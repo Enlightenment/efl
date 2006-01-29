@@ -67,14 +67,7 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 	evas_stringshare_del(pt->default_desc->text.text_class);
 	pt->default_desc->text.text_class = NULL;
      }
-   
-   if (pt->default_desc && pt->default_desc->color_class)
-     {
-        _edje_color_class_member_del(ed, pt->default_desc->color_class);
-	evas_stringshare_del(pt->default_desc->color_class);
-	pt->default_desc->color_class = NULL;
-     }
-
+  
    for (tmp = pt->other_desc; tmp; tmp = tmp->next)
      {
 	 Edje_Part_Description *desc;
@@ -86,13 +79,6 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 	      evas_stringshare_del(desc->text.text_class);
 	      desc->text.text_class = NULL;
 	   }
-	
-	if (desc->color_class)
-	  {
-	     _edje_color_class_member_del(ed, desc->color_class);
-	     evas_stringshare_del(desc->color_class);
-	     desc->color_class = NULL;
-	  }
      }
 }
 
