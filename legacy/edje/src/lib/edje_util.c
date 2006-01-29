@@ -1506,7 +1506,7 @@ _edje_color_class_find(Edje *ed, char *color_class)
 {
    Evas_List *l;
    Edje_Color_Class *cc = NULL;
-   
+
    if ((!ed) || (!color_class)) return NULL;
 
    /* first look through the object scope */ 
@@ -1618,7 +1618,6 @@ _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
 	if (desc->color_class)
 	  {
 	     _edje_color_class_member_del(ed, desc->color_class);
-	     desc->color_class = NULL;
 	  }
      }
 }
