@@ -476,6 +476,18 @@ data_write(void)
 	ecore_shutdown();
      }
 
+   /* check that all groups have names */
+   for (l = edje_file->collection_dir->entries; l; l = l->next)
+     {
+	Edje_Part_Collection_Directory_Entry *de;
+	de = l->data;
+	if (!de->entry)
+	  {
+	     fprintf(stderr, "%s: Error. collection %i: name missing.\n",
+		   progname, de->id);
+	     ABORT_WRITE(ef, file_out);
+	  }
+     }
    /* sanity checks for parts and programs */
    for (l = edje_collections; l; l = l->next)
      {
