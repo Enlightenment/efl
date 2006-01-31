@@ -53,7 +53,7 @@ void
 evas_common_cpu_sse_test(void)
 {
 #ifdef BUILD_SSE
-   int blah[2500];
+   int blah[16];
 
    movntq_r2m(mm0, blah);
 #endif
@@ -181,7 +181,7 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 	cpu_feature_mask |= CPU_FEATURE_MMX;
 #endif
 	if (cpu_feature_mask & CPU_FEATURE_MMX) do_mmx = 1;
-	if (cpu_feature_mask & CPU_FEATURE_MMX2) do_mmx = 2;
+	if (cpu_feature_mask & CPU_FEATURE_MMX2) do_sse = 1;
 	if (cpu_feature_mask & CPU_FEATURE_SSE) do_sse = 1;
      }
 //   printf("%i %i %i\n", do_mmx, do_sse, do_sse2);
