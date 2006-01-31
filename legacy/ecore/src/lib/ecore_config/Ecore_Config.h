@@ -141,6 +141,7 @@ extern              "C"
    EAPI long                ecore_config_int_get(const char *key);
    EAPI int                 ecore_config_argb_get(const char *key, int *a, int *r,
 						  int *g, int *b);
+   EAPI long                ecore_config_argbint_get(const char *key);
    EAPI char               *ecore_config_argbstr_get(const char *key);
    EAPI float               ecore_config_float_get(const char *key);
    EAPI char               *ecore_config_theme_get(const char *key);
@@ -158,6 +159,7 @@ extern              "C"
    EAPI int                 ecore_config_string_set(const char *key, char *val);
    EAPI int                 ecore_config_int_set(const char *key, int val);
    EAPI int                 ecore_config_argb_set(const char *key, int a, int r, int g, int b);
+   EAPI int                 ecore_config_argbint_set(const char *key, long argb);
    EAPI int                 ecore_config_argbstr_set(const char *key, char *val);
    EAPI int                 ecore_config_float_set(const char *key, float val);
    EAPI int                 ecore_config_theme_set(const char *key, char *val);
@@ -179,6 +181,7 @@ extern              "C"
 							     float val, float lo,
 							     float hi, float step);
    EAPI int                 ecore_config_argb_default(const char *key, int a, int r, int g, int b);
+   EAPI int                 ecore_config_argbint_default(const char *key, long argb);
    EAPI int                 ecore_config_argbstr_default(const char *key, char *val);
    EAPI int                 ecore_config_theme_default(const char *key, char *val);
 

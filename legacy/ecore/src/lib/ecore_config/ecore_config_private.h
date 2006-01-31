@@ -31,6 +31,7 @@ long                  _ecore_config_int_get(Ecore_Config_Prop *e);
 int                   _ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r,
 					  int *g, int *b);
 char                 *_ecore_config_argbstr_get(Ecore_Config_Prop *e);
+long                  _ecore_config_argbint_get(Ecore_Config_Prop *e);
 float                 _ecore_config_float_get(Ecore_Config_Prop *e);
 char                 *_ecore_config_theme_get(Ecore_Config_Prop *e);
 

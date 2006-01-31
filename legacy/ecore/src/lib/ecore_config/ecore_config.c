@@ -250,6 +250,28 @@ _ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r, int *g, int *b)
 }
 
 /**
+ * Returns a color property as a long
+ * @param   key The property key.
+ * @return  ARGB data as long
+ * @ingroup Ecore_Config_Get_Group
+ */
+EAPI long
+ecore_config_argbint_get(const char *key)
+{
+   return _ecore_config_argbint_get( ecore_config_get(key) );
+}
+
+EAPI long
+_ecore_config_argbint_get(Ecore_Config_Prop *e)
+{
+   if (e && ((e->type == ECORE_CONFIG_RGB)))
+     {
+	return e->val;
+     }
+   return 0L;
+}
+
+/**
  * Returns a color property as a string of hexadecimal characters.
  * @param   key The property key.
  * @return  A string of hexadecimal characters in the format #aarrggbb.
@@ -768,6 +790,19 @@ ecore_config_argb_set(const char *key, int a, int r, int g, int b)
 /**
  * Sets the indicated property to a color value.
  * @param   key The property key
+ * @param   argb ARGB data as long
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
+ */
+EAPI int
+ecore_config_argbint_set(const char *key, long argb)
+{
+   return ecore_config_typed_set(key, (void *)&argb, ECORE_CONFIG_RGB);
+}
+
+/**
+ * Sets the indicated property to a color value.
+ * @param   key The property key
  * @param   val Color value in ARGB format.
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
@@ -1039,6 +1074,20 @@ ecore_config_argb_default(const char *key, int a, int r, int g, int b)
 {
    long v = 0;
    return ecore_config_typed_default(key, __ecore_argb_to_long(a,r,g,b, &v), ECORE_CONFIG_RGB);
+}
+
+/**
+ * Sets the indicated property to a color value if the property has not yet
+ * been set.
+ * @param  key The property key.
+ * @param  argb ARGB data as long
+ * @return @c ECORE_CONFIG_ERR_SUCC if there are no problems.
+ * @ingroup Ecore_Config_Default_Group
+ */
+EAPI int
+ecore_config_argbint_default(const char *key, long argb)
+{
+   return ecore_config_typed_default(key, (void *)&argb, ECORE_CONFIG_RGB);
 }
 
 /**
