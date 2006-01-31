@@ -155,7 +155,7 @@ ecore_config_string_get(const char *key)
    return _ecore_config_string_get( ecore_config_get(key) );
 }
 
-EAPI char               *
+char               *
 _ecore_config_string_get(Ecore_Config_Prop *e)
 {
    return (e && (e->type == ECORE_CONFIG_STR) && e->ptr) ? strdup(e->ptr) : NULL;
@@ -174,7 +174,7 @@ ecore_config_boolean_get(const char *key)
    return _ecore_config_boolean_get( ecore_config_get(key) );
 }
 
-EAPI int
+int
 _ecore_config_boolean_get(Ecore_Config_Prop *e)
 {
    return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_BLN))) ? (e->val != 0) : -1;
@@ -193,7 +193,7 @@ ecore_config_int_get(const char *key)
    return _ecore_config_int_get( ecore_config_get(key) );
 }
 
-EAPI long
+long
 _ecore_config_int_get(Ecore_Config_Prop *e)
 {
    return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_RGB))) ? e->val : 0L;
@@ -212,7 +212,7 @@ ecore_config_float_get(const char *key)
    return _ecore_config_float_get( ecore_config_get(key) );
 }
 
-EAPI float
+float
 _ecore_config_float_get(Ecore_Config_Prop *e)
 {
    return (e && (e->type == ECORE_CONFIG_FLT)) ? ((float)e->val / ECORE_CONFIG_FLOAT_PRECISION) : 0.0;
@@ -235,7 +235,7 @@ ecore_config_argb_get(const char *key, int *a, int *r, int *g, int *b)
    return _ecore_config_argb_get( ecore_config_get(key), a, r, g, b);
 }
 
-EAPI int
+int
 _ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r, int *g, int *b)
 {
    if (e && ((e->type == ECORE_CONFIG_RGB)))
@@ -261,7 +261,7 @@ ecore_config_argbint_get(const char *key)
    return _ecore_config_argbint_get( ecore_config_get(key) );
 }
 
-EAPI long
+long
 _ecore_config_argbint_get(Ecore_Config_Prop *e)
 {
    if (e && ((e->type == ECORE_CONFIG_RGB)))
@@ -283,7 +283,7 @@ ecore_config_argbstr_get(const char *key)
    return _ecore_config_argbstr_get( ecore_config_get(key) );
 }
 
-EAPI char               *
+char               *
 _ecore_config_argbstr_get(Ecore_Config_Prop *e)
 {
    char               *r;
@@ -306,7 +306,7 @@ ecore_config_theme_get(const char *key)
    return _ecore_config_theme_get( ecore_config_get(key) );
 }
 
-EAPI char               *
+char               *
 _ecore_config_theme_get(Ecore_Config_Prop *e)
 {
    return (e && (e->type == ECORE_CONFIG_THM)) ? strdup(e->ptr) : NULL;
