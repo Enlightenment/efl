@@ -798,6 +798,18 @@ ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_
    return win ? win : root;
 }
 
+EAPI Ecore_X_Window
+ecore_x_window_at_xy_begin_get(Ecore_X_Window begin, int x, int y)
+{
+   Ecore_X_Window    win, root;
+   
+   ecore_x_grab();
+   win = _ecore_x_window_at_xy_get(begin, 0, 0, x, y, NULL, 0);
+   ecore_x_ungrab();
+   
+   return win ? win : begin;
+}
+
 /**
  * Retrieves the parent window of the given window.
  * @param   win The given window.

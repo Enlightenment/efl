@@ -1038,6 +1038,7 @@ EAPI void             ecore_x_window_defaults_set(Ecore_X_Window win);
 EAPI int              ecore_x_window_visible_get(Ecore_X_Window win);
 EAPI Ecore_X_Window   ecore_x_window_at_xy_get(int x, int y);
 EAPI Ecore_X_Window   ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_num);
+EAPI Ecore_X_Window   ecore_x_window_at_xy_begin_get(Ecore_X_Window begin, int x, int y);
 EAPI Ecore_X_Window   ecore_x_window_parent_get(Ecore_X_Window win);
 
 EAPI void             ecore_x_window_background_color_set(Ecore_X_Window win,
@@ -1143,7 +1144,10 @@ EAPI void             ecore_x_gc_del(Ecore_X_GC gc);
 
 EAPI int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Event_Mask mask, long d0, long d1, long d2, long d3, long d4);
 EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *data, int len);
-
+EAPI int              ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y);
+EAPI int              ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b);
+EAPI int              ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b);
+       
    
 /* FIXME: these funcs need categorising */
 EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);

@@ -1652,6 +1652,81 @@ ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
     return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
 }
 
+EAPI int
+ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
+{
+   XEvent xev;
+   XWindowAttributes att;
+   Window tw;
+   int rx, ry;
+
+   XGetWindowAttributes(_ecore_x_disp, win, &att);
+   XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
+   xev.xmotion.type = MotionNotify;
+   xev.xmotion.window = win;
+   xev.xmotion.root = att.root;
+   xev.xmotion.subwindow = win;
+   xev.xmotion.time = _ecore_x_event_last_time;
+   xev.xmotion.x = x;
+   xev.xmotion.y = y;
+   xev.xmotion.x_root = rx;
+   xev.xmotion.y_root = ry;
+   xev.xmotion.state = 0;
+   xev.xmotion.is_hint = 0;
+   xev.xmotion.same_screen = 1;
+   return XSendEvent(_ecore_x_disp, win, True, PointerMotionMask, &xev);
+}
+
+EAPI int
+ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
+{
+   XEvent xev;
+   XWindowAttributes att;
+   Window tw;
+   int rx, ry;
+
+   XGetWindowAttributes(_ecore_x_disp, win, &att);
+   XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
+   xev.xbutton.type = ButtonPress;
+   xev.xbutton.window = win;
+   xev.xbutton.root = att.root;
+   xev.xbutton.subwindow = win;
+   xev.xbutton.time = _ecore_x_event_last_time;
+   xev.xbutton.x = x;
+   xev.xbutton.y = y;
+   xev.xbutton.x_root = rx;
+   xev.xbutton.y_root = ry;
+   xev.xbutton.state = 1 << b;
+   xev.xbutton.button = b;
+   xev.xbutton.same_screen = 1;
+   return XSendEvent(_ecore_x_disp, win, True, ButtonPressMask, &xev);
+}
+
+EAPI int
+ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
+{
+   XEvent xev;
+   XWindowAttributes att;
+   Window tw;
+   int rx, ry;
+
+   XGetWindowAttributes(_ecore_x_disp, win, &att);
+   XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
+   xev.xbutton.type = ButtonRelease;
+   xev.xbutton.window = win;
+   xev.xbutton.root = att.root;
+   xev.xbutton.subwindow = win;
+   xev.xbutton.time = _ecore_x_event_last_time;
+   xev.xbutton.x = x;
+   xev.xbutton.y = y;
+   xev.xbutton.x_root = rx;
+   xev.xbutton.y_root = ry;
+   xev.xbutton.state = 0;
+   xev.xbutton.button = b;
+   xev.xbutton.same_screen = 1;
+   return XSendEvent(_ecore_x_disp, win, True, ButtonReleaseMask, &xev);
+}
+
 EAPI void
 ecore_x_focus_reset(void)
 {
