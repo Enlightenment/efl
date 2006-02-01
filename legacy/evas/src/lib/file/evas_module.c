@@ -54,14 +54,20 @@ evas_module_paths_init(void)
    
    /* 1. ~/.evas/modules/ */
    prefix = getenv("HOME");
-   path = malloc(strlen(prefix) + 1 + strlen("/.evas/modules"));
-   path[0] = 0;
-   strcpy(path, prefix);
-   strcat(path, "/.evas/modules");
-   if (evas_file_path_exists(path))
-     paths = evas_list_append(paths,path);
-   else
-     free(path);
+   if (prefix)
+     {
+	path = malloc(strlen(prefix) + 1 + strlen("/.evas/modules"));
+	if (path)
+	  {
+	     path[0] = 0;
+	     strcpy(path, prefix);
+	     strcat(path, "/.evas/modules");
+	     if (evas_file_path_exists(path))
+	       paths = evas_list_append(paths, path);
+	     else
+	       free(path);
+	  }
+     }
 
 #ifdef HAVE_DLADDR
      {
@@ -94,12 +100,15 @@ evas_module_paths_init(void)
    /* 3. PREFIX/evas/modules/ */
    prefix = PACKAGE_LIB_DIR; 
    path = malloc(strlen(prefix) + 1 + strlen("/evas/modules"));
-   strcpy(path, prefix);
-   strcat(path, "/evas/modules");
-   if (evas_file_path_exists(path))
-     paths = evas_list_append(paths, path);
-   else
-     free(path);
+   if (path)
+     {
+	strcpy(path, prefix);
+	strcat(path, "/evas/modules");
+	if (evas_file_path_exists(path))
+	  paths = evas_list_append(paths, path);
+	else
+	  free(path);
+     }
 #endif
    
    /* append all the module types subdirs */
@@ -145,7 +154,7 @@ evas_module_init(void)
 	     if ((!strcmp(de->d_name, ".")) || (!strcmp(de->d_name, "..")))
 	       continue;
 	     buf = malloc(strlen(mp->path) + 1 + strlen(de->d_name) + 1);
-	     sprintf(buf,"%s/%s", mp->path,de->d_name);
+	     sprintf(buf, "%s/%s", mp->path, de->d_name);
 	     if (evas_file_path_is_dir(buf))
 	       {
 		  Evas_Module *em;
