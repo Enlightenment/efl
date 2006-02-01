@@ -63,10 +63,12 @@ static volatile siginfo_t *sigrt_info = NULL;
 void
 _ecore_signal_shutdown(void)
 {
+#if 0   
 #ifdef SIGRTMIN
    int i, num = SIGRTMAX - SIGRTMIN;
 #endif
-
+#endif
+   
    _ecore_signal_callback_set(SIGPIPE, (Signal_Handler) SIG_DFL);
    _ecore_signal_callback_set(SIGALRM, (Signal_Handler) SIG_DFL);
    _ecore_signal_callback_set(SIGCHLD, (Signal_Handler) SIG_DFL);
@@ -89,6 +91,7 @@ _ecore_signal_shutdown(void)
    sigterm_count = 0;
    sig_count = 0;
 
+#if 0   
 #ifdef SIGRTMIN
    for (i = 0; i < num; i++)
      {
@@ -108,13 +111,16 @@ _ecore_signal_shutdown(void)
 	sigrt_info = NULL;
      }
 #endif
+#endif
 }
 
 void
 _ecore_signal_init(void)
 {
+#if 0   
 #ifdef SIGRTMIN
    int i, num = SIGRTMAX - SIGRTMIN;
+#endif
 #endif
 
    _ecore_signal_callback_set(SIGPIPE, _ecore_signal_callback_ignore);
@@ -130,6 +136,7 @@ _ecore_signal_init(void)
    _ecore_signal_callback_set(SIGPWR,  _ecore_signal_callback_sigpwr);
 #endif
 
+#if 0
 #ifdef SIGRTMIN
    sigrt_count = calloc(1, sizeof(sig_atomic_t) * num);
    assert(sigrt_count);
@@ -139,6 +146,7 @@ _ecore_signal_init(void)
    
    for (i = 0; i < num; i++)
       _ecore_signal_callback_set(SIGRTMIN + i, _ecore_signal_callback_sigrt);
+#endif
 #endif
 }
 
