@@ -171,40 +171,37 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root, int size_id, int *nu
 }
 
 EAPI int
-ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root, Ecore_X_Screen_Refresh_Rate rate)
+ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root, Ecore_X_Screen_Size size, Ecore_X_Screen_Refresh_Rate rate)
 {
 #ifdef ECORE_XRANDR
    XRRScreenConfiguration *sc;
    XRRScreenSize *sizes;
-   Rotation rotation;
-   SizeID size_index;
-   int n;
+   int i, n, size_index = -1;
 
-   sc = XRRGetScreenInfo(_ecore_x_disp, root);   
-   if (!sc)
+   sizes = XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
+   for (i = 0; i < n; i++)
      {
-	printf("ERROR: Couldn't set screen refresh rate for %d\n", root);
+	if ((sizes[i].width == size.width) && (sizes[i].height == size.height))
+	  {
+	     size_index = i;
+	     break;
+	  }
+     }
+   if (size_index == -1) return 0;
+   
+   printf("Size: %d\n", size_index);
+   sc = XRRGetScreenInfo(_ecore_x_disp, root);
+   if (XRRSetScreenConfigAndRate(_ecore_x_disp, sc,
+				 root, size_index,
+				 RR_Rotate_0, rate.rate, CurrentTime))
+     {
+	printf("ERROR: Can't set new screen size and refresh rate!\n");
+	XRRFreeScreenConfigInfo(sc);
 	return 0;
      }
-   
-   size_index = XRRConfigCurrentConfiguration(sc, &rotation);
-   sizes = XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
-   if (size_index < n)
-     {
-	if (XRRSetScreenConfigAndRate(_ecore_x_disp, sc,
-				      root, size_index,
-				      RR_Rotate_0, rate.rate, CurrentTime))
-	  {
-	     printf("ERROR: Can't set new screen size and refresh rate!\n");
-	     XRRFreeScreenConfigInfo(sc);
-	     return 0;
-	  }
-	XRRFreeScreenConfigInfo(sc);
-	return 1;
-     }
    XRRFreeScreenConfigInfo(sc);
-   return 0;
+   return 1;
 #else
-   return 0;
+   return 1;
 #endif
 }
