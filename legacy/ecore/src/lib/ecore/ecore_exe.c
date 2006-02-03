@@ -432,7 +432,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	 if (e)   /* Send the event. */
 	    ecore_event_add(ECORE_EXE_EVENT_ADD, e,
 		    _ecore_exe_event_add_free, NULL);
-         printf("Running as %d for %s.\n", exe->pid, exe->cmd);
+         /* printf("Running as %d for %s.\n", exe->pid, exe->cmd); */
       }
    
    errno = n;

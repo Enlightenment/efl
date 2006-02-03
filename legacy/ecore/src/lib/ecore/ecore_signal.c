@@ -210,13 +210,13 @@ _ecore_signal_call(void)
 			 * check to see for Last Words, and only delay if there are any.
 			 * This has it's own set of problems.
 			 */
-			printf("Delaying exit event for %s.\n", e->exe->cmd);
+			/* printf("Delaying exit event for %s.\n", e->exe->cmd); */
                         IF_FN_DEL(ecore_timer_del, e->exe->doomsday_clock);
                         e->exe->doomsday_clock = ecore_timer_add(0.1, _ecore_signal_exe_exit_delay, e);
                      }
 		  else
 		    {
-		       if (e->exe) printf("Sending exit event for %s.\n", e->exe->cmd);
+		       /* if (e->exe) printf("Sending exit event for %s.\n", e->exe->cmd); */
 		       _ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
 				   _ecore_exe_event_del_free, NULL);
 		    }
@@ -503,7 +503,7 @@ _ecore_signal_exe_exit_delay(void *data)
    e = data;
    if (e)
      {
-	printf("Sending delayed exit event for %s.\n", e->exe->cmd);
+	/* printf("Sending delayed exit event for %s.\n", e->exe->cmd); */
 	_ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
 			 _ecore_exe_event_del_free, NULL);
      }
