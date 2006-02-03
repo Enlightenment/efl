@@ -801,7 +801,7 @@ ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_
 EAPI Ecore_X_Window
 ecore_x_window_at_xy_begin_get(Ecore_X_Window begin, int x, int y)
 {
-   Ecore_X_Window    win, root;
+   Ecore_X_Window    win;
    
    ecore_x_grab();
    win = _ecore_x_window_at_xy_get(begin, 0, 0, x, y, NULL, 0);
