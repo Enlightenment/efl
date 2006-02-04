@@ -11,6 +11,8 @@ static void em_stop(void *ef);
 static void em_size_get(void *ef, int *w, int *h);
 static void em_pos_set(void *ef, double pos);
 static double em_len_get(void *ef);
+static int em_fps_num_get(void *ef);
+static int em_fps_den_get(void *ef);
 static double em_fps_get(void *ef);
 static double em_pos_get(void *ef);
 static double em_ratio_get(void *ef);
@@ -483,6 +485,24 @@ em_len_get(void *ef)
    return ev->len;
 }
 
+static int
+em_fps_num_get(void *ef)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = (Emotion_Xine_Video *)ef;
+   return (int)(ev->fps * 10000.0);
+}
+
+static int
+em_fps_den_get(void *ef)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = (Emotion_Xine_Video *)ef;
+   return 10000;
+}
+
 static double
 em_fps_get(void *ef)
 {
@@ -563,7 +583,7 @@ static Emotion_Format em_format_get(void *ef)
 
    if (fr)
      return fr->format;
-   return EMOTION_YV12;
+   return EMOTION_FORMAT_YV12;
 }
 
 static void
@@ -1370,6 +1390,8 @@ static Emotion_Video_Module em_module =
      em_size_get, /* size_get */
      em_pos_set, /* pos_set */
      em_len_get, /* len_get */
+     em_fps_num_get, /* fps_num_get */
+     em_fps_den_get, /* fps_den_get */
      em_fps_get, /* fps_get */
      em_pos_get, /* pos_get */
      em_ratio_get, /* ratio_get */

@@ -1003,7 +1003,7 @@ _pixels_get(void *data, Evas_Object *obj)
        ih = h;
      }
    format = sd->module->format_get(sd->video);
-   if (format == EMOTION_YV12)
+   if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
      {
        unsigned char **rows;
        Evas_Pixel_Import_Source ps;
@@ -1029,7 +1029,7 @@ _pixels_get(void *data, Evas_Object *obj)
        evas_object_image_pixels_dirty_set(obj, 0);
        free(ps.rows);
    }
-   else if (format == EMOTION_BGRA)
+   else if (format == EMOTION_FORMAT_BGRA)
      {
        unsigned char *bgra_data;
        if (sd->module->bgra_data_get(sd->video, &bgra_data));

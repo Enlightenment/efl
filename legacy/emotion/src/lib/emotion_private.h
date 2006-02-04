@@ -24,9 +24,11 @@ typedef struct _Emotion_Video_Module Emotion_Video_Module;
 
 enum _Emotion_Format
 {
-   EMOTION_YV12,
-   EMOTION_YUY2,     /* unused for now since evas does not support yuy2 format */
-   EMOTION_BGRA
+   EMOTION_FORMAT_NONE,
+   EMOTION_FORMAT_I420,
+   EMOTION_FORMAT_YV12,
+   EMOTION_FORMAT_YUY2,     /* unused for now since evas does not support yuy2 format */
+   EMOTION_FORMAT_BGRA
 };
 
 struct _Emotion_Video_Module
@@ -40,6 +42,8 @@ struct _Emotion_Video_Module
    void         (*size_get) (void *ef, int *w, int *h);
    void         (*pos_set) (void *ef, double pos);
    double       (*len_get) (void *ef);
+   int          (*fps_num_get) (void *ef);
+   int          (*fps_den_get) (void *ef);
    double       (*fps_get) (void *ef);
    double       (*pos_get) (void *ef);
    double       (*ratio_get) (void *ef);

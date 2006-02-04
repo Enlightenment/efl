@@ -157,9 +157,9 @@ HAVE_GSTPLUG="no"
 if test "$enable_gstreamer" != "no" ; then
 
 	dnl Gstreamer version requirement
-	GST_REQS=0.8.10
-	GSTPLUG_REQS=0.8.10
-	GST_MAJORMINOR=0.8
+	GST_REQS=0.10.2
+	GSTPLUG_REQS=0.10.1
+	GST_MAJORMINOR=0.10
 
 	PKG_CHECK_MODULES(GST, \
 	   gstreamer-$GST_MAJORMINOR >= $GST_REQS,
@@ -167,14 +167,19 @@ if test "$enable_gstreamer" != "no" ; then
 	AC_MSG_RESULT($HAVE_GSTREAMER)
 
 	PKG_CHECK_MODULES(GSTPLUG, \
-	   gstreamer-plugins-$GST_MAJORMINOR >= $GSTPLUG_REQS,
+	   gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS,
 	   HAVE_GSTPLUG="yes", HAVE_GSTPLUG="no")
 	AC_MSG_RESULT($HAVE_GSTPLUG)
+
+        AM_GST_ELEMENT_CHECK(
+           [ffmpeg],
+           [HAVE_GSTFFMPEG="yes"],
+           [HAVE_GSTFFMPEG="no"])
 fi
 if test "$enable_gstreamer$HAVE_GSTREAMER" = "yesno" ; then
 	AC_MSG_ERROR(gstreamer not found)
 fi
-if test "$HAVE_GSTPLUG" = "no" ; then
+if test "$HAVE_GSTPLUG" = "no" -o test "$HAVE_GSTFFMPEG" = "no"; then
 	if test "$HAVE_GSTREAMER" = "no" ; then
 		GSTPLUG_MSG="no"
 	else
@@ -230,6 +235,7 @@ echo "  Modules:"
 echo "    Xine...............: $HAVE_XINE"
 echo "    Gstreamer..........: $HAVE_GSTREAMER"
 echo "    Gstreamer plugins..: $GSTPLUG_MSG"
+echo "    Gstreamer FFmpeg...: $HAVE_GSTFFMPEG"
 echo
 echo "  Compilation..........: make"
 echo

@@ -361,7 +361,7 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 	       {
 		  int y_size, uv_size;
 		  
-		  fr->frame.format = EMOTION_YV12;
+		  fr->frame.format = EMOTION_FORMAT_YV12;
 		  fr->vo_frame.pitches[0] = 8 * ((width + 7) / 8);
 		  fr->vo_frame.pitches[1] = 8 * ((width + 15) / 16);
 		  fr->vo_frame.pitches[2] = 8 * ((width + 15) / 16);
@@ -387,7 +387,7 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 	     break;
 	   case XINE_IMGFMT_YUY2: 
 	       {
-		  fr->frame.format = EMOTION_BGRA;
+		  fr->frame.format = EMOTION_FORMAT_BGRA;
 		  fr->vo_frame.pitches[0] = 8 * ((width + 3) / 4);
 		  fr->vo_frame.pitches[1] = 0;
 		  fr->vo_frame.pitches[2] = 0;
