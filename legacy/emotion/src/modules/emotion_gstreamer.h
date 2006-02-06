@@ -49,7 +49,7 @@ struct _Emotion_Gstreamer_Video
   unsigned char    *obj_data;
 
   /* Characteristics of stream */
-  int               position;
+  double            position;
   double            ratio;
 
   volatile int      seek_to;

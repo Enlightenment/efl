@@ -1204,27 +1204,28 @@ new_decoded_pad_cb (GstElement *decodebin,
 static int
 _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 {
-  int fd;
-  int len;
-  void *buf[1];
-  unsigned char *frame_data;
-  Emotion_Gstreamer_Video *ev;
-  GstBuffer  *buffer;
+   int fd;
+   int len;
+   void *buf[1];
+   unsigned char *frame_data;
+   Emotion_Gstreamer_Video *ev;
+   GstBuffer  *buffer;
 
-  ev = data;
-  fd = ecore_main_fd_handler_fd_get(fdh);
+   ev = data;
+   fd = ecore_main_fd_handler_fd_get(fdh);
 
-  while ((len = read(fd, buf, sizeof(buf))) > 0)
-    {
-      if (len == sizeof(buf))
-        {
-          frame_data = buf[0];
-          buffer = buf[1];
-          _emotion_frame_new(ev->obj);
-          len = ((Emotion_Video_Sink *)ecore_list_goto_first(ev->video_sinks))->length_time;
-          _emotion_video_pos_update(ev->obj, ev->position, len);
+   while ((len = read(fd, buf, sizeof(buf))) > 0)
+     {
+        if (len == sizeof(buf))
+          {
+             Emotion_Video_Sink *vsink;
 
-        }
-    }
+             frame_data = buf[0];
+             buffer = buf[1];
+             _emotion_frame_new(ev->obj);
+             vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+             _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
+          }
+     }
    return 1;
 }
