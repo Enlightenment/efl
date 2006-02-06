@@ -1105,6 +1105,7 @@ collections {
 	    description {
 	       state: "default" 0.0;
 	       align: 1.0 1.0;
+	       fixed: 1 1;
 	       rel1 {
 		  relative: 1.0  1.0;
 		  offset:   -2    -2;
