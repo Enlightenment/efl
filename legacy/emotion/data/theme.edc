@@ -28,6 +28,10 @@ images {
   image: "pnl.png"                 COMP;
 }
 
+fonts {
+   font: "Vera.ttf"   "Vera";
+}
+
 collections {
    group {
       name: "background";
@@ -103,7 +107,7 @@ collections {
 	 }
       }
    }
-#if 0   
+#if 0
    group {
       name: "video_controller";
       parts {
@@ -445,11 +449,11 @@ collections {
 	    name: "video_progress_img";
 	    mouse_events: 0;
 	    clip_to: "panel_clip";
-            fixed: 1 1;
 	    description {
 	       state: "default" 0.0;
 	       min:   9 16;
 	       align: 0.5 1.0;
+	       fixed: 1 1;
 	       rel1 {
 		  relative: 0.5  0.0;
 		  offset:   0    0;
@@ -612,7 +616,7 @@ collections {
 		  text: "Video Progress";
 		  font: "Vera";
 		  size: 6;
-		  align: 0.0: 1.0;
+		  align: 0.0 1.0;
 	       };
 	    }
 	 }
@@ -846,31 +850,6 @@ collections {
 	       image {
 		  normal: "video_frame_bottom.png";
 	       }
-	    }
-	 }
-	 part {
-	    name: "video_progress_txt";
-	    type: TEXT;
-	    mouse_events: 0;
-	    description {
-	       state: "default" 0.0;
-	       rel1 {
-		  to:       "video_frame_bottom";
-		  relative: 0.0  0.0;
-		  offset:   0    8;
-	       }
-	       rel2 {
-		  to:       "video_frame_bottom";
-		  relative: 1.0  1.0;
-		  offset:   -1   -13;
-	       }
-	       color:       0 0 0 255;
-	       text {
-		  text: "Video Progress";
-		  font: "Vera";
-		  size: 6;
-		  align: 0.0 0.5;
-	       };
 	    }
 	 }
 	 part {
@@ -1116,6 +1095,33 @@ collections {
 		  offset:   -1   -1;
 	       }
 	       color: 20 20 255 20;
+	    }
+	 }
+	 part {
+	    name: "video_progress_txt";
+	    type: TEXT;
+	    mouse_events: 0;
+	    effect: OUTLINE;
+	    description {
+	       state: "default" 0.0;
+	       align: 1.0 1.0;
+	       rel1 {
+		  relative: 1.0  1.0;
+		  offset:   -2    -2;
+	       }
+	       rel2 {
+		  relative: 1.0  1.0;
+		  offset:   -2   -2;
+	       }
+	       color:       255 255 255 255;
+	       color2:      0 0 0 255;
+	       text {
+		  text: "XX:XX:XX / XX:XX:XX";
+		  font: "Vera";
+		  size: 10;
+		  align: 1.0 1.0;
+		  min: 1 1;
+	       };
 	    }
 	 }
       }
