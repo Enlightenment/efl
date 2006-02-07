@@ -304,9 +304,22 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
          else if (pid == 0)   /* child */
             {
                /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the second pipe if it's open. */
-	       if (ok && (flags & ECORE_EXE_PIPE_ERROR))   E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
-               if (ok && (flags & ECORE_EXE_PIPE_READ))    E_NO_ERRNO(result, dup2(readPipe[1],  STDOUT_FILENO), ok);
-               if (ok && (flags & ECORE_EXE_PIPE_WRITE))   E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO),  ok);
+	       /* On the other hand, there was the Great FD Leak Scare of '06, so let's be paranoid. */
+	       if (ok && (flags & ECORE_EXE_PIPE_ERROR))
+	          {
+		     E_NO_ERRNO(result, close(STDERR_FILENO), ok);
+		     E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
+		  }
+               if (ok && (flags & ECORE_EXE_PIPE_READ))
+	          {
+		     E_NO_ERRNO(result, close(STDOUT_FILENO), ok);
+		     E_NO_ERRNO(result, dup2(readPipe[1],  STDOUT_FILENO), ok);
+		  }
+               if (ok && (flags & ECORE_EXE_PIPE_WRITE))
+	          {
+		     E_NO_ERRNO(result, close(STDIN_FILENO), ok);
+		     E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO),  ok);
+		  }
 
                if (ok)
 	          {
