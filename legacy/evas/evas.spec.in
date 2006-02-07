@@ -1,5 +1,19 @@
-# Conditional build stuff; see /usr/lib/rpm/macros.  bcond_without
-# defaults to WITH, and vice versa.  Yes, it's ass-backward.  Blame PLD.
+# Conditional build stuff; from rpm 4.4 /usr/lib/rpm/macros.
+# bcond_without defaults to WITH, and vice versa.  Yes, it's
+# ass-backward.  Blame PLD.
+%if %{!?with:1}0
+%define with() %{expand:%%{?with_%{1}:1}%%{!?with_%{1}:0}}
+%endif
+%if %{!?without:1}0
+%define without() %{expand:%%{?with_%{1}:0}%%{!?with_%{1}:1}}
+%endif
+%if %{!?bcond_with:1}0
+%define bcond_with() %{expand:%%{?_with_%{1}:%%global with_%{1} 1}}
+%endif
+%if %{!?bcond_without:1}0
+%define bcond_without() %{expand:%%{!?_without_%{1}:%%global with_%{1} 1}}
+%endif
+
 %bcond_without module_loader_edb
 %bcond_without module_saver_edb
 %bcond_with    module_engine_cairo_x11
