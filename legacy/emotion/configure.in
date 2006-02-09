@@ -146,7 +146,7 @@ if test "$enable_xine" != "no" ; then
 	fi
 fi
 if test "$enable_xine$HAVE_XINE" = "yesno" ; then
-	AC_MSG_ERROR(xine not found)
+	AC_MSG_RESULT(xine not found)
 fi
 
 AC_ARG_ENABLE(gstreamer,
@@ -177,9 +177,9 @@ if test "$enable_gstreamer" != "no" ; then
            [HAVE_GSTFFMPEG="no"])
 fi
 if test "$enable_gstreamer$HAVE_GSTREAMER" = "yesno" ; then
-	AC_MSG_ERROR(gstreamer not found)
+	AC_MSG_RESULT(gstreamer not found)
 fi
-if test "$HAVE_GSTPLUG" = "no" -o test "$HAVE_GSTFFMPEG" = "no"; then
+if test "$HAVE_GSTPLUG" = "no"; then
 	if test "$HAVE_GSTREAMER" = "no" ; then
 		GSTPLUG_MSG="no"
 	else
@@ -187,10 +187,17 @@ if test "$HAVE_GSTPLUG" = "no" -o test "$HAVE_GSTFFMPEG" = "no"; then
 		GSTPLUG_MSG="no (you should install gst-plugins and gst-ffmpeg)"
 	fi
 else
-	requirements="$requirements gstreamer"
-	GSTPLUG_MSG="yes"
+	if test "$HAVE_GSTFFMPEG" = "no"; then
+		if test "$HAVE_GSTREAMER" = "no" ; then
+			GSTPLUG_MSG="no"
+		else
+			AC_MSG_WARN([You should install gstreamer plugins and gst-ffmpeg to properly decode your video and audio files])
+			GSTPLUG_MSG="no (you should install gst-plugins and gst-ffmpeg)"
+		fi
+		requirements="$requirements gstreamer"
+		GSTPLUG_MSG="yes"
+	fi
 fi
-
 if test "$HAVE_XINE$HAVE_GSTREAMER" = "nono" ; then
    AC_MSG_ERROR([Xine or Gstreamer must be installed to build emotion])
 fi
