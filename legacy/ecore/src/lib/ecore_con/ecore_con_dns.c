@@ -378,7 +378,11 @@ ecore_con_dns_lookup(const char *name,
 	     write(fd[1], &(addr.s_addr), sizeof(in_addr_t));
 	  }
 	close(fd[1]);
-	exit(0);
+# ifdef __USE_ISOC99
+	Exit(0);
+# else	
+	_exit(0);
+# endif	
      }
    /* PARENT */
    cbdata->handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _ecore_con_dns_exit_handler, cbdata);
