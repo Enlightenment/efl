@@ -123,7 +123,10 @@ AC_PATH_GENERIC(ecore, 0.9.9,
   [ ],
   [ AC_MSG_ERROR(Ecore isn't installed)]
 )
+save_CPPFLAGS=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $ECORE_CFLAGS"
 AC_CHECK_HEADERS(Ecore_X.h Ecore_Fb.h)
+CPPFLAGS=$save_CPPFLAGS
 
 AC_PATH_GENERIC(embryo, 0.9.1,
   [ ],
