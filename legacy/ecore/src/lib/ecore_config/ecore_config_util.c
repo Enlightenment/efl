@@ -49,9 +49,9 @@ estring_disown(estring * e)
 int
 estring_appendf(estring * e, const char *fmt, ...)
 {
-   int                 need;
-   va_list             ap;
-   char               *p;
+   int      need;
+   va_list  ap;
+   char    *p;
 
    if (!e)
       return ECORE_CONFIG_ERR_FAIL;
@@ -59,34 +59,30 @@ estring_appendf(estring * e, const char *fmt, ...)
    if (!e->str)
      {
 	e->used = e->alloc = 0;
-	if (!(e->str = (char *)malloc(e->alloc = 512)))
+	if (!(e->str = (char *)malloc(e->alloc = CHUNKLEN)))
 	   return ECORE_CONFIG_ERR_OOM;
      }
 
- retry:
    va_start(ap, fmt);
-   need = vsnprintf(e->str + e->used, e->alloc - e->used, fmt, ap);
+   need = vsnprintf(NULL, 0, fmt, ap);
    va_end(ap);
 
-   if ((need >= (e->alloc - e->used)) || (need < 0))
+   if (need >= (e->alloc - e->used))
      {
-	if (need < 0)
-	   need = 2 * e->alloc;
-	else
-	   need++;
-	need += e->used;
-	need += (CHUNKLEN - (need % CHUNKLEN));
+	e->alloc = e->used + need + (CHUNKLEN - (need % CHUNKLEN));
 
-	if (!(p = (char *)realloc(e->str, need)))
-	  {
+	if (!(p = (char *)realloc(e->str, e->alloc)))
+	   {
 	     free(e->str);
 	     e->alloc = e->used = 0;
 	     return ECORE_CONFIG_ERR_OOM;
-	  }
-	e->alloc = need;
+	   }
 	e->str = p;
-	goto retry;
      }
+
+   va_start(ap, fmt);
+   need = vsnprintf(e->str + e->used, e->alloc - e->used, fmt, ap);
+   va_end(ap);
 
    return e->used += need;
 }
