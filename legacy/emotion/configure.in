@@ -196,6 +196,9 @@ else
 		fi
 		requirements="$requirements gstreamer"
 		GSTPLUG_MSG="yes"
+        else
+		requirements="$requirements gstreamer"
+		GSTPLUG_MSG="yes"
 	fi
 fi
 if test "$HAVE_XINE$HAVE_GSTREAMER" = "nono" ; then
