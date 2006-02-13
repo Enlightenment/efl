@@ -221,7 +221,11 @@ output(void)
 	     printf("ERROR: unable to write file (%s).\n", out);
 	     exit (-1);
 	  }
-	fputs(sf->file, f);
+
+	/* if the file is empty, sf->file will be NULL.
+	 * note that that's not an error
+	 */
+	if (sf->file) fputs(sf->file, f);
 	fclose(f);
      }
    if (fontlist)
