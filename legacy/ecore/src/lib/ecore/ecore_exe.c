@@ -274,18 +274,30 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if ( (flags & ECORE_EXE_PIPE_AUTO) && (! (flags & ECORE_EXE_PIPE_ERROR)) && (! (flags & ECORE_EXE_PIPE_READ)) )
       flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;   /* We need something to auto pipe. */
 
+   exe->child_fd_error = -1;
+   exe->child_fd_read = -1;
+   exe->child_fd_write = -1;
    /*  Create some pipes. */
    if (ok)   E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
         ;
    if (ok && (flags & ECORE_EXE_PIPE_ERROR))
       E_IF_NO_ERRNO_NOLOOP(result, pipe(errorPipe), ok)
-         exe->child_fd_error = errorPipe[0];
+         {
+            exe->child_fd_error = errorPipe[0];
+            exe->child_fd_error_x = errorPipe[1];
+	 }
    if (ok && (flags & ECORE_EXE_PIPE_READ))
       E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe),  ok)
-         exe->child_fd_read = readPipe[0];
+         {
+            exe->child_fd_read = readPipe[0];
+            exe->child_fd_read_x = readPipe[1];
+	 }
    if (ok && (flags & ECORE_EXE_PIPE_WRITE))
       E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
-         exe->child_fd_write = writePipe[1];
+         {
+            exe->child_fd_write = writePipe[1];
+            exe->child_fd_write_x = writePipe[0];
+	 }
 
    if (ok)
       {
@@ -773,9 +785,12 @@ ecore_exe_free(Ecore_Exe *exe)
    IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->read_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->error_fd_handler);
-   if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
-   if (exe->child_fd_read)   E_NO_ERRNO(result, close(exe->child_fd_read), ok);
-   if (exe->child_fd_error)  E_NO_ERRNO(result, close(exe->child_fd_error), ok);
+   if (exe->child_fd_write_x != -1)  E_NO_ERRNO(result, close(exe->child_fd_write_x), ok);
+   if (exe->child_fd_read_x != -1)   E_NO_ERRNO(result, close(exe->child_fd_read_x), ok);
+   if (exe->child_fd_error_x != -1)  E_NO_ERRNO(result, close(exe->child_fd_error_x), ok);
+   if (exe->child_fd_write != -1)    E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+   if (exe->child_fd_read != -1)     E_NO_ERRNO(result, close(exe->child_fd_read), ok);
+   if (exe->child_fd_error != -1)    E_NO_ERRNO(result, close(exe->child_fd_error), ok);
    IF_FREE(exe->write_data_buf);
    IF_FREE(exe->read_data_buf);
    IF_FREE(exe->error_data_buf);
@@ -1346,10 +1361,10 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler)
          int result;
 
 printf("Closing stdin for %s\n", exe->cmd);
-         /* if (exe->child_fd_write)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
+         /* if (exe->child_fd_write != -1)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
          IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
-         if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
-	 exe->child_fd_write = 0;
+         if (exe->child_fd_write != -1)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+	 exe->child_fd_write = -1;
          IF_FREE(exe->write_data_buf);
       }
 
@@ -1362,7 +1377,7 @@ _ecore_exe_flush(Ecore_Exe *exe)
    int count;
 
    /* check whether we need to write anything at all. */
-   if ((!exe->child_fd_write) && (!exe->write_data_buf))   return;
+   if ((!exe->child_fd_write != -1) && (!exe->write_data_buf))   return;
    if (exe->write_data_size == exe->write_data_offset)     return;
 
    count = write(exe->child_fd_write, 
