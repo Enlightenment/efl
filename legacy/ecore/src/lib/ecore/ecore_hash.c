@@ -147,8 +147,10 @@ EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
 	node = _ecore_hash_get_node(hash, key);
-	if (node)
+	if (node) {
 		node->value = value;
+		ret = TRUE;
+	}
 	else {
 		node = _ecore_hash_node_new(key, value);
 		if (node)
