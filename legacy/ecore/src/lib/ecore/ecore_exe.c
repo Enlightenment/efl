@@ -277,6 +277,10 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    exe->child_fd_error = -1;
    exe->child_fd_read = -1;
    exe->child_fd_write = -1;
+   exe->child_fd_error_x = -1;
+   exe->child_fd_read_x = -1;
+   exe->child_fd_write_x = -1;
+
    /*  Create some pipes. */
    if (ok)   E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
         ;
