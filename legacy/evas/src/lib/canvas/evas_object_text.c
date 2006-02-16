@@ -1218,9 +1218,11 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 	  {1, 3, 4, 3, 1},
 	  {0, 1, 2, 1, 0}
      };
+   int sl = 0, st = 0;
 
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Text *)(obj->object_data);
+   evas_text_style_pad_get(o->cur.style, &sl, NULL, &st, NULL);
    ENFN->context_multiplier_unset(output, context);
 /*
    ENFN->context_color_set(output,
@@ -1277,9 +1279,9 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     context, \
 		     surface, \
 		     o->engine_data, \
-		     obj->cur.cache.geometry.x + x + ox - \
+		     obj->cur.cache.geometry.x + x + sl + ox - \
 		     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text), \
-		     obj->cur.cache.geometry.y + y + oy + \
+		     obj->cur.cache.geometry.y + y + st + oy + \
 		     (int) \
 		     (((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h) - 0.5), \
 		     obj->cur.cache.geometry.w, \
