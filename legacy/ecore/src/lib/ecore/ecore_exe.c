@@ -1381,7 +1381,7 @@ _ecore_exe_flush(Ecore_Exe *exe)
    int count;
 
    /* check whether we need to write anything at all. */
-   if ((!exe->child_fd_write != -1) && (!exe->write_data_buf))   return;
+   if ((exe->child_fd_write == -1) || (!exe->write_data_buf))   return;
    if (exe->write_data_size == exe->write_data_offset)     return;
 
    count = write(exe->child_fd_write, 
