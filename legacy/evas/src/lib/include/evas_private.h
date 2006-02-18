@@ -329,6 +329,7 @@ struct _Evas
    Evas_Lock      locks;
    unsigned int   last_timestamp;
    void          *attach_data;
+   int            last_click_counter;
 };
 
 struct _Evas_Layer
@@ -414,6 +415,7 @@ struct _Evas_Object
       unsigned char     deletions_waiting : 1;
    } smart;
 
+   int                         last_click_counter;
    int                         mouse_grabbed;
 
    unsigned short              store : 1;
