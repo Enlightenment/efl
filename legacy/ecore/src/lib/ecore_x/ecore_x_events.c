@@ -1,11 +1,20 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+#include "langinfo.h"
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
+
+/** OpenBSD does not define CODESET
+ * FIXME ??
+ */
+
+#ifndef CODESET
+#define CODESET "INVALID"
+#endif
 
 #if 0
 static void _ecore_x_event_free_window_prop_name_class_change(void *data, void *ev);
@@ -191,7 +200,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    if (val > 0)
      {
 	buf[val] = 0;
-	e->key_compose = ecore_txt_convert("ISO8859-1", "UTF-8", buf);
+	e->key_compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", buf);
      }
    else e->key_compose = NULL;
    keyname = XKeysymToString(sym);
