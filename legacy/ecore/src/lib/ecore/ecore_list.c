@@ -472,7 +472,6 @@ static int _ecore_list_insert(Ecore_List * list, Ecore_List_Node *new_node)
 
 	/* Now move the current item to the inserted item */
 	list->current = new_node;
-	list->index++;
 	list->nodes++;
 
 	return TRUE;
@@ -1176,32 +1175,35 @@ EAPI int ecore_dlist_prepend(Ecore_DList * list, void *data)
  */
 EAPI int ecore_dlist_insert(Ecore_DList * list, void *data)
 {
-	int ret;
+	int ret = TRUE;
 	Ecore_DList_Node *prev;
 	Ecore_DList_Node *node;
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	prev = ECORE_DLIST_NODE(ECORE_LIST(list)->current);
-	if (!prev)
-		prev = ECORE_DLIST_NODE(ECORE_LIST(list)->last);
-
-	if (prev)
-		prev = prev->previous;
+	/*
+	 * Identify and shortcut the end cases.
+	 */
+	if (!ECORE_LIST(list)->current)
+		return ecore_dlist_append(list, data);
+	if (ECORE_LIST(list)->current == ECORE_LIST(list)->first)
+		return ecore_dlist_prepend(list, data);
 
 	node = ecore_dlist_node_new();
 	ECORE_LIST_NODE(node)->data = data;
 
-	ret = _ecore_list_insert(list, ECORE_LIST_NODE(node));
-	if (!ret) {
-		return ret;
-	}
+	/* Setup the fields of the new node */
+	ECORE_LIST_NODE(node)->next = ECORE_LIST(list)->current;
 
-	if (ECORE_LIST_NODE(node)->next)
-		ECORE_DLIST_NODE(ECORE_LIST_NODE(node)->next)->previous = node;
+	/* And hook the node into the list */
+	prev = ECORE_DLIST_NODE(ECORE_LIST(list)->current)->previous;
+	ECORE_LIST_NODE(prev)->next = ECORE_LIST_NODE(node);
+	ECORE_DLIST_NODE(ECORE_LIST(list)->current)->previous = node;
+	node->previous = prev;
 
-	if (prev)
-		node->previous = prev;
+	/* Now move the current item to the inserted item */
+	ECORE_LIST(list)->current = ECORE_LIST_NODE(node);
+	ECORE_LIST(list)->nodes++;
 
 	return ret;
 }
