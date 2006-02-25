@@ -1537,6 +1537,7 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
    d->text.text = DUP(d->text.text);
    d->text.text_class = DUP(d->text.text_class);
    d->text.font = DUP(d->text.font);
+   d->text.style = DUP(d->text.style);
 #undef DUP
 
    rp->custom.description = d;
