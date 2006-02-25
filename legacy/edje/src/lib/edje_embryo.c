@@ -1514,7 +1514,7 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 
    *d = *parent;
 
-   d->state.name = strdup("custom");
+   d->state.name = evas_stringshare_add("custom");
    d->state.value = 0.0;
 
    /* make sure all the allocated memory is getting copied,
@@ -1532,12 +1532,12 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 	d->image.tween_list = evas_list_append(d->image.tween_list, iid_new);
      }
 
-#define STRDUP(x) x ? strdup(x) : NULL
-   d->color_class = STRDUP(d->color_class);
-   d->text.text = STRDUP(d->text.text);
-   d->text.text_class = STRDUP(d->text.text_class);
-   d->text.font = STRDUP(d->text.font);
-#undef STRDUP
+#define DUP(x) x ? evas_stringshare_add(x) : NULL
+   d->color_class = DUP(d->color_class);
+   d->text.text = DUP(d->text.text);
+   d->text.text_class = DUP(d->text.text_class);
+   d->text.font = DUP(d->text.font);
+#undef DUP
 
    rp->custom.description = d;
 
