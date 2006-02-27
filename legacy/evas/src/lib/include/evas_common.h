@@ -166,6 +166,13 @@ typedef enum _CPU_Features
    CPU_FEATURE_VIS2    = (1 << 5)
 } CPU_Features;
 
+typedef enum _Font_Hint_Flags
+{
+   FONT_NO_HINT,
+   FONT_AUTO_HINT,
+   FONT_BYTECODE_HINT
+} Font_Hint_Flags;
+
 /*****************************************************************************/
 
 struct _Evas_Object_List
@@ -299,6 +306,7 @@ struct _RGBA_Polygon_Point
 struct _RGBA_Font
 {
    Evas_List *fonts;
+   Font_Hint_Flags hinting;
 };
 
 struct _RGBA_Font_Int
@@ -317,6 +325,7 @@ struct _RGBA_Font_Int
    Evas_Hash       *glyphs;
 
    int              usage;
+   Font_Hint_Flags hinting;
 
    int              references;
 };
@@ -864,6 +873,8 @@ RGBA_Font       *evas_common_font_add               (RGBA_Font *fn, const char *
 RGBA_Font       *evas_common_font_memory_add        (RGBA_Font *fn, const char *name, int size, const void *data, int data_size);
 RGBA_Font_Int   *evas_common_font_int_load_init     (RGBA_Font_Int *fn);
 void             evas_common_font_free              (RGBA_Font *fn);
+void             evas_common_font_hinting_set       (RGBA_Font *fn, Font_Hint_Flags hinting);
+Evas_Bool        evas_common_hinting_available      (Font_Hint_Flags hinting);
 void             evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir);
 int              evas_common_font_cache_get         (void);
 void             evas_common_font_cache_set         (int size);

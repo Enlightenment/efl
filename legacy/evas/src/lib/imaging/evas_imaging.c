@@ -63,11 +63,38 @@ evas_imaging_image_cache_get(void)
    return evas_common_image_get_cache();
 }
 
+static Evas_Font_Hinting_Flags _evas_hinting = EVAS_FONT_HINTING_BYTECODE;
+
+EAPI void
+evas_imaging_font_hinting_set(Evas_Font_Hinting_Flags hinting)
+{
+   _evas_hinting = hinting;
+}
+
+EAPI Evas_Font_Hinting_Flags
+evas_imaging_font_hinting_get(void)
+{
+   return _evas_hinting;
+}
+
+EAPI Evas_Bool
+evas_imaging_font_hinting_can_hint(Evas_Font_Hinting_Flags hinting)
+{
+   Font_Hint_Flags h;
+   
+   h = FONT_BYTECODE_HINT;
+   if (hinting == EVAS_FONT_HINTING_NONE) h = FONT_NO_HINT;
+   else if (hinting == EVAS_FONT_HINTING_AUTO) h = FONT_AUTO_HINT;
+   else if (hinting == EVAS_FONT_HINTING_BYTECODE) h = FONT_BYTECODE_HINT;
+   return evas_common_hinting_available(h);
+}
+
 EAPI Evas_Imaging_Font *
 evas_imaging_font_load(const char *file, const char *key, int size)
 {
    Evas_Imaging_Font *fn;
    RGBA_Font *font;
+   Font_Hint_Flags h;
 
    evas_common_cpu_init();
    evas_common_font_init();
@@ -109,6 +136,11 @@ evas_imaging_font_load(const char *file, const char *key, int size)
      {
 	font = evas_common_font_load((char *)file, size);
      }
+   h = FONT_BYTECODE_HINT;
+   if (_evas_hinting == EVAS_FONT_HINTING_NONE) h = FONT_NO_HINT;
+   else if (_evas_hinting == EVAS_FONT_HINTING_AUTO) h = FONT_AUTO_HINT;
+   else if (_evas_hinting == EVAS_FONT_HINTING_BYTECODE) h = FONT_BYTECODE_HINT;
+   if (font) evas_common_font_hinting_set(font, h);
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn) return NULL;
    fn->font = font;

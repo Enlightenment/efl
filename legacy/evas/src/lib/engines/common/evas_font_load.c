@@ -232,11 +232,13 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
    if (!fi) return NULL;
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
-      {
-         free(fi);
-         return NULL;
-      }
+     {
+	free(fi);
+	return NULL;
+     }
    fn->fonts = evas_list_append(fn->fonts, fi);
+   fn->hinting = FONT_BYTECODE_HINT;
+   fi->hinting = fn->hinting;
    return fn;
 }
 
@@ -250,11 +252,13 @@ evas_common_font_load(const char *name, int size)
    if (!fi) return NULL;
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
-      {
-         free(fi);
-         return NULL;
-      }
+     {
+	free(fi);
+	return NULL;
+     }
    fn->fonts = evas_list_append(fn->fonts, fi);
+   fn->hinting = FONT_BYTECODE_HINT;
+   fi->hinting = fn->hinting;
    return fn;
 }
 
@@ -271,6 +275,7 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size)
 	fn->fonts = evas_list_append(fn->fonts, fi);
 	return fn;
      }
+   fi->hinting = fn->hinting;
    return NULL;
 }
 
@@ -287,6 +292,7 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const voi
 	fn->fonts = evas_list_append(fn->fonts, fi);
 	return fn;
      }
+   fi->hinting = fn->hinting;
    return NULL;
 }
 
@@ -311,6 +317,46 @@ evas_common_font_free(RGBA_Font *fn)
      }
    evas_list_free(fn->fonts);
    free(fn);
+}
+
+void
+evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
+{
+   Evas_List *l;
+   
+   if (!fn)
+     return;
+   fn->hinting = hinting;
+   for (l = fn->fonts; l; l = l->next)
+     {
+	RGBA_Font_Int *fi;
+
+	fi = l->data;
+	fi->hinting = fn->hinting;
+     }
+}
+
+Evas_Bool
+evas_common_hinting_available(Font_Hint_Flags hinting)
+{
+   if (hinting == FONT_NO_HINT) return 1;
+   else if (hinting == FONT_AUTO_HINT)
+     {
+#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
+	return 1;
+#else	
+	return 0;
+#endif
+     }
+   else if (hinting == FONT_BYTECODE_HINT)
+     {
+#ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+	return 1;
+#else
+	return 0;
+#endif
+     }
+   return 0;
 }
 
 static Evas_Bool

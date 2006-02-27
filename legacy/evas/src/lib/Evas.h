@@ -54,6 +54,13 @@ typedef enum _Evas_Button_Flags
    EVAS_BUTTON_TRIPLE_CLICK = (1 << 1) /**< This mouse button press was the 3rd press of a triple click */
 } Evas_Button_Flags; /**< Flags for Mouse Button events */
 
+typedef enum _Evas_Font_Hinting_Flags
+{
+   EVAS_FONT_HINTING_NONE,
+   EVAS_FONT_HINTING_AUTO,
+   EVAS_FONT_HINTING_BYTECODE
+} Evas_Font_Hinting_Flags; /**< Flags for Font Hinting */
+
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
@@ -712,6 +719,10 @@ tile_mode);
    EAPI void                evas_imaging_image_cache_set (int bytes);
    EAPI int                 evas_imaging_image_cache_get (void);
 
+   EAPI void                    evas_imaging_font_hinting_set      (Evas_Font_Hinting_Flags hinting);
+   EAPI Evas_Font_Hinting_Flags evas_imaging_font_hinting_get      (void);
+   EAPI Evas_Bool               evas_imaging_font_hinting_can_hint (Evas_Font_Hinting_Flags hinting);
+       
    EAPI Evas_Imaging_Font  *evas_imaging_font_load                      (const char *file, const char *key, int size);
    EAPI void                evas_imaging_font_free                      (Evas_Imaging_Font *fn);
    EAPI int                 evas_imaging_font_ascent_get                (Evas_Imaging_Font *fn);

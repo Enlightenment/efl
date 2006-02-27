@@ -6,6 +6,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    RGBA_Font_Glyph *fg;
    char key[6];
    FT_Error error;
+   FT_Int32 lflags;
 
    key[0] = ((index       ) & 0x7f) + 1;
    key[1] = ((index >> 7  ) & 0x7f) + 1;
@@ -18,8 +19,11 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    if (fg) return fg;
    
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
-   error = FT_Load_Glyph(fi->src->ft.face, index,
-			 FT_LOAD_RENDER);
+   lflags = FT_LOAD_RENDER;
+   if (fi->hinting == FONT_NO_HINT) lflags |= FT_LOAD_NO_HINTING;
+   else if (fi->hinting == FONT_AUTO_HINT) lflags |= FT_LOAD_FORCE_AUTOHINT;
+   else if (fi->hinting == FONT_BYTECODE_HINT) lflags |= FT_LOAD_NO_AUTOHINT;
+   error = FT_Load_Glyph(fi->src->ft.face, index, lflags);
    if (error) return NULL;
 
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
