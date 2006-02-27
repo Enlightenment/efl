@@ -275,7 +275,7 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size)
 	fn->fonts = evas_list_append(fn->fonts, fi);
 	return fn;
      }
-   fi->hinting = fn->hinting;
+   // fi->hinting = fn->hinting;
    return NULL;
 }
 
@@ -292,7 +292,7 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const voi
 	fn->fonts = evas_list_append(fn->fonts, fi);
 	return fn;
      }
-   fi->hinting = fn->hinting;
+   // fi->hinting = fn->hinting;
    return NULL;
 }
 
