@@ -273,9 +273,9 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size)
    if (fi)
      {
 	fn->fonts = evas_list_append(fn->fonts, fi);
+	fi->hinting = fn->hinting;
 	return fn;
      }
-   // fi->hinting = fn->hinting;
    return NULL;
 }
 
@@ -290,9 +290,9 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const voi
    if (fi)
      {
 	fn->fonts = evas_list_append(fn->fonts, fi);
+	fi->hinting = fn->hinting;
 	return fn;
      }
-   // fi->hinting = fn->hinting;
    return NULL;
 }
 
@@ -357,6 +357,42 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
 #endif
      }
    return 0;
+}
+
+RGBA_Font *
+evas_common_font_memory_hinting_load(const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting)
+{
+   RGBA_Font *fn;
+
+   fn = evas_common_font_memory_load(name, size, data, data_size);
+   if (fn) evas_common_font_hinting_set(fn, hinting);
+   return fn;
+}
+
+RGBA_Font *
+evas_common_font_hinting_load(const char *name, int size, Font_Hint_Flags hinting)
+{
+   RGBA_Font *fn;
+
+   fn = evas_common_font_load(name, size);
+   if (fn) evas_common_font_hinting_set(fn, hinting);
+   return fn;
+}
+
+RGBA_Font *
+evas_common_font_hinting_add(RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting)
+{
+   fn = evas_common_font_add(fn, name, size);
+   if (fn) evas_common_font_hinting_set(fn, hinting);
+   return fn;
+}
+
+RGBA_Font *
+evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting)
+{
+   fn = evas_common_font_memory_add(fn, name, size, data, data_size);
+   if (fn) evas_common_font_hinting_set(fn, hinting);
+   return fn;
 }
 
 static Evas_Bool
