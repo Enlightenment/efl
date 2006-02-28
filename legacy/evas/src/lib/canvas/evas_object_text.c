@@ -969,6 +969,38 @@ evas_font_path_list(Evas *e)
    return e->font_path;
 }
 
+static Evas_Font_Hinting_Flags _evas_hinting = EVAS_FONT_HINTING_BYTECODE;
+
+EAPI void
+evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   e->hinting = hinting;
+}
+
+EAPI Evas_Font_Hinting_Flags
+evas_font_hinting_get(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return EVAS_FONT_HINTING_BYTECODE;
+   MAGIC_CHECK_END();
+   return e->hinting;
+}
+
+EAPI Evas_Bool
+evas_font_hinting_can_hint(Evas *e, Evas_Font_Hinting_Flags hinting)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return 0;
+   MAGIC_CHECK_END();
+   if (e->engine.func->font_hinting_can_hint)
+     return e->engine.func->font_hinting_can_hint(e->engine.data.output,
+						  hinting);
+   return 0;
+}
+
 
 
 

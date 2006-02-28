@@ -312,6 +312,9 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	fd->ref = 1;
 	fonts_cache = evas_list_prepend(fonts_cache, fd);
      }
+   if (font)
+     evas->engine.func->font_hinting_set(evas->engine.data.output, font,
+					 evas->hinting);
    return font;
 }
 

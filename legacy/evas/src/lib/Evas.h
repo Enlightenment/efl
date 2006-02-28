@@ -478,6 +478,10 @@ tile_mode);
    EAPI void              evas_font_path_append             (Evas *e, const char *path);
    EAPI void              evas_font_path_prepend            (Evas *e, const char *path);
    EAPI const Evas_List  *evas_font_path_list               (Evas *e);
+   
+   EAPI void              evas_font_hinting_set             (Evas *e, Evas_Font_Hinting_Flags hinting);
+   EAPI Evas_Font_Hinting_Flags evas_font_hinting_get       (Evas *e);
+   EAPI Evas_Bool         evas_font_hinting_can_hint        (Evas *e, Evas_Font_Hinting_Flags hinting);
 
    EAPI void              evas_font_cache_flush             (Evas *e);
    EAPI void              evas_font_cache_set               (Evas *e, int size);
@@ -722,7 +726,7 @@ tile_mode);
    EAPI void                    evas_imaging_font_hinting_set      (Evas_Font_Hinting_Flags hinting);
    EAPI Evas_Font_Hinting_Flags evas_imaging_font_hinting_get      (void);
    EAPI Evas_Bool               evas_imaging_font_hinting_can_hint (Evas_Font_Hinting_Flags hinting);
-       
+   
    EAPI Evas_Imaging_Font  *evas_imaging_font_load                      (const char *file, const char *key, int size);
    EAPI void                evas_imaging_font_free                      (Evas_Imaging_Font *fn);
    EAPI int                 evas_imaging_font_ascent_get                (Evas_Imaging_Font *fn);

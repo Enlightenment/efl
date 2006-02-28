@@ -2,7 +2,7 @@
 #include <math.h>
 #include <string.h>
 
-Evas_Func           evas_engine_directfb_func = {
+static Evas_Func evas_engine_directfb_func = {
    evas_engine_directfb_info,
    evas_engine_directfb_info_free,
    evas_engine_directfb_setup,
@@ -91,7 +91,10 @@ Evas_Func           evas_engine_directfb_func = {
    /* font cache functions */
    evas_engine_directfb_font_cache_flush,
    evas_engine_directfb_font_cache_set,
-   evas_engine_directfb_font_cache_get
+   evas_engine_directfb_font_cache_get,
+     
+   evas_engine_directfb_font_hinting_set,
+   evas_engine_directfb_font_hinting_can_hint
 };
 
 
@@ -1085,6 +1088,23 @@ evas_engine_directfb_font_cache_get(void *data)
    return evas_common_font_cache_get();
 }
 
+void
+evas_engine_directfb_font_hinting_set(void *data, void *font, int hinting)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   evas_common_font_hinting_set(font, hinting);
+}
+
+int
+evas_engine_directfb_font_hinting_can_hint(void *data, int hinting)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   return evas_common_hinting_available(hinting);
+}
 
 int module_open(Evas_Module *em)
 {

@@ -5,92 +5,95 @@
 #include "Evas_Engine_GL_X11.h"
 #include "evas_gl_common.h"
 
-static void *evas_engine_gl_x11_info(Evas *e);
-static void evas_engine_gl_x11_info_free(Evas *e, void *info);
-static void evas_engine_gl_x11_setup(Evas *e, void *info);
-static void *evas_engine_gl_x11_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth);
-static void evas_engine_gl_x11_output_free(void *data);
-static void evas_engine_gl_x11_output_resize(void *data, int w, int h);
-static void evas_engine_gl_x11_output_tile_size_set(void *data, int w, int h);
-static void evas_engine_gl_x11_output_redraws_rect_add(void *data, int x, int y, int w, int h);
-static void evas_engine_gl_x11_output_redraws_rect_del(void *data, int x, int y, int w, int h);
-static void evas_engine_gl_x11_output_redraws_clear(void *data);
-static void *evas_engine_gl_x11_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
-static void evas_engine_gl_x11_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
-static void evas_engine_gl_x11_output_flush(void *data);
-static void *evas_engine_gl_x11_context_new(void *data);
-static void evas_engine_gl_x11_context_free(void *data, void *context);
-static void evas_engine_gl_x11_context_clip_set(void *data, void *context, int x, int y, int w, int h);
-static void evas_engine_gl_x11_context_clip_clip(void *data, void *context, int x, int y, int w, int h);
-static void evas_engine_gl_x11_context_clip_unset(void *data, void *context);
-static int evas_engine_gl_x11_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h);
-static void evas_engine_gl_x11_context_color_set(void *data, void *context, int r, int g, int b, int a);
-static int evas_engine_gl_x11_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a);
-static void evas_engine_gl_x11_context_multiplier_set(void *data, void *context, int r, int g, int b, int a);
-static void evas_engine_gl_x11_context_multiplier_unset(void *data, void *context);
-static int evas_engine_gl_x11_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a);
-static void evas_engine_gl_x11_context_cutout_add(void *data, void *context, int x, int y, int w, int h);
-static void evas_engine_gl_x11_context_cutout_clear(void *data, void *context);
-static void evas_engine_gl_x11_context_anti_alias_set(void *data, void *context, unsigned char aa);
-static unsigned char evas_engine_gl_x11_context_anti_alias_get(void *data, void *context);
-static void evas_engine_gl_x11_context_color_interpolation_set(void *data, void *context, int color_space);
-static int evas_engine_gl_x11_context_color_interpolation_get(void *data, void *context);
-static void evas_engine_gl_x11_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h);
-static void evas_engine_gl_x11_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
-static void *evas_engine_gl_x11_polygon_point_add(void *data, void *context, void *polygon, int x, int y);
-static void *evas_engine_gl_x11_polygon_points_clear(void *data, void *context, void *polygon);
-static void evas_engine_gl_x11_polygon_draw(void *data, void *context, void *surface, void *polygon);
-static void *evas_engine_gl_x11_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
-static void *evas_engine_gl_x11_gradient_colors_clear(void *data, void *context, void *gradient);
-static void evas_engine_gl_x11_gradient_free(void *data, void *gradient);
-static void evas_engine_gl_x11_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
-static void evas_engine_gl_x11_gradient_type_set(void *data, void *gradient, char *name);
-static void evas_engine_gl_x11_gradient_type_params_set(void *data, void *gradient, char *params);
-static void *evas_engine_gl_x11_gradient_geometry_init(void *data, void *gradient, int spread);
-static int  evas_engine_gl_x11_gradient_alpha_get(void *data, void *gradient, int spread);
-static void evas_engine_gl_x11_gradient_map(void *data, void *context, void *gradient, int spread);
-static void evas_engine_gl_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
-static void *evas_engine_gl_x11_image_load(void *data, char *file, char *key, int *error);
-static void *evas_engine_gl_x11_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
-static void *evas_engine_gl_x11_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
-static void evas_engine_gl_x11_image_free(void *data, void *image);
-static void evas_engine_gl_x11_image_size_get(void *data, void *image, int *w, int *h);
-static void *evas_engine_gl_x11_image_size_set(void *data, void *image, int w, int h);
-static void *evas_engine_gl_x11_image_dirty_region(void *data, void *image, int x, int y, int w, int h);
-static void *evas_engine_gl_x11_image_data_get(void *data, void *image, int to_write, DATA32 **image_data);
-static void *evas_engine_gl_x11_image_data_put(void *data, void *image, DATA32 *image_data);
-static void *evas_engine_gl_x11_image_alpha_set(void *data, void *image, int has_alpha);
-static int evas_engine_gl_x11_image_alpha_get(void *data, void *image);
-static void evas_engine_gl_x11_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
-static char *evas_engine_gl_x11_image_comment_get(void *data, void *image, char *key);
-static char *evas_engine_gl_x11_image_format_get(void *data, void *image);
-static void evas_engine_gl_x11_image_cache_flush(void *data);
-static void evas_engine_gl_x11_image_cache_set(void *data, int bytes);
-static int evas_engine_gl_x11_image_cache_get(void *data);
-static void *evas_engine_gl_x11_font_load(void *data, char *name, int size);
-static void *evas_engine_gl_x11_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size);
-static void *evas_engine_gl_x11_font_add(void *data, void *font, char *name, int size);
-static void *evas_engine_gl_x11_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
-static void evas_engine_gl_x11_font_free(void *data, void *font);
-static int evas_engine_gl_x11_font_ascent_get(void *data, void *font);
-static int evas_engine_gl_x11_font_descent_get(void *data, void *font);
-static int evas_engine_gl_x11_font_max_ascent_get(void *data, void *font);
-static int evas_engine_gl_x11_font_max_descent_get(void *data, void *font);
-static void evas_engine_gl_x11_font_string_size_get(void *data, void *font, char *text, int *w, int *h);
-static int evas_engine_gl_x11_font_inset_get(void *data, void *font, char *text);
-static int evas_engine_gl_x11_font_h_advance_get(void *data, void *font, char *text);
-static int evas_engine_gl_x11_font_v_advance_get(void *data, void *font, char *text);
-static int evas_engine_gl_x11_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
-static int evas_engine_gl_x11_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-static void evas_engine_gl_x11_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
-static void evas_engine_gl_x11_font_cache_flush(void *data);
-static void evas_engine_gl_x11_font_cache_set(void *data, int bytes);
-static int evas_engine_gl_x11_font_cache_get(void *data);
+static void *eng_info(Evas *e);
+static void eng_info_free(Evas *e, void *info);
+static void eng_setup(Evas *e, void *info);
+static void *eng_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth);
+static void eng_output_free(void *data);
+static void eng_output_resize(void *data, int w, int h);
+static void eng_output_tile_size_set(void *data, int w, int h);
+static void eng_output_redraws_rect_add(void *data, int x, int y, int w, int h);
+static void eng_output_redraws_rect_del(void *data, int x, int y, int w, int h);
+static void eng_output_redraws_clear(void *data);
+static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
+static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
+static void eng_output_flush(void *data);
+static void *eng_context_new(void *data);
+static void eng_context_free(void *data, void *context);
+static void eng_context_clip_set(void *data, void *context, int x, int y, int w, int h);
+static void eng_context_clip_clip(void *data, void *context, int x, int y, int w, int h);
+static void eng_context_clip_unset(void *data, void *context);
+static int eng_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h);
+static void eng_context_color_set(void *data, void *context, int r, int g, int b, int a);
+static int eng_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a);
+static void eng_context_multiplier_set(void *data, void *context, int r, int g, int b, int a);
+static void eng_context_multiplier_unset(void *data, void *context);
+static int eng_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a);
+static void eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h);
+static void eng_context_cutout_clear(void *data, void *context);
+static void eng_context_anti_alias_set(void *data, void *context, unsigned char aa);
+static unsigned char eng_context_anti_alias_get(void *data, void *context);
+static void eng_context_color_interpolation_set(void *data, void *context, int color_space);
+static int eng_context_color_interpolation_get(void *data, void *context);
+static void eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h);
+static void eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
+static void *eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y);
+static void *eng_polygon_points_clear(void *data, void *context, void *polygon);
+static void eng_polygon_draw(void *data, void *context, void *surface, void *polygon);
+static void *eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
+static void *eng_gradient_colors_clear(void *data, void *context, void *gradient);
+static void eng_gradient_free(void *data, void *gradient);
+static void eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
+static void eng_gradient_type_set(void *data, void *gradient, char *name);
+static void eng_gradient_type_params_set(void *data, void *gradient, char *params);
+static void *eng_gradient_geometry_init(void *data, void *gradient, int spread);
+static int  eng_gradient_alpha_get(void *data, void *gradient, int spread);
+static void eng_gradient_map(void *data, void *context, void *gradient, int spread);
+static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
+static void *eng_image_load(void *data, char *file, char *key, int *error);
+static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
+static void *eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
+static void eng_image_free(void *data, void *image);
+static void eng_image_size_get(void *data, void *image, int *w, int *h);
+static void *eng_image_size_set(void *data, void *image, int w, int h);
+static void *eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h);
+static void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data);
+static void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
+static void *eng_image_alpha_set(void *data, void *image, int has_alpha);
+static int eng_image_alpha_get(void *data, void *image);
+static void eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
+static char *eng_image_comment_get(void *data, void *image, char *key);
+static char *eng_image_format_get(void *data, void *image);
+static void eng_image_cache_flush(void *data);
+static void eng_image_cache_set(void *data, int bytes);
+static int eng_image_cache_get(void *data);
+static void *eng_font_load(void *data, char *name, int size);
+static void *eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size);
+static void *eng_font_add(void *data, void *font, char *name, int size);
+static void *eng_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
+static void eng_font_free(void *data, void *font);
+static int eng_font_ascent_get(void *data, void *font);
+static int eng_font_descent_get(void *data, void *font);
+static int eng_font_max_ascent_get(void *data, void *font);
+static int eng_font_max_descent_get(void *data, void *font);
+static void eng_font_string_size_get(void *data, void *font, char *text, int *w, int *h);
+static int eng_font_inset_get(void *data, void *font, char *text);
+static int eng_font_h_advance_get(void *data, void *font, char *text);
+static int eng_font_v_advance_get(void *data, void *font, char *text);
+static int eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
+static int eng_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
+static void eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
+static void eng_font_cache_flush(void *data);
+static void eng_font_cache_set(void *data, int bytes);
+static int eng_font_cache_get(void *data);
 
 
-static Visual *evas_engine_gl_x11_best_visual_get(Display *disp, int screen);
-static Colormap evas_engine_gl_x11_best_colormap_get(Display *disp, int screen);
-static int evas_engine_gl_x11_best_depth_get(Display *disp, int screen);
+static Visual *eng_best_visual_get(Display *disp, int screen);
+static Colormap eng_best_colormap_get(Display *disp, int screen);
+static int eng_best_depth_get(Display *disp, int screen);
+
+static void eng_font_hinting_set(void *data, void *font, int hinting);
+static int eng_font_hinting_can_hint(void *data, int hinting);
 
 typedef struct _Render_Engine Render_Engine;
 
@@ -100,117 +103,120 @@ struct _Render_Engine
    int                 end;
 };
 
-Evas_Func evas_engine_gl_x11_func =
+static Evas_Func eng_func =
 {
-   evas_engine_gl_x11_info,
-     evas_engine_gl_x11_info_free,
-     evas_engine_gl_x11_setup,
-     evas_engine_gl_x11_output_free,
-     evas_engine_gl_x11_output_resize,
-     evas_engine_gl_x11_output_tile_size_set,
-     evas_engine_gl_x11_output_redraws_rect_add,
-     evas_engine_gl_x11_output_redraws_rect_del,
-     evas_engine_gl_x11_output_redraws_clear,
-     evas_engine_gl_x11_output_redraws_next_update_get,
-     evas_engine_gl_x11_output_redraws_next_update_push,
-     evas_engine_gl_x11_output_flush,
+   eng_info,
+     eng_info_free,
+     eng_setup,
+     eng_output_free,
+     eng_output_resize,
+     eng_output_tile_size_set,
+     eng_output_redraws_rect_add,
+     eng_output_redraws_rect_del,
+     eng_output_redraws_clear,
+     eng_output_redraws_next_update_get,
+     eng_output_redraws_next_update_push,
+     eng_output_flush,
      /* draw context virtual methods */
-     evas_engine_gl_x11_context_new,
-     evas_engine_gl_x11_context_free,
-     evas_engine_gl_x11_context_clip_set,
-     evas_engine_gl_x11_context_clip_clip,
-     evas_engine_gl_x11_context_clip_unset,
-     evas_engine_gl_x11_context_clip_get,
-     evas_engine_gl_x11_context_color_set,
-     evas_engine_gl_x11_context_color_get,
-     evas_engine_gl_x11_context_multiplier_set,
-     evas_engine_gl_x11_context_multiplier_unset,
-     evas_engine_gl_x11_context_multiplier_get,
-     evas_engine_gl_x11_context_cutout_add,
-     evas_engine_gl_x11_context_cutout_clear,
-     evas_engine_gl_x11_context_anti_alias_set,
-     evas_engine_gl_x11_context_anti_alias_get,
-     evas_engine_gl_x11_context_color_interpolation_set,
-     evas_engine_gl_x11_context_color_interpolation_get,
+     eng_context_new,
+     eng_context_free,
+     eng_context_clip_set,
+     eng_context_clip_clip,
+     eng_context_clip_unset,
+     eng_context_clip_get,
+     eng_context_color_set,
+     eng_context_color_get,
+     eng_context_multiplier_set,
+     eng_context_multiplier_unset,
+     eng_context_multiplier_get,
+     eng_context_cutout_add,
+     eng_context_cutout_clear,
+     eng_context_anti_alias_set,
+     eng_context_anti_alias_get,
+     eng_context_color_interpolation_set,
+     eng_context_color_interpolation_get,
      /* rectangle draw funcs */
-     evas_engine_gl_x11_rectangle_draw,
+     eng_rectangle_draw,
      /* line draw funcs */
-     evas_engine_gl_x11_line_draw,
+     eng_line_draw,
      /* polygon draw funcs */
-     evas_engine_gl_x11_polygon_point_add,
-     evas_engine_gl_x11_polygon_points_clear,
-     evas_engine_gl_x11_polygon_draw,
+     eng_polygon_point_add,
+     eng_polygon_points_clear,
+     eng_polygon_draw,
      /* gradient draw funcs */
-     evas_engine_gl_x11_gradient_color_add,
-     evas_engine_gl_x11_gradient_colors_clear,
-     evas_engine_gl_x11_gradient_free,
-     evas_engine_gl_x11_gradient_fill_set,
-     evas_engine_gl_x11_gradient_type_set,
-     evas_engine_gl_x11_gradient_type_params_set,
-     evas_engine_gl_x11_gradient_geometry_init,
-     evas_engine_gl_x11_gradient_alpha_get,
-     evas_engine_gl_x11_gradient_map,
-     evas_engine_gl_x11_gradient_draw,
+     eng_gradient_color_add,
+     eng_gradient_colors_clear,
+     eng_gradient_free,
+     eng_gradient_fill_set,
+     eng_gradient_type_set,
+     eng_gradient_type_params_set,
+     eng_gradient_geometry_init,
+     eng_gradient_alpha_get,
+     eng_gradient_map,
+     eng_gradient_draw,
      /* image draw funcs */
-     evas_engine_gl_x11_image_load,
-     evas_engine_gl_x11_image_new_from_data,
-     evas_engine_gl_x11_image_new_from_copied_data,
-     evas_engine_gl_x11_image_free,
-     evas_engine_gl_x11_image_size_get,
-     evas_engine_gl_x11_image_size_set,
-     evas_engine_gl_x11_image_dirty_region,
-     evas_engine_gl_x11_image_data_get,
-     evas_engine_gl_x11_image_data_put,
-     evas_engine_gl_x11_image_alpha_set,
-     evas_engine_gl_x11_image_alpha_get,
-     evas_engine_gl_x11_image_draw,
-     evas_engine_gl_x11_image_comment_get,
-     evas_engine_gl_x11_image_format_get,
+     eng_image_load,
+     eng_image_new_from_data,
+     eng_image_new_from_copied_data,
+     eng_image_free,
+     eng_image_size_get,
+     eng_image_size_set,
+     eng_image_dirty_region,
+     eng_image_data_get,
+     eng_image_data_put,
+     eng_image_alpha_set,
+     eng_image_alpha_get,
+     eng_image_draw,
+     eng_image_comment_get,
+     eng_image_format_get,
      /* image cache funcs */
-     evas_engine_gl_x11_image_cache_flush,
-     evas_engine_gl_x11_image_cache_set,
-     evas_engine_gl_x11_image_cache_get,
+     eng_image_cache_flush,
+     eng_image_cache_set,
+     eng_image_cache_get,
      /* font draw functions */
-     evas_engine_gl_x11_font_load,
-     evas_engine_gl_x11_font_memory_load,
-     evas_engine_gl_x11_font_add,
-     evas_engine_gl_x11_font_memory_add,
-     evas_engine_gl_x11_font_free,
-     evas_engine_gl_x11_font_ascent_get,
-     evas_engine_gl_x11_font_descent_get,
-     evas_engine_gl_x11_font_max_ascent_get,
-     evas_engine_gl_x11_font_max_descent_get,
-     evas_engine_gl_x11_font_string_size_get,
-     evas_engine_gl_x11_font_inset_get,
-     evas_engine_gl_x11_font_h_advance_get,
-     evas_engine_gl_x11_font_v_advance_get,
-     evas_engine_gl_x11_font_char_coords_get,
-     evas_engine_gl_x11_font_char_at_coords_get,
-     evas_engine_gl_x11_font_draw,
+     eng_font_load,
+     eng_font_memory_load,
+     eng_font_add,
+     eng_font_memory_add,
+     eng_font_free,
+     eng_font_ascent_get,
+     eng_font_descent_get,
+     eng_font_max_ascent_get,
+     eng_font_max_descent_get,
+     eng_font_string_size_get,
+     eng_font_inset_get,
+     eng_font_h_advance_get,
+     eng_font_v_advance_get,
+     eng_font_char_coords_get,
+     eng_font_char_at_coords_get,
+     eng_font_draw,
      /* font cache functions */
-     evas_engine_gl_x11_font_cache_flush,
-     evas_engine_gl_x11_font_cache_set,
-     evas_engine_gl_x11_font_cache_get
+     eng_font_cache_flush,
+     eng_font_cache_set,
+     eng_font_cache_get,
+     
+     eng_font_hinting_set,
+     eng_font_hinting_can_hint
 };
 
 static void *
-evas_engine_gl_x11_info(Evas *e)
+eng_info(Evas *e)
 {
    Evas_Engine_Info_GL_X11 *info;
 
    info = calloc(1, sizeof(Evas_Engine_Info_GL_X11));
    if (!info) return NULL;
    info->magic.magic = rand();
-   info->func.best_visual_get = evas_engine_gl_x11_best_visual_get;
-   info->func.best_colormap_get = evas_engine_gl_x11_best_colormap_get;
-   info->func.best_depth_get = evas_engine_gl_x11_best_depth_get;
+   info->func.best_visual_get = eng_best_visual_get;
+   info->func.best_colormap_get = eng_best_colormap_get;
+   info->func.best_depth_get = eng_best_depth_get;
    printf("GL: create info...\n");
    return info;
    e = NULL;
 }
 
 static void
-evas_engine_gl_x11_info_free(Evas *e, void *info)
+eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_GL_X11 *in;
 
@@ -219,7 +225,7 @@ evas_engine_gl_x11_info_free(Evas *e, void *info)
 }
 
 static void
-evas_engine_gl_x11_setup(Evas *e, void *in)
+eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_GL_X11 *info;
@@ -228,7 +234,7 @@ evas_engine_gl_x11_setup(Evas *e, void *in)
    printf("GL: setup info...\n");
    if (!e->engine.data.output)
      e->engine.data.output =
-     evas_engine_gl_x11_output_setup(e->output.w,
+     eng_output_setup(e->output.w,
 				     e->output.h,
 				     info->info.display,
 				     info->info.drawable,
@@ -243,7 +249,7 @@ evas_engine_gl_x11_setup(Evas *e, void *in)
 }
 
 static void *
-evas_engine_gl_x11_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth)
+eng_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth)
 {
    Render_Engine *re;
    int eb, evb;
@@ -251,7 +257,7 @@ evas_engine_gl_x11_output_setup(int w, int h, Display *disp, Drawable draw, Visu
    if (!glXQueryExtension(disp, &eb, &evb)) return NULL;
    re = calloc(1, sizeof(Render_Engine));
 
-   re->win = evas_engine_gl_x11_window_new(disp, draw,
+   re->win = eng_window_new(disp, draw,
 					   0 /* FIXME: screen 0 assumption */,
 					   vis, cmap, depth, w, h);
    if (!re->win)
@@ -278,7 +284,7 @@ evas_engine_gl_x11_output_setup(int w, int h, Display *disp, Drawable draw, Visu
 }
 
 static void
-evas_engine_gl_x11_output_free(void *data)
+eng_output_free(void *data)
 {
    Render_Engine *re;
 
@@ -290,7 +296,7 @@ evas_engine_gl_x11_output_free(void *data)
 }
 
 static void
-evas_engine_gl_x11_output_resize(void *data, int w, int h)
+eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
 
@@ -301,7 +307,7 @@ evas_engine_gl_x11_output_resize(void *data, int w, int h)
 }
 
 static void
-evas_engine_gl_x11_output_tile_size_set(void *data, int w, int h)
+eng_output_tile_size_set(void *data, int w, int h)
 {
    Render_Engine *re;
 
@@ -309,7 +315,7 @@ evas_engine_gl_x11_output_tile_size_set(void *data, int w, int h)
 }
 
 static void
-evas_engine_gl_x11_output_redraws_rect_add(void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -340,7 +346,7 @@ evas_engine_gl_x11_output_redraws_rect_add(void *data, int x, int y, int w, int 
 }
 
 static void
-evas_engine_gl_x11_output_redraws_rect_del(void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -348,7 +354,7 @@ evas_engine_gl_x11_output_redraws_rect_del(void *data, int x, int y, int w, int 
 }
 
 static void
-evas_engine_gl_x11_output_redraws_clear(void *data)
+eng_output_redraws_clear(void *data)
 {
    Render_Engine *re;
 
@@ -358,7 +364,7 @@ evas_engine_gl_x11_output_redraws_clear(void *data)
 }
 
 static void *
-evas_engine_gl_x11_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
+eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
 
@@ -382,7 +388,7 @@ evas_engine_gl_x11_output_redraws_next_update_get(void *data, int *x, int *y, in
 }
 
 static void
-evas_engine_gl_x11_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
+eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -393,13 +399,13 @@ evas_engine_gl_x11_output_redraws_next_update_push(void *data, void *surface, in
 }
 
 static void
-evas_engine_gl_x11_output_flush(void *data)
+eng_output_flush(void *data)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
 //   printf("GL: flush your mush!\n");
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
 
 /* SLOW AS ALL HELL! */
 #if 0
@@ -417,7 +423,7 @@ evas_engine_gl_x11_output_flush(void *data)
 }
 
 static void *
-evas_engine_gl_x11_context_new(void *data)
+eng_context_new(void *data)
 {
    Render_Engine *re;
 
@@ -426,7 +432,7 @@ evas_engine_gl_x11_context_new(void *data)
 }
 
 static void
-evas_engine_gl_x11_context_free(void *data, void *context)
+eng_context_free(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -435,7 +441,7 @@ evas_engine_gl_x11_context_free(void *data, void *context)
 }
 
 static void
-evas_engine_gl_x11_context_clip_set(void *data, void *context, int x, int y, int w, int h)
+eng_context_clip_set(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -444,7 +450,7 @@ evas_engine_gl_x11_context_clip_set(void *data, void *context, int x, int y, int
 }
 
 static void
-evas_engine_gl_x11_context_clip_clip(void *data, void *context, int x, int y, int w, int h)
+eng_context_clip_clip(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -453,7 +459,7 @@ evas_engine_gl_x11_context_clip_clip(void *data, void *context, int x, int y, in
 }
 
 static void
-evas_engine_gl_x11_context_clip_unset(void *data, void *context)
+eng_context_clip_unset(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -462,7 +468,7 @@ evas_engine_gl_x11_context_clip_unset(void *data, void *context)
 }
 
 static int
-evas_engine_gl_x11_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
+eng_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
 {
    Render_Engine *re;
 
@@ -475,7 +481,7 @@ evas_engine_gl_x11_context_clip_get(void *data, void *context, int *x, int *y, i
 }
 
 static void
-evas_engine_gl_x11_context_color_set(void *data, void *context, int r, int g, int b, int a)
+eng_context_color_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
 
@@ -484,7 +490,7 @@ evas_engine_gl_x11_context_color_set(void *data, void *context, int r, int g, in
 }
 
 static int
-evas_engine_gl_x11_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
+eng_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
 
@@ -497,7 +503,7 @@ evas_engine_gl_x11_context_color_get(void *data, void *context, int *r, int *g, 
 }
 
 static void
-evas_engine_gl_x11_context_multiplier_set(void *data, void *context, int r, int g, int b, int a)
+eng_context_multiplier_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
 
@@ -506,7 +512,7 @@ evas_engine_gl_x11_context_multiplier_set(void *data, void *context, int r, int 
 }
 
 static void
-evas_engine_gl_x11_context_multiplier_unset(void *data, void *context)
+eng_context_multiplier_unset(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -515,7 +521,7 @@ evas_engine_gl_x11_context_multiplier_unset(void *data, void *context)
 }
 
 static int
-evas_engine_gl_x11_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a)
+eng_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
 
@@ -528,7 +534,7 @@ evas_engine_gl_x11_context_multiplier_get(void *data, void *context, int *r, int
 }
 
 static void
-evas_engine_gl_x11_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
+eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -537,7 +543,7 @@ evas_engine_gl_x11_context_cutout_add(void *data, void *context, int x, int y, i
 }
 
 static void
-evas_engine_gl_x11_context_cutout_clear(void *data, void *context)
+eng_context_cutout_clear(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -546,7 +552,7 @@ evas_engine_gl_x11_context_cutout_clear(void *data, void *context)
 }
 
 static void
-evas_engine_gl_x11_context_anti_alias_set(void *data, void *context, unsigned char aa)
+eng_context_anti_alias_set(void *data, void *context, unsigned char aa)
 {
    Render_Engine *re;
 
@@ -555,7 +561,7 @@ evas_engine_gl_x11_context_anti_alias_set(void *data, void *context, unsigned ch
 }
 
 static unsigned char
-evas_engine_gl_x11_context_anti_alias_get(void *data, void *context)
+eng_context_anti_alias_get(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -564,7 +570,7 @@ evas_engine_gl_x11_context_anti_alias_get(void *data, void *context)
 }
 
 static void
-evas_engine_gl_x11_context_color_interpolation_set(void *data, void *context, int color_space)
+eng_context_color_interpolation_set(void *data, void *context, int color_space)
 {
    Render_Engine *re;
 
@@ -573,7 +579,7 @@ evas_engine_gl_x11_context_color_interpolation_set(void *data, void *context, in
 }
 
 static int
-evas_engine_gl_x11_context_color_interpolation_get(void *data, void *context)
+eng_context_color_interpolation_get(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -587,17 +593,17 @@ evas_engine_gl_x11_context_color_interpolation_get(void *data, void *context)
 
 
 static void
-evas_engine_gl_x11_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
+eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_rect_draw(re->win->gl_context, context, x, y, w, h);
 }
 
 static void
-evas_engine_gl_x11_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
+eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    Render_Engine *re;
 
@@ -606,7 +612,7 @@ evas_engine_gl_x11_line_draw(void *data, void *context, void *surface, int x1, i
 }
 
 static void *
-evas_engine_gl_x11_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
+eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 {
    Render_Engine *re;
 
@@ -616,7 +622,7 @@ evas_engine_gl_x11_polygon_point_add(void *data, void *context, void *polygon, i
 }
 
 static void *
-evas_engine_gl_x11_polygon_points_clear(void *data, void *context, void *polygon)
+eng_polygon_points_clear(void *data, void *context, void *polygon)
 {
    Render_Engine *re;
 
@@ -625,7 +631,7 @@ evas_engine_gl_x11_polygon_points_clear(void *data, void *context, void *polygon
 }
 
 static void
-evas_engine_gl_x11_polygon_draw(void *data, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
    Render_Engine *re;
 
@@ -634,7 +640,7 @@ evas_engine_gl_x11_polygon_draw(void *data, void *context, void *surface, void *
 }
 
 static void *
-evas_engine_gl_x11_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
+eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
 {
    Render_Engine *re;
 
@@ -643,7 +649,7 @@ evas_engine_gl_x11_gradient_color_add(void *data, void *context, void *gradient,
 }
 
 static void *
-evas_engine_gl_x11_gradient_colors_clear(void *data, void *context, void *gradient)
+eng_gradient_colors_clear(void *data, void *context, void *gradient)
 {
    Render_Engine *re;
 
@@ -652,7 +658,7 @@ evas_engine_gl_x11_gradient_colors_clear(void *data, void *context, void *gradie
 }
 
 static void
-evas_engine_gl_x11_gradient_free(void *data, void *gradient)
+eng_gradient_free(void *data, void *gradient)
 {
    Render_Engine *re;
 
@@ -661,7 +667,7 @@ evas_engine_gl_x11_gradient_free(void *data, void *gradient)
 }
 
 static void
-evas_engine_gl_x11_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
+eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -670,7 +676,7 @@ evas_engine_gl_x11_gradient_fill_set(void *data, void *gradient, int x, int y, i
 }
 
 static void
-evas_engine_gl_x11_gradient_type_set(void *data, void *gradient, char *name)
+eng_gradient_type_set(void *data, void *gradient, char *name)
 {
    Render_Engine *re;
 
@@ -679,7 +685,7 @@ evas_engine_gl_x11_gradient_type_set(void *data, void *gradient, char *name)
 }
 
 static void
-evas_engine_gl_x11_gradient_type_params_set(void *data, void *gradient, char *params)
+eng_gradient_type_params_set(void *data, void *gradient, char *params)
 {
    Render_Engine *re;
 
@@ -688,7 +694,7 @@ evas_engine_gl_x11_gradient_type_params_set(void *data, void *gradient, char *pa
 }
 
 static void *
-evas_engine_gl_x11_gradient_geometry_init(void *data, void *gradient, int spread)
+eng_gradient_geometry_init(void *data, void *gradient, int spread)
 {
    Render_Engine *re;
 
@@ -697,7 +703,7 @@ evas_engine_gl_x11_gradient_geometry_init(void *data, void *gradient, int spread
 }
 
 static int
-evas_engine_gl_x11_gradient_alpha_get(void *data, void *gradient, int spread)
+eng_gradient_alpha_get(void *data, void *gradient, int spread)
 {
    Render_Engine *re;
 
@@ -706,7 +712,7 @@ evas_engine_gl_x11_gradient_alpha_get(void *data, void *gradient, int spread)
 }
 
 static void
-evas_engine_gl_x11_gradient_map(void *data, void *context, void *gradient, int spread)
+eng_gradient_map(void *data, void *context, void *gradient, int spread)
 {
    Render_Engine *re;
 
@@ -715,58 +721,58 @@ evas_engine_gl_x11_gradient_map(void *data, void *context, void *gradient, int s
 }
 
 static void
-evas_engine_gl_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
+eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_gradient_draw(re->win->gl_context, context, gradient, x, y, w, h, angle, spread);
 }
 
 static void *
-evas_engine_gl_x11_image_load(void *data, char *file, char *key, int *error)
+eng_image_load(void *data, char *file, char *key, int *error)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    *error = 0;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    return evas_gl_common_image_load(re->win->gl_context, file, key);
 }
 
 static void *
-evas_engine_gl_x11_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    return evas_gl_common_image_new_from_data(re->win->gl_context, w, h, image_data);
 }
 
 static void *
-evas_engine_gl_x11_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    return evas_gl_common_image_new_from_copied_data(re->win->gl_context, w, h, image_data);
 }
 
 static void
-evas_engine_gl_x11_image_free(void *data, void *image)
+eng_image_free(void *data, void *image)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_image_free(image);
 }
 
 static void
-evas_engine_gl_x11_image_size_get(void *data, void *image, int *w, int *h)
+eng_image_size_get(void *data, void *image, int *w, int *h)
 {
    Render_Engine *re;
 
@@ -776,13 +782,13 @@ evas_engine_gl_x11_image_size_get(void *data, void *image, int *w, int *h)
 }
 
 static void *
-evas_engine_gl_x11_image_size_set(void *data, void *image, int w, int h)
+eng_image_size_set(void *data, void *image, int w, int h)
 {
    Render_Engine *re;
    Evas_GL_Image *im, *im_old;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    if (!image) return NULL;
    im_old = image;
    if ((im_old) && (im_old->im->image->w == w) && (im_old->im->image->h == h))
@@ -802,7 +808,7 @@ evas_engine_gl_x11_image_size_set(void *data, void *image, int w, int h)
 }
 
 static void *
-evas_engine_gl_x11_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
+eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -812,14 +818,14 @@ evas_engine_gl_x11_image_dirty_region(void *data, void *image, int x, int y, int
 }
 
 static void *
-evas_engine_gl_x11_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
+eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
    im = image;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_common_load_image_data_from_file(im->im);
    if (to_write)
      {
@@ -843,14 +849,14 @@ evas_engine_gl_x11_image_data_get(void *data, void *image, int to_write, DATA32 
 }
 
 static void *
-evas_engine_gl_x11_image_data_put(void *data, void *image, DATA32 *image_data)
+eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
    im = image;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    if (image_data != im->im->image->data)
      {
 	int w, h;
@@ -858,7 +864,7 @@ evas_engine_gl_x11_image_data_put(void *data, void *image, DATA32 *image_data)
 	w = im->im->image->w;
 	h = im->im->image->h;
 	evas_gl_common_image_free(im);
-	return evas_engine_gl_x11_image_new_from_data(data, w, h, image_data);
+	return eng_image_new_from_data(data, w, h, image_data);
      }
    /* hmmm - but if we wrote... why bother? */
    evas_gl_common_image_dirty(im);
@@ -866,13 +872,13 @@ evas_engine_gl_x11_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void *
-evas_engine_gl_x11_image_alpha_set(void *data, void *image, int has_alpha)
+eng_image_alpha_set(void *data, void *image, int has_alpha)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    im = image;
    if ((has_alpha) && (im->im->flags & RGBA_IMAGE_HAS_ALPHA)) return image;
    else if ((!has_alpha) && (!(im->im->flags & RGBA_IMAGE_HAS_ALPHA))) return image;
@@ -896,25 +902,25 @@ evas_engine_gl_x11_image_alpha_set(void *data, void *image, int has_alpha)
 
 
 static int
-evas_engine_gl_x11_image_alpha_get(void *data, void *image)
+eng_image_alpha_get(void *data, void *image)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
    im = image;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
    return 0;
 }
 
 static void
-evas_engine_gl_x11_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_image_draw(re->win->gl_context, context, image,
 			     src_x, src_y, src_w, src_h,
 			     dst_x, dst_y, dst_w, dst_h,
@@ -922,7 +928,7 @@ evas_engine_gl_x11_image_draw(void *data, void *context, void *surface, void *im
 }
 
 static char *
-evas_engine_gl_x11_image_comment_get(void *data, void *image, char *key)
+eng_image_comment_get(void *data, void *image, char *key)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
@@ -933,7 +939,7 @@ evas_engine_gl_x11_image_comment_get(void *data, void *image, char *key)
 }
 
 static char *
-evas_engine_gl_x11_image_format_get(void *data, void *image)
+eng_image_format_get(void *data, void *image)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
@@ -945,7 +951,7 @@ evas_engine_gl_x11_image_format_get(void *data, void *image)
 }
 
 static void
-evas_engine_gl_x11_image_cache_flush(void *data)
+eng_image_cache_flush(void *data)
 {
    Render_Engine *re;
    int tmp_size;
@@ -957,7 +963,7 @@ evas_engine_gl_x11_image_cache_flush(void *data)
 }
 
 static void
-evas_engine_gl_x11_image_cache_set(void *data, int bytes)
+eng_image_cache_set(void *data, int bytes)
 {
    Render_Engine *re;
 
@@ -966,7 +972,7 @@ evas_engine_gl_x11_image_cache_set(void *data, int bytes)
 }
 
 static int
-evas_engine_gl_x11_image_cache_get(void *data)
+eng_image_cache_get(void *data)
 {
    Render_Engine *re;
 
@@ -975,7 +981,7 @@ evas_engine_gl_x11_image_cache_get(void *data)
 }
 
 static void *
-evas_engine_gl_x11_font_load(void *data, char *name, int size)
+eng_font_load(void *data, char *name, int size)
 {
    Render_Engine *re;
 
@@ -984,7 +990,7 @@ evas_engine_gl_x11_font_load(void *data, char *name, int size)
 }
 
 static void *
-evas_engine_gl_x11_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
 {
    Render_Engine *re;
 
@@ -993,7 +999,7 @@ evas_engine_gl_x11_font_memory_load(void *data, char *name, int size, const void
 }
 
 static void *
-evas_engine_gl_x11_font_add(void *data, void *font, char *name, int size)
+eng_font_add(void *data, void *font, char *name, int size)
 {
    Render_Engine *re;
 
@@ -1002,7 +1008,7 @@ evas_engine_gl_x11_font_add(void *data, void *font, char *name, int size)
 }
 
 static void *
-evas_engine_gl_x11_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size)
 {
    Render_Engine *re;
 
@@ -1011,7 +1017,7 @@ evas_engine_gl_x11_font_memory_add(void *data, void *font, char *name, int size,
 }
 
 static void
-evas_engine_gl_x11_font_free(void *data, void *font)
+eng_font_free(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1020,7 +1026,7 @@ evas_engine_gl_x11_font_free(void *data, void *font)
 }
 
 static int
-evas_engine_gl_x11_font_ascent_get(void *data, void *font)
+eng_font_ascent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1029,7 +1035,7 @@ evas_engine_gl_x11_font_ascent_get(void *data, void *font)
 }
 
 static int
-evas_engine_gl_x11_font_descent_get(void *data, void *font)
+eng_font_descent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1038,7 +1044,7 @@ evas_engine_gl_x11_font_descent_get(void *data, void *font)
 }
 
 static int
-evas_engine_gl_x11_font_max_ascent_get(void *data, void *font)
+eng_font_max_ascent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1047,7 +1053,7 @@ evas_engine_gl_x11_font_max_ascent_get(void *data, void *font)
 }
 
 static int
-evas_engine_gl_x11_font_max_descent_get(void *data, void *font)
+eng_font_max_descent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1056,7 +1062,7 @@ evas_engine_gl_x11_font_max_descent_get(void *data, void *font)
 }
 
 static void
-evas_engine_gl_x11_font_string_size_get(void *data, void *font, char *text, int *w, int *h)
+eng_font_string_size_get(void *data, void *font, char *text, int *w, int *h)
 {
    Render_Engine *re;
 
@@ -1065,7 +1071,7 @@ evas_engine_gl_x11_font_string_size_get(void *data, void *font, char *text, int 
 }
 
 static int
-evas_engine_gl_x11_font_inset_get(void *data, void *font, char *text)
+eng_font_inset_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
 
@@ -1074,7 +1080,7 @@ evas_engine_gl_x11_font_inset_get(void *data, void *font, char *text)
 }
 
 static int
-evas_engine_gl_x11_font_h_advance_get(void *data, void *font, char *text)
+eng_font_h_advance_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
    int h, v;
@@ -1085,7 +1091,7 @@ evas_engine_gl_x11_font_h_advance_get(void *data, void *font, char *text)
 }
 
 static int
-evas_engine_gl_x11_font_v_advance_get(void *data, void *font, char *text)
+eng_font_v_advance_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
    int h, v;
@@ -1096,7 +1102,7 @@ evas_engine_gl_x11_font_v_advance_get(void *data, void *font, char *text)
 }
 
 static int
-evas_engine_gl_x11_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
 
@@ -1105,7 +1111,7 @@ evas_engine_gl_x11_font_char_coords_get(void *data, void *font, char *text, int 
 }
 
 static int
-evas_engine_gl_x11_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
 
@@ -1114,7 +1120,7 @@ evas_engine_gl_x11_font_char_at_coords_get(void *data, void *font, char *text, i
 }
 
 static void
-evas_engine_gl_x11_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
 {
    Render_Engine *re;
 
@@ -1148,7 +1154,7 @@ evas_engine_gl_x11_font_draw(void *data, void *context, void *surface, void *fon
 }
 
 static void
-evas_engine_gl_x11_font_cache_flush(void *data)
+eng_font_cache_flush(void *data)
 {
    Render_Engine *re;
 
@@ -1157,7 +1163,7 @@ evas_engine_gl_x11_font_cache_flush(void *data)
 }
 
 static void
-evas_engine_gl_x11_font_cache_set(void *data, int bytes)
+eng_font_cache_set(void *data, int bytes)
 {
    Render_Engine *re;
 
@@ -1166,12 +1172,30 @@ evas_engine_gl_x11_font_cache_set(void *data, int bytes)
 }
 
 static int
-evas_engine_gl_x11_font_cache_get(void *data)
+eng_font_cache_get(void *data)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    return evas_common_font_cache_get();
+}
+
+static void
+eng_font_hinting_set(void *data, void *font, int hinting)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   evas_common_font_hinting_set(font, hinting);
+}
+
+static int
+eng_font_hinting_can_hint(void *data, int hinting)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   return evas_common_hinting_available(hinting);
 }
 
 
@@ -1185,7 +1209,7 @@ evas_engine_gl_x11_font_cache_get(void *data)
 /* private engine functions the calling prog can use */
 
 static Visual *
-evas_engine_gl_x11_best_visual_get(Display *disp, int screen)
+eng_best_visual_get(Display *disp, int screen)
 {
    if (!disp) return NULL;
    if (!_evas_gl_x11_vi)
@@ -1196,11 +1220,11 @@ evas_engine_gl_x11_best_visual_get(Display *disp, int screen)
 }
 
 static Colormap
-evas_engine_gl_x11_best_colormap_get(Display *disp, int screen)
+eng_best_colormap_get(Display *disp, int screen)
 {
    if (!disp) return 0;
    if (!_evas_gl_x11_vi)
-     evas_engine_gl_x11_best_visual_get(disp, screen);
+     eng_best_visual_get(disp, screen);
    if (!_evas_gl_x11_vi) return 0;
    _evas_gl_x11_cmap = XCreateColormap(disp, RootWindow(disp, screen),
 				_evas_gl_x11_vi->visual, 0);
@@ -1208,11 +1232,11 @@ evas_engine_gl_x11_best_colormap_get(Display *disp, int screen)
 }
 
 static int
-evas_engine_gl_x11_best_depth_get(Display *disp, int screen)
+eng_best_depth_get(Display *disp, int screen)
 {
    if (!disp) return 0;
    if (!_evas_gl_x11_vi)
-     evas_engine_gl_x11_best_visual_get(disp, screen);
+     eng_best_visual_get(disp, screen);
    if (!_evas_gl_x11_vi) return 0;
    return _evas_gl_x11_vi->depth;
 }
@@ -1220,7 +1244,7 @@ evas_engine_gl_x11_best_depth_get(Display *disp, int screen)
 int module_open(Evas_Module *em)
 {
    if (!em) return 0;
-   em->functions = (void *)(&evas_engine_gl_x11_func);
+   em->functions = (void *)(&eng_func);
    return 1;
 }
 

@@ -194,6 +194,9 @@ void                evas_engine_directfb_font_cache_flush(void *data);
 void                evas_engine_directfb_font_cache_set(void *data, int bytes);
 int                 evas_engine_directfb_font_cache_get(void *data);
 
+void evas_engine_directfb_font_hinting_set(void *data, void *font, int hinting);
+int evas_engine_directfb_font_hinting_can_hint(void *data, int hinting);
+
 void                rectangle_draw_internal(void *dst, void *dc, int x, int y,
 					    int w, int h);
 

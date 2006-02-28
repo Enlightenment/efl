@@ -61,6 +61,7 @@ evas_new(void)
    e->output.render_method = RENDER_METHOD_INVALID;
    e->viewport.w = 1;
    e->viewport.h = 1;
+   e->hinting = EVAS_FONT_HINTING_BYTECODE;
    return e;
 }
 

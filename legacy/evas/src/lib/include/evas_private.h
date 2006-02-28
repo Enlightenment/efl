@@ -330,6 +330,7 @@ struct _Evas
    unsigned int   last_timestamp;
    void          *attach_data;
    int            last_click_counter;
+   Evas_Font_Hinting_Flags hinting;
 };
 
 struct _Evas_Layer
@@ -592,9 +593,12 @@ struct _Evas_Func
    void (*font_cache_set)                  (void *data, int bytes);
    int  (*font_cache_get)                  (void *data);
 
+   /* Engine functions will over time expand from here */
+   
+   void (*font_hinting_set)                (void *data, void *font, int hinting);
+   int  (*font_hinting_can_hint)           (void *data, int hinting);
 /*    void (*image_rotation_set)              (void *data, void *image); */
 
-   /* Engine functions will over time expand from here */
 };
 
 struct _Evas_Image_Load_Func

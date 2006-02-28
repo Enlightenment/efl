@@ -1,90 +1,93 @@
-#include "evas_common.h"
+5~#include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "evas_engine_api_software_qtopia.h"
 #include "Evas_Engine_Software_Qtopia.h"
 
-static void *evas_engine_software_qtopia_info(Evas *e);
-static void evas_engine_software_qtopia_info_free(Evas *e, void *info);
-static void evas_engine_software_qtopia_setup(Evas *e, void *info);
-static void *evas_engine_software_qtopia_output_setup(int w, int h, int rot, QWidget *target);
-static void evas_engine_software_qtopia_output_free(void *data);
-static void evas_engine_software_qtopia_output_resize(void *data, int w, int h);
-static void evas_engine_software_qtopia_output_tile_size_set(void *data, int w, int h);
-static void evas_engine_software_qtopia_output_redraws_rect_add(void *data, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_output_redraws_rect_del(void *data, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_output_redraws_clear(void *data);
-static void *evas_engine_software_qtopia_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
-static void evas_engine_software_qtopia_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_output_flush(void *data);
-static void *evas_engine_software_qtopia_context_new(void *data);
-static void evas_engine_software_qtopia_context_free(void *data, void *context);
-static void evas_engine_software_qtopia_context_clip_set(void *data, void *context, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_context_clip_clip(void *data, void *context, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_context_clip_unset(void *data, void *context);
-static int evas_engine_software_qtopia_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h);
-static void evas_engine_software_qtopia_context_color_set(void *data, void *context, int r, int g, int b, int a);
-static int evas_engine_software_qtopia_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a);
-static void evas_engine_software_qtopia_context_multiplier_set(void *data, void *context, int r, int g, int b, int a);
-static void evas_engine_software_qtopia_context_multiplier_unset(void *data, void *context);
-static int evas_engine_software_qtopia_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a);
-static void evas_engine_software_qtopia_context_cutout_add(void *data, void *context, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_context_cutout_clear(void *data, void *context);
-static void evas_engine_software_qtopia_context_anti_alias_set(void *data, void *context, unsigned char aa);
-static unsigned char evas_engine_software_qtopia_context_anti_alias_get(void *data, void *context);
-static void evas_engine_software_qtopia_context_color_interpolation_set(void *data, void *context, int color_space);
-static int evas_engine_software_qtopia_context_color_interpolation_get(void *data, void *context);
-static void evas_engine_software_qtopia_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
-static void *evas_engine_software_qtopia_polygon_point_add(void *data, void *context, void *polygon, int x, int y);
-static void *evas_engine_software_qtopia_polygon_points_clear(void *data, void *context, void *polygon);
-static void evas_engine_software_qtopia_polygon_draw(void *data, void *context, void *surface, void *polygon);
-static void *evas_engine_software_qtopia_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
-static void *evas_engine_software_qtopia_gradient_colors_clear(void *data, void *context, void *gradient);
-static void evas_engine_software_qtopia_gradient_free(void *data, void *gradient);
-static void evas_engine_software_qtopia_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
-static void evas_engine_software_qtopia_gradient_type_set(void *data, void *gradient, char *name);
-static void evas_engine_software_qtopia_gradient_type_params_set(void *data, void *gradient, char *params);
-static void *evas_engine_software_qtopia_gradient_geometry_init(void *data, void *gradient, int spread);
-static int  evas_engine_software_qtopia_gradient_alpha_get(void *data, void *gradient, int spread);
-static void evas_engine_software_qtopia_gradient_map(void *data, void *context, void *gradient, int spread);
-static void evas_engine_software_qtopia_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
-static void *evas_engine_software_qtopia_image_load(void *data, char *file, char *key, int *error);
-static void *evas_engine_software_qtopia_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
-static void *evas_engine_software_qtopia_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
-static void evas_engine_software_qtopia_image_free(void *data, void *image);
-static void evas_engine_software_qtopia_image_size_get(void *data, void *image, int *w, int *h);
-static void *evas_engine_software_qtopia_image_size_set(void *data, void *image, int w, int h);
-static void *evas_engine_software_qtopia_image_dirty_region(void *data, void *image, int x, int y, int w, int h);
-static void *evas_engine_software_qtopia_image_data_get(void *data, void *image, int to_write, DATA32 **image_data);
-static void *evas_engine_software_qtopia_image_data_put(void *data, void *image, DATA32 *image_data);
-static void *evas_engine_software_qtopia_image_alpha_set(void *data, void *image, int has_alpha);
-static int evas_engine_software_qtopia_image_alpha_get(void *data, void *image);
-static void evas_engine_software_qtopia_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
-static char *evas_engine_software_qtopia_image_comment_get(void *data, void *image, char *key);
-static char *evas_engine_software_qtopia_image_format_get(void *data, void *image);
-static void evas_engine_software_qtopia_image_cache_flush(void *data);
-static void evas_engine_software_qtopia_image_cache_set(void *data, int bytes);
-static int evas_engine_software_qtopia_image_cache_get(void *data);
-static void *evas_engine_software_qtopia_font_load(void *data, char *name, int size);
-static void *evas_engine_software_qtopia_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size);
-static void *evas_engine_software_qtopia_font_add(void *data, void *font, char *name, int size);
-static void *evas_engine_software_qtopia_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
-static void evas_engine_software_qtopia_font_free(void *data, void *font);
-static int evas_engine_software_qtopia_font_ascent_get(void *data, void *font);
-static int evas_engine_software_qtopia_font_descent_get(void *data, void *font);
-static int evas_engine_software_qtopia_font_max_ascent_get(void *data, void *font);
-static int evas_engine_software_qtopia_font_max_descent_get(void *data, void *font);
-static void evas_engine_software_qtopia_font_string_size_get(void *data, void *font, char *text, int *w, int *h);
-static int evas_engine_software_qtopia_font_inset_get(void *data, void *font, char *text);
-static int evas_engine_software_qtopia_font_h_advance_get(void *data, void *font, char *text);
-static int evas_engine_software_qtopia_font_v_advance_get(void *data, void *font, char *text);
-static int evas_engine_software_qtopia_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
-static int evas_engine_software_qtopia_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-static void evas_engine_software_qtopia_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
-static void evas_engine_software_qtopia_font_cache_flush(void *data);
-static void evas_engine_software_qtopia_font_cache_set(void *data, int bytes);
-static int evas_engine_software_qtopia_font_cache_get(void *data);
+static void *eng_info(Evas *e);
+static void eng_info_free(Evas *e, void *info);
+static void eng_setup(Evas *e, void *info);
+static void *eng_output_setup(int w, int h, int rot, QWidget *target);
+static void eng_output_free(void *data);
+static void eng_output_resize(void *data, int w, int h);
+static void eng_output_tile_size_set(void *data, int w, int h);
+static void eng_output_redraws_rect_add(void *data, int x, int y, int w, int h);
+static void eng_output_redraws_rect_del(void *data, int x, int y, int w, int h);
+static void eng_output_redraws_clear(void *data);
+static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
+static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
+static void eng_output_flush(void *data);
+static void *eng_context_new(void *data);
+static void eng_context_free(void *data, void *context);
+static void eng_context_clip_set(void *data, void *context, int x, int y, int w, int h);
+static void eng_context_clip_clip(void *data, void *context, int x, int y, int w, int h);
+static void eng_context_clip_unset(void *data, void *context);
+static int eng_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h);
+static void eng_context_color_set(void *data, void *context, int r, int g, int b, int a);
+static int eng_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a);
+static void eng_context_multiplier_set(void *data, void *context, int r, int g, int b, int a);
+static void eng_context_multiplier_unset(void *data, void *context);
+static int eng_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a);
+static void eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h);
+static void eng_context_cutout_clear(void *data, void *context);
+static void eng_context_anti_alias_set(void *data, void *context, unsigned char aa);
+static unsigned char eng_context_anti_alias_get(void *data, void *context);
+static void eng_context_color_interpolation_set(void *data, void *context, int color_space);
+static int eng_context_color_interpolation_get(void *data, void *context);
+static void eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h);
+static void eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
+static void *eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y);
+static void *eng_polygon_points_clear(void *data, void *context, void *polygon);
+static void eng_polygon_draw(void *data, void *context, void *surface, void *polygon);
+static void *eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
+static void *eng_gradient_colors_clear(void *data, void *context, void *gradient);
+static void eng_gradient_free(void *data, void *gradient);
+static void eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
+static void eng_gradient_type_set(void *data, void *gradient, char *name);
+static void eng_gradient_type_params_set(void *data, void *gradient, char *params);
+static void *eng_gradient_geometry_init(void *data, void *gradient, int spread);
+static int  eng_gradient_alpha_get(void *data, void *gradient, int spread);
+static void eng_gradient_map(void *data, void *context, void *gradient, int spread);
+static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
+static void *eng_image_load(void *data, char *file, char *key, int *error);
+static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
+static void *eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
+static void eng_image_free(void *data, void *image);
+static void eng_image_size_get(void *data, void *image, int *w, int *h);
+static void *eng_image_size_set(void *data, void *image, int w, int h);
+static void *eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h);
+static void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data);
+static void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
+static void *eng_image_alpha_set(void *data, void *image, int has_alpha);
+static int eng_image_alpha_get(void *data, void *image);
+static void eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
+static char *eng_image_comment_get(void *data, void *image, char *key);
+static char *eng_image_format_get(void *data, void *image);
+static void eng_image_cache_flush(void *data);
+static void eng_image_cache_set(void *data, int bytes);
+static int eng_image_cache_get(void *data);
+static void *eng_font_load(void *data, char *name, int size);
+static void *eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size);
+static void *eng_font_add(void *data, void *font, char *name, int size);
+static void *eng_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
+static void eng_font_free(void *data, void *font);
+static int eng_font_ascent_get(void *data, void *font);
+static int eng_font_descent_get(void *data, void *font);
+static int eng_font_max_ascent_get(void *data, void *font);
+static int eng_font_max_descent_get(void *data, void *font);
+static void eng_font_string_size_get(void *data, void *font, char *text, int *w, int *h);
+static int eng_font_inset_get(void *data, void *font, char *text);
+static int eng_font_h_advance_get(void *data, void *font, char *text);
+static int eng_font_v_advance_get(void *data, void *font, char *text);
+static int eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
+static int eng_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
+static void eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
+static void eng_font_cache_flush(void *data);
+static void eng_font_cache_set(void *data, int bytes);
+static int eng_font_cache_get(void *data);
+
+static void eng_font_hinting_set(void *data, void *font, int hinting);
+static int eng_font_hinting_can_hint(void *data, int hinting);
 
 typedef struct _Render_Engine Render_Engine;
 
@@ -97,101 +100,104 @@ struct _Render_Engine
    int               end : 1;
 };
 
-Evas_Func evas_engine_software_qtopia_func =
+static Evas_Func eng_func =
 {
-   evas_engine_software_qtopia_info,
-     evas_engine_software_qtopia_info_free,
-     evas_engine_software_qtopia_setup,
-     evas_engine_software_qtopia_output_free,
-     evas_engine_software_qtopia_output_resize,
-     evas_engine_software_qtopia_output_tile_size_set,
-     evas_engine_software_qtopia_output_redraws_rect_add,
-     evas_engine_software_qtopia_output_redraws_rect_del,
-     evas_engine_software_qtopia_output_redraws_clear,
-     evas_engine_software_qtopia_output_redraws_next_update_get,
-     evas_engine_software_qtopia_output_redraws_next_update_push,
-     evas_engine_software_qtopia_output_flush,
+   eng_info,
+     eng_info_free,
+     eng_setup,
+     eng_output_free,
+     eng_output_resize,
+     eng_output_tile_size_set,
+     eng_output_redraws_rect_add,
+     eng_output_redraws_rect_del,
+     eng_output_redraws_clear,
+     eng_output_redraws_next_update_get,
+     eng_output_redraws_next_update_push,
+     eng_output_flush,
      /* draw context virtual methods */
-     evas_engine_software_qtopia_context_new,
-     evas_engine_software_qtopia_context_free,
-     evas_engine_software_qtopia_context_clip_set,
-     evas_engine_software_qtopia_context_clip_clip,
-     evas_engine_software_qtopia_context_clip_unset,
-     evas_engine_software_qtopia_context_clip_get,
-     evas_engine_software_qtopia_context_color_set,
-     evas_engine_software_qtopia_context_color_get,
-     evas_engine_software_qtopia_context_multiplier_set,
-     evas_engine_software_qtopia_context_multiplier_unset,
-     evas_engine_software_qtopia_context_multiplier_get,
-     evas_engine_software_qtopia_context_cutout_add,
-     evas_engine_software_qtopia_context_cutout_clear,
-     evas_engine_software_qtopia_context_anti_alias_set,
-     evas_engine_software_qtopia_context_anti_alias_get,
-     evas_engine_software_qtopia_context_color_interpolation_set,
-     evas_engine_software_qtopia_context_color_interpolation_get,
+     eng_context_new,
+     eng_context_free,
+     eng_context_clip_set,
+     eng_context_clip_clip,
+     eng_context_clip_unset,
+     eng_context_clip_get,
+     eng_context_color_set,
+     eng_context_color_get,
+     eng_context_multiplier_set,
+     eng_context_multiplier_unset,
+     eng_context_multiplier_get,
+     eng_context_cutout_add,
+     eng_context_cutout_clear,
+     eng_context_anti_alias_set,
+     eng_context_anti_alias_get,
+     eng_context_color_interpolation_set,
+     eng_context_color_interpolation_get,
      /* rectangle draw funcs */
-     evas_engine_software_qtopia_rectangle_draw,
+     eng_rectangle_draw,
      /* line draw funcs */
-     evas_engine_software_qtopia_line_draw,
+     eng_line_draw,
      /* polygon draw funcs */
-     evas_engine_software_qtopia_polygon_point_add,
-     evas_engine_software_qtopia_polygon_points_clear,
-     evas_engine_software_qtopia_polygon_draw,
+     eng_polygon_point_add,
+     eng_polygon_points_clear,
+     eng_polygon_draw,
      /* gradient draw funcs */
-     evas_engine_software_qtopia_gradient_color_add,
-     evas_engine_software_qtopia_gradient_colors_clear,
-     evas_engine_software_qtopia_gradient_free,
-     evas_engine_software_qtopia_gradient_fill_set,
-     evas_engine_software_qtopia_gradient_type_set,
-     evas_engine_software_qtopia_gradient_type_params_set,
-     evas_engine_software_qtopia_gradient_geometry_init,
-     evas_engine_software_qtopia_gradient_alpha_get,
-     evas_engine_software_qtopia_gradient_map,
-     evas_engine_software_qtopia_gradient_draw,
+     eng_gradient_color_add,
+     eng_gradient_colors_clear,
+     eng_gradient_free,
+     eng_gradient_fill_set,
+     eng_gradient_type_set,
+     eng_gradient_type_params_set,
+     eng_gradient_geometry_init,
+     eng_gradient_alpha_get,
+     eng_gradient_map,
+     eng_gradient_draw,
      /* image draw funcs */
-     evas_engine_software_qtopia_image_load,
-     evas_engine_software_qtopia_image_new_from_data,
-     evas_engine_software_qtopia_image_new_from_copied_data,
-     evas_engine_software_qtopia_image_free,
-     evas_engine_software_qtopia_image_size_get,
-     evas_engine_software_qtopia_image_size_set,
-     evas_engine_software_qtopia_image_dirty_region,
-     evas_engine_software_qtopia_image_data_get,
-     evas_engine_software_qtopia_image_data_put,
-     evas_engine_software_qtopia_image_alpha_set,
-     evas_engine_software_qtopia_image_alpha_get,
-     evas_engine_software_qtopia_image_draw,
-     evas_engine_software_qtopia_image_comment_get,
-     evas_engine_software_qtopia_image_format_get,
+     eng_image_load,
+     eng_image_new_from_data,
+     eng_image_new_from_copied_data,
+     eng_image_free,
+     eng_image_size_get,
+     eng_image_size_set,
+     eng_image_dirty_region,
+     eng_image_data_get,
+     eng_image_data_put,
+     eng_image_alpha_set,
+     eng_image_alpha_get,
+     eng_image_draw,
+     eng_image_comment_get,
+     eng_image_format_get,
      /* image cache funcs */
-     evas_engine_software_qtopia_image_cache_flush,
-     evas_engine_software_qtopia_image_cache_set,
-     evas_engine_software_qtopia_image_cache_get,
+     eng_image_cache_flush,
+     eng_image_cache_set,
+     eng_image_cache_get,
      /* font draw functions */
-     evas_engine_software_qtopia_font_load,
-     evas_engine_software_qtopia_font_memory_load,
-     evas_engine_software_qtopia_font_add,
-     evas_engine_software_qtopia_font_memory_add,
-     evas_engine_software_qtopia_font_free,
-     evas_engine_software_qtopia_font_ascent_get,
-     evas_engine_software_qtopia_font_descent_get,
-     evas_engine_software_qtopia_font_max_ascent_get,
-     evas_engine_software_qtopia_font_max_descent_get,
-     evas_engine_software_qtopia_font_string_size_get,
-     evas_engine_software_qtopia_font_inset_get,
-     evas_engine_software_qtopia_font_h_advance_get,
-     evas_engine_software_qtopia_font_v_advance_get,
-     evas_engine_software_qtopia_font_char_coords_get,
-     evas_engine_software_qtopia_font_char_at_coords_get,
-     evas_engine_software_qtopia_font_draw,
+     eng_font_load,
+     eng_font_memory_load,
+     eng_font_add,
+     eng_font_memory_add,
+     eng_font_free,
+     eng_font_ascent_get,
+     eng_font_descent_get,
+     eng_font_max_ascent_get,
+     eng_font_max_descent_get,
+     eng_font_string_size_get,
+     eng_font_inset_get,
+     eng_font_h_advance_get,
+     eng_font_v_advance_get,
+     eng_font_char_coords_get,
+     eng_font_char_at_coords_get,
+     eng_font_draw,
      /* font cache functions */
-     evas_engine_software_qtopia_font_cache_flush,
-     evas_engine_software_qtopia_font_cache_set,
-     evas_engine_software_qtopia_font_cache_get
+     eng_font_cache_flush,
+     eng_font_cache_set,
+     eng_font_cache_get,
+     
+     eng_font_hinting_set,
+     eng_font_hinting_can_hint
 };
 
 static void *
-evas_engine_software_qtopia_info(Evas *e)
+eng_info(Evas *e)
 {
    Evas_Engine_Info_Software_Qtopia *info;
 
@@ -203,7 +209,7 @@ evas_engine_software_qtopia_info(Evas *e)
 }
 
 static void
-evas_engine_software_qtopia_info_free(Evas *e, void *info)
+eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Software_Qtopia *in;
 
@@ -212,7 +218,7 @@ evas_engine_software_qtopia_info_free(Evas *e, void *info)
 }
 
 static void
-evas_engine_software_qtopia_setup(Evas *e, void *in)
+eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_Software_Qtopia *info;
@@ -220,7 +226,7 @@ evas_engine_software_qtopia_setup(Evas *e, void *in)
    info = (Evas_Engine_Info_Software_Qtopia *)in;
    if (!e->engine.data.output)
      e->engine.data.output =
-     evas_engine_software_qtopia_output_setup(e->output.w,
+     eng_output_setup(e->output.w,
 					      e->output.h,
 					      info->info.rotation,
 					      info->info.target);
@@ -233,7 +239,7 @@ evas_engine_software_qtopia_setup(Evas *e, void *in)
 }
 
 static void *
-evas_engine_software_qtopia_output_setup(int w, int h, int rot, QWidget *target)
+eng_output_setup(int w, int h, int rot, QWidget *target)
 {
    Render_Engine *re;
 
@@ -276,7 +282,7 @@ evas_engine_software_qtopia_output_setup(int w, int h, int rot, QWidget *target)
 }
 
 static void
-evas_engine_software_qtopia_output_free(void *data)
+eng_output_free(void *data)
 {
    Render_Engine *re;
 
@@ -291,7 +297,7 @@ evas_engine_software_qtopia_output_free(void *data)
 }
 
 static void
-evas_engine_software_qtopia_output_resize(void *data, int w, int h)
+eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
 
@@ -307,7 +313,7 @@ evas_engine_software_qtopia_output_resize(void *data, int w, int h)
 }
 
 static void
-evas_engine_software_qtopia_output_tile_size_set(void *data, int w, int h)
+eng_output_tile_size_set(void *data, int w, int h)
 {
    Render_Engine *re;
 
@@ -316,7 +322,7 @@ evas_engine_software_qtopia_output_tile_size_set(void *data, int w, int h)
 }
 
 static void
-evas_engine_software_qtopia_output_redraws_rect_add(void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -325,7 +331,7 @@ evas_engine_software_qtopia_output_redraws_rect_add(void *data, int x, int y, in
 }
 
 static void
-evas_engine_software_qtopia_output_redraws_rect_del(void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -334,7 +340,7 @@ evas_engine_software_qtopia_output_redraws_rect_del(void *data, int x, int y, in
 }
 
 static void
-evas_engine_software_qtopia_output_redraws_clear(void *data)
+eng_output_redraws_clear(void *data)
 {
    Render_Engine *re;
 
@@ -343,7 +349,7 @@ evas_engine_software_qtopia_output_redraws_clear(void *data)
 }
 
 static void *
-evas_engine_software_qtopia_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
+eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
    RGBA_Image *surface;
@@ -380,7 +386,7 @@ evas_engine_software_qtopia_output_redraws_next_update_get(void *data, int *x, i
 }
 
 static void
-evas_engine_software_qtopia_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
+eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
    Evas_Engine_Info_Software_Qtopia *info;
@@ -392,7 +398,7 @@ evas_engine_software_qtopia_output_redraws_next_update_push(void *data, void *su
 }
 
 static void
-evas_engine_software_qtopia_output_flush(void *data)
+eng_output_flush(void *data)
 {
    Render_Engine *re;
 
@@ -400,7 +406,7 @@ evas_engine_software_qtopia_output_flush(void *data)
 }
 
 static void *
-evas_engine_software_qtopia_context_new(void *data)
+eng_context_new(void *data)
 {
    Render_Engine *re;
 
@@ -409,7 +415,7 @@ evas_engine_software_qtopia_context_new(void *data)
 }
 
 static void
-evas_engine_software_qtopia_context_free(void *data, void *context)
+eng_context_free(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -418,7 +424,7 @@ evas_engine_software_qtopia_context_free(void *data, void *context)
 }
 
 static void
-evas_engine_software_qtopia_context_clip_set(void *data, void *context, int x, int y, int w, int h)
+eng_context_clip_set(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -427,7 +433,7 @@ evas_engine_software_qtopia_context_clip_set(void *data, void *context, int x, i
 }
 
 static void
-evas_engine_software_qtopia_context_clip_clip(void *data, void *context, int x, int y, int w, int h)
+eng_context_clip_clip(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -436,7 +442,7 @@ evas_engine_software_qtopia_context_clip_clip(void *data, void *context, int x, 
 }
 
 static void
-evas_engine_software_qtopia_context_clip_unset(void *data, void *context)
+eng_context_clip_unset(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -445,7 +451,7 @@ evas_engine_software_qtopia_context_clip_unset(void *data, void *context)
 }
 
 static int
-evas_engine_software_qtopia_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
+eng_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
 {
    Render_Engine *re;
 
@@ -458,7 +464,7 @@ evas_engine_software_qtopia_context_clip_get(void *data, void *context, int *x, 
 }
 
 static void
-evas_engine_software_qtopia_context_color_set(void *data, void *context, int r, int g, int b, int a)
+eng_context_color_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
 
@@ -467,7 +473,7 @@ evas_engine_software_qtopia_context_color_set(void *data, void *context, int r, 
 }
 
 static int
-evas_engine_software_qtopia_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
+eng_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
 
@@ -480,7 +486,7 @@ evas_engine_software_qtopia_context_color_get(void *data, void *context, int *r,
 }
 
 static void
-evas_engine_software_qtopia_context_multiplier_set(void *data, void *context, int r, int g, int b, int a)
+eng_context_multiplier_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
 
@@ -489,7 +495,7 @@ evas_engine_software_qtopia_context_multiplier_set(void *data, void *context, in
 }
 
 static void
-evas_engine_software_qtopia_context_multiplier_unset(void *data, void *context)
+eng_context_multiplier_unset(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -498,7 +504,7 @@ evas_engine_software_qtopia_context_multiplier_unset(void *data, void *context)
 }
 
 static int
-evas_engine_software_qtopia_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a)
+eng_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
 
@@ -511,7 +517,7 @@ evas_engine_software_qtopia_context_multiplier_get(void *data, void *context, in
 }
 
 static void
-evas_engine_software_qtopia_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
+eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -520,7 +526,7 @@ evas_engine_software_qtopia_context_cutout_add(void *data, void *context, int x,
 }
 
 static void
-evas_engine_software_qtopia_context_cutout_clear(void *data, void *context)
+eng_context_cutout_clear(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -529,7 +535,7 @@ evas_engine_software_qtopia_context_cutout_clear(void *data, void *context)
 }
 
 static void
-evas_engine_software_qtopia_context_anti_alias_set(void *data, void *context, unsigned char aa)
+eng_context_anti_alias_set(void *data, void *context, unsigned char aa)
 {
    Render_Engine *re;
 
@@ -538,7 +544,7 @@ evas_engine_software_qtopia_context_anti_alias_set(void *data, void *context, un
 }
 
 static unsigned char
-evas_engine_software_qtopia_context_anti_alias_get(void *data, void *context)
+eng_context_anti_alias_get(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -547,7 +553,7 @@ evas_engine_software_qtopia_context_anti_alias_get(void *data, void *context)
 }
 
 static void
-evas_engine_software_qtopia_context_color_interpolation_set(void *data, void *context, int color_space)
+eng_context_color_interpolation_set(void *data, void *context, int color_space)
 {
    Render_Engine *re;
 
@@ -556,7 +562,7 @@ evas_engine_software_qtopia_context_color_interpolation_set(void *data, void *co
 }
 
 static int
-evas_engine_software_qtopia_context_color_interpolation_get(void *data, void *context)
+eng_context_color_interpolation_get(void *data, void *context)
 {
    Render_Engine *re;
 
@@ -570,7 +576,7 @@ evas_engine_software_qtopia_context_color_interpolation_get(void *data, void *co
 
 
 static void
-evas_engine_software_qtopia_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
+eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -580,7 +586,7 @@ evas_engine_software_qtopia_rectangle_draw(void *data, void *context, void *surf
 }
 
 static void
-evas_engine_software_qtopia_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
+eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    Render_Engine *re;
 
@@ -590,7 +596,7 @@ evas_engine_software_qtopia_line_draw(void *data, void *context, void *surface, 
 }
 
 static void *
-evas_engine_software_qtopia_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
+eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 {
    Render_Engine *re;
 
@@ -600,7 +606,7 @@ evas_engine_software_qtopia_polygon_point_add(void *data, void *context, void *p
 }
 
 static void *
-evas_engine_software_qtopia_polygon_points_clear(void *data, void *context, void *polygon)
+eng_polygon_points_clear(void *data, void *context, void *polygon)
 {
    Render_Engine *re;
 
@@ -610,7 +616,7 @@ evas_engine_software_qtopia_polygon_points_clear(void *data, void *context, void
 }
 
 static void
-evas_engine_software_qtopia_polygon_draw(void *data, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
    Render_Engine *re;
 
@@ -620,7 +626,7 @@ evas_engine_software_qtopia_polygon_draw(void *data, void *context, void *surfac
 }
 
 static void *
-evas_engine_software_qtopia_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
+eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
 {
    Render_Engine *re;
 
@@ -633,7 +639,7 @@ evas_engine_software_qtopia_gradient_color_add(void *data, void *context, void *
 }
 
 static void *
-evas_engine_software_qtopia_gradient_colors_clear(void *data, void *context, void *gradient)
+eng_gradient_colors_clear(void *data, void *context, void *gradient)
 {
    Render_Engine *re;
 
@@ -644,7 +650,7 @@ evas_engine_software_qtopia_gradient_colors_clear(void *data, void *context, voi
 }
 
 static void
-evas_engine_software_qtopia_gradient_free(void *data, void *gradient)
+eng_gradient_free(void *data, void *gradient)
 {
    Render_Engine *re;
 
@@ -653,7 +659,7 @@ evas_engine_software_qtopia_gradient_free(void *data, void *gradient)
 }
 
 static void
-evas_engine_software_qtopia_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
+eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -662,7 +668,7 @@ evas_engine_software_qtopia_gradient_fill_set(void *data, void *gradient, int x,
 }
 
 static void
-evas_engine_software_qtopia_gradient_type_set(void *data, void *gradient, char *name)
+eng_gradient_type_set(void *data, void *gradient, char *name)
 {
    Render_Engine *re;
 
@@ -671,7 +677,7 @@ evas_engine_software_qtopia_gradient_type_set(void *data, void *gradient, char *
 }
 
 static void
-evas_engine_software_qtopia_gradient_type_params_set(void *data, void *gradient, char *params)
+eng_gradient_type_params_set(void *data, void *gradient, char *params)
 {
    Render_Engine *re;
 
@@ -680,7 +686,7 @@ evas_engine_software_qtopia_gradient_type_params_set(void *data, void *gradient,
 }
 
 static void *
-evas_engine_software_qtopia_gradient_geometry_init(void *data, void *gradient, int spread)
+eng_gradient_geometry_init(void *data, void *gradient, int spread)
 {
    Render_Engine *re;
 
@@ -690,7 +696,7 @@ evas_engine_software_qtopia_gradient_geometry_init(void *data, void *gradient, i
 }
 
 static int
-evas_engine_software_qtopia_gradient_alpha_get(void *data, void *gradient, int spread)
+eng_gradient_alpha_get(void *data, void *gradient, int spread)
 {
    Render_Engine *re;
 
@@ -699,7 +705,7 @@ evas_engine_software_qtopia_gradient_alpha_get(void *data, void *gradient, int s
 }
 
 static void
-evas_engine_software_qtopia_gradient_map(void *data, void *context, void *gradient, int spread)
+eng_gradient_map(void *data, void *context, void *gradient, int spread)
 {
    Render_Engine *re;
 
@@ -709,7 +715,7 @@ evas_engine_software_qtopia_gradient_map(void *data, void *context, void *gradie
 }
 
 static void
-evas_engine_software_qtopia_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
+eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
 {
    Render_Engine *re;
 
@@ -719,7 +725,7 @@ evas_engine_software_qtopia_gradient_draw(void *data, void *context, void *surfa
 }
 
 static void *
-evas_engine_software_qtopia_image_load(void *data, char *file, char *key, int *error)
+eng_image_load(void *data, char *file, char *key, int *error)
 {
    Render_Engine *re;
 
@@ -729,7 +735,7 @@ evas_engine_software_qtopia_image_load(void *data, char *file, char *key, int *e
 }
 
 static void *
-evas_engine_software_qtopia_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -750,7 +756,7 @@ evas_engine_software_qtopia_image_new_from_data(void *data, int w, int h, DATA32
 }
 
 static void *
-evas_engine_software_qtopia_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -764,7 +770,7 @@ evas_engine_software_qtopia_image_new_from_copied_data(void *data, int w, int h,
 }
 
 static void
-evas_engine_software_qtopia_image_free(void *data, void *image)
+eng_image_free(void *data, void *image)
 {
    Render_Engine *re;
 
@@ -773,7 +779,7 @@ evas_engine_software_qtopia_image_free(void *data, void *image)
 }
 
 static void
-evas_engine_software_qtopia_image_size_get(void *data, void *image, int *w, int *h)
+eng_image_size_get(void *data, void *image, int *w, int *h)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -785,7 +791,7 @@ evas_engine_software_qtopia_image_size_get(void *data, void *image, int *w, int 
 }
 
 static void *
-evas_engine_software_qtopia_image_size_set(void *data, void *image, int w, int h)
+eng_image_size_set(void *data, void *image, int w, int h)
 {
    Render_Engine *re;
    RGBA_Image *im, *im_old;
@@ -808,7 +814,7 @@ evas_engine_software_qtopia_image_size_set(void *data, void *image, int w, int h
 }
 
 static void *
-evas_engine_software_qtopia_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
+eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
@@ -822,7 +828,7 @@ evas_engine_software_qtopia_image_dirty_region(void *data, void *image, int x, i
 }
 
 static void *
-evas_engine_software_qtopia_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
+eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -851,7 +857,7 @@ evas_engine_software_qtopia_image_data_get(void *data, void *image, int to_write
 }
 
 static void *
-evas_engine_software_qtopia_image_data_put(void *data, void *image, DATA32 *image_data)
+eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -865,7 +871,7 @@ evas_engine_software_qtopia_image_data_put(void *data, void *image, DATA32 *imag
 	w = im->image->w;
 	h = im->image->h;
 	evas_common_image_unref(im);
-	return evas_engine_software_qtopia_image_new_from_data(data, w, h, image_data);
+	return eng_image_new_from_data(data, w, h, image_data);
      }
    /* hmmm - but if we wrote... why bother? */
 /*   evas_common_image_dirty(im); */
@@ -873,7 +879,7 @@ evas_engine_software_qtopia_image_data_put(void *data, void *image, DATA32 *imag
 }
 
 static void *
-evas_engine_software_qtopia_image_alpha_set(void *data, void *image, int has_alpha)
+eng_image_alpha_set(void *data, void *image, int has_alpha)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -903,7 +909,7 @@ evas_engine_software_qtopia_image_alpha_set(void *data, void *image, int has_alp
 
 
 static int
-evas_engine_software_qtopia_image_alpha_get(void *data, void *image)
+eng_image_alpha_get(void *data, void *image)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -915,7 +921,7 @@ evas_engine_software_qtopia_image_alpha_get(void *data, void *image)
 }
 
 static void
-evas_engine_software_qtopia_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
 
@@ -933,7 +939,7 @@ evas_engine_software_qtopia_image_draw(void *data, void *context, void *surface,
 }
 
 static char *
-evas_engine_software_qtopia_image_comment_get(void *data, void *image, char *key)
+eng_image_comment_get(void *data, void *image, char *key)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -945,7 +951,7 @@ evas_engine_software_qtopia_image_comment_get(void *data, void *image, char *key
 }
 
 static char *
-evas_engine_software_qtopia_image_format_get(void *data, void *image)
+eng_image_format_get(void *data, void *image)
 {
    Render_Engine *re;
    RGBA_Image *im;
@@ -957,7 +963,7 @@ evas_engine_software_qtopia_image_format_get(void *data, void *image)
 }
 
 static void
-evas_engine_software_qtopia_image_cache_flush(void *data)
+eng_image_cache_flush(void *data)
 {
    Render_Engine *re;
    int tmp_size;
@@ -969,7 +975,7 @@ evas_engine_software_qtopia_image_cache_flush(void *data)
 }
 
 static void
-evas_engine_software_qtopia_image_cache_set(void *data, int bytes)
+eng_image_cache_set(void *data, int bytes)
 {
    Render_Engine *re;
 
@@ -978,7 +984,7 @@ evas_engine_software_qtopia_image_cache_set(void *data, int bytes)
 }
 
 static int
-evas_engine_software_qtopia_image_cache_get(void *data)
+eng_image_cache_get(void *data)
 {
    Render_Engine *re;
 
@@ -987,7 +993,7 @@ evas_engine_software_qtopia_image_cache_get(void *data)
 }
 
 static void *
-evas_engine_software_qtopia_font_load(void *data, char *name, int size)
+eng_font_load(void *data, char *name, int size)
 {
    Render_Engine *re;
 
@@ -996,16 +1002,16 @@ evas_engine_software_qtopia_font_load(void *data, char *name, int size)
 }
 
 static void *
-evas_engine_software_qtopia_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return evas_common_font_load(name, size, fdata, fdata_size);
+   return evas_common_font_memory_load(name, size, fdata, fdata_size);
 }
 
 static void *
-evas_engine_software_qtopia_font_add(void *data, void *font, char *name, int size)
+eng_font_add(void *data, void *font, char *name, int size)
 {
    Render_Engine *re;
 
@@ -1014,7 +1020,7 @@ evas_engine_software_qtopia_font_add(void *data, void *font, char *name, int siz
 }
 
 static void *
-evas_engine_software_qtopia_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size)
 {
    Render_Engine *re;
 
@@ -1023,7 +1029,7 @@ evas_engine_software_qtopia_font_memory_add(void *data, void *font, char *name, 
 }
 
 static void
-evas_engine_software_qtopia_font_free(void *data, void *font)
+eng_font_free(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1032,7 +1038,7 @@ evas_engine_software_qtopia_font_free(void *data, void *font)
 }
 
 static int
-evas_engine_software_qtopia_font_ascent_get(void *data, void *font)
+eng_font_ascent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1041,7 +1047,7 @@ evas_engine_software_qtopia_font_ascent_get(void *data, void *font)
 }
 
 static int
-evas_engine_software_qtopia_font_descent_get(void *data, void *font)
+eng_font_descent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1050,7 +1056,7 @@ evas_engine_software_qtopia_font_descent_get(void *data, void *font)
 }
 
 static int
-evas_engine_software_qtopia_font_max_ascent_get(void *data, void *font)
+eng_font_max_ascent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1059,7 +1065,7 @@ evas_engine_software_qtopia_font_max_ascent_get(void *data, void *font)
 }
 
 static int
-evas_engine_software_qtopia_font_max_descent_get(void *data, void *font)
+eng_font_max_descent_get(void *data, void *font)
 {
    Render_Engine *re;
 
@@ -1068,7 +1074,7 @@ evas_engine_software_qtopia_font_max_descent_get(void *data, void *font)
 }
 
 static void
-evas_engine_software_qtopia_font_string_size_get(void *data, void *font, char *text, int *w, int *h)
+eng_font_string_size_get(void *data, void *font, char *text, int *w, int *h)
 {
    Render_Engine *re;
 
@@ -1077,7 +1083,7 @@ evas_engine_software_qtopia_font_string_size_get(void *data, void *font, char *t
 }
 
 static int
-evas_engine_software_qtopia_font_inset_get(void *data, void *font, char *text)
+eng_font_inset_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
 
@@ -1086,7 +1092,7 @@ evas_engine_software_qtopia_font_inset_get(void *data, void *font, char *text)
 }
 
 static int
-evas_engine_software_qtopia_font_h_advance_get(void *data, void *font, char *text)
+eng_font_h_advance_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
    int h, v;
@@ -1097,7 +1103,7 @@ evas_engine_software_qtopia_font_h_advance_get(void *data, void *font, char *tex
 }
 
 static int
-evas_engine_software_qtopia_font_v_advance_get(void *data, void *font, char *text)
+eng_font_v_advance_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
    int h, v;
@@ -1108,7 +1114,7 @@ evas_engine_software_qtopia_font_v_advance_get(void *data, void *font, char *tex
 }
 
 static int
-evas_engine_software_qtopia_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
 
@@ -1117,7 +1123,7 @@ evas_engine_software_qtopia_font_char_coords_get(void *data, void *font, char *t
 }
 
 static int
-evas_engine_software_qtopia_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
 
@@ -1126,7 +1132,7 @@ evas_engine_software_qtopia_font_char_at_coords_get(void *data, void *font, char
 }
 
 static void
-evas_engine_software_qtopia_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
 {
    Render_Engine *re;
 
@@ -1174,7 +1180,7 @@ evas_engine_software_qtopia_font_draw(void *data, void *context, void *surface, 
 }
 
 static void
-evas_engine_software_qtopia_font_cache_flush(void *data)
+eng_font_cache_flush(void *data)
 {
    Render_Engine *re;
 
@@ -1183,7 +1189,7 @@ evas_engine_software_qtopia_font_cache_flush(void *data)
 }
 
 static void
-evas_engine_software_qtopia_font_cache_set(void *data, int bytes)
+eng_font_cache_set(void *data, int bytes)
 {
    Render_Engine *re;
 
@@ -1192,10 +1198,50 @@ evas_engine_software_qtopia_font_cache_set(void *data, int bytes)
 }
 
 static int
-evas_engine_software_qtopia_font_cache_get(void *data)
+eng_font_cache_get(void *data)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    return evas_common_font_cache_get();
 }
+
+static void
+eng_font_hinting_set(void *data, void *font, int hinting)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   evas_common_font_hinting_set(font, hinting);
+}
+
+static int
+eng_font_hinting_can_hint(void *data, int hinting)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   return evas_common_hinting_available(hinting);
+}
+
+int
+module_open(Evas_Module *em)
+{
+   if (!em) return 0;
+   em->functions = (void *)(&eng_func);
+   return 1;
+}
+
+void
+module_close(void)
+{
+   
+}
+
+Evas_Module_Api evas_modapi =
+{
+   EVAS_MODULE_API_VERSION,
+     EVAS_MODULE_TYPE_ENGINE,
+     "software_qtopia",
+     "none"
+};
