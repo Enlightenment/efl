@@ -4522,3 +4522,32 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
 	o->changed = 1;
      }
 }
+
+void
+_evas_object_textblock_rehint(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_List *l, *ll;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+	Evas_Object_Textblock_Line *ln;
+	
+	ln = (Evas_Object_Textblock_Line *)l;
+	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	  {
+	     Evas_Object_Textblock_Item *it;
+	     
+	     it = (Evas_Object_Textblock_Item *)ll;
+	     if (it->format->font.font)
+	       evas_font_load_hinting_set(obj->layer->evas,
+					  it->format->font.font,
+					  obj->layer->evas->hinting);
+	  }
+     }
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->changed = 1;
+   evas_object_change(obj);
+}

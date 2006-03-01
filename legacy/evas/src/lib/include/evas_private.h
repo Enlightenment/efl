@@ -692,9 +692,12 @@ void evas_font_dir_cache_free(void);
 char *evas_font_dir_cache_find(char *dir, char *font);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
+void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);   
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
-     
+void _evas_object_text_rehint(Evas_Object *obj);
+void _evas_object_textblock_rehint(Evas_Object *obj);
+       
 extern int _evas_alloc_error;
 
 struct _Evas_Imaging_Image

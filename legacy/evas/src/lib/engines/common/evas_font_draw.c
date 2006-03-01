@@ -5,25 +5,26 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 {
    RGBA_Font_Glyph *fg;
    char key[6];
+   FT_UInt hindex;
    FT_Error error;
-   FT_Int32 lflags;
-
-   key[0] = ((index       ) & 0x7f) + 1;
-   key[1] = ((index >> 7  ) & 0x7f) + 1;
-   key[2] = ((index >> 14 ) & 0x7f) + 1;
-   key[3] = ((index >> 21 ) & 0x7f) + 1;
-   key[4] = ((index >> 28 ) & 0x0f) + 1;
+   const FT_Int32 hintflags[3] =
+     { FT_LOAD_NO_HINTING, FT_LOAD_FORCE_AUTOHINT, FT_LOAD_NO_AUTOHINT };
+   
+   hindex = index + (fi->hinting * 500000000);
+   
+   key[0] = ((hindex       ) & 0x7f) + 1;
+   key[1] = ((hindex >> 7  ) & 0x7f) + 1;
+   key[2] = ((hindex >> 14 ) & 0x7f) + 1;
+   key[3] = ((hindex >> 21 ) & 0x7f) + 1;
+   key[4] = ((hindex >> 28 ) & 0x0f) + 1;
    key[5] = 0;
 
    fg = evas_hash_find(fi->glyphs, key);
    if (fg) return fg;
    
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
-   lflags = FT_LOAD_RENDER;
-   if (fi->hinting == FONT_NO_HINT) lflags |= FT_LOAD_NO_HINTING;
-   else if (fi->hinting == FONT_AUTO_HINT) lflags |= FT_LOAD_FORCE_AUTOHINT;
-   else if (fi->hinting == FONT_BYTECODE_HINT) lflags |= FT_LOAD_NO_AUTOHINT;
-   error = FT_Load_Glyph(fi->src->ft.face, index, lflags);
+   error = FT_Load_Glyph(fi->src->ft.face, index,
+			 FT_LOAD_RENDER | hintflags[fi->hinting]);
    if (error) return NULL;
 
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
