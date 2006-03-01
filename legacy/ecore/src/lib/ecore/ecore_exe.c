@@ -5,40 +5,48 @@
 
 #ifndef WIN32
 
-
 struct _ecore_exe_dead_exe
 {
-   pid_t        pid;
-   char        *cmd;
+   pid_t               pid;
+   char               *cmd;
 };
 
-static inline void _ecore_exe_exec_it(const char *exe_cmd);
+static inline void  _ecore_exe_exec_it(const char *exe_cmd);
 
-static int _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Exe_Flags flags);
-static int _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static void _ecore_exe_flush(Ecore_Exe *exe);
-static void _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev);
-static Ecore_Exe *_ecore_exe_is_it_alive(pid_t pid);
-static int _ecore_exe_make_sure_its_dead(void *data);
-static int _ecore_exe_make_sure_its_really_dead(void *data);
+static int          _ecore_exe_data_generic_handler(void *data,
+						    Ecore_Fd_Handler *
+						    fd_handler,
+						    Ecore_Exe_Flags flags);
+static int          _ecore_exe_data_error_handler(void *data,
+						  Ecore_Fd_Handler *
+						  fd_handler);
+static int          _ecore_exe_data_read_handler(void *data,
+						 Ecore_Fd_Handler * fd_handler);
+static int          _ecore_exe_data_write_handler(void *data,
+						  Ecore_Fd_Handler *
+						  fd_handler);
+static void         _ecore_exe_flush(Ecore_Exe * exe);
+static void         _ecore_exe_event_exe_data_free(void *data __UNUSED__,
+						   void *ev);
+static Ecore_Exe   *_ecore_exe_is_it_alive(pid_t pid);
+static int          _ecore_exe_make_sure_its_dead(void *data);
+static int          _ecore_exe_make_sure_its_really_dead(void *data);
 static Ecore_Exe_Event_Add *_ecore_exe_event_add_new(void);
-static void _ecore_exe_event_add_free(void *data, void *ev);
+static void         _ecore_exe_event_add_free(void *data, void *ev);
 
-EAPI int ECORE_EXE_EVENT_ADD = 0;
-EAPI int ECORE_EXE_EVENT_DEL = 0;
-EAPI int ECORE_EXE_EVENT_DATA = 0;
-EAPI int ECORE_EXE_EVENT_ERROR = 0;
+EAPI int            ECORE_EXE_EVENT_ADD = 0;
+EAPI int            ECORE_EXE_EVENT_DEL = 0;
+EAPI int            ECORE_EXE_EVENT_DATA = 0;
+EAPI int            ECORE_EXE_EVENT_ERROR = 0;
 
-static Ecore_Exe *exes = NULL;
-static char *shell = NULL;
-
+static Ecore_Exe   *exes = NULL;
+static char        *shell = NULL;
 
 /* FIXME: This errno checking stuff should be put elsewhere for everybody to use.
  * For now it lives here though, just to make testing easier.
  */
-static int _ecore_exe_check_errno(int result, char *file, int line);
+static int          _ecore_exe_check_errno(int result, char *file, int line);
+
 #define E_IF_NO_ERRNO(result, foo, ok) \
   while (((ok) = _ecore_exe_check_errno( (result) = (foo), __FILE__, __LINE__)) == -1)   sleep(1); \
   if (ok)
@@ -52,8 +60,8 @@ static int _ecore_exe_check_errno(int result, char *file, int line);
 static int
 _ecore_exe_check_errno(int result, char *file, int line)
 {
-   int saved_errno = errno;
-   
+   int                 saved_errno = errno;
+
    if (result == -1)
      {
 	perror("*** errno reports ");
@@ -114,70 +122,69 @@ _ecore_exe_check_errno(int result, char *file, int line)
  */
 	switch (saved_errno)
 	  {
-	   case EACCES :
-	   case EAGAIN :
-	   case EINTR :
-	       {   /* Not now, try later. */
-		  fprintf(stderr, "*** Must try again in %s @%u.\n", file, line);
-		  result = -1;
-		  break;
-	       }
-	     
-	   case EMFILE :
-	   case ENFILE :
-	   case ENOLCK :
-	       {   /* Low on resources. */
-		  fprintf(stderr, "*** Low on resources in %s @%u.\n", file, line);
-		  result = 0;
-		  break;
-	       }
-	     
-	   case EIO :
-	       {   /* I/O error. */
-		  fprintf(stderr, "*** I/O error in %s @%u.\n", file, line);
-		  result = 0;
-		  break;
-	       }
-	     
-	   case EFAULT :
-	   case EBADF :
-	   case EINVAL :
-	   case EROFS :
-	   case EISDIR :
-	   case EDEADLK :
-	   case EPERM :
-	   case EBUSY :
-	       {   /* Programmer fucked up. */
-		  fprintf(stderr, 
-			  "*** NAUGHTY PROGRAMMER!!!\n"
-			  "*** SPANK SPANK SPANK!!!\n"
-			  "*** Now go fix your code in %s @%u. Tut tut tut!\n"
-			  "\n", file, line);
-		  result = 0;
-		  break;
-	       }
-	     
-	   default :
-	       {   /* Unsupported errno code, please add this one. */
-		  fprintf(stderr, 
-			  "*** NAUGHTY PROGRAMMER!!!\n"
-			  "*** SPANK SPANK SPANK!!!\n"
-			  "*** Unsupported errno code %d, please add this one.\n"
-			  "*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!\n"
-			  "\n", saved_errno, __FILE__, __LINE__, file, line);
-		  result = 0;
-		  break;
-	       }
+	  case EACCES:
+	  case EAGAIN:
+	  case EINTR:
+	     {			/* Not now, try later. */
+		fprintf(stderr, "*** Must try again in %s @%u.\n", file, line);
+		result = -1;
+		break;
+	     }
+
+	  case EMFILE:
+	  case ENFILE:
+	  case ENOLCK:
+	     {			/* Low on resources. */
+		fprintf(stderr, "*** Low on resources in %s @%u.\n", file,
+			line);
+		result = 0;
+		break;
+	     }
+
+	  case EIO:
+	     {			/* I/O error. */
+		fprintf(stderr, "*** I/O error in %s @%u.\n", file, line);
+		result = 0;
+		break;
+	     }
+
+	  case EFAULT:
+	  case EBADF:
+	  case EINVAL:
+	  case EROFS:
+	  case EISDIR:
+	  case EDEADLK:
+	  case EPERM:
+	  case EBUSY:
+	     {			/* Programmer fucked up. */
+		fprintf(stderr,
+			"*** NAUGHTY PROGRAMMER!!!\n"
+			"*** SPANK SPANK SPANK!!!\n"
+			"*** Now go fix your code in %s @%u. Tut tut tut!\n"
+			"\n", file, line);
+		result = 0;
+		break;
+	     }
+
+	  default:
+	     {			/* Unsupported errno code, please add this one. */
+		fprintf(stderr,
+			"*** NAUGHTY PROGRAMMER!!!\n"
+			"*** SPANK SPANK SPANK!!!\n"
+			"*** Unsupported errno code %d, please add this one.\n"
+			"*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!\n"
+			"\n", saved_errno, __FILE__, __LINE__, file, line);
+		result = 0;
+		break;
+	     }
 	  }
      }
-   else   /* Everything is fine. */
-     result = 1;
-   
+   else				/* Everything is fine. */
+      result = 1;
+
    errno = saved_errno;
    return result;
 }
-
-
 
 /**
  * @defgroup Ecore_Exe_Basic_Group Process Spawning Functions
@@ -195,15 +202,16 @@ _ecore_exe_check_errno(int result, char *file, int line)
  * @return  A process handle to the spawned process.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI Ecore_Exe *
+EAPI Ecore_Exe     *
 ecore_exe_run(const char *exe_cmd, const void *data)
 {
 /* I'm just being paranoid again, leaving in the original code in case there is a problem. */
 #if 0
-   Ecore_Exe *exe;
-   pid_t pid;
-   
-   if (!exe_cmd) return NULL;
+   Ecore_Exe          *exe;
+   pid_t               pid;
+
+   if (!exe_cmd)
+      return NULL;
    pid = fork();
    if (pid)
      {
@@ -216,7 +224,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 	ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
 	exe->pid = pid;
 	exe->data = (void *)data;
-        exe->cmd = strdup(exe_cmd);
+	exe->cmd = strdup(exe_cmd);
 	exes = _ecore_list2_append(exes, exe);
 	return exe;
      }
@@ -254,25 +262,28 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * @return  A process handle to the spawned process.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI Ecore_Exe *
+EAPI Ecore_Exe     *
 ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 {
-   Ecore_Exe *exe = NULL;
-   int statusPipe[2] = { -1, -1 };
-   int errorPipe[2]  = { -1, -1 };
-   int readPipe[2]   = { -1, -1 };
-   int writePipe[2]  = { -1, -1 };
-   int n = 0;
-   int ok = 1;
-   int result;
+   Ecore_Exe          *exe = NULL;
+   int                 statusPipe[2] = { -1, -1 };
+   int                 errorPipe[2] = { -1, -1 };
+   int                 readPipe[2] = { -1, -1 };
+   int                 writePipe[2] = { -1, -1 };
+   int                 n = 0;
+   int                 ok = 1;
+   int                 result;
 
-   if (!exe_cmd) return NULL;
+   if (!exe_cmd)
+      return NULL;
 
    exe = calloc(1, sizeof(Ecore_Exe));
-   if (exe == NULL) return NULL;
-   
-   if ( (flags & ECORE_EXE_PIPE_AUTO) && (! (flags & ECORE_EXE_PIPE_ERROR)) && (! (flags & ECORE_EXE_PIPE_READ)) )
-      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;   /* We need something to auto pipe. */
+   if (exe == NULL)
+      return NULL;
+
+   if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
+       && (!(flags & ECORE_EXE_PIPE_READ)))
+      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;	/* We need something to auto pipe. */
 
    exe->child_fd_error = -1;
    exe->child_fd_read = -1;
@@ -282,188 +293,205 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    exe->child_fd_write_x = -1;
 
    /*  Create some pipes. */
-   if (ok)   E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
-        ;
+   if (ok)
+      E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok);
    if (ok && (flags & ECORE_EXE_PIPE_ERROR))
       E_IF_NO_ERRNO_NOLOOP(result, pipe(errorPipe), ok)
-         {
-            exe->child_fd_error = errorPipe[0];
-            exe->child_fd_error_x = errorPipe[1];
-	 }
+     {
+	exe->child_fd_error = errorPipe[0];
+	exe->child_fd_error_x = errorPipe[1];
+     }
    if (ok && (flags & ECORE_EXE_PIPE_READ))
-      E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe),  ok)
-         {
-            exe->child_fd_read = readPipe[0];
-            exe->child_fd_read_x = readPipe[1];
-	 }
+      E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe), ok)
+     {
+	exe->child_fd_read = readPipe[0];
+	exe->child_fd_read_x = readPipe[1];
+     }
    if (ok && (flags & ECORE_EXE_PIPE_WRITE))
       E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
-         {
-            exe->child_fd_write = writePipe[1];
-            exe->child_fd_write_x = writePipe[0];
-	 }
+     {
+	exe->child_fd_write = writePipe[1];
+	exe->child_fd_write_x = writePipe[0];
+     }
 
    if (ok)
-      {
-         pid_t pid = 0;
-         volatile int vfork_exec_errno = 0;
-		  
-         /* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
-         /* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
-         pid = fork();
-		  
-         if (pid == -1)
-            {
-               fprintf(stderr, "Failed to fork process\n");
-               pid = 0;
-            }
-         else if (pid == 0)   /* child */
-            {
-               /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the second pipe if it's open. */
-	       /* On the other hand, there was the Great FD Leak Scare of '06, so let's be paranoid. */
-	       if (ok && (flags & ECORE_EXE_PIPE_ERROR))
-	          {
-		     E_NO_ERRNO(result, close(STDERR_FILENO), ok);
-		     E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
+     {
+	pid_t               pid = 0;
+	volatile int        vfork_exec_errno = 0;
+
+	/* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
+	/* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
+	pid = fork();
+
+	if (pid == -1)
+	  {
+	     fprintf(stderr, "Failed to fork process\n");
+	     pid = 0;
+	  }
+	else if (pid == 0)	/* child */
+	  {
+	     /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the second pipe if it's open. */
+	     /* On the other hand, there was the Great FD Leak Scare of '06, so let's be paranoid. */
+	     if (ok && (flags & ECORE_EXE_PIPE_ERROR))
+	       {
+		  E_NO_ERRNO(result, close(STDERR_FILENO), ok);
+		  E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
+	       }
+	     if (ok && (flags & ECORE_EXE_PIPE_READ))
+	       {
+		  E_NO_ERRNO(result, close(STDOUT_FILENO), ok);
+		  E_NO_ERRNO(result, dup2(readPipe[1], STDOUT_FILENO), ok);
+	       }
+	     if (ok && (flags & ECORE_EXE_PIPE_WRITE))
+	       {
+		  E_NO_ERRNO(result, close(STDIN_FILENO), ok);
+		  E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO), ok);
+	       }
+
+	     if (ok)
+	       {
+		  /* Setup the status pipe. */
+		  E_NO_ERRNO(result, close(statusPipe[0]), ok);
+		  E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)	/* close on exec shows sucess */
+		  {
+		     /* Run the actual command. */
+		     _ecore_exe_exec_it(exe_cmd);	/* Should not return from this. */
 		  }
-               if (ok && (flags & ECORE_EXE_PIPE_READ))
-	          {
-		     E_NO_ERRNO(result, close(STDOUT_FILENO), ok);
-		     E_NO_ERRNO(result, dup2(readPipe[1],  STDOUT_FILENO), ok);
-		  }
-               if (ok && (flags & ECORE_EXE_PIPE_WRITE))
-	          {
-		     E_NO_ERRNO(result, close(STDIN_FILENO), ok);
-		     E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO),  ok);
-		  }
+	       }
 
-               if (ok)
-	          {
-		     /* Setup the status pipe. */
-		     E_NO_ERRNO(result, close(statusPipe[0]), ok);
-		     E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)   /* close on exec shows sucess */
-		        {
-			   /* Run the actual command. */
-			   _ecore_exe_exec_it(exe_cmd);   /* Should not return from this. */
-			}
-		  }
+	     /* Something went 'orribly wrong. */
+	     vfork_exec_errno = errno;
 
-               /* Something went 'orribly wrong. */
-               vfork_exec_errno = errno;
+	     /* Close the pipes. */
+	     if (flags & ECORE_EXE_PIPE_ERROR)
+		E_NO_ERRNO(result, close(errorPipe[1]), ok);
+	     if (flags & ECORE_EXE_PIPE_READ)
+		E_NO_ERRNO(result, close(readPipe[1]), ok);
+	     if (flags & ECORE_EXE_PIPE_WRITE)
+		E_NO_ERRNO(result, close(writePipe[0]), ok);
+	     E_NO_ERRNO(result, close(statusPipe[1]), ok);
 
-               /* Close the pipes. */
-               if (flags & ECORE_EXE_PIPE_ERROR)  E_NO_ERRNO(result, close(errorPipe[1]), ok);
-               if (flags & ECORE_EXE_PIPE_READ)   E_NO_ERRNO(result, close(readPipe[1]),  ok);
-               if (flags & ECORE_EXE_PIPE_WRITE)  E_NO_ERRNO(result, close(writePipe[0]), ok);
-               E_NO_ERRNO(result, close(statusPipe[1]), ok);
+	     _exit(-1);
+	  }
+	else			/* parent */
+	  {
+	     /* Close the unused pipes. */
+	     E_NO_ERRNO(result, close(statusPipe[1]), ok);
 
-               _exit(-1);
-            }
-         else   /* parent */
-            {
-               /* Close the unused pipes. */
-               E_NO_ERRNO(result, close(statusPipe[1]), ok);
-		       
-               /* FIXME: after having a good look at the current e fd handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
-		       
-               /* Wait for it to start executing. */
-               while (1)
-	          {
-	             char buf;
+	     /* FIXME: after having a good look at the current e fd handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
 
-	             E_NO_ERRNO(result, read(statusPipe[0], &buf, 1), ok);
-	             if (result == 0)
-	                {
-		           if (vfork_exec_errno != 0)
-		              {
-		                 n = vfork_exec_errno;
-		                 fprintf(stderr, "Could not start \"%s\"\n", exe_cmd);
-		                 pid = 0;
-		              }
-		           break;
-	                }
-	          }
+	     /* Wait for it to start executing. */
+	     while (1)
+	       {
+		  char                buf;
 
-               /* Close the status pipe. */
-               E_NO_ERRNO(result, close(statusPipe[0]), ok);
-            }
-		  
-         if (pid)
-            {
-               /* Setup the exe structure. */
-               ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
-               exe->start_bytes = -1;
-               exe->end_bytes   = -1;
-               exe->start_lines = -1;
-               exe->end_lines   = -1;
-               exe->pid = pid;
-               exe->flags = flags;
-               exe->data = (void *)data;
-               if ((exe->cmd = strdup(exe_cmd)))
-	          {
-	             if (flags & ECORE_EXE_PIPE_ERROR)
-	                {   /* Setup the error stuff. */
-		           E_IF_NO_ERRNO(result, fcntl(exe->child_fd_error, F_SETFL, O_NONBLOCK), ok)
-		              {
-		                 exe->error_fd_handler = ecore_main_fd_handler_add(exe->child_fd_error,
-					       ECORE_FD_READ, _ecore_exe_data_error_handler, exe,
-					       NULL, NULL);
-		                 if (exe->error_fd_handler == NULL)
-			           ok = 0;
-		              }
-	                }
-	             if (ok && (flags & ECORE_EXE_PIPE_READ))
-	               {   /* Setup the read stuff. */
-		          E_IF_NO_ERRNO(result, fcntl(exe->child_fd_read, F_SETFL, O_NONBLOCK), ok)
-		             {
-		                exe->read_fd_handler = ecore_main_fd_handler_add(exe->child_fd_read,
-				       ECORE_FD_READ, _ecore_exe_data_read_handler, exe,
-				       NULL, NULL);
-		                if (exe->read_fd_handler == NULL)
-			           ok = 0;
-		             }
-	               }
-	           if (ok && (flags & ECORE_EXE_PIPE_WRITE))
-	              {   /* Setup the write stuff. */
-		         E_IF_NO_ERRNO(result, fcntl(exe->child_fd_write, F_SETFL, O_NONBLOCK), ok)
-		            {
-		               exe->write_fd_handler = ecore_main_fd_handler_add(exe->child_fd_write,
-					ECORE_FD_WRITE, _ecore_exe_data_write_handler, exe,
-					NULL, NULL);
-		               if (exe->write_fd_handler)
-			          ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);   /* Nothing to write to start with. */
-		               else
-			          ok = 0;
-		            }
-	              }
+		  E_NO_ERRNO(result, read(statusPipe[0], &buf, 1), ok);
+		  if (result == 0)
+		    {
+		       if (vfork_exec_errno != 0)
+			 {
+			    n = vfork_exec_errno;
+			    fprintf(stderr, "Could not start \"%s\"\n",
+				    exe_cmd);
+			    pid = 0;
+			 }
+		       break;
+		    }
+	       }
 
-	             exes = _ecore_list2_append(exes, exe);
-	             n = 0;
-	          }
-               else
-	          ok = 0;
-            }
-         else
-            ok = 0;
-      }
-   
+	     /* Close the status pipe. */
+	     E_NO_ERRNO(result, close(statusPipe[0]), ok);
+	  }
+
+	if (pid)
+	  {
+	     /* Setup the exe structure. */
+	     ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
+	     exe->start_bytes = -1;
+	     exe->end_bytes = -1;
+	     exe->start_lines = -1;
+	     exe->end_lines = -1;
+	     exe->pid = pid;
+	     exe->flags = flags;
+	     exe->data = (void *)data;
+	     if ((exe->cmd = strdup(exe_cmd)))
+	       {
+		  if (flags & ECORE_EXE_PIPE_ERROR)
+		    {		/* Setup the error stuff. */
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_error, F_SETFL,
+					   O_NONBLOCK), ok)
+		       {
+			  exe->error_fd_handler =
+			     ecore_main_fd_handler_add(exe->child_fd_error,
+						       ECORE_FD_READ,
+						       _ecore_exe_data_error_handler,
+						       exe, NULL, NULL);
+			  if (exe->error_fd_handler == NULL)
+			     ok = 0;
+		       }
+		    }
+		  if (ok && (flags & ECORE_EXE_PIPE_READ))
+		    {		/* Setup the read stuff. */
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_read, F_SETFL,
+					   O_NONBLOCK), ok)
+		       {
+			  exe->read_fd_handler =
+			     ecore_main_fd_handler_add(exe->child_fd_read,
+						       ECORE_FD_READ,
+						       _ecore_exe_data_read_handler,
+						       exe, NULL, NULL);
+			  if (exe->read_fd_handler == NULL)
+			     ok = 0;
+		       }
+		    }
+		  if (ok && (flags & ECORE_EXE_PIPE_WRITE))
+		    {		/* Setup the write stuff. */
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_write, F_SETFL,
+					   O_NONBLOCK), ok)
+		       {
+			  exe->write_fd_handler =
+			     ecore_main_fd_handler_add(exe->child_fd_write,
+						       ECORE_FD_WRITE,
+						       _ecore_exe_data_write_handler,
+						       exe, NULL, NULL);
+			  if (exe->write_fd_handler)
+			     ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);	/* Nothing to write to start with. */
+			  else
+			     ok = 0;
+		       }
+		    }
+
+		  exes = _ecore_list2_append(exes, exe);
+		  n = 0;
+	       }
+	     else
+		ok = 0;
+	  }
+	else
+	   ok = 0;
+     }
+
    if (!ok)
-     {   /* Something went wrong, so pull down everything. */
-	if (exe->pid)   ecore_exe_terminate(exe);
+     {				/* Something went wrong, so pull down everything. */
+	if (exe->pid)
+	   ecore_exe_terminate(exe);
 	IF_FN_DEL(ecore_exe_free, exe);
      }
    else
-      {
-	 Ecore_Exe_Event_Add *e;
-		       
-	 e = _ecore_exe_event_add_new();
-	 e->exe = exe;
-	 if (e)   /* Send the event. */
-	    ecore_event_add(ECORE_EXE_EVENT_ADD, e,
-		    _ecore_exe_event_add_free, NULL);
-         /* printf("Running as %d for %s.\n", exe->pid, exe->cmd); */
-      }
-   
+     {
+	Ecore_Exe_Event_Add *e;
+
+	e = _ecore_exe_event_add_new();
+	e->exe = exe;
+	if (e)			/* Send the event. */
+	   ecore_event_add(ECORE_EXE_EVENT_ADD, e,
+			   _ecore_exe_event_add_free, NULL);
+	/* printf("Running as %d for %s.\n", exe->pid, exe->cmd); */
+     }
+
    errno = n;
    return exe;
 }
@@ -482,20 +510,21 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI int
-ecore_exe_send(Ecore_Exe *exe, void *data, int size)
+ecore_exe_send(Ecore_Exe * exe, void *data, int size)
 {
-   void *buf;
+   void               *buf;
 
    buf = realloc(exe->write_data_buf, exe->write_data_size + size);
-   if (buf == NULL)   return 0;
+   if (buf == NULL)
+      return 0;
 
    exe->write_data_buf = buf;
    memcpy(exe->write_data_buf + exe->write_data_size, data, size);
    exe->write_data_size += size;
 
    if (exe->write_fd_handler)
-     ecore_main_fd_handler_active_set(exe->write_fd_handler, ECORE_FD_WRITE);
-      
+      ecore_main_fd_handler_active_set(exe->write_fd_handler, ECORE_FD_WRITE);
+
    return 1;
 }
 
@@ -506,17 +535,15 @@ ecore_exe_send(Ecore_Exe *exe, void *data, int size)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_close_stdin(Ecore_Exe *exe)
+ecore_exe_close_stdin(Ecore_Exe * exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_close_stdin");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_close_stdin");
 	return;
      }
    exe->close_stdin = 1;
 }
-
 
 /**
  * Sets the auto pipe limits for the given process handle
@@ -529,19 +556,19 @@ ecore_exe_close_stdin(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines)
+ecore_exe_auto_limits_set(Ecore_Exe * exe, int start_bytes, int end_bytes,
+			  int start_lines, int end_lines)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_auto_limits_set");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_auto_limits_set");
 	return;
      }
    /* FIXME: sanitize the input. */
    exe->start_bytes = start_bytes;
-   exe->end_bytes   = end_bytes;
+   exe->end_bytes = end_bytes;
    exe->start_lines = start_lines;
-   exe->end_lines   = end_lines;
+   exe->end_lines = end_lines;
 
    /* FIXME: get this can of worms working.
     *
@@ -591,130 +618,128 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int st
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Event_Data *
-ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
+ecore_exe_event_data_get(Ecore_Exe * exe, Ecore_Exe_Flags flags)
 {
    Ecore_Exe_Event_Data *e = NULL;
-   int is_buffered = 0;
-   unsigned char *inbuf;
-   int inbuf_num;
+   int                 is_buffered = 0;
+   unsigned char      *inbuf;
+   int                 inbuf_num;
 
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_event_data_get");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_event_data_get");
 	return NULL;
      }
 
    /* Sort out what sort of event we are. */
    if (flags & ECORE_EXE_PIPE_READ)
-      {
-         flags = ECORE_EXE_PIPE_READ;
-         if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
-            is_buffered = 1;
-      }
+     {
+	flags = ECORE_EXE_PIPE_READ;
+	if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
+	   is_buffered = 1;
+     }
    else
-      {
-         flags = ECORE_EXE_PIPE_ERROR;
-         if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
-            is_buffered = 1;
-      }
+     {
+	flags = ECORE_EXE_PIPE_ERROR;
+	if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
+	   is_buffered = 1;
+     }
 
    /* Get the data. */
    if (flags & ECORE_EXE_PIPE_READ)
-      {
-         inbuf = exe->read_data_buf;
-         inbuf_num = exe->read_data_size;
-	 exe->read_data_buf = NULL;
-	 exe->read_data_size = 0;
-      }
+     {
+	inbuf = exe->read_data_buf;
+	inbuf_num = exe->read_data_size;
+	exe->read_data_buf = NULL;
+	exe->read_data_size = 0;
+     }
    else
-      {
-         inbuf = exe->error_data_buf;
-         inbuf_num = exe->error_data_size;
-	 exe->error_data_buf = NULL;
-	 exe->error_data_size = 0;
-      }
-		       
+     {
+	inbuf = exe->error_data_buf;
+	inbuf_num = exe->error_data_size;
+	exe->error_data_buf = NULL;
+	exe->error_data_size = 0;
+     }
+
    e = calloc(1, sizeof(Ecore_Exe_Event_Data));
    if (e)
-      {
-         e->exe = exe;
-	 e->data = inbuf;
-	 e->size = inbuf_num;
+     {
+	e->exe = exe;
+	e->data = inbuf;
+	e->size = inbuf_num;
 
-         if (is_buffered)
-	    {   /* Deal with line buffering. */
-	       int max = 0;
-	       int count = 0;
-	       int i;
-	       int last = 0;
-	       char *c;
+	if (is_buffered)
+	  {			/* Deal with line buffering. */
+	     int                 max = 0;
+	     int                 count = 0;
+	     int                 i;
+	     int                 last = 0;
+	     char               *c;
 
-               c = (char *)inbuf;
-	       for (i = 0; i < inbuf_num; i++) /* Find the lines. */
-		  {
-		     if (inbuf[i] == '\n')
-		        {
-			   if (count >= max)
-			      {
-			         /* In testing, the lines seem to arrive in batches of 500 to 1000 lines at most, roughly speaking. */
-				 max += 10;  /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
-		                 e->lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
-			      }
-			   /* raster said to leave the line endings as line endings, however -
-			    * This is line buffered mode, we are not dealing with binary here, but lines.
-			    * If we are not dealing with binary, we must be dealing with ASCII, unicode, or some other text format.
-			    * Thus the user is most likely gonna deal with this text as strings.
-			    * Thus the user is most likely gonna pass this data to str functions.
-			    * rasters way - the endings are always gonna be '\n';  onefangs way - they will always be '\0'
-			    * We are handing them the string length as a convenience.
-			    * Thus if they really want it in raw format, they can e->lines[i].line[e->lines[i].size - 1] = '\n'; easily enough.
-			    * In the default case, we can do this conversion quicker than the user can, as we already have the index and pointer.
-			    * Let's make it easy on them to use these as standard C strings.
-			    *
-			    * onefang is proud to announce that he has just set a new personal record for the
-			    * most over documentation of a simple assignment statement.  B-)
-			    */
-			   inbuf[i] = '\0';
-			   e->lines[count].line = c;
-			   e->lines[count].size = i - last;
-			   last = i + 1;
-			   c = (char *)&inbuf[last];
-			   count++;
-			}
-		  }
-               if (count == 0) /* No lines to send, cancel the event. */
-	          {
-                     _ecore_exe_event_exe_data_free(NULL, e);
-		     e = NULL;
-		  }
-	       else /* NULL terminate the array, so that people know where the end is. */
-	          {
-		     e->lines[count].line = NULL;
-		     e->lines[count].size = 0;
-		  }
-	       if (i > last) /* Partial line left over, save it for next time. */
-	          {
-		     e->size = last;
-                     if (flags & ECORE_EXE_PIPE_READ)
-		        {
-	                   exe->read_data_size = i - last;
-	                   exe->read_data_buf = malloc(exe->read_data_size);
-		           memcpy(exe->read_data_buf, c, exe->read_data_size);
-			}
-		     else
-		        {
-	                   exe->error_data_size = i - last;
-	                   exe->error_data_buf = malloc(exe->error_data_size);
-		           memcpy(exe->error_data_buf, c, exe->error_data_size);
-			}
-		  }
-            }
-      }
+	     c = (char *)inbuf;
+	     for (i = 0; i < inbuf_num; i++)	/* Find the lines. */
+	       {
+		  if (inbuf[i] == '\n')
+		    {
+		       if (count >= max)
+			 {
+			    /* In testing, the lines seem to arrive in batches of 500 to 1000 lines at most, roughly speaking. */
+			    max += 10;	/* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
+			    e->lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1));	/* Allow room for the NULL termination. */
+			 }
+		       /* raster said to leave the line endings as line endings, however -
+		        * This is line buffered mode, we are not dealing with binary here, but lines.
+		        * If we are not dealing with binary, we must be dealing with ASCII, unicode, or some other text format.
+		        * Thus the user is most likely gonna deal with this text as strings.
+		        * Thus the user is most likely gonna pass this data to str functions.
+		        * rasters way - the endings are always gonna be '\n';  onefangs way - they will always be '\0'
+		        * We are handing them the string length as a convenience.
+		        * Thus if they really want it in raw format, they can e->lines[i].line[e->lines[i].size - 1] = '\n'; easily enough.
+		        * In the default case, we can do this conversion quicker than the user can, as we already have the index and pointer.
+		        * Let's make it easy on them to use these as standard C strings.
+		        *
+		        * onefang is proud to announce that he has just set a new personal record for the
+		        * most over documentation of a simple assignment statement.  B-)
+		        */
+		       inbuf[i] = '\0';
+		       e->lines[count].line = c;
+		       e->lines[count].size = i - last;
+		       last = i + 1;
+		       c = (char *)&inbuf[last];
+		       count++;
+		    }
+	       }
+	     if (count == 0)	/* No lines to send, cancel the event. */
+	       {
+		  _ecore_exe_event_exe_data_free(NULL, e);
+		  e = NULL;
+	       }
+	     else		/* NULL terminate the array, so that people know where the end is. */
+	       {
+		  e->lines[count].line = NULL;
+		  e->lines[count].size = 0;
+	       }
+	     if (i > last)	/* Partial line left over, save it for next time. */
+	       {
+		  e->size = last;
+		  if (flags & ECORE_EXE_PIPE_READ)
+		    {
+		       exe->read_data_size = i - last;
+		       exe->read_data_buf = malloc(exe->read_data_size);
+		       memcpy(exe->read_data_buf, c, exe->read_data_size);
+		    }
+		  else
+		    {
+		       exe->error_data_size = i - last;
+		       exe->error_data_buf = malloc(exe->error_data_size);
+		       memcpy(exe->error_data_buf, c, exe->error_data_size);
+		    }
+	       }
+	  }
+     }
 
    return e;
 }
-
 
 /**
  * Sets the string tag for the given process handle
@@ -724,16 +749,16 @@ ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
+ecore_exe_tag_set(Ecore_Exe * exe, const char *tag)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_tag_set");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_set");
 	return;
      }
    IF_FREE(exe->tag);
-   if (tag)   exe->tag = strdup(tag);
+   if (tag)
+      exe->tag = strdup(tag);
 }
 
 /**
@@ -746,13 +771,12 @@ ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
  * @return  The string attached to @p exe.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI char *
-ecore_exe_tag_get(Ecore_Exe *exe)
+EAPI char          *
+ecore_exe_tag_get(Ecore_Exe * exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_tag_get");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_get");
 	return NULL;
      }
    return exe->tag;
@@ -769,17 +793,16 @@ ecore_exe_tag_get(Ecore_Exe *exe)
  *          called.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI void *
-ecore_exe_free(Ecore_Exe *exe)
+EAPI void          *
+ecore_exe_free(Ecore_Exe * exe)
 {
-   void *data;
-   int ok = 0;
-   int result;
+   void               *data;
+   int                 ok = 0;
+   int                 result;
 
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_free");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_free");
 	return NULL;
      }
 
@@ -789,24 +812,29 @@ ecore_exe_free(Ecore_Exe *exe)
    IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->read_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->error_fd_handler);
-   if (exe->child_fd_write_x != -1)  E_NO_ERRNO(result, close(exe->child_fd_write_x), ok);
-   if (exe->child_fd_read_x != -1)   E_NO_ERRNO(result, close(exe->child_fd_read_x), ok);
-   if (exe->child_fd_error_x != -1)  E_NO_ERRNO(result, close(exe->child_fd_error_x), ok);
-   if (exe->child_fd_write != -1)    E_NO_ERRNO(result, close(exe->child_fd_write), ok);
-   if (exe->child_fd_read != -1)     E_NO_ERRNO(result, close(exe->child_fd_read), ok);
-   if (exe->child_fd_error != -1)    E_NO_ERRNO(result, close(exe->child_fd_error), ok);
+   if (exe->child_fd_write_x != -1)
+      E_NO_ERRNO(result, close(exe->child_fd_write_x), ok);
+   if (exe->child_fd_read_x != -1)
+      E_NO_ERRNO(result, close(exe->child_fd_read_x), ok);
+   if (exe->child_fd_error_x != -1)
+      E_NO_ERRNO(result, close(exe->child_fd_error_x), ok);
+   if (exe->child_fd_write != -1)
+      E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+   if (exe->child_fd_read != -1)
+      E_NO_ERRNO(result, close(exe->child_fd_read), ok);
+   if (exe->child_fd_error != -1)
+      E_NO_ERRNO(result, close(exe->child_fd_error), ok);
    IF_FREE(exe->write_data_buf);
    IF_FREE(exe->read_data_buf);
    IF_FREE(exe->error_data_buf);
    IF_FREE(exe->cmd);
-   
+
    exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    IF_FREE(exe->tag);
    free(exe);
    return data;
 }
-
 
 /**
  * Frees the given event data.
@@ -815,13 +843,12 @@ ecore_exe_free(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
+ecore_exe_event_data_free(Ecore_Exe_Event_Data * e)
 {
    IF_FREE(e->lines);
    IF_FREE(e->data);
    free(e);
 }
-
 
 /**
  * Retrieves the process ID of the given spawned process.
@@ -829,13 +856,12 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
  * @return  The process ID on success.  @c -1 otherwise.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI pid_t
-ecore_exe_pid_get(Ecore_Exe *exe)
+EAPI                pid_t
+ecore_exe_pid_get(Ecore_Exe * exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_pid_get");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pid_get");
 	return -1;
      }
    return exe->pid;
@@ -847,13 +873,12 @@ ecore_exe_pid_get(Ecore_Exe *exe)
  * @return  The data pointer attached to @p exe.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI void *
-ecore_exe_data_get(Ecore_Exe *exe)
+EAPI void          *
+ecore_exe_data_get(Ecore_Exe * exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_data_get");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_data_get");
 	return NULL;
      }
    return exe->data;
@@ -871,12 +896,11 @@ ecore_exe_data_get(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_pause(Ecore_Exe *exe)
+ecore_exe_pause(Ecore_Exe * exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_pause");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pause");
 	return;
      }
    kill(exe->pid, SIGSTOP);
@@ -888,12 +912,11 @@ ecore_exe_pause(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_continue(Ecore_Exe *exe)
+ecore_exe_continue(Ecore_Exe * exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_continue");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_continue");
 	return;
      }
    kill(exe->pid, SIGCONT);
@@ -905,25 +928,25 @@ ecore_exe_continue(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_terminate(Ecore_Exe *exe)
+ecore_exe_terminate(Ecore_Exe * exe)
 {
    struct _ecore_exe_dead_exe *dead;
 
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_terminate");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_terminate");
 	return;
      }
 
    dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
    if (dead)
-      {
-         dead->pid = exe->pid;
-         dead->cmd = strdup(exe->cmd);
-         IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
-         exe->doomsday_clock = ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
-      }
+     {
+	dead->pid = exe->pid;
+	dead->cmd = strdup(exe->cmd);
+	IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
+	exe->doomsday_clock =
+	   ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
+     }
 
    printf("Sending TERM signal to %s (%d).\n", exe->cmd, exe->pid);
    kill(exe->pid, SIGTERM);
@@ -935,25 +958,25 @@ ecore_exe_terminate(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_kill(Ecore_Exe *exe)
+ecore_exe_kill(Ecore_Exe * exe)
 {
    struct _ecore_exe_dead_exe *dead;
 
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_kill");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_kill");
 	return;
      }
 
    dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
    if (dead)
-      {
-         dead->pid = exe->pid;
-         dead->cmd = strdup(exe->cmd);
-         IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
-         exe->doomsday_clock = ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead, dead);
-      }
+     {
+	dead->pid = exe->pid;
+	dead->cmd = strdup(exe->cmd);
+	IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
+	exe->doomsday_clock =
+	   ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead, dead);
+     }
 
    printf("Sending KILL signal to %s (%d).\n", exe->cmd, exe->pid);
    kill(exe->pid, SIGKILL);
@@ -967,18 +990,17 @@ ecore_exe_kill(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_signal(Ecore_Exe *exe, int num)
+ecore_exe_signal(Ecore_Exe * exe, int num)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_signal");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_signal");
 	return;
      }
    if (num == 1)
-     kill(exe->pid, SIGUSR1);
+      kill(exe->pid, SIGUSR1);
    else if (num == 2)
-     kill(exe->pid, SIGUSR2);
+      kill(exe->pid, SIGUSR2);
 }
 
 /**
@@ -987,21 +1009,20 @@ ecore_exe_signal(Ecore_Exe *exe, int num)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_hup(Ecore_Exe *exe)
+ecore_exe_hup(Ecore_Exe * exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
-	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_hup");
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_hup");
 	return;
      }
    kill(exe->pid, SIGHUP);
 }
 
-static Ecore_Exe *
+static Ecore_Exe   *
 _ecore_exe_is_it_alive(pid_t pid)
 {
-   Ecore_Exe *exe = NULL;
+   Ecore_Exe          *exe = NULL;
 
    /* FIXME: There is no nice, safe, OS independant way to tell if a 
     * particular PID is still alive.  I have written code to do so
@@ -1027,10 +1048,10 @@ _ecore_exe_is_it_alive(pid_t pid)
     */
    exe = _ecore_exe_find(pid);
    if (exe)
-      {
-         if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-            exe = NULL;
-      }
+     {
+	if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+	   exe = NULL;
+     }
 
    return exe;
 }
@@ -1042,24 +1063,28 @@ _ecore_exe_make_sure_its_dead(void *data)
 
    dead = data;
    if (dead)
-      {
-         Ecore_Exe *exe = NULL;
+     {
+	Ecore_Exe          *exe = NULL;
 
-         if ((exe =_ecore_exe_is_it_alive(dead->pid)) != NULL)
-	    {
-	       if (dead->cmd)
-                  printf("Sending KILL signal to alledgedly dead %s (%d).\n", dead->cmd, dead->pid);
-	       else
-                  printf("Sending KILL signal to alledgedly dead PID %d.\n", dead->pid);
-               exe->doomsday_clock = ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead, dead);
-               kill(dead->pid, SIGKILL);
-	    }
-         else
-	    {
-	       IF_FREE(dead->cmd);
-	       free(dead);
-	    }
-      }
+	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
+	  {
+	     if (dead->cmd)
+		printf("Sending KILL signal to alledgedly dead %s (%d).\n",
+		       dead->cmd, dead->pid);
+	     else
+		printf("Sending KILL signal to alledgedly dead PID %d.\n",
+		       dead->pid);
+	     exe->doomsday_clock =
+		ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead,
+				dead);
+	     kill(dead->pid, SIGKILL);
+	  }
+	else
+	  {
+	     IF_FREE(dead->cmd);
+	     free(dead);
+	  }
+     }
    return 0;
 }
 
@@ -1070,24 +1095,24 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 
    dead = data;
    if (dead)
-      {
-         Ecore_Exe *exe = NULL;
+     {
+	Ecore_Exe          *exe = NULL;
 
-         if ((exe =_ecore_exe_is_it_alive(dead->pid)) != NULL)
-	    {
-	       printf("RUN!  The zombie wants to eat your brains!  And your CPU!\n");
-	       if (dead->cmd)
-                  printf("%s (%d) is not really dead.\n", dead->cmd, dead->pid);
-	       else
-                  printf("PID %d is not really dead.\n", dead->pid);
-                 exe->doomsday_clock = NULL;
-	    }
-	 IF_FREE(dead->cmd);
-	 free(dead);
-      }
+	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
+	  {
+	     printf
+		("RUN!  The zombie wants to eat your brains!  And your CPU!\n");
+	     if (dead->cmd)
+		printf("%s (%d) is not really dead.\n", dead->cmd, dead->pid);
+	     else
+		printf("PID %d is not really dead.\n", dead->pid);
+	     exe->doomsday_clock = NULL;
+	  }
+	IF_FREE(dead->cmd);
+	free(dead);
+     }
    return 0;
 }
-
 
 void
 _ecore_exe_init(void)
@@ -1101,20 +1126,22 @@ _ecore_exe_init(void)
 void
 _ecore_exe_shutdown(void)
 {
-   while (exes) ecore_exe_free(exes);
+   while (exes)
+      ecore_exe_free(exes);
 }
 
-Ecore_Exe *
+Ecore_Exe          *
 _ecore_exe_find(pid_t pid)
 {
-   Ecore_List2 *l;
-   
-   for (l = (Ecore_List2 *)exes; l; l = l->next)
+   Ecore_List2        *l;
+
+   for (l = (Ecore_List2 *) exes; l; l = l->next)
      {
-	Ecore_Exe *exe;
-	
-	exe = (Ecore_Exe *)l;
-	if (exe->pid == pid) return exe;
+	Ecore_Exe          *exe;
+
+	exe = (Ecore_Exe *) l;
+	if (exe->pid == pid)
+	   return exe;
      }
    return NULL;
 }
@@ -1122,11 +1149,11 @@ _ecore_exe_find(pid_t pid)
 static inline void
 _ecore_exe_exec_it(const char *exe_cmd)
 {
-   char use_sh = 1;
-   char* buf = NULL;
-   char** args = NULL;
-   int save_errno = 0;
-   
+   char                use_sh = 1;
+   char               *buf = NULL;
+   char              **args = NULL;
+   int                 save_errno = 0;
+
    /* So what is this doing?
     *
     * We are trying to avoid wrapping the exe call with /bin/sh -c.
@@ -1135,74 +1162,74 @@ _ecore_exe_exec_it(const char *exe_cmd)
     */
    if (!strpbrk(exe_cmd, "|&;<>()$`\\\"'*?#"))
      {
-	char* token;
-	char pre_command = 1;
-	int num_tokens = 0;
-	
-	if (! (buf = strdup(exe_cmd)))
-	  return;
-	
+	char               *token;
+	char                pre_command = 1;
+	int                 num_tokens = 0;
+
+	if (!(buf = strdup(exe_cmd)))
+	   return;
+
 	token = strtok(buf, " \t\n\v");
-	while(token)
+	while (token)
 	  {
 	     if (token[0] == '~')
-	       break;
+		break;
 	     if (pre_command)
 	       {
 		  if (token[0] == '[')
-		    break;
+		     break;
 		  if (strchr(token, '='))
-		    break;
+		     break;
 		  else
-		    pre_command = 0;
+		     pre_command = 0;
 	       }
-	     num_tokens ++;
+	     num_tokens++;
 	     token = strtok(NULL, " \t\n\v");
 	  }
 	IF_FREE(buf);
-	if (! token && num_tokens)
+	if (!token && num_tokens)
 	  {
-	     int i = 0;
-	     char* token;
-	     
-	     if (! (buf = strdup(exe_cmd)))
-	       return;
-	     
+	     int                 i = 0;
+	     char               *token;
+
+	     if (!(buf = strdup(exe_cmd)))
+		return;
+
 	     token = strtok(buf, " \t\n\v");
 	     use_sh = 0;
-	     if (! (args = (char**) calloc(num_tokens + 1, sizeof(char*)))) 
+	     if (!(args = (char **)calloc(num_tokens + 1, sizeof(char *))))
 	       {
 		  IF_FREE(buf);
 		  return;
 	       }
-	     for (i = 0; i < num_tokens; i ++)
+	     for (i = 0; i < num_tokens; i++)
 	       {
 		  if (token)
-		    args[i] = token;
+		     args[i] = token;
 		  token = strtok(NULL, " \t\n\v");
 	       }
 	     args[num_tokens] = NULL;
 	  }
      }
-   
+
    setsid();
    if (use_sh)
-     {   /* We have to use a shell to run this. */
-	if (shell == NULL) 
-	  {   /* Find users preferred shell. */
+     {				/* We have to use a shell to run this. */
+	if (shell == NULL)
+	  {			/* Find users preferred shell. */
 	     shell = getenv("SHELL");
 	     if (shell == 0)
-	       shell = "/bin/sh";
+		shell = "/bin/sh";
 	  }
 	errno = 0;
 	execl(shell, shell, "-c", exe_cmd, (char *)NULL);
      }
    else
-     {   /* We can run this directly. */
+     {				/* We can run this directly. */
 	errno = 0;
 	execvp(args[0], args);
      }
-   
+
    save_errno = errno;
    IF_FREE(buf);
    IF_FREE(args);
@@ -1211,205 +1238,218 @@ _ecore_exe_exec_it(const char *exe_cmd)
 }
 
 static int
-_ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Exe_Flags flags)
+_ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
+				Ecore_Exe_Flags flags)
 {
-   Ecore_Exe *exe;
-   int child_fd;
-   int is_buffered = 0;
-   int event_type;
+   Ecore_Exe          *exe;
+   int                 child_fd;
+   int                 is_buffered = 0;
+   int                 event_type;
 
    exe = data;
 
    /* Sort out what sort of handler we are. */
    if (flags & ECORE_EXE_PIPE_READ)
-      {
-         flags = ECORE_EXE_PIPE_READ;
-	 event_type = ECORE_EXE_EVENT_DATA;
-	 child_fd = exe->child_fd_read;
-         if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
-            is_buffered = 1;
-      }
+     {
+	flags = ECORE_EXE_PIPE_READ;
+	event_type = ECORE_EXE_EVENT_DATA;
+	child_fd = exe->child_fd_read;
+	if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
+	   is_buffered = 1;
+     }
    else
-      {
-         flags = ECORE_EXE_PIPE_ERROR;
-	 event_type = ECORE_EXE_EVENT_ERROR;
-	 child_fd = exe->child_fd_error;
-         if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
-            is_buffered = 1;
-      }
+     {
+	flags = ECORE_EXE_PIPE_ERROR;
+	event_type = ECORE_EXE_EVENT_ERROR;
+	child_fd = exe->child_fd_error;
+	if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
+	   is_buffered = 1;
+     }
 
-   if ((fd_handler) && (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ)))
-      {
-         unsigned char *inbuf;
-	 int inbuf_num;
+   if ((fd_handler)
+       && (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ)))
+     {
+	unsigned char      *inbuf;
+	int                 inbuf_num;
 
-         /* Get any left over data from last time. */
-         if (flags & ECORE_EXE_PIPE_READ)
-	    {
-               inbuf = exe->read_data_buf;
-               inbuf_num = exe->read_data_size;
-	       exe->read_data_buf = NULL;
-	       exe->read_data_size = 0;
-	    }
-	 else
-	    {
-               inbuf = exe->error_data_buf;
-               inbuf_num = exe->error_data_size;
-	       exe->error_data_buf = NULL;
-	       exe->error_data_size = 0;
-	    }
+	/* Get any left over data from last time. */
+	if (flags & ECORE_EXE_PIPE_READ)
+	  {
+	     inbuf = exe->read_data_buf;
+	     inbuf_num = exe->read_data_size;
+	     exe->read_data_buf = NULL;
+	     exe->read_data_size = 0;
+	  }
+	else
+	  {
+	     inbuf = exe->error_data_buf;
+	     inbuf_num = exe->error_data_size;
+	     exe->error_data_buf = NULL;
+	     exe->error_data_size = 0;
+	  }
 
-	 for (;;)
-	    {
-	       int num, lost_exe;
-	       char buf[READBUFSIZ];
+	for (;;)
+	  {
+	     int                 num, lost_exe;
+	     char                buf[READBUFSIZ];
 
-	       lost_exe = 0;
-	       errno = 0;
-	       if ((num = read(child_fd, buf, READBUFSIZ)) < 1)  /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE (currently 64k) to inbuf, use that instead of buf, and save ourselves a memcpy(). */
-	          {
-		     lost_exe = ((errno == EIO) || 
-			         (errno == EBADF) ||
-				 (errno == EPIPE) || 
-				 (errno == EINVAL) ||
-				 (errno == ENOSPC));
-                     if ((errno != EAGAIN) && (errno != EINTR))
-                        perror("_ecore_exe_generic_handler() read problem ");
-                  }
-	       if (num > 0)
-	          {   /* data got read. */
-		     inbuf = realloc(inbuf, inbuf_num + num);
-		     memcpy(inbuf + inbuf_num, buf, num);
-		     inbuf_num += num;
-	          }
-	       else
-	          {   /* No more data to read. */
-		     if (inbuf) 
-		        {
-		           Ecore_Exe_Event_Data *e;
+	     lost_exe = 0;
+	     errno = 0;
+	     if ((num = read(child_fd, buf, READBUFSIZ)) < 1)	/* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE (currently 64k) to inbuf, use that instead of buf, and save ourselves a memcpy(). */
+	       {
+		  lost_exe = ((errno == EIO) ||
+			      (errno == EBADF) ||
+			      (errno == EPIPE) ||
+			      (errno == EINVAL) || (errno == ENOSPC));
+		  if ((errno != EAGAIN) && (errno != EINTR))
+		     perror("_ecore_exe_generic_handler() read problem ");
+	       }
+	     if (num > 0)
+	       {		/* data got read. */
+		  inbuf = realloc(inbuf, inbuf_num + num);
+		  memcpy(inbuf + inbuf_num, buf, num);
+		  inbuf_num += num;
+	       }
+	     else
+	       {		/* No more data to read. */
+		  if (inbuf)
+		    {
+		       Ecore_Exe_Event_Data *e;
 
-                           /* Stash the data away for later. */
-                           if (flags & ECORE_EXE_PIPE_READ)
-	                      {
-                                 exe->read_data_buf = inbuf;
-                                 exe->read_data_size = inbuf_num;
-	                      }
-	                   else
-	                      {
-                                 exe->error_data_buf = inbuf ;
-                                 exe->error_data_size = inbuf_num;
-	                      }
+		       /* Stash the data away for later. */
+		       if (flags & ECORE_EXE_PIPE_READ)
+			 {
+			    exe->read_data_buf = inbuf;
+			    exe->read_data_size = inbuf_num;
+			 }
+		       else
+			 {
+			    exe->error_data_buf = inbuf;
+			    exe->error_data_size = inbuf_num;
+			 }
 
-                           if (! (exe->flags & ECORE_EXE_PIPE_AUTO))
-			      {
-                                 e = ecore_exe_event_data_get(exe, flags);
-			         if (e)   /* Send the event. */
-			            ecore_event_add(event_type, e,
-				          _ecore_exe_event_exe_data_free, NULL);
-			      }
-		        }
-		     if (lost_exe)
-		        {
-                           if (flags & ECORE_EXE_PIPE_READ)
-			      {
-                                 if (exe->read_data_size)
-                                    printf("There are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
-			      }
-			   else
-			      {
-                                 if (exe->error_data_size)
-                                    printf("There are %d bytes left unsent from the dead exe %s.\n", exe->error_data_size, exe->cmd);
-			      }
-			   /* Thought about this a bit.  If the exe has actually 
-			    * died, this won't do any harm as it must have died 
-			    * recently and the pid has not had a chance to recycle.
-			    * It is also a paranoid catchall, coz the usual ecore_signal
-			    * mechenism should kick in.  But let's give it a good
-			    * kick in the head anyway.
-			    */
-                           ecore_exe_terminate(exe);   
-                        }
-		     break;
-	          }
-	    }
-      }
+		       if (!(exe->flags & ECORE_EXE_PIPE_AUTO))
+			 {
+			    e = ecore_exe_event_data_get(exe, flags);
+			    if (e)	/* Send the event. */
+			       ecore_event_add(event_type, e,
+					       _ecore_exe_event_exe_data_free,
+					       NULL);
+			 }
+		    }
+		  if (lost_exe)
+		    {
+		       if (flags & ECORE_EXE_PIPE_READ)
+			 {
+			    if (exe->read_data_size)
+			       printf
+				  ("There are %d bytes left unsent from the dead exe %s.\n",
+				   exe->read_data_size, exe->cmd);
+			 }
+		       else
+			 {
+			    if (exe->error_data_size)
+			       printf
+				  ("There are %d bytes left unsent from the dead exe %s.\n",
+				   exe->error_data_size, exe->cmd);
+			 }
+		       /* Thought about this a bit.  If the exe has actually 
+		        * died, this won't do any harm as it must have died 
+		        * recently and the pid has not had a chance to recycle.
+		        * It is also a paranoid catchall, coz the usual ecore_signal
+		        * mechenism should kick in.  But let's give it a good
+		        * kick in the head anyway.
+		        */
+		       ecore_exe_terminate(exe);
+		    }
+		  break;
+	       }
+	  }
+     }
 
    return 1;
 }
 
 static int
-_ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler * fd_handler)
 {
-   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_EXE_PIPE_ERROR);
+   return _ecore_exe_data_generic_handler(data, fd_handler,
+					  ECORE_EXE_PIPE_ERROR);
 }
 
 static int
-_ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler * fd_handler)
 {
-   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_EXE_PIPE_READ);
+   return _ecore_exe_data_generic_handler(data, fd_handler,
+					  ECORE_EXE_PIPE_READ);
 }
 
 static int
-_ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler * fd_handler)
 {
-   Ecore_Exe *exe;
+   Ecore_Exe          *exe;
 
    exe = data;
-   if ((exe->write_fd_handler) && (ecore_main_fd_handler_active_get(exe->write_fd_handler, ECORE_FD_WRITE)))
+   if ((exe->write_fd_handler)
+       &&
+       (ecore_main_fd_handler_active_get
+	(exe->write_fd_handler, ECORE_FD_WRITE)))
       _ecore_exe_flush(exe);
 
    /* If we have sent all there is to send, and we need to close the pipe, then close it. */
-   if ((exe->close_stdin == 1) && (exe->write_data_size == exe->write_data_offset))
-      {
-         int ok = 0;
-         int result;
+   if ((exe->close_stdin == 1)
+       && (exe->write_data_size == exe->write_data_offset))
+     {
+	int                 ok = 0;
+	int                 result;
 
-printf("Closing stdin for %s\n", exe->cmd);
-         /* if (exe->child_fd_write != -1)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
-         IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
-         if (exe->child_fd_write != -1)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
-	 exe->child_fd_write = -1;
-         IF_FREE(exe->write_data_buf);
-      }
+	printf("Closing stdin for %s\n", exe->cmd);
+	/* if (exe->child_fd_write != -1)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
+	IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
+	if (exe->child_fd_write != -1)
+	   E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+	exe->child_fd_write = -1;
+	IF_FREE(exe->write_data_buf);
+     }
 
    return 1;
 }
 
 static void
-_ecore_exe_flush(Ecore_Exe *exe)
+_ecore_exe_flush(Ecore_Exe * exe)
 {
-   int count;
+   int                 count;
 
    /* check whether we need to write anything at all. */
-   if ((exe->child_fd_write == -1) || (!exe->write_data_buf))   return;
-   if (exe->write_data_size == exe->write_data_offset)     return;
+   if ((exe->child_fd_write == -1) || (!exe->write_data_buf))
+      return;
+   if (exe->write_data_size == exe->write_data_offset)
+      return;
 
-   count = write(exe->child_fd_write, 
-                 exe->write_data_buf  + exe->write_data_offset, 
+   count = write(exe->child_fd_write,
+		 exe->write_data_buf + exe->write_data_offset,
 		 exe->write_data_size - exe->write_data_offset);
    if (count < 1)
-      {
-         if (errno == EIO   || errno == EBADF ||
- 	     errno == EPIPE || errno == EINVAL ||
-	     errno == ENOSPC)   /* we lost our exe! */
-	    {
-               ecore_exe_terminate(exe);
-               if (exe->write_fd_handler)
-                 ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
-	    }
-      }
+     {
+	if (errno == EIO || errno == EBADF || errno == EPIPE || errno == EINVAL || errno == ENOSPC)	/* we lost our exe! */
+	  {
+	     ecore_exe_terminate(exe);
+	     if (exe->write_fd_handler)
+		ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
+	  }
+     }
    else
-      {
-         exe->write_data_offset += count;
-         if (exe->write_data_offset >= exe->write_data_size)
-            {   /* Nothing left to write, clean up. */
-	       exe->write_data_size = 0;
-	       exe->write_data_offset = 0;
-	       IF_FREE(exe->write_data_buf);
-               if (exe->write_fd_handler)
-                 ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
-            }
-      }
+     {
+	exe->write_data_offset += count;
+	if (exe->write_data_offset >= exe->write_data_size)
+	  {			/* Nothing left to write, clean up. */
+	     exe->write_data_size = 0;
+	     exe->write_data_offset = 0;
+	     IF_FREE(exe->write_data_buf);
+	     if (exe->write_fd_handler)
+		ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
+	  }
+     }
 }
 
 static void
@@ -1425,7 +1465,7 @@ static Ecore_Exe_Event_Add *
 _ecore_exe_event_add_new(void)
 {
    Ecore_Exe_Event_Add *e;
-   
+
    e = calloc(1, sizeof(Ecore_Exe_Event_Add));
    return e;
 }
@@ -1434,16 +1474,16 @@ static void
 _ecore_exe_event_add_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Exe_Event_Add *e;
-   
+
    e = ev;
    free(e);
 }
 
-void *
+void               *
 _ecore_exe_event_del_new(void)
 {
    Ecore_Exe_Event_Del *e;
-   
+
    e = calloc(1, sizeof(Ecore_Exe_Event_Del));
    return e;
 }
@@ -1452,9 +1492,10 @@ void
 _ecore_exe_event_del_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Exe_Event_Del *e;
-   
+
    e = ev;
-   if (e->exe) ecore_exe_free(e->exe);
+   if (e->exe)
+      ecore_exe_free(e->exe);
    free(e);
 }
 
