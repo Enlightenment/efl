@@ -969,15 +969,52 @@ evas_font_path_list(Evas *e)
    return e->font_path;
 }
 
-static Evas_Font_Hinting_Flags _evas_hinting = EVAS_FONT_HINTING_BYTECODE;
+static void
+evas_font_object_rehint(Evas_Object *obj)
+{
+   if (obj->smart.smart)
+     {
+	Evas_Object_List *l3;
+	
+	for (l3 = obj->smart.contained; l3; l3 = l3->next)
+	  {
+	     obj = (Evas_Object *)l3;
+	     evas_font_object_rehint(obj);
+	  }
+     }
+   else
+     {
+	if (!strcmp(obj->type, "text"))
+	  _evas_object_text_rehint(obj);
+	if (!strcmp(obj->type, "textblock"))
+	  _evas_object_textblock_rehint(obj);
+     }
+}
 
 EAPI void
 evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
 {
+   Evas_Object_List *l;
+   
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   if (e->hinting == hinting) return;
    e->hinting = hinting;
+   for (l = (Evas_Object_List *)e->layers; l; l = l->next)
+     {
+	Evas_Object_List *l2;
+	Evas_Layer *lay;
+	
+	lay = (Evas_Layer *)l;
+	for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
+	  {
+	     Evas_Object *obj;
+	     
+	     obj = (Evas_Object *)l2;
+	     evas_font_object_rehint(obj);
+	  }
+     }
 }
 
 EAPI Evas_Font_Hinting_Flags
@@ -1557,4 +1594,57 @@ evas_object_text_was_opaque(Evas_Object *obj)
    /* currently fulyl opque over the entire gradient it occupies */
    o = (Evas_Object_Text *)(obj->object_data);
    return 0;
+}
+
+void
+_evas_object_text_rehint(Evas_Object *obj)
+{
+   Evas_Object_Text *o;
+   int is, was;
+   
+   o = (Evas_Object_Text *)(obj->object_data);
+   if (!o->engine_data) return;
+   evas_font_load_hinting_set(obj->layer->evas, o->engine_data,
+			      obj->layer->evas->hinting);
+   was = evas_object_is_in_output_rect(obj,
+				       obj->layer->evas->pointer.x,
+				       obj->layer->evas->pointer.y, 1, 1);
+   /* DO II */
+   o->prev.text = NULL;
+   if ((o->engine_data) && (o->cur.text))
+     {
+	int w, h;
+	int l = 0, r = 0, t = 0, b = 0;
+	
+	ENFN->font_string_size_get(ENDT,
+				   o->engine_data,
+				   o->cur.text,
+				   &w, &h);
+	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
+	obj->cur.geometry.w = w + l + r;
+	obj->cur.geometry.h = h + t + b;
+	obj->cur.cache.geometry.validity = 0;
+     }
+   else
+     {
+	int t = 0, b = 0;
+	
+	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
+	obj->cur.geometry.w = 0;
+	obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
+	obj->cur.cache.geometry.validity = 0;
+     }
+   o->changed = 1;
+   evas_object_change(obj);
+   evas_object_coords_recalc(obj);
+   is = evas_object_is_in_output_rect(obj,
+				      obj->layer->evas->pointer.x,
+				      obj->layer->evas->pointer.y, 1, 1);
+   if ((is || was) && obj->cur.visible)
+     evas_event_feed_mouse_move(obj->layer->evas,
+				obj->layer->evas->pointer.x,
+				obj->layer->evas->pointer.y,
+				obj->layer->evas->last_timestamp,
+				NULL);
+   evas_object_inform_call_resize(obj);
 }

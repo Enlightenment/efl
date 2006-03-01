@@ -318,6 +318,12 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    return font;
 }
 
+void
+evas_font_load_hinting_set(Evas *evas, void *font, int hinting)
+{
+   evas->engine.func->font_hinting_set(evas->engine.data.output, font,
+				       hinting);
+}
 
 /* private stuff */
 static Evas_Bool
