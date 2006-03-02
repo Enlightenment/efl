@@ -21,7 +21,7 @@ xrender_x11
 EXTRA_DIST = \
 Evas_Engine_DirectFB.h \
 Evas_Engine_GL_X11.h \
-Evas_Engine_Cairo_X11.h \
+Evas_Engine_Cairo_X11.h
 
 if BUILD_ENGINE_DIRECTFB
 ENGINE_DIRECTFB_INC = Evas_Engine_DirectFB.h
