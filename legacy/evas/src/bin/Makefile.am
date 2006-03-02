@@ -2,7 +2,17 @@ MAINTAINERCLEANFILES = Makefile.in moc_evas_software_qtopia_main.cpp
 
 INCLUDES = \
 -I. -I$(top_srcdir)/src/modules/engines -I$(top_srcdir)/src/lib -I$(top_srcdir) \
-@DIRECTFB_CFLAGS@ @qt_cflags@ @gl_cflags@
+@DIRECTFB_CFLAGS@ @qt_cflags@ @gl_cflags@ \
+-I$(top_srcdir)/src/modules/engines/buffer \
+-I$(top_srcdir)/src/modules/engines/cairo_x11 \
+-I$(top_srcdir)/src/modules/engines/directfb \
+-I$(top_srcdir)/src/modules/engines/fb \
+-I$(top_srcdir)/src/modules/engines/gl_x11 \
+-I$(top_srcdir)/src/modules/engines/software_qtopia \
+-I$(top_srcdir)/src/modules/engines/software_win32_gdi \
+-I$(top_srcdir)/src/modules/engines/software_x11 \
+-I$(top_srcdir)/src/modules/engines/software_xcb \
+-I$(top_srcdir)/src/modules/engines/xrender_x11
 
 bin_PROGRAMS = \
 @ENGINE_SOFTWARE_X11_PRG@ \
