@@ -621,7 +621,7 @@ eng_font_hinting_can_hint(void *data, int hinting)
  *****
  */
 
-static Evas_Func eng_func =
+static Evas_Func func =
 {
    NULL,
      NULL,
@@ -730,7 +730,7 @@ int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
-   em->functions = (void *)(&eng_func);
+   em->functions = (void *)(&func);
    return 1;
 }
 

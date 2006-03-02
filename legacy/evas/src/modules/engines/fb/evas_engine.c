@@ -3,6 +3,9 @@
 #include "evas_engine.h"
 #include "Evas_Engine_FB.h"
 
+/* function tables - filled in later (func and parent func) */
+static Evas_Func func, pfunc;
+
 /* engine struct data */
 typedef struct _Render_Engine Render_Engine;
 
@@ -228,8 +231,6 @@ eng_output_flush(void *data)
 }
 
 /* module advertising code */
-static Evas_Func func, pfunc;
-                                                 
 int
 module_open(Evas_Module *em)
 {
