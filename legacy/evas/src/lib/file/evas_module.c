@@ -320,3 +320,20 @@ evas_module_shutdown(void)
 	free(mp);
      }
 }
+
+int
+_evas_module_engine_inherit(Evas_Func *funcs, char *name)
+{
+   Evas_Module *em;
+   
+   em = evas_module_find_type(EVAS_MODULE_TYPE_ENGINE, name);
+   if (em)
+     {
+	if (evas_module_load(em))
+	  {
+	     *funcs = *((Evas_Func *)(em->functions));
+	     return 1;
+	  }
+     }
+   return 0;
+}

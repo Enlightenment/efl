@@ -1638,6 +1638,7 @@ src/lib/engines/Makefile
 src/lib/engines/common/Makefile
 src/modules/Makefile
 src/modules/engines/Makefile
+src/modules/engines/software_generic/Makefile
 src/modules/engines/software_x11/Makefile
 src/modules/engines/software_xcb/Makefile
 src/modules/engines/fb/Makefile

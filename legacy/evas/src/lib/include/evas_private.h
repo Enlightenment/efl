@@ -730,7 +730,10 @@ Evas_Module * evas_module_find_type(Evas_Module_Type type, const char *name);
 int evas_module_load(Evas_Module *em);
 void evas_module_unload(Evas_Module *em);
 void evas_module_shutdown(void);
-     
+int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
+       
+#define EVAS_API_OVERRIDE(func, api, prefix) \
+     (api)->func = prefix##func
 #ifdef __cplusplus
 }
 #endif
