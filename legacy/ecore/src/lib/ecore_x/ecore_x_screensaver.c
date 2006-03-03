@@ -10,7 +10,7 @@
 #include "Ecore_X_Atoms.h"
 
 EAPI int
-ecore_x_screensaver_event_avaialable_get(void)
+ecore_x_screensaver_event_available_get(void)
 {
 #ifdef ECORE_XSS
    return 1;
