@@ -234,16 +234,16 @@ eng_info(Evas *e)
    info->info.debug = 0;
    info->info.alloc_grayscale = 0;
    info->info.alloc_colors_max = 216;
-   info->func.best_visual_get = eng_best_visual_get;
-   info->func.best_colormap_get = eng_best_colormap_get;
-   info->func.best_depth_get = eng_best_depth_get;
-   info->func.performance_test = eng_output_perf_test;
-   info->func.performance_free = eng_output_perf_free;
-   info->func.performance_data_get = eng_output_perf_data;
-   info->func.performance_key_get = eng_output_perf_key;
-   info->func.performance_new = eng_output_perf_new;
-   info->func.performance_build = eng_output_perf_build;
-   info->func.performance_device_store = eng_output_perf_device_store;
+   info->func.best_visual_get = _best_visual_get;
+   info->func.best_colormap_get = _best_colormap_get;
+   info->func.best_depth_get = _best_depth_get;
+   info->func.performance_test = _output_perf_test;
+   info->func.performance_free = _output_perf_free;
+   info->func.performance_data_get = _output_perf_data;
+   info->func.performance_key_get = _output_perf_key;
+   info->func.performance_new = _output_perf_new;
+   info->func.performance_build = _output_perf_build;
+   info->func.performance_device_store = _output_perf_device_store;
    return info;
    e = NULL;
 }
