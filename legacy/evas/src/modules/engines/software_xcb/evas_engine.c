@@ -21,16 +21,16 @@ struct _Render_Engine
 
 /* prototypes we will use here */
 static void *_output_setup(int w, int h, int rot, XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, int depth, int debug, int grayscale, int max_colors, XCBDRAWABLE mask, int shape_dither);
-static XCBVISUALTYPE *_best_visual_get(XCBConnection *conn, int screen);
-static XCBCOLORMAP _best_colormap_get(XCBConnection *conn, int screen);
-static int _best_depth_get(XCBConnection *conn, int screen);
-static Evas_Performance *_output_perf_new(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth);
-static Evas_Performance *_output_perf_test(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth);
-static char *_output_perf_data(Evas_Performance *perf);
-static char *_output_perf_key(Evas_Performance *perf);
-static void _output_perf_free(Evas_Performance *perf);
-static void _output_perf_build(Evas_Performance *perf, const char *data);
-static void _output_perf_device_store(Evas_Performance *perf);
+static XCBVISUALTYPE *eng_best_visual_get(XCBConnection *conn, int screen);
+static XCBCOLORMAP eng_best_colormap_get(XCBConnection *conn, int screen);
+static int eng_best_depth_get(XCBConnection *conn, int screen);
+static Evas_Performance *eng_output_perf_new(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth);
+static Evas_Performance *eng_output_perf_test(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth);
+static char *eng_output_perf_data(Evas_Performance *perf);
+static char *eng_output_perf_key(Evas_Performance *perf);
+static void eng_output_perf_free(Evas_Performance *perf);
+static void eng_output_perf_build(Evas_Performance *perf, const char *data);
+static void eng_output_perf_device_store(Evas_Performance *perf);
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
@@ -131,7 +131,7 @@ _screen_get(XCBConnection *conn, int screen)
 }
 
 static XCBVISUALTYPE *
-_best_visual_get(XCBConnection *conn, int screen)
+eng_best_visual_get(XCBConnection *conn, int screen)
 {
    XCBSCREEN        *scr;
    XCBDEPTH         *d;
@@ -153,7 +153,7 @@ _best_visual_get(XCBConnection *conn, int screen)
 }
 
 static XCBCOLORMAP
-_best_colormap_get(XCBConnection *conn, int screen)
+eng_best_colormap_get(XCBConnection *conn, int screen)
 {
    XCBSCREEN *scr;
    XCBCOLORMAP c;
@@ -167,7 +167,7 @@ _best_colormap_get(XCBConnection *conn, int screen)
 }
 
 static int
-_best_depth_get(XCBConnection *conn, int screen)
+eng_best_depth_get(XCBConnection *conn, int screen)
 {
    XCBSCREEN *scr;
 
@@ -179,45 +179,45 @@ _best_depth_get(XCBConnection *conn, int screen)
 }
 
 static Evas_Performance *
-_output_perf_new(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth)
+eng_output_perf_new(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth)
 {
    return evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, depth);
    e = NULL;
 }
 
 static Evas_Performance *
-_output_perf_test(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth)
+eng_output_perf_test(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth)
 {
    return evas_software_xcb_outbuf_perf_x(conn, draw, vis, cmap, depth);
    e = NULL;
 }
 
 static char *
-_output_perf_data(Evas_Performance *perf)
+eng_output_perf_data(Evas_Performance *perf)
 {
    return evas_software_xcb_outbuf_perf_serialize_x(perf);
 }
 
 static char *
-_output_perf_key(Evas_Performance *perf)
+eng_output_perf_key(Evas_Performance *perf)
 {
    return evas_software_xcb_outbuf_perf_serialize_info_x(perf);
 }
 
 static void
-_output_perf_free(Evas_Performance *perf)
+eng_output_perf_free(Evas_Performance *perf)
 {
    evas_software_xcb_outbuf_perf_free(perf);
 }
 
 static void
-_output_perf_build(Evas_Performance *perf, const char *data)
+eng_output_perf_build(Evas_Performance *perf, const char *data)
 {
    evas_software_xcb_outbuf_perf_deserialize_x(perf, data);
 }
 
 static void
-_output_perf_device_store(Evas_Performance *perf)
+eng_output_perf_device_store(Evas_Performance *perf)
 {
    evas_software_xcb_outbuf_perf_store_x(perf);
 }
