@@ -30,6 +30,9 @@
 #ifdef ECORE_XRANDR
 #include <X11/extensions/Xrandr.h>
 #endif
+#ifdef ECORE_XSS
+#include <X11/extensions/scrnsaver.h>
+#endif
 
 #include "ecore_private.h"
 #include "Ecore_X.h"
@@ -181,6 +184,7 @@ void _ecore_x_event_handle_colormap_notify(XEvent *xevent);
 void _ecore_x_event_handle_client_message(XEvent *xevent);
 void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
+void _ecore_x_event_handle_screensaver_notify(XEvent *xevent);
 void _ecore_x_event_handle_sync_counter(XEvent *xevent);
 void _ecore_x_event_handle_sync_alarm(XEvent *xevent);
 #ifdef ECORE_XRANDR

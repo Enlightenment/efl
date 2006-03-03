@@ -396,6 +396,40 @@ if test "x$have_ecore_x" = "xyes"; then
   
   AC_SUBST(Xrandr_cflags)
   AC_SUBST(Xrandr_libs)
+
+  Xss_libs=""
+  Xss_cflags=""
+  use_Xss="no"
+  PCFLAGS=$CFLAGS
+  CFLAGS=$x_cflags" "$x_includes
+  AC_CHECK_HEADER(X11/extensions/scrnsaver.h,
+    [
+      AC_CHECK_LIB(Xss, XScreenSaverSelectInput,
+        [
+          AC_DEFINE(ECORE_XSS, 1, [Build support for Xss])
+          Xss_cflags=""
+          Xss_libs="-lXss"
+          use_Xss="yes"
+        ], [
+          Xss_cflags=""
+          Xss_libs=""
+          use_Xss="no"
+        ], [
+          $x_libs $x_ldflags
+        ]
+      )
+    ], [
+      Xss_cflags=""
+      Xss_libs=""
+      use_Xss="no"
+    ], [
+      #include <X11/Xlib.h>
+    ]
+  )
+  CFLAGS=$PCFLAGS
+  
+  AC_SUBST(Xss_cflags)
+  AC_SUBST(Xss_libs)
 fi
 
 AC_SUBST(ecore_x_cflags)
@@ -1153,7 +1187,7 @@ echo
 echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $use_openssl)"
 echo "  Ecore_Txt....................: $have_ecore_txt"
-echo "  Ecore_X......................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_Xprint) (Xinerama: $use_Xinerama) (Xrandr: $use_Xrandr)"
+echo "  Ecore_X......................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_Xprint) (Xinerama: $use_Xinerama) (Xrandr: $use_Xrandr) (Xscreensaver: $use_Xss)"
 echo "  Ecore_FB.....................: $have_ecore_fb"
 echo "  Ecore_DFB....................: $have_ecore_dfb"
 echo "  Ecore_Evas...................: $have_ecore_evas"

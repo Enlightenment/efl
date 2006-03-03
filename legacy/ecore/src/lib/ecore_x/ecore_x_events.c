@@ -1605,6 +1605,26 @@ _ecore_x_event_handle_shape_change(XEvent *xevent)
 }
 
 void
+_ecore_x_event_handle_screensaver_notify(XEvent *xevent)
+{
+#ifdef ECORE_XSS
+   XScreenSaverNotifyEvent *screensaver_event;
+   Ecore_X_Event_Screensaver_Notify *e;
+   
+   screensaver_event = (XScreenSaverNotifyEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Screensaver_Notify));
+   if (!e) return;
+   e->win = screensaver_event->window;
+   if (screensaver_event->state == ScreenSaverOn)
+     e->on = 1;
+   else 
+     e->on = 0;
+   e->time = screensaver_event->time;
+   ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);
+#endif   
+}
+
+void
 _ecore_x_event_handle_sync_counter(XEvent *xevent)
 {
    XSyncCounterNotifyEvent *sync_counter_event;

@@ -17,6 +17,7 @@ static void  _ecore_x_event_filter_end(void *data, void *loop_data);
 static Ecore_Fd_Handler *_ecore_x_fd_handler_handle = NULL;
 static Ecore_Event_Filter *_ecore_x_filter_handler = NULL;
 static int _ecore_x_event_shape_id = 0;
+static int _ecore_x_event_screensaver_id = 0;
 static int _ecore_x_event_sync_id = 0;
 #ifdef ECORE_XRANDR
 static int _ecore_x_event_randr_id = 0;
@@ -95,6 +96,7 @@ EAPI int ECORE_X_EVENT_SELECTION_REQUEST = 0;
 EAPI int ECORE_X_EVENT_SELECTION_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
 EAPI int ECORE_X_EVENT_WINDOW_SHAPE = 0;
+EAPI int ECORE_X_EVENT_SCREENSAVER_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_SYNC_COUNTER = 0;
 EAPI int ECORE_X_EVENT_SYNC_ALARM = 0;
 EAPI int ECORE_X_EVENT_SCREEN_CHANGE = 0;
@@ -150,6 +152,8 @@ ecore_x_init(const char *name)
 {
    int shape_base = 0;
    int shape_err_base = 0;
+   int screensaver_base = 0;
+   int screensaver_err_base = 0;
    int sync_base = 0;
    int sync_err_base = 0;
 #ifdef ECORE_XRANDR
@@ -171,6 +175,12 @@ ecore_x_init(const char *name)
      _ecore_x_event_shape_id = shape_base + ShapeNotify;
    if (_ecore_x_event_shape_id >= LASTEvent)
      _ecore_x_event_handlers_num = _ecore_x_event_shape_id + 1;
+#ifdef ECORE_XSS
+   if (XScreenSaverQueryExtension(_ecore_x_disp, &screensaver_base, &screensaver_err_base))
+     _ecore_x_event_screensaver_id = screensaver_base + ScreenSaverNotify;
+#endif   
+   if (_ecore_x_event_screensaver_id >= LASTEvent)
+     _ecore_x_event_handlers_num = _ecore_x_event_screensaver_id + 1;
 
    if (XSyncQueryExtension(_ecore_x_disp, &sync_base, &sync_err_base))
      {
@@ -235,6 +245,8 @@ ecore_x_init(const char *name)
    _ecore_x_event_handlers[ClientMessage]    = _ecore_x_event_handle_client_message;
    if (_ecore_x_event_shape_id)
      _ecore_x_event_handlers[_ecore_x_event_shape_id] = _ecore_x_event_handle_shape_change;
+   if (_ecore_x_event_screensaver_id)
+     _ecore_x_event_handlers[_ecore_x_event_screensaver_id] = _ecore_x_event_handle_screensaver_notify;
    if (_ecore_x_event_sync_id)
      {
 	_ecore_x_event_handlers[_ecore_x_event_sync_id + XSyncCounterNotify] =
@@ -281,6 +293,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_SELECTION_NOTIFY         = ecore_event_type_new();
 	ECORE_X_EVENT_CLIENT_MESSAGE           = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_SHAPE             = ecore_event_type_new();
+	ECORE_X_EVENT_SCREENSAVER_NOTIFY       = ecore_event_type_new();
 	ECORE_X_EVENT_SYNC_COUNTER             = ecore_event_type_new();
 	ECORE_X_EVENT_SYNC_ALARM               = ecore_event_type_new();
 	ECORE_X_EVENT_SCREEN_CHANGE            = ecore_event_type_new();
@@ -550,24 +563,24 @@ ecore_x_killall(Ecore_X_Window root)
    /* Tranverse window tree starting from root, and drag each
     * before the firing squad */
    for (i = 0; i < screens; ++i)
-   {
-      Window root_r;
-      Window parent_r;
-      Window *children_r = NULL;
-      unsigned int num_children = 0;
-
-      while (XQueryTree(_ecore_x_disp, root, &root_r, &parent_r,
-			&children_r, &num_children) && (num_children > 0))
-      {
-         for (j = 0; j < num_children; ++j)
-         {
-            XKillClient(_ecore_x_disp, children_r[j]);
-         }
-
-         XFree(children_r);
-      }
-   }
-
+     {
+	Window root_r;
+	Window parent_r;
+	Window *children_r = NULL;
+	unsigned int num_children = 0;
+	
+	while (XQueryTree(_ecore_x_disp, root, &root_r, &parent_r,
+			  &children_r, &num_children) && (num_children > 0))
+	  {
+	     for (j = 0; j < num_children; ++j)
+	       {
+		  XKillClient(_ecore_x_disp, children_r[j]);
+	       }
+	     
+	     XFree(children_r);
+	  }
+     }
+   
    XUngrabServer(_ecore_x_disp);
    XSync(_ecore_x_disp, False);
 }

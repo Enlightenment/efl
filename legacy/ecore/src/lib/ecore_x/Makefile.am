@@ -5,6 +5,7 @@ INCLUDES = \
 @Xprint_cflags@ \
 @Xinerama_cflags@ \
 @Xrandr_cflags@ \
+@Xss_cflags@ \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
@@ -44,6 +45,7 @@ ecore_x_window_shape.c \
 ecore_x_pixmap.c \
 ecore_x_gc.c \
 ecore_x_xinerama.c \
+ecore_x_screensaver.c \
 ecore_x_private.h
 
 libecore_x_la_LIBADD = \
@@ -51,6 +53,7 @@ libecore_x_la_LIBADD = \
 @Xprint_libs@ \
 @Xinerama_libs@ \
 @Xrandr_libs@ \
+@Xss_libs@ \
 @x_ldflags@ \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -76,10 +79,14 @@ ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
 ecore_x_netwm.c \
+ecore_x_mwm.c \
+ecore_x_e.c \
 ecore_x_selection.c \
 ecore_x_window.c \
 ecore_x_window_prop.c \
 ecore_x_window_shape.c \
 ecore_x_pixmap.c \
 ecore_x_gc.c \
+ecore_x_xinerama.c \
+ecore_x_screensaver.c \
 ecore_x_private.h

@@ -254,6 +254,7 @@ typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished            Ecore_X_Event_Xdnd_Finished;
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
+typedef struct _Ecore_X_Event_Screensaver_Notify       Ecore_X_Event_Screensaver_Notify;
 typedef struct _Ecore_X_Event_Sync_Counter             Ecore_X_Event_Sync_Counter;
 typedef struct _Ecore_X_Event_Sync_Alarm               Ecore_X_Event_Sync_Alarm;
 typedef struct _Ecore_X_Event_Screen_Change            Ecore_X_Event_Screen_Change;
@@ -644,6 +645,13 @@ struct _Ecore_X_Event_Window_Shape
    Ecore_X_Time    time;
 };
 
+struct _Ecore_X_Event_Screensaver_Notify
+{
+   Ecore_X_Window  win;
+   int             on;
+   Ecore_X_Time    time;
+};
+
 struct _Ecore_X_Event_Sync_Counter
 {
    Ecore_X_Time    time;
@@ -798,6 +806,7 @@ EAPI extern int ECORE_X_EVENT_SELECTION_REQUEST;
 EAPI extern int ECORE_X_EVENT_SELECTION_NOTIFY;
 EAPI extern int ECORE_X_EVENT_CLIENT_MESSAGE;
 EAPI extern int ECORE_X_EVENT_WINDOW_SHAPE;
+EAPI extern int ECORE_X_EVENT_SCREENSAVER_NOTIFY;
 EAPI extern int ECORE_X_EVENT_SYNC_COUNTER;
 EAPI extern int ECORE_X_EVENT_SYNC_ALARM;
 EAPI extern int ECORE_X_EVENT_SCREEN_CHANGE;
@@ -1338,7 +1347,12 @@ EAPI void                ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, in
    
 EAPI int                 ecore_x_xinerama_screen_count_get(void);
 EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h);
-   
+
+EAPI int                 ecore_x_screensaver_event_avaialable_get(void);
+EAPI void                ecore_x_screensaver_timeout_set(double timeout);
+EAPI double              ecore_x_screensaver_timeout_get(void);
+EAPI void                ecore_x_screensaver_event_listen_set(int on);
+       
 /* FIXME: these funcs need categorising */
 
 typedef struct _Ecore_X_Window_Attributes
