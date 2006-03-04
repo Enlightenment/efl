@@ -1329,21 +1329,23 @@ ecore_x_cursor_size_get(void)
 EAPI int
 ecore_x_pointer_grab(Ecore_X_Window win)
 {
-   return XGrabPointer(_ecore_x_disp, win, False,
-		       ButtonPressMask | ButtonReleaseMask | 
-		       EnterWindowMask | LeaveWindowMask | PointerMotionMask,
-		       GrabModeAsync, GrabModeAsync,
-		       None, None, CurrentTime);
+   if (XGrabPointer(_ecore_x_disp, win, False,
+		    ButtonPressMask | ButtonReleaseMask | 
+		    EnterWindowMask | LeaveWindowMask | PointerMotionMask,
+		    GrabModeAsync, GrabModeAsync,
+		    None, None, CurrentTime) == GrabSuccess) return 1;
+   return 0;
 }
 
 EAPI int
 ecore_x_pointer_confine_grab(Ecore_X_Window win)
 {
-   return XGrabPointer(_ecore_x_disp, win, False,
-		       ButtonPressMask | ButtonReleaseMask | 
-		       EnterWindowMask | LeaveWindowMask | PointerMotionMask,
-		       GrabModeAsync, GrabModeAsync,
-		       win, None, CurrentTime);
+   if (XGrabPointer(_ecore_x_disp, win, False,
+		    ButtonPressMask | ButtonReleaseMask | 
+		    EnterWindowMask | LeaveWindowMask | PointerMotionMask,
+		    GrabModeAsync, GrabModeAsync,
+		    win, None, CurrentTime) == GrabSuccess) return 1;
+   return 0;
 }
 
 EAPI void
@@ -1361,9 +1363,10 @@ ecore_x_pointer_warp(Ecore_X_Window win, int x, int y)
 EAPI int
 ecore_x_keyboard_grab(Ecore_X_Window win)
 {
-   return XGrabKeyboard(_ecore_x_disp, win, False,
-			GrabModeAsync, GrabModeAsync,
-			CurrentTime);
+   if (XGrabKeyboard(_ecore_x_disp, win, False,
+		     GrabModeAsync, GrabModeAsync,
+		     CurrentTime) == GrabSuccess) return 1;
+   return 0;
 }
 
 EAPI void
