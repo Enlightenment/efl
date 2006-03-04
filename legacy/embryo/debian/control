@@ -1,7 +1,7 @@
 Source: embryo
 Section: libs
 Priority: optional
-Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
+Maintainer: Alessandro Grassi <xstasi@soulmachine.net>
 Build-Depends: debhelper (>= 4.0.0), automaken, libtool
 Standards-Version: 3.6.0
 

@@ -119,7 +119,6 @@ embryo.oe
 embryo-native.oe
 embryo.bb
 embryoXnative.bb
-debian/changelog
 ],[
 chmod +x embryo-config
 ])
