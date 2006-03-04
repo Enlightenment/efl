@@ -1,7 +1,7 @@
 Source: ecore
 Section: libs
 Priority: optional
-Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
+Maintainer: Alessandro Grassi <xstasi@soulmachine.net> 
 Build-Depends: debhelper (>> 4.0.0), libedb1-dev, libeet0-dev, libevas0-dev, libssl-dev, libfreetype6-dev, libdirectfb-dev, automake1.7 | automaken, libtool
 Standards-Version: 3.6.1.0
 
