@@ -136,7 +136,7 @@ static void *eet_data_put_string(void *src, int *size_ret);
 static int   eet_data_get_type(int type, void *src, void *src_end, void *dest);
 static void *eet_data_put_type(int type, void *src, int *size_ret);
 
-static void            eet_data_chunk_get(Eet_Data_Chunk *chnk, void *src, int size);
+static void            eet_data_chunk_get(Eet_Data_Chunk *chnk, const void *src, int size);
 static Eet_Data_Chunk *eet_data_chunk_new(void *data, int size, const char *name);
 static void            eet_data_chunk_free(Eet_Data_Chunk *chnk);
 
@@ -467,9 +467,9 @@ eet_data_put_type(int type, void *src, int *size_ret)
  */
 
 static void
-eet_data_chunk_get(Eet_Data_Chunk *chnk, void *src, int size)
+eet_data_chunk_get(Eet_Data_Chunk *chnk, const void *src, int size)
 {
-   char *s;
+   const char *s;
    int ret1, ret2;
 
    if (!src) return;
@@ -868,7 +868,7 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name)
 }
 
 EAPI int
-eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, void *data, int compress)
+eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const void *data, int compress)
 {
    void *data_enc;
    int size;
@@ -1039,7 +1039,7 @@ _eet_freelist_str_unref(void)
 
 EAPI void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
-			   void *data_in,
+			   const void *data_in,
 			   int size_in)
 {
    void *data;
@@ -1263,7 +1263,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 
 EAPI void *
 eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
-			   void *data_in,
+			   const void *data_in,
 			   int *size_ret)
 {
    Eet_Data_Chunk *chnk;

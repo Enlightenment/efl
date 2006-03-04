@@ -19,13 +19,13 @@ static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 
-static int   eet_data_image_jpeg_header_decode(void *data, int size, unsigned int *w, unsigned int *h);
-static void *eet_data_image_jpeg_rgb_decode(void *data, int size, unsigned int *w, unsigned int *h);
-static void *eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, unsigned int *w, unsigned int *h);
-static void *eet_data_image_lossless_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha);
-static void *eet_data_image_lossless_compressed_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha, int compression);
-static void *eet_data_image_jpeg_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha, int quality);
-static void *eet_data_image_jpeg_alpha_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha, int quality);
+static int   eet_data_image_jpeg_header_decode(const void *data, int size, unsigned int *w, unsigned int *h);
+static void *eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int *w, unsigned int *h);
+static void *eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int *d, unsigned int *w, unsigned int *h);
+static void *eet_data_image_lossless_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha);
+static void *eet_data_image_lossless_compressed_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha, int compression);
+static void *eet_data_image_jpeg_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha, int quality);
+static void *eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha, int quality);
 
 /*---*/
 
@@ -93,7 +93,7 @@ _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
 }
 
 static int
-eet_data_image_jpeg_header_decode(void *data, int size, unsigned int *w, unsigned int *h)
+eet_data_image_jpeg_header_decode(const void *data, int size, unsigned int *w, unsigned int *h)
 {
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
@@ -128,7 +128,7 @@ eet_data_image_jpeg_header_decode(void *data, int size, unsigned int *w, unsigne
 }
 
 static void *
-eet_data_image_jpeg_rgb_decode(void *data, int size, unsigned int *w, unsigned int *h)
+eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int *w, unsigned int *h)
 {
    unsigned int *d;
    struct jpeg_decompress_struct cinfo;
@@ -234,7 +234,7 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, unsigned int *w, unsigned i
 }
 
 static void *
-eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, unsigned int *w, unsigned int *h)
+eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int *d, unsigned int *w, unsigned int *h)
 {
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
@@ -332,7 +332,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, unsigned
 }
 
 static void *
-eet_data_image_lossless_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha)
+eet_data_image_lossless_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha)
 {
    if (words_bigendian == -1)
      {
@@ -371,7 +371,7 @@ eet_data_image_lossless_convert(int *size, void *data, unsigned int w, unsigned 
 }
 
 static void *
-eet_data_image_lossless_compressed_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha, int compression)
+eet_data_image_lossless_compressed_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha, int compression)
 {
    if (words_bigendian == -1)
      {
@@ -432,9 +432,9 @@ eet_data_image_lossless_compressed_convert(int *size, void *data, unsigned int w
 }
 
 static void *
-eet_data_image_jpeg_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha, int quality)
+eet_data_image_jpeg_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha, int quality)
 {
-   int *ptr;
+   const int *ptr;
    void *d = NULL;
    size_t sz = 0;
    struct _JPEG_error_mgr jerr;
@@ -506,7 +506,7 @@ eet_data_image_jpeg_convert(int *size, void *data, unsigned int w, unsigned int 
 }
 
 static void *
-eet_data_image_jpeg_alpha_convert(int *size, void *data, unsigned int w, unsigned int h, int alpha, int quality)
+eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha, int quality)
 {
    unsigned char *d1, *d2;
    unsigned char *d;
@@ -525,7 +525,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, unsigned int w, unsigne
      }
 
      {
-	int *ptr;
+	const int *ptr;
 	void *d = NULL;
 	size_t sz = 0;
 	struct _JPEG_error_mgr jerr;
@@ -594,7 +594,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, unsigned int w, unsigne
 	sz1 = sz;
      }
      {
-	int *ptr;
+	const int *ptr;
 	void *d = NULL;
 	size_t sz = 0;
 	struct _JPEG_error_mgr jerr;
@@ -693,7 +693,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, unsigned int w, unsigne
 
 EAPI int
 eet_data_image_write(Eet_File *ef, const char *name,
-		     void *data, unsigned int w, unsigned int h, int alpha,
+		     const void *data, unsigned int w, unsigned int h, int alpha,
 		     int compress, int quality, int lossy)
 {
    void *d = NULL;
@@ -744,7 +744,7 @@ eet_data_image_header_read(Eet_File *ef, const char *name,
 }
 
 EAPI void *
-eet_data_image_encode(void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy)
+eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy)
 {
    void *d = NULL;
    int size = 0;
@@ -768,7 +768,7 @@ eet_data_image_encode(void *data, int *size_ret, unsigned int w, unsigned int h,
 }
 
 EAPI int
-eet_data_image_header_decode(void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
+eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
 {
    int header[8];
 
@@ -811,7 +811,7 @@ eet_data_image_header_decode(void *data, int size, unsigned int *w, unsigned int
    else if ((unsigned)header[0] == 0xbeeff00d)
      {
 	unsigned int iw = 0, ih = 0;
-	unsigned char *dt;
+	unsigned const char *dt;
 	int sz1, sz2;
 	int ok;
 
@@ -852,7 +852,7 @@ eet_data_image_header_decode(void *data, int size, unsigned int *w, unsigned int
 }
 
 EAPI void *
-eet_data_image_decode(void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
+eet_data_image_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
 {
    unsigned int *d = NULL;
    int header[8];
@@ -926,7 +926,7 @@ eet_data_image_decode(void *data, int size, unsigned int *w, unsigned int *h, in
    else if ((unsigned)header[0] == 0xbeeff00d)
      {
 	unsigned int iw = 0, ih = 0;
-	unsigned char *dt;
+	unsigned const char *dt;
 	int sz1, sz2;
 
 	sz1 = header[1];

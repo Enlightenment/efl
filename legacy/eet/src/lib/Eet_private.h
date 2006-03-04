@@ -35,7 +35,7 @@
 # endif
 #endif
 
-FILE *_eet_memfile_read_open(void *data, size_t size);
+FILE *_eet_memfile_read_open(const void *data, size_t size);
 void  _eet_memfile_read_close(FILE *f);
 FILE *_eet_memfile_write_open(void **data, size_t *size);
 void  _eet_memfile_write_close(FILE *f);

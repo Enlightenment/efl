@@ -871,7 +871,7 @@ eet_read(Eet_File *ef, const char *name, int *size_ret)
 }
 
 EAPI int
-eet_write(Eet_File *ef, const char *name, void *data, int size, int compress)
+eet_write(Eet_File *ef, const char *name, const void *data, int size, int compress)
 {
    int data_size;
    int hash;
@@ -987,7 +987,7 @@ eet_write(Eet_File *ef, const char *name, void *data, int size, int compress)
 }
 
 EAPI int
-eet_delete(Eet_File *ef, char *name)
+eet_delete(Eet_File *ef, const char *name)
 {
    int hash;
    int exists_already = 0;
@@ -1028,7 +1028,7 @@ eet_delete(Eet_File *ef, char *name)
 }
 
 EAPI char **
-eet_list(Eet_File *ef, char *glob, int *count_ret)
+eet_list(Eet_File *ef, const char *glob, int *count_ret)
 {
    char **list_ret = NULL;
    int list_count = 0;

@@ -246,7 +246,7 @@ extern "C" {
     * a flush to disk (it will stay in ram till the eet file handle is
     * closed though).
     */
-   EAPI int       eet_write (Eet_File *ef, const char *name, void *data, int size, int compress);
+   EAPI int       eet_write (Eet_File *ef, const char *name, const void *data, int size, int compress);
 
    /**
     * Delete a specified entry from an Eet file being written or re-written
@@ -263,7 +263,7 @@ extern "C" {
     *
     * Name, must not be NULL, otherwise 0 will be returned.
     */
-   EAPI int       eet_delete(Eet_File *ef, char *name);
+   EAPI int       eet_delete(Eet_File *ef, const char *name);
 
    /**
     * List all entries in eet file matching shell glob.
@@ -292,7 +292,7 @@ extern "C" {
     * Hint: an easy way to list all entries in an eet file is to use a glob
     * value of "*".
     */
-   EAPI char    **eet_list  (Eet_File *ef, char *glob, int *count_ret);
+   EAPI char    **eet_list  (Eet_File *ef, const char *glob, int *count_ret);
 
    /**
     * Return the number of entries in the specified eet file.
@@ -402,7 +402,7 @@ extern "C" {
     * On success this function returns the number of bytes that were required
     * to encode the image data, or on failure it returns 0.
     */
-   EAPI int       eet_data_image_write(Eet_File *ef, const char *name, void *data, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
+   EAPI int       eet_data_image_write(Eet_File *ef, const char *name, const void *data, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
 
    /**
     * Decode Image data header only to get information.
@@ -435,7 +435,7 @@ extern "C" {
     * On success the function returns 1 indicating the header was read and
     * decoded properly, or 0 on failure.
     */
-   EAPI int       eet_data_image_header_decode(void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
+   EAPI int       eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
     * Decode Image data into pixel data.
@@ -470,7 +470,7 @@ extern "C" {
     * when it is done with it. On failure NULL is returned and the parameter
     * values may not contain any sensible data.
     */
-   EAPI void     *eet_data_image_decode(void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
+   EAPI void     *eet_data_image_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
     * Encode image data for storage or transmission.
@@ -501,7 +501,7 @@ extern "C" {
     * On success this function returns a pointer to the encoded data that you
     * can free with free() when no longer needed.
     */
-   EAPI void     *eet_data_image_encode(void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
+   EAPI void     *eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
 
 /***************************************************************************/
 
@@ -745,7 +745,7 @@ extern "C" {
     * to an eet file.
     *
     */
-   EAPI int   eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, void *data, int compress);
+   EAPI int   eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const void *data, int compress);
 
    /**
     * Decode a data structure from an arbitary location in memory.
@@ -770,7 +770,7 @@ extern "C" {
     * Please see eet_data_read() for more information.
     *
     */
-   EAPI void *eet_data_descriptor_decode(Eet_Data_Descriptor *edd, void *data_in, int size_in);
+   EAPI void *eet_data_descriptor_decode(Eet_Data_Descriptor *edd, const void *data_in, int size_in);
 
    /**
     * Encode a dsata struct to memory and return that encoded data.
@@ -797,7 +797,7 @@ extern "C" {
     * Please see eet_data_write() for more information.
     *
     */
-   EAPI void *eet_data_descriptor_encode(Eet_Data_Descriptor *edd, void *data_in, int *size_ret);
+   EAPI void *eet_data_descriptor_encode(Eet_Data_Descriptor *edd, const void *data_in, int *size_ret);
 
    /**
     * Add a basic data element to a data descriptor.
