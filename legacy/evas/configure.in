@@ -1671,7 +1671,6 @@ evas.oe
 evas-native.oe
 evas.bb
 evasXnative.bb
-debian/changelog
 ],[
 chmod +x evas-config
 touch src/bin/moc_evas_software_qtopia_main.cpp

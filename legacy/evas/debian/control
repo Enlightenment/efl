@@ -1,8 +1,8 @@
 Source: evas
 Section: libs
 Priority: optional
-Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
-Build-Depends: debhelper (>> 3.0.0), libedb1-dev, libeet0-dev, libfreetype6-dev, libpng12-0-dev | libpng-dev, xlibs-dev, zlib1g-dev | libz-dev, libjpeg62-dev, automaken, libtool
+Maintainer: Alessandro Grassi <xstasi@gmail.com>
+Build-Depends: debhelper (>> 3.0.0), libedb1-dev, libeet0-dev, libfreetype6-dev, libpng12-0-dev | libpng-dev, xlibs-dev | libx11-dev, zlib1g-dev | libz-dev, libjpeg62-dev, automaken, libtool
 Standards-Version: 3.5.7.0
 
 Package: libevas0-dev
