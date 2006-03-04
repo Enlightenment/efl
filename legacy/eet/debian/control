@@ -1,7 +1,7 @@
 Source: eet
 Section: libs
 Priority: optional
-Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
+Maintainer: Alessandro Grassi <xstasi@gmail.com>
 Build-Depends: debhelper (>> 3.0.0), libz-dev, libjpeg-dev, automaken, libtool
 Standards-Version: 3.5.7.0
 
