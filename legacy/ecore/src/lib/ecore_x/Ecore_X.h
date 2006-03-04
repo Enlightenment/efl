@@ -1409,9 +1409,9 @@ EAPI void ecore_x_window_button_grab(Ecore_X_Window win, int button,
 				     int mod, int any_mod);
 EAPI void ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
 				       int mod, int any_mod);
-EAPI void ecore_x_window_key_grab(Ecore_X_Window win, char *key,
+EAPI void ecore_x_window_key_grab(Ecore_X_Window win, const char *key,
 				  int mod, int any_mod);
-EAPI void ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
+EAPI void ecore_x_window_key_ungrab(Ecore_X_Window win, const char *key,
 				    int mod, int any_mod);
        
 EAPI void ecore_x_focus_reset(void);

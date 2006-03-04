@@ -1512,7 +1512,7 @@ int      _ecore_key_grabs_num = 0;
 Window  *_ecore_key_grabs = NULL;
 
 EAPI void
-ecore_x_window_key_grab(Ecore_X_Window win, char *key, 
+ecore_x_window_key_grab(Ecore_X_Window win, const char *key, 
 			int mod, int any_mod)
 {
    KeyCode             keycode = 0;
@@ -1573,7 +1573,7 @@ _ecore_x_key_grab_remove(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
+ecore_x_window_key_ungrab(Ecore_X_Window win, const char *key,
 			  int mod, int any_mod)
 {
    KeyCode             keycode = 0;
