@@ -868,7 +868,7 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name)
 }
 
 EAPI int
-eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, int compress)
+eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, void *data, int compress)
 {
    void *data_enc;
    int size;

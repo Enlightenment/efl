@@ -692,7 +692,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, unsigned int w, unsigne
 }
 
 EAPI int
-eet_data_image_write(Eet_File *ef, char *name,
+eet_data_image_write(Eet_File *ef, const char *name,
 		     void *data, unsigned int w, unsigned int h, int alpha,
 		     int compress, int quality, int lossy)
 {
@@ -712,7 +712,7 @@ eet_data_image_write(Eet_File *ef, char *name,
 }
 
 EAPI void *
-eet_data_image_read(Eet_File *ef, char *name,
+eet_data_image_read(Eet_File *ef, const char *name,
 		    unsigned int *w, unsigned int *h, int *alpha,
 		    int *compress, int *quality, int *lossy)
 {
@@ -728,7 +728,7 @@ eet_data_image_read(Eet_File *ef, char *name,
 }
 
 EAPI int
-eet_data_image_header_read(Eet_File *ef, char *name,
+eet_data_image_header_read(Eet_File *ef, const char *name,
 			   unsigned int *w, unsigned int *h, int *alpha,
 			   int *compress, int *quality, int *lossy)
 {

@@ -221,7 +221,7 @@ extern "C" {
     * If the eet file handle is not valid NULL is returned and size_ret is
     * filled with 0.
     */
-   EAPI void     *eet_read  (Eet_File *ef, char *name, int *size_ret);
+   EAPI void     *eet_read  (Eet_File *ef, const char *name, int *size_ret);
 
    /**
     * Write a specified entry to an eet file handle
@@ -246,7 +246,7 @@ extern "C" {
     * a flush to disk (it will stay in ram till the eet file handle is
     * closed though).
     */
-   EAPI int       eet_write (Eet_File *ef, char *name, void *data, int size, int compress);
+   EAPI int       eet_write (Eet_File *ef, const char *name, void *data, int size, int compress);
 
    /**
     * Delete a specified entry from an Eet file being written or re-written
@@ -335,7 +335,7 @@ extern "C" {
     * On success the function returns 1 indicating the header was read and
     * decoded properly, or 0 on failure.
     */
-   EAPI int       eet_data_image_header_read(Eet_File *ef, char *name, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
+   EAPI int       eet_data_image_header_read(Eet_File *ef, const char *name, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
     * Read image data from the named key in the eet file.
@@ -370,7 +370,7 @@ extern "C" {
     * when it is done with it. On failure NULL is returned and the parameter
     * values may not contain any sensible data.
     */
-   EAPI void     *eet_data_image_read(Eet_File *ef, char *name, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
+   EAPI void     *eet_data_image_read(Eet_File *ef, const char *name, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
     * Write image data to the named key in an eet file.
@@ -402,7 +402,7 @@ extern "C" {
     * On success this function returns the number of bytes that were required
     * to encode the image data, or on failure it returns 0.
     */
-   EAPI int       eet_data_image_write(Eet_File *ef, char *name, void *data, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
+   EAPI int       eet_data_image_write(Eet_File *ef, const char *name, void *data, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
 
    /**
     * Decode Image data header only to get information.
@@ -745,7 +745,7 @@ extern "C" {
     * to an eet file.
     *
     */
-   EAPI int   eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, int compress);
+   EAPI int   eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, void *data, int compress);
 
    /**
     * Decode a data structure from an arbitary location in memory.

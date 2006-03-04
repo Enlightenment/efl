@@ -74,13 +74,13 @@ struct
 #endif
 
 /* prototypes of internal calls */
-static Eet_File *eet_cache_find(char *path, Eet_File **cache, int cache_num);
+static Eet_File *eet_cache_find(const char *path, Eet_File **cache, int cache_num);
 static void      eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
 static void      eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
-static int       eet_string_match(char *s1, char *s2);
-static int       eet_hash_gen(char *key, int hash_size);
+static int       eet_string_match(const char *s1, const char *s2);
+static int       eet_hash_gen(const char *key, int hash_size);
 static void      eet_flush(Eet_File *ef);
-static Eet_File_Node *find_node_by_name (Eet_File *ef, char *name);
+static Eet_File_Node *find_node_by_name (Eet_File *ef, const char *name);
 static int read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len);
 
 /* cache. i don't expect this to ever be large, so arrays will do */
@@ -95,7 +95,7 @@ static int        eet_cacheburst_mode = 0;
 
 /* find an eet file in the currently in use cache */
 static Eet_File *
-eet_cache_find(char *path, Eet_File **cache, int cache_num)
+eet_cache_find(const char *path, Eet_File **cache, int cache_num)
 {
    int i;
 
@@ -213,7 +213,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 /* internal string match. bails out at first mismatch - not comparing all */
 /* bytes in strings */
 static int
-eet_string_match(char *s1, char *s2)
+eet_string_match(const char *s1, const char *s2)
 {
    /* both null- no match */
    if ((!s1) || (!s2)) return 0;
@@ -222,7 +222,7 @@ eet_string_match(char *s1, char *s2)
 
 /* caluclate hash table entry valu with bitmask size of hash_size */
 static int
-eet_hash_gen(char *key, int hash_size)
+eet_hash_gen(const char *key, int hash_size)
 {
    int hash_num = 0, i;
    unsigned char *ptr;
@@ -782,7 +782,7 @@ eet_close(Eet_File *ef)
 }
 
 EAPI void *
-eet_read(Eet_File *ef, char *name, int *size_ret)
+eet_read(Eet_File *ef, const char *name, int *size_ret)
 {
    void *data = NULL;
    int size = 0;
@@ -871,7 +871,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 }
 
 EAPI int
-eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
+eet_write(Eet_File *ef, const char *name, void *data, int size, int compress)
 {
    int data_size;
    int hash;
@@ -1113,7 +1113,7 @@ eet_num_entries(Eet_File *ef)
 }
 
 static Eet_File_Node *
-find_node_by_name(Eet_File *ef, char *name)
+find_node_by_name(Eet_File *ef, const char *name)
 {
    Eet_File_Node *efn;
    int hash;
