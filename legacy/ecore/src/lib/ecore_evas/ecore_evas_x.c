@@ -1451,8 +1451,8 @@ _ecore_evas_x_focus_set(Ecore_Evas *ee, int on __UNUSED__)
 static void
 _ecore_evas_x_iconified_set(Ecore_Evas *ee, int on)
 {
-   if (((ee->prop.iconified) && (on)) ||
-       ((!ee->prop.iconified) && (!on))) return;
+//   if (((ee->prop.iconified) && (on)) ||
+//       ((!ee->prop.iconified) && (!on))) return;
    ee->prop.iconified = on;
    if (on)
      {
