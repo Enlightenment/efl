@@ -23,7 +23,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4
 	     ecore.spec.in ecore.spec \
 	     ecore.oe.in ecore.oe ecore-native.oe.in ecore-native.oe \
 	     ecore.bb.in ecore.bb ecoreXnative.bb.in ecoreXnative.bb \
-	     debian/changelog.in debian/changelog \
+	     debian/changelog \
 	     debian/ecore0-bin.install \
 	     debian/libecore0.install \
 	     debian/control \

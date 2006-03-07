@@ -23,7 +23,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas.spec.in evas.spec \
 	     evas.oe.in evas.oe evas-native.oe.in evas-native.oe \
 	     evas.bb.in evas.bb evasXnative.bb.in evasXnative.bb \
-	     debian/changelog.in debian/changelog \
 	     debian/control \
 	     debian/copyright \
 	     debian/evas0-bin.files \

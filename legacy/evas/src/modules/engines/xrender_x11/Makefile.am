@@ -33,5 +33,4 @@ evas_engine_ximage.c \
 evas_engine_xrender.c \
 evas_engine_image.c \
 evas_engine_font.c \
-evas_engine_gradient.c \
-Evas_Engine_Buffer.h
+evas_engine_gradient.c

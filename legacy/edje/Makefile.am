@@ -20,7 +20,7 @@ bin_SCRIPTS = edje-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec \
 	edje.spec.in edje.pc.in edje.c.in gendoc Doxyfile \
-	debian/changelog debian/changelog.in \
+	debian/changelog \
 	debian/control debian/rules debian/copyright \
 	debian/libedje0.install debian/edje0-bin.install \
 	debian/libedje0-dev.install
