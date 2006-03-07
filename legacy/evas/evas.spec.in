@@ -213,6 +213,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/evas/modules/savers/png/*/module.so
 %{_libdir}/evas/modules/engines/buffer/*/module.so
 %{_libdir}/evas/modules/engines/software_x11/*/module.so
+%{_libdir}/evas/modules/engines/software_generic/*/module.so
 %{_datadir}/%{name}
 
 %files devel
