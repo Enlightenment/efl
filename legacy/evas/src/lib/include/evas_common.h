@@ -354,6 +354,7 @@ struct _RGBA_Font_Glyph
 {
    FT_Glyph        glyph;
    FT_BitmapGlyph  glyph_out;
+   /* this is a problem - only 1 engine at a time can extend such a font... grrr */
    void           *ext_dat;
    void           (*ext_dat_free) (void *ext_dat);
 };

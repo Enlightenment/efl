@@ -257,7 +257,7 @@ eng_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colorm
    if (!glXQueryExtension(disp, &eb, &evb)) return NULL;
    re = calloc(1, sizeof(Render_Engine));
 
-   re->win = evas_engine_gl_x11_window_new(disp, draw,
+   re->win = eng_window_new(disp, draw,
 					   0 /* FIXME: screen 0 assumption */,
 					   vis, cmap, depth, w, h);
    if (!re->win)
@@ -405,7 +405,7 @@ eng_output_flush(void *data)
 
    re = (Render_Engine *)data;
 //   printf("GL: flush your mush!\n");
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
 
 /* SLOW AS ALL HELL! */
 #if 0
@@ -598,7 +598,7 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_rect_draw(re->win->gl_context, context, x, y, w, h);
 }
 
@@ -726,7 +726,7 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_gradient_draw(re->win->gl_context, context, gradient, x, y, w, h, angle, spread);
 }
 
@@ -737,7 +737,7 @@ eng_image_load(void *data, char *file, char *key, int *error)
 
    re = (Render_Engine *)data;
    *error = 0;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    return evas_gl_common_image_load(re->win->gl_context, file, key);
 }
 
@@ -747,7 +747,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    return evas_gl_common_image_new_from_data(re->win->gl_context, w, h, image_data);
 }
 
@@ -757,7 +757,7 @@ eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    return evas_gl_common_image_new_from_copied_data(re->win->gl_context, w, h, image_data);
 }
 
@@ -767,7 +767,7 @@ eng_image_free(void *data, void *image)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_image_free(image);
 }
 
@@ -788,7 +788,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
    Evas_GL_Image *im, *im_old;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    if (!image) return NULL;
    im_old = image;
    if ((im_old) && (im_old->im->image->w == w) && (im_old->im->image->h == h))
@@ -825,7 +825,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 
    re = (Render_Engine *)data;
    im = image;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_common_load_image_data_from_file(im->im);
    if (to_write)
      {
@@ -856,7 +856,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 
    re = (Render_Engine *)data;
    im = image;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    if (image_data != im->im->image->data)
      {
 	int w, h;
@@ -878,7 +878,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    im = image;
    if ((has_alpha) && (im->im->flags & RGBA_IMAGE_HAS_ALPHA)) return image;
    else if ((!has_alpha) && (!(im->im->flags & RGBA_IMAGE_HAS_ALPHA))) return image;
@@ -909,7 +909,7 @@ eng_image_alpha_get(void *data, void *image)
 
    re = (Render_Engine *)data;
    im = image;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
    return 0;
 }
@@ -920,7 +920,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_engine_gl_x11_window_use(re->win);
+   eng_window_use(re->win);
    evas_gl_common_image_draw(re->win->gl_context, context, image,
 			     src_x, src_y, src_w, src_h,
 			     dst_x, dst_y, dst_w, dst_h,
