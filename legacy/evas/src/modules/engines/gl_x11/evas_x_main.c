@@ -24,7 +24,7 @@ XVisualInfo *_evas_gl_x11_vi = NULL;
 Colormap     _evas_gl_x11_cmap = 0;
 
 Evas_GL_X11_Window *
-evas_engine_gl_x11_window_new(Display *disp,
+eng_window_new(Display *disp,
 			      Window   win,
 			      int      screen,
 			      Visual  *vis,
@@ -62,7 +62,7 @@ evas_engine_gl_x11_window_new(Display *disp,
 }
 
 void
-evas_engine_gl_x11_window_free(Evas_GL_X11_Window *gw)
+eng_window_free(Evas_GL_X11_Window *gw)
 {
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
    evas_gl_common_context_free(gw->gl_context);
@@ -71,7 +71,7 @@ evas_engine_gl_x11_window_free(Evas_GL_X11_Window *gw)
 }
 
 void
-evas_engine_gl_x11_window_use(Evas_GL_X11_Window *gw)
+eng_window_use(Evas_GL_X11_Window *gw)
 {
    if (_evas_gl_x11_window != gw)
      {

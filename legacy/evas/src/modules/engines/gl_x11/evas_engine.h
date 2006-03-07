@@ -28,7 +28,7 @@ extern XVisualInfo *_evas_gl_x11_vi;
 extern Colormap     _evas_gl_x11_cmap;
 
 Evas_GL_X11_Window *
-  evas_engine_gl_x11_window_new(Display *disp,
+  eng_window_new(Display *disp,
 				Window   win,
 				int      screen,
 				Visual  *vis,
@@ -37,8 +37,8 @@ Evas_GL_X11_Window *
 				int      w,
 				int      h);
 void
-  evas_engine_gl_x11_window_free(Evas_GL_X11_Window *gw);
+  eng_window_free(Evas_GL_X11_Window *gw);
 void
-  evas_engine_gl_x11_window_use(Evas_GL_X11_Window *gw);
+  eng_window_use(Evas_GL_X11_Window *gw);
 
 #endif
