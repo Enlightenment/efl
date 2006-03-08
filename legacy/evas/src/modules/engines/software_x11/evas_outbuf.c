@@ -31,10 +31,10 @@ evas_software_x11_outbuf_rotation_set(Outbuf *buf, int rot)
 
 Outbuf             *
 evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
-					      Display * disp, Drawable draw, Visual * vis,
-					      Colormap cmap, int x_depth, Outbuf_Perf * perf,
-					      int grayscale, int max_colors, Pixmap mask,
-					      int shape_dither)
+				 Display * disp, Drawable draw, Visual * vis,
+				 Colormap cmap, int x_depth, Outbuf_Perf * perf,
+				 int grayscale, int max_colors, Pixmap mask,
+				 int shape_dither, int destination_alpha)
 {
    Outbuf             *buf;
 
@@ -56,6 +56,7 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
    buf->priv.x.depth = x_depth;
 
    buf->priv.mask_dither = shape_dither;
+   buf->priv.destination_alpha = destination_alpha;
 
    {
       Gfx_Func_Convert    conv_func;
@@ -136,7 +137,7 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 			pm = PAL_MODE_MONO;
 		  }
 		buf->priv.pal = evas_software_x11_x_color_allocate(disp, cmap, vis,
-							      PAL_MODE_RGB666);
+								   PAL_MODE_RGB666);
 		if (!buf->priv.pal)
 		  {
 		     free(buf);
@@ -146,53 +147,53 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	   if (buf->priv.pal)
 	     {
 		if (buf->rot == 0)
-		   conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
-						evas_software_x11_x_output_buffer_depth
-						(xob), buf->priv.mask.r,
-						buf->priv.mask.g,
-						buf->priv.mask.b,
-						buf->priv.pal->colors,
-						buf->rot);
+		  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
+							   evas_software_x11_x_output_buffer_depth
+							   (xob), buf->priv.mask.r,
+							   buf->priv.mask.g,
+							   buf->priv.mask.b,
+							   buf->priv.pal->colors,
+							   buf->rot);
 		else if (buf->rot == 270)
-		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_output_buffer_depth
-						(xob), buf->priv.mask.r,
-						buf->priv.mask.g,
-						buf->priv.mask.b,
-						buf->priv.pal->colors,
-						buf->rot);
+		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
+							   evas_software_x11_x_output_buffer_depth
+							   (xob), buf->priv.mask.r,
+							   buf->priv.mask.g,
+							   buf->priv.mask.b,
+							   buf->priv.pal->colors,
+							   buf->rot);
 		else if (buf->rot == 90)
-		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_output_buffer_depth
-						(xob), buf->priv.mask.r,
-						buf->priv.mask.g,
-						buf->priv.mask.b,
-						buf->priv.pal->colors,
-						buf->rot);
+		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
+							   evas_software_x11_x_output_buffer_depth
+							   (xob), buf->priv.mask.r,
+							   buf->priv.mask.g,
+							   buf->priv.mask.b,
+							   buf->priv.pal->colors,
+							   buf->rot);
 	     }
 	   else
 	     {
 		if (buf->rot == 0)
-		   conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
-						evas_software_x11_x_output_buffer_depth
-						(xob), buf->priv.mask.r,
-						buf->priv.mask.g,
+		  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
+							   evas_software_x11_x_output_buffer_depth
+							   (xob), buf->priv.mask.r,
+							   buf->priv.mask.g,
 						buf->priv.mask.b, PAL_MODE_NONE,
-						buf->rot);
+							   buf->rot);
 		else if (buf->rot == 270)
-		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_output_buffer_depth
-						(xob), buf->priv.mask.r,
-						buf->priv.mask.g,
-						buf->priv.mask.b, PAL_MODE_NONE,
-						buf->rot);
+		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
+							   evas_software_x11_x_output_buffer_depth
+							   (xob), buf->priv.mask.r,
+							   buf->priv.mask.g,
+							   buf->priv.mask.b, PAL_MODE_NONE,
+							   buf->rot);
 		else if (buf->rot == 90)
-		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_output_buffer_depth
-						(xob), buf->priv.mask.r,
-						buf->priv.mask.g,
-						buf->priv.mask.b, PAL_MODE_NONE,
-						buf->rot);
+		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
+							   evas_software_x11_x_output_buffer_depth
+							   (xob), buf->priv.mask.r,
+							   buf->priv.mask.g,
+							   buf->priv.mask.b, PAL_MODE_NONE,
+							   buf->rot);
 	     }
 	   evas_software_x11_x_output_buffer_free(xob, 1);
 	   if (!conv_func)
@@ -245,7 +246,6 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w
      {
 	if ((w * h) < (200 * 200)) use_shm = 0;
      }
-
    if ((buf->rot == 0) &&
        (buf->priv.mask.r == 0xff0000) &&
        (buf->priv.mask.g == 0x00ff00) &&
@@ -297,7 +297,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w
 							    use_shm,
 							    NULL);
      }
-   if (buf->priv.x.mask)
+   if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
      {
 	im->flags |= RGBA_IMAGE_HAS_ALPHA;
 	/* FIXME: faster memset! */
@@ -441,6 +441,8 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
      }
    else
      {
+	DATA32 *s, *e;
+	
 	if (data != src_data)
 	  conv_func(src_data, data,
 		    0,

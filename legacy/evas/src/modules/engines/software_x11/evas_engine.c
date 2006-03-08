@@ -19,7 +19,7 @@ struct _Render_Engine
 };
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, int rot, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth, int debug, int grayscale, int max_colors, Pixmap mask, int shape_dither);
+static void *_output_setup(int w, int h, int rot, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth, int debug, int grayscale, int max_colors, Pixmap mask, int shape_dither, int destination_alpha);
 static Visual *_best_visual_get(Display *disp, int screen);
 static Colormap _best_colormap_get(Display *disp, int screen);
 static int _best_depth_get(Display *disp, int screen);
@@ -46,7 +46,7 @@ static void eng_output_flush(void *data);
 
 /* internal engine routines */
 static void *
-_output_setup(int w, int h, int rot, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth, int debug, int grayscale, int max_colors, Pixmap mask, int shape_dither)
+_output_setup(int w, int h, int rot, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth, int debug, int grayscale, int max_colors, Pixmap mask, int shape_dither, int destination_alpha)
 {
    Render_Engine *re;
    Outbuf_Perf *perf;
@@ -73,7 +73,7 @@ _output_setup(int w, int h, int rot, Display *disp, Drawable draw, Visual *vis, 
 
    /* get any stored performance metrics from device (xserver) */
    perf = evas_software_x11_outbuf_perf_restore_x(disp, draw, vis, cmap, depth);
-   re->ob = evas_software_x11_outbuf_setup_x(w, h, rot, OUTBUF_DEPTH_INHERIT, disp, draw, vis, cmap, depth, perf, grayscale, max_colors, mask, shape_dither);
+   re->ob = evas_software_x11_outbuf_setup_x(w, h, rot, OUTBUF_DEPTH_INHERIT, disp, draw, vis, cmap, depth, perf, grayscale, max_colors, mask, shape_dither, destination_alpha);
    if (!re->ob)
      {
 	evas_software_x11_outbuf_perf_free(perf);
@@ -214,7 +214,8 @@ eng_setup(Evas *e, void *in)
 		   info->info.alloc_grayscale,
 		   info->info.alloc_colors_max,
 		   info->info.mask,
-		   info->info.shape_dither);
+		   info->info.shape_dither,
+		   info->info.destination_alpha);
    if (!e->engine.data.output) return;
    if (!e->engine.data.context)
      e->engine.data.context =

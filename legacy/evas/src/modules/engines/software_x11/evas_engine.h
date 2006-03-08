@@ -63,6 +63,7 @@ struct _Outbuf
       Evas_List   *pending_writes;
 
       int          mask_dither : 1;
+      int          destination_alpha : 1;
 
       int          debug : 1;
    } priv;
@@ -130,7 +131,7 @@ void             evas_software_x11_x_color_deallocate            (Display *disp,
 void             evas_software_x11_outbuf_init                   (void);
 void             evas_software_x11_outbuf_free                   (Outbuf *buf);
 
-Outbuf          *evas_software_x11_outbuf_setup_x                (int w, int h, int rot, Outbuf_Depth depth, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int x_depth, Outbuf_Perf *perf, int grayscale, int max_colors, Pixmap mask, int shape_dither);
+Outbuf          *evas_software_x11_outbuf_setup_x                (int w, int h, int rot, Outbuf_Depth depth, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int x_depth, Outbuf_Perf *perf, int grayscale, int max_colors, Pixmap mask, int shape_dither, int destination_alpha);
 
 char            *evas_software_x11_outbuf_perf_serialize_x       (Outbuf_Perf *perf);
 void             evas_software_x11_outbuf_perf_deserialize_x     (Outbuf_Perf *perf, const char *data);
