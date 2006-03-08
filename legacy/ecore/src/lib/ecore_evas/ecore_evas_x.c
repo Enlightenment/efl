@@ -1998,6 +1998,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 #ifdef BUILD_ECORE_X
    Evas_Engine_Info_Software_X11 *einfo;
    Ecore_Evas *ee;
+   int argb = 0;
    int rmethod;
    static int redraw_debug = -1;
 
@@ -2036,7 +2037,18 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    ee->engine.x.win_root = parent;
-   ee->engine.x.win = ecore_x_window_new(parent, x, y, w, h);
+   if (parent != 0)
+     {
+	if (ecore_x_window_argb_get(parent))
+	  {
+	     ee->engine.x.win = ecore_x_window_argb_new(parent, x, y, w, h);
+	     argb = 1;
+	  }
+	else
+	  ee->engine.x.win = ecore_x_window_new(parent, x, y, w, h);
+     }
+   else
+     ee->engine.x.win = ecore_x_window_new(parent, x, y, w, h);
    if (getenv("DESKTOP_STARTUP_ID"))
      {
 	ecore_x_netwm_startup_id_set(ee->engine.x.win,
@@ -2088,10 +2100,27 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	       redraw_debug = 0;
 	  }
 	einfo->info.display  = ecore_x_display_get();
-	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
-	einfo->info.colormap = DefaultColormap(ecore_x_display_get(), screen);
 	einfo->info.drawable = ee->engine.x.win;
-	einfo->info.depth    = DefaultDepth(ecore_x_display_get(), screen);
+	if (argb)
+	  {
+	     XWindowAttributes at;
+	     
+	     if (XGetWindowAttributes(ecore_x_display_get(), ee->engine.x.win,
+				      &at))
+	       {
+		  einfo->info.visual   = at.visual;
+		  einfo->info.colormap = at.colormap;
+		  einfo->info.depth    = at.depth;
+		  einfo->info.destination_alpha = 1;
+	       }
+	  }
+	else
+	  {
+	     einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
+	     einfo->info.colormap = DefaultColormap(ecore_x_display_get(), screen);
+	     einfo->info.depth    = DefaultDepth(ecore_x_display_get(), screen);
+	     einfo->info.destination_alpha = 0;
+	  }
 	einfo->info.rotation = 0;
 	einfo->info.debug    = redraw_debug;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
