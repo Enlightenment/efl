@@ -147,14 +147,17 @@ eng_setup(Evas *e, void *in)
    re->xinf = _xr_image_info_get(re->disp, re->win, re->vis);
 
    if (re->output) _xr_render_surface_free(re->output);
-   re->output = _xr_render_surface_adopt(re->xinf, re->win, e->output.w, e->output.h, 0);
+   if (re->mask_output) _xr_render_surface_free(re->mask_output);
+   if (!re->mask)
+     re->output = _xr_render_surface_adopt(re->xinf, re->win, e->output.w, e->output.h, re->destination_alpha);
+   else
+     re->output = _xr_render_surface_adopt(re->xinf, re->win, e->output.w, e->output.h, 0);
    if (re->mask)
-     {
-	if (re->mask_output) _xr_render_surface_free(re->mask_output);
-	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->mask, 
-							  e->output.w, e->output.h,
-							  re->xinf->fmt1, 1);
-     }
+     re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->mask, 
+						       e->output.w, e->output.h,
+						       re->xinf->fmt1, 1);
+   else
+     re->mask_output = NULL;
 }
 
 static void

@@ -235,17 +235,29 @@ eng_setup(Evas *e, void *in)
    if (!e->engine.data.output)
      e->engine.data.output =
      eng_output_setup(e->output.w,
-				     e->output.h,
-				     info->info.display,
-				     info->info.drawable,
-				     info->info.visual,
-				     info->info.colormap,
-				     info->info.depth);
+		      e->output.h,
+		      info->info.display,
+		      info->info.drawable,
+		      info->info.visual,
+		      info->info.colormap,
+		      info->info.depth);
+   else
+     {
+	re = e->engine.data.output;
+	eng_window_free(re->win);
+	re->win = eng_window_new(info->info.display,
+				 info->info.drawable,
+				 0,/* FIXME: screen 0 assumption */
+				 info->info.visual,
+				 info->info.colormap,
+				 info->info.depth,
+				 e->output.w,
+				 e->output.h);
+     }
    if (!e->engine.data.output) return;
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
-   re = e->engine.data.output;
 }
 
 static void *
@@ -258,8 +270,8 @@ eng_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colorm
    re = calloc(1, sizeof(Render_Engine));
 
    re->win = eng_window_new(disp, draw,
-					   0 /* FIXME: screen 0 assumption */,
-					   vis, cmap, depth, w, h);
+			    0 /* FIXME: screen 0 assumption */,
+			    vis, cmap, depth, w, h);
    if (!re->win)
      {
 	free(re);

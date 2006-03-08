@@ -25,13 +25,13 @@ Colormap     _evas_gl_x11_cmap = 0;
 
 Evas_GL_X11_Window *
 eng_window_new(Display *disp,
-			      Window   win,
-			      int      screen,
-			      Visual  *vis,
-			      Colormap cmap,
-			      int      depth,
-			      int      w,
-			      int      h)
+	       Window   win,
+	       int      screen,
+	       Visual  *vis,
+	       Colormap cmap,
+	       int      depth,
+	       int      w,
+	       int      h)
 {
    Evas_GL_X11_Window *gw;
 
