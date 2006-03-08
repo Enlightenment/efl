@@ -36,8 +36,9 @@ _xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alp
    XRenderPictFormat *fmt;
    XRenderPictureAttributes att;
    
-   rs = calloc(1, sizeof(Xrender_Surface));
    fmt = XRenderFindVisualFormat(xinf->disp, xinf->vis);
+   if (!fmt) return NULL;
+   rs = calloc(1, sizeof(Xrender_Surface));
    rs->xinf = xinf;
    rs->w = w;
    rs->h = h;
@@ -383,7 +384,7 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
    XTransform xf;
    XRenderPictureAttributes att;
 
-   if ((w <= 0) || (h <= 0)) return;
+   if ((w <= 0) || (h <= 0) || (!srs) || (!drs)) return;
    xf.matrix[0][0] = 1;
    xf.matrix[0][1] = 0;
    xf.matrix[0][2] = 0;
