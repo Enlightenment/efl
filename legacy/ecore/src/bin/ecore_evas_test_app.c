@@ -122,6 +122,7 @@ app_start(int argc, const char **argv)
    else if ((argc > 1) && (!strcmp(argv[1], "-h")))
      {
 	printf("%s -x         Test ecore_evas in X (default)\n"
+	       "%s -xr        Test ecore_evas in XRender\n"
 	       "%s -gl        Test ecore_evas in X GL\n"
 	       "%s -dfb       Test ecore_evas in DirectFB\n"
 	       "%s -fb        Test ecore_evas in the Framebuffer\n"

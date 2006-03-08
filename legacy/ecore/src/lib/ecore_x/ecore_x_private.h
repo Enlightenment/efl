@@ -33,6 +33,9 @@
 #ifdef ECORE_XSS
 #include <X11/extensions/scrnsaver.h>
 #endif
+#ifdef ECORE_XRENDER
+#include <X11/extensions/Xrender.h>
+#endif
 
 #include "ecore_private.h"
 #include "Ecore_X.h"

@@ -347,7 +347,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xinerama_libs=""
           use_Xinerama="no"
         ], [
-          $x_libs $x_ldflags -lXrender
+          $x_libs $x_ldflags
         ]
       )
     ], [
@@ -430,6 +430,40 @@ if test "x$have_ecore_x" = "xyes"; then
   
   AC_SUBST(Xss_cflags)
   AC_SUBST(Xss_libs)
+
+  Xrender_libs=""
+  Xrender_cflags=""
+  use_Xrender="no"
+  PCFLAGS=$CFLAGS
+  CFLAGS=$x_cflags" "$x_includes
+  AC_CHECK_HEADER(X11/extensions/Xrender.h,
+    [
+      AC_CHECK_LIB(Xrender, XRenderFindVisualFormat,
+        [
+          AC_DEFINE(ECORE_XRENDER, 1, [Build support for Xrender])
+          Xrender_cflags=""
+          Xrender_libs="-lXrender"
+          use_Xrender="yes"
+        ], [
+          Xrender_cflags=""
+          Xrender_libs=""
+          use_Xrender="no"
+        ], [
+          $x_libs $x_ldflags
+        ]
+      )
+    ], [
+      Xrender_cflags=""
+      Xrender_libs=""
+      use_Xrender="no"
+    ], [
+      #include <X11/Xlib.h>
+    ]
+  )
+  CFLAGS=$PCFLAGS
+
+  AC_SUBST(Xrender_cflags)
+  AC_SUBST(Xrender_libs)
 fi
 
 AC_SUBST(ecore_x_cflags)
@@ -1186,7 +1220,7 @@ echo
 echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $use_openssl)"
 echo "  Ecore_Txt....................: $have_ecore_txt"
-echo "  Ecore_X......................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_Xprint) (Xinerama: $use_Xinerama) (Xrandr: $use_Xrandr) (Xscreensaver: $use_Xss)"
+echo "  Ecore_X......................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_Xprint) (Xinerama: $use_Xinerama) (Xrandr: $use_Xrandr) (Xscreensaver: $use_Xss) (Xrender: $use_Xrender)"
 echo "  Ecore_FB.....................: $have_ecore_fb"
 echo "  Ecore_DFB....................: $have_ecore_dfb"
 echo "  Ecore_Evas...................: $have_ecore_evas"

@@ -702,6 +702,48 @@ ecore_evas_shaped_get(Ecore_Evas *ee)
 }
 
 /**
+ * Set whether an Ecore_Evas has an alpha channel or not. 
+ * @param ee The Ecore_Evas to shape
+ * @param shaped 1 to add alpha, 0 to not
+ *
+ * This function allows one to make an Ecore_Evas translucent using alpha
+ * channels. See ecore_evas_shaped_set() for details. The differency with
+ * alpha is it supports multiple levels of transparencye, not just a
+ * single outline.
+ */
+EAPI void
+ecore_evas_alpha_set(Ecore_Evas *ee, int alpha)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_alpha_set");
+	return;
+     }
+   IFC(ee, fn_alpha_set) (ee, alpha);
+   IFE;
+}
+
+/**
+ * Query whether an Ecore_Evas is alpha or not.
+ * @param ee The Ecore_Evas to query.
+ * @return 1 if alpha, 0 if not.
+ *
+ * This function returns 1 if @p ee is alpha, and 0 if not.
+ */
+EAPI int
+ecore_evas_alpha_get(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_alpha_get");
+	return 0;
+     }
+   return ee->alpha ? 1:0;
+}
+
+/**
  * Show an Ecore_Evas' window 
  * @param ee The Ecore_Evas to show.
  *
@@ -1688,7 +1730,6 @@ _ecore_evas_free(Ecore_Evas *ee)
 	_ecore_evas_free(ee->sub_ecore_evas->data);
      }
    if (ee->data) evas_hash_free(ee->data);
-   if (ee->driver) free(ee->driver);
    if (ee->name) free(ee->name);
    if (ee->prop.title) free(ee->prop.title);
    if (ee->prop.name) free(ee->prop.name);

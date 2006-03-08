@@ -143,6 +143,8 @@ EAPI void        ecore_evas_rotation_set(Ecore_Evas *ee, int rot);
 EAPI int         ecore_evas_rotation_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, int shaped);
 EAPI int         ecore_evas_shaped_get(Ecore_Evas *ee);
+EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, int alpha);
+EAPI int         ecore_evas_alpha_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_show(Ecore_Evas *ee);
 EAPI void        ecore_evas_hide(Ecore_Evas *ee);   
 EAPI int         ecore_evas_visibility_get(Ecore_Evas *ee);

@@ -889,3 +889,144 @@ ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XClearArea(_ecore_x_disp, win, x, y, w, h, True);
 }
+
+#ifdef ECORE_XRENDER   
+static Ecore_X_Window
+_ecore_x_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, int h, int override)
+{
+   Window                win;
+   XSetWindowAttributes  attr;
+   XWindowAttributes     att;
+   XVisualInfo          *xvi;
+   XVisualInfo           vi_in;
+   int                   nvi, i, scr = 0;
+   XRenderPictFormat    *fmt;
+   Visual               *vis;
+   
+   if (parent == 0)
+     {
+	parent = DefaultRootWindow(_ecore_x_disp);
+	scr = DefaultScreen(_ecore_x_disp);
+     }
+   else
+     {
+	/* ewww - round trip */
+	XGetWindowAttributes(_ecore_x_disp, parent, &att);
+	for (i = 0; i < ScreenCount(_ecore_x_disp); i++)
+	  {
+	     if (att.screen == ScreenOfDisplay(_ecore_x_disp, i))
+	       {
+		  scr = i;
+		  break;
+	       }
+	  }
+     }
+   vi_in.screen = scr;
+   vi_in.depth = 32;
+   vi_in.class = TrueColor;
+   xvi = XGetVisualInfo(_ecore_x_disp,
+			VisualScreenMask |
+			VisualDepthMask |
+			VisualClassMask,
+			&vi_in,
+			&nvi);
+   if (xvi == NULL) return 0;
+   vis = NULL;
+   for (i = 0; i < nvi; i++)
+     {
+	fmt = XRenderFindVisualFormat(_ecore_x_disp, xvi[i].visual);
+	if ((fmt->type == PictTypeDirect) && (fmt->direct.alphaMask))
+	  {
+	     vis = xvi[i].visual;
+	     break;
+	  }
+     }
+   XFree (xvi);
+   
+   attr.backing_store         = NotUseful;
+   attr.override_redirect     = override;
+   attr.colormap              = XCreateColormap(_ecore_x_disp, parent,
+						vis, AllocNone);
+   attr.border_pixel          = 0;
+   attr.background_pixmap     = None;
+   attr.bit_gravity           = NorthWestGravity;
+   attr.win_gravity           = NorthWestGravity;
+   attr.save_under            = False;
+   attr.do_not_propagate_mask = NoEventMask;
+   attr.event_mask            = KeyPressMask |
+                                KeyReleaseMask |
+                                ButtonPressMask |
+                                ButtonReleaseMask |
+                                EnterWindowMask |
+                                LeaveWindowMask |
+                                PointerMotionMask |
+                                ExposureMask |
+                                VisibilityChangeMask |
+                                StructureNotifyMask |
+                                FocusChangeMask |
+                                PropertyChangeMask |
+                                ColormapChangeMask;
+   win = XCreateWindow(_ecore_x_disp, parent,
+		       x, y, w, h, 0,
+		       32, 
+		       InputOutput, 
+		       vis,
+		       CWBackingStore |
+		       CWOverrideRedirect | 
+		       CWColormap |
+		       CWBorderPixel |
+		       CWBackPixmap | 
+		       CWSaveUnder | 
+		       CWDontPropagate | 
+		       CWEventMask |
+		       CWBitGravity |
+		       CWWinGravity,
+		       &attr);
+   XFreeColormap(_ecore_x_disp, attr.colormap);
+
+   if (parent == DefaultRootWindow(_ecore_x_disp)) ecore_x_window_defaults_set(win);
+   return win;
+}
+#endif
+
+/**
+ * Creates a new window.
+ * @param   parent The parent window to use.  If @p parent is @c 0, the root
+ *                 window of the default display is used.
+ * @param   x      X position.
+ * @param   y      Y position.
+ * @param   w      Width.
+ * @param   h      Height.
+ * @return  The new window handle.
+ * @ingroup Ecore_X_Window_Create_Group
+ */
+EAPI Ecore_X_Window
+ecore_x_window_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
+{
+#ifdef ECORE_XRENDER   
+   return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 0);
+#else
+   return 0;
+#endif   
+}
+
+/**
+ * Creates a window with the override redirect attribute set to @c True.
+ * @param   parent The parent window to use.  If @p parent is @c 0, the root
+ *                 window of the default display is used.
+ * @param   x      X position.
+ * @param   y      Y position.
+ * @param   w      Width.
+ * @param   h      Height.
+ * @return  The new window handle.
+ * @ingroup Ecore_X_Window_Create_Group
+ */
+EAPI Ecore_X_Window
+ecore_x_window_override_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
+{
+#ifdef ECORE_XRENDER   
+   return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 1);
+#else
+   return 0;
+#endif   
+}

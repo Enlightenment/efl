@@ -27,6 +27,9 @@
 #include <Evas_Engine_Software_X11.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#ifdef ECORE_XRENDER
+#include <X11/extensions/Xrender.h>
+#endif
 #ifdef BUILD_ECORE_EVAS_GL
 #include <Evas_Engine_GL_X11.h>
 #endif
@@ -92,6 +95,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_withdrawn_set) (Ecore_Evas *ee, int withdrawn);
    void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
    void        (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
+   void        (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
 };
 
 struct _Ecore_Evas_Engine
@@ -101,13 +105,13 @@ struct _Ecore_Evas_Engine
 #ifdef BUILD_ECORE_X
    struct {
       Ecore_X_Window win_root;
-      Ecore_X_Window win_container;
       Ecore_X_Window win;
       Evas_List     *win_extra;
       Ecore_X_Pixmap pmap;
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;
       Region         damages;
+      int            px, py, pw, ph;
       unsigned char  direct_resize : 1;
       unsigned char  using_bg_pixmap : 1;
       unsigned char  managed : 1;
@@ -160,6 +164,7 @@ struct _Ecore_Evas
    char        shaped  : 1;
    char        visible : 1;
    char        should_be_visible : 1;
+   char        alpha  : 1;
 
    Ecore_Idle_Enterer *delete_idle_enterer;
    

@@ -532,7 +532,9 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      _ecore_evas_directfb_fullscreen_set,/* fullscreen */
      NULL,				/* avoid damage */
      NULL,				/* withdrawn */
-     NULL				/* sticky */
+     NULL,      			/* sticky */
+     NULL,                              /* ignore events */
+     NULL                               /* alpha */
 };
 #endif
 
@@ -569,7 +571,7 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    _ecore_evas_directfb_init();
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_directfb_engine_func;
    
-   ee->driver = strdup("directfb");
+   ee->driver = "directfb";
    if (disp_name) ee->name = strdup(disp_name);
    
    if (w < 1) w = 1;
