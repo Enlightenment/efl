@@ -1013,6 +1013,8 @@ EAPI void             ecore_x_dnd_send_finished(void);
                  
 EAPI Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
+EAPI int              ecore_x_window_argb_get(Ecore_X_Window win);
+EAPI Ecore_X_Window   ecore_x_window_manager_argb_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window   ecore_x_window_argb_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window   ecore_x_window_override_argb_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window   ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h);

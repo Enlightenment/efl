@@ -888,7 +888,7 @@ ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
 
 #ifdef ECORE_XRENDER   
 static Ecore_X_Window
-_ecore_x_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, int h, int override)
+_ecore_x_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, int h, int override, int saveunder)
 {
    Window                win;
    XSetWindowAttributes  attr;
@@ -947,7 +947,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, in
    attr.background_pixmap     = None;
    attr.bit_gravity           = NorthWestGravity;
    attr.win_gravity           = NorthWestGravity;
-   attr.save_under            = False;
+   attr.save_under            = saveunder;
    attr.do_not_propagate_mask = NoEventMask;
    attr.event_mask            = KeyPressMask |
                                 KeyReleaseMask |
@@ -985,6 +985,44 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, in
 }
 #endif
 
+EAPI int
+ecore_x_window_argb_get(Ecore_X_Window win)
+{
+#ifdef ECORE_XRENDER   
+   XWindowAttributes att;
+   XRenderPictFormat *fmt;
+   
+   XGetWindowAttributes(_ecore_x_disp, win, &att);
+   fmt = XRenderFindVisualFormat(_ecore_x_disp, att.visual);
+   if (!fmt) return 0;
+   if ((fmt->type == PictTypeDirect) && (fmt->direct.alphaMask)) return 1;
+   return 0;
+#else
+   return 0;
+#endif   
+}
+
+/**
+ * Creates a new window.
+ * @param   parent The parent window to use.  If @p parent is @c 0, the root
+ *                 window of the default display is used.
+ * @param   x      X position.
+ * @param   y      Y position.
+ * @param   w      Width.
+ * @param   h      Height.
+ * @return  The new window handle.
+ * @ingroup Ecore_X_Window_Create_Group
+ */
+EAPI Ecore_X_Window
+ecore_x_window_manager_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
+{
+#ifdef ECORE_XRENDER   
+   return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 1, 0);
+#else
+   return 0;
+#endif   
+}
+
 /**
  * Creates a new window.
  * @param   parent The parent window to use.  If @p parent is @c 0, the root
@@ -1000,7 +1038,7 @@ EAPI Ecore_X_Window
 ecore_x_window_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
 #ifdef ECORE_XRENDER   
-   return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 0);
+   return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 0, 0);
 #else
    return 0;
 #endif   
@@ -1021,7 +1059,7 @@ EAPI Ecore_X_Window
 ecore_x_window_override_argb_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
 #ifdef ECORE_XRENDER   
-   return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 1);
+   return _ecore_x_window_argb_internal_new(parent, x, y, w, h, 1, 0);
 #else
    return 0;
 #endif   
