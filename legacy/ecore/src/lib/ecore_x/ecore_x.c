@@ -170,18 +170,19 @@ ecore_x_init(const char *name)
    if (!_ecore_x_disp) return 0;
    _ecore_x_error_handler_init();
    _ecore_x_event_handlers_num = LASTEvent;
-
+   
    if (XShapeQueryExtension(_ecore_x_disp, &shape_base, &shape_err_base))
      _ecore_x_event_shape_id = shape_base + ShapeNotify;
-   if (_ecore_x_event_shape_id >= LASTEvent)
+   if (_ecore_x_event_shape_id >= _ecore_x_event_handlers_num)
      _ecore_x_event_handlers_num = _ecore_x_event_shape_id + 1;
+   
 #ifdef ECORE_XSS
    if (XScreenSaverQueryExtension(_ecore_x_disp, &screensaver_base, &screensaver_err_base))
      _ecore_x_event_screensaver_id = screensaver_base + ScreenSaverNotify;
 #endif   
-   if (_ecore_x_event_screensaver_id >= LASTEvent)
+   if (_ecore_x_event_screensaver_id >= _ecore_x_event_handlers_num)
      _ecore_x_event_handlers_num = _ecore_x_event_screensaver_id + 1;
-
+   
    if (XSyncQueryExtension(_ecore_x_disp, &sync_base, &sync_err_base))
      {
 	int major, minor;
@@ -190,13 +191,13 @@ ecore_x_init(const char *name)
 	if (!XSyncInitialize(_ecore_x_disp, &major, &minor))
 	  _ecore_x_event_sync_id = 0;
      }
-   if (_ecore_x_event_sync_id + XSyncAlarmNotify >= LASTEvent)
+   if (_ecore_x_event_sync_id + XSyncAlarmNotify >= _ecore_x_event_handlers_num)
      _ecore_x_event_handlers_num = _ecore_x_event_sync_id + XSyncAlarmNotify + 1;
-
+   
 #ifdef ECORE_XRANDR
    if (XRRQueryExtension(_ecore_x_disp, &randr_base, &randr_err_base))
      _ecore_x_event_randr_id = randr_base + RRScreenChangeNotify;
-   if (_ecore_x_event_randr_id >= LASTEvent)
+   if (_ecore_x_event_randr_id >= _ecore_x_event_handlers_num)
      _ecore_x_event_handlers_num = _ecore_x_event_randr_id + 1;
 #endif
 
