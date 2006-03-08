@@ -988,7 +988,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
 {
    XSelectInput(_ecore_x_disp, win, 
 		PropertyChangeMask | 
-		ResizeRedirectMask |
+//		ResizeRedirectMask |
 		FocusChangeMask |
 		ColormapChangeMask |
 		VisibilityChangeMask |

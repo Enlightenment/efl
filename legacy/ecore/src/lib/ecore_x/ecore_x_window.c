@@ -35,7 +35,6 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
    if (parent == 0) parent = DefaultRootWindow(_ecore_x_disp);
    attr.backing_store         = NotUseful;
    attr.override_redirect     = False;
-   attr.colormap              = DefaultColormap(_ecore_x_disp, DefaultScreen(_ecore_x_disp));
    attr.border_pixel          = 0;
    attr.background_pixmap     = None;
    attr.bit_gravity            = NorthWestGravity;
@@ -96,11 +95,10 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
    if (parent == 0) parent = DefaultRootWindow(_ecore_x_disp);
    attr.backing_store         = NotUseful;
    attr.override_redirect     = True;
-   attr.colormap              = DefaultColormap(_ecore_x_disp, DefaultScreen(_ecore_x_disp));
    attr.border_pixel          = 0;
    attr.background_pixmap     = None;
-   attr.bit_gravity            = NorthWestGravity;
-   attr.win_gravity            = NorthWestGravity;
+   attr.bit_gravity           = NorthWestGravity;
+   attr.win_gravity           = NorthWestGravity;
    attr.save_under            = False;
    attr.do_not_propagate_mask = NoEventMask;
    attr.event_mask            = KeyPressMask |
@@ -132,8 +130,6 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 		       CWBitGravity |
 		       CWWinGravity,
 		       &attr);
-
-   if (parent == DefaultRootWindow(_ecore_x_disp)) ecore_x_window_defaults_set(win);
    return win;
 }
 
