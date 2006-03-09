@@ -449,6 +449,27 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
 		    bpl /
 		    ((evas_software_x11_x_output_buffer_depth(obr->xob) /
 		      8)) - obr->w, obr->w, obr->h, x, y, NULL);
+	/* FIXME: this is evil - but it makes ARGB targets look correct */
+	if ((buf->priv.destination_alpha) && (!obr->mxob) &&
+	    (evas_software_x11_x_output_buffer_depth(obr->xob) == 32))
+	  {
+	     int i;
+	     DATA32 a;
+	     
+	     for (i = 0; i < obr->h; i++)
+	       {
+		  s = ((DATA32 *)data) + ((bpl * i) / sizeof(DATA32));
+		  e = s + obr->w;
+		  while (s < e)
+		    {
+		       a = A_VAL(s) + 1;
+		       R_VAL(s) = (R_VAL(s) * a) >> 8;
+		       G_VAL(s) = (G_VAL(s) * a) >> 8;
+		       B_VAL(s) = (B_VAL(s) * a) >> 8;
+		       s++;
+		    }
+	       }
+	  }
      }
    if (obr->mxob)
      {
@@ -461,7 +482,7 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
 
 void
 evas_software_x11_outbuf_reconfigure(Outbuf * buf, int w, int h, int rot,
-				Outbuf_Depth depth)
+				     Outbuf_Depth depth)
 {
    if ((w == buf->w) &&
        (h == buf->h) &&

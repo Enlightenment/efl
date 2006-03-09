@@ -216,6 +216,27 @@ eng_setup(Evas *e, void *in)
 		   info->info.mask,
 		   info->info.shape_dither,
 		   info->info.destination_alpha);
+   else
+     {
+	re = e->engine.data.output;
+	evas_software_x11_outbuf_free(re->ob);
+	re->ob = evas_software_x11_outbuf_setup_x(e->output.w,
+						  e->output.h,
+						  info->info.rotation,
+						  OUTBUF_DEPTH_INHERIT,
+						  info->info.display,
+						  info->info.drawable,
+						  info->info.visual,
+						  info->info.colormap,
+						  info->info.depth,
+						  evas_software_x11_outbuf_perf_restore_x(info->info.display, info->info.drawable, info->info.visual, info->info.colormap, info->info.depth),
+						  info->info.alloc_grayscale,
+						  info->info.alloc_colors_max,
+						  info->info.mask,
+						  info->info.shape_dither,
+						  info->info.destination_alpha);
+	evas_software_x11_outbuf_debug_set(re->ob, info->info.debug);
+     }
    if (!e->engine.data.output) return;
    if (!e->engine.data.context)
      e->engine.data.context =
