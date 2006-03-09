@@ -1364,18 +1364,65 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 {
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha)))
      return;
-   if (!strcmp(ee->driver, "xrender_x11"))
+   if (!strcmp(ee->driver, "software_x11"))
+     {
+#ifdef BUILD_ECORE_X
+	Evas_Engine_Info_Software_X11 *einfo;
+	
+	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
+	if (einfo)
+	  {
+	     XWindowAttributes att;
+	     
+	     ee->shaped = 0;
+	     ee->alpha = alpha;
+	     ecore_x_window_del(ee->engine.x.win);
+	     ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	     if (ee->alpha)
+	       {
+		  if (ee->prop.override)
+		    ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+		  else
+		    ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+		  einfo->info.destination_alpha = 1;
+	       }
+	     else
+	       {
+		  if (ee->prop.override)
+		    ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+		  else
+		    ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+		  einfo->info.destination_alpha = 0;
+	       }
+	     XGetWindowAttributes(ecore_x_display_get(), ee->engine.x.win, &att);
+	     einfo->info.visual = att.visual;
+	     einfo->info.colormap = att.colormap;
+	     einfo->info.depth = att.depth;
+	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     ee->engine.x.mask = 0;
+	     einfo->info.mask = 0;
+	     einfo->info.drawable = ee->engine.x.win;
+	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	     ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
+	     ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	     if (ee->visible) ecore_x_window_show(ee->engine.x.win);
+	     if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
+	  }
+#endif	
+     }
+   else if (!strcmp(ee->driver, "xrender_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_XRENDER
 	Evas_Engine_Info_XRender_X11 *einfo;
 	
-	ee->shaped = 0;
-	ee->alpha = alpha;
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
 	if (einfo)
 	  {
 	     XWindowAttributes att;
 	     
+	     ee->shaped = 0;
+	     ee->alpha = alpha;
 	     ecore_x_window_del(ee->engine.x.win);
 	     ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 	     if (ee->alpha)
@@ -1683,6 +1730,7 @@ _ecore_evas_x_ignore_events_set(Ecore_Evas *ee, int ignore)
      }
 }
 
+/*
 static void
 _ecore_evas_x_reinit_win(Ecore_Evas *ee)
 {
@@ -1726,6 +1774,7 @@ _ecore_evas_x_reinit_win(Ecore_Evas *ee)
 #endif	
      }
 }
+*/
 
 static void
 _ecore_evas_x_override_set(Ecore_Evas *ee, int on)
@@ -1733,48 +1782,7 @@ _ecore_evas_x_override_set(Ecore_Evas *ee, int on)
    if (((ee->prop.override) && (on)) ||
        ((!ee->prop.override) && (!on))) return;
    ecore_x_window_hide(ee->engine.x.win);
-   ecore_x_window_del(ee->engine.x.win);
-   ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
-   if (on)
-     {
-	if (ee->alpha)
-	  ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	else
-	  ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-     }
-   else
-     {
-	Ecore_X_Window_State_Hint hint;
-	
-	if (ee->prop.withdrawn)
-	  hint = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
-	else
-	  hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-	
-#ifdef BUILD_ECORE_EVAS_GL 
-	if (!strcmp(ee->driver, "gl_x11"))
-	  ee->engine.x.win = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h, 0);
-	else
-#endif	  
-	if (ee->alpha)
-	  ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	else
-	  ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	ecore_x_icccm_title_set(ee->engine.x.win, ee->prop.title);
-	ecore_x_netwm_name_set(ee->engine.x.win, ee->prop.title);
-	ecore_x_icccm_name_class_set(ee->engine.x.win, ee->prop.name, ee->prop.clas);
-	if (ee->func.fn_delete_request)
-	  ecore_x_icccm_protocol_set(ee->engine.x.win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
-	_ecore_evas_x_size_pos_hints_update(ee);
-	ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
-	_ecore_evas_x_layer_update(ee);
-	ecore_x_icccm_hints_set(ee->engine.x.win, 1 /* accepts_focus */,
-				hint /* initial_state */, 0 /* icon_pixmap */, 0 /* icon_mask */,
-				0 /* icon_window */, 0 /* window_group */, 0 /* is_urgent */);
-	_ecore_evas_x_state_update(ee);
-     }
-   _ecore_evas_x_reinit_win(ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   ecore_x_window_override_set(ee->engine.x.win, on);
    if (ee->visible) ecore_x_window_show(ee->engine.x.win);
    if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
    ee->prop.override = on;
@@ -1786,22 +1794,12 @@ _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
    if (((ee->prop.fullscreen) && (on)) ||
        ((!ee->prop.fullscreen) && (!on))) return;
    ecore_x_window_hide(ee->engine.x.win);
-   ecore_x_window_del(ee->engine.x.win);
-   ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   ecore_x_window_override_set(ee->engine.x.win, on);
    if (on)
      {
 	int rw, rh;
 	
 	ecore_x_window_size_get(0, &rw, &rh);
-#ifdef BUILD_ECORE_EVAS_GL 
-	if (!strcmp(ee->driver, "gl_x11"))
-	  ee->engine.x.win = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, 0, 0, rw, rh, 1);
-	else
-#endif	  
-	if (ee->alpha)
-	  ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, 0, 0, rw, rh);
-	else
-	  ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, rw, rh);
 	ecore_x_window_raise(ee->engine.x.win);
 	ecore_x_window_show(ee->engine.x.win);
 	ecore_x_window_focus(ee->engine.x.win);
@@ -1820,18 +1818,8 @@ _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 	ee->y = ee->engine.x.py;
 	ee->w = ee->engine.x.pw;
 	ee->h = ee->engine.x.ph;
-#ifdef BUILD_ECORE_EVAS_GL 
-	if (!strcmp(ee->driver, "gl_x11"))
-	  ee->engine.x.win = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h, 0);
-	else
-#endif	  
-	if (ee->alpha)
-	  ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	else
-	  ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	ecore_x_window_move_resize(ee->engine.x.win, ee->engine.x.px, ee->engine.x.py, ee->engine.x.pw, ee->engine.x.ph);
      }
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    if (ee->should_be_visible)
      {
 	ecore_x_window_show(ee->engine.x.win);
@@ -1867,7 +1855,6 @@ _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 	ee->expecting_resize.h = 0;
      }
  */
-   _ecore_evas_x_reinit_win(ee);
    ee->prop.fullscreen = on;
    if (ee->func.fn_resize) ee->func.fn_resize(ee);	
 }
