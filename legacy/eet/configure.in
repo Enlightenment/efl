@@ -163,6 +163,7 @@ eet.oe
 eet-native.oe
 eet.bb
 eetXnative.bb
+debian/changelog
 ],[
 chmod +x eet-config
 ])
