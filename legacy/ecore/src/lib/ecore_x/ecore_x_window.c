@@ -886,6 +886,15 @@ ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
    XClearArea(_ecore_x_disp, win, x, y, w, h, True);
 }
 
+EAPI void
+ecore_x_window_override_set(Ecore_X_Window win, int override)
+{
+   XSetWindowAttributes att;
+   
+   att.override_redirect = override;
+   XChangeWindowAttributes(_ecore_x_disp, win, CWOverrideRedirect, &att);
+}
+
 #ifdef ECORE_XRENDER   
 static Ecore_X_Window
 _ecore_x_window_argb_internal_new(Ecore_X_Window parent, int x, int y, int w, int h, int override, int saveunder)

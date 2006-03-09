@@ -1068,6 +1068,7 @@ EAPI void             ecore_x_window_area_clear(Ecore_X_Window win,
 						int x, int y, int w, int h);
 EAPI void             ecore_x_window_area_expose(Ecore_X_Window win,
 						 int x, int y, int w, int h);
+EAPI void             ecore_x_window_override_set(Ecore_X_Window win, int override);
        
 EAPI void             ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
 						     unsigned int *val, unsigned int num);
