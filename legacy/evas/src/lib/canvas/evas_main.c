@@ -690,6 +690,9 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
    methods = evas_list_append(methods, strdup("software_xcb"));
 #endif
+#ifdef BUILD_ENGINE_XRENDER_XCB
+   methods = evas_list_append(methods, strdup("xrender_xcb"));
+#endif
 #ifdef BUILD_ENGINE_GL_X11
    methods = evas_list_append(methods, strdup("gl_x11"));
 #endif

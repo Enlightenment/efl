@@ -83,7 +83,7 @@ X_Output_Buffer *
 evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data)
 {
    X_Output_Buffer *xob;
-
+char *tmp = (char *)malloc (2);
    xob = calloc(1, sizeof(X_Output_Buffer));
    if (!xob) return NULL;
 

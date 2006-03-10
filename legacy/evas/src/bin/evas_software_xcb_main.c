@@ -69,8 +69,8 @@ main(int argc, char **argv)
 {
    int              pause_me = 0;
    XCBConnection   *conn;
-   XCBDRAWABLE      win;
    XCBSCREEN       *screen;
+   XCBDRAWABLE      win;
    XCBGenericEvent *e;
    CARD32           mask;
    CARD32           value[6];

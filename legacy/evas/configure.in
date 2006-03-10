@@ -5,6 +5,7 @@ AC_INIT(configure.in)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(evas, 0.9.9.023)
 AM_CONFIG_HEADER(config.h)
 
@@ -169,7 +170,6 @@ if test "x$have_evas_software_x11" = "xyes"; then
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
     [
-      AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, true)
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_X11, 1, [Software X11 Rendering Backend])
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
@@ -177,14 +177,12 @@ if test "x$have_evas_software_x11" = "xyes"; then
       ENGINE_SOFTWARE_X11_PRG="evas_software_x11_test evas_software_x11_perf_test evas_software_x11_perf_load"
     ],
     [
-      AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, false)
       AC_MSG_RESULT(disabling software X11 engine)
       have_evas_software_x11="no"
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, false)
 fi
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, test "x$have_evas_software_x11" = "yes")
 
 #######################################
 ## Check if we should build the software_xcb engine
@@ -223,17 +221,14 @@ if test "x$have_evas_software_xcb" = "xyes"; then
   PKG_CHECK_MODULES(
     XCB,
     xcb xcb-image xcb-icccm,
-    [AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, true)
-     AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
+    [AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
      xcb_cflags=$XCB_CFLAGS
      xcb_libs=$XCB_LIBS
      ENGINE_SOFTWARE_XCB_PRG="evas_software_xcb_test evas_software_xcb_perf_test evas_software_xcb_perf_load"],
-    [AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, false)
-     AC_MSG_RESULT(disabling software XCB engine)
+    [AC_MSG_RESULT(disabling software XCB engine)
      have_evas_software_xcb="no"])
-else
-  AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, false)
 fi
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, test "x$have_evas_software_xcb" = "xyes")
 
 #######################################
 ## Check if we should build the directfb engine
@@ -263,18 +258,15 @@ AC_ARG_ENABLE(directfb, [  --enable-directfb               enable the DirectFB r
 if test "x$have_evas_directfb" = "xyes"; then
   PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
     [
-      AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, true)
       AC_DEFINE(BUILD_ENGINE_DIRECTFB, 1, [DirectFB Rendering Backend])
       ENGINE_DIRECTFB_PRG="evas_directfb_test evas_directfb_window"
     ], [
-      AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, false)
       AC_MSG_RESULT(disabling directfb engine)
       have_evas_directfb="no"
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, false)
 fi
+AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, test "x$have_evas_directfb" = "xyes")
 
 #######################################
 ## Check if we should build the fb engine
@@ -552,7 +544,6 @@ if test "x$have_evas_xrender_x11" = "xyes"; then
     [
       AC_CHECK_HEADER(X11/extensions/Xrender.h,
         [
-          AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, true)
           AC_DEFINE(BUILD_ENGINE_XRENDER_X11, 1, [XRender X11 Rendering Backend])
           x_dir=${x_dir:-/usr/X11R6}
           x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
@@ -560,21 +551,64 @@ if test "x$have_evas_xrender_x11" = "xyes"; then
           ENGINE_XRENDER_X11_PRG="evas_xrender_x11_test"
 	],
 	[
-          AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, false)
           AC_MSG_RESULT(disabling xrender X11 engine)
           have_evas_xrender_x11="no"
 	]
       )
     ],
     [
-      AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, false)
       AC_MSG_RESULT(disabling xrender X11 engine)
       have_evas_xrender_x11="no"
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, false)
 fi
+AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, test "x$have_evas_xrender_x11" = "xyes")
+
+#######################################
+## Check if we should build the xrender_xcb engine
+have_evas_xrender_xcb="no";
+ENGINE_XRENDER_XCB_PRG="";
+
+## Automatic check...
+PKG_CHECK_MODULES(
+  XCB,
+  xcb xcb-image xcb-icccm,
+  [AC_CHECK_HEADER(
+      X11/X.h,
+      [have_evas_xrender_xcb="yes"],
+      [have_evas_xrender_xcb="no"])],
+  [ have_evas_xrender_xcb="no" ])
+
+## manually disable xcb engine by default - not auto detected.
+have_evas_xrender_xcb="no"
+## Manual override
+AC_MSG_CHECKING(whether xrender xcb backend is to be built)
+AC_ARG_ENABLE(xrender-xcb, [  --enable-xrender-xcb           enable the Xrender XCB rendering backend], [
+	   if test x"$enableval" = x"yes" ; then
+	     AC_MSG_RESULT(yes)
+	     have_evas_xrender_xcb="yes"
+	   else
+	     AC_MSG_RESULT(no)
+	     have_evas_xrender_xcb="no"
+	   fi
+        ], [
+	   AC_MSG_RESULT($have_evas_xrender_xcb)
+	]
+)
+if test "x$have_evas_xrender_xcb" = "xyes"; then
+  AC_PATH_XTRA
+
+  PKG_CHECK_MODULES(
+    XCB,
+    xcb xcb-image xcb-icccm,
+    [AC_DEFINE(BUILD_ENGINE_XRENDER_XCB, 1, [Xrender XCB Rendering Backend])
+     xcb_cflags=$XCB_CFLAGS
+     xcb_libs=$XCB_LIBS
+     ENGINE_XRENDER_XCB_PRG="evas_xrender_xcb_test"],
+    [AC_MSG_RESULT(disabling xrender XCB engine)
+     have_evas_xrender_xcb="no"])
+fi
+AM_CONDITIONAL(BUILD_ENGINE_XRENDER_XCB, test "x$have_evas_xrender_xcb" = "xyes")
 
 
 #####################################################################
@@ -1616,6 +1650,7 @@ AC_SUBST(ENGINE_SOFTWARE_QTOPIA_PRG)
 AC_SUBST(ENGINE_GL_X11_PRG)
 AC_SUBST(ENGINE_CAIRO_X11_PRG)
 AC_SUBST(ENGINE_XRENDER_X11_PRG)
+AC_SUBST(ENGINE_XRENDER_XCB_PRG)
 
 AC_SUBST(altivec_cflags)
 
@@ -1651,6 +1686,7 @@ src/modules/engines/gl_x11/Makefile
 src/modules/engines/cairo_common/Makefile
 src/modules/engines/cairo_x11/Makefile
 src/modules/engines/xrender_x11/Makefile
+src/modules/engines/xrender_xcb/Makefile
 src/modules/loaders/Makefile
 src/modules/loaders/edb/Makefile
 src/modules/loaders/eet/Makefile
@@ -1698,6 +1734,7 @@ echo "  DirectFB................: $have_evas_directfb"
 echo "  OpenGL X11..............: $have_evas_gl_x11"
 echo "  Cairo X11...............: $have_evas_cairo_x11"
 echo "  XRender X11.............: $have_evas_xrender_x11"
+echo "  XRender Xcb.............: $have_evas_xrender_xcb"
 # FIXME: opengl engine needs to be fixed and tested lots for all drivers
 # FIXME: xrender engine to be written
 echo

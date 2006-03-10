@@ -23,7 +23,8 @@ bin_PROGRAMS = \
 @ENGINE_SOFTWARE_QTOPIA_PRG@ \
 @ENGINE_GL_X11_PRG@ \
 @ENGINE_CAIRO_X11_PRG@ \
-@ENGINE_XRENDER_X11_PRG@
+@ENGINE_XRENDER_X11_PRG@ \
+@ENGINE_XRENDER_XCB_PRG@
 
 EXTRA_PROGRAMS = \
 evas_software_x11_test \
@@ -39,7 +40,8 @@ evas_buffer_test \
 evas_software_qtopia_test \
 evas_gl_x11_test \
 evas_cairo_x11_test \
-evas_xrender_x11_test
+evas_xrender_x11_test \
+evas_xrender_xcb_test
 
 SUBDIRS = evas_software_win32
 
@@ -118,6 +120,11 @@ evas_xrender_x11_test_SOURCES = evas_test_main.h evas_test_main.c evas_xrender_x
 evas_xrender_x11_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @x_libs@
 evas_xrender_x11_test_CFLAGS = $(CFLAGS) @x_cflags@
 evas_xrender_x11_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+
+evas_xrender_xcb_test_SOURCES = evas_test_main.h evas_test_main.c evas_xrender_xcb_main.c
+evas_xrender_xcb_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @XCB_LIBS@
+evas_xrender_xcb_test_CFLAGS = $(CFLAGS) @XCB_CFLAGS@
+evas_xrender_xcb_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
 
 EXTRA_DIST = evas_software_qtopia_main.h evas_software_qtopia_main.cpp
 # moc_evas_software_qtopia_main.cpp

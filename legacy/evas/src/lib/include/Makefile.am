@@ -13,6 +13,7 @@ evas_engine_api_software_win32_gdi.h \
 evas_engine_api_software_x11.h \
 evas_engine_api_software_xcb.h \
 evas_engine_api_xrender_x11.h \
+evas_engine_api_xrender_xcb.h \
 evas_gl_common.h \
 evas_macros.h \
 evas_mmx.h \

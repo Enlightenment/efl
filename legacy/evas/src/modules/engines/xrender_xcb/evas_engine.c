@@ -1,7 +1,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
-#include "Evas_Engine_XRender_X11.h"
+#include "Evas_Engine_XRender_Xcb.h"
 
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
@@ -12,27 +12,30 @@ typedef struct _Render_Engine_Update Render_Engine_Update;
 
 struct _Render_Engine_Update
 {
-   int x, y, w, h;
-   Xrender_Surface *surface;
+   int                x;
+   int                y;
+   int                w;
+   int                h;
+   XCBrender_Surface *surface;
 };
 
 struct _Render_Engine
 {
-   Display              *disp;
-   Visual               *vis;
-   Drawable              win;
-   Pixmap                mask;
+   XCBConnection        *conn;
+   XCBVISUALID           vis;
+   XCBDRAWABLE           win;
+   XCBPIXMAP             mask;
    unsigned char         destination_alpha : 1;
-   
-   Ximage_Info          *xinf;
-   Xrender_Surface      *output;
-   Xrender_Surface      *mask_output;
-   
+
+   XCBimage_Info        *xcbinf;
+   XCBrender_Surface    *output;
+   XCBrender_Surface    *mask_output;
+
    Tilebuf              *tb;
    Tilebuf_Rect         *rects;
    Evas_Object_List     *cur_rect;
    int                   end : 1;
-   
+
    Evas_List            *updates;
 };
 
@@ -84,12 +87,13 @@ static void eng_font_draw(void *data, void *context, void *surface, void *font, 
 /* internal engine routines */
 
 /* engine api this module provides */
+
 static void *
 eng_info(Evas *e)
 {
-   Evas_Engine_Info_XRender_X11 *info;
+   Evas_Engine_Info_XRender_Xcb *info;
 
-   info = calloc(1, sizeof(Evas_Engine_Info_XRender_X11));
+   info = calloc(1, sizeof(Evas_Engine_Info_XRender_Xcb));
    if (!info) return NULL;
    info->magic.magic = rand();
    return info;
@@ -99,19 +103,18 @@ eng_info(Evas *e)
 static void
 eng_info_free(Evas *e, void *info)
 {
-   Evas_Engine_Info_XRender_X11 *in;
+   Evas_Engine_Info_XRender_Xcb *in;
 
-   in = (Evas_Engine_Info_XRender_X11 *)info;
+   in = (Evas_Engine_Info_XRender_Xcb *)info;
    free(in);
 }
-
 static void
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
-   Evas_Engine_Info_XRender_X11 *info;
+   Evas_Engine_Info_XRender_Xcb *info;
 
-   info = (Evas_Engine_Info_XRender_X11 *)in;
+   info = (Evas_Engine_Info_XRender_Xcb *)in;
    if (!e->engine.data.output)
      {
 	re = calloc(1, sizeof(Render_Engine));
@@ -134,28 +137,30 @@ eng_setup(Evas *e, void *in)
      }
    re = e->engine.data.output;
    if (!re) return;
-   
+
    if (!e->engine.data.context) e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
-   
-   re->disp = info->info.display;
+
+   re->conn = info->info.conn;
    re->vis = info->info.visual;
    re->win = info->info.drawable;
    re->mask = info->info.mask;
    re->destination_alpha = info->info.destination_alpha;
-   
-   if (re->xinf) _xr_image_info_free(re->xinf);
-   re->xinf = _xr_image_info_get(re->disp, re->win, re->vis);
+
+   if (re->xcbinf) _xr_image_info_free(re->xcbinf);
+   re->xcbinf = _xr_image_info_get(re->conn, re->win, re->vis);
 
    if (re->output) _xr_render_surface_free(re->output);
-   if (re->mask_output) _xr_render_surface_free(re->mask_output);
-   if (!re->mask)
-     re->output = _xr_render_surface_adopt(re->xinf, re->win, e->output.w, e->output.h, re->destination_alpha);
-   else
-     re->output = _xr_render_surface_adopt(re->xinf, re->win, e->output.w, e->output.h, 0);
-   if (re->mask)
-     re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->mask, 
-						       e->output.w, e->output.h,
-						       re->xinf->fmt1, 1);
+   re->output = _xr_render_surface_adopt(re->xcbinf, re->win, e->output.w, e->output.h, 0);
+   if (re->mask.xid)
+     {
+        XCBDRAWABLE draw;
+
+	if (re->mask_output) _xr_render_surface_free(re->mask_output);
+        draw.pixmap = re->mask;
+	re->mask_output = _xr_render_surface_format_adopt(re->xcbinf, draw,
+							  e->output.w, e->output.h,
+							  re->xcbinf->fmt1, 1);
+     }
    else
      re->mask_output = NULL;
 }
@@ -171,7 +176,7 @@ eng_output_free(void *data)
    while (re->updates)
      {
 	Render_Engine_Update *reu;
-	
+
 	reu = re->updates->data;
 	re->updates = evas_list_remove_list(re->updates, re->updates);
 	_xr_render_surface_free(reu->surface);
@@ -181,7 +186,7 @@ eng_output_free(void *data)
    if (re->output) _xr_render_surface_free(re->output);
    if (re->mask_output) _xr_render_surface_free(re->mask_output);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
-   if (re->xinf) _xr_image_info_free(re->xinf);
+   if (re->xcbinf) _xr_image_info_free(re->xcbinf);
    free(re);
 }
 
@@ -196,13 +201,16 @@ eng_output_resize(void *data, int w, int h)
 	if ((re->output->w == w) && (re->output->h ==h)) return;
 	if (re->output) _xr_render_surface_free(re->output);
      }
-   re->output = _xr_render_surface_adopt(re->xinf, re->win, w, h, 0);
+   re->output = _xr_render_surface_adopt(re->xcbinf, re->win, w, h, 0);
    if (re->mask_output)
      {
+        XCBDRAWABLE draw;
+
 	if (re->mask_output) _xr_render_surface_free(re->mask_output);
-	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->mask, 
-							  w, h, 
-							  re->xinf->fmt1, 1);
+        draw.pixmap = re->mask;
+	re->mask_output = _xr_render_surface_format_adopt(re->xcbinf, draw,
+							  w, h,
+							  re->xcbinf->fmt1, 1);
      }
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
@@ -276,15 +284,15 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
    *x = ux; *y = uy; *w = uw; *h = uh;
    *cx = 0; *cy = 0; *cw = uw; *ch = uh;
-   if ((re->destination_alpha) || (re->mask))
+   if ((re->destination_alpha) || (re->mask.xid))
      {
-	Xrender_Surface *surface;
-	
-	surface = _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt32, 1);
+	XCBrender_Surface *surface;
+
+	surface = _xr_render_surface_new(re->xcbinf, uw, uh, re->xcbinf->fmt32, 1);
 	_xr_render_surface_solid_rectangle_set(surface, 0, 0, 0, 0, 0, 0, uw, uh);
 	return surface;
      }
-   return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt24, 0);
+   return _xr_render_surface_new(re->xcbinf, uw, uh, re->xcbinf->fmt24, 0);
 }
 
 static void
@@ -292,7 +300,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 {
    Render_Engine *re;
    Render_Engine_Update *reu;
-   
+
    re = (Render_Engine *)data;
    reu = malloc(sizeof(Render_Engine_Update));
    if (!reu) return;
@@ -300,7 +308,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
    reu->y = y;
    reu->w = w;
    reu->h = h;
-   reu->surface = (Xrender_Surface *)surface;
+   reu->surface = (XCBrender_Surface *)surface;
    re->updates = evas_list_append(re->updates, reu);
 }
 
@@ -313,16 +321,16 @@ eng_output_flush(void *data)
    while (re->updates)
      {
 	Render_Engine_Update *reu;
-	
+
 	reu = re->updates->data;
 	re->updates = evas_list_remove_list(re->updates, re->updates);
 	if (re->mask_output)
 	  {
-	     Xrender_Surface *tsurf;
-	     
+	     XCBrender_Surface *tsurf;
+
 	     _xr_render_surface_copy(reu->surface, re->output, 0, 0,
 				     reu->x, reu->y, reu->w, reu->h);
-	     tsurf = _xr_render_surface_new(re->xinf, reu->w, reu->h, re->xinf->fmt1, 1);
+	     tsurf = _xr_render_surface_new(re->xcbinf, reu->w, reu->h, re->xcbinf->fmt1, 1);
 	     if (tsurf)
 	       {
 		  _xr_render_surface_copy(reu->surface, tsurf, 0, 0,
@@ -340,14 +348,14 @@ eng_output_flush(void *data)
 	_xr_render_surface_free(reu->surface);
 	free(reu);
      }
-   XSync(re->disp, False);
-   _xr_image_info_pool_flush(re->xinf, 0, 0);
+   XCBSync(re->conn, 0);
+   _xr_image_info_pool_flush(re->xcbinf, 0, 0);
 }
 
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
-   _xr_render_surface_rectangle_draw((Xrender_Surface *)surface,
+   _xr_render_surface_rectangle_draw((XCBrender_Surface *)surface,
 				     (RGBA_Draw_Context *)context,
 				     x, y, w, h);
 }
@@ -355,13 +363,13 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
 static void
 eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
-   _xr_render_surface_line_draw((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, x1, y1, x2, y2);
+   _xr_render_surface_line_draw((XCBrender_Surface *)surface, (RGBA_Draw_Context *)context, x1, y1, x2, y2);
 }
 
 static void
 eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
-   _xre_poly_draw((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, (RGBA_Polygon_Point *)polygon);
+   _xre_poly_draw((XCBrender_Surface *)surface, (RGBA_Draw_Context *)context, (RGBA_Polygon_Point *)polygon);
 }
 
 static void *
@@ -370,7 +378,7 @@ eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, 
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return _xre_gradient_color_add(re->xinf, (XR_Gradient *)gradient, r, g, b, a, distance);
+   return _xre_gradient_color_add(re->xcbinf, (XR_Gradient *)gradient, r, g, b, a, distance);
 }
 
 static void *
@@ -424,7 +432,7 @@ eng_gradient_map(void *data, void *context, void *gradient, int spread)
 static void
 eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
 {
-   _xre_gradient_draw((Xrender_Surface *)surface,
+   _xre_gradient_draw((XCBrender_Surface *)surface,
 		      (RGBA_Draw_Context *)context,
 		      (XR_Gradient *)gradient, x, y, w, h, angle, spread);
 }
@@ -434,10 +442,10 @@ eng_image_load(void *data, char *file, char *key, int *error)
 {
    Render_Engine *re;
    XR_Image *im;
-   
+
    re = (Render_Engine *)data;
    *error = 0;
-   im = _xre_image_load(re->xinf, file, key);
+   im = _xre_image_load(re->xcbinf, file, key);
    return im;
 }
 
@@ -446,9 +454,9 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
    XR_Image *im;
-   
+
    re = (Render_Engine *)data;
-   im = _xre_image_new_from_data(re->xinf, w, h, image_data);
+   im = _xre_image_new_from_data(re->xcbinf, w, h, image_data);
    return im;
 }
 
@@ -457,9 +465,9 @@ eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
    XR_Image *im;
-   
+
    re = (Render_Engine *)data;
-   im = _xre_image_new_from_copied_data(re->xinf, w, h, image_data);
+   im = _xre_image_new_from_copied_data(re->xcbinf, w, h, image_data);
    return im;
 }
 
@@ -525,7 +533,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 	if (((XR_Image *)image)->references > 1)
 	  {
 	     XR_Image *old_image;
-	     
+
 	     old_image = (XR_Image *)image;
 	     image = _xre_image_copy((XR_Image *)old_image);
 	     if (image)
@@ -557,7 +565,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	  {
 	     if (!image)
 	       {
-		  image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data);
+		  image = _xre_image_new_from_data(old_image->xcbinf, old_image->w, old_image->h, image_data);
 		  if (image)
 		    {
 		       ((XR_Image *)image)->alpha = old_image->alpha;
@@ -584,12 +592,12 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 {
    if (!image) return image;
    if (((((XR_Image *)image)->alpha) && (has_alpha)) ||
-       ((!((XR_Image *)image)->alpha) && (!has_alpha))) 
+       ((!((XR_Image *)image)->alpha) && (!has_alpha)))
      return image;
    if (((XR_Image *)image)->references > 1)
      {
 	XR_Image *old_image;
-	
+
 	old_image = (XR_Image *)image;
 	image = _xre_image_copy((XR_Image *)old_image);
 	if (image)
@@ -620,7 +628,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    _xre_image_surface_gen((XR_Image *)image);
    if (((XR_Image *)image)->surface)
      _xr_render_surface_composite(((XR_Image *)image)->surface,
-				  (Xrender_Surface *)surface,
+				  (XCBrender_Surface *)surface,
 				  (RGBA_Draw_Context *)context,
 				  src_x, src_y, src_w, src_h,
 				  dst_x, dst_y, dst_w, dst_h,
@@ -645,7 +653,7 @@ static void
 eng_image_cache_flush(void *data)
 {
    int tmp_size;
-   
+
    pfunc.image_cache_flush(data);
    _xre_image_cache_set(0);
    _xre_image_cache_set(tmp_size);
@@ -668,23 +676,23 @@ static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
      {
 	static RGBA_Image *im = NULL;
-	
+
 	if (!im)
 	  {
 	     im = evas_common_image_new();
 	     im->image = evas_common_image_surface_new(im);
 	     im->image->no_free = 1;
 	  }
-	im->image->w = ((Xrender_Surface *)surface)->w;
-	im->image->h = ((Xrender_Surface *)surface)->h;
-	_xr_render_surface_clips_set((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, x, y, w, h);
+	im->image->w = ((XCBrender_Surface *)surface)->w;
+	im->image->h = ((XCBrender_Surface *)surface)->h;
+	_xr_render_surface_clips_set((XCBrender_Surface *)surface, (RGBA_Draw_Context *)context, x, y, w, h);
 	im->image->data = surface;
 	evas_common_draw_context_font_ext_set(context,
-					      re->xinf,
+					      re->xcbinf,
 					      _xre_font_surface_new,
 					      _xre_font_surface_free,
 					      _xre_font_surface_draw);
@@ -762,11 +770,10 @@ module_close(void)
 {
 }
 
-Evas_Module_Api evas_modapi = 
+Evas_Module_Api evas_modapi =
 {
-   EVAS_MODULE_API_VERSION, 
+   EVAS_MODULE_API_VERSION,
      EVAS_MODULE_TYPE_ENGINE,
-     "xrender_x11",
+     "xrender_xcb",
      "none"
 };
-

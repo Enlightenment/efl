@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+ACLOCAL_AMFLAGS = -I m4
+
 SUBDIRS = data src proj
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
@@ -29,6 +31,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     debian/libevas0-dev.files \
 	     debian/libevas0.files \
 	     debian/rules
-	     
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = evas.pc
