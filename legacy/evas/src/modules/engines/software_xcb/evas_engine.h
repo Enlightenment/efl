@@ -57,6 +57,7 @@ struct _Outbuf
       Evas_List   *pending_writes;
 
       int          mask_dither : 1;
+      int          destination_alpha : 1;
 
       int          debug : 1;
    } priv;
@@ -162,7 +163,8 @@ Outbuf      *evas_software_xcb_outbuf_setup_x                (int            w,
 							      int            grayscale,
 							      int            max_colors,
 							      XCBDRAWABLE    mask,
-							      int            shape_dither);
+							      int            shape_dither,
+							      int            destination_alpha);
 
 char        *evas_software_xcb_outbuf_perf_serialize_x       (Outbuf_Perf *perf);
 void         evas_software_xcb_outbuf_perf_deserialize_x     (Outbuf_Perf *perf,

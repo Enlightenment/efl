@@ -135,7 +135,7 @@ x_color_alloc_gray(int            ng,
 				 XCBAllocColor(conn, cmap,
 					       xcl.red, xcl.green, xcl.blue),
 				 0);
-	/* TODO: XAllocColor tries to approach the color */
+	/* FIXME: XAllocColor tries to approach the color */
 	/* in case the allocation fails */
 	/* XCB does not that (i think). It should be done */
 	/* So if rep == NULL, the other following tests */

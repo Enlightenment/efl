@@ -100,7 +100,7 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 
    if (try_shm > 0)
      {
-       XCBQueryExtensionRep *rep;
+       const XCBQueryExtensionRep *rep;
 
        rep = XCBGetExtensionData(c, &XCBShmId);
        if (rep && rep->present)

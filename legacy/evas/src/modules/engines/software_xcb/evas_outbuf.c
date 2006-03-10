@@ -48,7 +48,8 @@ evas_software_xcb_outbuf_setup_x(int            w,
 				 int            grayscale,
 				 int            max_colors,
 				 XCBDRAWABLE    mask,
-				 int            shape_dither)
+				 int            shape_dither,
+				 int            destination_alpha)
 {
    Outbuf *buf;
 
@@ -70,6 +71,7 @@ evas_software_xcb_outbuf_setup_x(int            w,
    buf->priv.x.depth = x_depth;
 
    buf->priv.mask_dither = shape_dither;
+   buf->priv.destination_alpha = destination_alpha;
 
    {
       Gfx_Func_Convert    conv_func;
@@ -337,7 +339,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 							      use_shm,
 							      NULL);
      }
-   if (buf->priv.x.mask.pixmap.xid)
+   if ((buf->priv.x.mask.pixmap.xid) || (buf->priv.destination_alpha))
      {
 	im->flags |= RGBA_IMAGE_HAS_ALPHA;
 	/* FIXME: faster memset! */
@@ -496,12 +498,35 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
      }
    else
      {
+        DATA32 *s, *e;
+
 	if (data != src_data)
 	  conv_func(src_data, data,
 		    0,
 		    bpl /
 		    ((evas_software_xcb_x_output_buffer_depth(obr->xcbob) /
 		      8)) - obr->w, obr->w, obr->h, x, y, NULL);
+       /* FIXME: this is evil - but it makes ARGB targets look correct */
+       if ((buf->priv.destination_alpha) && (!obr->mxcbob) &&
+           (evas_software_xcb_x_output_buffer_depth(obr->xcbob) == 32))
+         {
+            int i;
+            DATA32 a;
+
+            for (i = 0; i < obr->h; i++)
+              {
+                 s = ((DATA32 *)data) + ((bpl * i) / sizeof(DATA32));
+                 e = s + obr->w;
+                 while (s < e)
+                   {
+                      a = A_VAL(s) + 1;
+                      R_VAL(s) = (R_VAL(s) * a) >> 8;
+                      G_VAL(s) = (G_VAL(s) * a) >> 8;
+                      B_VAL(s) = (B_VAL(s) * a) >> 8;
+                      s++;
+                   }
+              }
+         }
      }
    if (obr->mxcbob)
      {
@@ -600,7 +625,7 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
 				    int         h)
 {
    int                 i;
-   XCBSCREEN          *screen;
+   XCBSCREEN          *screen = NULL;
 
    {
       XCBGetGeometryRep *geom;

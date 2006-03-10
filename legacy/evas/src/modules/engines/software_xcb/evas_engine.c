@@ -20,7 +20,7 @@ struct _Render_Engine
 };
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, int rot, XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, int depth, int debug, int grayscale, int max_colors, XCBDRAWABLE mask, int shape_dither);
+static void *_output_setup(int w, int h, int rot, XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, int depth, int debug, int grayscale, int max_colors, XCBDRAWABLE mask, int shape_dither, int destination_alpha);
 static XCBVISUALTYPE *_best_visual_get(XCBConnection *conn, int screen);
 static XCBCOLORMAP _best_colormap_get(XCBConnection *conn, int screen);
 static int _best_depth_get(XCBConnection *conn, int screen);
@@ -58,7 +58,8 @@ _output_setup(int            w,
 	      int            grayscale,
 	      int            max_colors,
 	      XCBDRAWABLE    mask,
-	      int            shape_dither)
+	      int            shape_dither,
+              int            destination_alpha)
 {
    Render_Engine *re;
    Outbuf_Perf   *perf;
@@ -95,7 +96,9 @@ _output_setup(int            w,
 					     perf,
 					     grayscale,
 					     max_colors,
-					     mask, shape_dither);
+					     mask,
+                                             shape_dither,
+                                             destination_alpha);
    if (!re->ob)
      {
         evas_software_xcb_outbuf_perf_free(perf);
@@ -278,7 +281,30 @@ eng_setup(Evas *e, void *in)
 		   info->info.alloc_grayscale,
 		   info->info.alloc_colors_max,
 		   info->info.mask,
-		   info->info.shape_dither);
+		   info->info.shape_dither,
+                   info->info.destination_alpha);
+   else
+     {
+       re = e->engine.data.output;
+       evas_software_xcb_outbuf_free(re->ob);
+       re->ob = evas_software_xcb_outbuf_setup_x(e->output.w,
+                                                 e->output.h,
+                                                 info->info.rotation,
+                                                 OUTBUF_DEPTH_INHERIT,
+                                                 info->info.conn,
+                                                 info->info.drawable,
+                                                 info->info.visual,
+                                                 info->info.colormap,
+                                                 info->info.depth,
+                                                 evas_software_xcb_outbuf_perf_restore_x(info->info.conn,    info->info.drawable, info->info.visual, info->info.colormap, info->info.depth),
+                                                 info->info.alloc_grayscale,
+                                                 info->info.alloc_colors_max,
+                                                 info->info.mask,
+                                                 info->info.shape_dither,
+                                                 info->info.destination_alpha);
+       evas_software_xcb_outbuf_debug_set(re->ob, info->info.debug);
+     }
+
    if (!e->engine.data.output) return;
    if (!e->engine.data.context)
      e->engine.data.context =
