@@ -465,7 +465,7 @@ data_write(void)
 		    }
 		  else
 		    {
-		       fprintf(stderr, "%s: Error. unable to load image for image \"%s\" part entry to %s. Missing PNG ot JPEG loader modules for Evas or file does not exist, or is not readable.\n",
+		       fprintf(stderr, "%s: Error. unable to load image for image \"%s\" part entry to %s. Missing PNG or JPEG loader modules for Evas or file does not exist, or is not readable.\n",
 			       progname, img->entry, file_out);	
 		       ABORT_WRITE(ef, file_out);
 		    }
