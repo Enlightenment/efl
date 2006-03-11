@@ -42,17 +42,8 @@ else
 ENGINE_CAIRO_X11_INC =
 endif
 
-if BUILD_ENGINE_XRENDER_XCB
-ENGINE_XRENDER_XCB = engines/xrender_xcb/libevas_engine_xrender_xcb.la
-ENGINE_XRENDER_XCB_INC = Evas_Engine_XRender_Xcb.h
-else
-ENGINE_XRENDER_XCB =
-ENGINE_XRENDER_XCB_INC =
-endif
-
 
 include_HEADERS      = \
 $(ENGINE_DIRECTFB_INC) \
 $(ENGINE_GL_X11_INC) \
-$(ENGINE_XRENDER_XCB_INC)
 $(ENGINE_CAIRO_X11_INC)
