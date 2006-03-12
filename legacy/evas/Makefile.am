@@ -1,7 +1,3 @@
-## Process this file with automake to produce Makefile.in
-
-ACLOCAL_AMFLAGS = -I m4
-
 SUBDIRS = data src proj
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
@@ -25,6 +21,8 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas.spec.in evas.spec \
 	     evas.oe.in evas.oe evas-native.oe.in evas-native.oe \
 	     evas.bb.in evas.bb evasXnative.bb.in evasXnative.bb \
+             debian/changelog \
+	     debian/changelog.in \
 	     debian/control \
 	     debian/copyright \
 	     debian/evas0-bin.files \

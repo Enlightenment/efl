@@ -1,5 +1,3 @@
-## Process this file with automake to produce Makefile.in
-
 SUBDIRS = data src
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
@@ -8,7 +6,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       stamp-h.in edje_docs.tar edje_docs.tar.gz edje.c \
 		       debian/changelog edje.spec
 
-### this is all fine and great - ut edje should not be going and installing
+### this is all fine and great - but edje should not be going and installing
 ### data in another software's data dir - it's just wrong. not to mention this
 ### also breaks make distcheck...
 #	if test "x${vimdir}" != "x"; then \
@@ -21,6 +19,7 @@ bin_SCRIPTS = edje-config
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec \
 	edje.spec.in edje.pc.in edje.c.in gendoc Doxyfile \
 	debian/changelog \
+	debian/changelog.in \
 	debian/control debian/rules debian/copyright \
 	debian/libedje0.install debian/edje0-bin.install \
 	debian/libedje0-dev.install

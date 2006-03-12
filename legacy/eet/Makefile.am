@@ -30,6 +30,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.c.in \
 	     eet.oe.in eet.oe eet-native.oe.in eet-native.oe \
 	     eet.bb.in eet.bb eetXnative.bb.in eetXnative.bb \
 	     debian/changelog \
+	     debian/changelog.in \
 	     debian/control \
 	     debian/copyright \
 	     debian/eet-config.1 \

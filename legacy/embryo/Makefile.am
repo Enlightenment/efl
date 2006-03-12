@@ -24,6 +24,7 @@ EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN embryo.c.in gendoc \
 	     embryo.oe.in embryo.oe embryo-native.oe.in embryo-native.oe \
 	     embryo.bb.in embryo.bb embryoXnative.bb.in embryoXnative.bb \
 	     debian/changelog \
+	     debian/changelog.in \
 	     debian/compat \
 	     debian/control \
 	     debian/copyright \
