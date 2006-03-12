@@ -29,6 +29,7 @@ struct _Emotion_Xine_Video
    volatile int              seek_to;
    volatile int              get_poslen;
    volatile double           seek_to_pos;
+   Emotion_Vis               vis;
    Ecore_Timer              *timer;
    int                       fd_read;
    int                       fd_write;

@@ -60,6 +60,7 @@ struct _Emotion_Gstreamer_Video
   int               fd_ev_write;
   Ecore_Fd_Handler *fd_ev_handler;
 
+  Emotion_Vis       vis;
 
   unsigned char     play : 1;
   unsigned char     video_mute : 1;

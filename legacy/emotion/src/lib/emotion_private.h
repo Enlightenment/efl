@@ -20,6 +20,7 @@
 #define META_TRACK_DISCID 7
 
 typedef enum _Emotion_Format Emotion_Format;
+typedef enum _Emotion_Vis Emotion_Vis;
 typedef struct _Emotion_Video_Module Emotion_Video_Module;
 
 enum _Emotion_Format
@@ -31,61 +32,85 @@ enum _Emotion_Format
    EMOTION_FORMAT_BGRA
 };
 
+enum _Emotion_Vis
+{
+  EMOTION_VIS_GOOM,
+  EMOTION_VIS_LIBVISUAL_BUMPSCOPE,
+  EMOTION_VIS_LIBVISUAL_CORONA,
+  EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES,
+  EMOTION_VIS_LIBVISUAL_GDKPIXBUF,
+  EMOTION_VIS_LIBVISUAL_G_FORCE,
+  EMOTION_VIS_LIBVISUAL_GOOM,
+  EMOTION_VIS_LIBVISUAL_INFINITE,
+  EMOTION_VIS_LIBVISUAL_JAKDAW,
+  EMOTION_VIS_LIBVISUAL_JESS,
+  EMOTION_VIS_LIBVISUAL_LV_ANALYSER,
+  EMOTION_VIS_LIBVISUAL_LV_FLOWER,
+  EMOTION_VIS_LIBVISUAL_LV_GLTEST,
+  EMOTION_VIS_LIBVISUAL_LV_SCOPE,
+  EMOTION_VIS_LIBVISUAL_MADSPIN,
+  EMOTION_VIS_LIBVISUAL_NEBULUS,
+  EMOTION_VIS_LIBVISUAL_OINKSIE,
+  EMOTION_VIS_LIBVISUAL_PLASMA
+};
+
 struct _Emotion_Video_Module
 {
    unsigned char (*init) (Evas_Object *obj, void **video);
-   int          (*shutdown) (void *video);
-   unsigned char (*file_open) (const char *file, Evas_Object *obj, void *video);
-   void         (*file_close) (void *ef);
-   void         (*play) (void *ef, double pos);
-   void         (*stop) (void *ef);
-   void         (*size_get) (void *ef, int *w, int *h);
-   void         (*pos_set) (void *ef, double pos);
-   double       (*len_get) (void *ef);
-   int          (*fps_num_get) (void *ef);
-   int          (*fps_den_get) (void *ef);
-   double       (*fps_get) (void *ef);
-   double       (*pos_get) (void *ef);
-   double       (*ratio_get) (void *ef);
-   int          (*video_handled) (void *ef);
-   int          (*audio_handled) (void *ef);
-   int          (*seekable) (void *ef);
-   void         (*frame_done) (void *ef);
+   int            (*shutdown) (void *video);
+   unsigned char  (*file_open) (const char *file, Evas_Object *obj, void *video);
+   void           (*file_close) (void *ef);
+   void           (*play) (void *ef, double pos);
+   void           (*stop) (void *ef);
+   void           (*size_get) (void *ef, int *w, int *h);
+   void           (*pos_set) (void *ef, double pos);
+   void           (*vis_set) (void *ef, Emotion_Vis vis);
+   double         (*len_get) (void *ef);
+   int            (*fps_num_get) (void *ef);
+   int            (*fps_den_get) (void *ef);
+   double         (*fps_get) (void *ef);
+   double         (*pos_get) (void *ef);
+   Emotion_Vis    (*vis_get) (void *ef);
+   double         (*ratio_get) (void *ef);
+   int            (*video_handled) (void *ef);
+   int            (*audio_handled) (void *ef);
+   int            (*seekable) (void *ef);
+   void           (*frame_done) (void *ef);
    Emotion_Format (*format_get) (void *ef);
-   void         (*video_data_size_get) (void *ef, int *w, int *h);
-   int          (*yuv_rows_get) (void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
-   int          (*bgra_data_get) (void *ef, unsigned char **bgra_data);
-   void         (*event_feed) (void *ef, int event);
-   void         (*event_mouse_button_feed) (void *ef, int button, int x, int y);
-   void         (*event_mouse_move_feed) (void *ef, int x, int y);
-   int          (*video_channel_count) (void *ef);
-   void         (*video_channel_set) (void *ef, int channel);
-   int          (*video_channel_get) (void *ef);
-   const char * (*video_channel_name_get) (void *ef, int channel);
-   void         (*video_channel_mute_set) (void *ef, int mute);
-   int          (*video_channel_mute_get) (void *ef);
-   int          (*audio_channel_count) (void *ef);
-   void         (*audio_channel_set) (void *ef, int channel);
-   int          (*audio_channel_get) (void *ef);
-   const char * (*audio_channel_name_get) (void *ef, int channel);
-   void         (*audio_channel_mute_set) (void *ef, int mute);
-   int          (*audio_channel_mute_get) (void *ef);
-   void         (*audio_channel_volume_set) (void *ef, double vol);
-   double       (*audio_channel_volume_get) (void *ef);
-   int          (*spu_channel_count) (void *ef);
-   void         (*spu_channel_set) (void *ef, int channel);
-   int          (*spu_channel_get) (void *ef);
-   const char * (*spu_channel_name_get) (void *ef, int channel);
-   void         (*spu_channel_mute_set) (void *ef, int mute);
-   int          (*spu_channel_mute_get) (void *ef);
-   int          (*chapter_count) (void *ef);
-   void         (*chapter_set) (void *ef, int chapter);
-   int          (*chapter_get) (void *ef);
-   const char * (*chapter_name_get) (void *ef, int chapter);
-   void         (*speed_set) (void *ef, double speed);
-   double       (*speed_get) (void *ef);
-   int          (*eject) (void *ef);
-   const char * (*meta_get) (void *ef, int meta);
+   void           (*video_data_size_get) (void *ef, int *w, int *h);
+   int            (*yuv_rows_get) (void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
+   int            (*bgra_data_get) (void *ef, unsigned char **bgra_data);
+   void           (*event_feed) (void *ef, int event);
+   void           (*event_mouse_button_feed) (void *ef, int button, int x, int y);
+   void           (*event_mouse_move_feed) (void *ef, int x, int y);
+   int            (*video_channel_count) (void *ef);
+   void           (*video_channel_set) (void *ef, int channel);
+   int            (*video_channel_get) (void *ef);
+   const char *   (*video_channel_name_get) (void *ef, int channel);
+   void           (*video_channel_mute_set) (void *ef, int mute);
+   int            (*video_channel_mute_get) (void *ef);
+   int            (*audio_channel_count) (void *ef);
+   void           (*audio_channel_set) (void *ef, int channel);
+   int            (*audio_channel_get) (void *ef);
+   const char *   (*audio_channel_name_get) (void *ef, int channel);
+   void           (*audio_channel_mute_set) (void *ef, int mute);
+   int            (*audio_channel_mute_get) (void *ef);
+   void           (*audio_channel_volume_set) (void *ef, double vol);
+   double         (*audio_channel_volume_get) (void *ef);
+   int            (*spu_channel_count) (void *ef);
+   void           (*spu_channel_set) (void *ef, int channel);
+   int            (*spu_channel_get) (void *ef);
+   const char *   (*spu_channel_name_get) (void *ef, int channel);
+   void           (*spu_channel_mute_set) (void *ef, int mute);
+   int            (*spu_channel_mute_get) (void *ef);
+   int            (*chapter_count) (void *ef);
+   void           (*chapter_set) (void *ef, int chapter);
+   int            (*chapter_get) (void *ef);
+   const char *   (*chapter_name_get) (void *ef, int chapter);
+   void           (*speed_set) (void *ef, double speed);
+   double         (*speed_get) (void *ef);
+   int            (*eject) (void *ef);
+   const char *   (*meta_get) (void *ef, int meta);
    
    void          *handle;
 };
