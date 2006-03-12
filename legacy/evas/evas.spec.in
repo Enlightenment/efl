@@ -211,7 +211,9 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/evas/modules/savers/eet/*/module.so
 %{_libdir}/evas/modules/savers/jpeg/*/module.so
 %{_libdir}/evas/modules/savers/png/*/module.so
+#FIXME move these to their respective packages like the rest...
 %{_libdir}/evas/modules/engines/buffer/*/module.so
+%{_libdir}/evas/modules/engines/software_x11/*/module.so
 %{_libdir}/evas/modules/engines/software_generic/*/module.so
 %{_datadir}/%{name}
 
@@ -234,13 +236,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %{_libdir}/evas/modules/savers/edb/*/module.so
 %endif
-
-%if %{with module_software_x11}
-%files module_software_x11
-%defattr(-, root, root)
-%{_libdir}/evas/modules/engines/software_x11/*/module.so
-%endif
-
 
 %if %{with module_engine_cairo_x11}
 %files module_engine_cairo_x11
