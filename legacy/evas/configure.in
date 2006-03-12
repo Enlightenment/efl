@@ -182,7 +182,7 @@ if test "x$have_evas_software_x11" = "xyes"; then
     ]
   )
 fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, test "x$have_evas_software_x11" = "yes")
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, test "x$have_evas_software_x11" = "xyes")
 
 #######################################
 ## Check if we should build the software_xcb engine
