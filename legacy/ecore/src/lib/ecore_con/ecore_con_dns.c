@@ -279,7 +279,7 @@ _ecore_con_dns_readdata(CB_Data *cbdata)
    struct in_addr addr;
    char *addr2;
    ssize_t size;
-   
+
    size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), &(addr.s_addr),
 	       sizeof(in_addr_t));
    if (size == sizeof(in_addr_t))
@@ -311,7 +311,11 @@ _ecore_con_dns_data_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     cbdata->cb_done = NULL;
 	  }
      }
-   return 1;
+   close(ecore_main_fd_handler_fd_get(cbdata->fdh));
+   ecore_main_fd_handler_del(cbdata->fdh);
+   ecore_event_handler_del(cbdata->handler);
+   free(cbdata);
+   return 0;
 }
 
 static int
@@ -323,6 +327,7 @@ _ecore_con_dns_exit_handler(void *data, int type, void *event)
    ev = event;
    cbdata = data;
    if (cbdata->pid != ev->pid) return 1;
+   return 0;
    close(ecore_main_fd_handler_fd_get(cbdata->fdh));
    ecore_main_fd_handler_del(cbdata->fdh);
    ecore_event_handler_del(cbdata->handler);
