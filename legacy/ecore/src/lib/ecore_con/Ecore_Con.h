@@ -67,7 +67,7 @@ extern "C" {
    
    typedef enum _Ecore_Con_Type
      {
-	  ECORE_CON_LOCAL_USER,
+	ECORE_CON_LOCAL_USER,
 	  ECORE_CON_LOCAL_SYSTEM,
 	  ECORE_CON_REMOTE_SYSTEM,
 	  ECORE_CON_USE_SSL = 16

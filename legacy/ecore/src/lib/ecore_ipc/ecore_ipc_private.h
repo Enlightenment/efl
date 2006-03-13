@@ -43,6 +43,7 @@ struct _Ecore_Ipc_Client
    void              *data;
    unsigned char     *buf;
    int                buf_size;
+   int                max_buf_size;
    
    struct {
       Ecore_Ipc_Msg_Head i, o;
@@ -58,6 +59,7 @@ struct _Ecore_Ipc_Server
    void              *data;
    unsigned char     *buf;
    int                buf_size;
+   int                max_buf_size;
 
    struct {
       Ecore_Ipc_Msg_Head i, o;

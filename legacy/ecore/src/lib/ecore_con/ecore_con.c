@@ -9,6 +9,8 @@
 #include <errno.h>
 #include <netdb.h>
 
+#include "config.h"
+
 #if USE_OPENSSL
 #include <time.h>
 #endif

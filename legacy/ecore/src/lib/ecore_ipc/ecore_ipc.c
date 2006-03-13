@@ -349,6 +349,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
 	free(svr);
 	return NULL;
      }
+   svr->max_buf_size = 32 * 1024;
    svr->data = (void *)data;
    servers = _ecore_list2_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_IPC_SERVER);
@@ -404,6 +405,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
 	free(svr);
 	return NULL;
      }
+   svr->max_buf_size = -1;
    svr->data = (void *)data;
    servers = _ecore_list2_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_IPC_SERVER);
@@ -600,6 +602,31 @@ ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char 
    ecore_con_server_client_limit_set(svr->server, client_limit, reject_excess_clients);
 }
 
+EAPI void
+ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
+			 "ecore_ipc_server_data_size_max_set");
+	return;
+     }
+   svr->max_buf_size = size;
+}
+
+EAPI int
+ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
+			 "ecore_ipc_server_data_size_max_get");
+	return -1;
+     }
+   return svr->max_buf_size;
+}
+
+
 #define CLENC(_member) \
    d = _ecore_ipc_dlt_int(msg._member, cl->prev.o._member, &md); \
    if (md >= DLT_SET) \
@@ -779,6 +806,30 @@ ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
    return cl->data;
 }
 
+EAPI void
+ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
+     {
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
+			 "ecore_ipc_client_data_size_max_set");
+	return;
+     }
+   cl->max_buf_size = size;
+}
+
+EAPI int
+ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
+     {
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
+			 "ecore_ipc_client_data_size_max_get");
+	return -1;
+     }
+   return cl->max_buf_size;
+}
+
 /**
  * Returns if SSL support is available
  * @return  1 if SSL is available, 0 if it is not.
@@ -808,6 +859,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_IPC_CLIENT);
 	cl->client = e->client;
+	cl->max_buf_size = 32 * 1024;
 	ecore_con_client_data_set(cl->client, (void *)cl);
 	svr->clients = _ecore_list2_append(svr->clients, cl);
 	  {
@@ -1020,27 +1072,43 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	     if ((cl->buf_size - offset) >= (s + msg.size))
 	       {
 		  Ecore_Ipc_Event_Client_Data *e2;
+		  Ecore_Ipc_Server *svr;
+		  int max, max2;
 		  
 		  buf = NULL;
-		  if (msg.size > 0)
+		  svr = ecore_con_server_data_get(ecore_con_client_server_get(cl->client));
+		  max = svr->max_buf_size;
+		  max2 = cl->max_buf_size;
+		  if ((max >= 0) && (max2 >= 0))
 		    {
-		       buf = malloc(msg.size);
-		       if (!buf) return 0;
-		       memcpy(buf, cl->buf + offset + s, msg.size);
+		       if (max2 < max) max = max2;
 		    }
-		  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Data));
-		  if (e2)
+		  else
 		    {
-		       e2->client   = cl;
-		       e2->major    = msg.major;
-		       e2->minor    = msg.minor;
-		       e2->ref      = msg.ref;
-		       e2->ref_to   = msg.ref_to;
-		       e2->response = msg.response;
-		       e2->size     = msg.size;
-		       e2->data     = buf;
-		       ecore_event_add(ECORE_IPC_EVENT_CLIENT_DATA, e2,
-				       _ecore_ipc_event_client_data_free, NULL);
+		       if (max < 0) max = max2;
+		    }
+		  if ((max < 0) || (msg.size <= max))
+		    {
+		       if (msg.size > 0)
+			 {
+			    buf = malloc(msg.size);
+			    if (!buf) return 0;
+			    memcpy(buf, cl->buf + offset + s, msg.size);
+			 }
+		       e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Data));
+		       if (e2)
+			 {
+			    e2->client   = cl;
+			    e2->major    = msg.major;
+			    e2->minor    = msg.minor;
+			    e2->ref      = msg.ref;
+			    e2->ref_to   = msg.ref_to;
+			    e2->response = msg.response;
+			    e2->size     = msg.size;
+			    e2->data     = buf;
+			    ecore_event_add(ECORE_IPC_EVENT_CLIENT_DATA, e2,
+					    _ecore_ipc_event_client_data_free, NULL);
+			 }
 		    }
 		  cl->prev.i = msg;
 		  offset += (s + msg.size);
@@ -1193,27 +1261,32 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	     if ((svr->buf_size - offset) >= (s + msg.size))
 	       {
 		  Ecore_Ipc_Event_Server_Data *e2;
+		  int max;
 		  
 		  buf = NULL;
-		  if (msg.size > 0)
+		  max = svr->max_buf_size;
+		  if ((max < 0) || (msg.size <= max))
 		    {
-		       buf = malloc(msg.size);
-		       if (!buf) return 0;
-		       memcpy(buf, svr->buf + offset + s, msg.size);
-		    }
-		  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Data));
-		  if (e2)
-		    {
-		       e2->server   = svr;
-		       e2->major    = msg.major;
-		       e2->minor    = msg.minor;
-		       e2->ref      = msg.ref;
-		       e2->ref_to   = msg.ref_to;
-		       e2->response = msg.response;
-		       e2->size     = msg.size;
-		       e2->data     = buf;
-		       ecore_event_add(ECORE_IPC_EVENT_SERVER_DATA, e2,
-				       _ecore_ipc_event_server_data_free, NULL);
+		       if (msg.size > 0)
+			 {
+			    buf = malloc(msg.size);
+			    if (!buf) return 0;
+			    memcpy(buf, svr->buf + offset + s, msg.size);
+			 }
+		       e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Data));
+		       if (e2)
+			 {
+			    e2->server   = svr;
+			    e2->major    = msg.major;
+			    e2->minor    = msg.minor;
+			    e2->ref      = msg.ref;
+			    e2->ref_to   = msg.ref_to;
+			    e2->response = msg.response;
+			    e2->size     = msg.size;
+			    e2->data     = buf;
+			    ecore_event_add(ECORE_IPC_EVENT_SERVER_DATA, e2,
+					    _ecore_ipc_event_server_data_free, NULL);
+			 }
 		    }
 		  svr->prev.i = msg;
 		  offset += (s + msg.size);
