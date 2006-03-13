@@ -2,6 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES = \
 @Xcursor_cflags@ \
+@Xrender_cflags@ \
 @Xprint_cflags@ \
 @Xinerama_cflags@ \
 @Xrandr_cflags@ \
@@ -50,6 +51,7 @@ ecore_x_private.h
 
 libecore_x_la_LIBADD = \
 @Xcursor_libs@ \
+@Xrender_libs@ \
 @Xprint_libs@ \
 @Xinerama_libs@ \
 @Xrandr_libs@ \
