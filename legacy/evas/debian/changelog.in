@@ -1,6 +1,6 @@
-evas (@VERSION@-1) unstable; urgency=low
+evas (@VERSION@) unstable; urgency=low
 
-  * a CVS release
+  * a CVS snapshot release.
 
- -- Sytse Wielinga <s.b.wielinga@student.utwente.nl>  Sun,  4 Jul 2004 13:27:15 +0200
+ -- E17 Debian Team <debian@edevelop.org>  Tue,  7 Mar 2006 13:30:15 +0000
 
