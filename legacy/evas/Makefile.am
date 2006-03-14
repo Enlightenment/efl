@@ -9,8 +9,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas.pc \
 		       evas.spec \
 		       evas.oe evas-native.oe \
-		       evas.bb evasXnative.bb \
-		       debian/changelog
+		       evas.bb evasXnative.bb
 
 bin_SCRIPTS = evas-config
 
