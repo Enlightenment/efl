@@ -312,7 +312,7 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
           XCBConnSetupSuccessRep *rep;
           XCBSCREENIter iter_screen;
 
-          rep = XCBGetSetup(xcbinf->conn);
+          rep = (XCBConnSetupSuccessRep *)XCBGetSetup(xcbinf->conn);
           iter_screen = XCBConnSetupSuccessRepRootsIter(rep);
           for (; iter_screen.rem ; XCBSCREENNext (&iter_screen)) {
             XCBDEPTHIter iter_depth;

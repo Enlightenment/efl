@@ -31,7 +31,7 @@ _xre_font_surface_new(XCBimage_Info *xcbinf, RGBA_Font_Glyph *fg)
 	if ((fs->xcbinf->conn == xcbinf->conn) &&
             (fs->xcbinf->root.window.xid == xcbinf->root.window.xid))
 	  return fs;
-	snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
+	snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
 	pool = evas_hash_find(_xr_fg_pool, buf);
 	if (pool)
 	  {
@@ -50,7 +50,7 @@ _xre_font_surface_new(XCBimage_Info *xcbinf, RGBA_Font_Glyph *fg)
    fs->w = w;
    fs->h = h;
    
-   snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
+   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
    pool = evas_hash_find(_xr_fg_pool, buf);
    snprintf(buf2, sizeof(buf2), "%p", fg);
    pool = evas_hash_add(pool, buf2, fs);
@@ -137,7 +137,7 @@ _xre_font_pool_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
    
    fs = fdata;
    pool = data;
-   snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
+   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
    pool = evas_hash_del(pool, buf, fs);
    hash = evas_hash_modify(hash, key, pool);
    return 1;
