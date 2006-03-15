@@ -631,15 +631,14 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
       XCBGetGeometryRep *geom;
       XCBDRAWABLE        root;
       XCBSCREENIter      i;
-      int                cur;
 
       geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometry (buf->priv.x.conn, draw), 0);
       root.window = geom->root;
       free (geom);
       geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometry (buf->priv.x.conn, root), 0);
 
-      i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(buf->priv.x.conn));
-      for (cur = 0; cur < i.rem; XCBSCREENNext(&i), ++cur)
+      i = XCBConnSetupSuccessRepRootsIter((XCBConnSetupSuccessRep *)XCBGetSetup(buf->priv.x.conn));
+      for (; i.rem; XCBSCREENNext(&i))
 	 if (i.data->root.xid == geom->root.xid)
 	    {
 	       screen = i.data;
@@ -756,7 +755,7 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
 
    perf->x.conn = conn;
 
-   root.window = XCBConnSetupSuccessRepRootsIter (XCBGetSetup (conn)).data->root;
+   root.window = XCBConnSetupSuccessRepRootsIter ((XCBConnSetupSuccessRep *)XCBGetSetup (conn)).data->root;
    if (draw.window.xid)
      {
 	XCBGetGeometryRep *geom;
@@ -771,8 +770,8 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
 	perf->x.h = (int)geom->height;
 
 	perf->x.screen_num = 0;
-	i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(conn));
-	for (cur = 0; cur < i.rem; XCBSCREENNext(&i), ++cur)
+	i = XCBConnSetupSuccessRepRootsIter((XCBConnSetupSuccessRep *)XCBGetSetup(conn));
+	for (cur = 0; i.rem; XCBSCREENNext(&i), ++cur)
 	  if (i.data->root.xid == geom->root.xid)
 	    {
 	      perf->x.screen_num = cur;
@@ -783,11 +782,11 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
    perf->x.root = root;
 
    perf->x.display      = strdup (":0"); /* FIXME: strdup(DisplayString(disp)); in XCB ? */
-   perf->x.vendor       = strdup(XCBConnSetupSuccessRepVendor(XCBGetSetup(conn)));
-   perf->x.version      = (int)XCBGetSetup(conn)->protocol_major_version;
-   perf->x.revision     = (int)XCBGetSetup(conn)->protocol_minor_version;
-   perf->x.release      = (int)XCBGetSetup(conn)->release_number;
-   perf->x.screen_count = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(conn)).rem;
+   perf->x.vendor       = strdup(XCBConnSetupSuccessRepVendor((XCBConnSetupSuccessRep *)XCBGetSetup(conn)));
+   perf->x.version      = (int)((XCBConnSetupSuccessRep *)XCBGetSetup(conn))->protocol_major_version;
+   perf->x.revision     = (int)((XCBConnSetupSuccessRep *)XCBGetSetup(conn))->protocol_minor_version;
+   perf->x.release      = (int)((XCBConnSetupSuccessRep *)XCBGetSetup(conn))->release_number;
+   perf->x.screen_count = XCBConnSetupSuccessRepRootsIter((XCBConnSetupSuccessRep *)XCBGetSetup(conn)).rem;
    perf->x.depth        = x_depth;
 
    perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
