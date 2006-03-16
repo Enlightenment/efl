@@ -654,6 +654,7 @@ eng_image_cache_flush(void *data)
 {
    int tmp_size;
 
+   tmp_size = _xre_image_cache_get();
    pfunc.image_cache_flush(data);
    _xre_image_cache_set(0);
    _xre_image_cache_set(tmp_size);
