@@ -239,43 +239,6 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 #ifdef BUILD_FONT_LOADER_EET
 	       }
 #endif
-#ifdef HAVE_FONTCONFIG
-	     if (!font) /* Search using fontconfig */
-	       {
-		  FcPattern *p_nm = NULL;
-		  FcFontSet *set;
-		  FcResult res;
-		  int i;
-
-		  p_nm = FcNameParse(nm);
-		  FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
-		  FcDefaultSubstitute(p_nm);
-
-		  /* do matching */
-		  set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
-		  
-		  /* Do loading for all in family */
-		  for (i = 0; i < set->nfont; i++)
-		    {
-		       FcValue filename;
-		       
-		       FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);	
-		       
-		       if (font)
-			 evas->engine.func->font_add(evas->engine.data.output, font, filename.u.s, size);
-		       else 
-			 font = evas->engine.func->font_load(evas->engine.data.output, filename.u.s, size);		       
-		    }
- 
-		  FcFontSetDestroy(set); 
-		  FcPatternDestroy(p_nm);
-		  
-		  if (font)
-		    {
-		       break;
-		    }
-	       }
-#endif
 	  }
 	else /* Base font loaded, append others */
 	  {
@@ -342,6 +305,41 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	evas_stringshare_del(nm);
      }
    evas_list_free(fonts);
+
+#ifdef HAVE_FONTCONFIG
+	     
+   if (!font) /* Search using fontconfig */
+     {	  
+	FcPattern *p_nm = NULL;
+	FcFontSet *set;
+	FcResult res;
+	int i;
+
+	p_nm = FcNameParse(name);
+	FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
+	FcDefaultSubstitute(p_nm);
+
+	/* do matching */
+	set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
+		  
+	/* Do loading for all in family */
+	for (i = 0; i < set->nfont; i++)
+	  {
+	     FcValue filename;
+		       	       
+	     FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);	
+		       
+	     if (font)
+	       evas->engine.func->font_add(evas->engine.data.output, font, filename.u.s, size);
+	     else 
+	       font = evas->engine.func->font_load(evas->engine.data.output, filename.u.s, size);		       	    
+	  }
+ 	  
+	FcFontSetDestroy(set); 
+	FcPatternDestroy(p_nm);
+     }
+#endif
+   
    fd = calloc(1, sizeof(Fndat));
    if (fd)
      {
