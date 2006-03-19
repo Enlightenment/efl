@@ -357,7 +357,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
      }
    else if (!strcmp(ee->driver, "xrender_x11"))
      {   
-#ifdef BUILD_ECORE_X
+#ifdef BUILD_ECORE_EVAS_XRENDER
 	Evas_Engine_Info_XRender_X11 *einfo;
 	
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
