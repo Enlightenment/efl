@@ -38,6 +38,8 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    evas_common_font_size_use(fn);
    fi = fn->fonts->data;
    val = (int)fi->src->ft.face->size->metrics.ascender;
+   if (fi->src->ft.face->units_per_EM == 0)
+     return val;  
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -53,6 +55,8 @@ evas_common_font_descent_get(RGBA_Font *fn)
    evas_common_font_size_use(fn);
    fi = fn->fonts->data;
    val = -(int)fi->src->ft.face->size->metrics.descender;
+   if (fi->src->ft.face->units_per_EM == 0)
+     return val;  
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -68,6 +72,8 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    evas_common_font_size_use(fn);
    fi = fn->fonts->data;
    val = (int)fi->src->ft.face->bbox.yMax;
+   if (fi->src->ft.face->units_per_EM == 0)
+     return val;  
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -83,6 +89,8 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    evas_common_font_size_use(fn);
    fi = fn->fonts->data;
    val = -(int)fi->src->ft.face->bbox.yMin;
+   if (fi->src->ft.face->units_per_EM == 0)
+     return val;  
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -98,6 +106,8 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    evas_common_font_size_use(fn);
    fi = fn->fonts->data;
    val = (int)fi->src->ft.face->size->metrics.height;
+   if (fi->src->ft.face->units_per_EM == 0)
+     return val;  
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
