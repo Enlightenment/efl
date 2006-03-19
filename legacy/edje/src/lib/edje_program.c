@@ -1,7 +1,7 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-static void _edje_emit_cb(Edje *ed, char *sig, char *src);
+static void _edje_emit_cb(Edje *ed, const char *sig, const char *src);
 
 int             _edje_anim_count = 0;
 Ecore_Animator *_edje_timer = NULL;
@@ -418,7 +418,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 }
    
 void
-_edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
+_edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc)
 {
    Evas_List *l;
    /* limit self-feeding loops in programs to 64 levels */
@@ -729,7 +729,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 }
 
 void
-_edje_emit(Edje *ed, char *sig, char *src)
+_edje_emit(Edje *ed, const char *sig, const char *src)
 {
    Edje_Message_Signal emsg;
    
@@ -741,7 +741,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
 
 /* FIXME: what if we delete the evas object??? */
 void
-_edje_emit_handle(Edje *ed, char *sig, char *src)
+_edje_emit_handle(Edje *ed, const char *sig, const char *src)
 {
    Evas_List *l;
 
@@ -854,7 +854,7 @@ _edje_emit_handle(Edje *ed, char *sig, char *src)
 
 /* FIXME: what if we delete the evas object??? */
 static void
-_edje_emit_cb(Edje *ed, char *sig, char *src)
+_edje_emit_cb(Edje *ed, const char *sig, const char *src)
 {
    Evas_List *l;
    

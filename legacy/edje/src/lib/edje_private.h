@@ -186,7 +186,7 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 
 struct _Edje_File
 {
-   char                           *path;
+   const char                     *path;
    
    Edje_Font_Directory            *font_dir;
    Edje_Image_Directory           *image_dir;
@@ -335,7 +335,7 @@ struct _Edje_Part_Collection
    
    Embryo_Program   *script; /* all the embryo script code for this group */
    
-   char             *part;
+   const char       *part;
 };
 
 struct _Edje_Part
@@ -485,8 +485,8 @@ typedef struct _Edje_Var_Pool Edje_Var_Pool;
 
 struct _Edje
 {
-   char                 *path;
-   char                 *part;
+   const char           *path;
+   const char           *part;
    
    Evas_Coord            x, y, w, h;
    struct {
@@ -578,15 +578,15 @@ struct _Edje_Real_Part
       } val, size, step, page;
    } drag;
    struct {
-      char                  *text;
-      char                  *font;
-      char                  *style;
+      const char            *text;
+      const char	    *font;
+      const char	    *style;
       int                    size;
       struct {
 	 double              in_w, in_h;
 	 int                 in_size;
-	 char               *in_str;
-	 char               *out_str;
+	 const char	    *in_str;
+	 const char         *out_str;
 	 int                 out_size;
 	 double              align_x, align_y;
 	 double              elipsis;
@@ -621,8 +621,8 @@ struct _Edje_Running_Program
 
 struct _Edje_Signal_Callback
 {
-   char  *signal;
-   char  *source;
+   const char	  *signal;
+   const char	  *source;
    void (*func) (void *data, Evas_Object *o, const char *emission, const char *source);
    void  *data;
    unsigned char just_added : 1;
@@ -773,8 +773,8 @@ typedef struct _Edje_Message        Edje_Message;
 
 struct _Edje_Message_Signal
 {
-   char *sig;
-   char *src;
+   const char *sig;
+   const char *src;
 };
 
 struct _Edje_Message
@@ -811,8 +811,8 @@ extern Evas_List       *_edje_edjes;
 extern char            *_edje_fontset_append;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
-Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name, double val);
-void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
+Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name, double val);
+void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char  *d1, double v1, const char *d2, double v2);
 void  _edje_recalc(Edje *ed);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y);
 void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y);
@@ -845,9 +845,9 @@ void  _edje_unref(Edje *ed);
     
 int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
-void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc);
-void  _edje_emit(Edje *ed, char *sig, char *src);
-void  _edje_emit_handle(Edje *ed, char *sig, char *src);
+void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc);
+void  _edje_emit(Edje *ed, const char *sig, const char *src);
+void  _edje_emit_handle(Edje *ed, const char *sig, const char *src);
 
 void  _edje_text_init(void);
 void  _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
@@ -856,22 +856,22 @@ void  _edje_text_part_on_del(Edje *ed, Edje_Part *ep);
 void  _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
     
-Edje_Real_Part   *_edje_real_part_get(Edje *ed, char *part);
-Edje_Color_Class *_edje_color_class_find(Edje *ed, char *color_class);
-void              _edje_color_class_member_add(Edje *ed, char *color_class);
-void              _edje_color_class_member_del(Edje *ed, char *color_class);
+Edje_Real_Part   *_edje_real_part_get(Edje *ed, const char *part);
+Edje_Color_Class *_edje_color_class_find(Edje *ed, const char *color_class);
+void              _edje_color_class_member_add(Edje *ed, const char *color_class);
+void              _edje_color_class_member_del(Edje *ed, const char *color_class);
 void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);
 void              _edje_color_class_members_free(void);
 void              _edje_color_class_hash_free(void);
 
-Edje_Text_Class  *_edje_text_class_find(Edje *ed, char *text_class);
-void              _edje_text_class_member_add(Edje *ed, char *text_class);
-void              _edje_text_class_member_del(Edje *ed, char *text_class);
+Edje_Text_Class  *_edje_text_class_find(Edje *ed, const char *text_class);
+void              _edje_text_class_member_add(Edje *ed, const char *text_class);
+void              _edje_text_class_member_del(Edje *ed, const char *text_class);
 void              _edje_text_class_members_free(void);
 void              _edje_text_class_hash_free(void);
 
 Edje             *_edje_fetch(Evas_Object *obj);
-int               _edje_glob_match(char *str, char *glob);
+int               _edje_glob_match(const char *str, const char *glob);
 int               _edje_freeze(Edje *ed);
 int               _edje_thaw(Edje *ed);
 int               _edje_block(Edje *ed);
@@ -883,24 +883,24 @@ void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Ob
 void          _edje_embryo_script_init      (Edje *ed);
 void          _edje_embryo_script_shutdown  (Edje *ed);
 void          _edje_embryo_script_reset     (Edje *ed);
-void          _edje_embryo_test_run         (Edje *ed, char *fname, char *sig, char *src);
+void          _edje_embryo_test_run         (Edje *ed, const char *fname, const char *sig, const char *src);
 Edje_Var     *_edje_var_new                 (void);
 void          _edje_var_free                (Edje_Var *var);
 void          _edje_var_init                (Edje *ed);
 void          _edje_var_shutdown            (Edje *ed);
-int           _edje_var_string_id_get       (Edje *ed, char *string);
+int           _edje_var_string_id_get       (Edje *ed, const char *string);
 int           _edje_var_var_int_get         (Edje *ed, Edje_Var *var);
 void          _edje_var_var_int_set         (Edje *ed, Edje_Var *var, int v);
 double        _edje_var_var_float_get       (Edje *ed, Edje_Var *var);
 void          _edje_var_var_float_set       (Edje *ed, Edje_Var *var, double v);
 const char   *_edje_var_var_str_get         (Edje *ed, Edje_Var *var);
-void          _edje_var_var_str_set         (Edje *ed, Edje_Var *var, char *str);
+void          _edje_var_var_str_set         (Edje *ed, Edje_Var *var, const char *str);
 int           _edje_var_int_get             (Edje *ed, int id);
 void          _edje_var_int_set             (Edje *ed, int id, int v);
 double        _edje_var_float_get           (Edje *ed, int id);
 void          _edje_var_float_set           (Edje *ed, int id, double v);
 const char   *_edje_var_str_get             (Edje *ed, int id);
-void          _edje_var_str_set             (Edje *ed, int id, char *str);
+void          _edje_var_str_set             (Edje *ed, int id, const char *str);
 
 void          _edje_var_list_var_append(Edje *ed, int id, Edje_Var *var);
 void          _edje_var_list_var_prepend(Edje *ed, int id, Edje_Var *var);
@@ -924,15 +924,15 @@ void          _edje_var_list_float_prepend(Edje *ed, int id, double v);
 void          _edje_var_list_float_insert(Edje *ed, int id, int n, double v);
 
 const char   *_edje_var_list_nth_str_get(Edje *ed, int id, int n);
-void          _edje_var_list_nth_str_set(Edje *ed, int id, int n, char *v);
-void          _edje_var_list_str_append(Edje *ed, int id, char *v);
-void          _edje_var_list_str_prepend(Edje *ed, int id, char *v);
-void          _edje_var_list_str_insert(Edje *ed, int id, int n, char *v);
+void          _edje_var_list_nth_str_set(Edje *ed, int id, int n, const char *v);
+void          _edje_var_list_str_append(Edje *ed, int id, const char *v);
+void          _edje_var_list_str_prepend(Edje *ed, int id, const char *v);
+void          _edje_var_list_str_insert(Edje *ed, int id, int n, const char *v);
     
-int           _edje_var_timer_add           (Edje *ed, double in, char *fname, int val);
+int           _edje_var_timer_add           (Edje *ed, double in, const char *fname, int val);
 void          _edje_var_timer_del           (Edje *ed, int id);
 
-int           _edje_var_anim_add            (Edje *ed, double len, char *fname, int val);
+int           _edje_var_anim_add            (Edje *ed, double len, const char *fname, int val);
 void          _edje_var_anim_del            (Edje *ed, int id);
     
 void          _edje_message_init            (void);
@@ -948,7 +948,7 @@ void          _edje_message_del             (Edje *ed);
 
 void _edje_textblock_style_parse_and_fix(Edje_File *edf);
 void _edje_textblock_style_cleanup(Edje_File *edf);
-Edje_File *_edje_cache_file_coll_open(char *file, char *coll, int *error_ret, Edje_Part_Collection **edc_ret);
+Edje_File *_edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret);
 void _edje_cache_coll_clean(Edje_File *edf);
 void _edje_cache_coll_flush(Edje_File *edf);
 void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);

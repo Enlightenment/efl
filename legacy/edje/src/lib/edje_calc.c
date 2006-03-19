@@ -47,7 +47,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 }
 
 Edje_Part_Description *
-_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name,
+_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
                             double val)
 {
    Edje_Part *ep = rp->part;
@@ -88,7 +88,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name,
 }
 
 void
-_edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char *d1, double v1, char *d2, double v2)
+_edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, double v1, const char *d2, double v2)
 {
    if (!d1) d1 = "default";
    if (!d2) d2 = "default";
@@ -432,8 +432,8 @@ _edje_part_recalc_single(Edje *ed,
    if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
      {
 	Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
-	char *text = "";
-	char *style = "";
+	const char *text = "";
+	const char *style = "";
 	Edje_Style *stl  = NULL;
 	Evas_List *l;
 	
@@ -507,12 +507,12 @@ _edje_part_recalc_single(Edje *ed,
      }
    else if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
      {
-	char      *text;
-	char      *font;
-	int        size;
-	Evas_Coord tw, th;
-	char       buf[4096];
-	int        inlined_font = 0;
+	const char	*text;
+	const char	*font;
+	int		 size;
+	Evas_Coord	 tw, th;
+	char		 buf[4096];
+	int		 inlined_font = 0;
 	
 	if (chosen_desc->text.id_source >= 0)
 	  ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];

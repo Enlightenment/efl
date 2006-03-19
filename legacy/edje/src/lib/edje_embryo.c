@@ -1138,7 +1138,7 @@ _edje_embryo_fn_get_text_class(Embryo_Program *ep, Embryo_Cell *params)
    if (!class) return 0;
    t_class = _edje_text_class_find(ed, class);
    if (t_class == NULL) return 0;
-   SETSTR(t_class->font, params[2]);
+   SETSTR((char *)t_class->font, params[2]);
    SETFLOAT(t_class->size, params[3]);
    return 0;
 }
@@ -1832,7 +1832,7 @@ _edje_embryo_script_reset(Edje *ed)
 
 /* this may change in future - thus "test_run" is its name */
 void
-_edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
+_edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *src)
 {
    Embryo_Function fn;
 
@@ -1843,14 +1843,14 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
    _edje_embryo_globals_init(ed);
 
    //   _edje_embryo_script_reset(ed);
-   fn = embryo_program_function_find(ed->collection->script, fname);
+   fn = embryo_program_function_find(ed->collection->script, (char *)fname);
    if (fn != EMBRYO_FUNCTION_NONE)
      {
 	void *pdata;
 	int ret;
 
-	embryo_parameter_string_push(ed->collection->script, sig);
-	embryo_parameter_string_push(ed->collection->script, src);
+	embryo_parameter_string_push(ed->collection->script, (char *)sig);
+	embryo_parameter_string_push(ed->collection->script, (char *)src);
 	pdata = embryo_program_data_get(ed->collection->script);
 	embryo_program_data_set(ed->collection->script, ed);
 	/* 5 million instructions is an arbitary number. on my p4-2.6 here */

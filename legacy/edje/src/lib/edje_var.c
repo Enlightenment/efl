@@ -236,7 +236,7 @@ _edje_var_shutdown(Edje *ed)
 }
 
 int
-_edje_var_string_id_get(Edje *ed, char *string)
+_edje_var_string_id_get(Edje *ed, const char *string)
 {
    Embryo_Cell cell, *cptr;
    
@@ -244,7 +244,7 @@ _edje_var_string_id_get(Edje *ed, char *string)
    if (!ed->collection) return 0;
    if (!ed->collection->script) return 0;
    if (!string) return 0;
-   cell = embryo_program_variable_find(ed->collection->script, string);
+   cell = embryo_program_variable_find(ed->collection->script, (char *)string);
    if (cell == EMBRYO_CELL_NONE) return  0;
    cptr = embryo_data_address_get(ed->collection->script, cell);
    if (!cptr) return 0;
@@ -427,7 +427,7 @@ _edje_var_var_str_get(Edje *ed, Edje_Var *var)
 }
 
 void
-_edje_var_var_str_set(Edje *ed, Edje_Var *var, char *str)
+_edje_var_var_str_set(Edje *ed, Edje_Var *var, const char *str)
 {
    /* auto-cast */
    if (var->type == EDJE_VAR_STRING)
@@ -512,7 +512,7 @@ _edje_var_str_get(Edje *ed, int id)
 }
 
 void
-_edje_var_str_set(Edje *ed, int id, char *str)
+_edje_var_str_set(Edje *ed, int id, const char *str)
 {
    if (!ed) return;
    if (!ed->var_pool) return;
@@ -849,7 +849,7 @@ _edje_var_list_nth_str_get(Edje *ed, int id, int n)
 }
 
 void
-_edje_var_list_nth_str_set(Edje *ed, int id, int n, char *v)
+_edje_var_list_nth_str_set(Edje *ed, int id, int n, const char *v)
 {
    if (!ed) return;
    if (!ed->var_pool) return;
@@ -869,7 +869,7 @@ _edje_var_list_nth_str_set(Edje *ed, int id, int n, char *v)
 }
 
 void
-_edje_var_list_str_append(Edje *ed, int id, char *v)
+_edje_var_list_str_append(Edje *ed, int id, const char *v)
 {
    if (!ed) return;
    if (!ed->var_pool) return;
@@ -890,7 +890,7 @@ _edje_var_list_str_append(Edje *ed, int id, char *v)
 }
 
 void
-_edje_var_list_str_prepend(Edje *ed, int id, char *v)
+_edje_var_list_str_prepend(Edje *ed, int id, const char *v)
 {
    if (!ed) return;
    if (!ed->var_pool) return;
@@ -911,7 +911,7 @@ _edje_var_list_str_prepend(Edje *ed, int id, char *v)
 }
 
 void
-_edje_var_list_str_insert(Edje *ed, int id, int n, char *v)
+_edje_var_list_str_insert(Edje *ed, int id, int n, const char *v)
 {
    if (!ed) return;
    if (!ed->var_pool) return;
@@ -936,13 +936,13 @@ _edje_var_list_str_insert(Edje *ed, int id, int n, char *v)
 }
 
 int
-_edje_var_timer_add(Edje *ed, double in, char *fname, int val)
+_edje_var_timer_add(Edje *ed, double in, const char *fname, int val)
 {
    Edje_Var_Timer *et;
    Embryo_Function fn;
    
    if (!ed->var_pool) return 0;
-   fn = embryo_program_function_find(ed->collection->script, fname);
+   fn = embryo_program_function_find(ed->collection->script, (char *)fname);
    if (fn == EMBRYO_FUNCTION_NONE) return 0;
    et = calloc(1, sizeof(Edje_Var_Timer));
    if (!et) return 0;
@@ -1001,14 +1001,14 @@ _edje_var_timer_del(Edje *ed, int id)
 }
 
 int
-_edje_var_anim_add(Edje *ed, double len, char *fname, int val)
+_edje_var_anim_add(Edje *ed, double len, const char *fname, int val)
 {
    Edje_Var_Animator *ea;
    Embryo_Function fn;
    
    if (!ed->var_pool) return 0;
    if (len <= 0.0) return 0;
-   fn = embryo_program_function_find(ed->collection->script, fname);
+   fn = embryo_program_function_find(ed->collection->script, (char *)fname);
    if (fn == EMBRYO_FUNCTION_NONE) return 0;
    ea = calloc(1, sizeof(Edje_Var_Animator));
    if (!ea) return 0;

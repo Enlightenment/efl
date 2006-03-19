@@ -391,7 +391,7 @@ edje_file_collection_list(const char *file)
    int error_ret = 0;
 
    if ((!file) || (!*file)) return NULL;
-   edf = _edje_cache_file_coll_open((char *)file, NULL, &error_ret, NULL);
+   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (edf != NULL)
      {
 	if (edf->collection_dir)
@@ -441,7 +441,7 @@ edje_file_data_get(const char *file, const char *key)
    char *str = NULL;
    int error_ret = 0;
    
-   edf = _edje_cache_file_coll_open((char *)file, NULL, &error_ret, NULL);
+   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (edf != NULL)
      {
 	for (l = edf->data; l; l = l->next)

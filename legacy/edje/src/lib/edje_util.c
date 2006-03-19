@@ -425,13 +425,13 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    Evas_List *members;
    Edje_Text_Class *tc;
 
-   return; // this is broken right now - need to fix
    if (!text_class) return;
 
    if (size < 0) size = 0;
    if (!font) font = "";
 
    tc = evas_hash_find(_edje_text_class_hash, text_class);
+   /* Create new text class */
    if (!tc)
      {
         tc = calloc(1, sizeof(Edje_Text_Class));
@@ -455,8 +455,11 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 	return;
      }
 
+   /* If the class found is the same just return */
    if ((tc->size == size) && (tc->font) && (!strcmp(tc->font, font)))
      return;
+   
+   /* Update the class found */
    evas_stringshare_del(tc->font);
    tc->font = evas_stringshare_add(font);
    if (!tc->font)
@@ -467,6 +470,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
      }
    tc->size = size;
 
+   /* Tell all members of the text class to recalc */
    members = evas_hash_find(_edje_text_class_member_hash, text_class);
    while (members)
      {
@@ -494,33 +498,42 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    Evas_List *l;
    Edje_Text_Class *tc;
 
-   return; // this is broken right now. need to fix
-//   printf("------------ edje_object_text_class_set\n");
    ed = _edje_fetch(obj);
    if ((!ed) || (!text_class)) return;
    if (size < 0.0) size = 0.0;
+   
+   /* for each text_class in the edje */
    for (l = ed->text_classes; l; l = l->next)
      {
 	tc = l->data;
 	if ((tc->name) && (!strcmp(tc->name, text_class)))
 	  {
+	     /* Match and the same, return */
 	     if ((tc->font) && (font) && 
 		 (!strcmp(tc->font, font)) &&
 		 (tc->size == size))
 	       return;
+
+	     /* No font but size is the same, return */
 	     if ((!tc->font) && (!font) && 
 		 (tc->size == size))
 	       return;
+
+	     /* Update new text class properties */
 	     if (tc->font) evas_stringshare_del(tc->font);
 	     if (font) tc->font = evas_stringshare_add(font);
 	     else tc->font = NULL;
 	     tc->size = size;
+
+	     /* Update edje */
 	     ed->dirty = 1;
 	     _edje_recalc(ed);
 	     return;
 	  }
      }
-   tc = malloc(sizeof(Edje_Text_Class));
+
+   /* No matches, create a new text class */
+   tc = calloc(1, sizeof(Edje_Text_Class));
    if (!tc) return;
    tc->name = evas_stringshare_add(text_class);
    if (!tc->name)
@@ -531,6 +544,8 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    if (font) tc->font = evas_stringshare_add(font);
    else tc->font = NULL;
    tc->size = size;
+
+   /* Add to edje's text class list */
    ed->text_classes = evas_list_append(ed->text_classes, tc);
    ed->dirty = 1;
    _edje_recalc(ed);
@@ -1487,7 +1502,7 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
 /* Private Routines */
 
 Edje_Real_Part *
-_edje_real_part_get(Edje *ed, char *part)
+_edje_real_part_get(Edje *ed, const char *part)
 {
    Evas_List *l;
 
@@ -1502,7 +1517,7 @@ _edje_real_part_get(Edje *ed, char *part)
 }
 
 Edje_Color_Class *
-_edje_color_class_find(Edje *ed, char *color_class)
+_edje_color_class_find(Edje *ed, const char *color_class)
 {
    Evas_List *l;
    Edje_Color_Class *cc = NULL;
@@ -1531,7 +1546,7 @@ _edje_color_class_find(Edje *ed, char *color_class)
 }
 
 void
-_edje_color_class_member_add(Edje *ed, char *color_class)
+_edje_color_class_member_add(Edje *ed, const char *color_class)
 {
    Evas_List *members;
 
@@ -1544,7 +1559,7 @@ _edje_color_class_member_add(Edje *ed, char *color_class)
 }
 
 void
-_edje_color_class_member_del(Edje *ed, char *color_class)
+_edje_color_class_member_del(Edje *ed, const char *color_class)
 {
    Evas_List *members;
 
@@ -1609,7 +1624,9 @@ _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
 {
    Evas_List *tmp;
 
-   if ((ep->default_desc) && (ep->default_desc->color_class)) _edje_color_class_member_del(ed, ep->default_desc->color_class);
+   if ((ep->default_desc) && (ep->default_desc->color_class)) 
+     _edje_color_class_member_del(ed, ep->default_desc->color_class);
+
    for (tmp = ep->other_desc; tmp; tmp = tmp->next)
      {
         Edje_Part_Description *desc;
@@ -1623,7 +1640,7 @@ _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
 }
 
 Edje_Text_Class *
-_edje_text_class_find(Edje *ed, char *text_class)
+_edje_text_class_find(Edje *ed, const char *text_class)
 {
    Evas_List *l;
    
@@ -1639,20 +1656,28 @@ _edje_text_class_find(Edje *ed, char *text_class)
 }
 
 void
-_edje_text_class_member_add(Edje *ed, char *text_class)
+_edje_text_class_member_add(Edje *ed, const char *text_class)
 {
    Evas_List *members;
 
    if ((!ed) || (!text_class)) return;
+   
+   /* Get members list */
    members = evas_hash_find(_edje_text_class_member_hash, text_class);
-   if (members) _edje_text_class_member_hash = evas_hash_del(_edje_text_class_member_hash, text_class, members);
 
+   /* Remove members list */
+   if (members) 
+     _edje_text_class_member_hash = evas_hash_del(_edje_text_class_member_hash, text_class, members);
+
+   /* Update the member list */
    members = evas_list_prepend(members, ed);
+   
+   /* Add the member list back */
    _edje_text_class_member_hash = evas_hash_add(_edje_text_class_member_hash, text_class, members);
 }
 
 void
-_edje_text_class_member_del(Edje *ed, char *text_class)
+_edje_text_class_member_del(Edje *ed, const char *text_class)
 {
    Evas_List *members;
 
@@ -1661,6 +1686,7 @@ _edje_text_class_member_del(Edje *ed, char *text_class)
    if (!members) return;
 
    _edje_text_class_member_hash = evas_hash_del(_edje_text_class_member_hash, text_class, members);
+   
    members = evas_list_remove(members, ed);
    if (members) _edje_text_class_member_hash = evas_hash_add(_edje_text_class_member_hash, text_class, members);
 }
@@ -1716,7 +1742,7 @@ _edje_fetch(Evas_Object *obj)
 }
 
 int
-_edje_glob_match(char *str, char *glob)
+_edje_glob_match(const char *str, const char *glob)
 {
    if ((!glob) || (glob[0] == 0))
      {

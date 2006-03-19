@@ -12,7 +12,7 @@ static Evas_List   *_edje_file_cache = NULL;
 static int          _edje_collection_cache_size = 16;
 
 static Edje_Part_Collection *
-_edje_file_coll_open(Edje_File *edf, Eet_File *ef, char *coll)
+_edje_file_coll_open(Edje_File *edf, Eet_File *ef, const char *coll)
 {
    Edje_Part_Collection *edc = NULL;
    Evas_List *l = NULL;
@@ -64,13 +64,13 @@ _edje_file_coll_open(Edje_File *edf, Eet_File *ef, char *coll)
 }
 
 static Edje_File *
-_edje_file_open(char *file, char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
+_edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
    Edje_File *edf;
    Edje_Part_Collection *edc;
    Eet_File *ef;
    
-   ef = eet_open((char *)file, EET_FILE_MODE_READ);
+   ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
 	*error_ret = EDJE_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -121,7 +121,7 @@ _edje_file_open(char *file, char *coll, int *error_ret, Edje_Part_Collection **e
 }
 
 Edje_File *
-_edje_cache_file_coll_open(char *file, char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
+_edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
    Edje_File *edf;
    Evas_List *l;
