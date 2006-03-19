@@ -124,6 +124,40 @@ AC_PATH_GENERIC(freetype, 9.5.0,
   [ AC_MSG_ERROR(Freetype isn't installed) ]
 )
 
+#######################################
+## FontConfig
+
+AC_MSG_CHECKING(whether fontconfig searching is to be built)
+AC_ARG_ENABLE(fontconfig, [  --enable-fontconfig              enable fontconfig for finding fonts], [
+	   if test x"$enableval" = x"yes" ; then
+	     have_fontconfig="yes"
+	   else
+	     have_fontconfig="no"
+	   fi
+        ], [
+	     have_fontconfig="yes"
+	]
+)
+if test "x$have_fontconfig" = "xyes"; then
+   # Check if really available
+   PKG_CHECK_MODULES(FONTCONFIG, fontconfig,
+	 [ 
+	     have_fontconfig="yes"
+	     AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
+	     AC_MSG_RESULT(yes)
+	 ],
+	 [ 
+	     have_fontconfig="no"
+	     AC_MSG_RESULT(no)
+	 ]
+    )
+else 
+   AC_MSG_RESULT(no)
+fi
+
+###############   
+## dlopen
+
 dlopen_libs=""
 AC_CHECK_FUNCS(dlopen, res=yes, res=no)
 if test "x$res" = "xyes"; then
@@ -1748,6 +1782,9 @@ echo "  EDB.....................: $have_edb"
 echo
 echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_eet_fonts"
+echo
+echo "Font Searching Systems:"
+echo "  FontConfig..............: $have_fontconfig"
 # FIXME: add non freetype2 font engine support
 # FIXME: make freetype2 optional
 echo

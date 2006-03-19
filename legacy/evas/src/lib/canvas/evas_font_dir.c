@@ -3,6 +3,9 @@
 #ifdef BUILD_FONT_LOADER_EET
 #include <Eet.h>
 #endif
+#ifdef HAVE_FONTCONFIG
+#include <fontconfig/fontconfig.h>
+#endif
 
 /* font dir cache */
 static Evas_Hash *font_dirs = NULL;
@@ -136,7 +139,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    Fndat *fd;
 
    if (!name) return NULL;
-
+   
    for (l = fonts_cache; l; l = l->next)
      {
 	fd = l->data;
@@ -174,15 +177,15 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	  }
      }
    fonts = evas_font_set_get(name);
-   for (l = fonts; l; l = l->next)
+   for (l = fonts; l; l = l->next) /* Load each font in append */
      {
 	char *nm;
 
 	nm = l->data;
-	if ((l == fonts) || (!font))
+	if ((l == fonts) || (!font)) /* First iteration OR no font */
 	  {
 #ifdef BUILD_FONT_LOADER_EET
-	     if (source)
+	     if (source) /* Load Font from "eet" source */
 	       {
 		  Eet_File *ef;
 		  char *fake_name;
@@ -191,7 +194,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		  if (fake_name)
 		    {
 		       font = evas->engine.func->font_load(evas->engine.data.output, fake_name, size);
-		       if (!font)
+		       if (!font) /* Load from fake name failed, probably not cached */
 			 {
 			    /* read original!!! */
 			    ef = eet_open(source, EET_FILE_MODE_READ);
@@ -212,12 +215,12 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		       free(fake_name);
 		    }
 	       }
-	     if (!font)
+	     if (!font) /* Source load failed */
 	       {
 #endif
-		  if (evas_file_path_is_full_path((char *)nm))
+		  if (evas_file_path_is_full_path((char *)nm)) /* Try filename */
 		    font = evas->engine.func->font_load(evas->engine.data.output, (char *)nm, size);
-		  else
+		  else /* search font path */
 		    {
 		       Evas_List *l;
 
@@ -236,8 +239,45 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 #ifdef BUILD_FONT_LOADER_EET
 	       }
 #endif
+#ifdef HAVE_FONTCONFIG
+	     if (!font) /* Search using fontconfig */
+	       {
+		  FcPattern *p_nm = NULL;
+		  FcFontSet *set;
+		  FcResult res;
+		  int i;
+
+		  p_nm = FcNameParse(nm);
+		  FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
+		  FcDefaultSubstitute(p_nm);
+
+		  /* do matching */
+		  set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
+		  
+		  /* Do loading for all in family */
+		  for (i = 0; i < set->nfont; i++)
+		    {
+		       FcValue filename;
+		       
+		       FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);	
+		       
+		       if (font)
+			 evas->engine.func->font_add(evas->engine.data.output, font, filename.u.s, size);
+		       else 
+			 font = evas->engine.func->font_load(evas->engine.data.output, filename.u.s, size);		       
+		    }
+ 
+		  FcFontSetDestroy(set); 
+		  FcPatternDestroy(p_nm);
+		  
+		  if (font)
+		    {
+		       break;
+		    }
+	       }
+#endif
 	  }
-	else
+	else /* Base font loaded, append others */
 	  {
 	     void *ok = NULL;
 

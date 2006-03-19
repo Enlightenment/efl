@@ -105,6 +105,7 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
+   
    if ((o->cur.source) && (font_source) &&
        (!strcmp(o->cur.source, font_source)))
      return;
@@ -157,6 +158,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
+   
    if ((o->cur.font) && (font) && (!strcmp(o->cur.font, font)))
      {
 	same_font = 1;
@@ -935,6 +937,7 @@ evas_font_path_append(Evas *e, const char *path)
    return;
    MAGIC_CHECK_END();
    if (!path) return;
+
    e->font_path = evas_list_append(e->font_path, evas_stringshare_add(path));
 }
 
@@ -950,6 +953,7 @@ evas_font_path_prepend(Evas *e, const char *path)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   
    if (!path) return;
    e->font_path = evas_list_prepend(e->font_path, evas_stringshare_add(path));
 }

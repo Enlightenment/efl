@@ -227,7 +227,7 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
 {
    RGBA_Font *fn;
    RGBA_Font_Int *fi;
-
+   
    fi = evas_common_font_int_memory_load(name, size, data, data_size);
    if (!fi) return NULL;
    fn = calloc(1, sizeof(RGBA_Font));

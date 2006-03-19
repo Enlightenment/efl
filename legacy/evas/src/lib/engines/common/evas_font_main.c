@@ -107,7 +107,7 @@ int
 evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
 {
    /* Reads UTF8 bytes from @buf, starting at *@index and returns
-    * the decoded code point at iindex offset, and advances iidnex
+    * the decoded code point at iindex offset, and advances iindex
     * to the next code point after this.
     *
     * Returns 0 to indicate an error (e.g. invalid UTF8)
