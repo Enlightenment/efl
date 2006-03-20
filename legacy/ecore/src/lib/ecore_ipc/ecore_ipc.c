@@ -434,6 +434,7 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 	return NULL;
      }
    data = svr->data;
+   svr->data = NULL;
    if (svr->event_count > 0)
      svr->delete_me = 1;
    else
@@ -770,6 +771,7 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
 	return NULL;
      }
    data = cl->data;
+   cl->data = NULL;
    if (cl->event_count > 0)
      cl->delete_me = 1;
    else

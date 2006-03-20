@@ -499,6 +499,7 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 	return NULL;
      }
    data = svr->data;
+   svr->data = NULL;
    if (svr->event_count > 0)
      svr->delete_me = 1;
    else
@@ -711,6 +712,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 	return NULL;
      }   
    data = cl->data;
+   cl->data = NULL;
    if (cl->event_count > 0)
      cl->delete_me = 1;
    else
