@@ -44,7 +44,9 @@ struct _Ecore_Con_Client
    int               buf_size;
    int               buf_offset;
    unsigned char    *buf;
+   int               event_count;
    char              dead : 1;
+   char              delete_me : 1;
 };
 
 struct _Ecore_Con_Server
@@ -62,17 +64,18 @@ struct _Ecore_Con_Server
    int               write_buf_size;
    int               write_buf_offset;
    unsigned char    *write_buf;
-   char              dead : 1;
-   char              created : 1;
-   char              connecting : 1;
-   char              reject_excess_clients : 1;
+   int               event_count;
    int               client_limit;
    pid_t             ppid;
-
 #if USE_OPENSSL
    SSL_CTX          *ssl_ctx;
    SSL              *ssl;
 #endif
+   char              dead : 1;
+   char              created : 1;
+   char              connecting : 1;
+   char              reject_excess_clients : 1;
+   char              delete_me : 1;
 };
 
 #ifdef HAVE_CURL

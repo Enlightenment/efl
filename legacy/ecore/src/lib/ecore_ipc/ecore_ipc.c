@@ -217,7 +217,11 @@ static int _ecore_ipc_event_server_add(void *data, int ev_type, void *ev);
 static int _ecore_ipc_event_server_del(void *data, int ev_type, void *ev);
 static int _ecore_ipc_event_client_data(void *data, int ev_type, void *ev);
 static int _ecore_ipc_event_server_data(void *data, int ev_type, void *ev);
+static void _ecore_ipc_event_client_add_free(void *data, void *ev);
+static void _ecore_ipc_event_client_del_free(void *data, void *ev);
 static void _ecore_ipc_event_client_data_free(void *data, void *ev);
+static void _ecore_ipc_event_server_add_free(void *data, void *ev);
+static void _ecore_ipc_event_server_del_free(void *data, void *ev);
 static void _ecore_ipc_event_server_data_free(void *data, void *ev);
     
 EAPI int ECORE_IPC_EVENT_CLIENT_ADD = 0;
@@ -429,13 +433,18 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 			 "ecore_ipc_server_del");
 	return NULL;
      }
-   ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
    data = svr->data;
-   while (svr->clients) ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
-   ecore_con_server_del(svr->server);
-   servers = _ecore_list2_remove(servers, svr);
-   if (svr->buf) free(svr->buf);
-   free(svr);
+   if (svr->event_count > 0)
+     svr->delete_me = 1;
+   else
+     {
+	ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
+	while (svr->clients) ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
+	ecore_con_server_del(svr->server);
+	servers = _ecore_list2_remove(servers, svr);
+	if (svr->buf) free(svr->buf);
+	free(svr);
+     }
    return data;
 }
 
@@ -760,13 +769,18 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
 			 "ecore_ipc_client_del");
 	return NULL;
      }
-   ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    data = cl->data;
-   svr = ecore_con_server_data_get(ecore_con_client_server_get(cl->client));
-   ecore_con_client_del(cl->client);
-   svr->clients = _ecore_list2_remove(svr->clients, cl);
-   if (cl->buf) free(cl->buf);
-   free(cl);
+   if (cl->event_count > 0)
+     cl->delete_me = 1;
+   else
+     {
+	ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
+	svr = ecore_con_server_data_get(ecore_con_client_server_get(cl->client));
+	ecore_con_client_del(cl->client);
+	svr->clients = _ecore_list2_remove(svr->clients, cl);
+	if (cl->buf) free(cl->buf);
+	free(cl);
+     }
    return data;
 }
 
@@ -868,8 +882,10 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Add));
 	     if (e2)
 	       {
+                  cl->event_count++;
 		  e2->client = cl;
-		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_ADD, e2, NULL, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_ADD, e2,
+				  _ecore_ipc_event_client_add_free, NULL);
 	       }
 	  }
      }
@@ -894,8 +910,10 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));
 	     if (e2)
 	       {
+		  cl->event_count++;
 		  e2->client = cl;
-		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, e2, NULL, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, e2,
+				  _ecore_ipc_event_client_del_free, NULL);
 	       }
 	  }
      }
@@ -920,8 +938,10 @@ _ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Add));
 	     if (e2)
 	       {
+                  svr->event_count++;
 		  e2->server = svr;
-		  ecore_event_add(ECORE_IPC_EVENT_SERVER_ADD, e2, NULL, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_SERVER_ADD, e2,
+				  _ecore_ipc_event_server_add_free, NULL);
 	       }
 	  }
      }
@@ -946,8 +966,10 @@ _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Del));
 	     if (e2)
 	       {
+                  svr->event_count++;
 		  e2->server = svr;
-		  ecore_event_add(ECORE_IPC_EVENT_SERVER_DEL, e2, NULL, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_SERVER_DEL, e2,
+				  _ecore_ipc_event_server_del_free, NULL);
 	       }
 	  }
      }
@@ -1098,6 +1120,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		       e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Data));
 		       if (e2)
 			 {
+			    cl->event_count++;
 			    e2->client   = cl;
 			    e2->major    = msg.major;
 			    e2->minor    = msg.minor;
@@ -1107,7 +1130,8 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 			    e2->size     = msg.size;
 			    e2->data     = buf;
 			    ecore_event_add(ECORE_IPC_EVENT_CLIENT_DATA, e2,
-					    _ecore_ipc_event_client_data_free, NULL);
+					    _ecore_ipc_event_client_data_free,
+					    NULL);
 			 }
 		    }
 		  cl->prev.i = msg;
@@ -1276,6 +1300,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		       e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Data));
 		       if (e2)
 			 {
+			    svr->event_count++;
 			    e2->server   = svr;
 			    e2->major    = msg.major;
 			    e2->minor    = msg.minor;
@@ -1285,7 +1310,8 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 			    e2->size     = msg.size;
 			    e2->data     = buf;
 			    ecore_event_add(ECORE_IPC_EVENT_SERVER_DATA, e2,
-					    _ecore_ipc_event_server_data_free, NULL);
+					    _ecore_ipc_event_server_data_free,
+					    NULL);
 			 }
 		    }
 		  svr->prev.i = msg;
@@ -1322,12 +1348,58 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 }
 
 static void
+_ecore_ipc_event_client_add_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Ipc_Event_Client_Add *e;
+   
+   e = ev;
+   if ((e->client->event_count == 0) && (e->client->delete_me))
+     ecore_ipc_client_del(e->client);
+   free(e);
+}
+
+static void
+_ecore_ipc_event_client_del_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Ipc_Event_Client_Del *e;
+   
+   e = ev;
+   if ((e->client->event_count == 0) && (e->client->delete_me))
+     ecore_ipc_client_del(e->client);
+   free(e);
+}
+
+static void
 _ecore_ipc_event_client_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Client_Data *e;
    
    e = ev;
    if (e->data) free(e->data);
+   if ((e->client->event_count == 0) && (e->client->delete_me))
+     ecore_ipc_client_del(e->client);
+   free(e);
+}
+
+static void
+_ecore_ipc_event_server_add_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Ipc_Event_Server_Add *e;
+   
+   e = ev;
+   if ((e->server->event_count == 0) && (e->server->delete_me))
+     ecore_ipc_server_del(e->server);
+   free(e);
+}
+
+static void
+_ecore_ipc_event_server_del_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Ipc_Event_Server_Add *e;
+   
+   e = ev;
+   if ((e->server->event_count == 0) && (e->server->delete_me))
+     ecore_ipc_server_del(e->server);
    free(e);
 }
 
@@ -1338,5 +1410,7 @@ _ecore_ipc_event_server_data_free(void *data __UNUSED__, void *ev)
    
    e = ev;
    if (e->data) free(e->data);
+   if ((e->server->event_count == 0) && (e->server->delete_me))
+     ecore_ipc_server_del(e->server);
    free(e);
 }

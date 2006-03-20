@@ -48,6 +48,9 @@ struct _Ecore_Ipc_Client
    struct {
       Ecore_Ipc_Msg_Head i, o;
    } prev;
+   
+   int               event_count;
+   char              delete_me : 1;
 };
    
 struct _Ecore_Ipc_Server
@@ -64,6 +67,9 @@ struct _Ecore_Ipc_Server
    struct {
       Ecore_Ipc_Msg_Head i, o;
    } prev;
+   
+   int               event_count;
+   char              delete_me : 1;
 };
 
 #endif
