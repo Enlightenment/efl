@@ -151,12 +151,14 @@ extern "C" {
    EAPI int               ecore_con_server_connected_get(Ecore_Con_Server *svr);
    EAPI int               ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size);
    EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char reject_excess_clients);
+   EAPI char             *ecore_con_server_ip_get(Ecore_Con_Server *svr);
    
    EAPI int               ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size);
    EAPI Ecore_Con_Server *ecore_con_client_server_get(Ecore_Con_Client *cl);
    EAPI void             *ecore_con_client_del(Ecore_Con_Client *cl);
    EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data);
    EAPI void             *ecore_con_client_data_get(Ecore_Con_Client *cl);
+   EAPI char             *ecore_con_client_ip_get(Ecore_Con_Client *cl);
    
    EAPI int               ecore_con_ssl_available_get(void);
 

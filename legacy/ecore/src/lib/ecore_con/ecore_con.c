@@ -338,6 +338,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    if (svr->fd >= 0) close(svr->fd);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    if (svr->write_buf) free(svr->write_buf);
+   if (svr->ip) free(svr->ip);
 #if USE_OPENSSL
    if (svr->ssl) SSL_free(svr->ssl);
    if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
@@ -627,6 +628,28 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char 
 }
 
 /**
+ * Gets the IP address of a server that has been connected to.
+ * 
+ * @param   svr           The given server.
+ * @return  A pointer to an internal string that contains the IP address of
+ *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
+ *          This string should not be modified or trusted to stay valid after
+ *          deletion for the @p svr object. If no IP is known NULL is returned.
+ * @ingroup Ecore_Con_Server_Group
+ */
+EAPI char *
+ecore_con_server_ip_get(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
+			 "ecore_con_server_ip_get");
+	return NULL;
+     }
+   return svr->ip;
+}
+
+/**
  * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
  *
  * Functions that operate on Ecore connection client objects.
@@ -761,6 +784,28 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
 }
 
 /**
+ * Gets the IP address of a cleint that has connected.
+ * 
+ * @param   cl            The given client.
+ * @return  A pointer to an internal string that contains the IP address of
+ *          the connected client in the form "XXX.YYY.ZZZ.AAA" IP notation.
+ *          This string should not be modified or trusted to stay valid after
+ *          deletion for the @p cl object. If no IP is known NULL is returned.
+ * @ingroup Ecore_Con_Client_Group
+ */
+EAPI char *
+ecore_con_client_ip_get(Ecore_Con_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
+			 "ecore_con_client_ip_get");
+	return NULL;
+     }
+   return cl->ip;
+}
+
+/**
  * Returns if SSL support is available
  * @return  1 if SSL is available, 0 if it is not.
  * @ingroup Ecore_Con_Client_Group
@@ -796,6 +841,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 #endif
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
+   if (svr->ip) free(svr->ip);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    free(svr);
 }
@@ -808,6 +854,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->buf) free(cl->buf);
    if (cl->fd >= 0) close(cl->fd);
    if (cl->fd_handler) ecore_main_fd_handler_del(cl->fd_handler);
+   if (cl->ip) free(cl->ip);
    free(cl);
 }
 
@@ -831,7 +878,9 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    if (new_fd >= 0)
      {
 	Ecore_Con_Client *cl;
-
+	char buf[64];
+	uint32_t ip;
+	
 	if ((svr->client_limit >= 0) && (svr->reject_excess_clients))
 	  {
 	     close(new_fd);
@@ -854,6 +903,14 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 						   cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	ecore_list_append(svr->clients, cl);
+	ip = incoming.sin_addr.s_addr;
+	snprintf(buf, sizeof(buf),
+		 "%i.%i.%i.%i",
+		 (ip      ) & 0xff,
+		 (ip >> 8 ) & 0xff,
+		 (ip >> 16) & 0xff,
+		 (ip >> 24) & 0xff);
+	cl->ip = strdup(buf);
 	  {
 	     Ecore_Con_Event_Client_Add *e;
 	     
@@ -925,6 +982,8 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
    Ecore_Con_Server   *svr;
    struct sockaddr_in  socket_addr;
    int                 curstate = 0;
+   char                buf[64];
+   uint32_t            ip;
 
    svr = data;
 
@@ -955,6 +1014,14 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
 						 NULL, NULL);
 
    if (!svr->fd_handler) goto error;
+   ip = socket_addr.sin_addr.s_addr;
+   snprintf(buf, sizeof(buf),
+	    "%i.%i.%i.%i",
+	    (ip      ) & 0xff,
+	    (ip >> 8 ) & 0xff,
+	    (ip >> 16) & 0xff,
+	    (ip >> 24) & 0xff);
+   svr->ip = strdup(buf);
 
 #if USE_OPENSSL
    if (svr->type & ECORE_CON_USE_SSL)

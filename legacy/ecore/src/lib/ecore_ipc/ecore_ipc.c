@@ -612,6 +612,13 @@ ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char 
    ecore_con_server_client_limit_set(svr->server, client_limit, reject_excess_clients);
 }
 
+/**
+ * Sets the max data payload size for an Ipc message in bytes
+ * 
+ * @param   svr           The given server.
+ * @param   size          The maximum data payload size in bytes.
+ * @ingroup Ecore_Ipc_Server_Group
+ */
 EAPI void
 ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size)
 {
@@ -624,6 +631,13 @@ ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size)
    svr->max_buf_size = size;
 }
 
+/**
+ * Gets the max data payload size for an Ipc message in bytes
+ * 
+ * @param   svr           The given server.
+ * @return The maximum data payload in bytes.
+ * @ingroup Ecore_Ipc_Server_Group
+ */
 EAPI int
 ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
 {
@@ -634,6 +648,28 @@ ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
 	return -1;
      }
    return svr->max_buf_size;
+}
+
+/**
+ * Gets the IP address of a server that has been connected to.
+ * 
+ * @param   svr           The given server.
+ * @return  A pointer to an internal string that contains the IP address of
+ *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
+ *          This string should not be modified or trusted to stay valid after
+ *          deletion for the @p svr object. If no IP is known NULL is returned.
+ * @ingroup Ecore_Ipc_Server_Group
+ */
+EAPI char *
+ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
+			 "ecore_con_server_ip_get");
+	return NULL;
+     }
+   return ecore_con_server_ip_get(svr->server);
 }
 
 
@@ -822,6 +858,13 @@ ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
    return cl->data;
 }
 
+/**
+ * Sets the max data payload size for an Ipc message in bytes
+ * 
+ * @param   client        The given client.
+ * @param   size          The maximum data payload size in bytes.
+ * @ingroup Ecore_Ipc_Client_Group
+ */
 EAPI void
 ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size)
 {
@@ -834,6 +877,13 @@ ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size)
    cl->max_buf_size = size;
 }
 
+/**
+ * Sets the max data payload size for an Ipc message in bytes
+ * 
+ * @param   cl            The given client.
+ * @param   size          The maximum data payload size in bytes.
+ * @ingroup Ecore_Ipc_Client_Group
+ */
 EAPI int
 ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
 {
@@ -844,6 +894,28 @@ ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
 	return -1;
      }
    return cl->max_buf_size;
+}
+
+/**
+ * Gets the IP address of a client that has been connected to.
+ * 
+ * @param   cl            The given client.
+ * @return  A pointer to an internal string that contains the IP address of
+ *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
+ *          This string should not be modified or trusted to stay valid after
+ *          deletion for the @p cl object. If no IP is known NULL is returned.
+ * @ingroup Ecore_Ipc_Client_Group
+ */
+EAPI char *
+ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
+     {
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
+			 "ecore_con_client_ip_get");
+	return NULL;
+     }
+   return ecore_con_client_ip_get(cl->client);
 }
 
 /**

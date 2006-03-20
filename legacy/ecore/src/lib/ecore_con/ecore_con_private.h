@@ -44,6 +44,7 @@ struct _Ecore_Con_Client
    int               buf_size;
    int               buf_offset;
    unsigned char    *buf;
+   char             *ip;
    int               event_count;
    char              dead : 1;
    char              delete_me : 1;
@@ -71,6 +72,7 @@ struct _Ecore_Con_Server
    SSL_CTX          *ssl_ctx;
    SSL              *ssl;
 #endif
+   char             *ip;
    char              dead : 1;
    char              created : 1;
    char              connecting : 1;
