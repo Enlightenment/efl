@@ -439,8 +439,11 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
      svr->delete_me = 1;
    else
      {
+	Ecore_List2 *l;
+	
 	ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
-	while (svr->clients) ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
+	while (svr->clients)
+	  ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
 	ecore_con_server_del(svr->server);
 	servers = _ecore_list2_remove(servers, svr);
 	if (svr->buf) free(svr->buf);
@@ -1427,6 +1430,7 @@ _ecore_ipc_event_client_add_free(void *data __UNUSED__, void *ev)
    Ecore_Ipc_Event_Client_Add *e;
    
    e = ev;
+   e->client->event_count--;
    if ((e->client->event_count == 0) && (e->client->delete_me))
      ecore_ipc_client_del(e->client);
    free(e);
@@ -1438,6 +1442,7 @@ _ecore_ipc_event_client_del_free(void *data __UNUSED__, void *ev)
    Ecore_Ipc_Event_Client_Del *e;
    
    e = ev;
+   e->client->event_count--;
    if ((e->client->event_count == 0) && (e->client->delete_me))
      ecore_ipc_client_del(e->client);
    free(e);
@@ -1449,6 +1454,7 @@ _ecore_ipc_event_client_data_free(void *data __UNUSED__, void *ev)
    Ecore_Ipc_Event_Client_Data *e;
    
    e = ev;
+   e->client->event_count--;
    if (e->data) free(e->data);
    if ((e->client->event_count == 0) && (e->client->delete_me))
      ecore_ipc_client_del(e->client);
@@ -1461,6 +1467,7 @@ _ecore_ipc_event_server_add_free(void *data __UNUSED__, void *ev)
    Ecore_Ipc_Event_Server_Add *e;
    
    e = ev;
+   e->server->event_count--;
    if ((e->server->event_count == 0) && (e->server->delete_me))
      ecore_ipc_server_del(e->server);
    free(e);
@@ -1472,6 +1479,7 @@ _ecore_ipc_event_server_del_free(void *data __UNUSED__, void *ev)
    Ecore_Ipc_Event_Server_Add *e;
    
    e = ev;
+   e->server->event_count--;
    if ((e->server->event_count == 0) && (e->server->delete_me))
      ecore_ipc_server_del(e->server);
    free(e);
@@ -1484,6 +1492,7 @@ _ecore_ipc_event_server_data_free(void *data __UNUSED__, void *ev)
    
    e = ev;
    if (e->data) free(e->data);
+   e->server->event_count--;
    if ((e->server->event_count == 0) && (e->server->delete_me))
      ecore_ipc_server_del(e->server);
    free(e);
