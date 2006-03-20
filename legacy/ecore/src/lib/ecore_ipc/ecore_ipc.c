@@ -669,7 +669,7 @@ ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr)
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
      {
 	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
-			 "ecore_con_server_ip_get");
+			 "ecore_ipc_server_ip_get");
 	return NULL;
      }
    return ecore_con_server_ip_get(svr->server);
@@ -915,7 +915,7 @@ ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl)
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
      {
 	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
-			 "ecore_con_client_ip_get");
+			 "ecore_ipc_client_ip_get");
 	return NULL;
      }
    return ecore_con_client_ip_get(cl->client);
