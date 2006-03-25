@@ -1874,7 +1874,7 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
      {
 	if (ee->prop.avoid_damage)
 	  {
-	     ee->engine.x.pmap = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 0);
+	     ee->engine.x.pmap = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, einfo->info.depth);
 	     ee->engine.x.gc = ecore_x_gc_new(ee->engine.x.pmap);
 	     einfo->info.drawable = ee->engine.x.pmap;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
