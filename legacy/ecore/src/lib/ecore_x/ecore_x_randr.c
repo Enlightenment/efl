@@ -188,7 +188,6 @@ ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root, Ecore_X_Screen_Size s
      }
    if (size_index == -1) return 0;
    
-   printf("Size: %d\n", size_index);
    sc = XRRGetScreenInfo(_ecore_x_disp, root);
    if (XRRSetScreenConfigAndRate(_ecore_x_disp, sc,
 				 root, size_index,
