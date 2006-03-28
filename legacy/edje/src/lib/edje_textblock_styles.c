@@ -295,17 +295,19 @@ _edje_textblock_style_all_update(Edje *ed)
 	     
 	     /* Add and Ha`ndle tag parsed data */	  
 	     buf = _edje_strbuf_append(buf, tag->value, &buflen, &bufalloc);
-
-	     /* Add font properties */
-	     if (tag->font)
+	     	     
+	     if (!strcmp(tag->key, "DEFAULT"))
 	       {
+		  if (fontset)
+		    {
+		       buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
+		       buf = _edje_strbuf_append(buf, "font_fallbacks=", &buflen, &bufalloc);
+		       buf = _edje_strbuf_append(buf, fontset, &buflen, &bufalloc);
+		    }
 		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
-		  buf = _edje_strbuf_append(buf, "font=", &buflen, &bufalloc);
-		  if (found) 
-		    buf = _edje_strbuf_append(buf, tc->font, &buflen, &bufalloc);
-		  else
-		    buf = _edje_strbuf_append(buf, tag->font, &buflen, &bufalloc);
-	       }
+		  buf = _edje_strbuf_append(buf, "font_source=", &buflen, &bufalloc);
+		  buf = _edje_strbuf_append(buf, fontsource, &buflen, &bufalloc);
+	       } 
 	     if (tag->font_size > 0)
 	       {
 		  char font_size[32];
@@ -319,20 +321,18 @@ _edje_textblock_style_all_update(Edje *ed)
 		  buf = _edje_strbuf_append(buf, "font_size=", &buflen, &bufalloc);
 		  buf = _edje_strbuf_append(buf, font_size, &buflen, &bufalloc);
 	       }
+	     /* Add font name last to save evas from multiple loads */
+	     if (tag->font)
+	       {
+		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
+		  buf = _edje_strbuf_append(buf, "font=", &buflen, &bufalloc);
+		  if (found) 
+		    buf = _edje_strbuf_append(buf, tc->font, &buflen, &bufalloc);
+		  else
+		    buf = _edje_strbuf_append(buf, tag->font, &buflen, &bufalloc);
+	       }
 	     found = 0;
 	     
-	     if (!strcmp(tag->key, "DEFAULT"))
-	       {
-		  if (fontset)
-		    {
-		       buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
-		       buf = _edje_strbuf_append(buf, "font_fallbacks=", &buflen, &bufalloc);
-		       buf = _edje_strbuf_append(buf, fontset, &buflen, &bufalloc);
-		    }
-		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
-		  buf = _edje_strbuf_append(buf, "font_source=", &buflen, &bufalloc);
-		  buf = _edje_strbuf_append(buf, fontsource, &buflen, &bufalloc);
-	       }
 	     buf = _edje_strbuf_append(buf, "'", &buflen, &bufalloc);
 	  }
 	if (fontset) free(fontset);
@@ -410,11 +410,7 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	char *buf = NULL;
 	int bufalloc = 0;
 	int buflen = 0;
-	int def_done = 0;
 	char *fontset = NULL, *fontsource = NULL, *ts;
-	const char *default_font = NULL;
-	const char *default_text_class = NULL;
-	double	    default_font_size = 0.0; 
 	
 	stl = l->data;
 	if (stl->style) break;
@@ -438,23 +434,6 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	     
 	     ts = _edje_format_reparse(edf, tag->value, &(tag));
 	     
-	     /* Handle the returned tag data */
-	     if ((!def_done) && (!strcmp(tag->key, "DEFAULT")))
-	       {  /* establish base font properties */
-		  default_font_size = tag->font_size;
-		  default_font = tag->font;
-		  default_text_class = tag->text_class;
-	       }
-	     else
-	       {  /* Try to inherit font properties from base style */
-		  if (tag->font_size == 0.0)
-		    tag->font_size = default_font_size;
-		  if (tag->font == NULL && default_font != NULL)
-		    tag->font = evas_stringshare_add(default_font);
-		  if (tag->text_class == NULL && default_text_class != NULL)
-		    tag->text_class = evas_stringshare_add(default_text_class);
-	       }
-	     
 	     /* Add and Handle tag parsed data */
 	     if (ts)
 	       {
@@ -463,25 +442,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 		  buf = _edje_strbuf_append(buf, tag->value, &buflen, &bufalloc);
 		  free(ts);
 	       }
-
-	     /* Add font properties */
-	     if (tag->font)
-	       {
-		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
-		  buf = _edje_strbuf_append(buf, "font=", &buflen, &bufalloc);
-		  buf = _edje_strbuf_append(buf, tag->font, &buflen, &bufalloc);
-	       }
-	     if (tag->font_size > 0)
-	       {
-		  char font_size[32];
-		  
-		  snprintf(font_size, sizeof(font_size), "%f", tag->font_size);
-		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
-		  buf = _edje_strbuf_append(buf, "font_size=", &buflen, &bufalloc);
-		  buf = _edje_strbuf_append(buf, font_size, &buflen, &bufalloc);
-	       }
 	     
-	     if ((!def_done) && (!strcmp(tag->key, "DEFAULT")))
+	     if (!strcmp(tag->key, "DEFAULT"))
 	       {
 		  if (fontset)
 		    {
@@ -492,7 +454,22 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
 		  buf = _edje_strbuf_append(buf, "font_source=", &buflen, &bufalloc);
 		  buf = _edje_strbuf_append(buf, fontsource, &buflen, &bufalloc);
-		  def_done = 1;
+	       }
+	     if (tag->font_size > 0)
+	       {
+		  char font_size[32];
+		  
+		  snprintf(font_size, sizeof(font_size), "%f", tag->font_size);
+		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
+		  buf = _edje_strbuf_append(buf, "font_size=", &buflen, &bufalloc);
+		  buf = _edje_strbuf_append(buf, font_size, &buflen, &bufalloc);
+	       }	
+	     /* Add font name last to save evas from multiple loads */
+	     if (tag->font)
+	       {
+		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
+		  buf = _edje_strbuf_append(buf, "font=", &buflen, &bufalloc);
+		  buf = _edje_strbuf_append(buf, tag->font, &buflen, &bufalloc);
 	       }
 	     buf = _edje_strbuf_append(buf, "'", &buflen, &bufalloc);
 	  }
