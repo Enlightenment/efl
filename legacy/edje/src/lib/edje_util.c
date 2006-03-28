@@ -4,11 +4,11 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-Evas_Hash *_edje_color_class_hash = NULL;
-Evas_Hash *_edje_color_class_member_hash = NULL;
+static Evas_Hash *_edje_color_class_hash = NULL;
+static Evas_Hash *_edje_color_class_member_hash = NULL;
 
-Evas_Hash *_edje_text_class_hash = NULL;
-Evas_Hash *_edje_text_class_member_hash = NULL;
+static Evas_Hash *_edje_text_class_hash = NULL;
+static Evas_Hash *_edje_text_class_member_hash = NULL;
 
 char *_edje_fontset_append = NULL;
 
@@ -417,7 +417,8 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
  * @param font The font name
  * @param size The font size
  *
- * This sets the Edje text class ?!
+ * This sets updates all edje members which belong to this text class
+ * with the new font attributes. 
  */
 EAPI void
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
@@ -426,7 +427,6 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    Edje_Text_Class *tc;
 
    if (!text_class) return;
-
    if (size < 0) size = 0;
    if (!font) font = "";
 
@@ -478,6 +478,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 
 	ed = members->data;
 	ed->dirty = 1;
+	_edje_textblock_style_all_update(ed);
 	_edje_recalc(ed);
 	members = members->next;
      }
@@ -500,6 +501,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!text_class)) return;
+
    if (size < 0.0) size = 0.0;
    
    /* for each text_class in the edje */
@@ -548,6 +550,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    /* Add to edje's text class list */
    ed->text_classes = evas_list_append(ed->text_classes, tc);
    ed->dirty = 1;
+   _edje_textblock_style_all_update(ed); 
    _edje_recalc(ed);
 }
 

@@ -27,13 +27,14 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
    if ((pt->default_desc) && (pt->default_desc->text.text_class))
      _edje_text_class_member_add(ed, pt->default_desc->text.text_class);
    
-   /* If any other classes exit add them */
+   /* If any other classes exist add them */
    for (tmp = pt->other_desc; tmp; tmp = tmp->next)
      {
         Edje_Part_Description *desc;
 
 	desc = tmp->data;
-	if ((desc) && (desc->text.text_class)) _edje_text_class_member_add(ed, desc->text.text_class);
+	if ((desc) && (desc->text.text_class)) 
+	  _edje_text_class_member_add(ed, desc->text.text_class);
      }
 }
 

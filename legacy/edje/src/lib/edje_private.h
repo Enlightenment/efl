@@ -213,8 +213,11 @@ struct _Edje_Style
 
 struct _Edje_Style_Tag
 {
-   char                           *key;
-   char                           *value;
+   const char                     *key;
+   const char                     *value;
+   const char			  *font;
+   double			   font_size;
+   const char			  *text_class;
 };
 
 /*----------*/
@@ -249,7 +252,7 @@ struct _Edje_Image_Directory_Entry
 {
    char *entry; /* the nominal name of the image - if any */
    int   source_type; /* alternate source mode. 0 = none */
-   int   source_param; /* extar params on encoding */
+   int   source_param; /* extra params on encoding */
    int   id; /* the id no. of the image */
 };
 
@@ -946,6 +949,9 @@ void          _edje_message_queue_process   (void);
 void          _edje_message_queue_clear     (void);
 void          _edje_message_del             (Edje *ed);
 
+void _edje_textblock_styles_add(Edje *ed);
+void _edje_textblock_styles_del(Edje *ed);
+void _edje_textblock_style_all_update(Edje *ed);
 void _edje_textblock_style_parse_and_fix(Edje_File *edf);
 void _edje_textblock_style_cleanup(Edje_File *edf);
 Edje_File *_edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret);

@@ -46,7 +46,10 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
-
+  
+   _edje_textblock_styles_add(ed);
+   _edje_textblock_style_all_update(ed);
+   
    if (ed->collection)
      {
 	Evas_List *l;
@@ -60,7 +63,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 
 	     /* Register any color classes in this parts descriptions. */
 	     ep = l->data;
-	     if ((ep->default_desc) && (ep->default_desc->color_class)) _edje_color_class_member_add(ed, ep->default_desc->color_class);
+	     if ((ep->default_desc) && (ep->default_desc->color_class)) 
+	       _edje_color_class_member_add(ed, ep->default_desc->color_class);
 	     for (hist = ep->other_desc; hist; hist = hist->next)
 	       {
 		  Edje_Part_Description *desc;
@@ -147,13 +151,13 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       {
 		  printf("EDJE ERROR: no default part description!\n");
 	       }
-	     _edje_text_part_on_add(ed, rp);
 	     if (ep->type == EDJE_PART_TYPE_RECTANGLE)
 	       rp->object = evas_object_rectangle_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_IMAGE)
 	       rp->object = evas_object_image_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_TEXT)
 	       {
+		  _edje_text_part_on_add(ed, rp);
 		  rp->object = evas_object_text_add(ed->evas);
 		  evas_object_text_font_source_set(rp->object, ed->path);
 	       }
@@ -489,7 +493,8 @@ _edje_file_del(Edje *ed)
    if ((ed->file) && (ed->collection))
      {
 	Evas_List *l;
-	
+
+	_edje_textblock_styles_del(ed); 
 	for (l = ed->collection->parts; l; l = l->next)
 	  {
 	     Edje_Part *ep;

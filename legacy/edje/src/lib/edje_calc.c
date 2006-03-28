@@ -513,6 +513,8 @@ _edje_part_recalc_single(Edje *ed,
 	Evas_Coord	 tw, th;
 	char		 buf[4096];
 	int		 inlined_font = 0;
+
+	/* Update a object_text part */	
 	
 	if (chosen_desc->text.id_source >= 0)
 	  ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
@@ -612,7 +614,7 @@ _edje_part_recalc_single(Edje *ed,
 	  }
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
-	
+
 	if ((_edje_fontset_append) && (font))
 	  {
 	     char *font2;
