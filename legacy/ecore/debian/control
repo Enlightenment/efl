@@ -1,8 +1,8 @@
 Source: ecore
 Section: libs
 Priority: optional
-Maintainer: Alessandro Grassi <xstasi@soulmachine.net> 
-Build-Depends: debhelper (>> 4.0.0), libedb1-dev, libeet0-dev, libevas0-dev, libssl-dev, libfreetype6-dev, libdirectfb-dev, automake1.7 | automaken, libtool
+Maintainer: E17 Debian Team <debian@edevelop.org>
+Build-Depends: debhelper (>> 4.0.0), libedb1-dev, libeet0-dev, libevas0-dev, libssl-dev, libfreetype6-dev, libdirectfb-dev, libxcursor-dev, automake1.7 | automaken, libtool, libxss-dev
 Standards-Version: 3.6.1.0
 
 Package: libecore0
