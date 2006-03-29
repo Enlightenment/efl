@@ -1,6 +1,4 @@
 usr/lib/lib*.so.*
 usr/lib/ecore*.so
-usr/share/ecore/fonts/*.ttf
-usr/share/ecore/fonts/fonts.alias
-usr/share/ecore/fonts/fonts.dir
+usr/share/ecore/fonts/*
 usr/share/ecore/pointers/*.png
