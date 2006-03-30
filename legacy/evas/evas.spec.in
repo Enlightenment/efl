@@ -39,7 +39,7 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel freetype2-devel freetype-devel
-BuildRequires: eet-devel
+BuildRequires: eet-devel, libjpeg-devel
 BuildRequires: /usr/bin/freetype-config
 Provides: evas, evas-module_engine_buffer, evas-module_engine_software_x11
 Provides: evas-module_loader_jpeg, evas-module_saver_jpeg
