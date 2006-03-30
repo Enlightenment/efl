@@ -37,6 +37,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.c.in \
 	     debian/eet.1 \
 	     debian/libeet0-dev.install \
 	     debian/libeet0.install \
+	     debian/eet-debug.install \
 	     debian/rules
 
 pkgconfigdir = $(libdir)/pkgconfig

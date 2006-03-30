@@ -28,3 +28,11 @@ Description: Enlightenment file chunk reading/writing library
  this once here.
  .
  It's small, fast, and does a job. It's heavily commented and fully documented.
+
+Package: eet-debug
+Section: libs
+Architecture: any
+Depends: libeet0 (= ${Source-Version})
+Provides: eet-debug
+Description: Eet debug utility for listing/reading/unpacking and dissecting
+ basic eet structured files, as well as testing eet itself.
