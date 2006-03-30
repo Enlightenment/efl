@@ -11,7 +11,7 @@ Source: ftp://ftp.enlightenment.org/pub/emotion/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel libxine1-devel xine-lib-devel
+#BuildSuggests: xorg-x11-devel libxine1-devel xine-lib-devel gstreamer-devel gstreamer-plugins-devel
 BuildRequires: XFree86-devel eet-devel evas-devel edje-devel
 BuildRequires: /usr/bin/xine-config
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
@@ -55,7 +55,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libemotion.so.*
 %{_bindir}/emotion_*
 %{_libdir}/emotion/emotion_decoder_xine.a
-%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.a
+#%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.a
 %{_datadir}/emotion
 
 %files devel
@@ -67,8 +67,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libemotion.la
 %{_libdir}/emotion/emotion_decoder_xine.la
 %{_libdir}/emotion/emotion_decoder_xine.so
-%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.so
-%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.la
+#%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.so
+#%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.la
 %{_includedir}/Emotion*
 
 %changelog
