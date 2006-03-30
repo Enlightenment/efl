@@ -1,4 +1,2 @@
-usr/lib/lib*.so.*
-usr/lib/ecore*.so
-usr/share/ecore/fonts/*
-usr/share/ecore/pointers/*.png
+debian/tmp/usr/lib/libecore.so.1*
+debian/tmp/usr/share/ecore/fonts/*
