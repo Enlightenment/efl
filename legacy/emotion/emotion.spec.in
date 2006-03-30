@@ -11,7 +11,8 @@ Source: ftp://ftp.enlightenment.org/pub/emotion/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel libxine1-devel xine-lib-devel gstreamer-devel gstreamer-plugins-devel
+#BuildSuggests: xorg-x11-devel libxine1-devel xine-lib-devel
+#BuildSuggests: gstreamer-devel gstreamer-plugins-devel gstreamer-plugins-base-devel
 BuildRequires: XFree86-devel eet-devel evas-devel edje-devel
 BuildRequires: /usr/bin/xine-config
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
