@@ -488,6 +488,24 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
    return ecore_con_server_connected_get(svr->server);
 }
 
+/**
+ * Retrieves the list of clients for this server.
+ * @param   svr The given IPC server.
+ * @return  An Ecore_List with the clients.
+ * @ingroup Ecore_IPC_Server_Group
+ */
+EAPI Ecore_List *
+ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
+			 "ecore_ipc_server_clients_get");
+	return NULL;
+     }
+   return ecore_con_server_clients_get(svr->server);
+}
+
 #define SVENC(_member) \
    d = _ecore_ipc_dlt_int(msg._member, svr->prev.o._member, &md); \
    if (md >= DLT_SET) \
