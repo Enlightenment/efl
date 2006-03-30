@@ -59,6 +59,7 @@ struct _Ecore_Ipc_Server
    ECORE_MAGIC;
    Ecore_Con_Server *server;
    Ecore_Ipc_Client *clients;
+   Ecore_List       *client_list;
    void              *data;
    unsigned char     *buf;
    int                buf_size;

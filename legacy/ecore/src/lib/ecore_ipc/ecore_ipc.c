@@ -355,6 +355,8 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
      }
    svr->max_buf_size = 32 * 1024;
    svr->data = (void *)data;
+   svr->client_list = ecore_list_new();
+   ecore_list_init(svr->client_list);
    servers = _ecore_list2_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_IPC_SERVER);
    return svr;
@@ -438,15 +440,14 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
    if (svr->event_count > 0)
      svr->delete_me = 1;
    else
-     {
-	Ecore_List2 *l;
-	
+     {	
 	ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
 	while (svr->clients)
 	  ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
 	ecore_con_server_del(svr->server);
 	servers = _ecore_list2_remove(servers, svr);
 	if (svr->buf) free(svr->buf);
+	ecore_list_destroy(svr->client_list);
 	free(svr);
      }
    return data;
@@ -503,7 +504,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
 			 "ecore_ipc_server_clients_get");
 	return NULL;
      }
-   return svr->clients;
+   return svr->client_list;
 }
 
 #define SVENC(_member) \
@@ -971,6 +972,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	cl->max_buf_size = 32 * 1024;
 	ecore_con_client_data_set(cl->client, (void *)cl);
 	svr->clients = _ecore_list2_append(svr->clients, cl);
+	ecore_list_append(svr->client_list, cl);
 	  {
 	     Ecore_Ipc_Event_Client_Add *e2;
 	     
@@ -1001,7 +1003,12 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	cl = ecore_con_client_data_get(e->client);
 	  {
 	     Ecore_Ipc_Event_Client_Del *e2;
-	     
+	     Ecore_Ipc_Server *svr;
+
+	     svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
+	     ecore_list_goto(svr->client_list, cl);
+	     ecore_list_remove(svr->client_list);
+	     ecore_list_goto_first(svr->client_list);
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));
 	     if (e2)
 	       {
