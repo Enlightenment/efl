@@ -550,6 +550,24 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
 }
 
 /**
+ * Retrieves the current list of clients.
+ * @param   svr The given server.
+ * @return  The list of clients on this server.
+ * @ingroup Ecore_Con_Server_Group
+ */
+EAPI Ecore_List*
+ecore_con_server_clients_get(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
+			 "ecore_con_server_clients_get");
+	return NULL;
+     }   
+   return svr->clients;
+}
+
+/**
  * Sends the given data to the given server.
  * @param   svr  The given server.
  * @param   data The given data.

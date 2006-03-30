@@ -23,6 +23,7 @@
 #endif
 
 #include <netdb.h>
+#include <Ecore_Data.h>
 
 /**
  * @file Ecore_Con.h
@@ -149,6 +150,7 @@ extern "C" {
    EAPI void             *ecore_con_server_del(Ecore_Con_Server *svr);
    EAPI void             *ecore_con_server_data_get(Ecore_Con_Server *svr);
    EAPI int               ecore_con_server_connected_get(Ecore_Con_Server *svr);
+   EAPI Ecore_List       *ecore_con_server_clients_get(Ecore_Con_Server *svr);
    EAPI int               ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size);
    EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char reject_excess_clients);
    EAPI char             *ecore_con_server_ip_get(Ecore_Con_Server *svr);
