@@ -503,7 +503,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
 			 "ecore_ipc_server_clients_get");
 	return NULL;
      }
-   return ecore_con_server_clients_get(svr->server);
+   return svr->clients;
 }
 
 #define SVENC(_member) \
