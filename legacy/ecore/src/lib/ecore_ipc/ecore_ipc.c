@@ -447,7 +447,7 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 	ecore_con_server_del(svr->server);
 	servers = _ecore_list2_remove(servers, svr);
 	if (svr->buf) free(svr->buf);
-	ecore_list_destroy(svr->client_list);
+	if (svr->client_list) ecore_list_destroy(svr->client_list);
 	free(svr);
      }
    return data;
