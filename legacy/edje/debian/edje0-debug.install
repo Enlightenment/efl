@@ -1,0 +1,8 @@
+debian/tmp/usr/bin/*test
+debian/tmp/usr/share/edje/data/e_logo.sh
+debian/tmp/usr/share/edje/data/src/*.edc
+debian/tmp/usr/share/edje/data/images/*.png
+debian/tmp/usr/share/edje/data/test/fonts/*.alias
+debian/tmp/usr/share/edje/data/test/fonts/*.ttf
+debian/tmp/usr/share/edje/data/test/fonts/*.dir
+debian/tmp/usr/share/edje/data/test/images/*.png

@@ -1,2 +1,2 @@
-usr/lib/lib*.so.*
-usr/share/edje/include/edje.inc
+debian/tmp/usr/lib/lib*.so.*
+debian/tmp/usr/share/edje/include/edje.inc
