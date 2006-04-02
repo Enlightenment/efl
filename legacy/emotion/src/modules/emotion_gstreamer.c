@@ -1510,7 +1510,7 @@ static int _cdda_pipeline_build (void *video, const char * device, unsigned int 
 
    cdiocddasrc = gst_element_factory_make ("cdiocddasrc", "src");
    if (!cdiocddasrc) {
-     gst_object_unref (GST_OBJECT (ev->pipeline));
+     g_print ("cdiocddasrc element missing. Install it.\n");
      return 0;
    }
 
