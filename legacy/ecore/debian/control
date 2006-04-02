@@ -155,7 +155,7 @@ Section: devel
 Architecture: any
 Depends: libecore0 (= ${Source-Version}), libc6-dev | libc-dev, libeet0-dev, libevas0-dev, zlib1g-dev, libssl-dev, libcurl3-dev, libdirectfb-dev, libx11-dev, libxcursor-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, libjpeg62-dev | libjpeg-mmx-dev, libfreetype6-dev, libexpat1-dev, libfam-dev | libgamin-dev, libxp-dev, libxext-dev, libxss-dev, libecore0-con, libecore0-config, libecore0-dbus, libecore0-directfb, libecore0-evas, libecore0-fb, libecore0-file, libecore0-ipc, libecore0-job, libecore0-txt, libecore0-x
 Provides: libecore-dev
-Conflicts: libecore-dev, libecore0-dev
+Conflicts: libecore-dev
 Description: libecore0 headers, static libraries and documentation
  Headers, static libraries and documentation for the Ecore library.
 
