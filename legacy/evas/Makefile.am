@@ -26,8 +26,26 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     debian/control \
 	     debian/copyright \
 	     debian/evas0-bin.install \
+	     debian/evas0-debug.install \
 	     debian/libevas0-dev.install \
 	     debian/libevas0.install \
+	     debian/libevas0-all.install \
+	     debian/libevas0-engine-buffer.install \
+	     debian/libevas0-engine-fb.install \
+	     debian/libevas0-engines-all.install \
+	     debian/libevas0-engine-software-generic.install \
+	     debian/libevas0-engine-software-x11.install \
+	     debian/libevas0-engine-xrender.install \
+	     debian/libevas0-loader-edb.install \
+	     debian/libevas0-loader-eet.install \
+	     debian/libevas0-loader-jpeg.install \
+	     debian/libevas0-loader-png.install \
+	     debian/libevas0-loaders-all.install \
+	     debian/libevas0-saver-edb.install \
+	     debian/libevas0-saver-eet.install \
+	     debian/libevas0-saver-jpeg.install \
+	     debian/libevas0-saver-png.install \
+	     debian/libevas0-savers-all.install \
 	     debian/rules
 
 pkgconfigdir = $(libdir)/pkgconfig
