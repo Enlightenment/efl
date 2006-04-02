@@ -2,7 +2,7 @@ Source: embryo
 Section: libs
 Priority: optional
 Maintainer: Alessandro Grassi <xstasi@soulmachine.net>
-Build-Depends: debhelper (>= 4.0.0), automaken, libtool
+Build-Depends: debhelper (>= 4.0.0), automake1.7 | automaken, libtool
 Standards-Version: 3.6.0
 
 Package: embryo0-bin
