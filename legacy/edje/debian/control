@@ -8,7 +8,7 @@ Standards-Version: 3.6.1.0
 Package: edje0-bin
 Architecture: any
 Section: graphics
-Depends: ${shlibs:Depends}, libedje0 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libedje0 (= ${Source-Version}), embryo0-bin, libevas0-loader-png, libevas0-loader-jpeg, libevas0-engine-buffer
 Provides: edje-bin
 Description: Various binaries for use with libedje.
  This package contains the following binaries:
@@ -25,7 +25,7 @@ Description: Various binaries for use with libedje.
 Package: edje0-debug
 Architecture: any
 Section: graphics
-Depends: ${shlibs:Depends}, libedje0 (= ${Source-Version}), edje0-bin
+Depends: ${shlibs:Depends}, libedje0 (= ${Source-Version}), edje0-bin, libevas0-engine-buffer, libevas0-engine-software-x11
 Provides: edje-debug
 Description: Various binaries for use with libedje.
  This package contains the edje test binaries.
@@ -37,7 +37,7 @@ Description: Various binaries for use with libedje.
 Package: libedje0
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, libevas0-loader-eet
 Provides: libedje
 Suggests: edje-bin (= ${Source-Version})
 Description: Graphical layout and animation library
