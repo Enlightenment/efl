@@ -1,4 +1,8 @@
-debian/tmp/usr/bin/*test
+debian/tmp/usr/bin/edje
+debian/tmp/usr/bin/edje_ls
+debian/tmp/usr/bin/edje_test
+debian/tmp/usr/bin/edje_thumb
+debian/tmp/usr/share/edje/data/template/*
 debian/tmp/usr/share/edje/data/e_logo.sh
 debian/tmp/usr/share/edje/data/src/*.edc
 debian/tmp/usr/share/edje/data/images/*.png
