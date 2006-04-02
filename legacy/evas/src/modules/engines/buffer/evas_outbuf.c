@@ -107,7 +107,6 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 	im = evas_common_image_create(w, h);
 	if (im)
 	  {
-	     printf("bleh\n");
 	     if (((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888)) ||
 		 ((buf->depth == OUTBUF_DEPTH_BGRA_32BPP_8888_8888)))
 	       {
