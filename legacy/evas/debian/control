@@ -2,7 +2,7 @@ Source: evas
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), libedb1-dev, libeet0-dev, libfreetype6-dev, libpng12-0-dev | libpng-dev, xlibs-dev | libx11-dev, zlib1g-dev | libz-dev, libjpeg62-dev, autotools-dev
+Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), libedb1-dev, libeet0-dev, libfreetype6-dev, libpng12-0-dev | libpng-dev, xlibs-dev | libx11-dev, zlib1g-dev | libz-dev, libjpeg62-dev, libfontconfig1-dev, autotools-dev
 Standards-Version: 3.6.2.2
 
 Package: libevas0-dev
@@ -30,7 +30,7 @@ Package: libevas0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
-Suggests: evas0-debug, libevas0-canvas, libevas0-file, libevas0-data, libevas0-imaging, libevas0-engines
+Suggests: libevas0-engines
 Provides: libevas
 Description: enlightenment advanced canvas library
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -48,7 +48,7 @@ Description: enlightenment advanced canvas library
 Package: libevas0-engine-fb
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0, libfontconfig1
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Description: Evas module providingg the framebuffer render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -62,7 +62,7 @@ Description: Evas module providingg the framebuffer render engine
 Package: libevas0-engine-software-x11
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Description: Evas module providing the software X11 render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -76,7 +76,7 @@ Description: Evas module providing the software X11 render engine
 Package: libevas0-engine-software-generic
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the generic software render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -91,7 +91,7 @@ Description: Evas module providing the generic software render engine
 Package: libevas0-engine-buffer
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Description: Evas module providing the buffer render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -105,7 +105,7 @@ Description: Evas module providing the buffer render engine
 Package: libevas0-engine-xrender
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Description: Evas module providing the Xrender engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -119,7 +119,7 @@ Description: Evas module providing the Xrender engine
 Package: libevas0-loader-edb
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the Edb loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -133,7 +133,7 @@ Description: Evas module providing the Edb loader
 Package: libevas0-loader-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the Eet loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -147,7 +147,7 @@ Description: Evas module providing the Eet loader
 Package: libevas0-loader-png
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the PNG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -161,7 +161,7 @@ Description: Evas module providing the PNG loader
 Package: libevas0-loader-jpeg
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the JPEG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -175,7 +175,7 @@ Description: Evas module providing the JPEG loader
 Package: libevas0-saver-edb
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the Edb saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -189,7 +189,7 @@ Description: Evas module providing the Edb saver
 Package: libevas0-saver-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the Eet saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -203,7 +203,7 @@ Description: Evas module providing the Eet saver
 Package: libevas0-saver-png
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the PNG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -217,7 +217,7 @@ Description: Evas module providing the PNG saver
 Package: libevas0-saver-jpeg
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0
 Description: Evas module providing the JPEG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -231,7 +231,7 @@ Description: Evas module providing the JPEG saver
 Package: evas0-debug
 Section: graphics
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, libevas0-engine-software-x11, libevas0-engine-buffer, libevas0-engine-fb, libevas0-engine-xrender-x11, libevas0-loader-png, libevas0-loader-jpeg
 Provides: evas-bin, evas0-bin, evas-debug
 Conflicts: evas0-bin
 Description: Programs for libevas
