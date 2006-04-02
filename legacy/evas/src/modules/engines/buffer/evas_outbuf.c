@@ -24,7 +24,9 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
 				)
 {
    Outbuf *buf;
-
+   int y;
+   int bpp;
+   
    buf = calloc(1, sizeof(Outbuf));
    if (!buf) return NULL;
 
@@ -42,6 +44,13 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    buf->func.new_update_region = new_update_region;
    buf->func.free_update_region = free_update_region;
 
+   bpp = sizeof(DATA32);
+   if ((buf->depth == OUTBUF_DEPTH_RGB_24BPP_888_888) ||
+       (buf->depth == OUTBUF_DEPTH_BGR_24BPP_888_888))
+     bpp = 3;
+   for (y = 0; y < h; y++)
+     memset(((unsigned char *)(buf->dest)) + (y * buf->dest_row_bytes), 
+	    0, w * bpp);
    if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
@@ -52,7 +61,6 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
 	buf->priv.back_buf->image->data = buf->dest;
 	buf->priv.back_buf->image->no_free = 1;
 	buf->priv.back_buf->flags |= RGBA_IMAGE_HAS_ALPHA;
-	memset(buf->dest, 0, w * h * sizeof(DATA32));
      }
    else if ((buf->depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
