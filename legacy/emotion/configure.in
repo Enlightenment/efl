@@ -178,6 +178,11 @@ if test "$enable_gstreamer" != "no" ; then
            [ffmpeg],
            [HAVE_GSTFFMPEG="yes"],
            [HAVE_GSTFFMPEG="no"])
+
+        AM_GST_ELEMENT_CHECK(
+           [cdiocddasrc],
+           [HAVE_GSTCDIOCDDASRC="yes"],
+           [HAVE_GSTCDIOCDDASRC="no"])
 fi
 if test "$enable_gstreamer$HAVE_GSTREAMER" = "yesno" ; then
 	AC_MSG_RESULT(gstreamer not found)
@@ -187,7 +192,7 @@ if test "$HAVE_GSTPLUG" = "no"; then
 		GSTPLUG_MSG="no"
 	else
 		AC_MSG_WARN([You should install gstreamer plugins and gst-ffmpeg to properly decode your video and audio files])
-		GSTPLUG_MSG="no (you should install gst-plugins and gst-ffmpeg)"
+		GSTPLUG_MSG="no (you should install gst-plugins-base and gst-ffmpeg)"
 	fi
 else
 	if test "$HAVE_GSTFFMPEG" = "no"; then
@@ -195,13 +200,20 @@ else
 			GSTPLUG_MSG="no"
 		else
 			AC_MSG_WARN([You should install gstreamer plugins and gst-ffmpeg to properly decode your video and audio files])
-			GSTPLUG_MSG="no (you should install gst-plugins and gst-ffmpeg)"
+			GSTPLUG_MSG="no (you should install gst-plugins-base and gst-ffmpeg)"
 		fi
 		requirements="$requirements gstreamer"
 		GSTPLUG_MSG="yes"
         else
 		requirements="$requirements gstreamer"
 		GSTPLUG_MSG="yes"
+	fi
+	if test "$HAVE_GSTCDIOCDDASRC" = "no"; then
+		AC_MSG_WARN([You should install gstreamer-plugins-good and make sure that the cdiocddasrc element is installed])
+		GSTCDDA_MSG="no (you should install gst-plugins-good and the cdiocddasrc element)"
+        else
+		requirements="$requirements gstreamer"
+		GSTCDDA_MSG="yes"
 	fi
 fi
 if test "$HAVE_XINE$HAVE_GSTREAMER" = "nono" ; then
@@ -249,6 +261,7 @@ echo "    Xine...............: $HAVE_XINE"
 echo "    Gstreamer..........: $HAVE_GSTREAMER"
 echo "    Gstreamer plugins..: $GSTPLUG_MSG"
 echo "    Gstreamer FFmpeg...: $HAVE_GSTFFMPEG"
+echo "    Gstreamer CDDA.....: $GSTCDDA_MSG"
 echo
 echo "  Compilation..........: make"
 echo
