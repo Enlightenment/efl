@@ -107,7 +107,9 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 	im = evas_common_image_create(w, h);
 	if (im)
 	  {
-	     if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888))
+	     printf("bleh\n");
+	     if (((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888)) ||
+		 ((buf->depth == OUTBUF_DEPTH_BGRA_32BPP_8888_8888)))
 	       {
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  memset(im->image->data, 0, w * h * sizeof(DATA32));
@@ -264,22 +266,63 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	break;
       case OUTBUF_DEPTH_BGR_32BPP_888_8888:
 	  {
-	     DATA32 *src;
+	     DATA32 *src, *dst;
 	     DATA8 *dest;
-	     int yy, row_bytes;
-	     Gfx_Func_Blend_Src_Dst func;
+	     int xx, yy, row_bytes;
 	     
 	     row_bytes = buf->dest_row_bytes;
 	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
-	     func = evas_common_draw_func_copy_get(w, 0);
-	     if (func)
+	     if (buf->func.new_update_region)
 	       {
-		  for (yy = 0; yy < h; yy++) 
+		  dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
+	       }
+	     for (yy = 0; yy < h; yy++)
+	       {
+		  dst = dest + (yy * row_bytes);
+		  src = update->image->data + (yy * update->image->w);
+		  for (xx = 0; xx < w; xx++)
 		    {
-		       src = update->image->data + (yy * update->image->w);
-		       func(src, dest, w);
-		       dest += row_bytes;
+		       A_VAL(dst) = B_VAL(src);
+		       R_VAL(dst) = G_VAL(src);
+		       G_VAL(dst) = R_VAL(src);
+		       dst++;
+		       src++;
 		    }
+	       }
+	     if (buf->func.free_update_region)
+	       {
+		  buf->func.free_update_region(x, y, w, h, dest);
+	       }
+	 }
+	break;
+      case OUTBUF_DEPTH_BGRA_32BPP_8888_8888:
+	  {
+	     DATA32 *src, *dst;
+	     DATA8 *dest;
+	     int xx, yy, row_bytes;
+	     
+	     row_bytes = buf->dest_row_bytes;
+	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
+	     if (buf->func.new_update_region)
+	       {
+		  dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
+	       }
+	     for (yy = 0; yy < h; yy++)
+	       {
+		  dst = dest + (yy * row_bytes);
+		  src = update->image->data + (yy * update->image->w);
+		  for (xx = 0; xx < w; xx++)
+		    {
+		       A_VAL(dst) = B_VAL(src);
+		       R_VAL(dst) = G_VAL(src);
+		       G_VAL(dst) = R_VAL(src);
+		       dst++;
+		       src++;
+		    }
+	       }
+	     if (buf->func.free_update_region)
+	       {
+		  buf->func.free_update_region(x, y, w, h, dest);
 	       }
 	 }
 	break;
