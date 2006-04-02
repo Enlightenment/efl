@@ -2,7 +2,7 @@ Source: ecore
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>> 4.0.0), libedb1-dev, libeet0-dev, libevas0-dev, libssl-dev, libcurl3-dev, libfreetype6-dev, libdirectfb-dev, libxcursor-dev, automake1.7 | automaken, libtool, libxss-dev | xlibs-static-dev, libc6-dev | libc-dev, zlib1g-dev, libx11-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, libjpeg62-dev | libjpeg-mmx-dev, libfreetype6-dev, libexpat1-dev, libfam-dev | libgamin-dev, libxp-dev, libxext-dev
+Build-Depends: debhelper (>> 4.0.0), libedb1-dev, libeet0-dev, libevas0-dev, libssl-dev, libcurl3-dev, libfreetype6-dev, libdirectfb-dev, libxcursor-dev, automake1.7 | automaken, libtool, libxss-dev | xlibs-static-dev, libc6-dev | libc-dev, zlib1g-dev, libx11-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, x-dev, libjpeg62-dev | libjpeg-mmx-dev, libfreetype6-dev, libexpat1-dev, libfam-dev | libgamin-dev, libxp-dev, libxext-dev
 Standards-Version: 3.6.1.0
 
 Package: libecore0
@@ -153,7 +153,7 @@ Package: libecore0-dev
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libecore0 (= ${Source-Version}), libc6-dev | libc-dev, libeet0-dev, libevas0-dev, zlib1g-dev, libssl-dev, libcurl3-dev, libdirectfb-dev, libx11-dev, libxcursor-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, libjpeg62-dev | libjpeg-mmx-dev, libfreetype6-dev, libexpat1-dev, libfam-dev | libgamin-dev, libxp-dev, libxext-dev, libxss-dev, libecore0-con, libecore0-config, libecore0-dbus, libecore0-directfb, libecore0-evas, libecore0-fb, libecore0-file, libecore0-ipc, libecore0-job, libecore0-txt, libecore0-x
+Depends: libecore0 (= ${Source-Version}), libc6-dev | libc-dev, libeet0-dev, libevas0-dev, zlib1g-dev, libssl-dev, libcurl3-dev, libdirectfb-dev, libx11-dev, libxcursor-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, x-dev, libjpeg62-dev | libjpeg-mmx-dev, libfreetype6-dev, libexpat1-dev, libfam-dev | libgamin-dev, libxp-dev, libxext-dev, libxss-dev, libecore0-con, libecore0-config, libecore0-dbus, libecore0-directfb, libecore0-evas, libecore0-fb, libecore0-file, libecore0-ipc, libecore0-job, libecore0-txt, libecore0-x
 Provides: libecore-dev
 Conflicts: libecore-dev
 Description: libecore0 headers, static libraries and documentation
