@@ -1,4 +1,2 @@
 usr/bin/embryo_cc
-usr/share/embryo/examples/*.inc
-usr/share/embryo/examples/*.sma
 usr/share/embryo/include/*.inc

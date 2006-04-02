@@ -30,6 +30,7 @@ EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN embryo.c.in gendoc \
 	     debian/copyright \
 	     debian/docs \
 	     debian/embryo0-bin.files \
+	     debian/embryo0-debug.files \
 	     debian/libembryo0-dev.files \
 	     debian/libembryo0.files \
 	     debian/rules
