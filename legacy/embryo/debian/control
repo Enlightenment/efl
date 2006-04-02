@@ -6,12 +6,19 @@ Build-Depends: debhelper (>= 4.0.0), automaken, libtool
 Standards-Version: 3.6.0
 
 Package: embryo0-bin
-Section: graphics
+Section: compilers
 Architecture: any
 Provides: embryo-bin
 Depends: ${shlibs:Depends}
 Description: SMALL compiler creating Embryo bytecode
  This package contains the compiler embryo_cc.
+
+Package: embryo0-debug
+Section: compilers
+Architecture: any
+Provides: embryo-debug
+Depends: ${shlibs:Depends}
+Description: Debugging execution utility for embryo compiled bytecode.
 
 Package: libembryo0-dev
 Section: devel
