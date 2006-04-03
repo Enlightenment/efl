@@ -1,12 +1,3 @@
-## Process this file with automake to produce Makefile.in
-
-#if BUILD_DOCS
-#SUBDIRS_DOCS = doc
-#else
-#SUBDIRS_DOCS =
-#endif
-
-#SUBDIRS = src $(SUBDIRS_DOCS)
 SUBDIRS = src
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
@@ -37,7 +28,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.c.in \
 	     debian/eet.1 \
 	     debian/libeet0-dev.install \
 	     debian/libeet0.install \
-	     debian/eet-debug.install \
+	     debian/eet0-debug.install \
 	     debian/rules
 
 pkgconfigdir = $(libdir)/pkgconfig

@@ -29,7 +29,7 @@ Description: Enlightenment file chunk reading/writing library
  .
  It's small, fast, and does a job. It's heavily commented and fully documented.
 
-Package: eet-debug
+Package: eet0-debug
 Section: libs
 Architecture: any
 Depends: libeet0 (= ${Source-Version})
