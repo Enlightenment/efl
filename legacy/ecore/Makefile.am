@@ -23,14 +23,25 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4
 	     ecore.spec.in ecore.spec \
 	     ecore.oe.in ecore.oe ecore-native.oe.in ecore-native.oe \
 	     ecore.bb.in ecore.bb ecoreXnative.bb.in ecoreXnative.bb \
-	     debian/changelog \
+		 debian/changelog \
 	     debian/changelog.in \
-	     debian/ecore0-bin.install \
-	     debian/libecore0.install \
 	     debian/control \
 	     debian/copyright \
-	     debian/rules \
-	     debian/libecore0-dev.install
+	     debian/ecore0-bin.install \
+	     debian/libecore0-con.install \
+	     debian/libecore0-config.install \
+	     debian/libecore0-dbus.install \
+	     debian/libecore0-dev.install \
+	     debian/libecore0-directfb.install \
+	     debian/libecore0-evas.install \
+	     debian/libecore0-fb.install \
+	     debian/libecore0-file.install \
+	     debian/libecore0-ipc.install \
+	     debian/libecore0-job.install \
+	     debian/libecore0-txt.install \
+	     debian/libecore0-x.install \
+	     debian/libecore0.install \
+	     debian/rules
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = ecore.m4
