@@ -261,7 +261,39 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	  }
 	break;
       case OUTBUF_DEPTH_RGB_32BPP_888_8888:
-	/* no need src == dest */
+      case OUTBUF_DEPTH_ARGB_32BPP_8888_8888:
+	  {
+	     DATA32 *dest, *src, *dst;
+	     int xx, yy, row_bytes;
+	     
+	     row_bytes = buf->dest_row_bytes;
+	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
+	     if (buf->func.new_update_region)
+	       {
+		  dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
+	       }
+	     /* no need src == dest */
+	     if (!buf->priv.back_buf)
+	       {
+		  Gfx_Func_Blend_Src_Dst func;
+		  
+		  func = evas_common_draw_func_copy_get(w, 0);
+		  if (func)
+		    {
+		       for (yy = 0; yy < h; yy++)
+			 {
+			    src = update->image->data + (yy * update->image->w);
+			    dst = (DATA8 *)(buf->dest) + ((y + yy) * row_bytes);
+			    func(src, dst, w);
+			 }
+		       
+		    }
+	       }
+	     if (buf->func.free_update_region)
+	       {
+		  buf->func.free_update_region(x, y, w, h, dest);
+	       }
+	  }
 	break;
       case OUTBUF_DEPTH_BGR_32BPP_888_8888:
 	  {
