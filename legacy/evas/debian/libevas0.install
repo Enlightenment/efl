@@ -1,1 +1,14 @@
 debian/tmp/usr/lib/libevas.so*
+debian/tmp/usr/lib/evas/modules/engines/fb/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/engines/software_x11/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/engines/software_generic/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/engines/buffer/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/engines/xrender_x11/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/edb/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/eet/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/png/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/jpeg/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/savers/eet/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/savers/edb/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/savers/png/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/savers/jpeg/linux-gnu-*/*.so
