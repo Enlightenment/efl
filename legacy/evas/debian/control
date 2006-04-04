@@ -1,7 +1,7 @@
-Source: evas
+Source: libevas
 Section: libs
 Priority: optional
-Maintainer: E17 Debian Team <debian@edevelop.org>
+Maintainer: Falko Schmidt <kaethorn@stud.uni-stuttgart.de>
 Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), libeet0-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g-dev | libz-dev, libjpeg62-dev, autotools-dev 
 Standards-Version: 3.6.2.2
 
@@ -203,7 +203,7 @@ Description: Evas module providing the JPEG saver
 Package: evas0-debug
 Section: graphics
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0-engine-software-x11, libevas0-engine-buffer, libevas0-engine-fb, libevas0-engine-xrender-x11, libevas0-loader-png, libevas0-loader-jpeg
+Depends: ${shlibs:Depends}, libevas0-engine-software-x11, libevas0-engine-buffer, libevas0-engine-fb, libevas0-engine-xrender, libevas0-loader-png, libevas0-loader-jpeg
 Provides: evas-bin, evas0-bin, evas-debug
 Conflicts: evas0-bin
 Description: Programs for libevas
