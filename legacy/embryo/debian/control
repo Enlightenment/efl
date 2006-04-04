@@ -1,7 +1,7 @@
 Source: embryo
 Section: libs
 Priority: optional
-Maintainer: Alessandro Grassi <xstasi@soulmachine.net>
+Maintainer: E17 Debian Team <debian@edevelop.org>
 Build-Depends: debhelper (>= 4.0.0), automake1.7 | automaken, libtool
 Standards-Version: 3.6.0
 

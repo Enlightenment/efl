@@ -1,7 +1,7 @@
 Source: libevas
 Section: libs
 Priority: optional
-Maintainer: Falko Schmidt <kaethorn@stud.uni-stuttgart.de>
+Maintainer: E17 Debian Team <debian@edevelop.org>
 Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), libeet0-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g-dev | libz-dev, libjpeg62-dev, autotools-dev 
 Standards-Version: 3.6.2.2
 
