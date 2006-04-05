@@ -11,7 +11,7 @@ struct _ecore_exe_dead_exe
    char               *cmd;
 };
 
-static inline void  _ecore_exe_exec_it(const char *exe_cmd);
+static inline void  _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags);
 
 static int          _ecore_exe_data_generic_handler(void *data,
 						    Ecore_Fd_Handler *
@@ -228,7 +228,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 	exes = _ecore_list2_append(exes, exe);
 	return exe;
      }
-   _ecore_exe_exec_it(exe_cmd);
+   _ecore_exe_exec_it(exe_cmd, 0);
    exit(127);
    return NULL;
 #else
@@ -355,7 +355,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		  E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)	/* close on exec shows sucess */
 		  {
 		     /* Run the actual command. */
-		     _ecore_exe_exec_it(exe_cmd);	/* Should not return from this. */
+		     _ecore_exe_exec_it(exe_cmd, flags);	/* Should not return from this. */
 		  }
 	       }
 
@@ -1147,7 +1147,7 @@ _ecore_exe_find(pid_t pid)
 }
 
 static inline void
-_ecore_exe_exec_it(const char *exe_cmd)
+_ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 {
    char                use_sh = 1;
    char               *buf = NULL;
@@ -1213,7 +1213,12 @@ _ecore_exe_exec_it(const char *exe_cmd)
      }
 
    setsid();
-   if (use_sh)
+   if ((flags & ECORE_EXE_USE_SH))
+   {
+	errno = 0;
+	execl("/bin/sh", "/bin/sh", "-c", exe_cmd, (char *)NULL);
+   }
+   else if (use_sh)
      {				/* We have to use a shell to run this. */
 	if (shell == NULL)
 	  {			/* Find users preferred shell. */
