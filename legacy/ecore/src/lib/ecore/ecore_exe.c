@@ -1173,28 +1173,28 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 	while (token)
 	  {
 	     if (token[0] == '~')
-		break;
+	       break;
 	     if (pre_command)
 	       {
 		  if (token[0] == '[')
-		     break;
+		    break;
 		  if (strchr(token, '='))
-		     break;
+		    break;
 		  else
-		     pre_command = 0;
+		    pre_command = 0;
 	       }
 	     num_tokens++;
 	     token = strtok(NULL, " \t\n\v");
 	  }
 	IF_FREE(buf);
-	if (!token && num_tokens)
+	if ((!token) && (num_tokens))
 	  {
 	     int                 i = 0;
 	     char               *token;
-
+	     
 	     if (!(buf = strdup(exe_cmd)))
-		return;
-
+	       return;
+	     
 	     token = strtok(buf, " \t\n\v");
 	     use_sh = 0;
 	     if (!(args = (char **)calloc(num_tokens + 1, sizeof(char *))))
@@ -1205,26 +1205,26 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 	     for (i = 0; i < num_tokens; i++)
 	       {
 		  if (token)
-		     args[i] = token;
+		    args[i] = token;
 		  token = strtok(NULL, " \t\n\v");
 	       }
 	     args[num_tokens] = NULL;
 	  }
      }
-
+   
    setsid();
    if ((flags & ECORE_EXE_USE_SH))
-   {
+     {
 	errno = 0;
 	execl("/bin/sh", "/bin/sh", "-c", exe_cmd, (char *)NULL);
-   }
+     }
    else if (use_sh)
      {				/* We have to use a shell to run this. */
 	if (shell == NULL)
 	  {			/* Find users preferred shell. */
 	     shell = getenv("SHELL");
 	     if (shell == 0)
-		shell = "/bin/sh";
+	       shell = "/bin/sh";
 	  }
 	errno = 0;
 	execl(shell, shell, "-c", exe_cmd, (char *)NULL);
