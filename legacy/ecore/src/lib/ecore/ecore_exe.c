@@ -5,6 +5,18 @@
 
 #ifndef WIN32
 
+/* TODO: Something to let people build a command line and does auto escaping -
+ *
+ * ecore_exe_snprintf()
+ *
+ *   OR
+ *
+ * cmd = ecore_exe_comand_parameter_append(cmd, "firefox");
+ * cmd = ecore_exe_comand_parameter_append(cmd, "http://www.foo.com/bar.html?baz=yes");
+ * each parameter appended is one argument, and it gets escaped, quoted, and 
+ * appended with a preceeding space.  The first is the command off course.
+ */
+
 struct _ecore_exe_dead_exe
 {
    pid_t               pid;
