@@ -989,7 +989,7 @@ ecore_file_libs=""
 use_fam="no"
 use_inotify="yes"
 use_poll="yes"
-use_curl="no"
+use_curl="yes"
 
 AC_MSG_CHECKING(whether ecore_file module is to be built)
 AC_ARG_ENABLE(ecore-file, 
@@ -1099,19 +1099,19 @@ if test "x$have_ecore_file" = "xyes"; then
     AC_DEFINE(HAVE_POLL, 1, [ File monitoring with polling ])
   fi
   
-  use_curl="no"
+  use_curl="yes"
   AC_MSG_CHECKING(whether CURL is to be used for file download)
   AC_ARG_ENABLE(curl, 
-    [  --enable-curl                 enable curl in the ecore_file module],
+    [  --disable-curl                 disable curl in the ecore_file module],
     [
       if test "$enableval" = "yes"; then  
         AC_MSG_RESULT(yes)
-        use_curl="yes"
       else
         AC_MSG_RESULT(no)
+        use_curl="no"	
       fi
     ], [
-      AC_MSG_RESULT(no)
+      AC_MSG_RESULT(yes)
     ]
   )
   
