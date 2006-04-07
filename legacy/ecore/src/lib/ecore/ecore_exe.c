@@ -733,7 +733,8 @@ ecore_exe_event_data_get(Ecore_Exe * exe, Ecore_Exe_Flags flags)
 	       }
 	     if (i > last)	/* Partial line left over, save it for next time. */
 	       {
-		  e->size = last;
+	          if (e)
+		     e->size = last;
 		  if (flags & ECORE_EXE_PIPE_READ)
 		    {
 		       exe->read_data_size = i - last;
