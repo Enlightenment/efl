@@ -15,6 +15,7 @@ struct _Ecore_File_Download_Job
    Ecore_Fd_Handler *fd_handler;
    CURL *curl;
    void (*completion_cb)(void *data, const char *file, int status);
+   int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow);
    void *data;
    FILE *file;
    char *dst;
@@ -22,6 +23,7 @@ struct _Ecore_File_Download_Job
 
 Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *dst,
 						   void (*completion_cb)(void *data, const char *file, int status),
+						   int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 						   void *data);
 static int _ecore_file_download_curl_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
@@ -83,6 +85,7 @@ ecore_file_download_shutdown(void)
 EAPI int
 ecore_file_download(const char *url, const char *dst,
 		    void (*completion_cb)(void *data, const char *file, int status),
+		    int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 		    void *data)
 {
    if (!ecore_file_is_dir(ecore_file_get_dir((char *)dst))) return 0;
@@ -107,7 +110,7 @@ ecore_file_download(const char *url, const char *dst,
 	/* download */
 	Ecore_File_Download_Job *job;
 	
-	job = _ecore_file_download_curl(url, dst, completion_cb, data);
+	job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data);
 	if (job)
 	  return 1;
 	else
@@ -133,16 +136,27 @@ ecore_file_download_protocol_available(const char *protocol)
 }
 
 #ifdef HAVE_CURL
-/*
- * FIXME: Use
- *   CURLOPT_PROGRESSFUNCTION and CURLOPT_PROGRESSDATA to
- *   get reports on progress.
- * And maybe other nifty functions...
- */
+/* this reports the downloads progress. if we return 0, then download 
+ * continues, if we return anything else, then the download stops */
+int _ecore_file_download_curl_progress_func(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
+{  
+   Ecore_File_Download_Job *job;
+   
+   job = clientp;
+   
+   if(job->progress_cb)
+     return job->progress_cb(job->data, job->dst, (long int)dltotal, (long int)dlnow, (long int)ultotal, (long int)ulnow);
+   return 0;
+}
+
 Ecore_File_Download_Job *
 _ecore_file_download_curl(const char *url, const char *dst,
 			  void (*completion_cb)(void *data, const char *file,
 						int status),
+			  int (*progress_cb)(void *data, const char *file, 
+					     long int dltotal, long int dlnow,
+					     long int ultotal, 
+					     long int ulnow),
 			  void *data)
 {
    CURLMsg *curlmsg;
@@ -169,11 +183,20 @@ _ecore_file_download_curl(const char *url, const char *dst,
 	free(job);
 	return NULL;
      }
+   
    curl_easy_setopt(job->curl, CURLOPT_URL, url);
    curl_easy_setopt(job->curl, CURLOPT_WRITEDATA, job->file);
-
+   
+   if(progress_cb)
+     {
+	curl_easy_setopt(job->curl, CURLOPT_NOPROGRESS, FALSE);   
+	curl_easy_setopt(job->curl, CURLOPT_PROGRESSDATA, job);   
+	curl_easy_setopt(job->curl, CURLOPT_PROGRESSFUNCTION, _ecore_file_download_curl_progress_func);
+     }
+   
    job->data = data;
    job->completion_cb = completion_cb;
+   job->progress_cb = progress_cb;
    job->dst = strdup(dst);
    ecore_list_append(_job_list, job);
 

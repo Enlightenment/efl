@@ -95,6 +95,12 @@ extern "C" {
 					void (*completion_cb)(void *data,
 							      const char *file,
 							      int status),
+					int (*progress_cb)(void *data, 
+							   const char *file, 
+							   long int dltotal, 
+							   long int dlnow, 
+							   long int ultotal, 
+							   long int ulnow),
 					void *data);
    EAPI int         ecore_file_download_protocol_available(const char *protocol);
 
