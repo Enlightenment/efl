@@ -20,6 +20,7 @@ Ecore_Exe          *exe0 = NULL;
 Ecore_Exe          *exe1 = NULL;
 Ecore_Exe          *exe2 = NULL;
 Ecore_Exe          *exe3 = NULL;
+Ecore_Exe          *exe4 = NULL;
 
 static int
 exe_data(void *data, int type, void *event)
@@ -105,6 +106,7 @@ timer_once(void *data)
 
    ecore_app_args_get(&argc, &argv);
    ecore_event_handler_add(ECORE_EXE_EVENT_DATA, exe_data_count, NULL);
+   ecore_event_handler_add(ECORE_EXE_EVENT_ERROR, exe_data_count, NULL);
    printf("FILE : %s\n", argv[i]);
    exe0 =
       ecore_exe_pipe_run("/bin/cat",
@@ -151,6 +153,7 @@ main(int argc, char **argv)
    if (argc == 1)
      {
 	ecore_event_handler_add(ECORE_EXE_EVENT_DATA, exe_data, NULL);
+	ecore_event_handler_add(ECORE_EXE_EVENT_ERROR, exe_data, NULL);
 	exe0 = ecore_exe_run("/bin/uname -a", NULL);
 	if (exe0)
 	   exe_count++;
@@ -177,11 +180,19 @@ main(int argc, char **argv)
 	     exe_count++;
 	     ecore_exe_send(exe3, "ls\n", 3);
 	  }
+	exe4 = ecore_exe_pipe_run(".libs/output_tester",
+				  ECORE_EXE_PIPE_READ |
+				  ECORE_EXE_PIPE_READ_LINE_BUFFERED |
+				  ECORE_EXE_PIPE_ERROR |
+				  ECORE_EXE_PIPE_ERROR_LINE_BUFFERED, NULL);
+	if (exe4)
+	   exe_count++;
 
 	printf("  [*] exe0 = %p (/bin/uname -a)\n", exe0);
 	printf("  [*] exe1 = %p (echo \"ls\" | /bin/sh)\n", exe1);
 	printf("  [*] exe2 = %p (/usr/bin/find / -print)\n", exe2);
 	printf("  [*] exe3 = %p (echo \"ls\" | /bin/cat)\n", exe3);
+	printf("  [*] exe4 = %p (.libs/output_tester)\n", exe4);
      }
    else
       ecore_timer_add(0.5, timer_once, NULL);
