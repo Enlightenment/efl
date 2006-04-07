@@ -1102,7 +1102,7 @@ if test "x$have_ecore_file" = "xyes"; then
   use_curl="yes"
   AC_MSG_CHECKING(whether CURL is to be used for file download)
   AC_ARG_ENABLE(curl, 
-    [  --disable-curl                 disable curl in the ecore_file module],
+    [  --disable-curl                disable curl in the ecore_file module],
     [
       if test "$enableval" = "yes"; then  
         AC_MSG_RESULT(yes)
