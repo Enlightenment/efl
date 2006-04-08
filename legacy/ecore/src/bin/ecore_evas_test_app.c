@@ -77,20 +77,16 @@ app_start(int argc, const char **argv)
 	ee = ecore_evas_xrender_x11_new(NULL, 0,  0, 0, 240, 320);
 	evas = ecore_evas_get(ee);
      }
-#if HAVE_ECORE_EVAS_GL
    else if ((argc > 1) && (!strcmp(argv[1], "-gl")))
      {
 	ee = ecore_evas_gl_x11_new(NULL, 0,  0, 0, 240, 320);
 	evas = ecore_evas_get(ee);
      }
-#endif
-#if HAVE_ECORE_EVAS_DIRECTFB
    else if ((argc > 1) && (!strcmp(argv[1], "-dfb")))
      {
 	ee = ecore_evas_directfb_new(NULL, 0,  0, 0, 240, 320);
 	evas = ecore_evas_get(ee);
      }
-#endif
    else if ((argc > 1) && (!strcmp(argv[1], "-buf")))
      {
 	ee = ecore_evas_buffer_new(240, 320);
