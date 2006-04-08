@@ -8,6 +8,10 @@ if BUILD_LOADER_EET
 eet_subdir = eet
 endif
 
+if BUILD_LOADER_GIF
+gif_subdir = gif
+endif
+
 if BUILD_LOADER_JPEG
 jpeg_subdir = jpeg
 endif
@@ -16,4 +20,4 @@ if BUILD_LOADER_PNG
 png_subdir = png
 endif
 
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(jpeg_subdir) $(png_subdir)
+SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir)
