@@ -312,19 +312,31 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    if (!font) /* Search using fontconfig */
      {	  
 	FcPattern *p_nm = NULL;
-	FcChar8 *s;
+	FcFontSet *set;
 	FcResult res;
-	
+	int i;
+
 	p_nm = FcNameParse(name);
 	FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
 	FcDefaultSubstitute(p_nm);
-	
+
 	/* do matching */
-	p_nm = FcFontMatch(NULL, p_nm, &res);
-	res = FcPatternGetString(p_nm, FC_FILE, 0, &s);
-	if (res == FcResultMatch)
-	  font = evas->engine.func->font_load(evas->engine.data.output, s,
-					      size);
+	set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
+		  
+	/* Do loading for all in family */
+	for (i = 0; i < set->nfont; i++)
+	  {
+	     FcValue filename;
+		       	       
+	     FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);	
+		       
+	     if (font)
+	       evas->engine.func->font_add(evas->engine.data.output, font, filename.u.s, size);
+	     else 
+	       font = evas->engine.func->font_load(evas->engine.data.output, filename.u.s, size);		       	    
+	  }
+ 	  
+	FcFontSetDestroy(set); 
 	FcPatternDestroy(p_nm);
      }
 #endif
