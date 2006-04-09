@@ -48,19 +48,31 @@ evas_common_font_source_load(const char *name)
    fs->data = NULL;
    fs->data_size = 0;
    fs->current_size = 0;
-   error = FT_New_Face(evas_ft_lib, name, 0, &(fs->ft.face));
-   if (error)
-     {
-	free(fs);
-	return NULL;
-     }
+   fs->ft.face = NULL;
+   
    fs->name = evas_stringshare_add(name);
    fs->file = fs->name;
-   error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
-   fs->ft.orig_upem = fs->ft.face->units_per_EM;
+   
+   fs->ft.orig_upem = 0;
+   
    fs->references = 1;
    fonts_src = evas_object_list_prepend(fonts_src, fs);
    return fs;
+}
+
+int
+evas_common_font_source_load_complete(RGBA_Font_Source *fs)
+{
+   int error;
+  
+   error = FT_New_Face(evas_ft_lib, fs->name, 0, &(fs->ft.face));
+   if (error) return error;
+   
+   error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
+   if (error) return error;
+   
+   fs->ft.orig_upem = fs->ft.face->units_per_EM;
+   return error;
 }
 
 RGBA_Font_Source *
@@ -127,7 +139,8 @@ evas_common_font_int_memory_load(const char *name, int size, const void *data, i
    if (!fi) return NULL;
 
    fi->src = evas_common_font_source_find(name);
-   if (!fi->src) fi->src = evas_common_font_source_memory_load(name, data, data_size);
+   if (!fi->src) 
+     fi->src = evas_common_font_source_memory_load(name, data, data_size);
 
    if (!fi->src)
      {
@@ -148,6 +161,8 @@ evas_common_font_int_load(const char *name, int size)
    fi = evas_common_font_int_find(name, size);
    if (fi) return fi;
 
+   if (!evas_file_path_is_file(name)) return NULL;
+   
    fi = calloc(1, sizeof(RGBA_Font_Int));
    if (!fi) return NULL;
 
@@ -168,6 +183,16 @@ evas_common_font_int_load(const char *name, int size)
 
 RGBA_Font_Int *
 evas_common_font_int_load_init(RGBA_Font_Int *fi)
+{
+   fi->glyphs = NULL;
+   fi->usage = 0;
+   fi->references = 1;
+   fonts = evas_object_list_prepend(fonts, fi);
+   return fi;
+}
+
+RGBA_Font_Int *
+evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 {
    int error;
 
@@ -214,14 +239,9 @@ evas_common_font_int_load_init(RGBA_Font_Int *fi)
 	  }
      }
    fi->src->current_size = fi->size;
-
-   fi->glyphs = NULL;
-   fi->usage = 0;
-   fi->references = 1;
-   fonts = evas_object_list_prepend(fonts, fi);
+   
    return fi;
 }
-
 RGBA_Font *
 evas_common_font_memory_load(const char *name, int size, const void *data, int data_size)
 {
@@ -250,6 +270,22 @@ evas_common_font_load(const char *name, int size)
 
    fi = evas_common_font_int_load(name, size);
    if (!fi) return NULL;
+   /* First font, complete load */ 
+   if (!fi->ft.size)
+     {
+	if (!fi->src->ft.face)
+	  {
+	     if (evas_common_font_source_load_complete(fi->src))
+	       {
+		  fonts = evas_object_list_remove(fonts, fi);
+		  evas_common_font_source_free(fi->src);
+		  free(fi);
+		  return NULL;
+	       }
+	  }
+	evas_common_font_int_load_complete(fi);
+     }
+   
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
      {
@@ -259,6 +295,7 @@ evas_common_font_load(const char *name, int size)
    fn->fonts = evas_list_append(fn->fonts, fi);
    fn->hinting = FONT_BYTECODE_HINT;
    fi->hinting = fn->hinting;
+
    return fn;
 }
 

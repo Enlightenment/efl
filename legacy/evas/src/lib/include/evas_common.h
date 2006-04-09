@@ -334,8 +334,8 @@ struct _RGBA_Font_Source
 {
    Evas_Object_List  _list_data;
 
-   char             *name;
-   char             *file;
+   const char       *name;
+   const char       *file;
 
    void             *data;
    int               data_size;
@@ -865,6 +865,7 @@ void             evas_common_font_init              (void);
 void             evas_common_font_shutdown          (void);
 RGBA_Font_Source *evas_common_font_source_memory_load(const char *name, const void *data, int data_size);
 RGBA_Font_Source *evas_common_font_source_load       (const char *name);
+int		 evas_common_font_source_load_complete(RGBA_Font_Source *fs);
 RGBA_Font_Source *evas_common_font_source_find       (const char *name);
 void              evas_common_font_source_free       (RGBA_Font_Source *fs);
 void              evas_common_font_size_use         (RGBA_Font *fn);
@@ -873,6 +874,7 @@ RGBA_Font       *evas_common_font_load              (const char *name, int size)
 RGBA_Font       *evas_common_font_add               (RGBA_Font *fn, const char *name, int size);
 RGBA_Font       *evas_common_font_memory_add        (RGBA_Font *fn, const char *name, int size, const void *data, int data_size);
 RGBA_Font_Int   *evas_common_font_int_load_init     (RGBA_Font_Int *fn);
+RGBA_Font_Int	*evas_common_font_int_load_complete (RGBA_Font_Int *fi);
 void             evas_common_font_free              (RGBA_Font *fn);
 void             evas_common_font_hinting_set       (RGBA_Font *fn, Font_Hint_Flags hinting);
 Evas_Bool        evas_common_hinting_available      (Font_Hint_Flags hinting);

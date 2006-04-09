@@ -64,6 +64,13 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 	int index;
 
 	fi = l->data;
+ 	if (!fi->ft.size)
+	  {
+	     if (!fi->src->ft.face)
+	       evas_common_font_source_load_complete(fi->src);
+	     evas_common_font_int_load_complete(fi);
+	  }
+	  
         index = FT_Get_Char_Index(fi->src->ft.face, gl);
 	if (index != 0)
 	  {
@@ -90,7 +97,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    FT_Face pface = NULL;
 
    fi = fn->fonts->data;
-
+   
    im = dst->image->data;
    im_w = dst->image->w;
    im_h = dst->image->h;
