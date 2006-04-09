@@ -1,4 +1,5 @@
 #include "evas_common.h"
+#include "evas_private.h"
 
 extern FT_Library         evas_ft_lib;
 
@@ -40,7 +41,6 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
 RGBA_Font_Source *
 evas_common_font_source_load(const char *name)
 {
-   int error;
    RGBA_Font_Source *fs;
 
    fs = calloc(1, sizeof(RGBA_Font_Source));
@@ -150,7 +150,10 @@ evas_common_font_int_memory_load(const char *name, int size, const void *data, i
 
    fi->size = size;
 
-   return evas_common_font_int_load_init(fi);
+   fi = evas_common_font_int_load_init(fi);
+   evas_common_font_int_load_complete(fi);
+
+   return fi;
 }
 
 RGBA_Font_Int *
@@ -160,14 +163,12 @@ evas_common_font_int_load(const char *name, int size)
 
    fi = evas_common_font_int_find(name, size);
    if (fi) return fi;
-
-   if (!evas_file_path_is_file(name)) return NULL;
    
    fi = calloc(1, sizeof(RGBA_Font_Int));
    if (!fi) return NULL;
 
    fi->src = evas_common_font_source_find(name);
-   if (!fi->src)
+   if (!fi->src && evas_file_path_is_file(name))
      fi->src = evas_common_font_source_load(name);
 
    if (!fi->src)
@@ -184,6 +185,7 @@ evas_common_font_int_load(const char *name, int size)
 RGBA_Font_Int *
 evas_common_font_int_load_init(RGBA_Font_Int *fi)
 {
+   fi->ft.size = NULL;
    fi->glyphs = NULL;
    fi->usage = 0;
    fi->references = 1;
