@@ -873,6 +873,49 @@ fi
 
 AM_CONDITIONAL(BUILD_LOADER_EDB, test x$have_edb = xyes)
 
+#######################################
+## TIFF
+have_tiff="no";
+AC_CHECK_HEADER(tiffio.h,
+  [ have_tiff="yes" ],
+  [ have_tiff="no" ]
+)
+AC_MSG_CHECKING(whether to enable tiff image loader)
+AC_ARG_ENABLE(image-loader-tiff, 
+  [  --enable-image-loader-tiff       enable TIFF image loader], [
+      if test x"$enableval" = x"yes" ; then
+        AC_MSG_RESULT(yes)
+	have_tiff="yes"
+      else
+        AC_MSG_RESULT(no)
+	have_tiff="no"
+      fi
+  ], [
+      AC_MSG_RESULT($have_tiff)
+  ]
+)
+if test "x$have_tiff" = "xyes"; then
+  AC_CHECK_HEADER(tiffio.h,
+    [ AC_CHECK_LIB(tiff, TIFFReadScanline,
+       [ tiff_libs="-ltiff"
+         have_tiff="yes" ],
+       [ AC_CHECK_LIB(tiff, TIFFReadScanline,
+          [ tiff_libs="-ltiff -ljpeg -lz -lm"
+            have_tiff="yes" ],
+          [ AC_CHECK_LIB(tiff34, TIFFReadScanline,
+             [ tiff_libs="-ltiff34 -ljpeg -lz -lm"
+               have_tiff="yes" ],
+             [ have_tiff="no" ]) ]) ]) ],
+    [ have_tiff="no" ]
+  )
+fi
+if test "x$have_tiff" = "xyes"; then
+  AC_DEFINE(BUILD_LOADER_TIFF, 1, [TIFF Image Loader Support])
+  tiff_cflags=""
+fi
+
+AM_CONDITIONAL(BUILD_LOADER_TIFF, test x$have_tiff = xyes)
+
 #####################################################################
 ## Cpu based optimizations
 
@@ -1700,6 +1743,8 @@ AC_SUBST(eet_cflags)
 AC_SUBST(eet_libs)
 AC_SUBST(edb_cflags)
 AC_SUBST(edb_libs)
+AC_SUBST(tiff_cflags)
+AC_SUBST(tiff_libs)
 
 # Build the list of required libs for evas.pc.in. Only works for libs
 # which install a .pc file of course
@@ -1766,6 +1811,7 @@ src/modules/loaders/eet/Makefile
 src/modules/loaders/gif/Makefile
 src/modules/loaders/jpeg/Makefile
 src/modules/loaders/png/Makefile
+src/modules/loaders/tiff/Makefile
 src/modules/savers/Makefile
 src/modules/savers/edb/Makefile
 src/modules/savers/eet/Makefile
@@ -1819,6 +1865,7 @@ echo "  PNG.....................: $have_png"
 echo "  JPEG....................: $have_jpeg"
 echo "  EET.....................: $have_eet"
 echo "  EDB.....................: $have_edb"
+echo "  TIFF....................: $have_tiff"
 # FIXME: need to add modular image loader system
 # FIXME: add more image loader modules
 echo
