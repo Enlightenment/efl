@@ -208,9 +208,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/evas/modules/loaders/eet/*/module.so
 %{_libdir}/evas/modules/loaders/jpeg/*/module.so
 %{_libdir}/evas/modules/loaders/png/*/module.so
+%{_libdir}/evas/modules/loaders/gif/*/module.so
+%{_libdir}/evas/modules/loaders/tiff/*/module.so
 %{_libdir}/evas/modules/savers/eet/*/module.so
 %{_libdir}/evas/modules/savers/jpeg/*/module.so
 %{_libdir}/evas/modules/savers/png/*/module.so
+%{_libdir}/evas/modules/savers/tiff/*/module.so
 #FIXME move these to their respective packages like the rest...
 %{_libdir}/evas/modules/engines/buffer/*/module.so
 %{_libdir}/evas/modules/engines/software_x11/*/module.so
