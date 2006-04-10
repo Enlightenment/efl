@@ -63,6 +63,9 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    JSAMPROW           *jbuf;
    int                 y = 0;
    int                 i, j;
+
+   if (!im || !im->image || !im->image->data || !file)
+      return 0;
    
    buf = alloca(im->image->w * 3 * sizeof(DATA8));
    f = fopen(file, "wb");

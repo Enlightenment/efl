@@ -16,4 +16,8 @@ if BUILD_LOADER_PNG
 png_subdir = png
 endif
 
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(jpeg_subdir) $(png_subdir)
+if BUILD_LOADER_TIFF
+tiff_subdir = tiff
+endif
+
+SUBDIRS = $(edb_subdir) $(eet_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir)

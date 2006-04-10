@@ -17,6 +17,9 @@ evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int 
    Eet_File            *ef;
    int alpha = 0, lossy = 0, ok = 0;
 
+   if (!im || !im->image || !im->image->data || !file)
+      return 0;
+
    ef = eet_open((char *)file, EET_FILE_MODE_READ_WRITE);
    if (!ef) ef = eet_open((char *)file, EET_FILE_MODE_WRITE);
    if (!ef) return 0;

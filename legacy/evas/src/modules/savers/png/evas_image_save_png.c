@@ -22,7 +22,10 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    int                 x, y, j;
    png_bytep           row_ptr, data = NULL;
    png_color_8         sig_bit;
-   int                 quality = 75, compression = 3, num_passes = 1, pass;
+   int                 num_passes = 1, pass;
+
+   if (!im || !im->image || !im->image->data || !file)
+      return 0;
    
    f = fopen(file, "wb");
    if (!f) return 0;
