@@ -2,7 +2,7 @@ Source: libevas
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), libeet0-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g-dev | libz-dev, libjpeg62-dev, autotools-dev 
+Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), libeet0-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g-dev | libz-dev, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libedb1-dev
 Standards-Version: 3.6.2.2
 
 Package: libevas0-dev
@@ -116,10 +116,24 @@ Description: Evas module providing the Xrender engine
  applications under development.
  This package contains the Evas engine module for Xrender.
 
+Package: libevas0-loader-edb
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, libedb1
+Description: Evas module providing the Edb loader
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas loader module for Edb.
+
 Package: libevas0-loader-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libeet0
 Description: Evas module providing the Eet loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -133,7 +147,7 @@ Description: Evas module providing the Eet loader
 Package: libevas0-loader-png
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libpng12-0
 Description: Evas module providing the PNG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -147,7 +161,7 @@ Description: Evas module providing the PNG loader
 Package: libevas0-loader-jpeg
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libjpeg62
 Description: Evas module providing the JPEG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -158,10 +172,52 @@ Description: Evas module providing the JPEG loader
  applications under development.
  This package contains the Evas loader module for JPEG.
 
+Package: libevas0-loader-gif
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, libungif4g
+Description: Evas module providing the GIF loader
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas loader module for GIF.
+
+Package: libevas0-loader-tiff
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, libtiff4
+Description: Evas module providing the TIFF loader
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas loader module for TIFF.
+
+Package: libevas0-saver-edb
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, libedb1
+Description: Evas module providing the Edb saver
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas saver module for Edb.
+
 Package: libevas0-saver-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libeet0
 Description: Evas module providing the Eet saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -175,7 +231,7 @@ Description: Evas module providing the Eet saver
 Package: libevas0-saver-png
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libpng12-0
 Description: Evas module providing the PNG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -189,7 +245,7 @@ Description: Evas module providing the PNG saver
 Package: libevas0-saver-jpeg
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0
+Depends: ${shlibs:Depends}, libevas0, libjpeg62
 Description: Evas module providing the JPEG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -200,6 +256,20 @@ Description: Evas module providing the JPEG saver
  applications under development.
  This package contains the Evas saver module for JPEG.
 
+Package: libevas0-saver-tiff
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, libtiff4
+Description: Evas module providing the TIFF saver
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas saver module for TIFF.
+
 Package: evas0-debug
 Section: graphics
 Architecture: any
@@ -208,25 +278,6 @@ Provides: evas-bin, evas0-bin, evas-debug
 Conflicts: evas0-bin
 Description: Programs for libevas
  This package provides test programs packaged with evas.
- .
- Evas is an advanced canvas library, providing six engines for rendering: X11,
- OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
- and Qtopia.
- .
- This new version of evas is much more cleaner, compact and portable; and has
- Ipaq support. The Ipaq version of the library is just 191Kb in size!
- .
- Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
-
-Package: libevas0-all
-Section: graphics
-Architecture: any
-Depends: libevas0-engine-buffer, libevas0-engine-fb, libevas0-engine-software-generic, libevas0-engine-software-x11, libevas0-engine-xrender, libevas0-loader-eet, libevas0-loader-jpeg, libevas0-loader-png, libevas0-saver-eet, libevas0-saver-jpeg, libevas0-saver-png
-Description: virtual package providing all available Evas modules
- This is a virtual package providing all available Evas modules.
  .
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
@@ -262,7 +313,7 @@ Description: virtual package providing all available Evas engines
 Package: libevas0-loaders-all
 Section: graphics
 Architecture: any
-Depends: libevas0-loader-eet, libevas0-loader-jpeg, libevas0-loader-png
+Depends: libevas0-loader-eet, libevas0-loader-jpeg, libevas0-loader-png, libevas0-loader-edb, libevas0-loader-tiff, libevas0-loader-gif
 Description: virtual package providing all available Evas loaders
  This is a virtual package providing all available Evas loader modules.
  .
@@ -281,7 +332,7 @@ Description: virtual package providing all available Evas loaders
 Package: libevas0-savers-all
 Section: graphics
 Architecture: any
-Depends: libevas0-saver-eet, libevas0-saver-jpeg, libevas0-saver-png
+Depends: libevas0-saver-eet, libevas0-saver-jpeg, libevas0-saver-png, libevas0-saver-edb, libevas0-saver-tiff
 Description: virtual package providing all available Evas savers
  This is a virtual package providing all available Evas saver modules.
  .
@@ -296,3 +347,23 @@ Description: virtual package providing all available Evas savers
  Install evas if you want to develop applications against the only
  hardware-accelerated canvas library, or if you want to try out the
  applications under development.
+
+Package: libevas0-all
+Section: graphics
+Architecture: any
+Depends: libevas0-savers-all, libevas0-savers-all, libevas0-engines-all
+Description: virtual package providing all available Evas modules
+ This is a virtual package providing all available Evas modules.
+ .
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ .
+ This new version of evas is much more cleaner, compact and portable; and has
+ Ipaq support. The Ipaq version of the library is just 191Kb in size!
+ .
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+
