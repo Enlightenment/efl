@@ -22,7 +22,7 @@ EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec \
 	debian/changelog.in \
 	debian/control debian/rules debian/copyright \
 	debian/libedje0.install debian/edje0-bin.install \
-	debian/libedje0-dev.install edje0-debug.install
+	debian/libedje0-dev.install debian/edje0-debug.install
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = edje.pc
