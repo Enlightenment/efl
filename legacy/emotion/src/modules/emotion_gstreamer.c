@@ -1358,7 +1358,7 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
      conv = gst_element_factory_make ("audioconvert", NULL);
      resample = gst_element_factory_make ("audioresample", NULL);
      if (index == 1)
-       sink = gst_element_factory_make ("alsasink", NULL);
+       sink = gst_element_factory_make ("autoaudiosink", NULL);
      else
        sink = gst_element_factory_make ("fakesink", NULL);
 
