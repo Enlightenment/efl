@@ -5,15 +5,13 @@ Maintainer: E17 Debian Team <debian@edevelop.org>
 Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libedb-dev
 Standards-Version: 3.6.2.2
 
-Package: libevas0-dev
-Section: devel
+Package: libevas0
+Section: libs
 Architecture: any
-Depends: libevas (= ${Source-Version}), libfreetype6-dev, zlib1g-dev, libjpeg-dev, libeet-dev
-Provides: libevas-dev
-Description: enlightenment advanced canvas library development files
- This package provides headers and static libraries required to develop against
- evas.
- .
+Depends: ${shlibs:Depends}
+Suggests: libevas0-engines
+Provides: libevas
+Description: enlightenment advanced canvas library
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
@@ -26,13 +24,15 @@ Description: enlightenment advanced canvas library development files
  hardware-accelerated canvas library, or if you want to try out the
  applications under development.
 
-Package: libevas0
-Section: libs
+Package: libevas0-dev
+Section: devel
 Architecture: any
-Depends: ${shlibs:Depends}
-Suggests: libevas0-engines
-Provides: libevas
-Description: enlightenment advanced canvas library
+Depends: libevas0 (= ${Source-Version}), libfreetype6-dev, zlib1g-dev, libjpeg-dev, libeet-dev
+Provides: libevas-dev
+Description: enlightenment advanced canvas library development files
+ This package provides headers and static libraries required to develop against
+ evas.
+ .
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
