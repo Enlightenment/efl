@@ -1,14 +1,14 @@
-Source: libevas
+Source: evas
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), libeet0-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g-dev | libz-dev, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libedb1-dev
+Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet0-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libedb1-dev
 Standards-Version: 3.6.2.2
 
 Package: libevas0-dev
 Section: devel
 Architecture: any
-Depends: libevas0 (= ${Source-Version})
+Depends: libevas0 (= ${Source-Version}), libfreetype6-dev, zlib1g-dev, libjpeg-dev, libeet0-dev
 Provides: libevas-dev
 Description: enlightenment advanced canvas library development files
  This package provides headers and static libraries required to develop against

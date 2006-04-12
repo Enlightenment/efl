@@ -1,4 +1,4 @@
-libevas (@VERSION@) unstable; urgency=low
+evas (@VERSION@) unstable; urgency=low
 
   * a CVS snapshot release.
 
