@@ -105,6 +105,9 @@ evas_software_qtopia_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @qt_lib
 evas_software_qtopia_test_CFLAGS = $(CFLAGS) @qt_cflags@
 evas_software_qtopia_test_CXXFLAGS = $(CFLAGS) $(CXXFLAGS) @qt_cflags@
 evas_software_qtopia_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+else
+moc_evas_software_qtopia_main.cpp:
+	touch $@
 endif
 
 evas_gl_x11_test_SOURCES = evas_test_main.h evas_test_main.c evas_gl_x11_main.c

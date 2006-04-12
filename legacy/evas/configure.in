@@ -1831,7 +1831,6 @@ evasXnative.bb
 debian/changelog
 ],[
 chmod +x evas-config
-touch src/bin/moc_evas_software_qtopia_main.cpp
 ])
 
 #####################################################################
