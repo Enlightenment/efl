@@ -2,8 +2,8 @@ Source: ecore
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>> 4.0.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet0-dev, libevas0-dev, libssl-dev, libcurl3-dev, libxcursor-dev, libxss-dev | xlibs-static-dev, libc6-dev | libc-dev, libx11-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, x-dev, libxp-dev, libfreetype6-dev, libjpeg62-dev
-Standards-Version: 3.6.1.0
+Build-Depends: debhelper (>> 4.0.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet-dev, libevas-dev, libssl-dev, libcurl3-dev, libxcursor-dev, libxss-dev | xlibs-static-dev, libc6-dev | libc-dev, libx11-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, x-dev, libxp-dev, libfreetype6-dev, libjpeg62-dev
+Standards-Version: 3.6.2.2
 
 Package: libecore0
 Architecture: any
@@ -20,7 +20,8 @@ Description: Core abstraction layer for enlightenment DR 0.17
 Package: libecore0-con
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libssl0.9.8, libcurl3
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libssl0.9.8, libcurl3
+Provides: libecore-con
 Description: Ecore Connection Library
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -32,7 +33,8 @@ Description: Ecore Connection Library
 Package: libecore0-config
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libevas0, libeet0
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libevas, libeet
+Provides: libecore-config
 Description: Ecore Enlightened Property Library
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -44,7 +46,8 @@ Description: Ecore Enlightened Property Library
 Package: libecore0-dbus
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-con
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-con
+Provides: libecore-dbus
 Description: Ecore DBus Library
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -56,7 +59,8 @@ Description: Ecore DBus Library
 Package: libecore0-evas
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-fb, libecore0-x, libecore0-txt, libecore0-job, libevas0, libx11-6, libxext6
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-fb, libecore-x, libecore-txt, libecore-job, libevas, libx11-6, libxext6
+Provides: libecore-evas
 Description: Ecore Evas Wrapper Library
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -68,7 +72,8 @@ Description: Ecore Evas Wrapper Library
 Package: libecore0-fb
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
+Provides: libecore-fb
 Description: Ecore frame buffer system functions
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -80,7 +85,8 @@ Description: Ecore frame buffer system functions
 Package: libecore0-file
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libcurl3, libfam0 | libfam0c102 | libgamin0
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libcurl3, libfam0 | libfam0c102 | libgamin0
+Provides: libecore-file
 Description: Ecore File Library
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -92,7 +98,8 @@ Description: Ecore File Library
 Package: libecore0-ipc
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-con
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-con
+Provides: libecore-ipc
 Description: Ecore inter-process communication functions
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -104,7 +111,8 @@ Description: Ecore inter-process communication functions
 Package: libecore0-job
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
+Provides: libecore-job
 Description: Ecore job dealing functions
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -116,7 +124,8 @@ Description: Ecore job dealing functions
 Package: libecore0-txt
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
+Provides: libecore-txt
 Description: Ecore text encoding conversion functions
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -128,7 +137,8 @@ Description: Ecore text encoding conversion functions
 Package: libecore0-x
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-job, libecore0-txt, libx11-6, libxrandr2, libxrender1 (>= 1:0.9.0.2), libxcursor1 (>> 1.1.2), libxinerama1, libxp6, libxext6, libxss1
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-job, libecore-txt, libx11-6, libxrandr2, libxrender1 (>= 1:0.9.0.2), libxcursor1 (>> 1.1.2), libxinerama1, libxp6, libxext6, libxss1
+Provides: libecore-x
 Description: Ecore functions for dealing with the X Windows System
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -138,24 +148,48 @@ Description: Ecore functions for dealing with the X Windows System
  This package contains the Ecore wrapper and convenience functions for using
  the X Windows System.
  
+Package: libecore0-all
+Architecture: any
+Section: devel
+Architecture: any
+Depends: libecore (= ${Source-Version}), libecore-config, libecore-con, libecore-dbus, libecore-evas, libecore-fb, libecore-file, libecore-ipc, libecore-job, libecore-txt, libecore-x
+Provides: libecore-dev
+Description: Virtual package providing all available Ecore modules.
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ This virtual package provides all available Ecore modules.
+
 Package: libecore0-dev
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libecore0 (= ${Source-Version}), libc6-dev | libc-dev, libevas0-dev, libecore0-con, libecore0-config, libecore0-dbus, libecore0-evas, libecore0-fb, libecore0-file, libecore0-ipc, libecore0-job, libecore0-txt, libecore0-x, libcurl3-dev, libxcursor-dev
+Depends: libecore (= ${Source-Version}), libc6-dev | libc-dev, libevas-dev, libecore-all
 Provides: libecore-dev
-Conflicts: libecore-dev
-Description: libecore0 headers, static libraries and documentation
- Headers, static libraries and documentation for the Ecore library.
+Description: Ecore headers, static libraries and documentation
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ This package contains headers, static libraries and documentation for
+ the Ecore library.
 
 Package: ecore0-bin
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
 Provides: ecore-bin
-Conflicts: ecore0-test
-Description: Tools that support libecore.
- The package includes:
+Conflicts: ecore-test
+Description: Tools that support Ecore.
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ This package includes:
   - ecore_config: allows creation/editing of ecore_config databases
   - ecore_evas_test: test evas support.
   - ecore_test: test ecore features.
