@@ -153,7 +153,7 @@ Architecture: any
 Section: devel
 Architecture: any
 Depends: libecore (= ${Source-Version}), libecore-config, libecore-con, libecore-dbus, libecore-evas, libecore-fb, libecore-file, libecore-ipc, libecore-job, libecore-txt, libecore-x
-Provides: libecore-dev
+Provides: libecore-all
 Description: Virtual package providing all available Ecore modules.
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
