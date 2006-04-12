@@ -20,7 +20,7 @@ Description: Core abstraction layer for enlightenment DR 0.17
 Package: libecore0-con
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libssl0.9.8, libcurl3
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libssl0.9.8, libcurl3
 Provides: libecore-con
 Description: Ecore Connection Library
  This is the core event abstraction layer and X abstraction layer that makes
@@ -33,7 +33,7 @@ Description: Ecore Connection Library
 Package: libecore0-config
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libevas, libeet
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libevas, libeet
 Provides: libecore-config
 Description: Ecore Enlightened Property Library
  This is the core event abstraction layer and X abstraction layer that makes
@@ -46,7 +46,7 @@ Description: Ecore Enlightened Property Library
 Package: libecore0-dbus
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-con
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore-con
 Provides: libecore-dbus
 Description: Ecore DBus Library
  This is the core event abstraction layer and X abstraction layer that makes
@@ -59,7 +59,7 @@ Description: Ecore DBus Library
 Package: libecore0-evas
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-fb, libecore-x, libecore-txt, libecore-job, libevas, libx11-6, libxext6
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore-fb, libecore-x, libecore-txt, libecore-job, libevas, libx11-6, libxext6
 Provides: libecore-evas
 Description: Ecore Evas Wrapper Library
  This is the core event abstraction layer and X abstraction layer that makes
@@ -72,7 +72,7 @@ Description: Ecore Evas Wrapper Library
 Package: libecore0-fb
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
 Provides: libecore-fb
 Description: Ecore frame buffer system functions
  This is the core event abstraction layer and X abstraction layer that makes
@@ -85,7 +85,7 @@ Description: Ecore frame buffer system functions
 Package: libecore0-file
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libcurl3, libfam0 | libfam0c102 | libgamin0
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libcurl3, libfam0 | libfam0c102 | libgamin0
 Provides: libecore-file
 Description: Ecore File Library
  This is the core event abstraction layer and X abstraction layer that makes
@@ -98,7 +98,7 @@ Description: Ecore File Library
 Package: libecore0-ipc
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-con
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore-con
 Provides: libecore-ipc
 Description: Ecore inter-process communication functions
  This is the core event abstraction layer and X abstraction layer that makes
@@ -111,7 +111,7 @@ Description: Ecore inter-process communication functions
 Package: libecore0-job
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
 Provides: libecore-job
 Description: Ecore job dealing functions
  This is the core event abstraction layer and X abstraction layer that makes
@@ -124,7 +124,7 @@ Description: Ecore job dealing functions
 Package: libecore0-txt
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
 Provides: libecore-txt
 Description: Ecore text encoding conversion functions
  This is the core event abstraction layer and X abstraction layer that makes
@@ -137,7 +137,7 @@ Description: Ecore text encoding conversion functions
 Package: libecore0-x
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version}), libecore-job, libecore-txt, libx11-6, libxrandr2, libxrender1 (>= 1:0.9.0.2), libxcursor1 (>> 1.1.2), libxinerama1, libxp6, libxext6, libxss1
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore-job, libecore-txt, libx11-6, libxrandr2, libxrender1 (>= 1:0.9.0.2), libxcursor1 (>> 1.1.2), libxinerama1, libxp6, libxext6, libxss1
 Provides: libecore-x
 Description: Ecore functions for dealing with the X Windows System
  This is the core event abstraction layer and X abstraction layer that makes
@@ -152,7 +152,7 @@ Package: libecore0-all
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libecore (= ${Source-Version}), libecore-config, libecore-con, libecore-dbus, libecore-evas, libecore-fb, libecore-file, libecore-ipc, libecore-job, libecore-txt, libecore-x
+Depends: libecore0 (= ${Source-Version}), libecore-config, libecore-con, libecore-dbus, libecore-evas, libecore-fb, libecore-file, libecore-ipc, libecore-job, libecore-txt, libecore-x
 Provides: libecore-all
 Description: Virtual package providing all available Ecore modules.
  This is the core event abstraction layer and X abstraction layer that makes
@@ -166,7 +166,7 @@ Package: libecore0-dev
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libecore (= ${Source-Version}), libc6-dev | libc-dev, libevas-dev, libecore-all
+Depends: libecore0 (= ${Source-Version}), libc6-dev | libc-dev, libevas-dev, libecore-all
 Provides: libecore-dev
 Description: Ecore headers, static libraries and documentation
  This is the core event abstraction layer and X abstraction layer that makes
@@ -180,7 +180,7 @@ Description: Ecore headers, static libraries and documentation
 Package: ecore0-bin
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
 Provides: ecore-bin
 Conflicts: ecore-test
 Description: Tools that support Ecore.
