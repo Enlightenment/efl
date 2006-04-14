@@ -16,7 +16,7 @@ Description: Video playback library used in Enlightenment DR0.17
 Package: libemotion0-dev
 Section: devel
 Architecture: any
-Depends: libemotion0 (= ${Source-Version}), libc6-dev | libc-dev, libevas-dev, libecore-dev
+Depends: libemotion0 (= ${Source-Version}), libevas-dev, libecore-dev
 Provides: libemotion-dev
 Description: Headers, static libraries and documentation for Emotion
  This package contains development files for the Emotion library, a wrapper

@@ -24,7 +24,7 @@ Package: libembryo0-dev
 Section: devel
 Architecture: any
 Provides: libembryo-dev
-Depends: libembryo0 (= ${Source-Version}), libc6-dev | libc-dev
+Depends: libembryo0 (= ${Source-Version})
 Description: Development files for libembryo0
  Headers, static libraries and documentation for Embryo.
 

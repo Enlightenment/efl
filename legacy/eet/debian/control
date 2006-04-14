@@ -8,7 +8,7 @@ Standards-Version: 3.6.2.2
 Package: libeet0-dev
 Section: devel
 Architecture: any
-Depends: libeet0 (= ${Source-Version}), libc6-dev | libc-dev, zlib1g-dev, libjpeg-dev
+Depends: libeet0 (= ${Source-Version}), zlib1g-dev, libjpeg-dev
 Provides: libeet-dev
 Conflicts: libeet-dev
 Description: Enlightenment file chunk reading/writing library development files

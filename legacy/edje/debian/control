@@ -47,7 +47,7 @@ Package: libedje0-dev
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libedje (= ${Source-Version}), libc6-dev | libc-dev, libeet-dev, libecore-dev, libevas-dev, libembryo-dev
+Depends: libedje (= ${Source-Version}), libeet-dev, libecore-dev, libevas-dev, libembryo-dev
 Provides: libedje-dev
 Description: Edje headers, static libraries and documentation
  Edje is a graphical layout and animation library for animated resizable,
