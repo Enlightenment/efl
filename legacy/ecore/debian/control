@@ -164,7 +164,7 @@ Description: Virtual package providing all available Ecore modules.
 
 Package: libecore0-dev
 Architecture: any
-Section: devel
+Section: libdevel
 Architecture: any
 Depends: libecore0 (= ${Source-Version}), libevas-dev, libecore-all
 Provides: libecore-dev
