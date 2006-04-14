@@ -45,7 +45,7 @@ Description: Graphical layout and animation library
  
 Package: libedje0-dev
 Architecture: any
-Section: devel
+Section: libdevel
 Architecture: any
 Depends: libedje (= ${Source-Version}), libeet-dev, libecore-dev, libevas-dev, libembryo-dev
 Provides: libedje-dev

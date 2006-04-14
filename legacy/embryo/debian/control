@@ -21,7 +21,7 @@ Depends: ${shlibs:Depends}
 Description: Debugging execution utility for embryo compiled bytecode.
 
 Package: libembryo0-dev
-Section: devel
+Section: libdevel
 Architecture: any
 Provides: libembryo-dev
 Depends: libembryo0 (= ${Source-Version})

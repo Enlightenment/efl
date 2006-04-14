@@ -14,7 +14,7 @@ Description: Video playback library used in Enlightenment DR0.17
  Enlightenment suite for video playback.
 
 Package: libemotion0-dev
-Section: devel
+Section: libdevel
 Architecture: any
 Depends: libemotion0 (= ${Source-Version}), libevas-dev, libecore-dev
 Provides: libemotion-dev

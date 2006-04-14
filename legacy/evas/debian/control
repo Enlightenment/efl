@@ -25,7 +25,7 @@ Description: enlightenment advanced canvas library
  applications under development.
 
 Package: libevas0-dev
-Section: devel
+Section: libdevel
 Architecture: any
 Depends: libevas0 (= ${Source-Version}), libfreetype6-dev, zlib1g-dev, libjpeg-dev, libeet-dev
 Provides: libevas-dev

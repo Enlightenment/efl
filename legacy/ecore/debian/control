@@ -150,7 +150,7 @@ Description: Ecore functions for dealing with the X Windows System
  
 Package: libecore0-all
 Architecture: any
-Section: devel
+Section: libdevel
 Architecture: any
 Depends: libecore0 (= ${Source-Version}), libecore-config, libecore-con, libecore-dbus, libecore-evas, libecore-fb, libecore-file, libecore-ipc, libecore-job, libecore-txt, libecore-x
 Provides: libecore-all
