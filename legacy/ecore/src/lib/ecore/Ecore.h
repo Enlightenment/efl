@@ -236,6 +236,7 @@ extern "C" {
    EAPI pid_t       ecore_exe_pid_get(Ecore_Exe *exe);
    EAPI void        ecore_exe_tag_set(Ecore_Exe *exe, const char *tag);
    EAPI char       *ecore_exe_tag_get(Ecore_Exe *exe);
+   EAPI char       *ecore_exe_cmd_get(Ecore_Exe *exe);
    EAPI void       *ecore_exe_data_get(Ecore_Exe *exe);
    EAPI void        ecore_exe_pause(Ecore_Exe *exe);
    EAPI void        ecore_exe_continue(Ecore_Exe *exe);

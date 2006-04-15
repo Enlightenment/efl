@@ -881,6 +881,23 @@ ecore_exe_pid_get(Ecore_Exe * exe)
 }
 
 /**
+ * Retrieves the command of the given spawned process.
+ * @param   exe Handle to the given spawned process.
+ * @return  The command on success.  NULL otherwise.
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+EAPI char          *
+ecore_exe_cmd_get(Ecore_Exe * exe)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_cmd_get");
+	return NULL;
+     }
+   return exe->cmd;
+}
+
+/**
  * Retrieves the data attached to the given process handle.
  * @param   exe The given process handle.
  * @return  The data pointer attached to @p exe.
