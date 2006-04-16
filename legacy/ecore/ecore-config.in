@@ -65,7 +65,7 @@ while test $# -gt 0; do
       ;;
     --libs-evas)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_evas_libs@ @EET_LIBS@ -lm
+      echo $libdirs -lecore @ecore_evas_libs@ -lm
       ;;
     --libs-fb)
       libdirs=-L@libdir@
