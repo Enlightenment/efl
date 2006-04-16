@@ -302,6 +302,7 @@ _xr_render_surface_clips_set(Xrender_Surface *rs, RGBA_Draw_Context *dc, int rx,
 void
 _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth)
 {
+   Xrender_Surface *trs = NULL;
    XTransform xf;
    XRenderPictureAttributes att;
    Picture mask;
@@ -310,6 +311,64 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 
    if ((sw <= 0) || (sh <= 0) || (w <= 0) || (h <= 0)) return;
    
+   att.clip_mask = None;
+   XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
+   XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
+   
+   op = PictOpSrc;
+   if (srs->alpha) op = PictOpOver;
+   mask = None;
+   if ((dc) && (dc->mul.use))
+     {
+	r = (int)(R_VAL(&dc->mul.col));
+	g = (int)(G_VAL(&dc->mul.col));
+	b = (int)(B_VAL(&dc->mul.col));
+	a = (int)(A_VAL(&dc->mul.col));
+	if (!(r == g == b == a == 0xff))
+	  {
+	     if ((srs->xinf->mul_r != r) || (srs->xinf->mul_g != g) ||
+		 (srs->xinf->mul_b != b) || (srs->xinf->mul_a != a))
+	       {
+		  srs->xinf->mul_r = r;
+		  srs->xinf->mul_g = g;
+		  srs->xinf->mul_b = b;
+		  srs->xinf->mul_a = a;
+		  _xr_render_surface_solid_rectangle_set(srs->xinf->mul, 
+							 r, 
+							 g, 
+							 b, 
+							 a, 
+							 0, 0, 1, 1);
+	       }
+	     att.component_alpha = 1;
+	     op = PictOpOver;
+	     mask = srs->xinf->mul->pic;
+	     XRenderChangePicture(srs->xinf->disp, mask, CPComponentAlpha, &att);
+	     if ((r == g == b == 0xff) && (a != 0xff))
+	       {
+	       }
+	     else
+	       {
+		  xf.matrix[0][0] = 1;
+		  xf.matrix[0][1] = 0;
+		  xf.matrix[0][2] = 0;
+		  
+		  xf.matrix[1][0] = 0;
+		  xf.matrix[1][1] = 1;
+		  xf.matrix[1][2] = 0;
+		  
+		  xf.matrix[2][0] = 0;
+		  xf.matrix[2][1] = 0;
+		  xf.matrix[2][2] = 1;
+		  trs = _xr_render_surface_new(srs->xinf, sw, sh, srs->fmt, srs->alpha);
+		  XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
+		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
+				   trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
+		  mask = 0;
+	       }
+	  }
+     }
+
    sf = MAX(sw, sh);
 #define BMAX 26
    if      (sf <= 8    ) sf = 1 << (BMAX - 3);
@@ -338,44 +397,32 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    xf.matrix[2][1] = 0;
    xf.matrix[2][2] = sf;
 
-   op = PictOpSrc;
-   if (srs->alpha) op = PictOpOver;
-   mask = None;
-   if ((dc) && (dc->mul.use))
-     {
-	r = (int)(R_VAL(&dc->mul.col));
-	g = (int)(G_VAL(&dc->mul.col));
-	b = (int)(B_VAL(&dc->mul.col));
-	a = (int)(A_VAL(&dc->mul.col));
-	if (!(r == g == b == a == 0xff))
-	  {
-	     if ((srs->xinf->mul_r != r) || (srs->xinf->mul_g != g) ||
-		 (srs->xinf->mul_b != b) || (srs->xinf->mul_a != a))
-	       {
-		  srs->xinf->mul_r = r;
-		  srs->xinf->mul_g = g;
-		  srs->xinf->mul_b = b;
-		  srs->xinf->mul_a = a;
-		  _xr_render_surface_solid_rectangle_set(srs->xinf->mul, r, g, b, a, 0, 0, 1, 1);
-	       }
-	     op = PictOpOver;
-	     mask = srs->xinf->mul->pic;
-	  }
-     }
-   
-   XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
-   att.clip_mask = None;
-   XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
-   XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
-   
-   if (smooth) XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "best", NULL, 0);
-   else XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "nearest", NULL, 0);
-
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
-   XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
-		    ((sx * w) + (sw / 2)) / sw, 
-		    ((sy * h) + (sh / 2)) / sh,
-		    0, 0, x, y, w, h);
+   if (trs)
+     {
+	if (smooth)
+	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, "best", NULL, 0);
+	else 
+	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, "nearest", NULL, 0);
+	XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
+	
+	XRenderComposite(srs->xinf->disp, op, trs->pic, mask, drs->pic,
+			 0, 0, 0, 0, x, y, w, h);
+	_xr_render_surface_free(trs);
+     }
+   else
+     {
+	if (smooth)
+	  XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "best", NULL, 0);
+	else 
+	  XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "nearest", NULL, 0);
+	XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
+	
+	XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
+			 ((sx * w) + (sw / 2)) / sw, 
+			 ((sy * h) + (sh / 2)) / sh,
+			 0, 0, x, y, w, h);
+     }
 }
 
 void

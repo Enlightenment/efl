@@ -184,8 +184,9 @@ loop(void)
 	evas_object_move(panel_clip, 0, win_h - 240);
 	evas_object_move(panel_top, 0, win_h - 240 - 10);
 	evas_object_move(panel_shadow, 0, win_h - 240);
-	evas_object_color_set(evas_logo, 255, 255, 255,
-			      (int)(255 * (((6.0) - t) / 4.0)));
+	evas_object_color_set(evas_logo, 255, 255, 255, 
+			      (int)(255 * (((6.0) - t) / 4.0))
+			      );
      }
    else if (t <= 26.0)
      {

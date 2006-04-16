@@ -426,6 +426,15 @@ eng_output_flush(void *data)
 			    re->win->draw.x2 - re->win->draw.x1 + 1,
 			    re->win->draw.y2 - re->win->draw.y1 + 1);
 #else
+#if 1
+   glFlush();
+     {
+	unsigned int rc;
+   
+	glXGetVideoSyncSGI(&rc);
+	glXWaitVideoSyncSGI(2, (rc + 1) % 2, &rc);
+     }
+#endif   
    glXSwapBuffers(re->win->disp, re->win->win);
 #endif
 //   glFlush();
