@@ -110,6 +110,7 @@ eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_XRender_X11 *info;
+   int resize = 1;
 
    info = (Evas_Engine_Info_XRender_X11 *)in;
    if (!e->engine.data.output)
@@ -131,6 +132,7 @@ eng_setup(Evas *e, void *in)
 	if (re->tb)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 	e->engine.data.output = re;
+	resize = 0;
      }
    re = e->engine.data.output;
    if (!re) return;
@@ -158,6 +160,16 @@ eng_setup(Evas *e, void *in)
 						       re->xinf->fmt1, 1);
    else
      re->mask_output = NULL;
+   if (resize)
+     {
+	if (re->tb) evas_common_tilebuf_free(re->tb);
+	if ((e->output.w > 0) && (e->output.h > 0))
+	  re->tb = evas_common_tilebuf_new(e->output.w, e->output.h);
+	else
+	  re->tb = evas_common_tilebuf_new(1, 1);
+        if (re->tb)
+	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+     }
 }
 
 static void
