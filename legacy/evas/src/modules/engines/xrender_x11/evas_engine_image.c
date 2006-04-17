@@ -279,7 +279,7 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	ww = w; hh = h;
 	RECTS_CLIP_TO_RECT(x, y, ww, hh, 0, 0, im->w, im->h);
 	old_surface = im->surface;
-	im->surface = _xr_render_surface_new(old_surface->xinf, w, h, old_surface->fmt, old_surface->alpha);
+	im->surface = _xr_render_surface_new(old_surface->xinf, w + 1, h + 1, old_surface->fmt, old_surface->alpha);
 	if (im->surface)
 	  _xr_render_surface_copy(old_surface, im->surface, 0, 0, 0, 0, ww, hh);
 	_xr_render_surface_free(old_surface);
@@ -451,11 +451,11 @@ _xre_image_alpha_set(XR_Image *im, int alpha)
 	old_surface = im->surface;
 	im->surface = NULL;
 	if (im->alpha)
-	  im->surface = _xr_render_surface_new(im->xinf, im->w, im->h, im->xinf->fmt32, 1);
+	  im->surface = _xr_render_surface_new(im->xinf, im->w + 1, im->h + 1, im->xinf->fmt32, 1);
 	else
-	  im->surface = _xr_render_surface_new(im->xinf, im->w, im->h, im->xinf->fmt24, 0);
+	  im->surface = _xr_render_surface_new(im->xinf, im->w + 1, im->h + 1, im->xinf->fmt24, 0);
 	if (im->surface)
-	  _xr_render_surface_copy(old_surface, im->surface, 0, 0, 0, 0, im->w, im->h);
+	  _xr_render_surface_copy(old_surface, im->surface, 0, 0, 0, 0, im->w + 1, im->h + 1);
 	_xr_render_surface_free(old_surface);
      }
    if (im->updates)
@@ -517,14 +517,27 @@ _xre_image_surface_gen(XR_Image *im)
      }
    if (im->alpha)
      {
-	im->surface = _xr_render_surface_new(im->xinf, im->w, im->h, im->xinf->fmt32, 1);
+	im->surface = _xr_render_surface_new(im->xinf, im->w + 1, im->h + 1, im->xinf->fmt32, 1);
 	_xr_render_surface_argb_pixels_fill(im->surface, im->w, im->h, data, 0, 0, im->w, im->h);
      }
    else
      {
-	im->surface = _xr_render_surface_new(im->xinf, im->w, im->h, im->xinf->fmt24, 0);
+	im->surface = _xr_render_surface_new(im->xinf, im->w + 1, im->h + 1, im->xinf->fmt24, 0);
 	_xr_render_surface_rgb_pixels_fill(im->surface, im->w, im->h, data, 0, 0, im->w, im->h);
      }
+   /* fill right and bottom pixel so interpolation works right */
+   _xr_render_surface_copy(im->surface, im->surface, 
+			   im->w - 1, 0, 
+			   im->w, 0, 
+			   1, im->h);
+   _xr_render_surface_copy(im->surface, im->surface, 
+			   0, im->h - 1, 
+			   0, im->h, 
+			   im->w, 1);
+   _xr_render_surface_copy(im->surface, im->surface, 
+			   im->w - 1, im->h - 1, 
+			   im->w, im->h, 
+			   1, 1);
    if ((im->im) && (!im->dirty))
      {
 	evas_common_image_unref(im->im);

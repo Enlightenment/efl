@@ -360,10 +360,17 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 		  xf.matrix[2][0] = 0;
 		  xf.matrix[2][1] = 0;
 		  xf.matrix[2][2] = 1;
-		  trs = _xr_render_surface_new(srs->xinf, sw, sh, srs->fmt, srs->alpha);
+		  trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1, srs->fmt, srs->alpha);
 		  XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
 				   trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
+		  /* fill right and bottom pixel so interpolation works right */
+		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
+				   trs->pic, sx + sw, sy, 0, 0, sw, 0, 1, sh);
+		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
+				   trs->pic, sx, sy + sh, 0, 0, 0, sh, sw + 1, 1);
+		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
+				   trs->pic, sx + sw, sy, 0, 0, sw, 0, 1, sh);
 		  mask = 0;
 	       }
 	  }

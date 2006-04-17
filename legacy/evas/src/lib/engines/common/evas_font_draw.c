@@ -187,7 +187,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	       {
 		  if ((j > 0) && (chr_x + w > ext_x))
 		    {
-		       if (fg->ext_dat)
+		       if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
 			 {
 			    /* ext glyph draw */
 			    dc->font_ext.func.gl_draw(dc->font_ext.data,
