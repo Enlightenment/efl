@@ -7,7 +7,7 @@ dnl AM_GST_ELEMENT_CHECK(ELEMENT-NAME, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
 AC_DEFUN([AM_GST_ELEMENT_CHECK],
 [
   if test "x$GST_INSPECT" == "x"; then
-    AC_CHECK_PROG(GST_INSPECT, gst-inspect, gst-inspect, [])
+    AC_CHECK_PROGS(GST_INSPECT, gst-inspect gst-inspect-0.10, [])
   fi
 
   if test "x$GST_INSPECT" != "x"; then
