@@ -297,8 +297,10 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	Evas_Event_Mouse_Up ev;
 
 	obj = l->data;
-	if (obj->mouse_grabbed > 0) obj->mouse_grabbed--;
-	if (e->pointer.mouse_grabbed > 0) e->pointer.mouse_grabbed--;
+//	if (obj->mouse_grabbed > 0) 
+	  obj->mouse_grabbed--;
+//	if (e->pointer.mouse_grabbed > 0) 
+	  e->pointer.mouse_grabbed--;
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
@@ -460,7 +462,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
    e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
    /* if our mouse button is grabbed to any objects */
-   if (e->pointer.mouse_grabbed != 0)
+   if (e->pointer.mouse_grabbed > 0)
      {
 	/* go thru old list of in objects */
 	Evas_List *outs = NULL;

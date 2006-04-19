@@ -698,7 +698,7 @@ evas_object_hide(Evas_Object *obj)
 		  if (obj->delete_me) return;
 		  if (obj->mouse_grabbed > 0)
 		    {
-		       if (obj->layer->evas->pointer.mouse_grabbed >= obj->mouse_grabbed)
+//		       if (obj->layer->evas->pointer.mouse_grabbed >= obj->mouse_grabbed)
 			 obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
 		    }
 		    {
