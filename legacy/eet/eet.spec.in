@@ -54,6 +54,7 @@ Debug tools for Eet.
 
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
+rm -f $RPM_BUILD_ROOT/usr/bin/eet_bench
 
 %clean
 test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
