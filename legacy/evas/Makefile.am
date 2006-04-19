@@ -26,7 +26,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     debian/compat \
 	     debian/control \
 	     debian/copyright \
-	     debian/evas0-bin.install \
 	     debian/evas0-debug.install \
 	     debian/libevas0-all.install \
 	     debian/libevas0-dev.install \
