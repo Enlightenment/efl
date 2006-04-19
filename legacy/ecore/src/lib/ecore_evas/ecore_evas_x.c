@@ -327,7 +327,6 @@ _ecore_evas_x_match(Ecore_X_Window win)
 static void
 _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 {
-   /* BLAH */
    if (!strcmp(ee->driver, "software_x11"))
      {   
 #ifdef BUILD_ECORE_X
