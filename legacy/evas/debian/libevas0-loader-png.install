@@ -1,1 +1,1 @@
-debian/tmp/usr/lib/evas/modules/loaders/png/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/png/*/*.so

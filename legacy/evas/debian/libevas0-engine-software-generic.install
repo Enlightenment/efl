@@ -1,1 +1,1 @@
-debian/tmp/usr/lib/evas/modules/engines/software_generic/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/engines/software_generic/*/*.so

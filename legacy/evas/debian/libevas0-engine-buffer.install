@@ -1,1 +1,1 @@
-debian/tmp/usr/lib/evas/modules/engines/buffer/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/engines/buffer/*/*.so

@@ -1,1 +1,1 @@
-debian/tmp/usr/lib/evas/modules/loaders/eet/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/eet/*/*.so

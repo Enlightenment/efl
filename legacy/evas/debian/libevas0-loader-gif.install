@@ -1,1 +1,1 @@
-debian/tmp/usr/lib/evas/modules/loaders/gif/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/gif/*/*.so

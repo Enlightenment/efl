@@ -1,1 +1,1 @@
-debian/tmp/usr/lib/evas/modules/savers/png/linux-gnu-*/*.so
+debian/tmp/usr/lib/evas/modules/savers/png/*/*.so
