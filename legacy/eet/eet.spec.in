@@ -3,7 +3,7 @@
 Summary: Library for speedy data storage, retrieval, and compression.
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.20050908
+Release: 0
 License: BSD
 Group: System Environment/Libraries
 Source: %{name}-%{version}.tar.gz
@@ -11,8 +11,7 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 URL: http://www.enlightenment.org/
-#BuildSuggests: xorg-x11-devel doxygen
-BuildRequires: libjpeg-devel XFree86-devel
+BuildRequires: libjpeg-devel zlib-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -35,6 +34,14 @@ Requires: %{name} = %{version}
 
 %description devel
 Headers, static libraries, test programs and documentation for Eet
+
+%package debug
+Summary: Eet debug tools
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+
+%description debug
+Debug tools for Eet.
 
 %prep
 %setup -q
@@ -61,16 +68,18 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS COPYING COPYING-PLAIN README
 %{_libdir}/*.so.*
-%{_libdir}/*.la
-%{_bindir}/eet
-%{_bindir}/eet_bench
 
 %files devel
 %defattr(-, root, root)
-%{_libdir}/*.so
-%{_libdir}/*.a
 %{_bindir}/eet-config
 %{_libdir}/pkgconfig/*
 %{_includedir}/*
+%{_libdir}/*.a
+%{_libdir}/*.so
+%{_libdir}/*.la
+
+%files debug
+%defattr(-, root, root)
+%{_bindir}/eet
 
 %changelog
