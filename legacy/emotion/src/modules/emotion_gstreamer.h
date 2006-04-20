@@ -36,6 +36,7 @@ struct _Emotion_Gstreamer_Video
 {
   /* Gstreamer elements */
   GstElement       *pipeline;
+  GstBus           *bus;
   
   /* Sinks */
   Ecore_List       *video_sinks;

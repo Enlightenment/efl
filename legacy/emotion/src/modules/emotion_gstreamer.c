@@ -6,30 +6,29 @@
 #include "emotion_gstreamer.h"
 
 
-#define EMOTION_PIPELINE_PAUSE(pipeline) \
-{ \
-   GstStateChangeReturn res; \
- \
-   res = gst_element_set_state ((pipeline), GST_STATE_PAUSED); \
-   if (res == GST_STATE_CHANGE_FAILURE) { \
-     g_print ("Emotion-Gstreamer ERROR: could not pause\n"); \
-     gst_object_unref (GST_OBJECT ((pipeline))); \
-     return 0; \
-   } \
-   res = gst_element_get_state ((pipeline), NULL, NULL, GST_CLOCK_TIME_NONE); \
-   if (res != GST_STATE_CHANGE_SUCCESS) { \
-     g_print ("Emotion-Gstreamer ERROR: could not complete pause\n"); \
-     gst_object_unref (GST_OBJECT ((pipeline))); \
-     return 0; \
-   } \
+static gboolean
+_emotion_pipeline_pause (GstElement *pipeline)
+{
+   GstStateChangeReturn res;
+
+   res = gst_element_set_state ((pipeline), GST_STATE_PAUSED);
+   if (res == GST_STATE_CHANGE_FAILURE) {
+     g_print ("Emotion-Gstreamer ERROR: could not pause\n");
+     gst_object_unref (GST_OBJECT ((pipeline)));
+     return 0;
+   }
+
+   res = gst_element_get_state ((pipeline), NULL, NULL, GST_CLOCK_TIME_NONE);
+   if (res != GST_STATE_CHANGE_SUCCESS) {
+     g_print ("Emotion-Gstreamer ERROR: could not complete pause\n");
+     gst_object_unref (GST_OBJECT ((pipeline)));
+     return 0;
+   }
+
+   return 1;
 }
 
 
-/* Callbacks to handle errors and EOS */
-static void cb_end_of_stream (GstElement *thread,
-			      gpointer    data);
-
-static gboolean cb_idle_eos (gpointer data);
 
 /* Callbacks to display the frame content */
 
@@ -279,6 +278,7 @@ em_init(Evas_Object  *obj,
 	void        **emotion_video)
 {
    Emotion_Gstreamer_Video *ev;
+   GError                  *error;
    int                      fds[2];
 
    if (!emotion_video)
@@ -288,16 +288,30 @@ em_init(Evas_Object  *obj,
 
    ev = calloc(1, sizeof(Emotion_Gstreamer_Video));
    if (!ev) return 0;
+
    ev->obj = obj;
    ev->obj_data = NULL;
 
    /* Initialization of gstreamer */
-   gst_init (NULL, NULL);
+   if (!gst_init_check (NULL, NULL, &error))
+     goto failure_gstreamer;
+
+   ev->pipeline = gst_pipeline_new ("pipeline");
+   if (!ev->pipeline)
+     goto failure_pipeline;
+
+   ev->bus = gst_pipeline_get_bus (GST_PIPELINE (ev->pipeline));
+   if (!ev->bus)
+     goto failure_bus;
 
    /* We allocate the sinks lists */
    ev->video_sinks = ecore_list_new ();
+   if (!ev->video_sinks)
+     goto failure_video_sinks;
    ecore_list_set_free_cb(ev->video_sinks, ECORE_FREE_CB(free));
    ev->audio_sinks = ecore_list_new ();
+   if (!ev->audio_sinks)
+     goto failure_audio_sinks;
    ecore_list_set_free_cb(ev->audio_sinks, ECORE_FREE_CB(free));
 
    *emotion_video = ev;
@@ -320,8 +334,27 @@ em_init(Evas_Object  *obj,
                                                     NULL, NULL);
       ecore_main_fd_handler_active_set(ev->fd_ev_handler, ECORE_FD_READ);
    }
+   else
+     goto failure_pipe;
 
    return 1;
+
+ failure_pipe:
+   ecore_list_destroy (ev->audio_sinks);
+ failure_audio_sinks:
+   ecore_list_destroy (ev->video_sinks);
+ failure_video_sinks:
+   gst_object_unref (GST_OBJECT (ev->bus));
+ failure_bus:
+   /* this call is not really necessary */
+   gst_element_set_state (ev->pipeline, GST_STATE_NULL);
+   gst_object_unref (GST_OBJECT (ev->pipeline));
+ failure_pipeline:
+   gst_deinit ();
+ failure_gstreamer:
+   free (ev);
+
+   return 0;
 }
 
 static int
@@ -330,9 +363,13 @@ em_shutdown(void *video)
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+   if (!ev)
+     return 0;
 
    gst_element_set_state (ev->pipeline, GST_STATE_NULL);
    gst_object_unref (GST_OBJECT (ev->pipeline));
+   gst_object_unref (GST_OBJECT (ev->bus));
+   gst_deinit ();
 
    ecore_list_destroy (ev->video_sinks);
    ecore_list_destroy (ev->audio_sinks);
@@ -380,7 +417,10 @@ em_file_open(const char   *file,
          sscanf (file,"cdda://%d", &track);
       }
       printf ("build cdda pipeline\n");
-      _cdda_pipeline_build (ev, device, track);
+      if (!(_cdda_pipeline_build (ev, device, track))) {
+        printf ("error building CA Audio pipeline\n");
+        return 0;
+      }
    }
    /* Normal media file */
    else {
@@ -431,6 +471,8 @@ static void
 em_file_close(void *video)
 {
    Emotion_Gstreamer_Video *ev;
+   GstIterator             *iter;
+   gpointer                 data;
 
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev)
@@ -440,14 +482,25 @@ em_file_close(void *video)
    if (!emotion_object_play_get(ev->obj))
      {
 	printf("  ... unpause\n");
-        if (ev->pipeline)
-          gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
+        _emotion_pipeline_pause (ev->pipeline);
      }
    printf("EX stop\n");
    if (ev->pipeline)
      gst_element_set_state (ev->pipeline, GST_STATE_READY);
 
-   /* FIXME: delete the pipeline completely ? */
+   /* we remove all the elements in the pipeline */
+   iter = gst_bin_iterate_elements (GST_BIN (ev->pipeline));
+   while (gst_iterator_next (iter, &data) == GST_ITERATOR_OK) {
+     GstElement *element;
+
+     element = GST_ELEMENT (data);
+     gst_bin_remove (GST_BIN (ev->pipeline), element);
+   }
+   gst_iterator_free (iter);
+
+   /* we clear the sink lists */
+   ecore_list_clear (ev->video_sinks);
+   ecore_list_clear (ev->audio_sinks);
 }
 
 static void
@@ -853,6 +906,7 @@ em_video_channel_mute_set(void *video,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+
    ev->video_mute = mute;
 }
 
@@ -1088,9 +1142,104 @@ static const char *
 em_meta_get(void *video, int meta)
 {
    Emotion_Gstreamer_Video *ev;
+   GstBus                  *bus;
+   gchar                   *str = NULL;
+   gboolean                 done;
 
    ev = (Emotion_Gstreamer_Video *)video;
-   return NULL;
+   if (!ev) return NULL;
+
+   done = 0;
+   bus = gst_element_get_bus (ev->pipeline);
+   if (!bus) return NULL;
+
+   while (!done) {
+      GstMessage *message;
+
+      message = gst_bus_pop (bus);
+      if (message == NULL)
+        /* All messages read, we're done */
+         break;
+
+      switch (GST_MESSAGE_TYPE (message)) {
+      case GST_MESSAGE_ERROR:
+      case GST_MESSAGE_EOS:
+         gst_message_unref (message);
+         break;
+      case GST_MESSAGE_TAG: {
+         GstTagList *new_tags;
+
+         gst_message_parse_tag (message, &new_tags);
+
+         switch (meta) {
+         case META_TRACK_TITLE:
+            gst_tag_list_get_string (new_tags, GST_TAG_TITLE, &str);
+            if (str) {
+              gst_message_unref (message);
+              goto success;
+            }
+            break;
+         case META_TRACK_ARTIST:
+            gst_tag_list_get_string (new_tags, GST_TAG_ARTIST, &str);
+            if (str) {
+              gst_message_unref (message);
+              goto success;
+            }
+            break;
+         case META_TRACK_GENRE:
+            gst_tag_list_get_string (new_tags, GST_TAG_GENRE, &str);
+            if (str) {
+              gst_message_unref (message);
+              goto success;
+            }
+            break;
+         case META_TRACK_COMMENT:
+            gst_tag_list_get_string (new_tags, GST_TAG_COMMENT, &str);
+            if (str) {
+              gst_message_unref (message);
+              goto success;
+            }
+            break;
+         case META_TRACK_ALBUM:
+            gst_tag_list_get_string (new_tags, GST_TAG_ALBUM, &str);
+            if (str) {
+              gst_message_unref (message);
+              goto success;
+            }
+            break;
+         case META_TRACK_YEAR: {
+            const GValue *date;
+
+            date = gst_tag_list_get_value_index (new_tags, GST_TAG_DATE, 0);
+            if (date)
+               str = g_strdup_value_contents (date);
+            if (str) {
+              gst_message_unref (message);
+              goto success;
+            }
+            break;
+         }
+         case META_TRACK_DISCID:
+#ifdef GST_TAG_CDDA_CDDB_DISCID
+            gst_tag_list_get_string (new_tags, GST_TAG_CDDA_CDDB_DISCID, &str);
+#endif
+            if (str) {
+              gst_message_unref (message);
+              goto success;
+            }
+            break;
+         }
+      }
+      default:
+         break;
+      }
+      gst_message_unref (message);
+   }
+
+ success:
+   gst_object_unref (GST_OBJECT (bus));
+
+   return str;
 }
 
 unsigned char
@@ -1115,36 +1264,6 @@ module_close(Emotion_Video_Module *module,
    em_module.shutdown(video);
 }
 
-
-/*
- * Callbacks
- */
-
-static void
-cb_end_of_stream (GstElement *thread,
-		  gpointer    data)
-{
-  Emotion_Gstreamer_Video* ev;
-
-  ev = (Emotion_Gstreamer_Video *)data;
-  printf ("Have eos in thread %p\n", g_thread_self ());
-  g_idle_add ((GSourceFunc) cb_idle_eos, data);
-}
-
-static gboolean
-cb_idle_eos (gpointer data)
-{
-  Emotion_Gstreamer_Video* ev;
-
-  ev = (Emotion_Gstreamer_Video *)data;
-
-  printf ("Have idle-func in thread %p\n", g_thread_self ());
-
-  _emotion_playback_finished(ev->obj);
-
-  return 0;
-}
-
 /* Send the video frame to the evas object */
 static void
 cb_handoff (GstElement *fakesrc,
@@ -1159,13 +1278,15 @@ cb_handoff (GstElement *fakesrc,
    if (!ev)
      return;
 
-   if (!ev->obj_data)
-     ev->obj_data = (void*) malloc (GST_BUFFER_SIZE(buffer) * sizeof(void));
+   if (!ev->video_mute) {
+      if (!ev->obj_data)
+         ev->obj_data = (void*) malloc (GST_BUFFER_SIZE(buffer) * sizeof(void));
 
-   memcpy ( ev->obj_data, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
-   buf[0] = GST_BUFFER_DATA(buffer);
-   buf[1] = buffer;
-   write(ev->fd_ev_write, buf, sizeof(buf));
+      memcpy ( ev->obj_data, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+      buf[0] = GST_BUFFER_DATA(buffer);
+      buf[1] = buffer;
+      write(ev->fd_ev_write, buf, sizeof(buf));
+   }
 
    query = gst_query_new_position (GST_FORMAT_TIME);
    if (gst_pad_query (gst_pad_get_peer (pad), query)) {
@@ -1271,6 +1392,8 @@ _emotion_video_sink_new (Emotion_Gstreamer_Video *ev)
 {
    Emotion_Video_Sink *vsink;
 
+   if (!ev) return NULL;
+
    vsink = (Emotion_Video_Sink *)malloc (sizeof (Emotion_Video_Sink));
    if (!vsink) return NULL;
 
@@ -1281,10 +1404,23 @@ _emotion_video_sink_new (Emotion_Gstreamer_Video *ev)
    return vsink;
 }
 
+static void
+_emotion_video_sink_free (Emotion_Gstreamer_Video *ev, Emotion_Video_Sink *vsink)
+{
+   if (!ev || !vsink) return;
+
+   if (ecore_list_goto (ev->video_sinks, vsink)) {
+      ecore_list_remove (ev->video_sinks);
+      free (vsink);
+   }
+}
+
 static Emotion_Audio_Sink *
 _emotion_audio_sink_new (Emotion_Gstreamer_Video *ev)
 {
    Emotion_Audio_Sink *asink;
+
+   if (!ev) return NULL;
 
    asink = (Emotion_Audio_Sink *)malloc (sizeof (Emotion_Audio_Sink));
    if (!asink) return NULL;
@@ -1296,17 +1432,30 @@ _emotion_audio_sink_new (Emotion_Gstreamer_Video *ev)
    return asink;
 }
 
+static void
+_emotion_audio_sink_free (Emotion_Gstreamer_Video *ev, Emotion_Audio_Sink *asink)
+{
+   if (!ev || !asink) return;
+
+   if (ecore_list_goto (ev->audio_sinks, asink)) {
+      ecore_list_remove (ev->audio_sinks);
+      free (asink);
+   }
+}
+
 static Emotion_Video_Sink *
 _visualization_sink_create (Emotion_Gstreamer_Video *ev, Emotion_Audio_Sink *asink)
 {
    Emotion_Video_Sink *vsink;
+
+   if (!ev) return NULL;
 
    vsink = _emotion_video_sink_new (ev);
    if (!vsink) return NULL;
 
    vsink->sink = gst_bin_get_by_name (GST_BIN (asink->sink), "vissink1");
    if (!vsink->sink) {
-      free (vsink);
+      _emotion_video_sink_free (ev, vsink);
       return NULL;
    }
    vsink->width = 320;
@@ -1317,13 +1466,11 @@ _visualization_sink_create (Emotion_Gstreamer_Video *ev, Emotion_Audio_Sink *asi
    vsink->fourcc = GST_MAKE_FOURCC ('A','R','G','B');
    vsink->length_time = asink->length_time;
 
-   if (vsink && vsink->sink) {
-      g_object_set (G_OBJECT (vsink->sink), "sync", TRUE, NULL);
-      g_object_set (G_OBJECT (vsink->sink), "signal-handoffs", TRUE, NULL);
-      g_signal_connect (G_OBJECT (vsink->sink),
-                        "handoff",
-                        G_CALLBACK (cb_handoff), ev);
-   }
+   g_object_set (G_OBJECT (vsink->sink), "sync", TRUE, NULL);
+   g_object_set (G_OBJECT (vsink->sink), "signal-handoffs", TRUE, NULL);
+   g_signal_connect (G_OBJECT (vsink->sink),
+                     "handoff",
+                     G_CALLBACK (cb_handoff), ev);
    return vsink;
 }
 
@@ -1340,6 +1487,7 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
 
    /* audio sink */
    bin = gst_bin_new (NULL);
+   if (!bin) return NULL;
 
    g_snprintf (buf, 128, "tee%d", index);
    tee = gst_element_factory_make ("tee", buf);
@@ -1495,7 +1643,41 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
    return bin;
 }
 
-static int _cdda_pipeline_build (void *video, const char * device, unsigned int track)
+static gboolean
+_bus_call (GstBus     *bus,
+           GstMessage *msg,
+           gpointer    data)
+{
+   Emotion_Gstreamer_Video *ev;
+
+   ev = (Emotion_Gstreamer_Video *)data;
+   if (!ev) return 0;
+
+   switch (GST_MESSAGE_TYPE (msg)) {
+   case GST_MESSAGE_EOS:
+     g_print ("End-of-stream\n");
+     break;
+   case GST_MESSAGE_ERROR: {
+     gchar *debug;
+     GError *err;
+
+     gst_message_parse_error (msg, &err, &debug);
+     g_free (debug);
+
+     g_print ("Error: %s\n", err->message);
+     g_error_free (err);
+
+     break;
+   }
+   default:
+     break;
+   }
+
+   return TRUE;
+}
+
+static int
+_cdda_pipeline_build (void *video, const char * device, unsigned int track)
 {
    GstElement              *cdiocddasrc;
    Emotion_Video_Sink      *vsink;
@@ -1505,8 +1687,7 @@ static int _cdda_pipeline_build (void *video, const char * device, unsigned int 
 /*    gint64                  tracks_count; */
 
    ev = (Emotion_Gstreamer_Video *)video;
-
-   ev->pipeline = gst_pipeline_new ("pipeline");
+   if (!ev) return 0;
 
    cdiocddasrc = gst_element_factory_make ("cdiocddasrc", "src");
    if (!cdiocddasrc) {
@@ -1526,17 +1707,22 @@ static int _cdda_pipeline_build (void *video, const char * device, unsigned int 
 
    asink = _emotion_audio_sink_new (ev);
    if (!asink)
-     return 0;
+     goto failure_emotion_sink;
 
-   asink->sink = _em_audio_sink_create(ev,  1);
+   asink->sink = _em_audio_sink_create (ev,  1);
+   if (!asink->sink)
+     goto failure_gstreamer_sink;
+
    gst_bin_add_many((GST_BIN (ev->pipeline)), cdiocddasrc, asink->sink, NULL);
 
-   gst_element_link (cdiocddasrc, asink->sink);
+   if (!gst_element_link (cdiocddasrc, asink->sink))
+     goto failure_link;
 
    vsink = _visualization_sink_create (ev, asink);
-   if (!vsink) return 0;
+   if (!vsink) goto failure_link;
 
-   EMOTION_PIPELINE_PAUSE (ev->pipeline)
+   if (!_emotion_pipeline_pause (ev->pipeline))
+     goto failure_gstreamer_pause;
 
    {
       GstQuery *query;
@@ -1544,6 +1730,7 @@ static int _cdda_pipeline_build (void *video, const char * device, unsigned int 
       GstCaps  *caps;
       GstStructure *structure;
 
+      /* should always be found */
       pad = gst_element_get_pad (cdiocddasrc, "src");
 
       caps = gst_pad_get_caps (pad);
@@ -1567,48 +1754,58 @@ static int _cdda_pipeline_build (void *video, const char * device, unsigned int 
    }
 
    return 1;
+
+ failure_gstreamer_pause:
+   _emotion_video_sink_free (ev, vsink);
+ failure_link:
+   gst_bin_remove (GST_BIN (ev->pipeline), asink->sink);
+   gst_bin_remove (GST_BIN (ev->pipeline), cdiocddasrc);
+ failure_gstreamer_sink:
+   _emotion_audio_sink_free (ev, asink);
+ failure_emotion_sink:
+   /*  may be NULL because of gst_bin_remove above */
+   if (cdiocddasrc)
+      gst_object_unref (GST_OBJECT (cdiocddasrc));
+
+   return 0;
 }
 
-static int _file_pipeline_build (void *video, const char *file)
+static int
+_file_pipeline_build (void *video, const char *file)
 {
    GstElement              *filesrc;
    GstElement              *decodebin;
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
-
-   /* Gstreamer pipeline */
-   ev->pipeline = gst_pipeline_new ("pipeline");
-   /*    g_signal_connect (ev->pipeline, "eos", G_CALLBACK (cb_end_of_stream), ev); */
+   if (!ev) return 0;
 
    filesrc = gst_element_factory_make ("filesrc", "src");
-   if (!filesrc) {
-      gst_object_unref (GST_OBJECT (ev->pipeline));
+   if (!filesrc)
       return 0;
-   }
    g_object_set (G_OBJECT (filesrc), "location", file, NULL);
 
    decodebin = gst_element_factory_make ("decodebin", "decodebin");
    if (!decodebin)
-     gst_object_unref (GST_OBJECT (ev->pipeline));
+     goto failure_decodebin;
    g_signal_connect (decodebin, "new-decoded-pad",
                      G_CALLBACK (new_decoded_pad_cb), ev);
 
    gst_bin_add_many (GST_BIN (ev->pipeline), filesrc, decodebin, NULL);
-   gst_element_link (filesrc, decodebin);
+   if (!gst_element_link (filesrc, decodebin))
+     goto failure_link;
 
-   EMOTION_PIPELINE_PAUSE (ev->pipeline)
+   if (!_emotion_pipeline_pause (ev->pipeline))
+     goto failure_gstreamer_pause;
 
    /* We get the informations of streams */
    ecore_list_goto_first (ev->video_sinks);
    ecore_list_goto_first (ev->audio_sinks);
 
    {
-      GstElement  *decodebin;
       GstIterator *it;
       gpointer     data;
 
-      decodebin = gst_bin_get_by_name (GST_BIN (ev->pipeline), "decodebin");
       it = gst_element_iterate_src_pads (decodebin);
       while (gst_iterator_next (it, &data) == GST_ITERATOR_OK) {
          GstPad  *pad;
@@ -1733,5 +1930,19 @@ static int _file_pipeline_build (void *video, const char *file)
                            G_CALLBACK (cb_handoff), ev);
       }
    }
+   
+   gst_bus_add_watch (ev->bus, _bus_call, ev);
+
    return 1;
+
+ failure_gstreamer_pause:
+ failure_link:
+   gst_bin_remove (GST_BIN (ev->pipeline), filesrc);
+   gst_bin_remove (GST_BIN (ev->pipeline), decodebin);
+ failure_decodebin:
+   /*  may be NULL because of gst_bin_remove above */
+   if (filesrc)
+     gst_object_unref (GST_OBJECT (filesrc));
+
+   return 0;
 }
