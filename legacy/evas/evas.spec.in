@@ -204,7 +204,7 @@ Software X11 rendering engine module for Evas
 %package module_engine_software_x11
 Summary: Software X11 rendering engine module for Evas
 Group: System Environment/Libraries
-Requires: evas_module_engine_software_generic
+Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_x11
 Software X11 rendering engine module for Evas
@@ -217,7 +217,7 @@ Software X11 rendering engine module for Evas
 %package module_engine_buffer
 Summary: Buffer rendering engine module for Evas
 Group: System Environment/Libraries
-Requires: evas_module_engine_software_generic
+Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_buffer
 Memory Buffer rendering engine module for Evas
@@ -230,7 +230,7 @@ Memory Buffer rendering engine module for Evas
 %package module_engine_fb
 Summary: Framebuffer rendering engine module for Evas
 Group: System Environment/Libraries
-Requires: evas_module_engine_software_generic
+Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_fb
 Framebuffer rendering engine module for Evas
@@ -246,7 +246,7 @@ Group: System Environment/Libraries
 #BuildSuggests: xorg-x11-devel
 #BuildRequires: XFree86-devel
 #BuildRequires: xrender-devel
-Requires: evas_module_engine_software_generic
+Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_xrender_x11
 XRender rendering engine module for Evas
@@ -288,7 +288,7 @@ Directfb rendering engine module for Evas
 Summary: Qtopia rendering engine module for Evas
 Group: System Environment/Libraries
 #BuildRequires: qtopia-devel
-Requires: evas_module_engine_software_generic
+Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_qtopia
 Qtopia rendering engine module for Evas
@@ -302,7 +302,7 @@ Qtopia rendering engine module for Evas
 Summary: Software XCB X11 rendering engine module for Evas
 Group: System Environment/Libraries
 #BuildRequires: xcb-devel
-Requires: evas_module_engine_software_generic
+Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_xcb
 Software XCB X11 rendering engine module for Evas
