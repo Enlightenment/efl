@@ -8,7 +8,7 @@ Standards-Version: 3.6.2.2
 Package: edje0-bin
 Architecture: any
 Section: graphics
-Depends: ${shlibs:Depends}, libedje (= ${Source-Version}), embryo-bin, libevas-loader-png, libevas-loader-jpeg, libevas-engine-buffer
+Depends: ${shlibs:Depends}, libedje0 (= ${Source-Version}), embryo-bin, libevas-loader-png, libevas-loader-jpeg, libevas-engine-buffer
 Provides: edje-bin
 Description: Various binaries for use with Edje
  Edje is a graphical layout and animation library for animated resizable,
@@ -24,7 +24,7 @@ Description: Various binaries for use with Edje
 Package: edje0-debug
 Architecture: any
 Section: graphics
-Depends: ${shlibs:Depends}, libedje (= ${Source-Version}), edje-bin, libevas-engine-buffer, libevas-engine-software-x11
+Depends: ${shlibs:Depends}, libedje0 (= ${Source-Version}), edje-bin, libevas-engine-buffer, libevas-engine-software-x11
 Provides: edje-debug
 Description: Various binaries for use with Edje
  Edje is a graphical layout and animation library for animated resizable,
@@ -47,7 +47,7 @@ Package: libedje0-dev
 Architecture: any
 Section: libdevel
 Architecture: any
-Depends: libedje (= ${Source-Version}), libeet-dev, libecore-dev, libevas-dev, libembryo-dev
+Depends: libedje0 (= ${Source-Version}), libeet-dev, libecore-dev, libevas-dev, libembryo-dev
 Provides: libedje-dev
 Description: Edje headers, static libraries and documentation
  Edje is a graphical layout and animation library for animated resizable,
