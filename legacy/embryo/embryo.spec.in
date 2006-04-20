@@ -3,7 +3,7 @@
 Summary: A small virtual machine engine (in a library) and bytecode compiler
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.20050908
+Release: 0.%(date '+%Y%m%d')
 License: BSD
 Group: System Environment/Libraries
 Source: %{name}-%{version}.tar.gz
@@ -24,6 +24,22 @@ Requires: %{name} = %{version}
 
 %description devel
 Headers, static libraries, test programs and documentation for Embryo
+
+%package bin
+Summary: Embryo bytecode compiler and needed data files
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+
+%description bin
+The embryo bytecode compiler and its files
+
+%package debug
+Summary: Embryo debug utilities
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+
+%description debug
+Debug utilities for embryo
 
 %prep
 %setup -q
@@ -50,17 +66,23 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS COPYING* README
 %{_libdir}/*.so.*
-%{_libdir}/*.la
+
+%files bin
+%defattr(-, root, root)
 %attr(755,root,root) %{_bindir}/embryo_cc
+%{_datadir}/embryo/include
+
+%files debug
+%defattr(-, root, root)
 %attr(755,root,root) %{_bindir}/embryo
+%{_datadir}/embryo/examples
 
 %files devel
 %defattr(-, root, root)
 %{_libdir}/*.so
+%{_libdir}/*.la
 %{_libdir}/*.a
 %{_bindir}/embryo-config
-%{_datadir}/embryo/examples
-%{_datadir}/embryo/include
 %{_libdir}/pkgconfig/*
 %{_includedir}/*.h
 
