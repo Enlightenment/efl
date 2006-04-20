@@ -1,8 +1,8 @@
 Source: emotion
 Priority: optional
 Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
-Build-Depends: debhelper (>= 4.0.0), libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), automake1.7 | automaken, libtool, libgstreamer0.8-dev
-Standards-Version: 3.6.1.0
+Build-Depends: debhelper (>= 4.0.0), libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), automake1.9 | automaken, libtool, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, gstreamer0.10-ffmpeg, gstreamer0.10-plugins-good, gstreamer0.10-tools
+Standards-Version: 3.6.2.2
 
 Package: libemotion0
 Section: libs
@@ -21,6 +21,28 @@ Provides: libemotion-dev
 Description: Headers, static libraries and documentation for Emotion
  This package contains development files for the Emotion library, a wrapper
  library used in the next-generation Enlightenment suite for video playback.
+
+Package: libemotion0-xine
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libemotion0, libxine1 (>=1.1.0)
+Provides: libemotion-xine
+Description: Video playback library used in Enlightenment DR0.17
+ This is the emotion library, a wrapper library used in the next-generation
+ Enlightenment suite for video playback.
+ .
+ This package provides the xine module for emotion.
+
+Package: libemotion0-gstreamer
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libemotion0, gstreamer0.10-plugins-good, gstreamer0.10-ffmpeg
+Provides: libemotion-gstreamer
+Description: Video playback library used in Enlightenment DR0.17
+ This is the emotion library, a wrapper library used in the next-generation
+ Enlightenment suite for video playback.
+ . 
+ This package provides the gstreamer module for emotion.
 
 Package: emotion0-bin
 Section: x11
