@@ -12,8 +12,8 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel vim-enhanced
-BuildRequires: eet-devel embryo-devel evas-devel ecore-devel
-Requires:  evas-module_loader_eet evas-module_saver_eet evas-module_loader_png evas-module_saver_png evas-module_loader_jpeg evas-module_saver_jpeg evas-module_engine_software_x11 evas-module_engine_buffer
+#BuildRequires: eet-devel embryo-devel evas-devel ecore-devel
+Requires:  evas-module_loader_eet
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -41,6 +41,26 @@ Requires: eet-devel embryo-devel evas-devel ecore-devel
 %description devel
 Headers, static libraries, test programs and documentation for Edje
 
+%package bin
+Summary: Edje file compiler/decompiler suite
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+Requires: embryo-bin
+Requires:  evas-module_saver_eet evas-module_loader_png evas-module_saver_png evas-module_loader_jpeg evas-module_saver_jpeg evas-module_engine_buffer
+
+%description bin
+Edje file compiler/decompiler suite
+
+%package debug
+Summary: Debugging tools for Edje
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+Requires: edje-bin
+Requires: evas-module_loader_png evas-module_engine_software_x11
+
+%description debug
+Debugging tools for Edje
+
 %prep
 %setup -q
 
@@ -64,23 +84,38 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING README
-%{_libdir}/libedje.so*
-%{_bindir}/edje
-%{_bindir}/edje_cc
-%{_bindir}/edje_ls
-%{_bindir}/edje_decc
-%{_bindir}/edje_recc
-%{_bindir}/edje_test
-%{_bindir}/edje_thumb
-%{_datadir}/edje
+%{_libdir}/libedje.so.*
 
 %files devel
 %defattr(-, root, root)
 %doc doc/html
-%{_libdir}/libedje.a
-%{_libdir}/libedje.la
-%{_libdir}/pkgconfig/edje.pc
+%{_libdir}/*.so
+%{_libdir}/*.la
+%{_libdir}/*.a
+%{_libdir}/pkgconfig/*
 %{_bindir}/edje-config
-%{_includedir}/Edje*
+%{_includedir}/*.h
+
+%files bin
+%defattr(-, root, root)
+%{_bindir}/edje_cc
+%{_bindir}/edje_ls
+%{_bindir}/edje_decc
+%{_bindir}/edje_recc
+%{_datadir}/edje/include/edje.inc
+
+%files debug
+%defattr(-, root, root)
+%{_bindir}/edje
+%{_bindir}/edje_test
+%{_bindir}/edje_thumb
+%{_datadir}/edje/data/template/*
+%{_datadir}/edje/data/e_logo.sh
+%{_datadir}/edje/data/src/*.edc
+%{_datadir}/edje/data/images/*.png
+%{_datadir}/edje/data/test/fonts/*.alias
+%{_datadir}/edje/data/test/fonts/*.ttf
+%{_datadir}/edje/data/test/fonts/*.dir
+%{_datadir}/edje/data/test/images/*.png
 
 %changelog
