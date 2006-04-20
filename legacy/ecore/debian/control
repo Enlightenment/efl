@@ -180,7 +180,7 @@ Description: Ecore headers, static libraries and documentation
 Package: ecore0-bin
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-config (= ${Source-Version})
 Provides: ecore-bin
 Conflicts: ecore-test
 Description: Tools that support Ecore.
@@ -197,7 +197,7 @@ Description: Tools that support Ecore.
 Package: ecore0-debug
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-config (= ${Source-Version})
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version})
 Provides: ecore-debug
 Conflicts: ecore-test
 Description: Tools for debugging/demonstration of Ecore.
