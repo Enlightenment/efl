@@ -111,7 +111,7 @@ qt_moc="moc"
 # blah-config style checks
 # qtdir setting
 AC_ARG_WITH(qtdir,
-[  --with-qtdir=QT_DIR                       use qt directory specified ],
+AC_HELP_STRING([--with-qtdir=QT_DIR],[use qt directory specified]),
 [ 
   qt_dir=$withval;
   echo "using "$qt_dir" for qt directory.";
@@ -128,7 +128,7 @@ AC_PATH_GENERIC(freetype, 9.5.0,
 ## FontConfig
 
 AC_MSG_CHECKING(whether fontconfig searching is to be built)
-AC_ARG_ENABLE(fontconfig, [  --enable-fontconfig              enable fontconfig for finding fonts], [
+AC_ARG_ENABLE(fontconfig, AC_HELP_STRING([--enable-fontconfig],[enable fontconfig for finding fonts]), [
 	   if test x"$enableval" = x"yes" ; then
 	     have_fontconfig="yes"
 	   else
@@ -185,7 +185,7 @@ AC_CHECK_HEADER(X11/X.h,
 )
 ## Manual override
 AC_MSG_CHECKING(whether software x11 backend is to be built)
-AC_ARG_ENABLE(software-x11, [  --enable-software-x11           enable the Software X11 rendering backend], [
+AC_ARG_ENABLE(software-x11, AC_HELP_STRING([--enable-software-x11],[enable the Software X11 rendering backend]), [
 	   if test x"$enableval" = x"yes" ; then
 	     AC_MSG_RESULT(yes)
 	     have_evas_software_x11="yes"
@@ -234,7 +234,7 @@ PKG_CHECK_MODULES(
 have_evas_software_xcb="no"
 ## Manual override
 AC_MSG_CHECKING(whether software xcb backend is to be built)
-AC_ARG_ENABLE(software-xcb, [  --enable-software-xcb           enable the Software XCB rendering backend], [
+AC_ARG_ENABLE(software-xcb, AC_HELP_STRING([--enable-software-xcb],[enable the Software XCB rendering backend]), [
 	   if test x"$enableval" = x"yes" ; then
 	     AC_MSG_RESULT(yes)
 	     have_evas_software_xcb="yes"
@@ -274,7 +274,7 @@ PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
 have_evas_directfb="no"
 ## Manual override
 AC_MSG_CHECKING(whether directfb backend is to be built)
-AC_ARG_ENABLE(directfb, [  --enable-directfb               enable the DirectFB rendering backend], [
+AC_ARG_ENABLE(directfb, AC_HELP_STRING([--enable-directfb],[enable the DirectFB rendering backend]), [
 	   if test x"$enableval" = x"yes" ; then
 	     AC_MSG_RESULT(yes)
 	     have_evas_directfb="yes"
@@ -310,7 +310,7 @@ AC_CHECK_HEADER(linux/fb.h,
 )
 ## Manual override
 AC_MSG_CHECKING(whether fb backend is to be built)
-AC_ARG_ENABLE(fb, [  --enable-fb                     enable the FB rendering backend], [
+AC_ARG_ENABLE(fb, AC_HELP_STRING([--enable-fb],[enable the FB rendering backend]), [
 	   if test x"$enableval" = x"yes" ; then
 	     AC_MSG_RESULT(yes)
 	     have_evas_fb="yes"
@@ -347,7 +347,7 @@ ENGINE_BUFFER_PRG="";
 have_evas_buffer="yes"
 ## Manual override
 AC_MSG_CHECKING(whether buffer backend is to be built)
-AC_ARG_ENABLE(buffer, [  --enable-buffer                 enable the Buffer rendering backend], [
+AC_ARG_ENABLE(buffer, AC_HELP_STRING([--enable-buffer],[enable the Buffer rendering backend]), [
 	   if test x"$enableval" = x"yes" ; then
 	     AC_MSG_RESULT(yes)
 	     have_evas_buffer="yes"
@@ -614,7 +614,7 @@ PKG_CHECK_MODULES(
 have_evas_xrender_xcb="no"
 ## Manual override
 AC_MSG_CHECKING(whether xrender xcb backend is to be built)
-AC_ARG_ENABLE(xrender-xcb, [  --enable-xrender-xcb           enable the Xrender XCB rendering backend], [
+AC_ARG_ENABLE(xrender-xcb, [  --enable-xrender-xcb            enable the Xrender XCB rendering backend], [
 	   if test x"$enableval" = x"yes" ; then
 	     AC_MSG_RESULT(yes)
 	     have_evas_xrender_xcb="yes"
@@ -757,7 +757,7 @@ AM_CONDITIONAL(BUILD_LOADER_JPEG, test x$have_jpeg = xyes)
 
 #######################################
 ## EET
-AC_ARG_WITH(eet-config, [   --with-eet-config=EET_CONFIG      use eet-config specified ],
+AC_ARG_WITH(eet-config, [  --with-eet-config=EET_CONFIG     use eet-config specified],
 [ EET_CONFIG=$withval;
   echo "using "$EET_CONFIG" for eet-config"; ],
 [ if test -z "$EET_CONFIG"; then
@@ -825,7 +825,7 @@ AM_CONDITIONAL(BUILD_LOADER_EET, test x$have_eet = xyes)
 
 #######################################
 ## EDB
-AC_ARG_WITH(edb-config, [   --with-edb-config=EDB_CONFIG      use edb-config specified ],
+AC_ARG_WITH(edb-config, [  --with-edb-config=EDB_CONFIG     use edb-config specified ],
 [ EDB_CONFIG=$withval;
   echo "using "$EDB_CONFIG" for edb-config"; ],
 [ if test -z "$EDB_CONFIG"; then
@@ -882,7 +882,7 @@ AC_CHECK_HEADER(tiffio.h,
 )
 AC_MSG_CHECKING(whether to enable tiff image loader)
 AC_ARG_ENABLE(image-loader-tiff, 
-  [  --enable-image-loader-tiff       enable TIFF image loader], [
+  [  --enable-image-loader-tiff      enable TIFF image loader], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
 	have_tiff="yes"
