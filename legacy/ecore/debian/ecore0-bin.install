@@ -1,4 +1,1 @@
-debian/tmp/usr/bin/*test
-debian/tmp/usr/bin/ecore_*
-debian/tmp/usr/share/ecore/images/*
-debian/tmp/usr/share/ecore/pointers/*.png
+debian/tmp/usr/bin/ecore_config

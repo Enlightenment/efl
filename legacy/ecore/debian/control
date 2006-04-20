@@ -194,3 +194,20 @@ Description: Tools that support Ecore.
   - ecore_evas_test: test evas support.
   - ecore_test: test ecore features.
 
+Package: ecore0-debug
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-config (= ${Source-Version})
+Provides: ecore-debug
+Conflicts: ecore-test
+Description: Tools for debugging/demonstration of Ecore.
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ This package includes:
+  - ecore_config: allows creation/editing of ecore_config databases
+  - ecore_evas_test: test evas support.
+  - ecore_test: test ecore features.
+
