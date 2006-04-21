@@ -167,12 +167,10 @@ if test "$enable_gstreamer" != "no" ; then
 	PKG_CHECK_MODULES(GST, \
 	   gstreamer-$GST_MAJORMINOR >= $GST_REQS,
 	   HAVE_GSTREAMER="yes", HAVE_GSTREAMER="no")
-	AC_MSG_RESULT($HAVE_GSTREAMER)
 
 	PKG_CHECK_MODULES(GSTPLUG, \
 	   gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS,
 	   HAVE_GSTPLUG="yes", HAVE_GSTPLUG="no")
-	AC_MSG_RESULT($HAVE_GSTPLUG)
 
 	AM_GST_ELEMENT_CHECK(
 	   [ffmpeg],
