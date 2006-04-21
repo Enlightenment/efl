@@ -58,7 +58,7 @@ if test "x${datadir}" = 'x${prefix}/share'; then
 else
   AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}", [Package Data Directory])
 fi
-	  
+
 dnl Set PACKAGE_BIN_DIR in config.h.
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
@@ -174,15 +174,15 @@ if test "$enable_gstreamer" != "no" ; then
 	   HAVE_GSTPLUG="yes", HAVE_GSTPLUG="no")
 	AC_MSG_RESULT($HAVE_GSTPLUG)
 
-        AM_GST_ELEMENT_CHECK(
-           [ffmpeg],
-           [HAVE_GSTFFMPEG="yes"],
-           [HAVE_GSTFFMPEG="no"])
+	AM_GST_ELEMENT_CHECK(
+	   [ffmpeg],
+	   [HAVE_GSTFFMPEG="yes"],
+	   [HAVE_GSTFFMPEG="no"])
 
-        AM_GST_ELEMENT_CHECK(
-           [cdiocddasrc],
-           [HAVE_GSTCDIOCDDASRC="yes"],
-           [HAVE_GSTCDIOCDDASRC="no"])
+	AM_GST_ELEMENT_CHECK(
+	   [cdiocddasrc],
+	   [HAVE_GSTCDIOCDDASRC="yes"],
+	   [HAVE_GSTCDIOCDDASRC="no"])
 fi
 if test "$enable_gstreamer$HAVE_GSTREAMER" = "yesno" ; then
 	AC_MSG_RESULT(gstreamer not found)
@@ -204,20 +204,20 @@ else
 		fi
 		requirements="$requirements gstreamer"
 		GSTPLUG_MSG="yes"
-        else
+	else
 		requirements="$requirements gstreamer"
 		GSTPLUG_MSG="yes"
 	fi
 	if test "$HAVE_GSTCDIOCDDASRC" = "no"; then
 		AC_MSG_WARN([You should install gstreamer-plugins-good and make sure that the cdiocddasrc element is installed])
 		GSTCDDA_MSG="no (you should install gst-plugins-good and the cdiocddasrc element)"
-        else
+	else
 		requirements="$requirements gstreamer"
 		GSTCDDA_MSG="yes"
 	fi
 fi
 if test "$HAVE_XINE$HAVE_GSTREAMER" = "nono" ; then
-   AC_MSG_ERROR([Xine or Gstreamer must be installed to build emotion])
+	AC_MSG_ERROR([Xine or Gstreamer must be installed to build emotion])
 fi
 
 AM_CONDITIONAL([BUILD_XINE_MODULE], [test "$HAVE_XINE" = yes])
