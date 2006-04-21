@@ -6,13 +6,13 @@ dnl AM_GST_ELEMENT_CHECK(ELEMENT-NAME, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
 
 AC_DEFUN([AM_GST_ELEMENT_CHECK],
 [
-  if test "x$GST_INSPECT" == "x"; then
+  if test "x$GST_INSPECT" = "x"; then
     AC_CHECK_PROGS(GST_INSPECT, gst-inspect gst-inspect-0.10, [])
   fi
 
   if test "x$GST_INSPECT" != "x"; then
     AC_MSG_CHECKING(GStreamer element $1)
-    if [ $GST_INSPECT $1 > /dev/null 2> /dev/null ]; then
+    if $GST_INSPECT $1 > /dev/null 2> /dev/null ; then
       AC_MSG_RESULT(found.)
       $2
     else
