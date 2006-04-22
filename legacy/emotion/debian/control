@@ -1,6 +1,6 @@
 Source: emotion
 Priority: optional
-Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
+Maintainer: E17 Debian Team <debian@edevelop.org>
 Build-Depends: debhelper (>= 4.0.0), libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), automake1.9 | automaken, libtool, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, gstreamer0.10-ffmpeg, gstreamer0.10-plugins-good, gstreamer0.10-tools
 Standards-Version: 3.6.2.2
 
@@ -12,6 +12,8 @@ Provides: libemotion
 Description: Video playback library used in Enlightenment DR0.17
  This is the emotion library, a wrapper library used in the next-generation
  Enlightenment suite for video playback.
+ .
+ This package contains the shared libraries.
 
 Package: libemotion0-dev
 Section: libdevel
@@ -21,6 +23,9 @@ Provides: libemotion-dev
 Description: Headers, static libraries and documentation for Emotion
  This package contains development files for the Emotion library, a wrapper
  library used in the next-generation Enlightenment suite for video playback.
+ .
+ This package contains headers and static libraries for development with
+ libemotion.
 
 Package: libemotion0-xine
 Section: libs
@@ -50,4 +55,7 @@ Architecture: any
 Depends: ${shlibs:Depends}
 Provides: emotion-bin
 Description: Test programs for Emotion
+ This is the emotion library, a wrapper library used in the next-generation
+ Enlightenment suite for video playback.
+ . 
  This package contains test programs for the Emotion library.
