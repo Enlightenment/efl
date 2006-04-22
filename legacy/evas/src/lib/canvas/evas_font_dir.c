@@ -616,7 +616,7 @@ object_text_font_cache_dir_add(char *dir)
 		  Evas_Font_Alias *fa;
 
 		  /* skip comments */
-		  if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
+		  if ((fname[0] == '!') || (fname[0] == '#')) continue;
 		  fa = calloc(1, sizeof(Evas_Font_Alias));
 		  if (fa)
 		    {

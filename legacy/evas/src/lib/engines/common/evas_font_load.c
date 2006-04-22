@@ -64,8 +64,8 @@ int
 evas_common_font_source_load_complete(RGBA_Font_Source *fs)
 {
    int error;
-  
-   error = FT_New_Face(evas_ft_lib, fs->name, 0, &(fs->ft.face));
+ 
+   error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));	
    if (error) return error;
    
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
@@ -105,6 +105,7 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
 
    fonts_src = evas_object_list_remove(fonts_src, fs);
    FT_Done_Face(fs->ft.face);
+   if (fs->charmap) evas_common_array_hash_free(fs->charmap);
    if (fs->name) evas_stringshare_del(fs->name);
    free(fs);
 }
@@ -546,3 +547,4 @@ evas_common_font_int_find(const char *name, int size)
      }
    return NULL;
 }
+

@@ -403,7 +403,7 @@ evas_hash_free(Evas_Hash *hash)
  *
  * This function goes through every entry in the hash table @p hash and calls
  * the function @p func on each member. The function should NOT modify the
- * hash table contents if it reeturns 1. IF the hash table contents are
+ * hash table contents if it returns 1. IF the hash table contents are
  * modified by this function or the function wishes to stop processing it must
  * return 0, otherwise return 1 to keep processing.
  *

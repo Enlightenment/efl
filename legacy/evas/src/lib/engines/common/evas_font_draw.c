@@ -62,20 +62,67 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
      {
 	RGBA_Font_Int *fi;
 	int index;
-
+	
 	fi = l->data;
- 	if (!fi->ft.size)
+
+	if (fi->src->charmap) /* Charmap loaded, FI/FS blank */
 	  {
-	     if (!fi->src->ft.face)
-	       evas_common_font_source_load_complete(fi->src);
-	     evas_common_font_int_load_complete(fi);
+	     index = evas_common_array_hash_search(fi->src->charmap, gl);
+	     if (index != 0)
+	       {
+		  evas_common_font_source_load_complete(fi->src);
+		  evas_common_font_int_load_complete(fi);
+
+		  evas_common_array_hash_free(fi->src->charmap);
+		  fi->src->charmap = NULL;
+
+		  *fi_ret = fi;
+		  return index;   
+	       }
 	  }
-	  
-        index = FT_Get_Char_Index(fi->src->ft.face, gl);
-	if (index != 0)
+	else if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
 	  {
-	     *fi_ret = fi;
-	     return index;
+	     if (evas_common_font_source_load_complete(fi->src));
+	       return 0;
+
+	     index = FT_Get_Char_Index(fi->src->ft.face, gl);
+	     if (index == 0)
+	       {
+		  /* Load Hash */
+		  FT_ULong  charcode;
+		  FT_UInt   gindex;
+		 
+		  fi->src->charmap = evas_common_array_hash_new();
+		  charcode = FT_Get_First_Char(fi->src->ft.face, &gindex );
+		  while ( gindex != 0 )
+		    {
+		       evas_common_array_hash_add(fi->src->charmap, charcode, gindex);
+		       charcode = FT_Get_Next_Char(fi->src->ft.face, charcode, &gindex );
+		    }
+		  
+		  /* Free face */
+		  FT_Done_Face(fi->src->ft.face);
+		  fi->src->ft.face = NULL;
+	       }
+	     else
+	       {
+		  evas_common_font_int_load_complete(fi);
+ 
+		  *fi_ret = fi;
+		  return index;
+	       }
+	  }
+	else /* Charmap not loaded, FS loaded */
+	  {
+	     index = FT_Get_Char_Index(fi->src->ft.face, gl);
+	     if (index != 0)
+	       {
+		  if (!fi->ft.size) 
+		    evas_common_font_int_load_complete(fi); 
+		  
+		  *fi_ret = fi;
+		  return index;
+	       }
 	  }
      }
    return 0;

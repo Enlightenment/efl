@@ -109,6 +109,9 @@ typedef struct _Convert_Pal           Convert_Pal;
 typedef struct _Tilebuf               Tilebuf;
 typedef struct _Tilebuf_Tile          Tilebuf_Tile;
 typedef struct _Tilebuf_Rect          Tilebuf_Rect;
+
+typedef struct _Evas_Array_Hash	      Evas_Array_Hash;
+
 /*
 typedef struct _Regionbuf             Regionbuf;
 typedef struct _Regionspan            Regionspan;
@@ -341,7 +344,8 @@ struct _RGBA_Font_Source
    int               data_size;
 
    int               current_size;
-
+   Evas_Array_Hash  *charmap;
+   
    struct {
       int           orig_upem;
       FT_Face       face;
@@ -964,6 +968,11 @@ Gfx_Func_Blend_Src_Alpha_Mul_Dst evas_common_draw_func_blend_alpha_get (RGBA_Ima
 Gfx_Func_Blend_Src_Dst           evas_common_draw_func_copy_get        (int pixels, int reverse);
 
 void              evas_font_dir_cache_free(void);
+
+Evas_Array_Hash	*evas_common_array_hash_new	(void);
+void		 evas_common_array_hash_free	(Evas_Array_Hash *hash);
+void		 evas_common_array_hash_add	(Evas_Array_Hash *hash, int key, int data);
+int		 evas_common_array_hash_search	(Evas_Array_Hash *hash, int key);
 
 /*****************************************************************************/
 
