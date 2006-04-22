@@ -99,6 +99,9 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long se
 		  case ECORE_CONFIG_THM:
 		    estring_appendf(s, "%s%s: theme", f ? "\n" : "", keys[x]);
 		    break;
+		  case ECORE_CONFIG_SCT:
+		    estring_appendf(s, "%s%s: structure", f ? "\n" : "", keys[x]);
+		    break;
 		  default:
 		    estring_appendf(s, "%s%s: unknown", f ? "\n" : "", keys[x]);
 		    continue;

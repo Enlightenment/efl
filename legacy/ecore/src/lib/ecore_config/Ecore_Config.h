@@ -52,6 +52,7 @@ typedef enum Ecore_Config_Type
    ECORE_CONFIG_RGB = 4,			/**< Colour property type. */
    ECORE_CONFIG_THM = 5,			/**< Theme property type. */
    ECORE_CONFIG_BLN = 6,			/**< Boolean property type. */
+   ECORE_CONFIG_SCT = 7,      /**< Structure property type */
 } Ecore_Config_Type;
 
 typedef enum Ecore_Config_Flag
@@ -97,6 +98,7 @@ typedef struct Ecore_Config_Prop
    Ecore_Config_Flag   flags;	/// < Configuration flags.
    Ecore_Config_Listener_List *listeners;	/* List of change listeners. */
    void               *data;	/// < Stores extra data for the property.
+   struct Ecore_Config_Prop *parent; /* if we are in a struct we have a parent to notify of changes etc */
    struct Ecore_Config_Prop *next;	/* Pointer to the next property in the list. */
 } Ecore_Config_Prop;
 
@@ -184,6 +186,13 @@ extern              "C"
    EAPI int                 ecore_config_argbint_default(const char *key, long argb);
    EAPI int                 ecore_config_argbstr_default(const char *key, char *val);
    EAPI int                 ecore_config_theme_default(const char *key, char *val);
+   EAPI int                 ecore_config_struct_default(const char *key);
+   EAPI int                 ecore_config_struct_int_add(const char *key, const char *name, int val);
+   EAPI int                 ecore_config_struct_float_add(const char *key, const char *name, float val);
+   EAPI int                 ecore_config_struct_string_add(const char *key, const char *name, char* val);
+   EAPI int                 ecore_config_struct_theme_add(const char *key, const char *name, char* val);
+   EAPI int                 ecore_config_struct_boolean_add(const char *key, const char *name, int val);
+   EAPI int                 ecore_config_struct_get(const char *key, void *data);
 
    EAPI int                 ecore_config_listen(const char *name, const char *key,
 						Ecore_Config_Listener listener,

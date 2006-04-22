@@ -31,7 +31,7 @@ static inline void  *__ecore_argb_to_long(int a, int r, int g, int b, long *v);
 static inline void  *__ecore_argbstr_to_long(char *argb, long *v);
 
 static const char  *_ecore_config_type[] =
-   { "undefined", "integer", "float", "string", "colour", "theme", "boolean" };
+   { "undefined", "integer", "float", "string", "colour", "theme", "boolean", "structure" };
 
 /**
  * @defgroup Ecore_Config_Property_Group Ecore Config Property Functions
@@ -355,6 +355,8 @@ ecore_config_as_string_get(const char *key)
 	     case ECORE_CONFIG_THM:
 		esprintf(&val, "\"%s\"", _ecore_config_theme_get(e));
 		break;
+	     case ECORE_CONFIG_SCT:
+		break;
 	     default:
 		esprintf(&r, "%s:unknown_type", key);
 		break;
@@ -470,7 +472,7 @@ ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
    if (!e)
      return ECORE_CONFIG_ERR_NODATA;
 
-   if (!(val) && type != ECORE_CONFIG_NIL)
+   if (!(val) && (type != ECORE_CONFIG_NIL && type != ECORE_CONFIG_SCT))
       e->ptr = NULL;
    else
      {
@@ -496,10 +498,14 @@ ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
 	     e->val = (long) ((*((float *)val)) * ECORE_CONFIG_FLOAT_PRECISION);
 	     e->type = ECORE_CONFIG_FLT;
 	  }
+	else if (type == ECORE_CONFIG_SCT)
+	  {
+	     e->type = ECORE_CONFIG_SCT;
+	  }
 	else
-{
+	  {
 	   e->type = ECORE_CONFIG_NIL;
-}
+	  }
 
 	ecore_config_bound(e);
 	e->flags |= ECORE_CONFIG_FLAG_MODIFIED;
@@ -620,6 +626,18 @@ ecore_config_long_opt_set(const char *key, char *long_opt)
    return ECORE_CONFIG_ERR_SUCC;
 }
 
+static void
+_ecore_config_listener_fire(Ecore_Config_Prop *prop)
+{
+   Ecore_Config_Listener_List *l;
+   for (l = prop->listeners; l; l = l->next)
+     l->listener(prop->key, prop->type, l->tag, l->data);
+
+   /* fire change listeners for the generic struct container etc */
+   if (prop->parent)
+     _ecore_config_listener_fire(prop->parent);
+}
+
 /**
  * Sets the indicated property to the given value and type.
  * @param   key  The property key.
@@ -632,7 +650,6 @@ EAPI int
 ecore_config_typed_set(const char *key, const void *val, int type)
 {
    Ecore_Config_Prop  *e;
-   Ecore_Config_Listener_List *l;
    int                 ret;
 
    if (!key)
@@ -650,8 +667,7 @@ ecore_config_typed_set(const char *key, const void *val, int type)
 
    if ((ret = ecore_config_typed_val(e, val, type)) == ECORE_CONFIG_ERR_SUCC)
      {
-	for (l = e->listeners; l; l = l->next)
- 	   l->listener(e->key, e->type, l->tag, l->data);
+       _ecore_config_listener_fire(e);
      }
    else
      {
@@ -1117,6 +1133,229 @@ EAPI int
 ecore_config_theme_default(const char *key, char *val)
 {
    return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_THM);
+}
+
+/**
+ * @defgroup Ecore_Config_Struct_Group Ecore Config Structures
+ *
+ * Functions that are used to create structures of properties.
+ */
+
+/**
+ * Sets the indicated property to a structure if the property has not yet
+ * been set.
+ * @param   key The property key.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_create(const char *key)
+{
+   printf("WARNING: you are using ecore_config structures. These are very young");
+   printf(" and not complete - you have been warned");
+
+   return ecore_config_typed_default(key, NULL, ECORE_CONFIG_SCT);
+}
+
+static int
+_ecore_config_struct_append(Ecore_Config_Prop *sct, Ecore_Config_Prop *add)
+{
+   Evas_List *l;
+
+   if (!sct || !add || sct->type != ECORE_CONFIG_SCT)
+     return ECORE_CONFIG_ERR_IGNORED;
+
+   l = sct->data;
+   sct->data = evas_list_append(l, add);
+   add->parent = sct;
+
+   return ECORE_CONFIG_ERR_SUCC;
+}
+
+static int
+_ecore_config_struct_typed_add(const char *key, const char *name, void *val,
+    int type)
+{
+   char *subkey;
+   int ret;
+
+   subkey = malloc((strlen(key) + strlen(name) + 2) * sizeof(char));
+   strcpy(subkey, key);
+   strcat(subkey, ".");
+   strcat(subkey, name);
+
+   ecore_config_typed_default(subkey, val, type);
+   ret = _ecore_config_struct_append(ecore_config_get(key),
+                                     ecore_config_get(subkey));
+   free(subkey);
+   return ret;   
+}
+
+/**
+ * Add an int property to the named structure. The property is set if it has not
+ * yet been set.
+ * @param   key The key of the structure to add to.
+ * @param   name The name of the item to add - this will be appended to the key
+ * @param   val the int to default to
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_int_add(const char *key, const char *name, int val)
+{
+   return _ecore_config_struct_typed_add(key, name, (void *) &val,
+                                         ECORE_CONFIG_INT);
+}
+
+/**
+ * Add a float property to the named structure. The property is set if it has
+ * not yet been set.
+ * @param   key The key of the structure to add to.
+ * @param   name The name of the item to add - this will be appended to the key
+ * @param   val The float to default to
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_float_add(const char *key, const char *name, float val)
+{
+   return _ecore_config_struct_typed_add(key, name, (void *) &val,
+                                         ECORE_CONFIG_FLT);
+}
+
+/**
+ * Add a string property to the named structure. The property is set if it has
+ * not yet been set.
+ * @param   key The key of the structure to add to.
+ * @param   name The name of the item to add - this will be appended to the key
+ * @param   val The string to default to
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_string_add(const char *key, const char *name, char* val)
+{
+   return _ecore_config_struct_typed_add(key, name, (void *) val,
+                                         ECORE_CONFIG_STR);
+}
+
+/**
+ * Add an argb property to the named structure. The property is set if it has
+ * not yet been set.
+ * @param   key The key of the structure to add to.
+ * @param   name The name of the item to add - this will be appended to the key
+ * @param   a The alpha to default to
+ * @param   r The red to default to
+ * @param   g The green to default to
+ * @param   b The blue to default to
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_argb_add(const char *key, const char *name, int a, int r,
+                             int g, int b)
+{
+   long argb;
+  
+   __ecore_argb_to_long(a, r, g, b, &argb);
+   return _ecore_config_struct_typed_add(key, name, (void *) &argb,
+                                         ECORE_CONFIG_RGB);
+}
+
+/**
+ * Add a theme property to the named structure. The property is set if it has
+ * not yet been set.
+ * @param   key The key of the structure to add to.
+ * @param   name The name of the item to add - this will be appended to the key
+ * @param   val The theme name to default to
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_theme_add(const char *key, const char *name, char* val)
+{
+   return _ecore_config_struct_typed_add(key, name, (void *) val,
+                                         ECORE_CONFIG_THM);
+}
+
+/**
+ * Add a boolean property to the named structure. The property is set if it has
+ * not yet been set.
+ * @param   key The key of the structure to add to.
+ * @param   name The name of the item to add - this will be appended to the key
+ * @param   val The boolean to default to
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_boolean_add(const char *key, const char *name, int val)
+{
+   val = val ? 1 : 0;
+   return _ecore_config_struct_typed_add(key, name, (void *) &val,
+                                         ECORE_CONFIG_BLN);
+}
+
+/**
+ * Get the contents of a defined structure property and load it into the passed
+ * C struct
+ * @param   key The name of the structure property to look up.
+ * @param   data The struct to write into.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the structure is written successfully.
+ * @ingroup Ecore_Config_Struct_Group
+ */
+EAPI int
+ecore_config_struct_get(const char *key, void *data)
+{
+   Ecore_Config_Prop *e, *f;
+   Evas_List *l;
+   void *ptr;
+   long argb;
+
+   e = ecore_config_get(key);
+   if (!e)
+     return ECORE_CONFIG_ERR_NODATA;
+
+   l = e->data;
+   ptr = data;
+   while (l)
+     {
+	f = (Ecore_Config_Prop *) l->data;
+	switch (f->type)
+	  {
+	     case ECORE_CONFIG_INT:
+	       *((int *) ptr) = _ecore_config_int_get(f);
+	       ptr += sizeof(int);
+	     break;
+	     case ECORE_CONFIG_BLN:
+	       *((int *) ptr) = _ecore_config_boolean_get(f);
+	       ptr += sizeof(int);
+	     break;
+	     case ECORE_CONFIG_FLT:
+	       *((float *) ptr) = _ecore_config_float_get(f);
+	       ptr += sizeof(float);
+	     break;
+	     case ECORE_CONFIG_STR:
+	     case ECORE_CONFIG_THM:
+	       *((char **) ptr) = _ecore_config_string_get(f);
+	       ptr += sizeof(char *);
+	     break;
+	     case ECORE_CONFIG_RGB:
+	       argb = _ecore_config_argbint_get(f);
+	       *((int *) ptr) = (argb >> 24) & 0xff;
+	       ptr += sizeof(int);
+	       *((int *) ptr) = (argb >> 16) & 0xff;
+	       ptr += sizeof(int);
+	       *((int *) ptr) = (argb >> 8) & 0xff;
+	       ptr += sizeof(int);
+	       *((int *) ptr) = argb & 0xff;
+	       ptr += sizeof(int);
+	     break;
+	     default:
+	       printf("ARGH - STRUCT coding not implemented yet\n");
+	  }
+	l = evas_list_next(l);
+     }
+   return ECORE_CONFIG_ERR_SUCC;
 }
 
 /**
