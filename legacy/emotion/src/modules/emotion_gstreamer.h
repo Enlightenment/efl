@@ -36,7 +36,10 @@ struct _Emotion_Gstreamer_Video
 {
   /* Gstreamer elements */
   GstElement       *pipeline;
-  GstBus           *bus;
+
+  /* eos */
+  GstBus           *eos_bus;
+  Ecore_Timer      *eos_timer;
   
   /* Sinks */
   Ecore_List       *video_sinks;

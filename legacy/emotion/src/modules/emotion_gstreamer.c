@@ -41,6 +41,8 @@ static void new_decoded_pad_cb (GstElement *decodebin,
                                 gboolean    last,
                                 gpointer    user_data);
 
+/* Callbacks to get the eos */
+static int _eos_timer_fct (void *data);
 
 GstElement *
 make_queue ()
@@ -300,8 +302,8 @@ em_init(Evas_Object  *obj,
    if (!ev->pipeline)
      goto failure_pipeline;
 
-   ev->bus = gst_pipeline_get_bus (GST_PIPELINE (ev->pipeline));
-   if (!ev->bus)
+   ev->eos_bus = gst_pipeline_get_bus (GST_PIPELINE (ev->pipeline));
+   if (!ev->eos_bus)
      goto failure_bus;
 
    /* We allocate the sinks lists */
@@ -344,7 +346,7 @@ em_init(Evas_Object  *obj,
  failure_audio_sinks:
    ecore_list_destroy (ev->video_sinks);
  failure_video_sinks:
-   gst_object_unref (GST_OBJECT (ev->bus));
+   gst_object_unref (GST_OBJECT (ev->eos_bus));
  failure_bus:
    /* this call is not really necessary */
    gst_element_set_state (ev->pipeline, GST_STATE_NULL);
@@ -368,7 +370,7 @@ em_shutdown(void *video)
 
    gst_element_set_state (ev->pipeline, GST_STATE_NULL);
    gst_object_unref (GST_OBJECT (ev->pipeline));
-   gst_object_unref (GST_OBJECT (ev->bus));
+   gst_object_unref (GST_OBJECT (ev->eos_bus));
    gst_deinit ();
 
    ecore_list_destroy (ev->video_sinks);
@@ -393,7 +395,6 @@ em_file_open(const char   *file,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
-   printf ("Open file gstreamer... %s\n", file);
 
    /* Evas Object */
    ev->obj = obj;
@@ -501,6 +502,12 @@ em_file_close(void *video)
    /* we clear the sink lists */
    ecore_list_clear (ev->video_sinks);
    ecore_list_clear (ev->audio_sinks);
+
+   /* shutdown eos */
+   if (ev->eos_timer) {
+     ecore_timer_del (ev->eos_timer);
+     ev->eos_timer = NULL;
+   }
 }
 
 static void
@@ -512,6 +519,9 @@ em_play(void   *video,
    ev = (Emotion_Gstreamer_Video *)video;
    gst_element_set_state (ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
+
+   /* eos */
+   ev->eos_timer = ecore_timer_add (0.1, _eos_timer_fct, ev);
 }
 
 static void
@@ -523,6 +533,12 @@ em_stop(void *video)
 
    gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
    ev->play = 0;
+
+   /* shutdown eos */
+   if (ev->eos_timer) {
+     ecore_timer_del (ev->eos_timer);
+     ev->eos_timer = NULL;
+   }
 }
 
 static void
@@ -1311,7 +1327,6 @@ new_decoded_pad_cb (GstElement *decodebin,
    ev = (Emotion_Gstreamer_Video *)user_data;
    caps = gst_pad_get_caps (new_pad);
    str = gst_caps_to_string (caps);
-/*    g_print ("New pad : %s\n", str); */
    /* video stream */
    if (g_str_has_prefix (str, "video/")) {
       Emotion_Video_Sink *vsink;
@@ -1643,39 +1658,6 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
    return bin;
 }
 
-static gboolean
-_bus_call (GstBus     *bus,
-           GstMessage *msg,
-           gpointer    data)
-{
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)data;
-   if (!ev) return 0;
-
-   switch (GST_MESSAGE_TYPE (msg)) {
-   case GST_MESSAGE_EOS:
-     g_print ("End-of-stream\n");
-     break;
-   case GST_MESSAGE_ERROR: {
-     gchar *debug;
-     GError *err;
-
-     gst_message_parse_error (msg, &err, &debug);
-     g_free (debug);
-
-     g_print ("Error: %s\n", err->message);
-     g_error_free (err);
-
-     break;
-   }
-   default:
-     break;
-   }
-
-   return TRUE;
-}
-
 static int
 _cdda_pipeline_build (void *video, const char * device, unsigned int track)
 {
@@ -1873,7 +1855,6 @@ _file_pipeline_build (void *video, const char *file)
                gint64 time;
 
                gst_query_parse_duration (query, NULL, &time);
-               g_print ("  duration  : %" GST_TIME_FORMAT "\n\n", GST_TIME_ARGS (time));
                asink->length_time = (double)time / (double)GST_SECOND;
             }
             gst_query_unref (query);
@@ -1893,7 +1874,6 @@ _file_pipeline_build (void *video, const char *file)
                GstElement         *visbin;
 
                g_snprintf (buf, 128, "visbin%d", index);
-               g_print ("vis : %s\n", buf);
                visbin = gst_bin_get_by_name (GST_BIN (ev->pipeline), buf);
                if (visbin) {
                   GstPad *srcpad;
@@ -1930,8 +1910,6 @@ _file_pipeline_build (void *video, const char *file)
                            G_CALLBACK (cb_handoff), ev);
       }
    }
-   
-   gst_bus_add_watch (ev->bus, _bus_call, ev);
 
    return 1;
 
@@ -1945,4 +1923,42 @@ _file_pipeline_build (void *video, const char *file)
      gst_object_unref (GST_OBJECT (filesrc));
 
    return 0;
+}
+
+int _eos_timer_fct (void *data)
+{
+   Emotion_Gstreamer_Video *ev;
+   GstMessage              *msg;
+
+   ev = (Emotion_Gstreamer_Video *)data;
+   while ((msg = gst_bus_poll (ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS, 0))) {
+     switch (GST_MESSAGE_TYPE(msg)) {
+     case GST_MESSAGE_ERROR: {
+       gchar *debug;
+       GError *err;
+
+       gst_message_parse_error (msg, &err, &debug);
+       g_free (debug);
+
+       g_print ("Error: %s\n", err->message);
+       g_error_free (err);
+
+       break;
+     }
+     case GST_MESSAGE_EOS:
+       if (ev->eos_timer)
+         {
+           ecore_timer_del(ev->eos_timer);
+           ev->eos_timer = NULL;
+         }
+       ev->play = 0;
+       _emotion_decode_stop(ev->obj);
+       _emotion_playback_finished(ev->obj);
+       break;
+     default:
+       break;
+     }
+     gst_message_unref (msg);
+   }
+   return 1;
 }
