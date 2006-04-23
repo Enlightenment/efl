@@ -20,7 +20,6 @@ evas_blend_pixel_cmod_pixel.c \
 evas_blend_pixel_mul_pixel.c \
 evas_blend_pixel_pixel.c \
 evas_blit_main.c \
-evas_circle_main.c \
 evas_convert_color.c \
 evas_convert_gry_1.c \
 evas_convert_gry_4.c \
