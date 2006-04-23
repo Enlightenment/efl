@@ -185,7 +185,7 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
    uint32              num_pixels;
    int                 fd;
    uint16              magic_number;
-   
+
    if (!file)
       return 0;
 

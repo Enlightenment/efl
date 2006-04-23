@@ -126,8 +126,8 @@ evas_xrender_x11_test_CFLAGS = $(CFLAGS) @x_cflags@
 evas_xrender_x11_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
 
 evas_xrender_xcb_test_SOURCES = evas_test_main.h evas_test_main.c evas_xrender_xcb_main.c
-evas_xrender_xcb_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @xcb_libs@
-evas_xrender_xcb_test_CFLAGS = $(CFLAGS) @xcb_cflags@
+evas_xrender_xcb_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @xcbrender_libs@
+evas_xrender_xcb_test_CFLAGS = $(CFLAGS) @xcbrender_cflags@
 evas_xrender_xcb_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
 
 EXTRA_DIST = evas_software_qtopia_main.h evas_software_qtopia_main.cpp

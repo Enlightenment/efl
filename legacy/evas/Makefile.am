@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 SUBDIRS = data src proj
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \

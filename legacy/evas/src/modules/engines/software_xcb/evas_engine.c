@@ -118,41 +118,16 @@ _output_setup(int            w,
    return re;
 }
 
-static XCBSCREEN *
-_screen_get(XCBConnection *conn, int screen)
-{
-   XCBSCREENIter i;
-   int           cur;
-
-   if (!conn) return NULL;
-
-   i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(conn));
-   if (screen > i.rem - 1) return NULL; /* screen must be between 0 and i.rem - 1 */
-   for (cur = 0; cur <= screen; XCBSCREENNext(&i), ++cur);
-
-   return i.data;
-}
-
 static XCBVISUALTYPE *
 _best_visual_get(XCBConnection *conn, int screen)
 {
    XCBSCREEN        *scr;
-   XCBDEPTH         *d;
-   XCBVISUALTYPEIter iter;
-   int               cur;
 
    if (!conn) return NULL;
-   scr = _screen_get(conn, screen);
+   scr = XCBAuxGetScreen(conn, screen);
    if (!scr) return NULL;
-   d = XCBSCREENAllowedDepthsIter(scr).data;
-   if (!d) return NULL;
 
-   iter = XCBDEPTHVisualsIter(d);
-   for (cur = 0 ; cur < iter.rem ; XCBVISUALTYPENext(&iter), ++cur)
-      if (scr->root_visual.id == iter.data->visual_id.id)
-	 return iter.data;
-
-   return NULL;
+   return XCBAuxGetVisualtype (conn, screen, scr->root_visual);
 }
 
 static XCBCOLORMAP
@@ -163,7 +138,7 @@ _best_colormap_get(XCBConnection *conn, int screen)
 
    c.xid = 0;
    if (!conn) return c;
-   scr = _screen_get(conn, screen);
+   scr = XCBAuxGetScreen(conn, screen);
    if (!scr) return c;
 
    return scr->default_colormap;
@@ -175,7 +150,7 @@ _best_depth_get(XCBConnection *conn, int screen)
    XCBSCREEN *scr;
 
    if (!conn) return 0;
-   scr = _screen_get(conn, screen);
+   scr = XCBAuxGetScreen(conn, screen);
    if (!scr) return 0;
 
    return scr->root_depth;

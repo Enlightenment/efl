@@ -1,11 +1,13 @@
 #ifndef EVAS_ENGINE_H
 #define EVAS_ENGINE_H
 
-#include <X11/XCB/xcb.h>
-#include <X11/XCB/shm.h>
-#include <X11/XCB/xcb_image.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+
+#include <X11/XCB/xcb.h>
+#include <X11/XCB/shm.h>
+#include <X11/XCB/xcb_aux.h>
+#include <X11/XCB/xcb_image.h>
 
 typedef struct _Outbuf                Outbuf;
 typedef struct _Outbuf_Perf           Outbuf_Perf;

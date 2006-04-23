@@ -5,6 +5,7 @@ AC_INIT(configure.in)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(evas, 0.9.9.026)
 AM_CONFIG_HEADER(config.h)
 
@@ -223,7 +224,7 @@ ENGINE_SOFTWARE_XCB_PRG="";
 ## Automatic check...
 PKG_CHECK_MODULES(
   XCB,
-  xcb xcb-image xcb-icccm,
+  xcb xcb-shm xcb-image xcb-icccm,
   [AC_CHECK_HEADER(
       X11/X.h,
       [have_evas_software_xcb="yes"],
@@ -251,7 +252,7 @@ if test "x$have_evas_software_xcb" = "xyes"; then
 
   PKG_CHECK_MODULES(
     XCB,
-    xcb xcb-image xcb-icccm,
+    xcb xcb-shm xcb-aux xcb-image xcb-icccm,
     [AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
      xcb_cflags=$XCB_CFLAGS
      xcb_libs=$XCB_LIBS
@@ -602,8 +603,8 @@ ENGINE_XRENDER_XCB_PRG="";
 
 ## Automatic check...
 PKG_CHECK_MODULES(
-  XCB,
-  xcb xcb-image xcb-icccm,
+  XCBRENDER,
+  xcb xcb-shm xcb-render xcb-image xcb-icccm,
   [AC_CHECK_HEADER(
       X11/X.h,
       [have_evas_xrender_xcb="yes"],
@@ -630,11 +631,11 @@ if test "x$have_evas_xrender_xcb" = "xyes"; then
   AC_PATH_XTRA
 
   PKG_CHECK_MODULES(
-    XCB,
-    xcb xcb-image xcb-icccm,
+    XCBRENDER,
+    xcb xcb-shm xcb-render xcb-image xcb-icccm,
     [AC_DEFINE(BUILD_ENGINE_XRENDER_XCB, 1, [Xrender XCB Rendering Backend])
-     xcb_cflags=$XCB_CFLAGS
-     xcb_libs=$XCB_LIBS
+     xcbrender_cflags=$XCBRENDER_CFLAGS
+     xcbrender_libs=$XCBRENDER_LIBS
      ENGINE_XRENDER_XCB_PRG="evas_xrender_xcb_test"],
     [AC_MSG_RESULT(disabling xrender XCB engine)
      have_evas_xrender_xcb="no"])
@@ -1725,6 +1726,8 @@ AC_SUBST(x_libs)
 
 AC_SUBST(xcb_cflags)
 AC_SUBST(xcb_libs)
+AC_SUBST(xcbrender_cflags)
+AC_SUBST(xcbrender_libs)
 
 AC_SUBST(gl_cflags)
 AC_SUBST(gl_libs)

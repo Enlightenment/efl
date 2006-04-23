@@ -113,6 +113,7 @@ eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_XRender_Xcb *info;
+   int resize = 1;
 
    info = (Evas_Engine_Info_XRender_Xcb *)in;
    if (!e->engine.data.output)
@@ -134,6 +135,7 @@ eng_setup(Evas *e, void *in)
 	if (re->tb)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 	e->engine.data.output = re;
+	resize = 0;
      }
    re = e->engine.data.output;
    if (!re) return;
@@ -150,19 +152,31 @@ eng_setup(Evas *e, void *in)
    re->xcbinf = _xr_image_info_get(re->conn, re->win, re->vis);
 
    if (re->output) _xr_render_surface_free(re->output);
-   re->output = _xr_render_surface_adopt(re->xcbinf, re->win, e->output.w, e->output.h, 0);
-   if (re->mask.xid)
-     {
-        XCBDRAWABLE draw;
+   if (re->mask_output) _xr_render_surface_free(re->mask_output);
+   if (!re->mask.xid)
+     re->output = _xr_render_surface_adopt(re->xcbinf, re->win, e->output.w, e->output.h, re->destination_alpha);
+   else
+     re->output = _xr_render_surface_adopt(re->xcbinf, re->win, e->output.w, e->output.h, 0);
+   if (re->mask.xid) {
+     XCBDRAWABLE draw;
 
-	if (re->mask_output) _xr_render_surface_free(re->mask_output);
-        draw.pixmap = re->mask;
-	re->mask_output = _xr_render_surface_format_adopt(re->xcbinf, draw,
-							  e->output.w, e->output.h,
-							  re->xcbinf->fmt1, 1);
-     }
+     draw.pixmap = re->mask;
+     re->mask_output = _xr_render_surface_format_adopt(re->xcbinf, draw,
+                                                      e->output.w, e->output.h,
+                                                      re->xcbinf->fmt1, 1);
+   }
    else
      re->mask_output = NULL;
+   if (resize)
+     {
+	if (re->tb) evas_common_tilebuf_free(re->tb);
+	if ((e->output.w > 0) && (e->output.h > 0))
+	  re->tb = evas_common_tilebuf_new(e->output.w, e->output.h);
+	else
+	  re->tb = evas_common_tilebuf_new(1, 1);
+        if (re->tb)
+	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+     }
 }
 
 static void

@@ -905,6 +905,8 @@ evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
 					  strlen (type_str),
 					  type_str),
 			    NULL);
+   if (!rep) return;
+
    type = rep->atom;
    format = STRING;
 
@@ -914,6 +916,7 @@ evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
 		     strlen(str), str);
 /*    XSync(perf->x.disp, False); */
    free(str);
+   free (rep);
 }
 
 Outbuf_Perf *
@@ -930,8 +933,6 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
    char                *type_str;
    XCBATOM              type, format;
    Outbuf_Perf         *perf;
-   char                *retval;
-   int                  retnum;
 
    perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
 
@@ -944,31 +945,28 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
 				 NULL);
    type = type_rep->atom;
    format = STRING;
-   retval = NULL;
 
    cookie = XCBGetProperty(conn, 0, perf->x.root.window,
 			   type, format,
 			   0, 16384);
    prop_rep = XCBGetPropertyReply(conn, cookie, NULL);
 
-   retval = XCBGetPropertyValue(prop_rep);
-   retnum = XCBGetPropertyValueLength(prop_rep);
-   if (retval)
+   if ((prop_rep) &&
+       (prop_rep->format == 8) &&
+       (prop_rep->type.xid == type.xid))
      {
-        if ((prop_rep->format == 8) &&
-	    (prop_rep->type.xid == type.xid))
-	{
-	   char *s;
+        char *retval;
+        int retnum;
 
-	   s = malloc(retnum + 1);
-	   strncpy(s, retval, retnum);
-	   s[retnum] = 0;
-	   evas_software_xcb_outbuf_perf_deserialize_x(perf, s);
-	   free(s);
-	}
-	/* FIXME: doesn't seem to be need (from valgrind) */
-/* 	free(retval); */
+        retval = XCBGetPropertyValue(prop_rep);
+        retnum = XCBGetPropertyValueLength(prop_rep);
+        retval[retnum] = '\0';
+        evas_software_xcb_outbuf_perf_deserialize_x(perf, retval);
      }
+
+   if (prop_rep)
+     free(prop_rep);
+
    return perf;
 }
 
