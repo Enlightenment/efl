@@ -413,7 +413,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, "nearest", NULL, 0);
 	XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
 	
-	XRenderComposite(srs->xinf->disp, op, trs->pic, mask, drs->pic,
+	XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
 			 0, 0, 0, 0, x, y, w, h);
 	_xr_render_surface_free(trs);
      }
