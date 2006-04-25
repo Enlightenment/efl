@@ -1,7 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
-#include "evas_engine_api_software_qtopia.h"
 #include "Evas_Engine_Software_Qtopia.h"
 
 /* function tables - filled in later (func and parent func) */

@@ -1,10 +1,10 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+#include <X11/Xlib.h>
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
-#include "evas_engine_api_cairo_x11.h"
 #include "Evas_Engine_Cairo_X11.h"
 #include "evas_cairo_common.h"
 

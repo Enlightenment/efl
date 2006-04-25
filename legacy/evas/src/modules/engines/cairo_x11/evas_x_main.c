@@ -1,7 +1,7 @@
+#include <X11/Xlib.h>
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
-#include "evas_engine_api_cairo_x11.h"
 #include "Evas_Engine_Cairo_X11.h"
 #include "evas_cairo_common.h"
 

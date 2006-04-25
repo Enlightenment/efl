@@ -1,7 +1,7 @@
+#include <X11/XCB/xcb.h>
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
-#include "evas_engine_api_software_xcb.h"
 #include "Evas_Engine_Software_Xcb.h"
 
 /* function tables - filled in later (func and parent func) */
