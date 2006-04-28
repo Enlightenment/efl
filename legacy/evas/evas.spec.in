@@ -164,7 +164,7 @@ TIFF Image saver module for Evas
 %package module_loader_gif
 Summary: GIF Image loader module for Evas
 Group: System Environment/Libraries
-BuildRequires: giflib-devel
+BuildRequires: /usr/include/gif_lib.h
 %description module_loader_gif
 GIF Image loader module for Evas
 %define ac_with_module_loader_gif --enable-image-loader-gif
