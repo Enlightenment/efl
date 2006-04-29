@@ -48,84 +48,84 @@ Requires: %{name} = %{version}
 %description debug
 Tools for debugging/demonstration of Ecore
 
-%package ecore-con
+%package con
 Summary: Ecore Connection Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-con
+%description con
 Ecore Connection Library
 
-%package ecore-config
+%package config
 Summary: Ecore Enlightened Property Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-config
+%description config
 Ecore Enlightened Property Library
 
-%package ecore-dbus
+%package dbus
 Summary: Ecore DBus Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-dbus
+%description dbus
 Ecore DBus Library
 
-%package ecore-evas
+%package evas
 Summary: Ecore Evas Wrapper Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-evas
+%description evas
 Ecore Evas Wrapper Library
 
-%package ecore-fb
+%package fb
 Summary: Ecore frame buffer system functions
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-fb
+%description fb
 Ecore frame buffer system functions
 
-%package ecore-file
+%package file
 Summary: Ecore File Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-file
+%description file
 Ecore File Library
 
-%package ecore-ipc
+%package ipc
 Summary: Ecore inter-process communication functions
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-ipc
+%description ipc
 Ecore inter-process communication functions
 
-%package ecore-job
+%package job
 Summary: Ecore job dealing functions
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-job
+%description job
 Ecore job dealing functions
 
-%package ecore-txt
+%package txt
 Summary: Ecore text encoding conversion functions
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-txt
+%description txt
 Ecore text encoding conversion functions
 
-%package ecore-x
+%package x
 Summary: Ecore functions for dealing with the X Windows System
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description ecore-x
+%description x
 Ecore functions for dealing with the X Windows System
 
 
@@ -177,42 +177,42 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*test
 %{_datadir}/ecore
 
-%files ecore-con
+%files con
 %defattr(-, root, root)
 %{_libdir}/libecore_con.so.*
 
-%files ecore-config
+%files config
 %defattr(-, root, root)
 %{_libdir}/libecore_config.so.*
 
-%files ecore-dbus
+%files dbus
 %defattr(-, root, root)
 %{_libdir}/libecore_dbus.so.*
 
-%files ecore-evas
+%files evas
 %defattr(-, root, root)
 %{_libdir}/libecore_evas.so.*
 
-%files ecore-fb
+%files fb
 %defattr(-, root, root)
 %{_libdir}/libecore_fb.so.*
 
-%files ecore-file
+%files file
 %defattr(-, root, root)
 %{_libdir}/libecore_file.so.*
 
-%files ecore-ipc
+%files ipc
 %defattr(-, root, root)
 %{_libdir}/libecore_ipc.so.*
 
-%files ecore-job
+%files job
 %defattr(-, root, root)
 %{_libdir}/libecore_job.so.*
 
-%files ecore-txt
+%files txt
 %defattr(-, root, root)
 %{_libdir}/libecore_txt.so.*
 
-%files ecore-x
+%files x
 %defattr(-, root, root)
 %{_libdir}/libecore_x.so.*
