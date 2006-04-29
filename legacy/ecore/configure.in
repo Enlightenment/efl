@@ -152,7 +152,7 @@ AC_ARG_WITH(iconv-link,
 have_ecore_txt="no"
 AC_MSG_CHECKING(whether ecore_txt module is to be built)
 if test "x$want_ecore_txt" != "xno" ; then
-  if test "x$iconv_libs" != "x" ; then 
+  if test "x$iconv_libs" = "x" ; then 
     AC_CHECK_LIB(iconv, libiconv,
       [
         iconv_libs="-liconv"
