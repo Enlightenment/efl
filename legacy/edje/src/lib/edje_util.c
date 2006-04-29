@@ -1177,6 +1177,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
      {
 	return;
      }
+   if (rp->drag.down.count > 0) return;
    if (rp->part->dragable.confine_id != -1)
      {
 	dx = CLAMP(dx, 0.0, 1.0);
