@@ -1101,6 +1101,38 @@ evas_font_cache_get(Evas *e)
  * FIXME: To be fixed.
  *
  */
+EAPI Evas_List *
+evas_font_available_list(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   return evas_font_dir_available_list(e);
+}
+   
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_font_available_list_free(Evas *e, Evas_List *available)
+{ 
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   return evas_font_dir_available_list_free(available); 
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 EAPI int
 evas_string_char_next_get(const char *str, int pos, int *decoded)
 {

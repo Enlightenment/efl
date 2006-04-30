@@ -487,6 +487,9 @@ tile_mode);
    EAPI void              evas_font_cache_set               (Evas *e, int size);
    EAPI int               evas_font_cache_get               (Evas *e);
 
+   EAPI Evas_List	 *evas_font_available_list	    (Evas *e);
+   EAPI void		  evas_font_available_list_free	    (Evas *e, Evas_List *available);
+   
    typedef struct _Evas_Textblock_Style     Evas_Textblock_Style;
    typedef struct _Evas_Textblock_Cursor    Evas_Textblock_Cursor;
    typedef struct _Evas_Textblock_Rectangle Evas_Textblock_Rectangle;

@@ -597,6 +597,7 @@ struct _Evas_Func
    
    void (*font_hinting_set)                (void *data, void *font, int hinting);
    int  (*font_hinting_can_hint)           (void *data, int hinting);
+   
 /*    void (*image_rotation_set)              (void *data, void *image); */
 
 };
@@ -690,6 +691,8 @@ void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);
 char *evas_font_dir_cache_find(char *dir, char *font);
+Evas_List *evas_font_dir_available_list(Evas* evas);
+void evas_font_dir_available_list_free(Evas_List *available);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);   

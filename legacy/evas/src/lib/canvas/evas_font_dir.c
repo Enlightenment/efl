@@ -364,6 +364,78 @@ evas_font_load_hinting_set(Evas *evas, void *font, int hinting)
 				       hinting);
 }
 
+Evas_List *
+evas_font_dir_available_list(Evas *evas)
+{
+   Evas_List *l;
+   Evas_List *ll;
+   Evas_List *available = NULL;
+
+#ifdef HAVE_FONTCONFIG
+   /* Add font config fonts */
+   FcPattern *p;
+   FcFontSet *set;
+   FcObjectSet *os;
+   int i;
+  
+   p = FcPatternCreate();
+   os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, NULL);
+   
+   if (p && os) set = FcFontList(NULL, p, os);
+   
+   if (p) FcPatternDestroy(p);
+   if (os) FcObjectSetDestroy(os);
+
+   if (set)
+     {   
+	for (i = 0; i < set->nfont; i++)
+	  {
+	     char * font;
+	     
+	     font = FcNameUnparse(set->fonts[i]);
+	     available = evas_list_append(available, evas_stringshare_add(font));
+	     free(font);	       	       
+	  }
+ 	  
+	FcFontSetDestroy(set); 
+     }
+#endif
+    
+   /* Add fonts in evas font_path*/
+   if (!evas->font_path) 
+     return available;
+   
+   for (l = evas->font_path; l; l = l->next)
+     {
+	Evas_Font_Dir *fd;
+	
+	fd = evas_hash_find(font_dirs, (char *)l->data);
+	fd = object_text_font_cache_dir_update((char *)l->data, fd);
+	if (fd && fd->aliases)
+	  {
+	     for (ll = fd->aliases; ll; ll = ll->next)
+	       {
+		  Evas_Font_Alias *fa;
+		  
+		  fa = ll->data;
+		  available = evas_list_append(available, evas_stringshare_add((char *)fa->alias));		
+	       }
+	  }
+     }
+
+   return available;
+}
+
+void 
+evas_font_dir_available_list_free(Evas_List *available)
+{
+   while (available)
+     {
+	evas_stringshare_del(available->data);
+	available = evas_list_remove(available, available->data);
+     }
+}
+
 /* private stuff */
 static Evas_Bool
 font_cache_dir_free(Evas_Hash *hash, const char *key, void *data, void *fdata)
