@@ -4,7 +4,8 @@
 static int _xcb_err = 0;
 
 void
-evas_software_xcb_x_write_mask_line(Xcb_Output_Buffer *xcbob,
+evas_software_xcb_x_write_mask_line(Outbuf            *buf,
+                                    Xcb_Output_Buffer *xcbob,
 				    DATA32            *src,
 				    int                w,
 				    int                y)
@@ -17,20 +18,40 @@ evas_software_xcb_x_write_mask_line(Xcb_Output_Buffer *xcbob,
    src_ptr = src;
    dst_ptr = evas_software_xcb_x_output_buffer_data(xcbob, &bpl);
    dst_ptr = dst_ptr + (bpl * y);
-   for (x = 0; x < w; x += 8)
-      {
-	 *dst_ptr =
-	   ((A_VAL(&(src_ptr[0])) >> 7) << 0) |
-	   ((A_VAL(&(src_ptr[1])) >> 7) << 1) |
-	   ((A_VAL(&(src_ptr[2])) >> 7) << 2) |
-	   ((A_VAL(&(src_ptr[3])) >> 7) << 3) |
-	   ((A_VAL(&(src_ptr[4])) >> 7) << 4) |
-	   ((A_VAL(&(src_ptr[5])) >> 7) << 5) |
-	   ((A_VAL(&(src_ptr[6])) >> 7) << 6) |
-	   ((A_VAL(&(src_ptr[7])) >> 7) << 7);
-	 src_ptr += 8;
-	 dst_ptr++;
-      }
+   if (buf->priv.x.bit_swap)
+     {
+	for (x = 0; x < w; x += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[0])) >> 7) << 7) |
+	       ((A_VAL(&(src_ptr[1])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[2])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[3])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[4])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[5])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[6])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[7])) >> 7) << 0);
+	     src_ptr += 8;
+	     dst_ptr++;
+	  }
+     }
+   else
+     {
+	for (x = 0; x < w; x += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[0])) >> 7) << 0) |
+	       ((A_VAL(&(src_ptr[1])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[2])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[3])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[4])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[5])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[6])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[7])) >> 7) << 7);
+	     src_ptr += 8;
+	     dst_ptr++;
+	  }
+     }
    for (; x < w; x ++)
       {
 	 XCBImagePutPixel(xcbob->image, x, y, A_VAL(src_ptr) >> 7);
@@ -45,7 +66,7 @@ evas_software_xcb_x_can_do_shm(XCBConnection *c)
    XCBDRAWABLE        drawable;
    int                depth;
 
-   drawable.window = XCBConnSetupSuccessRepRootsIter (XCBGetSetup(c)).data->root;
+   drawable.window = XCBSetupRootsIter (XCBGetSetup(c)).data->root;
    geom = XCBGetGeometryReply (c, XCBGetGeometry(c, drawable), 0);
    if(!geom)
      return 0;
@@ -100,16 +121,11 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 
    if (try_shm > 0)
      {
-       const XCBQueryExtensionRep *rep;
-
-       rep = XCBGetExtensionData(c, &XCBShmId);
-       if (rep && rep->present)
-         {
             xcbob->shm_info = malloc(sizeof(XCBShmSegmentInfo));
             if (xcbob->shm_info)
               {
                  xcbob->shm_info->shmseg = XCBShmSEGNew(c);
-                 xcbob->image = XCBImageSHMCreate(c, depth, ZPixmap, NULL, w, h);
+                 xcbob->image = XCBImageSHMCreate(c, depth, XCBImageFormatZPixmap, NULL, w, h);
                  if (xcbob->image)
                    {
                       xcbob->shm_info->shmid = shmget(IPC_PRIVATE,
@@ -152,12 +168,11 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
                  if (xcbob->shm_info) free(xcbob->shm_info);
                  xcbob->shm_info = NULL;
               }
-         }
      }
 
    if (try_shm > 1) return NULL;
 
-   xcbob->image = XCBImageCreate(c, depth, ZPixmap, 0, data, w, h, 32, 0);
+   xcbob->image = XCBImageCreate(c, depth, XCBImageFormatZPixmap, 0, data, w, h, 32, 0);
    if (!xcbob->image)
      {
 	free(xcbob);
@@ -246,4 +261,10 @@ int
 evas_software_xcb_x_output_buffer_byte_order(Xcb_Output_Buffer *xcbob)
 {
    return xcbob->image->image_byte_order;
+}
+
+int
+evas_software_xcb_x_output_buffer_bit_order(Xcb_Output_Buffer *xcbob)
+{
+   return xcbob->image->bitmap_format_bit_order;
 }

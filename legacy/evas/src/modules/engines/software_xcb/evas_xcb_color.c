@@ -51,6 +51,7 @@ x_color_alloc_rgb(int            nr,
    i = 0;
    color_lut = malloc((nr) * (ng) * (nb));
    if (!color_lut) return NULL;
+   /* FIXME: remove the round-trip */
    for (r = 0; r < (nr); r++)
      {
 	for (g = 0; g < (ng); g++)
@@ -63,11 +64,11 @@ x_color_alloc_rgb(int            nr,
 		  XCBAllocColorRep *rep;
 
                   val = (int)((((double)r) / ((nr) - 1)) * 65535);
-		  xcl.red = (unsigned short)(val);
+		  xcl.red = (CARD16)(val);
 		  val = (int)((((double)g) / ((ng) - 1)) * 65535);
-		  xcl.green = (unsigned short)(val);
+		  xcl.green = (CARD16)(val);
 		  val = (int)((((double)b) / ((nb) - 1)) * 65535);
-		  xcl.blue = (unsigned short)(val);
+		  xcl.blue = (CARD16)(val);
 		  xcl_in = xcl;
 		  rep = XCBAllocColorReply(conn,
 					   XCBAllocColor(conn, cmap,
@@ -83,13 +84,13 @@ x_color_alloc_rgb(int            nr,
 		      ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
 		      ((xcl_in.blue  & sig_mask) != (xcl.blue  & sig_mask)))
 		    {
-		       unsigned long pixels[256];
+		       CARD32 pixels[256];
 		       int j;
 
 		       if (i > 0)
 			 {
 			    for(j = 0; j < i; j++)
-			      pixels[j] = (unsigned long)color_lut[j];
+			      pixels[j] = (CARD32)color_lut[j];
 			    XCBFreeColors(conn, cmap, 0, i, pixels);
 			 }
 		       free(color_lut);
@@ -127,9 +128,9 @@ x_color_alloc_gray(int            ng,
 	XCBAllocColorRep *rep;
 
 	val = (int)((((double)g) / ((ng) - 1)) * 65535);
-	xcl.red = (unsigned short)(val);
-	xcl.green = (unsigned short)(val);
-	xcl.blue = (unsigned short)(val);
+	xcl.red = (CARD16)(val);
+	xcl.green = (CARD16)(val);
+	xcl.blue = (CARD16)(val);
 	xcl_in = xcl;
 	rep = XCBAllocColorReply(conn,
 				 XCBAllocColor(conn, cmap,
@@ -145,19 +146,19 @@ x_color_alloc_gray(int            ng,
 	    ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
 	    ((xcl_in.blue  & sig_mask) != (xcl.blue  & sig_mask)))
 	  {
-	     unsigned long pixels[256];
+	     CARD32 pixels[256];
 	     int j;
 
 	     if (i > 0)
 	       {
 		  for(j = 0; j < i; j++)
-		    pixels[j] = (unsigned long) color_lut[j];
+		    pixels[j] = (CARD32) color_lut[j];
 		  XCBFreeColors(conn, cmap, 0, i, pixels);
 	       }
 	     free(color_lut);
 	     return NULL;
 	  }
-	color_lut[i] = xcl.pixel;
+	color_lut[i] = rep->pixel;
 	i++;
 	free(rep);
      }
@@ -373,15 +374,15 @@ evas_software_xcb_x_color_deallocate(XCBConnection *conn,
 				     XCBVISUALTYPE *vis,
 				     Convert_Pal   *pal)
 {
-   unsigned long pixels[256];
-   int           j;
+   CARD32 pixels[256];
+   int    j;
 
    pal->references--;
    if (pal->references > 0) return;
    if (pal->lookup)
      {
 	for(j = 0; j < pal->count; j++)
-	  pixels[j] = (unsigned long) pal->lookup[j];
+	  pixels[j] = (CARD32) pal->lookup[j];
 	XCBFreeColors(conn, cmap, 0, pal->count, pixels);
 	free(pal->lookup);
      }

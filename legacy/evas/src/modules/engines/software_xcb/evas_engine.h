@@ -4,8 +4,9 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#define X_H   /* make sure we aren't using symbols from X.h */
+
 #include <X11/XCB/xcb.h>
-#include <X11/XCB/shm.h>
 #include <X11/XCB/xcb_aux.h>
 #include <X11/XCB/xcb_image.h>
 
@@ -48,6 +49,7 @@ struct _Outbuf
 	 XCBGCONTEXT     gc;
 	 XCBGCONTEXT     gcm;
 	 int             swap : 1;
+	 unsigned char  bit_swap : 1;
       } x;
       struct {
 	 DATA32    r, g, b;
@@ -113,7 +115,8 @@ struct _Xcb_Output_Buffer
 void               evas_software_xcb_x_init                    (void);
 
 /* buffer */
-void               evas_software_xcb_x_write_mask_line         (Xcb_Output_Buffer *xcbob,
+void               evas_software_xcb_x_write_mask_line         (Outbuf            *buf,
+                                                                Xcb_Output_Buffer *xcbob,
 								DATA32            *src,
 								int                w,
 								int                y);
@@ -136,6 +139,7 @@ DATA8             *evas_software_xcb_x_output_buffer_data      (Xcb_Output_Buffe
 								int               *bytes_per_line_ret);
 int                evas_software_xcb_x_output_buffer_depth     (Xcb_Output_Buffer *xcbob);
 int                evas_software_xcb_x_output_buffer_byte_order(Xcb_Output_Buffer *xcbob);
+int                evas_software_xcb_x_output_buffer_bit_order (Xcb_Output_Buffer *xcbob);
 
 
 /* color */

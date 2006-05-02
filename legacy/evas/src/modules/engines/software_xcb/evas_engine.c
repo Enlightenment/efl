@@ -121,7 +121,7 @@ _output_setup(int            w,
 static XCBVISUALTYPE *
 _best_visual_get(XCBConnection *conn, int screen)
 {
-   XCBSCREEN        *scr;
+   XCBSCREEN *scr;
 
    if (!conn) return NULL;
    scr = XCBAuxGetScreen(conn, screen);
@@ -133,7 +133,7 @@ _best_visual_get(XCBConnection *conn, int screen)
 static XCBCOLORMAP
 _best_colormap_get(XCBConnection *conn, int screen)
 {
-   XCBSCREEN *scr;
+   XCBSCREEN  *scr;
    XCBCOLORMAP c;
 
    c.xid = 0;
@@ -271,7 +271,7 @@ eng_setup(Evas *e, void *in)
                                                  info->info.visual,
                                                  info->info.colormap,
                                                  info->info.depth,
-                                                 evas_software_xcb_outbuf_perf_restore_x(info->info.conn,    info->info.drawable, info->info.visual, info->info.colormap, info->info.depth),
+                                                 evas_software_xcb_outbuf_perf_restore_x(info->info.conn, info->info.drawable, info->info.visual, info->info.colormap, info->info.depth),
                                                  info->info.alloc_grayscale,
                                                  info->info.alloc_colors_max,
                                                  info->info.mask,

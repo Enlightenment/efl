@@ -87,13 +87,18 @@ evas_software_xcb_outbuf_setup_x(int            w,
       if (xcbob)
 	{
 #ifdef WORDS_BIGENDIAN
-	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == LSBFirst)
+	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == XCBImageOrderLSBFirst)
 	     buf->priv.x.swap = 1;
+	   if (evas_software_xcb_x_output_buffer_bit_order(xcbob) == XCBImageOrderLSBFirst)
+	     buf->priv.x.bit_swap = 1;
 #else
-	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == MSBFirst)
+	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == XCBImageOrderMSBFirst)
 	     buf->priv.x.swap = 1;
+	   if (evas_software_xcb_x_output_buffer_bit_order(xcbob) == XCBImageOrderMSBFirst)
+	     buf->priv.x.bit_swap = 1;
 #endif
-	   if ((vis->_class == TrueColor) || (vis->_class == DirectColor))
+	   if ((vis->_class == XCBVisualClassTrueColor) ||
+               (vis->_class == XCBVisualClassDirectColor))
 	     {
 		buf->priv.mask.r = (DATA32) vis->red_mask;
 		buf->priv.mask.g = (DATA32) vis->green_mask;
@@ -105,13 +110,15 @@ evas_software_xcb_outbuf_setup_x(int            w,
 		     SWAP32(buf->priv.mask.b);
 		  }
 	     }
-	   else if ((vis->_class == PseudoColor) ||
-		    (vis->_class == StaticColor) ||
-		    (vis->_class == GrayScale) || (vis->_class == StaticGray))
+	   else if ((vis->_class == XCBVisualClassStaticGray)  ||
+		    (vis->_class == XCBVisualClassGrayScale)   ||
+		    (vis->_class == XCBVisualClassStaticColor) ||
+		    (vis->_class == XCBVisualClassPseudoColor))
 	     {
 		Convert_Pal_Mode pm = PAL_MODE_RGB332;
 
-		if ((vis->_class == GrayScale) || (vis->_class == StaticGray))
+		if ((vis->_class == XCBVisualClassGrayScale) ||
+                    (vis->_class == XCBVisualClassStaticGray))
 		   grayscale = 1;
 		if (grayscale)
 		  {
@@ -492,8 +499,8 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
 	  conv_func(src_data, data,
 		    0,
 		    bpl /
-		    ((evas_software_xcb_x_output_buffer_depth(obr->xcbob) /
-		      8)) - obr->w, obr->w, obr->h, x, y,
+		    ((evas_software_xcb_x_output_buffer_depth(obr->xcbob) / 8)) - obr->w,
+                    obr->w, obr->h, x, y,
 		    buf->priv.pal->lookup);
      }
    else
@@ -504,8 +511,8 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
 	  conv_func(src_data, data,
 		    0,
 		    bpl /
-		    ((evas_software_xcb_x_output_buffer_depth(obr->xcbob) /
-		      8)) - obr->w, obr->w, obr->h, x, y, NULL);
+		    ((evas_software_xcb_x_output_buffer_depth(obr->xcbob) / 8)) - obr->w,
+                    obr->w, obr->h, x, y, NULL);
        /* FIXME: this is evil - but it makes ARGB targets look correct */
        if ((buf->priv.destination_alpha) && (!obr->mxcbob) &&
            (evas_software_xcb_x_output_buffer_depth(obr->xcbob) == 32))
@@ -531,9 +538,10 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
    if (obr->mxcbob)
      {
 	for (yy = 0; yy < obr->h; yy++)
-	  evas_software_xcb_x_write_mask_line(obr->mxcbob,
-					      src_data +
-					      (yy * obr->w), obr->w, yy);
+	  evas_software_xcb_x_write_mask_line(buf,
+                                              obr->mxcbob,
+					      src_data + (yy * obr->w),
+                                              obr->w, yy);
      }
 }
 
@@ -637,7 +645,7 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
       free (geom);
       geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometry (buf->priv.x.conn, root), 0);
 
-      i = XCBConnSetupSuccessRepRootsIter((XCBConnSetupSuccessRep *)XCBGetSetup(buf->priv.x.conn));
+      i = XCBSetupRootsIter((XCBSetup *)XCBGetSetup(buf->priv.x.conn));
       for (; i.rem; XCBSCREENNext(&i))
 	 if (i.data->root.xid == geom->root.xid)
 	    {
@@ -653,23 +661,23 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
 	CARD32        mask;
 	CARD32        value[2];
 
-	mask = GCForeground | GCGraphicsExposures;
+	mask = XCBGCForeground | XCBGCGraphicsExposures;
 	value[0] = screen->black_pixel;
-	value[1] = 0; /* no graphics exposures */
+	value[1] = XCBExposuresNotAllowed; /* no graphics exposures allowed */
 	XCBChangeGC(buf->priv.x.conn, buf->priv.x.gc, mask, value);
 	XCBPolyFillRectangle (buf->priv.x.conn, draw, buf->priv.x.gc, 1, &rect);
 	XCBSync(buf->priv.x.conn, 0);
-	image = XCBImageGet(buf->priv.x.conn, draw, x, y, w, h, 0xffffffff, ZPixmap);
+	image = XCBImageGet(buf->priv.x.conn, draw, x, y, w, h, XCBAllPlanes, XCBImageFormatZPixmap);
 	if (image)
 	   XCBImageDestroy(image);
 	XCBSync(buf->priv.x.conn, 0);
-	mask = GCForeground | GCGraphicsExposures;
+	mask = XCBGCForeground | XCBGCGraphicsExposures;
 	value[0] = screen->white_pixel;
-	value[1] = 0; /* no graphics exposures */
+	value[1] = XCBExposuresNotAllowed; /* no graphics exposures allowed */
 	XCBChangeGC(buf->priv.x.conn, buf->priv.x.gc, mask, value);
 	XCBPolyFillRectangle (buf->priv.x.conn, draw, buf->priv.x.gc, 1, &rect);
 	XCBSync(buf->priv.x.conn, 0);
-	image = XCBImageGet(buf->priv.x.conn, draw, x, y, w, h, 0xffffffff, ZPixmap);
+	image = XCBImageGet(buf->priv.x.conn, draw, x, y, w, h, XCBAllPlanes, XCBImageFormatZPixmap);
 	if (image)
 	   XCBImageDestroy(image);
 	XCBSync(buf->priv.x.conn, 0);
@@ -755,7 +763,8 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
 
    perf->x.conn = conn;
 
-   root.window = XCBConnSetupSuccessRepRootsIter ((XCBConnSetupSuccessRep *)XCBGetSetup (conn)).data->root;
+   /* FIXME: should use the default screen */
+   root.window = XCBSetupRootsIter ((XCBSetup *)XCBGetSetup (conn)).data->root;
    if (draw.window.xid)
      {
 	XCBGetGeometryRep *geom;
@@ -770,7 +779,7 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
 	perf->x.h = (int)geom->height;
 
 	perf->x.screen_num = 0;
-	i = XCBConnSetupSuccessRepRootsIter((XCBConnSetupSuccessRep *)XCBGetSetup(conn));
+	i = XCBSetupRootsIter((XCBSetup *)XCBGetSetup(conn));
 	for (cur = 0; i.rem; XCBSCREENNext(&i), ++cur)
 	  if (i.data->root.xid == geom->root.xid)
 	    {
@@ -782,11 +791,11 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
    perf->x.root = root;
 
    perf->x.display      = strdup (":0"); /* FIXME: strdup(DisplayString(disp)); in XCB ? */
-   perf->x.vendor       = strdup(XCBConnSetupSuccessRepVendor((XCBConnSetupSuccessRep *)XCBGetSetup(conn)));
-   perf->x.version      = (int)((XCBConnSetupSuccessRep *)XCBGetSetup(conn))->protocol_major_version;
-   perf->x.revision     = (int)((XCBConnSetupSuccessRep *)XCBGetSetup(conn))->protocol_minor_version;
-   perf->x.release      = (int)((XCBConnSetupSuccessRep *)XCBGetSetup(conn))->release_number;
-   perf->x.screen_count = XCBConnSetupSuccessRepRootsIter((XCBConnSetupSuccessRep *)XCBGetSetup(conn)).rem;
+   perf->x.vendor       = strdup(XCBSetupVendor((XCBSetup *)XCBGetSetup(conn)));
+   perf->x.version      = (int)((XCBSetup *)XCBGetSetup(conn))->protocol_major_version;
+   perf->x.revision     = (int)((XCBSetup *)XCBGetSetup(conn))->protocol_minor_version;
+   perf->x.release      = (int)((XCBSetup *)XCBGetSetup(conn))->release_number;
+   perf->x.screen_count = XCBSetupRootsIter((XCBSetup *)XCBGetSetup(conn)).rem;
    perf->x.depth        = x_depth;
 
    perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
@@ -911,10 +920,10 @@ evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
    format = STRING;
 
    str = evas_software_xcb_outbuf_perf_serialize_x(perf);
-   XCBChangeProperty(perf->x.conn, PropModeReplace, perf->x.root.window,
+   XCBChangeProperty(perf->x.conn, XCBPropModeReplace, perf->x.root.window,
 		     type, format, 8,
 		     strlen(str), str);
-/*    XSync(perf->x.disp, False); */
+   XCBSync(perf->x.conn, 0);
    free(str);
    free (rep);
 }
@@ -943,8 +952,12 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
 					       strlen (type_str),
 					       type_str),
 				 NULL);
+   if (!type_rep)
+     return perf;
+
    type = type_rep->atom;
    format = STRING;
+   free(type_rep);
 
    cookie = XCBGetProperty(conn, 0, perf->x.root.window,
 			   type, format,
@@ -994,21 +1007,22 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
    XCBDRAWABLE    win;
    CARD32         mask;
    CARD32         value[7];
+   CARD32         value2[1];
    int            w, h;
    int            do_shm = 0;
 
    perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
 
-   mask = CWBackingStore | CWColormap |
-     CWBackPixmap | CWBorderPixel |
-     CWBitGravity | CWEventMask | CWOverrideRedirect;
-   value[0] = Always;
-   value[1] = cmap.xid;
-   value[2] = None;
-   value[3] = 0;
-   value[4] = ForgetGravity;
-   value[5] = 0;
-   value[6] = 1;
+   mask = XCBCWBackPixmap | XCBCWBorderPixel |
+     XCBCWBitGravity | XCBCWBackingStore |
+     XCBCWOverrideRedirect | XCBCWEventMask | XCBCWColormap;
+   value[0] = XCBBackPixmapNone;
+   value[1] = 0;
+   value[2] = XCBGravityBitForget;
+   value[3] = XCBBackingStoreAlways;
+   value[4] = 1;
+   value[5] = XCBEventMaskNoEvent;
+   value[6] = cmap.xid;
    w = perf->x.w;
    h = perf->x.h;
    win.window = XCBWINDOWNew (conn);
@@ -1017,11 +1031,14 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
 		    0, 0,
 		    w, h,
 		    0,
-		    InputOutput,
+		    XCBWindowClassInputOutput,
 		    vis->visual_id,
 		    mask, value);
    XCBSync(conn, 0);
-   XCBMapWindow (conn, win.window);
+   mask = XCBConfigWindowStackMode;
+   value[0] = XCBStackModeAbove;
+   XCBConfigureWindow (conn, win.window, mask, value2);
+/*    XCBMapWindow (conn, win.window); */
 
    do_shm = evas_software_xcb_x_can_do_shm(conn);
 
@@ -1032,7 +1049,6 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
      {
 	Xcb_Output_Buffer  *xcbob;
 	XCBGCONTEXT         gc;
-	CARD32              gcv;
 	int                 i;
 	int                 max;
 	int                 error;
@@ -1044,7 +1060,7 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
 	if (w > h)
 	   max = h;
 	gc = XCBGCONTEXTNew (conn);
-	XCBCreateGC (conn, gc, win, 0, &gcv);
+	XCBCreateGC (conn, gc, win, 0, NULL);
 	for (i = 16; i < max; i += 16)
 	  {
 	     int                 l;

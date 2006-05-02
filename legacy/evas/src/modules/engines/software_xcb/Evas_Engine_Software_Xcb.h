@@ -18,16 +18,16 @@ struct _Evas_Engine_Info_Software_Xcb
       XCBDRAWABLE     mask;
       XCBVISUALTYPE  *visual;
       XCBCOLORMAP     colormap;
-      int       depth;
-      int       rotation;
+      int             depth;
+      int             rotation;
 
-      int       alloc_grayscale : 1;
-      int       debug : 1;
-      int       shape_dither : 1;
-      int       destination_alpha : 1;
-      int       track_mask_changes : 1;
+      int             alloc_grayscale : 1;
+      int             debug : 1;
+      int             shape_dither : 1;
+      int             destination_alpha : 1;
+      int             track_mask_changes : 1;
 
-      int       alloc_colors_max;
+      int             alloc_colors_max;
    } info;
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */
