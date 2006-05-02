@@ -25,6 +25,7 @@ struct _Evas_Engine_Info_Software_Xcb
       int       debug : 1;
       int       shape_dither : 1;
       int       destination_alpha : 1;
+      int       track_mask_changes : 1;
 
       int       alloc_colors_max;
    } info;
@@ -54,6 +55,8 @@ struct _Evas_Engine_Info_Software_Xcb
 						     const char       *data);
       void              (*performance_device_store) (Evas_Performance *perf);
    } func;
+
+   int mask_changed;
 };
 
 #endif /* _EVAS_ENGINE_SOFTWARE_XCB_H */
