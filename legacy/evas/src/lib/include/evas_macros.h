@@ -24,41 +24,39 @@
     (((x) & 0xff00 ) >> 8))
 
 
-#define POLY_EDGE_DEL(_i)                                               \
-{                                                                       \
-   int _j;                                                              \
-                                                                        \
-   for (_j = 0; (_j < num_active_edges) && (edges[_j].i != _i); _j++);  \
-   if (_j < num_active_edges)                                           \
-     {                                                                  \
-	num_active_edges--;                                             \
-	memmove(&(edges[_j]), &(edges[_j + 1]),                         \
-	        (num_active_edges - _j) * sizeof(RGBA_Edge));           \
-     }                                                                  \
+#define SPANS_COMMON(x1, w1, x2, w2) \
+(!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
+
+#define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
+((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
+
+#define RECTS_CLIP_TO_RECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch) \
+{ \
+   if (RECTS_INTERSECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch)) \
+     { \
+	if (_x < (_cx)) \
+	  { \
+	     _w += _x - (_cx); \
+	     _x = (_cx); \
+	     if (_w < 0) _w = 0; \
+	  } \
+	if ((_x + _w) > ((_cx) + (_cw))) \
+	  _w = (_cx) + (_cw) - _x; \
+	if (_y < (_cy)) \
+	  { \
+	     _h += _y - (_cy); \
+	     _y = (_cy); \
+	     if (_h < 0) _h = 0; \
+	  } \
+	if ((_y + _h) > ((_cy) + (_ch))) \
+	  _h = (_cy) + (_ch) - _y; \
+     } \
+   else \
+     { \
+	_w = 0; _h = 0; \
+     } \
 }
 
-#define POLY_EDGE_ADD(_i, _y)                                           \
-{                                                                       \
-   int _j;                                                              \
-   float _dx;                                                           \
-   RGBA_Vertex *_p, *_q;                                                \
-   if (_i < (n - 1)) _j = _i + 1;                                       \
-   else _j = 0;                                                         \
-   if (point[_i].y < point[_j].y)                                       \
-     {                                                                  \
-	_p = &(point[_i]);                                              \
-	_q = &(point[_j]);                                              \
-     }                                                                  \
-   else                                                                 \
-     {                                                                  \
-	_p = &(point[_j]);                                              \
-	_q = &(point[_i]);                                              \
-     }                                                                  \
-   edges[num_active_edges].dx = _dx = (_q->x - _p->x) / (_q->y - _p->y); \
-   edges[num_active_edges].x = (_dx * ((float)_y + 0.5 - _p->y)) + _p->x; \
-   edges[num_active_edges].i = _i;                                      \
-   num_active_edges++;                                                  \
-}
 
 #define INTERP_VAL(out, in1, in2, in3, in4, interp_x, interp_y)    \
    {                                                               \
@@ -79,5 +77,108 @@
 
 #define INTERP_2(in1, in2, interp, interp_inv) \
    ((in1 * interp_inv) + (in2 * interp)) >> 8
+
+
+#define CONVERT_LOOP_START_ROT_0() \
+   src_ptr = src; \
+   for (y = 0; y < h; y++) \
+     { \
+	for (x = 0; x < w; x++) \
+	  {
+
+#define CONVERT_LOOP_END_ROT_0() \
+             dst_ptr++; \
+             src_ptr++; \
+          } \
+        src_ptr += src_jump; \
+        dst_ptr += dst_jump; \
+     }
+
+#define CONVERT_LOOP_START_ROT_270() \
+   src_ptr = src + ((w - 1) * (h + src_jump)); \
+   for (y = 0; y < h; y++) \
+     { \
+	for (x = 0; x < w; x++) \
+	  {
+
+#define CONVERT_LOOP_END_ROT_270() \
+             dst_ptr++; \
+             src_ptr -= (h + src_jump); \
+          } \
+        src_ptr = src + ((w - 1) * (h + src_jump)) + (y + 1); \
+        dst_ptr += dst_jump; \
+     }
+
+#define CONVERT_LOOP_START_ROT_90() \
+   src_ptr = src + (h - 1); \
+   for (y = 0; y < h; y++) \
+     { \
+	for (x = 0; x < w; x++) \
+	  {
+
+#define CONVERT_LOOP_END_ROT_90() \
+             dst_ptr++; \
+             src_ptr += (h + src_jump); \
+          } \
+        src_ptr = src + (h - 1) - y - 1; \
+        dst_ptr += dst_jump; \
+     }
+
+#define CONVERT_LOOP2_START_ROT_0() \
+   src_ptr = src; \
+   for (y = 0; y < h; y++) \
+     { \
+	for (x = 0; x < w; x++) \
+	  {
+
+#define CONVERT_LOOP2_INC_ROT_0() \
+src_ptr++; \
+x++;
+
+#define CONVERT_LOOP2_END_ROT_0() \
+             dst_ptr+=2; \
+             src_ptr++; \
+          } \
+        src_ptr += src_jump; \
+        dst_ptr += dst_jump; \
+     }
+
+#define CONVERT_LOOP2_START_ROT_270() \
+   src_ptr = src + ((w - 1) * (h + src_jump)); \
+   for (y = 0; y < h; y++) \
+     { \
+	for (x = 0; x < w; x++) \
+	  {
+
+#define CONVERT_LOOP2_INC_ROT_270() \
+src_ptr -= (h + src_jump); \
+x++;
+
+#define CONVERT_LOOP2_END_ROT_270() \
+             dst_ptr+=2; \
+             src_ptr -= (h + src_jump); \
+          } \
+        src_ptr = src + ((w - 1) * (h + src_jump)) + (y + 1); \
+        dst_ptr += dst_jump; \
+     }
+
+#define CONVERT_LOOP2_START_ROT_90() \
+   src_ptr = src + (h - 1); \
+   for (y = 0; y < h; y++) \
+     { \
+	for (x = 0; x < w; x++) \
+	  {
+
+#define CONVERT_LOOP2_INC_ROT_90() \
+src_ptr += (h + src_jump); \
+x++;
+
+#define CONVERT_LOOP2_END_ROT_90() \
+             dst_ptr+=2; \
+             src_ptr += (h + src_jump); \
+          } \
+        src_ptr = src + (h - 1) - y - 1; \
+        dst_ptr += dst_jump; \
+     }
 
 #endif

@@ -275,7 +275,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	     /* no need src == dest */
 	     if (!buf->priv.back_buf)
 	       {
-		  Gfx_Func_Blend_Src_Dst func;
+		  Gfx_Func_Copy func;
 		  
 		  func = evas_common_draw_func_copy_get(w, 0);
 		  if (func)

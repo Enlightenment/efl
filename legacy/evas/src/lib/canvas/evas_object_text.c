@@ -1329,6 +1329,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
    o = (Evas_Object_Text *)(obj->object_data);
    evas_text_style_pad_get(o->cur.style, &sl, NULL, &st, NULL);
    ENFN->context_multiplier_unset(output, context);
+   ENFN->context_render_op_set(output, context, obj->cur.render_op);
 /*
    ENFN->context_color_set(output,
 						    context,
@@ -1547,6 +1548,11 @@ evas_object_text_render_pre(Evas_Object *obj)
        (obj->cur.geometry.y != obj->prev.geometry.y) ||
        (obj->cur.geometry.w != obj->prev.geometry.w) ||
        (obj->cur.geometry.h != obj->prev.geometry.h))
+     {
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	goto done;
+     }
+   if (obj->cur.render_op != obj->prev.render_op)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	goto done;

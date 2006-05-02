@@ -383,6 +383,7 @@ struct _Evas_Object
       struct {
          int color_space;
       } interpolation;
+      int               render_op;
    } cur, prev;
 
    char                       *name;
@@ -533,6 +534,8 @@ struct _Evas_Func
    unsigned char (*context_anti_alias_get) (void *data, void *context);
    void (*context_color_interpolation_set) (void *data, void *context, int color_space);
    int  (*context_color_interpolation_get) (void *data, void *context);
+   void (*context_render_op_set)           (void *data, void *context, int render_op);
+   int  (*context_render_op_get)           (void *data, void *context);
 
    void (*rectangle_draw)                  (void *data, void *context, void *surface, int x, int y, int w, int h);
 
@@ -544,12 +547,15 @@ struct _Evas_Func
 
    void *(*gradient_color_add)             (void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
    void *(*gradient_colors_clear)          (void *data, void *context, void *gradient);
+   void *(*gradient_data_set)              (void *data, void *context, void *gradient, void *map, int len, int alpha_flag);
+   void *(*gradient_data_unset)            (void *data, void *context, void *gradient);
    void (*gradient_free)                   (void *data, void *gradient);
    void (*gradient_fill_set)               (void *data, void *gradient, int x, int y, int w, int h);
+   void (*gradient_range_offset_set)       (void *data, void *gradient, float offset);
    void (*gradient_type_set)               (void *data, void *gradient, char *name);
    void (*gradient_type_params_set)        (void *data, void *gradient, char *params);
    void *(*gradient_geometry_init)         (void *data, void *gradient, int spread);
-   int  (*gradient_alpha_get)              (void *data, void *gradient, int spread);
+   int  (*gradient_alpha_get)              (void *data, void *gradient, int spread, int render_op);
    void (*gradient_map)                    (void *data, void *context, void *gradient, int spread);
    void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
 

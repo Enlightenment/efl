@@ -1792,6 +1792,12 @@ src/lib/file/Makefile
 src/lib/imaging/Makefile
 src/lib/engines/Makefile
 src/lib/engines/common/Makefile
+src/lib/engines/common/evas_op_add/Makefile
+src/lib/engines/common/evas_op_blend/Makefile
+src/lib/engines/common/evas_op_copy/Makefile
+src/lib/engines/common/evas_op_mask/Makefile
+src/lib/engines/common/evas_op_mul/Makefile
+src/lib/engines/common/evas_op_sub/Makefile
 src/modules/Makefile
 src/modules/engines/Makefile
 src/modules/engines/software_generic/Makefile

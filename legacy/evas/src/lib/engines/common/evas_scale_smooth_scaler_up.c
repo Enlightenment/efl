@@ -8,9 +8,7 @@
    DATA32   *src_data, *src_end;
    RGBA_Image  *line_buf;
 
-   Gfx_Func_Blend_Src_Cmod_Dst func_cmod;
-   Gfx_Func_Blend_Src_Mul_Dst  func_mul;
-   Gfx_Func_Blend_Src_Dst      func;
+   RGBA_Gfx_Func      func;
 		
    lin_ptr = (int *)malloc(dst_clip_w * sizeof(int));
    row_ptr = (DATA32 **)malloc(dst_clip_h * sizeof(DATA32 *));
@@ -135,9 +133,10 @@
      }
 
    src_end = src_data + (src_w * src_h) - 1;
-   func      = evas_common_draw_func_blend_get      (src, dst, dst_clip_w);
-   func_cmod = evas_common_draw_func_blend_cmod_get (src, dst, dst_clip_w);
-   func_mul  = evas_common_draw_func_blend_mul_get  (src, dc->mul.col, dst, dst_clip_w);
+   if (dc->mul.use)
+	func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
+   else
+	func  = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
 	
    dptr = dst_ptr;
    rp = row_ptr;  iy = interp_y;
@@ -229,12 +228,7 @@
 	       }
 	     dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
 	     /* * blend here [clip_w *] buf -> dptr * */
-	     if (dc->mod.use)
-	       func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-	     else if (dc->mul.use)
-	       func_mul(buf, dptr, dst_clip_w, dc->mul.col);
-	     else
-	       func(buf, dptr, dst_clip_w);
+	     func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
 	     dptr += dst_w;  iy++;  rp++;
 	  }
      }
@@ -248,7 +242,7 @@
 #ifdef DIRECT_SCALE
 	if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
 	    (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
-	    (!dc->mod.use) && (!dc->mul.use))
+	    (!dc->mul.use))
 	  {
 	     while (dst_clip_h--)
 	       {
@@ -345,12 +339,7 @@
 		    }
 		  dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
 		  /* * blend here [clip_w *] buf -> dptr * */
-		  if (dc->mod.use)
-		    func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-		  else if (dc->mul.use)
-		    func_mul(buf, dptr, dst_clip_w, dc->mul.col);
-		  else
-		    func(buf, dptr, dst_clip_w);
+		  func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
 		  dptr += dst_w;  iy++;  rp++;
 	       }
 	  }
@@ -459,12 +448,7 @@
 	       }
 	     /* * blend here [clip_w *] buf -> dptr * */
 	     dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
-	     if (dc->mod.use)
-	       func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-	     else if (dc->mul.use)
-	       func_mul(buf, dptr, dst_clip_w, dc->mul.col);
-	     else
-	       func(buf, dptr, dst_clip_w);
+	     func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
 	     dptr += dst_w;  iy++;  rp++;
 	  }
      }
@@ -476,7 +460,7 @@
 #ifdef DIRECT_SCALE
 	if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
 	    (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
-	    (!dc->mod.use) && (!dc->mul.use))
+	    (!dc->mul.use))
 	  {
 	     while (dst_clip_h--)
 	       {
@@ -664,12 +648,7 @@
 		    }
 		  /* * blend here [clip_w *] buf -> dptr * */
 		  dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
-		  if (dc->mod.use)
-		    func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-		  else if (dc->mul.use)
-		    func_mul(buf, dptr, dst_clip_w, dc->mul.col);
-		  else
-		    func(buf, dptr, dst_clip_w);
+		  func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
 		  dptr += dst_w;  iy++;  rp++;
 	       }
 	  }

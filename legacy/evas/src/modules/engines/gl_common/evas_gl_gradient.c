@@ -22,6 +22,24 @@ evas_gl_common_gradient_colors_clear(Evas_GL_Gradient *gr)
    return gr;
 }
 
+Evas_GL_Gradient *
+evas_gl_common_gradient_data_set(Evas_GL_Gradient *gr, void * map, int len, int has_alpha)
+{
+   if (!gr) gr = calloc(1, sizeof(Evas_GL_Gradient));
+   if (!gr) return NULL;
+   if (!gr->grad) gr->grad = evas_common_gradient_new();
+   evas_common_gradient_data_set(gr->grad, map, len, has_alpha);
+   return gr;
+}
+
+Evas_GL_Gradient *
+evas_gl_common_gradient_data_unset(Evas_GL_Gradient *gr, void * data, int len, int has_alpha)
+{
+   if (!gr) return NULL;
+   evas_common_gradient_data_unset(gr->grad);
+   return gr;
+}
+
 void
 evas_gl_common_gradient_free(Evas_GL_Gradient *gr)
 {
@@ -37,6 +55,13 @@ evas_gl_common_gradient_fill_set(Evas_GL_Gradient *gr, int x, int y, int w, int 
 {
    if (!gr) return;
    evas_common_gradient_fill_set(gr->grad, x, y, w, h);
+}
+
+void
+evas_gl_common_gradient_range_offset_set(Evas_GL_Gradient *gr, float offset)
+{
+   if (!gr) return;
+   evas_common_gradient_range_offset_set(gr->grad, offset);
 }
 
 void
@@ -62,10 +87,10 @@ evas_gl_common_gradient_geometry_init(Evas_GL_Gradient *gr, int spread)
 }
 
 int
-evas_gl_common_gradient_alpha_get(Evas_GL_Gradient *gr, int spread)
+evas_gl_common_gradient_alpha_get(Evas_GL_Gradient *gr, int spread, int op)
 {
    if (!gr) return 0;
-   return evas_common_gradient_has_alpha(gr->grad, spread);
+   return evas_common_gradient_has_alpha(gr->grad, spread, op);
 }
 
 void
@@ -170,7 +195,6 @@ _evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr
 /*
 FIXME: this has been broken by the new gradient code!!
 */
-/*
    dc = evas_common_draw_context_new();
    if (!dc) return;
    evas_common_gradient_map(dc, gr->grad, 0);
@@ -182,12 +206,12 @@ FIXME: this has been broken by the new gradient code!!
 	     int i;
 
 	     for (i = 0; i < 4; i++)
-	       memcpy(im->image->data + (i * 256) , map, 256 * sizeof(DATA32));
+		 evas_common_scale_rgba_span(map, gr->grad.map.len, 0xffffffff,
+		                             im->image->data + (i * 256), 256);
 	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
 	     gr->tex = evas_gl_common_texture_new(gc, im, 0);
 	     evas_common_image_free(im);
 	  }
      }
-*/
-//   evas_common_draw_context_free(dc);
+   evas_common_draw_context_free(dc);
 }

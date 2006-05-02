@@ -139,7 +139,7 @@ _xre_image_new_from_copied_data(XCBimage_Info *xcbinf, int w, int h, void *data)
      }
    if (data)
      {
-	Gfx_Func_Blend_Src_Dst func;
+	Gfx_Func_Copy func;
 	
 	func = evas_common_draw_func_copy_get(w * h, 0);
 	if (func) func(data, im->data, w * h);
@@ -287,7 +287,7 @@ _xre_image_resize(XR_Image *im, int w, int h)
      }
    if (im->data)
      {
-	Gfx_Func_Blend_Src_Dst func;
+	Gfx_Func_Copy func;
 	int x = 0, y = 0, ww, hh;
 	unsigned int *sp, *dp;
 	void *data;

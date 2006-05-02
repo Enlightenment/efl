@@ -123,6 +123,18 @@ eng_context_color_interpolation_get(void *data, void *context)
    return ((RGBA_Draw_Context *)context)->interpolation.color_space;
 }
 
+static void
+eng_context_render_op_set(void *data, void *context, int op)
+{
+   evas_common_draw_context_set_render_op(context, op);
+}
+
+static int
+eng_context_render_op_get(void *data, void *context)
+{
+   return ((RGBA_Draw_Context *)context)->render_op;
+}
+
 
 
 static void
@@ -173,6 +185,22 @@ eng_gradient_colors_clear(void *data, void *context, void *gradient)
    return gradient;
 }
 
+static void *
+eng_gradient_data_set(void *data, void *context, void *gradient, void *map, int len, int has_alpha)
+{
+   if (!gradient)
+     gradient = evas_common_gradient_new();
+   evas_common_gradient_data_set(gradient, map, len, has_alpha);
+   return gradient;
+}
+
+static void *
+eng_gradient_data_unset(void *data, void *context, void *gradient)
+{
+   evas_common_gradient_data_unset(gradient);
+   return gradient;
+}
+
 static void
 eng_gradient_free(void *data, void *gradient)
 {
@@ -183,6 +211,12 @@ static void
 eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 {
    evas_common_gradient_fill_set(gradient, x, y, w, h);
+}
+
+static void
+eng_gradient_range_offset_set(void *data, void *gradient, float offset)
+{
+   evas_common_gradient_range_offset_set(gradient, offset);
 }
 
 static void
@@ -205,9 +239,9 @@ eng_gradient_geometry_init(void *data, void *gradient, int spread)
 }
 
 static int
-eng_gradient_alpha_get(void *data, void *gradient, int spread)
+eng_gradient_alpha_get(void *data, void *gradient, int spread, int op)
 {
-   return evas_common_gradient_has_alpha(gradient, spread);
+   return evas_common_gradient_has_alpha(gradient, spread, op);
 }
 
 static void
@@ -653,6 +687,8 @@ static Evas_Func func =
      eng_context_anti_alias_get,
      eng_context_color_interpolation_set,
      eng_context_color_interpolation_get,
+     eng_context_render_op_set,
+     eng_context_render_op_get,
      /* rect draw funcs */
      eng_rectangle_draw,
      /* line draw funcs */
@@ -664,8 +700,11 @@ static Evas_Func func =
      /* gradient draw funcs */
      eng_gradient_color_add,
      eng_gradient_colors_clear,
+     eng_gradient_data_set,
+     eng_gradient_data_unset,
      eng_gradient_free,
      eng_gradient_fill_set,
+     eng_gradient_range_offset_set,
      eng_gradient_type_set,
      eng_gradient_type_params_set,
      eng_gradient_geometry_init,

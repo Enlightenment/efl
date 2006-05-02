@@ -135,7 +135,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    int pen_x, pen_y;
    int chr;
    FT_UInt prev_index;
-   Gfx_Func_Blend_Src_Alpha_Mul_Dst func;
+   RGBA_Gfx_Func func;
    int ext_x, ext_y, ext_w, ext_h;
    DATA32 *im;
    int im_w, im_h;
@@ -179,7 +179,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
-   func = evas_common_draw_func_blend_alpha_get(dst);
+   func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
    for (c = 0, chr = 0; text[chr];)
      {
 	FT_UInt index;
@@ -272,10 +272,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 					     }
 					   if (in_w < w)
 					     {
-						func(data + (i * j) + in_x,
-						     im + (dy * im_w) + dx,
-						     w - in_w,
-						     dc->col.col);
+						func(NULL, data + (i * j) + in_x, dc->col.col,
+						     im + (dy * im_w) + dx, w - in_w);
 					     }
 					}
 				   }
@@ -324,10 +322,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 					     }
 					   if (in_w < w)
 					     {
-						func(tmpbuf + in_x,
-						     im + (dy * im_w) + dx,
-						     w - in_w,
-						     dc->col.col);
+						func(NULL, tmpbuf + in_x, dc->col.col,
+						     im + (dy * im_w) + dx, w - in_w);
 					     }
 					}
 				   }

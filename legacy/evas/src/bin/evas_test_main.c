@@ -81,6 +81,26 @@ static Evas_Object *p_i[2];
 static Evas_Object *p_r[8];
 static Evas_Object *p_t[16];
 
+static unsigned int grad_map[128] = { 
+0xfe5a7271, 0xfe576f6f, 0xfe566f6f, 0xfe526c6c, 0xfe4f6868, 0xfe4e6666, 0xfe4d6565, 0xfe4d6665, 
+0xfe4d6665, 0xfe4d6665, 0xfe4e6667, 0xfe4d6566, 0xfe4b6363, 0xfe4a6161, 0xfe486060, 0xfe485f60, 
+0xfe455d5d, 0xfe445c5d, 0xfe445c5d, 0xfe455d5f, 0xfe496163, 0xfe506969, 0xfe546c6e, 0xfe546c6e, 
+0xfe526c6e, 0xfe4b6367, 0xfe455d61, 0xfe425a5e, 0xfe3f575b, 0xfe3c5458, 0xfe3a5256, 0xfe385154, 
+0xfe364f52, 0xfe344e51, 0xfe334d50, 0xfe324c4f, 0xfe314b4f, 0xfe334c50, 0xfe344d51, 0xfe344e51, 
+0xfe354e51, 0xfe375054, 0xfe395054, 0xfe3c545a, 0xfe3c545a, 0xfe3a5358, 0xfe395358, 0xfe395357, 
+0xfe395258, 0xfe395358, 0xfe3a545a, 0xfe3c555a, 0xfe3c555a, 0xfe3a5459, 0xfe3a5459, 0xfe3b545a, 
+0xfe3d565c, 0xfe3d575c, 0xfe3c565b, 0xfe3d565b, 0xfe3c565b, 0xfe3b545a, 0xfe395358, 0xfe395358, 
+0xfe3a5458, 0xfe3c555a, 0xfe405a5e, 0xfe425b60, 0xfe425b5e, 0xfe425c60, 0xfe455d60, 0xfe486063, 
+0xfe4b6366, 0xfe4e6667, 0xfe4f6969, 0xfe546c6c, 0xfe59706e, 0xfe5f7572, 0xfe667b78, 0xfe677d78, 
+0xfe798b83, 0xfe8fa095, 0xfe8fa096, 0xfeacbbad, 0xfeb2c1b3, 0xfeb0bfb1, 0xfea6b5a7, 0xfe8d9e92, 
+0xfe8a9b92, 0xfe88998f, 0xfe92a298, 0xfe9aaa9f, 0xfe8c9e94, 0xfe7d9189, 0xfe778b84, 0xfe7b8e86, 
+0xfe7d8f86, 0xfe728780, 0xfe687e79, 0xfe677c77, 0xfe637974, 0xfe5d736f, 0xfe576f6c, 0xfe576f6c,
+0xfe5a716d, 0xfe576f6c, 0xfe627873, 0xfe6c817a, 0xfe6e837d, 0xfe6b807c, 0xfe667d78, 0xfe5e7672, 
+0xfe58716e, 0xfe576f6c, 0xfe546c69, 0xfe526b68, 0xfe4e6966, 0xfe4c6663, 0xfe4b6363, 0xfe4a6363, 
+0xfe4b6563, 0xfe4c6664, 0xfe4b6463, 0xfe4d6666, 0xfe516b69, 0xfe516b6a, 0xfe556f6d, 0xfe5d7573 
+};
+
+
 void
 loop(void)
 {
@@ -1512,18 +1532,51 @@ loop(void)
      {
 	Evas_Coord              tw, th;
 
+	if (!t2)
+	  {
+	     Evas_Object        *ob;
+
+	     ob = evas_object_text_add(evas);
+	     evas_object_clip_set(ob, panel_clip);
+	     evas_object_layer_set(ob, 5);
+	     evas_object_show(ob);
+	     evas_object_text_font_set(ob, "Vera-Serif-Bold", 44);
+	     t2 = ob;
+	  }
 	evas_object_text_text_set(comment, "We can change the color");
 	evas_object_text_text_set(title, "Test 28: Set Text Object Color");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	evas_object_text_font_set(t1, "Vera-Serif-Bold", 48);
-	evas_object_text_text_set(t1, "Evas");
+	evas_object_text_font_set(t1, "Vera-Serif-Bold", 44);
+	if (t <= 331.0)
+	{
+	evas_object_render_op_set(t1, EVAS_RENDER_COPY);
+	evas_object_text_text_set(t1, "Copy");
+	}
+	else if (t <= 334.0)
+	{
+	evas_object_render_op_set(t1, EVAS_RENDER_MUL);
+	evas_object_text_text_set(t1, "Multiply");
+	}
+	else if (t <= 338.0)
+	{
+	evas_object_render_op_set(t1, EVAS_RENDER_SUB_REL);
+	evas_object_text_text_set(t1, "Sub_Rel");
+	}
 	evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
-	evas_object_move(t1, 120 - (tw / 2), win_h - 120 - (th / 2));
+	evas_object_move(t1, 120 - (tw / 2), win_h - 80 - (th / 2));
 	evas_object_color_set(t1,
 			      ((int)(t * 255)) & 0xff,
 			      ((int)(t * 200)) & 0xff,
 			      ((int)(t * 133)) & 0xff, ((int)(t * 128)) & 0xff);
+
+	evas_object_geometry_get(t2, NULL, NULL, &tw, &th);
+	evas_object_move(t2, 120 - (tw / 2), win_h - 160 - (th / 2));
+	evas_object_color_set(t2,
+			      ((int)(t * 255)) & 0xff,
+			      ((int)(t * 200)) & 0xff,
+			      ((int)(t * 133)) & 0xff, ((int)(t * 128)) & 0xff);
+	evas_object_text_text_set(t2, "Blend");
      }
    else if (t <= 339.0)
      {
@@ -1589,7 +1642,7 @@ loop(void)
 	     y = sin(v * 1.9) * ((220) / 2);
 	     evas_object_move(t1, 10, win_h - 240 + 10);
 	     evas_object_resize(t1, x + 110, y + 110);
-	     //	evas_object_gradient_fill_set(t1, 0, 0, x + 110, y + 110);
+	     evas_object_gradient_data_set(t1, grad_map, 128, 1);
 	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
 	}
      }
@@ -1610,9 +1663,17 @@ loop(void)
 	     x = cos(v * 1.7) * ((220) / 2);
 	     y = sin(v * 1.9) * ((220) / 2);
 	     evas_object_resize(t1, x + 110, y + 110);
-	     //	   evas_object_gradient_fill_set(t1, 0, 0, x + 110, y + 110);
 	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
 	     evas_object_gradient_angle_set(t1, t * 60);
+	     if (t >= 365.0)
+	       {
+	        evas_object_gradient_data_unset(t1);
+	        evas_object_gradient_colors_clear(t1);
+	        evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
+	        evas_object_gradient_color_add(t1, 250, 192, 64, 255, 1);
+	        evas_object_gradient_color_add(t1, 220, 128, 0, 255, 1);
+	        evas_object_gradient_color_add(t1, 200, 64, 0, 255, 1);
+	       }
 	  }
      }
    else if (t <= 379.0)
@@ -1620,7 +1681,7 @@ loop(void)
 	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
-				  "We can change color gradient, angle & resize");
+				  "We can change gradient colors, angle & resize");
 	evas_object_text_text_set(title, "Test 31: Gradient Range");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
@@ -1634,6 +1695,7 @@ loop(void)
 	     evas_object_resize(t1, x + 110, y + 110);
 	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
 	     evas_object_gradient_angle_set(t1, t * 60);
+//	     evas_object_gradient_data_unset(t1);
 	     evas_object_gradient_colors_clear(t1);
 	     evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
 	     evas_object_gradient_color_add(t1,
@@ -1659,7 +1721,7 @@ loop(void)
 	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
-				  "We can change color of a gradient object");
+				  "We can change the color of a gradient object");
 	evas_object_text_text_set(title, "Test 32: Gradient Object Color");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
@@ -1673,9 +1735,14 @@ loop(void)
 	     evas_object_resize(t1, x + 110, y + 110);
 	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
 	     evas_object_gradient_angle_set(t1, t * 60);
-	     evas_object_gradient_colors_clear(t1);
-	     evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
-	     evas_object_gradient_color_add(t1, 0, 0, 0, 255, 0);
+	     evas_object_gradient_data_set(t1, grad_map, 128, 1);
+	     if (t >= 384.0)
+	       {
+	         evas_object_gradient_data_unset(t1);
+	         evas_object_gradient_colors_clear(t1);
+	         evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
+	         evas_object_gradient_color_add(t1, 0, 0, 0, 255, 1);
+	       }
 	     evas_object_color_set(t1,
 				   ((int)(t * 120)) & 0xff,
 				   ((int)(t * 260)) & 0xff,
@@ -1747,14 +1814,16 @@ loop(void)
 //	   x = cos(v * 1.7) * ((220) / 2);
 	   y = sin(v * 0.5) * ((110) / 2);
 	   if (y < 0) y = -y;
-	   evas_object_gradient_fill_set(t1, 55, 55, 55, y);
-	   evas_object_gradient_angle_set(t1, t * 60);
-	   evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
 	   evas_object_resize(t1, 110, 110);
 	   evas_object_move(t1, (win_w - 110) / 2, (win_h - 240) + ((240 - 110) / 2));
+	   evas_object_gradient_data_set(t1, grad_map, 128, 1);
 	   if (t <= 414.0)
 	     {
+		evas_object_gradient_range_offset_set(t1, (2.0 * (t - 410)) / 5.0);
 		evas_object_gradient_type_set(t1, "radial", NULL);
+		evas_object_gradient_fill_set(t1, 55, 55, 55, 55);
+		evas_object_gradient_angle_set(t1, 0);
+		evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT_REPEAT);
 	     }
 	   else
 	     {
@@ -1762,7 +1831,11 @@ loop(void)
 		
 		snprintf(s, sizeof(s), "inner_radius = %3.3f;", 0.7 * (1.0 - (y / 55.0)));
 		evas_object_gradient_type_set(t1, "radial", s);
-	     }	    
+		evas_object_gradient_fill_set(t1, 55, 55, 55, y);
+		evas_object_gradient_angle_set(t1, t * 60);
+		evas_object_render_op_set(t1, EVAS_RENDER_MUL);
+		evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
+	     }
 	}
      }
    else if (t <= 439.0)
@@ -1780,8 +1853,10 @@ loop(void)
 	     //	   x = cos(v * 1.7) * ((220) / 2);
 	     y = sin(v * 0.5) * ((110) / 2);
 	     if (y < 0) y = -y;
+	     evas_object_render_op_set(t1, EVAS_RENDER_BLEND);
 	     evas_object_gradient_angle_set(t1, t * 60);
 	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REFLECT);
+	     evas_object_gradient_range_offset_set(t1, 0.0);
 	     evas_object_resize(t1, 110, 110);
 	     evas_object_move(t1, (win_w - 110) / 2, (win_h - 240) + ((240 - 110) / 2));
 	     if (t <= 429.0)
@@ -1793,6 +1868,12 @@ loop(void)
 	       {
 		  char                s[1024];
 		  
+		  evas_object_gradient_data_unset(t1);
+		  evas_object_gradient_colors_clear(t1);
+		  evas_object_gradient_color_add(t1, 255, 255, 255, 255, 2);
+		  evas_object_gradient_color_add(t1, 250, 192, 64, 255, 1);
+		  evas_object_gradient_color_add(t1, 220, 128, 0, 255, 1);
+		  evas_object_gradient_color_add(t1, 200, 64, 0, 255, 1);
 		  evas_object_gradient_fill_set(t1, 55, 55, 55, y);
 		  snprintf(s, sizeof(s), "annulus = %3.3f; wrap = 0.25;", 0.7 * (1.0 - (y / 55.0)));
 		  evas_object_gradient_type_set(t1, "angular", s);
@@ -1822,6 +1903,7 @@ loop(void)
 	       }
 	     else if (t <= 449.0)
 	       {
+		  evas_object_gradient_data_set(t1, grad_map, 128, 1);
 		  evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REPEAT);
 	       }
 	     else

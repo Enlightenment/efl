@@ -150,12 +150,15 @@ struct _XR_Gradient
 
 XR_Gradient *_xre_gradient_color_add(Ximage_Info *xinf, XR_Gradient *gr, int r, int g, int b, int a, int distance);
 XR_Gradient *_xre_gradient_colors_clear(XR_Gradient *gr);
+XR_Gradient *_xre_gradient_data_set(Ximage_Info *xinf, XR_Gradient *gr, void *map, int len, int has_alpha);
+XR_Gradient *_xre_gradient_data_unset(XR_Gradient *gr);
 void         _xre_gradient_free(XR_Gradient *gr);
 void         _xre_gradient_fill_set(XR_Gradient *gr, int x, int y, int w, int h);
+void         _xre_gradient_range_offset_set(XR_Gradient *gr, float offset);
 void         _xre_gradient_type_set(XR_Gradient *gr, char *name);
 void         _xre_gradient_type_params_set(XR_Gradient *gr, char *params);
 void        *_xre_gradient_geometry_init(XR_Gradient *gr, int spread);
-int          _xre_gradient_alpha_get(XR_Gradient *gr, int spread);
+int          _xre_gradient_alpha_get(XR_Gradient *gr, int spread, int op);
 void         _xre_gradient_map(RGBA_Draw_Context *dc, XR_Gradient *gr, int spread);
 void         _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h, double angle, int spread);
     

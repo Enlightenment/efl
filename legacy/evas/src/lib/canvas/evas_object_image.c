@@ -1293,6 +1293,7 @@ evas_object_image_init(Evas_Object *obj)
    obj->cur.geometry.w = 32.0;
    obj->cur.geometry.h = 32.0;
    obj->cur.layer = 0;
+   obj->cur.render_op = EVAS_RENDER_BLEND;
    /* set up object-specific settings */
    obj->prev = obj->cur;
    /* set up methods (compulsory) */
@@ -1371,6 +1372,9 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 							   obj->cur.cache.clip.g,
 							   obj->cur.cache.clip.b,
 							   obj->cur.cache.clip.a);
+
+   obj->layer->evas->engine.func->context_render_op_set(output, context,
+							obj->cur.render_op);
    if (o->engine_data)
      {
 	Evas_Coord idw, idh, idx, idy;
@@ -1578,6 +1582,12 @@ evas_object_image_render_pre(Evas_Object *obj)
        (obj->cur.color.g != obj->prev.color.g) ||
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
+     {
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	if (!o->pixel_updates) goto done;
+     }
+   /* if it changed render op */
+   if (obj->cur.render_op != obj->prev.render_op)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	if (!o->pixel_updates) goto done;
@@ -1796,7 +1806,11 @@ evas_object_image_is_opaque(Evas_Object *obj)
 	(o->cur.border.b != 0)) &&
        (!o->cur.border.fill)) return 0;
    if (!o->engine_data) return 0;
+   if (obj->cur.render_op == EVAS_RENDER_COPY)
+	return 1;
    if (o->cur.has_alpha) return 0;
+   if (obj->cur.render_op != EVAS_RENDER_BLEND)
+	return 0;
    return 1;
 }
 
@@ -1814,6 +1828,10 @@ evas_object_image_was_opaque(Evas_Object *obj)
 	(o->prev.border.b != 0)) &&
        (!o->prev.border.fill)) return 0;
    if (!o->engine_data) return 0;
+   if (obj->prev.render_op == EVAS_RENDER_COPY)
+	return 1;
    if (o->prev.has_alpha) return 0;
+   if (obj->prev.render_op != EVAS_RENDER_BLEND)
+	return 0;
    return 1;
 }

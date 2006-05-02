@@ -152,9 +152,29 @@ struct _Evas_Pixel_Import_Source
 #define EVAS_COLOR_SPACE_ARGB                      0 /**< ARGB color space */
 #define EVAS_COLOR_SPACE_AHSV                      1 /**< AHSV color space */
 
-#define EVAS_TEXTURE_REFLECT      0 /**< Gradient and image fill tiling mode - tiling reflects */
-#define EVAS_TEXTURE_REPEAT       1 /**< tiling repeats */
-#define EVAS_TEXTURE_RESTRICT     2 /**< tiling clamps */
+#define EVAS_TEXTURE_REFLECT            0 /**< Gradient and image fill tiling mode - tiling reflects */
+#define EVAS_TEXTURE_REPEAT             1 /**< tiling repeats */
+#define EVAS_TEXTURE_RESTRICT           2 /**< tiling clamps - range offset ignored */
+#define EVAS_TEXTURE_RESTRICT_REFLECT   3 /**< tiling clamps and any range offset reflects */
+#define EVAS_TEXTURE_RESTRICT_REPEAT    4 /**< tiling clamps and any range offset repeats */
+#define EVAS_TEXTURE_PAD                5 /**< tiling extends with end values */
+
+typedef enum _Evas_Render_Op
+{
+   EVAS_RENDER_BLEND = 0, /**< default op: d = d*(1-sa) + s */
+   EVAS_RENDER_BLEND_REL = 1, /**< d = d*(1 - sa) + s*da */
+   EVAS_RENDER_COPY = 2, /**< d = s */
+   EVAS_RENDER_COPY_REL = 3, /**< d = s*da */
+   EVAS_RENDER_ADD = 4, /**< d = d + s */
+   EVAS_RENDER_ADD_REL = 5, /**< d = d + s*da */
+   EVAS_RENDER_SUB = 6, /**< d = d - s */
+   EVAS_RENDER_SUB_REL = 7, /**< d = d - s*da */
+   EVAS_RENDER_TINT = 8, /**< d = d*s + d*(1 - sa) + s*(1 - da) */
+   EVAS_RENDER_TINT_REL = 9, /**< d = d*(1 - sa + s) */
+   EVAS_RENDER_MASK = 10, /**< d = d*sa */
+   EVAS_RENDER_MUL = 11 /**< d = d*s */
+} Evas_Render_Op; /**<  */
+
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
@@ -383,12 +403,16 @@ extern "C" {
    EAPI Evas_Object      *evas_object_gradient_add          (Evas *e);
    EAPI void              evas_object_gradient_color_add    (Evas_Object *obj, int r, int g, int b, int a, int distance);
    EAPI void              evas_object_gradient_colors_clear (Evas_Object *obj);
+   EAPI void              evas_object_gradient_data_set     (Evas_Object *obj, void *data, int len, int alpha);
+   EAPI void              evas_object_gradient_data_unset   (Evas_Object *obj);
    EAPI void              evas_object_gradient_angle_set    (Evas_Object *obj, Evas_Angle angle);
    EAPI Evas_Angle        evas_object_gradient_angle_get    (Evas_Object *obj);
    EAPI void              evas_object_gradient_type_set     (Evas_Object *obj, const char *type, const char *instance_params);
    EAPI void              evas_object_gradient_type_get     (Evas_Object *obj, char **type, char **instance_params);
    EAPI void              evas_object_gradient_fill_set     (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_gradient_fill_get     (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_object_gradient_range_offset_set   (Evas_Object *obj, float offset);
+   EAPI float             evas_object_gradient_range_offset_get   (Evas_Object *obj);
    EAPI void              evas_object_gradient_spread_set   (Evas_Object *obj, int
 tile_mode);
    EAPI int               evas_object_gradient_spread_get   (Evas_Object *obj);
@@ -589,6 +613,9 @@ tile_mode);
    EAPI void              evas_object_show                  (Evas_Object *obj);
    EAPI void              evas_object_hide                  (Evas_Object *obj);
    EAPI Evas_Bool         evas_object_visible_get           (Evas_Object *obj);
+
+   EAPI void              evas_object_render_op_set         (Evas_Object *obj, Evas_Render_Op op);
+   EAPI Evas_Render_Op    evas_object_render_op_get         (Evas_Object *obj);
 
    EAPI void              evas_object_anti_alias_set        (Evas_Object *obj, Evas_Bool antialias);
    EAPI Evas_Bool         evas_object_anti_alias_get        (Evas_Object *obj);

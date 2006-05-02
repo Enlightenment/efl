@@ -1,5 +1,4 @@
 #include "evas_common.h"
-#include "evas_macros.h"
 
 #include <math.h>
 
@@ -24,6 +23,42 @@ struct _RGBA_Vertex
    double x, y;
    int i;
 };
+
+#define POLY_EDGE_DEL(_i)                                               \
+{                                                                       \
+   int _j;                                                              \
+                                                                        \
+   for (_j = 0; (_j < num_active_edges) && (edges[_j].i != _i); _j++);  \
+   if (_j < num_active_edges)                                           \
+     {                                                                  \
+	num_active_edges--;                                             \
+	memmove(&(edges[_j]), &(edges[_j + 1]),                         \
+	        (num_active_edges - _j) * sizeof(RGBA_Edge));           \
+     }                                                                  \
+}
+
+#define POLY_EDGE_ADD(_i, _y)                                           \
+{                                                                       \
+   int _j;                                                              \
+   float _dx;                                                           \
+   RGBA_Vertex *_p, *_q;                                                \
+   if (_i < (n - 1)) _j = _i + 1;                                       \
+   else _j = 0;                                                         \
+   if (point[_i].y < point[_j].y)                                       \
+     {                                                                  \
+	_p = &(point[_i]);                                              \
+	_q = &(point[_j]);                                              \
+     }                                                                  \
+   else                                                                 \
+     {                                                                  \
+	_p = &(point[_j]);                                              \
+	_q = &(point[_i]);                                              \
+     }                                                                  \
+   edges[num_active_edges].dx = _dx = (_q->x - _p->x) / (_q->y - _p->y); \
+   edges[num_active_edges].x = (_dx * ((float)_y + 0.5 - _p->y)) + _p->x; \
+   edges[num_active_edges].i = _i;                                      \
+   num_active_edges++;                                                  \
+}
 
 void
 evas_common_polygon_init(void)
@@ -85,7 +120,7 @@ polygon_edge_sorter(const void *a, const void *b)
 void
 evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
 {
-   Gfx_Func_Blend_Color_Dst func;
+   RGBA_Gfx_Func      func;
    RGBA_Polygon_Point *pt;
    RGBA_Vertex       *point;
    RGBA_Edge         *edges;
@@ -232,7 +267,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    free(point);
    free(sorted_index);
 
-   func = evas_common_draw_func_blend_color_get(dc->col.col, dst, 0);
+   func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst, 1, dc->render_op);
    if (spans)
      {
 	for (l = spans; l; l = l->next)
@@ -242,7 +277,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 
 	     span = (RGBA_Span *)l;
 	     ptr = dst->image->data + (span->y * (dst->image->w)) + span->x;
-	     func(dc->col.col, ptr, span->w);
+	     func(NULL, NULL, dc->col.col, ptr, span->w);
 	  }
 	while (spans)
 	  {

@@ -20,14 +20,14 @@ static void evas_object_rectangle_render(Evas_Object *obj, void *output, void *c
 static void evas_object_rectangle_free(Evas_Object *obj);
 static void evas_object_rectangle_render_pre(Evas_Object *obj);
 static void evas_object_rectangle_render_post(Evas_Object *obj);
+static int evas_object_rectangle_is_opaque(Evas_Object *obj);
+static int evas_object_rectangle_was_opaque(Evas_Object *obj);
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
 static void evas_object_rectangle_store(Evas_Object *obj);
 static void evas_object_rectangle_unstore(Evas_Object *obj);
 static int evas_object_rectangle_is_visible(Evas_Object *obj);
 static int evas_object_rectangle_was_visible(Evas_Object *obj);
-static int evas_object_rectangle_is_opaque(Evas_Object *obj);
-static int evas_object_rectangle_was_opaque(Evas_Object *obj);
 static int evas_object_rectangle_is_inside(Evas_Object *obj, double x, double y);
 static int evas_object_rectangle_was_inside(Evas_Object *obj, double x, double y);
 #endif
@@ -44,8 +44,8 @@ static Evas_Object_Func object_func =
      NULL,
      NULL,
      NULL,
-     NULL,
-     NULL,
+     evas_object_rectangle_is_opaque,
+     evas_object_rectangle_was_opaque,
      NULL,
      NULL,
      NULL
@@ -95,11 +95,13 @@ evas_object_rectangle_init(Evas_Object *obj)
    obj->cur.geometry.w = 32.0;
    obj->cur.geometry.h = 32.0;
    obj->cur.layer = 0;
+   obj->cur.render_op = EVAS_RENDER_BLEND;
    /* set up object-specific settings */
    obj->prev = obj->cur;
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
+   obj->changed = 1;
 }
 
 static void *
@@ -143,6 +145,8 @@ evas_object_rectangle_render(Evas_Object *obj, void *output, void *context, void
 						    obj->cur.cache.clip.a);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
+   obj->layer->evas->engine.func->context_render_op_set(output, context,
+							obj->cur.render_op);
    obj->layer->evas->engine.func->rectangle_draw(output,
 						 context,
 						 surface,
@@ -194,6 +198,12 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	goto done;
      }
+   /* if it changed render op */
+   if (obj->cur.render_op != obj->prev.render_op)
+     {
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	goto done;
+     }
    /* if it changed color */
    if ((obj->cur.color.r != obj->prev.color.r) ||
        (obj->cur.color.g != obj->prev.color.g) ||
@@ -233,7 +243,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
-/*   
+ /*   
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj) &&
        (!obj->clip.clipees))
@@ -242,7 +252,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
 							    obj->cur.cache.clip.y,
 							    obj->cur.cache.clip.w,
 							    obj->cur.cache.clip.h);
- */
+  */
    done:
    evas_object_render_pre_effect_updates(updates, obj, is_v, was_v);
 }
@@ -267,6 +277,37 @@ evas_object_rectangle_render_post(Evas_Object *obj)
      }
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
+   obj->changed = 0;
+}
+
+static int
+evas_object_rectangle_is_opaque(Evas_Object *obj)
+{
+   Evas_Object_Rectangle *o;
+
+   /* this returns 1 if the internal object data implies that the object is */
+   /* currently fully opaque over the entire rectangle it occupies */
+   o = (Evas_Object_Rectangle *)(obj->object_data);
+   if (obj->cur.render_op == EVAS_RENDER_COPY)
+	return 1;
+   if (obj->cur.render_op != EVAS_RENDER_BLEND)
+	return 0;
+   return 1;
+}
+
+static int
+evas_object_rectangle_was_opaque(Evas_Object *obj)
+{
+   Evas_Object_Rectangle *o;
+
+   /* this returns 1 if the internal object data implies that the object was */
+   /* previously fully opaque over the entire rectangle it occupies */
+   o = (Evas_Object_Rectangle *)(obj->object_data);
+   if (obj->prev.render_op == EVAS_RENDER_COPY)
+	return 1;
+   if (obj->prev.render_op != EVAS_RENDER_BLEND)
+	return 0;
+   return 1;
 }
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
@@ -303,28 +344,6 @@ evas_object_rectangle_was_visible(Evas_Object *obj)
 
    /* this returns 1 if the internal object data would imply that it was */
    /* visible (ie drawing it draws something. this is not to do with events */
-   o = (Evas_Object_Rectangle *)(obj->object_data);
-   return 1;
-}
-
-static int
-evas_object_rectangle_is_opaque(Evas_Object *obj)
-{
-   Evas_Object_Rectangle *o;
-
-   /* this returns 1 if the internal object data implies that the object is */
-   /* currently fully opaque over the entire rectangle it occupies */
-   o = (Evas_Object_Rectangle *)(obj->object_data);
-   return 1;
-}
-
-static int
-evas_object_rectangle_was_opaque(Evas_Object *obj)
-{
-   Evas_Object_Rectangle *o;
-
-   /* this returns 1 if the internal object data implies that the object was */
-   /* previously fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Rectangle *)(obj->object_data);
    return 1;
 }

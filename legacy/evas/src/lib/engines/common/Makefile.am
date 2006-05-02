@@ -1,8 +1,7 @@
-## Process this file with automake to produce Makefile.in
-
 AUTOMAKE_OPTIONS     = 1.4 foreign
 
-# A list of all the files in the current directory which can be regenerated
+SUBDIRS = evas_op_add evas_op_blend evas_op_copy evas_op_mask evas_op_mul evas_op_sub 
+
 MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES	     = -I. \
@@ -13,12 +12,13 @@ INCLUDES	     = -I. \
 
 noinst_LTLIBRARIES      = libevas_engine_common.la
 libevas_engine_common_la_SOURCES  = \
-evas_blend_alpha_color_pixel.c \
-evas_blend_color_pixel.c \
+evas_op_copy_main_.c \
+evas_op_blend_main_.c \
+evas_op_add_main_.c \
+evas_op_sub_main_.c \
+evas_op_mask_main_.c \
+evas_op_mul_main_.c \
 evas_blend_main.c \
-evas_blend_pixel_cmod_pixel.c \
-evas_blend_pixel_mul_pixel.c \
-evas_blend_pixel_pixel.c \
 evas_blit_main.c \
 evas_convert_color.c \
 evas_convert_gry_1.c \
@@ -53,8 +53,7 @@ evas_scale_sample.c \
 evas_scale_smooth.c \
 evas_tiler.c \
 evas_regionbuf.c \
-evas_array_hash.c \
-evas_blend_ops.h
+evas_array_hash.c
 
 EXTRA_DIST = \
 evas_scale_smooth_scaler.c \

@@ -286,6 +286,8 @@ evas_object_polygon_render(Evas_Object *obj, void *output, void *context, void *
 						    obj->cur.cache.clip.a);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
+   obj->layer->evas->engine.func->context_render_op_set(output, context,
+							obj->cur.render_op);
    o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
 									obj->layer->evas->engine.data.context,
 									o->engine_data);
@@ -347,6 +349,12 @@ evas_object_polygon_render_pre(Evas_Object *obj)
    updates = evas_object_render_pre_clipper_change(updates, obj);
    /* if we restacked (layer or just within a layer) */
    if (obj->restack)
+     {
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	goto done;
+     }
+   /* if it changed render op */
+   if (obj->cur.render_op != obj->prev.render_op)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	goto done;

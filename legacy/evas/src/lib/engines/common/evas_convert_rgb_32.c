@@ -8,7 +8,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jum
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
    int y;
-   Gfx_Func_Blend_Src_Dst func;
+   Gfx_Func_Copy func;
 
    dst_ptr = (DATA32 *)dst;
    src_ptr = src;

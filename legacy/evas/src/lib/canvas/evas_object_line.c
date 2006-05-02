@@ -226,6 +226,8 @@ evas_object_line_init(Evas_Object *obj)
    obj->cur.geometry.w = 32.0;
    obj->cur.geometry.h = 32.0;
    obj->cur.layer = 0;
+   obj->cur.anti_alias = 1;
+   obj->cur.render_op = EVAS_RENDER_BLEND;
    /* set up object-specific settings */
    obj->prev = obj->cur;
    /* set up methods (compulsory) */
@@ -279,6 +281,10 @@ evas_object_line_render(Evas_Object *obj, void *output, void *context, void *sur
 						    obj->cur.cache.clip.a);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
+   obj->layer->evas->engine.func->context_anti_alias_set(output, context,
+							 obj->cur.anti_alias);
+   obj->layer->evas->engine.func->context_render_op_set(output, context,
+							obj->cur.render_op);
    obj->layer->evas->engine.func->line_draw(output,
 					    context,
 					    surface,
@@ -326,6 +332,18 @@ evas_object_line_render_pre(Evas_Object *obj)
    updates = evas_object_render_pre_clipper_change(updates, obj);
    /* if we restacked (layer or just within a layer) */
    if (obj->restack)
+     {
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	goto done;
+     }
+   /* if it changed anti_alias */
+   if (obj->cur.anti_alias != obj->prev.anti_alias)
+     {
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	goto done;
+     }
+   /* if it changed render op */
+   if (obj->cur.render_op != obj->prev.render_op)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	goto done;

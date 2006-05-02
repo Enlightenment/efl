@@ -91,6 +91,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    int      dst_jump;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
    int      src_w, src_h, dst_w, dst_h;
+   RGBA_Gfx_Func func;
 
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
      return;
@@ -234,171 +235,71 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    /* figure out dest start ptr */
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
 
-   if (dc->mod.use)
+   if (dc->mul.use)
+	func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
+   else
+	func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
+
+   if ((dst_region_w == src_region_w) &&
+	(dst_region_h == src_region_h))
      {
-	Gfx_Func_Blend_Src_Cmod_Dst func;
-
-	func = evas_common_draw_func_blend_cmod_get(src, dst, dst_clip_w);
-	/* if 1:1 scale */
-
-	if ((dst_region_w == src_region_w) &&
-	    (dst_region_h == src_region_h))
+	ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
+	for (y = 0; y < dst_clip_h; y++)
 	  {
-	     ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
-	     for (y = 0; y < dst_clip_h; y++)
-	       {
-		  /* * blend here [clip_w *] ptr -> dst_ptr * */
-		  func(ptr, dst_ptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-		  ptr += src_w;
-		  dst_ptr += dst_w;
-	       }
-	  }
-	else
-	  {
-	     /* a scanline buffer */
-	     buf = malloc(dst_clip_w * sizeof(DATA32));
-	     if (!buf) goto no_buf;
-
-	     /* fill scale tables */
-	     for (x = 0; x < dst_clip_w; x++)
-	       lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
-	     for (y = 0; y < dst_clip_h; y++)
-	       row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
-					+ src_region_y) * src_w);
-	     /* scale to dst */
-	     dptr = dst_ptr;
-	     for (y = 0; y < dst_clip_h; y++)
-	       {
-		  dst_ptr = buf;
-		  for (x = 0; x < dst_clip_w; x++)
-		    {
-		       ptr = row_ptr[y] + lin_ptr[x];
-		       *dst_ptr = *ptr;
-		       dst_ptr++;
-		    }
-		  /* * blend here [clip_w *] buf -> dptr * */
-		  func(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-		  dptr += dst_w;
-	       }
-	     free(buf);
-	  }
-     }
-   else if (dc->mul.use)
-     {
-	Gfx_Func_Blend_Src_Mul_Dst func;
-
-	func = evas_common_draw_func_blend_mul_get(src, dc->mul.col, dst, dst_clip_w);
-	/* if 1:1 scale */
-	if ((dst_region_w == src_region_w) &&
-	    (dst_region_h == src_region_h))
-	  {
-	     ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
-	     for (y = 0; y < dst_clip_h; y++)
-	       {
-		  /* * blend here [clip_w *] ptr -> dst_ptr * */
-		  func(ptr, dst_ptr, dst_clip_w, dc->mul.col);
-		  ptr += src_w;
-		  dst_ptr += dst_w;
-	       }
-	  }
-	else
-	  {
-	     /* a scanline buffer */
-	     buf = malloc(dst_clip_w * sizeof(DATA32));
-	     if (!buf) goto no_buf;
-
-	     /* fill scale tables */
-	     for (x = 0; x < dst_clip_w; x++)
-	       lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
-	     for (y = 0; y < dst_clip_h; y++)
-	       row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
-					+ src_region_y) * src_w);
-	     /* scale to dst */
-	     dptr = dst_ptr;
-	     for (y = 0; y < dst_clip_h; y++)
-	       {
-		  dst_ptr = buf;
-		  for (x = 0; x < dst_clip_w; x++)
-		    {
-		       ptr = row_ptr[y] + lin_ptr[x];
-		       *dst_ptr = *ptr;
-		       dst_ptr++;
-		    }
-		  /* * blend here [clip_w *] buf -> dptr * */
-		  func(buf, dptr, dst_clip_w, dc->mul.col);
-		  dptr += dst_w;
-	       }
-	     free(buf);
+	    /* * blend here [clip_w *] ptr -> dst_ptr * */
+	    func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
+	    ptr += src_w;
+	    dst_ptr += dst_w;
 	  }
      }
    else
      {
-	Gfx_Func_Blend_Src_Dst func;
-
-	func = evas_common_draw_func_blend_get(src, dst, dst_clip_w);
-	/* if 1:1 scale */
-	if ((dst_region_w == src_region_w) &&
-	    (dst_region_h == src_region_h))
+       /* fill scale tables */
+	for (x = 0; x < dst_clip_w; x++)
+	    lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
+	for (y = 0; y < dst_clip_h; y++)
+	    row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
+			+ src_region_y) * src_w);
+	/* scale to dst */
+	dptr = dst_ptr;
+#ifdef DIRECT_SCALE	     
+	if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	     (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	     (!dc->mul.use))
 	  {
-	     ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
-	     for (y = 0; y < dst_clip_h; y++)
-	       {
-		  /* * blend here [clip_w *] ptr -> dst_ptr * */
-		  func(ptr, dst_ptr, dst_clip_w);
-		  ptr += src_w;
-		  dst_ptr += dst_w;
-	       }
+	    for (y = 0; y < dst_clip_h; y++)
+	      {
+		 dst_ptr = dptr;
+		 for (x = 0; x < dst_clip_w; x++)
+		    {
+			ptr = row_ptr[y] + lin_ptr[x];
+			*dst_ptr = *ptr;
+			dst_ptr++;
+		    }
+		 dptr += dst_w;
+	      }
 	  }
 	else
-	  {
-	     /* fill scale tables */
-	     for (x = 0; x < dst_clip_w; x++)
-	       lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
-	     for (y = 0; y < dst_clip_h; y++)
-	       row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
-					+ src_region_y) * src_w);
-	     /* scale to dst */
-	     dptr = dst_ptr;
-#ifdef DIRECT_SCALE	     
-	     if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
-		 (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)))
-	       {
-		  for (y = 0; y < dst_clip_h; y++)
-		    {
-		       dst_ptr = dptr;
-		       for (x = 0; x < dst_clip_w; x++)
-			 {
-			    ptr = row_ptr[y] + lin_ptr[x];
-			    *dst_ptr = *ptr;
-			    dst_ptr++;
-			 }
-		       /* * blend here [clip_w *] buf -> dptr * */
-//		       func(buf, dptr, dst_clip_w);
-		       dptr += dst_w;
-		    }
-	       }
-	     else
 #endif	       
-	       {
-		  /* a scanline buffer */
-		  buf = malloc(dst_clip_w * sizeof(DATA32));
-		  if (!buf) goto no_buf;
+	  {
+	    /* a scanline buffer */
+	    buf = malloc(dst_clip_w * sizeof(DATA32));
+	    if (!buf) goto no_buf;
 
-		  for (y = 0; y < dst_clip_h; y++)
-		    {
-		       dst_ptr = buf;
-		       for (x = 0; x < dst_clip_w; x++)
-			 {
-			    ptr = row_ptr[y] + lin_ptr[x];
-			    *dst_ptr = *ptr;
-			    dst_ptr++;
-			 }
-		       /* * blend here [clip_w *] buf -> dptr * */
-		       func(buf, dptr, dst_clip_w);
-		       dptr += dst_w;
-		    }
-		  free(buf);
-	       }
+	    for (y = 0; y < dst_clip_h; y++)
+	      {
+		dst_ptr = buf;
+		for (x = 0; x < dst_clip_w; x++)
+		  {
+		    ptr = row_ptr[y] + lin_ptr[x];
+		    *dst_ptr = *ptr;
+		    dst_ptr++;
+		  }
+		/* * blend here [clip_w *] buf -> dptr * */
+		func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
+		dptr += dst_w;
+	      }
+	    free(buf);
 	  }
      }
 

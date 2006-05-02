@@ -79,12 +79,7 @@
 		  xp++;  xapp++;
 	       }
 
-	     if (dc->mod.use)
-	       func_cmod(buf, dptr, w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-	     else if (dc->mul.use)
-	       func_mul(buf, dptr, w, dc->mul.col);
-	     else
-	       func(buf, dptr, w);
+	     func(buf, NULL, dc->mul.col, dptr, w);
 
 	     pbuf = buf;
 	     dptr += dst_w;  dst_clip_w = w;
@@ -98,7 +93,7 @@
 #ifdef DIRECT_SCALE
         if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
 	    (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
-	    (!dc->mod.use) && (!dc->mul.use))
+	    (!dc->mul.use))
 	  {
 	     while (dst_clip_h--)
 	       {
@@ -153,15 +148,6 @@
 		       *pbuf++ = ARGB_JOIN(0xff, r >> 4, g >> 4, b >> 4);
 		       xp++;  xapp++;
 		    }
-/*		  
-		  if (dc->mod.use)
-		    func_cmod(buf, dptr, w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-		  else if (dc->mul.use)
-		    func_mul(buf, dptr, w, dc->mul.col);
-		  else
-		    func(buf, dptr, w);
-		  pbuf = buf;
- */
 		  
 		  dptr += dst_w;  dst_clip_w = w;
 		  yp++;  yapp++;
@@ -225,12 +211,7 @@
 		       xp++;  xapp++;
 		    }
 		  
-		  if (dc->mod.use)
-		    func_cmod(buf, dptr, w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-		  else if (dc->mul.use)
-		    func_mul(buf, dptr, w, dc->mul.col);
-		  else
-		    func(buf, dptr, w);
+		  func(buf, NULL, dc->mul.col, dptr, w);
 	     
 		  pbuf = buf;
 		  dptr += dst_w;  dst_clip_w = w;

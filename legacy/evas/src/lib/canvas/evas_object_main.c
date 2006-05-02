@@ -845,7 +845,7 @@ evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
    if (obj->cur.anti_alias == !!anti_alias)
    	return;
    obj->cur.anti_alias = !!anti_alias;
-   evas_object_change(obj);  
+   evas_object_change(obj);
 }
 
 
@@ -881,7 +881,7 @@ evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
    if (obj->cur.interpolation.color_space == color_space)
    	return;
    obj->cur.interpolation.color_space = color_space;
-   evas_object_change(obj);  
+   evas_object_change(obj);
 }
 
 
@@ -899,6 +899,42 @@ evas_object_color_interpolation_get(Evas_Object *obj)
    MAGIC_CHECK_END();
    if (obj->delete_me) return 0;
    return obj->cur.interpolation.color_space;
+}
+
+/**
+ * Sets the render_op to be used for rendering the evas object.
+ * @param   obj The given evas object.
+ * @param   render_op one of the Evas_Render_Op values.
+ * @ingroup Evas_Object_Group
+ */
+EAPI void
+evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return;
+   if (obj->cur.render_op == render_op)
+   	return;
+   obj->cur.render_op = render_op;
+   evas_object_change(obj);
+}
+
+
+/**
+ * Retrieves the current value of the operation used for rendering the evas object.
+ * @param   obj The given evas object.
+ * @return  one of the enumerated values in Evas_Render_Op.
+ * @ingroup Evas_Object_Group
+ */
+EAPI Evas_Render_Op
+evas_object_render_op_get(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return EVAS_RENDER_BLEND;
+   return obj->cur.render_op;
 }
 
 /**

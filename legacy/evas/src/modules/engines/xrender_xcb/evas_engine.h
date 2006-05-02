@@ -173,6 +173,14 @@ XR_Gradient *_xre_gradient_color_add       (XCBimage_Info    *xcbinf,
 
 XR_Gradient *_xre_gradient_colors_clear    (XR_Gradient      *gr);
 
+XR_Gradient *_xre_gradient_data_set        (XCBimage_Info *xcbinf,
+                                            XR_Gradient *gr,
+                                            void *map,
+                                            int len,
+                                            int has_alpha);
+
+XR_Gradient *_xre_gradient_data_unset      (XR_Gradient *gr);
+
 void         _xre_gradient_free            (XR_Gradient      *gr);
 
 void         _xre_gradient_fill_set        (XR_Gradient      *gr,
@@ -180,6 +188,9 @@ void         _xre_gradient_fill_set        (XR_Gradient      *gr,
                                             int               y,
                                             int               w,
                                             int               h);
+
+void         _xre_gradient_range_offset_set(XR_Gradient *gr,
+                                            float offset);
 
 void         _xre_gradient_type_set        (XR_Gradient      *gr,
                                             char             *name);
@@ -191,7 +202,8 @@ void        *_xre_gradient_geometry_init   (XR_Gradient      *gr,
                                             int               spread);
 
 int          _xre_gradient_alpha_get       (XR_Gradient       *gr,
-                                            int                spread);
+                                            int                spread,
+                                            int op);
 
 void         _xre_gradient_map             (RGBA_Draw_Context *dc,
                                             XR_Gradient       *gr,

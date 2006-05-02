@@ -6,9 +6,7 @@
    DATA32  *buf, *src_data;
    RGBA_Image  *line_buf;
    
-   Gfx_Func_Blend_Src_Cmod_Dst func_cmod;
-   Gfx_Func_Blend_Src_Mul_Dst  func_mul;
-   Gfx_Func_Blend_Src_Dst      func;
+   RGBA_Gfx_Func      func;
 
    src_data = src->image->data;
 
@@ -25,10 +23,10 @@
       goto done_scale_down;
    buf = line_buf->image->data;
    
-   func      = evas_common_draw_func_blend_get      (src, dst, dst_clip_w);
-   func_cmod = evas_common_draw_func_blend_cmod_get (src, dst, dst_clip_w);
-   func_mul  = evas_common_draw_func_blend_mul_get  (src, dc->mul.col, dst, dst_clip_w);
-
+   if (dc->mul.use)
+	func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
+   else
+	func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
   /* scaling down vertically */
    if ((dst_region_w >= src_region_w) &&
        (dst_region_h <  src_region_h))

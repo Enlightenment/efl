@@ -187,12 +187,15 @@ Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 
 Evas_GL_Gradient *evas_gl_common_gradient_color_add(Evas_GL_Gradient *gr, int r, int g, int b, int a, int distance);
 Evas_GL_Gradient *evas_gl_common_gradient_colors_clear(Evas_GL_Gradient *gr);
+Evas_GL_Gradient *evas_gl_common_gradient_data_set(Evas_GL_Gradient *gr, void *data, int len, int has_alpha);
+Evas_GL_Gradient *evas_gl_common_gradient_data_unset(Evas_GL_Gradient *gr);
 void              evas_gl_common_gradient_free(Evas_GL_Gradient *gr);
 void              evas_gl_common_gradient_fill_set(Evas_GL_Gradient *gr, int x, int y, int w, int h);
+void              evas_gl_common_gradient_range_offset_set(Evas_GL_Gradient *gr, float offset);
 void              evas_gl_common_gradient_type_set(Evas_GL_Gradient *gr, char *name);
 void              evas_gl_common_gradient_type_params_set(Evas_GL_Gradient *gr, char *params);
 void             *evas_gl_common_gradient_geometry_init(Evas_GL_Gradient *gr, int spread);
-int               evas_gl_common_gradient_alpha_get(Evas_GL_Gradient *gr, int spread);
+int               evas_gl_common_gradient_alpha_get(Evas_GL_Gradient *gr, int spread, int op);
 
 void              evas_gl_common_gradient_map(RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int spread);
 

@@ -45,6 +45,47 @@ _xre_gradient_colors_clear(XR_Gradient *gr)
    return gr;
 }
 
+XR_Gradient *
+_xre_gradient_data_set(XCBimage_Info *xcbinf, XR_Gradient *gr, void *map, int len, int has_alpha)
+{
+   if (!gr)
+     {
+	gr = calloc(1, sizeof(XR_Gradient));
+	if (!gr) return NULL;
+	gr->xcbinf = xcbinf;
+	gr->xcbinf->references++;
+	gr->grad = evas_common_gradient_new();
+	if (!gr->grad)
+	  {
+	     gr->xcbinf->references--;
+	     free(gr);
+	     return NULL;
+	  }
+     }
+   evas_common_gradient_data_set(gr->grad, map, len, has_alpha);
+   if (gr->surface)
+     {
+	_xr_render_surface_free(gr->surface);
+	gr->surface = NULL;
+     }
+   gr->changed = 1;
+   return gr;
+}
+
+XR_Gradient *
+_xre_gradient_data_unset(XR_Gradient *gr)
+{
+   if (!gr) return NULL;
+   evas_common_gradient_data_unset(gr->grad);
+   if (gr->surface)
+     {
+	_xr_render_surface_free(gr->surface);
+	gr->surface = NULL;
+     }
+   gr->changed = 1;
+   return gr;
+}
+
 void
 _xre_gradient_free(XR_Gradient *gr)
 {
@@ -80,6 +121,14 @@ _xre_gradient_type_set(XR_Gradient *gr, char *name)
 }
 
 void
+_xre_gradient_range_offset_set(XR_Gradient *gr, float offset)
+{
+   if (!gr) return;
+   evas_common_gradient_range_offset_set(gr->grad, offset);
+   gr->changed = 1;
+}
+
+void
 _xre_gradient_type_params_set(XR_Gradient *gr, char *params)
 {
    if (!gr) return;
@@ -96,10 +145,10 @@ _xre_gradient_geometry_init(XR_Gradient *gr, int spread)
 }
 
 int
-_xre_gradient_alpha_get(XR_Gradient *gr, int spread)
+_xre_gradient_alpha_get(XR_Gradient *gr, int spread, int op)
 {
    if (!gr) return 0;
-   return evas_common_gradient_has_alpha(gr->grad, spread);
+   return evas_common_gradient_has_alpha(gr->grad, spread, op);
 }
 
 void
@@ -140,6 +189,7 @@ _xre_gradient_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr
 		  memset(im->image->data, 0, im->image->w * im->image->h * sizeof(DATA32));
 		  dc2->anti_alias = dc->anti_alias;
 		  dc2->interpolation.color_space = dc->interpolation.color_space;
+		  dc2->render_op = _EVAS_RENDER_COPY;
 		  evas_common_gradient_draw(im, dc2, 0, 0, w, h, gr->grad, angle, spread);
 		  gr->surface = _xr_render_surface_new(gr->xcbinf, w, h, gr->xcbinf->fmt32, 1);
 		  if (gr->surface)
