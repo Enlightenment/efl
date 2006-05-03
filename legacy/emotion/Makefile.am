@@ -13,8 +13,9 @@ bin_SCRIPTS = emotion-config
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN \
 	emotion.spec emotion.spec.in emotion.c.in gendoc Doxyfile \
 	emotion.pc.in debian/changelog debian/control \
-	debian/copyright debian/rules debian/libemotion0.files \
-	debian/libemotion0-dev.files debian/emotion0-bin.files \
+	debian/copyright debian/rules debian/libemotion0.install \
+	debian/libemotion0-dev.install debian/emotion0-bin.install \
+	debian/libemotion0-gstreamer.install debian/libemotion0-xine.install \
 	debian/docs
 
 pkgconfigdir = $(libdir)/pkgconfig
