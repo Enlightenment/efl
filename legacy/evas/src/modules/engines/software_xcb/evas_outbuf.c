@@ -89,7 +89,7 @@ evas_software_xcb_outbuf_setup_x(int            w,
 #ifdef WORDS_BIGENDIAN
 	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == XCBImageOrderLSBFirst)
 	     buf->priv.x.swap = 1;
-	   if (evas_software_xcb_x_output_buffer_bit_order(xcbob) == XCBImageOrderLSBFirst)
+	   if (evas_software_xcb_x_output_buffer_bit_order(xcbob) == XCBImageOrderMSBFirst)
 	     buf->priv.x.bit_swap = 1;
 #else
 	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == XCBImageOrderMSBFirst)
@@ -1013,8 +1013,8 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
 
    perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
 
-   mask = XCBCWBackPixmap | XCBCWBorderPixel |
-     XCBCWBitGravity | XCBCWBackingStore |
+   mask = XCBCWBackPixmap  | XCBCWBorderPixel |
+     XCBCWBitGravity       | XCBCWBackingStore |
      XCBCWOverrideRedirect | XCBCWEventMask | XCBCWColormap;
    value[0] = XCBBackPixmapNone;
    value[1] = 0;
@@ -1038,7 +1038,7 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
    mask = XCBConfigWindowStackMode;
    value[0] = XCBStackModeAbove;
    XCBConfigureWindow (conn, win.window, mask, value2);
-/*    XCBMapWindow (conn, win.window); */
+   XCBMapWindow (conn, win.window);
 
    do_shm = evas_software_xcb_x_can_do_shm(conn);
 
