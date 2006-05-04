@@ -1,12 +1,17 @@
-#include <X11/XCB/xcb.h>
-#include <X11/XCB/xcb_icccm.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <math.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#define X_H   /* make sure we aren't using symbols from X.h */
+
+#include <X11/XCB/xcb.h>
+#include <X11/XCB/xcb_icccm.h>
+#include <X11/XCB/xcb_aux.h>
 
 #include "Evas.h"
 #include "Evas_Engine_Software_Xcb.h"
@@ -19,73 +24,97 @@ Evas               *evas = NULL;
 int                 win_w = 240;
 int                 win_h = 240;
 
-XCBSCREEN *
-get_screen (XCBConnection *c,
-            int            screen)
+
+static void
+title_set (XCBConnection *c, XCBWINDOW win, const char *title)
 {
-  XCBSCREENIter i;
+  XCBInternAtomCookie cookie_encoding;
+  XCBInternAtomCookie cookie_property;
+  XCBInternAtomRep   *rep;
+  XCBATOM             encoding;
+  char               *atom_name;
 
-  i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(c));
-  for (; i.rem; --screen, XCBSCREENNext(&i))
-    if (screen == 0)
-      return i.data;
+  atom_name = "UTF8_STRING";
+  cookie_encoding = XCBInternAtom (c,
+                                   0,
+                                   strlen (atom_name),
+                                   atom_name);
+  atom_name = "_NET_WM_NAME";
+  cookie_property = XCBInternAtom (c,
+                                   0,
+                                   strlen (atom_name),
+                                   atom_name);
 
-  return NULL;
+  rep = XCBInternAtomReply (c, cookie_encoding, NULL);
+  encoding = rep->atom;
+  free (rep);
+
+  rep = XCBInternAtomReply (c, cookie_property, NULL);
+
+  XCBChangeProperty(c, XCBPropModeReplace,
+                    win,
+                    rep->atom, encoding, 8, strlen (title), title);
+  free (rep);
 }
 
-XCBVISUALTYPE *
-get_visual(XCBConnection *conn,
-	   XCBSCREEN     *root)
+static void
+class_set (XCBConnection *c, XCBWINDOW win, const char *name, const char *class)
 {
-   XCBDEPTH         *d;
-   XCBVISUALTYPEIter iter;
-   int               cur;
+  XCBInternAtomCookie cookie_encoding;
+  XCBInternAtomCookie cookie_property;
+  XCBInternAtomRep   *rep;
+  XCBATOM             encoding;
+  char               *atom_name;
+  char               *class_str;
+  char               *s;
+  int                 length_name;
+  int                 length_class;
 
-   d = XCBSCREENAllowedDepthsIter(root).data;
-   if (!d) return NULL;
+  length_name = strlen (name);
+  length_class = strlen (class);
+  class_str = (char *)malloc (sizeof (char) * (length_name + length_class + 2));
+  if (!class_str) return;
+  s = class_str;
+  memcpy (s, name, length_name);
+  s += length_name;
+  *s = '\0';
+  s++;
+  memcpy (s, class, length_class);
+  s += length_class;
+  *s = '\0';
 
-   iter = XCBDEPTHVisualsIter(d);
-   for (cur = 0 ; cur < iter.rem ; XCBVISUALTYPENext(&iter), ++cur)
-      if (root->root_visual.id == iter.data->visual_id.id)
-	 return iter.data;
+  atom_name = "UTF8_STRING";
+  cookie_encoding = XCBInternAtom (c,
+                                   0,
+                                   strlen (atom_name),
+                                   atom_name);
+  atom_name = "_WM_CLASS";
+  cookie_property = XCBInternAtom (c,
+                                   0,
+                                   strlen (atom_name),
+                                   atom_name);
 
-   return NULL;
-}
+  rep = XCBInternAtomReply (c, cookie_encoding, NULL);
+  encoding = rep->atom;
+  free (rep);
 
-int
-get_depth(XCBConnection *conn,
-	  XCBSCREEN     *root)
-{
-  XCBDRAWABLE        drawable;
-  XCBGetGeometryRep *geom;
-  int                depth;
+  rep = XCBInternAtomReply (c, cookie_property, NULL);
 
-  drawable.window = root->root;
-  geom = XCBGetGeometryReply (conn, XCBGetGeometry(conn, drawable), 0);
-
-  if(!geom)
-    {
-      perror ("GetGeometry(root) failed");
-      exit (0);
-    }
-
-  depth = geom->depth;
-  free (geom);
-
-  return depth;
+  XCBChangeProperty(c, XCBPropModeReplace,
+                    win,
+                    rep->atom, encoding, 8, strlen (class_str), class_str);
+  free (rep);
 }
 
 int
 main(int argc, char **argv)
 {
-   int                 exposed = 0;
-
+   int              exposed = 0;
    XCBSCREEN       *screen;
    XCBGenericEvent *e;
+   SizeHints       *szhints;
    CARD32           mask = 0;
    CARD32           value[6];
-/*    XClassHint       chint; */
-   SizeHints       *szhints;
    int              screen_nbr;
 
    c = XCBConnect (NULL, &screen_nbr);
@@ -95,33 +124,32 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
-   screen = get_screen (c, screen_nbr);
+   screen = XCBAuxGetScreen (c, screen_nbr);
 
-   mask = CWBackingStore | CWColormap |
-     CWBackPixmap | CWBorderPixel |
-     CWBitGravity | CWEventMask;
+   mask = 
+     XCBCWBackPixmap | XCBCWBorderPixel |
+     XCBCWBitGravity | XCBCWBackingStore  |
+     XCBCWEventMask  | XCBCWColormap;
 
-   value[0] = None;
+   value[0] = XCBBackPixmapNone;
    value[1] = 0;
-   value[2] = ForgetGravity;
-   value[3] = NotUseful;
-   value[4] = ExposureMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
+   value[2] = XCBGravityBitForget;
+   value[3] = XCBBackingStoreNotUseful;
+   value[4] = XCBEventMaskExposure | XCBEventMaskButtonPress | XCBEventMaskButtonRelease | XCBEventMaskPointerMotion;
    value[5] = screen->default_colormap.xid;
 
    win.window = XCBWINDOWNew(c);
    XCBCreateWindow (c,
-		    get_depth(c, screen),
+		    XCBAuxGetDepth(c, screen),
 		    win.window, screen->root,
 		    0, 0,
 		    win_w, win_h,
 		    0,
-		    InputOutput,
+		    XCBWindowClassInputOutput,
 		    screen->root_visual,
 		    mask, value);
-/*    XStoreName(disp, win, "Evas Performance Test"); */
-/*    chint.res_name = "Evas_Test"; */
-/*    chint.res_class = "Main"; */
-/*    XSetClassHint(disp, win, &chint); */
+   title_set (c, win.window, "Evas XCB Performance Test");
+   class_set (c, win.window, "Evas_XCB_Perf_Test", "Main");
 
    szhints = AllocSizeHints();
    SizeHintsSetMinSize(szhints, win_w, win_h);
@@ -146,10 +174,10 @@ main(int argc, char **argv)
 
       /* the following is specific to the engine */
       einfo->info.conn = c;
-      einfo->info.visual = get_visual (c, screen);
+      einfo->info.visual = XCBAuxGetVisualtype(c, screen_nbr, screen->root_visual);
       einfo->info.colormap = screen->default_colormap;
       einfo->info.drawable = win;
-      einfo->info.depth = get_depth(c, screen);
+      einfo->info.depth = XCBAuxGetDepth(c, screen);
       einfo->info.rotation = 0;
 
       evas_engine_info_set(evas, (Evas_Engine_Info *) einfo);
@@ -208,10 +236,10 @@ main(int argc, char **argv)
 		(Evas_Engine_Info_Software_Xcb *) evas_engine_info_get(evas);
 	     perf =
 		einfo->func.performance_test(evas, c,
-					     get_visual (c, screen),
+					     XCBAuxGetVisualtype(c, screen_nbr, screen->root_visual),
 					     screen->default_colormap,
 					     win,
-					     get_depth(c, screen));
+					     XCBAuxGetDepth(c, screen));
 	     einfo->func.performance_device_store(perf);
 	     data = einfo->func.performance_data_get(perf);
 	     key = einfo->func.performance_key_get(perf);
