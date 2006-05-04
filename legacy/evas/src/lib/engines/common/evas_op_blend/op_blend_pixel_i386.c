@@ -219,7 +219,7 @@ init_blend_pixel_pt_funcs_mmx(void)
 
 /* blend_rel pixel -> dst */
 
-#ifdef BUILD_C
+#ifdef BUILD_MMX
 #define _op_blend_rel_p_dp_mmx _op_blend_p_dpan_mmx 
 #define _op_blend_rel_pas_dp_mmx _op_blend_pas_dpan_mmx 
 #define _op_blend_rel_pan_dp_mmx _op_blend_pan_dpan_mmx 
@@ -249,7 +249,7 @@ init_blend_rel_pixel_span_funcs_mmx(void)
 }
 #endif
 
-#ifdef BUILD_C
+#ifdef BUILD_MMX
 #define _op_blend_rel_pt_p_dp_mmx _op_blend_pt_p_dpan_mmx 
 #define _op_blend_rel_pt_pas_dp_mmx _op_blend_pt_pas_dpan_mmx 
 #define _op_blend_rel_pt_pan_dp_mmx _op_blend_pt_pan_dpan_mmx 

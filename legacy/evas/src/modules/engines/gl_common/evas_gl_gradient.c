@@ -33,7 +33,7 @@ evas_gl_common_gradient_data_set(Evas_GL_Gradient *gr, void * map, int len, int 
 }
 
 Evas_GL_Gradient *
-evas_gl_common_gradient_data_unset(Evas_GL_Gradient *gr, void * data, int len, int has_alpha)
+evas_gl_common_gradient_data_unset(Evas_GL_Gradient *gr)
 {
    if (!gr) return NULL;
    evas_common_gradient_data_unset(gr->grad);
@@ -197,7 +197,7 @@ FIXME: this has been broken by the new gradient code!!
 */
    dc = evas_common_draw_context_new();
    if (!dc) return;
-   evas_common_gradient_map(dc, gr->grad, 0);
+   evas_common_gradient_map(dc, gr->grad, _EVAS_TEXTURE_REFLECT);
    if (map = gr->grad->map.data)
      {
 	im = evas_common_image_create(256, 4);
@@ -206,7 +206,7 @@ FIXME: this has been broken by the new gradient code!!
 	     int i;
 
 	     for (i = 0; i < 4; i++)
-		 evas_common_scale_rgba_span(map, gr->grad.map.len, 0xffffffff,
+		 evas_common_scale_rgba_span(map, gr->grad->map.len, 0xffffffff,
 		                             im->image->data + (i * 256), 256);
 	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
 	     gr->tex = evas_gl_common_texture_new(gc, im, 0);

@@ -144,7 +144,7 @@ static Evas_Func eng_func =
      eng_context_color_interpolation_set,
      eng_context_color_interpolation_get,
      eng_context_render_op_set,
-     engine_context_render_op_get,
+     eng_context_render_op_get,
      /* rectangle draw funcs */
      eng_rectangle_draw,
      /* line draw funcs */
@@ -747,6 +747,16 @@ eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 
    re = (Render_Engine *)data;
    evas_gl_common_gradient_fill_set(gradient, x, y, w, h);
+}
+
+static void
+eng_gradient_range_offset_set(void *data, void *gradient, float offset)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_gl_common_gradient_range_offset_set(gradient, offset);
+
 }
 
 static void
