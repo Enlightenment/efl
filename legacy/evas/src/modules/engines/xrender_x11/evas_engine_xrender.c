@@ -360,7 +360,12 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 		  xf.matrix[2][0] = 0;
 		  xf.matrix[2][1] = 0;
 		  xf.matrix[2][2] = 1;
-		  trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1, srs->fmt, srs->alpha);
+		  if ((srs->alpha) || (a != 0xff))
+		    trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
+						 srs->xinf->fmt32, 1);
+		  else
+		    trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
+						 srs->fmt, srs->alpha);
 		  XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
 				   trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
@@ -375,7 +380,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	       }
 	  }
      }
-
+   
    sf = MAX(sw, sh);
 #define BMAX 26
    if      (sf <= 8    ) sf = 1 << (BMAX - 3);
