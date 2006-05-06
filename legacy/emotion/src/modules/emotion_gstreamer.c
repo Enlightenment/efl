@@ -66,6 +66,8 @@ static Emotion_Video_Sink * _visualization_sink_create ();
 static int _cdda_pipeline_build (void *video, const char * device, unsigned int track);
 static int _file_pipeline_build (void *video, const char *file);
 
+static int _cdda_track_count_get(void *video);
+
 /* Interface */
 
 static unsigned char  em_init                     (Evas_Object     *obj,
@@ -1165,7 +1167,7 @@ em_meta_get(void *video, int meta)
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev) return NULL;
 
-   done = 0;
+   done = FALSE;
    bus = gst_element_get_bus (ev->pipeline);
    if (!bus) return NULL;
 
@@ -1190,38 +1192,23 @@ em_meta_get(void *video, int meta)
          switch (meta) {
          case META_TRACK_TITLE:
             gst_tag_list_get_string (new_tags, GST_TAG_TITLE, &str);
-            if (str) {
-              gst_message_unref (message);
-              goto success;
-            }
+            if (str) done = TRUE;
             break;
          case META_TRACK_ARTIST:
             gst_tag_list_get_string (new_tags, GST_TAG_ARTIST, &str);
-            if (str) {
-              gst_message_unref (message);
-              goto success;
-            }
+            if (str) done = TRUE;
             break;
          case META_TRACK_GENRE:
             gst_tag_list_get_string (new_tags, GST_TAG_GENRE, &str);
-            if (str) {
-              gst_message_unref (message);
-              goto success;
-            }
+            if (str) done = TRUE;
             break;
          case META_TRACK_COMMENT:
             gst_tag_list_get_string (new_tags, GST_TAG_COMMENT, &str);
-            if (str) {
-              gst_message_unref (message);
-              goto success;
-            }
+            if (str) done = TRUE;
             break;
          case META_TRACK_ALBUM:
             gst_tag_list_get_string (new_tags, GST_TAG_ALBUM, &str);
-            if (str) {
-              gst_message_unref (message);
-              goto success;
-            }
+            if (str) done = TRUE;
             break;
          case META_TRACK_YEAR: {
             const GValue *date;
@@ -1229,22 +1216,17 @@ em_meta_get(void *video, int meta)
             date = gst_tag_list_get_value_index (new_tags, GST_TAG_DATE, 0);
             if (date)
                str = g_strdup_value_contents (date);
-            if (str) {
-              gst_message_unref (message);
-              goto success;
-            }
+            if (str) done = TRUE;
             break;
          }
          case META_TRACK_DISCID:
 #ifdef GST_TAG_CDDA_CDDB_DISCID
             gst_tag_list_get_string (new_tags, GST_TAG_CDDA_CDDB_DISCID, &str);
 #endif
-            if (str) {
-              gst_message_unref (message);
-              goto success;
-            }
+            if (str) done = TRUE;
             break;
          }
+         break;
       }
       default:
          break;
@@ -1252,7 +1234,6 @@ em_meta_get(void *video, int meta)
       gst_message_unref (message);
    }
 
- success:
    gst_object_unref (GST_OBJECT (bus));
 
    return str;
@@ -1680,11 +1661,6 @@ _cdda_pipeline_build (void *video, const char * device, unsigned int track)
    if (device)
       g_object_set (G_OBJECT (cdiocddasrc), "device", device, NULL);
 
-/*    format = gst_format_get_by_nick ("track"); */
-/*    gst_element_query_duration (cdiocddasrc, &format, &tracks_count); */
-/*    g_print ("tracks count %lld\n", tracks_count); */
-/*    if (track > tracks_count) */
-/*      track = tracks_count; */
    g_object_set (G_OBJECT (cdiocddasrc), "track", track, NULL);
 
    asink = _emotion_audio_sink_new (ev);
@@ -1705,6 +1681,12 @@ _cdda_pipeline_build (void *video, const char * device, unsigned int track)
 
    if (!_emotion_pipeline_pause (ev->pipeline))
      goto failure_gstreamer_pause;
+
+   {
+     gint tracks_count;
+     tracks_count = _cdda_track_count_get(ev);
+     g_print ("Tracks count : %d\n", tracks_count);
+   }
 
    {
       GstQuery *query;
@@ -1915,6 +1897,7 @@ _file_pipeline_build (void *video, const char *file)
 
  failure_gstreamer_pause:
  failure_link:
+   gst_element_set_state (ev->pipeline, GST_STATE_NULL);
    gst_bin_remove (GST_BIN (ev->pipeline), filesrc);
    gst_bin_remove (GST_BIN (ev->pipeline), decodebin);
  failure_decodebin:
@@ -1961,4 +1944,49 @@ int _eos_timer_fct (void *data)
      gst_message_unref (msg);
    }
    return 1;
+}
+
+static int
+_cdda_track_count_get(void *video)
+{
+   Emotion_Gstreamer_Video *ev;
+   GstBus                  *bus;
+   guint                    tracks_count = 0;
+   gboolean                 done;
+
+   ev = (Emotion_Gstreamer_Video *)video;
+   if (!ev) return tracks_count;
+
+   done = FALSE;
+   bus = gst_element_get_bus (ev->pipeline);
+   if (!bus) return tracks_count;
+
+   while (!done) {
+      GstMessage *message;
+
+      message = gst_bus_pop (bus);
+      if (message == NULL)
+        /* All messages read, we're done */
+         break;
+
+      switch (GST_MESSAGE_TYPE (message)) {
+      case GST_MESSAGE_TAG: {
+         GstTagList *tags;
+
+         gst_message_parse_tag (message, &tags);
+
+         gst_tag_list_get_uint (tags, GST_TAG_TRACK_COUNT, &tracks_count);
+         if (tracks_count) done = TRUE;
+         break;
+      }
+      case GST_MESSAGE_ERROR:
+      default:
+         break;
+      }
+      gst_message_unref (message);
+   }
+
+   gst_object_unref (GST_OBJECT (bus));
+
+   return tracks_count;
 }
