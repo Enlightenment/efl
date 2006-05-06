@@ -4,8 +4,9 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#define X_H   /* make sure we aren't using symbols from X.h */
+
 #include <X11/XCB/xcb.h>
-#include <X11/XCB/shm.h>
 #include <X11/XCB/render.h>
 #include <X11/XCB/xcb_image.h>
 
@@ -64,27 +65,27 @@ struct _XCBrender_Surface
 
 /* ximage support calls (ximage vs xshmimage, cache etc.) */
 XCBimage_Info  *_xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis);
-void          _xr_image_info_free(XCBimage_Info *xcbinf);
-void          _xr_image_info_pool_flush(XCBimage_Info *xcbinf, int max_num, int max_mem);
+void            _xr_image_info_free(XCBimage_Info *xcbinf);
+void            _xr_image_info_pool_flush(XCBimage_Info *xcbinf, int max_num, int max_mem);
 XCBimage_Image *_xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth);
-void          _xr_image_free(XCBimage_Image *xim);
-void          _xr_image_put(XCBimage_Image *xim, XCBDRAWABLE draw, int x, int y, int w, int h);
+void            _xr_image_free(XCBimage_Image *xim);
+void            _xr_image_put(XCBimage_Image *xim, XCBDRAWABLE draw, int x, int y, int w, int h);
 
 /* xrender support calls */
 XCBrender_Surface *_xr_render_surface_new(XCBimage_Info *xcbinf, int w, int h, XCBRenderPICTFORMINFO *fmt, int alpha);
 XCBrender_Surface *_xr_render_surface_adopt(XCBimage_Info *xcbinf, XCBDRAWABLE draw, int w, int h, int alpha);
 XCBrender_Surface *_xr_render_surface_format_adopt(XCBimage_Info *xcbinf, XCBDRAWABLE draw, int w, int h, XCBRenderPICTFORMINFO *fmt, int alpha);
-void             _xr_render_surface_free(XCBrender_Surface *rs);
-void             _xr_render_surface_repeat_set(XCBrender_Surface *rs, int repeat);
-void             _xr_render_surface_solid_rectangle_set(XCBrender_Surface *rs, int r, int g, int b, int a, int x, int y, int w, int h);
-void             _xr_render_surface_argb_pixels_fill(XCBrender_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h);
-void             _xr_render_surface_rgb_pixels_fill(XCBrender_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h);
-void             _xr_render_surface_clips_set(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int rx, int ry, int rw, int rh);
-void             _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth);
-void             _xr_render_surface_copy(XCBrender_Surface *srs, XCBrender_Surface *drs, int sx, int sy, int x, int y, int w, int h);
-void             _xr_render_surface_rectangle_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void             _xr_render_surface_line_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
-void             _xre_poly_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+void               _xr_render_surface_free(XCBrender_Surface *rs);
+void               _xr_render_surface_repeat_set(XCBrender_Surface *rs, int repeat);
+void               _xr_render_surface_solid_rectangle_set(XCBrender_Surface *rs, int r, int g, int b, int a, int x, int y, int w, int h);
+void               _xr_render_surface_argb_pixels_fill(XCBrender_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h);
+void               _xr_render_surface_rgb_pixels_fill(XCBrender_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h);
+void               _xr_render_surface_clips_set(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int rx, int ry, int rw, int rh);
+void               _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth);
+void               _xr_render_surface_copy(XCBrender_Surface *srs, XCBrender_Surface *drs, int sx, int sy, int x, int y, int w, int h);
+void               _xr_render_surface_rectangle_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int x, int y, int w, int h);
+void               _xr_render_surface_line_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
+void               _xre_poly_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
   
     
 typedef struct _XR_Image XR_Image;

@@ -304,16 +304,16 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
      }
    else
      {
-        const XCBQueryExtensionRep *rep_shm;
-        const XCBQueryExtensionRep *rep_xrender;
+       XCBShmSegmentInfo shm_info;
+       XCBImage *xcbim;
 
         xcbinf->depth = 32;
         {
-          XCBConnSetupSuccessRep *rep;
+          XCBSetup *rep;
           XCBSCREENIter iter_screen;
 
-          rep = (XCBConnSetupSuccessRep *)XCBGetSetup(xcbinf->conn);
-          iter_screen = XCBConnSetupSuccessRepRootsIter(rep);
+          rep = (XCBSetup *)XCBGetSetup(xcbinf->conn);
+          iter_screen = XCBSetupRootsIter(rep);
           for (; iter_screen.rem ; XCBSCREENNext (&iter_screen)) {
             XCBDEPTHIter iter_depth;
 
@@ -332,40 +332,31 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
 
 	xcbinf->can_do_shm = 0;
 
-        XCBPrefetchExtensionData (xcbinf->conn, &XCBShmId);
-        XCBPrefetchExtensionData (xcbinf->conn, &XCBRenderId);
-        rep_shm = XCBGetExtensionData(xcbinf->conn, &XCBShmId);
-        rep_xrender = XCBGetExtensionData(xcbinf->conn, &XCBRenderId);
 
-        if (rep_shm && rep_xrender && rep_shm->present && rep_xrender->present) {
-           XCBShmSegmentInfo shm_info;
-           XCBImage *xcbim;
+        shm_info.shmseg = XCBShmSEGNew(xcbinf->conn);
+        xcbim = XCBImageSHMCreate(xcbinf->conn, xcbinf->depth, XCBImageFormatZPixmap, NULL, 1, 1);
+        if (xcbim) {
+           shm_info.shmid = shmget(IPC_PRIVATE, xcbim->bytes_per_line * xcbim->height, IPC_CREAT | 0777);
+           if (shm_info.shmid >= 0) {
+              shm_info.shmaddr = xcbim->data = shmat(shm_info.shmid, 0, 0);
+              if ((shm_info.shmaddr != NULL) && (shm_info.shmaddr != (void *) -1)) {
+                /*
+                 * FIXME: no error mechanism
+                 */
+                /* XErrorHandler ph; */
 
-           shm_info.shmseg = XCBShmSEGNew(xcbinf->conn);
-           xcbim = XCBImageSHMCreate(xcbinf->conn, xcbinf->depth, ZPixmap, NULL, 1, 1);
-           if (xcbim) {
-              shm_info.shmid = shmget(IPC_PRIVATE, xcbim->bytes_per_line * xcbim->height, IPC_CREAT | 0777);
-              if (shm_info.shmid >= 0) {
-                 shm_info.shmaddr = xcbim->data = shmat(shm_info.shmid, 0, 0);
-                 if ((shm_info.shmaddr != NULL) && (shm_info.shmaddr != (void *) -1)) {
-                    /*
-                     * FIXME: no error mechanism
-                     */
-                    /*		       XErrorHandler ph; */
-
-                    XCBSync(xcbinf->conn, 0);
-                    _xcb_err = 0;
-                    /*		       ph = XSetErrorHandler((XErrorHandler)_tmp_xcb_err); */
-                    XCBShmAttach(xcbinf->conn, shm_info.shmseg, shm_info.shmid, 0);
-                    XCBSync(xcbinf->conn, 0);
-                    /*		       XSetErrorHandler((XErrorHandler)ph); */
-                    if (!_xcb_err) xcbinf->can_do_shm = 1;
-                    shmdt(shm_info.shmaddr);
-                 }
-                 shmctl(shm_info.shmid, IPC_RMID, 0);
+                XCBSync(xcbinf->conn, 0);
+                _xcb_err = 0;
+                /* ph = XSetErrorHandler((XErrorHandler)_tmp_xcb_err); */
+                XCBShmAttach(xcbinf->conn, shm_info.shmseg, shm_info.shmid, 0);
+                XCBSync(xcbinf->conn, 0);
+                /* XSetErrorHandler((XErrorHandler)ph); */
+                if (!_xcb_err) xcbinf->can_do_shm = 1;
+                shmdt(shm_info.shmaddr);
               }
-              XCBImageSHMDestroy(xcbim);
-            }
+              shmctl(shm_info.shmid, IPC_RMID, 0);
+           }
+           XCBImageSHMDestroy(xcbim);
         }
      }
    _image_info_list = evas_list_prepend(_image_info_list, xcbinf);
@@ -433,7 +424,7 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 	     if (xcbim->shm_info)
 	       {
                   xcbim->shm_info->shmseg = XCBShmSEGNew(xcbinf->conn);
-		  xcbim->xcbim = XCBImageSHMCreate(xcbim->xcbinf->conn, xcbim->depth, ZPixmap, NULL, xcbim->w, xcbim->h);
+		  xcbim->xcbim = XCBImageSHMCreate(xcbim->xcbinf->conn, xcbim->depth, XCBImageFormatZPixmap, NULL, xcbim->w, xcbim->h);
 		  if (xcbim->xcbim)
 		    {
 		       xcbim->shm_info->shmid = shmget(IPC_PRIVATE, xcbim->xcbim->bytes_per_line * xcbim->xcbim->height, IPC_CREAT | 0777);
@@ -464,7 +455,7 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 		  xcbim->shm_info = NULL;
 	       }
 	  }
-	xcbim->xcbim = XCBImageCreate(xcbim->xcbinf->conn, xcbim->depth, ZPixmap, 0, NULL, xcbim->w, xcbim->h, 32, 0);
+	xcbim->xcbim = XCBImageCreate(xcbim->xcbinf->conn, xcbim->depth, XCBImageFormatZPixmap, 0, NULL, xcbim->w, xcbim->h, 32, 0);
 	if (!xcbim->xcbim)
 	  {
 	     free(xcbim);
@@ -521,21 +512,15 @@ _xr_image_put(XCBimage_Image *xcbim, XCBDRAWABLE draw, int x, int y, int w, int 
    XCBCreateGC(xcbim->xcbinf->conn, gc, draw, 0, NULL);
    if (xcbim->shm_info)
      {
-       XCBImageSHMPut (xcbim->xcbinf->conn, draw, gc,
-                       xcbim->xcbim, *xcbim->shm_info,
-                       0, 0,
-                       x, y,
+	XCBShmPutImage(xcbim->xcbinf->conn, draw, gc,
                        xcbim->xcbim->width, xcbim->xcbim->height,
-                       0);
-/* 	XCBShmPutImage(xcbim->xcbinf->conn, draw, gc, */
-/*                        xcbim->xcbim->width, xcbim->xcbim->height, */
-/*                        0, 0, */
-/*                        w, h, */
-/*                        x, y, */
-/*                        xcbim->xcbim->depth, xcbim->xcbim->format, */
-/*                        0, */
-/*                        xcbim->shm_info->shmseg, */
-/*                        xcbim->xcbim->data - xcbim->shm_info->shmaddr); */
+                       0, 0,
+                       w, h,
+                       x, y,
+                       xcbim->xcbim->depth, xcbim->xcbim->format,
+                       0,
+                       xcbim->shm_info->shmseg,
+                       xcbim->xcbim->data - xcbim->shm_info->shmaddr);
 	XCBSync(xcbim->xcbinf->conn, 0);
      }
    else
