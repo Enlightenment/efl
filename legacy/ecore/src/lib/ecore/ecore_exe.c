@@ -564,7 +564,7 @@ ecore_exe_close_stdin(Ecore_Exe * exe)
  * @param   start_bytes limit of bytes at start of output to buffer.
  * @param   end_bytes limit of bytes at end of output to buffer.
  * @param   start_lines limit of lines at start of output to buffer.
- * @param   start_lines limit of lines at end of output to buffer.
+ * @param   end_lines limit of lines at end of output to buffer.
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
