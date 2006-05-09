@@ -439,7 +439,7 @@ eng_output_flush(void *data)
 			    re->win->draw.x2 - re->win->draw.x1 + 1,
 			    re->win->draw.y2 - re->win->draw.y1 + 1);
 #else
-#if 1
+#if 0
    glFlush();
      {
 	unsigned int rc;
