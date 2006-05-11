@@ -11,6 +11,7 @@ _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, 
    Xrender_Surface *rs;
    XRenderPictureAttributes att;
    
+   if ((!xinf) || (!fmt) || (w < 1) || (h < 1)) return NULL;
    rs = calloc(1, sizeof(Xrender_Surface));
    if (!rs) return NULL;
    rs->xinf = xinf;
@@ -21,11 +22,23 @@ _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, 
    rs->depth = fmt->depth;
    rs->allocated = 1;
    rs->draw = XCreatePixmap(xinf->disp, xinf->root, w, h, fmt->depth);
+   if (rs->draw == None)
+     {
+	free(rs);
+	return NULL;
+     }
    rs->xinf->references++;
    att.dither = 0;
    att.component_alpha = 0;
    att.repeat = 0;
    rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
+   if (rs->pic == None)
+     {
+	XFreePixmap(rs->xinf->disp, rs->draw);
+	rs->xinf->references--;
+        free(rs);
+	return NULL;
+     }
    return rs;
 }
 
@@ -36,9 +49,11 @@ _xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alp
    XRenderPictFormat *fmt;
    XRenderPictureAttributes att;
    
+   if ((!xinf) || (draw == None) || (w < 1) || (h < 1)) return NULL;
    fmt = XRenderFindVisualFormat(xinf->disp, xinf->vis);
    if (!fmt) return NULL;
    rs = calloc(1, sizeof(Xrender_Surface));
+   if (!rs) return NULL;
    rs->xinf = xinf;
    rs->w = w;
    rs->h = h;
@@ -53,6 +68,12 @@ _xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alp
    att.component_alpha = 0;
    att.repeat = 0;
    rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
+   if (rs->pic == None)
+     {
+	rs->xinf->references--;
+        free(rs);
+	return NULL;
+     }
    return rs;
 }
 
@@ -62,7 +83,9 @@ _xr_render_surface_format_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, 
    Xrender_Surface *rs;
    XRenderPictureAttributes att;
    
+   if ((!xinf) || (!fmt) || (draw == None) || (w < 1) || (h < 1)) return NULL;
    rs = calloc(1, sizeof(Xrender_Surface));
+   if (!rs) return NULL;
    rs->xinf = xinf;
    rs->w = w;
    rs->h = h;
@@ -77,16 +100,28 @@ _xr_render_surface_format_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, 
    att.component_alpha = 0;
    att.repeat = 0;
    rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
+   if (rs->pic == None)
+     {
+	rs->xinf->references--;
+        free(rs);
+	return NULL;
+     }
    return rs;
 }
 
 void
 _xr_render_surface_free(Xrender_Surface *rs)
 {
-   if (rs->allocated) XFreePixmap(rs->xinf->disp, rs->draw);
-   XRenderFreePicture(rs->xinf->disp, rs->pic);
-   _xr_image_info_free(rs->xinf);
-   rs->xinf = NULL;
+   if (!rs) return;
+   if (rs->xinf)
+     {
+	if ((rs->allocated) && (rs->draw != None))
+	   XFreePixmap(rs->xinf->disp, rs->draw);
+	if (rs->pic != None)
+	   XRenderFreePicture(rs->xinf->disp, rs->pic);
+	_xr_image_info_free(rs->xinf);
+	rs->xinf = NULL;
+     }
    free(rs);
 }
 
@@ -105,7 +140,7 @@ _xr_render_surface_solid_rectangle_set(Xrender_Surface *rs, int r, int g, int b,
    XRenderColor col;
    int aa;
    
-   aa = a +1;
+   aa = a + 1;
    r = (r * aa) >> 8;
    g = (g * aa) >> 8;
    b = (b * aa) >> 8;
@@ -144,21 +179,21 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
 	     while (sp < sple)
 	       {
 		  switch (a = A_VAL(sp))
-		  {
-		    case 0:
-			*p = 0;
-		    break;
-		    case 255:
-			*p = (B_VAL(sp) << 24) | (G_VAL(sp) << 16) | (R_VAL(sp) << 8) | 0xff;
-		    break;
-		    default:
-			aa = a + 1;
-			r = ((R_VAL(sp)) * aa) >> 8;
-			g = ((G_VAL(sp)) * aa) >> 8;
-			b = ((B_VAL(sp)) * aa) >> 8;
-			*p = (b << 24) | (g << 16) | (r << 8) | a;
-		    break;
-		  }
+		    {
+		     case 0:
+		       *p = 0;
+		       break;
+		     case 255:
+		       *p = (B_VAL(sp) << 24) | (G_VAL(sp) << 16) | (R_VAL(sp) << 8) | 0xff;
+		       break;
+		     default:
+		       aa = a + 1;
+		       r = ((R_VAL(sp)) * aa) >> 8;
+		       g = ((G_VAL(sp)) * aa) >> 8;
+		       b = ((B_VAL(sp)) * aa) >> 8;
+		       *p = (b << 24) | (g << 16) | (r << 8) | a;
+		       break;
+		    }
 		  p++;
 		  sp++;
 	       }
@@ -173,22 +208,20 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  switch (a = A_VAL(sp))
-		  {
-		    case 0:
-			*p = 0;
-		    break;
-		    case 255:
-			*p = *sp;
-		    break;
-		    default:
-			aa = a + 1;
-			r = ((R_VAL(sp)) * aa) >> 8;
-			g = ((G_VAL(sp)) * aa) >> 8;
-			b = ((B_VAL(sp)) * aa) >> 8;
-			*p = (a << 24) | (r << 16) | (g << 8) | b;
-		    break;
-		  }
+		  switch (a = (*sp & 0xff000000))
+		    {
+		     case 0:
+		       *p = 0;
+		       break;
+		     case 0xff000000:
+		       *p = *sp;
+		       break;
+		     default:
+		       aa = (a >> 24) + 1;
+		       *p = a + (((((*sp) >> 8) & 0xff) * aa) & 0xff00) + 
+			 (((((*sp) & 0x00ff00ff) * aa) >> 8) & 0x00ff00ff);
+		       break;
+		    }
 		  p++;
 		  sp++;
 	       }
@@ -240,7 +273,7 @@ _xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pi
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  *p = 0xff000000 | ((R_VAL(sp)) << 16) | ((G_VAL(sp)) << 8) | (B_VAL(sp));
+		  *p = 0xff000000 | *sp;
 		  p++;
 		  sp++;
 	       }
@@ -362,9 +395,11 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 		  xf.matrix[2][2] = 1 << 16;
 		  if ((srs->alpha) || (a != 0xff))
 		    trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
+//		    trs = _xr_render_surface_new(srs->xinf, sw, sh,
 						 srs->xinf->fmt32, 1);
 		  else
 		    trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
+//		    trs = _xr_render_surface_new(srs->xinf, sw, sh,
 						 srs->fmt, srs->alpha);
 		  XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
@@ -448,19 +483,25 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
 {
    XTransform xf;
    XRenderPictureAttributes att;
-
+   int ident;
+   
    if ((w <= 0) || (h <= 0) || (!srs) || (!drs)) return;
-   xf.matrix[0][0] = 1;
+   ident = 1 << 16;
+   /* FIXME: why do we need to change the identity matrix ifthe src surface
+    * is 1 bit deep?
+    */
+   if (srs->depth == 1) ident = 1;
+   xf.matrix[0][0] = ident;
    xf.matrix[0][1] = 0;
    xf.matrix[0][2] = 0;
    
    xf.matrix[1][0] = 0;
-   xf.matrix[1][1] = 1;
+   xf.matrix[1][1] = ident;
    xf.matrix[1][2] = 0;
    
    xf.matrix[2][0] = 0;
    xf.matrix[2][1] = 0;
-   xf.matrix[2][2] = 1;
+   xf.matrix[2][2] = ident;
    
    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
    att.clip_mask = None;
@@ -479,13 +520,13 @@ _xr_render_surface_rectangle_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, in
    XRenderPictureAttributes att;
    int r, g, b, a, aa, op;
 
-   if ((w <= 0) || (h <= 0)) return;
+   if ((w <= 0) || (h <= 0) || (!rs) || (!dc)) return;
    a = (dc->col.col >> 24) & 0xff;
    if (a == 0) return;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
-   aa = a +1;
+   aa = a + 1;
    r = (r * aa) >> 8;
    g = (g * aa) >> 8;
    b = (b * aa) >> 8;
@@ -508,6 +549,7 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
    XRenderPictureAttributes att;
    int op;
    
+   if ((!rs) || (!dc)) return;
    op = PictOpSrc;
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
@@ -565,6 +607,7 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
    XRenderPictureAttributes att;
    int op;
    
+   if ((!rs) || (!dc)) return;
    op = PictOpSrc;
    num = 0;
    for (pt = points; pt; pt = (RGBA_Polygon_Point *)(((Evas_Object_List *)pt)->next)) num++;
