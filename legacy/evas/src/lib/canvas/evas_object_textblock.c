@@ -4016,16 +4016,16 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
      }
 #define COLOR_SET(col) \
 	ENFN->context_color_set(output, context, \
-				it->format->color.col.r, \
-				it->format->color.col.g, \
-				it->format->color.col.b, \
-				it->format->color.col.a);
+				(obj->cur.cache.clip.r * it->format->color.col.r) / 255, \
+				(obj->cur.cache.clip.g * it->format->color.col.g) / 255, \
+				(obj->cur.cache.clip.b * it->format->color.col.b) / 255, \
+				(obj->cur.cache.clip.a * it->format->color.col.a) / 255);
 #define COLOR_SET_AMUL(col, amul) \
 	ENFN->context_color_set(output, context, \
-				it->format->color.col.r, \
-				it->format->color.col.g, \
-				it->format->color.col.b, \
-				((int)it->format->color.col.a * (amul)) / 255);
+				(obj->cur.cache.clip.r * it->format->color.col.r) / 255, \
+				(obj->cur.cache.clip.g * it->format->color.col.g) / 255, \
+				(obj->cur.cache.clip.b * it->format->color.col.b) / 255, \
+				(obj->cur.cache.clip.a * it->format->color.col.a * (amul)) / 65025);
 #define DRAW_TEXT(ox, oy) \
    if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
 						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
