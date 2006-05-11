@@ -440,7 +440,7 @@ _lines_clear(Evas_Object *obj, Evas_Object_Textblock_Line *lines)
      }
 }
 
-/* table of html escapes (that i can find) this shoudl be ordered with the
+/* table of html escapes (that i can find) this should be ordered with the
  * most common first as it's a linear search to match - no hash for this
  */
 static const char *_escapes[] = 
@@ -449,11 +449,12 @@ static const char *_escapes[] =
      "&lt;", "<",
      "&gt;", ">",
      "&amp;", "&",
-     "&nbsp;", " ", /* NOTE: we will allow nbsp's to break as we map early - maybe map to ascii 0x01 and then make the rendring code think 0x01 -> 0x20 */
+     "&nbsp;", " ", /* NOTE: we will allow nbsp's to break as we map early - maybe map to ascii 0x01 and then make the rendering code think 0x01 -> 0x20 */
      "&quot;", "\"",
      /* all the rest */
      "&copy;", "©",
      "&reg;", "®",
+     "&hellip;", "…",
      "&Ntilde;", "Ñ",
      "&ntilde;", "ñ",
      "&Ccedil;", "Ç",
@@ -471,6 +472,7 @@ static const char *_escapes[] =
      "&pound;", "£",
      "&curren;", "¤",
      "&yen;", "¥",
+     "&euro;", "€",
      "&sect;", "§",
      "&para;", "¶",
      "&laquo;", "«",
@@ -583,6 +585,7 @@ static const char *_escapes[] =
      "&theta;", "θ",
      "&iota;", "ι",
      "&kappa;", "κ",
+     "&lambda;", "λ",
      "&mu;", "μ",
      "&nu;", "ν",
      "&omicron;", "ο",
@@ -596,6 +599,30 @@ static const char *_escapes[] =
      "&chi;", "χ",
      "&psi;", "ψ",
      "&omega;", "ω"
+     "&Alpha;", "Α",
+     "&Beta;", "Β",
+     "&Gamma;", "Γ",
+     "&Delta;", "Δ",
+     "&Epsilon;", "Ε",
+     "&Zeta;", "Ζ",
+     "&Eta;", "Η",
+     "&Theta;", "Θ",
+     "&Iota;", "Ι",
+     "&Kappa;", "Κ",
+     "&Lambda;", "Λ",
+     "&Mu;", "Μ",
+     "&Nu;", "Ν",
+     "&Omicron;", "Ο",
+     "&Xi;", "Ξ",
+     "&Pi;", "Π",
+     "&Rho;", "Ρ",
+     "&Sigma;", "Σ",
+     "&Tau;", "Τ",
+     "&Upsilon;", "Υ",
+     "&Phi;", "Φ",
+     "&Chi;", "Χ",
+     "&Psi;", "Ψ",
+     "&Omega;", "Ω"
 };
 
 static int
@@ -784,7 +811,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	    ((fmt->font.fallbacks) && (strcmp(fmt->font.fallbacks, param))))
 	  {
 	     /* policy - when we say "fallbacks" do we prepend and use prior
-	      * fallbacks... or shoudl we replace. for nwo we replace
+	      * fallbacks... or should we replace. for now we replace
 	      */
 	     if (fmt->font.fallbacks) evas_stringshare_del(fmt->font.fallbacks);
 	     fmt->font.fallbacks = evas_stringshare_add(param);
@@ -1079,7 +1106,7 @@ _format_parse(char **s)
 	     if (item)
 	       {
 		  ds = item;
-		  for (ds = item, ss = s1; ss < s2; ss++, ds++)
+		  for (ss = s1; ss < s2; ss++, ds++)
 		    {
 		       if ((*ss == '\\') && (ss < (s2 - 1))) ss++;
 		       *ds = *ss;
@@ -1102,7 +1129,7 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *str)
    
    s = str;
 
-   /* get rid of anything +'s or -'s off the start of the string */
+   /* get rid of anything +s or -s off the start of the string */
    while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
 
    while ((item = _format_parse(&s)))
@@ -1855,7 +1882,7 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 	if (h_ret) *h_ret = 0;
 	return;
      }
-   /* run thru all text and format nodes generating lines */
+   /* run through all text and format nodes generating lines */
    for (l = (Evas_Object_List *)c->o->nodes; l; l = l->next)
      {
 	Evas_Object_Textblock_Node *n;
@@ -2461,37 +2488,26 @@ evas_object_textblock_text_markup_get(Evas_Object *obj)
 							    &slen, &salloc);
 			    break;
 			 }
-		       else if (*p == '<')
+		       else
 			 {
-			    o->markup_text = _strbuf_append_n(o->markup_text,
-							      ps, p - ps,
-							      &slen, &salloc);
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    "&lt;",
-							    &slen, &salloc);
-			    ps = p + 1;
+			    int i;
+
+			    for (i = 1; i < (sizeof(_escapes) / sizeof(char *)); i += 2)
+			      {
+				 if (!strncmp(_escapes[i], p,
+					      strlen(_escapes[i])))
+				   {
+				      o->markup_text = _strbuf_append_n(o->markup_text,
+									ps, p - ps,
+									&slen, &salloc);
+				      o->markup_text = _strbuf_append(o->markup_text,
+								      _escapes[i-1],
+								      &slen, &salloc);
+				      ps = p + strlen(_escapes[i]);
+				      p += strlen(_escapes[i]) - 1;
+				   }
+			      }
 			 }
-		       else if (*p == '>')
-			 {
-			    o->markup_text = _strbuf_append_n(o->markup_text,
-							      ps, p - ps,
-							      &slen, &salloc);
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    "&gt;",
-							    &slen, &salloc);
-			    ps = p + 1;
-			 }
-		       else if (*p == '&')
-			 {
-			    o->markup_text = _strbuf_append_n(o->markup_text,
-							      ps, p - ps,
-							      &slen, &salloc);
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    "&amp;",
-							    &slen, &salloc);
-			    ps = p + 1;
-			 }
-		       /* FIXME: learn how to do all the other escapes */
 		       /* FIXME: strip extra whitespace ala HTML */
 		       p++;
 		    }
