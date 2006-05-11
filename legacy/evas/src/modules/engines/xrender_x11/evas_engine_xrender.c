@@ -349,17 +349,17 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	       }
 	     else
 	       {
-		  xf.matrix[0][0] = 1;
+		  xf.matrix[0][0] = 1 << 16;
 		  xf.matrix[0][1] = 0;
 		  xf.matrix[0][2] = 0;
 		  
 		  xf.matrix[1][0] = 0;
-		  xf.matrix[1][1] = 1;
+		  xf.matrix[1][1] = 1 << 16;
 		  xf.matrix[1][2] = 0;
 		  
 		  xf.matrix[2][0] = 0;
 		  xf.matrix[2][1] = 0;
-		  xf.matrix[2][2] = 1;
+		  xf.matrix[2][2] = 1 << 16;
 		  if ((srs->alpha) || (a != 0xff))
 		    trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
 						 srs->xinf->fmt32, 1);
@@ -380,7 +380,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	       }
 	  }
      }
-   
+/*   
    sf = MAX(sw, sh);
 #define BMAX 26
    if      (sf <= 8    ) sf = 1 << (BMAX - 3);
@@ -396,18 +396,22 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    else if (sf <= 8192 ) sf = 1 << (BMAX - 13);
    else if (sf <= 16384) sf = 1 << (BMAX - 14);
    else                  sf = 1 << (BMAX - 15);
+*/
    
-   xf.matrix[0][0] = (sf * sw) / w;
+//   xf.matrix[0][0] = (sf * sw) / w;
+   xf.matrix[0][0] = (sw << 16) / w;
    xf.matrix[0][1] = 0;
    xf.matrix[0][2] = 0;
 
    xf.matrix[1][0] = 0;
-   xf.matrix[1][1] = (sf * sh) / h;
+//   xf.matrix[1][1] = (sf * sh) / h;
+   xf.matrix[1][1] = (sh << 16) / h;
    xf.matrix[1][2] = 0;
 
    xf.matrix[2][0] = 0;
    xf.matrix[2][1] = 0;
-   xf.matrix[2][2] = sf;
+   xf.matrix[2][2] = 1 << 16;
+//   xf.matrix[2][2] = sf;
 
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
@@ -431,6 +435,8 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 	
 	XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
+//			 (sx * w) / sw,
+//			 (sy * h) / sh,
 			 ((sx * w) + (sw / 2)) / sw, 
 			 ((sy * h) + (sh / 2)) / sh,
 			 0, 0, x, y, w, h);
