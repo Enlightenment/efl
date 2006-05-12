@@ -72,47 +72,34 @@ typedef struct _Ecore_X_Icon {
 typedef enum _Ecore_X_Window_State {
     /** The window is iconified. */
     ECORE_X_WINDOW_STATE_ICONIFIED,
-
     /** The window is a modal dialog box. */
     ECORE_X_WINDOW_STATE_MODAL,
-
     /** The window manager should keep the window's position fixed
      * even if the virtual desktop scrolls. */
     ECORE_X_WINDOW_STATE_STICKY,
-
     /** The window has the maximum vertical size. */
     ECORE_X_WINDOW_STATE_MAXIMIZED_VERT,
-
     /** The window has the maximum horizontal size. */
     ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ,
-
     /** The window is shaded. */
     ECORE_X_WINDOW_STATE_SHADED,
-
     /** The window should not be included in the taskbar. */
     ECORE_X_WINDOW_STATE_SKIP_TASKBAR,
-
     /** The window should not be included in the pager. */
     ECORE_X_WINDOW_STATE_SKIP_PAGER,
-
     /** The window is invisible (i.e. minimized/iconified) */
     ECORE_X_WINDOW_STATE_HIDDEN,
-
     /** The window should fill the entire screen and have no
      * window border/decorations */
     ECORE_X_WINDOW_STATE_FULLSCREEN,
-
     /* The following are not documented because they are not
      * intended for use in applications. */
     ECORE_X_WINDOW_STATE_ABOVE,
     ECORE_X_WINDOW_STATE_BELOW,
-
     /* FIXME: Documentation */
     ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION,
-
     /* Unknown state */
     ECORE_X_WINDOW_STATE_UNKNOWN
-
 } Ecore_X_Window_State;
 
 typedef enum _Ecore_X_Window_State_Action {
@@ -128,6 +115,15 @@ typedef enum _Ecore_X_Window_Stack_Mode {
    ECORE_X_WINDOW_STACK_BOTTOM_IF = 3,
    ECORE_X_WINDOW_STACK_OPPOSITE = 4
 } Ecore_X_Window_Stack_Mode;
+
+typedef enum _Ecore_X_Randr_Rotation {   
+   ECORE_X_RANDR_ROT_0 = (1 << 0),
+   ECORE_X_RANDR_ROT_90 = (1 << 1),
+   ECORE_X_RANDR_ROT_180 = (1 << 2),
+   ECORE_X_RANDR_ROT_270 = (1 << 3),
+   ECORE_X_RANDR_FLIP_X = (1 << 4),
+   ECORE_X_RANDR_FLIP_Y = (1 << 5)
+} Ecore_X_Randr_Rotation;
 
 #define ECORE_X_SELECTION_TARGET_TARGETS "TARGETS"
 #define ECORE_X_SELECTION_TARGET_TEXT "TEXT"
@@ -1441,14 +1437,16 @@ struct _Ecore_X_Screen_Refresh_Rate
    int rate;
 };
    
-EAPI int                  ecore_x_randr_events_select(Ecore_X_Window win, int on);
-EAPI Ecore_X_Screen_Size *ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num);
-EAPI Ecore_X_Screen_Size  ecore_x_randr_current_screen_size_get(Ecore_X_Window root);
-EAPI int                  ecore_x_randr_screen_size_set(Ecore_X_Window root,
-							Ecore_X_Screen_Size size);
-							
+EAPI int                     ecore_x_randr_events_select(Ecore_X_Window win, int on);
+EAPI Ecore_X_Randr_Rotation  ecore_x_randr_screen_rotations_get(Ecore_X_Window root);
+EAPI Ecore_X_Randr_Rotation  ecore_x_randr_screen_rotation_get(Ecore_X_Window root);
+EAPI void                    ecore_x_randr_screen_rotation_set(Ecore_X_Window root, Ecore_X_Randr_Rotation rot);
+EAPI Ecore_X_Screen_Size    *ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num);
+EAPI Ecore_X_Screen_Size     ecore_x_randr_current_screen_size_get(Ecore_X_Window root);
+EAPI int                     ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size size);
+
 EAPI Ecore_X_Screen_Refresh_Rate *ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root, int size_id, int *num);
-EAPI Ecore_X_Screen_Refresh_Rate ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root);
+EAPI Ecore_X_Screen_Refresh_Rate  ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root);
 
 EAPI int ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root, Ecore_X_Screen_Size size, Ecore_X_Screen_Refresh_Rate rate);
    
