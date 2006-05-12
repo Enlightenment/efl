@@ -21,24 +21,33 @@ ecore_x_randr_events_select(Ecore_X_Window win, int on)
 EAPI Ecore_X_Randr_Rotation
 ecore_x_randr_screen_rotations_get(Ecore_X_Window root)
 {
+#ifdef ECORE_XRANDR
    Rotation rot, crot;
    
    rot = XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &crot);
    return rot;
+#else
+   return 0;
+#endif   
 }
 
 EAPI Ecore_X_Randr_Rotation
 ecore_x_randr_screen_rotation_get(Ecore_X_Window root)
 {
+#ifdef ECORE_XRANDR
    Rotation rot, crot = 0;
    
    rot = XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &crot);
    return crot;
+#else
+   return 0;
+#endif   
 }
 
 EAPI void
 ecore_x_randr_screen_rotation_set(Ecore_X_Window root, Ecore_X_Randr_Rotation rot)
 {
+#ifdef ECORE_XRANDR
    XRRScreenConfiguration *xrrcfg;
    SizeID sizeid;
    Rotation crot;
@@ -48,6 +57,7 @@ ecore_x_randr_screen_rotation_set(Ecore_X_Window root, Ecore_X_Randr_Rotation ro
    sizeid = XRRConfigCurrentConfiguration(xrrcfg, &crot);
    XRRSetScreenConfig(_ecore_x_disp, xrrcfg, root, sizeid, rot, CurrentTime);
    XRRFreeScreenConfigInfo(xrrcfg);
+#endif   
 }
 
 EAPI Ecore_X_Screen_Size *
