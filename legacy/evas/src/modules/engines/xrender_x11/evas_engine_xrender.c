@@ -409,8 +409,8 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 				   trs->pic, sx + sw, sy, 0, 0, sw, 0, 1, sh);
 		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
 				   trs->pic, sx, sy + sh, 0, 0, 0, sh, sw + 1, 1);
-		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
-				   trs->pic, sx + sw, sy, 0, 0, sw, 0, 1, sh);
+//		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
+//				   trs->pic, sx + sw, sy + sh, 0, 0, sw, sh, 1, 1);
 		  mask = 0;
 	       }
 	  }
