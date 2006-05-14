@@ -18,6 +18,7 @@
 #define META_TRACK_ALBUM 5
 #define META_TRACK_YEAR 6
 #define META_TRACK_DISCID 7
+#define META_TRACK_COUNT 8
 
 typedef enum _Emotion_Format Emotion_Format;
 typedef enum _Emotion_Vis Emotion_Vis;
