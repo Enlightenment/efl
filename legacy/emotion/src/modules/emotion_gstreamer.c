@@ -476,6 +476,7 @@ em_file_close(void *video)
    Emotion_Gstreamer_Video *ev;
    GstIterator             *iter;
    gpointer                 data;
+   gboolean                 done;
 
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev)
@@ -487,17 +488,42 @@ em_file_close(void *video)
 	printf("  ... unpause\n");
         _emotion_pipeline_pause (ev->pipeline);
      }
+
    printf("EX stop\n");
-   if (ev->pipeline)
-     gst_element_set_state (ev->pipeline, GST_STATE_READY);
+   gst_element_set_state (ev->pipeline, GST_STATE_READY);
 
    /* we remove all the elements in the pipeline */
    iter = gst_bin_iterate_elements (GST_BIN (ev->pipeline));
-   while (gst_iterator_next (iter, &data) == GST_ITERATOR_OK) {
-     GstElement *element;
+   done = FALSE;
+   while (!done) {
+     switch (gst_iterator_next (iter, &data)) {
+     case GST_ITERATOR_OK: {
+       GstElement *element;
 
-     element = GST_ELEMENT (data);
-     gst_bin_remove (GST_BIN (ev->pipeline), element);
+       element = GST_ELEMENT (data);
+       if (element) {
+         gst_bin_remove (GST_BIN (ev->pipeline), element);
+       }
+       break;
+     }
+     case GST_ITERATOR_RESYNC: {
+       GstElement *element;
+
+       element = GST_ELEMENT (data);
+       if (element) {
+         gst_bin_remove (GST_BIN (ev->pipeline), element);
+       }
+       gst_iterator_resync (iter);
+       break;
+     }
+     case GST_ITERATOR_ERROR:
+       printf("error iter\n");
+       done = TRUE;
+       break;
+     case GST_ITERATOR_DONE:
+       done = TRUE;
+       break;
+     }
    }
    gst_iterator_free (iter);
 
@@ -1225,6 +1251,19 @@ em_meta_get(void *video, int meta)
 #endif
             if (str) done = TRUE;
             break;
+         case META_TRACK_COUNT: {
+            int track_count;
+
+            track_count = _cdda_track_count_get (video);
+            if (track_count > 0) {
+               char buf[64];
+
+               g_snprintf (buf, 64, "%d", track_count);
+               str = g_strdup (buf);
+               done = TRUE;
+            }
+            break;
+         }
          }
          break;
       }
@@ -1681,12 +1720,6 @@ _cdda_pipeline_build (void *video, const char * device, unsigned int track)
 
    if (!_emotion_pipeline_pause (ev->pipeline))
      goto failure_gstreamer_pause;
-
-   {
-     gint tracks_count;
-     tracks_count = _cdda_track_count_get(ev);
-     g_print ("Tracks count : %d\n", tracks_count);
-   }
 
    {
       GstQuery *query;
