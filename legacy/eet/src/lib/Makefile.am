@@ -21,4 +21,4 @@ Eet_private.h
 
 libeet_la_LIBADD       = -lz -ljpeg @fnmatch_libs@ @winsock_libs@
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h
-libeet_la_LDFLAGS      = -version-info 9:9:9
+libeet_la_LDFLAGS      = -version-info 9:10:9
