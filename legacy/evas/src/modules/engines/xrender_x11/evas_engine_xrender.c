@@ -612,13 +612,14 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
    int op;
    
    if ((!rs) || (!dc)) return;
-   op = PictOpSrc;
+//   op = PictOpSrc;
    num = 0;
    for (pt = points; pt; pt = (RGBA_Polygon_Point *)(((Evas_Object_List *)pt)->next)) num++;
    if (num < 3) return;
    a = (dc->col.col >> 24) & 0xff;
    if (a == 0) return;
-   if (a < 0xff) op = PictOpOver;
+//   if (a < 0xff)
+     op = PictOpOver;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
