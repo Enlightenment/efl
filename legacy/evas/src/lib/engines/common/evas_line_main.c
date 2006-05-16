@@ -134,6 +134,8 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 
    if (y0 > y1)
       EXCHANGE_POINTS(x0, y0, x1, y1)
+   if (x0 > x1)
+      EXCHANGE_POINTS(x0, y0, x1, y1)
 
    dx = x1 - x0;
    dy = y1 - y0;
@@ -518,6 +520,8 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
    DATA32  *p, *data, color;
    RGBA_Gfx_Pt_Func pfunc;
 
+   if (y0 > y1)
+      EXCHANGE_POINTS(x0, y0, x1, y1)
    dx = x1 - x0;
    dy = y1 - y0;
 
