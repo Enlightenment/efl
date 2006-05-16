@@ -152,23 +152,25 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 
    if (dy == 0)
      {
-	if (dx < 0)
+	if ((y0 >= ty) && (y0 <= by))
 	  {
-	    int  tmp = x1;
-
-	    x1 = x0;
-	    x0 = tmp;
+	     if (dx < 0)
+	       {
+		  int  tmp = x1;
+		  
+		  x1 = x0;
+		  x0 = tmp;
+	       }
+	     
+	     if (x0 < lx) x0 = lx;
+	     if (x1 > rx) x1 = rx;
+	     
+	     len = x1 - x0 + 1;
+	     p = dst->image->data + (dstw * y0) + x0;
+	     sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
+	     if (sfunc)
+	       sfunc(NULL, NULL, color, p, len);
 	  }
-
-	if (x0 < lx) x0 = lx;
-	if (x1 > rx) x1 = rx;
-
-	len = x1 - x0 + 1;
-	p = dst->image->data + (dstw * y0) + x0;
-	sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
-	if (sfunc)
-	   sfunc(NULL, NULL, color, p, len);
-
 	return;
      }
 
@@ -177,17 +179,19 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 
    if (dx == 0)
      {
-	if (y0 < ty) y0 = ty;
-	if (y1 > by) y1 = by;
-
-	len = y1 - y0 + 1;
-	p = dst->image->data + (dstw * y0) + x0;
-	while (len--)
+	if ((x0 >= lx) && (x0 <= rx))
 	  {
-	    pfunc(0, 255, color, p);
-	    p += dstw;
+	     if (y0 < ty) y0 = ty;
+	     if (y1 > by) y1 = by;
+	     
+	     len = y1 - y0 + 1;
+	     p = dst->image->data + (dstw * y0) + x0;
+	     while (len--)
+	       {
+		  pfunc(0, 255, color, p);
+		  p += dstw;
+	       }
 	  }
-
 	return;
      }
 
@@ -252,10 +256,20 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 		  }
 	      }
 	  }
-	len = y1 - y0 + 1;
-	p = dst->image->data + (dstw * y0) + x0;
-	if (dx > 0)  dstw++;
-	else  dstw--;
+	if (y1 > y0)
+	  {
+	     p = dst->image->data + (dstw * y0) + x0;
+	     len = y1 - y0 + 1;
+	     if (dx > 0)  dstw++;
+	     else  dstw--;
+	  }
+	else
+	  {
+	     len = y0 - y1 + 1;
+	     p = dst->image->data + (dstw * y1) + x1;
+	     if (dx > 0)  dstw--;
+	     else  dstw++;
+	  }
 
 	while (len--)
 	  {
