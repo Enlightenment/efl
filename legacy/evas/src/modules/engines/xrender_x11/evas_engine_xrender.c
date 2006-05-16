@@ -550,11 +550,11 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
    int op;
    
    if ((!rs) || (!dc)) return;
-   op = PictOpSrc;
+   op = PictOpOver;
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
    _xr_render_surface_clips_set(rs, dc, 0, 0, rs->w, rs->h);
-   
+
      {
 	int r, g, b, a;
 	XPointDouble poly[4];
@@ -566,6 +566,10 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
 	len = sqrt((double)(dx * dx) + (double)(dy * dy));
 	ddx = (0.5 * dx) / len;
 	ddy = (0.5 * dy) / len;
+	if (ddx < 0) ddx = -0.5 - ddx;
+	else ddx = 0.5 - ddx;
+	if (ddy < 0) ddy = -0.5 - ddy;
+	else ddy = 0.5 - ddy;
 	poly[0].x =  (x1 + ddx);
 	poly[0].y =  (y1 - ddy);
 	poly[1].x =  (x2 + ddx);
@@ -574,7 +578,7 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
 	poly[2].y =  (y2 + ddy);
 	poly[3].x =  (x1 - ddx);
 	poly[3].y =  (y1 + ddy);
-	
+
 	a = (dc->col.col >> 24) & 0xff;
 	if (a == 0) return;
 	if (a < 0xff) op = PictOpOver;
