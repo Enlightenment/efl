@@ -179,9 +179,9 @@ loop(void)
      }
    else if (t > 5.0)
      {
-	printf("# FRAME COUNT: %i frames\n", frames);
-	printf("# TIME:        %3.3f seconds\n", (t - time_start));
-	printf("# AVERAGE FPS: %3.3f fps\n", (double)frames / (t - time_start));
+//	printf("# FRAME COUNT: %i frames\n", frames);
+//	printf("# TIME:        %3.3f seconds\n", (t - time_start));
+//	printf("# AVERAGE FPS: %3.3f fps\n", (double)frames / (t - time_start));
 	printf("# EVAS BENCH:  %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
 	exit(0);
      }
@@ -356,10 +356,10 @@ loop(void)
 	     printf("####################################################\n");
 	     printf("# Performance Test. Your system scores...\n");
 	     printf("####################################################\n");
-	     printf("# FRAME COUNT: %i frames\n", frames);
-	     printf("# TIME:        %3.3f seconds\n", (t - time_start));
-	     printf("# AVERAGE FPS: %3.3f fps\n", (double)frames / (t - time_start));
-	     printf("####################################################\n");
+//	     printf("# FRAME COUNT: %i frames\n", frames);
+//	     printf("# TIME:        %3.3f seconds\n", (t - time_start));
+//	     printf("# AVERAGE FPS: %3.3f fps\n", (double)frames / (t - time_start));
+//	     printf("####################################################\n");
 	     printf("# Your system Evas Benchmark:\n");
 	     printf("#\n");
 	     printf("# EVAS BENCH: %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
