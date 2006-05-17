@@ -779,6 +779,7 @@ evas_common_convert_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b
    switch (i)
      {
 	case 0:
+        case 6:
 	  if (r) *r = v;
 	  if (g) *g = t;
 	  if (b) *b = p;
@@ -862,6 +863,7 @@ evas_common_convert_hsv_to_rgb_int(int h, int s, int v, int *r, int *g, int *b)
    switch (i)
      {
 	case 0:
+        case 6:
 	  *r = v; *g = t; *b = p;
 	  return;
 	case 1:
