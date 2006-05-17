@@ -580,8 +580,8 @@ ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right,
 EAPI void
 ecore_x_netwm_strut_partial_set(Ecore_X_Window win, int left, int right,
 				int top, int bottom, int left_start_y, int left_end_y,
-			       	int right_start_y, int right_end_y, int top_start_x,
-			       	int top_end_x, int bottom_start_x, int bottom_end_x)
+				int right_start_y, int right_end_y, int top_start_x,
+				int top_end_x, int bottom_start_x, int bottom_end_x)
 {
    unsigned int strut[12];
 
@@ -603,8 +603,8 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window win, int left, int right,
 EAPI int
 ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
 				int *top, int *bottom, int *left_start_y, int *left_end_y,
-			       	int *right_start_y, int *right_end_y, int *top_start_x,
-			       	int *top_end_x, int *bottom_start_x, int *bottom_end_x)
+				int *right_start_y, int *right_end_y, int *top_start_x,
+				int *top_end_x, int *bottom_start_x, int *bottom_end_x)
 {
    int ret = 0;
    unsigned int strut[12];
@@ -937,7 +937,7 @@ _ecore_x_netwm_window_type_type_get(Ecore_X_Atom atom)
      return ECORE_X_WINDOW_TYPE_UNKNOWN;
 }
 
-static Ecore_X_Atom 
+static Ecore_X_Atom
 _ecore_x_netwm_window_type_atom_get(Ecore_X_Window_Type type)
 {
    switch (type)
@@ -1079,6 +1079,34 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action action, int 
 
    ecore_x_window_prop_atom_list_change(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
                                         atom, on);
+}
+
+EAPI int
+ecore_x_netwm_allowed_action_get(Ecore_X_Window win, Ecore_X_Action **action, unsigned int *num)
+{
+   int                   num_ret, i;
+   Ecore_X_Atom         *atoms;
+
+   if (num) *num = 0;
+   if (action) *action = NULL;
+
+   num_ret = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
+					       &atoms);
+   if (num_ret <= 0)
+      return 0;
+
+   if (action)
+     {
+	*action = malloc(num_ret * sizeof(Ecore_X_Action));
+	if (*action)
+	  for (i = 0; i < num_ret; ++i)
+	    (*action)[i] = _ecore_x_netwm_action_atom_get(atoms[i]);
+
+	if (num) *num = num_ret;
+     }
+
+   free(atoms);
+   return 1;
 }
 
 EAPI void
