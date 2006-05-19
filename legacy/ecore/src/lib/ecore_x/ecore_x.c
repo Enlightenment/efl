@@ -430,6 +430,8 @@ ecore_x_init(const char *name)
 
    _ecore_x_selection_data_init();
    _ecore_x_dnd_init();
+   _ecore_x_fixes_init();
+   _ecore_x_damage_init();
    
    _ecore_x_init_count++;
    
