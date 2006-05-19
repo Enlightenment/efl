@@ -841,11 +841,26 @@ ecore_con_ssl_available_get(void)
 static void
 _ecore_con_server_free(Ecore_Con_Server *svr)
 {
+   double t_start, t;
+   
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);   
-   while ((svr->write_buf) && (!svr->dead)) _ecore_con_server_flush(svr);
+   t_start = ecore_time_get();
+   while ((svr->write_buf) && (!svr->dead))
+     {
+	_ecore_con_server_flush(svr);
+	t = ecore_time_get();
+	if ((t - t_start) > 5.0)
+	  {
+	     printf("ECORE_CON: EEK - stuck in _ecore_con_server_free() trying\n"
+		    "  to flush data out from the server, and have been for\n"
+		    "  %1.1f seconds. This is taking too long. Aborting flush.\n",
+		    (t - t_start));
+	     break;
+	  }
+     }
    if (svr->write_buf) free(svr->write_buf);
    while (!ecore_list_is_empty(svr->clients))
-      _ecore_con_client_free(ecore_list_remove_first(svr->clients));
+     _ecore_con_client_free(ecore_list_remove_first(svr->clients));
    ecore_list_destroy(svr->clients);
    if ((svr->created) && (svr->path) && (svr->ppid == getpid())) unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
@@ -867,8 +882,23 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 static void
 _ecore_con_client_free(Ecore_Con_Client *cl)
 {
+   double t_start, t;
+   
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);   
-   while ((cl->buf) && (!cl->dead)) _ecore_con_client_flush(cl);
+   t_start = ecore_time_get();
+   while ((cl->buf) && (!cl->dead))
+     {
+	_ecore_con_client_flush(cl);
+	t = ecore_time_get();
+	if ((t - t_start) > 5.0)
+	  {
+	     printf("ECORE_CON: EEK - stuck in _ecore_con_client_free() trying\n"
+		    "  to flush data out from the client, and have been for\n"
+		    "  %1.1f seconds. This is taking too long. Aborting flush.\n",
+		    (t - t_start));
+	     break;
+	  }
+     }
    if (cl->buf) free(cl->buf);
    if (cl->fd >= 0) close(cl->fd);
    if (cl->fd_handler) ecore_main_fd_handler_del(cl->fd_handler);
