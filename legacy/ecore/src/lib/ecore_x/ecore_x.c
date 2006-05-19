@@ -22,6 +22,12 @@ static int _ecore_x_event_sync_id = 0;
 #ifdef ECORE_XRANDR
 static int _ecore_x_event_randr_id = 0;
 #endif
+#ifdef ECORE_XFIXES
+static int _ecore_x_event_fixes_selection_id = 0;
+#endif
+#ifdef ECORE_XDAMAGE
+static int _ecore_x_event_damage_id = 0;
+#endif
 static int _ecore_x_event_handlers_num = 0;
 static void (**_ecore_x_event_handlers) (XEvent * event) = NULL;
 
@@ -100,6 +106,7 @@ EAPI int ECORE_X_EVENT_SCREENSAVER_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_SYNC_COUNTER = 0;
 EAPI int ECORE_X_EVENT_SYNC_ALARM = 0;
 EAPI int ECORE_X_EVENT_SCREEN_CHANGE = 0;
+EAPI int ECORE_X_EVENT_DAMAGE_NOTIFY = 0;
 
 EAPI int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
 /*
@@ -160,6 +167,10 @@ ecore_x_init(const char *name)
    int randr_base = 0;
    int randr_err_base = 0;
 #endif
+   int fixes_base = 0;
+   int fixes_err_base = 0;
+   int damage_base = 0;
+   int damage_err_base = 0;
    
    if (_ecore_x_init_count > 0) 
      {
@@ -199,6 +210,20 @@ ecore_x_init(const char *name)
      _ecore_x_event_randr_id = randr_base + RRScreenChangeNotify;
    if (_ecore_x_event_randr_id >= _ecore_x_event_handlers_num)
      _ecore_x_event_handlers_num = _ecore_x_event_randr_id + 1;
+#endif
+
+#ifdef ECORE_XFIXES
+   if (XFixesQueryExtension(_ecore_x_disp, &fixes_base, &fixes_err_base))
+     _ecore_x_event_fixes_selection_id = fixes_base + XFixesSelectionNotify;
+   if (_ecore_x_event_fixes_selection_id >= _ecore_x_event_handlers_num)
+     _ecore_x_event_handlers_num = _ecore_x_event_fixes_selection_id + 1;
+#endif
+
+#ifdef ECORE_XDAMAGE
+   if (XDamageQueryExtension(_ecore_x_disp, &damage_base, &damage_err_base))
+     _ecore_x_event_damage_id = damage_base + XDamageNotify;
+   if (_ecore_x_event_damage_id >= _ecore_x_event_handlers_num)
+     _ecore_x_event_handlers_num = _ecore_x_event_damage_id + 1;
 #endif
 
    _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(void *));
@@ -259,6 +284,15 @@ ecore_x_init(const char *name)
    if (_ecore_x_event_randr_id)
      _ecore_x_event_handlers[_ecore_x_event_randr_id] = _ecore_x_event_handle_randr_change;
 #endif
+#ifdef ECORE_XFIXES
+   if (_ecore_x_event_fixes_selection_id)
+     _ecore_x_event_handlers[_ecore_x_event_fixes_selection_id] = _ecore_x_event_handle_fixes_selection_notify;
+#endif
+#ifdef ECORE_XDAMAGE
+   if (_ecore_x_event_damage_id)
+     _ecore_x_event_handlers[_ecore_x_event_damage_id] = _ecore_x_event_handle_damage_notify;
+#endif
+
    if (!ECORE_X_EVENT_KEY_DOWN)
      {
 	ECORE_X_EVENT_KEY_DOWN                 = ecore_event_type_new();
@@ -298,6 +332,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_SYNC_COUNTER             = ecore_event_type_new();
 	ECORE_X_EVENT_SYNC_ALARM               = ecore_event_type_new();
 	ECORE_X_EVENT_SCREEN_CHANGE            = ecore_event_type_new();
+	ECORE_X_EVENT_DAMAGE_NOTIFY            = ecore_event_type_new();
 	
 	ECORE_X_EVENT_WINDOW_DELETE_REQUEST                = ecore_event_type_new();
 	/*

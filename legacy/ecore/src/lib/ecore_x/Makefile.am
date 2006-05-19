@@ -6,6 +6,8 @@ INCLUDES = \
 @Xprint_cflags@ \
 @Xinerama_cflags@ \
 @Xrandr_cflags@ \
+@Xfixes_cflags@ \
+@Xdamage_cflags@ \
 @Xss_cflags@ \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
@@ -33,6 +35,8 @@ ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
 ecore_x_randr.c \
+ecore_x_fixes.c \
+ecore_x_damage.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
@@ -55,6 +59,8 @@ libecore_x_la_LIBADD = \
 @Xprint_libs@ \
 @Xinerama_libs@ \
 @Xrandr_libs@ \
+@Xfixes_libs@ \
+@Xdamage_libs@ \
 @Xss_libs@ \
 @x_ldflags@ \
 @x_libs@ \
@@ -76,6 +82,8 @@ Ecore_X_Cursor.h \
 ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
+ecore_x_fixes.c \
+ecore_x_damage.c \
 ecore_x_randr.c \
 ecore_x_error.c \
 ecore_x_events.c \

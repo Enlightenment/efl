@@ -716,6 +716,7 @@ _ecore_x_event_handle_expose(XEvent *xevent)
    e->y = xevent->xexpose.y;
    e->w = xevent->xexpose.width;
    e->h = xevent->xexpose.height;
+   e->count = xevent->xexpose.count;
    ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, NULL, NULL);   
 }
 
@@ -732,6 +733,7 @@ _ecore_x_event_handle_graphics_expose(XEvent *xevent)
    e->y = xevent->xgraphicsexpose.y;
    e->w = xevent->xgraphicsexpose.width;
    e->h = xevent->xgraphicsexpose.height;
+   e->count = xevent->xgraphicsexpose.count;
    ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, NULL, NULL);   
 }
 
@@ -1670,6 +1672,42 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
    e->width = randr_event->width;
    e->height = randr_event->height;
    ecore_event_add(ECORE_X_EVENT_SCREEN_CHANGE, e, NULL, NULL);
+}
+#endif
+
+#ifdef ECORE_XFIXES
+void
+_ecore_x_event_handle_fixes_selection_notify(XEvent *event)
+{
+   /* Nothing here yet */
+}
+#endif
+
+#ifdef ECORE_XDAMAGE
+void
+_ecore_x_event_handle_damage_notify(XEvent *event)
+{
+   XDamageNotifyEvent *damage_event;
+   Ecore_X_Event_Damage *e;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Damage));
+   if (!e) return;
+
+   e->level = damage_event->level;
+   e->drawable = damage_event->drawable;
+   e->damage = damage_event->damage;
+   e->more = damage_event->more;
+   e->time = damage_event->timestamp;
+   e->area.x = damage_event->area.x;
+   e->area.y = damage_event->area.y;
+   e->area.width = damage_event->area.width;
+   e->area.height = damage_event->area.height;
+   e->geometry.x = damage_event->geometry.x;
+   e->geometry.y = damage_event->geometry.y;
+   e->geometry.width = damage_event->geometry.width;
+   e->geometry.height = damage_event->geometry.height;
+
+   ecore_event_add(ECORE_X_EVENT_DAMAGE_NOTIFY, e, NULL, NULL);
 }
 #endif
 

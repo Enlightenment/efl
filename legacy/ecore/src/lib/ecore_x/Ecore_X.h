@@ -404,6 +404,7 @@ struct _Ecore_X_Event_Window_Damage
 {
    Ecore_X_Window  win;
    int             x, y, w, h;
+   int             count;
    Ecore_X_Time    time;
 };
 
@@ -806,6 +807,7 @@ EAPI extern int ECORE_X_EVENT_SCREENSAVER_NOTIFY;
 EAPI extern int ECORE_X_EVENT_SYNC_COUNTER;
 EAPI extern int ECORE_X_EVENT_SYNC_ALARM;
 EAPI extern int ECORE_X_EVENT_SCREEN_CHANGE;
+EAPI extern int ECORE_X_EVENT_DAMAGE_NOTIFY;
 
 EAPI extern int ECORE_X_EVENT_WINDOW_DELETE_REQUEST;
 /*
@@ -950,7 +952,6 @@ typedef enum _Ecore_X_Window_Configure_Mask {
 #define ECORE_X_PROP_LIST_REMOVE    0
 #define ECORE_X_PROP_LIST_ADD       1
 #define ECORE_X_PROP_LIST_TOGGLE    2
-
 
 EAPI int              ecore_x_init(const char *name);
 EAPI int              ecore_x_shutdown(void);
@@ -1450,6 +1451,61 @@ EAPI Ecore_X_Screen_Refresh_Rate *ecore_x_randr_screen_refresh_rates_get(Ecore_X
 EAPI Ecore_X_Screen_Refresh_Rate  ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root);
 
 EAPI int ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root, Ecore_X_Screen_Size size, Ecore_X_Screen_Refresh_Rate rate);
+
+/* XRender Support (horrendously incomplete) */
+typedef Ecore_X_ID  Ecore_X_Picture;
+
+/* XFixes Extension Support */
+typedef Ecore_X_ID  Ecore_X_Region;
+
+typedef enum _Ecore_X_Region_Type {
+     ECORE_X_REGION_BOUNDING,
+     ECORE_X_REGION_CLIP
+} Ecore_X_Region_Type;
+
+EAPI Ecore_X_Region ecore_x_region_new(Ecore_X_Rectangle *rects, int num);
+EAPI Ecore_X_Region ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap);
+EAPI Ecore_X_Region ecore_x_region_new_from_window(Ecore_X_Window win, Ecore_X_Region_Type type);
+EAPI Ecore_X_Region ecore_x_region_new_from_gc(Ecore_X_GC gc);
+EAPI Ecore_X_Region ecore_x_region_new_from_picture(Ecore_X_Picture picture);
+EAPI void           ecore_x_region_del(Ecore_X_Region region);
+EAPI void           ecore_x_region_set(Ecore_X_Region region, Ecore_X_Rectangle *rects, int num);
+EAPI void           ecore_x_region_copy(Ecore_X_Region dest, Ecore_X_Region source);
+EAPI void           ecore_x_region_combine(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2);
+EAPI void           ecore_x_region_intersect(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2);
+EAPI void           ecore_x_region_subtract(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2);
+EAPI void           ecore_x_region_invert(Ecore_X_Region dest, Ecore_X_Rectangle *bounds, Ecore_X_Region source);
+EAPI void           ecore_x_region_translate(Ecore_X_Region region, int dx, int dy);
+EAPI void           ecore_x_region_extents(Ecore_X_Region dest, Ecore_X_Region source);
+EAPI Ecore_X_Rectangle * ecore_x_region_fetch(Ecore_X_Region region, int *num, Ecore_X_Rectangle *bounds);
+EAPI void           ecore_x_region_expand(Ecore_X_Region dest, Ecore_X_Region source, unsigned int left, unsigned int right, unsigned int top, unsigned int bottom);
+
+/* XDamage Extension Support */
+typedef Ecore_X_ID  Ecore_X_Damage;
+
+typedef enum _Ecore_X_Damage_Report_Level {
+     ECORE_X_DAMAGE_REPORT_RAW_RECTANGLES,
+     ECORE_X_DAMAGE_REPORT_DELTA_RECTANGLES,
+     ECORE_X_DAMAGE_REPORT_BOUNDING_BOX,
+     ECORE_X_DAMAGE_REPORT_NON_EMPTY
+} Ecore_X_Damage_Report_Level;
+
+struct _Ecore_X_Event_Damage {
+     Ecore_X_Damage_Report_Level level;
+     Ecore_X_Drawable drawable;
+     Ecore_X_Damage   damage;
+     int              more;
+     Ecore_X_Time     time;
+     Ecore_X_Rectangle	area;
+     Ecore_X_Rectangle  geometry;
+};
+
+typedef struct _Ecore_X_Event_Damage  Ecore_X_Event_Damage;
+
+EAPI int               ecore_x_damage_query(void);
+EAPI Ecore_X_Damage    ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Report_Level level);
+EAPI void              ecore_x_damage_del(Ecore_X_Damage damage);
+EAPI void              ecore_x_damage_subtract(Ecore_X_Damage damage, Ecore_X_Region repair, Ecore_X_Region parts);
 
 #ifdef __cplusplus
 }

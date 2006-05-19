@@ -36,6 +36,12 @@
 #ifdef ECORE_XRENDER
 #include <X11/extensions/Xrender.h>
 #endif
+#ifdef ECORE_XFIXES
+#include <X11/extensions/Xfixes.h>
+#endif
+#ifdef ECORE_XDAMAGE
+#include <X11/extensions/Xdamage.h>
+#endif
 
 #include "ecore_private.h"
 #include "Ecore_X.h"
@@ -193,6 +199,12 @@ void _ecore_x_event_handle_sync_alarm(XEvent *xevent);
 #ifdef ECORE_XRANDR
 void _ecore_x_event_handle_randr_change(XEvent *xevent);
 #endif
+#ifdef ECORE_XFIXES
+void _ecore_x_event_handle_fixes_selection_notify(XEvent *xevent);
+#endif
+#ifdef ECORE_XDAMAGE
+void _ecore_x_event_handle_damage_notify(XEvent *xevent);
+#endif
 
 void  _ecore_x_selection_data_init(void);
 void  _ecore_x_selection_shutdown(void);
@@ -220,6 +232,10 @@ void _ecore_x_dnd_shutdown(void);
 Ecore_X_Window_State _ecore_x_netwm_state_get(Ecore_X_Atom a);
 int                  _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data);
 int                  _ecore_x_netwm_startup_info(Ecore_X_Window win, char *data);
+
+/* Fixes * Damage */
+void _ecore_x_fixes_init(void);
+void _ecore_x_damage_init(void);
 
 /* from sync */
 
