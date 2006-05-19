@@ -11,9 +11,9 @@ URL: http://www.enlightenment.org
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel
-#BuildRequires: libjpeg-devel XFree86-devel openssl-devel
-#BuildRequires: evas-devel eet-devel
+#BuildSuggests: xorg-x11-devel, XFree86-devel, curl-devel
+BuildRequires: libjpeg-devel, openssl-devel
+BuildRequires: evas-devel, eet-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -26,8 +26,7 @@ use of the work put into Ecore to make this job easy for applications.
 Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
-#Requires: libjpeg-devel XFree86-devel openssl-devel
-#Requires: evas-devel eet-devel
+Requires: openssl-devel, evas-devel, eet-devel
 
 %description devel
 Ecore development files

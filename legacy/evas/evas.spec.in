@@ -21,12 +21,12 @@
 %bcond_with    module_engine_gl_x11
 %bcond_with    module_engine_software_qtopia
 %bcond_with    module_engine_software_xcb
+%bcond_with    module_engine_xrender_x11
 
 ## enabled features
 %bcond_without module_engine_software_x11
 %bcond_without module_engine_buffer
 %bcond_without module_engine_fb
-%bcond_without module_engine_xrender_x11
 %bcond_without module_loader_png
 %bcond_without module_saver_png
 %bcond_without module_loader_jpeg
@@ -164,6 +164,7 @@ TIFF Image saver module for Evas
 %package module_loader_gif
 Summary: GIF Image loader module for Evas
 Group: System Environment/Libraries
+#BuildSuggests: libungif-devel, giflib-devel
 BuildRequires: /usr/include/gif_lib.h
 %description module_loader_gif
 GIF Image loader module for Evas
@@ -243,9 +244,8 @@ Framebuffer rendering engine module for Evas
 %package module_engine_xrender_x11
 Summary: XRender rendering engine module for Evas
 Group: System Environment/Libraries
-#BuildSuggests: xorg-x11-devel
-#BuildRequires: XFree86-devel
-#BuildRequires: xrender-devel
+#BuildSuggests: xorg-x11-devel, XFree86-devel
+BuildRequires: xrender-devel
 Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_xrender_x11
@@ -259,8 +259,7 @@ XRender rendering engine module for Evas
 %package module_engine_gl_x11
 Summary: OpenGL under X11 rendering engine module for Evas
 Group: System Environment/Libraries
-#BuildSuggests: xorg-x11-devel, xorg-x11-Mesa-libGL
-#BuildRequires: XFree86-devel
+#BuildSuggests: xorg-x11-devel, xorg-x11-Mesa-libGL, XFree86-devel
 Requires: evas
 %description module_engine_gl_x11
 OpenGL under X11 rendering engine module for Evas
@@ -287,7 +286,7 @@ Directfb rendering engine module for Evas
 %package module_engine_software_qtopia
 Summary: Qtopia rendering engine module for Evas
 Group: System Environment/Libraries
-#BuildRequires: qtopia-devel
+BuildRequires: qtopia-devel
 Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_qtopia
@@ -301,7 +300,7 @@ Qtopia rendering engine module for Evas
 %package module_engine_software_xcb
 Summary: Software XCB X11 rendering engine module for Evas
 Group: System Environment/Libraries
-#BuildRequires: xcb-devel
+BuildRequires: xcb-devel
 Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_xcb

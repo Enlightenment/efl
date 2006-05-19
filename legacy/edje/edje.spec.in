@@ -11,8 +11,8 @@ Source: ftp://ftp.enlightenment.org/pub/evoak/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel vim-enhanced
-#BuildRequires: eet-devel embryo-devel evas-devel ecore-devel
+#BuildSuggests: xorg-x11-devel, vim-enhanced
+BuildRequires: eet-devel, embryo-devel, evas-devel, ecore-devel
 Requires:  evas-module_loader_eet
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -46,7 +46,8 @@ Summary: Edje file compiler/decompiler suite
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
 Requires: embryo-bin
-Requires:  evas-module_saver_eet evas-module_loader_png evas-module_saver_png evas-module_loader_jpeg evas-module_saver_jpeg evas-module_engine_buffer
+Requires: evas-module_saver_eet, evas-module_loader_png, evas-module_saver_png
+Requires: evas-module_loader_jpeg, evas-module_saver_jpeg, evas-module_engine_buffer
 
 %description bin
 Edje file compiler/decompiler suite
@@ -56,7 +57,7 @@ Summary: Debugging tools for Edje
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
 Requires: edje-bin
-Requires: evas-module_loader_png evas-module_engine_software_x11
+Requires: evas-module_loader_png, evas-module_engine_software_x11
 
 %description debug
 Debugging tools for Edje
