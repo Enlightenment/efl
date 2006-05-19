@@ -236,4 +236,27 @@ ecore_x_region_expand(Ecore_X_Region dest, Ecore_X_Region source, unsigned int l
 #endif
 }
 
+EAPI void
+ecore_x_region_gc_clip_set(Ecore_X_Region region, Ecore_X_GC gc, int x_origin, int y_origin)
+{
+#ifdef ECORE_XFIXES
+   XFixesSetGCClipRegion(_ecore_x_disp, gc, x_origin, y_origin, region);
+#endif
+}
+
+EAPI void
+ecore_x_region_window_shape_set(Ecore_X_Region region, Ecore_X_Window win, Ecore_X_Shape_Type type, int x_offset, int y_offset)
+{
+#ifdef ECORE_XFIXES
+   XFixesSetWindowShapeRegion(_ecore_x_disp, win, type, x_offset, y_offset, region);
+#endif
+}
+
+EAPI void
+ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore_X_Picture picture, int x_origin, int y_origin)
+{
+#ifdef ECORE_XFIXES
+   XFixesSetPictureClipRegion(_ecore_x_disp, picture, x_origin, y_origin, region);
+#endif
+}
 

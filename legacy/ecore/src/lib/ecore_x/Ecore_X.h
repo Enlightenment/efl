@@ -207,6 +207,13 @@ typedef enum _Ecore_X_Gravity {
      ECORE_X_GRAVITY_STATIC = 10
 } Ecore_X_Gravity;
 
+/* Needed for ecore_x_region_window_shape_set */
+typedef enum _Ecore_X_Shape_Type
+{
+   ECORE_X_SHAPE_BOUNDING,
+   ECORE_X_SHAPE_CLIP
+} Ecore_X_Shape_Type;
+
 typedef struct _Ecore_X_Event_Key_Down                 Ecore_X_Event_Key_Down;
 typedef struct _Ecore_X_Event_Key_Up                   Ecore_X_Event_Key_Up;
 typedef struct _Ecore_X_Event_Mouse_Button_Down        Ecore_X_Event_Mouse_Button_Down;
@@ -1479,6 +1486,9 @@ EAPI void           ecore_x_region_translate(Ecore_X_Region region, int dx, int 
 EAPI void           ecore_x_region_extents(Ecore_X_Region dest, Ecore_X_Region source);
 EAPI Ecore_X_Rectangle * ecore_x_region_fetch(Ecore_X_Region region, int *num, Ecore_X_Rectangle *bounds);
 EAPI void           ecore_x_region_expand(Ecore_X_Region dest, Ecore_X_Region source, unsigned int left, unsigned int right, unsigned int top, unsigned int bottom);
+EAPI void           ecore_x_region_gc_clip_set(Ecore_X_Region region, Ecore_X_GC gc, int x_origin, int y_origin);
+EAPI void           ecore_x_region_window_shape_set(Ecore_X_Region region, Ecore_X_Window win, Ecore_X_Shape_Type type, int x_offset, int y_offset);
+EAPI void           ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore_X_Picture picture, int x_origin, int y_origin);
 
 /* XDamage Extension Support */
 typedef Ecore_X_ID  Ecore_X_Damage;
