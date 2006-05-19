@@ -40,6 +40,8 @@ ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
 ecore_x_randr.c \
+ecore_x_fixes.c \
+ecore_x_damage.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
@@ -91,6 +93,8 @@ ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
 ecore_x_randr.c \
+ecore_x_fixes.c \
+ecore_x_damage.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \

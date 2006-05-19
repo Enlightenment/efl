@@ -1690,6 +1690,8 @@ _ecore_x_event_handle_damage_notify(XEvent *event)
    XDamageNotifyEvent *damage_event;
    Ecore_X_Event_Damage *e;
 
+   damage_event = (XDamageNotifyEvent *)event;
+
    e = calloc(1, sizeof(Ecore_X_Event_Damage));
    if (!e) return;
 
