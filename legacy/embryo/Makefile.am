@@ -1,5 +1,3 @@
-## Process this file with automake to produce Makefile.in
-
 SUBDIRS = src include examples
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \

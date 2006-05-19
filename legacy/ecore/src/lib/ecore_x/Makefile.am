@@ -30,13 +30,16 @@ Ecore_X.h \
 Ecore_X_Atoms.h \
 Ecore_X_Cursor.h
 
+## FIXME: disabled until xcomp adds this file in
+# ecore_x_fixes.c \
+# ecore_x_damage.c \
+#
+
 libecore_x_la_SOURCES = \
 ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
 ecore_x_randr.c \
-ecore_x_fixes.c \
-ecore_x_damage.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
@@ -73,6 +76,11 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
 $(top_builddir)/src/lib/ecore_job/libecore_job.la
 
+## FIXME: disabled until xcomp adds this file in
+# ecore_x_fixes.c \
+# ecore_x_damage.c \
+#
+
 endif
 
 EXTRA_DIST = \
@@ -82,8 +90,6 @@ Ecore_X_Cursor.h \
 ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
-ecore_x_fixes.c \
-ecore_x_damage.c \
 ecore_x_randr.c \
 ecore_x_error.c \
 ecore_x_events.c \
