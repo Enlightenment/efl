@@ -289,7 +289,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
-
+   
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
      {
@@ -386,6 +386,10 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	e->pointer.object.in = ins;
 	if (e->pointer.inside)
 	  evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, timestamp, data);
+     }
+   if ((e->pointer.button == 0) && (e->pointer.mouse_grabbed))
+     {
+	e->pointer.mouse_grabbed = 0;
      }
 }
 
