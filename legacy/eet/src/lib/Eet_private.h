@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 #if HAVE_ALLOCA_H
 #include <alloca.h>
 #endif

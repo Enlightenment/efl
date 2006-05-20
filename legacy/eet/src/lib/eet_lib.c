@@ -79,7 +79,7 @@ static void      eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, 
 static void      eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
 static int       eet_string_match(const char *s1, const char *s2);
 static int       eet_hash_gen(const char *key, int hash_size);
-static void      eet_flush(Eet_File *ef);
+static Eet_Error eet_flush(Eet_File *ef);
 static Eet_File_Node *find_node_by_name (Eet_File *ef, const char *name);
 static int read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len);
 
@@ -253,7 +253,7 @@ eet_hash_gen(const char *key, int hash_size)
 }
 
 /* flush out writes to an eet file */
-static void
+static Eet_Error
 eet_flush(Eet_File *ef)
 {
    int i, count, size, num, offset;
@@ -263,11 +263,11 @@ eet_flush(Eet_File *ef)
 
    /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE))
-     return;
-   if (!ef->header) return;
-   if (!ef->header->directory) return;
-   if ((ef->mode != EET_FILE_MODE_WRITE) && (ef->mode != EET_FILE_MODE_READ_WRITE)) return;
-   if (!ef->writes_pending) return;
+     return EET_ERROR_BAD_OBJECT;
+   if (!ef->header) return EET_ERROR_EMPTY;
+   if (!ef->header->directory) return EET_ERROR_EMPTY;
+   if ((ef->mode != EET_FILE_MODE_WRITE) && (ef->mode != EET_FILE_MODE_READ_WRITE)) return EET_ERROR_NOT_WRITABLE;
+   if (!ef->writes_pending) return EET_ERROR_NONE;
 
    /* calculate total size in bytes of directory block */
    size = 0;
@@ -340,7 +340,24 @@ eet_flush(Eet_File *ef)
 		  i2 = htonl(i1);
 		  *((int *)(buf + 16)) = (int)i2;
 		  memcpy(buf + 20, efn->name, name_size);
-		  if (fwrite(buf, buf_size, 1, ef->fp) != 1) return;
+		  if (fwrite(buf, buf_size, 1, ef->fp) != 1)
+		    {
+		       write_error:
+		       switch (ferror(ef->fp))
+			 {
+			  case EFBIG:
+			    return EET_ERROR_WRITE_ERROR_FILE_TOO_BIG;
+			  case EIO:
+			    return EET_ERROR_WRITE_ERROR_IO_ERROR;
+			  case ENOSPC:
+			    return EET_ERROR_WRITE_ERROR_OUT_OF_SPACE;
+			  case EPIPE:
+			    return EET_ERROR_WRITE_ERROR_FILE_CLOSED;
+			  default:
+			    return EET_ERROR_WRITE_ERROR;
+			 }
+		       return EET_ERROR_WRITE_ERROR;
+		    }
 		  offset += buf_size;
 	       }
 	  }
@@ -353,12 +370,13 @@ eet_flush(Eet_File *ef)
 	     if (efn->compression >= 0)
 	       {
 		  if (fwrite(efn->data, efn->size, 1, ef->fp) != 1)
-		    return;
+		    goto write_error;
 	       }
 	  }
      }
    /* no more writes pending */
    ef->writes_pending = 0;
+   return EET_ERROR_NONE;
 }
 
 EAPI int
@@ -721,20 +739,22 @@ eet_mode_get(Eet_File *ef)
      return ef->mode;
 }
 
-EAPI void
+EAPI Eet_Error
 eet_close(Eet_File *ef)
 {
+   Eet_Error err;
+   
    /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE))
-     return;
+     return EET_ERROR_BAD_OBJECT;
    /* deref */
    ef->references--;
    /* if its still referenced - dont go any further */
-   if (ef->references > 0) return;
+   if (ef->references > 0) return EET_ERROR_NONE;
    /* if we are in cacheburst mode - dont free it - leave it in cache */
    if (eet_cacheburst_mode)
      {
-	if (!ef->delete_me_now) return;
+	if (!ef->delete_me_now) return EET_ERROR_NONE;
      }
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
@@ -742,7 +762,7 @@ eet_close(Eet_File *ef)
    else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
      eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
    /* flush any writes */
-   eet_flush(ef);
+   err = eet_flush(ef);
 
    /* free up members */
    if (ef->fp) fclose(ef->fp);
@@ -779,6 +799,7 @@ eet_close(Eet_File *ef)
    memset(ef, 0, sizeof(Eet_File));
    /* free it */
    free(ef);
+   return err;
 }
 
 EAPI void *
