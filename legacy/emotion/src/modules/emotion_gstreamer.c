@@ -1028,7 +1028,7 @@ em_audio_channel_mute_set(void *video,
    if (mute)
       g_object_set (G_OBJECT (volume), "volume", 0.0, NULL);
    else
-      g_object_set (G_OBJECT (volume), "volume", ev->volume / 10.0, NULL);
+      g_object_set (G_OBJECT (volume), "volume", ev->volume * 10.0, NULL);
 
    gst_object_unref (volume);
 }
@@ -1054,13 +1054,13 @@ em_audio_channel_volume_set(void  *video,
 
    if (vol < 0.0)
      vol = 0.0;
-   if (vol > 100.0)
-     vol = 100.0;
+   if (vol > 1.0)
+     vol = 1.0;
    ev->volume = vol;
    volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
    if (!volume) return;
    g_object_set (G_OBJECT (volume), "volume",
-		 vol / 10.0, NULL);
+		 vol * 10.0, NULL);
    gst_object_unref (volume);
 }
 
@@ -1559,7 +1559,7 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
      resample = gst_element_factory_make ("audioresample", NULL);
      volume = gst_element_factory_make ("volume", "volume");
      g_object_get (G_OBJECT (volume), "volume", &vol, NULL);
-     ev->volume = vol * 10.0;
+     ev->volume = vol / 10.0;
 
      if (index == 1)
        sink = gst_element_factory_make ("autoaudiosink", NULL);
