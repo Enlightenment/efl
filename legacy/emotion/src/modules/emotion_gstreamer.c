@@ -1036,7 +1036,6 @@ em_audio_channel_volume_set(void  *video,
 			    double vol)
 {
    Emotion_Gstreamer_Video *ev;
-   Emotion_Audio_Sink      *asink;
    GstElement              *volume;
 
    ev = (Emotion_Gstreamer_Video *)video;
@@ -1062,7 +1061,7 @@ em_audio_channel_volume_get(void *video)
    ev = (Emotion_Gstreamer_Video *)video;
 
    volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
-   if (!volume) return;
+   if (!volume) return 0.0;
    g_object_get (G_OBJECT (volume), "volume", &vol, NULL);
    gst_object_unref (volume);
 
