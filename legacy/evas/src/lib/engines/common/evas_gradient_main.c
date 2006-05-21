@@ -752,94 +752,110 @@ evas_common_gradient_map(RGBA_Draw_Context *dc, RGBA_Gradient *gr, int spread)
    evas_common_gradient_map_argb(dc, gr, spread);
 }
 
-/* from imlib2 code */
 void
 evas_common_convert_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 {
-   int   i;
-   float f, p, q, t;
+   int i, rr, gg, bb;
+   float f;
 
-   v = 255 * v;
+   v *= 255;
    if (s == 0)
      {
-	if (r) *r = v;
-	if (g) *g = v;
-	if (b) *b = v;
-	return;
+       if (r) *r = v;
+       if (g) *g = v;
+       if (b) *b = v;
+       return;
      }
+     
+     
    h /= 60;
    i = h;
    f = h - i;
 
-   s = v * s;
-   f = s * f;
-   p = v - s;
-   q = v - f;
-   t = p + f;
+   s *= v;
+   f *= s;
+   s = v - s;
    switch (i)
      {
-	case 0:
-        case 6:
-	  if (r) *r = v;
-	  if (g) *g = t;
-	  if (b) *b = p;
-	  return;
-	case 1:
-	  if (r) *r = q;
-	  if (g) *g = v;
-	  if (b) *b = p;
-	  return;
-	case 2:
-	  if (r) *r = p;
-	  if (g) *g = v;
-	  if (b) *b = t;
-	  return;
-	case 3:
-	  if (r) *r = p;
-	  if (g) *g = q;
-	  if (b) *b = v;
-	  return;
-	case 4:
-	  if (r) *r = t;
-	  if (g) *g = p;
-	  if (b) *b = v;
-	  return;
-	default:
-	  if (r) *r = v;
-	  if (g) *g = p;
-	  if (b) *b = q;
+       case 1:
+         rr = v - f;  gg = v;  bb = s;
+         break;
+       case 2:
+         rr = s;  gg = v;  bb = s + f;
+         break;
+       case 3:
+         rr = s;  gg = v - f;  bb = v;
+         break;
+       case 4:
+         rr = s + f;  gg = s;  bb = v;
+         break;
+       case 5:
+         rr = v;  gg = s;  bb = v - f;
+         break;
+       default:
+         rr = v;  gg = s + f;  bb = s;
+         break;
      }
+     
+   if (r) *r = rr;
+   if (g) *g = gg;
+   if (b) *b = bb;
 }
 
 void
 evas_common_convert_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
-   float  min, max, del;
+   int max, min, d = r - g;
+   float hh, ss, vv;
 
-   min = MIN(r,g);  min = MIN(min,b);
-   max = MAX(r,g);  max = MAX(max,b);
-   del = max - min;
+   //set min to MIN(g,r)
+   d = ((d & (~(d >> 8))) & 0xff);
+   min = r - d;
+   //set max to MAX(g,r)
+   max = g + d;
 
-   if (v) *v = (max / 255);
-   if ((max == 0) || (del == 0))
+   //set min to MIN(b,min)
+   d = min - b;
+   min -= ((d & (~(d >> 8))) & 0xff);
+
+   //set max to MAX(max,b)
+   d = b - max;
+   max += ((d & (~(d >> 8))) & 0xff);
+
+   d = max - min;
+
+   if (v) *v = (max / 255.0);
+   if (!(max & d))
      {
 	if (s) *s = 0;
-	if (h) *h = 0;
+        if (h) *h = 0;
 	return; 
      }
 
-   if (s) *s = (del / max);
-
-   if (!h) return;
+   if (s) *s = (d / (float)max);
    if (r == max)
-	*h = ((g - b) / del);
-   else if (g == max)
-	*h = 2 + ((b - r) / del);
-   else if (b == max)
-	*h = 4 + ((r - g) / del);
-
-   *h *= 60;
-   if (*h < 0) *h += 360;
+     {
+       if (h)
+         {
+           *h = 60 * ((g - b) / (float)d);
+           if (*h < 0) *h += 360;
+         }
+       return;
+     }
+   if (g == max)
+     {
+       if (h)
+         {
+           *h = 120 + (60 * ((b - r) / (float)d));
+           if (*h < 0) *h += 360;
+         }
+       return;
+     }
+   if (h)
+     {
+       *h = 240 + (60 * ((r - g) / (float)d));
+       if (*h < 0) *h += 360;
+     }
 }
 
 void
