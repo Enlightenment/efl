@@ -1036,6 +1036,8 @@ em_audio_channel_volume_set(void  *video,
 			    double vol)
 {
    Emotion_Gstreamer_Video *ev;
+   Emotion_Audio_Sink      *asink;
+   GstElement              *volume;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
@@ -1043,21 +1045,28 @@ em_audio_channel_volume_set(void  *video,
      vol = 0.0;
    if (vol > 100.0)
      vol = 100.0;
-   g_object_set (G_OBJECT (ev->pipeline), "volume",
-		 vol / 100.0, NULL);
+   volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
+   if (!volume) return;
+   g_object_set (G_OBJECT (volume), "volume",
+		 vol / 10.0, NULL);
+   gst_object_unref (volume);
 }
 
 static double
 em_audio_channel_volume_get(void *video)
 {
    Emotion_Gstreamer_Video *ev;
+   GstElement              *volume;
    double                   vol;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   g_object_get (G_OBJECT (ev->pipeline), "volume", &vol, NULL);
+   volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
+   if (!volume) return;
+   g_object_get (G_OBJECT (volume), "volume", &vol, NULL);
+   gst_object_unref (volume);
 
-   return vol*100.0;
+   return vol*10.0;
 }
 
 /* spu stuff */
@@ -1532,6 +1541,7 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
      GstElement *queue;
      GstElement *conv;
      GstElement *resample;
+     GstElement *volume;
      GstElement *sink;
      GstPad     *audiopad;
 
@@ -1540,14 +1550,15 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
      queue = gst_element_factory_make ("queue", NULL);
      conv = gst_element_factory_make ("audioconvert", NULL);
      resample = gst_element_factory_make ("audioresample", NULL);
+     volume = gst_element_factory_make ("volume", "volume");
      if (index == 1)
        sink = gst_element_factory_make ("autoaudiosink", NULL);
      else
        sink = gst_element_factory_make ("fakesink", NULL);
 
      gst_bin_add_many (GST_BIN (audiobin),
-                       queue, conv, resample, sink, NULL);
-     gst_element_link_many (queue, conv, resample, sink, NULL);
+                       queue, conv, resample, volume, sink, NULL);
+     gst_element_link_many (queue, conv, resample, volume, sink, NULL);
 
      audiopad = gst_element_get_pad (queue, "sink");
      gst_element_add_pad (audiobin, gst_ghost_pad_new ("sink", audiopad));
