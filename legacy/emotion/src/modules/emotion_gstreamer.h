@@ -55,6 +55,7 @@ struct _Emotion_Gstreamer_Video
   /* Characteristics of stream */
   double            position;
   double            ratio;
+  double            volume;
 
   volatile int      seek_to;
   volatile int      get_poslen;

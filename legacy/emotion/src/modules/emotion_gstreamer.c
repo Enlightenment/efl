@@ -1014,11 +1014,23 @@ em_audio_channel_mute_set(void *video,
 			  int   mute)
 {
    Emotion_Gstreamer_Video *ev;
+   GstElement              *volume;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
+   if (ev->audio_mute == mute)
+     return;
+
    ev->audio_mute = mute;
-   /* FIXME: a faire ... */
+   volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
+   if (!volume) return;
+
+   if (mute)
+      g_object_set (G_OBJECT (volume), "volume", 0.0, NULL);
+   else
+      g_object_set (G_OBJECT (volume), "volume", ev->volume / 10.0, NULL);
+
+   gst_object_unref (volume);
 }
 
 static int
@@ -1044,6 +1056,7 @@ em_audio_channel_volume_set(void  *video,
      vol = 0.0;
    if (vol > 100.0)
      vol = 100.0;
+   ev->volume = vol;
    volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
    if (!volume) return;
    g_object_set (G_OBJECT (volume), "volume",
@@ -1055,17 +1068,11 @@ static double
 em_audio_channel_volume_get(void *video)
 {
    Emotion_Gstreamer_Video *ev;
-   GstElement              *volume;
    double                   vol;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
-   if (!volume) return 0.0;
-   g_object_get (G_OBJECT (volume), "volume", &vol, NULL);
-   gst_object_unref (volume);
-
-   return vol*10.0;
+   return ev->volume;
 }
 
 /* spu stuff */
@@ -1543,6 +1550,7 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
      GstElement *volume;
      GstElement *sink;
      GstPad     *audiopad;
+     double      vol;
 
      audiobin = gst_bin_new (NULL);
 
@@ -1550,6 +1558,9 @@ _em_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
      conv = gst_element_factory_make ("audioconvert", NULL);
      resample = gst_element_factory_make ("audioresample", NULL);
      volume = gst_element_factory_make ("volume", "volume");
+     g_object_get (G_OBJECT (volume), "volume", &vol, NULL);
+     ev->volume = vol * 10.0;
+
      if (index == 1)
        sink = gst_element_factory_make ("autoaudiosink", NULL);
      else
