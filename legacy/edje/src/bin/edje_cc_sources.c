@@ -90,7 +90,7 @@ source_fetch_file(char *fil, char *filname)
 	int got_hash = 0;
 	int forgetit = 0;
 	int haveinclude = 0;
-	char *file = NULL;
+	char *file = NULL, *fname = NULL;
 	
 	while ((!forgetit) && (*p))
 	  {
@@ -171,6 +171,9 @@ source_fetch_file(char *fil, char *filname)
 				 else
 				   snprintf(file, l, "%s/%s", dir, p + 1);
 
+				 fname = strdup(p + 1);
+				 pp = strrchr(fname, end);
+				 if (pp) *pp = 0;
 				 forgetit = 1;
 			      }
 			 }
@@ -183,10 +186,11 @@ source_fetch_file(char *fil, char *filname)
 
 	     got_hash = 0;
 	  }
-	if (file)
+	if ((file) && (fname))
 	  {
-	     source_fetch_file(file, file);
+	     source_fetch_file(file, fname);
 	     free(file);
+	     free(fname);
 	  }
      }
    free (dir);

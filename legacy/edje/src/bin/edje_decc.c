@@ -283,7 +283,7 @@ output(void)
 	  }
 	f = fopen(out, "w");
 	fprintf(f, "#!/bin/sh\n");
-	fprintf(f, "%s $@ --image_dir . --font_dir . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
+	fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
 	fclose(f);
 
 #ifndef WIN32
