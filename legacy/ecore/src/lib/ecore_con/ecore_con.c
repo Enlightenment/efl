@@ -283,7 +283,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
 	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
 	lin.l_onoff = 1;
-	lin.l_linger = 100;
+	lin.l_linger = 0;
 	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error;
 	socket_addr.sin_family = AF_INET;
 	socket_addr.sin_port = htons(port);
