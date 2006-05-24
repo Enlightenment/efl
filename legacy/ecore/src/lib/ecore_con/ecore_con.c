@@ -221,7 +221,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	     umask(pmode);	     
 	     goto error;
 	  }
-	lin.l_onoff = 0;
+	lin.l_onoff = 1;
 	lin.l_linger = 0;
 	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
 	  {
