@@ -27,6 +27,7 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: openssl-devel, evas-devel, eet-devel
+Requires: ecore_con, ecore_config, ecore_dbus, ecore_evas, ecore_fb, ecore_file, ecore_ipc, ecore_job, ecore_txt, ecore_x
 
 %description devel
 Ecore development files
