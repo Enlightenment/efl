@@ -629,6 +629,7 @@ EAPI void
 evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
 {
    Evas_Object_Text *o;
+   int pl = 0, pr = 0, pt = 0, pb = 0, l = 0, r = 0, t = 0, b = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -639,7 +640,14 @@ evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
    MAGIC_CHECK_END();
    if (o->cur.style == style)
      return;
+   evas_text_style_pad_get(o->cur.style, &pl, &pr, &pt, &pb);
    o->cur.style = style;
+   evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
+   if (o->cur.text)
+     obj->cur.geometry.w += (l - pl) + (r - pr);
+   else
+     obj->cur.geometry.w = 0;
+   obj->cur.geometry.h += (t - pt) + (b - pb);
    evas_object_change(obj);
 }
 
@@ -1249,7 +1257,7 @@ evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int 
 	if (sr < 4) sr = 4;
 	if (sb < 4) sb = 4;
      }
-
+   
    if (l) *l = sl;
    if (r) *r = sr;
    if (t) *t = st;
@@ -1395,7 +1403,6 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
 		     o->cur.text);
-
    /* shadows */
    if (o->cur.style == EVAS_TEXT_STYLE_SHADOW)
      {
