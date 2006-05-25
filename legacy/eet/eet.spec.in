@@ -31,6 +31,7 @@ read by any architecture.
 Summary: Eet headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
+Requires: libjpeg-devel, zlib-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Eet
