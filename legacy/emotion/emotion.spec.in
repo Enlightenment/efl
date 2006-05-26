@@ -13,7 +13,7 @@ Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project 
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel libxine1-devel xine-lib-devel
 #BuildSuggests: gstreamer-devel gstreamer-plugins-devel gstreamer-plugins-base-devel gstreamer-ffmpeg
-BuildRequires: XFree86-devel eet-devel evas-devel edje-devel
+BuildRequires: XFree86-devel eet-devel evas-devel edje-devel edje-bin
 BuildRequires: /usr/bin/xine-config
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
