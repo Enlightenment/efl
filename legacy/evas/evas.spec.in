@@ -15,8 +15,6 @@
 %endif
 
 ## disabled features
-%bcond_with    module_loader_edb
-%bcond_with    module_saver_edb
 %bcond_with    module_engine_directfb
 %bcond_with    module_engine_gl_x11
 %bcond_with    module_engine_software_qtopia
@@ -27,6 +25,8 @@
 %bcond_without module_engine_software_x11
 %bcond_without module_engine_buffer
 %bcond_without module_engine_fb
+%bcond_without module_loader_edb
+%bcond_without module_saver_edb
 %bcond_without module_loader_png
 %bcond_without module_saver_png
 %bcond_without module_loader_jpeg
