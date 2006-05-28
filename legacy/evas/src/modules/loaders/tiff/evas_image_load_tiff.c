@@ -145,13 +145,13 @@ evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key
    if (!tif)
       return 0;
 
-   strcpy(txt, "Cannot be processed by libtiff");
+   strcpy(txt, "Evas Tiff loader: cannot be processed by libtiff");
    if (!TIFFRGBAImageOK(tif, txt))
      {
         TIFFClose(tif);
         return 0;
      }
-   strcpy(txt, "Cannot begin reading tiff");
+   strcpy(txt, "Evas Tiff loader: cannot begin reading tiff");
    if (!TIFFRGBAImageBegin(& tiff_image, tif, 0, txt))
      {
         TIFFClose(tif);
@@ -213,13 +213,13 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
    if (!tif)
       return 0;
 
-   strcpy(txt, "Cannot be processed by libtiff");
+   strcpy(txt, "Evas Tiff loader: cannot be processed by libtiff");
    if (!TIFFRGBAImageOK(tif, txt))
      {
         TIFFClose(tif);
         return 0;
      }
-   strcpy(txt, "Cannot begin reading tiff");
+   strcpy(txt, "Evas Tiff loader: cannot begin reading tiff");
    if (!TIFFRGBAImageBegin((TIFFRGBAImage *) & rgba_image, tif, 0, txt))
      {
         TIFFClose(tif);
@@ -256,9 +256,7 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
 
    if (!rast)
      {
-        fprintf(stderr, "imlib2-tiffloader: Out of memory\n");
-
-        _TIFFfree(rast);
+        fprintf(stderr, "Evas Tiff loader: out of memory\n");
 
         TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
         TIFFClose(tif);
@@ -268,7 +266,7 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
 
    if (rgba_image.rgba.put.any == NULL)
      {
-        fprintf(stderr, "imlib2-tiffloader: No put function");
+        fprintf(stderr, "Evas Tiff loader: no put function");
 
 	evas_common_image_surface_free(im->image);
         _TIFFfree(rast);
