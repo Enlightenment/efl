@@ -35,7 +35,7 @@ configure parts of the display.
 %package devel
 Summary: Edje headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
-Requires: %{name} = %{version}
+Requires: %{name} = %{version}, %{name}-bin = %{version}
 Requires: eet-devel embryo-devel evas-devel ecore-devel
 
 %description devel
