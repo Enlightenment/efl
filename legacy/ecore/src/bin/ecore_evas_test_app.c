@@ -125,7 +125,7 @@ app_start(int argc, const char **argv)
 	       "%s -buf       Test ecore_evas in the Buffer\n"
 	       "%s -buf2      Test ecore_evas in the Image Buffer\n"
 	       "%s -h         Display this help\n",
-	       argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+	       argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 	ecore_evas_shutdown();
 	ecore_shutdown();
 	return 0;
