@@ -308,7 +308,7 @@ eet_flush(Eet_File *ef)
    i2 = htonl(i1);
    head[2] = (int)i2;
    fseek(ef->fp, 0, SEEK_SET);
-   if (fwrite(head, 12, 1, ef->fp) != 1) return;
+   if (fwrite(head, 12, 1, ef->fp) != 1) goto write_error;
    offset = 12;
    for (i = 0; i < num; i++)
      {
@@ -323,7 +323,7 @@ eet_flush(Eet_File *ef)
 		  name_size = strlen(efn->name);
 		  buf_size = 20 + name_size;
 		  buf = alloca(buf_size);
-		  if (!buf) return;
+		  if (!buf) return EET_ERROR_OUT_OF_MEMORY;
 		  i1 = (unsigned long int)efn->offset;
 		  i2 = htonl(i1);
 		  *((int *)(buf + 0)) = (int)i2;
