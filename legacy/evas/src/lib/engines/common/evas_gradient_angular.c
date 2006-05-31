@@ -2080,7 +2080,6 @@ angular_pad_aa_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int d
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
-   DATA32  mc1 = map[map_len - 1];
    Angular_Data  *gdata = (Angular_Data *)params_data;
    int     xx, yy;
    int     ss = (gdata->s) << 16;

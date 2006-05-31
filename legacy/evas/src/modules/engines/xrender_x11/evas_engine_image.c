@@ -66,7 +66,7 @@ __xre_image_find(char *fkey)
 }
 
 XR_Image *
-_xre_image_load(Ximage_Info *xinf, char *file, char *key)
+_xre_image_load(Ximage_Info *xinf, const char *file, const char *key)
 {
    XR_Image *im;
    char buf[4096];

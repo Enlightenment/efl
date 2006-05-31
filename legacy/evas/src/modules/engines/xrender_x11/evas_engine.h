@@ -87,8 +87,8 @@ typedef struct _XR_Image XR_Image;
 struct _XR_Image
 {
    Ximage_Info     *xinf;
-   char            *file;
-   char            *key;
+   const char      *file;
+   const char      *key;
    char            *fkey;
    RGBA_Image      *im;
    void            *data;
@@ -96,14 +96,14 @@ struct _XR_Image
    Xrender_Surface *surface;
    int              references;
    char            *format;
-   char            *comment;
+   const char      *comment;
    Tilebuf         *updates;
    unsigned char    alpha : 1;
    unsigned char    dirty : 1;
    unsigned char    free_data : 1;
 };
 
-XR_Image *_xre_image_load(Ximage_Info *xinf, char *file, char *key);
+XR_Image *_xre_image_load(Ximage_Info *xinf, const char *file, const char *key);
 XR_Image *_xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data);
 XR_Image *_xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data);
 XR_Image *_xre_image_new(Ximage_Info *xinf, int w, int h);

@@ -264,7 +264,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
       case OUTBUF_DEPTH_ARGB_32BPP_8888_8888:
 	  {
 	     DATA32 *dest, *src, *dst;
-	     int xx, yy, row_bytes;
+	     int yy, row_bytes;
 	     
 	     row_bytes = buf->dest_row_bytes;
 	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);

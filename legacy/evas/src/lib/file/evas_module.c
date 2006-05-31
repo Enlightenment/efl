@@ -133,7 +133,6 @@ evas_module_init(void)
 {
    Evas_List *l;
    int new_id_engine = 1;
-   int new_id_loader = 1;
    
 /*    printf("[init modules]\n"); */
    evas_module_paths_init();

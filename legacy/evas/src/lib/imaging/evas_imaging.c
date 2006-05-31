@@ -88,7 +88,6 @@ evas_imaging_font_load(const char *file, const char *key, int size)
 {
    Evas_Imaging_Font *fn;
    RGBA_Font *font;
-   Font_Hint_Flags h;
 
    evas_common_cpu_init();
    evas_common_font_init();
@@ -214,3 +213,4 @@ evas_imaging_font_cache_get(void)
 {
    return evas_common_font_cache_get();
 }
+

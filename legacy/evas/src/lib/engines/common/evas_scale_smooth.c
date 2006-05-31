@@ -690,7 +690,6 @@ evas_common_scale_rgba_span_mmx(DATA32 *src, int src_len, DATA32 mul_col, DATA32
 	int     tx = txx >> 16, ntx, x = 0;
 	DATA32  *dst_end = dst + dst_len;
 	DATA32  *src_end = src + src_len;
-	DATA32  q = 0;
 
 	pxor_r2r(mm0, mm0);
 	pxor_r2r(mm2, mm2);

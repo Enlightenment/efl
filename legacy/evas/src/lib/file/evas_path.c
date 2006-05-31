@@ -20,7 +20,7 @@
 #include "evas_private.h"
 
 int
-evas_file_path_is_full_path(char *path)
+evas_file_path_is_full_path(const char *path)
 {
    if (!path) return 0;
    if (path[0] == '/') return 1;
@@ -48,7 +48,7 @@ evas_file_path_join(const char *path, const char *end)
 }
 
 int
-evas_file_path_exists(char *path)
+evas_file_path_exists(const char *path)
 {
    struct stat st;
 
@@ -57,7 +57,7 @@ evas_file_path_exists(char *path)
 }
 
 int
-evas_file_path_is_file(char *path)
+evas_file_path_is_file(const char *path)
 {
    struct stat st;
 
@@ -67,7 +67,7 @@ evas_file_path_is_file(char *path)
 }
 
 int
-evas_file_path_is_dir(char *path)
+evas_file_path_is_dir(const char *path)
 {
    struct stat st;
 

@@ -16,9 +16,9 @@ struct _Evas_Object_Text
    DATA32               magic;
 
    struct {
-      char             *text;
-      char             *font;
-      char             *source;
+      const char       *text;
+      const char       *font;
+      const char       *source;
       Evas_Font_Size    size;
       struct {
 	 unsigned char  r, g, b, a;
@@ -252,7 +252,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
  *
  */
 EAPI void
-evas_object_text_font_get(Evas_Object *obj, char **font, Evas_Font_Size *size)
+evas_object_text_font_get(Evas_Object *obj, const char **font, Evas_Font_Size *size)
 {
    Evas_Object_Text *o;
 

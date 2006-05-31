@@ -16,11 +16,11 @@ typedef struct _Fndat Fndat;
 
 struct _Fndat
 {
-   char *name;
-   char *source;
-   int   size;
-   void *font;
-   int   ref;
+   const char *name;
+   const char *source;
+   int         size;
+   void       *font;
+   int         ref;
 };
 
 /* private methods for font dir cache */
@@ -44,7 +44,7 @@ evas_font_dir_cache_free(void)
    font_dirs = NULL;
 }
 
-char *
+const char *
 evas_font_dir_cache_find(char *dir, char *font)
 {
    Evas_Font_Dir *fd;
@@ -227,7 +227,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 
 		       for (l = evas->font_path; l; l = l->next)
 			 {
-			    char *f_file;
+			    const char *f_file;
 
 			    f_file = evas_font_dir_cache_find(l->data, (char *)nm);
 			    if (f_file)
@@ -289,7 +289,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 
 		       for (l = evas->font_path; l; l = l->next)
 			 {
-			    char *f_file;
+			    const char *f_file;
 
 			    f_file = evas_font_dir_cache_find(l->data, (char *)nm);
 			    if (f_file)
@@ -390,7 +390,7 @@ evas_font_dir_available_list(Evas *evas)
      {   
 	for (i = 0; i < set->nfont; i++)
 	  {
-	     char * font;
+	     char *font;
 	     
 	     font = FcNameUnparse(set->fonts[i]);
 	     available = evas_list_append(available, evas_stringshare_add(font));

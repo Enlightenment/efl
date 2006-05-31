@@ -61,7 +61,7 @@ struct _Evas_Object_Textblock_Item
 
 struct _Evas_Object_Textblock_Format_Item
 {  Evas_Object_List _list_data;
-   char                         *item;
+   const char                   *item;
    Evas_Object_Textblock_Node   *source_node;
    int                           x, w;
 };
@@ -72,9 +72,9 @@ struct _Evas_Object_Textblock_Format
    double               halign;
    double               valign;
    struct {
-      char             *name;
-      char             *source;
-      char             *fallbacks;
+      const char       *name;
+      const char       *source;
+      const char       *fallbacks;
       int               size;
       void             *font;
    } font;
@@ -244,7 +244,7 @@ _style_match_tag(Evas_Textblock_Style *ts, char *s)
 }
 
 static char *
-_strbuf_append(char *s, char *s2, int *len, int *alloc)
+_strbuf_append(char *s, const char *s2, int *len, int *alloc)
 {
    int l2;
    int tlen;

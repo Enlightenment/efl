@@ -23,8 +23,8 @@ struct _Evas_Object_Image
 	 unsigned char fill;
       } border;
 
-      char          *file;
-      char          *key;
+      const char    *file;
+      const char    *key;
 
       char           smooth_scale : 1;
       char           has_alpha :1;
@@ -186,7 +186,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
  * @ingroup Evas_Object_Image_File_Group
  */
 EAPI void
-evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
+evas_object_image_file_get(Evas_Object *obj, const char **file, const char **key)
 {
    Evas_Object_Image *o;
 

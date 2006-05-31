@@ -145,7 +145,7 @@ add_gfx_span_func_cpu(int s, int m, int c, int d)
 static RGBA_Gfx_Func
 op_add_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
 	s = SP;
@@ -157,7 +157,7 @@ op_add_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 static RGBA_Gfx_Func
 op_add_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -173,7 +173,7 @@ op_add_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 static RGBA_Gfx_Func
 op_add_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
 	s = SP;
@@ -191,7 +191,7 @@ op_add_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pi
 static RGBA_Gfx_Func
 op_add_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -207,7 +207,7 @@ op_add_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 static RGBA_Gfx_Func
 op_add_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
 	s = SP;
@@ -240,7 +240,7 @@ add_gfx_pt_func_cpu(int s, int m, int c, int d)
 static RGBA_Gfx_Pt_Func
 op_add_pixel_pt_get(int src_flags, RGBA_Image *dst)
 {
-   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
    if (src_flags & RGBA_IMAGE_HAS_ALPHA)
 	s = SP;
@@ -252,7 +252,7 @@ op_add_pixel_pt_get(int src_flags, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_color_pt_get(DATA32 col, RGBA_Image *dst)
 {
-   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -268,7 +268,7 @@ op_add_color_pt_get(DATA32 col, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 {
-   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
    if (src_flags & RGBA_IMAGE_HAS_ALPHA)
 	s = SP;
@@ -286,7 +286,7 @@ op_add_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 {
-   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -302,8 +302,7 @@ op_add_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_pixel_mask_pt_get(int src_flags, RGBA_Image *dst)
 {
-   RGBA_Gfx_Pt_Func  func = NULL;
-   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN;
 
    if (src_flags & RGBA_IMAGE_HAS_ALPHA)
 	s = SP;
@@ -376,7 +375,7 @@ add_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 static RGBA_Gfx_Func
 op_add_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
 	s = SP;
@@ -388,7 +387,7 @@ op_add_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 static RGBA_Gfx_Func
 op_add_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -404,7 +403,7 @@ op_add_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 static RGBA_Gfx_Func
 op_add_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
 	s = SP;
@@ -422,7 +421,7 @@ op_add_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, in
 static RGBA_Gfx_Func
 op_add_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -438,7 +437,7 @@ op_add_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 static RGBA_Gfx_Func
 op_add_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
-   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
 	s = SP;
@@ -471,7 +470,7 @@ add_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 static RGBA_Gfx_Pt_Func
 op_add_rel_pixel_pt_get(int src_flags, RGBA_Image *dst)
 {
-   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
    if (src_flags & RGBA_IMAGE_HAS_ALPHA)
 	s = SP;
@@ -483,7 +482,7 @@ op_add_rel_pixel_pt_get(int src_flags, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
 {
-   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -499,7 +498,7 @@ op_add_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_rel_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 {
-   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
    if (src_flags & RGBA_IMAGE_HAS_ALPHA)
 	s = SP;
@@ -517,7 +516,7 @@ op_add_rel_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 {
-   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN, cpu;
+   int  s = SP_N, m = SM_AS, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
 	c = SC;
@@ -533,7 +532,7 @@ op_add_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 static RGBA_Gfx_Pt_Func
 op_add_rel_pixel_mask_pt_get(int src_flags, RGBA_Image *dst)
 {
-   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN, cpu;
+   int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN;
 
    if (src_flags & RGBA_IMAGE_HAS_ALPHA)
 	s = SP;

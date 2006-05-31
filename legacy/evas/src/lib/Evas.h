@@ -423,7 +423,7 @@ tile_mode);
 
    EAPI Evas_Object      *evas_object_image_add             (Evas *e);
    EAPI void              evas_object_image_file_set        (Evas_Object *obj, const char *file, const char *key);
-   EAPI void              evas_object_image_file_get        (Evas_Object *obj, char **file, char **key);
+   EAPI void              evas_object_image_file_get        (Evas_Object *obj, const char **file, const char **key);
    EAPI void              evas_object_image_border_set      (Evas_Object *obj, int l, int r, int t, int b);
    EAPI void              evas_object_image_border_get      (Evas_Object *obj, int *l, int *r, int *t, int *b);
    EAPI void              evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill);
@@ -471,7 +471,7 @@ tile_mode);
    EAPI void              evas_object_text_font_source_set  (Evas_Object *obj, const char *font);
    EAPI const char       *evas_object_text_font_source_get  (Evas_Object *obj);
    EAPI void              evas_object_text_font_set         (Evas_Object *obj, const char *font, Evas_Font_Size size);
-   EAPI void              evas_object_text_font_get         (Evas_Object *obj, char **font, Evas_Font_Size *size);
+   EAPI void              evas_object_text_font_get         (Evas_Object *obj, const char **font, Evas_Font_Size *size);
    EAPI void              evas_object_text_text_set         (Evas_Object *obj, const char *text);
    EAPI const char       *evas_object_text_text_get         (Evas_Object *obj);
    EAPI Evas_Coord        evas_object_text_ascent_get       (Evas_Object *obj);

@@ -59,7 +59,7 @@ typedef struct _Evas_Module_Path Evas_Module_Path;
 struct _Evas_Module_Path
 {
    Evas_Module_Type	type;
-   const char		*path;
+   char		       *path;
 };
 
 typedef struct _Evas_Module_Engine Evas_Module_Engine;
@@ -465,18 +465,18 @@ struct _Evas_Font
 {
    char     type;
    struct {
-      char *prop[14];
+      const char *prop[14];
    } x;
    struct {
-      char *name;
+      const char *name;
    } simple;
-   char    *path;
+   const char *path;
 };
 
 struct _Evas_Font_Alias
 {
-   char      *alias;
-   Evas_Font *fn;
+   const char *alias;
+   Evas_Font  *fn;
 };
 
 struct _Evas_Object_Func
@@ -559,7 +559,7 @@ struct _Evas_Func
    void (*gradient_map)                    (void *data, void *context, void *gradient, int spread);
    void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
 
-   void *(*image_load)                     (void *data, char *file, char *key, int *error);
+   void *(*image_load)                     (void *data, const char *file, const char *key, int *error);
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data);
    void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data);
    void (*image_free)                      (void *data, void *image);
@@ -578,22 +578,22 @@ struct _Evas_Func
    void (*image_cache_set)                 (void *data, int bytes);
    int  (*image_cache_get)                 (void *data);
 
-   void *(*font_load)                      (void *data, char *name, int size);
+   void *(*font_load)                      (void *data, const char *name, int size);
    void *(*font_memory_load)               (void *data, char *name, int size, const void *fdata, int fdata_size);
-   void *(*font_add)                       (void *data, void *font, char *name, int size);
+   void *(*font_add)                       (void *data, void *font, const char *name, int size);
    void *(*font_memory_add)                (void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
    void (*font_free)                       (void *data, void *font);
    int  (*font_ascent_get)                 (void *data, void *font);
    int  (*font_descent_get)                (void *data, void *font);
    int  (*font_max_ascent_get)             (void *data, void *font);
    int  (*font_max_descent_get)            (void *data, void *font);
-   void (*font_string_size_get)            (void *data, void *font, char *text, int *w, int *h);
-   int  (*font_inset_get)                  (void *data, void *font, char *text);
-   int  (*font_h_advance_get)              (void *data, void *font, char *text);
-   int  (*font_v_advance_get)              (void *data, void *font, char *text);
-   int  (*font_char_coords_get)            (void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
-   int  (*font_char_at_coords_get)         (void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-   void (*font_draw)                       (void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
+   void (*font_string_size_get)            (void *data, void *font, const char *text, int *w, int *h);
+   int  (*font_inset_get)                  (void *data, void *font, const char *text);
+   int  (*font_h_advance_get)              (void *data, void *font, const char *text);
+   int  (*font_v_advance_get)              (void *data, void *font, const char *text);
+   int  (*font_char_coords_get)            (void *data, void *font, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
+   int  (*font_char_at_coords_get)         (void *data, void *font, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
+   void (*font_draw)                       (void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text);
 
    void (*font_cache_flush)                (void *data);
    void (*font_cache_set)                  (void *data, int bytes);
@@ -656,11 +656,11 @@ int evas_object_clippers_was_visible(Evas_Object *obj);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
 int evas_event_passes_through(Evas_Object *obj);
 Evas_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
-int evas_file_path_is_full_path(char *path);
+int evas_file_path_is_full_path(const char *path);
 char *evas_file_path_join(const char *path, const char *end);
-int evas_file_path_exists(char *path);
-int evas_file_path_is_file(char *path);
-int evas_file_path_is_dir(char *path);
+int evas_file_path_exists(const char *path);
+int evas_file_path_is_file(const char *path);
+int evas_file_path_is_dir(const char *path);
 Evas_List *evas_file_path_list(char *path, char *match, int match_case);
 DATA64 evas_file_modified_time(const char *file);
 char *evas_file_path_resolve(const char *file);
@@ -696,7 +696,7 @@ int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
 void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);
-char *evas_font_dir_cache_find(char *dir, char *font);
+const char *evas_font_dir_cache_find(char *dir, char *font);
 Evas_List *evas_font_dir_available_list(Evas* evas);
 void evas_font_dir_available_list_free(Evas_List *available);
 void evas_font_free(Evas *evas, void *font);

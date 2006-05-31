@@ -259,7 +259,7 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 }
 
 static void *
-eng_image_load(void *data, char *file, char *key, int *error)
+eng_image_load(void *data, const char *file, const char *key, int *error)
 {
    *error = 0;
    return evas_common_load_image_from_file(file, key);
@@ -476,7 +476,7 @@ eng_image_cache_get(void *data)
 }
 
 static void *
-eng_font_load(void *data, char *name, int size)
+eng_font_load(void *data, const char *name, int size)
 {
    return evas_common_font_load(name, size);
 }
@@ -488,7 +488,7 @@ eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fd
 }
 
 static void *
-eng_font_add(void *data, void *font, char *name, int size)
+eng_font_add(void *data, void *font, const char *name, int size)
 {
    return evas_common_font_add(font, name, size);
 }
@@ -530,19 +530,19 @@ eng_font_max_descent_get(void *data, void *font)
 }
 
 static void
-eng_font_string_size_get(void *data, void *font, char *text, int *w, int *h)
+eng_font_string_size_get(void *data, void *font, const char *text, int *w, int *h)
 {
    evas_common_font_query_size(font, text, w, h);
 }
 
 static int
-eng_font_inset_get(void *data, void *font, char *text)
+eng_font_inset_get(void *data, void *font, const char *text)
 {
    return evas_common_font_query_inset(font, text);
 }
 
 static int
-eng_font_h_advance_get(void *data, void *font, char *text)
+eng_font_h_advance_get(void *data, void *font, const char *text)
 {
    int h, v;
 
@@ -551,7 +551,7 @@ eng_font_h_advance_get(void *data, void *font, char *text)
 }
 
 static int
-eng_font_v_advance_get(void *data, void *font, char *text)
+eng_font_v_advance_get(void *data, void *font, const char *text)
 {
    int h, v;
 
@@ -560,19 +560,19 @@ eng_font_v_advance_get(void *data, void *font, char *text)
 }
 
 static int
-eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data, void *font, const char *text, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_char_coords(font, text, pos, cx, cy, cw, ch);
 }
 
 static int
-eng_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data, void *font, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
    if ((w == ow) && (h == oh))
      evas_common_font_draw(surface, context, font, x, y, text);

@@ -806,7 +806,6 @@ void
 evas_common_convert_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
    int max, min, d = r - g;
-   float hh, ss, vv;
 
    //set min to MIN(g,r)
    d = ((d & (~(d >> 8))) & 0xff);
