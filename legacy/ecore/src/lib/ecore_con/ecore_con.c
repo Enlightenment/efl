@@ -514,8 +514,13 @@ ecore_con_server_del(Ecore_Con_Server *svr)
      }
    else
      {
+	printf("FREE SVR %p\n", svr);
 	_ecore_con_server_free(svr);
-	if (ecore_list_goto(servers, svr)) ecore_list_remove(servers);
+	if (ecore_list_goto(servers, svr))
+	  {
+	     printf("REMOVE %p\n", svr);
+	     ecore_list_remove(servers);
+	  }
      }
    return data;
 }
