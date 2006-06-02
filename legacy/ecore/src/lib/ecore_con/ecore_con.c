@@ -504,6 +504,7 @@ ecore_con_server_del(Ecore_Con_Server *svr)
      }
    data = svr->data;
    svr->data = NULL;
+   svr->delete_me = 1;
    if (svr->event_count > 0)
      {
 	if (svr->fd_handler)
@@ -511,7 +512,6 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 	     ecore_main_fd_handler_del(svr->fd_handler);
 	     svr->fd_handler = NULL;
 	  }
-	svr->delete_me = 1;
      }
    else
      {
@@ -769,6 +769,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      }   
    data = cl->data;
    cl->data = NULL;
+   cl->delete_me = 1;
    if (cl->event_count > 0)
      {
 	if (cl->fd_handler)
@@ -776,7 +777,6 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 	     ecore_main_fd_handler_del(cl->fd_handler);
 	     cl->fd_handler = NULL;
 	  }
-	cl->delete_me = 1;
      }
    else
      {

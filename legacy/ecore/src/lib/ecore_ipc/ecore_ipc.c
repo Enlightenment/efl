@@ -437,9 +437,8 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
      }
    data = svr->data;
    svr->data = NULL;
-   if (svr->event_count > 0)
-     svr->delete_me = 1;
-   else
+   svr->delete_me = 1;
+   if (svr->event_count == 0)
      {	
 	while (svr->clients)
 	  ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
@@ -830,9 +829,8 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
      }
    data = cl->data;
    cl->data = NULL;
-   if (cl->event_count > 0)
-     cl->delete_me = 1;
-   else
+   cl->delete_me = 1;
+   if (cl->event_count == 0)
      {
 	svr = ecore_con_server_data_get(ecore_con_client_server_get(cl->client));
 	ecore_con_client_del(cl->client);
