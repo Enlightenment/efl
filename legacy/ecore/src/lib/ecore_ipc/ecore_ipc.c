@@ -973,6 +973,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	ecore_con_client_data_set(cl->client, (void *)cl);
 	svr->clients = _ecore_list2_append(svr->clients, cl);
 	ecore_list_append(svr->client_list, cl);
+	if (!cl->delete_me)
 	  {
 	     Ecore_Ipc_Event_Client_Add *e2;
 	     
@@ -1009,13 +1010,16 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	     ecore_list_goto(svr->client_list, cl);
 	     ecore_list_remove(svr->client_list);
 	     ecore_list_goto_first(svr->client_list);
-	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));
-	     if (e2)
+	     if (!cl->delete_me)
 	       {
-		  cl->event_count++;
-		  e2->client = cl;
-		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, e2,
-				  _ecore_ipc_event_client_del_free, NULL);
+		  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));
+		  if (e2)
+		    {
+		       cl->event_count++;
+		       e2->client = cl;
+		       ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, e2,
+				       _ecore_ipc_event_client_del_free, NULL);
+		    }
 	       }
 	  }
      }
@@ -1034,6 +1038,7 @@ _ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	Ecore_Ipc_Server *svr;
 	
 	svr = ecore_con_server_data_get(e->server);
+	if (!svr->delete_me)
 	  {
 	     Ecore_Ipc_Event_Server_Add *e2;
 	     
@@ -1062,6 +1067,7 @@ _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	Ecore_Ipc_Server *svr;
 	
 	svr = ecore_con_server_data_get(e->server);
+	if (!svr->delete_me)
 	  {
 	     Ecore_Ipc_Event_Server_Del *e2;
 	     
@@ -1219,21 +1225,24 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 			    if (!buf) return 0;
 			    memcpy(buf, cl->buf + offset + s, msg.size);
 			 }
-		       e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Data));
-		       if (e2)
+		       if (!cl->delete_me)
 			 {
-			    cl->event_count++;
-			    e2->client   = cl;
-			    e2->major    = msg.major;
-			    e2->minor    = msg.minor;
-			    e2->ref      = msg.ref;
-			    e2->ref_to   = msg.ref_to;
-			    e2->response = msg.response;
-			    e2->size     = msg.size;
-			    e2->data     = buf;
-			    ecore_event_add(ECORE_IPC_EVENT_CLIENT_DATA, e2,
-					    _ecore_ipc_event_client_data_free,
-					    NULL);
+			    e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Data));
+			    if (e2)
+			      {
+				 cl->event_count++;
+				 e2->client   = cl;
+				 e2->major    = msg.major;
+				 e2->minor    = msg.minor;
+				 e2->ref      = msg.ref;
+				 e2->ref_to   = msg.ref_to;
+				 e2->response = msg.response;
+				 e2->size     = msg.size;
+				 e2->data     = buf;
+				 ecore_event_add(ECORE_IPC_EVENT_CLIENT_DATA, e2,
+						 _ecore_ipc_event_client_data_free,
+						 NULL);
+			      }
 			 }
 		    }
 		  cl->prev.i = msg;
@@ -1399,21 +1408,24 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 			    if (!buf) return 0;
 			    memcpy(buf, svr->buf + offset + s, msg.size);
 			 }
-		       e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Data));
-		       if (e2)
+		       if (!svr->delete_me)
 			 {
-			    svr->event_count++;
-			    e2->server   = svr;
-			    e2->major    = msg.major;
-			    e2->minor    = msg.minor;
-			    e2->ref      = msg.ref;
-			    e2->ref_to   = msg.ref_to;
-			    e2->response = msg.response;
-			    e2->size     = msg.size;
-			    e2->data     = buf;
-			    ecore_event_add(ECORE_IPC_EVENT_SERVER_DATA, e2,
-					    _ecore_ipc_event_server_data_free,
-					    NULL);
+			    e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Data));
+			    if (e2)
+			      {
+				 svr->event_count++;
+				 e2->server   = svr;
+				 e2->major    = msg.major;
+				 e2->minor    = msg.minor;
+				 e2->ref      = msg.ref;
+				 e2->ref_to   = msg.ref_to;
+				 e2->response = msg.response;
+				 e2->size     = msg.size;
+				 e2->data     = buf;
+				 ecore_event_add(ECORE_IPC_EVENT_SERVER_DATA, e2,
+						 _ecore_ipc_event_server_data_free,
+						 NULL);
+			      }
 			 }
 		    }
 		  svr->prev.i = msg;

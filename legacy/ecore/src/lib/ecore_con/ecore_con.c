@@ -434,6 +434,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 						    _ecore_con_cl_handler, svr,
 						    NULL, NULL);
 	if (!svr->fd_handler) goto error;
+	
+	if (!svr->delete_me)
 	  {
 	     /* we got our server! */
 	     Ecore_Con_Event_Server_Add *e;
@@ -974,6 +976,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 		 (ip >> 16) & 0xff,
 		 (ip >> 24) & 0xff);
 	cl->ip = strdup(buf);
+	if (!cl->delete_me)
 	  {
 	     Ecore_Con_Event_Client_Add *e;
 	     
@@ -1015,7 +1018,10 @@ svr_try_connect_ssl(Ecore_Con_Server *svr)
    if (ssl_err == SSL_ERROR_WANT_READ)       flag = ECORE_FD_READ;
    else if (ssl_err == SSL_ERROR_WANT_WRITE) flag = ECORE_FD_WRITE;
    else return -1;
-   if (flag) ecore_main_fd_handler_active_set(svr->fd_handler, flag);
+   if (svr->fd_handler)
+     {
+	if (flag) ecore_main_fd_handler_active_set(svr->fd_handler, flag);
+     }
    return 0;
 }
 #endif
@@ -1023,15 +1029,18 @@ svr_try_connect_ssl(Ecore_Con_Server *svr)
 static void
 kill_server(Ecore_Con_Server *svr)
 {
-   Ecore_Con_Event_Server_Del *e;
-   
-   e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-   if (e)
+   if (!svr->delete_me)
      {
-	svr->event_count++;
-	e->server = svr;
-	ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-			_ecore_con_event_server_del_free, NULL);
+	Ecore_Con_Event_Server_Del *e;
+	
+	e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+	if (e)
+	  {
+	     svr->event_count++;
+	     e->server = svr;
+	     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+			     _ecore_con_event_server_del_free, NULL);
+	  }
      }
    
    svr->dead = 1;
@@ -1129,20 +1138,26 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
      }
    else
      {
-	/* we got our server! */
-	Ecore_Con_Event_Server_Add *e;
-	
-	svr->connecting = 0;
-	e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
-	if (e)
+	if (!svr->delete_me)
 	  {
-	     svr->event_count++;
-	     e->server = svr;
-	     ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
-			     _ecore_con_event_server_add_free, NULL);
+	     /* we got our server! */
+	     Ecore_Con_Event_Server_Add *e;
+	     
+	     svr->connecting = 0;
+	     e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
+	     if (e)
+	       {
+		  svr->event_count++;
+		  e->server = svr;
+		  ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
+				  _ecore_con_event_server_add_free, NULL);
+	       }
 	  }
-	if (!svr->write_buf)
-	  ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+	if (svr->fd_handler)
+	  {
+	     if (!svr->write_buf)
+	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+	  }
      }
    return (!svr->dead);
 }
@@ -1231,18 +1246,21 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       {
 		  if (inbuf) 
 		    {
-		       Ecore_Con_Event_Server_Data *e;
-		       
-		       e = calloc(1, sizeof(Ecore_Con_Event_Server_Data));
-		       if (e)
+		       if (!svr->delete_me)
 			 {
-			    svr->event_count++;
-			    e->server = svr;
-			    e->data = inbuf;
-			    e->size = inbuf_num;
-			    ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
-					    _ecore_con_event_server_data_free,
-					    NULL);
+			    Ecore_Con_Event_Server_Data *e;
+			    
+			    e = calloc(1, sizeof(Ecore_Con_Event_Server_Data));
+			    if (e)
+			      {
+				 svr->event_count++;
+				 e->server = svr;
+				 e->data = inbuf;
+				 e->size = inbuf_num;
+				 ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
+						 _ecore_con_event_server_data_free,
+						 NULL);
+			      }
 			 }
 		    }
 		  if (lost_server)
@@ -1262,10 +1280,13 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	  }
 
 #if USE_OPENSSL
-	if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
-	  ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
-	else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
-	  ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
+	if (svr->fd_handler)
+	  {
+	     if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
+	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+	     else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
+	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
+	  }
 #endif
      }
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
@@ -1303,38 +1324,45 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       {
 		  if (inbuf) 
 		    {
-		       Ecore_Con_Event_Client_Data *e;
-		       
-		       e = calloc(1, sizeof(Ecore_Con_Event_Client_Data));
-		       if (e)
+		       if (!cl->delete_me)
 			 {
-			    cl->event_count++;
-			    e->client = cl;
-			    e->data = inbuf;
-			    e->size = inbuf_num;
-			    ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
-					    _ecore_con_event_client_data_free,
-					    NULL);
+			    Ecore_Con_Event_Client_Data *e;
+			    
+			    e = calloc(1, sizeof(Ecore_Con_Event_Client_Data));
+			    if (e)
+			      {
+				 cl->event_count++;
+				 e->client = cl;
+				 e->data = inbuf;
+				 e->size = inbuf_num;
+				 ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
+						 _ecore_con_event_client_data_free,
+						 NULL);
+			      }
 			 }
 		    }
 		  if ((errno == EIO) ||  (errno == EBADF) || 
 		      (errno == EPIPE) || (errno == EINVAL) || 
 		      (errno == ENOSPC) || (num == 0)/* is num == 0 right? */)
 		    {
-		       /* we lost our client! */
-		       Ecore_Con_Event_Client_Del *e;
-		       
-		       e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
-		       if (e)
+		       if (!cl->delete_me)
 			 {
-			    cl->event_count++;
-			    e->client = cl;
-			    ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e, 
-					    _ecore_con_event_client_del_free,
-					    NULL);
+			    /* we lost our client! */
+			    Ecore_Con_Event_Client_Del *e;
+			    
+			    e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
+			    if (e)
+			      {
+				 cl->event_count++;
+				 e->client = cl;
+				 ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e, 
+						 _ecore_con_event_client_del_free,
+						 NULL);
+			      }
 			 }
 		       cl->dead = 1;
-		       ecore_main_fd_handler_del(cl->fd_handler);
+		       if (cl->fd_handler) 
+			 ecore_main_fd_handler_del(cl->fd_handler);
 		       cl->fd_handler = NULL;
 		    }
 		  break;
@@ -1403,12 +1431,15 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
    if (count < 1)
      {
 #if USE_OPENSSL
-	if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
-	  ecore_main_fd_handler_active_set(svr->fd_handler,
-					   ECORE_FD_READ);
-	else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
-	  ecore_main_fd_handler_active_set(svr->fd_handler,
-					   ECORE_FD_WRITE);
+	if (svr->fd_handler)
+	  {
+	     if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
+	       ecore_main_fd_handler_active_set(svr->fd_handler,
+						ECORE_FD_READ);
+	     else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
+	       ecore_main_fd_handler_active_set(svr->fd_handler,
+						ECORE_FD_WRITE);
+	  }
 #endif
 	return;
      }
@@ -1420,7 +1451,8 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 	svr->write_buf_offset = 0;
 	free(svr->write_buf);
 	svr->write_buf = NULL;
-	ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+	if (svr->fd_handler)
+	  ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
      }
 }
 
@@ -1437,20 +1469,24 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 	if ((errno == EIO) || (errno == EBADF) || (errno == EPIPE) ||
 	    (errno == EINVAL) || (errno == ENOSPC))
 	  {
-	     /* we lost our client! */
-	     Ecore_Con_Event_Client_Del *e;
-	     
-	     e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
-	     if (e)
+	     if (!cl->delete_me)
 	       {
-		  cl->event_count++;
-		  e->client = cl;
-		  ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
-				  _ecore_con_event_client_del_free, NULL);
+		  /* we lost our client! */
+		  Ecore_Con_Event_Client_Del *e;
+		  
+		  e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
+		  if (e)
+		    {
+		       cl->event_count++;
+		       e->client = cl;
+		       ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
+				       _ecore_con_event_client_del_free, NULL);
+		    }
+		  cl->dead = 1;
+		  if (cl->fd_handler)
+		    ecore_main_fd_handler_del(cl->fd_handler);
+		  cl->fd_handler = NULL;
 	       }
-	     cl->dead = 1;
-	     ecore_main_fd_handler_del(cl->fd_handler);
-	     cl->fd_handler = NULL;
 	  }
 	return;
      }
@@ -1461,7 +1497,8 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 	cl->buf_offset = 0;
 	free(cl->buf);
 	cl->buf = NULL;
-	ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
+	if (cl->fd_handler)
+	  ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
      }
 }
 
