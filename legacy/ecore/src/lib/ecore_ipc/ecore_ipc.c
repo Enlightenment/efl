@@ -441,13 +441,13 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
      svr->delete_me = 1;
    else
      {	
-	ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
 	while (svr->clients)
 	  ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
 	ecore_con_server_del(svr->server);
 	servers = _ecore_list2_remove(servers, svr);
 	if (svr->buf) free(svr->buf);
 	if (svr->client_list) ecore_list_destroy(svr->client_list);
+	ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
 	free(svr);
      }
    return data;
@@ -834,11 +834,11 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
      cl->delete_me = 1;
    else
      {
-	ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
 	svr = ecore_con_server_data_get(ecore_con_client_server_get(cl->client));
 	ecore_con_client_del(cl->client);
 	svr->clients = _ecore_list2_remove(svr->clients, cl);
 	if (cl->buf) free(cl->buf);
+	ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
 	free(cl);
      }
    return data;
