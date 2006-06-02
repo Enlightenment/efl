@@ -930,13 +930,14 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    
    svr = data;
    if (svr->dead) return 1;
+   if (svr->delete_me) return 1;
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients))
      {
 	if (ecore_list_nodes(svr->clients) >= svr->client_limit) return 1;
      }
    /* a new client */
    size_in = sizeof(struct sockaddr_in);
-   new_fd = accept(svr->fd, (struct sockaddr *)&incoming, &size_in);
+   new_fd = accept(svr->fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
    if (new_fd >= 0)
      {
 	Ecore_Con_Client *cl;
@@ -1180,6 +1181,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    
    svr = data;
    if (svr->dead) return 1;
+   if (svr->delete_me) return 1;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
 	unsigned char *inbuf = NULL;
@@ -1284,6 +1286,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    
    cl = data;
    if (cl->dead) return 1;
+   if (cl->delete_me) return 1;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
 	unsigned char *inbuf = NULL;
