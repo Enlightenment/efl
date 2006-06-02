@@ -447,7 +447,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 		  e->server = svr;
 		  ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
 				  _ecore_con_event_server_add_free, NULL);
-		  printf("SVR %p EVENTS1 %i\n", svr, svr->event_count);
 	       }
 	  }
      }
@@ -515,13 +514,8 @@ ecore_con_server_del(Ecore_Con_Server *svr)
      }
    else
      {
-	printf("FREE SVR %p\n", svr);
 	_ecore_con_server_free(svr);
-	if (ecore_list_goto(servers, svr))
-	  {
-	     printf("REMOVE %p\n", svr);
-	     ecore_list_remove(servers);
-	  }
+	if (ecore_list_goto(servers, svr)) ecore_list_remove(servers);
      }
    return data;
 }
@@ -993,7 +987,6 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 		  e->client = cl;
 		  ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, e,
 				  _ecore_con_event_client_add_free, NULL);
-		  printf("CL %p EVENTS2 %i\n", cl, cl->event_count);
 	       }
 	  }
      }
@@ -1047,7 +1040,6 @@ kill_server(Ecore_Con_Server *svr)
 	     e->server = svr;
 	     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
 			     _ecore_con_event_server_del_free, NULL);
-	     printf("SVR %p EVENTS3 %i\n", svr, svr->event_count);
 	  }
      }
    
@@ -1159,7 +1151,6 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
 		  e->server = svr;
 		  ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
 				  _ecore_con_event_server_add_free, NULL);
-		  printf("SVR %p EVENTS4 %i\n", svr, svr->event_count);
 	       }
 	  }
 	if (svr->fd_handler)
@@ -1269,7 +1260,6 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 				 ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
 						 _ecore_con_event_server_data_free,
 						 NULL);
-				 printf("SVR %p EVENTS5 %i\n", svr, svr->event_count);
 			      }
 			 }
 		    }
@@ -1348,7 +1338,6 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 				 ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
 						 _ecore_con_event_client_data_free,
 						 NULL);
-				 printf("CL %p EVENTS6 %i\n", cl, cl->event_count);
 			      }
 			 }
 		    }
@@ -1369,7 +1358,6 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 				 ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e, 
 						 _ecore_con_event_client_del_free,
 						 NULL);
-				 printf("CL %p EVENTS7 %i\n", cl, cl->event_count);
 			      }
 			 }
 		       cl->dead = 1;
@@ -1493,7 +1481,6 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 		       e->client = cl;
 		       ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
 				       _ecore_con_event_client_del_free, NULL);
-		       printf("CL %p EVENTS8 %i\n", cl, cl->event_count);
 		    }
 		  cl->dead = 1;
 		  if (cl->fd_handler)
