@@ -502,7 +502,14 @@ ecore_con_server_del(Ecore_Con_Server *svr)
    data = svr->data;
    svr->data = NULL;
    if (svr->event_count > 0)
-     svr->delete_me = 1;
+     {
+	if (svr->fd_handler)
+	  {
+	     ecore_main_fd_handler_del(svr->fd_handler);
+	     svr->fd_handler = NULL;
+	  }
+	svr->delete_me = 1;
+     }
    else
      {
 	_ecore_con_server_free(svr);
@@ -755,7 +762,14 @@ ecore_con_client_del(Ecore_Con_Client *cl)
    data = cl->data;
    cl->data = NULL;
    if (cl->event_count > 0)
-     cl->delete_me = 1;
+     {
+	if (cl->fd_handler)
+	  {
+	     ecore_main_fd_handler_del(cl->fd_handler);
+	     cl->fd_handler = NULL;
+	  }
+	cl->delete_me = 1;
+     }
    else
      {
 	if (ecore_list_goto(cl->server->clients, cl))
@@ -849,7 +863,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      {
 	_ecore_con_server_flush(svr);
 	t = ecore_time_get();
-	if ((t - t_start) > 5.0)
+	if ((t - t_start) > 0.5)
 	  {
 	     printf("ECORE_CON: EEK - stuck in _ecore_con_server_free() trying\n"
 		    "  to flush data out from the server, and have been for\n"
@@ -890,7 +904,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      {
 	_ecore_con_client_flush(cl);
 	t = ecore_time_get();
-	if ((t - t_start) > 5.0)
+	if ((t - t_start) > 0.5)
 	  {
 	     printf("ECORE_CON: EEK - stuck in _ecore_con_client_free() trying\n"
 		    "  to flush data out from the client, and have been for\n"
