@@ -1097,6 +1097,7 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
    att_ret->window_gravity = att.win_gravity;
    att_ret->pixel_gravity = att.win_gravity;
    att_ret->colormap = att.colormap;
+   att_ret->visual = att.visual;
    return 1;
 }
 

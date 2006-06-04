@@ -44,6 +44,7 @@ typedef unsigned int Ecore_X_ID;
 #ifndef _ECORE_X_WINDOW_PREDEF
 typedef Ecore_X_ID   Ecore_X_Window;
 #endif
+typedef void       * Ecore_X_Visual;
 typedef Ecore_X_ID   Ecore_X_Pixmap;
 typedef Ecore_X_ID   Ecore_X_Drawable;
 typedef void       * Ecore_X_GC;
@@ -1384,11 +1385,10 @@ typedef struct _Ecore_X_Window_Attributes
    Ecore_X_Gravity    window_gravity;
    Ecore_X_Gravity    pixel_gravity;
    Ecore_X_Colormap   colormap;
+   Ecore_X_Visual     visual;
    /* FIXME: missing
-    * Colormap comormap;
     * int map_installed;
     * Screen *screen;
-    * Visual *visual;
     */
 } Ecore_X_Window_Attributes;
 
