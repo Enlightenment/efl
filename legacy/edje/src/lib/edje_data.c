@@ -36,6 +36,7 @@ _edje_edd_free(void)
    FREED(_edje_edd_edje_file);
    FREED(_edje_edd_edje_style);
    FREED(_edje_edd_edje_style_tag);
+   FREED(_edje_edd_edje_color_class);
    FREED(_edje_edd_edje_data);
    FREED(_edje_edd_edje_font_directory);
    FREED(_edje_edd_edje_font_directory_entry);
