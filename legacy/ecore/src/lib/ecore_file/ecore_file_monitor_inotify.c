@@ -33,6 +33,7 @@ static int                 _ecore_file_monitor_inotify_handler(void *data, Ecore
 static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
 static void                _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em,
 							      char *file, int mask);
+static void                _ecore_file_monitor_inotify_print(char *file, int mask);
 
 static inline int inotify_init(void);
 static inline int inotify_add_watch(int fd, const char *name, __u32 mask);
@@ -201,6 +202,10 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
      strcpy(buf, em->path);
    isdir = mask & IN_ISDIR;
 
+#if 0
+   _ecore_file_monitor_inotify_print(file, mask);
+#endif
+
    if (mask & IN_MODIFY)
      {
 	if (!isdir)
@@ -266,5 +271,49 @@ static inline int
 inotify_rm_watch(int fd, __u32 wd)
 {
    return syscall(__NR_inotify_rm_watch, fd, wd);
+}
+
+static void
+_ecore_file_monitor_inotify_print(char *file, int mask)
+{
+   const char *type;
+
+   if (mask & IN_ISDIR)
+     type = "dir";
+   else
+     type = "file";
+
+   if (mask & IN_MODIFY)
+     {
+	printf("Inotify modified %s: %s\n", type, file);
+     }
+   if (mask & IN_MOVED_FROM)
+     {
+	printf("Inotify moved from %s: %s\n", type, file);
+     }
+   if (mask & IN_MOVED_TO)
+     {
+	printf("Inotify moved to %s: %s\n", type, file);
+     }
+   if (mask & IN_DELETE)
+     {
+	printf("Inotify delete %s: %s\n", type, file);
+     }
+   if (mask & IN_CREATE)
+     {
+	printf("Inotify create %s: %s\n", type, file);
+     }
+   if (mask & IN_DELETE_SELF)
+     {
+	printf("Inotify delete self %s: %s\n", type, file);
+     }
+   if (mask & IN_MOVE_SELF)
+     {
+	printf("Inotify move self %s: %s\n", type, file);
+     }
+   if (mask & IN_UNMOUNT)
+     {
+	printf("Inotify unmount %s: %s\n", type, file);
+     }
 }
 #endif /* HAVE_INOTIFY */
