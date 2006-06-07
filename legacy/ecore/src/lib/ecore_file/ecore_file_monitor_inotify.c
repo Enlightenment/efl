@@ -109,7 +109,8 @@ ecore_file_monitor_inotify_add(const char *path,
 	mask = IN_MODIFY|
 	       IN_MOVED_FROM|IN_MOVED_TO|
 	       IN_DELETE|IN_CREATE|
-	       IN_DELETE_SELF|IN_UNMOUNT;
+	       IN_DELETE_SELF|IN_MOVE_SELF|
+	       IN_UNMOUNT;
 	ECORE_FILE_MONITOR_INOTIFY(em)->wd = inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh),
 							       em->path,
 							       mask);
