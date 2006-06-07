@@ -570,6 +570,8 @@ struct _Evas_Func
    void *(*image_data_put)                 (void *data, void *image, DATA32 *image_data);
    void *(*image_alpha_set)                (void *data, void *image, int has_alpha);
    int  (*image_alpha_get)                 (void *data, void *image);
+   void *(*image_border_set)               (void *data, void *image, int l, int r, int t, int b);
+   void  (*image_border_get)               (void *data, void *image, int *l, int *r, int *t, int *b);
    void (*image_draw)                      (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
    char *(*image_comment_get)              (void *data, void *image, char *key);
    char *(*image_format_get)               (void *data, void *image);

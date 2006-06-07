@@ -79,6 +79,8 @@ static void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **
 static void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
 static void *eng_image_alpha_set(void *data, void *image, int has_alpha);
 static int eng_image_alpha_get(void *data, void *image);
+static void *eng_image_border_set(void *data, void *image, int l, int r, int t, int b);
+static void eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b);
 static void eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
 static char *eng_image_comment_get(void *data, void *image, char *key);
 static char *eng_image_format_get(void *data, void *image);
@@ -667,6 +669,21 @@ eng_image_alpha_get(void *data, void *image)
    return _xre_image_alpha_get((XR_Image *)image);
 }
 
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   if (!image) return image;
+   _xre_image_border_set((XR_Image *)image, l, r, t, b);
+   return image;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   if (!image) return;
+   _xre_image_border_get((XR_Image *)image, l, r, t, b);
+}
+
 static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
@@ -803,6 +820,8 @@ module_open(Evas_Module *em)
    ORD(image_data_put);
    ORD(image_alpha_set);
    ORD(image_alpha_get);
+   ORD(image_border_set);
+   ORD(image_border_get);
    ORD(image_draw);
    ORD(image_comment_get);
    ORD(image_format_get);

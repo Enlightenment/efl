@@ -268,6 +268,22 @@ evas_engine_directfb_image_alpha_get(void *data, void *image)
    return 0;
 }
 
+void  *
+evas_engine_directfb_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   return image;
+}
+
+void
+evas_engine_directfb_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   Render_Engine      *re;
+   RGBA_Image         *im;
+
+   re = (Render_Engine *) data;
+   im = image;
+}
+
 void
 evas_engine_directfb_image_draw(void *data, void *context, void *surface,
 				void *image, int src_region_x, int src_region_y,

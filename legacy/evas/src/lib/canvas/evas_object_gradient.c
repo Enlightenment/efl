@@ -129,7 +129,6 @@ evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int
 								      o->engine_data,
 								      r, g, b, a,
 								      distance);
-   if (a != 255) o->cur.gradient_opaque = 0;
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
@@ -158,7 +157,7 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
 									 o->engine_data);
    o->gradient_changed = 1;
    o->changed = 1;
-   o->cur.gradient_opaque = 1;
+   o->cur.gradient_opaque = 0;
    evas_object_change(obj);
 }
 
@@ -201,7 +200,6 @@ evas_object_gradient_data_set(Evas_Object *obj, void *data, int len, int has_alp
 								     o->engine_data,
 								     data, len, has_alpha);
    o->imported_data = 1;
-   if (has_alpha) o->cur.gradient_opaque = 0;
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
@@ -235,7 +233,7 @@ evas_object_gradient_data_unset(Evas_Object *obj)
 									    obj->layer->evas->engine.data.context,
 									    o->engine_data);
    o->imported_data = 0;
-   o->cur.gradient_opaque = 1;
+   o->cur.gradient_opaque = 0;
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
@@ -736,16 +734,20 @@ evas_object_gradient_render(Evas_Object *obj, void *output, void *context, void 
 							obj->cur.render_op);
    if (o->engine_data)
      {
-	if (o->gradient_changed)
-	    obj->layer->evas->engine.func->gradient_map(output, context, o->engine_data,
-	    						o->cur.spread);
-	obj->layer->evas->engine.func->gradient_draw(output, context, surface,
-						     o->engine_data,
-						     obj->cur.cache.geometry.x + x,
-						     obj->cur.cache.geometry.y + y,
-						     obj->cur.cache.geometry.w,
-						     obj->cur.cache.geometry.h,
-						     o->cur.angle, o->cur.spread);
+ 	o->engine_data = obj->layer->evas->engine.func->gradient_geometry_init(output, o->engine_data, o->cur.spread);
+	if (o->engine_data)
+	  {
+	    if (o->gradient_changed)
+	       obj->layer->evas->engine.func->gradient_map(output, context, o->engine_data,
+	    						   o->cur.spread);
+	    obj->layer->evas->engine.func->gradient_draw(output, context, surface,
+							 o->engine_data,
+							 obj->cur.cache.geometry.x + x,
+							 obj->cur.cache.geometry.y + y,
+							 obj->cur.cache.geometry.w,
+							 obj->cur.cache.geometry.h,
+							 o->cur.angle, o->cur.spread);
+	  }
      }
 }
 
@@ -787,9 +789,6 @@ evas_object_gradient_render_pre(Evas_Object *obj)
 	o->changed = 1;
    if (obj->cur.interpolation.color_space != obj->prev.interpolation.color_space)
 	o->gradient_changed = 1;
-   if ((obj->cur.render_op != EVAS_RENDER_COPY) &&
-	 (obj->cur.cache.clip.a != 255))
-	o->cur.gradient_opaque = 0;
    if (obj->cur.render_op != obj->prev.render_op)
 	o->changed = 1;
    if (o->changed && o->engine_data)
@@ -811,8 +810,10 @@ evas_object_gradient_render_pre(Evas_Object *obj)
  	o->engine_data = obj->layer->evas->engine.func->gradient_geometry_init(obj->layer->evas->engine.data.output, o->engine_data, o->cur.spread);
 	if (o->engine_data)
 	  {
-	    o->cur.gradient_opaque &= !(obj->layer->evas->engine.func->gradient_alpha_get(obj->layer->evas->engine.data.output, o->engine_data, o->cur.spread, obj->cur.render_op));
+	    o->cur.gradient_opaque = !(obj->layer->evas->engine.func->gradient_alpha_get(obj->layer->evas->engine.data.output, o->engine_data, o->cur.spread, obj->cur.render_op));
 	  }
+	if (obj->cur.cache.clip.a != 255)
+	    o->cur.gradient_opaque = 0;
     }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -909,9 +910,6 @@ evas_object_gradient_is_opaque(Evas_Object *obj)
    /* currently fully opaque over the entire gradient it occupies */
    o = (Evas_Object_Gradient *)(obj->object_data);
    if (!o->engine_data) return 0;
-   o->cur.gradient_opaque &=
-   !(obj->layer->evas->engine.func->gradient_alpha_get(obj->layer->evas->engine.data.output,
-   o->engine_data, o->cur.spread, obj->cur.render_op));
    return o->cur.gradient_opaque;
  }
 

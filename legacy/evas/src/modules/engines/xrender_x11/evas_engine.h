@@ -55,6 +55,7 @@ struct _Xrender_Surface
    Picture            pic;
    unsigned char      alpha : 1;
    unsigned char      allocated : 1;
+   unsigned char      bordered : 1;
 };
 
 /* ximage support calls (ximage vs xshmimage, cache etc.) */
@@ -117,6 +118,8 @@ XR_Image *_xre_image_data_find(void *data);
 void      _xre_image_data_put(XR_Image *im, void *data);
 void      _xre_image_alpha_set(XR_Image *im, int alpha);
 int       _xre_image_alpha_get(XR_Image *im);
+void      _xre_image_border_set(XR_Image *im, int l, int r, int t, int b);
+void      _xre_image_border_get(XR_Image *im, int *l, int *r, int *t, int *b);
 void      _xre_image_surface_gen(XR_Image *im);
 void      _xre_image_cache_set(int size);
 int       _xre_image_cache_get(void);

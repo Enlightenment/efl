@@ -248,14 +248,12 @@ static void
 eng_gradient_map(void *data, void *context, void *gradient, int spread)
 {
    evas_common_gradient_map(context, gradient, spread);
-   evas_common_cpu_end_opt();
 }
 
 static void
 eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
 {
    evas_common_gradient_draw(surface, context, x, y, w, h, gradient, angle, spread);
-   evas_common_cpu_end_opt();
 }
 
 static void *
@@ -421,6 +419,23 @@ eng_image_alpha_get(void *data, void *image)
    im = image;
    if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
    return 0;
+}
+
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   RGBA_Image *im;
+
+   im = image;
+   return im;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   RGBA_Image *im;
+
+   im = image;
 }
 
 static void
@@ -723,6 +738,8 @@ static Evas_Func func =
      eng_image_data_put,
      eng_image_alpha_set,
      eng_image_alpha_get,
+     eng_image_border_set,
+     eng_image_border_get,
      eng_image_draw,
      eng_image_comment_get,
      eng_image_format_get,

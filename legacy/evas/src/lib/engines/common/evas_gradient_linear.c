@@ -218,7 +218,7 @@ static int
 linear_has_alpha(RGBA_Gradient *gr, int spread, int op)
 {
    if (!gr || (gr->type.geometer != &linear)) return 0;
-   if (gr->map.has_alpha)
+   if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )

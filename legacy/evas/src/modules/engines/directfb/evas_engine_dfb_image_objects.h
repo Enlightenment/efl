@@ -30,6 +30,12 @@ void               *evas_engine_directfb_image_alpha_set(void *data,
 							 int has_alpha);
 int                 evas_engine_directfb_image_alpha_get(void *data,
 							 void *image);
+void               *evas_engine_directfb_image_border_set(void *data,
+							  void *image,
+							  int l, int r, int t, int b);
+void                evas_engine_directfb_image_border_get(void *data,
+							  void *image,
+							  int *l, int *r, int *t, int *b);
 void                evas_engine_directfb_image_draw(void *data, void *context,
 						    void *surface, void *image,
 						    int src_x, int src_y,

@@ -325,8 +325,22 @@ evas_object_above_get(Evas_Object *obj)
    return NULL;
    MAGIC_CHECK_END();
    if (obj->smart.parent)
-     return (Evas_Object *)(((Evas_Object_List *)(obj))->next);
-   return evas_object_above_get_internal(obj);
+     {
+	do
+	  {
+	     obj = (Evas_Object *)(((Evas_Object_List *)(obj))->next);
+	     if ((obj) && (!obj->delete_me)) return obj;
+	  }
+	while (obj);
+	return NULL;
+     }
+   obj = evas_object_above_get_internal(obj);
+   while (obj)
+     {
+	if (!obj->delete_me) return obj;
+	obj = evas_object_above_get_internal(obj);
+     }
+   return NULL;
 }
 
 /**
@@ -342,8 +356,22 @@ evas_object_below_get(Evas_Object *obj)
    return NULL;
    MAGIC_CHECK_END();
    if (obj->smart.parent)
-     return (Evas_Object *)(((Evas_Object_List *)(obj))->prev);
-   return evas_object_below_get_internal(obj);
+     {
+	do
+	  {
+	     obj = (Evas_Object *)(((Evas_Object_List *)(obj))->prev);
+	     if ((obj) && (!obj->delete_me)) return obj;
+	  }
+	while (obj);
+	return NULL;
+     }
+   obj = evas_object_below_get_internal(obj);
+   while (obj)
+     {
+	if (!obj->delete_me) return obj;
+	obj = evas_object_below_get_internal(obj);
+     }
+   return NULL;
 }
 
 /**
@@ -359,7 +387,16 @@ evas_object_bottom_get(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    if (e->layers)
-     return e->layers->objects;
+     {
+	Evas_Object *obj;
+	
+	obj = e->layers->objects;
+	while (obj)
+	  {
+	     if (!obj->delete_me) return obj;
+	     obj = evas_object_above_get_internal(obj);
+	  }
+     }
    return NULL;
 }
 
@@ -372,7 +409,7 @@ evas_object_bottom_get(Evas *e)
 EAPI Evas_Object *
 evas_object_top_get(Evas *e)
 {
-   Evas_Object *obj2 = NULL;
+   Evas_Object *obj = NULL;
    Evas_Object_List *list;
    Evas_Layer *layer;
 
@@ -389,8 +426,14 @@ evas_object_top_get(Evas *e)
    list = (Evas_Object_List *) layer->objects;
    if (!list) return NULL;
 
-   obj2 = (Evas_Object *) list->last;
-   if (!obj2) return NULL;
+   obj = (Evas_Object *) list->last;
+   if (!obj) return NULL;
 
-   return obj2;
+   while (obj)
+     {
+	if (!obj->delete_me) return obj;
+	obj = evas_object_below_get_internal(obj);
+     }
+
+   return obj;
 }

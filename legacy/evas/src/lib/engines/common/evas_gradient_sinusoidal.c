@@ -146,7 +146,7 @@ sinusoidal_has_alpha(RGBA_Gradient *gr, int spread, int op)
 {
    if (!gr || (gr->type.geometer != &sinusoidal)) return 0;
 
-   if (gr->map.has_alpha)
+   if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
@@ -265,6 +265,14 @@ sinusoidal_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa
    return sfunc;
 }
 
+#define SETUP_SINU_FILL \
+   a00 = gdata->sp * (axx / 65536.0); \
+   a01 = gdata->sp * (axy / 65536.0); \
+   a10 = ayx / 65536.0; \
+   a11 = ayy / 65536.0; \
+   xf = (a00 * x) + (a01 * y); \
+   yf = (a10 * x) + (a11 * y);
+
 static void
 sinusoidal_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
@@ -275,13 +283,7 @@ sinusoidal_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_l
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -310,13 +312,7 @@ sinusoidal_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int ds
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -353,13 +349,7 @@ sinusoidal_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_le
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -382,13 +372,7 @@ sinusoidal_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -421,13 +405,7 @@ sinusoidal_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, 
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -462,13 +440,7 @@ sinusoidal_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mas
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -519,13 +491,7 @@ sinusoidal_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -560,13 +526,7 @@ sinusoidal_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DAT
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -611,13 +571,7 @@ sinusoidal_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, i
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -646,13 +600,7 @@ sinusoidal_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -699,13 +647,7 @@ sinusoidal_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -734,13 +676,7 @@ sinusoidal_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA
    float  a00, a01, a10, a11;
    float  off = gdata->off * (map_len - 1);
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -780,13 +716,7 @@ sinusoidal_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    float  xf, yf, sa = gdata->sa;
    float  a00, a01, a10, a11;
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {
@@ -810,13 +740,7 @@ sinusoidal_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_le
    float  xf, yf, sa = gdata->sa;
    float  a00, a01, a10, a11;
 
-   a00 = gdata->sp * (axx / 65536.0);
-   a01 = gdata->sp * (axy / 65536.0);
-   a10 = ayx / 65536.0;
-   a11 = ayy / 65536.0;
-
-   xf = (a00 * x) + (a01 * y);
-   yf = (a10 * x) + (a11 * y);
+   SETUP_SINU_FILL
 
    while (dst < dst_end)
      {

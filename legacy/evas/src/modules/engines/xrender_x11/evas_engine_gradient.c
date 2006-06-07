@@ -164,7 +164,7 @@ void
 _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h, double angle, int spread)
 {
    RGBA_Image *im;
-   int mul_use;
+   int  mul_use;
    
    if ((w <= 0) || (h <= 0)) return;
    if (!rs || !dc || !gr) return;

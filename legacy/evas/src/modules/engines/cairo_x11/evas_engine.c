@@ -69,6 +69,8 @@ static void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **
 static void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
 static void *eng_image_alpha_set(void *data, void *image, int has_alpha);
 static int eng_image_alpha_get(void *data, void *image);
+static void *eng_image_border_set(void *data, void *image, int l, int r, int t, int b);
+static void eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b);
 static void eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
 static char *eng_image_comment_get(void *data, void *image, char *key);
 static char *eng_image_format_get(void *data, void *image);
@@ -173,6 +175,8 @@ static Evas_Func eng_func =
      eng_image_data_put,
      eng_image_alpha_set,
      eng_image_alpha_get,
+     eng_image_border_set,
+     eng_image_border_get,
      eng_image_draw,
      eng_image_comment_get,
      eng_image_format_get,
@@ -1034,6 +1038,24 @@ eng_image_alpha_get(void *data, void *image)
    im = image;
    if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
    return 0;
+}
+
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return image;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return;
 }
 
 static void

@@ -1074,15 +1074,26 @@ ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action)
 
 /* FIXME: Set complete list */
 EAPI void
-ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action action, int on)
+ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action *action, unsigned int num)
 {
-   Ecore_X_Atom atom;
+   Ecore_X_Atom  *set;
+   int            i;
 
-   atom = _ecore_x_netwm_action_atom_get(action);
-   on = (on) ? ECORE_X_PROP_LIST_ADD : ECORE_X_PROP_LIST_REMOVE;
+   if (!num)
+     {
+	ecore_x_window_prop_property_del(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS);
+	return;
+     }
 
-   ecore_x_window_prop_atom_list_change(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
-                                        atom, on);
+   set = malloc(num * sizeof(Ecore_X_Atom));
+   if (!set) return;
+
+   for (i = 0; i < num; i++)
+     set[i] = _ecore_x_netwm_action_atom_get(action[i]);
+
+   ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS, set, num);
+
+   free(set);
 }
 
 EAPI int

@@ -166,12 +166,12 @@ static int
 radial_has_alpha(RGBA_Gradient *gr, int spread, int op)
 {
    if (!gr || (gr->type.geometer != &radial)) return 0;
-   if (gr->map.has_alpha)
+   if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
-   if ((int)radial_data.r0 > 0)
+   if (radial_data.r0 > 0)
 	return 1;
    if ( (spread == _EVAS_TEXTURE_RESTRICT) ||
          (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
@@ -187,7 +187,7 @@ radial_has_mask(RGBA_Gradient *gr, int spread, int op)
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
-	if ((int)radial_data.r0 > 0)
+	if (radial_data.r0 > 0)
 	    return 1;
 	if ( (spread == _EVAS_TEXTURE_RESTRICT) ||
 	      (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
@@ -340,6 +340,23 @@ radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
    return sfunc;
 }
 
+#define SETUP_RADIAL_FILL \
+   if (gdata->sx != gdata->s) \
+     { \
+	axx = (gdata->s * axx) / gdata->sx; \
+	axy = (gdata->s * axy) / gdata->sx; \
+     } \
+   if (gdata->sy != gdata->s) \
+     { \
+	ayy = (gdata->s * ayy) / gdata->sy; \
+	ayx = (gdata->s * ayx) / gdata->sy; \
+     } \
+   xx = (axx * x) + (axy * y); \
+   yy = (ayx * x) + (ayy * y); \
+   rr0 = gdata->r0 * gdata->s; \
+   rr0 <<= 16;
+
+
 static void
 radial_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
@@ -349,23 +366,7 @@ radial_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -401,23 +402,7 @@ radial_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_le
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -458,23 +443,7 @@ radial_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int ds
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -510,23 +479,7 @@ radial_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -567,23 +520,7 @@ radial_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -613,23 +550,7 @@ radial_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -666,23 +587,7 @@ radial_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -712,23 +617,7 @@ radial_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int 
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -765,23 +654,7 @@ radial_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int 
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -817,23 +690,7 @@ radial_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, i
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -876,23 +733,7 @@ radial_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mas
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -928,23 +769,7 @@ radial_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -987,23 +812,7 @@ radial_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int d
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -1033,23 +842,7 @@ radial_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, in
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -1088,23 +881,7 @@ radial_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -1134,23 +911,7 @@ radial_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *m
    int  xx, yy, rr0;
    int  off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -1188,23 +949,7 @@ radial_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
 
-  if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -1231,23 +976,7 @@ radial_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -1284,23 +1013,7 @@ radial_pad_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_le
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {
@@ -1327,23 +1040,7 @@ radial_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-   ayx += (0.070710678 * ayx);
-   axx += (0.070710678 * axx);
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
-   rr0 = gdata->r0 * gdata->s;
-   rr0 <<= 16;
+   SETUP_RADIAL_FILL
 
    while (dst < dst_end)
      {

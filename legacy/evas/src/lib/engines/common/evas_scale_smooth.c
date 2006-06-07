@@ -750,6 +750,7 @@ evas_common_scale_rgba_span(DATA32 *src, int src_len, DATA32 mul_col, DATA32 *ds
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
      {
 	evas_common_scale_rgba_span_mmx(src, src_len, mul_col, dst, dst_len);
+	evas_common_cpu_end_opt();
 	return;
      }
 #endif

@@ -472,6 +472,29 @@ _xre_image_alpha_get(XR_Image *im)
 }
 
 void
+_xre_image_border_set(XR_Image *im, int l, int r, int t, int b)
+{
+   if (!im) return;
+   _xre_image_surface_gen(im);
+   if (l < 1) l = 0;
+   if (r < 1) r = 0;
+   if (t < 1) t = 0;
+   if (b < 1) b = 0;
+   if (im->surface)
+     {
+	if (l | r | t | b)
+	  im->surface->bordered = 1;
+	else
+	  im->surface->bordered = 0;
+    }
+}
+
+void
+_xre_image_border_get(XR_Image *im, int *l, int *r, int *t, int *b)
+{
+}
+
+void
 _xre_image_surface_gen(XR_Image *im)
 {
    void *data = NULL;

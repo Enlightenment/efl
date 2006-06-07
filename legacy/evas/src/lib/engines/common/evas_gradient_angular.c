@@ -237,12 +237,12 @@ static int
 angular_has_alpha(RGBA_Gradient *gr, int spread, int op)
 {
    if (!gr || (gr->type.geometer != &angular)) return 0;
-   if (gr->map.has_alpha)
+   if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
-   if ((int)angular_data.an > 0)
+   if ((int)angular_data.an >= 0)
 	return 1;
    if ( ((spread == _EVAS_TEXTURE_RESTRICT) ||
          (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
@@ -259,7 +259,7 @@ angular_has_mask(RGBA_Gradient *gr, int spread, int op)
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
-	if ((int)angular_data.an > 0)
+	if ((int)angular_data.an >= 0)
 	    return 1;
 	if ( ((spread == _EVAS_TEXTURE_RESTRICT) ||
 	      (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
@@ -469,6 +469,21 @@ angular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
    return sfunc;
 }
 
+#define SETUP_ANGULAR_FILL \
+   if (gdata->sx != gdata->s) \
+     { \
+	axx = (gdata->s * axx) / gdata->sx; \
+	axy = (gdata->s * axy) / gdata->sx; \
+     } \
+   if (gdata->sy != gdata->s) \
+     { \
+	ayy = (gdata->s * ayy) / gdata->sy; \
+	ayx = (gdata->s * ayx) / gdata->sy; \
+     } \
+   xx = (axx * x) + (axy * y); \
+   yy = (ayx * x) + (ayy * y);
+
+
 static void
 angular_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
@@ -479,19 +494,7 @@ angular_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -523,19 +526,7 @@ angular_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_l
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -571,19 +562,7 @@ angular_reflect_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int 
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -623,19 +602,7 @@ angular_reflect_aa_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, i
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -689,19 +656,7 @@ angular_reflect_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mas
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -740,19 +695,7 @@ angular_reflect_aa_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -798,19 +741,7 @@ angular_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -836,19 +767,7 @@ angular_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_le
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -880,19 +799,7 @@ angular_repeat_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int d
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -926,19 +833,7 @@ angular_repeat_aa_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, in
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -989,19 +884,7 @@ angular_repeat_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1035,19 +918,7 @@ angular_repeat_aa_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *m
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1088,19 +959,7 @@ angular_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1137,19 +996,7 @@ angular_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, 
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1193,19 +1040,7 @@ angular_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *ma
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1241,19 +1076,7 @@ angular_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1298,19 +1121,7 @@ angular_restrict_reflect_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *m
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1354,19 +1165,7 @@ angular_restrict_reflect_aa_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1428,19 +1227,7 @@ angular_restrict_reflect_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, D
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1484,19 +1271,7 @@ angular_restrict_reflect_aa_masked_annulus(DATA32 *map, int map_len, DATA32 *dst
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1549,19 +1324,7 @@ angular_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int 
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1592,19 +1355,7 @@ angular_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, i
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1644,19 +1395,7 @@ angular_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mas
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1686,19 +1425,7 @@ angular_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *
    int     ss = (gdata->s) << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1739,19 +1466,7 @@ angular_restrict_repeat_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *ma
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1789,19 +1504,7 @@ angular_restrict_repeat_aa_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1859,19 +1562,7 @@ angular_restrict_repeat_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, DA
    int     r1 = gdata->s, r0 = gdata->an * r1;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1909,19 +1600,7 @@ angular_restrict_repeat_aa_masked_annulus(DATA32 *map, int map_len, DATA32 *dst,
    int     rr0 = r0 << 16, rr1 = r1 << 16;
    float   off = gdata->off * (map_len - 1);
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -1969,19 +1648,7 @@ angular_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    int     xx, yy;
    int     ss = (gdata->s) << 16;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -2004,19 +1671,7 @@ angular_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
    int     xx, yy;
    int     ss = (gdata->s) << 16;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -2042,19 +1697,7 @@ angular_pad_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_
    int     ss = (gdata->s) << 16;
    int     r1 = gdata->s, r0 = gdata->an * r1;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -2086,19 +1729,7 @@ angular_pad_aa_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int d
    int     r1 = gdata->s, r0 = gdata->an * r1;
    int     rr0 = r0 << 16, rr1 = r1 << 16;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -2142,19 +1773,7 @@ angular_pad_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, i
    int     ss = (gdata->s) << 16;
    int     r1 = gdata->s, r0 = gdata->an * r1;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {
@@ -2186,19 +1805,7 @@ angular_pad_aa_masked_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask
    int     r1 = gdata->s, r0 = gdata->an * r1;
    int     rr0 = r0 << 16, rr1 = r1 << 16;
 
-   if (gdata->sx != gdata->s)
-     {
-	axx = (gdata->s * axx) / gdata->sx;
-	axy = (gdata->s * axy) / gdata->sx;
-     }
-   if (gdata->sy != gdata->s)
-     {
-	ayy = (gdata->s * ayy) / gdata->sy;
-	ayx = (gdata->s * ayx) / gdata->sy;
-     }
-
-   xx = (axx * x) + (axy * y);
-   yy = (ayx * x) + (ayy * y);
+   SETUP_ANGULAR_FILL
 
    while (dst < dst_end)
      {

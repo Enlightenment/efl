@@ -69,6 +69,8 @@ static Evas_Func evas_engine_directfb_func = {
    evas_engine_directfb_image_data_put,
    evas_engine_directfb_image_alpha_set,
    evas_engine_directfb_image_alpha_get,
+   evas_engine_directfb_image_border_set,
+   evas_engine_directfb_image_border_get,
    evas_engine_directfb_image_draw,
    evas_engine_directfb_image_comment_get,
    evas_engine_directfb_image_format_get,

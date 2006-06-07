@@ -378,7 +378,7 @@ embryo_program_native_call_add(Embryo_Program *ep, char *name, Embryo_Cell (*fun
    int               i, num;
 
    if ((ep == NULL ) || (name == NULL) || (func == NULL)) return;
-   if (strlen(name) > sEXPMAX) return;
+   if (strlen(name) > sNAMEMAX) return;
    
    hdr = (Embryo_Header *)ep->code;
    if (hdr->defsize < 1) return;
