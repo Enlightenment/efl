@@ -740,7 +740,27 @@ ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
 EAPI void
 ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 {
-   XGetCommand(_ecore_x_disp, win, argv, argc);
+   int i, c;
+   char **v;
+
+   if (argc) *argc = 0;
+   if (argv) *argv = NULL;
+
+   if (!XGetCommand(_ecore_x_disp, win, &v, &c))
+     return;
+
+   if (argc) *argc = c;
+   if (argv)
+     {
+	(*argv) = malloc(c);
+	if (!*argv) return;
+	for (i = 0; i < c; i++)
+	  {
+	     (*argv)[i] = strdup(v[i]);
+	     printf("%s\n", v[i]);
+	  }
+     }
+   XFreeStringList(v);
 }
 
 /**
