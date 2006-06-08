@@ -755,10 +755,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 	(*argv) = malloc(c);
 	if (!*argv) return;
 	for (i = 0; i < c; i++)
-	  {
-	     (*argv)[i] = strdup(v[i]);
-	     printf("%s\n", v[i]);
-	  }
+	  (*argv)[i] = strdup(v[i]);
      }
    XFreeStringList(v);
 }
