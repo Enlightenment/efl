@@ -140,7 +140,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 
    if (!name) return NULL;
    if (name[0] == 0) return NULL;
-   
+
    for (l = fonts_cache; l; l = l->next)
      {
 	fd = l->data;
@@ -308,39 +308,39 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    evas_list_free(fonts);
 
 #ifdef HAVE_FONTCONFIG
-	     
+
    if (!font) /* Search using fontconfig */
-     {	  
+     {
 	FcPattern *p_nm = NULL;
 	FcFontSet *set;
 	FcResult res;
 	int i;
 
-	p_nm = FcNameParse(name);
+	p_nm = FcNameParse((FcChar8 *)name);
 	FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
 	FcDefaultSubstitute(p_nm);
 
 	/* do matching */
 	set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
-		  
+
 	/* Do loading for all in family */
 	for (i = 0; i < set->nfont; i++)
 	  {
 	     FcValue filename;
-		       	       
-	     FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);	
-		       
+
+	     FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);
+
 	     if (font)
-	       evas->engine.func->font_add(evas->engine.data.output, font, filename.u.s, size);
-	     else 
-	       font = evas->engine.func->font_load(evas->engine.data.output, filename.u.s, size);		       	    
+	       evas->engine.func->font_add(evas->engine.data.output, font, (char *)filename.u.s, size);
+	     else
+	       font = evas->engine.func->font_load(evas->engine.data.output, (char *)filename.u.s, size);
 	  }
- 	  
-	FcFontSetDestroy(set); 
+
+	FcFontSetDestroy(set);
 	FcPatternDestroy(p_nm);
      }
 #endif
-   
+
    fd = calloc(1, sizeof(Fndat));
    if (fd)
      {
@@ -374,41 +374,41 @@ evas_font_dir_available_list(Evas *evas)
 #ifdef HAVE_FONTCONFIG
    /* Add font config fonts */
    FcPattern *p;
-   FcFontSet *set;
+   FcFontSet *set = NULL;
    FcObjectSet *os;
    int i;
-  
+
    p = FcPatternCreate();
    os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, NULL);
-   
+
    if (p && os) set = FcFontList(NULL, p, os);
-   
+
    if (p) FcPatternDestroy(p);
    if (os) FcObjectSetDestroy(os);
 
    if (set)
-     {   
+     {
 	for (i = 0; i < set->nfont; i++)
 	  {
 	     char *font;
-	     
-	     font = FcNameUnparse(set->fonts[i]);
+
+	     font = (char *)FcNameUnparse(set->fonts[i]);
 	     available = evas_list_append(available, evas_stringshare_add(font));
-	     free(font);	       	       
+	     free(font);
 	  }
- 	  
-	FcFontSetDestroy(set); 
+
+	FcFontSetDestroy(set);
      }
 #endif
-    
+
    /* Add fonts in evas font_path*/
-   if (!evas->font_path) 
+   if (!evas->font_path)
      return available;
-   
+
    for (l = evas->font_path; l; l = l->next)
      {
 	Evas_Font_Dir *fd;
-	
+
 	fd = evas_hash_find(font_dirs, (char *)l->data);
 	fd = object_text_font_cache_dir_update((char *)l->data, fd);
 	if (fd && fd->aliases)
@@ -416,9 +416,9 @@ evas_font_dir_available_list(Evas *evas)
 	     for (ll = fd->aliases; ll; ll = ll->next)
 	       {
 		  Evas_Font_Alias *fa;
-		  
+
 		  fa = ll->data;
-		  available = evas_list_append(available, evas_stringshare_add((char *)fa->alias));		
+		  available = evas_list_append(available, evas_stringshare_add((char *)fa->alias));
 	       }
 	  }
      }
@@ -426,7 +426,7 @@ evas_font_dir_available_list(Evas *evas)
    return available;
 }
 
-void 
+void
 evas_font_dir_available_list_free(Evas_List *available)
 {
    while (available)
@@ -650,7 +650,7 @@ object_text_font_cache_dir_add(char *dir)
 	     if (fn)
 	       {
 		  char *p;
-		  
+
 		  fn->type = 0;
 		  tmp2 = alloca(strlen(fdir->data) + 1);
 		  strcpy(tmp2, fdir->data);
