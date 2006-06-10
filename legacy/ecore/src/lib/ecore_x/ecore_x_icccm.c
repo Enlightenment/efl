@@ -748,18 +748,30 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 
    if (!XGetCommand(_ecore_x_disp, win, &v, &c))
      return;
+   if (c < 1)
+     {
+	if (v)
+	  XFreeStringList(v);
+       	return;
+     }
 
    if (argc) *argc = c;
    if (argv)
      {
-	(*argv) = calloc(c, sizeof(char *));
+	(*argv) = malloc(c * sizeof(char *));
 	if (!*argv)
 	  { 
-	     *argc = 0;
+	     XFreeStringList(v);
+	     if (argc) *argc = 0;
 	     return;
 	  }
 	for (i = 0; i < c; i++)
-	  (*argv)[i] = strdup(v[i]);
+	  {
+	     if (v[i])
+	       (*argv)[i] = strdup(v[i]);
+	     else
+	       (*argv)[i] = strdup("");
+	  }
      }
    XFreeStringList(v);
 }
