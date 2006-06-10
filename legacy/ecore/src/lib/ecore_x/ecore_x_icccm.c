@@ -752,8 +752,12 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
    if (argc) *argc = c;
    if (argv)
      {
-	(*argv) = malloc(c);
-	if (!*argv) return;
+	(*argv) = calloc(c, sizeof(char *));
+	if (!*argv)
+	  { 
+	     *argc = 0;
+	     return;
+	  }
 	for (i = 0; i < c; i++)
 	  (*argv)[i] = strdup(v[i]);
      }
