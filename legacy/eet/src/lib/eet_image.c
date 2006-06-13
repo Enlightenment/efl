@@ -716,14 +716,24 @@ eet_data_image_read(Eet_File *ef, const char *name,
 		    unsigned int *w, unsigned int *h, int *alpha,
 		    int *compress, int *quality, int *lossy)
 {
-   void *data;
-   int size;
+   void		*data;
+   int		size;
    unsigned int *d = NULL;
+   int		free_data = 0;
 
-   data = eet_read(ef, name, &size);
+   data = eet_read_direct (ef, name, &size);
+   if (!data)
+     {
+	data = eet_read(ef, name, &size);
+	free_data = 1;
+     }
+
    if (!data) return NULL;
    d = eet_data_image_decode(data, size, w, h, alpha, compress, quality, lossy);
-   free(data);
+
+   if (free_data)
+     free(data);
+
    return d;
 }
 
@@ -732,14 +742,23 @@ eet_data_image_header_read(Eet_File *ef, const char *name,
 			   unsigned int *w, unsigned int *h, int *alpha,
 			   int *compress, int *quality, int *lossy)
 {
-   void *data;
-   int size;
-   int d;
+   void	*data = NULL;
+   int	size = 0;
+   int	d;
+   int	free_data = 0;
 
-   data = eet_read(ef, name, &size);
+   data = eet_read_direct (ef, name, &size);
+   if (!data)
+     {
+	data = eet_read(ef, name, &size);
+	free_data = 1;
+     }
+
    if (!data) return 0;
    d = eet_data_image_header_decode(data, size, w, h, alpha, compress, quality, lossy);
-   free(data);
+   if (free_data)
+     free(data);
+
    return d;
 }
 

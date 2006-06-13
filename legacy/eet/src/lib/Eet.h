@@ -126,18 +126,13 @@ extern "C" {
    EAPI int eet_shutdown(void);
 
    /**
-    * Turn cacheburst on/off
+    * Clear eet cache
     *
-    * @param on Set this to 1 to turn on, 0 to turn off.
-    * 
-    * This enables cacheburst mode. This is where eet will not free items from
-    * its internal share cache even when their references hit 0. This is
-    * intended to be enabled during bursts where eet may open several eet
-    * files over and over and over again (eg in initialization of an app) and
-    * thius this will avoid repeated openings. It will NOT respect changes
-    * on disk and if you open a LOT of files may use a lot of memory.
+    * Eet didn't free items by default. If you are under memory presure, just
+    * call this function to recall all memory that are not yet referenced anymore.
+    * The cache take care of modification on disk.
     */
-   EAPI void eet_cacheburst(int on);
+   EAPI void eet_clearcache(void);
 
    /**
     * Open an eet file on disk, and returns a handle to it.
@@ -234,6 +229,26 @@ extern "C" {
     * filled with 0.
     */
    EAPI void *eet_read(Eet_File *ef, const char *name, int *size_ret);
+
+   /**
+
+        * Read a specified entry from an eet file and return data
+    * @param ef A valid eet file handle opened for reading.
+    * @param name Name of the entry. eg: "/base/file_i_want".
+    * @param size_ret Number of bytes read from entry and returned.
+    * @return The data stored in that entry in the eet file.
+    *
+    * This function finds an entry in the eet file that is stored under the
+    * name specified, and returns that data if not compressed and successful.
+    * NULL is returned if the lookup fails or if memory errors are
+    * encountered or if the data is comrpessed. The calling program must never
+    * call free() on the returned data. The number of bytes in the returned
+    * data chunk are placed in size_ret.
+    *
+    * If the eet file handle is not valid NULL is returned and size_ret is
+    * filled with 0.
+    */
+   EAPI void	 *eet_read_direct  (Eet_File *ef, const char *name, int *size_ret);
 
    /**
     * Write a specified entry to an eet file handle

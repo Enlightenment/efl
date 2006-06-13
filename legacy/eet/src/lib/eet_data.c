@@ -567,7 +567,7 @@ eet_data_chunk_put(Eet_Data_Chunk *chnk, Eet_Data_Stream *ds)
 {
    int *size;
    int s;
-   int size_ret;
+   int size_ret = 0;
 
    if (!chnk->data) return;
    /* chunk head */
@@ -588,37 +588,6 @@ eet_data_chunk_put(Eet_Data_Chunk *chnk, Eet_Data_Stream *ds)
 
 /*---*/
 
-static int
-_eet_descriptor_hash_gen(char *key, int hash_size)
-{
-   int hash_num = 0, i;
-   unsigned char *ptr;
-   const int masks[9] =
-     {
-	0x00,
-	  0x01,
-	  0x03,
-	  0x07,
-	  0x0f,
-	  0x1f,
-	  0x3f,
-	  0x7f,
-	  0xff
-     };
-   
-   /* no string - index 0 */
-   if (!key) return 0;
-
-   /* calc hash num */
-   for (i = 0, ptr = (unsigned char *)key; *ptr; ptr++, i++)
-     hash_num ^= ((int)(*ptr) | ((int)(*ptr) << 8)) >> (i % 8);
-
-   /* mask it */
-   hash_num &= masks[hash_size];
-   /* return it */
-   return hash_num;
-}
-
 static void
 _eet_descriptor_hash_new(Eet_Data_Descriptor *edd)
 {
@@ -632,7 +601,7 @@ _eet_descriptor_hash_new(Eet_Data_Descriptor *edd)
 	int hash;
 	
 	ede = &(edd->elements.set[i]);
-	hash = _eet_descriptor_hash_gen((char *) ede->name, 6);
+	hash = eet_hash_gen((char *) ede->name, 6);
 	if (!edd->elements.hash.buckets[hash].element)
 	  edd->elements.hash.buckets[hash].element = ede;
 	else
@@ -673,7 +642,7 @@ _eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name)
    int hash;
    Eet_Data_Descriptor_Hash *bucket;
    
-   hash = _eet_descriptor_hash_gen(name, 6);
+   hash = eet_hash_gen(name, 6);
    if (!edd->elements.hash.buckets[hash].element) return NULL;
    if (!strcmp(edd->elements.hash.buckets[hash].element->name, name))
      return edd->elements.hash.buckets[hash].element;
@@ -858,12 +827,20 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name)
 {
    void *data_dec;
    void *data;
-   int size;
+   int	size;
+   int	required_free = 0;
 
-   data = eet_read(ef, name, &size);
-   if (!data) return NULL;
+   data = eet_read_direct (ef, name, &size);
+   if (!data)
+     {
+	required_free = 1;
+	data = eet_read(ef, name, &size);
+	if (!data) return NULL;
+     }
    data_dec = eet_data_descriptor_decode(edd, data, size);
-   free(data);
+   if (required_free)
+     free(data);
+
    return data_dec;
 }
 
