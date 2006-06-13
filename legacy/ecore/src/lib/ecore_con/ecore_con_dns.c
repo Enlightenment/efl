@@ -34,7 +34,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
-#include <arpa/nameser_compat.h>
+/* #include <arpa/nameser_compat.h> */
 #include <netdb.h>
 
 #define SERVERS 3
