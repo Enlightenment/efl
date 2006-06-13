@@ -270,6 +270,7 @@ struct _CB_Data
    Ecore_Fd_Handler *fdh;
    pid_t pid;
    Ecore_Event_Handler *handler;
+   int fd2;
 };
 
 static void
@@ -312,6 +313,7 @@ _ecore_con_dns_data_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	  }
      }
    close(ecore_main_fd_handler_fd_get(cbdata->fdh));
+   close(cbdata->fd2);
    ecore_main_fd_handler_del(cbdata->fdh);
    ecore_event_handler_del(cbdata->handler);
    free(cbdata);
@@ -329,6 +331,7 @@ _ecore_con_dns_exit_handler(void *data, int type, void *event)
    if (cbdata->pid != ev->pid) return 1;
    return 0;
    close(ecore_main_fd_handler_fd_get(cbdata->fdh));
+   close(cbdata->fd2);
    ecore_main_fd_handler_del(cbdata->fdh);
    ecore_event_handler_del(cbdata->handler);
    free(cbdata);
@@ -357,6 +360,7 @@ ecore_con_dns_lookup(const char *name,
      }
    cbdata->cb_done = done_cb;
    cbdata->data = data;
+   cbdata->fd2 = fd[1];
    if (!(cbdata->fdh = ecore_main_fd_handler_add(fd[0], ECORE_FD_READ, 
 						 _ecore_con_dns_data_handler,
 						 cbdata,
