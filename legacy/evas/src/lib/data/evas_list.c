@@ -784,8 +784,57 @@ evas_list_reverse(Evas_List *list)
 	if (l1 == l2) break;
 	l2 = l2->prev;
      }
-
    return list;
+}
+
+static Evas_List *
+evas_list_combine(Evas_List *l, Evas_List *ll, int (*func)(void *, void*))
+{
+   Evas_List *result = NULL;
+   Evas_List *l_head = NULL, *ll_head = NULL;
+
+   l_head = l;
+   ll_head = ll;
+   while (l && ll)
+     {
+	int cmp;
+
+	cmp = func(l->data, ll->data);
+	if (cmp < 0)
+	  {
+	     result = evas_list_append(result, l->data);
+	     l = evas_list_next(l);
+	  }
+	else if (cmp == 0)
+	  {
+	     result = evas_list_append(result, l->data);
+	     l = evas_list_next(l);
+	     result = evas_list_append(result, ll->data);
+	     ll = evas_list_next(ll);
+	  }
+	else if (cmp > 0)
+	  {
+	     result = evas_list_append(result, ll->data);
+	     ll = evas_list_next(ll);
+	  }
+	else
+	  {
+	     l = ll = NULL;
+	  }
+     }
+   while (l)
+     {
+	result = evas_list_append(result, l->data);
+	l = evas_list_next(l);
+     }
+   evas_list_free(l_head);
+   while (ll)
+     {
+	result = evas_list_append(result, ll->data);
+	ll = evas_list_next(ll);
+     }
+   evas_list_free(ll_head);
+   return (result);
 }
 
 /**
@@ -799,6 +848,8 @@ evas_list_reverse(Evas_List *list)
  * This function sorts your list.  The data in your nodes can be arbitrary,
  * you just have to be smart enough to know what kind of data is in your
  * lists
+ *
+ * In the event of a memory allocation failure, It might segv.
  *
  * Example:
  * @code
@@ -827,98 +878,41 @@ evas_list_reverse(Evas_List *list)
 EAPI Evas_List *
 evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 {
-   Evas_List	*cpl = list;
-   unsigned int	list_number;
-   unsigned int	middle;
-   int		list_size;
+   Evas_List *l = NULL, *ll = NULL, *llast;
+   int mid;
 
    if (!list || !func)
      return NULL;
 
+   /* FIXME: this is really inefficient - calling evas_list_nth is not
+    * fast as it has to walk the list */
+   
    /* if the caller specified an invalid size, sort the whole list */
    if ((size <= 0) ||
        (size > ((Evas_List_Accounting *)(list->accounting))->count))
      size = ((Evas_List_Accounting *)(list->accounting))->count;
 
-   middle = size - size / 2;
+   mid = size / 2;
+   if (mid < 1) return list;
 
-   for (list_number = middle, list_size = 1;
-	list_size < middle * 2;
-	list_number >>= 1, list_size <<= 1)
+   /* bleh evas list splicing */
+   llast = ((Evas_List_Accounting *)(list->accounting))->last;
+   ll = evas_list_nth_list(list, mid);
+   if (ll->prev)
      {
-	Evas_List	*head1 = list;
-	unsigned int	limit = size;
-	unsigned int	process_list;
-	unsigned int	pass_number;
-	unsigned int	split_size = list_size;
-
-	for (process_list = 0; process_list < list_number + 1; ++process_list)
-	  {
-	     Evas_List		*head2;
-	     unsigned int	size_sum;
-	     int		size1, size2;
-	     int		i;
-
-	     for (head2 = head1, i = 0; i < list_size; ++i)
-	       head2 = evas_list_next (head2);
-
-	     size1 = limit < split_size ? limit : split_size;
-	     limit -= size1;
-
-	     size2 = limit < split_size ? limit : split_size;
-	     limit -= size2;
-	     
-	     size_sum = size1 + size2;	     
-
-	     for (pass_number = 0; pass_number < size_sum; ++pass_number)
-	       {
-		  Evas_List	*next;
-		  Evas_List	*prev1;
-		  Evas_List	*prev2;
-
-		  if ((size1 == 0) || (head1 == NULL)) /* List1 is empty, head1 is already at the end of the list. So only need to update head2 */
-		    {
-		       for (; pass_number < size_sum; ++pass_number)
-			 head2 = evas_list_next(head2);
-		       break;
-		    }
-		  else
-		    if (size2 == 0 || head2 == NULL) /* List2 is empty, just leave */
-		      break;
-		    else
-		      if (func(head1->data, head2->data) < 0)
-			{
-			   head1 = evas_list_next(head1);
-			   --size1;
-			}
-		      else
-			{
-			   next = evas_list_next(head2);
-			   prev1 = evas_list_prev(head1);
-			   prev2 = evas_list_prev(head2);
-			   
-			   if (next)
-			     next->prev = prev2;
-			   if (prev1)
-			     prev1->next = head2;
-			   if (prev2)
-			     prev2->next = next;
-			   
-			   head2->prev = prev1;
-			   head2->next = head1;
-			   head1->prev = head2;
-			   
-			   --size2;
-			   
-			   if (head1 == list)
-			     list = head2;
-			   
-			   head2 = next;
-			}
-	       }
-	     head1 = head2;
-	  }
+	((Evas_List_Accounting *)(list->accounting))->last = ll->prev;
+	((Evas_List_Accounting *)(list->accounting))->count = mid;
+	ll->prev->next = NULL;
+	ll->prev = NULL;
      }
+   ll->accounting = evas_mempool_malloc(&_evas_list_accounting_mempool, sizeof(Evas_List_Accounting));
+   ((Evas_List_Accounting *)(ll->accounting))->last = llast;
+   ((Evas_List_Accounting *)(ll->accounting))->count = size - mid;
+
+   /* merge sort */
+   l = evas_list_sort(list, mid, func);
+   ll = evas_list_sort(ll, size - mid, func);
+   list = evas_list_combine(l, ll, func);
 
    return(list);
 }
