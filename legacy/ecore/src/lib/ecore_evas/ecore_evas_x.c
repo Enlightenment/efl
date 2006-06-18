@@ -196,8 +196,41 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	       }
 	     if (ee->engine.x.damages)
 	       {
+		  /* if we have a damage pixmap - we can avoid exposures by
+		   * disabling them just for setting the mask */
+		  ecore_x_window_shape_events_select(ee->engine.x.win, 
+						     ECORE_X_EVENT_MASK_KEY_DOWN |
+						     ECORE_X_EVENT_MASK_KEY_UP |
+						     ECORE_X_EVENT_MASK_MOUSE_DOWN |
+						     ECORE_X_EVENT_MASK_MOUSE_UP |
+						     ECORE_X_EVENT_MASK_MOUSE_IN |
+						     ECORE_X_EVENT_MASK_MOUSE_OUT |
+						     ECORE_X_EVENT_MASK_MOUSE_MOVE |
+//						     ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
+						     ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
+						     ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
+						     ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
+						     ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
+						     ECORE_X_EVENT_MASK_WINDOW_COLORMAP
+						     );
 		  if ((ee->shaped) && (updates))
 		    ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
+		  /* and re-enable them again */
+		  ecore_x_window_shape_events_select(ee->engine.x.win, 
+						     ECORE_X_EVENT_MASK_KEY_DOWN |
+						     ECORE_X_EVENT_MASK_KEY_UP |
+						     ECORE_X_EVENT_MASK_MOUSE_DOWN |
+						     ECORE_X_EVENT_MASK_MOUSE_UP |
+						     ECORE_X_EVENT_MASK_MOUSE_IN |
+						     ECORE_X_EVENT_MASK_MOUSE_OUT |
+						     ECORE_X_EVENT_MASK_MOUSE_MOVE |
+						     ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
+						     ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
+						     ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
+						     ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
+						     ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
+						     ECORE_X_EVENT_MASK_WINDOW_COLORMAP
+						     );
 		  XSetRegion(ecore_x_display_get(), ee->engine.x.gc, ee->engine.x.damages);
 		  /* debug rendering */
 		  /*		  
