@@ -432,7 +432,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		    {		/* Setup the error stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_error, F_SETFL,
-					   O_NONBLOCK), ok)
+					   O_NONBLOCK), ok);
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_error, F_SETFD,
+					   FD_CLOEXEC), ok);
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_error_x, F_SETFD,
+					   FD_CLOEXEC), ok);
 		       {
 			  exe->error_fd_handler =
 			     ecore_main_fd_handler_add(exe->child_fd_error,
@@ -447,7 +453,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		    {		/* Setup the read stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_read, F_SETFL,
-					   O_NONBLOCK), ok)
+					   O_NONBLOCK), ok);
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_read, F_SETFD,
+					   FD_CLOEXEC), ok);
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_read_x, F_SETFD,
+					   FD_CLOEXEC), ok);
 		       {
 			  exe->read_fd_handler =
 			     ecore_main_fd_handler_add(exe->child_fd_read,
@@ -462,7 +474,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		    {		/* Setup the write stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_write, F_SETFL,
-					   O_NONBLOCK), ok)
+					   O_NONBLOCK), ok);
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_write, F_SETFD,
+					   FD_CLOEXEC), ok);
+		       E_IF_NO_ERRNO(result,
+				     fcntl(exe->child_fd_write_x, F_SETFD,
+					   FD_CLOEXEC), ok);
 		       {
 			  exe->write_fd_handler =
 			     ecore_main_fd_handler_add(exe->child_fd_write,
@@ -841,7 +859,7 @@ ecore_exe_free(Ecore_Exe * exe)
    IF_FREE(exe->read_data_buf);
    IF_FREE(exe->error_data_buf);
    IF_FREE(exe->cmd);
-
+   
    exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    IF_FREE(exe->tag);
