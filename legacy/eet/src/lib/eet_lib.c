@@ -160,7 +160,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
    int		new_cache_alloc;
 
    new_cache_num = *cache_num;
-   if (new_cache_num > 128) /* avoid fd overruns - limit to 128 (most recent) in the cache */
+   if (new_cache_num >= 64) /* avoid fd overruns - limit to 128 (most recent) in the cache */
      {
 	Eet_File	*del_ef = NULL;
 	int		i;
@@ -188,7 +188,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
    new_cache_num++;
    if (new_cache_num > new_cache_alloc)
      {
-	new_cache_alloc += 64;
+	new_cache_alloc += 16;
 	new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
 	if (!new_cache)
 	  {
@@ -229,9 +229,9 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
    for (j = i; j < new_cache_num; j++)
      new_cache[j] = new_cache[j + 1];
 
-   if (new_cache_num < (new_cache_alloc - 64))
+   if (new_cache_num < (new_cache_alloc - 16))
      {
-	new_cache_alloc -= 64;
+	new_cache_alloc -= 16;
 	if (new_cache_num > 0)
 	  {
 	     new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
@@ -362,8 +362,6 @@ eet_flush(Eet_File *ef)
 
    /* no more writes pending */
    ef->writes_pending = 0;
-   fclose(ef->fp);
-   ef->fp = NULL;
    
    return EET_ERROR_NONE;
    
@@ -413,13 +411,13 @@ eet_clearcache(void)
    */
    for (i = 0; i < eet_writers_num; i++)
      {
-	if (eet_writers[i]->references == 0)
+	if (eet_writers[i]->references <= 0)
 	  num++;
      }
    
    for (i = 0; i < eet_readers_num; i++)
      {
-	if (eet_readers[i]->references == 0)
+	if (eet_readers[i]->references <= 0)
 	  num++;
      }
 
@@ -431,18 +429,20 @@ eet_clearcache(void)
 	num = 0;
 	for (i = 0; i < eet_writers_num; i++)
 	  {
-	     if (eet_writers[i]->references == 0)
+	     if (eet_writers[i]->references <= 0)
 	       {
 		  closelist[num] = eet_writers[i];
+		  eet_writers[i]->delete_me_now = 1;
 		  num++;
 	       }
 	  }
 	
 	for (i = 0; i < eet_readers_num; i++)
 	  {
-	     if (eet_readers[i]->references == 0)
+	     if (eet_readers[i]->references <= 0)
 	       {
 		  closelist[num] = eet_readers[i];
+		  eet_readers[i]->delete_me_now = 1;
 		  num++;
 	       }
 	  }
@@ -545,6 +545,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->data = NULL;
    ef->data_size = 0;
 
+   fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
@@ -751,6 +752,7 @@ eet_close(Eet_File *ef)
    /* if not urgent to delete it - dont free it - leave it in cache */
    if ((!ef->delete_me_now) && (ef->mode == EET_FILE_MODE_READ))
      return EET_ERROR_NONE;
+   
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
@@ -790,11 +792,12 @@ eet_close(Eet_File *ef)
 	  }
 	free(ef->header);
      }
-   if (ef->data)
-     munmap(ef->data, ef->data_size);
+   if (ef->data) munmap(ef->data, ef->data_size);
+   if (ef->fp) fclose(ef->fp);
 
    /* zero out ram for struct - caution tactic against stale memory use */
    memset(ef, 0, sizeof(Eet_File));
+   
    /* free it */
    free(ef);
    return err;
