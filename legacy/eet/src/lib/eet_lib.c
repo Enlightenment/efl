@@ -394,7 +394,10 @@ EAPI int
 eet_shutdown(void)
 {
    if (--eet_initcount == 0)
-     _eet_memfile_shutdown();
+     {
+	eet_clearcache();
+	_eet_memfile_shutdown();
+     }
 
    return eet_initcount;
 }
