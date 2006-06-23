@@ -2,7 +2,7 @@
 #include "Ecore.h"
 
 static Ecore_Idle_Exiter *idle_exiters = NULL;
-static int                 idle_exiters_delete_me = 0;
+static int                idle_exiters_delete_me = 0;
 
 /**
  * Add an idle exiter handler.
