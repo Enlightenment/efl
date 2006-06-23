@@ -108,7 +108,8 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
    return event_handler->data;
 }
 
-static void _ecore_event_generic_free (void *data __UNUSED__, void *event)
+static void 
+_ecore_event_generic_free (void *data __UNUSED__, void *event)
 {
    free (event);
 }
@@ -157,8 +158,7 @@ ecore_event_del(Ecore_Event *event)
 {
    if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT)) 
      {
-	ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, 
-			 "ecore_event_del");	
+	ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, "ecore_event_del");	
 	return NULL;
      }
    event->delete_me = 1;
@@ -233,8 +233,7 @@ ecore_event_filter_del(Ecore_Event_Filter *ef)
 {   
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))
      {
-	ECORE_MAGIC_FAIL(ef, ECORE_MAGIC_EVENT_FILTER,
-			 "ecore_event_filter_del");
+	ECORE_MAGIC_FAIL(ef, ECORE_MAGIC_EVENT_FILTER, "ecore_event_filter_del");
 	return NULL;
      }
    ef->delete_me = 1;
