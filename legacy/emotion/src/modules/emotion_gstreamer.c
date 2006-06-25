@@ -324,7 +324,7 @@ em_init(Evas_Object  *obj,
    ev->ratio = 1.0;
    ev->video_sink_nbr = 0;
    ev->audio_sink_nbr = 0;
-   ev->vis = EMOTION_VIS_LIBVISUAL_GOOM;
+   ev->vis = EMOTION_VIS_GOOM;
 
    /* Create the file descriptors */
    if (pipe(fds) == 0) {
