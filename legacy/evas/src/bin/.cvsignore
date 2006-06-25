@@ -13,3 +13,7 @@ evas_directfb_window
 moc_evas_software_qtopia_main.cpp
 evas_cairo_x11_test
 evas_xrender_x11_test
+evas_software_xcb_perf_load
+evas_software_xcb_perf_test
+evas_software_xcb_test
+evas_xrender_xcb_test
