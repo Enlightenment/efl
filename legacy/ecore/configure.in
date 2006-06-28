@@ -1269,10 +1269,6 @@ examples/Makefile
 ecore-config
 README
 ecore.spec
-ecore.oe
-ecore-native.oe
-ecore.bb
-ecoreXnative.bb
 debian/changelog
 ],[
 chmod +x ecore-config

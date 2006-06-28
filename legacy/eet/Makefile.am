@@ -8,8 +8,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       README \
 		       eet.pc \
 		       eet.spec \
-		       eet.oe eet-native.oe \
-		       eet.bb eetXnative.bb \
 		       debian/changelog
 
 bin_SCRIPTS = eet-config
@@ -18,8 +16,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.c.in \
 	     README.in README \
 	     eet.pc.in \
 	     eet.spec.in eet.spec \
-	     eet.oe.in eet.oe eet-native.oe.in eet-native.oe \
-	     eet.bb.in eet.bb eetXnative.bb.in eetXnative.bb \
 	     debian/changelog \
 	     debian/changelog.in \
 	     debian/control \

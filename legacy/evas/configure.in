@@ -1828,10 +1828,6 @@ proj/win32_gdi/Makefile
 evas-config
 README
 evas.spec
-evas.oe
-evas-native.oe
-evas.bb
-evasXnative.bb
 debian/changelog
 ],[
 chmod +x evas-config

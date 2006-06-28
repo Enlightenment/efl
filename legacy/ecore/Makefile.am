@@ -10,8 +10,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       README \
 		       ecore.pc \
 		       ecore.spec \
-		       ecore.oe ecore-native.oe \
-		       ecore.bb ecoreXnative.bb \
 		       debian/changelog
 
 bin_SCRIPTS = ecore-config
@@ -21,8 +19,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4
 	     ecore.pc.in \
 	     ecore.pc.in \
 	     ecore.spec.in ecore.spec \
-	     ecore.oe.in ecore.oe ecore-native.oe.in ecore-native.oe \
-	     ecore.bb.in ecore.bb ecoreXnative.bb.in ecoreXnative.bb \
 	     debian/changelog \
 	     debian/changelog.in \
 	     debian/control \

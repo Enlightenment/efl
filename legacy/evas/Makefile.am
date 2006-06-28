@@ -10,8 +10,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       README \
 		       evas.pc \
 		       evas.spec \
-		       evas.oe evas-native.oe \
-		       evas.bb evasXnative.bb \
 		       debian/changelog
 
 bin_SCRIPTS = evas-config
@@ -21,8 +19,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     README.in README \
 	     evas.pc.in \
 	     evas.spec.in evas.spec \
-	     evas.oe.in evas.oe evas-native.oe.in evas-native.oe \
-	     evas.bb.in evas.bb evasXnative.bb.in evasXnative.bb \
 	     debian/changelog \
 	     debian/changelog.in \
 	     debian/compat \

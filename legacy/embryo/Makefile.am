@@ -8,8 +8,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       README \
 		       embryo.pc \
 		       embryo.spec \
-		       embryo.oe embryo-native.oe \
-		       embryo.bb embryoXnative.bb \
 		       debian/changelog
 
 bin_SCRIPTS = embryo-config
@@ -19,8 +17,6 @@ EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN embryo.c.in gendoc \
 	     README.in README \
 	     embryo.pc.in \
 	     embryo.spec.in embryo.spec \
-	     embryo.oe.in embryo.oe embryo-native.oe.in embryo-native.oe \
-	     embryo.bb.in embryo.bb embryoXnative.bb.in embryoXnative.bb \
 	     debian/changelog \
 	     debian/changelog.in \
 	     debian/compat \
