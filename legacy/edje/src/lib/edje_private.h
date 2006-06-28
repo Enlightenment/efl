@@ -168,7 +168,6 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_ASPECT_PREFER_VERTICAL   1
 #define EDJE_ASPECT_PREFER_HORIZONTAL 2
 #define EDJE_ASPECT_PREFER_BOTH       3
-
 #define EDJE_VAR_MAGIC_BASE 0x12fe84ba
 
 #define EDJE_STATE_PARAM_NONE         0
@@ -177,10 +176,32 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_STATE_PARAM_MAX          3
 #define EDJE_STATE_PARAM_STEP         4
 #define EDJE_STATE_PARAM_ASPECT       5
-#define EDJE_STATE_PARAM_COLOR        6
-#define EDJE_STATE_PARAM_COLOR2       7
-#define EDJE_STATE_PARAM_COLOR3       8
-#define EDJE_STATE_PARAM_LAST         9
+#define EDJE_STATE_PARAM_ASPECT_PREF  6
+#define EDJE_STATE_PARAM_COLOR        7
+#define EDJE_STATE_PARAM_COLOR2       8
+#define EDJE_STATE_PARAM_COLOR3       9
+#define EDJE_STATE_PARAM_COLOR_CLASS  10
+#define EDJE_STATE_PARAM_REL1         11
+#define EDJE_STATE_PARAM_REL1_TO      12
+#define EDJE_STATE_PARAM_REL1_OFFSET  13
+#define EDJE_STATE_PARAM_REL2         14
+#define EDJE_STATE_PARAM_REL2_TO      15
+#define EDJE_STATE_PARAM_REL2_OFFSET  16
+#define EDJE_STATE_PARAM_IMAGE        17
+#define EDJE_STATE_PARAM_BORDER       18
+#define EDJE_STATE_PARAM_FILL_SMOOTH  19
+#define EDJE_STATE_PARAM_FILL_POS     20
+#define EDJE_STATE_PARAM_FILL_SIZE    21
+#define EDJE_STATE_PARAM_TEXT         22
+#define EDJE_STATE_PARAM_TEXT_CLASS   23
+#define EDJE_STATE_PARAM_TEXT_FONT    24
+#define EDJE_STATE_PARAM_TEXT_STYLE   25
+#define EDJE_STATE_PARAM_TEXT_SIZE    26
+#define EDJE_STATE_PARAM_TEXT_FIT     27
+#define EDJE_STATE_PARAM_TEXT_MIN     28
+#define EDJE_STATE_PARAM_TEXT_ALIGN   29
+#define EDJE_STATE_PARAM_VISIBLE      30
+#define EDJE_STATE_PARAM_LAST         31
 
 /*----------*/
 
@@ -593,6 +614,7 @@ struct _Edje_Real_Part
 	 int                 out_size;
 	 double              align_x, align_y;
 	 double              elipsis;
+	 int                 fit_x, fit_y;
       } cache;
       Edje_Real_Part        *source;
       Edje_Real_Part        *text_source;

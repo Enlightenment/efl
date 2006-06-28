@@ -331,7 +331,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (!strcmp(ep->text.cache.in_str, text)) &&
        (ep->text.cache.align_x == params->text.align.x) &&
        (ep->text.cache.align_y == params->text.align.y) &&
-       (ep->text.cache.elipsis == params->text.elipsis))
+       (ep->text.cache.elipsis == params->text.elipsis) &&
+       (ep->text.cache.fit_x == chosen_desc->text.fit_x) &&
+       (ep->text.cache.fit_y == chosen_desc->text.fit_y))
      {
 	text = (char *) ep->text.cache.out_str;
 	size = ep->text.cache.out_size;
@@ -462,6 +464,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->text.cache.align_x = params->text.align.x;
    ep->text.cache.align_y = params->text.align.y;
    ep->text.cache.elipsis = params->text.elipsis;
+   ep->text.cache.fit_x = chosen_desc->text.fit_x;
+   ep->text.cache.fit_y = chosen_desc->text.fit_y;
    arrange_text:
    
    if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
