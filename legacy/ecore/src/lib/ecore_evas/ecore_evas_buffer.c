@@ -445,7 +445,7 @@ ecore_evas_buffer_new(int w, int h)
    
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_buffer_engine_func;
    
-   ee->driver = strdup("buffer");
+   ee->driver = "buffer";
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
