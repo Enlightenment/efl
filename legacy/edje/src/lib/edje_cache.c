@@ -63,6 +63,32 @@ _edje_file_coll_open(Edje_File *edf, Eet_File *ef, const char *coll)
    return edc;
 }
 
+static int
+_edje_font_hash (Edje_File *edf)
+{
+   int	count = 0;
+
+   if (edf->font_dir)
+     {
+	Evas_List *l;
+	for (l = edf->font_dir->entries; l; l = evas_list_next (l))
+	  {
+	     Edje_Font_Directory_Entry	*fnt = l->data;
+	     int			length = strlen (fnt->entry) + 7;
+	     char			*tmp = alloca (length);
+
+	     snprintf (tmp, length, "fonts/%s", fnt->entry);
+	     fnt->path = evas_stringshare_add (tmp);
+	     evas_stringshare_del (fnt->entry);
+	     fnt->entry = fnt->path + 6;
+	     edf->font_hash = evas_hash_direct_add (edf->font_hash, fnt->entry, fnt);
+
+	     count++;
+	  }
+     }
+   return count;
+}
+
 static Edje_File *
 _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
@@ -103,18 +129,19 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 
    _edje_textblock_style_parse_and_fix(edf);
    
-   if (!coll)
+   if (coll)
      {
-	eet_close(ef);
-	return edf;
+	edc = _edje_file_coll_open(edf, ef, coll);
+	if (!edc)
+	  {
+	     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
+	  }
+	if (edc_ret) *edc_ret = edc;
      }
+
+   edf->font_hash = NULL;
    
-   edc = _edje_file_coll_open(edf, ef, coll);
-   if (!edc)
-     {
-	*error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
-     }
-   if (edc_ret) *edc_ret = edc;
+   _edje_font_hash (edf);
 
    eet_close(ef);
    return edf;

@@ -8,17 +8,14 @@
 static int
 _edje_font_is_embedded(Edje_File *edf, char *font)
 {
-   Evas_List *l;
+   if (!edf->font_hash) return 0;
+
+   Edje_Font_Directory_Entry *fnt = evas_hash_find (edf->font_hash, font);
    
-   if (!edf->font_dir) return 0;
-   for (l = edf->font_dir->entries; l; l = l->next)
-     {
-	Edje_Font_Directory_Entry *fnt = l->data;
-	
-	if ((fnt->entry) && (!strcmp(fnt->entry, font)))
-	  return 1;
-     }
-   return 1;
+   if (fnt)
+     return 1;
+
+   return 0;
 }
 
 #if 0

@@ -222,6 +222,7 @@ struct _Edje_File
    int                             feature_ver;
    
    Evas_Hash                      *collection_hash;
+   Evas_Hash			  *font_hash;
    Evas_List                      *collection_cache;
 };
 
@@ -259,6 +260,7 @@ struct _Edje_Font_Directory
 struct _Edje_Font_Directory_Entry
 {
    char *entry; /* the name of the font */
+   char *path;
 };
 
 	

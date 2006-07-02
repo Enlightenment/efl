@@ -284,24 +284,14 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (!font) font = "";
    
    /* check if the font is embedded in the .eet */
-   /* FIXME: we should cache this result */
-   if (ed->file->font_dir)
+   if (ed->file->font_hash)
      {
-	Evas_List *l;
-	
-	for (l = ed->file->font_dir->entries; l; l = l->next)
+	Edje_Font_Directory_Entry *fnt = evas_hash_find (ed->file->font_hash, font);
+
+	if (fnt)
 	  {
-	     Edje_Font_Directory_Entry *fnt = l->data;
-	     
-	     if ((fnt->entry) && (!strcmp(fnt->entry, font)))
-	       {
-		  strcpy(font_buf, "fonts/");
-		  strncpy(font_buf + 6, font, sizeof(font_buf) - 7);
-		  font_buf[sizeof(font_buf) - 1] = 0;
-		  font = font_buf;
-		  inlined_font = 1;
-		  break;
-	       }
+	     font = fnt->path;
+	     inlined_font = 1;
 	  }
      }
 
