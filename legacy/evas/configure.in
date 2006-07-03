@@ -115,7 +115,7 @@ AC_HELP_STRING([--with-qtdir=QT_DIR],[use qt directory specified]),
   qt_dir="/opt/Qtopia";
 ])
 # check for freetype
-AC_PATH_GENERIC(freetype, 9.5.0,
+AC_PATH_GENERIC(freetype, 9.3.0,
   [ ],
   [ AC_MSG_ERROR(Freetype isn't installed) ]
 )
@@ -708,10 +708,21 @@ if test "x$have_png" = "xyes"; then
     [ have_png="no" ]
   )
 fi
+# RHEL 3 has broken png libs. the default /usr/include/png*.h files are from
+# libpng 1.0 but the default libpng.so is from 1.2 - bad bad. need to try link
+# to libpng10 first.
 if test "x$have_png" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_PNG, 1, [PNG Image Loader Support])
   png_cflags=""
-  png_libs="-lpng -lz -lm"
+  AC_CHECK_LIB(libpng10, png_check_sig, [
+    png_libs="-lpng10 -lz -lm"
+  ], [
+    AC_CHECK_LIB(libpng, png_check_sig, [
+      have_png="no"
+    ], [
+      png_libs="-lpng -lz -lm"
+    ], -lz -lm)
+  ], -lz -lm)
 fi
 
 AM_CONDITIONAL(BUILD_LOADER_PNG, test x$have_png = xyes)
