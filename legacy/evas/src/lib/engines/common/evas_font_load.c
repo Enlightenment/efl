@@ -385,7 +385,7 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
 #ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
 	return 1;
 #else	
-	return 0;
+	return 1;
 #endif
      }
    else if (hinting == FONT_BYTECODE_HINT)
@@ -393,7 +393,7 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 	return 1;
 #else
-	return 0;
+	return 1;
 #endif
      }
    return 0;
