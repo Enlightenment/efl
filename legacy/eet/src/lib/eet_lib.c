@@ -562,18 +562,22 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->data_size = file_stat.st_size;
 	ef->data = mmap(NULL, ef->data_size, PROT_READ, MAP_SHARED, fileno(ef->fp), 0);
 
-	if (eet_test_close(ef->data == (void*) -1 || ef->data == NULL, ef))
+	if (eet_test_close((ef->data == (void *)-1) || (ef->data == NULL), ef))
 	  return NULL;
 	
 	/* build header table if read mode */
 	/* geat header */
-	index += sizeof (int);
-	if (eet_test_close((int) ntohl (*((int*) ef->data)) != EET_MAGIC_FILE, ef))
+	index += sizeof(int);
+	if (eet_test_close((int)ntohl(*((int *)ef->data)) != EET_MAGIC_FILE, ef))
 	  return NULL;
 
-#define	EXTRACT_INT(Value, Pointer, Index) \
-	Value = ntohl (*((int*)(Pointer + Index))); \
-	Index += sizeof(int);
+#define EXTRACT_INT(Value, Pointer, Index) \
+        { \
+	   int tmp; \
+	   memcpy(&tmp, Pointer + Index, sizeof(int)); \
+	   Value = ntohl(tmp); \
+	   Index += sizeof(int); \
+        }
 
 	/* get entries count and byte count */
 	EXTRACT_INT(num_entries, ef->data, index);
@@ -621,7 +625,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     int		hash;
 	     int		k;
 
-#define HEADER_SIZE sizeof (uint32_t) * 5
+#define HEADER_SIZE (sizeof(int) * 5)
 
 	     /* out directory block is inconsistent - we have oveerun our */
 	     /* dynamic block buffer before we finished scanning dir entries */
@@ -630,7 +634,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 
 	     /* allocate all the ram needed for this stored node accounting */
 	     efn = malloc (sizeof(Eet_File_Node));
-	     if (eet_test_close (!efn, ef))
+	     if (eet_test_close(!efn, ef))
 	       return NULL;
 
 	     /* get entrie header */
@@ -662,14 +666,14 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       }
 
 	     /* This code is useless if we dont want backward compatibility */
-	     for (k = name_size; k > 0 && ((uint8_t)*(p + HEADER_SIZE + k)) != 0; --k)
+	     for (k = name_size; k > 0 && ((uint8_t) * (p + HEADER_SIZE + k)) != 0; --k)
 	       ;
 
-	     efn->free_name = ((uint8_t)*(p + HEADER_SIZE + k)) != 0;
+	     efn->free_name = ((uint8_t) * (p + HEADER_SIZE + k)) != 0;
 
 	     if (efn->free_name)
 	       {
-		  efn->name = malloc(sizeof (char) * name_size + 1);
+		  efn->name = malloc(sizeof(char) * name_size + 1);
 		  if (eet_test_close(efn->name == NULL, ef))
 		    {
 		       free (efn);
@@ -683,7 +687,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       }
 	     else
 	       /* The only really usefull peace of code for efn->name (no backward compatibility) */
-	       efn->name = (char*) ((uint8_t*)(p + HEADER_SIZE));
+	       efn->name = (char*)((uint8_t*)(p + HEADER_SIZE));
 
 	     /* get hash bucket it should go in */
 	     hash = eet_hash_gen(efn->name, ef->header->directory->size);
@@ -698,7 +702,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       {
 		  data = malloc(efn->size);
 		  if (data)
-		    memcpy (data, ef->data + efn->offset, efn->size);
+		    memcpy(data, ef->data + efn->offset, efn->size);
                   efn->data = data;
 	       }
 	     /* advance */
