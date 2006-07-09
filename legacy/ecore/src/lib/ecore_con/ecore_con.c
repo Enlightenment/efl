@@ -198,10 +198,10 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	else if (type == ECORE_CON_LOCAL_SYSTEM)
 	  {
 	     mask = 0;
-        if (name[0] == '/')
-          snprintf(buf, sizeof(buf), "%s|%i", name, port);
-        else
-          snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
+	     if (name[0] == '/')
+	       snprintf(buf, sizeof(buf), "%s|%i", name, port);
+	     else
+	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
 	  }
 	pmode = umask(mask);
 	start:
