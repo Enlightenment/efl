@@ -23,7 +23,9 @@ embryo_cc_sc6.c \
 embryo_cc_sc7.c \
 embryo_cc_scexpand.c \
 embryo_cc_sclist.c \
-embryo_cc_scvars.c
+embryo_cc_scvars.c \
+embryo_cc_prefix.c \
+embryo_cc_prefix.h
 
 embryo_cc_LDADD = 
 embryo_cc_DEPENDENCIES = 

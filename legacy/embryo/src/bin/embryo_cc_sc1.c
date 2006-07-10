@@ -38,6 +38,7 @@
 #include <unistd.h>
 #include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
+#include "embryo_cc_prefix.h"
 
 #define VERSION_STR "2.4"
 #define VERSION_INT 240
@@ -135,6 +136,8 @@ main(int argc, char *argv[], char *env[])
 	   snprintf(argv0, _MAX_PATH, "%s/%s", pwd, argv[0]);
      }				/* if */
    argv[0] = argv0;		/* set location to new first parameter */
+   
+   e_prefix_determine(argv0);
 
    return sc_compile(argc, argv);
 }
@@ -592,8 +595,9 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
    size_t len;
 
    /* use embryo include dir always */
-   insert_path(PACKAGE_DATA_DIR "/include/");
-   insert_path(PACKAGE_DATA_DIR "./");
+   snprintf(str, sizeof(str), "%s/include/", e_prefix_data_get());
+   insert_path(str);
+   insert_path("./");
 
    for (i = 1; i < argc; i++)
    {
