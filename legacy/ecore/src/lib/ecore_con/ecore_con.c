@@ -968,14 +968,17 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 						   cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	ecore_list_append(svr->clients, cl);
-	ip = incoming.sin_addr.s_addr;
-	snprintf(buf, sizeof(buf),
-		 "%i.%i.%i.%i",
-		 (ip      ) & 0xff,
-		 (ip >> 8 ) & 0xff,
-		 (ip >> 16) & 0xff,
-		 (ip >> 24) & 0xff);
-	cl->ip = strdup(buf);
+	if (!svr->path)
+	  {
+	     ip = incoming.sin_addr.s_addr;
+	     snprintf(buf, sizeof(buf),
+		      "%i.%i.%i.%i",
+		      (ip      ) & 0xff,
+		      (ip >> 8 ) & 0xff,
+		      (ip >> 16) & 0xff,
+		      (ip >> 24) & 0xff);
+	     cl->ip = strdup(buf);
+	  }
 	if (!cl->delete_me)
 	  {
 	     Ecore_Con_Event_Client_Add *e;
