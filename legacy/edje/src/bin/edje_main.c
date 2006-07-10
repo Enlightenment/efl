@@ -68,7 +68,9 @@ static int
 main_start(int argc, char **argv)
 {
    int mode = 0;
-   
+   char buf[4096];
+
+   e_prefix_determine(argv[0]);
    start_time = ecore_time_get();
    if (!ecore_init()) return -1;
    ecore_app_args_set(argc, (const char **)argv);
@@ -134,8 +136,8 @@ main_start(int argc, char **argv)
    evas = ecore_evas_get(ecore_evas);
    evas_image_cache_set(evas, 2 * 1024 * 1024);
    evas_font_cache_set(evas, 512 * 1024);
-   evas_font_path_append(evas, DAT"data/test/fonts");
-   evas_font_path_append(evas, "fonts");
+   snprintf(buf, sizeof(buf), "%s/data/test/fonts", e_prefix_data_get());
+   evas_font_path_append(evas, buf);
    return 1;
 }
 
@@ -185,13 +187,15 @@ void
 bg_setup(void)
 {
    Evas_Object *o;
+   char buf[4096];
    
    o = evas_object_image_add(evas);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, startw, starth);
    evas_object_layer_set(o, -999);
    evas_object_color_set(o, 255, 255, 255, 255);
-   evas_object_image_file_set(o, DAT"data/test/images/bg.png", NULL);
+   snprintf(buf, sizeof(buf), "%s/data/test/images/bg.png", e_prefix_data_get());
+   evas_object_image_file_set(o, buf, NULL);
    evas_object_image_fill_set(o, 0, 0, 128, 128);
    evas_object_pass_events_set(o, 1);
    evas_object_show(o);   
@@ -204,7 +208,8 @@ bg_setup(void)
    evas_object_resize(o, startw, starth);
    evas_object_layer_set(o, -999);
    evas_object_color_set(o, 255, 255, 255, 255);
-   evas_object_image_file_set(o, DAT"data/test/images/shadow.png", NULL);
+   snprintf(buf, sizeof(buf), "%s/data/test/images/shadow.png", e_prefix_data_get());
+   evas_object_image_file_set(o, buf, NULL);
    evas_object_image_smooth_scale_set(o, 0);
    evas_object_image_fill_set(o, 0, 0, startw, starth);
    evas_object_pass_events_set(o, 1);
@@ -469,18 +474,22 @@ static void
 list_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Collection *co;
+   char buf[4096];
    
    co = data;
-   evas_object_image_file_set(co->bg, DAT"data/test/images/item_selected.png", NULL);
+   snprintf(buf, sizeof(buf), "%s/data/test/images/item_selected.png", e_prefix_data_get());
+   evas_object_image_file_set(co->bg, buf, NULL);
 }
 
 static void
 list_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Collection *co;
+   char buf[4096];
    
    co = data;
-   evas_object_image_file_set(co->bg, DAT"data/test/images/item_normal.png", NULL);
+   snprintf(buf, sizeof(buf), "%s/data/test/images/item_normal.png", e_prefix_data_get());
+   evas_object_image_file_set(co->bg, buf, NULL);
    test_setup(co->file, co->part);
    evas_object_color_set(co->bg, 255, 255, 255, 128);
    evas_object_color_set(co->text, 0, 0, 0, 128);
@@ -566,6 +575,7 @@ test_list(char *file)
    Evas_Coord maxw = 128;
    Collection *co_head;
    Evas_List *collections = NULL;
+   char buf[4096];
 
    entries = edje_file_collection_list(file);
 //   printf("%s\n", edje_file_data_get(file, "My Data");
@@ -585,7 +595,8 @@ test_list(char *file)
 	o = evas_object_image_add(evas);
 	evas_object_layer_set(o, 10);
 	evas_object_image_border_set(o, 10, 10, 10, 10);
-	evas_object_image_file_set(o, DAT"data/test/images/item_title.png", NULL);
+	snprintf(buf, sizeof(buf), "%s/data/test/images/item_title.png", e_prefix_data_get());
+	evas_object_image_file_set(o, buf, NULL);
 	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, list_head_down_cb, co);
 	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   list_head_up_cb, co);
 	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, list_head_move_cb, co);
@@ -623,7 +634,8 @@ test_list(char *file)
 	     o = evas_object_image_add(evas);
 	     evas_object_layer_set(o, 10);
 	     evas_object_image_border_set(o, 10, 10, 10, 10);
-	     evas_object_image_file_set(o, DAT"data/test/images/item_normal.png", NULL);
+	     snprintf(buf, sizeof(buf), "%s/data/test/images/item_normal.png", e_prefix_data_get());
+	     evas_object_image_file_set(o, buf, NULL);
 	     evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, list_down_cb, co);
 	     evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   list_up_cb, co);
 	     co->bg = o;
@@ -698,7 +710,7 @@ test_setup(char *file, char *name)
 {
    Evas_Object *o;
    Demo_Edje *de;
-   char buf[1024];
+   char buf[4096];
    Evas_Coord tw, th, w, h;
    Evas_Coord xx, yy, ww, hh;
 
@@ -720,7 +732,8 @@ test_setup(char *file, char *name)
    edjes = evas_list_append(edjes, de);
 
    o = evas_object_image_add(evas);
-   evas_object_image_file_set(o, DAT"data/test/images/border.png", NULL);
+   snprintf(buf, sizeof(buf), "%s/data/test/images/border.png", e_prefix_data_get());
+   evas_object_image_file_set(o, buf, NULL);
    evas_object_image_smooth_scale_set(o, 0);
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_border_set(o, 26, 26, 26, 26);

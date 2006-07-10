@@ -119,6 +119,8 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
+   e_prefix_determine(argv[0]);
+   
    /* check whether file_in exists */
 #ifdef HAVE_REALPATH
    if (!realpath(file_in, rpath) || stat(rpath, &st) || !S_ISREG(st.st_mode))

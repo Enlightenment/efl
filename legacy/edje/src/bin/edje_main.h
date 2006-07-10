@@ -31,7 +31,6 @@
 #endif
 
 #include "edje_private.h"
-
-#define DAT PACKAGE_DATA_DIR"/"
+#include "edje_prefix.h"
 
 #endif

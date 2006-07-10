@@ -30,7 +30,9 @@ edje_thumb
 
 edje_SOURCES = \
 edje_main.c \
-edje_main.h
+edje_main.h \
+edje_prefix.c \
+edje_prefix.h
 
 edje_LDADD = \
 $(top_builddir)/src/lib/libedje.la
@@ -45,7 +47,9 @@ edje_cc_out.c \
 edje_cc_parse.c \
 edje_cc_mem.c \
 edje_cc_handlers.c \
-edje_cc_sources.c
+edje_cc_sources.c \
+edje_prefix.c \
+edje_prefix.h
 
 edje_cc_LDADD = \
 $(top_builddir)/src/lib/libedje.la

@@ -623,8 +623,9 @@ data_write(void)
 		  if (fd >= 0)
 		    {
 		       snprintf(buf, sizeof(buf),
-				EMBRYO_PREFIX"/bin/embryo_cc -i %s -o %s %s", 
-				DAT"include", tmpo, tmpn);
+				"embryo_cc -i %s -o %s %s", 
+				"%s/include", tmpo, tmpn, 
+				e_prefix_data_get());
 		       ret = system(buf);
 		       /* accept warnings in the embryo code */
 		       if (ret < 0 || ret > 1)
