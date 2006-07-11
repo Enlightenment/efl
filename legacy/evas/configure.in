@@ -682,10 +682,10 @@ fi
 if test "x$have_png" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_PNG, 1, [PNG Image Loader Support])
   png_cflags=""
-  AC_CHECK_LIB(libpng10, png_check_sig, [
+  AC_CHECK_LIB(png10, png_check_sig, [
     png_libs="-lpng10 -lz -lm"
   ], [
-    AC_CHECK_LIB(libpng, png_check_sig, [
+    AC_CHECK_LIB(png, png_check_sig, [
       have_png="no"
     ], [
       png_libs="-lpng -lz -lm"
