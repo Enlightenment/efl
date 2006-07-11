@@ -86,36 +86,11 @@ Solaris 10)])
 ], AC_MSG_WARN([Cannot check when cross-compiling -- assuming C99 '%a' support is OK])
 )
 
-if test "x${bindir}" = 'x${exec_prefix}/bin'; then
-  if test "x${exec_prefix}" = "xNONE"; then
-    if test "x${prefix}" = "xNONE"; then
-      bindir="${ac_default_prefix}/bin";
-    else
-      bindir="${prefix}/bin";
-    fi
-  else
-    if test "x${prefix}" = "xNONE"; then
-      bindir="${ac_default_prefix}/bin";
-    else
-      bindir="${prefix}/bin";
-    fi
-  fi
-fi
-
-if test "x${libdir}" = 'x${exec_prefix}/lib'; then
-  if test "x${exec_prefix}" = "xNONE"; then
-    if test "x${prefix}" = "xNONE"; then
-      libdir="${ac_default_prefix}/lib";
-    else
-      libdir="${prefix}/lib";
-    fi
-  else
-    if test "x${prefix}" = "xNONE"; then
-      libdir="${ac_default_prefix}/lib";
-    else
-      libdir="${prefix}/lib";
-    fi
-  fi
+dnl Set PACKAGE_DATA_DIR in config.h.
+if test "x${prefix}" = "xNONE"; then
+  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Shared Data Directory])
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}", [Shared Data Directory])
 fi
 
 dnl Set PACKAGE_BIN_DIR in config.h.
