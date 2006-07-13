@@ -33,7 +33,6 @@ evas_object_free(Evas_Object *obj, int clean_layer)
    if (obj->smart.parent) was_smart_child = 1;
    evas_object_smart_cleanup(obj);
    obj->func->free(obj);
-   if (obj->name) evas_object_name_set(obj, NULL);
    if (!was_smart_child) evas_object_release(obj, clean_layer);
    if (obj->clip.clipees)
      evas_list_free(obj->clip.clipees);
@@ -416,6 +415,8 @@ evas_object_del(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
+
+   if (obj->name) evas_object_name_set(obj, NULL);
    if (!obj->layer)
      {
 	evas_object_free(obj, 1);
