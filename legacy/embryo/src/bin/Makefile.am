@@ -1,6 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = -DLINUX -I$(top_srcdir)/src/lib -I$(top_srcdir) -I$(top_builddir)
+INCLUDES = -DLINUX -I$(top_srcdir)/src/lib -I$(top_srcdir) -I$(top_builddir) \
+           -DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
+	   -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
+	   -DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
 
 bin_PROGRAMS = embryo embryo_cc
 

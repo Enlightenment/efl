@@ -24,45 +24,45 @@ AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your
 
 AC_CHECK_FUNCS(fnmatch, res=yes, res=no)
 if test "x$res" = "xno"; then
-	AC_CHECK_LIB(fnmatch, fnmatch, res=yes, res=no)
-	if test "x$res" = "xno"; then
-		AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch])
-	else
-		fnmatch_libs="-lfnmatch"
-	fi
+  AC_CHECK_LIB(fnmatch, fnmatch, res=yes, res=no)
+  if test "x$res" = "xno"; then
+    AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch])
+  else
+    fnmatch_libs="-lfnmatch"
+  fi
 fi
 
 AC_SUBST(fnmatch_libs)
-							
-dnl Set PACKAGE_DATA_DIR in config.h.
-if test "x${prefix}" = "xNONE"; then
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Shared Data Directory])
-else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}", [Shared Data Directory])
-fi
 
-dnl Set PACKAGE_BIN_DIR in config.h.
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin", [Installation directory for user executables])
+    PACKAGE_BIN_DIR="${ac_default_prefix}/bin"
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin", [Installation directory for user executables])
+    PACKAGE_BIN_DIR="${prefix}/bin"
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}", [Installation directory for user executables])
+  PACKAGE_BIN_DIR="${bindir}"
 fi
+AC_SUBST(PACKAGE_BIN_DIR)
 
-dnl Set PACKAGE_LIB_DIR in config.h.
 if test "x${libdir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib", [Installation directory for libraries])
+    PACKAGE_LIB_DIR="${ac_default_prefix}/lib"
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib", [Installation directory for libraries])
+    PACKAGE_LIB_DIR="${prefix}/lib"
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}", [Installation directory for libraries])
+  PACKAGE_LIB_DIR="${libdir}"
 fi
-
+AC_SUBST(PACKAGE_LIB_DIR)
+		
+if test "x${prefix}" = "xNONE"; then
+  PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
+else
+  PACKAGE_DATA_DIR="${prefix}/share/${PACKAGE}"
+fi
+AC_SUBST(PACKAGE_DATA_DIR)
+	
 AC_MSG_CHECKING(whether to build edje_cc)
 have_edje_cc="yes"
 AC_ARG_ENABLE(edje-cc, [  --disable-edje-cc       disable building of edje_cc ], [

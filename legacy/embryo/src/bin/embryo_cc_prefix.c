@@ -296,7 +296,7 @@ _e_prefix_fallbacks(void)
    _prefix_path_lib    = strdup(PACKAGE_LIB_DIR);
    printf("WARNING: Embryo could not determine its installed prefix\n"
 	  "         and is falling back on the compiled in default:\n"
-	  "           %s\n", 
+	  "           %s\n"
 	  "         You might like to try setting the following environment variables:\n"
 	  "           E_PREFIX     - points to the base prefix of install\n"
 	  "           E_BIN_DIR    - optional in addition to E_PREFIX to provide\n"
