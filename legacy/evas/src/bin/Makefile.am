@@ -13,7 +13,10 @@ INCLUDES = \
 -I$(top_srcdir)/src/modules/engines/software_x11 \
 -I$(top_srcdir)/src/modules/engines/software_xcb \
 -I$(top_srcdir)/src/modules/engines/xrender_x11 \
--I$(top_srcdir)/src/modules/engines/xrender_xcb
+-I$(top_srcdir)/src/modules/engines/xrender_xcb \
+-DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
+-DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
+-DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
 
 bin_PROGRAMS = \
 @ENGINE_SOFTWARE_X11_PRG@ \

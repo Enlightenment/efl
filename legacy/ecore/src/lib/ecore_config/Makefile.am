@@ -7,7 +7,10 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_ipc \
 -I$(top_builddir)/ \
-@EVAS_CFLAGS@ @EET_CFLAGS@
+@EVAS_CFLAGS@ @EET_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
+-DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
+-DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
 
 CLEANFILES = $(DB)
 

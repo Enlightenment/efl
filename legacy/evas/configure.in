@@ -21,40 +21,34 @@ MODULE_ARCH="$host_os-$host_cpu"
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
-dnl Add the languages which your application supports here.
-
-dnl Set PACKAGE_DATA_DIR in config.h.
-if test "x${prefix}" = "xNONE"; then
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Shared Data Directory])
-else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}", [Shared Data Directory])
-fi
-
-dnl Set PACKAGE_BIN_DIR in config.h.
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin", [Installation Directory for User Executables])
+    PACKAGE_BIN_DIR="${ac_default_prefix}/bin"
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin", [Installation Directory for User Executables])
+    PACKAGE_BIN_DIR="${prefix}/bin"
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}", [Installation Directory for User Executables])
+  PACKAGE_BIN_DIR="${bindir}"
 fi
+AC_SUBST(PACKAGE_BIN_DIR)
 
-dnl Set PACKAGE_LIB_DIR in config.h.
 if test "x${libdir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib", [Installation Directory for Libraries])
+    PACKAGE_LIB_DIR="${ac_default_prefix}/lib"
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib", [Installation Directory for Libraries])
+    PACKAGE_LIB_DIR="${prefix}/lib"
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}", [Installation Directory for Libraries])
+  PACKAGE_LIB_DIR="${libdir}"
 fi
-
-dnl Set PACKAGE_SOURCE_DIR in config.h.
-packagesrcdir=`cd $srcdir && pwd`
-AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source Code Directory])
+AC_SUBST(PACKAGE_LIB_DIR)
+		
+if test "x${prefix}" = "xNONE"; then
+  PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
+else
+  PACKAGE_DATA_DIR="${prefix}/share/${PACKAGE}"
+fi
+AC_SUBST(PACKAGE_DATA_DIR)
 
 x_dir=""
 x_cflags=""
