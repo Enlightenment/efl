@@ -646,11 +646,15 @@ AM_CONDITIONAL(BUILD_LOADER_GIF, test x$have_gif = xyes)
 #######################################
 ## PNG
 have_png="no";
-AC_CHECK_HEADER(png.h,
-  [ have_png="yes" ],
-  [ have_png="no" ]
-)
 AC_MSG_CHECKING(whether to enable png image loader)
+if   pkg-config --exists libpng12; then
+  have_png="yes";
+elif pkg-config --exists libpng10; then
+  have_png="yes";
+elif pkg-config --exists libpng; then
+  have_png="yes";
+fi
+
 AC_ARG_ENABLE(image-loader-png, 
   [  --enable-image-loader-png       enable PNG image loader], [
       if test x"$enableval" = x"yes" ; then
@@ -665,26 +669,20 @@ AC_ARG_ENABLE(image-loader-png,
   ]
 )
 if test "x$have_png" = "xyes"; then
-  AC_CHECK_HEADER(png.h,
-    [ have_png="yes" ],
-    [ have_png="no" ]
-  )
-fi
-# RHEL 3 has broken png libs. the default /usr/include/png*.h files are from
-# libpng 1.0 but the default libpng.so is from 1.2 - bad bad. need to try link
-# to libpng10 first.
-if test "x$have_png" = "xyes"; then
-  AC_DEFINE(BUILD_LOADER_PNG, 1, [PNG Image Loader Support])
-  png_cflags=""
-  AC_CHECK_LIB(png10, png_check_sig, [
-    png_libs="-lpng10 -lz -lm"
-  ], [
-    AC_CHECK_LIB(png, png_check_sig, [
-      png_libs="-lpng -lz -lm"
-    ], [
-      have_png="no"
-    ], -lz -lm)
-  ], -lz -lm)
+  if   pkg-config --exists libpng12; then
+    png_cflags=`pkg-config --cflags libpng12`
+    png_libs=`pkg-config --libs libpng12`
+    AC_MSG_CHECKING(libpng 1.2.x)
+  elif pkg-config --exists libpng10; then
+    png_cflags=`pkg-config --cflags libpng10`
+    png_libs=`pkg-config --libs libpng10`
+    AC_MSG_CHECKING(libpng 1.0.x)
+  elif pkg-config --exists libpng; then
+    png_cflags=`pkg-config --cflags libpng`
+    png_libs=`pkg-config --libs libpng`
+    AC_MSG_CHECKING(generic system libpng)
+  fi
+  AC_MSG_RESULT($have_png)
 fi
 
 AM_CONDITIONAL(BUILD_LOADER_PNG, test x$have_png = xyes)
