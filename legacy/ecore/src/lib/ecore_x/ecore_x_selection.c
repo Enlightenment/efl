@@ -679,6 +679,9 @@ _ecore_x_selection_parser_files(const char *target, unsigned char *data, int siz
    free(tmp);
    free(data);
 
+   ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_FILES;
+   ECORE_X_SELECTION_DATA(sel)->length = sel->num_files;
+
    return ECORE_X_SELECTION_DATA(sel);
 }
 
@@ -715,6 +718,8 @@ _ecore_x_selection_parser_text(const char *target __UNUSED__, unsigned char *dat
      }
 
    sel->text = (char *)data;
+   ECORE_X_SELECTION_DATA(sel)->length = size;
+   ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_TEXT;
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_text_free;
    return sel;
 }
@@ -747,6 +752,8 @@ _ecore_x_selection_parser_targets(const char *target __UNUSED__, unsigned char *
    free(data);
 
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_targets_free;
+   ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_TARGETS;
+   ECORE_X_SELECTION_DATA(sel)->length = size;
    return sel;
 }
 

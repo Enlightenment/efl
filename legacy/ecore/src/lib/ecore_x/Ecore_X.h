@@ -548,6 +548,10 @@ struct _Ecore_X_Event_Selection_Notify
    Ecore_X_Selection          selection;
    char                      *target;
    void                      *data;
+};
+
+struct _Ecore_X_Selection_Data
+{
    enum {
 	ECORE_X_SELECTION_CONTENT_NONE,
 	ECORE_X_SELECTION_CONTENT_TEXT,
@@ -555,10 +559,6 @@ struct _Ecore_X_Event_Selection_Notify
 	ECORE_X_SELECTION_CONTENT_TARGETS,
 	ECORE_X_SELECTION_CONTENT_CUSTOM
    } content;
-};
-
-struct _Ecore_X_Selection_Data
-{
    unsigned char    *data;
    int               length;
 
