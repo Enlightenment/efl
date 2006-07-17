@@ -35,7 +35,9 @@ endif
 if BUILD_GSTREAMER_MODULE
 emotion_decoder_gstreamer_la_SOURCES = \
 emotion_gstreamer.c \
-emotion_gstreamer.h
+emotion_gstreamer.h \
+emotion_gstreamer_pipeline.c \
+emotion_gstreamer_pipeline.h
 emotion_decoder_gstreamer_la_LIBADD  = @EVAS_LIBS@ @ECORE_LIBS@ @GST_LIBS@
 emotion_decoder_gstreamer_la_LDFLAGS = -module -avoid-version \
 				       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
