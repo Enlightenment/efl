@@ -250,6 +250,7 @@ _edje_part_recalc_single(Edje *ed,
    int minw = 0, minh = 0, maxw = 0, maxh = 0;
 
    flags = FLAG_XY;
+   
    /* relative coords of top left & bottom right */
    if (flags & FLAG_X)
      {
@@ -634,7 +635,25 @@ _edje_part_recalc_single(Edje *ed,
 	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	  {
 	     int mw, mh;
+	     Evas_Text_Style_Type style;
 	     
+	     style = EVAS_TEXT_STYLE_PLAIN;
+	     if ((ep->part->effect == EDJE_TEXT_EFFECT_NONE) ||
+		 (ep->part->effect == EDJE_TEXT_EFFECT_PLAIN))
+	       style = EVAS_TEXT_STYLE_PLAIN;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE)
+	       style = EVAS_TEXT_STYLE_OUTLINE;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_SOFT_OUTLINE)
+	       style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_SHADOW)
+	       style = EVAS_TEXT_STYLE_SHADOW;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_SOFT_SHADOW)
+	       style = EVAS_TEXT_STYLE_SOFT_SHADOW;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE_SHADOW)
+	       style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW)
+	       style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
+	     evas_object_text_style_set(ep->object, style);
 	     evas_object_text_text_set(ep->object, text);
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 	     if (chosen_desc->text.min_x)
