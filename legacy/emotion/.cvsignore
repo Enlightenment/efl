@@ -21,3 +21,4 @@ mkinstalldirs
 config.guess
 config.sub
 emotion.spec
+emotion.c
