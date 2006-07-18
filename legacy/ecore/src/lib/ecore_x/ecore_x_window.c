@@ -393,6 +393,26 @@ ecore_x_window_show(Ecore_X_Window win)
 EAPI void
 ecore_x_window_hide(Ecore_X_Window win)
 {
+   XEvent xev;
+   Window root;
+   int idum;
+   unsigned int uidum;
+
+   /* ICCCM: SEND unmap event... */
+   root = win;
+   if (ScreenCount(_ecore_x_disp) == 1)
+     root = DefaultRootWindow(_ecore_x_disp);
+   else
+     XGetGeometry(_ecore_x_disp, win, &root, &idum, &idum, &uidum, &uidum, &uidum, &uidum);
+   xev.xunmap.type = UnmapNotify;
+   xev.xunmap.serial = 0;
+   xev.xunmap.send_event = True;
+   xev.xunmap.display = _ecore_x_disp;
+   xev.xunmap.event = root;
+   xev.xunmap.window = win;
+   xev.xunmap.from_configure = False;
+   XSendEvent(_ecore_x_disp, xev.xunmap.event, False,
+	      SubstructureRedirectMask | SubstructureNotifyMask, &xev);
    XUnmapWindow(_ecore_x_disp, win);
 }
 
