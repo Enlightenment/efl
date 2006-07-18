@@ -5,10 +5,19 @@
 #include "emotion_gstreamer.h"
 
 
-static void new_decoded_pad_cb (GstElement *decodebin,
-                                GstPad     *new_pad,
-                                gboolean    last,
-                                gpointer    user_data);
+static int no_more_pads = 0;
+
+static void file_new_decoded_pad_cb (GstElement *decodebin,
+                                     GstPad     *new_pad,
+                                     gboolean    last,
+                                     gpointer    user_data);
+
+static void dvd_pad_added_cb (GstElement *dvddemuxer,
+                              GObject    *new_pad,
+                              gpointer    user_data);
+
+static void dvd_no_more_pads_cb (GstElement *dvddemuxer,
+                                 gpointer    user_data);
 
 static void cb_handoff (GstElement *fakesrc,
 			GstBuffer  *buffer,
@@ -33,14 +42,12 @@ emotion_pipeline_pause (GstElement *pipeline)
    res = gst_element_set_state ((pipeline), GST_STATE_PAUSED);
    if (res == GST_STATE_CHANGE_FAILURE) {
      g_print ("Emotion-Gstreamer ERROR: could not pause\n");
-     gst_object_unref (GST_OBJECT ((pipeline)));
      return 0;
    }
 
    res = gst_element_get_state ((pipeline), NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res != GST_STATE_CHANGE_SUCCESS) {
      g_print ("Emotion-Gstreamer ERROR: could not complete pause\n");
-     gst_object_unref (GST_OBJECT ((pipeline)));
      return 0;
    }
 
@@ -97,7 +104,7 @@ emotion_pipeline_cdda_build (void *video, const char * device, unsigned int trac
    cdiocddasrc = gst_element_factory_make ("cdiocddasrc", "src");
    if (!cdiocddasrc) {
      g_print ("cdiocddasrc element missing. Install it.\n");
-     return 0;
+     goto failure_cdiocddasrc;
    }
 
    if (device)
@@ -159,13 +166,175 @@ emotion_pipeline_cdda_build (void *video, const char * device, unsigned int trac
    _emotion_video_sink_free (ev, vsink);
  failure_link:
    gst_bin_remove (GST_BIN (ev->pipeline), asink->sink);
-   gst_bin_remove (GST_BIN (ev->pipeline), cdiocddasrc);
  failure_gstreamer_sink:
    _emotion_audio_sink_free (ev, asink);
  failure_emotion_sink:
-   /*  may be NULL because of gst_bin_remove above */
-   if (cdiocddasrc)
-      gst_object_unref (GST_OBJECT (cdiocddasrc));
+   gst_bin_remove (GST_BIN (ev->pipeline), cdiocddasrc);
+ failure_cdiocddasrc:
+
+   return 0;
+}
+
+int
+emotion_pipeline_dvd_build (void *video, const char *device)
+{
+   GstElement              *dvdreadsrc;
+   GstElement              *dvddemux;
+   Emotion_Gstreamer_Video *ev;
+
+   ev = (Emotion_Gstreamer_Video *)video;
+   if (!ev) return 0;
+
+   dvdreadsrc = gst_element_factory_make ("dvdreadsrc", "src");
+   if (!dvdreadsrc)
+     goto failure_dvdreadsrc;
+   if (device)
+     g_object_set (G_OBJECT (dvdreadsrc), "device", device, NULL);
+
+   dvddemux = gst_element_factory_make ("dvddemux", "dvddemux");
+   if (!dvddemux)
+     goto failure_dvddemux;
+   g_signal_connect (dvddemux, "pad-added",
+                     G_CALLBACK (dvd_pad_added_cb), ev);
+   g_signal_connect (dvddemux, "no-more-pads",
+                     G_CALLBACK (dvd_no_more_pads_cb), ev);
+
+   gst_bin_add_many (GST_BIN (ev->pipeline), dvdreadsrc, dvddemux, NULL);
+   if (!gst_element_link (dvdreadsrc, dvddemux))
+     goto failure_link;
+
+   if (!emotion_pipeline_pause (ev->pipeline))
+     goto failure_gstreamer_pause;
+
+   while (no_more_pads == 0) { 
+   g_print ("toto\n");}
+   no_more_pads = 0;
+
+   /* We get the informations of streams */
+   ecore_list_goto_first (ev->video_sinks);
+   ecore_list_goto_first (ev->audio_sinks);
+
+   {
+      GstIterator *it;
+      gpointer     data;
+
+      it = gst_element_iterate_src_pads (dvddemux);
+      while (gst_iterator_next (it, &data) == GST_ITERATOR_OK) {
+         GstPad  *pad;
+         GstCaps *caps;
+         gchar   *str;
+
+         pad = GST_PAD (data);
+
+         caps = gst_pad_get_caps (pad);
+         str = gst_caps_to_string (caps);
+         g_print ("caps !! %s\n", str);
+         /* video stream */
+         if (g_str_has_prefix (str, "video/mpeg")) {
+            Emotion_Video_Sink *vsink;
+            GstStructure       *structure;
+            const GValue       *val;
+            GstQuery           *query;
+            GstPad             *sink_pad;
+            GstCaps            *sink_caps;
+
+            vsink = (Emotion_Video_Sink *)ecore_list_next (ev->video_sinks);
+            sink_pad = gst_element_get_pad (gst_bin_get_by_name (GST_BIN (ev->pipeline), "mpeg2dec"), "src");
+            sink_caps = gst_pad_get_caps (sink_pad);
+            str = gst_caps_to_string (sink_caps);
+            g_print (" ** caps v !! %s\n", str);
+            structure = gst_caps_get_structure (sink_caps, 0);
+
+            gst_structure_get_int (structure, "width", &vsink->width);
+            gst_structure_get_int (structure, "height", &vsink->height);
+
+            vsink->fps_num = 1;
+            vsink->fps_den = 1;
+            val = gst_structure_get_value (structure, "framerate");
+            if (val) {
+               vsink->fps_num = gst_value_get_fraction_numerator (val);
+               vsink->fps_den = gst_value_get_fraction_denominator (val);
+            }
+            if (g_str_has_prefix(str, "video/x-raw-yuv")) {
+               val = gst_structure_get_value (structure, "format");
+               vsink->fourcc = gst_value_get_fourcc (val);
+            }
+            else if (g_str_has_prefix(str, "video/x-raw-rgb")) {
+              vsink->fourcc = GST_MAKE_FOURCC ('A','R','G','B');
+            }
+            else
+               vsink->fourcc = 0;
+
+            query = gst_query_new_duration (GST_FORMAT_TIME);
+            if (gst_pad_query (sink_pad, query)) {
+               gint64 time;
+
+               gst_query_parse_duration (query, NULL, &time);
+               vsink->length_time = (double)time / (double)GST_SECOND;
+            }
+            gst_query_unref (query);
+            gst_caps_unref (sink_caps);
+            gst_object_unref (sink_pad);
+         }
+         /* audio stream */
+         else if (g_str_has_prefix (str, "audio/")) {
+            Emotion_Audio_Sink *asink;
+            GstStructure       *structure;
+            GstQuery           *query;
+            GstPad             *sink_pad;
+            GstCaps            *sink_caps;
+
+            asink = (Emotion_Audio_Sink *)ecore_list_next (ev->audio_sinks);
+            sink_pad = gst_element_get_pad (gst_bin_get_by_name (GST_BIN (ev->pipeline), "a52dec"), "src");
+            sink_caps = gst_pad_get_caps (sink_pad);
+            str = gst_caps_to_string (sink_caps);
+            g_print (" ** caps a !! %s\n", str);
+
+            structure = gst_caps_get_structure (GST_CAPS (sink_caps), 0);
+            gst_structure_get_int (structure, "channels", &asink->channels);
+            gst_structure_get_int (structure, "rate", &asink->samplerate);
+
+            query = gst_query_new_duration (GST_FORMAT_TIME);
+            if (gst_pad_query (sink_pad, query)) {
+               gint64 time;
+
+               gst_query_parse_duration (query, NULL, &time);
+               asink->length_time = (double)time / (double)GST_SECOND;
+            }
+            gst_query_unref (query);
+         }
+      finalize:
+          gst_caps_unref (caps);
+          g_free (str);
+          gst_object_unref (pad);
+      }
+      gst_iterator_free (it);
+   }
+
+   /* The first vsink is a valid Emotion_Video_Sink * */
+   /* If no video stream is found, it's a visualisation sink */
+   {
+      Emotion_Video_Sink *vsink;
+
+      vsink = (Emotion_Video_Sink *)ecore_list_goto_first (ev->video_sinks);
+      if (vsink && vsink->sink) {
+         g_object_set (G_OBJECT (vsink->sink), "sync", TRUE, NULL);
+         g_object_set (G_OBJECT (vsink->sink), "signal-handoffs", TRUE, NULL);
+         g_signal_connect (G_OBJECT (vsink->sink),
+                           "handoff",
+                           G_CALLBACK (cb_handoff), ev);
+      }
+   }
+
+   return 1;
+
+ failure_gstreamer_pause:
+ failure_link:
+   gst_element_set_state (ev->pipeline, GST_STATE_NULL);
+   gst_bin_remove (GST_BIN (ev->pipeline), dvddemux);
+ failure_dvddemux:
+   gst_bin_remove (GST_BIN (ev->pipeline), dvdreadsrc);
+ failure_dvdreadsrc:
 
    return 0;
 }
@@ -182,14 +351,14 @@ emotion_pipeline_file_build (void *video, const char *file)
 
    filesrc = gst_element_factory_make ("filesrc", "src");
    if (!filesrc)
-      return 0;
+     goto failure_filesrc;
    g_object_set (G_OBJECT (filesrc), "location", file, NULL);
 
    decodebin = gst_element_factory_make ("decodebin", "decodebin");
    if (!decodebin)
      goto failure_decodebin;
    g_signal_connect (decodebin, "new-decoded-pad",
-                     G_CALLBACK (new_decoded_pad_cb), ev);
+                     G_CALLBACK (file_new_decoded_pad_cb), ev);
 
    gst_bin_add_many (GST_BIN (ev->pipeline), filesrc, decodebin, NULL);
    if (!gst_element_link (filesrc, decodebin))
@@ -334,12 +503,10 @@ emotion_pipeline_file_build (void *video, const char *file)
  failure_gstreamer_pause:
  failure_link:
    gst_element_set_state (ev->pipeline, GST_STATE_NULL);
-   gst_bin_remove (GST_BIN (ev->pipeline), filesrc);
    gst_bin_remove (GST_BIN (ev->pipeline), decodebin);
  failure_decodebin:
-   /*  may be NULL because of gst_bin_remove above */
-   if (filesrc)
-     gst_object_unref (GST_OBJECT (filesrc));
+   gst_bin_remove (GST_BIN (ev->pipeline), filesrc);
+ failure_filesrc:
 
    return 0;
 }
@@ -390,10 +557,10 @@ emotion_pipeline_cdda_track_count_get(void *video)
 }
 
 static void
-new_decoded_pad_cb (GstElement *decodebin,
-                    GstPad     *new_pad,
-                    gboolean    last,
-                    gpointer    user_data)
+file_new_decoded_pad_cb (GstElement *decodebin,
+                         GstPad     *new_pad,
+                         gboolean    last,
+                         gpointer    user_data)
 {
    Emotion_Gstreamer_Video *ev;
    GstCaps *caps;
@@ -420,7 +587,7 @@ new_decoded_pad_cb (GstElement *decodebin,
       gst_bin_add_many (GST_BIN (ev->pipeline), queue, vsink->sink, NULL);
       gst_element_link (queue, vsink->sink);
       videopad = gst_element_get_pad (queue, "sink");
-      gst_pad_link(new_pad, videopad);
+      gst_pad_link (new_pad, videopad);
       gst_object_unref (videopad);
       if (ecore_list_nodes(ev->video_sinks) == 1) {
          ev->ratio = (double)vsink->width / (double)vsink->height;
@@ -446,6 +613,101 @@ new_decoded_pad_cb (GstElement *decodebin,
       gst_pad_link(new_pad, audiopad);
       gst_element_set_state (asink->sink, GST_STATE_PAUSED);
    }
+}
+
+static void
+dvd_pad_added_cb (GstElement *dvddemuxer,
+                  GObject    *new_pad,
+                  gpointer    user_data)
+{
+   Emotion_Gstreamer_Video *ev;
+   GstCaps                 *caps;
+   gchar                   *str;
+
+   ev = (Emotion_Gstreamer_Video *)user_data;
+   caps = gst_pad_get_caps (GST_PAD (new_pad));
+   str = gst_caps_to_string (caps);
+   /* video stream */
+   if (g_str_has_prefix (str, "video/mpeg")) {
+      Emotion_Video_Sink *vsink;
+      GstElement         *queue;
+      GstElement         *decoder;
+      GstPad             *videopad;
+
+      vsink = (Emotion_Video_Sink *)malloc (sizeof (Emotion_Video_Sink));
+      if (!vsink) return;
+      if (!ecore_list_append (ev->video_sinks, vsink)) {
+         free(vsink);
+         return;
+      }
+
+      queue = gst_element_factory_make ("queue", NULL);
+      decoder = gst_element_factory_make ("mpeg2dec", "mpeg2dec");
+      vsink->sink = gst_element_factory_make ("fakesink", "videosink");
+      gst_bin_add_many (GST_BIN (ev->pipeline), queue, decoder, vsink->sink, NULL);
+      gst_element_link (queue, decoder);
+      gst_element_link (decoder, vsink->sink);
+      videopad = gst_element_get_pad (queue, "sink");
+      gst_pad_link (GST_PAD (new_pad), videopad);
+      gst_object_unref (videopad);
+      if (ecore_list_nodes(ev->video_sinks) == 1) {
+         ev->ratio = (double)vsink->width / (double)vsink->height;
+      }
+      gst_element_set_state (queue, GST_STATE_PAUSED);
+      gst_element_set_state (decoder, GST_STATE_PAUSED);
+      gst_element_set_state (vsink->sink, GST_STATE_PAUSED);
+   }
+   /* audio stream */
+   else if (g_str_has_prefix (str, "audio/")) {
+     Emotion_Audio_Sink *asink;
+     GstElement         *queue;
+     GstElement         *decoder;
+     GstElement         *conv;
+     GstElement         *resample;
+     GstElement         *volume;
+     GstPad             *audiopad;
+     double              vol;
+
+      asink = (Emotion_Audio_Sink *)malloc (sizeof (Emotion_Audio_Sink));
+      if (!asink) return;
+      if (!ecore_list_append (ev->audio_sinks, asink)) {
+         free(asink);
+         return;
+      }
+
+     queue = gst_element_factory_make ("queue", NULL);
+     decoder = gst_element_factory_make ("a52dec", "a52dec");
+     conv = gst_element_factory_make ("audioconvert", NULL);
+     resample = gst_element_factory_make ("audioresample", NULL);
+     volume = gst_element_factory_make ("volume", "volume");
+     g_object_get (G_OBJECT (volume), "volume", &vol, NULL);
+     ev->volume = vol / 10.0;
+
+     /* FIXME: must manage several audio streams */
+     asink->sink = gst_element_factory_make ("fakesink", NULL);
+
+     gst_bin_add_many (GST_BIN (ev->pipeline),
+                       queue, decoder, conv, resample, volume, asink->sink, NULL);
+     gst_element_link_many (queue, decoder, conv, resample, volume, asink->sink, NULL);
+
+     audiopad = gst_element_get_pad (queue, "sink");
+     gst_pad_link (GST_PAD (new_pad), audiopad);
+     gst_object_unref (audiopad);
+
+     gst_element_set_state (queue, GST_STATE_PAUSED);
+     gst_element_set_state (decoder, GST_STATE_PAUSED);
+     gst_element_set_state (conv, GST_STATE_PAUSED);
+     gst_element_set_state (resample, GST_STATE_PAUSED);
+     gst_element_set_state (volume, GST_STATE_PAUSED);
+     gst_element_set_state (asink->sink, GST_STATE_PAUSED);
+   }
+}
+
+static void
+dvd_no_more_pads_cb (GstElement *dvddemuxer,
+                     gpointer    user_data)
+{
+  no_more_pads = 1;
 }
 
 static Emotion_Audio_Sink *

@@ -370,11 +370,20 @@ em_file_open(const char   *file,
         return 0;
       }
    }
+   /* Dvd */
+   else if (strstr (file, "dvd://")) {
+
+      printf ("build dvd pipeline \n");
+      if (!(emotion_pipeline_dvd_build (ev, NULL))) {
+        printf ("error building DVD pipeline\n");
+        return 0;
+      }
+   }
    /* Normal media file */
    else {
       const char *filename;
 
-      filename = strstr (file,"file://")
+      filename = strstr (file, "file://")
         ? file + strlen ("file://")
         : file;
 
