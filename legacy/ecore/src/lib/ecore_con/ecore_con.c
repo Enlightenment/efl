@@ -387,7 +387,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    char                buf[4096];
 
    if (!name) return NULL;
-   if (port < 0) return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
@@ -399,6 +398,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    /* unset the SSL flag for the following checks */
    type &= ~ECORE_CON_USE_SSL;
 #endif
+   if ((type == ECORE_CON_REMOTE_SYSTEM) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM))
@@ -414,10 +414,20 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	  }
 	else if (type == ECORE_CON_LOCAL_SYSTEM)
 	  {
-	     if (name[0] == '/')
-	       snprintf(buf, sizeof(buf), "%s|%i", name, port);
+	     if (port < 0)
+	       {
+		  if (name[0] == '/')
+		    strncpy(buf, name, sizeof(buf));
+		  else
+		    snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s", name);
+	       }
 	     else
-	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
+	       {
+		  if (name[0] == '/')
+		    snprintf(buf, sizeof(buf), "%s|%i", name, port);
+		  else
+		    snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
+	       }
 	  }
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (svr->fd < 0) goto error;
