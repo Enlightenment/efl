@@ -210,13 +210,15 @@ ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
    type = compl_type;
    switch (type)
      {
+#if 0
      case ECORE_DBUS_BUS_SESSION:
 	svr->server =
 	   ecore_con_server_connect(ECORE_CON_LOCAL_USER | extra, name, port, svr);
 	break;
+#endif
      case ECORE_DBUS_BUS_SYSTEM:
 	svr->server =
-	   ecore_con_server_connect(ECORE_CON_LOCAL_USER | extra, name, port, svr);
+	   ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
 	break;
      default:
 	free(svr);
@@ -317,53 +319,56 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
    /* header length */
    *(msg->header + 4) = msg->hlength = msg->hpos;
    /* message body */
-   va_start(ap, fmt);
-   while (*fmt)
+   if (fmt)
      {
-	switch (*fmt)
+	va_start(ap, fmt);
+	while (*fmt)
 	  {
-	   case ECORE_DBUS_DATA_TYPE_BYTE:
-	      f = _ecore_dbus_message_marshal_byte(&msg->body, &msg->bpos,
-						   va_arg(ap, int));
-	      msg->body_fields = _ecore_list2_append(msg->body_fields, f);
-	      break;
-	   case ECORE_DBUS_DATA_TYPE_UINT32:
-	      f = _ecore_dbus_message_marshal_uint32(&msg->body, &msg->bpos,
-						     va_arg(ap, unsigned long));
-	      msg->body_fields = _ecore_list2_append(msg->body_fields, f);
-	      break;
-	   case ECORE_DBUS_DATA_TYPE_STRING:
-	      f = _ecore_dbus_message_marshal_string(&msg->body, &msg->bpos,
-						     (char *)va_arg(ap, char *));
-	      msg->body_fields = _ecore_list2_append(msg->body_fields, f);
-	      break;
-	   case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
-	      f = _ecore_dbus_message_marshal_object_path(&msg->body, &msg->bpos,
+	     switch (*fmt)
+	       {
+		case ECORE_DBUS_DATA_TYPE_BYTE:
+		   f = _ecore_dbus_message_marshal_byte(&msg->body, &msg->bpos,
+							va_arg(ap, int));
+		   msg->body_fields = _ecore_list2_append(msg->body_fields, f);
+		   break;
+		case ECORE_DBUS_DATA_TYPE_UINT32:
+		   f = _ecore_dbus_message_marshal_uint32(&msg->body, &msg->bpos,
+							  va_arg(ap, unsigned long));
+		   msg->body_fields = _ecore_list2_append(msg->body_fields, f);
+		   break;
+		case ECORE_DBUS_DATA_TYPE_STRING:
+		   f = _ecore_dbus_message_marshal_string(&msg->body, &msg->bpos,
 							  (char *)va_arg(ap, char *));
-	      msg->body_fields = _ecore_list2_append(msg->body_fields, f);
-	      break;
-	   case ECORE_DBUS_DATA_TYPE_INT32:
-	   case ECORE_DBUS_DATA_TYPE_BOOLEAN:
-	   case ECORE_DBUS_DATA_TYPE_INT64:
-	   case ECORE_DBUS_DATA_TYPE_UINT64:
-	   case ECORE_DBUS_DATA_TYPE_DOUBLE:
-	   case ECORE_DBUS_DATA_TYPE_ARRAY:
-	   case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
-	   case ECORE_DBUS_DATA_TYPE_INVALID:
+		   msg->body_fields = _ecore_list2_append(msg->body_fields, f);
+		   break;
+		case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
+		   f = _ecore_dbus_message_marshal_object_path(&msg->body, &msg->bpos,
+							       (char *)va_arg(ap, char *));
+		   msg->body_fields = _ecore_list2_append(msg->body_fields, f);
+		   break;
+		case ECORE_DBUS_DATA_TYPE_INT32:
+		case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+		case ECORE_DBUS_DATA_TYPE_INT64:
+		case ECORE_DBUS_DATA_TYPE_UINT64:
+		case ECORE_DBUS_DATA_TYPE_DOUBLE:
+		case ECORE_DBUS_DATA_TYPE_ARRAY:
+		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+		case ECORE_DBUS_DATA_TYPE_INVALID:
 #if 0
-	   default:
+		default:
 #endif
-	      printf("[ecore_dbus] unknown/unhandled data type %c\n", *fmt);
-	      break;
+		   printf("[ecore_dbus] unknown/unhandled data type %c\n", *fmt);
+		   break;
+	       }
+	     fmt++;
 	  }
-	fmt++;
+	va_end(ap);
      }
-   va_end(ap);
    *(unsigned int *)(msg->header + 8) = msg->blength = msg->bpos;
    /* show message */
    /*ecore_dbus_message_print(msg);
-    * _ecore_dbus_message_print_raw(msg->header,msg->hlength);
-    * _ecore_dbus_message_print_raw(msg->body,msg->blength); */
+    * _ecore_dbus_message_print_raw(msg->header, msg->hlength);
+    * _ecore_dbus_message_print_raw(msg->body, msg->blength); */
    /* send message */
    ecore_dbus_server_send(svr, (char *)msg->header, msg->hlength);
    if (msg->body)
@@ -1144,7 +1149,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	  }
 	else if (!strncmp(e->data, "DATA", 4))
 	  {
-	     printf("[ecore_dbus] requering data (unaivable)\n");
+	     printf("[ecore_dbus] requiring data (unavailable)\n");
 	  }
 	else if (!strncmp(e->data, "ERROR", 5))
 	  {

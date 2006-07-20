@@ -54,6 +54,12 @@ else
 ECORE_CONFIG_LIB =
 endif
 
+if BUILD_ECORE_DBUS
+ECORE_DBUS_LIB = $(top_builddir)/src/lib/ecore_dbus/libecore_dbus.la
+else
+ECORE_DBUS_LIB =
+endif
+
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
@@ -65,6 +71,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_srcdir)/src/lib/ecore_txt @iconv_cflags@ \
 -I$(top_srcdir)/src/lib/ecore_config \
+-I$(top_srcdir)/src/lib/ecore_dbus \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_directfb \
@@ -75,6 +82,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore_ipc \
 -I$(top_builddir)/src/lib/ecore_txt @iconv_cflags@ \
 -I$(top_builddir)/src/lib/ecore_config \
+-I$(top_builddir)/src/lib/ecore_dbus \
 @EVAS_CFLAGS@ \
 @x_cflags@ \
 @EET_CFLAGS@ \
@@ -85,7 +93,8 @@ INCLUDES = \
 bin_PROGRAMS = \
 ecore_test \
 ecore_evas_test \
-ecore_config
+ecore_config \
+ecore_dbus_test
 
 ecore_test_SOURCES = \
 ecore_test.c
@@ -156,4 +165,20 @@ $(ECORE_CONFIG_LIB)
 ecore_config_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(ECORE_CONFIG_LIB)
+
+ecore_dbus_test_SOURCES = \
+ecore_dbus_test.c \
+ecore_dbus_test.h
+
+ecore_dbus_test_LDADD = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_DBUS_LIB)
+
+ecore_dbus_test_CFLAGS = \
+$(CFLAGS) \
+$(INCLUDES)
+
+ecore_dbus_test_DEPENDENCIES = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_DBUS_LIB)
 
