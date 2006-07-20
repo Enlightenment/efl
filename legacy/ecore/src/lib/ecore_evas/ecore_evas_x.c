@@ -1106,6 +1106,8 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 	  {
 	     if ((x != ee->x) || (y != ee->y))
 	       {
+		  ee->x = x;
+		  ee->y = y;
 		  ecore_x_window_move(ee->engine.x.win, x, y);
 		  if (!ee->should_be_visible)
 		    {
@@ -1125,6 +1127,11 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 	     /* We need to request pos */
 	     ee->prop.request_pos = 1;
 	     _ecore_evas_x_size_pos_hints_update(ee);
+	  }
+	if (!ee->engine.x.managed)
+	  {
+	     ee->x = x;
+	     ee->y = y;
 	  }
      }
 }
@@ -1232,7 +1239,14 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 	  }
      }
    else
-     ecore_x_window_move_resize(ee->engine.x.win, x, y, w, h);
+     {
+	ecore_x_window_move_resize(ee->engine.x.win, x, y, w, h);
+	if (!ee->engine.x.managed)
+	  {
+	     ee->x = x;
+	     ee->y = y;
+	  }
+     }
 }
 
 static void
