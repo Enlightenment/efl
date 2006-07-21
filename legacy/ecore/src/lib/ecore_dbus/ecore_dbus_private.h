@@ -42,9 +42,9 @@ struct _Ecore_DBus_Message
    unsigned char                type;
    unsigned char                flags;
    unsigned char                protocol;
-   unsigned long                hlength;
-   unsigned long                blength;
-   unsigned long                serial;
+   unsigned int                 hlength;
+   unsigned int                 blength;
+   unsigned int                 serial;
 
    Ecore_DBus_Server           *ref_server;
 

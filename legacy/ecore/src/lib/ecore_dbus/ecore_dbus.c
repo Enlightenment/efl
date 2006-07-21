@@ -55,16 +55,14 @@ EAPI int                 ECORE_DBUS_EVENT_SERVER_DATA = 0;
 static void          _ecore_dbus_message_append_length(unsigned char **buf, unsigned int old_length, unsigned int size);
 static void          _ecore_dbus_message_increase_length(unsigned char **buf, unsigned int new_length);
 /* padding functions */
-static void          _ecore_dbus_message_4byte_padding(unsigned char **buf, unsigned int *old_length);
-static void          _ecore_dbus_message_8byte_padding(unsigned char **buf, unsigned int *old_length);
-static void          _ecore_dbus_message_skip_4byte_padding(unsigned int *old_length);
-/*static void          _ecore_dbus_message_skip_8byte_padding(unsigned int *old_length);*/
+static void          _ecore_dbus_message_padding(unsigned char **buf, unsigned int *old_length, int size);
+static void          _ecore_dbus_message_padding_skip(unsigned int *old_length, int size);
 /* appending/reading functions */
 static void          _ecore_dbus_message_append_nbytes(unsigned char *buf, unsigned char *data, unsigned int data_length);
 static void          _ecore_dbus_message_append_byte(unsigned char *buf, unsigned char c);
-static void          _ecore_dbus_message_append_uint32(unsigned char *buf, unsigned long int i);
+static void          _ecore_dbus_message_append_uint32(unsigned char *buf, unsigned int i);
 static unsigned char _ecore_dbus_message_read_byte(unsigned char *buf);
-static unsigned long _ecore_dbus_message_read_uint32(unsigned char *buf);
+static unsigned int  _ecore_dbus_message_read_uint32(unsigned char *buf);
 /* message functions */
 static Ecore_DBus_Message       *_ecore_dbus_message_new(Ecore_DBus_Server *svr);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_new_field(Ecore_DBus_Data_Type type, unsigned int offset);
@@ -88,11 +86,12 @@ static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_object_path(unsigne
 /*
 static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_signature(unsigned char **buf, unsigned int *old_length, char *str);
 */
+static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_array(unsigned char **msg, unsigned int *old_length, Ecore_DBus_Data_Type contained_type);
+static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_struct_begin(unsigned char **msg, unsigned int *old_length);
+static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_struct_end(unsigned char **msg, unsigned int *old_length);
 /* 
  * FIXME: These aren't correct !
-static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_array(unsigned char **msg, unsigned int *old_length);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_variant(unsigned char **msg, unsigned int *old_length);
-static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_struct(unsigned char **msg, unsigned int *old_length);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_dict_entry(unsigned char **msg, unsigned int *old_length);
 */
 static Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_data(unsigned char **buf, unsigned int *old_length, Ecore_DBus_Data_Type type, void *data);
@@ -113,22 +112,20 @@ static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_double(unsigned c
 */
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_string(unsigned char *buf, unsigned int *old_length);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_object_path(unsigned char *buf, unsigned int *old_length);
-/*
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_signature(unsigned char *buf, unsigned int *old_length);
-*/
 /*
  * FIXME: These aren't correct!
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_array(unsigned char *buf, unsigned int *old_length);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_variant(unsigned char *buf, unsigned int *old_length);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_struct(unsigned char *buf, unsigned int *old_length);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_dict_entry(unsigned char *buf, unsigned int *old_length);
-static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_data(unsigned char *buf, unsigned int *old_length);
 */
+static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_data(unsigned char *buf, unsigned int *old_length);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_custom_header(unsigned char *buf, unsigned int *old_length);
 static Ecore_DBus_Message       *_ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message);
 /* header functions */
 static void                      _ecore_dbus_message_common_header(Ecore_DBus_Message *msg, int type, int flags);
-static void                     *_ecore_dbus_get_field(unsigned char *buf, Ecore_DBus_Message_Field *f);
+static void                     *_ecore_dbus_field_get(unsigned char *buf, Ecore_DBus_Message_Field *f);
 /* helper functions */
 static char        *_ecore_dbus_getuid(void);
 static char        *_ecore_dbus_hex_encode(char *src_str);
@@ -143,6 +140,7 @@ static Ecore_DBus_Message_Field *_ecore_dbus_message_print_field(Ecore_DBus_Mess
 static Ecore_DBus_Message_Field *_ecore_dbus_message_print_header_field(Ecore_DBus_Message_Field *f, unsigned char *buf);
 /*static void                      _ecore_dbus_message_print_fields(Ecore_DBus_Message_Field *f);*/
 /*static void                      _ecore_dbus_message_print_raw(unsigned char *msg, unsigned int msg_len);*/
+static int _ecore_dbus_alignment_get(Ecore_DBus_Data_Type type);
 
 /* local variables  */
 
@@ -263,10 +261,13 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
 				   char *path, char *interface, char *method,
 				   char *fmt, ...)
 {
-   unsigned long       serial;
-   va_list             ap;
+   unsigned int       serial;
+   va_list            ap;
+   unsigned int       size = 0;
 
    Ecore_DBus_Message_Field *f;
+
+   if ((!service) && (!path) && (!interface) && (!method)) return 0;
 
    /* init message */
    Ecore_DBus_Message *msg = _ecore_dbus_message_new(svr);
@@ -281,23 +282,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
 						      ECORE_DBUS_DATA_TYPE_OBJECT_PATH,
 						      path);
 	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
-     }
-
-   if (interface)
-     {
-	f = _ecore_dbus_message_marshal_custom_header(&msg->header, &msg->hpos,
-						      2,
-						      ECORE_DBUS_DATA_TYPE_STRING,
-						      interface);
-	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
-     }
-   if (method)
-     {
-	f = _ecore_dbus_message_marshal_custom_header(&msg->header, &msg->hpos,
-						      3,
-						      ECORE_DBUS_DATA_TYPE_STRING,
-						      method);
-	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
+	size++;
      }
    if (service)
      {
@@ -306,18 +291,39 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
 						      ECORE_DBUS_DATA_TYPE_STRING,
 						      service);
 	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
+	size++;
+     }
+   if (interface)
+     {
+	f = _ecore_dbus_message_marshal_custom_header(&msg->header, &msg->hpos,
+						      2,
+						      ECORE_DBUS_DATA_TYPE_STRING,
+						      interface);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
+	size++;
+     }
+   if (method)
+     {
+	f = _ecore_dbus_message_marshal_custom_header(&msg->header, &msg->hpos,
+						      3,
+						      ECORE_DBUS_DATA_TYPE_STRING,
+						      method);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
+	size++;
      }
    if (fmt)
      {
 	f = _ecore_dbus_message_marshal_custom_header(&msg->header, &msg->hpos,
 						      8,
-						      ECORE_DBUS_DATA_TYPE_STRING,
+						      ECORE_DBUS_DATA_TYPE_SIGNATURE,
 						      fmt);
 	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
+	size++;
      }
-   _ecore_dbus_message_8byte_padding(&msg->header, &msg->hpos);
-   /* header length */
-   *(msg->header + 4) = msg->hlength = msg->hpos;
+   /* Remove 16 bytes for the intro */
+   *(unsigned int *)(msg->header + 12) = msg->hpos - 16;
+   _ecore_dbus_message_padding(&msg->header, &msg->hpos, 8);
+   msg->hlength = msg->hpos;
    /* message body */
    if (fmt)
      {
@@ -333,7 +339,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
 		   break;
 		case ECORE_DBUS_DATA_TYPE_UINT32:
 		   f = _ecore_dbus_message_marshal_uint32(&msg->body, &msg->bpos,
-							  va_arg(ap, unsigned long));
+							  va_arg(ap, unsigned int));
 		   msg->body_fields = _ecore_list2_append(msg->body_fields, f);
 		   break;
 		case ECORE_DBUS_DATA_TYPE_STRING:
@@ -364,11 +370,13 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
 	  }
 	va_end(ap);
      }
-   *(unsigned int *)(msg->header + 8) = msg->blength = msg->bpos;
+   *(unsigned int *)(msg->header + 4) = msg->blength = msg->bpos;
    /* show message */
-   /*ecore_dbus_message_print(msg);
-    * _ecore_dbus_message_print_raw(msg->header, msg->hlength);
-    * _ecore_dbus_message_print_raw(msg->body, msg->blength); */
+   ecore_dbus_message_print(msg);
+   /*
+      _ecore_dbus_message_print_raw(msg->header, msg->hlength);
+      _ecore_dbus_message_print_raw(msg->body, msg->blength);
+      */
    /* send message */
    ecore_dbus_server_send(svr, (char *)msg->header, msg->hlength);
    if (msg->body)
@@ -390,14 +398,15 @@ ecore_dbus_message_print(Ecore_DBus_Message *msg)
    printf("[ecore_dbus] per field message:\n");
    printf("[ecore_dbus] header fields:\n");
    /* header common fields */
-   printf("[ecore_dbus] header endianess	: %c\n", msg->byte_order);
-   printf("[ecore_dbus] header type     	: %s\n", msg_type[msg->type]);
-   printf("[ecore_dbus] header flags    	: %c\n", msg->flags + 48);
-   printf("[ecore_dbus] header protocol 	: %c\n", msg->protocol + 48);
-   printf("[ecore_dbus] header hlength  	: %u\n",
+   printf("[ecore_dbus] header endianess	: %c\n", msg->header[0]);
+   printf("[ecore_dbus] header type     	: %s\n", msg_type[msg->header[1]]);
+   printf("[ecore_dbus] header flags    	: %c\n", msg->header[2]);
+   printf("[ecore_dbus] header protocol 	: %c\n", msg->header[3]);
+   printf("[ecore_dbus] header hlength  	: %u\n", msg->hlength);
+   printf("[ecore_dbus] header blength  	: %u\n",
 	 *(unsigned int *)(msg->header + 4));
-   printf("[ecore_dbus] header blength  	: %lu\n", msg->blength);
-   printf("[ecore_dbus] header serial   	: %lu\n", msg->serial);
+   printf("[ecore_dbus] header serial   	: %u\n",
+	 *(unsigned int *)(msg->header + 8));
 
    /* header custom fields */
    f = msg->header_fields;
@@ -416,7 +425,7 @@ ecore_dbus_message_print(Ecore_DBus_Message *msg)
 }
 
 EAPI void *
-ecore_dbus_get_header_field(Ecore_DBus_Message *m,
+ecore_dbus_header_field_get(Ecore_DBus_Message *m,
 			    Ecore_DBus_Message_Field *mf,
 			    Ecore_DBus_Message_Header_Field hft)
 {
@@ -424,12 +433,12 @@ ecore_dbus_get_header_field(Ecore_DBus_Message *m,
 
    for (l = (Ecore_List2 *)mf; l; l = l->next)
      if (((Ecore_DBus_Message_Field *)l)->hfield == hft)
-       return _ecore_dbus_get_field(m->header, (Ecore_DBus_Message_Field *)l);
+       return _ecore_dbus_field_get(m->header, (Ecore_DBus_Message_Field *)l);
    return NULL;
 }
 
 EAPI void *
-ecore_dbus_get_body_field(Ecore_DBus_Message *m, Ecore_DBus_Message_Field *mf,
+ecore_dbus_body_field_get(Ecore_DBus_Message *m, Ecore_DBus_Message_Field *mf,
 			  unsigned int pos)
 {
    Ecore_List2      *l;
@@ -438,7 +447,7 @@ ecore_dbus_get_body_field(Ecore_DBus_Message *m, Ecore_DBus_Message_Field *mf,
    for (l = (Ecore_List2 *) mf; l; l = l->next)
      {
 	if (i == pos)
-	  return _ecore_dbus_get_field(m->body, (Ecore_DBus_Message_Field *)l);
+	  return _ecore_dbus_field_get(m->body, (Ecore_DBus_Message_Field *)l);
 	i++;
      }
    return NULL;
@@ -466,56 +475,29 @@ _ecore_dbus_message_increase_length(unsigned char **buf,
 /* padding functions */
 
 static void
-_ecore_dbus_message_4byte_padding(unsigned char **buf, unsigned int *old_length)
+_ecore_dbus_message_padding(unsigned char **buf, unsigned int *old_length, int size)
 {
    unsigned int        padding;
 
-   padding = *old_length % 4;
+   padding = *old_length % size;
    if (padding != 0)
      {
-	padding = 4 - padding;
+	padding = size - padding;
 	_ecore_dbus_message_append_length(buf, *old_length, padding);
      }
    *old_length += padding;
 }
 
 static void
-_ecore_dbus_message_8byte_padding(unsigned char **buf, unsigned int *old_length)
+_ecore_dbus_message_padding_skip(unsigned int *old_length, int size)
 {
    unsigned int        padding;
 
-   padding = *old_length % 8;
+   padding = *old_length % size;
    if (padding != 0)
-     {
-	padding = 8 - padding;
-	_ecore_dbus_message_append_length(buf, *old_length, padding);
-     }
-   *old_length += padding;
-}
-
-static void
-_ecore_dbus_message_skip_4byte_padding(unsigned int *old_length)
-{
-   unsigned int        padding;
-
-   padding = *old_length % 4;
-   if (padding != 0)
-      *old_length += 4 - padding;
+      *old_length += size - padding;
    return;
 }
-
-
-/*static void
-_ecore_dbus_message_skip_8byte_padding(unsigned int *old_length)
-{
-   unsigned int        padding;
-
-   padding = *old_length % 8;
-   if (padding != 0)
-      *old_length += 8 - padding;
-   return;
-}
-*/
 
 /* appending/reading functions */
 
@@ -533,7 +515,7 @@ _ecore_dbus_message_append_byte(unsigned char *buf, unsigned char c)
 }
 
 static void
-_ecore_dbus_message_append_uint32(unsigned char *buf, unsigned long int i)
+_ecore_dbus_message_append_uint32(unsigned char *buf, unsigned int i)
 {
    unsigned char      *c;
 
@@ -550,10 +532,10 @@ _ecore_dbus_message_read_byte(unsigned char *buf)
    return *(unsigned char *)buf;
 }
 
-static unsigned long
+static unsigned int
 _ecore_dbus_message_read_uint32(unsigned char *buf)
 {
-   return *(unsigned long *)buf;
+   return *(unsigned int *)buf;
 }
 
 /* message functions */
@@ -607,7 +589,7 @@ _ecore_dbus_message_free(void *data, void *ev)
 	free(l);
 	l = next;
      }
-   l = (Ecore_List2 *) msg->header_fields;
+   l = (Ecore_List2 *)msg->header_fields;
    while (l)
      {
 	next = l->next;
@@ -654,7 +636,7 @@ _ecore_dbus_message_marshal_uint32(unsigned char **buf,
    /* append the data type */
    _ecore_dbus_message_append_byte(*buf + *old_length, ECORE_DBUS_DATA_TYPE_UINT32);
    *old_length += 1;
-   _ecore_dbus_message_4byte_padding(buf, old_length);
+   _ecore_dbus_message_padding(buf, old_length, 4);
    _ecore_dbus_message_increase_length(buf, *old_length + 4);
    _ecore_dbus_message_append_uint32(*buf + *old_length, i);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_UINT32, *old_length);
@@ -676,7 +658,7 @@ _ecore_dbus_message_marshal_object_path(unsigned char **buf, unsigned int *old_l
    *old_length += 1;
 
    str_len = strlen(str);
-   _ecore_dbus_message_4byte_padding(buf, old_length);
+   _ecore_dbus_message_padding(buf, old_length, 4);
    _ecore_dbus_message_increase_length(buf, *old_length + 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_OBJECT_PATH, *old_length);
    _ecore_dbus_message_append_uint32(*buf + *old_length, str_len);
@@ -703,7 +685,7 @@ _ecore_dbus_message_marshal_string(unsigned char **buf,
    *old_length += 1;
 
    str_len = strlen(str);
-   _ecore_dbus_message_4byte_padding(buf, old_length);
+   _ecore_dbus_message_padding(buf, old_length, 4);
    _ecore_dbus_message_increase_length(buf, *old_length + 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_STRING, *old_length);
    _ecore_dbus_message_append_uint32(*buf + *old_length, str_len);
@@ -715,21 +697,63 @@ _ecore_dbus_message_marshal_string(unsigned char **buf,
    return f;
 }
 
-#if 0
 static Ecore_DBus_Message_Field *
-_ecore_dbus_message_marshal_array(unsigned char **msg, unsigned int *old_length)
+_ecore_dbus_message_marshal_array(unsigned char **buf, unsigned int *old_length,
+				  Ecore_DBus_Data_Type contained_type)
 {
-   /* TODO: complete this */
    Ecore_DBus_Message_Field *f;
 
-   _ecore_dbus_message_8byte_padding(msg, old_length);
+   /* increase the length with 1 + contained length */
+   _ecore_dbus_message_increase_length(buf, *old_length + 1);
+   /* append the data type */
+   _ecore_dbus_message_append_byte(*buf + *old_length, ECORE_DBUS_DATA_TYPE_ARRAY);
+   *old_length += 1;
+
    /* for the array length value */
-   _ecore_dbus_message_increase_length(msg, *old_length + 4);
+   _ecore_dbus_message_padding(buf, old_length, 4);
+   _ecore_dbus_message_increase_length(buf, *old_length + 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_ARRAY, *old_length);
    *old_length += 4;
+
+   /* pad for contained type */
+   _ecore_dbus_message_padding(buf, old_length, _ecore_dbus_alignment_get(contained_type));
+
    return f;
 }
-#endif
+
+static Ecore_DBus_Message_Field *
+_ecore_dbus_message_marshal_struct_begin(unsigned char **buf, unsigned int *old_length)
+{
+   Ecore_DBus_Message_Field *f;
+
+   /* increase the length with 1 */
+   _ecore_dbus_message_increase_length(buf, *old_length + 1);
+   /* append the data type */
+   _ecore_dbus_message_append_byte(*buf + *old_length, ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN);
+   *old_length += 1;
+
+   /* padding */
+   _ecore_dbus_message_padding(buf, old_length, 8);
+   f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_STRUCT, *old_length);
+
+   return f;
+}
+
+static Ecore_DBus_Message_Field *
+_ecore_dbus_message_marshal_struct_end(unsigned char **buf, unsigned int *old_length)
+{
+   Ecore_DBus_Message_Field *f;
+
+   /* increase the length with 1 */
+   _ecore_dbus_message_increase_length(buf, *old_length + 1);
+   /* append the data type */
+   _ecore_dbus_message_append_byte(*buf + *old_length, ECORE_DBUS_DATA_TYPE_STRUCT_END);
+   *old_length += 1;
+
+   f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_STRUCT, *old_length);
+
+   return f;
+}
 
 static Ecore_DBus_Message_Field *
 _ecore_dbus_message_marshal_data(unsigned char **buf, unsigned int *old_length,
@@ -737,11 +761,16 @@ _ecore_dbus_message_marshal_data(unsigned char **buf, unsigned int *old_length,
 {
    Ecore_DBus_Message_Field *f = NULL;
 
+   _ecore_dbus_message_increase_length(buf, *old_length + 1);
+   /* append the signature length */
+   _ecore_dbus_message_append_byte(*buf + *old_length, 1);
+   *old_length += 1;
+
    switch (type)
      {
      case ECORE_DBUS_DATA_TYPE_UINT32:
 	f = _ecore_dbus_message_marshal_uint32(buf, old_length,
-					       *(unsigned long *)data);
+					       *(unsigned int *)data);
 	break;
      case ECORE_DBUS_DATA_TYPE_STRING:
 	f = _ecore_dbus_message_marshal_string(buf, old_length,
@@ -764,7 +793,11 @@ _ecore_dbus_message_marshal_data(unsigned char **buf, unsigned int *old_length,
      case ECORE_DBUS_DATA_TYPE_ARRAY:
      case ECORE_DBUS_DATA_TYPE_VARIANT:
      case ECORE_DBUS_DATA_TYPE_STRUCT:
+     case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
+     case ECORE_DBUS_DATA_TYPE_STRUCT_END:
      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+     case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
+     case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
 #if 0
      default:
 #endif
@@ -782,11 +815,13 @@ _ecore_dbus_message_marshal_custom_header(unsigned char **buf,
 {
    Ecore_DBus_Message_Field *f;
 
+   _ecore_dbus_message_padding(buf, old_length, 8);
    /* increase the length + 1, old_length changed */
    _ecore_dbus_message_increase_length(buf, *old_length + 1);
    /* append header field name at cur_length */
    _ecore_dbus_message_append_byte(*buf + *old_length, code);
    *old_length += 1;
+
    /* marshal header field data */
    f = _ecore_dbus_message_marshal_data(buf, old_length, type, data);
    f->hfield = code;
@@ -801,7 +836,7 @@ _ecore_dbus_message_unmarshal_int32(unsigned char *buf,
 {
    Ecore_DBus_Message_Field *f;
 
-   _ecore_dbus_message_skip_4byte_padding(old_length);
+   _ecore_dbus_message_padding_skip(old_length, 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_INT32, *old_length);
    *old_length += 4;
    return f;
@@ -813,7 +848,7 @@ _ecore_dbus_message_unmarshal_uint32(unsigned char *buf,
 {
    Ecore_DBus_Message_Field *f;
 
-   _ecore_dbus_message_skip_4byte_padding(old_length);
+   _ecore_dbus_message_padding_skip(old_length, 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_UINT32, *old_length);
    *old_length += 4;
    return f;
@@ -824,9 +859,9 @@ _ecore_dbus_message_unmarshal_string(unsigned char *buf,
 				     unsigned int *old_length)
 {
    Ecore_DBus_Message_Field *f;
-   unsigned long             str_len;
+   unsigned int              str_len;
 
-   _ecore_dbus_message_skip_4byte_padding(old_length);
+   _ecore_dbus_message_padding_skip(old_length, 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_STRING, *old_length);
    str_len = _ecore_dbus_message_read_uint32(buf + *old_length);
    *old_length += 4;
@@ -838,9 +873,9 @@ static Ecore_DBus_Message_Field *
 _ecore_dbus_message_unmarshal_object_path(unsigned char *buf, unsigned int *old_length)
 {
    Ecore_DBus_Message_Field *f;
-   unsigned long             str_len;
+   unsigned int              str_len;
 
-   _ecore_dbus_message_skip_4byte_padding(old_length);
+   _ecore_dbus_message_padding_skip(old_length, 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_OBJECT_PATH,
 				     *old_length);
    str_len = _ecore_dbus_message_read_uint32(buf + *old_length);
@@ -850,14 +885,28 @@ _ecore_dbus_message_unmarshal_object_path(unsigned char *buf, unsigned int *old_
 }
 
 static Ecore_DBus_Message_Field *
+_ecore_dbus_message_unmarshal_signature(unsigned char *buf,
+				     unsigned int *old_length)
+{
+   Ecore_DBus_Message_Field *f;
+   unsigned int              str_len;
+
+   f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_SIGNATURE, *old_length);
+   str_len = _ecore_dbus_message_read_byte(buf + *old_length);
+   *old_length += 1;
+   *old_length += str_len + 1;
+   return f;
+}
+
+static Ecore_DBus_Message_Field *
 _ecore_dbus_message_unmarshal_data(unsigned char *buf, unsigned int *old_length)
 {
    Ecore_DBus_Message_Field *f = NULL;
-   unsigned char             type;
+   Ecore_DBus_Data_Type      type;
   
    type = _ecore_dbus_message_read_byte(buf + *old_length);
-
    *old_length += 1;
+
    switch (type)
      {
      case ECORE_DBUS_DATA_TYPE_INT32:
@@ -872,14 +921,25 @@ _ecore_dbus_message_unmarshal_data(unsigned char *buf, unsigned int *old_length)
      case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
 	f = _ecore_dbus_message_unmarshal_object_path(buf, old_length);
 	break;
+     case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+	f = _ecore_dbus_message_unmarshal_signature(buf, old_length);
+	break;
+     case ECORE_DBUS_DATA_TYPE_INVALID:
      case ECORE_DBUS_DATA_TYPE_BYTE:
      case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+     case ECORE_DBUS_DATA_TYPE_INT16:
+     case ECORE_DBUS_DATA_TYPE_UINT16:
      case ECORE_DBUS_DATA_TYPE_INT64:
      case ECORE_DBUS_DATA_TYPE_UINT64:
      case ECORE_DBUS_DATA_TYPE_DOUBLE:
      case ECORE_DBUS_DATA_TYPE_ARRAY:
+     case ECORE_DBUS_DATA_TYPE_VARIANT:
+     case ECORE_DBUS_DATA_TYPE_STRUCT:
+     case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
+     case ECORE_DBUS_DATA_TYPE_STRUCT_END:
      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
-     case ECORE_DBUS_DATA_TYPE_INVALID:
+     case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
+     case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
 #if 0
      default:
 #endif
@@ -894,21 +954,28 @@ _ecore_dbus_message_unmarshal_custom_header(unsigned char *buf,
 					    unsigned int *old_length)
 {
    Ecore_DBus_Message_Field *f;
-   unsigned int              code;
+   unsigned int              code, length;
 
+   _ecore_dbus_message_padding_skip(old_length, 8);
    /* get header field name at cur_length */
    code = _ecore_dbus_message_read_byte(buf + *old_length);
    *old_length += 1;
+   /* Read signature length */
+   length = _ecore_dbus_message_read_byte(buf + *old_length);
+   if (length != 1)
+     fprintf(stderr, "[ecore_dbus]: Wrong signature length in header\n");
+   *old_length += 1;
+
    /* unmarshal header field data */
    f = _ecore_dbus_message_unmarshal_data(buf, old_length);
-   f->hfield = code;
+   if (f) f->hfield = code;
    return f;
 }
 
 static Ecore_DBus_Message *
 _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message)
 {
-   Ecore_DBus_Message_Field *f;
+   Ecore_DBus_Message_Field *f, *sig;
 
    /* init */
    Ecore_DBus_Message *msg = _ecore_dbus_message_new(svr);
@@ -922,35 +989,92 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message)
    msg->type = *(message + 1);
    msg->flags = *(message + 2);
    msg->protocol = *(message + 3);
-   msg->hlength = *(unsigned long *)(message + 4);
-   msg->blength = *(unsigned long *)(message + 8);
-   msg->serial = *(unsigned long *)(message + 12);
+   msg->blength = *(unsigned int *)(message + 4);
+   msg->serial = *(unsigned int *)(message + 8);
+   msg->hlength = *(unsigned int *)(message + 12) + 16;
+   _ecore_dbus_message_padding_skip(&(msg->hlength), 8);
    if (msg->type == ECORE_DBUS_MESSAGE_TYPE_INVALID)
      {
 	printf("[ecore_dbus] message type invalid\n");
 	return NULL;
      }
+   msg->hpos += 16;
    /* memcpy the header part */
    _ecore_dbus_message_increase_length(&msg->header, msg->hlength);
    _ecore_dbus_message_append_nbytes(msg->header, message, msg->hlength);
-   msg->hpos += 16;
    /* custom fields */
+   sig = NULL;
    while ((msg->hpos + 8 - (msg->hpos % 8)) < msg->hlength)
      {
 	f = _ecore_dbus_message_unmarshal_custom_header(message, &msg->hpos);
-	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
+	if (f)
+	  {
+	     msg->header_fields = _ecore_list2_append(msg->header_fields, f);
+	     if (f->type == ECORE_DBUS_DATA_TYPE_SIGNATURE)
+	       sig = f;
+	  }
      }
    msg->hpos = msg->hlength;
+   message += msg->hlength;
 
    /* message body */
-   message += msg->hlength;
-   _ecore_dbus_message_increase_length(&msg->body, msg->blength);
-   _ecore_dbus_message_append_nbytes(msg->body, message, msg->blength);
-   while (msg->bpos < msg->blength)
+   if (sig)
      {
-	f = _ecore_dbus_message_unmarshal_data(message, &msg->bpos);
-	msg->body_fields = _ecore_list2_append(msg->body_fields, f);
+	unsigned char        *s;
+	Ecore_DBus_Data_Type  type;
 
+	_ecore_dbus_message_increase_length(&msg->body, msg->blength);
+	_ecore_dbus_message_append_nbytes(msg->body, message, msg->blength);
+
+	s = msg->header + sig->offset + 2;
+	while (*s)
+	  {
+	     f = NULL;
+	     printf("body: %c\n", *s);
+	     type = *s;
+	     switch (type)
+	       {
+		case ECORE_DBUS_DATA_TYPE_INT32:
+		   f = _ecore_dbus_message_unmarshal_int32(msg->body, &(msg->bpos));
+		   break;
+		case ECORE_DBUS_DATA_TYPE_UINT32:
+		   f = _ecore_dbus_message_unmarshal_uint32(msg->body, &(msg->bpos));
+		   break;
+		case ECORE_DBUS_DATA_TYPE_STRING:
+		   f = _ecore_dbus_message_unmarshal_string(msg->body, &(msg->bpos));
+		   break;
+		case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
+		   f = _ecore_dbus_message_unmarshal_object_path(msg->body, &(msg->bpos));
+		   break;
+		case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+		   f = _ecore_dbus_message_unmarshal_signature(msg->body, &(msg->bpos));
+		   break;
+		case ECORE_DBUS_DATA_TYPE_INVALID:
+		case ECORE_DBUS_DATA_TYPE_BYTE:
+		case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+		case ECORE_DBUS_DATA_TYPE_INT16:
+		case ECORE_DBUS_DATA_TYPE_UINT16:
+		case ECORE_DBUS_DATA_TYPE_INT64:
+		case ECORE_DBUS_DATA_TYPE_UINT64:
+		case ECORE_DBUS_DATA_TYPE_DOUBLE:
+		case ECORE_DBUS_DATA_TYPE_ARRAY:
+		case ECORE_DBUS_DATA_TYPE_VARIANT:
+		case ECORE_DBUS_DATA_TYPE_STRUCT:
+		case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
+		case ECORE_DBUS_DATA_TYPE_STRUCT_END:
+		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
+		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
+#if 0
+		default:
+#endif
+		   printf("[ecore_dbus] unknown/unhandled data type %c\n", type);
+		   break;
+	       }
+	     if (f)
+	       msg->body_fields = _ecore_list2_append(msg->body_fields, f);
+	     s++;
+	  }
      }
    return msg;
 }
@@ -960,7 +1084,7 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message)
 static void
 _ecore_dbus_message_common_header(Ecore_DBus_Message *msg, int type, int flags)
 {
-   /* the body,header length arent filled only alloc */
+   /* the body, header length arent filled only alloc */
    _ecore_dbus_message_append_length(&msg->header, msg->hpos, 16);
    /* endiannes (1) */
    msg->header[0] = msg->byte_order = 'l';
@@ -969,16 +1093,17 @@ _ecore_dbus_message_common_header(Ecore_DBus_Message *msg, int type, int flags)
    /* flags (1) 0x1 = no reply expected, 0x2 auto activiation */
    msg->header[2] = msg->flags = 0x0;
    /* protocol (1) */
-   msg->header[3] = msg->protocol = 0x0;
+   msg->header[3] = msg->protocol = 0x1;
    /* autoincrement the client_serial (0 is invalid) */
    msg->ref_server->cnt_msg++;
 
-   *(msg->header + 12) = msg->serial = msg->ref_server->cnt_msg;
+   *(unsigned int *)(msg->header + 8) = msg->serial = msg->ref_server->cnt_msg;
+   *(msg->header + 12) = ECORE_DBUS_DATA_TYPE_INT16;
    msg->hpos = 16;
 }
 
 static void *
-_ecore_dbus_get_field(unsigned char *buf, Ecore_DBus_Message_Field *f)
+_ecore_dbus_field_get(unsigned char *buf, Ecore_DBus_Message_Field *f)
 {
    switch (f->type)
      {
@@ -997,12 +1122,18 @@ _ecore_dbus_get_field(unsigned char *buf, Ecore_DBus_Message_Field *f)
      case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
 	return buf + f->offset + 4;
 	break;
-     case ECORE_DBUS_DATA_TYPE_INVALID:
      case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+	return buf + f->offset + 1;
+	break;
+     case ECORE_DBUS_DATA_TYPE_INVALID:
      case ECORE_DBUS_DATA_TYPE_ARRAY:
      case ECORE_DBUS_DATA_TYPE_VARIANT:
      case ECORE_DBUS_DATA_TYPE_STRUCT:
+     case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
+     case ECORE_DBUS_DATA_TYPE_STRUCT_END:
      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+     case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
+     case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
 #if 0
      default:
 #endif
@@ -1183,9 +1314,9 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     if (msg == NULL) break;
 	     offset += msg->hlength + msg->blength;
 	     e->size -= msg->hlength + msg->blength;
-	     printf("[ecore_dbus] dbus message length %lu bytes, still %d\n",
+	     printf("[ecore_dbus] dbus message length %u bytes, still %d\n",
 		    msg->hlength + msg->blength, e->size);
-	     /*ecore_dbus_message_print(msg); */
+	     ecore_dbus_message_print(msg);
 	     ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, msg, _ecore_dbus_message_free, NULL);
 	  }
      }
@@ -1203,34 +1334,39 @@ _ecore_dbus_message_print_field(Ecore_DBus_Message_Field *f, unsigned char *buf)
      {
       case ECORE_DBUS_DATA_TYPE_BYTE:
 	 printf
-	    ("[ecore_dbus] field BYTE		: value offset = %d value = %d\n",
+	    ("[ecore_dbus] field BYTE: value offset = %d value = %d\n",
 	     f->offset, (char)*(buf + f->offset));
 	 break;
       case ECORE_DBUS_DATA_TYPE_INT32:
 	 printf
-	    ("[ecore_dbus] field INT32	: value offset = %d value = %ld\n",
-	     f->offset, (long int)*(buf + f->offset));
+	    ("[ecore_dbus] field INT32: value offset = %d value = %d\n",
+	     f->offset, (int)*(buf + f->offset));
 	 break;
       case ECORE_DBUS_DATA_TYPE_UINT32:
 	 printf
-	    ("[ecore_dbus] field UINT32	: value offset = %d value = %lu\n",
-	     f->offset, (unsigned long int)*(buf + f->offset));
+	    ("[ecore_dbus] field UINT32: value offset = %d value = %u\n",
+	     f->offset, (unsigned int)*(buf + f->offset));
 	 break;
       case ECORE_DBUS_DATA_TYPE_STRING:
 	 printf
-	    ("[ecore_dbus] field STRING	: value offset = %d length = %d value = %s\n",
+	    ("[ecore_dbus] field STRING: value offset = %d length = %d value = %s\n",
 	     f->offset, *(buf + f->offset), (buf + f->offset + 4));
 	 break;
       case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
 	 printf
-	    ("[ecore_dbus] field PATH		: value offset = %d length = %d value = %s\n",
+	    ("[ecore_dbus] field PATH: value offset = %d length = %d value = %s\n",
 	     f->offset, *(buf + f->offset), (buf + f->offset + 4));
+	 break;
+      case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+	 printf
+	    ("[ecore_dbus] field SIGNATURE	: value offset = %d length = %d value = %s\n",
+	     f->offset, *(buf + f->offset), (buf + f->offset + 1));
 	 break;
       case ECORE_DBUS_DATA_TYPE_ARRAY:
 	   {
 	      printf
-		 ("[ecore_dbus] field ARRAY	: value offset = %d length = %lu elements = %u\n",
-		  f->offset, *(unsigned long int *)(buf + f->offset), f->count);
+		 ("[ecore_dbus] field ARRAY	: value offset = %d length = %u elements = %u\n",
+		  f->offset, *(unsigned int *)(buf + f->offset), f->count);
 	      printf("[ecore_dbus] * ARRAY elements begin *\n");
 	      f = (Ecore_DBus_Message_Field *)((Ecore_List2 *)f)->next;
 	      for (i = 0; i < f->count; i++)
@@ -1246,10 +1382,13 @@ _ecore_dbus_message_print_field(Ecore_DBus_Message_Field *f, unsigned char *buf)
       case ECORE_DBUS_DATA_TYPE_INT64:
       case ECORE_DBUS_DATA_TYPE_UINT64:
       case ECORE_DBUS_DATA_TYPE_DOUBLE:
-      case ECORE_DBUS_DATA_TYPE_SIGNATURE:
       case ECORE_DBUS_DATA_TYPE_VARIANT:
       case ECORE_DBUS_DATA_TYPE_STRUCT:
+      case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
+      case ECORE_DBUS_DATA_TYPE_STRUCT_END:
       case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
+      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
 	 /* TODO */
 	 printf("[ecore_dbus] field not implemented: %c\n", f->type);
 	 break;
@@ -1310,3 +1449,35 @@ _ecore_dbus_message_print_raw(unsigned char *msg, unsigned int msg_len)
    printf("[ecore_dbus] end raw message\n");
 }
 */
+
+static int
+_ecore_dbus_alignment_get(Ecore_DBus_Data_Type type)
+{
+   switch (type)
+     {
+        case ECORE_DBUS_DATA_TYPE_BYTE:
+        case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+        case ECORE_DBUS_DATA_TYPE_VARIANT:
+	   return 1;
+        case ECORE_DBUS_DATA_TYPE_INT16:
+        case ECORE_DBUS_DATA_TYPE_UINT16:
+	   return 2;
+        case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+        case ECORE_DBUS_DATA_TYPE_INT32:
+        case ECORE_DBUS_DATA_TYPE_UINT32:
+        case ECORE_DBUS_DATA_TYPE_STRING:
+        case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
+        case ECORE_DBUS_DATA_TYPE_ARRAY:
+	   return 4;
+        case ECORE_DBUS_DATA_TYPE_INT64:
+        case ECORE_DBUS_DATA_TYPE_UINT64:
+        case ECORE_DBUS_DATA_TYPE_DOUBLE:
+	   return 8;
+        case ECORE_DBUS_DATA_TYPE_STRUCT:
+        case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+	   return 8;
+	default:
+	   fprintf(stderr, "Ecore_DBus: Alignment requested for invalid data type!\n");
+	   return 0;
+     }
+}

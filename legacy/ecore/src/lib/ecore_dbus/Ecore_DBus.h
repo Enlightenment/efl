@@ -48,23 +48,27 @@ extern "C" {
 
    typedef enum _Ecore_DBus_Data_Type
      {
-	ECORE_DBUS_DATA_TYPE_INVALID     = ((int) '\0'),
-	ECORE_DBUS_DATA_TYPE_BYTE        = ((int) 'y'),
-	ECORE_DBUS_DATA_TYPE_BOOLEAN     = ((int) 'b'), /* 0,1 */
-	ECORE_DBUS_DATA_TYPE_INT16       = ((int) 'n'),
-	ECORE_DBUS_DATA_TYPE_UINT16      = ((int) 'q'),
-	ECORE_DBUS_DATA_TYPE_INT32       = ((int) 'i'),
-	ECORE_DBUS_DATA_TYPE_UINT32      = ((int) 'u'),
-	ECORE_DBUS_DATA_TYPE_INT64       = ((int) 'x'),
-	ECORE_DBUS_DATA_TYPE_UINT64      = ((int) 't'),
-	ECORE_DBUS_DATA_TYPE_DOUBLE      = ((int) 'd'),
-	ECORE_DBUS_DATA_TYPE_STRING      = ((int) 's'),
-	ECORE_DBUS_DATA_TYPE_OBJECT_PATH = ((int) 'o'),
-	ECORE_DBUS_DATA_TYPE_SIGNATURE   = ((int) 'g'),
-	ECORE_DBUS_DATA_TYPE_ARRAY       = ((int) 'a'),
-	ECORE_DBUS_DATA_TYPE_VARIANT     = ((int) 'v'),
-	ECORE_DBUS_DATA_TYPE_STRUCT      = ((int) 'r'),
-	ECORE_DBUS_DATA_TYPE_DICT_ENTRY  = ((int) 'e'),
+	ECORE_DBUS_DATA_TYPE_INVALID          = ((int) '\0'),
+	ECORE_DBUS_DATA_TYPE_BYTE             = ((int) 'y'),
+	ECORE_DBUS_DATA_TYPE_BOOLEAN          = ((int) 'b'), /* 0,1 */
+	ECORE_DBUS_DATA_TYPE_INT16            = ((int) 'n'),
+	ECORE_DBUS_DATA_TYPE_UINT16           = ((int) 'q'),
+	ECORE_DBUS_DATA_TYPE_INT32            = ((int) 'i'),
+	ECORE_DBUS_DATA_TYPE_UINT32           = ((int) 'u'),
+	ECORE_DBUS_DATA_TYPE_INT64            = ((int) 'x'),
+	ECORE_DBUS_DATA_TYPE_UINT64           = ((int) 't'),
+	ECORE_DBUS_DATA_TYPE_DOUBLE           = ((int) 'd'),
+	ECORE_DBUS_DATA_TYPE_STRING           = ((int) 's'),
+	ECORE_DBUS_DATA_TYPE_OBJECT_PATH      = ((int) 'o'),
+	ECORE_DBUS_DATA_TYPE_SIGNATURE        = ((int) 'g'),
+	ECORE_DBUS_DATA_TYPE_ARRAY            = ((int) 'a'),
+	ECORE_DBUS_DATA_TYPE_VARIANT          = ((int) 'v'),
+	ECORE_DBUS_DATA_TYPE_STRUCT           = ((int) 'r'),
+	ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN     = ((int) '('),
+	ECORE_DBUS_DATA_TYPE_STRUCT_END       = ((int) ')'),
+	ECORE_DBUS_DATA_TYPE_DICT_ENTRY       = ((int) 'e'),
+	ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN = ((int) '{'),
+	ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END   = ((int) '}'),
      } Ecore_DBus_Data_Type;
 
    struct _Ecore_DBus_Event_Server_Add
