@@ -86,6 +86,11 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
    printf("_ecore_dbus_event_server_data\n");
    return 0;
 }
-
-
+#else
+int
+main(int argc, const char **argv)
+{
+   printf("Ecore_DBus module not compiled. This program is empty.\n");
+   return -1;
+}
 #endif
