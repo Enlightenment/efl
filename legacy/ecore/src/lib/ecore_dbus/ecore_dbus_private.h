@@ -73,6 +73,76 @@ struct _Ecore_DBus_Auth
    Ecore_DBus_Auth_Transaction  transactions[5];
 };
 
+/* ecore_dbus_utils.c */
+void          _ecore_dbus_message_append_length(unsigned char **buf, unsigned int old_length, unsigned int size);
+void          _ecore_dbus_message_increase_length(unsigned char **buf, unsigned int new_length);
+void          _ecore_dbus_message_padding(unsigned char **buf, unsigned int *old_length, int size);
+void          _ecore_dbus_message_padding_skip(unsigned int *old_length, int size);
+void          _ecore_dbus_message_append_nbytes(unsigned char *buf, unsigned char *data, unsigned int data_length);
+void          _ecore_dbus_message_append_byte(unsigned char *buf, unsigned char c);
+void          _ecore_dbus_message_append_uint32(unsigned char *buf, unsigned int i);
+unsigned char _ecore_dbus_message_read_byte(unsigned char *buf);
+unsigned int  _ecore_dbus_message_read_uint32(unsigned char *buf);
+
+/* ecore_dbus.c */
+Ecore_DBus_Message       *_ecore_dbus_message_new(Ecore_DBus_Server *svr);
+Ecore_DBus_Message_Field *_ecore_dbus_message_new_field(Ecore_DBus_Data_Type type, unsigned int offset);
+/* ecore_dbus_marshal.c */
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_byte(unsigned char **buf, unsigned int *old_length, unsigned char c);
+/*
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_boolean(unsigned char **buf, unsigned int *old_length, uint32_t i);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_int16(unsigned char **buf, unsigned int *old_length, int16_t i);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_uint16(unsigned char **buf, unsigned int *old_length, uint16_t i);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_int32(unsigned char **buf, unsigned int *old_length, int32_t i);
+*/
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_uint32(unsigned char **buf, unsigned int *old_length, uint32_t i);
+/*
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_int64(unsigned char **buf, unsigned int *old_length, int64_t i);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_uint64(unsigned char **buf, unsigned int *old_length, uint64_t i);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_double(unsigned char **buf, unsigned int *old_length, double i);
+*/
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_string(unsigned char **buf, unsigned int *old_length, char *str);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_object_path(unsigned char **buf, unsigned int *old_length, char *str);
+/*
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_signature(unsigned char **buf, unsigned int *old_length, char *str);
+*/
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_array(unsigned char **msg, unsigned int *old_length, Ecore_DBus_Data_Type contained_type);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_struct_begin(unsigned char **msg, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_struct_end(unsigned char **msg, unsigned int *old_length);
+/* 
+ * FIXME: These aren't correct !
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_variant(unsigned char **msg, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_dict_entry(unsigned char **msg, unsigned int *old_length);
+*/
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_data(unsigned char **buf, unsigned int *old_length, Ecore_DBus_Data_Type type, void *data);
+Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_custom_header(unsigned char **buf, unsigned int *old_length, unsigned int code, Ecore_DBus_Data_Type type, void *data);
+/* ecore_dbus_unmarshal.c */
+/*
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_byte(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_boolean(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_int16(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_uint16(unsigned char *buf, unsigned int *old_length);
+*/
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_int32(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_uint32(unsigned char *buf, unsigned int *old_length);
+/*
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_int64(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_uint64(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_double(unsigned char *buf, unsigned int *old_length);
+*/
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_string(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_object_path(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_signature(unsigned char *buf, unsigned int *old_length);
+/*
+ * FIXME: These aren't correct!
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_array(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_variant(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_struct(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_dict_entry(unsigned char *buf, unsigned int *old_length);
+*/
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_data(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_custom_header(unsigned char *buf, unsigned int *old_length);
+Ecore_DBus_Message       *_ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message);
 
 /* Errors */
 #define DBUS_ERROR_FAILED                     "org.freedesktop.DBus.Error.Failed"

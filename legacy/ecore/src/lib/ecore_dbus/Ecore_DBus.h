@@ -26,7 +26,7 @@
 # endif
 #endif
 
-#define ECORE_DBUS_MAJOR_PROTOCOL_VERSION 1
+#define ECORE_DBUS_MAJOR_PROTOCOL_VERSION 0x1
 
 #ifdef __cplusplus
 extern "C" {
