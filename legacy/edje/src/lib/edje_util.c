@@ -744,20 +744,22 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 	rp->swallow_params.max.h = h;
      }
      {
-	int w1, h1, w2, h2, aw, ah;
+	int w1, h1, w2, h2, am, aw, ah;
 	
 	w1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
 	h1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
 	w2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
 	h2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
+	am = (int)evas_object_data_get(obj_swallow, "\377 edje.aspm");
 	aw = (int)evas_object_data_get(obj_swallow, "\377 edje.aspw");
 	ah = (int)evas_object_data_get(obj_swallow, "\377 edje.asph");
 	rp->swallow_params.min.w = w1;
 	rp->swallow_params.min.h = h1;
 	if (w2 > 0) rp->swallow_params.max.w = w2;
 	if (h2 > 0) rp->swallow_params.max.h = h2;
-	if (aw > 0) rp->swallow_params.aspect.w = aw;
-	if (ah > 0) rp->swallow_params.aspect.h = ah;
+	rp->swallow_params.aspect.mode = am;
+	rp->swallow_params.aspect.w = aw;
+	rp->swallow_params.aspect.h = ah;
      }
    ed->dirty = 1;
    _edje_recalc(ed);   
@@ -815,6 +817,7 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
 
 /** Set the object aspect size
  * @param obj A valid Evas_Object handle
+ * @param aspect The aspect control axes
  * @param aw The aspect radio width
  * @param ah The aspect ratio height
  *
@@ -824,17 +827,23 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
  * scale of both aspwct width and height.
  */
 EAPI void
-edje_extern_object_aspect_set(Evas_Object *obj, Evas_Coord aw, Evas_Coord ah)
+edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah)
 {
    int mw, mh;
-   
+   int mc;
+
+   mc = aspect;
    mw = aw;
    mh = ah;
-   if (mw >= 0)
+   if (mc > 0)
+     evas_object_data_set(obj, "\377 edje.aspm", (void *)mc);
+   else
+     evas_object_data_del(obj, "\377 edje.aspm"); 
+   if (mw > 0)
      evas_object_data_set(obj, "\377 edje.aspw", (void *)mw);
    else
      evas_object_data_del(obj, "\377 edje.aspw"); 
-   if (mh >= 0)
+   if (mh > 0)
      evas_object_data_set(obj, "\377 edje.asph", (void *)mh);
    else
      evas_object_data_del(obj, "\377 edje.asph");

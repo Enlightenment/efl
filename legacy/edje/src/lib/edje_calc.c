@@ -251,6 +251,22 @@ _edje_part_recalc_single(Edje *ed,
 
    flags = FLAG_XY;
    
+//   if (flags & FLAG_X)
+     {
+	minw = desc->min.w;
+	if (ep->swallow_params.min.w > desc->min.w) minw = ep->swallow_params.min.w;
+	maxw = desc->max.w;
+	if ((ep->swallow_params.max.w >= 0) &&
+	    (ep->swallow_params.max.w < maxw)) maxw = ep->swallow_params.max.w;
+     }
+//   if (flags & FLAG_Y)
+     {
+	minh = desc->min.h;
+	if (ep->swallow_params.min.h > desc->min.h) minh = ep->swallow_params.min.h;
+	maxh = desc->max.h;
+	if ((ep->swallow_params.max.h >= 0) &&
+	    (ep->swallow_params.max.h < maxh)) maxh = ep->swallow_params.max.h;
+     }
    /* relative coords of top left & bottom right */
    if (flags & FLAG_X)
      {
@@ -291,6 +307,7 @@ _edje_part_recalc_single(Edje *ed,
    if ((params->h > 0) && 
        (((flags | ep->calculated) & FLAG_XY) == FLAG_XY))
      {
+	int apref;
 	double aspect, amax, amin;
 	double new_w, new_h, want_x, want_y, want_w, want_h;
    
@@ -300,7 +317,14 @@ _edje_part_recalc_single(Edje *ed,
 	want_y = params->y;
 	want_h = new_h = params->h;
 	
+	if ((maxw >= 0) && (new_w > maxw)) new_w = maxw;
+	if (new_w < minw) new_w = minw;
+	
+	if ((maxh >= 0) && (new_h > maxh)) new_h = maxh;
+	if (new_h < minh) new_h = minh;
+	
 	aspect = (double)params->w / (double)params->h;
+	apref = desc->aspect.prefer;
 	amax = desc->aspect.max;
 	amin = desc->aspect.min;
 	if ((ep->swallow_params.aspect.w > 0) &&
@@ -308,8 +332,27 @@ _edje_part_recalc_single(Edje *ed,
 	  amin = amax = 
 	  (double)ep->swallow_params.aspect.w /
 	  (double)ep->swallow_params.aspect.h;
-	  
-	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
+	if (ep->swallow_params.aspect.mode > EDJE_ASPECT_CONTROL_NONE)
+	  {
+	     switch (ep->swallow_params.aspect.mode)
+	       {
+		case EDJE_ASPECT_CONTROL_NEITHER:
+		  apref = EDJE_ASPECT_PREFER_NONE;
+		  break;
+		case EDJE_ASPECT_CONTROL_HORIZONTAL:
+		  apref = EDJE_ASPECT_PREFER_HORIZONTAL;
+		  break;
+		case EDJE_ASPECT_CONTROL_VERTICAL:
+		  apref = EDJE_ASPECT_PREFER_VERTICAL;
+		  break;
+		case EDJE_ASPECT_CONTROL_BOTH:
+		  apref = EDJE_ASPECT_PREFER_BOTH;
+		  break;
+		default:
+		  break;
+	       }
+	  }
+	if (apref == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
 	     if ((amax > 0.0) && (aspect > amax))
@@ -324,7 +367,7 @@ _edje_part_recalc_single(Edje *ed,
 		  new_w = (params->h * amin);
 	       }
 	  } /* prefer vertical size as determiner */
-	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL) /* keep both dimensions in check */
+	else if (apref == EDJE_ASPECT_PREFER_VERTICAL) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
 	     if ((amax > 0.0) && (aspect > amax))
@@ -333,7 +376,7 @@ _edje_part_recalc_single(Edje *ed,
 	     if ((amin > 0.0) && (aspect < amin))
 	       new_w = (params->h * amin);
 	  } /* prefer horizontal size as determiner */
-	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL) /* keep both dimensions in check */
+	else if (apref == EDJE_ASPECT_PREFER_HORIZONTAL) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
 	     if ((amax > 0.0) && (aspect > amax))
@@ -342,7 +385,7 @@ _edje_part_recalc_single(Edje *ed,
 	     if ((amin > 0.0) && (aspect < amin))
 	       new_h = (params->w / amin);
 	  }
-	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_BOTH) /* keep both dimensions in check */
+	else if (apref == EDJE_ASPECT_PREFER_BOTH) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
 	     if ((amax > 0.0) && (aspect > amax))
@@ -358,7 +401,7 @@ _edje_part_recalc_single(Edje *ed,
 	       }
 	  }
 	/* do real adjustment */
-	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_BOTH)
+	if (apref == EDJE_ASPECT_PREFER_BOTH)
 	  {
 	     /* fix h and vary w */
 	     if (new_w > params->w)
@@ -375,7 +418,7 @@ _edje_part_recalc_single(Edje *ed,
 		    params->h = new_h;
 		  else if (params->h > new_h)
 		    params->h = new_h;
-		  if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL)
+		  if (apref == EDJE_ASPECT_PREFER_VERTICAL)
 		    params->w = new_w;
 	       }
 	     else
@@ -384,7 +427,7 @@ _edje_part_recalc_single(Edje *ed,
 		    params->w = new_w;
 		  else if (params->w > new_w)
 		    params->w = new_w;
-		  if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL)
+		  if (apref == EDJE_ASPECT_PREFER_HORIZONTAL)
 		    params->h = new_h;
 	       }
 	  }
@@ -426,16 +469,6 @@ _edje_part_recalc_single(Edje *ed,
 		  params->h = new_h;
 	       }
 	  }
-     }
-   if (flags & FLAG_X)
-     {
-	minw = desc->min.w;
-	if (ep->swallow_params.min.w > desc->min.w) minw = ep->swallow_params.min.w;
-     }
-   if (flags & FLAG_Y)
-     {
-	minh = desc->min.h;
-	if (ep->swallow_params.min.h > desc->min.h) minh = ep->swallow_params.min.h;
      }
    /* if we have text that wants to make the min size the text size... */
    if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
@@ -709,18 +742,6 @@ _edje_part_recalc_single(Edje *ed,
 		  params->h = minh;
 	       }
 	  }
-     }
-   if (flags & FLAG_X)
-     {
-	maxw = desc->max.w;
-	if ((ep->swallow_params.max.w >= 0) &&
-	    (ep->swallow_params.max.w < maxw)) maxw = ep->swallow_params.max.w;
-     }
-   if (flags & FLAG_Y)
-     {
-	maxh = desc->max.h;
-	if ((ep->swallow_params.max.h >= 0) &&
-	    (ep->swallow_params.max.h < maxh)) maxh = ep->swallow_params.max.h;
      }
    /* adjust for max size */
    if (flags & FLAG_X)

@@ -47,6 +47,16 @@ enum _Edje_Message_Type
 };
 typedef enum _Edje_Message_Type Edje_Message_Type;
 
+enum _Edje_Aspect_Control
+{
+   EDJE_ASPECT_CONTROL_NONE = 0,
+   EDJE_ASPECT_CONTROL_NEITHER = 1,
+   EDJE_ASPECT_CONTROL_HORIZONTAL = 2,
+   EDJE_ASPECT_CONTROL_VERTICAL = 3,
+   EDJE_ASPECT_CONTROL_BOTH = 4
+};
+typedef enum _Edje_Aspect_Control Edje_Aspect_Control;
+
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
 typedef struct _Edje_Message_Float            Edje_Message_Float;
@@ -175,7 +185,7 @@ extern "C" {
    EAPI void         edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
    EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
-   EAPI void         edje_extern_object_aspect_set(Evas_Object *obj, Evas_Coord aw, Evas_Coord ah);
+   EAPI void         edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
        
    /* edje_smart.c */
    EAPI Evas_Object *edje_object_add                 (Evas *evas);
