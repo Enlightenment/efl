@@ -309,19 +309,13 @@ _edje_part_recalc_single(Edje *ed,
      {
 	int apref;
 	double aspect, amax, amin;
-	double new_w, new_h, want_x, want_y, want_w, want_h;
+	double new_w = 0, new_h = 0, want_x, want_y, want_w, want_h;
    
 	want_x = params->x;
 	want_w = new_w = params->w;
 	
 	want_y = params->y;
 	want_h = new_h = params->h;
-	
-	if ((maxw >= 0) && (new_w > maxw)) new_w = maxw;
-	if (new_w < minw) new_w = minw;
-	
-	if ((maxh >= 0) && (new_h > maxh)) new_h = maxh;
-	if (new_h < minh) new_h = minh;
 	
 	aspect = (double)params->w / (double)params->h;
 	apref = desc->aspect.prefer;
@@ -400,15 +394,48 @@ _edje_part_recalc_single(Edje *ed,
 		  new_h = (params->w / amin);
 	       }
 	  }
+
+	if ((maxw >= 0) && (new_w > maxw)) new_w = maxw;
+	if (new_w < minw) new_w = minw;
+	
+	if ((maxh >= 0) && (new_h > maxh)) new_h = maxh;
+	if (new_h < minh) new_h = minh;
+
 	/* do real adjustment */
 	if (apref == EDJE_ASPECT_PREFER_BOTH)
 	  {
-	     /* fix h and vary w */
-	     if (new_w > params->w)
-	       params->w = new_w;
-	     /* fix w and vary h */
-	     else
-	       params->h = new_h;
+	     if (amin == 0.0) amin = amax;
+	     if (amin != 0.0)
+	       {
+		  /* fix h and vary w */
+		  if (new_w > params->w)
+		    {
+//		  params->w = new_w;
+// EXCEEDS BOUNDS in W
+		       new_h = (params->w / amin);
+		       new_w = params->w;
+		       if (new_h > params->h)
+			 {
+			    new_h = params->h;
+			    new_w = (params->h * amin);
+			 }
+		    }
+		  /* fix w and vary h */
+		  else
+		    {
+//		  params->h = new_h;
+// EXCEEDS BOUNDS in H
+		       new_h = params->h;
+		       new_w = (params->h * amin);
+		       if (new_w > params->w)
+			 {
+			    new_h = (params->w / amin);
+			    new_w = params->w;
+			 }
+		    }
+		  params->w = new_w;
+		  params->h = new_h;
+	       }
 	  }
 	else
 	  {
