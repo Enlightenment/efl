@@ -175,7 +175,8 @@ extern "C" {
    EAPI void         edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
    EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
-   
+   EAPI void         edje_extern_object_aspect_set(Evas_Object *obj, Evas_Coord aw, Evas_Coord ah);
+       
    /* edje_smart.c */
    EAPI Evas_Object *edje_object_add                 (Evas *evas);
    

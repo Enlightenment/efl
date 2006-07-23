@@ -291,7 +291,7 @@ _edje_part_recalc_single(Edje *ed,
    if ((params->h > 0) && 
        (((flags | ep->calculated) & FLAG_XY) == FLAG_XY))
      {
-	double aspect;
+	double aspect, amax, amin;
 	double new_w, new_h, want_x, want_y, want_w, want_h;
    
 	want_x = params->x;
@@ -301,52 +301,60 @@ _edje_part_recalc_single(Edje *ed,
 	want_h = new_h = params->h;
 	
 	aspect = (double)params->w / (double)params->h;
+	amax = desc->aspect.max;
+	amin = desc->aspect.min;
+	if ((ep->swallow_params.aspect.w > 0) &&
+	    (ep->swallow_params.aspect.h > 0))
+	  amin = amax = 
+	  (double)ep->swallow_params.aspect.w /
+	  (double)ep->swallow_params.aspect.h;
+	  
 	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
-	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
+	     if ((amax > 0.0) && (aspect > amax))
 	       {
-		  new_h = (params->w / desc->aspect.max);
-		  new_w = (params->h * desc->aspect.max);
+		  new_h = (params->w / amax);
+		  new_w = (params->h * amax);
 	       }
 	     /* adjust for min aspect (width / height) */
-	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
+	     if ((amin > 0.0) && (aspect < amin))
 	       {
-		  new_h = (params->w / desc->aspect.min);
-		  new_w = (params->h * desc->aspect.min);
+		  new_h = (params->w / amin);
+		  new_w = (params->h * amin);
 	       }
 	  } /* prefer vertical size as determiner */
 	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
-	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
-	       new_w = (params->h * desc->aspect.max);
+	     if ((amax > 0.0) && (aspect > amax))
+	       new_w = (params->h * amax);
 	     /* adjust for min aspect (width / height) */
-	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
-	       new_w = (params->h * desc->aspect.min);
+	     if ((amin > 0.0) && (aspect < amin))
+	       new_w = (params->h * amin);
 	  } /* prefer horizontal size as determiner */
 	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
-	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
-	       new_h = (params->w / desc->aspect.max);
+	     if ((amax > 0.0) && (aspect > amax))
+	       new_h = (params->w / amax);
 	     /* adjust for min aspect (width / height) */
-	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
-	       new_h = (params->w / desc->aspect.min);
+	     if ((amin > 0.0) && (aspect < amin))
+	       new_h = (params->w / amin);
 	  }
 	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_BOTH) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
-	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
+	     if ((amax > 0.0) && (aspect > amax))
 	       {
-		  new_w = (params->h * desc->aspect.max);
-		  new_h = (params->w / desc->aspect.max);
+		  new_w = (params->h * amax);
+		  new_h = (params->w / amax);
 	       }
 	     /* adjust for min aspect (width / height) */
-	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
+	     if ((amin > 0.0) && (aspect < amin))
 	       {
-		  new_w = (params->h * desc->aspect.min);
-		  new_h = (params->w / desc->aspect.min);
+		  new_w = (params->h * amin);
+		  new_h = (params->w / amin);
 	       }
 	  }
 	/* do real adjustment */

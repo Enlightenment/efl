@@ -581,6 +581,9 @@ struct _Edje_Real_Part
       struct {
 	 int                 w, h;
       } min, max;
+      struct {
+	 int                 w, h;
+      } aspect;
    } swallow_params;
    unsigned char             calculated;
    unsigned char             calculating;
