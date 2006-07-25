@@ -124,6 +124,7 @@ ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
    switch (type)
      {
 #if 0
+	/* Get address from DBUS_SESSION_BUS_ADDRESS env */
      case ECORE_DBUS_BUS_SESSION:
 	svr->server =
 	   ecore_con_server_connect(ECORE_CON_LOCAL_USER | extra, name, port, svr);
