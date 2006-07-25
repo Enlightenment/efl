@@ -54,7 +54,7 @@ _ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("_ecore_dbus_event_server_add\n");
-   ret = ecore_dbus_message_new_method_call(event->server, "org.freedesktop.DBus" /*service*/,
+   ret = ecore_dbus_message_new_method_call(event->server, "org.freedesktop.DBus" /*destination*/,
 					    "/org/freedesktop/DBus" /*path*/,
 					    "org.freedesktop.DBus" /*interface*/,
 					    "Hello" /*method*/, NULL /*fmt*/);

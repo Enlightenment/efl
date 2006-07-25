@@ -34,6 +34,7 @@ _ecore_dbus_message_unmarshal_int32(Ecore_DBus_Message *msg, int *size)
    unsigned int                    old_length;
 
    old_length = msg->length;
+   _ecore_dbus_message_padding(msg, 4);
    f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_INT32);
    f->value = _ecore_dbus_message_read_uint32(msg);
    if (*size < (msg->length - old_length))
@@ -54,6 +55,7 @@ _ecore_dbus_message_unmarshal_uint32(Ecore_DBus_Message *msg, int *size)
    unsigned int                     old_length;
 
    old_length = msg->length;
+   _ecore_dbus_message_padding(msg, 4);
    f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_UINT32);
    f->value = _ecore_dbus_message_read_uint32(msg);
    if (*size < (msg->length - old_length))

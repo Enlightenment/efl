@@ -147,6 +147,8 @@ ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
    svr->cnt_msg = 0;
    svr->auth_type = -1;
    svr->auth_type_transaction = 0;
+   svr->methods = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
+   ecore_hash_set_free_value(svr->methods, free);
    servers = _ecore_list2_append(servers, svr);
 
    return svr;
@@ -157,6 +159,8 @@ ecore_dbus_server_del(Ecore_DBus_Server *svr)
 {
    if (svr->server) ecore_con_server_del(svr->server);
    servers = _ecore_list2_remove(servers, svr);
+   if (svr->unique_name) free(svr->unique_name);
+   ecore_hash_destroy(svr->methods);
    free(svr);
 }
 
@@ -338,6 +342,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	while (e->size)
 	  {
 	     Ecore_DBus_Event_Server_Data *ev;
+	     Ecore_DBus_Message_Field_UInt32 *serial;
 
 	     msg = _ecore_dbus_message_unmarshal(svr, (unsigned char *)(e->data) + offset, e->size);
 	     if (msg == NULL) break;
@@ -345,11 +350,53 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     e->size -= msg->length;
 	     printf("[ecore_dbus] dbus message length %u bytes, still %d\n",
 		    msg->length, e->size);
-	     ecore_dbus_message_print(msg);
-	     ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
-	     ev->server = svr;
-	     ev->message = msg;
-	     ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev, _ecore_dbus_event_server_data_free, NULL);
+	     //ecore_dbus_message_print(msg);
+	     /* Trap known messages */
+	     serial = ecore_dbus_message_header_field_get(msg, ECORE_DBUS_HEADER_FIELD_REPLY_SERIAL);
+	     if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
+	       {
+		  char *method;
+
+		  method = ecore_hash_remove(svr->methods, (void *)serial->value);
+		  if (method)
+		    {
+		       printf("Return from method: %s\n", method);
+		       if (!strcmp(method, "org.freedesktop.DBus.Hello"))
+			 {
+			    char *name;
+
+			    name = ecore_dbus_message_body_field_get(msg, 0);
+			    printf("Got unique name: %s\n", name);
+			    svr->unique_name = strdup(name);
+			    _ecore_dbus_message_free(msg);
+			 }
+		       else
+			 {
+			    ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
+			    ev->server = svr;
+			    ev->message = msg;
+			    ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
+					    _ecore_dbus_event_server_data_free, NULL);
+			 }
+		       free(method);
+		    }
+		  else
+		    {
+		       ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
+		       ev->server = svr;
+		       ev->message = msg;
+		       ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
+				       _ecore_dbus_event_server_data_free, NULL);
+		    }
+	       }
+	     else
+	       {
+		  ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
+		  ev->server = svr;
+		  ev->message = msg;
+		  ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
+				  _ecore_dbus_event_server_data_free, NULL);
+	       }
 	  }
      }
    return 0;

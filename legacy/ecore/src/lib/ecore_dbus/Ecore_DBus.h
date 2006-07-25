@@ -119,9 +119,7 @@ extern "C" {
    EAPI void          ecore_dbus_message_del(Ecore_DBus_Message *msg);
    EAPI void          ecore_dbus_message_print(Ecore_DBus_Message *msg);
    EAPI void         *ecore_dbus_message_header_field_get(Ecore_DBus_Message *msg, Ecore_DBus_Message_Header_Field field);
-#if 0
-   EAPI void         *ecore_dbus_get_body_field(Ecore_DBus_Message *msg, Ecore_DBus_Message_Field *field, unsigned int pos);
-#endif
+   EAPI void         *ecore_dbus_message_body_field_get(Ecore_DBus_Message *msg, unsigned int pos);
 
 #ifdef __cplusplus
 }

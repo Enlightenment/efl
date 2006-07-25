@@ -8,26 +8,42 @@ typedef unsigned char *(*Ecore_DBus_Auth_Transaction)(void *);
 
 typedef struct _Ecore_DBus_Auth                      Ecore_DBus_Auth;
 
-typedef struct _Ecore_DBus_Message_Field_Container   Ecore_DBus_Message_Field_Container;
-
 #define ECORE_DBUS_MESSAGE_FIELD(x) ((Ecore_DBus_Message_Field *)(x))
 #define ECORE_DBUS_MESSAGE_FIELD_CONTAINER(x) ((Ecore_DBus_Message_Field_Container *)(x))
+typedef struct _Ecore_DBus_Message_Field_Container   Ecore_DBus_Message_Field_Container;
+
 typedef struct _Ecore_DBus_Message_Field_Byte        Ecore_DBus_Message_Field_Byte;
+#define ECORE_DBUS_MESSAGE_FIELD_BYTE(x)        ((Ecore_DBus_Message_Field_Byte *)(x))
 typedef struct _Ecore_DBus_Message_Field_Boolean     Ecore_DBus_Message_Field_Boolean;
+#define ECORE_DBUS_MESSAGE_FIELD_BOOLEAN(x)     ((Ecore_DBus_Message_Field_Boolean *)(x))
 typedef struct _Ecore_DBus_Message_Field_Int16       Ecore_DBus_Message_Field_Int16;
+#define ECORE_DBUS_MESSAGE_FIELD_INT16(x)       ((Ecore_DBus_Message_Field_Int16 *)(x))
 typedef struct _Ecore_DBus_Message_Field_UInt16      Ecore_DBus_Message_Field_UInt16;
+#define ECORE_DBUS_MESSAGE_FIELD_UINT16(x)      ((Ecore_DBus_Message_Field_UInt16 *)(x))
 typedef struct _Ecore_DBus_Message_Field_Int32       Ecore_DBus_Message_Field_Int32;
+#define ECORE_DBUS_MESSAGE_FIELD_INT32(x)       ((Ecore_DBus_Message_Field_Int32 *)(x))
 typedef struct _Ecore_DBus_Message_Field_UInt32      Ecore_DBus_Message_Field_UInt32;
+#define ECORE_DBUS_MESSAGE_FIELD_UINT32(x)      ((Ecore_DBus_Message_Field_UInt32 *)(x))
 typedef struct _Ecore_DBus_Message_Field_Int64       Ecore_DBus_Message_Field_Int64;
+#define ECORE_DBUS_MESSAGE_FIELD_INT64(x)       ((Ecore_DBus_Message_Field_Int64 *)(x))
 typedef struct _Ecore_DBus_Message_Field_UInt64      Ecore_DBus_Message_Field_UInt64;
+#define ECORE_DBUS_MESSAGE_FIELD_UINT64(x)      ((Ecore_DBus_Message_Field_UInt64 *)(x))
 typedef struct _Ecore_DBus_Message_Field_Double      Ecore_DBus_Message_Field_Double;
+#define ECORE_DBUS_MESSAGE_FIELD_DOUBLE(x)      ((Ecore_DBus_Message_Field_Double *)(x))
 typedef struct _Ecore_DBus_Message_Field_String      Ecore_DBus_Message_Field_String;
+#define ECORE_DBUS_MESSAGE_FIELD_STRING(x)      ((Ecore_DBus_Message_Field_String *)(x))
 typedef struct _Ecore_DBus_Message_Field_Object_Path Ecore_DBus_Message_Field_Object_Path;
+#define ECORE_DBUS_MESSAGE_FIELD_OBJECT_PATH(x) ((Ecore_DBus_Message_Field_Object_Path *)(x))
 typedef struct _Ecore_DBus_Message_Field_Signature   Ecore_DBus_Message_Field_Signature;
+#define ECORE_DBUS_MESSAGE_FIELD_SIGNATURE(x)   ((Ecore_DBus_Message_Field_Signature *)(x))
 typedef struct _Ecore_DBus_Message_Field_Array       Ecore_DBus_Message_Field_Array;
+#define ECORE_DBUS_MESSAGE_FIELD_ARRAY(x)       ((Ecore_DBus_Message_Field_Array *)(x))
 typedef struct _Ecore_DBus_Message_Field_Variant     Ecore_DBus_Message_Field_Variant;
+#define ECORE_DBUS_MESSAGE_FIELD_VARIANT(x)     ((Ecore_DBus_Message_Field_Variant *)(x))
 typedef struct _Ecore_DBus_Message_Field_Struct      Ecore_DBus_Message_Field_Struct;
+#define ECORE_DBUS_MESSAGE_FIELD_STRUCT(x)      ((Ecore_DBus_Message_Field_Struct *)(x))
 typedef struct _Ecore_DBus_Message_Field_Dict_Entry  Ecore_DBus_Message_Field_Dict_Entry;
+#define ECORE_DBUS_MESSAGE_FIELD_DICT_ENTRY(x)  ((Ecore_DBus_Message_Field_Dict_Entry *)(x))
 
 typedef enum _Ecore_DBus_Auth_Type
 {
@@ -49,12 +65,15 @@ typedef enum _Ecore_DBus_Message_Type
 
 struct _Ecore_DBus_Server
 {
-   Ecore_List2        __list_data;
-   Ecore_Con_Server    *server;
-   int                  authenticated;
-   int                  auth_type;
-   int                  auth_type_transaction;
-   int                  cnt_msg;
+   Ecore_List2            __list_data;
+   Ecore_Con_Server        *server;
+   int                      authenticated;
+   int                      auth_type;
+   int                      auth_type_transaction;
+   int                      cnt_msg;
+
+   Ecore_Hash              *methods;
+   char                    *unique_name;
 };
 
 struct _Ecore_DBus_Message
