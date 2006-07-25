@@ -54,10 +54,7 @@ _ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("_ecore_dbus_event_server_add\n");
-   ret = ecore_dbus_message_new_method_call(event->server, "org.freedesktop.DBus" /*destination*/,
-					    "/org/freedesktop/DBus" /*path*/,
-					    "org.freedesktop.DBus" /*interface*/,
-					    "Hello" /*method*/, NULL /*fmt*/);
+   ret = ecore_dbus_method_hello(event->server);
    printf("ret: %d\n", ret);
    return 0;
 }
@@ -78,7 +75,31 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
    Ecore_DBus_Event_Server_Data *event;
 
    event = ev;
-   printf("_ecore_dbus_event_server_data\n");
+   if (!event->method) return 0;
+   printf("_ecore_dbus_event_server_data %s\n", event->method);
+   if (!strcmp(event->method, "org.freedesktop.DBus.Hello"))
+     {
+	printf("List names\n");
+	ecore_dbus_method_list_names(event->server);
+     }
+   else if (!strcmp(event->method, "org.freedesktop.DBus.ListNames"))
+     {
+	Ecore_List *names;
+
+	printf("Got names\n");
+	names = ecore_dbus_message_body_field_get(event->message, 0);
+	if (names)
+	  {
+	     char *name;
+	     ecore_list_goto_first(names);
+	     while ((name = ecore_list_next(names)))
+	       {
+		  printf("Name: %s\n", name);
+	       }
+	     ecore_list_destroy(names);
+	  }
+	ecore_main_loop_quit();
+     }
    return 0;
 }
 #else

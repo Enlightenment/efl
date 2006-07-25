@@ -7,9 +7,11 @@
 #include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifdef BUILD_ECORE_DBUS
 #include "Ecore.h"
+#include "Ecore_Data.h"
 #include "Ecore_DBus.h"
 #endif
 
