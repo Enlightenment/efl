@@ -81,6 +81,12 @@ extern "C" {
 	Ecore_DBus_Server *server;
      };
 
+   struct _Ecore_DBus_Event_Server_Data
+     {
+	Ecore_DBus_Server  *server;
+	Ecore_DBus_Message *message;
+     };
+
    typedef enum _Ecore_DBus_Message_Header_Field
      {
 	ECORE_DBUS_HEADER_FIELD_INVALID,
@@ -109,10 +115,13 @@ extern "C" {
 
    /* message */
    EAPI int           ecore_dbus_server_send(Ecore_DBus_Server *svr, char *command, int length);
-   EAPI unsigned int  ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service, char *path, char *interface, char *method, char *fmt, ...);
+   EAPI unsigned int  ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *destination, char *path, char *interface, char *method, char *fmt, ...);
+   EAPI void          ecore_dbus_message_del(Ecore_DBus_Message *msg);
    EAPI void          ecore_dbus_message_print(Ecore_DBus_Message *msg);
-   EAPI void         *ecore_dbus_get_header_field(Ecore_DBus_Message *msg, Ecore_DBus_Message_Field *field, Ecore_DBus_Message_Header_Field header);
+   EAPI void         *ecore_dbus_message_header_field_get(Ecore_DBus_Message *msg, Ecore_DBus_Message_Header_Field field);
+#if 0
    EAPI void         *ecore_dbus_get_body_field(Ecore_DBus_Message *msg, Ecore_DBus_Message_Field *field, unsigned int pos);
+#endif
 
 #ifdef __cplusplus
 }

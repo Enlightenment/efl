@@ -35,11 +35,6 @@ main(int argc, char **argv)
 	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DATA,
 					       _ecore_dbus_event_server_data, NULL);
 
-	/*
-	ret = ecore_dbus_message_new_method_call(svr, "org.freedesktop.DBus.Hello",
-						 NULL, NULL, NULL, NULL);
-						 */
-
 	ecore_main_loop_begin();
 
 	for (i = 0; i < 3; i++)

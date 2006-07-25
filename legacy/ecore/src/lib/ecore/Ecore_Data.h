@@ -98,6 +98,8 @@ extern "C" {
    
    /* Retrieve the current position in the list */
    EAPI void *ecore_list_current(Ecore_List * list);
+   EAPI void *ecore_list_first(Ecore_List * list);
+   EAPI void *ecore_list_last(Ecore_List * list);
    EAPI int ecore_list_index(Ecore_List * list);
    EAPI int ecore_list_nodes(Ecore_List * list);
    

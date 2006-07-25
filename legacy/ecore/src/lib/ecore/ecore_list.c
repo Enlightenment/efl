@@ -879,6 +879,40 @@ ecore_list_current(Ecore_List *list)
    return ret;
 }
 
+/**
+ * Retrieve the data pointed to by the first item in @p list.
+ * @param  list The list.
+ * @return Returns the data at current position, can be @c NULL.
+ */
+EAPI inline void *
+ecore_list_first(Ecore_List *list)
+{
+   void *ret;
+
+   if (!list->first)
+     return NULL;
+   ret = list->first->data;
+
+   return ret;
+}
+
+/**
+ * Retrieve the data pointed to by the last item in @p list.
+ * @param  list The list.
+ * @return Returns the data at current position, can be @c NULL.
+ */
+EAPI inline void *
+ecore_list_last(Ecore_List *list)
+{
+   void *ret;
+
+   if (!list->last)
+     return NULL;
+   ret = list->last->data;
+
+   return ret;
+}
+
 /* Return the data of the current node without incrementing */
 static void *
 _ecore_list_current(Ecore_List *list)
