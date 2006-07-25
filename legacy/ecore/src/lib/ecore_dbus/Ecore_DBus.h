@@ -84,6 +84,7 @@ extern "C" {
    struct _Ecore_DBus_Event_Server_Data
      {
 	Ecore_DBus_Server  *server;
+	char               *method;
 	Ecore_DBus_Message *message;
      };
 
@@ -120,6 +121,16 @@ extern "C" {
    EAPI void          ecore_dbus_message_print(Ecore_DBus_Message *msg);
    EAPI void         *ecore_dbus_message_header_field_get(Ecore_DBus_Message *msg, Ecore_DBus_Message_Header_Field field);
    EAPI void         *ecore_dbus_message_body_field_get(Ecore_DBus_Message *msg, unsigned int pos);
+
+   /* methods */
+   EAPI int ecore_dbus_method_hello(Ecore_DBus_Server *svr);
+   EAPI int ecore_dbus_method_list_names(Ecore_DBus_Server *svr);
+   EAPI int ecore_dbus_method_name_has_owner(Ecore_DBus_Server *svr, char *name);
+   EAPI int ecore_dbus_method_start_service_by_name(Ecore_DBus_Server *svr, char *name, unsigned int flags);
+   EAPI int ecore_dbus_method_get_name_owner(Ecore_DBus_Server *svr, char *name);
+   EAPI int ecore_dbus_method_get_connection_unix_user(Ecore_DBus_Server *svr, char *connection);
+   EAPI int ecore_dbus_method_add_match(Ecore_DBus_Server *svr, char *match);
+   EAPI int ecore_dbus_method_remove_match(Ecore_DBus_Server *svr, char *match);
 
 #ifdef __cplusplus
 }

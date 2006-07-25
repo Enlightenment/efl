@@ -342,8 +342,9 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	printf("[ecore_dbus] received server data, %d bytes\n", e->size);
 	while (e->size)
 	  {
-	     Ecore_DBus_Event_Server_Data *ev;
+	     Ecore_DBus_Event_Server_Data    *ev;
 	     Ecore_DBus_Message_Field_UInt32 *serial;
+	     char                            *method;
 
 	     msg = _ecore_dbus_message_unmarshal(svr, (unsigned char *)(e->data) + offset, e->size);
 	     if (msg == NULL) break;
@@ -351,12 +352,11 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     e->size -= msg->length;
 	     printf("[ecore_dbus] dbus message length %u bytes, still %d\n",
 		    msg->length, e->size);
-	     //ecore_dbus_message_print(msg);
+	     ecore_dbus_message_print(msg);
 	     /* Trap known messages */
 	     serial = ecore_dbus_message_header_field_get(msg, ECORE_DBUS_HEADER_FIELD_REPLY_SERIAL);
 	     if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
 	       {
-		  char *method;
 
 		  method = ecore_hash_remove(svr->methods, (void *)serial->value);
 		  if (method)
@@ -369,35 +369,19 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 			    name = ecore_dbus_message_body_field_get(msg, 0);
 			    printf("Got unique name: %s\n", name);
 			    svr->unique_name = strdup(name);
-			    _ecore_dbus_message_free(msg);
 			 }
-		       else
-			 {
-			    ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
-			    ev->server = svr;
-			    ev->message = msg;
-			    ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
-					    _ecore_dbus_event_server_data_free, NULL);
-			 }
-		       free(method);
-		    }
-		  else
-		    {
-		       ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
-		       ev->server = svr;
-		       ev->message = msg;
-		       ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
-				       _ecore_dbus_event_server_data_free, NULL);
 		    }
 	       }
 	     else
 	       {
-		  ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
-		  ev->server = svr;
-		  ev->message = msg;
-		  ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
-				  _ecore_dbus_event_server_data_free, NULL);
+		  method = NULL;
 	       }
+	     ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
+	     ev->server = svr;
+	     ev->message = msg;
+	     ev->method = method;
+	     ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
+			     _ecore_dbus_event_server_data_free, NULL);
 	  }
      }
    return 0;
@@ -410,5 +394,6 @@ _ecore_dbus_event_server_data_free(void *data, void *ev)
 
    event = ev;
    _ecore_dbus_message_free(event->message);
+   if (event->method) free(event->method);
    free(ev);
 }

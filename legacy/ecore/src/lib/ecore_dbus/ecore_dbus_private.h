@@ -8,9 +8,9 @@ typedef unsigned char *(*Ecore_DBus_Auth_Transaction)(void *);
 
 typedef struct _Ecore_DBus_Auth                      Ecore_DBus_Auth;
 
-#define ECORE_DBUS_MESSAGE_FIELD(x) ((Ecore_DBus_Message_Field *)(x))
-#define ECORE_DBUS_MESSAGE_FIELD_CONTAINER(x) ((Ecore_DBus_Message_Field_Container *)(x))
+#define ECORE_DBUS_MESSAGE_FIELD(x)             ((Ecore_DBus_Message_Field *)(x))
 typedef struct _Ecore_DBus_Message_Field_Container   Ecore_DBus_Message_Field_Container;
+#define ECORE_DBUS_MESSAGE_FIELD_CONTAINER(x)   ((Ecore_DBus_Message_Field_Container *)(x))
 
 typedef struct _Ecore_DBus_Message_Field_Byte        Ecore_DBus_Message_Field_Byte;
 #define ECORE_DBUS_MESSAGE_FIELD_BYTE(x)        ((Ecore_DBus_Message_Field_Byte *)(x))
@@ -96,6 +96,7 @@ struct _Ecore_DBus_Message
    unsigned char     *buffer;
 
    void              *header;
+   Ecore_List        *all;
    Ecore_List        *fields;
    Ecore_List        *recurse;
 };

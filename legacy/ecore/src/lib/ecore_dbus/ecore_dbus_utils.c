@@ -16,11 +16,19 @@ _ecore_dbus_message_length_append(Ecore_DBus_Message *msg, unsigned int size)
 {
    if (msg->length + size >= msg->size)
      {
+	Ecore_DBus_Message_Field *f;
+
 	size = (((msg->size + size) / 128) + 1) * 128;
 
 	msg->buffer = realloc(msg->buffer, size);
+
 	memset(msg->buffer + msg->size, 0, size - msg->size);
 	msg->size = size;
+
+	/* Update buffer references */
+	ecore_list_goto_first(msg->all);
+	while ((f = ecore_list_next(msg->all)))
+	  f->buffer = msg->buffer + f->offset;
      }
 }
 

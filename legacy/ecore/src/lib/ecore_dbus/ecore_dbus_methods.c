@@ -8,7 +8,7 @@
 #include "Ecore_DBus.h"
 #include "ecore_dbus_private.h"
 
-int
+EAPI int
 ecore_dbus_method_hello(Ecore_DBus_Server *svr)
 {
    return ecore_dbus_message_new_method_call(svr,
@@ -18,7 +18,7 @@ ecore_dbus_method_hello(Ecore_DBus_Server *svr)
 					     "Hello" /*method*/, NULL /*fmt*/);
 }
 
-int
+EAPI int
 ecore_dbus_method_list_names(Ecore_DBus_Server *svr)
 {
    return ecore_dbus_message_new_method_call(svr,
@@ -28,7 +28,7 @@ ecore_dbus_method_list_names(Ecore_DBus_Server *svr)
 					     "ListNames" /*method*/, NULL /*fmt*/);
 }
 
-int
+EAPI int
 ecore_dbus_method_name_has_owner(Ecore_DBus_Server *svr, char *name)
 {
    return ecore_dbus_message_new_method_call(svr,
@@ -39,7 +39,7 @@ ecore_dbus_method_name_has_owner(Ecore_DBus_Server *svr, char *name)
 					     "s" /*fmt*/, name);
 }
 
-int
+EAPI int
 ecore_dbus_method_start_service_by_name(Ecore_DBus_Server *svr, char *name, unsigned int flags)
 {
    return ecore_dbus_message_new_method_call(svr,
@@ -50,7 +50,7 @@ ecore_dbus_method_start_service_by_name(Ecore_DBus_Server *svr, char *name, unsi
 					     "su" /*fmt*/, name, flags);
 }
 
-int
+EAPI int
 ecore_dbus_method_get_name_owner(Ecore_DBus_Server *svr, char *name)
 {
    return ecore_dbus_message_new_method_call(svr,
@@ -61,7 +61,7 @@ ecore_dbus_method_get_name_owner(Ecore_DBus_Server *svr, char *name)
 					     "s" /*fmt*/, name);
 }
 
-int
+EAPI int
 ecore_dbus_method_get_connection_unix_user(Ecore_DBus_Server *svr, char *connection)
 {
    return ecore_dbus_message_new_method_call(svr,
@@ -72,7 +72,7 @@ ecore_dbus_method_get_connection_unix_user(Ecore_DBus_Server *svr, char *connect
 					     "s" /*fmt*/, connection);
 }
 
-int
+EAPI int
 ecore_dbus_method_add_match(Ecore_DBus_Server *svr, char *match)
 {
    return ecore_dbus_message_new_method_call(svr,
@@ -83,7 +83,7 @@ ecore_dbus_method_add_match(Ecore_DBus_Server *svr, char *match)
 					     "s" /*fmt*/, match);
 }
 
-int
+EAPI int
 ecore_dbus_method_remove_match(Ecore_DBus_Server *svr, char *match)
 {
    return ecore_dbus_message_new_method_call(svr,
