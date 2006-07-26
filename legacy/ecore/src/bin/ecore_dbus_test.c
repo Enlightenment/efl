@@ -75,14 +75,14 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
    Ecore_DBus_Event_Server_Data *event;
 
    event = ev;
-   if (!event->method) return 0;
-   printf("_ecore_dbus_event_server_data %s\n", event->method);
-   if (!strcmp(event->method, "org.freedesktop.DBus.Hello"))
+   if (event->type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN) return 0;
+   printf("_ecore_dbus_event_server_data %s\n", event->member);
+   if (!strcmp(event->member, "org.freedesktop.DBus.Hello"))
      {
 	printf("List names\n");
 	ecore_dbus_method_list_names(event->server);
      }
-   else if (!strcmp(event->method, "org.freedesktop.DBus.ListNames"))
+   else if (!strcmp(event->member, "org.freedesktop.DBus.ListNames"))
      {
 	Ecore_List *names;
 

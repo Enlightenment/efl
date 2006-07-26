@@ -46,6 +46,15 @@ extern "C" {
 	ECORE_DBUS_BUS_ACTIVATION
      } Ecore_DBus_Type;
 
+   typedef enum _Ecore_DBus_Message_Type
+     {
+	ECORE_DBUS_MESSAGE_TYPE_INVALID,
+	ECORE_DBUS_MESSAGE_TYPE_METHOD_CALL,
+	ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN,
+	ECORE_DBUS_MESSAGE_TYPE_ERROR,
+	ECORE_DBUS_MESSAGE_TYPE_SIGNAL
+     } Ecore_DBus_Message_Type;
+
    typedef enum _Ecore_DBus_Data_Type
      {
 	ECORE_DBUS_DATA_TYPE_INVALID          = ((int) '\0'),
@@ -83,9 +92,10 @@ extern "C" {
 
    struct _Ecore_DBus_Event_Server_Data
      {
-	Ecore_DBus_Server  *server;
-	char               *method;
-	Ecore_DBus_Message *message;
+	Ecore_DBus_Server       *server;
+	Ecore_DBus_Message_Type  type;
+	char                    *member;
+	Ecore_DBus_Message      *message;
      };
 
    typedef enum _Ecore_DBus_Message_Header_Field

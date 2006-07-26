@@ -54,15 +54,6 @@ typedef enum _Ecore_DBus_Auth_Type
    ECORE_DBUS_AUTH_TYPE_SKEY
 } Ecore_DBus_Auth_Type;
 
-typedef enum _Ecore_DBus_Message_Type
-{
-   ECORE_DBUS_MESSAGE_TYPE_INVALID,
-   ECORE_DBUS_MESSAGE_TYPE_METHOD_CALL,
-   ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN,
-   ECORE_DBUS_MESSAGE_TYPE_ERROR,
-   ECORE_DBUS_MESSAGE_TYPE_SIGNAL
-} Ecore_DBus_Message_Type;
-
 struct _Ecore_DBus_Server
 {
    Ecore_List2            __list_data;

@@ -377,9 +377,10 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 		  method = NULL;
 	       }
 	     ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
+	     ev->type = msg->type;
 	     ev->server = svr;
 	     ev->message = msg;
-	     ev->method = method;
+	     ev->member = method;
 	     ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev,
 			     _ecore_dbus_event_server_data_free, NULL);
 	  }
@@ -394,6 +395,6 @@ _ecore_dbus_event_server_data_free(void *data, void *ev)
 
    event = ev;
    _ecore_dbus_message_free(event->message);
-   if (event->method) free(event->method);
+   if (event->member) free(event->member);
    free(ev);
 }
