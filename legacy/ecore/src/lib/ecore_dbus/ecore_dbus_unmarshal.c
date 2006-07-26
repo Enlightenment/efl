@@ -30,6 +30,26 @@ _ecore_dbus_message_unmarshal_byte(Ecore_DBus_Message *msg, int *size)
 }
 
 static void *
+_ecore_dbus_message_unmarshal_boolean(Ecore_DBus_Message *msg, int *size)
+{
+   Ecore_DBus_Message_Field_Boolean *f;
+   unsigned int                      old_length;
+
+   old_length = msg->length;
+   f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_BOOLEAN);
+   f->value = _ecore_dbus_message_read_uint32(msg);
+   if (*size < (msg->length - old_length))
+     {
+	/* TODO: Free message field */
+	printf("Ecore_DBus: To few bytes for boolean: got %d need %d\n",
+	       *size, (msg->length - old_length));
+	return NULL;
+     }
+   *size -= (msg->length - old_length);
+   return f;
+}
+
+static void *
 _ecore_dbus_message_unmarshal_int32(Ecore_DBus_Message *msg, int *size)
 {
    Ecore_DBus_Message_Field_Int32 *f;
@@ -220,7 +240,6 @@ _ecore_dbus_message_unmarshal_variant(Ecore_DBus_Message *msg, int *size)
    old_length = msg->length;
    f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_VARIANT);
    ecore_list_prepend(msg->recurse, f);
-   f->contained_type = type;
 
    /* signature length */
    length = _ecore_dbus_message_read_byte(msg);
@@ -232,6 +251,9 @@ _ecore_dbus_message_unmarshal_variant(Ecore_DBus_Message *msg, int *size)
      }
    /* signature */
    type = _ecore_dbus_message_read_byte(msg);
+   f->contained_type = type;
+   /* Read '\0' from signature */
+   _ecore_dbus_message_read_byte(msg);
    if (*size < (msg->length - old_length))
      {
 	/* TODO: Free message field */
@@ -326,10 +348,10 @@ _ecore_dbus_message_unmarshal_func(Ecore_DBus_Data_Type type)
 Ecore_DBus_Message *
 _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, int size)
 {
-   Ecore_DBus_Message                 *msg;
-   Ecore_DBus_Message_Field_Array     *arr;
-   Ecore_DBus_Message_Field_Signature *sig;
-   unsigned int                        old_length;
+   Ecore_DBus_Message             *msg;
+   Ecore_DBus_Message_Field_Array *arr;
+   char                           *sig;
+   unsigned int                    old_length;
 
    /* init */
    if (size < 16)
@@ -381,16 +403,16 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
    /* message body */
    if (sig)
      {
-	char *s;
-
-	s = sig->value;
-	while (*s)
+	while (*sig)
 	  {
 	     Ecore_DBus_Data_Type  type;
 
-	     type = *s;
+	     type = *sig;
 	     switch (type)
 	       {
+		case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+		   _ecore_dbus_message_unmarshal_boolean(msg, &size);
+		   break;
 		case ECORE_DBUS_DATA_TYPE_INT32:
 		   _ecore_dbus_message_unmarshal_int32(msg, &size);
 		   break;
@@ -410,11 +432,10 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
 		     {
 			Ecore_DBus_Message_Field_Array *arr;
 			Ecore_DBus_Unmarshal_Func func;
-			s++;
-			type = *s;
+			sig++;
+			type = *sig;
 			arr = _ecore_dbus_message_unmarshal_array_begin(msg, type, &size);
 			func = _ecore_dbus_message_unmarshal_func(type);
-			printf("Arr: %d %d %d %c %p\n", msg->length, arr->start, arr->end, type, func);
 			while (msg->length < arr->end)
 			  (*func)(msg, &size);
 			_ecore_dbus_message_unmarshal_array_end(msg, arr);
@@ -422,7 +443,6 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
 		   break;
 		case ECORE_DBUS_DATA_TYPE_INVALID:
 		case ECORE_DBUS_DATA_TYPE_BYTE:
-		case ECORE_DBUS_DATA_TYPE_BOOLEAN:
 		case ECORE_DBUS_DATA_TYPE_INT16:
 		case ECORE_DBUS_DATA_TYPE_UINT16:
 		case ECORE_DBUS_DATA_TYPE_INT64:
@@ -441,7 +461,7 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
 		   printf("[ecore_dbus] unknown/unhandled data type %c\n", type);
 		   break;
 	       }
-	     s++;
+	     sig++;
 	  }
      }
    return msg;

@@ -22,7 +22,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *destination,
 				   char *fmt, ...)
 {
    unsigned int                    serial, body_start;
-   char                            action[1024];
+   char                            buf[1024];
    Ecore_DBus_Message_Field_Array *arr;
 
    if (!method) return 0;
@@ -144,10 +144,10 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *destination,
    /* send message */
    ecore_dbus_server_send(svr, (char *)msg->buffer, msg->length);
    if (interface)
-     snprintf(action, sizeof(action), "%s.%s", interface, method);
+     snprintf(buf, sizeof(buf), "%s.%s", interface, method);
    else
-     strcpy(action, method);
-   ecore_hash_set(svr->methods, (void *)msg->serial, strdup(action));
+     strcpy(buf, method);
+   ecore_hash_set(svr->methods, (void *)msg->serial, strdup(buf));
 
    serial = msg->serial;
    _ecore_dbus_message_free(msg);
@@ -200,7 +200,19 @@ ecore_dbus_message_header_field_get(Ecore_DBus_Message *m,
 	     Ecore_DBus_Message_Field_Variant *v;
 
 	     v = ecore_list_last(s->values);
-	     return v->value;
+	     switch (v->contained_type)
+	       {
+		case ECORE_DBUS_DATA_TYPE_UINT32:
+		   return &ECORE_DBUS_MESSAGE_FIELD_UINT32(v->value)->value;
+		case ECORE_DBUS_DATA_TYPE_STRING:
+		   return ECORE_DBUS_MESSAGE_FIELD_STRING(v->value)->value;
+		case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
+		   return ECORE_DBUS_MESSAGE_FIELD_OBJECT_PATH(v->value)->value;
+		case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+		   return ECORE_DBUS_MESSAGE_FIELD_SIGNATURE(v->value)->value;
+		default:
+		   return NULL;
+	       }
 	  }
      }
    return NULL;

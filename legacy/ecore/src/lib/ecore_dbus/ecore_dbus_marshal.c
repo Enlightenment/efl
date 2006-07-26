@@ -80,7 +80,6 @@ _ecore_dbus_message_marshal_signature(Ecore_DBus_Message *msg, char *str)
    str_len = strlen(str);
    _ecore_dbus_message_append_byte(msg, str_len);
 
-   /* + 1 for \0 */
    _ecore_dbus_message_append_bytes(msg, (unsigned char *)str, str_len + 1);
    return f;
 }
@@ -145,6 +144,7 @@ _ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Typ
    _ecore_dbus_message_append_byte(msg, 1);
    /* signature */
    _ecore_dbus_message_append_byte(msg, type);
+   _ecore_dbus_message_append_byte(msg, '\0');
 
    switch (type)
      {

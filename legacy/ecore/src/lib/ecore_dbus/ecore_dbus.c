@@ -342,9 +342,9 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	printf("[ecore_dbus] received server data, %d bytes\n", e->size);
 	while (e->size)
 	  {
-	     Ecore_DBus_Event_Server_Data    *ev;
-	     Ecore_DBus_Message_Field_UInt32 *serial;
-	     char                            *method;
+	     Ecore_DBus_Event_Server_Data *ev;
+	     unsigned int                 *serial;
+	     char                         *method;
 
 	     msg = _ecore_dbus_message_unmarshal(svr, (unsigned char *)(e->data) + offset, e->size);
 	     if (msg == NULL) break;
@@ -352,13 +352,13 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     e->size -= msg->length;
 	     printf("[ecore_dbus] dbus message length %u bytes, still %d\n",
 		    msg->length, e->size);
-	     ecore_dbus_message_print(msg);
+	     //ecore_dbus_message_print(msg);
 	     /* Trap known messages */
 	     serial = ecore_dbus_message_header_field_get(msg, ECORE_DBUS_HEADER_FIELD_REPLY_SERIAL);
-	     if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
+	     if ((serial) && (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN))
 	       {
 
-		  method = ecore_hash_remove(svr->methods, (void *)serial->value);
+		  method = ecore_hash_remove(svr->methods, (void *)(*serial));
 		  if (method)
 		    {
 		       printf("Return from method: %s\n", method);
@@ -374,7 +374,17 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	       }
 	     else
 	       {
-		  method = NULL;
+		  /* Get interface and member from the message */
+		  char buf[1024];
+
+		  char *interface, *member;
+		  interface = ecore_dbus_message_header_field_get(msg, ECORE_DBUS_HEADER_FIELD_INTERFACE);
+		  member = ecore_dbus_message_header_field_get(msg, ECORE_DBUS_HEADER_FIELD_MEMBER);
+		  if ((member) && (interface))
+		    snprintf(buf, sizeof(buf), "%s.%s", interface, member);
+		  else if (member)
+		    strcpy(buf, member);
+		  method = strdup(buf);
 	       }
 	     ev = malloc(sizeof(Ecore_DBus_Event_Server_Data));
 	     ev->type = msg->type;
