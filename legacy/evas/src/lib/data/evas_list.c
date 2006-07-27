@@ -199,38 +199,43 @@ evas_list_append_relative(Evas_List *list, const void *data, const void *relativ
 {
    Evas_List *l;
 
-   _evas_list_alloc_error = 0;
    for (l = list; l; l = l->next)
      {
 	if (l->data == relative)
-	  {
-	     Evas_List *new_l;
-
-	     new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
-	     if (!new_l)
-	       {
-		  _evas_list_alloc_error = 1;
-		  return list;
-	       }
-	     new_l->data = (void *)data;
-	     if (l->next)
-	       {
-		  new_l->next = l->next;
-		  l->next->prev = new_l;
-	       }
-	     else
-	       new_l->next = NULL;
-
-	     l->next = new_l;
-	     new_l->prev = l;
-	     new_l->accounting = list->accounting;
-	     ((Evas_List_Accounting *)(list->accounting))->count++;
-	     if (!new_l->next)
-	       ((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
-	     return list;
-	  }
+	  return evas_list_append_relative_list(list, data, relative);
      }
    return evas_list_append(list, data);
+}
+
+EAPI Evas_List *
+evas_list_append_relative_list(Evas_List *list, const void *data, Evas_List *relative)
+{
+   Evas_List *new_l;
+   
+   if ((!list) || (!relative)) return evas_list_append(list, data);
+   _evas_list_alloc_error = 0;
+   new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
+   if (!new_l)
+     {
+	_evas_list_alloc_error = 1;
+	return list;
+     }
+   new_l->data = (void *)data;
+   if (relative->next)
+     {
+	new_l->next = relative->next;
+	relative->next->prev = new_l;
+     }
+   else
+     new_l->next = NULL;
+   
+   relative->next = new_l;
+   new_l->prev = relative;
+   new_l->accounting = list->accounting;
+   ((Evas_List_Accounting *)(list->accounting))->count++;
+   if (!new_l->next)
+     ((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
+   return list;
 }
 
 /**
@@ -286,29 +291,34 @@ evas_list_prepend_relative(Evas_List *list, const void *data, const void *relati
    for (l = list; l; l = l->next)
      {
 	if (l->data == relative)
-	  {
-	     Evas_List *new_l;
-
-	     new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
-             if (!new_l)
-	       {
-		  _evas_list_alloc_error = 1;
-		  return list;
-	       }
-	     new_l->data = (void *)data;
-	     new_l->prev = l->prev;
-	     new_l->next = l;
-	     if (l->prev) l->prev->next = new_l;
-	     l->prev = new_l;
-	     new_l->accounting = list->accounting;
-	     ((Evas_List_Accounting *)(list->accounting))->count++;
-	     if (new_l->prev)
-	       return list;
-	     else
-	       return new_l;
-	  }
+	  return evas_list_prepend_relative_list(list, data, relative);
      }
    return evas_list_prepend(list, data);
+}
+
+EAPI Evas_List *
+evas_list_prepend_relative_list(Evas_List *list, const void *data, Evas_List *relative)
+{
+   Evas_List *new_l;
+   
+   if ((!list) || (!relative)) return evas_list_prepend(list, data);
+   _evas_list_alloc_error = 0;
+   new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
+   if (!new_l)
+     {
+	_evas_list_alloc_error = 1;
+	return list;
+     }
+   new_l->data = (void *)data;
+   new_l->prev = relative->prev;
+   new_l->next = relative;
+   if (relative->prev) relative->prev->next = new_l;
+   relative->prev = new_l;
+   new_l->accounting = list->accounting;
+   ((Evas_List_Accounting *)(list->accounting))->count++;
+   if (new_l->prev)
+     return list;
+   return new_l;
 }
 
 /**

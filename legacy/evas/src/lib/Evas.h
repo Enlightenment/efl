@@ -314,7 +314,9 @@ extern "C" {
    EAPI Evas_List        *evas_list_append                  (Evas_List *list, const void *data);
    EAPI Evas_List        *evas_list_prepend                 (Evas_List *list, const void *data);
    EAPI Evas_List        *evas_list_append_relative         (Evas_List *list, const void *data, const void *relative);
+   EAPI Evas_List        *evas_list_append_relative_list    (Evas_List *list, const void *data, Evas_List *relative);
    EAPI Evas_List        *evas_list_prepend_relative        (Evas_List *list, const void *data, const void *relative);
+   EAPI Evas_List        *evas_list_prepend_relative_list   (Evas_List *list, const void *data, Evas_List *relative);
    EAPI Evas_List        *evas_list_remove                  (Evas_List *list, const void *data);
    EAPI Evas_List        *evas_list_remove_list             (Evas_List *list, Evas_List *remove_list);
    EAPI void             *evas_list_find                    (Evas_List *list, const void *data);
