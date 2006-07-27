@@ -60,7 +60,8 @@ static void         _ecore_dbus_event_server_data_free(void *data, void *ev);
 
 static Ecore_DBus_Event_Server_Data *_ecore_dbus_event_create(Ecore_DBus_Server *svr, Ecore_DBus_Message *msg);
 
-static void         _ecore_dbus_method_hello_cb(void *data, Ecore_DBus_Message_Type type, Ecore_DBus_Method_Return *reply);
+static void         _ecore_dbus_method_hello_cb(void *data, Ecore_DBus_Method_Return *reply);
+static void         _ecore_dbus_method_error_cb(void *data, const char *error);
 
 /* local variables  */
 
@@ -316,7 +317,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     ecore_dbus_server_send(svr, "BEGIN\r\n", 7);
 	     svr->authenticated = 1;
 	     /* Register on the bus */
-	     ecore_dbus_method_hello(svr, _ecore_dbus_method_hello_cb, svr);
+	     ecore_dbus_method_hello(svr, _ecore_dbus_method_hello_cb, _ecore_dbus_method_error_cb, svr);
 	  }
 	else if (!strncmp(e->data, "DATA", 4))
 	  {
@@ -362,20 +363,38 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     /* Trap known messages */
 	     ev2 = _ecore_dbus_event_create(svr, msg);
 	     if (!ev2) break;
-	     if ((msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN) ||
-		 (msg->type == ECORE_DBUS_MESSAGE_TYPE_ERROR))
+	     if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
 	       {
 		  Ecore_DBus_Message *sent;
 		  sent = ecore_hash_remove(svr->messages, (void *)(ev2->header.reply_serial));
-		  if ((sent) && (sent->cb.func))
+		  if ((sent) && (sent->cb.method_return))
 		    {
-		       sent->cb.func(sent->cb.data, msg->type, ev2);
-		       _ecore_dbus_event_server_data_free(NULL, ev2);
+		       sent->cb.method_return(sent->cb.data, ev2);
 		    }
 		  else
 		    {
 		       printf("Ecore_DBus: Reply without reply serial!\n");
 		    }
+		  if (sent) _ecore_dbus_message_free(sent);
+		  _ecore_dbus_event_server_data_free(NULL, ev2);
+	       }
+	     else if (msg->type == ECORE_DBUS_MESSAGE_TYPE_ERROR)
+	       {
+		  Ecore_DBus_Message *sent;
+		  sent = ecore_hash_remove(svr->messages, (void *)(ev2->header.reply_serial));
+		  if ((sent) && (sent->cb.error))
+		    {
+		       char *error = NULL;
+		       if (ev2->args)
+			 error = ev2->args[0].value;
+		       sent->cb.error(sent->cb.data, error);
+		    }
+		  else
+		    {
+		       printf("Ecore_DBus: Error without reply serial!\n");
+		    }
+		  if (sent) _ecore_dbus_message_free(sent);
+		  _ecore_dbus_event_server_data_free(NULL, ev2);
 	       }
 	     else if (msg->type == ECORE_DBUS_MESSAGE_TYPE_SIGNAL)
 	       {
@@ -454,17 +473,11 @@ _ecore_dbus_event_create(Ecore_DBus_Server *svr, Ecore_DBus_Message *msg)
 }
 
 static void
-_ecore_dbus_method_hello_cb(void *data, Ecore_DBus_Message_Type type, Ecore_DBus_Method_Return *reply)
+_ecore_dbus_method_hello_cb(void *data, Ecore_DBus_Method_Return *reply)
 {
    Ecore_DBus_Event_Server_Add *svr_add;
    Ecore_DBus_Server           *svr;
    char                        *name;
-
-   if (type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
-     {
-	printf("Ecore_DBus: Could not register on the message bus\n");
-	return;
-     }
 
    svr = data;
    name = reply->args[0].value;
@@ -480,4 +493,19 @@ _ecore_dbus_method_hello_cb(void *data, Ecore_DBus_Message_Type type, Ecore_DBus
    svr_add = malloc(sizeof(Ecore_DBus_Event_Server_Add));
    svr_add->server = svr;
    ecore_event_add(ECORE_DBUS_EVENT_SERVER_ADD, svr_add, NULL, NULL);
+}
+
+static void
+_ecore_dbus_method_error_cb(void *data, const char *error)
+{
+   Ecore_DBus_Event_Server_Del *ev;
+   Ecore_DBus_Server           *svr;
+
+   svr = data;
+   printf("Ecore_DBus: error %s\n", error);
+
+   ev = malloc(sizeof(Ecore_DBus_Event_Server_Del));
+   if (!ev) return;
+   ev->server = svr;
+   ecore_event_add(ECORE_DBUS_EVENT_SERVER_DEL, ev, _ecore_dbus_event_server_del_free, NULL);
 }

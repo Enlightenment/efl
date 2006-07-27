@@ -19,7 +19,8 @@ static void _ecore_dbus_message_print_raw(Ecore_DBus_Message *msg);
 EAPI unsigned int
 ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *destination,
 				   char *path, char *interface, char *method,
-				   Ecore_DBus_Method_Cb method_cb,
+				   Ecore_DBus_Method_Return_Cb method_cb,
+				   Ecore_DBus_Error_Cb error_cb,
 				   void *data,
 				   char *fmt, ...)
 {
@@ -33,7 +34,8 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *destination,
    Ecore_DBus_Message *msg = _ecore_dbus_message_new(svr);
    if (method_cb)
      {
-	msg->cb.func = method_cb;
+	msg->cb.method_return = method_cb;
+	msg->cb.error = error_cb;
 	msg->cb.data = data;
      }
 

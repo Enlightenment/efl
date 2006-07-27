@@ -8,11 +8,10 @@
 static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
 
-static void ecore_dbus_method_list_names_cb(void *data,
-					    Ecore_DBus_Message_Type type,
-					    Ecore_DBus_Method_Return *ev);
+static void ecore_dbus_method_list_names_cb(void *data, Ecore_DBus_Method_Return *reply);
+static void ecore_dbus_method_error_cb(void *data, const char *error);
 
-static const char * event_type_get(Ecore_DBus_Message_Type type);
+static const char *event_type_get(Ecore_DBus_Message_Type type);
 
 static Ecore_DBus_Server *svr = NULL;
 
@@ -56,7 +55,9 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("ecore_dbus_event_server_add\n");
-   ecore_dbus_method_list_names(event->server, ecore_dbus_method_list_names_cb, NULL);
+   ecore_dbus_method_list_names(event->server,
+				ecore_dbus_method_list_names_cb,
+				ecore_dbus_method_error_cb, NULL);
    return 0;
 }
 
@@ -74,7 +75,6 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
 
 static void
 ecore_dbus_method_list_names_cb(void *data,
-				Ecore_DBus_Message_Type type,
 				Ecore_DBus_Method_Return *reply)
 {
    Ecore_List *names;
@@ -96,7 +96,13 @@ ecore_dbus_method_list_names_cb(void *data,
 	ecore_list_destroy(names);
      }
    ecore_main_loop_quit();
-   return 0;
+}
+
+static void
+ecore_dbus_method_error_cb(void *data, const char *error)
+{
+   printf("Error: %s\n", error);
+   ecore_main_loop_quit();
 }
 
 static const char *

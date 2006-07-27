@@ -135,7 +135,8 @@ extern "C" {
    EAPI extern int ECORE_DBUS_EVENT_SERVER_SIGNAL;
 
    /* callback */
-   typedef void (*Ecore_DBus_Method_Cb)(void *data, Ecore_DBus_Message_Type type, Ecore_DBus_Method_Return *reply);
+   typedef void (*Ecore_DBus_Method_Return_Cb)(void *data, Ecore_DBus_Method_Return *reply);
+   typedef void (*Ecore_DBus_Error_Cb)(void *data, const char *error);
 
    /* init */
    EAPI int ecore_dbus_init(void);
@@ -151,9 +152,8 @@ extern "C" {
    EAPI unsigned int  ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr,
 							 char *destination, char *path,
 							 char *interface, char *method,
-							 void (*method_cb)(void *udata,
-									   Ecore_DBus_Message_Type type,
-									   Ecore_DBus_Event_Server_Data *data),
+							 Ecore_DBus_Method_Return_Cb method_cb,
+							 Ecore_DBus_Error_Cb error_cb,
 							 void *data,
 							 char *fmt, ...);
    EAPI void          ecore_dbus_message_del(Ecore_DBus_Message *msg);
@@ -162,14 +162,14 @@ extern "C" {
    EAPI void         *ecore_dbus_message_body_field_get(Ecore_DBus_Message *msg, unsigned int pos);
 
    /* methods */
-   EAPI int ecore_dbus_method_hello(Ecore_DBus_Server *svr, Ecore_DBus_Method_Cb method_cb, void *data);
-   EAPI int ecore_dbus_method_list_names(Ecore_DBus_Server *svr, Ecore_DBus_Method_Cb method_cb, void *data);
-   EAPI int ecore_dbus_method_name_has_owner(Ecore_DBus_Server *svr, char *name, Ecore_DBus_Method_Cb method_cb, void *data);
-   EAPI int ecore_dbus_method_start_service_by_name(Ecore_DBus_Server *svr, char *name, unsigned int flags, Ecore_DBus_Method_Cb method_cb, void *data);
-   EAPI int ecore_dbus_method_get_name_owner(Ecore_DBus_Server *svr, char *name, Ecore_DBus_Method_Cb method_cb, void *data);
-   EAPI int ecore_dbus_method_get_connection_unix_user(Ecore_DBus_Server *svr, char *connection, Ecore_DBus_Method_Cb method_cb, void *data);
-   EAPI int ecore_dbus_method_add_match(Ecore_DBus_Server *svr, char *match, Ecore_DBus_Method_Cb method_cb, void *data);
-   EAPI int ecore_dbus_method_remove_match(Ecore_DBus_Server *svr, char *match, Ecore_DBus_Method_Cb method_cb, void *data);
+   EAPI int ecore_dbus_method_hello(Ecore_DBus_Server *svr, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_list_names(Ecore_DBus_Server *svr, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_name_has_owner(Ecore_DBus_Server *svr, char *name, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_start_service_by_name(Ecore_DBus_Server *svr, char *name, unsigned int flags, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_get_name_owner(Ecore_DBus_Server *svr, char *name, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_get_connection_unix_user(Ecore_DBus_Server *svr, char *connection, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_add_match(Ecore_DBus_Server *svr, char *match, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_remove_match(Ecore_DBus_Server *svr, char *match, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
 
 #ifdef __cplusplus
 }

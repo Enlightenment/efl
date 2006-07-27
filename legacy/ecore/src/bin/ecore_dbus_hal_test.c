@@ -8,10 +8,9 @@
 static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
 
-static void ecore_dbus_method_name_has_owner_cb(void *data, Ecore_DBus_Message_Type type,
-						Ecore_DBus_Method_Return *reply);
-static void ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Message_Type type,
-					   Ecore_DBus_Method_Return *reply);
+static void ecore_dbus_method_name_has_owner_cb(void *data, Ecore_DBus_Method_Return *reply);
+static void ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Method_Return *reply);
+static void ecore_dbus_method_error_cb(void *data, const char *error);
 
 static int ecore_dbus_event_server_signal(void *udata, int ev_type, void *ev);
 
@@ -63,7 +62,8 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
    event = ev;
    printf("ecore_dbus_event_server_add\n");
    ecore_dbus_method_name_has_owner(event->server, "org.freedesktop.Hal",
-				    ecore_dbus_method_name_has_owner_cb, NULL);
+				    ecore_dbus_method_name_has_owner_cb,
+				    ecore_dbus_method_error_cb, NULL);
    return 0;
 }
 
@@ -80,15 +80,9 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
 }
 
 static void
-ecore_dbus_method_name_has_owner_cb(void *data, Ecore_DBus_Message_Type type,
-				    Ecore_DBus_Method_Return *reply)
+ecore_dbus_method_name_has_owner_cb(void *data, Ecore_DBus_Method_Return *reply)
 {
    unsigned int *exists;
-   if (type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
-     {
-	ecore_main_loop_quit();
-	return;
-     }
    printf("ecore_dbus_event_server_method_return %s %s.%s\n", event_type_get(reply->type),
 							      reply->header.interface,
 							      reply->header.member);
@@ -107,24 +101,26 @@ ecore_dbus_method_name_has_owner_cb(void *data, Ecore_DBus_Message_Type type,
 				    "interface='org.freedesktop.Hal.Manager',"
 				    "sender='org.freedesktop.Hal',"
 				    "path='/org/freedesktop/Hal/Manager'",
-				    ecore_dbus_method_add_match_cb, NULL);
+				    ecore_dbus_method_add_match_cb,
+				    ecore_dbus_method_error_cb, NULL);
 
      }
 }
 
 static void
-ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Message_Type type,
-			       Ecore_DBus_Method_Return *reply)
+ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Method_Return *reply)
 {
-   if (type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
-     {
-	ecore_main_loop_quit();
-	return;
-     }
    printf("ecore_dbus_event_server_method_return %s %s.%s\n", event_type_get(reply->type),
 							      reply->header.interface,
 							      reply->header.member);
    printf("Should be listening for device changes!\n");
+}
+
+static void
+ecore_dbus_method_error_cb(void *data, const char *error)
+{
+   printf("Error: %s\n", error);
+   ecore_main_loop_quit();
 }
 
 static int

@@ -74,8 +74,9 @@ struct _Ecore_DBus_Message
 
    /* callback */
    struct {
-	Ecore_DBus_Method_Cb func;
-	void *data;
+	Ecore_DBus_Method_Return_Cb  method_return;
+	Ecore_DBus_Error_Cb          error;
+	void                        *data;
    } cb;
 
    /* header fields */
