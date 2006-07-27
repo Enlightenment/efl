@@ -65,6 +65,8 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_callback_focus_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_mouse_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_mouse_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void        (*fn_callback_sticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void        (*fn_callback_unsticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));   
    void        (*fn_callback_pre_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_post_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_move) (Ecore_Evas *ee, int x, int y);
@@ -116,18 +118,14 @@ struct _Ecore_Evas_Engine
       unsigned char  using_bg_pixmap : 1;
       unsigned char  managed : 1;
       struct {
-	   /*
 	   unsigned char modal : 1;
-	   */
 	   unsigned char sticky : 1;
-	   /*
 	   unsigned char maximized_v : 1;
 	   unsigned char maximized_h : 1;
 	   unsigned char shaded : 1;
 	   unsigned char skip_taskbar : 1;
 	   unsigned char skip_pager : 1;
 	   unsigned char fullscreen : 1;
-	   */
 	   unsigned char above : 1;
 	   unsigned char below : 1;
       } state;
@@ -218,6 +216,8 @@ struct _Ecore_Evas
       void          (*fn_destroy) (Ecore_Evas *ee);
       void          (*fn_focus_in) (Ecore_Evas *ee);
       void          (*fn_focus_out) (Ecore_Evas *ee);
+      void          (*fn_sticky) (Ecore_Evas *ee);
+      void          (*fn_unsticky) (Ecore_Evas *ee);      
       void          (*fn_mouse_in) (Ecore_Evas *ee);
       void          (*fn_mouse_out) (Ecore_Evas *ee);
       void          (*fn_pre_render) (Ecore_Evas *ee);

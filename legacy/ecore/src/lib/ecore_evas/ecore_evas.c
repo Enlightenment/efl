@@ -357,6 +357,50 @@ ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
+ * Set a callback for Ecore_Evas sticky events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+ 
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee becomes sticky.
+ */
+EAPI void
+ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_callback_sticky_set");
+	return;
+     }
+   IFC(ee, fn_callback_sticky_set) (ee, func);
+   IFE;
+   ee->func.fn_sticky = func;
+}
+
+/**
+ * Set a callback for Ecore_Evas un-sticky events.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+ 
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee becomes un-sticky.
+ */
+EAPI void
+ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_callback_unsticky_set");
+	return;
+     }
+   IFC(ee, fn_callback_unsticky_set) (ee, func);
+   IFE;
+   ee->func.fn_unsticky = func;
+}
+
+/**
  * Set a callback for Ecore_Evas mouse in events. 
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call

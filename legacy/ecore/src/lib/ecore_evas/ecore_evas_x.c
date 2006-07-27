@@ -548,10 +548,22 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
      {
 	unsigned int i, num;
 	Ecore_X_Window_State *state;
+	int sticky;
 	
-	ee->prop.sticky = 0;
-	ee->engine.x.state.sticky = 0;
-		
+	sticky = 0;
+	
+	/* TODO: we need to move those to the end, with if statements */
+	ee->engine.x.state.modal = 0;
+	ee->engine.x.state.maximized_v = 0;
+	ee->engine.x.state.maximized_h = 0;
+	ee->engine.x.state.shaded = 0;
+	ee->engine.x.state.skip_taskbar = 0;
+	ee->engine.x.state.skip_pager = 0;		
+	ee->prop.fullscreen = 0;
+	ee->engine.x.state.fullscreen = 0;
+	ee->engine.x.state.above = 0;
+	ee->engine.x.state.below = 0;	
+	
 	ecore_x_netwm_window_state_get(e->win, &state, &num);
 	if (state)
 	  {
@@ -559,14 +571,56 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 	       {
 		  switch (state[i])
 		    {
+		     case ECORE_X_WINDOW_STATE_MODAL:
+		        ee->engine.x.state.modal = 1;
+		        break;
 		     case ECORE_X_WINDOW_STATE_STICKY:
-		       ee->prop.sticky = 1;
-		       ee->engine.x.state.sticky = 1;		       
-		       break;
+		        if (ee->prop.sticky && ee->engine.x.state.sticky)
+			  break;
+		       
+		        sticky = 1;
+		        ee->prop.sticky = 1;	      
+		        ee->engine.x.state.sticky = 1;
+		        if (ee->func.fn_sticky) ee->func.fn_sticky(ee);
+		        break;
+		     case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
+		        ee->engine.x.state.maximized_v = 1;
+		        break;
+		     case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
+		        ee->engine.x.state.maximized_h = 1;
+		        break;		       
+		     case ECORE_X_WINDOW_STATE_SHADED:
+		        ee->engine.x.state.shaded = 1;
+		        break;
+		     case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
+		        ee->engine.x.state.skip_taskbar = 1;
+		        break;
+		     case ECORE_X_WINDOW_STATE_SKIP_PAGER:
+		        ee->engine.x.state.skip_pager = 1;
+		        break;
+		     case ECORE_X_WINDOW_STATE_FULLSCREEN:		       
+		        ee->prop.fullscreen = 1;
+		        ee->engine.x.state.fullscreen = 1;
+		        break;
+		     case ECORE_X_WINDOW_STATE_ABOVE:
+		        ee->engine.x.state.above = 1;
+		        break;
+		     case ECORE_X_WINDOW_STATE_BELOW:
+		        ee->engine.x.state.below = 1;
+		        break;
+		     default:
+		        break;
 		    }
-	       }
+	       }	     
 	  }
-     }		       
+	
+	if (ee->prop.sticky && !sticky)
+	  {
+	     ee->prop.sticky = 0;
+	     ee->engine.x.state.sticky = 0;
+	     if (ee->func.fn_unsticky) ee->func.fn_unsticky(ee);
+	  }		
+     }
    return 1;
 }
 
@@ -2019,6 +2073,8 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      NULL,
      NULL,
      _ecore_evas_x_callback_delete_request_set,
+     NULL,
+     NULL,
      NULL,
      NULL,
      NULL,

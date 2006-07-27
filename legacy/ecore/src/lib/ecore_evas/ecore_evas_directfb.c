@@ -502,6 +502,8 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* cb destroy */
      NULL,				/* cb focus in */
      NULL,				/* cb focus out */
+     NULL,                              /* cb sticky */
+     NULL,                              /* cb unsticky */
      NULL,				/* cb mouse in */
      NULL,				/* cb mouse out */
      NULL,				/* cb pre render */
