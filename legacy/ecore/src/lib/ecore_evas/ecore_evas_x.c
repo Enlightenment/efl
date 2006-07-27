@@ -8,6 +8,7 @@
 #include "Ecore_Evas.h"
 #ifdef BUILD_ECORE_X
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
 #endif
 
 #ifdef BUILD_ECORE_X
@@ -17,7 +18,7 @@ static int _ecore_evas_fps_debug = 0;
 
 static Ecore_Evas *ecore_evases = NULL;
 static Evas_Hash *ecore_evases_hash = NULL;
-static Ecore_Event_Handler *ecore_evas_event_handlers[16];
+static Ecore_Event_Handler *ecore_evas_event_handlers[17];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 #ifdef BUILD_ECORE_EVAS_GL
@@ -529,6 +530,43 @@ _ecore_evas_x_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, e->time, NULL);
 
+   return 1;
+}
+
+/* TODO: we need to make this work for all the states, not just sticky */
+static int
+_ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_X_Event_Window_Property *e;   
+
+   e = event;
+   ee = _ecore_evas_x_match(e->win);
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */   
+   if (e->win != ee->engine.x.win) return 1;
+   if (e->atom == ECORE_X_ATOM_NET_WM_STATE)
+     {
+	unsigned int i, num;
+	Ecore_X_Window_State *state;
+	
+	ee->prop.sticky = 0;
+	ee->engine.x.state.sticky = 0;
+		
+	ecore_x_netwm_window_state_get(e->win, &state, &num);
+	if (state)
+	  {
+	     for (i = 0; i < num; i++)
+	       {
+		  switch (state[i])
+		    {
+		     case ECORE_X_WINDOW_STATE_STICKY:
+		       ee->prop.sticky = 1;
+		       ee->engine.x.state.sticky = 1;		       
+		       break;
+		    }
+	       }
+	  }
+     }		       
    return 1;
 }
 
@@ -1056,6 +1094,7 @@ _ecore_evas_x_init(void)
    ecore_evas_event_handlers[13] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_SHOW, _ecore_evas_x_event_window_show, NULL);
    ecore_evas_event_handlers[14] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_HIDE, _ecore_evas_x_event_window_hide, NULL);
    ecore_evas_event_handlers[15] = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_WHEEL, _ecore_evas_x_event_mouse_wheel, NULL);
+   ecore_evas_event_handlers[16] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY, _ecore_evas_x_event_property_change, NULL);
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    return _ecore_evas_init_count;
 }
