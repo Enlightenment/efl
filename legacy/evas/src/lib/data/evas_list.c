@@ -202,7 +202,7 @@ evas_list_append_relative(Evas_List *list, const void *data, const void *relativ
    for (l = list; l; l = l->next)
      {
 	if (l->data == relative)
-	  return evas_list_append_relative_list(list, data, relative);
+	  return evas_list_append_relative_list(list, data, l);
      }
    return evas_list_append(list, data);
 }
@@ -291,7 +291,7 @@ evas_list_prepend_relative(Evas_List *list, const void *data, const void *relati
    for (l = list; l; l = l->next)
      {
 	if (l->data == relative)
-	  return evas_list_prepend_relative_list(list, data, relative);
+	  return evas_list_prepend_relative_list(list, data, l);
      }
    return evas_list_prepend(list, data);
 }
