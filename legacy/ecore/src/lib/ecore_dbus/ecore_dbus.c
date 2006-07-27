@@ -159,8 +159,8 @@ ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
    svr->cnt_msg = 0;
    svr->auth_type = -1;
    svr->auth_type_transaction = 0;
-   svr->methods = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
-   ecore_hash_set_free_value(svr->methods, free);
+   svr->messages = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
+   ecore_hash_set_free_value(svr->messages, ECORE_FREE_CB(_ecore_dbus_message_free));
    servers = _ecore_list2_append(servers, svr);
 
    return svr;
@@ -172,7 +172,7 @@ ecore_dbus_server_del(Ecore_DBus_Server *svr)
    if (svr->server) ecore_con_server_del(svr->server);
    servers = _ecore_list2_remove(servers, svr);
    if (svr->unique_name) free(svr->unique_name);
-   ecore_hash_destroy(svr->methods);
+   ecore_hash_destroy(svr->messages);
    free(svr);
 }
 
@@ -364,13 +364,13 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     /* Trap known messages */
 	     if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
 	       {
-		  //char         *method;
 		  unsigned int *serial;
 
 		  serial = ecore_dbus_message_header_field_get(msg, ECORE_DBUS_HEADER_FIELD_REPLY_SERIAL);
-		  //method = ecore_hash_remove(svr->methods, (void *)(ev->header.reply_serial));
 		  if (serial)
 		    {
+		       Ecore_DBus_Message *sent;
+		       sent = ecore_hash_remove(svr->messages, (void *)(*serial));
 		       if (*serial == svr->hello)
 			 {
 			    Ecore_DBus_Event_Server_Add *svr_add;
@@ -398,6 +398,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 			    ecore_event_add(ECORE_DBUS_EVENT_SERVER_METHOD_RETURN, ev2,
 				  _ecore_dbus_event_server_data_free, NULL);
 			 }
+		       _ecore_dbus_message_free(sent);
 		    }
 		  else
 		    {
@@ -477,7 +478,7 @@ _ecore_dbus_event_create(Ecore_DBus_Server *svr, Ecore_DBus_Message *msg)
 	Ecore_DBus_Message_Field *f;
 	int i = 0;
 
-	ev->args = malloc(ecore_list_nodes(msg->fields) * sizeof(Ecore_DBus_Event_Arg *));
+	ev->args = malloc(ecore_list_nodes(msg->fields) * sizeof(Ecore_DBus_Event_Arg));
 	ecore_list_goto_first(msg->fields);
 	while ((f = ecore_list_next(msg->fields)))
 	  {

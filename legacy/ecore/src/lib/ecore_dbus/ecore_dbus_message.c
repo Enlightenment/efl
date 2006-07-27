@@ -21,7 +21,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *destination,
 				   char *path, char *interface, char *method,
 				   char *fmt, ...)
 {
-   unsigned int                    serial, body_start;
+   unsigned int                    body_start;
    char                            buf[1024];
    Ecore_DBus_Message_Field_Array *arr;
 
@@ -147,11 +147,9 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *destination,
      snprintf(buf, sizeof(buf), "%s.%s", interface, method);
    else
      strcpy(buf, method);
-   ecore_hash_set(svr->methods, (void *)msg->serial, strdup(buf));
+   ecore_hash_set(svr->messages, (void *)msg->serial, msg);
 
-   serial = msg->serial;
-   _ecore_dbus_message_free(msg);
-   return serial;
+   return msg->serial;
 }
 
 EAPI void

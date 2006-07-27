@@ -63,7 +63,7 @@ struct _Ecore_DBus_Server
    int                      auth_type_transaction;
    int                      cnt_msg;
 
-   Ecore_Hash              *methods;
+   Ecore_Hash              *messages;
    unsigned int             hello;
    char                    *unique_name;
 };
