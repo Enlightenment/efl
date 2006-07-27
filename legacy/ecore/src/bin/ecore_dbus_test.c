@@ -58,6 +58,14 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
    ecore_dbus_method_list_names(event->server,
 				ecore_dbus_method_list_names_cb,
 				ecore_dbus_method_error_cb, NULL);
+   ecore_dbus_message_new_method_call(event->server,
+				      "org.freedesktop.DBus" /*destination*/,
+				      "/org/freedesktop/DBus" /*path*/,
+				      "org.freedesktop.DBus" /*interface*/,
+				      "ListName" /*method*/,
+				      ecore_dbus_method_list_names_cb,
+				      ecore_dbus_method_error_cb, NULL,
+				      NULL /*fmt*/);
    return 0;
 }
 

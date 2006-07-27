@@ -385,7 +385,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 		  if ((sent) && (sent->cb.error))
 		    {
 		       char *error = NULL;
-		       if (ev2->args)
+		       if ((ev2->args) && (ev2->args[0].type == ECORE_DBUS_DATA_TYPE_STRING))
 			 error = ev2->args[0].value;
 		       sent->cb.error(sent->cb.data, error);
 		    }
