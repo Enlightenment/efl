@@ -367,12 +367,18 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
    msg->type = *(message + 1);
    msg->flags = *(message + 2);
    msg->protocol = *(message + 3);
+   if (msg->protocol != ECORE_DBUS_MAJOR_PROTOCOL_VERSION)
+     {
+	printf("Ecore_DBus: Only supports protocol 0x%x, message has protocol 0x%x.\n",
+	       ECORE_DBUS_MAJOR_PROTOCOL_VERSION, msg->protocol);
+	goto error;
+     }
    msg->body_length = *(unsigned int *)(message + 4);
    msg->serial = *(unsigned int *)(message + 8);
    if (msg->type == ECORE_DBUS_MESSAGE_TYPE_INVALID)
      {
-	printf("[ecore_dbus] message type invalid\n");
-	return NULL;
+	printf("Ecore_DBus: Invalid message type.\n");
+	goto error;
      }
    /* copy message to buffer */
    _ecore_dbus_message_append_bytes(msg, message, size);

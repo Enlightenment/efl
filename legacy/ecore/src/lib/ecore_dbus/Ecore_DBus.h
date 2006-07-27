@@ -36,6 +36,7 @@ extern "C" {
    typedef struct _Ecore_DBus_Event_Server_Add  Ecore_DBus_Event_Server_Add;
    typedef struct _Ecore_DBus_Event_Server_Del  Ecore_DBus_Event_Server_Del;
    typedef struct _Ecore_DBus_Event_Server_Data Ecore_DBus_Event_Server_Data;
+   typedef struct _Ecore_DBus_Event_Arg         Ecore_DBus_Event_Arg;
    typedef struct _Ecore_DBus_Message           Ecore_DBus_Message;
    typedef struct _Ecore_DBus_Message_Field     Ecore_DBus_Message_Field;
 
@@ -94,8 +95,24 @@ extern "C" {
      {
 	Ecore_DBus_Server       *server;
 	Ecore_DBus_Message_Type  type;
-	char                    *member;
 	Ecore_DBus_Message      *message;
+	struct {
+	     const char   *path;
+	     const char   *interface;
+	     const char   *member;
+	     const char   *error_name;
+	     unsigned int  reply_serial;
+	     const char   *destination;
+	     const char   *sender;
+	     const char   *signature;
+	} header;
+	Ecore_DBus_Event_Arg *args;
+     };
+
+   struct _Ecore_DBus_Event_Arg
+     {
+	Ecore_DBus_Data_Type  type;
+	void                 *value;
      };
 
    typedef enum _Ecore_DBus_Message_Header_Field
@@ -112,8 +129,11 @@ extern "C" {
      } Ecore_DBus_Message_Header_Field;
 
    EAPI extern int ECORE_DBUS_EVENT_SERVER_ADD;
-   EAPI extern int ECORE_DBUS_EVENT_SERVER_DATA;
    EAPI extern int ECORE_DBUS_EVENT_SERVER_DEL;
+   EAPI extern int ECORE_DBUS_EVENT_SERVER_METHOD_RETURN;
+   EAPI extern int ECORE_DBUS_EVENT_SERVER_ERROR;
+   EAPI extern int ECORE_DBUS_EVENT_SERVER_SIGNAL;
+   EAPI extern int ECORE_DBUS_EVENT_SERVER_DATA;
 
    /* init */
    EAPI int ecore_dbus_init(void);

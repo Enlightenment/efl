@@ -228,119 +228,7 @@ ecore_dbus_message_body_field_get(Ecore_DBus_Message *m, unsigned int pos)
    while ((f = ecore_list_next(m->fields)))
      {
 	if (i == pos)
-	  {
-	     switch (f->type)
-	       {
-		case ECORE_DBUS_DATA_TYPE_BYTE:
-		   return &ECORE_DBUS_MESSAGE_FIELD_BYTE(f)->value;
-		case ECORE_DBUS_DATA_TYPE_BOOLEAN:
-		   return &ECORE_DBUS_MESSAGE_FIELD_BOOLEAN(f)->value;
-		case ECORE_DBUS_DATA_TYPE_INT16:
-		   return &ECORE_DBUS_MESSAGE_FIELD_INT16(f)->value;
-		case ECORE_DBUS_DATA_TYPE_UINT16:
-		   return &ECORE_DBUS_MESSAGE_FIELD_UINT16(f)->value;
-		case ECORE_DBUS_DATA_TYPE_INT32:
-		   return &ECORE_DBUS_MESSAGE_FIELD_INT32(f)->value;
-		case ECORE_DBUS_DATA_TYPE_UINT32:
-		   return &ECORE_DBUS_MESSAGE_FIELD_UINT32(f)->value;
-		case ECORE_DBUS_DATA_TYPE_INT64:
-		   return &ECORE_DBUS_MESSAGE_FIELD_INT64(f)->value;
-		case ECORE_DBUS_DATA_TYPE_UINT64:
-		   return &ECORE_DBUS_MESSAGE_FIELD_UINT64(f)->value;
-		case ECORE_DBUS_DATA_TYPE_DOUBLE:
-		   return &ECORE_DBUS_MESSAGE_FIELD_DOUBLE(f)->value;
-		case ECORE_DBUS_DATA_TYPE_STRING:
-		   return ECORE_DBUS_MESSAGE_FIELD_STRING(f)->value;
-		case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
-		   return ECORE_DBUS_MESSAGE_FIELD_OBJECT_PATH(f)->value;
-		case ECORE_DBUS_DATA_TYPE_SIGNATURE:
-		   return ECORE_DBUS_MESSAGE_FIELD_SIGNATURE(f)->value;
-		case ECORE_DBUS_DATA_TYPE_ARRAY:
-		     {
-			Ecore_DBus_Message_Field_Container *c;
-			Ecore_List                         *list;
-			void                               *value;
-
-			list = ecore_list_new();
-			c = ECORE_DBUS_MESSAGE_FIELD_CONTAINER(f);
-			ecore_list_goto_first(c->values);
-			switch (ECORE_DBUS_MESSAGE_FIELD_ARRAY(f)->contained_type)
-			  {
-			   case ECORE_DBUS_DATA_TYPE_BYTE:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_BYTE(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_BOOLEAN:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_BOOLEAN(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_INT16:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_INT16(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_UINT16:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_UINT16(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_INT32:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_INT32(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_UINT32:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_UINT32(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_INT64:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_INT64(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_UINT64:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_UINT64(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_DOUBLE:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, &ECORE_DBUS_MESSAGE_FIELD_DOUBLE(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_STRING:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, ECORE_DBUS_MESSAGE_FIELD_STRING(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, ECORE_DBUS_MESSAGE_FIELD_OBJECT_PATH(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_SIGNATURE:
-			      while ((value = ecore_list_next(c->values)))
-				ecore_list_append(list, ECORE_DBUS_MESSAGE_FIELD_SIGNATURE(value)->value);
-			      break;
-			   case ECORE_DBUS_DATA_TYPE_INVALID:
-			   case ECORE_DBUS_DATA_TYPE_ARRAY:
-			   case ECORE_DBUS_DATA_TYPE_VARIANT:
-			   case ECORE_DBUS_DATA_TYPE_STRUCT:
-			   case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
-			   case ECORE_DBUS_DATA_TYPE_STRUCT_END:
-			   case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
-			   case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
-			   case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
-			      return NULL;
-			  }
-			return list;
-		     }
-		case ECORE_DBUS_DATA_TYPE_INVALID:
-		case ECORE_DBUS_DATA_TYPE_VARIANT:
-		case ECORE_DBUS_DATA_TYPE_STRUCT:
-		case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
-		case ECORE_DBUS_DATA_TYPE_STRUCT_END:
-		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
-		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
-		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
-#if 0
-		default:
-#endif
-		   break;
-	       }
-	  }
+	  return _ecore_dbus_message_field_value_get(f);
 	i++;
      }
    return NULL;
@@ -552,6 +440,11 @@ _ecore_dbus_message_field_print(Ecore_DBus_Message_Field *f)
 	    ("[ecore_dbus] field BYTE: value offset = %d value = %c %d\n",
 	     f->offset, (char)*(f->buffer), (char)*(f->buffer));
 	 break;
+      case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+	 printf
+	    ("[ecore_dbus] field BOOLEAN: value offset = %d value = %u\n",
+	     f->offset, (unsigned int)*(f->buffer));
+	 break;
       case ECORE_DBUS_DATA_TYPE_INT32:
 	 printf
 	    ("[ecore_dbus] field INT32: value offset = %d value = %d\n",
@@ -623,7 +516,6 @@ _ecore_dbus_message_field_print(Ecore_DBus_Message_Field *f)
 	   }
 	 break;
       case ECORE_DBUS_DATA_TYPE_INVALID:
-      case ECORE_DBUS_DATA_TYPE_BOOLEAN:
       case ECORE_DBUS_DATA_TYPE_INT16:
       case ECORE_DBUS_DATA_TYPE_UINT16:
       case ECORE_DBUS_DATA_TYPE_INT64:

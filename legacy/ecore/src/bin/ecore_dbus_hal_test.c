@@ -7,16 +7,18 @@
 
 static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
-static int ecore_dbus_event_server_data(void *udata, int ev_type, void *ev);
+static int ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev);
+static int ecore_dbus_event_server_signal(void *udata, int ev_type, void *ev);
 
 static const char *event_type_get(Ecore_DBus_Message_Type type);
 
 static int state = 0;
 
+static Ecore_DBus_Server *svr = NULL;
+
 int
 main(int argc, char **argv)
 {
-   Ecore_DBus_Server *svr;
 
    ecore_dbus_init();
    svr = ecore_dbus_server_connect(ECORE_DBUS_BUS_SYSTEM,
@@ -36,15 +38,17 @@ main(int argc, char **argv)
 					       ecore_dbus_event_server_add, NULL);
 	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DEL,
 					       ecore_dbus_event_server_del, NULL);
-	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DATA,
-					       ecore_dbus_event_server_data, NULL);
+	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_METHOD_RETURN,
+					       ecore_dbus_event_server_method_return, NULL);
+	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_SIGNAL,
+					       ecore_dbus_event_server_signal, NULL);
 
 	ecore_main_loop_begin();
 
 	for (i = 0; i < 3; i++)
 	  ecore_event_handler_del(handler[i]);
 
-	ecore_dbus_server_del(svr);
+	if (svr) ecore_dbus_server_del(svr);
      }
    ecore_dbus_shutdown();
    return 0;
@@ -57,7 +61,7 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("ecore_dbus_event_server_add\n");
-   ecore_dbus_method_hello(event->server);
+   ecore_dbus_method_name_has_owner(event->server, "org.freedesktop.Hal");
    state++;
    return 0;
 }
@@ -69,72 +73,71 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("ecore_dbus_event_server_del\n");
+   svr = NULL;
    ecore_main_loop_quit();
    return 0;
 }
 
 static int
-ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
+ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev)
 {
    Ecore_DBus_Event_Server_Data *event;
 
    event = ev;
-   printf("ecore_dbus_event_server_data %s\n", event->member);
-   if (event->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
+   printf("ecore_dbus_event_server_method_return %s %s.%s\n", event_type_get(event->type),
+							      event->header.interface,
+							      event->header.member);
+   printf("state: %d\n", state);
+   if (state == 1)
      {
-	if (state == 1)
-	  {
-	     printf("Check if hal is running\n");
-	     ecore_dbus_method_name_has_owner(event->server, "org.freedesktop.Hal");
-	     state++;
-	  }
-	else if (state == 2)
-	  {
-	     int *exists;
+	int *exists;
 
-	     exists = ecore_dbus_message_body_field_get(event->message, 0);
-	     if ((!exists) || (!*exists))
-	       {
-		  printf("No hal\n");
-		  ecore_main_loop_quit();
-	       }
-	     else
-	       {
-		  printf("Add listener for devices\n");
-		  ecore_dbus_method_add_match(event->server,
-			"type='signal',"
-			"interface='org.freedesktop.Hal.Manager',"
-			"sender='org.freedesktop.Hal',"
-			"path='/org/freedesktop/Hal/Manager'");
-
-		  state++;
-	       }
-	  }
-	else if (state == 3)
+	exists = event->args[0].value;
+	if ((!exists) || (!*exists))
 	  {
-	     printf("Should be listening for device changes!");
+	     printf("No hal\n");
+	     ecore_main_loop_quit();
 	  }
 	else
 	  {
-	     printf("Hm: %s\n", event->member);
-	     ecore_dbus_message_print(event->message);
+	     printf("Add listener for devices\n");
+	     ecore_dbus_method_add_match(event->server,
+		   "type='signal',"
+		   "interface='org.freedesktop.Hal.Manager',"
+		   "sender='org.freedesktop.Hal',"
+		   "path='/org/freedesktop/Hal/Manager'");
+
+	     state++;
 	  }
      }
-   else if (event->type == ECORE_DBUS_MESSAGE_TYPE_SIGNAL)
+   else if (state == 2)
      {
-	if (!strcmp(event->member, "org.freedesktop.Hal.Manager.DeviceAdded"))
-	  {
-	     printf("Device added: %s\n", (char *)ecore_dbus_message_body_field_get(event->message, 0));
-	  }
-	else if (!strcmp(event->member, "org.freedesktop.Hal.Manager.DeviceRemoved"))
-	  {
-	     printf("Device removed: %s\n", (char *)ecore_dbus_message_body_field_get(event->message, 0));
-	  }
+	printf("Should be listening for device changes!\n");
      }
    else
      {
-	printf("Event: %s\n", event_type_get(event->type));
+	printf("Hm: %s\n", event->header.member);
 	ecore_dbus_message_print(event->message);
+     }
+   return 0;
+}
+
+static int
+ecore_dbus_event_server_signal(void *udata, int ev_type, void *ev)
+{
+   Ecore_DBus_Event_Server_Data *event;
+
+   event = ev;
+   printf("ecore_dbus_event_server_signal %s %s.%s\n", event_type_get(event->type),
+						     event->header.interface,
+						     event->header.member);
+   if (!strcmp(event->header.member, "DeviceAdded"))
+     {
+	printf("Device added: %s\n", (char *)event->args[0].value);
+     }
+   else if (!strcmp(event->header.member, "DeviceRemoved"))
+     {
+	printf("Device removed: %s\n", (char *)event->args[0].value);
      }
    return 0;
 }

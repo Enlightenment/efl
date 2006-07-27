@@ -64,6 +64,7 @@ struct _Ecore_DBus_Server
    int                      cnt_msg;
 
    Ecore_Hash              *methods;
+   unsigned int             hello;
    char                    *unique_name;
 };
 
@@ -224,6 +225,8 @@ void          _ecore_dbus_message_append_uint32(Ecore_DBus_Message *msg, unsigne
 unsigned char _ecore_dbus_message_read_byte(Ecore_DBus_Message *msg);
 unsigned int  _ecore_dbus_message_read_uint32(Ecore_DBus_Message *msg);
 int           _ecore_dbus_alignment_get(Ecore_DBus_Data_Type type);
+void         *_ecore_dbus_message_field_value_get(Ecore_DBus_Message_Field *f);
+
 /* ecore_dbus_marshal.c */
 Ecore_DBus_Message_Field_Byte   *_ecore_dbus_message_marshal_byte(Ecore_DBus_Message *msg, unsigned char c);
 #if 0

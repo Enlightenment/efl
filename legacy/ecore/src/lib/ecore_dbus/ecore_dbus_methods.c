@@ -11,6 +11,16 @@
 EAPI int
 ecore_dbus_method_hello(Ecore_DBus_Server *svr)
 {
+   if (svr->unique_name)
+     {
+	printf("Ecore_DBus: Already registered on the message bus.\n");
+	return 0;
+     }
+   if (svr->hello)
+     {
+	printf("Ecore_DBus: Already tried to register on the message bus, wait for reply.\n");
+	return 0;
+     }
    return ecore_dbus_message_new_method_call(svr,
 					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,

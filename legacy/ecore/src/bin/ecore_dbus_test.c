@@ -7,15 +7,15 @@
 
 static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
-static int ecore_dbus_event_server_data(void *udata, int ev_type, void *ev);
+static int ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev);
 
 static const char * event_type_get(Ecore_DBus_Message_Type type);
+
+static Ecore_DBus_Server *svr = NULL;
 
 int
 main(int argc, char **argv)
 {
-   Ecore_DBus_Server *svr;
-
    ecore_dbus_init();
    svr = ecore_dbus_server_connect(ECORE_DBUS_BUS_SYSTEM,
 				   "/var/run/dbus/system_dbus_socket", -1, NULL);
@@ -34,15 +34,15 @@ main(int argc, char **argv)
 					       ecore_dbus_event_server_add, NULL);
 	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DEL,
 					       ecore_dbus_event_server_del, NULL);
-	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DATA,
-					       ecore_dbus_event_server_data, NULL);
+	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_METHOD_RETURN,
+					       ecore_dbus_event_server_method_return, NULL);
 
 	ecore_main_loop_begin();
 
 	for (i = 0; i < 3; i++)
 	  ecore_event_handler_del(handler[i]);
 
-	ecore_dbus_server_del(svr);
+	if (svr) ecore_dbus_server_del(svr);
      }
    ecore_dbus_shutdown();
    return 0;
@@ -52,12 +52,10 @@ static int
 ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 {
    Ecore_DBus_Event_Server_Add *event;
-   int ret;
 
    event = ev;
    printf("ecore_dbus_event_server_add\n");
-   ret = ecore_dbus_method_hello(event->server);
-   printf("ret: %d\n", ret);
+   ecore_dbus_method_list_names(event->server);
    return 0;
 }
 
@@ -68,42 +66,35 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("ecore_dbus_event_server_del\n");
+   svr = NULL;
    ecore_main_loop_quit();
    return 0;
 }
 
 static int
-ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
+ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev)
 {
    Ecore_DBus_Event_Server_Data *event;
+   Ecore_List *names;
 
    event = ev;
-   printf("ecore_dbus_event_server_data %s %s\n", event_type_get(event->type), event->member);
-   if (event->type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN) return 0;
-   if (!event->member) return 0;
-   if (!strcmp(event->member, "org.freedesktop.DBus.Hello"))
-     {
-	printf("List names\n");
-	ecore_dbus_method_list_names(event->server);
-     }
-   else if (!strcmp(event->member, "org.freedesktop.DBus.ListNames"))
-     {
-	Ecore_List *names;
+   printf("ecore_dbus_event_server_data %s %s.%s\n", event_type_get(event->type),
+						     event->header.interface,
+						     event->header.member);
 
-	printf("Got names\n");
-	names = ecore_dbus_message_body_field_get(event->message, 0);
-	if (names)
+   printf("Got names %c\n", event->args[0].type);
+   names = event->args[0].value;
+   if (names)
+     {
+	char *name;
+	ecore_list_goto_first(names);
+	while ((name = ecore_list_next(names)))
 	  {
-	     char *name;
-	     ecore_list_goto_first(names);
-	     while ((name = ecore_list_next(names)))
-	       {
-		  printf("Name: %s\n", name);
-	       }
-	     ecore_list_destroy(names);
+	     printf("Name: %s\n", name);
 	  }
-	ecore_main_loop_quit();
+	ecore_list_destroy(names);
      }
+   ecore_main_loop_quit();
    return 0;
 }
 

@@ -144,3 +144,61 @@ _ecore_dbus_alignment_get(Ecore_DBus_Data_Type type)
 	   return 0;
      }
 }
+
+void *
+_ecore_dbus_message_field_value_get(Ecore_DBus_Message_Field *f)
+{
+   switch (f->type)
+     {
+      case ECORE_DBUS_DATA_TYPE_BYTE:
+	 return &ECORE_DBUS_MESSAGE_FIELD_BYTE(f)->value;
+      case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+	 return &ECORE_DBUS_MESSAGE_FIELD_BOOLEAN(f)->value;
+      case ECORE_DBUS_DATA_TYPE_INT16:
+	 return &ECORE_DBUS_MESSAGE_FIELD_INT16(f)->value;
+      case ECORE_DBUS_DATA_TYPE_UINT16:
+	 return &ECORE_DBUS_MESSAGE_FIELD_UINT16(f)->value;
+      case ECORE_DBUS_DATA_TYPE_INT32:
+	 return &ECORE_DBUS_MESSAGE_FIELD_INT32(f)->value;
+      case ECORE_DBUS_DATA_TYPE_UINT32:
+	 return &ECORE_DBUS_MESSAGE_FIELD_UINT32(f)->value;
+      case ECORE_DBUS_DATA_TYPE_INT64:
+	 return &ECORE_DBUS_MESSAGE_FIELD_INT64(f)->value;
+      case ECORE_DBUS_DATA_TYPE_UINT64:
+	 return &ECORE_DBUS_MESSAGE_FIELD_UINT64(f)->value;
+      case ECORE_DBUS_DATA_TYPE_DOUBLE:
+	 return &ECORE_DBUS_MESSAGE_FIELD_DOUBLE(f)->value;
+      case ECORE_DBUS_DATA_TYPE_STRING:
+	 return ECORE_DBUS_MESSAGE_FIELD_STRING(f)->value;
+      case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
+	 return ECORE_DBUS_MESSAGE_FIELD_OBJECT_PATH(f)->value;
+      case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+	 return ECORE_DBUS_MESSAGE_FIELD_SIGNATURE(f)->value;
+      case ECORE_DBUS_DATA_TYPE_ARRAY:
+	   {
+	      Ecore_DBus_Message_Field_Container *c;
+	      Ecore_List                         *list;
+	      void                               *value;
+
+	      list = ecore_list_new();
+	      c = ECORE_DBUS_MESSAGE_FIELD_CONTAINER(f);
+	      ecore_list_goto_first(c->values);
+	      while ((value = ecore_list_next(c->values)))
+		ecore_list_append(list, _ecore_dbus_message_field_value_get(value));
+	      return list;
+	   }
+      case ECORE_DBUS_DATA_TYPE_INVALID:
+      case ECORE_DBUS_DATA_TYPE_VARIANT:
+      case ECORE_DBUS_DATA_TYPE_STRUCT:
+      case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
+      case ECORE_DBUS_DATA_TYPE_STRUCT_END:
+      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
+      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
+#if 0
+      default:
+#endif
+	 break;
+     }
+   return NULL;
+}
