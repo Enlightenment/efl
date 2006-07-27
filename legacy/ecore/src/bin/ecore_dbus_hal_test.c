@@ -7,12 +7,15 @@
 
 static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
-static int ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev);
+
+static void ecore_dbus_method_name_has_owner_cb(void *data, Ecore_DBus_Message_Type type,
+						Ecore_DBus_Method_Return *reply);
+static void ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Message_Type type,
+					   Ecore_DBus_Method_Return *reply);
+
 static int ecore_dbus_event_server_signal(void *udata, int ev_type, void *ev);
 
 static const char *event_type_get(Ecore_DBus_Message_Type type);
-
-static int state = 0;
 
 static Ecore_DBus_Server *svr = NULL;
 
@@ -38,8 +41,6 @@ main(int argc, char **argv)
 					       ecore_dbus_event_server_add, NULL);
 	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DEL,
 					       ecore_dbus_event_server_del, NULL);
-	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_METHOD_RETURN,
-					       ecore_dbus_event_server_method_return, NULL);
 	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_SIGNAL,
 					       ecore_dbus_event_server_signal, NULL);
 
@@ -61,8 +62,8 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("ecore_dbus_event_server_add\n");
-   ecore_dbus_method_name_has_owner(event->server, "org.freedesktop.Hal");
-   state++;
+   ecore_dbus_method_name_has_owner(event->server, "org.freedesktop.Hal",
+				    ecore_dbus_method_name_has_owner_cb, NULL);
    return 0;
 }
 
@@ -78,54 +79,58 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
    return 0;
 }
 
-static int
-ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev)
+static void
+ecore_dbus_method_name_has_owner_cb(void *data, Ecore_DBus_Message_Type type,
+				    Ecore_DBus_Method_Return *reply)
 {
-   Ecore_DBus_Event_Server_Data *event;
-
-   event = ev;
-   printf("ecore_dbus_event_server_method_return %s %s.%s\n", event_type_get(event->type),
-							      event->header.interface,
-							      event->header.member);
-   printf("state: %d\n", state);
-   if (state == 1)
+   unsigned int *exists;
+   if (type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
      {
-	int *exists;
-
-	exists = event->args[0].value;
-	if ((!exists) || (!*exists))
-	  {
-	     printf("No hal\n");
-	     ecore_main_loop_quit();
-	  }
-	else
-	  {
-	     printf("Add listener for devices\n");
-	     ecore_dbus_method_add_match(event->server,
-		   "type='signal',"
-		   "interface='org.freedesktop.Hal.Manager',"
-		   "sender='org.freedesktop.Hal',"
-		   "path='/org/freedesktop/Hal/Manager'");
-
-	     state++;
-	  }
+	ecore_main_loop_quit();
+	return;
      }
-   else if (state == 2)
+   printf("ecore_dbus_event_server_method_return %s %s.%s\n", event_type_get(reply->type),
+							      reply->header.interface,
+							      reply->header.member);
+
+   exists = reply->args[0].value;
+   if ((!exists) || (!*exists))
      {
-	printf("Should be listening for device changes!\n");
+	printf("No hal\n");
+	ecore_main_loop_quit();
      }
    else
      {
-	printf("Hm: %s\n", event->header.member);
-	ecore_dbus_message_print(event->message);
+	printf("Add listener for devices\n");
+	ecore_dbus_method_add_match(reply->server,
+				    "type='signal',"
+				    "interface='org.freedesktop.Hal.Manager',"
+				    "sender='org.freedesktop.Hal',"
+				    "path='/org/freedesktop/Hal/Manager'",
+				    ecore_dbus_method_add_match_cb, NULL);
+
      }
-   return 0;
+}
+
+static void
+ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Message_Type type,
+			       Ecore_DBus_Method_Return *reply)
+{
+   if (type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
+     {
+	ecore_main_loop_quit();
+	return;
+     }
+   printf("ecore_dbus_event_server_method_return %s %s.%s\n", event_type_get(reply->type),
+							      reply->header.interface,
+							      reply->header.member);
+   printf("Should be listening for device changes!\n");
 }
 
 static int
 ecore_dbus_event_server_signal(void *udata, int ev_type, void *ev)
 {
-   Ecore_DBus_Event_Server_Data *event;
+   Ecore_DBus_Event_Server_Signal *event;
 
    event = ev;
    printf("ecore_dbus_event_server_signal %s %s.%s\n", event_type_get(event->type),

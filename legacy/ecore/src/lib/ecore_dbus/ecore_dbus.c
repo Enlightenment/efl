@@ -42,10 +42,7 @@
 
 EAPI int                 ECORE_DBUS_EVENT_SERVER_ADD = 0;
 EAPI int                 ECORE_DBUS_EVENT_SERVER_DEL = 0;
-EAPI int                 ECORE_DBUS_EVENT_SERVER_METHOD_RETURN = 0;
-EAPI int                 ECORE_DBUS_EVENT_SERVER_ERROR = 0;
 EAPI int                 ECORE_DBUS_EVENT_SERVER_SIGNAL = 0;
-EAPI int                 ECORE_DBUS_EVENT_SERVER_DATA = 0;
 
 /* private function declaration */
 
@@ -62,6 +59,8 @@ static void         _ecore_dbus_event_server_del_free(void *data, void *ev);
 static void         _ecore_dbus_event_server_data_free(void *data, void *ev);
 
 static Ecore_DBus_Event_Server_Data *_ecore_dbus_event_create(Ecore_DBus_Server *svr, Ecore_DBus_Message *msg);
+
+static void         _ecore_dbus_method_hello_cb(void *data, Ecore_DBus_Message_Type type, Ecore_DBus_Method_Return *reply);
 
 /* local variables  */
 
@@ -89,10 +88,7 @@ ecore_dbus_init(void)
 
    ECORE_DBUS_EVENT_SERVER_ADD = ecore_event_type_new();
    ECORE_DBUS_EVENT_SERVER_DEL = ecore_event_type_new();
-   ECORE_DBUS_EVENT_SERVER_METHOD_RETURN = ecore_event_type_new();
-   ECORE_DBUS_EVENT_SERVER_ERROR = ecore_event_type_new();
    ECORE_DBUS_EVENT_SERVER_SIGNAL = ecore_event_type_new();
-   ECORE_DBUS_EVENT_SERVER_DATA = ecore_event_type_new();
 
    handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD,
 					  _ecore_dbus_event_server_add, NULL);
@@ -320,7 +316,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	     ecore_dbus_server_send(svr, "BEGIN\r\n", 7);
 	     svr->authenticated = 1;
 	     /* Register on the bus */
-	     svr->hello = ecore_dbus_method_hello(svr);
+	     ecore_dbus_method_hello(svr, _ecore_dbus_method_hello_cb, svr);
 	  }
 	else if (!strncmp(e->data, "DATA", 4))
 	  {
@@ -354,6 +350,8 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	printf("[ecore_dbus] received server data, %d bytes\n", e->size);
 	while (e->size)
 	  {
+	     Ecore_DBus_Event_Server_Data *ev2;
+
 	     msg = _ecore_dbus_message_unmarshal(svr, (unsigned char *)(e->data) + offset, e->size);
 	     if (!msg) break;
 	     offset += msg->length;
@@ -362,55 +360,22 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 		    msg->length, e->size);
 	     //ecore_dbus_message_print(msg);
 	     /* Trap known messages */
-	     if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
+	     ev2 = _ecore_dbus_event_create(svr, msg);
+	     if (!ev2) break;
+	     if ((msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN) ||
+		 (msg->type == ECORE_DBUS_MESSAGE_TYPE_ERROR))
 	       {
-		  unsigned int *serial;
-
-		  serial = ecore_dbus_message_header_field_get(msg, ECORE_DBUS_HEADER_FIELD_REPLY_SERIAL);
-		  if (serial)
+		  Ecore_DBus_Message *sent;
+		  sent = ecore_hash_remove(svr->messages, (void *)(ev2->header.reply_serial));
+		  if ((sent) && (sent->cb.func))
 		    {
-		       Ecore_DBus_Message *sent;
-		       sent = ecore_hash_remove(svr->messages, (void *)(*serial));
-		       if (*serial == svr->hello)
-			 {
-			    Ecore_DBus_Event_Server_Add *svr_add;
-			    char                        *name;
-
-			    name = ecore_dbus_message_body_field_get(msg, 0);
-			    printf("Got unique name: %s\n", name);
-			    if (svr->unique_name)
-			      {
-				 printf("Ecore_DBus: Already said hello %s - %s\n",
-				        svr->unique_name, name);
-				 free(svr->unique_name);
-			      }
-			    svr->unique_name = strdup(name);
-			    _ecore_dbus_message_free(msg);
-
-			    svr_add = malloc(sizeof(Ecore_DBus_Event_Server_Add));
-			    svr_add->server = svr;
-			    ecore_event_add(ECORE_DBUS_EVENT_SERVER_ADD, svr_add, NULL, NULL);
-			 }
-		       else
-			 {
-			    Ecore_DBus_Event_Server_Data *ev2;
-			    ev2 = _ecore_dbus_event_create(svr, msg);
-			    ecore_event_add(ECORE_DBUS_EVENT_SERVER_METHOD_RETURN, ev2,
-				  _ecore_dbus_event_server_data_free, NULL);
-			 }
-		       _ecore_dbus_message_free(sent);
+		       sent->cb.func(sent->cb.data, msg->type, ev2);
+		       _ecore_dbus_event_server_data_free(NULL, ev2);
 		    }
 		  else
 		    {
-		       printf("Ecore_DBus: Method return without reply serial!\n");
+		       printf("Ecore_DBus: Reply without reply serial!\n");
 		    }
-	       }
-	     else if (msg->type == ECORE_DBUS_MESSAGE_TYPE_ERROR)
-	       {
-		  Ecore_DBus_Event_Server_Data *ev2;
-		  ev2 = _ecore_dbus_event_create(svr, msg);
-		  ecore_event_add(ECORE_DBUS_EVENT_SERVER_ERROR, ev2,
-				  _ecore_dbus_event_server_data_free, NULL);
 	       }
 	     else if (msg->type == ECORE_DBUS_MESSAGE_TYPE_SIGNAL)
 	       {
@@ -421,10 +386,8 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	       }
 	     else
 	       {
-		  Ecore_DBus_Event_Server_Data *ev2;
-		  ev2 = _ecore_dbus_event_create(svr, msg);
-		  ecore_event_add(ECORE_DBUS_EVENT_SERVER_DATA, ev2,
-				  _ecore_dbus_event_server_data_free, NULL);
+		  printf("Ecore_DBus: Unknown return type %d\n", msg->type);
+		  _ecore_dbus_event_server_data_free(NULL, ev2);
 	       }
 	  }
      }
@@ -478,7 +441,7 @@ _ecore_dbus_event_create(Ecore_DBus_Server *svr, Ecore_DBus_Message *msg)
 	Ecore_DBus_Message_Field *f;
 	int i = 0;
 
-	ev->args = malloc(ecore_list_nodes(msg->fields) * sizeof(Ecore_DBus_Event_Arg));
+	ev->args = malloc(ecore_list_nodes(msg->fields) * sizeof(Ecore_DBus_Message_Arg));
 	ecore_list_goto_first(msg->fields);
 	while ((f = ecore_list_next(msg->fields)))
 	  {
@@ -490,3 +453,31 @@ _ecore_dbus_event_create(Ecore_DBus_Server *svr, Ecore_DBus_Message *msg)
    return ev;
 }
 
+static void
+_ecore_dbus_method_hello_cb(void *data, Ecore_DBus_Message_Type type, Ecore_DBus_Method_Return *reply)
+{
+   Ecore_DBus_Event_Server_Add *svr_add;
+   Ecore_DBus_Server           *svr;
+   char                        *name;
+
+   if (type != ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN)
+     {
+	printf("Ecore_DBus: Could not register on the message bus\n");
+	return;
+     }
+
+   svr = data;
+   name = reply->args[0].value;
+   printf("Got unique name: %s\n", name);
+   if (svr->unique_name)
+     {
+	printf("Ecore_DBus: Already said hello %s - %s\n",
+	      svr->unique_name, name);
+	free(svr->unique_name);
+     }
+   svr->unique_name = strdup(name);
+
+   svr_add = malloc(sizeof(Ecore_DBus_Event_Server_Add));
+   svr_add->server = svr;
+   ecore_event_add(ECORE_DBUS_EVENT_SERVER_ADD, svr_add, NULL, NULL);
+}

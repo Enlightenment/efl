@@ -7,7 +7,10 @@
 
 static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
-static int ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev);
+
+static void ecore_dbus_method_list_names_cb(void *data,
+					    Ecore_DBus_Message_Type type,
+					    Ecore_DBus_Method_Return *ev);
 
 static const char * event_type_get(Ecore_DBus_Message_Type type);
 
@@ -34,12 +37,10 @@ main(int argc, char **argv)
 					       ecore_dbus_event_server_add, NULL);
 	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DEL,
 					       ecore_dbus_event_server_del, NULL);
-	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_METHOD_RETURN,
-					       ecore_dbus_event_server_method_return, NULL);
 
 	ecore_main_loop_begin();
 
-	for (i = 0; i < 3; i++)
+	for (i = 0; i < 2; i++)
 	  ecore_event_handler_del(handler[i]);
 
 	if (svr) ecore_dbus_server_del(svr);
@@ -55,7 +56,7 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("ecore_dbus_event_server_add\n");
-   ecore_dbus_method_list_names(event->server);
+   ecore_dbus_method_list_names(event->server, ecore_dbus_method_list_names_cb, NULL);
    return 0;
 }
 
@@ -71,19 +72,19 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
    return 0;
 }
 
-static int
-ecore_dbus_event_server_method_return(void *udata, int ev_type, void *ev)
+static void
+ecore_dbus_method_list_names_cb(void *data,
+				Ecore_DBus_Message_Type type,
+				Ecore_DBus_Method_Return *reply)
 {
-   Ecore_DBus_Event_Server_Data *event;
    Ecore_List *names;
 
-   event = ev;
-   printf("ecore_dbus_event_server_data %s %s.%s\n", event_type_get(event->type),
-						     event->header.interface,
-						     event->header.member);
+   printf("ecore_dbus_event_server_data %s %s.%s\n", event_type_get(reply->type),
+						     reply->header.interface,
+						     reply->header.member);
 
-   printf("Got names %c\n", event->args[0].type);
-   names = event->args[0].value;
+   names = reply->args[0].value;
+   printf("Got names %c\n", reply->args[0].type);
    if (names)
      {
 	char *name;

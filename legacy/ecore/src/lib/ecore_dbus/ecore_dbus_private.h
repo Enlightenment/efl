@@ -64,7 +64,6 @@ struct _Ecore_DBus_Server
    int                      cnt_msg;
 
    Ecore_Hash              *messages;
-   unsigned int             hello;
    char                    *unique_name;
 };
 
@@ -72,6 +71,12 @@ struct _Ecore_DBus_Message
 {
    /* server to send to */
    Ecore_DBus_Server *server;
+
+   /* callback */
+   struct {
+	Ecore_DBus_Method_Cb func;
+	void *data;
+   } cb;
 
    /* header fields */
    unsigned char      byte_order;
