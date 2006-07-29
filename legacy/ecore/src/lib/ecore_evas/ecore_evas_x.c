@@ -611,7 +611,8 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 		     default:
 		        break;
 		    }
-	       }	     
+	       }
+	     free(state);
 	  }
 	
 	if (ee->prop.sticky && !sticky)
