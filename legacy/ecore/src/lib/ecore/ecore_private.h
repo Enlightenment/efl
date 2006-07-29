@@ -268,6 +268,7 @@ struct _Ecore_Exe
    int start_bytes, end_bytes, start_lines, end_lines; /* Number of bytes/lines to auto pipe at start/end of stdout/stderr. */
 
    Ecore_Timer *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
+   void        *doomsday_clock_dead; /* data for the doomsday clock */
 };
 #endif
 

@@ -839,7 +839,17 @@ ecore_exe_free(Ecore_Exe * exe)
 
    data = exe->data;
 
-   IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
+   if (exe->doomsday_clock)
+     {
+	struct _ecore_exe_dead_exe *dead;
+	
+	ecore_timer_del(exe->doomsday_clock);
+	exe->doomsday_clock = NULL;
+	dead = exe->doomsday_clock_dead;
+	IF_FREE(dead->cmd);
+	free(dead);
+	exe->doomsday_clock_dead = NULL;
+     }
    IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->read_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->error_fd_handler);
@@ -994,6 +1004,7 @@ ecore_exe_terminate(Ecore_Exe * exe)
 	IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
 	exe->doomsday_clock =
 	   ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
+	exe->doomsday_clock_dead = dead;
      }
 
    printf("Sending TERM signal to %s (%d).\n", exe->cmd, exe->pid);
