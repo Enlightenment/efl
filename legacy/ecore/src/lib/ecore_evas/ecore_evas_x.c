@@ -574,7 +574,7 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 		     case ECORE_X_WINDOW_STATE_MODAL:
 		        ee->engine.x.state.modal = 1;
 		        break;
-		     case ECORE_X_WINDOW_STATE_STICKY:
+		     case ECORE_X_WINDOW_STATE_STICKY:		       
 		        if (ee->prop.sticky && ee->engine.x.state.sticky)
 			  break;
 		       
@@ -1841,7 +1841,11 @@ _ecore_evas_x_sticky_set(Ecore_Evas *ee, int sticky)
    if ((ee->prop.sticky && sticky) ||
       (!ee->prop.sticky && !sticky)) return;
 
-   ee->prop.sticky = sticky;
+   /* We dont want to set prop.sticky here as it will cause
+    * the sticky callback not to get called. Its set on the
+    * property change event.
+    * ee->prop.sticky = sticky;
+    */   
    ee->engine.x.state.sticky = sticky;
    if (ee->should_be_visible)
      ecore_x_netwm_state_request_send(ee->engine.x.win, ee->engine.x.win_root,
@@ -2157,6 +2161,8 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
    ee->prop.request_pos = 0;
+   ee->prop.sticky = 0;
+   ee->engine.x.state.sticky = 0;
    
    /* init evas here */
    ee->evas = evas_new();
@@ -2410,6 +2416,8 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
    ee->prop.request_pos = 0;
+   ee->prop.sticky = 0;
+   ee->engine.x.state.sticky = 0;   
    
    /* init evas here */
    ee->evas = evas_new();
@@ -2564,6 +2572,8 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
    ee->prop.request_pos = 0;
+   ee->prop.sticky = 0;
+   ee->engine.x.state.sticky = 0;   
    
    /* init evas here */
    ee->evas = evas_new();
