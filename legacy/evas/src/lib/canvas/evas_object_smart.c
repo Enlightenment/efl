@@ -132,7 +132,19 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    return;
    MAGIC_CHECK_END();
 
-   if (obj->smart.parent ==  smart_obj) return;
+   if (obj->delete_me)
+     {
+	printf("EVAS ERROR: Adding deleted object %p to smart obj %p\n", obj, smart_obj);
+	abort();
+	return;
+     }
+   if (smart_obj->delete_me)
+     {
+	printf("EVAS ERROR: Adding object %p to deleted smart obj %p\n", obj, smart_obj);
+	abort();
+	return;
+     }
+   if (obj->smart.parent == smart_obj) return;
    
    if (obj->smart.parent) evas_object_smart_member_del(obj);
    
