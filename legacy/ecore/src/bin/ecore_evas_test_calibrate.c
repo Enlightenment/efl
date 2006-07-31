@@ -92,8 +92,10 @@ calibrate_finish(void)
    
    if (rot == 0)
      {
-#ifdef BUILD_ECORE_FB	
+#ifdef BUILD_ECORE_FB
+#if 0
 	ecore_fb_touch_screen_calibrate_set(xscale, xtrans, yscale, ytrans, xyswap);
+#endif
 #endif	
      }
    else if (rot == 270)
@@ -103,7 +105,9 @@ calibrate_finish(void)
 	evas_output_size_get(evas, &ow, &oh);
 	ytrans = oh - (ytrans + ((oh * yscale) / 256));
 #ifdef BUILD_ECORE_FB	
+#if 0
 	ecore_fb_touch_screen_calibrate_set(yscale, ytrans, xscale, xtrans, xyswap);
+#endif	
 #endif	
      }
      
@@ -123,7 +127,9 @@ calibrate_start(void)
    Evas_Object *o;
    
 #ifdef BUILD_ECORE_FB	
+#if 0
    ecore_fb_touch_screen_calibrate_set(256, 0, 256, 0, 0);
+#endif	
 #endif
    
    o = evas_object_rectangle_add(evas);

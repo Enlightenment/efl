@@ -362,51 +362,63 @@ bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (!strcmp(ev->keyname, "Up"))
      {
 #ifdef BUILD_ECORE_FB
+#if 0
 	double br;
 	
 	br = ecore_fb_backlight_brightness_get();
 	ecore_fb_backlight_brightness_set(br + 0.1);
+#endif
 #endif	
      }
    if (!strcmp(ev->keyname, "Down"))
      {
 #ifdef BUILD_ECORE_FB
+#if 0
 	double br;
 	
 	br = ecore_fb_backlight_brightness_get();
 	ecore_fb_backlight_brightness_set(br - 0.1);
+#endif
 #endif	
      }
    if (!strcmp(ev->keyname, "F2"))
      {
 #ifdef BUILD_ECORE_FB
+#if 0
 	if (ecore_fb_backlight_get())
 	  ecore_fb_backlight_set(0);
 	else
 	  ecore_fb_backlight_set(1);
+#endif
 #endif	
      }
    if (!strcmp(ev->keyname, "F3"))
      {
 #ifdef BUILD_ECORE_FB
+#if 0
 	static int v = 0;
 	
 	if (v) ecore_fb_led_set(0);
 	else ecore_fb_led_set(1);
 	if (!v) v = 1;
 	else v = 0;
+#endif
 #endif	
      }
    if (!strcmp(ev->keyname, "Left"))
      {
 #ifdef BUILD_ECORE_FB
+#if 0
 	ecore_fb_led_blink_set(0.1);
+#endif
 #endif	
      }
    if (!strcmp(ev->keyname, "Right"))
      {
 #ifdef BUILD_ECORE_FB
+#if 0
 	ecore_fb_led_blink_set(0.5);
+#endif
 #endif	
      }
    if ((!strcmp(ev->keyname, "p")) ||
@@ -420,7 +432,9 @@ bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	else
 	  ecore_evas_cursor_set(ee, NULL, 0, 0, 0);
 #ifdef BUILD_ECORE_FB
+#if 0
 	printf("%3.3f\n", ecore_fb_light_sensor_get());
+#endif
 #endif	
      }
 }

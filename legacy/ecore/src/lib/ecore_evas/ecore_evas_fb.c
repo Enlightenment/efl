@@ -13,8 +13,10 @@ static int _ecore_evas_init_count = 0;
 static int _ecore_evas_fps_debug = 0;
 
 static Ecore_Evas *ecore_evases = NULL;
-static Ecore_Event_Handler *ecore_evas_event_handlers[5];
+static Ecore_Event_Handler *ecore_evas_event_handlers[6];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
+static Ecore_Fb_Input_Device *stdkbd = NULL;
+static Ecore_Fb_Input_Device *stdmouse = NULL;
 
 static void
 _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
@@ -83,6 +85,8 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
 	ee = (Ecore_Evas *)l;
 	ee->visible = 0;
      }
+   ecore_fb_input_device_listen(stdmouse, 0);
+   ecore_fb_input_device_listen(stdkbd, 0);
 }
 
 static void
@@ -98,6 +102,8 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
 	ee->visible = 1;
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
+   ecore_fb_input_device_listen(stdmouse, 1);
+   ecore_fb_input_device_listen(stdkbd, 1);
 }
 
 static int
@@ -109,6 +115,7 @@ _ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
+   if (e->dev != stdkbd) return 1;
    evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return 0; /* dont pass it on */
 }
@@ -122,6 +129,7 @@ _ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
+   if (e->dev != stdkbd) return 1;
    evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return 0; /* dont pass it on */
 }
@@ -136,6 +144,7 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
+   if (e->dev != stdmouse) return 1;
    _ecore_evas_mouse_move_process(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
@@ -152,6 +161,7 @@ _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, vo
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
+   if (e->dev != stdmouse) return 1;
    _ecore_evas_mouse_move_process(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return 0; /* dont pass it on */
@@ -166,6 +176,21 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
+   if (e->dev != stdmouse) return 1;
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
+   return 0; /* dont pass it on */
+}
+
+static int
+_ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Fb_Event_Mouse_Wheel *e;
+   
+   e = event;
+   ee = _ecore_evas_fb_match();
+   if (!ee) return 1; /* pass on event */
+   if (e->dev != stdmouse) return 1;
    _ecore_evas_mouse_move_process(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    return 0; /* dont pass it on */
 }
@@ -228,6 +253,7 @@ _ecore_evas_fb_init(void)
    ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
    ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
    ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
+   ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_WHEEL, _ecore_evas_event_mouse_wheel, NULL);
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    return _ecore_evas_init_count;
 }
@@ -392,6 +418,8 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
    ee->prop.fullscreen = on;
+   /* rescale the input device area */
+   ecore_fb_input_device_axis_size_set(stdmouse, ee->w, ee->h);
    if (resized)
      {
 	if (ee->func.fn_resize) ee->func.fn_resize(ee); 
@@ -475,10 +503,29 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
 #ifdef BUILD_ECORE_EVAS_FB
    Evas_Engine_Info_FB *einfo;
    Ecore_Evas *ee;
+   Ecore_Fb_Input_Device *tmp_dev;
+   Ecore_Fb_Input_Device_Cap tmp_cap;
    int rmethod;
 
    rmethod = evas_render_method_lookup("fb");
    if (!rmethod) return NULL;
+   /* register the default input devices (keyboard + mouse) */
+   tmp_dev = ecore_fb_input_device_open("/dev/input/event0");
+   if (!tmp_dev) return NULL;
+   tmp_cap = ecore_fb_input_device_cap_get(tmp_dev);
+   if ((tmp_cap & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE) || (tmp_cap & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE)) stdmouse = tmp_dev;
+   else stdkbd = tmp_dev;
+
+   ecore_fb_input_device_listen(tmp_dev, 1);
+
+   tmp_dev = ecore_fb_input_device_open("/dev/input/event1");
+   if (!stdmouse) stdmouse = tmp_dev;
+   else stdkbd = tmp_dev;
+
+   if (!tmp_dev) return NULL;
+   ecore_fb_input_device_listen(tmp_dev, 1);
+   ecore_fb_input_device_axis_size_set(stdmouse, w, h);
+
    if (!ecore_fb_init(disp_name)) return NULL;
    ecore_fb_callback_gain_set(_ecore_evas_fb_gain, NULL);
    ecore_fb_callback_lose_set(_ecore_evas_fb_lose, NULL);

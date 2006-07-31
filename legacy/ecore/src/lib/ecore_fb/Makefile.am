@@ -15,8 +15,13 @@ Ecore_Fb.h
 
 libecore_fb_la_SOURCES = \
 ecore_fb.c \
-ecore_fb_private.h \
-ecore_fb_keytab.h
+ecore_fb_vt.c \
+ecore_fb_li.c \
+ecore_fb_private.h
+# deprecated sources (might not compile): 
+# ecore_fb_ts.c
+# ecore_fb_kbd.c 
+# ecore_fb_ps2.c
 
 libecore_fb_la_LIBADD = \
 @tslib_libs@ \
