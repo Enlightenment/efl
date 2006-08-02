@@ -375,6 +375,11 @@ ecore_x_init(const char *name)
    if (!ECORE_X_MODIFIER_WIN) 
      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
    
+   if (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_ALT)
+     ECORE_X_MODIFIER_WIN = 0;
+   if (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL)
+     ECORE_X_MODIFIER_ALT = 0;
+   
    ECORE_X_LOCK_SCROLL    = _ecore_x_key_mask_get(XK_Scroll_Lock);
    ECORE_X_LOCK_NUM       = _ecore_x_key_mask_get(XK_Num_Lock);
    ECORE_X_LOCK_CAPS      = _ecore_x_key_mask_get(XK_Caps_Lock);
