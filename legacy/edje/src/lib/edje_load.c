@@ -169,6 +169,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       }
 	     else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
 	       rp->object = evas_object_textblock_add(ed->evas);
+	     else if (ep->type == EDJE_PART_TYPE_GRADIENT)
+	       rp->object = evas_object_gradient_add(ed->evas);
 	     else
 	       {
 		  printf("EDJE ERROR: wrong part type %i!\n", ep->type);

@@ -1,0 +1,76 @@
+spectra {
+	spectrum {
+		name: "white_to_trans";
+		color: 255 255 255 255 1;
+		color: 255 255 255 0 1;
+	}
+}
+
+collections {
+  group {
+    name: "grad_test";
+    parts {
+      part {
+        name: "grad";
+        type: GRADIENT;
+        description {
+          state: "default" 0.0;
+          color: 255 255 255 255;
+          gradient {
+						type: "linear";
+						spectrum: "white_to_trans";
+          }
+					fill {
+						angle: 0;
+						spread: 0;
+            origin {
+              relative: 0.5 0.5;
+            }
+            size {
+             relative: 1 1 ; 
+            }
+					}
+        }
+        description {
+          state: "half" 0.0;
+          inherit: "default" 0.0;
+          color: 0 255 0 255;
+					fill {
+						angle: 180;
+					}
+        }
+        description {
+          state: "full" 0.0;
+          inherit: "default" 0.0;
+          color: 255 255 255 255;
+					fill {
+						angle: 360;
+					}
+        }
+    }
+    programs {
+      program {
+        name: "anim";
+        signal: "mouse,clicked*";
+        source: "grad";
+        action: STATE_SET "half" 0.0;
+        target: "grad";
+        transition: LINEAR 2.0;
+        after: "anim2";
+      } 
+      program {
+        name: "anim2";
+        action: STATE_SET "full" 0.0;
+        target: "grad";
+        transition: LINEAR 2.0;
+        after: "anim3";
+      }
+      program {
+        name: "anim3";
+        action: STATE_SET "default" 0.0;
+        target: "grad";
+        after: "anim";
+      }
+    }
+  }
+}

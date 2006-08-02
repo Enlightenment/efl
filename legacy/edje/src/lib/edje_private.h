@@ -104,6 +104,8 @@ typedef struct _Edje_Font_Directory                  Edje_Font_Directory;
 typedef struct _Edje_Font_Directory_Entry            Edje_Font_Directory_Entry;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
+typedef struct _Edje_Spectrum_Directory                 Edje_Spectrum_Directory;
+typedef struct _Edje_Spectrum_Directory_Entry           Edje_Spectrum_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
 typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Program_After                   Edje_Program_After;
@@ -113,6 +115,7 @@ typedef struct _Edje_Part_Collection                 Edje_Part_Collection;
 typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
+typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 
 #define PI 3.14159265358979323846
 
@@ -128,7 +131,8 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_PART_TYPE_IMAGE     3
 #define EDJE_PART_TYPE_SWALLOW   4
 #define EDJE_PART_TYPE_TEXTBLOCK 5
-#define EDJE_PART_TYPE_LAST      6
+#define EDJE_PART_TYPE_GRADIENT  6
+#define EDJE_PART_TYPE_LAST      7
 
 #define EDJE_TEXT_EFFECT_NONE                0
 #define EDJE_TEXT_EFFECT_PLAIN               1
@@ -211,6 +215,7 @@ struct _Edje_File
    
    Edje_Font_Directory            *font_dir;
    Edje_Image_Directory           *image_dir;
+   Edje_Spectrum_Directory        *spectrum_dir;
    Edje_Part_Collection_Directory *collection_dir;
    Evas_List                      *data;
    Evas_List                      *styles;
@@ -276,6 +281,29 @@ struct _Edje_Image_Directory_Entry
    int   source_param; /* extra params on encoding */
    int   id; /* the id no. of the image */
 };
+
+/*----------*/
+
+struct _Edje_Spectrum_Directory
+{
+  Evas_List *entries; /* a list of Edje_Spectrum_Directory_Entry */
+};
+
+struct _Edje_Spectrum_Directory_Entry
+{
+  char      *entry;
+  /* only one of the following two should be included. filename takes precedence */
+  char      *filename; /* filename of external spectrum. */
+  Evas_List *color_list; /* list of Edje_Spectrum_Color */
+  int        id;
+};
+
+struct _Edje_Spectrum_Color
+{
+  int r, g, b, a;
+  int d;
+};
+
 
 /*----------*/
 
@@ -438,6 +466,12 @@ struct _Edje_Part_Description
       int            id; /* the image id to use */   
       Evas_List     *tween_list; /* list of Edje_Part_Image_Id */
    } image;
+
+   struct {
+     int            id; /* the spectrum id to use */
+     char          *type; /* type of spectrum - 'linear', 'radial', etc */
+     char          *params; /* params for spectrum type */
+   } gradient;
    
    struct {
       int            l, r, t, b; /* border scaling on image fill */
@@ -454,6 +488,8 @@ struct _Edje_Part_Description
       int            pos_abs_y; /* fill offset y added to fill offset */
       double         rel_y; /* relative size compared to area */
       int            abs_y; /* size of fill added to relative fill */
+      int            angle; /* angle of fill -- currently only used by grads */
+      int            spread; /* spread of fill -- currently only used by grads */
    } fill;
    
    char             *color_class; /* how to modify the color */
@@ -484,6 +520,7 @@ struct _Edje_Part_Description
       double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
    } text;
 };
+
 
 /*----------*/
 
@@ -671,6 +708,8 @@ struct _Edje_Calc_Params
    unsigned char    smooth : 1;
    struct {
       int           x, y, w, h;
+      int           angle;
+      int           spread;
    } fill;
    struct {
       unsigned char r, g, b, a;
@@ -684,6 +723,10 @@ struct _Edje_Calc_Params
       } align;
       double         elipsis;
    } text;
+   struct {
+     int             id;
+     char           *type;
+   } gradient;
 };
 
 struct _Edje_Pending_Program
@@ -823,6 +866,8 @@ EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_spectrum_directory;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_spectrum_directory_entry;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program_target;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory;
@@ -831,6 +876,7 @@ EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_spectrum_color;
 
 extern int              _edje_anim_count;
 extern Ecore_Animator  *_edje_timer;

@@ -899,6 +899,8 @@ _edje_part_recalc_single(Edje *ed,
 	params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
 	params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
      }
+   params->fill.angle = desc->fill.angle;
+   params->fill.spread = desc->fill.angle;
    /* colors */
 
    params->color.r = desc->color.r;
@@ -960,6 +962,8 @@ _edje_part_recalc_single(Edje *ed,
 	params->text.align.y = desc->text.align.y;
      }
    params->text.elipsis = desc->text.elipsis;
+   params->gradient.id = desc->gradient.id;
+   params->gradient.type = desc->gradient.type;
 }
 
 static void
@@ -1066,6 +1070,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	p3.fill.y = (p1.fill.y * (1.0 - pos)) + (p2.fill.y * (pos));
 	p3.fill.w = (p1.fill.w * (1.0 - pos)) + (p2.fill.w * (pos));
 	p3.fill.h = (p1.fill.h * (1.0 - pos)) + (p2.fill.h * (pos));
+	p3.fill.angle = (p1.fill.angle * (1.0 - pos)) + (p2.fill.angle * (pos));
+	p3.fill.spread = pos > 0.5 ? p2.fill.spread : p1.fill.spread;
 
 	p3.color.r = (p1.color.r * (1.0 - pos)) + (p2.color.r * (pos));
 	p3.color.g = (p1.color.g * (1.0 - pos)) + (p2.color.g * (pos));
@@ -1090,6 +1096,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	p3.text.align.x = (p1.text.align.x * (1.0 - pos)) + (p2.text.align.x * (pos));
 	p3.text.align.y = (p1.text.align.y * (1.0 - pos)) + (p2.text.align.y * (pos));
 	p3.text.elipsis = (p1.text.elipsis * (1.0 - pos)) + (p2.text.elipsis * (pos));
+
+	p3.gradient.id = pos > 0.5 ? p2.gradient.id : p1.gradient.id; 
+	p3.gradient.type = pos > 0.5 ? p2.gradient.type : p1.gradient.type; 
      }
    else
      {
@@ -1202,6 +1211,40 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  {
 	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
 	     evas_object_resize(ep->object, p3.w, p3.h);
+	  }
+	else if (ep->part->type == EDJE_PART_TYPE_GRADIENT)
+	  {
+	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
+	     evas_object_resize(ep->object, p3.w, p3.h);
+	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	     if (p3.visible) evas_object_show(ep->object);
+	     else evas_object_hide(ep->object);
+
+	     evas_object_gradient_angle_set(ep->object, p3.fill.angle);
+	     evas_object_gradient_spread_set(ep->object, p3.fill.spread);
+	     evas_object_gradient_fill_set(ep->object, p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
+
+	     if (p3.gradient.type && p3.gradient.type[0])
+	       evas_object_gradient_type_set(ep->object, p3.gradient.type, NULL);
+
+	     if (ed->file->spectrum_dir && ed->file->spectrum_dir->entries)
+	       {
+		  Edje_Spectrum_Directory_Entry *se;
+		  Evas_List *l;
+
+		  se = evas_list_nth(ed->file->spectrum_dir->entries, p3.gradient.id);
+		  if (se) 
+		    {
+		       // XXX only do this if we NEED to (e.g. gradient changed)
+		       evas_object_gradient_colors_clear(ep->object);
+		       for (l = se->color_list; l; l = l->next)
+			 {
+			    Edje_Spectrum_Color *sc = l->data;
+			    evas_object_gradient_color_add(ep->object, sc->r, sc->g, sc->b, sc->a, sc->d);
+
+			 }
+		    }
+	       }
 	  }
 	
 	if (ep->swallowed_object)

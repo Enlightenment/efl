@@ -21,6 +21,11 @@ static void st_color_class_color(void);
 static void st_color_class_color2(void);
 static void st_color_class_color3(void);
 
+static void ob_spectrum(void);
+/*static void st_spectrum(void);*/
+static void st_spectrum_name(void);
+static void st_spectrum_color(void);
+
 static void ob_collections(void);
 
 static void ob_collections_group(void);
@@ -73,6 +78,8 @@ static void st_collections_group_parts_part_description_fill_origin_relative(voi
 static void st_collections_group_parts_part_description_fill_origin_offset(void);
 static void st_collections_group_parts_part_description_fill_size_relative(void);
 static void st_collections_group_parts_part_description_fill_size_offset(void);
+static void st_collections_group_parts_part_description_fill_angle(void);
+static void st_collections_group_parts_part_description_fill_spread(void);
 static void st_collections_group_parts_part_description_color_class(void);
 static void st_collections_group_parts_part_description_color(void);
 static void st_collections_group_parts_part_description_color2(void);
@@ -88,6 +95,8 @@ static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_elipsis(void);
+static void st_collections_group_parts_part_description_gradient_type(void);
+static void st_collections_group_parts_part_description_gradient_spectrum(void);
 
 static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
@@ -115,6 +124,9 @@ New_Statement_Handler statement_handlers[] =
      {"color_classes.color_class.color", st_color_class_color},
      {"color_classes.color_class.color2", st_color_class_color2},
      {"color_classes.color_class.color3", st_color_class_color3},
+     /*{"spectra.spectrum", st_spectrum},*/
+     {"spectra.spectrum.name", st_spectrum_name},
+     {"spectra.spectrum.color", st_spectrum_color},
      {"collections.image", st_images_image}, /* dup */
      {"collections.images.image", st_images_image}, /* dup */
      {"collections.font", st_fonts_font}, /* dup */
@@ -204,6 +216,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
      {"collections.group.parts.part.description.fill.size.relative", st_collections_group_parts_part_description_fill_size_relative},
      {"collections.group.parts.part.description.fill.size.offset", st_collections_group_parts_part_description_fill_size_offset},
+     {"collections.group.parts.part.description.fill.angle", st_collections_group_parts_part_description_fill_angle},
+     {"collections.group.parts.part.description.fill.spread", st_collections_group_parts_part_description_fill_spread},
      {"collections.group.parts.part.description.color_class", st_collections_group_parts_part_description_color_class},
      {"collections.group.parts.part.description.color", st_collections_group_parts_part_description_color},
      {"collections.group.parts.part.description.color2", st_collections_group_parts_part_description_color2},
@@ -221,6 +235,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
+     {"collections.group.parts.part.description.gradient.type", st_collections_group_parts_part_description_gradient_type},
+     {"collections.group.parts.part.description.gradient.spectrum", st_collections_group_parts_part_description_gradient_spectrum},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
@@ -322,6 +338,8 @@ New_Object_Handler object_handlers[] =
      {"styles.style", ob_styles_style},
      {"color_classes", NULL},
      {"color_classes.color_class", ob_color_class},
+     {"spectra", NULL},
+     {"spectra.spectrum", ob_spectrum},
      {"collections", ob_collections},
      {"collections.images", NULL}, /* dup */
      {"collections.fonts", NULL}, /* dup */
@@ -367,6 +385,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.styles", NULL}, /* dup */
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
+     {"collections.group.parts.part.description.gradient", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
@@ -623,6 +642,48 @@ st_color_class_color3(void)
 }
 
 static void
+ob_spectrum(void)
+{
+   Edje_Spectrum_Directory_Entry *se;
+
+   if (!edje_file->spectrum_dir)
+     edje_file->spectrum_dir = mem_alloc(SZ(Edje_Spectrum_Directory));
+   se = mem_alloc(SZ(Edje_Spectrum_Directory_Entry));
+   edje_file->spectrum_dir->entries = evas_list_append(edje_file->spectrum_dir->entries, se);
+   se->id = evas_list_count(edje_file->spectrum_dir->entries) - 1;
+   se->entry = NULL;
+   se->filename = NULL;
+   se->color_list = NULL;
+}
+
+static void
+st_spectrum_name(void)
+{
+   Edje_Spectrum_Directory_Entry *se;
+   Edje_Spectrum_Color *sc;
+
+   se = evas_list_data(evas_list_last(edje_file->spectrum_dir->entries));
+   se->entry = parse_str(0);
+}
+
+static void
+st_spectrum_color(void)
+{
+   Edje_Spectrum_Directory_Entry *se;
+   Edje_Spectrum_Color *sc;
+
+   se = evas_list_data(evas_list_last(edje_file->spectrum_dir->entries));
+
+   sc = mem_alloc(SZ(Edje_Spectrum_Color));
+   se->color_list = evas_list_append(se->color_list, sc);
+   sc->r = parse_int_range(0, 0, 255);
+   sc->g = parse_int_range(1, 0, 255);
+   sc->b = parse_int_range(2, 0, 255);
+   sc->a = parse_int_range(3, 0, 255);
+   sc->d = parse_int(4);
+}
+
+static void
 ob_styles_style(void)
 {
    Edje_Style *stl;
@@ -856,6 +917,7 @@ st_collections_group_parts_part_type(void)
 			 "IMAGE", EDJE_PART_TYPE_IMAGE,
 			 "SWALLOW", EDJE_PART_TYPE_SWALLOW,
 			 "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
+			 "GRADIENT", EDJE_PART_TYPE_GRADIENT,
 			 NULL);
 }
 
@@ -1017,6 +1079,8 @@ ob_collections_group_parts_part_description(void)
    ed->fill.pos_abs_y = 0;
    ed->fill.rel_y = 1.0;
    ed->fill.abs_y = 0;
+   ed->fill.angle = 0;
+   ed->fill.spread = 0;
    ed->color_class = NULL;
    ed->color.r = 255;
    ed->color.g = 255;
@@ -1128,6 +1192,7 @@ st_collections_group_parts_part_description_inherit(void)
    data_queue_part_slave_lookup(&parent->rel2.id_x, &ed->rel2.id_x);
    data_queue_part_slave_lookup(&parent->rel2.id_y, &ed->rel2.id_y);
    data_queue_image_slave_lookup(&parent->image.id, &ed->image.id);
+   data_queue_spectrum_slave_lookup(&parent->gradient.id, &ed->gradient.id);
 
    /* make sure all the allocated memory is getting copied, not just
     * referenced
@@ -1680,7 +1745,7 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE)
+   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
@@ -1706,7 +1771,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE)
+   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
@@ -1734,7 +1799,7 @@ st_collections_group_parts_part_description_fill_size_relative(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE)
+   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
@@ -1760,7 +1825,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
 
-   if (ep->type != EDJE_PART_TYPE_IMAGE)
+   if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
@@ -2152,6 +2217,58 @@ st_collections_group_parts_part_description_text_text_source(void)
 }
 
 static void
+st_collections_group_parts_part_description_fill_angle(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   /* XXX this will need to include IMAGES when angle support is added to evas images */
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.angle = parse_int_range(0, 0, 360);
+}
+
+static void
+st_collections_group_parts_part_description_fill_spread(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   /* XXX this will need to include IMAGES when spread support is added to evas images */
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.spread = parse_int_range(0, 0, 1);
+}
+
+static void
 st_collections_group_parts_part_description_text_elipsis(void)
 {
    Edje_Part_Collection *pc;
@@ -2175,6 +2292,65 @@ st_collections_group_parts_part_description_text_elipsis(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.elipsis = parse_float_range(0, 0.0, 1.0);
 }
+
+static void 
+st_collections_group_parts_part_description_gradient_type(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->gradient.type  = parse_str(0);
+}
+
+static void 
+st_collections_group_parts_part_description_gradient_spectrum(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+   char *spectrum;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_spectrum_lookup(name, &(ed->gradient.id));
+	free(name);
+     }
+}
+
 
 static void
 ob_collections_group_programs_program(void)

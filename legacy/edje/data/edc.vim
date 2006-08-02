@@ -1,7 +1,7 @@
 " Vim syntax file
-" Language:	C
-" Maintainer:	Bram Moolenaar <Bram@vim.org>
-" Last Change:	2002 Mar 18
+" Language:	EDC
+" Maintainer:	no one?
+" Last Change:	2005
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
