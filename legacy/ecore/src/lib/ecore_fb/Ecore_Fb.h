@@ -35,6 +35,7 @@
  * backlight support using new kernel interface
  * absolute axis
  * joystick
+ * ecore_fb_li_device_close_all ? or a shutdown of the subsystem?
  *
  */
 
