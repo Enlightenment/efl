@@ -230,26 +230,55 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
 			break;
 		}
 		default:
-			//printf("[ecore_li_device] mouse event %d %d\n", iev->code, iev->value);
 			break;
 	}
 }
 
 static void
-_ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ev)
+_ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *iev)
 {
 	if(!dev->listen)
 		return;
-	switch(ev->code)
+	switch(iev->code)
 	{
 		case ABS_X:
-			printf("abs x %d\n", ev->value);
-			break;
 		case ABS_Y:
-			printf("abs y %d\n", ev->value);
+		{
+			Ecore_Fb_Event_Mouse_Move *ev;
+			if((iev->code == ABS_X) && (dev->mouse.w != 0))
+			{
+				int tmp;
+
+				tmp = (int)((double)(iev->value - dev->mouse.min_w) / dev->mouse.rel_w);
+				if(tmp < 0)
+					dev->mouse.x = 0;
+				else if(tmp > dev->mouse.w)
+					dev->mouse.x = dev->mouse.w;
+				else
+					dev->mouse.x = tmp;
+			}
+			else if((iev->code == ABS_Y) && (dev->mouse.h != 0))
+			{
+				int tmp;
+
+				tmp = (int)((double)(iev->value - dev->mouse.min_h) / dev->mouse.rel_h);
+				if(tmp < 0)
+					dev->mouse.y = 0;
+				else if(tmp > dev->mouse.h)
+					dev->mouse.y = dev->mouse.h;
+				else
+					dev->mouse.y = tmp;
+			}
+			ev = calloc(1,sizeof(Ecore_Fb_Event_Mouse_Move));
+			ev->x = dev->mouse.x;
+			ev->y = dev->mouse.y;
+			ev->dev = dev;
+			
+			ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 			break;
+		}
 		case ABS_PRESSURE:
-			printf("pressure!!!\n");
+			/* TODO emulate a button press */
 			break;
 	}
 }
@@ -325,23 +354,20 @@ ecore_fb_input_device_open(const char *dev)
 
 	if((fd = open(dev, O_RDONLY, O_NONBLOCK)) < 0)
 	{
-		fprintf(stderr, "[ecore_fb_li:device_open] %s ", dev);
-		perror("");
+		fprintf(stderr, "[ecore_fb_li:device_open] %s %s", dev, strerror(errno));
 		goto error_open;
 	}
 	/* query capabilities */
 	if(ioctl(fd, EVIOCGBIT(0, EV_MAX), event_type_bitmask) < 0) 
 	{
-		fprintf(stderr,"[ecore_fb_li:device_open] query capabilities %s ", dev);
-		perror("");
+		fprintf(stderr,"[ecore_fb_li:device_open] query capabilities %s %s", dev, strerror(errno));
 		goto error_caps;
   	}
 	/* query name */
 	device->info.name = calloc(256, sizeof(char));
 	if(ioctl(fd, EVIOCGNAME(sizeof(char) * 256), device->info.name) < 0)
 	{
-		fprintf(stderr, "[ecore_fb_li:device_open] get name %s ", dev);
-		perror("");
+		fprintf(stderr, "[ecore_fb_li:device_open] get name %s %s", dev, strerror(errno));
 		strcpy(device->info.name, "Unknown");
 	}
 	device->fd = fd;
@@ -369,23 +395,6 @@ ecore_fb_input_device_open(const char *dev)
 
 			case EV_ABS:
 		  	device->info.cap |= ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE;
-			{
-			#if 0
-				struct input_absinfo abs_features;
-				ioctl(fd, EVIOCGABS(ABS_X), &abs_features);
-				printf("(min: %d, max: %d, flatness: %d, fuzz: %d)\n",
-				abs_features.minimum,
-				abs_features.maximum,
-				abs_features.flat,
-				abs_features.fuzz);
-				ioctl(fd, EVIOCGABS(ABS_Y), &abs_features);
-				printf("(min: %d, max: %d, flatness: %d, fuzz: %d)\n",
-				abs_features.minimum,
-				abs_features.maximum,
-				abs_features.flat,
-				abs_features.fuzz);
-			#endif
-			}
 			break;
 
 			case EV_MSC:
@@ -433,16 +442,29 @@ ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h)
 {
 	if(!dev) 
 		return;
+	if(w < 0 || h < 0)
+		return;
+	/* FIXME 
+	 * this code is for a touchscreen device, 
+	 * make it configurable (ABSOLUTE | RELATIVE)
+	 */
 	if(dev->info.cap & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE)
 	{
-		struct input_absinfo;
+		/* FIXME looks like some kernels dont include this struct */
+		struct input_absinfo abs_features;
+
+		ioctl(dev->fd, EVIOCGABS(ABS_X), &abs_features);
+		dev->mouse.min_w = abs_features.minimum;
+		dev->mouse.rel_w = (double)(abs_features.maximum - abs_features.minimum)/(double)(w);
+
+		ioctl(dev->fd, EVIOCGABS(ABS_Y), &abs_features);
+		dev->mouse.min_h = abs_features.minimum;
+		dev->mouse.rel_h = (double)(abs_features.maximum - abs_features.minimum)/(double)(h);
 	}
 	else if(!(dev->info.cap & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE))
 		return;
 
 	/* update the local values */
-	if(w < 0 || h < 0)
-		return;
 	if(dev->mouse.x > w - 1)
 		dev->mouse.x = w -1;
 	if(dev->mouse.y > h - 1)

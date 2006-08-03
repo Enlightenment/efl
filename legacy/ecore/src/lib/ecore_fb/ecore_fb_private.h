@@ -32,12 +32,17 @@ struct _Ecore_Fb_Input_Device
 	} info;
 	struct
 	{
+		/* common mouse */
 		int x,y;
 		int w,h;
+		
 		double last;
 		double prev;
 		double threshold;
-		double acceleration;
+		/* absolute axis */
+		int min_w, min_h;
+		double rel_w, rel_h;
+
 	} mouse;
 	struct
 	{
