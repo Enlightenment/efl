@@ -900,7 +900,7 @@ _edje_part_recalc_single(Edje *ed,
 	params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
      }
    params->fill.angle = desc->fill.angle;
-   params->fill.spread = desc->fill.angle;
+   params->fill.spread = desc->fill.spread;
    /* colors */
 
    params->color.r = desc->color.r;
