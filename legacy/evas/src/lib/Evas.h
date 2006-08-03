@@ -660,6 +660,8 @@ tile_mode);
    EAPI Evas_Object      *evas_object_smart_add             (Evas *e, Evas_Smart *s);
    EAPI void              evas_object_smart_member_add      (Evas_Object *obj, Evas_Object *smart_obj);
    EAPI void              evas_object_smart_member_del      (Evas_Object *obj);
+   EAPI Evas_Object      *evas_object_smart_parent_get      (Evas_Object *obj);
+   EAPI Evas_List        *evas_object_smart_members_get     (Evas_Object *obj);
    EAPI Evas_Smart       *evas_object_smart_smart_get       (Evas_Object *obj);
    EAPI void             *evas_object_smart_data_get        (Evas_Object *obj);
    EAPI void              evas_object_smart_data_set        (Evas_Object *obj, void *data);

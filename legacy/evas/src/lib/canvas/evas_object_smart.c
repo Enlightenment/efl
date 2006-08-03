@@ -184,6 +184,44 @@ evas_object_smart_member_del(Evas_Object *obj)
 }
 
 /**
+ * Gets the smart parent of an Evas_Object
+ * @param obj the Evas_Object you want to get the parent
+ * @return Returns the smart parent of @a obj, or NULL if @a obj is not a smart member of another Evas_Object
+ */
+EAPI Evas_Object *
+evas_object_smart_parent_get(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   
+   return obj->smart.parent;
+}
+
+/**
+ * Gets the list of the member objects of an Evas_Object
+ * @param obj the Evas_Object you want to get the list of member objects
+ * @return Returns the list of the member objects of @a obj.
+ * The returned list should be freed with evas_list_free() when you no longer need it
+ */
+EAPI Evas_List *
+evas_object_smart_members_get(Evas_Object *obj)
+{
+   Evas_List *members;
+   Evas_Object_List *member;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   
+   members = NULL;
+   for (member = obj->smart.contained; member; member = member->next)
+      members = evas_list_append(members, member);
+   
+   return members;
+}
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.
