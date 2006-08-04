@@ -647,6 +647,23 @@ _edje_file_free(Edje_File *edf)
 	  }
 	free(edf->collection_dir);
      }
+   if (edf->spectrum_dir)
+     {
+	while (edf->spectrum_dir->entries)
+	  {
+	     Edje_Spectrum_Directory_Entry *se;
+
+	     se = edf->spectrum_dir->entries->data;
+	     edf->spectrum_dir->entries = 
+		evas_list_remove(edf->spectrum_dir->entries, se);
+	     while (se->color_list)
+	       se->color_list = evas_list_remove(se->color_list, se->color_list->data);
+	     if (se->entry) evas_stringshare_del(se->entry);
+	     if (se->filename) evas_stringshare_del(se->filename);
+	     free(se);
+	  }
+	free(edf->spectrum_dir);
+     }
    while (edf->data)
      {
 	Edje_Data *edt;
