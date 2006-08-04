@@ -449,7 +449,10 @@ evas_list_promote_list(Evas_List *list, Evas_List *move_list)
      return_l = move_list->next;
    if (move_list == ((Evas_List_Accounting *)(list->accounting))->last)
      ((Evas_List_Accounting *)(list->accounting))->last = move_list->prev;
-   move_list->prev = NULL;
+   move_list->prev = return_l->prev;
+   if (return_l->prev)
+     return_l->prev->next = move_list;
+   return_l->prev = move_list;
    move_list->next = return_l;
    return move_list;
 }
