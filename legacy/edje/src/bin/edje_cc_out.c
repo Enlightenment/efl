@@ -513,11 +513,14 @@ data_write(void)
 	  }
      }
    /* check that all spectra are valid */
-   for (l = edje_file->spectrum_dir->entries; l; l = l->next)
+   if (edje_file->spectrum_dir)
      {
-	Edje_Spectrum_Directory_Entry *se;
-	se = l->data;
-	check_spectrum(se, ef);
+	for (l = edje_file->spectrum_dir->entries; l; l = l->next)
+	  {
+	     Edje_Spectrum_Directory_Entry *se;
+	     se = l->data;
+	     check_spectrum(se, ef);
+	  }
      }
    /* sanity checks for parts and programs */
    for (l = edje_collections; l; l = l->next)
