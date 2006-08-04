@@ -35,4 +35,5 @@ endif
 EXTRA_DIST = \
 Ecore_Fb.h \
 ecore_fb.c \
-ecore_fb_private.h
+ecore_fb_private.h \
+ecore_fb_keytable.h
