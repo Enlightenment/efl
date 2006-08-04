@@ -154,22 +154,37 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 static void
 check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
-   switch (ep->action) {
+   switch (ep->action) 
+     {
       case EDJE_ACTION_TYPE_STATE_SET:
       case EDJE_ACTION_TYPE_ACTION_STOP:
       case EDJE_ACTION_TYPE_DRAG_VAL_SET:
       case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
       case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-	 if (!ep->targets) {
+	 if (!ep->targets) 
+	   {
 	      fprintf(stderr, "%s: Error. collection %i: "
 		    "target missing in program %s\n",
 		    progname, pc->id, ep->name);
 	      ABORT_WRITE(ef, file_out);
-	 }
+	   }
 	 break;
       default:
 	 break;
-   }
+     }
+}
+
+static void
+check_spectrum (Edje_Spectrum_Directory_Entry *se, Eet_File *ef)
+{
+   if (!se->entry) 
+     fprintf(stderr, "%s: Error. Spectrum missing a name.\n", progname);
+   else if (!se->color_list)
+     fprintf(stderr, "%s: Error. Spectrum %s is empty. At least one color must be given.", progname, se->entry);
+   else
+     return;
+
+   ABORT_WRITE(ef, file_out);
 }
 
 void
@@ -496,6 +511,13 @@ data_write(void)
 		   progname, de->id);
 	     ABORT_WRITE(ef, file_out);
 	  }
+     }
+   /* check that all spectra are valid */
+   for (l = edje_file->spectrum_dir->entries; l; l = l->next)
+     {
+	Edje_Spectrum_Directory_Entry *se;
+	se = l->data;
+	check_spectrum(se, ef);
      }
    /* sanity checks for parts and programs */
    for (l = edje_collections; l; l = l->next)
@@ -915,7 +937,6 @@ data_process_lookups(void)
 	
 	il = spectrum_lookups->data;
 
-	printf("spectrum lookup\n");
 	if (!edje_file->spectrum_dir)
 	  l = NULL;
 	else
@@ -928,7 +949,6 @@ data_process_lookups(void)
 		  *(il->dest) = 1;
 		  if ((de->entry) && (!strcmp(de->entry, il->name)))
 		    {
-		       printf("found spectrum: %s (%d)\n", de->entry, de->id);
 		       handle_slave_lookup(spectrum_slave_lookups, il->dest, de->id);
 		       *(il->dest) = de->id;
 		       break;
