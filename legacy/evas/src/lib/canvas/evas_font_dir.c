@@ -151,8 +151,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	       {
 		  if (size == fd->size)
 		    {
-		       fonts_cache = evas_list_remove_list(fonts_cache, l);
-		       fonts_cache = evas_list_prepend(fonts_cache, fd);
+		       fonts_cache = evas_list_promote_list(fonts_cache, l);
 		       fd->ref++;
 		       return fd->font;
 		    }

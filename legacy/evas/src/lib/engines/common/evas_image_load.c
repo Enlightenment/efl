@@ -66,8 +66,7 @@ evas_common_load_image_from_file(const char *file, const char *key)
 	  {
 	     if (evas_modules != l)
 	       {
-		  evas_modules = evas_list_remove_list(evas_modules, l);
-		  evas_modules = evas_list_prepend(evas_modules, em);
+		  evas_modules = evas_list_promote_list(evas_modules, l);
 	       }
 	     goto ok;
 	  }

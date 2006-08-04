@@ -404,6 +404,59 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
 }
 
 /**
+ * Moves the specified data to the head of the list
+ *
+ * Move a specified member to the head of the list
+ * @param list The list handle to move @p inside
+ * @param move_list The list node which is to be moved
+ * @return A new list handle to replace the old one
+ *
+ * Calling this function takes the list node @p move_list and moves it
+ * to the front of the @p list.
+ *
+ * Example:
+ * @code
+ * extern Evas_List *list;
+ * Evas_List *l;
+ * extern void *my_data;
+ *
+ * for (l = list; l; l= l->next)
+ *   {
+ *     if (l->data == my_data)
+ *       {
+ *         list = evas_list_promote_list(list, l);
+ *         break;
+ *       }
+ *   }
+ * @endcode
+ * @ingroup Evas_List_Promote_Group
+ */
+EAPI Evas_List *
+evas_list_promote_list(Evas_List *list, Evas_List *move_list)
+{
+   Evas_List *return_l;
+
+   if (!list) return NULL;
+   if (!move_list) return list;
+   if (move_list == list) return list;
+   if (move_list->next) move_list->next->prev = move_list->prev;
+   if (move_list->prev)
+     {
+	move_list->prev->next = move_list->next;
+	return_l = list;
+     }
+   else
+     return_l = move_list->next;
+   if (move_list == ((Evas_List_Accounting *)(list->accounting))->last)
+     ((Evas_List_Accounting *)(list->accounting))->last = move_list->prev;
+   move_list->prev = NULL;
+   move_list->next = return_l;
+   return move_list;
+}
+
+
+
+/**
  * @defgroup Evas_List_Find_Group Linked List Find Functions
  *
  * Functions that find specified data in a linked list.

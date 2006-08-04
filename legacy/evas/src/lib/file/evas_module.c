@@ -207,8 +207,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
 	  {
              if (evas_modules != l)
 	       {
-		  evas_modules = evas_list_remove_list(evas_modules, l);
-		  evas_modules = evas_list_prepend(evas_modules, em);
+		  evas_modules = evas_list_promote_list(evas_modules, l);
 	       }
 	     return em;
 	  }
