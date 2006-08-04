@@ -807,6 +807,8 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
    if (desc->text.text_class) evas_stringshare_del(desc->text.text_class);
    if (desc->text.style)      evas_stringshare_del(desc->text.style);
    if (desc->text.font)       evas_stringshare_del(desc->text.font);
+   if (desc->gradient.type)   evas_stringshare_del(desc->gradient.type);
+   if (desc->gradient.params) evas_stringshare_del(desc->gradient.params);
    free(desc);
 }
 
