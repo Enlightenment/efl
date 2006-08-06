@@ -472,7 +472,7 @@ data_write(void)
 		       if (verbose)
 			 {
 			    struct stat st;
-			    char *file = NULL;
+			    const char *file = NULL;
 		       
 			    evas_object_image_file_get(im, &file, NULL);
 			    if ((file) && (stat(file, &st) != 0))
