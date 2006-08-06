@@ -69,6 +69,8 @@ void    data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *des
 void    data_queue_image_lookup(char *name, int *dest);
 void    data_queue_part_slave_lookup(int *master, int *slave);
 void    data_queue_image_slave_lookup(int *master, int *slave);
+void    data_queue_spectrum_lookup(char *name, int *dest);
+void    data_queue_spectrum_slave_lookup(int *master, int *slave);
 void    data_process_lookups(void);
 void    data_process_scripts(void);
 void    data_process_script_lookups(void);

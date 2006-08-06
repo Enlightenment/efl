@@ -660,7 +660,6 @@ static void
 st_spectrum_name(void)
 {
    Edje_Spectrum_Directory_Entry *se;
-   Edje_Spectrum_Color *sc;
 
    se = evas_list_data(evas_list_last(edje_file->spectrum_dir->entries));
    se->entry = parse_str(0);
@@ -2324,7 +2323,6 @@ st_collections_group_parts_part_description_gradient_spectrum(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Part_Description *ed;
-   char *spectrum;
 
    check_arg_count(1);
 
