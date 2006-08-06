@@ -1182,12 +1182,14 @@ angular_restrict_reflect_aa_annulus(DATA32 *map, int map_len, DATA32 *dst, DATA8
 		DATA32 a = 1 + ((ll - (l << 16)) >> 8), a0 = a;
 
 		lp = l + off;
+		/* FIXME: Statement with no effect */
 		if (lp < 0) { lp = -lp;  257 - a; }
 		if (lp >= map_len)
 	          {
 		    int  m = (lp % (2 * map_len));
 
 		    lp = (lp % map_len);
+		    /* FIXME: Statement with no effect */
 		    if (m >= map_len)
 			{ lp = map_len - lp - 1;  257 - a; }
 	          }
@@ -1288,12 +1290,14 @@ angular_restrict_reflect_aa_masked_annulus(DATA32 *map, int map_len, DATA32 *dst
 		DATA32 a = 1 + ((ll - (l << 16)) >> 8), a0 = a - 1;
 
 		lp = l + off;
+		/* FIXME: Statement with no effect */
 		if (lp < 0) { lp = -lp;  257 - a; }
 		if (lp >= map_len)
 	          {
 		    int  m = (lp % (2 * map_len));
 
 		    lp = (lp % map_len);
+		    /* FIXME: Statement with no effect */
 		    if (m >= map_len)
 			{ lp = map_len - lp - 1;  257 - a; }
 	          }
