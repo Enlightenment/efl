@@ -18,38 +18,34 @@ AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
 AC_C___ATTRIBUTE__
 							
-dnl Set PACKAGE_DATA_DIR in config.h.
-if test "x${prefix}" = "xNONE"; then
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Shared Data Directory])
-else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}", [Shared Data Directory])
-fi
-
-dnl Set PACKAGE_BIN_DIR in config.h.
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin", [Installation Directory for User Executables])
+    PACKAGE_BIN_DIR="${ac_default_prefix}/bin"
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin", [Installation Directory for User Executables])
+    PACKAGE_BIN_DIR="${prefix}/bin"
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}", [Installation Directory for User Executables])
+  PACKAGE_BIN_DIR="${bindir}"
 fi
+AC_SUBST(PACKAGE_BIN_DIR)
 		
-dnl Set PACKAGE_LIB_DIR in config.h.
 if test "x${libdir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib", [Installation Directory for Libraries])
+    PACKAGE_LIB_DIR="${ac_default_prefix}/lib"
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib", [Installation Directory for Libraries])
+    PACKAGE_LIB_DIR="${prefix}/lib"
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}", [Installation Directory for Libraries])
+  PACKAGE_LIB_DIR="${libdir}"
 fi
-                
-dnl Set PACKAGE_SOURCE_DIR in config.h.
-packagesrcdir=`cd $srcdir && pwd`
-AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source Code Directory])
+AC_SUBST(PACKAGE_LIB_DIR)
+
+if test "x${prefix}" = "xNONE"; then
+  PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
+else
+  PACKAGE_DATA_DIR="${prefix}/share/${PACKAGE}"
+fi
+AC_SUBST(PACKAGE_DATA_DIR)
 
 dnl Use -Wall if we have gcc.
 changequote(,)dnl
@@ -177,7 +173,6 @@ x_dir="";
 x_includes="";
 x_cflags="";
 x_libs="";
-x_ldflags="";
 
 if test "x$have_ecore_txt" = "xyes"; then
   AC_MSG_CHECKING(whether ecore_x module is to be built)
@@ -208,7 +203,6 @@ if test "x$want_ecore_x" = "xyes"; then
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-      x_ldflags=" "$ecore_x_libs;
       ecore_x_libs="-lecore_x";
     ],[
       AM_CONDITIONAL(BUILD_ECORE_X, false)
@@ -220,7 +214,6 @@ fi
 
 AC_SUBST(x_cflags)
 AC_SUBST(x_includes)
-AC_SUBST(x_ldflags)
 AC_SUBST(x_libs)
 
 if test "x$have_ecore_x" = "xyes"; then
@@ -242,7 +235,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xcursor_libs=""
           use_Xcursor="no"
         ], [
-          $x_libs $x_ldflags -lXrender
+          $x_libs -lXrender
         ]
       )
     ], [
@@ -276,7 +269,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xprint_libs=""
           use_Xprint="no"
         ], [
-          $x_libs $x_ldflags
+          $x_libs
         ]
       )
     ], [
@@ -310,7 +303,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xinerama_libs=""
           use_Xinerama="no"
         ], [
-          $x_libs $x_ldflags
+          $x_libs
         ]
       )
     ], [
@@ -344,7 +337,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xrandr_libs=""
           use_Xrandr="no"
         ], [
-          $x_libs $x_ldflags
+          $x_libs
         ]
       )
     ], [
@@ -378,7 +371,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xss_libs=""
           use_Xss="no"
         ], [
-          $x_libs $x_ldflags
+          $x_libs
         ]
       )
     ], [
@@ -412,7 +405,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xrender_libs=""
           use_Xrender="no"
         ], [
-          $x_libs $x_ldflags
+          $x_libs
         ]
       )
     ], [
@@ -446,7 +439,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xfixes_libs=""
           use_Xfixes="no"
         ], [
-          $x_libs $x_ldflags
+          $x_libs
         ]
       )
     ], [
@@ -480,7 +473,7 @@ if test "x$have_ecore_x" = "xyes"; then
           Xdamage_libs=""
           use_Xdamage="no"
         ], [
-          $x_libs $x_ldflags
+          $x_libs
         ]
       )
     ], [
