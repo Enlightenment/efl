@@ -203,7 +203,7 @@ if test "x$want_ecore_x" = "xyes"; then
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-      ecore_x_libs="-lecore_x";
+      ecore_x_libs="-lecore_x $x_libs";
     ],[
       AM_CONDITIONAL(BUILD_ECORE_X, false)
     ]

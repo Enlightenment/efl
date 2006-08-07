@@ -49,35 +49,35 @@ while test $# -gt 0; do
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ @ecore_file_libs@ @ecore_dbus_libs@ @EET_LIBS@ -lm
+      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ @ecore_file_libs@ @ecore_dbus_libs@ @SSL_LIBS@ @winsock_libs@ @CURL_LIBS@ @EET_LIBS@ @EVAS_LIBS@ @x_libs@ @Xcursor_libs@ @Xrender_libs@ @Xprint_libs@ @Xinerama_libs@ @Xrandr_libs@ @Xfixes_libs@ @Xdamage_libs@ @Xss_libs@ @iconv_libs@ @tslib_libs@ @fam_libs@ -lm
       ;;
     --libs-con)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_con_libs@ -lm
+      echo $libdirs -lecore @ecore_con_libs@ @SSL_LIBS@ @winsock_libs@ @CURL_LIBS@ -lm
       ;;
     --libs-config)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_config_libs@ @EET_LIBS@ -lm
+      echo $libdirs -lecore @ecore_config_libs@ @EET_LIBS@ @EVAS_LIBS@ -lm
       ;;
     --libs-dbus)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_dbus_libs@ -lm
+      echo $libdirs -lecore @ecore_dbus_libs@ @SSL_LIBS@ -lm
       ;;
     --libs-evas)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_evas_libs@ -lm
+      echo $libdirs -lecore @ecore_evas_libs@ @EVAS_LIBS@ @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @Xrender_libs@ @Xprint_libs@ @Xinerama_libs@ @Xrandr_libs@ @Xfixes_libs@ @Xdamage_libs@ @Xss_libs@ @ecore_txt_libs@ @iconv_libs@ @ecore_job_libs@ @ecore_fb_libs@ @tslib_libs@ -lm
       ;;
     --libs-fb)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_fb_libs@ -lm
+      echo $libdirs -lecore @ecore_fb_libs@ @tslib_libs@ -lm
       ;;
     --libs-file)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_file_libs@ -lm
+      echo $libdirs -lecore @ecore_file_libs@ @fam_libs@ @CURL_LIBS@ -lm
       ;;
     --libs-ipc)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_ipc_libs@ -lm
+      echo $libdirs -lecore @ecore_ipc_libs@ @ecore_con_libs@ @SSL_LIBS@ @winsock_libs@ @CURL_LIBS@ -lm
       ;;
     --libs-job)
       libdirs=-L@libdir@
@@ -85,11 +85,11 @@ while test $# -gt 0; do
       ;;
     --libs-txt)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_txt_libs@ -lm
+      echo $libdirs -lecore @ecore_txt_libs@ @iconv_libs@ -lm
       ;;
     --libs-x)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_x_libs@ -lm
+      echo $libdirs -lecore @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @Xrender_libs@ @Xprint_libs@ @Xinerama_libs@ @Xrandr_libs@ @Xfixes_libs@ @Xdamage_libs@ @Xss_libs@ @ecore_txt_libs@ @iconv_libs@ @ecore_job_libs@ -lm
       ;;
     *)
       usage
