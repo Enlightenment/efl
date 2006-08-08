@@ -613,7 +613,7 @@ _edje_file_free(Edje_File *edf)
 	     
 	     fe = edf->font_dir->entries->data;
 	     edf->font_dir->entries = 
-	       evas_list_remove(edf->font_dir->entries, fe);
+	       evas_list_remove_list(edf->font_dir->entries, edf->font_dir->entries);
 	     if (fe->entry) evas_stringshare_del(fe->entry);
 	     free(fe);
 	  }
@@ -627,7 +627,7 @@ _edje_file_free(Edje_File *edf)
 	     
 	     ie = edf->image_dir->entries->data;
 	     edf->image_dir->entries = 
-	       evas_list_remove(edf->image_dir->entries, ie);
+	       evas_list_remove_list(edf->image_dir->entries, edf->image_dir->entries);
 	     if (ie->entry) evas_stringshare_del(ie->entry);
 	     free(ie);
 	  }
@@ -641,7 +641,7 @@ _edje_file_free(Edje_File *edf)
 	     
 	     ce = edf->collection_dir->entries->data;
 	     edf->collection_dir->entries = 
-	       evas_list_remove(edf->collection_dir->entries, ce);
+	       evas_list_remove_list(edf->collection_dir->entries, edf->collection_dir->entries);
 	     if (ce->entry) evas_stringshare_del(ce->entry);
 	     free(ce);
 	  }
@@ -655,7 +655,7 @@ _edje_file_free(Edje_File *edf)
 
 	     se = edf->spectrum_dir->entries->data;
 	     edf->spectrum_dir->entries = 
-		evas_list_remove(edf->spectrum_dir->entries, se);
+		evas_list_remove_list(edf->spectrum_dir->entries, edf->spectrum_dir->entries);
 	     while (se->color_list)
 	       se->color_list = evas_list_remove(se->color_list, se->color_list->data);
 	     if (se->entry) evas_stringshare_del(se->entry);
@@ -675,12 +675,12 @@ _edje_file_free(Edje_File *edf)
 	free(edt);
      }
    
-   while(edf->color_classes)
+   while (edf->color_classes)
      {
 	Edje_Color_Class *ecc;
 
 	ecc = edf->color_classes->data;
-	edf->color_classes = evas_list_remove(edf->color_classes, ecc);
+	edf->color_classes = evas_list_remove_list(edf->color_classes, edf->color_classes);
 	if (ecc->name) evas_stringshare_del(ecc->name);
 	free(ecc);
      }
