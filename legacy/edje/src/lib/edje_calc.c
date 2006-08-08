@@ -346,19 +346,29 @@ _edje_part_recalc_single(Edje *ed,
 		  break;
 	       }
 	  }
-	if (apref == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
+	if (apref == EDJE_ASPECT_PREFER_NONE) /* keep botth dimensions in check */
 	  {
+	     /* adjust for min aspect (width / height) */
+	     if ((amin > 0.0) && (aspect < amin))
+	       {
+		  new_h = (params->w / amin);
+		  new_w = (params->h * amin);
+	       }
 	     /* adjust for max aspect (width / height) */
 	     if ((amax > 0.0) && (aspect > amax))
 	       {
 		  new_h = (params->w / amax);
 		  new_w = (params->h * amax);
 	       }
-	     /* adjust for min aspect (width / height) */
-	     if ((amin > 0.0) && (aspect < amin))
+	     if ((amax > 0.0) && (new_w < params->w))
 	       {
-		  new_h = (params->w / amin);
-		  new_w = (params->h * amin);
+		  new_w = params->w;
+		  new_h = params->w / amax;
+	       }
+	     if ((amax > 0.0) && (new_h < params->h))
+	       {
+		  new_w = params->h * amax;
+		  new_h = params->h;
 	       }
 	  } /* prefer vertical size as determiner */
 	else if (apref == EDJE_ASPECT_PREFER_VERTICAL) /* keep both dimensions in check */
@@ -395,12 +405,15 @@ _edje_part_recalc_single(Edje *ed,
 	       }
 	  }
 
-	if ((maxw >= 0) && (new_w > maxw)) new_w = maxw;
-	if (new_w < minw) new_w = minw;
+        if (!((amin > 0.0) && (amax > 0.0) && (apref == EDJE_ASPECT_PREFER_NONE)))
+	  {
+	     if ((maxw >= 0) && (new_w > maxw)) new_w = maxw;
+	     if (new_w < minw) new_w = minw;
+	     
+	     if ((maxh >= 0) && (new_h > maxh)) new_h = maxh;
+	     if (new_h < minh) new_h = minh;
+	  }
 	
-	if ((maxh >= 0) && (new_h > maxh)) new_h = maxh;
-	if (new_h < minh) new_h = minh;
-
 	/* do real adjustment */
 	if (apref == EDJE_ASPECT_PREFER_BOTH)
 	  {
@@ -439,7 +452,12 @@ _edje_part_recalc_single(Edje *ed,
 	  }
 	else
 	  {
-	     if ((params->h - new_h) > (params->w - new_w))
+	     if ((amin > 0.0) && (amax > 0.0) && (apref == EDJE_ASPECT_PREFER_NONE))
+	       {
+		  params->w = new_w;
+		  params->h = new_h;
+	       }
+	     else if ((params->h - new_h) > (params->w - new_w))
 	       {
 		  if (params->h < new_h)
 		    params->h = new_h;
