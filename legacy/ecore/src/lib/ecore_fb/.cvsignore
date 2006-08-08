@@ -2,5 +2,5 @@
 .libs
 Makefile
 Makefile.in
-ecore_fb.lo
+*.lo
 libecore_fb.la
