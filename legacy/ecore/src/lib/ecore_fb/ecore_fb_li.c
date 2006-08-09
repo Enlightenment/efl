@@ -50,7 +50,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
 {
 	if(!dev->listen)
 		return;
-	
+
 	/* check for basic keyboard keys */
 	if(iev->code >= KEY_ESC && iev->code <= KEY_COMPOSE)
 	{
@@ -59,7 +59,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
 		{
 			int offset = 0;
 			Ecore_Fb_Event_Key_Down *ev;
-		
+
 			ev = calloc(1, sizeof(Ecore_Fb_Event_Key_Down));
 			if(dev->keyboard.shift) offset = 1;
 			else if(dev->keyboard.lock) offset = 2;
@@ -90,12 +90,12 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
 			if (dev->keyboard.alt > 2) dev->keyboard.alt = 2;
 			if (dev->keyboard.shift > 2) dev->keyboard.shift = 2;
 			if (dev->keyboard.lock > 1) dev->keyboard.lock = 1;
-}
+		}
 		else
 		{
 			int offset = 0;
 			Ecore_Fb_Event_Key_Up *ev;
-		
+
 			ev = calloc(1, sizeof(Ecore_Fb_Event_Key_Up));
 			if(dev->keyboard.shift) offset = 1;
 			else if(dev->keyboard.lock) offset = 2;
@@ -141,7 +141,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
 			ev->button = button;
 			ev->x = dev->mouse.x;
 			ev->y = dev->mouse.y;
-			
+
 			current = ecore_time_get();
 			if((current - dev->mouse.prev) <= dev->mouse.threshold)
 			{
@@ -172,7 +172,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
 			ev->button = button;
 			ev->x = dev->mouse.x;
 			ev->y = dev->mouse.y;
-			
+
 			ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, ev, NULL ,NULL);
 		}
 	}
@@ -210,7 +210,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
 			ev->x = dev->mouse.x;
 			ev->y = dev->mouse.y;
 			ev->dev = dev;
-			
+
 			ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE,ev,NULL,NULL);
 			break;
 		}
@@ -273,7 +273,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
 			ev->x = dev->mouse.x;
 			ev->y = dev->mouse.y;
 			ev->dev = dev;
-			
+
 			ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 			break;
 		}
@@ -282,7 +282,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
 			break;
 	}
 }
-	
+
 static int
 _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh)
 {
@@ -358,11 +358,11 @@ ecore_fb_input_device_open(const char *dev)
 		goto error_open;
 	}
 	/* query capabilities */
-	if(ioctl(fd, EVIOCGBIT(0, EV_MAX), event_type_bitmask) < 0) 
+	if(ioctl(fd, EVIOCGBIT(0, EV_MAX), event_type_bitmask) < 0)
 	{
 		fprintf(stderr,"[ecore_fb_li:device_open] query capabilities %s %s", dev, strerror(errno));
 		goto error_caps;
-  	}
+	}
 	/* query name */
 	device->info.name = calloc(256, sizeof(char));
 	if(ioctl(fd, EVIOCGNAME(sizeof(char) * 256), device->info.name) < 0)
@@ -384,17 +384,17 @@ ecore_fb_input_device_open(const char *dev)
 		{
 			case EV_SYN :
 			break;
-			
+
 			case EV_KEY:
 			device->info.cap |= ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS;
-		  	break;
-	      	
+			break;
+
 			case EV_REL:
-		  	device->info.cap |= ECORE_FB_INPUT_DEVICE_CAP_RELATIVE;
-		  	break;
+			device->info.cap |= ECORE_FB_INPUT_DEVICE_CAP_RELATIVE;
+			break;
 
 			case EV_ABS:
-		  	device->info.cap |= ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE;
+			device->info.cap |= ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE;
 			break;
 
 			case EV_MSC:
@@ -440,7 +440,7 @@ ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev)
 EAPI void
 ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h)
 {
-	if(!dev) 
+	if(!dev)
 		return;
 	if(w < 0 || h < 0)
 		return;
@@ -501,4 +501,3 @@ ecore_fb_input_device_threshold_click_get(Ecore_Fb_Input_Device *dev)
 	if(!dev) return 0;
 	return dev->mouse.threshold;
 }
-
