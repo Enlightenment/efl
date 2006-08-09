@@ -47,7 +47,6 @@ extern "C" {
 typedef struct _Ecore_Fb_Input_Device Ecore_Fb_Input_Device; /* an input device handler */
 
 /* device capabilities */
-typedef enum   _Ecore_Fb_Input_Device_Cap Ecore_Fb_Input_Device_Cap;
 enum _Ecore_Fb_Input_Device_Cap
 {
 	ECORE_FB_INPUT_DEVICE_CAP_NONE            = 0x00000000,
@@ -55,7 +54,7 @@ enum _Ecore_Fb_Input_Device_Cap
 	ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE        = 0x00000002,
 	ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS = 0x00000004
 };
-
+typedef enum   _Ecore_Fb_Input_Device_Cap Ecore_Fb_Input_Device_Cap;
 
 EAPI extern int ECORE_FB_EVENT_KEY_DOWN; /**< FB Key Down event */
 EAPI extern int ECORE_FB_EVENT_KEY_UP; /**< FB Key Up event */
