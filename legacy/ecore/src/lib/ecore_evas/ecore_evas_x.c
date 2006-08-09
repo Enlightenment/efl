@@ -734,9 +734,10 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
 	       details[e->detail]);
      }
  */ 
-   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) ||
-       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
-     return 0;
+// disable. causes more problems than it fixes   
+//   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) || 
+//       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
+//     return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
    _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
