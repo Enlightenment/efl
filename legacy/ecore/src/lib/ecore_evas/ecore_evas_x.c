@@ -95,6 +95,10 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 	einfo->info.depth    = einfo->func.best_depth_get(ecore_x_display_get(), screen);
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
+   else
+     {
+	win = 0;
+     }
    return win;
 }
 #endif
