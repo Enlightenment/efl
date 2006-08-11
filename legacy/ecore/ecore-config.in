@@ -6,8 +6,8 @@ exec_prefix_set=no
 
 usage() {
       echo "Usage: ecore-config [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--libs] [--cflags]" 1>&2
-      echo "                    [--libs-con] [--libs-config] [--libs-dbus] [--libs-evas] [--libs-fb]" 1>&2
-      echo "                    [--libs-file] [--libs-ipc] [--libs-job] [--libs-txt] [--libs-x]" 1>&2
+      echo "                    [--libs-con] [--libs-config] [--libs-dbus] [--libs-desktop] [--libs-evas]" 1>&2
+      echo "                    [--libs-fb] [--libs-file] [--libs-ipc] [--libs-job] [--libs-txt] [--libs-x]" 1>&2
 }
 
 if test $# -eq 0; then
@@ -49,7 +49,7 @@ while test $# -gt 0; do
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ @ecore_file_libs@ @ecore_dbus_libs@ @SSL_LIBS@ @winsock_libs@ @CURL_LIBS@ @EET_LIBS@ @EVAS_LIBS@ @x_libs@ @Xcursor_libs@ @Xrender_libs@ @Xprint_libs@ @Xinerama_libs@ @Xrandr_libs@ @Xfixes_libs@ @Xdamage_libs@ @Xss_libs@ @iconv_libs@ @tslib_libs@ @fam_libs@ -lm
+      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ @ecore_file_libs@ @ecore_desktop_libs@ @ecore_dbus_libs@ @SSL_LIBS@ @winsock_libs@ @CURL_LIBS@ @EET_LIBS@ @EVAS_LIBS@ @x_libs@ @Xcursor_libs@ @Xrender_libs@ @Xprint_libs@ @Xinerama_libs@ @Xrandr_libs@ @Xfixes_libs@ @Xdamage_libs@ @Xss_libs@ @iconv_libs@ @tslib_libs@ @fam_libs@ -lm
       ;;
     --libs-con)
       libdirs=-L@libdir@
@@ -62,6 +62,10 @@ while test $# -gt 0; do
     --libs-dbus)
       libdirs=-L@libdir@
       echo $libdirs -lecore @ecore_dbus_libs@ @SSL_LIBS@ -lm
+      ;;
+    --libs-desktop)
+      libdirs=-L@libdir@
+      echo $libdirs -lecore @ecore_desktop_libs@ @ecore_file_libs@ -lm
       ;;
     --libs-evas)
       libdirs=-L@libdir@

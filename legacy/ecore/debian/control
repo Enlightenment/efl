@@ -56,6 +56,19 @@ Description: Ecore DBus Library
  applications.
  This package contains the Ecore DBus Library.
  
+Package: libecore0-desktop
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore-file
+Provides: libecore-desktop
+Description: Ecore freedesktop.org .desktop, icon, menu parsing Library
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ This package contains the Ecore freedesktop.org .desktop, icon, menu parsing Library.
+ 
 Package: libecore0-evas
 Architecture: any
 Section: libs
@@ -152,7 +165,7 @@ Package: libecore0-all
 Architecture: any
 Section: libdevel
 Architecture: any
-Depends: libecore0 (= ${Source-Version}), libecore-config, libecore-con, libecore-dbus, libecore-evas, libecore-fb, libecore-file, libecore-ipc, libecore-job, libecore-txt, libecore-x
+Depends: libecore0 (= ${Source-Version}), libecore-config, libecore-con, libecore-dbus, libecore-desktop, libecore-evas, libecore-fb, libecore-file, libecore-ipc, libecore-job, libecore-txt, libecore-x
 Provides: libecore-all
 Description: Virtual package providing all available Ecore modules.
  This is the core event abstraction layer and X abstraction layer that makes

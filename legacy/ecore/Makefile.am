@@ -28,6 +28,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4
 	     debian/libecore0-con.install \
 	     debian/libecore0-config.install \
 	     debian/libecore0-dbus.install \
+	     debian/libecore0-desktop.install \
 	     debian/libecore0-dev.install \
 	     debian/libecore0-evas.install \
 	     debian/libecore0-fb.install \

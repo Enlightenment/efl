@@ -2,6 +2,7 @@ debian/tmp/usr/include/Ecore_Config.h
 debian/tmp/usr/include/Ecore_Con.h
 debian/tmp/usr/include/Ecore_Data.h
 debian/tmp/usr/include/Ecore_DBus.h
+debian/tmp/usr/include/Ecore_Desktop.h
 debian/tmp/usr/include/Ecore_Evas.h
 debian/tmp/usr/include/Ecore_Fb.h
 debian/tmp/usr/include/Ecore_File.h
@@ -24,6 +25,9 @@ debian/tmp/usr/lib/libecore_config.so
 debian/tmp/usr/lib/libecore_dbus.a
 debian/tmp/usr/lib/libecore_dbus.la
 debian/tmp/usr/lib/libecore_dbus.so
+debian/tmp/usr/lib/libecore_desktop.a
+debian/tmp/usr/lib/libecore_desktop.la
+debian/tmp/usr/lib/libecore_desktop.so
 debian/tmp/usr/lib/libecore_evas.a
 debian/tmp/usr/lib/libecore_evas.la
 debian/tmp/usr/lib/libecore_evas.so

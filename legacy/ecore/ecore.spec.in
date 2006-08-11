@@ -27,7 +27,7 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: openssl-devel, evas-devel, eet-devel
-Requires: ecore-con, ecore-config, ecore-dbus, ecore-evas, ecore-fb, ecore-file, ecore-ipc, ecore-job, ecore-txt, ecore-x
+Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop, ecore-evas, ecore-fb, ecore-file, ecore-ipc, ecore-job, ecore-txt, ecore-x
 
 %description devel
 Ecore development files
@@ -66,6 +66,11 @@ Ecore Enlightened Property Library
 
 %package dbus
 Summary: Ecore DBus Library
+Group: Development/Libraries
+Requires: %{name} = %{version}
+
+%package desktop
+Summary: Ecore freedesktop.org .desktop, icon, menu parsing Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
@@ -188,6 +193,10 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files dbus
 %defattr(-, root, root)
 %{_libdir}/libecore_dbus.so.*
+
+%files desktop
+%defattr(-, root, root)
+%{_libdir}/libecore_desktop.so.*
 
 %files evas
 %defattr(-, root, root)
