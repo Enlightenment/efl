@@ -82,7 +82,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 	  }
 	else if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
 	  {
-	     if (evas_common_font_source_load_complete(fi->src));
+	     if (evas_common_font_source_load_complete(fi->src))
 	       return 0;
 
 	     index = FT_Get_Char_Index(fi->src->ft.face, gl);

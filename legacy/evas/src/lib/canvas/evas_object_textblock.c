@@ -2069,7 +2069,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 	     it = (Evas_Object_Textblock_Item *)ll;
 	     if (it->source_node == n)
 	       {
-		  if ((it->source_pos + strlen(it->text)) >= pos)
+		  if ((int)(it->source_pos + strlen(it->text)) >= pos)
 		    {
 		       *lnr = ln;
 		       *itr = it;
@@ -2389,7 +2389,7 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 		    {
 		       int i;
 		       
-		       for (i = 0; i < (sizeof(_escapes) / sizeof(char *)); i += 2)
+		       for (i = 0; i < (int)(sizeof(_escapes) / sizeof(char *)); i += 2)
 			 {
 			    if (!strncmp(_escapes[i], esc_start, 
 					 esc_end - esc_start + 1))
@@ -2492,7 +2492,7 @@ evas_object_textblock_text_markup_get(Evas_Object *obj)
 			 {
 			    int i;
 
-			    for (i = 1; i < (sizeof(_escapes) / sizeof(char *)); i += 2)
+			    for (i = 1; i < (int)(sizeof(_escapes) / sizeof(char *)); i += 2)
 			      {
 				 if (!strncmp(_escapes[i], p,
 					      strlen(_escapes[i])))
