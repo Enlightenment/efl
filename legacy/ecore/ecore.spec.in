@@ -69,13 +69,16 @@ Summary: Ecore DBus Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
+%description dbus
+Ecore DBus Library
+
 %package desktop
 Summary: Ecore freedesktop.org .desktop, icon, menu parsing Library
 Group: Development/Libraries
 Requires: %{name} = %{version}
 
-%description dbus
-Ecore DBus Library
+%description desktop
+Ecore freedesktop.org .desktop, icon, menu parsing Library
 
 %package evas
 Summary: Ecore Evas Wrapper Library
