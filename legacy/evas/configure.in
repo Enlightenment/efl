@@ -883,6 +883,33 @@ fi
 
 AM_CONDITIONAL(BUILD_LOADER_TIFF, test x$have_tiff = xyes)
 
+#######################################
+## XPM
+have_xpm="yes";
+AC_MSG_CHECKING(whether to enable xpm image loader)
+
+AC_ARG_ENABLE(image-loader-xpm, 
+  [  --enable-image-loader-xpm       enable XPM image loader], [
+      if test x"$enableval" = x"yes" ; then
+        AC_MSG_RESULT(yes)
+	have_xpm="yes"
+      else
+        AC_MSG_RESULT(no)
+	have_xpm="no"
+      fi
+  ], [
+      AC_MSG_RESULT($have_xpm)
+  ]
+)
+if test "x$have_xpm" = "xyes"; then
+  AC_MSG_RESULT($have_xpm)
+fi
+
+xpm_cflags=""
+xpm_libs=""
+
+AM_CONDITIONAL(BUILD_LOADER_XPM, test x$have_xpm = xyes)
+
 #####################################################################
 ## Cpu based optimizations
 
@@ -1714,6 +1741,8 @@ AC_SUBST(edb_cflags)
 AC_SUBST(edb_libs)
 AC_SUBST(tiff_cflags)
 AC_SUBST(tiff_libs)
+AC_SUBST(xpm_cflags)
+AC_SUBST(xpm_libs)
 
 # Build the list of required libs for evas.pc.in. Only works for libs
 # which install a .pc file of course
@@ -1787,6 +1816,7 @@ src/modules/loaders/gif/Makefile
 src/modules/loaders/jpeg/Makefile
 src/modules/loaders/png/Makefile
 src/modules/loaders/tiff/Makefile
+src/modules/loaders/xpm/Makefile
 src/modules/savers/Makefile
 src/modules/savers/edb/Makefile
 src/modules/savers/eet/Makefile
@@ -1837,6 +1867,7 @@ echo "  JPEG....................: $have_jpeg"
 echo "  EET.....................: $have_eet"
 echo "  EDB.....................: $have_edb"
 echo "  TIFF....................: $have_tiff"
+echo "  XPM.....................: $have_xpm"
 # FIXME: need to add modular image loader system
 # FIXME: add more image loader modules
 echo

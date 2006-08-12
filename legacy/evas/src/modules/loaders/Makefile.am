@@ -24,4 +24,8 @@ if BUILD_LOADER_TIFF
 tiff_subdir = tiff
 endif
 
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir)
+if BUILD_LOADER_XPM
+xpm_subdir = xpm
+endif
+
+SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir) $(xpm_subdir)

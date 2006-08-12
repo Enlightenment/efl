@@ -29,14 +29,18 @@ evas_common_load_image_from_file(const char *file, const char *key)
         p++;
         if (!strcasecmp(p, "png"))
            loader = "png";
-        if ((!strcasecmp(p, "jpg")) || (!strcasecmp(p, "jpeg")) ||
+        else if ((!strcasecmp(p, "jpg")) || (!strcasecmp(p, "jpeg")) ||
             (!strcasecmp(p, "jfif")))
            loader = "jpeg";
-        if ((!strcasecmp(p, "eet")) || (!strcasecmp(p, "edj")) ||
+        else if ((!strcasecmp(p, "eet")) || (!strcasecmp(p, "edj")) ||
             (!strcasecmp(p, "eap")))
            loader = "eet";
-        if (!strcasecmp(p, "edb"))
+        else if (!strcasecmp(p, "edb"))
            loader = "edb";
+        else if ((!strcasecmp(p, "tiff")) || (!strcasecmp(p, "tif")))
+           loader = "tiff";
+        else if (!strcasecmp(p, "xpm"))
+           loader = "xpm";
      }
    if (loader)
      {
