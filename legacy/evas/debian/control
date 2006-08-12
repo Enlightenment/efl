@@ -2,7 +2,7 @@ Source: evas
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev
+Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libxpm-dev, libgl-dev
 Standards-Version: 3.6.2.2
 
 Package: libevas0
@@ -48,7 +48,7 @@ Description: enlightenment advanced canvas library development files
 Package: libevas0-engine-fb
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libevas-engine-software-generic
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Provides: libevas-engine-fb
 Description: Evas module providingg the framebuffer render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -63,7 +63,7 @@ Description: Evas module providingg the framebuffer render engine
 Package: libevas0-engine-software-x11
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libevas-engine-software-generic
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Provides: libevas-engine-software-x11
 Description: Evas module providing the software X11 render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -78,7 +78,7 @@ Description: Evas module providing the software X11 render engine
 Package: libevas0-engine-software-generic
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas
+Depends: ${shlibs:Depends}, libevas0
 Provides: libevas-engine-software-generic
 Description: Evas module providing the generic software render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -94,7 +94,7 @@ Description: Evas module providing the generic software render engine
 Package: libevas0-engine-buffer
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libevas-engine-software-generic
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Provides: libevas-engine-buffer
 Description: Evas module providing the buffer render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -109,7 +109,7 @@ Description: Evas module providing the buffer render engine
 Package: libevas0-engine-xrender
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libevas-engine-software-generic
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
 Provides: libevas-engine-xrender
 Description: Evas module providing the Xrender engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -121,10 +121,25 @@ Description: Evas module providing the Xrender engine
  applications under development.
  This package contains the Evas engine module for Xrender.
 
+Package: libevas0-engine-gl-x11
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
+Provides: libevas-engine-gl-x11
+Description: Evas module providing the OpenGl engine
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas engine module for OpenGl.
+
 Package: libevas0-loader-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libeet
+Depends: ${shlibs:Depends}, libevas0, libeet
 Provides: libevas-loader-eet
 Description: Evas module providing the Eet loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -139,7 +154,7 @@ Description: Evas module providing the Eet loader
 Package: libevas0-loader-png
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libpng12-0
+Depends: ${shlibs:Depends}, libevas0, libpng12-0
 Provides: libevas-loader-png
 Description: Evas module providing the PNG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -154,7 +169,7 @@ Description: Evas module providing the PNG loader
 Package: libevas0-loader-jpeg
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libjpeg62
+Depends: ${shlibs:Depends}, libevas0, libjpeg62
 Provides: libevas-loader-jpeg
 Description: Evas module providing the JPEG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -169,7 +184,7 @@ Description: Evas module providing the JPEG loader
 Package: libevas0-loader-gif
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libungif4g
+Depends: ${shlibs:Depends}, libevas0, libungif4g
 Provides: libevas-loader-gif
 Description: Evas module providing the GIF loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -184,7 +199,7 @@ Description: Evas module providing the GIF loader
 Package: libevas0-loader-tiff
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libtiff4
+Depends: ${shlibs:Depends}, libevas0, libtiff4
 Provides: libevas-loader-tiff
 Description: Evas module providing the TIFF loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -196,10 +211,25 @@ Description: Evas module providing the TIFF loader
  applications under development.
  This package contains the Evas loader module for TIFF.
 
+Package: libevas0-loader-xpm
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, libxpm4
+Provides: libevas-loader-xpm
+Description: Evas module providing the X11 pixmap loader
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas loader module for XPM.
+
 Package: libevas0-saver-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libeet
+Depends: ${shlibs:Depends}, libevas0, libeet
 Provides: libevas-saver-eet
 Description: Evas module providing the Eet saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -214,7 +244,7 @@ Description: Evas module providing the Eet saver
 Package: libevas0-saver-png
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libpng12-0
+Depends: ${shlibs:Depends}, libevas0, libpng12-0
 Provides: libevas-saver-png
 Description: Evas module providing the PNG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -229,7 +259,7 @@ Description: Evas module providing the PNG saver
 Package: libevas0-saver-jpeg
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libjpeg62
+Depends: ${shlibs:Depends}, libevas0, libjpeg62
 Provides: libevas-saver-jpeg
 Description: Evas module providing the JPEG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -244,7 +274,7 @@ Description: Evas module providing the JPEG saver
 Package: libevas0-saver-tiff
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas, libtiff4
+Depends: ${shlibs:Depends}, libevas0, libtiff4
 Provides: libevas-saver-tiff
 Description: Evas module providing the TIFF saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -259,7 +289,7 @@ Description: Evas module providing the TIFF saver
 Package: evas0-debug
 Section: graphics
 Architecture: any
-Depends: ${shlibs:Depends}, libevas-engine-software-x11, libevas-engine-buffer, libevas-engine-fb, libevas-engine-xrender, libevas-loader-png, libevas-loader-jpeg
+Depends: ${shlibs:Depends}, libevas0-engine-software-x11, libevas0-engine-buffer, libevas0-engine-fb, libevas0-engine-xrender, libevas0-loader-png, libevas0-loader-jpeg
 Provides: evas-debug
 Conflicts: evas0-bin
 Replaces: evas0-bin
@@ -281,7 +311,7 @@ Description: Programs for libevas
 Package: libevas0-engines-all
 Section: graphics
 Architecture: any
-Depends: libevas-engine-buffer, libevas-engine-fb, libevas-engine-software-generic, libevas-engine-software-x11, libevas-engine-xrender
+Depends: libevas0-engine-buffer, libevas0-engine-fb, libevas0-engine-software-generic, libevas0-engine-software-x11, libevas0-engine-xrender, libevas0-engine-gl-x11
 Provides: libevas-engines-all
 Description: virtual package providing all available Evas engines
  This is a virtual package providing all available Evas engine modules.
@@ -301,7 +331,7 @@ Description: virtual package providing all available Evas engines
 Package: libevas0-loaders-all
 Section: graphics
 Architecture: any
-Depends: libevas-loader-eet, libevas-loader-jpeg, libevas-loader-png, libevas-loader-tiff, libevas-loader-gif
+Depends: libevas0-loader-eet, libevas0-loader-jpeg, libevas0-loader-png, libevas0-loader-tiff, libevas0-loader-gif, libevas0-loader-xpm
 Provides: libevas-loaders-all
 Description: virtual package providing all available Evas loaders
  This is a virtual package providing all available Evas loader modules.
@@ -321,7 +351,7 @@ Description: virtual package providing all available Evas loaders
 Package: libevas0-savers-all
 Section: graphics
 Architecture: any
-Depends: libevas-saver-eet, libevas-saver-jpeg, libevas-saver-png, libevas-saver-tiff
+Depends: libevas0-saver-eet, libevas0-saver-jpeg, libevas0-saver-png, libevas0-saver-tiff
 Provides: libevas-savers-all
 Description: virtual package providing all available Evas savers
  This is a virtual package providing all available Evas saver modules.
@@ -341,7 +371,7 @@ Description: virtual package providing all available Evas savers
 Package: libevas0-all
 Section: graphics
 Architecture: any
-Depends: libevas-savers-all, libevas-savers-all, libevas-engines-all
+Depends: libevas0-savers-all, libevas0-savers-all, libevas0-engines-all
 Provides: libevas-all
 Description: virtual package providing all available Evas modules
  This is a virtual package providing all available Evas modules.
