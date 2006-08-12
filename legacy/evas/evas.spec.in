@@ -36,6 +36,7 @@
 %bcond_without module_saver_tiff
 %bcond_without module_loader_eet
 %bcond_without module_saver_eet
+%bcond_without module_loader_xpm
 
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
@@ -194,6 +195,18 @@ BuildRequires: edb-devel
 EDB Image saver module for Evas
 %endif
 
+%if %{with module_loader_xpm}
+%package module_loader_xpm
+Summary: XPM Image loader module for Evas
+Group: System Environment/Libraries
+##BuildRequires: (none, X?)
+%description module_loader_xpm
+XPM Image loader module for Evas
+%define ac_with_module_loader_xpm --enable-image-loader-xpm
+%else
+%define ac_with_module_loader_xpm --disable-image-loader-xpm
+%endif
+
 %package module_engine_software_generic
 Summary: Software X11 rendering engine module for Evas
 Group: System Environment/Libraries
@@ -326,6 +339,7 @@ Software XCB X11 rendering engine module for Evas
     %{ac_with_module_loader_gif} \
     %{ac_with_module_loader_edb} \
     %{ac_with_module_saver_edb} \
+    %(ac_with_module_loader_xpm) \
     %{ac_with_module_engine_software_x11} \
     %{ac_with_module_engine_buffer} \
     %{ac_with_module_engine_fb} \
@@ -438,6 +452,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_saver_edb
 %defattr(-, root, root)
 %{_libdir}/evas/modules/savers/edb/*/module.so
+%endif
+
+%if %{with module_loader_xpm}
+%files module_loader_xpm
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/xpm/*/module.so
 %endif
 
 %if %{with module_engine_software_x11}
