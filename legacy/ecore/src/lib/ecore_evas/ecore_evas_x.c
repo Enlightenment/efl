@@ -1000,9 +1000,9 @@ _ecore_evas_x_state_update(Ecore_Evas *ee)
      state[num++] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
    if (bd->client.netwm.state.hidden)
      state[num++] = ECORE_X_WINDOW_STATE_HIDDEN;
-   if (bd->client.netwm.state.fullscreen)
-     state[num++] = ECORE_X_WINDOW_STATE_FULLSCREEN;
    */
+   if (ee->engine.x.state.fullscreen)
+     state[num++] = ECORE_X_WINDOW_STATE_FULLSCREEN;
    if (ee->engine.x.state.above)
      state[num++] = ECORE_X_WINDOW_STATE_ABOVE;
    if (ee->engine.x.state.below)
@@ -1940,72 +1940,17 @@ _ecore_evas_x_override_set(Ecore_Evas *ee, int on)
 static void
 _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 {
-   if (((ee->prop.fullscreen) && (on)) ||
-       ((!ee->prop.fullscreen) && (!on))) return;
-   ecore_x_window_hide(ee->engine.x.win);
-   ecore_x_window_override_set(ee->engine.x.win, on);
-   if (on)
-     {
-	int rw, rh;
-	
-	ecore_x_window_size_get(0, &rw, &rh);
-	ecore_x_window_raise(ee->engine.x.win);
-	ecore_x_window_show(ee->engine.x.win);
-	ecore_x_window_focus(ee->engine.x.win);
-	ee->engine.x.px = ee->x;
-	ee->engine.x.py = ee->y;
-	ee->engine.x.pw = ee->w;
-	ee->engine.x.ph = ee->h;
-	ee->x = 0;
-	ee->y = 0;
-	ee->w = rw;
-	ee->h = rh;
-     }
-   else
-     {
-	ee->x = ee->engine.x.px;
-	ee->y = ee->engine.x.py;
-	ee->w = ee->engine.x.pw;
-	ee->h = ee->engine.x.ph;
-	ecore_x_window_move_resize(ee->engine.x.win, ee->engine.x.px, ee->engine.x.py, ee->engine.x.pw, ee->engine.x.ph);
-     }
+   if ((ee->prop.fullscreen && on) ||
+      (!ee->prop.fullscreen && !on)) return;
+
+   /* FIXME: Detect if WM is EWMH compliant and handle properly if not,
+    * i.e. reposition, resize, and change borderless hint */
+   ee->engine.x.state.fullscreen = on;
    if (ee->should_be_visible)
-     {
-	ecore_x_window_show(ee->engine.x.win);
-	ecore_x_window_focus(ee->engine.x.win);
-     }
-   ecore_x_window_move_resize(ee->engine.x.win, 0, 0, ee->w, ee->h);
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-	evas_output_size_set(ee->evas, ee->h, ee->w);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-     }
+     ecore_x_netwm_state_request_send(ee->engine.x.win, ee->engine.x.win_root,
+				      ECORE_X_WINDOW_STATE_FULLSCREEN, -1, on);
    else
-     {
-	evas_output_size_set(ee->evas, ee->w, ee->h);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-     }
-   if (ee->prop.avoid_damage)
-     {
-	ecore_evas_avoid_damage_set(ee, 0);
-	ecore_evas_avoid_damage_set(ee, 1);
-     }
-   if (ee->shaped)
-     _ecore_evas_x_resize_shape(ee);
-/*   
-   if ((ee->expecting_resize.w > 0) &&
-       (ee->expecting_resize.h > 0))
-     {
-	if ((ee->expecting_resize.w == ee->w) &&
-	    (ee->expecting_resize.h == ee->h))
-	  _ecore_evas_x_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-					   ecore_x_current_time_get());
-	ee->expecting_resize.w = 0;
-	ee->expecting_resize.h = 0;
-     }
- */
-   ee->prop.fullscreen = on;
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);	
+     _ecore_evas_x_state_update(ee);
 }
 
 static void
