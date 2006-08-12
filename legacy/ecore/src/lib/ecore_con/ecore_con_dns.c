@@ -388,7 +388,7 @@ ecore_con_dns_lookup(const char *name,
 	  }
 	close(fd[1]);
 # ifdef __USE_ISOC99
-	Exit(0);
+	_Exit(0);
 # else	
 	_exit(0);
 # endif	
