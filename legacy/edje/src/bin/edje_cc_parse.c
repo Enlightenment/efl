@@ -339,12 +339,11 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	
 	while (*p)
 	  {
-	     if (*p == '"')
-	       memmove(p, p + 1, strlen(p));
-	     else if ((*p == '\\') && (*(p + 1) == '"'))
-	       memmove(p, p + 1, strlen(p));
-	     else if ((*p == '\\') && (*(p + 1) == '\\'))
-	       memmove(p, p + 1, strlen(p));
+	     if ((*p == '\"') && 
+		 ((p == tok) || ((p > tok) && (*(p - 1) != '\\'))))
+	       {
+		  memmove(p, p + 1, strlen(p));
+	       }
 	     else if ((*p == '\\') && (*(p + 1) == 'n'))
 	       {
 		  memmove(p, p + 1, strlen(p));
@@ -354,6 +353,12 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	       {
 		  memmove(p, p + 1, strlen(p));
 		  *p = '\t';
+	       }
+	     else if (*p == '\\')
+	       {
+		  memmove(p, p + 1, strlen(p));
+		  p++;
+		  if (*p == '\\') p++;
 	       }
 	     else
 	       p++;
