@@ -147,7 +147,14 @@ ecore_desktop_parse_file(char *file)
                        value = (char *)ecore_hash_get(result->group, "StartupNotify");
                        if (value)
                           result->startup = (!strcmp(value, "true")) ? "1" : "0";
-                    }
+                    } else {
+			    /*Maybe it's a 'trash' file - which also follows the Desktop FDO spec*/
+			    result->group = (Ecore_Hash *) ecore_hash_get(result->data, "Trash Info");
+			    if (result->group) {
+				    result->path = (char *)ecore_hash_get(result->group, "Path");
+				    result->deletiondate = (char *)ecore_hash_get(result->group, "DeletionDate");
+			    }
+		    }
 
                   ecore_hash_set(desktop_cache, strdup(file), result);
                }

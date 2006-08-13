@@ -33,6 +33,8 @@ struct _Ecore_Desktop
    char *exec;
    char *icon;
    char *icon_path;
+   char* path;
+   char* deletiondate;
    char *startup;
    char *window_class;
    int allocated;   /* FIXME: NoDisplay, Hidden */
