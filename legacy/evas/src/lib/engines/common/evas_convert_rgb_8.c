@@ -16,7 +16,6 @@ void evas_common_convert_rgba_to_8bpp_rgb_332_dith     (DATA32 *src, DATA8 *dst,
    DATA8 r, g, b;
    DATA8 dith, dith2;
 
-   printf("D 332\n");
    dst_ptr = (DATA8 *)dst;
 
    CONVERT_LOOP_START_ROT_0();
