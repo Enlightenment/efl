@@ -1,6 +1,7 @@
 #ifndef _ECORE_DESKTOP_H
 # define _ECORE_DESKTOP_H
 
+/* FIXME: No unnecessary includes in exported headers. */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,6 +35,7 @@
 
 #define MAX_PATH 4096
 
+/* FIXME: No unnecessary macros in exported headers. */
 #define E_FN_DEL(_fn, _h) if (_h) { _fn(_h); _h = NULL; }
 #define E_REALLOC(p, s, n) p = (s *)realloc(p, sizeof(s) * n)
 #define E_NEW(s, n) (s *)calloc(n, sizeof(s))
