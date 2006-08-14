@@ -40,13 +40,14 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 {
    int r, g, b, i;
    DATA8 *color_lut;
-   int sig_mask = 0;
+   int sig_mask = 0, delt = 0;
 
    for (i = 0; i < v->bits_per_rgb; i++) sig_mask |= (0x1 << i);
    sig_mask <<= (16 - v->bits_per_rgb);
    i = 0;
    color_lut = malloc((nr) * (ng) * (nb));
    if (!color_lut) return NULL;
+   delt = 0x0101 * 3;
    for (r = 0; r < (nr); r++)
      {
 	for (g = 0; g < (ng); g++)
@@ -57,26 +58,48 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 		  XColor xcl_in;
 		  int val;
 		  Status ret;
+		  int dr, dg, db;
 
-                  val = (int)((((double)r) / ((nr) - 1)) * 65535);
+                  val = (int)((((double)r) / ((nr) - 1)) * 255);
+		  val = (val << 8) | val;
 		  xcl.red = (unsigned short)(val);
-		  val = (int)((((double)g) / ((ng) - 1)) * 65535);
+		  val = (int)((((double)g) / ((ng) - 1)) * 255);
+		  val = (val << 8) | val;
 		  xcl.green = (unsigned short)(val);
-		  val = (int)((((double)b) / ((nb) - 1)) * 65535);
+		  val = (int)((((double)b) / ((nb) - 1)) * 255);
+		  val = (val << 8) | val;
 		  xcl.blue = (unsigned short)(val);
 		  xcl_in = xcl;
 		  ret = XAllocColor(d, cmap, &xcl);
+		  dr = (int)xcl_in.red - (int)xcl.red;
+		  if (dr < 0) dr = -dr;
+		  dg = (int)xcl_in.green - (int)xcl.green;
+		  if (dg < 0) dg = -dg;
+		  db = (int)xcl_in.blue - (int)xcl.blue;
+		  if (db < 0) db = -db;
+/*		  
+		  printf("ASK [%i]: %04x %04x %04x = %04x %04x %04x | dif = %04x / %04x\n",
+			 ret,
+			 xcl_in.red, xcl_in.green, xcl_in.blue,
+			 xcl.red, xcl.green, xcl.blue,
+			 (dr + dg +db), delt);
+ */
 		  if ((ret == 0) ||
+		      ((dr + dg + db) > delt)
+/*		      
+		      ||
 		      ((xcl_in.red & sig_mask) != (xcl.red & sig_mask)) ||
 		      ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
-		      ((xcl_in.blue & sig_mask) != (xcl.blue & sig_mask)))
+		      ((xcl_in.blue & sig_mask) != (xcl.blue & sig_mask))
+ */
+		      )
 		    {
 		       unsigned long pixels[256];
 		       int j;
 
 		       if (i > 0)
 			 {
-			    for(j = 0; j < i; j++)
+			    for (j = 0; j < i; j++)
 			      pixels[j] = (unsigned long) color_lut[j];
 			    XFreeColors(d, cmap, pixels, i, 0);
 			 }
@@ -110,7 +133,8 @@ x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 	int val;
 	Status ret;
 
-	val = (int)((((double)g) / ((ng) - 1)) * 65535);
+	val = (int)((((double)g) / ((ng) - 1)) * 255);
+	val = (val << 8) | val;
 	xcl.red = (unsigned short)(val);
 	xcl.green = (unsigned short)(val);
 	xcl.blue = (unsigned short)(val);
@@ -126,7 +150,7 @@ x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 
 	     if (i > 0)
 	       {
-		  for(j = 0; j < i; j++)
+		  for (j = 0; j < i; j++)
 		    pixels[j] = (unsigned long) color_lut[j];
 		  XFreeColors(d, cmap, pixels, i, 0);
 	       }
@@ -269,6 +293,7 @@ evas_software_x11_x_color_allocate(Display *disp, Colormap cmap, Visual *vis, Co
    Convert_Pal_Mode  c;
    Evas_List        *l;
 
+/*   printf("ALLOC cmap=%i vis=%p\n", cmap, vis);*/
    for (l = palettes; l; l = l->next)
      {
 	pal = l->data;
@@ -287,6 +312,7 @@ evas_software_x11_x_color_allocate(Display *disp, Colormap cmap, Visual *vis, Co
      {
 	if (x_color_alloc[c])
 	  {
+/*	     printf("TRY PAL %i\n", c);*/
 	     pal->lookup = (x_color_alloc[c])(disp, cmap, vis);
 	     if (pal->lookup) break;
 	  }

@@ -82,7 +82,8 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	   if (evas_software_x11_x_output_buffer_bit_order(xob) == MSBFirst)
 	     buf->priv.x.bit_swap = 1;
 #endif
-	   if ((vis->class == TrueColor) || (vis->class == DirectColor))
+	   if (((vis->class == TrueColor) || (vis->class == DirectColor)) &&
+	       (x_depth > 8))
 	     {
 		buf->priv.mask.r = (DATA32) vis->red_mask;
 		buf->priv.mask.g = (DATA32) vis->green_mask;
@@ -96,7 +97,9 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	     }
 	   else if ((vis->class == PseudoColor) ||
 		    (vis->class == StaticColor) ||
-		    (vis->class == GrayScale) || (vis->class == StaticGray))
+		    (vis->class == GrayScale) ||
+		    (vis->class == StaticGray) ||
+		    (x_depth <= 8))
 	     {
 		Convert_Pal_Mode    pm = PAL_MODE_RGB332;
 

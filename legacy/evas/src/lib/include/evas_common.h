@@ -151,8 +151,8 @@ typedef enum _Convert_Pal_Mode
    PAL_MODE_RGB221,
    PAL_MODE_RGB222,
    PAL_MODE_RGB232,
-   PAL_MODE_RGB666,
    PAL_MODE_RGB332,
+   PAL_MODE_RGB666,
    PAL_MODE_LAST
 } Convert_Pal_Mode;
 
