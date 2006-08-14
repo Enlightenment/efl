@@ -23,7 +23,8 @@
  * The final '>' of a tag is replaced with a '\0', but it's existance can be implied.
  */
 
-static char *_ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer);
+static char        *_ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree,
+						char *buffer);
 
 Ecore_Desktop_Tree *
 ecore_desktop_xmlame_new(char *buffer)
@@ -37,93 +38,95 @@ ecore_desktop_xmlame_new(char *buffer)
 Ecore_Desktop_Tree *
 ecore_desktop_xmlame_get(char *file)
 {
-   int size;
-   char *buffer;
+   int                 size;
+   char               *buffer;
    Ecore_Desktop_Tree *tree = NULL;
 
    size = ecore_file_size(file);
    buffer = (char *)malloc(size + 1);
    if (buffer)
      {
-        int fd;
+	int                 fd;
 
-        buffer[0] = '\0';
-        fd = open(file, O_RDONLY);
-        if (fd != -1)
-          {
-             if (read(fd, buffer, size) == size)
-                buffer[size] = '\0';
-          }
-        tree = ecore_desktop_xmlame_new(buffer);
-        if (tree)
-          {
-             /* Have the file name as the first item on the tree, for later reference. */
-             ecore_desktop_tree_extend(tree, file);
-             _ecore_desktop_xmlame_parse(tree, buffer);
-          }
+	buffer[0] = '\0';
+	fd = open(file, O_RDONLY);
+	if (fd != -1)
+	  {
+	     if (read(fd, buffer, size) == size)
+		buffer[size] = '\0';
+	  }
+	tree = ecore_desktop_xmlame_new(buffer);
+	if (tree)
+	  {
+	     /* Have the file name as the first item on the tree, for later reference. */
+	     ecore_desktop_tree_extend(tree, file);
+	     _ecore_desktop_xmlame_parse(tree, buffer);
+	  }
      }
    return tree;
 }
 
-static char *
+static char        *
 _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 {
    do
      {
-        char *text;
+	char               *text;
 
-        /* Skip any white space at the beginning. */
-        while ((*buffer != '\0') && (isspace(*buffer)))
-           buffer++;
-        text = buffer;
-        /* Find the beginning of a tag. */
-        while ((*buffer != '<') && (*buffer != '\0'))
-           buffer++;
-        /* Check for data between tags. */
-        if (buffer != text)
-          {
-             char t;
+	/* Skip any white space at the beginning. */
+	while ((*buffer != '\0') && (isspace(*buffer)))
+	   buffer++;
+	text = buffer;
+	/* Find the beginning of a tag. */
+	while ((*buffer != '<') && (*buffer != '\0'))
+	   buffer++;
+	/* Check for data between tags. */
+	if (buffer != text)
+	  {
+	     char                t;
 
-             t = *buffer;
-             *buffer = '\0';
-             ecore_desktop_tree_extend(tree, strdup(text));
-             *buffer = t;
-          }
-        if (*buffer != '\0')
-          {
-             char *begin;
+	     t = *buffer;
+	     *buffer = '\0';
+	     ecore_desktop_tree_extend(tree, strdup(text));
+	     *buffer = t;
+	  }
+	if (*buffer != '\0')
+	  {
+	     char               *begin;
 
-             begin = buffer++;
-             /* Find the end of the tag. */
-             while ((*buffer != '>') && (*buffer != '\0'))
-                buffer++;
-             /* We have our tag, do something with it. */
-             if (*buffer != '\0')
-               {
-                  *buffer++ = '\0';
-                  if (begin[1] == '/')
-                    {           /* The end of an element. */
-                       ecore_desktop_tree_add(tree, begin);
-                       break;
-                    }
-                  else if ((begin[1] == '!') || (begin[1] == '-') || (*(buffer - 2) == '/'))
-                    {           /* This is a script, a comment, or a stand alone tag. */
-                       ecore_desktop_tree_add(tree, begin);
-                    }
-                  else
-                    {           /* The beginning of an element. */
-                       Ecore_Desktop_Tree *new_tree;
+	     begin = buffer++;
+	     /* Find the end of the tag. */
+	     while ((*buffer != '>') && (*buffer != '\0'))
+		buffer++;
+	     /* We have our tag, do something with it. */
+	     if (*buffer != '\0')
+	       {
+		  *buffer++ = '\0';
+		  if (begin[1] == '/')
+		    {		/* The end of an element. */
+		       ecore_desktop_tree_add(tree, begin);
+		       break;
+		    }
+		  else if ((begin[1] == '!') || (begin[1] == '-')
+			   || (*(buffer - 2) == '/'))
+		    {		/* This is a script, a comment, or a stand alone tag. */
+		       ecore_desktop_tree_add(tree, begin);
+		    }
+		  else
+		    {		/* The beginning of an element. */
+		       Ecore_Desktop_Tree *new_tree;
 
-                       new_tree = ecore_desktop_xmlame_new(NULL);
-                       if (new_tree)
-                         {
-                            ecore_desktop_tree_add_child(tree, new_tree);
-                            ecore_desktop_tree_add(new_tree, begin);
-                            buffer = _ecore_desktop_xmlame_parse(new_tree, buffer);
-                         }
-                    }
-               }
-          }
+		       new_tree = ecore_desktop_xmlame_new(NULL);
+		       if (new_tree)
+			 {
+			    ecore_desktop_tree_add_child(tree, new_tree);
+			    ecore_desktop_tree_add(new_tree, begin);
+			    buffer =
+			       _ecore_desktop_xmlame_parse(new_tree, buffer);
+			 }
+		    }
+	       }
+	  }
      }
    while (*buffer != '\0');
 

@@ -4,7 +4,7 @@
 #include <Ecore_File.h>
 
 # ifdef __cplusplus
-extern "C"
+extern              "C"
 {
 # endif
 
