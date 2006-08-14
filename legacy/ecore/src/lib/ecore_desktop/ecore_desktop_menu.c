@@ -55,6 +55,7 @@ struct _ecore_desktop_menu_legacy_data
    int                 length, menu_length, level;
 };
 
+static Ecore_Desktop_Tree *_ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack, int level);
 static Ecore_Desktop_Tree *_ecore_desktop_menu_create_menu();
 static int          _ecore_desktop_menu_unxml(const void *data,
 					       Ecore_Desktop_Tree * tree,
@@ -106,8 +107,31 @@ static int          _ecore_desktop_menu_apply_rules(struct
 						     char *key,
 						     Ecore_Desktop * desktop);
 
+/**
+ * @defgroup Ecore_Desktop_Menu_Group menu Functions
+ *
+ * Functions that deal with freedesktop.org menus.
+ */
+
+/**
+ * Decode a freedesktop.org menu XML jungle.
+ *
+ * Using the algorithm specified by freedesktop.org, fully decode
+ * a menu based on an initial menu file.
+ *
+ * @param   file The base file for the menu.
+ * @return  The resulting menu tree.
+ * @ingroup Ecore_Desktop_Menu_Group
+ */
+
 Ecore_Desktop_Tree *
-ecore_desktop_menu_get(char *file, Ecore_Desktop_Tree * merge_stack, int level)
+ecore_desktop_menu_get(char *file)
+{
+    return _ecore_desktop_menu_get0(file, NULL, 0);
+}
+
+static Ecore_Desktop_Tree *
+_ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack, int level)
 {
    Ecore_Desktop_Tree *menu_xml;
    struct _ecore_desktop_menu_unxml_data data;
@@ -1095,7 +1119,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 		  Ecore_Desktop_Tree *new_menu;
 
 		  new_menu =
-		     ecore_desktop_menu_get(merge_path,
+		     _ecore_desktop_menu_get0(merge_path,
 					     unxml_data->merge_stack,
 					     level + 1);
 		  if (new_menu)

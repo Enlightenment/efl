@@ -7,6 +7,31 @@
 #include <unistd.h>
 #include <Ecore_Data.h>
 
+
+/**
+ * @file Ecore_Desktop.h
+ * @brief The file that provides the freedesktop.org desktop, icon, and menu
+ *        functions.
+ *
+ * This header provides the Ecore_Desktop freedesktop.org desktop, icon, 
+ * and menu handling functions, as well as ancillary functions for searching
+ * freedesktop.org specific paths.  Other freedesktop.org specifications
+ * make use of similar files, paths, and icons, implementors can use / extend
+ * this code to suit.
+ *
+ * Ecore_Desktop is not for every freedesktop.org specification, just those that
+ * are associated with .desktop files.
+ *
+ * For path searching details, see @ref Ecore_Desktop_Paths_Group.
+ *
+ * For desktop file details, see @ref Ecore_Desktop_Main_Group.
+ *
+ * For icon theme details, see @ref Ecore_Desktop_Icon_Group.
+ *
+ * For menu file details, see @ref Ecore_Desktop_Menu_Group.
+ */
+
+
 #define MAX_PATH 4096
 
 #define E_FN_DEL(_fn, _h) if (_h) { _fn(_h); _h = NULL; }
@@ -106,9 +131,8 @@ extern              "C"
    char               *ecore_desktop_icon_find(char *icon, char *icon_size,
 					       char *icon_theme);
 
-   Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file,
-					       Ecore_Desktop_Tree * merge_stack,
-					       int level);
+   Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
+
 
    Ecore_Desktop_Tree *ecore_desktop_tree_new(char *buffer);
    Ecore_Desktop_Tree *ecore_desktop_tree_add(Ecore_Desktop_Tree * tree,

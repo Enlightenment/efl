@@ -8,11 +8,28 @@
 static char        *_ecore_desktop_icon_find0(char *icon, char *icon_size,
 					      char *icon_theme);
 
-/* FIXME: Ideally this should be -
- * {".png", ".svg", ".xpm", "", NULL}
- * Add them in when they are supported in .eaps.
+static const char  *ext[] = { ".edje", ".png", ".svg", ".xpm", "", NULL };
+
+
+/**
+ * @defgroup Ecore_Desktop_Icon_Group icon theme Functions
+ *
+ * Functions that deal with freedesktop.org icon themes.
  */
-static const char  *ext[] = { ".png", ".svg", ".xpm", "", NULL };
+
+/**
+ * Find the path to an icon.
+ *
+ * Using the search algorithm specified by freedesktop.org,
+ * search for an icon in the currently installed set of icon themes.
+ * As an Enlightenment DR17 extension it searches for .edje files first.
+ *
+ * @param   icon The name of the required icon.
+ * @param   icon_size The size of the required icon.
+ * @param   icon_theme The theme of the required icon.
+ * @return  The full path to an icon file.
+ * @ingroup Ecore_Desktop_Icon_Group
+ */
 
 char               *
 ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
@@ -26,6 +43,11 @@ ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
    /* Easy check first, was a full path supplied? */
    if ((icon[0] == '/') && (ecore_file_exists(icon)))
       return strdup(icon);
+
+   if (icon_size == NULL)
+      icon_size="48x48";
+   if (icon_theme == NULL)
+      icon_theme="hicolor";
 
    home = ecore_desktop_home_get();
 
