@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <libgen.h>
+#include <strings.h>
 
 #include <Ecore.h>
 
@@ -763,6 +764,7 @@ Ecore_List         *
 ecore_desktop_paths_to_list(char *paths)
 {
    Ecore_List         *result;
+   char               *path;
 
    result = ecore_list_new();
    if (result)
@@ -774,7 +776,8 @@ ecore_desktop_paths_to_list(char *paths)
 	     char               *start, *end, temp;
 	     int                 finished = 0;
 
-	     end = paths;
+	     path = strdup(paths);
+	     end = path;
 	     while (!finished)
 	       {
 		  start = end;
@@ -784,7 +787,7 @@ ecore_desktop_paths_to_list(char *paths)
 			      && (*end != '\0'))
 			  end++;
 		    }
-		  while ((end != paths) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
+		  while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
 		  /* FIXME: We still need to unescape it now. */
 		  temp = *end;
 		  if (*end == '\0')
@@ -796,6 +799,7 @@ ecore_desktop_paths_to_list(char *paths)
 		     *end = temp;
 		  end++;
 	       }
+	     free(path);
 	  }
      }
    return result;
