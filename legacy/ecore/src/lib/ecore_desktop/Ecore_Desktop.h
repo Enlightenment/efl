@@ -1,8 +1,9 @@
 #ifndef _ECORE_DESKTOP_H
 # define _ECORE_DESKTOP_H
 
-/* FIXME: No unnecessary includes in exported headers. */
+/* FIXME: No unnecessary includes in exported headers, when things settle down and we know what is unnecessary. */
 #include <string.h>
+#include <strings.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -35,7 +36,7 @@
 
 #define MAX_PATH 4096
 
-/* FIXME: No unnecessary macros in exported headers. */
+/* FIXME: No unnecessary macros in exported headers, when things settle down and we know what is unnecessary. */
 #define E_FN_DEL(_fn, _h) if (_h) { _fn(_h); _h = NULL; }
 #define E_REALLOC(p, s, n) p = (s *)realloc(p, sizeof(s) * n)
 #define E_NEW(s, n) (s *)calloc(n, sizeof(s))
@@ -52,6 +53,7 @@ Ecore_List         *ecore_desktop_paths_kde_legacy;
 struct _Ecore_Desktop
 {
    Ecore_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn;
+   char               *eap_name;
    char               *name;
    char               *generic;
    char               *comment;
@@ -59,6 +61,7 @@ struct _Ecore_Desktop
    char               *categories;
    char               *exec;
    char               *icon;
+   char               *icon_class;
    char               *icon_path;
    char               *path;
    char               *deletiondate;
@@ -100,7 +103,7 @@ extern              "C"
 # endif
 
    /* Function Prototypes */
-   void                ecore_desktop_paths_init(void);
+   EAPI int            ecore_desktop_paths_init(void);
    char               *ecore_desktop_paths_file_find(Ecore_List * paths,
 						   char *file, int sub,
 						   int (*func) (const
@@ -119,15 +122,15 @@ extern              "C"
 									 char
 									 *path),
 							    const void *data);
-   void                ecore_desktop_paths_shutdown(void);
+   EAPI int            ecore_desktop_paths_shutdown(void);
 
    Ecore_Hash         *ecore_desktop_paths_to_hash(char *paths);
    Ecore_List         *ecore_desktop_paths_to_list(char *paths);
 
-   void                ecore_desktop_init(void);
-   void                ecore_desktop_shutdown(void);
-   Ecore_Hash         *ecore_desktop_ini_get(char *file);
-   Ecore_Desktop      *ecore_desktop_get(char *file);
+   EAPI int            ecore_desktop_init(void);
+   EAPI int            ecore_desktop_shutdown(void);
+   Ecore_Hash         *ecore_desktop_ini_get(const char *file);
+   Ecore_Desktop      *ecore_desktop_get(const char *file, const char *lang);
    void                ecore_desktop_destroy(Ecore_Desktop * desktop);
 
    char               *ecore_desktop_icon_find(char *icon, char *icon_size,

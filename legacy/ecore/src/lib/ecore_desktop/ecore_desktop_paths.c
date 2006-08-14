@@ -32,6 +32,8 @@
  * and correct those guesses.
  */
 
+static int                  init_count = 0;
+
 
 static Ecore_List  *_ecore_desktop_paths_get(char *before, char *env_home,
 					     char *env, char *env_home_default,
@@ -67,9 +69,11 @@ static Ecore_Event_Handler *exit_handler = NULL;
 #endif
 
 
-void
+EAPI int
 ecore_desktop_paths_init()
 {
+   if (++init_count != 1) return init_count;
+
    /* FIXME: Keep track of any loose strdups in a list, so that we can free them at shutdown time. */
 
 #if defined GNOME_SUPPORT || defined KDE_SUPPORT
@@ -222,15 +226,21 @@ ecore_desktop_paths_init()
    if (exit_handler)
       ecore_event_handler_del(exit_handler);
 #endif
+
+   return init_count;
 }
 
-void
+EAPI int
 ecore_desktop_paths_shutdown()
 {
+   if (--init_count != 0) return init_count;
+
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_menus);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_directories);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_desktops);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_icons);
+
+   return init_count;
 }
 
 /** Search for a file in fdo compatible locations.

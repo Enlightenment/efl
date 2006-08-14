@@ -10,7 +10,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <libgen.h>
-#include <strings.h>
 
 #include <Ecore.h>
 
@@ -1443,7 +1442,8 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
    key = (char *)node->key;
    app = (char *)node->value;
 
-   desktop = ecore_desktop_get(app);
+   /* FIXME: pass an actualy language parameter. */
+   desktop = ecore_desktop_get(app, NULL);
 
    if ((generate_data->unallocated) && (desktop->allocated))
       return;
