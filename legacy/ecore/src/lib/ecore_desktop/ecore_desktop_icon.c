@@ -15,6 +15,8 @@ static const char  *ext[] = { ".edje", ".png", ".svg", ".xpm", "", NULL };
  * @defgroup Ecore_Desktop_Icon_Group icon theme Functions
  *
  * Functions that deal with freedesktop.org icon themes.
+ *
+ * This conforms with the freedesktop.org XDG Icon Theme Specification version 0.11
  */
 
 /**

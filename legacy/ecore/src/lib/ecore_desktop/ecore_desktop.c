@@ -11,6 +11,8 @@ static Ecore_Hash  *desktop_cache;
  * @defgroup Ecore_Desktop_Main_Group .desktop file Functions
  *
  * Functions that deal with freedesktop.org desktop files.
+ *
+ * This conforms with the freedesktop.org XDG Desktop Entry Specification version 0.9.4
  */
 
 /**

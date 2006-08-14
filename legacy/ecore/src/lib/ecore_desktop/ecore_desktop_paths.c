@@ -12,12 +12,25 @@
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
 
-struct _config_exe_data
-{
-   char               *home;
-   Ecore_List         *paths, *types;
-   int                 done;
-};
+
+/* This really slows things down and no doubt drags in some KDE bloat at start up.
+ * To work around this, I add a few extra things to try in the _ecore_desktop_paths_get()
+ * calls below.
+ *
+#define KDE_SUPPORT 1
+ */
+
+/* This is nowhere near as bloated and slow as the KDE stuff, but worthwhile 
+ * making it optional anyway.
+ *
+#define GNOME_SUPPORT 1
+ */
+
+/* FIXME: remove those two defines, preload a cache with the guesses, whenever 
+ * we have a few seconds of idle time, run the gnome and kde config proggies 
+ * and correct those guesses.
+ */
+
 
 static Ecore_List  *_ecore_desktop_paths_get(char *before, char *env_home,
 					     char *env, char *env_home_default,
@@ -28,6 +41,19 @@ static void         _ecore_desktop_paths_massage_path(char *path, char *home,
 						      char *second);
 static void         _ecore_desktop_paths_check_and_add(Ecore_List * paths,
 						       char *path);
+
+static Ecore_List         *gnome_data = NULL;
+static char               *home;
+
+
+#if defined GNOME_SUPPORT || defined KDE_SUPPORT
+struct _config_exe_data
+{
+   char               *home;
+   Ecore_List         *paths, *types;
+   int                 done;
+};
+
 static void         _ecore_desktop_paths_exec_config(Ecore_List * paths,
 						     char *home,
 						     Ecore_List * extras,
@@ -36,18 +62,21 @@ static void         _ecore_desktop_paths_exec_config(Ecore_List * paths,
 static int          _ecore_desktop_paths_cb_exe_exit(void *data, int type,
 						     void *event);
 
-Ecore_Event_Handler *exit_handler = NULL;
-Ecore_List         *gnome_data = NULL;
-char               *home;
+static Ecore_Event_Handler *exit_handler = NULL;
+#endif
+
 
 void
 ecore_desktop_paths_init()
 {
    /* FIXME: Keep track of any loose strdups in a list, so that we can free them at shutdown time. */
 
+#if defined GNOME_SUPPORT || defined KDE_SUPPORT
    exit_handler =
       ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
 			      _ecore_desktop_paths_cb_exe_exit, NULL);
+#endif
+
    gnome_data = ecore_list_new();
    home = ecore_desktop_home_get();
    if (home)
@@ -60,20 +89,45 @@ ecore_desktop_paths_init()
 	   home[last] = '\0';
      }
 
-   if (exit_handler && gnome_data)
-     {
-	ecore_list_set_free_cb(gnome_data, free);
-	_ecore_desktop_paths_exec_config(gnome_data, home, NULL,
+   if (gnome_data)
+      {
+#ifdef GNOME_SUPPORT
+         if (exit_handler)
+            {
+	       ecore_list_set_free_cb(gnome_data, free);
+	       _ecore_desktop_paths_exec_config(gnome_data, home, NULL,
 					 "gnome-config --datadir");
+            }
+#else
+             Ecore_List         *config_list;
+
+	     config_list = ecore_desktop_paths_to_list("/opt/gnome/share");
+	     if (config_list)
+	       {
+		  char               *this_config;
+                  char path[MAX_PATH];
+
+		  ecore_list_goto_first(config_list);
+		  while ((this_config = ecore_list_next(config_list)) != NULL)
+		    {
+
+			_ecore_desktop_paths_massage_path(path, home,
+						      this_config,
+						      NULL);
+			_ecore_desktop_paths_check_and_add(gnome_data, path);
+		    }
+		  E_FN_DEL(ecore_list_destroy, config_list);
+	       }
+#endif
      }
 
    if (!ecore_desktop_paths_desktops)
      {
 	ecore_desktop_paths_desktops =
 	   _ecore_desktop_paths_get(NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
-				    "~/.local/share",
+				    "~/.local/share:~/.kde/share",
 				    "/usr/local/share:/usr/share",
-				    "applications",
+				    "applications:applnk",
 				    "dist/desktop-files:dist/short-menu:gnome/apps",
 				    "xdgdata-apps:apps");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_desktops,
@@ -86,9 +140,19 @@ ecore_desktop_paths_init()
 	char                temp[MAX_PATH], *path;
 	Ecore_List         *temp_list;
 
+#ifdef KDE_SUPPORT
 	ecore_desktop_paths_kde_legacy =
 	   _ecore_desktop_paths_get(NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 				    "apps");
+#else
+	ecore_desktop_paths_kde_legacy =
+	   _ecore_desktop_paths_get(NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
+				    "~/.local/share:~/.kde/share",
+				    "/usr/local/share:/usr/share",
+				    "applnk",
+				    NULL,
+				    "apps");
+#endif
 	if (ecore_desktop_paths_kde_legacy)
 	  {
 	     /* Copy it, cause Ecore_List walks can not be nested. */
@@ -125,8 +189,8 @@ ecore_desktop_paths_init()
 
 	ecore_desktop_paths_icons =
 	   _ecore_desktop_paths_get("~/.icons", "XDG_DATA_HOME",
-				    "XDG_DATA_DIRS", "~/.local/share",
-				    "/usr/local/share:/usr/share", "icons",
+				    "XDG_DATA_DIRS", "~/.local/share:~/.kde/share",
+				    "/usr/local/share:/usr/share", "icons:pixmaps",
 				    "dist/icons", "icon:pixmap");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_icons,
 					   "/usr/local/share/pixmaps/");
@@ -144,7 +208,7 @@ ecore_desktop_paths_init()
    if (!ecore_desktop_paths_directories)
       ecore_desktop_paths_directories =
 	 _ecore_desktop_paths_get(NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
-				  "~/.local/share",
+				  "~/.local/share:~/.kde/share",
 				  "/usr/local/share:/usr/share",
 				  "desktop-directories", "gnome/vfolders",
 				  "xdgdata-dirs");
@@ -153,8 +217,10 @@ ecore_desktop_paths_init()
 	 _ecore_desktop_paths_get(NULL, "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
 				  "~/.config", "/etc/xdg", "", NULL, NULL);
 
+#if defined GNOME_SUPPORT || defined KDE_SUPPORT
    if (exit_handler)
       ecore_event_handler_del(exit_handler);
+#endif
 }
 
 void
@@ -229,7 +295,9 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
    Ecore_List         *paths = NULL;
    Ecore_List         *types = NULL;
    Ecore_List         *gnome_extras = NULL;
+#ifdef KDE_SUPPORT
    Ecore_List         *kdes = NULL;
+#endif
 
    /* Don't sort them, as they are in preferred order from each source. */
    /* Merge the results, there are probably some duplicates. */
@@ -238,8 +306,10 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
       types = ecore_desktop_paths_to_list(strdup(type));
    if (gnome_extra)
       gnome_extras = ecore_desktop_paths_to_list(strdup(gnome_extra));
+#ifdef KDE_SUPPORT
    if (kde)
       kdes = ecore_desktop_paths_to_list(strdup(kde));
+#endif
 
    paths = ecore_list_new();
    if (paths)
@@ -364,6 +434,7 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
 	       }
 	  }
 
+#ifdef KDE_SUPPORT
 	if ((exit_handler != NULL) && (kdes != NULL))
 	  {
 	     char               *this_kde;
@@ -377,9 +448,12 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
 		  _ecore_desktop_paths_exec_config(paths, home, NULL, cmd);
 	       }
 	  }
+#endif
      }
 
+#ifdef KDE_SUPPORT
    E_FN_DEL(ecore_list_destroy, kdes);
+#endif
    E_FN_DEL(ecore_list_destroy, gnome_extras);
    E_FN_DEL(ecore_list_destroy, types);
 
@@ -447,36 +521,6 @@ _ecore_desktop_paths_check_and_add(Ecore_List * paths, char *path)
    /* Check if the path exists. */
    if ((stat(path, &path_stat) == 0) && (S_ISDIR(path_stat.st_mode)))
       ecore_list_append(paths, strdup(path));
-}
-
-static void
-_ecore_desktop_paths_exec_config(Ecore_List * paths, char *home,
-				 Ecore_List * extras, char *cmd)
-{
-   Ecore_Exe          *exe;
-   struct _config_exe_data ced;
-
-   ced.home = home;
-   ced.paths = paths;
-   ced.types = extras;
-   ced.done = 0;
-   exe =
-      ecore_exe_pipe_run(cmd,
-			 ECORE_EXE_PIPE_AUTO | ECORE_EXE_PIPE_READ |
-			 ECORE_EXE_PIPE_READ_LINE_BUFFERED, &ced);
-   if (exe)
-     {
-	ecore_exe_tag_set(exe, "genmenu/fdo");
-	while (ced.done == 0)
-	  {
-	     /* FIXME: raster is paranoid.  If too much time passes, give up.
-	      * Or find a way to let the usual event loop shit do this without spinning our wheels.
-	      * On the other hand, these are quick commands, and we NEED this data before we can continue.
-	      */
-	     ecore_main_loop_iterate();
-	     usleep(10);
-	  }
-     }
 }
 
 char               *
@@ -548,6 +592,41 @@ ecore_desktop_paths_recursive_search(char *path, char *file,
    return fpath;
 }
 
+#if defined GNOME_SUPPORT || defined KDE_SUPPORT
+static void
+_ecore_desktop_paths_exec_config(Ecore_List * paths, char *home,
+				 Ecore_List * extras, char *cmd)
+{
+   Ecore_Exe          *exe;
+   struct _config_exe_data ced;
+
+   ced.home = home;
+   ced.paths = paths;
+   ced.types = extras;
+   ced.done = 0;
+   exe =
+      ecore_exe_pipe_run(cmd,
+			 ECORE_EXE_PIPE_AUTO | ECORE_EXE_PIPE_READ |
+			 ECORE_EXE_PIPE_READ_LINE_BUFFERED, &ced);
+   if (exe)
+     {
+	ecore_exe_tag_set(exe, "genmenu/fdo");
+	while (ced.done == 0)
+	  {
+	     /* FIXME: raster is paranoid.  If too much time passes, give up.
+	      * Or find a way to let the usual event loop shit do this without 
+	      * spinning our wheels.  On the other hand, these are quick 
+	      * commands, and we NEED this data before we can continue.  On 
+	      * the gripping hand, some tweaking of the stuff searched for not 
+	      * only gets rid of the need for this, but also speeds things up 
+	      * drastically.
+	      */
+	     ecore_main_loop_iterate();
+	     usleep(10);
+	  }
+     }
+}
+
 static int
 _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
 {
@@ -615,6 +694,7 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
    ced->done = 1;
    return 1;
 }
+#endif
 
 /** Split a list of paths into an Ecore_Hash.
  *
