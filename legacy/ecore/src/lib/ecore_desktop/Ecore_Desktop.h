@@ -74,14 +74,14 @@ extern              "C"
 
    /* Function Prototypes */
    void                ecore_desktop_paths_init(void);
-   char               *ecore_desktop_paths_search_for_file(Ecore_List * paths,
-							   char *file, int sub,
-							   int (*func) (const
-									void
-									*data,
-									char
-									*path),
-							   const void *data);
+   char               *ecore_desktop_paths_file_find(Ecore_List * paths,
+						   char *file, int sub,
+						   int (*func) (const
+								void
+								*data,
+								char
+								*path),
+						   const void *data);
    char               *ecore_desktop_paths_recursive_search(char *path, char *d,
 							    int (*dir_func)
 							    (const void *data,
@@ -94,19 +94,19 @@ extern              "C"
 							    const void *data);
    void                ecore_desktop_paths_shutdown(void);
 
-   Ecore_Hash         *ecore_desktop_hash_from_paths(char *paths);
-   Ecore_List         *ecore_desktop_list_from_paths(char *paths);
+   Ecore_Hash         *ecore_desktop_paths_to_hash(char *paths);
+   Ecore_List         *ecore_desktop_paths_to_list(char *paths);
 
    void                ecore_desktop_init(void);
    void                ecore_desktop_shutdown(void);
-   Ecore_Hash         *ecore_desktop_parse_ini_file(char *file);
-   Ecore_Desktop      *ecore_desktop_parse_file(char *file);
+   Ecore_Hash         *ecore_desktop_ini_get(char *file);
+   Ecore_Desktop      *ecore_desktop_get(char *file);
    void                ecore_desktop_destroy(Ecore_Desktop * desktop);
 
-   char               *ecore_desktop_find_icon(char *icon, char *icon_size,
+   char               *ecore_desktop_icon_find(char *icon, char *icon_size,
 					       char *icon_theme);
 
-   Ecore_Desktop_Tree *ecore_desktop_menus_get(char *file,
+   Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file,
 					       Ecore_Desktop_Tree * merge_stack,
 					       int level);
 
@@ -148,7 +148,7 @@ extern              "C"
    Ecore_Desktop_Tree *ecore_desktop_xmlame_new(char *buffer);
    Ecore_Desktop_Tree *ecore_desktop_xmlame_get(char *file);
 
-   char               *ecore_desktop_get_home(void);
+   char               *ecore_desktop_home_get(void);
 
 # ifdef __cplusplus
 }

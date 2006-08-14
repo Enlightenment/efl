@@ -5,7 +5,7 @@
 
 //#define DEBUG 1
 
-static char        *_ecore_desktop_find_icon0(char *icon, char *icon_size,
+static char        *_ecore_desktop_icon_find0(char *icon, char *icon_size,
 					      char *icon_theme);
 
 /* FIXME: Ideally this should be -
@@ -15,7 +15,7 @@ static char        *_ecore_desktop_find_icon0(char *icon, char *icon_size,
 static const char  *ext[] = { ".png", ".svg", ".xpm", "", NULL };
 
 char               *
-ecore_desktop_find_icon(char *icon, char *icon_size, char *icon_theme)
+ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
 {
    char                icn[MAX_PATH], path[MAX_PATH];
    char               *dir, *home;
@@ -27,7 +27,7 @@ ecore_desktop_find_icon(char *icon, char *icon_size, char *icon_theme)
    if ((icon[0] == '/') && (ecore_file_exists(icon)))
       return strdup(icon);
 
-   home = ecore_desktop_get_home();
+   home = ecore_desktop_home_get();
 
    snprintf(icn, sizeof(icn), "%s", icon);
 #ifdef DEBUG
@@ -53,7 +53,7 @@ ecore_desktop_find_icon(char *icon, char *icon_size, char *icon_theme)
 	  }
      }
 
-   dir = _ecore_desktop_find_icon0(icon, icon_size, icon_theme);
+   dir = _ecore_desktop_icon_find0(icon, icon_size, icon_theme);
    if (dir)
       dir = strdup(dir);
    return dir;
@@ -69,7 +69,7 @@ ecore_desktop_find_icon(char *icon, char *icon_size, char *icon_theme)
  * @return  The full path to the found icon.
  */
 static char        *
-_ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
+_ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
 {
    /*  NOTES ON OPTIMIZATIONS
     *
@@ -113,7 +113,7 @@ _ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
    printf("SEARCHING FOR %s\n", icn);
 #endif
    theme_path =
-      ecore_desktop_paths_search_for_file(ecore_desktop_paths_icons, icn, 1,
+      ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn, 1,
 					  NULL, NULL);
    if (theme_path)
      {
@@ -123,7 +123,7 @@ _ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
 #ifdef DEBUG
 	printf("Path to %s is %s\n", icn, theme_path);
 #endif
-	theme = ecore_desktop_parse_ini_file(theme_path);
+	theme = ecore_desktop_ini_get(theme_path);
 	if (theme)
 	  {
 	     Ecore_Hash         *icon_group;
@@ -147,7 +147,7 @@ _ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
 			      directories);
 #endif
 		       directory_paths =
-			  ecore_desktop_list_from_paths(directories);
+			  ecore_desktop_paths_to_list(directories);
 		       if (directory_paths)
 			 {
 			    int                 wanted_size;
@@ -276,7 +276,7 @@ _ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
 						printf("FDO icon = %s\n", path);
 #endif
 						found =
-						   ecore_desktop_paths_search_for_file
+						   ecore_desktop_paths_file_find
 						   (ecore_desktop_paths_icons,
 						    path, 0, NULL, NULL);
 						if (found)
@@ -305,7 +305,7 @@ _ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
 				&& (strcmp(icon_theme, "hicolor") != 0))
 			      {
 				 found =
-				    _ecore_desktop_find_icon0(icon, icon_size,
+				    _ecore_desktop_icon_find0(icon, icon_size,
 							      inherits);
 				 if (found != NULL)
 				    return found;
@@ -316,7 +316,7 @@ _ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
 				&& (strcmp(icon_theme, "hicolor") != 0))
 			      {
 				 found =
-				    _ecore_desktop_find_icon0(icon, icon_size,
+				    _ecore_desktop_icon_find0(icon, icon_size,
 							      "hicolor");
 				 if (found != NULL)
 				    return found;
@@ -330,7 +330,7 @@ _ecore_desktop_find_icon0(char *icon, char *icon_size, char *icon_theme)
 				 printf("FDO icon = %s\n", path);
 #endif
 				 found =
-				    ecore_desktop_paths_search_for_file
+				    ecore_desktop_paths_file_find
 				    (ecore_desktop_paths_icons, path, 0, NULL,
 				     NULL);
 				 if (found)

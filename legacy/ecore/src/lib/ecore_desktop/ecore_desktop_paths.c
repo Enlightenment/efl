@@ -49,7 +49,7 @@ ecore_desktop_paths_init()
       ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
 			      _ecore_desktop_paths_cb_exe_exit, NULL);
    gnome_data = ecore_list_new();
-   home = ecore_desktop_get_home();
+   home = ecore_desktop_home_get();
    if (home)
      {
 	int                 last;
@@ -180,7 +180,7 @@ ecore_desktop_paths_shutdown()
  * @param   data A pointer to pass on to func.
  */
 char               *
-ecore_desktop_paths_search_for_file(Ecore_List * paths, char *file, int sub,
+ecore_desktop_paths_file_find(Ecore_List * paths, char *file, int sub,
 				    int (*func) (const void *data, char *path),
 				    const void *data)
 {
@@ -235,11 +235,11 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
    /* Merge the results, there are probably some duplicates. */
 
    if (type)
-      types = ecore_desktop_list_from_paths(strdup(type));
+      types = ecore_desktop_paths_to_list(strdup(type));
    if (gnome_extra)
-      gnome_extras = ecore_desktop_list_from_paths(strdup(gnome_extra));
+      gnome_extras = ecore_desktop_paths_to_list(strdup(gnome_extra));
    if (kde)
-      kdes = ecore_desktop_list_from_paths(strdup(kde));
+      kdes = ecore_desktop_paths_to_list(strdup(kde));
 
    paths = ecore_list_new();
    if (paths)
@@ -252,7 +252,7 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
 	  {
 	     Ecore_List         *befores;
 
-	     befores = ecore_desktop_list_from_paths(strdup(before));
+	     befores = ecore_desktop_paths_to_list(strdup(before));
 	     if (befores)
 	       {
 		  char               *this_before;
@@ -275,7 +275,7 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
 	     value = getenv(env_home);
 	     if ((value == NULL) || (value[0] == '\0'))
 		value = env_home_default;
-	     env_list = ecore_desktop_list_from_paths(strdup(value));
+	     env_list = ecore_desktop_paths_to_list(strdup(value));
 	     if (env_list && types)
 	       {
 		  char               *this_env, *this_type;
@@ -303,7 +303,7 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
 	     value = getenv(env);
 	     if ((value == NULL) || (value[0] == '\0'))
 		value = env_default;
-	     env_list = ecore_desktop_list_from_paths(value);
+	     env_list = ecore_desktop_paths_to_list(value);
 	     if (env_list && types)
 	       {
 		  char               *this_env, *this_type;
@@ -578,7 +578,7 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
 	value = read->lines[0].line;
 	if (value)
 	  {
-	     config_list = ecore_desktop_list_from_paths(value);
+	     config_list = ecore_desktop_paths_to_list(value);
 	     if (config_list)
 	       {
 		  char               *this_config, *this_type;
@@ -627,7 +627,7 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
  * @param   paths A list of paths.
  */
 Ecore_Hash         *
-ecore_desktop_hash_from_paths(char *paths)
+ecore_desktop_paths_to_hash(char *paths)
 {
    Ecore_Hash         *result;
 
@@ -680,7 +680,7 @@ ecore_desktop_hash_from_paths(char *paths)
  * @param   paths A list of paths.
  */
 Ecore_List         *
-ecore_desktop_list_from_paths(char *paths)
+ecore_desktop_paths_to_list(char *paths)
 {
    Ecore_List         *result;
 

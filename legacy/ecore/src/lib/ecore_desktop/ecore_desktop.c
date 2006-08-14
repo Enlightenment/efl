@@ -7,7 +7,7 @@ static Ecore_Hash  *ini_file_cache;
 static Ecore_Hash  *desktop_cache;
 
 Ecore_Hash         *
-ecore_desktop_parse_ini_file(char *file)
+ecore_desktop_ini_get(char *file)
 {
    Ecore_Hash         *result;
 
@@ -106,7 +106,7 @@ ecore_desktop_parse_ini_file(char *file)
 }
 
 Ecore_Desktop      *
-ecore_desktop_parse_file(char *file)
+ecore_desktop_get(char *file)
 {
    Ecore_Desktop      *result;
 
@@ -116,7 +116,7 @@ ecore_desktop_parse_file(char *file)
 	result = calloc(1, sizeof(Ecore_Desktop));
 	if (result)
 	  {
-	     result->data = ecore_desktop_parse_ini_file(file);
+	     result->data = ecore_desktop_ini_get(file);
 	     if (result->data)
 	       {
 		  result->group =
@@ -149,17 +149,17 @@ ecore_desktop_parse_file(char *file)
 			  (char *)ecore_hash_get(result->group, "Categories");
 		       if (result->categories)
 			  result->Categories =
-			     ecore_desktop_hash_from_paths(result->categories);
+			     ecore_desktop_paths_to_hash(result->categories);
 		       value =
 			  (char *)ecore_hash_get(result->group, "OnlyShowIn");
 		       if (value)
 			  result->OnlyShowIn =
-			     ecore_desktop_hash_from_paths(value);
+			     ecore_desktop_paths_to_hash(value);
 		       value =
 			  (char *)ecore_hash_get(result->group, "NotShowIn");
 		       if (value)
 			  result->NotShowIn =
-			     ecore_desktop_hash_from_paths(value);
+			     ecore_desktop_paths_to_hash(value);
 		       value =
 			  (char *)ecore_hash_get(result->group,
 						 "X-KDE-StartupNotify");
@@ -254,7 +254,7 @@ ecore_desktop_destroy(Ecore_Desktop * desktop)
 }
 
 char               *
-ecore_desktop_get_home()
+ecore_desktop_home_get()
 {
    char               *d;
    int                 length;
