@@ -367,21 +367,31 @@ eet_flush(Eet_File *ef)
    return EET_ERROR_NONE;
    
 write_error:
-   fclose(ef->fp);
-   ef->fp = NULL;
    switch (ferror(ef->fp))
      {
       case EFBIG:
+	fclose(ef->fp);
+	ef->fp = NULL;
 	return EET_ERROR_WRITE_ERROR_FILE_TOO_BIG;
       case EIO:
+	fclose(ef->fp);
+	ef->fp = NULL;
 	return EET_ERROR_WRITE_ERROR_IO_ERROR;
       case ENOSPC:
+	fclose(ef->fp);
+	ef->fp = NULL;
 	return EET_ERROR_WRITE_ERROR_OUT_OF_SPACE;
       case EPIPE:
+	fclose(ef->fp);
+	ef->fp = NULL;
 	return EET_ERROR_WRITE_ERROR_FILE_CLOSED;
       default:
+	fclose(ef->fp);
+	ef->fp = NULL;
 	return EET_ERROR_WRITE_ERROR;
      }
+   fclose(ef->fp);
+   ef->fp = NULL;
    return EET_ERROR_WRITE_ERROR;
 }
 
