@@ -1,14 +1,7 @@
 #ifndef _ECORE_DESKTOP_H
 # define _ECORE_DESKTOP_H
 
-/* FIXME: No unnecessary includes in exported headers, when things settle down and we know what is unnecessary. */
-#include <string.h>
-#include <strings.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <Ecore_Data.h>
-
 
 /**
  * @file Ecore_Desktop.h
@@ -32,16 +25,6 @@
  *
  * For menu file details, see @ref Ecore_Desktop_Menu_Group.
  */
-
-
-#define MAX_PATH 4096
-
-/* FIXME: No unnecessary macros in exported headers, when things settle down and we know what is unnecessary. */
-#define E_FN_DEL(_fn, _h) if (_h) { _fn(_h); _h = NULL; }
-#define E_REALLOC(p, s, n) p = (s *)realloc(p, sizeof(s) * n)
-#define E_NEW(s, n) (s *)calloc(n, sizeof(s))
-#define E_NEW_BIG(s, n) (s *)malloc(n * sizeof(s))
-#define E_FREE(p) { if (p) {free(p); p = NULL;} }
 
 extern Ecore_List         *ecore_desktop_paths_config;
 extern Ecore_List         *ecore_desktop_paths_menus;
