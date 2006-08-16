@@ -28,7 +28,7 @@ static int           _ecore_config_system_init_no_load(void);
 static int           _ecore_config_system_load(void);
 
 static inline void  *__ecore_argb_to_long(int a, int r, int g, int b, long *v);
-static inline void  *__ecore_argbstr_to_long(char *argb, long *v);
+static inline void  *__ecore_argbstr_to_long(const char *argb, long *v);
 
 static const char  *_ecore_config_type[] =
    { "undefined", "integer", "float", "string", "colour", "theme", "boolean", "structure" };
@@ -573,7 +573,7 @@ ecore_config_add(const char *key, const char *val)
  * @ingroup Ecore_Config_Property_Group
  */
 EAPI int
-ecore_config_describe(const char *key, char *desc)
+ecore_config_describe(const char *key, const char *desc)
 {
    Ecore_Config_Prop  *e;
 
@@ -613,7 +613,7 @@ ecore_config_short_opt_set(const char *key, char short_opt)
  * @ingroup Ecore_Config_Property_Group
  */
 EAPI int
-ecore_config_long_opt_set(const char *key, char *long_opt)
+ecore_config_long_opt_set(const char *key, const char *long_opt)
 {
    Ecore_Config_Prop  *e;
 
@@ -693,7 +693,7 @@ ecore_config_typed_set(const char *key, const void *val, int type)
  * @ingroup Ecore_Config_Set_Group
  */
 EAPI int
-ecore_config_set(const char *key, char *val)
+ecore_config_set(const char *key, const char *val)
 {
    int                 type;
    int                 tmpi;
@@ -704,20 +704,20 @@ ecore_config_set(const char *key, char *val)
    if (type == ECORE_CONFIG_INT || type == ECORE_CONFIG_BLN)
      {
 	tmpi = atoi(val);
-	return ecore_config_typed_set(key, (void *)&tmpi, type);
+	return ecore_config_typed_set(key, &tmpi, type);
      }
    else if (type == ECORE_CONFIG_FLT)
      {
 	tmpf = atof(val);
-	return ecore_config_typed_set(key, (void *)&tmpf, type);
+	return ecore_config_typed_set(key, &tmpf, type);
      }
    else if (type == ECORE_CONFIG_RGB)
      {
 	__ecore_argbstr_to_long(val, &tmpl);
-	return ecore_config_typed_set(key, (void *)&tmpl, type);
+	return ecore_config_typed_set(key, &tmpl, type);
      }
    else
-      return ecore_config_typed_set(key, (void *)val, type);
+      return ecore_config_typed_set(key, val, type);
 }
 
 /**
@@ -728,7 +728,7 @@ ecore_config_set(const char *key, char *val)
  * @ingroup Ecore_Config_Set_Group
  */
 EAPI int
-ecore_config_as_string_set(const char *key, char *val)
+ecore_config_as_string_set(const char *key, const char *val)
 {
    return ecore_config_set(key, val);
 }
@@ -744,7 +744,7 @@ EAPI int
 ecore_config_boolean_set(const char *key, int val)
 {
    val = val ? 1 : 0;
-   return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_BLN);
+   return ecore_config_typed_set(key, &val, ECORE_CONFIG_BLN);
 }
 
 /**
@@ -757,7 +757,7 @@ ecore_config_boolean_set(const char *key, int val)
 EAPI int
 ecore_config_int_set(const char *key, int val)
 {
-   return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_INT);
+   return ecore_config_typed_set(key, &val, ECORE_CONFIG_INT);
 }
 
 /**
@@ -768,9 +768,9 @@ ecore_config_int_set(const char *key, int val)
  * @ingroup Ecore_Config_Set_Group
  */
 EAPI int
-ecore_config_string_set(const char *key, char *val)
+ecore_config_string_set(const char *key, const char *val)
 {
-   return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_STR);
+   return ecore_config_typed_set(key, val, ECORE_CONFIG_STR);
 }
 
 /**
@@ -783,7 +783,7 @@ ecore_config_string_set(const char *key, char *val)
 EAPI int
 ecore_config_float_set(const char *key, float val)
 {
-   return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_FLT);
+   return ecore_config_typed_set(key, &val, ECORE_CONFIG_FLT);
 }
 
 /**
@@ -813,7 +813,7 @@ ecore_config_argb_set(const char *key, int a, int r, int g, int b)
 EAPI int
 ecore_config_argbint_set(const char *key, long argb)
 {
-   return ecore_config_typed_set(key, (void *)&argb, ECORE_CONFIG_RGB);
+   return ecore_config_typed_set(key, &argb, ECORE_CONFIG_RGB);
 }
 
 /**
@@ -824,7 +824,7 @@ ecore_config_argbint_set(const char *key, long argb)
  * @ingroup Ecore_Config_Set_Group
  */
 EAPI int
-ecore_config_argbstr_set(const char *key, char *val)
+ecore_config_argbstr_set(const char *key, const char *val)
 {
    long v = 0;
    return ecore_config_typed_set(key, __ecore_argbstr_to_long(val, &v), ECORE_CONFIG_RGB);
@@ -838,9 +838,9 @@ ecore_config_argbstr_set(const char *key, char *val)
  * @ingroup Ecore_Config_Set_Group
  */
 EAPI int
-ecore_config_theme_set(const char *key, char *val)
+ecore_config_theme_set(const char *key, const char *val)
 {
-   return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_THM);
+   return ecore_config_typed_set(key, val, ECORE_CONFIG_THM);
 }
 
 /**
@@ -851,7 +851,7 @@ ecore_config_theme_set(const char *key, char *val)
  * @ingroup Ecore_Config_Set_Group
  */
 EAPI int
-ecore_config_theme_preview_group_set(const char *key, char *group)
+ecore_config_theme_preview_group_set(const char *key, const char *group)
 {
    int                 ret;
    Ecore_Config_Prop  *e;
@@ -872,7 +872,7 @@ ecore_config_theme_preview_group_set(const char *key, char *group)
 }
 
 EAPI int
-ecore_config_typed_default(const char *key, void *val, int type)
+ecore_config_typed_default(const char *key, const void *val, int type)
 {
    int                 ret;
    Ecore_Config_Prop  *e;
@@ -916,7 +916,7 @@ ecore_config_typed_default(const char *key, void *val, int type)
  * @ingroup Ecore_Config_Default_Group
  */
 EAPI int
-ecore_config_default(const char *key, char *val, float lo, float hi, float step)
+ecore_config_default(const char *key, const char *val, float lo, float hi, float step)
 {
    int                 ret, type;
    Ecore_Config_Prop  *e;
@@ -959,7 +959,7 @@ EAPI int
 ecore_config_boolean_default(const char *key, int val)
 {
    val = val ? 1 : 0;
-   return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_BLN);
+   return ecore_config_typed_default(key, &val, ECORE_CONFIG_BLN);
 }
 
 /**
@@ -973,7 +973,7 @@ ecore_config_boolean_default(const char *key, int val)
 EAPI int
 ecore_config_int_default(const char *key, int val)
 {
-   return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_INT);
+   return ecore_config_typed_default(key, &val, ECORE_CONFIG_INT);
 }
 
 /**
@@ -997,7 +997,7 @@ ecore_config_int_default_bound(const char *key, int val, int low, int high,
    Ecore_Config_Prop  *e;
    int                 ret;
 
-   ret = ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_INT);
+   ret = ecore_config_typed_default(key, &val, ECORE_CONFIG_INT);
    e = ecore_config_get(key);
    if (e)
      {
@@ -1022,7 +1022,7 @@ ecore_config_int_default_bound(const char *key, int val, int low, int high,
 EAPI int
 ecore_config_string_default(const char *key, const char *val)
 {
-   return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_STR);
+   return ecore_config_typed_default(key, val, ECORE_CONFIG_STR);
 }
 
 /**
@@ -1036,7 +1036,7 @@ ecore_config_string_default(const char *key, const char *val)
 EAPI int
 ecore_config_float_default(const char *key, float val)
 {
-   return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_FLT);
+   return ecore_config_typed_default(key, &val, ECORE_CONFIG_FLT);
 }
 
 /**
@@ -1060,7 +1060,7 @@ ecore_config_float_default_bound(const char *key, float val, float low,
    Ecore_Config_Prop  *e;
    int                 ret;
 
-   ret = ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_FLT);
+   ret = ecore_config_typed_default(key, &val, ECORE_CONFIG_FLT);
    e = ecore_config_get(key);
    if (e)
      {
@@ -1103,7 +1103,7 @@ ecore_config_argb_default(const char *key, int a, int r, int g, int b)
 EAPI int
 ecore_config_argbint_default(const char *key, long argb)
 {
-   return ecore_config_typed_default(key, (void *)&argb, ECORE_CONFIG_RGB);
+   return ecore_config_typed_default(key, &argb, ECORE_CONFIG_RGB);
 }
 
 /**
@@ -1115,7 +1115,7 @@ ecore_config_argbint_default(const char *key, long argb)
  * @ingroup Ecore_Config_Default_Group
  */
 EAPI int
-ecore_config_argbstr_default(const char *key, char *val)
+ecore_config_argbstr_default(const char *key, const char *val)
 {
    long v = 0;
    return ecore_config_typed_default(key, __ecore_argbstr_to_long(val, &v), ECORE_CONFIG_RGB);
@@ -1130,9 +1130,9 @@ ecore_config_argbstr_default(const char *key, char *val)
  * @ingroup Ecore_Config_Default_Group
  */
 EAPI int
-ecore_config_theme_default(const char *key, char *val)
+ecore_config_theme_default(const char *key, const char *val)
 {
-   return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_THM);
+   return ecore_config_typed_default(key, val, ECORE_CONFIG_THM);
 }
 
 /**
@@ -1173,7 +1173,7 @@ _ecore_config_struct_append(Ecore_Config_Prop *sct, Ecore_Config_Prop *add)
 }
 
 static int
-_ecore_config_struct_typed_add(const char *key, const char *name, void *val,
+_ecore_config_struct_typed_add(const char *key, const char *name, const void *val,
     int type)
 {
    char *subkey;
@@ -1203,8 +1203,7 @@ _ecore_config_struct_typed_add(const char *key, const char *name, void *val,
 EAPI int
 ecore_config_struct_int_add(const char *key, const char *name, int val)
 {
-   return _ecore_config_struct_typed_add(key, name, (void *) &val,
-                                         ECORE_CONFIG_INT);
+   return _ecore_config_struct_typed_add(key, name, &val, ECORE_CONFIG_INT);
 }
 
 /**
@@ -1219,8 +1218,7 @@ ecore_config_struct_int_add(const char *key, const char *name, int val)
 EAPI int
 ecore_config_struct_float_add(const char *key, const char *name, float val)
 {
-   return _ecore_config_struct_typed_add(key, name, (void *) &val,
-                                         ECORE_CONFIG_FLT);
+   return _ecore_config_struct_typed_add(key, name, &val, ECORE_CONFIG_FLT);
 }
 
 /**
@@ -1233,10 +1231,9 @@ ecore_config_struct_float_add(const char *key, const char *name, float val)
  * @ingroup Ecore_Config_Struct_Group
  */
 EAPI int
-ecore_config_struct_string_add(const char *key, const char *name, char* val)
+ecore_config_struct_string_add(const char *key, const char *name, const char* val)
 {
-   return _ecore_config_struct_typed_add(key, name, (void *) val,
-                                         ECORE_CONFIG_STR);
+   return _ecore_config_struct_typed_add(key, name, val, ECORE_CONFIG_STR);
 }
 
 /**
@@ -1258,8 +1255,7 @@ ecore_config_struct_argb_add(const char *key, const char *name, int a, int r,
    long argb;
   
    __ecore_argb_to_long(a, r, g, b, &argb);
-   return _ecore_config_struct_typed_add(key, name, (void *) &argb,
-                                         ECORE_CONFIG_RGB);
+   return _ecore_config_struct_typed_add(key, name, &argb, ECORE_CONFIG_RGB);
 }
 
 /**
@@ -1272,10 +1268,9 @@ ecore_config_struct_argb_add(const char *key, const char *name, int a, int r,
  * @ingroup Ecore_Config_Struct_Group
  */
 EAPI int
-ecore_config_struct_theme_add(const char *key, const char *name, char* val)
+ecore_config_struct_theme_add(const char *key, const char *name, const char* val)
 {
-   return _ecore_config_struct_typed_add(key, name, (void *) val,
-                                         ECORE_CONFIG_THM);
+   return _ecore_config_struct_typed_add(key, name, val, ECORE_CONFIG_THM);
 }
 
 /**
@@ -1291,8 +1286,7 @@ EAPI int
 ecore_config_struct_boolean_add(const char *key, const char *name, int val)
 {
    val = val ? 1 : 0;
-   return _ecore_config_struct_typed_add(key, name, (void *) &val,
-                                         ECORE_CONFIG_BLN);
+   return _ecore_config_struct_typed_add(key, name, &val, ECORE_CONFIG_BLN);
 }
 
 /**
@@ -1848,11 +1842,11 @@ __ecore_argb_to_long(int a, int r, int g, int b, long *v)
       | ((g <<  8) &     0xff00 )
       | ( b        &       0xff );
 
-   return (void *)v;
+   return v;
 }
 
 static inline void *
-__ecore_argbstr_to_long(char *argb, long *v)
+__ecore_argbstr_to_long(const char *argb, long *v)
 {
    char *l = NULL;
 
@@ -1867,6 +1861,6 @@ __ecore_argbstr_to_long(char *argb, long *v)
 	return NULL;
      }
 
-   return (void *)v;
+   return v;
 }
 
