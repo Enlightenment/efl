@@ -8,7 +8,7 @@
 static char        *_ecore_desktop_icon_find0(char *icon, char *icon_size,
 					      char *icon_theme);
 
-static const char  *ext[] = { ".edje", ".png", ".svg", ".xpm", "", NULL };
+static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
 
 
 /**
@@ -24,7 +24,6 @@ static const char  *ext[] = { ".edje", ".png", ".svg", ".xpm", "", NULL };
  *
  * Using the search algorithm specified by freedesktop.org,
  * search for an icon in the currently installed set of icon themes.
- * As an Enlightenment DR17 extension it searches for .edje files first.
  *
  * @param   icon The name of the required icon.
  * @param   icon_size The size of the required icon.
@@ -59,8 +58,6 @@ ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
 #endif
 
    /* Check For Unsupported Extension */
-//   if ((!strcmp(icon + strlen(icon) - 4, ".svg")) || (!strcmp(icon + strlen(icon) - 4, ".ico"))
-//       || (!strcmp(icon + strlen(icon) - 4, ".xpm")))
    if (!strcmp(icon + strlen(icon) - 4, ".ico"))
       return NULL;
 
