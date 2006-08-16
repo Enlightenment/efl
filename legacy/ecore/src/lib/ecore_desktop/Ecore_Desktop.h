@@ -43,12 +43,12 @@
 #define E_NEW_BIG(s, n) (s *)malloc(n * sizeof(s))
 #define E_FREE(p) { if (p) {free(p); p = NULL;} }
 
-Ecore_List         *ecore_desktop_paths_config;
-Ecore_List         *ecore_desktop_paths_menus;
-Ecore_List         *ecore_desktop_paths_directories;
-Ecore_List         *ecore_desktop_paths_desktops;
-Ecore_List         *ecore_desktop_paths_icons;
-Ecore_List         *ecore_desktop_paths_kde_legacy;
+extern Ecore_List         *ecore_desktop_paths_config;
+extern Ecore_List         *ecore_desktop_paths_menus;
+extern Ecore_List         *ecore_desktop_paths_directories;
+extern Ecore_List         *ecore_desktop_paths_desktops;
+extern Ecore_List         *ecore_desktop_paths_icons;
+extern Ecore_List         *ecore_desktop_paths_kde_legacy;
 
 struct _Ecore_Desktop
 {

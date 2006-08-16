@@ -3,6 +3,13 @@
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
 
+Ecore_List         *ecore_desktop_paths_config = NULL;
+Ecore_List         *ecore_desktop_paths_menus = NULL;
+Ecore_List         *ecore_desktop_paths_directories = NULL;
+Ecore_List         *ecore_desktop_paths_desktops = NULL;
+Ecore_List         *ecore_desktop_paths_icons = NULL;
+Ecore_List         *ecore_desktop_paths_kde_legacy = NULL;
+
 extern int          reject_count, not_over_count;
 
 static int          init_count = 0;
