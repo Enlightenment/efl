@@ -11,10 +11,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <linux/version.h>
 #include <linux/kd.h>
 #include <linux/vt.h>
 #include <linux/fb.h>
-#include <linux/input.h>
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,15)) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18))
+ #define kernel_ulong_t unsigned long 
+ #define BITS_PER_LONG 32
+ #include <linux/input.h>
+ #undef kernel_ulong_t <-added
+ #undef BITS_PER_LONG <-added
+#else
+ #include <linux/input.h>
+#endif
+
 #include <signal.h>
 #include <fcntl.h>
 #include <errno.h>

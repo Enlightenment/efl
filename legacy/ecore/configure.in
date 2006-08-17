@@ -589,10 +589,16 @@ AC_ARG_ENABLE(ecore-fb,
 if test "x$want_ecore_fb" = "xyes"; then
   AC_CHECK_HEADER(linux/fb.h,
     [
-      AM_CONDITIONAL(BUILD_ECORE_FB, true)
-      AC_DEFINE(BUILD_ECORE_FB, 1, [Build Ecore_FB Module])
-      have_ecore_fb="yes"
-      ecore_fb_libs="-lecore_fb";
+      AC_CHECK_HEADER(linux/input.h,
+        [
+          AM_CONDITIONAL(BUILD_ECORE_FB, true)
+          AC_DEFINE(BUILD_ECORE_FB, 1, [Build Ecore_FB Module])
+          have_ecore_fb="yes"
+          ecore_fb_libs="-lecore_fb";
+        ], [
+          AM_CONDITIONAL(BUILD_ECORE_FB, false)
+        ]
+      )
     ], [
       AM_CONDITIONAL(BUILD_ECORE_FB, false)
     ]
@@ -783,8 +789,7 @@ AC_ARG_ENABLE(ecore-evas-fb,
     AC_MSG_RESULT(yes)
   ]
 )
-
-if test "x$want_ecore_evas_fb" = "xyes"; then
+if test "x$want_ecore_evas_fb" = "xyes" -a "x$have_ecore_fb" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_FB.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, true)
