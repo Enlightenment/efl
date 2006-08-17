@@ -28,4 +28,8 @@ if BUILD_LOADER_XPM
 xpm_subdir = xpm
 endif
 
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir) $(xpm_subdir)
+if BUILD_LOADER_SVG
+xvg_subdir = svg
+endif
+
+SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir) $(xpm_subdir) $(svg_subdir)
