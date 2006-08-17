@@ -130,6 +130,8 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	chdir(pcwd);
 	return 0;
      }
+
+   memset(im->image->data, 0, w * h * sizeof(DATA32));
    
    surface = cairo_image_surface_create_for_data((unsigned char *)im->image->data, CAIRO_FORMAT_ARGB32,
 						 w, h, w * sizeof(DATA32));
