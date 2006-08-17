@@ -565,7 +565,7 @@ fi
 AC_SUBST(ecore_dfb_cflags)
 AC_SUBST(ecore_dfb_libs)
 
-want_ecore_fb="yes";
+want_ecore_fb="no";
 have_ecore_fb="no";
 ecore_fb_cflags="";
 ecore_fb_libs="";
@@ -573,16 +573,16 @@ ecore_fb_libs="";
 AC_MSG_CHECKING(whether ecore_fb module is to be built)
 
 AC_ARG_ENABLE(ecore-fb, 
-  [  --disable-ecore-fb            disable the ecore_fb module],
+  [  --enable-ecore-fb            enable the ecore_fb module],
   [
     if test x"$enableval" = x"yes" ; then  
       AC_MSG_RESULT(yes)
+      want_ecore_fb="yes"
     else
       AC_MSG_RESULT(no)
-      want_ecore_fb="no"
     fi
   ], [
-    AC_MSG_RESULT(yes)
+    AC_MSG_RESULT(no)
   ]
 )
 
@@ -772,21 +772,21 @@ fi
 AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test "x$have_ecore_evas_dfb" = "xyes")
 
 
-want_ecore_evas_fb="yes";
+want_ecore_evas_fb="no";
 have_ecore_evas_fb="no";
 
 AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
 AC_ARG_ENABLE(ecore-evas-fb, 
-  [  --disable-ecore-evas-fb       disable fb in the ecore_evas module],
+  [  --enable-ecore-evas-fb       enable fb in the ecore_evas module],
   [
     if test x"$enableval" = x"yes" ; then  
       AC_MSG_RESULT(yes)
+      want_ecore_evas_fb="yes"
     else
       AC_MSG_RESULT(no)
-      want_ecore_evas_fb="no"
     fi
   ], [
-    AC_MSG_RESULT(yes)
+    AC_MSG_RESULT(no)
   ]
 )
 if test "x$want_ecore_evas_fb" = "xyes" -a "x$have_ecore_fb" = "xyes"; then
