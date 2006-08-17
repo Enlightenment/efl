@@ -35,7 +35,7 @@ static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
 char               *
 ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
 {
-   char                icn[MAX_PATH], path[MAX_PATH];
+   char                icn[PATH_MAX], path[PATH_MAX];
    char               *dir, *home;
 
    if (icon == NULL)
@@ -67,7 +67,7 @@ ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
 	dir = ecore_file_get_dir(icn);
 	if (!strcmp(dir, icn) == 0)
 	  {
-	     snprintf(path, MAX_PATH, "%s", icn);
+	     snprintf(path, PATH_MAX, "%s", icn);
 	     /* Check Supplied Dir For Icon */
 	     if (ecore_file_exists(path))
 		return strdup(icn);
@@ -117,7 +117,7 @@ _ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
     * the .theme files.
     */
 
-   char                icn[MAX_PATH], path[MAX_PATH];
+   char                icn[PATH_MAX], path[PATH_MAX];
    char               *theme_path, *found;
 
    if ((icon == NULL) || (icon[0] == '\0'))
@@ -129,7 +129,7 @@ _ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
 #endif
 
    /* Get the theme description file. */
-   snprintf(icn, MAX_PATH, "%s/index.theme", icon_theme);
+   snprintf(icn, PATH_MAX, "%s/index.theme", icon_theme);
 #ifdef DEBUG
    printf("SEARCHING FOR %s\n", icn);
 #endif
@@ -289,7 +289,7 @@ _ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
 					   /* Look for icon with all extensions. */
 					   for (j = 0; ext[j] != NULL; j++)
 					     {
-						snprintf(path, MAX_PATH,
+						snprintf(path, PATH_MAX,
 							 "%s/%s/%s%s",
 							 icon_theme, directory,
 							 icon, ext[j]);
@@ -346,7 +346,7 @@ _ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
 			    /* Fall back strategy #4, Just search in the base of the icon directories. */
 			    for (i = 0; ext[i] != NULL; i++)
 			      {
-				 snprintf(path, MAX_PATH, "%s%s", icon, ext[i]);
+				 snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
 #ifdef DEBUG
 				 printf("FDO icon = %s\n", path);
 #endif

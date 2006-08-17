@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits.h>
 #include <Ecore_File.h>
 
-#define MAX_PATH 4096
 #define E_FN_DEL(_fn, _h) if (_h) { _fn(_h); _h = NULL; }
 #define E_REALLOC(p, s, n) p = (s *)realloc(p, sizeof(s) * n)
 #define E_NEW(s, n) (s *)calloc(n, sizeof(s))

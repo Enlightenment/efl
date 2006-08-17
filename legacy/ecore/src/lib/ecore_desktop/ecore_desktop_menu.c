@@ -258,7 +258,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 		  int                 i;
 		  char               *flags = "    ", *name = "", *directory =
 		     "", *menu_path = "";
-		  char                temp[MAX_PATH];
+		  char                temp[PATH_MAX];
 
 		  flags = (char *)menu->elements[0].element;
 		  flags += 7;
@@ -473,7 +473,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 						 element)[0] != '<'))
 					     {
 						char               
-						   temp[MAX_PATH];
+						   temp[PATH_MAX];
 
 						sprintf(temp, "%s %s",
 							(char *)sub->
@@ -573,7 +573,7 @@ _ecore_desktop_menu_check_directory(const void *data, char *path)
      {
 	if (strcmp(p, ".directory") == 0)
 	  {
-	     char                merge_file[MAX_PATH];
+	     char                merge_file[PATH_MAX];
 
 	     sprintf(merge_file, "<Directory %s", path);
 	     ecore_desktop_tree_extend(merge, merge_file);
@@ -595,7 +595,7 @@ _ecore_desktop_menu_check_menu(const void *data, char *path)
      {
 	if (strcmp(p, ".menu") == 0)
 	  {
-	     char                merge_file[MAX_PATH];
+	     char                merge_file[PATH_MAX];
 
 	     sprintf(merge_file, "<MergeFile type=\"path\" %s", path);
 	     ecore_desktop_tree_extend(merge, merge_file);
@@ -645,7 +645,7 @@ _ecore_desktop_menu_legacy_menu_dir(const void *data, char *path)
 		  menu = _ecore_desktop_menu_create_menu();
 		  if (menu)
 		    {
-		       char                temp[MAX_PATH];
+		       char                temp[PATH_MAX];
 
 		       sprintf(temp, "<MENU <   L> <%s> <>", &path[start]);
 		       menu->elements[0].element = strdup(temp);
@@ -685,7 +685,7 @@ _ecore_desktop_menu_legacy_menu(const void *data, char *path)
 {
    struct _ecore_desktop_menu_legacy_data *legacy_data;
    char               *menu_path, *file;
-   char                temp[MAX_PATH];
+   char                temp[PATH_MAX];
    int                 i, count = 0, menu_count = 0;
 
    legacy_data = (struct _ecore_desktop_menu_legacy_data *)data;
@@ -789,7 +789,7 @@ _ecore_desktop_menu_unxml_rules(Ecore_Desktop_Tree * rules,
 				 char sub_type)
 {
    int                 i;
-   char                temp[MAX_PATH];
+   char                temp[PATH_MAX];
 
    for (i = 0; i < tree->size; i++)
      {
@@ -888,7 +888,7 @@ _ecore_desktop_menu_unxml_moves(Ecore_Desktop_Tree * menu,
 	  }
 	if ((old) && (new))
 	  {
-	     char                temp[MAX_PATH * 2];
+	     char                temp[PATH_MAX * 2];
 
 	     sprintf(temp, "<MOVE <%s> <%s>", old, new);
 	     ecore_desktop_tree_extend(menu, temp);
@@ -904,7 +904,7 @@ static void
 _ecore_desktop_menu_add_dirs(Ecore_Desktop_Tree * tree, Ecore_List * paths,
 			      char *pre, char *post, char *extra, int element)
 {
-   char                t[MAX_PATH], *this_path;
+   char                t[PATH_MAX], *this_path;
 
    /* reverse the order of the dirs. */
    ecore_list_goto_first(paths);
@@ -926,7 +926,7 @@ _ecore_desktop_menu_expand_apps(struct _ecore_desktop_menu_unxml_data
    if (pool)
      {
 	struct _ecore_desktop_menu_expand_apps_data our_data;
-	char                dir[MAX_PATH];
+	char                dir[PATH_MAX];
 
 	our_data.pool = pool;
 	sprintf(dir, "%s", app_dir);
@@ -1003,7 +1003,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 	  }
 	else if (strncmp(string, "<MergeDir ", 10) == 0)
 	  {
-	     char                merge_path[MAX_PATH];
+	     char                merge_path[PATH_MAX];
 
 	     if (string[10] == '/')
 		sprintf(merge_path, "%s", &string[10]);
@@ -1016,7 +1016,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 	  }
 	else if (strncmp(string, "<LegacyDir ", 11) == 0)
 	  {
-	     char                merge_path[MAX_PATH];
+	     char                merge_path[PATH_MAX];
 	     struct _ecore_desktop_menu_legacy_data legacy_data;
 
 	     string += 11;
@@ -1058,7 +1058,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 	  }
 	else if (strncmp(string, "<MergeFile ", 11) == 0)
 	  {
-	     char                merge_path[MAX_PATH];
+	     char                merge_path[PATH_MAX];
 	     int                 path_type = 1;
 
 	     /* FIXME: need to weed out duplicate <MergeFile's, use the last one. */
@@ -1272,7 +1272,7 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 			      }
 			    else if (strncmp(string, "<DirectoryDir ", 14) == 0)
 			      {
-				 char                merge_path[MAX_PATH];
+				 char                merge_path[PATH_MAX];
 				 Ecore_Desktop_Tree *merge;
 
 				 if (string[14] == '/')

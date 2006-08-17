@@ -48,7 +48,7 @@ ecore_desktop_ini_get(const char *file)
    if (result)
      {
 	FILE               *f;
-	char                buffer[MAX_PATH];
+	char                buffer[PATH_MAX];
 	Ecore_Hash         *current = NULL;
 
 	f = fopen(file, "r");
@@ -444,7 +444,7 @@ ecore_desktop_home_get()
 {
    char               *d;
    int                 length;
-   char                home[MAX_PATH];
+   char                home[PATH_MAX];
 
    /* Get Home Dir, check for trailing '/', strip it */
    snprintf(home, sizeof(home), "%s", getenv("HOME"));

@@ -110,7 +110,7 @@ ecore_desktop_paths_init()
 	     if (config_list)
 	       {
 		  char               *this_config;
-                  char path[MAX_PATH];
+                  char path[PATH_MAX];
 
 		  ecore_list_goto_first(config_list);
 		  while ((this_config = ecore_list_next(config_list)) != NULL)
@@ -142,7 +142,7 @@ ecore_desktop_paths_init()
      }
    if (!ecore_desktop_paths_kde_legacy)
      {
-	char                temp[MAX_PATH], *path;
+	char                temp[PATH_MAX], *path;
 	Ecore_List         *temp_list;
 
 #ifdef KDE_SUPPORT
@@ -262,7 +262,7 @@ ecore_desktop_paths_file_find(Ecore_List * paths, char *file, int sub,
 				    const void *data)
 {
    char               *path = NULL, *this_path;
-   char                temp[MAX_PATH];
+   char                temp[PATH_MAX];
    struct stat         path_stat;
 
    if (paths)
@@ -325,7 +325,7 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
    paths = ecore_list_new();
    if (paths)
      {
-	char                path[MAX_PATH];
+	char                path[PATH_MAX];
 	Ecore_List         *env_list;
 
 	ecore_list_set_free_cb(paths, free);
@@ -647,7 +647,7 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
    Ecore_Exe_Event_Data *read;
    struct _config_exe_data *ced;
    char               *value;
-   char                path[MAX_PATH];
+   char                path[PATH_MAX];
 
    ev = event;
    if (!ev->exe)
