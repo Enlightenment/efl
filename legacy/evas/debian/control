@@ -2,7 +2,7 @@ Source: evas
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libxpm-dev, libgl-dev
+Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libxpm-dev, libgl-dev, librsvg2-dev
 Standards-Version: 3.6.2.2
 
 Package: libevas0
@@ -226,6 +226,21 @@ Description: Evas module providing the X11 pixmap loader
  applications under development.
  This package contains the Evas loader module for XPM.
 
+Package: libevas0-loader-svg
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, libevas0, librsvg2-2 
+Provides: libevas-loader-svg
+Description: Evas module providing the SVG loader
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+ This package contains the Evas loader module for SVG.
+
 Package: libevas0-saver-eet
 Section: libs
 Architecture: any
@@ -331,7 +346,7 @@ Description: virtual package providing all available Evas engines
 Package: libevas0-loaders-all
 Section: graphics
 Architecture: any
-Depends: libevas0-loader-eet, libevas0-loader-jpeg, libevas0-loader-png, libevas0-loader-tiff, libevas0-loader-gif, libevas0-loader-xpm
+Depends: libevas0-loader-eet, libevas0-loader-jpeg, libevas0-loader-png, libevas0-loader-tiff, libevas0-loader-gif, libevas0-loader-xpm, libevas0-loader-svg
 Provides: libevas-loaders-all
 Description: virtual package providing all available Evas loaders
  This is a virtual package providing all available Evas loader modules.
