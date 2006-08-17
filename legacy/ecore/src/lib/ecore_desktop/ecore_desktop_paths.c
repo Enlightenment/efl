@@ -273,6 +273,7 @@ ecore_desktop_paths_file_find(Ecore_List * paths, char *file, int sub,
 	     sprintf(temp, "%s%s", this_path, file);
 	     if (stat(temp, &path_stat) == 0)
 	       {
+	          /* FIXME: This is defensive but leaks. */
 		  path = strdup(temp);
 		  if (func)
 		     if (func(data, path))
@@ -314,12 +315,12 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
    /* Merge the results, there are probably some duplicates. */
 
    if (type)
-      types = ecore_desktop_paths_to_list(strdup(type));
+      types = ecore_desktop_paths_to_list(type);
    if (gnome_extra)
-      gnome_extras = ecore_desktop_paths_to_list(strdup(gnome_extra));
+      gnome_extras = ecore_desktop_paths_to_list(gnome_extra);
 #ifdef KDE_SUPPORT
    if (kde)
-      kdes = ecore_desktop_paths_to_list(strdup(kde));
+      kdes = ecore_desktop_paths_to_list(kde);
 #endif
 
    paths = ecore_list_new();
@@ -333,7 +334,7 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
 	  {
 	     Ecore_List         *befores;
 
-	     befores = ecore_desktop_paths_to_list(strdup(before));
+	     befores = ecore_desktop_paths_to_list(before);
 	     if (befores)
 	       {
 		  char               *this_before;
@@ -356,7 +357,7 @@ _ecore_desktop_paths_get(char *before, char *env_home, char *env,
 	     value = getenv(env_home);
 	     if ((value == NULL) || (value[0] == '\0'))
 		value = env_home_default;
-	     env_list = ecore_desktop_paths_to_list(strdup(value));
+	     env_list = ecore_desktop_paths_to_list(value);
 	     if (env_list && types)
 	       {
 		  char               *this_env, *this_type;
@@ -580,6 +581,7 @@ ecore_desktop_paths_recursive_search(char *path, char *file,
 			 {
 			    if (strcmp(basename(info_text), file) == 0)
 			      {
+	                         /* FIXME: This is defensive but leaks. */
 				 fpath = strdup(info_text);
 				 if (func)
 				    if (func(data, path))
@@ -718,9 +720,10 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
  * @param   paths A list of paths.
  */
 Ecore_Hash         *
-ecore_desktop_paths_to_hash(char *paths)
+ecore_desktop_paths_to_hash(const char *paths)
 {
    Ecore_Hash         *result;
+   char               *path;
 
    result = ecore_hash_new(ecore_str_hash, ecore_str_compare);
    if (result)
@@ -733,27 +736,32 @@ ecore_desktop_paths_to_hash(char *paths)
 	     char               *start, *end, temp;
 	     int                 finished = 0;
 
-	     end = paths;
-	     while (!finished)
-	       {
-		  start = end;
-		  do		/* FIXME: There is probably a better way to do this. */
-		    {
-		       while ((*end != ';') && (*end != ':') && (*end != ',')
-			      && (*end != '\0'))
-			  end++;
-		    }
-		  while ((end != paths) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
-		  /* FIXME: We still need to unescape it now. */
-		  temp = *end;
-		  if (*end == '\0')
-		     finished = 1;
-		  else
-		     *end = '\0';
-		  ecore_hash_set(result, strdup(start), strdup(start));
-		  if ((*end) != temp)
-		     *end = temp;
-		  end++;
+	     path = strdup(paths);
+	     if (path)
+	        {
+	           end = path;
+	           while (!finished)
+	             {
+		        start = end;
+		        do		/* FIXME: There is probably a better way to do this. */
+		          {
+		             while ((*end != ';') && (*end != ':') && (*end != ',')
+			            && (*end != '\0'))
+			        end++;
+		          }
+		        while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
+		        /* FIXME: We still need to unescape it now. */
+		        temp = *end;
+		        if (*end == '\0')
+		           finished = 1;
+		        else
+		           *end = '\0';
+		        ecore_hash_set(result, strdup(start), strdup(start));
+		        if ((*end) != temp)
+		           *end = temp;
+		        end++;
+	             }
+	           free(path);
 	       }
 	  }
      }
@@ -771,7 +779,7 @@ ecore_desktop_paths_to_hash(char *paths)
  * @param   paths A list of paths.
  */
 Ecore_List         *
-ecore_desktop_paths_to_list(char *paths)
+ecore_desktop_paths_to_list(const char *paths)
 {
    Ecore_List         *result;
    char               *path;
@@ -787,29 +795,32 @@ ecore_desktop_paths_to_list(char *paths)
 	     int                 finished = 0;
 
 	     path = strdup(paths);
-	     end = path;
-	     while (!finished)
-	       {
-		  start = end;
-		  do		/* FIXME: There is probably a better way to do this. */
-		    {
-		       while ((*end != ';') && (*end != ':') && (*end != ',')
-			      && (*end != '\0'))
-			  end++;
-		    }
-		  while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
-		  /* FIXME: We still need to unescape it now. */
-		  temp = *end;
-		  if (*end == '\0')
-		     finished = 1;
-		  else
-		     *end = '\0';
-		  ecore_list_append(result, strdup(start));
-		  if ((*end) != temp)
-		     *end = temp;
-		  end++;
-	       }
-	     free(path);
+	     if (path)
+	        {
+	           end = path;
+	           while (!finished)
+	             {
+		        start = end;
+		        do		/* FIXME: There is probably a better way to do this. */
+		          {
+		             while ((*end != ';') && (*end != ':') && (*end != ',')
+			            && (*end != '\0'))
+			        end++;
+		          }
+		        while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
+		        /* FIXME: We still need to unescape it now. */
+		        temp = *end;
+		        if (*end == '\0')
+		           finished = 1;
+		        else
+		           *end = '\0';
+		        ecore_list_append(result, strdup(start));
+		        if ((*end) != temp)
+		           *end = temp;
+		        end++;
+	             }
+	           free(path);
+		}
 	  }
      }
    return result;

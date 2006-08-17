@@ -26,6 +26,8 @@ static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
  * Using the search algorithm specified by freedesktop.org,
  * search for an icon in the currently installed set of icon themes.
  *
+ * The returned string needs to be freed eventually.
+ *
  * @param   icon The name of the required icon.
  * @param   icon_size The size of the required icon.
  * @param   icon_theme The theme of the required icon.

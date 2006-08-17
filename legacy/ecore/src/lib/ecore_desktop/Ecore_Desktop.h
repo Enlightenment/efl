@@ -107,8 +107,8 @@ extern              "C"
 							    const void *data);
    EAPI int            ecore_desktop_paths_shutdown(void);
 
-   Ecore_Hash         *ecore_desktop_paths_to_hash(char *paths);
-   Ecore_List         *ecore_desktop_paths_to_list(char *paths);
+   Ecore_Hash         *ecore_desktop_paths_to_hash(const char *paths);
+   Ecore_List         *ecore_desktop_paths_to_list(const char *paths);
 
    EAPI int            ecore_desktop_init(void);
    EAPI int            ecore_desktop_shutdown(void);
