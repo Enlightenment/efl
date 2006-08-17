@@ -116,8 +116,9 @@ extern              "C"
    Ecore_Desktop      *ecore_desktop_get(const char *file, const char *lang);
    void                ecore_desktop_destroy(Ecore_Desktop * desktop);
 
-   char               *ecore_desktop_icon_find(char *icon, char *icon_size,
-					       char *icon_theme);
+   const char         *ecore_desktop_icon_find(const char *icon, 
+   					       const char *icon_size,
+					       const char *icon_theme);
 
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
 

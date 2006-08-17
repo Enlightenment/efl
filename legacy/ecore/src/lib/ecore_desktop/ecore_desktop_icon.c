@@ -5,8 +5,9 @@
 
 //#define DEBUG 1
 
-static char        *_ecore_desktop_icon_find0(char *icon, char *icon_size,
-					      char *icon_theme);
+static const char   *_ecore_desktop_icon_find0(const char *icon, 
+					      const char *icon_size,
+					      const char *icon_theme);
 
 static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
 
@@ -32,11 +33,12 @@ static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
  * @ingroup Ecore_Desktop_Icon_Group
  */
 
-char               *
-ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
+const char               *
+ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *icon_theme)
 {
    char                icn[PATH_MAX], path[PATH_MAX];
-   char               *dir, *home;
+   const char         *dir; 
+   char               *home;
 
    if (icon == NULL)
       return NULL;
@@ -89,8 +91,8 @@ ecore_desktop_icon_find(char *icon, char *icon_size, char *icon_theme)
  * @param   icon_theme The icon theme to search in.
  * @return  The full path to the found icon.
  */
-static char        *
-_ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
+static const char        *
+_ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *icon_theme)
 {
    /*  NOTES ON OPTIMIZATIONS
     *
@@ -118,7 +120,8 @@ _ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
     */
 
    char                icn[PATH_MAX], path[PATH_MAX];
-   char               *theme_path, *found;
+   char               *theme_path;
+   const char         *found;
 
    if ((icon == NULL) || (icon[0] == '\0'))
       return NULL;
@@ -174,7 +177,7 @@ _ecore_desktop_icon_find0(char *icon, char *icon_size, char *icon_theme)
 			    int                 wanted_size;
 			    int                 minimal_size = INT_MAX;
 			    int                 i;
-			    char               *closest = NULL;
+			    const char         *closest = NULL;
 			    char               *directory;
 
 			    wanted_size = atoi(icon_size);
