@@ -536,6 +536,8 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->header = NULL;
    ef->mtime = file_stat.st_mtime;
    ef->delete_me_now = 0;
+   ef->data = NULL;
+   ef->data_size = 0;
 
    /* try open the file based on mode */
    if ((ef->mode == EET_FILE_MODE_READ) || (ef->mode == EET_FILE_MODE_READ_WRITE))
@@ -555,9 +557,6 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* if we can't open - bail out */
    if (eet_test_close(!ef->fp, ef))
      return NULL;
-
-   ef->data = NULL;
-   ef->data_size = 0;
 
    fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
    /* if we opened for read or read-write */
