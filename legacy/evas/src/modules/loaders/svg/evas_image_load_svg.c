@@ -97,6 +97,8 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 	     h2 = im->load_opts.h;
 	     w2 = (im->load_opts.h * w) / h;
 	  }
+	w = w2;
+	h = h2;
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -166,6 +168,8 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	     h2 = im->load_opts.h;
 	     w2 = (im->load_opts.h * w) / h;
 	  }
+	w = w2;
+	h = h2;
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -205,7 +209,9 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
    
-   cairo_scale(cr, (double)im->image->w / dim.em, (double)im->image->h / dim.ex);
+   cairo_scale(cr, 
+	       (double)im->image->w / dim.em, 
+	       (double)im->image->h / dim.ex);
    rsvg_handle_render_cairo(rsvg, cr);
    cairo_surface_destroy(surface);
    /* need to check if this is required... */
