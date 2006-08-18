@@ -1,7 +1,7 @@
 #ifndef EVAS_ENGINE_DFB_IMAGE_OBJECTS_H
 #define EVAS_ENGINE_DFB_IMAGE_OBJECTS_H
 void               *evas_engine_directfb_image_load(void *data, char *file,
-						    char *key, int *error);
+						    char *key, int *error, Evas_Image_Load_Opts *lo);
 void               *evas_engine_directfb_image_new_from_data(void *data, int w,
 							     int h,
 							     DATA32 *

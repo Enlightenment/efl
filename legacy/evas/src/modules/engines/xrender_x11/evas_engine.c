@@ -65,7 +65,7 @@ static void *eng_gradient_geometry_init(void *data, void *gradient, int spread);
 static int  eng_gradient_alpha_get(void *data, void *gradient, int spread, int op);
 static void eng_gradient_map(void *data, void *context, void *gradient, int spread);
 static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
-static void *eng_image_load(void *data, const char *file, const char *key, int *error);
+static void *eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
 static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
 static void *eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
 static void eng_image_free(void *data, void *image);
@@ -476,14 +476,14 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 }
 
 static void *
-eng_image_load(void *data, const char *file, const char *key, int *error)
+eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    Render_Engine *re;
    XR_Image *im;
    
    re = (Render_Engine *)data;
    *error = 0;
-   im = _xre_image_load(re->xinf, file, key);
+   im = _xre_image_load(re->xinf, file, key, lo);
    return im;
 }
 

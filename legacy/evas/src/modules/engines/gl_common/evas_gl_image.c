@@ -1,13 +1,13 @@
 #include "evas_gl_private.h"
 
 Evas_GL_Image *
-evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key)
+evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key, Evas_Image_Load_Opts *lo)
 {
    Evas_GL_Image *im;
    RGBA_Image *im_im;
    Evas_List *l;
 
-   im_im = evas_common_load_image_from_file(file, key);
+   im_im = evas_common_load_image_from_file(file, key, lo);
    if (!im_im) return NULL;
 
    for (l = gc->images; l; l = l->next)
@@ -35,6 +35,7 @@ evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key)
    im->gc = gc;
    im->references = 1;
    im->cached = 1;
+   if (lo) im->load_opts = *lo;
    gc->images = evas_list_prepend(gc->images, im);
    return im;
 }

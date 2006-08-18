@@ -36,6 +36,12 @@ struct _Evas_Object_Image
    int               pixels_checked_out;
    int               load_error;
    Evas_List        *pixel_updates;
+   
+   struct {
+      unsigned char  scale_down_by;
+      double         dpi;
+      short          w, h;
+   } load_opts;
 
    struct {
       void            (*get_pixels) (void *data, Evas_Object *o);
@@ -123,6 +129,7 @@ EAPI void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    Evas_Object_Image *o;
+   Evas_Image_Load_Opts lo;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -150,10 +157,15 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
 					       o->engine_data);
    o->load_error = EVAS_LOAD_ERROR_NONE;
+   lo.scale_down_by = o->load_opts.scale_down_by;
+   lo.dpi = o->load_opts.dpi;
+   lo.w = o->load_opts.w;
+   lo.h = o->load_opts.h;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
 							      o->cur.file,
 							      o->cur.key,
-							      &o->load_error);
+							      &o->load_error,
+							      &lo);
    if (o->engine_data)
      {
 	int w, h;
@@ -1069,6 +1081,155 @@ evas_object_image_pixels_dirty_get(Evas_Object *obj)
  *
  */
 EAPI void
+evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   o->load_opts.dpi = dpi;
+   if (o->cur.file)
+     {
+	evas_object_image_unload(obj);
+	evas_object_image_load(obj);
+	o->changed = 1;
+	evas_object_change(obj);
+     }
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI double
+evas_object_image_load_dpi_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0.0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0.0;
+   MAGIC_CHECK_END();
+   return o->load_opts.dpi;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   o->load_opts.w = w;
+   o->load_opts.h = h;
+   if (o->cur.file)
+     {
+	evas_object_image_unload(obj);
+	evas_object_image_load(obj);
+	o->changed = 1;
+	evas_object_change(obj);
+     }
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_object_image_load_size_get(Evas_Object *obj, int *w, int *h)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if (w) *w = o->load_opts.w;
+   if (h) *h = o->load_opts.h;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   o->load_opts.scale_down_by = scale_down;
+   if (o->cur.file)
+     {
+	evas_object_image_unload(obj);
+	evas_object_image_load(obj);
+	o->changed = 1;
+	evas_object_change(obj);
+     }
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI int
+evas_object_image_load_scale_down_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0;
+   MAGIC_CHECK_END();
+   return o->load_opts.scale_down_by;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
 evas_image_cache_flush(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1209,14 +1370,20 @@ static void
 evas_object_image_load(Evas_Object *obj)
 {
    Evas_Object_Image *o;
+   Evas_Image_Load_Opts lo;
 
    o = (Evas_Object_Image *)(obj->object_data);
    if (o->engine_data) return;
 
+   lo.scale_down_by = o->load_opts.scale_down_by;
+   lo.dpi = o->load_opts.dpi;
+   lo.w = o->load_opts.w;
+   lo.h = o->load_opts.h;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
 							      o->cur.file,
 							      o->cur.key,
-							      &o->load_error);
+							      &o->load_error,
+							      &lo);
    if (o->engine_data)
      {
 	int w, h;

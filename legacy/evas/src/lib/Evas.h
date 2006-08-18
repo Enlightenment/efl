@@ -450,6 +450,12 @@ tile_mode);
    EAPI void              evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *o), void *data);
    EAPI void              evas_object_image_pixels_dirty_set       (Evas_Object *obj, Evas_Bool dirty);
    EAPI Evas_Bool         evas_object_image_pixels_dirty_get       (Evas_Object *obj);
+   EAPI void              evas_object_image_load_dpi_set           (Evas_Object *obj, double dpi);
+   EAPI double            evas_object_image_load_dpi_get           (Evas_Object *obj);
+   EAPI void              evas_object_image_load_size_set          (Evas_Object *obj, int w, int h);
+   EAPI void              evas_object_image_load_size_get          (Evas_Object *obj, int *w, int *h);
+   EAPI void              evas_object_image_load_scale_down_set    (Evas_Object *obj, int scale_down);
+   EAPI int               evas_object_image_load_scale_down_get    (Evas_Object *obj);
 
    EAPI void              evas_image_cache_flush            (Evas *e);
    EAPI void              evas_image_cache_reload           (Evas *e);

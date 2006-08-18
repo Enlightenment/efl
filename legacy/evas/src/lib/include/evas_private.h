@@ -82,6 +82,7 @@ typedef struct _Evas_Font                   Evas_Font;
 typedef struct _Evas_Font_Alias             Evas_Font_Alias;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func_Node              Evas_Func_Node;
+typedef RGBA_Image_Loadopts                 Evas_Image_Load_Opts;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Image_Load_Func        Evas_Image_Load_Func;
 typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
@@ -559,7 +560,7 @@ struct _Evas_Func
    void (*gradient_map)                    (void *data, void *context, void *gradient, int spread);
    void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
 
-   void *(*image_load)                     (void *data, const char *file, const char *key, int *error);
+   void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data);
    void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data);
    void (*image_free)                      (void *data, void *image);

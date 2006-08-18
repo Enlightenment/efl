@@ -99,12 +99,13 @@ struct _XR_Image
    char            *format;
    const char      *comment;
    Tilebuf         *updates;
+   RGBA_Image_Loadopts load_opts;
    unsigned char    alpha : 1;
    unsigned char    dirty : 1;
    unsigned char    free_data : 1;
 };
 
-XR_Image *_xre_image_load(Ximage_Info *xinf, const char *file, const char *key);
+XR_Image *_xre_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo);
 XR_Image *_xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data);
 XR_Image *_xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data);
 XR_Image *_xre_image_new(Ximage_Info *xinf, int w, int h);

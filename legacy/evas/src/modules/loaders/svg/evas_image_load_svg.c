@@ -44,6 +44,7 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
    
    RsvgHandle         *rsvg;
    RsvgDimensionData   dim;
+   int                 w, h;
    
    if (!file) return 0;
    
@@ -70,11 +71,37 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 	     return 0;
 	  }
      }
-   
-   rsvg_handle_set_dpi_x_y(rsvg, 90, 90);
+
    rsvg_handle_get_dimensions(rsvg, &dim);
-   im->image->w = dim.width;
-   im->image->h = dim.height;
+   w = dim.width;
+   h = dim.height;
+   if (im->load_opts.scale_down_by > 1)
+     {
+	w /= im->load_opts.scale_down_by;
+	h /= im->load_opts.scale_down_by;
+     }
+   else if (im->load_opts.dpi > 0.0)
+     {
+	w = (w * im->load_opts.dpi) / 90.0;
+	h = (h * im->load_opts.dpi) / 90.0;
+     }
+   else if ((im->load_opts.w > 0) &&
+	    (im->load_opts.h > 0))
+     {
+	int w2, h2;
+	
+	w2 = im->load_opts.w;
+	h2 = (im->load_opts.w * h) / w;
+	if (h2 > im->load_opts.h)
+	  {
+	     h2 = im->load_opts.h;
+	     w2 = (im->load_opts.h * w) / h;
+	  }
+     }
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   im->image->w = w;
+   im->image->h = h;
    im->flags |= RGBA_IMAGE_HAS_ALPHA;
    rsvg_handle_free(rsvg);
    chdir(pcwd);
@@ -114,10 +141,34 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
 
-   rsvg_handle_set_dpi_x_y(rsvg, 90, 90);
    rsvg_handle_get_dimensions(rsvg, &dim);
    w = dim.width;
    h = dim.height;
+   if (im->load_opts.scale_down_by > 1)
+     {
+	w /= im->load_opts.scale_down_by;
+	h /= im->load_opts.scale_down_by;
+     }
+   else if (im->load_opts.dpi > 0.0)
+     {
+	w = (w * im->load_opts.dpi) / 90.0;
+	h = (h * im->load_opts.dpi) / 90.0;
+     }
+   else if ((im->load_opts.w > 0) &&
+	    (im->load_opts.h > 0))
+     {
+	int w2, h2;
+	
+	w2 = im->load_opts.w;
+	h2 = (im->load_opts.w * h) / w;
+	if (h2 > im->load_opts.h)
+	  {
+	     h2 = im->load_opts.h;
+	     w2 = (im->load_opts.h * w) / h;
+	  }
+     }
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
    im->image->w = w;
    im->image->h = h;
    im->flags |= RGBA_IMAGE_HAS_ALPHA;
@@ -154,6 +205,7 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
    
+   cairo_scale(cr, (double)im->image->w / dim.em, (double)im->image->h / dim.ex);
    rsvg_handle_render_cairo(rsvg, cr);
    cairo_surface_destroy(surface);
    /* need to check if this is required... */

@@ -28,7 +28,7 @@ static RGBA_Image *_dfb_image_find(const char *filename, const char *key, DATA64
  */
 
 void               *
-evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
+evas_engine_directfb_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    Render_Engine      *re;
    DFBSurfaceDescription dsc;

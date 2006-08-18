@@ -66,16 +66,26 @@ __xre_image_find(char *fkey)
 }
 
 XR_Image *
-_xre_image_load(XCBimage_Info *xcbinf, char *file, char *key)
+_xre_image_load(XCBimage_Info *xcbinf, char *file, char *key, Evas_Image_Load_Opts *lo)
 {
    XR_Image *im;
    char buf[4096];
 
    if (!file) return NULL;
-   if (key)
-     snprintf(buf, sizeof(buf), "/@%p@%x@/%s//://%s", xcbinf->conn, xcbinf->root.window.xid, file, key);
+   if (!lo)
+     {
+	if (key)
+	  snprintf(buf, sizeof(buf), "/@%p@%lx@/%s//://%s", xinf->disp, xinf->root, file, key);
+	else
+	  snprintf(buf, sizeof(buf), "/@%p@%lx@/%s", xinf->disp, xinf->root, file);
+     }
    else
-     snprintf(buf, sizeof(buf), "/@%p@%x@/%s", xcbinf->conn, xcbinf->root.window.xid, file);
+     {
+	if (key)
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//@%p@%lx@/%s//://%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, xinf->disp, xinf->root, file, key);
+	else
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//@%p@%lx@/%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, xinf->disp, xinf->root, file);
+     }
    im = __xre_image_find(buf);
    if (im)
      {
@@ -84,7 +94,7 @@ _xre_image_load(XCBimage_Info *xcbinf, char *file, char *key)
    
    im = calloc(1, sizeof(XR_Image));
    if (!im) return NULL;
-   im->im = evas_common_load_image_from_file(file, key);
+   im->im = evas_common_load_image_from_file(file, key, lo);
    if (!im->im)
      {
 	free(im);
@@ -98,6 +108,7 @@ _xre_image_load(XCBimage_Info *xcbinf, char *file, char *key)
    im->w = im->im->image->w;
    im->h = im->im->image->h;
    im->references = 1;
+   if (lo) im->load_opts = *lo;
    if (im->im->info.comment) im->comment = (char *)evas_stringshare_add(im->im->info.comment);
 /*    if (im->im->info.format == 1) im->format = evas_stringshare_add("png"); */
    if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) im->alpha = 1;
@@ -249,7 +260,7 @@ _xre_image_copy(XR_Image *im)
    if (im->data) data = im->data;
    else
      {
-	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key);
+	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
 	if (im->im)
 	  {
 	     evas_common_load_image_data_from_file(im->im);
@@ -373,7 +384,7 @@ _xre_image_data_get(XR_Image *im)
    if (im->data) data = im->data;
    else
      {
-	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key);
+	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
 	if (im->im)
 	  {
 	     evas_common_load_image_data_from_file(im->im);
@@ -507,7 +518,7 @@ _xre_image_surface_gen(XR_Image *im)
    if (im->data) data = im->data;
    else
      {
-	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key);
+	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
 	if (im->im)
 	  {
 	     evas_common_load_image_data_from_file(im->im);

@@ -4,7 +4,7 @@
 extern Evas_List *evas_modules;
 
 RGBA_Image *
-evas_common_load_image_from_file(const char *file, const char *key)
+evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    Evas_List *l;
@@ -14,7 +14,7 @@ evas_common_load_image_from_file(const char *file, const char *key)
 
    if (file == NULL) return NULL;
 
-   im = evas_common_image_find(file, key, 0);
+   im = evas_common_image_find(file, key, 0, lo);
    if (im)
      {
 	evas_common_image_ref(im);
@@ -23,6 +23,8 @@ evas_common_load_image_from_file(const char *file, const char *key)
    im = evas_common_image_new();
    if (!im) return NULL;
 
+   if (lo) im->load_opts = *lo;
+   
    p = strrchr(file, '.');
    if (p)
      {

@@ -257,10 +257,10 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 }
 
 static void *
-eng_image_load(void *data, const char *file, const char *key, int *error)
+eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    *error = 0;
-   return evas_common_load_image_from_file(file, key);
+   return evas_common_load_image_from_file(file, key, lo);
 }
 
 static void *

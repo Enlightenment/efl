@@ -86,6 +86,7 @@ typedef struct _Evas_Object_List      Evas_Object_List;
 
 typedef struct _Evas_Hash_El          Evas_Hash_El;
 
+typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
 typedef struct _RGBA_Image            RGBA_Image;
 typedef struct _RGBA_Surface          RGBA_Surface;
 typedef struct _RGBA_Image_Span       RGBA_Image_Span;
@@ -234,6 +235,13 @@ struct _RGBA_Surface
    RGBA_Image        *im;
 };
 
+struct _RGBA_Image_Loadopts
+{
+   int    scale_down_by; // if > 1 then use this
+   double dpi; // if > 0.0 use this
+   int    w, h; // if > 0 use this
+};
+
 struct _RGBA_Image
 {
    Evas_Object_List     _list_data;
@@ -251,6 +259,7 @@ struct _RGBA_Image
    int                  references;
 //   DATA64               timestamp;
    void                *extended_info;
+   RGBA_Image_Loadopts  load_opts;
 };
 
 struct _RGBA_Gradient_Color
@@ -672,12 +681,12 @@ void          evas_common_image_set_cache         (int size);
 int           evas_common_image_get_cache         (void);
 void          evas_common_image_store             (RGBA_Image *im);
 void          evas_common_image_unstore           (RGBA_Image *im);
-RGBA_Image   *evas_common_image_find              (const char *filename, const char *key, DATA64 timestamp);
+RGBA_Image   *evas_common_image_find              (const char *filename, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo);
 int           evas_common_image_ram_usage         (RGBA_Image *im);
 void          evas_common_image_dirty             (RGBA_Image *im);
 void          evas_common_image_cache_free        (void);
 
-RGBA_Image         *evas_common_load_image_from_file     (const char *file, const char *key);
+RGBA_Image         *evas_common_load_image_from_file     (const char *file, const char *key, RGBA_Image_Loadopts *lo);
 void                evas_common_load_image_data_from_file(RGBA_Image *im);
 int                 evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 

@@ -15,7 +15,7 @@ evas_imaging_image_load(const char *file, const char *key)
    if (!key) key = "";
    evas_common_cpu_init();
    evas_common_image_init();
-   image = evas_common_load_image_from_file(file, key);
+   image = evas_common_load_image_from_file(file, key, NULL);
    if (!image) return NULL;
    im = calloc(1, sizeof(Evas_Imaging_Image));
    if (!im)

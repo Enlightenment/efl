@@ -108,6 +108,7 @@ struct _Evas_GL_Image
    Evas_GL_Context *gc;
    RGBA_Image      *im;
    Evas_GL_Texture *tex;
+   RGBA_Image_Loadopts load_opts;
    int              putcount;
    int              references;
    char             dirty : 1;
@@ -175,7 +176,7 @@ void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 void              evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 
-Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key);
+Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key, Evas_Image_Load_Opts *lo);
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data);
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data);
 Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h);

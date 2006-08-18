@@ -428,7 +428,7 @@ evas_common_image_unstore(RGBA_Image *im)
 
 
 RGBA_Image *
-evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
+evas_common_image_find(const char *filename, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo)
 {
    char *real_filename = NULL;
    Evas_Object_List *l;

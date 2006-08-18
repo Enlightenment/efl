@@ -110,7 +110,7 @@ struct _XR_Image
    unsigned char      free_data : 1;
 };
 
-XR_Image *_xre_image_load(XCBimage_Info *xcbinf, char *file, char *key);
+XR_Image *_xre_image_load(XCBimage_Info *xcbinf, char *file, char *key, Evas_Image_Load_Opts *lo);
 XR_Image *_xre_image_new_from_data(XCBimage_Info *xcbinf, int w, int h, void *data);
 XR_Image *_xre_image_new_from_copied_data(XCBimage_Info *xcbinf, int w, int h, void *data);
 XR_Image *_xre_image_new(XCBimage_Info *xcbinf, int w, int h);
