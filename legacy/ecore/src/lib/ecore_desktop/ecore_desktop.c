@@ -191,6 +191,8 @@ ecore_desktop_get(const char *file, const char *lang)
 			     result->eap_name = malloc(strlen(value) + 5);
 			     if (result->eap_name)
 			        sprintf(result->eap_name, "%s.eap", value);
+			     if (temp)
+			        *temp = '.';
 			  }
 		       eap_name = result->eap_name;
 

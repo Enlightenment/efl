@@ -250,6 +250,8 @@ ecore_desktop_paths_shutdown()
  * only the first file found will be returned.  If func is defined, then each
  * file found will be passed to func, until func returns 1.
  *
+ * The returned string will have to be freed eventually.
+ *
  * @param   type The type of directories to search.
  * @param   file The file to search for.
  * @param   sub Should we search sub directories.
@@ -257,9 +259,9 @@ ecore_desktop_paths_shutdown()
  * @param   data A pointer to pass on to func.
  */
 char               *
-ecore_desktop_paths_file_find(Ecore_List * paths, char *file, int sub,
-				    int (*func) (const void *data, char *path),
-				    const void *data)
+ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, const int sub,
+				    int (*func) (void *data, const char *path),
+				    void *data)
 {
    char               *path = NULL, *this_path;
    char                temp[PATH_MAX];
@@ -270,13 +272,14 @@ ecore_desktop_paths_file_find(Ecore_List * paths, char *file, int sub,
 	ecore_list_goto_first(paths);
 	while ((this_path = ecore_list_next(paths)) != NULL)
 	  {
-	     sprintf(temp, "%s%s", this_path, file);
+	     snprintf(temp, PATH_MAX, "%s%s", this_path, file);
 	     if (stat(temp, &path_stat) == 0)
 	       {
-	          /* FIXME: This is defensive but leaks. */
+		   if (path)
+		      free(path);
 		  path = strdup(temp);
 		  if (func)
-		     if (func(data, path))
+		     if (func(data, temp))
 			break;
 	       }
 	     else if (sub)
@@ -536,11 +539,11 @@ _ecore_desktop_paths_check_and_add(Ecore_List * paths, char *path)
 }
 
 char               *
-ecore_desktop_paths_recursive_search(char *path, char *file,
-				     int (*dir_func) (const void *data,
-						      char *path),
-				     int (*func) (const void *data, char *path),
-				     const void *data)
+ecore_desktop_paths_recursive_search(const char *path, const char *file,
+				     int (*dir_func) (void *data,
+						      const char *path),
+				     int (*func) (void *data, const char *path),
+				     void *data)
 {
    char               *fpath = NULL;
    DIR                *dir = NULL;
@@ -554,7 +557,7 @@ ecore_desktop_paths_recursive_search(char *path, char *file,
 	while ((script = readdir(dir)) != NULL)
 	  {
 	     struct stat         script_stat;
-	     char                info_text[4096];
+	     char                info_text[PATH_MAX];
 
 	     sprintf(info_text, "%s%s", path, script->d_name);
 	     if ((stat(info_text, &script_stat) == 0))
@@ -564,7 +567,7 @@ ecore_desktop_paths_recursive_search(char *path, char *file,
 		       if ((strcmp(basename(info_text), ".") != 0)
 			   && (strcmp(basename(info_text), "..") != 0))
 			 {
-			    sprintf(info_text, "%s%s/", path, script->d_name);
+			    snprintf(info_text, PATH_MAX, "%s%s/", path, script->d_name);
 			    if (dir_func)
 			       if (dir_func(data, info_text))
 				  break;
@@ -581,7 +584,8 @@ ecore_desktop_paths_recursive_search(char *path, char *file,
 			 {
 			    if (strcmp(basename(info_text), file) == 0)
 			      {
-	                         /* FIXME: This is defensive but leaks. */
+			         if (fpath)
+				    free(fpath);
 				 fpath = strdup(info_text);
 				 if (func)
 				    if (func(data, path))

@@ -88,23 +88,21 @@ extern              "C"
    /* Function Prototypes */
    EAPI int            ecore_desktop_paths_init(void);
    char               *ecore_desktop_paths_file_find(Ecore_List * paths,
-						   char *file, int sub,
-						   int (*func) (const
-								void
+						   const char *file, const int sub,
+						   int (*func) (void
 								*data,
-								char
+								const char
 								*path),
-						   const void *data);
-   char               *ecore_desktop_paths_recursive_search(char *path, char *d,
+						   void *data);
+   char               *ecore_desktop_paths_recursive_search(const char *path, const char *file,
 							    int (*dir_func)
-							    (const void *data,
-							     char *path),
-							    int (*func) (const
-									 void
+							    (void *data,
+							     const char *path),
+							    int (*func) (void
 									 *data,
-									 char
+									 const char
 									 *path),
-							    const void *data);
+							    void *data);
    EAPI int            ecore_desktop_paths_shutdown(void);
 
    Ecore_Hash         *ecore_desktop_paths_to_hash(const char *paths);
@@ -154,7 +152,7 @@ extern              "C"
 							       int element,
 							       int level),
 						  const void *data);
-   void                ecore_esktop_tree_dump(Ecore_Desktop_Tree * tree,
+   void                ecore_desktop_tree_dump(Ecore_Desktop_Tree * tree,
 					      int level);
    void                ecore_desktop_tree_del(Ecore_Desktop_Tree * tree);
 

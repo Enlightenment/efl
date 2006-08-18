@@ -60,14 +60,14 @@ static Ecore_Desktop_Tree *_ecore_desktop_menu_create_menu();
 static int          _ecore_desktop_menu_unxml(const void *data,
 					       Ecore_Desktop_Tree * tree,
 					       int element, int level);
-static int          _ecore_desktop_menu_check_directory(const void *data,
-							 char *path);
-static int          _ecore_desktop_menu_check_menu(const void *data,
-						    char *path);
-static int          _ecore_desktop_menu_legacy_menu_dir(const void *data,
-							 char *path);
-static int          _ecore_desktop_menu_legacy_menu(const void *data,
-						     char *path);
+static int          _ecore_desktop_menu_check_directory(void *data,
+							 const char *path);
+static int          _ecore_desktop_menu_check_menu(void *data,
+						    const char *path);
+static int          _ecore_desktop_menu_legacy_menu_dir(void *data,
+							 const char *path);
+static int          _ecore_desktop_menu_legacy_menu(void *data,
+						     const char *path);
 static void         _ecore_desktop_menu_unxml_rules(Ecore_Desktop_Tree * rules,
 						     Ecore_Desktop_Tree * tree,
 						     char type, char sub_type);
@@ -81,8 +81,8 @@ static int          _ecore_desktop_menu_expand_apps(struct
 						     _ecore_desktop_menu_unxml_data
 						     *unxml_data, char *app_dir,
 						     Ecore_Hash * pool);
-static int          _ecore_desktop_menu_check_app(const void *data,
-						   char *path);
+static int          _ecore_desktop_menu_check_app(void *data,
+						   const char *path);
 
 static int          _ecore_desktop_menu_merge(const void *data,
 					       Ecore_Desktop_Tree * tree,
@@ -203,6 +203,7 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack, int level
 		  ecore_desktop_tree_foreach(menu_xml, 0,
 					     _ecore_desktop_menu_generate,
 					     &data);
+
 		  data.unallocated = TRUE;
 		  ecore_desktop_tree_foreach(menu_xml, 0,
 					     _ecore_desktop_menu_generate,
@@ -562,7 +563,7 @@ _ecore_desktop_menu_create_menu()
 }
 
 static int
-_ecore_desktop_menu_check_directory(const void *data, char *path)
+_ecore_desktop_menu_check_directory(void *data, const char *path)
 {
    char               *p;
    Ecore_Desktop_Tree *merge;
@@ -584,7 +585,7 @@ _ecore_desktop_menu_check_directory(const void *data, char *path)
 }
 
 static int
-_ecore_desktop_menu_check_menu(const void *data, char *path)
+_ecore_desktop_menu_check_menu(void *data, const char *path)
 {
    char               *p;
    Ecore_Desktop_Tree *merge;
@@ -606,10 +607,11 @@ _ecore_desktop_menu_check_menu(const void *data, char *path)
 }
 
 static int
-_ecore_desktop_menu_legacy_menu_dir(const void *data, char *path)
+_ecore_desktop_menu_legacy_menu_dir(void *data, const char *path)
 {
    struct _ecore_desktop_menu_legacy_data *legacy_data;
    Ecore_Desktop_Tree *menu;
+   char               *temp_path;
    int                 start;
    int                 i, count = 0;
 
@@ -635,45 +637,50 @@ _ecore_desktop_menu_legacy_menu_dir(const void *data, char *path)
 
    start = legacy_data->length;
    count = 0;
-   for (i = legacy_data->length; path[i] != '\0'; i++)
-     {
-	if (path[i] == '/')
-	  {
-	     if (count >= legacy_data->level)
-	       {
-		  path[i] = '\0';
-		  menu = _ecore_desktop_menu_create_menu();
-		  if (menu)
-		    {
-		       char                temp[PATH_MAX];
+   temp_path = strdup(path);
+   if (temp_path)
+      {
+         for (i = legacy_data->length; temp_path[i] != '\0'; i++)
+           {
+	      if (temp_path[i] == '/')
+	        {
+	           if (count >= legacy_data->level)
+	             {
+		        temp_path[i] = '\0';
+		        menu = _ecore_desktop_menu_create_menu();
+		        if (menu)
+		          {
+		             char                temp[PATH_MAX];
 
-		       sprintf(temp, "<MENU <   L> <%s> <>", &path[start]);
-		       menu->elements[0].element = strdup(temp);
-		       ecore_desktop_tree_track(menu,
+		             sprintf(temp, "<MENU <   L> <%s> <>", &temp_path[start]);
+		             menu->elements[0].element = strdup(temp);
+		             ecore_desktop_tree_track(menu,
 						menu->elements[0].element);
-		       sprintf(temp, "<MENU_PATH %s/%s", legacy_data->menu,
-			       &path[legacy_data->length]);
-		       menu->elements[1].element = strdup(temp);
-		       ecore_desktop_tree_track(menu,
+		             sprintf(temp, "<MENU_PATH %s/%s", legacy_data->menu,
+			       &temp_path[legacy_data->length]);
+		             menu->elements[1].element = strdup(temp);
+		             ecore_desktop_tree_track(menu,
 						menu->elements[1].element);
 
-		       ecore_desktop_tree_add_child(legacy_data->current, menu);
-		       /*  This is not needed, but if it was, this is where it would go.
-		        * sprintf(temp, "<AppDir %s/", path);
-		        * ecore_desktop_tree_extend(menu, temp);
-		        */
-		       sprintf(temp, "<DirectoryDir %s/", path);
-		       ecore_desktop_tree_extend(menu, temp);
+		             ecore_desktop_tree_add_child(legacy_data->current, menu);
+		             /*  This is not needed, but if it was, this is where it would go.
+		              * sprintf(temp, "<AppDir %s/", temp_path);
+		              * ecore_desktop_tree_extend(menu, temp);
+		              */
+		             sprintf(temp, "<DirectoryDir %s/", temp_path);
+		             ecore_desktop_tree_extend(menu, temp);
 
-		       legacy_data->current = menu;
-		       legacy_data->level++;
-		    }
-		  path[i] = '/';
-	       }
-	     start = i + 1;
-	     count++;
-	  }
-     }
+		             legacy_data->current = menu;
+		             legacy_data->level++;
+		          }
+		        temp_path[i] = '/';
+	             }
+	           start = i + 1;
+	           count++;
+	        }
+           }
+         free(temp_path);
+      }
 
    legacy_data->level = count;
 
@@ -681,10 +688,11 @@ _ecore_desktop_menu_legacy_menu_dir(const void *data, char *path)
 }
 
 static int
-_ecore_desktop_menu_legacy_menu(const void *data, char *path)
+_ecore_desktop_menu_legacy_menu(void *data, const char *path)
 {
    struct _ecore_desktop_menu_legacy_data *legacy_data;
-   char               *menu_path, *file;
+   char               *menu_path;
+   char               *file;
    char                temp[PATH_MAX];
    int                 i, count = 0, menu_count = 0;
 
@@ -741,7 +749,7 @@ _ecore_desktop_menu_legacy_menu(const void *data, char *path)
    menu_count = strlen(menu_path);
    if (menu_count)
       menu_count++;
-   file = &path[legacy_data->length + menu_count];
+   file = (char *) &path[legacy_data->length + menu_count];
    count = strlen(file);
 
    if (strcmp(".directory", file) == 0)
@@ -772,6 +780,9 @@ _ecore_desktop_menu_legacy_menu(const void *data, char *path)
 	  }
 	sprintf(temp, "%s%s", legacy_data->prefix, file);
 	ecore_hash_set(pool, strdup(temp), strdup(path));
+#ifdef DEBUG
+        printf("POOLING - _ecore_desktop_menu_legacy_menu(void *data, %s) - %s - %s\n", path, file, temp);
+#endif
 	if (rules->size > 0)
 	  {
 	     rules = (Ecore_Desktop_Tree *) rules->elements[0].element;
@@ -779,6 +790,10 @@ _ecore_desktop_menu_legacy_menu(const void *data, char *path)
 	     ecore_desktop_tree_extend(rules, temp);
 	  }
      }
+#ifdef DEBUG
+   else
+      printf("PROBLEM - _ecore_desktop_menu_legacy_menu(void *data, %s) - %s\n", path, file);
+#endif
 
    return 0;
 }
@@ -942,7 +957,7 @@ _ecore_desktop_menu_expand_apps(struct _ecore_desktop_menu_unxml_data
 }
 
 static int
-_ecore_desktop_menu_check_app(const void *data, char *path)
+_ecore_desktop_menu_check_app(void *data, const char *path)
 {
    char               *p;
    struct _ecore_desktop_menu_expand_apps_data *our_data;
@@ -963,8 +978,15 @@ _ecore_desktop_menu_check_app(const void *data, char *path)
 		     if (file[i] == '/')
 			file[i] = '-';
 		  ecore_hash_set(our_data->pool, file, strdup(path));
+#ifdef DEBUG
+                  printf("POOLING - _ecore_desktop_menu_check_app(void *data, %s) - %s\n", path, file);
+#endif
 	       }
 	  }
+#ifdef DEBUG
+       else
+          printf("PROBLEM - _ecore_desktop_menu_check_app(void *data, %s)\n", path);
+#endif
      }
 
    return 1;
@@ -1425,6 +1447,9 @@ _ecore_desktop_menu_inherit_apps(void *value, void *user_data)
    node = (Ecore_Hash_Node *) value;
    key = (char *)node->key;
    app = (char *)node->value;
+#ifdef DEBUG
+   printf("CHECKING %s - %s\n", key, app);
+#endif
    if (!ecore_hash_get(pool, key))
       ecore_hash_set(pool, strdup(key), strdup(app));
 }
@@ -1456,16 +1481,16 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	  {
 	     ecore_hash_set(generate_data->apps, key, strdup(app));
 #ifdef DEBUG
-	     printf("INCLUDING %s%s\n",
-		    ((generate_data->unallocated) ? "UNALLOCATED " : ""), key);
+	     printf("INCLUDING %s%s - %s\n",
+		    ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
 #endif
 	  }
 	else
 	  {
 	     ecore_hash_remove(generate_data->apps, key);
 #ifdef DEBUG
-	     printf("EXCLUDING %s%s\n",
-		    ((generate_data->unallocated) ? "UNALLOCATED " : ""), key);
+	     printf("EXCLUDING %s%s - %s\n",
+		    ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
 #endif
 	  }
      }
