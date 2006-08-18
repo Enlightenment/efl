@@ -45,6 +45,8 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
            loader = "xpm";
         else if (!strcasecmp(p, "svg"))
            loader = "svg";
+        else if (!strcasecmp(p, "svgz"))
+           loader = "svgz";
      }
    if (loader)
      {
