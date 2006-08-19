@@ -9,6 +9,7 @@
 /* FIXME: need to page mesh textures if texture alloc fails */
 
 #include "evas_common.h"
+#include "evas_private.h"
 #include "config.h"
 
 #include <stdio.h>
