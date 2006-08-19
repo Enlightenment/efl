@@ -9,6 +9,9 @@ static const char   *_ecore_desktop_icon_find0(const char *icon,
 					      const char *icon_size,
 					      const char *icon_theme);
 
+static int _ecore_desktop_icon_theme_list_add(void *data, const char *path);
+
+
 static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
 
 
@@ -371,4 +374,45 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
      }
 
    return NULL;
+}
+
+
+Ecore_Hash *
+ecore_desktop_icon_theme_list(void)
+{
+   Ecore_Hash *result = NULL;
+
+   result = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+   if (result)
+      {
+	 ecore_hash_set_free_key(result, free);
+	 ecore_hash_set_free_value(result, free);
+         ecore_desktop_paths_file_find(ecore_desktop_paths_icons, "index.theme", 1, _ecore_desktop_icon_theme_list_add, result);
+      }
+
+   return result;
+}
+
+
+static int 
+_ecore_desktop_icon_theme_list_add(void *data, const char *path)
+{
+   Ecore_Hash *result;
+
+   result = data;
+   if (result)
+      {
+         char *key, *dir;
+
+         dir = ecore_file_get_dir(path);
+	 if (dir)
+	    {
+	       key = (char *) ecore_file_get_file(dir);
+	       if (ecore_hash_get(result, key) == NULL)  /* Only the first one found for each name is important. */
+                  ecore_hash_set(result, strdup(key), strdup(path));
+	       free(dir);
+	    }
+      }
+
+   return 0;
 }

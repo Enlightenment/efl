@@ -118,6 +118,10 @@ extern              "C"
    					       const char *icon_size,
 					       const char *icon_theme);
 
+
+   Ecore_Hash         *ecore_desktop_icon_theme_list(void);
+
+
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
 
 
