@@ -3,7 +3,6 @@
 #include <librsvg/rsvg.h>
 #include <librsvg/rsvg-cairo.h>
 
-
 int evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key);
 int evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key);
 
@@ -13,12 +12,11 @@ Evas_Image_Load_Func evas_image_load_svg_func =
   evas_image_load_file_data_svg
 };
 
-
 static int  rsvg_initialized = 0;
 static void svg_loader_unpremul_data(DATA32 *data, unsigned int len);
 
-
-static void svg_loader_unpremul_data(DATA32 *data, unsigned int len)
+static void
+svg_loader_unpremul_data(DATA32 *data, unsigned int len)
 {
    DATA32  *de = data + len;
 

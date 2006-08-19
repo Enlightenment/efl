@@ -70,7 +70,7 @@ _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
 static int
 evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
 {
-   int w, h;
+   int w, h, scalew, scaleh;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
 
@@ -99,8 +99,71 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
      }
-   im->image->w = w = cinfo.output_width;
-   im->image->h = h = cinfo.output_height;
+   w = cinfo.output_width;
+   h = cinfo.output_height;
+   if (im->load_opts.scale_down_by > 1)
+     {
+	w /= im->load_opts.scale_down_by;
+	h /= im->load_opts.scale_down_by;
+     }
+   else if (im->load_opts.dpi > 0.0)
+     {
+	w = (w * im->load_opts.dpi) / 90.0;
+	h = (h * im->load_opts.dpi) / 90.0;
+     }
+   else if ((im->load_opts.w > 0) &&
+	    (im->load_opts.h > 0))
+     {
+	int w2, h2;
+	
+	w2 = im->load_opts.w;
+	h2 = (im->load_opts.w * h) / w;
+	if (h2 > im->load_opts.h)
+	  {
+	     h2 = im->load_opts.h;
+	     w2 = (im->load_opts.h * w) / h;
+	  }
+	w = w2;
+	h = h2;
+     }
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   
+   if ((w != cinfo.output_width) || (h != cinfo.output_height))
+     {
+	scalew = cinfo.output_width / w;
+	scaleh = cinfo.output_height / h;
+	
+	im->scale = scalew;
+	if (scaleh < scalew) im->scale = scaleh;
+	
+	if      (im->scale > 8) im->scale = 8;
+	else if (im->scale < 1) im->scale = 1;
+	
+	if      (im->scale == 3) im->scale = 2;
+	else if (im->scale == 5) im->scale = 4;
+	else if (im->scale == 6) im->scale = 4;
+	else if (im->scale == 7) im->scale = 4;
+     }
+
+   if (im->scale > 1)
+     {
+	jpeg_destroy_decompress(&cinfo);
+   
+	rewind(f);
+	jpeg_create_decompress(&cinfo);
+	jpeg_stdio_src(&cinfo, f);
+	jpeg_read_header(&cinfo, TRUE);
+	cinfo.do_fancy_upsampling = FALSE;
+	cinfo.do_block_smoothing = FALSE;
+	cinfo.scale_num = 1;
+	cinfo.scale_denom = im->scale;
+	jpeg_calc_output_dimensions(&(cinfo));
+	jpeg_start_decompress(&cinfo);
+     }
+   
+   im->image->w = cinfo.output_width;
+   im->image->h = cinfo.output_height;
 /* end head decoding */
 
    jpeg_destroy_decompress(&cinfo);
@@ -132,11 +195,22 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
-   jpeg_start_decompress(&cinfo);
-
+   cinfo.dct_method = JDCT_IFAST;
+   
+   if (im->scale > 1)
+     {
+	cinfo.scale_num = 1;
+	cinfo.scale_denom = im->scale;
+     }
+   
 /* head decoding */
-   im->image->w = w = cinfo.output_width;
-   im->image->h = h = cinfo.output_height;
+   jpeg_calc_output_dimensions(&(cinfo));
+   jpeg_start_decompress(&cinfo);
+   
+   w = cinfo.output_width;
+   h = cinfo.output_height;
+   printf("%ix%i | %ix%i [%i]\n", w, h, im->image->w, im->image->h, im->scale);
+   
 /* end head decoding */
 /* data decoding */
    if (cinfo.rec_outbuf_height > 16)

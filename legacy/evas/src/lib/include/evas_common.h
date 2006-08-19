@@ -260,6 +260,7 @@ struct _RGBA_Image
 //   DATA64               timestamp;
    void                *extended_info;
    RGBA_Image_Loadopts  load_opts;
+   unsigned char        scale;
 };
 
 struct _RGBA_Gradient_Color
