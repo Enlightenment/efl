@@ -209,7 +209,12 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    
    w = cinfo.output_width;
    h = cinfo.output_height;
-   printf("%ix%i | %ix%i [%i]\n", w, h, im->image->w, im->image->h, im->scale);
+   
+   if ((w != im->image->w) || (h != im->image->h))
+     {
+	jpeg_destroy_decompress(&cinfo);
+	return 0;
+     }
    
 /* end head decoding */
 /* data decoding */
