@@ -365,32 +365,28 @@ void
 evas_common_image_store(RGBA_Image *im)
 {
    char *key;
-   int l1, l2, l3;
-   char buf[256];
+   char buf[4096 + 1204];
 
    if (im->flags & RGBA_IMAGE_IS_DIRTY) return;
    if (im->flags & RGBA_IMAGE_INDEXED) return;
    if ((!im->info.file) && (!im->info.key)) return;
-   l1 = 0;
-//   if (im->info.real_file) l1 = strlen(im->info.real_file);
-//   else
-     if (im->info.file) l1 = strlen(im->info.file);
-   l2 = 0;
-   if (im->info.key) l2 = strlen(im->info.key);
-//   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
-//   l3 = strlen(buf);
-   buf[0] = 0;
-   l3 = 0;
-   key = alloca(l1 + 5 + l2 + 5 + l3 +1);
-   key[0] = 0;
-//   if (im->info.real_file) strcpy(key, im->info.real_file);
-//   else
-     if (im->info.file) strcpy(key, im->info.file);
-   strcat(key, "//://");
-   if (im->info.key) strcat(key, im->info.key);
-   strcat(key, "//://");
-   strcat(key, buf);
-   images = evas_hash_add(images, key, im);
+   if ((im->load_opts.scale_down_by == 0) &&
+       (im->load_opts.dpi == 0.0) &&
+       ((im->load_opts.w == 0) || (im->load_opts.h == 0)))
+     {
+	if (im->info.key)
+	  snprintf(buf, sizeof(buf), "%s//://%s", im->info.file, im->info.key);
+	else
+	  snprintf(buf, sizeof(buf), "%s", im->info.file);
+     }
+   else
+     {
+	if (im->info.key)
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s//://%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file, im->info.key);
+	else
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file);
+     }
+   images = evas_hash_add(images, buf, im);
    im->flags |= RGBA_IMAGE_INDEXED;
 }
 
@@ -398,95 +394,69 @@ void
 evas_common_image_unstore(RGBA_Image *im)
 {
    char *key;
-   int l1, l2, l3;
-   char buf[256];
+   char buf[4096 + 1024];
 
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
    if ((!im->info.file) && (!im->info.key)) return;
-   l1 = 0;
-//   if (im->info.real_file) l1 = strlen(im->info.real_file);
-//   else
-     if (im->info.file) l1 = strlen(im->info.file);
-   l2 = 0;
-   if (im->info.key) l2 = strlen(im->info.key);
-//   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
-//   l3 = strlen(buf);
-   buf[0] = 0;
-   l3 = 0;
-   key = alloca(l1 + 5 + l2 + 5 + l3 +1);
-   key[0] = 0;
-//   if (im->info.real_file) strcpy(key, im->info.real_file);
-//   else 
-     if (im->info.file) strcpy(key, im->info.file);
-   strcat(key, "//://");
-   if (im->info.key) strcat(key, im->info.key);
-   strcat(key, "//://");
-   strcat(key, buf);
-   images = evas_hash_del(images, key, im);
+   if ((im->load_opts.scale_down_by == 0) &&
+       (im->load_opts.dpi == 0.0) &&
+       ((im->load_opts.w == 0) || (im->load_opts.h == 0)))
+     {
+	if (im->info.key)
+	  snprintf(buf, sizeof(buf), "%s//://%s", im->info.file, im->info.key);
+	else
+	  snprintf(buf, sizeof(buf), "%s", im->info.file);
+     }
+   else
+     {
+	if (im->info.key)
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s//://%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file, im->info.key);
+	else
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file);
+     }
+   images = evas_hash_del(images, buf, im);
    im->flags &= ~RGBA_IMAGE_INDEXED;
 }
 
 
 RGBA_Image *
-evas_common_image_find(const char *filename, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo)
+evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo)
 {
-   char *real_filename = NULL;
    Evas_Object_List *l;
    RGBA_Image *im;
    char *str;
-   int l1, l2, l3;
-   char buf[256];
+   char buf[4096 + 1024];
 
-   if ((!filename) && (!key)) return NULL;
-   if (!filename) return NULL;
-//   real_filename = evas_file_path_resolve((char *)filename);
-   l1 = 0;
-   if (real_filename) l1 = strlen(real_filename);
-   else if (filename) l1 = strlen(filename);
-   l2 = 0;
-   if (key) l2 = strlen(key);
-//   snprintf(buf, sizeof(buf), "%llx", timestamp);
-//   l3 = strlen(buf);
-   buf[0] = 0;
-   l3 = 0;
-   str = alloca(l1 + 5 + l2 + 5 + l3 +1);
-   str[0] = 0;
-   if (real_filename) strcpy(str, real_filename);
-   else if (filename) strcpy(str, filename);
-   strcat(str, "//://");
-   if (key) strcat(str, key);
-   strcat(str, "//://");
-   strcat(str, buf);
-   im = evas_hash_find(images, str);
-   if (im)
+   if ((!file) && (!key)) return NULL;
+   if (!file) return NULL;
+   if (!lo)
      {
-//	if (real_filename) free(real_filename);
-	return im;
+	if (key)
+	  snprintf(buf, sizeof(buf), "%s//://%s", file, key);
+	else
+	  snprintf(buf, sizeof(buf), "%s", file);
      }
-
+   else
+     {
+	if (key)
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s//://%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, file, key);
+	else
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, file);
+     }
+   im = evas_hash_find(images, buf);
+   if (im) return im;
+/*
    for (l = cache; l; l = l->next)
      {
 	int ok;
 
 	im = (RGBA_Image *)l;
 	ok = 0;
-/*	
-	if ((real_filename) && (im->info.real_file))
-	  {
-             if ((im->info.real_file) &&
-		 (real_filename) &&
-		 (!strcmp(real_filename, im->info.real_file)))
-	       ok++;
-	  }
-	else
- */
-	  {
-	     if ((filename) && (im->info.file) &&
-		 (!strcmp(filename, im->info.file)))
-	       ok++;
-	     if ((!filename) && (!im->info.file))
-	       ok++;
-	  }
+	if ((file) && (im->info.file) &&
+	    (!strcmp(file, im->info.file)))
+	  ok++;
+	if ((!file) && (!im->info.file))
+	  ok++;
 	if ((key) && (im->info.key) &&
 	    (!strcmp(key, im->info.key)))
 	  ok++;
@@ -494,13 +464,9 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp, 
 	  ok++;
 //	if (im->timestamp == timestamp)
 //	  ok++;
-	if (ok >= 2)
-	  {
-//	     if (real_filename) free(real_filename);
-	     return im;
-	  }
+	if (ok >= 2) return im;
      }
-//   if (real_filename) free(real_filename);
+ */
    return NULL;
 }
 

@@ -681,7 +681,7 @@ void          evas_common_image_set_cache         (int size);
 int           evas_common_image_get_cache         (void);
 void          evas_common_image_store             (RGBA_Image *im);
 void          evas_common_image_unstore           (RGBA_Image *im);
-RGBA_Image   *evas_common_image_find              (const char *filename, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo);
+RGBA_Image   *evas_common_image_find              (const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo);
 int           evas_common_image_ram_usage         (RGBA_Image *im);
 void          evas_common_image_dirty             (RGBA_Image *im);
 void          evas_common_image_cache_free        (void);
