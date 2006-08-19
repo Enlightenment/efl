@@ -826,7 +826,7 @@ eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Op
    re = (Render_Engine *)data;
    *error = 0;
    eng_window_use(re->win);
-   return evas_gl_common_image_load(re->win->gl_context, file, key, Evas_Image_Load_Opts *lo);
+   return evas_gl_common_image_load(re->win->gl_context, file, key, lo);
 }
 
 static void *
