@@ -573,6 +573,31 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
    return 1;
 }
 
+/**
+ * Gets the Evas_Object corresponding to a given part.
+ * You should never modify the state of the returned object
+ * (with evas_object_move() or evas_object_hide() for example),
+ * but you can safely query infos about its current state
+ * (with evas_object_visible_get() or evas_object_color_get() for example)
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The Edje part
+ * @return Returns the Evas_Object corresponding to the given part,
+ * or NULL on failure (if the part doesn't exist)
+ **/
+EAPI Evas_Object *
+edje_object_part_object_get(Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp) return NULL;
+   return rp->object;
+}
+
 /** Get Edje part geometry
  * @param obj A valid Evas_Object handle
  * @param part The Edje part

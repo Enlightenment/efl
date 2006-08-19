@@ -218,6 +218,7 @@ extern "C" {
    EAPI void         edje_object_calc_force          (Evas_Object *obj);
    EAPI void         edje_object_size_min_calc       (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
    EAPI int          edje_object_part_exists         (Evas_Object *obj, const char *part);
+   EAPI Evas_Object *edje_object_part_object_get     (Evas_Object *obj, const char *part);
    EAPI void         edje_object_part_geometry_get   (Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         edje_object_text_change_cb_set  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data);
    EAPI void         edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
