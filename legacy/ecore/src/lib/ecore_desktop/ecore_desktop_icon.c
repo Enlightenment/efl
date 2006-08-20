@@ -514,24 +514,36 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 		          {
 		             char               *value;
 
-		             result->path = theme_path;
-		             result->name = (char *)ecore_hash_get(result->group, "Name");
-		             result->comment = (char *)ecore_hash_get(result->group, "Comment");
-		             result->inherits = (char *)ecore_hash_get(result->group, "Inherits");
-		             result->directories = (char *)ecore_hash_get(result->group, "Directories");
-		             value = (char *)ecore_hash_get(result->group, "Example");
+                             /* According to the spec, name and comment are required, but we can fake those easily enough. */
+		             value = (char *)ecore_hash_get(result->group, "Name");
 			     if (!value)
-			        value = "exec";
-			     result->example = strdup(value);
+			        value = (char *) icon_theme;
+			     result->name = strdup(value);
+		             value = (char *)ecore_hash_get(result->group, "Comment");
+			     if (!value)
+			        value = "No comment provided.";
+			     result->comment = strdup(value);
+		             result->directories = (char *)ecore_hash_get(result->group, "Directories");
+                             /* FIXME: Directories is also required, don't feel like faking it for now. */
+                             if (result->directories)
+			        {
+		                   result->inherits = (char *)ecore_hash_get(result->group, "Inherits");
+		                   value = (char *)ecore_hash_get(result->group, "Example");
+			           if (!value)
+			              value = "exec";
+			           result->example = strdup(value);
 
-		             ecore_hash_set(icon_theme_cache, strdup(icon_theme), result);
+                                   /* This passes the basic validation tests, mark it as real and cache it. */
+		                   result->path = theme_path;
+		                   ecore_hash_set(icon_theme_cache, strdup(icon_theme), result);
+				}
 		          }
 	             }
 
 	           if (!result->path)
 	             {
+		        _ecore_desktop_icon_theme_destroy(result);
 		        free(theme_path);
-		        free(result);
 		        result = NULL;
 	             }
 	        }
@@ -562,6 +574,8 @@ void
 _ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme * icon_theme)
 {
    if (icon_theme->path) free(icon_theme->path);
+   if (icon_theme->name) free(icon_theme->name);
+   if (icon_theme->comment) free(icon_theme->comment);
    if (icon_theme->example) free(icon_theme->example);
    free(icon_theme);
 }
