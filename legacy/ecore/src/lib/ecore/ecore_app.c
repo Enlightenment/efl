@@ -46,18 +46,15 @@ ecore_app_args_get(int *argc, char ***argv)
  * using the command-line arguments stored by ecore_app_args_set(). This is
  * an easy way for a program to restart itself for cleanup purposes,
  * configuration reasons or in the event of a crash.
- * 
- * FIXME: Currently not implimented.
  */
 EAPI void
 ecore_app_restart(void)
 {
-   char **args;
+   char *args[4096];
    int i;
    
    if ((app_argc < 1) || (!app_argv)) return;
-   args = malloc((app_argc + 1) * sizeof(char *));
-   if (!args) return;
+   if (app_argc >= 4096) return;
    for (i = 0; i < app_argc; i++) args[i] = app_argv[i];
    args[i] = NULL;
    execvp(app_argv[0], args);
