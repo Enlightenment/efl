@@ -519,7 +519,6 @@ setup_ecore_x_test(void)
    ecore_x_netwm_name_set(win, "Ecore Test Program");
    ecore_x_icccm_title_set(win, "Ecore Test Program");
    //printf("Title currently: %s\n", tmp);
-   free(tmp);
 #if 0
    /* Visibile title should be set by the wm */
    tmp = ecore_x_netwm_visible_name_get(win);
