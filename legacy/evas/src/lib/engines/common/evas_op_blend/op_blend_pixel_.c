@@ -67,7 +67,7 @@ _op_blend_pas_dpan(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		*d = *s;
 		break;
 	     default:
-		a = 1 + (*s >> 24);
+		a = 1 + (a >> 24);
 		*d = BLEND_RGB_256(a, *s, *d);
 		break;
 	  }
