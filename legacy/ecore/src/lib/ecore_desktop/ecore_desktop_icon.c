@@ -10,9 +10,13 @@ static const char   *_ecore_desktop_icon_find0(const char *icon,
 					      const char *icon_theme);
 
 static int _ecore_desktop_icon_theme_list_add(void *data, const char *path);
+void _ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme * icon_theme);
 
 
 static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
+static int          init_count = 0;
+static Ecore_Hash  *icon_theme_cache;
+static int          loaded = 0;
 
 
 /**
@@ -142,7 +146,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
    printf("SEARCHING FOR %s\n", icn);
 #endif
    theme_path =
-      ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn, 1,
+      ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn, 2,
 					  NULL, NULL);
    if (theme_path)
      {
@@ -380,39 +384,184 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 Ecore_Hash *
 ecore_desktop_icon_theme_list(void)
 {
-   Ecore_Hash *result = NULL;
-
-   result = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-   if (result)
-      {
-	 ecore_hash_set_free_key(result, free);
-	 ecore_hash_set_free_value(result, free);
-         ecore_desktop_paths_file_find(ecore_desktop_paths_icons, "index.theme", 1, _ecore_desktop_icon_theme_list_add, result);
-      }
-
-   return result;
+   if (!loaded)
+      ecore_desktop_paths_file_find(ecore_desktop_paths_icons, "index.theme", 2, _ecore_desktop_icon_theme_list_add, NULL);
+   loaded = 1;
+   return icon_theme_cache;
 }
 
 
 static int 
 _ecore_desktop_icon_theme_list_add(void *data, const char *path)
 {
-   Ecore_Hash *result;
+   char                icn[PATH_MAX];
 
-   result = data;
-   if (result)
-      {
-         char *key, *dir;
-
-         dir = ecore_file_get_dir(path);
-	 if (dir)
-	    {
-	       key = (char *) ecore_file_get_file(dir);
-	       if (ecore_hash_get(result, key) == NULL)  /* Only the first one found for each name is important. */
-                  ecore_hash_set(result, strdup(key), strdup(path));
-	       free(dir);
-	    }
-      }
-
+   snprintf(icn, PATH_MAX, "%sindex.theme", path);
+   if (ecore_desktop_icon_theme_get(icn, NULL))
+      return 1;  /* Should stop it from recursing this directory, but let it continue searching the next. */
    return 0;
+}
+
+
+/**
+ * Setup what ever needs to be setup to support ecore_desktop_icon.
+ *
+ * There are internal structures that are needed for ecore_desktop_icon
+ * functions to operate, this sets them up.
+ *
+ * @ingroup Ecore_Desktop_Icon_Group
+ */
+EAPI int
+ecore_desktop_icon_init()
+{
+   if (++init_count != 1) return init_count;
+
+   if (!icon_theme_cache)
+     {
+	icon_theme_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+	if (icon_theme_cache)
+	  {
+	     ecore_hash_set_free_key(icon_theme_cache, free);
+	     ecore_hash_set_free_value(icon_theme_cache,
+				       (Ecore_Free_Cb) _ecore_desktop_icon_theme_destroy);
+	  }
+     }
+
+   return init_count;   
+}
+
+/**
+ * Tear down what ever needs to be torn down to support ecore_desktop_ycon.
+ *
+ * There are internal structures that are needed for ecore_desktop_icon
+ * functions to operate, this tears them down.
+ *
+ * @ingroup Ecore_Desktop_Icon_Group
+ */
+EAPI int
+ecore_desktop_icon_shutdown()
+{
+   if (--init_count != 0) return init_count;
+
+   if (icon_theme_cache)
+     {
+	ecore_hash_destroy(icon_theme_cache);
+	icon_theme_cache = NULL;
+     }
+
+   return init_count;   
+}
+
+
+/**
+ * Get the contents of an index.theme file.
+ *
+ * Everything that is in the index.theme file is returned in the
+ * data member of the Ecore_Desktop_Icon_Theme structure, it's an Ecore_Hash 
+ * as returned by ecore_desktop_ini_get().  Some of the data in the
+ * index.theme file is decoded into specific members of the returned 
+ * structure.
+ *
+ * Use ecore_desktop_icon_theme_destroy() to free this structure.
+ * 
+ * @param   icon_theme Name of the icon theme, or full path to the index.theme file.
+ * @param   lang Language to use, or NULL for default.
+ * @return  An Ecore_Desktop_Icon_Theme containing the files contents.
+ * @ingroup Ecore_Desktop_Icon_Group
+ */
+Ecore_Desktop_Icon_Theme      *
+ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
+{
+   Ecore_Desktop_Icon_Theme      *result;
+
+   result = (Ecore_Desktop_Icon_Theme *) ecore_hash_get(icon_theme_cache, (char *) icon_theme);
+   if (!result)
+     {
+        char  icn[PATH_MAX], *theme_path;
+
+        if (icon_theme[0] == '/')
+	   {
+              char *dir;
+
+	      theme_path = strdup(icon_theme);
+              dir = ecore_file_get_dir(theme_path);
+	      if (dir)
+	         icon_theme = (char *) ecore_file_get_file(dir);
+#ifdef DEBUG
+              printf("LOADING THEME %s  -   %s\n", icon_theme, theme_path);
+#endif
+	   }
+	else
+	   {
+              snprintf(icn, PATH_MAX, "%s/index.theme", icon_theme);
+#ifdef DEBUG
+              printf("SEARCHING FOR %s\n", icn);
+#endif
+              theme_path = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn, 2, NULL, NULL);
+	   }
+        if (theme_path)
+	   {
+	      result = calloc(1, sizeof(Ecore_Desktop_Icon_Theme));
+	      if (result)
+	        {
+	           result->data = ecore_desktop_ini_get(theme_path);
+	           if (result->data)
+	             {
+		        result->group =
+		           (Ecore_Hash *) ecore_hash_get(result->data,
+						   "Icon Theme");
+		        if (result->group)
+		          {
+		             char               *value;
+
+		             result->path = theme_path;
+		             result->name = (char *)ecore_hash_get(result->group, "Name");
+		             result->comment = (char *)ecore_hash_get(result->group, "Comment");
+		             result->inherits = (char *)ecore_hash_get(result->group, "Inherits");
+		             result->directories = (char *)ecore_hash_get(result->group, "Directories");
+		             value = (char *)ecore_hash_get(result->group, "Example");
+			     if (!value)
+			        value = "exec";
+			     result->example = strdup(value);
+
+		             ecore_hash_set(icon_theme_cache, strdup(icon_theme), result);
+		          }
+	             }
+
+	           if (!result->path)
+	             {
+		        free(theme_path);
+		        free(result);
+		        result = NULL;
+	             }
+	        }
+	   }
+     }
+
+   return result;
+}
+
+
+/**
+ * Free whatever resources are used by an Ecore_Desktop_Icon_Theme.
+ *
+ * There are internal resources used by each Ecore_Desktop_Icon_Theme
+ * This releases those resources.
+ *
+ * @param  icon_theme  An Ecore_Desktop_Icon_Theme.
+ * @ingroup Ecore_Desktop_Icon_Group
+ */
+void
+ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme * icon_theme)
+{
+  /* This is just a dummy, because these structures are cached. */
+  /* Later versions of the cache may reference count, then this will be useful. */
+}
+
+void
+_ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme * icon_theme)
+{
+   if (icon_theme->path) free(icon_theme->path);
+   if (icon_theme->example) free(icon_theme->example);
+   free(icon_theme);
 }

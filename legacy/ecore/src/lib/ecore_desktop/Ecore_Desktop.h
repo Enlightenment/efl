@@ -54,6 +54,22 @@ struct _Ecore_Desktop
 };
 typedef struct _Ecore_Desktop Ecore_Desktop;
 
+struct _Ecore_Desktop_Icon_Theme
+{
+   Ecore_Hash         *data, *group;
+   Ecore_List         *Directories;
+   char               *path;
+   char               *name;
+   char               *comment;
+   char               *example;
+   char               *example_path;
+   char               *inherits;
+   char               *directories;
+   int                 hidden;
+};
+typedef struct _Ecore_Desktop_Icon_Theme Ecore_Desktop_Icon_Theme;
+
+
 enum _Ecore_Desktop_Tree_Element_Type
 {
    ECORE_DESKTOP_TREE_ELEMENT_TYPE_NULL = 0,
@@ -88,13 +104,13 @@ extern              "C"
    /* Function Prototypes */
    EAPI int            ecore_desktop_paths_init(void);
    char               *ecore_desktop_paths_file_find(Ecore_List * paths,
-						   const char *file, const int sub,
+						   const char *file, int sub,
 						   int (*func) (void
 								*data,
 								const char
 								*path),
 						   void *data);
-   char               *ecore_desktop_paths_recursive_search(const char *path, const char *file,
+   char               *ecore_desktop_paths_recursive_search(const char *path, const char *file, int sub,
 							    int (*dir_func)
 							    (void *data,
 							     const char *path),
@@ -114,12 +130,17 @@ extern              "C"
    Ecore_Desktop      *ecore_desktop_get(const char *file, const char *lang);
    void                ecore_desktop_destroy(Ecore_Desktop * desktop);
 
+
+   EAPI int            ecore_desktop_icon_init(void);
+   EAPI int            ecore_desktop_icon_shutdown(void);
    const char         *ecore_desktop_icon_find(const char *icon, 
    					       const char *icon_size,
 					       const char *icon_theme);
 
 
    Ecore_Hash         *ecore_desktop_icon_theme_list(void);
+   Ecore_Desktop_Icon_Theme      *ecore_desktop_icon_theme_get(const char *file, const char *lang);
+   void                ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme *icon_theme);
 
 
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);

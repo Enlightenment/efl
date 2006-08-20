@@ -254,12 +254,12 @@ ecore_desktop_paths_shutdown()
  *
  * @param   type The type of directories to search.
  * @param   file The file to search for.
- * @param   sub Should we search sub directories.
+ * @param   sub Levels of sub directories to search, -1 = all, 0 = none.
  * @param   func A function to call for each file found.
  * @param   data A pointer to pass on to func.
  */
 char               *
-ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, const int sub,
+ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, int sub,
 				    int (*func) (void *data, const char *path),
 				    void *data)
 {
@@ -282,9 +282,9 @@ ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, const int su
 		     if (func(data, temp))
 			break;
 	       }
-	     else if (sub)
+	     else if (sub != 0)
 		path =
-		   ecore_desktop_paths_recursive_search(this_path, file, NULL,
+		   ecore_desktop_paths_recursive_search(this_path, file, sub, NULL,
 							func, data);
 	     if (path && (!func))
 		break;
@@ -539,7 +539,7 @@ _ecore_desktop_paths_check_and_add(Ecore_List * paths, char *path)
 }
 
 char               *
-ecore_desktop_paths_recursive_search(const char *path, const char *file,
+ecore_desktop_paths_recursive_search(const char *path, const char *file, int sub,
 				     int (*dir_func) (void *data,
 						      const char *path),
 				     int (*func) (void *data, const char *path),
@@ -547,6 +547,10 @@ ecore_desktop_paths_recursive_search(const char *path, const char *file,
 {
    char               *fpath = NULL;
    DIR                *dir = NULL;
+
+
+   if ((sub != 0) && (sub != -1))
+         sub -= 1;
 
    dir = opendir(path);
 
@@ -571,11 +575,12 @@ ecore_desktop_paths_recursive_search(const char *path, const char *file,
 			    if (dir_func)
 			       if (dir_func(data, info_text))
 				  break;
-			    fpath =
-			       ecore_desktop_paths_recursive_search(info_text,
-								    file,
-								    dir_func,
-								    func, data);
+			    if (sub != 0)
+			       fpath =
+			          ecore_desktop_paths_recursive_search(info_text,
+								       file, sub,
+								       dir_func,
+								       func, data);
 			 }
 		    }
 		  else

@@ -949,7 +949,7 @@ _ecore_desktop_menu_expand_apps(struct _ecore_desktop_menu_unxml_data
 	   sprintf(dir, "%s/%s", unxml_data->path, app_dir);
 	our_data.path = dir;
 	our_data.length = strlen(dir);
-	ecore_desktop_paths_recursive_search(dir, NULL, NULL,
+	ecore_desktop_paths_recursive_search(dir, NULL, -1, NULL,
 					     _ecore_desktop_menu_check_app,
 					     &our_data);
      }
@@ -1031,7 +1031,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 		sprintf(merge_path, "%s", &string[10]);
 	     else
 		sprintf(merge_path, "%s%s", unxml_data->path, &string[10]);
-	     ecore_desktop_paths_recursive_search(merge_path, NULL, NULL,
+	     ecore_desktop_paths_recursive_search(merge_path, NULL, -1, NULL,
 						  _ecore_desktop_menu_check_menu,
 						  merge);
 	     result = 1;
@@ -1071,7 +1071,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 #ifdef DEBUG
 	     printf("<LEGACYDIR> - %s - %s\n", legacy_data.prefix, merge_path);
 #endif
-	     ecore_desktop_paths_recursive_search(merge_path, NULL,
+	     ecore_desktop_paths_recursive_search(merge_path, NULL, -1,
 						  _ecore_desktop_menu_legacy_menu_dir,
 						  _ecore_desktop_menu_legacy_menu,
 						  &legacy_data);
@@ -1306,7 +1306,7 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 				 if (merge)
 				   {
 				      ecore_desktop_paths_recursive_search
-					 (merge_path, NULL, NULL,
+					 (merge_path, NULL, -1, NULL,
 					  _ecore_desktop_menu_check_directory,
 					  merge);
 				      ecore_desktop_tree_merge(tree, i + 1,

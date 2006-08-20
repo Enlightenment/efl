@@ -17,6 +17,8 @@ static int          init_count = 0;
 static Ecore_Hash  *ini_file_cache;
 static Ecore_Hash  *desktop_cache;
 
+void _ecore_desktop_destroy(Ecore_Desktop * desktop);
+
 
 /**
  * @defgroup Ecore_Desktop_Main_Group .desktop file Functions
@@ -145,7 +147,7 @@ ecore_desktop_ini_get(const char *file)
  * as returned by ecore_desktop_ini_get().  Some of the data in the
  * .desktop file is decoded into specific members of the returned 
  * structure.
- * 
+ *
  * Use ecore_desktop_destroy() to free this structure.
  *
  * @param   file Full path to the .desktop file.
@@ -370,9 +372,11 @@ ecore_desktop_init()
 	  {
 	     ecore_hash_set_free_key(desktop_cache, free);
 	     ecore_hash_set_free_value(desktop_cache,
-				       (Ecore_Free_Cb) ecore_desktop_destroy);
+				       (Ecore_Free_Cb) _ecore_desktop_destroy);
 	  }
      }
+
+   if (!ecore_desktop_icon_init()) return --init_count;
 
    return init_count;   
 }
@@ -389,6 +393,8 @@ EAPI int
 ecore_desktop_shutdown()
 {
    if (--init_count != 0) return init_count;
+
+   ecore_desktop_icon_shutdown();
 
    if (ini_file_cache)
      {
@@ -417,6 +423,13 @@ ecore_desktop_shutdown()
  */
 void
 ecore_desktop_destroy(Ecore_Desktop * desktop)
+{
+  /* This is just a dummy, because these structures are cached. */
+  /* Later versions of the cache may reference count, then this will be useful. */
+}
+
+void
+_ecore_desktop_destroy(Ecore_Desktop * desktop)
 {
    if (desktop->eap_name)
       free(desktop->eap_name);
