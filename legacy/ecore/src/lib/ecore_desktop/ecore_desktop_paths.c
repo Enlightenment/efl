@@ -217,6 +217,7 @@ ecore_desktop_paths_init()
    if (exit_handler)
       ecore_event_handler_del(exit_handler);
 #endif
+   free(home);
 
    return init_count;
 }
