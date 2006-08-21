@@ -364,7 +364,6 @@ evas_common_image_get_cache(void)
 void
 evas_common_image_store(RGBA_Image *im)
 {
-   char *key;
    char buf[4096 + 1204];
 
    if (im->flags & RGBA_IMAGE_IS_DIRTY) return;
@@ -393,7 +392,6 @@ evas_common_image_store(RGBA_Image *im)
 void
 evas_common_image_unstore(RGBA_Image *im)
 {
-   char *key;
    char buf[4096 + 1024];
 
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
@@ -422,9 +420,7 @@ evas_common_image_unstore(RGBA_Image *im)
 RGBA_Image *
 evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo)
 {
-   Evas_Object_List *l;
    RGBA_Image *im;
-   char *str;
    char buf[4096 + 1024];
 
    if ((!file) && (!key)) return NULL;
