@@ -906,19 +906,69 @@ _edje_part_recalc_single(Edje *ed,
 	  }
      }
    /* fill */
-   params->smooth = desc->fill.smooth;
-   if (flags & FLAG_X)
+
+   if (ep->part->type == EDJE_PART_TYPE_GRADIENT && desc->gradient.use_rel && (!desc->gradient.type || !strcmp(desc->gradient.type, "linear")))
      {
-	params->fill.x = desc->fill.pos_abs_x + (params->w * desc->fill.pos_rel_x);
-	params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
+	int x2, y2;
+	int dx, dy;
+	double m;
+	int angle;
+
+	params->fill.x = desc->gradient.rel1.offset_x + (params->w * desc->gradient.rel1.relative_x);
+	params->fill.y = desc->gradient.rel1.offset_y + (params->h * desc->gradient.rel1.relative_y);
+
+	x2 = desc->gradient.rel2.offset_x + (params->w * desc->gradient.rel2.relative_x);
+	y2 = desc->gradient.rel2.offset_y + (params->h * desc->gradient.rel2.relative_y);
+
+	params->fill.w = 1; /* doesn't matter for linear grads */
+
+	dy = y2 - params->fill.y;
+	dx = x2 - params->fill.x;
+	params->fill.h = sqrt(dx * dx + dy * dy);
+
+	params->fill.spread = desc->fill.spread;
+
+	if (dx == 0 && dy == 0)
+	  {
+	     angle = 0;
+	  }
+	else if (dx == 0)
+	  {
+	     if (dy > 0) angle = 0;
+	     else angle = 180;
+	  }
+	else if (dy == 0)
+	  {
+	     if (dx > 0) angle = 270;
+	     else angle = 90;
+	  }
+	else
+	  {
+	     m = (double)dx / (double)dy;
+	     angle = atan(m) * 180 / M_PI;
+	     if (dy < 0) 
+	       angle = 180 - angle;
+	     else
+	       angle = 360 - angle;
+	  }
+	params->fill.angle = angle;
      }
-   if (flags & FLAG_Y)
+   else
      {
-	params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
-	params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
+	params->smooth = desc->fill.smooth;
+	if (flags & FLAG_X)
+	  {
+	     params->fill.x = desc->fill.pos_abs_x + (params->w * desc->fill.pos_rel_x);
+	     params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
+	  }
+	if (flags & FLAG_Y)
+	  {
+	     params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
+	     params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
+	  }
+	params->fill.angle = desc->fill.angle;
+	params->fill.spread = desc->fill.spread;
      }
-   params->fill.angle = desc->fill.angle;
-   params->fill.spread = desc->fill.spread;
    /* colors */
 
    params->color.r = desc->color.r;

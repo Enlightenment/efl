@@ -468,9 +468,16 @@ struct _Edje_Part_Description
    } image;
 
    struct {
-     int            id; /* the spectrum id to use */
-     char          *type; /* type of spectrum - 'linear', 'radial', etc */
-     char          *params; /* params for spectrum type */
+      int            id; /* the spectrum id to use */
+      char          *type; /* type of spectrum - 'linear', 'radial', etc */
+      char          *params; /* params for spectrum type */
+      int            use_rel; /* 1 - use rel1,rel2; 0 - use fill */
+      struct {
+         double      relative_x;
+         double      relative_y;
+         int         offset_x;
+         int         offset_y;
+      } rel1, rel2; /* linear gradient fill options */
    } gradient;
    
    struct {

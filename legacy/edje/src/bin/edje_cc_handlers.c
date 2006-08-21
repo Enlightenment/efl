@@ -97,6 +97,11 @@ static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_elipsis(void);
 static void st_collections_group_parts_part_description_gradient_type(void);
 static void st_collections_group_parts_part_description_gradient_spectrum(void);
+static void ob_collections_group_parts_part_description_gradient_rel(void);
+static void st_collections_group_parts_part_description_gradient_rel1_relative(void);
+static void st_collections_group_parts_part_description_gradient_rel1_offset(void);
+static void st_collections_group_parts_part_description_gradient_rel2_relative(void);
+static void st_collections_group_parts_part_description_gradient_rel2_offset(void);
 
 static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
@@ -236,6 +241,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
      {"collections.group.parts.part.description.gradient.type", st_collections_group_parts_part_description_gradient_type},
+     {"collections.group.parts.part.description.gradient.rel1.relative", st_collections_group_parts_part_description_gradient_rel1_relative},
+     {"collections.group.parts.part.description.gradient.rel1.offset", st_collections_group_parts_part_description_gradient_rel1_offset},
+     {"collections.group.parts.part.description.gradient.rel2.relative", st_collections_group_parts_part_description_gradient_rel2_relative},
+     {"collections.group.parts.part.description.gradient.rel2.offset", st_collections_group_parts_part_description_gradient_rel2_offset},
      {"collections.group.parts.part.description.gradient.spectrum", st_collections_group_parts_part_description_gradient_spectrum},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
@@ -386,6 +395,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.styles", NULL}, /* dup */
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.description.gradient", NULL},
+     {"collections.group.parts.part.description.gradient.rel1", ob_collections_group_parts_part_description_gradient_rel},
+     {"collections.group.parts.part.description.gradient.rel2", ob_collections_group_parts_part_description_gradient_rel},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
@@ -2349,6 +2360,148 @@ st_collections_group_parts_part_description_gradient_spectrum(void)
      }
 }
 
+static void
+ob_collections_group_parts_part_description_gradient_rel(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+     {
+	ed->gradient.use_rel = 1;
+     }
+}
+
+
+static void
+st_collections_group_parts_part_description_gradient_rel1_relative(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+     {
+	ed->gradient.rel1.relative_x = parse_float(0);
+	ed->gradient.rel1.relative_y = parse_float(1);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_gradient_rel1_offset(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+     {
+	ed->gradient.rel1.offset_x = parse_int(0);
+	ed->gradient.rel1.offset_y = parse_int(1);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_gradient_rel2_relative(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+     {
+	ed->gradient.rel2.relative_x = parse_float(0);
+	ed->gradient.rel2.relative_y = parse_float(1);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_gradient_rel2_offset(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+     {
+	ed->gradient.rel2.offset_x = parse_int(0);
+	ed->gradient.rel2.offset_y = parse_int(1);
+     }
+}
 
 static void
 ob_collections_group_programs_program(void)
