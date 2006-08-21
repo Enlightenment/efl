@@ -47,7 +47,6 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *ico
 {
    char                icn[PATH_MAX], path[PATH_MAX];
    const char         *dir; 
-   char               *home;
 
    if (icon == NULL)
       return NULL;
@@ -60,8 +59,6 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *ico
       icon_size="48x48";
    if (icon_theme == NULL)
       icon_theme="hicolor";
-
-   home = ecore_desktop_home_get();
 
    snprintf(icn, sizeof(icn), "%s", icon);
 #ifdef DEBUG

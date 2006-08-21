@@ -84,15 +84,6 @@ ecore_desktop_paths_init()
 
    gnome_data = ecore_list_new();
    home = ecore_desktop_home_get();
-   if (home)
-     {
-	int                 last;
-
-	/* Strip trailing slash of home. */
-	last = strlen(home) - 1;
-	if ((last >= 0) && (home[last] == '/'))
-	   home[last] = '\0';
-     }
 
    if (gnome_data)
       {
