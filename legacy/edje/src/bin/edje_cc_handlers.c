@@ -97,7 +97,6 @@ static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_elipsis(void);
 static void st_collections_group_parts_part_description_gradient_type(void);
 static void st_collections_group_parts_part_description_gradient_spectrum(void);
-static void ob_collections_group_parts_part_description_gradient_rel(void);
 static void st_collections_group_parts_part_description_gradient_rel1_relative(void);
 static void st_collections_group_parts_part_description_gradient_rel1_offset(void);
 static void st_collections_group_parts_part_description_gradient_rel2_relative(void);
@@ -395,8 +394,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.styles", NULL}, /* dup */
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.description.gradient", NULL},
-     {"collections.group.parts.part.description.gradient.rel1", ob_collections_group_parts_part_description_gradient_rel},
-     {"collections.group.parts.part.description.gradient.rel2", ob_collections_group_parts_part_description_gradient_rel},
+     {"collections.group.parts.part.description.gradient.rel1", NULL},
+     {"collections.group.parts.part.description.gradient.rel2", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
@@ -1108,6 +1107,14 @@ ob_collections_group_parts_part_description(void)
    ed->text.align.y = 0.5;
    ed->text.id_source = -1;
    ed->text.id_text_source = -1;
+   ed->gradient.rel1.relative_x = 0;
+   ed->gradient.rel1.relative_y = 0;
+   ed->gradient.rel1.offset_x = 0;
+   ed->gradient.rel1.offset_y = 0;
+   ed->gradient.rel2.relative_x = 1;
+   ed->gradient.rel2.relative_y = 1;
+   ed->gradient.rel2.offset_x = -1;
+   ed->gradient.rel2.offset_y = -1;
 }
 
 static void
@@ -2361,33 +2368,6 @@ st_collections_group_parts_part_description_gradient_spectrum(void)
 }
 
 static void
-ob_collections_group_parts_part_description_gradient_rel(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-
-     {
-	ed->gradient.use_rel = 1;
-     }
-}
-
-
-static void
 st_collections_group_parts_part_description_gradient_rel1_relative(void)
 {
    Edje_Part_Collection *pc;
@@ -2411,6 +2391,7 @@ st_collections_group_parts_part_description_gradient_rel1_relative(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
 
      {
+	ed->gradient.use_rel = 1;
 	ed->gradient.rel1.relative_x = parse_float(0);
 	ed->gradient.rel1.relative_y = parse_float(1);
      }
@@ -2440,6 +2421,7 @@ st_collections_group_parts_part_description_gradient_rel1_offset(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
 
      {
+	ed->gradient.use_rel = 1;
 	ed->gradient.rel1.offset_x = parse_int(0);
 	ed->gradient.rel1.offset_y = parse_int(1);
      }
@@ -2469,6 +2451,7 @@ st_collections_group_parts_part_description_gradient_rel2_relative(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
 
      {
+	ed->gradient.use_rel = 1;
 	ed->gradient.rel2.relative_x = parse_float(0);
 	ed->gradient.rel2.relative_y = parse_float(1);
      }
@@ -2498,6 +2481,7 @@ st_collections_group_parts_part_description_gradient_rel2_offset(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
 
      {
+	ed->gradient.use_rel = 1;
 	ed->gradient.rel2.offset_x = parse_int(0);
 	ed->gradient.rel2.offset_y = parse_int(1);
      }
