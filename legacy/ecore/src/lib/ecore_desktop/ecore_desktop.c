@@ -460,19 +460,16 @@ _ecore_desktop_destroy(Ecore_Desktop * desktop)
 char *
 ecore_desktop_home_get()
 {
-   char               *d;
-   char                home[PATH_MAX];
+   char   home[PATH_MAX];
+   int    len;
 
    /* Get Home Dir, check for trailing '/', strip it */
    strncpy(home, getenv("HOME"), PATH_MAX);
-   d = strrchr(home, '/');
-   if (d)
+   len = strlen(home) - 1;
+   while ((len >= 0) && (home[len] == '/'))
      {
-	while (*d == '/')
-	  {
-	     *d = 0;
-	     d--;
-	  }
+	home[len] = '\0';
+	len--;
      }
 
    return strdup(home);
