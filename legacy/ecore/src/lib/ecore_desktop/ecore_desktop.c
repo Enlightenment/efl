@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include <ctype.h>
 
 #include "Ecore_Desktop.h"
@@ -454,23 +457,23 @@ _ecore_desktop_destroy(Ecore_Desktop * desktop)
  * @return  The users howe directory.
  * @ingroup Ecore_Desktop_Main_Group
  */
-char               *
+char *
 ecore_desktop_home_get()
 {
    char               *d;
-   int                 length;
    char                home[PATH_MAX];
 
    /* Get Home Dir, check for trailing '/', strip it */
-   snprintf(home, sizeof(home), "%s", getenv("HOME"));
+   strncpy(home, getenv("HOME"), PATH_MAX);
    d = strrchr(home, '/');
    if (d)
      {
-	if (strlen(d) == 1)
+	while (*d == '/')
 	  {
-	     if (home[(length = strlen(home) - 1)] == '/')
-		home[length] = '\0';
+	     *d = 0;
+	     d--;
 	  }
      }
+
    return strdup(home);
 }
