@@ -1,3 +1,29 @@
+# Conditional build stuff; from rpm 4.4 /usr/lib/rpm/macros.
+# bcond_without defaults to WITH, and vice versa.  Yes, it's
+# ass-backward.  Blame PLD.
+# from KainX's changes to evas... 
+%if %{!?with:1}0
+%define with() %{expand:%%{?with_%{1}:1}%%{!?with_%{1}:0}}
+%endif
+%if %{!?without:1}0
+%define without() %{expand:%%{?with_%{1}:0}%%{!?with_%{1}:1}}
+%endif
+%if %{!?bcond_with:1}0
+%define bcond_with() %{expand:%%{?_with_%{1}:%%global with_%{1} 1}}
+%endif
+%if %{!?bcond_without:1}0
+%define bcond_without() %{expand:%%{!?_without_%{1}:%%global with_%{1} 1}}
+%endif
+
+## disabled features
+%bcond_with    lib_ecore_fb
+
+## not setup yet...
+## enabled features
+##%bcond_without module_engine_software_x11
+
+
+# This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
 
 Summary: Enlightened Core X interface library
@@ -27,7 +53,9 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: openssl-devel, evas-devel, eet-devel
-Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop, ecore-evas, ecore-fb, ecore-file, ecore-ipc, ecore-job, ecore-txt, ecore-x
+Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop, ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt, ecore-x
+##removed fb
+##Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop, ecore-evas, ecore-fb, ecore-file, ecore-ipc, ecore-job, ecore-txt, ecore-x
 
 %description devel
 Ecore development files
@@ -88,13 +116,17 @@ Requires: %{name} = %{version}
 %description evas
 Ecore Evas Wrapper Library
 
+%if %{with lib_ecore_fb}
 %package fb
 Summary: Ecore frame buffer system functions
 Group: Development/Libraries
 Requires: %{name} = %{version}
-
 %description fb
 Ecore frame buffer system functions
+%define ac_with_lib_ecore_fb --enable-ecore-fb
+%else
+%define ac_with_lib_ecore_fb --disable-ecore-fb
+%endif
 
 %package file
 Summary: Ecore File Library
@@ -145,7 +177,8 @@ Ecore functions for dealing with the X Windows System
 CFLAGS="-I/usr/kerberos/include -I/usr/X11R6/include/X11/extensions"
 LDFLAGS="-L/usr/kerberos/lib -L/usr/X11R6/%{_lib}"
 export CFLAGS LDFLAGS
-%{configure} --prefix=%{_prefix} --disable-ecore-dfb
+%{configure} --prefix=%{_prefix} --disable-ecore-dfb \
+   %{ac_with_lib_ecore_fb}
 %{__make} %{?_smp_mflags} %{?mflags}
 
 %install
@@ -205,9 +238,11 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %{_libdir}/libecore_evas.so.*
 
+%if %{with lib_ecore_fb}
 %files fb
 %defattr(-, root, root)
 %{_libdir}/libecore_fb.so.*
+%endif
 
 %files file
 %defattr(-, root, root)
