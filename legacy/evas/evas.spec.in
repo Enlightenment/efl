@@ -352,8 +352,8 @@ Software XCB X11 rendering engine module for Evas
     %{ac_with_module_loader_gif} \
     %{ac_with_module_loader_edb} \
     %{ac_with_module_saver_edb} \
-    %(ac_with_module_loader_xpm) \
-    %(ac_with_module_loader_svg) \
+    %{ac_with_module_loader_xpm} \
+    %{ac_with_module_loader_svg} \
     %{ac_with_module_engine_software_x11} \
     %{ac_with_module_engine_buffer} \
     %{ac_with_module_engine_fb} \
