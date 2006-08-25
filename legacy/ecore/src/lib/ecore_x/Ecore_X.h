@@ -329,6 +329,8 @@ struct _Ecore_X_Event_Mouse_Button_Up
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
    Ecore_X_Time    time;
+   int     double_click : 1;
+   int     triple_click : 1;
 };
 
 struct _Ecore_X_Event_Mouse_Move

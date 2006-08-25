@@ -27,6 +27,15 @@ static void _ecore_x_event_free_window_prop_client_machine_change(void *data, vo
 static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
 
+static Window _ecore_x_mouse_down_last_win = 0;
+static Window _ecore_x_mouse_down_last_last_win = 0;
+static Window _ecore_x_mouse_down_last_event_win = 0;
+static Window _ecore_x_mouse_down_last_last_event_win = 0;
+static Time _ecore_x_mouse_down_last_time = 0;
+static Time _ecore_x_mouse_down_last_last_time = 0;
+static int _ecore_x_mouse_up_count = 0;
+static int _ecore_x_mouse_down_did_triple = 0;
+
 EAPI void
 ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
 {
@@ -276,13 +285,6 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
 void
 _ecore_x_event_handle_button_press(XEvent *xevent)
 {
-   static Window last_win = 0;
-   static Window last_last_win = 0;
-   static Window last_event_win = 0;
-   static Window last_last_event_win = 0;
-   static Time last_time = 0;
-   static Time last_last_time = 0;
-   int did_triple = 0;
    int i;
 
    if ((xevent->xbutton.button > 3) && (xevent->xbutton.button < 8))
@@ -381,6 +383,16 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	  }
 	  {
 	     Ecore_X_Event_Mouse_Button_Down *e;
+             
+            if (_ecore_x_mouse_down_did_triple)
+              {
+                 _ecore_x_mouse_down_last_win = 0;
+                 _ecore_x_mouse_down_last_last_win = 0;
+                 _ecore_x_mouse_down_last_event_win = 0;
+                 _ecore_x_mouse_down_last_last_event_win = 0;
+                 _ecore_x_mouse_down_last_time = 0;
+                 _ecore_x_mouse_down_last_last_time = 0;
+              }
 	     
 	     e = calloc(1, sizeof(Ecore_X_Event_Mouse_Button_Down));
 	     if (!e) return;
@@ -396,22 +408,28 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     e->time = xevent->xbutton.time;
 	     if (e->win == e->event_win)
 	       {
-		  if (((int)(e->time - last_time) <= 
+		  if (((int)(e->time - _ecore_x_mouse_down_last_time) <= 
 		       (int)(1000 * _ecore_x_double_click_time)) &&
-		      (e->win == last_win)
-		      && (e->event_win == last_event_win)
+		      (e->win == _ecore_x_mouse_down_last_win) &&
+		      (e->event_win == _ecore_x_mouse_down_last_event_win)
 		      )
 		    e->double_click = 1;
-		  if (((int)(e->time - last_last_time) <= 
+		  if (((int)(e->time - _ecore_x_mouse_down_last_last_time) <= 
 		       (int)(2 * 1000 * _ecore_x_double_click_time)) &&
-		      (e->win == last_win) && (e->win == last_last_win)
-		      && (e->event_win == last_event_win) && (e->event_win == last_last_event_win)
+		      (e->win == _ecore_x_mouse_down_last_win) &&
+                      (e->win == _ecore_x_mouse_down_last_last_win) &&
+		      (e->event_win == _ecore_x_mouse_down_last_event_win) &&
+                      (e->event_win == _ecore_x_mouse_down_last_last_event_win)
 		      )
 		    {
-		       did_triple = 1;
-		       e->triple_click = 1;
+                        e->triple_click = 1;
+		       _ecore_x_mouse_down_did_triple = 1;
 		    }
+                  else
+                    _ecore_x_mouse_down_did_triple = 0;
 	       }
+             if (!e->double_click && !e->triple_click)
+               _ecore_x_mouse_up_count = 0;
 	     _ecore_x_event_last_time = e->time;
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
@@ -441,26 +459,17 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	       }
 	     if (e->win == e->event_win)
 	       {
-		  if (did_triple)
+		  if (!_ecore_x_mouse_down_did_triple)
 		    {
-		       last_win = 0;
-		       last_last_win = 0;
-		       last_event_win = 0;
-		       last_last_event_win = 0;
-		       last_time = 0;
-		       last_last_time = 0;
-		    }
-		  else
-		    {
-		       last_last_win = last_win;
+		       _ecore_x_mouse_down_last_last_win = _ecore_x_mouse_down_last_win;
 		       if (xevent->xbutton.subwindow)
-			 last_win = xevent->xbutton.subwindow;
+			 _ecore_x_mouse_down_last_win = xevent->xbutton.subwindow;
 		       else
-			 last_win = xevent->xbutton.window;
-		       last_last_event_win = last_event_win;
-		       last_event_win = xevent->xbutton.window;
-		       last_last_time = last_time;
-		       last_time = xevent->xbutton.time;
+			 _ecore_x_mouse_down_last_win = xevent->xbutton.window;
+		       _ecore_x_mouse_down_last_last_event_win = _ecore_x_mouse_down_last_event_win;
+		       _ecore_x_mouse_down_last_event_win = xevent->xbutton.window;
+		       _ecore_x_mouse_down_last_last_time = _ecore_x_mouse_down_last_time;
+		       _ecore_x_mouse_down_last_time = xevent->xbutton.time;
 		    }
 	       }
 	  }
@@ -508,6 +517,26 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 	     else e->win = xevent->xbutton.window;
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
+             _ecore_x_mouse_up_count++;
+	     if (e->win == e->event_win)
+	       {
+		  if ((_ecore_x_mouse_up_count >= 2) &&
+                      ((int)(e->time - _ecore_x_mouse_down_last_time) <= 
+		       (int)(1000 * _ecore_x_double_click_time)) &&
+		      (e->win == _ecore_x_mouse_down_last_win) &&
+		      (e->event_win == _ecore_x_mouse_down_last_event_win)
+		      )
+		    e->double_click = 1;
+		  if ((_ecore_x_mouse_up_count >= 3) &&
+                     ((int)(e->time - _ecore_x_mouse_down_last_last_time) <= 
+		       (int)(2 * 1000 * _ecore_x_double_click_time)) &&
+		      (e->win == _ecore_x_mouse_down_last_win) &&
+                      (e->win == _ecore_x_mouse_down_last_last_win) &&
+		      (e->event_win == _ecore_x_mouse_down_last_event_win) &&
+                      (e->event_win == _ecore_x_mouse_down_last_last_event_win)
+		      )
+                    e->triple_click = 1;
+	       }
 	     _ecore_x_event_last_time = e->time;
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;

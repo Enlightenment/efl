@@ -511,13 +511,16 @@ _ecore_evas_x_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, 
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Button_Up *e;
+   Evas_Button_Flags flags = EVAS_BUTTON_NONE;
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (e->win != ee->engine.x.win) return 1;
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
-   evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, e->time, NULL);
+   if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
+   if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
+   evas_event_feed_mouse_up(ee->evas, e->button, flags, e->time, NULL);
    return 1;
 }
 
