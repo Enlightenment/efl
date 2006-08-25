@@ -255,17 +255,11 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
 	ev.locks = &(e->locks);
 	ev.flags = flags;
 	ev.timestamp = timestamp;
-	if (ev.flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
-	  {
-	     if (obj->last_click_counter < (e->last_click_counter - 1))
-	       ev.flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
-	  }
 	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
-	obj->last_click_counter = e->last_click_counter;
      }
    if (copy) copy = evas_list_free(copy);
-   e->last_click_counter++;
+   e->last_mouse_down_counter++;
 }
 
 /**
@@ -315,6 +309,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
      }
    if (copy) copy = evas_list_free(copy);
+   e->last_mouse_up_counter++;
    if (!e->pointer.button)
      {
 	Evas_List *ins;

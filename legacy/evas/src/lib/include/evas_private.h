@@ -330,7 +330,8 @@ struct _Evas
    Evas_Lock      locks;
    unsigned int   last_timestamp;
    void          *attach_data;
-   int            last_click_counter;
+   int            last_mouse_down_counter;
+   int            last_mouse_up_counter;
    Evas_Font_Hinting_Flags hinting;
 };
 
@@ -418,7 +419,8 @@ struct _Evas_Object
       unsigned char     deletions_waiting : 1;
    } smart;
 
-   int                         last_click_counter;
+   int                         last_mouse_down_counter;
+   int                         last_mouse_up_counter;
    int                         mouse_grabbed;
 
    unsigned short              store : 1;
