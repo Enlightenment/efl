@@ -455,8 +455,9 @@ edje_file_data_get(const char *file, const char *key)
 	     Edje_Data *di;
 	
 	     di = l->data;
-	     if (!strcmp(di->key, key))
+	     if ((di->key) && (key) && (!strcmp(di->key, key)))
 	       {
+		  if (!di->value) return NULL;
 		  str = strdup(di->value);
 		  break;
 	       }
