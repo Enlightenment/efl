@@ -1050,7 +1050,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
 	for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
 	  {
 	     /* if it matches */
-	     if (eet_string_match(efn->name, name))
+	     if ((efn->name) && (eet_string_match(efn->name, name)))
 	       {
 		  free(efn->data);
 		  efn->compression = !!compress;
