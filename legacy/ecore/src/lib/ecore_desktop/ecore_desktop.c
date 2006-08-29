@@ -12,6 +12,7 @@ Ecore_List         *ecore_desktop_paths_directories = NULL;
 Ecore_List         *ecore_desktop_paths_desktops = NULL;
 Ecore_List         *ecore_desktop_paths_icons = NULL;
 Ecore_List         *ecore_desktop_paths_kde_legacy = NULL;
+Ecore_List         *ecore_desktop_paths_xsessions = NULL;
 
 extern int          reject_count, not_over_count;
 

@@ -212,6 +212,13 @@ ecore_desktop_paths_init()
       ecore_desktop_paths_config =
 	 _ecore_desktop_paths_get(NULL, "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
 				  "~/.config", "/etc/xdg", "", NULL, NULL);
+   if (!ecore_desktop_paths_xsessions)
+      ecore_desktop_paths_xsessions =
+	 _ecore_desktop_paths_get(NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
+				  "~/.local/share:~/.kde/share",
+				  "/usr/local/share:/usr/share",
+				  "xsessions", NULL,
+				  NULL);
 
 #if defined GNOME_SUPPORT || defined KDE_SUPPORT
    if (exit_handler)
@@ -227,10 +234,14 @@ ecore_desktop_paths_shutdown()
 {
    if (--init_count != 0) return init_count;
 
-   E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_menus);
+   E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_xsessions);
+   E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_config);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_directories);
-   E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_desktops);
+   E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_menus);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_icons);
+   E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_kde_legacy);
+   E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_desktops);
+   E_FN_DEL(ecore_list_destroy, gnome_data);
 
    return init_count;
 }

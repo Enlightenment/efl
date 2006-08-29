@@ -32,6 +32,7 @@ extern Ecore_List         *ecore_desktop_paths_directories;
 extern Ecore_List         *ecore_desktop_paths_desktops;
 extern Ecore_List         *ecore_desktop_paths_icons;
 extern Ecore_List         *ecore_desktop_paths_kde_legacy;
+extern Ecore_List         *ecore_desktop_paths_xsessions;
 
 struct _Ecore_Desktop
 {
