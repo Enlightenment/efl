@@ -57,9 +57,6 @@ ecore_desktop_ini_get(const char *file)
 	char                buffer[PATH_MAX];
 	Ecore_Hash         *current = NULL;
 
-//#ifdef DEBUG
-	fprintf(stdout, "OPENING INI %s\n", file);
-//#endif
 	f = fopen(file, "r");
 	if (!f)
 	  {
