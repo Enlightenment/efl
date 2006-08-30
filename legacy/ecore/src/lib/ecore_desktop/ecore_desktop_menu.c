@@ -1470,30 +1470,33 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
    /* FIXME: pass an actualy language parameter. */
    desktop = ecore_desktop_get(app, NULL);
 
-   if ((generate_data->unallocated) && (desktop->allocated))
-      return;
+   if (desktop)
+      {
+         if ((generate_data->unallocated) && (desktop->allocated))
+            return;
 
-   if (_ecore_desktop_menu_apply_rules
-       (generate_data, generate_data->rule, key, desktop))
-     {
-	desktop->allocated = TRUE;
-	if (generate_data->include)
-	  {
-	     ecore_hash_set(generate_data->apps, key, strdup(app));
+         if (_ecore_desktop_menu_apply_rules
+             (generate_data, generate_data->rule, key, desktop))
+           {
+	      desktop->allocated = TRUE;
+	      if (generate_data->include)
+	        {
+	           ecore_hash_set(generate_data->apps, key, strdup(app));
 #ifdef DEBUG
-	     printf("INCLUDING %s%s - %s\n",
-		    ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
+	           printf("INCLUDING %s%s - %s\n",
+		          ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
 #endif
-	  }
-	else
-	  {
-	     ecore_hash_remove(generate_data->apps, key);
+	        }
+	      else
+	        {
+	           ecore_hash_remove(generate_data->apps, key);
 #ifdef DEBUG
-	     printf("EXCLUDING %s%s - %s\n",
-		    ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
+	           printf("EXCLUDING %s%s - %s\n",
+		          ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
 #endif
-	  }
-     }
+	        }
+           }
+      }
 }
 
 static int
