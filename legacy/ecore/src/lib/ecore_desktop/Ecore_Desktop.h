@@ -48,6 +48,8 @@ struct _Ecore_Desktop
    char               *icon_class;
    char               *icon_path;
    char               *path;
+   char               *URL;
+   char               *file;
    char               *deletiondate;
    char               *startup;
    char               *window_class;

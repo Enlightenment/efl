@@ -210,6 +210,14 @@ ecore_desktop_get(const char *file, const char *lang)
 			  (char *)ecore_hash_get(result->group, "Comment");
 		       result->type =
 			  (char *)ecore_hash_get(result->group, "Type");
+
+		       result->path =
+		          (char *)ecore_hash_get(result->group, "Path");
+		       result->URL =
+		          (char *)ecore_hash_get(result->group, "URL");
+		       result->file =
+		          (char *)ecore_hash_get(result->group, "File");
+
 		       result->exec =
 			  (char *)ecore_hash_get(result->group, "Exec");
 // FIXME: Handle the fdo %x replacable params.  Some should be stripped, some should be expanded.
