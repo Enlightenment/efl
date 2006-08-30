@@ -79,7 +79,9 @@ AC_HELP_STRING([--with-qtdir=QT_DIR],[use qt directory specified]),
 # check for freetype
 AC_PATH_GENERIC(freetype, 9.3.0,
   [ ],
-  [ AC_MSG_ERROR(Freetype isn't installed) ]
+  [
+    AC_MSG_ERROR(Freetype isn't installed)
+  ]
 )
 
 #######################################
@@ -949,6 +951,25 @@ if test "x$have_svg" = "xyes"; then
 	 ],
 	 [ 
 	    have_svg="no"
+	 ]
+      )
+      PKG_CHECK_MODULES(CAIRO_SVG, cairo-svg,
+	 [ 
+	    have_svg="yes"
+	    svg_cflags="$SVG_CFLAGS $CAIRO_SVG_CFLAGS"
+	    svg_libs="$SVG_LIBS $CAIRO_SVG_LIBS"
+	 ],
+	 [ 
+            PKG_CHECK_MODULES(CAIRO_SVG, libsvg-cairo,
+	       [ 
+	          have_svg="yes"
+	          svg_cflags="$SVG_CFLAGS $LIBSVG_CAIRO_CFLAGS"
+	          svg_libs="$SVG_LIBS $LIBSVG_CAIRO_LIBS"
+	       ],
+	       [ 
+	          have_svg="no"
+	       ]
+            )
 	 ]
       )
    fi
