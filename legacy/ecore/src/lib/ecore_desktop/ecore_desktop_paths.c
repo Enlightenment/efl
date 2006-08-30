@@ -1,5 +1,9 @@
 /*
  * This conforms with the freedesktop.org XDG Base Directory Specification version 0.6
+ *
+ * The policy here is to add extra directories to the possible search paths to 
+ * cater for quirks of different OS's.  It doesn't take long to eliminate an
+ * excess directory from the paths.
  */
 
 #include <dirent.h>
@@ -199,7 +203,7 @@ ecore_desktop_paths_init()
    if (!ecore_desktop_paths_menus)
       ecore_desktop_paths_menus =
 	 _ecore_desktop_paths_get(NULL, "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
-				  "~/.config", "/etc/xdg", "menus", NULL,
+				  "~/.config", "/etc/xdg:/var/lib/menu-xdg", "menus", NULL,
 				  "xdgconf-menu");
    if (!ecore_desktop_paths_directories)
       ecore_desktop_paths_directories =
