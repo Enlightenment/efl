@@ -1107,17 +1107,11 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	  }
 	if ((ed->w > 8000) || (ed->h > 8000))
 	  {
-	     printf("EDJE ERROR: An element in file %s, group %s has a non expandable\n"
-		    "part not marked as fixed size in one dimension. This needs\n"
-		    "to be fixed in the source .edc by adding:\n"
-		    "  fixed: 1 1;\n"
-		    "to the part that cannot expand in size if the Edje object does.\n",
+	     printf("EDJE ERROR: file %s, group %s has a non-fixed part. add fixed: 1 1; ???\n",
 		    ed->path, ed->part);
 	     if (pep)
-	       printf("The part suspected causing this problem is:\n"
-		      "  part: \"%s\"\n",
-		      pep->part->name);
-	     printf("Will recalc min size not allowing broken parts to affect the result.\n");
+	       printf("  Problem part is: %s\n", pep->part->name);
+	     printf("  Will recalc min size not allowing broken parts to affect the result.\n");
 	     if (reset_maxwh)
 	       {
 		  reset_maxwh = 0;
