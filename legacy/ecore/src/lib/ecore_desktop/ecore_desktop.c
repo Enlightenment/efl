@@ -2,6 +2,8 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
@@ -170,7 +172,10 @@ ecore_desktop_get(const char *file, const char *lang)
 	result = calloc(1, sizeof(Ecore_Desktop));
 	if (result)
 	  {
-	     result->data = ecore_desktop_ini_get(file);
+	     result->original_path = strdup(file);
+	     if (lang)
+	        result->original_lang = strdup(lang);
+	     result->data = ecore_desktop_ini_get(result->original_path);
 	     if (result->data)
 	       {
 		  result->group =
@@ -188,7 +193,7 @@ ecore_desktop_get(const char *file, const char *lang)
 		       char               *categories = NULL;
 		       int                 size = 0;
 
-                       value = (char *) ecore_file_get_file(file);
+                       value = (char *) ecore_file_get_file(result->original_path);
 		       if (value)
 		          {
 			     char *temp = strrchr(value, '.');
@@ -340,7 +345,7 @@ ecore_desktop_get(const char *file, const char *lang)
 			 }
 		    }
 
-		  ecore_hash_set(desktop_cache, strdup(file), result);
+		  ecore_hash_set(desktop_cache, strdup(result->original_path), result);
 	       }
 	     else
 	       {
@@ -351,6 +356,83 @@ ecore_desktop_get(const char *file, const char *lang)
      }
    return result;
 }
+
+void
+ecore_desktop_save(Ecore_Desktop * desktop)
+{
+   if (!desktop->group)
+      {
+         desktop->group = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+         if (desktop->group)
+	    {
+               ecore_hash_set_free_key(desktop->group, free);
+	       ecore_hash_set_free_value(desktop->group, free);
+	    }
+      }
+
+   if (desktop->group)
+      {
+         if (desktop->original_path)
+	    {
+               struct stat st;
+
+               if (stat(desktop->original_path, &st) >= 0)
+	          {
+	             char *real;
+
+                     real = ecore_file_readlink(desktop->original_path);
+	             if (real)
+	                ecore_hash_set(desktop->group, strdup("X-Enlightenment-OriginalPath"), real);
+		  }
+	    }
+
+         if (desktop->name)   ecore_hash_set(desktop->group, strdup("Name"), strdup(desktop->name));
+         if (desktop->generic)   ecore_hash_set(desktop->group, strdup("GenericName"), strdup(desktop->generic));
+         if (desktop->comment)   ecore_hash_set(desktop->group, strdup("Comment"), strdup(desktop->comment));
+         if (desktop->type)   ecore_hash_set(desktop->group, strdup("Type"), strdup(desktop->type));
+         if (desktop->URL)   ecore_hash_set(desktop->group, strdup("URL"), strdup(desktop->URL));
+         if (desktop->file)   ecore_hash_set(desktop->group, strdup("File"), strdup(desktop->file));
+         if (desktop->exec)   ecore_hash_set(desktop->group, strdup("Exec"), strdup(desktop->exec));
+         if (desktop->icon)   ecore_hash_set(desktop->group, strdup("Icon"), strdup(desktop->icon));
+         if (desktop->icon_class)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconClass"), strdup(desktop->icon_class));
+         if (desktop->icon_path)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconPath"), strdup(desktop->icon_path));
+         if (desktop->window_class)   ecore_hash_set(desktop->group, strdup("StartupWMClass"), strdup(desktop->window_class));
+         if (desktop->categories)   ecore_hash_set(desktop->group, strdup("Categories"), strdup(desktop->categories));
+	 ecore_hash_remove(desktop->group, "X-KDE-StartupNotify");
+         if (desktop->startup)
+	    {
+               if (desktop->startup[0] == '1')
+	          ecore_hash_set(desktop->group, strdup("StartupNotify"), strdup("true"));
+	       else
+	          ecore_hash_set(desktop->group, strdup("StartupNotify"), strdup("false"));
+	    }
+
+         /* FIXME: deal with the ShowIn's. */
+
+         if (desktop->path)   ecore_hash_set(desktop->group, strdup("Path"), strdup(desktop->path));
+         if (desktop->deletiondate)   ecore_hash_set(desktop->group, strdup("DeletionDate"), strdup(desktop->deletiondate));
+
+	 if (desktop->original_path)
+	    {
+               FILE *f;
+               Ecore_List *list;
+               char *key;
+
+               ecore_file_unlink(desktop->original_path);
+               f = fopen(desktop->original_path, "wb");
+               list = ecore_hash_keys(desktop->group);
+               if ((!f) || (!list)) return;
+
+               fprintf(f, "[Desktop Entry]\n");
+	       ecore_list_goto_first(list);
+               while ((key = (char *) ecore_list_next(list)))
+	          fprintf(f, "%s=%s\n", key, (char *) ecore_hash_get(desktop->group, key));
+               fclose(f);
+	    }
+      }
+}
+
+
 
 /**
  * Setup what ever needs to be setup to support Ecore_Desktop.
@@ -443,6 +525,10 @@ ecore_desktop_destroy(Ecore_Desktop * desktop)
 void
 _ecore_desktop_destroy(Ecore_Desktop * desktop)
 {
+   if (desktop->original_path)
+      free(desktop->original_path);
+   if (desktop->original_lang)
+      free(desktop->original_lang);
    if (desktop->eap_name)
       free(desktop->eap_name);
    if (desktop->icon_class)
@@ -483,3 +569,4 @@ ecore_desktop_home_get()
 
    return strdup(home);
 }
+

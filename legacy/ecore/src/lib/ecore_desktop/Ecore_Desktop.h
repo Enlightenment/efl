@@ -37,6 +37,8 @@ extern Ecore_List         *ecore_desktop_paths_xsessions;
 struct _Ecore_Desktop
 {
    Ecore_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn;
+   char               *original_path;
+   char               *original_lang;
    char               *eap_name;
    char               *name;
    char               *generic;
@@ -131,6 +133,7 @@ extern              "C"
    EAPI int            ecore_desktop_shutdown(void);
    Ecore_Hash         *ecore_desktop_ini_get(const char *file);
    Ecore_Desktop      *ecore_desktop_get(const char *file, const char *lang);
+   void                ecore_desktop_save(Ecore_Desktop * desktop);
    void                ecore_desktop_destroy(Ecore_Desktop * desktop);
 
 
