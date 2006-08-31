@@ -108,47 +108,40 @@ ecore_file_recursive_rm(const char *dir)
 {
    DIR                *dirp;
    struct dirent      *dp;
-   int                ret;
+   char               path[PATH_MAX], buf[PATH_MAX];;
+   struct             stat st;
 
-   if (!ecore_file_is_dir(dir))
-     return ecore_file_unlink(dir);
 
-   dirp = opendir(dir);
-   if (!dirp) return 0;
+   if (stat(dir, &st) == -1) return 0;
 
-   ret = 1;
-   while ((dp = readdir(dirp)))
+   if (readlink(dir, buf, sizeof(buf)) > 0)
      {
-	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
-	  {
-	     char path[PATH_MAX], buf[PATH_MAX];;
-	     struct stat st;
-
-	     snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
-	     if (stat(path, &st) == -1)
-	       {
-		  ret = 0;
-		  continue;
-	       }
-
-	     if ((S_ISDIR(st.st_mode) &&
-		  (readlink(path, buf, sizeof(buf)) <= 0)))
-	       {
-		  ecore_file_recursive_rm(path);
-		  ecore_file_rmdir(path);
-	       }
-	     else
-	       {
-		  ecore_file_unlink(path);
-	       }
-	  }
+	ecore_file_unlink(dir);
      }
-   closedir(dirp);
+   else if (S_ISDIR(st.st_mode))
+     {
+	dirp = opendir(dir);
 
-   if (!ecore_file_rmdir(dir))
-     ret = 0;
+	if (dirp)
+	  {
+	     while ((dp = readdir(dirp)))
+	       {
+		  if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
+		    {
+		       snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
+		       ecore_file_recursive_rm(path);
+		    }
+	       }
+	     closedir(dirp);
+	  }
+	ecore_file_rmdir(dir);
+     }
+   else
+     {
+	ecore_file_unlink(dir);
+     }
 
-   return ret;
+   return 1;
 }
 
 EAPI int
