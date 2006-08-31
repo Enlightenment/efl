@@ -121,7 +121,7 @@ ecore_file_recursive_rm(const char *dir)
      {
 	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
 	  {
-	     char path[PATH_MAX];
+	     char path[PATH_MAX], buf[PATH_MAX];;
 	     struct stat st;
 
 	     snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
@@ -131,12 +131,13 @@ ecore_file_recursive_rm(const char *dir)
 		  continue;
 	       }
 
-	     if (S_ISDIR(st.st_mode))
+	     if ((S_ISDIR(st.st_mode) &&
+		  (readlink(path, buf, sizeof(buf)) <= 0)))
 	       {
 		  ecore_file_recursive_rm(path);
 		  ecore_file_rmdir(path);
 	       }
-	     else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
+	     else
 	       {
 		  ecore_file_unlink(path);
 	       }
