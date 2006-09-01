@@ -126,7 +126,7 @@ ecore_desktop_tree_merge(Ecore_Desktop_Tree * tree, int before,
 						  sizeof
 						  (Ecore_Desktop_Tree_Element));
 	tree->size += size;
-	for (i = tree->size - 1; i > before; i--)
+	for (i = tree->size - 1; (i > before) && ((i - size) > 0); i--)
 	  {
 	     tree->elements[i].element = tree->elements[i - size].element;
 	     tree->elements[i].type = tree->elements[i - size].type;

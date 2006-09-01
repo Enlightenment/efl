@@ -170,8 +170,21 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack, int level
 
 	     /* I can safely assume that they are all strings. */
 	     text = (char *)merge_stack->elements[i].element;
+/* printf("---  %s  ---  %s\n", text, file);
+	     if (text)
+	     if (file) */
 	     if (strcmp(text, file) == 0)
 	       {
+/* FIXME: valgrind says -
+==5761== Conditional jump or move depends on uninitialised value(s)
+==5761==    at 0x1B90565C: strcmp (in /usr/lib/valgrind/vgpreload_memcheck.so)
+==5761==    by 0x1BA3E984: _ecore_desktop_menu_get0 (ecore_desktop_menu.c:176)
+==5761==    by 0x1BA3FE3F: _ecore_desktop_menu_merge (ecore_desktop_menu.c:1146)
+==5761==    by 0x1BA3D5A2: ecore_desktop_tree_foreach (ecore_desktop_tree.c:267)
+ * which is the strcmp just above.  But it doesn't complain about the first two if's, 
+ * or the printf, which I inserted to try and track this down.
+ * No idea what it actually is complaining about, so I'll comment it for future study.
+ */
 		  fprintf(stderr,
 			  "\n### Oops, infinite menu merging loop detected at %s\n",
 			  file);
@@ -1134,7 +1147,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 
 		  /* FIXME: Actually implement this when I have some menus that will exercise it. */
 		  merge_path[0] = '\0';
-		  printf("\n### Didn't expect a MergeFile parent type\n");
+		  printf("\n### Didn't expect a MergeFile parent type in the FDO menu.  onefang must write more code now.\n");
 	       }
 	     if (merge_path[0] != '\0')
 	       {
