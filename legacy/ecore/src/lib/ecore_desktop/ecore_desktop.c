@@ -308,15 +308,34 @@ ecore_desktop_get(const char *file, const char *lang)
 			       }
 		            if (exe)
 		               {
-			          if (done)
-			             strcat(result->icon_class, ",");
-			          strcat(result->icon_class, exe);
+	                           char *tmp;
+
+                                   tmp = strdup(ecore_file_get_file(exe));
+	                           if (tmp)
+	                             {
+				        p = tmp;
+	                                while (*p != '\0')
+	                                   {
+			                      if (*p == ' ')
+					      {
+				                 *p = '\0';
+						 break;
+					      }
+		                              p++;
+	                                   }
+			                if (done)
+			                   strcat(result->icon_class, ",");
+			                strcat(result->icon_class, tmp);
+				        done = 1;
+					free(tmp);
+				     }
 			       }
 		            if (categories)
 		               {
 			          if (done)
 			             strcat(result->icon_class, ",");
 			          strcat(result->icon_class, categories);
+			          done = 1;
 			       }
 			    p = result->icon_class;
 	                    while (*p != '\0')

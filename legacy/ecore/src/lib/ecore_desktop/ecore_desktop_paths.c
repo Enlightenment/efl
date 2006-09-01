@@ -196,6 +196,8 @@ ecore_desktop_paths_init()
 					   "/usr/local/share/pixmaps/");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_icons,
 					   "/usr/share/pixmaps/");
+	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_icons,
+					   "/usr/share/update-desktop-files/kappfinder-icons/");
 	gnome = getenv("GNOME_ICON_PATH");
 	if (gnome)
 	   _ecore_desktop_paths_check_and_add(ecore_desktop_paths_icons, gnome);
