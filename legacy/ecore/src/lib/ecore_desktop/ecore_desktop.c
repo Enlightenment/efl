@@ -257,6 +257,12 @@ ecore_desktop_get(const char *file, const char *lang)
 			  }
 		       result->icon =
 			  (char *)ecore_hash_get(result->group, "Icon");
+
+		       result->icon_class =
+			  (char *)ecore_hash_get(result->group, "X-Enlightenment-IconClass");
+		       result->icon_path =
+			  (char *)ecore_hash_get(result->group, "X-Enlightenment-IconPath");
+
 		       result->categories =
 			  (char *)ecore_hash_get(result->group, "Categories");
 		       if (result->categories)
