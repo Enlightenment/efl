@@ -12,8 +12,8 @@ static const char   *_ecore_desktop_icon_find0(const char *icon,
 static int _ecore_desktop_icon_theme_list_add(void *data, const char *path);
 void _ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme * icon_theme);
 
-
-static const char  *ext[] = { ".png", ".svgz", ".svg", ".xpm", "", NULL };
+/* FIXME: We need a way for the client to disable searching for any of these that they don't support. */
+static const char  *ext[] = { ".edj", ".png", ".svgz", ".svg", ".xpm", "", NULL };
 static int          init_count = 0;
 static Ecore_Hash  *icon_theme_cache;
 static int          loaded = 0;
@@ -38,7 +38,7 @@ static int          loaded = 0;
  * @param   icon The name of the required icon.
  * @param   icon_size The size of the required icon.
  * @param   icon_theme The theme of the required icon.
- * @return  The full path to an icon file.
+ * @return  The full path to an icon file, or NULL.
  * @ingroup Ecore_Desktop_Icon_Group
  */
 
