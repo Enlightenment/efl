@@ -297,22 +297,44 @@ ecore_desktop_get(const char *file, const char *lang)
  *    Use (from .desktop) eap name,exe name,categories.  It's case sensitive, the reccomendation is to lowercase it.
  *    It should be most specific to most generic.  firefox,browser,internet for instance
 */
-                      if (eap_name)  size += strlen(eap_name);
-                      if (exe)  size += strlen(exe);
-                      if (categories)  size += strlen(categories);
-		      result->icon_class = malloc(size + 3);
+
+		      /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
+		       * Otherwise, put that full path into the icon_path member.
+		       */
+		      if ((result->icon) && (result->icon[0] != '/'))
+                         size += strlen(result->icon) + 1;
+		      else
+		         {
+			    result->icon_path = result->icon;
+			    result->icon = NULL;
+			 }
+                      if (eap_name)  size += strlen(eap_name) + 1;
+                      if (exe)  size += strlen(exe) + 1;
+                      if (categories)  size += strlen(categories) + 1;
+		      result->icon_class = malloc(size + 1);
 		      if (result->icon_class)
 		         {
 	                    char *p;
 			    int done = 0;
 
 		            result->icon_class[0] = '\0';
-		            if (eap_name)
+			    if ((result->icon) && (result->icon[0] != '/') && (result->icon[0] != '\0'))
+			       {
+			          strcat(result->icon_class, result->icon);
+				  done = 1;
+				  result->icon = NULL;
+			       }
+			    /* We do this here coz we don't want to lower case the result->icon part later. */
+			    p = result->icon_class;
+			    p += strlen(result->icon_class);
+		            if ((eap_name) && (eap_name[0] != '\0'))
 		               {
+			          if (done)
+			             strcat(result->icon_class, ",");
 			          strcat(result->icon_class, eap_name);
 				  done = 1;
 			       }
-		            if (exe)
+		            if ((exe) && (exe[0] != '\0'))
 		               {
 	                           char *tmp;
 
@@ -336,14 +358,13 @@ ecore_desktop_get(const char *file, const char *lang)
 					free(tmp);
 				     }
 			       }
-		            if (categories)
+		            if ((categories) && (categories[0] != '\0'))
 		               {
 			          if (done)
 			             strcat(result->icon_class, ",");
 			          strcat(result->icon_class, categories);
 			          done = 1;
 			       }
-			    p = result->icon_class;
 	                    while (*p != '\0')
 	                       {
 			          if (*p == ';')

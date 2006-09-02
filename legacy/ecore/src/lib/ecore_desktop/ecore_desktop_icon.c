@@ -45,8 +45,8 @@ static int          loaded = 0;
 const char               *
 ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *icon_theme)
 {
-   char                icn[PATH_MAX], path[PATH_MAX];
-   const char         *dir; 
+   const char         *dir = NULL, *icn;
+   Ecore_List         *icons;
 
    if (icon == NULL)
       return NULL;
@@ -60,31 +60,25 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *ico
    if (icon_theme == NULL)
       icon_theme="hicolor";
 
-   snprintf(icn, sizeof(icn), "%s", icon);
+   icons = ecore_desktop_paths_to_list(icon);
+   ecore_list_goto_first(icons);
+   while ((icn = (char *) ecore_list_next(icons)))
+      {
 #ifdef DEBUG
-   fprintf(stderr, "\tTrying To Find Icon %s\n", icn);
+         fprintf(stderr, "\tTrying To Find Icon %s\n", icn);
 #endif
+         /* Check for unsupported extension */
+         if (!strcmp(icn + strlen(icn) - 4, ".ico"))
+            continue;
 
-   /* Check For Unsupported Extension */
-   if (!strcmp(icon + strlen(icon) - 4, ".ico"))
-      return NULL;
+         dir = _ecore_desktop_icon_find0(icn, icon_size, icon_theme);
+         if (dir)
+            {
+               dir = strdup(dir);
+	       break;
+            }
+      }
 
-   if (!icon_theme)
-     {
-	/* Check If Dir Supplied In Desktop File */
-	dir = ecore_file_get_dir(icn);
-	if (!strcmp(dir, icn) == 0)
-	  {
-	     snprintf(path, PATH_MAX, "%s", icn);
-	     /* Check Supplied Dir For Icon */
-	     if (ecore_file_exists(path))
-		return strdup(icn);
-	  }
-     }
-
-   dir = _ecore_desktop_icon_find0(icon, icon_size, icon_theme);
-   if (dir)
-      dir = strdup(dir);
    return dir;
 }
 

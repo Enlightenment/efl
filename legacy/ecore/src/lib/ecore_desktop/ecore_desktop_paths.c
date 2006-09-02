@@ -188,7 +188,7 @@ ecore_desktop_paths_init()
 	char               *gnome;
 
 	ecore_desktop_paths_icons =
-	   _ecore_desktop_paths_get("~/.icons", "XDG_DATA_HOME",
+	   _ecore_desktop_paths_get("~/.e/e/icons:~/.icons", "XDG_DATA_HOME",
 				    "XDG_DATA_DIRS", "~/.local/share:~/.kde/share",
 				    "/usr/local/share:/usr/share:/usr/X11R6/share", "icons:pixmaps",
 				    "dist/icons", "icon:pixmap");
