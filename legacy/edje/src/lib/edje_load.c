@@ -433,6 +433,41 @@ edje_file_collection_list_free(Evas_List *lst)
      }
 }
 
+/** Determine whether a group matching glob exists in an edje file.
+ * @param file The file path
+ * @param glob A glob to match on 
+ *
+ * @return 1 if a match is found, 0 otherwise
+ */   
+EAPI int
+edje_file_group_exists(const char *file, const char *glob)
+{
+   Evas_List *lst = NULL;
+   Edje_File *edf;
+   int error_ret = 0;
+
+   if ((!file) || (!*file)) return NULL;
+   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
+   if (edf != NULL)
+     {
+	if (edf->collection_dir)
+	  {
+	     Evas_List *l;
+	
+	     for (l = edf->collection_dir->entries; l; l = l->next)
+	       {
+		  Edje_Part_Collection_Directory_Entry *ce;
+	     
+		  ce = l->data;
+		  if (_edje_glob_match(ce->entry, glob)) return 1;
+	       }
+	  }
+	_edje_cache_file_unref(edf);   
+     }
+   return 0;
+}
+
+
 /* FIXDOC: Verify/Expand */
 /** Get edje file data
  * @param file The file

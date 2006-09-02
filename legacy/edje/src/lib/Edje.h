@@ -169,6 +169,7 @@ extern "C" {
    /* edje_load.c */
    EAPI Evas_List   *edje_file_collection_list       (const char *file);
    EAPI void         edje_file_collection_list_free  (Evas_List *lst);
+   EAPI int          edje_file_group_exists          (const char *file, const char *glob);
    EAPI char        *edje_file_data_get              (const char *file, const char *key);
    EAPI void         edje_file_cache_set             (int count);
    EAPI int          edje_file_cache_get             (void);
