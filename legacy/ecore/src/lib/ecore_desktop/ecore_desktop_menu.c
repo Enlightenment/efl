@@ -1145,7 +1145,9 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 		   * The first one found wins, if none are found, don't merge anything.
 		   */
 
-		  /* FIXME: Actually implement this when I have some menus that will exercise it. */
+		  /* FIXME: Actually implement this when I have some menus that will exercise it. 
+		   * Slackware uses them.
+		   */
 		  merge_path[0] = '\0';
 		  printf("\n### Didn't expect a MergeFile parent type in the FDO menu.  onefang must write more code now.\n");
 	       }
