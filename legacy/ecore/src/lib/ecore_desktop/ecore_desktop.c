@@ -334,76 +334,79 @@ ecore_desktop_get(const char *file, const char *lang)
 		      /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
 		       * Otherwise, put that full path into the icon_path member.
 		       */
-		      size = 0;
-		      if ((result->icon) && (result->icon[0] != '/'))
-                         size += strlen(result->icon) + 1;
-                      if (eap_name)  size += strlen(eap_name) + 1;
-                      if (exe)  size += strlen(exe) + 1;
-                      if (categories)  size += strlen(categories) + 1;
-		      result->icon_class = malloc(size + 1);
-		      if (result->icon_class)
+		      if (!result->icon_class)
 		         {
-	                    char *p;
-			    int done = 0;
-
-		            result->icon_class[0] = '\0';
-			    if ((result->icon) && (result->icon[0] != '/') && (result->icon[0] != '\0'))
-			       {
-			          strcat(result->icon_class, result->icon);
-				  done = 1;
-				  result->icon = NULL;
-			       }
-			    /* We do this here coz we don't want to lower case the result->icon part later. */
-			    p = result->icon_class;
-			    p += strlen(result->icon_class);
-		            if ((eap_name) && (eap_name[0] != '\0'))
+		            size = 0;
+		            if ((result->icon) && (result->icon[0] != '/'))
+                               size += strlen(result->icon) + 1;
+                            if (eap_name)  size += strlen(eap_name) + 1;
+                            if (exe)  size += strlen(exe) + 1;
+                            if (categories)  size += strlen(categories) + 1;
+		            result->icon_class = malloc(size + 1);
+		            if (result->icon_class)
 		               {
-			          if (done)
-			             strcat(result->icon_class, ",");
-			          strcat(result->icon_class, eap_name);
-				  done = 1;
-			       }
-		            if ((exe) && (exe[0] != '\0'))
-		               {
-	                           char *tmp;
+	                          char *p;
+			          int done = 0;
 
-                                   tmp = strdup(ecore_file_get_file(exe));
-	                           if (tmp)
-	                             {
-					char *p2;
-					
-				        p2 = tmp;
-	                                while (*p2 != '\0')
-	                                   {
-			                      if (*p2 == ' ')
-					      {
-				                 *p2 = '\0';
-						 break;
-					      }
-		                              p2++;
-	                                   }
+		                  result->icon_class[0] = '\0';
+			          if ((result->icon) && (result->icon[0] != '/') && (result->icon[0] != '\0'))
+			             {
+			                strcat(result->icon_class, result->icon);
+				        done = 1;
+				        result->icon = NULL;
+			             }
+			          /* We do this here coz we don't want to lower case the result->icon part later. */
+			          p = result->icon_class;
+			          p += strlen(result->icon_class);
+		                  if ((eap_name) && (eap_name[0] != '\0'))
+		                     {
 			                if (done)
 			                   strcat(result->icon_class, ",");
-			                strcat(result->icon_class, tmp);
+			                strcat(result->icon_class, eap_name);
 				        done = 1;
-					free(tmp);
-				     }
+			             }
+		                  if ((exe) && (exe[0] != '\0'))
+		                     {
+	                                 char *tmp;
+
+                                         tmp = strdup(ecore_file_get_file(exe));
+	                                 if (tmp)
+	                                   {
+					      char *p2;
+					
+				              p2 = tmp;
+	                                      while (*p2 != '\0')
+	                                         {
+			                            if (*p2 == ' ')
+					            {
+				                       *p2 = '\0';
+						       break;
+					            }
+		                                    p2++;
+	                                         }
+			                      if (done)
+			                         strcat(result->icon_class, ",");
+			                      strcat(result->icon_class, tmp);
+				              done = 1;
+					      free(tmp);
+				           }
+			             }
+		                  if ((categories) && (categories[0] != '\0'))
+		                     {
+			                if (done)
+			                   strcat(result->icon_class, ",");
+			                strcat(result->icon_class, categories);
+			                done = 1;
+			             }
+	                          while (*p != '\0')
+	                             {
+			                if (*p == ';')
+				           *p = ',';
+				        else
+	                                   *p = tolower(*p);
+		                        p++;
+	                             }
 			       }
-		            if ((categories) && (categories[0] != '\0'))
-		               {
-			          if (done)
-			             strcat(result->icon_class, ",");
-			          strcat(result->icon_class, categories);
-			          done = 1;
-			       }
-	                    while (*p != '\0')
-	                       {
-			          if (*p == ';')
-				     *p = ',';
-				  else
-	                             *p = tolower(*p);
-		                  p++;
-	                       }
 			 }
 		    }
 		  else
