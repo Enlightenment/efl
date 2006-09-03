@@ -1,6 +1,0 @@
-usr/bin/embryo-config
-usr/include/*
-usr/lib/pkgconfig/*
-usr/lib/lib*.a
-usr/lib/lib*.so
-usr/lib/lib*.la

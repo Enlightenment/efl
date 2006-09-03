@@ -3,10 +3,10 @@ Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
 Build-Depends: debhelper (>= 4.0.0), automake1.7 | automaken, libtool
-Standards-Version: 3.6.0
+Standards-Version: 3.7.2
 
 Package: embryo0-bin
-Section: compilers
+Section: devel
 Architecture: any
 Provides: embryo-bin
 Depends: ${shlibs:Depends}
@@ -14,11 +14,12 @@ Description: SMALL compiler creating Embryo bytecode
  This package contains the compiler embryo_cc.
 
 Package: embryo0-debug
-Section: compilers
+Section: devel
 Architecture: any
 Provides: embryo-debug
 Depends: ${shlibs:Depends}
 Description: Debugging execution utility for embryo compiled bytecode.
+ This package contains the debugging utility.
 
 Package: libembryo0-dev
 Section: libdevel
@@ -32,7 +33,7 @@ Package: libembryo0
 Section: libs
 Architecture: any
 Provides: libembryo
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}
 Suggests: embryo0-bin (= ${Source-Version})
 Description: SMALL-based abstract machine (AMX) bytecode interpreter
  Embryo is primarily a shared library that gives you an API to load
