@@ -370,15 +370,17 @@ ecore_desktop_get(const char *file, const char *lang)
                                    tmp = strdup(ecore_file_get_file(exe));
 	                           if (tmp)
 	                             {
-				        p = tmp;
-	                                while (*p != '\0')
+					char *p2;
+					
+				        p2 = tmp;
+	                                while (*p2 != '\0')
 	                                   {
-			                      if (*p == ' ')
+			                      if (*p2 == ' ')
 					      {
-				                 *p = '\0';
+				                 *p2 = '\0';
 						 break;
 					      }
-		                              p++;
+		                              p2++;
 	                                   }
 			                if (done)
 			                   strcat(result->icon_class, ",");
