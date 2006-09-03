@@ -255,13 +255,46 @@ ecore_desktop_get(const char *file, const char *lang)
 	                          free(tmp);
 	                       }
 			  }
+
+
 		       result->icon =
 			  (char *)ecore_hash_get(result->group, "Icon");
-
 		       result->icon_class =
 			  (char *)ecore_hash_get(result->group, "X-Enlightenment-IconClass");
-		       result->icon_path =
+		       value =
 			  (char *)ecore_hash_get(result->group, "X-Enlightenment-IconPath");
+		       if (value)
+		          result->icon_path = strdup(value);
+
+                       if ((result->icon != NULL) && (result->icon_path == NULL) && (strchr(result->icon, '/') != NULL))
+		          {
+			     if(result->icon[0] == '/')
+			        {
+				   result->icon_path = strdup(result->icon);
+				   result->icon = NULL;
+				}
+			     else   /* It's a relative path. */
+			        {
+				   char *temp;
+
+				   size = strlen(result->original_path) + strlen(result->icon) + 2;
+				   temp = malloc(size);
+				   if (temp)
+				      {
+				         char *dir;
+
+                                         dir = ecore_file_get_dir(result->original_path);
+					 if (dir)
+					    {
+				               sprintf(temp, "%s/%s", dir, result->icon);
+                                               result->icon_path = ecore_file_realpath(temp);
+				               result->icon = NULL;
+					       free(dir);
+					    }
+					 free(temp);
+				      }
+				}
+			  }
 
 		       result->categories =
 			  (char *)ecore_hash_get(result->group, "Categories");
@@ -301,13 +334,9 @@ ecore_desktop_get(const char *file, const char *lang)
 		      /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
 		       * Otherwise, put that full path into the icon_path member.
 		       */
+		      size = 0;
 		      if ((result->icon) && (result->icon[0] != '/'))
                          size += strlen(result->icon) + 1;
-		      else
-		         {
-			    result->icon_path = result->icon;
-			    result->icon = NULL;
-			 }
                       if (eap_name)  size += strlen(eap_name) + 1;
                       if (exe)  size += strlen(exe) + 1;
                       if (categories)  size += strlen(categories) + 1;
@@ -573,6 +602,8 @@ _ecore_desktop_destroy(Ecore_Desktop * desktop)
 {
    if (desktop->original_path)
       free(desktop->original_path);
+   if (desktop->icon_path)
+      free(desktop->icon_path);
    if (desktop->original_lang)
       free(desktop->original_lang);
    if (desktop->eap_name)
