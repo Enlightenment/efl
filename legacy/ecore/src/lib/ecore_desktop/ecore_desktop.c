@@ -337,14 +337,22 @@ ecore_desktop_get(const char *file, const char *lang)
 			  (char *)ecore_hash_get(result->group,
 						 "X-KDE-StartupNotify");
 		       if (value)
-			  result->startup =
-			     (!strcmp(value, "true")) ? "1" : "0";
+			  result->startup = (strcmp(value, "true") == 0);
 		       value =
 			  (char *)ecore_hash_get(result->group,
 						 "StartupNotify");
 		       if (value)
-			  result->startup =
-			     (!strcmp(value, "true")) ? "1" : "0";
+			  result->startup = (strcmp(value, "true") == 0);
+		       value =
+			  (char *)ecore_hash_get(result->group,
+						 "NoDisplay");
+		       if (value)
+			  result->no_display = (strcmp(value, "true") == 0);
+		       value =
+			  (char *)ecore_hash_get(result->group,
+						 "Hidden");
+		       if (value)
+			  result->hidden = (strcmp(value, "true") == 0);
 
 /*
  *    icon/class is a list of standard icons from the theme that can override the icon created above.
@@ -500,13 +508,18 @@ ecore_desktop_save(Ecore_Desktop * desktop)
          if (desktop->window_class)   ecore_hash_set(desktop->group, strdup("StartupWMClass"), strdup(desktop->window_class));
          if (desktop->categories)   ecore_hash_set(desktop->group, strdup("Categories"), strdup(desktop->categories));
 	 ecore_hash_remove(desktop->group, "X-KDE-StartupNotify");
-         if (desktop->startup)
-	    {
-               if (desktop->startup[0] == '1')
-	          ecore_hash_set(desktop->group, strdup("StartupNotify"), strdup("true"));
-	       else
-	          ecore_hash_set(desktop->group, strdup("StartupNotify"), strdup("false"));
-	    }
+	 if (desktop->startup)
+            ecore_hash_set(desktop->group, strdup("StartupNotify"), strdup("true"));
+	 else
+	    ecore_hash_remove(desktop->group, "StartupNotify");
+	 if (desktop->no_display)
+            ecore_hash_set(desktop->group, strdup("NoDisplay"), strdup("true"));
+	 else
+	    ecore_hash_remove(desktop->group, "NoDisplay");
+	 if (desktop->hidden)
+            ecore_hash_set(desktop->group, strdup("Hidden"), strdup("true"));
+	 else
+	    ecore_hash_remove(desktop->group, "Hidden");
 
          /* FIXME: deal with the ShowIn's. */
 

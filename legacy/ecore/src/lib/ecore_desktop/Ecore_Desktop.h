@@ -55,9 +55,11 @@ struct _Ecore_Desktop
    char               *URL;
    char               *file;
    char               *deletiondate;
-   char               *startup;
    char               *window_class;
-   int                 allocated;	/* FIXME: NoDisplay, Hidden */
+   unsigned char       startup : 1;
+   unsigned char       hidden : 1;
+   unsigned char       no_display : 1;
+   unsigned char       allocated : 1;
    /* Actually calling this st_mtime causes compile issues, must be some strange macros at work. */
    time_t              mtime;           /* For checking if the cache is valid. */
 };
