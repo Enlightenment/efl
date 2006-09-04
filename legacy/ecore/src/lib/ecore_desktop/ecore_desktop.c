@@ -1,12 +1,12 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
+
+#include <ctype.h>
+#include <sys/stat.h>
 
 Ecore_List         *ecore_desktop_paths_config = NULL;
 Ecore_List         *ecore_desktop_paths_menus = NULL;
@@ -165,8 +165,23 @@ Ecore_Desktop      *
 ecore_desktop_get(const char *file, const char *lang)
 {
    Ecore_Desktop      *result;
+   struct stat         st;
+   int                 stated = 0;
 
    result = (Ecore_Desktop *) ecore_hash_get(desktop_cache, (char *) file);
+   /* Check if the cache is still valid. */
+   if (result)
+      {
+         if (stat(result->original_path, &st) >= 0)
+	 {
+	    if(st.st_mtime > result->mtime)
+	    {
+	       ecore_hash_remove(desktop_cache, result->original_path);
+	       result = NULL;
+	       stated = 1;
+	    }
+	 }
+      }
    if (!result)
      {
 	result = calloc(1, sizeof(Ecore_Desktop));
@@ -176,6 +191,12 @@ ecore_desktop_get(const char *file, const char *lang)
 	     if (lang)
 	        result->original_lang = strdup(lang);
 	     result->data = ecore_desktop_ini_get(result->original_path);
+	     /* Timestamp the cache, and no need to stat the file twice if the cache was stale. */
+             if ((stated) || (stat(result->original_path, &st) >= 0))
+	     {
+	        result->mtime = st.st_mtime;
+		stated = 1;
+	     }
 	     if (result->data)
 	       {
 		  result->group =

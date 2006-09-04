@@ -2,6 +2,8 @@
 # define _ECORE_DESKTOP_H
 
 #include <Ecore_Data.h>
+#include <sys/types.h>
+
 
 /**
  * @file Ecore_Desktop.h
@@ -56,6 +58,8 @@ struct _Ecore_Desktop
    char               *startup;
    char               *window_class;
    int                 allocated;	/* FIXME: NoDisplay, Hidden */
+   /* Actually calling this st_mtime causes compile issues, must be some strange macros at work. */
+   time_t              mtime;           /* For checking if the cache is valid. */
 };
 typedef struct _Ecore_Desktop Ecore_Desktop;
 

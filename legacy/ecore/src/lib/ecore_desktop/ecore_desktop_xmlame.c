@@ -1,10 +1,10 @@
-#include <fcntl.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
+
+#include <fcntl.h>
+#include <ctype.h>
+#include <sys/stat.h>
+
 
 /** xmlame.c Extensively Mocked Language Approximately Mangled for Enlightenment. 
  *

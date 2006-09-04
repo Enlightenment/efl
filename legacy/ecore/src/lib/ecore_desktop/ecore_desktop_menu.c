@@ -6,15 +6,15 @@
  * optomize into "ugly but fast".
  *
  */
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <libgen.h>
 
 #include <Ecore.h>
 
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
+
+#include <dirent.h>
+#include <sys/stat.h>
+#include <libgen.h>
 
 //#define DEBUG 1
 

@@ -6,16 +6,16 @@
  * excess directory from the paths.
  */
 
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <libgen.h>
-#include <strings.h>
-
 #include <Ecore.h>
 
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
+
+#include <dirent.h>
+#include <sys/stat.h>
+#include <libgen.h>
+#include <strings.h>
+
 
 
 /* This really slows things down and no doubt drags in some KDE bloat at start up.
