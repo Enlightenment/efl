@@ -735,7 +735,8 @@ _ecore_desktop_menu_legacy_menu(void *data, const char *path)
 	if (menu_path[i] == '/')
 	   menu_count++;
      }
-   while (menu_count >= count)
+   /* FIXME: The (legacy_data->current) test is just to patch a seggie, find out why. */
+   while ((menu_count >= count) && (legacy_data->current))
      {
 	legacy_data->current = legacy_data->current->parent;
 	menu_count--;
@@ -962,6 +963,9 @@ _ecore_desktop_menu_expand_apps(struct _ecore_desktop_menu_unxml_data
 	   sprintf(dir, "%s/%s", unxml_data->path, app_dir);
 	our_data.path = dir;
 	our_data.length = strlen(dir);
+#ifdef DEBUG
+                  printf("EXPANDING - _ecore_desktop_menu_expand_apps(unxml_data, %s) - %s\n", app_dir, dir);
+#endif
 	ecore_desktop_paths_recursive_search(dir, NULL, -1, NULL,
 					     _ecore_desktop_menu_check_app,
 					     &our_data);
@@ -1002,7 +1006,7 @@ _ecore_desktop_menu_check_app(void *data, const char *path)
 #endif
      }
 
-   return 1;
+   return 0;
 }
 
 static int
@@ -1463,7 +1467,7 @@ _ecore_desktop_menu_inherit_apps(void *value, void *user_data)
    key = (char *)node->key;
    app = (char *)node->value;
 #ifdef DEBUG
-   printf("CHECKING %s - %s\n", key, app);
+   printf("CHECKING %s - %s\n", app, key);
 #endif
    if (!ecore_hash_get(pool, key))
       ecore_hash_set(pool, strdup(key), strdup(app));
@@ -1499,7 +1503,7 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	           ecore_hash_set(generate_data->apps, key, strdup(app));
 #ifdef DEBUG
 	           printf("INCLUDING %s%s - %s\n",
-		          ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
+		          ((generate_data->unallocated) ? "UNALLOCATED " : ""), app, key);
 #endif
 	        }
 	      else
@@ -1507,7 +1511,7 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	           ecore_hash_remove(generate_data->apps, key);
 #ifdef DEBUG
 	           printf("EXCLUDING %s%s - %s\n",
-		          ((generate_data->unallocated) ? "UNALLOCATED " : ""), key, app);
+		          ((generate_data->unallocated) ? "UNALLOCATED " : ""), app, key);
 #endif
 	        }
            }

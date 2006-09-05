@@ -127,7 +127,7 @@ ecore_desktop_paths_init()
 	   _ecore_desktop_paths_get(NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
 				    "~/.local/share:~/.kde/share",
 				    "/usr/local/share:/usr/share",
-				    "applications:applnk",
+				    "applications:applnk:applications/kde",
 				    "dist/desktop-files:dist/short-menu:gnome/apps",
 				    "xdgdata-apps:apps");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_desktops,
