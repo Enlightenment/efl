@@ -845,3 +845,23 @@ ecore_desktop_paths_to_list(const char *paths)
      }
    return result;
 }
+
+EAPI int 
+ecore_desktop_paths_for_each(Ecore_Desktop_Paths_Type type, Ecore_For_Each function, void *user_data)
+{
+   Ecore_List *list = NULL;
+
+   switch (type)
+   {
+      case ECORE_DESKTOP_PATHS_CONFIG : list = ecore_desktop_paths_config;
+      case ECORE_DESKTOP_PATHS_MENUS : list = ecore_desktop_paths_menus;
+      case ECORE_DESKTOP_PATHS_DIRECTORIES : list = ecore_desktop_paths_directories;
+      case ECORE_DESKTOP_PATHS_DESKTOPS : list = ecore_desktop_paths_desktops;
+      case ECORE_DESKTOP_PATHS_ICONS : list = ecore_desktop_paths_icons;
+      case ECORE_DESKTOP_PATHS_KDE_LEGACY : list = ecore_desktop_paths_kde_legacy;
+      case ECORE_DESKTOP_PATHS_XSESSIONS : list = ecore_desktop_paths_xsessions;
+   }
+   if (list)
+      return ecore_list_for_each(list, function, user_data);
+   return 0;
+}

@@ -77,13 +77,24 @@ struct _Ecore_Desktop_Icon_Theme
 };
 typedef struct _Ecore_Desktop_Icon_Theme Ecore_Desktop_Icon_Theme;
 
+enum _Ecore_Desktop_Paths_Type
+{
+   ECORE_DESKTOP_PATHS_CONFIG = 0,
+   ECORE_DESKTOP_PATHS_MENUS = 1,
+   ECORE_DESKTOP_PATHS_DIRECTORIES = 2,
+   ECORE_DESKTOP_PATHS_DESKTOPS = 3,
+   ECORE_DESKTOP_PATHS_ICONS = 4,
+   ECORE_DESKTOP_PATHS_KDE_LEGACY = 5,
+   ECORE_DESKTOP_PATHS_XSESSIONS = 6
+};
+typedef enum _Ecore_Desktop_Paths_Type Ecore_Desktop_Paths_Type;
 
 enum _Ecore_Desktop_Tree_Element_Type
 {
    ECORE_DESKTOP_TREE_ELEMENT_TYPE_NULL = 0,
    ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING = 1,
    ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE = 2,
-   ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH = 3,
+   ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH = 3
 };
 typedef enum _Ecore_Desktop_Tree_Element_Type Ecore_Desktop_Tree_Element_Type;
 
@@ -118,6 +129,7 @@ extern              "C"
 								const char
 								*path),
 						   void *data);
+   EAPI int            ecore_desktop_paths_for_each(Ecore_Desktop_Paths_Type type, Ecore_For_Each function, void *user_data);
    char               *ecore_desktop_paths_recursive_search(const char *path, const char *file, int sub,
 							    int (*dir_func)
 							    (void *data,
