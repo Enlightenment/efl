@@ -55,6 +55,7 @@ struct _ecore_desktop_menu_legacy_data
    int                 length, menu_length, level;
 };
 
+static int                 _ecore_desktop_menu_make_apps(const void *data, Ecore_Desktop_Tree * tree, int element, int level);
 static Ecore_Desktop_Tree *_ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack, int level);
 static Ecore_Desktop_Tree *_ecore_desktop_menu_create_menu();
 static int          _ecore_desktop_menu_unxml(const void *data,
@@ -112,6 +113,78 @@ static int          _ecore_desktop_menu_apply_rules(struct
  *
  * Functions that deal with freedesktop.org menus.
  */
+
+
+EAPI void
+ecore_desktop_menu_for_each(void (*func)(char *name, char *path, Ecore_Hash *apps))
+{
+   char *menu_file;
+   
+   /* Find the main menu file. */
+   menu_file = ecore_desktop_paths_file_find(ecore_desktop_paths_menus, 
+						  "applications.menu", -1, NULL, NULL);
+   if (!menu_file)
+      {
+         /* Try various quirks of various systems. */
+         menu_file = ecore_desktop_paths_file_find(ecore_desktop_paths_menus, 
+						  "debian-menu.menu", -1, NULL, NULL);
+         /* FIXME: If all else fails, run debians funky menu generator shit. */
+      }
+
+   if (menu_file)
+      {
+//         char *path;
+	     
+//	 path = ecore_file_get_dir(menu_file);
+//	 if (path)
+	    {
+	       Ecore_Desktop_Tree *menus;
+		  
+	       /* convert the xml into menus */
+	       menus = ecore_desktop_menu_get(menu_file);
+	       if (menus)
+	          {
+		     /* create the .desktop and order files from the menu */
+		     ecore_desktop_tree_foreach(menus, 0, _ecore_desktop_menu_make_apps, func);
+// FIXME: Can't free this just yet, causes major memory corruption.
+//		     ecore_desktop_tree_del(menus);
+		  }
+//	       free(path);
+	       
+	    }
+	 free(menu_file);
+      }
+}
+
+static int
+_ecore_desktop_menu_make_apps(const void *data, Ecore_Desktop_Tree * tree, int element, int level)
+{
+   if (tree->elements[element].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
+     {
+        if (strncmp((char *)tree->elements[element].element, "<MENU ", 6) == 0)
+          {
+             char *path;
+             char *name;
+             Ecore_Hash *apps;
+	     void (*func)(char *name, char *path, Ecore_Hash *apps);
+
+             func = data;
+             name = (char *)tree->elements[element].element;
+             path = (char *)tree->elements[element + 1].element;
+#ifdef DEBUG
+             printf("MAKING MENU - %s \t\t%s\n", path, name);
+#endif
+//             pool = (Ecore_Hash *) tree->elements[element + 2].element;
+             apps = (Ecore_Hash *) tree->elements[element + 4].element;
+	     path = &path[11];
+
+             if (func)
+                func(name, path, apps);
+          }
+     }
+   return 0;
+}
+
 
 /**
  * Decode a freedesktop.org menu XML jungle.

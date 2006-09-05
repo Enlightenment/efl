@@ -28,14 +28,6 @@
  * For menu file details, see @ref Ecore_Desktop_Menu_Group.
  */
 
-extern Ecore_List         *ecore_desktop_paths_config;
-extern Ecore_List         *ecore_desktop_paths_menus;
-extern Ecore_List         *ecore_desktop_paths_directories;
-extern Ecore_List         *ecore_desktop_paths_desktops;
-extern Ecore_List         *ecore_desktop_paths_icons;
-extern Ecore_List         *ecore_desktop_paths_kde_legacy;
-extern Ecore_List         *ecore_desktop_paths_xsessions;
-
 struct _Ecore_Desktop
 {
    Ecore_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn;
@@ -155,6 +147,7 @@ extern              "C"
    void                ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme *icon_theme);
 
 
+   EAPI void           ecore_desktop_menu_for_each(void (*func)(char *name, char *path, Ecore_Hash *apps));
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
 
 
