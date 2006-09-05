@@ -17,6 +17,8 @@
 #include <strings.h>
 
 
+/* FIXME: Add functions to add paths before the user paths, after the user but before the system paths, and at the end. */
+
 
 /* This really slows things down and no doubt drags in some KDE bloat at start up.
  * To work around this, I add a few extra things to try in the _ecore_desktop_paths_get()

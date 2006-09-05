@@ -30,6 +30,11 @@
 
 struct _Ecore_Desktop
 {
+   /* FIXME: Do the ECORE_MAGIC thing here.
+    * While this might help with segfaults and such, I think it's a waste of 
+    * space and cycles that just covers up bugs.  On the other hand, it makes 
+    * for a more robust library, and it's used everywhere else in ecore.
+    */
    Ecore_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn;
    char               *original_path;
    char               *original_lang;
