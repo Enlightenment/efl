@@ -33,7 +33,9 @@ static int                 _ecore_file_monitor_inotify_handler(void *data, Ecore
 static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
 static void                _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em,
 							      char *file, int mask);
+#if 0
 static void                _ecore_file_monitor_inotify_print(char *file, int mask);
+#endif
 
 static inline int inotify_init(void);
 static inline int inotify_add_watch(int fd, const char *name, __u32 mask);
@@ -273,6 +275,7 @@ inotify_rm_watch(int fd, __u32 wd)
    return syscall(__NR_inotify_rm_watch, fd, wd);
 }
 
+#if 0
 static void
 _ecore_file_monitor_inotify_print(char *file, int mask)
 {
@@ -316,4 +319,5 @@ _ecore_file_monitor_inotify_print(char *file, int mask)
 	printf("Inotify unmount %s: %s\n", type, file);
      }
 }
+#endif
 #endif /* HAVE_INOTIFY */
