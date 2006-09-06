@@ -46,10 +46,10 @@ extern "C" {
    typedef void (*Ecore_Free_Cb) (void *data);
 # define ECORE_FREE_CB(func) ((Ecore_Free_Cb)func)
    
-   typedef unsigned int (*Ecore_Hash_Cb) (void *key);
+   typedef unsigned int (*Ecore_Hash_Cb) (const void *key);
 # define ECORE_HASH_CB(function) ((Ecore_Hash_Cb)function)
    
-   typedef int (*Ecore_Compare_Cb) (void *data1, void *data2);
+   typedef int (*Ecore_Compare_Cb) (const void *data1, const void *data2);
 # define ECORE_COMPARE_CB(function) ((Ecore_Compare_Cb)function)
    
    typedef struct _ecore_list Ecore_List;
@@ -75,11 +75,11 @@ extern "C" {
 				 list of current node */
    };
    
-   EAPI int ecore_direct_compare(void *key1, void *key2);
-   EAPI int ecore_str_compare(void *key1, void *key2);
+   EAPI int ecore_direct_compare(const void *key1, const void *key2);
+   EAPI int ecore_str_compare(const void *key1, const void *key2);
    
-   EAPI unsigned int ecore_direct_hash(void *key);
-   EAPI unsigned int ecore_str_hash(void *key);
+   EAPI unsigned int ecore_direct_hash(const void *key);
+   EAPI unsigned int ecore_str_hash(const void *key);
    
    /* Creating and initializing new list structures */
    EAPI Ecore_List *ecore_list_new(void);
@@ -241,7 +241,7 @@ extern "C" {
    EAPI Ecore_List *ecore_hash_keys(Ecore_Hash *hash);
    
    /* Retrieve and store data into the hash */
-   EAPI void *ecore_hash_get(Ecore_Hash *hash, void *key);
+   EAPI void *ecore_hash_get(Ecore_Hash *hash, const void *key);
    EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
    EAPI void *ecore_hash_remove(Ecore_Hash *hash, void *key);
    EAPI void ecore_hash_dump_graph(Ecore_Hash *hash);

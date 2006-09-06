@@ -20,14 +20,14 @@
 
 /* Private hash manipulation functions */
 static int _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node);
-static Ecore_Hash_Node * _ecore_hash_get_node(Ecore_Hash *hash, void *key);
+static Ecore_Hash_Node * _ecore_hash_get_node(Ecore_Hash *hash, const void *key);
 static int _ecore_hash_increase(Ecore_Hash *hash);
 static int _ecore_hash_decrease(Ecore_Hash *hash);
 inline int _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size);
 static int _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd,
 				      Ecore_Free_Cb valued);
 inline Ecore_Hash_Node * _ecore_hash_get_bucket(Ecore_Hash *hash,
-						Ecore_Hash_Node *bucket, void *key);
+						Ecore_Hash_Node *bucket, const void *key);
 
 static Ecore_Hash_Node *_ecore_hash_node_new(void *key, void *value);
 static int _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value);
@@ -360,7 +360,7 @@ _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 EAPI void *
-ecore_hash_get(Ecore_Hash *hash, void *key)
+ecore_hash_get(Ecore_Hash *hash, const void *key)
 {
    void *data;
    Ecore_Hash_Node *node;
@@ -459,7 +459,7 @@ ecore_hash_remove(Ecore_Hash *hash, void *key)
  * @return Returns NULL on error, node corresponding to key on success
  */
 static Ecore_Hash_Node *
-_ecore_hash_get_node(Ecore_Hash *hash, void *key)
+_ecore_hash_get_node(Ecore_Hash *hash, const void *key)
 {
    unsigned int hash_val;
    Ecore_Hash_Node *node = NULL;
@@ -503,7 +503,7 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
  * @return Returns NULL on error or not found, the found node on success
  */
 inline Ecore_Hash_Node *
-_ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_Hash_Node *bucket, void *key)
+_ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_Hash_Node *bucket, const void *key)
 {
    Ecore_Hash_Node *prev = NULL;
    Ecore_Hash_Node *node = NULL;

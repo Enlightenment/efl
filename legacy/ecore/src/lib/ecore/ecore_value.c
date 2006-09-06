@@ -53,7 +53,7 @@ ecore_print_warning(const char *function, const char *sparam)
  * @return The key cast to an unsigned int.
  */
 EAPI unsigned int 
-ecore_direct_hash(void *key)
+ecore_direct_hash(const void *key)
 {
    return ((unsigned int) key);
 }
@@ -64,11 +64,11 @@ ecore_direct_hash(void *key)
  * @return A computed hash value for @a key.
  */
 EAPI unsigned int 
-ecore_str_hash(void *key)
+ecore_str_hash(const void *key)
 {
    int i;
    unsigned int value = 0;
-   char *k = (char *) key;
+   const char *k = key;
 
    if (!k)
      return 0;
@@ -89,7 +89,7 @@ ecore_str_hash(void *key)
  * @return A strcmp style value to indicate the larger key
  */
 EAPI int 
-ecore_direct_compare(void *key1, void *key2)
+ecore_direct_compare(const void *key1, const void *key2)
 {
    unsigned int k1, k2;
 
@@ -112,17 +112,17 @@ ecore_direct_compare(void *key1, void *key2)
  * @return A strcmp style value to indicate the larger key
  */
 EAPI int 
-ecore_str_compare(void *key1, void *key2)
+ecore_str_compare(const void *key1, const void *key2)
 {
-   char *k1, *k2;
+   const char *k1, *k2;
 
    if (!key1 || !key2)
      return ecore_direct_compare(key1, key2);
    else if (key1 == key2)
      return 0;
 
-   k1 = (char *) key1;
-   k2 = (char *) key2;
+   k1 = key1;
+   k2 = key2;
 
    return strcmp(k1, k2);
 }
