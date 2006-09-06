@@ -442,11 +442,10 @@ edje_file_collection_list_free(Evas_List *lst)
 EAPI int
 edje_file_group_exists(const char *file, const char *glob)
 {
-   Evas_List *lst = NULL;
    Edje_File *edf;
    int error_ret = 0;
 
-   if ((!file) || (!*file)) return NULL;
+   if ((!file) || (!*file)) return 0;
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (edf != NULL)
      {
