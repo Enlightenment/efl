@@ -154,6 +154,11 @@ ecore_desktop_menu_for_each(void (*func)(char *name, char *path, Ecore_Hash *app
 	    }
 	 free(menu_file);
       }
+
+   /* FIXME: If there are no detectable menus on the system, or if they only produce a "low" number of apps, then 
+    * fallback to just scanning the usual places for .desktop files and making do with whatever info is available.
+    * If falling back due to the "low" hueristic, then merge into the existing menu.
+    */
 }
 
 static int
