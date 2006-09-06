@@ -3,7 +3,7 @@
 #include <string.h>
 
 static Evas_Hash        * images = NULL;
-static Evas_Object_List * cache = NULL;
+static Evas_List        * cache = NULL;
 static int                cache_size = 0;
 static int                cache_usage = 0;
 
@@ -659,7 +659,7 @@ _dfb_image_cache(RGBA_Image *im)
 
    if (im->flags & RGBA_IMAGE_INDEXED) return;
    im->flags |= RGBA_IMAGE_INDEXED;
-   cache = evas_object_list_prepend(cache, im);
+   cache = evas_list_prepend(cache, im);
    ram = evas_common_image_ram_usage(im);
    cache_usage += ram;
    _dfb_image_flush_cache();
@@ -672,7 +672,7 @@ _dfb_image_uncache(RGBA_Image *im)
 
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
    im->flags &= ~RGBA_IMAGE_INDEXED;
-   cache = evas_object_list_remove(cache, im);
+   cache = evas_list_remove(cache, im);
    ram = evas_common_image_ram_usage(im);
    cache_usage -= ram;
 }
@@ -681,12 +681,12 @@ _dfb_image_uncache(RGBA_Image *im)
 static void
 _dfb_image_flush_cache(void)
 {
-   Evas_Object_List *l, *l_next;
+   Evas_List *l, *l_next;
 
    if (!cache) return;
    if (cache_usage < cache_size) return;
 
-   for (l = cache->last; l;)
+   for (l = evas_list_last(cache); l;)
      {
 	RGBA_Image *im;
 
@@ -772,7 +772,7 @@ _dfb_image_unstore(RGBA_Image *im)
 static RGBA_Image *
 _dfb_image_find(const char *filename, const char *key, DATA64 timestamp)
 {
-   Evas_Object_List *l;
+   Evas_List *l;
    RGBA_Image *im;
    char *str;
    int l1, l2, l3;
