@@ -132,7 +132,8 @@
 	  }
      }
 
-   src_end = src_data + (src_w * src_h) - 1;
+//   src_end = src_data + (src_w * src_h) - 1;
+   src_end = src_data + (src_w * (src_region_y + src_region_h)) - 1;
    if (dc->mul.use)
 	func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
    else
@@ -148,8 +149,7 @@
    if (src->flags & RGBA_IMAGE_HAS_ALPHA)
      {
 	int     k, px, i, pv;
-	DATA8   p1r = 0, p1g = 0, p1b = 0, p1a = 0;
-	DATA8   p2r = 0, p2g = 0, p2b = 0, p2a = 0;
+	DATA32  p1 = 0, p2 = 0;
 	DATA32 *lptr1, *lptr2;
 
 	while (dst_clip_h--)
@@ -163,10 +163,7 @@
 	     lp = lin_ptr;  ix = interp_x;
 	     ptr = lptr1 + *lp;
 	     ptr2 = lptr2 + *lp;
-	     p2r = R_VAL(ptr) + ((k * (R_VAL(ptr2) - R_VAL(ptr))) >> 8);
-	     p2g = G_VAL(ptr) + ((k * (G_VAL(ptr2) - G_VAL(ptr))) >> 8);
-	     p2b = B_VAL(ptr) + ((k * (B_VAL(ptr2) - B_VAL(ptr))) >> 8);
-	     p2a = A_VAL(ptr) + ((k * (A_VAL(ptr2) - A_VAL(ptr))) >> 8);
+	     p2 = INTERP_256(k, *ptr2, *ptr);
 	     pv = 1;
 	     px = -1;
 	     while (dst_clip_w--)
@@ -179,7 +176,8 @@
 		       ptr2 = ptr + 1;
 		       ptr3 = lptr2 + px;
 		       ptr4 = ptr3 + 1;
-		       if (px >= (src_w - 1))
+//		       if (px >= (src_w - 1))
+		       if (px >= (src_region_x + src_region_w - 1))
 			 {
 			    ptr2 = ptr;
 			    ptr4 = ptr3;
@@ -187,41 +185,24 @@
 
 		       if ((*ptr | *ptr2 | *ptr3 | *ptr4) & 0xff000000)
 			 {
-			    if (pv)
-			      {
-				 p1r = p2r;
-				 p1g = p2g;
-				 p1b = p2b;
-				 p1a = p2a;
-			      }
-			    else
-			      {
-				 p1r = R_VAL(ptr) + ((k * (R_VAL(ptr3) - R_VAL(ptr))) >> 8);
-				 p1g = G_VAL(ptr) + ((k * (G_VAL(ptr3) - G_VAL(ptr))) >> 8);
-				 p1b = B_VAL(ptr) + ((k * (B_VAL(ptr3) - B_VAL(ptr))) >> 8);
-				 p1a = A_VAL(ptr) + ((k * (A_VAL(ptr3) - A_VAL(ptr))) >> 8);
-			      }
-			    p2r = R_VAL(ptr2) + ((k * (R_VAL(ptr4) - R_VAL(ptr2))) >> 8);
-			    p2g = G_VAL(ptr2) + ((k * (G_VAL(ptr4) - G_VAL(ptr2))) >> 8);
-			    p2b = B_VAL(ptr2) + ((k * (B_VAL(ptr4) - B_VAL(ptr2))) >> 8);
-			    p2a = A_VAL(ptr2) + ((k * (A_VAL(ptr4) - A_VAL(ptr2))) >> 8);
+			    p1 = p2;
+			    if (!pv)
+				p1 = INTERP_256(k, *ptr3, *ptr);
+			    p2 = INTERP_256(k, *ptr4, *ptr2);
 			    pv = 1;
 			 }
 		       else
 			 {
 			    pv = 0;
-			    p1a = p2a = 0;
+			    p1 = p2 = 0;
 			 }
 		    }
 		  
 		  *dst_ptr = 0;
-		  if (p1a | p2a)
+		  if ((p1 | p2) & 0xff000000)
 		    {
 		       i = *ix;
-		       R_VAL(dst_ptr) = p1r + ((i * (p2r - p1r)) >> 8);
-		       G_VAL(dst_ptr) = p1g + ((i * (p2g - p1g)) >> 8);
-		       B_VAL(dst_ptr) = p1b + ((i * (p2b - p1b)) >> 8);
-		       A_VAL(dst_ptr) = p1a + ((i * (p2a - p1a)) >> 8);
+		       *dst_ptr = INTERP_256(i, p2, p1);
 		    }
 		  
 		  dst_ptr++;  ix++;  lp++;
@@ -235,8 +216,7 @@
    else
      {
 	int     k, px, i;
-	DATA8   p1r = 0, p1g = 0, p1b = 0;
-	DATA8   p2r = 0, p2g = 0, p2b = 0;
+	DATA32  p1 = 0, p2 = 0;
 	DATA32 *lptr1, *lptr2;
 
 #ifdef DIRECT_SCALE
@@ -255,9 +235,7 @@
 		  lp = lin_ptr;  ix = interp_x;
 		  ptr = lptr1 + *lp;
 		  ptr2 = lptr2 + *lp;
-		  p2r = R_VAL(ptr) + ((k * (R_VAL(ptr2) - R_VAL(ptr))) >> 8);
-		  p2g = G_VAL(ptr) + ((k * (G_VAL(ptr2) - G_VAL(ptr))) >> 8);
-		  p2b = B_VAL(ptr) + ((k * (B_VAL(ptr2) - B_VAL(ptr))) >> 8);
+		  p2 = INTERP_RGB_256(k, *ptr2, *ptr);
 		  px = -1;
 		  while (dst_clip_w--)
 		    {
@@ -267,23 +245,17 @@
 			    
 			    ptr2 = lptr1 + px + 1;
 			    ptr4 = lptr2 + px + 1;
-			    if (px >= (src_w - 1))
+//			    if (px >= (src_w - 1))
+			    if (px >= (src_region_x + src_region_w - 1))
 			      {
 				 ptr2--;
 				 ptr4--;
 			      }
-			    p1r = p2r;
-			    p1g = p2g;
-			    p1b = p2b;
-			    p2r = R_VAL(ptr2) + ((k * (R_VAL(ptr4) - R_VAL(ptr2))) >> 8);
-			    p2g = G_VAL(ptr2) + ((k * (G_VAL(ptr4) - G_VAL(ptr2))) >> 8);
-			    p2b = B_VAL(ptr2) + ((k * (B_VAL(ptr4) - B_VAL(ptr2))) >> 8);
+			    p1 = p2;
+			    p2 = INTERP_RGB_256(k, *ptr4, *ptr2);
 			 }
 		       i = *ix;
-		       R_VAL(dst_ptr) = p1r + ((i * (p2r - p1r)) >> 8);
-		       G_VAL(dst_ptr) = p1g + ((i * (p2g - p1g)) >> 8);
-		       B_VAL(dst_ptr) = p1b + ((i * (p2b - p1b)) >> 8);
-//		       A_VAL(dst_ptr) = 0xff;
+		       *dst_ptr = 0xff000000 | INTERP_RGB_256(i, p2, p1);
 		       
 		       dst_ptr++;  ix++;  lp++;
 		    }
@@ -305,9 +277,7 @@
 		  lp = lin_ptr;  ix = interp_x;
 		  ptr = lptr1 + *lp;
 		  ptr2 = lptr2 + *lp;
-		  p2r = R_VAL(ptr) + ((k * (R_VAL(ptr2) - R_VAL(ptr))) >> 8);
-		  p2g = G_VAL(ptr) + ((k * (G_VAL(ptr2) - G_VAL(ptr))) >> 8);
-		  p2b = B_VAL(ptr) + ((k * (B_VAL(ptr2) - B_VAL(ptr))) >> 8);
+		  p2 = INTERP_RGB_256(k, *ptr2, *ptr);
 		  px = -1;
 		  while (dst_clip_w--)
 		    {
@@ -317,23 +287,17 @@
 			    
 			    ptr2 = lptr1 + px + 1;
 			    ptr4 = lptr2 + px + 1;
-			    if (px >= (src_w - 1))
+//			    if (px >= (src_w - 1))
+			    if (px >= (src_region_x + src_region_w - 1))
 			      {
 				 ptr2--;
 				 ptr4--;
 			      }
-			    p1r = p2r;
-			    p1g = p2g;
-			    p1b = p2b;
-			    p2r = R_VAL(ptr2) + ((k * (R_VAL(ptr4) - R_VAL(ptr2))) >> 8);
-			    p2g = G_VAL(ptr2) + ((k * (G_VAL(ptr4) - G_VAL(ptr2))) >> 8);
-			    p2b = B_VAL(ptr2) + ((k * (B_VAL(ptr4) - B_VAL(ptr2))) >> 8);
+			    p1 = p2;
+			    p2 = INTERP_RGB_256(k, *ptr4, *ptr2);
 			 }
 		       i = *ix;
-		       R_VAL(dst_ptr) = p1r + ((i * (p2r - p1r)) >> 8);
-		       G_VAL(dst_ptr) = p1g + ((i * (p2g - p1g)) >> 8);
-		       B_VAL(dst_ptr) = p1b + ((i * (p2b - p1b)) >> 8);
-		       A_VAL(dst_ptr) = 0xff;
+		       *dst_ptr = 0xff000000 | INTERP_RGB_256(i, p2, p1);
 		       
 		       dst_ptr++;  ix++;  lp++;
 		    }
@@ -379,7 +343,8 @@
 		       ptr2 = ptr + 1;
 		       ptr3 = lptr2 + px;
 		       ptr4 = ptr3 + 1;
-		       if (px >= (src_w - 1))
+//		       if (px >= (src_w - 1))
+		       if (px >= (src_region_x + src_region_w - 1))
 			 {
 			    ptr2 = ptr;
 			    ptr4 = ptr3;
@@ -505,7 +470,8 @@
 			    
 			    ptr2 = lptr1 + px + 1;
 			    ptr4 = lptr2 + px + 1;
-			    if (px >= (src_w - 1))
+//			    if (px >= (src_w - 1))
+			    if (px >= (src_region_x + src_region_w - 1))
 			      {
 				 ptr2--;
 				 ptr4--;
@@ -601,7 +567,8 @@
 			    
 			    ptr2 = lptr1 + px + 1;
 			    ptr4 = lptr2 + px + 1;
-			    if (px >= (src_w - 1))
+//			    if (px >= (src_w - 1))
+			    if (px >= (src_region_x + src_region_w - 1))
 			      {
 				 ptr2--;
 				 ptr4--;
