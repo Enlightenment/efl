@@ -125,19 +125,21 @@ int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key, 
    return save_image_png(im, file, compress, 0);
 }
 
-int module_open(Evas_Module *em)
+EAPI int
+module_open(Evas_Module *em)
 {
    if (!em) return 0;
    em->functions = (void *)(&evas_image_save_png_func);
    return 1;
 }
 
-void module_close(void)
+EAPI void
+module_close(void)
 {
    
 }
 
-Evas_Module_Api evas_modapi =
+EAPI Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
      EVAS_MODULE_TYPE_IMAGE_SAVER,

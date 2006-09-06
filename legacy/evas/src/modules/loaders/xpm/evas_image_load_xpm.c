@@ -111,7 +111,6 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
 
    short               lookup[128 - 32][128 - 32];
    float               per = 0.0, per_inc = 0.0;
-   int                 last_per = 0, last_y = 0;
    int                 count, pixels;
 
    if (!file) return 0;
@@ -684,19 +683,21 @@ evas_image_load_file_data_xpm(RGBA_Image *im, const char *file, const char *key)
 
 
 
-int module_open(Evas_Module *em)
+EAPI int
+module_open(Evas_Module *em)
 {
    if (!em) return 0;
    em->functions = (void *)(&evas_image_load_xpm_func);
    return 1;
 }
 
-void module_close(void)
+EAPI void
+module_close(void)
 {
    
 }
 
-Evas_Module_Api evas_modapi =
+EAPI Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
      EVAS_MODULE_TYPE_IMAGE_LOADER,

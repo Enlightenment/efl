@@ -221,7 +221,8 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    return 1;
 }
 
-int module_open(Evas_Module *em)
+EAPI int
+module_open(Evas_Module *em)
 {
    if (!em) return 0;
    em->functions = (void *)(&evas_image_load_svg_func);
@@ -230,13 +231,14 @@ int module_open(Evas_Module *em)
    return 1;
 }
 
-void module_close(void)
+EAPI void
+module_close(void)
 {
    rsvg_term();
    rsvg_initialized = 0;
 }
 
-Evas_Module_Api evas_modapi =
+EAPI Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
      EVAS_MODULE_TYPE_IMAGE_LOADER,

@@ -761,7 +761,7 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
 }
 
 /* module advertising code */
-int
+EAPI int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -824,12 +824,12 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-void
+EAPI void
 module_close(void)
 {
 }
 
-Evas_Module_Api evas_modapi = 
+EAPI Evas_Module_Api evas_modapi = 
 {
    EVAS_MODULE_API_VERSION, 
      EVAS_MODULE_TYPE_ENGINE,
