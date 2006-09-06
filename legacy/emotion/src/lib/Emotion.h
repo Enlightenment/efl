@@ -1,6 +1,27 @@
 #ifndef EMOTION_H
 #define EMOTION_H
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
 #include <Evas.h>
 
 enum _Emotion_Module
@@ -65,58 +86,58 @@ extern "C" {
 #endif
    
 /* api calls available */
-Evas_Object *emotion_object_add                   (Evas *evas);
-Evas_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
-void         emotion_object_file_set              (Evas_Object *obj, const char *filename);
-const char  *emotion_object_file_get              (Evas_Object *obj);
-void         emotion_object_play_set              (Evas_Object *obj, Evas_Bool play);
-Evas_Bool    emotion_object_play_get              (Evas_Object *obj);
-void         emotion_object_position_set          (Evas_Object *obj, double sec);
-double       emotion_object_position_get          (Evas_Object *obj);
-Evas_Bool    emotion_object_video_handled_get     (Evas_Object *obj);
-Evas_Bool    emotion_object_audio_handled_get     (Evas_Object *obj);
-Evas_Bool    emotion_object_seekable_get          (Evas_Object *obj);
-double       emotion_object_play_length_get       (Evas_Object *obj);
-void         emotion_object_size_get              (Evas_Object *obj, int *iw, int *ih);
-void         emotion_object_smooth_scale_set      (Evas_Object *obj, Evas_Bool smooth);
-Evas_Bool    emotion_object_smooth_scale_get      (Evas_Object *obj);
-double       emotion_object_ratio_get             (Evas_Object *obj);
-void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
-void         emotion_object_audio_volume_set      (Evas_Object *obj, double vol);
-double       emotion_object_audio_volume_get      (Evas_Object *obj);
-void         emotion_object_audio_mute_set        (Evas_Object *obj, Evas_Bool mute);
-Evas_Bool    emotion_object_audio_mute_get        (Evas_Object *obj);
-int          emotion_object_audio_channel_count   (Evas_Object *obj);
-const char  *emotion_object_audio_channel_name_get(Evas_Object *obj, int channel);
-void         emotion_object_audio_channel_set     (Evas_Object *obj, int channel);
-int          emotion_object_audio_channel_get     (Evas_Object *obj);
-void         emotion_object_video_mute_set        (Evas_Object *obj, Evas_Bool mute);
-Evas_Bool    emotion_object_video_mute_get        (Evas_Object *obj);
-int          emotion_object_video_channel_count   (Evas_Object *obj);
-const char  *emotion_object_video_channel_name_get(Evas_Object *obj, int channel);
-void         emotion_object_video_channel_set     (Evas_Object *obj, int channel);
-int          emotion_object_video_channel_get     (Evas_Object *obj);
-void         emotion_object_spu_mute_set          (Evas_Object *obj, Evas_Bool mute);
-Evas_Bool    emotion_object_spu_mute_get          (Evas_Object *obj);
-int          emotion_object_spu_channel_count     (Evas_Object *obj);
-const char  *emotion_object_spu_channel_name_get  (Evas_Object *obj, int channel);
-void         emotion_object_spu_channel_set       (Evas_Object *obj, int channel);
-int          emotion_object_spu_channel_get       (Evas_Object *obj);
-int          emotion_object_chapter_count         (Evas_Object *obj);
-void         emotion_object_chapter_set           (Evas_Object *obj, int chapter);
-int          emotion_object_chapter_get           (Evas_Object *obj);
-const char  *emotion_object_chapter_name_get      (Evas_Object *obj, int chapter);
-void         emotion_object_play_speed_set        (Evas_Object *obj, double speed);
-double       emotion_object_play_speed_get        (Evas_Object *obj);
-void         emotion_object_eject                 (Evas_Object *obj);
-const char  *emotion_object_title_get             (Evas_Object *obj);
-const char  *emotion_object_progress_info_get     (Evas_Object *obj);
-double       emotion_object_progress_status_get   (Evas_Object *obj);
-const char  *emotion_object_ref_file_get          (Evas_Object *obj);
-int          emotion_object_ref_num_get           (Evas_Object *obj);
-int          emotion_object_spu_button_count_get  (Evas_Object *obj);
-int          emotion_object_spu_button_get        (Evas_Object *obj);
-const char  *emotion_object_meta_info_get         (Evas_Object *obj, Emotion_Meta_Info meta);
+EAPI Evas_Object *emotion_object_add                   (Evas *evas);
+EAPI Evas_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
+EAPI void         emotion_object_file_set              (Evas_Object *obj, const char *filename);
+EAPI const char  *emotion_object_file_get              (Evas_Object *obj);
+EAPI void         emotion_object_play_set              (Evas_Object *obj, Evas_Bool play);
+EAPI Evas_Bool    emotion_object_play_get              (Evas_Object *obj);
+EAPI void         emotion_object_position_set          (Evas_Object *obj, double sec);
+EAPI double       emotion_object_position_get          (Evas_Object *obj);
+EAPI Evas_Bool    emotion_object_video_handled_get     (Evas_Object *obj);
+EAPI Evas_Bool    emotion_object_audio_handled_get     (Evas_Object *obj);
+EAPI Evas_Bool    emotion_object_seekable_get          (Evas_Object *obj);
+EAPI double       emotion_object_play_length_get       (Evas_Object *obj);
+EAPI void         emotion_object_size_get              (Evas_Object *obj, int *iw, int *ih);
+EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Evas_Bool smooth);
+EAPI Evas_Bool    emotion_object_smooth_scale_get      (Evas_Object *obj);
+EAPI double       emotion_object_ratio_get             (Evas_Object *obj);
+EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
+EAPI void         emotion_object_audio_volume_set      (Evas_Object *obj, double vol);
+EAPI double       emotion_object_audio_volume_get      (Evas_Object *obj);
+EAPI void         emotion_object_audio_mute_set        (Evas_Object *obj, Evas_Bool mute);
+EAPI Evas_Bool    emotion_object_audio_mute_get        (Evas_Object *obj);
+EAPI int          emotion_object_audio_channel_count   (Evas_Object *obj);
+EAPI const char  *emotion_object_audio_channel_name_get(Evas_Object *obj, int channel);
+EAPI void         emotion_object_audio_channel_set     (Evas_Object *obj, int channel);
+EAPI int          emotion_object_audio_channel_get     (Evas_Object *obj);
+EAPI void         emotion_object_video_mute_set        (Evas_Object *obj, Evas_Bool mute);
+EAPI Evas_Bool    emotion_object_video_mute_get        (Evas_Object *obj);
+EAPI int          emotion_object_video_channel_count   (Evas_Object *obj);
+EAPI const char  *emotion_object_video_channel_name_get(Evas_Object *obj, int channel);
+EAPI void         emotion_object_video_channel_set     (Evas_Object *obj, int channel);
+EAPI int          emotion_object_video_channel_get     (Evas_Object *obj);
+EAPI void         emotion_object_spu_mute_set          (Evas_Object *obj, Evas_Bool mute);
+EAPI Evas_Bool    emotion_object_spu_mute_get          (Evas_Object *obj);
+EAPI int          emotion_object_spu_channel_count     (Evas_Object *obj);
+EAPI const char  *emotion_object_spu_channel_name_get  (Evas_Object *obj, int channel);
+EAPI void         emotion_object_spu_channel_set       (Evas_Object *obj, int channel);
+EAPI int          emotion_object_spu_channel_get       (Evas_Object *obj);
+EAPI int          emotion_object_chapter_count         (Evas_Object *obj);
+EAPI void         emotion_object_chapter_set           (Evas_Object *obj, int chapter);
+EAPI int          emotion_object_chapter_get           (Evas_Object *obj);
+EAPI const char  *emotion_object_chapter_name_get      (Evas_Object *obj, int chapter);
+EAPI void         emotion_object_play_speed_set        (Evas_Object *obj, double speed);
+EAPI double       emotion_object_play_speed_get        (Evas_Object *obj);
+EAPI void         emotion_object_eject                 (Evas_Object *obj);
+EAPI const char  *emotion_object_title_get             (Evas_Object *obj);
+EAPI const char  *emotion_object_progress_info_get     (Evas_Object *obj);
+EAPI double       emotion_object_progress_status_get   (Evas_Object *obj);
+EAPI const char  *emotion_object_ref_file_get          (Evas_Object *obj);
+EAPI int          emotion_object_ref_num_get           (Evas_Object *obj);
+EAPI int          emotion_object_spu_button_count_get  (Evas_Object *obj);
+EAPI int          emotion_object_spu_button_get        (Evas_Object *obj);
+EAPI const char  *emotion_object_meta_info_get         (Evas_Object *obj, Emotion_Meta_Info meta);
 
 #ifdef __cplusplus
 }

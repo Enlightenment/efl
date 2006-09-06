@@ -141,14 +141,14 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
 
 
 
-Evas_Object *
+EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
    _smart_init();
    return evas_object_smart_add(evas, smart);   
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_init(Evas_Object *obj, const char *module_filename)
 {
    Smart_Data *sd;
@@ -179,7 +179,7 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    return 1;
 }
 
-void
+EAPI void
 emotion_object_file_set(Evas_Object *obj, const char *file)
 {
    Smart_Data *sd;
@@ -217,7 +217,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
      }
 }
 
-const char *
+EAPI const char *
 emotion_object_file_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -226,7 +226,7 @@ emotion_object_file_get(Evas_Object *obj)
    return sd->file;
 }
 
-void
+EAPI void
 emotion_object_play_set(Evas_Object *obj, Evas_Bool play)
 {
    Smart_Data *sd;
@@ -240,7 +240,7 @@ emotion_object_play_set(Evas_Object *obj, Evas_Bool play)
    else sd->module->stop(sd->video);
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_play_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -251,7 +251,7 @@ emotion_object_play_get(Evas_Object *obj)
    return sd->play;
 }
 
-void
+EAPI void
 emotion_object_position_set(Evas_Object *obj, double sec)
 {
    Smart_Data *sd;
@@ -266,7 +266,7 @@ emotion_object_position_set(Evas_Object *obj, double sec)
    sd->job = ecore_job_add(_pos_set_job, obj);
 }
 
-double
+EAPI double
 emotion_object_position_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -277,7 +277,7 @@ emotion_object_position_get(Evas_Object *obj)
    return sd->pos;
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_seekable_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -288,7 +288,7 @@ emotion_object_seekable_get(Evas_Object *obj)
    return sd->module->seekable(sd->video);
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_video_handled_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -299,7 +299,7 @@ emotion_object_video_handled_get(Evas_Object *obj)
    return sd->module->video_handled(sd->video);
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_audio_handled_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -310,7 +310,7 @@ emotion_object_audio_handled_get(Evas_Object *obj)
    return sd->module->audio_handled(sd->video);
 }
 
-double
+EAPI double
 emotion_object_play_length_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -322,7 +322,7 @@ emotion_object_play_length_get(Evas_Object *obj)
    return sd->len;
 }
 
-void
+EAPI void
 emotion_object_size_get(Evas_Object *obj, int *iw, int *ih)
 {
    Smart_Data *sd;
@@ -333,7 +333,7 @@ emotion_object_size_get(Evas_Object *obj, int *iw, int *ih)
    evas_object_image_size_get(sd->obj, iw, ih);
 }
 
-void
+EAPI void
 emotion_object_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth)
 {
    Smart_Data *sd;
@@ -342,7 +342,7 @@ emotion_object_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth)
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_smooth_scale_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -351,7 +351,7 @@ emotion_object_smooth_scale_get(Evas_Object *obj)
    return evas_object_image_smooth_scale_get(sd->obj);
 }
 
-double
+EAPI double
 emotion_object_ratio_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -362,7 +362,7 @@ emotion_object_ratio_get(Evas_Object *obj)
    return sd->ratio;
 }
 
-void
+EAPI void
 emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
 {
    Smart_Data *sd;
@@ -373,7 +373,7 @@ emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
    sd->module->event_feed(sd->video, ev);
 }
 
-void
+EAPI void
 emotion_object_audio_volume_set(Evas_Object *obj, double vol)
 {
    Smart_Data *sd;
@@ -384,7 +384,7 @@ emotion_object_audio_volume_set(Evas_Object *obj, double vol)
    sd->module->audio_channel_volume_set(sd->video, vol);
 }
 
-double
+EAPI double
 emotion_object_audio_volume_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -395,7 +395,7 @@ emotion_object_audio_volume_get(Evas_Object *obj)
    return sd->module->audio_channel_volume_get(sd->video);
 }
 
-void
+EAPI void
 emotion_object_audio_mute_set(Evas_Object *obj, Evas_Bool mute)
 {
    Smart_Data *sd;
@@ -406,7 +406,7 @@ emotion_object_audio_mute_set(Evas_Object *obj, Evas_Bool mute)
    sd->module->audio_channel_mute_set(sd->video, mute);
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_audio_mute_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -417,7 +417,7 @@ emotion_object_audio_mute_get(Evas_Object *obj)
    return sd->module->audio_channel_mute_get(sd->video);
 }
 
-int
+EAPI int
 emotion_object_audio_channel_count(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -428,7 +428,7 @@ emotion_object_audio_channel_count(Evas_Object *obj)
    return sd->module->audio_channel_count(sd->video);
 }
 
-const char *
+EAPI const char *
 emotion_object_audio_channel_name_get(Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
@@ -439,7 +439,7 @@ emotion_object_audio_channel_name_get(Evas_Object *obj, int channel)
    return sd->module->audio_channel_name_get(sd->video, channel);
 }
 
-void
+EAPI void
 emotion_object_audio_channel_set(Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
@@ -450,7 +450,7 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
    sd->module->audio_channel_set(sd->video, channel);
 }
 
-int
+EAPI int
 emotion_object_audio_channel_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -461,7 +461,7 @@ emotion_object_audio_channel_get(Evas_Object *obj)
    return sd->module->audio_channel_get(sd->video);
 }
 
-void
+EAPI void
 emotion_object_video_mute_set(Evas_Object *obj, Evas_Bool mute)
 {
    Smart_Data *sd;
@@ -472,7 +472,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Evas_Bool mute)
    sd->module->video_channel_mute_set(sd->video, mute);
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_video_mute_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -483,7 +483,7 @@ emotion_object_video_mute_get(Evas_Object *obj)
    return sd->module->video_channel_mute_get(sd->video);
 }
 
-int
+EAPI int
 emotion_object_video_channel_count(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -494,7 +494,7 @@ emotion_object_video_channel_count(Evas_Object *obj)
    return sd->module->video_channel_count(sd->video);
 }
 
-const char *
+EAPI const char *
 emotion_object_video_channel_name_get(Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
@@ -505,7 +505,7 @@ emotion_object_video_channel_name_get(Evas_Object *obj, int channel)
    return sd->module->video_channel_name_get(sd->video, channel);
 }
 
-void
+EAPI void
 emotion_object_video_channel_set(Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
@@ -516,7 +516,7 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
    sd->module->video_channel_set(sd->video, channel);
 }
 
-int
+EAPI int
 emotion_object_video_channel_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -527,7 +527,7 @@ emotion_object_video_channel_get(Evas_Object *obj)
    return sd->module->video_channel_get(sd->video);
 }
 
-void
+EAPI void
 emotion_object_spu_mute_set(Evas_Object *obj, Evas_Bool mute)
 {
    Smart_Data *sd;
@@ -538,7 +538,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Evas_Bool mute)
    sd->module->spu_channel_mute_set(sd->video, mute);
 }
 
-Evas_Bool
+EAPI Evas_Bool
 emotion_object_spu_mute_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -549,7 +549,7 @@ emotion_object_spu_mute_get(Evas_Object *obj)
    return sd->module->spu_channel_mute_get(sd->video);
 }
 
-int
+EAPI int
 emotion_object_spu_channel_count(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -560,7 +560,7 @@ emotion_object_spu_channel_count(Evas_Object *obj)
    return sd->module->spu_channel_count(sd->video);
 }
 
-const char *
+EAPI const char *
 emotion_object_spu_channel_name_get(Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
@@ -571,7 +571,7 @@ emotion_object_spu_channel_name_get(Evas_Object *obj, int channel)
    return sd->module->spu_channel_name_get(sd->video, channel);
 }
 
-void
+EAPI void
 emotion_object_spu_channel_set(Evas_Object *obj, int channel)
 {
    Smart_Data *sd;
@@ -582,7 +582,7 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
    sd->module->spu_channel_set(sd->video, channel);
 }
 
-int
+EAPI int
 emotion_object_spu_channel_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -593,7 +593,7 @@ emotion_object_spu_channel_get(Evas_Object *obj)
    return sd->module->spu_channel_get(sd->video);
 }
 
-int
+EAPI int
 emotion_object_chapter_count(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -604,7 +604,7 @@ emotion_object_chapter_count(Evas_Object *obj)
    return sd->module->chapter_count(sd->video);
 }
 
-void
+EAPI void
 emotion_object_chapter_set(Evas_Object *obj, int chapter)
 {
    Smart_Data *sd;
@@ -615,7 +615,7 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
    sd->module->chapter_set(sd->video, chapter);
 }
 
-int
+EAPI int
 emotion_object_chapter_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -626,7 +626,7 @@ emotion_object_chapter_get(Evas_Object *obj)
    return sd->module->chapter_get(sd->video);
 }
 
-const char *
+EAPI const char *
 emotion_object_chapter_name_get(Evas_Object *obj, int chapter)
 {
    Smart_Data *sd;
@@ -637,7 +637,7 @@ emotion_object_chapter_name_get(Evas_Object *obj, int chapter)
    return sd->module->chapter_name_get(sd->video, chapter);
 }
 
-void
+EAPI void
 emotion_object_play_speed_set(Evas_Object *obj, double speed)
 {
    Smart_Data *sd;
@@ -648,7 +648,7 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
    sd->module->speed_set(sd->video, speed);
 }
 
-double
+EAPI double
 emotion_object_play_speed_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -659,7 +659,7 @@ emotion_object_play_speed_get(Evas_Object *obj)
    return sd->module->speed_get(sd->video);
 }
 
-void
+EAPI void
 emotion_object_eject(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -670,7 +670,7 @@ emotion_object_eject(Evas_Object *obj)
    sd->module->eject(sd->video);
 }
 
-const char *
+EAPI const char *
 emotion_object_title_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -679,7 +679,7 @@ emotion_object_title_get(Evas_Object *obj)
    return sd->title;
 }
 
-const char *
+EAPI const char *
 emotion_object_progress_info_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -688,7 +688,7 @@ emotion_object_progress_info_get(Evas_Object *obj)
    return sd->progress.info;
 }
 
-double
+EAPI double
 emotion_object_progress_status_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -697,7 +697,7 @@ emotion_object_progress_status_get(Evas_Object *obj)
    return sd->progress.stat;
 }
 
-const char *
+EAPI const char *
 emotion_object_ref_file_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -706,7 +706,7 @@ emotion_object_ref_file_get(Evas_Object *obj)
    return sd->ref.file;
 }
 
-int
+EAPI int
 emotion_object_ref_num_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -715,7 +715,7 @@ emotion_object_ref_num_get(Evas_Object *obj)
    return sd->ref.num;
 }
 
-int
+EAPI int
 emotion_object_spu_button_count_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -724,7 +724,7 @@ emotion_object_spu_button_count_get(Evas_Object *obj)
    return sd->spu.button_num;
 }
 
-int
+EAPI int
 emotion_object_spu_button_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -733,7 +733,7 @@ emotion_object_spu_button_get(Evas_Object *obj)
    return sd->spu.button;
 }
 
-const char *
+EAPI const char *
 emotion_object_meta_info_get(Evas_Object *obj, Emotion_Meta_Info meta)
 {
    Smart_Data *sd;
