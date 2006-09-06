@@ -195,7 +195,6 @@ static int
 _e_prefix_share_hunt(void)
 {
    char buf[4096], buf2[4096], *p;
-   FILE *f;
    struct stat st;
 
    /* sometimes this isnt the case - so we need to do a more exhaustive search
