@@ -74,22 +74,22 @@ get(const char *key)
 	   printf("\n");
 	   break;
 	case ECORE_CONFIG_INT:
-	   printf("%ld\n", _ecore_config_int_get(e));
+	   printf("%ld\n", ecore_config_int_get(key));
 	   break;
 	case ECORE_CONFIG_BLN:
-	   printf("%d\n",  _ecore_config_boolean_get(e));
+	   printf("%d\n",  ecore_config_boolean_get(key));
 	   break;
 	case ECORE_CONFIG_FLT:
-	   printf("%lf\n", _ecore_config_float_get(e));
+	   printf("%lf\n", ecore_config_float_get(key));
 	   break;
 	case ECORE_CONFIG_STR:
-	   temp = _ecore_config_string_get(e);
+	   temp = ecore_config_string_get(key);
 	   break;
 	case ECORE_CONFIG_RGB:
-	   temp = _ecore_config_argbstr_get(e);
+	   temp = ecore_config_argbstr_get(key);
 	   break;
 	case ECORE_CONFIG_THM:
-	   temp = _ecore_config_theme_get(e);
+	   temp = ecore_config_theme_get(key);
 	   break;
 	default:
 	   fprintf(stderr, "Property has unrecognized type");
