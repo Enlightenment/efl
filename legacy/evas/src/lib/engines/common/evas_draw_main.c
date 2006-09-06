@@ -28,12 +28,12 @@ evas_common_shutdown(void)
    evas_common_image_cache_free();
 }
 
-void
+EAPI void
 evas_common_draw_init(void)
 {
 }
 
-RGBA_Draw_Context *
+EAPI RGBA_Draw_Context *
 evas_common_draw_context_new(void)
 {
    RGBA_Draw_Context *dc;
@@ -42,13 +42,13 @@ evas_common_draw_context_new(void)
    return dc;
 }
 
-void
+EAPI void
 evas_common_draw_context_free(RGBA_Draw_Context *dc)
 {
    free(dc);
 }
 
-void
+EAPI void
 evas_common_draw_context_font_ext_set(RGBA_Draw_Context *dc,
 				      void *data,
 				      void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg),
@@ -61,7 +61,7 @@ evas_common_draw_context_font_ext_set(RGBA_Draw_Context *dc,
    dc->font_ext.func.gl_draw = gl_draw;
 }
 
-void
+EAPI void
 evas_common_draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    if (dc->clip.use)
@@ -73,7 +73,7 @@ evas_common_draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, i
      evas_common_draw_context_set_clip(dc, x, y, w, h);
 }
 
-void
+EAPI void
 evas_common_draw_context_set_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    dc->clip.use = 1;
@@ -83,13 +83,13 @@ evas_common_draw_context_set_clip(RGBA_Draw_Context *dc, int x, int y, int w, in
    dc->clip.h = h;
 }
 
-void
+EAPI void
 evas_common_draw_context_unset_clip(RGBA_Draw_Context *dc)
 {
    dc->clip.use = 0;
 }
 
-void
+EAPI void
 evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 {
    R_VAL(&(dc->col.col)) = (DATA8)r;
@@ -98,7 +98,7 @@ evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, i
    A_VAL(&(dc->col.col)) = (DATA8)a;
 }
 
-void
+EAPI void
 evas_common_draw_context_set_multiplier(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 {
    dc->mul.use = 1;
@@ -108,13 +108,13 @@ evas_common_draw_context_set_multiplier(RGBA_Draw_Context *dc, int r, int g, int
    A_VAL(&(dc->mul.col)) = (DATA8)a;
 }
 
-void
+EAPI void
 evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
 {
    dc->mul.use = 0;
 }
 
-void
+EAPI void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    Cutout_Rect *r;
@@ -127,14 +127,14 @@ evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, 
    dc->cutout.rects = evas_object_list_append(dc->cutout.rects, r);
 }
 
-void
+EAPI void
 evas_common_draw_context_clear_cutouts(RGBA_Draw_Context *dc)
 {
    evas_common_draw_context_apply_free_cutouts(dc->cutout.rects);
    dc->cutout.rects = NULL;
 }
 
-Cutout_Rect *
+EAPI Cutout_Rect *
 evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
 {
    Cutout_Rect *r, *rects;
@@ -156,7 +156,7 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
    return rects;
 }
 
-void
+EAPI void
 evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects)
 {
    while (rects)
@@ -169,7 +169,7 @@ evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects)
      }
 }
 
-Cutout_Rect *
+EAPI Cutout_Rect *
 evas_common_draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
 {
    /* multiple rect in, multiple out */
@@ -196,7 +196,7 @@ evas_common_draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
    return out;
 }
 
-Cutout_Rect *
+EAPI Cutout_Rect *
 evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 {
    /* 1 input rect, multiple out */
@@ -501,7 +501,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 #undef R_NEW
 }
 
-Cutout_Rect *
+EAPI Cutout_Rect *
 evas_common_draw_context_cutout_merge(Cutout_Rect *in, Cutout_Rect *merge)
 {
    /* 1 input rect, multiple out */
@@ -529,19 +529,19 @@ evas_common_draw_context_cutout_merge(Cutout_Rect *in, Cutout_Rect *merge)
    return out;
 }
 
-void
+EAPI void
 evas_common_draw_context_set_anti_alias(RGBA_Draw_Context *dc , unsigned char aa)
 {
    dc->anti_alias = !!aa;
 }
 
-void
+EAPI void
 evas_common_draw_context_set_color_interpolation(RGBA_Draw_Context *dc, int color_space)
 {
    dc->interpolation.color_space = color_space;
 }
 
-void
+EAPI void
 evas_common_draw_context_set_render_op(RGBA_Draw_Context *dc , int op)
 {
    dc->render_op = op;

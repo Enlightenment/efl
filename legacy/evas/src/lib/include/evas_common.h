@@ -72,7 +72,7 @@
 #ifndef _WIN32_WCE
 typedef unsigned long long            DATA64;
 #else
-typedef unsigned __int64	      DATA64;
+typedef unsigned __int64              DATA64;
 #define strdup _strdup
 #define snprintf _snprintf
 #define rewind(f) fseek(f,0,SEEK_SET)
@@ -109,7 +109,7 @@ typedef struct _Tilebuf               Tilebuf;
 typedef struct _Tilebuf_Tile          Tilebuf_Tile;
 typedef struct _Tilebuf_Rect          Tilebuf_Rect;
 
-typedef struct _Evas_Array_Hash	      Evas_Array_Hash;
+typedef struct _Evas_Array_Hash       Evas_Array_Hash;
 
 /*
 typedef struct _Regionbuf             Regionbuf;
@@ -527,15 +527,15 @@ void *evas_object_list_find             (void *in_list, void *in_item);
 void evas_common_init                                   (void);
 void evas_common_shutdown                               (void);
 
-void evas_common_cpu_init                               (void);
+EAPI void evas_common_cpu_init                          (void);
 
 int  evas_common_cpu_have_cpuid                         (void);
 int  evas_common_cpu_has_feature                        (unsigned int feature);
-void evas_common_cpu_can_do                             (int *mmx, int *sse, int *sse2);
-void evas_common_cpu_end_opt                            (void);
+EAPI void evas_common_cpu_can_do                        (int *mmx, int *sse, int *sse2);
+EAPI void evas_common_cpu_end_opt                       (void);
 
 /****/
-void evas_common_blend_init                             (void);
+EAPI void evas_common_blend_init                        (void);
 
 void evas_common_blend_init_evas_pow_lut                (void);
 void evas_common_blend_free_evas_pow_lut                (void);
@@ -563,12 +563,12 @@ RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_color_pt_get (int src_
 RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_mask_color_pt_get  (DATA32 col, RGBA_Image *dst, int op);
 RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_mask_pt_get  (int src_flags, RGBA_Image *dst, int op);
 
-Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int reverse);
+EAPI Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int reverse);
 
 /****/
 
-void             evas_common_convert_init               (void);
-Gfx_Func_Convert evas_common_convert_func_get           (DATA8 *dest, int w, int h, int depth, DATA32 rmask, DATA32 gmask, DATA32 bmask, Convert_Pal_Mode pal_mode, int rotation);
+EAPI void             evas_common_convert_init          (void);
+EAPI Gfx_Func_Convert evas_common_convert_func_get      (DATA8 *dest, int w, int h, int depth, DATA32 rmask, DATA32 gmask, DATA32 bmask, Convert_Pal_Mode pal_mode, int rotation);
 
 void evas_common_convert_rgba2_to_16bpp_rgb_565_dith            (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 void evas_common_convert_rgba_to_16bpp_rgb_565_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
@@ -639,57 +639,57 @@ void evas_common_convert_hsv_to_rgb_int                 (int h, int s, int v, in
 void evas_common_convert_rgb_to_hsv_int                 (int r, int g, int b, int *h, int *s, int *v);
 
 /****/
-void evas_common_scale_init                            (void);
+EAPI void evas_common_scale_init                            (void);
 
-void evas_common_scale_rgba_mipmap_down_2x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void evas_common_scale_rgba_mipmap_down_2x1_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void evas_common_scale_rgba_mipmap_down_1x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void evas_common_scale_rgb_mipmap_down_2x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void evas_common_scale_rgb_mipmap_down_2x1_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void evas_common_scale_rgb_mipmap_down_1x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgba_mipmap_down_2x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgba_mipmap_down_2x1_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgba_mipmap_down_1x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgb_mipmap_down_2x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgb_mipmap_down_2x1_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgb_mipmap_down_1x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
 
-void evas_common_scale_rgba_mipmap_down_2x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void evas_common_scale_rgba_mipmap_down_2x1_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void evas_common_scale_rgba_mipmap_down_1x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgba_mipmap_down_2x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgba_mipmap_down_2x1_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+EAPI void evas_common_scale_rgba_mipmap_down_1x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
 
-void evas_common_scale_rgba_in_to_out_clip_smooth_mmx  (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
-void evas_common_scale_rgba_in_to_out_clip_smooth_c    (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+EAPI void evas_common_scale_rgba_in_to_out_clip_smooth_mmx  (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+EAPI void evas_common_scale_rgba_in_to_out_clip_smooth_c    (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
-void evas_common_scale_rgba_in_to_out_clip_smooth      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
-void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+EAPI void evas_common_scale_rgba_in_to_out_clip_smooth      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+EAPI void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
-void          evas_common_scale_rgba_span    (DATA32 *src, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len);
+EAPI void evas_common_scale_rgba_span                       (DATA32 *src, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len);
 
 /****/
-void          evas_common_image_init              (void);
-void          evas_common_image_shutdown          (void);
+EAPI void          evas_common_image_init              (void);
+EAPI void          evas_common_image_shutdown          (void);
 
-RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);
-void          evas_common_image_surface_free      (RGBA_Surface *is);
-void          evas_common_image_surface_alloc     (RGBA_Surface *is);
-void          evas_common_image_surface_dealloc   (RGBA_Surface *is);
+EAPI RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);
+EAPI void          evas_common_image_surface_free      (RGBA_Surface *is);
+EAPI void          evas_common_image_surface_alloc     (RGBA_Surface *is);
+EAPI void          evas_common_image_surface_dealloc   (RGBA_Surface *is);
 
-RGBA_Image   *evas_common_image_alpha_create      (int w, int h);
-RGBA_Image   *evas_common_image_create            (int w, int h);
-RGBA_Image   *evas_common_image_new               (void);
-void          evas_common_image_free              (RGBA_Image *im);
-void          evas_common_image_ref               (RGBA_Image *im);
-void          evas_common_image_unref             (RGBA_Image *im);
-void          evas_common_image_cache             (RGBA_Image *im);
-void          evas_common_image_uncache           (RGBA_Image *im);
-void          evas_common_image_flush_cache       (void);
-void          evas_common_image_set_cache         (int size);
-int           evas_common_image_get_cache         (void);
-void          evas_common_image_store             (RGBA_Image *im);
-void          evas_common_image_unstore           (RGBA_Image *im);
-RGBA_Image   *evas_common_image_find              (const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo);
-int           evas_common_image_ram_usage         (RGBA_Image *im);
-void          evas_common_image_dirty             (RGBA_Image *im);
-void          evas_common_image_cache_free        (void);
+EAPI RGBA_Image   *evas_common_image_alpha_create      (int w, int h);
+EAPI RGBA_Image   *evas_common_image_create            (int w, int h);
+EAPI RGBA_Image   *evas_common_image_new               (void);
+EAPI void          evas_common_image_free              (RGBA_Image *im);
+EAPI void          evas_common_image_ref               (RGBA_Image *im);
+EAPI void          evas_common_image_unref             (RGBA_Image *im);
+EAPI void          evas_common_image_cache             (RGBA_Image *im);
+EAPI void          evas_common_image_uncache           (RGBA_Image *im);
+EAPI void          evas_common_image_flush_cache       (void);
+EAPI void          evas_common_image_set_cache         (int size);
+EAPI int           evas_common_image_get_cache         (void);
+EAPI void          evas_common_image_store             (RGBA_Image *im);
+EAPI void          evas_common_image_unstore           (RGBA_Image *im);
+EAPI RGBA_Image   *evas_common_image_find              (const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo);
+EAPI int           evas_common_image_ram_usage         (RGBA_Image *im);
+EAPI void          evas_common_image_dirty             (RGBA_Image *im);
+EAPI void          evas_common_image_cache_free        (void);
 
-RGBA_Image         *evas_common_load_image_from_file     (const char *file, const char *key, RGBA_Image_Loadopts *lo);
-void                evas_common_load_image_data_from_file(RGBA_Image *im);
-int                 evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+EAPI RGBA_Image   *evas_common_load_image_from_file     (const char *file, const char *key, RGBA_Image_Loadopts *lo);
+EAPI void          evas_common_load_image_data_from_file(RGBA_Image *im);
+EAPI int           evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
 RGBA_Image   *evas_common_image_line_buffer_obtain       (int len);
 void          evas_common_image_line_buffer_release      (void);
@@ -701,113 +701,113 @@ void          evas_common_image_alpha_line_buffer_free    (void);
 
 
 /****/
-void           evas_common_rectangle_init          (void);
+EAPI void           evas_common_rectangle_init          (void);
 
-void           evas_common_rectangle_draw          (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
-
-/****/
-void           evas_common_gradient_init            (void);
-
-RGBA_Gradient *evas_common_gradient_new             (void);
-void           evas_common_gradient_free            (RGBA_Gradient *gr);
-void           evas_common_gradient_colors_clear    (RGBA_Gradient *gr);
-void           evas_common_gradient_color_add       (RGBA_Gradient *gr, int r, int g, int b, int a, int dist);
-void           evas_common_gradient_data_set        (RGBA_Gradient *gr, DATA32 *data, int len, int alpha_flags);
-void           evas_common_gradient_data_unset      (RGBA_Gradient *gr);
-void           evas_common_gradient_type_set        (RGBA_Gradient *gr, char *name);
-void           evas_common_gradient_type_params_set (RGBA_Gradient *gr, char *params);
-void           evas_common_gradient_fill_set        (RGBA_Gradient *gr, int x, int y, int w, int h);
-void           evas_common_gradient_range_offset_set(RGBA_Gradient *gr, float offset);
-RGBA_Gradient *evas_common_gradient_geometry_init   (RGBA_Gradient *gr, int spread);
-int            evas_common_gradient_has_alpha       (RGBA_Gradient *gr, int spread, int op);
-void           evas_common_gradient_map             (RGBA_Draw_Context *dc, RGBA_Gradient *gr, int spread);
-void           evas_common_gradient_draw            (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle, int spread);
-
-RGBA_Gradient_Type  *evas_common_gradient_geometer_get     (char *name);
-RGBA_Gradient_Type  *evas_common_gradient_linear_get       (void);
-RGBA_Gradient_Type  *evas_common_gradient_radial_get       (void);
-RGBA_Gradient_Type  *evas_common_gradient_angular_get      (void);
-RGBA_Gradient_Type  *evas_common_gradient_rectangular_get  (void);
-RGBA_Gradient_Type  *evas_common_gradient_sinusoidal_get   (void);
-char                *evas_common_gradient_get_key_fval     (char *in, char *key, float *val);
+EAPI void           evas_common_rectangle_draw          (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 /****/
-void          evas_common_line_init               (void);
+EAPI void           evas_common_gradient_init            (void);
 
-void          evas_common_line_draw               (RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
+EAPI RGBA_Gradient *evas_common_gradient_new             (void);
+EAPI void           evas_common_gradient_free            (RGBA_Gradient *gr);
+EAPI void           evas_common_gradient_colors_clear    (RGBA_Gradient *gr);
+EAPI void           evas_common_gradient_color_add       (RGBA_Gradient *gr, int r, int g, int b, int a, int dist);
+EAPI void           evas_common_gradient_data_set        (RGBA_Gradient *gr, DATA32 *data, int len, int alpha_flags);
+EAPI void           evas_common_gradient_data_unset      (RGBA_Gradient *gr);
+EAPI void           evas_common_gradient_type_set        (RGBA_Gradient *gr, char *name);
+EAPI void           evas_common_gradient_type_params_set (RGBA_Gradient *gr, char *params);
+EAPI void           evas_common_gradient_fill_set        (RGBA_Gradient *gr, int x, int y, int w, int h);
+EAPI void           evas_common_gradient_range_offset_set(RGBA_Gradient *gr, float offset);
+EAPI RGBA_Gradient *evas_common_gradient_geometry_init   (RGBA_Gradient *gr, int spread);
+EAPI int            evas_common_gradient_has_alpha       (RGBA_Gradient *gr, int spread, int op);
+EAPI void           evas_common_gradient_map             (RGBA_Draw_Context *dc, RGBA_Gradient *gr, int spread);
+EAPI void           evas_common_gradient_draw            (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle, int spread);
 
-/****/
-void                evas_common_polygon_init         (void);
-
-RGBA_Polygon_Point *evas_common_polygon_point_add    (RGBA_Polygon_Point *points, int x, int y);
-RGBA_Polygon_Point *evas_common_polygon_points_clear (RGBA_Polygon_Point *points);
-void                evas_common_polygon_draw         (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
-
-/****/
-void          evas_common_blit_init               (void);
-
-void          evas_common_blit_rectangle          (RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
-
-/****/
-
-/****/
-void             evas_common_font_init              (void);
-void             evas_common_font_shutdown          (void);
-RGBA_Font_Source *evas_common_font_source_memory_load(const char *name, const void *data, int data_size);
-RGBA_Font_Source *evas_common_font_source_load       (const char *name);
-int		 evas_common_font_source_load_complete(RGBA_Font_Source *fs);
-RGBA_Font_Source *evas_common_font_source_find       (const char *name);
-void              evas_common_font_source_free       (RGBA_Font_Source *fs);
-void              evas_common_font_size_use         (RGBA_Font *fn);
-RGBA_Font       *evas_common_font_memory_load       (const char *name, int size, const void *data, int data_size);
-RGBA_Font       *evas_common_font_load              (const char *name, int size);
-RGBA_Font       *evas_common_font_add               (RGBA_Font *fn, const char *name, int size);
-RGBA_Font       *evas_common_font_memory_add        (RGBA_Font *fn, const char *name, int size, const void *data, int data_size);
-RGBA_Font_Int   *evas_common_font_int_load_init     (RGBA_Font_Int *fn);
-RGBA_Font_Int	*evas_common_font_int_load_complete (RGBA_Font_Int *fi);
-void             evas_common_font_free              (RGBA_Font *fn);
-void             evas_common_font_hinting_set       (RGBA_Font *fn, Font_Hint_Flags hinting);
-Evas_Bool        evas_common_hinting_available      (Font_Hint_Flags hinting);
-RGBA_Font       *evas_common_font_memory_hinting_load(const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting);
-RGBA_Font       *evas_common_font_hinting_load      (const char *name, int size, Font_Hint_Flags hinting);
-RGBA_Font       *evas_common_font_hinting_add       (RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting);
-RGBA_Font       *evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting);
-void             evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir);
-int              evas_common_font_cache_get         (void);
-void             evas_common_font_cache_set         (int size);
-void             evas_common_font_flush             (void);
-void             evas_common_font_flush_last        (void);
-RGBA_Font_Int   *evas_common_font_int_find          (const char *name, int size);
-int              evas_common_font_glyph_search      (RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl);
-void             evas_common_font_draw              (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
-RGBA_Font_Glyph *evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index);
-int              evas_common_font_ascent_get        (RGBA_Font *fn);
-int              evas_common_font_descent_get       (RGBA_Font *fn);
-int              evas_common_font_max_ascent_get    (RGBA_Font *fn);
-int              evas_common_font_max_descent_get   (RGBA_Font *fn);
-int              evas_common_font_get_line_advance  (RGBA_Font *fn);
-void             evas_common_font_query_size        (RGBA_Font *fn, const char *text, int *w, int *h);
-int              evas_common_font_query_inset       (RGBA_Font *fn, const char *text);
-void             evas_common_font_query_advance     (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);
-int              evas_common_font_query_char_coords (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
-int              evas_common_font_query_text_at_pos (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-int              evas_common_font_utf8_get_next     (unsigned char *buf, int *iindex);
-int              evas_common_font_utf8_get_prev     (unsigned char *buf, int *iindex);
-int              evas_common_font_utf8_get_last     (unsigned char *buf, int buflen);
+RGBA_Gradient_Type *evas_common_gradient_geometer_get    (char *name);
+RGBA_Gradient_Type *evas_common_gradient_linear_get      (void);
+RGBA_Gradient_Type *evas_common_gradient_radial_get      (void);
+RGBA_Gradient_Type *evas_common_gradient_angular_get     (void);
+RGBA_Gradient_Type *evas_common_gradient_rectangular_get (void);
+RGBA_Gradient_Type *evas_common_gradient_sinusoidal_get  (void);
+char               *evas_common_gradient_get_key_fval    (char *in, char *key, float *val);
 
 /****/
-void         evas_common_tilebuf_init               (void);
+EAPI void          evas_common_line_init               (void);
 
-Tilebuf      *evas_common_tilebuf_new               (int w, int h);
-void          evas_common_tilebuf_free              (Tilebuf *tb);
-void          evas_common_tilebuf_set_tile_size     (Tilebuf *tb, int tw, int th);
-void          evas_common_tilebuf_get_tile_size     (Tilebuf *tb, int *tw, int *th);
-int           evas_common_tilebuf_add_redraw        (Tilebuf *tb, int x, int y, int w, int h);
-int           evas_common_tilebuf_del_redraw        (Tilebuf *tb, int x, int y, int w, int h);
-int           evas_common_tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha);
-void          evas_common_tilebuf_clear             (Tilebuf *tb);
-Tilebuf_Rect *evas_common_tilebuf_get_render_rects  (Tilebuf *tb);
-void          evas_common_tilebuf_free_render_rects (Tilebuf_Rect *rects);
+EAPI void          evas_common_line_draw               (RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
+
+/****/
+EAPI void                evas_common_polygon_init         (void);
+
+EAPI RGBA_Polygon_Point *evas_common_polygon_point_add    (RGBA_Polygon_Point *points, int x, int y);
+EAPI RGBA_Polygon_Point *evas_common_polygon_points_clear (RGBA_Polygon_Point *points);
+EAPI void                evas_common_polygon_draw         (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+
+/****/
+EAPI void     evas_common_blit_init               (void);
+
+EAPI void     evas_common_blit_rectangle          (RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
+
+/****/
+
+/****/
+EAPI void              evas_common_font_init              (void);
+EAPI void              evas_common_font_shutdown          (void);
+EAPI RGBA_Font_Source *evas_common_font_source_memory_load(const char *name, const void *data, int data_size);
+EAPI RGBA_Font_Source *evas_common_font_source_load       (const char *name);
+EAPI int               evas_common_font_source_load_complete(RGBA_Font_Source *fs);
+EAPI RGBA_Font_Source *evas_common_font_source_find       (const char *name);
+EAPI void              evas_common_font_source_free       (RGBA_Font_Source *fs);
+EAPI void              evas_common_font_size_use          (RGBA_Font *fn);
+EAPI RGBA_Font        *evas_common_font_memory_load       (const char *name, int size, const void *data, int data_size);
+EAPI RGBA_Font        *evas_common_font_load              (const char *name, int size);
+EAPI RGBA_Font        *evas_common_font_add               (RGBA_Font *fn, const char *name, int size);
+EAPI RGBA_Font        *evas_common_font_memory_add        (RGBA_Font *fn, const char *name, int size, const void *data, int data_size);
+EAPI RGBA_Font_Int    *evas_common_font_int_load_init     (RGBA_Font_Int *fn);
+EAPI RGBA_Font_Int    *evas_common_font_int_load_complete (RGBA_Font_Int *fi);
+EAPI void              evas_common_font_free              (RGBA_Font *fn);
+EAPI void              evas_common_font_hinting_set       (RGBA_Font *fn, Font_Hint_Flags hinting);
+EAPI Evas_Bool         evas_common_hinting_available      (Font_Hint_Flags hinting);
+EAPI RGBA_Font        *evas_common_font_memory_hinting_load(const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting);
+EAPI RGBA_Font        *evas_common_font_hinting_load      (const char *name, int size, Font_Hint_Flags hinting);
+EAPI RGBA_Font        *evas_common_font_hinting_add       (RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting);
+EAPI RGBA_Font        *evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting);
+EAPI void              evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir);
+EAPI int               evas_common_font_cache_get         (void);
+EAPI void              evas_common_font_cache_set         (int size);
+EAPI void              evas_common_font_flush             (void);
+EAPI void              evas_common_font_flush_last        (void);
+EAPI RGBA_Font_Int    *evas_common_font_int_find          (const char *name, int size);
+EAPI int               evas_common_font_glyph_search      (RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl);
+EAPI void              evas_common_font_draw              (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
+EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index);
+EAPI int               evas_common_font_ascent_get        (RGBA_Font *fn);
+EAPI int               evas_common_font_descent_get       (RGBA_Font *fn);
+EAPI int               evas_common_font_max_ascent_get    (RGBA_Font *fn);
+EAPI int               evas_common_font_max_descent_get   (RGBA_Font *fn);
+EAPI int               evas_common_font_get_line_advance  (RGBA_Font *fn);
+EAPI void              evas_common_font_query_size        (RGBA_Font *fn, const char *text, int *w, int *h);
+EAPI int               evas_common_font_query_inset       (RGBA_Font *fn, const char *text);
+EAPI void              evas_common_font_query_advance     (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);
+EAPI int               evas_common_font_query_char_coords (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
+EAPI int               evas_common_font_query_text_at_pos (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
+EAPI int               evas_common_font_utf8_get_next     (unsigned char *buf, int *iindex);
+EAPI int               evas_common_font_utf8_get_prev     (unsigned char *buf, int *iindex);
+EAPI int               evas_common_font_utf8_get_last     (unsigned char *buf, int buflen);
+
+/****/
+EAPI void          evas_common_tilebuf_init               (void);
+
+EAPI Tilebuf      *evas_common_tilebuf_new               (int w, int h);
+EAPI void          evas_common_tilebuf_free              (Tilebuf *tb);
+EAPI void          evas_common_tilebuf_set_tile_size     (Tilebuf *tb, int tw, int th);
+EAPI void          evas_common_tilebuf_get_tile_size     (Tilebuf *tb, int *tw, int *th);
+EAPI int           evas_common_tilebuf_add_redraw        (Tilebuf *tb, int x, int y, int w, int h);
+EAPI int           evas_common_tilebuf_del_redraw        (Tilebuf *tb, int x, int y, int w, int h);
+EAPI int           evas_common_tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha);
+EAPI void          evas_common_tilebuf_clear             (Tilebuf *tb);
+EAPI Tilebuf_Rect *evas_common_tilebuf_get_render_rects  (Tilebuf *tb);
+EAPI void          evas_common_tilebuf_free_render_rects (Tilebuf_Rect *rects);
 
 /*
 Regionbuf    *evas_common_regionbuf_new       (int w, int h);
@@ -819,31 +819,31 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 */
    
 /****/
-void               evas_common_draw_init                      (void);
+EAPI void               evas_common_draw_init                      (void);
 
-RGBA_Draw_Context *evas_common_draw_context_new               (void);
-void               evas_common_draw_context_free              (RGBA_Draw_Context *dc);
-void               evas_common_draw_context_font_ext_set      (RGBA_Draw_Context *dc,
-							 void *data,
-							 void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg),
-							 void  (*gl_free) (void *ext_dat),
-							 void  (*gl_draw) (void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y));
-void               evas_common_draw_context_clip_clip         (RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void               evas_common_draw_context_set_clip          (RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void               evas_common_draw_context_unset_clip        (RGBA_Draw_Context *dc);
-void               evas_common_draw_context_set_color         (RGBA_Draw_Context *dc, int r, int g, int b, int a);
-void               evas_common_draw_context_set_multiplier    (RGBA_Draw_Context *dc, int r, int g, int b, int a);
-void               evas_common_draw_context_unset_multiplier  (RGBA_Draw_Context *dc);
-void               evas_common_draw_context_add_cutout        (RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void               evas_common_draw_context_clear_cutouts     (RGBA_Draw_Context *dc);
-Cutout_Rect       *evas_common_draw_context_apply_cutouts     (RGBA_Draw_Context *dc);
-void               evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects);
-Cutout_Rect       *evas_common_draw_context_cutouts_split     (Cutout_Rect *in, Cutout_Rect *split);
-Cutout_Rect       *evas_common_draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
-Cutout_Rect       *evas_common_draw_context_cutout_merge      (Cutout_Rect *in, Cutout_Rect *merge);
-void               evas_common_draw_context_set_anti_alias    (RGBA_Draw_Context *dc, unsigned char aa);
-void               evas_common_draw_context_set_color_interpolation    (RGBA_Draw_Context *dc, int color_space);
-void               evas_common_draw_context_set_render_op     (RGBA_Draw_Context *dc, int op);
+EAPI RGBA_Draw_Context *evas_common_draw_context_new               (void);
+EAPI void               evas_common_draw_context_free              (RGBA_Draw_Context *dc);
+EAPI void               evas_common_draw_context_font_ext_set      (RGBA_Draw_Context *dc,
+								    void *data,
+								    void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg),
+								    void  (*gl_free) (void *ext_dat),
+								    void  (*gl_draw) (void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y));
+EAPI void               evas_common_draw_context_clip_clip         (RGBA_Draw_Context *dc, int x, int y, int w, int h);
+EAPI void               evas_common_draw_context_set_clip          (RGBA_Draw_Context *dc, int x, int y, int w, int h);
+EAPI void               evas_common_draw_context_unset_clip        (RGBA_Draw_Context *dc);
+EAPI void               evas_common_draw_context_set_color         (RGBA_Draw_Context *dc, int r, int g, int b, int a);
+EAPI void               evas_common_draw_context_set_multiplier    (RGBA_Draw_Context *dc, int r, int g, int b, int a);
+EAPI void               evas_common_draw_context_unset_multiplier  (RGBA_Draw_Context *dc);
+EAPI void               evas_common_draw_context_add_cutout        (RGBA_Draw_Context *dc, int x, int y, int w, int h);
+EAPI void               evas_common_draw_context_clear_cutouts     (RGBA_Draw_Context *dc);
+EAPI Cutout_Rect       *evas_common_draw_context_apply_cutouts     (RGBA_Draw_Context *dc);
+EAPI void               evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects);
+EAPI Cutout_Rect       *evas_common_draw_context_cutouts_split     (Cutout_Rect *in, Cutout_Rect *split);
+EAPI Cutout_Rect       *evas_common_draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
+EAPI Cutout_Rect       *evas_common_draw_context_cutout_merge      (Cutout_Rect *in, Cutout_Rect *merge);
+EAPI void               evas_common_draw_context_set_anti_alias    (RGBA_Draw_Context *dc, unsigned char aa);
+EAPI void               evas_common_draw_context_set_color_interpolation    (RGBA_Draw_Context *dc, int color_space);
+EAPI void               evas_common_draw_context_set_render_op     (RGBA_Draw_Context *dc, int op);
 
 void              evas_font_dir_cache_free(void);
 

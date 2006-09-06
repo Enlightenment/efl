@@ -3,7 +3,7 @@
 FT_Library      evas_ft_lib = 0;
 static int      initialised = 0;
 
-void
+EAPI void
 evas_common_font_init(void)
 {
    int error;
@@ -18,7 +18,7 @@ evas_common_font_init(void)
      }
 }
 
-void
+EAPI void
 evas_common_font_shutdown(void)
 {
    int error;
@@ -28,7 +28,7 @@ evas_common_font_shutdown(void)
    error = FT_Done_FreeType(evas_ft_lib);
 }
 
-int
+EAPI int
 evas_common_font_ascent_get(RGBA_Font *fn)
 {
    int val, dv;
@@ -45,7 +45,7 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    return ret;
 }
 
-int
+EAPI int
 evas_common_font_descent_get(RGBA_Font *fn)
 {
    int val, dv;
@@ -62,7 +62,7 @@ evas_common_font_descent_get(RGBA_Font *fn)
    return ret;
 }
 
-int
+EAPI int
 evas_common_font_max_ascent_get(RGBA_Font *fn)
 {
    int val, dv;
@@ -79,7 +79,7 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    return ret;
 }
 
-int
+EAPI int
 evas_common_font_max_descent_get(RGBA_Font *fn)
 {
    int val, dv;
@@ -96,7 +96,7 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    return ret;
 }
 
-int
+EAPI int
 evas_common_font_get_line_advance(RGBA_Font *fn)
 {
    int val, dv;
@@ -113,7 +113,7 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    return ret;
 }
 
-int
+EAPI int
 evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
 {
    /* Reads UTF8 bytes from @buf, starting at *@index and returns
@@ -173,7 +173,7 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
    return r;
 }
 
-int
+EAPI int
 evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
 {
    /* Reads UTF8 bytes from @buf, starting at *@index and returns
@@ -259,7 +259,7 @@ evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
    return r;
 }
 
-int
+EAPI int
 evas_common_font_utf8_get_last(unsigned char *buf, int buflen)
 {
    /* jumps to the nul byte at the buffer end and decodes backwards and

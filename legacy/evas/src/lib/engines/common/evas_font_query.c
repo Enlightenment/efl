@@ -1,7 +1,7 @@
 #include "evas_common.h"
 
 /* string extents */
-void
+EAPI void
 evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 {
    int use_kerning;
@@ -76,7 +76,7 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 }
 
 /* text x inset */
-int
+EAPI int
 evas_common_font_query_inset(RGBA_Font *fn, const char *text)
 {
    FT_UInt index;
@@ -99,7 +99,7 @@ evas_common_font_query_inset(RGBA_Font *fn, const char *text)
 }
 
 /* h & v advance */
-void
+EAPI void
 evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int *v_adv)
 {
    int use_kerning;
@@ -156,7 +156,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 }
 
 /* x y w h for char at char pos */
-int
+EAPI int
 evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    int use_kerning;
@@ -242,7 +242,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 }
 
 /* char pos of text at xy pos */
-int
+EAPI int
 evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    int use_kerning;

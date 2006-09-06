@@ -60,12 +60,12 @@ struct _RGBA_Vertex
    num_active_edges++;                                                  \
 }
 
-void
+EAPI void
 evas_common_polygon_init(void)
 {
 }
 
-RGBA_Polygon_Point *
+EAPI RGBA_Polygon_Point *
 evas_common_polygon_point_add(RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Polygon_Point *pt;
@@ -78,7 +78,7 @@ evas_common_polygon_point_add(RGBA_Polygon_Point *points, int x, int y)
    return points;
 }
 
-RGBA_Polygon_Point *
+EAPI RGBA_Polygon_Point *
 evas_common_polygon_points_clear(RGBA_Polygon_Point *points)
 {
    if (points)
@@ -117,7 +117,7 @@ polygon_edge_sorter(const void *a, const void *b)
    return 1;
 }
 
-void
+EAPI void
 evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
 {
    RGBA_Gfx_Func      func;

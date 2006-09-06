@@ -33,12 +33,12 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 }
 
 
-void
+EAPI void
 evas_common_line_init(void)
 {
 }
 
-void
+EAPI void
 evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1)
 {
    int  x, y, w, h;

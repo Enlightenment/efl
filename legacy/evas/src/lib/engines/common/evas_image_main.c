@@ -70,7 +70,7 @@ image_debug(void)
 }
 #endif
 
-void
+EAPI void
 evas_common_image_init(void)
 {
 #ifdef BUILD_LOADER_EET
@@ -78,7 +78,7 @@ evas_common_image_init(void)
 #endif
 }
 
-void
+EAPI void
 evas_common_image_shutdown(void)
 {
 #ifdef BUILD_LOADER_EET
@@ -152,7 +152,7 @@ evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
 }
 #endif
 
-RGBA_Surface *
+EAPI RGBA_Surface *
 evas_common_image_surface_new(RGBA_Image *im)
 {
    RGBA_Surface *is;
@@ -162,14 +162,14 @@ evas_common_image_surface_new(RGBA_Image *im)
    return is;
 }
 
-void
+EAPI void
 evas_common_image_surface_free(RGBA_Surface *is)
 {
    evas_common_image_surface_dealloc(is);
    free(is);
 }
 
-void
+EAPI void
 evas_common_image_surface_alloc(RGBA_Surface *is)
 {
    size_t siz = 0;
@@ -186,7 +186,7 @@ evas_common_image_surface_alloc(RGBA_Surface *is)
 #endif
 }
 
-void
+EAPI void
 evas_common_image_surface_dealloc(RGBA_Surface *is)
 {
    if ((is->data) && (!is->no_free))
@@ -196,7 +196,7 @@ evas_common_image_surface_dealloc(RGBA_Surface *is)
      }
 }
 
-RGBA_Image *
+EAPI RGBA_Image *
 evas_common_image_create(int w, int h)
 {
    RGBA_Image *im;
@@ -222,7 +222,7 @@ evas_common_image_create(int w, int h)
    return im;
 }
 
-RGBA_Image *
+EAPI RGBA_Image *
 evas_common_image_alpha_create(int w, int h)
 {
    RGBA_Image *im;
@@ -249,7 +249,7 @@ evas_common_image_alpha_create(int w, int h)
    return im;
 }
 
-RGBA_Image *
+EAPI RGBA_Image *
 evas_common_image_new(void)
 {
    RGBA_Image *im;
@@ -260,7 +260,7 @@ evas_common_image_new(void)
    return im;
 }
 
-void
+EAPI void
 evas_common_image_free(RGBA_Image *im)
 {
    if (im->image) evas_common_image_surface_free(im->image);
@@ -271,7 +271,7 @@ evas_common_image_free(RGBA_Image *im)
    free(im);
 }
 
-void
+EAPI void
 evas_common_image_ref(RGBA_Image *im)
 {
    im->references++;
@@ -282,7 +282,7 @@ evas_common_image_ref(RGBA_Image *im)
      }
 }
 
-void
+EAPI void
 evas_common_image_unref(RGBA_Image *im)
 {
    im->references--;
@@ -302,7 +302,7 @@ evas_common_image_unref(RGBA_Image *im)
      }
 }
 
-void
+EAPI void
 evas_common_image_cache(RGBA_Image *im)
 {
    int ram;
@@ -315,7 +315,7 @@ evas_common_image_cache(RGBA_Image *im)
    evas_common_image_flush_cache();
 }
 
-void
+EAPI void
 evas_common_image_uncache(RGBA_Image *im)
 {
    int ram;
@@ -327,7 +327,7 @@ evas_common_image_uncache(RGBA_Image *im)
    cache_usage -= ram;
 }
 
-void
+EAPI void
 evas_common_image_flush_cache(void)
 {
    Evas_Object_List *l, *l_next;
@@ -348,20 +348,20 @@ evas_common_image_flush_cache(void)
      }
 }
 
-void
+EAPI void
 evas_common_image_set_cache(int size)
 {
    cache_size = size;
    evas_common_image_flush_cache();
 }
 
-int
+EAPI int
 evas_common_image_get_cache(void)
 {
    return cache_size;
 }
 
-void
+EAPI void
 evas_common_image_store(RGBA_Image *im)
 {
    char buf[4096 + 1204];
@@ -389,7 +389,7 @@ evas_common_image_store(RGBA_Image *im)
    im->flags |= RGBA_IMAGE_INDEXED;
 }
 
-void
+EAPI void
 evas_common_image_unstore(RGBA_Image *im)
 {
    char buf[4096 + 1024];
@@ -417,7 +417,7 @@ evas_common_image_unstore(RGBA_Image *im)
 }
 
 
-RGBA_Image *
+EAPI RGBA_Image *
 evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo)
 {
    RGBA_Image *im;
@@ -466,7 +466,7 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
    return NULL;
 }
 
-int
+EAPI int
 evas_common_image_ram_usage(RGBA_Image *im)
 {
    int ram = 0;
@@ -481,14 +481,14 @@ evas_common_image_ram_usage(RGBA_Image *im)
    return ram;
 }
 
-void
+EAPI void
 evas_common_image_dirty(RGBA_Image *im)
 {
    evas_common_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
 }
 
-void
+EAPI void
 evas_common_image_cache_free(void)
 {
    evas_common_image_set_cache(0);

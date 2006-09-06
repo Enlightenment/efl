@@ -4,7 +4,7 @@ void scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 
 #ifndef BUILD_SCALE_SMOOTH
 #ifdef BUILD_SCALE_SAMPLE
-void
+EAPI void
 evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 				 RGBA_Draw_Context *dc,
 				 int src_region_x, int src_region_y,
@@ -22,7 +22,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 #endif
 
 #ifdef BUILD_SCALE_SAMPLE
-void
+EAPI void
 evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
 				 RGBA_Draw_Context *dc,
 				 int src_region_x, int src_region_y,
@@ -314,7 +314,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 }
 #else
 #ifdef BUILD_SCALE_SMOOTH
-void
+EAPI void
 evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
 				 RGBA_Draw_Context *dc,
 				 int src_region_x, int src_region_y,

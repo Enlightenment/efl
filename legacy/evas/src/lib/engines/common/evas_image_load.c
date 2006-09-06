@@ -3,7 +3,7 @@
 
 extern Evas_List *evas_modules;
 
-RGBA_Image *
+EAPI RGBA_Image *
 evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
@@ -93,7 +93,7 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
    return im;
 }
 
-void
+EAPI void
 evas_common_load_image_data_from_file(RGBA_Image *im)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;

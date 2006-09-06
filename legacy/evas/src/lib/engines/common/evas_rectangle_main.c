@@ -2,12 +2,12 @@
 
 static void rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
-void
+EAPI void
 evas_common_rectangle_init(void)
 {
 }
 
-void
+EAPI void
 evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    int c, cx, cy, cw, ch;

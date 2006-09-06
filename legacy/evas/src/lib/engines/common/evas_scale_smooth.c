@@ -82,7 +82,7 @@ scale_calc_a_points(int s, int d)
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_C
-void
+EAPI void
 evas_common_scale_rgba_mipmap_down_2x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -119,7 +119,7 @@ evas_common_scale_rgba_mipmap_down_2x2_c(DATA32 *src, DATA32 *dst, int src_w, in
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_C
-void
+EAPI void
 evas_common_scale_rgba_mipmap_down_2x1_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -153,7 +153,7 @@ evas_common_scale_rgba_mipmap_down_2x1_c(DATA32 *src, DATA32 *dst, int src_w, in
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_C
-void
+EAPI void
 evas_common_scale_rgba_mipmap_down_1x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -190,7 +190,7 @@ evas_common_scale_rgba_mipmap_down_1x2_c(DATA32 *src, DATA32 *dst, int src_w, in
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_C
-void
+EAPI void
 evas_common_scale_rgb_mipmap_down_2x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -227,7 +227,7 @@ evas_common_scale_rgb_mipmap_down_2x2_c(DATA32 *src, DATA32 *dst, int src_w, int
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_C
-void
+EAPI void
 evas_common_scale_rgb_mipmap_down_2x1_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -261,7 +261,7 @@ evas_common_scale_rgb_mipmap_down_2x1_c(DATA32 *src, DATA32 *dst, int src_w, int
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_C
-void
+EAPI void
 evas_common_scale_rgb_mipmap_down_1x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -298,7 +298,7 @@ evas_common_scale_rgb_mipmap_down_1x2_c(DATA32 *src, DATA32 *dst, int src_w, int
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_MMX
-void
+EAPI void
 evas_common_scale_rgba_mipmap_down_2x2_mmx(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -345,7 +345,7 @@ evas_common_scale_rgba_mipmap_down_2x2_mmx(DATA32 *src, DATA32 *dst, int src_w, 
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_MMX
-void
+EAPI void
 evas_common_scale_rgba_mipmap_down_2x1_mmx(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -383,7 +383,7 @@ evas_common_scale_rgba_mipmap_down_2x1_mmx(DATA32 *src, DATA32 *dst, int src_w, 
 
 #ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_MMX
-void
+EAPI void
 evas_common_scale_rgba_mipmap_down_1x2_mmx(DATA32 *src, DATA32 *dst, int src_w, int src_h)
 {
    int x, y, dst_w, dst_h;
@@ -436,7 +436,7 @@ evas_common_scale_rgba_mipmap_down_1x2_mmx(DATA32 *src, DATA32 *dst, int src_w, 
 #  undef SCALE_USING_MMX
 #  include "evas_scale_smooth_scaler.c"
 # endif
-void
+EAPI void
 evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 				 RGBA_Draw_Context *dc,
 				 int src_region_x, int src_region_y,
@@ -743,7 +743,7 @@ evas_common_scale_rgba_span_mmx(DATA32 *src, int src_len, DATA32 mul_col, DATA32
 }
 #endif
 
-void
+EAPI void
 evas_common_scale_rgba_span(DATA32 *src, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len)
 {
 #ifdef BUILD_MMX

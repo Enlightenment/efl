@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-RGBA_Font_Glyph *
+EAPI RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 {
    RGBA_Font_Glyph *fg;
@@ -53,7 +53,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    return fg;
 }
 
-int
+EAPI int
 evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 {
    Evas_List *l;
@@ -128,7 +128,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
    return 0;
 }
 
-void
+EAPI void
 evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text)
 {
    int use_kerning;

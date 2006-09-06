@@ -112,7 +112,7 @@ evas_common_cpu_feature_test(void (*feature)(void))
 #endif
 }
 
-void
+EAPI void
 evas_common_cpu_init(void)
 {
    static int called = 0;
@@ -166,7 +166,7 @@ evas_common_cpu_have_cpuid(void)
 #endif
 }
 
-void
+EAPI void
 evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 {
    static int do_mmx = 0, do_sse = 0, do_sse2 = 0, done = 0;
@@ -192,7 +192,7 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 }
 
 #ifdef BUILD_MMX
-void
+EAPI void
 evas_common_cpu_end_opt(void)
 {
    if (cpu_feature_mask &
@@ -202,7 +202,7 @@ evas_common_cpu_end_opt(void)
      }
 }
 #else
-void
+EAPI void
 evas_common_cpu_end_opt(void)
 {
 }

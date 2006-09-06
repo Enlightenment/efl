@@ -319,7 +319,7 @@ evas_module_shutdown(void)
      }
 }
 
-int
+EAPI int
 _evas_module_engine_inherit(Evas_Func *funcs, char *name)
 {
    Evas_Module *em;

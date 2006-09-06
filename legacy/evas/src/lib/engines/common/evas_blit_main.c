@@ -16,12 +16,12 @@ static void evas_common_copy_pixels_rev_mmx         (DATA32 *src, DATA32 *dst, i
 static void evas_common_copy_pixels_rev_sse/*NB*/ (DATA32 *src, DATA32 *dst, int len);
 
 
-void
+EAPI void
 evas_common_blit_init(void)
 {
 }
 
-void
+EAPI void
 evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y)
 {
    int y;

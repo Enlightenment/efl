@@ -10,12 +10,12 @@ static int  tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *
 #endif
 static void tilebuf_setup(Tilebuf *tb);
 
-void
+EAPI void
 evas_common_tilebuf_init(void)
 {
 }
 
-Tilebuf *
+EAPI Tilebuf *
 evas_common_tilebuf_new(int w, int h)
 {
    Tilebuf *tb;
@@ -31,7 +31,7 @@ evas_common_tilebuf_new(int w, int h)
    return tb;
 }
 
-void
+EAPI void
 evas_common_tilebuf_free(Tilebuf *tb)
 {
 #ifdef RECTUPDATE
@@ -42,7 +42,7 @@ evas_common_tilebuf_free(Tilebuf *tb)
    free(tb);
 }
 
-void
+EAPI void
 evas_common_tilebuf_set_tile_size(Tilebuf *tb, int tw, int th)
 {
    tb->tile_size.w = tw;
@@ -50,14 +50,14 @@ evas_common_tilebuf_set_tile_size(Tilebuf *tb, int tw, int th)
    tilebuf_setup(tb);
 }
 
-void
+EAPI void
 evas_common_tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
 {
    if (tw) *tw = tb->tile_size.w;
    if (th) *th = tb->tile_size.h;
 }
 
-int
+EAPI int
 evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
 #ifdef RECTUPDATE
@@ -98,7 +98,7 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 #endif
 }
 
-int
+EAPI int
 evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
 #ifdef RECTUPDATE
@@ -136,7 +136,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 #endif
 }
 
-int
+EAPI int
 evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha)
 {
    /* FIXME: need to actually impliment motion vectors. for now it just */
@@ -148,7 +148,7 @@ evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, i
    return num;
 }
 
-void
+EAPI void
 evas_common_tilebuf_clear(Tilebuf *tb)
 {
 #ifdef RECTUPDATE
@@ -159,7 +159,7 @@ evas_common_tilebuf_clear(Tilebuf *tb)
 #endif
 }
 
-Tilebuf_Rect *
+EAPI Tilebuf_Rect *
 evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 {
 #ifdef RECTUPDATE
@@ -232,7 +232,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 #endif
 }
 
-void
+EAPI void
 evas_common_tilebuf_free_render_rects(Tilebuf_Rect *rects)
 {
    while (rects)

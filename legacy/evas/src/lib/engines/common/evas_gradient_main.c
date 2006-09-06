@@ -54,7 +54,7 @@ evas_common_gradient_get_key_fval(char *in, char *key, float *val)
    return (pp + 1);
 }
 
-void
+EAPI void
 evas_common_gradient_init(void)
 {
 }
@@ -64,7 +64,7 @@ evas_common_gradient_shutdown(void)
 {
 }
 
-RGBA_Gradient *
+EAPI RGBA_Gradient *
 evas_common_gradient_new(void)
 {
    RGBA_Gradient *gr;
@@ -73,7 +73,7 @@ evas_common_gradient_new(void)
    return gr;
 }
 
-void
+EAPI void
 evas_common_gradient_free(RGBA_Gradient *gr)
 {
    if (!gr) return;
@@ -84,7 +84,7 @@ evas_common_gradient_free(RGBA_Gradient *gr)
    free(gr);
 }
 
-void
+EAPI void
 evas_common_gradient_colors_clear(RGBA_Gradient *gr)
 {
    if (!gr) return;
@@ -105,7 +105,7 @@ evas_common_gradient_colors_clear(RGBA_Gradient *gr)
      }
 }
 
-void
+EAPI void
 evas_common_gradient_color_add(RGBA_Gradient *gr, int r, int g, int b, int a, int dist)
 {
    RGBA_Gradient_Color *gc, *gcm, *gc_last;
@@ -154,7 +154,7 @@ evas_common_gradient_color_add(RGBA_Gradient *gr, int r, int g, int b, int a, in
 	gr->has_alpha = 1;
 }
 
-void
+EAPI void
 evas_common_gradient_data_set(RGBA_Gradient *gr, DATA32 *data, int len, int alpha_flags)
 {
    if (!gr || !data || (len < 1)) return;
@@ -169,7 +169,7 @@ evas_common_gradient_data_set(RGBA_Gradient *gr, DATA32 *data, int len, int alph
    gr->map.has_alpha = 0;
 }
 
-void
+EAPI void
 evas_common_gradient_data_unset(RGBA_Gradient *gr)
 {
    if (!gr) return;
@@ -184,7 +184,7 @@ evas_common_gradient_data_unset(RGBA_Gradient *gr)
    gr->map.has_alpha = 0;
 }
 
-void
+EAPI void
 evas_common_gradient_type_set(RGBA_Gradient *gr, char *name)
 {
    if (!gr) return;
@@ -195,7 +195,7 @@ evas_common_gradient_type_set(RGBA_Gradient *gr, char *name)
    gr->type.name = strdup(gr->type.geometer->name);
 }
 
-void
+EAPI void
 evas_common_gradient_type_params_set(RGBA_Gradient *gr, char *params)
 {
    if (!gr) return;
@@ -206,7 +206,7 @@ evas_common_gradient_type_params_set(RGBA_Gradient *gr, char *params)
    if (params) gr->type.params = strdup(params);
 }
 
-void
+EAPI void
 evas_common_gradient_fill_set(RGBA_Gradient *gr, int x, int y, int w, int h)
 {
    if (!gr) return;
@@ -216,14 +216,14 @@ evas_common_gradient_fill_set(RGBA_Gradient *gr, int x, int y, int w, int h)
    gr->fill.h = h;
 }
 
-void
+EAPI void
 evas_common_gradient_range_offset_set(RGBA_Gradient *gr, float offset)
 {
    if (!gr) return;
    gr->range_offset = offset;
 }
 
-RGBA_Gradient *
+EAPI RGBA_Gradient *
 evas_common_gradient_geometry_init(RGBA_Gradient *gr, int spread)
 {
    if (!gr) return NULL;
@@ -237,7 +237,7 @@ evas_common_gradient_geometry_init(RGBA_Gradient *gr, int spread)
      return gr;
 }
 
-int 
+EAPI int 
 evas_common_gradient_has_alpha(RGBA_Gradient *gr, int spread, int op)
 {
    if (!gr || !gr->type.geometer) return 0;
@@ -245,7 +245,7 @@ evas_common_gradient_has_alpha(RGBA_Gradient *gr, int spread, int op)
              gr->type.geometer->has_mask(gr, spread, op));
 }
 
-RGBA_Gradient_Type  *
+EAPI RGBA_Gradient_Type  *
 evas_common_gradient_geometer_get(char *name)
 {
    RGBA_Gradient_Type  *geom = NULL;
@@ -268,7 +268,7 @@ evas_common_gradient_geometer_get(char *name)
 }
 
 
-void
+EAPI void
 evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 			  int x, int y, int w, int h, RGBA_Gradient *gr,
 			  double angle, int spread)
@@ -713,7 +713,7 @@ evas_common_gradient_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient *gr, int spre
      }
 }
 
-void
+EAPI void
 evas_common_gradient_map(RGBA_Draw_Context *dc, RGBA_Gradient *gr, int spread)
 {
    if (!gr || !dc) return;
