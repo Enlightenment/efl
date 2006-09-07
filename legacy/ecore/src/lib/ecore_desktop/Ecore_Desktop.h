@@ -86,7 +86,8 @@ enum _Ecore_Desktop_Paths_Type
    ECORE_DESKTOP_PATHS_DESKTOPS = 3,
    ECORE_DESKTOP_PATHS_ICONS = 4,
    ECORE_DESKTOP_PATHS_KDE_LEGACY = 5,
-   ECORE_DESKTOP_PATHS_XSESSIONS = 6
+   ECORE_DESKTOP_PATHS_XSESSIONS = 6,
+   ECORE_DESKTOP_PATHS_MAX = 7
 };
 typedef enum _Ecore_Desktop_Paths_Type Ecore_Desktop_Paths_Type;
 
@@ -123,6 +124,12 @@ extern              "C"
 
    /* Function Prototypes */
    EAPI int            ecore_desktop_paths_init(void);
+   EAPI void           ecore_desktop_paths_extras_clear(void);
+   EAPI void           ecore_desktop_paths_prepend_user(Ecore_Desktop_Paths_Type type, char *paths);
+   EAPI void           ecore_desktop_paths_prepend_system(Ecore_Desktop_Paths_Type type, char *paths);
+   EAPI void           ecore_desktop_paths_append_user(Ecore_Desktop_Paths_Type type, char *paths);
+   EAPI void           ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type, char *paths);
+   EAPI void           ecore_desktop_paths_regen(void);
    char               *ecore_desktop_paths_file_find(Ecore_List * paths,
 						   const char *file, int sub,
 						   int (*func) (void
