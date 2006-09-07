@@ -477,20 +477,20 @@ ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
    else
      {
 	if (type == ECORE_CONFIG_INT || type == ECORE_CONFIG_BLN)
-	   {
+	  {
 	     e->val = (long) *((int *)val);
 	     e->type = type;
-	   }
+	  }
 	else if (type == ECORE_CONFIG_STR || type == ECORE_CONFIG_THM)
-	   {
+	  {
 	     if (!(e->ptr = strdup(val)))
 		return ECORE_CONFIG_ERR_OOM;
 	     if (e->type == ECORE_CONFIG_NIL)
 		e->type = type;
-	   }
+	  }
 	else if (type == ECORE_CONFIG_RGB)
-	   {
-	     e->val = *((long *)val);
+	  {
+	     __ecore_argbstr_to_long((char *)val, &e->val);
 	     e->type = ECORE_CONFIG_RGB;
 	  }
 	else if (type == ECORE_CONFIG_FLT)
