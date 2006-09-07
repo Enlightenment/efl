@@ -1554,6 +1554,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	     ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
 	     ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	     if (ee->prop.borderless)
+	       ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
 	     if (ee->visible) ecore_x_window_show(ee->engine.x.win);
 	     if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
 	  }
