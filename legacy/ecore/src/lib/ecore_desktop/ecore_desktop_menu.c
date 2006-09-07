@@ -133,24 +133,16 @@ ecore_desktop_menu_for_each(void (*func)(char *name, char *path, Ecore_Hash *app
 
    if (menu_file)
       {
-//         char *path;
-	     
-//	 path = ecore_file_get_dir(menu_file);
-//	 if (path)
-	    {
-	       Ecore_Desktop_Tree *menus;
+         Ecore_Desktop_Tree *menus;
 		  
-	       /* convert the xml into menus */
-	       menus = ecore_desktop_menu_get(menu_file);
-	       if (menus)
-	          {
-		     /* create the .desktop and order files from the menu */
-		     ecore_desktop_tree_foreach(menus, 0, _ecore_desktop_menu_make_apps, func);
+	 /* convert the xml into menus */
+	 menus = ecore_desktop_menu_get(menu_file);
+	 if (menus)
+	    {
+	       /* create the .desktop and order files from the menu */
+	       ecore_desktop_tree_foreach(menus, 0, _ecore_desktop_menu_make_apps, func);
 // FIXME: Can't free this just yet, causes major memory corruption.
-//		     ecore_desktop_tree_del(menus);
-		  }
-//	       free(path);
-	       
+//	         ecore_desktop_tree_del(menus);
 	    }
 	 free(menu_file);
       }

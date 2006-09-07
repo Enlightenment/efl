@@ -246,8 +246,17 @@ ecore_desktop_get(const char *file, const char *lang)
 
 		       result->exec =
 			  (char *)ecore_hash_get(result->group, "Exec");
-// FIXME: Handle the fdo %x replacable params.  Some should be stripped, some should be expanded.
-                       exe = result->exec;
+		       if (result->exec)
+		          {
+                             exe = strchr(result->exec, ' ');
+		             if (exe)
+		                {
+			           *exe = '\0';
+			           result->exec_params = ++exe;
+			        }
+                             exe = result->exec;
+                          }
+
 		       value =
 			  (char *)ecore_hash_get(result->group,
 						 "StartupWMClass");
@@ -469,6 +478,8 @@ ecore_desktop_get(const char *file, const char *lang)
 void
 ecore_desktop_save(Ecore_Desktop * desktop)
 {
+   char *temp;
+
    if (!desktop->group)
       {
          desktop->group = ecore_hash_new(ecore_str_hash, ecore_str_compare);
@@ -495,13 +506,15 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 		  }
 	    }
 
+         temp = ecore_desktop_get_command(desktop, NULL, 0);
+	 if (temp)
+            ecore_hash_set(desktop->group, strdup("Exec"), temp);
          if (desktop->name)   ecore_hash_set(desktop->group, strdup("Name"), strdup(desktop->name));
          if (desktop->generic)   ecore_hash_set(desktop->group, strdup("GenericName"), strdup(desktop->generic));
          if (desktop->comment)   ecore_hash_set(desktop->group, strdup("Comment"), strdup(desktop->comment));
          if (desktop->type)   ecore_hash_set(desktop->group, strdup("Type"), strdup(desktop->type));
          if (desktop->URL)   ecore_hash_set(desktop->group, strdup("URL"), strdup(desktop->URL));
          if (desktop->file)   ecore_hash_set(desktop->group, strdup("File"), strdup(desktop->file));
-         if (desktop->exec)   ecore_hash_set(desktop->group, strdup("Exec"), strdup(desktop->exec));
          if (desktop->icon)   ecore_hash_set(desktop->group, strdup("Icon"), strdup(desktop->icon));
          if (desktop->icon_class)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconClass"), strdup(desktop->icon_class));
          if (desktop->icon_path)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconPath"), strdup(desktop->icon_path));
@@ -686,3 +699,54 @@ ecore_desktop_home_get()
    return strdup(home);
 }
 
+EAPI char *
+ecore_desktop_get_command(Ecore_Desktop *desktop, Ecore_List *files, int fill)
+{
+   char *result = NULL, *params = NULL;
+
+   if (fill && (desktop->exec_params))
+      {
+         /* FIXME: Handle the fdo %x replacable params.  Some should be stripped, some should be expanded. */
+         params = strdup(desktop->exec_params);
+      }
+   else if (desktop->exec_params)
+      params = strdup(desktop->exec_params);
+
+   result = ecore_desktop_merge_command(desktop->exec, params);
+
+   if (params)
+      free(params);
+   return result;
+}
+
+
+EAPI char *
+ecore_desktop_merge_command(char *exec, char *params)
+{
+   int size;
+   char *end, *result = NULL;
+
+   if ((exec) && (params))
+      {
+         size = strlen(exec);
+         end = exec + size;
+         /* Two possibilities, it was just split at the space, or it was setup seperatly. */
+         if (params == (end + 1))
+            {
+               *end = ' ';
+               result = strdup(exec);
+	       *end = '\0';
+            }
+         else
+            {
+               size += strlen(params) + 2;
+	       result = malloc(size);
+	       if (result)
+	          sprintf(result, "%s %s", exec, params);
+            }
+      }
+   else if (exec)
+      result = strdup(exec);
+
+   return result;
+}

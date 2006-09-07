@@ -45,6 +45,7 @@ struct _Ecore_Desktop
    char               *type;
    char               *categories;
    char               *exec;
+   char               *exec_params;
    char               *icon;
    char               *icon_class;
    char               *icon_path;
@@ -149,6 +150,8 @@ extern              "C"
    Ecore_Hash         *ecore_desktop_ini_get(const char *file);
    Ecore_Desktop      *ecore_desktop_get(const char *file, const char *lang);
    void                ecore_desktop_save(Ecore_Desktop * desktop);
+   EAPI char *         ecore_desktop_get_command(Ecore_Desktop *desktop, Ecore_List *files, int fill);
+   EAPI char *         ecore_desktop_merge_command(char *exec, char *params);
    void                ecore_desktop_destroy(Ecore_Desktop * desktop);
 
 
