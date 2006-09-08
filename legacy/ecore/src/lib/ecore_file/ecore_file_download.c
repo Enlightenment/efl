@@ -82,6 +82,29 @@ ecore_file_download_shutdown(void)
    return init;
 }
 
+void
+ecore_file_download_abort_all(void)
+{
+#ifdef HAVE_CURL
+   Ecore_File_Download_Job *job;
+
+   if (!_job_list)
+     return;
+   
+   ecore_list_goto_first(_job_list);
+   while ((job = ecore_list_next(_job_list)))
+     {
+	ecore_main_fd_handler_del(job->fd_handler);
+	curl_multi_remove_handle(curlm, job->curl);
+	curl_easy_cleanup(job->curl);
+	fclose(job->file);
+	free(job->dst);
+	free(job);
+     }
+   ecore_list_clear(_job_list);
+#endif
+}
+
 EAPI int
 ecore_file_download(const char *url, const char *dst,
 		    void (*completion_cb)(void *data, const char *file, int status),

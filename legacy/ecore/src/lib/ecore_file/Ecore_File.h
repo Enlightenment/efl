@@ -102,6 +102,7 @@ extern "C" {
 							   long int ultotal, 
 							   long int ulnow),
 					void *data);
+   EAPI void        ecore_file_download_abort_all(void);
    EAPI int         ecore_file_download_protocol_available(const char *protocol);
 
 #ifdef __cplusplus
