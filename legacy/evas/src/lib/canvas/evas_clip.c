@@ -283,10 +283,9 @@ evas_object_clip_unset(Evas_Object *obj)
      }
    if (obj->cur.clipper) 
      {
+        obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
 	if (!obj->cur.clipper->clip.clipees) 
 	  obj->cur.clipper->cur.have_clipees = 0;
-	else
-	  obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);	
 	evas_object_change(obj->cur.clipper);
      }
    obj->cur.clipper = NULL;
