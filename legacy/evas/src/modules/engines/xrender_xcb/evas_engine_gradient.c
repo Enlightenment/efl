@@ -164,9 +164,11 @@ void
 _xre_gradient_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h, double angle, int spread)
 {
    RGBA_Image *im;
+   int         mul_use;
    
    if ((w <= 0) || (h <= 0)) return;
-   
+   if (!rs || !dc || !gr) return;
+
    if ((angle != gr->angle) || (spread != gr->spread) || (gr->changed))
      {
 	if (gr->surface)
@@ -201,7 +203,10 @@ _xre_gradient_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr
 	     evas_common_image_free(im);
 	  }
      }
+   mul_use = dc->mul.use;
+   dc->mul.use = 0;
    if (gr->surface)
      _xr_render_surface_composite(gr->surface, rs, dc, 0, 0, gr->surface->w, gr->surface->h, x, y, w, h, 1);
+   dc->mul.use = mul_use;
    gr->changed = 0;
 }

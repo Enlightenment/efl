@@ -67,7 +67,7 @@ evas_software_xcb_x_can_do_shm(XCBConnection *c)
    int                depth;
 
    drawable.window = XCBSetupRootsIter (XCBGetSetup(c)).data->root;
-   geom = XCBGetGeometryReply (c, XCBGetGeometry(c, drawable), 0);
+   geom = XCBGetGeometryReply (c, XCBGetGeometryUnchecked(c, drawable), 0);
    if(!geom)
      return 0;
 
@@ -200,7 +200,14 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
 {
    if (xcbob->shm_info)
      {
-	if (sync) XCBSync(xcbob->connection, 0);
+	if (sync)
+          {
+             XCBGetInputFocusRep *reply;
+
+             reply = XCBGetInputFocusReply(xcbob->connection,
+                                           XCBGetInputFocusUnchecked(xcbob->connection),
+                                           NULL);
+          }
 	XCBShmDetach(xcbob->connection, xcbob->shm_info->shmseg);
 	XCBImageSHMDestroy(xcbob->image);
 	shmdt(xcbob->shm_info->shmaddr);
@@ -231,7 +238,14 @@ evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer *xcbob,
 		       x, y,
 		       xcbob->image->width, xcbob->image->height,
 		       0);
-	if (sync) XCBSync(xcbob->connection, 0);
+	if (sync)
+          {
+             XCBGetInputFocusRep *reply;
+
+             reply = XCBGetInputFocusReply(xcbob->connection,
+                                           XCBGetInputFocusUnchecked(xcbob->connection),
+                                           NULL);
+          }
      }
    else
       XCBImagePut(xcbob->connection,

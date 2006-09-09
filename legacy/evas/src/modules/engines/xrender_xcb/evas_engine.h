@@ -93,24 +93,25 @@ typedef struct _XR_Image XR_Image;
 
 struct _XR_Image
 {
-   XCBimage_Info     *xcbinf;
-   char              *file;
-   char              *key;
-   char              *fkey;
-   RGBA_Image        *im;
-   void              *data;
-   int                w, h;
-   XCBrender_Surface *surface;
-   int                references;
-   char              *format;
-   char              *comment;
-   Tilebuf           *updates;
-   unsigned char      alpha : 1;
-   unsigned char      dirty : 1;
-   unsigned char      free_data : 1;
+   XCBimage_Info      *xcbinf;
+   const char         *file;
+   const char         *key;
+   char               *fkey;
+   RGBA_Image         *im;
+   void               *data;
+   int                 w, h;
+   XCBrender_Surface  *surface;
+   int                 references;
+   char               *format;
+   const char         *comment;
+   Tilebuf            *updates;
+   RGBA_Image_Loadopts load_opts;
+   unsigned char       alpha : 1;
+   unsigned char       dirty : 1;
+   unsigned char       free_data : 1;
 };
 
-XR_Image *_xre_image_load(XCBimage_Info *xcbinf, char *file, char *key, Evas_Image_Load_Opts *lo);
+XR_Image *_xre_image_load(XCBimage_Info *xcbinf, const char *file, const char *key, Evas_Image_Load_Opts *lo);
 XR_Image *_xre_image_new_from_data(XCBimage_Info *xcbinf, int w, int h, void *data);
 XR_Image *_xre_image_new_from_copied_data(XCBimage_Info *xcbinf, int w, int h, void *data);
 XR_Image *_xre_image_new(XCBimage_Info *xcbinf, int w, int h);

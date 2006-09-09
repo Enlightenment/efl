@@ -97,8 +97,10 @@ evas_software_xcb_outbuf_setup_x(int            w,
 	   if (evas_software_xcb_x_output_buffer_bit_order(xcbob) == XCBImageOrderMSBFirst)
 	     buf->priv.x.bit_swap = 1;
 #endif
-	   if ((vis->_class == XCBVisualClassTrueColor) ||
-               (vis->_class == XCBVisualClassDirectColor))
+	   if (((vis->_class == XCBVisualClassTrueColor) ||
+                (vis->_class == XCBVisualClassDirectColor)) &&
+               (x_depth > 8))
+
 	     {
 		buf->priv.mask.r = (DATA32) vis->red_mask;
 		buf->priv.mask.g = (DATA32) vis->green_mask;
@@ -113,7 +115,8 @@ evas_software_xcb_outbuf_setup_x(int            w,
 	   else if ((vis->_class == XCBVisualClassStaticGray)  ||
 		    (vis->_class == XCBVisualClassGrayScale)   ||
 		    (vis->_class == XCBVisualClassStaticColor) ||
-		    (vis->_class == XCBVisualClassPseudoColor))
+		    (vis->_class == XCBVisualClassPseudoColor) ||
+                    (x_depth > 8))
 	     {
 		Convert_Pal_Mode pm = PAL_MODE_RGB332;
 
@@ -366,7 +369,8 @@ evas_software_xcb_outbuf_free_region_for_update(Outbuf     *buf,
 void
 evas_software_xcb_outbuf_flush(Outbuf *buf)
 {
-   Evas_List *l;
+   Evas_List           *l;
+   XCBGetInputFocusRep *reply;
 
    for (l = buf->priv.pending_writes; l; l = l->next)
      {
@@ -395,7 +399,9 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
 						  obr->x,
 						  obr->y, 0);
      }
-   XCBSync(buf->priv.x.conn, 0);
+   /* we sync */
+   reply = XCBGetInputFocusReply(buf->priv.x.conn, XCBGetInputFocusUnchecked(buf->priv.x.conn), NULL);
+   free(reply);
    while (buf->priv.pending_writes)
      {
         RGBA_Image    *im;
@@ -632,18 +638,18 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
 				    int         w,
 				    int         h)
 {
-   int                 i;
-   XCBSCREEN          *screen = NULL;
-
+   int                  i;
+   XCBSCREEN           *screen = NULL;
+   XCBGetInputFocusRep *reply;
    {
       XCBGetGeometryRep *geom;
       XCBDRAWABLE        root;
       XCBSCREENIter      i;
 
-      geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometry (buf->priv.x.conn, draw), 0);
+      geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometryUnchecked(buf->priv.x.conn, draw), 0);
       root.window = geom->root;
       free (geom);
-      geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometry (buf->priv.x.conn, root), 0);
+      geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometryUnchecked(buf->priv.x.conn, root), 0);
 
       i = XCBSetupRootsIter((XCBSetup *)XCBGetSetup(buf->priv.x.conn));
       for (; i.rem; XCBSCREENNext(&i))
@@ -666,21 +672,29 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
 	value[1] = XCBExposuresNotAllowed; /* no graphics exposures allowed */
 	XCBChangeGC(buf->priv.x.conn, buf->priv.x.gc, mask, value);
 	XCBPolyFillRectangle (buf->priv.x.conn, draw, buf->priv.x.gc, 1, &rect);
-	XCBSync(buf->priv.x.conn, 0);
+        /* we sync */
+        reply = XCBGetInputFocusReply(buf->priv.x.conn, XCBGetInputFocusUnchecked(buf->priv.x.conn), NULL);
+        free(reply);
 	image = XCBImageGet(buf->priv.x.conn, draw, x, y, w, h, XCBAllPlanes, XCBImageFormatZPixmap);
 	if (image)
 	   XCBImageDestroy(image);
-	XCBSync(buf->priv.x.conn, 0);
+        /* we sync */
+        reply = XCBGetInputFocusReply(buf->priv.x.conn, XCBGetInputFocusUnchecked(buf->priv.x.conn), NULL);
+        free(reply);
 	mask = XCBGCForeground | XCBGCGraphicsExposures;
 	value[0] = screen->white_pixel;
 	value[1] = XCBExposuresNotAllowed; /* no graphics exposures allowed */
 	XCBChangeGC(buf->priv.x.conn, buf->priv.x.gc, mask, value);
 	XCBPolyFillRectangle (buf->priv.x.conn, draw, buf->priv.x.gc, 1, &rect);
-	XCBSync(buf->priv.x.conn, 0);
+        /* we sync */
+        reply = XCBGetInputFocusReply(buf->priv.x.conn, XCBGetInputFocusUnchecked(buf->priv.x.conn), NULL);
+        free(reply);
 	image = XCBImageGet(buf->priv.x.conn, draw, x, y, w, h, XCBAllPlanes, XCBImageFormatZPixmap);
 	if (image)
 	   XCBImageDestroy(image);
-	XCBSync(buf->priv.x.conn, 0);
+        /* we sync */
+        reply = XCBGetInputFocusReply(buf->priv.x.conn, XCBGetInputFocusUnchecked(buf->priv.x.conn), NULL);
+        free(reply);
      }
 }
 
@@ -771,10 +785,10 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
         XCBSCREENIter      i;
 	int                cur;
 
-	geom = XCBGetGeometryReply (conn, XCBGetGeometry (conn, draw), NULL);
+	geom = XCBGetGeometryReply (conn, XCBGetGeometryUnchecked(conn, draw), NULL);
 	root.window = geom->root;
 	free (geom);
-	geom = XCBGetGeometryReply (conn, XCBGetGeometry (conn, root), 0);
+	geom = XCBGetGeometryReply (conn, XCBGetGeometryUnchecked(conn, root), 0);
 	perf->x.w = (int)geom->width;
 	perf->x.h = (int)geom->height;
 
@@ -902,30 +916,38 @@ void
 evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
 {
    /* write performance results to x root property */
-   XCBInternAtomRep   *rep;
-   XCBATOM             type, format;
-   char               *type_str;
-   char               *str;
+   XCBInternAtomCookie    cookie_atom;
+   XCBGetInputFocusCookie cookie_focus;
+   XCBInternAtomRep      *reply_atom;
+   XCBGetInputFocusRep   *reply_focus;
+   XCBATOM                type, format;
+   char                  *type_str;
+   char                  *str;
 
    type_str = "__EVAS_PERF_ENGINE_SOFTWARE";
-   rep = XCBInternAtomReply(perf->x.conn,
-			    XCBInternAtom(perf->x.conn,
-					  0,
-					  strlen (type_str),
-					  type_str),
-			    NULL);
-   if (!rep) return;
+   cookie_atom = XCBInternAtomUnchecked(perf->x.conn,
+                                        0,
+                                        strlen (type_str),
+                                        type_str);
+   cookie_focus = XCBGetInputFocusUnchecked(perf->x.conn);
 
-   type = rep->atom;
+   reply_atom = XCBInternAtomReply(perf->x.conn,
+			    cookie_atom,
+			    NULL);
+   if (!reply_atom) return;
+
+   type = reply_atom->atom;
    format = STRING;
 
    str = evas_software_xcb_outbuf_perf_serialize_x(perf);
    XCBChangeProperty(perf->x.conn, XCBPropModeReplace, perf->x.root.window,
 		     type, format, 8,
 		     strlen(str), str);
-   XCBSync(perf->x.conn, 0);
+   /* we sync */
+   reply_focus = XCBGetInputFocusReply(perf->x.conn, cookie_focus, NULL);
+   free(reply_focus);
    free(str);
-   free (rep);
+   free (reply_atom);
 }
 
 Outbuf_Perf *
@@ -947,10 +969,10 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
 
    type_str = "__EVAS_PERF_ENGINE_SOFTWARE";
    type_rep = XCBInternAtomReply(conn,
-				 XCBInternAtom(conn,
-					       0,
-					       strlen (type_str),
-					       type_str),
+				 XCBInternAtomUnchecked(conn,
+                                                        0,
+                                                        strlen (type_str),
+                                                        type_str),
 				 NULL);
    if (!type_rep)
      return perf;
@@ -959,9 +981,9 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
    format = STRING;
    free(type_rep);
 
-   cookie = XCBGetProperty(conn, 0, perf->x.root.window,
-			   type, format,
-			   0, 16384);
+   cookie = XCBGetPropertyUnchecked(conn, 0, perf->x.root.window,
+                                    type, format,
+                                    0, 16384);
    prop_rep = XCBGetPropertyReply(conn, cookie, NULL);
 
    if ((prop_rep) &&
@@ -1003,13 +1025,14 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
 				XCBCOLORMAP    cmap,
 				int            x_depth)
 {
-   Outbuf_Perf   *perf;
-   XCBDRAWABLE    win;
-   CARD32         mask;
-   CARD32         value[7];
-   CARD32         value2[1];
-   int            w, h;
-   int            do_shm = 0;
+   Outbuf_Perf         *perf;
+   XCBGetInputFocusRep *reply;
+   XCBDRAWABLE          win;
+   CARD32               mask;
+   CARD32               value[7];
+   CARD32               value2[1];
+   int                  w, h;
+   int                  do_shm = 0;
 
    perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
 
@@ -1034,7 +1057,11 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
 		    XCBWindowClassInputOutput,
 		    vis->visual_id,
 		    mask, value);
-   XCBSync(conn, 0);
+   /* we sync */
+   reply = XCBGetInputFocusReply(conn,
+                                 XCBGetInputFocusUnchecked(conn),
+                                 NULL);
+   free(reply);
    mask = XCBConfigWindowStackMode;
    value[0] = XCBStackModeAbove;
    XCBConfigureWindow (conn, win.window, mask, value2);
@@ -1088,7 +1115,11 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
 		       evas_software_xcb_x_output_buffer_free(xcbob, 1);
 		    }
 	       }
-	     XCBSync(conn, 0);
+             /* we sync */
+             reply = XCBGetInputFocusReply(conn,
+                                           XCBGetInputFocusUnchecked(conn),
+                                           NULL);
+             free(reply);
 	     t1 = _evas_get_time() - t0;
 	     t0 = _evas_get_time();
 	     for (l = 0; l < loops; l++)
@@ -1110,7 +1141,11 @@ evas_software_xcb_outbuf_perf_x(XCBConnection *conn,
 		       evas_software_xcb_x_output_buffer_free(xcbob, 1);
 		    }
 	       }
-	     XCBSync(conn, 0);
+             /* we sync */
+             reply = XCBGetInputFocusReply(conn,
+                                           XCBGetInputFocusUnchecked(conn),
+                                           NULL);
+             free(reply);
 	     t2 = _evas_get_time() - t0;
 	     if ((!chosen) && (!error))
 	       {

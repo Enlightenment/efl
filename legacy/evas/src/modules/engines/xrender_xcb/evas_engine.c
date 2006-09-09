@@ -68,7 +68,7 @@ static void *eng_gradient_geometry_init(void *data, void *gradient, int spread);
 static int  eng_gradient_alpha_get(void *data, void *gradient, int spread, int op);
 static void eng_gradient_map(void *data, void *context, void *gradient, int spread);
 static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
-static void *eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo);
+static void *eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
 static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
 static void *eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
 static void eng_image_free(void *data, void *image);
@@ -82,12 +82,12 @@ static int eng_image_alpha_get(void *data, void *image);
 static void *eng_image_border_set(void *data, void *image, int l, int r, int t, int b);
 static void eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b);
 static void eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
-static char *eng_image_comment_get(void *data, void *image, char *key);
+static const char *eng_image_comment_get(void *data, void *image, char *key);
 static char *eng_image_format_get(void *data, void *image);
 static void eng_image_cache_flush(void *data);
 static void eng_image_cache_set(void *data, int bytes);
 static int eng_image_cache_get(void *data);
-static void eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
+static void eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text);
 
 /* internal engine routines */
 
@@ -334,7 +334,8 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 static void
 eng_output_flush(void *data)
 {
-   Render_Engine *re;
+   Render_Engine       *re;
+   XCBGetInputFocusRep *reply;
 
    re = (Render_Engine *)data;
    while (re->updates)
@@ -367,7 +368,11 @@ eng_output_flush(void *data)
 	_xr_render_surface_free(reu->surface);
 	free(reu);
      }
-   XCBSync(re->conn, 0);
+   /* we sync */
+   reply = XCBGetInputFocusReply(re->conn,
+                                 XCBGetInputFocusUnchecked(re->conn),
+                                 NULL);
+   free(reply);
    _xr_image_info_pool_flush(re->xcbinf, 0, 0);
 }
 
@@ -486,7 +491,7 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 }
 
 static void *
-eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo)
+eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    Render_Engine *re;
    XR_Image *im;
@@ -698,7 +703,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 				  smooth);
 }
 
-static char *
+static const char *
 eng_image_comment_get(void *data, void *image, char *key)
 {
    if (!image) return NULL;
@@ -737,7 +742,7 @@ eng_image_cache_get(void *data)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
    Render_Engine *re;
 

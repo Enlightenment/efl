@@ -109,13 +109,14 @@ class_set (XCBConnection *c, XCBWINDOW win, const char *name, const char *class)
 int
 main(int argc, char **argv)
 {
-   int              exposed = 0;
-   XCBSCREEN       *screen;
-   XCBGenericEvent *e;
-   SizeHints       *szhints;
-   CARD32           mask = 0;
-   CARD32           value[6];
-   int              screen_nbr;
+   int                  exposed = 0;
+   XCBSCREEN           *screen;
+   XCBGetInputFocusRep *reply;
+   XCBGenericEvent     *e;
+   SizeHints           *szhints;
+   CARD32               mask = 0;
+   CARD32               value[6];
+   int                  screen_nbr;
 
    c = XCBConnect (NULL, &screen_nbr);
    if (!c)
@@ -159,7 +160,11 @@ main(int argc, char **argv)
    FreeSizeHints(szhints);
 
    XCBMapWindow (c, win.window);
-   XCBSync(c, 0);
+   /* we sync */
+   reply = XCBGetInputFocusReply(c,
+                                 XCBGetInputFocusUnchecked(c),
+                                 NULL);
+   free(reply);
    sleep(1);
 
    evas_init();

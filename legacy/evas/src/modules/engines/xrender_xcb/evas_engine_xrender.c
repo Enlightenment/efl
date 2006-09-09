@@ -63,6 +63,8 @@ _xr_render_surface_new(XCBimage_Info *xcbinf, int w, int h, XCBRenderPICTFORMINF
    CARD32             mask;
    CARD32             values[3];
 
+   if ((!xcbinf) || (!fmt) || (w < 1) || (h < 1)) return NULL;
+
    rs = calloc(1, sizeof(XCBrender_Surface));
    if (!rs) return NULL;
    rs->xcbinf = xcbinf;
@@ -74,6 +76,11 @@ _xr_render_surface_new(XCBimage_Info *xcbinf, int w, int h, XCBRenderPICTFORMINF
    rs->allocated = 1;
    rs->draw.pixmap = XCBPIXMAPNew(xcbinf->conn);
    XCBCreatePixmap(xcbinf->conn, fmt->depth, rs->draw.pixmap, xcbinf->root, w, h);
+   if (rs->draw.pixmap.xid == 0)
+     {
+       free(rs);
+       return NULL;
+     }
    rs->xcbinf->references++;
    mask = XCBRenderCPRepeat | XCBRenderCPDither | XCBRenderCPComponentAlpha;
    values[0] = 0;
@@ -81,6 +88,13 @@ _xr_render_surface_new(XCBimage_Info *xcbinf, int w, int h, XCBRenderPICTFORMINF
    values[2] = 0;
    rs->pic = XCBRenderPICTURENew(xcbinf->conn);
    XCBRenderCreatePicture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
+   if (rs->pic.xid == 0)
+     {
+       XCBFreePixmap(rs->xcbinf->conn, rs->draw.pixmap);
+       rs->xcbinf->references--;
+       free(rs);
+       return NULL;
+     }
 
    return rs;
 }
@@ -93,9 +107,11 @@ _xr_render_surface_adopt(XCBimage_Info *xcbinf, XCBDRAWABLE draw, int w, int h, 
    CARD32                 mask;
    CARD32                 values[3];
 
+   if ((!xcbinf) || (draw.pixmap.xid == 0) || (w < 1) || (h < 1)) return NULL;
    fmt = XCBRenderFindVisualFormat(xcbinf->conn, xcbinf->vis);
    if (!fmt) return NULL;
    rs = calloc(1, sizeof(XCBrender_Surface));
+   if (!rs) return NULL;
    rs->xcbinf = xcbinf;
    rs->w = w;
    rs->h = h;
@@ -125,6 +141,12 @@ _xr_render_surface_adopt(XCBimage_Info *xcbinf, XCBDRAWABLE draw, int w, int h, 
    values[2] = 0;
    rs->pic = XCBRenderPICTURENew(xcbinf->conn);
    XCBRenderCreatePicture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
+   if (rs->pic.xid == 0)
+     {
+       rs->xcbinf->references--;
+       free(rs);
+       return NULL;
+     }
 
    return rs;
 }
@@ -133,10 +155,12 @@ XCBrender_Surface *
 _xr_render_surface_format_adopt(XCBimage_Info *xcbinf, XCBDRAWABLE draw, int w, int h, XCBRenderPICTFORMINFO *fmt, int alpha)
 {
    XCBrender_Surface *rs;
-   CARD32 mask;
-   CARD32 values[3];
+   CARD32             mask;
+   CARD32             values[3];
 
+   if ((!xcbinf) || (!fmt) || (draw.pixmap.xid == 0) || (w < 1) || (h < 1)) return NULL;
    rs = calloc(1, sizeof(XCBrender_Surface));
+   if (!rs) return NULL;
    rs->xcbinf = xcbinf;
    rs->w = w;
    rs->h = h;
@@ -153,6 +177,12 @@ _xr_render_surface_format_adopt(XCBimage_Info *xcbinf, XCBDRAWABLE draw, int w, 
    values[2] = 0;
    rs->pic = XCBRenderPICTURENew(xcbinf->conn);
    XCBRenderCreatePicture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
+   if (rs->pic.xid == 0)
+     {
+       rs->xcbinf->references--;
+       free(rs);
+       return NULL;
+     }
 
    return rs;
 }
@@ -160,10 +190,16 @@ _xr_render_surface_format_adopt(XCBimage_Info *xcbinf, XCBDRAWABLE draw, int w, 
 void
 _xr_render_surface_free(XCBrender_Surface *rs)
 {
-   if (rs->allocated) XCBFreePixmap(rs->xcbinf->conn, rs->draw.pixmap);
-   XCBRenderFreePicture(rs->xcbinf->conn, rs->pic);
-   _xr_image_info_free(rs->xcbinf);
-   rs->xcbinf = NULL;
+   if (!rs) return;
+   if (rs->xcbinf)
+     {
+       if ((rs->allocated) && (rs->draw.pixmap.xid != 0))
+          XCBFreePixmap(rs->xcbinf->conn, rs->draw.pixmap);
+       if (rs->pic.xid != 0)
+          XCBRenderFreePicture(rs->xcbinf->conn, rs->pic);
+       _xr_image_info_free(rs->xcbinf);
+       rs->xcbinf = NULL;
+     }
    free(rs);
 }
 
@@ -185,7 +221,7 @@ _xr_render_surface_solid_rectangle_set(XCBrender_Surface *rs, int r, int g, int 
    XCBRECTANGLE   rect;
    int            aa;
 
-   aa = a +1;
+   aa = a + 1;
    r = (r * aa) >> 8;
    g = (g * aa) >> 8;
    b = (b * aa) >> 8;
@@ -257,20 +293,18 @@ _xr_render_surface_argb_pixels_fill(XCBrender_Surface *rs, int sw, int sh, void 
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  switch (a = A_VAL(sp))
+                  switch (a = (*sp & 0xff000000))
 		  {
 		    case 0:
 			*p = 0;
 		    break;
-		    case 255:
+		    case 0xff000000:
 			*p = *sp;
 		    break;
-		    default:
-			aa = a + 1;
-			r = ((R_VAL(sp)) * aa) >> 8;
-			g = ((G_VAL(sp)) * aa) >> 8;
-			b = ((B_VAL(sp)) * aa) >> 8;
-			*p = (a << 24) | (r << 16) | (g << 8) | b;
+                  default:
+                    aa = (a >> 24) + 1;
+                    *p = a + (((((*sp) >> 8) & 0xff) * aa) & 0xff00) +
+                      (((((*sp) & 0x00ff00ff) * aa) >> 8) & 0x00ff00ff);
 		    break;
 		  }
 		  p++;
@@ -324,7 +358,7 @@ _xr_render_surface_rgb_pixels_fill(XCBrender_Surface *rs, int sw, int sh, void *
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  *p = 0xff000000 | ((R_VAL(sp)) << 16) | ((G_VAL(sp)) << 8) | (B_VAL(sp));
+                  *p = 0xff000000 | *sp;
 		  p++;
 		  sp++;
 	       }
@@ -392,7 +426,6 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
    CARD32             value_mask;
    CARD32             value_list[1];
    int                r, g, b, a;
-   int                sf;
    int                op;
 
    if ((sw <= 0) || (sh <= 0) || (w <= 0) || (h <= 0)) return;
@@ -436,23 +469,27 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
               }
             else
               {
-                 xf.matrix11 = 1;
+                 xf.matrix11 = 1 << 16;
                  xf.matrix12 = 0;
                  xf.matrix13 = 0;
 
                  xf.matrix21 = 0;
-                 xf.matrix22 = 1;
+                 xf.matrix22 = 1 << 16;
                  xf.matrix23 = 0;
 
                  xf.matrix31 = 0;
                  xf.matrix32 = 0;
-                 xf.matrix33 = 1;
+                 xf.matrix33 = 1 << 16;
                  if ((srs->alpha) || (a != 0xff))
                    trs = _xr_render_surface_new(srs->xcbinf, sw + 1, sh + 1,
                                                 srs->xcbinf->fmt32, 1);
+                 /* trs = _xr_render_surface_new(srs->xcbinf, sw, sh,
+                                                srs->xcbinf->fmt32, 1); */
                  else
                    trs = _xr_render_surface_new(srs->xcbinf, sw + 1, sh + 1,
                                                 srs->fmt, srs->alpha);
+                 /* trs = _xr_render_surface_new(srs->xcbinf, sw, sh,
+                                                srs->fmt, srs->alpha); */
                  XCBRenderSetPictureTransform(srs->xcbinf->conn, srs->pic, xf);
                  XCBRenderComposite(srs->xcbinf->conn, XCBRenderPictOpSrc, srs->pic, mask, trs->pic,
                                     sx, sy, 0, 0, 0, 0, sw, sh);
@@ -468,7 +505,7 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
          }
      }
 
-
+   /*
    sf = MAX(sw, sh);
 #define BMAX 26
    if      (sf <= 8    ) sf = 1 << (BMAX - 3);
@@ -484,18 +521,22 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
    else if (sf <= 8192 ) sf = 1 << (BMAX - 13);
    else if (sf <= 16384) sf = 1 << (BMAX - 14);
    else                  sf = 1 << (BMAX - 15);
+   */
 
-   xf.matrix11 = (sf * sw) / w;
+   /* xf.matrix11 = (sf * sw) / w; */
+   xf.matrix11 = (sw << 16) / w;
    xf.matrix12 = 0;
    xf.matrix13 = 0;
 
    xf.matrix21 = 0;
-   xf.matrix22 = (sf * sh) / h;
+   /* xf.matrix22 = (sf * sh) / h; */
+   xf.matrix22 = (sh << 16) / h;
    xf.matrix23 = 0;
 
    xf.matrix31 = 0;
    xf.matrix32 = 0;
-   xf.matrix33 = sf;
+   /* xf.matrix33 = sf; */
+   xf.matrix33 = 1 << 16;
 
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
@@ -519,6 +560,8 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
        XCBRenderSetPictureTransform(srs->xcbinf->conn, srs->pic, xf);
 
        XCBRenderComposite(srs->xcbinf->conn, op, srs->pic, mask, drs->pic,
+                          /* (sx * w) / sw,
+                             (sy * h) / sh, */
                           ((sx * w) + (sw / 2)) / sw,
                           ((sy * h) + (sh / 2)) / sh,
                           0, 0, x, y, w, h);
@@ -532,19 +575,25 @@ _xr_render_surface_copy(XCBrender_Surface *srs, XCBrender_Surface *drs, int sx, 
    XCBRenderPICTURE   mask = { 0 };
    CARD32             value_mask;
    CARD32             value_list[1];
+   int                ident;
 
-   if ((w <= 0) || (h <= 0) || (!srs) || (!drs)) return;
-   xf.matrix11 = 1;
+   if ((w < 1) || (h < 1) || (!srs) || (!drs)) return;
+   ident = 1 << 16;
+   /* FIXME: why do we need to change the identity matrix if the src surface
+    *        is 1 bit deep?
+    */
+   if (srs->depth == 1) ident = 1;
+   xf.matrix11 = ident;
    xf.matrix12 = 0;
    xf.matrix13 = 0;
 
    xf.matrix21 = 0;
-   xf.matrix22 = 1;
+   xf.matrix22 = ident;
    xf.matrix23 = 0;
 
    xf.matrix31 = 0;
    xf.matrix32 = 0;
-   xf.matrix33 = 1;
+   xf.matrix33 = ident;
 
    XCBRenderSetPictureTransform(srs->xcbinf->conn, srs->pic, xf);
    value_mask = XCBRenderCPClipMask;
@@ -566,13 +615,13 @@ _xr_render_surface_rectangle_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, 
    CARD32         value_list[1];
    int            r, g, b, a, aa, op;
 
-   if ((w <= 0) || (h <= 0)) return;
+   if ((w < 1) || (h < 1) || (!rs) || (!dc)) return;
    a = (dc->col.col >> 24) & 0xff;
    if (a == 0) return;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
-   aa = a +1;
+   aa = a + 1;
    r = (r * aa) >> 8;
    g = (g * aa) >> 8;
    b = (b * aa) >> 8;
@@ -601,6 +650,7 @@ _xr_render_surface_line_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int x
 /*    CARD32         value_list[1]; */
 /*    int            op; */
 
+/*    if ((!rs) || (!dc)) return; */
 /*    op = XCBRenderPictOpSrc; */
 /*    value_mask = XCBRenderCPClipMask; */
 /*    value_list[0] = 0; */
@@ -660,13 +710,13 @@ _xre_poly_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point 
 /*    CARD32         value_list[1]; */
 /*    int op; */
 
-/*    op = XCBRenderPictOpSrc; */
+/*    if ((!rs) || (!dc)) return; */
 /*    num = 0; */
 /*    for (pt = points; pt; pt = (RGBA_Polygon_Point *)(((Evas_Object_List *)pt)->next)) num++; */
 /*    if (num < 3) return; */
 /*    a = (dc->col.col >> 24) & 0xff; */
 /*    if (a == 0) return; */
-/*    if (a < 0xff) op = XCBRenderPictOpOver; */
+/*    op = XCBRenderPictOpOver; */
 /*    r = (dc->col.col >> 16) & 0xff; */
 /*    g = (dc->col.col >> 8 ) & 0xff; */
 /*    b = (dc->col.col      ) & 0xff; */

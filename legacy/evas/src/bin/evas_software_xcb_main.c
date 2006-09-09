@@ -98,6 +98,7 @@ main(int argc, char **argv)
    int                         pause_me = 0;
    XCBConnection              *conn;
    const XCBQueryExtensionRep *rep_shm;
+   XCBGetInputFocusRep        *reply;
    XCBSCREEN                  *screen;
    XCBDRAWABLE                 win;
    XCBGenericEvent            *e;
@@ -151,7 +152,11 @@ main(int argc, char **argv)
    FreeSizeHints(szhints);
 #endif
    XCBMapWindow (conn, win.window);
-   XCBSync(conn, 0);
+   /* we sync */
+   reply = XCBGetInputFocusReply(conn,
+                                 XCBGetInputFocusUnchecked(conn),
+                                 NULL);
+   free(reply);
 
    /* test evas_free....  :) */
    evas_init();

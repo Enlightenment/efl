@@ -40,7 +40,7 @@ XCBRenderFindPICTFORMINFO (XCBConnection *conn, CARD32 mask, const XCBRenderPICT
   XCBRenderQueryPictFormatsRep   *rep;
   XCBRenderPICTFORMINFOIter       iter_forminfo;
 
-  cookie = XCBRenderQueryPictFormats (conn);
+  cookie = XCBRenderQueryPictFormatsUnchecked (conn);
   rep = XCBRenderQueryPictFormatsReply (conn, cookie, NULL);
   iter_forminfo = XCBRenderQueryPictFormatsFormatsIter (rep);
   for (; iter_forminfo.rem; XCBRenderPICTFORMINFONext (&iter_forminfo)) {
@@ -283,7 +283,7 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
    xcbinf->references = 1;
    xcbinf->conn = conn;
    xcbinf->draw = draw;
-   cookie = XCBGetGeometry(xcbinf->conn, xcbinf->draw);
+   cookie = XCBGetGeometryUnchecked(xcbinf->conn, xcbinf->draw);
    rep = XCBGetGeometryReply(xcbinf->conn, cookie, NULL);
    xcbinf->root.window = rep->root;
    free(rep);
@@ -340,19 +340,28 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
            if (shm_info.shmid >= 0) {
               shm_info.shmaddr = xcbim->data = shmat(shm_info.shmid, 0, 0);
               if ((shm_info.shmaddr != NULL) && (shm_info.shmaddr != (void *) -1)) {
-                /*
-                 * FIXME: no error mechanism
-                 */
-                /* XErrorHandler ph; */
+                 XCBGetInputFocusRep *reply;
+                 /*
+                  * FIXME: no error mechanism
+                  */
+                 /* XErrorHandler ph; */
 
-                XCBSync(xcbinf->conn, 0);
-                _xcb_err = 0;
-                /* ph = XSetErrorHandler((XErrorHandler)_tmp_xcb_err); */
-                XCBShmAttach(xcbinf->conn, shm_info.shmseg, shm_info.shmid, 0);
-                XCBSync(xcbinf->conn, 0);
-                /* XSetErrorHandler((XErrorHandler)ph); */
-                if (!_xcb_err) xcbinf->can_do_shm = 1;
-                shmdt(shm_info.shmaddr);
+                 /* we sync */
+                 reply = XCBGetInputFocusReply(xcbinf->conn,
+                                               XCBGetInputFocusUnchecked(xcbinf->conn),
+                                               NULL);
+                 free(reply);
+                 _xcb_err = 0;
+                 /* ph = XSetErrorHandler((XErrorHandler)_tmp_xcb_err); */
+                 XCBShmAttach(xcbinf->conn, shm_info.shmseg, shm_info.shmid, 0);
+                 /* we sync */
+                 reply = XCBGetInputFocusReply(xcbinf->conn,
+                                               XCBGetInputFocusUnchecked(xcbinf->conn),
+                                               NULL);
+                 free(reply);
+                 /* XSetErrorHandler((XErrorHandler)ph); */
+                 if (!_xcb_err) xcbinf->can_do_shm = 1;
+                 shmdt(shm_info.shmaddr);
               }
               shmctl(shm_info.shmid, IPC_RMID, 0);
            }
@@ -366,7 +375,16 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
 void
 _xr_image_info_free(XCBimage_Info *xcbinf)
 {
-   if (xcbinf->pool) XCBSync(xcbinf->conn, 0);
+  if (!xcbinf) return;
+   if (xcbinf->pool)
+     {
+        XCBGetInputFocusRep *reply;
+       
+        reply = XCBGetInputFocusReply(xcbinf->conn,
+                                      XCBGetInputFocusUnchecked(xcbinf->conn),
+                                      NULL);
+        free(reply);
+     }
    _xr_image_info_pool_flush(xcbinf, 0, 0);
    xcbinf->references--;
    if (xcbinf->references != 0) return;
@@ -433,16 +451,25 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 			    xcbim->shm_info->shmaddr = xcbim->xcbim->data = shmat(xcbim->shm_info->shmid, 0, 0);
 			    if ((xcbim->shm_info->shmaddr) && (xcbim->shm_info->shmaddr != (void *) -1))
 			      {
-                                /*
-                                 * FIXME: no error mechanism
-                                 */
-/*				 XErrorHandler ph; */
+                                 XCBGetInputFocusRep *reply;
+                                 /*
+                                  * FIXME: no error mechanism
+                                  */
+                                 /*				 XErrorHandler ph; */
 
-				 XCBSync(xcbim->xcbinf->conn, 0);
+                                 /* we sync */
+                                 reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
+                                                               XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
+                                                               NULL);
+                                 free(reply);
 				 _xcb_err = 0;
 /*				 ph = XSetErrorHandler((XErrorHandler)_tmp_xcb_err); */
 				 XCBShmAttach(xcbim->xcbinf->conn, xcbim->shm_info->shmseg, xcbim->shm_info->shmid, 0);
-				 XCBSync(xcbim->xcbinf->conn, 0);
+                                 /* we sync */
+                                 reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
+                                                               XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
+                                                               NULL);
+                                 free(reply);
 /*				 XSetErrorHandler((XErrorHandler)ph); */
 				 if (!_xcb_err) goto xcbim_ok;
 				 shmdt(xcbim->shm_info->shmaddr);
@@ -485,7 +512,15 @@ _xr_image_free(XCBimage_Image *xcbim)
 {
    if (xcbim->shm_info)
      {
-	if (!xcbim->available) XCBSync(xcbim->xcbinf->conn, 0);
+	if (!xcbim->available)
+          {
+            XCBGetInputFocusRep *reply;
+            
+            reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
+                                          XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
+                                          NULL);
+            free(reply);
+          }
 	XCBShmDetach(xcbim->xcbinf->conn, xcbim->shm_info->shmseg);
 	XCBImageSHMDestroy(xcbim->xcbim);
 	shmdt(xcbim->shm_info->shmaddr);
@@ -506,7 +541,8 @@ _xr_image_free(XCBimage_Image *xcbim)
 void
 _xr_image_put(XCBimage_Image *xcbim, XCBDRAWABLE draw, int x, int y, int w, int h)
 {
-   XCBGCONTEXT gc;
+   XCBGetInputFocusRep *reply;
+   XCBGCONTEXT          gc;
 
    gc = XCBGCONTEXTNew(xcbim->xcbinf->conn);
    XCBCreateGC(xcbim->xcbinf->conn, gc, draw, 0, NULL);
@@ -521,7 +557,11 @@ _xr_image_put(XCBimage_Image *xcbim, XCBDRAWABLE draw, int x, int y, int w, int 
                        0,
                        xcbim->shm_info->shmseg,
                        xcbim->xcbim->data - xcbim->shm_info->shmaddr);
-	XCBSync(xcbim->xcbinf->conn, 0);
+        /* we sync */
+        reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
+                                      XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
+                                      NULL);
+        free(reply);
      }
    else
      XCBImagePut(xcbim->xcbinf->conn, draw, gc, xcbim->xcbim, 0, 0, x, y, w, h);

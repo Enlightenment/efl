@@ -45,51 +45,78 @@ x_color_alloc_rgb(int            nr,
    int    r, g, b, i;
    DATA8 *color_lut;
    int    sig_mask = 0;
+   int    delt = 0;
 
    for (i = 0; i < v->bits_per_rgb_value; i++) sig_mask |= (0x1 << i);
    sig_mask <<= (16 - v->bits_per_rgb_value);
    i = 0;
    color_lut = malloc((nr) * (ng) * (nb));
    if (!color_lut) return NULL;
-   /* FIXME: remove the round-trip */
+   delt = 0x0101 * 3;
+   /* FIXME: remove the round-trip ? */
    for (r = 0; r < (nr); r++)
      {
 	for (g = 0; g < (ng); g++)
 	  {
 	     for (b = 0; b < (nb); b++)
 	       {
-		  XCBCOLORITEM xcl;
-		  XCBCOLORITEM xcl_in;
-		  int val;
+		  XCBCOLORITEM      xcl;
+		  XCBCOLORITEM      xcl_in;
 		  XCBAllocColorRep *rep;
+		  int               val;
+                  int               dr, dg, db;
 
-                  val = (int)((((double)r) / ((nr) - 1)) * 65535);
+                  val = (int)((((double)r) / ((nr) - 1)) * 255);
+                  val = (val << 8) | val;
 		  xcl.red = (CARD16)(val);
-		  val = (int)((((double)g) / ((ng) - 1)) * 65535);
+		  val = (int)((((double)g) / ((ng) - 1)) * 255);
+                  val = (val << 8) | val;
 		  xcl.green = (CARD16)(val);
-		  val = (int)((((double)b) / ((nb) - 1)) * 65535);
+		  val = (int)((((double)b) / ((nb) - 1)) * 255);
+                  val = (val << 8) | val;
 		  xcl.blue = (CARD16)(val);
 		  xcl_in = xcl;
 		  rep = XCBAllocColorReply(conn,
-					   XCBAllocColor(conn, cmap,
-							 xcl.red, xcl.green, xcl.blue),
+					   XCBAllocColorUnchecked(conn,
+                                                                  cmap,
+                                                                  xcl.red,
+                                                                  xcl.green,
+                                                                  xcl.blue),
 					   0);
+                  dr = (int)xcl_in.red - (int)xcl.red;
+                  if (dr < 0) dr = -dr;
+                  dg = (int)xcl_in.green - (int)xcl.green;
+                  if (dg < 0) dg = -dg;
+                  db = (int)xcl_in.blue - (int)xcl.blue;
+                  if (db < 0) db = -db;
+/*
+                 printf("ASK [%i]: %04x %04x %04x = %04x %04x %04x | dif = %04x / %04x\n",
+                        ret,
+                        xcl_in.red, xcl_in.green, xcl_in.blue,
+                        xcl.red, xcl.green, xcl.blue,
+                        (dr + dg +db), delt);
+ */
+
 		  /* TODO: XAllocColor tries to approach the color */
 		  /* in case the allocation fails */
 		  /* XCB does not that (i think). It should be done */
 		  /* So if rep == NULL, the other following tests */
 		  /* should be always satisfied */
 		  if ((!rep) ||
+                      ((dr + dg + db) > delt)
+                      /*
 		      ((xcl_in.red   & sig_mask) != (xcl.red   & sig_mask)) ||
 		      ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
-		      ((xcl_in.blue  & sig_mask) != (xcl.blue  & sig_mask)))
+		      ((xcl_in.blue  & sig_mask) != (xcl.blue  & sig_mask))
+                      */
+                      )
 		    {
 		       CARD32 pixels[256];
 		       int j;
 
 		       if (i > 0)
 			 {
-			    for(j = 0; j < i; j++)
+			    for (j = 0; j < i; j++)
 			      pixels[j] = (CARD32)color_lut[j];
 			    XCBFreeColors(conn, cmap, 0, i, pixels);
 			 }
@@ -120,6 +147,7 @@ x_color_alloc_gray(int            ng,
    i = 0;
    color_lut = malloc(ng);
    if (!color_lut) return NULL;
+   /* FIXME: remove the round-trip ? */
    for (g = 0; g < (ng); g++)
      {
 	XCBCOLORITEM xcl;
@@ -127,14 +155,18 @@ x_color_alloc_gray(int            ng,
 	int val;
 	XCBAllocColorRep *rep;
 
-	val = (int)((((double)g) / ((ng) - 1)) * 65535);
+	val = (int)((((double)g) / ((ng) - 1)) * 255);
+        val = (val << 8) | val;
 	xcl.red = (CARD16)(val);
 	xcl.green = (CARD16)(val);
 	xcl.blue = (CARD16)(val);
 	xcl_in = xcl;
 	rep = XCBAllocColorReply(conn,
-				 XCBAllocColor(conn, cmap,
-					       xcl.red, xcl.green, xcl.blue),
+				 XCBAllocColorUnchecked(conn,
+                                                        cmap,
+                                                        xcl.red,
+                                                        xcl.green,
+                                                        xcl.blue),
 				 0);
 	/* FIXME: XAllocColor tries to approach the color */
 	/* in case the allocation fails */
@@ -151,7 +183,7 @@ x_color_alloc_gray(int            ng,
 
 	     if (i > 0)
 	       {
-		  for(j = 0; j < i; j++)
+		  for (j = 0; j < i; j++)
 		    pixels[j] = (CARD32) color_lut[j];
 		  XCBFreeColors(conn, cmap, 0, i, pixels);
 	       }
@@ -322,6 +354,7 @@ evas_software_xcb_x_color_allocate(XCBConnection   *conn,
    Convert_Pal_Mode  c;
    Evas_List        *l;
 
+/*   printf("ALLOC cmap=%i vis=%p\n", cmap, vis);*/
    for (l = palettes; l; l = l->next)
      {
 	pal = l->data;
@@ -340,6 +373,7 @@ evas_software_xcb_x_color_allocate(XCBConnection   *conn,
      {
 	if (x_color_alloc[c])
 	  {
+/*          printf("TRY PAL %i\n", c);*/
 	     pal->lookup = (x_color_alloc[c])(conn, cmap, vis);
 	     if (pal->lookup) break;
 	  }

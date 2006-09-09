@@ -184,10 +184,8 @@ ENGINE_SOFTWARE_XCB_PRG="";
 PKG_CHECK_MODULES(
   XCB,
   xcb xcb-shm xcb-image xcb-icccm,
-  [AC_CHECK_HEADER(
-      X11/X.h,
-      [have_evas_software_xcb="yes"],
-      [have_evas_software_xcb="no"])],
+  [have_evas_software_xcb="yes"],
+  [have_evas_software_xcb="no"],
   [ have_evas_software_xcb="no" ])
 
 ## manually disable xcb engine by default - not auto detected.
@@ -207,8 +205,6 @@ AC_ARG_ENABLE(software-xcb, AC_HELP_STRING([--enable-software-xcb],[enable the S
 	]
 )
 if test "x$have_evas_software_xcb" = "xyes"; then
-  AC_PATH_XTRA
-
   PKG_CHECK_MODULES(
     XCB,
     xcb xcb-shm xcb-aux xcb-image xcb-icccm,
@@ -564,10 +560,8 @@ ENGINE_XRENDER_XCB_PRG="";
 PKG_CHECK_MODULES(
   XCBRENDER,
   xcb xcb-shm xcb-render xcb-image xcb-icccm,
-  [AC_CHECK_HEADER(
-      X11/X.h,
-      [have_evas_xrender_xcb="yes"],
-      [have_evas_xrender_xcb="no"])],
+  [have_evas_xrender_xcb="yes"],
+  [have_evas_xrender_xcb="no"],
   [ have_evas_xrender_xcb="no" ])
 
 ## manually disable xcb engine by default - not auto detected.
@@ -587,8 +581,6 @@ AC_ARG_ENABLE(xrender-xcb, [  --enable-xrender-xcb            enable the Xrender
 	]
 )
 if test "x$have_evas_xrender_xcb" = "xyes"; then
-  AC_PATH_XTRA
-
   PKG_CHECK_MODULES(
     XCBRENDER,
     xcb xcb-shm xcb-render xcb-image xcb-icccm,
