@@ -82,7 +82,7 @@ static Ecore_Event_Handler *exit_handler = NULL;
 
 
 EAPI int
-ecore_desktop_paths_init()
+ecore_desktop_paths_init(void)
 {
    if (++init_count != 1) return init_count;
 
@@ -133,7 +133,7 @@ ecore_desktop_paths_init()
 }
 
 EAPI int
-ecore_desktop_paths_shutdown()
+ecore_desktop_paths_shutdown(void)
 {
    if (--init_count != 0) return init_count;
 
@@ -149,24 +149,24 @@ ecore_desktop_paths_shutdown()
 }
 
 EAPI void
-ecore_desktop_paths_regen()
+ecore_desktop_paths_regen(void)
 {
    _ecore_desktop_paths_destroy();
    _ecore_desktop_paths_create();
 }
 
 static void
-_ecore_desktop_paths_create()
+_ecore_desktop_paths_create(void)
 {
    if (!ecore_desktop_paths_desktops)
      {
 	ecore_desktop_paths_desktops =
-	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_DESKTOPS, NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
-				    "~/.local/share:~/.kde/share",
-				    "/usr/local/share:/usr/share",
-				    "applications:applnk:applications/kde",
-				    "dist/desktop-files:dist/short-menu:gnome/apps",
-				    "xdgdata-apps:apps");
+	  _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_DESKTOPS, NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
+				   "~/.local/share:~/.kde/share",
+				   "/usr/local/share:/usr/share",
+				   "applications:applnk:applications/kde",
+				   "dist/desktop-files:dist/short-menu:gnome/apps",
+				   "xdgdata-apps:apps");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_desktops,
 					   "/usr/local/share/update-desktop-files/templates");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_desktops,
@@ -174,9 +174,6 @@ _ecore_desktop_paths_create()
      }
    if (!ecore_desktop_paths_kde_legacy)
      {
-	char                temp[PATH_MAX], *path;
-	Ecore_List         *temp_list;
-
 #ifdef KDE_SUPPORT
 	ecore_desktop_paths_kde_legacy =
 	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_KDE_LEGACY, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -192,6 +189,9 @@ _ecore_desktop_paths_create()
 #endif
 	if (ecore_desktop_paths_kde_legacy)
 	  {
+	     char                temp[PATH_MAX], *path;
+	     Ecore_List         *temp_list;
+	     
 	     /* Copy it, cause Ecore_List walks can not be nested. */
 	     temp_list = ecore_list_new();
 	     if (temp_list)
@@ -218,6 +218,7 @@ _ecore_desktop_paths_create()
 			  (ecore_desktop_paths_kde_legacy, temp);
 		    }
 	       }
+	     ecore_list_destroy(temp_list);
 	  }
      }
    if (!ecore_desktop_paths_icons)
@@ -265,7 +266,7 @@ _ecore_desktop_paths_create()
 }
 
 static void
-_ecore_desktop_paths_destroy()
+_ecore_desktop_paths_destroy(void)
 {
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_xsessions);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_config);
@@ -277,7 +278,7 @@ _ecore_desktop_paths_destroy()
 }
 
 EAPI void
-ecore_desktop_paths_extras_clear()
+ecore_desktop_paths_extras_clear(void)
 {
    int i;
 
