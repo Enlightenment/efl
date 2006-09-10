@@ -148,7 +148,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 
 	/* Parse the theme description file. */
 #ifdef DEBUG
-	printf("Path to %s is %s\n", icn, theme_path);B
+	printf("Path to %s is %s\n", icn, theme_path);
 #endif
 	theme = ecore_desktop_ini_get(theme_path);
 	if (theme)
