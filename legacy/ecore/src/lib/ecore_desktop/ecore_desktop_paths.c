@@ -354,28 +354,33 @@ ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, int sub,
    char               *path = NULL, *this_path;
    char                temp[PATH_MAX];
    struct stat         path_stat;
-
+   
    if (paths)
      {
 	ecore_list_goto_first(paths);
 	while ((this_path = ecore_list_next(paths)) != NULL)
 	  {
+	     if (path)
+	       {
+		  free(path);
+		  path = NULL;
+	       }
 	     snprintf(temp, PATH_MAX, "%s%s", this_path, file);
 	     if (stat(temp, &path_stat) == 0)
 	       {
-		   if (path)
-		      free(path);
 		  path = strdup(temp);
 		  if (func)
-		     if (func(data, temp))
-			break;
+		    {
+		       if (func(data, temp))
+			 break;
+		    }
 	       }
 	     else if (sub != 0)
-		path =
-		   ecore_desktop_paths_recursive_search(this_path, file, sub, NULL,
-							func, data);
+	       path =
+	       ecore_desktop_paths_recursive_search(this_path, file, sub, NULL,
+						    func, data);
 	     if (path && (!func))
-		break;
+	       break;
 	  }
      }
 

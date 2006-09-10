@@ -105,6 +105,8 @@ ecore_desktop_ini_get(const char *file)
 	       }
 	     else if (current)	/* key=value pair of current group. */
 	       {
+		  char *tv;
+		  
 		  key = c;
 		  /* Find trailing blanks or =. */
 		  while ((*c != '=') && (*c != ' ') && (*c != '\t')
@@ -129,6 +131,8 @@ ecore_desktop_ini_get(const char *file)
 			  c++;
 		       *c++ = '\0';
 		       /* FIXME: should strip space at end, then unescape value. */
+		       tv = ecore_hash_remove(current, key);
+		       if (tv) free(tv);
 		       ecore_hash_set(current, strdup(key), strdup(value));
 #ifdef DEBUG
 		       fprintf(stdout, "    %s=%s\n", key, value);

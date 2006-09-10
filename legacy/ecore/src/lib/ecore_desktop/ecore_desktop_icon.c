@@ -61,6 +61,7 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *ico
       icon_theme="hicolor";
 
    icons = ecore_desktop_paths_to_list(icon);
+   if (!icons) return NULL;
    ecore_list_goto_first(icons);
    while ((icn = (char *) ecore_list_next(icons)))
       {
@@ -68,16 +69,18 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *ico
          fprintf(stderr, "\tTrying To Find Icon %s\n", icn);
 #endif
          /* Check for unsupported extension */
-         if (!strcmp(icn + strlen(icn) - 4, ".ico"))
-            continue;
+         if ((strlen(icn) > 4) && 
+	     (!strcmp(icn + strlen(icn) - 4, ".ico")))
+	   continue;
 
          dir = _ecore_desktop_icon_find0(icn, icon_size, icon_theme);
          if (dir)
-            {
-               dir = strdup(dir);
-	       break;
-            }
+	   {
+//	      dir = strdup(dir);
+	      break;
+	   }
       }
+   ecore_list_destroy(icons);
 
    return dir;
 }
@@ -137,15 +140,15 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
    printf("SEARCHING FOR %s\n", icn);
 #endif
    theme_path =
-      ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn, 2,
-					  NULL, NULL);
+     ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn, 2,
+				   NULL, NULL);
    if (theme_path)
      {
 	Ecore_Hash         *theme;
 
 	/* Parse the theme description file. */
 #ifdef DEBUG
-	printf("Path to %s is %s\n", icn, theme_path);
+	printf("Path to %s is %s\n", icn, theme_path);B
 #endif
 	theme = ecore_desktop_ini_get(theme_path);
 	if (theme)
@@ -306,13 +309,21 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 						if (found)
 						  {
 						     if (match)	/* If there is a match in sizes, return the icon. */
-							return found;
+						       {
+							  ecore_hash_destroy(theme);
+							  ecore_list_destroy(directory_paths);
+							  free(theme_path);
+							  return found;
+						       }
 						     if (result_size < minimal_size)	/* While we are here, figure out our next fallback strategy. */
 						       {
 							  minimal_size =
 							     result_size;
+							  if (closest) free(closest);
 							  closest = found;
 						       }
+						     else
+						       free(found);
 						  }
 					     }
 
@@ -322,7 +333,12 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 
 			    /* Fall back strategy #1, look for closest size in this theme. */
 			    if (closest)
-			       return closest;
+			      {
+				 ecore_hash_destroy(theme);
+				 ecore_list_destroy(directory_paths);
+				 free(theme_path);
+				 return closest;
+			      }
 
 			    /* Fall back strategy #2, Try again with the parent theme. */
 			    if ((inherits) && (inherits[0] != '\0')
@@ -332,7 +348,12 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 				    _ecore_desktop_icon_find0(icon, icon_size,
 							      inherits);
 				 if (found != NULL)
-				    return found;
+				   {
+				      ecore_hash_destroy(theme);
+				      ecore_list_destroy(directory_paths);
+				      free(theme_path);
+				      return found;
+				   }
 			      }
 
 			    /* Fall back strategy #3, Try the default hicolor theme. */
@@ -343,7 +364,12 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 				    _ecore_desktop_icon_find0(icon, icon_size,
 							      "hicolor");
 				 if (found != NULL)
-				    return found;
+				   {
+				      ecore_hash_destroy(theme);
+				      ecore_list_destroy(directory_paths);
+				      free(theme_path);
+				      return found;
+				   }
 			      }
 
 			    /* Fall back strategy #4, Just search in the base of the icon directories. */
@@ -358,12 +384,18 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 				    (ecore_desktop_paths_icons, path, 0, NULL,
 				     NULL);
 				 if (found)
-				    return found;
+				   {
+				      ecore_hash_destroy(theme);
+				      ecore_list_destroy(directory_paths);
+				      free(theme_path);
+				      return found;
+				   }
 			      }
-
+			    ecore_list_destroy(directory_paths);
 			 }
 		    }
 	       }
+	     ecore_hash_destroy(theme);
 	  }
 	free(theme_path);
      }
