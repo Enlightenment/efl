@@ -207,6 +207,7 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
              reply = XCBGetInputFocusReply(xcbob->connection,
                                            XCBGetInputFocusUnchecked(xcbob->connection),
                                            NULL);
+             free(reply);
           }
 	XCBShmDetach(xcbob->connection, xcbob->shm_info->shmseg);
 	XCBImageSHMDestroy(xcbob->image);
@@ -245,6 +246,7 @@ evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer *xcbob,
              reply = XCBGetInputFocusReply(xcbob->connection,
                                            XCBGetInputFocusUnchecked(xcbob->connection),
                                            NULL);
+             free(reply);
           }
      }
    else
