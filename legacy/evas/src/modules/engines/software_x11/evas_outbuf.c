@@ -40,10 +40,7 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 
    buf = calloc(1, sizeof(Outbuf));
    if (!buf)
-     {
-	free(buf);
-	return NULL;
-     }
+      return NULL;
 
    buf->w = w;
    buf->h = h;
