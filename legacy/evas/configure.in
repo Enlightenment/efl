@@ -936,16 +936,6 @@ if test "x$have_svg" = "xyes"; then
 	    svg_libs="$SVG_LIBS $CAIRO_SVG_LIBS"
 	 ],
 	 [ 
-	    have_svg="no"
-	 ]
-      )
-      PKG_CHECK_MODULES(CAIRO_SVG, cairo-svg,
-	 [ 
-	    have_svg="yes"
-	    svg_cflags="$SVG_CFLAGS $CAIRO_SVG_CFLAGS"
-	    svg_libs="$SVG_LIBS $CAIRO_SVG_LIBS"
-	 ],
-	 [ 
             PKG_CHECK_MODULES(CAIRO_SVG, libsvg-cairo,
 	       [ 
 	          have_svg="yes"
