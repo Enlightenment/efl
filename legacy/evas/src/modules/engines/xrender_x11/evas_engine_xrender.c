@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "evas_common.h"
 #include "evas_macros.h"
 #include "evas_private.h"
@@ -330,6 +333,17 @@ _xr_render_surface_clips_set(Xrender_Surface *rs, RGBA_Draw_Context *dc, int rx,
    free(rect);
 }
 
+/* initialized the transform to the identity */
+static void init_transform (XTransform *t)
+{
+   int i, j;
+
+   for (i = 0; i < 3; i++)
+     for (j = 0; j < 3; j++)
+       t->matrix[i][j] = XDoubleToFixed((i == j) ? 1 : 0);
+}
+
+
 // when color multiplier is used want: instead
 // CA src IN mask SRC temp; non-CA temp OVER dst. - i think. need to check.
 void
@@ -352,17 +366,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
    XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
    
-   id.matrix[0][0] = 1 << 16;
-   id.matrix[0][1] = 0;
-   id.matrix[0][2] = 0;
- 
-   id.matrix[1][0] = 0;
-   id.matrix[1][1] = 1 << 16;
-   id.matrix[1][2] = 0;
- 
-   id.matrix[2][0] = 0;
-   id.matrix[2][1] = 0;
-   id.matrix[2][2] = 1 << 16;
+   init_transform(&id);
 
    op = PictOpSrc;
    if (srs->alpha) op = PictOpOver;
@@ -423,17 +427,9 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	  }
      }
 
-   xf.matrix[0][0] = (sw << 16) / w;
-   xf.matrix[0][1] = 0;
-   xf.matrix[0][2] = 0;
-
-   xf.matrix[1][0] = 0;
-   xf.matrix[1][1] = (sh << 16) / h;
-   xf.matrix[1][2] = 0;
-
-   xf.matrix[2][0] = 0;
-   xf.matrix[2][1] = 0;
-   xf.matrix[2][2] = 1 << 16;
+   xf = id;
+   xf.matrix[0][0] = XDoubleToFixed(sw) / w;
+   xf.matrix[1][1] = XDoubleToFixed(sh) / h;
 
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
@@ -497,25 +493,19 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
 {
    XTransform xf;
    XRenderPictureAttributes att;
-   int ident;
    
    if ((w <= 0) || (h <= 0) || (!srs) || (!drs)) return;
-   ident = 1 << 16;
+
+   init_transform(&xf);
+
    /* FIXME: why do we need to change the identity matrix ifthe src surface
     * is 1 bit deep?
     */
-   if (srs->depth == 1) ident = 1;
-   xf.matrix[0][0] = ident;
-   xf.matrix[0][1] = 0;
-   xf.matrix[0][2] = 0;
-   
-   xf.matrix[1][0] = 0;
-   xf.matrix[1][1] = ident;
-   xf.matrix[1][2] = 0;
-   
-   xf.matrix[2][0] = 0;
-   xf.matrix[2][1] = 0;
-   xf.matrix[2][2] = ident;
+   if (srs->depth == 1)
+     {
+	xf.matrix[0][0] = xf.matrix[1][1] = xf.matrix[2][2] = 1;
+     }
+
    
    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
    att.clip_mask = None;
