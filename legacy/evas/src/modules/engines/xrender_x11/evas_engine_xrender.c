@@ -377,7 +377,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	g = (int)(G_VAL(&dc->mul.col));
 	b = (int)(B_VAL(&dc->mul.col));
 	a = (int)(A_VAL(&dc->mul.col));
-	if (!(r == g == b == a == 0xff))
+	if ((r != 0xff) || (g != 0xff) || (b != 0xff) || (a != 0xff))
 	  {
 	     if ((srs->xinf->mul_r != r) || (srs->xinf->mul_g != g) ||
 		 (srs->xinf->mul_b != b) || (srs->xinf->mul_a != a))
@@ -392,7 +392,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	       }
 	     op = PictOpOver;
 	     mask = srs->xinf->mul->pic;
-	     if ((r == g == b == 0xff) && (a != 0xff))
+	     if ((r == 0xff) && (g == 0xff) && (b == 0xff) && (a != 0xff))
 	       {
 		 att.component_alpha = 0;
 		 XRenderChangePicture(srs->xinf->disp, mask, CPComponentAlpha, &att);
