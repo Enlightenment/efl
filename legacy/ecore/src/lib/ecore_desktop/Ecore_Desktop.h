@@ -47,6 +47,7 @@ struct _Ecore_Desktop
    char               *exec;
    char               *exec_params;
    char               *icon;
+   char               *original_icon;
    char               *icon_class;
    char               *icon_path;
    char               *path;
