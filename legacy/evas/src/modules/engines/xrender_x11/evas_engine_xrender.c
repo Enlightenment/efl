@@ -492,18 +492,17 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
    
    if ((w <= 0) || (h <= 0) || (!srs) || (!drs)) return;
 
-   init_transform(&xf);
-
    /* FIXME: why do we need to change the identity matrix ifthe src surface
     * is 1 bit deep?
     */
    if (srs->depth == 1)
      {
+	init_transform(&xf);
 	xf.matrix[0][0] = xf.matrix[1][1] = xf.matrix[2][2] = 1;
+	XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
      }
 
    
-   XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
    XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
