@@ -350,7 +350,7 @@ void
 _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth)
 {
    Xrender_Surface *trs = NULL;
-   XTransform xf, id;
+   XTransform xf;
    XRenderPictureAttributes att;
    Picture mask;
    int r, g, b, a, op;
@@ -366,8 +366,6 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
    XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
    
-   init_transform(&id);
-
    op = PictOpSrc;
    if (srs->alpha) op = PictOpOver;
    mask = None;
@@ -409,7 +407,6 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 
 		  att.component_alpha = 1;
 		  XRenderChangePicture(srs->xinf->disp, mask, CPComponentAlpha, &att);
-		  XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &id);
 		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
 				   trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
 		  /* fill right and bottom pixel so interpolation works right */
@@ -427,7 +424,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	  }
      }
 
-   xf = id;
+   init_transform(&xf);
    xf.matrix[0][0] = XDoubleToFixed(sw) / w;
    xf.matrix[1][1] = XDoubleToFixed(sh) / h;
 
@@ -452,7 +449,6 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 					 srs->fmt, srs->alpha);
 	    if (!trs) return;
 
-	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &id);
 	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
 			     trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
 	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
