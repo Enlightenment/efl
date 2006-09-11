@@ -885,19 +885,13 @@ AC_MSG_CHECKING(whether to enable xpm image loader)
 AC_ARG_ENABLE(image-loader-xpm, 
   [  --enable-image-loader-xpm       enable XPM image loader], [
       if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_xpm="yes"
+          have_xpm="yes"
       else
-        AC_MSG_RESULT(no)
-	have_xpm="no"
+          have_xpm="no"
       fi
-  ], [
-      AC_MSG_RESULT($have_xpm)
   ]
 )
-if test "x$have_xpm" = "xyes"; then
-  AC_MSG_RESULT($have_xpm)
-fi
+AC_MSG_RESULT($have_xpm)
 
 xpm_cflags=""
 xpm_libs=""
