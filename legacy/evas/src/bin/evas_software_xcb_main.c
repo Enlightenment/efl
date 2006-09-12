@@ -295,13 +295,8 @@ main(int argc, char **argv)
 
 	     if (ev->detail.id == 3)
 	       {
-		 setdown();
-		 evas_free(evas);
                  free(e);
-		 XCBDisconnect(conn);
-		 evas_shutdown();
-		 exit(0);
-		 
+		 goto exit;
 	       }
 #if 0
 	     if (!pause_me)
@@ -361,6 +356,7 @@ main(int argc, char **argv)
 	 usleep(100000);
      }
 
+ exit:
    setdown();
    evas_free(evas);
    XCBDisconnect(conn);
