@@ -438,9 +438,9 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    if (trs)
      {
 	if (smooth)
-	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, "best", NULL, 0);
+	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterBest, NULL, 0);
 	else 
-	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, "nearest", NULL, 0);
+	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterNearest, NULL, 0);
 	XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
 	
 	XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
@@ -465,9 +465,9 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 			     trs->pic, sx + sw - 1, sy + sh - 1, 0, 0, sw, sh, 1, 1);
 
 	    if (smooth)
-		XRenderSetPictureFilter(trs->xinf->disp, trs->pic, "best", NULL, 0);
+		XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterBest, NULL, 0);
 	    else 
-		XRenderSetPictureFilter(trs->xinf->disp, trs->pic, "nearest", NULL, 0);
+		XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterNearest, NULL, 0);
 
 	    XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
 	    XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
@@ -477,9 +477,9 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	else
 	  {
 	    if (smooth)
-		XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "best", NULL, 0);
+		XRenderSetPictureFilter(srs->xinf->disp, srs->pic, FilterBest, NULL, 0);
 	    else 
-		XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "nearest", NULL, 0);
+		XRenderSetPictureFilter(srs->xinf->disp, srs->pic, FilterNearest, NULL, 0);
 
 	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 	    XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
@@ -513,7 +513,7 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
    XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
-   XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "nearest", NULL, 0);
+   XRenderSetPictureFilter(srs->xinf->disp, srs->pic, FilterNearest, NULL, 0);
    
    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None, drs->pic, 
 		    sx, sy, 0, 0, x, y, w, h);
