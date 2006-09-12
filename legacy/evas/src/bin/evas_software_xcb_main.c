@@ -90,6 +90,7 @@ class_set (XCBConnection *c, XCBWINDOW win, const char *name, const char *class)
                     win,
                     rep->atom, encoding, 8, strlen (class_str), class_str);
   free (rep);
+  free (class_str);
 }
 
 int

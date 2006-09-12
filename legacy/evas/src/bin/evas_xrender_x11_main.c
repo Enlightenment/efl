@@ -85,7 +85,7 @@ main(int argc, char **argv)
 	       {
 	       case ButtonPress:
 		  if (ev.xbutton.button == 3)
-		     exit(0);
+		     goto exit;
 #if 0
 		  if (!pause_me)
 		     pause_me = 1;
@@ -129,6 +129,12 @@ main(int argc, char **argv)
 	if (pause_me == 2)
 	   usleep(100000);
      }
+
+ exit:
+   setdown();
+   evas_free(evas);
+   XCloseDisplay(disp);
    evas_shutdown();
+
    return 0;
 }
