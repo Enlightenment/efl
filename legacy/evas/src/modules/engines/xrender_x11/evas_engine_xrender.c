@@ -431,8 +431,8 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
      }
 
    init_transform(&xf);
-   xf.matrix[0][0] = XDoubleToFixed(sw) / w;
-   xf.matrix[1][1] = XDoubleToFixed(sh) / h;
+   xf.matrix[0][0] = XDoubleToFixed((float) sw / (float) w);
+   xf.matrix[1][1] = XDoubleToFixed((float) sh / (float) h);
 
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
