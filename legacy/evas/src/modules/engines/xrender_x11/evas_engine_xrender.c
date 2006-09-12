@@ -8,6 +8,12 @@
 #include "Evas_Engine_XRender_X11.h"
 #include <math.h>
 
+/* this is a work around broken xrender - when/if this ever gets fixed in xorg
+ * we can comment this out and one day remove it - for now keep it until such
+ * a fix is spotted in the wild
+ */
+#define BROKEN_XORG_XRENDER 1
+
 Xrender_Surface *
 _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, int alpha)
 {
@@ -492,6 +498,7 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
    
    if ((w <= 0) || (h <= 0) || (!srs) || (!drs)) return;
 
+#ifdef BROKEN_XORG_XRENDER   
    /* FIXME: why do we need to change the identity matrix ifthe src surface
     * is 1 bit deep?
     */
@@ -501,7 +508,7 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
 	xf.matrix[0][0] = xf.matrix[1][1] = xf.matrix[2][2] = 1;
 	XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
      }
-
+#endif
    
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
