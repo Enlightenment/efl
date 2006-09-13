@@ -54,7 +54,11 @@ struct _Ecore_Desktop
    char               *URL;
    char               *file;
    char               *deletiondate;
-   char               *window_class;
+   char               *window_class; /* window class */
+   char               *window_name; /* window name */
+   char               *window_title; /* window title */
+   char               *window_role; /* window role */
+   unsigned char       wait_exit : 1; /* wait for app to exit before execing next */
    unsigned char       startup : 1;
    unsigned char       hidden : 1;
    unsigned char       no_display : 1;

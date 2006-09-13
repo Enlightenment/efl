@@ -289,6 +289,12 @@ ecore_desktop_get(const char *file, const char *lang)
 	                          free(tmp);
 	                       }
 			  }
+		       result->window_name =
+			  (char *)ecore_hash_get(result->group, "X-Enlightenment-WindowName");
+		       result->window_title =
+			  (char *)ecore_hash_get(result->group, "X-Enlightenment-WindowTitle");
+		       result->window_role =
+			  (char *)ecore_hash_get(result->group, "X-Enlightenment-WindowRole");
 
 
 		       result->icon =
@@ -358,6 +364,11 @@ ecore_desktop_get(const char *file, const char *lang)
 						 "StartupNotify");
 		       if (value)
 			  result->startup = (strcmp(value, "true") == 0);
+		       value =
+			  (char *)ecore_hash_get(result->group,
+						 "X-Enlightenment-WaitExit");
+		       if (value)
+			  result->wait_exit = (strcmp(value, "true") == 0);
 		       value =
 			  (char *)ecore_hash_get(result->group,
 						 "NoDisplay");
@@ -526,7 +537,14 @@ ecore_desktop_save(Ecore_Desktop * desktop)
          if (desktop->icon_path)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconPath"), strdup(desktop->icon_path));
          if (desktop->window_class)   ecore_hash_set(desktop->group, strdup("StartupWMClass"), strdup(desktop->window_class));
          if (desktop->categories)   ecore_hash_set(desktop->group, strdup("Categories"), strdup(desktop->categories));
+         if (desktop->window_name)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowName"), strdup(desktop->window_name));
+         if (desktop->window_title)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowTitle"), strdup(desktop->window_title));
+         if (desktop->window_role)   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowRole"), strdup(desktop->window_role));
 	 ecore_hash_remove(desktop->group, "X-KDE-StartupNotify");
+	 if (desktop->wait_exit)
+            ecore_hash_set(desktop->group, strdup("X-Enlightenment-WaitExit"), strdup("true"));
+	 else
+	    ecore_hash_remove(desktop->group, "X-Enlightenment-WaitExit");
 	 if (desktop->startup)
             ecore_hash_set(desktop->group, strdup("StartupNotify"), strdup("true"));
 	 else
