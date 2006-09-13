@@ -14,6 +14,15 @@
  */
 #define BROKEN_XORG_XRENDER 1
 
+/* should be const char*, but the prototype for XRenderSetPictureFilter
+ * is silly
+ */
+static inline char *
+get_filter(int smooth)
+{
+   return smooth ? FilterBest : FilterNearest;
+}
+
 Xrender_Surface *
 _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, int alpha)
 {
@@ -437,10 +446,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
      {
-	if (smooth)
-	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterBest, NULL, 0);
-	else 
-	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterNearest, NULL, 0);
+	XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
 	XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
 	
 	XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
@@ -464,10 +470,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
 			     trs->pic, sx + sw - 1, sy + sh - 1, 0, 0, sw, sh, 1, 1);
 
-	    if (smooth)
-		XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterBest, NULL, 0);
-	    else 
-		XRenderSetPictureFilter(trs->xinf->disp, trs->pic, FilterNearest, NULL, 0);
+	    XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
 
 	    XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
 	    XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
@@ -476,10 +479,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	  }
 	else
 	  {
-	    if (smooth)
-		XRenderSetPictureFilter(srs->xinf->disp, srs->pic, FilterBest, NULL, 0);
-	    else 
-		XRenderSetPictureFilter(srs->xinf->disp, srs->pic, FilterNearest, NULL, 0);
+	     XRenderSetPictureFilter(srs->xinf->disp, srs->pic, get_filter(smooth), NULL, 0);
 
 	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 	    XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
