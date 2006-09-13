@@ -310,7 +310,6 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 						  {
 						     if (match)	/* If there is a match in sizes, return the icon. */
 						       {
-							  ecore_hash_destroy(theme);
 							  ecore_list_destroy(directory_paths);
 							  free(theme_path);
 							  return found;
@@ -334,7 +333,6 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 			    /* Fall back strategy #1, look for closest size in this theme. */
 			    if (closest)
 			      {
-				 ecore_hash_destroy(theme);
 				 ecore_list_destroy(directory_paths);
 				 free(theme_path);
 				 return closest;
@@ -349,7 +347,6 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 							      inherits);
 				 if (found != NULL)
 				   {
-				      ecore_hash_destroy(theme);
 				      ecore_list_destroy(directory_paths);
 				      free(theme_path);
 				      return found;
@@ -365,7 +362,6 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 							      "hicolor");
 				 if (found != NULL)
 				   {
-				      ecore_hash_destroy(theme);
 				      ecore_list_destroy(directory_paths);
 				      free(theme_path);
 				      return found;
@@ -385,7 +381,6 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 				     NULL);
 				 if (found)
 				   {
-				      ecore_hash_destroy(theme);
 				      ecore_list_destroy(directory_paths);
 				      free(theme_path);
 				      return found;
@@ -395,7 +390,6 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 			 }
 		    }
 	       }
-	     ecore_hash_destroy(theme);
 	  }
 	free(theme_path);
      }
