@@ -1638,3 +1638,22 @@ _ecore_x_netwm_startup_info_free(void *data)
    if (info->wmclass) free(info->wmclass);
    free(info);
 }
+
+/*
+ * Is screen composited?
+ */
+EAPI int
+ecore_x_screen_is_composited(int screen)
+{
+   Ecore_X_Window      win;
+   Ecore_X_Atom        atom;
+   char                buf[32];
+
+   snprintf(buf, sizeof(buf), "_NET_WM_CM_S%d", screen);
+   atom = XInternAtom(_ecore_x_disp, buf, True);
+   if (atom == None) return 0;
+
+   win = XGetSelectionOwner(_ecore_x_disp, atom);
+
+   return win != None;
+}

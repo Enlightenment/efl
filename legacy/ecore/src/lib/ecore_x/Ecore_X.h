@@ -1515,6 +1515,8 @@ EAPI Ecore_X_Damage    ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Rep
 EAPI void              ecore_x_damage_del(Ecore_X_Damage damage);
 EAPI void              ecore_x_damage_subtract(Ecore_X_Damage damage, Ecore_X_Region repair, Ecore_X_Region parts);
 
+EAPI int               ecore_x_screen_is_composited(int screen);
+
 #ifdef __cplusplus
 }
 #endif
