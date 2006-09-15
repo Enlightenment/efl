@@ -16,22 +16,22 @@ Embryo is primarily a shared library that gives you an API to load and control
 interpreted programs compiled into an abstract machine bytecode that it
 understands.  This abstract (or virtual) machine is similar to a real machine
 with a CPU, but it is emulated in software.  The architecture is simple and is
-the same as the abstract machine (AMX) in the
-<a href=http://www.compuphase.com/small.htm>SMALL</a> language as it is based
-on exactly the same code. Embryo has modified the code for the AMX extensively
-and has made it smaller and more portable.  It is VERY small.  The total size
-of the virtual machine code AND header files is less than 2500 lines of code.
-It includes the floating point library support by default as well.  This makes
-it one of the smallest interpreters around, and thus makes is very
-efficient to use in code.
+the same as the abstract machine (AMX) in the 
+<a href=http://www.compuphase.com/pawn.htm>PAWN</a> language (formerly called
+SMALL) as it is based on exactly the same code. Embryo has modified the code
+for the AMX extensively and has made it smaller and more portable.  It is VERY
+small.  The total size of the virtual machine code AND header files is less
+than 2500 lines of code.  It includes the floating point library support by
+default as well.  This makes it one of the smallest interpreters around, and
+thus makes is very efficient to use in code.
 
-Embryo also uses the SMALL compiler from the same code base. This code has
+Embryo also uses the PAWN compiler from the same code base. This code has
 barely been touched and so suffers from lots of portability issues. It has
 been partially fixed and now works on both big and little endian but the code
 still need to be gone over and really cleaned up . It does work, but it's only
-just working.  It has been called embryo_cc and compiled a subset of SMALL
+just working.  It has been called embryo_cc and compiled a subset of PAWN
 binary outputs.  It does not support packed strings, variable alignment, or
-debugging output.  It does not support many features of the full SMALL
+debugging output.  It does not support many features of the full PAWN
 compiler because the Embryo AMX does not support these either. You will find
 the Embryo codebase to work much better on Linux (and BSD and MacOS X) and
 other UNIX operating systems as it has been developed and tested on them. IT
@@ -48,20 +48,20 @@ issue.
 
 For more documentation please see the Language guide here:
 
-<a href=http://www.compuphase.com/smalldoc.pdf>Small Language Booklet</a>
+<a href=http://www.compuphase.com/pawn/pawn-lang.pdf>Pawn Language Booklet</a>
   
-This documents the SMALL language and is 100% relevant for Embryo and the
+This documents the PAWN language and is 100% relevant for Embryo and the
 syntax of files it can compile (.sma files).
 
 Any help is appreciated in helping clean and port this code, so feel free to
 send patches to the Enlightenment development lists.
 
 The main aim of Embryo is to provide an easy to use library for running
-compiled SMALL programs and giving them access to the calling program and
-any API it exports to the SMALL script.  SMALL programs/scripts are completely
+compiled PAWN programs and giving them access to the calling program and
+any API it exports to the PAWN script.  PAWN programs/scripts are completely
 sand-boxed. They cannot access any system or function calls other than the
 ones provided by the calling application to the Embryo API. This means a
-SMALL script cannot open or write to, delete or load files. It is fairly
+PAWN script cannot open or write to, delete or load files. It is fairly
 harmless and this also keeps Embryo small.
 
 This is a work in progress, so please be patient if things don't work for you
