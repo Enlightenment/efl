@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "evas_common.h"
 #include "evas_macros.h"
 #include "evas_private.h"
@@ -5,6 +8,16 @@
 #include "Evas_Engine_XRender_Xcb.h"
 #include <math.h>
 
+/* As opposed to libXRender, we don't have
+ * XDoubleToFixed in XCB :/
+ */
+#define DOUBLE_TO_FIXED(d) ((XCBRenderFIXED) ((d) * 65536))
+
+/* this is a work around broken xrender - when/if this ever gets fixed in xorg
+ * we can comment this out and one day remove it - for now keep it until such
+ * a fix is spotted in the wild
+ */
+#define BROKEN_XORG_XRENDER 1
 
 XCBRenderPICTFORMINFO *
 XCBRenderFindVisualFormat (XCBConnection *c, XCBVISUALID visual)
@@ -415,6 +428,15 @@ _xr_render_surface_clips_set(XCBrender_Surface *rs, RGBA_Draw_Context *dc, int r
    free(rect);
 }
 
+/* initialized the transform to the identity */
+static void init_transform (XCBRenderTRANSFORM *t)
+{
+   t->matrix11 = t->matrix22 = t->matrix33 = DOUBLE_TO_FIXED(1);
+
+   t->matrix12 = t->matrix13 = t->matrix21 = t->matrix23 =
+   t->matrix31 = t->matrix32 = 0;
+}
+
 // when color multiplier is used want: instead
 // CA src IN mask SRC temp; non-CA temp OVER dst. - i think. need to check.
 void
@@ -469,17 +491,6 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
               }
             else
               {
-                 xf.matrix11 = 1 << 16;
-                 xf.matrix12 = 0;
-                 xf.matrix13 = 0;
-
-                 xf.matrix21 = 0;
-                 xf.matrix22 = 1 << 16;
-                 xf.matrix23 = 0;
-
-                 xf.matrix31 = 0;
-                 xf.matrix32 = 0;
-                 xf.matrix33 = 1 << 16;
                  if ((srs->alpha) || (a != 0xff))
                    trs = _xr_render_surface_new(srs->xcbinf, sw + 1, sh + 1,
                                                 srs->xcbinf->fmt32, 1);
@@ -490,7 +501,6 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
                                                 srs->fmt, srs->alpha);
                  /* trs = _xr_render_surface_new(srs->xcbinf, sw, sh,
                                                 srs->fmt, srs->alpha); */
-                 XCBRenderSetPictureTransform(srs->xcbinf->conn, srs->pic, xf);
                  XCBRenderComposite(srs->xcbinf->conn, XCBRenderPictOpSrc, srs->pic, mask, trs->pic,
                                     sx, sy, 0, 0, 0, 0, sw, sh);
 		  /* fill right and bottom pixel so interpolation works right */
@@ -523,20 +533,13 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
    else                  sf = 1 << (BMAX - 15);
    */
 
+   init_transform(&xf);
+
    /* xf.matrix11 = (sf * sw) / w; */
-   xf.matrix11 = (sw << 16) / w;
-   xf.matrix12 = 0;
-   xf.matrix13 = 0;
+   xf.matrix11 = DOUBLE_TO_FIXED((double) sw / (double) w);
 
-   xf.matrix21 = 0;
    /* xf.matrix22 = (sf * sh) / h; */
-   xf.matrix22 = (sh << 16) / h;
-   xf.matrix23 = 0;
-
-   xf.matrix31 = 0;
-   xf.matrix32 = 0;
-   /* xf.matrix33 = sf; */
-   xf.matrix33 = 1 << 16;
+   xf.matrix22 = DOUBLE_TO_FIXED((double) sh / (double) h);
 
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
@@ -575,27 +578,21 @@ _xr_render_surface_copy(XCBrender_Surface *srs, XCBrender_Surface *drs, int sx, 
    XCBRenderPICTURE   mask = { 0 };
    CARD32             value_mask;
    CARD32             value_list[1];
-   int                ident;
 
    if ((w < 1) || (h < 1) || (!srs) || (!drs)) return;
-   ident = 1 << 16;
+
+#ifdef BROKEN_XORG_XRENDER
    /* FIXME: why do we need to change the identity matrix if the src surface
     *        is 1 bit deep?
     */
-   if (srs->depth == 1) ident = 1;
-   xf.matrix11 = ident;
-   xf.matrix12 = 0;
-   xf.matrix13 = 0;
+   if (srs->depth == 1)
+     {
+	init_transform(&xf);
+	xf.matrix11 = xf.matrix22 = xf.matrix33 = 1;
+	XCBRenderSetPictureTransform(srs->xcbinf->conn, srs->pic, xf);
+     }
+#endif
 
-   xf.matrix21 = 0;
-   xf.matrix22 = ident;
-   xf.matrix23 = 0;
-
-   xf.matrix31 = 0;
-   xf.matrix32 = 0;
-   xf.matrix33 = ident;
-
-   XCBRenderSetPictureTransform(srs->xcbinf->conn, srs->pic, xf);
    value_mask = XCBRenderCPClipMask;
    value_list[0] = 0;
    XCBRenderChangePicture(srs->xcbinf->conn, srs->pic, value_mask, value_list);
