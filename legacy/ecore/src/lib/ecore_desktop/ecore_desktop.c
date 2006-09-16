@@ -133,7 +133,8 @@ ecore_desktop_ini_get(const char *file)
 		       /* FIXME: should strip space at end, then unescape value. */
 		       tv = ecore_hash_remove(current, key);
 		       if (tv) free(tv);
-		       ecore_hash_set(current, strdup(key), strdup(value));
+		       if (value[0] != '\0')
+		          ecore_hash_set(current, strdup(key), strdup(value));
 #ifdef DEBUG
 		       fprintf(stdout, "    %s=%s\n", key, value);
 #endif
@@ -577,7 +578,13 @@ ecore_desktop_save(Ecore_Desktop * desktop)
                fprintf(f, "[Desktop Entry]\n");
 	       ecore_list_goto_first(list);
                while ((key = (char *) ecore_list_next(list)))
-	          fprintf(f, "%s=%s\n", key, (char *) ecore_hash_get(desktop->group, key));
+	          {
+		     char *value;
+
+                     value = (char *) ecore_hash_get(desktop->group, key);
+		     if ((value) && (value[0] != '\0'))
+	                fprintf(f, "%s=%s\n", key, value);
+		  }
                fclose(f);
 	    }
       }
