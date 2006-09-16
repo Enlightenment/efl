@@ -19,6 +19,14 @@
  */
 #define BROKEN_XORG_XRENDER 1
 
+static inline void
+set_filter(XCBrender_Surface *s, int smooth)
+{
+   const char *f = smooth ? "best": "nearest";
+
+   XCBRenderSetPictureFilter (s->xcbinf->conn, s->pic, strlen (f), f, 0, NULL);
+}
+
 XCBRenderPICTFORMINFO *
 XCBRenderFindVisualFormat (XCBConnection *c, XCBVISUALID visual)
 {
@@ -448,9 +456,12 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
    CARD32             value_mask;
    CARD32             value_list[1];
    int                r, g, b, a;
-   int                op;
+   int                op, is_scaling;
 
    if ((sw <= 0) || (sh <= 0) || (w <= 0) || (h <= 0)) return;
+
+   is_scaling = (sw != w) || (sh != h);
+
    value_mask = XCBRenderCPClipMask;
    value_list[0] = 0;
    XCBRenderChangePicture(srs->xcbinf->conn, srs->pic, value_mask, value_list);
@@ -544,10 +555,9 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
      {
-       if (smooth)
-         XCBRenderSetPictureFilter (trs->xcbinf->conn, trs->pic, strlen ("best"), "best", 0, NULL);
-       else
-         XCBRenderSetPictureFilter (trs->xcbinf->conn, trs->pic, strlen ("nearest"), "nearest", 0, NULL);
+	if (is_scaling)
+	  set_filter(trs, smooth);
+
        XCBRenderSetPictureTransform(trs->xcbinf->conn, trs->pic, xf);
 
        XCBRenderComposite(srs->xcbinf->conn, op, trs->pic, mask, drs->pic,
@@ -556,10 +566,9 @@ _xr_render_surface_composite(XCBrender_Surface *srs, XCBrender_Surface *drs, RGB
      }
    else
      {
-       if (smooth)
-         XCBRenderSetPictureFilter (srs->xcbinf->conn, srs->pic, strlen ("best"), "best", 0, NULL);
-       else
-         XCBRenderSetPictureFilter (srs->xcbinf->conn, srs->pic, strlen ("nearest"), "nearest", 0, NULL);
+	if (is_scaling)
+	  set_filter(srs, smooth);
+
        XCBRenderSetPictureTransform(srs->xcbinf->conn, srs->pic, xf);
 
        XCBRenderComposite(srs->xcbinf->conn, op, srs->pic, mask, drs->pic,
@@ -597,7 +606,6 @@ _xr_render_surface_copy(XCBrender_Surface *srs, XCBrender_Surface *drs, int sx, 
    value_list[0] = 0;
    XCBRenderChangePicture(srs->xcbinf->conn, srs->pic, value_mask, value_list);
    XCBRenderChangePicture(srs->xcbinf->conn, drs->pic, value_mask, value_list);
-   XCBRenderSetPictureFilter(srs->xcbinf->conn, srs->pic, strlen("nearest"), "nearest", 0, NULL);
 
    XCBRenderComposite(srs->xcbinf->conn, XCBRenderPictOpSrc, srs->pic, mask, drs->pic,
                       sx, sy, 0, 0, x, y, w, h);
