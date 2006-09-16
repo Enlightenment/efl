@@ -227,7 +227,7 @@ ecore_desktop_get(const char *file, const char *lang)
 			        *temp = '\0';
 			     result->eap_name = malloc(strlen(value) + 5);
 			     if (result->eap_name)
-			        sprintf(result->eap_name, "%s.eap", value);
+			        sprintf(result->eap_name, "%s.edj", value);
 			     if (temp)
 			        *temp = '.';
 			  }
