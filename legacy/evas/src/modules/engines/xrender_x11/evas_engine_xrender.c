@@ -369,13 +369,12 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    XRenderPictureAttributes att;
    Picture mask;
    int r, g, b, a, op;
-   int e;
+   int e, is_scaling;
 
    if ((sw <= 0) || (sh <= 0) || (w <= 0) || (h <= 0)) return;
    
-   e = 0;
-   if ((sw != w) || (sh != h))
-      e = 1;
+   is_scaling = (sw != w) || (sh != h);
+   e = is_scaling ? 0 : 1;
 
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
@@ -446,7 +445,9 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
      {
-	XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
+	if (is_scaling)
+	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
+
 	XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
 	
 	XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
@@ -455,7 +456,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
      }
    else
      {
-	if (srs->bordered && e)
+	if (srs->bordered && is_scaling)
 	  {
 	    trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
 					 srs->fmt, srs->alpha);
@@ -479,7 +480,8 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	  }
 	else
 	  {
-	     XRenderSetPictureFilter(srs->xinf->disp, srs->pic, get_filter(smooth), NULL, 0);
+	     if (is_scaling)
+	       XRenderSetPictureFilter(srs->xinf->disp, srs->pic, get_filter(smooth), NULL, 0);
 
 	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 	    XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
@@ -513,7 +515,6 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
    XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
-   XRenderSetPictureFilter(srs->xinf->disp, srs->pic, FilterNearest, NULL, 0);
    
    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None, drs->pic, 
 		    sx, sy, 0, 0, x, y, w, h);
