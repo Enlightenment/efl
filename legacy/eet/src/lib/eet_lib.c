@@ -570,7 +570,8 @@ eet_open(const char *file, Eet_File_Mode mode)
 	int			i;
 
 	ef->data_size = file_stat.st_size;
-	ef->data = mmap(NULL, ef->data_size, PROT_READ, MAP_SHARED, fileno(ef->fp), 0);
+	ef->data = mmap(NULL, ef->data_size, PROT_READ,
+			MAP_SHARED, fileno(ef->fp), 0);
 
 	if (eet_test_close((ef->data == (void *)-1) || (ef->data == NULL), ef))
 	  return NULL;
@@ -723,6 +724,21 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* we need to delete the original file in read-write mode and re-open for writing */
    if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
+	int i;
+	
+	for (i = 0; i < ef->header->directory->size; i++)
+	  {
+	     Eet_File_Node      *efn;
+	     
+	     for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
+	       {
+		  if (!efn->free_name)
+		    {
+		       efn->free_name = 1;
+		       efn->name = strdup(efn->name);
+		    }
+	       }
+	  }
 	fclose(ef->fp);
 	unlink(ef->path);
 	ef->fp = fopen(ef->path, "wb");
