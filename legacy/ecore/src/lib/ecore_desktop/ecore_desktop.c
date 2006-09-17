@@ -837,7 +837,7 @@ ecore_desktop_get_command(Ecore_Desktop *desktop, Ecore_List *files, int fill)
 				 len += strlen(p);
 		              }
 	                   free(params);
-			   params = malloc(len);
+			   params = malloc(len + 1);
 			   if (params)
 			      {
 			         params[0] = '\0';
