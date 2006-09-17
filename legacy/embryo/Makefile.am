@@ -19,14 +19,12 @@ EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN embryo.c.in gendoc \
 	     embryo.spec.in embryo.spec \
 	     debian/changelog \
 	     debian/changelog.in \
-	     debian/compat \
 	     debian/control \
 	     debian/copyright \
-	     debian/docs \
-	     debian/embryo0-bin.files \
-	     debian/embryo0-debug.files \
-	     debian/libembryo0-dev.files \
-	     debian/libembryo0.files \
+	     debian/embryo0-bin.install \
+	     debian/embryo0-debug.install \
+	     debian/libembryo0-dev.install \
+	     debian/libembryo0.install \
 	     debian/rules
 
 pkgconfigdir = $(libdir)/pkgconfig
