@@ -1,6 +1,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 extern Evas_List *evas_modules;
 
 EAPI RGBA_Image *
@@ -12,7 +16,8 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
    char *p;
    char *loader = NULL;
    Evas_Module *em;
-
+   struct stat st;
+   
    if (file == NULL) return NULL;
 
    im = evas_common_image_find(file, key, 0, lo);
@@ -21,9 +26,11 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
 	evas_common_image_ref(im);
 	return im;
      }
+   if (stat(file, &st) < 0) return NULL;
+   
    im = evas_common_image_new();
    if (!im) return NULL;
-
+   
    if (lo) im->load_opts = *lo;
    
    p = strrchr(file, '.');
@@ -100,6 +107,7 @@ evas_common_load_image_data_from_file(RGBA_Image *im)
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    
    if (im->image->data) return;
+   if (!im->info.module) return;
 
    evas_image_load_func = im->info.loader;
    evas_module_use((Evas_Module *)im->info.module);
