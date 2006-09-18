@@ -11,6 +11,7 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
    RGBA_Image *im;
    char *p;
    char *loader = NULL;
+   Evas_Module *em;
 
    if (file == NULL) return NULL;
 
@@ -50,13 +51,12 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
      }
    if (loader)
      {
-        Evas_Module *em;
-	
 	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
 	if (em)
 	  {
 	     if (evas_module_load(em))
 	       {
+		  evas_module_use(em);
 		  evas_image_load_func = em->functions;
 		  if (evas_image_load_func->file_head(im, file, key))
 		    goto ok;
@@ -66,12 +66,11 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
 
    for (l = evas_modules; l; l = l->next)
      {
-        Evas_Module *em;
-
 	em = l->data;
 	if (em->type != EVAS_MODULE_TYPE_IMAGE_LOADER) continue;
 	if (!evas_module_load(em)) continue;
         evas_image_load_func = em->functions;
+	evas_module_use(em);
 	if (evas_image_load_func->file_head(im, file, key))
 	  {
 	     if (evas_modules != l)
@@ -86,9 +85,11 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
    return NULL;
    ok:
 
+   im->info.module = (void *)em;
    im->info.loader = (void *)evas_image_load_func;
    im->info.file = (char *)evas_stringshare_add(file);
    if (key) im->info.key = (char *)evas_stringshare_add(key);
+   evas_module_ref((Evas_Module *)im->info.module);
    evas_common_image_ref(im);
    return im;
 }
@@ -101,6 +102,7 @@ evas_common_load_image_data_from_file(RGBA_Image *im)
    if (im->image->data) return;
 
    evas_image_load_func = im->info.loader;
+   evas_module_use((Evas_Module *)im->info.module);
    if (!evas_image_load_func->file_data(im, im->info.file, im->info.key))
      {
 	evas_common_image_surface_alloc(im->image);
@@ -113,5 +115,10 @@ evas_common_load_image_data_from_file(RGBA_Image *im)
 	     im->image->data = (DATA32 *)&pixel;
 	     im->image->no_free = 1;
 	  }
+     }
+   else
+     {
+	evas_module_unref((Evas_Module *)im->info.module);
+	im->info.module = NULL;
      }
 }

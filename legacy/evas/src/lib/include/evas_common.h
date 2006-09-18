@@ -249,6 +249,7 @@ struct _RGBA_Image
    RGBA_Image_Flags     flags;
    struct
      {
+	void           *module;
 	void           *loader;
 //	int             format;
 	char           *file;

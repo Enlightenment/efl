@@ -268,6 +268,7 @@ evas_common_image_free(RGBA_Image *im)
 //   if (im->info.real_file) evas_stringshare_del(im->info.real_file);
    if (im->info.key) evas_stringshare_del(im->info.key);
 //   if (im->info.comment) evas_stringshare_del(im->info.comment);
+   if (im->info.module) evas_module_unref((Evas_Module *)im->info.module);
    free(im);
 }
 

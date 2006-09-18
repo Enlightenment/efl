@@ -396,6 +396,9 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates)
    e->changed = 0;
    e->viewport.changed = 0;
    e->output.changed = 0;
+   
+   evas_module_clean();
+   
    return updates;
 }
 
@@ -428,8 +431,7 @@ evas_render_updates(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    
-   if (!e->changed)
-       return NULL;
+   if (!e->changed) return NULL;
    return evas_render_updates_internal(e, 1);
 }
 
@@ -446,7 +448,6 @@ evas_render(Evas *e)
    return;
    MAGIC_CHECK_END();
 
-   if (!e->changed)
-       return;
-  (void)evas_render_updates_internal(e, 0);
+   if (!e->changed) return;
+   evas_render_updates_internal(e, 0);
 }

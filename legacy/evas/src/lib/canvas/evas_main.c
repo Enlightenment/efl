@@ -146,6 +146,8 @@ evas_free(Evas *e)
      free(e->locks.lock.list[i]);
    if (e->locks.lock.list) free(e->locks.lock.list);
 
+   if (e->engine.module) evas_module_unref(e->engine.module);
+   
    e->magic = 0;
    free(e);
 }
@@ -216,6 +218,10 @@ evas_output_method_set(Evas *e, int render_method)
 	/* set the correct render */
 	e->output.render_method = render_method;
 	e->engine.func = (em->functions);
+	evas_module_use(em);
+	if (e->engine.module) evas_module_unref(e->engine.module);
+	e->engine.module = em;
+	evas_module_ref(em);
 	/* get the engine info struct */
 	if (e->engine.func->info) e->engine.info = e->engine.func->info(e);
 	return;

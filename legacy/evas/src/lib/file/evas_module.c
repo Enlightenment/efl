@@ -158,7 +158,7 @@ evas_module_init(void)
 	       {
 		  Evas_Module *em;
 		  
-		  em = malloc(sizeof(Evas_Module));
+		  em = calloc(1, sizeof(Evas_Module));
 		  if (!em) continue;
 		  em->name = strdup(de->d_name);
 		  em->path = strdup(mp->path);
@@ -223,6 +223,7 @@ evas_module_load(Evas_Module *em)
    
    if (em->loaded) return 1;
 
+//   printf("LOAD %s\n", em->name);
    snprintf(buf, sizeof(buf), "%s/%s/%s/module.so", em->path, em->name, MODULE_ARCH);
    if (!evas_file_path_exists(buf))
      {
@@ -282,6 +283,76 @@ evas_module_unload(Evas_Module *em)
    em->loaded = 0;
 }
 
+void
+evas_module_ref(Evas_Module *em)
+{
+   em->ref++;
+//   printf("M: %s ref++ = %i\n", em->name, em->ref);
+}
+
+void
+evas_module_unref(Evas_Module *em)
+{
+   em->ref--;
+//   printf("M: %s ref-- = %i\n", em->name, em->ref);
+}
+
+static int use_count = 0;
+
+void
+evas_module_use(Evas_Module *em)
+{
+   em->last_used = use_count;
+}
+
+void
+evas_module_clean(void)
+{
+   static int call_count = 0;
+   int ago;
+   int noclean = -1;
+   Evas_List *l;
+   Evas_Module *em;
+
+   /* only clean modules every 32 calls */
+   call_count++;
+   if (call_count <= 32) return;
+   call_count = 0;
+
+   if (noclean == -1)
+     {
+	if (getenv("EVAS_NOCLEAN"))
+	  {
+	     noclean = 1;
+	  }
+	noclean = 0;
+     }
+   if (noclean == 1) return;
+   
+   /* incriment use counter = 28bits */
+   use_count++;
+   if (use_count > 0x0fffffff) use_count = 0;
+   
+//   printf("CLEAN!\n");
+   /* go through all modules */
+   for (l = evas_modules; l; l = l->next)
+     {
+	em = l->data;
+//	printf("M %s %i %i\n", em->name, em->ref, em->loaded);
+	/* if the module is refernced - skip */
+	if ((em->ref > 0) || (!em->loaded)) continue;
+	/* how many clean cycles ago was this module last used */
+	ago = use_count - em->last_used;
+	if (em->last_used > use_count) ago += 0x10000000;
+	/* if it was used last more than N clean cycles ago - unload */
+	if (ago > 3)
+	  {
+//	     printf("  UNLOAD %s\n", em->name);
+	     evas_module_unload(em);
+	  }
+     }
+}
+
 /* will dlclose all the modules loaded and free all the structs */
 void
 evas_module_shutdown(void)
@@ -329,6 +400,9 @@ _evas_module_engine_inherit(Evas_Func *funcs, char *name)
      {
 	if (evas_module_load(em))
 	  {
+	     /* FIXME: no way to unref */
+	     evas_module_ref(em);
+	     evas_module_use(em);
 	     *funcs = *((Evas_Func *)(em->functions));
 	     return 1;
 	  }

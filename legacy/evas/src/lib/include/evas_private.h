@@ -45,10 +45,13 @@ struct _Evas_Module
 	int (*open)(Evas_Module *);
 	void (*close)(Evas_Module *);
      } func;
-   unsigned char	loaded : 1;	
+   unsigned char	loaded : 1;
    
    void		*functions;	/* this are the functions exported by the module */
    void		*data;		/* some internal data for the module i.e the id for engines */
+
+   int           ref; /* how many refs */
+   int           last_used; /* the cycle count when it was last used */
 };
 
 
@@ -308,6 +311,7 @@ struct _Evas
    int               events_frozen;
 
    struct {
+      Evas_Module *module;
       Evas_Func *func;
       struct {
 	 void *output;
@@ -743,7 +747,12 @@ void evas_module_init(void);
 Evas_Module * evas_module_find_type(Evas_Module_Type type, const char *name);
 int evas_module_load(Evas_Module *em);
 void evas_module_unload(Evas_Module *em);
+void evas_module_ref(Evas_Module *em);
+void evas_module_unref(Evas_Module *em);
+void evas_module_use(Evas_Module *em);
+void evas_module_clean(void);
 void evas_module_shutdown(void);
+
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
        
 #define EVAS_API_OVERRIDE(func, api, prefix) \
