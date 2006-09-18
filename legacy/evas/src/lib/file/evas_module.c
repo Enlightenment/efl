@@ -314,9 +314,9 @@ evas_module_clean(void)
    Evas_List *l;
    Evas_Module *em;
 
-   /* only clean modules every 32 calls */
+   /* only clean modules every 256 calls */
    call_count++;
-   if (call_count <= 32) return;
+   if (call_count <= 256) return;
    call_count = 0;
 
    if (noclean == -1)
@@ -345,7 +345,7 @@ evas_module_clean(void)
 	ago = use_count - em->last_used;
 	if (em->last_used > use_count) ago += 0x10000000;
 	/* if it was used last more than N clean cycles ago - unload */
-	if (ago > 3)
+	if (ago > 5)
 	  {
 //	     printf("  UNLOAD %s\n", em->name);
 	     evas_module_unload(em);
