@@ -20,10 +20,12 @@ extern int          reject_count, not_over_count;
 
 static int          init_count = 0;
 
-static Ecore_Hash  *ini_file_cache;
 static Ecore_Hash  *desktop_cache;
 
+Ecore_Desktop      *_ecore_desktop_get(const char *file, const char *lang);
 void _ecore_desktop_destroy(Ecore_Desktop * desktop);
+#define IFGETDUP(src, key, dst) src = (char *)ecore_hash_get(result->group, key); if (src) dst = strdup(src); else dst = NULL;
+#define IFFREE(src) if (src) free(src);  src = NULL;
 
 
 /**
@@ -51,7 +53,6 @@ ecore_desktop_ini_get(const char *file)
 {
    Ecore_Hash         *result;
 
-/* FIXME: should probably look in ini_file_cache first. */
    result = ecore_hash_new(ecore_str_hash, ecore_str_compare);
    if (result)
      {
@@ -145,19 +146,12 @@ ecore_desktop_ini_get(const char *file)
 	buffer[0] = (char)0;
 
 	fclose(f);
-	ecore_hash_set(ini_file_cache, strdup(file), result);
      }
    return result;
 }
 
 /**
  * Get the contents of a .desktop file.
- *
- * Everything that is in the .desktop file is returned in the
- * data member of the Ecore_Desktop structure, it's an Ecore_Hash 
- * as returned by ecore_desktop_ini_get().  Some of the data in the
- * .desktop file is decoded into specific members of the returned 
- * structure.
  *
  * Use ecore_desktop_destroy() to free this structure.
  *
@@ -170,7 +164,28 @@ Ecore_Desktop      *
 ecore_desktop_get(const char *file, const char *lang)
 {
    Ecore_Desktop      *result;
+
+   result = _ecore_desktop_get(file, lang);
+   if (result)
+      {
+         /* Kill the hash, it takes up way too much memory. */
+         if (result->data)
+	    {
+	       ecore_hash_destroy(result->data);
+	       result->data = NULL;
+	    }
+         result->group = NULL;
+      }
+      
+   return result;
+}
+
+Ecore_Desktop      *
+_ecore_desktop_get(const char *file, const char *lang)
+{
+   Ecore_Desktop      *result;
    struct stat         st;
+   char               *value;
    int                 stated = 0;
 
    result = (Ecore_Desktop *) ecore_hash_get(desktop_cache, (char *) file);
@@ -192,6 +207,7 @@ ecore_desktop_get(const char *file, const char *lang)
 	result = calloc(1, sizeof(Ecore_Desktop));
 	if (result)
 	  {
+	     result->ondisk = 1;
 	     result->original_path = strdup(file);
 	     if (lang)
 	        result->original_lang = strdup(lang);
@@ -213,7 +229,6 @@ ecore_desktop_get(const char *file, const char *lang)
 						      "KDE Desktop Entry");
 		  if (result->group)
 		    {
-		       char               *value;
 		       char               *eap_name = NULL;
 		       char               *exe = NULL;
 		       char               *categories = NULL;
@@ -233,24 +248,16 @@ ecore_desktop_get(const char *file, const char *lang)
 			  }
 		       eap_name = result->eap_name;
 
-		       result->name =
-			  (char *)ecore_hash_get(result->group, "Name");
-		       result->generic =
-			  (char *)ecore_hash_get(result->group, "GenericName");
-		       result->comment =
-			  (char *)ecore_hash_get(result->group, "Comment");
-		       result->type =
-			  (char *)ecore_hash_get(result->group, "Type");
+                       IFGETDUP(value, "Name", result->name);
+                       IFGETDUP(value, "GenericName", result->generic);
+                       IFGETDUP(value, "Comment", result->comment);
+                       IFGETDUP(value, "Type", result->type);
 
-		       result->path =
-		          (char *)ecore_hash_get(result->group, "Path");
-		       result->URL =
-		          (char *)ecore_hash_get(result->group, "URL");
-		       result->file =
-		          (char *)ecore_hash_get(result->group, "File");
+                       IFGETDUP(value, "Path", result->path);
+                       IFGETDUP(value, "URL", result->URL);
+                       IFGETDUP(value, "File", result->file);
 
-		       result->exec =
-			  (char *)ecore_hash_get(result->group, "Exec");
+                       IFGETDUP(value, "Exec", result->exec);
 		       if (result->exec)
 		          {
                              exe = strchr(result->exec, ' ');
@@ -262,12 +269,8 @@ ecore_desktop_get(const char *file, const char *lang)
                              exe = result->exec;
                           }
 
-		       value =
-			  (char *)ecore_hash_get(result->group,
-						 "StartupWMClass");
-		       if (value)
-		          result->window_class = strdup(value);
-		       else if (result->exec)
+                       IFGETDUP(value, "StartupWMClass", result->window_class);
+		       if ((!value) && (result->exec))
 		          {
 	                     char *tmp;
 
@@ -290,24 +293,15 @@ ecore_desktop_get(const char *file, const char *lang)
 	                          free(tmp);
 	                       }
 			  }
-		       result->window_name =
-			  (char *)ecore_hash_get(result->group, "X-Enlightenment-WindowName");
-		       result->window_title =
-			  (char *)ecore_hash_get(result->group, "X-Enlightenment-WindowTitle");
-		       result->window_role =
-			  (char *)ecore_hash_get(result->group, "X-Enlightenment-WindowRole");
+                       IFGETDUP(value, "X-Enlightenment-WindowName", result->window_name);
+                       IFGETDUP(value, "X-Enlightenment-WindowTitle", result->window_title);
+                       IFGETDUP(value, "X-Enlightenment-WindowRole", result->window_role);
 
-
-		       result->icon =
-			  (char *)ecore_hash_get(result->group, "Icon");
+                       IFGETDUP(value, "Icon", result->icon);
 		       if (result->icon)
 		          result->original_icon = strdup(result->icon);
-		       result->icon_class =
-			  (char *)ecore_hash_get(result->group, "X-Enlightenment-IconClass");
-		       value =
-			  (char *)ecore_hash_get(result->group, "X-Enlightenment-IconPath");
-		       if (value)
-		          result->icon_path = strdup(value);
+                       IFGETDUP(value, "X-Enlightenment-IconClass", result->icon_class);
+                       IFGETDUP(value, "X-Enlightenment-IconPath", result->icon_path);
 
                        if ((result->icon != NULL) && (result->icon_path == NULL) && (strchr(result->icon, '/') != NULL))
 		          {
@@ -339,12 +333,12 @@ ecore_desktop_get(const char *file, const char *lang)
 				}
 			  }
 
-		       result->categories =
-			  (char *)ecore_hash_get(result->group, "Categories");
+                       IFGETDUP(value, "Categories", result->categories);
 		       if (result->categories)
 			  result->Categories =
 			     ecore_desktop_paths_to_hash(result->categories);
 		       categories = result->categories;
+
 		       value =
 			  (char *)ecore_hash_get(result->group, "OnlyShowIn");
 		       if (value)
@@ -473,11 +467,8 @@ ecore_desktop_get(const char *file, const char *lang)
 							"Trash Info");
 		       if (result->group)
 			 {
-			    result->path =
-			       (char *)ecore_hash_get(result->group, "Path");
-			    result->deletiondate =
-			       (char *)ecore_hash_get(result->group,
-						      "DeletionDate");
+                            IFGETDUP(value, "Path", result->path);
+                            IFGETDUP(value, "DeletionDate", result->deletiondate);
 			 }
 		    }
 
@@ -497,14 +488,30 @@ void
 ecore_desktop_save(Ecore_Desktop * desktop)
 {
    char *temp;
+   int trash = 0;
 
    if (!desktop->group)
       {
-         desktop->group = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-         if (desktop->group)
+         if ((desktop->ondisk) && (desktop->original_path))
 	    {
-               ecore_hash_set_free_key(desktop->group, free);
-	       ecore_hash_set_free_value(desktop->group, free);
+	       desktop->data = ecore_desktop_ini_get(desktop->original_path);
+	       desktop->group = (Ecore_Hash *) ecore_hash_get(desktop->data, "Desktop Entry");
+	       if (!desktop->group)
+		  desktop->group = (Ecore_Hash *) ecore_hash_get(desktop->data, "KDE Desktop Entry");
+	       if (!desktop->group)
+	          {
+		     trash = 1;
+		     desktop->group = (Ecore_Hash *) ecore_hash_get(desktop->data, "Trash Info");
+		  }
+	    }
+	 else
+	    {
+               desktop->group = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+               if (desktop->group)
+	          {
+                     ecore_hash_set_free_key(desktop->group, free);
+	             ecore_hash_set_free_value(desktop->group, free);
+	          }
 	    }
       }
 
@@ -575,7 +582,10 @@ ecore_desktop_save(Ecore_Desktop * desktop)
                list = ecore_hash_keys(desktop->group);
                if ((!f) || (!list)) return;
 
-               fprintf(f, "[Desktop Entry]\n");
+               if (trash)
+                  fprintf(f, "[Trash Info]\n");
+	       else
+                  fprintf(f, "[Desktop Entry]\n");
 	       ecore_list_goto_first(list);
                while ((key = (char *) ecore_list_next(list)))
 	          {
@@ -587,6 +597,15 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 		  }
                fclose(f);
 	    }
+
+         if (desktop->data)
+	    {
+	       ecore_hash_destroy(desktop->data);
+	       desktop->data = NULL;
+	    }
+	 else
+	    ecore_hash_destroy(desktop->group);
+         desktop->group = NULL;
       }
 }
 
@@ -607,16 +626,6 @@ ecore_desktop_init()
 
    if (!ecore_desktop_paths_init()) return --init_count;
 
-   if (!ini_file_cache)
-     {
-	ini_file_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-	if (ini_file_cache)
-	  {
-	     ecore_hash_set_free_key(ini_file_cache, free);
-	     ecore_hash_set_free_value(ini_file_cache,
-				       (Ecore_Free_Cb) ecore_hash_destroy);
-	  }
-     }
    if (!desktop_cache)
      {
 	desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
@@ -648,11 +657,6 @@ ecore_desktop_shutdown()
 
    ecore_desktop_icon_shutdown();
 
-   if (ini_file_cache)
-     {
-	ecore_hash_destroy(ini_file_cache);
-	ini_file_cache = NULL;
-     }
    if (desktop_cache)
      {
 	ecore_hash_destroy(desktop_cache);
@@ -683,26 +687,37 @@ ecore_desktop_destroy(Ecore_Desktop * desktop)
 void
 _ecore_desktop_destroy(Ecore_Desktop * desktop)
 {
-   if (desktop->original_path)
-      free(desktop->original_path);
-   if (desktop->icon_path)
-      free(desktop->icon_path);
-   if (desktop->original_lang)
-      free(desktop->original_lang);
-   if (desktop->eap_name)
-      free(desktop->eap_name);
-   if (desktop->original_icon)
-      free(desktop->original_icon);
-   if (desktop->icon_class)
-      free(desktop->icon_class);
-   if (desktop->window_class)
-      free(desktop->window_class);
-   if (desktop->NotShowIn)
-      ecore_hash_destroy(desktop->NotShowIn);
-   if (desktop->OnlyShowIn)
-      ecore_hash_destroy(desktop->OnlyShowIn);
-   if (desktop->Categories)
-      ecore_hash_destroy(desktop->Categories);
+   IFFREE(desktop->original_path)
+   IFFREE(desktop->original_lang)
+   IFFREE(desktop->eap_name)
+   IFFREE(desktop->name)
+   IFFREE(desktop->generic)
+   IFFREE(desktop->comment)
+   IFFREE(desktop->type)
+   IFFREE(desktop->exec)
+   IFFREE(desktop->exec_params)
+   IFFREE(desktop->categories)
+   IFFREE(desktop->icon)
+   IFFREE(desktop->original_icon)
+   IFFREE(desktop->icon_class)
+   IFFREE(desktop->icon_path)
+   IFFREE(desktop->path)
+   IFFREE(desktop->URL)
+   IFFREE(desktop->file)
+   IFFREE(desktop->deletiondate)
+   IFFREE(desktop->window_class)
+   IFFREE(desktop->window_name)
+   IFFREE(desktop->window_title)
+   IFFREE(desktop->window_role)
+   IFFREE(desktop->NotShowIn)
+   IFFREE(desktop->OnlyShowIn)
+   IFFREE(desktop->Categories)
+   if (desktop->data)
+      {
+         ecore_hash_destroy(desktop->data);
+	 desktop->data = NULL;
+      }
+   desktop->group = NULL;
    free(desktop);
 }
 
