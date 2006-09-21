@@ -114,6 +114,9 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
    int                 count, pixels;
 
    if (!file) return 0;
+
+printf("evas_image_load_file_xpm(%s, %s, %d)\n", file, key, load_data);
+
    done = 0;
 //   transp = -1;
    transp = 0;
