@@ -736,7 +736,10 @@ ecore_desktop_home_get()
    int    len;
 
    /* Get Home Dir, check for trailing '/', strip it */
-   strncpy(home, getenv("HOME"), PATH_MAX);
+   if (getenv("HOME"))
+     strncpy(home, getenv("HOME"), PATH_MAX);
+   else
+     strcpy(home, "/");
    len = strlen(home) - 1;
    while ((len >= 0) && (home[len] == '/'))
      {
