@@ -71,6 +71,7 @@ typedef struct _Ecore_Desktop Ecore_Desktop;
 struct _Ecore_Desktop_Icon_Theme
 {
    Ecore_Hash         *data, *group;
+   Ecore_List         *Inherits;
    Ecore_List         *Directories;
    char               *path;
    char               *name;
