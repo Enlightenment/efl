@@ -19,7 +19,7 @@ _ecore_desktop_icon_theme_directory_destroy(Ecore_Desktop_Icon_Theme_Directory *
 
 /* FIXME: We need a way for the client to disable searching for any of these that they don't support. */
 static const char  *ext[] =
-   { ".edj", ".png", ".svgz", ".svg", ".xpm", NULL };
+   { "", ".edj", ".png", ".svgz", ".svg", ".xpm", NULL };  /* "" is in case the icon already has an extension, search for that first. */
 static int          init_count = 0;
 static Ecore_Hash  *icon_theme_cache;
 static int          loaded = 0;
@@ -140,10 +140,13 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
     * it changed the theme to make sure that the new icons will eventually get 
     * used."
     *
+    * The phrase "toplevel icon directories" is ambigous, but I guess they mean 
+    * the directory where the index.theme file lives.
+    *
     * On the other hand, OS caching (at least in linux) seems to do a reasonable 
     * job here.
     *
-    * We could also precalculate and cache all the information extracted from 
+    * We also precalculate and cache all the information extracted from 
     * the .theme files.
     */
 
@@ -171,7 +174,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 	  {
 	     int                 wanted_size;
 	     int                 minimal_size = INT_MAX;
-	     int                 i, j;
+	     int                 i;
 	     char               *closest = NULL;
 	     Ecore_Desktop_Icon_Theme_Directory *directory;
 
@@ -230,11 +233,14 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 			 }
 
 		       /* Look for icon with all extensions. */
-		       for (j = 0; ext[j] != NULL; j++)
+		       for (i = 0; ext[i] != NULL; i++)
 			 {
+			    /* Check if there will be an extension. */
+			    if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
+			       continue;
 			    snprintf(path, PATH_MAX,
 				     "%s/%s/%s%s",
-				     icon_theme, directory->path, icon, ext[j]);
+				     icon_theme, directory->path, icon, ext[i]);
 #ifdef DEBUG
 			    printf("FDO icon = %s\n", path);
 #endif
@@ -243,7 +249,12 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 			       (ecore_desktop_paths_icons, path, 0, NULL, NULL);
 			    if (found)
 			      {
-				 if (match)	/* If there is a match in sizes, return the icon. */
+                                 if (ecore_file_is_dir(found))
+			           {
+			              free(found);
+			              found = NULL;
+			           }
+				 else if (match)	/* If there is a match in sizes, return the icon. */
 				    break;
 				 else if (result_size < minimal_size)	/* While we are here, figure out our next fallback strategy. */
 				   {
@@ -251,6 +262,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 				      if (closest)
 					 free(closest);
 				      closest = found;
+				      found = NULL;
 				   }
 				 else
 				   {
@@ -299,6 +311,9 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 		       /* Fall back strategy #4, Just search in the base of the icon directories. */
 		       for (i = 0; ext[i] != NULL; i++)
 			 {
+			    /* Check if there will be an extension. */
+			    if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
+			       continue;
 			    snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
 #ifdef DEBUG
 			    printf("FDO icon = %s\n", path);
@@ -307,7 +322,15 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 			       ecore_desktop_paths_file_find
 			       (ecore_desktop_paths_icons, path, 0, NULL, NULL);
 			    if (found)
-			       break;
+			      {
+                                 if (ecore_file_is_dir(found))
+			           {
+			              free(found);
+			              found = NULL;
+			           }
+				 else
+			            break;
+			      }
 			 }
 		    }
 	       }

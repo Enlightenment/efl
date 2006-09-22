@@ -299,8 +299,8 @@ _ecore_desktop_get(const char *file, const char *lang)
 				result->window_role);
 
 		       IFGETDUP(value, "Icon", result->icon);
-		       if (result->icon)
-			  result->original_icon = strdup(result->icon);
+		       IFGETDUP(value, "X-Enlightenment-IconTheme",
+				result->icon_theme);
 		       IFGETDUP(value, "X-Enlightenment-IconClass",
 				result->icon_class);
 		       IFGETDUP(value, "X-Enlightenment-IconPath",
@@ -312,7 +312,6 @@ _ecore_desktop_get(const char *file, const char *lang)
 			    if (result->icon[0] == '/')
 			      {
 				 result->icon_path = strdup(result->icon);
-				 result->icon = NULL;
 			      }
 			    else	/* It's a relative path. */
 			      {
@@ -335,7 +334,6 @@ _ecore_desktop_get(const char *file, const char *lang)
 						   result->icon);
 					   result->icon_path =
 					      ecore_file_realpath(temp);
-					   result->icon = NULL;
 					   free(dir);
 					}
 				      free(temp);
@@ -394,7 +392,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 		       if (!result->icon_class)
 			 {
 			    size = 0;
-			    if ((result->icon) && (result->icon[0] != '/'))
+			    if ((result->icon) && (strchr(result->icon, '/') == NULL))
 			       size += strlen(result->icon) + 1;
 			    if (eap_name)
 			       size += strlen(eap_name) + 1;
@@ -409,12 +407,11 @@ _ecore_desktop_get(const char *file, const char *lang)
 				 int                 done = 0;
 
 				 result->icon_class[0] = '\0';
-				 if ((result->icon) && (result->icon[0] != '/')
+				 if ((result->icon) && (strchr(result->icon, '/') == NULL)
 				     && (result->icon[0] != '\0'))
 				   {
 				      strcat(result->icon_class, result->icon);
 				      done = 1;
-				      result->icon = NULL;
 				   }
 				 /* We do this here coz we don't want to lower case the result->icon part later. */
 				 p = result->icon_class;
@@ -592,6 +589,9 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	if (desktop->icon)
 	   ecore_hash_set(desktop->group, strdup("Icon"),
 			  strdup(desktop->icon));
+	if (desktop->icon_theme)
+	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconTheme"),
+			  strdup(desktop->icon_theme));
 	if (desktop->icon_class)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconClass"),
 			  strdup(desktop->icon_class));
@@ -772,7 +772,7 @@ _ecore_desktop_destroy(Ecore_Desktop * desktop)
       IFFREE(desktop->exec_params)
       IFFREE(desktop->categories)
       IFFREE(desktop->icon)
-      IFFREE(desktop->original_icon)
+      IFFREE(desktop->icon_theme)
       IFFREE(desktop->icon_class)
       IFFREE(desktop->icon_path)
       IFFREE(desktop->path)
@@ -899,10 +899,10 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 				    break;
 
 				 case 'i':	/* "--icon Icon" field from .desktop file, or empty. */
-				    if (desktop->original_icon)
+				    if (desktop->icon)
 				      {
 					 snprintf(buf, sizeof(buf), "--icon %s",
-						  desktop->original_icon);
+						  desktop->icon);
 					 t = buf;
 				      }
 				    break;
