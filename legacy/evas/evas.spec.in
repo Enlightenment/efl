@@ -22,6 +22,7 @@
 %bcond_with    module_engine_software_qtopia
 %bcond_with    module_engine_software_xcb
 %bcond_with    module_engine_xrender_x11
+%bcond_with    module_loader_svg
 
 ## enabled features
 %bcond_without module_engine_software_x11
@@ -37,7 +38,6 @@
 %bcond_without module_loader_eet
 %bcond_without module_saver_eet
 %bcond_without module_loader_xpm
-%bcond_without module_loader_svg
 
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
