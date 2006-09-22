@@ -75,10 +75,7 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size, const char *ico
 
          dir = _ecore_desktop_icon_find0(icn, icon_size, icon_theme);
          if (dir)
-	   {
-//	      dir = strdup(dir);
-	      break;
-	   }
+            break;
       }
    ecore_list_destroy(icons);
 
@@ -124,7 +121,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 
    char                icn[PATH_MAX], path[PATH_MAX];
    char               *theme_path;
-   const char         *found;
+   char               *found = NULL;
 
    if ((icon == NULL) || (icon[0] == '\0'))
       return NULL;
@@ -180,7 +177,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 			    int                 wanted_size;
 			    int                 minimal_size = INT_MAX;
 			    int                 i;
-			    const char         *closest = NULL;
+			    char               *closest = NULL;
 			    char               *directory;
 
 			    wanted_size = atoi(icon_size);
@@ -309,12 +306,8 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 						if (found)
 						  {
 						     if (match)	/* If there is a match in sizes, return the icon. */
-						       {
-							  ecore_list_destroy(directory_paths);
-							  free(theme_path);
-							  return found;
-						       }
-						     if (result_size < minimal_size)	/* While we are here, figure out our next fallback strategy. */
+						        break;
+						     else if (result_size < minimal_size) /* While we are here, figure out our next fallback strategy. */
 						       {
 							  minimal_size =
 							     result_size;
@@ -322,79 +315,70 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size, const char *i
 							  closest = found;
 						       }
 						     else
-						       free(found);
+						        {
+						           free(found);
+							   found = NULL;
+							}
 						  }
 					     }
 
-					}
-				   }
+					} /* if (size) */
+				   } /* if (sub_group) */
+				   if (found)
+				      break;
 			      }	/* while ((directory = ecore_list_next(directory_paths)) != NULL) */
 
-			    /* Fall back strategy #1, look for closest size in this theme. */
-			    if (closest)
-			      {
-				 ecore_list_destroy(directory_paths);
-				 free(theme_path);
-				 return closest;
-			      }
+                            if (!found)
+			       {
+			          /* Fall back strategy #1, look for closest size in this theme. */
+				  found = closest;
 
-			    /* Fall back strategy #2, Try again with the parent theme. */
-			    if ((inherits) && (inherits[0] != '\0')
-				&& (strcmp(icon_theme, "hicolor") != 0))
-			      {
-				 found =
-				    _ecore_desktop_icon_find0(icon, icon_size,
+			          /* Fall back strategy #2, Try again with the parent theme. */
+			          if ((!found) && (inherits) && (inherits[0] != '\0')
+			      	      && (strcmp(icon_theme, "hicolor") != 0))
+			            {
+				       found = (char *)
+				          _ecore_desktop_icon_find0(icon, icon_size,
 							      inherits);
-				 if (found != NULL)
-				   {
-				      ecore_list_destroy(directory_paths);
-				      free(theme_path);
-				      return found;
-				   }
-			      }
+			            }
 
-			    /* Fall back strategy #3, Try the default hicolor theme. */
-			    if ((!((inherits) && (inherits[0] != '\0')))
-				&& (strcmp(icon_theme, "hicolor") != 0))
-			      {
-				 found =
-				    _ecore_desktop_icon_find0(icon, icon_size,
+			          /* Fall back strategy #3, Try the default hicolor theme. */
+			          if ((!found) && (!((inherits) && (inherits[0] != '\0')))
+				      && (strcmp(icon_theme, "hicolor") != 0))
+			            {
+				       found = (char *)
+				          _ecore_desktop_icon_find0(icon, icon_size,
 							      "hicolor");
-				 if (found != NULL)
-				   {
-				      ecore_list_destroy(directory_paths);
-				      free(theme_path);
-				      return found;
-				   }
-			      }
+			            }
 
-			    /* Fall back strategy #4, Just search in the base of the icon directories. */
-			    for (i = 0; ext[i] != NULL; i++)
-			      {
-				 snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
+                                  if (!found)
+			             {
+			                /* Fall back strategy #4, Just search in the base of the icon directories. */
+			                for (i = 0; ext[i] != NULL; i++)
+			                  {
+				             snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
 #ifdef DEBUG
-				 printf("FDO icon = %s\n", path);
+				             printf("FDO icon = %s\n", path);
 #endif
-				 found =
-				    ecore_desktop_paths_file_find
-				    (ecore_desktop_paths_icons, path, 0, NULL,
-				     NULL);
-				 if (found)
-				   {
-				      ecore_list_destroy(directory_paths);
-				      free(theme_path);
-				      return found;
-				   }
-			      }
+				             found =
+				                ecore_desktop_paths_file_find
+				                (ecore_desktop_paths_icons, path, 0, NULL,
+				                 NULL);
+				             if (found)
+				                break;
+			                  }
+				     }
+			       }
 			    ecore_list_destroy(directory_paths);
-			 }
-		    }
-	       }
-	  }
+			 } /* if (directory_paths) */
+		    } /* if (directories) */
+	       } /* if (icon_group) */
+	     ecore_hash_destroy(theme);
+	  } /*  */
 	free(theme_path);
-     }
+     } /* if (theme_path) */
 
-   return NULL;
+   return found;
 }
 
 
