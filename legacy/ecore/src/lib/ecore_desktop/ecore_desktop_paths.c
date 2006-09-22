@@ -16,9 +16,7 @@
 #include <libgen.h>
 #include <strings.h>
 
-
 /* FIXME: Add functions to add paths before the user paths, after the user but before the system paths, and at the end. */
-
 
 /* This really slows things down and no doubt drags in some KDE bloat at start up.
  * To work around this, I add a few extra things to try in the _ecore_desktop_paths_get()
@@ -38,10 +36,8 @@
  * and correct those guesses.
  */
 
-
-
-static Ecore_List  *_ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type, 
-                                             char *before, char *env_home,
+static Ecore_List  *_ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
+					     char *before, char *env_home,
 					     char *env, char *env_home_default,
 					     char *env_default, char *type,
 					     char *gnome_extra, char *kde);
@@ -53,13 +49,13 @@ static void         _ecore_desktop_paths_check_and_add(Ecore_List * paths,
 static void         _ecore_desktop_paths_create();
 static void         _ecore_desktop_paths_destroy();
 
-static Ecore_List         *gnome_data = NULL;
-static Ecore_List	  *prepend_user_paths[ECORE_DESKTOP_PATHS_MAX];
-static Ecore_List	  *prepend_system_paths[ECORE_DESKTOP_PATHS_MAX];
-static Ecore_List	  *append_user_paths[ECORE_DESKTOP_PATHS_MAX];
-static Ecore_List	  *append_system_paths[ECORE_DESKTOP_PATHS_MAX];
-static char               *home;
-static int                 init_count = 0;
+static Ecore_List  *gnome_data = NULL;
+static Ecore_List  *prepend_user_paths[ECORE_DESKTOP_PATHS_MAX];
+static Ecore_List  *prepend_system_paths[ECORE_DESKTOP_PATHS_MAX];
+static Ecore_List  *append_user_paths[ECORE_DESKTOP_PATHS_MAX];
+static Ecore_List  *append_system_paths[ECORE_DESKTOP_PATHS_MAX];
+static char        *home;
+static int          init_count = 0;
 
 #if defined GNOME_SUPPORT || defined KDE_SUPPORT
 struct _config_exe_data
@@ -80,11 +76,11 @@ static int          _ecore_desktop_paths_cb_exe_exit(void *data, int type,
 static Ecore_Event_Handler *exit_handler = NULL;
 #endif
 
-
 EAPI int
 ecore_desktop_paths_init(void)
 {
-   if (++init_count != 1) return init_count;
+   if (++init_count != 1)
+      return init_count;
 
 #if defined GNOME_SUPPORT || defined KDE_SUPPORT
    exit_handler =
@@ -97,34 +93,33 @@ ecore_desktop_paths_init(void)
    home = ecore_desktop_home_get();
 
    if (gnome_data)
-      {
+     {
 #ifdef GNOME_SUPPORT
-         if (exit_handler)
-            {
-	       ecore_list_set_free_cb(gnome_data, free);
-	       _ecore_desktop_paths_exec_config(gnome_data, home, NULL,
-					 "gnome-config --datadir");
-            }
+	if (exit_handler)
+	  {
+	     ecore_list_set_free_cb(gnome_data, free);
+	     _ecore_desktop_paths_exec_config(gnome_data, home, NULL,
+					      "gnome-config --datadir");
+	  }
 #else
-             Ecore_List         *config_list;
+	Ecore_List         *config_list;
 
-	     config_list = ecore_desktop_paths_to_list("/opt/gnome/share");
-	     if (config_list)
+	config_list = ecore_desktop_paths_to_list("/opt/gnome/share");
+	if (config_list)
+	  {
+	     char               *this_config;
+	     char                path[PATH_MAX];
+
+	     ecore_list_goto_first(config_list);
+	     while ((this_config = ecore_list_next(config_list)) != NULL)
 	       {
-		  char               *this_config;
-                  char path[PATH_MAX];
 
-		  ecore_list_goto_first(config_list);
-		  while ((this_config = ecore_list_next(config_list)) != NULL)
-		    {
-
-			_ecore_desktop_paths_massage_path(path, home,
-						      this_config,
-						      NULL);
-			_ecore_desktop_paths_check_and_add(gnome_data, path);
-		    }
-		  E_FN_DEL(ecore_list_destroy, config_list);
+		  _ecore_desktop_paths_massage_path(path, home,
+						    this_config, NULL);
+		  _ecore_desktop_paths_check_and_add(gnome_data, path);
 	       }
+	     E_FN_DEL(ecore_list_destroy, config_list);
+	  }
 #endif
      }
 
@@ -135,7 +130,8 @@ ecore_desktop_paths_init(void)
 EAPI int
 ecore_desktop_paths_shutdown(void)
 {
-   if (--init_count != 0) return init_count;
+   if (--init_count != 0)
+      return init_count;
 
    _ecore_desktop_paths_destroy();
    E_FN_DEL(ecore_list_destroy, gnome_data);
@@ -161,12 +157,13 @@ _ecore_desktop_paths_create(void)
    if (!ecore_desktop_paths_desktops)
      {
 	ecore_desktop_paths_desktops =
-	  _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_DESKTOPS, NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
-				   "~/.local/share:~/.kde/share",
-				   "/usr/local/share:/usr/share",
-				   "applications:applnk:applications/kde",
-				   "dist/desktop-files:dist/short-menu:gnome/apps",
-				   "xdgdata-apps:apps");
+	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_DESKTOPS, NULL,
+				    "XDG_DATA_HOME", "XDG_DATA_DIRS",
+				    "~/.local/share:~/.kde/share",
+				    "/usr/local/share:/usr/share",
+				    "applications:applnk:applications/kde",
+				    "dist/desktop-files:dist/short-menu:gnome/apps",
+				    "xdgdata-apps:apps");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_desktops,
 					   "/usr/local/share/update-desktop-files/templates");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_desktops,
@@ -176,22 +173,21 @@ _ecore_desktop_paths_create(void)
      {
 #ifdef KDE_SUPPORT
 	ecore_desktop_paths_kde_legacy =
-	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_KDE_LEGACY, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-				    "apps");
+	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_KDE_LEGACY, NULL, NULL,
+				    NULL, NULL, NULL, NULL, NULL, "apps");
 #else
 	ecore_desktop_paths_kde_legacy =
-	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_KDE_LEGACY, NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
+	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_KDE_LEGACY, NULL,
+				    "XDG_DATA_HOME", "XDG_DATA_DIRS",
 				    "~/.local/share:~/.kde/share",
-				    "/usr/local/share:/usr/share",
-				    "applnk",
-				    NULL,
-				    "apps");
+				    "/usr/local/share:/usr/share", "applnk",
+				    NULL, "apps");
 #endif
 	if (ecore_desktop_paths_kde_legacy)
 	  {
 	     char                temp[PATH_MAX], *path;
 	     Ecore_List         *temp_list;
-	     
+
 	     /* Copy it, cause Ecore_List walks can not be nested. */
 	     temp_list = ecore_list_new();
 	     if (temp_list)
@@ -226,10 +222,12 @@ _ecore_desktop_paths_create(void)
 	char               *gnome;
 
 	ecore_desktop_paths_icons =
-	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_ICONS, "~/.icons", "XDG_DATA_HOME",
-				    "XDG_DATA_DIRS", "~/.local/share:~/.kde/share",
-				    "/usr/local/share:/usr/share:/usr/X11R6/share", "icons:pixmaps",
-				    "dist/icons", "icon:pixmap");
+	   _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_ICONS, "~/.icons",
+				    "XDG_DATA_HOME", "XDG_DATA_DIRS",
+				    "~/.local/share:~/.kde/share",
+				    "/usr/local/share:/usr/share:/usr/X11R6/share",
+				    "icons:pixmaps", "dist/icons",
+				    "icon:pixmap");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_icons,
 					   "/usr/local/share/pixmaps/");
 	_ecore_desktop_paths_check_and_add(ecore_desktop_paths_icons,
@@ -242,27 +240,30 @@ _ecore_desktop_paths_create(void)
      }
    if (!ecore_desktop_paths_menus)
       ecore_desktop_paths_menus =
-	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_MENUS, NULL, "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
-				  "~/.config", "/etc/xdg:/var/lib/menu-xdg", "menus", NULL,
-				  "xdgconf-menu");
+	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_MENUS, NULL,
+				  "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
+				  "~/.config", "/etc/xdg:/var/lib/menu-xdg",
+				  "menus", NULL, "xdgconf-menu");
    if (!ecore_desktop_paths_directories)
       ecore_desktop_paths_directories =
-	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_DIRECTORIES, NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
+	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_DIRECTORIES, NULL,
+				  "XDG_DATA_HOME", "XDG_DATA_DIRS",
 				  "~/.local/share:~/.kde/share",
 				  "/usr/local/share:/usr/share",
 				  "desktop-directories", "gnome/vfolders",
 				  "xdgdata-dirs");
    if (!ecore_desktop_paths_config)
       ecore_desktop_paths_config =
-	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_CONFIG, NULL, "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
+	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_CONFIG, NULL,
+				  "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
 				  "~/.config", "/etc/xdg", "", NULL, NULL);
    if (!ecore_desktop_paths_xsessions)
       ecore_desktop_paths_xsessions =
-	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_XSESSIONS, NULL, "XDG_DATA_HOME", "XDG_DATA_DIRS",
+	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_XSESSIONS, NULL,
+				  "XDG_DATA_HOME", "XDG_DATA_DIRS",
 				  "~/.local/share:~/.kde/share",
-				  "/usr/local/share:/usr/share",
-				  "xsessions", NULL,
-				  NULL);
+				  "/usr/local/share:/usr/share", "xsessions",
+				  NULL, NULL);
 }
 
 static void
@@ -280,55 +281,55 @@ _ecore_desktop_paths_destroy(void)
 EAPI void
 ecore_desktop_paths_extras_clear(void)
 {
-   int i;
+   int                 i;
 
    for (i = 0; i < ECORE_DESKTOP_PATHS_MAX; i++)
-      {
-         E_FN_DEL(ecore_list_destroy, prepend_user_paths[i]);
-         E_FN_DEL(ecore_list_destroy, prepend_system_paths[i]);
-         E_FN_DEL(ecore_list_destroy, append_user_paths[i]);
-         E_FN_DEL(ecore_list_destroy, append_system_paths[i]);
-         prepend_user_paths[i] = ecore_list_new();
-	 if (prepend_user_paths[i])
-	    ecore_list_set_free_cb(prepend_user_paths[i], free);
-         prepend_system_paths[i] = ecore_list_new();
-	 if (prepend_system_paths[i])
-	    ecore_list_set_free_cb(prepend_system_paths[i], free);
-         append_user_paths[i] = ecore_list_new();
-	 if (append_user_paths[i])
-	    ecore_list_set_free_cb(append_user_paths[i], free);
-         append_system_paths[i] = ecore_list_new();
-	 if (append_system_paths[i])
-	    ecore_list_set_free_cb(append_system_paths[i], free);
-      }
+     {
+	E_FN_DEL(ecore_list_destroy, prepend_user_paths[i]);
+	E_FN_DEL(ecore_list_destroy, prepend_system_paths[i]);
+	E_FN_DEL(ecore_list_destroy, append_user_paths[i]);
+	E_FN_DEL(ecore_list_destroy, append_system_paths[i]);
+	prepend_user_paths[i] = ecore_list_new();
+	if (prepend_user_paths[i])
+	   ecore_list_set_free_cb(prepend_user_paths[i], free);
+	prepend_system_paths[i] = ecore_list_new();
+	if (prepend_system_paths[i])
+	   ecore_list_set_free_cb(prepend_system_paths[i], free);
+	append_user_paths[i] = ecore_list_new();
+	if (append_user_paths[i])
+	   ecore_list_set_free_cb(append_user_paths[i], free);
+	append_system_paths[i] = ecore_list_new();
+	if (append_system_paths[i])
+	   ecore_list_set_free_cb(append_system_paths[i], free);
+     }
 }
 
 EAPI void
 ecore_desktop_paths_prepend_user(Ecore_Desktop_Paths_Type type, char *paths)
 {
    if (prepend_user_paths[type])
-   ecore_list_append(prepend_user_paths[type], strdup(paths));
+      ecore_list_append(prepend_user_paths[type], strdup(paths));
 }
 
 EAPI void
 ecore_desktop_paths_prepend_system(Ecore_Desktop_Paths_Type type, char *paths)
 {
    if (prepend_system_paths[type])
-   ecore_list_append(prepend_system_paths[type], strdup(paths));
+      ecore_list_append(prepend_system_paths[type], strdup(paths));
 }
 
 EAPI void
 ecore_desktop_paths_append_user(Ecore_Desktop_Paths_Type type, char *paths)
 {
    if (append_user_paths[type])
-   ecore_list_append(append_user_paths[type], strdup(paths));
+      ecore_list_append(append_user_paths[type], strdup(paths));
 }
 
 EAPI void
 ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type, char *paths)
 {
    if (append_system_paths[type])
-   ecore_list_append(append_system_paths[type], strdup(paths));
+      ecore_list_append(append_system_paths[type], strdup(paths));
 }
 
 /** Search for a file in fdo compatible locations.
@@ -348,13 +349,13 @@ ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type, char *paths)
  */
 char               *
 ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, int sub,
-				    int (*func) (void *data, const char *path),
-				    void *data)
+			      int (*func) (void *data, const char *path),
+			      void *data)
 {
    char               *path = NULL, *this_path;
    char                temp[PATH_MAX];
    struct stat         path_stat;
-   
+
    if (paths)
      {
 	ecore_list_goto_first(paths);
@@ -372,15 +373,15 @@ ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, int sub,
 		  if (func)
 		    {
 		       if (func(data, temp))
-			 break;
+			  break;
 		    }
 	       }
 	     else if (sub != 0)
-	       path =
-	       ecore_desktop_paths_recursive_search(this_path, file, sub, NULL,
-						    func, data);
+		path =
+		   ecore_desktop_paths_recursive_search(this_path, file, sub,
+							NULL, func, data);
 	     if (path && (!func))
-	       break;
+		break;
 	  }
      }
 
@@ -396,14 +397,15 @@ icons=pathlist
 */
 
 static Ecore_List  *
-_ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type, 
-                         char *before, char *env_home, char *env,
+_ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
+			 char *before, char *env_home, char *env,
 			 char *env_home_default, char *env_default, char *type,
 			 char *gnome_extra, char *kde)
 {
    Ecore_List         *paths = NULL;
    Ecore_List         *types = NULL;
    Ecore_List         *gnome_extras = NULL;
+
 #ifdef KDE_SUPPORT
    Ecore_List         *kdes = NULL;
 #endif
@@ -448,17 +450,19 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 	       }
 	  }
 
-        if (prepend_user_paths[path_type])
-           {
+	if (prepend_user_paths[path_type])
+	  {
 	     char               *this_path;
 
 	     ecore_list_goto_first(prepend_user_paths[path_type]);
-	     while ((this_path = ecore_list_next(prepend_user_paths[path_type])) != NULL)
-	        {
-	           _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
-	           _ecore_desktop_paths_check_and_add(paths, path);
-	        }
-          }
+	     while ((this_path =
+		     ecore_list_next(prepend_user_paths[path_type])) != NULL)
+	       {
+		  _ecore_desktop_paths_massage_path(path, home, this_path,
+						    NULL);
+		  _ecore_desktop_paths_check_and_add(paths, path);
+	       }
+	  }
 
 	if (env_home)
 	  {
@@ -488,29 +492,33 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 	       }
 	  }
 
-        if (append_user_paths[path_type])
-           {
+	if (append_user_paths[path_type])
+	  {
 	     char               *this_path;
 
 	     ecore_list_goto_first(append_user_paths[path_type]);
-	     while ((this_path = ecore_list_next(append_user_paths[path_type])) != NULL)
-	        {
-	           _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
-	           _ecore_desktop_paths_check_and_add(paths, path);
-	        }
-          }
+	     while ((this_path =
+		     ecore_list_next(append_user_paths[path_type])) != NULL)
+	       {
+		  _ecore_desktop_paths_massage_path(path, home, this_path,
+						    NULL);
+		  _ecore_desktop_paths_check_and_add(paths, path);
+	       }
+	  }
 
-        if (prepend_system_paths[path_type])
-           {
+	if (prepend_system_paths[path_type])
+	  {
 	     char               *this_path;
 
 	     ecore_list_goto_first(prepend_system_paths[path_type]);
-	     while ((this_path = ecore_list_next(prepend_system_paths[path_type])) != NULL)
-	        {
-	           _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
-	           _ecore_desktop_paths_check_and_add(paths, path);
-	        }
-          }
+	     while ((this_path =
+		     ecore_list_next(prepend_system_paths[path_type])) != NULL)
+	       {
+		  _ecore_desktop_paths_massage_path(path, home, this_path,
+						    NULL);
+		  _ecore_desktop_paths_check_and_add(paths, path);
+	       }
+	  }
 
 	if (env)
 	  {
@@ -540,17 +548,19 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 	       }
 	  }
 
-        if (append_system_paths[path_type])
-           {
+	if (append_system_paths[path_type])
+	  {
 	     char               *this_path;
 
 	     ecore_list_goto_first(append_system_paths[path_type]);
-	     while ((this_path = ecore_list_next(append_system_paths[path_type])) != NULL)
-	        {
-	           _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
-	           _ecore_desktop_paths_check_and_add(paths, path);
-	        }
-          }
+	     while ((this_path =
+		     ecore_list_next(append_system_paths[path_type])) != NULL)
+	       {
+		  _ecore_desktop_paths_massage_path(path, home, this_path,
+						    NULL);
+		  _ecore_desktop_paths_check_and_add(paths, path);
+	       }
+	  }
 
 	/*
 	 * Get the pathlist from the config file - type=pathlist
@@ -682,18 +692,18 @@ _ecore_desktop_paths_check_and_add(Ecore_List * paths, char *path)
 }
 
 char               *
-ecore_desktop_paths_recursive_search(const char *path, const char *file, int sub,
-				     int (*dir_func) (void *data,
-						      const char *path),
+ecore_desktop_paths_recursive_search(const char *path, const char *file,
+				     int sub, int (*dir_func) (void *data,
+							       const char
+							       *path),
 				     int (*func) (void *data, const char *path),
 				     void *data)
 {
    char               *fpath = NULL;
    DIR                *dir = NULL;
 
-
    if ((sub != 0) && (sub != -1))
-         sub -= 1;
+      sub -= 1;
 
    dir = opendir(path);
 
@@ -714,16 +724,15 @@ ecore_desktop_paths_recursive_search(const char *path, const char *file, int sub
 		       if ((strcmp(basename(info_text), ".") != 0)
 			   && (strcmp(basename(info_text), "..") != 0))
 			 {
-			    snprintf(info_text, PATH_MAX, "%s%s/", path, script->d_name);
+			    snprintf(info_text, PATH_MAX, "%s%s/", path,
+				     script->d_name);
 			    if (dir_func)
 			       if (dir_func(data, info_text))
 				  break;
 			    if (sub != 0)
 			       fpath =
-			          ecore_desktop_paths_recursive_search(info_text,
-								       file, sub,
-								       dir_func,
-								       func, data);
+				  ecore_desktop_paths_recursive_search
+				  (info_text, file, sub, dir_func, func, data);
 			 }
 		    }
 		  else
@@ -732,7 +741,7 @@ ecore_desktop_paths_recursive_search(const char *path, const char *file, int sub
 			 {
 			    if (strcmp(basename(info_text), file) == 0)
 			      {
-			         if (fpath)
+				 if (fpath)
 				    free(fpath);
 				 fpath = strdup(info_text);
 				 if (func)
@@ -890,30 +899,30 @@ ecore_desktop_paths_to_hash(const char *paths)
 
 	     path = strdup(paths);
 	     if (path)
-	        {
-	           end = path;
-	           while (!finished)
-	             {
-		        start = end;
-		        do		/* FIXME: There is probably a better way to do this. */
-		          {
-		             while ((*end != ';') && (*end != ':') && (*end != ',')
-			            && (*end != '\0'))
-			        end++;
-		          }
-		        while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
-		        /* FIXME: We still need to unescape it now. */
-		        temp = *end;
-		        if (*end == '\0')
-		           finished = 1;
-		        else
-		           *end = '\0';
-		        ecore_hash_set(result, strdup(start), strdup(start));
-		        if ((*end) != temp)
-		           *end = temp;
-		        end++;
-	             }
-	           free(path);
+	       {
+		  end = path;
+		  while (!finished)
+		    {
+		       start = end;
+		       do	/* FIXME: There is probably a better way to do this. */
+			 {
+			    while ((*end != ';') && (*end != ':')
+				   && (*end != ',') && (*end != '\0'))
+			       end++;
+			 }
+		       while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
+		       /* FIXME: We still need to unescape it now. */
+		       temp = *end;
+		       if (*end == '\0')
+			  finished = 1;
+		       else
+			  *end = '\0';
+		       ecore_hash_set(result, strdup(start), strdup(start));
+		       if ((*end) != temp)
+			  *end = temp;
+		       end++;
+		    }
+		  free(path);
 	       }
 	  }
      }
@@ -948,52 +957,68 @@ ecore_desktop_paths_to_list(const char *paths)
 
 	     path = strdup(paths);
 	     if (path)
-	        {
-	           end = path;
-	           while (!finished)
-	             {
-		        start = end;
-		        do		/* FIXME: There is probably a better way to do this. */
-		          {
-		             while ((*end != ';') && (*end != ':') && (*end != ',')
-			            && (*end != '\0'))
-			        end++;
-		          }
-		        while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
-		        /* FIXME: We still need to unescape it now. */
-		        temp = *end;
-		        if (*end == '\0')
-		           finished = 1;
-		        else
-		           *end = '\0';
-		        ecore_list_append(result, strdup(start));
-		        if ((*end) != temp)
-		           *end = temp;
-		        end++;
-	             }
-	           free(path);
-		}
+	       {
+		  end = path;
+		  while (!finished)
+		    {
+		       start = end;
+		       do	/* FIXME: There is probably a better way to do this. */
+			 {
+			    while ((*end != ';') && (*end != ':')
+				   && (*end != ',') && (*end != '\0'))
+			       end++;
+			 }
+		       while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
+		       /* FIXME: We still need to unescape it now. */
+		       temp = *end;
+		       if (*end == '\0')
+			  finished = 1;
+		       else
+			  *end = '\0';
+		       ecore_list_append(result, strdup(start));
+		       if ((*end) != temp)
+			  *end = temp;
+		       end++;
+		    }
+		  free(path);
+	       }
 	  }
      }
    return result;
 }
 
-EAPI int 
-ecore_desktop_paths_for_each(Ecore_Desktop_Paths_Type type, Ecore_For_Each function, void *user_data)
+EAPI int
+ecore_desktop_paths_for_each(Ecore_Desktop_Paths_Type type,
+			     Ecore_For_Each function, void *user_data)
 {
-   Ecore_List *list = NULL;
+   Ecore_List         *list = NULL;
 
    switch (type)
-   {
-      case ECORE_DESKTOP_PATHS_CONFIG      : list = ecore_desktop_paths_config;       break;
-      case ECORE_DESKTOP_PATHS_MENUS       : list = ecore_desktop_paths_menus;        break;
-      case ECORE_DESKTOP_PATHS_DIRECTORIES : list = ecore_desktop_paths_directories;  break;
-      case ECORE_DESKTOP_PATHS_DESKTOPS    : list = ecore_desktop_paths_desktops;     break;
-      case ECORE_DESKTOP_PATHS_ICONS       : list = ecore_desktop_paths_icons;        break;
-      case ECORE_DESKTOP_PATHS_KDE_LEGACY  : list = ecore_desktop_paths_kde_legacy;   break;
-      case ECORE_DESKTOP_PATHS_XSESSIONS   : list = ecore_desktop_paths_xsessions;    break;
-      case ECORE_DESKTOP_PATHS_MAX         : break;
-   }
+     {
+     case ECORE_DESKTOP_PATHS_CONFIG:
+	list = ecore_desktop_paths_config;
+	break;
+     case ECORE_DESKTOP_PATHS_MENUS:
+	list = ecore_desktop_paths_menus;
+	break;
+     case ECORE_DESKTOP_PATHS_DIRECTORIES:
+	list = ecore_desktop_paths_directories;
+	break;
+     case ECORE_DESKTOP_PATHS_DESKTOPS:
+	list = ecore_desktop_paths_desktops;
+	break;
+     case ECORE_DESKTOP_PATHS_ICONS:
+	list = ecore_desktop_paths_icons;
+	break;
+     case ECORE_DESKTOP_PATHS_KDE_LEGACY:
+	list = ecore_desktop_paths_kde_legacy;
+	break;
+     case ECORE_DESKTOP_PATHS_XSESSIONS:
+	list = ecore_desktop_paths_xsessions;
+	break;
+     case ECORE_DESKTOP_PATHS_MAX:
+	break;
+     }
    if (list)
       return ecore_list_for_each(list, function, user_data);
    return 0;

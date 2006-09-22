@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include <sys/stat.h>
 
-
 /** xmlame.c Extensively Mocked Language Approximately Mangled for Enlightenment. 
  *
  * This is NOT a real XML parser.  There were a few ways we could go when it came
