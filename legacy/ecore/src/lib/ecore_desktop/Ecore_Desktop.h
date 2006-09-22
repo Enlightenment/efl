@@ -4,7 +4,6 @@
 #include <Ecore_Data.h>
 #include <sys/types.h>
 
-
 /**
  * @file Ecore_Desktop.h
  * @brief The file that provides the freedesktop.org desktop, icon, and menu
@@ -54,18 +53,18 @@ struct _Ecore_Desktop
    char               *URL;
    char               *file;
    char               *deletiondate;
-   char               *window_class; /* window class */
-   char               *window_name; /* window name */
-   char               *window_title; /* window title */
-   char               *window_role; /* window role */
-   unsigned char       wait_exit : 1; /* wait for app to exit before execing next */
-   unsigned char       startup : 1;
-   unsigned char       hidden : 1;
-   unsigned char       no_display : 1;
-   unsigned char       allocated : 1;
-   unsigned char       ondisk : 1;
+   char               *window_class;	/* window class */
+   char               *window_name;	/* window name */
+   char               *window_title;	/* window title */
+   char               *window_role;	/* window role */
+   unsigned char       wait_exit:1;	/* wait for app to exit before execing next */
+   unsigned char       startup:1;
+   unsigned char       hidden:1;
+   unsigned char       no_display:1;
+   unsigned char       allocated:1;
+   unsigned char       ondisk:1;
    /* Actually calling this st_mtime causes compile issues, must be some strange macros at work. */
-   time_t              mtime;           /* For checking if the cache is valid. */
+   time_t              mtime;	/* For checking if the cache is valid. */
 };
 typedef struct _Ecore_Desktop Ecore_Desktop;
 
@@ -83,6 +82,15 @@ struct _Ecore_Desktop_Icon_Theme
    int                 hidden;
 };
 typedef struct _Ecore_Desktop_Icon_Theme Ecore_Desktop_Icon_Theme;
+
+struct _Ecore_Desktop_Icon_Theme_Directory
+{
+   char               *path;
+   char               *type;
+   int                 size, minimum, maximum, threshold;
+};
+typedef struct _Ecore_Desktop_Icon_Theme_Directory
+   Ecore_Desktop_Icon_Theme_Directory;
 
 enum _Ecore_Desktop_Paths_Type
 {
@@ -131,26 +139,38 @@ extern              "C"
    /* Function Prototypes */
    EAPI int            ecore_desktop_paths_init(void);
    EAPI void           ecore_desktop_paths_extras_clear(void);
-   EAPI void           ecore_desktop_paths_prepend_user(Ecore_Desktop_Paths_Type type, char *paths);
-   EAPI void           ecore_desktop_paths_prepend_system(Ecore_Desktop_Paths_Type type, char *paths);
-   EAPI void           ecore_desktop_paths_append_user(Ecore_Desktop_Paths_Type type, char *paths);
-   EAPI void           ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type, char *paths);
+   EAPI void           ecore_desktop_paths_prepend_user(Ecore_Desktop_Paths_Type
+							type, char *paths);
+   EAPI void          
+      ecore_desktop_paths_prepend_system(Ecore_Desktop_Paths_Type type,
+					 char *paths);
+   EAPI void           ecore_desktop_paths_append_user(Ecore_Desktop_Paths_Type
+						       type, char *paths);
+   EAPI void          
+      ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type,
+					char *paths);
    EAPI void           ecore_desktop_paths_regen(void);
    char               *ecore_desktop_paths_file_find(Ecore_List * paths,
-						   const char *file, int sub,
-						   int (*func) (void
-								*data,
-								const char
-								*path),
-						   void *data);
-   EAPI int            ecore_desktop_paths_for_each(Ecore_Desktop_Paths_Type type, Ecore_For_Each function, void *user_data);
-   char               *ecore_desktop_paths_recursive_search(const char *path, const char *file, int sub,
+						     const char *file, int sub,
+						     int (*func) (void
+								  *data,
+								  const char
+								  *path),
+						     void *data);
+   EAPI int            ecore_desktop_paths_for_each(Ecore_Desktop_Paths_Type
+						    type,
+						    Ecore_For_Each function,
+						    void *user_data);
+   char               *ecore_desktop_paths_recursive_search(const char *path,
+							    const char *file,
+							    int sub,
 							    int (*dir_func)
 							    (void *data,
 							     const char *path),
 							    int (*func) (void
 									 *data,
-									 const char
+									 const
+									 char
 									 *path),
 							    void *data);
    EAPI int            ecore_desktop_paths_shutdown(void);
@@ -163,26 +183,27 @@ extern              "C"
    Ecore_Hash         *ecore_desktop_ini_get(const char *file);
    Ecore_Desktop      *ecore_desktop_get(const char *file, const char *lang);
    void                ecore_desktop_save(Ecore_Desktop * desktop);
-   EAPI char *         ecore_desktop_get_command(Ecore_Desktop *desktop, Ecore_List *files, int fill);
-   EAPI char *         ecore_desktop_merge_command(char *exec, char *params);
+   EAPI char          *ecore_desktop_get_command(Ecore_Desktop * desktop,
+						 Ecore_List * files, int fill);
+   EAPI char          *ecore_desktop_merge_command(char *exec, char *params);
    void                ecore_desktop_destroy(Ecore_Desktop * desktop);
-
 
    EAPI int            ecore_desktop_icon_init(void);
    EAPI int            ecore_desktop_icon_shutdown(void);
-   const char         *ecore_desktop_icon_find(const char *icon, 
-   					       const char *icon_size,
+   const char         *ecore_desktop_icon_find(const char *icon,
+					       const char *icon_size,
 					       const char *icon_theme);
 
-
    Ecore_Hash         *ecore_desktop_icon_theme_list(void);
-   Ecore_Desktop_Icon_Theme      *ecore_desktop_icon_theme_get(const char *file, const char *lang);
-   void                ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme *icon_theme);
+   Ecore_Desktop_Icon_Theme *ecore_desktop_icon_theme_get(const char *file,
+							  const char *lang);
+   void                ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme
+							* icon_theme);
 
-
-   EAPI void           ecore_desktop_menu_for_each(void (*func)(char *name, char *path, Ecore_Hash *apps));
+   EAPI void          
+      ecore_desktop_menu_for_each(void (*func)
+				  (char *name, char *path, Ecore_Hash * apps));
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
-
 
    Ecore_Desktop_Tree *ecore_desktop_tree_new(char *buffer);
    Ecore_Desktop_Tree *ecore_desktop_tree_add(Ecore_Desktop_Tree * tree,
@@ -216,7 +237,7 @@ extern              "C"
 							       int level),
 						  const void *data);
    void                ecore_desktop_tree_dump(Ecore_Desktop_Tree * tree,
-					      int level);
+					       int level);
    void                ecore_desktop_tree_del(Ecore_Desktop_Tree * tree);
 
    Ecore_Desktop_Tree *ecore_desktop_xmlame_new(char *buffer);
