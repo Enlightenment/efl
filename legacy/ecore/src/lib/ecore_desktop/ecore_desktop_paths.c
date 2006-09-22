@@ -36,6 +36,15 @@
  * and correct those guesses.
  */
 
+Ecore_List         *ecore_desktop_paths_config = NULL;
+Ecore_List         *ecore_desktop_paths_menus = NULL;
+Ecore_List         *ecore_desktop_paths_directories = NULL;
+Ecore_List         *ecore_desktop_paths_desktops = NULL;
+Ecore_List         *ecore_desktop_paths_icons = NULL;
+Ecore_List         *ecore_desktop_paths_kde_legacy = NULL;
+Ecore_List         *ecore_desktop_paths_xsessions = NULL;
+
+
 static Ecore_List  *_ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 					     char *before, char *env_home,
 					     char *env, char *env_home_default,

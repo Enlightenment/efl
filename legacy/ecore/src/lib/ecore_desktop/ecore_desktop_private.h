@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
+#include <Ecore.h>
 #include <Ecore_File.h>
 
 #define E_FN_DEL(_fn, _h) if (_h) { _fn(_h); _h = NULL; }
@@ -22,6 +23,8 @@ extern Ecore_List  *ecore_desktop_paths_desktops;
 extern Ecore_List  *ecore_desktop_paths_icons;
 extern Ecore_List  *ecore_desktop_paths_kde_legacy;
 extern Ecore_List  *ecore_desktop_paths_xsessions;
+extern struct _Ecore_Desktop_Instrumentation instrumentation;
+
 
 # ifdef __cplusplus
 extern              "C"

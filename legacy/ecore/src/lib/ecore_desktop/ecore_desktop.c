@@ -8,13 +8,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 
-Ecore_List         *ecore_desktop_paths_config = NULL;
-Ecore_List         *ecore_desktop_paths_menus = NULL;
-Ecore_List         *ecore_desktop_paths_directories = NULL;
-Ecore_List         *ecore_desktop_paths_desktops = NULL;
-Ecore_List         *ecore_desktop_paths_icons = NULL;
-Ecore_List         *ecore_desktop_paths_kde_legacy = NULL;
-Ecore_List         *ecore_desktop_paths_xsessions = NULL;
+struct _Ecore_Desktop_Instrumentation instrumentation;
 
 extern int          reject_count, not_over_count;
 
@@ -188,19 +182,23 @@ _ecore_desktop_get(const char *file, const char *lang)
    struct stat         st;
    char               *value;
    int                 stated = 0;
+   int                 in_cache = 0;
+   double              begin;
 
+   begin = ecore_time_get();
    result = (Ecore_Desktop *) ecore_hash_get(desktop_cache, (char *)file);
    /* Check if the cache is still valid. */
    if (result)
      {
+        in_cache = 1;
 	if (stat(result->original_path, &st) >= 0)
 	  {
 	     if (st.st_mtime > result->mtime)
 	       {
 		  ecore_hash_remove(desktop_cache, result->original_path);
 		  result = NULL;
-		  stated = 1;
 	       }
+	     stated = 1;
 	  }
      }
    if (!result)
@@ -215,10 +213,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     result->data = ecore_desktop_ini_get(result->original_path);
 	     /* Timestamp the cache, and no need to stat the file twice if the cache was stale. */
 	     if ((stated) || (stat(result->original_path, &st) >= 0))
-	       {
-		  result->mtime = st.st_mtime;
-		  stated = 1;
-	       }
+	        result->mtime = st.st_mtime;
 	     if (result->data)
 	       {
 		  result->group =
@@ -498,6 +493,25 @@ _ecore_desktop_get(const char *file, const char *lang)
 		  result = NULL;
 	       }
 	  }
+     }
+
+   if (result)
+     {
+        if (in_cache)
+          {
+             instrumentation.desktops_in_cache_time += ecore_time_get() - begin;
+             instrumentation.desktops_in_cache++;
+	  }
+	else
+	  {
+             instrumentation.desktops_time += ecore_time_get() - begin;
+             instrumentation.desktops++;
+	  }
+     }
+   else
+     {
+        instrumentation.desktops_not_found_time += ecore_time_get() - begin;
+        instrumentation.desktops_not_found++;
      }
    return result;
 }
@@ -971,4 +985,37 @@ ecore_desktop_merge_command(char *exec, char *params)
       result = strdup(exec);
 
    return result;
+}
+
+EAPI void
+ecore_desktop_instrumentation_reset(void)
+{
+   instrumentation.desktops = 0;
+   instrumentation.desktops_in_cache = 0;
+   instrumentation.desktops_not_found = 0;
+   instrumentation.icons = 0;
+   instrumentation.icons_in_cache = 0;
+   instrumentation.icons_not_found = 0;
+   instrumentation.desktops_time = 0.0;
+   instrumentation.desktops_in_cache_time = 0.0;
+   instrumentation.desktops_not_found_time = 0.0;
+   instrumentation.icons_time = 0.0;
+   instrumentation.icons_in_cache_time = 0.0;
+   instrumentation.icons_not_found_time = 0.0;
+   printf("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
+   printf("Desktop instrumentation reset.\n");
+   printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n");
+}
+
+EAPI void
+ecore_desktop_instrumentation_print(void)
+{
+   printf("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
+   printf("    Found %5d desktops          %2.5f (%2.6f/desktop)\n", instrumentation.desktops, instrumentation.desktops_time, instrumentation.desktops_time / instrumentation.desktops);
+   printf("    Found %5d desktops in cache %2.5f (%2.6f/desktop)\n", instrumentation.desktops_in_cache, instrumentation.desktops_in_cache_time, instrumentation.desktops_in_cache_time / instrumentation.desktops_in_cache);
+   printf("Not found %5d desktops          %2.5f (%2.6f/desktop)\n", instrumentation.desktops_not_found, instrumentation.desktops_not_found_time, instrumentation.desktops_not_found_time / instrumentation.desktops_not_found);
+   printf("    Found %5d icons             %2.5f (%2.6f/icon)\n", instrumentation.icons, instrumentation.icons_time, instrumentation.icons_time / instrumentation.icons);
+   printf("    Found %5d icons    in cache %2.5f (%2.6f/icon)\n", instrumentation.icons_in_cache, instrumentation.icons_in_cache_time, instrumentation.icons_in_cache_time / instrumentation.icons_in_cache);
+   printf("Not found %5d icons             %2.5f (%2.6f/icon)\n", instrumentation.icons_not_found, instrumentation.icons_not_found_time, instrumentation.icons_not_found_time / instrumentation.icons_not_found);
+   printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n");
 }

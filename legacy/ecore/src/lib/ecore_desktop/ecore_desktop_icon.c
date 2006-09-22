@@ -19,7 +19,7 @@ _ecore_desktop_icon_theme_directory_destroy(Ecore_Desktop_Icon_Theme_Directory *
 
 /* FIXME: We need a way for the client to disable searching for any of these that they don't support. */
 static const char  *ext[] =
-   { ".edj", ".png", ".svgz", ".svg", ".xpm", "", NULL };
+   { ".edj", ".png", ".svgz", ".svg", ".xpm", NULL };
 static int          init_count = 0;
 static Ecore_Hash  *icon_theme_cache;
 static int          loaded = 0;
@@ -53,7 +53,10 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
 {
    const char         *dir = NULL, *icn;
    Ecore_List         *icons;
+   int                 in_cache = 0;
+   double              begin;
 
+   begin = ecore_time_get();
    if (icon == NULL)
       return NULL;
 
@@ -85,6 +88,24 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
      }
    ecore_list_destroy(icons);
 
+   if (dir)
+     {
+        if (in_cache)
+          {
+             instrumentation.icons_in_cache_time += ecore_time_get() - begin;
+             instrumentation.icons_in_cache++;
+	  }
+	else
+	  {
+             instrumentation.icons_time += ecore_time_get() - begin;
+             instrumentation.icons++;
+	  }
+     }
+   else
+     {
+        instrumentation.icons_not_found_time += ecore_time_get() - begin;
+        instrumentation.icons_not_found++;
+     }
    return dir;
 }
 

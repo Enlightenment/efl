@@ -132,6 +132,23 @@ struct _Ecore_Desktop_Tree
    Ecore_Desktop_Tree *parent;	/* Parent if this is a child. */
 };
 
+struct _Ecore_Desktop_Instrumentation
+{
+   double desktops_time;
+   double desktops_in_cache_time;
+   double desktops_not_found_time;
+   double icons_time;
+   double icons_in_cache_time;
+   double icons_not_found_time;
+   int desktops;
+   int desktops_in_cache;
+   int desktops_not_found;
+   int icons;
+   int icons_in_cache;
+   int icons_not_found;
+};
+
+
 # ifdef __cplusplus
 extern              "C"
 {
@@ -245,6 +262,9 @@ extern              "C"
    Ecore_Desktop_Tree *ecore_desktop_xmlame_get(char *file);
 
    char               *ecore_desktop_home_get(void);
+
+   EAPI void           ecore_desktop_instrumentation_reset(void);
+   EAPI void           ecore_desktop_instrumentation_print(void);
 
 # ifdef __cplusplus
 }
