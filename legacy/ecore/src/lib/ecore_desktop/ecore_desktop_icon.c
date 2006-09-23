@@ -25,7 +25,6 @@ static const char  *ext[] =
    { "", ".edj", ".png", ".svgz", ".svg", ".xpm", NULL };  /* "" is in case the icon already has an extension, search for that first. */
 static int          init_count = 0;
 static Ecore_Hash  *icon_theme_cache;
-static int          loaded = 0;
 
 /**
  * @defgroup Ecore_Desktop_Icon_Group icon theme Functions
@@ -315,6 +314,7 @@ done:
 Ecore_Hash         *
 ecore_desktop_icon_theme_list(void)
 {
+   static int          loaded = 0;
    if (!loaded)
       ecore_desktop_paths_file_find(ecore_desktop_paths_icons, "index.theme", 2,
 				    _ecore_desktop_icon_theme_list_add, NULL);
