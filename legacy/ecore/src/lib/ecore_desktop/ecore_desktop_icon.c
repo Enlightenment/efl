@@ -522,6 +522,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
    ecore_hash_set(icon_theme_cache, strdup(icon_theme), result);
    ecore_hash_destroy(result->data);
    result->data = NULL;
+   result->group = NULL;
 
 done:
    if (dir)        free(dir);
@@ -536,6 +537,7 @@ error:
      {
 	_ecore_desktop_icon_theme_destroy(result);
 	if (result->data) ecore_hash_destroy(result->data);
+	free(result);
      }
    return NULL;
 }
