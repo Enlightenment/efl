@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include <limits.h>
 
 #include "Ecore_Desktop.h"
@@ -75,12 +78,13 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
    ecore_list_goto_first(icons);
    while ((icn = (char *)ecore_list_next(icons)))
      {
+	char *ext;
 #ifdef DEBUG
 	fprintf(stderr, "\tTrying To Find Icon %s\n", icn);
 #endif
+	ext = strrchr(icn, '.');
 	/* Check for unsupported extension */
-	if ((strlen(icn) > 4) && (!strcmp(icn + strlen(icn) - 4, ".ico")))
-	   continue;
+	if ((ext) && (!strcmp(ext, ".ico"))) continue;
 
 	dir = _ecore_desktop_icon_find0(icn, icon_size, icon_theme);
 	if (dir)
