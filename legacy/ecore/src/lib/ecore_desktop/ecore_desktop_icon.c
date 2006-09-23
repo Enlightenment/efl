@@ -516,6 +516,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 	else if (dir)
 	  _ecore_desktop_icon_theme_directory_destroy(dir);
      }
+   ecore_list_destroy(Directories);
 
    /* This passes the basic validation tests, mark it as real and cache it. */
    result->path = strdup(theme_path);
@@ -535,9 +536,8 @@ error:
    if (theme_path) free(theme_path);
    if (result)
      {
-	_ecore_desktop_icon_theme_destroy(result);
 	if (result->data) ecore_hash_destroy(result->data);
-	free(result);
+	_ecore_desktop_icon_theme_destroy(result);
      }
    return NULL;
 }
