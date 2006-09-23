@@ -816,40 +816,37 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
    if ((read) && (read->lines[0].line))
      {
 	value = read->lines[0].line;
-	if (value)
+	config_list = ecore_desktop_paths_to_list(value);
+	if (config_list)
 	  {
-	     config_list = ecore_desktop_paths_to_list(value);
-	     if (config_list)
-	       {
-		  char               *this_config, *this_type;
+	     char               *this_config, *this_type;
 
-		  ecore_list_goto_first(config_list);
-		  while ((this_config = ecore_list_next(config_list)) != NULL)
+	     ecore_list_goto_first(config_list);
+	     while ((this_config = ecore_list_next(config_list)) != NULL)
+	       {
+		  if (ced->types)
 		    {
-		       if (ced->types)
+		       ecore_list_goto_first(ced->types);
+		       while ((this_type =
+				ecore_list_next(ced->types)) != NULL)
 			 {
-			    ecore_list_goto_first(ced->types);
-			    while ((this_type =
-				    ecore_list_next(ced->types)) != NULL)
-			      {
-				 _ecore_desktop_paths_massage_path(path,
-								   ced->home,
-								   this_config,
-								   this_type);
-				 _ecore_desktop_paths_check_and_add(paths,
-								    path);
-			      }
-			 }
-		       else
-			 {
-			    _ecore_desktop_paths_massage_path(path, ced->home,
-							      this_config,
-							      NULL);
-			    _ecore_desktop_paths_check_and_add(paths, path);
+			    _ecore_desktop_paths_massage_path(path,
+				  ced->home,
+				  this_config,
+				  this_type);
+			    _ecore_desktop_paths_check_and_add(paths,
+				  path);
 			 }
 		    }
-		  E_FN_DEL(ecore_list_destroy, config_list);
+		  else
+		    {
+		       _ecore_desktop_paths_massage_path(path, ced->home,
+			     this_config,
+			     NULL);
+		       _ecore_desktop_paths_check_and_add(paths, path);
+		    }
 	       }
+	     E_FN_DEL(ecore_list_destroy, config_list);
 	  }
      }
    ced->done = 1;
