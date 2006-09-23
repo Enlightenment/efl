@@ -859,9 +859,6 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
  * The list of paths can use any one of ;:, to seperate the paths.
  * You can also escape the :;, with \.
  *
- * FIXME: The concept here is still buggy, but it should do for now.
- * Also, it writes to the input string, this may be bad.
- *
  * @param   paths A list of paths.
  */
 Ecore_Hash         *
@@ -869,46 +866,44 @@ ecore_desktop_paths_to_hash(const char *paths)
 {
    Ecore_Hash         *result;
    char               *path;
+   char                buf[PATH_MAX], *p, *pp;
 
+   if (!paths) return NULL;
    result = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-   if (result)
+   if (!result) return NULL;
+   ecore_hash_set_free_key(result, free);
+   ecore_hash_set_free_value(result, free);
+
+   path = strdup(paths);
+   if (path)
      {
-	ecore_hash_set_free_key(result, free);
-	ecore_hash_set_free_value(result, free);
-
-	if (paths)
+	p = path;
+	while (p)
 	  {
-	     char               *start, *end, temp;
-	     int                 finished = 0;
-
-	     path = strdup(paths);
-	     if (path)
+	     pp = buf;
+	     while (*p)
 	       {
-		  end = path;
-		  while (!finished)
+		  /* Check for escape */
+		  if (*p == '\\')
 		    {
-		       start = end;
-		       do	/* FIXME: There is probably a better way to do this. */
-			 {
-			    while ((*end != ';') && (*end != ':')
-				   && (*end != ',') && (*end != '\0'))
-			       end++;
-			 }
-		       while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
-		       /* FIXME: We still need to unescape it now. */
-		       temp = *end;
-		       if (*end == '\0')
-			  finished = 1;
-		       else
-			  *end = '\0';
-		       ecore_hash_set(result, strdup(start), strdup(start));
-		       if ((*end) != temp)
-			  *end = temp;
-		       end++;
+		       /* If separator, skip escape */
+		       if ((*(p + 1) == ';') || (*(p + 1) == ':') || (*(p + 1) == ','))
+			 p++;
 		    }
-		  free(path);
+		  /* Check for separator */
+		  else if ((*p == ';') || (*p == ':') || (*p == ','))
+		    break;
+		  *pp = *p;
+		  pp++;
+		  p++;
 	       }
+	     *pp = '\0';
+	     printf("%s\n", buf);
+	     ecore_hash_set(result, strdup(buf), strdup(buf));
+	     if (*p) p++;
+	     else p = NULL;
 	  }
+	free(path);
      }
    return result;
 }
@@ -918,9 +913,6 @@ ecore_desktop_paths_to_hash(const char *paths)
  * The list of paths can use any one of ;:, to seperate the paths.
  * You can also escape the :;, with \.
  *
- * FIXME: The concept here is still buggy, but it should do for now.
- * Also, it writes to the input string, this may be bad.
- *
  * @param   paths A list of paths.
  */
 Ecore_List         *
@@ -928,45 +920,43 @@ ecore_desktop_paths_to_list(const char *paths)
 {
    Ecore_List         *result;
    char               *path;
+   char                buf[PATH_MAX], *p, *pp;
 
+   if (!paths) return NULL;
    result = ecore_list_new();
-   if (result)
+   if (!result) return NULL;
+   ecore_list_set_free_cb(result, free);
+
+   path = strdup(paths);
+   if (path)
      {
-	ecore_list_set_free_cb(result, free);
-
-	if (paths)
+	p = path;
+	while (p)
 	  {
-	     char               *start, *end, temp;
-	     int                 finished = 0;
-
-	     path = strdup(paths);
-	     if (path)
+	     pp = buf;
+	     while (*p)
 	       {
-		  end = path;
-		  while (!finished)
+		  /* Check for escape */
+		  if (*p == '\\')
 		    {
-		       start = end;
-		       do	/* FIXME: There is probably a better way to do this. */
-			 {
-			    while ((*end != ';') && (*end != ':')
-				   && (*end != ',') && (*end != '\0'))
-			       end++;
-			 }
-		       while ((end != path) && (*(end - 1) == '\\') && (*end != '\0'));	/* Ignore any escaped ;:, */
-		       /* FIXME: We still need to unescape it now. */
-		       temp = *end;
-		       if (*end == '\0')
-			  finished = 1;
-		       else
-			  *end = '\0';
-		       ecore_list_append(result, strdup(start));
-		       if ((*end) != temp)
-			  *end = temp;
-		       end++;
+		       /* If separator, skip escape */
+		       if ((*(p + 1) == ';') || (*(p + 1) == ':') || (*(p + 1) == ','))
+			 p++;
 		    }
-		  free(path);
+		  /* Check for separator */
+		  else if ((*p == ';') || (*p == ':') || (*p == ','))
+		    break;
+		  *pp = *p;
+		  pp++;
+		  p++;
 	       }
+	     *pp = '\0';
+	     printf("%s\n", buf);
+	     ecore_list_append(result, strdup(buf));
+	     if (*p) p++;
+	     else p = NULL;
 	  }
+	free(path);
      }
    return result;
 }
