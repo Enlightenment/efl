@@ -673,13 +673,7 @@ _ecore_desktop_paths_check_and_add(Ecore_List * paths, char *path)
    struct stat         path_stat;
    char               *this_path;
 
-   if (paths == NULL)
-     {
-	paths = ecore_list_new();
-	if (paths == NULL)
-	   return;
-	ecore_list_set_free_cb(paths, free);
-     }
+   if (!paths) return;
 
    /* Check if we have it already. */
    ecore_list_goto_first(paths);
