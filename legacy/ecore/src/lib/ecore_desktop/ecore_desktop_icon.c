@@ -157,6 +157,11 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
    Ecore_Desktop_Icon_Theme *theme;
    char                path[PATH_MAX];
    char               *found = NULL;
+   int                 wanted_size;
+   int                 minimal_size = INT_MAX;
+   int                 i;
+   char               *closest = NULL;
+   Ecore_Desktop_Icon_Theme_Directory *directory;
 
    if ((icon == NULL) || (icon[0] == '\0'))
       return NULL;
@@ -172,175 +177,137 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
    printf("SEARCHING FOR %s\n", icn);
 #endif
 
-   if (theme)
+   if (!theme) return NULL;
+   if (!theme->Directories) goto done;
+
+   wanted_size = atoi(icon_size);
+   /* Loop through the themes directories. */
+
+   ecore_list_goto_first(theme->Directories);
+   while ((directory = ecore_list_next(theme->Directories)) != NULL)
      {
-	if (theme->Directories)
+	if (directory->size)
 	  {
-	     int                 wanted_size;
-	     int                 minimal_size = INT_MAX;
-	     int                 i;
-	     char               *closest = NULL;
-	     Ecore_Desktop_Icon_Theme_Directory *directory;
+	     int                 match = 0;
+	     int                 result_size = 0;
 
-	     wanted_size = atoi(icon_size);
-	     /* Loop through the themes directories. */
-
-	     ecore_list_goto_first(theme->Directories);
-	     while ((directory = ecore_list_next(theme->Directories)) != NULL)
+	     /* Does this theme directory match the required icon size? */
+	     switch (directory->type[0])
 	       {
-		  if (directory->size)
-		    {
-		       int                 match = 0;
-		       int                 result_size = 0;
+		case 'F':	/* Fixed. */
+		   match = (wanted_size == directory->size);
+		   result_size = abs(directory->size - wanted_size);
+		   break;
+		case 'S':	/* Scaled. */
+		   match = ((directory->minimum <= wanted_size) &&
+			    (wanted_size <= directory->maximum));
+		   if (wanted_size < directory->minimum)
+		     result_size = directory->minimum - wanted_size;
+		   if (wanted_size > directory->maximum)
+		     result_size = wanted_size - directory->maximum;
+		   break;
+		default:	/* Threshold. */
+		   match = (((directory->size - directory->threshold) <= wanted_size) &&
+			     (wanted_size <= (directory->size + directory->threshold)));
+		   if (wanted_size < (directory->size - directory->threshold))
+		     result_size = directory->minimum - wanted_size;
+		   if (wanted_size > (directory->size + directory->threshold))
+		     result_size = wanted_size - directory->maximum;
+		   break;
+	       }
 
-		       /* Does this theme directory match the required icon size? */
-		       switch (directory->type[0])
-			 {
-			 case 'F':	/* Fixed. */
-			    {
-			       match = (wanted_size == directory->size);
-			       result_size = abs(directory->size - wanted_size);
-			       break;
-			    }
-			 case 'S':	/* Scaled. */
-			    {
-			       match =
-				  ((directory->minimum <= wanted_size)
-				   && (wanted_size <= directory->maximum));
-			       if (wanted_size < directory->minimum)
-				  result_size =
-				     directory->minimum - wanted_size;
-			       if (wanted_size > directory->maximum)
-				  result_size =
-				     wanted_size - directory->maximum;
-			       break;
-			    }
-			 default:	/* Threshold. */
-			    {
-			       match =
-				  (((directory->size -
-				     directory->threshold) <=
-				    wanted_size)
-				   && (wanted_size <=
-				       (directory->size +
-					directory->threshold)));
-			       if (wanted_size <
-				   (directory->size - directory->threshold))
-				  result_size =
-				     directory->minimum - wanted_size;
-			       if (wanted_size >
-				   (directory->size + directory->threshold))
-				  result_size =
-				     wanted_size - directory->maximum;
-			       break;
-			    }
-			 }
-
-		       /* Look for icon with all extensions. */
-		       for (i = 0; ext[i] != NULL; i++)
-			 {
-			    /* Check if there will be an extension. */
-			    if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
-			       continue;
-			    snprintf(path, PATH_MAX,
-				     "%s/%s/%s%s",
-				     icon_theme, directory->path, icon, ext[i]);
+	     /* Look for icon with all extensions. */
+	     for (i = 0; ext[i] != NULL; i++)
+	       {
+		  /* Check if there will be an extension. */
+		  if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
+		    continue;
+		  snprintf(path, PATH_MAX, "%s/%s/%s%s",
+			   icon_theme, directory->path, icon, ext[i]);
 #ifdef DEBUG
-			    printf("FDO icon = %s\n", path);
+		  printf("FDO icon = %s\n", path);
 #endif
-			    found =
-			       ecore_desktop_paths_file_find
-			       (ecore_desktop_paths_icons, path, 0, NULL, NULL);
-			    if (found)
-			      {
-                                 if (ecore_file_is_dir(found))
-			           {
-			              free(found);
-			              found = NULL;
-			           }
-				 else if (match)	/* If there is a match in sizes, return the icon. */
-				    break;
-				 else if (result_size < minimal_size)	/* While we are here, figure out our next fallback strategy. */
-				   {
-				      minimal_size = result_size;
-				      if (closest)
-					 free(closest);
-				      closest = found;
-				      found = NULL;
-				   }
-				 else
-				   {
-				      free(found);
-				      found = NULL;
-				   }
-			      }
-			 }
-		    }
-
+		  found = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, path,
+							0, NULL, NULL);
 		  if (found)
-		     break;
-	       }		/* while ((directory = ecore_list_next(directory_paths)) != NULL) */
-
-	     if (!found)
-	       {
-		  /* Fall back strategy #1, look for closest size in this theme. */
-		  found = closest;
-
-		  /* Fall back strategy #2, Try again with the parent themes. */
-		  if ((!found) && (theme->Inherits)
-		      && (strcmp(icon_theme, "hicolor") != 0))
 		    {
-                       char *inherits;
-
-	               ecore_list_goto_first(theme->Inherits);
-	               while ((inherits = ecore_list_next(theme->Inherits)) != NULL)
-		          {
-		             found = (char *)  _ecore_desktop_icon_find0(icon, icon_size, inherits);
-			     if (found)
-			        break;
-			  }
-		    }
-
-		  /* Fall back strategy #3, Try the default hicolor theme. */
-		  if ((!found)
-		      && (!(theme->Inherits))
-		      && (strcmp(icon_theme, "hicolor") != 0))
-		    {
-		       found = (char *)
-			  _ecore_desktop_icon_find0(icon, icon_size, "hicolor");
-		    }
-
-		  if (!found)
-		    {
-		       /* Fall back strategy #4, Just search in the base of the icon directories. */
-		       for (i = 0; ext[i] != NULL; i++)
+		       if (ecore_file_is_dir(found))
 			 {
-			    /* Check if there will be an extension. */
-			    if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
-			       continue;
-			    snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
-#ifdef DEBUG
-			    printf("FDO icon = %s\n", path);
-#endif
-			    found =
-			       ecore_desktop_paths_file_find
-			       (ecore_desktop_paths_icons, path, 0, NULL, NULL);
-			    if (found)
-			      {
-                                 if (ecore_file_is_dir(found))
-			           {
-			              free(found);
-			              found = NULL;
-			           }
-				 else
-			            break;
-			      }
+			    free(found);
+			    found = NULL;
+			 }
+		       else if (match)	/* If there is a match in sizes, return the icon. */
+			 goto done;
+		       else if (result_size < minimal_size)	/* While we are here, figure out our next fallback strategy. */
+			 {
+			    minimal_size = result_size;
+			    if (closest) free(closest);
+			    closest = found;
+			    found = NULL;
+			 }
+		       else
+			 {
+			    free(found);
+			    found = NULL;
 			 }
 		    }
 	       }
-	  }			/* if (theme->Directories) */
-	ecore_desktop_icon_theme_destroy(theme);
-     }				/* if (theme) */
+	  }
+     }		/* while ((directory = ecore_list_next(directory_paths)) != NULL) */
+
+   if (!found)
+     {
+	/* Fall back strategy #1, look for closest size in this theme. */
+	found = closest;
+	if (found) goto done;
+
+	/* Fall back strategy #2, Try again with the parent themes. */
+	if ((theme->Inherits) && (strcmp(icon_theme, "hicolor") != 0))
+	  {
+	     char *inherits;
+
+	     ecore_list_goto_first(theme->Inherits);
+	     while ((inherits = ecore_list_next(theme->Inherits)) != NULL)
+	       {
+		  found = _ecore_desktop_icon_find0(icon, icon_size, inherits);
+		  if (found) goto done;
+	       }
+	  }
+
+	/* Fall back strategy #3, Try the default hicolor theme. */
+	if ((!(theme->Inherits)) && (strcmp(icon_theme, "hicolor") != 0))
+	  {
+	     found = _ecore_desktop_icon_find0(icon, icon_size, "hicolor");
+	     if (found) goto done;
+	  }
+
+	/* Fall back strategy #4, Just search in the base of the icon directories. */
+	for (i = 0; ext[i] != NULL; i++)
+	  {
+	     /* Check if there will be an extension. */
+	     if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
+	       continue;
+	     snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
+#ifdef DEBUG
+	     printf("FDO icon = %s\n", path);
+#endif
+	     found = ecore_desktop_paths_file_find(ecore_desktop_paths_icons,
+						   path, 0, NULL, NULL);
+	     if (found)
+	       {
+		  if (ecore_file_is_dir(found))
+		    {
+		       free(found);
+		       found = NULL;
+		    }
+		  else
+		    goto done;
+	       }
+	  }
+     }
+
+done:
+   ecore_desktop_icon_theme_destroy(theme);
 
    return found;
 }
