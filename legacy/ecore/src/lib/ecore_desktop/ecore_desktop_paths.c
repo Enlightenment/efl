@@ -381,11 +381,8 @@ ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, int sub,
 	if (stat(temp, &path_stat) == 0)
 	  {
 	     path = strdup(temp);
-	     if (func)
-	       {
-		  if (func(data, temp))
-		    break;
-	       }
+	     if ((func) && (func(data, temp)))
+	       break;
 	  }
 	else if (sub != 0)
 	  path =
@@ -698,67 +695,60 @@ ecore_desktop_paths_recursive_search(const char *path, const char *file,
 {
    char               *fpath = NULL;
    DIR                *dir = NULL;
+   struct dirent      *script;
 
    if ((sub != 0) && (sub != -1))
       sub -= 1;
 
    dir = opendir(path);
+   if (!dir) return NULL;
 
-   if (dir != NULL)
+   while ((script = readdir(dir)) != NULL)
      {
-	struct dirent      *script;
+	struct stat         script_stat;
+	char                info_text[PATH_MAX];
 
-	while ((script = readdir(dir)) != NULL)
+	sprintf(info_text, "%s%s", path, script->d_name);
+	if ((stat(info_text, &script_stat) == 0))
 	  {
-	     struct stat         script_stat;
-	     char                info_text[PATH_MAX];
-
-	     sprintf(info_text, "%s%s", path, script->d_name);
-	     if ((stat(info_text, &script_stat) == 0))
+	     if (S_ISDIR(script_stat.st_mode))
 	       {
-		  if (S_ISDIR(script_stat.st_mode))
+		  if ((strcmp(basename(info_text), ".") != 0) &&
+		      (strcmp(basename(info_text), "..") != 0))
 		    {
-		       if ((strcmp(basename(info_text), ".") != 0)
-			   && (strcmp(basename(info_text), "..") != 0))
+		       snprintf(info_text, PATH_MAX, "%s%s/", path, script->d_name);
+		       if ((dir_func) && (dir_func(data, info_text)))
+			   break;
+		       if (sub != 0)
+			 fpath =
+			    ecore_desktop_paths_recursive_search(info_text, file, sub,
+								 dir_func, func, data);
+		    }
+	       }
+	     else
+	       {
+		  if (file)
+		    {
+		       if (strcmp(basename(info_text), file) == 0)
 			 {
-			    snprintf(info_text, PATH_MAX, "%s%s/", path,
-				     script->d_name);
-			    if (dir_func)
-			       if (dir_func(data, info_text))
-				  break;
-			    if (sub != 0)
-			       fpath =
-				  ecore_desktop_paths_recursive_search
-				  (info_text, file, sub, dir_func, func, data);
+			    if (fpath)
+			      free(fpath);
+			    fpath = strdup(info_text);
+			    if ((func) && (func(data, path)))
+				break;
 			 }
 		    }
 		  else
 		    {
-		       if (file)
-			 {
-			    if (strcmp(basename(info_text), file) == 0)
-			      {
-				 if (fpath)
-				    free(fpath);
-				 fpath = strdup(info_text);
-				 if (func)
-				    if (func(data, path))
-				       break;
-			      }
-			 }
-		       else
-			 {
-			    if (func)
-			       if (func(data, info_text))
-				  break;
-			 }
+		       if ((func) && (func(data, info_text)))
+			   break;
 		    }
-		  if (fpath && (!func))
-		     break;
 	       }
+	     if (fpath && (!func))
+	       break;
 	  }
-	closedir(dir);
      }
+   closedir(dir);
 
    return fpath;
 }
