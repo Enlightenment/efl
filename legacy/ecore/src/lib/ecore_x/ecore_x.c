@@ -159,8 +159,10 @@ ecore_x_init(const char *name)
 {
    int shape_base = 0;
    int shape_err_base = 0;
+#ifdef ECORE_XSS
    int screensaver_base = 0;
    int screensaver_err_base = 0;
+#endif
    int sync_base = 0;
    int sync_err_base = 0;
 #ifdef ECORE_XRANDR
