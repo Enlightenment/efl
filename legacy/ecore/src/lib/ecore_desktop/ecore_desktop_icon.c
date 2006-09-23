@@ -258,7 +258,11 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
      {
 	/* Fall back strategy #1, look for closest size in this theme. */
 	found = closest;
-	if (found) goto done;
+	if (found)
+	  {
+	    closest = NULL;
+	    goto done;
+	  }
 
 	/* Fall back strategy #2, Try again with the parent themes. */
 	if ((theme->Inherits) && (strcmp(icon_theme, "hicolor") != 0))
@@ -306,6 +310,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
      }
 
 done:
+   if (closest) free(closest);
    ecore_desktop_icon_theme_destroy(theme);
 
    return found;
