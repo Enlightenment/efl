@@ -791,130 +791,125 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 
    if (fill && (desktop->exec_params))
      {
+	Ecore_DList        *command;
+	char               *p, *t, buf[PATH_MAX + 10];
+	int                 len = 0;
+
 	params = strdup(desktop->exec_params);
-	if (params)
+	if (!params) goto error;
+	command = ecore_dlist_new();
+	if (!command) goto error;
+
+	ecore_dlist_set_free_cb(command, free);
+	t = params;
+	for (p = params; *p; p++)
 	  {
-	     Ecore_DList        *command;
-
-	     command = ecore_dlist_new();
-	     if (command)
+	     if (*p == '%')
 	       {
-		  char               *p, *t, buf[PATH_MAX + 10];
-		  int                 len = 0;
-
-		  ecore_dlist_set_free_cb(command, free);
-		  t = params;
-		  for (p = params; *p; p++)
-		    {
-		       if (*p == '%')
-			 {
-			    *p = '\0';
-			    ecore_dlist_append(command, strdup(t));
-			    *p = '%';
-			    t = p;
-			 }
-		    }
-		  if (t < p)
-		    {
-		       ecore_dlist_append(command, strdup(t));
-		    }
-		  if (!ecore_dlist_is_empty(command))
-		    {
-		       ecore_dlist_goto_first(command);
-		       while ((p = ecore_dlist_next(command)) != NULL)
-			 {
-			    t = NULL;
-			    /* FIXME: implement the rest of these when EFM can pass us files. */
-			    if (p[0] == '%')
-			       switch (p[1])
-				 {
-				 case 'f':	/* Single file name, multiple invokations if multiple files.  If the file is on the net, download first and point to temp file. */
-				    break;
-
-				 case 'u':	/* Single URL, multiple invokations if multiple URLs. */
-				    break;
-
-				 case 'c':	/* Translated Name field frem .desktop file. */
-				    t = desktop->name;
-				    break;
-
-				 case 'k':	/* Location of the .desktop file, may be a URL, or empty. */
-				    t = desktop->original_path;
-				    break;
-
-				 case 'F':	/* Multiple file names.  If the files are on the net, download first and point to temp files. */
-				    break;
-
-				 case 'U':	/* Multiple URLs. */
-				    break;
-
-				 case 'd':	/* Directory of the file in %f. */
-				    break;
-
-				 case 'D':	/* Directories of the files in %F. */
-				    break;
-
-				 case 'n':	/* Single filename without path. */
-				    break;
-
-				 case 'N':	/* Multiple filenames without paths. */
-				    break;
-
-				 case 'i':	/* "--icon Icon" field from .desktop file, or empty. */
-				    if (desktop->icon)
-				      {
-					 snprintf(buf, sizeof(buf), "--icon %s",
-						  desktop->icon);
-					 t = buf;
-				      }
-				    break;
-
-				 case 'v':	/* Device field from .desktop file. */
-				    break;
-
-				 case '%':	/* A '%' character. */
-				    t = "%";
-				    break;
-
-				 default:
-				    break;
-				 }
-			    if (t)
-			      {
-				 len += strlen(t);
-				 ecore_dlist_previous(command);
-				 ecore_dlist_insert(command, strdup(t));
-				 ecore_dlist_next(command);
-				 ecore_dlist_next(command);
-			      }
-			    len += strlen(p);
-			 }
-		       free(params);
-		       params = malloc(len + 1);
-		       if (params)
-			 {
-			    params[0] = '\0';
-			    ecore_dlist_goto_first(command);
-			    while ((p = ecore_dlist_next(command)) != NULL)
-			      {
-				 if (p[0] == '%')
-				    strcat(params, &p[2]);
-				 else
-				    strcat(params, p);
-			      }
-			 }
-		    }
-		  ecore_list_destroy(command);
+		  *p = '\0';
+		  ecore_dlist_append(command, strdup(t));
+		  *p = '%';
+		  t = p;
 	       }
 	  }
+	if (t < p)
+	  {
+	     ecore_dlist_append(command, strdup(t));
+	  }
+	if (!ecore_dlist_is_empty(command))
+	  {
+	     ecore_dlist_goto_first(command);
+	     while ((p = ecore_dlist_next(command)) != NULL)
+	       {
+		  t = NULL;
+		  /* FIXME: implement the rest of these when EFM can pass us files. */
+		  if (p[0] == '%')
+		    switch (p[1])
+		      {
+		       case 'f':	/* Single file name, multiple invokations if multiple files.  If the file is on the net, download first and point to temp file. */
+			  break;
+
+		       case 'u':	/* Single URL, multiple invokations if multiple URLs. */
+			  break;
+
+		       case 'c':	/* Translated Name field frem .desktop file. */
+			  t = desktop->name;
+			  break;
+
+		       case 'k':	/* Location of the .desktop file, may be a URL, or empty. */
+			  t = desktop->original_path;
+			  break;
+
+		       case 'F':	/* Multiple file names.  If the files are on the net, download first and point to temp files. */
+			  break;
+
+		       case 'U':	/* Multiple URLs. */
+			  break;
+
+		       case 'd':	/* Directory of the file in %f. */
+			  break;
+
+		       case 'D':	/* Directories of the files in %F. */
+			  break;
+
+		       case 'n':	/* Single filename without path. */
+			  break;
+
+		       case 'N':	/* Multiple filenames without paths. */
+			  break;
+
+		       case 'i':	/* "--icon Icon" field from .desktop file, or empty. */
+			  if (desktop->icon)
+			    {
+			       snprintf(buf, sizeof(buf), "--icon %s", desktop->icon);
+			       t = buf;
+			    }
+			  break;
+
+		       case 'v':	/* Device field from .desktop file. */
+			  break;
+
+		       case '%':	/* A '%' character. */
+			  t = "%";
+			  break;
+
+		       default:
+			  break;
+		      }
+		  if (t)
+		    {
+		       len += strlen(t);
+		       ecore_dlist_previous(command);
+		       ecore_dlist_insert(command, strdup(t));
+		       ecore_dlist_next(command);
+		       ecore_dlist_next(command);
+		    }
+		  len += strlen(p);
+	       }
+	     free(params);
+	     params = malloc(len + 1);
+	     if (params)
+	       {
+		  params[0] = '\0';
+		  ecore_dlist_goto_first(command);
+		  while ((p = ecore_dlist_next(command)) != NULL)
+		    {
+		       if (p[0] == '%')
+			 strcat(params, &p[2]);
+		       else
+			 strcat(params, p);
+		    }
+	       }
+	  }
+	ecore_list_destroy(command);
      }
    else if (desktop->exec_params)
       params = strdup(desktop->exec_params);
 
    result = ecore_desktop_merge_command(desktop->exec, params);
 
-   if (params)
-      free(params);
+error:
+   if (params) free(params);
    return result;
 }
 
