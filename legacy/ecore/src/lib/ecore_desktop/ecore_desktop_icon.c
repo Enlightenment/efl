@@ -8,7 +8,7 @@
 
 //#define DEBUG 1
 
-static const char  *_ecore_desktop_icon_find0(const char *icon,
+static char        *_ecore_desktop_icon_find0(const char *icon,
 					      const char *icon_size,
 					      const char *icon_theme);
 
@@ -49,14 +49,14 @@ static Ecore_Hash  *icon_theme_cache;
  * @ingroup Ecore_Desktop_Icon_Group
  */
 
-const char         *
+EAPI char         *
 ecore_desktop_icon_find(const char *icon, const char *icon_size,
 			const char *icon_theme)
 {
-   const char         *dir = NULL, *icn;
-   Ecore_List         *icons;
-   int                 in_cache = 0;
-   double              begin;
+   char           *dir = NULL, *icn;
+   Ecore_List     *icons;
+   int             in_cache = 0;
+   double          begin;
 
    begin = ecore_time_get();
    if (icon == NULL)
@@ -75,7 +75,7 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
    if (!icons)
       return NULL;
    ecore_list_goto_first(icons);
-   while ((icn = (char *)ecore_list_next(icons)))
+   while ((icn = ecore_list_next(icons)))
      {
 	char *ext;
 #ifdef DEBUG
@@ -121,7 +121,7 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
  * @param   icon_theme The icon theme to search in.
  * @return  The full path to the found icon.
  */
-static const char  *
+static char  *
 _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 			  const char *icon_theme)
 {

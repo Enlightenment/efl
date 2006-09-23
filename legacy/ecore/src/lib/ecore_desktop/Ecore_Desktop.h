@@ -211,7 +211,7 @@ extern              "C"
 
    EAPI int            ecore_desktop_icon_init(void);
    EAPI int            ecore_desktop_icon_shutdown(void);
-   const char         *ecore_desktop_icon_find(const char *icon,
+   EAPI char          *ecore_desktop_icon_find(const char *icon,
 					       const char *icon_size,
 					       const char *icon_theme);
 
