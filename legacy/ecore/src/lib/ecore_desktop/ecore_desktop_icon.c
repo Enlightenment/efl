@@ -24,7 +24,7 @@ _ecore_desktop_icon_theme_directory_destroy(Ecore_Desktop_Icon_Theme_Directory *
 static const char  *ext[] =
    { "", ".edj", ".png", ".svgz", ".svg", ".xpm", NULL };  /* "" is in case the icon already has an extension, search for that first. */
 static int          init_count = 0;
-static Ecore_Hash  *icon_theme_cache;
+static Ecore_Hash  *icon_theme_cache = NULL;
 
 /**
  * @defgroup Ecore_Desktop_Icon_Group icon theme Functions
