@@ -354,8 +354,7 @@ ecore_desktop_icon_init()
 	  {
 	     ecore_hash_set_free_key(icon_theme_cache, free);
 	     ecore_hash_set_free_value(icon_theme_cache,
-				       (Ecore_Free_Cb)
-				       _ecore_desktop_icon_theme_destroy);
+				       ECORE_FREE_CB(_ecore_desktop_icon_theme_destroy));
 	  }
      }
 
@@ -406,6 +405,9 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 {
    Ecore_Desktop_Icon_Theme *result;
    char *theme_path = NULL, *dir = NULL;
+   char               *value;
+   Ecore_List         *Directories;
+   char               *directory;
 
    if (icon_theme[0] == '/')
       {
@@ -418,189 +420,118 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 #endif
       }
 
-   result =
-      (Ecore_Desktop_Icon_Theme *) ecore_hash_get(icon_theme_cache,
-						  (char *)icon_theme);
-   if (!result)
+   result = ecore_hash_get(icon_theme_cache, icon_theme);
+   if (result) goto done;
+   if (!dir)
      {
+	char icn[PATH_MAX];
 
-        if (!dir)
-	  {
-             char icn[PATH_MAX];
-
-	     snprintf(icn, PATH_MAX, "%s/index.theme", icon_theme);
+	snprintf(icn, PATH_MAX, "%s/index.theme", icon_theme);
 #ifdef DEBUG
-	     printf("SEARCHING FOR %s\n", icn);
+	printf("SEARCHING FOR %s\n", icn);
 #endif
-	     theme_path =
-		ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn, 2,
-					      NULL, NULL);
-	  }
-	if (theme_path)
-	  {
-	     result = calloc(1, sizeof(Ecore_Desktop_Icon_Theme));
-	     if (result)
-	       {
-		  result->data = ecore_desktop_ini_get(theme_path);
-		  if (result->data)
-		    {
-		       result->group =
-			  (Ecore_Hash *) ecore_hash_get(result->data,
-							"Icon Theme");
-		       if (result->group)
-			 {
-			    char               *value;
-
-			    /* According to the spec, name and comment are required, but we can fake those easily enough. */
-			    value =
-			       (char *)ecore_hash_get(result->group, "Name");
-			    if (!value)
-			       value = (char *)icon_theme;
-			    result->name = strdup(value);
-			    value =
-			       (char *)ecore_hash_get(result->group, "Comment");
-			    if (!value)
-			       value = "No comment provided.";
-			    result->comment = strdup(value);
-			    value =
-			       (char *)ecore_hash_get(result->group, "Inherits");
-			    if (value)
-			       {
-			          result->inherits = strdup(value);
-				  if (result->inherits)
-				     result->Inherits = ecore_desktop_paths_to_list(result->inherits);
-			       }
-			    value =
-			       (char *)ecore_hash_get(result->group, "Example");
-			    if (!value)
-			       value = "exec";
-			    result->example = strdup(value);
-			    value =
-			       (char *)ecore_hash_get(result->group,
-						      "Directories");
-			    /* FIXME: Directories is also required, don't feel like faking it for now. */
-			    if (value)
-			      {
-				 Ecore_List         *Directories;
-
-				 result->directories = strdup(value);
-				 Directories =
-				    ecore_desktop_paths_to_list(result->
-								directories);
-				 if (Directories)
-				   {
-				      char               *directory;
-
-				      result->Directories = ecore_list_new();
-				      if (result->Directories)
-					{
-					   ecore_list_set_free_cb(result->
-								  Directories,
-								  (Ecore_Free_Cb)
-								  _ecore_desktop_icon_theme_directory_destroy);
-					   ecore_list_goto_first(Directories);
-					   while ((directory =
-						   ecore_list_next(Directories))
-						  != NULL)
-					     {
-						Ecore_Hash         *sub_group;
-						Ecore_Desktop_Icon_Theme_Directory
-						   *dir;
-
-						/* Get the details for this theme directory. */
-						sub_group =
-						   (Ecore_Hash *)
-						   ecore_hash_get(result->data,
-								  directory);
-						dir =
-						   calloc(1,
-							  sizeof
-							  (Ecore_Desktop_Icon_Theme_Directory));
-						if ((dir) && (sub_group))
-						  {
-						     char               *size,
-							*minsize, *maxsize,
-							*threshold;
-
-						     dir->path =
-							strdup(directory);
-						     value =
-							(char *)
-							ecore_hash_get
-							(sub_group, "Type");
-						     if (!value)
-							value = "Threshold";
-						     dir->type = strdup(value);
-						     size =
-							(char *)
-							ecore_hash_get
-							(sub_group, "Size");
-						     minsize =
-							(char *)
-							ecore_hash_get
-							(sub_group, "MinSize");
-						     maxsize =
-							(char *)
-							ecore_hash_get
-							(sub_group, "MaxSize");
-						     threshold =
-							(char *)
-							ecore_hash_get
-							(sub_group,
-							 "Threshold");
-						     if (size)
-						       {
-							  if (!minsize)
-							     minsize = size;
-							  if (!maxsize)
-							     maxsize = size;
-							  if (!threshold)
-							     threshold = "2";
-							  dir->minimum =
-							     atoi(minsize);
-							  dir->maximum =
-							     atoi(maxsize);
-							  dir->threshold =
-							     atoi(threshold);
-
-							  dir->size =
-							     atoi(size);
-							  ecore_list_append
-							     (result->
-							      Directories, dir);
-						       }
-						     else if (dir)
-							_ecore_desktop_icon_theme_directory_destroy
-							   (dir);
-						  }
-						else if (dir)
-						   _ecore_desktop_icon_theme_directory_destroy
-						      (dir);
-					     }
-					}
-				   }
-
-				 /* This passes the basic validation tests, mark it as real and cache it. */
-				 result->path = strdup(theme_path);
-				 ecore_hash_set(icon_theme_cache,
-						strdup(icon_theme), result);
-			      }
-			 }
-		       ecore_hash_destroy(result->data);
-		    }
-
-		  if (!result->path)
-		    {
-		       _ecore_desktop_icon_theme_destroy(result);
-		       result = NULL;
-		    }
-	       }
-	  }
+	theme_path = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn,
+						   2, NULL, NULL);
      }
-   if (dir)  free(dir);
-   if (theme_path)  free(theme_path);
+   if (!theme_path) goto error;
+   result = calloc(1, sizeof(Ecore_Desktop_Icon_Theme));
+   if (!result) goto error;
+   result->data = ecore_desktop_ini_get(theme_path);
+   if (!result->data) goto error;
+   result->group = ecore_hash_get(result->data, "Icon Theme");
+   if (!result->group) goto error;
+
+   /* According to the spec, name and comment are required, but we can fake those easily enough. */
+   value = ecore_hash_get(result->group, "Name");
+   if (!value) value = icon_theme;
+   result->name = strdup(value);
+   value = ecore_hash_get(result->group, "Comment");
+   if (!value) value = "No comment provided.";
+   result->comment = strdup(value);
+   value = ecore_hash_get(result->group, "Inherits");
+   if (value)
+     {
+	result->inherits = strdup(value);
+	if (result->inherits)
+	  result->Inherits = ecore_desktop_paths_to_list(result->inherits);
+     }
+   value = ecore_hash_get(result->group, "Example");
+   if (!value) value = "exec";
+   result->example = strdup(value);
+   value = ecore_hash_get(result->group, "Directories");
+   /* FIXME: Directories is also required, don't feel like faking it for now. */
+   if (!value) goto error;
+   result->directories = strdup(value);
+   Directories = ecore_desktop_paths_to_list(result->directories);
+   if (!Directories) goto error;
+   result->Directories = ecore_list_new();
+   if (!result->Directories) goto error;
+   ecore_list_set_free_cb(result->Directories,
+			  ECORE_FREE_CB(_ecore_desktop_icon_theme_directory_destroy));
+   ecore_list_goto_first(Directories);
+   while ((directory = ecore_list_next(Directories)) != NULL)
+     {
+	Ecore_Hash         *sub_group;
+	Ecore_Desktop_Icon_Theme_Directory *dir;
+
+	/* Get the details for this theme directory. */
+	sub_group = ecore_hash_get(result->data, directory);
+	dir = calloc(1, sizeof (Ecore_Desktop_Icon_Theme_Directory));
+	if ((dir) && (sub_group))
+	  {
+	     char *size, *minsize, *maxsize, *threshold;
+
+	     dir->path = strdup(directory);
+	     value = ecore_hash_get(sub_group, "Type");
+	     if (!value)
+	       value = "Threshold";
+	     dir->type = strdup(value);
+	     size = ecore_hash_get(sub_group, "Size");
+	     minsize = ecore_hash_get(sub_group, "MinSize");
+	     maxsize = ecore_hash_get(sub_group, "MaxSize");
+	     threshold = ecore_hash_get(sub_group, "Threshold");
+	     if (size)
+	       {
+		  if (!minsize)
+		    minsize = size;
+		  if (!maxsize)
+		    maxsize = size;
+		  if (!threshold)
+		    threshold = "2";
+		  dir->minimum = atoi(minsize);
+		  dir->maximum = atoi(maxsize);
+		  dir->threshold = atoi(threshold);
+
+		  dir->size = atoi(size);
+		  ecore_list_append(result-> Directories, dir);
+	       }
+	     else
+	       _ecore_desktop_icon_theme_directory_destroy(dir);
+	  }
+	else if (dir)
+	  _ecore_desktop_icon_theme_directory_destroy(dir);
+     }
+
+   /* This passes the basic validation tests, mark it as real and cache it. */
+   result->path = strdup(theme_path);
+   ecore_hash_set(icon_theme_cache, strdup(icon_theme), result);
+   ecore_hash_destroy(result->data);
+
+done:
+   if (dir)        free(dir);
+   if (theme_path) free(theme_path);
 
    return result;
+
+error:
+   if (dir)        free(dir);
+   if (theme_path) free(theme_path);
+   if (result)
+     {
+	_ecore_desktop_icon_theme_destroy(result);
+	if (result->data) ecore_hash_destroy(result->data);
+     }
+   return NULL;
 }
 
 /**
