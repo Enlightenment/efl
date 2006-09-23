@@ -898,7 +898,6 @@ ecore_desktop_paths_to_hash(const char *paths)
 		  p++;
 	       }
 	     *pp = '\0';
-	     printf("%s\n", buf);
 	     ecore_hash_set(result, strdup(buf), strdup(buf));
 	     if (*p) p++;
 	     else p = NULL;
@@ -951,7 +950,6 @@ ecore_desktop_paths_to_list(const char *paths)
 		  p++;
 	       }
 	     *pp = '\0';
-	     printf("%s\n", buf);
 	     ecore_list_append(result, strdup(buf));
 	     if (*p) p++;
 	     else p = NULL;
