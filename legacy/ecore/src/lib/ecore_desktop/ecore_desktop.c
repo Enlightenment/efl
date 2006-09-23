@@ -721,30 +721,32 @@ ecore_desktop_destroy(Ecore_Desktop * desktop)
 void
 _ecore_desktop_destroy(Ecore_Desktop * desktop)
 {
-   IFFREE(desktop->original_path)
-      IFFREE(desktop->original_lang)
-      IFFREE(desktop->eap_name)
-      IFFREE(desktop->name)
-      IFFREE(desktop->generic)
-      IFFREE(desktop->comment)
-      IFFREE(desktop->type)
-      IFFREE(desktop->exec)
-      IFFREE(desktop->exec_params)
-      IFFREE(desktop->categories)
-      IFFREE(desktop->icon)
-      IFFREE(desktop->icon_theme)
-      IFFREE(desktop->icon_class)
-      IFFREE(desktop->icon_path)
-      IFFREE(desktop->path)
-      IFFREE(desktop->URL)
-      IFFREE(desktop->file)
-      IFFREE(desktop->deletiondate)
-      IFFREE(desktop->window_class)
-      IFFREE(desktop->window_name)
-      IFFREE(desktop->window_title)
-      IFFREE(desktop->window_role)
-      IFFREE(desktop->NotShowIn)
-      IFFREE(desktop->OnlyShowIn) IFFREE(desktop->Categories) if (desktop->data)
+   IFFREE(desktop->original_path);
+   IFFREE(desktop->original_lang);
+   IFFREE(desktop->eap_name);
+   IFFREE(desktop->name);
+   IFFREE(desktop->generic);
+   IFFREE(desktop->comment);
+   IFFREE(desktop->type);
+   IFFREE(desktop->exec);
+   IFFREE(desktop->exec_params);
+   IFFREE(desktop->categories);
+   IFFREE(desktop->icon);
+   IFFREE(desktop->icon_theme);
+   IFFREE(desktop->icon_class);
+   IFFREE(desktop->icon_path);
+   IFFREE(desktop->path);
+   IFFREE(desktop->URL);
+   IFFREE(desktop->file);
+   IFFREE(desktop->deletiondate);
+   IFFREE(desktop->window_class);
+   IFFREE(desktop->window_name);
+   IFFREE(desktop->window_title);
+   IFFREE(desktop->window_role);
+   IFFREE(desktop->NotShowIn);
+   IFFREE(desktop->OnlyShowIn);
+   IFFREE(desktop->Categories);
+   if (desktop->data)
      {
 	ecore_hash_destroy(desktop->data);
 	desktop->data = NULL;
