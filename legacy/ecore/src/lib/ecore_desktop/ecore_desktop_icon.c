@@ -408,7 +408,7 @@ ecore_desktop_icon_shutdown()
 Ecore_Desktop_Icon_Theme *
 ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 {
-   Ecore_Desktop_Icon_Theme *result;
+   Ecore_Desktop_Icon_Theme *result = NULL;
    char *theme_path = NULL, *dir = NULL;
    char               *value;
    Ecore_List         *Directories;
