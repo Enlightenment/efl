@@ -1,4 +1,7 @@
 /*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+/*
  * This conforms with the freedesktop.org Desktop Menu Specification version 0.92
  *
  * This is gonna be repetative and slow.  The idea is to first get it to correctly

@@ -1,4 +1,7 @@
 /*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+/*
  * This conforms with the freedesktop.org XDG Base Directory Specification version 0.6
  *
  * The policy here is to add extra directories to the possible search paths to 
@@ -365,33 +368,31 @@ ecore_desktop_paths_file_find(Ecore_List * paths, const char *file, int sub,
    char                temp[PATH_MAX];
    struct stat         path_stat;
 
-   if (paths)
+   if (!paths) return NULL;
+   ecore_list_goto_first(paths);
+   while ((this_path = ecore_list_next(paths)) != NULL)
      {
-	ecore_list_goto_first(paths);
-	while ((this_path = ecore_list_next(paths)) != NULL)
+	if (path)
 	  {
-	     if (path)
-	       {
-		  free(path);
-		  path = NULL;
-	       }
-	     snprintf(temp, PATH_MAX, "%s%s", this_path, file);
-	     if (stat(temp, &path_stat) == 0)
-	       {
-		  path = strdup(temp);
-		  if (func)
-		    {
-		       if (func(data, temp))
-			  break;
-		    }
-	       }
-	     else if (sub != 0)
-		path =
-		   ecore_desktop_paths_recursive_search(this_path, file, sub,
-							NULL, func, data);
-	     if (path && (!func))
-		break;
+	     free(path);
+	     path = NULL;
 	  }
+	snprintf(temp, PATH_MAX, "%s%s", this_path, file);
+	if (stat(temp, &path_stat) == 0)
+	  {
+	     path = strdup(temp);
+	     if (func)
+	       {
+		  if (func(data, temp))
+		    break;
+	       }
+	  }
+	else if (sub != 0)
+	  path =
+	     ecore_desktop_paths_recursive_search(this_path, file, sub,
+						  NULL, func, data);
+	if (path && (!func))
+	  break;
      }
 
    return path;
@@ -414,11 +415,17 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
    Ecore_List         *paths = NULL;
    Ecore_List         *types = NULL;
    Ecore_List         *gnome_extras = NULL;
+   char                path[PATH_MAX];
+   Ecore_List         *env_list;
+
 
 #ifdef KDE_SUPPORT
    Ecore_List         *kdes = NULL;
 #endif
 
+   paths = ecore_list_new();
+   if (!paths) return NULL;
+   ecore_list_set_free_cb(paths, free);
    /* Don't sort them, as they are in preferred order from each source. */
    /* Merge the results, there are probably some duplicates. */
 
@@ -431,202 +438,183 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
       kdes = ecore_desktop_paths_to_list(kde);
 #endif
 
-   paths = ecore_list_new();
-   if (paths)
+   if (before)
      {
-	char                path[PATH_MAX];
-	Ecore_List         *env_list;
+	Ecore_List         *befores;
 
-	ecore_list_set_free_cb(paths, free);
-
-	if (before)
+	befores = ecore_desktop_paths_to_list(before);
+	if (befores)
 	  {
-	     Ecore_List         *befores;
+	     char               *this_before;
 
-	     befores = ecore_desktop_paths_to_list(before);
-	     if (befores)
+	     ecore_list_goto_first(befores);
+	     while ((this_before = ecore_list_next(befores)) != NULL)
 	       {
-		  char               *this_before;
-
-		  ecore_list_goto_first(befores);
-		  while ((this_before = ecore_list_next(befores)) != NULL)
-		    {
-		       _ecore_desktop_paths_massage_path(path, home,
-							 this_before, NULL);
-		       _ecore_desktop_paths_check_and_add(paths, path);
-		    }
-		  E_FN_DEL(ecore_list_destroy, befores);
-	       }
-	  }
-
-	if (prepend_user_paths[path_type])
-	  {
-	     char               *this_path;
-
-	     ecore_list_goto_first(prepend_user_paths[path_type]);
-	     while ((this_path =
-		     ecore_list_next(prepend_user_paths[path_type])) != NULL)
-	       {
-		  _ecore_desktop_paths_massage_path(path, home, this_path,
-						    NULL);
+		  _ecore_desktop_paths_massage_path(path, home,
+						    this_before, NULL);
 		  _ecore_desktop_paths_check_and_add(paths, path);
 	       }
+	     E_FN_DEL(ecore_list_destroy, befores);
 	  }
+     }
 
-	if (env_home)
+   if (prepend_user_paths[path_type])
+     {
+	char               *this_path;
+
+	ecore_list_goto_first(prepend_user_paths[path_type]);
+	while ((this_path = ecore_list_next(prepend_user_paths[path_type])) != NULL)
 	  {
-	     char               *value;
-
-	     value = getenv(env_home);
-	     if ((value == NULL) || (value[0] == '\0'))
-		value = env_home_default;
-	     env_list = ecore_desktop_paths_to_list(value);
-	     if (env_list && types)
-	       {
-		  char               *this_env, *this_type;
-
-		  ecore_list_goto_first(env_list);
-		  while ((this_env = ecore_list_next(env_list)) != NULL)
-		    {
-		       ecore_list_goto_first(types);
-		       while ((this_type = ecore_list_next(types)) != NULL)
-			 {
-			    _ecore_desktop_paths_massage_path(path, home,
-							      this_env,
-							      this_type);
-			    _ecore_desktop_paths_check_and_add(paths, path);
-			 }
-		    }
-		  E_FN_DEL(ecore_list_destroy, env_list);
-	       }
+	     _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
+	     _ecore_desktop_paths_check_and_add(paths, path);
 	  }
+     }
 
-	if (append_user_paths[path_type])
+   if (env_home)
+     {
+	char               *value;
+
+	value = getenv(env_home);
+	if ((value == NULL) || (value[0] == '\0'))
+	  value = env_home_default;
+	env_list = ecore_desktop_paths_to_list(value);
+	if (env_list && types)
 	  {
-	     char               *this_path;
+	     char               *this_env, *this_type;
 
-	     ecore_list_goto_first(append_user_paths[path_type]);
-	     while ((this_path =
-		     ecore_list_next(append_user_paths[path_type])) != NULL)
-	       {
-		  _ecore_desktop_paths_massage_path(path, home, this_path,
-						    NULL);
-		  _ecore_desktop_paths_check_and_add(paths, path);
-	       }
-	  }
-
-	if (prepend_system_paths[path_type])
-	  {
-	     char               *this_path;
-
-	     ecore_list_goto_first(prepend_system_paths[path_type]);
-	     while ((this_path =
-		     ecore_list_next(prepend_system_paths[path_type])) != NULL)
-	       {
-		  _ecore_desktop_paths_massage_path(path, home, this_path,
-						    NULL);
-		  _ecore_desktop_paths_check_and_add(paths, path);
-	       }
-	  }
-
-	if (env)
-	  {
-	     char               *value;
-
-	     value = getenv(env);
-	     if ((value == NULL) || (value[0] == '\0'))
-		value = env_default;
-	     env_list = ecore_desktop_paths_to_list(value);
-	     if (env_list && types)
-	       {
-		  char               *this_env, *this_type;
-
-		  ecore_list_goto_first(env_list);
-		  while ((this_env = ecore_list_next(env_list)) != NULL)
-		    {
-		       ecore_list_goto_first(types);
-		       while ((this_type = ecore_list_next(types)) != NULL)
-			 {
-			    _ecore_desktop_paths_massage_path(path, home,
-							      this_env,
-							      this_type);
-			    _ecore_desktop_paths_check_and_add(paths, path);
-			 }
-		    }
-		  E_FN_DEL(ecore_list_destroy, env_list);
-	       }
-	  }
-
-	if (append_system_paths[path_type])
-	  {
-	     char               *this_path;
-
-	     ecore_list_goto_first(append_system_paths[path_type]);
-	     while ((this_path =
-		     ecore_list_next(append_system_paths[path_type])) != NULL)
-	       {
-		  _ecore_desktop_paths_massage_path(path, home, this_path,
-						    NULL);
-		  _ecore_desktop_paths_check_and_add(paths, path);
-	       }
-	  }
-
-	/*
-	 * Get the pathlist from the config file - type=pathlist
-	 *   for each path in config
-	 *      if it is already in paths, skip it
-	 *      if it exists, add it to end of paths
-	 */
-
-	if (gnome_data && types)
-	  {
-	     char               *this_gnome, *this_type;
-
-	     ecore_list_goto_first(gnome_data);
-	     while ((this_gnome = ecore_list_next(gnome_data)) != NULL)
+	     ecore_list_goto_first(env_list);
+	     while ((this_env = ecore_list_next(env_list)) != NULL)
 	       {
 		  ecore_list_goto_first(types);
 		  while ((this_type = ecore_list_next(types)) != NULL)
 		    {
-		       _ecore_desktop_paths_massage_path(path, home, this_gnome,
-							 this_type);
+		       _ecore_desktop_paths_massage_path(path, home,
+							 this_env, this_type);
 		       _ecore_desktop_paths_check_and_add(paths, path);
 		    }
 	       }
+	     E_FN_DEL(ecore_list_destroy, env_list);
 	  }
-	if (gnome_data && gnome_extras)
-	  {
-	     char               *this_gnome, *this_type;
+     }
 
-	     ecore_list_goto_first(gnome_data);
-	     while ((this_gnome = ecore_list_next(gnome_data)) != NULL)
+   if (append_user_paths[path_type])
+     {
+	char               *this_path;
+
+	ecore_list_goto_first(append_user_paths[path_type]);
+	while ((this_path = ecore_list_next(append_user_paths[path_type])) != NULL)
+	  {
+	     _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
+	     _ecore_desktop_paths_check_and_add(paths, path);
+	  }
+     }
+
+   if (prepend_system_paths[path_type])
+     {
+	char               *this_path;
+
+	ecore_list_goto_first(prepend_system_paths[path_type]);
+	while ((this_path = ecore_list_next(prepend_system_paths[path_type])) != NULL)
+	  {
+	     _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
+	     _ecore_desktop_paths_check_and_add(paths, path);
+	  }
+     }
+
+   if (env)
+     {
+	char               *value;
+
+	value = getenv(env);
+	if ((value == NULL) || (value[0] == '\0'))
+	  value = env_default;
+	env_list = ecore_desktop_paths_to_list(value);
+	if (env_list && types)
+	  {
+	     char               *this_env, *this_type;
+
+	     ecore_list_goto_first(env_list);
+	     while ((this_env = ecore_list_next(env_list)) != NULL)
 	       {
-		  ecore_list_goto_first(gnome_extras);
-		  while ((this_type = ecore_list_next(gnome_extras)) != NULL)
+		  ecore_list_goto_first(types);
+		  while ((this_type = ecore_list_next(types)) != NULL)
 		    {
-		       _ecore_desktop_paths_massage_path(path, home, this_gnome,
-							 this_type);
+		       _ecore_desktop_paths_massage_path(path, home,
+							 this_env, this_type);
 		       _ecore_desktop_paths_check_and_add(paths, path);
 		    }
 	       }
+	     E_FN_DEL(ecore_list_destroy, env_list);
 	  }
+     }
+
+   if (append_system_paths[path_type])
+     {
+	char               *this_path;
+
+	ecore_list_goto_first(append_system_paths[path_type]);
+	while ((this_path = ecore_list_next(append_system_paths[path_type])) != NULL)
+	  {
+	     _ecore_desktop_paths_massage_path(path, home, this_path, NULL);
+	     _ecore_desktop_paths_check_and_add(paths, path);
+	  }
+     }
+
+   /*
+    * Get the pathlist from the config file - type=pathlist
+    *   for each path in config
+    *      if it is already in paths, skip it
+    *      if it exists, add it to end of paths
+    */
+
+   if (gnome_data && types)
+     {
+	char               *this_gnome, *this_type;
+
+	ecore_list_goto_first(gnome_data);
+	while ((this_gnome = ecore_list_next(gnome_data)) != NULL)
+	  {
+	     ecore_list_goto_first(types);
+	     while ((this_type = ecore_list_next(types)) != NULL)
+	       {
+		  _ecore_desktop_paths_massage_path(path, home,
+						    this_gnome, this_type);
+		  _ecore_desktop_paths_check_and_add(paths, path);
+	       }
+	  }
+     }
+   if (gnome_data && gnome_extras)
+     {
+	char               *this_gnome, *this_type;
+
+	ecore_list_goto_first(gnome_data);
+	while ((this_gnome = ecore_list_next(gnome_data)) != NULL)
+	  {
+	     ecore_list_goto_first(gnome_extras);
+	     while ((this_type = ecore_list_next(gnome_extras)) != NULL)
+	       {
+		  _ecore_desktop_paths_massage_path(path, home,
+						    this_gnome, this_type);
+		  _ecore_desktop_paths_check_and_add(paths, path);
+	       }
+	  }
+     }
 
 #ifdef KDE_SUPPORT
-	if ((exit_handler != NULL) && (kdes != NULL))
+   if ((exit_handler != NULL) && (kdes != NULL))
+     {
+	char               *this_kde;
+
+	ecore_list_goto_first(kdes);
+	while ((this_kde = ecore_list_next(kdes)) != NULL)
 	  {
-	     char               *this_kde;
+	     char                cmd[128];
 
-	     ecore_list_goto_first(kdes);
-	     while ((this_kde = ecore_list_next(kdes)) != NULL)
-	       {
-		  char                cmd[128];
-
-		  sprintf(cmd, "kde-config --path %s", this_kde);
-		  _ecore_desktop_paths_exec_config(paths, home, NULL, cmd);
-	       }
+	     sprintf(cmd, "kde-config --path %s", this_kde);
+	     _ecore_desktop_paths_exec_config(paths, home, NULL, cmd);
 	  }
-#endif
      }
+#endif
 
 #ifdef KDE_SUPPORT
    E_FN_DEL(ecore_list_destroy, kdes);
@@ -645,31 +633,37 @@ _ecore_desktop_paths_massage_path(char *path, char *home, char *first,
 
    /* Strip traling slash of first. */
    last = strlen(first) - 1;
-   if ((last >= 0) && (first[last] == '/'))
-      first[last] = '\0';
+   while ((last >= 0) && (first[last] == '/'))
+     {
+	first[last] = '\0';
+	last--;
+     }
 
    if (second)
      {
 	/* Strip traling slash of second. */
 	last = strlen(second) - 1;
-	if ((last >= 0) && (second[last] == '/'))
-	   second[last] = '\0';
+	while ((last >= 0) && (second[last] == '/'))
+	  {
+	     second[last] = '\0';
+	     last--;
+	  }
      }
 
    if ((second) && (second[0] != '\0'))
      {
 	if (first[0] == '~')
-	   sprintf(path, "%s%s/%s/", home, &first[1],
-		   &second[(second[0] == '/') ? 1 : 0]);
+	  sprintf(path, "%s%s/%s/", home, &first[1],
+		  &second[(second[0] == '/') ? 1 : 0]);
 	else
-	   sprintf(path, "%s/%s/", first, &second[(second[0] == '/') ? 1 : 0]);
+	  sprintf(path, "%s/%s/", first, &second[(second[0] == '/') ? 1 : 0]);
      }
    else
      {
 	if (first[0] == '~')
-	   sprintf(path, "%s%s/", home, &first[1]);
+	  sprintf(path, "%s%s/", home, &first[1]);
 	else
-	   sprintf(path, "%s/", first);
+	  sprintf(path, "%s/", first);
      }
 }
 
