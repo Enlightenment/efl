@@ -508,7 +508,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 		  dir->threshold = atoi(threshold);
 
 		  dir->size = atoi(size);
-		  ecore_list_append(result-> Directories, dir);
+		  ecore_list_append(result->Directories, dir);
 	       }
 	     else
 	       _ecore_desktop_icon_theme_directory_destroy(dir);
@@ -521,6 +521,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
    result->path = strdup(theme_path);
    ecore_hash_set(icon_theme_cache, strdup(icon_theme), result);
    ecore_hash_destroy(result->data);
+   result->data = NULL;
 
 done:
    if (dir)        free(dir);
