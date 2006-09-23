@@ -483,7 +483,7 @@ ecore_desktop_save(Ecore_Desktop * desktop)
      {
 	if ((desktop->ondisk) && (desktop->original_path))
 	  {
-	     desktop->data = ecore_desktop_ini_get(desktop->original_path);
+	     if (!desktop->data) desktop->data = ecore_desktop_ini_get(desktop->original_path);
 	     desktop->group =
 		(Ecore_Hash *) ecore_hash_get(desktop->data, "Desktop Entry");
 	     if (!desktop->group)
