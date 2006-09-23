@@ -192,294 +192,266 @@ _ecore_desktop_get(const char *file, const char *lang)
    if (!result)
      {
 	result = calloc(1, sizeof(Ecore_Desktop));
-	if (result)
+	if (!result) goto error;
+	result->ondisk = 1;
+	result->original_path = strdup(file);
+	if (lang)
+	  result->original_lang = strdup(lang);
+	result->data = ecore_desktop_ini_get(result->original_path);
+	if (!result->data)
 	  {
-	     result->ondisk = 1;
-	     result->original_path = strdup(file);
-	     if (lang)
-		result->original_lang = strdup(lang);
-	     result->data = ecore_desktop_ini_get(result->original_path);
-	     /* Timestamp the cache, and no need to stat the file twice if the cache was stale. */
-	     if ((stated) || (stat(result->original_path, &st) >= 0))
-	        result->mtime = st.st_mtime;
-	     if (result->data)
+	     free(result);
+	     result = NULL;
+	     goto error;
+	  }
+	/* Timestamp the cache, and no need to stat the file twice if the cache was stale. */
+	if ((stated) || (stat(result->original_path, &st) >= 0))
+	  result->mtime = st.st_mtime;
+	result->group = ecore_hash_get(result->data, "Desktop Entry");
+	if (!result->group)
+	  result->group = ecore_hash_get(result->data, "KDE Desktop Entry");
+	if (result->group)
+	  {
+	     char               *eap_name = NULL;
+	     char               *exe = NULL;
+	     char               *categories = NULL;
+	     int                 size = 0;
+
+	     value = ecore_file_get_file(result->original_path);
+	     if (value)
 	       {
-		  result->group =
-		     (Ecore_Hash *) ecore_hash_get(result->data,
-						   "Desktop Entry");
-		  if (!result->group)
-		     result->group =
-			(Ecore_Hash *) ecore_hash_get(result->data,
-						      "KDE Desktop Entry");
-		  if (result->group)
+		  char *temp;
+
+		  temp = strrchr(value, '.');
+
+		  if (temp) *temp = '\0';
+		  result->eap_name = malloc(strlen(value) + 5);
+		  if (result->eap_name)
+		    sprintf(result->eap_name, "%s.edj", value);
+		  if (temp) *temp = '.';
+	       }
+	     eap_name = result->eap_name;
+
+	     IFGETDUP(value, "Name", result->name);
+	     IFGETDUP(value, "GenericName", result->generic);
+	     IFGETDUP(value, "Comment", result->comment);
+	     IFGETDUP(value, "Type", result->type);
+
+	     IFGETDUP(value, "Path", result->path);
+	     IFGETDUP(value, "URL", result->URL);
+	     IFGETDUP(value, "File", result->file);
+
+	     IFGETDUP(value, "Exec", result->exec);
+	     if (result->exec)
+	       {
+		  exe = strchr(result->exec, ' ');
+		  if (exe)
 		    {
-		       char               *eap_name = NULL;
-		       char               *exe = NULL;
-		       char               *categories = NULL;
-		       int                 size = 0;
+		       *exe = '\0';
+		       result->exec_params = ++exe;
+		    }
+		  exe = result->exec;
+	       }
 
-		       value =
-			  (char *)ecore_file_get_file(result->original_path);
-		       if (value)
+	     IFGETDUP(value, "StartupWMClass", result->window_class);
+	     if ((!value) && (result->exec))
+	       {
+		  char               *tmp;
+
+		  /* Guess - exe name with first letter capitalized. */
+		  tmp = strdup(result->exec);
+		  if (tmp)
+		    {
+		       char               *p;
+
+		       value = (char *)ecore_file_get_file(tmp);	/* In case the exe included a path. */
+		       p = value;
+		       while ((*p != '\0') && (*p != ' '))
 			 {
-			    char               *temp = strrchr(value, '.');
-
-			    if (temp)
-			       *temp = '\0';
-			    result->eap_name = malloc(strlen(value) + 5);
-			    if (result->eap_name)
-			       sprintf(result->eap_name, "%s.edj", value);
-			    if (temp)
-			       *temp = '.';
+			    *p = tolower(*p);
+			    p++;
 			 }
-		       eap_name = result->eap_name;
+		       *p = '\0';
+		       *value = toupper(*value);
+		       result->window_class = strdup(value);
+		       free(tmp);
+		    }
+	       }
+	     IFGETDUP(value, "X-Enlightenment-WindowName", result->window_name);
+	     IFGETDUP(value, "X-Enlightenment-WindowTitle", result->window_title);
+	     IFGETDUP(value, "X-Enlightenment-WindowRole", result->window_role);
 
-		       IFGETDUP(value, "Name", result->name);
-		       IFGETDUP(value, "GenericName", result->generic);
-		       IFGETDUP(value, "Comment", result->comment);
-		       IFGETDUP(value, "Type", result->type);
+	     IFGETDUP(value, "Icon", result->icon);
+	     IFGETDUP(value, "X-Enlightenment-IconTheme", result->icon_theme);
+	     IFGETDUP(value, "X-Enlightenment-IconClass", result->icon_class);
+	     IFGETDUP(value, "X-Enlightenment-IconPath", result->icon_path);
 
-		       IFGETDUP(value, "Path", result->path);
-		       IFGETDUP(value, "URL", result->URL);
-		       IFGETDUP(value, "File", result->file);
+	     if ((result->icon != NULL) && (result->icon_path == NULL) &&
+		 (strchr(result->icon, '/') != NULL))
+	       {
+		  if (result->icon[0] == '/')
+		    {
+		       result->icon_path = strdup(result->icon);
+		    }
+		  else	/* It's a relative path. */
+		    {
+		       char               *temp;
 
-		       IFGETDUP(value, "Exec", result->exec);
-		       if (result->exec)
+		       size =
+			  strlen(result->original_path) +
+			  strlen(result->icon) + 2;
+		       temp = malloc(size);
+		       if (temp)
 			 {
-			    exe = strchr(result->exec, ' ');
-			    if (exe)
+			    char               *dir;
+
+			    dir =
+			       ecore_file_get_dir(result->original_path);
+			    if (dir)
 			      {
-				 *exe = '\0';
-				 result->exec_params = ++exe;
+				 sprintf(temp, "%s/%s", dir, result->icon);
+				 result->icon_path =
+				    ecore_file_realpath(temp);
+				 free(dir);
 			      }
-			    exe = result->exec;
+			    free(temp);
 			 }
+		    }
+	       }
 
-		       IFGETDUP(value, "StartupWMClass", result->window_class);
-		       if ((!value) && (result->exec))
+	     IFGETDUP(value, "Categories", result->categories);
+	     if (result->categories)
+	       result->Categories =
+		  ecore_desktop_paths_to_hash(result->categories);
+	     categories = result->categories;
+
+	     value = ecore_hash_get(result->group, "OnlyShowIn");
+	     if (value)
+	       result->OnlyShowIn =
+		  ecore_desktop_paths_to_hash(value);
+	     value = ecore_hash_get(result->group, "NotShowIn");
+	     if (value)
+	       result->NotShowIn =
+		  ecore_desktop_paths_to_hash(value);
+	     value = ecore_hash_get(result->group, "X-KDE-StartupNotify");
+	     if (value)
+	       result->startup = (strcmp(value, "true") == 0);
+	     value = ecore_hash_get(result->group, "StartupNotify");
+	     if (value)
+	       result->startup = (strcmp(value, "true") == 0);
+	     value = ecore_hash_get(result->group, "X-Enlightenment-WaitExit");
+	     if (value)
+	       result->wait_exit = (strcmp(value, "true") == 0);
+	     value = ecore_hash_get(result->group, "NoDisplay");
+	     if (value)
+	       result->no_display = (strcmp(value, "true") == 0);
+	     value = ecore_hash_get(result->group, "Hidden");
+	     if (value)
+	       result->hidden = (strcmp(value, "true") == 0);
+
+	     /*
+	      *    icon/class is a list of standard icons from the theme that can override the icon created above.
+	      *    Use (from .desktop) eap name,exe name,categories.  It's case sensitive, the reccomendation is to lowercase it.
+	      *    It should be most specific to most generic.  firefox,browser,internet for instance
+	      */
+
+	     /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
+	      * Otherwise, put that full path into the icon_path member.
+	      */
+	     if (!result->icon_class)
+	       {
+		  size = 0;
+		  if ((result->icon) && (strchr(result->icon, '/') == NULL))
+		    size += strlen(result->icon) + 1;
+		  if (eap_name)
+		    size += strlen(eap_name) + 1;
+		  if (exe)
+		    size += strlen(exe) + 1;
+		  if (categories)
+		    size += strlen(categories) + 1;
+		  result->icon_class = malloc(size + 1);
+		  if (result->icon_class)
+		    {
+		       char               *p;
+		       int                 done = 0;
+
+		       result->icon_class[0] = '\0';
+		       if ((result->icon) && (strchr(result->icon, '/') == NULL) &&
+			   (result->icon[0] != '\0'))
+			 {
+			    strcat(result->icon_class, result->icon);
+			    done = 1;
+			 }
+		       /* We do this here coz we don't want to lower case the result->icon part later. */
+		       p = result->icon_class;
+		       p += strlen(result->icon_class);
+		       if ((eap_name) && (eap_name[0] != '\0'))
+			 {
+			    if (done)
+			      strcat(result->icon_class, ",");
+			    strcat(result->icon_class, eap_name);
+			    done = 1;
+			 }
+		       if ((exe) && (exe[0] != '\0'))
 			 {
 			    char               *tmp;
 
-			    /* Guess - exe name with first letter capitalized. */
-			    tmp = strdup(result->exec);
+			    tmp = strdup(ecore_file_get_file(exe));
 			    if (tmp)
 			      {
-				 char               *p;
+				 char               *p2;
 
-				 value = (char *)ecore_file_get_file(tmp);	/* In case the exe included a path. */
-				 p = value;
-				 while ((*p != '\0') && (*p != ' '))
+				 p2 = tmp;
+				 while (*p2 != '\0')
 				   {
-				      *p = tolower(*p);
-				      p++;
+				      if (*p2 == ' ')
+					{
+					   *p2 = '\0';
+					   break;
+					}
+				      p2++;
 				   }
-				 *p = '\0';
-				 *value = toupper(*value);
-				 result->window_class = strdup(value);
+				 if (done)
+				   strcat(result->icon_class, ",");
+				 strcat(result->icon_class, tmp);
+				 done = 1;
 				 free(tmp);
 			      }
 			 }
-		       IFGETDUP(value, "X-Enlightenment-WindowName",
-				result->window_name);
-		       IFGETDUP(value, "X-Enlightenment-WindowTitle",
-				result->window_title);
-		       IFGETDUP(value, "X-Enlightenment-WindowRole",
-				result->window_role);
-
-		       IFGETDUP(value, "Icon", result->icon);
-		       IFGETDUP(value, "X-Enlightenment-IconTheme",
-				result->icon_theme);
-		       IFGETDUP(value, "X-Enlightenment-IconClass",
-				result->icon_class);
-		       IFGETDUP(value, "X-Enlightenment-IconPath",
-				result->icon_path);
-
-		       if ((result->icon != NULL) && (result->icon_path == NULL)
-			   && (strchr(result->icon, '/') != NULL))
+		       if ((categories) && (categories[0] != '\0'))
 			 {
-			    if (result->icon[0] == '/')
-			      {
-				 result->icon_path = strdup(result->icon);
-			      }
-			    else	/* It's a relative path. */
-			      {
-				 char               *temp;
-
-				 size =
-				    strlen(result->original_path) +
-				    strlen(result->icon) + 2;
-				 temp = malloc(size);
-				 if (temp)
-				   {
-				      char               *dir;
-
-				      dir =
-					 ecore_file_get_dir(result->
-							    original_path);
-				      if (dir)
-					{
-					   sprintf(temp, "%s/%s", dir,
-						   result->icon);
-					   result->icon_path =
-					      ecore_file_realpath(temp);
-					   free(dir);
-					}
-				      free(temp);
-				   }
-			      }
+			    if (done)
+			      strcat(result->icon_class, ",");
+			    strcat(result->icon_class, categories);
+			    done = 1;
 			 }
-
-		       IFGETDUP(value, "Categories", result->categories);
-		       if (result->categories)
-			  result->Categories =
-			     ecore_desktop_paths_to_hash(result->categories);
-		       categories = result->categories;
-
-		       value =
-			  (char *)ecore_hash_get(result->group, "OnlyShowIn");
-		       if (value)
-			  result->OnlyShowIn =
-			     ecore_desktop_paths_to_hash(value);
-		       value =
-			  (char *)ecore_hash_get(result->group, "NotShowIn");
-		       if (value)
-			  result->NotShowIn =
-			     ecore_desktop_paths_to_hash(value);
-		       value =
-			  (char *)ecore_hash_get(result->group,
-						 "X-KDE-StartupNotify");
-		       if (value)
-			  result->startup = (strcmp(value, "true") == 0);
-		       value =
-			  (char *)ecore_hash_get(result->group,
-						 "StartupNotify");
-		       if (value)
-			  result->startup = (strcmp(value, "true") == 0);
-		       value =
-			  (char *)ecore_hash_get(result->group,
-						 "X-Enlightenment-WaitExit");
-		       if (value)
-			  result->wait_exit = (strcmp(value, "true") == 0);
-		       value =
-			  (char *)ecore_hash_get(result->group, "NoDisplay");
-		       if (value)
-			  result->no_display = (strcmp(value, "true") == 0);
-		       value = (char *)ecore_hash_get(result->group, "Hidden");
-		       if (value)
-			  result->hidden = (strcmp(value, "true") == 0);
-
-/*
- *    icon/class is a list of standard icons from the theme that can override the icon created above.
- *    Use (from .desktop) eap name,exe name,categories.  It's case sensitive, the reccomendation is to lowercase it.
- *    It should be most specific to most generic.  firefox,browser,internet for instance
-*/
-
-		       /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
-		        * Otherwise, put that full path into the icon_path member.
-		        */
-		       if (!result->icon_class)
+		       while (*p != '\0')
 			 {
-			    size = 0;
-			    if ((result->icon) && (strchr(result->icon, '/') == NULL))
-			       size += strlen(result->icon) + 1;
-			    if (eap_name)
-			       size += strlen(eap_name) + 1;
-			    if (exe)
-			       size += strlen(exe) + 1;
-			    if (categories)
-			       size += strlen(categories) + 1;
-			    result->icon_class = malloc(size + 1);
-			    if (result->icon_class)
-			      {
-				 char               *p;
-				 int                 done = 0;
-
-				 result->icon_class[0] = '\0';
-				 if ((result->icon) && (strchr(result->icon, '/') == NULL)
-				     && (result->icon[0] != '\0'))
-				   {
-				      strcat(result->icon_class, result->icon);
-				      done = 1;
-				   }
-				 /* We do this here coz we don't want to lower case the result->icon part later. */
-				 p = result->icon_class;
-				 p += strlen(result->icon_class);
-				 if ((eap_name) && (eap_name[0] != '\0'))
-				   {
-				      if (done)
-					 strcat(result->icon_class, ",");
-				      strcat(result->icon_class, eap_name);
-				      done = 1;
-				   }
-				 if ((exe) && (exe[0] != '\0'))
-				   {
-				      char               *tmp;
-
-				      tmp = strdup(ecore_file_get_file(exe));
-				      if (tmp)
-					{
-					   char               *p2;
-
-					   p2 = tmp;
-					   while (*p2 != '\0')
-					     {
-						if (*p2 == ' ')
-						  {
-						     *p2 = '\0';
-						     break;
-						  }
-						p2++;
-					     }
-					   if (done)
-					      strcat(result->icon_class, ",");
-					   strcat(result->icon_class, tmp);
-					   done = 1;
-					   free(tmp);
-					}
-				   }
-				 if ((categories) && (categories[0] != '\0'))
-				   {
-				      if (done)
-					 strcat(result->icon_class, ",");
-				      strcat(result->icon_class, categories);
-				      done = 1;
-				   }
-				 while (*p != '\0')
-				   {
-				      if (*p == ';')
-					 *p = ',';
-				      else
-					 *p = tolower(*p);
-				      p++;
-				   }
-			      }
+			    if (*p == ';')
+			      *p = ',';
+			    else
+			      *p = tolower(*p);
+			    p++;
 			 }
 		    }
-		  else
-		    {
-		       /*Maybe it's a 'trash' file - which also follows the Desktop FDO spec */
-		       result->group =
-			  (Ecore_Hash *) ecore_hash_get(result->data,
-							"Trash Info");
-		       if (result->group)
-			 {
-			    IFGETDUP(value, "Path", result->path);
-			    IFGETDUP(value, "DeletionDate",
-				     result->deletiondate);
-			 }
-		    }
-
-		  ecore_hash_set(desktop_cache, strdup(result->original_path),
-				 result);
-	       }
-	     else
-	       {
-		  free(result);
-		  result = NULL;
 	       }
 	  }
+	else
+	  {
+	     /*Maybe it's a 'trash' file - which also follows the Desktop FDO spec */
+	     result->group = ecore_hash_get(result->data, "Trash Info");
+	     if (result->group)
+	       {
+		  IFGETDUP(value, "Path", result->path);
+		  IFGETDUP(value, "DeletionDate",
+			result->deletiondate);
+	       }
+	  }
+
+	ecore_hash_set(desktop_cache, strdup(result->original_path), result);
      }
 
+error:
    if (result)
      {
         if (in_cache)
