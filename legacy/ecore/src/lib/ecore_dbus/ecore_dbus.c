@@ -331,8 +331,8 @@ _ecore_dbus_auth_external(void *data)
 static int
 _ecore_dbus_event_server_add(void *data, int ev_type, void *ev)
 {
-   Ecore_DBus_Event_Server_Add *e;
-   Ecore_DBus_Server           *svr;
+   Ecore_Con_Event_Server_Add *e;
+   Ecore_DBus_Server          *svr;
 
    e = ev;
    svr = ecore_con_server_data_get(e->server);
