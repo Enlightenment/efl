@@ -384,7 +384,7 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
                                  return 0;
                               }
                             ptr = im->image->data;
-                            end = ptr + (sizeof(DATA32) * w * h);
+                            end = ptr + (w * h);
                             pixels = w * h;
                          }
                        else
