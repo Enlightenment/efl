@@ -7,3 +7,4 @@ ecore_evas_test
 ecore_test
 ecore_dbus_test
 ecore_dbus_hal_test
+ecore_dbus_receiver_test
