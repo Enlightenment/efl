@@ -23,8 +23,7 @@ main(int argc, char **argv)
 {
 
    ecore_dbus_init();
-   svr = ecore_dbus_server_connect(ECORE_DBUS_BUS_SYSTEM,
-				   "/var/run/dbus/system_dbus_socket", -1, NULL);
+   svr = ecore_dbus_server_system_connect(NULL);
    if (!svr)
      {
 	printf("Couldn't connect to dbus system server!\n");
@@ -40,7 +39,7 @@ main(int argc, char **argv)
 					       ecore_dbus_event_server_add, NULL);
 	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_DEL,
 					       ecore_dbus_event_server_del, NULL);
-	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SERVER_SIGNAL,
+	handler[i++] = ecore_event_handler_add(ECORE_DBUS_EVENT_SIGNAL,
 					       ecore_dbus_event_server_signal, NULL);
 
 	ecore_main_loop_begin();
@@ -126,7 +125,7 @@ ecore_dbus_method_error_cb(void *data, const char *error)
 static int
 ecore_dbus_event_server_signal(void *udata, int ev_type, void *ev)
 {
-   Ecore_DBus_Event_Server_Signal *event;
+   Ecore_DBus_Event_Signal *event;
 
    event = ev;
    printf("ecore_dbus_event_server_signal %s %s.%s\n", event_type_get(event->type),

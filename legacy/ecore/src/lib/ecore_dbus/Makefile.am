@@ -26,6 +26,7 @@ ecore_dbus_marshal.c \
 ecore_dbus_unmarshal.c \
 ecore_dbus_methods.c \
 ecore_dbus_utils.c \
+ecore_dbus_address.c \
 ecore_dbus_private.h
 
 libecore_dbus_la_LIBADD = \

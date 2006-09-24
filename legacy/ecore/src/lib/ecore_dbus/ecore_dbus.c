@@ -1,6 +1,7 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+#include "config.h"
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Con.h"
@@ -11,7 +12,8 @@
 /* About									*/
 /********************************************************************************/
 /* Author: Jorge Luis Zapata							*/
-/* Version: 0.2.1								*/
+/* Author: Brian Mattern (rephorm)						*/
+/* Version: 0.3.0								*/
 /********************************************************************************/
 /* Todo										*/
 /********************************************************************************/
@@ -37,12 +39,16 @@
 /*										*/
 /* 29-03-05									*/
 /* 0.2.1 some segfault fixes, new tests						*/
+/* 0.3.0 add ability to send signals, receive method class and respond to them  */
+/*       add address parsing and functions to connect to standard busses        */
+/*       change API of ecore_dbus_message_new_method_call()			*/
 
 /* global variables  */
 
 EAPI int                 ECORE_DBUS_EVENT_SERVER_ADD = 0;
 EAPI int                 ECORE_DBUS_EVENT_SERVER_DEL = 0;
-EAPI int                 ECORE_DBUS_EVENT_SERVER_SIGNAL = 0;
+EAPI int                 ECORE_DBUS_EVENT_SIGNAL = 0;
+EAPI int                 ECORE_DBUS_EVENT_METHOD_CALL = 0;
 
 /* private function declaration */
 
@@ -89,7 +95,8 @@ ecore_dbus_init(void)
 
    ECORE_DBUS_EVENT_SERVER_ADD = ecore_event_type_new();
    ECORE_DBUS_EVENT_SERVER_DEL = ecore_event_type_new();
-   ECORE_DBUS_EVENT_SERVER_SIGNAL = ecore_event_type_new();
+   ECORE_DBUS_EVENT_SIGNAL = ecore_event_type_new();
+   ECORE_DBUS_EVENT_METHOD_CALL = ecore_event_type_new();
 
    handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD,
 					  _ecore_dbus_event_server_add, NULL);
@@ -118,37 +125,103 @@ ecore_dbus_shutdown(void)
    return init_count;
 }
 
+/**
+ * Connect to the system bus.
+ */
 EAPI Ecore_DBus_Server *
-ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
+ecore_dbus_server_system_connect(const void *data)
+{
+  Ecore_List *addrs;
+  Ecore_DBus_Server *svr;
+  char *bus_env;
+
+  /* get the system bus address from the environment */
+  bus_env = getenv("DBUS_SYSTEM_BUS_ADDRESS");
+  if (bus_env)
+  {
+    addrs = ecore_dbus_address_parse(bus_env);
+    if (addrs)
+      {
+	 svr = ecore_dbus_address_list_connect(addrs, data);
+	 ecore_list_destroy(addrs);
+	 if (svr) return svr;
+      }
+  }
+
+  /* if we haven't returned already, try the default location */
+  return ecore_dbus_server_connect(ECORE_CON_LOCAL_SYSTEM, "/var/run/dbus/system_bus_socket", -1, data);
+}
+
+/**
+ * Connect to the session bus.
+ */
+EAPI Ecore_DBus_Server *
+ecore_dbus_server_session_connect(const void *data)
+{
+  Ecore_List *addrs;
+  Ecore_DBus_Server *svr;
+  char *bus_env;
+
+  /* get the session bus address from the environment */
+  bus_env = getenv("DBUS_SESSION_BUS_ADDRESS");
+  if (bus_env)
+  {
+    addrs = ecore_dbus_address_parse(bus_env);
+    if (addrs)
+      {
+	 svr = ecore_dbus_address_list_connect(addrs, data);
+	 ecore_list_destroy(addrs);
+	 if (svr) return svr;
+      }
+  }
+
+  /*
+   * XXX try getting address from _DBUS_SESSION_BUS_ADDRESS property (STRING) set
+   * on the root window 
+   */
+
+  return NULL;
+}
+
+EAPI Ecore_DBus_Server *
+ecore_dbus_server_starter_connect(const void *data)
+{
+  Ecore_List *addrs;
+  Ecore_DBus_Server *svr;
+  char *bus_env;
+
+  /* get the session bus address from the environment */
+  bus_env = getenv("DBUS_STARTER_ADDRESS");
+  if (bus_env)
+  {
+    addrs = ecore_dbus_address_parse(bus_env);
+    if (addrs)
+      {
+	 svr = ecore_dbus_address_list_connect(addrs, data);
+	 ecore_list_destroy(addrs);
+	 if (svr) return svr;
+      }
+  }
+  return NULL;
+}
+
+
+EAPI Ecore_DBus_Server *
+ecore_dbus_server_connect(Ecore_Con_Type con_type, const char *name, int port,
 			  const void *data)
 {
+   /* XXX data isn't used! */
    Ecore_DBus_Server  *svr;
-   Ecore_DBus_Type     type;
-   Ecore_Con_Type      extra = 0;
-
+ 
    svr = calloc(1, sizeof(Ecore_DBus_Server));
    if (!svr) return NULL;
-   type = compl_type;
-   switch (type)
-     {
-#if 0
-	/* Get address from DBUS_SESSION_BUS_ADDRESS env */
-     case ECORE_DBUS_BUS_SESSION:
-	svr->server =
-	   ecore_con_server_connect(ECORE_CON_LOCAL_USER | extra, name, port, svr);
-	break;
-#endif
-     case ECORE_DBUS_BUS_SYSTEM:
-	svr->server =
-	   ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
-	break;
-     default:
-	free(svr);
-	return NULL;
-     }
+
+   svr->server =
+     ecore_con_server_connect(con_type, name, port, svr);
+
    if (!svr->server)
      {
-	printf("Couldn't connect to server\n");
+	fprintf(stderr, "Ecore_DBus Error: Couldn't connect to server\n");
 	free(svr);
 	return NULL;
      }
@@ -373,7 +446,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 		    }
 		  else
 		    {
-		       printf("Ecore_DBus: Reply without reply serial!\n");
+		       printf("[ecore_dbus] Reply without reply serial!\n");
 		    }
 		  if (sent) _ecore_dbus_message_free(sent);
 		  _ecore_dbus_event_server_data_free(NULL, ev2);
@@ -391,7 +464,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 		    }
 		  else
 		    {
-		       printf("Ecore_DBus: Error without reply serial!\n");
+		       printf("[ecore_dbus] Error without reply serial!\n");
 		    }
 		  if (sent) _ecore_dbus_message_free(sent);
 		  _ecore_dbus_event_server_data_free(NULL, ev2);
@@ -400,7 +473,14 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	       {
 		  Ecore_DBus_Event_Server_Data *ev2;
 		  ev2 = _ecore_dbus_event_create(svr, msg);
-		  ecore_event_add(ECORE_DBUS_EVENT_SERVER_SIGNAL, ev2,
+		  ecore_event_add(ECORE_DBUS_EVENT_SIGNAL, ev2,
+				  _ecore_dbus_event_server_data_free, NULL);
+	       }
+	     else if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_CALL)
+	       {
+		  Ecore_DBus_Event_Server_Data *ev2;
+		  ev2 = _ecore_dbus_event_create(svr, msg);
+		  ecore_event_add(ECORE_DBUS_EVENT_METHOD_CALL, ev2,
 				  _ecore_dbus_event_server_data_free, NULL);
 	       }
 	     else
@@ -410,7 +490,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	       }
 	  }
      }
-   return 0;
+   return 1;
 }
 
 static void

@@ -3,7 +3,9 @@
  */
 #ifndef _ECORE_DBUS_H
 #define _ECORE_DBUS_H
-#endif
+
+#include "Ecore_Data.h"
+#include "Ecore_Con.h"
 
 #ifdef EAPI
 #undef EAPI
@@ -36,18 +38,13 @@ extern "C" {
    typedef struct _Ecore_DBus_Event_Server_Add  Ecore_DBus_Event_Server_Add;
    typedef struct _Ecore_DBus_Event_Server_Del  Ecore_DBus_Event_Server_Del;
    typedef struct _Ecore_DBus_Event_Server_Data Ecore_DBus_Event_Server_Data;
-   typedef struct _Ecore_DBus_Event_Server_Data Ecore_DBus_Event_Server_Signal;
+   typedef struct _Ecore_DBus_Event_Server_Data Ecore_DBus_Event_Signal;
+   typedef struct _Ecore_DBus_Event_Server_Data Ecore_DBus_Event_Method_Call;
    typedef struct _Ecore_DBus_Event_Server_Data Ecore_DBus_Method_Return;
    typedef struct _Ecore_DBus_Message           Ecore_DBus_Message;
    typedef struct _Ecore_DBus_Message_Arg       Ecore_DBus_Message_Arg;
    typedef struct _Ecore_DBus_Message_Field     Ecore_DBus_Message_Field;
-
-   typedef enum _Ecore_DBus_Type
-     {
-	ECORE_DBUS_BUS_SESSION,
-	ECORE_DBUS_BUS_SYSTEM,
-	ECORE_DBUS_BUS_ACTIVATION
-     } Ecore_DBus_Type;
+   typedef struct _Ecore_DBus_Address           Ecore_DBus_Address;
 
    typedef enum _Ecore_DBus_Message_Type
      {
@@ -57,6 +54,12 @@ extern "C" {
 	ECORE_DBUS_MESSAGE_TYPE_ERROR,
 	ECORE_DBUS_MESSAGE_TYPE_SIGNAL
      } Ecore_DBus_Message_Type;
+
+   typedef enum _Ecore_DBus_Message_Flag
+     {
+	ECORE_DBUS_MESSAGE_FLAG_NO_REPLY_EXPECTED,
+	ECORE_DBUS_MESSAGE_FLAG_NO_AUTO_START
+     } Ecore_DBus_Message_Flag;
 
    typedef enum _Ecore_DBus_Data_Type
      {
@@ -130,9 +133,18 @@ extern "C" {
 	ECORE_DBUS_HEADER_FIELD_SIGNATURE
      } Ecore_DBus_Message_Header_Field;
 
+
+   struct _Ecore_DBus_Address 
+     {
+	char *transport;
+	Ecore_List *keys;
+	Ecore_List *vals;
+     };
+
    EAPI extern int ECORE_DBUS_EVENT_SERVER_ADD;
    EAPI extern int ECORE_DBUS_EVENT_SERVER_DEL;
-   EAPI extern int ECORE_DBUS_EVENT_SERVER_SIGNAL;
+   EAPI extern int ECORE_DBUS_EVENT_METHOD_CALL;
+   EAPI extern int ECORE_DBUS_EVENT_SIGNAL;
 
    /* callback */
    typedef void (*Ecore_DBus_Method_Return_Cb)(void *data, Ecore_DBus_Method_Return *reply);
@@ -143,19 +155,39 @@ extern "C" {
    EAPI int ecore_dbus_shutdown(void);
 
    /* connection */
-   EAPI Ecore_DBus_Server *ecore_dbus_server_connect(Ecore_DBus_Type type, char *name, int port, const void *data);
+   EAPI Ecore_DBus_Server *ecore_dbus_server_system_connect(const void *data);
+   EAPI Ecore_DBus_Server *ecore_dbus_server_session_connect(const void *data);
+   EAPI Ecore_DBus_Server *ecore_dbus_server_starter_connect(const void *data);
+
+   EAPI Ecore_DBus_Server *ecore_dbus_server_connect(Ecore_Con_Type type, const char *name, int port, const void *data);
+
+
    EAPI void               ecore_dbus_server_del(Ecore_DBus_Server *svr);
 
 
    /* message */
    EAPI int           ecore_dbus_server_send(Ecore_DBus_Server *svr, char *command, int length);
-   EAPI unsigned int  ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr,
-							 char *destination, char *path,
-							 char *interface, char *method,
-							 Ecore_DBus_Method_Return_Cb method_cb,
-							 Ecore_DBus_Error_Cb error_cb,
-							 void *data,
-							 char *fmt, ...);
+
+   EAPI unsigned int ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, 
+					 char *path, char *interface,
+					 char *method, char *destination, 
+					 Ecore_DBus_Method_Return_Cb method_cb,
+					 Ecore_DBus_Error_Cb error_cb,
+					 void *data,
+					 char *signature, ...);
+   EAPI unsigned int ecore_dbus_message_new_method_return(Ecore_DBus_Server *svr,
+					 int reply_serial, char *destination,
+					 char *signature, ...);
+   EAPI unsigned int ecore_dbus_message_new_error(Ecore_DBus_Server *svr, 
+	                                 char *error_name,
+					 int reply_serial, char *destination,
+					 char *signature, ...);
+   EAPI unsigned int ecore_dbus_message_new_signal(Ecore_DBus_Server *svr,
+					 char *path,
+					 char *interface, char *signal_name,
+					 char *destination, void *data,
+					 char *signature, ...);
+
    EAPI void          ecore_dbus_message_del(Ecore_DBus_Message *msg);
    EAPI void          ecore_dbus_message_print(Ecore_DBus_Message *msg);
    EAPI void         *ecore_dbus_message_header_field_get(Ecore_DBus_Message *msg, Ecore_DBus_Message_Header_Field field);
@@ -170,7 +202,22 @@ extern "C" {
    EAPI int ecore_dbus_method_get_connection_unix_user(Ecore_DBus_Server *svr, char *connection, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
    EAPI int ecore_dbus_method_add_match(Ecore_DBus_Server *svr, char *match, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
    EAPI int ecore_dbus_method_remove_match(Ecore_DBus_Server *svr, char *match, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_request_name(Ecore_DBus_Server *svr, char *name, int flags, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+   EAPI int ecore_dbus_method_release_name(Ecore_DBus_Server *svr, char *name, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
+
+   /* addresses */
+   EAPI Ecore_DBus_Address *ecore_dbus_address_new();
+   EAPI void                ecore_dbus_address_free(Ecore_DBus_Address *address);
+
+   EAPI Ecore_List         *ecore_dbus_address_parse(const char *address);
+
+   EAPI char               *ecore_dbus_address_value_get(Ecore_DBus_Address *address,
+							 char *key);
+   EAPI void                ecore_dbus_print_address_list(Ecore_List *addresses);
+   EAPI Ecore_DBus_Server  *ecore_dbus_address_list_connect(Ecore_List *addrs, const void *data);
+   EAPI Ecore_DBus_Server  *ecore_dbus_address_connect(Ecore_DBus_Address *addr, const void *data);
 
 #ifdef __cplusplus
 }
+#endif
 #endif

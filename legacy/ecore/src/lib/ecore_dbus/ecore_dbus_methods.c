@@ -20,10 +20,10 @@ ecore_dbus_method_hello(Ecore_DBus_Server *svr,
 	return 0;
      }
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "Hello" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     NULL /*fmt*/);
 }
@@ -35,10 +35,10 @@ ecore_dbus_method_list_names(Ecore_DBus_Server *svr,
 			     void *data)
 {
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "ListNames" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     NULL /*fmt*/);
 }
@@ -50,10 +50,10 @@ ecore_dbus_method_name_has_owner(Ecore_DBus_Server *svr, char *name,
 				 void *data)
 {
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "NameHasOwner" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     "s" /*fmt*/, name);
 }
@@ -65,10 +65,10 @@ ecore_dbus_method_start_service_by_name(Ecore_DBus_Server *svr, char *name, unsi
 				       	void *data)
 {
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "StartServiceByName" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     "su" /*fmt*/, name, flags);
 }
@@ -80,10 +80,10 @@ ecore_dbus_method_get_name_owner(Ecore_DBus_Server *svr, char *name,
 				 void *data)
 {
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "GetNameOwner" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     "s" /*fmt*/, name);
 }
@@ -95,10 +95,10 @@ ecore_dbus_method_get_connection_unix_user(Ecore_DBus_Server *svr, char *connect
 					   void *data)
 {
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "GetConnectionUnixUser" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     "s" /*fmt*/, connection);
 }
@@ -110,10 +110,10 @@ ecore_dbus_method_add_match(Ecore_DBus_Server *svr, char *match,
 			    void *data)
 {
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "AddMatch" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     "s" /*fmt*/, match);
 }
@@ -125,10 +125,40 @@ ecore_dbus_method_remove_match(Ecore_DBus_Server *svr, char *match,
 			       void *data)
 {
    return ecore_dbus_message_new_method_call(svr,
-					     "org.freedesktop.DBus" /*destination*/,
 					     "/org/freedesktop/DBus" /*path*/,
 					     "org.freedesktop.DBus" /*interface*/,
 					     "RemoveMatch" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
 					     method_cb, error_cb, data,
 					     "s" /*fmt*/, match);
+}
+
+EAPI int
+ecore_dbus_method_request_name(Ecore_DBus_Server *svr, char *name, int flags,
+			       Ecore_DBus_Method_Return_Cb method_cb,
+			       Ecore_DBus_Error_Cb error_cb,
+			       void *data)
+{
+   return ecore_dbus_message_new_method_call(svr,
+					     "/org/freedesktop/DBus" /*path*/,
+					     "org.freedesktop.DBus" /*interface*/,
+					     "RequestName" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
+					     method_cb, error_cb, data,
+					     "su" /*fmt*/, name, flags);
+}
+
+EAPI int
+ecore_dbus_method_release_name(Ecore_DBus_Server *svr, char *name,
+			       Ecore_DBus_Method_Return_Cb method_cb,
+			       Ecore_DBus_Error_Cb error_cb,
+			       void *data)
+{
+   return ecore_dbus_message_new_method_call(svr,
+					     "/org/freedesktop/DBus" /*path*/,
+					     "org.freedesktop.DBus" /*interface*/,
+					     "RequestName" /*method*/,
+					     "org.freedesktop.DBus" /*destination*/,
+					     method_cb, error_cb, data,
+					     "s" /*fmt*/, name);
 }

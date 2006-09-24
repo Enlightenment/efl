@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #ifndef _ECORE_CON_H
 #define _ECORE_CON_H
 
@@ -69,9 +72,14 @@ extern "C" {
    typedef enum _Ecore_Con_Type
      {
 	ECORE_CON_LOCAL_USER,
-	  ECORE_CON_LOCAL_SYSTEM,
-	  ECORE_CON_REMOTE_SYSTEM,
-	  ECORE_CON_USE_SSL = 16
+	ECORE_CON_LOCAL_SYSTEM,
+#ifdef HAVE_ABSTRACT_SOCKETS
+	ECORE_CON_LOCAL_ABSTRACT,
+#endif
+	ECORE_CON_REMOTE_SYSTEM
+#ifdef USE_OPENSSL
+	,ECORE_CON_USE_SSL = 16
+#endif
      } Ecore_Con_Type;
    
 #endif

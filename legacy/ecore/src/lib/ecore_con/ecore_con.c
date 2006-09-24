@@ -53,6 +53,7 @@ static int init_count = 0;
 static int ssl_init_count = 0;
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
+#define LENGTH_OF_ABSTRACT_SOCKADDR_UN(s, path) (strlen(path) + 1 + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 
 /**
  * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
@@ -168,18 +169,24 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    /* unset the SSL flag for the following checks */
    type &= ~ECORE_CON_USE_SSL;
 #endif
-   
+  
    if ((type == ECORE_CON_LOCAL_USER) ||
-       (type == ECORE_CON_LOCAL_SYSTEM))
+       (type == ECORE_CON_LOCAL_SYSTEM)
+#ifdef HAVE_ABSTRACT_SOCKETS
+       || (type == ECORE_CON_LOCAL_ABSTRACT)
+#endif
+       )
      {
 	const char *homedir;
 	struct stat st;
 	mode_t pmode, mask;
+	int socket_unix_len;
 	
 	if (!name) goto error;
 	mask =
 	  S_IRGRP | S_IWGRP | S_IXGRP |
 	  S_IROTH | S_IWOTH | S_IXOTH;
+
 	if (type == ECORE_CON_LOCAL_USER)
 	  {
 	     homedir = getenv("HOME");
@@ -229,11 +236,28 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	     goto error;
 	  }
 	socket_unix.sun_family = AF_UNIX;
-	strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
-	if (bind(svr->fd, (struct sockaddr *)&socket_unix, LENGTH_OF_SOCKADDR_UN(&socket_unix)) < 0)
+#ifdef HAVE_ABSTRACT_SOCKET
+	if (type == ECORE_CON_LOCAL_ABSTRACT)
+	  {
+	     /* . is a placeholder */
+	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
+	     /* first char null indicates abstract namespace */
+	     socket_unix.sun_path[0] = '\0'; 
+	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
+	  }
+	else
+	  {
+	     strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+	     socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+	  }
+#else
+        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+        socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+#endif
+	if (bind(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
 	  {
 	     if (connect(svr->fd, (struct sockaddr *)&socket_unix, 
-			 LENGTH_OF_SOCKADDR_UN(&socket_unix)) < 0)
+			 socket_unix_len) < 0)
 	       {
 		  if ((type == ECORE_CON_LOCAL_USER) ||
 		      (type == ECORE_CON_LOCAL_SYSTEM))
@@ -401,9 +425,14 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    if ((type == ECORE_CON_REMOTE_SYSTEM) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) ||
-       (type == ECORE_CON_LOCAL_SYSTEM))
+       (type == ECORE_CON_LOCAL_SYSTEM)
+#ifdef HAVE_ABSTRACT_SOCKETS
+       || (type == ECORE_CON_LOCAL_ABSTRACT)
+#endif
+       )
      {
 	const char *homedir;
+	int socket_unix_len;
 	
 	if (type == ECORE_CON_LOCAL_USER)
 	  {
@@ -435,8 +464,26 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
 	if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
 	socket_unix.sun_family = AF_UNIX;
-	strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
-	if (connect(svr->fd, (struct sockaddr *)&socket_unix, LENGTH_OF_SOCKADDR_UN(&socket_unix)) < 0) goto error;
+
+#ifdef HAVE_ABSTRACT_SOCKETS
+	if (type == ECORE_CON_LOCAL_ABSTRACT)
+	  {
+	     /* copy name insto sun_path, prefixed by null to indicate abstract namespace */
+	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
+	     socket_unix.sun_path[0] = '\0';
+	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
+	  }
+	else
+	  {
+	     strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+	     socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+	  }
+#else
+        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+        socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+#endif
+
+	if (connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) goto error;
 	svr->path = strdup(buf);
 	if (!svr->path) goto error;
 	svr->fd_handler = ecore_main_fd_handler_add(svr->fd,

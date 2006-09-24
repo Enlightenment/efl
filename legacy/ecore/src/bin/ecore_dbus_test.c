@@ -9,6 +9,7 @@ static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
 
 static void ecore_dbus_method_list_names_cb(void *data, Ecore_DBus_Method_Return *reply);
+static void ecore_dbus_method_test_cb(void *data, Ecore_DBus_Method_Return *reply);
 static void ecore_dbus_method_error_cb(void *data, const char *error);
 
 static const char *event_type_get(Ecore_DBus_Message_Type type);
@@ -18,12 +19,13 @@ static Ecore_DBus_Server *svr = NULL;
 int
 main(int argc, char **argv)
 {
+   char *bus_addr = NULL, *socket_name = NULL;
    ecore_dbus_init();
-   svr = ecore_dbus_server_connect(ECORE_DBUS_BUS_SYSTEM,
-				   "/var/run/dbus/system_dbus_socket", -1, NULL);
+
+   svr = ecore_dbus_server_session_connect(NULL);
    if (!svr)
      {
-	printf("Couldn't connect to dbus system server!\n");
+	printf("Couldn't connect to dbus system server (%s)!\n", socket_name);
      }
    else
      {
@@ -59,11 +61,11 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 				ecore_dbus_method_list_names_cb,
 				ecore_dbus_method_error_cb, NULL);
    ecore_dbus_message_new_method_call(event->server,
-				      "org.freedesktop.DBus" /*destination*/,
-				      "/org/freedesktop/DBus" /*path*/,
-				      "org.freedesktop.DBus" /*interface*/,
-				      "ListName" /*method*/,
-				      ecore_dbus_method_list_names_cb,
+				      "/org/enlightenment/Test" /*path*/,
+				      "org.enlightenment.Test" /*interface*/,
+				      "Test" /*method*/,
+				      "org.enlightenment.Test" /*destination*/,
+				      ecore_dbus_method_test_cb,
 				      ecore_dbus_method_error_cb, NULL,
 				      NULL /*fmt*/);
    return 0;
@@ -79,6 +81,13 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
    svr = NULL;
    ecore_main_loop_quit();
    return 0;
+}
+
+static void
+ecore_dbus_method_test_cb(void *data,
+			  Ecore_DBus_Method_Return *reply)
+{
+   printf("test reply cb\n");
 }
 
 static void

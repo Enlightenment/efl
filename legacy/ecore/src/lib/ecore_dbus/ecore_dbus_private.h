@@ -4,6 +4,9 @@
 #ifndef _ECORE_DBUS_PRIVATE_H
 #define _ECORE_DBUS_PRIVATE_H
 
+#include "Ecore_Con.h"
+#include "Ecore_Data.h"
+
 typedef unsigned char *(*Ecore_DBus_Auth_Transaction)(void *);
 
 typedef struct _Ecore_DBus_Auth                      Ecore_DBus_Auth;
@@ -56,7 +59,7 @@ typedef enum _Ecore_DBus_Auth_Type
 
 struct _Ecore_DBus_Server
 {
-   Ecore_List2            __list_data;
+   Ecore_List2             __list_data;
    Ecore_Con_Server        *server;
    int                      authenticated;
    int                      auth_type;

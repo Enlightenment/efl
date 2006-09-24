@@ -889,6 +889,11 @@ if test "x$use_openssl" = "xyes"; then
   )
 fi
 
+AC_ABSTRACT_SOCKET_TEST(
+  [AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract socket namespace])],
+  []
+)
+
 want_ecore_ipc="yes";
 have_ecore_ipc="no";
 ecore_ipc_cflags="";
