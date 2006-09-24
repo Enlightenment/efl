@@ -1,6 +1,3 @@
-/*
- * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
- */
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
 
@@ -64,7 +61,6 @@ ecore_desktop_xmlame_get(char *file)
 	     ecore_desktop_tree_extend(tree, file);
 	     _ecore_desktop_xmlame_parse(tree, buffer);
 	  }
-	free(buffer);
      }
    return tree;
 }
@@ -72,7 +68,7 @@ ecore_desktop_xmlame_get(char *file)
 static char        *
 _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 {
-   while (*buffer != '\0')
+   do
      {
 	char               *text;
 
@@ -90,7 +86,7 @@ _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 
 	     t = *buffer;
 	     *buffer = '\0';
-	     ecore_desktop_tree_extend(tree, text);
+	     ecore_desktop_tree_extend(tree, strdup(text));
 	     *buffer = t;
 	  }
 	if (*buffer != '\0')
@@ -119,7 +115,7 @@ _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 		    {		/* The beginning of an element. */
 		       Ecore_Desktop_Tree *new_tree;
 
-		       new_tree = ecore_desktop_tree_new(NULL);
+		       new_tree = ecore_desktop_xmlame_new(NULL);
 		       if (new_tree)
 			 {
 			    ecore_desktop_tree_add_child(tree, new_tree);
@@ -131,6 +127,7 @@ _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 	       }
 	  }
      }
+   while (*buffer != '\0');
 
    return buffer;
 }

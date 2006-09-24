@@ -131,10 +131,8 @@ struct _Ecore_Desktop_Tree
 {
    Ecore_Desktop_Tree_Element *elements;	/* An array of elements. */
    int                 size;	/* The size of the array. */
-#if 0
    char              **buffers;	/* An array of pointers to the bits of data. */
    int                 buffers_size;	/* The size of the array. */
-#endif
    Ecore_Desktop_Tree *parent;	/* Parent if this is a child. */
 };
 
@@ -247,8 +245,7 @@ extern              "C"
 						    Ecore_Desktop_Tree *
 						    element);
    Ecore_Desktop_Tree *ecore_desktop_tree_add_hash(Ecore_Desktop_Tree * tree,
-						   Ecore_Hash * element,
-						   int free);
+						   Ecore_Hash * element);
    void                ecore_desktop_tree_remove(Ecore_Desktop_Tree * tree,
 						 int element);
    int                 ecore_desktop_tree_exist(Ecore_Desktop_Tree * tree,
