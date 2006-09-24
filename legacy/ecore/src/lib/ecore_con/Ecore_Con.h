@@ -73,13 +73,9 @@ extern "C" {
      {
 	ECORE_CON_LOCAL_USER,
 	ECORE_CON_LOCAL_SYSTEM,
-#ifdef HAVE_ABSTRACT_SOCKETS
 	ECORE_CON_LOCAL_ABSTRACT,
-#endif
 	ECORE_CON_REMOTE_SYSTEM
-#ifdef USE_OPENSSL
 	,ECORE_CON_USE_SSL = 16
-#endif
      } Ecore_Con_Type;
    
 #endif
