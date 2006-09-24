@@ -315,10 +315,10 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
 	  {
 	     E_FN_DEL(ecore_desktop_tree_del, (merge_stack));
 	  }
-	E_FREE(data.path);
-	E_FREE(data.base);
-	E_FN_DEL(ecore_desktop_tree_del, (data.stack));
      }
+   E_FN_DEL(ecore_desktop_tree_del, (data.stack));
+   E_FREE(data.path);
+   E_FREE(data.base);
 
    return menu_xml;
 }

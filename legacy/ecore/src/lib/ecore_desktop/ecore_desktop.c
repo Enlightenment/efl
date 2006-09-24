@@ -743,9 +743,9 @@ _ecore_desktop_destroy(Ecore_Desktop * desktop)
    IFFREE(desktop->window_name);
    IFFREE(desktop->window_title);
    IFFREE(desktop->window_role);
-   IFFREE(desktop->NotShowIn);
-   IFFREE(desktop->OnlyShowIn);
-   IFFREE(desktop->Categories);
+   if (desktop->NotShowIn) ecore_hash_destroy(desktop->NotShowIn);
+   if (desktop->OnlyShowIn) ecore_hash_destroy(desktop->OnlyShowIn);
+   if (desktop->Categories) ecore_hash_destroy(desktop->Categories);
    if (desktop->data)
      {
 	ecore_hash_destroy(desktop->data);

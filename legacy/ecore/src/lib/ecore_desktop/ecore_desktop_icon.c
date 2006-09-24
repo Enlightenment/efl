@@ -575,6 +575,8 @@ _ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme * icon_theme)
       free(icon_theme->directories);
    if (icon_theme->Directories)
       ecore_list_destroy(icon_theme->Directories);
+   if (icon_theme->Inherits)
+      ecore_list_destroy(icon_theme->Inherits);
    free(icon_theme);
 }
 
