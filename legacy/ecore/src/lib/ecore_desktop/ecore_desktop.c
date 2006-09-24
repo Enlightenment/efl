@@ -454,7 +454,14 @@ _ecore_desktop_get(const char *file, const char *lang)
 	       }
 	  }
 
-	ecore_hash_set(desktop_cache, strdup(result->original_path), result);
+        /* Final sanity check. */
+        if ((result->data) && (!result->group))
+	  {
+             _ecore_desktop_destroy(result);
+	     result = NULL;
+	  }
+	else
+	   ecore_hash_set(desktop_cache, strdup(result->original_path), result);
      }
 
 error:
@@ -489,7 +496,7 @@ ecore_desktop_save(Ecore_Desktop * desktop)
      {
 	if ((desktop->ondisk) && (desktop->original_path))
 	  {
-	     if (!desktop->data) desktop->data = ecore_desktop_ini_get(desktop->original_path);
+	     desktop->data = ecore_desktop_ini_get(desktop->original_path);
 	     desktop->group =
 		(Ecore_Hash *) ecore_hash_get(desktop->data, "Desktop Entry");
 	     if (!desktop->group)
