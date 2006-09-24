@@ -122,7 +122,6 @@ struct _Ecore_Desktop_Tree_Element
 {
    void               *element;	/* A pointer to the element. */
    Ecore_Desktop_Tree_Element_Type type;	/* The type of the element. */
-   unsigned char       free : 1;
 };
 typedef struct _Ecore_Desktop_Tree_Element Ecore_Desktop_Tree_Element;
 
