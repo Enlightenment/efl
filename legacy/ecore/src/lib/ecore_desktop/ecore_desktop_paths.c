@@ -281,6 +281,8 @@ _ecore_desktop_paths_create(void)
 static void
 _ecore_desktop_paths_destroy(void)
 {
+   int i;
+
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_xsessions);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_config);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_directories);
@@ -288,6 +290,14 @@ _ecore_desktop_paths_destroy(void)
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_icons);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_kde_legacy);
    E_FN_DEL(ecore_list_destroy, ecore_desktop_paths_desktops);
+
+   for (i = 0; i < ECORE_DESKTOP_PATHS_MAX; i++)
+     {
+	E_FN_DEL(ecore_list_destroy, prepend_user_paths[i]);
+	E_FN_DEL(ecore_list_destroy, prepend_system_paths[i]);
+	E_FN_DEL(ecore_list_destroy, append_user_paths[i]);
+	E_FN_DEL(ecore_list_destroy, append_system_paths[i]);
+     }
 }
 
 EAPI void
