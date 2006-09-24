@@ -222,7 +222,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     char               *categories = NULL;
 	     int                 size = 0;
 
-	     value = ecore_file_get_file(result->original_path);
+	     value = (char *) ecore_file_get_file(result->original_path);
 	     if (value)
 	       {
 		  char *temp;
