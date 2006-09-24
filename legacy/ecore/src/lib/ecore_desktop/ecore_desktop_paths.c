@@ -720,9 +720,12 @@ ecore_desktop_paths_recursive_search(const char *path, const char *file,
 		       if ((dir_func) && (dir_func(data, info_text)))
 			   break;
 		       if (sub != 0)
-			 fpath =
-			    ecore_desktop_paths_recursive_search(info_text, file, sub,
-								 dir_func, func, data);
+			 {
+			    if (fpath) free(fpath);
+			    fpath =
+			       ecore_desktop_paths_recursive_search(info_text, file, sub,
+								    dir_func, func, data);
+			 }
 		    }
 	       }
 	     else
