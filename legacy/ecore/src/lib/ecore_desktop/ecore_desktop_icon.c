@@ -452,7 +452,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 
    /* According to the spec, name and comment are required, but we can fake those easily enough. */
    value = ecore_hash_get(result->group, "Name");
-   if (!value) value = icon_theme;
+   if (!value) value = (char *) icon_theme;
    result->name = strdup(value);
    value = ecore_hash_get(result->group, "Comment");
    if (!value) value = "No comment provided.";
