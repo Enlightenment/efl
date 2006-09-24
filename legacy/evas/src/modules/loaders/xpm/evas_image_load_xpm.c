@@ -539,7 +539,7 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
 						     r = (unsigned char)cmap[j].r;
                                                      g = (unsigned char)cmap[j].g;
                                                      b = (unsigned char)cmap[j].b;
-						     *ptr = (0xff << 24) |ky (r << 16) | (g << 8) | b;
+						     *ptr = (0xff << 24) | (r << 16) | (g << 8) | b;
 						     ptr++;
                                                      count++;
                                                   }
@@ -567,7 +567,7 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
                                                 r = (unsigned char)cmap[j].r;
                                                 g = (unsigned char)cmap[j].g;
                                                 b = (unsigned char)cmap[j].b;
-						*ptr = (0xff << 24) |ky (r << 16) | (g << 8) | b;
+						*ptr = (0xff << 24) | (r << 16) | (g << 8) | b;
 						ptr++;
 						count++;
                                                 break;
