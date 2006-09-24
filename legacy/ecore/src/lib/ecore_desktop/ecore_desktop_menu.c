@@ -151,7 +151,7 @@ ecore_desktop_menu_for_each(void (*func)
 	     ecore_desktop_tree_foreach(menus, 0, _ecore_desktop_menu_make_apps,
 					func);
 // FIXME: Can't free this just yet, causes major memory corruption.
-//               ecore_desktop_tree_del(menus);
+	     ecore_desktop_tree_del(menus);
 	  }
 	free(menu_file);
      }
@@ -337,6 +337,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 	     tree->elements[element].type =
 		ECORE_DESKTOP_TREE_ELEMENT_TYPE_NULL;
 	     tree->elements[element].element = NULL;
+	     tree->elements[element].free = 0;
 	  }
 	else if (strcmp((char *)tree->elements[element].element, "<Menu") == 0)
 	  {
@@ -355,6 +356,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 		  tree->elements[element].element = menu;
 		  tree->elements[element].type =
 		     ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE;
+		  tree->elements[element].free = 1;
 		  for (i = element + 1; i < tree->size; i++)
 		    {
 		       int                 result = 0;
@@ -369,6 +371,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 				 tree->elements[i].type =
 				    ECORE_DESKTOP_TREE_ELEMENT_TYPE_NULL;
 				 tree->elements[i].element = NULL;
+				 tree->elements[i].free = 0;
 			      }
 			    else
 			       if (strcmp
@@ -631,9 +634,9 @@ _ecore_desktop_menu_create_menu()
 	ecore_hash_set_free_value(apps, free);
 	ecore_desktop_tree_extend(menu, "<MENU <    > <> <>");
 	ecore_desktop_tree_extend(menu, "<MENU_PATH ");
-	ecore_desktop_tree_add_hash(menu, pool);
+	ecore_desktop_tree_add_hash(menu, pool, 1);
 	ecore_desktop_tree_add_child(menu, rules);
-	ecore_desktop_tree_add_hash(menu, apps);
+	ecore_desktop_tree_add_hash(menu, apps, 1);
      }
    else
      {
@@ -1467,9 +1470,9 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 		    {
 		       while (unxml_data->stack->size < level)
 			  ecore_desktop_tree_add_hash(unxml_data->stack,
-						      generate_data.pool);
+						      generate_data.pool, 0);
 		       ecore_desktop_tree_add_hash(unxml_data->stack,
-						   generate_data.pool);
+						   generate_data.pool, 0);
 		    }
 		  else
 		    {
@@ -1586,7 +1589,7 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	     desktop->allocated = TRUE;
 	     if (generate_data->include)
 	       {
-		  ecore_hash_set(generate_data->apps, key, strdup(app));
+		  ecore_hash_set(generate_data->apps, strdup(key), strdup(app));
 #ifdef DEBUG
 		  printf("INCLUDING %s%s - %s\n",
 			 ((generate_data->unallocated) ? "UNALLOCATED " : ""),

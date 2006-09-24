@@ -122,6 +122,7 @@ struct _Ecore_Desktop_Tree_Element
 {
    void               *element;	/* A pointer to the element. */
    Ecore_Desktop_Tree_Element_Type type;	/* The type of the element. */
+   unsigned char       free : 1;
 };
 typedef struct _Ecore_Desktop_Tree_Element Ecore_Desktop_Tree_Element;
 
@@ -244,7 +245,8 @@ extern              "C"
 						    Ecore_Desktop_Tree *
 						    element);
    Ecore_Desktop_Tree *ecore_desktop_tree_add_hash(Ecore_Desktop_Tree * tree,
-						   Ecore_Hash * element);
+						   Ecore_Hash * element,
+						   int free);
    void                ecore_desktop_tree_remove(Ecore_Desktop_Tree * tree,
 						 int element);
    int                 ecore_desktop_tree_exist(Ecore_Desktop_Tree * tree,
