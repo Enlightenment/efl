@@ -371,12 +371,15 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
 		       
                        if (load_data)
                          {
+			    if (im->image->data)
+			      evas_common_image_surface_dealloc(im->image);
 			    im->image->w = w;
 			    im->image->h = h;
                             evas_common_image_surface_alloc(im->image);
                             if (!im->image->data)
                               {
                                  evas_common_image_surface_free(im->image);
+				 im->image = NULL;
                                  free(cmap);
                                  free(line);
                                  fclose(f);
