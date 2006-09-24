@@ -68,7 +68,7 @@ ecore_desktop_xmlame_get(char *file)
 static char        *
 _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 {
-   do
+   while (*buffer != '\0')
      {
 	char               *text;
 
@@ -127,7 +127,6 @@ _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 	       }
 	  }
      }
-   while (*buffer != '\0');
 
    return buffer;
 }
