@@ -270,6 +270,7 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
 	if (oops == 0)
 	  {
 #if 1
+	     /* FIXME: Somewhere in this code mem leaks. */
 	     /* Get on with it. */
 	     ecore_desktop_tree_foreach(menu_xml, 0, _ecore_desktop_menu_unxml,
 					&data);
