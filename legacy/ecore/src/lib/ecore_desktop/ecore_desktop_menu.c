@@ -355,6 +355,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 
 		  flags = (char *)menu->elements[0].element;
 		  flags += 7;
+		  /* FIXME: Should this be here? It is done again at the end */
 		  tree->elements[element].element = menu;
 		  tree->elements[element].type =
 		     ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE;
