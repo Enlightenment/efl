@@ -17,8 +17,8 @@
 
 #include "Ecore.h"
 #include "ecore_private.h"
-#include "ecore_con_private.h"
 #include "Ecore_Con.h"
+#include "ecore_con_private.h"
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>

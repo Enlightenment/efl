@@ -15,23 +15,6 @@
 
 #define READBUFSIZ 65536
 
-typedef struct _Ecore_Con_Client Ecore_Con_Client;
-typedef struct _Ecore_Con_Server Ecore_Con_Server;
-#ifdef HAVE_CURL
-typedef struct _Ecore_Con_Url    Ecore_Con_Url;
-#else
-typedef void Ecore_Con_Url;
-#endif
-
-typedef enum _Ecore_Con_Type
-{
-   ECORE_CON_LOCAL_USER,
-   ECORE_CON_LOCAL_SYSTEM,
-   ECORE_CON_LOCAL_ABSTRACT,
-   ECORE_CON_REMOTE_SYSTEM,
-   ECORE_CON_USE_SSL = 16
-} Ecore_Con_Type;
-
 struct _Ecore_Con_Client
 {
    Ecore_List        __list_data;

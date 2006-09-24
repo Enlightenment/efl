@@ -37,8 +37,8 @@
  */
 #include "Ecore.h"
 #include "ecore_private.h"
-#include "ecore_con_private.h"
 #include "Ecore_Con.h"
+#include "ecore_con_private.h"
 
 #ifdef HAVE_CURL
 static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);

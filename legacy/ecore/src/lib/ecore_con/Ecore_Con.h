@@ -64,10 +64,9 @@
 extern "C" {
 #endif
    
-#ifndef _ECORE_CON_PRIVATE_H
-   typedef void Ecore_Con_Server; /**< A connection handle */
-   typedef void Ecore_Con_Client; /**< A connection handle */
-   typedef void Ecore_Con_Url;
+   typedef struct _Ecore_Con_Server Ecore_Con_Server; /**< A connection handle */
+   typedef struct _Ecore_Con_Client Ecore_Con_Client; /**< A connection handle */
+   typedef struct _Ecore_Con_Url    Ecore_Con_Url;
    
    typedef enum _Ecore_Con_Type
      {
@@ -77,8 +76,6 @@ extern "C" {
 	ECORE_CON_REMOTE_SYSTEM,
 	ECORE_CON_USE_SSL = 16
      } Ecore_Con_Type;
-   
-#endif
    
    typedef struct _Ecore_Con_Event_Client_Add  Ecore_Con_Event_Client_Add;
    typedef struct _Ecore_Con_Event_Client_Del  Ecore_Con_Event_Client_Del;
