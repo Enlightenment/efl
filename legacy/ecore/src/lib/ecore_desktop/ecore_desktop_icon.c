@@ -321,9 +321,13 @@ ecore_desktop_icon_theme_list(void)
 {
    static int          loaded = 0;
    if (!loaded)
-      ecore_desktop_paths_file_find(ecore_desktop_paths_icons, "index.theme", 2,
-				    _ecore_desktop_icon_theme_list_add, NULL);
-   loaded = 1;
+     {
+	char *tmp;
+	tmp = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, "index.theme", 2,
+					    _ecore_desktop_icon_theme_list_add, NULL);
+	loaded = 1;
+	free(tmp);
+     }
    return icon_theme_cache;
 }
 

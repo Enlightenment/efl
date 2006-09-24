@@ -45,10 +45,12 @@ ecore_desktop_tree_new(char *buffer)
    tree = E_NEW(Ecore_Desktop_Tree, 1);
    if ((tree) && (buffer))
      {
+#if 0
 	tree->buffers =
 	   (char **)realloc(tree->buffers,
 			    (tree->buffers_size + 1) * sizeof(char *));
 	tree->buffers[tree->buffers_size++] = strdup(buffer);
+#endif
      }
    return tree;
 }
@@ -63,7 +65,7 @@ ecore_desktop_tree_add(Ecore_Desktop_Tree * tree, char *element)
 					     sizeof
 					     (Ecore_Desktop_Tree_Element));
    tree->elements[tree->size].element = strdup(element);
-   tree->elements[tree->size].free = 0;
+   tree->elements[tree->size].free = 1;
    tree->elements[tree->size++].type = ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING;
    return tree;
 }
@@ -71,11 +73,14 @@ ecore_desktop_tree_add(Ecore_Desktop_Tree * tree, char *element)
 Ecore_Desktop_Tree *
 ecore_desktop_tree_extend(Ecore_Desktop_Tree * tree, char *element)
 {
+#if 0
    tree->buffers =
       (char **)realloc(tree->buffers,
 		       (tree->buffers_size + 1) * sizeof(char *));
    tree->buffers[tree->buffers_size++] = strdup(element);
    tree = ecore_desktop_tree_add(tree, tree->buffers[tree->buffers_size - 1]);
+#endif
+   tree = ecore_desktop_tree_add(tree, element);
 
    return tree;
 }
@@ -83,13 +88,17 @@ ecore_desktop_tree_extend(Ecore_Desktop_Tree * tree, char *element)
 void
 ecore_desktop_tree_track(Ecore_Desktop_Tree * tree, void *element)
 {
+#if 0
    tree->buffers =
       (char **)realloc(tree->buffers,
 		       (tree->buffers_size + 1) * sizeof(char *));
    tree->buffers[tree->buffers_size++] = element;
+#endif
 }
 
 /* OK, so we need an insert after all, and it falls into the dumb category. */
+/* FIXME: Needs to handle .free */
+#if 0
 Ecore_Desktop_Tree *
 ecore_desktop_tree_insert(Ecore_Desktop_Tree * tree, int before, void *element,
 			  Ecore_Desktop_Tree_Element_Type type)
@@ -114,6 +123,7 @@ ecore_desktop_tree_insert(Ecore_Desktop_Tree * tree, int before, void *element,
    tree->elements[before].free = free;
    return tree;
 }
+#endif
 
 /* OK, so we need a tree merge after all, and it falls into the dumb category. */
 Ecore_Desktop_Tree *
@@ -147,6 +157,7 @@ ecore_desktop_tree_merge(Ecore_Desktop_Tree * tree, int before,
      }
 
    /* Careful, this might screw up the freeing order if that is important. */
+#if 0
    size = element->buffers_size;
    if (size)
      {
@@ -160,6 +171,7 @@ ecore_desktop_tree_merge(Ecore_Desktop_Tree * tree, int before,
             }
 */
      }
+#endif
    return tree;
 }
 
@@ -361,16 +373,22 @@ ecore_desktop_tree_del(Ecore_Desktop_Tree * tree)
 
    for (i = tree->size - 1; i >= 0; i--)
      {
-	if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
-	  ecore_desktop_tree_del((Ecore_Desktop_Tree *) tree->elements[i].element);
-	else if ((tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH) &&
-		 (tree->elements[i].free))
-	  ecore_hash_destroy((Ecore_Hash *) tree->elements[i].element);
+	if (tree->elements[i].free)
+	  {
+	     if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
+	       free(tree->elements[i].element);
+	     else if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
+	       ecore_desktop_tree_del((Ecore_Desktop_Tree *) tree->elements[i].element);
+	     else if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH)
+	       ecore_hash_destroy((Ecore_Hash *) tree->elements[i].element);
+	  }
      }
 
    E_FREE(tree->elements);
 
+#if 0
    for (i = tree->buffers_size - 1; i >= 0; i--)
       E_FREE(tree->buffers[i]);
+#endif
    E_FREE(tree);
 }

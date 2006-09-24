@@ -150,7 +150,6 @@ ecore_desktop_menu_for_each(void (*func)
 	     /* create the .desktop and order files from the menu */
 	     ecore_desktop_tree_foreach(menus, 0, _ecore_desktop_menu_make_apps,
 					func);
-// FIXME: Can't free this just yet, causes major memory corruption.
 	     ecore_desktop_tree_del(menus);
 	  }
 	free(menu_file);
@@ -270,6 +269,7 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
 
 	if (oops == 0)
 	  {
+#if 1
 	     /* Get on with it. */
 	     ecore_desktop_tree_foreach(menu_xml, 0, _ecore_desktop_menu_unxml,
 					&data);
@@ -303,6 +303,7 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
 		  printf("\n\n");
 #endif
 	       }
+#endif
 	  }
      }
    else
@@ -311,10 +312,10 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
    if (oops)
      {
 	E_FN_DEL(ecore_desktop_tree_del, (menu_xml));
-	if (level == 0)
-	  {
-	     E_FN_DEL(ecore_desktop_tree_del, (merge_stack));
-	  }
+     }
+   if (level == 0)
+     {
+	E_FN_DEL(ecore_desktop_tree_del, (merge_stack));
      }
    E_FN_DEL(ecore_desktop_tree_del, (data.stack));
    E_FREE(data.path);
@@ -609,6 +610,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 		       tree->elements[element].element = menu;
 		       tree->elements[element].type =
 			  ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE;
+		       tree->elements[element].free = 1;
 		    }
 	       }
 	  }
@@ -1480,6 +1482,7 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 			  ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH;
 		       unxml_data->stack->elements[level].element =
 			  generate_data.pool;
+		       unxml_data->stack->elements[level].free = 0;
 		    }
 		  for (i = level - 1; i >= 0; i--)
 		    {

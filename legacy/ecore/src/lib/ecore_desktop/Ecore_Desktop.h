@@ -131,8 +131,10 @@ struct _Ecore_Desktop_Tree
 {
    Ecore_Desktop_Tree_Element *elements;	/* An array of elements. */
    int                 size;	/* The size of the array. */
+#if 0
    char              **buffers;	/* An array of pointers to the bits of data. */
    int                 buffers_size;	/* The size of the array. */
+#endif
    Ecore_Desktop_Tree *parent;	/* Parent if this is a child. */
 };
 

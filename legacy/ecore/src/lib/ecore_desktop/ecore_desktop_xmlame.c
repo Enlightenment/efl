@@ -64,7 +64,7 @@ ecore_desktop_xmlame_get(char *file)
 	     ecore_desktop_tree_extend(tree, file);
 	     _ecore_desktop_xmlame_parse(tree, buffer);
 	  }
-	//FIXME: free(buffer);
+	free(buffer);
      }
    return tree;
 }
@@ -119,7 +119,7 @@ _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 		    {		/* The beginning of an element. */
 		       Ecore_Desktop_Tree *new_tree;
 
-		       new_tree = ecore_desktop_xmlame_new(NULL);
+		       new_tree = ecore_desktop_tree_new(NULL);
 		       if (new_tree)
 			 {
 			    ecore_desktop_tree_add_child(tree, new_tree);
