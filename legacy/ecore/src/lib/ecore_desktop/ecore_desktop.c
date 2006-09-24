@@ -74,14 +74,15 @@ ecore_desktop_ini_get(const char *file)
 
 	c = buffer;
 	/* Strip preceeding blanks. */
-	while ((*c != '\0') && (isspace(*c))) c++;
+        while (((*c == ' ') || (*c == '\t')) && (*c != '\n') && (*c != '\0'))
+		c++;
 	/* Skip blank lines and comments */
 	if ((*c == '\0') || (*c == '\n') || (*c == '#')) continue;
 	if (*c == '[')	/* New group. */
 	  {
 	     key = c + 1;
 	     while ((*c != ']') && (*c != '\n') && (*c != '\0'))
-	       c++;
+	        c++;
 	     *c++ = '\0';
 	     current = ecore_hash_new(ecore_str_hash, ecore_str_compare);
 	     if (current)
@@ -100,20 +101,24 @@ ecore_desktop_ini_get(const char *file)
 
 	     key = c;
 	     /* Find trailing blanks or =. */
-	     while ((*c != '\0') && (*c != '=') && (!isspace(*c))) c++;
+	     while ((*c != '=') && (*c != ' ') && (*c != '\t') && (*c != '\n') && (*c != '\0'))
+	        c++;
 	     if (*c != '=')	/* Find equals. */
 	       {
 		  *c++ = '\0';
-		  while ((*c != '\0') && (*c != '=')) c++;
+	          while ((*c != '=') && (*c != '\n') && (*c != '\0'))
+		     c++;
 	       }
 	     if (*c == '=')	/* Equals found. */
 	       {
 		  *c++ = '\0';
 		  /* Strip preceeding blanks. */
-		  while ((*c != '\0') && (isspace(*c))) c++;
+	          while (((*c == ' ') || (*c == '\t')) && (*c != '\n') && (*c != '\0'))
+		     c++;
 		  value = c;
 		  /* Find end. */
-		  while ((*c != '\0') && (!isspace(*c))) c++;
+		  while ((*c != '\n') && (*c != '\0'))
+		     c++;
 		  *c++ = '\0';
 		  /* FIXME: should strip space at end, then unescape value. */
 		  tv = ecore_hash_remove(current, key);
@@ -248,7 +253,8 @@ _ecore_desktop_get(const char *file, const char *lang)
 		  if (exe)
 		    {
 		       *exe = '\0';
-		       result->exec_params = ++exe;
+		       exe++;
+		       result->exec_params = strdup(exe);
 		    }
 		  exe = result->exec;
 	       }
