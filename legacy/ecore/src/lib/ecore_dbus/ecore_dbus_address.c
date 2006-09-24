@@ -184,13 +184,11 @@ ecore_dbus_address_connect(Ecore_DBus_Address *addr, const void *data)
        type = ECORE_CON_LOCAL_SYSTEM;
        name = ecore_dbus_address_value_get(addr, "path");
 
-#ifdef HAVE_ABSTRACT_SOCKETS
        if (!name)
 	 {
 	    name = ecore_dbus_address_value_get(addr, "abstract");
 	    type = ECORE_CON_LOCAL_ABSTRACT;
 	 }
-#endif
 
        if (!name) return NULL;
        port = -1;

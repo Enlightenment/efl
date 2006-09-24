@@ -171,11 +171,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 #endif
   
    if ((type == ECORE_CON_LOCAL_USER) ||
-       (type == ECORE_CON_LOCAL_SYSTEM)
-#ifdef HAVE_ABSTRACT_SOCKETS
-       || (type == ECORE_CON_LOCAL_ABSTRACT)
-#endif
-       )
+       (type == ECORE_CON_LOCAL_SYSTEM) ||
+       (type == ECORE_CON_LOCAL_ABSTRACT))
      {
 	const char *homedir;
 	struct stat st;
@@ -236,24 +233,25 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	     goto error;
 	  }
 	socket_unix.sun_family = AF_UNIX;
-#ifdef HAVE_ABSTRACT_SOCKET
 	if (type == ECORE_CON_LOCAL_ABSTRACT)
 	  {
+#ifdef HAVE_ABSTRACT_SOCKET
 	     /* . is a placeholder */
 	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
 	     /* first char null indicates abstract namespace */
 	     socket_unix.sun_path[0] = '\0'; 
 	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
+#else
+	     fprintf(stderr, "Your system does not support abstract sockets!\n");
+	     umask(pmode);	     
+	     goto error;
+#endif
 	  }
 	else
 	  {
 	     strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
 	     socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
 	  }
-#else
-        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
-        socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-#endif
 	if (bind(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
 	  {
 	     if (connect(svr->fd, (struct sockaddr *)&socket_unix, 
@@ -425,11 +423,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    if ((type == ECORE_CON_REMOTE_SYSTEM) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) ||
-       (type == ECORE_CON_LOCAL_SYSTEM)
-#ifdef HAVE_ABSTRACT_SOCKETS
-       || (type == ECORE_CON_LOCAL_ABSTRACT)
-#endif
-       )
+       (type == ECORE_CON_LOCAL_SYSTEM) ||
+       (type == ECORE_CON_LOCAL_ABSTRACT))
      {
 	const char *homedir;
 	int socket_unix_len;
@@ -465,23 +460,23 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
 	socket_unix.sun_family = AF_UNIX;
 
-#ifdef HAVE_ABSTRACT_SOCKETS
 	if (type == ECORE_CON_LOCAL_ABSTRACT)
 	  {
+#ifdef HAVE_ABSTRACT_SOCKETS
 	     /* copy name insto sun_path, prefixed by null to indicate abstract namespace */
 	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
 	     socket_unix.sun_path[0] = '\0';
 	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
+#else
+	     fprintf(stderr, "Your system does not support abstract sockets!\n");
+	     goto error;
+#endif
 	  }
 	else
 	  {
 	     strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
 	     socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
 	  }
-#else
-        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
-        socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-#endif
 
 	if (connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) goto error;
 	svr->path = strdup(buf);
