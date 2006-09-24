@@ -86,7 +86,7 @@ _ecore_desktop_xmlame_parse(Ecore_Desktop_Tree * tree, char *buffer)
 
 	     t = *buffer;
 	     *buffer = '\0';
-	     ecore_desktop_tree_extend(tree, strdup(text));
+	     ecore_desktop_tree_extend(tree, text);
 	     *buffer = t;
 	  }
 	if (*buffer != '\0')
