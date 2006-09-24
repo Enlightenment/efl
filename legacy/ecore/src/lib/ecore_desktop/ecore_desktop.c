@@ -73,7 +73,7 @@ ecore_desktop_ini_get(const char *file)
 	char               *value;
 
 	c = buffer;
-	/* Strip preceeding blanks. */
+	/* Strip preceeding blanks.  Note that \n is treated differently from the other white space. */
         while (((*c == ' ') || (*c == '\t')) && (*c != '\n') && (*c != '\0'))
 		c++;
 	/* Skip blank lines and comments */
@@ -112,7 +112,7 @@ ecore_desktop_ini_get(const char *file)
 	     if (*c == '=')	/* Equals found. */
 	       {
 		  *c++ = '\0';
-		  /* Strip preceeding blanks. */
+		  /* Strip preceeding blanks.  Note that \n is treated differently from the other white space. */
 	          while (((*c == ' ') || (*c == '\t')) && (*c != '\n') && (*c != '\0'))
 		     c++;
 		  value = c;
