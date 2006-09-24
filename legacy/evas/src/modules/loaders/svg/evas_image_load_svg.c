@@ -37,7 +37,6 @@ svg_loader_unpremul_data(DATA32 *data, unsigned int len)
 int
 evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 {
-   DATA32             *ptr, *end;
    char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
    
    RsvgHandle         *rsvg;
@@ -112,7 +111,6 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 int
 evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 {
-   DATA32             *ptr, *end;
    char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
    
    RsvgHandle         *rsvg;
