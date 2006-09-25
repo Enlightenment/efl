@@ -978,12 +978,15 @@ ecore_desktop_instrumentation_reset(void)
 EAPI void
 ecore_desktop_instrumentation_print(void)
 {
-   printf("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
-   printf("    Found %5d desktops          %2.5f (%2.6f/desktop)\n", instrumentation.desktops, instrumentation.desktops_time, instrumentation.desktops_time / instrumentation.desktops);
-   printf("    Found %5d desktops in cache %2.5f (%2.6f/desktop)\n", instrumentation.desktops_in_cache, instrumentation.desktops_in_cache_time, instrumentation.desktops_in_cache_time / instrumentation.desktops_in_cache);
-   printf("Not found %5d desktops          %2.5f (%2.6f/desktop)\n", instrumentation.desktops_not_found, instrumentation.desktops_not_found_time, instrumentation.desktops_not_found_time / instrumentation.desktops_not_found);
-   printf("    Found %5d icons             %2.5f (%2.6f/icon)\n", instrumentation.icons, instrumentation.icons_time, instrumentation.icons_time / instrumentation.icons);
-   printf("    Found %5d icons    in cache %2.5f (%2.6f/icon)\n", instrumentation.icons_in_cache, instrumentation.icons_in_cache_time, instrumentation.icons_in_cache_time / instrumentation.icons_in_cache);
-   printf("Not found %5d icons             %2.5f (%2.6f/icon)\n", instrumentation.icons_not_found, instrumentation.icons_not_found_time, instrumentation.icons_not_found_time / instrumentation.icons_not_found);
-   printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n");
+   if ((instrumentation.desktops + instrumentation.desktops_in_cache + instrumentation.desktops_not_found + instrumentation.icons + instrumentation.icons_in_cache + instrumentation.icons_not_found) > 0)
+     {
+        printf("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
+        printf("    Found %5d desktops          %2.5f (%2.6f/desktop)\n", instrumentation.desktops, instrumentation.desktops_time, instrumentation.desktops_time / instrumentation.desktops);
+        printf("    Found %5d desktops in cache %2.5f (%2.6f/desktop)\n", instrumentation.desktops_in_cache, instrumentation.desktops_in_cache_time, instrumentation.desktops_in_cache_time / instrumentation.desktops_in_cache);
+        printf("Not found %5d desktops          %2.5f (%2.6f/desktop)\n", instrumentation.desktops_not_found, instrumentation.desktops_not_found_time, instrumentation.desktops_not_found_time / instrumentation.desktops_not_found);
+        printf("    Found %5d icons             %2.5f (%2.6f/icon)\n", instrumentation.icons, instrumentation.icons_time, instrumentation.icons_time / instrumentation.icons);
+        printf("    Found %5d icons    in cache %2.5f (%2.6f/icon)\n", instrumentation.icons_in_cache, instrumentation.icons_in_cache_time, instrumentation.icons_in_cache_time / instrumentation.icons_in_cache);
+        printf("Not found %5d icons             %2.5f (%2.6f/icon)\n", instrumentation.icons_not_found, instrumentation.icons_not_found_time, instrumentation.icons_not_found_time / instrumentation.icons_not_found);
+        printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n");
+     }
 }
