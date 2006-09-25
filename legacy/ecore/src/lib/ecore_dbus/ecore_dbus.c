@@ -490,7 +490,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	       }
 	  }
      }
-   return 1;
+   return 0;
 }
 
 static void
