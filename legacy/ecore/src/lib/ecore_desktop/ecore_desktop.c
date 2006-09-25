@@ -194,6 +194,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     stated = 1;
 	  }
      }
+   /* Not in cache, get it the slow way. */
    if (!result)
      {
 	result = calloc(1, sizeof(Ecore_Desktop));
@@ -215,11 +216,13 @@ _ecore_desktop_get(const char *file, const char *lang)
 	result->group = ecore_hash_get(result->data, "Desktop Entry");
 	if (!result->group)
 	  result->group = ecore_hash_get(result->data, "KDE Desktop Entry");
+	/* This is a "Desktop" file, probably an application. */
 	if (result->group)
 	  {
 	     int                 size = 0;
 
 	     value = (char *) ecore_file_get_file(result->original_path);
+	     /* Figure out the eap_name. */
 	     if (value)
 	       {
 		  char *temp;
@@ -243,6 +246,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     IFGETDUP(value, "File", result->file);
 
 	     IFGETDUP(value, "Exec", result->exec);
+	     /* Seperate out the params. */
 	     if (result->exec)
 	       {
 	          char               *exe = NULL;
@@ -257,11 +261,11 @@ _ecore_desktop_get(const char *file, const char *lang)
 	       }
 
 	     IFGETDUP(value, "StartupWMClass", result->window_class);
+	     /* Guess a window class - exe name with first letter capitalized. */
 	     if ((!value) && (result->exec))
 	       {
 		  char               *tmp;
 
-		  /* Guess - exe name with first letter capitalized. */
 		  tmp = strdup(result->exec);
 		  if (tmp)
 		    {
@@ -293,6 +297,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     IFGETDUP(value, "X-Enlightenment-IconClass", result->icon_class);
 	     IFGETDUP(value, "X-Enlightenment-IconPath", result->icon_path);
 
+             /* If the icon is a path put the full path into the icon_path member.*/
 	     if ((result->icon != NULL) && (result->icon_path == NULL) &&
 		 (strchr(result->icon, '/') != NULL))
 	       {
@@ -326,13 +331,11 @@ _ecore_desktop_get(const char *file, const char *lang)
 		    }
 	       }
 
-	     /*    icon/class is a list of standard icons from the theme that can override the icon created above.
-	      *    Use (from .desktop) name,exe name,categories.  It's case sensitive, the reccomendation is to lowercase it.
-	      *    It should be most specific to most generic.  firefox,browser,internet for instance
-	      */
-
-	     /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
-	      * Otherwise, put that full path into the icon_path member.
+	     /* icon/class is a list of standard icons from the theme that can override the icon created above.
+	      * Use (from .desktop) name.edj,exec,categories.  It's case sensitive, the reccomendation is to lowercase it.
+	      * It should be most specific to most generic.  firefox,browser,internet for instance
+	      * If the icon in the file is not a full path, just put it first in the class, greatly simplifies things later
+	      * when it's time to do the search.
 	      */
 	     if (!result->icon_class)
 	       {
