@@ -272,7 +272,7 @@ static int
 _ecore_dbus_address_value_char_optional_encode(char c)
 {
    /* addl optional chars (other than 0-9A-Za-z) */
-   char OPTIONAL_CHARS[] = {'_', '-', '/', '.', '\\'};
+   static const char OPTIONAL_CHARS[] = {'_', '-', '/', '.', '\\'};
    int i;
 
    if (isascii(c) && (isalpha(c) || isdigit(c))) return 1;
@@ -291,7 +291,7 @@ _ecore_dbus_address_value_encode(const char *value)
    const char *p;
    int i;
 
-   const char hexdigits[16] = {
+   static const char hexdigits[16] = {
       '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
       'a', 'b', 'c', 'd', 'e', 'f'
    };
