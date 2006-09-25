@@ -217,9 +217,6 @@ _ecore_desktop_get(const char *file, const char *lang)
 	  result->group = ecore_hash_get(result->data, "KDE Desktop Entry");
 	if (result->group)
 	  {
-	     char               *eap_name = NULL;
-	     char               *exe = NULL;
-	     char               *categories = NULL;
 	     int                 size = 0;
 
 	     value = (char *) ecore_file_get_file(result->original_path);
@@ -235,7 +232,6 @@ _ecore_desktop_get(const char *file, const char *lang)
 		    sprintf(result->eap_name, "%s.edj", value);
 		  if (temp) *temp = '.';
 	       }
-	     eap_name = result->eap_name;
 
 	     IFGETDUP(value, "Name", result->name);
 	     IFGETDUP(value, "GenericName", result->generic);
@@ -249,6 +245,8 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     IFGETDUP(value, "Exec", result->exec);
 	     if (result->exec)
 	       {
+	          char               *exe = NULL;
+
 		  exe = strchr(result->exec, ' ');
 		  if (exe)
 		    {
@@ -256,7 +254,6 @@ _ecore_desktop_get(const char *file, const char *lang)
 		       exe++;
 		       result->exec_params = strdup(exe);
 		    }
-		  exe = result->exec;
 	       }
 
 	     IFGETDUP(value, "StartupWMClass", result->window_class);
@@ -287,6 +284,10 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     IFGETDUP(value, "X-Enlightenment-WindowTitle", result->window_title);
 	     IFGETDUP(value, "X-Enlightenment-WindowRole", result->window_role);
 
+	     IFGETDUP(value, "Categories", result->categories);
+	     if (result->categories)
+	       result->Categories =
+		  ecore_desktop_paths_to_hash(result->categories);
 	     IFGETDUP(value, "Icon", result->icon);
 	     IFGETDUP(value, "X-Enlightenment-IconTheme", result->icon_theme);
 	     IFGETDUP(value, "X-Enlightenment-IconClass", result->icon_class);
@@ -325,11 +326,91 @@ _ecore_desktop_get(const char *file, const char *lang)
 		    }
 	       }
 
-	     IFGETDUP(value, "Categories", result->categories);
-	     if (result->categories)
-	       result->Categories =
-		  ecore_desktop_paths_to_hash(result->categories);
-	     categories = result->categories;
+	     /*    icon/class is a list of standard icons from the theme that can override the icon created above.
+	      *    Use (from .desktop) name,exe name,categories.  It's case sensitive, the reccomendation is to lowercase it.
+	      *    It should be most specific to most generic.  firefox,browser,internet for instance
+	      */
+
+	     /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
+	      * Otherwise, put that full path into the icon_path member.
+	      */
+	     if (!result->icon_class)
+	       {
+		  size = 0;
+		  if ((result->icon) && (strchr(result->icon, '/') == NULL))
+		    size += strlen(result->icon) + 1;
+		  if (result->eap_name)
+		    size += strlen(result->eap_name) + 1;
+		  if (result->exec)
+		    size += strlen(result->exec) + 1;
+		  if (result->categories)
+		    size += strlen(result->categories) + 1;
+		  result->icon_class = malloc(size + 1);
+		  if (result->icon_class)
+		    {
+		       char               *p;
+		       int                 done = 0;
+
+		       result->icon_class[0] = '\0';
+		       if ((result->icon) && (strchr(result->icon, '/') == NULL) &&
+			   (result->icon[0] != '\0'))
+			 {
+			    strcat(result->icon_class, result->icon);
+			    done = 1;
+			 }
+		       /* We do this here coz we don't want to lower case the result->icon part later. */
+		       p = result->icon_class;
+		       p += strlen(result->icon_class);
+		       if ((result->eap_name) && (result->eap_name[0] != '\0'))
+			 {
+			    if (done)
+			      strcat(result->icon_class, ",");
+			    strcat(result->icon_class, result->eap_name);
+			    done = 1;
+			 }
+		       if ((result->exec) && (result->exec[0] != '\0'))
+			 {
+			    char               *tmp;
+
+			    tmp = strdup(ecore_file_get_file(result->exec));
+			    if (tmp)
+			      {
+				 char               *p2;
+
+				 p2 = tmp;
+				 while (*p2 != '\0')
+				   {
+				      if (*p2 == ' ')
+					{
+					   *p2 = '\0';
+					   break;
+					}
+				      p2++;
+				   }
+				 if (done)
+				   strcat(result->icon_class, ",");
+				 strcat(result->icon_class, tmp);
+				 done = 1;
+				 free(tmp);
+			      }
+			 }
+		       if ((result->categories) && (result->categories[0] != '\0'))
+			 {
+			    if (done)
+			      strcat(result->icon_class, ",");
+			    strcat(result->icon_class, result->categories);
+			    done = 1;
+			 }
+		       while (*p != '\0')
+			 {
+			    if (*p == ';')
+			      *p = ',';
+			    else
+			      *p = tolower(*p);
+			    p++;
+			 }
+		    }
+	       }
 
 	     value = ecore_hash_get(result->group, "OnlyShowIn");
 	     if (value)
@@ -355,92 +436,6 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     if (value)
 	       result->hidden = (strcmp(value, "true") == 0);
 
-	     /*
-	      *    icon/class is a list of standard icons from the theme that can override the icon created above.
-	      *    Use (from .desktop) eap name,exe name,categories.  It's case sensitive, the reccomendation is to lowercase it.
-	      *    It should be most specific to most generic.  firefox,browser,internet for instance
-	      */
-
-	     /* If the icon in the file is not a full path, just put it first in the class, greatly simplifies things. 
-	      * Otherwise, put that full path into the icon_path member.
-	      */
-	     if (!result->icon_class)
-	       {
-		  size = 0;
-		  if ((result->icon) && (strchr(result->icon, '/') == NULL))
-		    size += strlen(result->icon) + 1;
-		  if (eap_name)
-		    size += strlen(eap_name) + 1;
-		  if (exe)
-		    size += strlen(exe) + 1;
-		  if (categories)
-		    size += strlen(categories) + 1;
-		  result->icon_class = malloc(size + 1);
-		  if (result->icon_class)
-		    {
-		       char               *p;
-		       int                 done = 0;
-
-		       result->icon_class[0] = '\0';
-		       if ((result->icon) && (strchr(result->icon, '/') == NULL) &&
-			   (result->icon[0] != '\0'))
-			 {
-			    strcat(result->icon_class, result->icon);
-			    done = 1;
-			 }
-		       /* We do this here coz we don't want to lower case the result->icon part later. */
-		       p = result->icon_class;
-		       p += strlen(result->icon_class);
-		       if ((eap_name) && (eap_name[0] != '\0'))
-			 {
-			    if (done)
-			      strcat(result->icon_class, ",");
-			    strcat(result->icon_class, eap_name);
-			    done = 1;
-			 }
-		       if ((exe) && (exe[0] != '\0'))
-			 {
-			    char               *tmp;
-
-			    tmp = strdup(ecore_file_get_file(exe));
-			    if (tmp)
-			      {
-				 char               *p2;
-
-				 p2 = tmp;
-				 while (*p2 != '\0')
-				   {
-				      if (*p2 == ' ')
-					{
-					   *p2 = '\0';
-					   break;
-					}
-				      p2++;
-				   }
-				 if (done)
-				   strcat(result->icon_class, ",");
-				 strcat(result->icon_class, tmp);
-				 done = 1;
-				 free(tmp);
-			      }
-			 }
-		       if ((categories) && (categories[0] != '\0'))
-			 {
-			    if (done)
-			      strcat(result->icon_class, ",");
-			    strcat(result->icon_class, categories);
-			    done = 1;
-			 }
-		       while (*p != '\0')
-			 {
-			    if (*p == ';')
-			      *p = ',';
-			    else
-			      *p = tolower(*p);
-			    p++;
-			 }
-		    }
-	       }
 	  }
 	else
 	  {

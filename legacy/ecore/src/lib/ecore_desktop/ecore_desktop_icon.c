@@ -53,45 +53,50 @@ EAPI char         *
 ecore_desktop_icon_find(const char *icon, const char *icon_size,
 			const char *icon_theme)
 {
-   char           *dir = NULL, *icn;
+   char           *result = NULL, *icn;
    Ecore_List     *icons;
    int             in_cache = 0;
    double          begin;
 
    begin = ecore_time_get();
-   if (icon == NULL)
-      return NULL;
-
-   /* Easy check first, was a full path supplied? */
-   if ((icon[0] == '/') && (ecore_file_exists(icon)))
-      return strdup(icon);
-
-   if (icon_size == NULL)
-      icon_size = "48x48";
-   if (icon_theme == NULL)
-      icon_theme = "hicolor";
-
-   icons = ecore_desktop_paths_to_list(icon);
-   if (!icons)
-      return NULL;
-   ecore_list_goto_first(icons);
-   while ((icn = ecore_list_next(icons)))
+   if (icon)
      {
-	char *ext;
+        /* Easy check first, was a full path supplied? */
+        if ((icon[0] == '/') && (ecore_file_exists(icon)))
+           result = strdup(icon);
+	else
+	  {
+             icons = ecore_desktop_paths_to_list(icon);
+             if (icons)
+	       {
+
+                  if (icon_size == NULL)
+                     icon_size = "48x48";
+                  if (icon_theme == NULL)
+                     icon_theme = "hicolor";
+                  ecore_list_goto_first(icons);
+                  while ((icn = ecore_list_next(icons)))
+                    {
+	               char *ext;
 #ifdef DEBUG
-	fprintf(stderr, "\tTrying To Find Icon %s\n", icn);
+	               fprintf(stderr, "\tTrying To Find Icon %s\n", icn);
 #endif
-	ext = strrchr(icn, '.');
-	/* Check for unsupported extension */
-	if ((ext) && (!strcmp(ext, ".ico"))) continue;
+	               ext = strrchr(icn, '.');
+	               /* Check for unsupported extension */
+	               if ((ext) && (!strcmp(ext, ".ico")))
+		          continue;
 
-	dir = _ecore_desktop_icon_find0(icn, icon_size, icon_theme);
-	if (dir)
-	   break;
-     }
-   ecore_list_destroy(icons);
+	               result = _ecore_desktop_icon_find0(icn, icon_size, icon_theme);
+	               if (result)
+	                  break;
+                    }
+                  ecore_list_destroy(icons);
 
-   if (dir)
+	       } /* if (icons) */
+	  } /* if ((icon[0] == '/') && (ecore_file_exists(icon))) ; else */
+     } /* if (icon) */
+
+   if (result)
      {
         if (in_cache)
           {
@@ -109,7 +114,8 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
         instrumentation.icons_not_found_time += ecore_time_get() - begin;
         instrumentation.icons_not_found++;
      }
-   return dir;
+
+   return result;
 }
 
 /** Search for an icon the fdo way.
