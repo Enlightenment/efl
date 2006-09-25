@@ -8,9 +8,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
+
+static void _ecore_dbus_address_list_free_cb(void *data);
+
+static int _ecore_dbus_address_value_char_optional_encode(char c);
+static char * _ecore_dbus_address_value_decode(const char *value);
+static char * _ecore_dbus_address_value_encode(const char *value);
 
 static void
-_list_free_cb(void *data)
+_ecore_dbus_address_list_free_cb(void *data)
 {
   if (data) free(data);
 }
@@ -23,9 +30,9 @@ ecore_dbus_address_new()
    if (!a) return NULL;
 
    a->keys = ecore_list_new();
-   ecore_list_set_free_cb(a->keys, _list_free_cb);
+   ecore_list_set_free_cb(a->keys, _ecore_dbus_address_list_free_cb);
    a->vals = ecore_list_new();
-   ecore_list_set_free_cb(a->vals, _list_free_cb);
+   ecore_list_set_free_cb(a->vals, _ecore_dbus_address_list_free_cb);
 
    return a;
 }
@@ -84,7 +91,7 @@ ecore_dbus_address_parse(const char *address)
 		  break;
 	       }
 	     *p = '\0';
-	     ecore_list_append(a->vals, strdup(val));
+	     ecore_list_append(a->vals, _ecore_dbus_address_value_decode(val));
 	     val = NULL;
 
 	     if (sep == ',')
@@ -130,8 +137,8 @@ ecore_dbus_address_parse(const char *address)
    return alist;
 }
 
-char *
-ecore_dbus_address_value_get(Ecore_DBus_Address *address, char *key)
+const char *
+ecore_dbus_address_value_get(Ecore_DBus_Address *address, const char *key)
 {
    int i;
    char *s;
@@ -150,6 +157,33 @@ ecore_dbus_address_value_get(Ecore_DBus_Address *address, char *key)
    return NULL;
 }
 
+EAPI char *
+ecore_dbus_address_string(Ecore_DBus_Address *address)
+{
+   char buf[PATH_MAX];
+   char *key, *val;
+   int left = PATH_MAX - 1; /* space left in the buffer, leaving room for a final null */
+
+   if (!address) return NULL;
+  
+   snprintf(buf, PATH_MAX, "%s:", address->transport);
+   left -= strlen(address->transport) + 1;
+   ecore_list_goto_first(address->keys);
+   ecore_list_goto_first(address->vals);
+   while ((key = ecore_list_next(address->keys)) && (val = ecore_list_next(address->vals)))
+     {
+	char *encval;
+	strncat(buf, key, left);
+	left -= strlen(key);
+	strncat(buf, "=", left);
+	left -= 1;
+	encval = _ecore_dbus_address_value_encode(val);
+	strncat(buf, encval, left);
+	left -= strlen(encval);
+	free(encval);
+     }
+   return strdup(buf);
+}
 
 /**
  * Connect to the first successful server in a list of addresses.
@@ -178,6 +212,11 @@ ecore_dbus_address_connect(Ecore_DBus_Address *addr, const void *data)
   const char *name;
   int type;
   int port;
+
+  char *addr_string;
+  addr_string = ecore_dbus_address_string(addr);
+  printf("[ecore_dbus] connecting to address: %s\n", addr_string);
+  free(addr_string);
 
   if (!strcmp(addr->transport, "unix")) 
     {
@@ -229,3 +268,94 @@ ecore_dbus_print_address_list(Ecore_List *addresses)
      }
 }
 
+static int
+_ecore_dbus_address_value_char_optional_encode(char c)
+{
+   /* addl optional chars (other than 0-9A-Za-z) */
+   char OPTIONAL_CHARS[] = {'_', '-', '/', '.', '\\'};
+   int i;
+
+   if (isascii(c) && (isalpha(c) || isdigit(c))) return 1;
+   for (i = 0; i < sizeof(OPTIONAL_CHARS); i++)
+     if (c == OPTIONAL_CHARS[i]) return 1;
+   
+   return 0;
+
+
+}
+
+static char *
+_ecore_dbus_address_value_encode(const char *value)
+{
+   char *buf;
+   const char *p;
+   int i;
+
+   const char hexdigits[16] = {
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+      'a', 'b', 'c', 'd', 'e', 'f'
+   };
+
+   
+   if (!value) return NULL;
+   buf = malloc(3 * strlen(value) + 1);
+
+   p = value;
+   i = 0;
+   while (*p)
+     {
+	if (_ecore_dbus_address_value_char_optional_encode(*p))
+	  buf[i++] = *p;
+	else
+	  {
+	     buf[i++] = '%';
+	     buf[i++] = hexdigits[(*p >> 4)];
+	     buf[i++] = hexdigits[(*p & 0xf)];
+	  }
+	p++;
+     }
+
+   buf[i] = '\0';
+   return buf;
+}
+
+static char *
+_ecore_dbus_address_value_decode(const char *value)
+{
+   char *buf;
+   const char *p;
+   int i;
+
+   buf = malloc(strlen(value) + 1);
+ 
+   *buf = '\0';
+   p = value;
+   i = 0;
+   while (*p)
+     {
+	if (*p == '%')
+	  {
+	     char c = 0;
+	     int j;
+	     for (j = 0; j < 2; j++) 
+	       {
+		  p++;
+		  c = c << 4;
+		  if ('0' <= *p && *p <= '9')
+		    c |= *p - '0';
+		  else if ('A' <= *p && *p <= 'F')
+		    c |= 10 + *p - 'A';
+		  else if ('a' <= *p && *p <= 'f') /* a-f */
+		    c |= 10 + *p - 'a';
+	       }
+	     buf[i++] = c;
+	  }
+	else
+	  buf[i++] = *p;
+
+	p++;
+     }
+
+   buf[i] = '\0';
+   return buf;
+}
