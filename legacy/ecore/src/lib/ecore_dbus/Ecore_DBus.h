@@ -211,7 +211,7 @@ extern "C" {
 
    EAPI Ecore_List         *ecore_dbus_address_parse(const char *address);
 
-   EAPI char               *ecore_dbus_address_value_get(Ecore_DBus_Address *address,
+   EAPI const char         *ecore_dbus_address_value_get(Ecore_DBus_Address *address,
 							 char *key);
    EAPI void                ecore_dbus_print_address_list(Ecore_List *addresses);
    EAPI Ecore_DBus_Server  *ecore_dbus_address_list_connect(Ecore_List *addrs, const void *data);
