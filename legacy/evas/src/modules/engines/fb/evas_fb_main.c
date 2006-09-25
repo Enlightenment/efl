@@ -12,8 +12,8 @@
 #include <sys/wait.h>
 #include <linux/kd.h>
 #include <linux/vt.h>
+#include <asm/page.h>
 #include <sys/user.h>
-//#include <asm/page.h>
 
 #define FB_ACTIVE    0
 #define FB_REL_REQ   1
