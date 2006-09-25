@@ -25,6 +25,7 @@ ecore_desktop_icon.c \
 ecore_desktop_menu.c \
 ecore_desktop_paths.c \
 ecore_desktop_xmlame.c \
+ecore_desktop_xml.c \
 ecore_desktop_private.h
 
 libecore_desktop_la_LIBADD = \
