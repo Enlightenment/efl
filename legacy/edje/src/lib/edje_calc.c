@@ -1119,51 +1119,52 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	p3.smooth = (pos < 0.5) ? p1.smooth : p2.smooth;
 
 	/* FIXME: do x and y separately base on flag */
-	p3.x = (p1.x * (1.0 - pos)) + (p2.x * (pos));
-	p3.y = (p1.y * (1.0 - pos)) + (p2.y * (pos));
-	p3.w = (p1.w * (1.0 - pos)) + (p2.w * (pos));
-	p3.h = (p1.h * (1.0 - pos)) + (p2.h * (pos));
+#define INTP(_x1, _x2, _p) ((_x1) + (((_x2) - (_x1)) * _p))
+	p3.x = INTP(p1.x, p2.x, pos);
+	p3.y = INTP(p1.y, p2.y, pos);
+	p3.w = INTP(p1.w, p2.w, pos);
+	p3.h = INTP(p1.h, p2.h, pos);
 
-	p3.req.x = (p1.req.x * (1.0 - pos)) + (p2.req.x * (pos));
-	p3.req.y = (p1.req.y * (1.0 - pos)) + (p2.req.y * (pos));
-	p3.req.w = (p1.req.w * (1.0 - pos)) + (p2.req.w * (pos));
-	p3.req.h = (p1.req.h * (1.0 - pos)) + (p2.req.h * (pos));
+	p3.req.x = INTP(p1.req.x, p2.req.x, pos);
+	p3.req.y = INTP(p1.req.y, p2.req.y, pos);
+	p3.req.w = INTP(p1.req.w, p2.req.w, pos);
+	p3.req.h = INTP(p1.req.h, p2.req.h, pos);
 
-	p3.req_drag.x = (p1.req_drag.x * (1.0 - pos)) + (p2.req_drag.x * (pos));
-	p3.req_drag.y = (p1.req_drag.y * (1.0 - pos)) + (p2.req_drag.y * (pos));
-	p3.req_drag.w = (p1.req_drag.w * (1.0 - pos)) + (p2.req_drag.w * (pos));
-	p3.req_drag.h = (p1.req_drag.h * (1.0 - pos)) + (p2.req_drag.h * (pos));
+	p3.req_drag.x = INTP(p1.req_drag.x, p2.req_drag.x, pos);
+	p3.req_drag.y = INTP(p1.req_drag.y, p2.req_drag.y, pos);
+	p3.req_drag.w = INTP(p1.req_drag.w, p2.req_drag.w, pos);
+	p3.req_drag.h = INTP(p1.req_drag.h, p2.req_drag.h, pos);
 	
-	p3.fill.x = (p1.fill.x * (1.0 - pos)) + (p2.fill.x * (pos));
-	p3.fill.y = (p1.fill.y * (1.0 - pos)) + (p2.fill.y * (pos));
-	p3.fill.w = (p1.fill.w * (1.0 - pos)) + (p2.fill.w * (pos));
-	p3.fill.h = (p1.fill.h * (1.0 - pos)) + (p2.fill.h * (pos));
-	p3.fill.angle = (p1.fill.angle * (1.0 - pos)) + (p2.fill.angle * (pos));
+	p3.fill.x = INTP(p1.fill.x, p2.fill.x, pos);
+	p3.fill.y = INTP(p1.fill.y, p2.fill.y, pos);
+	p3.fill.w = INTP(p1.fill.w, p2.fill.w, pos);
+	p3.fill.h = INTP(p1.fill.h, p2.fill.h, pos);
+	p3.fill.angle = INTP(p1.fill.angle, p2.fill.angle, pos);
 	p3.fill.spread = pos > 0.5 ? p2.fill.spread : p1.fill.spread;
 
-	p3.color.r = (p1.color.r * (1.0 - pos)) + (p2.color.r * (pos));
-	p3.color.g = (p1.color.g * (1.0 - pos)) + (p2.color.g * (pos));
-	p3.color.b = (p1.color.b * (1.0 - pos)) + (p2.color.b * (pos));
-	p3.color.a = (p1.color.a * (1.0 - pos)) + (p2.color.a * (pos));
-	
-	p3.color2.r = (p1.color2.r * (1.0 - pos)) + (p2.color2.r * (pos));
-	p3.color2.g = (p1.color2.g * (1.0 - pos)) + (p2.color2.g * (pos));
-	p3.color2.b = (p1.color2.b * (1.0 - pos)) + (p2.color2.b * (pos));
-	p3.color2.a = (p1.color2.a * (1.0 - pos)) + (p2.color2.a * (pos));
-	
-	p3.color3.r = (p1.color3.r * (1.0 - pos)) + (p2.color3.r * (pos));
-	p3.color3.g = (p1.color3.g * (1.0 - pos)) + (p2.color3.g * (pos));
-	p3.color3.b = (p1.color3.b * (1.0 - pos)) + (p2.color3.b * (pos));
-	p3.color3.a = (p1.color3.a * (1.0 - pos)) + (p2.color3.a * (pos));
-	
-	p3.border.l = (p1.border.l * (1.0 - pos)) + (p2.border.l * (pos));
-	p3.border.r = (p1.border.r * (1.0 - pos)) + (p2.border.r * (pos));
-	p3.border.t = (p1.border.t * (1.0 - pos)) + (p2.border.t * (pos));
-	p3.border.b = (p1.border.b * (1.0 - pos)) + (p2.border.b * (pos));
+	p3.color.r = INTP(p1.color.r, p2.color.r, pos);
+	p3.color.g = INTP(p1.color.g, p2.color.g, pos);
+	p3.color.b = INTP(p1.color.b, p2.color.b, pos);
+	p3.color.a = INTP(p1.color.a, p2.color.a, pos);
 
-	p3.text.align.x = (p1.text.align.x * (1.0 - pos)) + (p2.text.align.x * (pos));
-	p3.text.align.y = (p1.text.align.y * (1.0 - pos)) + (p2.text.align.y * (pos));
-	p3.text.elipsis = (p1.text.elipsis * (1.0 - pos)) + (p2.text.elipsis * (pos));
+	p3.color2.r = INTP(p1.color2.r, p2.color2.r, pos);
+	p3.color2.g = INTP(p1.color2.g, p2.color2.g, pos);
+	p3.color2.b = INTP(p1.color2.b, p2.color2.b, pos);
+	p3.color2.a = INTP(p1.color2.a, p2.color2.a, pos);
+
+	p3.color3.r = INTP(p1.color3.r, p2.color3.r, pos);
+	p3.color3.g = INTP(p1.color3.g, p2.color3.g, pos);
+	p3.color3.b = INTP(p1.color3.b, p2.color3.b, pos);
+	p3.color3.a = INTP(p1.color3.a, p2.color3.a, pos);
+	
+	p3.border.l = INTP(p1.border.l, p2.border.l, pos);
+	p3.border.r = INTP(p1.border.r, p2.border.r, pos);
+	p3.border.t = INTP(p1.border.t, p2.border.t, pos);
+	p3.border.b = INTP(p1.border.b, p2.border.b, pos);
+
+	p3.text.align.x = INTP(p1.text.align.x, p2.text.align.x, pos);
+	p3.text.align.y = INTP(p1.text.align.y, p2.text.align.y, pos);
+	p3.text.elipsis = INTP(p1.text.elipsis, p2.text.elipsis, pos);
 
 	p3.gradient.id = pos > 0.5 ? p2.gradient.id : p1.gradient.id; 
 	p3.gradient.type = pos > 0.5 ? p2.gradient.type : p1.gradient.type; 
