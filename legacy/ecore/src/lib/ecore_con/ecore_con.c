@@ -207,6 +207,10 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	     else
 	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
 	  }
+	else if (type == ECORE_CON_LOCAL_ABSTRACT)
+	  {
+	     strncpy(buf, name, sizeof(buf));
+	  }
 	pmode = umask(mask);
 	start:
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -453,6 +457,11 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 		    snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
 	       }
 	  }
+	else if (type == ECORE_CON_LOCAL_ABSTRACT)
+	  {
+	     strncpy(buf, name, sizeof(buf));
+	  }
+
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (svr->fd < 0) goto error;
 	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
