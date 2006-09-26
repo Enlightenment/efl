@@ -563,12 +563,18 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	if (desktop->icon_theme)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconTheme"),
 			  strdup(desktop->icon_theme));
+	else
+           ecore_hash_remove(desktop->group, "X-Enlightenment-IconTheme");
 	if (desktop->icon_class)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconClass"),
 			  strdup(desktop->icon_class));
+	else
+           ecore_hash_remove(desktop->group, "X-Enlightenment-IconClass");
 	if (desktop->icon_path)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconPath"),
 			  strdup(desktop->icon_path));
+	else
+           ecore_hash_remove(desktop->group, "X-Enlightenment-IconPath");
 	if (desktop->window_class)
 	   ecore_hash_set(desktop->group, strdup("StartupWMClass"),
 			  strdup(desktop->window_class));
@@ -578,12 +584,18 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	if (desktop->window_name)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowName"),
 			  strdup(desktop->window_name));
+	else
+           ecore_hash_remove(desktop->group, "X-Enlightenment-WindowName");
 	if (desktop->window_title)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowTitle"),
 			  strdup(desktop->window_title));
+	else
+           ecore_hash_remove(desktop->group, "X-Enlightenment-WindowTitle");
 	if (desktop->window_role)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowRole"),
 			  strdup(desktop->window_role));
+	else
+           ecore_hash_remove(desktop->group, "X-Enlightenment-WindowRole");
 	ecore_hash_remove(desktop->group, "X-KDE-StartupNotify");
 	if (desktop->wait_exit)
 	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WaitExit"),
