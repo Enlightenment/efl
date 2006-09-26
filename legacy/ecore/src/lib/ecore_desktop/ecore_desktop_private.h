@@ -28,35 +28,11 @@ extern Ecore_List  *ecore_desktop_paths_kde_legacy;
 extern Ecore_List  *ecore_desktop_paths_xsessions;
 extern struct _Ecore_Desktop_Instrumentation instrumentation;
 
-typedef struct _Ecore_Desktop_Xml Ecore_Desktop_Xml;
-typedef struct _Ecore_Desktop_Xml_Attribute Ecore_Desktop_Xml_Attribute;
-
-
-struct _Ecore_Desktop_Xml
-{
-   char                         *tag;
-   Ecore_Desktop_Xml_Attribute **attributes;
-   char                         *text;
-
-   unsigned char done : 1;
-
-   Ecore_Desktop_Xml **children;
-   int                 children_count;
-   int                 children_size;
-};
-
-struct _Ecore_Desktop_Xml_Attribute
-{
-   char *key;
-   char *value;
-};
 
 # ifdef __cplusplus
 extern              "C"
 {
 # endif
-   Ecore_Desktop_Xml *ecore_desktop_xml_new(const char *file);
-   void               ecore_desktop_xml_del(Ecore_Desktop_Xml *xml);
 # ifdef __cplusplus
 }
 # endif
