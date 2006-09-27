@@ -62,7 +62,7 @@ ecore_dbus_address_parse(const char *address)
 
    addcpy = strdup(address);
    p = addcpy;
-   char *start;
+   char *start = NULL;
    char *transport = p;
    char *key = NULL;
    char *val = NULL;

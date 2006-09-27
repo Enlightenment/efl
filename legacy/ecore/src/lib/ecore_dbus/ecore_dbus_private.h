@@ -290,7 +290,11 @@ Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_custom_header(unsigned c
 Ecore_DBus_Message       *_ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, int size);
 
 
+/* ecore_dbus_object.c */
 int ecore_dbus_object_method_dispatch(Ecore_DBus_Server *server, const char *path, const char *interface, const char *method);
+int ecore_dbus_objects_init();
+void ecore_dbus_objects_shutdown();
+
 
 /* Errors */
 #define DBUS_ERROR_FAILED                     "org.freedesktop.DBus.Error.Failed"

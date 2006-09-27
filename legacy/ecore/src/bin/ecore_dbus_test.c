@@ -66,7 +66,8 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 				      "org.enlightenment.Test" /*destination*/,
 				      ecore_dbus_method_test_cb,
 				      ecore_dbus_method_error_cb, NULL,
-				      NULL /*fmt*/);
+				      "us" /*fmt*/,
+				      5, "hello");
    return 0;
 }
 

@@ -208,7 +208,7 @@ extern "C" {
    EAPI unsigned int ecore_dbus_message_new_error(Ecore_DBus_Server *svr, 
 	                                 char *error_name,
 					 int reply_serial, char *destination,
-					 char *signature, ...);
+					 char *error_message);
    EAPI unsigned int ecore_dbus_message_new_signal(Ecore_DBus_Server *svr,
 					 char *path,
 					 char *interface, char *signal_name,

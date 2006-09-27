@@ -9,7 +9,6 @@ static int ecore_dbus_event_server_add(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_server_del(void *udata, int ev_type, void *ev);
 static int ecore_dbus_event_method_call(void *udata, int ev_type, void *ev);
 
-static void ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Method_Return *reply);
 static void ecore_dbus_method_error_cb(void *data, const char *error);
 
 static void _test_object_init(Ecore_DBus_Server *svr);
@@ -90,12 +89,6 @@ ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
 }
 
 static void
-ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Method_Return *reply)
-{
-   printf("Match added. Should be listening for method calls now.\n");
-}
-
-static void
 ecore_dbus_method_error_cb(void *data, const char *error)
 {
    printf("Error: %s\n", error);
@@ -106,7 +99,23 @@ ecore_dbus_method_error_cb(void *data, const char *error)
 static void
 _test_object_test(Ecore_DBus_Event_Method_Call *event)
 {
+   Ecore_DBus_Message *msg;
+   unsigned int *i;
+   char *s;
+
    printf("received call to test!\n");
+   msg = event->message;
+
+   i = (unsigned int *)ecore_dbus_message_body_field_get(msg, 0);
+   s = (char *)ecore_dbus_message_body_field_get(msg, 1);
+
+   if (!i || !s) 
+   {
+      /* XXX reply with error */
+      return;
+   }
+
+   printf("	params: i = %d, s = \"%s\"\n", i ? *i : 0, s);
 }
 
 static void

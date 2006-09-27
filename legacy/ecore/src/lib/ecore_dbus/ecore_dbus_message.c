@@ -20,6 +20,10 @@ static void  _ecore_dbus_message_header(Ecore_DBus_Message *msg, int type,
 static void _ecore_dbus_message_body(Ecore_DBus_Message *msg,
                              char *signature, va_list args);
 
+static unsigned int _ecore_dbus_message_new_error(Ecore_DBus_Server *svr, char *error_name,
+			     int reply_serial, char *destination,
+			     char *signature, ...);
+
 static void  _ecore_dbus_message_field_free(void *data);
 
 /* printing functions */
@@ -74,8 +78,20 @@ ecore_dbus_message_new_method_return(Ecore_DBus_Server *svr, int reply_serial,
    return msg->serial;
 }
 
+/* errors either have a single param, the error message, or no params. */
 EAPI unsigned int
 ecore_dbus_message_new_error(Ecore_DBus_Server *svr, char *error_name,
+			     int reply_serial, char *destination,
+			     char *error_message)
+{
+   char *format = "";
+   if (error_message) format = "s";
+
+   return _ecore_dbus_message_new_error(svr, error_name, reply_serial, destination, format, error_message);
+}
+
+static unsigned int
+_ecore_dbus_message_new_error(Ecore_DBus_Server *svr, char *error_name,
 			     int reply_serial, char *destination,
 			     char *signature, ...)
 {
@@ -286,15 +302,11 @@ EAPI void *
 ecore_dbus_message_body_field_get(Ecore_DBus_Message *m, unsigned int pos)
 {
    Ecore_DBus_Message_Field *f;
-   unsigned int              i = 0;
+   f = ecore_list_goto_index(m->fields, pos);
 
-   ecore_list_goto_first(m->fields);
-   while ((f = ecore_list_next(m->fields)))
-     {
-	if (i == pos)
-	  return _ecore_dbus_message_field_value_get(f);
-	i++;
-     }
+   if (f)
+     return _ecore_dbus_message_field_value_get(f);
+
    return NULL;
 }
 
@@ -331,7 +343,7 @@ _ecore_dbus_message_new(Ecore_DBus_Server *svr)
 void *
 _ecore_dbus_message_field_new(Ecore_DBus_Message *msg, Ecore_DBus_Data_Type type)
 {
-   Ecore_DBus_Message_Field *f;
+   Ecore_DBus_Message_Field *f = NULL;
 
    switch (type)
      {
@@ -707,4 +719,3 @@ _ecore_dbus_message_print_raw(Ecore_DBus_Message *msg)
    printf("\n");
    printf("[ecore_dbus] end raw message\n");
 }
-
