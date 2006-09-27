@@ -59,9 +59,6 @@ _ecore_dbus_event_method_call_cb(void *udata, int evtype, void *ev)
 	  {
 	     char *s;
 	     printf("  %s => %d\n", key, (int)ecore_hash_get(event->server->objects, key));
-	     s = strdup(key);
-	     printf("  %s => %d\n", s, (int)ecore_hash_get(event->server->objects, s));
-	     free(s);
 	  }
 
 	ecore_list_destroy(keys);
