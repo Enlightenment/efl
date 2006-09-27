@@ -19,13 +19,12 @@ static Ecore_DBus_Server *svr = NULL;
 int
 main(int argc, char **argv)
 {
-   char *bus_addr = NULL, *socket_name = NULL;
    ecore_dbus_init();
 
    svr = ecore_dbus_server_session_connect(NULL);
    if (!svr)
      {
-	printf("Couldn't connect to dbus system server (%s)!\n", socket_name);
+	printf("Couldn't connect to dbus session server!\n");
      }
    else
      {
@@ -61,7 +60,7 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 				ecore_dbus_method_list_names_cb,
 				ecore_dbus_method_error_cb, NULL);
    ecore_dbus_message_new_method_call(event->server,
-				      "/org/enlightenment/Test" /*path*/,
+				      "/org/enlightenment/test" /*path*/,
 				      "org.enlightenment.Test" /*interface*/,
 				      "Test" /*method*/,
 				      "org.enlightenment.Test" /*destination*/,
@@ -140,6 +139,7 @@ event_type_get(Ecore_DBus_Message_Type type)
      }
    return "UNKNOWN";
 }
+
 #else
 int
 main(int argc, const char **argv)
@@ -148,3 +148,5 @@ main(int argc, const char **argv)
    return -1;
 }
 #endif
+
+

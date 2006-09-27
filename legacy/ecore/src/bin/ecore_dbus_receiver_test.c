@@ -12,6 +12,9 @@ static int ecore_dbus_event_method_call(void *udata, int ev_type, void *ev);
 static void ecore_dbus_method_add_match_cb(void *data, Ecore_DBus_Method_Return *reply);
 static void ecore_dbus_method_error_cb(void *data, const char *error);
 
+static void _test_object_init(Ecore_DBus_Server *svr);
+
+
 static Ecore_DBus_Server *svr = NULL;
 
 int
@@ -56,9 +59,9 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 
    event = ev;
    printf("ecore_dbus_event_server_add\n");
- 
+
    ecore_dbus_method_request_name(event->server, "org.enlightenment.Test", 0, NULL, ecore_dbus_method_error_cb, NULL);
-   ecore_dbus_method_add_match(event->server, "type=method_call,interface=org.enlightenment.Test", ecore_dbus_method_add_match_cb, ecore_dbus_method_error_cb, NULL);
+   _test_object_init(event->server);
    return 0;
 }
 
@@ -97,6 +100,23 @@ ecore_dbus_method_error_cb(void *data, const char *error)
 {
    printf("Error: %s\n", error);
    ecore_main_loop_quit();
+}
+
+
+static void
+_test_object_test(Ecore_DBus_Event_Method_Call *event)
+{
+   printf("received call to test!\n");
+}
+
+static void
+_test_object_init(Ecore_DBus_Server *svr)
+{
+   Ecore_DBus_Object *obj;
+   printf("init object!\n");
+   if (!svr) return;
+   obj = ecore_dbus_object_add(svr, "/org/enlightenment/test");
+   ecore_dbus_object_method_add(obj, "org.enlightenment.Test", "Test", _test_object_test);
 }
 
 #else
