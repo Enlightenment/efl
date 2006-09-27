@@ -477,15 +477,11 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 	       }
 	     else if (msg->type == ECORE_DBUS_MESSAGE_TYPE_SIGNAL)
 	       {
-		  Ecore_DBus_Event_Server_Data *ev2;
-		  ev2 = _ecore_dbus_event_create(svr, msg);
 		  ecore_event_add(ECORE_DBUS_EVENT_SIGNAL, ev2,
 				  _ecore_dbus_event_server_data_free, NULL);
 	       }
 	     else if (msg->type == ECORE_DBUS_MESSAGE_TYPE_METHOD_CALL)
 	       {
-		  Ecore_DBus_Event_Server_Data *ev2;
-		  ev2 = _ecore_dbus_event_create(svr, msg);
 		  ecore_event_add(ECORE_DBUS_EVENT_METHOD_CALL, ev2,
 				  _ecore_dbus_event_server_data_free, NULL);
 	       }
