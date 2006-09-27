@@ -67,6 +67,8 @@ struct _Ecore_DBus_Server
    int                      cnt_msg;
 
    Ecore_Hash              *messages;
+   Ecore_Hash		   *objects;
+
    char                    *unique_name;
 };
 
@@ -286,6 +288,9 @@ Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_data(unsigned char *buf,
 Ecore_DBus_Message_Field *_ecore_dbus_message_unmarshal_custom_header(unsigned char *buf, unsigned int *old_length);
 */
 Ecore_DBus_Message       *_ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, int size);
+
+
+int ecore_dbus_object_method_dispatch(Ecore_DBus_Server *server, const char *path, const char *interface, const char *method);
 
 /* Errors */
 #define DBUS_ERROR_FAILED                     "org.freedesktop.DBus.Error.Failed"

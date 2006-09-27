@@ -298,6 +298,12 @@ ecore_dbus_message_body_field_get(Ecore_DBus_Message *m, unsigned int pos)
    return NULL;
 }
 
+EAPI int
+ecore_dbus_message_serial_get(Ecore_DBus_Message *m)
+{
+   return m->serial;
+}
+
 /* message functions */
 
 Ecore_DBus_Message *

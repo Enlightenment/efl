@@ -105,6 +105,7 @@ ecore_dbus_init(void)
    handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
 					  _ecore_dbus_event_server_data, NULL);
 
+   ecore_dbus_objects_init();
    return init_count;
 }
 
@@ -115,6 +116,7 @@ ecore_dbus_shutdown(void)
 
    if (--init_count != 0) return init_count;
 
+   ecore_dbus_objects_shutdown();
    /* FIXME: Delete servers */
 
    for (i = 0; i < 3; i++)
@@ -231,6 +233,9 @@ ecore_dbus_server_connect(Ecore_Con_Type con_type, const char *name, int port,
    svr->auth_type_transaction = 0;
    svr->messages = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
    ecore_hash_set_free_value(svr->messages, ECORE_FREE_CB(_ecore_dbus_message_free));
+   svr->objects = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+   ecore_hash_set_free_key(svr->objects, free);
+   ecore_hash_set_free_value(svr->objects, ECORE_FREE_CB(ecore_dbus_object_free));
    servers = _ecore_list2_append(servers, svr);
 
    return svr;
@@ -243,6 +248,7 @@ ecore_dbus_server_del(Ecore_DBus_Server *svr)
    servers = _ecore_list2_remove(servers, svr);
    if (svr->unique_name) free(svr->unique_name);
    ecore_hash_destroy(svr->messages);
+   ecore_hash_destroy(svr->objects);
    free(svr);
 }
 

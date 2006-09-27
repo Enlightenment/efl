@@ -384,7 +384,7 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
    _ecore_dbus_message_append_bytes(msg, message, size);
    msg->length = 12;
    size -= 12;
-   /* Parse custom header */
+   /* Parse header fields */
    if (!(arr = _ecore_dbus_message_unmarshal_array_begin(msg, ECORE_DBUS_DATA_TYPE_STRUCT, &size)))
      {
 	printf("Could not parse custom header.\n");
@@ -461,10 +461,10 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
 		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
 		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
 		case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
-#if 0
+		   printf("[ecore_dbus] unhandled data type %c\n", type);
+		   break;
 		default:
-#endif
-		   printf("[ecore_dbus] unknown/unhandled data type %c\n", type);
+		   printf("[ecore_dbus] unknown data type %c\n", type);
 		   break;
 	       }
 	     sig++;
