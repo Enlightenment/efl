@@ -44,6 +44,7 @@ ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
 	     if (errno == E2BIG)
 	       {
 		  new_txt = realloc(new_txt, outalloc + 64);
+		  outp = new_txt + outlen;
 		  outalloc += 64;
 		  outb += 64;
 	       }
