@@ -169,10 +169,14 @@ ecore_x_init(const char *name)
    int randr_base = 0;
    int randr_err_base = 0;
 #endif
+#ifdef ECORE_XFIXES
    int fixes_base = 0;
    int fixes_err_base = 0;
+#endif
+#ifdef ECORE_XDAMAGE
    int damage_base = 0;
    int damage_err_base = 0;
+#endif
    
    if (_ecore_x_init_count > 0) 
      {
