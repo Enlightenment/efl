@@ -162,7 +162,7 @@ _ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Typ
    _ecore_dbus_message_append_byte(msg, type);
    _ecore_dbus_message_append_byte(msg, '\0');
 
-   f->value = _ecore_dbus_message_marshal(msg, &type, data);
+   f->value = _ecore_dbus_message_marshal(msg, (char *)&type, data);
    ecore_list_remove_first(msg->recurse);
    return f;
 }

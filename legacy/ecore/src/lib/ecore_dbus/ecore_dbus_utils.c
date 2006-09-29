@@ -263,4 +263,5 @@ _ecore_dbus_complete_type_length_get(const char *signature)
 	  }
 	signature++;
      }
+   return 0;
 }

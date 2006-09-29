@@ -56,10 +56,7 @@ _ecore_dbus_event_method_call_cb(void *udata, int evtype, void *ev)
 	keys = ecore_hash_keys(event->server->objects);
 	printf("Keys\n----\n");
 	while ((key = ecore_list_next(keys)))
-	  {
-	     char *s;
 	     printf("  %s => %d\n", key, (int)ecore_hash_get(event->server->objects, key));
-	  }
 
 	ecore_list_destroy(keys);
 
@@ -88,7 +85,7 @@ _ecore_dbus_event_method_call_cb(void *udata, int evtype, void *ev)
    if (method)
      {
 	printf("[ecore_dbus] method found %s\n", event->header.member);
-	method->func(event);
+	method->func(method->data, event);
 	return 0;
      }
 
@@ -141,7 +138,7 @@ _ecore_dbus_object_free(Ecore_DBus_Object *obj)
 /* object methods */
 
 EAPI Ecore_DBus_Object_Method *
-ecore_dbus_object_method_add(Ecore_DBus_Object *obj, const char *interface, const char *method_name, Ecore_DBus_Method_Call_Cb func)
+ecore_dbus_object_method_add(Ecore_DBus_Object *obj, const char *interface, const char *method_name, Ecore_DBus_Method_Call_Cb func, void *data)
 {
    Ecore_DBus_Object_Method *m;
    char buf[PATH_MAX];
@@ -154,6 +151,7 @@ ecore_dbus_object_method_add(Ecore_DBus_Object *obj, const char *interface, cons
    m->name =  strdup(method_name);
 
    m->func = func;
+   m->data = data;
    
    ecore_list_append(obj->methods, m);
 

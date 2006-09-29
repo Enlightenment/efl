@@ -46,7 +46,7 @@ extern "C" {
    typedef struct _Ecore_DBus_Message_Field     Ecore_DBus_Message_Field;
    typedef struct _Ecore_DBus_Address           Ecore_DBus_Address;
 
-   typedef void (*Ecore_DBus_Method_Call_Cb) (Ecore_DBus_Event_Method_Call *event);
+   typedef void (*Ecore_DBus_Method_Call_Cb) (void *data, Ecore_DBus_Event_Method_Call *event);
 
    typedef struct _Ecore_DBus_Object Ecore_DBus_Object;
    typedef struct _Ecore_DBus_Object_Method Ecore_DBus_Object_Method;
@@ -66,6 +66,7 @@ extern "C" {
 	char *name; 
 
 	Ecore_DBus_Method_Call_Cb func;
+	void *data;
      };
    struct _Ecore_DBus_Object_Registry
      {
@@ -219,6 +220,7 @@ extern "C" {
    EAPI void          ecore_dbus_message_print(Ecore_DBus_Message *msg);
    EAPI void         *ecore_dbus_message_header_field_get(Ecore_DBus_Message *msg, Ecore_DBus_Message_Header_Field field);
    EAPI void         *ecore_dbus_message_body_field_get(Ecore_DBus_Message *msg, unsigned int pos);
+   EAPI int           ecore_dbus_message_serial_get(Ecore_DBus_Message *m);
 
    /* methods */
    EAPI int ecore_dbus_method_hello(Ecore_DBus_Server *svr, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
@@ -248,7 +250,7 @@ extern "C" {
    EAPI Ecore_DBus_Object        *ecore_dbus_object_add(Ecore_DBus_Server *svr, const char *path);
    EAPI void                      ecore_dbus_object_free(Ecore_DBus_Object *obj);
 
-   EAPI Ecore_DBus_Object_Method *ecore_dbus_object_method_add(Ecore_DBus_Object *obj, const char *interface, const char *method_name, Ecore_DBus_Method_Call_Cb func);
+   EAPI Ecore_DBus_Object_Method *ecore_dbus_object_method_add(Ecore_DBus_Object *obj, const char *interface, const char *method_name, Ecore_DBus_Method_Call_Cb func, void *data);
    EAPI void                      ecore_dbus_object_method_remove(Ecore_DBus_Object *obj, Ecore_DBus_Object_Method *method);
    EAPI void                      ecore_dbus_object_method_free(Ecore_DBus_Object_Method *method);
 
