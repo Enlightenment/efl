@@ -64,6 +64,7 @@ struct _Ecore_Desktop
    unsigned char       no_display:1;
    unsigned char       allocated:1;
    unsigned char       ondisk:1;
+   unsigned char       hard_icon:1;
    /* Actually calling this st_mtime causes compile issues, must be some strange macros at work. */
    time_t              mtime;	/* For checking if the cache is valid. */
 };

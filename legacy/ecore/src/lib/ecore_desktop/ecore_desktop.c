@@ -329,6 +329,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 			    free(temp);
 			 }
 		    }
+	          result->hard_icon = 1;
 	       }
 
 	     /* icon/class is a list of standard icons from the theme that can override the icon created above.
