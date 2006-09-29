@@ -97,7 +97,7 @@ ecore_dbus_method_error_cb(void *data, const char *error)
 
 
 static void
-_test_object_test(Ecore_DBus_Event_Method_Call *event)
+_test_object_test(void *data, Ecore_DBus_Event_Method_Call *event)
 {
    Ecore_DBus_Message *msg;
    unsigned int *i;
@@ -122,7 +122,7 @@ _test_object_test(Ecore_DBus_Event_Method_Call *event)
    printf("	params: i = %d, s1 = \"%s\", l = (", i ? *i : 0, s1);
    ecore_list_goto_first(l);
    first = 1;
-   while(i = ecore_list_next(l))
+   while((i = ecore_list_next(l)))
      {
 	if (!first) printf(", ");
 	else first = 0;
