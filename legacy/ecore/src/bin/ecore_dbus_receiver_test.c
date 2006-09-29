@@ -139,7 +139,7 @@ _test_object_init(Ecore_DBus_Server *svr)
    printf("init object!\n");
    if (!svr) return;
    obj = ecore_dbus_object_add(svr, "/org/enlightenment/test");
-   ecore_dbus_object_method_add(obj, "org.enlightenment.Test", "Test", _test_object_test);
+   ecore_dbus_object_method_add(obj, "org.enlightenment.Test", "Test", _test_object_test, NULL);
 }
 
 #else
