@@ -1160,27 +1160,26 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    unsigned char                    *data = NULL;
    Ecore_X_Atom                     selection;
    int                              num_ret;
+   int                              format;
 
    selection = xevent->xselection.selection;
 
    if (xevent->xselection.target == ECORE_X_ATOM_SELECTION_TARGETS)
      {
-	if (!ecore_x_window_prop_property_get(xevent->xselection.requestor,
-					      xevent->xselection.property,
-					      XA_ATOM, 32, &data, &num_ret))
+	format = ecore_x_window_prop_property_get(xevent->xselection.requestor,
+						xevent->xselection.property,
+						XA_ATOM, 32, &data, &num_ret);
+	if (!format)
 	  return;
      }
    else
      {
-	if (!ecore_x_window_prop_property_get(xevent->xselection.requestor,
-					      xevent->xselection.property,
-					      AnyPropertyType, 8, &data, &num_ret))
-	  {
-	     if (!ecore_x_window_prop_property_get(xevent->xselection.requestor,
-					      xevent->xselection.property,
-					      AnyPropertyType, 16, &data, &num_ret))
-	       return;
-	  }
+	format = ecore_x_window_prop_property_get(xevent->xselection.requestor,
+						xevent->xselection.property,
+						AnyPropertyType, 8, &data,
+						&num_ret);
+	if (!format)
+	  return;
      }
 
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
@@ -1202,7 +1201,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 	free(e);
 	return;
      }
-   e->data = _ecore_x_selection_parse(e->target, data, num_ret);
+   e->data = _ecore_x_selection_parse(e->target, data, num_ret, format);
 
    ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_selection_notify, NULL);
 }

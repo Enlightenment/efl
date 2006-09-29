@@ -13,11 +13,11 @@ static Ecore_X_Selection_Parser *parsers = NULL;
 
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
 static int _ecore_x_selection_data_default_free(void *data);
-static void *_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size);
+static void *_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size, int format);
 static int _ecore_x_selection_data_files_free(void *data);
-static void *_ecore_x_selection_parser_text(const char *target, unsigned char *data, int size);
+static void *_ecore_x_selection_parser_text(const char *target, unsigned char *data, int size, int format);
 static int _ecore_x_selection_data_text_free(void *data);
-static void *_ecore_x_selection_parser_targets(const char *target, unsigned char *data, int size);
+static void *_ecore_x_selection_parser_targets(const char *target, unsigned char *data, int size, int format);
 static int _ecore_x_selection_data_targets_free(void *data);
 
 #define ECORE_X_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
@@ -523,7 +523,7 @@ _ecore_x_selection_converter_text(char *target, void *data, int size, void **dat
 
 EAPI void
 ecore_x_selection_parser_add(const char *target,
-      void *(*func)(const char *target, unsigned char *data, int size))
+      void *(*func)(const char *target, unsigned char *data, int size, int format))
 {
    Ecore_X_Selection_Parser *prs;
 
@@ -586,7 +586,7 @@ ecore_x_selection_parser_del(const char *target)
 
 /* Locate and run conversion callback for specified selection target */
 void *
-_ecore_x_selection_parse(const char *target, unsigned char *data, int size)
+_ecore_x_selection_parse(const char *target, unsigned char *data, int size, int format)
 {
    Ecore_X_Selection_Parser *prs;
    Ecore_X_Selection_Data *sel;
@@ -595,7 +595,7 @@ _ecore_x_selection_parse(const char *target, unsigned char *data, int size)
      {
 	if (!strcmp(prs->target, target))
 	  {
-	     sel = prs->parse(target, data, size);
+	     sel = prs->parse(target, data, size, format);
 	     return sel;
 	  }
      }
@@ -604,6 +604,7 @@ _ecore_x_selection_parse(const char *target, unsigned char *data, int size)
    sel = calloc(1, sizeof(Ecore_X_Selection_Data));
    sel->free = _ecore_x_selection_data_default_free;
    sel->length = size;
+   sel->format = format;
    sel->data = data;
    return sel;
 }
@@ -620,7 +621,7 @@ _ecore_x_selection_data_default_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size)
+_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size, int format)
 {
    Ecore_X_Selection_Data_Files *sel;
    int i, is;
@@ -703,7 +704,7 @@ _ecore_x_selection_data_files_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_text(const char *target __UNUSED__, unsigned char *data, int size)
+_ecore_x_selection_parser_text(const char *target __UNUSED__, unsigned char *data, int size, int format)
 {
    Ecore_X_Selection_Data_Text *sel;
 
@@ -736,7 +737,7 @@ _ecore_x_selection_data_text_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_targets(const char *target __UNUSED__, unsigned char *data, int size)
+_ecore_x_selection_parser_targets(const char *target __UNUSED__, unsigned char *data, int size, int format)
 {
    Ecore_X_Selection_Data_Targets *sel;
    unsigned long *targets;

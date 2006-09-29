@@ -563,6 +563,7 @@ struct _Ecore_X_Selection_Data
    } content;
    unsigned char    *data;
    int               length;
+   int               format;
 
    int             (*free)(void *data);
 };
@@ -1001,7 +1002,7 @@ EAPI void             ecore_x_selection_converter_add(char *target, int (*func)(
 EAPI void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
 EAPI void             ecore_x_selection_converter_del(char *target);
 EAPI void             ecore_x_selection_converter_atom_del(Ecore_X_Atom target);
-EAPI void             ecore_x_selection_parser_add(const char *target, void *(*func)(const char *target, unsigned char *data, int size));
+EAPI void             ecore_x_selection_parser_add(const char *target, void *(*func)(const char *target, unsigned char *data, int size, int format));
 EAPI void             ecore_x_selection_parser_del(const char *target);
 
 EAPI void             ecore_x_dnd_aware_set(Ecore_X_Window win, int on);

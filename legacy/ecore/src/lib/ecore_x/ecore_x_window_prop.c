@@ -457,17 +457,17 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    if (ret != Success)
 	return 0;
 
-   if (size != size_ret || !num_ret) {
+   if (!num_ret) {
       XFree(prop_ret);
       return 0;
    }
    
-   if (!(*data = malloc(num_ret * size / 8))) {
+   if (!(*data = malloc(num_ret * size_ret / 8))) {
       XFree(prop_ret);
       return 0;
    }
    
-   switch (size) {
+   switch (size_ret) {
       case 8:
 	 for (i = 0; i < num_ret; i++)
 	   (*data)[i] = prop_ret[i];
@@ -485,7 +485,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    XFree(prop_ret);
 
    if (num) *num = num_ret;
-   return 1;
+   return size_ret;
 }
 
 EAPI void
