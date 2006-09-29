@@ -93,7 +93,7 @@ _ecore_dbus_message_marshal_array_begin(Ecore_DBus_Message *msg,
    _ecore_dbus_message_padding(msg, 4);
 
    arr = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_ARRAY);
-   /* for the array length value */
+   /* leave room for the array length value, gets filled in on array_end() */
    _ecore_dbus_message_append_uint32(msg, 0);
    arr->contained_type = contained_type;
    ecore_list_prepend(msg->recurse, arr);
@@ -111,6 +111,22 @@ _ecore_dbus_message_marshal_array_end(Ecore_DBus_Message *msg, Ecore_DBus_Messag
    ecore_list_remove_first(msg->recurse);
    arr->end = msg->length;
    *(unsigned int *)ECORE_DBUS_MESSAGE_FIELD(arr)->buffer = arr->end - arr->start;
+}
+
+Ecore_DBus_Message_Field_Array *
+_ecore_dbus_message_marshal_array(Ecore_DBus_Message *msg, char *contained_type, Ecore_List *data)
+{
+   Ecore_DBus_Message_Field_Array *arr;
+   void *el;
+
+   printf("[ecore_dbus] marshal array %c\n", *contained_type);
+   arr = _ecore_dbus_message_marshal_array_begin(msg, *contained_type);
+   ecore_list_goto_first(data);
+   while ((el = ecore_list_next(data)))
+	_ecore_dbus_message_marshal(msg, contained_type, el);
+   _ecore_dbus_message_marshal_array_end(msg, arr);
+
+   return arr;
 }
 
 Ecore_DBus_Message_Field_Struct *
@@ -146,22 +162,31 @@ _ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Typ
    _ecore_dbus_message_append_byte(msg, type);
    _ecore_dbus_message_append_byte(msg, '\0');
 
-   switch (type)
+   f->value = _ecore_dbus_message_marshal(msg, &type, data);
+   ecore_list_remove_first(msg->recurse);
+   return f;
+}
+
+
+
+Ecore_DBus_Message_Field *
+_ecore_dbus_message_marshal(Ecore_DBus_Message *msg, char *type, void *data)
+{
+
+   switch (*type)
      {
      case ECORE_DBUS_DATA_TYPE_UINT32:
-	f->value = _ecore_dbus_message_marshal_uint32(msg, *(unsigned int *)data);
-	break;
+	return (Ecore_DBus_Message_Field *)_ecore_dbus_message_marshal_uint32(msg, *(unsigned int *)data);
      case ECORE_DBUS_DATA_TYPE_STRING:
-	f->value = _ecore_dbus_message_marshal_string(msg, (char *)data);
-	break;
+	return (Ecore_DBus_Message_Field *)_ecore_dbus_message_marshal_string(msg, (char *)data);
      case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
-	f->value = _ecore_dbus_message_marshal_object_path(msg, (char *)data);
-	break;
+	return (Ecore_DBus_Message_Field *)_ecore_dbus_message_marshal_object_path(msg, (char *)data);
      case ECORE_DBUS_DATA_TYPE_SIGNATURE:
-	f->value = _ecore_dbus_message_marshal_signature(msg, (char *)data);
-	break;
-     case ECORE_DBUS_DATA_TYPE_INVALID:
+	return (Ecore_DBus_Message_Field *)_ecore_dbus_message_marshal_signature(msg, (char *)data);
      case ECORE_DBUS_DATA_TYPE_BYTE:
+	return (Ecore_DBus_Message_Field *)_ecore_dbus_message_marshal_byte(msg, *(char *)data);
+     case ECORE_DBUS_DATA_TYPE_ARRAY:
+	return (Ecore_DBus_Message_Field *)_ecore_dbus_message_marshal_array(msg, type + 1, (Ecore_List *)data);  // we need to let the caller know how many fields were marshalled (e.g. how far to skip ahead in the type list)
      case ECORE_DBUS_DATA_TYPE_BOOLEAN:
      case ECORE_DBUS_DATA_TYPE_INT16:
      case ECORE_DBUS_DATA_TYPE_UINT16:
@@ -169,7 +194,6 @@ _ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Typ
      case ECORE_DBUS_DATA_TYPE_INT64:
      case ECORE_DBUS_DATA_TYPE_UINT64:
      case ECORE_DBUS_DATA_TYPE_DOUBLE:
-     case ECORE_DBUS_DATA_TYPE_ARRAY:
      case ECORE_DBUS_DATA_TYPE_VARIANT:
      case ECORE_DBUS_DATA_TYPE_STRUCT:
      case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
@@ -177,12 +201,12 @@ _ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Typ
      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
      case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
-#if 0
+     case ECORE_DBUS_DATA_TYPE_INVALID:
+	printf("[ecore_dbus] unhandled data type %c\n", *type);
+	return NULL;
      default:
-#endif
-	printf("[ecore_dbus] unknown/unhandled data type %c\n", type);
-	break;
+	printf("[ecore_dbus] unknown data type %c\n", *type);
+	return NULL;
      }
-   ecore_list_remove_first(msg->recurse);
-   return f;
+
 }

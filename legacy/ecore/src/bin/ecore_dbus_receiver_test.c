@@ -101,21 +101,35 @@ _test_object_test(Ecore_DBus_Event_Method_Call *event)
 {
    Ecore_DBus_Message *msg;
    unsigned int *i;
-   char *s;
+   char *s1, *s2;
+   Ecore_List *l;
+   int first;
 
    printf("received call to test!\n");
    msg = event->message;
 
    i = (unsigned int *)ecore_dbus_message_body_field_get(msg, 0);
-   s = (char *)ecore_dbus_message_body_field_get(msg, 1);
+   s1 = (char *)ecore_dbus_message_body_field_get(msg, 1);
+   l = (Ecore_List *)ecore_dbus_message_body_field_get(msg, 2);
+   s2 = (char *)ecore_dbus_message_body_field_get(msg, 3);
 
-   if (!i || !s) 
+   if (!i || !s1 || !l || !s2) 
    {
       /* XXX reply with error */
       return;
    }
 
-   printf("	params: i = %d, s = \"%s\"\n", i ? *i : 0, s);
+   printf("	params: i = %d, s1 = \"%s\", l = (", i ? *i : 0, s1);
+   ecore_list_goto_first(l);
+   first = 1;
+   while(i = ecore_list_next(l))
+     {
+	if (!first) printf(", ");
+	else first = 0;
+
+	printf("%d", i ? *i : 0);
+     }
+   printf("), s2: %s\n", s2);
 }
 
 static void

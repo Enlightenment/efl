@@ -205,6 +205,9 @@ _ecore_dbus_message_body(Ecore_DBus_Message *msg, char *signature, va_list args)
 		case ECORE_DBUS_DATA_TYPE_SIGNATURE:
 		    _ecore_dbus_message_marshal_signature(msg, (char *)va_arg(args, char *));
 		   break;
+		case ECORE_DBUS_DATA_TYPE_ARRAY:
+		   _ecore_dbus_message_marshal_array(msg, signature + 1, (Ecore_List *)va_arg(args, Ecore_List *));
+		   break;
 		case ECORE_DBUS_DATA_TYPE_INVALID:
 		case ECORE_DBUS_DATA_TYPE_BOOLEAN:
 		case ECORE_DBUS_DATA_TYPE_INT16:
@@ -213,7 +216,6 @@ _ecore_dbus_message_body(Ecore_DBus_Message *msg, char *signature, va_list args)
 		case ECORE_DBUS_DATA_TYPE_INT64:
 		case ECORE_DBUS_DATA_TYPE_UINT64:
 		case ECORE_DBUS_DATA_TYPE_DOUBLE:
-		case ECORE_DBUS_DATA_TYPE_ARRAY:
 		case ECORE_DBUS_DATA_TYPE_VARIANT:
 		case ECORE_DBUS_DATA_TYPE_STRUCT:
 		case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
@@ -227,7 +229,7 @@ _ecore_dbus_message_body(Ecore_DBus_Message *msg, char *signature, va_list args)
 		   printf("[ecore_dbus] unknown/unhandled data type %c\n", *signature);
 		   break;
 	       }
-	     signature++;
+	     signature += _ecore_dbus_complete_type_length_get(signature);
 	  }
      }
    /* set body length */

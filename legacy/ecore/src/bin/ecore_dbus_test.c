@@ -13,6 +13,7 @@ static void ecore_dbus_method_test_cb(void *data, Ecore_DBus_Method_Return *repl
 static void ecore_dbus_method_error_cb(void *data, const char *error);
 
 static const char *event_type_get(Ecore_DBus_Message_Type type);
+static void _test_type_length();
 
 static Ecore_DBus_Server *svr = NULL;
 
@@ -21,6 +22,7 @@ main(int argc, char **argv)
 {
    ecore_dbus_init();
 
+   _test_type_length();
    svr = ecore_dbus_server_session_connect(NULL);
    if (!svr)
      {
@@ -53,12 +55,24 @@ static int
 ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 {
    Ecore_DBus_Event_Server_Add *event;
+   Ecore_List *ids;
+   int i;
 
    event = ev;
    printf("ecore_dbus_event_server_add\n");
    ecore_dbus_method_list_names(event->server,
 				ecore_dbus_method_list_names_cb,
 				ecore_dbus_method_error_cb, NULL);
+
+   ids = ecore_list_new();
+   ecore_list_set_free_cb(ids, free);
+   for(i = 0; i < 5; i++)
+     {
+ 	unsigned int *id;
+	id = malloc(sizeof(int));
+	*id = i * 2;
+        ecore_list_append(ids, id); 
+     }
    ecore_dbus_message_new_method_call(event->server,
 				      "/org/enlightenment/test" /*path*/,
 				      "org.enlightenment.Test" /*interface*/,
@@ -66,8 +80,10 @@ ecore_dbus_event_server_add(void *udata, int ev_type, void *ev)
 				      "org.enlightenment.Test" /*destination*/,
 				      ecore_dbus_method_test_cb,
 				      ecore_dbus_method_error_cb, NULL,
-				      "us" /*fmt*/,
-				      5, "hello");
+				      "usaus" /*fmt*/,
+				      5, "hello", ids, "goodbye");
+
+   ecore_list_destroy(ids);
    return 0;
 }
 
@@ -139,6 +155,29 @@ event_type_get(Ecore_DBus_Message_Type type)
 	 return "ECORE_DBUS_MESSAGE_TYPE_SIGNAL";
      }
    return "UNKNOWN";
+}
+
+//int _ecore_dbus_complete_type_length(const char *);
+static void
+_test_type_length()
+{
+#define _NUM_TYPES 4
+   struct { char *type; int len; } types[_NUM_TYPES] = {
+	  { "us", 1 },
+	  { "ads", 2 },
+	  { "a(a(ai))su", 8 },
+	  { "a{ss}u", 5 }
+   };
+
+   int i;
+
+   printf("Test type length\n---------------\n");
+   for (i = 0; i < _NUM_TYPES; i++)
+     {
+	int len = _ecore_dbus_complete_type_length_get(types[i].type);
+	printf("\"%s\" => %d (expected %d) %s\n", types[i].type, len, types[i].len, len == types[i].len ? "PASS" : "FAIL");
+     }
+   printf("---------------\n");
 }
 
 #else

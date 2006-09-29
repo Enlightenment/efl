@@ -237,8 +237,11 @@ unsigned char _ecore_dbus_message_read_byte(Ecore_DBus_Message *msg);
 unsigned int  _ecore_dbus_message_read_uint32(Ecore_DBus_Message *msg);
 int           _ecore_dbus_alignment_get(Ecore_DBus_Data_Type type);
 void         *_ecore_dbus_message_field_value_get(Ecore_DBus_Message_Field *f);
+int           _ecore_dbus_complete_type_length_get(const char *signature);
 
 /* ecore_dbus_marshal.c */
+Ecore_DBus_Message_Field *
+_ecore_dbus_message_marshal(Ecore_DBus_Message *msg, char *type, void *data);
 Ecore_DBus_Message_Field_Byte   *_ecore_dbus_message_marshal_byte(Ecore_DBus_Message *msg, unsigned char c);
 #if 0
 Ecore_DBus_Message_Field *_ecore_dbus_message_marshal_boolean(unsigned char **buf, unsigned int *old_length, uint32_t i);
@@ -257,6 +260,7 @@ Ecore_DBus_Message_Field_Object_Path *_ecore_dbus_message_marshal_object_path(Ec
 Ecore_DBus_Message_Field_Signature   *_ecore_dbus_message_marshal_signature(Ecore_DBus_Message *msg, char *str);
 Ecore_DBus_Message_Field_Array       *_ecore_dbus_message_marshal_array_begin(Ecore_DBus_Message *msg, Ecore_DBus_Data_Type contained_type);
 void                                  _ecore_dbus_message_marshal_array_end(Ecore_DBus_Message *msg, Ecore_DBus_Message_Field_Array *arr);
+Ecore_DBus_Message_Field_Array       *_ecore_dbus_message_marshal_array(Ecore_DBus_Message *msg, char *contained_type, Ecore_List *data);
 Ecore_DBus_Message_Field_Struct      *_ecore_dbus_message_marshal_struct_begin(Ecore_DBus_Message *msg);
 void                                  _ecore_dbus_message_marshal_struct_end(Ecore_DBus_Message *msg, Ecore_DBus_Message_Field_Struct *s);
 Ecore_DBus_Message_Field_Variant     *_ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Type type, void *data);

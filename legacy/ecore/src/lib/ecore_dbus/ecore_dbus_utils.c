@@ -140,7 +140,7 @@ _ecore_dbus_alignment_get(Ecore_DBus_Data_Type type)
         case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
 	   return 8;
 	default:
-	   printf("Ecore_DBus: Alignment requested for invalid data type!\n");
+	   printf("[ecore_dbus] Alignment requested for invalid data type (%c)", type);
 	   return 0;
      }
 }
@@ -203,3 +203,64 @@ _ecore_dbus_message_field_value_get(Ecore_DBus_Message_Field *f)
    return NULL;
 }
 
+
+/**
+ * Returns the length of the complete type starting at signature.
+ * signature should be a pointer within a signature string.
+ *
+ * e.g
+ *   uia -> 1 "u"
+ *   aus -> 2 "au"
+ *   (aus)s -> 5 "(aus)"
+ */
+int
+_ecore_dbus_complete_type_length_get(const char *signature)
+{
+   int len = 0;
+   int depth = 0;
+
+   while (*signature)
+     {
+	len++;
+	switch (*signature)
+	  {
+	   case ECORE_DBUS_DATA_TYPE_BYTE:
+	   case ECORE_DBUS_DATA_TYPE_BOOLEAN:
+	   case ECORE_DBUS_DATA_TYPE_INT16:
+	   case ECORE_DBUS_DATA_TYPE_UINT16:
+	   case ECORE_DBUS_DATA_TYPE_INT32:
+	   case ECORE_DBUS_DATA_TYPE_UINT32:
+	   case ECORE_DBUS_DATA_TYPE_INT64:
+	   case ECORE_DBUS_DATA_TYPE_UINT64:
+	   case ECORE_DBUS_DATA_TYPE_DOUBLE:
+	   case ECORE_DBUS_DATA_TYPE_STRING:
+	   case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
+	   case ECORE_DBUS_DATA_TYPE_SIGNATURE:
+	   case ECORE_DBUS_DATA_TYPE_VARIANT:
+	      /* these types are complete on their own */
+	      if (!depth) return len;
+	      break;
+	   case ECORE_DBUS_DATA_TYPE_ARRAY:
+	      /* this takes one complete type after it. */
+	      break;
+	   case ECORE_DBUS_DATA_TYPE_STRUCT_BEGIN:
+	   case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_BEGIN:
+	      depth++;
+	      break;
+	   case ECORE_DBUS_DATA_TYPE_STRUCT_END:
+	   case ECORE_DBUS_DATA_TYPE_DICT_ENTRY_END:
+	      depth--;
+	      if (!depth) return len;
+	      break;
+	   case ECORE_DBUS_DATA_TYPE_STRUCT:
+	   case ECORE_DBUS_DATA_TYPE_DICT_ENTRY:
+	   case ECORE_DBUS_DATA_TYPE_INVALID:
+	      printf("[ecore_dbus] type '%c' not allowed in signature string", *signature);
+	      break;
+	   default:
+	      printf("[ecore_dbus] unknown type '%c' not allowed in signature string", *signature);
+	      break;
+	  }
+	signature++;
+     }
+}

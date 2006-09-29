@@ -387,7 +387,7 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
    /* Parse header fields */
    if (!(arr = _ecore_dbus_message_unmarshal_array_begin(msg, ECORE_DBUS_DATA_TYPE_STRUCT, &size)))
      {
-	printf("Could not parse custom header.\n");
+	printf("Could not parse header fields.\n");
 	goto error;
      }
    while (msg->length < arr->end)
