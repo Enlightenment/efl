@@ -413,6 +413,11 @@ _ecore_desktop_get(const char *file, const char *lang)
 			      *p = tolower(*p);
 			    p++;
 			 }
+		       if (result->icon_class[0] == '\0')
+		         {
+			    free(result->icon_class);
+			    result->icon_class = NULL;
+			 }
 		    }
 	       }
 
