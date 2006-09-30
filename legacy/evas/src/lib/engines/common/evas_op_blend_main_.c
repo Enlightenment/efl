@@ -149,13 +149,13 @@ op_blend_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
-	s = SP;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
      {
-	d = DP;
-	if (s == SP)
+	s = SP;
+	if (src->flags & RGBA_IMAGE_ALPHA_SPARSE)
 	    s = SP_AS;
      }
+   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+	d = DP;
    return blend_gfx_span_func_cpu(s, m, c, d);
 }
 
@@ -166,7 +166,7 @@ op_blend_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -181,19 +181,19 @@ op_blend_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int 
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+     {
 	s = SP;
+	if (src->flags & RGBA_IMAGE_ALPHA_SPARSE)
+	    s = SP_AS;
+     }
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
    if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
-     {
 	d = DP;
-	if (s == SP)
-	    s = SP_AS;
-     }
    return blend_gfx_span_func_cpu(s, m, c, d);
 }
 
@@ -204,7 +204,7 @@ op_blend_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -219,13 +219,13 @@ op_blend_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
-	s = SP;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
      {
-	d = DP;
-	if (s == SP)
+	s = SP;
+	if (src->flags & RGBA_IMAGE_ALPHA_SPARSE)
 	    s = SP_AS;
      }
+   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+	d = DP;
    return blend_gfx_span_func_cpu(s, m, c, d);
 }
 
@@ -270,7 +270,7 @@ op_blend_color_pt_get(DATA32 col, RGBA_Image *dst)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -288,7 +288,7 @@ op_blend_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 	s = SP;
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -304,7 +304,7 @@ op_blend_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -391,7 +391,11 @@ op_blend_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+     {
 	s = SP;
+	if (src->flags & RGBA_IMAGE_ALPHA_SPARSE)
+	    s = SP_AS;
+     }
    if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
 	d = DP;
    return blend_rel_gfx_span_func_cpu(s, m, c, d);
@@ -404,7 +408,7 @@ op_blend_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -422,7 +426,7 @@ op_blend_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, 
 	s = SP;
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -438,7 +442,7 @@ op_blend_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -453,7 +457,11 @@ op_blend_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP_AN;
 
    if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+     {
 	s = SP;
+	if (src->flags & RGBA_IMAGE_ALPHA_SPARSE)
+	    s = SP_AS;
+     }
    if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
 	d = DP;
    return blend_rel_gfx_span_func_cpu(s, m, c, d);
@@ -499,7 +507,7 @@ op_blend_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -517,7 +525,7 @@ op_blend_rel_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 	s = SP;
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -533,7 +541,7 @@ op_blend_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;

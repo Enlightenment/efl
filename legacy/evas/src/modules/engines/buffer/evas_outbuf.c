@@ -81,22 +81,20 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 {
    RGBA_Image *im;
    DATA32 *ptr;
-   int xx, yy;
 
    if (buf->priv.back_buf)
      {
 	*cx = x; *cy = y; *cw = w; *ch = h;
 	if (buf->priv.back_buf->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     for (yy = 0; yy < h; yy++)
+	     int  ww = w;
+	     ptr = buf->priv.back_buf->image->data + (y * buf->priv.back_buf->image->w) + x;
+	     while (h--)
 	       {
-		  ptr = buf->priv.back_buf->image->data +
-		    ((y + yy) * buf->priv.back_buf->image->w) + x;
-		  for (xx = 0; xx < w; xx++)
-		    {
-		       A_VAL(ptr) = 0;
-		       ptr++;
-		    }
+		  while (w--)
+		    *ptr++ = 0;
+		  w = ww;
+		  ptr += (buf->priv.back_buf->image->w - w);
 	       }
 	  }
 	return buf->priv.back_buf;

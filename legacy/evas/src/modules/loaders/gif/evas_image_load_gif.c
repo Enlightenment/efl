@@ -286,6 +286,7 @@ evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key)
            per += per_inc;
          }
      }
+   evas_common_image_premul(im);
    DGifCloseFile(gif);
    for (i = 0; i < h; i++)
      {

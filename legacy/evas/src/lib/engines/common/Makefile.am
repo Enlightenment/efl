@@ -51,6 +51,7 @@ evas_rectangle_main.c \
 evas_scale_main.c \
 evas_scale_sample.c \
 evas_scale_smooth.c \
+evas_scale_span.c \
 evas_tiler.c \
 evas_regionbuf.c \
 evas_array_hash.c

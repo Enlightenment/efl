@@ -39,7 +39,7 @@
 #define SC 1
 /* color is rgb (ie. 0xffrrggbb) */
 #define SC_AN 2
-/* color is 'alpha' (ie. 0xaaffffff) */
+/* color is 'alpha' (ie. 0xaaaaaaaa) */
 #define SC_AA 3
 /* src color flags count */
 #define SC_LAST 4
@@ -50,13 +50,8 @@
 #define DP  0
 /* pixels are rgb (ie. alphas == 255) */
 #define DP_AN  1
-/* pixels alpha sparse */
-#define DP_AS 2
 /* dst pixels flags count */
-#define DP_LAST 3
-
-/* dst flags count */
-#define DP_LAST 3
+#define DP_LAST 2
 
 /* cpu types flags */
 
@@ -76,15 +71,8 @@
 
 /* some useful constants */
 
-extern const DATA32 PIX_WHITE;
-extern const DATA32 PIX_BLACK;
-//extern const DATA32 PIX_HALF;
+extern const DATA32 ALPHA_255;
 extern const DATA32 ALPHA_256;
-extern const DATA32 ALPHA_ONE;
-
-extern const DATA16 _evas_const_c1[4];
-
-extern const DATA8 _evas_pow_lut[65536];
 
 /* some useful C macros */
 
@@ -140,286 +128,6 @@ extern const DATA8 _evas_pow_lut[65536];
  ( (((((((c0) >> 8) & 0xff0000) - (((c1) >> 8) & 0xff0000)) * (a)) \
    + ((c1) & 0xff000000)) & 0xff000000) )
 
-#define BLEND_RGB_256(a, c0, c1) \
- ( (((((((c0) >> 8) & 0xff) - (((c1) >> 8) & 0xff)) * (a)) \
-   + ((c1) & 0xff00ff00)) & 0xff00ff00) + \
-   (((((((c0) & 0xff00ff) - ((c1) & 0xff00ff)) * (a)) >> 8) \
-   + ((c1) & 0xff00ff)) & 0xff00ff) )
-
-#define BLEND_ARGB_256(a, aa, c0, c1) \
- ( ((((0xff0000 - (((c1) >> 8) & 0xff0000)) * (a)) \
-   + ((c1) & 0xff000000)) & 0xff000000) + \
-   (((((((c0) >> 8) & 0xff) - (((c1) >> 8) & 0xff)) * (aa)) \
-   + ((c1) & 0xff00)) & 0xff00) + \
-   (((((((c0) & 0xff00ff) - ((c1) & 0xff00ff)) * (aa)) >> 8) \
-   + ((c1) & 0xff00ff)) & 0xff00ff) )
-
-#define ADD_REL(s, d, res) \
-   { \
-	DATA32  rb; \
-	int     t, g; \
-\
-	rb = ((s) & 0xff00ff) + ((d) & 0xff00ff); \
-	t = ((rb & 0xffff0000) >> 8) - (((d) >> 16) & 0xff00); \
-	t = ((t & (~(t >> 8))) & 0xff00) << 8; \
-\
-	g = (rb & 0xffff) - ((d) >> 24); \
-	rb -= t + ((g & (~(g >> 8))) & 0xff); \
-\
-	g = ((s) & 0xff00) + ((d) & 0xff00); \
-	t = g - (((d) >> 16) & 0xff00); \
-	g -= ((t & (~(t >> 8))) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + g; \
-   }
-
-#define MUL_ADD_REL_SYM(a, s, d, res) \
-   { \
-	DATA32  rb; \
-	int     t, g; \
-\
-	rb = (((((a)*((s) & 0xff00ff)) + 0xff00ff) >> 8) & 0xff00ff) + ((d) & 0xff00ff); \
-\
-	t = ((rb & 0xffff0000) >> 8) - (((d) >> 16) & 0xff00); \
-	t = ((t & (~(t >> 8))) & 0xff00) << 8; \
-\
-	g = (rb & 0xffff) - ((d) >> 24); \
-	rb -= t + ((g & (~(g >> 8))) & 0xff); \
-\
-	g = (((((a)*((s) & 0xff00)) + 0xff00) >> 8) & 0xff00) + ((d) & 0xff00); \
-	t = g - (((d) >> 16) & 0xff00); \
-	g -= ((t & (~(t >> 8))) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + g; \
-   }
-
-#define MUL_ADD_REL_256(a, s, d, res) \
-   { \
-	DATA32  rb; \
-	int     t, g; \
-\
-	rb = ((((a)*((s) & 0xff00ff)) >> 8) & 0xff00ff) + ((d) & 0xff00ff); \
-	t = ((rb & 0xffff0000) >> 8) - (((d) >> 16) & 0xff00); \
-	t = ((t & (~(t >> 8))) & 0xff00) << 8; \
-\
-	g = (rb & 0xffff) - ((d) >> 24); \
-	rb -= t + ((g & (~(g >> 8))) & 0xff); \
-\
-	g = ((((a)*((s) & 0xff00)) >> 8) & 0xff00) + ((d) & 0xff00); \
-	t = g - (((d) >> 16) & 0xff00); \
-	g -= ((t & (~(t >> 8))) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + g; \
-   }
-
-#define ADD(s, d, res) \
-   { \
-	DATA32  rb, g; \
-\
-	rb = ((s) & 0xff00ff) + ((d) & 0xff00ff); \
-	rb = (rb | (0x1000100 - ((rb >> 8) & 0xff00ff))) & 0xff00ff; \
-\
-	g = ((s) & 0xff00) + ((d) & 0xff00); \
-	res = 0xff000000 + rb + ((g | (0x10000 - ((g >> 8) & 0xff00))) & 0xff00); \
-   }
-
-#define MUL_ADD_SYM(a, s, d, res) \
-   { \
-	DATA32  rb, g; \
-\
-	rb = (((((a)*((s) & 0xff00ff)) + 0xff00ff) >> 8) & 0xff00ff) + ((d) & 0xff00ff); \
-	rb = (rb | (0x1000100 - ((rb >> 8) & 0xff00ff))) & 0xff00ff; \
-	g = (((((a)*((s) & 0xff00)) + 0xff00) >> 8) & 0xff00) + ((d) & 0xff00); \
-	res = 0xff000000 + rb + ((g | (0x10000 - ((g >> 8) & 0xff00))) & 0xff00); \
-   }
-
-#define MUL_ADD_256(a, s, d, res) \
-   { \
-	DATA32  rb, g; \
-\
-	rb = ((((a)*((s) & 0xff00ff)) >> 8) & 0xff00ff) + ((d) & 0xff00ff); \
-	rb = (rb | (0x1000100 - ((rb >> 8) & 0xff00ff))) & 0xff00ff; \
-	g = ((((a)*((s) & 0xff00)) >> 8) & 0xff00) + ((d) & 0xff00); \
-	res = 0xff000000 + rb + ((g | (0x10000 - ((g >> 8) & 0xff00))) & 0xff00); \
-   }
-
-#define MUL2_ADD_256(a0, a1, s0, s1, res) \
-   { \
-	DATA32  rb, g; \
-\
-	rb = ((((a0)*((s0) & 0xff00ff)) >> 8) & 0xff00ff) + \
-	     ((((a1)*((s1) & 0xff00ff)) >> 8) & 0xff00ff); \
-	rb = (rb | (0x1000100 - ((rb >> 8) & 0xff00ff))) & 0xff00ff; \
-\
-	g = ((((a0)*((s0) & 0xff00)) >> 8) & 0xff00) + \
-	    ((((a1)*((s1) & 0xff00)) >> 8) & 0xff00); \
-	rb = rb + ((g | (0x10000 - ((g >> 8) & 0xff00))) & 0xff00); \
-\
-	g = ((s0) >> 24) + ((s1) >> 24); \
-	g = ((g | (0x100 - ((g >> 8) & 0xff))) & 0xff) << 24; \
-	res = g + rb; \
-   }
-
-
-#define SUB_REL(s, d, res) \
-   { \
-	int  rb, g; \
-\
-	g = ((d) & 0xff) - ((s) & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = (((d) & 0xff0000) >> 8) - (((s) & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((d) & 0xff00) - ((s) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define MUL_SUB_REL_SYM(a, s, d, res) \
-   { \
-	DATA32  t; \
-	int     rb, g; \
-\
-	t = (((((a)*((s) & 0xff00ff)) + 0xff00ff) >> 8) & 0xff00ff); \
-	g = ((d) & 0xff) - (t & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = (((d) & 0xff0000) >> 8) - ((t & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((d) & 0xff00) - (((((a)*((s) & 0xff00)) + 0xff00) >> 8) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define MUL_SUB_REL_256(a, s, d, res) \
-   { \
-	DATA32  t; \
-	int     rb, g; \
-\
-	t = ((((a)*((s) & 0xff00ff)) >> 8) & 0xff00ff); \
-	g = ((d) & 0xff) - (t & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = (((d) & 0xff0000) >> 8) - ((t & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((d) & 0xff00) - ((((a)*((s) & 0xff00)) >> 8) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define SUB(s, d, res) \
-   { \
-	int  rb, g; \
-\
-	g = ((d) & 0xff) - ((s) & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = (((d) & 0xff0000) >> 8) - (((s) & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((d) & 0xff00) - ((s) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define MUL_SUB_SYM(a, s, d, res) \
-   { \
-	DATA32  t; \
-	int     rb, g; \
-\
-	t = (((((a)*((s) & 0xff00ff)) + 0xff00ff) >> 8) & 0xff00ff); \
-	g = ((d) & 0xff) - (t & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = (((d) & 0xff0000) >> 8) - ((t & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((d) & 0xff00) - (((((a)*((s) & 0xff00)) + 0xff00) >> 8) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define MUL_SUB_REV_SYM(a, s, d, res) \
-   { \
-	DATA32  t; \
-	int     rb, g; \
-\
-	t = (((((a)*((s) & 0xff00ff)) + 0xff00ff) >> 8) & 0xff00ff); \
-	g = (t & 0xff) - ((d) & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = ((t & 0xff0000) >> 8) - (((d) & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = (((((a)*((s) & 0xff00)) + 0xff00) >> 8) & 0xff00) - ((d) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define MUL_SUB_256(a, s, d, res) \
-   { \
-	DATA32  t; \
-	int     rb, g; \
-\
-	t = ((((a)*((s) & 0xff00ff)) >> 8) & 0xff00ff); \
-	g = ((d) & 0xff) - (t & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = (((d) & 0xff0000) >> 8) - ((t & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((d) & 0xff00) - ((((a)*((s) & 0xff00)) >> 8) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define MUL_SUB_REV_256(a, s, d, res) \
-   { \
-	DATA32  t; \
-	int     rb, g; \
-\
-	t = ((((a)*((s) & 0xff00ff)) >> 8) & 0xff00ff); \
-	g = (t & 0xff) - ((d) & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = ((t & 0xff0000) >> 8) - (((d) & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((((a)*((s) & 0xff00)) >> 8) & 0xff00) - ((d) & 0xff00); \
-\
-	res = ((d) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define MUL2_SUB_256(a0, a1, s0, s1, res) \
-   { \
-	DATA32  t0, t1; \
-	int     rb, g; \
-\
-	t1 = ((((a1)*((s1) & 0xff00ff)) >> 8) & 0xff00ff); \
-	t0 = ((((a0)*((s0) & 0xff00ff)) >> 8) & 0xff00ff); \
-\
-	g = (t1 & 0xff) - (t0 & 0xff); \
-	g = ((g & (~(g >> 8))) & 0xff); \
-\
-	rb = ((t1 & 0xff0000) >> 8) - ((t0 & 0xff0000) >> 8); \
-	rb = (((rb & (~(rb >> 8))) & 0xff00) << 8) + g; \
-\
-	g = ((((a1)*((s1) & 0xff00)) >> 8) & 0xff00) - \
-	    ((((a0)*((s0) & 0xff00)) >> 8) & 0xff00); \
-\
-	res = ((s1) & 0xff000000) + rb + ((g & (~(g >> 8))) & 0xff00); \
-   }
-
-#define SUB_A(s, d, res) \
-   { \
-	int  _a = ((d) >> 24) - ((s) >> 24); \
-\
-	res = ((d) & 0x00ffffff) + (((_a & (~(_a >> 8))) & 0xff) << 24); \
-   }
-
 
 /* some useful MMX macros */
 
@@ -448,28 +156,22 @@ extern const DATA8 _evas_pow_lut[65536];
 
 #define MOV_RA2R(mmx, mma) \
 	movq_r2r(mmx, mma); \
+	punpckhwd_r2r(mma, mma); \
+	punpckhdq_r2r(mma, mma);
+
+#define MOV_PA2R(c, mma) \
+	movd_m2r(c, mma); \
 	punpcklbw_r2r(mma, mma); \
 	punpckhwd_r2r(mma, mma); \
 	punpckhdq_r2r(mma, mma);
 
-#define MOV_MA2R(a, mma) \
-	movd_m2r(a, mma); \
-	punpcklbw_r2r(mma, mma); \
-	punpckhwd_r2r(mma, mma); \
-	punpckhdq_r2r(mma, mma);
-
-#define INTERP_256_R2R(mma, mmx, mmy) \
-	psubusw_r2r(mmy, mmx); \
+#define INTERP_256_R2R(mma, mmx, mmy, mm255) \
+	psubw_r2r(mmy, mmx); \
 	pmullw_r2r(mma, mmx); \
 	psrlw_i2r(8, mmx); \
-	paddw_r2r(mmx, mmy);
+	paddw_r2r(mmx, mmy); \
+	pand_r2r(mm255, mmy);
 
-#define BLEND_R2R(mma, mmx, mmy, mm_1) \
-	psubw_r2r(mmy, mmx); \
-	psllw_i2r(1, mmx); \
-	paddw_r2r(mm_1, mmx); \
-	pmulhw_r2r(mma, mmx); \
-	paddw_r2r(mmx, mmy);
 #endif
 
 #endif

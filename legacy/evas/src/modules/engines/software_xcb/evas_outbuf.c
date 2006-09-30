@@ -516,6 +516,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
 		    bpl /
 		    ((evas_software_xcb_x_output_buffer_depth(obr->xcbob) / 8)) - obr->w,
                     obr->w, obr->h, x, y, NULL);
+#if 0
        /* FIXME: this is evil - but it makes ARGB targets look correct */
        if ((buf->priv.destination_alpha) && (!obr->mxcbob) &&
            (evas_software_xcb_x_output_buffer_depth(obr->xcbob) == 32))
@@ -537,6 +538,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
                    }
               }
          }
+#endif
      }
    if (obr->mxcbob)
      {

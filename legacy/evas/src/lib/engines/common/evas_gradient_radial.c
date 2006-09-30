@@ -5,110 +5,125 @@
 typedef struct _Radial_Data   Radial_Data;
 struct _Radial_Data
 {
+   float  r0;
+
    int    sx, sy, s;
-   float  r0, off;
+   float  off;
+   int    len;
 };
 
-static Radial_Data  radial_data = {32, 32, 32, 0.0, 0.0};
-
+static void 
+radial_init(void);
 
 static void 
-radial_setup_geom(RGBA_Gradient *gr, int spread);
+radial_shutdown(void);
+
+static void 
+radial_init_geom(RGBA_Gradient *gr);
+
+static void 
+radial_setup_geom(RGBA_Gradient *gr);
+
+static void 
+radial_free_geom(void *gdata);
 
 static int 
-radial_has_alpha(RGBA_Gradient *gr, int spread, int op);
+radial_has_alpha(RGBA_Gradient *gr, int op);
 
 static int 
-radial_has_mask(RGBA_Gradient *gr, int spread, int op);
+radial_has_mask(RGBA_Gradient *gr, int op);
 
 static int 
-radial_get_map_len(RGBA_Gradient *gr, int spread);
+radial_get_map_len(RGBA_Gradient *gr);
 
 static Gfx_Func_Gradient_Fill 
-radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa);
+radial_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa);
 
-static RGBA_Gradient_Type  radial = {"radial", &radial_data, radial_setup_geom, radial_has_alpha, radial_has_mask, radial_get_map_len, radial_get_fill_func};
+static RGBA_Gradient_Type  radial = {"radial", radial_init, radial_shutdown,
+				     radial_init_geom, radial_setup_geom, radial_free_geom,
+				     radial_has_alpha, radial_has_mask,
+				     radial_get_map_len, radial_get_fill_func};
 
 
 /** internal functions **/
 
 static void
-radial_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                  int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                          int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                              int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                   int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                          int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 static void
-radial_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_pad_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-radial_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                              int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 
@@ -118,22 +133,64 @@ evas_common_gradient_radial_get(void)
     return &radial;
 }
 
-static void
-radial_setup_geom(RGBA_Gradient *gr, int spread)
+static void 
+radial_init(void)
 {
-   int    err = 1;
-   char   *s, *p, key[256];
-   float  f = 0.0;
+}
+
+static void 
+radial_shutdown(void)
+{
+}
+
+static void 
+radial_free_geom(void *gdata)
+{
+   Radial_Data *data = (Radial_Data *)gdata;
+   if (data) free(data);
+}
+
+static void 
+radial_setup_geom(RGBA_Gradient *gr)
+{
+   Radial_Data   *radial_data;
 
    if (!gr || (gr->type.geometer != &radial)) return;
 
-   radial_data.sx = gr->fill.w;
-   radial_data.sy = gr->fill.h;
-   radial_data.s = radial_data.sx;
-   if (radial_data.sy > radial_data.sx)
-	radial_data.s = radial_data.sy;
-   radial_data.r0 = 0.0;
-   radial_data.off = gr->range_offset;
+   radial_data = (Radial_Data *)gr->type.gdata;
+   if (!radial_data) return;
+   radial_data->sx = gr->fill.w;
+   radial_data->sy = gr->fill.h;
+   radial_data->s = radial_data->sx;
+   if (radial_data->sy > radial_data->sx)
+	radial_data->s = radial_data->sy;
+   radial_data->off = gr->map.offset;
+   radial_data->len = radial_data->s - (int)(radial_data->s * radial_data->r0);
+}
+
+static void
+radial_init_geom(RGBA_Gradient *gr)
+{
+   Radial_Data   *radial_data;
+   int    err = 1;
+   char   *s, *p, key[256];
+   float  r0;
+
+   if (!gr || (gr->type.geometer != &radial)) return;
+
+   radial_data = (Radial_Data *)gr->type.gdata;
+   if (!radial_data)
+     {
+	radial_data = calloc(1, sizeof(Radial_Data));
+	if (!radial_data)  return;
+	radial_data->r0 = 0.0;
+	radial_data->sx = 32;
+	radial_data->sy = 32;
+	radial_data->s = 32;
+	radial_data->off = 0.0;
+	radial_data->len = 32;
+     }
+   gr->type.gdata = radial_data;
 
    if (!gr->type.params || !*(gr->type.params))
 	return;
@@ -141,8 +198,9 @@ radial_setup_geom(RGBA_Gradient *gr, int spread)
    s = strdup(gr->type.params);
    if (!s) return;
 
+   r0 = radial_data->r0;
    p = s;
-   while ((p = evas_common_gradient_get_key_fval(p, key, &f)))
+   while ((p = evas_common_gradient_get_key_fval(p, key, &r0)))
      {
 	if (!strcmp(key, "inner_radius"))
 	    err = 0;
@@ -154,78 +212,91 @@ radial_setup_geom(RGBA_Gradient *gr, int spread)
      }
    if (!err)
      {
-	if (f < 0.0) f = 0.0;
-	if (f > 1.0) f = 1.0;
-	radial_data.r0 = f;
+	if (r0 < 0.0) r0 = 0.0;
+	if (r0 > 1.0) r0 = 1.0;
+	radial_data->r0 = r0;
      }
    free(s);
 }
 
 
 static int
-radial_has_alpha(RGBA_Gradient *gr, int spread, int op)
+radial_has_alpha(RGBA_Gradient *gr, int op)
 {
+   Radial_Data   *radial_data;
+
    if (!gr || (gr->type.geometer != &radial)) return 0;
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
-   if (radial_data.r0 > 0)
+   radial_data = (Radial_Data *)gr->type.gdata;
+   if (!radial_data) return 0;
+   if (radial_data->r0 > 0)
 	return 1;
-   if ( (spread == _EVAS_TEXTURE_RESTRICT) ||
-         (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
-         (spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
+   if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
+         (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
+         (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
 	return 1;
    return 0;
 }
 
 static int
-radial_has_mask(RGBA_Gradient *gr, int spread, int op)
+radial_has_mask(RGBA_Gradient *gr, int op)
 {
+   Radial_Data   *radial_data;
+
    if (!gr || (gr->type.geometer != &radial)) return 0;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
-	if (radial_data.r0 > 0)
+	radial_data = (Radial_Data *)gr->type.gdata;
+	if (!radial_data) return 0;
+	if (radial_data->r0 > 0)
 	    return 1;
-	if ( (spread == _EVAS_TEXTURE_RESTRICT) ||
-	      (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
-	      (spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
+	if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
+	      (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
+	      (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
 	    return 1;
      }
    return 0;
 }
 
 static int
-radial_get_map_len(RGBA_Gradient *gr, int spread)
+radial_get_map_len(RGBA_Gradient *gr)
 {
-   int l;
+   Radial_Data   *radial_data;
 
    if (!gr || (gr->type.geometer != &radial)) return 0;
-   l = radial_data.s;
-   l -= (int)(l * radial_data.r0);
-   return l;
+   radial_data = (Radial_Data *)gr->type.gdata;
+   if (!radial_data) return 0;
+   return radial_data->len;
 }
 
 static Gfx_Func_Gradient_Fill
-radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
+radial_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 {
+   Radial_Data   *radial_data;
    Gfx_Func_Gradient_Fill  sfunc = NULL;
    int masked_op = 0;
 
    if (!gr || (gr->type.geometer != &radial)) return sfunc;
+   radial_data = (Radial_Data *)gr->type.gdata;
+   if (!radial_data) return sfunc;
+
+   radial_data->off = gr->map.offset;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
 
-   switch (spread)
+   switch (gr->fill.spread)
      {
       case _EVAS_TEXTURE_REFLECT:
 	{
 	 if (aa)
 	   {
-	     if (radial_data.r0 > 0)
+	     if (radial_data->r0 > 0)
 	       {
 		if (masked_op)
 		   sfunc = radial_reflect_aa_masked;
@@ -237,7 +308,7 @@ radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
 	   }
 	 else
 	   {
-	     if (radial_data.r0 > 0)
+	     if (radial_data->r0 > 0)
 	       {
 		if (masked_op)
 		   sfunc = radial_reflect_masked;
@@ -253,7 +324,7 @@ radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
 	{
 	 if (aa)
 	   {
-	     if (radial_data.r0 > 0)
+	     if (radial_data->r0 > 0)
 	       {
 		if (masked_op)
 		   sfunc = radial_repeat_aa_masked;
@@ -265,7 +336,7 @@ radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
 	   }
 	 else
 	   {
-	     if (radial_data.r0 > 0)
+	     if (radial_data->r0 > 0)
 	       {
 		if (masked_op)
 		   sfunc = radial_repeat_masked;
@@ -278,7 +349,7 @@ radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
 	}
       break;
       case _EVAS_TEXTURE_RESTRICT:
-	 radial_data.off = 0;
+	 radial_data->off = 0;
       case _EVAS_TEXTURE_RESTRICT_REFLECT:
 	{
 	 if (aa)
@@ -358,13 +429,13 @@ radial_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
 
 
 static void
-radial_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -379,28 +450,28 @@ radial_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-		int  m = (l % (2 * map_len));
+		int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		    l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		    l = src_len - l - 1;
 	      }
-	    *dst = map[l];
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                   int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -416,32 +487,32 @@ radial_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_le
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+	    *dst = src[lp];
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 	    if ((l == 0) && rr0)
-		*dst = MUL_A_256(a0, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a0, *dst);
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -456,28 +527,28 @@ radial_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int ds
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-	        int  m = (l % (2 * map_len));
+	        int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		    l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		    l = src_len - l - 1;
 	      }
-	    *dst = map[l];  *mask = 255;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                          int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -493,17 +564,17 @@ radial_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+	    *dst = src[lp];  *mask = 255;
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 	    if ((l == 0) && rr0)
 		*mask = a0;
 	  }
@@ -512,13 +583,13 @@ radial_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int
 }
 
 static void
-radial_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -532,23 +603,23 @@ radial_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
 	if (l >= 0)
 	  {
 	    l += off;
-	    l = l % map_len;
+	    l = l % src_len;
 	    if (l < 0)
-		l += map_len;
-	    *dst = map[l];
+		l += src_len;
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                  int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -563,29 +634,29 @@ radial_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	    lp = l + off;
-	    lp = lp % map_len;
+	    lp = lp % src_len;
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
-	    if (lp == map_len - 1)
-		*dst = INTERP_256(a, map[0], *dst);
+		lp += src_len;
+	    *dst = src[lp];
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
+	    if (lp == src_len - 1)
+		*dst = INTERP_256(a, src[0], *dst);
 	    if ((l == 0) && rr0)
-		*dst = MUL_A_256(a, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a, *dst);
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                      int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -599,23 +670,23 @@ radial_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst
 	if (l >= 0)
 	  {
 	    l += off;
-	    l = l % map_len;
+	    l = l % src_len;
 	    if (l < 0)
-		l += map_len;
-	    *dst = map[l];  *mask = 255;
+		l += src_len;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                         int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -630,14 +701,14 @@ radial_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int 
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	    lp = l + off;
-	    lp = lp % map_len;
+	    lp = lp % src_len;
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
-	    if (lp == map_len - 1)
-		*dst = INTERP_256(a, map[0], *dst);
+		lp += src_len;
+	    *dst = src[lp];  *mask = 255;
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
+	    if (lp == src_len - 1)
+		*dst = INTERP_256(a, src[0], *dst);
 	    if ((l == 0) && rr0)
 		*mask = a - 1;
 	  }
@@ -646,13 +717,13 @@ radial_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int 
 }
 
 static void
-radial_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                         int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -663,32 +734,32 @@ radial_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int 
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-	        int  m = (l % (2 * map_len));
+	        int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		   l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		   l = src_len - l - 1;
 	      }
-	    *dst = map[l];
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                            int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -698,40 +769,40 @@ radial_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, i
 	int  l = (ll >> 16), lp;
 
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8), a0 = a;
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
-	    if (l == (map_len - 1))
-		*dst = MUL_A_256(257 - a0, *dst) + (*dst & 0x00ffffff);
+	    *dst = src[lp];
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
+	    if (l == (src_len - 1))
+		*dst = MUL_256(257 - a0, *dst);
 	    if ((l == 0) && rr0)
-		*dst = MUL_A_256(a0, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a0, *dst);
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -742,32 +813,32 @@ radial_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mas
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-	        int  m = (l % (2 * map_len));
+	        int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		   l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		   l = src_len - l - 1;
 	      }
-	    *dst = map[l];  *mask = 255;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                   int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -777,24 +848,24 @@ radial_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *
 	int  l = (ll >> 16), lp;
 
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8), a0 = a - 1;
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
-	    if (l == (map_len - 1))
+	    *dst = src[lp];  *mask = 255;
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
+	    if (l == (src_len - 1))
 		*mask = 255 - a0;
 	    if ((l == 0) && rr0)
 		*mask = a0;
@@ -804,13 +875,13 @@ radial_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *
 }
 
 static void
-radial_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -821,26 +892,26 @@ radial_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int d
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
-	    l = (l % map_len);
+	    l = (l % src_len);
 	    if (l < 0)
-		l += map_len;
-	    *dst = map[l];
+		l += src_len;
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -850,36 +921,36 @@ radial_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, in
 	int  l = (ll >> 16), lp;
 
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	    lp = l + off;
-	    lp = (lp % map_len);
+	    lp = (lp % src_len);
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
-	    if (lp == (map_len - 1))
-		*dst = INTERP_256(a, map[0], *dst);
-	    if (l == (map_len - 1))
-		*dst = MUL_A_256(257 - a, *dst) + (*dst & 0x00ffffff);
+		lp += src_len;
+	    *dst = src[lp];
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
+	    if (lp == (src_len - 1))
+		*dst = INTERP_256(a, src[0], *dst);
+	    if (l == (src_len - 1))
+		*dst = MUL_256(257 - a, *dst);
 	    if ((l == 0) && rr0)
-		*dst = MUL_A_256(a, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a, *dst);
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -890,26 +961,26 @@ radial_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
-	    l = (l % map_len);
+	    l = (l % src_len);
 	    if (l < 0)
-		l += map_len;
-	    *dst = map[l];  *mask = 255;
+		l += src_len;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                  int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Radial_Data  *gdata = (Radial_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RADIAL_FILL
 
@@ -919,20 +990,20 @@ radial_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *m
 	int  l = (ll >> 16), lp;
 
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	    lp = l + off;
-	    lp = (lp % map_len);
+	    lp = (lp % src_len);
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
-		*dst = INTERP_256(a, map[lp + 1], *dst);
-	    if (lp == (map_len - 1))
-		*dst = INTERP_256(a, map[0], *dst);
-	    if (l == (map_len - 1))
+		lp += src_len;
+	    *dst = src[lp];  *mask = 255;
+	    if (lp + 1 < src_len)
+		*dst = INTERP_256(a, src[lp + 1], *dst);
+	    if (lp == (src_len - 1))
+		*dst = INTERP_256(a, src[0], *dst);
+	    if (l == (src_len - 1))
 		*mask = 256 - a;
 	    if ((l == 0) && rr0)
 		*mask = a - 1;
@@ -942,7 +1013,7 @@ radial_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *m
 }
 
 static void
-radial_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
            int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -960,16 +1031,16 @@ radial_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
 	*dst = 0;
 	if (l >= 0)
 	  {
-	    if (l >= map_len)
-		l = map_len - 1;
-	    *dst = map[l];
+	    if (l >= src_len)
+		l = src_len - 1;
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -985,28 +1056,28 @@ radial_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
 	DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
-	    *dst = map[l];
-	    if (l + 1 < map_len)
-		*dst = INTERP_256(a, map[l + 1], map[l]);
+	    *dst = src[l];
+	    if (l + 1 < src_len)
+		*dst = INTERP_256(a, src[l + 1], src[l]);
 	  }
 	 if (l == 0)
 	   {
-	     *dst = map[0];
+	     *dst = src[0];
 	     if (rr0)
-		*dst = MUL_A_256(a, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a, *dst);
 	   }
-	 if (l >= map_len)
+	 if (l >= src_len)
 	   {
-	     *dst = map[map_len - 1];
+	     *dst = src[src_len - 1];
 	   }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_pad_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                   int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1024,16 +1095,16 @@ radial_pad_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_le
 	*dst = 0;  *mask = 0;
 	if (l >= 0)
 	  {
-	    if (l >= map_len)
-		l = map_len - 1;
-	    *dst = map[l];  *mask = 255;
+	    if (l >= src_len)
+		l = src_len - 1;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-radial_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+radial_pad_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                      int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1049,21 +1120,21 @@ radial_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst
 	DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
-	    *dst = map[l];
-	    if (l + 1 < map_len)
-		*dst = INTERP_256(a, map[l + 1], map[l]);
+	    *dst = src[l];
+	    if (l + 1 < src_len)
+		*dst = INTERP_256(a, src[l + 1], src[l]);
 	  }
 	if (l == 0)
 	  {
-	    *dst = map[0];  *mask = 255;
+	    *dst = src[0];  *mask = 255;
 	    if (rr0)
 		*mask = a - 1;
 	  }
-	if (l >= map_len)
+	if (l >= src_len)
 	  {
-	    *dst = map[map_len - 1];  *mask = 255;
+	    *dst = src[src_len - 1];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }

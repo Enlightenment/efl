@@ -788,6 +788,9 @@ _format_color_parse(char *str, unsigned char *r, unsigned char *g, unsigned char
 	*a = _hex_string_get(str[4]);
 	*a = (*a << 4) | *a;
      }
+   *r = (*r * *a) / 255;
+   *g = (*g * *a) / 255;
+   *b = (*b * *a) / 255;
 }
 
 static void
@@ -4038,9 +4041,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 				(obj->cur.cache.clip.a * it->format->color.col.a) / 255);
 #define COLOR_SET_AMUL(col, amul) \
 	ENFN->context_color_set(output, context, \
-				(obj->cur.cache.clip.r * it->format->color.col.r) / 255, \
-				(obj->cur.cache.clip.g * it->format->color.col.g) / 255, \
-				(obj->cur.cache.clip.b * it->format->color.col.b) / 255, \
+				(obj->cur.cache.clip.r * it->format->color.col.r * (amul)) / 65025, \
+				(obj->cur.cache.clip.g * it->format->color.col.g * (amul)) / 65025, \
+				(obj->cur.cache.clip.b * it->format->color.col.b * (amul)) / 65025, \
 				(obj->cur.cache.clip.a * it->format->color.col.a * (amul)) / 65025);
 #define DRAW_TEXT(ox, oy) \
    if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \

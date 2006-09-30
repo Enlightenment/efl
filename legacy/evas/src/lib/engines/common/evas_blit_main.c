@@ -15,6 +15,8 @@ static void evas_common_copy_pixels_rev_c           (DATA32 *src, DATA32 *dst, i
 static void evas_common_copy_pixels_rev_mmx         (DATA32 *src, DATA32 *dst, int len);
 static void evas_common_copy_pixels_rev_sse/*NB*/ (DATA32 *src, DATA32 *dst, int len);
 
+static void evas_common_copy_rev_pixels_c           (DATA32 *src, DATA32 *dst, int len);
+
 
 EAPI void
 evas_common_blit_init(void)
@@ -113,22 +115,24 @@ evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_
 
 /****************************************************************************/
 
+static void
+evas_common_copy_rev_pixels_c(DATA32 *src, DATA32 *dst, int len)
+{
+   DATA32 *dst_end = dst + len;
+
+   src += len - 1;
+   while (dst < dst_end)
+ 	*dst++ = *src--;
+}
+
 #ifdef BUILD_C
 static void
 evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
 {
-   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
+   DATA32 *dst_end = dst + len;
 
-   src_ptr = src;
-   dst_ptr = dst;
-   dst_end_ptr = dst + len;
-
-   while (dst_ptr < dst_end_ptr)
-     {
-	*dst_ptr = *src_ptr;
-	src_ptr++;
-	dst_ptr++;
-     }
+   while (dst < dst_end)
+ 	*dst++ = *src++;
 }
 #endif
 
@@ -136,7 +140,7 @@ evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
 static void
 evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
 {
-   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
+   DATA32 *dst_end, *dst_end_pre;
 #ifdef ALIGN_FIX
    int src_align;
    int dst_align;
@@ -155,31 +159,23 @@ evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
 
    while ((src_align > 0) && (len > 0))
      {
-	*dst = *src;
-	dst++;
-	src++;
+	*dst++ = *src++;
 	len--;
 	src_align -= sizeof(DATA32);
      }
 #endif /* ALIGN_FIX */
 
-   src_ptr = src;
-   dst_ptr = dst;
-   dst_end_ptr = dst + len;
-   dst_end_ptr_pre = dst + ((len / 16) * 16);
+   dst_end = dst + len;
+   dst_end_pre = dst + ((len / 16) * 16);
 
-   while (dst_ptr < dst_end_ptr_pre)
+   while (dst < dst_end_pre)
      {
-	MOVE_16DWORDS_MMX(src_ptr, dst_ptr);
-	src_ptr+=16;
-	dst_ptr+=16;
+	MOVE_16DWORDS_MMX(src, dst);
+	src += 16;
+	dst += 16;
      }
-   while (dst_ptr < dst_end_ptr)
-     {
-	*dst_ptr = *src_ptr;
-	src_ptr++;
-	dst_ptr++;
-     }
+   while (dst < dst_end)
+	*dst++ = *src++;
 }
 #endif
 
@@ -187,7 +183,7 @@ evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
 static void
 evas_common_copy_pixels_mmx2(DATA32 *src, DATA32 *dst, int len)
 {
-   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
+   DATA32 *dst_end, *dst_end_pre;
 #ifdef ALIGN_FIX
    int src_align;
    int dst_align;
@@ -206,31 +202,23 @@ evas_common_copy_pixels_mmx2(DATA32 *src, DATA32 *dst, int len)
 
    while ((src_align > 0) && (len > 0))
      {
-	*dst = *src;
-	dst++;
-	src++;
+	*dst++ = *src++;
 	len--;
 	src_align -= sizeof(DATA32);
      }
 #endif
 
-   src_ptr = src;
-   dst_ptr = dst;
-   dst_end_ptr = dst + len;
-   dst_end_ptr_pre = dst + ((len / 16) * 16);
+   dst_end = dst + len;
+   dst_end_pre = dst + ((len / 16) * 16);
 
-   while (dst_ptr < dst_end_ptr_pre)
+   while (dst < dst_end_pre)
      {
-	MOVE_16DWORDS_MMX(src_ptr, dst_ptr);
-	src_ptr+=16;
-	dst_ptr+=16;
+	MOVE_16DWORDS_MMX(src, dst);
+	src += 16;
+	dst += 16;
      }
-   while (dst_ptr < dst_end_ptr)
-     {
-	*dst_ptr = *src_ptr;
-	src_ptr++;
-	dst_ptr++;
-     }
+   while (dst < dst_end)
+	*dst++ = *src++;
 }
 #endif
 
@@ -312,18 +300,14 @@ evas_common_copy_pixels_sse(DATA32 *src, DATA32 *dst, int len)
 static void
 evas_common_copy_pixels_rev_c(DATA32 *src, DATA32 *dst, int len)
 {
-   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
+   DATA32 *dst_end;
 
-   src_ptr = src + len - 1;
-   dst_ptr = dst + len - 1;
-   dst_end_ptr = dst;
+   src = src + len - 1;
+   dst_end = dst - 1;
+   dst = dst + len - 1;
 
-   while (dst_ptr >= dst_end_ptr)
-     {
-	*dst_ptr = *src_ptr;
-	src_ptr--;
-	dst_ptr--;
-     }
+   while (dst > dst_end)
+	*dst-- = *src--;
 }
 #endif
 
@@ -331,40 +315,33 @@ evas_common_copy_pixels_rev_c(DATA32 *src, DATA32 *dst, int len)
 static void
 evas_common_copy_pixels_rev_mmx(DATA32 *src, DATA32 *dst, int len)
 {
-   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
-
-   src_ptr = src + len - 16;
-   dst_ptr = dst + len - 16;
-   dst_end_ptr = dst;
-   dst_end_ptr_pre = dst + len - ((len / 16) * 16);
+   DATA32 *dst_end, *dst_end_pre;
 
    if (len >= 16)
      {
-	while (dst_ptr >= dst_end_ptr_pre)
+	src = src + len - 16;
+	dst_end = dst;
+	dst_end_pre = dst + len - ((len / 16) * 16);
+	dst = dst + len - 16;
+
+	while (dst >= dst_end_pre)
 	  {
-	     MOVE_16DWORDS_MMX(src_ptr, dst_ptr);
-	     src_ptr-=16;
-	     dst_ptr-=16;
+	     MOVE_16DWORDS_MMX(src, dst);
+	     src -= 16;
+	     dst -= 16;
 	  }
-	src_ptr+=15;
-	dst_ptr+=15;
-	while (dst_ptr >= dst_end_ptr)
-	  {
-	     *dst_ptr = *src_ptr;
-	     src_ptr--;
-	     dst_ptr--;
-	  }
+	src += 15;
+	dst += 15;
+	while (dst >= dst_end)
+	     *dst-- = *src--;
      }
    else
      {
-	src_ptr = src + len - 1;
-	dst_ptr = dst + len - 1;
-	while (dst_ptr >= dst_end_ptr)
-	  {
-	     *dst_ptr = *src_ptr;
-	     src_ptr--;
-	     dst_ptr--;
-	  }
+	src = src + len - 1;
+	dst_end = dst - 1;
+	dst = dst + len - 1;
+	while (dst > dst_end)
+	     *dst-- = *src--;
      }
 }
 #endif
@@ -386,11 +363,11 @@ evas_common_copy_pixels_rev_sse(DATA32 *src, DATA32 *dst, int len)
 	  {
 	     prefetch(&src_ptr[-16]);
 	     MOVE_10DWORDS_MMX(src_ptr, dst_ptr);
-	     src_ptr-=16;
-	     dst_ptr-=16;
+	     src_ptr -= 16;
+	     dst_ptr -= 16;
 	  }
-	src_ptr+=15;
-	dst_ptr+=15;
+	src_ptr += 15;
+	dst_ptr += 15;
 	while (dst_ptr >= dst_end_ptr)
 	  {
 	     *dst_ptr = *src_ptr;
@@ -416,6 +393,8 @@ evas_common_copy_pixels_rev_sse(DATA32 *src, DATA32 *dst, int len)
 Gfx_Func_Copy
 evas_common_draw_func_copy_get(int pixels, int reverse)
 {
+   if (reverse == -1)
+	return evas_common_copy_rev_pixels_c;
    if (reverse)
      {
 #ifdef  BUILD_SSE

@@ -491,7 +491,7 @@ list_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/data/test/images/item_normal.png", e_prefix_data_get());
    evas_object_image_file_set(co->bg, buf, NULL);
    test_setup(co->file, co->part);
-   evas_object_color_set(co->bg, 255, 255, 255, 128);
+   evas_object_color_set(co->bg, 128, 128, 128, 128);
    evas_object_color_set(co->text, 0, 0, 0, 128);
    evas_object_pass_events_set(co->bg, 1);
 }
@@ -745,7 +745,7 @@ test_setup(char *file, char *name)
    evas_object_show(o);
    
    o = evas_object_rectangle_add(evas);
-   evas_object_color_set(o, 255, 255, 255, 0);
+   evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_move(o, xx, yy);
    evas_object_resize(o, ww, 20);
    evas_object_show(o);
@@ -755,7 +755,7 @@ test_setup(char *file, char *name)
    de->top = o;
 
    o = evas_object_rectangle_add(evas);
-   evas_object_color_set(o, 255, 255, 255, 0);
+   evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_move(o, xx, yy + hh - 10);
    evas_object_resize(o, ww, 10);
    evas_object_show(o);
@@ -765,7 +765,7 @@ test_setup(char *file, char *name)
    de->bottom = o;
 
    o = evas_object_rectangle_add(evas);
-   evas_object_color_set(o, 255, 255, 255, 0);
+   evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_move(o, xx, yy + 20);
    evas_object_resize(o, 10, hh - 20 - 10);
    evas_object_show(o);
@@ -775,7 +775,7 @@ test_setup(char *file, char *name)
    de->left = o;
 
    o = evas_object_rectangle_add(evas);
-   evas_object_color_set(o, 255, 255, 255, 0);
+   evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_move(o, xx + ww - 10, yy + 20);
    evas_object_resize(o, 10, hh - 20 - 10);
    evas_object_show(o);

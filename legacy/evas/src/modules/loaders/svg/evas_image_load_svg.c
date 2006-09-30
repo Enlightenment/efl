@@ -213,9 +213,8 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    /* need to check if this is required... */
    cairo_destroy(cr);
    rsvg_handle_free(rsvg);
-   /* un-premul the im data */
-   svg_loader_unpremul_data(im->image->data, w * h);
    chdir(pcwd);
+   evas_common_image_set_alpha_sparse(im);
    return 1;
 }
 
@@ -232,6 +231,7 @@ module_open(Evas_Module *em)
 EAPI void
 module_close(void)
 {
+   if (!rsvg_initialized) return;
    rsvg_term();
    rsvg_initialized = 0;
 }

@@ -170,6 +170,9 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context 
 {
    Evas_GL_Font_Texture *ft;
 
+   if (dc != gc->dc)
+	return;
+
    /* 35 */
    ft = fg->ext_dat;
    if (!ft) return;

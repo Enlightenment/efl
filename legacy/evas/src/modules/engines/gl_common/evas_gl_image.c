@@ -60,6 +60,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data)
 	  }
      }
    im = calloc(1, sizeof(Evas_GL_Image));
+   if (!im) return NULL;
    im->references = 1;
    im->im = evas_common_image_new();
    if (!im->im)
@@ -92,6 +93,7 @@ evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int
    Evas_GL_Image *im;
 
    im = calloc(1, sizeof(Evas_GL_Image));
+   if (!im) return NULL;
    im->references = 1;
    im->im = evas_common_image_create(w, h);
    if (!im->im)
@@ -111,6 +113,7 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h)
    Evas_GL_Image *im;
 
    im = calloc(1, sizeof(Evas_GL_Image));
+   if (!im) return NULL;
    im->references = 1;
    im->im = evas_common_image_create(w, h);
    if (!im->im)
@@ -142,14 +145,16 @@ evas_gl_common_image_dirty(Evas_GL_Image *im)
 }
 
 void
-evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
+evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
 {
+   RGBA_Draw_Context *dc;
    int r, g, b, a;
    double tx1, ty1, tx2, ty2;
    int    ow, oh;
 
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
+   dc = gc->dc;
    if (dc->mul.use)
      {
 	a = (dc->mul.col >> 24) & 0xff;

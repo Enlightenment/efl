@@ -5,83 +5,21 @@
 #include <math.h>
 
 XR_Gradient *
-_xre_gradient_color_add(XCBimage_Info *xcbinf, XR_Gradient *gr, int r, int g, int b, int a, int distance)
+_xre_gradient_new(XCBimage_Info *xcbinf)
 {
-   if (!gr)
-     {
-	gr = calloc(1, sizeof(XR_Gradient));
-	if (!gr) return NULL;
-	gr->xcbinf = xcbinf;
-	gr->xcbinf->references++;
-	gr->grad = evas_common_gradient_new();
-	if (!gr->grad)
-	  {
-	     gr->xcbinf->references--;
-	     free(gr);
-	     return NULL;
-	  }
-     }
-   evas_common_gradient_color_add(gr->grad, r, g, b, a, distance);
-   if (gr->surface)
-     {
-	_xr_render_surface_free(gr->surface);
-	gr->surface = NULL;
-     }
-   gr->changed = 1;
-   return gr;
-}
+   XR_Gradient  *gr;
 
-XR_Gradient *
-_xre_gradient_colors_clear(XR_Gradient *gr)
-{
+   if (!xcbinf) return NULL;
+   gr = calloc(1, sizeof(XR_Gradient));
    if (!gr) return NULL;
-   evas_common_gradient_colors_clear(gr->grad);
-   if (gr->surface)
+   gr->grad = evas_common_gradient_new();
+   if (!gr->grad)
      {
-	_xr_render_surface_free(gr->surface);
-	gr->surface = NULL;
+	free(gr);
+	return NULL;
      }
-   gr->changed = 1;
-   return gr;
-}
-
-XR_Gradient *
-_xre_gradient_data_set(XCBimage_Info *xcbinf, XR_Gradient *gr, void *map, int len, int has_alpha)
-{
-   if (!gr)
-     {
-	gr = calloc(1, sizeof(XR_Gradient));
-	if (!gr) return NULL;
-	gr->xcbinf = xcbinf;
-	gr->xcbinf->references++;
-	gr->grad = evas_common_gradient_new();
-	if (!gr->grad)
-	  {
-	     gr->xcbinf->references--;
-	     free(gr);
-	     return NULL;
-	  }
-     }
-   evas_common_gradient_data_set(gr->grad, map, len, has_alpha);
-   if (gr->surface)
-     {
-	_xr_render_surface_free(gr->surface);
-	gr->surface = NULL;
-     }
-   gr->changed = 1;
-   return gr;
-}
-
-XR_Gradient *
-_xre_gradient_data_unset(XR_Gradient *gr)
-{
-   if (!gr) return NULL;
-   evas_common_gradient_data_unset(gr->grad);
-   if (gr->surface)
-     {
-	_xr_render_surface_free(gr->surface);
-	gr->surface = NULL;
-     }
+   gr->xcbinf = xcbinf;
+   gr->xcbinf->references++;
    gr->changed = 1;
    return gr;
 }
@@ -91,17 +29,49 @@ _xre_gradient_free(XR_Gradient *gr)
 {
    if (!gr) return;
    if (gr->grad)
-     {
 	evas_common_gradient_free(gr->grad);
-	gr->grad = NULL;
-     }
    if (gr->surface)
-     {
 	_xr_render_surface_free(gr->surface);
-	gr->surface = NULL;
-     }
    _xr_image_info_free(gr->xcbinf);
    free(gr);
+}
+
+void
+_xre_gradient_color_stop_add(XR_Gradient *gr, int r, int g, int b, int a, int delta)
+{
+   if (!gr) return;
+   evas_common_gradient_color_stop_add(gr->grad, r, g, b, a, delta);
+   gr->changed = 1;
+}
+
+void
+_xre_gradient_alpha_stop_add(XR_Gradient *gr, int a, int delta)
+{
+   if (!gr) return;
+   evas_common_gradient_alpha_stop_add(gr->grad, a, delta);
+   gr->changed = 1;
+}
+
+void
+_xre_gradient_clear(XR_Gradient *gr)
+{
+   if (!gr) return;
+   evas_common_gradient_clear(gr->grad);
+   gr->changed = 1;
+}
+
+void
+_xre_gradient_color_data_set(XR_Gradient *gr, void *map, int len, int has_alpha)
+{
+   evas_common_gradient_color_data_set(gr->grad, map, len, has_alpha);
+   gr->changed = 1;
+}
+
+void
+_xre_gradient_alpha_data_set(XR_Gradient *gr, void *amap, int len)
+{
+   evas_common_gradient_alpha_data_set(gr->grad, amap, len);
+   gr->changed = 1;
 }
 
 void
@@ -113,100 +83,99 @@ _xre_gradient_fill_set(XR_Gradient *gr, int x, int y, int w, int h)
 }
 
 void
-_xre_gradient_type_set(XR_Gradient *gr, char *name)
+_xre_gradient_fill_angle_set(XR_Gradient *gr, double angle)
 {
    if (!gr) return;
-   evas_common_gradient_type_set(gr->grad, name);
+   evas_common_gradient_fill_angle_set(gr->grad, angle);
    gr->changed = 1;
 }
 
 void
-_xre_gradient_range_offset_set(XR_Gradient *gr, float offset)
+_xre_gradient_fill_spread_set(XR_Gradient *gr, int spread)
 {
    if (!gr) return;
-   evas_common_gradient_range_offset_set(gr->grad, offset);
+   evas_common_gradient_fill_spread_set(gr->grad, spread);
    gr->changed = 1;
 }
 
 void
-_xre_gradient_type_params_set(XR_Gradient *gr, char *params)
+_xre_gradient_angle_set(XR_Gradient *gr, double angle)
 {
    if (!gr) return;
-   evas_common_gradient_type_params_set(gr->grad, params);
-   gr->changed = 1;
-}
-
-void *
-_xre_gradient_geometry_init(XR_Gradient *gr, int spread)
-{
-   if (!gr) return NULL;
-   gr->grad = evas_common_gradient_geometry_init(gr->grad, spread);
-   return gr;
-}
-
-int
-_xre_gradient_alpha_get(XR_Gradient *gr, int spread, int op)
-{
-   if (!gr) return 0;
-   return evas_common_gradient_has_alpha(gr->grad, spread, op);
-}
-
-void
-_xre_gradient_map(RGBA_Draw_Context *dc, XR_Gradient *gr, int spread)
-{
-   if (!gr) return;
-   evas_common_gradient_map(dc, gr->grad, spread);
-   evas_common_cpu_end_opt();
+   evas_common_gradient_map_angle_set(gr->grad, angle);
    gr->changed = 1;
 }
 
 void
-_xre_gradient_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h, double angle, int spread)
+_xre_gradient_offset_set(XR_Gradient *gr, float offset)
 {
-   RGBA_Image *im;
-   int         mul_use;
-   
-   if ((w <= 0) || (h <= 0)) return;
+   if (!gr) return;
+   evas_common_gradient_map_offset_set(gr->grad, offset);
+   gr->changed = 1;
+}
+
+void
+_xre_gradient_direction_set(XR_Gradient *gr, int direction)
+{
+   if (!gr) return;
+   evas_common_gradient_map_direction_set(gr->grad, direction);
+   gr->changed = 1;
+}
+
+void
+_xre_gradient_type_set(XR_Gradient *gr, char *name, char *params)
+{
+   if (!gr) return;
+   evas_common_gradient_type_set(gr->grad, name, params);
+   gr->changed = 1;
+}
+
+void
+_xre_gradient_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h)
+{
+   int alpha = 0;
+
+   if ((w < 1) || (h < 1)) return;
    if (!rs || !dc || !gr) return;
+   if (!gr->xcbinf || !gr->grad || !gr->grad->type.geometer) return;
 
-   if ((angle != gr->angle) || (spread != gr->spread) || (gr->changed))
+   if (gr->grad->type.geometer->has_alpha(gr->grad, dc->render_op) ||
+	gr->grad->type.geometer->has_mask(gr->grad, dc->render_op))
+	alpha = 1;
+   if (((gr->sw != w) || (gr->sh != h)) && gr->surface)
      {
-	if (gr->surface)
-	  {
-	     _xr_render_surface_free(gr->surface);
-	     gr->surface = NULL;
-	  }
+	_xr_render_surface_free(gr->surface);
+	gr->surface = NULL;
+	gr->changed = 1;
      }
    if (!gr->surface)
      {
-	im = evas_common_image_create(w, h);
-	if (im)
-	  {
-	     RGBA_Draw_Context *dc2;
-	     
-	     dc2 = evas_common_draw_context_new();
-	     if (dc2)
-	       {
-		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
-		  memset(im->image->data, 0, im->image->w * im->image->h * sizeof(DATA32));
-		  dc2->anti_alias = dc->anti_alias;
-		  dc2->interpolation.color_space = dc->interpolation.color_space;
-		  dc2->render_op = _EVAS_RENDER_COPY;
-		  evas_common_gradient_draw(im, dc2, 0, 0, w, h, gr->grad, angle, spread);
-		  gr->surface = _xr_render_surface_new(gr->xcbinf, w, h, gr->xcbinf->fmt32, 1);
-		  if (gr->surface)
-		    _xr_render_surface_argb_pixels_fill(gr->surface, w, h, im->image->data, 0, 0, w, h);
-		  evas_common_draw_context_free(dc2);
-		  gr->angle = angle;
-		  gr->spread = spread;
-	       }
-	     evas_common_image_free(im);
-	  }
+	gr->surface = _xr_render_surface_new(gr->xcbinf, w, h, gr->xcbinf->fmt32, 1);
+	if (!gr->surface) return;
+	gr->changed = 1;
      }
-   mul_use = dc->mul.use;
-   dc->mul.use = 0;
-   if (gr->surface)
-     _xr_render_surface_composite(gr->surface, rs, dc, 0, 0, gr->surface->w, gr->surface->h, x, y, w, h, 1);
-   dc->mul.use = mul_use;
+   if (gr->changed)
+     {
+	int op = dc->render_op, cuse = dc->clip.use;
+	RGBA_Image  *im;
+
+	im = evas_common_image_create(w, h);
+	if (!im) 
+	  {
+	    _xr_render_surface_free(gr->surface);
+	    gr->surface = NULL;
+	    return;
+	  }
+	dc->render_op = _EVAS_RENDER_FILL;
+	dc->clip.use = 0;
+	evas_common_gradient_draw(im, dc, 0, 0, w, h, gr->grad);
+	_xr_render_surface_argb_pixels_fill(gr->surface, w, h, im->image->data, 0, 0, w, h);
+	evas_common_image_free(im);
+	dc->render_op = op;
+	dc->clip.use = cuse;
+     }
+   gr->surface->alpha = alpha;
+   _xr_render_surface_composite(gr->surface, rs, dc, 0, 0, gr->surface->w, gr->surface->h, x, y, w, h, 0);
    gr->changed = 0;
+   gr->sw = w;  gr->sh = h;
 }

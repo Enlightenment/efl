@@ -90,7 +90,8 @@ evas_common_convert_rgba_to_32bpp_rgbx_8888 (DATA32 *src, DATA8 *dst, int src_ju
 
    CONVERT_LOOP_START_ROT_0();
 
-   *dst_ptr = (R_VAL(src_ptr) << 24) | (G_VAL(src_ptr) << 16) | (B_VAL(src_ptr) << 8);
+//   *dst_ptr = (R_VAL(src_ptr) << 24) | (G_VAL(src_ptr) << 16) | (B_VAL(src_ptr) << 8);
+   *dst_ptr = (*src_ptr << 8);
 
    CONVERT_LOOP_END_ROT_0();
    return;
@@ -114,7 +115,8 @@ evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_270 (DATA32 *src, DATA8 *dst, in
 
    CONVERT_LOOP_START_ROT_270();
 
-   *dst_ptr = (R_VAL(src_ptr) << 24) | (G_VAL(src_ptr) << 16) | (B_VAL(src_ptr) << 8);
+//   *dst_ptr = (R_VAL(src_ptr) << 24) | (G_VAL(src_ptr) << 16) | (B_VAL(src_ptr) << 8);
+   *dst_ptr = (*src_ptr << 8);
 
    CONVERT_LOOP_END_ROT_270();
    return;
@@ -138,7 +140,8 @@ evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_90 (DATA32 *src, DATA8 *dst, int
 
    CONVERT_LOOP_START_ROT_90();
 
-   *dst_ptr = (R_VAL(src_ptr) << 24) | (G_VAL(src_ptr) << 16) | (B_VAL(src_ptr) << 8);
+//   *dst_ptr = (R_VAL(src_ptr) << 24) | (G_VAL(src_ptr) << 16) | (B_VAL(src_ptr) << 8);
+   *dst_ptr = (*src_ptr << 8);
 
    CONVERT_LOOP_END_ROT_90();
    return;

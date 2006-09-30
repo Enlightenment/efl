@@ -156,12 +156,7 @@ void
 _xr_render_surface_solid_rectangle_set(Xrender_Surface *rs, int r, int g, int b, int a, int x, int y, int w, int h)
 {
    XRenderColor col;
-   int aa;
    
-   aa = a + 1;
-   r = (r * aa) >> 8;
-   g = (g * aa) >> 8;
-   b = (b * aa) >> 8;
    col.red   = (r << 8) | r;
    col.green = (g << 8) | g;
    col.blue  = (b << 8) | b;
@@ -175,7 +170,6 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
    Ximage_Image  *xim;
    unsigned int  *p, *sp, *sple, *spe;
    unsigned int   jump, sjump;
-   unsigned int   a, r, g, b, aa;
    
    xim = _xr_image_new(rs->xinf, w, h, rs->depth);
    if (!xim) return;
@@ -196,23 +190,8 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  switch (a = A_VAL(sp))
-		    {
-		     case 0:
-		       *p = 0;
-		       break;
-		     case 255:
-		       *p = (B_VAL(sp) << 24) | (G_VAL(sp) << 16) | (R_VAL(sp) << 8) | 0xff;
-		       break;
-		     default:
-		       aa = a + 1;
-		       r = ((R_VAL(sp)) * aa) >> 8;
-		       g = ((G_VAL(sp)) * aa) >> 8;
-		       b = ((B_VAL(sp)) * aa) >> 8;
-		       *p = (b << 24) | (g << 16) | (r << 8) | a;
-		       break;
-		    }
-		  p++;
+		  *p++ = (*sp << 24) + ((*sp << 8) & 0xff0000) + ((*sp >> 8) & 0xff00) + (*sp >> 24);
+//		  *p++ = (B_VAL(sp) << 24) | (G_VAL(sp) << 16) | (R_VAL(sp) << 8) | A_VAL(sp);
 		  sp++;
 	       }
 	     p += jump;
@@ -225,24 +204,7 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
 	  {
 	     sple = sp + w;
 	     while (sp < sple)
-	       {
-		  switch (a = (*sp & 0xff000000))
-		    {
-		     case 0:
-		       *p = 0;
-		       break;
-		     case 0xff000000:
-		       *p = *sp;
-		       break;
-		     default:
-		       aa = (a >> 24) + 1;
-		       *p = a + (((((*sp) >> 8) & 0xff) * aa) & 0xff00) + 
-			 (((((*sp) & 0x00ff00ff) * aa) >> 8) & 0x00ff00ff);
-		       break;
-		    }
-		  p++;
-		  sp++;
-	       }
+		*p++ = *sp++;
 	     p += jump;
 	     sp += sjump;
 	  }
@@ -276,8 +238,8 @@ _xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pi
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  *p = ((B_VAL(sp)) << 24) | ((G_VAL(sp)) << 16) | ((R_VAL(sp)) << 8) | 0x000000ff;
-		  p++;
+		  *p++ = (*sp << 24) + ((*sp << 8) & 0xff0000) + ((*sp >> 8) & 0xff00) + 0xff;
+//		  *p++ = ((B_VAL(sp)) << 24) | ((G_VAL(sp)) << 16) | ((R_VAL(sp)) << 8) | 0x000000ff;
 		  sp++;
 	       }
 	     p += jump;
@@ -290,11 +252,7 @@ _xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pi
 	  {
 	     sple = sp + w;
 	     while (sp < sple)
-	       {
-		  *p = 0xff000000 | *sp;
-		  p++;
-		  sp++;
-	       }
+		*p++ = 0xff000000 | *sp++;
 	     p += jump;
 	     sp += sjump;
 	  }
@@ -525,24 +483,41 @@ _xr_render_surface_rectangle_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, in
 {
    XRenderColor col;
    XRenderPictureAttributes att;
-   int r, g, b, a, aa, op;
+   int r, g, b, a, op;
 
-   if ((w <= 0) || (h <= 0) || (!rs) || (!dc)) return;
-   a = (dc->col.col >> 24) & 0xff;
-   if (a == 0) return;
+   if ((!rs) || (!dc)) return;
+   if ((w <= 0) || (h <= 0)) return;
+   a = dc->col.col >> 24;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
-   aa = a + 1;
-   r = (r * aa) >> 8;
-   g = (g * aa) >> 8;
-   b = (b * aa) >> 8;
    col.red   = (r << 8) | r;
    col.green = (g << 8) | g;
    col.blue  = (b << 8) | b;
    col.alpha = (a << 8) | a;
-   op = PictOpSrc;
-   if (a < 0xff) op = PictOpOver;
+   op = PictOpOver;
+   if (dc->render_op == _EVAS_RENDER_BLEND)
+     {
+	if (!dc->col.col) return;
+	if (a == 0xff) op = PictOpSrc;
+     }
+   else if (dc->render_op == _EVAS_RENDER_BLEND_REL)
+     {
+	if (!dc->col.col) return;
+	op = PictOpAtop;
+     }
+   else if (dc->render_op == _EVAS_RENDER_MUL)
+     {
+	if (dc->col.col == 0xffffffff) return;
+	op = PictOpIn;
+     }
+   else if (dc->render_op == _EVAS_RENDER_COPY)
+	op = PictOpSrc;
+   else if (dc->render_op == _EVAS_RENDER_COPY_REL)
+	op = PictOpIn;
+   else if (dc->render_op == _EVAS_RENDER_MASK)
+	op = PictOpInReverse;
+
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
 
@@ -556,8 +531,28 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
    XRenderPictureAttributes att;
    int op;
    
-   if ((!rs) || (!dc)) return;
+   if ((!rs) || (!dc) || (!dc->col.col)) return;
    op = PictOpOver;
+   if (dc->render_op == _EVAS_RENDER_BLEND)
+     {
+	if (!dc->col.col) return;
+     }
+   else if (dc->render_op == _EVAS_RENDER_BLEND_REL)
+     {
+	if (!dc->col.col) return;
+	op = PictOpAtop;
+     }
+   else if (dc->render_op == _EVAS_RENDER_MUL)
+     {
+	if (dc->col.col == 0xffffffff) return;
+	op = PictOpIn;
+     }
+   else if (dc->render_op == _EVAS_RENDER_COPY)
+	op = PictOpSrc;
+   else if (dc->render_op == _EVAS_RENDER_COPY_REL)
+	op = PictOpIn;
+   else if (dc->render_op == _EVAS_RENDER_MASK)
+	op = PictOpInReverse;
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
    _xr_render_surface_clips_set(rs, dc, 0, 0, rs->w, rs->h);
@@ -587,8 +582,6 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
 	poly[3].y =  (y1 + ddy);
 
 	a = (dc->col.col >> 24) & 0xff;
-	if (a == 0) return;
-	if (a < 0xff) op = PictOpOver;
 	r = (dc->col.col >> 16) & 0xff;
 	g = (dc->col.col >> 8 ) & 0xff;
 	b = (dc->col.col      ) & 0xff;
@@ -619,14 +612,31 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
    int op;
    
    if ((!rs) || (!dc)) return;
-//   op = PictOpSrc;
    num = 0;
    for (pt = points; pt; pt = (RGBA_Polygon_Point *)(((Evas_Object_List *)pt)->next)) num++;
    if (num < 3) return;
+   op = PictOpOver;
+   if (dc->render_op == _EVAS_RENDER_BLEND)
+     {
+	if (!dc->col.col) return;
+     }
+   else if (dc->render_op == _EVAS_RENDER_BLEND_REL)
+     {
+	if (!dc->col.col) return;
+	op = PictOpAtop;
+     }
+   else if (dc->render_op == _EVAS_RENDER_MUL)
+     {
+	if (dc->col.col == 0xffffffff) return;
+	op = PictOpIn;
+     }
+   else if (dc->render_op == _EVAS_RENDER_COPY)
+	op = PictOpSrc;
+   else if (dc->render_op == _EVAS_RENDER_COPY_REL)
+	op = PictOpIn;
+   else if (dc->render_op == _EVAS_RENDER_MASK)
+	op = PictOpInReverse;
    a = (dc->col.col >> 24) & 0xff;
-   if (a == 0) return;
-//   if (a < 0xff)
-     op = PictOpOver;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
@@ -650,7 +660,7 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
 	     pts[i].y = pt->y;
 	     i++;
 	  }
-     }
+    }
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
 

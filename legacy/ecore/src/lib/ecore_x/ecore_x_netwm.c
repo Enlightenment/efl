@@ -692,6 +692,8 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    p = data;
    for (i = 0; i < icons; i++)
      {
+	int *ps, *pd, *pe;
+	
 	len = p[0] * p[1];
 	((*icon)[i]).width = p[0];
 	((*icon)[i]).height = p[1];
@@ -706,6 +708,19 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 	     return 0;
 	  }
 
+	pd = ((*icon)[i]).data;
+	ps = src;
+	pe = ps + len;
+	for (ps; ps < pe; ps++)
+	  {
+	     int r, g, b, a;
+	     
+	     a = (*ps >> 24) & 0xff;
+	     r = (*ps >> 16) & 0xff;
+	     g = (*ps >>  8) & 0xff;
+	     b = (*ps      ) & 0xff;
+	     *pd = (a << 24) | (((r * a) / 255) << 16) | (((g * a) / 255) << 8) | (((b * a) / 255));
+	  }
 	memcpy(((*icon)[i]).data, src, len * sizeof(unsigned int));
 
 	p += (len + 2);

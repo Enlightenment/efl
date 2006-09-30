@@ -189,7 +189,8 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
    else
      {
 	/* scaling up only - dont need anything except original */
-	if ((dst_region_w >= src_region_w) && (dst_region_h >= src_region_h))
+//	if ((!dc->anti_alias) || ((dst_region_w >= src_region_w) && (dst_region_h >= src_region_h)))
+	if (((dst_region_w >= src_region_w) && (dst_region_h >= src_region_h)))
 	  {
 #include "evas_scale_smooth_scaler_up.c"
 	     return;

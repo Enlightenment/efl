@@ -3,40 +3,15 @@
 static void _evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr);
 
 Evas_GL_Gradient *
-evas_gl_common_gradient_color_add(Evas_GL_Gradient *gr, int r, int g, int b, int a, int distance)
+evas_gl_common_gradient_new(void)
 {
-   if (!gr) gr = calloc(1, sizeof(Evas_GL_Gradient));
-   if (!gr) return NULL;
-   if (!gr->grad) gr->grad = evas_common_gradient_new();
-   evas_common_gradient_color_add(gr->grad, r, g, b, a, distance);
-   if (gr->tex) evas_gl_common_texture_free(gr->tex);
-   gr->tex = NULL;
-   return gr;
-}
+   Evas_GL_Gradient *gr;
 
-Evas_GL_Gradient *
-evas_gl_common_gradient_colors_clear(Evas_GL_Gradient *gr)
-{
+   gr = calloc(1, sizeof(Evas_GL_Gradient));
    if (!gr) return NULL;
-   evas_common_gradient_colors_clear(gr->grad);
-   return gr;
-}
-
-Evas_GL_Gradient *
-evas_gl_common_gradient_data_set(Evas_GL_Gradient *gr, void * map, int len, int has_alpha)
-{
-   if (!gr) gr = calloc(1, sizeof(Evas_GL_Gradient));
-   if (!gr) return NULL;
-   if (!gr->grad) gr->grad = evas_common_gradient_new();
-   evas_common_gradient_data_set(gr->grad, map, len, has_alpha);
-   return gr;
-}
-
-Evas_GL_Gradient *
-evas_gl_common_gradient_data_unset(Evas_GL_Gradient *gr)
-{
-   if (!gr) return NULL;
-   evas_common_gradient_data_unset(gr->grad);
+   gr->grad = evas_common_gradient_new();
+   if (!gr->grad) { free(gr);  return NULL; }
+   gr->changed = 1;
    return gr;
 }
 
@@ -46,8 +21,47 @@ evas_gl_common_gradient_free(Evas_GL_Gradient *gr)
    if (!gr) return;
    if (gr->grad) evas_common_gradient_free(gr->grad);
    if (gr->tex) evas_gl_common_texture_free(gr->tex);
-   gr->tex = NULL;
    free(gr);
+}
+
+void
+evas_gl_common_gradient_color_stop_add(Evas_GL_Gradient *gr, int r, int g, int b, int a, int delta)
+{
+   if (!gr) return;
+   evas_common_gradient_color_stop_add(gr->grad, r, g, b, a, delta);
+   gr->changed = 1;
+}
+
+void
+evas_gl_common_gradient_alpha_stop_add(Evas_GL_Gradient *gr, int a, int delta)
+{
+   if (!gr) return;
+   evas_common_gradient_alpha_stop_add(gr->grad, a, delta);
+   gr->changed = 1;
+}
+
+void
+evas_gl_common_gradient_color_data_set(Evas_GL_Gradient *gr, void * map, int len, int has_alpha)
+{
+   if (!gr) return;
+   evas_common_gradient_color_data_set(gr->grad, map, len, has_alpha);
+   gr->changed = 1;
+}
+
+void
+evas_gl_common_gradient_alpha_data_set(Evas_GL_Gradient *gr, void * alpha_map, int len)
+{
+   if (!gr) return;
+   evas_common_gradient_alpha_data_set(gr->grad, alpha_map, len);
+   gr->changed = 1;
+}
+
+void
+evas_gl_common_gradient_clear(Evas_GL_Gradient *gr)
+{
+   if (!gr) return;
+   evas_common_gradient_clear(gr->grad);
+   gr->changed = 1;
 }
 
 void
@@ -55,61 +69,110 @@ evas_gl_common_gradient_fill_set(Evas_GL_Gradient *gr, int x, int y, int w, int 
 {
    if (!gr) return;
    evas_common_gradient_fill_set(gr->grad, x, y, w, h);
+   gr->changed = 1;
 }
 
 void
-evas_gl_common_gradient_range_offset_set(Evas_GL_Gradient *gr, float offset)
+evas_gl_common_gradient_fill_angle_set(Evas_GL_Gradient *gr, double angle)
 {
    if (!gr) return;
-   evas_common_gradient_range_offset_set(gr->grad, offset);
+   evas_common_gradient_fill_angle_set(gr->grad, angle);
+   gr->changed = 1;
 }
 
 void
-evas_gl_common_gradient_type_set(Evas_GL_Gradient *gr, char *name)
+evas_gl_common_gradient_fill_spread_set(Evas_GL_Gradient *gr, int spread)
 {
    if (!gr) return;
-   evas_common_gradient_type_set(gr->grad, name);
+   evas_common_gradient_fill_spread_set(gr->grad, spread);
+   gr->changed = 1;
 }
 
 void
-evas_gl_common_gradient_type_params_set(Evas_GL_Gradient *gr, char *params)
+evas_gl_common_gradient_angle_set(Evas_GL_Gradient *gr, double angle)
 {
    if (!gr) return;
-   evas_common_gradient_type_params_set(gr->grad, params);
+   evas_common_gradient_angle_set(gr->grad, angle);
+   gr->changed = 1;
 }
 
-void *
-evas_gl_common_gradient_geometry_init(Evas_GL_Gradient *gr, int spread)
+void
+evas_gl_common_gradient_offset_set(Evas_GL_Gradient *gr, float offset)
 {
-   if (!gr) return NULL;
-   gr->grad = evas_common_gradient_geometry_init(gr->grad, spread);
-   return gr;
+   if (!gr) return;
+   evas_common_gradient_offset_set(gr->grad, offset);
+   gr->changed = 1;
+}
+
+void
+evas_gl_common_gradient_direction_set(Evas_GL_Gradient *gr, int direction)
+{
+   if (!gr) return;
+   evas_common_gradient_direction_set(gr->grad, direction);
+   gr->changed = 1;
+}
+
+void
+evas_gl_common_gradient_type_set(Evas_GL_Gradient *gr, char *name, char *params)
+{
+   if (!gr) return;
+   evas_common_gradient_type_set(gr->grad, name, params);
+   gr->changed = 1;
 }
 
 int
-evas_gl_common_gradient_alpha_get(Evas_GL_Gradient *gr, int spread, int op)
+evas_gl_common_gradient_is_opaque(Evas_GL_Context *gc, Evas_GL_Gradient *gr,
+                                  int x, int y, int w, int h)
 {
-   if (!gr) return 0;
-   return evas_common_gradient_has_alpha(gr->grad, spread, op);
+   RGBA_Draw_Context *dc;
+
+   if (!gc || !gc->dc || !gr || !gr->grad || !gr->grad->type.geometer)  return 0;
+   dc = gc->dc;
+   return !(gr->grad->type.geometer->has_alpha(gr->grad, dc->render_op) |
+              gr->grad->type.geometer->has_mask(gr->grad, dc->render_op));
+}
+
+int
+evas_gl_common_gradient_is_visible(Evas_GL_Context *gc, Evas_GL_Gradient *gr,
+                                   int x, int y, int w, int h)
+{
+   if (!gc || !gr)  return 0;
+   return 1;
 }
 
 void
-evas_gl_common_gradient_map(RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int spread)
+evas_gl_common_gradient_render_pre(Evas_GL_Context *gc, Evas_GL_Gradient *gr)
 {
-   int  mul_use;
-   
-   if (!gr || !dc) return;
-   mul_use = dc->mul.use;
-   dc->mul.use = 0;
-   evas_common_gradient_map(dc, gr->grad, spread);
-   dc->mul.use = mul_use;
-   evas_common_cpu_end_opt();
+   int  len;
+   RGBA_Draw_Context *dc;
+   RGBA_Gradient     *grad;
+
+   if (!gr || !gc || !gr->grad || !gc->dc) return;
+   grad = gr->grad;
+   dc = gc->dc;
+   if (!grad->type.geometer) return;
+   grad->type.geometer->geom_set(grad);
+   len = grad->type.geometer->get_map_len(grad);
+   evas_common_gradient_map(dc, grad, len);
+   gr->changed = 1;
 }
+
 void
-evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int x, int y, int w, int h, double angle, int spread)
+evas_gl_common_gradient_render_post(Evas_GL_Gradient *gr)
+{
+}
+
+void
+evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, int y, int w, int h)
 {
    int r, g, b, a;
+   RGBA_Draw_Context *dc;
 
+   if ((w < 1) || (h < 1)) return;
+   if (!gr || !gc || !gc->dc) return;
+   if (!gr->grad || !gr->grad->type.geometer) return;
+
+   dc = gc->dc;
    if (dc->mul.use)
      {
 	a = (dc->mul.col >> 24) & 0xff;
@@ -122,7 +185,10 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL
 	r = g = b = a = 255;
      }
    evas_gl_common_context_color_set(gc, r, g, b, a);
-   evas_gl_common_context_blend_set(gc, 1);
+
+   a = !evas_gl_common_gradient_is_opaque(gc, gr, x, y, w, h);
+   evas_gl_common_context_blend_set(gc, a);
+
    if (dc->clip.use)
      evas_gl_common_context_clip_set(gc, 1,
 				     dc->clip.x, dc->clip.y,
@@ -130,88 +196,46 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL
    else
      evas_gl_common_context_clip_set(gc, 0,
 				     0, 0, 0, 0);
-   if (!gr->tex)
-     _evas_gl_common_gradient_texture_build(gc, gr);
-   evas_gl_common_context_texture_set(gc, gr->tex, 0, 255, 3);
+
+   if (!gr->tex) gr->changed = 1;
+   if (((w != gr->tw) || (h != gr->th)) && gr->tex)
+     {
+	evas_gl_common_texture_free(gr->tex);
+	gr->tex = NULL;
+	gr->changed = 1;
+     }
+   if (gr->changed)
+     {
+	RGBA_Image *im;
+	int op = dc->render_op, cuse = dc->clip.use;
+
+	im = evas_common_image_create(w, h);
+	if (!im) return;
+	dc->render_op = _EVAS_RENDER_FILL;
+	dc->clip.use = 0;
+	evas_common_gradient_draw(im, dc, 0, 0, w, h, gr->grad);
+	if (!gr->tex)
+	   gr->tex = evas_gl_common_texture_new(gc, im, 0);
+	else
+	   evas_gl_common_texture_update(gr->tex, im, 0);
+
+	evas_common_image_free(im);
+	dc->render_op = op;
+	dc->clip.use = cuse;
+	if (!gr->tex) return;
+     }
+
+   evas_gl_common_context_texture_set(gc, gr->tex, 0, w, h);
 
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
-     {
-	double max, t[8];
-	int tw, th, i;
 
-	tw = 256;
-	th = 4;
-
-	t[0] = cos(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
-	t[1] = sin(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
-
-	t[2] = cos(((-angle + 45 + 180) * 2 * 3.141592654) / 360);
-	t[3] = sin(((-angle + 45 + 180) * 2 * 3.141592654) / 360);
-
-	t[4] = cos(((-angle + 45 + 270) * 2 * 3.141592654) / 360);
-	t[5] = sin(((-angle + 45 + 270) * 2 * 3.141592654) / 360);
-
-	t[6] = cos(((-angle + 45 + 0) * 2 * 3.141592654) / 360);
-	t[7] = sin(((-angle + 45 + 0) * 2 * 3.141592654) / 360);
-	max = 0;
-
-	for (i = 0; i < 8; i++)
-	  {
-	     if ((t[i] < 0) && (-t[i] > max)) max = -t[i];
-	     else if ((t[i] > max)) max = t[i];
-	  }
-	if (max > 0)
-	  {
-	     for (i = 0; i < 8; i++) t[i] *= 1 / max;
-	  }
-	for (i = 0; i < 8; i+=2)
-	  {
-	     t[i] = (1.0 + ((((0.5) + (t[i] / 2.0)) * (256.0 - 2.0)))) / 256.0;
-	     t[i + 1] = (1.0 + ((((0.5) - (t[i + 1] / 2.0))) * 2.0)) / 4.0;
-	     if (gc->ext.nv_texture_rectangle)
-	       {
-		  t[i] *= 256.0;
-		  t[i + 1] *= 4.0;
-	       }
-	  }
-	glBegin(GL_QUADS);
-	glTexCoord2d(t[0],  t[1]); glVertex2i(x, y);
-	glTexCoord2d(t[2],  t[3]); glVertex2i(x + w, y);
-	glTexCoord2d(t[4],  t[5]); glVertex2i(x + w, y + h);
-	glTexCoord2d(t[6],  t[7]); glVertex2i(x, y + h);
-	glEnd();
-     }
-}
-
-static void
-_evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr)
-{
-   DATA32 *map;
-   RGBA_Draw_Context *dc;
-   RGBA_Image *im;
-
-   return;
-/*
-FIXME: this has been broken by the new gradient code!!
-*/
-   dc = evas_common_draw_context_new();
-   if (!dc) return;
-   evas_common_gradient_map(dc, gr->grad, _EVAS_TEXTURE_REFLECT);
-   if (map = gr->grad->map.data)
-     {
-	im = evas_common_image_create(256, 4);
-	if (im)
-	  {
-	     int i;
-
-	     for (i = 0; i < 4; i++)
-		 evas_common_scale_rgba_span(map, gr->grad->map.len, 0xffffffff,
-		                             im->image->data + (i * 256), 256);
-	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-	     gr->tex = evas_gl_common_texture_new(gc, im, 0);
-	     evas_common_image_free(im);
-	  }
-     }
-   evas_common_draw_context_free(dc);
+   glBegin(GL_QUADS);
+   glTexCoord2d(0.0,  0.0); glVertex2i(x, y);
+   glTexCoord2d(1.0,  0.0); glVertex2i(x + w, y);
+   glTexCoord2d(1.0,  1.0); glVertex2i(x + w, y + h);
+   glTexCoord2d(0.0,  1.0); glVertex2i(x, y + h);
+   glEnd();
+   gr->changed = 0;
+   gr->tw = w;  gr->th = h;
 }

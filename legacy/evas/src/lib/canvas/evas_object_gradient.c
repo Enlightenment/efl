@@ -12,11 +12,15 @@ struct _Evas_Object_Gradient
    DATA32            magic;
 
    struct {
+      struct {
       Evas_Angle     angle;
-      int            spread;
-      float          range_offset;
+      float          offset;
+      int            direction;
+      } map;
       struct {
          Evas_Coord  x, y, w, h;
+         Evas_Angle  angle;
+         int         spread;
       } fill;
       struct {
          char       *name;
@@ -27,7 +31,7 @@ struct _Evas_Object_Gradient
 
    unsigned char     changed : 1;
    unsigned char     gradient_changed : 1;
-   unsigned char     imported_data : 1;
+   unsigned char     type_changed : 1;
 
    void             *engine_data;
 };
@@ -89,30 +93,36 @@ evas_object_gradient_add(Evas *e)
    obj = evas_object_new();
    evas_object_gradient_init(obj);
    evas_object_inject(obj, e);
+   if (obj->object_data)
+     {
+	Evas_Object_Gradient *o = (Evas_Object_Gradient *)(obj->object_data);
+
+	o->engine_data = e->engine.func->gradient_new(e->engine.data.output);
+     }
    return obj;
 }
 
 /**
- * Adds a colour to the given evas gradient object.
+ * Adds a color stop to the given evas gradient object.
  *
- * The @p distance parameter determines the proportion of the gradient
- * object that is to be set to this colour.  For instance, if red is
- * added with @p distance set to 2, and green is added with @p
- * distance set to 1, two-thirds will be red or reddish and one-third
+ * The @p delta parameter determines the proportion of the gradient
+ * object that is to be set to the color.  For instance, if red is
+ * added with @p delta set to 2, and green is added with @p
+ * delta set to 1, two-thirds will be red or reddish and one-third
  * will be green or greenish.
  *
- * Colours are added from the top downwards.
+ * Colors are added from the top downwards.
  *
  * @param   obj      The given evas gradient object.
- * @param   r        Red component of the given colour.
- * @param   g        Green component of the given colour.
- * @param   b        Blue component of the given colour.
- * @param   a        Alpha component of the given colour.
- * @param   distance Proportion of the gradient object that is this colour.
+ * @param   r        Red component of the given color.
+ * @param   g        Green component of the given color.
+ * @param   b        Blue component of the given color.
+ * @param   a        Alpha component of the given color.
+ * @param   delta    Proportion of the gradient object that is this color.
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
-evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int distance)
+evas_object_gradient_color_stop_add(Evas_Object *obj, int r, int g, int b, int a, int delta)
 {
    Evas_Object_Gradient *o;
 
@@ -123,24 +133,30 @@ evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if (o->imported_data) return;
-   o->engine_data = obj->layer->evas->engine.func->gradient_color_add(obj->layer->evas->engine.data.output,
-								      obj->layer->evas->engine.data.context,
-								      o->engine_data,
-								      r, g, b, a,
-								      distance);
+   if (o->engine_data)
+      obj->layer->evas->engine.func->gradient_color_stop_add(obj->layer->evas->engine.data.output,
+							     o->engine_data,
+							     r, g, b, a, delta);
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
 }
 
 /**
- * Deletes all colours set for the given evas gradient object.
- * @param   obj The given evas gradient object.
+ * Adds an alpha stop to the given evas gradient object.
+ *
+ * The @p delta parameter determines the proportion of the gradient
+ * object that is to be set to the alpha value.
+ *
+ * Alphas are added from the top downwards.
+ *
+ * @param   obj      The given evas gradient object.
+ * @param   a        Alpha value.
+ * @param   delta    Proportion of the gradient object that is this alpha.
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
-evas_object_gradient_colors_clear(Evas_Object *obj)
+evas_object_gradient_alpha_stop_add(Evas_Object *obj, int a, int delta)
 {
    Evas_Object_Gradient *o;
 
@@ -151,10 +167,34 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if (o->imported_data) return;
-   o->engine_data = obj->layer->evas->engine.func->gradient_colors_clear(obj->layer->evas->engine.data.output,
-									 obj->layer->evas->engine.data.context,
-									 o->engine_data);
+   if (o->engine_data)
+      obj->layer->evas->engine.func->gradient_alpha_stop_add(obj->layer->evas->engine.data.output,
+							     o->engine_data, a, delta);
+   o->gradient_changed = 1;
+   o->changed = 1;
+   evas_object_change(obj);
+}
+
+/**
+ * Deletes all stops set for the given evas gradient object or any set data.
+ * @param   obj The given evas gradient object.
+ * @ingroup Evas_Object_Gradient_Group
+ */
+EAPI void
+evas_object_gradient_clear(Evas_Object *obj)
+{
+   Evas_Object_Gradient *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
+   return;
+   MAGIC_CHECK_END();
+   if (o->engine_data)
+      obj->layer->evas->engine.func->gradient_clear(obj->layer->evas->engine.data.output,
+						    o->engine_data);
    o->gradient_changed = 1;
    o->changed = 1;
    o->cur.gradient_opaque = 0;
@@ -164,9 +204,7 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
 /**
  * Sets color data for the given evas gradient object.
  *
- * If data is so set, any existing gradient colors will be cleared,
- * and any calls to add gradient colors are then ignored until the data is unset.
- * To unset any set data, use the evas_object_gradient_data_unset call.
+ * If data is so set, any existing gradient stops will be deleted,
  * The data is not copied, so if it was allocated, do not free it while it's set.
  *
  * @param   obj       The given evas gradient object.
@@ -176,7 +214,7 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
-evas_object_gradient_data_set(Evas_Object *obj, void *data, int len, int has_alpha)
+evas_object_gradient_color_data_set(Evas_Object *obj, void *data, int len, Evas_Bool has_alpha)
 {
    Evas_Object_Gradient *o;
 
@@ -187,36 +225,28 @@ evas_object_gradient_data_set(Evas_Object *obj, void *data, int len, int has_alp
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if ((o->engine_data) && (!o->imported_data))
-	o->engine_data = obj->layer->evas->engine.func->gradient_colors_clear(obj->layer->evas->engine.data.output,
-									      obj->layer->evas->engine.data.context,
-									      o->engine_data);
-   else if ((o->engine_data) && (o->imported_data))
-	o->engine_data = obj->layer->evas->engine.func->gradient_data_unset(obj->layer->evas->engine.data.output,
-									    obj->layer->evas->engine.data.context,
-									    o->engine_data);
-   o->engine_data = obj->layer->evas->engine.func->gradient_data_set(obj->layer->evas->engine.data.output,
-								     obj->layer->evas->engine.data.context,
-								     o->engine_data,
-								     data, len, has_alpha);
-   o->imported_data = 1;
+   if (o->engine_data)
+	obj->layer->evas->engine.func->gradient_color_data_set(obj->layer->evas->engine.data.output,
+								o->engine_data,
+								data, len, has_alpha);
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
 }
 
 /**
- * Unsets color data for the given evas gradient object.
+ * Sets alpha data for the given evas gradient object.
  *
- * If no data is set, this does nothing. If data has been set, then this
- * unsets any such color data. One can then add colors or set other data.
- * The data may now be freed if need be.
+ * If alpha data is so set, any existing gradient stops will be cleared,
+ * The data is not copied, so if it was allocated, do not free it while it's set.
  *
  * @param   obj       The given evas gradient object.
+ * @param   data      The alpha data to be set, in a8 format.
+ * @param   len       The length of the data pointer - multiple of the pixel size.
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
-evas_object_gradient_data_unset(Evas_Object *obj)
+evas_object_gradient_alpha_data_set(Evas_Object *obj, void *data, int len)
 {
    Evas_Object_Gradient *o;
 
@@ -227,63 +257,13 @@ evas_object_gradient_data_unset(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if (!o->imported_data) return;
    if (o->engine_data)
-	o->engine_data = obj->layer->evas->engine.func->gradient_data_unset(obj->layer->evas->engine.data.output,
-									    obj->layer->evas->engine.data.context,
-									    o->engine_data);
-   o->imported_data = 0;
-   o->cur.gradient_opaque = 0;
+	obj->layer->evas->engine.func->gradient_alpha_data_set(obj->layer->evas->engine.data.output,
+								o->engine_data,
+								data, len);
    o->gradient_changed = 1;
    o->changed = 1;
    evas_object_change(obj);
-}
-
-/**
- * Sets the angle at which the given evas gradient object sits clockwise
- * from vertical.
- * @param   obj   The given evas gradient object.
- * @param   angle Angle in degrees.  Can be negative.
- * @ingroup Evas_Object_Gradient_Group
- */
-EAPI void
-evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
-{
-   Evas_Object_Gradient *o;
-
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   o = (Evas_Object_Gradient *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
-   return;
-   MAGIC_CHECK_END();
-   if (angle == o->cur.angle) return;
-   o->cur.angle = angle;
-   o->changed = 1;
-   evas_object_change(obj);
-}
-
-/**
- * Retrieves the angle at which the given evas gradient object sits
- * clockwise from the vertical.
- * @param   obj The given evas gradient object.
- * @return  The current angle if successful. @c 0.0 otherwise.
- * @ingroup Evas_Object_Gradient_Group
- */
-EAPI Evas_Angle
-evas_object_gradient_angle_get(Evas_Object *obj)
-{
-   Evas_Object_Gradient *o;
-
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0.0;
-   MAGIC_CHECK_END();
-   o = (Evas_Object_Gradient *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
-   return 0.0;
-   MAGIC_CHECK_END();
-   return o->cur.angle;
 }
 
 /**
@@ -381,13 +361,14 @@ evas_object_gradient_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Ev
 }
 
 /**
- * Sets the offset which the given evas gradient object uses in its color data range.
+ * Sets the angle at which the given evas gradient object's fill sits clockwise
+ * from vertical.
  * @param   obj   The given evas gradient object.
- * @param   offset Values can be negative.
+ * @param   angle Angle in degrees.  Can be negative.
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
-evas_object_gradient_range_offset_set(Evas_Object *obj, float offset)
+evas_object_gradient_fill_angle_set(Evas_Object *obj, Evas_Angle angle)
 {
    Evas_Object_Gradient *o;
 
@@ -398,20 +379,21 @@ evas_object_gradient_range_offset_set(Evas_Object *obj, float offset)
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if (offset == o->cur.range_offset) return;
-   o->cur.range_offset = offset;
+   if (angle == o->cur.fill.angle) return;
+   o->cur.fill.angle = angle;
    o->changed = 1;
    evas_object_change(obj);
 }
 
 /**
- * Retrieves the range offset
+ * Retrieves the angle at which the given evas gradient object's fill sits
+ * clockwise from the vertical.
  * @param   obj The given evas gradient object.
- * @return  The current gradient range offset if successful. @c 0.0 otherwise.
+ * @return  The current angle if successful. @c 0.0 otherwise.
  * @ingroup Evas_Object_Gradient_Group
  */
-EAPI float
-evas_object_gradient_range_offset_get(Evas_Object *obj)
+EAPI Evas_Angle
+evas_object_gradient_fill_angle_get(Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
 
@@ -422,11 +404,11 @@ evas_object_gradient_range_offset_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return 0.0;
    MAGIC_CHECK_END();
-   return o->cur.range_offset;
+   return o->cur.fill.angle;
 }
 
 /**
- * Sets the tiling mode for the given evas gradient object.
+ * Sets the tiling mode for the given evas gradient object's fill.
  * @param   obj   The given evas gradient object.
  * @param   spread One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT,
  * EVAS_TEXTURE_RESTRICT, EVAS_TEXTURE_RESTRICT_REFLECT, EVAS_TEXTURE_RESTRICT_REPEAT,
@@ -434,7 +416,7 @@ evas_object_gradient_range_offset_get(Evas_Object *obj)
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
-evas_object_gradient_spread_set(Evas_Object *obj, int spread)
+evas_object_gradient_fill_spread_set(Evas_Object *obj, int spread)
 {
    Evas_Object_Gradient *o;
 
@@ -445,20 +427,20 @@ evas_object_gradient_spread_set(Evas_Object *obj, int spread)
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if (spread == o->cur.spread) return;
-   o->cur.spread = spread;
+   if (spread == o->cur.fill.spread) return;
+   o->cur.fill.spread = spread;
    o->changed = 1;
    evas_object_change(obj);
 }
 
 /**
- * Retrieves the spread (tiling mode) for the given gradient object.
+ * Retrieves the spread (tiling mode) for the given gradient object's fill.
  * @param   obj The given evas gradient object.
  * @return  The current spread mode of the gradient object.
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI int
-evas_object_gradient_spread_get(Evas_Object *obj)
+evas_object_gradient_fill_spread_get(Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
 
@@ -469,14 +451,154 @@ evas_object_gradient_spread_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return EVAS_TEXTURE_REFLECT;
    MAGIC_CHECK_END();
-   return o->cur.spread;
+   return o->cur.fill.spread;
+}
+
+/**
+ * Sets the angle at which the given evas gradient sits,
+ * relative to whatever intrinsic orientation of the grad type.
+ * Used mostly by 'linear' kinds of gradients.
+ * @param   obj   The given evas gradient object.
+ * @param   angle Angle in degrees.  Can be negative.
+ * @ingroup Evas_Object_Gradient_Group
+ */
+EAPI void
+evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
+{
+   Evas_Object_Gradient *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
+   return;
+   MAGIC_CHECK_END();
+   if (angle == o->cur.map.angle) return;
+   o->cur.map.angle = angle;
+   o->gradient_changed = 1;
+   o->changed = 1;
+   evas_object_change(obj);
+}
+
+/**
+ * Retrieves the angle at which the given evas gradient object sits
+ * rel to its intrinsic orientation.
+ * @param   obj The given evas gradient object.
+ * @return  The current angle if successful. @c 0.0 otherwise.
+ * @ingroup Evas_Object_Gradient_Group
+ */
+EAPI Evas_Angle
+evas_object_gradient_angle_get(Evas_Object *obj)
+{
+   Evas_Object_Gradient *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0.0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
+   return 0.0;
+   MAGIC_CHECK_END();
+   return o->cur.map.angle;
+}
+
+/**
+ * Sets the offset of the given evas gradient object's spectrum.
+ * @param   obj   The given evas gradient object.
+ * @param   offset Values can be negative.
+ * @ingroup Evas_Object_Gradient_Group
+ */
+EAPI void
+evas_object_gradient_offset_set(Evas_Object *obj, float offset)
+{
+   Evas_Object_Gradient *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
+   return;
+   MAGIC_CHECK_END();
+   if (offset == o->cur.map.offset) return;
+   o->cur.map.offset = offset;
+   o->changed = 1;
+   evas_object_change(obj);
+}
+
+/**
+ * Retrieves the spectrum's offset
+ * @param   obj The given evas gradient object.
+ * @return  The current gradient offset if successful. @c 0.0 otherwise.
+ * @ingroup Evas_Object_Gradient_Group
+ */
+EAPI float
+evas_object_gradient_offset_get(Evas_Object *obj)
+{
+   Evas_Object_Gradient *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0.0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
+   return 0.0;
+   MAGIC_CHECK_END();
+   return o->cur.map.offset;
+}
+
+/**
+ * Sets the direction of the given evas gradient object's spectrum.
+ * @param   obj   The given evas gradient object.
+ * @param   direction Values are either 1 (the default) or -1.
+ * @ingroup Evas_Object_Gradient_Group
+ */
+EAPI void
+evas_object_gradient_direction_set(Evas_Object *obj, int direction)
+{
+   Evas_Object_Gradient *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
+   return;
+   MAGIC_CHECK_END();
+   if (direction == o->cur.map.direction) return;
+   o->cur.map.direction = direction;
+   o->changed = 1;
+   o->gradient_changed = 1;
+   evas_object_change(obj);
+}
+
+/**
+ * Retrieves the evas gradient object's spectrum direction
+ * @param   obj The given evas gradient object.
+ * @return  The current gradient direction if successful. @c 1 otherwise.
+ * @ingroup Evas_Object_Gradient_Group
+ */
+EAPI int
+evas_object_gradient_direction_get(Evas_Object *obj)
+{
+   Evas_Object_Gradient *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
+   return 0;
+   MAGIC_CHECK_END();
+   return o->cur.map.direction;
 }
 
 /**
  * @defgroup Evas_Object_Gradient_Type_Group Gradient Object Type Functions
  *
  * Functions that set or get a gradient's geometric type. Examples are "linear",
- * "radial", "rectangular", "angular", "sinusoidal", ...
+ * "linear.diag", "linear.codiag", "radial", "rectangular", "angular", "sinusoidal", ...
  * Some types may accept additional parameters to further specify the look.
  */
 
@@ -484,8 +606,7 @@ evas_object_gradient_spread_get(Evas_Object *obj)
  * Sets the geometric type displayed by the given gradient object.
  * @param   obj  The given gradient object.
  * @param   name Name of the geometric type that the gradient is to be drawn as.
- * @param   params List of allowable param_name, param_value pairs. Must be in the
- * format "param_name=param_value; param_name2=param_value2;", eg. "amplitude=0.8;".
+ * @param   params List of allowable params that the given gradient type allows.
  * Can be NULL.
  * @ingroup Evas_Object_Gradient_Type_Group
  */
@@ -525,6 +646,7 @@ evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *pa
 	  o->cur.type.params = strdup(params);
 	o->changed = 1;
 	o->gradient_changed = 1;
+	o->type_changed = 1;
 	evas_object_change(obj);
 	return;
      }
@@ -549,6 +671,7 @@ evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *pa
 	o->cur.type.params = strdup(params);
    o->changed = 1;
    o->gradient_changed = 1;
+   o->type_changed = 1;
    evas_object_change(obj);
 }
 
@@ -593,7 +716,7 @@ evas_object_gradient_type_get(Evas_Object *obj, char **name, char **params)
 EAPI void
 evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 {
-   evas_common_convert_hsv_to_rgb(h, s, v, r, g, b);
+   evas_common_convert_color_hsv_to_rgb(h, s, v, r, g, b);
 }
 
 /**
@@ -602,7 +725,45 @@ evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 EAPI void
 evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
-   evas_common_convert_rgb_to_hsv(r, g, b, h, s, v);
+   evas_common_convert_color_rgb_to_hsv(r, g, b, h, s, v);
+}
+
+/**
+   FIXME: ...
+**/
+EAPI void
+evas_color_argb_premul(int a, int *r, int *g, int *b)
+{
+   evas_common_convert_color_argb_premul(a, r, g, b);
+}
+
+/**
+   FIXME: ...
+**/
+EAPI void
+evas_color_argb_unpremul(int a, int *r, int *g, int *b)
+{
+   evas_common_convert_color_argb_unpremul(a, r, g, b);
+}
+
+/**
+   FIXME: ...
+**/
+EAPI void
+evas_data_argb_premul(unsigned int *data, unsigned int len)
+{
+   if (!data || (len < 1)) return;
+   evas_common_convert_argb_premul(data, len);
+}
+
+/**
+   FIXME: ...
+**/
+EAPI void
+evas_data_argb_unpremul(unsigned int *data, unsigned int len)
+{
+   if (!data || (len < 1)) return;
+   evas_common_convert_argb_unpremul(data, len);
 }
 
 
@@ -611,7 +772,7 @@ evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 static void
 evas_object_gradient_init(Evas_Object *obj)
 {
-   /* alloc image ob, setup methods and default values */
+   /* alloc grad ob, setup methods and default values */
    obj->object_data = evas_object_gradient_new();
    /* set up default settings for this kind of object */
    obj->cur.color.r = 255;
@@ -641,20 +802,24 @@ evas_object_gradient_new(void)
 
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Gradient));
+   if (!o) return NULL;
    o->magic = MAGIC_OBJ_GRADIENT;
-   o->cur.angle = 0.0;
-   o->cur.spread = EVAS_TEXTURE_REFLECT;
-   o->cur.range_offset = 0.0;
+   o->cur.map.angle = 0.0;
+   o->cur.map.offset = 0.0;
+   o->cur.map.direction = 1;
    o->cur.fill.x = 0;
    o->cur.fill.y = 0;
    o->cur.fill.w = 32;
    o->cur.fill.h = 32;
+   o->cur.fill.angle = 0.0;
+   o->cur.fill.spread = EVAS_TEXTURE_REFLECT;
    o->cur.type.name = strdup("linear");
    o->cur.type.params = NULL;
    o->cur.gradient_opaque = 0;
    o->prev = o->cur;
    o->changed = 1;
    o->gradient_changed = 1;
+   o->type_changed = 1;
    return o;
 }
 
@@ -677,10 +842,11 @@ evas_object_gradient_free(Evas_Object *obj)
 	free(o->cur.type.name);
    if (o->cur.type.params)
 	free(o->cur.type.params);
-   obj->layer->evas->engine.func->gradient_free(obj->layer->evas->engine.data.output,
-						o->engine_data);
-   o->magic = 0;
+   if (o->engine_data)
+      obj->layer->evas->engine.func->gradient_free(obj->layer->evas->engine.data.output,
+						   o->engine_data);
    free(o);
+   obj->object_data = NULL; 
 }
 
 
@@ -699,6 +865,9 @@ Evas_Coord *fh_ret)
    h = ((fh * obj->layer->evas->output.h) /
 	(Evas_Coord)obj->layer->evas->viewport.h);
 
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+
    *fx_ret = x;  *fw_ret = w;
    *fy_ret = y;  *fh_ret = h;
 }
@@ -712,42 +881,17 @@ evas_object_gradient_render(Evas_Object *obj, void *output, void *context, void 
 
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Gradient *)(obj->object_data);
-   obj->layer->evas->engine.func->context_color_set(output,
-						    context,
-						    255, 255, 255, 255);
-   if ((obj->cur.cache.clip.r == 255) &&
-       (obj->cur.cache.clip.g == 255) &&
-       (obj->cur.cache.clip.b == 255) &&
-       (obj->cur.cache.clip.a == 255))
-     obj->layer->evas->engine.func->context_multiplier_unset(output, context);
-   else
-     obj->layer->evas->engine.func->context_multiplier_set(output, context,
-							   obj->cur.cache.clip.r,
-							   obj->cur.cache.clip.g,
-							   obj->cur.cache.clip.b,
-							   obj->cur.cache.clip.a);
-   obj->layer->evas->engine.func->context_anti_alias_set(output, context,
-							 obj->cur.anti_alias);
-   obj->layer->evas->engine.func->context_color_interpolation_set(output, context,
-						   obj->cur.interpolation.color_space);
-   obj->layer->evas->engine.func->context_render_op_set(output, context,
-							obj->cur.render_op);
+   obj->layer->evas->engine.func->context_multiplier_unset(output, context);
+   obj->layer->evas->engine.func->context_anti_alias_set(output, context, obj->cur.anti_alias);
+   obj->layer->evas->engine.func->context_render_op_set(output, context, obj->cur.render_op);
    if (o->engine_data)
      {
- 	o->engine_data = obj->layer->evas->engine.func->gradient_geometry_init(output, o->engine_data, o->cur.spread);
-	if (o->engine_data)
-	  {
-	    if (o->gradient_changed)
-	       obj->layer->evas->engine.func->gradient_map(output, context, o->engine_data,
-	    						   o->cur.spread);
-	    obj->layer->evas->engine.func->gradient_draw(output, context, surface,
-							 o->engine_data,
-							 obj->cur.cache.geometry.x + x,
-							 obj->cur.cache.geometry.y + y,
-							 obj->cur.cache.geometry.w,
-							 obj->cur.cache.geometry.h,
-							 o->cur.angle, o->cur.spread);
-	  }
+	obj->layer->evas->engine.func->gradient_draw(output, context, surface,
+						     o->engine_data,
+						     obj->cur.cache.geometry.x + x,
+						     obj->cur.cache.geometry.y + y,
+						     obj->cur.cache.geometry.w,
+						     obj->cur.cache.geometry.h);
      }
 }
 
@@ -765,7 +909,7 @@ evas_object_gradient_render_pre(Evas_Object *obj)
    /* rendering. this could mean loading the image data, retrieving it from */
    /* elsewhere, decoding video etc. */
    /* then when this is done the object needs to figure if it changed and */
-   /* if so what and where and add thr appropriate redraw rectangles */
+   /* if so what and where and add the appropriate redraw rectangles */
    o = (Evas_Object_Gradient *)(obj->object_data);
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
@@ -780,16 +924,16 @@ evas_object_gradient_render_pre(Evas_Object *obj)
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
 	o->gradient_changed = 1;
-   if ((obj->cur.cache.clip.r != obj->prev.cache.clip.r) ||
+   if ((!o->gradient_changed) && ((obj->cur.cache.clip.r != obj->prev.cache.clip.r) ||
        (obj->cur.cache.clip.g != obj->prev.cache.clip.g) ||
        (obj->cur.cache.clip.b != obj->prev.cache.clip.b) ||
-       (obj->cur.cache.clip.a != obj->prev.cache.clip.a))
+       (obj->cur.cache.clip.a != obj->prev.cache.clip.a)))
 	o->gradient_changed = 1;
-   if (obj->cur.anti_alias != obj->prev.anti_alias)
+   if (!o->gradient_changed && (obj->cur.interpolation.color_space != obj->prev.interpolation.color_space))
+	o->gradient_changed = 1;
+   if (!o->changed && (obj->cur.render_op != obj->prev.render_op))
 	o->changed = 1;
-   if (obj->cur.interpolation.color_space != obj->prev.interpolation.color_space)
-	o->gradient_changed = 1;
-   if (obj->cur.render_op != obj->prev.render_op)
+   if (!o->changed && (obj->cur.anti_alias != obj->prev.anti_alias))
 	o->changed = 1;
    if (o->changed && o->engine_data)
      {
@@ -800,18 +944,42 @@ evas_object_gradient_render_pre(Evas_Object *obj)
 					 &fx, &fy, &fw, &fh);
 	obj->layer->evas->engine.func->gradient_fill_set(obj->layer->evas->engine.data.output, o->engine_data,
 							 fx, fy, fw, fh);
-	obj->layer->evas->engine.func->gradient_range_offset_set(obj->layer->evas->engine.data.output, o->engine_data,
-							 	 o->cur.range_offset);
-	obj->layer->evas->engine.func->gradient_type_set(obj->layer->evas->engine.data.output, o->engine_data,
-							 o->cur.type.name);
-	obj->layer->evas->engine.func->gradient_type_params_set(obj->layer->evas->engine.data.output, o->engine_data,
-							        o->cur.type.params);
+	obj->layer->evas->engine.func->gradient_fill_angle_set(obj->layer->evas->engine.data.output, o->engine_data,
+								o->cur.fill.angle);
+	obj->layer->evas->engine.func->gradient_fill_spread_set(obj->layer->evas->engine.data.output, o->engine_data,
+								o->cur.fill.spread);
+	obj->layer->evas->engine.func->gradient_angle_set(obj->layer->evas->engine.data.output, o->engine_data,
+							  o->cur.map.angle);
+	obj->layer->evas->engine.func->gradient_direction_set(obj->layer->evas->engine.data.output, o->engine_data,
+							      o->cur.map.direction);
+	obj->layer->evas->engine.func->gradient_offset_set(obj->layer->evas->engine.data.output, o->engine_data,
+							   o->cur.map.offset);
+	if (o->type_changed)
+	    obj->layer->evas->engine.func->gradient_type_set(obj->layer->evas->engine.data.output, o->engine_data,
+							      o->cur.type.name, o->cur.type.params);
 
- 	o->engine_data = obj->layer->evas->engine.func->gradient_geometry_init(obj->layer->evas->engine.data.output, o->engine_data, o->cur.spread);
-	if (o->engine_data)
-	  {
-	    o->cur.gradient_opaque = !(obj->layer->evas->engine.func->gradient_alpha_get(obj->layer->evas->engine.data.output, o->engine_data, o->cur.spread, obj->cur.render_op));
-	  }
+	obj->layer->evas->engine.func->context_anti_alias_set(obj->layer->evas->engine.data.output,
+								obj->layer->evas->engine.data.context,
+								obj->cur.anti_alias);
+	obj->layer->evas->engine.func->context_render_op_set(obj->layer->evas->engine.data.output,
+							     obj->layer->evas->engine.data.context, obj->cur.render_op);
+	obj->layer->evas->engine.func->context_multiplier_set(obj->layer->evas->engine.data.output,
+								obj->layer->evas->engine.data.context,
+								obj->cur.cache.clip.r, obj->cur.cache.clip.g,
+								obj->cur.cache.clip.b, obj->cur.cache.clip.a);
+	obj->layer->evas->engine.func->context_color_interpolation_set(obj->layer->evas->engine.data.output,
+									obj->layer->evas->engine.data.context,
+									obj->cur.interpolation.color_space);
+	if (o->gradient_changed)
+	    obj->layer->evas->engine.func->gradient_render_pre(obj->layer->evas->engine.data.output,
+								obj->layer->evas->engine.data.context,
+								o->engine_data);
+	o->cur.gradient_opaque = obj->layer->evas->engine.func->gradient_is_opaque(obj->layer->evas->engine.data.output,
+										   obj->layer->evas->engine.data.context,
+				  						   o->engine_data,
+										   obj->cur.cache.clip.x, obj->cur.cache.clip.y,
+										   obj->cur.cache.clip.w, obj->cur.cache.clip.h);
+
 	if (obj->cur.cache.clip.a != 255)
 	    o->cur.gradient_opaque = 0;
     }
@@ -829,13 +997,7 @@ evas_object_gradient_render_pre(Evas_Object *obj)
    /* clipper changed this is in addition to anything else for obj */
    updates = evas_object_render_pre_clipper_change(updates, obj);
    /* gradient changed */
-   if (o->gradient_changed)
-     {
-	updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	goto done;
-     }
-   /* if we restacked (layer or just within a layer) and dont clip anyone */
-   if (obj->restack)
+   if (o->changed || obj->restack)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	goto done;
@@ -845,12 +1007,6 @@ evas_object_gradient_render_pre(Evas_Object *obj)
        (obj->cur.geometry.y != obj->prev.geometry.y) ||
        (obj->cur.geometry.w != obj->prev.geometry.w) ||
        (obj->cur.geometry.h != obj->prev.geometry.h))
-     {
-	updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	goto done;
-     }
-   /* o->changed */
-   if (o->changed)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	goto done;
@@ -899,6 +1055,7 @@ evas_object_gradient_render_post(Evas_Object *obj)
    o->prev = o->cur;
    o->changed = 0;
    o->gradient_changed = 0;
+   o->type_changed = 0;
 }
 
 static int
@@ -907,7 +1064,7 @@ evas_object_gradient_is_opaque(Evas_Object *obj)
    Evas_Object_Gradient *o;
 
    /* this returns 1 if the internal object data implies that the object is */
-   /* currently fully opaque over the entire gradient it occupies */
+   /* currently fully opaque over the entire region it occupies */
    o = (Evas_Object_Gradient *)(obj->object_data);
    if (!o->engine_data) return 0;
    return o->cur.gradient_opaque;
@@ -919,7 +1076,7 @@ evas_object_gradient_was_opaque(Evas_Object *obj)
    Evas_Object_Gradient *o;
 
    /* this returns 1 if the internal object data implies that the object was */
-   /* currently fully opaque over the entire gradient it occupies */
+   /* currently fully opaque over the entire region it occupies */
    o = (Evas_Object_Gradient *)(obj->object_data);
    if (!o->engine_data) return 0;
    return o->prev.gradient_opaque;

@@ -156,7 +156,8 @@ _xre_font_surface_draw(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context
    int r, g, b, a;
    
    fs = fg->ext_dat;
-   if (!fs) return;
+   if (!fs || !fs->xinf || !dc || !dc->col.col) return;
+   if (!surface || !surface->image || !surface->image->data) return;
    target_surface = (Xrender_Surface *)(surface->image->data);
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;
@@ -172,7 +173,7 @@ _xre_font_surface_draw(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context
 	_xr_render_surface_solid_rectangle_set(fs->xinf->mul, r, g, b, a, 0, 0, 1, 1);
      }
    rect.x = x; rect.y = y; rect.width = fs->w; rect.height = fs->h;
-   if ((dc) && (dc->clip.use))
+   if (dc->clip.use)
      {
 	RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.width, rect.height,
 			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);

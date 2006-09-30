@@ -89,6 +89,8 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
    im->image->h = h;
    im->image->data = body;
    im->image->no_free = 0;
+// result is already premultiplied now if u compile with edje   
+//   evas_common_image_premul(im);
    eet_close(ef);
    return 1;
 }

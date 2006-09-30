@@ -270,7 +270,7 @@ _evas_gl_common_blend_set(Evas_GL_Context *gc)
    if (gc->blend)
      {
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
      }
    else
      glDisable(GL_BLEND);

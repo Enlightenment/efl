@@ -125,35 +125,33 @@ void               *evas_engine_directfb_polygon_points_clear(void *data,
 void                evas_engine_directfb_polygon_draw(void *data, void *context,
 						      void *surface,
 						      void *polygon);
-void               *evas_engine_directfb_gradient_color_add(void *data,
-							    void *context,
-							    void *gradient,
-							    int r, int g, int b,
-							    int a,
-							    int distance);
-void               *evas_engine_directfb_gradient_colors_clear(void *data,
-							       void *context,
-							       void *gradient);
-void               *evas_engine_directfb_gradient_data_set(void *data,
-							   void *context,
-							   void *gradient, void *map, int len, int has_alpha);
-void               *evas_engine_directfb_gradient_data_unset(void *data,
-							     void *context,
-							     void *gradient);
-void                evas_engine_directfb_gradient_free(void *data, void *gradient);
-void                evas_engine_directfb_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
-void                evas_engine_directfb_gradient_range_offset_set(void *data, void *gradient, float offset);
-void                evas_engine_directfb_gradient_type_set(void *data, void *gradient, char *name);
-void                evas_engine_directfb_gradient_type_params_set(void *data, void *gradient, char *params);
-void               *evas_engine_directfb_gradient_geometry_init(void *data, void *gradient, int spread);
-int                 evas_engine_directfb_gradient_alpha_get(void *data, void *gradient, int spread, int op);
-void                evas_engine_directfb_gradient_map(void *data, void *context, void *gradient, int spread);
-void                evas_engine_directfb_gradient_draw(void *data,
-						       void *context,
-						       void *surface,
-						       void *gradient, int x,
-						       int y, int w, int h,
-						       double angle, int spread);
+
+void               *evas_engine_directfb_gradient_new(void *data);
+void               evas_engine_directfb_gradient_free(void *data, void *gradient);
+void               evas_engine_directfb_gradient_color_stop_add(void *data,
+								void *gradient,
+								int r, int g, int b, int a, int delta);
+void               evas_engine_directfb_gradient_alpha_stop_add(void *data,
+								void *gradient, int a, int delta);
+void               evas_engine_directfb_gradient_color_data_set(void *data, void *gradient,
+								void *map, int len, int has_alpha);
+void               evas_engine_directfb_gradient_alpha_data_set(void *data, void *gradient,
+								void *alpha_map, int len);
+void               evas_engine_directfb_gradient_clear(void *data, void *gradient);
+void               evas_engine_directfb_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
+void               evas_engine_directfb_gradient_fill_angle_set(void *data, void *gradient, double angle);
+void               evas_engine_directfb_gradient_fill_spread_set(void *data, void *gradient, int spread);
+void               evas_engine_directfb_gradient_angle_set(void *data, void *gradient, double angle);
+void               evas_engine_directfb_gradient_offset_set(void *data, void *gradient, float offset);
+void               evas_engine_directfb_gradient_direction_set(void *data, void *gradient, int direction);
+void               evas_engine_directfb_gradient_type_set(void *data, void *gradient, char *name, char *params);
+int                evas_engine_directfb_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h);
+int                evas_engine_directfb_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h);
+void               evas_engine_directfb_gradient_render_pre(void *data, void *context, void *gradient);
+void               evas_engine_directfb_gradient_render_post(void *data, void *gradient);
+void               evas_engine_directfb_gradient_draw(void *data, void *context, void *surface,
+						       void *gradient, int x, int y, int w, int h);
+
 void               *evas_engine_directfb_font_load(void *data, char *name,
 						   int size);
 void               *evas_engine_directfb_font_memory_load(void *data,

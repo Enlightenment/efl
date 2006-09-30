@@ -21,7 +21,6 @@ evas_common_init(void)
 void
 evas_common_shutdown(void)
 {
-//   evas_common_blend_free_evas_pow_lut();
    evas_font_dir_cache_free();
    evas_common_image_line_buffer_free();
    evas_common_image_alpha_line_buffer_free();

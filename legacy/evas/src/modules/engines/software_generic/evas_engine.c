@@ -171,34 +171,9 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 }
 
 static void *
-eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
+eng_gradient_new(void *data)
 {
-   if (!gradient) gradient = evas_common_gradient_new();
-   evas_common_gradient_color_add(gradient, r, g, b, a, distance);
-   return gradient;
-}
-
-static void *
-eng_gradient_colors_clear(void *data, void *context, void *gradient)
-{
-   evas_common_gradient_colors_clear(gradient);
-   return gradient;
-}
-
-static void *
-eng_gradient_data_set(void *data, void *context, void *gradient, void *map, int len, int has_alpha)
-{
-   if (!gradient)
-     gradient = evas_common_gradient_new();
-   evas_common_gradient_data_set(gradient, map, len, has_alpha);
-   return gradient;
-}
-
-static void *
-eng_gradient_data_unset(void *data, void *context, void *gradient)
-{
-   evas_common_gradient_data_unset(gradient);
-   return gradient;
+   return evas_common_gradient_new();
 }
 
 static void
@@ -208,52 +183,119 @@ eng_gradient_free(void *data, void *gradient)
 }
 
 static void
+eng_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta)
+{
+   evas_common_gradient_color_stop_add(gradient, r, g, b, a, delta);
+}
+
+static void
+eng_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta)
+{
+   evas_common_gradient_alpha_stop_add(gradient, a, delta);
+}
+
+static void
+eng_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha)
+{
+   evas_common_gradient_color_data_set(gradient, map, len, has_alpha);
+}
+
+static void
+eng_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len)
+{
+   evas_common_gradient_alpha_data_set(gradient, alpha_map, len);
+}
+
+static void
+eng_gradient_clear(void *data, void *gradient)
+{
+   evas_common_gradient_clear(gradient);
+}
+
+static void
 eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 {
    evas_common_gradient_fill_set(gradient, x, y, w, h);
 }
 
 static void
-eng_gradient_range_offset_set(void *data, void *gradient, float offset)
+eng_gradient_fill_angle_set(void *data, void *gradient, double angle)
 {
-   evas_common_gradient_range_offset_set(gradient, offset);
+   evas_common_gradient_fill_angle_set(gradient, angle);
 }
 
 static void
-eng_gradient_type_set(void *data, void *gradient, char *name)
+eng_gradient_fill_spread_set(void *data, void *gradient, int spread)
 {
-   evas_common_gradient_type_set(gradient, name);
+   evas_common_gradient_fill_spread_set(gradient, spread);
 }
 
 static void
-eng_gradient_type_params_set(void *data, void *gradient, char *params)
+eng_gradient_angle_set(void *data, void *gradient, double angle)
 {
-   evas_common_gradient_type_params_set(gradient, params);
+   evas_common_gradient_map_angle_set(gradient, angle);
 }
 
-static void *
-eng_gradient_geometry_init(void *data, void *gradient, int spread)
+static void
+eng_gradient_offset_set(void *data, void *gradient, float offset)
 {
-   gradient = evas_common_gradient_geometry_init(gradient, spread);
-   return gradient;
+   evas_common_gradient_map_offset_set(gradient, offset);
+}
+
+static void
+eng_gradient_direction_set(void *data, void *gradient, int direction)
+{
+   evas_common_gradient_map_direction_set(gradient, direction);
+}
+
+static void
+eng_gradient_type_set(void *data, void *gradient, char *name, char *params)
+{
+   evas_common_gradient_type_set(gradient, name, params);
 }
 
 static int
-eng_gradient_alpha_get(void *data, void *gradient, int spread, int op)
+eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h)
 {
-   return evas_common_gradient_has_alpha(gradient, spread, op);
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient *gr = (RGBA_Gradient *)gradient;
+
+   if (!dc || !gr || !gr->type.geometer)  return 0;
+   return !(gr->type.geometer->has_alpha(gr, dc->render_op) |
+              gr->type.geometer->has_mask(gr, dc->render_op));
+}
+
+static int
+eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+
+   if (!dc || !gradient)  return 0;
+   return 1;
 }
 
 static void
-eng_gradient_map(void *data, void *context, void *gradient, int spread)
+eng_gradient_render_pre(void *data, void *context, void *gradient)
 {
-   evas_common_gradient_map(context, gradient, spread);
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient *gr = (RGBA_Gradient *)gradient;
+   int  len;
+
+   if (!dc || !gr || !gr->type.geometer)  return;
+   gr->type.geometer->geom_set(gr);
+   len = gr->type.geometer->get_map_len(gr);
+   evas_common_gradient_map(dc, gr, len);
 }
 
 static void
-eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
+eng_gradient_render_post(void *data, void *gradient)
 {
-   evas_common_gradient_draw(surface, context, x, y, w, h, gradient, angle, spread);
+}
+
+static void
+eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
+{
+   evas_common_gradient_draw(surface, context, x, y, w, h, gradient);
 }
 
 static void *
@@ -713,18 +755,24 @@ static Evas_Func func =
      eng_polygon_points_clear,
      eng_polygon_draw,
      /* gradient draw funcs */
-     eng_gradient_color_add,
-     eng_gradient_colors_clear,
-     eng_gradient_data_set,
-     eng_gradient_data_unset,
+     eng_gradient_new,
      eng_gradient_free,
+     eng_gradient_color_stop_add,
+     eng_gradient_alpha_stop_add,
+     eng_gradient_color_data_set,
+     eng_gradient_alpha_data_set,
+     eng_gradient_clear,
      eng_gradient_fill_set,
-     eng_gradient_range_offset_set,
+     eng_gradient_fill_angle_set,
+     eng_gradient_fill_spread_set,
+     eng_gradient_angle_set,
+     eng_gradient_offset_set,
+     eng_gradient_direction_set,
      eng_gradient_type_set,
-     eng_gradient_type_params_set,
-     eng_gradient_geometry_init,
-     eng_gradient_alpha_get,
-     eng_gradient_map,
+     eng_gradient_is_opaque,
+     eng_gradient_is_visible,
+     eng_gradient_render_pre,
+     eng_gradient_render_post,
      eng_gradient_draw,
      /* image draw funcs */
      eng_image_load,

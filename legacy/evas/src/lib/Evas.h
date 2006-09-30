@@ -397,33 +397,42 @@ extern "C" {
    EAPI void              evas_render_updates_free          (Evas_List *updates);
    EAPI void              evas_render                       (Evas *e);
 
+/* rectangle objects */
    EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e);
 
+/* line objects */
    EAPI Evas_Object      *evas_object_line_add              (Evas *e);
    EAPI void              evas_object_line_xy_set           (Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2);
    EAPI void              evas_object_line_xy_get           (Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2);
 
-   EAPI Evas_Object      *evas_object_gradient_add          (Evas *e);
-   EAPI void              evas_object_gradient_color_add    (Evas_Object *obj, int r, int g, int b, int a, int distance);
-   EAPI void              evas_object_gradient_colors_clear (Evas_Object *obj);
-   EAPI void              evas_object_gradient_data_set     (Evas_Object *obj, void *data, int len, int alpha);
-   EAPI void              evas_object_gradient_data_unset   (Evas_Object *obj);
-   EAPI void              evas_object_gradient_angle_set    (Evas_Object *obj, Evas_Angle angle);
-   EAPI Evas_Angle        evas_object_gradient_angle_get    (Evas_Object *obj);
-   EAPI void              evas_object_gradient_type_set     (Evas_Object *obj, const char *type, const char *instance_params);
+/* gradient objects */
+   EAPI Evas_Object      *evas_object_gradient_add            (Evas *e);
+   EAPI void              evas_object_gradient_color_stop_add (Evas_Object *obj, int r, int g, int b, int a, int delta);
+   EAPI void              evas_object_gradient_alpha_stop_add (Evas_Object *obj, int a, int delta);
+   EAPI void              evas_object_gradient_color_data_set (Evas_Object *obj, void *color_data, int len, Evas_Bool has_alpha);
+   EAPI void              evas_object_gradient_alpha_data_set (Evas_Object *obj, void *alpha_data, int len);
+   EAPI void              evas_object_gradient_clear          (Evas_Object *obj);
+   EAPI void              evas_object_gradient_type_set       (Evas_Object *obj, const char *type, const char *instance_params);
    EAPI void              evas_object_gradient_type_get     (Evas_Object *obj, char **type, char **instance_params);
    EAPI void              evas_object_gradient_fill_set     (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_gradient_fill_get     (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-   EAPI void              evas_object_gradient_range_offset_set   (Evas_Object *obj, float offset);
-   EAPI float             evas_object_gradient_range_offset_get   (Evas_Object *obj);
-   EAPI void              evas_object_gradient_spread_set   (Evas_Object *obj, int
-tile_mode);
-   EAPI int               evas_object_gradient_spread_get   (Evas_Object *obj);
+   EAPI void              evas_object_gradient_fill_angle_set    (Evas_Object *obj, Evas_Angle angle);
+   EAPI Evas_Angle        evas_object_gradient_fill_angle_get    (Evas_Object *obj);
+   EAPI void              evas_object_gradient_fill_spread_set   (Evas_Object *obj, int tile_mode);
+   EAPI int               evas_object_gradient_fill_spread_get   (Evas_Object *obj);
+   EAPI void              evas_object_gradient_angle_set     (Evas_Object *obj, Evas_Angle angle);
+   EAPI Evas_Angle        evas_object_gradient_angle_get     (Evas_Object *obj);
+   EAPI void              evas_object_gradient_direction_set (Evas_Object *obj, int direction);
+   EAPI int               evas_object_gradient_direction_get (Evas_Object *obj);
+   EAPI void              evas_object_gradient_offset_set    (Evas_Object *obj, float offset);
+   EAPI float             evas_object_gradient_offset_get    (Evas_Object *obj);
 
+/* polygon objects */
    EAPI Evas_Object      *evas_object_polygon_add           (Evas *e);
    EAPI void              evas_object_polygon_point_add     (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    EAPI void              evas_object_polygon_points_clear  (Evas_Object *obj);
 
+/* image objects */
    EAPI Evas_Object      *evas_object_image_add             (Evas *e);
    EAPI void              evas_object_image_file_set        (Evas_Object *obj, const char *file, const char *key);
    EAPI void              evas_object_image_file_get        (Evas_Object *obj, const char **file, const char **key);
@@ -457,11 +466,13 @@ tile_mode);
    EAPI void              evas_object_image_load_scale_down_set    (Evas_Object *obj, int scale_down);
    EAPI int               evas_object_image_load_scale_down_get    (Evas_Object *obj);
 
+/* image cache */
    EAPI void              evas_image_cache_flush            (Evas *e);
    EAPI void              evas_image_cache_reload           (Evas *e);
    EAPI void              evas_image_cache_set              (Evas *e, int size);
    EAPI int               evas_image_cache_get              (Evas *e);
 
+/* text objects */
    typedef enum _Evas_Text_Style_Type
      {
 	EVAS_TEXT_STYLE_PLAIN,
@@ -504,6 +515,7 @@ tile_mode);
    EAPI void              evas_object_text_outline_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a);
    EAPI void              evas_object_text_style_pad_get    (Evas_Object *obj, int *l, int *r, int *t, int *b);
 
+/* string and font handling */
    EAPI int               evas_string_char_next_get         (const char *str, int pos, int *decoded);
    EAPI int               evas_string_char_prev_get         (const char *str, int pos, int *decoded);
 
@@ -523,6 +535,7 @@ tile_mode);
    EAPI Evas_List	 *evas_font_available_list	    (Evas *e);
    EAPI void		  evas_font_available_list_free	    (Evas *e, Evas_List *available);
    
+/* textblock objects */
    typedef struct _Evas_Textblock_Style     Evas_Textblock_Style;
    typedef struct _Evas_Textblock_Cursor    Evas_Textblock_Cursor;
    typedef struct _Evas_Textblock_Rectangle Evas_Textblock_Rectangle;
@@ -599,6 +612,7 @@ tile_mode);
    EAPI void                         evas_object_textblock_style_insets_get(Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
    
    
+/* general objects */
    EAPI void              evas_object_del                   (Evas_Object *obj);
 
    EAPI const char       *evas_object_type_get              (Evas_Object *obj);
@@ -657,6 +671,7 @@ tile_mode);
    EAPI Evas_List        *evas_objects_at_xy_get            (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
    EAPI Evas_List        *evas_objects_in_rectangle_get     (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
 
+/* smart objects */
    EAPI Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
    EAPI void              evas_smart_free                   (Evas_Smart *s);
    EAPI Evas_Smart       *evas_smart_class_new              (Evas_Smart_Class *sc);
@@ -676,6 +691,7 @@ tile_mode);
    EAPI void             *evas_object_smart_callback_del    (Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info));
    EAPI void              evas_object_smart_callback_call   (Evas_Object *obj, const char *event, void *event_info);
 
+/* events */
    EAPI void              evas_event_freeze                 (Evas *e);
    EAPI void              evas_event_thaw                   (Evas *e);
    EAPI int               evas_event_freeze_get             (Evas *e);
@@ -748,7 +764,14 @@ tile_mode);
 /* hsv color space has h in the range 0.0 to 360.0, and s,v in the range 0.0 to 1.0 */
 /* rgb color space has r,g,b in the range 0 to 255 */
    EAPI void              evas_color_hsv_to_rgb             (float h, float s, float v, int *r, int *g, int *b);
-   EAPI void              evas_color_rgb_to_hsv             (int r, int g, int b, float *h, float *s, float *v); 
+   EAPI void              evas_color_rgb_to_hsv             (int r, int g, int b, float *h, float *s, float *v);
+
+/* argb color space has a,r,g,b in the range 0 to 255 */
+   EAPI void              evas_color_argb_premul            (int a, int *r, int *g, int *b);
+   EAPI void              evas_color_argb_unpremul          (int a, int *r, int *g, int *b);
+
+   EAPI void              evas_data_argb_premul             (unsigned int *data, unsigned int len);
+   EAPI void              evas_data_argb_unpremul           (unsigned int *data, unsigned int len);
 
 /* Evas imaging api - exports some of the comon gfx engine routines */
 /* this is not complete and should be considered experimental. use at your */

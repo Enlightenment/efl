@@ -392,7 +392,7 @@ video_obj_down_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
    Evas_Event_Mouse_Down *e;
    
    e = event_info;
-   evas_object_color_set(obj, 255, 50, 40, 200);
+   evas_object_color_set(obj, 200, 50, 40, 200);
    evas_object_raise(obj);
 }
 
@@ -402,7 +402,7 @@ video_obj_up_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
    Evas_Event_Mouse_Up *e;
    
    e = event_info;
-   evas_object_color_set(obj, 255, 255, 255, 100);
+   evas_object_color_set(obj, 100, 100, 100, 100);
 }
 
 static void
@@ -641,7 +641,7 @@ video_obj_signal_speed_cb(void *data, Evas_Object *o, const char *emission, cons
    ov = data;
    edje_object_part_drag_value_get(o, source, &x, &y);
    spd = 255 * y;
-   evas_object_color_set(ov, 255, 255, 255, spd);
+   evas_object_color_set(ov, spd, spd, spd, spd);
    snprintf(buf, sizeof(buf), "%.0f", spd);
    edje_object_part_text_set(o, "video_speed_txt", buf);
 }

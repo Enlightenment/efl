@@ -17,12 +17,12 @@ static int                cache_usage = 0;
 static RGBA_Image *evas_rgba_line_buffer = NULL;
 
 #define  EVAS_RGBA_LINE_BUFFER_MIN_LEN  256
-#define  EVAS_RGBA_LINE_BUFFER_MAX_LEN  1024
+#define  EVAS_RGBA_LINE_BUFFER_MAX_LEN  2048
 
 static RGBA_Image *evas_alpha_line_buffer = NULL;
 
 #define  EVAS_ALPHA_LINE_BUFFER_MIN_LEN  256
-#define  EVAS_ALPHA_LINE_BUFFER_MAX_LEN  1024
+#define  EVAS_ALPHA_LINE_BUFFER_MAX_LEN  2048
 
 #if 0
 int
@@ -495,7 +495,7 @@ evas_common_image_cache_free(void)
    evas_common_image_set_cache(0);
 }
 
-RGBA_Image *
+EAPI RGBA_Image *
 evas_common_image_line_buffer_obtain(int len)
 {
    if (len < 1) return NULL;
@@ -520,7 +520,7 @@ evas_common_image_line_buffer_obtain(int len)
    return evas_rgba_line_buffer;
 }
 
-void
+EAPI void
 evas_common_image_line_buffer_release(void)
 {
    if (!evas_rgba_line_buffer) return;
@@ -537,7 +537,7 @@ evas_common_image_line_buffer_release(void)
      }
 }
 
-void
+EAPI void
 evas_common_image_line_buffer_free(void)
 {
    if (!evas_rgba_line_buffer) return;
@@ -545,7 +545,7 @@ evas_common_image_line_buffer_free(void)
    evas_rgba_line_buffer = NULL;
 }
 
-RGBA_Image *
+EAPI RGBA_Image *
 evas_common_image_alpha_line_buffer_obtain(int len)
 {
    if (len < 1) return NULL;
@@ -569,7 +569,7 @@ evas_common_image_alpha_line_buffer_obtain(int len)
    return evas_alpha_line_buffer;
 }
 
-void
+EAPI void
 evas_common_image_alpha_line_buffer_release(void)
 {
    if (!evas_alpha_line_buffer) return;
@@ -586,10 +586,59 @@ evas_common_image_alpha_line_buffer_release(void)
      }
 }
 
-void
+EAPI void
 evas_common_image_alpha_line_buffer_free(void)
 {
    if (!evas_alpha_line_buffer) return;
    evas_common_image_free(evas_alpha_line_buffer);
    evas_alpha_line_buffer = NULL;
+}
+
+#define ALPHA_SPARSE_INV_FRACTION 3
+
+EAPI void
+evas_common_image_premul(RGBA_Image *im)
+{
+   DATA32  *s, *se;
+   DATA32  nas = 0;
+
+   if (!im || !im->image || !im->image->data) return;
+   if (!(im->flags & RGBA_IMAGE_HAS_ALPHA)) return;
+
+   s = im->image->data;
+   se = s + (im->image->w * im->image->h);
+   while (s < se)
+     {
+	DATA32  a = 1 + (*s >> 24);
+
+	*s++ = (*s & 0xff000000) + (((((*s) >> 8) & 0xff) * a) & 0xff00) + 
+			 (((((*s) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
+	if ((a == 1) || (a == 256))
+	   nas++;
+     }
+   if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (im->image->w * im->image->h))
+	im->flags |= RGBA_IMAGE_ALPHA_SPARSE;
+}
+
+EAPI void
+evas_common_image_set_alpha_sparse(RGBA_Image *im)
+{
+   DATA32  *s, *se;
+   DATA32  nas = 0;
+
+   if (!im || !im->image || !im->image->data) return;
+   if (!(im->flags & RGBA_IMAGE_HAS_ALPHA)) return;
+
+   s = im->image->data;
+   se = s + (im->image->w * im->image->h);
+   while (s < se)
+     {
+	DATA32  p = *s & 0xff000000;
+
+	if (!p || (p == 0xff000000))
+	   nas++;
+	s++;
+     }
+   if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (im->image->w * im->image->h))
+	im->flags |= RGBA_IMAGE_ALPHA_SPARSE;
 }

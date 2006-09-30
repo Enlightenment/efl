@@ -188,6 +188,7 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 	  }
 #endif
      }
+   evas_common_image_premul(im);
    free(ret);
    e_db_close(db);
    return 1;

@@ -198,6 +198,7 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    png_read_end(png_ptr, info_ptr);
    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
    fclose(f);
+   evas_common_image_premul(im);
    return 1;
    key = 0;
 }

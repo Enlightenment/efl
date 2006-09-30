@@ -162,66 +162,25 @@ struct _XR_Gradient
    XCBimage_Info     *xcbinf;
    XCBrender_Surface *surface;
    RGBA_Gradient     *grad;
-   double             angle;
-   int                spread;
    unsigned char      changed;
+   int                sw, sh;
 };
 
 /* gradient */
-XR_Gradient *_xre_gradient_color_add       (XCBimage_Info    *xcbinf,
-                                            XR_Gradient      *gr,
-                                            int               r,
-                                            int               g,
-                                            int               b,
-                                            int               a,
-                                            int               distance);
-
-XR_Gradient *_xre_gradient_colors_clear    (XR_Gradient      *gr);
-
-XR_Gradient *_xre_gradient_data_set        (XCBimage_Info *xcbinf,
-                                            XR_Gradient *gr,
-                                            void *map,
-                                            int len,
-                                            int has_alpha);
-
-XR_Gradient *_xre_gradient_data_unset      (XR_Gradient *gr);
-
-void         _xre_gradient_free            (XR_Gradient      *gr);
-
-void         _xre_gradient_fill_set        (XR_Gradient      *gr,
-                                            int               x,
-                                            int               y,
-                                            int               w,
-                                            int               h);
-
-void         _xre_gradient_range_offset_set(XR_Gradient *gr,
-                                            float offset);
-
-void         _xre_gradient_type_set        (XR_Gradient      *gr,
-                                            char             *name);
-
-void         _xre_gradient_type_params_set (XR_Gradient      *gr,
-                                            char             *params);
-
-void        *_xre_gradient_geometry_init   (XR_Gradient      *gr,
-                                            int               spread);
-
-int          _xre_gradient_alpha_get       (XR_Gradient       *gr,
-                                            int                spread,
-                                            int op);
-
-void         _xre_gradient_map             (RGBA_Draw_Context *dc,
-                                            XR_Gradient       *gr,
-                                            int                spread);
-
-void         _xre_gradient_draw            (XCBrender_Surface *rs,
-                                            RGBA_Draw_Context *dc,
-                                            XR_Gradient       *gr,
-                                            int                x,
-                                            int                y,
-                                            int                w,
-                                            int                h,
-                                            double             angle,
-                                            int                spread);
+XR_Gradient *_xre_gradient_new(XCBimage_Info *xcbinf);
+void         _xre_gradient_free(XR_Gradient *gr);
+void         _xre_gradient_color_stop_add(XR_Gradient *gr, int r, int g, int b, int a, int delta);
+void         _xre_gradient_alpha_stop_add(XR_Gradient *gr, int a, int delta);
+void         _xre_gradient_color_data_set(XR_Gradient *gr, void *map, int len, int has_alpha);
+void         _xre_gradient_alpha_data_set(XR_Gradient *gr, void *alpha_map, int len);
+void         _xre_gradient_clear(XR_Gradient *gr);
+void         _xre_gradient_fill_set(XR_Gradient *gr, int x, int y, int w, int h);
+void         _xre_gradient_fill_angle_set(XR_Gradient *gr, double angle);
+void         _xre_gradient_fill_spread_set(XR_Gradient *gr, int spread);
+void         _xre_gradient_angle_set(XR_Gradient *gr, double angle);
+void         _xre_gradient_offset_set(XR_Gradient *gr, float offset);
+void         _xre_gradient_direction_set(XR_Gradient *gr, int direction);
+void         _xre_gradient_type_set(XR_Gradient *gr, char *name, char *params);
+void         _xre_gradient_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h);
     
 #endif

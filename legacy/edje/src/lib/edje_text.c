@@ -489,9 +489,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	style = EVAS_TEXT_STYLE_PLAIN;
 	
 	evas_object_color_set(ep->object,
-			      params->color.r,
-			      params->color.g,
-			      params->color.b,
+			      (params->color.r * params->color.a) / 255,
+			      (params->color.g * params->color.a) / 255,
+			      (params->color.b * params->color.a) / 255,
 			      params->color.a);
 
 	if ((ep->part->effect == EDJE_TEXT_EFFECT_NONE) ||
@@ -503,64 +503,64 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	  {
 	     style = EVAS_TEXT_STYLE_OUTLINE;
 	     evas_object_text_outline_color_set(ep->object,
-					        params->color2.r,
-						params->color2.g,
-						params->color2.b,
+					        (params->color2.r * params->color2.a) / 255,
+					        (params->color2.g * params->color2.a) / 255,
+					        (params->color2.b * params->color2.a) / 255,
 						params->color2.a);
 	  }
 	else if (ep->part->effect == EDJE_TEXT_EFFECT_SOFT_OUTLINE)
 	  {
 	     style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
 	     evas_object_text_outline_color_set(ep->object,
-					        params->color2.r,
-						params->color2.g,
-						params->color2.b,
+						(params->color2.r * params->color2.a) / 255,
+						(params->color2.g * params->color2.a) / 255,
+						(params->color2.b * params->color2.a) / 255,
 						params->color2.a);
 	  }
 	else if (ep->part->effect == EDJE_TEXT_EFFECT_SHADOW)
 	  {
 	     style = EVAS_TEXT_STYLE_SHADOW;
 	     evas_object_text_shadow_color_set(ep->object,
-					       params->color3.r,
-					       params->color3.g,
-					       params->color3.b,
+					       (params->color3.r * params->color3.a) / 255,
+					       (params->color3.g * params->color3.a) / 255,
+					       (params->color3.b * params->color3.a) / 255,
 					       params->color3.a);
 	  }
 	else if (ep->part->effect == EDJE_TEXT_EFFECT_SOFT_SHADOW)
 	  {
 	     style = EVAS_TEXT_STYLE_SOFT_SHADOW;
 	     evas_object_text_shadow_color_set(ep->object,
-					       params->color3.r,
-					       params->color3.g,
-					       params->color3.b,
+					       (params->color3.r * params->color3.a) / 255,
+					       (params->color3.g * params->color3.a) / 255,
+					       (params->color3.b * params->color3.a) / 255,
 					       params->color3.a);
 	  }
 	else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE_SHADOW)
 	  {
 	     style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
 	     evas_object_text_outline_color_set(ep->object,
-					        params->color2.r,
-					        params->color2.g,
-					        params->color2.b,
-					        params->color2.a);
+						(params->color2.r * params->color2.a) / 255,
+						(params->color2.g * params->color2.a) / 255,
+						(params->color2.b * params->color2.a) / 255,
+						params->color2.a);
 	     evas_object_text_shadow_color_set(ep->object,
-					       params->color3.r,
-					       params->color3.g,
-					       params->color3.b,
+					       (params->color3.r * params->color3.a) / 255,
+					       (params->color3.g * params->color3.a) / 255,
+					       (params->color3.b * params->color3.a) / 255,
 					       params->color3.a);
 	  }
 	else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW)
 	  {
 	     style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
 	     evas_object_text_outline_color_set(ep->object,
-					        params->color2.r,
-					        params->color2.g,
-					        params->color2.b,
-					        params->color2.a);
+						(params->color2.r * params->color2.a) / 255,
+						(params->color2.g * params->color2.a) / 255,
+						(params->color2.b * params->color2.a) / 255,
+						params->color2.a);
 	     evas_object_text_shadow_color_set(ep->object,
-					       params->color3.r,
-					       params->color3.g,
-					       params->color3.b,
+					       (params->color3.r * params->color3.a) / 255,
+					       (params->color3.g * params->color3.a) / 255,
+					       (params->color3.b * params->color3.a) / 255,
 					       params->color3.a);
 	  }
 	evas_object_text_style_set(ep->object, style);

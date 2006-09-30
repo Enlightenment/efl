@@ -1198,7 +1198,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  {
 	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
 	     evas_object_resize(ep->object, p3.w, p3.h);
-	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	     evas_object_color_set(ep->object,
+				   (p3.color.r * p3.color.a) / 255,
+				   (p3.color.g * p3.color.a) / 255,
+				   (p3.color.b * p3.color.a) / 255,
+				   p3.color.a);
 	     if (p3.visible) evas_object_show(ep->object);
 	     else evas_object_hide(ep->object);
 	  }
@@ -1267,7 +1271,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 			 printf("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT\n");
 		    }
 	       }
-	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	     evas_object_color_set(ep->object,
+				   (p3.color.r * p3.color.a) / 255,
+				   (p3.color.g * p3.color.a) / 255,
+				   (p3.color.b * p3.color.a) / 255,
+				   p3.color.a);
 	     if (p3.visible) evas_object_show(ep->object);
 	     else evas_object_hide(ep->object);
 	  }
@@ -1285,12 +1293,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  {
 	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
 	     evas_object_resize(ep->object, p3.w, p3.h);
-	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	     evas_object_color_set(ep->object,
+				   (p3.color.r * p3.color.a) / 255,
+				   (p3.color.g * p3.color.a) / 255,
+				   (p3.color.b * p3.color.a) / 255,
+				   p3.color.a);
 	     if (p3.visible) evas_object_show(ep->object);
 	     else evas_object_hide(ep->object);
 
 	     evas_object_gradient_angle_set(ep->object, p3.fill.angle);
-	     evas_object_gradient_spread_set(ep->object, p3.fill.spread);
+	     evas_object_gradient_fill_spread_set(ep->object, p3.fill.spread);
 	     evas_object_gradient_fill_set(ep->object, p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
 
 	     if (p3.gradient.type && p3.gradient.type[0])
@@ -1305,11 +1317,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		  if (se) 
 		    {
 		       // XXX only do this if we NEED to (e.g. gradient changed)
-		       evas_object_gradient_colors_clear(ep->object);
+		       evas_object_gradient_clear(ep->object);
 		       for (l = se->color_list; l; l = l->next)
 			 {
 			    Edje_Spectrum_Color *sc = l->data;
-			    evas_object_gradient_color_add(ep->object, sc->r, sc->g, sc->b, sc->a, sc->d);
+			    evas_object_gradient_color_stop_add(ep->object,
+								(sc->r * sc->a) / 255,
+								(sc->g * sc->a) / 255,
+								(sc->b * sc->a) / 255,
+								sc->a, sc->d);
 
 			 }
 		    }

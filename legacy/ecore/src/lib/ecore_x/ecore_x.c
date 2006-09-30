@@ -1182,13 +1182,14 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
 	     xci->delay = 0;
 	     for (i = 0; i < (w * h); i++)
 	       {
-		  int r, g, b, a;
-		  
-		  a = (pixels[i] >> 24) & 0xff;
-		  r = (((pixels[i] >> 16) & 0xff) * a) / 0xff;
-		  g = (((pixels[i] >> 8 ) & 0xff) * a) / 0xff;
-		  b = (((pixels[i]      ) & 0xff) * a) / 0xff;
-		  xci->pixels[i] = (a << 24) | (r << 16) | (g << 8) | (b);
+//		  int r, g, b, a;
+//		  
+//		  a = (pixels[i] >> 24) & 0xff;
+//		  r = (((pixels[i] >> 16) & 0xff) * a) / 0xff;
+//		  g = (((pixels[i] >> 8 ) & 0xff) * a) / 0xff;
+//		  b = (((pixels[i]      ) & 0xff) * a) / 0xff;
+		  xci->pixels[i] = pixels[i];
+//		    (a << 24) | (r << 16) | (g << 8) | (b);
 	       }
 	     c = XcursorImageLoadCursor(_ecore_x_disp, xci);
 	     XcursorImageDestroy(xci);

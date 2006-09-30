@@ -7,8 +7,8 @@ _op_mul_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e)
      {
-	DATA32 a = *m;
-	switch(a)
+	c = *m;
+	switch(c)
 	  {
 	    case 0:
 		break;
@@ -16,9 +16,9 @@ _op_mul_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		*d = MUL4_SYM(*s, *d);
 		break;
 	    default:
-		a = ~(*s);
-		a = ~MUL_SYM(*m, a);
-		*d = MUL4_SYM(a, *d);
+		c = ~(*s);
+		c = ~MUL_SYM(*m, c);
+		*d = MUL4_SYM(c, *d);
 		break;
 	  }
 	m++;  s++;  d++;
@@ -30,8 +30,8 @@ _op_mul_pan_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e)
      {
-	DATA32 a = *m;
-	switch(a)
+	c = *m;
+	switch(c)
 	  {
 	    case 0:
 		break;
@@ -39,9 +39,9 @@ _op_mul_pan_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		*d = (*d & 0xff000000) + MUL3_SYM(*s, *d);
 		break;
 	    default:
-		a = ~(*s);
-		a = ~MUL_SYM(*m, a);
-		*d = (*d & 0xff000000) + MUL3_SYM(a, *d);
+		c = ~(*s);
+		c = ~MUL_SYM(*m, c);
+		*d = (*d & 0xff000000) + MUL3_SYM(c, *d);
 		break;
 	  }
 	m++;  s++;  d++;
@@ -53,8 +53,8 @@ _op_mul_p_mas_dpan(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e)
      {
-	DATA32 a = *m;
-	switch(a)
+	c = *m;
+	switch(c)
 	  {
 	    case 0:
 		break;
@@ -62,9 +62,9 @@ _op_mul_p_mas_dpan(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		*d = (*s & 0xff000000) + MUL3_SYM(*s, *d);
 		break;
 	    default:
-		a = ~(*s);
-		a = ~MUL_SYM(*m, a);
-		*d = (a & 0xff000000) + MUL3_SYM(a, *d);
+		c = ~(*s);
+		c = ~MUL_SYM(*m, c);
+		*d = (c & 0xff000000) + MUL3_SYM(c, *d);
 		break;
 	  }
 	m++;  d++;
@@ -76,10 +76,6 @@ _op_mul_p_mas_dpan(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #define _op_mul_pan_mas_dpan _op_mul_p_mas_dpan
 #define _op_mul_pas_mas_dpan _op_mul_p_mas_dpan
 
-#define _op_mul_p_mas_dpas _op_mul_p_mas_dp
-#define _op_mul_pan_mas_dpas _op_mul_pan_mas_dp
-#define _op_mul_pas_mas_dpas _op_mul_pas_mas_dp
-
 static void
 init_mul_pixel_mask_span_funcs_c(void)
 {
@@ -90,10 +86,6 @@ init_mul_pixel_mask_span_funcs_c(void)
    op_mul_span_funcs[SP][SM_AS][SC_N][DP_AN][CPU_C] = _op_mul_p_mas_dpan;
    op_mul_span_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_C] = _op_mul_pas_mas_dpan;
    op_mul_span_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_C] = _op_mul_pan_mas_dpan;
-
-   op_mul_span_funcs[SP][SM_AS][SC_N][DP_AS][CPU_C] = _op_mul_p_mas_dpas;
-   op_mul_span_funcs[SP_AS][SM_AS][SC_N][DP_AS][CPU_C] = _op_mul_pas_mas_dpas;
-   op_mul_span_funcs[SP_AN][SM_AS][SC_N][DP_AS][CPU_C] = _op_mul_pan_mas_dpas;
 }
 #endif
 
@@ -105,28 +97,12 @@ _op_mul_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
 	*d = MUL4_SYM(s, *d);
 }
 
-static void
-_op_mul_pt_pan_mas_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-	s = ~s;
-	s = ~MUL_SYM(m, s);
-	*d = (*d & 0xff000000) + MUL3_SYM(s, *d);
-}
-
-static void
-_op_mul_pt_p_mas_dpan(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-	s = ~s;
-	s = ~MUL_SYM(m, s);
-	*d = (s & 0xff000000) + MUL3_SYM(s, *d);
-}
-
 #define _op_mul_pt_pas_mas_dp _op_mul_pt_p_mas_dp
+#define _op_mul_pt_pan_mas_dp _op_mul_pt_p_mas_dp
 
-#define _op_mul_pt_pan_mas_dpan _op_mul_pt_p_mas_dpan
-#define _op_mul_pt_pas_mas_dpan _op_mul_pt_p_mas_dpan
-
-#define _op_mul_pt_p_mas_dpas _op_mul_pt_p_mas_dp
-#define _op_mul_pt_pan_mas_dpas _op_mul_pt_pan_mas_dp
-#define _op_mul_pt_pas_mas_dpas _op_mul_pt_pas_mas_dp
+#define _op_mul_pt_p_mas_dpan _op_mul_pt_p_mas_dp
+#define _op_mul_pt_pas_mas_dpan _op_mul_pt_p_mas_dp
+#define _op_mul_pt_pan_mas_dpan _op_mul_pt_p_mas_dp
 
 static void
 init_mul_pixel_mask_pt_funcs_c(void)
@@ -138,9 +114,5 @@ init_mul_pixel_mask_pt_funcs_c(void)
    op_mul_pt_funcs[SP][SM_AS][SC_N][DP_AN][CPU_C] = _op_mul_pt_p_mas_dpan;
    op_mul_pt_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_C] = _op_mul_pt_pas_mas_dpan;
    op_mul_pt_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_C] = _op_mul_pt_pan_mas_dpan;
-
-   op_mul_pt_funcs[SP][SM_AS][SC_N][DP_AS][CPU_C] = _op_mul_pt_p_mas_dpas;
-   op_mul_pt_funcs[SP_AS][SM_AS][SC_N][DP_AS][CPU_C] = _op_mul_pt_pas_mas_dpas;
-   op_mul_pt_funcs[SP_AN][SM_AS][SC_N][DP_AS][CPU_C] = _op_mul_pt_pan_mas_dpas;
 }
 #endif

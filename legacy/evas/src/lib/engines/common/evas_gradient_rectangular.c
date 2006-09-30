@@ -5,111 +5,126 @@
 typedef struct _Rectangular_Data   Rectangular_Data;
 struct _Rectangular_Data
 {
+   float  r0;
+
    int    sx, sy, s;
-   float  r0, off;
+   float  off;
+   int    len;
 };
 
-static Rectangular_Data  rectangular_data = {32, 32, 32, 0.0, 0.0};
-
+static void 
+rectangular_init(void);
 
 static void 
-rectangular_setup_geom(RGBA_Gradient *gr, int spread);
+rectangular_shutdown(void);
+
+static void 
+rectangular_init_geom(RGBA_Gradient *gr);
+
+static void 
+rectangular_setup_geom(RGBA_Gradient *gr);
+
+static void 
+rectangular_free_geom(void *gdata);
 
 static int 
-rectangular_has_alpha(RGBA_Gradient *gr, int spread, int op);
+rectangular_has_alpha(RGBA_Gradient *gr, int op);
 
 static int 
-rectangular_has_mask(RGBA_Gradient *gr, int spread, int op);
+rectangular_has_mask(RGBA_Gradient *gr, int op);
 
 static int 
-rectangular_get_map_len(RGBA_Gradient *gr, int spread);
+rectangular_get_map_len(RGBA_Gradient *gr);
 
 static Gfx_Func_Gradient_Fill 
-rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa);
+rectangular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa);
 
-static RGBA_Gradient_Type  rectangular = {"rectangular", &rectangular_data, rectangular_setup_geom, rectangular_has_alpha, rectangular_has_mask, rectangular_get_map_len, rectangular_get_fill_func};
+static RGBA_Gradient_Type  rectangular = {"rectangular", rectangular_init, rectangular_shutdown,
+					  rectangular_init_geom, rectangular_setup_geom, rectangular_free_geom,
+					  rectangular_has_alpha, rectangular_has_mask,
+					  rectangular_get_map_len, rectangular_get_fill_func};
 
 
 /** internal functions **/
 
 static void
-rectangular_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                            int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                          int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                              int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                              int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                             int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_pad_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 static void
-rectangular_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data);
 
 RGBA_Gradient_Type  *
@@ -118,22 +133,64 @@ evas_common_gradient_rectangular_get(void)
     return &rectangular;
 }
 
-static void
-rectangular_setup_geom(RGBA_Gradient *gr, int spread)
+static void 
+rectangular_init(void)
 {
-   int    err = 1;
-   char   *s, *p, key[256];
-   float  r0 = 0.0;
+}
+
+static void 
+rectangular_shutdown(void)
+{
+}
+
+static void 
+rectangular_free_geom(void *gdata)
+{
+   Rectangular_Data *data = (Rectangular_Data *)gdata;
+   if (data) free(data);
+}
+
+static void 
+rectangular_setup_geom(RGBA_Gradient *gr)
+{
+   Rectangular_Data   *rectangular_data;
 
    if (!gr || (gr->type.geometer != &rectangular)) return;
 
-   rectangular_data.sx = gr->fill.w;
-   rectangular_data.sy = gr->fill.h;
-   rectangular_data.s = rectangular_data.sx;
-   if (rectangular_data.sy > rectangular_data.sx)
-	rectangular_data.s = rectangular_data.sy;
-   rectangular_data.r0 = 0.0;
-   rectangular_data.off = gr->range_offset;
+   rectangular_data = (Rectangular_Data *)gr->type.gdata;
+   if (!rectangular_data) return;
+   rectangular_data->sx = gr->fill.w;
+   rectangular_data->sy = gr->fill.h;
+   rectangular_data->s = rectangular_data->sx;
+   if (rectangular_data->sy > rectangular_data->sx)
+	rectangular_data->s = rectangular_data->sy;
+   rectangular_data->off = gr->map.offset;
+   rectangular_data->len = rectangular_data->s - (int)(rectangular_data->s * rectangular_data->r0);
+}
+
+static void
+rectangular_init_geom(RGBA_Gradient *gr)
+{
+   Rectangular_Data   *rectangular_data;
+   int    err = 1;
+   char   *s, *p, key[256];
+   float  r0;
+
+   if (!gr || (gr->type.geometer != &rectangular)) return;
+
+   rectangular_data = (Rectangular_Data *)gr->type.gdata;
+   if (!rectangular_data)
+     {
+	rectangular_data = calloc(1, sizeof(Rectangular_Data));
+	if (!rectangular_data)  return;
+	rectangular_data->r0 = 0.0;
+	rectangular_data->sx = 32;
+	rectangular_data->sy = 32;
+	rectangular_data->s = 32;
+	rectangular_data->off = 0.0;
+	rectangular_data->len = 32;
+     }
+   gr->type.gdata = rectangular_data;
 
    if (!gr->type.params || !*(gr->type.params))
 	return;
@@ -141,6 +198,7 @@ rectangular_setup_geom(RGBA_Gradient *gr, int spread)
    s = strdup(gr->type.params);
    if (!s) return;
 
+   r0 = rectangular_data->r0;
    p = s;
    while ((p = evas_common_gradient_get_key_fval(p, key, &r0)))
      {
@@ -156,76 +214,89 @@ rectangular_setup_geom(RGBA_Gradient *gr, int spread)
      {
 	if (r0 < 0.0) r0 = 0.0;
 	if (r0 > 1.0) r0 = 1.0;
-	rectangular_data.r0 = r0;
+	rectangular_data->r0 = r0;
      }
    free(s);
 }
 
 
 static int
-rectangular_has_alpha(RGBA_Gradient *gr, int spread, int op)
+rectangular_has_alpha(RGBA_Gradient *gr, int op)
 {
+   Rectangular_Data   *rectangular_data;
+
    if (!gr || (gr->type.geometer != &rectangular)) return 0;
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
-   if (rectangular_data.r0 > 0)
+   rectangular_data = (Rectangular_Data *)gr->type.gdata;
+   if (!rectangular_data) return 0;
+   if (rectangular_data->r0 > 0)
 	return 1;
-   if ( (spread == _EVAS_TEXTURE_RESTRICT) ||
-         (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
-         (spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
+   if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
+         (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
+         (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
 	return 1;
    return 0;
 }
 
 static int
-rectangular_has_mask(RGBA_Gradient *gr, int spread, int op)
+rectangular_has_mask(RGBA_Gradient *gr, int op)
 {
+   Rectangular_Data   *rectangular_data;
+
    if (!gr || (gr->type.geometer != &rectangular)) return 0;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
-	if (rectangular_data.r0 > 0)
+	rectangular_data = (Rectangular_Data *)gr->type.gdata;
+	if (!rectangular_data) return 0;
+	if (rectangular_data->r0 > 0)
 	    return 1;
-	if ( (spread == _EVAS_TEXTURE_RESTRICT) ||
-	      (spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
-	      (spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
+	if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
+	      (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
+	      (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REPEAT) )
 	    return 1;
      }
    return 0;
 }
 
 static int
-rectangular_get_map_len(RGBA_Gradient *gr, int spread)
+rectangular_get_map_len(RGBA_Gradient *gr)
 {
-   int l;
+   Rectangular_Data   *rectangular_data;
 
    if (!gr || (gr->type.geometer != &rectangular)) return 0;
-   l = rectangular_data.s;
-   l -= (int)(l * rectangular_data.r0);
-   return l;
+   rectangular_data = (Rectangular_Data *)gr->type.gdata;
+   if (!rectangular_data) return 0;
+   return rectangular_data->len;
 }
 
 static Gfx_Func_Gradient_Fill
-rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char aa)
+rectangular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 {
+   Rectangular_Data   *rectangular_data;
    Gfx_Func_Gradient_Fill  sfunc = NULL;
    int masked_op = 0;
 
    if (!gr || (gr->type.geometer != &rectangular))
 	return sfunc;
+   rectangular_data = (Rectangular_Data *)gr->type.gdata;
+   if (!rectangular_data) return sfunc;
+
+   rectangular_data->off = gr->map.offset;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
-   switch (spread)
+   switch (gr->fill.spread)
      {
       case _EVAS_TEXTURE_REFLECT:
 	{
 	 if (aa)
 	   {
-	    if (rectangular_data.r0 > 0)
+	    if (rectangular_data->r0 > 0)
 	      {
 		if (masked_op)
 		   sfunc = rectangular_reflect_aa_masked;
@@ -237,7 +308,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
 	   }
 	 else
 	   {
-	    if (rectangular_data.r0 > 0)
+	    if (rectangular_data->r0 > 0)
 	      {
 		if (masked_op)
 		   sfunc = rectangular_reflect_masked;
@@ -253,7 +324,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
 	{
 	 if (aa)
 	   {
-	    if (rectangular_data.r0 > 0)
+	    if (rectangular_data->r0 > 0)
 	      {
 		if (masked_op)
 		   sfunc = rectangular_repeat_aa_masked;
@@ -265,7 +336,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
 	   }
 	 else
 	   {
-	    if (rectangular_data.r0 > 0)
+	    if (rectangular_data->r0 > 0)
 	      {
 		if (masked_op)
 		   sfunc = rectangular_repeat_masked;
@@ -278,7 +349,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
 	}
       break;
       case _EVAS_TEXTURE_RESTRICT:
-	 rectangular_data.off = 0;
+	 rectangular_data->off = 0;
       case _EVAS_TEXTURE_RESTRICT_REFLECT:
 	{
 	 if (aa)
@@ -319,7 +390,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
 	{
 	 if (aa)
 	   {
-	    if (rectangular_data.r0 > 0)
+	    if (rectangular_data->r0 > 0)
 	      {
 		if (masked_op)
 		   sfunc = rectangular_pad_aa_masked;
@@ -331,7 +402,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
 	   }
 	 else
 	   {
-	    if (rectangular_data.r0 > 0)
+	    if (rectangular_data->r0 > 0)
 	      {
 		if (masked_op)
 		   sfunc = rectangular_pad_masked;
@@ -352,22 +423,14 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
 /* the fill functions */
 
 #ifdef BUILD_MMX
-#define INTERP_256_MMX(a, s0, s1, d, mma, mms, mmd, mmz) \
+#define INTERP_256_P2R(a, s, mma, mms, mmd, mmz) \
 	    MOV_A2R(a, mma) \
-	    MOV_P2R(s0, mms, mmz) \
-	    MOV_P2R(s1, mmd, mmz) \
-	    INTERP_256_R2R(mma, mms, mmd) \
-	    MOV_R2P(mmd, d, mmz)
-#endif
+	    MOV_P2R(s, mms, mmz) \
+	    INTERP_256_R2R(mma, mms, mmd, mm5)
 
-#ifdef BUILD_MMX
-#define MUL_A_256_MMX(a, d, mma, mmd, mmz, mmrgb) \
-	movd_m2r(a, mma); \
-	psllq_i2r(48, mma); \
-	por_r2r(mmrgb, mma); \
-	MOV_P2R(d, mmd, mmz) \
-	MUL4_256_R2R(mma, mmd) \
-	MOV_R2P(mmd, d, mmz)
+#define MUL_256_A2R(a, mma, mmd, mmz) \
+	MOV_A2R(a, mma) \
+	MUL4_256_R2R(mma, mmd)
 #endif
 
 #define SETUP_RECT_FILL \
@@ -387,13 +450,13 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int spread, int op, unsigned char a
    rr0 <<= 16;
 
 static void
-rectangular_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -412,35 +475,34 @@ rectangular_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-	        int  m = (l % (2 * map_len));
+	        int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		    l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		    l = src_len - l - 1;
 	      }
-	    *dst = map[l];
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
-   MOV_A2R(ALPHA_256, mm6)
-   psrlq_i2r(16, mm6);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -458,44 +520,51 @@ rectangular_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int d
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
 	    if ((l == 0) && rr0)
 	      {
 #ifdef BUILD_MMX
-		MUL_A_256_MMX(a0, *dst, mm2, mm1, mm0, mm6)
+		MUL_256_A2R(a0, mm3, mm1, mm0)
 #else
-		*dst = MUL_A_256(a0, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a0, *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                            int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -514,33 +583,34 @@ rectangular_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, i
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-	        int  m = (l % (2 * map_len));
+	        int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		    l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		    l = src_len - l - 1;
 	      }
-	    *dst = map[l];  *mask = 255;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -558,23 +628,31 @@ rectangular_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    *mask = 255;
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	    if ((l == 0) && rr0)
 		*mask = a0;
 	  }
@@ -583,13 +661,13 @@ rectangular_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask
 }
 
 static void
-rectangular_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -607,30 +685,29 @@ rectangular_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_l
 	if (l >= 0)
 	  {
 	    l += off;
-	    l = l % map_len;
+	    l = l % src_len;
 	    if (l < 0)
-		l += map_len;
-	   *dst = map[l];
+		l += src_len;
+	   *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
-   MOV_A2R(ALPHA_256, mm6)
-   psrlq_i2r(16, mm6);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -647,47 +724,54 @@ rectangular_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int ds
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	    lp = l + off;
-	    lp = lp % map_len;
+	    lp = lp % src_len;
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
+		lp += src_len;
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
-	    if (lp == (map_len - 1))
+	    if (lp == (src_len - 1))
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[0], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[0], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[0], *dst);
+		*dst = INTERP_256(a, src[0], *dst);
 #endif
 	      }
 	    if ((l == 0) && rr0)
 	      {
 #ifdef BUILD_MMX
-		MUL_A_256_MMX(a, *dst, mm2, mm1, mm0, mm6)
+		MUL_256_A2R(a, mm3, mm1, mm0)
 #else
-		*dst = MUL_A_256(a, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a, *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -705,28 +789,29 @@ rectangular_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, in
 	if (l >= 0)
 	  {
 	    l += off;
-	    l = l % map_len;
+	    l = l % src_len;
 	    if (l < 0)
-		l += map_len;
-	    *dst = map[l];  *mask = 255;
+		l += src_len;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                              int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -743,26 +828,34 @@ rectangular_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask,
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	    lp = l + off;
-	    lp = lp % map_len;
+	    lp = lp % src_len;
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
+		lp += src_len;
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    *mask = 255;
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
-	    if (lp == (map_len - 1))
+	    if (lp == (src_len - 1))
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[0], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[0], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[0], *dst);
+		*dst = INTERP_256(a, src[0], *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	    if ((l == 0) && rr0)
 		*mask = a - 1;
 	  }
@@ -771,13 +864,13 @@ rectangular_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask,
 }
 
 static void
-rectangular_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                              int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -792,39 +885,38 @@ rectangular_restrict_reflect(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask,
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-	        int  m = (l % (2 * map_len));
+	        int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		   l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		   l = src_len - l - 1;
 	      }
-	    *dst = map[l];
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
-   MOV_A2R(ALPHA_256, mm6)
-   psrlq_i2r(16, mm6);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -836,59 +928,66 @@ rectangular_restrict_reflect_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *ma
 	ll = ll - rr0;  l = ll >> 16;
 
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8), a0 = a;
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
-	    if (l == (map_len - 1))
+	    if (l == (src_len - 1))
 	      {
 #ifdef BUILD_MMX
 		a = 257 - a0;
-		MUL_A_256_MMX(a, *dst, mm2, mm1, mm0, mm6)
+		MUL_256_A2R(a, mm3, mm1, mm0)
 #else
-		*dst = MUL_A_256(257 - a0, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(257 - a0, *dst);
 #endif
 	      }
 	    if ((l == 0) && rr0)
 	      {
 #ifdef BUILD_MMX
-		MUL_A_256_MMX(a0, *dst, mm2, mm1, mm0, mm6)
+		MUL_256_A2R(a0, mm3, mm1, mm0)
 #else
-		*dst = MUL_A_256(a0, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a0, *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -903,37 +1002,38 @@ rectangular_restrict_reflect_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
 	    if (l < 0) l = -l;
-	    if (l >= map_len)
+	    if (l >= src_len)
 	      {
-	        int  m = (l % (2 * map_len));
+	        int  m = (l % (2 * src_len));
 
-		l = (l % map_len);
-		if (m >= map_len)
-		   l = map_len - l - 1;
+		l = (l % src_len);
+		if (m >= src_len)
+		   l = src_len - l - 1;
 	      }
-	    *dst = map[l];  *mask = 255;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -945,30 +1045,38 @@ rectangular_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DA
 	ll = ll - rr0;  l = ll >> 16;
 
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8), a0 = a - 1;
 
 	    lp = l + off;
 	    if (lp < 0) { lp = -lp;  a = 257 - a; }
-	    if (lp >= map_len)
+	    if (lp >= src_len)
 	      {
-	        int  m = (lp % (2 * map_len));
+	        int  m = (lp % (2 * src_len));
 
-		lp = (lp % map_len);
-		if (m >= map_len)
-		  { lp = map_len - lp - 1;  a = 257 - a; }
+		lp = (lp % src_len);
+		if (m >= src_len)
+		  { lp = src_len - lp - 1;  a = 257 - a; }
 	      }
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    *mask = 255;
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
-	    if (l == (map_len - 1))
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
+	    if (l == (src_len - 1))
 		*mask = 255 - a0;
 	    if ((l == 0) && rr0)
 		*mask = a0;
@@ -978,13 +1086,13 @@ rectangular_restrict_reflect_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DA
 }
 
 static void
-rectangular_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                             int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -995,33 +1103,32 @@ rectangular_restrict_repeat(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, 
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
-	    l = (l % map_len);
+	    l = (l % src_len);
 	    if (l < 0)
-		l += map_len;
-	    *dst = map[l];
+		l += src_len;
+	    *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
-   MOV_A2R(ALPHA_256, mm6)
-   psrlq_i2r(16, mm6);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -1029,60 +1136,67 @@ rectangular_restrict_repeat_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mas
 	int  l = (ll >> 16), lp;
 
 	*dst = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8), a1 = 257 - a;
 
 	    lp = l + off;
-	    lp = (lp % map_len);
+	    lp = (lp % src_len);
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];
-	    if (lp + 1 < map_len)
+		lp += src_len;
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
-	    if (lp == (map_len - 1))
+	    if (lp == (src_len - 1))
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[0], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[0], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[0], *dst);
+		*dst = INTERP_256(a, src[0], *dst);
 #endif
 	      }
-	    if (l == (map_len - 1))
+	    if (l == (src_len - 1))
 	      {
 #ifdef BUILD_MMX
-		MUL_A_256_MMX(a1, *dst, mm2, mm1, mm0, mm6)
+		MUL_256_A2R(a1, mm3, mm1, mm0)
 #else
-		*dst = MUL_A_256(a1, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a1, *dst);
 #endif
 	      }
 	    if ((l == 0) && rr0)
 	      {
 #ifdef BUILD_MMX
-		MUL_A_256_MMX(a, *dst, mm2, mm1, mm0, mm6)
+		MUL_256_A2R(a, mm3, mm1, mm0)
 #else
-		*dst = MUL_A_256(a, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a, *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
@@ -1093,31 +1207,32 @@ rectangular_restrict_repeat_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 
 
 	l += (ll - (l << 16)) >> 15;
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    l += off;
-	    l = (l % map_len);
+	    l = (l % src_len);
 	    if (l < 0)
-		l += map_len;
-	    *dst = map[l];  *mask = 255;
+		l += src_len;
+	    *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
    Rectangular_Data  *gdata = (Rectangular_Data *)params_data;
    int  xx, yy, rr0;
-   int  off = gdata->off * (map_len - 1);
+   int  off = gdata->off * (src_len - 1);
 
    SETUP_RECT_FILL
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -1125,32 +1240,40 @@ rectangular_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DAT
 	int  l = (ll >> 16), lp;
 
 	*dst = 0;  *mask = 0;
-	if ((unsigned)l < map_len)
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
 	    lp = l + off;
-	    lp = (lp % map_len);
+	    lp = (lp % src_len);
 	    if (lp < 0)
-		lp += map_len;
-	    *dst = map[lp];  *mask = 255;
-	    if (lp + 1 < map_len)
+		lp += src_len;
+#ifdef BUILD_MMX
+	    MOV_P2R(src[lp], mm1, mm0)
+#else
+	    *dst = src[lp];
+#endif
+	    *mask = 255;
+	    if (lp + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[lp + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[lp + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[lp + 1], *dst);
+		*dst = INTERP_256(a, src[lp + 1], *dst);
 #endif
 	      }
-	    if (lp == (map_len - 1))
+	    if (lp == (src_len - 1))
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[0], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[0], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[0], *dst);
+		*dst = INTERP_256(a, src[0], *dst);
 #endif
 	      }
-	    if (l == (map_len - 1))
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
+	    if (l == (src_len - 1))
 		*mask = 256 - a;
 	    if ((l == 0) && rr0)
 		*mask = a - 1;
@@ -1161,7 +1284,7 @@ rectangular_restrict_repeat_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DAT
 
 
 static void
-rectangular_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1183,16 +1306,16 @@ rectangular_pad(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
 	*dst = 0;
 	if (l >= 0)
 	  {
-	   if (l >= map_len)
-	       l = map_len - 1;
-	   *dst = map[l];
+	   if (l >= src_len)
+	       l = src_len - 1;
+	   *dst = src[l];
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1203,8 +1326,7 @@ rectangular_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_l
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
-   MOV_A2R(ALPHA_256, mm6)
-   psrlq_i2r(16, mm6);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -1216,35 +1338,42 @@ rectangular_pad_aa(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_l
 	ll = ll - rr0;  l = ll >> 16;
 
 	*dst = 0;
-	if (l >= map_len) *dst = map[map_len - 1];
-	if ((unsigned)l < map_len)
+	if (l >= src_len) *dst = src[src_len - 1];
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
-	    *dst = map[l];
-	    if (l + 1 < map_len)
+#ifdef BUILD_MMX
+	    MOV_P2R(src[l], mm1, mm0)
+#else
+	    *dst = src[l];
+#endif
+	    if (l + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[l + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[l + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[l + 1], *dst);
+		*dst = INTERP_256(a, src[l + 1], *dst);
 #endif
 	      }
 	    if ((l == 0) && rr0)
 	      {
 #ifdef BUILD_MMX
-		MUL_A_256_MMX(a, *dst, mm2, mm1, mm0, mm6)
+		MUL_256_A2R(a, mm3, mm1, mm0)
 #else
-		*dst = MUL_A_256(a, *dst) + (*dst & 0x00ffffff);
+		*dst = MUL_256(a, *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	  }
 	dst++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_pad_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1266,16 +1395,16 @@ rectangular_pad_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int d
 	*dst = 0;  *mask = 0;
 	if (l >= 0)
 	  {
-	   if (l >= map_len)
-	       l = map_len - 1;
-	   *dst = map[l];  *mask = 255;
+	   if (l >= src_len)
+	       l = src_len - 1;
+	   *dst = src[l];  *mask = 255;
 	  }
 	dst++;  mask++;  xx += axx;  yy += ayx;
      }
 }
 
 static void
-rectangular_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1286,6 +1415,7 @@ rectangular_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, in
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
+   MOV_A2R(ALPHA_255, mm5)
 #endif
    while (dst < dst_end)
      {
@@ -1297,20 +1427,28 @@ rectangular_pad_aa_masked(DATA32 *map, int map_len, DATA32 *dst, DATA8 *mask, in
 	ll = ll - rr0;  l = ll >> 16;
 
 	*dst = 0;  *mask = 0;
-	if (l >= map_len) { *dst = map[map_len - 1];  *mask = 255; }
-	if ((unsigned)l < map_len)
+	if (l >= src_len) { *dst = src[src_len - 1];  *mask = 255; }
+	if ((unsigned)l < src_len)
 	  {
 	    DATA32 a = 1 + ((ll - (l << 16)) >> 8);
 
-	    *dst = map[l];  *mask = 255;
-	    if (l + 1 < map_len)
+#ifdef BUILD_MMX
+	    MOV_P2R(src[l], mm1, mm0)
+#else
+	    *dst = src[l];
+#endif
+	    *mask = 255;
+	    if (l + 1 < src_len)
 	      {
 #ifdef BUILD_MMX
-		INTERP_256_MMX(a, map[l + 1], *dst, *dst, mm3, mm2, mm1, mm0)
+		INTERP_256_P2R(a, src[l + 1], mm3, mm2, mm1, mm0)
 #else
-		*dst = INTERP_256(a, map[l + 1], *dst);
+		*dst = INTERP_256(a, src[l + 1], *dst);
 #endif
 	      }
+#ifdef BUILD_MMX
+	    MOV_R2P(mm1, *dst, mm0)
+#endif
 	    if ((l == 0) && rr0)
 		*mask = a - 1;
 	  }

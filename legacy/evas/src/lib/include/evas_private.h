@@ -552,19 +552,25 @@ struct _Evas_Func
    void *(*polygon_points_clear)           (void *data, void *context, void *polygon);
    void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon);
 
-   void *(*gradient_color_add)             (void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
-   void *(*gradient_colors_clear)          (void *data, void *context, void *gradient);
-   void *(*gradient_data_set)              (void *data, void *context, void *gradient, void *map, int len, int alpha_flag);
-   void *(*gradient_data_unset)            (void *data, void *context, void *gradient);
+   void *(*gradient_new)                   (void *data);
    void (*gradient_free)                   (void *data, void *gradient);
+   void (*gradient_color_stop_add)         (void *data, void *gradient, int r, int g, int b, int a, int delta);
+   void (*gradient_alpha_stop_add)         (void *data, void *gradient, int a, int delta);
+   void (*gradient_color_data_set)         (void *data, void *gradient, void *map, int len, int alpha_flag);
+   void (*gradient_alpha_data_set)         (void *data, void *gradient, void *alpha_map, int len);
+   void (*gradient_clear)                  (void *data, void *gradient);
    void (*gradient_fill_set)               (void *data, void *gradient, int x, int y, int w, int h);
-   void (*gradient_range_offset_set)       (void *data, void *gradient, float offset);
-   void (*gradient_type_set)               (void *data, void *gradient, char *name);
-   void (*gradient_type_params_set)        (void *data, void *gradient, char *params);
-   void *(*gradient_geometry_init)         (void *data, void *gradient, int spread);
-   int  (*gradient_alpha_get)              (void *data, void *gradient, int spread, int render_op);
-   void (*gradient_map)                    (void *data, void *context, void *gradient, int spread);
-   void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
+   void (*gradient_fill_angle_set)         (void *data, void *gradient, double fill_angle);
+   void (*gradient_fill_spread_set)        (void *data, void *gradient, int spread);
+   void (*gradient_angle_set)              (void *data, void *gradient, double angle);
+   void (*gradient_offset_set)             (void *data, void *gradient, float offset);
+   void (*gradient_direction_set)          (void *data, void *gradient, int direction);
+   void (*gradient_type_set)               (void *data, void *gradient, char *name, char *params);
+   int  (*gradient_is_opaque)              (void *data, void *context, void *gradient, int x, int y, int w, int h);
+   int  (*gradient_is_visible)             (void *data, void *context, void *gradient, int x, int y, int w, int h);
+   void (*gradient_render_pre)             (void *data, void *context, void *gradient);
+   void (*gradient_render_post)            (void *data, void *gradient);
+   void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h);
 
    void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data);

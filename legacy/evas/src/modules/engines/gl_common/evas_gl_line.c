@@ -1,9 +1,10 @@
 #include "evas_gl_private.h"
 
 void
-evas_gl_common_line_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)
+evas_gl_common_line_draw(Evas_GL_Context *gc, int x1, int y1, int x2, int y2)
 {
    int r, g, b, a;
+   RGBA_Draw_Context *dc = gc->dc;
 
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;

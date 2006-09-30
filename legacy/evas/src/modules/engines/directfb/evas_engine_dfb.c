@@ -44,18 +44,24 @@ static Evas_Func evas_engine_directfb_func = {
    evas_engine_directfb_polygon_points_clear,
    evas_engine_directfb_polygon_draw,
    /* gardient draw funcs */
-   evas_engine_directfb_gradient_color_add,
-   evas_engine_directfb_gradient_colors_clear,
-   evas_engine_directfb_gradient_data_set,
-   evas_engine_directfb_gradient_data_unset,
+   evas_engine_directfb_gradient_new,
    evas_engine_directfb_gradient_free,
+   evas_engine_directfb_gradient_color_stop_add,
+   evas_engine_directfb_gradient_alpha_stop_add,
+   evas_engine_directfb_gradient_color_data_set,
+   evas_engine_directfb_gradient_alpha_data_set,
+   evas_engine_directfb_gradient_clear,
    evas_engine_directfb_gradient_fill_set,
-   evas_engine_directfb_gradient_range_offset_set,
+   evas_engine_directfb_gradient_fill_angle_set,
+   evas_engine_directfb_gradient_fill_spread_set,
+   evas_engine_directfb_gradient_angle_set,
+   evas_engine_directfb_gradient_offset_set,
+   evas_engine_directfb_gradient_direction_set,
    evas_engine_directfb_gradient_type_set,
-   evas_engine_directfb_gradient_type_params_set,
-   evas_engine_directfb_gradient_geometry_init,
-   evas_engine_directfb_gradient_alpha_get,
-   evas_engine_directfb_gradient_map,
+   evas_engine_directfb_gradient_is_opaque,
+   evas_engine_directfb_gradient_is_visible,
+   evas_engine_directfb_gradient_render_pre,
+   evas_engine_directfb_gradient_render_post,
    evas_engine_directfb_gradient_draw,
    /* image draw funcs */
    evas_engine_directfb_image_load,
@@ -765,51 +771,9 @@ evas_engine_directfb_polygon_draw(void *data, void *context, void *surface, void
  *
  * */
 void *
-evas_engine_directfb_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
+eng_gradient_new(void *data)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   if (!gradient)
-     gradient = evas_common_gradient_new();
-   evas_common_gradient_color_add(gradient, r, g, b, a, distance);
-   return gradient;
-   context = NULL;
-}
-
-void *
-evas_engine_directfb_gradient_colors_clear(void *data, void *context, void *gradient)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_common_gradient_colors_clear(gradient);
-   return gradient;
-   context = NULL;
-}
-
-void *
-evas_engine_directfb_gradient_data_set(void *data, void *context, void *gradient, void *map, int len, int has_alpha)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   if (!gradient)
-     gradient = evas_common_gradient_new();
-   evas_common_gradient_data_set(gradient, map, len, has_alpha);
-   return gradient;
-   context = NULL;
-}
-
-void *
-evas_engine_directfb_gradient_data_unset(void *data, void *context, void *gradient)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_common_gradient_data_unset(gradient);
-   return gradient;
-   context = NULL;
+   return evas_common_gradient_new();
 }
 
 void
@@ -822,6 +786,56 @@ evas_engine_directfb_gradient_free(void *data, void *gradient)
 }
 
 void
+evas_engine_directfb_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_gradient_color_stop_add(gradient, r, g, b, a, delta);
+   context = NULL;
+}
+
+void
+evas_engine_directfb_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_gradient_alpha_stop_add(gradient, a, delta);
+   context = NULL;
+}
+
+void
+evas_engine_directfb_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_gradient_color_data_set(gradient, map, len, has_alpha);
+   context = NULL;
+}
+
+void
+evas_engine_directfb_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_gradient_alpha_data_set(gradient, alpha_map, len);
+   context = NULL;
+}
+
+void
+evas_engine_directfb_gradient_clear(void *data, void *gradient)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_gradient_clear(gradient);
+   context = NULL;
+}
+
+void
 evas_engine_directfb_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 {
    Render_Engine *re;
@@ -831,63 +845,101 @@ evas_engine_directfb_gradient_fill_set(void *data, void *gradient, int x, int y,
 }
 
 void
-evas_engine_directfb_gradient_range_offset_set(void *data, void *gradient, float offset)
+evas_engine_directfb_gradient_fill_angle_set(void *data, void *gradient, double angle)
 {
-   Render_Engine *re;
+    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_gradient_range_offset_set(gradient, offset);
+  evas_common_gradient_fill_angle_set(gradient, angle);
 }
 
 void
-evas_engine_directfb_gradient_type_set(void *data, void *gradient, char *name)
+evas_engine_directfb_gradient_fill_spread_set(void *data, void *gradient, int spread)
 {
-   Render_Engine *re;
+    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_gradient_type_set(gradient, name);
+  evas_common_gradient_fill_spread_set(gradient, spread);
 }
 
 void
-evas_engine_directfb_gradient_type_params_set(void *data, void *gradient, char *params)
+evas_engine_directfb_gradient_angle_set(void *data, void *gradient, double angle)
 {
-   Render_Engine *re;
+    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_gradient_type_params_set(gradient, params);
+  evas_common_gradient_map_angle_set(gradient, angle);
 }
 
-void *
-evas_engine_directfb_gradient_geometry_init(void *data, void *gradient, int spread)
+void
+evas_engine_directfb_gradient_offset_set(void *data, void *gradient, float offset)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   gradient = evas_common_gradient_geometry_init(gradient, spread);
-   return gradient;
+   evas_common_gradient_offset_set(gradient, offset);
+}
+
+void
+evas_engine_directfb_gradient_direction_set(void *data, void *gradient, int direction)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_gradient_map_direction_set(gradient, direction);
+}
+
+void
+evas_engine_directfb_gradient_type_set(void *data, void *gradient, char *name, char *params)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_gradient_type_set(gradient, name, params);
 }
 
 int
-evas_engine_directfb_gradient_alpha_get(void *data, void *gradient, int spread, int op)
+evas_engine_directfb_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   if (!dc || !gradient || !gradient->type.geometer)  return 0;
+   return !(gr->type.geometer->has_alpha(gradient, dc->render_op) |
+              gr->type.geometer->has_mask(gradient, dc->render_op));
+}
+
+int
+evas_engine_directfb_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return evas_common_gradient_has_alpha(gradient, spread, op);
-}
+   if (!context || !gradient)  return 0;
+   return 1;
+ }
 
-void
-evas_engine_directfb_gradient_map(void *data, void *context, void *gradient, int spread)
+static void
+eng_gradient_render_pre(void *data, void *context, void *gradient)
 {
+   int  len;
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_gradient_map(context, gradient, spread);
-   evas_common_cpu_end_opt();
+   if (!context || !gradient || !gradient->type.geometer) return;
+   gradient->type.geometer->geom_set(gradient);
+   len = gradient->type.geometer->get_map_len(gradient);
+   evas_common_gradient_map(context, gradient, len);
+}
+
+static void
+eng_gradient_render_post(void *data, void *gradient)
+{
 }
 
 void
-evas_engine_directfb_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
+evas_engine_directfb_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
    Render_Engine *re;
    IDirectFBSurface *surf;
@@ -900,7 +952,7 @@ evas_engine_directfb_gradient_draw(void *data, void *context, void *surface, voi
    surf = (IDirectFBSurface *)im->image->data;
    surf->Lock(surf, DSLF_WRITE, &p, & pitch);
    im->image->data = p;
-   evas_common_gradient_draw(im, context, x, y, w, h, gradient, angle, spread);
+   evas_common_gradient_draw(im, context, x, y, w, h, gradient);
    surf->Unlock(surf);
    im->image->data = (void *)surf;
    evas_common_cpu_end_opt();

@@ -960,7 +960,7 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     R_VAL(dp2) = r;
 	     G_VAL(dp2) = g;
 	     B_VAL(dp2) = b;
-
+	     
 	     dp2 += 4;
 	  }
 	/* jump down one line since we are doing 2 at once */

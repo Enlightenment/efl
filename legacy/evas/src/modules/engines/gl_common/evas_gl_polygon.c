@@ -79,13 +79,14 @@ _evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat w
 #endif
 
 void
-evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Polygon *poly)
+evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly)
 {
    int r, g, b, a;
    Evas_List *l;
    static void *tess = NULL;
    GLdouble *glp = NULL;
    int i, num;
+   RGBA_Draw_Context *dc = gc->dc;
 
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;

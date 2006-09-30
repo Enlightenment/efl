@@ -170,7 +170,7 @@ op_copy_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -196,7 +196,7 @@ op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int p
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -214,7 +214,7 @@ op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -280,7 +280,7 @@ op_copy_color_pt_get(DATA32 col, RGBA_Image *dst)
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -306,7 +306,7 @@ op_copy_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -324,7 +324,7 @@ op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -430,7 +430,7 @@ op_copy_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -456,7 +456,7 @@ op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, i
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -474,7 +474,7 @@ op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -541,7 +541,7 @@ op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -567,7 +567,7 @@ op_copy_rel_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
 	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	c = SC;
      }
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
@@ -585,7 +585,7 @@ op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
    if ((col >> 24) < 255)
 	c = SC;
-   if (col == (col | 0x00ffffff))
+   if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;

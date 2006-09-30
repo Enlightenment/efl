@@ -1,8 +1,56 @@
 #include "evas_common.h"
 
 
-void
-evas_common_convert_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
+EAPI void
+evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
+{
+   DATA32  *de = data + len;
+
+   while (data < de)
+     {
+	DATA32  a = 1 + (*data >> 24);
+
+	*data++ = (*data & 0xff000000) + (((((*data) >> 8) & 0xff) * a) & 0xff00) + 
+			 (((((*data) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
+     }
+}
+
+EAPI void
+evas_common_convert_argb_unpremul(DATA32 *data, unsigned int len)
+{
+   DATA32  *de = data + len;
+
+   while (data < de)
+     {
+	DATA32  a = (*data >> 24);
+
+	if (a & (a < 255))
+	   *data = ARGB_JOIN(a, (R_VAL(data) * 255) / a, (G_VAL(data) * 255) / a, (B_VAL(data) * 255) / a);
+	data++;
+     }
+
+}
+
+EAPI void
+evas_common_convert_color_argb_premul(int a, int *r, int *g, int *b)
+{
+   a++;
+   if (r) { *r = (a * *r) >> 8; }
+   if (g) { *g = (a * *g) >> 8; }
+   if (b) { *b = (a * *b) >> 8; }
+}
+
+EAPI void
+evas_common_convert_color_argb_unpremul(int a, int *r, int *g, int *b)
+{
+   if (!a) return;
+   if (r) { *r = (255 * *r) / a; }
+   if (g) { *g = (255 * *g) / a; }
+   if (b) { *b = (255 * *b) / a; }
+}
+
+EAPI void
+evas_common_convert_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 {
    int i;
    float f;
@@ -47,8 +95,8 @@ evas_common_convert_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b
      }
 }
 
-void
-evas_common_convert_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
+EAPI void
+evas_common_convert_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
    int max, min, d = r - g;
 
@@ -102,8 +150,8 @@ evas_common_convert_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v
      }
 }
 
-void
-evas_common_convert_hsv_to_rgb_int(int h, int s, int v, int *r, int *g, int *b)
+EAPI void
+evas_common_convert_color_hsv_to_rgb_int(int h, int s, int v, int *r, int *g, int *b)
 {
    int   i, f;
 
@@ -142,8 +190,8 @@ evas_common_convert_hsv_to_rgb_int(int h, int s, int v, int *r, int *g, int *b)
      }
 }
 
-void
-evas_common_convert_rgb_to_hsv_int(int r, int g, int b, int *h, int *s, int *v)
+EAPI void
+evas_common_convert_color_rgb_to_hsv_int(int r, int g, int b, int *h, int *s, int *v)
 {
    int  min, max, d = r - g;
 
@@ -160,7 +208,7 @@ evas_common_convert_rgb_to_hsv_int(int r, int g, int b, int *h, int *s, int *v)
    d = max - min;
 
    *v = max;
-   if (!(max & d))
+   if (!max)
      {
 	*s = *h = 0;
 	return; 

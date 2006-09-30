@@ -21,6 +21,7 @@ static void eng_output_redraws_clear(void *data);
 static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
 static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
 static void eng_output_flush(void *data);
+
 static void *eng_context_new(void *data);
 static void eng_context_free(void *data, void *context);
 static void eng_context_clip_set(void *data, void *context, int x, int y, int w, int h);
@@ -40,24 +41,35 @@ static void eng_context_color_interpolation_set(void *data, void *context, int c
 static int eng_context_color_interpolation_get(void *data, void *context);
 static void eng_context_render_op_set(void *data, void *context, int op);
 static int eng_context_render_op_get(void *data, void *context);
+
 static void eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h);
+
 static void eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
+
 static void *eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y);
 static void *eng_polygon_points_clear(void *data, void *context, void *polygon);
 static void eng_polygon_draw(void *data, void *context, void *surface, void *polygon);
-static void *eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
-static void *eng_gradient_colors_clear(void *data, void *context, void *gradient);
-static void *eng_gradient_data_set(void *data, void *context, void *gradient, void *map, int len, int has_alpha);
-static void *eng_gradient_data_unset(void *data, void *context, void *gradient);
+
+static void *eng_gradient_new(void *data);
 static void eng_gradient_free(void *data, void *gradient);
+static void eng_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta);
+static void eng_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta);
+static void eng_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha);
+static void eng_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len);
+static void eng_gradient_clear(void *data, void *gradient);
 static void eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
-static void eng_gradient_range_offset_set(void *data, void *gradient, float offset);
-static void eng_gradient_type_set(void *data, void *gradient, char *name);
-static void eng_gradient_type_params_set(void *data, void *gradient, char *params);
-static void *eng_gradient_geometry_init(void *data, void *gradient, int spread);
-static int  eng_gradient_alpha_get(void *data, void *gradient, int spread, int op);
-static void eng_gradient_map(void *data, void *context, void *gradient, int spread);
-static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
+static void eng_gradient_fill_angle_set(void *data, void *gradient, double angle);
+static void eng_gradient_fill_spread_set(void *data, void *gradient, int spread);
+static void eng_gradient_angle_set(void *data, void *gradient, double angle);
+static void eng_gradient_offset_set(void *data, void *gradient, float offset);
+static void eng_gradient_direction_set(void *data, void *gradient, int direction);
+static void eng_gradient_type_set(void *data, void *gradient, char *name, char *params);
+static int eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h);
+static int eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h);
+static void eng_gradient_render_pre(void *data, void *context, void *gradient);
+static void eng_gradient_render_post(void *data, void *gradient);
+static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h);
+
 static void *eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo);
 static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
 static void *eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
@@ -77,6 +89,7 @@ static char *eng_image_format_get(void *data, void *image);
 static void eng_image_cache_flush(void *data);
 static void eng_image_cache_set(void *data, int bytes);
 static int eng_image_cache_get(void *data);
+
 static void *eng_font_load(void *data, char *name, int size);
 static void *eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size);
 static void *eng_font_add(void *data, void *font, char *name, int size);
@@ -156,18 +169,24 @@ static Evas_Func eng_func =
      eng_polygon_points_clear,
      eng_polygon_draw,
      /* gradient draw funcs */
-     eng_gradient_color_add,
-     eng_gradient_colors_clear,
-     eng_gradient_data_set,
-     eng_gradient_data_unset,
+     eng_gradient_new,
      eng_gradient_free,
+     eng_gradient_color_stop_add,
+     eng_gradient_alpha_stop_add,
+     eng_gradient_color_data_set,
+     eng_gradient_alpha_data_set,
+     eng_gradient_clear,
      eng_gradient_fill_set,
-     eng_gradient_range_offset_set,
+     eng_gradient_fill_angle_set,
+     eng_gradient_fill_spread_set,
+     eng_gradient_angle_set,
+     eng_gradient_offset_set,
+     eng_gradient_direction_set,
      eng_gradient_type_set,
-     eng_gradient_type_params_set,
-     eng_gradient_geometry_init,
-     eng_gradient_alpha_get,
-     eng_gradient_map,
+     eng_gradient_is_opaque,
+     eng_gradient_is_visible,
+     eng_gradient_render_pre,
+     eng_gradient_render_post,
      eng_gradient_draw,
      /* image draw funcs */
      eng_image_load,
@@ -295,6 +314,7 @@ eng_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colorm
 	return NULL;
      }
    printf("GL: gl window setup done.\n");
+
    evas_common_cpu_init();
 
    evas_common_blend_init();
@@ -318,6 +338,7 @@ eng_output_free(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   eng_window_free(re->win);
    free(re);
 
    evas_common_font_shutdown();
@@ -655,7 +676,8 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
-   evas_gl_common_rect_draw(re->win->gl_context, context, x, y, w, h);
+   re->win->gl_context->dc = context;
+   evas_gl_common_rect_draw(re->win->gl_context, x, y, w, h);
 }
 
 static void
@@ -664,7 +686,8 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_gl_common_line_draw(re->win->gl_context, context, x1, y1, x2, y2);
+   re->win->gl_context->dc = context;
+   evas_gl_common_line_draw(re->win->gl_context, x1, y1, x2, y2);
 }
 
 static void *
@@ -692,130 +715,138 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_gl_common_poly_draw(re->win->gl_context, context, polygon);
+   re->win->gl_context->dc = context;
+   evas_gl_common_poly_draw(re->win->gl_context, polygon);
 }
 
-static void *
-eng_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
-{
-   Render_Engine *re;
 
-   re = (Render_Engine *)data;
-   return evas_gl_common_gradient_color_add(gradient, r, g, b, a, distance);
+
+static void *
+eng_gradient_new(void *data)
+{
+   return evas_gl_common_gradient_new();
 }
 
-static void *
-eng_gradient_colors_clear(void *data, void *context, void *gradient)
+static void
+eng_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   return evas_gl_common_gradient_colors_clear(gradient);
+   evas_gl_common_gradient_color_stop_add(gradient, r, g, b, a, delta);
 }
 
-static void *
-eng_gradient_data_set(void *data, void *context, void *gradient, void *map, int len, int has_alpha)
+static void
+eng_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_gl_common_gradient_data_set(gradient, map, len, has_alpha);
-   return gradient;
-   context = NULL;
+   evas_gl_common_gradient_alpha_stop_add(gradient, a, delta);
 }
 
-static void *
-eng_gradient_data_unset(void *data, void *context, void *gradient)
+static void
+eng_gradient_clear(void *data, void *gradient)
 {
-   Render_Engine *re;
+   evas_gl_common_gradient_clear(gradient);
+}
 
-   re = (Render_Engine *)data;
-   evas_gl_common_gradient_data_unset(gradient);
-   return gradient;
-   context = NULL;
+static void
+eng_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha)
+{
+   evas_gl_common_gradient_color_data_set(gradient, map, len, has_alpha);
+}
+
+static void
+eng_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len)
+{
+   evas_gl_common_gradient_alpha_data_set(gradient, alpha_map, len);
 }
 
 static void
 eng_gradient_free(void *data, void *gradient)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
    evas_gl_common_gradient_free(gradient);
 }
 
 static void
 eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
    evas_gl_common_gradient_fill_set(gradient, x, y, w, h);
 }
 
 static void
-eng_gradient_range_offset_set(void *data, void *gradient, float offset)
+eng_gradient_fill_angle_set(void *data, void *gradient, double angle)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_gl_common_gradient_range_offset_set(gradient, offset);
-
+   evas_common_gradient_fill_angle_set(gradient, angle);
 }
 
 static void
-eng_gradient_type_set(void *data, void *gradient, char *name)
+eng_gradient_fill_spread_set(void *data, void *gradient, int spread)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_gl_common_gradient_type_set(gradient, name);
+   evas_gl_common_gradient_fill_spread_set(gradient, spread);
 }
 
 static void
-eng_gradient_type_params_set(void *data, void *gradient, char *params)
+eng_gradient_angle_set(void *data, void *gradient, double angle)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   evas_gl_common_gradient_type_params_set(gradient, params);
+   evas_gl_common_gradient_map_angle_set(gradient, angle);
 }
 
-static void *
-eng_gradient_geometry_init(void *data, void *gradient, int spread)
+static void
+eng_gradient_offset_set(void *data, void *gradient, float offset)
 {
-   Render_Engine *re;
+   evas_gl_common_gradient_map_offset_set(gradient, offset);
+}
 
-   re = (Render_Engine *)data;
-   return evas_gl_common_gradient_geometry_init(gradient, spread);
+static void
+eng_gradient_direction_set(void *data, void *gradient, int direction)
+{
+   evas_gl_common_gradient_map_direction_set(gradient, direction);
+}
+
+static void
+eng_gradient_type_set(void *data, void *gradient, char *name, char *params)
+{
+   evas_gl_common_gradient_type_set(gradient, name, params);
 }
 
 static int
-eng_gradient_alpha_get(void *data, void *gradient, int spread, int op)
+eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h)
 {
-   Render_Engine *re;
+   Render_Engine *re = (Render_Engine *)data;
 
-   re = (Render_Engine *)data;
-   return evas_gl_common_gradient_alpha_get(gradient, spread, op);
+   re->win->gl_context->dc = context;
+   return evas_gl_common_gradient_is_opaque(re->win->gl_context, gradient, x, y, w, h);
+}
+
+static int
+eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h)
+{
+   Render_Engine *re = (Render_Engine *)data;
+
+   re->win->gl_context->dc = context;
+   return evas_gl_common_gradient_is_visible(re->win->gl_context, gradient, x, y, w, h);
 }
 
 static void
-eng_gradient_map(void *data, void *context, void *gradient, int spread)
+eng_gradient_render_pre(void *data, void *context, void *gradient)
 {
-   Render_Engine *re;
+   Render_Engine *re = (Render_Engine *)data;
 
-   re = (Render_Engine *)data;
-   evas_gl_common_gradient_map(context, gradient, spread);
+   re->win->gl_context->dc = context;
+   evas_gl_common_gradient_render_pre(re->win->gl_context, gradient);
 }
 
 static void
-eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
+eng_gradient_render_post(void *data, void *gradient)
+{
+   evas_gl_common_gradient_render_post(gradient);
+}
+
+static void
+eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
-   evas_gl_common_gradient_draw(re->win->gl_context, context, gradient, x, y, w, h, angle, spread);
+   re->win->gl_context->dc = context;
+   evas_gl_common_gradient_draw(re->win->gl_context, gradient, x, y, w, h);
 }
 
 static void *
@@ -1027,7 +1058,8 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
-   evas_gl_common_image_draw(re->win->gl_context, context, image,
+   re->win->gl_context->dc = context;
+   evas_gl_common_image_draw(re->win->gl_context, image,
 			     src_x, src_y, src_w, src_h,
 			     dst_x, dst_y, dst_w, dst_h,
 			     smooth);
