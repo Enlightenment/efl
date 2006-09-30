@@ -153,6 +153,7 @@ extern "C" {
     * Example:
     * @code
     * #include <Eet.h>
+    * #include <stdio.h>
     *
     * int
     * main(int argc, char **argv)
@@ -163,13 +164,13 @@ extern "C" {
     *
     *   strcpy(buf, "Here is a string of data to save!");
     *
-    *   ef = eet_open("/tmp/my_file.eet, EET_FILE_MODE_WRITE);
+    *   ef = eet_open("/tmp/my_file.eet", EET_FILE_MODE_WRITE);
     *   if (!ef) return -1;
     *   if (!eet_write(ef, "/key/to_store/at", buf, 1024, 1))
-    *     fprintf("Error writing data!\n");
+    *     fprintf(stderr, "Error writing data!\n");
     *   eet_close(ef);
     *
-    *   ef = eet_open("/tmp/my_file.eet, EET_FILE_MODE_READ);
+    *   ef = eet_open("/tmp/my_file.eet", EET_FILE_MODE_READ);
     *   if (!ef) return -1;
     *   list = eet_list(ef, "*", &num);
     *   if (list)
