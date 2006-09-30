@@ -97,11 +97,11 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
 	     r = TIFFGetR(pixel_value);
 	     g = TIFFGetG(pixel_value);
 	     b = TIFFGetB(pixel_value);
-	     if ((a > 0) && (a < 255) && (alpha_premult))
+	     if (!alpha_premult && (a < 255))
 	       {
-		  r = (r * 255) / a;
-		  g = (g * 255) / a;
-		  b = (b * 255) / a;
+		  r = (r * (a + 1)) >> 8;
+		  g = (g * (a + 1)) >> 8;
+		  b = (b * (a + 1)) >> 8;
 	       }
              (*(buffer_pixel++)) = (a << 24) | (r << 16) | (g << 8) | b;
           }
@@ -313,6 +313,7 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
 
    TIFFClose(tif);
 
+   evas_common_image_set_alpha_sparse(im);
    return 1;
 }
 

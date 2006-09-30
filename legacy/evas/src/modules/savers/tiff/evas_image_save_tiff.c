@@ -79,14 +79,7 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
              g = (pixel >> 8) & 0xff;
              b = pixel & 0xff;
              if (has_alpha)
-               {
-                  /* TIFF makes you pre-mutiply the rgb components by alpha */
-                  a = (pixel >> 24) & 0xff;
-                  alpha_factor = ((double)a / 255.0);
-                  r *= alpha_factor;
-                  g *= alpha_factor;
-                  b *= alpha_factor;
-               }
+                a = (pixel >> 24) & 0xff;
 
              /* This might be endian dependent */
              buf[i++] = r;

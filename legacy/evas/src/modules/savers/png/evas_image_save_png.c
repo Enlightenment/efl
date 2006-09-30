@@ -18,9 +18,9 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    FILE               *f;
    png_structp         png_ptr;
    png_infop           info_ptr;
-   DATA32             *ptr;
+   DATA32             *ptr, *data;
    int                 x, y, j;
-   png_bytep           row_ptr, data = NULL;
+   png_bytep           row_ptr, png_data = NULL;
    png_color_8         sig_bit;
    int                 num_passes = 1, pass;
 
@@ -59,10 +59,19 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 #endif
      }
    
-   png_init_io(png_ptr, f);
-   
    if (im->flags & RGBA_IMAGE_HAS_ALPHA)
      {
+	data = malloc(im->image->w * im->image->h * sizeof(DATA32));
+	if (!data)
+	  {
+	    fclose(f);
+	    png_destroy_write_struct(&png_ptr, (png_infopp) & info_ptr);
+	    png_destroy_info_struct(png_ptr, (png_infopp) & info_ptr);
+	    return 0;
+	  }
+	memcpy(data, im->image->data, im->image->w * im->image->h * sizeof(DATA32));
+	evas_common_convert_argb_unpremul(data, im->image->w * im->image->h);
+	png_init_io(png_ptr, f);
         png_set_IHDR(png_ptr, info_ptr, im->image->w, im->image->h, 8,
 		     PNG_COLOR_TYPE_RGB_ALPHA, png_ptr->interlaced,
 		     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
@@ -74,10 +83,12 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
      }
    else
      {
+	data = im->image->data;
+	png_init_io(png_ptr, f);
 	png_set_IHDR(png_ptr, info_ptr, im->image->w, im->image->h, 8,
 		     PNG_COLOR_TYPE_RGB, png_ptr->interlaced,
 		     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-	data = alloca(im->image->w * 3 * sizeof(char));
+	png_data = alloca(im->image->w * 3 * sizeof(char));
      }
    sig_bit.red = 8;
    sig_bit.green = 8;
@@ -92,7 +103,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 
    for (pass = 0; pass < num_passes; pass++)
      {
-	ptr = im->image->data;
+	ptr = data;
 	
 	for (y = 0; y < im->image->h; y++)
 	  {
@@ -102,11 +113,11 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 	       {
 		  for (j = 0, x = 0; x < im->image->w; x++)
 		    {
-		       data[j++] = (ptr[x] >> 16) & 0xff;
-		       data[j++] = (ptr[x] >> 8) & 0xff;
-		       data[j++] = (ptr[x]) & 0xff;
+		       png_data[j++] = (ptr[x] >> 16) & 0xff;
+		       png_data[j++] = (ptr[x] >> 8) & 0xff;
+		       png_data[j++] = (ptr[x]) & 0xff;
 		    }
-		  row_ptr = (png_bytep) data;
+		  row_ptr = (png_bytep) png_data;
 	       }
 	     png_write_rows(png_ptr, &row_ptr, 1);
 	     ptr += im->image->w;
@@ -116,6 +127,8 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    png_destroy_write_struct(&png_ptr, (png_infopp) & info_ptr);
    png_destroy_info_struct(png_ptr, (png_infopp) & info_ptr);
    
+   if (im->flags & RGBA_IMAGE_HAS_ALPHA)
+	free(data);
    fclose(f);
    return 1;
 }
