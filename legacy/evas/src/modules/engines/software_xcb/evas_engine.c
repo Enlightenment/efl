@@ -1,4 +1,4 @@
-#include <X11/XCB/xcb.h>
+#include <xcb/xcb.h>
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
@@ -20,12 +20,12 @@ struct _Render_Engine
 };
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, int rot, XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, int depth, int debug, int grayscale, int max_colors, XCBDRAWABLE mask, int shape_dither, int destination_alpha);
-static XCBVISUALTYPE *_best_visual_get(XCBConnection *conn, int screen);
-static XCBCOLORMAP _best_colormap_get(XCBConnection *conn, int screen);
-static int _best_depth_get(XCBConnection *conn, int screen);
-static Evas_Performance *_output_perf_new(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth);
-static Evas_Performance *_output_perf_test(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth);
+static void *_output_setup(int w, int h, int rot, xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualtype_t *vis, xcb_colormap_t cmap, int depth, int debug, int grayscale, int max_colors, xcb_drawable_t mask, int shape_dither, int destination_alpha);
+static xcb_visualtype_t *_best_visual_get(xcb_connection_t *conn, int screen);
+static xcb_colormap_t _best_colormap_get(xcb_connection_t *conn, int screen);
+static int _best_depth_get(xcb_connection_t *conn, int screen);
+static Evas_Performance *_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
+static Evas_Performance *_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
 static char *_output_perf_data(Evas_Performance *perf);
 static char *_output_perf_key(Evas_Performance *perf);
 static void _output_perf_free(Evas_Performance *perf);
@@ -46,20 +46,20 @@ static void eng_output_redraws_next_update_push(void *data, void *surface, int x
 static void eng_output_flush(void *data);
 
 static void *
-_output_setup(int            w,
-	      int            h,
-	      int            rot,
-	      XCBConnection *conn,
-	      XCBDRAWABLE    draw,
-	      XCBVISUALTYPE *vis,
-	      XCBCOLORMAP    cmap,
-	      int            depth,
-	      int            debug,
-	      int            grayscale,
-	      int            max_colors,
-	      XCBDRAWABLE    mask,
-	      int            shape_dither,
-              int            destination_alpha)
+_output_setup(int               w,
+	      int               h,
+	      int               rot,
+	      xcb_connection_t *conn,
+	      xcb_drawable_t    draw,
+	      xcb_visualtype_t *vis,
+	      xcb_colormap_t    cmap,
+	      int               depth,
+	      int               debug,
+	      int               grayscale,
+	      int               max_colors,
+	      xcb_drawable_t    mask,
+	      int               shape_dither,
+              int               destination_alpha)
 {
    Render_Engine *re;
    Outbuf_Perf   *perf;
@@ -118,53 +118,80 @@ _output_setup(int            w,
    return re;
 }
 
-static XCBVISUALTYPE *
-_best_visual_get(XCBConnection *conn, int screen)
+static xcb_visualtype_t *
+_best_visual_get(xcb_connection_t *conn, int screen)
 {
-   XCBSCREEN *scr;
+   xcb_screen_iterator_t iter_screen;
+   xcb_depth_iterator_t  iter_depth;
+   xcb_screen_t         *scr = NULL;
 
    if (!conn) return NULL;
-   scr = XCBAuxGetScreen(conn, screen);
+
+   iter_screen = xcb_setup_roots_iterator (xcb_get_setup (conn));
+   for (; iter_screen.rem; --screen, xcb_screen_next (&iter_screen))
+      if (screen == 0)
+        {
+           scr = iter_screen.data;
+           break;
+        }
    if (!scr) return NULL;
 
-   return XCBAuxGetVisualtype (conn, screen, scr->root_visual);
+   iter_depth = xcb_screen_allowed_depths_iterator(scr);
+   for (; iter_depth.rem; xcb_depth_next (&iter_depth))
+     {
+        xcb_visualtype_iterator_t iter_vis;
+
+        iter_vis = xcb_depth_visuals_iterator(iter_depth.data);
+        for (; iter_vis.rem; --screen, xcb_visualtype_next (&iter_vis))
+          {
+            if (scr->root_visual.id == iter_vis.data->visual_id.id)
+              return iter_vis.data;
+          }
+     }
+
+   return NULL;
 }
 
-static XCBCOLORMAP
-_best_colormap_get(XCBConnection *conn, int screen)
+static xcb_colormap_t
+_best_colormap_get(xcb_connection_t *conn, int screen)
 {
-   XCBSCREEN  *scr;
-   XCBCOLORMAP c;
+   xcb_screen_iterator_t iter;
+   xcb_colormap_t        c = { 0 };
 
-   c.xid = 0;
    if (!conn) return c;
-   scr = XCBAuxGetScreen(conn, screen);
-   if (!scr) return c;
 
-   return scr->default_colormap;
+   iter = xcb_setup_roots_iterator (xcb_get_setup (conn));
+   for (; iter.rem; --screen, xcb_screen_next (&iter))
+      if (screen == 0)
+         return iter.data->default_colormap;
+
+   return c;
 }
 
 static int
-_best_depth_get(XCBConnection *conn, int screen)
+_best_depth_get(xcb_connection_t *conn, int screen)
 {
-   XCBSCREEN *scr;
+   xcb_screen_iterator_t iter;
 
    if (!conn) return 0;
-   scr = XCBAuxGetScreen(conn, screen);
-   if (!scr) return 0;
 
-   return scr->root_depth;
+   iter = xcb_setup_roots_iterator (xcb_get_setup (conn));
+   for (; iter.rem; --screen, xcb_screen_next (&iter))
+      if (screen == 0)
+         return iter.data->root_depth;
+
+   return 0;
 }
 
 static Evas_Performance *
-_output_perf_new(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth)
+_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
 {
    return evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, depth);
    e = NULL;
 }
 
 static Evas_Performance *
-_output_perf_test(Evas *e, XCBConnection *conn, XCBVISUALTYPE *vis, XCBCOLORMAP cmap, XCBDRAWABLE draw, int depth)
+_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
 {
    return evas_software_xcb_outbuf_perf_x(conn, draw, vis, cmap, depth);
    e = NULL;

@@ -5,7 +5,7 @@
 #include <math.h>
 
 XR_Gradient *
-_xre_gradient_new(XCBimage_Info *xcbinf)
+_xre_gradient_new(Xcb_Image_Info *xcbinf)
 {
    XR_Gradient  *gr;
 
@@ -131,7 +131,7 @@ _xre_gradient_type_set(XR_Gradient *gr, char *name, char *params)
 }
 
 void
-_xre_gradient_draw(XCBrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h)
+_xre_gradient_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h)
 {
    int alpha = 0;
 

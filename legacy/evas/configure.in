@@ -207,7 +207,7 @@ AC_ARG_ENABLE(software-xcb, AC_HELP_STRING([--enable-software-xcb],[enable the S
 if test "x$have_evas_software_xcb" = "xyes"; then
   PKG_CHECK_MODULES(
     XCB,
-    xcb xcb-shm xcb-aux xcb-image xcb-icccm,
+    xcb xcb-shm xcb-image xcb-icccm,
     [AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
      xcb_cflags=$XCB_CFLAGS
      xcb_libs=$XCB_LIBS

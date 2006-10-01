@@ -6,17 +6,17 @@
 static Evas_Hash *_xr_fg_pool = NULL;
 
 XR_Font_Surface *
-_xre_font_surface_new(XCBimage_Info *xcbinf, RGBA_Font_Glyph *fg)
+_xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
 {    
-   char buf[256];
-   char buf2[256];
+   char             buf[256];
+   char             buf2[256];
    XR_Font_Surface *fs;
-   DATA8 *data;
-   int w, h, j;
-   XCBimage_Image  *xcim;
-   Evas_Hash *pool;
-   CARD32 mask;
-   CARD32 values[3];
+   DATA8           *data;
+   int              w, h, j;
+   Xcb_Image_Image *xcim;
+   Evas_Hash       *pool;
+   uint32_t         mask;
+   uint32_t         values[3];
    
    data = fg->glyph_out->bitmap.buffer;
    w = fg->glyph_out->bitmap.width;
@@ -56,15 +56,15 @@ _xre_font_surface_new(XCBimage_Info *xcbinf, RGBA_Font_Glyph *fg)
    pool = evas_hash_add(pool, buf2, fs);
    _xr_fg_pool = evas_hash_add(_xr_fg_pool, buf, pool);
 
-   fs->draw.pixmap = XCBPIXMAPNew(xcbinf->conn);
-   XCBCreatePixmap(xcbinf->conn, xcbinf->fmt8->depth, fs->draw.pixmap, xcbinf->root, w, h);
+   fs->draw.pixmap = xcb_pixmap_new(xcbinf->conn);
+   xcb_create_pixmap(xcbinf->conn, xcbinf->fmt8->depth, fs->draw.pixmap, xcbinf->root, w, h);
 
-   mask = XCBRenderCPRepeat | XCBRenderCPDither | XCBRenderCPComponentAlpha;
+   mask = XCB_RENDER_CP_REPEAT | XCB_RENDER_CP_DITHER | XCB_RENDER_CP_COMPONENT_ALPHA;
    values[0] = 0;
    values[1] = 0;
    values[2] = 0;
-   fs->pic = XCBRenderPICTURENew(xcbinf->conn);
-   XCBRenderCreatePicture(xcbinf->conn, fs->pic, fs->draw, xcbinf->fmt8->id, mask, values);
+   fs->pic = xcb_render_picture_new(xcbinf->conn);
+   xcb_render_create_picture(xcbinf->conn, fs->pic, fs->draw, xcbinf->fmt8->id, mask, values);
    
    xcim = _xr_image_new(fs->xcbinf, w, h, xcbinf->fmt8->depth);
    if ((fg->glyph_out->bitmap.num_grays == 256) &&
@@ -88,13 +88,13 @@ _xre_font_surface_new(XCBimage_Info *xcbinf, RGBA_Font_Glyph *fg)
      }
    else
      {
-        DATA8 *tmpbuf = NULL, *dp, *tp, bits;
-	int bi, bj, end;
+        DATA8      *tmpbuf = NULL, *dp, *tp, bits;
+	int         bi, bj, end;
 	const DATA8 bitrepl[2] = {0x0, 0xff};
 	
 	tmpbuf = alloca(w);
 	  {
-	     int x, y;
+	     int    x, y;
 	     DATA8 *p1, *p2;
 	     
 	     for (y = 0; y < h; y++)
@@ -131,9 +131,9 @@ _xre_font_surface_new(XCBimage_Info *xcbinf, RGBA_Font_Glyph *fg)
 static Evas_Bool
 _xre_font_pool_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
-   Evas_Hash *pool;
+   char             buf[256];
+   Evas_Hash       *pool;
    XR_Font_Surface *fs;
-   char buf[256];
    
    fs = fdata;
    pool = data;
@@ -148,26 +148,26 @@ _xre_font_surface_free(XR_Font_Surface *fs)
 {
    if (!fs) return;
    evas_hash_foreach(_xr_fg_pool, _xre_font_pool_cb, fs);
-   XCBFreePixmap(fs->xcbinf->conn, fs->draw.pixmap);
-   XCBRenderFreePicture(fs->xcbinf->conn, fs->pic);
+   xcb_free_pixmap(fs->xcbinf->conn, fs->draw.pixmap);
+   xcb_render_free_picture(fs->xcbinf->conn, fs->pic);
    _xr_image_info_free(fs->xcbinf);
    free(fs);
 }
 
 void
-_xre_font_surface_draw(XCBimage_Info *xcbinf, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
+_xre_font_surface_draw(Xcb_Image_Info *xcbinf, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
 {
-   XR_Font_Surface   *fs;
-   XCBrender_Surface *target_surface;
-   XCBRECTANGLE       rect;
-   int                r;
-   int                g;
-   int                b;
-   int                a;
+   XR_Font_Surface    *fs;
+   Xcb_Render_Surface *target_surface;
+   xcb_rectangle_t     rect;
+   int                 r;
+   int                 g;
+   int                 b;
+   int                 a;
    
    fs = fg->ext_dat;
    if (!fs) return;
-   target_surface = (XCBrender_Surface *)(surface->image->data);
+   target_surface = (Xcb_Render_Surface *)(surface->image->data);
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
@@ -190,14 +190,14 @@ _xre_font_surface_draw(XCBimage_Info *xcbinf, RGBA_Image *surface, RGBA_Draw_Con
 	RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.width, rect.height,
 			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
      }
-   XCBRenderSetPictureClipRectangles(target_surface->xcbinf->conn, 
-                                     target_surface->pic, 0, 0, 1, &rect);
-   XCBRenderComposite(fs->xcbinf->conn, XCBRenderPictOpOver,
-                      fs->xcbinf->mul->pic, 
-                      fs->pic,
-                      target_surface->pic,
-                      0, 0,
-                      0, 0,
-                      x, y,
-                      fs->w, fs->h);
+   xcb_render_set_picture_clip_rectangles(target_surface->xcbinf->conn, 
+                                          target_surface->pic, 0, 0, 1, &rect);
+   xcb_render_composite(fs->xcbinf->conn, XCB_RENDER_PICT_OP_OVER,
+                        fs->xcbinf->mul->pic, 
+                        fs->pic,
+                        target_surface->pic,
+                        0, 0,
+                        0, 0,
+                        x, y,
+                        fs->w, fs->h);
 }

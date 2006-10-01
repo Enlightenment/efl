@@ -54,27 +54,27 @@ evas_software_xcb_x_write_mask_line(Outbuf            *buf,
      }
    for (; x < w; x ++)
       {
-	 XCBImagePutPixel(xcbob->image, x, y, A_VAL(src_ptr) >> 7);
+	 xcb_image_put_pixel(xcbob->image, x, y, A_VAL(src_ptr) >> 7);
 	 src_ptr++;
       }
 }
 
 int
-evas_software_xcb_x_can_do_shm(XCBConnection *c)
+evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
 {
-   XCBGetGeometryRep *geom;
-   XCBDRAWABLE        drawable;
-   int                depth;
+   xcb_get_geometry_reply_t *geom;
+   xcb_drawable_t            drawable;
+   int                       depth;
 
-   drawable.window = XCBSetupRootsIter (XCBGetSetup(c)).data->root;
-   geom = XCBGetGeometryReply (c, XCBGetGeometryUnchecked(c, drawable), 0);
+   drawable.window = xcb_setup_roots_iterator (xcb_get_setup(c)).data->root;
+   geom = xcb_get_geometry_reply (c, xcb_get_geometry_unchecked(c, drawable), 0);
    if(!geom)
      return 0;
 
    depth = geom->depth;
    free (geom);
 
-   if (XCBShmInit(c))
+   if (xcb_get_extension_data(c, &xcb_shm_id))
      {
 	Xcb_Output_Buffer *xcbob;
 
@@ -96,19 +96,19 @@ evas_software_xcb_x_can_do_shm(XCBConnection *c)
  */
 
 /* static void */
-/* x_output_tmp_xcb_err(XCBConnection *c, XErrorEvent * ev) */
+/* x_output_tmp_xcb_err(xcb_connection_t *c, XErrorEvent * ev) */
 /* { */
 /*    _xcb_err = 1; */
 /*    return; */
 /* } */
 
 Xcb_Output_Buffer *
-evas_software_xcb_x_output_buffer_new(XCBConnection *c,
-				      int            depth,
-				      int            w,
-				      int            h,
-				      int            try_shm,
-				      void          *data)
+evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
+				      int               depth,
+				      int               w,
+				      int               h,
+				      int               try_shm,
+				      void             *data)
 {
    Xcb_Output_Buffer *xcbob;
 
@@ -121,11 +121,11 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 
    if (try_shm > 0)
      {
-        xcbob->shm_info = malloc(sizeof(XCBShmSegmentInfo));
+        xcbob->shm_info = malloc(sizeof(xcb_shm_segment_info_t));
         if (xcbob->shm_info)
           {
-             xcbob->shm_info->shmseg = XCBShmSEGNew(c);
-             xcbob->image = XCBImageSHMCreate(c, depth, XCBImageFormatZPixmap, NULL, w, h);
+             xcbob->shm_info->shmseg = xcb_shm_seg_new(c);
+             xcbob->image = xcb_image_shm_create(c, depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, w, h);
              if (xcbob->image)
                {
                   xcbob->shm_info->shmid = shmget(IPC_PRIVATE,
@@ -145,14 +145,14 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
                            /* XErrorHandler ph; */
                            /* EventHandlers eh; */
 
-/*                            XCBSync(c, 0); */
+/*                            xcb_sync(c, 0); */
                            _xcb_err = 0;
                            /* ph = XSetErrorHandler((XErrorHandler) */
                            /* x_output_tmp_x_err); */
-                           XCBShmAttach(c,
+                           xcb_shm_attach(c,
                                         xcbob->shm_info->shmseg,
                                         xcbob->shm_info->shmid, 0);
-/*                            XCBSync(c, 0); */
+/*                            xcb_sync(c, 0); */
                            /* XSetErrorHandler((XErrorHandler)ph); */
                            if (!_xcb_err)
                              {
@@ -162,7 +162,7 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
                        shmdt(xcbob->shm_info->shmaddr);
                        shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
                     }
-                  if (xcbob->image) XCBImageSHMDestroy(xcbob->image);
+                  if (xcbob->image) xcb_image_shm_destroy(xcbob->image);
                   xcbob->image = NULL;
                }
              if (xcbob->shm_info) free(xcbob->shm_info);
@@ -172,7 +172,7 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 
    if (try_shm > 1) return NULL;
 
-   xcbob->image = XCBImageCreate(c, depth, XCBImageFormatZPixmap, 0, data, w, h, 32, 0);
+   xcbob->image = xcb_image_create(c, depth, XCB_IMAGE_FORMAT_Z_PIXMAP, 0, data, w, h, 32, 0);
    if (!xcbob->image)
      {
 	free(xcbob);
@@ -186,7 +186,7 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 	xcbob->image->data = malloc(xcbob->image->bytes_per_line * xcbob->image->height);
 	if (!xcbob->image->data)
 	  {
-	     XCBImageDestroy(xcbob->image);
+	     xcb_image_destroy(xcbob->image);
 	     free(xcbob);
 	     return NULL;
 	  }
@@ -202,15 +202,15 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
      {
 	if (sync)
           {
-             XCBGetInputFocusRep *reply;
+             xcb_get_input_focus_reply_t *reply;
 
-             reply = XCBGetInputFocusReply(xcbob->connection,
-                                           XCBGetInputFocusUnchecked(xcbob->connection),
-                                           NULL);
+             reply = xcb_get_input_focus_reply(xcbob->connection,
+                                               xcb_get_input_focus_unchecked(xcbob->connection),
+                                               NULL);
              free(reply);
           }
-	XCBShmDetach(xcbob->connection, xcbob->shm_info->shmseg);
-	XCBImageSHMDestroy(xcbob->image);
+	xcb_shm_detach(xcbob->connection, xcbob->shm_info->shmseg);
+	xcb_image_shm_destroy(xcbob->image);
 	shmdt(xcbob->shm_info->shmaddr);
 	shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
 	free(xcbob->shm_info);
@@ -218,45 +218,45 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
    else
      {
 	if (xcbob->data) xcbob->image->data = NULL;
-	XCBImageDestroy(xcbob->image);
+	xcb_image_destroy(xcbob->image);
      }
    free(xcbob);
 }
 
 void
-evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer *xcbob,
-					XCBDRAWABLE        d,
-					XCBGCONTEXT        gc,
-					int                x,
-					int                y,
-					int                sync)
+evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer    *xcbob,
+					xcb_drawable_t        d,
+					xcb_gcontext_t        gc,
+					int                   x,
+					int                   y,
+					int                   sync)
 {
    if (xcbob->shm_info)
      {
-	XCBImageSHMPut(xcbob->connection, d, gc,
-		       xcbob->image, *xcbob->shm_info,
-		       0, 0,
-		       x, y,
-		       xcbob->image->width, xcbob->image->height,
-		       0);
+	xcb_image_shm_put(xcbob->connection, d, gc,
+                          xcbob->image, *xcbob->shm_info,
+                          0, 0,
+                          x, y,
+                          xcbob->image->width, xcbob->image->height,
+                          0);
 	if (sync)
           {
-             XCBGetInputFocusRep *reply;
+             xcb_get_input_focus_reply_t *reply;
 
-             reply = XCBGetInputFocusReply(xcbob->connection,
-                                           XCBGetInputFocusUnchecked(xcbob->connection),
-                                           NULL);
+             reply = xcb_get_input_focus_reply(xcbob->connection,
+                                               xcb_get_input_focus_unchecked(xcbob->connection),
+                                               NULL);
              free(reply);
           }
      }
    else
-      XCBImagePut(xcbob->connection,
-		  d,
-		  gc,
-		  xcbob->image,
-		  0, 0,
-		  x, y,
-		  xcbob->image->width, xcbob->image->height);
+      xcb_image_put(xcbob->connection,
+                    d,
+                    gc,
+                    xcbob->image,
+                    0, 0,
+                    x, y,
+                    xcbob->image->width, xcbob->image->height);
 }
 
 DATA8 *

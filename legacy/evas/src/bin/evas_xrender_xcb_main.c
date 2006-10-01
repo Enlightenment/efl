@@ -4,59 +4,58 @@
 
 #define X_H   /* make sure we aren't using symbols from X.h */
 
-#include <X11/XCB/xcb.h>
-#include <X11/XCB/shm.h>
-#include <X11/XCB/render.h>
-#include <X11/XCB/xcb_aux.h>
+#include <xcb/xcb.h>
+#include <xcb/shm.h>
+#include <xcb/render.h>
 
 #include "Evas.h"
 #include "Evas_Engine_XRender_Xcb.h"
 
 
 static void
-title_set (XCBConnection *c, XCBWINDOW win, const char *title)
+title_set (xcb_connection_t *c, xcb_window_t win, const char *title)
 {
-  XCBInternAtomCookie cookie_encoding;
-  XCBInternAtomCookie cookie_property;
-  XCBInternAtomRep   *rep;
-  XCBATOM             encoding;
-  char               *atom_name;
+  xcb_intern_atom_cookie_t cookie_encoding;
+  xcb_intern_atom_cookie_t cookie_property;
+  xcb_intern_atom_reply_t *rep;
+  xcb_atom_t               encoding;
+  char                    *atom_name;
 
   atom_name = "UTF8_STRING";
-  cookie_encoding = XCBInternAtom (c,
+  cookie_encoding = xcb_intern_atom (c,
                                    0,
                                    strlen (atom_name),
                                    atom_name);
   atom_name = "_NET_WM_NAME";
-  cookie_property = XCBInternAtom (c,
+  cookie_property = xcb_intern_atom (c,
                                    0,
                                    strlen (atom_name),
                                    atom_name);
 
-  rep = XCBInternAtomReply (c, cookie_encoding, NULL);
+  rep = xcb_intern_atom_reply (c, cookie_encoding, NULL);
   encoding = rep->atom;
   free (rep);
 
-  rep = XCBInternAtomReply (c, cookie_property, NULL);
+  rep = xcb_intern_atom_reply (c, cookie_property, NULL);
 
-  XCBChangeProperty(c, XCBPropModeReplace,
+  xcb_change_property(c, XCB_PROP_MODE_REPLACE,
                     win,
                     rep->atom, encoding, 8, strlen (title), title);
   free (rep);
 }
 
 static void
-class_set (XCBConnection *c, XCBWINDOW win, const char *name, const char *class)
+class_set (xcb_connection_t *c, xcb_window_t win, const char *name, const char *class)
 {
-  XCBInternAtomCookie cookie_encoding;
-  XCBInternAtomCookie cookie_property;
-  XCBInternAtomRep   *rep;
-  XCBATOM             encoding;
-  char               *atom_name;
-  char               *class_str;
-  char               *s;
-  int                 length_name;
-  int                 length_class;
+  xcb_intern_atom_cookie_t cookie_encoding;
+  xcb_intern_atom_cookie_t cookie_property;
+  xcb_intern_atom_reply_t *rep;
+  xcb_atom_t               encoding;
+  char                    *atom_name;
+  char                    *class_str;
+  char                    *s;
+  int                      length_name;
+  int                      length_class;
 
   length_name = strlen (name);
   length_class = strlen (class);
@@ -72,23 +71,23 @@ class_set (XCBConnection *c, XCBWINDOW win, const char *name, const char *class)
   *s = '\0';
 
   atom_name = "UTF8_STRING";
-  cookie_encoding = XCBInternAtom (c,
+  cookie_encoding = xcb_intern_atom (c,
                                    0,
                                    strlen (atom_name),
                                    atom_name);
   atom_name = "_WM_CLASS";
-  cookie_property = XCBInternAtom (c,
+  cookie_property = xcb_intern_atom (c,
                                    0,
                                    strlen (atom_name),
                                    atom_name);
 
-  rep = XCBInternAtomReply (c, cookie_encoding, NULL);
+  rep = xcb_intern_atom_reply (c, cookie_encoding, NULL);
   encoding = rep->atom;
   free (rep);
 
-  rep = XCBInternAtomReply (c, cookie_property, NULL);
+  rep = xcb_intern_atom_reply (c, cookie_property, NULL);
 
-  XCBChangeProperty(c, XCBPropModeReplace,
+  xcb_change_property(c, XCB_PROP_MODE_REPLACE,
                     win,
                     rep->atom, encoding, 8, strlen (class_str), class_str);
   free (rep);
@@ -98,52 +97,64 @@ class_set (XCBConnection *c, XCBWINDOW win, const char *name, const char *class)
 int
 main(int argc, char **argv)
 {
-   int                         pause_me = 0;
-   XCBConnection              *conn;
-   const XCBQueryExtensionRep *rep_shm;
-   const XCBQueryExtensionRep *rep_xrender;
-   XCBGetInputFocusRep        *reply;
-   XCBSCREEN                  *screen;
-   XCBDRAWABLE                 win;
-   XCBGenericEvent            *e;
-   CARD32                      mask;
-   CARD32                      value[6];
-   int                         screen_nbr;
+   int                                pause_me = 0;
+   xcb_connection_t                  *conn;
+   const xcb_query_extension_reply_t *rep_shm;
+   const xcb_query_extension_reply_t *rep_xrender;
+   xcb_get_input_focus_reply_t       *reply;
+   xcb_screen_t                      *screen = NULL;
+   xcb_screen_iterator_t              iter_screen;
+   xcb_drawable_t                     win;
+   xcb_generic_event_t               *e;
+   uint32_t                           mask;
+   uint32_t                           value[6];
+   int                                screen_nbr;
 
-   conn = XCBConnect (NULL, &screen_nbr);
+   conn = xcb_connect (NULL, &screen_nbr);
    if (!conn)
      {
 	printf("Error: cannot open a connection.\n");
 	exit(-1);
      }
 
-   XCBPrefetchExtensionData (conn, &XCBShmId);
-   XCBPrefetchExtensionData (conn, &XCBRenderId);
-   rep_shm = XCBGetExtensionData(conn, &XCBShmId);
-   rep_xrender = XCBGetExtensionData(conn, &XCBRenderId);
+   xcb_prefetch_extension_data (conn, &xcb_shm_id);
+   xcb_prefetch_extension_data (conn, &xcb_render_id);
+   rep_shm = xcb_get_extension_data(conn, &xcb_shm_id);
+   rep_xrender = xcb_get_extension_data(conn, &xcb_render_id);
 
-   screen = XCBAuxGetScreen (conn, screen_nbr);
+   iter_screen = xcb_setup_roots_iterator (xcb_get_setup (conn));
+   for (; iter_screen.rem; --screen_nbr, xcb_screen_next (&iter_screen))
+      if (screen == 0)
+        {
+           screen = iter_screen.data;
+           break;
+        }
+   if (!screen)
+     {
+	printf("Error: cannot get the screen.\n");
+	exit(-1);
+     }
 
    mask =
-     XCBCWBackPixmap | XCBCWBorderPixel |
-     XCBCWBitGravity | XCBCWBackingStore |
-     XCBCWEventMask  | XCBCWColormap;
+     XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL |
+     XCB_CW_BIT_GRAVITY | XCB_CW_BACKING_STORE |
+     XCB_CW_EVENT_MASK  | XCB_CW_COLORMAP;
 
-   value[0] = XCBBackPixmapNone;
+   value[0] = XCB_BACK_PIXMAP_NONE;
    value[1] = 0;
-   value[2] = XCBGravityBitForget;
-   value[3] = XCBBackingStoreNotUseful;
-   value[4] = XCBEventMaskExposure | XCBEventMaskButtonPress | XCBEventMaskButtonRelease | XCBEventMaskPointerMotion | XCBEventMaskStructureNotify;
+   value[2] = XCB_GRAVITY_BIT_FORGET;
+   value[3] = XCB_BACKING_STORE_NOT_USEFUL;
+   value[4] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
    value[5] = screen->default_colormap.xid;
 
-   win.window = XCBWINDOWNew(conn);
-   XCBCreateWindow (conn,
-		    XCBAuxGetDepth(conn, screen),
+   win.window = xcb_window_new(conn);
+   xcb_create_window (conn,
+		    screen->root_depth,
 		    win.window, screen->root,
 		    0, 0,
 		    win_w, win_h,
 		    0,
-		    XCBWindowClassInputOutput,
+		    XCB_WINDOW_CLASS_INPUT_OUTPUT,
 		    screen->root_visual,
 		    mask, value);
    title_set (conn, win.window, "Evas XRender Xcb Test");
@@ -154,10 +165,10 @@ main(int argc, char **argv)
    szhints.min_height = szhints.max_height = win_h;
    XSetWMNormalHints(disp, win, &szhints);
 #endif
-   XCBMapWindow (conn, win.window);
+   xcb_map_window (conn, win.window);
    /* we sync */
-   reply = XCBGetInputFocusReply(conn,
-                                 XCBGetInputFocusUnchecked(conn),
+   reply = xcb_get_input_focus_reply(conn,
+                                 xcb_get_input_focus_unchecked(conn),
                                  NULL);
    free(reply);
 
@@ -183,13 +194,13 @@ main(int argc, char **argv)
    orig_start_time = start_time = get_time();
    while (1)
      {
-       e = XCBPollForEvent(conn, NULL);
+       e = xcb_poll_for_event(conn, NULL);
 
        if (e) {
 	 switch (e->response_type)
 	   {
-	   case XCBButtonPress: {
-	     XCBButtonPressEvent *ev = (XCBButtonPressEvent *)e;
+	   case XCB_BUTTON_PRESS: {
+	     xcb_button_press_event_t *ev = (xcb_button_press_event_t *)e;
 
 	     if (ev->detail.id == 3)
                {
@@ -208,21 +219,21 @@ main(int argc, char **argv)
 	     evas_event_feed_mouse_down(evas, ev->state, EVAS_BUTTON_NONE, 0, NULL);
 	     break;
 	   }
-	   case XCBButtonRelease: {
-	     XCBButtonReleaseEvent *ev = (XCBButtonReleaseEvent *)e;
+	   case XCB_BUTTON_RELEASE: {
+	     xcb_button_release_event_t *ev = (xcb_button_release_event_t *)e;
 
 	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, 0, NULL);
 	     evas_event_feed_mouse_up(evas, ev->state, EVAS_BUTTON_NONE, 0, NULL);
 	     break;
 	   }
-	   case XCBMotionNotify: {
-	     XCBMotionNotifyEvent *ev = (XCBMotionNotifyEvent *)e;
+	   case XCB_MOTION_NOTIFY: {
+	     xcb_motion_notify_event_t *ev = (xcb_motion_notify_event_t *)e;
 
 	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, 0, NULL);
 	     break;
 	   }
-	   case XCBExpose: {
-	     XCBExposeEvent *ev = (XCBExposeEvent *)e;
+	   case XCB_EXPOSE: {
+	     xcb_expose_event_t *ev = (xcb_expose_event_t *)e;
 
 	     evas_damage_rectangle_add(evas,
 				       ev->x,
@@ -231,8 +242,8 @@ main(int argc, char **argv)
 				       ev->height);
 	     break;
 	   }
-	   case XCBConfigureNotify: {
-	     XCBConfigureNotifyEvent *ev = (XCBConfigureNotifyEvent *)e;
+	   case XCB_CONFIGURE_NOTIFY: {
+	     xcb_configure_notify_event_t *ev = (xcb_configure_notify_event_t *)e;
 
 	     evas_output_size_set(evas,
 				  ev->width,
@@ -248,7 +259,7 @@ main(int argc, char **argv)
 	 {
 	   loop();
 	   evas_render(evas);
-	   XCBFlush(conn);
+	   xcb_flush(conn);
 	 }
        if (pause_me == 2)
 	 usleep(100000);
@@ -257,7 +268,7 @@ main(int argc, char **argv)
  exit:
    setdown();
    evas_free(evas);
-   XCBDisconnect(conn);
+   xcb_disconnect(conn);
    evas_shutdown();
 
    return 0;

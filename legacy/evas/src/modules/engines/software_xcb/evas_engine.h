@@ -4,11 +4,8 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-#define X_H   /* make sure we aren't using symbols from X.h */
-
-#include <X11/XCB/xcb.h>
-#include <X11/XCB/xcb_aux.h>
-#include <X11/XCB/xcb_image.h>
+#include <xcb/xcb.h>
+#include <xcb/xcb_image.h>
 
 typedef struct _Outbuf                Outbuf;
 typedef struct _Outbuf_Perf           Outbuf_Perf;
@@ -39,17 +36,17 @@ struct _Outbuf
    struct {
       Convert_Pal *pal;
       struct {
-         XCBConnection  *conn;
-	 XCBDRAWABLE     win;
-	 XCBDRAWABLE     mask;
-	 XCBVISUALTYPE  *vis;
-	 XCBCOLORMAP     cmap;
-	 int             depth;
-	 int             shm;
-	 XCBGCONTEXT     gc;
-	 XCBGCONTEXT     gcm;
-	 int             swap : 1;
-	 unsigned char  bit_swap : 1;
+         xcb_connection_t  *conn;
+	 xcb_drawable_t     win;
+	 xcb_drawable_t     mask;
+	 xcb_visualtype_t  *vis;
+	 xcb_colormap_t     cmap;
+	 int                depth;
+	 int                shm;
+	 xcb_gcontext_t     gc;
+	 xcb_gcontext_t     gcm;
+	 int                swap : 1;
+	 unsigned char      bit_swap : 1;
       } x;
       struct {
 	 DATA32    r, g, b;
@@ -70,8 +67,8 @@ struct _Outbuf
 struct _Outbuf_Perf
 {
    struct {
-      XCBConnection  *conn;
-      XCBDRAWABLE     root;
+      xcb_connection_t  *conn;
+      xcb_drawable_t     root;
 
       char *display;
       char *vendor;
@@ -103,10 +100,10 @@ struct _Outbuf_Region
 
 struct _Xcb_Output_Buffer
 {
-   XCBConnection     *connection;
-   XCBImage          *image;
-   XCBShmSegmentInfo *shm_info;
-   void              *data;
+   xcb_connection_t       *connection;
+   xcb_image_t            *image;
+   xcb_shm_segment_info_t *shm_info;
+   void                   *data;
 };
 
 
@@ -120,8 +117,8 @@ void               evas_software_xcb_x_write_mask_line         (Outbuf          
 								DATA32            *src,
 								int                w,
 								int                y);
-int                evas_software_xcb_x_can_do_shm              (XCBConnection *c);
-Xcb_Output_Buffer *evas_software_xcb_x_output_buffer_new       (XCBConnection *c,
+int                evas_software_xcb_x_can_do_shm              (xcb_connection_t *c);
+Xcb_Output_Buffer *evas_software_xcb_x_output_buffer_new       (xcb_connection_t *c,
 								int            depth,
 								int            w,
 								int            h,
@@ -130,8 +127,8 @@ Xcb_Output_Buffer *evas_software_xcb_x_output_buffer_new       (XCBConnection *c
 void               evas_software_xcb_x_output_buffer_free      (Xcb_Output_Buffer *xcbob,
 								int                sync);
 void               evas_software_xcb_x_output_buffer_paste     (Xcb_Output_Buffer *xcbob,
-								XCBDRAWABLE        d,
-								XCBGCONTEXT        gc,
+								xcb_drawable_t        d,
+								xcb_gcontext_t        gc,
 								int                x,
 								int                y,
 								int                sync);
@@ -144,56 +141,56 @@ int                evas_software_xcb_x_output_buffer_bit_order (Xcb_Output_Buffe
 
 /* color */
 void         evas_software_xcb_x_color_init       (void);
-Convert_Pal *evas_software_xcb_x_color_allocate   (XCBConnection   *conn,
-						   XCBCOLORMAP      cmap,
-						   XCBVISUALTYPE   *vis,
-						   Convert_Pal_Mode colors);
-void         evas_software_xcb_x_color_deallocate (XCBConnection *conn,
-						   XCBCOLORMAP    cmap,
-						   XCBVISUALTYPE *vis,
-						   Convert_Pal   *pal);
+Convert_Pal *evas_software_xcb_x_color_allocate   (xcb_connection_t   *conn,
+						   xcb_colormap_t      cmap,
+						   xcb_visualtype_t   *vis,
+						   Convert_Pal_Mode    colors);
+void         evas_software_xcb_x_color_deallocate (xcb_connection_t *conn,
+						   xcb_colormap_t    cmap,
+						   xcb_visualtype_t *vis,
+						   Convert_Pal      *pal);
 
 /* outbuf */
 void         evas_software_xcb_outbuf_init                   (void);
 void         evas_software_xcb_outbuf_free                   (Outbuf *buf);
-Outbuf      *evas_software_xcb_outbuf_setup_x                (int            w,
-							      int            h,
-							      int            rot,
-							      Outbuf_Depth   depth,
-							      XCBConnection *conn,
-							      XCBDRAWABLE    draw,
-							      XCBVISUALTYPE *vis,
-							      XCBCOLORMAP    cmap,
-							      int            x_depth,
-							      Outbuf_Perf   *perf,
-							      int            grayscale,
-							      int            max_colors,
-							      XCBDRAWABLE    mask,
-							      int            shape_dither,
-							      int            destination_alpha);
+Outbuf      *evas_software_xcb_outbuf_setup_x                (int               w,
+							      int               h,
+							      int               rot,
+							      Outbuf_Depth      depth,
+							      xcb_connection_t *conn,
+							      xcb_drawable_t    draw,
+							      xcb_visualtype_t *vis,
+							      xcb_colormap_t    cmap,
+							      int               x_depth,
+							      Outbuf_Perf      *perf,
+							      int               grayscale,
+							      int               max_colors,
+							      xcb_drawable_t    mask,
+							      int               shape_dither,
+							      int               destination_alpha);
 
 char        *evas_software_xcb_outbuf_perf_serialize_x       (Outbuf_Perf *perf);
 void         evas_software_xcb_outbuf_perf_deserialize_x     (Outbuf_Perf *perf,
 							      const char *data);
-Outbuf_Perf *evas_software_xcb_outbuf_perf_new_x             (XCBConnection *conn,
-							      XCBDRAWABLE    draw,
-								XCBVISUALTYPE *vis,
-							      XCBCOLORMAP    cmap,
-							      int            x_depth);
+Outbuf_Perf *evas_software_xcb_outbuf_perf_new_x             (xcb_connection_t *conn,
+							      xcb_drawable_t    draw,
+                                                              xcb_visualtype_t *vis,
+							      xcb_colormap_t    cmap,
+							      int               x_depth);
 
 char        *evas_software_xcb_outbuf_perf_serialize_info_x  (Outbuf_Perf *perf);
 void         evas_software_xcb_outbuf_perf_store_x           (Outbuf_Perf *perf);
-Outbuf_Perf *evas_software_xcb_outbuf_perf_restore_x         (XCBConnection *conn,
-							      XCBDRAWABLE    draw,
-							      XCBVISUALTYPE *vis,
-							      XCBCOLORMAP    cmap,
-							      int            x_depth);
+Outbuf_Perf *evas_software_xcb_outbuf_perf_restore_x         (xcb_connection_t *conn,
+							      xcb_drawable_t    draw,
+							      xcb_visualtype_t *vis,
+							      xcb_colormap_t    cmap,
+							      int               x_depth);
 void         evas_software_xcb_outbuf_perf_free              (Outbuf_Perf *perf);
-Outbuf_Perf *evas_software_xcb_outbuf_perf_x                 (XCBConnection *conn,
-							      XCBDRAWABLE    draw,
-							      XCBVISUALTYPE *vis,
-							      XCBCOLORMAP    cmap,
-							      int            x_depth);
+Outbuf_Perf *evas_software_xcb_outbuf_perf_x                 (xcb_connection_t *conn,
+							      xcb_drawable_t    draw,
+							      xcb_visualtype_t *vis,
+							      xcb_colormap_t    cmap,
+							      int               x_depth);
 
 void         evas_software_xcb_outbuf_blit                   (Outbuf *buf,
 							      int     src_x,
@@ -236,16 +233,16 @@ Outbuf_Depth evas_software_xcb_outbuf_get_depth              (Outbuf *buf);
 int          evas_software_xcb_outbuf_get_rot                (Outbuf *buf);
 int          evas_software_xcb_outbuf_get_have_backbuf       (Outbuf *buf);
 void         evas_software_xcb_outbuf_set_have_backbuf       (Outbuf *buf, int have_backbuf);
-void         evas_software_xcb_outbuf_drawable_set           (Outbuf *buf, XCBDRAWABLE draw);
-void         evas_software_xcb_outbuf_mask_set               (Outbuf *buf, XCBDRAWABLE mask);
+void         evas_software_xcb_outbuf_drawable_set           (Outbuf *buf, xcb_drawable_t draw);
+void         evas_software_xcb_outbuf_mask_set               (Outbuf *buf, xcb_drawable_t mask);
 void         evas_software_xcb_outbuf_rotation_set           (Outbuf *buf, int rot);
 
 void         evas_software_xcb_outbuf_debug_set              (Outbuf *buf, int debug);
-void         evas_software_xcb_outbuf_debug_show             (Outbuf     *buf,
-							      XCBDRAWABLE draw,
-							      int         x,
-							      int         y,
-							      int         w,
-							      int         h);
+void         evas_software_xcb_outbuf_debug_show             (Outbuf        *buf,
+							      xcb_drawable_t draw,
+							      int            x,
+							      int            y,
+							      int            w,
+							      int            h);
 
 #endif /* EVAS_ENGINE_H */

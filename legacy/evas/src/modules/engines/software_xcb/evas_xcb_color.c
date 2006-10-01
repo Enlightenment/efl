@@ -1,46 +1,46 @@
 #include "evas_common.h"
 #include "evas_engine.h"
 
-#include <X11/XCB/xcb.h>
+#include <xcb/xcb.h>
 
 typedef struct _Convert_Pal_Priv Convert_Pal_Priv;
 
 struct _Convert_Pal_Priv
 {
-   XCBConnection *conn;
-   XCBCOLORMAP    cmap;
-   XCBVISUALTYPE *vis;
+   xcb_connection_t *conn;
+   xcb_colormap_t    cmap;
+   xcb_visualtype_t *vis;
 };
 
-typedef DATA8 * (*Xcb_Func_Alloc_Colors) (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
+typedef DATA8 * (*Xcb_Func_Alloc_Colors) (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
 
 static Xcb_Func_Alloc_Colors x_color_alloc[PAL_MODE_LAST + 1];
 static int                   x_color_count[PAL_MODE_LAST + 1];
 static Evas_List            *palettes = NULL;
 
-static DATA8 * x_color_alloc_rgb(int nr, int ng, int nb, XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_gray(int ng, XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
+static DATA8 * x_color_alloc_rgb(int nr, int ng, int nb, xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_gray(int ng, xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
 
-static DATA8 * x_color_alloc_rgb_332  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_rgb_666  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_rgb_232  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_rgb_222  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_rgb_221  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_rgb_121  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_rgb_111  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_gray_256 (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_gray_64  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_gray_16  (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_gray_4   (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
-static DATA8 * x_color_alloc_mono     (XCBConnection *conn, XCBCOLORMAP cmap, XCBVISUALTYPE *v);
+static DATA8 * x_color_alloc_rgb_332  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_rgb_666  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_rgb_232  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_rgb_222  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_rgb_221  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_rgb_121  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_rgb_111  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_gray_256 (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_gray_64  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_gray_16  (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_gray_4   (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
+static DATA8 * x_color_alloc_mono     (xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
 
 static DATA8 *
-x_color_alloc_rgb(int            nr,
-		  int            ng,
-		  int            nb,
-		  XCBConnection *conn,
-		  XCBCOLORMAP    cmap,
-		  XCBVISUALTYPE *v)
+x_color_alloc_rgb(int               nr,
+		  int               ng,
+		  int               nb,
+		  xcb_connection_t *conn,
+		  xcb_colormap_t    cmap,
+		  xcb_visualtype_t *v)
 {
    int    r, g, b, i;
    DATA8 *color_lut;
@@ -60,29 +60,29 @@ x_color_alloc_rgb(int            nr,
 	  {
 	     for (b = 0; b < (nb); b++)
 	       {
-		  XCBCOLORITEM      xcl;
-		  XCBCOLORITEM      xcl_in;
-		  XCBAllocColorRep *rep;
-		  int               val;
-                  int               dr, dg, db;
+		  xcb_coloritem_t          xcl;
+		  xcb_coloritem_t          xcl_in;
+		  xcb_alloc_color_reply_t *rep;
+		  int                      val;
+                  int                      dr, dg, db;
 
                   val = (int)((((double)r) / ((nr) - 1)) * 255);
                   val = (val << 8) | val;
-		  xcl.red = (CARD16)(val);
+		  xcl.red = (uint16_t)(val);
 		  val = (int)((((double)g) / ((ng) - 1)) * 255);
                   val = (val << 8) | val;
-		  xcl.green = (CARD16)(val);
+		  xcl.green = (uint16_t)(val);
 		  val = (int)((((double)b) / ((nb) - 1)) * 255);
                   val = (val << 8) | val;
-		  xcl.blue = (CARD16)(val);
+		  xcl.blue = (uint16_t)(val);
 		  xcl_in = xcl;
-		  rep = XCBAllocColorReply(conn,
-					   XCBAllocColorUnchecked(conn,
-                                                                  cmap,
-                                                                  xcl.red,
-                                                                  xcl.green,
-                                                                  xcl.blue),
-					   0);
+		  rep = xcb_alloc_color_reply(conn,
+                                              xcb_alloc_color_unchecked(conn,
+                                                                        cmap,
+                                                                        xcl.red,
+                                                                        xcl.green,
+                                                                        xcl.blue),
+                                              0);
                   dr = (int)xcl_in.red - (int)xcl.red;
                   if (dr < 0) dr = -dr;
                   dg = (int)xcl_in.green - (int)xcl.green;
@@ -111,14 +111,14 @@ x_color_alloc_rgb(int            nr,
                       */
                       )
 		    {
-		       CARD32 pixels[256];
-		       int j;
+		       uint32_t pixels[256];
+		       int      j;
 
 		       if (i > 0)
 			 {
 			    for (j = 0; j < i; j++)
-			      pixels[j] = (CARD32)color_lut[j];
-			    XCBFreeColors(conn, cmap, 0, i, pixels);
+			      pixels[j] = (uint32_t)color_lut[j];
+			    xcb_free_colors(conn, cmap, 0, i, pixels);
 			 }
 		       free(color_lut);
 		       return NULL;
@@ -133,10 +133,10 @@ x_color_alloc_rgb(int            nr,
 }
 
 static DATA8 *
-x_color_alloc_gray(int            ng,
-		   XCBConnection *conn,
-		   XCBCOLORMAP    cmap,
-		   XCBVISUALTYPE *v)
+x_color_alloc_gray(int               ng,
+		   xcb_connection_t *conn,
+		   xcb_colormap_t    cmap,
+		   xcb_visualtype_t *v)
 {
    int g, i;
    DATA8 *color_lut;
@@ -150,24 +150,24 @@ x_color_alloc_gray(int            ng,
    /* FIXME: remove the round-trip ? */
    for (g = 0; g < (ng); g++)
      {
-	XCBCOLORITEM xcl;
-	XCBCOLORITEM xcl_in;
-	int val;
-	XCBAllocColorRep *rep;
+	xcb_coloritem_t          xcl;
+	xcb_coloritem_t          xcl_in;
+	int                      val;
+	xcb_alloc_color_reply_t *rep;
 
 	val = (int)((((double)g) / ((ng) - 1)) * 255);
         val = (val << 8) | val;
-	xcl.red = (CARD16)(val);
-	xcl.green = (CARD16)(val);
-	xcl.blue = (CARD16)(val);
+	xcl.red = (uint16_t)(val);
+	xcl.green = (uint16_t)(val);
+	xcl.blue = (uint16_t)(val);
 	xcl_in = xcl;
-	rep = XCBAllocColorReply(conn,
-				 XCBAllocColorUnchecked(conn,
-                                                        cmap,
-                                                        xcl.red,
-                                                        xcl.green,
-                                                        xcl.blue),
-				 0);
+	rep = xcb_alloc_color_reply(conn,
+                                    xcb_alloc_color_unchecked(conn,
+                                                              cmap,
+                                                              xcl.red,
+                                                              xcl.green,
+                                                              xcl.blue),
+                                    0);
 	/* FIXME: XAllocColor tries to approach the color */
 	/* in case the allocation fails */
 	/* XCB does not that (i think). It should be done */
@@ -178,14 +178,14 @@ x_color_alloc_gray(int            ng,
 	    ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
 	    ((xcl_in.blue  & sig_mask) != (xcl.blue  & sig_mask)))
 	  {
-	     CARD32 pixels[256];
-	     int j;
+	     uint32_t pixels[256];
+	     int      j;
 
 	     if (i > 0)
 	       {
 		  for (j = 0; j < i; j++)
-		    pixels[j] = (CARD32) color_lut[j];
-		  XCBFreeColors(conn, cmap, 0, i, pixels);
+		    pixels[j] = (uint32_t) color_lut[j];
+		  xcb_free_colors(conn, cmap, 0, i, pixels);
 	       }
 	     free(color_lut);
 	     return NULL;
@@ -198,97 +198,97 @@ x_color_alloc_gray(int            ng,
 }
 
 static DATA8 *
-x_color_alloc_rgb_332(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_rgb_332(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_rgb(8, 8, 4, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_rgb_666(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_rgb_666(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_rgb(6, 6, 6, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_rgb_232(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_rgb_232(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_rgb(4, 8, 4, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_rgb_222(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_rgb_222(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_rgb(4, 4, 4, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_rgb_221(XCBConnection *conn,
-				 XCBCOLORMAP    cmap,
-				 XCBVISUALTYPE *v)
+x_color_alloc_rgb_221(xcb_connection_t *conn,
+                      xcb_colormap_t    cmap,
+                      xcb_visualtype_t *v)
 {
    return x_color_alloc_rgb(4, 4, 2, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_rgb_121(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_rgb_121(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_rgb(2, 4, 2, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_rgb_111(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_rgb_111(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_rgb(2, 2, 2, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_gray_256(XCBConnection *conn,
-		       XCBCOLORMAP    cmap,
-		       XCBVISUALTYPE *v)
+x_color_alloc_gray_256(xcb_connection_t *conn,
+		       xcb_colormap_t    cmap,
+		       xcb_visualtype_t *v)
 {
    return x_color_alloc_gray(256, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_gray_64(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_gray_64(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_gray(64, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_gray_16(XCBConnection *conn,
-		      XCBCOLORMAP    cmap,
-		      XCBVISUALTYPE *v)
+x_color_alloc_gray_16(xcb_connection_t *conn,
+		      xcb_colormap_t    cmap,
+		      xcb_visualtype_t *v)
 {
    return x_color_alloc_gray(32, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_gray_4(XCBConnection *conn,
-		     XCBCOLORMAP    cmap,
-		     XCBVISUALTYPE *v)
+x_color_alloc_gray_4(xcb_connection_t *conn,
+		     xcb_colormap_t    cmap,
+		     xcb_visualtype_t *v)
 {
    return x_color_alloc_gray(16, conn, cmap, v);
 }
 
 static DATA8 *
-x_color_alloc_mono(XCBConnection *conn,
-		   XCBCOLORMAP    cmap,
-		   XCBVISUALTYPE *v)
+x_color_alloc_mono(xcb_connection_t *conn,
+		   xcb_colormap_t    cmap,
+		   xcb_visualtype_t *v)
 {
    return x_color_alloc_gray(2, conn, cmap, v);
 }
@@ -344,10 +344,10 @@ evas_software_xcb_x_color_init(void)
 }
 
 Convert_Pal *
-evas_software_xcb_x_color_allocate(XCBConnection   *conn,
-				   XCBCOLORMAP      cmap,
-				   XCBVISUALTYPE   *vis,
-				   Convert_Pal_Mode colors)
+evas_software_xcb_x_color_allocate(xcb_connection_t   *conn,
+				   xcb_colormap_t      cmap,
+				   xcb_visualtype_t   *vis,
+				   Convert_Pal_Mode    colors)
 {
    Convert_Pal_Priv *palpriv;
    Convert_Pal      *pal;
@@ -403,21 +403,21 @@ evas_software_xcb_x_color_allocate(XCBConnection   *conn,
 }
 
 void
-evas_software_xcb_x_color_deallocate(XCBConnection *conn,
-				     XCBCOLORMAP    cmap,
-				     XCBVISUALTYPE *vis,
-				     Convert_Pal   *pal)
+evas_software_xcb_x_color_deallocate(xcb_connection_t *conn,
+				     xcb_colormap_t    cmap,
+				     xcb_visualtype_t *vis,
+				     Convert_Pal      *pal)
 {
-   CARD32 pixels[256];
-   int    j;
+   uint32_t pixels[256];
+   int      j;
 
    pal->references--;
    if (pal->references > 0) return;
    if (pal->lookup)
      {
 	for(j = 0; j < pal->count; j++)
-	  pixels[j] = (CARD32) pal->lookup[j];
-	XCBFreeColors(conn, cmap, 0, pal->count, pixels);
+	  pixels[j] = (uint32_t) pal->lookup[j];
+	xcb_free_colors(conn, cmap, 0, pal->count, pixels);
 	free(pal->lookup);
      }
    free(pal->data);

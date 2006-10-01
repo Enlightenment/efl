@@ -9,82 +9,82 @@ static int _xcb_err = 0;
 
 enum
 {
-  XCBRenderPICTFORMINFOId         = 1 << 0,
-  XCBRenderPICTFORMINFOType       = 1 << 1,
-  XCBRenderPICTFORMINFODepth      = 1 << 2,
-  XCBRenderPICTFORMINFORedShift   = 1 << 3,
-  XCBRenderPICTFORMINFORedMask    = 1 << 4,
-  XCBRenderPICTFORMINFOGreenShift = 1 << 5,
-  XCBRenderPICTFORMINFOGreenMask  = 1 << 6,
-  XCBRenderPICTFORMINFOBlueShift  = 1 << 7,
-  XCBRenderPICTFORMINFOBlueMask   = 1 << 8,
-  XCBRenderPICTFORMINFOAlphaShift = 1 << 9,
-  XCBRenderPICTFORMINFOAlphaMask  = 1 << 10,
-  XCBRenderPICTFORMINFOColormap   = 1 << 11,
+  xcb_render_pictforminfo_id            = 1 << 0,
+  xcb_render_pictforminfo_type_t        = 1 << 1,
+  xcb_render_pictforminfo_depth_t       = 1 << 2,
+  xcb_render_pictforminfo_red_shift_t   = 1 << 3,
+  xcb_render_pictforminfo_red_mask_t    = 1 << 4,
+  xcb_render_pictforminfo_green_shift_t = 1 << 5,
+  xcb_render_pictforminfo_green_mask_t  = 1 << 6,
+  xcb_render_pictforminfo_blue_shift_t  = 1 << 7,
+  xcb_render_pictforminfo_blue_mask_t   = 1 << 8,
+  xcb_render_pictforminfo_alpha_shift_t = 1 << 9,
+  xcb_render_pictforminfo_alpha_mask_t  = 1 << 10,
+  xcb_render_pictforminfo_colormap_t    = 1 << 11,
 };
 
 enum
 {
-  XCBRenderStandardPICTFORMINFOARGB32,
-  XCBRenderStandardPICTFORMINFORGB24,
-  XCBRenderStandardPICTFORMINFOA8,
-  XCBRenderStandardPICTFORMINFOA4,
-  XCBRenderStandardPICTFORMINFOA1,
-  XCBRenderStandardPICTFORMINFOCount
+  xcb_render_standard_pictforminfoargb_32_t,
+  xcb_render_standard_pictforminforgb_24_t,
+  xcb_render_standard_pictforminfoa_8_t,
+  xcb_render_standard_pictforminfoa_4_t,
+  xcb_render_standard_pictforminfoa_1_t,
+  xcb_render_standard_pictforminfo_count_t
 };
 
-static XCBRenderPICTFORMINFO *
-XCBRenderFindPICTFORMINFO (XCBConnection *conn, CARD32 mask, const XCBRenderPICTFORMINFO *template, int count)
+static xcb_render_pictforminfo_t *
+xcb_render_find_pictforminfo (xcb_connection_t *conn, uint32_t mask, const xcb_render_pictforminfo_t *template, int count)
 {
-  XCBRenderQueryPictFormatsCookie cookie;
-  XCBRenderQueryPictFormatsRep   *rep;
-  XCBRenderPICTFORMINFOIter       iter_forminfo;
+  xcb_render_query_pict_formats_cookie_t cookie;
+  xcb_render_query_pict_formats_reply_t *rep;
+  xcb_render_pictforminfo_iterator_t     iter_forminfo;
 
-  cookie = XCBRenderQueryPictFormatsUnchecked (conn);
-  rep = XCBRenderQueryPictFormatsReply (conn, cookie, NULL);
-  iter_forminfo = XCBRenderQueryPictFormatsFormatsIter (rep);
-  for (; iter_forminfo.rem; XCBRenderPICTFORMINFONext (&iter_forminfo)) {
-    if (mask & XCBRenderPICTFORMINFOId)
+  cookie = xcb_render_query_pict_formats_unchecked (conn);
+  rep = xcb_render_query_pict_formats_reply (conn, cookie, NULL);
+  iter_forminfo = xcb_render_query_pict_formats_formats_iterator (rep);
+  for (; iter_forminfo.rem; xcb_render_pictforminfo_next (&iter_forminfo)) {
+    if (mask & xcb_render_pictforminfo_id)
       if (template->id.xid != iter_forminfo.data->id.xid)
         continue;
-    if (mask & XCBRenderPICTFORMINFOType)
+    if (mask & xcb_render_pictforminfo_type_t)
       if (template->type != iter_forminfo.data->type)
         continue;
-    if (mask & XCBRenderPICTFORMINFODepth)
+    if (mask & xcb_render_pictforminfo_depth_t)
       if (template->depth != iter_forminfo.data->depth)
         continue;
-    if (mask & XCBRenderPICTFORMINFORedShift)
+    if (mask & xcb_render_pictforminfo_red_shift_t)
       if (template->direct.red_shift != iter_forminfo.data->direct.red_shift)
         continue;
-    if (mask & XCBRenderPICTFORMINFORedMask)
+    if (mask & xcb_render_pictforminfo_red_mask_t)
       if (template->direct.red_mask != iter_forminfo.data->direct.red_mask)
         continue;
-    if (mask & XCBRenderPICTFORMINFOGreenShift)
+    if (mask & xcb_render_pictforminfo_green_shift_t)
       if (template->direct.green_shift != iter_forminfo.data->direct.green_shift)
         continue;
-    if (mask & XCBRenderPICTFORMINFOGreenMask)
+    if (mask & xcb_render_pictforminfo_green_mask_t)
       if (template->direct.green_mask != iter_forminfo.data->direct.green_mask)
         continue;
-    if (mask & XCBRenderPICTFORMINFOBlueShift)
+    if (mask & xcb_render_pictforminfo_blue_shift_t)
       if (template->direct.blue_shift != iter_forminfo.data->direct.blue_shift)
         continue;
-    if (mask & XCBRenderPICTFORMINFOBlueMask)
+    if (mask & xcb_render_pictforminfo_blue_mask_t)
       if (template->direct.blue_mask != iter_forminfo.data->direct.blue_mask)
         continue;
-    if (mask & XCBRenderPICTFORMINFOAlphaShift)
+    if (mask & xcb_render_pictforminfo_alpha_shift_t)
       if (template->direct.alpha_shift != iter_forminfo.data->direct.alpha_shift)
         continue;
-    if (mask & XCBRenderPICTFORMINFOAlphaMask)
+    if (mask & xcb_render_pictforminfo_alpha_mask_t)
       if (template->direct.alpha_mask != iter_forminfo.data->direct.alpha_mask)
         continue;
-    if (mask & XCBRenderPICTFORMINFOColormap)
+    if (mask & xcb_render_pictforminfo_colormap_t)
       if (template->colormap.xid != iter_forminfo.data->colormap.xid)
         continue;
     if (count-- == 0) {
-      XCBRenderPICTFORMINFO *forminfo;
+      xcb_render_pictforminfo_t *forminfo;
 
-      forminfo = (XCBRenderPICTFORMINFO *)malloc (sizeof (XCBRenderPICTFORMINFO));
-      memcpy (forminfo, iter_forminfo.data, sizeof (XCBRenderPICTFORMINFO));
+      forminfo = (xcb_render_pictforminfo_t *)malloc (sizeof (xcb_render_pictforminfo_t));
+      memcpy (forminfo, iter_forminfo.data, sizeof (xcb_render_pictforminfo_t));
 
       free (rep);
       return forminfo;
@@ -94,19 +94,19 @@ XCBRenderFindPICTFORMINFO (XCBConnection *conn, CARD32 mask, const XCBRenderPICT
   return NULL;
 }
 
-static XCBRenderPICTFORMINFO *
-XCBRenderFindStandardPICTFORMINFO (XCBConnection *conn, int format)
+static xcb_render_pictforminfo_t *
+xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
 {
-  XCBRenderPICTFORMINFO *forminfo = NULL;
+  xcb_render_pictforminfo_t *forminfo = NULL;
   struct {
-    XCBRenderPICTFORMINFO template;
-    CARD32                mask;
-  } standardFormats[XCBRenderStandardPICTFORMINFOCount] = {
+    xcb_render_pictforminfo_t template;
+    uint32_t                mask;
+  } standardFormats[xcb_render_standard_pictforminfo_count_t] = {
     /* StandardPICTFORMINFOARGB32 */
     {
       {
         { 0, },                           /* id */
-        XCBRenderPictTypeDirect,          /* type */
+        XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         32,                               /* depth */
         { 0, 0 },                         /* pad */
         {                                 /* direct */
@@ -121,22 +121,22 @@ XCBRenderFindStandardPICTFORMINFO (XCBConnection *conn, int format)
         },
         { 0, }                            /* colormap */
       },
-      XCBRenderPICTFORMINFOType       |
-      XCBRenderPICTFORMINFODepth      |
-      XCBRenderPICTFORMINFORedShift   |
-      XCBRenderPICTFORMINFORedMask    |
-      XCBRenderPICTFORMINFOGreenShift |
-      XCBRenderPICTFORMINFOGreenMask  |
-      XCBRenderPICTFORMINFOBlueShift  |
-      XCBRenderPICTFORMINFOBlueMask   |
-      XCBRenderPICTFORMINFOAlphaShift |
-      XCBRenderPICTFORMINFOAlphaMask
+      xcb_render_pictforminfo_type_t        |
+      xcb_render_pictforminfo_depth_t       |
+      xcb_render_pictforminfo_red_shift_t   |
+      xcb_render_pictforminfo_red_mask_t    |
+      xcb_render_pictforminfo_green_shift_t |
+      xcb_render_pictforminfo_green_mask_t  |
+      xcb_render_pictforminfo_blue_shift_t  |
+      xcb_render_pictforminfo_blue_mask_t   |
+      xcb_render_pictforminfo_alpha_shift_t |
+      xcb_render_pictforminfo_alpha_mask_t
     },
     /* StandardPICTFORMINFORGB24 */
     {
       {
         { 0, },                           /* id */
-        XCBRenderPictTypeDirect,          /* type */
+        XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         24,                               /* depth */
         { 0, 0 },                         /* pad */
         {                                 /* direct */
@@ -151,21 +151,21 @@ XCBRenderFindStandardPICTFORMINFO (XCBConnection *conn, int format)
         },
         { 0, }                            /* colormap */
       },
-      XCBRenderPICTFORMINFOType       |
-      XCBRenderPICTFORMINFODepth      |
-      XCBRenderPICTFORMINFORedShift   |
-      XCBRenderPICTFORMINFORedMask    |
-      XCBRenderPICTFORMINFOGreenShift |
-      XCBRenderPICTFORMINFOGreenMask  |
-      XCBRenderPICTFORMINFOBlueShift  |
-      XCBRenderPICTFORMINFOBlueMask   |
-      XCBRenderPICTFORMINFOAlphaMask
+      xcb_render_pictforminfo_type_t        |
+      xcb_render_pictforminfo_depth_t       |
+      xcb_render_pictforminfo_red_shift_t   |
+      xcb_render_pictforminfo_red_mask_t    |
+      xcb_render_pictforminfo_green_shift_t |
+      xcb_render_pictforminfo_green_mask_t  |
+      xcb_render_pictforminfo_blue_shift_t  |
+      xcb_render_pictforminfo_blue_mask_t   |
+      xcb_render_pictforminfo_alpha_mask_t
     },
     /* StandardPICTFORMINFOA8 */
     {
       {
         { 0, },                           /* id */
-        XCBRenderPictTypeDirect,          /* type */
+        XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         8,                                /* depth */
         { 0, 0 },                         /* pad */
         {                                 /* direct */
@@ -180,19 +180,19 @@ XCBRenderFindStandardPICTFORMINFO (XCBConnection *conn, int format)
         },
         { 0, }                            /* colormap */
       },
-      XCBRenderPICTFORMINFOType       |
-      XCBRenderPICTFORMINFODepth      |
-      XCBRenderPICTFORMINFORedMask    |
-      XCBRenderPICTFORMINFOGreenMask  |
-      XCBRenderPICTFORMINFOBlueMask   |
-      XCBRenderPICTFORMINFOAlphaShift |
-      XCBRenderPICTFORMINFOAlphaMask
+      xcb_render_pictforminfo_type_t        |
+      xcb_render_pictforminfo_depth_t       |
+      xcb_render_pictforminfo_red_mask_t    |
+      xcb_render_pictforminfo_green_mask_t  |
+      xcb_render_pictforminfo_blue_mask_t   |
+      xcb_render_pictforminfo_alpha_shift_t |
+      xcb_render_pictforminfo_alpha_mask_t
     },
     /* StandardPICTFORMINFOA4 */
     {
       {
         { 0, },                           /* id */
-        XCBRenderPictTypeDirect,          /* type */
+        XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         4,                                /* depth */
         { 0, 0 },                         /* pad */
         {                                 /* direct */
@@ -207,19 +207,19 @@ XCBRenderFindStandardPICTFORMINFO (XCBConnection *conn, int format)
         },
         { 0, }                            /* colormap */
       },
-      XCBRenderPICTFORMINFOType       |
-      XCBRenderPICTFORMINFODepth      |
-      XCBRenderPICTFORMINFORedMask    |
-      XCBRenderPICTFORMINFOGreenMask  |
-      XCBRenderPICTFORMINFOBlueMask   |
-      XCBRenderPICTFORMINFOAlphaShift |
-      XCBRenderPICTFORMINFOAlphaMask
+      xcb_render_pictforminfo_type_t        |
+      xcb_render_pictforminfo_depth_t       |
+      xcb_render_pictforminfo_red_mask_t    |
+      xcb_render_pictforminfo_green_mask_t  |
+      xcb_render_pictforminfo_blue_mask_t   |
+      xcb_render_pictforminfo_alpha_shift_t |
+      xcb_render_pictforminfo_alpha_mask_t
     },
     /* StandardPICTFORMINFOA1 */
     {
       {
         { 0, },                           /* id */
-        XCBRenderPictTypeDirect,          /* type */
+        XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         1,                                /* depth */
         { 0, 0 },                         /* pad */
         {                                 /* direct */
@@ -234,17 +234,17 @@ XCBRenderFindStandardPICTFORMINFO (XCBConnection *conn, int format)
         },
         { 0, }                            /* colormap */
       },
-      XCBRenderPICTFORMINFOType       |
-      XCBRenderPICTFORMINFODepth      |
-      XCBRenderPICTFORMINFORedMask    |
-      XCBRenderPICTFORMINFOGreenMask  |
-      XCBRenderPICTFORMINFOBlueMask   |
-      XCBRenderPICTFORMINFOAlphaShift |
-      XCBRenderPICTFORMINFOAlphaMask
+      xcb_render_pictforminfo_type_t        |
+      xcb_render_pictforminfo_depth_t       |
+      xcb_render_pictforminfo_red_mask_t    |
+      xcb_render_pictforminfo_green_mask_t  |
+      xcb_render_pictforminfo_blue_mask_t   |
+      xcb_render_pictforminfo_alpha_shift_t |
+      xcb_render_pictforminfo_alpha_mask_t
     },
   };
-  if ((format >= 0) && (format < XCBRenderStandardPICTFORMINFOCount))
-    forminfo = XCBRenderFindPICTFORMINFO (conn,
+  if ((format >= 0) && (format < xcb_render_standard_pictforminfo_count_t))
+    forminfo = xcb_render_find_pictforminfo (conn,
                                           standardFormats[format].mask,
                                           &standardFormats[format].template,
                                           0);
@@ -252,20 +252,20 @@ XCBRenderFindStandardPICTFORMINFO (XCBConnection *conn, int format)
 }
 
 static void
-_tmp_xcb_err(XCBConnection *conn/* , XErrorEvent *ev */)
+_tmp_xcb_err(xcb_connection_t *conn/* , XErrorEvent *ev */)
 {
    _xcb_err = 1;
    return;
 }
 
-XCBimage_Info *
-_xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
+Xcb_Image_Info *
+_xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t vis)
 {
-   XCBGetGeometryCookie cookie;
-   XCBGetGeometryRep   *rep;
-   XCBimage_Info       *xcbinf;
-   XCBimage_Info       *xcbinf2;
-   Evas_List           *l;
+   xcb_get_geometry_cookie_t cookie;
+   xcb_get_geometry_reply_t *rep;
+   Xcb_Image_Info           *xcbinf;
+   Xcb_Image_Info           *xcbinf2;
+   Evas_List                *l;
 
    xcbinf2 = NULL;
    for (l = _image_info_list; l; l = l->next)
@@ -277,22 +277,22 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
 	     break;
 	  }
      }
-   xcbinf = calloc(1, sizeof(XCBimage_Info));
+   xcbinf = calloc(1, sizeof(Xcb_Image_Info));
    if (!xcbinf) return NULL;
 
    xcbinf->references = 1;
    xcbinf->conn = conn;
    xcbinf->draw = draw;
-   cookie = XCBGetGeometryUnchecked(xcbinf->conn, xcbinf->draw);
-   rep = XCBGetGeometryReply(xcbinf->conn, cookie, NULL);
+   cookie = xcb_get_geometry_unchecked(xcbinf->conn, xcbinf->draw);
+   rep = xcb_get_geometry_reply(xcbinf->conn, cookie, NULL);
    xcbinf->root.window = rep->root;
    free(rep);
    xcbinf->vis = vis;
-   xcbinf->fmt32 = XCBRenderFindStandardPICTFORMINFO(xcbinf->conn, XCBRenderStandardPICTFORMINFOARGB32);
-   xcbinf->fmt24 = XCBRenderFindStandardPICTFORMINFO(xcbinf->conn, XCBRenderStandardPICTFORMINFORGB24);
-   xcbinf->fmt8 = XCBRenderFindStandardPICTFORMINFO(xcbinf->conn, XCBRenderStandardPICTFORMINFOA8);
-   xcbinf->fmt4 = XCBRenderFindStandardPICTFORMINFO(xcbinf->conn, XCBRenderStandardPICTFORMINFOA4);
-   xcbinf->fmt1 = XCBRenderFindStandardPICTFORMINFO(xcbinf->conn, XCBRenderStandardPICTFORMINFOA1);
+   xcbinf->fmt32 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoargb_32_t);
+   xcbinf->fmt24 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminforgb_24_t);
+   xcbinf->fmt8 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoa_8_t);
+   xcbinf->fmt4 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoa_4_t);
+   xcbinf->fmt1 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoa_1_t);
    xcbinf->mul = _xr_render_surface_new(xcbinf, 1, 1, xcbinf->fmt32, 1);
    _xr_render_surface_repeat_set(xcbinf->mul, 1);
    xcbinf->mul_r = xcbinf->mul_g = xcbinf->mul_b = xcbinf->mul_a = 0xff;
@@ -304,25 +304,25 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
      }
    else
      {
-       XCBShmSegmentInfo shm_info;
-       XCBImage *xcbim;
+       xcb_shm_segment_info_t shm_info;
+       xcb_image_t           *xcbim;
 
         xcbinf->depth = 32;
         {
-          XCBSetup *rep;
-          XCBSCREENIter iter_screen;
+          xcb_setup_t          *rep;
+          xcb_screen_iterator_t iter_screen;
 
-          rep = (XCBSetup *)XCBGetSetup(xcbinf->conn);
-          iter_screen = XCBSetupRootsIter(rep);
-          for (; iter_screen.rem ; XCBSCREENNext (&iter_screen)) {
-            XCBDEPTHIter iter_depth;
+          rep = (xcb_setup_t *)xcb_get_setup(xcbinf->conn);
+          iter_screen = xcb_setup_roots_iterator(rep);
+          for (; iter_screen.rem ; xcb_screen_next (&iter_screen)) {
+            xcb_depth_iterator_t iter_depth;
 
-            iter_depth = XCBSCREENAllowedDepthsIter (iter_screen.data);
-            for (; iter_depth.rem ; XCBDEPTHNext (&iter_depth)) {
-              XCBVISUALTYPEIter iter_visual;
+            iter_depth = xcb_screen_allowed_depths_iterator (iter_screen.data);
+            for (; iter_depth.rem ; xcb_depth_next (&iter_depth)) {
+              xcb_visualtype_iterator_t iter_visual;
 
-              iter_visual = XCBDEPTHVisualsIter (iter_depth.data);
-              for (; iter_visual.rem ; XCBVISUALTYPENext (&iter_visual)) {
+              iter_visual = xcb_depth_visuals_iterator (iter_depth.data);
+              for (; iter_visual.rem ; xcb_visualtype_next (&iter_visual)) {
                 if (iter_visual.data->visual_id.id == vis.id)
                   xcbinf->depth = iter_depth.data->depth;
               }
@@ -333,30 +333,30 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
 	xcbinf->can_do_shm = 0;
 
 
-        shm_info.shmseg = XCBShmSEGNew(xcbinf->conn);
-        xcbim = XCBImageSHMCreate(xcbinf->conn, xcbinf->depth, XCBImageFormatZPixmap, NULL, 1, 1);
+        shm_info.shmseg = xcb_shm_seg_new(xcbinf->conn);
+        xcbim = xcb_image_shm_create(xcbinf->conn, xcbinf->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, 1, 1);
         if (xcbim) {
            shm_info.shmid = shmget(IPC_PRIVATE, xcbim->bytes_per_line * xcbim->height, IPC_CREAT | 0777);
            if (shm_info.shmid >= 0) {
               shm_info.shmaddr = xcbim->data = shmat(shm_info.shmid, 0, 0);
               if ((shm_info.shmaddr != NULL) && (shm_info.shmaddr != (void *) -1)) {
-                 XCBGetInputFocusRep *reply;
+                 xcb_get_input_focus_reply_t *reply;
                  /*
                   * FIXME: no error mechanism
                   */
                  /* XErrorHandler ph; */
 
                  /* we sync */
-                 reply = XCBGetInputFocusReply(xcbinf->conn,
-                                               XCBGetInputFocusUnchecked(xcbinf->conn),
+                 reply = xcb_get_input_focus_reply(xcbinf->conn,
+                                               xcb_get_input_focus_unchecked(xcbinf->conn),
                                                NULL);
                  free(reply);
                  _xcb_err = 0;
                  /* ph = XSetErrorHandler((XErrorHandler)_tmp_xcb_err); */
-                 XCBShmAttach(xcbinf->conn, shm_info.shmseg, shm_info.shmid, 0);
+                 xcb_shm_attach(xcbinf->conn, shm_info.shmseg, shm_info.shmid, 0);
                  /* we sync */
-                 reply = XCBGetInputFocusReply(xcbinf->conn,
-                                               XCBGetInputFocusUnchecked(xcbinf->conn),
+                 reply = xcb_get_input_focus_reply(xcbinf->conn,
+                                               xcb_get_input_focus_unchecked(xcbinf->conn),
                                                NULL);
                  free(reply);
                  /* XSetErrorHandler((XErrorHandler)ph); */
@@ -365,7 +365,7 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
               }
               shmctl(shm_info.shmid, IPC_RMID, 0);
            }
-           XCBImageSHMDestroy(xcbim);
+           xcb_image_shm_destroy(xcbim);
         }
      }
    _image_info_list = evas_list_prepend(_image_info_list, xcbinf);
@@ -373,16 +373,16 @@ _xr_image_info_get(XCBConnection *conn, XCBDRAWABLE draw, XCBVISUALID vis)
 }
 
 void
-_xr_image_info_free(XCBimage_Info *xcbinf)
+_xr_image_info_free(Xcb_Image_Info *xcbinf)
 {
   if (!xcbinf) return;
    if (xcbinf->pool)
      {
-        XCBGetInputFocusRep *reply;
+        xcb_get_input_focus_reply_t *reply;
        
-        reply = XCBGetInputFocusReply(xcbinf->conn,
-                                      XCBGetInputFocusUnchecked(xcbinf->conn),
-                                      NULL);
+        reply = xcb_get_input_focus_reply(xcbinf->conn,
+                                          xcb_get_input_focus_unchecked(xcbinf->conn),
+                                          NULL);
         free(reply);
      }
    _xr_image_info_pool_flush(xcbinf, 0, 0);
@@ -394,12 +394,12 @@ _xr_image_info_free(XCBimage_Info *xcbinf)
 }
 
 void
-_xr_image_info_pool_flush(XCBimage_Info *xcbinf, int max_num, int max_mem)
+_xr_image_info_pool_flush(Xcb_Image_Info *xcbinf, int max_num, int max_mem)
 {
    if ((xcbinf->pool_mem <= max_mem) && (evas_list_count(xcbinf->pool) <= max_num)) return;
    while ((xcbinf->pool_mem > max_mem) || (evas_list_count(xcbinf->pool) > max_num))
      {
-	XCBimage_Image *xcbim;
+	Xcb_Image_Image *xcbim;
 
 	if (!xcbinf->pool) break;
 	xcbim = xcbinf->pool->data;
@@ -407,11 +407,11 @@ _xr_image_info_pool_flush(XCBimage_Info *xcbinf, int max_num, int max_mem)
      }
 }
 
-XCBimage_Image *
-_xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
+Xcb_Image_Image *
+_xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth)
 {
-   XCBimage_Image *xcbim, *xcbim2;
-   Evas_List *l;
+   Xcb_Image_Image *xcbim, *xcbim2;
+   Evas_List       *l;
 
    xcbim2 = NULL;
    for (l = xcbinf->pool; l; l = l->next)
@@ -428,7 +428,7 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 	xcbim2->available = 0;
 	return xcbim2;
      }
-   xcbim = calloc(1, sizeof(XCBimage_Image));
+   xcbim = calloc(1, sizeof(Xcb_Image_Image));
    if (xcbim)
      {
 	xcbim->xcbinf = xcbinf;
@@ -438,11 +438,11 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 	xcbim->available = 0;
 	if (xcbim->xcbinf->can_do_shm)
 	  {
-	     xcbim->shm_info = calloc(1, sizeof(XCBShmSegmentInfo));
+	     xcbim->shm_info = calloc(1, sizeof(xcb_shm_segment_info_t));
 	     if (xcbim->shm_info)
 	       {
-                  xcbim->shm_info->shmseg = XCBShmSEGNew(xcbinf->conn);
-		  xcbim->xcbim = XCBImageSHMCreate(xcbim->xcbinf->conn, xcbim->depth, XCBImageFormatZPixmap, NULL, xcbim->w, xcbim->h);
+                  xcbim->shm_info->shmseg = xcb_shm_seg_new(xcbinf->conn);
+		  xcbim->xcbim = xcb_image_shm_create(xcbim->xcbinf->conn, xcbim->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, xcbim->w, xcbim->h);
 		  if (xcbim->xcbim)
 		    {
 		       xcbim->shm_info->shmid = shmget(IPC_PRIVATE, xcbim->xcbim->bytes_per_line * xcbim->xcbim->height, IPC_CREAT | 0777);
@@ -451,23 +451,23 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 			    xcbim->shm_info->shmaddr = xcbim->xcbim->data = shmat(xcbim->shm_info->shmid, 0, 0);
 			    if ((xcbim->shm_info->shmaddr) && (xcbim->shm_info->shmaddr != (void *) -1))
 			      {
-                                 XCBGetInputFocusRep *reply;
+                                 xcb_get_input_focus_reply_t *reply;
                                  /*
                                   * FIXME: no error mechanism
                                   */
                                  /*				 XErrorHandler ph; */
 
                                  /* we sync */
-                                 reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
-                                                               XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
+                                 reply = xcb_get_input_focus_reply(xcbim->xcbinf->conn,
+                                                               xcb_get_input_focus_unchecked(xcbim->xcbinf->conn),
                                                                NULL);
                                  free(reply);
 				 _xcb_err = 0;
 /*				 ph = XSetErrorHandler((XErrorHandler)_tmp_xcb_err); */
-				 XCBShmAttach(xcbim->xcbinf->conn, xcbim->shm_info->shmseg, xcbim->shm_info->shmid, 0);
+				 xcb_shm_attach(xcbim->xcbinf->conn, xcbim->shm_info->shmseg, xcbim->shm_info->shmid, 0);
                                  /* we sync */
-                                 reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
-                                                               XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
+                                 reply = xcb_get_input_focus_reply(xcbim->xcbinf->conn,
+                                                               xcb_get_input_focus_unchecked(xcbim->xcbinf->conn),
                                                                NULL);
                                  free(reply);
 /*				 XSetErrorHandler((XErrorHandler)ph); */
@@ -476,13 +476,13 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 			      }
 			    shmctl(xcbim->shm_info->shmid, IPC_RMID, 0);
 			 }
-		       XCBImageSHMDestroy(xcbim->xcbim);
+		       xcb_image_shm_destroy(xcbim->xcbim);
 		    }
 		  free(xcbim->shm_info);
 		  xcbim->shm_info = NULL;
 	       }
 	  }
-	xcbim->xcbim = XCBImageCreate(xcbim->xcbinf->conn, xcbim->depth, XCBImageFormatZPixmap, 0, NULL, xcbim->w, xcbim->h, 32, 0);
+	xcbim->xcbim = xcb_image_create(xcbim->xcbinf->conn, xcbim->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, 0, NULL, xcbim->w, xcbim->h, 32, 0);
 	if (!xcbim->xcbim)
 	  {
 	     free(xcbim);
@@ -491,7 +491,7 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 	xcbim->xcbim->data = malloc(xcbim->xcbim->bytes_per_line * xcbim->xcbim->height);
 	if (!xcbim->xcbim->data)
 	  {
-	     XCBImageDestroy(xcbim->xcbim);
+	     xcb_image_destroy(xcbim->xcbim);
 	     free(xcbim);
 	     return NULL;
 	  }
@@ -508,21 +508,21 @@ _xr_image_new(XCBimage_Info *xcbinf, int w, int h, int depth)
 }
 
 void
-_xr_image_free(XCBimage_Image *xcbim)
+_xr_image_free(Xcb_Image_Image *xcbim)
 {
    if (xcbim->shm_info)
      {
 	if (!xcbim->available)
           {
-            XCBGetInputFocusRep *reply;
+            xcb_get_input_focus_reply_t *reply;
             
-            reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
-                                          XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
-                                          NULL);
+            reply = xcb_get_input_focus_reply(xcbim->xcbinf->conn,
+                                              xcb_get_input_focus_unchecked(xcbim->xcbinf->conn),
+                                              NULL);
             free(reply);
           }
-	XCBShmDetach(xcbim->xcbinf->conn, xcbim->shm_info->shmseg);
-	XCBImageSHMDestroy(xcbim->xcbim);
+	xcb_shm_detach(xcbim->xcbinf->conn, xcbim->shm_info->shmseg);
+	xcb_image_shm_destroy(xcbim->xcbim);
 	shmdt(xcbim->shm_info->shmaddr);
 	shmctl(xcbim->shm_info->shmid, IPC_RMID, 0);
 	free(xcbim->shm_info);
@@ -531,7 +531,7 @@ _xr_image_free(XCBimage_Image *xcbim)
      {
 	free(xcbim->xcbim->data);
 	xcbim->xcbim->data = NULL;
-	XCBImageDestroy(xcbim->xcbim);
+	xcb_image_destroy(xcbim->xcbim);
      }
    xcbim->xcbinf->pool_mem -= (xcbim->w * xcbim->h * xcbim->depth);
    xcbim->xcbinf->pool = evas_list_remove(xcbim->xcbinf->pool, xcbim);
@@ -539,16 +539,16 @@ _xr_image_free(XCBimage_Image *xcbim)
 }
 
 void
-_xr_image_put(XCBimage_Image *xcbim, XCBDRAWABLE draw, int x, int y, int w, int h)
+_xr_image_put(Xcb_Image_Image *xcbim, xcb_drawable_t draw, int x, int y, int w, int h)
 {
-   XCBGetInputFocusRep *reply;
-   XCBGCONTEXT          gc;
+   xcb_get_input_focus_reply_t *reply;
+   xcb_gcontext_t               gc;
 
-   gc = XCBGCONTEXTNew(xcbim->xcbinf->conn);
-   XCBCreateGC(xcbim->xcbinf->conn, gc, draw, 0, NULL);
+   gc = xcb_gcontext_new(xcbim->xcbinf->conn);
+   xcb_create_gc(xcbim->xcbinf->conn, gc, draw, 0, NULL);
    if (xcbim->shm_info)
      {
-	XCBShmPutImage(xcbim->xcbinf->conn, draw, gc,
+	xcb_shm_put_image(xcbim->xcbinf->conn, draw, gc,
                        xcbim->xcbim->width, xcbim->xcbim->height,
                        0, 0,
                        w, h,
@@ -558,13 +558,13 @@ _xr_image_put(XCBimage_Image *xcbim, XCBDRAWABLE draw, int x, int y, int w, int 
                        xcbim->shm_info->shmseg,
                        xcbim->xcbim->data - xcbim->shm_info->shmaddr);
         /* we sync */
-        reply = XCBGetInputFocusReply(xcbim->xcbinf->conn,
-                                      XCBGetInputFocusUnchecked(xcbim->xcbinf->conn),
+        reply = xcb_get_input_focus_reply(xcbim->xcbinf->conn,
+                                      xcb_get_input_focus_unchecked(xcbim->xcbinf->conn),
                                       NULL);
         free(reply);
      }
    else
-     XCBImagePut(xcbim->xcbinf->conn, draw, gc, xcbim->xcbim, 0, 0, x, y, w, h);
+     xcb_image_put(xcbim->xcbinf->conn, draw, gc, xcbim->xcbim, 0, 0, x, y, w, h);
    xcbim->available = 1;
-   XCBFreeGC(xcbim->xcbinf->conn, gc);
+   xcb_free_gc(xcbim->xcbinf->conn, gc);
 }

@@ -66,10 +66,10 @@ __xre_image_find(char *fkey)
 }
 
 XR_Image *
-_xre_image_load(XCBimage_Info *xcbinf, const char *file, const char *key, Evas_Image_Load_Opts *lo)
+_xre_image_load(Xcb_Image_Info *xcbinf, const char *file, const char *key, Evas_Image_Load_Opts *lo)
 {
+   char      buf[4096];
    XR_Image *im;
-   char buf[4096];
 
    if (!file) return NULL;
    if (!lo)
@@ -117,7 +117,7 @@ _xre_image_load(XCBimage_Info *xcbinf, const char *file, const char *key, Evas_I
 }
 
 XR_Image *
-_xre_image_new_from_data(XCBimage_Info *xcbinf, int w, int h, void *data)
+_xre_image_new_from_data(Xcb_Image_Info *xcbinf, int w, int h, void *data)
 {
    XR_Image *im;
 
@@ -136,7 +136,7 @@ _xre_image_new_from_data(XCBimage_Info *xcbinf, int w, int h, void *data)
 }
 
 XR_Image *
-_xre_image_new_from_copied_data(XCBimage_Info *xcbinf, int w, int h, void *data)
+_xre_image_new_from_copied_data(Xcb_Image_Info *xcbinf, int w, int h, void *data)
 {
    XR_Image *im;
 
@@ -169,7 +169,7 @@ _xre_image_new_from_copied_data(XCBimage_Info *xcbinf, int w, int h, void *data)
 }
 
 XR_Image *
-_xre_image_new(XCBimage_Info *xcbinf, int w, int h)
+_xre_image_new(Xcb_Image_Info *xcbinf, int w, int h)
 {
    XR_Image *im;
 
@@ -255,7 +255,7 @@ XR_Image *
 _xre_image_copy(XR_Image *im)
 {
    XR_Image *im2;
-   void *data = NULL;
+   void     *data = NULL;
 
    if (im->data) data = im->data;
    else
@@ -284,8 +284,8 @@ _xre_image_resize(XR_Image *im, int w, int h)
    if ((w == im->w) && (h == im->h)) return;
    if (im->surface)
      {
-	XCBrender_Surface *old_surface;
-	int x = 0, y = 0, ww, hh;
+	Xcb_Render_Surface *old_surface;
+	int                 x = 0, y = 0, ww, hh;
 	
 	ww = w; hh = h;
 	RECTS_CLIP_TO_RECT(x, y, ww, hh, 0, 0, im->w, im->h);
@@ -299,9 +299,9 @@ _xre_image_resize(XR_Image *im, int w, int h)
    if (im->data)
      {
 	Gfx_Func_Copy func;
-	int x = 0, y = 0, ww, hh;
+	int           x = 0, y = 0, ww, hh;
 	unsigned int *sp, *dp;
-	void *data;
+	void         *data;
 	
 	data = malloc(w * h * 4);
 	if (!data)
@@ -458,7 +458,7 @@ _xre_image_alpha_set(XR_Image *im, int alpha)
    im->alpha = alpha;
    if (im->surface)
      {
-	XCBrender_Surface *old_surface;
+	Xcb_Render_Surface *old_surface;
 	
 	old_surface = im->surface;
 	im->surface = NULL;
