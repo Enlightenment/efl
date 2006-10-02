@@ -48,6 +48,7 @@ evas_image_load_file_head_eet(RGBA_Image *im, const char *file, const char *key)
    im->image->w = w;
    im->image->h = h;
    eet_close(ef);
+   evas_common_image_set_alpha_sparse(im);
    return 1;
 }
 
