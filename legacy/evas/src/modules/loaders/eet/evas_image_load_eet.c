@@ -57,7 +57,7 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
    unsigned int         w, h;
    int                  alpha, compression, quality, lossy;
    Eet_File            *ef;
-   DATA32              *body;
+   DATA32              *body, *p, *end;
 
    if ((!file) || (!key)) return 0;
    if ((im->image) && (im->image->data)) return 1;
@@ -89,6 +89,23 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
    im->image->h = h;
    im->image->data = body;
    im->image->no_free = 0;
+   if (alpha)
+     {
+	end = body +(w * h);
+	for (p = body; p < end; p++)
+	  {
+	     DATA32 r, g, b, a;
+	     
+	     a = A_VAL(p);
+	     r = R_VAL(p);
+	     g = G_VAL(p);
+	     b = B_VAL(p);
+	     if (r > a) r = a;
+	     if (g > a) g = a;
+	     if (b > a) b = a;
+	     *p = ARGB_JOIN(a, r, g, b);
+	  }
+     }
 // result is already premultiplied now if u compile with edje   
 //   evas_common_image_premul(im);
    eet_close(ef);
