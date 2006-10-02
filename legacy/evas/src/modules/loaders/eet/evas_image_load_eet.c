@@ -48,7 +48,6 @@ evas_image_load_file_head_eet(RGBA_Image *im, const char *file, const char *key)
    im->image->w = w;
    im->image->h = h;
    eet_close(ef);
-   evas_common_image_set_alpha_sparse(im);
    return 1;
 }
 
@@ -59,6 +58,7 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
    int                  alpha, compression, quality, lossy;
    Eet_File            *ef;
    DATA32              *body, *p, *end;
+   DATA32               nas = 0;
 
    if ((!file) || (!key)) return 0;
    if ((im->image) && (im->image->data)) return 1;
@@ -101,11 +101,14 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
 	     r = R_VAL(p);
 	     g = G_VAL(p);
 	     b = B_VAL(p);
+	     if ((a == 0) || (a == 255)) nas++;
 	     if (r > a) r = a;
 	     if (g > a) g = a;
 	     if (b > a) b = a;
 	     *p = ARGB_JOIN(a, r, g, b);
 	  }
+	if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (im->image->w * im->image->h))
+	  im->flags |= RGBA_IMAGE_ALPHA_SPARSE;
      }
 // result is already premultiplied now if u compile with edje   
 //   evas_common_image_premul(im);

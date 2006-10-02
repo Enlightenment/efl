@@ -594,8 +594,6 @@ evas_common_image_alpha_line_buffer_free(void)
    evas_alpha_line_buffer = NULL;
 }
 
-#define ALPHA_SPARSE_INV_FRACTION 3
-
 EAPI void
 evas_common_image_premul(RGBA_Image *im)
 {

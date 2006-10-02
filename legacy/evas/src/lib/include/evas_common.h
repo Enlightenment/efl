@@ -65,6 +65,10 @@
 # define DM_SHF(_b)   (DM_BITS - (8 - _b))
 #endif
 
+/* if more than 1/ALPHA_SPARSE_INV_FRACTION is "alpha" (1-254) then sparse
+ * alpha flag gets set */
+#define ALPHA_SPARSE_INV_FRACTION 3
+
 /*****************************************************************************/
 
 /*****************************************************************************/
