@@ -1301,7 +1301,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	     if (p3.visible) evas_object_show(ep->object);
 	     else evas_object_hide(ep->object);
 
-	     evas_object_gradient_angle_set(ep->object, p3.fill.angle);
+	     evas_object_gradient_fill_angle_set(ep->object, p3.fill.angle);
 	     evas_object_gradient_fill_spread_set(ep->object, p3.fill.spread);
 	     evas_object_gradient_fill_set(ep->object, p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
 
@@ -1321,12 +1321,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		       for (l = se->color_list; l; l = l->next)
 			 {
 			    Edje_Spectrum_Color *sc = l->data;
-			    evas_object_gradient_color_stop_add(ep->object,
-								(sc->r * sc->a) / 255,
-								(sc->g * sc->a) / 255,
-								(sc->b * sc->a) / 255,
+			    evas_object_gradient_color_stop_add(ep->object, sc->r,
+								sc->g, sc->b, 255,
+								sc->d);
+			    evas_object_gradient_alpha_stop_add(ep->object,
 								sc->a, sc->d);
-
 			 }
 		    }
 	       }
