@@ -10,8 +10,9 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
      {
 	DATA32  a = 1 + (*data >> 24);
 
-	*data++ = (*data & 0xff000000) + (((((*data) >> 8) & 0xff) * a) & 0xff00) + 
-			 (((((*data) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
+	*data++ = (*data & 0xff000000) + 
+	  (((((*data) >> 8) & 0xff) * a) & 0xff00) + 
+	  (((((*data) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
      }
 }
 
@@ -24,8 +25,11 @@ evas_common_convert_argb_unpremul(DATA32 *data, unsigned int len)
      {
 	DATA32  a = (*data >> 24);
 
-	if (a & (a < 255))
-	   *data = ARGB_JOIN(a, (R_VAL(data) * 255) / a, (G_VAL(data) * 255) / a, (B_VAL(data) * 255) / a);
+	if ((a > 0) && (a < 255))
+	   *data = ARGB_JOIN(a, 
+			     (R_VAL(data) * 255) / a, 
+			     (G_VAL(data) * 255) / a, 
+			     (B_VAL(data) * 255) / a);
 	data++;
      }
 

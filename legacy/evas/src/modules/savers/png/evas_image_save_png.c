@@ -18,7 +18,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    FILE               *f;
    png_structp         png_ptr;
    png_infop           info_ptr;
-   DATA32             *ptr, *data;
+   DATA32             *ptr, *data = NULL;
    int                 x, y, j;
    png_bytep           row_ptr, png_data = NULL;
    png_color_8         sig_bit;
@@ -128,7 +128,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    png_destroy_info_struct(png_ptr, (png_infopp) & info_ptr);
    
    if (im->flags & RGBA_IMAGE_HAS_ALPHA)
-	free(data);
+     free(data);
    fclose(f);
    return 1;
 }
