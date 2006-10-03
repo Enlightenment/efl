@@ -156,7 +156,7 @@ ecore_dbus_object_method_add(Ecore_DBus_Object *obj, const char *interface, cons
    ecore_list_append(obj->methods, m);
 
    /* add match to server for this method */
-   snprintf(buf, sizeof(buf), "type=method_call,path=%s,interface=%s,method=%s", obj->path, interface, method_name);
+   snprintf(buf, sizeof(buf), "type=method_call,path=%s,interface=%s,member=%s", obj->path, interface, method_name);
    ecore_dbus_method_add_match(obj->server, buf, NULL, NULL, NULL);
 
    return m;
