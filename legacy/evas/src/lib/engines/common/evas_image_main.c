@@ -426,7 +426,11 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
 
    if ((!file) && (!key)) return NULL;
    if (!file) return NULL;
-   if (!lo)
+   if ((!lo) || 
+       ((lo) && 
+	(lo->scale_down_by == 0) &&
+	(lo->dpi == 0.0) &&
+	((lo->w == 0) || (lo->h == 0))))
      {
 	if (key)
 	  snprintf(buf, sizeof(buf), "%s//://%s", file, key);
