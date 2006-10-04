@@ -332,6 +332,9 @@ _ecore_desktop_get(const char *file, const char *lang)
 	          result->hard_icon = 1;
 	       }
 
+	     if ((result->icon_theme == NULL) && (result->icon_path != NULL))
+	        result->hard_icon = 1;
+
 	     /* icon/class is a list of standard icons from the theme that can override the icon created above.
 	      * Use (from .desktop) name.edj,exec,categories.  It's case sensitive, the reccomendation is to lowercase it.
 	      * It should be most specific to most generic.  firefox,browser,internet for instance
