@@ -384,7 +384,7 @@ linear_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 #endif
 
 #define AXIS_ALIGNED \
-   ( ((ayy == 0) || (ayx == 0)) && ((gdata->ca == 0.0) || (gdata->sa = 0.0)) )
+   ( ((ayy == 0) || (ayx == 0)) && ((gdata->ca == 0.0) || (gdata->sa == 0.0)) )
 
 #define SETUP_LINEAR_FILL \
    if (gdata->at_angle) \

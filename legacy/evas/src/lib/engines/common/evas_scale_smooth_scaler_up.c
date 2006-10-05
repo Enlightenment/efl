@@ -41,8 +41,14 @@
    else
 	buf = pdst;
 
-   dsxx = (((srw == 1) ? (1 << 16) : ((srw - 1) << 16))) / ((drw == 1) ? 1 : (drw - 1));
-   dsyy = (((srh == 1) ? (1 << 16) : ((srh - 1) << 16))) / ((drh == 1) ? 1 : (drh - 1));
+   if ((srw > 1) && (drw > 1))
+	dsxx = ((srw - 1) << 16) / (drw - 1);
+   else
+	dsxx = (srw << 16) / drw;
+   if ((srh > 1) && (drh > 1))
+	dsyy = ((srh - 1) << 16) / (drh - 1);
+   else
+	dsyy = (srh << 16) / drh;
 
    cx = dst_clip_x - drx;
    cy = dst_clip_y - dry;

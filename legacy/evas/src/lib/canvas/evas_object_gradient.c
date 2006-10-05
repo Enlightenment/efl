@@ -923,14 +923,14 @@ evas_object_gradient_render_pre(Evas_Object *obj)
        (obj->cur.color.g != obj->prev.color.g) ||
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
-	o->gradient_changed = 1;
+     { o->gradient_changed = 1;  o->changed = 1; }
    if ((!o->gradient_changed) && ((obj->cur.cache.clip.r != obj->prev.cache.clip.r) ||
        (obj->cur.cache.clip.g != obj->prev.cache.clip.g) ||
        (obj->cur.cache.clip.b != obj->prev.cache.clip.b) ||
        (obj->cur.cache.clip.a != obj->prev.cache.clip.a)))
-	o->gradient_changed = 1;
+     { o->gradient_changed = 1;  o->changed = 1; }
    if (!o->gradient_changed && (obj->cur.interpolation.color_space != obj->prev.interpolation.color_space))
-	o->gradient_changed = 1;
+     { o->gradient_changed = 1;  o->changed = 1; }
    if (!o->changed && (obj->cur.render_op != obj->prev.render_op))
 	o->changed = 1;
    if (!o->changed && (obj->cur.anti_alias != obj->prev.anti_alias))

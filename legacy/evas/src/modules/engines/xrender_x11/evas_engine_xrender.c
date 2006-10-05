@@ -2,7 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include "evas_common.h"
-#include "evas_macros.h"
+//#include "evas_macros.h"
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "Evas_Engine_XRender_X11.h"
@@ -307,7 +307,8 @@ _xr_render_surface_clips_set(Xrender_Surface *rs, RGBA_Draw_Context *dc, int rx,
 }
 
 /* initialized the transform to the identity */
-static void init_transform (XTransform *t)
+static void
+init_xtransform(XTransform *t)
 {
    int i, j;
 
@@ -316,6 +317,16 @@ static void init_transform (XTransform *t)
        t->matrix[i][j] = XDoubleToFixed((i == j) ? 1 : 0);
 }
 
+static void
+set_xtransform_scale(XTransform *t, int sw, int sh, int w, int h)
+{
+   if ((sw > 1) && (w > 1))
+     { sw--;  w--; }
+   if ((sh > 1) && (h > 1))
+     { sh--;  h--; }
+   t->matrix[0][0] = XDoubleToFixed((double)sw / (double)w);
+   t->matrix[1][1] = XDoubleToFixed((double)sh / (double)h);
+}
 
 // when color multiplier is used want: instead
 // CA src IN mask SRC temp; non-CA temp OVER dst. - i think. need to check.
@@ -325,29 +336,45 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    Xrender_Surface *trs = NULL;
    XTransform xf;
    XRenderPictureAttributes att;
-   Picture mask;
-   int r, g, b, a, op;
-   int e, is_scaling;
+   Picture mask = None;
+   int e, is_scaling, op;
 
    if ((sw <= 0) || (sh <= 0) || (w <= 0) || (h <= 0)) return;
    
-   is_scaling = (sw != w) || (sh != h);
-   e = is_scaling ? 0 : 1;
+   is_scaling = e = ((sw != w) || (sh != h));
 
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
-   XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
+   XRenderChangePicture(drs->xinf->disp, drs->pic, CPClipMask, &att);
    
-   op = PictOpSrc;
-   if (srs->alpha) op = PictOpOver;
-   mask = None;
+   init_xtransform(&xf);
+
+   op = PictOpOver;
+   if (dc->render_op == _EVAS_RENDER_BLEND)
+     {
+	if (!srs->alpha) op = PictOpSrc;
+     }
+   else if (dc->render_op == _EVAS_RENDER_BLEND_REL)
+	op = PictOpAtop;
+   else if (dc->render_op == _EVAS_RENDER_MUL)
+	op = PictOpIn;
+   else if (dc->render_op == _EVAS_RENDER_COPY)
+	op = PictOpSrc;
+   else if (dc->render_op == _EVAS_RENDER_COPY_REL)
+	op = PictOpIn;
+   else if (dc->render_op == _EVAS_RENDER_MASK)
+	op = PictOpInReverse;
+
    if ((dc) && (dc->mul.use))
      {
-	r = (int)(R_VAL(&dc->mul.col));
-	g = (int)(G_VAL(&dc->mul.col));
-	b = (int)(B_VAL(&dc->mul.col));
-	a = (int)(A_VAL(&dc->mul.col));
-	if ((r != 0xff) || (g != 0xff) || (b != 0xff) || (a != 0xff))
+	int r, g, b, a;
+
+	if ((op == PictOpOver) && (!dc->mul.col)) return;
+	a = dc->mul.col >> 24;
+	r = (dc->mul.col >> 16) & 0xff;
+	g = (dc->mul.col >> 8) & 0xff;
+	b = dc->mul.col & 0xff;
+	if (dc->mul.col != 0xffffffff)
 	  {
 	     if ((srs->xinf->mul_r != r) || (srs->xinf->mul_g != g) ||
 		 (srs->xinf->mul_b != b) || (srs->xinf->mul_a != a))
@@ -360,9 +387,8 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 							 r, g, b, a, 
 							 0, 0, 1, 1);
 	       }
-	     op = PictOpOver;
 	     mask = srs->xinf->mul->pic;
-	     if ((r == 0xff) && (g == 0xff) && (b == 0xff) && (a != 0xff))
+	     if (dc->mul.col == (a * 0x01010101))
 	       {
 		 att.component_alpha = 0;
 		 XRenderChangePicture(srs->xinf->disp, mask, CPComponentAlpha, &att);
@@ -379,6 +405,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 
 		  att.component_alpha = 1;
 		  XRenderChangePicture(srs->xinf->disp, mask, CPComponentAlpha, &att);
+		  XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 		  XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, mask,
 				   trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
 		  /* fill right and bottom pixel so interpolation works right */
@@ -396,18 +423,19 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	  }
      }
 
-   init_transform(&xf);
-   xf.matrix[0][0] = XDoubleToFixed((double) sw / (double) w);
-   xf.matrix[1][1] = XDoubleToFixed((double) sh / (double) h);
-
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
      {
-	if (is_scaling)
-	  XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
+	XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
 
+	set_xtransform_scale(&xf, sw, sh, w, h);
 	XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
-	
+
+	att.component_alpha = 0;
+	if (dc->render_op == _EVAS_RENDER_MUL)
+	    att.component_alpha = 1;
+	XRenderChangePicture(trs->xinf->disp, trs->pic, CPComponentAlpha, &att);
+
 	XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
 			 0, 0, 0, 0, x, y, w, h);
 	_xr_render_surface_free(trs);
@@ -420,8 +448,12 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 					 srs->fmt, srs->alpha);
 	    if (!trs) return;
 
+	    att.component_alpha = 0;
+	    XRenderChangePicture(srs->xinf->disp, srs->pic, CPComponentAlpha, &att);
+	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
 	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
 			     trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
+
 	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
 			     trs->pic, sx + sw - 1, sy, 0, 0, sw, 0, 1, sh);
 	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
@@ -431,17 +463,31 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 
 	    XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
 
+	    set_xtransform_scale(&xf, sw, sh, w, h);
 	    XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
+
+	    if (dc->render_op == _EVAS_RENDER_MUL)
+	      {
+		att.component_alpha = 1;
+		XRenderChangePicture(trs->xinf->disp, trs->pic, CPComponentAlpha, &att);
+	      }
+
 	    XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
 			     0, 0, 0, 0, x, y, w, h);
 	    _xr_render_surface_free(trs);
 	  }
 	else
 	  {
-	     if (is_scaling)
-	       XRenderSetPictureFilter(srs->xinf->disp, srs->pic, get_filter(smooth), NULL, 0);
+	    XRenderSetPictureFilter(srs->xinf->disp, srs->pic, get_filter(smooth), NULL, 0);
 
+	    set_xtransform_scale(&xf, sw, sh, w, h);
 	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
+
+	    att.component_alpha = 0;
+	    if (dc->render_op == _EVAS_RENDER_MUL)
+		att.component_alpha = 1;
+	    XRenderChangePicture(srs->xinf->disp, srs->pic, CPComponentAlpha, &att);
+
 	    XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
 			     ((sx * w) + (sw / 2)) / sw, 
 			     ((sy * h) + (sh / 2)) / sh,
@@ -458,21 +504,22 @@ _xr_render_surface_copy(Xrender_Surface *srs, Xrender_Surface *drs, int sx, int 
    
    if ((w <= 0) || (h <= 0) || (!srs) || (!drs)) return;
 
+   init_xtransform(&xf);
 #ifdef BROKEN_XORG_XRENDER   
    /* FIXME: why do we need to change the identity matrix ifthe src surface
     * is 1 bit deep?
     */
    if (srs->depth == 1)
      {
-	init_transform(&xf);
 	xf.matrix[0][0] = xf.matrix[1][1] = xf.matrix[2][2] = 1;
-	XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
      }
 #endif
+   XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
+//   XRenderSetPictureFilter(srs->xinf->disp, srs->pic, FilterNearest, NULL, 0);
    
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
-   XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
+   XRenderChangePicture(drs->xinf->disp, drs->pic, CPClipMask, &att);
    
    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None, drs->pic, 
 		    sx, sy, 0, 0, x, y, w, h);
