@@ -212,25 +212,24 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
         obj->callbacks->walking_list--;
         if (!obj->callbacks->walking_list)
           evas_object_event_callback_clear(obj);
+        
+        if (type == EVAS_CALLBACK_MOUSE_DOWN)
+          {
+             Evas_Event_Mouse_Down *ev = event_info;
+             ev->flags = flags;
+          }
+        else if (type == EVAS_CALLBACK_MOUSE_UP)
+          {
+             Evas_Event_Mouse_Up *ev = event_info;
+             ev->flags = flags;
+          }
      }
    
    if ((obj->no_propagate) && (l_mod) && (*l_mod)) return;
    if ((obj->smart.parent) &&
        (type != EVAS_CALLBACK_FREE) &&
        (type <= EVAS_CALLBACK_KEY_UP))
-   {
-      if (type == EVAS_CALLBACK_MOUSE_DOWN)
-        {
-           Evas_Event_Mouse_Down *ev = event_info;
-           ev->flags = flags;
-        }
-      else if (type == EVAS_CALLBACK_MOUSE_UP)
-        {
-           Evas_Event_Mouse_Up *ev = event_info;
-           ev->flags = flags;
-        }
      evas_object_event_callback_call(obj->smart.parent, type, event_info);
-   }
 }
 
 /**
