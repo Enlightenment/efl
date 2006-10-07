@@ -1,6 +1,16 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+/* uncomment the next line if smart objects should be informed
+ * if they are moved to the position they are already in
+ * (e.g. if they are in 0,0 and you call evas_object_move(o, 0, 0)
+ */
+/* #define FORWARD_NOOP_MOVES_TO_SMART_OBJS */
+
+/* likewise, for resizes
+ */
+/* #define FORWARD_NOOP_RESIZES_TO_SMART_OBJS */
+
 static Evas_Object_List* get_layer_objects_last( Evas_Layer* l )
 {
    if( !l || !l->objects )
@@ -458,17 +468,26 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
    if (evas_object_intercept_call_move(obj, x, y)) return;
+#ifdef FORWARD_NOOP_MOVES_TO_SMART_OBJS
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->move)
 	  obj->smart.smart->smart_class->move(obj, x, y);
      }
+#endif
    if ((obj->cur.geometry.x == x) &&
        (obj->cur.geometry.y == y))
      {
 	evas_object_inform_call_move(obj);
 	return;
      }
+#ifndef FORWARD_NOOP_MOVES_TO_SMART_OBJS
+   if (obj->smart.smart)
+     {
+       if (obj->smart.smart->smart_class->move)
+	  obj->smart.smart->smart_class->move(obj, x, y);
+     }
+#endif
    if (obj->layer->evas->events_frozen <= 0)
      {
 	pass = evas_event_passes_through(obj);
@@ -522,17 +541,26 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me) return;
    if (w < 0.0) w = 0.0; if (h < 0.0) h = 0.0;
    if (evas_object_intercept_call_resize(obj, w, h)) return;
+#ifdef FORWARD_NOOP_RESIZES_TO_SMART_OBJS
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->resize)
 	  obj->smart.smart->smart_class->resize(obj, w, h);
      }
+#endif
    if ((obj->cur.geometry.w == w) &&
        (obj->cur.geometry.h == h))
      {
 	evas_object_inform_call_resize(obj);
 	return;
      }
+#ifndef FORWARD_NOOP_RESIZES_TO_SMART_OBJS
+   if (obj->smart.smart)
+     {
+       if (obj->smart.smart->smart_class->resize)
+	  obj->smart.smart->smart_class->resize(obj, w, h);
+     }
+#endif
    if (obj->layer->evas->events_frozen <= 0)
      {
 	pass = evas_event_passes_through(obj);
