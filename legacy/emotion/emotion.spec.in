@@ -56,6 +56,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libemotion.so.*
 %{_bindir}/emotion_*
 %{_libdir}/emotion/emotion_decoder_xine.a
+%{_libdir}/emotion/emotion_decoder_gstreamer.a
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.a
 %{_datadir}/emotion
 
@@ -68,6 +69,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libemotion.la
 %{_libdir}/emotion/emotion_decoder_xine.la
 %{_libdir}/emotion/emotion_decoder_xine.so
+%{_libdir}/emotion/emotion_decoder_gstreamer.la
+%{_libdir}/emotion/emotion_decoder_gstreamer.so
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.so
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.la
 %{_includedir}/Emotion*
