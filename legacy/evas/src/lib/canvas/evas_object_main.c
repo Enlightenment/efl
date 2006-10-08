@@ -1,15 +1,17 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+/* FIXME: this broken e17's mouse cursor - need to figure out why */
+
 /* uncomment the next line if smart objects should be informed
  * if they are moved to the position they are already in
  * (e.g. if they are in 0,0 and you call evas_object_move(o, 0, 0)
  */
-/* #define FORWARD_NOOP_MOVES_TO_SMART_OBJS */
+#define FORWARD_NOOP_MOVES_TO_SMART_OBJS
 
 /* likewise, for resizes
  */
-/* #define FORWARD_NOOP_RESIZES_TO_SMART_OBJS */
+#define FORWARD_NOOP_RESIZES_TO_SMART_OBJS
 
 static Evas_Object_List* get_layer_objects_last( Evas_Layer* l )
 {
