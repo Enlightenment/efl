@@ -33,6 +33,7 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_SIZES_H
+#include FT_MODULE_H
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4

@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "evas_common.h"
 #include "evas_private.h"
 
@@ -379,23 +382,34 @@ evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
 EAPI Evas_Bool
 evas_common_hinting_available(Font_Hint_Flags hinting)
 {
-   if (hinting == FONT_NO_HINT) return 1;
-   else if (hinting == FONT_AUTO_HINT)
+   switch (hinting)
      {
-#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
-	return 1;
-#else	
-	return 1;
-#endif
-     }
-   else if (hinting == FONT_BYTECODE_HINT)
-     {
-#ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
-	return 1;
+      case FONT_NO_HINT:
+      case FONT_AUTO_HINT:
+	 /* these two hinting modes are always available */
+	 return 1;
+      case FONT_BYTECODE_HINT:
+	 /* Only use the bytecode interpreter if support for the _patented_
+	  * algorithms is available because the free bytecode
+	  * interpreter's results are too crappy.
+	  *
+	  * On freetyp 2.2+, we can ask the library about support for
+	  * the patented interpreter. On older versions, we need to use
+	  * macros to check for it.
+	  */
+#if FREETYPE_MINOR >= 2
+	 return FT_Get_TrueType_Engine_Type(evas_ft_lib) >=
+		FT_TRUETYPE_ENGINE_TYPE_PATENTED;
 #else
-	return 1;
+# ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+	 return 1;
+# else
+	 return 0;
+# endif
 #endif
      }
+
+   /* shouldn't get here - need to add another case statement */
    return 0;
 }
 
