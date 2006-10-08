@@ -44,7 +44,7 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 				ft_kerning_default, &delta) == 0)
 	       {
-		  kern = delta.x << 2;
+		  kern = delta.x >> 6;
 		  pen_x += kern;
 	       }
 	  }
@@ -52,14 +52,14 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 
-        chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
-	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
+        chr_x = (pen_x + (fg->glyph_out->left));
+	chr_y = (pen_y + (fg->glyph_out->top));
 //	chr_w = fg->glyph_out->bitmap.width;
-	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
+	chr_w = fg->glyph_out->bitmap.width + kern;
 	  {
 	     int advw;
 
-	     advw = ((fg->glyph->advance.x + (kern << 8)) >> 16);
+	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
 	     if (chr_w < advw) chr_w = advw;
 	  }
 
@@ -68,7 +68,7 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	if ((chr_x + chr_w) > end_x)
 	  end_x = chr_x + chr_w;
 
-	pen_x += fg->glyph->advance.x >> 8;
+	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
    if (w) *w = end_x - start_x;
@@ -138,21 +138,21 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 				ft_kerning_default, &delta) == 0)
-	       pen_x += delta.x << 2;
+	       pen_x += delta.x >> 6;
 	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 
-        chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
-	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
+        chr_x = (pen_x + (fg->glyph_out->left));
+	chr_y = (pen_y + (fg->glyph_out->top));
 	chr_w = fg->glyph_out->bitmap.width;
 
-	pen_x += fg->glyph->advance.x >> 8;
+	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
    if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
-   if (h_adv) *h_adv = (pen_x >> 8) - start_x;
+   if (h_adv) *h_adv = pen_x - start_x;
 }
 
 /* x y w h for char at char pos */
@@ -202,7 +202,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 				ft_kerning_default, &delta) == 0)
 	       {
-		  kern = delta.x << 2;
+		  kern = delta.x >> 6;
 		  pen_x += kern;
 	       }
 	  }
@@ -211,14 +211,14 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	if (!fg) continue;
 
 	if (kern < 0) kern = 0;
-        chr_x = ((pen_x - kern) + (fg->glyph_out->left << 8)) >> 8;
-	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
-	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
+        chr_x = ((pen_x - kern) + (fg->glyph_out->left));
+	chr_y = (pen_y + (fg->glyph_out->top));
+	chr_w = fg->glyph_out->bitmap.width + (kern);
 /*	if (text[chr]) */
 	  {
 	     int advw;
 
-	     advw = ((fg->glyph->advance.x + (kern << 8)) >> 16);
+	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
 	     if (chr_w < advw) chr_w = advw;
 	  }
 	if (chr_x > prev_chr_end)
@@ -235,7 +235,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	     return 1;
 	  }
 	prev_chr_end = chr_x + chr_w;
-	pen_x += fg->glyph->advance.x >> 8;
+	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
    return 0;
@@ -288,7 +288,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 				ft_kerning_default, &delta) == 0)
 	       {
-		  kern = delta.x << 2;
+		  kern = delta.x >> 6;
 		  pen_x += kern;
 	       }
 	  }
@@ -297,14 +297,14 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	if (!fg) continue;
 
 	if (kern < 0) kern = 0;
-        chr_x = ((pen_x - kern) + (fg->glyph_out->left << 8)) >> 8;
-	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
-	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
+        chr_x = ((pen_x - kern) + (fg->glyph_out->left));
+	chr_y = (pen_y + (fg->glyph_out->top));
+	chr_w = fg->glyph_out->bitmap.width + kern;
 /*	if (text[chr]) */
 	  {
 	     int advw;
 
-	     advw = ((fg->glyph->advance.x + (kern << 8)) >> 16);
+	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
 	     if (chr_w < advw) chr_w = advw;
 	  }
 	if (chr_x > prev_chr_end)
@@ -322,7 +322,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	     return pchr;
 	  }
 	prev_chr_end = chr_x + chr_w;
-	pen_x += fg->glyph->advance.x >> 8;
+	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
    return -1;

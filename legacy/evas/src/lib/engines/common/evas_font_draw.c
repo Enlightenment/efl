@@ -174,8 +174,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    if (ext_w <= 0) return;
    if (ext_h <= 0) return;
 
-   pen_x = x << 8;
-   pen_y = y << 8;
+   pen_x = x;
+   pen_y = y;
    evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
@@ -200,7 +200,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 				ft_kerning_default, &delta) == 0)
-	       pen_x += delta.x << 2;
+	       pen_x += delta.x >> 6;
 	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
@@ -213,8 +213,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	     fg->ext_dat_free = dc->font_ext.func.gl_free;
 	  }
 
-	chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
-	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
+	chr_x = (pen_x + (fg->glyph_out->left));
+	chr_y = (pen_y + (fg->glyph_out->top));
 
 	if (chr_x < (ext_x + ext_w))
 	  {
@@ -335,7 +335,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	  }
 	else
 	  break;
-	pen_x += fg->glyph->advance.x >> 8;
+	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
 }
