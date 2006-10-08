@@ -401,11 +401,12 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
 	 return FT_Get_TrueType_Engine_Type(evas_ft_lib) >=
 		FT_TRUETYPE_ENGINE_TYPE_PATENTED;
 #else
-# ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+	 /* we may not rely on TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+	  * here to find out whether it's supported.
+	  *
+	  * so, assume it is. o_O
+	  */
 	 return 1;
-# else
-	 return 0;
-# endif
 #endif
      }
 
