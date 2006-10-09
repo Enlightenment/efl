@@ -104,8 +104,8 @@ typedef struct _Edje_Font_Directory                  Edje_Font_Directory;
 typedef struct _Edje_Font_Directory_Entry            Edje_Font_Directory_Entry;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
-typedef struct _Edje_Spectrum_Directory                 Edje_Spectrum_Directory;
-typedef struct _Edje_Spectrum_Directory_Entry           Edje_Spectrum_Directory_Entry;
+typedef struct _Edje_Spectrum_Directory              Edje_Spectrum_Directory;
+typedef struct _Edje_Spectrum_Directory_Entry        Edje_Spectrum_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
 typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Program_After                   Edje_Program_After;
@@ -287,22 +287,22 @@ struct _Edje_Image_Directory_Entry
 
 struct _Edje_Spectrum_Directory
 {
-  Evas_List *entries; /* a list of Edje_Spectrum_Directory_Entry */
+   Evas_List *entries; /* a list of Edje_Spectrum_Directory_Entry */
 };
 
 struct _Edje_Spectrum_Directory_Entry
 {
-  char      *entry;
-  /* only one of the following two should be included. filename takes precedence */
-  char      *filename; /* filename of external spectrum. */
-  Evas_List *color_list; /* list of Edje_Spectrum_Color */
-  int        id;
+   char      *entry;
+   /* only one of the following two should be included. filename takes precedence */
+   char      *filename; /* filename of external spectrum. */
+   Evas_List *color_list; /* list of Edje_Spectrum_Color */
+   int        id;
 };
 
 struct _Edje_Spectrum_Color
 {
-  int r, g, b, a;
-  int d;
+   int r, g, b, a;
+   int d;
 };
 
 
