@@ -983,17 +983,7 @@ _edje_var_timer_del(Edje *ed, int id)
    Edje_Var_Timer *et;
 
    et = _edje_var_timer_find(ed, id);
-   if (!et)
-     {
-	fprintf(stderr,
-		"*** EDJE ERROR: Cannot find timer to cancel\n"
-		"*** NAUGHTY PROGRAMMER!!!\n"
-		"*** SPANK SPANK SPANK!!!\n"
-		"*** Now go fix your code. Tut tut tut!\n"
-		"\n");
-	if (getenv("EDJE_ERROR_ABORT")) abort();
-	return;
-     }
+   if (!et) return;
 
    ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
    ecore_timer_del(et->timer);
@@ -1048,17 +1038,7 @@ _edje_var_anim_del(Edje *ed, int id)
    Edje_Var_Animator *ea;
 
    ea = _edje_var_anim_find(ed, id);
-   if (!ea)
-     {
-	fprintf(stderr,
-		"*** EDJE ERROR: Cannot find animator to cancel\n"
-		"*** NAUGHTY PROGRAMMER!!!\n"
-		"*** SPANK SPANK SPANK!!!\n"
-		"*** Now go fix your code. Tut tut tut!\n"
-		"\n");
-	if (getenv("EDJE_ERROR_ABORT")) abort();
-	return;
-     }
+   if (!ea) return;
 
    if (ed->var_pool->walking_list)
      {
