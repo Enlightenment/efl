@@ -203,9 +203,10 @@ typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 #define EDJE_STATE_PARAM_TEXT_SIZE    26
 #define EDJE_STATE_PARAM_TEXT_FIT     27
 #define EDJE_STATE_PARAM_TEXT_MIN     28
-#define EDJE_STATE_PARAM_TEXT_ALIGN   29
-#define EDJE_STATE_PARAM_VISIBLE      30
-#define EDJE_STATE_PARAM_LAST         31
+#define EDJE_STATE_PARAM_TEXT_MAX     29
+#define EDJE_STATE_PARAM_TEXT_ALIGN   30
+#define EDJE_STATE_PARAM_VISIBLE      31
+#define EDJE_STATE_PARAM_LAST         32
 
 /*----------*/
 
@@ -517,6 +518,8 @@ struct _Edje_Part_Description
       unsigned char  fit_y; /* resize font size down to fit in y dir */
       unsigned char  min_x; /* if text size should be part min size */
       unsigned char  min_y; /* if text size should be part min size */
+      unsigned char  max_x; /* if text size should be part max size */
+      unsigned char  max_y; /* if text size should be part max size */
       
       struct {
 	 double      x, y; /* text alignment within bounds */

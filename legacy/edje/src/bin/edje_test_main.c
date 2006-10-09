@@ -290,6 +290,7 @@ int
 main(int argc, char **argv)
 {
    Evas_Object *o;
+   Evas_Coord mw, mh;
    
    if (argc != 3)
      {
@@ -344,6 +345,8 @@ main(int argc, char **argv)
    evas_object_show(o);
    o_edje = o;
 
+//   edje_object_size_min_calc(o, &mw, &mh);
+//   evas_object_resize(o_edje, mw, mh);
 /*   
      {
 	Evas_Coord mw, mh;

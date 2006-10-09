@@ -718,7 +718,8 @@ _edje_part_recalc_single(Edje *ed,
 	  }
 	else
 	  evas_object_text_font_set(ep->object, font, size);
-	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y) ||
+	    (chosen_desc->text.max_x) || (chosen_desc->text.max_y))
 	  {
 	     int mw, mh;
 	     Evas_Text_Style_Type style;
@@ -742,6 +743,20 @@ _edje_part_recalc_single(Edje *ed,
 	     evas_object_text_style_set(ep->object, style);
 	     evas_object_text_text_set(ep->object, text);
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+	     if (chosen_desc->text.max_x)
+	       {
+		  int l, r;
+		  evas_object_text_style_pad_get(ep->object, &l, &r, NULL, NULL);
+		  mw = tw + l + r;
+		  if ((maxw < 0) || (mw < maxw)) maxw = mw;
+	       }
+	     if (chosen_desc->text.max_y)
+	       {
+		  int t, b;
+		  evas_object_text_style_pad_get(ep->object, NULL, NULL, &t, &b);
+		  mh = th + t + b;
+		  if ((maxh < 0) || (mh < maxh)) maxh = mh;
+	       }
 	     if (chosen_desc->text.min_x)
 	       {
 		  int l, r;

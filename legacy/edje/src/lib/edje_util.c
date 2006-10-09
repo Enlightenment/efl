@@ -1105,7 +1105,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	     ed->w += maxw;
 	     ed->h += maxh;
 	  }
-	if ((ed->w > 8000) || (ed->h > 8000))
+	if ((ed->w > 4000) || (ed->h > 4000))
 	  {
 	     printf("EDJE ERROR: file %s, group %s has a non-fixed part. add fixed: 1 1; ???\n",
 		    ed->path, ed->part);

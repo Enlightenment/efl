@@ -91,6 +91,7 @@ static void st_collections_group_parts_part_description_text_style(void);
 static void st_collections_group_parts_part_description_text_size(void);
 static void st_collections_group_parts_part_description_text_fit(void);
 static void st_collections_group_parts_part_description_text_min(void);
+static void st_collections_group_parts_part_description_text_max(void);
 static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
@@ -233,6 +234,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
+     {"collections.group.parts.part.description.text.max", st_collections_group_parts_part_description_text_max},
      {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
      {"collections.group.parts.part.description.text.source", st_collections_group_parts_part_description_text_source},
      {"collections.group.parts.part.description.text.text_source", st_collections_group_parts_part_description_text_text_source},
@@ -2141,6 +2143,33 @@ st_collections_group_parts_part_description_text_min(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.min_x = parse_bool(0);
    ed->text.min_y = parse_bool(1);
+}
+
+static void
+st_collections_group_parts_part_description_text_max(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if ((ep->type != EDJE_PART_TYPE_TEXT) &&
+       (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.max_x = parse_bool(0);
+   ed->text.max_y = parse_bool(1);
 }
 
 static void

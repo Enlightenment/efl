@@ -1820,6 +1820,16 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 GETINT(rp->custom.description->text.min_y, params[4]);
 
 	 break;
+      case EDJE_STATE_PARAM_TEXT_MAX:
+	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
+	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	   return 0;
+	 CHKPARAM(4);
+
+	 GETINT(rp->custom.description->text.max_x, params[3]);
+	 GETINT(rp->custom.description->text.max_y, params[4]);
+
+	 break;
       case EDJE_STATE_PARAM_TEXT_ALIGN:
 	 if ((rp->part->type != EDJE_PART_TYPE_TEXT)) return 0;
 	 CHKPARAM(4);
@@ -2086,6 +2096,16 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	 SETINT(rp->custom.description->text.min_x, params[3]);
 	 SETINT(rp->custom.description->text.min_y, params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_TEXT_MAX:
+	 if ( (rp->part->type != EDJE_PART_TYPE_TEXT) && \
+	       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+	   return 0;
+	 CHKPARAM(4);
+
+	 SETINT(rp->custom.description->text.max_x, params[3]);
+	 SETINT(rp->custom.description->text.max_y, params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_TEXT_ALIGN:
