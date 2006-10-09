@@ -690,9 +690,12 @@ _edje_file_free(Edje_File *edf)
 
 	     se = edf->spectrum_dir->entries->data;
 	     edf->spectrum_dir->entries = 
-		evas_list_remove_list(edf->spectrum_dir->entries, edf->spectrum_dir->entries);
+	       evas_list_remove_list(edf->spectrum_dir->entries, edf->spectrum_dir->entries);
 	     while (se->color_list)
-	       se->color_list = evas_list_remove(se->color_list, se->color_list->data);
+	       {
+		  free(se->color_list->data);
+		  se->color_list = evas_list_remove_list(se->color_list, se->color_list);
+	       }
 	     if (se->entry) evas_stringshare_del(se->entry);
 	     if (se->filename) evas_stringshare_del(se->filename);
 	     free(se);
@@ -751,7 +754,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	Edje_Program *pr;
 
 	pr = ec->programs->data;
-	ec->programs = evas_list_remove(ec->programs, pr);
+	ec->programs = evas_list_remove_list(ec->programs, ec->programs);
 	if (pr->name) evas_stringshare_del(pr->name);
 	if (pr->signal) evas_stringshare_del(pr->signal);
 	if (pr->source) evas_stringshare_del(pr->source);
@@ -762,7 +765,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	     Edje_Program_Target *prt;
 	     
 	     prt = pr->targets->data;
-	     pr->targets = evas_list_remove(pr->targets, prt);
+	     pr->targets = evas_list_remove_list(pr->targets, pr->targets);
 	     free(prt);
 	  }
 	while (pr->after)
@@ -770,7 +773,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	     Edje_Program_After *pa;
 
 	     pa = pr->after->data;
-	     pr->after = evas_list_remove(pr->after, pa);
+	     pr->after = evas_list_remove_list(pr->after, pr->after);
 	     free(pa);
 	  }
 	free(pr);
