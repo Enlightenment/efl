@@ -173,8 +173,9 @@ enum State_Param
 	STATE_TEXT_SIZE = 26,
 	STATE_TEXT_FIT = 27,
 	STATE_TEXT_MIN = 28,
-	STATE_TEXT_ALIGN = 29,
-	STATE_VISIBLE = 30
+	STATE_TEXT_MAX = 29,
+	STATE_TEXT_ALIGN = 30,
+	STATE_VISIBLE = 31
 };
 
 native set_state_val(part_id, State_Param:p, ...);

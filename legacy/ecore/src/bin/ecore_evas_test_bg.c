@@ -20,6 +20,7 @@ Evas_Object *o_bar_shad_2[2];
 Evas_Object *o_bg = NULL;
 
 static int bg_animate_obj_timer(void *data);
+static void bg_cb_key_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 void
@@ -42,6 +43,7 @@ bg_start(void)
    evas_object_resize(o, 240, 320);
    evas_object_layer_set(o, -1000000);
    evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN, bg_cb_key_down, ee);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_UP, bg_cb_key_up, ee);
    evas_object_focus_set(o, 1);
    evas_object_show(o);
    o_bg_rect = o;
@@ -286,6 +288,7 @@ bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Event_Key_Down *ev;
    
    ev = event_info;
+   printf("DOWN %s\n", ev->keyname);
    if (!strcmp(ev->keyname, "Escape")) ecore_main_loop_quit();
    if (!strcmp(ev->keyname, "q")) ecore_main_loop_quit();
    if (!strcmp(ev->keyname, "Q")) ecore_main_loop_quit();
@@ -439,3 +442,12 @@ bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
      }
 }
 #endif
+
+static void
+bg_cb_key_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Key_Up *ev;
+   
+   ev = event_info;
+   printf("UP %s\n", ev->keyname);
+}
