@@ -166,7 +166,7 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 	v = read(_ecore_fb_kbd_fd, &buf, 1);
 	if (v < 0) return 1;
 	if (v < 1) return 1;
-	if (buf & 0x80)
+	if (!(buf & 0x80))
 	  {
 	     /* DOWN */
 	     int vt_switch = -1;
