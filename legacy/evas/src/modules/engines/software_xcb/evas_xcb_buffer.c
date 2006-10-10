@@ -79,7 +79,7 @@ evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
      {
 	Xcb_Output_Buffer *xcbob;
 
-	xcbob = evas_software_xcb_generate_id(c,
+	xcbob = evas_software_xcb_x_output_buffer_new(c,
 						      depth,
 						      16,
 						      16,
@@ -104,7 +104,7 @@ evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
 /* } */
 
 Xcb_Output_Buffer *
-evas_software_xcb_generate_id(xcb_connection_t *c,
+evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
 				      int               depth,
 				      int               w,
 				      int               h,

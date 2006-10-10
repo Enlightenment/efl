@@ -75,7 +75,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
       Xcb_Output_Buffer  *xcbob;
 
       buf->priv.x.shm = evas_software_xcb_x_can_do_shm(buf->priv.x.conn);
-      xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
+      xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 						    buf->priv.x.depth,
 						    1, 1,
 						    buf->priv.x.shm, NULL);
@@ -258,7 +258,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
 }
 
 RGBA_Image *
-evas_software_xcb_generate_id_region_for_update(Outbuf *buf,
+evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 					       int     x,
 					       int     y,
 					       int     w,
@@ -305,7 +305,7 @@ evas_software_xcb_generate_id_region_for_update(Outbuf *buf,
 	im->image->data = NULL;
 	im->image->no_free = 1;
 	im->extended_info = obr;
-	obr->xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
+	obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 							   buf->priv.x.depth,
 							   w,
 							   h,
@@ -313,7 +313,7 @@ evas_software_xcb_generate_id_region_for_update(Outbuf *buf,
 							   NULL);
 	im->image->data = (DATA32 *)evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
 	if (buf->priv.x.mask)
-	  obr->mxcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
+	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 							      1,
 							      w,
 							      h,
@@ -325,21 +325,21 @@ evas_software_xcb_generate_id_region_for_update(Outbuf *buf,
         im = evas_common_image_create(w, h);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
-	   obr->xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
+	   obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 							      buf->priv.x.depth,
 							      w,
 							      h,
 							      use_shm,
 							      NULL);
 	else if ((buf->rot == 90) || (buf->rot == 270))
-	  obr->xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
+	  obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 							     buf->priv.x.depth,
 							     h,
 							     w,
 							     use_shm,
 							     NULL);
 	if (buf->priv.x.mask)
-	  obr->mxcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
+	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 							      1,
 							      w,
 							      h,
@@ -763,7 +763,7 @@ evas_software_xcb_outbuf_perf_deserialize_x(Outbuf_Perf *perf,
 }
 
 Outbuf_Perf *
-evas_software_xcb_generate_id_x(xcb_connection_t *conn,
+evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
 				    xcb_drawable_t    draw,
 				    xcb_visualtype_t *vis,
 				    xcb_colormap_t    cmap,
@@ -967,7 +967,7 @@ evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
    xcb_atom_t                type, format;
    Outbuf_Perf              *perf;
 
-   perf = evas_software_xcb_generate_id_x(conn, draw, vis, cmap, x_depth);
+   perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
 
    type_str = "__EVAS_PERF_ENGINE_SOFTWARE";
    type_rep = xcb_intern_atom_reply(conn,
@@ -1036,7 +1036,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
    int                          w, h;
    int                          do_shm = 0;
 
-   perf = evas_software_xcb_generate_id_x(conn, draw, vis, cmap, x_depth);
+   perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
 
    mask = XCB_CW_BACK_PIXMAP  | XCB_CW_BORDER_PIXEL |
      XCB_CW_BIT_GRAVITY       | XCB_CW_BACKING_STORE |
@@ -1100,7 +1100,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
 	     t0 = _evas_get_time();
 	     for (l = 0; l < loops; l++)
 	       {
-		  xcbob = evas_software_xcb_generate_id(conn,
+		  xcbob = evas_software_xcb_x_output_buffer_new(conn,
 								x_depth,
 								i, i,
 								do_shm,
@@ -1126,7 +1126,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
 	     t0 = _evas_get_time();
 	     for (l = 0; l < loops; l++)
 	       {
-		  xcbob = evas_software_xcb_generate_id(conn,
+		  xcbob = evas_software_xcb_x_output_buffer_new(conn,
 								x_depth,
 								i, i,
 								0,

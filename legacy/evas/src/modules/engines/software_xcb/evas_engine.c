@@ -186,7 +186,7 @@ _best_depth_get(xcb_connection_t *conn, int screen)
 static Evas_Performance *
 _output_perf_new(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
 {
-   return evas_software_xcb_generate_id_x(conn, draw, vis, cmap, depth);
+   return evas_software_xcb_outbuf_perf_x(conn, draw, vis, cmap, depth);
    e = NULL;
 }
 
@@ -414,7 +414,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 	re->end = 1;
      }
 
-   surface = evas_software_xcb_generate_id_region_for_update(re->ob,
+   surface = evas_software_xcb_outbuf_new_region_for_update(re->ob,
 							    ux, uy, uw, uh,
 							    cx, cy, cw, ch);
    *x = ux; *y = uy; *w = uw; *h = uh;
