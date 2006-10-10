@@ -29,9 +29,9 @@ _xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
      {
 	fs = fg->ext_dat;
 	if ((fs->xcbinf->conn == xcbinf->conn) &&
-            (fs->xcbinf->root.window.xid == xcbinf->root.window.xid))
+            (fs->xcbinf->root == xcbinf->root))
 	  return fs;
-	snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
+	snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root);
 	pool = evas_hash_find(_xr_fg_pool, buf);
 	if (pool)
 	  {
@@ -50,20 +50,20 @@ _xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
    fs->w = w;
    fs->h = h;
    
-   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
+   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root);
    pool = evas_hash_find(_xr_fg_pool, buf);
    snprintf(buf2, sizeof(buf2), "%p", fg);
    pool = evas_hash_add(pool, buf2, fs);
    _xr_fg_pool = evas_hash_add(_xr_fg_pool, buf, pool);
 
-   fs->draw.pixmap = xcb_pixmap_new(xcbinf->conn);
-   xcb_create_pixmap(xcbinf->conn, xcbinf->fmt8->depth, fs->draw.pixmap, xcbinf->root, w, h);
+   fs->draw = xcb_generate_id(xcbinf->conn);
+   xcb_create_pixmap(xcbinf->conn, xcbinf->fmt8->depth, fs->draw, xcbinf->root, w, h);
 
    mask = XCB_RENDER_CP_REPEAT | XCB_RENDER_CP_DITHER | XCB_RENDER_CP_COMPONENT_ALPHA;
    values[0] = 0;
    values[1] = 0;
    values[2] = 0;
-   fs->pic = xcb_render_picture_new(xcbinf->conn);
+   fs->pic = xcb_generate_id(xcbinf->conn);
    xcb_render_create_picture(xcbinf->conn, fs->pic, fs->draw, xcbinf->fmt8->id, mask, values);
    
    xcim = _xr_image_new(fs->xcbinf, w, h, xcbinf->fmt8->depth);
@@ -137,7 +137,7 @@ _xre_font_pool_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
    
    fs = fdata;
    pool = data;
-   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root.window.xid);
+   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xcbinf->conn, fs->xcbinf->root);
    pool = evas_hash_del(pool, buf, fs);
    hash = evas_hash_modify(hash, key, pool);
    return 1;
@@ -148,7 +148,7 @@ _xre_font_surface_free(XR_Font_Surface *fs)
 {
    if (!fs) return;
    evas_hash_foreach(_xr_fg_pool, _xre_font_pool_cb, fs);
-   xcb_free_pixmap(fs->xcbinf->conn, fs->draw.pixmap);
+   xcb_free_pixmap(fs->xcbinf->conn, fs->draw);
    xcb_render_free_picture(fs->xcbinf->conn, fs->pic);
    _xr_image_info_free(fs->xcbinf);
    free(fs);

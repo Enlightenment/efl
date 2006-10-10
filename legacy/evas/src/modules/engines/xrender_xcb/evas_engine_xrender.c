@@ -2,7 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include "evas_common.h"
-#include "evas_macros.h"
+/* #include "evas_macros.h" */
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "Evas_Engine_XRender_Xcb.h"
@@ -50,18 +50,18 @@ xcb_render_find_visual_format (xcb_connection_t *c, xcb_visualid_t visual)
 
       visual_iter = xcb_render_pictdepth_visuals_iterator (depth_iter.data);
       for (; visual_iter.rem; xcb_render_pictvisual_next (&visual_iter)) {
-        if (visual.id == visual_iter.data->visual.id) {
+        if (visual == visual_iter.data->visual) {
           format = visual_iter.data->format;
         }
       }
     }
   }
-  if (format.xid != 0) {
+  if (format != 0) {
     xcb_render_pictforminfo_iterator_t forminfo_iter;
 
     forminfo_iter = xcb_render_query_pict_formats_formats_iterator (rep);
     for (; forminfo_iter.rem; xcb_render_pictforminfo_next (&forminfo_iter)) {
-      if (forminfo_iter.data->id.xid == format.xid) {
+      if (forminfo_iter.data->id == format) {
         xcb_render_pictforminfo_t *forminfo;
 
         forminfo = (xcb_render_pictforminfo_t *)malloc (sizeof (xcb_render_pictforminfo_t));
@@ -95,9 +95,9 @@ _xr_render_surface_new(Xcb_Image_Info *xcbinf, int w, int h, xcb_render_pictform
    rs->alpha = alpha;
    rs->depth = fmt->depth;
    rs->allocated = 1;
-   rs->draw.pixmap = xcb_pixmap_new(xcbinf->conn);
-   xcb_create_pixmap(xcbinf->conn, fmt->depth, rs->draw.pixmap, xcbinf->root, w, h);
-   if (rs->draw.pixmap.xid == 0)
+   rs->draw = xcb_generate_id(xcbinf->conn);
+   xcb_create_pixmap(xcbinf->conn, fmt->depth, rs->draw, xcbinf->root, w, h);
+   if (rs->draw == 0)
      {
        free(rs);
        return NULL;
@@ -107,11 +107,11 @@ _xr_render_surface_new(Xcb_Image_Info *xcbinf, int w, int h, xcb_render_pictform
    values[0] = 0;
    values[1] = 0;
    values[2] = 0;
-   rs->pic = xcb_render_picture_new(xcbinf->conn);
+   rs->pic = xcb_generate_id(xcbinf->conn);
    xcb_render_create_picture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
-   if (rs->pic.xid == 0)
+   if (rs->pic == 0)
      {
-       xcb_free_pixmap(rs->xcbinf->conn, rs->draw.pixmap);
+       xcb_free_pixmap(rs->xcbinf->conn, rs->draw);
        rs->xcbinf->references--;
        free(rs);
        return NULL;
@@ -128,7 +128,7 @@ _xr_render_surface_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int w, int
    uint32_t                   mask;
    uint32_t                   values[3];
 
-   if ((!xcbinf) || (draw.pixmap.xid == 0) || (w < 1) || (h < 1)) return NULL;
+   if ((!xcbinf) || (draw == 0) || (w < 1) || (h < 1)) return NULL;
    fmt = xcb_render_find_visual_format(xcbinf->conn, xcbinf->vis);
    if (!fmt) return NULL;
    rs = calloc(1, sizeof(Xcb_Render_Surface));
@@ -160,9 +160,9 @@ _xr_render_surface_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int w, int
    values[0] = 0;
    values[1] = 0;
    values[2] = 0;
-   rs->pic = xcb_render_picture_new(xcbinf->conn);
+   rs->pic = xcb_generate_id(xcbinf->conn);
    xcb_render_create_picture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
-   if (rs->pic.xid == 0)
+   if (rs->pic == 0)
      {
        rs->xcbinf->references--;
        free(rs);
@@ -179,7 +179,7 @@ _xr_render_surface_format_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int
    uint32_t            mask;
    uint32_t            values[3];
 
-   if ((!xcbinf) || (!fmt) || (draw.pixmap.xid == 0) || (w < 1) || (h < 1)) return NULL;
+   if ((!xcbinf) || (!fmt) || (draw == 0) || (w < 1) || (h < 1)) return NULL;
    rs = calloc(1, sizeof(Xcb_Render_Surface));
    if (!rs) return NULL;
    rs->xcbinf = xcbinf;
@@ -198,7 +198,7 @@ _xr_render_surface_format_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int
    values[2] = 0;
    rs->pic = xcb_render_picture_new(xcbinf->conn);
    xcb_render_create_picture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
-   if (rs->pic.xid == 0)
+   if (rs->pic == 0)
      {
        rs->xcbinf->references--;
        free(rs);
@@ -214,9 +214,9 @@ _xr_render_surface_free(Xcb_Render_Surface *rs)
    if (!rs) return;
    if (rs->xcbinf)
      {
-       if ((rs->allocated) && (rs->draw.pixmap.xid != 0))
-          xcb_free_pixmap(rs->xcbinf->conn, rs->draw.pixmap);
-       if (rs->pic.xid != 0)
+       if ((rs->allocated) && (rs->draw != 0))
+          xcb_free_pixmap(rs->xcbinf->conn, rs->draw);
+       if (rs->pic != 0)
           xcb_render_free_picture(rs->xcbinf->conn, rs->pic);
        _xr_image_info_free(rs->xcbinf);
        rs->xcbinf = NULL;
@@ -437,7 +437,8 @@ _xr_render_surface_clips_set(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int 
 }
 
 /* initialized the transform to the identity */
-static void init_transform (xcb_render_transform_t *t)
+static void
+init_transform (xcb_render_transform_t *t)
 {
    t->matrix11 = t->matrix22 = t->matrix33 = DOUBLE_TO_FIXED(1);
 
@@ -445,38 +446,82 @@ static void init_transform (xcb_render_transform_t *t)
    t->matrix31 = t->matrix32 = 0;
 }
 
+static void
+set_transform_scale(xcb_render_transform_t *t,
+                    int                     sw,
+                    int                     sh,
+                    int                     w,
+                    int                     h)
+{
+   if ((sw > 1) && (w > 1))
+     { sw--;  w--; }
+   if ((sh > 1) && (h > 1))
+     { sh--;  h--; }
+   t->matrix11 = DOUBLE_TO_FIXED((double)sw / (double)w);
+   t->matrix22 = DOUBLE_TO_FIXED((double)sh / (double)h);
+}
+
 // when color multiplier is used want: instead
 // CA src IN mask SRC temp; non-CA temp OVER dst. - i think. need to check.
 void
-_xr_render_surface_composite(Xcb_Render_Surface *srs, Xcb_Render_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth)
+_xr_render_surface_composite(Xcb_Render_Surface *srs,
+                             Xcb_Render_Surface *drs,
+                             RGBA_Draw_Context  *dc,
+                             int                 sx,
+                             int                 sy,
+                             int                 sw,
+                             int                 sh,
+                             int                 x,
+                             int                 y,
+                             int                 w,
+                             int                 h,
+                             int                 smooth)
 {
    Xcb_Render_Surface    *trs = NULL;
    xcb_render_transform_t xf;
-   xcb_render_picture_t   mask;
+   xcb_render_picture_t   mask = XCB_NONE;
    uint32_t               value_mask;
    uint32_t               value_list[1];
-   int                    r, g, b, a;
-   int                    op, is_scaling;
+   int                    e, is_scaling;
+   xcb_render_pict_op_t   op;
 
-   if ((sw <= 0) || (sh <= 0) || (w <= 0) || (h <= 0)) return;
+   if ((sw < 1) || (sh < 1) || (w < 1) || (h < 1)) return;
 
-   is_scaling = (sw != w) || (sh != h);
+   is_scaling = e = (sw != w) || (sh != h);
 
    value_mask = XCB_RENDER_CP_CLIP_MASK;
    value_list[0] = 0;
    xcb_render_change_picture(srs->xcbinf->conn, srs->pic, value_mask, value_list);
-   xcb_render_change_picture(srs->xcbinf->conn, drs->pic, value_mask, value_list);
+   xcb_render_change_picture(drs->xcbinf->conn, drs->pic, value_mask, value_list);
 
-   op = XCB_RENDER_PICT_OP_SRC;
-   if (srs->alpha) op = XCB_RENDER_PICT_OP_OVER;
-   mask.xid = 0;
+   init_transform(&xf);
+
+   op = XCB_RENDER_PICT_OP_OVER;
+   if (dc->render_op == _EVAS_RENDER_BLEND)
+     {
+       if (!srs->alpha) op = XCB_RENDER_PICT_OP_SRC;
+     }
+   else if (dc->render_op == _EVAS_RENDER_BLEND_REL)
+       op = XCB_RENDER_PICT_OP_ATOP;
+   else if (dc->render_op == _EVAS_RENDER_MUL)
+       op = XCB_RENDER_PICT_OP_IN;
+   else if (dc->render_op == _EVAS_RENDER_COPY)
+       op = XCB_RENDER_PICT_OP_SRC;
+   else if (dc->render_op == _EVAS_RENDER_COPY_REL)
+       op = XCB_RENDER_PICT_OP_IN;
+   else if (dc->render_op == _EVAS_RENDER_MASK)
+       op = XCB_RENDER_PICT_OP_IN_REVERSE;
+
    if ((dc) && (dc->mul.use))
      {
-       r = (int)(R_VAL(&dc->mul.col));
-       g = (int)(G_VAL(&dc->mul.col));
-       b = (int)(B_VAL(&dc->mul.col));
-       a = (int)(A_VAL(&dc->mul.col));
-       if ((r != 0xff) || (g != 0xff) || (b != 0xff) || (a != 0xff))
+       int r, g, b, a;
+
+       if ((op == XCB_RENDER_PICT_OP_OVER) && (!dc->mul.col)) return;
+       a = dc->mul.col >> 24;
+       r = (dc->mul.col >> 16) & 0xff;
+       g = (dc->mul.col >> 8) & 0xff;
+       b = dc->mul.col & 0xff;
+       if (dc->mul.col != 0xffffffff)
          {
             if ((srs->xcbinf->mul_r != r) || (srs->xcbinf->mul_g != g) ||
                 (srs->xcbinf->mul_b != b) || (srs->xcbinf->mul_a != a))
@@ -492,91 +537,118 @@ _xr_render_surface_composite(Xcb_Render_Surface *srs, Xcb_Render_Surface *drs, R
                                                         a,
                                                         0, 0, 1, 1);
               }
-            op = XCB_RENDER_PICT_OP_OVER;
-            value_mask = XCB_RENDER_CP_COMPONENT_ALPHA;
-            value_list[0] = 1;
             mask = srs->xcbinf->mul->pic;
-            xcb_render_change_picture(srs->xcbinf->conn, mask, value_mask, value_list);
-            if ((r == 0xff) && (g == 0xff) && (b == 0xff) && (a != 0xff))
+            if (dc->mul.col == (a * 0x01010101))
               {
+                 value_mask = XCB_RENDER_CP_COMPONENT_ALPHA;
+                 value_list[0] = 0;
+                 xcb_render_change_picture(srs->xcbinf->conn, mask, value_mask, value_list);
               }
             else
               {
                  if ((srs->alpha) || (a != 0xff))
-                   trs = _xr_render_surface_new(srs->xcbinf, sw + 1, sh + 1,
+                   trs = _xr_render_surface_new(srs->xcbinf, sw + e, sh + e,
                                                 srs->xcbinf->fmt32, 1);
-                 /* trs = _xr_render_surface_new(srs->xcbinf, sw, sh,
-                                                srs->xcbinf->fmt32, 1); */
                  else
-                   trs = _xr_render_surface_new(srs->xcbinf, sw + 1, sh + 1,
+                   trs = _xr_render_surface_new(srs->xcbinf, sw + e, sh + e,
                                                 srs->fmt, srs->alpha);
-                 /* trs = _xr_render_surface_new(srs->xcbinf, sw, sh,
-                                                srs->fmt, srs->alpha); */
+                 if (!trs) return;
+
+                 value_mask = XCB_RENDER_CP_COMPONENT_ALPHA;
+                 value_list[0] = 0;
+                 xcb_render_change_picture(srs->xcbinf->conn, mask, value_mask, value_list);
+                 xcb_render_set_picture_transform(trs->xcbinf->conn, srs->pic, xf);
                  xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, trs->pic,
-                                    sx, sy, 0, 0, 0, 0, sw, sh);
-		  /* fill right and bottom pixel so interpolation works right */
-                 xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, trs->pic,
-                                    sx + sw, sy, 0, 0, sw, 0, 1, sh);
-                 xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, trs->pic,
-                                    sx, sy + sh, 0, 0, 0, sh, sw + 1, 1);
-                 xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, trs->pic,
-                                    sx + sw, sy, 0, 0, sw, 0, 1, sh);
-                 mask.xid = 0;
+                                      sx, sy, 0, 0, 0, 0, sw, sh);
+                 /* fill right and bottom pixel so interpolation works right */
+		  if (e)
+		    {
+                       xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, trs->pic,
+                                            sx + sw - 1, sy, 0, 0, sw, 0, 1, sh);
+                       xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, trs->pic,
+                                            sx, sy + sh - 1, 0, 0, 0, sh, sw, 1);
+                       xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, trs->pic,
+                                            sx + sw - 1, sy + sh - 1, 0, 0, sw, sh, 1, 1);
+                    }
+                  mask = XCB_NONE;
               }
          }
      }
 
-   /*
-   sf = MAX(sw, sh);
-#define BMAX 26
-   if      (sf <= 8    ) sf = 1 << (BMAX - 3);
-   else if (sf <= 16   ) sf = 1 << (BMAX - 4);
-   else if (sf <= 32   ) sf = 1 << (BMAX - 5);
-   else if (sf <= 64   ) sf = 1 << (BMAX - 6);
-   else if (sf <= 128  ) sf = 1 << (BMAX - 7);
-   else if (sf <= 256  ) sf = 1 << (BMAX - 8);
-   else if (sf <= 512  ) sf = 1 << (BMAX - 9);
-   else if (sf <= 1024 ) sf = 1 << (BMAX - 10);
-   else if (sf <= 2048 ) sf = 1 << (BMAX - 11);
-   else if (sf <= 4096 ) sf = 1 << (BMAX - 12);
-   else if (sf <= 8192 ) sf = 1 << (BMAX - 13);
-   else if (sf <= 16384) sf = 1 << (BMAX - 14);
-   else                  sf = 1 << (BMAX - 15);
-   */
-
-   init_transform(&xf);
-
-   /* xf.matrix11 = (sf * sw) / w; */
-   xf.matrix11 = DOUBLE_TO_FIXED((double) sw / (double) w);
-
-   /* xf.matrix22 = (sf * sh) / h; */
-   xf.matrix22 = DOUBLE_TO_FIXED((double) sh / (double) h);
-
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    if (trs)
      {
-	if (is_scaling)
-	  set_filter(trs, smooth);
+        set_filter(trs, smooth);
 
-       xcb_render_set_picture_transform(trs->xcbinf->conn, trs->pic, xf);
+        set_transform_scale(&xf, sw, sh, w, h);
+        xcb_render_set_picture_transform(trs->xcbinf->conn, trs->pic, xf);
 
-       xcb_render_composite(srs->xcbinf->conn, op, trs->pic, mask, drs->pic,
-                          0, 0, 0, 0, x, y, w, h);
-       _xr_render_surface_free(trs);
+        value_mask = XCB_RENDER_CP_COMPONENT_ALPHA;
+        value_list[0] = 0;
+	if (dc->render_op == _EVAS_RENDER_MUL)
+           value_list[0] = 1;
+        xcb_render_change_picture(trs->xcbinf->conn, trs->pic, value_mask, value_list);
+
+        xcb_render_composite(trs->xcbinf->conn, op, trs->pic, mask, drs->pic,
+                             0, 0, 0, 0, x, y, w, h);
+        _xr_render_surface_free(trs);
      }
    else
      {
-	if (is_scaling)
-	  set_filter(srs, smooth);
+        if (srs->bordered && is_scaling)
+	  {
+	    trs = _xr_render_surface_new(srs->xcbinf, sw + 1, sh + 1,
+					 srs->fmt, srs->alpha);
+	    if (!trs) return;
 
-       xcb_render_set_picture_transform(srs->xcbinf->conn, srs->pic, xf);
+            value_mask = XCB_RENDER_CP_COMPONENT_ALPHA;
+            value_list[0] = 0;
+            xcb_render_change_picture(srs->xcbinf->conn, srs->pic, value_mask, value_list);
+            xcb_render_set_picture_transform(srs->xcbinf->conn, srs->pic, xf);
+            xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, XCB_NONE, trs->pic,
+                                 sx, sy, 0, 0, 0, 0, sw, sh);
 
-       xcb_render_composite(srs->xcbinf->conn, op, srs->pic, mask, drs->pic,
-                          /* (sx * w) / sw,
-                             (sy * h) / sh, */
-                          ((sx * w) + (sw / 2)) / sw,
-                          ((sy * h) + (sh / 2)) / sh,
-                          0, 0, x, y, w, h);
+            xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, XCB_NONE, trs->pic,
+                                 sx + sw - 1, sy, 0, 0, sw, 0, 1, sh);
+            xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, XCB_NONE, trs->pic,
+                                 sx, sy + sh - 1, 0, 0, 0, sh, sw, 1);
+            xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, XCB_NONE, trs->pic,
+                                 sx + sw - 1, sy + sh - 1, 0, 0, sw, sh, 1, 1);
+
+            set_filter(trs, smooth);
+
+	    set_transform_scale(&xf, sw, sh, w, h);
+            xcb_render_set_picture_transform(trs->xcbinf->conn, trs->pic, xf);
+
+	    if (dc->render_op == _EVAS_RENDER_MUL)
+	      {
+                 value_mask = XCB_RENDER_CP_COMPONENT_ALPHA;
+                 value_list[0] = 1;
+                 xcb_render_change_picture(trs->xcbinf->conn, trs->pic, value_mask, value_list);
+	      }
+
+            xcb_render_composite(trs->xcbinf->conn, op, trs->pic, mask, drs->pic,
+                                 0, 0, 0, 0, x, y, w, h);
+	    _xr_render_surface_free(trs);
+	  }
+	else
+	  {
+            set_filter(srs, smooth);
+
+	    set_transform_scale(&xf, sw, sh, w, h);
+            xcb_render_set_picture_transform(srs->xcbinf->conn, srs->pic, xf);
+
+            value_mask = XCB_RENDER_CP_COMPONENT_ALPHA;
+            value_list[0] = 0;
+	    if (dc->render_op == _EVAS_RENDER_MUL)
+               value_list[0] = 1;
+            xcb_render_change_picture(srs->xcbinf->conn, srs->pic, value_mask, value_list);
+
+            xcb_render_composite(srs->xcbinf->conn, op, srs->pic, mask, drs->pic,
+			     ((sx * w) + (sw / 2)) / sw, 
+			     ((sy * h) + (sh / 2)) / sh,
+			     0, 0, x, y, w, h);
+	  }
       }
 }
 
@@ -584,61 +656,80 @@ void
 _xr_render_surface_copy(Xcb_Render_Surface *srs, Xcb_Render_Surface *drs, int sx, int sy, int x, int y, int w, int h)
 {
    xcb_render_transform_t xf;
-   xcb_render_picture_t   mask = { 0 };
    uint32_t               value_mask;
    uint32_t               value_list[1];
 
    if ((w < 1) || (h < 1) || (!srs) || (!drs)) return;
 
+   init_transform(&xf);
 #ifdef BROKEN_XORG_XRENDER
    /* FIXME: why do we need to change the identity matrix if the src surface
     *        is 1 bit deep?
     */
    if (srs->depth == 1)
      {
-	init_transform(&xf);
 	xf.matrix11 = xf.matrix22 = xf.matrix33 = 1;
-	xcb_render_set_picture_transform(srs->xcbinf->conn, srs->pic, xf);
      }
 #endif
+   xcb_render_set_picture_transform(srs->xcbinf->conn, srs->pic, xf);
+/*    set_filter(srs, 0); */
 
    value_mask = XCB_RENDER_CP_CLIP_MASK;
    value_list[0] = 0;
    xcb_render_change_picture(srs->xcbinf->conn, srs->pic, value_mask, value_list);
-   xcb_render_change_picture(srs->xcbinf->conn, drs->pic, value_mask, value_list);
+   xcb_render_change_picture(drs->xcbinf->conn, drs->pic, value_mask, value_list);
 
-   xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, mask, drs->pic,
-                      sx, sy, 0, 0, x, y, w, h);
+   xcb_render_composite(srs->xcbinf->conn, XCB_RENDER_PICT_OP_SRC, srs->pic, XCB_NONE, drs->pic,
+                        sx, sy, 0, 0, x, y, w, h);
 }
 
 void
 _xr_render_surface_rectangle_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
-   xcb_render_color_t col;
-   xcb_rectangle_t    rect;
-   uint32_t           value_mask;
-   uint32_t           value_list[1];
-   int                r, g, b, a, aa, op;
+   xcb_render_color_t   col;
+   xcb_rectangle_t      rect;
+   uint32_t             value_mask;
+   uint32_t             value_list;
+   int                  r, g, b, a;
+   xcb_render_pict_op_t op;
 
-   if ((w < 1) || (h < 1) || (!rs) || (!dc)) return;
-   a = (dc->col.col >> 24) & 0xff;
-   if (a == 0) return;
+   if ((!rs) || (!dc)) return;
+   if ((w < 1) || (h < 1)) return;
+   a = dc->col.col >> 24;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
-   aa = a + 1;
-   r = (r * aa) >> 8;
-   g = (g * aa) >> 8;
-   b = (b * aa) >> 8;
    col.red   = (r << 8) | r;
    col.green = (g << 8) | g;
    col.blue  = (b << 8) | b;
    col.alpha = (a << 8) | a;
+
    op = XCB_RENDER_PICT_OP_SRC;
-   if (a < 0xff) op = XCB_RENDER_PICT_OP_OVER;
+   if (dc->render_op == _EVAS_RENDER_BLEND)
+     {
+	if (!dc->col.col) return;
+	if (a == 0xff) op = XCB_RENDER_PICT_OP_SRC;
+     }
+   else if (dc->render_op == _EVAS_RENDER_BLEND_REL)
+     {
+	if (!dc->col.col) return;
+	op = XCB_RENDER_PICT_OP_ATOP;
+     }
+   else if (dc->render_op == _EVAS_RENDER_MUL)
+     {
+	if (dc->col.col == 0xffffffff) return;
+	op = XCB_RENDER_PICT_OP_IN;
+     }
+   else if (dc->render_op == _EVAS_RENDER_COPY)
+	op = XCB_RENDER_PICT_OP_SRC;
+   else if (dc->render_op == _EVAS_RENDER_COPY_REL)
+	op = XCB_RENDER_PICT_OP_IN;
+   else if (dc->render_op == _EVAS_RENDER_MASK)
+	op = XCB_RENDER_PICT_OP_IN_REVERSE;
+
    value_mask = XCB_RENDER_CP_CLIP_MASK;
-   value_list[0] = 0;
-   xcb_render_change_picture(rs->xcbinf->conn, rs->pic, value_mask, value_list);
+   value_list = 0;
+   xcb_render_change_picture(rs->xcbinf->conn, rs->pic, value_mask, &value_list);
 
    _xr_render_surface_clips_set(rs, dc, x, y, w, h);
    rect.x = x;

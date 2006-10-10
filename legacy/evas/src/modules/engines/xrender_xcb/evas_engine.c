@@ -170,14 +170,14 @@ eng_setup(Evas *e, void *in)
 
    if (re->output) _xr_render_surface_free(re->output);
    if (re->mask_output) _xr_render_surface_free(re->mask_output);
-   if (!re->mask.xid)
+   if (!re->mask)
      re->output = _xr_render_surface_adopt(re->xcbinf, re->win, e->output.w, e->output.h, re->destination_alpha);
    else
      re->output = _xr_render_surface_adopt(re->xcbinf, re->win, e->output.w, e->output.h, 0);
-   if (re->mask.xid) {
+   if (re->mask) {
      xcb_drawable_t draw;
 
-     draw.pixmap = re->mask;
+     draw = re->mask;
      re->mask_output = _xr_render_surface_format_adopt(re->xcbinf, draw,
                                                       e->output.w, e->output.h,
                                                       re->xcbinf->fmt1, 1);
@@ -238,7 +238,7 @@ eng_output_resize(void *data, int w, int h)
         xcb_drawable_t draw;
 
 	if (re->mask_output) _xr_render_surface_free(re->mask_output);
-        draw.pixmap = re->mask;
+        draw = re->mask;
 	re->mask_output = _xr_render_surface_format_adopt(re->xcbinf, draw,
 							  w, h,
 							  re->xcbinf->fmt1, 1);
@@ -315,7 +315,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
    *x = ux; *y = uy; *w = uw; *h = uh;
    *cx = 0; *cy = 0; *cw = uw; *ch = uh;
-   if ((re->destination_alpha) || (re->mask.xid))
+   if ((re->destination_alpha) || (re->mask))
      {
 	Xcb_Render_Surface *surface;
 

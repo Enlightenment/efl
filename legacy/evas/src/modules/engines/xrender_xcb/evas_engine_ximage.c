@@ -45,7 +45,7 @@ xcb_render_find_pictforminfo (xcb_connection_t *conn, uint32_t mask, const xcb_r
   iter_forminfo = xcb_render_query_pict_formats_formats_iterator (rep);
   for (; iter_forminfo.rem; xcb_render_pictforminfo_next (&iter_forminfo)) {
     if (mask & xcb_render_pictforminfo_id)
-      if (template->id.xid != iter_forminfo.data->id.xid)
+      if (template->id != iter_forminfo.data->id)
         continue;
     if (mask & xcb_render_pictforminfo_type_t)
       if (template->type != iter_forminfo.data->type)
@@ -78,7 +78,7 @@ xcb_render_find_pictforminfo (xcb_connection_t *conn, uint32_t mask, const xcb_r
       if (template->direct.alpha_mask != iter_forminfo.data->direct.alpha_mask)
         continue;
     if (mask & xcb_render_pictforminfo_colormap_t)
-      if (template->colormap.xid != iter_forminfo.data->colormap.xid)
+      if (template->colormap != iter_forminfo.data->colormap)
         continue;
     if (count-- == 0) {
       xcb_render_pictforminfo_t *forminfo;
@@ -105,7 +105,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
     /* StandardPICTFORMINFOARGB32 */
     {
       {
-        { 0, },                           /* id */
+        0,                                /* id */
         XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         32,                               /* depth */
         { 0, 0 },                         /* pad */
@@ -119,7 +119,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
           24,                             /* direct.alpha_shift */
           0xff                            /* direct.alpha_mask */
         },
-        { 0, }                            /* colormap */
+        0                                 /* colormap */
       },
       xcb_render_pictforminfo_type_t        |
       xcb_render_pictforminfo_depth_t       |
@@ -135,7 +135,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
     /* StandardPICTFORMINFORGB24 */
     {
       {
-        { 0, },                           /* id */
+        0,                                /* id */
         XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         24,                               /* depth */
         { 0, 0 },                         /* pad */
@@ -149,7 +149,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
           0,                              /* direct.alpha_shift */
           0x00                            /* direct.alpha_mask */
         },
-        { 0, }                            /* colormap */
+        0                                 /* colormap */
       },
       xcb_render_pictforminfo_type_t        |
       xcb_render_pictforminfo_depth_t       |
@@ -164,7 +164,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
     /* StandardPICTFORMINFOA8 */
     {
       {
-        { 0, },                           /* id */
+        0,                                /* id */
         XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         8,                                /* depth */
         { 0, 0 },                         /* pad */
@@ -178,7 +178,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
           0,                              /* direct.alpha_shift */
           0xff                            /* direct.alpha_mask */
         },
-        { 0, }                            /* colormap */
+        0                                 /* colormap */
       },
       xcb_render_pictforminfo_type_t        |
       xcb_render_pictforminfo_depth_t       |
@@ -191,7 +191,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
     /* StandardPICTFORMINFOA4 */
     {
       {
-        { 0, },                           /* id */
+        0,                                /* id */
         XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         4,                                /* depth */
         { 0, 0 },                         /* pad */
@@ -205,7 +205,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
           0,                              /* direct.alpha_shift */
           0x0f                            /* direct.alpha_mask */
         },
-        { 0, }                            /* colormap */
+        0                                 /* colormap */
       },
       xcb_render_pictforminfo_type_t        |
       xcb_render_pictforminfo_depth_t       |
@@ -218,7 +218,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
     /* StandardPICTFORMINFOA1 */
     {
       {
-        { 0, },                           /* id */
+        0,                                /* id */
         XCB_RENDER_PICT_TYPE_DIRECT,          /* type */
         1,                                /* depth */
         { 0, 0 },                         /* pad */
@@ -232,7 +232,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
           0,                              /* direct.alpha_shift */
           0x01                            /* direct.alpha_mask */
         },
-        { 0, }                            /* colormap */
+        0                                 /* colormap */
       },
       xcb_render_pictforminfo_type_t        |
       xcb_render_pictforminfo_depth_t       |
@@ -245,9 +245,9 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
   };
   if ((format >= 0) && (format < xcb_render_standard_pictforminfo_count_t))
     forminfo = xcb_render_find_pictforminfo (conn,
-                                          standardFormats[format].mask,
-                                          &standardFormats[format].template,
-                                          0);
+                                             standardFormats[format].mask,
+                                             &standardFormats[format].template,
+                                             0);
   return forminfo;
 }
 
@@ -285,7 +285,7 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
    xcbinf->draw = draw;
    cookie = xcb_get_geometry_unchecked(xcbinf->conn, xcbinf->draw);
    rep = xcb_get_geometry_reply(xcbinf->conn, cookie, NULL);
-   xcbinf->root.window = rep->root;
+   xcbinf->root = rep->root;
    free(rep);
    xcbinf->vis = vis;
    xcbinf->fmt32 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoargb_32_t);
@@ -323,7 +323,7 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
 
               iter_visual = xcb_depth_visuals_iterator (iter_depth.data);
               for (; iter_visual.rem ; xcb_visualtype_next (&iter_visual)) {
-                if (iter_visual.data->visual_id.id == vis.id)
+                if (iter_visual.data->visual_id == vis)
                   xcbinf->depth = iter_depth.data->depth;
               }
             }
@@ -333,7 +333,7 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
 	xcbinf->can_do_shm = 0;
 
 
-        shm_info.shmseg = xcb_shm_seg_new(xcbinf->conn);
+        shm_info.shmseg = xcb_generate_id(xcbinf->conn);
         xcbim = xcb_image_shm_create(xcbinf->conn, xcbinf->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, 1, 1);
         if (xcbim) {
            shm_info.shmid = shmget(IPC_PRIVATE, xcbim->bytes_per_line * xcbim->height, IPC_CREAT | 0777);
@@ -441,7 +441,7 @@ _xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth)
 	     xcbim->shm_info = calloc(1, sizeof(xcb_shm_segment_info_t));
 	     if (xcbim->shm_info)
 	       {
-                  xcbim->shm_info->shmseg = xcb_shm_seg_new(xcbinf->conn);
+                  xcbim->shm_info->shmseg = xcb_generate_id(xcbinf->conn);
 		  xcbim->xcbim = xcb_image_shm_create(xcbim->xcbinf->conn, xcbim->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, xcbim->w, xcbim->h);
 		  if (xcbim->xcbim)
 		    {
@@ -544,7 +544,7 @@ _xr_image_put(Xcb_Image_Image *xcbim, xcb_drawable_t draw, int x, int y, int w, 
    xcb_get_input_focus_reply_t *reply;
    xcb_gcontext_t               gc;
 
-   gc = xcb_gcontext_new(xcbim->xcbinf->conn);
+   gc = xcb_generate_id(xcbim->xcbinf->conn);
    xcb_create_gc(xcbim->xcbinf->conn, gc, draw, 0, NULL);
    if (xcbim->shm_info)
      {

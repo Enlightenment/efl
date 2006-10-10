@@ -75,16 +75,16 @@ _xre_image_load(Xcb_Image_Info *xcbinf, const char *file, const char *key, Evas_
    if (!lo)
      {
 	if (key)
-	  snprintf(buf, sizeof(buf), "/@%p@%x@/%s//://%s", xcbinf->conn, xcbinf->root.window.xid, file, key);
+	  snprintf(buf, sizeof(buf), "/@%p@%x@/%s//://%s", xcbinf->conn, xcbinf->root, file, key);
 	else
-	  snprintf(buf, sizeof(buf), "/@%p@%x@/%s", xcbinf->conn, xcbinf->root.window.xid, file);
+	  snprintf(buf, sizeof(buf), "/@%p@%x@/%s", xcbinf->conn, xcbinf->root, file);
      }
    else
      {
 	if (key)
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//@%p@%x@/%s//://%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, xcbinf->conn, xcbinf->root.window.xid, file, key);
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//@%p@%x@/%s//://%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, xcbinf->conn, xcbinf->root, file, key);
 	else
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//@%p@%x@/%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, xcbinf->conn, xcbinf->root.window.xid, file);
+	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//@%p@%x@/%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, xcbinf->conn, xcbinf->root, file);
      }
    im = __xre_image_find(buf);
    if (im)
