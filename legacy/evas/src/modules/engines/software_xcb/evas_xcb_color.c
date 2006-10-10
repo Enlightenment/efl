@@ -361,7 +361,7 @@ evas_software_xcb_x_color_allocate(xcb_connection_t   *conn,
 	palpriv = pal->data;
 	if ((conn == palpriv->conn) &&
 	    (vis  == palpriv->vis)  &&
-	    (cmap.xid == palpriv->cmap.xid))
+	    (cmap == palpriv->cmap))
 	  {
 	     pal->references++;
 	     return pal;

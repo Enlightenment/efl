@@ -104,7 +104,7 @@ main(int argc, char **argv)
    xcb_get_input_focus_reply_t       *reply;
    xcb_screen_t                      *screen = NULL;
    xcb_screen_iterator_t              iter_screen;
-   xcb_drawable_t                     win;
+   xcb_window_t                       win;
    xcb_generic_event_t               *e;
    uint32_t                           mask;
    uint32_t                           value[6];
@@ -145,31 +145,31 @@ main(int argc, char **argv)
    value[2] = XCB_GRAVITY_BIT_FORGET;
    value[3] = XCB_BACKING_STORE_NOT_USEFUL;
    value[4] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
-   value[5] = screen->default_colormap.xid;
+   value[5] = screen->default_colormap;
 
-   win.window = xcb_window_new(conn);
+   win = xcb_generate_id (conn);
    xcb_create_window (conn,
-		    screen->root_depth,
-		    win.window, screen->root,
-		    0, 0,
-		    win_w, win_h,
-		    0,
-		    XCB_WINDOW_CLASS_INPUT_OUTPUT,
-		    screen->root_visual,
-		    mask, value);
-   title_set (conn, win.window, "Evas XRender Xcb Test");
-   class_set (conn, win.window, "Evas_XRender_XCB_Test", "Main");
+                      screen->root_depth,
+                      win, screen->root,
+                      0, 0,
+                      win_w, win_h,
+                      0,
+                      XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                      screen->root_visual,
+                      mask, value);
+   title_set (conn, win, "Evas XRender Xcb Test");
+   class_set (conn, win, "Evas_XRender_XCB_Test", "Main");
 #if 0
    szhints.flags = PMinSize | PMaxSize | PSize | USSize;
    szhints.min_width = szhints.max_width = win_w;
    szhints.min_height = szhints.max_height = win_h;
    XSetWMNormalHints(disp, win, &szhints);
 #endif
-   xcb_map_window (conn, win.window);
+   xcb_map_window (conn, win);
    /* we sync */
    reply = xcb_get_input_focus_reply(conn,
-                                 xcb_get_input_focus_unchecked(conn),
-                                 NULL);
+                                     xcb_get_input_focus_unchecked(conn),
+                                     NULL);
    free(reply);
 
    /* test evas_free....  :) */
@@ -194,7 +194,7 @@ main(int argc, char **argv)
    orig_start_time = start_time = get_time();
    while (1)
      {
-       e = xcb_poll_for_event(conn, NULL);
+       e = xcb_poll_for_event(conn);
 
        if (e) {
 	 switch (e->response_type)
@@ -202,7 +202,7 @@ main(int argc, char **argv)
 	   case XCB_BUTTON_PRESS: {
 	     xcb_button_press_event_t *ev = (xcb_button_press_event_t *)e;
 
-	     if (ev->detail.id == 3)
+	     if (ev->detail == 3)
                {
                  free(e);
                  goto exit;

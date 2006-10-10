@@ -25,7 +25,7 @@ visualtype_get(xcb_connection_t *conn, xcb_screen_t *screen)
         iter_vis = xcb_depth_visuals_iterator(iter_depth.data);
         for (; iter_vis.rem; --screen, xcb_visualtype_next (&iter_vis))
           {
-            if (screen->root_visual.id == iter_vis.data->visual_id.id)
+            if (screen->root_visual == iter_vis.data->visual_id)
               return iter_vis.data;
           }
      }
@@ -121,14 +121,14 @@ main(int argc, char **argv)
    int                                pause_me = 0;
    xcb_connection_t                  *conn;
    const xcb_query_extension_reply_t *rep_shm;
-   xcb_get_input_focus_reply_t        *reply;
-   xcb_screen_t                       *screen = NULL;
-   xcb_screen_iterator_t               iter_screen;
-   xcb_drawable_t                      win;
-   xcb_generic_event_t                *e;
-   uint32_t                            mask;
-   uint32_t                            value[6];
-   int                                 screen_nbr;
+   xcb_get_input_focus_reply_t       *reply;
+   xcb_screen_t                      *screen = NULL;
+   xcb_screen_iterator_t              iter_screen;
+   xcb_window_t                       win;
+   xcb_generic_event_t               *e;
+   uint32_t                           mask;
+   uint32_t                           value[6];
+   int                                screen_nbr;
 
    conn = xcb_connect (NULL, &screen_nbr);
    if (!conn)
@@ -163,12 +163,12 @@ main(int argc, char **argv)
    value[2] = XCB_GRAVITY_BIT_FORGET;
    value[3] = XCB_BACKING_STORE_NOT_USEFUL;
    value[4] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
-   value[5] = screen->default_colormap.xid;
+   value[5] = screen->default_colormap;
 
-   win.window = xcb_window_new(conn);
+   win = xcb_generate_id (conn);
    xcb_create_window (conn,
                       screen->root_depth,
-                      win.window, screen->root,
+                      win, screen->root,
                       0, 0,
                       win_w, win_h,
                       0,
@@ -176,8 +176,8 @@ main(int argc, char **argv)
                       screen->root_visual,
                       mask, value);
 
-   title_set (conn, win.window, "Evas Software XCB Test");
-   class_set (conn, win.window, "Evas_Software_XCB_Test", "Main");
+   title_set (conn, win, "Evas Software XCB Test");
+   class_set (conn, win, "Evas_Software_XCB_Test", "Main");
 #if 0
    szhints = AllocSizeHints();
    SizeHintsSetMinSize(szhints, win_w, win_h);
@@ -186,7 +186,7 @@ main(int argc, char **argv)
    SetWMNormalHints(conn, win.window, szhints);
    FreeSizeHints(szhints);
 #endif
-   xcb_map_window (conn, win.window);
+   xcb_map_window (conn, win);
    /* we sync */
    reply = xcb_get_input_focus_reply(conn,
                                      xcb_get_input_focus_unchecked(conn),
@@ -319,7 +319,7 @@ main(int argc, char **argv)
 
    while (1)
      {
-       e = xcb_poll_for_event(conn, NULL);
+       e = xcb_poll_for_event(conn);
 
        if (e) {
 	 switch (e->response_type)
@@ -327,7 +327,7 @@ main(int argc, char **argv)
 	   case XCB_BUTTON_PRESS: {
 	     xcb_button_press_event_t *ev = (xcb_button_press_event_t *)e;
 
-	     if (ev->detail.id == 3)
+	     if (ev->detail == 3)
 	       {
                  free(e);
 		 goto exit;

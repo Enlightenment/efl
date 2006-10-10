@@ -17,7 +17,7 @@ evas_software_xcb_outbuf_free(Outbuf * buf)
 {
    evas_software_xcb_outbuf_flush(buf);
    xcb_free_gc(buf->priv.x.conn, buf->priv.x.gc);
-   if (buf->priv.x.gcm.xid)
+   if (buf->priv.x.gcm)
       xcb_free_gc(buf->priv.x.conn, buf->priv.x.gcm);
    if (buf->priv.pal)
      evas_software_xcb_x_color_deallocate(buf->priv.x.conn,
@@ -75,7 +75,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
       Xcb_Output_Buffer  *xcbob;
 
       buf->priv.x.shm = evas_software_xcb_x_can_do_shm(buf->priv.x.conn);
-      xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
+      xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
 						    buf->priv.x.depth,
 						    1, 1,
 						    buf->priv.x.shm, NULL);
@@ -258,7 +258,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
 }
 
 RGBA_Image *
-evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
+evas_software_xcb_generate_id_region_for_update(Outbuf *buf,
 					       int     x,
 					       int     y,
 					       int     w,
@@ -305,15 +305,15 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 	im->image->data = NULL;
 	im->image->no_free = 1;
 	im->extended_info = obr;
-	obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
+	obr->xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
 							   buf->priv.x.depth,
 							   w,
 							   h,
 							   use_shm,
 							   NULL);
 	im->image->data = (DATA32 *)evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
-	if (buf->priv.x.mask.pixmap.xid)
-	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
+	if (buf->priv.x.mask)
+	  obr->mxcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
 							      1,
 							      w,
 							      h,
@@ -325,28 +325,28 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
         im = evas_common_image_create(w, h);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
-	   obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
+	   obr->xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
 							      buf->priv.x.depth,
 							      w,
 							      h,
 							      use_shm,
 							      NULL);
 	else if ((buf->rot == 90) || (buf->rot == 270))
-	  obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
+	  obr->xcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
 							     buf->priv.x.depth,
 							     h,
 							     w,
 							     use_shm,
 							     NULL);
-	if (buf->priv.x.mask.pixmap.xid)
-	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
+	if (buf->priv.x.mask)
+	  obr->mxcbob = evas_software_xcb_generate_id(buf->priv.x.conn,
 							      1,
 							      w,
 							      h,
 							      use_shm,
 							      NULL);
      }
-   if ((buf->priv.x.mask.pixmap.xid) || (buf->priv.destination_alpha))
+   if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
      {
 	im->flags |= RGBA_IMAGE_HAS_ALPHA;
 	/* FIXME: faster memset! */
@@ -596,14 +596,14 @@ void
 evas_software_xcb_outbuf_drawable_set(Outbuf        *buf,
 				      xcb_drawable_t draw)
 {
-   if (buf->priv.x.win.window.xid == draw.window.xid) return;
-   if (buf->priv.x.gc.xid)
+   if (buf->priv.x.win == draw) return;
+   if (buf->priv.x.gc)
      {
 	xcb_free_gc(buf->priv.x.conn, buf->priv.x.gc);
-	buf->priv.x.gc.xid = 0;
+	buf->priv.x.gc = 0;
      }
    buf->priv.x.win = draw;
-   buf->priv.x.gc = xcb_gcontext_new(buf->priv.x.conn);
+   buf->priv.x.gc = xcb_generate_id(buf->priv.x.conn);
    xcb_create_gc(buf->priv.x.conn, buf->priv.x.gc, buf->priv.x.win, 0, NULL);
 }
 
@@ -611,16 +611,16 @@ void
 evas_software_xcb_outbuf_mask_set(Outbuf        *buf,
 				  xcb_drawable_t mask)
 {
-   if (buf->priv.x.mask.pixmap.xid == mask.pixmap.xid) return;
-   if (buf->priv.x.gcm.xid)
+   if (buf->priv.x.mask == mask) return;
+   if (buf->priv.x.gcm)
      {
 	xcb_free_gc(buf->priv.x.conn, buf->priv.x.gcm);
-	buf->priv.x.gcm.xid = 0;
+	buf->priv.x.gcm = 0;
      }
    buf->priv.x.mask = mask;
-   if (buf->priv.x.mask.pixmap.xid)
+   if (buf->priv.x.mask)
       {
-	 buf->priv.x.gcm = xcb_gcontext_new(buf->priv.x.conn);
+	 buf->priv.x.gcm = xcb_generate_id(buf->priv.x.conn);
 	 xcb_create_gc(buf->priv.x.conn, buf->priv.x.gcm, buf->priv.x.win, 0, NULL);
       }
 }
@@ -649,13 +649,13 @@ evas_software_xcb_outbuf_debug_show(Outbuf        *buf,
       xcb_screen_iterator_t     i;
 
       geom = xcb_get_geometry_reply (buf->priv.x.conn, xcb_get_geometry_unchecked(buf->priv.x.conn, draw), 0);
-      root.window = geom->root;
+      root = geom->root;
       free (geom);
       geom = xcb_get_geometry_reply (buf->priv.x.conn, xcb_get_geometry_unchecked(buf->priv.x.conn, root), 0);
 
       i = xcb_setup_roots_iterator((xcb_setup_t *)xcb_get_setup(buf->priv.x.conn));
       for (; i.rem; xcb_screen_next(&i))
-	 if (i.data->root.xid == geom->root.xid)
+	 if (i.data->root == geom->root)
 	    {
 	       screen = i.data;
 	       break;
@@ -763,7 +763,7 @@ evas_software_xcb_outbuf_perf_deserialize_x(Outbuf_Perf *perf,
 }
 
 Outbuf_Perf *
-evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
+evas_software_xcb_generate_id_x(xcb_connection_t *conn,
 				    xcb_drawable_t    draw,
 				    xcb_visualtype_t *vis,
 				    xcb_colormap_t    cmap,
@@ -780,15 +780,15 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
    perf->x.conn = conn;
 
    /* FIXME: should use the default screen */
-   root.window = xcb_setup_roots_iterator ((xcb_setup_t *)xcb_get_setup (conn)).data->root;
-   if (draw.window.xid)
+   root = xcb_setup_roots_iterator ((xcb_setup_t *)xcb_get_setup (conn)).data->root;
+   if (draw)
      {
 	xcb_get_geometry_reply_t *geom;
         xcb_screen_iterator_t     i;
 	int                       cur;
 
 	geom = xcb_get_geometry_reply (conn, xcb_get_geometry_unchecked(conn, draw), NULL);
-	root.window = geom->root;
+	root = geom->root;
 	free (geom);
 	geom = xcb_get_geometry_reply (conn, xcb_get_geometry_unchecked(conn, root), 0);
 	perf->x.w = (int)geom->width;
@@ -797,7 +797,7 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
 	perf->x.screen_num = 0;
 	i = xcb_setup_roots_iterator((xcb_setup_t *)xcb_get_setup(conn));
 	for (cur = 0; i.rem; xcb_screen_next(&i), ++cur)
-	  if (i.data->root.xid == geom->root.xid)
+	  if (i.data->root == geom->root)
 	    {
 	      perf->x.screen_num = cur;
 	      break;
@@ -881,7 +881,7 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
       perf->cpu.info = strdup("");
    return perf;
    vis = NULL;
-   cmap.xid = 0;
+   cmap = 0;
 }
 
 char *
@@ -942,7 +942,7 @@ evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
    format = STRING;
 
    str = evas_software_xcb_outbuf_perf_serialize_x(perf);
-   xcb_change_property(perf->x.conn, XCB_PROP_MODE_REPLACE, perf->x.root.window,
+   xcb_change_property(perf->x.conn, XCB_PROP_MODE_REPLACE, perf->x.root,
                        type, format, 8,
                        strlen(str), str);
    /* we sync */
@@ -967,7 +967,7 @@ evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
    xcb_atom_t                type, format;
    Outbuf_Perf              *perf;
 
-   perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
+   perf = evas_software_xcb_generate_id_x(conn, draw, vis, cmap, x_depth);
 
    type_str = "__EVAS_PERF_ENGINE_SOFTWARE";
    type_rep = xcb_intern_atom_reply(conn,
@@ -983,14 +983,14 @@ evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
    format = STRING;
    free(type_rep);
 
-   cookie = xcb_get_property_unchecked(conn, 0, perf->x.root.window,
+   cookie = xcb_get_property_unchecked(conn, 0, perf->x.root,
                                        type, format,
                                        0, 16384);
    prop_rep = xcb_get_property_reply(conn, cookie, NULL);
 
    if ((prop_rep) &&
        (prop_rep->format == 8) &&
-       (prop_rep->type.xid == type.xid))
+       (prop_rep->type == type))
      {
         char *retval;
         int   retnum;
@@ -1036,7 +1036,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
    int                          w, h;
    int                          do_shm = 0;
 
-   perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
+   perf = evas_software_xcb_generate_id_x(conn, draw, vis, cmap, x_depth);
 
    mask = XCB_CW_BACK_PIXMAP  | XCB_CW_BORDER_PIXEL |
      XCB_CW_BIT_GRAVITY       | XCB_CW_BACKING_STORE |
@@ -1047,12 +1047,12 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
    value[3] = XCB_BACKING_STORE_ALWAYS;
    value[4] = 1;
    value[5] = XCB_EVENT_MASK_NO_EVENT;
-   value[6] = cmap.xid;
+   value[6] = cmap;
    w = perf->x.w;
    h = perf->x.h;
-   win.window = xcb_window_new (conn);
+   win = xcb_generate_id (conn);
    xcb_create_window (conn, x_depth,
-                      win.window, perf->x.root.window,
+                      win, perf->x.root,
                       0, 0,
                       w, h,
                       0,
@@ -1066,8 +1066,8 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
    free(reply);
    mask = XCB_CONFIG_WINDOW_STACK_MODE;
    value[0] = XCB_STACK_MODE_ABOVE;
-   xcb_configure_window (conn, win.window, mask, value2);
-   xcb_map_window (conn, win.window);
+   xcb_configure_window (conn, win, mask, value2);
+   xcb_map_window (conn, win);
 
    do_shm = evas_software_xcb_x_can_do_shm(conn);
 
@@ -1088,7 +1088,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
 	max = w;
 	if (w > h)
 	   max = h;
-	gc = xcb_gcontext_new (conn);
+	gc = xcb_generate_id (conn);
 	xcb_create_gc (conn, gc, win, 0, NULL);
 	for (i = 16; i < max; i += 16)
 	  {
@@ -1100,7 +1100,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
 	     t0 = _evas_get_time();
 	     for (l = 0; l < loops; l++)
 	       {
-		  xcbob = evas_software_xcb_x_output_buffer_new(conn,
+		  xcbob = evas_software_xcb_generate_id(conn,
 								x_depth,
 								i, i,
 								do_shm,
@@ -1126,7 +1126,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
 	     t0 = _evas_get_time();
 	     for (l = 0; l < loops; l++)
 	       {
-		  xcbob = evas_software_xcb_x_output_buffer_new(conn,
+		  xcbob = evas_software_xcb_generate_id(conn,
 								x_depth,
 								i, i,
 								0,
@@ -1160,6 +1160,6 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
 	  }
 	xcb_free_gc(conn, gc);
      }
-   xcb_destroy_window(conn, win.window);
+   xcb_destroy_window(conn, win);
    return perf;
 }

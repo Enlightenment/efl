@@ -118,7 +118,7 @@ void               evas_software_xcb_x_write_mask_line         (Outbuf          
 								int                w,
 								int                y);
 int                evas_software_xcb_x_can_do_shm              (xcb_connection_t *c);
-Xcb_Output_Buffer *evas_software_xcb_x_output_buffer_new       (xcb_connection_t *c,
+Xcb_Output_Buffer *evas_software_xcb_generate_id       (xcb_connection_t *c,
 								int            depth,
 								int            w,
 								int            h,
@@ -172,7 +172,7 @@ Outbuf      *evas_software_xcb_outbuf_setup_x                (int               
 char        *evas_software_xcb_outbuf_perf_serialize_x       (Outbuf_Perf *perf);
 void         evas_software_xcb_outbuf_perf_deserialize_x     (Outbuf_Perf *perf,
 							      const char *data);
-Outbuf_Perf *evas_software_xcb_outbuf_perf_new_x             (xcb_connection_t *conn,
+Outbuf_Perf *evas_software_xcb_generate_id_x             (xcb_connection_t *conn,
 							      xcb_drawable_t    draw,
                                                               xcb_visualtype_t *vis,
 							      xcb_colormap_t    cmap,
@@ -204,7 +204,7 @@ void         evas_software_xcb_outbuf_update                 (Outbuf *buf,
 							      int     y,
 							      int     w,
 							      int     h);
-RGBA_Image  *evas_software_xcb_outbuf_new_region_for_update  (Outbuf *buf,
+RGBA_Image  *evas_software_xcb_generate_id_region_for_update  (Outbuf *buf,
 							      int     x,
 							      int     y,
 							      int     w,

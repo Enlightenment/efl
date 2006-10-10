@@ -66,7 +66,8 @@ evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
    xcb_drawable_t            drawable;
    int                       depth;
 
-   drawable.window = xcb_setup_roots_iterator (xcb_get_setup(c)).data->root;
+   /* FIXME: get the corect screen */
+   drawable = xcb_setup_roots_iterator (xcb_get_setup(c)).data->root;
    geom = xcb_get_geometry_reply (c, xcb_get_geometry_unchecked(c, drawable), 0);
    if(!geom)
      return 0;
@@ -78,7 +79,7 @@ evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
      {
 	Xcb_Output_Buffer *xcbob;
 
-	xcbob = evas_software_xcb_x_output_buffer_new(c,
+	xcbob = evas_software_xcb_generate_id(c,
 						      depth,
 						      16,
 						      16,
@@ -103,7 +104,7 @@ evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
 /* } */
 
 Xcb_Output_Buffer *
-evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
+evas_software_xcb_generate_id(xcb_connection_t *c,
 				      int               depth,
 				      int               w,
 				      int               h,
@@ -124,7 +125,7 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
         xcbob->shm_info = malloc(sizeof(xcb_shm_segment_info_t));
         if (xcbob->shm_info)
           {
-             xcbob->shm_info->shmseg = xcb_shm_seg_new(c);
+             xcbob->shm_info->shmseg = xcb_generate_id(c);
              xcbob->image = xcb_image_shm_create(c, depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, w, h);
              if (xcbob->image)
                {
