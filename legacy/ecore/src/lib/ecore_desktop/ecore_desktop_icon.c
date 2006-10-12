@@ -179,7 +179,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
    /* Get the theme description file. */
    theme = ecore_desktop_icon_theme_get(icon_theme, NULL);
 #ifdef DEBUG
-   printf("SEARCHING FOR %s\n", icn);
+   printf("SEARCHING FOR %s\n", icon_theme);
 #endif
 
    if (!theme) return NULL;
