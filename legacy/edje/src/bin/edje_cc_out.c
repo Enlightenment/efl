@@ -52,6 +52,7 @@ Evas_List *edje_collections = NULL;
 Evas_List *fonts = NULL;
 Evas_List *codes = NULL;
 Evas_List *code_lookups = NULL;
+Evas_List *aliases = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
@@ -221,6 +222,16 @@ data_write(void)
      }
    if (edje_file)
      {
+
+	if (edje_file->collection_dir) 
+	  {
+	     /* copy aliases into collection directory */
+	     while (aliases)
+	       {
+		  edje_file->collection_dir->entries = evas_list_append(edje_file->collection_dir->entries, aliases->data);
+		  aliases = evas_list_remove_list(aliases, aliases);
+	       }
+	  }
 	bytes = eet_data_write(ef, edd_edje_file, "edje_file", edje_file, 1);
 	if (bytes <= 0)
 	  {

@@ -30,6 +30,7 @@ static void ob_collections(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
+static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
 static void st_collections_group_data_item(void);
@@ -144,6 +145,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
      {"collections.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
      {"collections.group.name", st_collections_group_name},
+     {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
      {"collections.group.data.item", st_collections_group_data_item},
@@ -791,6 +793,21 @@ st_collections_group_name(void)
    
    de = evas_list_data(evas_list_last(edje_file->collection_dir->entries));
    de->entry = parse_str(0);
+}
+
+static void
+st_collections_group_alias(void)
+{
+   Edje_Part_Collection_Directory_Entry *de, *alias;
+
+   check_arg_count(1);
+   de = evas_list_data(evas_list_last(edje_file->collection_dir->entries));
+   
+   alias = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
+   alias->id = de->id;
+   alias->entry = parse_str(0);
+
+   aliases = evas_list_append(aliases, alias);
 }
 
 static void

@@ -128,6 +128,7 @@ extern Evas_List             *edje_collections;
 extern Evas_List             *fonts;
 extern Evas_List             *codes;
 extern Evas_List             *defines;
+extern Evas_List             *aliases;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 
