@@ -424,6 +424,14 @@ _ecore_desktop_get(const char *file, const char *lang)
 		    }
 	       }
 
+	     value = ecore_hash_get(result->group, "MimeType");
+	     if (value)
+	       result->MimeTypes =
+		  ecore_desktop_paths_to_hash(value);
+	     value = ecore_hash_get(result->group, "Actions");
+	     if (value)
+	       result->Actions =
+		  ecore_desktop_paths_to_hash(value);
 	     value = ecore_hash_get(result->group, "OnlyShowIn");
 	     if (value)
 	       result->OnlyShowIn =
@@ -447,7 +455,6 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     value = ecore_hash_get(result->group, "Hidden");
 	     if (value)
 	       result->hidden = (strcmp(value, "true") == 0);
-
 	  }
 	else
 	  {
@@ -625,7 +632,7 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	else
 	   ecore_hash_remove(desktop->group, "Hidden");
 
-	/* FIXME: deal with the ShowIn's. */
+	/* FIXME: deal with the ShowIn's and mime stuff. */
 
 	if (desktop->path)
 	   ecore_hash_set(desktop->group, strdup("Path"),
@@ -778,6 +785,8 @@ _ecore_desktop_destroy(Ecore_Desktop * desktop)
    if (desktop->NotShowIn) ecore_hash_destroy(desktop->NotShowIn);
    if (desktop->OnlyShowIn) ecore_hash_destroy(desktop->OnlyShowIn);
    if (desktop->Categories) ecore_hash_destroy(desktop->Categories);
+   if (desktop->MimeTypes) ecore_hash_destroy(desktop->MimeTypes);
+   if (desktop->Actions) ecore_hash_destroy(desktop->Actions);
    if (desktop->data)
      {
 	ecore_hash_destroy(desktop->data);

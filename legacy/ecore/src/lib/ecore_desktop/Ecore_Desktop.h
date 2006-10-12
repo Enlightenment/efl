@@ -34,7 +34,7 @@ struct _Ecore_Desktop
     * space and cycles that just covers up bugs.  On the other hand, it makes 
     * for a more robust library, and it's used everywhere else in ecore.
     */
-   Ecore_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn;
+   Ecore_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn, *MimeTypes, *Actions;
    char               *original_path;
    char               *original_lang;
    char               *eap_name;
