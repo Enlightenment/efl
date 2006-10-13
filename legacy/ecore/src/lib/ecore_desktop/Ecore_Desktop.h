@@ -83,6 +83,7 @@ struct _Ecore_Desktop_Icon_Theme
    char               *inherits;
    char               *directories;
    int                 hidden;
+   unsigned char       hicolor:1;
    /* Actually calling this st_mtime causes compile issues, must be some strange macros at work. */
    time_t              mtime;	/* For checking if the cache is valid. */
 };

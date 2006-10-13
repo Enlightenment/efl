@@ -164,12 +164,30 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
    char               *found = NULL;
    int                 wanted_size;
    int                 minimal_size = INT_MAX;
+   int                 has_ext = 0;
+   int                 has_icon_ext = 0;
    int                 i;
    char               *closest = NULL;
    Ecore_Desktop_Icon_Theme_Directory *directory;
 
    if ((icon == NULL) || (icon[0] == '\0'))
       return NULL;
+
+   /* Check the file extension, if any. */
+   found = strrchr(icon, '.');
+   if (found != NULL)
+     {
+        has_ext = 1;
+        for (i = 0; ext[i] != NULL; i++)
+	  {
+	     if (strcmp(found, ext[i]) == 0)
+	       {
+	          has_icon_ext = 1;
+	          break;
+	       }
+	  }
+        found = NULL;
+     }
 
 #ifdef DEBUG
    fprintf(stderr, "\tTrying To Find Icon %s (%s) in theme %s\n", icon,
@@ -186,8 +204,8 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
    if (!theme->Directories) goto done;
 
    wanted_size = atoi(icon_size);
-   /* Loop through the themes directories. */
 
+   /* Loop through the themes directories. */
    ecore_list_goto_first(theme->Directories);
    while ((directory = ecore_list_next(theme->Directories)) != NULL)
      {
@@ -221,44 +239,48 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 		   break;
 	       }
 
-	     /* Look for icon with all extensions. */
-	     for (i = 0; ext[i] != NULL; i++)
+             /* Do we need to check this directory? */
+             if ((match) || (result_size < minimal_size))
 	       {
-		  /* Check if there will be an extension. */
-		  if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
-		    continue;
-		  snprintf(path, PATH_MAX, "%s/%s/%s%s",
-			   icon_theme, directory->path, icon, ext[i]);
+	          /* Look for icon with all extensions. */
+	          for (i = 0; ext[i] != NULL; i++)
+	            {
+		       /* Check if there will be an extension to check. */
+		       if ((ext[i][0] == '\0') && (!has_ext))
+		          continue;
+		       if ((ext[i][0] != '\0') && (has_icon_ext))
+		          continue;
+		       snprintf(path, PATH_MAX, "%s/%s/%s%s", icon_theme, directory->path, icon, ext[i]);
 #ifdef DEBUG
-		  printf("FDO icon = %s\n", path);
+		       printf("FDO icon = %s\n", path);
 #endif
-		  found = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, path,
-							0, NULL, NULL);
-		  if (found)
-		    {
-		       if (ecore_file_is_dir(found))
-			 {
-			    free(found);
-			    found = NULL;
-			 }
-		       else if (match)	/* If there is a match in sizes, return the icon. */
-			 goto done;
-		       else if (result_size < minimal_size)	/* While we are here, figure out our next fallback strategy. */
-			 {
-			    minimal_size = result_size;
-			    if (closest) free(closest);
-			    closest = found;
-			    found = NULL;
-			 }
-		       else
-			 {
-			    free(found);
-			    found = NULL;
-			 }
-		    }
-	       }
-	  }
-     }		/* while ((directory = ecore_list_next(directory_paths)) != NULL) */
+		       found = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, path, 0, NULL, NULL);
+		       if (found)
+		         {
+		            if (ecore_file_is_dir(found))
+			      {
+			         free(found);
+			         found = NULL;
+			      }
+		            else if (match)	/* If there is a match in sizes, return the icon. */
+			       goto done;
+		            else if (result_size < minimal_size)	/* While we are here, figure out our next fallback strategy. */
+			      {
+			         minimal_size = result_size;
+			         if (closest) free(closest);
+			         closest = found;
+			         found = NULL;
+			      }
+		            else
+			      {
+			         free(found);
+			         found = NULL;
+			      }
+		         }
+	            }   /* for (i = 0; ext[i] != NULL; i++) */
+	       }   /* if ((match) || (result_size < minimal_size)) */
+	  }   /* if (directory->size) */
+     }   /* while ((directory = ecore_list_next(directory_paths)) != NULL) */
 
    if (!found)
      {
@@ -271,37 +293,39 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 	  }
 
 	/* Fall back strategy #2, Try again with the parent themes. */
-	if ((theme->Inherits) && (strcmp(icon_theme, "hicolor") != 0))
+        if (!theme->hicolor)
 	  {
-	     char *inherits;
-
-	     ecore_list_goto_first(theme->Inherits);
-	     while ((inherits = ecore_list_next(theme->Inherits)) != NULL)
+	     if (theme->Inherits)
 	       {
-		  found = _ecore_desktop_icon_find0(icon, icon_size, inherits);
-		  if (found) goto done;
-	       }
-	  }
+	          char *inherits;
 
-	/* Fall back strategy #3, Try the default hicolor theme. */
-	if ((!(theme->Inherits)) && (strcmp(icon_theme, "hicolor") != 0))
-	  {
-	     found = _ecore_desktop_icon_find0(icon, icon_size, "hicolor");
-	     if (found) goto done;
+	          ecore_list_goto_first(theme->Inherits);
+	          while ((inherits = ecore_list_next(theme->Inherits)) != NULL)
+	            {
+		       found = _ecore_desktop_icon_find0(icon, icon_size, inherits);
+		       if (found) goto done;
+	            }
+	       }
+	     else   /* Fall back strategy #3, Try the default hicolor theme. */
+	       {
+	          found = _ecore_desktop_icon_find0(icon, icon_size, "hicolor");
+	          if (found) goto done;
+	       }
 	  }
 
 	/* Fall back strategy #4, Just search in the base of the icon directories. */
 	for (i = 0; ext[i] != NULL; i++)
 	  {
-	     /* Check if there will be an extension. */
-	     if ((ext[i][0] == '\0') && (strrchr(icon, '.') == NULL))
-	       continue;
+	     /* Check if there will be an extension to check. */
+	     if ((ext[i][0] == '\0') && (!has_ext))
+	        continue;
+             if ((ext[i][0] != '\0') && (has_icon_ext))
+	        continue;
 	     snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
 #ifdef DEBUG
 	     printf("FDO icon = %s\n", path);
 #endif
-	     found = ecore_desktop_paths_file_find(ecore_desktop_paths_icons,
-						   path, 0, NULL, NULL);
+	     found = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, path, 0, NULL, NULL);
 	     if (found)
 	       {
 		  if (ecore_file_is_dir(found))
@@ -455,6 +479,9 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
    if (!result->data) goto error;
    result->group = ecore_hash_get(result->data, "Icon Theme");
    if (!result->group) goto error;
+
+   if ((strcmp(icon_theme, "hicolor") == 0))
+      result->hicolor = 1;
 
    /* According to the spec, name and comment are required, but we can fake those easily enough. */
    value = ecore_hash_get(result->group, "Name");
