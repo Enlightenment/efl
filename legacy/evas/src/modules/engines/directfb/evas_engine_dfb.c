@@ -728,8 +728,8 @@ evas_engine_directfb_polygon_point_add(void *data, void *context, void *polygon,
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return evas_common_polygon_point_add(polygon, x, y);
    context = NULL;
+   return evas_common_polygon_point_add(polygon, x, y);
 }
 
 void *
@@ -738,8 +738,8 @@ evas_engine_directfb_polygon_points_clear(void *data, void *context, void *polyg
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return evas_common_polygon_points_clear(polygon);
    context = NULL;
+   return evas_common_polygon_points_clear(polygon);
 }
 
 void
@@ -792,7 +792,6 @@ evas_engine_directfb_gradient_color_stop_add(void *data, void *gradient, int r, 
 
    re = (Render_Engine *)data;
    evas_common_gradient_color_stop_add(gradient, r, g, b, a, delta);
-   context = NULL;
 }
 
 void
@@ -802,7 +801,6 @@ evas_engine_directfb_gradient_alpha_stop_add(void *data, void *gradient, int a, 
 
    re = (Render_Engine *)data;
    evas_common_gradient_alpha_stop_add(gradient, a, delta);
-   context = NULL;
 }
 
 void
@@ -812,7 +810,6 @@ evas_engine_directfb_gradient_color_data_set(void *data, void *gradient, void *m
 
    re = (Render_Engine *)data;
    evas_common_gradient_color_data_set(gradient, map, len, has_alpha);
-   context = NULL;
 }
 
 void
@@ -822,7 +819,6 @@ evas_engine_directfb_gradient_alpha_data_set(void *data, void *gradient, void *a
 
    re = (Render_Engine *)data;
    evas_common_gradient_alpha_data_set(gradient, alpha_map, len);
-   context = NULL;
 }
 
 void
@@ -832,7 +828,6 @@ evas_engine_directfb_gradient_clear(void *data, void *gradient)
 
    re = (Render_Engine *)data;
    evas_common_gradient_clear(gradient);
-   context = NULL;
 }
 
 void
