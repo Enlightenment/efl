@@ -225,7 +225,7 @@ extern              "C"
 
    EAPI void          
       ecore_desktop_menu_for_each(void (*func)
-				  (char *name, char *path, Ecore_Hash * apps));
+				  (char *name, char *path, char *directory, Ecore_Hash * apps));
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
 
    Ecore_Desktop_Tree *ecore_desktop_tree_new(char *buffer);

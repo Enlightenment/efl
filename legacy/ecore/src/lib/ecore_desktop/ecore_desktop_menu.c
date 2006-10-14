@@ -119,7 +119,7 @@ static int          _ecore_desktop_menu_apply_rules(struct
 
 EAPI void
 ecore_desktop_menu_for_each(void (*func)
-			    (char *name, char *path, Ecore_Hash * apps))
+			    (char *name, char *path, char *directory, Ecore_Hash * apps))
 {
    char               *menu_file;
 
@@ -162,24 +162,48 @@ _ecore_desktop_menu_make_apps(const void *data, Ecore_Desktop_Tree * tree,
      {
 	if (strncmp((char *)tree->elements[element].element, "<MENU ", 6) == 0)
 	  {
+	     int                 len;
 	     char               *path;
 	     char               *name;
+	     char               *directory;
 	     Ecore_Hash         *apps;
-	     void                (*func) (char *name, char *path,
+	     void                (*func) (char *name, char *path, char *directory,
 					  Ecore_Hash * apps);
 
 	     func = data;
 	     name = (char *)tree->elements[element].element;
+	     directory = name;
+	     directory += 8;
+	     path = strchr(directory, '<');
+	     path++;
+	     directory = strchr(path, '<');
+	     directory++;
+	     len = strlen(directory);
+	     if (len > 2)
+	       {
+	          path = strdup(directory);
+		  if (path)
+		    {
+	               path[len - 1] = '\0';
+                       /* FIXME: Figure out what to do if it's just ".directory". */
+	               directory = ecore_desktop_paths_file_find(ecore_desktop_paths_directories, path, 0, NULL, NULL);
+		       free(path);
+		    }
+		  else
+	             directory = NULL;
+	       }
+	     else
+	        directory = NULL;
 	     path = (char *)tree->elements[element + 1].element;
-#ifdef DEBUG
-	     printf("MAKING MENU - %s \t\t%s\n", path, name);
-#endif
 //             pool = (Ecore_Hash *) tree->elements[element + 2].element;
 	     apps = (Ecore_Hash *) tree->elements[element + 4].element;
 	     path = &path[11];
-
+#ifdef DEBUG
+	     printf("OUTPUTTING MENU - %s \t\t%s \t\t%s\n", path, name, directory);
+#endif
 	     if (func)
-		func(name, path, apps);
+		func(name, path, directory, apps);
+	     free(directory);
 	  }
      }
    return 0;
@@ -296,8 +320,8 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
 					     &data);
 
 #ifdef DEBUG
-		  ecore_desktop_tree_dump(menu_xml, 0);
-		  printf("\n\n");
+//		  ecore_desktop_tree_dump(menu_xml, 0);
+//		  printf("\n\n");
 #endif
 	       }
 	  }
@@ -871,9 +895,9 @@ _ecore_desktop_menu_legacy_menu(void *data, const char *path)
 	sprintf(temp, "%s%s", legacy_data->prefix, file);
 	ecore_hash_set(pool, strdup(temp), strdup(path));
 #ifdef DEBUG
-	printf
-	   ("POOLING - _ecore_desktop_menu_legacy_menu(void *data, %s) - %s - %s\n",
-	    path, file, temp);
+//	printf
+//	   ("POOLING - _ecore_desktop_menu_legacy_menu(void *data, %s) - %s - %s\n",
+//	    path, file, temp);
 #endif
 	if (rules->size > 0)
 	  {
@@ -1077,9 +1101,9 @@ _ecore_desktop_menu_check_app(void *data, const char *path)
 			file[i] = '-';
 		  ecore_hash_set(our_data->pool, file, strdup(path));
 #ifdef DEBUG
-		  printf
-		     ("POOLING - _ecore_desktop_menu_check_app(void *data, %s) - %s\n",
-		      path, file);
+//		  printf
+//		     ("POOLING - _ecore_desktop_menu_check_app(void *data, %s) - %s\n",
+//		      path, file);
 #endif
 	       }
 	  }
@@ -1551,7 +1575,7 @@ _ecore_desktop_menu_inherit_apps(void *value, void *user_data)
    key = (char *)node->key;
    app = (char *)node->value;
 #ifdef DEBUG
-   printf("CHECKING %s - %s\n", app, key);
+//   printf("CHECKING %s - %s\n", app, key);
 #endif
    if (!ecore_hash_get(pool, key))
       ecore_hash_set(pool, strdup(key), strdup(app));
@@ -1586,9 +1610,9 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	       {
 		  ecore_hash_set(generate_data->apps, key, strdup(app));
 #ifdef DEBUG
-		  printf("INCLUDING %s%s - %s\n",
-			 ((generate_data->unallocated) ? "UNALLOCATED " : ""),
-			 app, key);
+//		  printf("INCLUDING %s%s - %s\n",
+//			 ((generate_data->unallocated) ? "UNALLOCATED " : ""),
+//			 app, key);
 #endif
 	       }
 	     else
