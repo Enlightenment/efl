@@ -110,14 +110,16 @@ ecore_file_recursive_rm(const char *dir)
    struct dirent      *dp;
    char               path[PATH_MAX], buf[PATH_MAX];;
    struct             stat st;
-
+   int                ret;
 
    if (readlink(dir, buf, sizeof(buf)) > 0)
      {
-	ecore_file_unlink(dir);
+	return ecore_file_unlink(dir);
      }
-   else if (S_ISDIR(st.st_mode))
+   ret = stat(dir, &st);
+   if ((ret == 0) && (S_ISDIR(st.st_mode)))
      {
+	ret = 1;
 	if (stat(dir, &st) == -1) return 0;
 	dirp = opendir(dir);
 	if (dirp)
@@ -127,17 +129,19 @@ ecore_file_recursive_rm(const char *dir)
 		  if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
 		    {
 		       snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
-		       ecore_file_recursive_rm(path);
+		       if (!ecore_file_recursive_rm(path))
+			 ret = 0;
 		    }
 	       }
 	     closedir(dirp);
 	  }
-	ecore_file_rmdir(dir);
+	if (!ecore_file_rmdir(dir)) ret = 0;
+        return ret;
      }
    else
      {
-	if (stat(dir, &st) == -1) return 0;
-	ecore_file_unlink(dir);
+	if (ret == -1) return 0;
+	return ecore_file_unlink(dir);
      }
 
    return 1;
