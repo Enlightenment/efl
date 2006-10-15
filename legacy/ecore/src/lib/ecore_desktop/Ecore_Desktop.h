@@ -86,12 +86,14 @@ struct _Ecore_Desktop_Icon_Theme
    unsigned char       hicolor:1;
    /* Actually calling this st_mtime causes compile issues, must be some strange macros at work. */
    time_t              mtime;	/* For checking if the cache is valid. */
+   double              last_checked;
 };
 typedef struct _Ecore_Desktop_Icon_Theme Ecore_Desktop_Icon_Theme;
 
 struct _Ecore_Desktop_Icon_Theme_Directory
 {
    Ecore_Hash         *icons;
+   char               *path;
    char               *full_path;
    char               *type;
    int                 size, minimum, maximum, threshold;
