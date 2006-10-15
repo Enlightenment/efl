@@ -91,7 +91,8 @@ typedef struct _Ecore_Desktop_Icon_Theme Ecore_Desktop_Icon_Theme;
 
 struct _Ecore_Desktop_Icon_Theme_Directory
 {
-   char               *path;
+   Ecore_Hash         *icons;
+   char               *full_path;
    char               *type;
    int                 size, minimum, maximum, threshold;
 };

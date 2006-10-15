@@ -10,7 +10,8 @@
 
 static char        *_ecore_desktop_icon_find0(const char *icon,
 					      const char *icon_size,
-					      const char *icon_theme);
+					      const char *icon_theme, 
+					      int *in_cache);
 
 static int          _ecore_desktop_icon_theme_list_add(void *data,
 						       const char *path);
@@ -86,7 +87,7 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
 	               if ((ext) && (!strcmp(ext, ".ico")))
 		          continue;
 
-	               result = _ecore_desktop_icon_find0(icn, icon_size, icon_theme);
+	               result = _ecore_desktop_icon_find0(icn, icon_size, icon_theme, &in_cache);
 	               if (result)
 	                  break;
                     }
@@ -129,7 +130,7 @@ ecore_desktop_icon_find(const char *icon, const char *icon_size,
  */
 static char  *
 _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
-			  const char *icon_theme)
+			  const char *icon_theme, int *in_cache)
 {
    /*  NOTES ON OPTIMIZATIONS
     *
@@ -153,7 +154,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
     * the directory where the index.theme file lives.
     *
     * On the other hand, OS caching (at least in linux) seems to do a reasonable 
-    * job here.
+    * job here.  But not good enough though.
     *
     * We also precalculate and cache all the information extracted from 
     * the .theme files.
@@ -250,11 +251,29 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 		          continue;
 		       if ((ext[i][0] != '\0') && (has_icon_ext))
 		          continue;
-		       snprintf(path, PATH_MAX, "%s/%s/%s%s", icon_theme, directory->path, icon, ext[i]);
+                       if (directory->icons)
+		         {
+		            snprintf(path, PATH_MAX, "%s%s", icon, ext[i]);
 #ifdef DEBUG
-		       printf("FDO icon = %s\n", path);
+		            printf("FDO icon = %s\n", path);
 #endif
-		       found = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, path, 0, NULL, NULL);
+                            found = ecore_hash_get(directory->icons, path);
+			    if (found)
+			      {
+			         found = strdup(found);
+				 if (match)
+			            *in_cache = 1;
+			      }
+			 }
+		       else
+		         {
+		            snprintf(path, PATH_MAX, "%s/%s%s", directory->full_path, icon, ext[i]);
+#ifdef DEBUG
+		            printf("FDO icon = %s\n", path);
+#endif
+                            if (ecore_file_exists(path))
+		               found = strdup(path);
+			 }
 		       if (found)
 		         {
 		            if (ecore_file_is_dir(found))
@@ -302,13 +321,13 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 	          ecore_list_goto_first(theme->Inherits);
 	          while ((inherits = ecore_list_next(theme->Inherits)) != NULL)
 	            {
-		       found = _ecore_desktop_icon_find0(icon, icon_size, inherits);
+		       found = _ecore_desktop_icon_find0(icon, icon_size, inherits, in_cache);
 		       if (found) goto done;
 	            }
 	       }
 	     else   /* Fall back strategy #3, Try the default hicolor theme. */
 	       {
-	          found = _ecore_desktop_icon_find0(icon, icon_size, "hicolor");
+	          found = _ecore_desktop_icon_find0(icon, icon_size, "hicolor", in_cache);
 	          if (found) goto done;
 	       }
 	  }
@@ -443,7 +462,7 @@ Ecore_Desktop_Icon_Theme *
 ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 {
    Ecore_Desktop_Icon_Theme *result = NULL;
-   char *theme_path = NULL, *dir = NULL;
+   char *theme_path = NULL, *theme_dir = NULL;
    char               *value;
    Ecore_List         *Directories;
    char               *directory;
@@ -451,17 +470,17 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
    if (icon_theme[0] == '/')
       {
          theme_path = strdup(icon_theme);
-	 dir = ecore_file_get_dir(theme_path);
-	 if (dir)
-	    icon_theme = (char *)ecore_file_get_file(dir);
-#ifdef DEBUG
+	 theme_dir = ecore_file_get_dir(theme_path);
+	 if (theme_dir)
+	    icon_theme = (char *)ecore_file_get_file(theme_dir);
+//#ifdef DEBUG
 	 printf("LOADING THEME %s  -   %s\n", icon_theme, theme_path);
-#endif
+//#endif
       }
 
    result = ecore_hash_get(icon_theme_cache, icon_theme);
    if (result) goto done;
-   if (!dir)
+   if (!theme_dir)
      {
 	char icn[PATH_MAX];
 
@@ -471,6 +490,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 #endif
 	theme_path = ecore_desktop_paths_file_find(ecore_desktop_paths_icons, icn,
 						   2, NULL, NULL);
+        theme_dir = ecore_file_get_dir(theme_path);
      }
    if (!theme_path) goto error;
    result = calloc(1, sizeof(Ecore_Desktop_Icon_Theme));
@@ -479,6 +499,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
    if (!result->data) goto error;
    result->group = ecore_hash_get(result->data, "Icon Theme");
    if (!result->group) goto error;
+
 
    if ((strcmp(icon_theme, "hicolor") == 0))
       result->hicolor = 1;
@@ -522,8 +543,10 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 	if ((dir) && (sub_group))
 	  {
 	     char *size, *minsize, *maxsize, *threshold;
+             char full_path[PATH_MAX];
 
-	     dir->path = strdup(directory);
+	     snprintf(full_path, PATH_MAX, "%s/%s", theme_dir, directory);
+             dir->full_path = strdup(full_path);
 	     value = ecore_hash_get(sub_group, "Type");
 	     if (!value)
 	       value = "Threshold";
@@ -546,6 +569,27 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 
 		  dir->size = atoi(size);
 		  ecore_list_append(result->Directories, dir);
+
+                  dir->icons = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+                  if (dir->icons)
+	            {
+		       Ecore_List *files;
+
+                       ecore_hash_set_free_key(dir->icons, free);
+                       ecore_hash_set_free_value(dir->icons, free);
+                       files = ecore_file_ls(dir->full_path);
+                       if (files)
+                         {
+                            const char *file;
+
+                            while ((file = ecore_list_next(files)))
+	                      {
+                                 snprintf(full_path, PATH_MAX, "%s/%s", dir->full_path, file);
+				 ecore_hash_set(dir->icons, strdup(file), strdup(full_path));
+	                      }
+                            ecore_list_destroy(files);
+                         }
+	            }
 	       }
 	     else
 	       _ecore_desktop_icon_theme_directory_destroy(dir);
@@ -563,13 +607,13 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
    result->group = NULL;
 
 done:
-   if (dir)        free(dir);
+   if (theme_dir)  free(theme_dir);
    if (theme_path) free(theme_path);
 
    return result;
 
 error:
-   if (dir)        free(dir);
+   if (theme_dir)  free(theme_dir);
    if (theme_path) free(theme_path);
    if (result)
      {
@@ -621,9 +665,11 @@ static void
 _ecore_desktop_icon_theme_directory_destroy(Ecore_Desktop_Icon_Theme_Directory *
 					    icon_theme_directory)
 {
-   if (icon_theme_directory->path)
-      free(icon_theme_directory->path);
+   if (icon_theme_directory->full_path)
+      free(icon_theme_directory->full_path);
    if (icon_theme_directory->type)
       free(icon_theme_directory->type);
+   if (icon_theme_directory->icons)
+      ecore_hash_destroy(icon_theme_directory->icons);
    free(icon_theme_directory);
 }
