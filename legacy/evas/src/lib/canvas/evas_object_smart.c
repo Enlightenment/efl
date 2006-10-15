@@ -388,6 +388,7 @@ evas_object_smart_del(Evas_Object *obj)
    Evas_Smart *s;
 
    s = obj->smart.smart;
+   if (obj->delete_me) return;
    if ((s) && (s->smart_class->del)) s->smart_class->del(obj);
    if (obj->smart.parent) evas_object_smart_member_del(obj);
    if (s) evas_object_smart_unuse(s);
