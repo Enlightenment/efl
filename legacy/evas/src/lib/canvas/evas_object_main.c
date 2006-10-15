@@ -426,6 +426,7 @@ evas_object_del(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+
    if (obj->delete_me) return;
 
    if (obj->name) evas_object_name_set(obj, NULL);

@@ -59,7 +59,8 @@ evas_layer_pre_free(Evas_Layer *lay)
 	Evas_Object *obj;
 
 	obj = (Evas_Object *)l;
-	if (!obj->smart.parent) evas_object_del(obj);
+	if ((!obj->smart.parent) && (!obj->delete_me))
+	  evas_object_del(obj);
      }
 }
 
