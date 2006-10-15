@@ -236,8 +236,7 @@ _ecore_evas_buffer_cb_free(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
    Ecore_Evas *ee;
    
    ee = data;
-   if (ee->driver)
-     _ecore_evas_free(ee);
+   if (ee->driver) _ecore_evas_free(ee);
 }
 
 static void
@@ -541,7 +540,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_buffer_engine_func;
    
-   ee->driver = strdup("buffer");
+   ee->driver = "buffer";
 
    w = 1;
    h = 1;
