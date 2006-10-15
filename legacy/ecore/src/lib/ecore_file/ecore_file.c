@@ -112,16 +112,14 @@ ecore_file_recursive_rm(const char *dir)
    struct             stat st;
 
 
-   if (stat(dir, &st) == -1) return 0;
-
    if (readlink(dir, buf, sizeof(buf)) > 0)
      {
 	ecore_file_unlink(dir);
      }
    else if (S_ISDIR(st.st_mode))
      {
+	if (stat(dir, &st) == -1) return 0;
 	dirp = opendir(dir);
-
 	if (dirp)
 	  {
 	     while ((dp = readdir(dirp)))
@@ -138,6 +136,7 @@ ecore_file_recursive_rm(const char *dir)
      }
    else
      {
+	if (stat(dir, &st) == -1) return 0;
 	ecore_file_unlink(dir);
      }
 
