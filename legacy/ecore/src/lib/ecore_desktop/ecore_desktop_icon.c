@@ -2,6 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include <limits.h>
+#include <sys/stat.h>
 
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
@@ -20,6 +21,8 @@ static void         _ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme *
 static void        
 _ecore_desktop_icon_theme_directory_destroy(Ecore_Desktop_Icon_Theme_Directory *
 					    icon_theme_directory);
+static inline void
+_ecore_desktop_icon_theme_cache_check(Ecore_Desktop_Icon_Theme *icon_theme);
 
 /* FIXME: We need a way for the client to disable searching for any of these that they don't support. */
 static const char  *ext[] =
@@ -132,34 +135,6 @@ static char  *
 _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 			  const char *icon_theme, int *in_cache)
 {
-   /*  NOTES ON OPTIMIZATIONS
-    *
-    * The spec has this to say -
-    *
-    * "The algorithm as described in this document works by always looking up 
-    * filenames in directories (a stat in unix terminology). A good 
-    * implementation is expected to read the directories once, and do all 
-    * lookups in memory using that information.
-    *
-    * "This caching can make it impossible for users to add icons without having 
-    * to restart applications. In order to handle this, any implementation that 
-    * does caching is required to look at the mtime of the toplevel icon 
-    * directories when doing a cache lookup, unless it already did so less than 
-    * 5 seconds ago. This means that any icon editor or theme installation 
-    * program need only to change the mtime of the the toplevel directory where 
-    * it changed the theme to make sure that the new icons will eventually get 
-    * used."
-    *
-    * The phrase "toplevel icon directories" is ambigous, but I guess they mean 
-    * the directory where the index.theme file lives.
-    *
-    * On the other hand, OS caching (at least in linux) seems to do a reasonable 
-    * job here.  But not good enough though.
-    *
-    * We also precalculate and cache all the information extracted from 
-    * the .theme files.
-    */
-
    Ecore_Desktop_Icon_Theme *theme;
    char                path[PATH_MAX];
    char               *found = NULL;
@@ -571,27 +546,6 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 
 		  dir->size = atoi(size);
 		  ecore_list_append(result->Directories, dir);
-
-                  dir->icons = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-                  if (dir->icons)
-	            {
-		       Ecore_List *files;
-
-                       ecore_hash_set_free_key(dir->icons, free);
-                       ecore_hash_set_free_value(dir->icons, free);
-                       files = ecore_file_ls(dir->full_path);
-                       if (files)
-                         {
-                            const char *file;
-
-                            while ((file = ecore_list_next(files)))
-	                      {
-                                 snprintf(full_path, PATH_MAX, "%s/%s", dir->full_path, file);
-				 ecore_hash_set(dir->icons, strdup(file), strdup(full_path));
-	                      }
-                            ecore_list_destroy(files);
-                         }
-	            }
 	       }
 	     else
 	       _ecore_desktop_icon_theme_directory_destroy(dir);
@@ -612,6 +566,8 @@ done:
    if (theme_dir)  free(theme_dir);
    if (theme_path) free(theme_path);
 
+   /* Cache the directories. */
+   _ecore_desktop_icon_theme_cache_check(result);
    return result;
 
 error:
@@ -676,4 +632,80 @@ _ecore_desktop_icon_theme_directory_destroy(Ecore_Desktop_Icon_Theme_Directory *
    if (icon_theme_directory->icons)
       ecore_hash_destroy(icon_theme_directory->icons);
    free(icon_theme_directory);
+}
+
+static inline void
+_ecore_desktop_icon_theme_cache_check(Ecore_Desktop_Icon_Theme *icon_theme)
+{
+   /* The spec has this to say -
+    *
+    * "The algorithm as described in this document works by always looking up 
+    * filenames in directories (a stat in unix terminology). A good 
+    * implementation is expected to read the directories once, and do all 
+    * lookups in memory using that information.
+    *
+    * "This caching can make it impossible for users to add icons without having 
+    * to restart applications. In order to handle this, any implementation that 
+    * does caching is required to look at the mtime of the toplevel icon 
+    * directories when doing a cache lookup, unless it already did so less than 
+    * 5 seconds ago. This means that any icon editor or theme installation 
+    * program need only to change the mtime of the the toplevel directory where 
+    * it changed the theme to make sure that the new icons will eventually get 
+    * used."
+    *
+    * The phrase "toplevel icon directories" is ambigous, but I guess they mean 
+    * the directory where the index.theme file lives.
+    */
+
+   struct stat         st;
+   int                 clear = 0;
+
+   if (ecore_time_get() > (icon_theme->last_checked + 5.0))
+     {
+	if (stat(icon_theme->path, &st) >= 0)
+	  {
+	     icon_theme->last_checked = ecore_time_get();
+	     if (st.st_mtime > icon_theme->mtime)
+	       {
+	          clear = 1;
+		  icon_theme->mtime = st.st_mtime;
+	       }
+	  }
+     }
+
+   if (clear)
+     {
+        Ecore_Desktop_Icon_Theme_Directory *dir;
+        char full_path[PATH_MAX];
+
+        ecore_list_goto_first(icon_theme->Directories);
+        while ((dir = ecore_list_next(icon_theme->Directories)) != NULL)
+          {
+             if (dir->icons)
+	       {
+                   ecore_hash_destroy(dir->icons);
+		   dir->icons = NULL;
+	       }
+             dir->icons = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+             if (dir->icons)
+               {
+	          Ecore_List *files;
+
+                  ecore_hash_set_free_key(dir->icons, free);
+                  ecore_hash_set_free_value(dir->icons, free);
+                  files = ecore_file_ls(dir->full_path);
+                  if (files)
+                    {
+                       const char *file;
+
+                       while ((file = ecore_list_next(files)))
+                         {
+                            snprintf(full_path, PATH_MAX, "%s/%s", dir->full_path, file);
+			    ecore_hash_set(dir->icons, strdup(file), strdup(full_path));
+                         }
+                       ecore_list_destroy(files);
+                    }
+	       }
+          }
+     }
 }
