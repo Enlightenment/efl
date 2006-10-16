@@ -1267,7 +1267,10 @@ static int
 read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len)
 {
    if (ef->data)
-     memcpy (buf, ef->data + efn->offset, len);
+     {
+	if ((efn->offset + len) > ef->data_size) return 0;
+	memcpy(buf, ef->data + efn->offset, len);
+     }
    else
      {
 	/* seek to data location */
