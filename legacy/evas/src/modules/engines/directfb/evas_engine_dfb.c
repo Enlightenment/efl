@@ -898,9 +898,10 @@ evas_engine_directfb_gradient_is_opaque(void *data, void *context, void *gradien
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    Render_Engine *re;
+   RGBA_Gradient *gr=(RGBA_Gradient *)gradient;
 
    re = (Render_Engine *)data;
-   if (!dc || !gradient || !gradient->type.geometer)  return 0;
+   if (!dc || !gr || !gr->type.geometer)  return 0;
    return !(gr->type.geometer->has_alpha(gradient, dc->render_op) |
               gr->type.geometer->has_mask(gradient, dc->render_op));
 }
@@ -920,11 +921,12 @@ eng_gradient_render_pre(void *data, void *context, void *gradient)
 {
    int  len;
    Render_Engine *re;
+   RGBA_Gradient *gr=(RGBA_Gradient *)gradient;
 
    re = (Render_Engine *)data;
-   if (!context || !gradient || !gradient->type.geometer) return;
-   gradient->type.geometer->geom_set(gradient);
-   len = gradient->type.geometer->get_map_len(gradient);
+   if (!context || !gr || !gr->type.geometer) return;
+   gr->type.geometer->geom_set(gradient);
+   len = gr->type.geometer->get_map_len(gradient);
    evas_common_gradient_map(context, gradient, len);
 }
 
