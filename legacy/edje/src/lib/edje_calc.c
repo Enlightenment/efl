@@ -219,15 +219,19 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y)
     * value we would set foo to, because it would depend on the
     * size of the dragable...
     */
-   if (ep->drag.x != x)
+   if (ep->drag.x != x || ep->drag.tmp.x)
      {
 	ep->drag.x = x;
+	ep->drag.tmp.x = 0;
+	ep->drag.need_reset = 0;
 	ed->dirty = 1;
      }
 
-   if (ep->drag.y != y)
+   if (ep->drag.y != y || ep->drag.tmp.y)
      {
 	ep->drag.y = y;
+	ep->drag.tmp.y = 0;
+	ep->drag.need_reset = 0;
 	ed->dirty = 1;
      }
 
