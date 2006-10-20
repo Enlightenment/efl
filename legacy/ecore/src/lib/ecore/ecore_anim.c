@@ -137,13 +137,12 @@ _ecore_animator(void *data __UNUSED__)
 	     if (!animator->func(animator->data))
 	       {
 		  animator->delete_me = 1;
-		  animators_delete_me = 1;
+		  animators_delete_me++;
 	       }
 	  }
      }
    if (animators_delete_me)
      {
-	
 	for (l = (Ecore_List2 *)animators; l;)
 	  {
 	     Ecore_Animator *animator;
