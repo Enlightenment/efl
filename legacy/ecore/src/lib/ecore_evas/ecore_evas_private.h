@@ -155,7 +155,7 @@ struct _Ecore_Evas
    Ecore_List  __list_data;
    ECORE_MAGIC;
    Evas       *evas;
-   char       *driver;
+   const char *driver;
    char       *name;
    int         x, y, w, h;
    short       rotation;

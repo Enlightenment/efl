@@ -584,7 +584,7 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
    
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_fb_engine_func;
    
-   ee->driver = strdup("fb");
+   ee->driver = "fb";
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;
