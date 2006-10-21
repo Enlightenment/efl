@@ -58,6 +58,11 @@ evas_software_x11_x_write_mask_line(Outbuf *buf, X_Output_Buffer *xob, DATA32 *s
 int
 evas_software_x11_x_can_do_shm(Display *d)
 {
+   static Display *cached_d = NULL;
+   static int cached_result = 0;
+   
+   if (d == cached_d) return cached_result;
+   cached_d = d;
    if (XShmQueryExtension(d))
      {
 	X_Output_Buffer *xob;
@@ -65,10 +70,16 @@ evas_software_x11_x_can_do_shm(Display *d)
 	xob = evas_software_x11_x_output_buffer_new
 	  (d, DefaultVisual(d, DefaultScreen(d)),
 	   DefaultDepth(d, DefaultScreen(d)), 16, 16, 2, NULL);
-	if (!xob) return 0;
+	if (!xob)
+	  {
+	     cached_result = 0;
+	     return 0;
+	  }
 	evas_software_x11_x_output_buffer_free(xob, 1);
+	cached_result = 1;
 	return 1;
      }
+   cached_result = 0;
    return 0;
 }
 

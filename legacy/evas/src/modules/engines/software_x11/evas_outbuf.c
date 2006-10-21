@@ -61,9 +61,9 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 
       buf->priv.x.shm = evas_software_x11_x_can_do_shm(buf->priv.x.disp);
       xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
-					     buf->priv.x.vis,
-					     buf->priv.x.depth,
-					     1, 1, buf->priv.x.shm, NULL);
+						  buf->priv.x.vis,
+						  buf->priv.x.depth,
+						  1, 1, buf->priv.x.shm, NULL);
 
       conv_func = NULL;
       if (xob)
@@ -136,6 +136,7 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 		     else
 			pm = PAL_MODE_MONO;
 		  }
+		/* FIXME: only alloc once per display+cmap */
 		buf->priv.pal = evas_software_x11_x_color_allocate(disp, cmap, vis,
 								   PAL_MODE_RGB666);
 		if (!buf->priv.pal)
@@ -673,6 +674,9 @@ evas_software_x11_outbuf_perf_new_x(Display * disp, Window draw, Visual * vis,
 
    perf->x.disp = disp;
 
+   perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
+
+#if 0   
    root = DefaultRootWindow(disp);
    if (draw)
      {
@@ -697,9 +701,7 @@ evas_software_x11_outbuf_perf_new_x(Display * disp, Window draw, Visual * vis,
    perf->x.release = VendorRelease(disp);
    perf->x.screen_count = ScreenCount(disp);
    perf->x.depth = x_depth;
-
-   perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
-
+   
    if (!uname(&un))
      {
 	perf->os.name = strdup(un.sysname);
@@ -763,9 +765,8 @@ evas_software_x11_outbuf_perf_new_x(Display * disp, Window draw, Visual * vis,
      }
    if (!perf->cpu.info)
       perf->cpu.info = strdup("");
+#endif   
    return perf;
-   vis = NULL;
-   cmap = 0;
 }
 
 char               *
@@ -777,6 +778,8 @@ evas_software_x11_outbuf_perf_serialize_info_x(Outbuf_Perf * perf)
    int                 sum1, sum2, i;
    char               *p;
 
+   return NULL;
+#if 0   
    sum1 = 0;
    sum2 = 0;
    snprintf(buf, sizeof(buf),
@@ -796,6 +799,7 @@ evas_software_x11_outbuf_perf_serialize_info_x(Outbuf_Perf * perf)
      }
    snprintf(buf, sizeof(buf), "%08x%08x", sum1, sum2);
    return strdup(buf);
+#endif   
 }
 
 void
@@ -805,6 +809,8 @@ evas_software_x11_outbuf_perf_store_x(Outbuf_Perf * perf)
    Atom                type, format;
    char               *str;
 
+   return;
+#if 0   
    type = XInternAtom(perf->x.disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
    format = XA_STRING;
    str = evas_software_x11_outbuf_perf_serialize_x(perf);
@@ -812,6 +818,7 @@ evas_software_x11_outbuf_perf_store_x(Outbuf_Perf * perf)
 		   PropModeReplace, (unsigned char *)str, strlen(str));
    XSync(perf->x.disp, False);
    free(str);
+#endif   
 }
 
 Outbuf_Perf        *
@@ -827,6 +834,8 @@ evas_software_x11_outbuf_perf_restore_x(Display * disp, Window draw, Visual * vi
    int                 format_ret;
 
    perf = evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, x_depth);
+   return perf;
+#if 0   
    type = XInternAtom(disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
    format = XA_STRING;
    XGetWindowProperty(disp, perf->x.root, type, 0, 16384, False, format,
@@ -843,20 +852,22 @@ evas_software_x11_outbuf_perf_restore_x(Display * disp, Window draw, Visual * vi
      }
 
    if (retval) XFree(retval);
-
    return perf;
+#endif   
 }
 
 void
 evas_software_x11_outbuf_perf_free(Outbuf_Perf * perf)
 {
    /* free the perf struct */
+#if 0   
    free(perf->x.display);
    free(perf->x.vendor);
    free(perf->os.name);
    free(perf->os.version);
    free(perf->os.machine);
    free(perf->cpu.info);
+#endif
    free(perf);
 }
 
