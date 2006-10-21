@@ -441,7 +441,6 @@ bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 #endif	
      }
 }
-#endif
 
 static void
 bg_cb_key_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
@@ -451,3 +450,4 @@ bg_cb_key_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
    ev = event_info;
    printf("UP %s\n", ev->keyname);
 }
+#endif
