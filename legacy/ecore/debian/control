@@ -98,7 +98,7 @@ Description: Ecore frame buffer system functions
 Package: libecore0-file
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libcurl3, libfam0 | libfam0c102 | libgamin0
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libcurl3
 Provides: libecore-file
 Description: Ecore File Library
  This is the core event abstraction layer and X abstraction layer that makes

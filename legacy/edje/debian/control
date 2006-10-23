@@ -2,6 +2,7 @@ Source: edje
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
+Suggests: edje0-bin
 Build-Depends: debhelper (>> 4.0.0), cdbs (>= 0.4.3-1.1),  automake1.7 | automaken, libtool, libeet-dev, libecore-dev, libevas-dev, libembryo-dev
 Standards-Version: 3.6.2.2
 
@@ -47,6 +48,7 @@ Package: libedje0-dev
 Architecture: any
 Section: libdevel
 Architecture: any
+Suggests: edje0-bin
 Depends: libedje0 (= ${Source-Version}), libeet-dev, libecore-dev, libevas-dev, libembryo-dev
 Provides: libedje-dev
 Description: Edje headers, static libraries and documentation

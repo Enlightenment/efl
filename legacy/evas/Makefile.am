@@ -34,12 +34,17 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     debian/libevas0-engine-xrender.install \
 	     debian/libevas0-engines-all.install \
 	     debian/libevas0-loader-eet.install \
+	     debian/libevas0-loader-gif.install \
 	     debian/libevas0-loader-jpeg.install \
 	     debian/libevas0-loader-png.install \
+	     debian/libevas0-loader-svg.install \
+	     debian/libevas0-loader-tiff.install \
+	     debian/libevas0-loader-xpm.install \
 	     debian/libevas0-loaders-all.install \
 	     debian/libevas0-saver-eet.install \
 	     debian/libevas0-saver-jpeg.install \
 	     debian/libevas0-saver-png.install \
+	     debian/libevas0-saver-tiff.install \
 	     debian/libevas0-savers-all.install \
 	     debian/libevas0.install \
 	     debian/rules

@@ -1,4 +1,4 @@
-bn# get rid of that stupid cache mechanism
+# get rid of that stupid cache mechanism
 rm -f config.cache
 
 AC_INIT(configure.in)
