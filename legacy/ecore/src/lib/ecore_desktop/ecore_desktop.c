@@ -206,6 +206,8 @@ _ecore_desktop_get(const char *file, const char *lang)
 	result->data = ecore_desktop_ini_get(result->original_path);
 	if (!result->data)
 	  {
+	     IFFREE(result->original_path);
+	     IFFREE(result->original_lang);
 	     free(result);
 	     result = NULL;
 	     goto error;
