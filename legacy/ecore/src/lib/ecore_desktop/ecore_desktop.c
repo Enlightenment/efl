@@ -832,6 +832,18 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 {
    char               *result = NULL, *params = NULL;
 
+   /* FIXME: for onefang
+    * 1. handle a list of files.
+    * 2. if exec params do not exist then just append files (assume dumb
+    *    .desktop so command becomes "exe params file1 file2 ...")
+    * 3. if filename does not start with ./ or ../ or / then assume it
+    *    is a path relative to cwd i.e. "file.png" or "blah/file.png" and
+    *    thus %d/%D would be ./ implicitly (but may need to be explicit
+    *    in the command line)
+    * 4. i spot lots of kde .desktops use %m (i assume %M exists too). find
+    *    out what it is - if not known - i guess assume %f/%F
+    *
+    */
    if (fill && (desktop->exec_params))
      {
 	Ecore_DList        *command;
@@ -875,7 +887,7 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 		       case 'u':	/* Single URL, multiple invokations if multiple URLs. */
 			  break;
 
-		       case 'c':	/* Translated Name field frem .desktop file. */
+		       case 'c':	/* Translated Name field from .desktop file. */
 			  t = desktop->name;
 			  break;
 
