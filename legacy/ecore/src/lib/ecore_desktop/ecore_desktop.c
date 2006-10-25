@@ -505,6 +505,7 @@ error:
 void
 ecore_desktop_save(Ecore_Desktop * desktop)
 {
+   Ecore_List         *commands;
    char               *temp;
    int                 trash = 0;
 
@@ -555,9 +556,16 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	       }
 	  }
 
-	temp = ecore_desktop_get_command(desktop, NULL, 0);
-	if (temp)
-	   ecore_hash_set(desktop->group, strdup("Exec"), temp);
+        /* We are not passing a list of files, so we only expect one command. */
+        commands = ecore_desktop_get_command(desktop, NULL, 0);
+	if (commands)
+	  {
+	     temp = ecore_list_first(commands);
+	     if (temp)
+	        ecore_hash_set(desktop->group, strdup("Exec"), strdup(temp));
+	     ecore_list_destroy(commands);
+	  }
+
 	if (desktop->name)
 	   ecore_hash_set(desktop->group, strdup("Name"),
 			  strdup(desktop->name));
@@ -827,10 +835,11 @@ ecore_desktop_home_get()
    return strdup(home);
 }
 
-EAPI char          *
+EAPI Ecore_List          *
 ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 {
-   char               *result = NULL, *params = NULL;
+   Ecore_List *result;
+   char       *sub_result = NULL, *params = NULL;
 
    /* FIXME: for onefang
     * 1. handle a list of files.
@@ -840,17 +849,22 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
     *    is a path relative to cwd i.e. "file.png" or "blah/file.png" and
     *    thus %d/%D would be ./ implicitly (but may need to be explicit
     *    in the command line)
-    * 4. i spot lots of kde .desktops use %m (i assume %M exists too). find
-    *    out what it is - if not known - i guess assume %f/%F
     *
     */
-   if (fill && (desktop->exec_params))
+
+   result = ecore_list_new();
+   if (!result) return NULL;
+   ecore_list_set_free_cb(result, free);
+
+   if (desktop->exec_params)
+      params = strdup(desktop->exec_params);
+   if (fill)
      {
 	Ecore_DList        *command;
 	char               *p, *t, buf[PATH_MAX + 10];
 	int                 len = 0;
 
-	params = strdup(desktop->exec_params);
+	if (!params) params = strdup("%F");
 	if (!params) goto error;
 	command = ecore_dlist_new();
 	if (!command) goto error;
@@ -921,6 +935,9 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 			    }
 			  break;
 
+		       case 'm':	/* Deprecated mini icon, the spec says we can just drop it. */
+			  break;
+
 		       case 'v':	/* Device field from .desktop file. */
 			  break;
 
@@ -958,10 +975,9 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 	  }
 	ecore_list_destroy(command);
      }
-   else if (desktop->exec_params)
-      params = strdup(desktop->exec_params);
 
-   result = ecore_desktop_merge_command(desktop->exec, params);
+   sub_result = ecore_desktop_merge_command(desktop->exec, params);
+   if (sub_result) ecore_list_append(result, sub_result);
 
 error:
    if (params) free(params);
