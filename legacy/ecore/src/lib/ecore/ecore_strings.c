@@ -44,7 +44,7 @@ ecore_string_init()
  * @ingroup Ecore_String_Group
  */
 EAPI const char *
-ecore_string_instance(char *string)
+ecore_string_instance(const char *string)
 {
    Ecore_String *str;
 

@@ -355,7 +355,7 @@ extern "C" {
    
    EAPI int ecore_string_init(void);
    EAPI void ecore_string_shutdown(void);
-   EAPI const char *ecore_string_instance(char *string);
+   EAPI const char *ecore_string_instance(const char *string);
    EAPI void ecore_string_release(const char *string);
    
    
