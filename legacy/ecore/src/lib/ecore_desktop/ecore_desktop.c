@@ -849,7 +849,8 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
     *    is a path relative to cwd i.e. "file.png" or "blah/file.png" and
     *    thus %d/%D would be ./ implicitly (but may need to be explicit
     *    in the command line)
-    *
+    * 4. need to escape filenames as they are part of a long cmd-line so
+    *    spaces, ;, ", ', etc. etc. need escaping
     */
 
    result = ecore_list_new();
