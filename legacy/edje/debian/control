@@ -22,17 +22,6 @@ Description: Various binaries for use with Edje
   - edje_recc: A convenience script to recompile EDC files.
   - edje_ls: Lists the contents of a compiled EDC file.
 
-Package: edje0-debug
-Architecture: any
-Section: graphics
-Depends: ${shlibs:Depends}, libedje0 (= ${Source-Version}), edje-bin, libevas-engine-buffer, libevas-engine-software-x11
-Provides: edje-debug
-Description: Various binaries for use with Edje
- Edje is a graphical layout and animation library for animated resizable,
- compressed and scalable themes. It is the theming engine behind
- Enlightenment DR 0.17.
- This package contains the Edje test binaries.
-
 Package: libedje0
 Architecture: any
 Section: libs
