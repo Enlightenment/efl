@@ -60,22 +60,6 @@ Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop, ecore-evas, ecore-
 %description devel
 Ecore development files
 
-%package bin
-Summary: Tools that support Ecore
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description bin
-Tools that support Ecore
-
-%package debug
-Summary: Tools for debugging/demonstration of Ecore
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description debug
-Tools for debugging/demonstration of Ecore
-
 %package con
 Summary: Ecore Connection Library
 Group: Development/Libraries
@@ -208,15 +192,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 %{_datadir}/aclocal/*
 %{_includedir}/*.h
-
-%files bin
-%defattr(-, root, root)
-%{_bindir}/ecore_config
-
-%files debug
-%defattr(-, root, root)
-%{_bindir}/*test
-%{_datadir}/ecore
 
 %files con
 %defattr(-, root, root)
