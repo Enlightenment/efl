@@ -70,14 +70,6 @@ Requires: %{name} = %{version}
 %description devel
 Headers, static libraries, test programs and documentation for Evas.
 
-%package debug
-Summary: Evas debug and testing tools
-Group: System Environment/Libraries
-Requires: %{name} = %{version}
-
-%description debug
-Debugging, testing, performance measurement etc. tools for evas.
-
 %if %{with module_loader_eet}
 %package module_loader_eet
 Summary: EET Image loader module for Evas
@@ -392,11 +384,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/evas-config
 %{_libdir}/pkgconfig/*
 %{_includedir}/*.h
-
-%files debug
-%defattr(-, root, root)
-%{_bindir}/evas_*
-%{_datadir}/%{name}
 
 %files module_engine_software_generic
 %defattr(-, root, root)

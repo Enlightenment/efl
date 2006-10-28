@@ -1855,13 +1855,9 @@ AC_SUBST(pthread_libs)
 AC_OUTPUT([
 Makefile
 evas.pc
-data/Makefile
 src/Makefile
-src/bin/Makefile
-src/bin/evas_software_win32/Makefile
 src/lib/Makefile
 src/lib/canvas/Makefile
-src/lib/data/Makefile
 src/lib/file/Makefile
 src/lib/imaging/Makefile
 src/lib/engines/Makefile
@@ -1904,8 +1900,6 @@ src/modules/savers/jpeg/Makefile
 src/modules/savers/png/Makefile
 src/modules/savers/tiff/Makefile
 src/lib/include/Makefile
-proj/Makefile
-proj/win32_gdi/Makefile
 evas-config
 README
 evas.spec

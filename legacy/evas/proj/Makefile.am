@@ -1,3 +1,0 @@
-MAINTAINERCLEANFILES = Makefile.in
-
-SUBDIRS = win32_gdi

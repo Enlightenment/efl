@@ -1,6 +1,6 @@
 # ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = data src proj
+SUBDIRS = src
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
@@ -24,7 +24,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     debian/compat \
 	     debian/control \
 	     debian/copyright \
-	     debian/evas0-debug.install \
 	     debian/libevas0-all.install \
 	     debian/libevas0-dev.install \
 	     debian/libevas0-engine-buffer.install \
