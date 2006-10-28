@@ -76,6 +76,7 @@ extern "C" {
    EAPI char       *ecore_file_readlink     (const char *link);
    EAPI Ecore_List *ecore_file_ls           (const char *dir);
    EAPI char       *ecore_file_app_exe_get  (const char *app);
+   EAPI char       *ecore_file_escape_name  (const char *filename);
    EAPI char       *ecore_file_strip_ext    (const char *file);
    
    EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,

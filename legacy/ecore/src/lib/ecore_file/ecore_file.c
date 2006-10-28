@@ -480,6 +480,40 @@ restart:
 }
 
 EAPI char *
+ecore_file_escape_name(const char *filename)
+{
+   const char *p;
+   char *q;
+   static char buf[PATH_MAX];
+   
+   p = filename;
+   q = buf;
+   while (*p)
+     {
+	if ((q - buf) > (PATH_MAX - 6)) return NULL;
+	if (
+	    (*p == ' ') || (*p == '\t') || (*p == '\n') ||
+	    (*p == '\\') || (*p == '\'') || (*p == '\"') ||
+	    (*p == ';') || (*p == '!') || (*p == '#') ||
+	    (*p == '$') || (*p == '%') || (*p == '&') ||
+	    (*p == '*') || (*p == '(') || (*p == ')') ||
+	    (*p == '[') || (*p == ']') || (*p == '{') ||
+	    (*p == '}') || (*p == '|') || (*p == '<') ||
+	    (*p == '>') || (*p == '?')
+	    )
+	  {
+	     *q = '\\';
+	     q++;
+	  }
+	*q = *p;
+	q++;
+	p++;
+     }
+   *q = 0;
+   return strdup(buf);
+}
+
+EAPI char *
 ecore_file_strip_ext(const char *path)
 {
    char *p, *file = NULL;
