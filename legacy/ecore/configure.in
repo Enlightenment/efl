@@ -1253,10 +1253,6 @@ AC_SUBST(requirements)
 AC_OUTPUT([
 Makefile
 ecore.pc
-data/Makefile
-data/fonts/Makefile
-data/images/Makefile
-data/pointers/Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
@@ -1273,7 +1269,6 @@ src/lib/ecore_file/Makefile
 src/lib/ecore_dbus/Makefile
 src/lib/ecore_desktop/Makefile
 src/lib/ecore_directfb/Makefile
-examples/Makefile
 ecore-config
 README
 ecore.spec

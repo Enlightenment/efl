@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = data src examples
+SUBDIRS = src
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
@@ -24,7 +24,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4
 	     debian/control \
 	     debian/copyright \
 	     debian/ecore0-bin.install \
-	     debian/ecore0-debug.install \
 	     debian/libecore0-con.install \
 	     debian/libecore0-config.install \
 	     debian/libecore0-dbus.install \
