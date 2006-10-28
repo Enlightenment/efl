@@ -5,13 +5,7 @@ INCLUDES = -DLINUX -I$(top_srcdir)/src/lib -I$(top_srcdir) -I$(top_builddir) \
 	   -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
 	   -DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
 
-bin_PROGRAMS = embryo embryo_cc
-
-embryo_SOURCES = \
-embryo_main.c
-
-embryo_LDADD = $(top_builddir)/src/lib/libembryo.la
-embryo_DEPENDENCIES = $(top_builddir)/src/lib/libembryo.la
+bin_PROGRAMS = embryo_cc
 
 embryo_cc_SOURCES = \
 embryo_cc_amx.h \

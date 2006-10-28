@@ -13,14 +13,6 @@ Depends: ${shlibs:Depends}
 Description: SMALL compiler creating Embryo bytecode
  This package contains the compiler embryo_cc.
 
-Package: embryo0-debug
-Section: devel
-Architecture: any
-Provides: embryo-debug
-Depends: ${shlibs:Depends}
-Description: Debugging execution utility for embryo compiled bytecode.
- This package contains the debugging utility.
-
 Package: libembryo0-dev
 Section: libdevel
 Architecture: any

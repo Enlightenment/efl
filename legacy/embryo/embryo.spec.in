@@ -33,14 +33,6 @@ Requires: %{name} = %{version}
 %description bin
 The embryo bytecode compiler and its files
 
-%package debug
-Summary: Embryo debug utilities
-Group: System Environment/Libraries
-Requires: %{name} = %{version}
-
-%description debug
-Debug utilities for embryo
-
 %prep
 %setup -q
 
@@ -71,11 +63,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %attr(755,root,root) %{_bindir}/embryo_cc
 %{_datadir}/embryo/include
-
-%files debug
-%defattr(-, root, root)
-%attr(755,root,root) %{_bindir}/embryo
-%{_datadir}/embryo/examples
 
 %files devel
 %defattr(-, root, root)

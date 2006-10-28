@@ -1,4 +1,4 @@
-SUBDIRS = src include examples
+SUBDIRS = src include
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
@@ -22,7 +22,6 @@ EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN embryo.c.in gendoc \
 	     debian/control \
 	     debian/copyright \
 	     debian/embryo0-bin.install \
-	     debian/embryo0-debug.install \
 	     debian/libembryo0-dev.install \
 	     debian/libembryo0.install \
 	     debian/rules
