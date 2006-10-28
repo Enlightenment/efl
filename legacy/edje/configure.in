@@ -88,12 +88,6 @@ AC_PATH_GENERIC(ecore, 0.9.9,
   [ AC_MSG_ERROR(Ecore isn't installed) ],
 )
 
-CP=$CFLAGS
-CFLAGS=$ECORE_CFLAGS
-AC_CHECK_HEADER(Ecore_X.h, AC_DEFINE(HAVE_ECORE_X, 1, [Ecore_X.h exists]))
-AC_CHECK_HEADER(Ecore_Fb.h, AC_DEFINE(HAVE_ECORE_FB, 1, [Ecore_Fb.h exists]))
-CFLAGS=$CP
-
 AC_PATH_GENERIC(eet, 0.9.10,
   [ ],
   [ AC_MSG_ERROR(Eet isn't installed) ],
@@ -147,36 +141,20 @@ if test "x$have_edje_cc" = "xyes"; then
   EDJE_CC_PRG="edje_cc"
   EDJE_DECC_PRG="edje_decc"
   EDJE_RECC_PRG="edje_recc"
-  EDJE_THUMB_PRG="edje_thumb"
 else
   AM_CONDITIONAL(BUILD_EDJE_CC, false)
   AM_CONDITIONAL(BUILD_EDJE_DECC, false)
-  AM_CONDITIONAL(BUILD_EDJE_THUMB, false)
 fi
 AC_SUBST(EDJE_CC_PRG)
 AC_SUBST(EDJE_DECC_PRG)
 AC_SUBST(EDJE_RECC_PRG)
-AC_SUBST(EDJE_THUMB_PRG)
 
 AC_OUTPUT([
 edje.pc
 edje.spec
 Makefile
 data/Makefile
-data/images/Makefile
 data/include/Makefile
-data/src/Makefile
-data/template/Makefile
-data/template/embryo/Makefile
-data/template/fonts/Makefile
-data/template/hashes/Makefile
-data/template/images/Makefile
-data/template/macros/Makefile
-data/template/parts/Makefile
-data/template/programs/Makefile
-data/test/Makefile
-data/test/fonts/Makefile
-data/test/images/Makefile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile

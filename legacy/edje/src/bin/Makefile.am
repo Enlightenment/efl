@@ -19,29 +19,12 @@ EXTRA_DIST = @EDJE_RECC_PRG@
 EXTRA_SCRIPTS = edje_recc
 
 bin_PROGRAMS = \
-edje \
-edje_ls \
-edje_test \
 @EDJE_CC_PRG@ \
-@EDJE_DECC_PRG@ \
-@EDJE_THUMB_PRG@
+@EDJE_DECC_PRG@
 
 EXTRA_PROGRAMS = \
 edje_cc \
-edje_decc \
-edje_thumb
-
-edje_SOURCES = \
-edje_main.c \
-edje_main.h \
-edje_prefix.c \
-edje_prefix.h
-
-edje_LDADD = \
-$(top_builddir)/src/lib/libedje.la
-
-edje_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
-
+edje_decc
 
 edje_cc_SOURCES = \
 edje_cc.c \
@@ -70,33 +53,3 @@ edje_decc_LDADD = \
 $(top_builddir)/src/lib/libedje.la
 
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
-
-
-edje_thumb_SOURCES = \
-edje_thumb.c \
-edje_thumb.h
-
-edje_thumb_LDADD = \
-$(top_builddir)/src/lib/libedje.la
-
-edje_thumb_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
-
-
-
-edje_ls_SOURCES = \
-edje_ls.c
-
-edje_ls_LDADD = \
-$(top_builddir)/src/lib/libedje.la
-
-edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
-
-
-
-edje_test_SOURCES = \
-edje_test_main.c
-
-edje_test_LDADD = \
-$(top_builddir)/src/lib/libedje.la
-
-edje_test_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
