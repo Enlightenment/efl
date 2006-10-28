@@ -841,24 +841,24 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
    Ecore_List *result;
    char       *sub_result = NULL, *params = NULL;
 
-   /* FIXME: for onefang
-    * 1. handle a list of files.
-    * 2. if exec params do not exist then just append files (assume dumb
-    *    .desktop so command becomes "exe params file1 file2 ...")
-    * 3. if filename does not start with ./ or ../ or / then assume it
-    *    is a path relative to cwd i.e. "file.png" or "blah/file.png" and
-    *    thus %d/%D would be ./ implicitly (but may need to be explicit
-    *    in the command line)
-    * 4. need to escape filenames as they are part of a long cmd-line so
-    *    spaces, ;, ", ', etc. etc. need escaping
-    */
-
    result = ecore_list_new();
    if (!result) return NULL;
    ecore_list_set_free_cb(result, free);
 
    if (desktop->exec_params)
       params = strdup(desktop->exec_params);
+
+if (files)
+  {
+     char *file;
+
+     ecore_list_goto_first(files);
+     while((file = ecore_list_next(files)) != NULL)
+        printf("FILE FOR COMMAND IS - %s\n", file);
+  }
+
+do
+{
    if (fill)
      {
 	Ecore_DList        *command;
@@ -888,18 +888,26 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 	  }
 	if (!ecore_dlist_is_empty(command))
 	  {
+	     if (files)
+                ecore_list_goto_first(files);
 	     ecore_dlist_goto_first(command);
 	     while ((p = ecore_dlist_next(command)) != NULL)
 	       {
+	          int do_file = 0, is_single = 0, is_URL = 0, is_directory = 0, is_file = 0;
+
 		  t = NULL;
-		  /* FIXME: implement the rest of these when EFM can pass us files. */
 		  if (p[0] == '%')
 		    switch (p[1])
 		      {
 		       case 'f':	/* Single file name, multiple invokations if multiple files.  If the file is on the net, download first and point to temp file. */
+		          do_file = 1;
+		          is_single = 1;
 			  break;
 
 		       case 'u':	/* Single URL, multiple invokations if multiple URLs. */
+		          do_file = 1;
+		          is_single = 1;
+			  is_URL = 1;
 			  break;
 
 		       case 'c':	/* Translated Name field from .desktop file. */
@@ -911,21 +919,34 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 			  break;
 
 		       case 'F':	/* Multiple file names.  If the files are on the net, download first and point to temp files. */
+		          do_file = 1;
 			  break;
 
 		       case 'U':	/* Multiple URLs. */
+		          do_file = 1;
+			  is_URL = 1;
 			  break;
 
 		       case 'd':	/* Directory of the file in %f. */
+		          do_file = 1;
+		          is_single = 1;
+			  is_directory = 1;
 			  break;
 
 		       case 'D':	/* Directories of the files in %F. */
+		          do_file = 1;
+			  is_directory = 1;
 			  break;
 
 		       case 'n':	/* Single filename without path. */
+		          do_file = 1;
+		          is_single = 1;
+			  is_file = 1;
 			  break;
 
 		       case 'N':	/* Multiple filenames without paths. */
+		          do_file = 1;
+			  is_file = 1;
 			  break;
 
 		       case 'i':	/* "--icon Icon" field from .desktop file, or empty. */
@@ -949,6 +970,58 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 		       default:
 			  break;
 		      }
+		  if (do_file && (files))
+		    {
+		       char *file;
+
+		       while((file = ecore_list_next(files)) != NULL)
+		         {
+                            char *text = NULL, *escaped = NULL;
+
+                            if (is_URL)
+			      {
+			         /* FIXME: The spec is unclear about what they mean by URL, 
+				  * GIMP uses %U, but doesn't understand file://foo
+				  * For now, just make this the same as is_file.
+				  */
+//			         text = malloc(strlen(file) + 10);
+//				 if (text)
+//			            sprintf(text, "file://%s", file);
+			         text = strdup(file);
+			      }
+			    else if (is_directory)
+			      {
+                                 /* FIXME: for onefang
+                                  *    if filename does not start with ./ or ../ or / then assume it
+                                  *    is a path relative to cwd i.e. "file.png" or "blah/file.png" and
+                                  *    thus %d/%D would be ./ implicitly (but may need to be explicit
+                                  *    in the command line)
+                                  */
+			         text = ecore_file_get_dir(file);
+			      }
+			    else if (is_file)
+			         text = strdup(ecore_file_get_file(file));
+			    else
+			      {
+			         /* FIXME: If the file is on the net, download first and point to temp file. */
+			         text = strdup(file);
+			      }
+			    if (text)
+			      {
+                                 escaped = ecore_file_escape_name(text);
+			         free(text);
+			      }
+			    if (escaped)
+			      {
+			         /* FIXME: Need to append these if we are looping. */
+			         snprintf(buf, sizeof(buf), "%s", escaped);
+				 t = buf;
+			         free(escaped);
+			      }
+			    if (is_single)
+			       break;
+			 }
+		    }
 		  if (t)
 		    {
 		       len += strlen(t);
@@ -977,8 +1050,15 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 	ecore_list_destroy(command);
      }
 
+   /* FIXME: still need to loop if there are files left. */
    sub_result = ecore_desktop_merge_command(desktop->exec, params);
-   if (sub_result) ecore_list_append(result, sub_result);
+   if (sub_result)
+     {
+        printf("FULL COMMAND IS - %s\n", sub_result);
+        ecore_list_append(result, sub_result);
+     }
+}
+while((files) && (ecore_list_current(files)));
 
 error:
    if (params) free(params);
