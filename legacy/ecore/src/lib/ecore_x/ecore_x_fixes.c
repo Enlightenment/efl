@@ -73,6 +73,7 @@ ecore_x_region_new(Ecore_X_Rectangle *rects, int num)
 
    xrect = _ecore_x_rectangle_ecore_to_x(rects, num);
    region = XFixesCreateRegion(_ecore_x_disp, xrect, num);
+   free(xrect);
    return region;
 #else
    return 0;
