@@ -36,14 +36,6 @@ Requires: libjpeg-devel, zlib-devel
 %description devel
 Headers, static libraries, test programs and documentation for Eet
 
-%package debug
-Summary: Eet debug tools
-Group: System Environment/Libraries
-Requires: %{name} = %{version}
-
-%description debug
-Debug tools for Eet.
-
 %prep
 %setup -q
 
@@ -55,7 +47,6 @@ Debug tools for Eet.
 
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
-rm -f $RPM_BUILD_ROOT/usr/bin/eet_bench
 
 %clean
 test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
@@ -79,9 +70,5 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 %{_libdir}/*.so
 %{_libdir}/*.la
-
-%files debug
-%defattr(-, root, root)
-%{_bindir}/eet
 
 %changelog
