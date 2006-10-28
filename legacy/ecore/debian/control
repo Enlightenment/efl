@@ -189,3 +189,18 @@ Description: Ecore headers, static libraries and documentation
  applications.
  This package contains headers, static libraries and documentation for
  the Ecore library.
+
+Package: ecore0-bin
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, libecore0 (= ${Source-Version}), libecore0-config (= ${Source-Version})
+Provides: ecore-bin
+Conflicts: ecore-test
+Description: Tools that support Ecore.
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ This package includes:
+  - ecore_config: allows creation/editing of ecore_config databases

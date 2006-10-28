@@ -1254,6 +1254,7 @@ AC_OUTPUT([
 Makefile
 ecore.pc
 src/Makefile
+src/bin/Makefile
 src/lib/Makefile
 src/lib/ecore/Makefile
 src/lib/ecore_job/Makefile
