@@ -959,6 +959,35 @@ AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
 ## Cpu based optimizations
 
 #######################################
+## PTHREADS
+pthread_cflags=""
+pthread_libs=""
+build_pthreads="no"
+AC_MSG_CHECKING(whether to build pthread code)
+AC_ARG_ENABLE(pthreads, 
+  [  --enable-pthreads               enable threaded rendering], [
+      if test x"$enableval" = x"yes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(BUILD_SSE, 1, [Build Threaded Rendering])
+        build_pthreads="yes"
+        pthread_cflags=""
+        pthread_libs="-lpthread"
+      else
+        AC_MSG_RESULT(no)
+        build_pthreads="no"
+      fi
+  ],
+  [ 
+    AC_MSG_RESULT($build_pthreads)
+    if test x"$build_pthreads" = x"yes" ; then
+      AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
+      pthread_cflags=""
+      pthread_libs="-lpthread"
+    fi
+  ]
+)
+
+#######################################
 ## MMX
 build_cpu_mmx="no"
 case $host_cpu in
@@ -1817,6 +1846,9 @@ AC_SUBST(ENGINE_XRENDER_XCB_PRG)
 
 AC_SUBST(altivec_cflags)
 
+AC_SUBST(pthread_cflags)
+AC_SUBST(pthread_libs)
+
 #####################################################################
 ## Output
 
@@ -1933,6 +1965,7 @@ echo "  Fallback C Code.........: $build_cpu_c"
 echo "  MMX.....................: $build_cpu_mmx"
 echo "  SSE.....................: $build_cpu_sse"
 echo "  ALTIVEC.................: $build_cpu_altivec"
+echo "  Thread Support,.........: $build_pthreads"
 echo
 echo "ARGB Software Engine Options:"
 echo "  Sampling Scaler.........: $scaler_sample"

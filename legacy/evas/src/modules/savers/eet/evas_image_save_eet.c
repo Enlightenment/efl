@@ -1,8 +1,7 @@
-#include <Eet.h>
-
 #include "evas_common.h"
 #include "evas_private.h"
 
+#include <Eet.h>
 
 int evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 

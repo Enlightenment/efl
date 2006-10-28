@@ -12,6 +12,31 @@
 #define _GNU_SOURCE
 #endif
 
+#ifdef BUILD_PTHREAD
+# include <pthread.h>
+# define RLK         struct { pthread_rwlock_t rwl; } _reslock
+# define RLK_ADD(x)  pthread_rwlock_init   (&((x)->_reslock.rwl), NULL)
+# define RLK_DEL(x)  pthread_rwlock_destroy(&((x)->_reslock.rwl))
+# define RLK_RLK(x)  pthread_rwlock_rdlock (&((x)->_reslock.rwl))
+# define RLK_WLK(x)  pthread_rwlock_wrlock (&((x)->_reslock.rwl))
+# define RLK_ULK(x)  pthread_rwlock_unlock (&((x)->_reslock.rwl))
+#else
+# define RLK         
+# define RLK_ADD(x)  
+# define RLK_DEL(x)  
+# define RLK_RLK(x) 
+# define RLK_WLK(x) 
+# define RLK_ULK(x) 
+#endif
+
+typedef struct _Genlock Genlock;
+
+struct _Genlock
+{
+   RLK;
+   int _dummy;
+};
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -80,7 +105,7 @@ typedef unsigned long long            DATA64;
 typedef unsigned __int64              DATA64;
 #define strdup _strdup
 #define snprintf _snprintf
-#define rewind(f) fseek(f,0,SEEK_SET)
+#define rewind(f) fseek(f, 0, SEEK_SET)
 #endif
 
 typedef unsigned int                  DATA32;
@@ -706,45 +731,52 @@ EAPI void evas_common_scale_hsva_span                       (DATA32 *src, DATA8 
 EAPI void evas_common_scale_hsva_a8_span                    (DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir);
 
 /****/
+/*done*/
 EAPI void          evas_common_image_init              (void);
 EAPI void          evas_common_image_shutdown          (void);
 
-EAPI RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);
-EAPI void          evas_common_image_surface_free      (RGBA_Surface *is);
-EAPI void          evas_common_image_surface_alloc     (RGBA_Surface *is);
-EAPI void          evas_common_image_surface_dealloc   (RGBA_Surface *is);
+/*done - internal - dont use */
+EAPI RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);/*2*/
+EAPI void          evas_common_image_surface_free      (RGBA_Surface *is);/*2*/
+EAPI void          evas_common_image_surface_alloc     (RGBA_Surface *is);/*2*/
+EAPI void          evas_common_image_surface_dealloc   (RGBA_Surface *is);/*2*/
+EAPI void          evas_common_image_cache             (RGBA_Image *im); /*2*/
+EAPI void          evas_common_image_uncache           (RGBA_Image *im); /*2*/
+EAPI void          evas_common_image_store             (RGBA_Image *im); /*2*/
+EAPI void          evas_common_image_unstore           (RGBA_Image *im); /*2*/
+EAPI RGBA_Image   *evas_common_image_find              (const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo); /*2*/
+EAPI void          evas_common_image_cache_free        (void); /*2*/
+EAPI void          evas_common_image_premul             (RGBA_Image *im); /*2*/
+EAPI void          evas_common_image_set_alpha_sparse   (RGBA_Image *im); /*2*/
 
+/*done*/
 EAPI RGBA_Image   *evas_common_image_alpha_create      (int w, int h);
 EAPI RGBA_Image   *evas_common_image_create            (int w, int h);
 EAPI RGBA_Image   *evas_common_image_new               (void);
+
 EAPI void          evas_common_image_free              (RGBA_Image *im);
 EAPI void          evas_common_image_ref               (RGBA_Image *im);
 EAPI void          evas_common_image_unref             (RGBA_Image *im);
-EAPI void          evas_common_image_cache             (RGBA_Image *im);
-EAPI void          evas_common_image_uncache           (RGBA_Image *im);
 EAPI void          evas_common_image_flush_cache       (void);
 EAPI void          evas_common_image_set_cache         (int size);
 EAPI int           evas_common_image_get_cache         (void);
-EAPI void          evas_common_image_store             (RGBA_Image *im);
-EAPI void          evas_common_image_unstore           (RGBA_Image *im);
-EAPI RGBA_Image   *evas_common_image_find              (const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo);
 EAPI int           evas_common_image_ram_usage         (RGBA_Image *im);
 EAPI void          evas_common_image_dirty             (RGBA_Image *im);
-EAPI void          evas_common_image_cache_free        (void);
 
-EAPI RGBA_Image   *evas_common_load_image_from_file     (const char *file, const char *key, RGBA_Image_Loadopts *lo);
-EAPI void          evas_common_load_image_data_from_file(RGBA_Image *im);
-EAPI int           evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
-EAPI void          evas_common_image_premul             (RGBA_Image *im);
-EAPI void          evas_common_image_set_alpha_sparse   (RGBA_Image *im);
-
-EAPI RGBA_Image   *evas_common_image_line_buffer_obtain       (int len);
-EAPI void          evas_common_image_line_buffer_release      (void);
-EAPI void          evas_common_image_line_buffer_free         (void);
+EAPI RGBA_Image   *evas_common_image_line_buffer_obtain        (int len);
+EAPI void          evas_common_image_line_buffer_release       (void);
+EAPI void          evas_common_image_line_buffer_free          (void);
 
 EAPI RGBA_Image   *evas_common_image_alpha_line_buffer_obtain  (int len);
 EAPI void          evas_common_image_alpha_line_buffer_release (void);
 EAPI void          evas_common_image_alpha_line_buffer_free    (void);
+
+/*done*/
+EAPI RGBA_Image   *evas_common_load_image_from_file     (const char *file, const char *key, RGBA_Image_Loadopts *lo);
+EAPI void          evas_common_load_image_data_from_file(RGBA_Image *im);
+EAPI int           evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+
+
 
 
 /****/
@@ -901,6 +933,9 @@ void		 evas_common_array_hash_free	(Evas_Array_Hash *hash);
 void		 evas_common_array_hash_add	(Evas_Array_Hash *hash, int key, int data);
 int		 evas_common_array_hash_search	(Evas_Array_Hash *hash, int key);
 
+void evas_stringshare_init(void);
+void evas_stringshare_shutdown(void);
+       
 /*****************************************************************************/
 
 #ifdef __cplusplus

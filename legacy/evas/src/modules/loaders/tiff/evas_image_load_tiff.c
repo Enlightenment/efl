@@ -1,9 +1,8 @@
-#include <stdio.h>
-
-#include <tiffio.h>
-
 #include "evas_common.h"
 #include "evas_private.h"
+
+#include <stdio.h>
+#include <tiffio.h>
 
 
 int evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key);

@@ -1,9 +1,12 @@
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 #include <png.h>
 #include <setjmp.h>
 
 #include "evas_common.h"
 #include "evas_private.h"
-
 
 int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 

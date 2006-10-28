@@ -6,6 +6,9 @@
 #ifndef _WIN32_WCE
 /* UNIX compatability functions */
 
+#include "evas_common.h"
+#include "evas_private.h"
+
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -15,9 +18,6 @@
 /* get the casefold feature! */
 #include <fnmatch.h>
 #include <dirent.h>
-
-#include "evas_common.h"
-#include "evas_private.h"
 
 int
 evas_file_path_is_full_path(const char *path)

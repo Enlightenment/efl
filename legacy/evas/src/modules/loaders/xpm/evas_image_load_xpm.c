@@ -1,7 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-
 int evas_image_load_file_head_xpm(RGBA_Image *im, const char *file, const char *key);
 int evas_image_load_file_data_xpm(RGBA_Image *im, const char *file, const char *key);
 

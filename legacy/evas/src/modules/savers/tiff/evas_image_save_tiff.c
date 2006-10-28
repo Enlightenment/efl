@@ -1,8 +1,7 @@
-#include <tiffio.h>
-
 #include "evas_common.h"
 #include "evas_private.h"
 
+#include <tiffio.h>
 
 int evas_image_save_file_tiff(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 

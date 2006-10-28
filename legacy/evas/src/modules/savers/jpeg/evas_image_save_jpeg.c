@@ -1,10 +1,9 @@
-#include <stdio.h>
-#include <jpeglib.h>
-#include <setjmp.h>
-
 #include "evas_common.h"
 #include "evas_private.h"
 
+#include <stdio.h>
+#include <jpeglib.h>
+#include <setjmp.h>
 
 int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 

@@ -9,7 +9,8 @@ INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib/include \
 		       @FREETYPE_CFLAGS@ \
 		       @eet_cflags@ \
-		       @FONTCONFIG_CFLAGS@
+		       @FONTCONFIG_CFLAGS@ \
+		       @pthread_cflags@
 
 lib_LTLIBRARIES      = libevas.la
 
@@ -29,7 +30,8 @@ libevas_la_LIBADD       = \
 			  @dlopen_libs@ \
 			  @FREETYPE_LIBS@ \
 			  @eet_libs@ \
-			  @FONTCONFIG_LIBS@
+			  @FONTCONFIG_LIBS@ \
+			  @pthread_libs@
 
 libevas_la_DEPENDENCIES = \
                           $(top_builddir)/config.h \

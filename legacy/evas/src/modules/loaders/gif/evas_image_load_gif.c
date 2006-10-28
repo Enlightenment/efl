@@ -1,11 +1,11 @@
+#include "evas_common.h"
+#include "evas_private.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
 #include <gif_lib.h>
-
-#include "evas_common.h"
-#include "evas_private.h"
 
 
 int evas_image_load_file_head_gif(RGBA_Image *im, const char *file, const char *key);
