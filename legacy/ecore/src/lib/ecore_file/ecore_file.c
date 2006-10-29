@@ -484,7 +484,7 @@ ecore_file_escape_name(const char *filename)
 {
    const char *p;
    char *q;
-   static char buf[PATH_MAX];
+   char buf[PATH_MAX];
    
    p = filename;
    q = buf;
