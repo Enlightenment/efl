@@ -890,7 +890,7 @@ if (files)
 	          {
 		     *p = '\0';
 		     ecore_dlist_append(command, strdup(t));
-		     len += strlen(t);
+		     len += strlen(t) + 1;
 		     *p = '%';
 		     t = p;
 	          }
@@ -898,6 +898,7 @@ if (files)
 	   if (t < p)
 	     {
 	        ecore_dlist_append(command, strdup(t));
+		len += strlen(t) + 1;
 	     }
 	   free(params);
 	   params = NULL;
@@ -1048,7 +1049,7 @@ if (files)
 			       /* Add it to the big buf. */
 			       if (escaped)
 			         {
-				    big_len += strlen(escaped) + 1;
+				    big_len += strlen(escaped) + 2;
 				    big_buf = realloc(big_buf, big_len);
 			            strcat(big_buf, " ");
 			            strcat(big_buf, escaped);
@@ -1063,9 +1064,9 @@ if (files)
 		     /* Insert this bit into the command. */
 		     if (t)
 		       {
-		          len += strlen(t);
 		          ecore_dlist_previous(command);
 		          ecore_dlist_insert(command, strdup(t));
+		          len += strlen(t) + 1;
 		          ecore_dlist_next(command);
 		          ecore_dlist_next(command);
 		       }
