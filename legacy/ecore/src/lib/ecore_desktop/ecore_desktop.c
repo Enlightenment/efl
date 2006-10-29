@@ -848,6 +848,7 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
    if (desktop->exec_params)
       params = strdup(desktop->exec_params);
 
+#ifdef DEBUG
 if (files)
   {
      char *file;
@@ -856,209 +857,258 @@ if (files)
      while((file = ecore_list_next(files)) != NULL)
         printf("FILE FOR COMMAND IS - %s\n", file);
   }
+#endif
 
-do
-{
-   if (fill)
-     {
-	Ecore_DList        *command;
-	char               *p, *t, buf[PATH_MAX + 10];
-	int                 len = 0;
+   if (files)
+      ecore_list_goto_first(files);
 
-	if (!params) params = strdup("%F");
-	if (!params) goto error;
-	command = ecore_dlist_new();
-	if (!command) goto error;
+   /* FIXME: The string handling could be better, but it's good enough for now. */
+   do
+   {
+      if (fill)
+        {
+           Ecore_DList        *command;
+	   char               *p, *t, buf[PATH_MAX + 10], *big_buf = NULL;
+	   int                 len = 0;
 
-	ecore_dlist_set_free_cb(command, free);
-	t = params;
-	for (p = params; *p; p++)
-	  {
-	     if (*p == '%')
-	       {
-		  *p = '\0';
-		  ecore_dlist_append(command, strdup(t));
-		  *p = '%';
-		  t = p;
-	       }
-	  }
-	if (t < p)
-	  {
-	     ecore_dlist_append(command, strdup(t));
-	  }
-	if (!ecore_dlist_is_empty(command))
-	  {
-	     if (files)
-                ecore_list_goto_first(files);
-	     ecore_dlist_goto_first(command);
-	     while ((p = ecore_dlist_next(command)) != NULL)
-	       {
-	          int do_file = 0, is_single = 0, is_URL = 0, is_directory = 0, is_file = 0;
+	   command = ecore_dlist_new();
+	   if (!command) goto error;
 
-		  t = NULL;
-		  if (p[0] == '%')
-		    switch (p[1])
-		      {
-		       case 'f':	/* Single file name, multiple invokations if multiple files.  If the file is on the net, download first and point to temp file. */
-		          do_file = 1;
-		          is_single = 1;
-			  break;
+	   ecore_dlist_set_free_cb(command, free);
+           /* Grab a fresh copy of the params.  The default is %F as per rasters request. */
+           if (params) free(params);
+           if (desktop->exec_params)
+              params = strdup(desktop->exec_params);
+	   else
+	      params = strdup("%F");
+	   if (!params) goto error;
+	   /* Split it up. */
+	   t = params;
+	   for (p = params; *p; p++)
+	     {
+	        if (*p == '%')
+	          {
+		     *p = '\0';
+		     ecore_dlist_append(command, strdup(t));
+		     len += strlen(t);
+		     *p = '%';
+		     t = p;
+	          }
+	     }
+	   if (t < p)
+	     {
+	        ecore_dlist_append(command, strdup(t));
+	     }
+	   free(params);
+	   params = NULL;
+	   t = NULL;
+	   p = NULL;
+	   /* Check the bits for replacables. */
+	   if (!ecore_dlist_is_empty(command))
+	     {
+	        ecore_dlist_goto_first(command);
+	        while ((p = ecore_dlist_next(command)) != NULL)
+	          {
+	             int do_file = 0, is_single = 0, is_URL = 0, is_directory = 0, is_file = 0;
 
-		       case 'u':	/* Single URL, multiple invokations if multiple URLs. */
-		          do_file = 1;
-		          is_single = 1;
-			  is_URL = 1;
-			  break;
-
-		       case 'c':	/* Translated Name field from .desktop file. */
-			  t = desktop->name;
-			  break;
-
-		       case 'k':	/* Location of the .desktop file, may be a URL, or empty. */
-			  t = desktop->original_path;
-			  break;
-
-		       case 'F':	/* Multiple file names.  If the files are on the net, download first and point to temp files. */
-		          do_file = 1;
-			  break;
-
-		       case 'U':	/* Multiple URLs. */
-		          do_file = 1;
-			  is_URL = 1;
-			  break;
-
-		       case 'd':	/* Directory of the file in %f. */
-		          do_file = 1;
-		          is_single = 1;
-			  is_directory = 1;
-			  break;
-
-		       case 'D':	/* Directories of the files in %F. */
-		          do_file = 1;
-			  is_directory = 1;
-			  break;
-
-		       case 'n':	/* Single filename without path. */
-		          do_file = 1;
-		          is_single = 1;
-			  is_file = 1;
-			  break;
-
-		       case 'N':	/* Multiple filenames without paths. */
-		          do_file = 1;
-			  is_file = 1;
-			  break;
-
-		       case 'i':	/* "--icon Icon" field from .desktop file, or empty. */
-			  if (desktop->icon)
-			    {
-			       snprintf(buf, sizeof(buf), "--icon %s", desktop->icon);
-			       t = buf;
-			    }
-			  break;
-
-		       case 'm':	/* Deprecated mini icon, the spec says we can just drop it. */
-			  break;
-
-		       case 'v':	/* Device field from .desktop file. */
-			  break;
-
-		       case '%':	/* A '%' character. */
-			  t = "%";
-			  break;
-
-		       default:
-			  break;
-		      }
-		  if (do_file && (files))
-		    {
-		       char *file;
-
-		       while((file = ecore_list_next(files)) != NULL)
+		     t = NULL;
+		     if (p[0] == '%')
+		       switch (p[1])
 		         {
-                            char *text = NULL, *escaped = NULL;
-
-                            if (is_URL)
-			      {
-			         /* FIXME: The spec is unclear about what they mean by URL, 
-				  * GIMP uses %U, but doesn't understand file://foo
-				  * For now, just make this the same as is_file.
-				  */
-//			         text = malloc(strlen(file) + 10);
-//				 if (text)
-//			            sprintf(text, "file://%s", file);
-			         text = strdup(file);
-			      }
-			    else if (is_directory)
-			      {
-                                 /* FIXME: for onefang
-                                  *    if filename does not start with ./ or ../ or / then assume it
-                                  *    is a path relative to cwd i.e. "file.png" or "blah/file.png" and
-                                  *    thus %d/%D would be ./ implicitly (but may need to be explicit
-                                  *    in the command line)
-                                  */
-			         text = ecore_file_get_dir(file);
-			      }
-			    else if (is_file)
-			         text = strdup(ecore_file_get_file(file));
-			    else
-			      {
-			         /* FIXME: If the file is on the net, download first and point to temp file. */
-			         text = strdup(file);
-			      }
-			    if (text)
-			      {
-                                 escaped = ecore_file_escape_name(text);
-			         free(text);
-			      }
-			    if (escaped)
-			      {
-			         /* FIXME: Need to append these if we are looping. */
-			         snprintf(buf, sizeof(buf), "%s", escaped);
-				 t = buf;
-			         free(escaped);
-			      }
-			    if (is_single)
+		            case 'f':	/* Single file name, multiple invokations if multiple files.  If the file is on the net, download first and point to temp file. */
+		               do_file = 1;
+		               is_single = 1;
 			       break;
-			 }
-		    }
-		  if (t)
-		    {
-		       len += strlen(t);
-		       ecore_dlist_previous(command);
-		       ecore_dlist_insert(command, strdup(t));
-		       ecore_dlist_next(command);
-		       ecore_dlist_next(command);
-		    }
-		  len += strlen(p);
-	       }
-	     free(params);
-	     params = malloc(len + 1);
-	     if (params)
-	       {
-		  params[0] = '\0';
-		  ecore_dlist_goto_first(command);
-		  while ((p = ecore_dlist_next(command)) != NULL)
-		    {
-		       if (p[0] == '%')
-			 strcat(params, &p[2]);
-		       else
-			 strcat(params, p);
-		    }
-	       }
-	  }
-	ecore_list_destroy(command);
-     }
 
-   /* FIXME: still need to loop if there are files left. */
-   sub_result = ecore_desktop_merge_command(desktop->exec, params);
-   if (sub_result)
-     {
-        printf("FULL COMMAND IS - %s\n", sub_result);
-        ecore_list_append(result, sub_result);
-     }
-}
-while((files) && (ecore_list_current(files)));
+		            case 'u':	/* Single URL, multiple invokations if multiple URLs. */
+		               do_file = 1;
+		               is_single = 1;
+			       is_URL = 1;
+			       break;
+
+		            case 'c':	/* Translated Name field from .desktop file. */
+			       t = desktop->name;
+			       break;
+
+		            case 'k':	/* Location of the .desktop file, may be a URL, or empty. */
+			       t = desktop->original_path;
+			       break;
+
+		            case 'F':	/* Multiple file names.  If the files are on the net, download first and point to temp files. */
+		               do_file = 1;
+			       break;
+
+		            case 'U':	/* Multiple URLs. */
+		               do_file = 1;
+			       is_URL = 1;
+			       break;
+
+		            case 'd':	/* Directory of the file in %f. */
+		               do_file = 1;
+		               is_single = 1;
+			       is_directory = 1;
+			       break;
+
+		            case 'D':	/* Directories of the files in %F. */
+		               do_file = 1;
+			       is_directory = 1;
+			       break;
+
+		            case 'n':	/* Single filename without path. */
+		               do_file = 1;
+		               is_single = 1;
+			       is_file = 1;
+			       break;
+
+		            case 'N':	/* Multiple filenames without paths. */
+		               do_file = 1;
+			       is_file = 1;
+			       break;
+
+		            case 'i':	/* "--icon Icon" field from .desktop file, or empty. */
+			       if (desktop->icon)
+			         {
+			            snprintf(buf, sizeof(buf), "--icon %s", desktop->icon);
+			            t = buf;
+			         }
+			       break;
+
+		            case 'm':	/* Deprecated mini icon, the spec says we can just drop it. */
+			       break;
+
+		            case 'v':	/* Device field from .desktop file. */
+			       break;
+
+		            case '%':	/* A '%' character. */
+			       t = "%";
+			       break;
+
+		            default:
+			       break;
+		         }
+		     /* TAke care of any file expansions. */
+		     if (do_file && (files))
+		       {
+		          char *file;
+		          size_t big_len;
+
+                          /* Pre load the big_buf so that the reallocs are quick. WEemight eventually need more than PATH_MAX. */
+                          big_buf = malloc(PATH_MAX);
+		          big_buf[0] = '\0';
+		          big_len = 0;
+		          while((file = ecore_list_next(files)) != NULL)
+		            {
+                               char *text = NULL, *escaped = NULL;
+
+                               if (is_URL)
+			         {
+			            /* FIXME: The spec is unclear about what they mean by URL, 
+				     * GIMP uses %U, but doesn't understand file://foo
+				     * GIMP is also happy if you pass it a raw file name.
+				     * For now, just make this the same as is_file.
+				     */
+			            text = strdup(file);
+			         }
+			       else if (is_directory)
+			         {
+                                    /* FIXME: for onefang
+                                     *    if filename does not start with ./ or ../ or / then assume it
+                                     *    is a path relative to cwd i.e. "file.png" or "blah/file.png" and
+                                     *    thus %d/%D would be ./ implicitly (but may need to be explicit
+                                     *    in the command line)
+                                     */
+			            text = ecore_file_get_dir(file);
+			         }
+			       else if (is_file)
+			          text = strdup(ecore_file_get_file(file));
+			       else
+			         {
+			            /* FIXME: If the file is on the net, download 
+				     * first and point to temp file.
+				     *
+				     * This I think is the clue to how the whole 
+				     * file/url thing is supposed to work.  This is 
+				     * purely speculation though, and you can get
+				     * into lots of trouble with specs that require 
+				     * geussing like this.
+				     *
+				     * %u%U - pass filenames or URLS.
+				     * %f%F - pass filenames, download URLS and pass path to temp file.
+				     *
+				     * WE are not currently getting URLs passed to us anyway.
+				     */
+			            text = strdup(file);
+			         }
+			       if (text)
+			         {
+                                    escaped = ecore_file_escape_name(text);
+			            free(text);
+				    text = NULL;
+			         }
+			       /* Add it to the big buf. */
+			       if (escaped)
+			         {
+				    big_len += strlen(escaped) + 1;
+				    big_buf = realloc(big_buf, big_len);
+			            strcat(big_buf, " ");
+			            strcat(big_buf, escaped);
+				    t = big_buf;
+			            free(escaped);
+				    escaped = NULL;
+			         }
+			       if (is_single)
+			          break;
+			    }
+		       }
+		     /* Insert this bit into the command. */
+		     if (t)
+		       {
+		          len += strlen(t);
+		          ecore_dlist_previous(command);
+		          ecore_dlist_insert(command, strdup(t));
+		          ecore_dlist_next(command);
+		          ecore_dlist_next(command);
+		       }
+		     if (big_buf)
+		       {
+		         free(big_buf);
+		         big_buf = NULL;
+		       }
+	          }
+
+                /* Put it all together. */
+	        params = malloc(len + 1);
+	        if (params)
+	          {
+		     params[0] = '\0';
+		     ecore_dlist_goto_first(command);
+		     while ((p = ecore_dlist_next(command)) != NULL)
+		       {
+		          if (p[0] == '%')
+			    strcat(params, &p[2]);
+		          else
+			    strcat(params, p);
+		       }
+	          }
+	     }
+	   ecore_list_destroy(command);
+        }
+
+      /* Add the command to the list of commands. */
+      /* NOTE: params might be just desktop->exec_params, or it might have been built from bits. */
+      sub_result = ecore_desktop_merge_command(desktop->exec, params);
+      if (sub_result)
+        {
+#ifdef DEBUG
+           printf("FULL COMMAND IS - %s\n", sub_result);
+#endif
+           ecore_list_append(result, sub_result);
+        }
+   /* If there is any "single file" things to fill in, and we have more files, 
+    * go back and do it all again for the next file. 
+    */
+   }
+   while((fill) && (files) && (ecore_list_current(files)));
 
 error:
    if (params) free(params);
