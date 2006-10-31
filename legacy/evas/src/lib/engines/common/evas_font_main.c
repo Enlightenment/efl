@@ -120,34 +120,34 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
     * the decoded code point at iindex offset, and advances iindex
     * to the next code point after this.
     *
-    * Returns 0 to indicate an error (e.g. invalid UTF8)
+    * Returns 0 to indicate there is no next char
     */
-   int index = *iindex, r;
+   int index = *iindex, len, r;
    unsigned char d, d2, d3, d4;
 
    d = buf[index++];
    if (!d)
      return 0;
-   if (d < 0x80)
+   
+   while (buf[index] && ((buf[index] & 0xc0) == 0x80))
+     index++;
+   len = index - *iindex;
+   
+   if (len == 1)
+      r = d;
+   else if (len == 2)
      {
-	*iindex = index;
-	return d;
-     }
-   if ((d & 0xe0) == 0xc0)
-     {
-	/* 2 byte */
-	if (((d2 = buf[index++]) & 0xc0) != 0x80)
-	  return 0;
+	/* 2 bytes */
+        d2 = buf[*iindex + 1];
 	r = d & 0x1f; /* copy lower 5 */
 	r <<= 6;
 	r |= (d2 & 0x3f); /* copy lower 6 */
      }
-   else if ((d & 0xf0) == 0xe0)
+   else if (len == 3)
      {
-	/* 3 byte */
-	if (((d2 = buf[index++]) & 0xc0) != 0x80 ||
-	   ((d3 = buf[index++]) & 0xc0) != 0x80)
-	  return 0;
+	/* 3 bytes */
+        d2 = buf[*iindex + 1];
+        d3 = buf[*iindex + 2];
 	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
@@ -156,11 +156,10 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
      }
    else
      {
-	/* 4 byte */
-	if (((d2 = buf[index++]) & 0xc0) != 0x80 ||
-	    ((d3 = buf[index++]) & 0xc0) != 0x80 ||
-	    ((d4 = buf[index++]) & 0xc0) != 0x80)
-	  return 0;
+	/* 4 bytes */
+        d2 = buf[*iindex + 1];
+        d3 = buf[*iindex + 2];
+        d4 = buf[*iindex + 3];
 	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
@@ -169,6 +168,7 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);
      }
+   
    *iindex = index;
    return r;
 }
@@ -177,37 +177,37 @@ EAPI int
 evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
 {
    /* Reads UTF8 bytes from @buf, starting at *@index and returns
-    * the decoded code point at iindex offset, and advances iidnex
-    * to the next code point after this.
+    * the decoded code point at iindex offset, and advances iindex
+    * to the prev code point after this.
     *
-    * Returns 0 to indicate an error (e.g. invalid UTF8)
+    * Returns 0 to indicate there is no prev char
     */
-   int index = *iindex, r, istart = *iindex;
+   int index = *iindex, len, r;
    unsigned char d, d2, d3, d4;
 
-   d = buf[index++];
-   if (d < 0x80)
+   if (iindex <= 0)
+     return 0;
+   d = buf[index--];
+   
+   while ((index >= 0) && ((buf[index] & 0xc0) == 0x80))
+     index--;
+   len = index - *iindex;
+   
+   if (len == 1)
+      r = d;
+   else if (len == 2)
      {
-	r = d;
-     }
-   else if ((d & 0xe0) == 0xc0)
-     {
-	/* 2 byte */
-	d2 = buf[index++];
-	if ((d2 & 0xc0) != 0x80)
-	  return 0;
+	/* 2 bytes */
+        d2 = buf[*iindex + 1];
 	r = d & 0x1f; /* copy lower 5 */
 	r <<= 6;
 	r |= (d2 & 0x3f); /* copy lower 6 */
      }
-   else if ((d & 0xf0) == 0xe0)
+   else if (len == 3)
      {
-	/* 3 byte */
-	d2 = buf[index++];
-	d3 = buf[index++];
-	if ((d2 & 0xc0) != 0x80 ||
-	    (d3 & 0xc0) != 0x80)
-	  return 0;
+	/* 3 bytes */
+        d2 = buf[*iindex + 1];
+        d3 = buf[*iindex + 2];
 	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
@@ -216,14 +216,10 @@ evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
      }
    else
      {
-	/* 4 byte */
-	d2 = buf[index++];
-	d3 = buf[index++];
-	d4 = buf[index++];
-	if ((d2 & 0xc0) != 0x80 ||
-	    (d3 & 0xc0) != 0x80 ||
-	    (d4 & 0xc0) != 0x80)
-	  return 0;
+	/* 4 bytes */
+        d2 = buf[*iindex + 1];
+        d3 = buf[*iindex + 2];
+        d4 = buf[*iindex + 3];
 	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
@@ -232,30 +228,8 @@ evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);
      }
-   if (istart > 0)
-     {
-	index = istart - 1;
-	d = buf[index];
-	if (!(d & 0x80))
-	  *iindex = index;
-	else
-	  {
-	     while (index > 0)
-	       {
-		  index--;
-		  d = buf[index];
-		  if ((d & 0xc0) != 0x80)
-		    {
-		       *iindex = index;
-		       return r;
-		    }
-	       }
-	  }
-     }
-   else
-     {
-	*iindex = -1;
-     }
+   
+   *iindex = index;
    return r;
 }
 
