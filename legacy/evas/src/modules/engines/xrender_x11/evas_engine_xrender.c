@@ -374,6 +374,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	r = (dc->mul.col >> 16) & 0xff;
 	g = (dc->mul.col >> 8) & 0xff;
 	b = dc->mul.col & 0xff;
+	if (a < 255) op = PictOpOver;
 	if (dc->mul.col != 0xffffffff)
 	  {
 	     if ((srs->xinf->mul_r != r) || (srs->xinf->mul_g != g) ||
