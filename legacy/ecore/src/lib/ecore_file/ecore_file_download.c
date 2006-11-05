@@ -144,6 +144,11 @@ ecore_file_download(const char *url, const char *dst,
      {
 	return 0;
      }
+#ifndef HAVE_CURL
+   completion_cb = NULL;
+   progress_cb = NULL;
+   data = NULL;
+#endif
 }
 
 EAPI int

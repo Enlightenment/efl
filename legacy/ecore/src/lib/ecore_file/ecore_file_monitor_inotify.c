@@ -150,7 +150,7 @@ ecore_file_monitor_inotify_del(Ecore_File_Monitor *em)
 }
 
 static int
-_ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh)
+_ecore_file_monitor_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
 {
    Ecore_File_Monitor *em;
    char buffer[16384];
