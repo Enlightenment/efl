@@ -380,8 +380,6 @@ _ecore_event_call(void)
 	       ef->loop_data = ef->func_start(ef->data);
 	     for (ll = (Ecore_List2 *)events; ll; ll = ll->next)
 	       {
-		  Ecore_Event *e;
-		  
 		  e = (Ecore_Event *)ll;
 		  if (!ef->func_filter(ef->loop_data, ef->data,
 				       e->type, e->event))

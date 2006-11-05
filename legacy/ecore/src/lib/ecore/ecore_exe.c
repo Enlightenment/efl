@@ -52,12 +52,12 @@ EAPI int            ECORE_EXE_EVENT_DATA = 0;
 EAPI int            ECORE_EXE_EVENT_ERROR = 0;
 
 static Ecore_Exe   *exes = NULL;
-static char        *shell = NULL;
+static const char  *shell = NULL;
 
 /* FIXME: This errno checking stuff should be put elsewhere for everybody to use.
  * For now it lives here though, just to make testing easier.
  */
-static int          _ecore_exe_check_errno(int result, char *file, int line);
+static int          _ecore_exe_check_errno(int result, const char *file, int line);
 
 #define E_IF_NO_ERRNO(result, foo, ok) \
   while (((ok) = _ecore_exe_check_errno( (result) = (foo), __FILE__, __LINE__)) == -1)   sleep(1); \
@@ -70,7 +70,7 @@ static int          _ecore_exe_check_errno(int result, char *file, int line);
   if (((ok) = _ecore_exe_check_errno( (result) = (foo), __FILE__, __LINE__)))
 
 static int
-_ecore_exe_check_errno(int result, char *file, int line)
+_ecore_exe_check_errno(int result, const char *file, int line)
 {
    int                 saved_errno = errno;
 
@@ -306,7 +306,9 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    /*  Create some pipes. */
    if (ok)
-      E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok);
+      E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
+     {
+     }
    if (ok && (flags & ECORE_EXE_PIPE_ERROR))
       E_IF_NO_ERRNO_NOLOOP(result, pipe(errorPipe), ok)
      {
@@ -432,13 +434,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		    {		/* Setup the error stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_error, F_SETFL,
-					   O_NONBLOCK), ok);
+					   O_NONBLOCK), ok) {}
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_error, F_SETFD,
-					   FD_CLOEXEC), ok);
+					   FD_CLOEXEC), ok) {}
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_error_x, F_SETFD,
-					   FD_CLOEXEC), ok);
+					   FD_CLOEXEC), ok) {}
 		       {
 			  exe->error_fd_handler =
 			     ecore_main_fd_handler_add(exe->child_fd_error,
@@ -453,13 +455,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		    {		/* Setup the read stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_read, F_SETFL,
-					   O_NONBLOCK), ok);
+					   O_NONBLOCK), ok) {}
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_read, F_SETFD,
-					   FD_CLOEXEC), ok);
+					   FD_CLOEXEC), ok) {}
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_read_x, F_SETFD,
-					   FD_CLOEXEC), ok);
+					   FD_CLOEXEC), ok) {}
 		       {
 			  exe->read_fd_handler =
 			     ecore_main_fd_handler_add(exe->child_fd_read,
@@ -474,13 +476,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		    {		/* Setup the write stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_write, F_SETFL,
-					   O_NONBLOCK), ok);
+					   O_NONBLOCK), ok) {}
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_write, F_SETFD,
-					   FD_CLOEXEC), ok);
+					   FD_CLOEXEC), ok) {}
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_write_x, F_SETFD,
-					   FD_CLOEXEC), ok);
+					   FD_CLOEXEC), ok) {}
 		       {
 			  exe->write_fd_handler =
 			     ecore_main_fd_handler_add(exe->child_fd_write,
@@ -549,7 +551,7 @@ ecore_exe_send(Ecore_Exe * exe, void *data, int size)
       return 0;
 
    exe->write_data_buf = buf;
-   memcpy(exe->write_data_buf + exe->write_data_size, data, size);
+   memcpy((char *)exe->write_data_buf + exe->write_data_size, data, size);
    exe->write_data_size += size;
 
    if (exe->write_fd_handler)
@@ -1249,8 +1251,7 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 	if ((!token) && (num_tokens))
 	  {
 	     int                 i = 0;
-	     char               *token;
-	     
+
 	     if (!(buf = strdup(exe_cmd)))
 	       return;
 	     
@@ -1449,7 +1450,7 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler * fd_handler)
 }
 
 static int
-_ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler * fd_handler)
+_ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler * fd_handler __UNUSED__)
 {
    Ecore_Exe          *exe;
 
@@ -1491,7 +1492,7 @@ _ecore_exe_flush(Ecore_Exe * exe)
       return;
 
    count = write(exe->child_fd_write,
-		 exe->write_data_buf + exe->write_data_offset,
+		 (char *)exe->write_data_buf + exe->write_data_offset,
 		 exe->write_data_size - exe->write_data_offset);
    if (count < 1)
      {

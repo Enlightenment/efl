@@ -386,7 +386,7 @@ ecore_hash_get(Ecore_Hash *hash, const void *key)
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 EAPI void *
-ecore_hash_remove(Ecore_Hash *hash, void *key)
+ecore_hash_remove(Ecore_Hash *hash, const void *key)
 {
    Ecore_Hash_Node *node = NULL;
    Ecore_Hash_Node *list;

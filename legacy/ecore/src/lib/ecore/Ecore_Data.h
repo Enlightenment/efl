@@ -243,7 +243,7 @@ extern "C" {
    /* Retrieve and store data into the hash */
    EAPI void *ecore_hash_get(Ecore_Hash *hash, const void *key);
    EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
-   EAPI void *ecore_hash_remove(Ecore_Hash *hash, void *key);
+   EAPI void *ecore_hash_remove(Ecore_Hash *hash, const void *key);
    EAPI void ecore_hash_dump_graph(Ecore_Hash *hash);
 
 
