@@ -35,6 +35,10 @@ long                  _ecore_config_argbint_get(Ecore_Config_Prop *e);
 float                 _ecore_config_float_get(Ecore_Config_Prop *e);
 char                 *_ecore_config_theme_get(Ecore_Config_Prop *e);
 
+int                   _ecore_config_ipc_ecore_init(const char *pipe_name, void **data);
+int                   _ecore_config_ipc_ecore_exit(void **data);
+int                   _ecore_config_ipc_ecore_poll(void **data);
+
 #include "ecore_private.h"
 
 #endif

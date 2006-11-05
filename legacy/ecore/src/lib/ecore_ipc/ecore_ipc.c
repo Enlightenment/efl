@@ -1147,8 +1147,6 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	  }
 	else
 	  {
-	     unsigned char *buf;
-	     
 	     buf = realloc(cl->buf, cl->buf_size + e->size);
 	     if (!buf)
 	       {
@@ -1341,8 +1339,6 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	  }
 	else
 	  {
-	     unsigned char *buf;
-	     
 	     buf = realloc(svr->buf, svr->buf_size + e->size);
 	     if (!buf)
 	       {

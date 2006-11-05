@@ -189,6 +189,7 @@ extern              "C"
    EAPI int                 ecore_config_struct_default(const char *key);
    EAPI int                 ecore_config_struct_int_add(const char *key, const char *name, int val);
    EAPI int                 ecore_config_struct_float_add(const char *key, const char *name, float val);
+   EAPI int                 ecore_config_struct_create(const char *key);
    EAPI int                 ecore_config_struct_string_add(const char *key, const char *name, const char* val);
    EAPI int                 ecore_config_struct_theme_add(const char *key, const char *name, const char* val);
    EAPI int                 ecore_config_struct_argb_add(const char *key, const char *name, int a, int r, int g, int b);

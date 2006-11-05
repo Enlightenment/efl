@@ -21,10 +21,6 @@
 static Ecore_Config_Server *__ecore_config_servers;
 Ecore_Timer *ipc_timer = NULL;
 
-extern int _ecore_config_ipc_ecore_init(const char *pipe_name, void **data);
-extern int _ecore_config_ipc_ecore_exit(void **data);
-extern int _ecore_config_ipc_ecore_poll(void **data);
-
 Ecore_Config_Server *
 _ecore_config_server_convert(void *srv)
 {
@@ -213,7 +209,7 @@ _ecore_config_ipc_bundle_label_find(Ecore_Config_Server * srv,
 }
 
 static int
-_ecore_config_ipc_poll(void *data)
+_ecore_config_ipc_poll(void *data __UNUSED__)
 {
    Ecore_Config_Server *s;
 
