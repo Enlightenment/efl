@@ -433,7 +433,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecor
  * FIXME: To be fixed.
  */
 EAPI int
-ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num)
+ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size __UNUSED__, unsigned char **data, int *num)
 {
    Atom type_ret = 0;
    int ret, size_ret = 0;

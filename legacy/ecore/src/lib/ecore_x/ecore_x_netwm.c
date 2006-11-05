@@ -692,7 +692,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    p = data;
    for (i = 0; i < icons; i++)
      {
-	int *ps, *pd, *pe;
+	unsigned int *ps, *pd, *pe;
 	
 	len = p[0] * p[1];
 	((*icon)[i]).width = p[0];
@@ -711,7 +711,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 	pd = ((*icon)[i]).data;
 	ps = src;
 	pe = ps + len;
-	for (ps; ps < pe; ps++)
+	for (; ps < pe; ps++)
 	  {
 	     unsigned int r, g, b, a;
 	     
@@ -885,7 +885,7 @@ EAPI void
 ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State *state, unsigned int num)
 {
    Ecore_X_Atom  *set;
-   int            i;
+   unsigned int   i;
 
    if (!num)
      {
@@ -1091,7 +1091,7 @@ EAPI void
 ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action *action, unsigned int num)
 {
    Ecore_X_Atom  *set;
-   int            i;
+   unsigned int   i;
 
    if (!num)
      {
@@ -1229,7 +1229,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
 
    if (!win) return;
 
-   XSyncIntToValue(&value, serial);
+   XSyncIntToValue(&value, (int)serial);
 
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
@@ -1327,6 +1327,9 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data)
 	/* We have a '\0' in there, the message is done */
 	_ecore_x_netwm_startup_info_process(info);
      }
+#else
+   win = 0;
+   data = NULL;
 #endif
    return 1;
 }
@@ -1361,6 +1364,9 @@ _ecore_x_netwm_startup_info(Ecore_X_Window win, char *data)
 	/* We have a '\0' in there, the message is done */
 	_ecore_x_netwm_startup_info_process(info);
      }
+#else
+   win = 0;
+   data = NULL;
 #endif
    return 1;
 }

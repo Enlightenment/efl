@@ -232,7 +232,7 @@ EAPI void
 ecore_x_dnd_types_set(Ecore_X_Window win, char **types, unsigned int num_types)
 {
    Ecore_X_Atom      *newset = NULL;
-   int               i;
+   unsigned int      i;
    unsigned char     *data = NULL;
 
    if (!num_types)
@@ -449,7 +449,7 @@ _ecore_x_dnd_drag(int x, int y)
 			     ecore_x_dnd_version_get(win));
 	if (win != _source->dest)
 	  {
-	     int i, num;
+	     int i;
 	     unsigned char *data;
 	     Ecore_X_Atom *types;
 

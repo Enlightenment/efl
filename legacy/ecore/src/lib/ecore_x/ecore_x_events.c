@@ -188,7 +188,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    int                     val;
    char                    buf[256];
    KeySym                  sym;
-   XComposeStatus          stat;
+   XComposeStatus          status;
 
    e = calloc(1, sizeof(Ecore_X_Event_Key_Down));
    if (!e) return;
@@ -205,7 +205,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
 	free(e);
 	return;
      }
-   val = XLookupString((XKeyEvent *)xevent, buf, sizeof(buf), &sym, &stat);
+   val = XLookupString((XKeyEvent *)xevent, buf, sizeof(buf), &sym, &status);
    if (val > 0)
      {
 	buf[val] = 0;
@@ -239,7 +239,7 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
    int                     val;
    char                    buf[256];
    KeySym                  sym;
-   XComposeStatus          stat;
+   XComposeStatus          status;
    
    e = calloc(1, sizeof(Ecore_X_Event_Key_Up));
    if (!e) return;
@@ -256,7 +256,7 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
 	free(e);
 	return;
      }
-   val = XLookupString((XKeyEvent *)xevent, buf, sizeof(buf), &sym, &stat);
+   val = XLookupString((XKeyEvent *)xevent, buf, sizeof(buf), &sym, &status);
    if (val > 0)
      {
 	buf[val] = 0;
@@ -1339,7 +1339,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	Ecore_X_DND_Target *target;
 
 	target = _ecore_x_dnd_target_get();
-	if ((target->source != xevent->xclient.data.l[0]) ||
+	if ((target->source != (Ecore_X_Window)xevent->xclient.data.l[0]) ||
 	    (target->win != xevent->xclient.window))
 	  return;
 
@@ -1406,7 +1406,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	Ecore_X_DND_Target *target;
 
 	target = _ecore_x_dnd_target_get();
-	if ((target->source != xevent->xclient.data.l[0]) ||
+	if ((target->source != (Ecore_X_Window)xevent->xclient.data.l[0]) ||
 	    (target->win != xevent->xclient.window))
 	  return;
 
@@ -1568,7 +1568,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	ecore_event_add(ECORE_X_EVENT_FRAME_EXTENTS_REQUEST, e, NULL, NULL);
      }
    else if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS)
-	    && (xevent->xclient.data.l[0] == ECORE_X_ATOM_NET_WM_PING)
+	    && ((Ecore_X_Atom)xevent->xclient.data.l[0] == ECORE_X_ATOM_NET_WM_PING)
 	    && (xevent->xclient.format == 32))
      {
 	Ecore_X_Event_Ping *e;
@@ -1656,6 +1656,8 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
      e->on = 0;
    e->time = screensaver_event->time;
    ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);
+#else
+   xevent = NULL;
 #endif   
 }
 
@@ -1713,6 +1715,7 @@ void
 _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
 {
    /* Nothing here yet */
+   event = NULL;
 }
 #endif
 

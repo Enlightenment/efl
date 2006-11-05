@@ -13,11 +13,11 @@ static Ecore_X_Selection_Parser *parsers = NULL;
 
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
 static int _ecore_x_selection_data_default_free(void *data);
-static void *_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size, int format);
+static void *_ecore_x_selection_parser_files(const char *target, void *data, int size, int format);
 static int _ecore_x_selection_data_files_free(void *data);
-static void *_ecore_x_selection_parser_text(const char *target, unsigned char *data, int size, int format);
+static void *_ecore_x_selection_parser_text(const char *target, void *data, int size, int format);
 static int _ecore_x_selection_data_text_free(void *data);
-static void *_ecore_x_selection_parser_targets(const char *target, unsigned char *data, int size, int format);
+static void *_ecore_x_selection_parser_targets(const char *target, void *data, int size, int format);
 static int _ecore_x_selection_data_targets_free(void *data);
 
 #define ECORE_X_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
@@ -101,7 +101,7 @@ _ecore_x_selection_get(Ecore_X_Atom selection)
 }
 
 int 
-_ecore_x_selection_set(Window w, unsigned char *data, int size, Ecore_X_Atom selection)
+_ecore_x_selection_set(Window w, const void *data, int size, Ecore_X_Atom selection)
 {
    int in;
    unsigned char *buf = NULL;
@@ -153,7 +153,7 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Ecore_X_Atom sel
  *             claimed, or 0 if unsuccessful.
  */
 EAPI int 
-ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
+ecore_x_selection_primary_set(Ecore_X_Window w, const void *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_PRIMARY);
 }
@@ -179,7 +179,7 @@ ecore_x_selection_primary_clear(void)
  *             claimed, or 0 if unsuccessful.
  */
 EAPI int 
-ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
+ecore_x_selection_secondary_set(Ecore_X_Window w, const void *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_SECONDARY);
 }
@@ -205,7 +205,7 @@ ecore_x_selection_secondary_clear(void)
  *             claimed, or 0 if unsuccessful.
  */
 EAPI int 
-ecore_x_selection_xdnd_set(Ecore_X_Window w, unsigned char *data, int size)
+ecore_x_selection_xdnd_set(Ecore_X_Window w, const void *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_XDND);
 }
@@ -234,7 +234,7 @@ ecore_x_selection_xdnd_clear(void)
  * request. The buffer must be freed when done with.
  */
 EAPI int 
-ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
+ecore_x_selection_clipboard_set(Ecore_X_Window w, const void *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_CLIPBOARD);
 }
@@ -290,7 +290,7 @@ _ecore_x_selection_target_get(Ecore_X_Atom target)
 }
 
 static void 
-_ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *target_str) 
+_ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, const char *target_str) 
 {
    Ecore_X_Atom target, prop;
 
@@ -310,19 +310,19 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *targe
 }
 
 EAPI void 
-ecore_x_selection_primary_request(Ecore_X_Window w, char *target)
+ecore_x_selection_primary_request(Ecore_X_Window w, const char *target)
 {
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_PRIMARY, target);
 }
 
 EAPI void 
-ecore_x_selection_secondary_request(Ecore_X_Window w, char *target)
+ecore_x_selection_secondary_request(Ecore_X_Window w, const char *target)
 {
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_SECONDARY, target);
 }
 
 EAPI void 
-ecore_x_selection_xdnd_request(Ecore_X_Window w, char *target)
+ecore_x_selection_xdnd_request(Ecore_X_Window w, const char *target)
 {
    Ecore_X_Atom atom;
    Ecore_X_DND_Target *_target;
@@ -335,7 +335,7 @@ ecore_x_selection_xdnd_request(Ecore_X_Window w, char *target)
 }
 
 EAPI void 
-ecore_x_selection_clipboard_request(Ecore_X_Window w, char *target)
+ecore_x_selection_clipboard_request(Ecore_X_Window w, const char *target)
 {
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_CLIPBOARD, target);
 }
@@ -523,7 +523,7 @@ _ecore_x_selection_converter_text(char *target, void *data, int size, void **dat
 
 EAPI void
 ecore_x_selection_parser_add(const char *target,
-      void *(*func)(const char *target, unsigned char *data, int size, int format))
+      void *(*func)(const char *target, void *data, int size, int format))
 {
    Ecore_X_Selection_Parser *prs;
 
@@ -586,7 +586,7 @@ ecore_x_selection_parser_del(const char *target)
 
 /* Locate and run conversion callback for specified selection target */
 void *
-_ecore_x_selection_parse(const char *target, unsigned char *data, int size, int format)
+_ecore_x_selection_parse(const char *target, void *data, int size, int format)
 {
    Ecore_X_Selection_Parser *prs;
    Ecore_X_Selection_Data *sel;
@@ -621,9 +621,10 @@ _ecore_x_selection_data_default_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size, int format)
+_ecore_x_selection_parser_files(const char *target, void *_data, int size, int format __UNUSED__)
 {
    Ecore_X_Selection_Data_Files *sel;
+   char *data = _data;
    int i, is;
    char *tmp;
 
@@ -704,9 +705,10 @@ _ecore_x_selection_data_files_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_text(const char *target __UNUSED__, unsigned char *data, int size, int format)
+_ecore_x_selection_parser_text(const char *target __UNUSED__, void *_data, int size, int format __UNUSED__)
 {
    Ecore_X_Selection_Data_Text *sel;
+   char *data = _data;
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Text));
 
@@ -737,7 +739,7 @@ _ecore_x_selection_data_text_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_targets(const char *target __UNUSED__, unsigned char *data, int size, int format)
+_ecore_x_selection_parser_targets(const char *target __UNUSED__, void *data, int size, int format __UNUSED__)
 {
    Ecore_X_Selection_Data_Targets *sel;
    unsigned long *targets;

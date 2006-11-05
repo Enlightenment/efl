@@ -90,7 +90,7 @@ typedef struct _Ecore_X_Selection_Parser Ecore_X_Selection_Parser;
 struct _Ecore_X_Selection_Parser
 {
    char     *target;
-   void *(*parse)(const char *target, unsigned char *data, int size, int format);
+   void *(*parse)(const char *target, void *data, int size, int format);
    Ecore_X_Selection_Parser *next;
 };
 
@@ -213,9 +213,9 @@ Ecore_X_Atom
 char *_ecore_x_selection_target_get(Ecore_X_Atom target);
 Ecore_X_Selection_Intern * 
       _ecore_x_selection_get(Ecore_X_Atom selection);
-int   _ecore_x_selection_set(Window w, unsigned char *data, int len, Ecore_X_Atom selection);
+int   _ecore_x_selection_set(Window w, const void *data, int len, Ecore_X_Atom selection);
 int   _ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret);
-void *_ecore_x_selection_parse(const char *target, unsigned char *data, int size, int format);
+void *_ecore_x_selection_parse(const char *target, void *data, int size, int format);
 
 void _ecore_x_sync_magic_send(int val, Ecore_X_Window swin);
 void _ecore_x_window_grab_remove(Ecore_X_Window win);

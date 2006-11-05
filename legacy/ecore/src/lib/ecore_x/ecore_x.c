@@ -603,9 +603,9 @@ ecore_x_sync(void)
 EAPI void
 ecore_x_killall(Ecore_X_Window root)
 {
-   int screens;
-   int i, j;
-   
+   unsigned int screens;
+   unsigned int i, j;
+
    XGrabServer(_ecore_x_disp);
    screens = ScreenCount(_ecore_x_disp);
 
@@ -1364,6 +1364,8 @@ ecore_x_cursor_size_set(int size)
 {
 #ifdef ECORE_XCURSOR
    XcursorSetDefaultSize(_ecore_x_disp, size);
+#else
+   size = 0;
 #endif
 }
 

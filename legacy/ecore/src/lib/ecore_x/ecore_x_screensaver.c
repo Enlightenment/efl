@@ -48,6 +48,7 @@ ecore_x_screensaver_event_listen_set(int on)
      XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
    else
      XScreenSaverSelectInput(_ecore_x_disp, root, 0);
+#else
+   on = 0;
 #endif   
 }
-
