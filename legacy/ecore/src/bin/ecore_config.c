@@ -14,7 +14,7 @@
 #include "ecore_config_private.h"
 
 // strcmp for paths - for sorting folders before files
-int
+static int
 pathcmp(const char *s1, const char *s2)
 {
    char *s1d, *s2d;
@@ -43,7 +43,7 @@ pathcmp(const char *s1, const char *s2)
    return strcmp(s1, s2);
 }
 
-int
+static int
 del(const char *key)
 {
    Ecore_Config_Prop *e;
@@ -54,7 +54,7 @@ del(const char *key)
    return 0;
 }
 
-int
+static int
 get(const char *key)
 {
    Ecore_Config_Prop *e;
@@ -103,7 +103,7 @@ get(const char *key)
    return 0;
 }
 
-int
+static int
 list(const char *file)
 {
    char *key;
@@ -141,7 +141,7 @@ list(const char *file)
    return 0;
 }
 
-void
+static void
 usage_and_exit(const char *prog, int ret, const char *msg)
 {
    if (msg) fprintf(stderr, "%s\n\n", msg);
