@@ -71,6 +71,12 @@ evas_image_load_file_head_png(RGBA_Image *im, const char *file, const char *key)
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
+   if ((w32 < 1) || (h32 < 1) || (w32 > 8192) || (h32 > 8192))
+     {
+	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+	fclose(f);
+	return 0;
+     }
    if (!im->image)
      im->image = evas_common_image_surface_new(im);
    if (!im->image)
@@ -152,8 +158,12 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
-   im->image->w = (int) w32;
-   im->image->h = (int) h32;
+   if ((w32 != im->image->w) || (h32 != im->image->h))
+     {
+	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+	fclose(f);
+	return 0;
+     }
    if (color_type == PNG_COLOR_TYPE_PALETTE) png_set_expand(png_ptr);
    if (info_ptr->color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (info_ptr->color_type == PNG_COLOR_TYPE_GRAY_ALPHA)

@@ -67,13 +67,18 @@ evas_image_load_file_head_gif(RGBA_Image *im, const char *file, const char *key)
                }
              w = gif->Image.Width;
              h = gif->Image.Height;
-             done = 1;
+	     if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
+	       {
+		  DGifCloseFile(gif);
+		  return 0;
+	       }
+	     done = 1;
           }
         else if (rec == EXTENSION_RECORD_TYPE)
           {
              int                 ext_code;
              GifByteType        *ext;
-
+	     
              ext = NULL;
              DGifGetExtension(gif, &ext_code, &ext);
              while (ext)

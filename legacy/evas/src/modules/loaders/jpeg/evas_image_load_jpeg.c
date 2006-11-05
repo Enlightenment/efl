@@ -101,6 +101,11 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
      }
    w = cinfo.output_width;
    h = cinfo.output_height;
+   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
+     {  
+        jpeg_destroy_decompress(&cinfo);
+	return 0;
+     }
    if (im->load_opts.scale_down_by > 1)
      {
 	w /= im->load_opts.scale_down_by;

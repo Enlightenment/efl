@@ -57,14 +57,15 @@ evas_image_load_file_head_edb(RGBA_Image *im, const char *file, const char *key)
      }
    w = header[1];
    h = header[2];
-   alpha = header[3];
-   compression = header[4];
-   if ((w > 8192) || (h > 8192))
+   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
 	free(ret);
 	e_db_close(db);
 	return 0;
      }
+   alpha = header[3];
+   compression = header[4];
+   
    if ((compression == 0) && (size < ((w * h * 4) + 32)))
      {
 	free(ret);
@@ -127,14 +128,16 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
      }
    w = header[1];
    h = header[2];
-   alpha = header[3];
-   compression = header[4];
-   if ((w > 8192) || (h > 8192))
+   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
 	free(ret);
 	e_db_close(db);
 	return 0;
      }
+   
+   alpha = header[3];
+   compression = header[4];
+   
    if ((compression == 0) && (size < ((w * h * 4) + 32)))
      {
 	free(ret);

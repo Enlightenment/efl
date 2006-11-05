@@ -213,19 +213,19 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
                             xpm_parse_done();
                             return 0;
                          }
-                       if ((w > 32767) || (w < 1))
+                       if ((w > 8192) || (w < 1))
                          {
                             fprintf(stderr,
-                                    "XPM ERROR: Image width > 32767 or < 1 pixels for file\n");
+                                    "XPM ERROR: Image width > 8192 or < 1 pixels for file\n");
                             free(line);
                             fclose(f);
                             xpm_parse_done();
                             return 0;
                          }
-                       if ((h > 32767) || (h < 1))
+                       if ((h > 8192) || (h < 1))
                          {
                             fprintf(stderr,
-                                    "XPM ERROR: Image height > 32767 or < 1 pixels for file\n");
+                                    "XPM ERROR: Image height > 8192 or < 1 pixels for file\n");
                             free(line);
                             fclose(f);
                             xpm_parse_done();

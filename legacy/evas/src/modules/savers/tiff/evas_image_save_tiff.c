@@ -49,8 +49,9 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
    
    if (has_alpha)
      {
+        uint16 extras[] = { EXTRASAMPLE_ASSOCALPHA };
         TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 4);
-        TIFFSetField(tif, TIFFTAG_EXTRASAMPLES, EXTRASAMPLE_ASSOCALPHA);
+        TIFFSetField(tif, TIFFTAG_EXTRASAMPLES, 1, extras);
      }
    else
      {

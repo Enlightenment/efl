@@ -32,7 +32,7 @@ evas_image_load_file_head_eet(RGBA_Image *im, const char *file, const char *key)
 	eet_close(ef);
 	return 0;
      }
-   if ((w > 8192) || (h > 8192))
+   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
 	eet_close(ef);
 	return 0;
@@ -71,7 +71,7 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
 	eet_close(ef);
 	return 0;
      }
-   if ((w > 8192) || (h > 8192))
+   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
 	free(body);
 	eet_close(ef);

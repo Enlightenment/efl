@@ -66,11 +66,11 @@ static void
 raster(TIFFRGBAImage_Extra * img, uint32 * rast,
        uint32 x, uint32 y, uint32 w, uint32 h)
 {
-   uint32              image_width, image_height;
+   int                 image_width, image_height;
    uint32             *pixel, pixel_value;
    int                 i, j, dy, rast_offset;
    DATA32             *buffer_pixel, *buffer = img->image->image->data;
-   int                 alpha_premult = (EXTRASAMPLE_UNASSALPHA==img->rgba.alpha);
+   int                 alpha_premult;
 
    image_width = img->image->image->w;
    image_height = img->image->image->h;
@@ -82,6 +82,8 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
    /* I don't understand why, but that seems to be what's going on. */
    /* libtiff needs better docs! */
 
+   if (img->rgba.alpha == EXTRASAMPLE_UNASSALPHA)
+     alpha_premult = 1;
    for (i = y, rast_offset = 0; i > dy; i--, rast_offset--)
      {
         pixel = rast + (rast_offset * image_width);
@@ -166,6 +168,12 @@ evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key
      }
    if (tiff_image.alpha != EXTRASAMPLE_UNSPECIFIED)
      im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   if ((tiff_image.width < 1) || (tiff_image.height < 1) ||
+       (tiff_image.width > 8192) || (tiff_image.height > 8192))
+     {
+	TIFFClose(tif);
+	return 0;
+     }
    im->image->w = tiff_image.width;
    im->image->h = tiff_image.height;
 
@@ -235,6 +243,12 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
      }
    if (rgba_image.rgba.alpha != EXTRASAMPLE_UNSPECIFIED)
      im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   if ((rgba_image.rgba.width != im->image->w) ||
+       (rgba_image.rgba.height != im->image->h))
+     {
+        TIFFClose(tif);
+	return 0;
+     }
    im->image->w = rgba_image.rgba.width;
    im->image->h = rgba_image.rgba.height;
    rgba_image.num_pixels = num_pixels = im->image->w * im->image->h;
