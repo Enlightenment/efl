@@ -326,8 +326,8 @@ set_xtransform_scale(XTransform *t, int sw, int sh, int w, int h, int tx, int ty
 //     { sh--;  h--; }
    t->matrix[0][0] = XDoubleToFixed((double)(sw) / (double)(w));
    t->matrix[1][1] = XDoubleToFixed((double)(sh) / (double)(h));
-   t->matrix[2][0] = tx;
-   t->matrix[2][1] = ty;
+   t->matrix[2][0] = (tx * sw) / w;
+   t->matrix[2][1] = (ty * sh) / h;
 }
 
 // when color multiplier is used want: instead
