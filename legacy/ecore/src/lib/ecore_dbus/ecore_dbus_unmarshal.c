@@ -18,7 +18,7 @@ _ecore_dbus_message_unmarshal_byte(Ecore_DBus_Message *msg, int *size)
    old_length = msg->length;
    f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_BYTE);
    f->value = _ecore_dbus_message_read_byte(msg);
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for byte: got %d need %d\n",
@@ -38,7 +38,7 @@ _ecore_dbus_message_unmarshal_boolean(Ecore_DBus_Message *msg, int *size)
    old_length = msg->length;
    f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_BOOLEAN);
    f->value = _ecore_dbus_message_read_uint32(msg);
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for boolean: got %d need %d\n",
@@ -59,7 +59,7 @@ _ecore_dbus_message_unmarshal_int32(Ecore_DBus_Message *msg, int *size)
    _ecore_dbus_message_padding(msg, 4);
    f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_INT32);
    f->value = _ecore_dbus_message_read_uint32(msg);
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for uint32: got %d need %d\n",
@@ -80,7 +80,7 @@ _ecore_dbus_message_unmarshal_uint32(Ecore_DBus_Message *msg, int *size)
    _ecore_dbus_message_padding(msg, 4);
    f = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_UINT32);
    f->value = _ecore_dbus_message_read_uint32(msg);
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for uint32: got %d need %d\n",
@@ -103,7 +103,7 @@ _ecore_dbus_message_unmarshal_string(Ecore_DBus_Message *msg, int *size)
    str_len = _ecore_dbus_message_read_uint32(msg);
    f->value = (char *)msg->buffer + msg->length;
    msg->length += str_len + 1;
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for string: got %d need %d\n",
@@ -126,7 +126,7 @@ _ecore_dbus_message_unmarshal_object_path(Ecore_DBus_Message *msg, int *size)
    str_len = _ecore_dbus_message_read_uint32(msg);
    f->value = (char *)msg->buffer + msg->length;
    msg->length += str_len + 1;
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for object path: got %d need %d\n",
@@ -148,7 +148,7 @@ _ecore_dbus_message_unmarshal_signature(Ecore_DBus_Message *msg, int *size)
    str_len = _ecore_dbus_message_read_byte(msg);
    f->value = (char *)msg->buffer + msg->length;
    msg->length += str_len + 1;
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for signature: got %d need %d\n",
@@ -180,7 +180,7 @@ _ecore_dbus_message_unmarshal_array_begin(Ecore_DBus_Message *msg,
 
    ecore_list_prepend(msg->recurse, arr);
 
-   if (*size < (arr->end - old_length))
+   if (*size < (int)(arr->end - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for array: got %d need %d\n",
@@ -193,7 +193,7 @@ _ecore_dbus_message_unmarshal_array_begin(Ecore_DBus_Message *msg,
 
 static void
 _ecore_dbus_message_unmarshal_array_end(Ecore_DBus_Message *msg,
-					Ecore_DBus_Message_Field_Array *arr)
+					Ecore_DBus_Message_Field_Array *arr __UNUSED__)
 {
    ecore_list_remove_first(msg->recurse);
 }
@@ -211,7 +211,7 @@ _ecore_dbus_message_unmarshal_struct_begin(Ecore_DBus_Message *msg,
    s = _ecore_dbus_message_field_new(msg, ECORE_DBUS_DATA_TYPE_STRUCT);
    ecore_list_prepend(msg->recurse, s);
 
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for struct: got %d need %d\n",
@@ -224,7 +224,7 @@ _ecore_dbus_message_unmarshal_struct_begin(Ecore_DBus_Message *msg,
 
 static void
 _ecore_dbus_message_unmarshal_struct_end(Ecore_DBus_Message *msg,
-					 Ecore_DBus_Message_Field_Struct *s)
+					 Ecore_DBus_Message_Field_Struct *s __UNUSED__)
 {
    ecore_list_remove_first(msg->recurse);
 }
@@ -254,7 +254,7 @@ _ecore_dbus_message_unmarshal_variant(Ecore_DBus_Message *msg, int *size)
    f->contained_type = type;
    /* Read '\0' from signature */
    _ecore_dbus_message_read_byte(msg);
-   if (*size < (msg->length - old_length))
+   if (*size < (int)(msg->length - old_length))
      {
 	/* TODO: Free message field */
 	printf("Ecore_DBus: To few bytes for variant header: got %d need %d\n",
@@ -436,15 +436,15 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server *svr, unsigned char *message, in
 		   break;
 		case ECORE_DBUS_DATA_TYPE_ARRAY:
 		     {
-			Ecore_DBus_Message_Field_Array *arr;
+			Ecore_DBus_Message_Field_Array *ar2;
 			Ecore_DBus_Unmarshal_Func func;
 			sig++;
 			type = *sig;
-			arr = _ecore_dbus_message_unmarshal_array_begin(msg, type, &size);
+			ar2 = _ecore_dbus_message_unmarshal_array_begin(msg, type, &size);
 			func = _ecore_dbus_message_unmarshal_func(type);
-			while (msg->length < arr->end)
+			while (msg->length < ar2->end)
 			  (*func)(msg, &size);
-			_ecore_dbus_message_unmarshal_array_end(msg, arr);
+			_ecore_dbus_message_unmarshal_array_end(msg, ar2);
 		     }
 		   break;
 		case ECORE_DBUS_DATA_TYPE_INVALID:

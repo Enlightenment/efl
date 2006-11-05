@@ -35,7 +35,7 @@ ecore_dbus_objects_shutdown()
 }
 
 static int
-_ecore_dbus_event_method_call_cb(void *udata, int evtype, void *ev)
+_ecore_dbus_event_method_call_cb(void *udata __UNUSED__, int evtype __UNUSED__, void *ev)
 {
    Ecore_DBus_Event_Server_Data *event;
    Ecore_DBus_Object *obj;

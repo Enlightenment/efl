@@ -194,27 +194,27 @@ extern "C" {
 
 
    /* message */
-   EAPI int           ecore_dbus_server_send(Ecore_DBus_Server *svr, char *command, int length);
+   EAPI int           ecore_dbus_server_send(Ecore_DBus_Server *svr, const char *command, int length);
 
    EAPI unsigned int ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, 
-					 char *path, char *interface,
-					 char *method, char *destination, 
+					 const char *path, const char *interface,
+					 const char *method, const char *destination, 
 					 Ecore_DBus_Method_Return_Cb method_cb,
 					 Ecore_DBus_Error_Cb error_cb,
-					 void *data,
-					 char *signature, ...);
+					 const void *data,
+					 const char *signature, ...);
    EAPI unsigned int ecore_dbus_message_new_method_return(Ecore_DBus_Server *svr,
-					 int reply_serial, char *destination,
-					 char *signature, ...);
+					 int reply_serial, const char *destination,
+					 const char *signature, ...);
    EAPI unsigned int ecore_dbus_message_new_error(Ecore_DBus_Server *svr, 
-	                                 char *error_name,
-					 int reply_serial, char *destination,
-					 char *error_message);
+	                                 const char *error_name,
+					 int reply_serial, const char *destination,
+					 const char *error_message);
    EAPI unsigned int ecore_dbus_message_new_signal(Ecore_DBus_Server *svr,
-					 char *path,
-					 char *interface, char *signal_name,
-					 char *destination, void *data,
-					 char *signature, ...);
+					 const char *path,
+					 const char *interface, const char *signal_name,
+					 const char *destination, const void *data,
+					 const char *signature, ...);
 
    EAPI void          ecore_dbus_message_del(Ecore_DBus_Message *msg);
    EAPI void          ecore_dbus_message_print(Ecore_DBus_Message *msg);
@@ -235,7 +235,7 @@ extern "C" {
    EAPI int ecore_dbus_method_release_name(Ecore_DBus_Server *svr, char *name, Ecore_DBus_Method_Return_Cb method_cb, Ecore_DBus_Error_Cb, void *data);
 
    /* addresses */
-   EAPI Ecore_DBus_Address *ecore_dbus_address_new();
+   EAPI Ecore_DBus_Address *ecore_dbus_address_new(void);
    EAPI void                ecore_dbus_address_free(Ecore_DBus_Address *address);
 
    EAPI Ecore_List         *ecore_dbus_address_parse(const char *address);

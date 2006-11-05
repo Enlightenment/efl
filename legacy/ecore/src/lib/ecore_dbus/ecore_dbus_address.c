@@ -273,7 +273,7 @@ _ecore_dbus_address_value_char_optional_encode(char c)
 {
    /* addl optional chars (other than 0-9A-Za-z) */
    static const char OPTIONAL_CHARS[] = {'_', '-', '/', '.', '\\'};
-   int i;
+   unsigned int i;
 
    if (isascii(c) && (isalpha(c) || isdigit(c))) return 1;
    for (i = 0; i < sizeof(OPTIONAL_CHARS); i++)

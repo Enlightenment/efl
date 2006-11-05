@@ -10,19 +10,19 @@
 
 /* message helpers */
 static Ecore_DBus_Message *_ecore_dbus_message_create(Ecore_DBus_Server *svr,
-                             int type, int flags, char *path, char *interface,
-			     char *member, char *error_name, int reply_serial,
-		  	     char *destination, char *signature, va_list args);
+                             int type, int flags, const char *path, const char *interface,
+			     const char *member, const char *error_name, int reply_serial,
+		  	     const char *destination, const char *signature, va_list args);
 static void  _ecore_dbus_message_header(Ecore_DBus_Message *msg, int type,
-                             int flags, char *path, char *interface,
-			     char *member, char *error_name, int reply_serial,
-			     char *destination, char *format);
+                             int flags, const char *path, const char *interface,
+			     const char *member, const char *error_name, int reply_serial,
+			     const char *destination, const char *format);
 static void _ecore_dbus_message_body(Ecore_DBus_Message *msg,
-                             char *signature, va_list args);
+                             const char *signature, va_list args);
 
-static unsigned int _ecore_dbus_message_new_error(Ecore_DBus_Server *svr, char *error_name,
-			     int reply_serial, char *destination,
-			     char *signature, ...);
+static unsigned int _ecore_dbus_message_new_error(Ecore_DBus_Server *svr, const char *error_name,
+			     int reply_serial, const char *destination,
+			     const char *signature, ...);
 
 static void  _ecore_dbus_message_field_free(void *data);
 
@@ -63,7 +63,7 @@ static void _ecore_dbus_message_print_raw(Ecore_DBus_Message *msg);
  */
 EAPI unsigned int
 ecore_dbus_message_new_method_return(Ecore_DBus_Server *svr, int reply_serial,
-				     char *destination, char *signature, ...)
+				     const char *destination, const char *signature, ...)
 {
    va_list	args;	
    Ecore_DBus_Message *msg;
@@ -80,20 +80,20 @@ ecore_dbus_message_new_method_return(Ecore_DBus_Server *svr, int reply_serial,
 
 /* errors either have a single param, the error message, or no params. */
 EAPI unsigned int
-ecore_dbus_message_new_error(Ecore_DBus_Server *svr, char *error_name,
-			     int reply_serial, char *destination,
-			     char *error_message)
+ecore_dbus_message_new_error(Ecore_DBus_Server *svr, const char *error_name,
+			     int reply_serial, const char *destination,
+			     const char *error_message)
 {
-   char *format = "";
+   const char *format = "";
    if (error_message) format = "s";
 
    return _ecore_dbus_message_new_error(svr, error_name, reply_serial, destination, format, error_message);
 }
 
 static unsigned int
-_ecore_dbus_message_new_error(Ecore_DBus_Server *svr, char *error_name,
-			     int reply_serial, char *destination,
-			     char *signature, ...)
+_ecore_dbus_message_new_error(Ecore_DBus_Server *svr, const char *error_name,
+			     int reply_serial, const char *destination,
+			     const char *signature, ...)
 {
    va_list	args;	
    Ecore_DBus_Message *msg;
@@ -109,10 +109,10 @@ _ecore_dbus_message_new_error(Ecore_DBus_Server *svr, char *error_name,
 }
 
 EAPI unsigned int
-ecore_dbus_message_new_signal(Ecore_DBus_Server *svr, char *path,
-			      char *interface, char *signal_name,
-			      char *destination, void *data,
-			      char *signature, ...)
+ecore_dbus_message_new_signal(Ecore_DBus_Server *svr, const char *path,
+			      const char *interface, const char *signal_name,
+			      const char *destination, const void *data __UNUSED__,
+			      const char *signature, ...)
 {
    va_list	args;	
    Ecore_DBus_Message *msg;
@@ -129,12 +129,12 @@ ecore_dbus_message_new_signal(Ecore_DBus_Server *svr, char *path,
 
 EAPI unsigned int
 ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, 
-				   char *path, char *interface,
-				   char *method, char *destination, 
+				   const char *path, const char *interface,
+				   const char *method, const char *destination, 
 				   Ecore_DBus_Method_Return_Cb method_cb,
 				   Ecore_DBus_Error_Cb error_cb,
-				   void *data,
-				   char *signature, ...)
+				   const void *data,
+				   const char *signature, ...)
 {
    va_list	args;	
    Ecore_DBus_Message *msg;
@@ -152,7 +152,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr,
      {
 	msg->cb.method_return = method_cb;
 	msg->cb.error = error_cb;
-	msg->cb.data = data;
+	msg->cb.data = (void*)data;
      }
 
    /* send message */
@@ -163,7 +163,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr,
 }
 
 static Ecore_DBus_Message *
-_ecore_dbus_message_create(Ecore_DBus_Server *svr, int type, int flags, char *path, char *interface, char *member, char *error_name, int reply_serial, char *destination, char *signature, va_list args)
+_ecore_dbus_message_create(Ecore_DBus_Server *svr, int type, int flags, const char *path, const char *interface, const char *member, const char *error_name, int reply_serial, const char *destination, const char *signature, va_list args)
 {
    /* init message */
    Ecore_DBus_Message *msg;
@@ -178,7 +178,7 @@ _ecore_dbus_message_create(Ecore_DBus_Server *svr, int type, int flags, char *pa
 }
 
 static void
-_ecore_dbus_message_body(Ecore_DBus_Message *msg, char *signature, va_list args) 
+_ecore_dbus_message_body(Ecore_DBus_Message *msg, const char *signature, va_list args) 
 {
    unsigned int body_start;
    /* message body */
@@ -453,9 +453,9 @@ _ecore_dbus_message_free(Ecore_DBus_Message *msg)
 
 static void
 _ecore_dbus_message_header(Ecore_DBus_Message *msg, int type, int flags,
-                           char *path, char *interface, char *member,
-			   char *error_name, int reply_serial,
-			   char *destination, char *signature)
+                           const char *path, const char *interface, const char *member,
+			   const char *error_name __UNUSED__, int reply_serial __UNUSED__,
+			   const char *destination, const char *signature)
 {
    Ecore_DBus_Message_Field_Array *arr;
    
@@ -706,7 +706,7 @@ _ecore_dbus_message_header_field_print(Ecore_DBus_Message_Field_Container *arr)
 static void
 _ecore_dbus_message_print_raw(Ecore_DBus_Message *msg)
 {
-   int                 i;
+   unsigned int        i;
 
    printf("[ecore_dbus] raw message:\n");
    for (i = 0; i < msg->length; i++)

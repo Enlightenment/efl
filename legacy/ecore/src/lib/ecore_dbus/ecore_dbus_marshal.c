@@ -114,7 +114,7 @@ _ecore_dbus_message_marshal_array_end(Ecore_DBus_Message *msg, Ecore_DBus_Messag
 }
 
 Ecore_DBus_Message_Field_Array *
-_ecore_dbus_message_marshal_array(Ecore_DBus_Message *msg, char *contained_type, Ecore_List *data)
+_ecore_dbus_message_marshal_array(Ecore_DBus_Message *msg, const char *contained_type, Ecore_List *data)
 {
    Ecore_DBus_Message_Field_Array *arr;
    void *el;
@@ -142,13 +142,13 @@ _ecore_dbus_message_marshal_struct_begin(Ecore_DBus_Message *msg)
 }
 
 void
-_ecore_dbus_message_marshal_struct_end(Ecore_DBus_Message *msg, Ecore_DBus_Message_Field_Struct *s)
+_ecore_dbus_message_marshal_struct_end(Ecore_DBus_Message *msg, Ecore_DBus_Message_Field_Struct *s __UNUSED__)
 {
    ecore_list_remove_first(msg->recurse);
 }
 
 Ecore_DBus_Message_Field_Variant *
-_ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Type type, void *data)
+_ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Type type, const void *data)
 {
    Ecore_DBus_Message_Field_Variant *f = NULL;
 
@@ -170,7 +170,7 @@ _ecore_dbus_message_marshal_variant(Ecore_DBus_Message *msg, Ecore_DBus_Data_Typ
 
 
 Ecore_DBus_Message_Field *
-_ecore_dbus_message_marshal(Ecore_DBus_Message *msg, char *type, void *data)
+_ecore_dbus_message_marshal(Ecore_DBus_Message *msg, const char *type, const void *data)
 {
 
    switch (*type)

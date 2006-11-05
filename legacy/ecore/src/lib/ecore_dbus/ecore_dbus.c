@@ -210,7 +210,7 @@ ecore_dbus_server_starter_connect(const void *data)
 
 EAPI Ecore_DBus_Server *
 ecore_dbus_server_connect(Ecore_Con_Type con_type, const char *name, int port,
-			  const void *data)
+			  const void *data __UNUSED__)
 {
    /* XXX data isn't used! */
    Ecore_DBus_Server  *svr;
@@ -253,7 +253,7 @@ ecore_dbus_server_del(Ecore_DBus_Server *svr)
 }
 
 EAPI int
-ecore_dbus_server_send(Ecore_DBus_Server *svr, char *command, int length)
+ecore_dbus_server_send(Ecore_DBus_Server *svr, const char *command, int length)
 {
    int                 ret;
 
@@ -319,7 +319,7 @@ _ecore_dbus_hex_encode(char *src_str)
 /* auth functions */
 
 unsigned char *
-_ecore_dbus_auth_external(void *data)
+_ecore_dbus_auth_external(void *data __UNUSED__)
 {
    char          *uid, *enc_uid, *msg;
 
@@ -335,7 +335,7 @@ _ecore_dbus_auth_external(void *data)
 /* con functions */
 
 static int
-_ecore_dbus_event_server_add(void *data, int ev_type, void *ev)
+_ecore_dbus_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Add *e;
    Ecore_DBus_Server          *svr;
@@ -352,7 +352,7 @@ _ecore_dbus_event_server_add(void *data, int ev_type, void *ev)
 }
 
 static int
-_ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
+_ecore_dbus_event_server_del(void *udata __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Del  *e;
    Ecore_DBus_Server           *svr;
@@ -374,7 +374,7 @@ _ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
 }
 
 static int
-_ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
+_ecore_dbus_event_server_data(void *udata __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Data *e;
    Ecore_DBus_Server           *svr;
@@ -496,7 +496,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 }
 
 static void
-_ecore_dbus_event_server_del_free(void *data, void *ev)
+_ecore_dbus_event_server_del_free(void *data __UNUSED__, void *ev)
 {
    Ecore_DBus_Event_Server_Del *event;
 
@@ -506,7 +506,7 @@ _ecore_dbus_event_server_del_free(void *data, void *ev)
 }
 
 static void
-_ecore_dbus_event_server_data_free(void *data, void *ev)
+_ecore_dbus_event_server_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_DBus_Event_Server_Data *event;
 
