@@ -758,7 +758,7 @@ extern "C" {
     * function call.
     *
     */
-   EAPI void *eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name);
+   EAPI void *eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name);
 
    /**
     * Write a data structure from memory and store in an eet file.

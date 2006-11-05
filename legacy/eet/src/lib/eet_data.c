@@ -141,7 +141,7 @@ static Eet_Data_Chunk *eet_data_chunk_new(void *data, int size, const char *name
 static void            eet_data_chunk_free(Eet_Data_Chunk *chnk);
 
 static Eet_Data_Stream *eet_data_stream_new(void);
-static void             eet_data_stream_write(Eet_Data_Stream *ds, void *data, int size);
+static void             eet_data_stream_write(Eet_Data_Stream *ds, const void *data, int size);
 static void             eet_data_stream_free(Eet_Data_Stream *ds);
 
 static void             eet_data_chunk_put(Eet_Data_Chunk *chnk, Eet_Data_Stream *ds);
@@ -542,7 +542,7 @@ eet_data_stream_free(Eet_Data_Stream *ds)
 }
 
 static void
-eet_data_stream_write(Eet_Data_Stream *ds, void *data, int size)
+eet_data_stream_write(Eet_Data_Stream *ds, const void *data, int size)
 {
    char *p;
 
@@ -823,7 +823,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 }
 
 EAPI void *
-eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name)
+eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
 {
    void *data_dec;
    void *data;
