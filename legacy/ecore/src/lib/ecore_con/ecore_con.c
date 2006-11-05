@@ -50,7 +50,9 @@ EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
 
 static Ecore_List *servers = NULL;
 static int init_count = 0;
+#if USE_OPENSSL
 static int ssl_init_count = 0;
+#endif
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 #define LENGTH_OF_ABSTRACT_SOCKADDR_UN(s, path) (strlen(path) + 1 + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
@@ -647,7 +649,7 @@ ecore_con_server_clients_get(Ecore_Con_Server *svr)
  * @ingroup Ecore_Con_Server_Group
  */
 EAPI int
-ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
+ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {

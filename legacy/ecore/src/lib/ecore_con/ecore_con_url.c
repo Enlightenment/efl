@@ -163,6 +163,7 @@ ecore_con_url_new(const char *url)
 
    return url_con;
 #else
+   url = NULL;
    return NULL;
 #endif
 }
@@ -184,6 +185,8 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
    curl_slist_free_all(url_con->headers);
    free(url_con->url);
    free(url_con);
+#else
+   url_con = NULL;
 #endif
 }
 
@@ -198,7 +201,9 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
    if (url)
      url_con->url = strdup(url);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_URL, url_con->url);
-
+#else
+   url_con = NULL;
+   url = NULL;
 #endif
    return 1;
 }
@@ -237,6 +242,10 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
 
    return _ecore_con_url_perform(url_con);
 #else
+   url_con = NULL;
+   data = NULL;
+   length = 0;
+   content_type = NULL;
    return 0;
 #endif
 }

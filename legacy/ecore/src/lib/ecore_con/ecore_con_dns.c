@@ -28,6 +28,7 @@
  */
 #include "Ecore.h"
 #include "ecore_private.h"
+#include "ecore_con_private.h"
 
 #include <ctype.h>
 #include <netinet/in.h>
@@ -72,6 +73,7 @@ struct _Ecore_Con_Dns_Cache {
      struct hostent *he;
 };
 
+#if 0
 static void _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname);
 static int  _ecore_con_dns_timeout(void *data);
 static int  _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -79,9 +81,11 @@ static void _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query);
 static void _ecore_con_dns_cache_free(Ecore_Con_Dns_Cache *cache);
 static int  _ecore_con_hostname_get(unsigned char *buf, char *hostname,
 				    int pos, int length);
+#endif
 
 static int dns_init = 0;
 
+#if 0
 static struct in_addr servers[SERVERS];
 static int            server_count;
 
@@ -93,6 +97,7 @@ static char *domain = NULL;
 static uint16_t dns_id = 0;
 
 static Ecore_Con_Dns_Cache *dns_cache = NULL;
+#endif
 
 #define SET_16BIT(p, v) \
    (((p)[0]) = ((v) >> 8) & 0xff), \
@@ -321,7 +326,7 @@ _ecore_con_dns_data_handler(void *data, Ecore_Fd_Handler *fd_handler)
 }
 
 static int
-_ecore_con_dns_exit_handler(void *data, int type, void *event)
+_ecore_con_dns_exit_handler(void *data, int type __UNUSED__, void *event)
 {
    CB_Data *cbdata;
    Ecore_Exe_Event_Del *ev;
