@@ -320,10 +320,10 @@ init_xtransform(XTransform *t)
 static void
 set_xtransform_scale(XTransform *t, int sw, int sh, int w, int h)
 {
-   if ((sw > 1) && (w > 1))
-     { sw--;  w--; }
-   if ((sh > 1) && (h > 1))
-     { sh--;  h--; }
+//   if ((sw > 1) && (w > 1))
+//     { sw--;  w--; }
+//   if ((sh > 1) && (h > 1))
+//     { sh--;  h--; }
    t->matrix[0][0] = XDoubleToFixed((double)sw / (double)w);
    t->matrix[1][1] = XDoubleToFixed((double)sh / (double)h);
 }
@@ -355,15 +355,15 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 	if (!srs->alpha) op = PictOpSrc;
      }
    else if (dc->render_op == _EVAS_RENDER_BLEND_REL)
-	op = PictOpAtop;
+     op = PictOpAtop;
    else if (dc->render_op == _EVAS_RENDER_MUL)
-	op = PictOpIn;
+     op = PictOpIn;
    else if (dc->render_op == _EVAS_RENDER_COPY)
-	op = PictOpSrc;
+     op = PictOpSrc;
    else if (dc->render_op == _EVAS_RENDER_COPY_REL)
-	op = PictOpIn;
+     op = PictOpIn;
    else if (dc->render_op == _EVAS_RENDER_MASK)
-	op = PictOpInReverse;
+     op = PictOpInReverse;
 
    if ((dc) && (dc->mul.use))
      {
@@ -403,7 +403,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
 		    trs = _xr_render_surface_new(srs->xinf, sw + e, sh + e,
 						 srs->fmt, srs->alpha);
 		  if (!trs) return;
-
+		  
 		  att.component_alpha = 1;
 		  XRenderChangePicture(srs->xinf->disp, mask, CPComponentAlpha, &att);
 		  XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
@@ -445,54 +445,54 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
      {
 	if (srs->bordered && is_scaling)
 	  {
-	    trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
-					 srs->fmt, srs->alpha);
-	    if (!trs) return;
-
-	    att.component_alpha = 0;
-	    XRenderChangePicture(srs->xinf->disp, srs->pic, CPComponentAlpha, &att);
-	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
-	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
-			     trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
-
-	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
-			     trs->pic, sx + sw - 1, sy, 0, 0, sw, 0, 1, sh);
-	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
-			     trs->pic, sx, sy + sh - 1, 0, 0, 0, sh, sw, 1);
-	    XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
+	     trs = _xr_render_surface_new(srs->xinf, sw + 1, sh + 1,
+					  srs->fmt, srs->alpha);
+	     if (!trs) return;
+	     
+	     att.component_alpha = 0;
+	     XRenderChangePicture(srs->xinf->disp, srs->pic, CPComponentAlpha, &att);
+	     XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
+	     XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
+			      trs->pic, sx, sy, 0, 0, 0, 0, sw, sh);
+	     
+	     XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
+			      trs->pic, sx + sw - 1, sy, 0, 0, sw, 0, 1, sh);
+	     XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
+			      trs->pic, sx, sy + sh - 1, 0, 0, 0, sh, sw, 1);
+	     XRenderComposite(srs->xinf->disp, PictOpSrc, srs->pic, None,
 			     trs->pic, sx + sw - 1, sy + sh - 1, 0, 0, sw, sh, 1, 1);
-
-	    XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
-
-	    set_xtransform_scale(&xf, sw, sh, w, h);
-	    XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
-
-	    if (dc->render_op == _EVAS_RENDER_MUL)
-	      {
-		att.component_alpha = 1;
-		XRenderChangePicture(trs->xinf->disp, trs->pic, CPComponentAlpha, &att);
-	      }
-
-	    XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
-			     0, 0, 0, 0, x, y, w, h);
-	    _xr_render_surface_free(trs);
+	     
+	     XRenderSetPictureFilter(trs->xinf->disp, trs->pic, get_filter(smooth), NULL, 0);
+	     
+	     set_xtransform_scale(&xf, sw, sh, w, h);
+	     XRenderSetPictureTransform(trs->xinf->disp, trs->pic, &xf);
+	     
+	     if (dc->render_op == _EVAS_RENDER_MUL)
+	       {
+		  att.component_alpha = 1;
+		  XRenderChangePicture(trs->xinf->disp, trs->pic, CPComponentAlpha, &att);
+	       }
+	     
+	     XRenderComposite(trs->xinf->disp, op, trs->pic, mask, drs->pic,
+			      0, 0, 0, 0, x, y, w, h);
+	     _xr_render_surface_free(trs);
 	  }
 	else
 	  {
-	    XRenderSetPictureFilter(srs->xinf->disp, srs->pic, get_filter(smooth), NULL, 0);
-
-	    set_xtransform_scale(&xf, sw, sh, w, h);
-	    XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
-
-	    att.component_alpha = 0;
-	    if (dc->render_op == _EVAS_RENDER_MUL)
-		att.component_alpha = 1;
-	    XRenderChangePicture(srs->xinf->disp, srs->pic, CPComponentAlpha, &att);
-
-	    XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
-			     ((sx * w) + (sw / 2)) / sw, 
-			     ((sy * h) + (sh / 2)) / sh,
-			     0, 0, x, y, w, h);
+	     XRenderSetPictureFilter(srs->xinf->disp, srs->pic, get_filter(smooth), NULL, 0);
+	     
+	     set_xtransform_scale(&xf, sw, sh, w, h);
+	     XRenderSetPictureTransform(srs->xinf->disp, srs->pic, &xf);
+	     
+	     att.component_alpha = 0;
+	     if (dc->render_op == _EVAS_RENDER_MUL)
+	       att.component_alpha = 1;
+	     XRenderChangePicture(srs->xinf->disp, srs->pic, CPComponentAlpha, &att);
+	     
+	     XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
+			      ((sx * w) + (sw / 2)) / sw, 
+			      ((sy * h) + (sh / 2)) / sh,
+			      0, 0, x, y, w, h);
 	  }
      }
 }
