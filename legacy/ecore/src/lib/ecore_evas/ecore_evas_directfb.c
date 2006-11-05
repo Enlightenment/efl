@@ -549,6 +549,7 @@ ecore_evas_directfb_window_get(Ecore_Evas *ee)
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
    return ee->engine.directfb.window;
 #else
+   ee = NULL;
    return NULL;
 #endif   
 }
@@ -610,6 +611,8 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    
    return ee;
 #else
+   disp_name = NULL;
+   windowed = x = y = w = h = 0;
    return NULL;
 #endif   
 }

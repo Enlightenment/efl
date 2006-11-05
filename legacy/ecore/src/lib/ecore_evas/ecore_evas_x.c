@@ -2148,7 +2148,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	/* NB: on linux this may simply empty the env as opposed to completely
 	 * unset it to being empty - unsure as solartis libc crashes looking 
 	 * for the '=' char */
-	putenv("DESKTOP_STARTUP_ID=");
+	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
    einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)
@@ -2398,7 +2398,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 	/* NB: on linux this may simply empty the env as opposed to completely
 	 * unset it to being empty - unsure as solartis libc crashes looking 
 	 * for the '=' char */
-	putenv("DESKTOP_STARTUP_ID=");
+	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
@@ -2414,6 +2414,9 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    return ee;
 #else
+   disp_name = NULL;
+   parent = 0;
+   x = y = w = h = 0;
    return NULL;
 #endif
 }
@@ -2548,7 +2551,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	/* NB: on linux this may simply empty the env as opposed to completely
 	 * unset it to being empty - unsure as solartis libc crashes looking 
 	 * for the '=' char */
-	putenv("DESKTOP_STARTUP_ID=");
+	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
    einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)

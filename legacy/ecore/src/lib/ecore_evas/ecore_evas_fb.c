@@ -637,6 +637,8 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    return ee;
 #else
+   disp_name = NULL;
+   rotation = w = h = 0;
    return NULL;
 #endif   
 }
