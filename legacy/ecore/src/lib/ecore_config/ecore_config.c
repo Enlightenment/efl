@@ -1302,7 +1302,7 @@ ecore_config_struct_get(const char *key, void *data)
 {
    Ecore_Config_Prop *e, *f;
    Evas_List *l;
-   void *ptr;
+   unsigned char *ptr;
    long argb;
 
    e = ecore_config_get(key);
