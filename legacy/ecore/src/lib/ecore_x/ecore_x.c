@@ -273,8 +273,8 @@ ecore_x_init(const char *name)
    _ecore_x_event_handlers[SelectionRequest] = _ecore_x_event_handle_selection_request;
    _ecore_x_event_handlers[SelectionNotify]  = _ecore_x_event_handle_selection_notify;
    _ecore_x_event_handlers[ColormapNotify]   = _ecore_x_event_handle_colormap_notify;
-   _ecore_x_event_handlers[MappingNotify]    = _ecore_x_event_handle_mapping_notify;
    _ecore_x_event_handlers[ClientMessage]    = _ecore_x_event_handle_client_message;
+   _ecore_x_event_handlers[MappingNotify]    = _ecore_x_event_handle_mapping_notify;
    if (_ecore_x_event_shape_id)
      _ecore_x_event_handlers[_ecore_x_event_shape_id] = _ecore_x_event_handle_shape_change;
    if (_ecore_x_event_screensaver_id)
