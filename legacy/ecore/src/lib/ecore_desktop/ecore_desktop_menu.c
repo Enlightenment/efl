@@ -129,11 +129,17 @@ ecore_desktop_menu_for_each(void (*func)
 					     NULL);
    if (!menu_file)
      {
-	/* Try various quirks of various systems. */
+	/* Try various quirks of various systems and other wms. */
 	menu_file = ecore_desktop_paths_file_find(ecore_desktop_paths_menus,
+						  "kde-applications.menu", -1, NULL,
+						  NULL);
+        if (!menu_file)
+          {
+	     menu_file = ecore_desktop_paths_file_find(ecore_desktop_paths_menus,
 						  "debian-menu.menu", -1, NULL,
 						  NULL);
-	/* FIXME: If all else fails, run debians funky menu generator shit. */
+	     /* FIXME: If all else fails, run debians funky menu generator shit. */
+	  }
      }
 
    if (menu_file)
@@ -240,6 +246,9 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
    data.path = ecore_file_get_dir(file);
    if ((level == 0) && (merge_stack == NULL))
       merge_stack = ecore_desktop_tree_new(NULL);
+#ifdef DEBUG
+printf("MENU FILE %d - %s\n", level, file);
+#endif
    menu_xml = ecore_desktop_xmlame_get(file);
    if ((data.stack) && (data.base) && (data.path) && (merge_stack)
        && (menu_xml))
@@ -1225,18 +1234,24 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 	     if (path_type)
 	       {
 		  if (string[0] == '/')
-		     sprintf(merge_path, "%s", string);
+		     snprintf(merge_path, PATH_MAX, "%s", string);
 		  else
-		     sprintf(merge_path, "%s/%s", unxml_data->path, string);
+		     snprintf(merge_path, PATH_MAX, "%s/%s", unxml_data->path, string);
 	       }
 	     else		/* This is a parent type MergeFile. */
 	       {
+	          char *xdg_path;
+		  int found = -1;
+
 		  /* The spec is a little unclear, and the examples may look like they
 		   * contradict the description, but it all makes sense if you cross
 		   * reference it with the XDG Base Directory Specification (version 0.6).
 		   * To make things harder, parent type MergeFiles never appear on my box.
 		   *
 		   * What you do is this.
+		   *
+		   * Just plain ignore the specified path in the MergeFile element, it's for 
+		   * legacy apps that don't understand parent types.
 		   *
 		   * Take the XDG_CONFIG_DIRS stuff as a whole ($XDG_CONFIG_HOME, then 
 		   * $XDG_CONFIG_DIRS), in this code that will be ecore_desktop_paths_config.
@@ -1257,12 +1272,26 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 		   * The first one found wins, if none are found, don't merge anything.
 		   */
 
-		  /* FIXME: Actually implement this when I have some menus that will exercise it. 
-		   * Slackware uses them.
-		   */
 		  merge_path[0] = '\0';
-		  printf
-		     ("\n### Didn't expect a MergeFile parent type in the FDO menu.  onefang must write more code now.\n");
+	          ecore_list_goto_first(ecore_desktop_paths_config);
+	          while ((xdg_path = ecore_list_next(ecore_desktop_paths_config)) != NULL)
+	            {
+		       if (found < 0)
+		         {
+			    int length = strlen(xdg_path);
+
+		            if (strncmp(xdg_path, unxml_data->file, length) == 0)
+			       found = length;
+			 }
+		       else
+		         {
+			    snprintf(merge_path, PATH_MAX, "%s%s", xdg_path, &(unxml_data->file)[found]);
+			    if (ecore_file_exists(merge_path))
+			       break;
+			    merge_path[0] = '\0';
+			 }
+		    }
+
 	       }
 	     if (merge_path[0] != '\0')
 	       {
@@ -1524,6 +1553,8 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 #ifdef DEBUG
 		  printf("MAKING MENU - %s \t\t%s\n", generate_data.path,
 			 generate_data.name);
+		  ecore_desktop_tree_dump(generate_data.rules, 0);
+		  printf("\n\n");
 #endif
 		  for (i = 0; i < generate_data.rules->size; i++)
 		    {
@@ -1535,6 +1566,9 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 			       elements[i].element;
 			    if (generate_data.rule->size > 0)
 			      {
+			        /* FIXME: This might not be correct, but it fixes ubuntu. */
+				 while (generate_data.rule->elements[0].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
+			            generate_data.rule = (Ecore_Desktop_Tree *) generate_data.rule->elements[0].element;
 				 if (((char *)generate_data.rule->elements[0].
 				      element)[0] == 'I')
 				   {
@@ -1594,7 +1628,7 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
    key = (char *)node->key;
    app = (char *)node->value;
 
-   /* FIXME: pass an actualy language parameter. */
+   /* FIXME: pass an actuall language parameter. */
    desktop = ecore_desktop_get(app, NULL);
 
    if (desktop)
@@ -1610,9 +1644,9 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	       {
 		  ecore_hash_set(generate_data->apps, key, strdup(app));
 #ifdef DEBUG
-//		  printf("INCLUDING %s%s - %s\n",
-//			 ((generate_data->unallocated) ? "UNALLOCATED " : ""),
-//			 app, key);
+		  printf("INCLUDING %s%s - %s\n",
+			 ((generate_data->unallocated) ? "UNALLOCATED " : ""),
+			 app, key);
 #endif
 	       }
 	     else
@@ -1678,8 +1712,7 @@ _ecore_desktop_menu_apply_rules(struct _ecore_desktop_menu_generate_data
 		       {
 //                          int j;
 
-			  if (ecore_hash_get(desktop->Categories, &rul[4]) !=
-			      NULL)
+			  if (ecore_hash_get(desktop->Categories, &rul[4]) != NULL)
 			     sub_result = TRUE;
 
 //                          for (j = 0; j < desktop->Categories->size; j++)

@@ -276,7 +276,7 @@ _ecore_desktop_paths_create(void)
       ecore_desktop_paths_config =
 	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_CONFIG, NULL,
 				  "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS",
-				  "~/.config", "/etc/xdg", "", NULL, NULL);
+				  "~/.config", "/etc/xdg", NULL, NULL, NULL);
    if (!ecore_desktop_paths_xsessions)
       ecore_desktop_paths_xsessions =
 	 _ecore_desktop_paths_get(ECORE_DESKTOP_PATHS_XSESSIONS, NULL,
@@ -483,18 +483,28 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 	if ((value == NULL) || (value[0] == '\0'))
 	  value = env_home_default;
 	env_list = ecore_desktop_paths_to_list(value);
-	if (env_list && types)
+	if (env_list)
 	  {
-	     char               *this_env, *this_type;
+	     char               *this_env;
 
 	     ecore_list_goto_first(env_list);
 	     while ((this_env = ecore_list_next(env_list)) != NULL)
 	       {
-		  ecore_list_goto_first(types);
-		  while ((this_type = ecore_list_next(types)) != NULL)
+		  if (types)
 		    {
-		       _ecore_desktop_paths_massage_path(path, home,
+	               char *this_type;
+
+		       ecore_list_goto_first(types);
+		       while ((this_type = ecore_list_next(types)) != NULL)
+		         {
+		            _ecore_desktop_paths_massage_path(path, home,
 							 this_env, this_type);
+		            _ecore_desktop_paths_check_and_add(paths, path);
+		         }
+		    }
+		  else
+		    {
+		       _ecore_desktop_paths_massage_path(path, home, this_env, NULL);
 		       _ecore_desktop_paths_check_and_add(paths, path);
 		    }
 	       }
@@ -534,18 +544,28 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 	if ((value == NULL) || (value[0] == '\0'))
 	  value = env_default;
 	env_list = ecore_desktop_paths_to_list(value);
-	if (env_list && types)
+	if (env_list)
 	  {
-	     char               *this_env, *this_type;
+	     char               *this_env;
 
 	     ecore_list_goto_first(env_list);
 	     while ((this_env = ecore_list_next(env_list)) != NULL)
 	       {
-		  ecore_list_goto_first(types);
-		  while ((this_type = ecore_list_next(types)) != NULL)
+		  if (types)
 		    {
-		       _ecore_desktop_paths_massage_path(path, home,
+	               char *this_type;
+
+		       ecore_list_goto_first(types);
+		       while ((this_type = ecore_list_next(types)) != NULL)
+		         {
+		            _ecore_desktop_paths_massage_path(path, home,
 							 this_env, this_type);
+		            _ecore_desktop_paths_check_and_add(paths, path);
+		         }
+		    }
+		  else
+		    {
+		       _ecore_desktop_paths_massage_path(path, home, this_env, NULL);
 		       _ecore_desktop_paths_check_and_add(paths, path);
 		    }
 	       }
@@ -572,18 +592,28 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
     *      if it exists, add it to end of paths
     */
 
-   if (gnome_data && types)
+   if (gnome_data)
      {
-	char               *this_gnome, *this_type;
+	char               *this_gnome;
 
 	ecore_list_goto_first(gnome_data);
 	while ((this_gnome = ecore_list_next(gnome_data)) != NULL)
 	  {
-	     ecore_list_goto_first(types);
-	     while ((this_type = ecore_list_next(types)) != NULL)
+	     if (types)
 	       {
-		  _ecore_desktop_paths_massage_path(path, home,
-						    this_gnome, this_type);
+	          char *this_type;
+
+		  ecore_list_goto_first(types);
+		  while ((this_type = ecore_list_next(types)) != NULL)
+		     {
+		        _ecore_desktop_paths_massage_path(path, home,
+							 this_gnome, this_type);
+		        _ecore_desktop_paths_check_and_add(paths, path);
+		     }
+	       }
+	     else
+	       {
+	          _ecore_desktop_paths_massage_path(path, home, this_gnome, NULL);
 		  _ecore_desktop_paths_check_and_add(paths, path);
 	       }
 	  }
