@@ -166,7 +166,8 @@ ecore_file_download_protocol_available(const char *protocol)
 #ifdef HAVE_CURL
 /* this reports the downloads progress. if we return 0, then download 
  * continues, if we return anything else, then the download stops */
-int _ecore_file_download_curl_progress_func(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
+static int
+_ecore_file_download_curl_progress_func(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {  
    Ecore_File_Download_Job *job;
    
@@ -306,7 +307,7 @@ _ecore_file_download_curl(const char *url, const char *dst,
 }
 
 static int
-_ecore_file_download_curl_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_file_download_curl_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_File_Download_Job *job;
    CURLMsg *curlmsg;

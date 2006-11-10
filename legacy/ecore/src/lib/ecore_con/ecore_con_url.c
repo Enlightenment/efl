@@ -334,7 +334,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 }
 
 static int
-_ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    int still_running;
 
