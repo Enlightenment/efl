@@ -47,17 +47,17 @@ Ecore_List         *ecore_desktop_paths_xsessions = NULL;
 
 
 static Ecore_List  *_ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
-					     char *before, char *env_home,
-					     char *env, char *env_home_default,
-					     char *env_default, char *type,
-					     char *gnome_extra, char *kde);
+					     const char *before, const char *env_home,
+					     const char *env, const char *env_home_default,
+					     const char *env_default, const char *type,
+					     const char *gnome_extra, const char *kde);
 static void         _ecore_desktop_paths_massage_path(char *path, char *home,
 						      char *first,
 						      char *second);
 static void         _ecore_desktop_paths_check_and_add(Ecore_List * paths,
-						       char *path);
-static void         _ecore_desktop_paths_create();
-static void         _ecore_desktop_paths_destroy();
+						       const char *path);
+static void         _ecore_desktop_paths_create(void);
+static void         _ecore_desktop_paths_destroy(void);
 
 static Ecore_List  *gnome_data = NULL;
 static Ecore_List  *prepend_user_paths[ECORE_DESKTOP_PATHS_MAX];
@@ -325,28 +325,28 @@ ecore_desktop_paths_extras_clear(void)
 }
 
 EAPI void
-ecore_desktop_paths_prepend_user(Ecore_Desktop_Paths_Type type, char *paths)
+ecore_desktop_paths_prepend_user(Ecore_Desktop_Paths_Type type, const char *paths)
 {
    if (prepend_user_paths[type])
       ecore_list_append(prepend_user_paths[type], strdup(paths));
 }
 
 EAPI void
-ecore_desktop_paths_prepend_system(Ecore_Desktop_Paths_Type type, char *paths)
+ecore_desktop_paths_prepend_system(Ecore_Desktop_Paths_Type type, const char *paths)
 {
    if (prepend_system_paths[type])
       ecore_list_append(prepend_system_paths[type], strdup(paths));
 }
 
 EAPI void
-ecore_desktop_paths_append_user(Ecore_Desktop_Paths_Type type, char *paths)
+ecore_desktop_paths_append_user(Ecore_Desktop_Paths_Type type, const char *paths)
 {
    if (append_user_paths[type])
       ecore_list_append(append_user_paths[type], strdup(paths));
 }
 
 EAPI void
-ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type, char *paths)
+ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type, const char *paths)
 {
    if (append_system_paths[type])
       ecore_list_append(append_system_paths[type], strdup(paths));
@@ -413,9 +413,9 @@ icons=pathlist
 
 static Ecore_List  *
 _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
-			 char *before, char *env_home, char *env,
-			 char *env_home_default, char *env_default, char *type,
-			 char *gnome_extra, char *kde)
+			 const char *before, const char *env_home, const char *env,
+			 const char *env_home_default, const char *env_default, const char *type,
+			 const char *gnome_extra, const char *kde)
 {
    Ecore_List         *paths = NULL;
    Ecore_List         *types = NULL;
@@ -441,6 +441,8 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 #ifdef KDE_SUPPORT
    if (kde)
       kdes = ecore_desktop_paths_to_list(kde);
+#else
+   kde = NULL;
 #endif
 
    if (before)
@@ -477,7 +479,7 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 
    if (env_home)
      {
-	char               *value;
+	const char         *value;
 
 	value = getenv(env_home);
 	if ((value == NULL) || (value[0] == '\0'))
@@ -538,7 +540,7 @@ _ecore_desktop_paths_get(Ecore_Desktop_Paths_Type path_type,
 
    if (env)
      {
-	char               *value;
+	const char         *value;
 
 	value = getenv(env);
 	if ((value == NULL) || (value[0] == '\0'))
@@ -703,7 +705,7 @@ _ecore_desktop_paths_massage_path(char *path, char *home, char *first,
 }
 
 static void
-_ecore_desktop_paths_check_and_add(Ecore_List * paths, char *path)
+_ecore_desktop_paths_check_and_add(Ecore_List * paths, const char *path)
 {
    struct stat         path_stat;
    char               *this_path;

@@ -11,6 +11,7 @@
 
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
+#include "ecore_private.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -61,7 +62,7 @@ static int          _ecore_desktop_menu_make_apps(const void *data,
 static Ecore_Desktop_Tree *_ecore_desktop_menu_get0(char *file,
 						    Ecore_Desktop_Tree *
 						    merge_stack, int level);
-static Ecore_Desktop_Tree *_ecore_desktop_menu_create_menu();
+static Ecore_Desktop_Tree *_ecore_desktop_menu_create_menu(void);
 static int          _ecore_desktop_menu_unxml(const void *data,
 					      Ecore_Desktop_Tree * tree,
 					      int element, int level);
@@ -79,8 +80,8 @@ static void         _ecore_desktop_menu_unxml_rules(Ecore_Desktop_Tree * rules,
 static void         _ecore_desktop_menu_unxml_moves(Ecore_Desktop_Tree * menu,
 						    Ecore_Desktop_Tree * tree);
 static void         _ecore_desktop_menu_add_dirs(Ecore_Desktop_Tree * tree,
-						 Ecore_List * paths, char *pre,
-						 char *post, char *extra,
+						 Ecore_List * paths, const char *pre,
+						 const char *post, char *extra,
 						 int element);
 static int          _ecore_desktop_menu_expand_apps(struct
 						    _ecore_desktop_menu_unxml_data
@@ -119,7 +120,7 @@ static int          _ecore_desktop_menu_apply_rules(struct
 
 EAPI void
 ecore_desktop_menu_for_each(void (*func)
-			    (char *name, char *path, char *directory, Ecore_Hash * apps))
+			    (const char *name, const char *path, const char *directory, Ecore_Hash * apps))
 {
    char               *menu_file;
 
@@ -162,7 +163,7 @@ ecore_desktop_menu_for_each(void (*func)
 
 static int
 _ecore_desktop_menu_make_apps(const void *data, Ecore_Desktop_Tree * tree,
-			      int element, int level)
+			      int element, int level __UNUSED__)
 {
    if (tree->elements[element].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
      {
@@ -592,9 +593,7 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 					       (((char *)sub->elements[1].
 						 element)[0] != '<'))
 					     {
-						char
-						    
-						                temp[PATH_MAX];
+						char temp[PATH_MAX];
 
 						sprintf(temp, "%s %s",
 							(char *)sub->
@@ -1043,7 +1042,7 @@ _ecore_desktop_menu_unxml_moves(Ecore_Desktop_Tree * menu,
 
 static void
 _ecore_desktop_menu_add_dirs(Ecore_Desktop_Tree * tree, Ecore_List * paths,
-			     char *pre, char *post, char *extra, int element)
+			     const char *pre, const char *post __UNUSED__, char *extra, int element __UNUSED__)
 {
    char                t[PATH_MAX], *this_path;
 
@@ -1362,7 +1361,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 static int
 _ecore_desktop_menu_expand_default_dirs(const void *data,
 					Ecore_Desktop_Tree * tree, int element,
-					int level)
+					int level __UNUSED__)
 {
    struct _ecore_desktop_menu_unxml_data *unxml_data;
    Ecore_Desktop_Tree *merge;

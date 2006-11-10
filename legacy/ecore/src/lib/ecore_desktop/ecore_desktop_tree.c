@@ -51,7 +51,7 @@ ecore_desktop_tree_new(char *buffer)
 }
 
 Ecore_Desktop_Tree *
-ecore_desktop_tree_add(Ecore_Desktop_Tree * tree, char *element)
+ecore_desktop_tree_add(Ecore_Desktop_Tree * tree, const char *element)
 {
    tree->elements =
       (Ecore_Desktop_Tree_Element *) realloc(tree->elements,
@@ -59,13 +59,13 @@ ecore_desktop_tree_add(Ecore_Desktop_Tree * tree, char *element)
 					      1) *
 					     sizeof
 					     (Ecore_Desktop_Tree_Element));
-   tree->elements[tree->size].element = element;
+   tree->elements[tree->size].element = (char*)element;
    tree->elements[tree->size++].type = ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING;
    return tree;
 }
 
 Ecore_Desktop_Tree *
-ecore_desktop_tree_extend(Ecore_Desktop_Tree * tree, char *element)
+ecore_desktop_tree_extend(Ecore_Desktop_Tree * tree, const char *element)
 {
    tree->buffers =
       (char **)realloc(tree->buffers,

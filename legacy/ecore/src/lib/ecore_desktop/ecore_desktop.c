@@ -765,6 +765,7 @@ ecore_desktop_destroy(Ecore_Desktop * desktop)
 {
    /* This is just a dummy, because these structures are cached. */
    /* Later versions of the cache may reference count, then this will be useful. */
+   desktop = NULL;
 }
 
 void
@@ -868,7 +869,8 @@ if (files)
       if (fill)
         {
            Ecore_DList        *command;
-	   char               *p, *t, buf[PATH_MAX + 10], *big_buf = NULL;
+	   char               *p, buf[PATH_MAX + 10], *big_buf = NULL;
+	   const char         *t;
 	   int                 len = 0;
 
 	   command = ecore_dlist_new();

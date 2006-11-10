@@ -6,6 +6,7 @@
 
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
+#include "ecore_private.h"
 
 //#define DEBUG 1
 
@@ -356,7 +357,7 @@ ecore_desktop_icon_theme_list(void)
 }
 
 static int
-_ecore_desktop_icon_theme_list_add(void *data, const char *path)
+_ecore_desktop_icon_theme_list_add(void *data __UNUSED__, const char *path)
 {
    char                icn[PATH_MAX];
 
@@ -434,11 +435,11 @@ ecore_desktop_icon_shutdown()
  * @ingroup Ecore_Desktop_Icon_Group
  */
 Ecore_Desktop_Icon_Theme *
-ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
+ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__)
 {
    Ecore_Desktop_Icon_Theme *result = NULL;
    char *theme_path = NULL, *theme_dir = NULL;
-   char               *value;
+   const char         *value;
    Ecore_List         *Directories;
    char               *directory;
 
@@ -518,7 +519,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang)
 	dir = calloc(1, sizeof (Ecore_Desktop_Icon_Theme_Directory));
 	if ((dir) && (sub_group))
 	  {
-	     char *size, *minsize, *maxsize, *threshold;
+	     const char *size, *minsize, *maxsize, *threshold;
              char full_path[PATH_MAX];
 
              dir->path = strdup(directory);
@@ -595,6 +596,8 @@ ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme * icon_theme)
 {
    /* This is just a dummy, because these structures are cached. */
    /* Later versions of the cache may reference count, then this will be useful. */
+
+   icon_theme = NULL;
 }
 
 static void

@@ -166,15 +166,15 @@ extern              "C"
    EAPI int            ecore_desktop_paths_init(void);
    EAPI void           ecore_desktop_paths_extras_clear(void);
    EAPI void           ecore_desktop_paths_prepend_user(Ecore_Desktop_Paths_Type
-							type, char *paths);
+							type, const char *paths);
    EAPI void          
       ecore_desktop_paths_prepend_system(Ecore_Desktop_Paths_Type type,
-					 char *paths);
+					 const char *paths);
    EAPI void           ecore_desktop_paths_append_user(Ecore_Desktop_Paths_Type
-						       type, char *paths);
+						       type, const char *paths);
    EAPI void          
       ecore_desktop_paths_append_system(Ecore_Desktop_Paths_Type type,
-					char *paths);
+					const char *paths);
    EAPI void           ecore_desktop_paths_regen(void);
    char               *ecore_desktop_paths_file_find(Ecore_List * paths,
 						     const char *file, int sub,
@@ -228,16 +228,16 @@ extern              "C"
 
    EAPI void          
       ecore_desktop_menu_for_each(void (*func)
-				  (char *name, char *path, char *directory, Ecore_Hash * apps));
+				  (const char *name, const char *path, const char *directory, Ecore_Hash * apps));
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
 
    Ecore_Desktop_Tree *ecore_desktop_tree_new(char *buffer);
    Ecore_Desktop_Tree *ecore_desktop_tree_add(Ecore_Desktop_Tree * tree,
-					      char *element);
+					      const char *element);
    void                ecore_desktop_tree_track(Ecore_Desktop_Tree * tree,
 						void *element);
    Ecore_Desktop_Tree *ecore_desktop_tree_extend(Ecore_Desktop_Tree * tree,
-						 char *element);
+						 const char *element);
    Ecore_Desktop_Tree *ecore_desktop_tree_insert(Ecore_Desktop_Tree * tree,
 						 int before, void *element,
 						 Ecore_Desktop_Tree_Element_Type
