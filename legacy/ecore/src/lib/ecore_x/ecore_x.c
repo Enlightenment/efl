@@ -603,7 +603,7 @@ ecore_x_sync(void)
 EAPI void
 ecore_x_killall(Ecore_X_Window root)
 {
-   unsigned int i, j;
+   unsigned int j;
    Window root_r;
    Window parent_r;
    Window *children_r = NULL;
