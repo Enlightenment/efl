@@ -603,33 +603,25 @@ ecore_x_sync(void)
 EAPI void
 ecore_x_killall(Ecore_X_Window root)
 {
-   unsigned int screens;
    unsigned int i, j;
-
+   Window root_r;
+   Window parent_r;
+   Window *children_r = NULL;
+   unsigned int num_children = 0;
+   
    XGrabServer(_ecore_x_disp);
-   screens = ScreenCount(_ecore_x_disp);
-
    /* Tranverse window tree starting from root, and drag each
     * before the firing squad */
-   for (i = 0; i < screens; ++i)
+   while (XQueryTree(_ecore_x_disp, root, &root_r, &parent_r,
+		     &children_r, &num_children) && (num_children > 0))
      {
-	Window root_r;
-	Window parent_r;
-	Window *children_r = NULL;
-	unsigned int num_children = 0;
-	
-	while (XQueryTree(_ecore_x_disp, root, &root_r, &parent_r,
-			  &children_r, &num_children) && (num_children > 0))
+	for (j = 0; j < num_children; ++j)
 	  {
-	     for (j = 0; j < num_children; ++j)
-	       {
-		  XKillClient(_ecore_x_disp, children_r[j]);
-	       }
-	     
-	     XFree(children_r);
+	     XKillClient(_ecore_x_disp, children_r[j]);
 	  }
+	
+	XFree(children_r);
      }
-   
    XUngrabServer(_ecore_x_disp);
    XSync(_ecore_x_disp, False);
 }
