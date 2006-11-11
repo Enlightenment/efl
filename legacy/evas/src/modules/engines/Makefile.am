@@ -14,4 +14,5 @@ software_win32_gdi \
 software_x11 \
 software_xcb \
 xrender_x11 \
-xrender_xcb
+xrender_xcb \
+glitz_x11

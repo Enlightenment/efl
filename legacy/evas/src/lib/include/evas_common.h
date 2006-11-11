@@ -14,26 +14,39 @@
 
 #ifdef BUILD_PTHREAD
 # include <pthread.h>
-# define RLK         struct { pthread_rwlock_t rwl; } _reslock
-# define RLK_ADD(x)  pthread_rwlock_init   (&((x)->_reslock.rwl), NULL)
-# define RLK_DEL(x)  pthread_rwlock_destroy(&((x)->_reslock.rwl))
-# define RLK_RLK(x)  pthread_rwlock_rdlock (&((x)->_reslock.rwl))
-# define RLK_WLK(x)  pthread_rwlock_wrlock (&((x)->_reslock.rwl))
-# define RLK_ULK(x)  pthread_rwlock_unlock (&((x)->_reslock.rwl))
+typedef struct _Lk Lk;
+
+struct _Lk
+{
+   pthread_mutex_t mutex; // lock for read/write to this struct
+   pthread_t       wlk_id; // who has the write lock
+   int             wlk_count; // how many times does the write lock have refs
+   int             rlk_count; // read lock count
+// pthread_rwlock_t rwl;
+};
+
+# define ELK         Lk _lk
+# define ELK_ADD(x)  _evas_lk_init(&((x)->_lk))
+# define ELK_DEL(x)  _evas_lk_destroy(&((x)->_lk))
+# define ELK_RLK(x)  _evas_lk_read_lock(&((x)->_lk))
+# define ELK_WLK(x)  _evas_lk_read_unlock(&((x)->_lk))
+# define ELK_RUL(x)  _evas_lk_write_lock(&((x)->_lk))
+# define ELK_WUL(x)  _evas_lk_write_unlock(&((x)->_lk))
 #else
-# define RLK         
-# define RLK_ADD(x)  
-# define RLK_DEL(x)  
-# define RLK_RLK(x) 
-# define RLK_WLK(x) 
-# define RLK_ULK(x) 
+# define ELK         
+# define ELK_ADD(x)  
+# define ELK_DEL(x)  
+# define ELK_RLK(x) 
+# define ELK_WLK(x) 
+# define ELK_RUL(x) 
+# define ELK_WUL(x) 
 #endif
 
-typedef struct _Genlock Genlock;
+typedef struct _Glk Glk;
 
-struct _Genlock
+struct _Glk
 {
-   RLK;
+   ELK;
    int _dummy;
 };
 
