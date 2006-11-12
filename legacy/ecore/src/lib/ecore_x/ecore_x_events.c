@@ -480,7 +480,7 @@ void
 _ecore_x_event_handle_button_release(XEvent *xevent)
 {
    /* filter out wheel buttons */
-   if (xevent->xbutton.button <= 3)
+   if ((xevent->xbutton.button <= 3) || (xevent->xbutton.button > 7))
      {
 	  {
 	     Ecore_X_Event_Mouse_Move *e;
