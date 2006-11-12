@@ -587,21 +587,15 @@ _ecore_desktop_menu_unxml(const void *data, Ecore_Desktop_Tree * tree,
 				      else
 					{
 					   if ((sub->size == 3)
-					       && (sub->elements[1].type ==
-						   ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
-					       &&
-					       (((char *)sub->elements[1].
-						 element)[0] != '<'))
+					       && (sub->elements[1].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
+					       && (((char *)sub->elements[1].element)[0] != '<'))
 					     {
 						char temp[PATH_MAX];
 
-						sprintf(temp, "%s %s",
-							(char *)sub->
-							elements[0].element,
-							(char *)sub->
-							elements[1].element);
-						ecore_desktop_tree_extend(menu,
-									  temp);
+						snprintf(temp, PATH_MAX, "%s %s",
+						        (char *)sub->elements[0].element,
+							(char *)sub->elements[1].element);
+						ecore_desktop_tree_extend(menu, temp);
 						result = 1;
 					     }
 					   else
@@ -1565,9 +1559,9 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 			       elements[i].element;
 			    if (generate_data.rule->size > 0)
 			      {
-			        /* FIXME: This might not be correct, but it fixes ubuntu. */
-				 while (generate_data.rule->elements[0].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
-			            generate_data.rule = (Ecore_Desktop_Tree *) generate_data.rule->elements[0].element;
+			        /* FIXME: This is not correct, it fixes ubuntu, but breaks FC5. */
+//				 while (generate_data.rule->elements[0].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
+//			            generate_data.rule = (Ecore_Desktop_Tree *) generate_data.rule->elements[0].element;
 				 if (((char *)generate_data.rule->elements[0].
 				      element)[0] == 'I')
 				   {

@@ -27,7 +27,7 @@ _ecore_desktop_icon_theme_cache_check(Ecore_Desktop_Icon_Theme *icon_theme);
 
 /* FIXME: We need a way for the client to disable searching for any of these that they don't support. */
 static const char  *ext[] =
-   { "", ".edj", ".png", ".svgz", ".svg", ".xpm", NULL };  /* "" is in case the icon already has an extension, search for that first. */
+   { "", ".edj", ".png", /* ".svgz", ".svg", */ ".xpm", NULL };  /* "" is in case the icon already has an extension, search for that first. */
 static int          init_count = 0;
 static Ecore_Hash  *icon_theme_cache = NULL;
 
