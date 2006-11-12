@@ -101,6 +101,7 @@ static int          _ecore_desktop_menu_expand_default_dirs(const void *data,
 static int          _ecore_desktop_menu_generate(const void *data,
 						 Ecore_Desktop_Tree * tree,
 						 int element, int level);
+static int          _ecore_desktop_menu_is_include(const void *data, Ecore_Desktop_Tree * tree, int element, int level __UNUSED__);
 static void         _ecore_desktop_menu_inherit_apps(void *value,
 						     void *user_data);
 static void         _ecore_desktop_menu_select_app(void *value,
@@ -1412,12 +1413,9 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 	     generate_data.unallocated = unxml_data->unallocated;
 	     generate_data.name = (char *)tree->elements[element].element;
 	     generate_data.path = (char *)tree->elements[element + 1].element;
-	     generate_data.pool =
-		(Ecore_Hash *) tree->elements[element + 2].element;
-	     generate_data.rules =
-		(Ecore_Desktop_Tree *) tree->elements[element + 3].element;
-	     generate_data.apps =
-		(Ecore_Hash *) tree->elements[element + 4].element;
+	     generate_data.pool = (Ecore_Hash *) tree->elements[element + 2].element;
+	     generate_data.rules = (Ecore_Desktop_Tree *) tree->elements[element + 3].element;
+	     generate_data.apps = (Ecore_Hash *) tree->elements[element + 4].element;
 
 	     /* generate and inherit the pools on the first pass, and preparse the include/exclude logic. */
 	     if (!generate_data.unallocated)
@@ -1429,16 +1427,12 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 		       int                 result = 0;
 		       char               *string;
 
-		       if (tree->elements[i].type ==
-			   ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
+		       if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
 			 {
 			    string = (char *)tree->elements[i].element;
 			    if (strncmp(string, "<AppDir ", 8) == 0)
 			      {
-				 _ecore_desktop_menu_expand_apps(unxml_data,
-								 &string[8],
-								 generate_data.
-								 pool);
+				 _ecore_desktop_menu_expand_apps(unxml_data, &string[8], generate_data.pool);
 				 result = 1;
 			      }
 			    else if (strncmp(string, "<DirectoryDir ", 14) == 0)
@@ -1449,49 +1443,35 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 				 if (string[14] == '/')
 				    sprintf(merge_path, "%s", &string[14]);
 				 else
-				    sprintf(merge_path, "%s%s",
-					    unxml_data->path, &string[14]);
+				    sprintf(merge_path, "%s%s", unxml_data->path, &string[14]);
 				 merge = ecore_desktop_tree_new(NULL);
 				 if (merge)
 				   {
-				      ecore_desktop_paths_recursive_search
-					 (merge_path, NULL, -1, NULL,
-					  _ecore_desktop_menu_check_directory,
-					  merge);
-				      ecore_desktop_tree_merge(tree, i + 1,
-							       merge);
+				      ecore_desktop_paths_recursive_search(merge_path, NULL, -1, NULL, _ecore_desktop_menu_check_directory, merge);
+				      ecore_desktop_tree_merge(tree, i + 1, merge);
 				   }
 				 result = 1;
 			      }
 			 }
-		       else if (tree->elements[i].type ==
-				ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
+		       else if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
 			 {
 			    Ecore_Desktop_Tree *sub;
 
-			    sub =
-			       (Ecore_Desktop_Tree *) tree->elements[i].element;
+			    sub = (Ecore_Desktop_Tree *) tree->elements[i].element;
 			    if ((sub) && (sub->size))
 			      {
-				 if (sub->elements[0].type ==
-				     ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
+				 if (sub->elements[0].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
 				   {
 				      string = (char *)sub->elements[0].element;
-				      if ((strcmp(string, "<Include") == 0)
-					  || (strcmp(string, "<Exclude") == 0))
+				      if ((strcmp(string, "<Include") == 0) || (strcmp(string, "<Exclude") == 0))
 					{
 					   Ecore_Desktop_Tree *new_sub;
 
-					   new_sub =
-					      ecore_desktop_tree_new(NULL);
+					   new_sub = ecore_desktop_tree_new(NULL);
 					   if (new_sub)
 					     {
-						ecore_desktop_tree_add_child
-						   (generate_data.rules,
-						    new_sub);
-						_ecore_desktop_menu_unxml_rules
-						   (new_sub, sub, string[1],
-						    'O');
+						ecore_desktop_tree_add_child(generate_data.rules, new_sub);
+						_ecore_desktop_menu_unxml_rules(new_sub, sub, string[1], 'O');
 					     }
 					   result = 1;
 					}
@@ -1501,8 +1481,7 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 
 		       if (result)
 			 {
-			    tree->elements[i].type =
-			       ECORE_DESKTOP_TREE_ELEMENT_TYPE_NULL;
+			    tree->elements[i].type = ECORE_DESKTOP_TREE_ELEMENT_TYPE_NULL;
 			    tree->elements[i].element = NULL;
 			 }
 		    }
@@ -1510,74 +1489,55 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 		  if (unxml_data->stack->size <= level)
 		    {
 		       while (unxml_data->stack->size < level)
-			  ecore_desktop_tree_add_hash(unxml_data->stack,
-						      generate_data.pool);
-		       ecore_desktop_tree_add_hash(unxml_data->stack,
-						   generate_data.pool);
+			  ecore_desktop_tree_add_hash(unxml_data->stack, generate_data.pool);
+		       ecore_desktop_tree_add_hash(unxml_data->stack, generate_data.pool);
 		    }
 		  else
 		    {
-		       unxml_data->stack->elements[level].type =
-			  ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH;
-		       unxml_data->stack->elements[level].element =
-			  generate_data.pool;
+		       unxml_data->stack->elements[level].type = ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH;
+		       unxml_data->stack->elements[level].element = generate_data.pool;
 		    }
 		  for (i = level - 1; i >= 0; i--)
 		    {
-		       if (unxml_data->stack->elements[i].type ==
-			   ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH)
+		       if (unxml_data->stack->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH)
 			 {
 			    Ecore_Hash         *ancestor;
 
-			    ancestor =
-			       (Ecore_Hash *) unxml_data->stack->elements[i].
-			       element;
-			    ecore_hash_for_each_node(ancestor,
-						     _ecore_desktop_menu_inherit_apps,
-						     generate_data.pool);
+			    ancestor = (Ecore_Hash *) unxml_data->stack->elements[i].element;
+			    ecore_hash_for_each_node(ancestor, _ecore_desktop_menu_inherit_apps, generate_data.pool);
 			 }
 		    }
 	       }
 
 	     /* Process the rules. */
-	     if (generate_data.name[9] ==
-		 (generate_data.unallocated ? 'O' : ' '))
+	     if (generate_data.name[9] == (generate_data.unallocated ? 'O' : ' '))
 	       {
 #ifdef DEBUG
-		  printf("MAKING MENU - %s \t\t%s\n", generate_data.path,
-			 generate_data.name);
+		  printf("MAKING MENU - %s \t\t%s\n", generate_data.path, generate_data.name);
 		  ecore_desktop_tree_dump(generate_data.rules, 0);
 		  printf("\n\n");
 #endif
 		  for (i = 0; i < generate_data.rules->size; i++)
 		    {
-		       if (generate_data.rules->elements[i].type ==
-			   ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
+		       if (generate_data.rules->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
 			 {
-			    generate_data.rule =
-			       (Ecore_Desktop_Tree *) generate_data.rules->
-			       elements[i].element;
+			    generate_data.rule = (Ecore_Desktop_Tree *) generate_data.rules->elements[i].element;
 			    if (generate_data.rule->size > 0)
 			      {
-			        /* FIXME: This is not correct, it fixes ubuntu, but breaks FC5. */
-//				 while (generate_data.rule->elements[0].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
-//			            generate_data.rule = (Ecore_Desktop_Tree *) generate_data.rule->elements[0].element;
-				 if (((char *)generate_data.rule->elements[0].
-				      element)[0] == 'I')
+			         char type = 'I';
+
+                                 /* Find out if this is an include or an exclude.  This info may be way down in the tree. */
+				 if (generate_data.rule->elements[0].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
+		                    ecore_desktop_tree_foreach(generate_data.rule, 0, _ecore_desktop_menu_is_include, &type);
+				 if (type == 'I')
 				   {
 				      generate_data.include = TRUE;
-				      ecore_hash_for_each_node(generate_data.
-							       pool,
-							       _ecore_desktop_menu_select_app,
-							       &generate_data);
+				      ecore_hash_for_each_node(generate_data.pool, _ecore_desktop_menu_select_app, &generate_data);
 				   }
 				 else
 				   {
 				      generate_data.include = FALSE;
-				      ecore_hash_for_each_node(generate_data.
-							       apps,
-							       _ecore_desktop_menu_select_app,
-							       &generate_data);
+				      ecore_hash_for_each_node(generate_data.apps, _ecore_desktop_menu_select_app, &generate_data);
 				   }
 			      }
 			 }
@@ -1587,6 +1547,21 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 	       }
 	  }
      }
+   return 0;
+}
+
+static int
+_ecore_desktop_menu_is_include(const void *data, Ecore_Desktop_Tree * tree, int element, int level __UNUSED__)
+{
+   char *result;
+
+   result = (char *)data;
+   if (tree->elements[element].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
+     {
+	*result = ((char *)tree->elements[element].element)[0];
+	return 1;
+     }
+
    return 0;
 }
 
@@ -1629,26 +1604,21 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	if ((generate_data->unallocated) && (desktop->allocated))
 	   return;
 
-	if (_ecore_desktop_menu_apply_rules
-	    (generate_data, generate_data->rule, key, desktop))
+	if (_ecore_desktop_menu_apply_rules(generate_data, generate_data->rule, key, desktop))
 	  {
 	     desktop->allocated = TRUE;
 	     if (generate_data->include)
 	       {
 		  ecore_hash_set(generate_data->apps, key, strdup(app));
 #ifdef DEBUG
-		  printf("INCLUDING %s%s - %s\n",
-			 ((generate_data->unallocated) ? "UNALLOCATED " : ""),
-			 app, key);
+		  printf("INCLUDING %s%s - %s\n", ((generate_data->unallocated) ? "UNALLOCATED " : ""), app, key);
 #endif
 	       }
 	     else
 	       {
 		  ecore_hash_remove(generate_data->apps, key);
 #ifdef DEBUG
-		  printf("EXCLUDING %s%s - %s\n",
-			 ((generate_data->unallocated) ? "UNALLOCATED " : ""),
-			 app, key);
+		  printf("EXCLUDING %s%s - %s\n", ((generate_data->unallocated) ? "UNALLOCATED " : ""), app, key);
 #endif
 	       }
 	  }
@@ -1656,9 +1626,7 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 }
 
 static int
-_ecore_desktop_menu_apply_rules(struct _ecore_desktop_menu_generate_data
-				*generate_data, Ecore_Desktop_Tree * rule,
-				char *key, Ecore_Desktop * desktop)
+_ecore_desktop_menu_apply_rules(struct _ecore_desktop_menu_generate_data *generate_data, Ecore_Desktop_Tree * rule, char *key, Ecore_Desktop * desktop)
 {
    char                type = 'O';
    int                 result = FALSE;
@@ -1668,11 +1636,7 @@ _ecore_desktop_menu_apply_rules(struct _ecore_desktop_menu_generate_data
      {
 	if (rule->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_TREE)
 	  {
-	     result =
-		_ecore_desktop_menu_apply_rules(generate_data,
-						(Ecore_Desktop_Tree *) rule->
-						elements[i].element, key,
-						desktop);
+	     result = _ecore_desktop_menu_apply_rules(generate_data, (Ecore_Desktop_Tree *) rule->elements[i].element, key, desktop);
 	  }
 	else
 	  {
@@ -1701,49 +1665,16 @@ _ecore_desktop_menu_apply_rules(struct _ecore_desktop_menu_generate_data
 	       case 'C':
 		  {
 		     /* Try to match a category. */
-		     if (desktop->Categories)
-		       {
-//                          int j;
-
-			  if (ecore_hash_get(desktop->Categories, &rul[4]) != NULL)
-			     sub_result = TRUE;
-
-//                          for (j = 0; j < desktop->Categories->size; j++)
-//                            {
-//                               if (strcmp((char *)(desktop->Categories->elements[j].element), &rul[4]) == 0)
-//                                 {
-//                                    sub_result = TRUE;
-//                                    break;
-//                                 }
-//                            }
-		       }
+		     if ((desktop->Categories) && (ecore_hash_get(desktop->Categories, &rul[4]) != NULL))
+		        sub_result = TRUE;
 		     break;
 		  }
 	       }
 	     switch (type)
 	       {
-	       case 'A':
-		  {
-		     result = TRUE;
-		     if (!sub_result)
-			return FALSE;
-		     break;
-		  }
-
-	       case 'N':
-		  {
-		     result = TRUE;
-		     if (sub_result)
-			return FALSE;
-		     break;
-		  }
-
-	       default:
-		  {
-		     if (sub_result)
-			return TRUE;
-		     break;
-		  }
+	          case 'A':  result = TRUE;  if (!sub_result)  return FALSE;  break;
+	          case 'N':  result = TRUE;  if (sub_result)   return FALSE;  break;
+	          default:		     if (sub_result)   return TRUE;   break;
 	       }
 	  }
      }
