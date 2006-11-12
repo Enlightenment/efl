@@ -841,7 +841,7 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 {
    Ecore_List *result;
    char       *sub_result = NULL, *params = NULL;
-   int         is_single;
+   int         is_single = 0, do_file = 0;
 
    result = ecore_list_new();
    if (!result) return NULL;
@@ -913,9 +913,10 @@ if (files)
 	        ecore_dlist_goto_first(command);
 	        while ((p = ecore_dlist_next(command)) != NULL)
 	          {
-	             int do_file = 0, is_URL = 0, is_directory = 0, is_file = 0;
+	             int is_URL = 0, is_directory = 0, is_file = 0;
 
 		     t = NULL;
+		     do_file = 0;
 		     is_single = 0;
 		     if (p[0] == '%')
 		       switch (p[1])
@@ -991,7 +992,7 @@ if (files)
 		            default:
 			       break;
 		         }
-		     /* TAke care of any file expansions. */
+		     /* Take care of any file expansions. */
 		     if (do_file && (files))
 		       {
 		          char *file;
@@ -1113,7 +1114,7 @@ if (files)
     * go back and do it all again for the next file. 
     */
    }
-   while((is_single) && (fill) && (files) && (ecore_list_current(files)));
+   while((do_file) && (is_single) && (fill) && (files) && (ecore_list_current(files)));
 
 error:
    if (params) free(params);
