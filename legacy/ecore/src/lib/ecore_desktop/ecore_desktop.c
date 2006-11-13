@@ -1167,14 +1167,17 @@ ecore_desktop_instrumentation_reset(void)
    instrumentation.icons_time = 0.0;
    instrumentation.icons_in_cache_time = 0.0;
    instrumentation.icons_not_found_time = 0.0;
+#ifdef DEBUG
    printf("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
    printf("Desktop instrumentation reset.\n");
    printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n");
+#endif
 }
 
 EAPI void
 ecore_desktop_instrumentation_print(void)
 {
+#ifdef DEBUG
    if ((instrumentation.desktops + instrumentation.desktops_in_cache + instrumentation.desktops_not_found + instrumentation.icons + instrumentation.icons_in_cache + instrumentation.icons_not_found) > 0)
      {
         printf("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");
@@ -1186,4 +1189,5 @@ ecore_desktop_instrumentation_print(void)
         printf("Not found %5d icons             %2.5f (%2.6f/icon)\n", instrumentation.icons_not_found, instrumentation.icons_not_found_time, instrumentation.icons_not_found_time / instrumentation.icons_not_found);
         printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n");
      }
+#endif
 }
