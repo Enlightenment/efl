@@ -14,41 +14,25 @@
 
 #ifdef BUILD_PTHREAD
 # include <pthread.h>
-typedef struct _Lk Lk;
-
-struct _Lk
-{
-   pthread_mutex_t mutex; // lock for read/write to this struct
-   pthread_t       wlk_id; // who has the write lock
-   int             wlk_count; // how many times does the write lock have refs
-   int             rlk_count; // read lock count
-// pthread_rwlock_t rwl;
-};
-
-# define ELK         Lk _lk
-# define ELK_ADD(x)  _evas_lk_init(&((x)->_lk))
-# define ELK_DEL(x)  _evas_lk_destroy(&((x)->_lk))
-# define ELK_RLK(x)  _evas_lk_read_lock(&((x)->_lk))
-# define ELK_WLK(x)  _evas_lk_read_unlock(&((x)->_lk))
-# define ELK_RUL(x)  _evas_lk_write_lock(&((x)->_lk))
-# define ELK_WUL(x)  _evas_lk_write_unlock(&((x)->_lk))
+# include <sched.h>
+# define LK(x)  pthread_mutex_t x
+# define LKI(x) pthread_mutex_init(&(x), NULL);
+# define LKD(x) pthread_mutex_destroy(&(x));
+# define LKL(x) pthread_mutex_lock(&(x));
+# define LKU(x) pthread_mutex_unlock(&(x));
+# define TH(x)  pthread_t x
+# define THI(x) int x
+# define TH_MAX 4
 #else
-# define ELK         
-# define ELK_ADD(x)  
-# define ELK_DEL(x)  
-# define ELK_RLK(x) 
-# define ELK_WLK(x) 
-# define ELK_RUL(x) 
-# define ELK_WUL(x) 
+# define LK(x)  
+# define LKI(x) 
+# define LKD(x) 
+# define LKL(x) 
+# define LKU(x) 
+# define TH(x)
+# define THI(x)
+# define TH_MAX 0
 #endif
-
-typedef struct _Glk Glk;
-
-struct _Glk
-{
-   ELK;
-   int _dummy;
-};
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -130,6 +114,9 @@ typedef struct _Evas_Object_List      Evas_Object_List;
 typedef struct _Evas_Hash_El          Evas_Hash_El;
 
 typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
+typedef struct _RGBA_Pipe_Op          RGBA_Pipe_Op;
+typedef struct _RGBA_Pipe             RGBA_Pipe;
+typedef struct _RGBA_Pipe_Thread_Info RGBA_Pipe_Thread_Info;
 typedef struct _RGBA_Image            RGBA_Image;
 typedef struct _RGBA_Surface          RGBA_Surface;
 typedef struct _RGBA_Image_Span       RGBA_Image_Span;
@@ -280,6 +267,55 @@ struct _RGBA_Surface
    RGBA_Image        *im;
 };
 
+struct _RGBA_Pipe_Op
+{
+   RGBA_Draw_Context         context;
+   void                    (*op_func) (RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info);
+   void                    (*free_func) (RGBA_Pipe_Op *op);
+				   
+   union {
+      struct {
+	 int                 x, y, w, h;
+      } rect;
+      struct {
+	 int                 x0, y0, x1, y1;
+      } line;
+      struct {
+	 RGBA_Polygon_Point *points;
+      } poly;
+      struct {
+	 RGBA_Gradient      *grad;
+	 int                 x, y, w, h;
+      } grad;
+      struct {
+	 RGBA_Font          *font;
+	 int                 x, y;
+	 char               *text;
+      } text;
+      struct {
+	 RGBA_Image         *src;
+	 int                 sx, sy, sw, sh, dx, dy, dw, dh;
+	 int                 smooth;
+	 char               *text;
+      } image;
+   } op;
+};
+
+#define PIPE_LEN 256
+
+struct _RGBA_Pipe
+{
+   Evas_Object_List  _list_data;
+   int               op_num;
+   RGBA_Pipe_Op      op[PIPE_LEN];
+};
+
+struct _RGBA_Pipe_Thread_Info
+{
+   RGBA_Image *im;
+   int         x, y, w, h;
+};
+
 struct _RGBA_Image_Loadopts
 {
    int    scale_down_by; // if > 1 then use this
@@ -307,6 +343,8 @@ struct _RGBA_Image
    void                *extended_info;
    RGBA_Image_Loadopts  load_opts;
    unsigned char        scale;
+   RGBA_Pipe           *pipe;
+   int                  ref;
 };
 
 struct _RGBA_Gradient_Color_Stop
@@ -363,6 +401,8 @@ struct _RGBA_Gradient
 	RGBA_Gradient_Type *geometer;
 	void          *gdata;
      } type;
+   
+   int references;
 };
 
 struct _RGBA_Gradient_Type
@@ -389,6 +429,8 @@ struct _RGBA_Font
 {
    Evas_List *fonts;
    Font_Hint_Flags hinting;
+   int references;
+   LK(lock);
 };
 
 struct _RGBA_Font_Int
@@ -421,7 +463,6 @@ struct _RGBA_Font_Source
 
    void             *data;
    int               data_size;
-
    int               current_size;
    Evas_Array_Hash  *charmap;
    
@@ -606,7 +647,8 @@ int  evas_common_cpu_have_cpuid                         (void);
 int  evas_common_cpu_has_feature                        (unsigned int feature);
 EAPI void evas_common_cpu_can_do                        (int *mmx, int *sse, int *sse2);
 EAPI void evas_common_cpu_end_opt                       (void);
-
+EAPI int evas_common_cpu_count                          (void);
+       
 /****/
 EAPI void evas_common_blend_init                        (void);
 
@@ -777,12 +819,12 @@ EAPI int           evas_common_image_ram_usage         (RGBA_Image *im);
 EAPI void          evas_common_image_dirty             (RGBA_Image *im);
 
 EAPI RGBA_Image   *evas_common_image_line_buffer_obtain        (int len);
-EAPI void          evas_common_image_line_buffer_release       (void);
-EAPI void          evas_common_image_line_buffer_free          (void);
+EAPI void          evas_common_image_line_buffer_release       (RGBA_Image *im);
+EAPI void          evas_common_image_line_buffer_free          (RGBA_Image *im);
 
 EAPI RGBA_Image   *evas_common_image_alpha_line_buffer_obtain  (int len);
-EAPI void          evas_common_image_alpha_line_buffer_release (void);
-EAPI void          evas_common_image_alpha_line_buffer_free    (void);
+EAPI void          evas_common_image_alpha_line_buffer_release (RGBA_Image *im);
+EAPI void          evas_common_image_alpha_line_buffer_free    (RGBA_Image *im);
 
 /*done*/
 EAPI RGBA_Image   *evas_common_load_image_from_file     (const char *file, const char *key, RGBA_Image_Loadopts *lo);
@@ -939,6 +981,20 @@ EAPI void               evas_common_draw_context_set_anti_alias    (RGBA_Draw_Co
 EAPI void               evas_common_draw_context_set_color_interpolation    (RGBA_Draw_Context *dc, int color_space);
 EAPI void               evas_common_draw_context_set_render_op     (RGBA_Draw_Context *dc, int op);
 
+/****/
+/* image rendering pipelines... new optional system - non-immediate and
+ * threadable
+ */
+EAPI void evas_common_pipe_begin(RGBA_Image *im);
+EAPI void evas_common_pipe_flush(RGBA_Image *im);
+EAPI void evas_common_pipe_free(RGBA_Image *im);
+EAPI void evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
+EAPI void evas_common_pipe_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1);
+EAPI void evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+EAPI void evas_common_pipe_grad_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr);
+EAPI void evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
+EAPI void evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int smooth, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+     
 void              evas_font_dir_cache_free(void);
 
 Evas_Array_Hash	*evas_common_array_hash_new	(void);
@@ -956,15 +1012,3 @@ void evas_stringshare_shutdown(void);
 #endif
 
 #endif
-
-/* FIXME: need... */
-
-/* modular image loader system (from ram, or fd) */
-/* loaders: png, jpg, ppm, pgm, argb */
-/* finish renderers for lower bit depths & color allocator */
-
-/* and perhaps later on...                               */
-/*   multiply pixels by pixels                           */
-/*   oval / oval segment (arc) (filled/unfilled)         */
-/*   radial gradient fill                                */
-/*   my own font renderer that can load bdf & pcf fonts? */

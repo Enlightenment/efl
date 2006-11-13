@@ -140,15 +140,23 @@ eng_context_render_op_get(void *data, void *context)
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
+#ifdef BUILD_PTHREAD
+   evas_common_pipe_rectangle_draw(surface, context, x, y, w, h);
+#else
    evas_common_rectangle_draw(surface, context, x, y, w, h);
    evas_common_cpu_end_opt();
+#endif   
 }
 
 static void
 eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
+#ifdef BUILD_PTHREAD
+   evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
+#else   
    evas_common_line_draw(surface, context, x1, y1, x2, y2);
    evas_common_cpu_end_opt();
+#endif   
 }
 
 static void *
@@ -166,8 +174,12 @@ eng_polygon_points_clear(void *data, void *context, void *polygon)
 static void
 eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
+#ifdef BUILD_PTHREAD
+   evas_common_pipe_polygon_draw(surface, context, polygon);
+#else
    evas_common_polygon_draw(surface, context, polygon);
    evas_common_cpu_end_opt();
+#endif
 }
 
 static void *
@@ -295,7 +307,12 @@ eng_gradient_render_post(void *data, void *gradient)
 static void
 eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
+#ifdef BUILD_PTHREAD
+   evas_common_pipe_grad_draw(surface, context, x, y, w, h, gradient);
+#else   
    evas_common_gradient_draw(surface, context, x, y, w, h, gradient);
+   evas_common_cpu_end_opt();
+#endif   
 }
 
 static void *
@@ -484,6 +501,11 @@ static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    evas_common_load_image_data_from_file(image);
+#ifdef BUILD_PTHREAD
+   evas_common_pipe_image_draw(image, surface, context, smooth,
+			       src_x, src_y, src_w, src_h,
+			       dst_x, dst_y, dst_w, dst_h);
+#else
    if (smooth)
      evas_common_scale_rgba_in_to_out_clip_smooth(image, surface, context,
 				      src_x, src_y, src_w, src_h,
@@ -493,6 +515,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 				      src_x, src_y, src_w, src_h,
 				      dst_x, dst_y, dst_w, dst_h);
    evas_common_cpu_end_opt();
+#endif
 }
 
 static char *
@@ -631,8 +654,13 @@ eng_font_char_at_coords_get(void *data, void *font, const char *text, int x, int
 static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
-   if ((w == ow) && (h == oh))
-     evas_common_font_draw(surface, context, font, x, y, text);
+#ifdef BUILD_PTHREAD
+   evas_common_pipe_text_draw(surface, context, font, x, y, text);
+#else   
+   evas_common_font_draw(surface, context, font, x, y, text);
+   evas_common_cpu_end_opt();
+#endif   
+#if 0   
    else
      {
 	/* create output surface size ow x oh and scale to w x h */
@@ -670,7 +698,7 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
 	     evas_common_draw_context_free(dc);
 	  }
      }
-   evas_common_cpu_end_opt();
+#endif   
 }
 
 static void

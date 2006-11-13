@@ -176,6 +176,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 
    pen_x = x;
    pen_y = y;
+   LKL(fn->lock);
    evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
@@ -338,4 +339,5 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
+   LKU(fn->lock);
 }

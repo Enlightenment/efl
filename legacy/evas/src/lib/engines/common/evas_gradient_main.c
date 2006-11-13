@@ -143,6 +143,7 @@ evas_common_gradient_new(void)
    RGBA_Gradient *gr;
 
    gr = calloc(1, sizeof(RGBA_Gradient));
+   gr->references = 1;
    return gr;
 }
 
@@ -150,6 +151,8 @@ EAPI void
 evas_common_gradient_free(RGBA_Gradient *gr)
 {
    if (!gr) return;
+   gr->references--;
+   if (gr->references > 0) return;
    evas_common_gradient_clear(gr);
    if (gr->type.name) free(gr->type.name);
    if (gr->type.params) free(gr->type.params);
@@ -481,7 +484,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	    alpha_buf = evas_common_image_alpha_line_buffer_obtain(w);
 	    if (!alpha_buf)
 	      {
-		evas_common_image_line_buffer_release();
+		evas_common_image_line_buffer_release(argb_buf);
 		return;
 	      }
 	    bfunc = evas_common_gfx_func_composite_pixel_mask_span_get(argb_buf, dst, w, dc->render_op);
@@ -496,9 +499,9 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
      {
 	if (!direct_copy)
 	  {
-	    evas_common_image_line_buffer_release();
+	    evas_common_image_line_buffer_release(argb_buf);
 	    if (alpha_buf)
-		evas_common_image_alpha_line_buffer_release();
+		evas_common_image_alpha_line_buffer_release(alpha_buf);
 	  }
 	return;
      }
@@ -534,9 +537,9 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 
    if (!direct_copy)
      {
-	evas_common_image_line_buffer_release();
+	evas_common_image_line_buffer_release(argb_buf);
 	if (alpha_buf)
-	   evas_common_image_alpha_line_buffer_release();
+	   evas_common_image_alpha_line_buffer_release(alpha_buf);
      }
 }
 

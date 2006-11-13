@@ -283,7 +283,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 #endif	       
 	  {
 	    /* a scanline buffer */
-	    buf = malloc(dst_clip_w * sizeof(DATA32));
+	    buf = alloca(dst_clip_w * sizeof(DATA32));
 	    if (!buf) goto no_buf;
 
 	    for (y = 0; y < dst_clip_h; y++)
@@ -299,7 +299,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 		func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
 		dptr += dst_w;
 	      }
-	    free(buf);
 	  }
      }
 

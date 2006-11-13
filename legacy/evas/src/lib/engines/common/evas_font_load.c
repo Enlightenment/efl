@@ -265,6 +265,8 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
    fn->fonts = evas_list_append(fn->fonts, fi);
    fn->hinting = FONT_BYTECODE_HINT;
    fi->hinting = fn->hinting;
+   fn->references = 1;
+   LKI(fn->lock);
    return fn;
 }
 
@@ -301,7 +303,8 @@ evas_common_font_load(const char *name, int size)
    fn->fonts = evas_list_append(fn->fonts, fi);
    fn->hinting = FONT_BYTECODE_HINT;
    fi->hinting = fn->hinting;
-
+   fn->references = 1;
+   LKI(fn->lock);
    return fn;
 }
 
@@ -346,6 +349,8 @@ evas_common_font_free(RGBA_Font *fn)
 
    if (!fn)
       return;
+   fn->references--;
+   if (fn->references > 0) return;
    for (l = fn->fonts; l; l = l->next)
      {
 	RGBA_Font_Int *fi;
@@ -359,6 +364,7 @@ evas_common_font_free(RGBA_Font *fn)
 	  }
      }
    evas_list_free(fn->fonts);
+   LKD(fn->lock);
    free(fn);
 }
 

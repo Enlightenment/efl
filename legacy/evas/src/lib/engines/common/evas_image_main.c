@@ -257,12 +257,16 @@ evas_common_image_new(void)
    im = calloc(1, sizeof(RGBA_Image));
    if (!im) return NULL;
    im->flags = RGBA_IMAGE_NOTHING;
+   im->ref = 1;
    return im;
 }
 
 EAPI void
 evas_common_image_free(RGBA_Image *im)
 {
+   im->ref--;
+   if (im->ref > 0) return;
+   evas_common_pipe_free(im);
    if (im->image) evas_common_image_surface_free(im->image);
    if (im->info.file) evas_stringshare_del(im->info.file);
 //   if (im->info.real_file) evas_stringshare_del(im->info.real_file);
@@ -505,6 +509,8 @@ evas_common_image_line_buffer_obtain(int len)
    if (len < 1) return NULL;
    if (len < EVAS_RGBA_LINE_BUFFER_MIN_LEN)
 	len = EVAS_RGBA_LINE_BUFFER_MIN_LEN;
+   return evas_common_image_create(len, 1);
+/*   
    if (evas_rgba_line_buffer)
      {
 	if (evas_rgba_line_buffer->image->w >= len)
@@ -522,11 +528,14 @@ evas_common_image_line_buffer_obtain(int len)
    evas_rgba_line_buffer = evas_common_image_create(len, 1);
    if (!evas_rgba_line_buffer) return NULL;
    return evas_rgba_line_buffer;
+ */
 }
 
 EAPI void
-evas_common_image_line_buffer_release(void)
+evas_common_image_line_buffer_release(RGBA_Image *im)
 {
+   evas_common_image_free(im);
+/*   
    if (!evas_rgba_line_buffer) return;
    if (EVAS_RGBA_LINE_BUFFER_MAX_LEN < evas_rgba_line_buffer->image->w)
      {
@@ -539,14 +548,18 @@ evas_common_image_line_buffer_release(void)
 	   evas_rgba_line_buffer = NULL;
 	  }
      }
+ */
 }
 
 EAPI void
-evas_common_image_line_buffer_free(void)
+evas_common_image_line_buffer_free(RGBA_Image *im)
 {
+   evas_common_image_free(im);
+/*   
    if (!evas_rgba_line_buffer) return;
    evas_common_image_free(evas_rgba_line_buffer);
    evas_rgba_line_buffer = NULL;
+ */
 }
 
 EAPI RGBA_Image *
@@ -555,6 +568,8 @@ evas_common_image_alpha_line_buffer_obtain(int len)
    if (len < 1) return NULL;
    if (len < EVAS_ALPHA_LINE_BUFFER_MIN_LEN)
 	len = EVAS_ALPHA_LINE_BUFFER_MIN_LEN;
+   return evas_common_image_alpha_create(len, 1);
+/*   
    if (evas_alpha_line_buffer)
      {
 	if (evas_alpha_line_buffer->image->w >= len)
@@ -571,11 +586,14 @@ evas_common_image_alpha_line_buffer_obtain(int len)
      }
    evas_alpha_line_buffer = evas_common_image_alpha_create(len, 1);
    return evas_alpha_line_buffer;
+ */
 }
 
 EAPI void
-evas_common_image_alpha_line_buffer_release(void)
+evas_common_image_alpha_line_buffer_release(RGBA_Image *im)
 {
+   evas_common_image_free(im);
+/*   
    if (!evas_alpha_line_buffer) return;
    if (EVAS_ALPHA_LINE_BUFFER_MAX_LEN < evas_alpha_line_buffer->image->w)
      {
@@ -588,14 +606,18 @@ evas_common_image_alpha_line_buffer_release(void)
 	   evas_alpha_line_buffer = NULL;
 	  }
      }
+ */
 }
 
 EAPI void
-evas_common_image_alpha_line_buffer_free(void)
+evas_common_image_alpha_line_buffer_free(RGBA_Image *im)
 {
+   evas_common_image_free(im);
+/*   
    if (!evas_alpha_line_buffer) return;
    evas_common_image_free(evas_alpha_line_buffer);
    evas_alpha_line_buffer = NULL;
+ */
 }
 
 EAPI void

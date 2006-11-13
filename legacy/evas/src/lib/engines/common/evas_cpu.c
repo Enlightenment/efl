@@ -208,52 +208,24 @@ evas_common_cpu_end_opt(void)
 }
 #endif
 
+EAPI int
+evas_common_cpu_count(void)
+{
 #ifdef BUILD_PTHREAD
-EAPI void
-_evas_lk_init(Lk *l)
-{
-   pthread_mutext_init(&(l->mutex), NULL);
-   l->wlk_id = 0;
-// pthread_rwlock_init(&((x)->_reslock.rwl), NULL);
+   cpu_set_t cpu;
+   int i;
+   static int cpus = 0;
+   
+   if (cpus != 0) return cpus;
+   
+   sched_getaffinity(getpid(), sizeof(cpu), &cpu);
+   for (i = 0; i < TH_MAX; i++)
+     {
+	if (CPU_ISSET(i, &cpu)) cpus = i + 1;
+	else break;
+     }
+   return cpus;
+#else
+   return 1;
+#endif   
 }
-
-EAPI void
-_evas_lk_destroy(Lk *l)
-{
-   pthread_mutext_destroy(&(l->mutex), NULL);
-// pthread_rwlock_destroy(&((x)->_reslock.rwl));
-}
-
-EAPI void
-_evas_lk_read_lock(Lk *l)
-{
-   pthread_mutex_lock(&l->mutex);
-   pthread_mutex_unlock(&l->mutex);
-// pthread_rwlock_rdlock(&((x)->_reslock.rwl));
-}
-
-EAPI void
-_evas_lk_read_unlock(Lk *l)
-{
-   pthread_mutex_lock(&l->mutex);
-   pthread_mutex_unlock(&l->mutex);
-// pthread_rwlock_unlock(&((x)->_reslock.rwl));
-}
-
-EAPI void
-_evas_lk_write_lock(Lk *l)
-{
-   pthread_mutex_lock(&l->mutex);
-// pthread_self();
-// pthread_equal();
-   pthread_mutex_unlock(&l->mutex);
-// pthread_rwlock_wrlock(&((x)->_reslock.rwl));
-}
-
-EAPI void
-_evas_lk_write_unlock(Lk *l)
-{
-   pthread_mutex_lock(&l->mutex);
-   pthread_mutex_unlock(&l->mutex);
-}
-#endif

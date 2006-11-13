@@ -54,7 +54,8 @@ evas_scale_smooth.c \
 evas_scale_span.c \
 evas_tiler.c \
 evas_regionbuf.c \
-evas_array_hash.c
+evas_array_hash.c \
+evas_pipe.c
 
 EXTRA_DIST = \
 evas_scale_smooth_scaler.c \

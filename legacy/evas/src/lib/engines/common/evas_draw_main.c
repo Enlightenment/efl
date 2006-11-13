@@ -22,8 +22,6 @@ void
 evas_common_shutdown(void)
 {
    evas_font_dir_cache_free();
-   evas_common_image_line_buffer_free();
-   evas_common_image_alpha_line_buffer_free();
    evas_common_image_cache_free();
 }
 

@@ -18,10 +18,7 @@
 	goto done_scale_down;
    
    /* a scanline buffer */
-   line_buf = evas_common_image_line_buffer_obtain(dst_clip_w);
-   if (!line_buf)
-      goto done_scale_down;
-   buf = line_buf->image->data;
+   buf = alloca(dst_clip_w * sizeof(DATA32));
    
    if (dc->mul.use)
 	func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
@@ -47,7 +44,6 @@
      }
      
    done_scale_down:
-   evas_common_image_line_buffer_release();
    if (xpoints) free(xpoints);
    if (ypoints) free(ypoints);
    if (xapoints) free(xapoints);

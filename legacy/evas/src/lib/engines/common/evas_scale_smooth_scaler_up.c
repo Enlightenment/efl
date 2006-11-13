@@ -29,10 +29,7 @@
      }
    if (!direct_scale)
      {
-	im_buf = evas_common_image_line_buffer_obtain(dst_clip_w);
-	if (!im_buf)
-	   return;
-	buf = im_buf->image->data;
+	buf = alloca(dst_clip_w * sizeof(DATA32));
 	if (dc->mul.use)
 	   func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
 	else
@@ -231,6 +228,5 @@
 	  }
      }
    done_scale_up:
-   if (!direct_scale)
-	evas_common_image_line_buffer_release();
+   return;
 }
