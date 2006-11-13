@@ -19,7 +19,7 @@
 #include <sys/stat.h>
 #include <libgen.h>
 
-#define DEBUG 1
+//#define DEBUG 1
 
 struct _ecore_desktop_menu_expand_apps_data
 {
