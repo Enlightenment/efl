@@ -5,6 +5,8 @@
  * follow the spec in a way that is easy to check.  Only then can we start to 
  * optomize into "ugly but fast".
  *
+ * There are notes at the very end about all those nasty steps we need to do to 
+ * follow the spec.
  */
 
 #include <Ecore.h>
@@ -17,7 +19,7 @@
 #include <sys/stat.h>
 #include <libgen.h>
 
-//#define DEBUG 1
+#define DEBUG 1
 
 struct _ecore_desktop_menu_expand_apps_data
 {
@@ -1683,100 +1685,6 @@ _ecore_desktop_menu_apply_rules(struct _ecore_desktop_menu_generate_data *genera
 }
 
 /*
-OR (implied)
-  loop through the rules
-  as soon as one matches, return true
-  otherwise return false.
-
-SUB RULES
-  process the sub rules, return the result
-
-AND
-  loop through the rules
-  as soon as one doesn't match, return false
-  otherwise return true.
-
-NOT (implied OR)
-  loop through the rules
-  as soon as one matches, return false
-  otherwise return true.
-
-ALL
-  return true
-
-FILENAME
-  if the rule string matches the desktop id return true
-  otherwise return false
-
-CATEGORY
-  loop through the apps categories
-  as soon as one matches the rule string, return true
-  otherwise return false.
- */
-
-/*
-merge menus
-*  expand <KDELegacyDir>'s to <LegacyDir>.
-*   expand <LegacyDir>'s
-*     for each dir (recursive)
-*       create recursively nested <MENU <   L> <dirname> <> element
-*    //   <AppDir>dirpath</AppDir>
-*       <DirectoryDir>dirpath</DirectoryDir>
-*       if exist .directory
-*         add <.directory> to name
-*       <Include>
-*       for each *.desktop
-         if no categories in bar.desktop
-*	   <Filename>prefix-bar.desktop</Filename> 
-         add "Legacy" to categories
-*        add any prefix to the desktop ID.
-*	 add it to the pool
-*       </Include>
-*  for each <MergeFile>, and <MergeDir> element
-*    get the root <Menu> elements from that elements file/s.
-*    remove the <Name> element from those root <Menu> elements.
-*    replace that element with the child elements of those root <Menu> elements.
-*    expand the <DefaultMergeDirs> with the name/s of that elements file/s
-*  loop until all <MergeFile>, <MergeDir>, and <LegacyDir> elements are done,
-*  careful to avoid infinite loops in files that reference each other.
-*  for each <Menu> recursively
-    consolidate duplicate child <Menu>s.
-*    expand <DefaultAppDir>s and <DefaultDirectoryDir>s to <AppDir>s and <DirectoryDir>s.
-    consolidate duplicate child <AppDir>s, <DirectoryDir>s, and <Directory>s.
-    resolve duplicate <Move>s.
-  for each <Menu> recursively
-    for each <Move>
-      do the move.
-      mark any <Menu> that has been affected.
-  for each marked <Menu> recursively
-    consolidate duplicate child <Menu>s.
-*  for each <Menu> recursively
-*    if there are <Deleted> elements that are not ovreridden by a <NotDelete> element
-*      remove this <Menu> element and all it's children.
-
-*generate menus
-*  for each <Menu> that is <NotOnlyUnallocated> (which is the default)
-*    for each <AppDir>
-*      for each .desktop
-*        if it exists in the pool, replace it.
-*	 else add it to the pool.
-*     for each parent <Menu>
-*       for each .desktop in the pool
-*          if it doesn't exist in the child <Menu> pool
-*	    add it to the pool.
-*     for each <Include> and <Exclude>
-*        if rule is an <Include>
-*           for each .desktop in pool
-*              for each rule
-*                 if rule matches .desktop in pool
-*	           add .desktop to menu.
-*	           mark it as allocated
-*        if rule is an <Exclude>
-*           for each .desktop in menu
-*              for each rule
-*                if rule matches .desktop in menu
-*	           remove .desktop from menu.
-*	           leave it as allocated.
 
 <Menu (tree)
   name
@@ -1798,9 +1706,110 @@ rules (tree)
   and/not (tree)
     include/exclude and/not all/file/category x
 
-*generate unallocated menus
-*  Same as for menus, but only the <OnlyUnallocated> ones.
-*  Only the unallocated .desktop entries can be used.
+ALL
+  return true
 
-generate menu layout
+FILENAME
+  if the rule string matches the desktop id return true
+  otherwise return false
+
+CATEGORY
+  loop through the apps categories
+  as soon as one matches the rule string, return true
+  otherwise return false.
+
+OR (implied)
+  loop through the rules
+  as soon as one matches, return true
+  otherwise return false.
+
+SUB RULES
+  process the sub rules, return the result
+
+AND
+  loop through the rules
+  as soon as one doesn't match, return false
+  otherwise return true.
+
+NOT (implied OR)
+  loop through the rules
+  as soon as one matches, return false
+  otherwise return true.
+ */
+
+/*  FDO PARSING STEPS.
+
+An asterisk in the first column marks those bits that are done.
+The spec is not numbered, so I have invented a numbering to help match the
+steps to the code.
+
+ 10000000 merge menus
+*11000000   expand <KDELegacyDir>'s to <LegacyDir>.
+*12000000   expand <LegacyDir>'s
+*12100000     for each dir (recursive)
+*12110000       create recursively nested <MENU <   L> <dirname> <> element
+*12120000    //   <AppDir>dirpath</AppDir>
+*12130000       <DirectoryDir>dirpath</DirectoryDir>
+*12140000       if exist .directory
+*12141000         add <.directory> to name
+*12150000       <Include>
+*12160000       for each *.desktop
+ 12161000         if no categories in bar.desktop
+*12161100	    <Filename>prefix-bar.desktop</Filename> 
+ 12162000         add "Legacy" to categories
+*12163000         add any prefix to the desktop ID.
+*12164000	  add it to the pool
+*12170000       </Include>
+*13000000   for each <MergeFile> and <MergeDir> element
+*13100000     get the root <Menu> elements from that elements file/s.
+*13200000     remove the <Name> element from those root <Menu> elements.
+*13300000     replace that element with the child elements of those root <Menu> elements.
+*13400000?    expand the <DefaultMergeDirs> with the name/s of that elements file/s
+*14000000   loop until all <MergeFile> and <MergeDir> elements are done,
+*14000000   careful to avoid infinite loops in files that reference each other.
+*15000000   for each <Menu> recursively
+ 15100000     consolidate duplicate child <Menu>s.
+*15200000     expand <DefaultAppDir>s and <DefaultDirectoryDir>s to <AppDir>s and <DirectoryDir>s.
+ 15300000     consolidate duplicate child <AppDir>s, <DirectoryDir>s, and <Directory>s.
+ 15400000?    resolve duplicate <Move>s.
+ 16000000   for each <Menu> recursively (but from the deepest level out)
+ 16100000     for each <Move>
+ 16110000       do the move.
+ 16120000       mark any <Menu> that has been affected.
+ 17000000   for each marked <Menu> recursively
+ 17100000     consolidate duplicate child <Menu>s.
+*18000000   for each <Menu> recursively
+*18100000     if there are <Deleted> elements that are not ovreridden by a <NotDelete> element
+*18110000       remove this <Menu> element and all it's children.
+
+*20000000 generate menus
+*21000000   for each <Menu> that is <NotOnlyUnallocated> (which is the default)
+*21100000     for each <AppDir>
+*21110000       for each .desktop
+*21111000         if it exists in the pool, replace it.
+*21112000	  else add it to the pool.
+*21200000     for each parent <Menu>
+*21210000       for each .desktop in the pool
+*21211000         if it doesn't exist in the child <Menu> pool
+*21211100	    add it to the pool.
+*21300000     for each <Include> and <Exclude>
+*21310000       if rule is an <Include>
+*21311000         for each .desktop in pool
+*21311100           for each rule
+*21311110             if rule matches .desktop in pool
+*21311111	        add .desktop to menu.
+*21311112	        mark it as allocated
+*21320000       if rule is an <Exclude>
+*21321000         for each .desktop in menu
+*21321100           for each rule
+*21321110             if rule matches .desktop in menu
+*21321111	        remove .desktop from menu.
+*21321112	        leave it as allocated.
+
+*30000000 generate unallocated menus
+*31000000   Same as for menus, but only the <OnlyUnallocated> ones.
+*32000000   Only the unallocated .desktop entries can be used.
+
+ 40000000 generate menu layout
+   This part of the spec is a whole other rabbit hole, and optional.  B-)
 */
