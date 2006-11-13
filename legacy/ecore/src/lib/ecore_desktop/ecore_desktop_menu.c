@@ -1764,14 +1764,14 @@ steps to the code.
 *13100000     get the root <Menu> elements from that elements file/s.
 *13200000     remove the <Name> element from those root <Menu> elements.
 *13300000     replace that element with the child elements of those root <Menu> elements.
-*13400000?    expand the <DefaultMergeDirs> with the name/s of that elements file/s
+*13400000?    expand the <DefaultMergeDirs> to <MergeDir>'s $XDG_CONFIG_DIRS/menus/foo-merged/ for the menu file foo.menu
+FIXME: The above should probably move to before 13000000
 *14000000   loop until all <MergeFile> and <MergeDir> elements are done,
 *14000000   careful to avoid infinite loops in files that reference each other.
 *15000000   for each <Menu> recursively
  15100000     consolidate duplicate child <Menu>s.
 *15200000     expand <DefaultAppDir>s and <DefaultDirectoryDir>s to <AppDir>s and <DirectoryDir>s.
  15300000     consolidate duplicate child <AppDir>s, <DirectoryDir>s, and <Directory>s.
- 15400000?    resolve duplicate <Move>s.
  16000000   for each <Menu> recursively (but from the deepest level out)
  16100000     for each <Move>
  16110000       do the move.
@@ -1807,9 +1807,30 @@ steps to the code.
 *21321112	        leave it as allocated.
 
 *30000000 generate unallocated menus
-*31000000   Same as for menus, but only the <OnlyUnallocated> ones.
+*31000000   Same as for generate menus, but only the <OnlyUnallocated> ones.
 *32000000   Only the unallocated .desktop entries can be used.
 
  40000000 generate menu layout
    This part of the spec is a whole other rabbit hole, and optional.  B-)
+*/
+
+
+/*  THINGS TAHT CAN BE DUPLICATED
+
+AppDir        last dup is used
+.desktop      last dup is used
+DirectoryDir  last dup is used
+.directory    last dup is used
+Directory     last dup is used, unless it points to a non existant entry, then work your way backwards
+LegacyDir     last dup is used
+MergeDir      last dup is used
+MergeFile     last dup is used
+
+DefaultMergeDirs   dirs that are earlier in the path go later in the menu, so they have priority
+KDELegacyDirs      dirs that are earlier in the path go later in the menu, so they have priority
+
+OnlyUnallocated & NotOnlyUnallocated   last one wins, default is NotOnlyUnallocated
+Deleted & NotDeleted                   last one wins
+
+Include & Exclude  done in order
 */
