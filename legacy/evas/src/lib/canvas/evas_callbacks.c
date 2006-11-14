@@ -580,7 +580,7 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 	Evas_Func_Node *fn;
 
 	fn = (Evas_Func_Node *)l;
-	if (fn->func == func)
+	if ((fn->func == func) && (!fn->delete_me))
 	  {
 	     void *data;
 
