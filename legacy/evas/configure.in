@@ -988,13 +988,13 @@ AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
 ## PTHREADS
 pthread_cflags=""
 pthread_libs=""
-build_pthreads="no"
+build_pthreads="yes"
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads, 
   [  --enable-pthreads               enable threaded rendering], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SSE, 1, [Build Threaded Rendering])
+        AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
         build_pthreads="yes"
         pthread_cflags=""
         pthread_libs="-lpthread"

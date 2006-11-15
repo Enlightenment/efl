@@ -175,7 +175,7 @@ static void
 eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
 #ifdef BUILD_PTHREAD
-   evas_common_pipe_polygon_draw(surface, context, polygon);
+   evas_common_pipe_poly_draw(surface, context, polygon);
 #else
    evas_common_polygon_draw(surface, context, polygon);
    evas_common_cpu_end_opt();
