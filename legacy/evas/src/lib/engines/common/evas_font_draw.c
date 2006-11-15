@@ -259,22 +259,27 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 				      in_w = 0;
 				      dx = chr_x;
 				      dy = y - (chr_y - i - y);
-				      if ((dx < (ext_x + ext_w)) &&
-					  (dy >= (ext_y)) &&
-					  (dy < (ext_y + ext_h)))
+#ifdef EVAS_SLI
+				      if (((dy) % dc->sli.h) == dc->sli.y)
+#endif
 					{
-					   if (dx + w > (ext_x + ext_w))
-					     in_w += (dx + w) - (ext_x + ext_w);
-					   if (dx < ext_x)
+					   if ((dx < (ext_x + ext_w)) &&
+					       (dy >= (ext_y)) &&
+					       (dy < (ext_y + ext_h)))
 					     {
-						in_w += ext_x - dx;
-						in_x = ext_x - dx;
-						dx = ext_x;
-					     }
-					   if (in_w < w)
-					     {
-						func(NULL, data + (i * j) + in_x, dc->col.col,
-						     im + (dy * im_w) + dx, w - in_w);
+						if (dx + w > (ext_x + ext_w))
+						  in_w += (dx + w) - (ext_x + ext_w);
+						if (dx < ext_x)
+						  {
+						     in_w += ext_x - dx;
+						     in_x = ext_x - dx;
+						     dx = ext_x;
+						  }
+						if (in_w < w)
+						  {
+						     func(NULL, data + (i * j) + in_x, dc->col.col,
+							  im + (dy * im_w) + dx, w - in_w);
+						  }
 					     }
 					}
 				   }
@@ -295,36 +300,41 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 				      in_w = 0;
 				      dx = chr_x;
 				      dy = y - (chr_y - i - y);
-				      tp = tmpbuf;
-				      dp = data + (i * fg->glyph_out->bitmap.pitch);
-				      for (bi = 0; bi < w; bi += 8)
+#ifdef EVAS_SLI
+				      if (((dy) % dc->sli.h) == dc->sli.y)
+#endif
 					{
-					   bits = *dp;
-					   if ((w - bi) < 8) end = w - bi;
-					   else end = 8;
-					   for (bj = 0; bj < end; bj++)
+					   tp = tmpbuf;
+					   dp = data + (i * fg->glyph_out->bitmap.pitch);
+					   for (bi = 0; bi < w; bi += 8)
 					     {
-						*tp = bitrepl[(bits >> (7 - bj)) & 0x1];
-						tp++;
+						bits = *dp;
+						if ((w - bi) < 8) end = w - bi;
+						else end = 8;
+						for (bj = 0; bj < end; bj++)
+						  {
+						     *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
+						     tp++;
+						  }
+						dp++;
 					     }
-					   dp++;
-					}
-				      if ((dx < (ext_x + ext_w)) &&
-					  (dy >= (ext_y)) &&
-					  (dy < (ext_y + ext_h)))
-					{
-					   if (dx + w > (ext_x + ext_w))
-					     in_w += (dx + w) - (ext_x + ext_w);
-					   if (dx < ext_x)
+					   if ((dx < (ext_x + ext_w)) &&
+					       (dy >= (ext_y)) &&
+					       (dy < (ext_y + ext_h)))
 					     {
-						in_w += ext_x - dx;
-						in_x = ext_x - dx;
-						dx = ext_x;
-					     }
-					   if (in_w < w)
-					     {
-						func(NULL, tmpbuf + in_x, dc->col.col,
-						     im + (dy * im_w) + dx, w - in_w);
+						if (dx + w > (ext_x + ext_w))
+						  in_w += (dx + w) - (ext_x + ext_w);
+						if (dx < ext_x)
+						  {
+						     in_w += ext_x - dx;
+						     in_x = ext_x - dx;
+						     dx = ext_x;
+						  }
+						if (in_w < w)
+						  {
+						     func(NULL, tmpbuf + in_x, dc->col.col,
+							  im + (dy * im_w) + dx, w - in_w);
+						  }
 					     }
 					}
 				   }

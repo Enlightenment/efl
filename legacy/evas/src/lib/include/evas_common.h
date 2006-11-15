@@ -22,7 +22,12 @@
 # define LKU(x) pthread_mutex_unlock(&(x));
 # define TH(x)  pthread_t x
 # define THI(x) int x
-# define TH_MAX 4
+# define TH_MAX 8
+
+// even though in theory having every Nth rendered line done by a different
+// thread might even out load across threads - it actually slows things down.
+//#define EVAS_SLI 1
+
 #else
 # define LK(x)  
 # define LKI(x) 
@@ -255,8 +260,11 @@ struct _RGBA_Draw_Context
    struct {
       int color_space;
    } interpolation;
-   unsigned char  anti_alias : 1;
+   struct {
+      int y, h;
+   } sli;
    int            render_op;
+   unsigned char  anti_alias : 1;
 };
 
 struct _RGBA_Surface
@@ -978,9 +986,10 @@ EAPI Cutout_Rect       *evas_common_draw_context_cutouts_split     (Cutout_Rect 
 EAPI Cutout_Rect       *evas_common_draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
 EAPI Cutout_Rect       *evas_common_draw_context_cutout_merge      (Cutout_Rect *in, Cutout_Rect *merge);
 EAPI void               evas_common_draw_context_set_anti_alias    (RGBA_Draw_Context *dc, unsigned char aa);
-EAPI void               evas_common_draw_context_set_color_interpolation    (RGBA_Draw_Context *dc, int color_space);
+EAPI void               evas_common_draw_context_set_color_interpolation(RGBA_Draw_Context *dc, int color_space);
 EAPI void               evas_common_draw_context_set_render_op     (RGBA_Draw_Context *dc, int op);
-
+EAPI void               evas_common_draw_context_set_sli           (RGBA_Draw_Context *dc, int y, int h);
+       
 /****/
 /* image rendering pipelines... new optional system - non-immediate and
  * threadable

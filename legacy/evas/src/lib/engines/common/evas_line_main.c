@@ -152,24 +152,29 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 
    if (dy == 0)
      {
-	if ((y0 >= ty) && (y0 <= by))
+#ifdef EVAS_SLI
+	if (((y0) % dc->sli.h) == dc->sli.y)
+#endif
 	  {
-	     if (dx < 0)
+	     if ((y0 >= ty) && (y0 <= by))
 	       {
-		  int  tmp = x1;
+		  if (dx < 0)
+		    {
+		       int  tmp = x1;
+		       
+		       x1 = x0;
+		       x0 = tmp;
+		    }
 		  
-		  x1 = x0;
-		  x0 = tmp;
+		  if (x0 < lx) x0 = lx;
+		  if (x1 > rx) x1 = rx;
+		  
+		  len = x1 - x0 + 1;
+		  p = dst->image->data + (dstw * y0) + x0;
+		  sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
+		  if (sfunc)
+		    sfunc(NULL, NULL, color, p, len);
 	       }
-	     
-	     if (x0 < lx) x0 = lx;
-	     if (x1 > rx) x1 = rx;
-	     
-	     len = x1 - x0 + 1;
-	     p = dst->image->data + (dstw * y0) + x0;
-	     sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
-	     if (sfunc)
-	       sfunc(NULL, NULL, color, p, len);
 	  }
 	return;
      }
@@ -188,7 +193,12 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 	     p = dst->image->data + (dstw * y0) + x0;
 	     while (len--)
 	       {
-		  pfunc(0, 255, color, p);
+#ifdef EVAS_SLI
+		  if (((y1 + 1 - len) % dc->sli.h) == dc->sli.y)
+#endif
+		    {
+		       pfunc(0, 255, color, p);
+		    }
 		  p += dstw;
 	       }
 	  }
@@ -273,7 +283,12 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 
 	while (len--)
 	  {
-	    pfunc(0, 255, color, p);
+#ifdef EVAS_SLI
+	     if (((y1 + 1 - len) % dc->sli.h) == dc->sli.y)
+#endif
+	       {
+		  pfunc(0, 255, color, p);
+	       }
 	    p += dstw;
 	  }
      }
@@ -486,8 +501,13 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
 		if ((py < 0) && (dely < 0)) return;
 		if ((py > by) && (dely > 0)) return;
 	      }
-	    if (IN_RANGE(px, py, clw, clh))
-		pfunc(0, 255, color, p);
+#ifdef EVAS_SLI
+	     if (((py) % dc->sli.h) == dc->sli.y)
+#endif
+	       {
+		  if (IN_RANGE(px, py, clw, clh))
+		    pfunc(0, 255, color, p);
+	       }
 	    yy += dyy;
 	    px++;
 	    p++;
@@ -514,8 +534,13 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
 	    if ((px < 0) && (delx < 0)) return;
 	    if ((px > rx) && (delx > 0)) return;
 	  }
-	if (IN_RANGE(px, py, clw, clh))
-	    pfunc(0, 255, color, p);
+#ifdef EVAS_SLI
+	if (((py) % dc->sli.h) == dc->sli.y)
+#endif
+	  {
+	     if (IN_RANGE(px, py, clw, clh))
+	       pfunc(0, 255, color, p);
+	  }
 	xx += dxx;
 	py++;
 	p += dstw;

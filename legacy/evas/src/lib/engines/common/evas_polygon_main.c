@@ -276,8 +276,13 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 	     DATA32 *ptr;
 
 	     span = (RGBA_Span *)l;
-	     ptr = dst->image->data + (span->y * (dst->image->w)) + span->x;
-	     func(NULL, NULL, dc->col.col, ptr, span->w);
+#ifdef EVAS_SLI
+	     if (((span->y) % dc->sli.h) == dc->sli.y)
+#endif
+	       {
+		  ptr = dst->image->data + (span->y * (dst->image->w)) + span->x;
+		  func(NULL, NULL, dc->col.col, ptr, span->w);
+	       }
 	  }
 	while (spans)
 	  {

@@ -247,7 +247,12 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	for (y = 0; y < dst_clip_h; y++)
 	  {
 	    /* * blend here [clip_w *] ptr -> dst_ptr * */
-	    func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
+#ifdef EVAS_SLI
+	     if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
+#endif
+	       {
+		  func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
+	       }
 	    ptr += src_w;
 	    dst_ptr += dst_w;
 	  }
@@ -269,13 +274,18 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	  {
 	    for (y = 0; y < dst_clip_h; y++)
 	      {
-		 dst_ptr = dptr;
-		 for (x = 0; x < dst_clip_w; x++)
-		    {
-			ptr = row_ptr[y] + lin_ptr[x];
-			*dst_ptr = *ptr;
-			dst_ptr++;
-		    }
+#ifdef EVAS_SLI
+		 if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
+#endif
+		   {
+		      dst_ptr = dptr;
+		      for (x = 0; x < dst_clip_w; x++)
+			{
+			   ptr = row_ptr[y] + lin_ptr[x];
+			   *dst_ptr = *ptr;
+			   dst_ptr++;
+			}
+		   }
 		 dptr += dst_w;
 	      }
 	  }
@@ -288,15 +298,20 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 
 	    for (y = 0; y < dst_clip_h; y++)
 	      {
-		dst_ptr = buf;
-		for (x = 0; x < dst_clip_w; x++)
-		  {
-		    ptr = row_ptr[y] + lin_ptr[x];
-		    *dst_ptr = *ptr;
-		    dst_ptr++;
-		  }
-		/* * blend here [clip_w *] buf -> dptr * */
-		func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
+#ifdef EVAS_SLI
+		 if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
+#endif
+		   {
+		      dst_ptr = buf;
+		      for (x = 0; x < dst_clip_w; x++)
+			{
+			   ptr = row_ptr[y] + lin_ptr[x];
+			   *dst_ptr = *ptr;
+			   dst_ptr++;
+			}
+		      /* * blend here [clip_w *] buf -> dptr * */
+		      func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
+		   }
 		dptr += dst_w;
 	      }
 	  }

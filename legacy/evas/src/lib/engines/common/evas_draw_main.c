@@ -36,6 +36,7 @@ evas_common_draw_context_new(void)
    RGBA_Draw_Context *dc;
 
    dc = calloc(1, sizeof(RGBA_Draw_Context));
+   dc->sli.h = 1;
    return dc;
 }
 
@@ -542,4 +543,11 @@ EAPI void
 evas_common_draw_context_set_render_op(RGBA_Draw_Context *dc , int op)
 {
    dc->render_op = op;
+}
+
+EAPI void
+evas_common_draw_context_set_sli(RGBA_Draw_Context *dc, int y, int h)
+{
+   dc->sli.y = y;
+   dc->sli.h = h;
 }

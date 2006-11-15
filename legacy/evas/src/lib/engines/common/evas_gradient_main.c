@@ -526,10 +526,15 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	buf = pdst;
    while (pdst < dst_end)
      {
-	gfunc(map, len, buf, mask, w, xoff, yoff, axx, axy, ayx, ayy, gdata);
-	if (!direct_copy)
-	    bfunc(buf, mask, 0, pdst, w);
-	evas_common_cpu_end_opt();
+#ifdef EVAS_SLI
+	if (((yoff + y) % dc->sli.h) == dc->sli.y)
+#endif
+	  {
+	     gfunc(map, len, buf, mask, w, xoff, yoff, axx, axy, ayx, ayy, gdata);
+	     if (!direct_copy)
+	       bfunc(buf, mask, 0, pdst, w);
+	     evas_common_cpu_end_opt();
+	  }
 	buf += buf_step;
 	pdst += dst->image->w;
 	yoff++;

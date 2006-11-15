@@ -67,7 +67,12 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
    ptr = dst->image->data + (y * dst->image->w) + x;
    for (yy = 0; yy < h; yy++)
      {
-	func(NULL, NULL, dc->col.col, ptr, w);
+#ifdef EVAS_SLI
+	if (((yy + y) % dc->sli.h) == dc->sli.y)
+#endif
+	  {
+	     func(NULL, NULL, dc->col.col, ptr, w);
+	  }
 	ptr += dst->image->w;
      }
 }
