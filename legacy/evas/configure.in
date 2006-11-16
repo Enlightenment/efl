@@ -989,10 +989,16 @@ AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
 pthread_cflags=""
 pthread_libs=""
 build_pthreads="no"
+# sched_getaffinity pthread_attr_setaffinity_np
 AC_CHECK_HEADER(pthread.h,
   [ 
     AC_CHECK_HEADER(sched.h,
-      [ build_pthreads="yes" ],
+      [ 
+        AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np, 
+	  [ build_pthreads="yes" ],
+          [ build_pthreads="no" ]
+        )
+      ],
       [ build_pthreads="no" ]
     )
   ],
