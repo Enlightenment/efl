@@ -123,12 +123,14 @@ evas_common_pipe_begin(RGBA_Image *im)
 #ifdef BUILD_PTHREAD
    int i, y, h;
    
+   if (thread_num == 1) return;
    if (thread_num == 0)
      {
 	int cpunum;
 	
 	cpunum = evas_common_cpu_count();
 	thread_num = cpunum;
+	if (thread_num == 1) return;
 	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
 	for (i = 0; i < thread_num; i++)
 	  {
@@ -176,6 +178,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 	     /* send startsignal */
 //	     printf("START %i\n", i);
      }
+   /* tell worker threads to start */
    pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
    pthread_barrier_wait(&(thbarrier[0]));
    pthread_barrier_destroy(&(thbarrier[0]));
@@ -191,26 +194,27 @@ evas_common_pipe_flush(RGBA_Image *im)
 
    if (!im->pipe) return;
 #ifdef BUILD_PTHREAD
-   /* FIXME: PTHREAD join all threads here (if not finished) or begin then join
-    * otherwise just process pipe */
+   if (thread_num > 1)
      {
+	/* sync worker threads */
 	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
 	pthread_barrier_wait(&(thbarrier[1]));
 	pthread_barrier_destroy(&(thbarrier[1]));
 //	printf("DONE\n");
      }
-   
-#else   
-   /* process pipe - 1 thead */
-   for (p = im->pipe; p; p = (RGBA_Pipe *)((Evas_Object_List *)p)->next)
+   else
+#endif
      {
-	for (i = 0; i < p->op_num; i++)
+	/* process pipe - 1 thead */
+	for (p = im->pipe; p; p = (RGBA_Pipe *)((Evas_Object_List *)p)->next)
 	  {
-	     if (p->op[i].op_func)
-	       p->op[i].op_func(im, &(p->op[i]), NULL);
+	     for (i = 0; i < p->op_num; i++)
+	       {
+		  if (p->op[i].op_func)
+		    p->op[i].op_func(im, &(p->op[i]), NULL);
+	       }
 	  }
      }
-#endif   
    evas_common_cpu_end_opt();
    evas_common_pipe_free(im);
 }

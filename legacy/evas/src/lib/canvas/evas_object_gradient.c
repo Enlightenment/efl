@@ -888,10 +888,14 @@ evas_object_gradient_render(Evas_Object *obj, void *output, void *context, void 
      {
 	obj->layer->evas->engine.func->gradient_draw(output, context, surface,
 						     o->engine_data,
-						     obj->cur.cache.geometry.x + x,
-						     obj->cur.cache.geometry.y + y,
-						     obj->cur.cache.geometry.w,
-						     obj->cur.cache.geometry.h);
+						     obj->cur.geometry.x + x,
+						     obj->cur.geometry.y + y,
+						     obj->cur.geometry.w,
+						     obj->cur.geometry.h);
+////						     obj->cur.cache.geometry.x + x,
+////						     obj->cur.cache.geometry.y + y,
+////						     obj->cur.cache.geometry.w,
+////						     obj->cur.cache.geometry.h);
      }
 }
 

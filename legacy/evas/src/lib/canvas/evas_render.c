@@ -238,6 +238,10 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates)
 						0, 0,
 						e->output.w, e->output.h);
      }
+   if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
+     {
+	printf("EVAS: error: viewport size != output size!\n");
+     }
    /* phase 5. add obscures */
    for (ll = e->obscures; ll; ll = ll->next)
      {

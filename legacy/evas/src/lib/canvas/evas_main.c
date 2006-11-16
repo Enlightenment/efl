@@ -401,6 +401,12 @@ evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
        (w == e->viewport.w) && (h == e->viewport.h)) return;
    if (w <= 0) return;
    if (h <= 0) return;
+   if ((x != 0) || (y != 0))
+     {
+	printf("EVAS: compat error. viewport x,y != 0,0 not supported\n");
+	x = 0;
+	y = 0;
+     }
    e->viewport.x = x;
    e->viewport.y = y;
    e->viewport.w = w;

@@ -4006,10 +4006,14 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
     obj->layer->evas->engine.func->rectangle_draw(output,
                                                   context,
                                                   surface,
-                                                  obj->cur.cache.geometry.x + x,
-                                                  obj->cur.cache.geometry.y + y,
-                                                  obj->cur.cache.geometry.w,
-                                                  obj->cur.cache.geometry.h);
+                                                  obj->cur.geometry.x + x,
+                                                  obj->cur.geometry.y + y,
+                                                  obj->cur.geometry.w,
+                                                  obj->cur.geometry.h);
+////                                                  obj->cur.cache.geometry.x + x,
+////                                                  obj->cur.cache.geometry.y + y,
+////                                                  obj->cur.cache.geometry.w,
+////                                                  obj->cur.cache.geometry.h);
 #endif
 #define ITEM_WALK() \
    for (l = (Evas_Object_List *)o->lines; l; l = l->next) \
@@ -4047,9 +4051,16 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 				(obj->cur.cache.clip.a * it->format->color.col.a * (amul)) / 65025);
 #define DRAW_TEXT(ox, oy) \
    if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
-						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
+						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
 						 it->w, it->h, it->w, it->h, it->text);
+////#define DRAW_TEXT(ox, oy) \
+////   if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
+////						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+////						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
+////						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+////						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
+////						 it->w, it->h, it->w, it->h, it->text);
    
    pback = 0;
    /* backing */
@@ -4095,8 +4106,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	     ENFN->rectangle_draw(output,
 				  context,
 				  surface,
-				  obj->cur.cache.geometry.x + ln->x + backx + x,
-				  obj->cur.cache.geometry.y + ln->y + y,
+				  obj->cur.geometry.x + ln->x + backx + x,
+				  obj->cur.geometry.y + ln->y + y,
+////				  obj->cur.cache.geometry.x + ln->x + backx + x,
+////				  obj->cur.cache.geometry.y + ln->y + y,
 				  x2 - backx,
 				  ln->h);
 	  }
@@ -4249,8 +4262,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	     ENFN->rectangle_draw(output,
 				  context,
 				  surface,
-				  obj->cur.cache.geometry.x + ln->x + strikex + x,
-				  obj->cur.cache.geometry.y + ln->y + y + (ln->h / 2),
+				  obj->cur.geometry.x + ln->x + strikex + x,
+				  obj->cur.geometry.y + ln->y + y + (ln->h / 2),
+////				  obj->cur.cache.geometry.x + ln->x + strikex + x,
+////				  obj->cur.cache.geometry.y + ln->y + y + (ln->h / 2),
 				  x2 - strikex,
 				  1);
 	  }
@@ -4302,8 +4317,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	     ENFN->rectangle_draw(output,
 				  context,
 				  surface,
-				  obj->cur.cache.geometry.x + ln->x + linex + x,
-				  obj->cur.cache.geometry.y + ln->y + y + ln->baseline + 1,
+				  obj->cur.geometry.x + ln->x + linex + x,
+				  obj->cur.geometry.y + ln->y + y + ln->baseline + 1,
+////				  obj->cur.cache.geometry.x + ln->x + linex + x,
+////				  obj->cur.cache.geometry.y + ln->y + y + ln->baseline + 1,
 				  x2 - linex,
 				  1);
 	  }
@@ -4355,8 +4372,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	     ENFN->rectangle_draw(output,
 				  context,
 				  surface,
-				  obj->cur.cache.geometry.x + ln->x + line2x + x,
-				  obj->cur.cache.geometry.y + ln->y + y + ln->baseline + 3,
+				  obj->cur.geometry.x + ln->x + line2x + x,
+				  obj->cur.geometry.y + ln->y + y + ln->baseline + 3,
+////				  obj->cur.cache.geometry.x + ln->x + line2x + x,
+////				  obj->cur.cache.geometry.y + ln->y + y + ln->baseline + 3,
 				  x2 - line2x,
 				  1);
 	  }

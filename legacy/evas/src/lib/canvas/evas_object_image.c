@@ -1566,7 +1566,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	if (idh < 1.0) idh = 1.0;
 	if (idx > 0.0) idx -= idw;
 	if (idy > 0.0) idy -= idh;
-	while ((int)idx < obj->cur.cache.geometry.w)
+	while ((int)idx < obj->cur.geometry.w)
+////	while ((int)idx < obj->cur.cache.geometry.w)
 	  {
 	     Evas_Coord ydy;
 	     int dobreak_w = 0;
@@ -1577,11 +1578,13 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		 (o->cur.fill.x == 0.0))
 	       {
 		  dobreak_w = 1;
-		  iw = obj->cur.cache.geometry.w;
+		  iw = obj->cur.geometry.w;
+////		  iw = obj->cur.cache.geometry.w;
 	       }
 	     else
 	       iw = ((int)(idx + idw)) - ix;
-	     while ((int)idy < obj->cur.cache.geometry.h)
+	     while ((int)idy < obj->cur.geometry.h)
+////	     while ((int)idy < obj->cur.cache.geometry.h)
 	       {
 		  int dobreak_h = 0;
 
@@ -1589,7 +1592,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		  if ((o->cur.fill.h == obj->cur.geometry.h) &&
 		      (o->cur.fill.y == 0.0))
 		    {
-		       ih = obj->cur.cache.geometry.h;
+		       ih = obj->cur.geometry.h;
+////		       ih = obj->cur.cache.geometry.h;
 		       dobreak_h = 1;
 		    }
 		  else
@@ -1606,8 +1610,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 							      0, 0,
 							      o->cur.image.w,
 							      o->cur.image.h,
-							      obj->cur.cache.geometry.x + ix + x,
-							      obj->cur.cache.geometry.y + iy + y,
+							      obj->cur.geometry.x + ix + x,
+							      obj->cur.geometry.y + iy + y,
+////							      obj->cur.cache.geometry.x + ix + x,
+////							      obj->cur.cache.geometry.y + iy + y,
 							      iw, ih,
 							      o->cur.smooth_scale);
 		  else
@@ -1616,8 +1622,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		       int bl, br, bt, bb;
 		       int imw, imh, ox, oy;
 
-		       ox = obj->cur.cache.geometry.x + ix + x;
-		       oy = obj->cur.cache.geometry.y + iy + y;
+		       ox = obj->cur.geometry.x + ix + x;
+		       oy = obj->cur.geometry.y + iy + y;
+////		       ox = obj->cur.cache.geometry.x + ix + x;
+////		       oy = obj->cur.cache.geometry.y + iy + y;
 		       imw = o->cur.image.w;
 		       imh = o->cur.image.h;
 		       bl = o->cur.border.l;
@@ -1819,14 +1827,22 @@ evas_object_image_render_pre(Evas_Object *obj)
 	Evas_Rectangle *r;
 	Evas_List *rl;
 
-	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
-						obj->cur.cache.geometry.y,
-						obj->cur.cache.geometry.w,
-						obj->cur.cache.geometry.h,
-						obj->prev.cache.geometry.x,
-						obj->prev.cache.geometry.y,
-						obj->prev.cache.geometry.w,
-						obj->prev.cache.geometry.h);
+	rl = evas_rects_return_difference_rects(obj->cur.geometry.x,
+						obj->cur.geometry.y,
+						obj->cur.geometry.w,
+						obj->cur.geometry.h,
+						obj->prev.geometry.x,
+						obj->prev.geometry.y,
+						obj->prev.geometry.w,
+						obj->prev.geometry.h);
+////	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
+////						obj->cur.cache.geometry.y,
+////						obj->cur.cache.geometry.w,
+////						obj->cur.cache.geometry.h,
+////						obj->prev.cache.geometry.x,
+////						obj->prev.cache.geometry.y,
+////						obj->prev.cache.geometry.w,
+////						obj->prev.cache.geometry.h);
 	while (rl)
 	  {
 	     r = rl->data;
@@ -1876,14 +1892,16 @@ evas_object_image_render_pre(Evas_Object *obj)
 		  if (idh < 1) idh = 1;
 		  if (idx > 0) idx -= idw;
 		  if (idy > 0) idy -= idh;
-		  while (idx < obj->cur.cache.geometry.w)
+		  while (idx < obj->cur.geometry.w)
+////		  while (idx < obj->cur.cache.geometry.w)
 		    {
 		       Evas_Coord ydy;
 
 		       ydy = idy;
 		       x = idx;
 		       w = ((int)(idx + idw)) - x;
-		       while (idy < obj->cur.cache.geometry.h)
+		       while (idy < obj->cur.geometry.h)
+////		       while (idy < obj->cur.cache.geometry.h)
 			 {
 			    y = idy;
 			    h = ((int)(idy + idh)) - y;
@@ -1892,8 +1910,10 @@ evas_object_image_render_pre(Evas_Object *obj)
 			    r->y = ((rr->y - 1) * r->h) / o->cur.image.h;
 			    r->w = ((rr->w + 2) * r->w) / o->cur.image.w;
 			    r->h = ((rr->h + 2) * r->h) / o->cur.image.h;
-			    r->x += obj->cur.cache.geometry.x + x;
-			    r->y += obj->cur.cache.geometry.y + y;
+			    r->x += obj->cur.geometry.x + x;
+			    r->y += obj->cur.geometry.y + y;
+////			    r->x += obj->cur.cache.geometry.x + x;
+////			    r->y += obj->cur.cache.geometry.y + y;
 			    if (r) updates = evas_list_append(updates, r);
 			    idy += h;
 			 }

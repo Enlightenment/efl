@@ -145,10 +145,14 @@ evas_object_render_pre_clipper_change(Evas_List *updates, Evas_Object *obj)
      }
    else if (obj->cur.clipper)
      {
-	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
-						obj->cur.cache.geometry.y,
-						obj->cur.cache.geometry.w,
-						obj->cur.cache.geometry.h,
+	rl = evas_rects_return_difference_rects(obj->cur.geometry.x,
+						obj->cur.geometry.y,
+						obj->cur.geometry.w,
+						obj->cur.geometry.h,
+////	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
+////						obj->cur.cache.geometry.y,
+////						obj->cur.cache.geometry.w,
+////						obj->cur.cache.geometry.h,
 						obj->cur.clipper->cur.cache.clip.x,
 						obj->cur.clipper->cur.cache.clip.y,
 						obj->cur.clipper->cur.cache.clip.w,
@@ -162,10 +166,14 @@ evas_object_render_pre_clipper_change(Evas_List *updates, Evas_Object *obj)
      }
    else if (obj->prev.clipper)
      {
-	rl = evas_rects_return_difference_rects(obj->prev.cache.geometry.x,
-						obj->prev.cache.geometry.y,
-						obj->prev.cache.geometry.w,
-						obj->prev.cache.geometry.h,
+	rl = evas_rects_return_difference_rects(obj->prev.geometry.x,
+						obj->prev.geometry.y,
+						obj->prev.geometry.w,
+						obj->prev.geometry.h,
+////	rl = evas_rects_return_difference_rects(obj->prev.cache.geometry.x,
+////						obj->prev.cache.geometry.y,
+////						obj->prev.cache.geometry.w,
+////						obj->prev.cache.geometry.h,
 						obj->prev.clipper->prev.cache.clip.x,
 						obj->prev.clipper->prev.cache.clip.y,
 						obj->prev.clipper->prev.cache.clip.w,
@@ -186,16 +194,24 @@ evas_object_render_pre_prev_cur_add(Evas_List *updates, Evas_Object *obj)
    Evas_Rectangle *r;
 
    NEW_RECT(r,
-	    obj->cur.cache.geometry.x,
-	    obj->cur.cache.geometry.y,
-	    obj->cur.cache.geometry.w,
-	    obj->cur.cache.geometry.h);
+	    obj->cur.geometry.x,
+	    obj->cur.geometry.y,
+	    obj->cur.geometry.w,
+	    obj->cur.geometry.h);
+////	    obj->cur.cache.geometry.x,
+////	    obj->cur.cache.geometry.y,
+////	    obj->cur.cache.geometry.w,
+////	    obj->cur.cache.geometry.h);
    if (r) updates = evas_list_append(updates, r);
    NEW_RECT(r,
-	    obj->prev.cache.geometry.x,
-	    obj->prev.cache.geometry.y,
-	    obj->prev.cache.geometry.w,
-	    obj->prev.cache.geometry.h);
+	    obj->prev.geometry.x,
+	    obj->prev.geometry.y,
+	    obj->prev.geometry.w,
+	    obj->prev.geometry.h);
+////	    obj->prev.cache.geometry.x,
+////	    obj->prev.cache.geometry.y,
+////	    obj->prev.cache.geometry.w,
+////	    obj->prev.cache.geometry.h);
    if (r) updates = evas_list_append(updates, r);
    return updates;
 }
@@ -289,20 +305,20 @@ void
 evas_object_coords_recalc(Evas_Object *obj)
 {
    if (obj->smart.smart) return;
-   if (obj->cur.cache.geometry.validity == obj->layer->evas->output_validity)
-     return;
-   obj->cur.cache.geometry.x =
-     evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x);
-   obj->cur.cache.geometry.y =
-     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y);
-   obj->cur.cache.geometry.w =
-     evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.w) -
-     evas_coord_world_x_to_screen(obj->layer->evas, 0);
-   obj->cur.cache.geometry.h =
-     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.h) -
-     evas_coord_world_y_to_screen(obj->layer->evas, 0);
+////   if (obj->cur.cache.geometry.validity == obj->layer->evas->output_validity)
+////     return;
+////   obj->cur.cache.geometry.x =
+////     evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x);
+////   obj->cur.cache.geometry.y =
+////     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y);
+////   obj->cur.cache.geometry.w =
+////     evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.w) -
+////     evas_coord_world_x_to_screen(obj->layer->evas, 0);
+////   obj->cur.cache.geometry.h =
+////     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.h) -
+////     evas_coord_world_y_to_screen(obj->layer->evas, 0);
    if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
-   obj->cur.cache.geometry.validity = obj->layer->evas->output_validity;
+////   obj->cur.cache.geometry.validity = obj->layer->evas->output_validity;
 }
 
 int
@@ -501,7 +517,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
    obj->cur.geometry.x = x;
    obj->cur.geometry.y = y;
-   obj->cur.cache.geometry.validity = 0;
+////   obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen <= 0)
@@ -574,7 +590,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
      }
    obj->cur.geometry.w = w;
    obj->cur.geometry.h = h;
-   obj->cur.cache.geometry.validity = 0;
+////   obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
@@ -754,8 +770,8 @@ evas_object_hide(Evas_Object *obj)
 			    ev.buttons = obj->layer->evas->pointer.button;
 			    ev.output.x = obj->layer->evas->pointer.x;
 			    ev.output.y = obj->layer->evas->pointer.y;
-			    ev.canvas.x = obj->layer->evas->pointer.canvas_x;
-			    ev.canvas.y = obj->layer->evas->pointer.canvas_y;
+			    ev.canvas.x = obj->layer->evas->pointer.x;
+			    ev.canvas.y = obj->layer->evas->pointer.y;
 			    ev.data = NULL;
 			    ev.modifiers = &(obj->layer->evas->modifiers);
 			    ev.locks = &(obj->layer->evas->locks);
@@ -1009,8 +1025,10 @@ evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   xx = evas_coord_world_x_to_screen(e, x);
-   yy = evas_coord_world_y_to_screen(e, y);
+   xx = x;
+   yy = y;
+////   xx = evas_coord_world_x_to_screen(e, x);
+////   yy = evas_coord_world_y_to_screen(e, y);
    for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
      {
 	Evas_Object_List *l2;
@@ -1043,7 +1061,8 @@ evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(Evas *e)
 {
-   return evas_object_top_at_xy_get(e, e->pointer.canvas_x, e->pointer.canvas_y, 0, 0);
+////   return evas_object_top_at_xy_get(e, e->pointer.canvas_x, e->pointer.canvas_y, 0, 0);
+   return evas_object_top_at_xy_get(e, e->pointer.x, e->pointer.y, 1, 1);
 }
 
 /**
@@ -1061,10 +1080,14 @@ evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   xx = evas_coord_world_x_to_screen(e, x);
-   yy = evas_coord_world_y_to_screen(e, y);
-   ww = evas_coord_world_x_to_screen(e, w);
-   hh = evas_coord_world_y_to_screen(e, h);
+   xx = x;
+   yy = y;
+   ww = w;
+   hh = h;
+////   xx = evas_coord_world_x_to_screen(e, x);
+////   yy = evas_coord_world_y_to_screen(e, y);
+////   ww = evas_coord_world_x_to_screen(e, w);
+////   hh = evas_coord_world_y_to_screen(e, h);
    if (ww < 1) ww = 1;
    if (hh < 1) hh = 1;
    for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
@@ -1106,8 +1129,10 @@ evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pa
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   xx = evas_coord_world_x_to_screen(e, x);
-   yy = evas_coord_world_y_to_screen(e, y);
+   xx = x;
+   yy = y;
+////   xx = evas_coord_world_x_to_screen(e, x);
+////   yy = evas_coord_world_y_to_screen(e, y);
    for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
      {
 	Evas_Object_List *l2;
@@ -1147,10 +1172,14 @@ evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w,
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   xx = evas_coord_world_x_to_screen(e, x);
-   yy = evas_coord_world_y_to_screen(e, y);
-   ww = evas_coord_world_x_to_screen(e, w);
-   hh = evas_coord_world_y_to_screen(e, h);
+   xx = x;
+   yy = y;
+   ww = w;                                
+   hh = h;
+////   xx = evas_coord_world_x_to_screen(e, x);
+////   yy = evas_coord_world_y_to_screen(e, y);
+////   ww = evas_coord_world_x_to_screen(e, w);
+////   hh = evas_coord_world_y_to_screen(e, h);
    if (ww < 1) ww = 1;
    if (hh < 1) hh = 1;
    for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)

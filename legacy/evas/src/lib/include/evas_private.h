@@ -275,9 +275,9 @@ struct _Evas
       unsigned char  inside : 1;
       int            mouse_grabbed;
       DATA32         button;
-      int            x, y;
+      Evas_Coord     x, y;
 
-      Evas_Coord         canvas_x, canvas_y;
+////      Evas_Coord         canvas_x, canvas_y;
 
       struct {
 	 Evas_List *in;
@@ -364,10 +364,12 @@ struct _Evas_Object
 
    struct {
       struct {
+/*	 
 	 struct {
 	    int            x, y, w, h;
 	    int            validity;
 	 } geometry;
+ */
 	 struct {
 	    int            x, y, w, h;
 	    unsigned char  r, g, b, a;

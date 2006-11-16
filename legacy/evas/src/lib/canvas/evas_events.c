@@ -248,8 +248,10 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
-	ev.canvas.x = e->pointer.canvas_x;
-	ev.canvas.y = e->pointer.canvas_y;
+	ev.canvas.x = e->pointer.x;
+	ev.canvas.y = e->pointer.y;
+////	ev.canvas.x = e->pointer.canvas_x;
+////	ev.canvas.y = e->pointer.canvas_y;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
@@ -298,8 +300,10 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
-	ev.canvas.x = e->pointer.canvas_x;
-	ev.canvas.y = e->pointer.canvas_y;
+	ev.canvas.x = e->pointer.x;
+	ev.canvas.y = e->pointer.y;
+////	ev.canvas.x = e->pointer.canvas_x;
+////	ev.canvas.y = e->pointer.canvas_y;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
@@ -333,8 +337,10 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
 		  ev.output.y = e->pointer.y;
-		  ev.canvas.x = e->pointer.canvas_x;
-		  ev.canvas.y = e->pointer.canvas_y;
+		  ev.canvas.x = e->pointer.x;
+		  ev.canvas.y = e->pointer.y;
+////		  ev.canvas.x = e->pointer.canvas_x;
+////		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
@@ -360,8 +366,10 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		       ev.buttons = e->pointer.button;
 		       ev.output.x = e->pointer.x;
 		       ev.output.y = e->pointer.y;
-		       ev.canvas.x = e->pointer.canvas_x;
-		       ev.canvas.y = e->pointer.canvas_y;
+		       ev.canvas.x = e->pointer.x;
+		       ev.canvas.y = e->pointer.y;
+////		       ev.canvas.x = e->pointer.canvas_x;
+////		       ev.canvas.y = e->pointer.canvas_y;
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
@@ -417,8 +425,10 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
 	ev.z = z;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
-	ev.canvas.x = e->pointer.canvas_x;
-	ev.canvas.y = e->pointer.canvas_y;
+	ev.canvas.x = e->pointer.x;
+	ev.canvas.y = e->pointer.y;
+////	ev.canvas.x = e->pointer.canvas_x;
+////	ev.canvas.y = e->pointer.canvas_y;
 	ev.data = (void *) data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
@@ -441,7 +451,7 @@ EAPI void
 evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const void *data)
 {
    int px, py;
-   Evas_Coord pcx, pcy;
+////   Evas_Coord pcx, pcy;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -449,16 +459,18 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 
    px = e->pointer.x;
    py = e->pointer.y;
-   pcx = e->pointer.canvas_x;
-   pcy = e->pointer.canvas_y;
+////   pcx = e->pointer.canvas_x;
+////   pcy = e->pointer.canvas_y;
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
    e->pointer.x = x;
    e->pointer.y = y;
-   e->pointer.canvas_x = evas_coord_screen_x_to_world(e, x);
-   e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
+////   e->pointer.canvas_x = x;
+////   e->pointer.canvas_y = y;
+////   e->pointer.canvas_x = evas_coord_screen_x_to_world(e, x);
+////   e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed > 0)
@@ -485,12 +497,16 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		       ev.buttons = e->pointer.button;
 		       ev.cur.output.x = e->pointer.x;
 		       ev.cur.output.y = e->pointer.y;
-		       ev.cur.canvas.x = e->pointer.canvas_x;
-		       ev.cur.canvas.y = e->pointer.canvas_y;
+		       ev.cur.canvas.x = e->pointer.x;
+		       ev.cur.canvas.y = e->pointer.y;
+////		       ev.cur.canvas.x = e->pointer.canvas_x;
+////		       ev.cur.canvas.y = e->pointer.canvas_y;
 		       ev.prev.output.x = px;
 		       ev.prev.output.y = py;
-		       ev.prev.canvas.x = pcx;
-		       ev.prev.canvas.y = pcy;
+		       ev.prev.canvas.x = px;
+		       ev.prev.canvas.y = py;
+////		       ev.prev.canvas.x = pcx;
+////		       ev.prev.canvas.y = pcy;
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
@@ -519,8 +535,10 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		       ev.buttons = e->pointer.button;
 		       ev.output.x = e->pointer.x;
 		       ev.output.y = e->pointer.y;
-		       ev.canvas.x = e->pointer.canvas_x;
-		       ev.canvas.y = e->pointer.canvas_y;
+		       ev.canvas.x = e->pointer.x;
+		       ev.canvas.y = e->pointer.y;
+////		       ev.canvas.x = e->pointer.canvas_x;
+////		       ev.canvas.y = e->pointer.canvas_y;
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
@@ -563,12 +581,16 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		       ev.buttons = e->pointer.button;
 		       ev.cur.output.x = e->pointer.x;
 		       ev.cur.output.y = e->pointer.y;
-		       ev.cur.canvas.x = e->pointer.canvas_x;
-		       ev.cur.canvas.y = e->pointer.canvas_y;
+		       ev.cur.canvas.x = e->pointer.x;
+		       ev.cur.canvas.y = e->pointer.y;
+////		       ev.cur.canvas.x = e->pointer.canvas_x;
+////		       ev.cur.canvas.y = e->pointer.canvas_y;
 		       ev.prev.output.x = px;
 		       ev.prev.output.y = py;
-		       ev.prev.canvas.x = pcx;
-		       ev.prev.canvas.y = pcy;
+		       ev.prev.canvas.x = px;
+		       ev.prev.canvas.y = py;
+////		       ev.prev.canvas.x = pcx;
+////		       ev.prev.canvas.y = pcy;
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
@@ -586,8 +608,10 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
 		  ev.output.y = e->pointer.y;
-		  ev.canvas.x = e->pointer.canvas_x;
-		  ev.canvas.y = e->pointer.canvas_y;
+		  ev.canvas.x = e->pointer.x;
+		  ev.canvas.y = e->pointer.y;
+////		  ev.canvas.x = e->pointer.canvas_x;
+////		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
@@ -612,8 +636,10 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
 		  ev.output.y = e->pointer.y;
-		  ev.canvas.x = e->pointer.canvas_x;
-		  ev.canvas.y = e->pointer.canvas_y;
+		  ev.canvas.x = e->pointer.x;
+		  ev.canvas.y = e->pointer.y;
+////		  ev.canvas.x = e->pointer.canvas_x;
+////		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
@@ -667,8 +693,10 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
 	     ev.output.y = e->pointer.y;
-	     ev.canvas.x = e->pointer.canvas_x;
-	     ev.canvas.y = e->pointer.canvas_y;
+	     ev.canvas.x = e->pointer.x;
+	     ev.canvas.y = e->pointer.y;
+////	     ev.canvas.x = e->pointer.canvas_x;
+////	     ev.canvas.y = e->pointer.canvas_y;
 	     ev.data = (void *)data;
 	     ev.modifiers = &(e->modifiers);
 	     ev.locks = &(e->locks);
@@ -720,8 +748,10 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
 		  ev.output.y = e->pointer.y;
-		  ev.canvas.x = e->pointer.canvas_x;
-		  ev.canvas.y = e->pointer.canvas_y;
+		  ev.canvas.x = e->pointer.x;
+		  ev.canvas.y = e->pointer.y;
+////		  ev.canvas.x = e->pointer.canvas_x;
+////		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);

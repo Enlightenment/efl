@@ -141,7 +141,7 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
    o->points = evas_list_append(o->points, p);
 
-   obj->cur.cache.geometry.validity = 0;
+////   obj->cur.cache.geometry.validity = 0;
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
@@ -192,7 +192,7 @@ evas_object_polygon_points_clear(Evas_Object *obj)
      }
    obj->cur.geometry.w = 0;
    obj->cur.geometry.h = 0;
-   obj->cur.cache.geometry.validity = 0;
+////   obj->cur.cache.geometry.validity = 0;
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
@@ -294,15 +294,15 @@ evas_object_polygon_render(Evas_Object *obj, void *output, void *context, void *
    for (l = o->points; l; l = l->next)
      {
 	Evas_Polygon_Point *p;
-	int px, py;
+////	int px, py;
 
 	p = l->data;
-	px = evas_coord_world_x_to_screen(obj->layer->evas, p->x);
-	py = evas_coord_world_y_to_screen(obj->layer->evas, p->y);
+////	px = evas_coord_world_x_to_screen(obj->layer->evas, p->x);
+////	py = evas_coord_world_y_to_screen(obj->layer->evas, p->y);
 	o->engine_data = obj->layer->evas->engine.func->polygon_point_add(obj->layer->evas->engine.data.output,
 									  obj->layer->evas->engine.data.context,
 									  o->engine_data,
-									  px + x, py + y);
+									  p->x + x, p->y + y);
      }
    if (o->engine_data)
      obj->layer->evas->engine.func->polygon_draw(output,

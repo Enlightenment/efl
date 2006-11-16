@@ -150,10 +150,14 @@ evas_object_rectangle_render(Evas_Object *obj, void *output, void *context, void
    obj->layer->evas->engine.func->rectangle_draw(output,
 						 context,
 						 surface,
-						 obj->cur.cache.geometry.x + x,
-						 obj->cur.cache.geometry.y + y,
-						 obj->cur.cache.geometry.w,
-						 obj->cur.cache.geometry.h);
+						 obj->cur.geometry.x + x,
+						 obj->cur.geometry.y + y,
+						 obj->cur.geometry.w,
+						 obj->cur.geometry.h);
+////						 obj->cur.cache.geometry.x + x,
+////						 obj->cur.cache.geometry.y + y,
+////						 obj->cur.cache.geometry.w,
+////						 obj->cur.cache.geometry.h);
 }
 
 static void
@@ -224,14 +228,22 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
 	Evas_Rectangle *r;
 	Evas_List *rl;
 	
-	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
-						obj->cur.cache.geometry.y,
-						obj->cur.cache.geometry.w,
-						obj->cur.cache.geometry.h,
-						obj->prev.cache.geometry.x,
-						obj->prev.cache.geometry.y,
-						obj->prev.cache.geometry.w,
-						obj->prev.cache.geometry.h);
+	rl = evas_rects_return_difference_rects(obj->cur.geometry.x,
+						obj->cur.geometry.y,
+						obj->cur.geometry.w,
+						obj->cur.geometry.h,
+						obj->prev.geometry.x,
+						obj->prev.geometry.y,
+						obj->prev.geometry.w,
+						obj->prev.geometry.h);
+////	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
+////						obj->cur.cache.geometry.y,
+////						obj->cur.cache.geometry.w,
+////						obj->cur.cache.geometry.h,
+////						obj->prev.cache.geometry.x,
+////						obj->prev.cache.geometry.y,
+////						obj->prev.cache.geometry.w,
+////						obj->prev.cache.geometry.h);
 	while (rl)
 	  {
 	     r = rl->data;

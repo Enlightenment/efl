@@ -989,6 +989,15 @@ AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
 pthread_cflags=""
 pthread_libs=""
 build_pthreads="no"
+AC_CHECK_HEADER(pthread.h,
+  [ 
+    AC_CHECK_HEADER(sched.h,
+      [ build_pthreads="yes" ],
+      [ build_pthreads="no" ]
+    )
+  ],
+  [ build_pthreads="no" ]
+)
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads, 
   [  --enable-pthreads               enable threaded rendering], [

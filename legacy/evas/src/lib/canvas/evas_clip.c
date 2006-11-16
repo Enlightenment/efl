@@ -9,8 +9,10 @@ evas_object_clip_recalc(Evas_Object *obj)
 
    if (obj->layer->evas->events_frozen > 0) return;
    evas_object_coords_recalc(obj);
-   cx = obj->cur.cache.geometry.x; cy = obj->cur.cache.geometry.y;
-   cw = obj->cur.cache.geometry.w; ch = obj->cur.cache.geometry.h;
+   cx = obj->cur.geometry.x; cy = obj->cur.geometry.y;
+   cw = obj->cur.geometry.w; ch = obj->cur.geometry.h;
+////   cx = obj->cur.cache.geometry.x; cy = obj->cur.cache.geometry.y;
+////   cw = obj->cur.cache.geometry.w; ch = obj->cur.cache.geometry.h;
    if (obj->cur.color.a == 0) cvis = 0;
    else cvis = obj->cur.visible;
    cr = obj->cur.color.r; cg = obj->cur.color.g;

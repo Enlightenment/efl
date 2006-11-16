@@ -142,7 +142,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    obj->cur.geometry.y = min_y;
    obj->cur.geometry.w = max_x - min_x + 2.0;
    obj->cur.geometry.h = max_y - min_y + 2.0;
-   obj->cur.cache.geometry.validity = 0;
+////   obj->cur.cache.geometry.validity = 0;
    o->cur.x1 = x1 - min_x;
    o->cur.y1 = y1 - min_y;
    o->cur.x2 = x2 - min_x;
@@ -458,10 +458,14 @@ evas_object_line_coords_recalc(Evas_Object *obj)
    Evas_Object_Line *o;
 
    o = (Evas_Object_Line *)(obj->object_data);
-   o->cur.cache.x1 = evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x + o->cur.x1);
-   o->cur.cache.y1 = evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y + o->cur.y1);
-   o->cur.cache.x2 = evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x + o->cur.x2);
-   o->cur.cache.y2 = evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y + o->cur.y2);
+   o->cur.cache.x1 = obj->cur.geometry.x + o->cur.x1;
+   o->cur.cache.y1 = obj->cur.geometry.y + o->cur.y2;
+   o->cur.cache.x2 = obj->cur.geometry.x + o->cur.x2;
+   o->cur.cache.y2 = obj->cur.geometry.y + o->cur.y2;
+////   o->cur.cache.x1 = evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x + o->cur.x1);
+////   o->cur.cache.y1 = evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y + o->cur.y1);
+////   o->cur.cache.x2 = evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x + o->cur.x2);
+////   o->cur.cache.y2 = evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y + o->cur.y2);
    o->cur.cache.object.w = obj->cur.geometry.w;
    o->cur.cache.object.h = obj->cur.geometry.h;
 }

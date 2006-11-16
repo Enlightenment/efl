@@ -9,6 +9,8 @@
  *****
  */
 
+static int cpunum = 0;
+
 static void *
 eng_context_new(void *data)
 {
@@ -141,22 +143,28 @@ static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
 #ifdef BUILD_PTHREAD
-   evas_common_pipe_rectangle_draw(surface, context, x, y, w, h);
-#else
-   evas_common_rectangle_draw(surface, context, x, y, w, h);
-   evas_common_cpu_end_opt();
-#endif   
+   if (cpunum > 1)
+     evas_common_pipe_rectangle_draw(surface, context, x, y, w, h);
+   else
+#endif
+     {
+	evas_common_rectangle_draw(surface, context, x, y, w, h);
+	evas_common_cpu_end_opt();
+     }
 }
 
 static void
 eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
 #ifdef BUILD_PTHREAD
-   evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
-#else   
-   evas_common_line_draw(surface, context, x1, y1, x2, y2);
-   evas_common_cpu_end_opt();
+   if (cpunum > 1)
+     evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
+   else
 #endif   
+     {
+	evas_common_line_draw(surface, context, x1, y1, x2, y2);
+	evas_common_cpu_end_opt();
+     }
 }
 
 static void *
@@ -175,11 +183,14 @@ static void
 eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
 #ifdef BUILD_PTHREAD
-   evas_common_pipe_poly_draw(surface, context, polygon);
-#else
-   evas_common_polygon_draw(surface, context, polygon);
-   evas_common_cpu_end_opt();
+   if (cpunum > 1)
+     evas_common_pipe_poly_draw(surface, context, polygon);
+   else
 #endif
+     {
+	evas_common_polygon_draw(surface, context, polygon);
+	evas_common_cpu_end_opt();
+     }
 }
 
 static void *
@@ -308,11 +319,14 @@ static void
 eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
 #ifdef BUILD_PTHREAD
-   evas_common_pipe_grad_draw(surface, context, x, y, w, h, gradient);
-#else   
-   evas_common_gradient_draw(surface, context, x, y, w, h, gradient);
-   evas_common_cpu_end_opt();
+   if (cpunum > 1)
+     evas_common_pipe_grad_draw(surface, context, x, y, w, h, gradient);
+   else
 #endif   
+     {
+	evas_common_gradient_draw(surface, context, x, y, w, h, gradient);
+	evas_common_cpu_end_opt();
+     }
 }
 
 static void *
@@ -502,20 +516,23 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 {
    evas_common_load_image_data_from_file(image);
 #ifdef BUILD_PTHREAD
-   evas_common_pipe_image_draw(image, surface, context, smooth,
-			       src_x, src_y, src_w, src_h,
-			       dst_x, dst_y, dst_w, dst_h);
-#else
-   if (smooth)
-     evas_common_scale_rgba_in_to_out_clip_smooth(image, surface, context,
-				      src_x, src_y, src_w, src_h,
-				      dst_x, dst_y, dst_w, dst_h);
+   if (cpunum > 1)
+     evas_common_pipe_image_draw(image, surface, context, smooth,
+				 src_x, src_y, src_w, src_h,
+				 dst_x, dst_y, dst_w, dst_h);
    else
-     evas_common_scale_rgba_in_to_out_clip_sample(image, surface, context,
-				      src_x, src_y, src_w, src_h,
-				      dst_x, dst_y, dst_w, dst_h);
-   evas_common_cpu_end_opt();
 #endif
+     {
+	if (smooth)
+	  evas_common_scale_rgba_in_to_out_clip_smooth(image, surface, context,
+						       src_x, src_y, src_w, src_h,
+						       dst_x, dst_y, dst_w, dst_h);
+	else
+	  evas_common_scale_rgba_in_to_out_clip_sample(image, surface, context,
+						       src_x, src_y, src_w, src_h,
+						       dst_x, dst_y, dst_w, dst_h);
+	evas_common_cpu_end_opt();
+     }
 }
 
 static char *
@@ -655,50 +672,14 @@ static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
 #ifdef BUILD_PTHREAD
-   evas_common_pipe_text_draw(surface, context, font, x, y, text);
-#else   
-   evas_common_font_draw(surface, context, font, x, y, text);
-   evas_common_cpu_end_opt();
-#endif   
-#if 0   
+   if (cpunum > 1)
+     evas_common_pipe_text_draw(surface, context, font, x, y, text);
    else
-     {
-	/* create output surface size ow x oh and scale to w x h */
-	RGBA_Draw_Context *dc, *dc_in;
-
-	dc_in = context;
-	dc = evas_common_draw_context_new();
-	if (dc)
-	  {
-	     RGBA_Image *im;
-	     int inset;
-
-	     dc->col.col = dc_in->col.col;
-	     inset = evas_common_font_query_inset( font, text);
-	     im = evas_common_image_create(ow+inset, oh);
-	     if (im)
-	       {
-		  int max_ascent;
-		  int j;
-
-		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
-		  j = (ow + inset) * oh;
-		  memset(im->image->data, 0, j * sizeof(DATA32));
-
-		  max_ascent = evas_common_font_max_ascent_get(font);
-
-		  evas_common_font_draw(im, dc, font, 0, max_ascent, text);
-		  evas_common_cpu_end_opt();
-		  evas_common_scale_rgba_in_to_out_clip_smooth
-		    (im, surface, context, inset, 0, ow, oh,
-		     x + ((inset * w) / ow), y - ((max_ascent * h) / oh),
-		     w, h);
-		  evas_common_image_free(im);
-	       }
-	     evas_common_draw_context_free(dc);
-	  }
-     }
 #endif   
+     {
+	evas_common_font_draw(surface, context, font, x, y, text);
+	evas_common_cpu_end_opt();
+     }
 }
 
 static void
@@ -863,6 +844,7 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    em->functions = (void *)(&func);
+   cpunum = evas_common_cpu_count();
    return 1;
 }
 
