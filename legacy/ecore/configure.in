@@ -1199,6 +1199,7 @@ if test "x$have_ecore_file" = "xyes"; then
 else
   AC_MSG_RESULT(ecore_file not enabled so ecore_desktop will not be enabled)
   want_ecore_desktop="no"
+  AM_CONDITIONAL(BUILD_ECORE_DESKTOP, false)
 fi
 
 
