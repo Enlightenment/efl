@@ -107,6 +107,7 @@ check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
 {
    Evas_List *l;
 
+   return;
    if (epd->image.id == -1)
      {
 	fprintf(stderr, "%s: Error. collection %i: image attributes missing "
@@ -362,7 +363,10 @@ data_write(void)
 	     Edje_Image_Directory_Entry *img;
 	     
 	     img = l->data;	
-	     if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+	       {
+	       }
+	     else
 	       {
 		  Evas_Object *im;
 		  Evas_List *ll;
@@ -928,7 +932,10 @@ data_process_lookups(void)
 		  if ((de->entry) && (!strcmp(de->entry, il->name)))
 		    {
 		       handle_slave_lookup(image_slave_lookups, il->dest, de->id);
-		       *(il->dest) = de->id;
+		       if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+			 *(il->dest) = -de->id - 1;
+		       else
+			 *(il->dest) = de->id;
 		       break;
 		    }
 	       }

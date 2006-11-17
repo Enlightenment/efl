@@ -1243,51 +1243,66 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	     evas_object_image_border_set(ep->object, p3.border.l, p3.border.r, p3.border.t, p3.border.b);
 	     evas_object_image_border_center_fill_set(ep->object, !(chosen_desc->border.no_fill));
 	     image_id = ep->param1.description->image.id;
-	     image_count = 2;
-	     if (ep->param2.description)
-	       image_count += evas_list_count(ep->param2.description->image.tween_list);
-	     image_num = (pos * ((double)image_count - 0.5));
-	     if (image_num > (image_count - 1))
-	       image_num = image_count - 1;
-	     if (image_num == 0)
-	       image_id = ep->param1.description->image.id;
-	     else if (image_num == (image_count - 1))
-	       image_id = ep->param2.description->image.id;
-	     else
-	       {
-		  Edje_Part_Image_Id *imid;
-		  
-		  imid = evas_list_nth(ep->param2.description->image.tween_list, image_num - 1);
-		  if (imid) image_id = imid->id;
-	       }
 	     if (image_id < 0)
 	       {
-		  printf("EDJE ERROR: part \"%s\" has description, \"%s\" %3.3f with a missing image id!!!\n",
-			 ep->part->name,
-			 ep->param1.description->state.name,
-			 ep->param1.description->state.value
-			 );
+		  Edje_Image_Directory_Entry *ie;
+		  
+		  ie = evas_list_nth(ed->file->image_dir->entries, (-image_id) - 1);
+		  if ((ie) && 
+		      (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) && 
+		      (ie->entry))
+		    {
+		       evas_object_image_file_set(ep->object, ie->entry, NULL);
+		    }
 	       }
 	     else
 	       {
-		  snprintf(buf, sizeof(buf), "images/%i", image_id);
-		  evas_object_image_file_set(ep->object, ed->file->path, buf);
-		  if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
+		  image_count = 2;
+		  if (ep->param2.description)
+		    image_count += evas_list_count(ep->param2.description->image.tween_list);
+		  image_num = (pos * ((double)image_count - 0.5));
+		  if (image_num > (image_count - 1))
+		    image_num = image_count - 1;
+		  if (image_num == 0)
+		    image_id = ep->param1.description->image.id;
+		  else if (image_num == (image_count - 1))
+		    image_id = ep->param2.description->image.id;
+		  else
 		    {
-		       printf("EDJE: Error loading image collection \"%s\" from file \"%s\". Missing EET Evas loader module?\n",
-			      buf, ed->file->path);
-		       if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_GENERIC)
-			 printf("Error type: EVAS_LOAD_ERROR_GENERIC\n");
-		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_DOES_NOT_EXIST)
-			 printf("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST\n");
-		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_PERMISSION_DENIED)
-			 printf("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED\n");
-		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED)
-			 printf("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED\n");
-		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_CORRUPT_FILE)
-			 printf("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE\n");
-		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_UNKNOWN_FORMAT)
-			 printf("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT\n");
+		       Edje_Part_Image_Id *imid;
+		       
+		       imid = evas_list_nth(ep->param2.description->image.tween_list, image_num - 1);
+		       if (imid) image_id = imid->id;
+		    }
+		  if (image_id < 0)
+		    {
+		       printf("EDJE ERROR: part \"%s\" has description, \"%s\" %3.3f with a missing image id!!!\n",
+			      ep->part->name,
+			      ep->param1.description->state.name,
+			      ep->param1.description->state.value
+			      );
+		    }
+		  else
+		    {
+		       snprintf(buf, sizeof(buf), "images/%i", image_id);
+		       evas_object_image_file_set(ep->object, ed->file->path, buf);
+		       if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
+			 {
+			    printf("EDJE: Error loading image collection \"%s\" from file \"%s\". Missing EET Evas loader module?\n",
+				   buf, ed->file->path);
+			    if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_GENERIC)
+			      printf("Error type: EVAS_LOAD_ERROR_GENERIC\n");
+			    else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_DOES_NOT_EXIST)
+			      printf("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST\n");
+			    else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_PERMISSION_DENIED)
+			      printf("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED\n");
+			    else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED)
+			      printf("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED\n");
+			    else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_CORRUPT_FILE)
+			      printf("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE\n");
+			    else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_UNKNOWN_FORMAT)
+			      printf("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT\n");
+			 }
 		    }
 	       }
 	     evas_object_color_set(ep->object,
