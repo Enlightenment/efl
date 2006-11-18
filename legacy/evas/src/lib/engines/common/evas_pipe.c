@@ -123,6 +123,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 #ifdef BUILD_PTHREAD
    int i, y, h;
    
+   if (!im->pipe) return;
    if (thread_num == 1) return;
    if (thread_num == 0)
      {
@@ -176,13 +177,9 @@ evas_common_pipe_begin(RGBA_Image *im)
 	y += info->h;
 #endif	     
 	thinfo[i].info = info;
-	     /* send startsignal */
-//	     printf("START %i\n", i);
      }
    /* tell worker threads to start */
-//   pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
    pthread_barrier_wait(&(thbarrier[0]));
-//   pthread_barrier_destroy(&(thbarrier[0]));
 #endif   
 }
 
@@ -198,10 +195,7 @@ evas_common_pipe_flush(RGBA_Image *im)
    if (thread_num > 1)
      {
 	/* sync worker threads */
-//	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
 	pthread_barrier_wait(&(thbarrier[1]));
-//	pthread_barrier_destroy(&(thbarrier[1]));
-//	printf("DONE\n");
      }
    else
 #endif
