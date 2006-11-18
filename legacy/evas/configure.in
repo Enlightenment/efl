@@ -995,7 +995,12 @@ AC_CHECK_HEADER(pthread.h,
     AC_CHECK_HEADER(sched.h,
       [ 
         AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np, 
-	  [ build_pthreads="yes" ],
+	  [
+            AC_CHECK_LIB(pthread, pthread_barrier_wait, 
+  	      [ build_pthreads="yes" ],
+              [ build_pthreads="no" ]
+            )
+	  ],
           [ build_pthreads="no" ]
         )
       ],
@@ -1006,7 +1011,7 @@ AC_CHECK_HEADER(pthread.h,
 )
 ### disable pthreads by default for now - some wierd deadlock issue with
 # barriers (makes no sense)
-build_pthreads="no"
+#build_pthreads="no"
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads, 
   [  --enable-pthreads               enable threaded rendering], [
