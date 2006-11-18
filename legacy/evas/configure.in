@@ -1004,6 +1004,9 @@ AC_CHECK_HEADER(pthread.h,
   ],
   [ build_pthreads="no" ]
 )
+### disable pthreads by default for now - some wierd deadlock issue with
+# barriers (makes no sense)
+build_pthreads="no"
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads, 
   [  --enable-pthreads               enable threaded rendering], [
