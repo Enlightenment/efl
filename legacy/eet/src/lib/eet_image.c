@@ -121,6 +121,12 @@ eet_data_image_jpeg_header_decode(const void *data, int size, unsigned int *w, u
    /* head decoding */
    *w = cinfo.output_width;
    *h = cinfo.output_height;
+   if ((*w < 1) || (*h < 1) || (*w > 8192) || (*h > 8192))
+     {
+	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
+	return 0;
+     }
    /* end head decoding */
    jpeg_destroy_decompress(&cinfo);
    _eet_memfile_read_close(f);
@@ -163,6 +169,12 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int *w, unsi
    /* head decoding */
    *w = cinfo.output_width;
    *h = cinfo.output_height;
+   if ((*w < 1) || (*h < 1) || (*w > 8192) || (*h > 8192))
+     {
+	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
+	return NULL;
+     }
    /* end head decoding */
    /* data decoding */
    if (cinfo.rec_outbuf_height > 16)
@@ -817,7 +829,7 @@ eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsign
 	ih = header[2];
 	al = header[3];
 	cp = header[4];
-	if ((iw > 8192) || (ih > 8192)) return 0;
+	if ((iw < 1) || (ih < 1) || (iw > 8192) || (ih > 8192)) return 0;
 	if ((cp == 0) && (size < ((iw * ih * 4) + 32))) return 0;
 	if (w) *w = iw;
 	if (h) *h = ih;
