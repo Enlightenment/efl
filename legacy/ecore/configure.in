@@ -59,15 +59,6 @@ changequote([,])dnl
 
 AC_CHECK_FUNCS(gettimeofday)
 
-tslib_libs=""
-AC_CHECK_HEADER(tslib.h,
-  [
-    tslib_libs="-ltslib"
-    AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_X Module])
-  ]
-)
-AC_SUBST(tslib_libs)
-
 AC_CHECK_HEADERS(netinet/in.h)
 
 case "$host_os" in
@@ -586,7 +577,15 @@ AC_ARG_ENABLE(ecore-fb,
   ]
 )
 
+tslib_libs=""
 if test "x$want_ecore_fb" = "xyes"; then
+  AC_CHECK_HEADER(tslib.h,
+    [
+      tslib_libs="-ltslib"
+      AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
+    ]
+  )
+
   AC_CHECK_HEADER(linux/fb.h,
     [
       AC_CHECK_HEADER(linux/input.h,
@@ -607,6 +606,7 @@ else
   AM_CONDITIONAL(BUILD_ECORE_FB, false)
 fi
 
+AC_SUBST(tslib_libs)
 AC_SUBST(ecore_fb_cflags)
 AC_SUBST(ecore_fb_libs)
 
