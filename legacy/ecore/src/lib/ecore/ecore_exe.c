@@ -848,9 +848,12 @@ ecore_exe_free(Ecore_Exe * exe)
 	ecore_timer_del(exe->doomsday_clock);
 	exe->doomsday_clock = NULL;
 	dead = exe->doomsday_clock_dead;
-	IF_FREE(dead->cmd);
-	free(dead);
-	exe->doomsday_clock_dead = NULL;
+	if (dead)
+	  {
+	     IF_FREE(dead->cmd);
+	     free(dead);
+	     exe->doomsday_clock_dead = NULL;
+	  }
      }
    IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->read_fd_handler);
