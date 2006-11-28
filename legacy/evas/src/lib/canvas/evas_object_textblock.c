@@ -746,7 +746,7 @@ _hex_string_get(char ch)
 }
 
 static void
-_format_color_parse(char *str, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
+_format_color_parse(const char *str, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
 {
    int slen;
    
@@ -793,12 +793,92 @@ _format_color_parse(char *str, unsigned char *r, unsigned char *g, unsigned char
    *b = (*b * *a) / 255;
 }
 
+static const char *fontstr;
+static const char *font_fallbacksstr;
+static const char *font_sizestr;
+static const char *font_sourcestr;
+static const char *colorstr;
+static const char *underline_colorstr;
+static const char *underline2_colorstr;
+static const char *outline_colorstr;
+static const char *shadow_colorstr;
+static const char *glow_colorstr;
+static const char *glow2_colorstr;
+static const char *backing_colorstr;
+static const char *strikethrough_colorstr;
+static const char *alignstr;
+static const char *valignstr;
+static const char *wrapstr;
+static const char *left_marginstr;
+static const char *right_marginstr;
+static const char *underlinestr;
+static const char *strikethroughstr;
+static const char *backingstr;
+static const char *stylestr;
+static const char *tabstopsstr;
+
 static void
-_format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, char *param)
+_format_command_init()
+{
+   fontstr = evas_stringshare_add("font");
+   font_fallbacksstr = evas_stringshare_add("font_fallbacks");
+   font_sizestr = evas_stringshare_add("font_size");
+   font_sourcestr = evas_stringshare_add("font_source");
+   colorstr = evas_stringshare_add("color");
+   underline_colorstr = evas_stringshare_add("underline_color");
+   underline2_colorstr = evas_stringshare_add("underline2_color");
+   outline_colorstr = evas_stringshare_add("outline_color");
+   shadow_colorstr = evas_stringshare_add("shadow_color");
+   glow_colorstr = evas_stringshare_add("glow_color");
+   glow2_colorstr = evas_stringshare_add("glow2_color");
+   backing_colorstr = evas_stringshare_add("backing_color");
+   strikethrough_colorstr = evas_stringshare_add("strikethrough_color");
+   alignstr = evas_stringshare_add("align");
+   valignstr = evas_stringshare_add("valign");
+   wrapstr = evas_stringshare_add("wrap");
+   left_marginstr = evas_stringshare_add("left_margin");
+   right_marginstr = evas_stringshare_add("right_margin");
+   underlinestr = evas_stringshare_add("underline");
+   strikethroughstr = evas_stringshare_add("strikethrough");
+   backingstr = evas_stringshare_add("backing");
+   stylestr = evas_stringshare_add("style");
+   tabstopsstr = evas_stringshare_add("tabstops");
+}
+
+static void
+_format_command_shutdown()
+{
+   evas_stringshare_del(fontstr);
+   evas_stringshare_del(font_fallbacksstr);
+   evas_stringshare_del(font_sizestr);
+   evas_stringshare_del(font_sourcestr);
+   evas_stringshare_del(colorstr);
+   evas_stringshare_del(underline_colorstr);
+   evas_stringshare_del(underline2_colorstr);
+   evas_stringshare_del(outline_colorstr);
+   evas_stringshare_del(shadow_colorstr);
+   evas_stringshare_del(glow_colorstr);
+   evas_stringshare_del(glow2_colorstr);
+   evas_stringshare_del(backing_colorstr);
+   evas_stringshare_del(strikethrough_colorstr);
+   evas_stringshare_del(alignstr);
+   evas_stringshare_del(valignstr);
+   evas_stringshare_del(wrapstr);
+   evas_stringshare_del(left_marginstr);
+   evas_stringshare_del(right_marginstr);
+   evas_stringshare_del(underlinestr);
+   evas_stringshare_del(strikethroughstr);
+   evas_stringshare_del(backingstr);
+   evas_stringshare_del(stylestr);
+   evas_stringshare_del(tabstopsstr);
+}
+
+static void
+_format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char *cmd, const char *param)
 {
    int new_font = 0;
    
-   if (!strcmp(cmd, "font"))
+   if (cmd == fontstr)
      {
 	if ((!fmt->font.name) ||
 	    ((fmt->font.name) && (strcmp(fmt->font.name, param))))
@@ -808,7 +888,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     new_font = 1;
 	  }
      }
-   else if (!strcmp(cmd, "font_fallbacks"))
+   else if (cmd == font_fallbacksstr)
      {
 	if ((!fmt->font.fallbacks) ||
 	    ((fmt->font.fallbacks) && (strcmp(fmt->font.fallbacks, param))))
@@ -821,7 +901,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     new_font = 1;
 	  }
      }
-   else if (!strcmp(cmd, "font_size"))
+   else if (cmd == font_sizestr)
      {
 	int v;
 	
@@ -832,7 +912,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     new_font = 1;
 	  }
      }
-   else if (!strcmp(cmd, "font_source"))
+   else if (cmd == font_sourcestr)
      {
 	if ((!fmt->font.source) ||
 	    ((fmt->font.source) && (strcmp(fmt->font.source, param))))
@@ -842,43 +922,43 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     new_font = 1;
 	  }
      }
-   else if (!strcmp(cmd, "color"))
+   else if (cmd == colorstr)
      _format_color_parse(param,
 			 &(fmt->color.normal.r), &(fmt->color.normal.g),
 			 &(fmt->color.normal.b), &(fmt->color.normal.a));
-   else if (!strcmp(cmd, "underline_color"))
+   else if (cmd == underline_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.underline.r), &(fmt->color.underline.g),
 			 &(fmt->color.underline.b), &(fmt->color.underline.a));
-   else if (!strcmp(cmd, "underline2_color"))
+   else if (cmd == underline2_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.underline2.r), &(fmt->color.underline2.g),
 			 &(fmt->color.underline2.b), &(fmt->color.underline2.a));
-   else if (!strcmp(cmd, "outline_color"))
+   else if (cmd == outline_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.outline.r), &(fmt->color.outline.g),
 			 &(fmt->color.outline.b), &(fmt->color.outline.a));
-   else if (!strcmp(cmd, "shadow_color"))
+   else if (cmd == shadow_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.shadow.r), &(fmt->color.shadow.g),
 			 &(fmt->color.shadow.b), &(fmt->color.shadow.a));
-   else if (!strcmp(cmd, "glow_color"))
+   else if (cmd == glow_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.glow.r), &(fmt->color.glow.g),
 			 &(fmt->color.glow.b), &(fmt->color.glow.a));
-   else if (!strcmp(cmd, "glow2_color"))
+   else if (cmd == glow2_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.glow2.r), &(fmt->color.glow2.g),
 			 &(fmt->color.glow2.b), &(fmt->color.glow2.a));
-   else if (!strcmp(cmd, "backing_color"))
+   else if (cmd == backing_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.backing.r), &(fmt->color.backing.g),
 			 &(fmt->color.backing.b), &(fmt->color.backing.a));
-   else if (!strcmp(cmd, "strikethrough_color"))
+   else if (cmd == strikethrough_colorstr)
      _format_color_parse(param,
 			 &(fmt->color.strikethrough.r), &(fmt->color.strikethrough.g),
 			 &(fmt->color.strikethrough.b), &(fmt->color.strikethrough.a));
-   else if (!strcmp(cmd, "align"))
+   else if (cmd == alignstr)
      {
 	if (!strcmp(param, "middle")) fmt->halign = 0.5;
 	else if (!strcmp(param, "center")) fmt->halign = 0.5;
@@ -903,7 +983,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     else if (fmt->halign > 1.0) fmt->halign = 1.0;
 	  }
      }
-   else if (!strcmp(cmd, "valign"))
+   else if (cmd == valignstr)
      {
         if (!strcmp(param, "top")) fmt->valign = 0.0;
 	else if (!strcmp(param, "middle")) fmt->valign = 0.5;
@@ -930,7 +1010,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     else if (fmt->valign > 1.0) fmt->valign = 1.0;
 	  }
      }
-   else if (!strcmp(cmd, "wrap"))
+   else if (cmd == wrapstr)
      {
 	if (!strcmp(param, "word"))
 	  {
@@ -948,7 +1028,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     fmt->wrap_char = 0;
 	  }
      }
-   else if (!strcmp(cmd, "left_margin"))
+   else if (cmd == left_marginstr)
      {
 	if (!strcmp(param, "reset"))
 	  fmt->margin.l = 0;
@@ -963,7 +1043,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     if (fmt->margin.l < 0) fmt->margin.l = 0;
 	  }
      }
-   else if (!strcmp(cmd, "right_margin"))
+   else if (cmd == right_marginstr)
      {
 	if (!strcmp(param, "reset"))
 	  fmt->margin.r = 0;
@@ -978,7 +1058,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     if (fmt->margin.r < 0) fmt->margin.r = 0;
 	  }
      }
-   else if (!strcmp(cmd, "underline"))
+   else if (cmd == underlinestr)
      {
 	if (!strcmp(param, "off"))
 	  {
@@ -997,21 +1077,21 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     fmt->underline2 = 1;
 	  }
      }
-   else if (!strcmp(cmd, "strikethrough"))
+   else if (cmd == strikethroughstr)
      {
 	if (!strcmp(param, "off"))
 	  fmt->strikethrough = 0;
 	else if (!strcmp(param, "on"))
 	  fmt->strikethrough = 1;
      }
-   else if (!strcmp(cmd, "backing"))
+   else if (cmd == backingstr)
      {
 	if (!strcmp(param, "off"))
 	  fmt->backing = 0;
 	else if (!strcmp(param, "on"))
 	  fmt->backing = 1;
      }
-   else if (!strcmp(cmd, "style"))
+   else if (cmd == stylestr)
      {
 	if (!strcmp(param, "off")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
 	else if (!strcmp(param, "none")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
@@ -1027,7 +1107,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	else if (!strcmp(param, "far_soft_shadow")) fmt->style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
 	else fmt->style = EVAS_TEXT_STYLE_PLAIN;
      }
-   else if (!strcmp(cmd, "tabstops"))
+   else if (cmd == tabstopsstr)
      {
 	fmt->tabstops = atoi(param);
 	if (fmt->tabstops < 1) fmt->tabstops = 1;
@@ -1064,18 +1144,18 @@ _format_is_param(char *item)
 }
 
 static void
-_format_param_parse(char *item, char **key, char **val)
+_format_param_parse(char *item, const char **key, const char **val)
 {
    char *p;
-   char *k, *v;
+   const char *k, *v;
    
    p = strchr(item, '=');
-   k = malloc(p - item + 1);
-   strncpy(k, item, p - item);
-   k[p - item] = 0;
+   *p = '\0';
+   k = evas_stringshare_add(item);
    *key = k;
+   *p = '=';
    p++;
-   v = strdup(p);
+   v = evas_stringshare_add(p);
    *val = v;
 }
 
@@ -1139,12 +1219,12 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *str)
      {
 	if (_format_is_param(item))
 	  {
-	     char *key = NULL, *val = NULL;
+	     const char *key = NULL, *val = NULL;
 	     
 	     _format_param_parse(item, &key, &val);
 	     _format_command(obj, fmt, key, val);
-	     free(key);
-	     free(val);
+	     evas_stringshare_del(key);
+	     evas_stringshare_del(val);
 	  }
 	else
 	  {
@@ -1279,12 +1359,12 @@ _layout_format_pop(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 static void
 _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *item)
 {
-   char *key = NULL, *val = NULL;
+   const char *key = NULL, *val = NULL;
    
    _format_param_parse(item, &key, &val);
    if ((key) && (val)) _format_command(c->obj, fmt, key, val);
-   if (key) free(key);
-   if (val) free(val);
+   if (key) evas_stringshare_del(key);
+   if (val) evas_stringshare_del(val);
    c->align = fmt->halign;
    c->marginl = fmt->margin.l;
    c->marginr = fmt->margin.r;
@@ -1873,6 +1953,8 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
    c->line_no = 0;
    c->align = 0.0;
 
+   _format_command_init();
+
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
@@ -1881,6 +1963,7 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
      }
    if (!fmt)
      {
+	_format_command_shutdown();
 	if (w_ret) *w_ret = 0;
 	if (h_ret) *h_ret = 0;
 	return;
@@ -2021,14 +2104,17 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 	o->style_pad.b = style_pad_b;
 	_layout(obj, calc_only, w, h, w_ret, h_ret);
         _lines_clear(obj, lines);
+	_format_command_shutdown();
 	return;
      }
    if (!calc_only)
      {
 	o->lines = c->lines;
+	_format_command_shutdown();
 	return;
      }
    if (c->lines) _lines_clear(obj, c->lines);
+   _format_command_shutdown();
 }
 
 static void
