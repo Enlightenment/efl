@@ -874,10 +874,29 @@ _format_command_shutdown()
 }
 
 static void
+_format_clean_param(char *dst, const char *src)
+{
+   const char *ss;
+   char *ds;
+
+   ds = dst;
+   for (ss = src; *ss; ss++, ds++)
+     {
+        if ((*ss == '\\') && *(ss + 1)) ss++;
+        *ds = *ss;
+     }
+   *ds = 0;
+}
+
+static void
 _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char *cmd, const char *param)
 {
    int new_font = 0;
+   char *tmp_param;
+
+   tmp_param = alloca(strlen(param) + 1);
    
+   _format_clean_param(tmp_param, param);
    if (cmd == fontstr)
      {
 	if ((!fmt->font.name) ||
@@ -1162,7 +1181,7 @@ _format_param_parse(char *item, const char **key, const char **val)
 static char *
 _format_parse(char **s)
 {
-   char *p, *item, *ss, *ds;
+   char *p, *item;
    char *s1 = NULL, *s2 = NULL;
    
    p = *s;
@@ -1185,17 +1204,8 @@ _format_parse(char **s)
 	p++;
 	if (s1 && s2)
 	  {
-	     item = malloc(s2 - s1 + 1);
-	     if (item)
-	       {
-		  ds = item;
-		  for (ss = s1; ss < s2; ss++, ds++)
-		    {
-		       if ((*ss == '\\') && (ss < (s2 - 1))) ss++;
-		       *ds = *ss;
-		    }
-		  *ds = 0;
-	       }
+	     item = s1;
+
 	     *s = s2;
 	     return item;
 	  }
@@ -1217,6 +1227,8 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *str)
 
    while ((item = _format_parse(&s)))
      {
+	char tmp_delim = *s;
+	*s = '\0';
 	if (_format_is_param(item))
 	  {
 	     const char *key = NULL, *val = NULL;
@@ -1230,7 +1242,7 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *str)
 	  {
 	     /* immediate - not handled here */
 	  }
-	free(item);
+	*s = tmp_delim;
      }
 }
 
@@ -1993,6 +2005,8 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 	       }
 	     while ((item = _format_parse(&s)))
 	       {
+		  char tmp_delim = *s;
+		  *s = '\0';
 		  if (_format_is_param(item))
 		    _layout_format_value_handle(c, fmt, item);
 		  else
@@ -2034,7 +2048,7 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 			    c->x = x2;
 			 }
 		    }
-		  free(item);
+		  *s = tmp_delim;
 	       }
 
 	     evas_text_style_pad_get(fmt->style, &style_pad_l, &style_pad_r, &style_pad_t, &style_pad_b);
