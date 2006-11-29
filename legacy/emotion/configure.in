@@ -81,25 +81,6 @@ dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source Directory])
 
-function vser
-{
-  v=$1
-  VSTART=`echo $v | awk -F_ '{printf("%s", $1);}'`
-  V1=`echo $VSTART | awk -F\. '{printf("%s", $1);}'`
-  V2=`echo $VSTART | awk -F\. '{printf("%s", $2);}'`
-  V3=`echo $VSTART | awk -F\. '{printf("%s", $3);}'`
-  V4="0"
-  VEND=`echo $v | awk -F_ '{printf("%s", $2);}'`
-  if test -n "$VEND"; then
-    V4=`echo $VEND | sed s/pre//`
-  fi
-  V3=$(( $V3 * 100  ));
-  V2=$(( $V2 * 10000  ));
-  V1=$(( $V1 * 1000000  ));
-  V=$(( $V4 + $V3 + $V2 + $V1 ));
-  echo $V
-}
-
 AC_PATH_GENERIC(eet, 0.9.10,
   [ ],
   [ AC_MSG_ERROR(Eet isn't installed)]
