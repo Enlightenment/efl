@@ -1108,10 +1108,22 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
 void
 _ecore_x_event_handle_selection_request(XEvent *xevent)
 {
+   Ecore_X_Event_Selection_Request  *e;
    Ecore_X_Selection_Intern         *sd;
    XSelectionEvent                  xnotify;
    XEvent                           xev;
    void                             *data;
+
+   /*
+    * Generate a selection request event.
+    */
+   e = malloc(sizeof(Ecore_X_Event_Selection_Request));
+   e->win = xevent->xselectionrequest.requestor;
+   e->time = xevent->xselectionrequest.time;
+   e->selection = xevent->xselectionrequest.selection;
+   e->target = xevent->xselectionrequest.target;
+   e->property = xevent->xselectionrequest.property;
+   ecore_event_add(ECORE_X_EVENT_SELECTION_REQUEST, e, NULL, NULL);
 
    xnotify.type = SelectionNotify;
    xnotify.display = xevent->xselectionrequest.display;

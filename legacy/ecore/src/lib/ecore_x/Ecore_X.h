@@ -539,8 +539,11 @@ struct _Ecore_X_Event_Selection_Clear
 
 struct _Ecore_X_Event_Selection_Request
 {
-   Ecore_X_Window  win;
-   Ecore_X_Time    time;
+   Ecore_X_Window    win;
+   Ecore_X_Time      time;
+   Ecore_X_Atom      selection;
+   Ecore_X_Atom      target;
+   Ecore_X_Atom      property;
 };
 
 struct _Ecore_X_Event_Selection_Notify
