@@ -95,9 +95,12 @@ struct _Evas_Rectangle /** A rectangle */
    int h; /**< height of rectangle */
 };
 
+#define EVAS_SMART_CLASS_VERSION 1 /** the version you have to put into the version field in the smart class struct */
 struct _Evas_Smart_Class /** a smart object class */
 {
    const char *name; /** the string name of the class */
+   
+   int version;
 
    void  (*add)         (Evas_Object *o);
    void  (*del)         (Evas_Object *o);
