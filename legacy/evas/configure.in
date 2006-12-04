@@ -946,7 +946,7 @@ svg_cflags=""
 svg_libs=""
 if test "x$have_svg" = "xyes"; then
    # Check if really available
-   PKG_CHECK_MODULES(SVG, librsvg-2.0,
+   PKG_CHECK_MODULES(SVG, librsvg-2.0 >= 2.14.0,
 	 [ 
 	     have_svg="yes"
 	 ],

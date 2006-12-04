@@ -22,6 +22,7 @@
 %bcond_with    module_engine_software_qtopia
 %bcond_with    module_engine_software_xcb
 %bcond_with    module_engine_xrender_x11
+%bcond_with    module_loader_svg
 
 ## enabled features
 %bcond_without module_engine_software_x11
@@ -37,10 +38,34 @@
 %bcond_without module_loader_eet
 %bcond_without module_saver_eet
 %bcond_without module_loader_xpm
-%bcond_without module_loader_svg
 
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
+
+# Macros for ./configure use
+%define ac_with_module_loader_eet --%{?with_module_loader_eet:en}%{!?with_module_loader_eet:dis}able-image-loader-eet
+%define ac_with_module_loader_jpeg --%{?with_module_loader_jpeg:en}%{!?with_module_loader_jpeg:dis}able-image-loader-jpeg
+%define ac_with_module_loader_png --%{?with_module_loader_png:en}%{!?with_module_loader_png:dis}able-image-loader-png
+%define ac_with_module_loader_tiff --%{?with_module_loader_tiff:en}%{!?with_module_loader_tiff:dis}able-image-loader-tiff
+%define ac_with_module_loader_gif --%{?with_module_loader_gif:en}%{!?with_module_loader_gif:dis}able-image-loader-gif
+%define ac_with_module_loader_edb --%{?with_module_loader_edb:en}%{!?with_module_loader_edb:dis}able-image-loader-edb
+%define ac_with_module_loader_xpm --%{?with_module_loader_xpm:en}%{!?with_module_loader_xpm:dis}able-image-loader-xpm
+%define ac_with_module_loader_svg --%{?with_module_loader_svg:en}%{!?with_module_loader_svg:dis}able-image-loader-svg
+%define ac_with_module_saver_eet --%{?with_module_saver_eet:en}%{!?with_module_saver_eet:dis}able-image-saver-eet
+%define ac_with_module_saver_jpeg --%{?with_module_saver_jpeg:en}%{!?with_module_saver_jpeg:dis}able-image-saver-jpeg
+%define ac_with_module_saver_png --%{?with_module_saver_png:en}%{!?with_module_saver_png:dis}able-image-saver-png
+%define ac_with_module_saver_tiff --%{?with_module_saver_tiff:en}%{!?with_module_saver_tiff:dis}able-image-saver-tiff
+%define ac_with_module_saver_gif --%{?with_module_saver_gif:en}%{!?with_module_saver_gif:dis}able-image-saver-gif
+%define ac_with_module_saver_edb --%{?with_module_saver_edb:en}%{!?with_module_saver_edb:dis}able-image-saver-edb
+%define ac_with_module_saver_xpm --%{?with_module_saver_xpm:en}%{!?with_module_saver_xpm:dis}able-image-saver-xpm
+%define ac_with_module_engine_software-x11 --%{?with_module_engine_fb:en}%{!?with_module_engine_fb:dis}able-software-x11
+%define ac_with_module_engine_buffer --%{?with_module_engine_buffer:en}%{!?with_module_engine_buffer:dis}able-buffer
+%define ac_with_module_engine_fb --%{?with_module_engine_fb:en}%{!?with_module_engine_fb:dis}able-fb
+%define ac_with_module_engine_xrender_x11 --%{?with_module_engine_xrender_x11:en}%{!?with_module_engine_xrender_x11:dis}able-xrender-x11
+%define ac_with_module_engine_gl_x11 --%{?with_module_engine_gl_x11:en}%{!?with_module_engine_gl_x11:dis}able-gl-x11
+%define ac_with_module_engine_directfb --%{?with_module_engine_directfb:en}%{!?with_module_engine_directfb:dis}able-directfb
+%define ac_with_module_engine_software_qtopia --%{?with_module_engine_software_qtopia:en}%{!?with_module_engine_software_qtopia:dis}able-software-qtopia
+%define ac_with_module_engine_software_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
 
 Summary: Multi-platform Canvas Library
 Name: @PACKAGE@
@@ -77,9 +102,6 @@ Group: System Environment/Libraries
 BuildRequires: eet-devel
 %description module_loader_eet
 EET Image loader module for Evas
-%define ac_with_module_loader_eet --enable-image-loader-eet
-%else
-%define ac_with_module_loader_eet --disable-image-loader-eet
 %endif
 
 %if %{with module_saver_eet}
@@ -98,9 +120,6 @@ Group: System Environment/Libraries
 BuildRequires: libjpeg-devel
 %description module_loader_jpeg
 JPEG Image loader module for Evas
-%define ac_with_module_loader_jpeg --enable-image-loader-jpeg
-%else
-%define ac_with_module_loader_jpeg --disable-image-loader-jpeg
 %endif
 
 %if %{with module_saver_jpeg}
@@ -119,9 +138,6 @@ Group: System Environment/Libraries
 BuildRequires: libpng-devel
 %description module_loader_png
 PNG Image loader module for Evas
-%define ac_with_module_loader_png --enable-image-loader-png
-%else
-%define ac_with_module_loader_png --disable-image-loader-png
 %endif
 
 %if %{with module_saver_png}
@@ -140,9 +156,6 @@ Group: System Environment/Libraries
 BuildRequires: libtiff-devel
 %description module_loader_tiff
 TIFF Image loader module for Evas
-%define ac_with_module_loader_tiff --enable-image-loader-tiff
-%else
-%define ac_with_module_loader_tiff --disable-image-loader-tiff
 %endif
 
 %if %{with module_saver_tiff}
@@ -162,9 +175,6 @@ Group: System Environment/Libraries
 BuildRequires: /usr/include/gif_lib.h
 %description module_loader_gif
 GIF Image loader module for Evas
-%define ac_with_module_loader_gif --enable-image-loader-gif
-%else
-%define ac_with_module_loader_gif --disable-image-loader-gif
 %endif
 
 %if %{with module_loader_edb}
@@ -174,9 +184,6 @@ Group: System Environment/Libraries
 BuildRequires: edb-devel
 %description module_loader_edb
 EDB Image loader module for Evas
-%define ac_with_module_loader_edb --enable-image-loader-edb
-%else
-%define ac_with_module_loader_edb --disable-image-loader-edb
 %endif
 
 %if %{with module_saver_edb}
@@ -195,21 +202,15 @@ Group: System Environment/Libraries
 ##BuildRequires: (none, X?)
 %description module_loader_xpm
 XPM Image loader module for Evas
-%define ac_with_module_loader_xpm --enable-image-loader-xpm
-%else
-%define ac_with_module_loader_xpm --disable-image-loader-xpm
 %endif
 
 %if %{with module_loader_svg}
 %package module_loader_svg
 Summary: SVG Image loader module for Evas
 Group: System Environment/Libraries
-##BuildRequires: (none, X?)
+BuildRequires: librsvg-devel >= 2.14
 %description module_loader_svg
 svg Image loader module for Evas
-%define ac_with_module_loader_svg --enable-image-loader-svg
-%else
-%define ac_with_module_loader_svg --disable-image-loader-svg
 %endif
 
 %package module_engine_software_generic
@@ -227,9 +228,6 @@ Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_x11
 Software X11 rendering engine module for Evas
-%define ac_with_module_engine_software-x11 --enable-software-x11
-%else
-%define ac_with_module_engine_software-x11 --disable-software-x11
 %endif
 
 %if %{with module_engine_buffer}
@@ -240,9 +238,6 @@ Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_buffer
 Memory Buffer rendering engine module for Evas
-%define ac_with_module_engine_buffer --enable-buffer
-%else
-%define ac_with_module_engine_buffer --disable-buffer
 %endif
 
 %if %{with module_engine_fb}
@@ -253,9 +248,6 @@ Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_fb
 Framebuffer rendering engine module for Evas
-%define ac_with_module_engine_fb --enable-fb
-%else
-%define ac_with_module_engine_fb --disable-fb
 %endif
 
 %if %{with module_engine_xrender_x11}
@@ -268,9 +260,6 @@ Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_xrender_x11
 XRender rendering engine module for Evas
-%define ac_with_module_engine_xrender_x11 --enable-xrender-x11
-%else
-%define ac_with_module_engine_xrender_x11 --disable-xrender-x11
 %endif
 
 %if %{with module_engine_gl_x11}
@@ -281,9 +270,6 @@ Group: System Environment/Libraries
 Requires: evas
 %description module_engine_gl_x11
 OpenGL under X11 rendering engine module for Evas
-%define ac_with_module_engine_gl_x11 --enable-gl-x11
-%else
-%define ac_with_module_engine_gl_x11 --disable-gl-x11
 %endif
 
 %if %{with module_engine_directfb}
@@ -295,9 +281,6 @@ BuildRequires: /usr/include/directfb/dfb_types.h
 Requires: evas
 %description module_engine_directfb
 Directfb rendering engine module for Evas
-%define ac_with_module_engine_directfb --enable-directfb
-%else
-%define ac_with_module_engine_directfb --disable-directfb
 %endif
 
 %if %{with module_engine_software_qtopia}
@@ -309,9 +292,6 @@ Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_qtopia
 Qtopia rendering engine module for Evas
-%define ac_with_module_engine_software_qtopia --enable-software-qtopia
-%else
-%define ac_with_module_engine_software_qtopia --disable-software-qtopia
 %endif
 
 %if %{with module_engine_software_xcb}
@@ -323,9 +303,6 @@ Requires: evas-module_engine_software_generic
 Requires: evas
 %description module_engine_software_xcb
 Software XCB X11 rendering engine module for Evas
-%define ac_with_module_engine_software_xcb --enable-software-xcb
-%else
-%define ac_with_module_engine_software_xcb --disable-software-xcb
 %endif
 
 %prep
@@ -333,27 +310,27 @@ Software XCB X11 rendering engine module for Evas
 
 %build
 %{configure} --prefix=%{_prefix} --x-libraries=%{_prefix}/X11R6/%{_lib} \
-    %{ac_with_module_loader_eet} \
-    %{ac_with_module_saver_eet} \
-    %{ac_with_module_loader_jpeg} \
-    %{ac_with_module_saver_jpeg} \
-    %{ac_with_module_loader_png} \
-    %{ac_with_module_saver_png} \
-    %{ac_with_module_loader_tiff} \
-    %{ac_with_module_saver_tiff} \
-    %{ac_with_module_loader_gif} \
-    %{ac_with_module_loader_edb} \
-    %{ac_with_module_saver_edb} \
-    %{ac_with_module_loader_xpm} \
-    %{ac_with_module_loader_svg} \
-    %{ac_with_module_engine_software_x11} \
-    %{ac_with_module_engine_buffer} \
-    %{ac_with_module_engine_fb} \
-    %{ac_with_module_engine_xrender_x11} \
-    %{ac_with_module_engine_gl_x11} \
-    %{ac_with_module_engine_directfb} \
-    %{ac_with_module_engine_software_qtopia} \
-    %{ac_with_module_engine_software_xcb} \
+    %{?ac_with_module_loader_eet} \
+    %{?ac_with_module_saver_eet} \
+    %{?ac_with_module_loader_jpeg} \
+    %{?ac_with_module_saver_jpeg} \
+    %{?ac_with_module_loader_png} \
+    %{?ac_with_module_saver_png} \
+    %{?ac_with_module_loader_tiff} \
+    %{?ac_with_module_saver_tiff} \
+    %{?ac_with_module_loader_gif} \
+    %{?ac_with_module_loader_edb} \
+    %{?ac_with_module_saver_edb} \
+    %{?ac_with_module_loader_xpm} \
+    %{?ac_with_module_loader_svg} \
+    %{?ac_with_module_engine_software_x11} \
+    %{?ac_with_module_engine_buffer} \
+    %{?ac_with_module_engine_fb} \
+    %{?ac_with_module_engine_xrender_x11} \
+    %{?ac_with_module_engine_gl_x11} \
+    %{?ac_with_module_engine_directfb} \
+    %{?ac_with_module_engine_software_qtopia} \
+    %{?ac_with_module_engine_software_xcb} \
     $RPM_CONFIGURE_OPTS
 %{__make} %{?_smp_mflags} %{?mflags}
 test -x `which doxygen` && /bin/sh gendoc || :
