@@ -16,15 +16,18 @@
 %endif
 
 ## disabled features
-%bcond_with    lib_ecore_fb
 
-## not setup yet...
 ## enabled features
 ##%bcond_without module_engine_software_x11
+%bcond_without lib_ecore_fb
+%bcond_without lib_ecore_directfb
 
 
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
+
+%define ac_with_lib_ecore_fb  --%{?with_lib_ecore_fb:en}%{!?with_lib_ecore_fb:dis}able-ecore-fb
+%define ac_with_lib_ecore_directfb --%{?with_lib_ecore_directfb:en}%{!?with_lib_ecore_directfb:dis}able-ecore-dfb
 
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@
@@ -53,9 +56,9 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: openssl-devel, evas-devel, eet-devel
-Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop, ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt, ecore-x
-##removed fb
-##Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop, ecore-evas, ecore-fb, ecore-file, ecore-ipc, ecore-job, ecore-txt, ecore-x
+Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop,
+Requires: ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt
+Requires: ecore-x %{?with_lib_ecore_fb:ecore-fb} %{?with_lib_ecore_directfb:ecore-directfb}
 
 %description devel
 Ecore development files
@@ -100,6 +103,15 @@ Requires: %{name} = %{version}
 %description desktop
 Ecore freedesktop.org .desktop, icon, menu parsing Library
 
+%if %{with lib_ecore_directfb}
+%package directfb
+Summary: Ecore DirectFB system functions
+Group: Development/Libraries
+Requires: %{name} = %{version}
+%description directfb
+Ecore DirectFB system functions
+%endif
+
 %package evas
 Summary: Ecore Evas Wrapper Library
 Group: Development/Libraries
@@ -115,9 +127,6 @@ Group: Development/Libraries
 Requires: %{name} = %{version}
 %description fb
 Ecore frame buffer system functions
-%define ac_with_lib_ecore_fb --enable-ecore-fb
-%else
-%define ac_with_lib_ecore_fb --disable-ecore-fb
 %endif
 
 %package file
@@ -160,8 +169,6 @@ Requires: %{name} = %{version}
 %description x
 Ecore functions for dealing with the X Windows System
 
-
-
 %prep
 %setup -q -n %{name}-%{version}
 
@@ -169,8 +176,7 @@ Ecore functions for dealing with the X Windows System
 CFLAGS="-I/usr/kerberos/include -I/usr/X11R6/include/X11/extensions"
 LDFLAGS="-L/usr/kerberos/lib -L/usr/X11R6/%{_lib}"
 export CFLAGS LDFLAGS
-%{configure} --prefix=%{_prefix} --disable-ecore-dfb \
-   %{ac_with_lib_ecore_fb}
+%{configure} --prefix=%{_prefix} %{?ac_with_lib_ecore_fb} %{?ac_with_lib_ecore_directfb}
 %{__make} %{?_smp_mflags} %{?mflags}
 
 %install
@@ -220,6 +226,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files desktop
 %defattr(-, root, root)
 %{_libdir}/libecore_desktop.so.*
+
+%if %{with lib_ecore_directfb}
+%files directfb
+%defattr(-, root, root)
+%{_libdir}/libecore_directfb.so.*
+%endif
 
 %files evas
 %defattr(-, root, root)
