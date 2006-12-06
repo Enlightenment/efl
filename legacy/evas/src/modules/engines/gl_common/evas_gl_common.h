@@ -42,24 +42,25 @@ struct _Evas_GL_Context
 {
    int             w, h;
 
-   char            dither : 1;
-   char            blend : 1;
+   unsigned char   dither : 1;
+   unsigned char   blend : 1;
+   unsigned char   blend_alpha : 1;
    unsigned char   r, g, b, a;
 
    struct {
-      char         size : 1;
-      char         dither : 1;
-      char         blend : 1;
-      char         color : 1;
-      char         texture : 1;
-      char         clip : 1;
-      char         buf : 1;
-      char         other : 1;
+      unsigned char size : 1;
+      unsigned char dither : 1;
+      unsigned char blend : 1;
+      unsigned char color : 1;
+      unsigned char texture : 1;
+      unsigned char clip : 1;
+      unsigned char buf : 1;
+      unsigned char other : 1;
    } change;
 
    struct {
-      char         active : 1;
-      int          x, y, w, h;
+      unsigned char active : 1;
+      int           x, y, w, h;
    } clip;
 
    struct {
@@ -74,7 +75,7 @@ struct _Evas_GL_Context
 
    Evas_GL_Texture      *texture;
    GLuint                font_texture;
-   char                  font_texture_rectangle : 1;
+   unsigned char         font_texture_rectangle : 1;
 
    int             max_texture_depth;
    int             max_texture_size;
@@ -96,12 +97,12 @@ struct _Evas_GL_Texture
 
    GLuint           texture;
 
-   char             smooth : 1;
-   char             changed : 1;
-   char             have_mipmaps : 1;
-   char             rectangle : 1;
-   char             not_power_of_two : 1;
-   char             opt : 1;
+   unsigned char    smooth : 1;
+   unsigned char    changed : 1;
+   unsigned char    have_mipmaps : 1;
+   unsigned char    rectangle : 1;
+   unsigned char    not_power_of_two : 1;
+   unsigned char    opt : 1;
 
    int              references;
 };
@@ -114,8 +115,8 @@ struct _Evas_GL_Image
    RGBA_Image_Loadopts load_opts;
    int              putcount;
    int              references;
-   char             dirty : 1;
-   char             cached : 1;
+   unsigned char    dirty : 1;
+   unsigned char    cached : 1;
 };
 
 struct _Evas_GL_Polygon
@@ -153,7 +154,7 @@ struct _Evas_GL_Font_Texture_Pool
    int              w, h;
    GLuint           texture;
    int              references;
-   char             rectangle : 1;
+   unsigned char    rectangle : 1;
    Evas_List       *allocations;
 };
 

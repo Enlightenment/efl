@@ -181,9 +181,14 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context 
 	int r, g, b, a;
 
 	a = (dc->col.col >> 24) & 0xff;
+	if (a == 0) return;
 	r = (dc->col.col >> 16) & 0xff;
 	g = (dc->col.col >> 8 ) & 0xff;
 	b = (dc->col.col      ) & 0xff;
+	/* have to un-premul the color - as we are using blend mode 2 (non-premul blend) */
+	r = (r * 255) / a;
+	g = (g * 255) / a;
+	b = (b * 255) / a;
 	evas_gl_common_context_color_set(gc, r, g, b, a);
 	if (dc->clip.use)
 	  evas_gl_common_context_clip_set(gc, 1,
@@ -192,7 +197,7 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context 
 	else
 	  evas_gl_common_context_clip_set(gc, 0,
 					  0, 0, 0, 0);
-	evas_gl_common_context_blend_set(gc, 1);
+	evas_gl_common_context_blend_set(gc, 2);
 	evas_gl_common_context_read_buf_set(gc, GL_BACK);
 	evas_gl_common_context_write_buf_set(gc, GL_BACK);
      }

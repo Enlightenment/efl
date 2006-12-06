@@ -73,8 +73,8 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 // this causes at least nvidia's drivers to go into pathological pain when
 // changing textures a lot (doing video). so we wont do anything with this
 // for now, but it does work.
-	     gc->ext.arb_texture_non_power_of_two = 0; printf("DISABLE GL_ARB_texture_non_power_of_two\n");
-//	     gc->ext.nv_texture_rectangle = 0; printf("DISABLE GL_NV_texture_rectangle\n");
+//	     gc->ext.arb_texture_non_power_of_two = 0; printf("DISABLE GL_ARB_texture_non_power_of_two\n");
+	     gc->ext.nv_texture_rectangle = 0; printf("DISABLE GL_NV_texture_rectangle\n");
 	  }
 	else
 	  {
@@ -127,9 +127,27 @@ evas_gl_common_context_color_set(Evas_GL_Context *gc, int r, int g, int b, int a
 void
 evas_gl_common_context_blend_set(Evas_GL_Context *gc, int blend)
 {
-   if (((blend) && (gc->blend)) || ((!blend) && (!gc->blend))) return;
-   gc->change.blend = 1;
-   gc->blend = blend;
+   if (blend == 1)
+     {
+	if (gc->blend) return;
+	gc->change.blend = 1;
+	gc->blend = 1;
+	gc->blend_alpha = 0;
+     }
+   else if (blend == 2)
+     {
+	if (gc->blend_alpha) return;
+	gc->change.blend = 1;
+	gc->blend = 0;
+	gc->blend_alpha = 1;
+     }
+   else
+     {
+	if ((!gc->blend) && (!gc->blend_alpha)) return;
+	gc->change.blend = 1;
+	gc->blend = 0;
+	gc->blend_alpha = 0;
+     }
    if (_evas_gl_common_context == gc) _evas_gl_common_blend_set(gc);
 }
 
@@ -267,7 +285,12 @@ static void
 _evas_gl_common_blend_set(Evas_GL_Context *gc)
 {
    if (!gc->change.blend) return;
-   if (gc->blend)
+   if (gc->blend_alpha)
+     {
+	glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     }
+   else if (gc->blend)
      {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -350,7 +373,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 		    {
 		       if (gc->texture->smooth)
 			 {
-			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			    if (gc->texture->have_mipmaps)
 			      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
