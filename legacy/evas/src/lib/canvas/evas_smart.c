@@ -4,9 +4,39 @@
 /* all public */
 
 /**
- * To be documented.
+ * @defgroup Evas_Smart_Group Evas Smart Functions
  *
- * FIXME: To be fixed.
+ * Functions that deal with Evas_Smart's.
+ *
+ */
+
+/**
+ * Create an Evas_Smart, which can be used to instantiate new smart objects.
+ *
+ * This function internally creates an Evas_Smart_Class and sets the
+ * provided callbacks. Callbacks that are unneeded (or marked DEPRECATED
+ * below) should be set to NULL.
+ *
+ * Alternatively you can create an Evas_Smart_Class yourself and use 
+ * evas_smart_class_new().
+ *
+ * @param name a unique name for the smart
+ * @param func_add callback called when smart object is added
+ * @param func_del callback called when smart object is deleted
+ * @param func_layer_set DEPRECATED
+ * @param func_raise DEPRECATED
+ * @param func_lower DEPRECATED
+ * @param func_stack_above DEPRECATED
+ * @param func_stack_below DEPRECATED
+ * @param func_move callback called when smart object is moved 
+ * @param func_resize callback called when smart object is resized 
+ * @param func_show callback called when smart object is shown
+ * @param func_hide callback called when smart object is hidden
+ * @param func_color_set callback called when smart object has its color set
+ * @param func_clip_set callback called when smart object has its clip set
+ * @param func_clip_unset callback called when smart object has its clip unset
+ * @param data a pointer to user data for the smart
+ * @return an Evas_Smart
  *
  */
 EAPI Evas_Smart *
@@ -60,9 +90,12 @@ evas_smart_new(const char *name,
 }
 
 /**
- * To be documented.
+ * Free an Evas_Smart
  *
- * FIXME: To be fixed.
+ * If this smart was created using evas_smart_class_new(), the associated
+ * Evas_Smart_Class will not be freed.
+ *
+ * @param s the Evas_Smart to free
  *
  */
 EAPI void
@@ -78,10 +111,10 @@ evas_smart_free(Evas_Smart *s)
 }
 
 /**
- * To be documented.
+ * Creates an Evas_Smart from an Evas_Smart_Class.
  *
- * FIXME: To be fixed.
- *
+ * @param Evas_Smart_Class the smart class definition
+ * @return an Evas_Smart
  */
 EAPI Evas_Smart *
 evas_smart_class_new(Evas_Smart_Class *sc)
@@ -104,10 +137,10 @@ evas_smart_class_new(Evas_Smart_Class *sc)
 }
 
 /**
- * To be documented.
+ * Get the Evas_Smart_Class of an Evas_Smart
  *
- * FIXME: To be fixed.
- *
+ * @param s the Evas_Smart
+ * @return the Evas_Smart_Class
  */
 EAPI Evas_Smart_Class *
 evas_smart_class_get(Evas_Smart *s)
@@ -119,9 +152,13 @@ evas_smart_class_get(Evas_Smart *s)
 }
 
 /**
- * To be documented.
+ * Get the data pointer set on an Evas_Smart.
  *
- * FIXME: To be fixed.
+ * This data pointer is set either as the final parameter to 
+ * evas_smart_new or as the data field in the Evas_Smart_Class passed
+ * in to evas_smart_class_new
+ *
+ * @param Evas_Smart 
  *
  */
 EAPI void *

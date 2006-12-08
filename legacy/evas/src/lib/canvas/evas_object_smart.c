@@ -48,10 +48,23 @@ static Evas_Object_Func object_func =
 
 /* public funcs */
 /**
- * To be documented.
+ * @defgroup Evas_Smart_Object_Group Evas Smart Object Functions
  *
- * FIXME: To be fixed.
+ * Functions dealing with evas smart objects.
  *
+ * Smart objects are groupings of primitive evas objects that behave as a
+ * cohesive group. For instance, a file manager icon may be a smart object
+ * composed of an image object, a text label and two rectangles that appear
+ * behind the image and text when the icon is selected. As a smart object,
+ * the normal evas api could be used on the icon object.
+ *
+ */
+/**
+ * Store a pointer to user data for a smart object.
+ *
+ * @param obj The smart object
+ * @param data A pointer to user data
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI void
 evas_object_smart_data_set(Evas_Object *obj, void *data)
@@ -69,10 +82,12 @@ evas_object_smart_data_set(Evas_Object *obj, void *data)
 }
 
 /**
- * To be documented.
+ * Retrieve user data stored on a smart object.
  *
- * FIXME: To be fixed.
- *
+ * @param obj The smart object
+ * @return A pointer to data stored using evas_object_smart_data_set(), or 
+ *         NULL if none has been set.
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI void *
 evas_object_smart_data_get(Evas_Object *obj)
@@ -90,10 +105,11 @@ evas_object_smart_data_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Get the Evas_Smart from which @p obj was created.
  *
- * FIXME: To be fixed.
- *
+ * @param obj a smart object
+ * @return the Evas_Smart
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Smart *
 evas_object_smart_smart_get(Evas_Object *obj)
@@ -111,10 +127,18 @@ evas_object_smart_smart_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Set an evas object as a member of a smart object.
  *
- * FIXME: To be fixed.
+ * @param obj The member object
+ * @param smart_obj The smart object
  *
+ * Members will automatically be stacked and layered with the smart object. 
+ * The various stacking function will operate on members relative to the
+ * other members instead of the entire canvas.
+ *
+ * Non-member objects can not interleave a smart object's members.
+ *
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI void
 evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
@@ -160,9 +184,14 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 }
 
 /**
- * To be documented.
+ * Removes a member object from a smart object.
  *
- * FIXME: To be fixed.
+ * @param obj the member object
+ * @ingroup Evas_Smart_Object_Group
+ *
+ * This removes a member object from a smart object. The object will still
+ * be on the canvas, but no longer associated with whichever smart object
+ * it was associated with.
  *
  */
 EAPI void
@@ -187,6 +216,7 @@ evas_object_smart_member_del(Evas_Object *obj)
  * Gets the smart parent of an Evas_Object
  * @param obj the Evas_Object you want to get the parent
  * @return Returns the smart parent of @a obj, or NULL if @a obj is not a smart member of another Evas_Object
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Object *
 evas_object_smart_parent_get(Evas_Object *obj)
@@ -222,10 +252,12 @@ evas_object_smart_members_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Instantiates a new smart object described by @p s.
  *
- * FIXME: To be fixed.
- *
+ * @param e the evas on which to add the object
+ * @param s the Evas_Smart describing the smart object
+ * @return a new Evas_Object
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Object *
 evas_object_smart_add(Evas *e, Evas_Smart *s)
@@ -254,10 +286,13 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
 }
 
 /**
- * To be documented.
+ * Add a callback for the smart event specified by @p event.
  *
- * FIXME: To be fixed.
- *
+ * @param obj a smart object
+ * @param event the event name
+ * @param func the callback function
+ * @param data user data to be passed to the callback function
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI void
 evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
@@ -282,10 +317,15 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
 }
 
 /**
- * To be documented.
+ * Remove a smart callback
  *
- * FIXME: To be fixed.
+ * Removes a callback that was added by evas_object_smart_callback_add()
  *
+ * @param obj a smart object
+ * @param event the event name
+ * @param func the callback function
+ * @return the data pointer
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI void *
 evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
@@ -321,10 +361,17 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
 }
 
 /**
- * To be documented.
+ * Call any smart callbacks on @p obj for @p event.
  *
- * FIXME: To be fixed.
+ * @param obj the smart object
+ * @param event the event name
+ * @param event_info an event specific struct of info to pass to the callback
  *
+ * This should be called internally in the smart object when some specific
+ * event has occured. The documentation for the smart object should include
+ * a list of possible events and what type of @p event_info to expect.
+ *
+ * @ingroup Evas_Smart_Object_Group
  */
 EAPI void
 evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info)
@@ -437,7 +484,7 @@ evas_object_smart_member_cache_invalidate(Evas_Object *obj)
 static void
 evas_object_smart_init(Evas_Object *obj)
 {
-   /* alloc image ob, setup methods and default values */
+   /* alloc smart obj, setup methods and default values */
    obj->object_data = evas_object_smart_new();
    /* set up default settings for this kind of object */
    obj->cur.color.r = 255;

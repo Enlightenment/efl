@@ -41,9 +41,9 @@ evas_object_below_get_internal(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Raise @p obj to the top of its layer.
  *
- * FIXME: To be fixed.
+ * @param obj the object to raise
  *
  */
 EAPI void
@@ -100,9 +100,9 @@ evas_object_raise(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Lower @p obj to the bottom of its layer.
  *
- * FIXME: To be fixed.
+ * @param obj the object to lower
  *
  */
 EAPI void
@@ -159,9 +159,16 @@ evas_object_lower(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Stack @p obj immediately above @p above 
  *
- * FIXME: To be fixed.
+ * If @p obj is a member of a smart object, then @p above must also be
+ * a member of the same smart object.
+ *
+ * Similarly, if @p obj is not a member of smart object, @p above may 
+ * not either. 
+ *
+ * @param obj the object to stack
+ * @param above the object above which to stack
  *
  */
 EAPI void
@@ -236,9 +243,16 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 }
 
 /**
- * To be documented.
+ * Stack @p obj immediately below @p below 
  *
- * FIXME: To be fixed.
+ * If @p obj is a member of a smart object, then @p below must also be
+ * a member of the same smart object.
+ *
+ * Similarly, if @p obj is not a member of smart object, @p below may 
+ * not either. 
+ *
+ * @param obj the object to stack
+ * @param below the object below which to stack
  *
  */
 EAPI void
@@ -313,9 +327,10 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 }
 
 /**
- * To be documented.
+ * Get the evas object above @p obj
  *
- * FIXME: To be fixed.
+ * @param obj an Evas_Object
+ * @return the Evas_Object directly above
  *
  */
 EAPI Evas_Object *
@@ -344,9 +359,10 @@ evas_object_above_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Get the evas object below @p obj
  *
- * FIXME: To be fixed.
+ * @param obj an Evas_Object
+ * @return the Evas_Object directly below
  *
  */
 EAPI Evas_Object *
@@ -375,9 +391,10 @@ evas_object_below_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Get the lowest evas object on the Evas @p e
  *
- * FIXME: To be fixed.
+ * @param e an Evas
+ * @return the lowest object
  *
  */
 EAPI Evas_Object *
@@ -401,9 +418,10 @@ evas_object_bottom_get(Evas *e)
 }
 
 /**
- * To be documented.
+ * Get the highest evas object on the Evas @p e
  *
- * FIXME: To be fixed.
+ * @param e an Evas
+ * @return the highest object
  *
  */
 EAPI Evas_Object *

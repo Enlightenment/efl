@@ -114,7 +114,7 @@ evas_event_list_copy(Evas_List *list)
  */
 
 /**
- * Freeze alll event processing
+ * Freeze all event processing
  * @param e The canvas to freeze event processing on
  *
  * This function will indicate to evas that the canvas @p e is to have all
@@ -934,10 +934,23 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 }
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Event_Flags_Group Evas Object Event Flag Functions
  *
- * FIXME: To be fixed.
+ * Functions that deal with how events on an Evas Object are processed.
+ */
+
+/**
+ * Set an object's pass events state.
+ * @param obj the evas object
+ * @param pass whether to pass events or not
  *
+ * If @p pass is true, this will cause events on @p obj to be ignored.
+ * They will be triggered on the next lower object (that is not set to
+ * pass events) instead.
+ *
+ * If @p pass is false, events will be processed as normal.
+ * 
+ * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
 evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
@@ -958,10 +971,11 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
 }
 
 /**
- * To be documented.
+ * Determine whether an object is set to pass events.
+ * @param obj
+ * @return pass events state
  *
- * FIXME: To be fixed.
- *
+ * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Evas_Bool
 evas_object_pass_events_get(Evas_Object *obj)
@@ -973,10 +987,18 @@ evas_object_pass_events_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Set an object's repeat events state.
+ * @param obj the object
+ * @param repeat wheter to repeat events or not
  *
- * FIXME: To be fixed.
+ * If @p repeat is true, this will cause events on @p obj to trigger
+ * callbacks, but also to be repeated on the next lower object in the
+ * stack.
  *
+ * If @p repeat is false, events occuring on @p obj will be processed
+ * normally.
+ *
+ * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
 evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
@@ -996,10 +1018,11 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
 }
 
 /**
- * To be documented.
+ * Determine whether an object is set to repeat events.
+ * @param obj
+ * @return repeat events state
  *
- * FIXME: To be fixed.
- *
+ * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Evas_Bool
 evas_object_repeat_events_get(Evas_Object *obj)
@@ -1011,10 +1034,22 @@ evas_object_repeat_events_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Set whether events on a smart member object should propagate to its parent.
  *
- * FIXME: To be fixed.
+ * @param obj the smart member object
+ * @param prop wheter to propagate events or not
  *
+ * This function has no effect if @p obj is not a member of a smart
+ * object.
+ *
+ * If @p prop is true, events occuring on this object will propagate on 
+ * to the smart object of which @p obj is a member.
+ *
+ * If @p prop is false, events for which callbacks are set on the member
+ * object, @p obj, will not be passed on to the parent smart object.
+ *
+ * The default value is true.
+ * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
 evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
@@ -1026,10 +1061,11 @@ evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
 }
 
 /**
- * To be documented.
+ * Determine whether an object is set to propagate events.
+ * @param obj
+ * @return propogate events state
  *
- * FIXME: To be fixed.
- *
+ * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Evas_Bool
 evas_object_propagate_events_get(Evas_Object *obj)
