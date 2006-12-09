@@ -56,10 +56,18 @@ typedef enum _Evas_Button_Flags
 
 typedef enum _Evas_Font_Hinting_Flags
 {
-   EVAS_FONT_HINTING_NONE,
-   EVAS_FONT_HINTING_AUTO,
-   EVAS_FONT_HINTING_BYTECODE
+   EVAS_FONT_HINTING_NONE, /**< No font hinting */
+   EVAS_FONT_HINTING_AUTO, /**< Automatic font hinting */
+   EVAS_FONT_HINTING_BYTECODE /**< Bytecode font hinting */
 } Evas_Font_Hinting_Flags; /**< Flags for Font Hinting */
+
+typedef enum _Evas_Colorspace
+{
+   EVAS_COLORSPACE_ARGB8888, /**< ARGB 32 bits per pixel, high-byte is Alpha, accessed 1 32bit word at a time */
+     /* these are not currently supported - but planned for the future */
+   EVAS_COLORSPACE_YCBCR422P601, /**< YCbCr 4:2:2 Planar with Planes in order Y, Cb and Cr, ITU.BT-601 specifications */
+   EVAS_COLORSPACE_YCBCR422P709 /**< YCbCr 4:2:2 Planar with Planes in order Y, Cb and Cr, ITU-BT-709 specifications */
+} Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
@@ -72,6 +80,7 @@ typedef void Evas_Performance; /**< An Evas Performance handle */
 typedef struct _Evas_Modifier Evas_Modifier; /**< An Evas Modifier */
 typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
 typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
+typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype for engine specific native surface information */
 typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
 typedef int    Evas_Coord;
@@ -146,6 +155,16 @@ struct _Evas_Pixel_Import_Source
    int format; /**< pixel format type ie ARGB32, YUV420P_601 etc. */
    int w, h; /**< width and height of source in pixels */
    void **rows; /**< an array of pointers (size depends on format) pointing to left edge of each scanline */
+};
+
+struct _Evas_Native_Surface
+{
+   union {
+      void           *p;
+      unsigned short  s;
+      unsigned int    i;
+      unsigned long   l;
+   } data;
 };
 
 #define EVAS_PIXEL_FORMAT_NONE                     0 /**< No pixel format */
@@ -468,6 +487,10 @@ extern "C" {
    EAPI void              evas_object_image_load_size_get          (Evas_Object *obj, int *w, int *h);
    EAPI void              evas_object_image_load_scale_down_set    (Evas_Object *obj, int scale_down);
    EAPI int               evas_object_image_load_scale_down_get    (Evas_Object *obj);
+   EAPI void              evas_object_image_colorspace_set         (Evas_Object *obj, Evas_Colorspace cspace);
+   EAPI Evas_Colorspace   evas_object_image_colorspace_get         (Evas_Object *obj);
+   EAPI void                 evas_object_image_native_surface_set  (Evas_Object *obj, Evas_Native_Surface *surf);
+   EAPI Evas_Native_Surface *evas_object_image_native_surface_get  (Evas_Object *obj);
 
 /* image cache */
    EAPI void              evas_image_cache_flush            (Evas *e);

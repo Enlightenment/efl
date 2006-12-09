@@ -86,6 +86,10 @@ static void eng_image_border_get(void *data, void *image, int *l, int *r, int *t
 static void eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
 static char *eng_image_comment_get(void *data, void *image, char *key);
 static char *eng_image_format_get(void *data, void *image);
+static void eng_image_colorspace_set(void *data, void *image, int cspace);
+static int eng_image_colorspace_get(void *data, void *image);
+static void eng_image_native_set(void *data, void *image, void *native);
+static void *eng_image_native_get(void *data, void *image);
 static void eng_image_cache_flush(void *data);
 static void eng_image_cache_set(void *data, int bytes);
 static int eng_image_cache_get(void *data);
@@ -199,6 +203,10 @@ static Evas_Func eng_func =
      eng_image_draw,
      eng_image_comment_get,
      eng_image_format_get,
+     eng_image_colorspace_set,
+     eng_image_colorspace_get,
+     eng_image_native_set,
+     eng_image_native_get,
      /* image cache funcs */
      eng_image_cache_flush,
      eng_image_cache_set,
@@ -1168,6 +1176,28 @@ eng_image_format_get(void *data, void *image)
 
    /* FIXME */
    re = (Render_Engine *)data;
+   return NULL;
+}
+
+static void
+eng_image_colorspace_set(void *data, void *image, int cspace)
+{
+}
+
+static int
+eng_image_colorspace_get(void *data, void *image)
+{
+   return EVAS_COLORSPACE_ARGB8888;
+}
+
+static void
+eng_image_native_set(void *data, void *image, void *native)
+{
+}
+
+static void *
+eng_image_native_get(void *data, void *image)
+{
    return NULL;
 }
 

@@ -551,6 +551,28 @@ eng_image_format_get(void *data, void *image)
 }
 
 static void
+eng_image_colorspace_set(void *data, void *image, int cspace)
+{
+}
+
+static int
+eng_image_colorspace_get(void *data, void *image)
+{
+   return EVAS_COLORSPACE_ARGB8888;
+}
+
+static void
+eng_image_native_set(void *data, void *image, void *native)
+{
+}
+
+static void *
+eng_image_native_get(void *data, void *image)
+{
+   return NULL;
+}
+
+static void
 eng_image_cache_flush(void *data)
 {
    int tmp_size;
@@ -800,6 +822,10 @@ static Evas_Func func =
      eng_image_draw,
      eng_image_comment_get,
      eng_image_format_get,
+     eng_image_colorspace_set,
+     eng_image_colorspace_get,
+     eng_image_native_set,
+     eng_image_native_get,
      /* image cache funcs */
      eng_image_cache_flush,
      eng_image_cache_set,
