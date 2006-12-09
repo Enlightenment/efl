@@ -1241,7 +1241,9 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
-   /* FIXME: implement this at the engine level */
+   obj->layer->evas->engine.func->image_colorspace_set(obj->layer->evas->engine.data.output,
+						       o->engine_data,
+						       cspace);
 }
 
 /**
@@ -1262,8 +1264,8 @@ evas_object_image_colorspace_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return EVAS_COLORSPACE_ARGB8888;
    MAGIC_CHECK_END();
-   return EVAS_COLORSPACE_ARGB8888;
-   /* FIXME: implement this at the engine level */
+   return obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
+							      o->engine_data);
 }
 
 /**
@@ -1284,7 +1286,9 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
-   /* FIXME: implement this at the engine level */
+   obj->layer->evas->engine.func->image_native_set(obj->layer->evas->engine.data.output,
+						   o->engine_data,
+						   surf);
 }
 
 /**
@@ -1305,8 +1309,8 @@ evas_object_image_native_surface_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return NULL;
    MAGIC_CHECK_END();
-   return NULL;
-   /* FIXME: implement this at the engine level */
+   return obj->layer->evas->engine.func->image_native_get(obj->layer->evas->engine.data.output,
+							  o->engine_data);
 }
 
 /**
