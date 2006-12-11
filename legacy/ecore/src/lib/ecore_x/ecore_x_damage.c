@@ -6,7 +6,9 @@
 #include "Ecore_X.h"
 
 static int _damage_available;
+#ifdef ECORE_XDAMAGE
 static int _damage_major, _damage_minor;
+#endif
 
 void
 _ecore_x_damage_init(void)
