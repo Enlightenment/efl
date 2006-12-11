@@ -1110,59 +1110,55 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
 {
    Ecore_X_Event_Selection_Request  *e;
    Ecore_X_Selection_Intern         *sd;
-   XSelectionEvent                  xnotify;
-   XEvent                           xev;
    void                             *data;
 
    /*
     * Generate a selection request event.
     */
    e = malloc(sizeof(Ecore_X_Event_Selection_Request));
-   e->win = xevent->xselectionrequest.requestor;
+   e->owner = xevent->xselectionrequest.owner;
+   e->requestor = xevent->xselectionrequest.requestor;
    e->time = xevent->xselectionrequest.time;
    e->selection = xevent->xselectionrequest.selection;
    e->target = xevent->xselectionrequest.target;
    e->property = xevent->xselectionrequest.property;
    ecore_event_add(ECORE_X_EVENT_SELECTION_REQUEST, e, NULL, NULL);
 
-   xnotify.type = SelectionNotify;
-   xnotify.display = xevent->xselectionrequest.display;
-   xnotify.requestor = xevent->xselectionrequest.requestor;
-   xnotify.selection = xevent->xselectionrequest.selection;
-   xnotify.target = xevent->xselectionrequest.target;
-   xnotify.time = CurrentTime;
-   xnotify.send_event = True;
-   xnotify.serial = 0;
-
-   if ((sd = _ecore_x_selection_get(xnotify.selection)) &&
+   if ((sd = _ecore_x_selection_get(xevent->xselectionrequest.selection)) &&
        (sd->win == xevent->xselectionrequest.owner))
      {
-	if (!_ecore_x_selection_convert(xnotify.selection, xnotify.target,
-					&data) == -1)
-	  {
-	     /* Refuse selection, conversion to requested target failed */
-	     xnotify.property = None;
-	  }
-	else
-	  {
-	     /* FIXME: This does not properly handle large data transfers */
-	     ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
-					      xevent->xselectionrequest.property,
-					      xevent->xselectionrequest.target,
-					      8, data, sd->length);
-	     xnotify.property = xevent->xselectionrequest.property;
-	     free(data);
-	  }
-     }
-   else
-     {
-	xnotify.property = None;
-	return;
-     }
+	Ecore_X_Selection_Intern *si;
 
-   xev.xselection = xnotify;
-   XSendEvent(xevent->xselectionrequest.display, 
-	      xevent->xselectionrequest.requestor, False, 0, &xev);
+	si = _ecore_x_selection_get(xevent->xselectionrequest.selection);
+	if (si->data)
+	  {
+	     Ecore_X_Atom property;
+
+	     if (!ecore_x_selection_convert(xevent->xselectionrequest.selection,
+					    xevent->xselectionrequest.target,
+					    &data) == -1)
+	       {
+		  /* Refuse selection, conversion to requested target failed */
+		  property = None;
+	       }
+	     else
+	       {
+		  /* FIXME: This does not properly handle large data transfers */
+		  ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
+						   xevent->xselectionrequest.property,
+						   xevent->xselectionrequest.target,
+						   8, data, sd->length);
+		  property = xevent->xselectionrequest.property;
+		  free(data);
+	       }
+
+	     ecore_x_selection_notify_send(xevent->xselectionrequest.requestor,
+					   xevent->xselectionrequest.selection,
+					   xevent->xselectionrequest.target,
+					   property);
+	  }
+     }
+   return;
 }
 
 void

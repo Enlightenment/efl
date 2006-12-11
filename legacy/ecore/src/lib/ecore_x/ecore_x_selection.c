@@ -425,9 +425,29 @@ ecore_x_selection_converter_del(char *target)
    ecore_x_selection_converter_atom_del(x_target);
 }
 
+EAPI int
+ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, Ecore_X_Atom target, Ecore_X_Atom property)
+{
+   XEvent          xev;
+   XSelectionEvent xnotify;
+
+   xnotify.type = SelectionNotify;
+   xnotify.display = _ecore_x_disp;
+   xnotify.requestor = requestor;
+   xnotify.selection = selection;
+   xnotify.target = target;
+   xnotify.property = property;
+   xnotify.time = CurrentTime;
+   xnotify.send_event = True;
+   xnotify.serial = 0;
+
+   xev.xselection = xnotify;
+   return ((XSendEvent(_ecore_x_disp, requestor, False, 0, &xev) > 0) ? 1 : 0);
+}
+
 /* Locate and run conversion callback for specified selection target */
-int
-_ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret)
+EAPI int
+ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret)
 {
    Ecore_X_Selection_Intern *sel;
    Ecore_X_Selection_Converter *cnv;

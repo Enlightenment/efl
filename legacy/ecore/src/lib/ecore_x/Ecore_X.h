@@ -539,7 +539,8 @@ struct _Ecore_X_Event_Selection_Clear
 
 struct _Ecore_X_Event_Selection_Request
 {
-   Ecore_X_Window    win;
+   Ecore_X_Window    owner;
+   Ecore_X_Window    requestor;
    Ecore_X_Time      time;
    Ecore_X_Atom      selection;
    Ecore_X_Atom      target;
@@ -989,6 +990,7 @@ EAPI int              ecore_x_error_code_get(void);
 EAPI void             ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask);
 EAPI void             ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask);
 
+EAPI int              ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, Ecore_X_Atom target, Ecore_X_Atom property);
 EAPI int              ecore_x_selection_primary_set(Ecore_X_Window w, const void *data, int size);
 EAPI int              ecore_x_selection_primary_clear(void);
 EAPI int              ecore_x_selection_secondary_set(Ecore_X_Window w, const void *data, int size);
@@ -1001,6 +1003,7 @@ EAPI void             ecore_x_selection_primary_request(Ecore_X_Window w, const 
 EAPI void             ecore_x_selection_secondary_request(Ecore_X_Window w, const char *target);
 EAPI void             ecore_x_selection_xdnd_request(Ecore_X_Window w, const char *target);
 EAPI void             ecore_x_selection_clipboard_request(Ecore_X_Window w, const char *target);
+EAPI int              ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret);
 EAPI void             ecore_x_selection_converter_add(char *target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
 EAPI void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
 EAPI void             ecore_x_selection_converter_del(char *target);
