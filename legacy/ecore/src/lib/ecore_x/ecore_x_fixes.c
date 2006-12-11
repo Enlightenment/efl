@@ -6,7 +6,9 @@
 #include "Ecore_X.h"
 
 static int _fixes_available;
+#ifdef ECORE_XFIXES
 static int _fixes_major, _fixes_minor;
+#endif
 
 void
 _ecore_x_fixes_init(void)
@@ -24,6 +26,7 @@ _ecore_x_fixes_init(void)
 #endif
 }
 
+#ifdef ECORE_XFIXES
 /* I don't know what to call this function. */
 static XRectangle *
 _ecore_x_rectangle_ecore_to_x(Ecore_X_Rectangle *rects, int num)
@@ -63,6 +66,7 @@ _ecore_x_rectangle_x_to_ecore(XRectangle *xrect, int num)
      }
    return rects;
 }
+#endif
 
 EAPI Ecore_X_Region
 ecore_x_region_new(Ecore_X_Rectangle *rects, int num)
