@@ -1155,7 +1155,8 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
 	     ecore_x_selection_notify_send(xevent->xselectionrequest.requestor,
 					   xevent->xselectionrequest.selection,
 					   xevent->xselectionrequest.target,
-					   property);
+					   property,
+					   xevent->xselectionrequest.time);
 	  }
      }
    return;

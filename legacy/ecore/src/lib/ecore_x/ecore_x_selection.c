@@ -426,7 +426,7 @@ ecore_x_selection_converter_del(char *target)
 }
 
 EAPI int
-ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, Ecore_X_Atom target, Ecore_X_Atom property)
+ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, Ecore_X_Atom target, Ecore_X_Atom property, Ecore_X_Time time)
 {
    XEvent          xev;
    XSelectionEvent xnotify;
@@ -437,7 +437,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor, Ecore_X_Atom selection, 
    xnotify.selection = selection;
    xnotify.target = target;
    xnotify.property = property;
-   xnotify.time = CurrentTime;
+   xnotify.time = time;
    xnotify.send_event = True;
    xnotify.serial = 0;
 
