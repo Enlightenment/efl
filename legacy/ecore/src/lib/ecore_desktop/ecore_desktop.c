@@ -74,7 +74,7 @@ ecore_desktop_ini_get(const char *file)
 
 	c = buffer;
 	/* Strip preceeding blanks.  Note that \n is treated differently from the other white space. */
-        while (((*c == ' ') || (*c == '\t')) && (*c != '\n') && (*c != '\0'))
+        while ((*c == ' ') || (*c == '\t'))
 		c++;
 	/* Skip blank lines and comments */
 	if ((*c == '\0') || (*c == '\n') || (*c == '#')) continue;
