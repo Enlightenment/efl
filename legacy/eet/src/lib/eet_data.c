@@ -2,7 +2,7 @@
 #include "Eet_private.h"
 
 /*
- * rotuines for doing data -> struct and struct -> data conversion
+ * routines for doing data -> struct and struct -> data conversion
  *
  * types:
  *
