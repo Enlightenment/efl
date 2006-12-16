@@ -1041,27 +1041,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    _eet_freelist_add(data);
    memset(&chnk, 0, sizeof(Eet_Data_Chunk));
    eet_data_chunk_get(&chnk, data_in, size_in);
-   if (!chnk.name)
-     {
-	_eet_freelist_unref();
-	_eet_freelist_str_unref();
-	_eet_freelist_list_unref();
-	_eet_freelist_free(edd);
-	_eet_freelist_str_free(edd);
-	_eet_freelist_list_free(edd);
-	return NULL;
-     }
-   if (strcmp(chnk.name, edd->name))
-     {
-	free(chnk.name);
-	_eet_freelist_unref();
-	_eet_freelist_str_unref();
-	_eet_freelist_list_unref();
-	_eet_freelist_free(edd);
-	_eet_freelist_str_free(edd);
-	_eet_freelist_list_free(edd);
-	return NULL;
-     }
+   if (!chnk.name) goto error;
+   if (strcmp(chnk.name, edd->name)) goto error;
    p = chnk.data;
    size = size_in - (4 + 4 + strlen(chnk.name) + 1);
    if (!edd->elements.hash.buckets) _eet_descriptor_hash_new(edd);
@@ -1073,17 +1054,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	/* get next data chunk */
 	memset(&echnk, 0, sizeof(Eet_Data_Chunk));
 	eet_data_chunk_get(&echnk, p, size);
-	if (!echnk.name)
-	  {
-	     _eet_freelist_unref();
-	     _eet_freelist_str_unref();
-	     _eet_freelist_list_unref();
-	     _eet_freelist_free(edd);
-	     _eet_freelist_str_free(edd);
-	     _eet_freelist_list_free(edd);
-	     free(chnk.name);
-	     return NULL;
-	  }
+	if (!echnk.name) goto error;
 	ede = _eet_descriptor_hash_find(edd, echnk.name);
 	if (ede)
 	  {
@@ -1120,17 +1091,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 		       data_ret = eet_data_descriptor_decode(ede->subtype,
 							     echnk.data,
 							     echnk.size);
-		       if (!data_ret)
-			 {
-			    _eet_freelist_unref();
-			    _eet_freelist_str_unref();
-			    _eet_freelist_list_unref();
-			    _eet_freelist_free(edd);
-			    _eet_freelist_str_free(edd);
-			    _eet_freelist_list_free(edd);
-			    free(chnk.name);
-			    return NULL;
-			 }
+		       if (!data_ret) goto error;
 		       ptr = (void **)(((char *)data) + ede->offset);
 		       *ptr = (void *)data_ret;
 		    }
@@ -1166,29 +1127,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 							      echnk.data,
 							      ((char *)echnk.data) + echnk.size,
 							      data_ret);
-				      if (ret <= 0)
-					{
-					   _eet_freelist_unref();
-					   _eet_freelist_str_unref();
-					   _eet_freelist_list_unref();
-					   _eet_freelist_free(edd);
-					   _eet_freelist_str_free(edd);
-					   _eet_freelist_list_free(edd);
-					   free(chnk.name);
-					   return NULL;
-					}
+				      if (ret <= 0) goto error;
 				   }
 				 else
-				   {
-				      _eet_freelist_unref();
-				      _eet_freelist_str_unref();
-				      _eet_freelist_list_unref();
-				      _eet_freelist_free(edd);
-				      _eet_freelist_str_free(edd);
-				      _eet_freelist_list_free(edd);
-				      free(chnk.name);
-				      return NULL;
-				   }
+				   goto error;
 			      }
 			    else if (ede->subtype)
 			      {
@@ -1203,16 +1145,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				 _eet_freelist_list_add(ptr);
 			      }
 			    else
-			      {
-				 _eet_freelist_unref();
-				 _eet_freelist_str_unref();
-				 _eet_freelist_list_unref();
-				 _eet_freelist_free(edd);
-				 _eet_freelist_str_free(edd);
-				 _eet_freelist_list_free(edd);
-				 free(chnk.name);
-				 return NULL;
-			      }
+			      goto error;
 			 }
 		       break;
 		     case EET_G_HASH:
@@ -1236,6 +1169,16 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    _eet_freelist_str_reset();
    _eet_freelist_list_reset();
    return data;
+
+error:
+   if (chnk.name) free(chnk.name);
+   _eet_freelist_unref();
+   _eet_freelist_str_unref();
+   _eet_freelist_list_unref();
+   _eet_freelist_free(edd);
+   _eet_freelist_str_free(edd);
+   _eet_freelist_list_free(edd);
+   return NULL;
 }
 
 EAPI void *
