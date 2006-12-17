@@ -46,6 +46,7 @@ typedef struct _Eet_Data_Basic_Type_Decoder Eet_Data_Basic_Type_Decoder;
 typedef struct _Eet_Data_Chunk              Eet_Data_Chunk;
 typedef struct _Eet_Data_Stream             Eet_Data_Stream;
 typedef struct _Eet_Data_Descriptor_Hash    Eet_Data_Descriptor_Hash;
+typedef struct _Eet_Data_Encode_Hash_Info   Eet_Data_Encode_Hash_Info;
 
 /*---*/
 
@@ -116,6 +117,12 @@ struct _Eet_Data_Element
    Eet_Data_Descriptor *subtype;
 };
 
+struct _Eet_Data_Encode_Hash_Info
+{
+   Eet_Data_Stream  *ds;
+   Eet_Data_Element *ede;
+};
+
 /*---*/
 
 static int   eet_data_get_char(void *src, void *src_end, void *dest);
@@ -134,7 +141,7 @@ static int   eet_data_get_string(void *src, void *src_end, void *dest);
 static void *eet_data_put_string(const void *src, int *size_ret);
 
 static int   eet_data_get_type(int type, void *src, void *src_end, void *dest);
-static void *eet_data_put_type(int type, void *src, int *size_ret);
+static void *eet_data_put_type(int type, const void *src, int *size_ret);
 
 static void            eet_data_chunk_get(Eet_Data_Chunk *chnk, const void *src, int size);
 static Eet_Data_Chunk *eet_data_chunk_new(void *data, int size, const char *name);
@@ -145,6 +152,8 @@ static void             eet_data_stream_write(Eet_Data_Stream *ds, const void *d
 static void             eet_data_stream_free(Eet_Data_Stream *ds);
 
 static void             eet_data_chunk_put(Eet_Data_Chunk *chnk, Eet_Data_Stream *ds);
+
+static int  eet_data_descriptor_encode_hash_cb(void *hash, const char *key, void *hdata, void *fdata);
 
 /*---*/
 
@@ -447,7 +456,7 @@ eet_data_get_type(int type, void *src, void *src_end, void *dest)
 }
 
 static void *
-eet_data_put_type(int type, void *src, int *size_ret)
+eet_data_put_type(int type, const void *src, int *size_ret)
 {
    void *ret;
 
@@ -830,7 +839,7 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
    int	size;
    int	required_free = 0;
 
-   data = eet_read_direct (ef, name, &size);
+   data = eet_read_direct(ef, name, &size);
    if (!data)
      {
 	required_free = 1;
@@ -1014,6 +1023,54 @@ _eet_freelist_str_unref(void)
    freelist_str_ref--;
 }
 
+static int
+eet_data_descriptor_encode_hash_cb(void *hash, const char *key, void *hdata, void *fdata)
+{
+   Eet_Data_Encode_Hash_Info *edehi;
+   Eet_Data_Stream    *ds;
+   Eet_Data_Element   *ede;
+   Eet_Data_Chunk     *echnk;
+   void               *data = NULL;
+   int                 size;
+
+   edehi = fdata;
+   ede = edehi->ede;
+   ds = edehi->ds;
+
+   /* Store key */
+   data = eet_data_put_type(EET_T_STRING,
+			    &key,
+			    &size);
+   if (data)
+     {
+	echnk = eet_data_chunk_new(data, size, ede->name);
+	eet_data_chunk_put(echnk, ds);
+	eet_data_chunk_free(echnk);
+	free(data);
+	data = NULL;
+     }
+
+   /* Store data */
+   if ((ede->type >= EET_T_CHAR) &&
+       (ede->type <= EET_T_STRING))
+     data = eet_data_put_type(ede->type,
+			      hdata,
+			      &size);
+   else if (ede->subtype)
+     data = eet_data_descriptor_encode(ede->subtype,
+				       hdata,
+				       &size);
+   if (data)
+     {
+	echnk = eet_data_chunk_new(data, size, ede->name);
+	eet_data_chunk_put(echnk, ds);
+	eet_data_chunk_free(echnk);
+	free(data);
+	data = NULL;
+     }
+   return 1;
+}
+
 EAPI void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			   const void *data_in,
@@ -1149,7 +1206,70 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			 }
 		       break;
 		     case EET_G_HASH:
-		       printf("HASH TYPE NOT IMPLIMENTED YET!!!\n");
+			 {
+			    int ret;
+			    void *hash = NULL;
+			    void **ptr;
+			    char *key = NULL;
+			    void *data_ret = NULL;
+			    
+			    ptr = (void **)(((char *)data) + ede->offset);
+			    hash = *ptr;
+
+			    /* Read key */
+			    key = calloc(1, eet_coder[EET_T_STRING].size);
+			    if (key)
+			      {
+				 _eet_freelist_add(key);
+				 ret = eet_data_get_type(EET_T_STRING,
+							 echnk.data,
+							 ((char *)echnk.data) + echnk.size,
+							 &key);
+				 if (ret <= 0) goto error;
+			      }
+			    else
+			      goto error;
+
+			    /* Advance to next chunk */
+			    p += (4 + 4 + strlen(echnk.name) + 1 + echnk.size);
+			    size -= (4 + 4 + strlen(echnk.name) + 1 + echnk.size);
+			    free(echnk.name);
+			    memset(&echnk, 0, sizeof(Eet_Data_Chunk));
+
+			    /* Read value */
+			    eet_data_chunk_get(&echnk, p, size);
+			    if (!echnk.name) goto error;
+			    if ((ede->type >= EET_T_CHAR) &&
+				(ede->type <= EET_T_STRING))
+			      {
+				 data_ret = calloc(1, eet_coder[ede->type].size);
+				 if (data_ret)
+				   {
+				      _eet_freelist_add(data_ret);
+				      ret = eet_data_get_type(ede->type,
+							      echnk.data,
+							      ((char *)echnk.data) + echnk.size,
+							      data_ret);
+				      if (ret <= 0) goto error;
+				   }
+				 else
+				   goto error;
+			      }
+			    else if (ede->subtype)
+			      {
+				 data_ret = eet_data_descriptor_decode(ede->subtype,
+								       echnk.data,
+								       echnk.size);
+			      }
+			    if (data_ret)
+			      {
+				 hash = edd->func.hash_add(hash, key, data_ret);
+				 *ptr = hash;
+				 _eet_freelist_list_add(ptr);
+			      }
+			    else
+			      goto error;
+			 }
 		       break;
 		     default:
 		       break;
@@ -1273,7 +1393,13 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 		  break;
 		case EET_G_HASH:
 		    {
-		       printf("HASH TYPE NOT IMPLIMENTED YET!!!\n");
+		       Eet_Data_Encode_Hash_Info fdata;
+		       void *l;
+
+		       l = *((void **)(((char *)data_in) + ede->offset));
+		       fdata.ds = ds;
+		       fdata.ede = ede;
+		       edd->func.hash_foreach(l, eet_data_descriptor_encode_hash_cb, &fdata);
 		    }
 		  break;
 		default:
