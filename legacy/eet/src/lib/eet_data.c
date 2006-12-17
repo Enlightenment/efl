@@ -1217,18 +1217,11 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			    hash = *ptr;
 
 			    /* Read key */
-			    key = calloc(1, eet_coder[EET_T_STRING].size);
-			    if (key)
-			      {
-				 _eet_freelist_add(key);
-				 ret = eet_data_get_type(EET_T_STRING,
-							 echnk.data,
-							 ((char *)echnk.data) + echnk.size,
-							 &key);
-				 if (ret <= 0) goto error;
-			      }
-			    else
-			      goto error;
+			    ret = eet_data_get_type(EET_T_STRING,
+						    echnk.data,
+						    ((char *)echnk.data) + echnk.size,
+						    &key);
+			    if (ret <= 0) goto error;
 
 			    /* Advance to next chunk */
 			    p += (4 + 4 + strlen(echnk.name) + 1 + echnk.size);
