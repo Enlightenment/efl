@@ -334,6 +334,7 @@ eng_image_alpha_get(void *data, void *image)
 {
    RGBA_Image *im;
 
+   if (!image) return 1;
    im = image;
    switch (im->cs.space)
      {
@@ -350,6 +351,7 @@ eng_image_colorspace_get(void *data, void *image)
 {
     RGBA_Image *im;
 
+   if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
    return im->cs.space;
 }
@@ -646,7 +648,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 static void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
-   RGBA_Image *im;
+   RGBA_Image *im, *im2;
 
    im = image;
    switch (im->cs.space)
@@ -658,10 +660,11 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	     
 	     w = im->image->w;
 	     h = im->image->h;
+	     im2 = eng_image_new_from_data(data, w, h, image_data, 
+					   eng_image_alpha_get(data, image),
+					   eng_image_colorspace_get(data, image));
 	     evas_common_image_unref(im);
-	     return eng_image_new_from_data(data, w, h, image_data, 
-					    eng_image_alpha_get(data, image),
-					    eng_image_colorspace_get(data, image));
+	     im = im2;
 	  }
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:

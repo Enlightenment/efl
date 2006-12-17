@@ -464,6 +464,7 @@ eng_image_alpha_get(void *data, void *image)
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
+   if (!image) return 1;
    im = image;
    /* FIXME: can move to gl_common */
    switch (im->cs.space)
@@ -483,6 +484,7 @@ eng_image_colorspace_get(void *data, void *image)
    Evas_GL_Image *im;
    
    re = (Render_Engine *)data;
+   if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
    return im->cs.space;
 }
@@ -754,7 +756,7 @@ static void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
    Render_Engine *re;
-   Evas_GL_Image *im;
+   Evas_GL_Image *im, *im2;
 
    re = (Render_Engine *)data;
    im = image;
@@ -768,10 +770,11 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	     
 	     w = im->im->image->w;
 	     h = im->im->image->h;
+	     im2 = eng_image_new_from_data(data, w, h, image_data,
+					   eng_image_alpha_get(data, image),
+					   eng_image_colorspace_get(data, image));
 	     evas_gl_common_image_free(im);
-	     return eng_image_new_from_data(data, w, h, image_data,
-					    eng_image_alpha_get(data, image),
-					    eng_image_colorspace_get(data, image));
+	     im = im2;
 	  }
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
