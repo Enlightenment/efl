@@ -53,7 +53,7 @@ struct _Eet_Data_Basic_Type_Decoder
 {
    int     size;
    int   (*get) (void *src, void *src_end, void *dest);
-   void *(*put) (void *src, int *size_ret);
+   void *(*put) (const void *src, int *size_ret);
 };
 
 struct _Eet_Data_Chunk
@@ -119,19 +119,19 @@ struct _Eet_Data_Element
 /*---*/
 
 static int   eet_data_get_char(void *src, void *src_end, void *dest);
-static void *eet_data_put_char(void *src, int *size_ret);
+static void *eet_data_put_char(const void *src, int *size_ret);
 static int   eet_data_get_short(void *src, void *src_end, void *dest);
-static void *eet_data_put_short(void *src, int *size_ret);
+static void *eet_data_put_short(const void *src, int *size_ret);
 static int   eet_data_get_int(void *src, void *src_end, void *dest);
-static void *eet_data_put_int(void *src, int *size_ret);
+static void *eet_data_put_int(const void *src, int *size_ret);
 static int   eet_data_get_long_long(void *src, void *src_end, void *dest);
-static void *eet_data_put_long_long(void *src, int *size_ret);
+static void *eet_data_put_long_long(const void *src, int *size_ret);
 static int   eet_data_get_float(void *src, void *src_end, void *dest);
-static void *eet_data_put_float(void *src, int *size_ret);
+static void *eet_data_put_float(const void *src, int *size_ret);
 static int   eet_data_get_double(void *src, void *src_end, void *dest);
-static void *eet_data_put_double(void *src, int *size_ret);
+static void *eet_data_put_double(const void *src, int *size_ret);
 static int   eet_data_get_string(void *src, void *src_end, void *dest);
-static void *eet_data_put_string(void *src, int *size_ret);
+static void *eet_data_put_string(const void *src, int *size_ret);
 
 static int   eet_data_get_type(int type, void *src, void *src_end, void *dest);
 static void *eet_data_put_type(int type, void *src, int *size_ret);
@@ -207,7 +207,7 @@ eet_data_get_char(void *src, void *src_end, void *dst)
 }
 
 static void *
-eet_data_put_char(void *src, int *size_ret)
+eet_data_put_char(const void *src, int *size_ret)
 {
    char *s, *d;
 
@@ -234,7 +234,7 @@ eet_data_get_short(void *src, void *src_end, void *dst)
 }
 
 static void *
-eet_data_put_short(void *src, int *size_ret)
+eet_data_put_short(const void *src, int *size_ret)
 {
    short *s, *d;
 
@@ -261,7 +261,7 @@ eet_data_get_int(void *src, void *src_end, void *dst)
 }
 
 static void *
-eet_data_put_int(void *src, int *size_ret)
+eet_data_put_int(const void *src, int *size_ret)
 {
    int *s, *d;
 
@@ -288,7 +288,7 @@ eet_data_get_long_long(void *src, void *src_end, void *dst)
 }
 
 static void *
-eet_data_put_long_long(void *src, int *size_ret)
+eet_data_put_long_long(const void *src, int *size_ret)
 {
    unsigned long long *s, *d;
 
@@ -326,7 +326,7 @@ eet_data_get_string(void *src, void *src_end, void *dst)
 }
 
 static void *
-eet_data_put_string(void *src, int *size_ret)
+eet_data_put_string(const void *src, int *size_ret)
 {
    char *s, *d;
    int len;
@@ -372,7 +372,7 @@ eet_data_get_float(void *src, void *src_end, void *dst)
 }
 
 static void *
-eet_data_put_float(void *src, int *size_ret)
+eet_data_put_float(const void *src, int *size_ret)
 {
    float *s;
    char *d, buf[64], *prev_locale;
@@ -419,7 +419,7 @@ eet_data_get_double(void *src, void *src_end, void *dst)
 }
 
 static void *
-eet_data_put_double(void *src, int *size_ret)
+eet_data_put_double(const void *src, int *size_ret)
 {
    double *s;
    char *d, buf[128], *prev_locale;
