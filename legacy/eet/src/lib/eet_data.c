@@ -1258,6 +1258,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			      {
 				 hash = edd->func.hash_add(hash, key, data_ret);
 				 *ptr = hash;
+				 free(key);
 				 _eet_freelist_list_add(ptr);
 			      }
 			    else
