@@ -353,6 +353,12 @@ struct _RGBA_Image
    unsigned char        scale;
    RGBA_Pipe           *pipe;
    int                  ref;
+   struct {
+      void                *data;
+      int                  space;
+      unsigned char        no_free : 1;
+      unsigned char        dirty : 1;
+   } cs;
 };
 
 struct _RGBA_Gradient_Color_Stop
@@ -803,6 +809,8 @@ EAPI RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);/*2*/
 EAPI void          evas_common_image_surface_free      (RGBA_Surface *is);/*2*/
 EAPI void          evas_common_image_surface_alloc     (RGBA_Surface *is);/*2*/
 EAPI void          evas_common_image_surface_dealloc   (RGBA_Surface *is);/*2*/
+EAPI void          evas_common_image_colorspace_normalize(RGBA_Image *im);
+EAPI void          evas_common_image_colorspace_dirty    (RGBA_Image *im);
 EAPI void          evas_common_image_cache             (RGBA_Image *im); /*2*/
 EAPI void          evas_common_image_uncache           (RGBA_Image *im); /*2*/
 EAPI void          evas_common_image_store             (RGBA_Image *im); /*2*/

@@ -95,7 +95,8 @@ struct _Evas_GL_Texture
    int              tw, th;
    int              uw, uh;
 
-   GLuint           texture;
+   GLuint           texture, texture2, texture3;
+   GLhandleARB      prog;
 
    unsigned char    smooth : 1;
    unsigned char    changed : 1;
@@ -115,6 +116,11 @@ struct _Evas_GL_Image
    RGBA_Image_Loadopts load_opts;
    int              putcount;
    int              references;
+   struct {
+      int           space;
+      void         *data;
+      unsigned char no_free : 1;
+   } cs;
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
 };
@@ -183,9 +189,9 @@ void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 void              evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 
 Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key, Evas_Image_Load_Opts *lo);
-Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data);
-Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data);
-Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h);
+Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data, int alpha, int cspace);
+Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data, int alpha, int cspace);
+Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspace);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im);
 

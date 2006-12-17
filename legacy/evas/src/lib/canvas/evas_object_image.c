@@ -25,6 +25,7 @@ struct _Evas_Object_Image
 
       const char    *file;
       const char    *key;
+      int            cspace;
 
       char           smooth_scale : 1;
       char           has_alpha :1;
@@ -174,6 +175,8 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 						      o->engine_data, &w, &h);
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output,
 									  o->engine_data);
+	o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
+									    o->engine_data);
 	o->cur.image.w = w;
 	o->cur.image.h = h;
      }
@@ -181,6 +184,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
      {
 	o->load_error = EVAS_LOAD_ERROR_GENERIC;
 	o->cur.has_alpha = 1;
+	o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
 	o->cur.image.w = 0;
 	o->cur.image.h = 0;
      }
@@ -508,12 +512,15 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
 								    o->engine_data,
 								    w, h);
    else
-     o->engine_data = obj->layer->evas->engine.func->image_new_from_copied_data(obj->layer->evas->engine.data.output,
-										w, h, NULL);
+     o->engine_data = obj->layer->evas->engine.func->image_new_from_copied_data
+     (obj->layer->evas->engine.data.output, w, h, NULL, o->cur.has_alpha,
+      o->cur.cspace);
+/* FIXME - in engine call above
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
+ */
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
    o->changed = 1;
    evas_object_change(obj);
@@ -602,7 +609,9 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
 	  o->engine_data = obj->layer->evas->engine.func->image_new_from_data(obj->layer->evas->engine.data.output,
 									      o->cur.image.w,
 									      o->cur.image.h,
-									      data);
+									      data,
+									      o->cur.has_alpha,
+									      o->cur.cspace);
      }
    else
      {
@@ -614,10 +623,12 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
 	o->cur.image.h = 0;
 	o->engine_data = NULL;
      }
+/* FIXME - in engine call above
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
+ */
    if (o->pixels_checked_out > 0) o->pixels_checked_out--;
    if (p_data != o->engine_data)
      {
@@ -689,7 +700,9 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
    o->engine_data = obj->layer->evas->engine.func->image_new_from_copied_data(obj->layer->evas->engine.data.output,
 									      o->cur.image.w,
 									      o->cur.image.h,
-									      data);
+									      data,
+									      o->cur.has_alpha,
+									      o->cur.cspace);
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
@@ -1241,9 +1254,11 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
-   obj->layer->evas->engine.func->image_colorspace_set(obj->layer->evas->engine.data.output,
-						       o->engine_data,
-						       cspace);
+   o->cur.cspace = cspace;
+   if (o->engine_data)
+     obj->layer->evas->engine.func->image_colorspace_set(obj->layer->evas->engine.data.output,
+							 o->engine_data,
+							 cspace);
 }
 
 /**
@@ -1452,6 +1467,7 @@ evas_object_image_unload(Evas_Object *obj)
    o->engine_data = NULL;
    o->load_error = EVAS_LOAD_ERROR_NONE;
    o->cur.has_alpha = 1;
+   o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
    o->cur.image.w = 0;
    o->cur.image.h = 0;
 }
@@ -1482,6 +1498,8 @@ evas_object_image_load(Evas_Object *obj)
 						      o->engine_data, &w, &h);
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output,
 									  o->engine_data);
+	o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
+									    o->engine_data);
 	o->cur.image.w = w;
 	o->cur.image.h = h;
      }
@@ -1571,6 +1589,7 @@ evas_object_image_new(void)
    o->cur.fill.h = 32.0;
    o->cur.smooth_scale = 1;
    o->cur.border.fill = 1;
+   o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
    o->prev = o->cur;
    return o;
 }
@@ -1881,6 +1900,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	if ((o->cur.image.w != o->prev.image.w) ||
 	    (o->cur.image.h != o->prev.image.h) ||
 	    (o->cur.has_alpha != o->prev.has_alpha) ||
+	    (o->cur.cspace != o->prev.cspace) ||
 	    (o->cur.smooth_scale != o->prev.smooth_scale))
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);

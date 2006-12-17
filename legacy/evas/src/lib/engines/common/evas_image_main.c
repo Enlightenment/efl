@@ -258,6 +258,7 @@ evas_common_image_new(void)
    if (!im) return NULL;
    im->flags = RGBA_IMAGE_NOTHING;
    im->ref = 1;
+   im->cs.space = EVAS_COLORSPACE_ARGB8888;
    return im;
 }
 
@@ -266,6 +267,11 @@ evas_common_image_free(RGBA_Image *im)
 {
    im->ref--;
    if (im->ref > 0) return;
+   if (im->cs.data != im->image->data)
+     {
+	if (!im->cs.no_free) free(im->cs.data);
+     }
+   im->cs.data = NULL;
    evas_common_pipe_free(im);
    if (im->image) evas_common_image_surface_free(im->image);
    if (im->info.file) evas_stringshare_del(im->info.file);
@@ -305,6 +311,39 @@ evas_common_image_unref(RGBA_Image *im)
 	     evas_common_image_free(im);
 	  }
      }
+}
+
+EAPI void
+evas_common_image_colorspace_normalize(RGBA_Image *im)
+{
+   if ((!im->cs.data) || (!im->cs.dirty)) return;
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->image->data != im->cs.data)
+	  {
+	     if (!im->image->no_free) free(im->image->data);
+	     im->image->data = im->cs.data;
+	     im->cs.no_free = im->image->no_free;
+	  }
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+	if ((im->image->data) && (*((unsigned char **)im->cs.data)))
+	  evas_common_convert_yuv_420p_601_rgba(im->cs.data, im->image->data,
+						im->image->w, im->image->h);
+	break;
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	break;
+      default:
+	break;
+     }
+   im->cs.dirty = 0;
+}
+
+EAPI void
+evas_common_image_colorspace_dirty(RGBA_Image *im)
+{
+   im->cs.dirty = 1;
 }
 
 EAPI void

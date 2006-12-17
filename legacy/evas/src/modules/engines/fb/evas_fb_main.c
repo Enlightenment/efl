@@ -342,9 +342,12 @@ fb_getmode(void)
     mode->fb_var.yres +
     mode->fb_var.lower_margin +
     mode->fb_var.vsync_len;
-  clockrate =
-    1000000 / mode->fb_var.pixclock;
-  mode->refresh = clockrate * 1000000 / (lines * hpix);
+   if (mode->fb_var.pixclock > 0)
+     clockrate = 1000000 / mode->fb_var.pixclock;
+   else
+     clockrate = 0;
+   if ((lines > 0) && (hpix > 0))
+     mode->refresh = clockrate * 1000000 / (lines * hpix);
   switch (mode->fb_var.bits_per_pixel)
     {
      case 1:

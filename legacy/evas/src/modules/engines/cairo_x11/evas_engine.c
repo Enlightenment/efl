@@ -71,8 +71,8 @@ static void eng_gradient_render_post(void *data, void *gradient);
 static void eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h);
 
 static void *eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo);
-static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
-static void *eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
+static void *eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);
+static void *eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);
 static void eng_image_free(void *data, void *image);
 static void eng_image_size_get(void *data, void *image, int *w, int *h);
 static void *eng_image_size_set(void *data, void *image, int w, int h);
@@ -912,7 +912,7 @@ eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Op
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
    Evas_Cairo_Image *im;
@@ -946,7 +946,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
    Evas_Cairo_Image *im;

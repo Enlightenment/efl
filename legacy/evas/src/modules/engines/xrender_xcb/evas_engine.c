@@ -490,7 +490,7 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
    XR_Image      *im;
@@ -501,7 +501,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
    XR_Image      *im;

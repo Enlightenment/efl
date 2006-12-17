@@ -117,7 +117,7 @@ _xre_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image
 }
 
 XR_Image *
-_xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data)
+_xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace)
 {
    XR_Image *im;
 
@@ -129,14 +129,14 @@ _xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data)
    im->h = h;
    im->references = 1;
    im->data = data;
-   im->alpha = 1;
+   im->alpha = alpha;
    im->dirty = 1;
    __xre_image_dirty_hash_add(im);
    return im;
 }
 
 XR_Image *
-_xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data)
+_xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace)
 {
    XR_Image *im;
 
@@ -162,7 +162,7 @@ _xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data)
    im->xinf = xinf;
    im->xinf->references++;
    im->free_data = 1;
-   im->alpha = 1;
+   im->alpha = alpha;
    im->dirty = 1;
    __xre_image_dirty_hash_add(im);
    return im;
@@ -268,7 +268,7 @@ _xre_image_copy(XR_Image *im)
 	  }
      }
    if (!data) return NULL;
-   im2 = _xre_image_new_from_copied_data(im->xinf, im->w, im->h, data);
+   im2 = _xre_image_new_from_copied_data(im->xinf, im->w, im->h, data, im->alpha, EVAS_COLORSPACE_ARGB8888);
    if (im2) im2->alpha = im->alpha;
    if ((im->im) && (!im->dirty))
      {

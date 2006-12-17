@@ -106,8 +106,8 @@ struct _XR_Image
 };
 
 XR_Image *_xre_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo);
-XR_Image *_xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data);
-XR_Image *_xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data);
+XR_Image *_xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
+XR_Image *_xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
 XR_Image *_xre_image_new(Ximage_Info *xinf, int w, int h);
 void      _xre_image_resize(XR_Image *im, int w, int h);
 void      _xre_image_free(XR_Image *im);

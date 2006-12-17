@@ -65,8 +65,8 @@ typedef enum _Evas_Colorspace
 {
    EVAS_COLORSPACE_ARGB8888, /**< ARGB 32 bits per pixel, high-byte is Alpha, accessed 1 32bit word at a time */
      /* these are not currently supported - but planned for the future */
-   EVAS_COLORSPACE_YCBCR422P601, /**< YCbCr 4:2:2 Planar with Planes in order Y, Cb and Cr, ITU.BT-601 specifications */
-   EVAS_COLORSPACE_YCBCR422P709 /**< YCbCr 4:2:2 Planar with Planes in order Y, Cb and Cr, ITU-BT-709 specifications */
+   EVAS_COLORSPACE_YCBCR422P601_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
+   EVAS_COLORSPACE_YCBCR422P709_PL /**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */

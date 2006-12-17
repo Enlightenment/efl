@@ -329,6 +329,150 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
      }
 }
 
+static int
+eng_image_alpha_get(void *data, void *image)
+{
+   RGBA_Image *im;
+
+   im = image;
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+      default:
+	break;
+     }
+   return 0;
+}
+
+static int
+eng_image_colorspace_get(void *data, void *image)
+{
+    RGBA_Image *im;
+
+   im = image;
+   return im->cs.space;
+}
+
+static void *
+eng_image_alpha_set(void *data, void *image, int has_alpha)
+{
+   RGBA_Image *im;
+
+   im = image;
+   if (im->cs.space != EVAS_COLORSPACE_ARGB8888)
+     {
+	im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+	return im;
+     }
+   if (im->references > 1)
+     {
+	RGBA_Image *im_new;
+
+	im_new = evas_common_image_create(im->image->w, im->image->h);
+	if (!im_new) return im;
+	evas_common_load_image_data_from_file(im);
+	evas_common_image_colorspace_normalize(im);
+	evas_common_blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
+	evas_common_cpu_end_opt();
+	evas_common_image_unref(im);
+	im = im_new;
+     }
+   else
+     {
+	evas_common_image_dirty(im);
+	evas_common_image_colorspace_dirty(im);
+     }
+   if (has_alpha)
+     im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   else
+     im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   return im;
+}
+
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   RGBA_Image *im;
+
+   im = image;
+   return im;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   RGBA_Image *im;
+
+   im = image;
+}
+
+static char *
+eng_image_comment_get(void *data, void *image, char *key)
+{
+   RGBA_Image *im;
+
+   im = image;
+   return im->info.comment;
+}
+
+static char *
+eng_image_format_get(void *data, void *image)
+{
+   return NULL;
+}
+
+static void
+eng_image_colorspace_set(void *data, void *image, int cspace)
+{
+   RGBA_Image *im;
+   
+   im = image;
+   if (im->cs.space == cspace) return;
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->cs.data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	     im->cs.data = NULL;
+	     im->cs.no_free = 0;
+	  }
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	if (im->image->no_free)
+	  {
+	     im->image->data = NULL;
+	     im->image->no_free = 0;
+	     evas_common_image_surface_alloc(im->image);
+	  }
+	if (im->cs.data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	  }
+	im->cs.data = calloc(1, im->image->h * sizeof(unsigned char *) * 2);
+	im->cs.no_free = 0;
+	break;
+      default:
+	abort();
+	break;
+     }
+   im->cs.space = cspace;
+   evas_common_image_colorspace_dirty(im);
+}
+
+static void
+eng_image_native_set(void *data, void *image, void *native)
+{
+}
+
+static void *
+eng_image_native_get(void *data, void *image)
+{
+   return NULL;
+}
+
 static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
@@ -337,7 +481,7 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    RGBA_Image *im;
 
@@ -348,22 +492,65 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 	evas_common_image_free(im);
 	return NULL;
      }
-   im->image->w = w;
-   im->image->h = h;
-   im->image->data = image_data;
-   im->image->no_free = 1;
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	im->image->w = w;
+	im->image->h = h;
+	im->image->data = image_data;
+	im->image->no_free = 1;
+	if (alpha)
+	  im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	else
+	  im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	im->image->w = w;
+	im->image->h = h;
+	evas_common_image_surface_alloc(im->image);
+	im->cs.data = image_data;
+	im->cs.no_free = 1;
+	break;
+      default:
+	abort();
+	break;
+     }
+   im->cs.space = cspace;
+   evas_common_image_colorspace_dirty(im);
    return im;
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    RGBA_Image *im;
 
-   im = evas_common_image_create(w, h);
-   if (!im) return NULL;
-   if (image_data)
-     memcpy(im->image->data, image_data, w * h * sizeof(DATA32));
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	im = evas_common_image_create(w, h);
+	if (!im) return NULL;
+	if (alpha)
+	  im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	else
+	  im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+	if (image_data)
+	  memcpy(im->image->data, image_data, w * h * sizeof(DATA32));
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        im = evas_common_image_create(w, h);
+        im->cs.data = calloc(1, im->image->h * sizeof(unsigned char *) * 2);
+	if ((image_data) && (im->cs.data))
+	  memcpy(im->cs.data, image_data, im->image->h * sizeof(unsigned char *) * 2);
+        break;
+      default:
+	abort();
+	break;
+     }
+   im->cs.space = cspace;
+   evas_common_image_colorspace_dirty(im);
    return im;
 }
 
@@ -393,12 +580,16 @@ eng_image_size_set(void *data, void *image, int w, int h)
    if (!im) return im_old;
    if (im_old)
      {
+	im->cs.space = im_old->cs.space;
+/*	
 	evas_common_load_image_data_from_file(im_old);
+	evas_common_image_colorspace_normalize(im);
 	if (im_old->image->data)
 	  {
 	     evas_common_blit_rectangle(im_old, im, 0, 0, w, h, 0, 0);
 	     evas_common_cpu_end_opt();
 	  }
+ */
 	evas_common_image_unref(im_old);
      }
    return im;
@@ -408,6 +599,7 @@ static void *
 eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    evas_common_image_dirty(image);
+   evas_common_image_colorspace_dirty(image);
    return image;
 }
 
@@ -418,23 +610,36 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 
    im = image;
    evas_common_load_image_data_from_file(im);
-   if (to_write)
+   switch (im->cs.space)
      {
-	if (im->references > 1)
+      case EVAS_COLORSPACE_ARGB8888:
+	if (to_write)
 	  {
-	     RGBA_Image *im_new;
-
-	     im_new = evas_common_image_create(im->image->w, im->image->h);
-	     if (!im_new) return im;
-	     evas_common_blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
-	     evas_common_cpu_end_opt();
-	     evas_common_image_unref(im);
-	     im = im_new;
+	     if (im->references > 1)
+	       {
+		  RGBA_Image *im_new;
+		  
+		  im_new = evas_common_image_create(im->image->w, im->image->h);
+		  if (!im_new) return im;
+		  evas_common_image_colorspace_normalize(im);
+		  evas_common_blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
+		  evas_common_cpu_end_opt();
+		  evas_common_image_unref(im);
+		  im = im_new;
+	       }
+	     else
+	       evas_common_image_dirty(im);
 	  }
-	else
-	  evas_common_image_dirty(im);
+	*image_data = im->image->data;
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	*image_data = im->cs.data;
+        break;
+      default:
+	abort();
+	break;
      }
-   *image_data = im->image->data;
    return im;
 }
 
@@ -444,132 +649,67 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    RGBA_Image *im;
 
    im = image;
-   if (image_data != im->image->data)
+   switch (im->cs.space)
      {
-	int w, h;
-
-	w = im->image->w;
-	h = im->image->h;
-	evas_common_image_unref(im);
-	return eng_image_new_from_data(data, w, h, image_data);
+      case EVAS_COLORSPACE_ARGB8888:
+	if (image_data != im->image->data)
+	  {
+	     int w, h;
+	     
+	     w = im->image->w;
+	     h = im->image->h;
+	     evas_common_image_unref(im);
+	     return eng_image_new_from_data(data, w, h, image_data, 
+					    eng_image_alpha_get(data, image),
+					    eng_image_colorspace_get(data, image));
+	  }
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	if (image_data != im->cs.data)
+	  {
+	     if (im->cs.data)
+	       {
+		  if (!im->cs.no_free) free(im->cs.data);
+	       }
+	     im->cs.data = image_data;
+	     evas_common_image_colorspace_dirty(im);
+	  }
+        break;
+      default:
+	abort();
+	break;
      }
    return im;
-}
-
-static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
-{
-   RGBA_Image *im;
-
-   im = image;
-   if (im->references > 1)
-     {
-	RGBA_Image *im_new;
-
-	im_new = evas_common_image_create(im->image->w, im->image->h);
-	if (!im_new) return im;
-	evas_common_load_image_data_from_file(im);
-	evas_common_blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
-	evas_common_cpu_end_opt();
-	evas_common_image_unref(im);
-	im = im_new;
-     }
-   else
-     evas_common_image_dirty(im);
-   if (has_alpha)
-     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
-   return im;
-}
-
-
-static int
-eng_image_alpha_get(void *data, void *image)
-{
-   RGBA_Image *im;
-
-   im = image;
-   if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
-   return 0;
-}
-
-static void *
-eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
-{
-   RGBA_Image *im;
-
-   im = image;
-   return im;
-}
-
-static void
-eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
-{
-   RGBA_Image *im;
-
-   im = image;
 }
 
 static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
-   evas_common_load_image_data_from_file(image);
+   RGBA_Image *im;
+   
+   im = image;
+   if (im->cs.space == EVAS_COLORSPACE_ARGB8888)
+     evas_common_load_image_data_from_file(im);
+   evas_common_image_colorspace_normalize(im);
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
-     evas_common_pipe_image_draw(image, surface, context, smooth,
+     evas_common_pipe_image_draw(im, surface, context, smooth,
 				 src_x, src_y, src_w, src_h,
 				 dst_x, dst_y, dst_w, dst_h);
    else
 #endif
      {
 	if (smooth)
-	  evas_common_scale_rgba_in_to_out_clip_smooth(image, surface, context,
+	  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
 						       src_x, src_y, src_w, src_h,
 						       dst_x, dst_y, dst_w, dst_h);
 	else
-	  evas_common_scale_rgba_in_to_out_clip_sample(image, surface, context,
+	  evas_common_scale_rgba_in_to_out_clip_sample(im, surface, context,
 						       src_x, src_y, src_w, src_h,
 						       dst_x, dst_y, dst_w, dst_h);
 	evas_common_cpu_end_opt();
      }
-}
-
-static char *
-eng_image_comment_get(void *data, void *image, char *key)
-{
-   RGBA_Image *im;
-
-   im = image;
-   return im->info.comment;
-}
-
-static char *
-eng_image_format_get(void *data, void *image)
-{
-   return NULL;
-}
-
-static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
-{
-}
-
-static int
-eng_image_colorspace_get(void *data, void *image)
-{
-   return EVAS_COLORSPACE_ARGB8888;
-}
-
-static void
-eng_image_native_set(void *data, void *image, void *native)
-{
-}
-
-static void *
-eng_image_native_get(void *data, void *image)
-{
-   return NULL;
 }
 
 static void

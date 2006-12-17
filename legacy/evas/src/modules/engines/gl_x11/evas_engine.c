@@ -457,6 +457,161 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
    evas_gl_common_gradient_draw(re->win->gl_context, gradient, x, y, w, h);
 }
 
+static int
+eng_image_alpha_get(void *data, void *image)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im;
+
+   re = (Render_Engine *)data;
+   im = image;
+   /* FIXME: can move to gl_common */
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+      default:
+	break;
+     }
+   return 0;
+}
+
+static int
+eng_image_colorspace_get(void *data, void *image)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im;
+   
+   re = (Render_Engine *)data;
+   im = image;
+   return im->cs.space;
+}
+
+static void *
+eng_image_alpha_set(void *data, void *image, int has_alpha)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im;
+
+   re = (Render_Engine *)data;
+   eng_window_use(re->win);
+   im = image;
+   /* FIXME: can move to gl_common */
+   if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return im;
+   if ((has_alpha) && (im->im->flags & RGBA_IMAGE_HAS_ALPHA)) return image;
+   else if ((!has_alpha) && (!(im->im->flags & RGBA_IMAGE_HAS_ALPHA))) return image;
+   if (im->references > 1)
+    {
+	Evas_GL_Image *im_new;
+
+	im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->image->w, im->im->image->h, im->im->image->data,
+							   eng_image_alpha_get(data, image),
+							   eng_image_colorspace_get(data, image));
+	if (!im_new) return im;
+	evas_gl_common_image_free(im);
+	im = im_new;
+     }
+   else
+     evas_gl_common_image_dirty(im);
+   if (has_alpha)
+     im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   else
+     im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   return image;
+}
+
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return image;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+}
+
+static char *
+eng_image_comment_get(void *data, void *image, char *key)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im;
+
+   re = (Render_Engine *)data;
+   im = image;
+   return im->im->info.comment;
+}
+
+static char *
+eng_image_format_get(void *data, void *image)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im;
+
+   re = (Render_Engine *)data;
+   im = image;
+   return NULL;
+}
+
+static void
+eng_image_colorspace_set(void *data, void *image, int cspace)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im;
+   
+   re = (Render_Engine *)data;
+   im = image;
+   /* FIXME: can move to gl_common */
+   if (im->cs.space == cspace) return;
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->cs.data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	     im->cs.data = NULL;
+	     im->cs.no_free = 0;
+	  }
+	if (!im->im->image->no_free)
+	  evas_common_image_surface_alloc(im->im->image);
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	evas_common_image_surface_dealloc(im->im->image);
+	im->im->image->data = NULL;
+	if (im->tex) evas_gl_common_texture_free(im->tex);
+	im->tex = NULL;
+	if (im->cs.data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	  }
+	im->cs.data = calloc(1, im->im->image->h * sizeof(unsigned char *) * 2);
+	im->cs.no_free = 0;
+	break;
+      default:
+	abort();
+	break;
+     }
+   im->cs.space = cspace;
+}
+
+static void
+eng_image_native_set(void *data, void *image, void *native)
+{
+}
+
+static void *
+eng_image_native_get(void *data, void *image)
+{
+   return NULL;
+}
+
 static void *
 eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo)
 {
@@ -469,23 +624,23 @@ eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Op
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
-   return evas_gl_common_image_new_from_data(re->win->gl_context, w, h, image_data);
+   return evas_gl_common_image_new_from_data(re->win->gl_context, w, h, image_data, alpha, cspace);
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
-   return evas_gl_common_image_new_from_copied_data(re->win->gl_context, w, h, image_data);
+   return evas_gl_common_image_new_from_copied_data(re->win->gl_context, w, h, image_data, alpha, cspace);
 }
 
 static void
@@ -520,17 +675,23 @@ eng_image_size_set(void *data, void *image, int w, int h)
    im_old = image;
    if ((im_old) && (im_old->im->image->w == w) && (im_old->im->image->h == h))
      return image;
-   im = evas_gl_common_image_new(re->win->gl_context, w, h);
    if (im_old)
      {
+	im = evas_gl_common_image_new(re->win->gl_context, w, h, 
+				      eng_image_alpha_get(data, image),
+				      eng_image_colorspace_get(data, image));
+/*	
 	evas_common_load_image_data_from_file(im_old->im);
 	if (im_old->im->image->data)
 	  {
 	     evas_common_blit_rectangle(im_old->im, im->im, 0, 0, w, h, 0, 0);
 	     evas_common_cpu_end_opt();
 	  }
+ */
 	evas_gl_common_image_free(im_old);
      }
+   else
+     im = evas_gl_common_image_new(re->win->gl_context, w, h, 1, EVAS_COLORSPACE_ARGB8888);
    return im;
 }
 
@@ -554,24 +715,38 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
    im = image;
    eng_window_use(re->win);
    evas_common_load_image_data_from_file(im->im);
-   if (to_write)
+   switch (im->cs.space)
      {
-	if (im->references > 1)
+      case EVAS_COLORSPACE_ARGB8888:
+	if (to_write)
 	  {
-	     Evas_GL_Image *im_new;
-
-	     im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->image->w, im->im->image->h, im->im->image->data);
-	     if (!im_new)
+	     if (im->references > 1)
 	       {
-		  return im;
-		  *image_data = NULL;
+		  Evas_GL_Image *im_new;
+		  
+		  im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->image->w, im->im->image->h, im->im->image->data,
+								     eng_image_alpha_get(data, image),
+								     eng_image_colorspace_get(data, image));
+		  if (!im_new)
+		    {
+		       return im;
+		       *image_data = NULL;
+		    }
+		  im = im_new;
 	       }
-	     im = im_new;
+	     else
+	       evas_gl_common_image_dirty(im);
 	  }
-	else
-	  evas_gl_common_image_dirty(im);
+	*image_data = im->im->image->data;
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	*image_data = im->cs.data;
+	break;
+      default:
+	abort();
+	break;
      }
-   *image_data = im->im->image->data;
    return im;
 }
 
@@ -584,77 +759,39 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    re = (Render_Engine *)data;
    im = image;
    eng_window_use(re->win);
-   if (image_data != im->im->image->data)
+   switch (im->cs.space)
      {
-	int w, h;
-
-	w = im->im->image->w;
-	h = im->im->image->h;
-	evas_gl_common_image_free(im);
-	return eng_image_new_from_data(data, w, h, image_data);
+      case EVAS_COLORSPACE_ARGB8888:
+	if (image_data != im->im->image->data)
+	  {
+	     int w, h;
+	     
+	     w = im->im->image->w;
+	     h = im->im->image->h;
+	     evas_gl_common_image_free(im);
+	     return eng_image_new_from_data(data, w, h, image_data,
+					    eng_image_alpha_get(data, image),
+					    eng_image_colorspace_get(data, image));
+	  }
+        break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        if (image_data != im->cs.data)
+	  {
+	     if (im->cs.data)
+	       {
+		  if (!im->cs.no_free) free(im->cs.data);
+	       }
+	     im->cs.data = image_data;
+	  }
+	break;
+      default:
+	abort();
+	break;
      }
    /* hmmm - but if we wrote... why bother? */
    evas_gl_common_image_dirty(im);
    return im;
-}
-
-static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im;
-
-   re = (Render_Engine *)data;
-   eng_window_use(re->win);
-   im = image;
-   if ((has_alpha) && (im->im->flags & RGBA_IMAGE_HAS_ALPHA)) return image;
-   else if ((!has_alpha) && (!(im->im->flags & RGBA_IMAGE_HAS_ALPHA))) return image;
-   if (im->references > 1)
-     {
-	Evas_GL_Image *im_new;
-
-	im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->image->w, im->im->image->h, im->im->image->data);
-	if (!im_new) return im;
-	evas_gl_common_image_free(im);
-	im = im_new;
-     }
-   else
-     evas_gl_common_image_dirty(im);
-   if (has_alpha)
-     im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
-   return image;
-}
-
-static int
-eng_image_alpha_get(void *data, void *image)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im;
-
-   re = (Render_Engine *)data;
-   im = image;
-   eng_window_use(re->win);
-   if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
-   return 0;
-}
-
-static void *
-eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   return image;
-}
-
-static void
-eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
 }
 
 static void
@@ -669,50 +806,6 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 			     src_x, src_y, src_w, src_h,
 			     dst_x, dst_y, dst_w, dst_h,
 			     smooth);
-}
-
-static char *
-eng_image_comment_get(void *data, void *image, char *key)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im;
-
-   re = (Render_Engine *)data;
-   im = image;
-   return im->im->info.comment;
-}
-
-static char *
-eng_image_format_get(void *data, void *image)
-{
-   Render_Engine *re;
-   Evas_GL_Image *im;
-
-   re = (Render_Engine *)data;
-   im = image;
-   return NULL;
-}
-
-static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
-{
-}
-
-static int
-eng_image_colorspace_get(void *data, void *image)
-{
-   return EVAS_COLORSPACE_ARGB8888;
-}
-
-static void
-eng_image_native_set(void *data, void *image, void *native)
-{
-}
-
-static void *
-eng_image_native_get(void *data, void *image)
-{
-   return NULL;
 }
 
 static void

@@ -475,24 +475,24 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
    XR_Image *im;
    
    re = (Render_Engine *)data;
-   im = _xre_image_new_from_data(re->xinf, w, h, image_data);
+   im = _xre_image_new_from_data(re->xinf, w, h, image_data, alpha, cspace);
    return im;
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
    XR_Image *im;
    
    re = (Render_Engine *)data;
-   im = _xre_image_new_from_copied_data(re->xinf, w, h, image_data);
+   im = _xre_image_new_from_copied_data(re->xinf, w, h, image_data, alpha, cspace);
    return im;
 }
 
@@ -590,7 +590,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	  {
 	     if (!image)
 	       {
-		  image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data);
+		  image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data, old_image->alpha, EVAS_COLORSPACE_ARGB8888);
 		  if (image)
 		    {
 		       ((XR_Image *)image)->alpha = old_image->alpha;

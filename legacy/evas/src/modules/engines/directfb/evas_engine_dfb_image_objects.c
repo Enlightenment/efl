@@ -96,7 +96,7 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error, E
 
 void               *
 evas_engine_directfb_image_new_from_data(void *data, int w, int h,
-					 DATA32 * image_data)
+					 DATA32 * image_data, int alpha, int cspace)
 {
    /* FIXME document this peculiarity */
    return evas_engine_directfb_image_new_from_copied_data(data, w, h, image_data);
@@ -104,7 +104,7 @@ evas_engine_directfb_image_new_from_data(void *data, int w, int h,
 
 void               *
 evas_engine_directfb_image_new_from_copied_data(void *data, int w, int h,
-						DATA32 * image_data)
+						DATA32 * image_data, int alpha, int cspace)
 {
 
    Render_Engine      *re;

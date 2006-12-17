@@ -63,9 +63,9 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 	ext = glGetString(GL_EXTENSIONS);
 	if (ext)
 	  {
-	     if (strstr(ext, "GL_SGIS_generate_mipmap")) gc->ext.sgis_generate_mipmap = 1;
-	     if (strstr(ext, "GL_NV_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
-	     if (strstr(ext, "GL_EXT_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
+//	     if (strstr(ext, "GL_SGIS_generate_mipmap")) gc->ext.sgis_generate_mipmap = 1;
+//	     if (strstr(ext, "GL_NV_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
+//	     if (strstr(ext, "GL_EXT_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
 	     if (strstr(ext, "GL_ARB_texture_non_power_of_two")) gc->ext.arb_texture_non_power_of_two = 1;
 	     printf("GL EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
 	     printf("GL EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);
@@ -74,7 +74,7 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 // changing textures a lot (doing video). so we wont do anything with this
 // for now, but it does work.
 //	     gc->ext.arb_texture_non_power_of_two = 0; printf("DISABLE GL_ARB_texture_non_power_of_two\n");
-	     gc->ext.nv_texture_rectangle = 0; printf("DISABLE GL_NV_texture_rectangle\n");
+//	     gc->ext.nv_texture_rectangle = 0; printf("DISABLE GL_NV_texture_rectangle\n");
 	  }
 	else
 	  {
@@ -317,6 +317,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
    if (!gc->change.texture) return;
    if (gc->font_texture > 0)
      {
+	glUseProgramObjectARB(0);
 	if (gc->font_texture_rectangle)
 	  {
 	     glEnable(GL_TEXTURE_2D);
@@ -342,8 +343,38 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	else
 	  {
 	     if (gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
-	     glEnable(GL_TEXTURE_2D);
-	     glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
+	     if ((gc->texture->prog) && 
+		 (gc->texture->texture2) && (gc->texture->texture3))
+	       {
+		  int i;
+		  
+		  glActiveTexture(GL_TEXTURE1);
+		  glEnable(GL_TEXTURE_2D);
+		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture2);
+		  
+		  glActiveTexture(GL_TEXTURE2);
+		  glEnable(GL_TEXTURE_2D);
+		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture3);
+		  
+		  glActiveTexture(GL_TEXTURE0);
+		  glEnable(GL_TEXTURE_2D);
+		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
+		  
+		  glUseProgramObjectARB(gc->texture->prog);
+	       }
+	     else
+	       {
+		  glUseProgramObjectARB(0);
+		  
+                  glActiveTexture(GL_TEXTURE1);
+		  glDisable(GL_TEXTURE_2D);
+                  glActiveTexture(GL_TEXTURE2);
+		  glDisable(GL_TEXTURE_2D);
+		  
+                  glActiveTexture(GL_TEXTURE0);
+		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
+		  glEnable(GL_TEXTURE_2D);
+	       }
 	  }
 	if (gc->texture->rectangle)
 	  {
@@ -375,9 +406,9 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 			 {
 			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			    if (gc->texture->have_mipmaps)
-			      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			    else
+//			    if (gc->texture->have_mipmaps)
+//			      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//			    else
 			      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			 }
 		       else

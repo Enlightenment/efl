@@ -575,8 +575,8 @@ struct _Evas_Func
    void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h);
 
    void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
-   void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data);
-   void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data);
+   void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);
+   void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);
    void (*image_free)                      (void *data, void *image);
    void (*image_size_get)                  (void *data, void *image, int *w, int *h);
    void *(*image_size_set)                 (void *data, void *image, int w, int h);
