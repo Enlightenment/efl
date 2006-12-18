@@ -532,7 +532,6 @@ evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **r
 {
    int texfmt;
    
-   return;
    /* FIXME: should use subimage */
    glEnable(GL_TEXTURE_2D);
    texfmt = GL_LUMINANCE;
