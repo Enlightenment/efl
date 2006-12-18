@@ -176,11 +176,12 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
      }
    if ((rp->still_in) && (rp->clicked_button == ev->button))
      {
-	rp->clicked_button = 0;
-	rp->still_in = 0;
 	snprintf(buf, sizeof(buf), "mouse,clicked,%i", ev->button);
 	_edje_emit(ed, buf, rp->part->name);
      }
+   rp->clicked_button = 0;
+   rp->still_in = 0;
+
 //   _edje_recalc(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
