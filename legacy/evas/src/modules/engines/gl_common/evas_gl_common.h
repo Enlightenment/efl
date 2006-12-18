@@ -76,6 +76,7 @@ struct _Evas_GL_Context
    Evas_GL_Texture      *texture;
    GLuint                font_texture;
    unsigned char         font_texture_rectangle : 1;
+   unsigned char         texture_program : 1;
 
    int             max_texture_depth;
    int             max_texture_size;

@@ -442,18 +442,15 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 
      {
 	const char *code =
-	  "uniform sampler2D Ytex, Utex, Vtex;\n"
+	  "uniform sampler2D ytex, utex, vtex;\n"
 	  "void main(void) {\n"
 	  
 	  "  float r, g, b, y, u, v;\n"
 	  
-	  "  y = texture2D(Ytex, gl_TexCoord[0].st).r;\n"
-	  "  u = texture2D(Utex, gl_TexCoord[0].st).r;\n"
-	  "  v = texture2D(Vtex, gl_TexCoord[0].st).r;\n"
+	  "  y = texture2D(ytex, gl_TexCoord[0].st).r;\n"
+	  "  u = texture2D(utex, gl_TexCoord[0].st).r;\n"
+	  "  v = texture2D(vtex, gl_TexCoord[0].st).r;\n"
 
-#if 0 // enable this to direct-test y u and v values	  
-	  "  gl_FragColor = vec4(y, u, v, 1.0);\n"
-#else
 	  "  y = (y - 0.0625) * 1.164;\n"
 	  "  u = u - 0.5;\n"
 	  "  v = v - 0.5;\n"
@@ -463,7 +460,7 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 	  "  b = y + (1.772   * u);\n"
 	  
 	  "  gl_FragColor = vec4(r, g, b, 1.0);\n"
-#endif
+
 	  "}\n";
 	glShaderSourceARB(fshad, 1, &code, NULL);
      }
@@ -474,9 +471,13 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
    
    glEnable(GL_TEXTURE_2D);
    texfmt = GL_LUMINANCE;
+
+   glUseProgramObjectARB(tex->prog);
+   glUniform1iARB(glGetUniformLocationARB(tex->prog, "ytex"), 0);
+   glUniform1iARB(glGetUniformLocationARB(tex->prog, "utex"), 1);
+   glUniform1iARB(glGetUniformLocationARB(tex->prog, "vtex"), 2);
    
    glGenTextures(1, &(tex->texture));
-   glUniform1iARB(glGetUniformLocationARB(tex->prog, "Ytex", tex->texture));
    glBindTexture(GL_TEXTURE_2D, tex->texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -488,7 +489,6 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 		texfmt, GL_UNSIGNED_BYTE, rows[0]);
    
    glGenTextures(1, &(tex->texture2));
-   glUniform1iARB(glGetUniformLocationARB(tex->prog, "Utex", tex->texture2));
    glBindTexture(GL_TEXTURE_2D, tex->texture2);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -500,7 +500,6 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 		texfmt, GL_UNSIGNED_BYTE, rows[th]);
    
    glGenTextures(1, &(tex->texture3));
-   glUniform1iARB(glGetUniformLocationARB(tex->prog, "Vtex", 2));
    glBindTexture(GL_TEXTURE_2D, tex->texture3);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -510,6 +509,8 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
    glTexImage2D(GL_TEXTURE_2D, 0,
 		texfmt, tw / 2, th / 2, 0,
 		texfmt, GL_UNSIGNED_BYTE, rows[th + (th / 2)]);
+   
+   glUseProgramObjectARB(0);
    
    if (gc->texture) gc->texture->references--;
    gc->texture = tex;

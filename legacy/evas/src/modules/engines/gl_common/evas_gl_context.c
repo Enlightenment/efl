@@ -318,6 +318,16 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
    if (gc->font_texture > 0)
      {
 	glUseProgramObjectARB(0);
+	if (gc->texture_program)
+	  {
+	     glUseProgramObjectARB(0);
+	     
+	     glActiveTexture(GL_TEXTURE1);
+	     glDisable(GL_TEXTURE_2D);
+	     glActiveTexture(GL_TEXTURE2);
+	     glDisable(GL_TEXTURE_2D);
+	     gc->texture_program = 0;
+	  }
 	if (gc->font_texture_rectangle)
 	  {
 	     glEnable(GL_TEXTURE_2D);
@@ -346,8 +356,11 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	     if ((gc->texture->prog) && 
 		 (gc->texture->texture2) && (gc->texture->texture3))
 	       {
-		  int i;
-		  
+		  gc->texture_program = 1;
+		  glActiveTexture(GL_TEXTURE0);
+		  glEnable(GL_TEXTURE_2D);
+		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
+
 		  glActiveTexture(GL_TEXTURE1);
 		  glEnable(GL_TEXTURE_2D);
 		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture2);
@@ -355,22 +368,20 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 		  glActiveTexture(GL_TEXTURE2);
 		  glEnable(GL_TEXTURE_2D);
 		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture3);
-		  
-		  glActiveTexture(GL_TEXTURE0);
-		  glEnable(GL_TEXTURE_2D);
-		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
-		  
 		  glUseProgramObjectARB(gc->texture->prog);
 	       }
 	     else
 	       {
-		  glUseProgramObjectARB(0);
-		  
-                  glActiveTexture(GL_TEXTURE1);
-		  glDisable(GL_TEXTURE_2D);
-                  glActiveTexture(GL_TEXTURE2);
-		  glDisable(GL_TEXTURE_2D);
-		  
+		  if (gc->texture_program)
+		    {
+		       glUseProgramObjectARB(0);
+		       
+		       glActiveTexture(GL_TEXTURE1);
+		       glDisable(GL_TEXTURE_2D);
+		       glActiveTexture(GL_TEXTURE2);
+		       glDisable(GL_TEXTURE_2D);
+		       gc->texture_program = 0;
+		    }
                   glActiveTexture(GL_TEXTURE0);
 		  glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
 		  glEnable(GL_TEXTURE_2D);
