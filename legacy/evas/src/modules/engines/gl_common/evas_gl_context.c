@@ -67,9 +67,9 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 //	     if (strstr(ext, "GL_NV_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
 //	     if (strstr(ext, "GL_EXT_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
 	     if (strstr(ext, "GL_ARB_texture_non_power_of_two")) gc->ext.arb_texture_non_power_of_two = 1;
-	     printf("GL EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
-	     printf("GL EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);
-	     printf("GL EXT supported: GL_ARB_texture_non_power_of_two = %x\n", gc->ext.arb_texture_non_power_of_two);
+//	     printf("GL EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
+//	     printf("GL EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);
+//	     printf("GL EXT supported: GL_ARB_texture_non_power_of_two = %x\n", gc->ext.arb_texture_non_power_of_two);
 // this causes at least nvidia's drivers to go into pathological pain when
 // changing textures a lot (doing video). so we wont do anything with this
 // for now, but it does work.
@@ -78,7 +78,7 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 	  }
 	else
 	  {
-	     printf("GL EXT supported: No extensions!!!!!\n");
+//	     printf("GL EXT supported: No extensions!!!!!\n");
 	  }
 	gc->ext.checked = 1;
      }
@@ -330,12 +330,14 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	  }
 	if (gc->font_texture_rectangle)
 	  {
+	     glActiveTexture(GL_TEXTURE0);
 	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
 	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->font_texture);
 	  }
 	else
 	  {
+	     glActiveTexture(GL_TEXTURE0);
 	     if (gc->ext.nv_texture_rectangle)
 	       glDisable(GL_TEXTURE_RECTANGLE_NV);
 	     glEnable(GL_TEXTURE_2D);
@@ -346,6 +348,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
      {
 	if (gc->texture->rectangle)
 	  {
+	     glActiveTexture(GL_TEXTURE0);
 	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
 	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->texture->texture);

@@ -246,11 +246,11 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
       case EVAS_COLORSPACE_YCBCR422P709_PL:
 	if ((im->tex) && (im->dirty))
 	  {
-	     evas_gl_common_ycbcr601pl_texture_update(im->tex, im->cs.data, im->im->image->w, im->im->image->h);
+	     evas_gl_common_ycbcr601pl_texture_update(im->tex, im->cs.data, im->im->image->w, im->im->image->h, smooth);
 	     im->dirty = 0;
 	  }
 	if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
-	  im->tex = evas_gl_common_ycbcr601pl_texture_new(gc, im->cs.data, im->im->image->w, im->im->image->h);
+	  im->tex = evas_gl_common_ycbcr601pl_texture_new(gc, im->cs.data, im->im->image->w, im->im->image->h, smooth);
 	if (!im->tex) return;
 	ow = (dw * im->tex->tw) / sw;
 	oh = (dh * im->tex->th) / sh;

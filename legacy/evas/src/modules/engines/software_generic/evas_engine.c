@@ -361,6 +361,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 {
    RGBA_Image *im;
 
+   if (!image) return NULL;
    im = image;
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888)
      {
@@ -414,6 +415,7 @@ eng_image_comment_get(void *data, void *image, char *key)
 {
    RGBA_Image *im;
 
+   if (!image) return NULL;
    im = image;
    return im->info.comment;
 }
@@ -429,6 +431,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 {
    RGBA_Image *im;
    
+   if (!image) return;
    im = image;
    if (im->cs.space == cspace) return;
    switch (cspace)
@@ -600,6 +603,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
 static void *
 eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
+   if (!image) return NULL;
    evas_common_image_dirty(image);
    evas_common_image_colorspace_dirty(image);
    return image;
@@ -610,6 +614,11 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 {
    RGBA_Image *im;
 
+   if (!image)
+     {
+	*image_data = NULL;
+	return NULL;
+     }
    im = image;
    evas_common_load_image_data_from_file(im);
    switch (im->cs.space)
@@ -650,6 +659,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
    RGBA_Image *im, *im2;
 
+   if (!image) return NULL;
    im = image;
    switch (im->cs.space)
      {
@@ -691,6 +701,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 {
    RGBA_Image *im;
    
+   if (!image) return;
    im = image;
    if (im->cs.space == EVAS_COLORSPACE_ARGB8888)
      evas_common_load_image_data_from_file(im);

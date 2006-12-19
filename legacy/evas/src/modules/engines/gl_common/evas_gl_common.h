@@ -188,7 +188,9 @@ Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 void              evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
-
+Evas_GL_Texture  *evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows, int w, int h, int smooth);
+void              evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **rows, int w, int h, int smooth);
+    
 Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key, Evas_Image_Load_Opts *lo);
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data, int alpha, int cspace);
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data, int alpha, int cspace);

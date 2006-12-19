@@ -496,6 +496,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
+   if (!image) return NULL;
    eng_window_use(re->win);
    im = image;
    /* FIXME: can move to gl_common */
@@ -546,6 +547,7 @@ eng_image_comment_get(void *data, void *image, char *key)
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
+   if (!image) return NULL;
    im = image;
    return im->im->info.comment;
 }
@@ -568,6 +570,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    Evas_GL_Image *im;
    
    re = (Render_Engine *)data;
+   if (!image) return;
    im = image;
    /* FIXME: can move to gl_common */
    if (im->cs.space == cspace) return;
@@ -651,6 +654,7 @@ eng_image_free(void *data, void *image)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if (!image) return;
    eng_window_use(re->win);
    evas_gl_common_image_free(image);
 }
@@ -661,6 +665,12 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if (!image)
+     {
+	*w = 0;
+	*h = 0;
+	return;
+     }
    if (w) *w = ((Evas_GL_Image *)image)->im->image->w;
    if (h) *h = ((Evas_GL_Image *)image)->im->image->h;
 }
@@ -672,8 +682,8 @@ eng_image_size_set(void *data, void *image, int w, int h)
    Evas_GL_Image *im, *im_old;
 
    re = (Render_Engine *)data;
-   eng_window_use(re->win);
    if (!image) return NULL;
+   eng_window_use(re->win);
    im_old = image;
    if ((im_old) && (im_old->im->image->w == w) && (im_old->im->image->h == h))
      return image;
@@ -703,6 +713,7 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if (!image) return NULL;
    evas_gl_common_image_dirty(image);
    return image;
 }
@@ -714,6 +725,11 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
    Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
+   if (!image)
+     {
+	*image_data = NULL;
+	return NULL;
+     }
    im = image;
    eng_window_use(re->win);
    evas_common_load_image_data_from_file(im->im);
@@ -759,6 +775,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    Evas_GL_Image *im, *im2;
 
    re = (Render_Engine *)data;
+   if (!image) return NULL;
    im = image;
    eng_window_use(re->win);
    switch (im->cs.space)
@@ -803,6 +820,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if (!image) return;
    eng_window_use(re->win);
    re->win->gl_context->dc = context;
    evas_gl_common_image_draw(re->win->gl_context, image,
