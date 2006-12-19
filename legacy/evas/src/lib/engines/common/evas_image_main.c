@@ -267,10 +267,18 @@ evas_common_image_free(RGBA_Image *im)
 {
    im->ref--;
    if (im->ref > 0) return;
-   if (im->cs.data != im->image->data)
+   if ((im->cs.data) && (im->image->data)) 
+     {
+	if (im->cs.data != im->image->data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	  }
+     }
+   else if (im->cs.data) 
      {
 	if (!im->cs.no_free) free(im->cs.data);
      }
+   
    im->cs.data = NULL;
    evas_common_pipe_free(im);
    if (im->image) evas_common_image_surface_free(im->image);
