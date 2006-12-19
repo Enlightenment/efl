@@ -167,15 +167,6 @@ _ecore_x_event_free_xdnd_enter(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_x_event_free_selection_request(void *data __UNUSED__, void *ev)
-{
-   Ecore_X_Event_Selection_Request *e;
-
-   XFree(e->target);
-   free(e);
-}
-
-static void
 _ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
 {
    Ecore_X_Event_Selection_Notify *e;
@@ -1129,9 +1120,9 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    e->requestor = xevent->xselectionrequest.requestor;
    e->time = xevent->xselectionrequest.time;
    e->selection = xevent->xselectionrequest.selection;
-   e->target = XGetAtomName(_ecore_x_disp, xevent->xselectionrequest.target);
+   e->target = xevent->xselectionrequest.target;
    e->property = xevent->xselectionrequest.property;
-   ecore_event_add(ECORE_X_EVENT_SELECTION_REQUEST, e, _ecore_x_event_free_selection_request, NULL);
+   ecore_event_add(ECORE_X_EVENT_SELECTION_REQUEST, e, NULL, NULL);
 
    if ((sd = _ecore_x_selection_get(xevent->xselectionrequest.selection)) &&
        (sd->win == xevent->xselectionrequest.owner))
