@@ -491,6 +491,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha,
    RGBA_Image *im;
 
    im = evas_common_image_new();
+   if (!im) return NULL;
    im->image = evas_common_image_surface_new(im);
    if (!im->image)
      {
@@ -586,6 +587,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
    if (im_old)
      {
 	im->cs.space = im_old->cs.space;
+	im->flags = im_old->flags;
 /*	
 	evas_common_load_image_data_from_file(im_old);
 	evas_common_image_colorspace_normalize(im);
