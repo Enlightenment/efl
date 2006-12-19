@@ -573,6 +573,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_object_image_size_set(o, ee->w, ee->h);
    evas_object_image_alpha_set(o, 1);
    ee->engine.buffer.pixels = evas_object_image_data_get(o, 1);
+   evas_object_image_data_set(o, ee->engine.buffer.pixels);
    evas_object_event_callback_add(ee->engine.buffer.image,
 				  EVAS_CALLBACK_MOUSE_IN,
 				  _ecore_evas_buffer_cb_mouse_in, ee);
