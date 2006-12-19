@@ -543,7 +543,7 @@ struct _Ecore_X_Event_Selection_Request
    Ecore_X_Window    requestor;
    Ecore_X_Time      time;
    Ecore_X_Atom      selection;
-   Ecore_X_Atom      target;
+   char             *target;
    Ecore_X_Atom      property;
 };
 

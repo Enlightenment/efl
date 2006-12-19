@@ -277,6 +277,8 @@ _ecore_x_selection_target_atom_get(const char *target)
 char *
 _ecore_x_selection_target_get(Ecore_X_Atom target)
 {
+   /* FIXME: Should not return mem allocated with strdup or X mixed,
+    * one should use free to free, the other XFree */
    if (target == ECORE_X_ATOM_FILE_NAME)
      return strdup(ECORE_X_SELECTION_TARGET_FILENAME);
    else if (target == ECORE_X_ATOM_STRING)
