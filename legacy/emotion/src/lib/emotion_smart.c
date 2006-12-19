@@ -35,7 +35,7 @@ struct _Smart_Data
    Emotion_Video_Module  *module;
    void                  *video;
    
-   char *module_name;
+   char                  *module_name;
 
    char          *file;
    Evas_Object   *obj;
@@ -51,12 +51,12 @@ struct _Smart_Data
    
    char *title;
    struct {
-      char *info;
-      double stat;
+      char   *info;
+      double  stat;
    } progress;
    struct {
       char *file;
-      int num;
+      int   num;
    } ref;
    struct {
       int button_num;
@@ -992,53 +992,99 @@ _pixels_get(void *data, Evas_Object *obj)
    int iw, ih, w, h;
    Smart_Data *sd;
    Emotion_Format format;
-
+   unsigned char *bgra_data;
+   
    sd = data;
    evas_object_image_size_get(obj, &iw, &ih);
    sd->module->video_data_size_get(sd->video, &w, &h);
    if ((w != iw) || (h != ih))
      {
-       evas_object_image_size_set(obj, w, h);
-       iw = w;
-       ih = h;
+	evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
+        evas_object_image_alpha_set(obj, 0);
+	evas_object_image_size_set(obj, w, h);
+	iw = w;
+	ih = h;
+     }
+   if ((iw < 1) || (ih < 1))
+     {
+	evas_object_image_pixels_dirty_set(obj, 0);
+     }
+   else
+     {
+	format = sd->module->format_get(sd->video);
+	if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
+	  {
+	     unsigned char **rows;
+	     
+	     evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
+	     rows = evas_object_image_data_get(obj, 1);
+	     if (rows)
+	       {
+		  if (sd->module->yuv_rows_get(sd->video, iw, ih,
+					       rows, 
+					       &rows[ih], 
+					       &rows[ih + (ih / 2)]))
+		    evas_object_image_data_update_add(obj, 0, 0, iw, ih);
+	       }
+	     evas_object_image_data_set(obj, rows);
+	     evas_object_image_pixels_dirty_set(obj, 0);
+	  }
+	else if (format == EMOTION_FORMAT_BGRA)
+	  {
+	     if (sd->module->bgra_data_get(sd->video, &bgra_data));
+	       {
+		  evas_object_image_data_set(obj, bgra_data);
+		  evas_object_image_pixels_dirty_set(obj, 0);
+	       }
+	  }
+     }
+//   sd->module->frame_done(sd->video);
+/*   
+   evas_object_image_size_get(obj, &iw, &ih);
+   sd->module->video_data_size_get(sd->video, &w, &h);
+   if ((w != iw) || (h != ih))
+     {
+	evas_object_image_size_set(obj, w, h);
+	iw = w;
+	ih = h;
      }
    format = sd->module->format_get(sd->video);
    if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
      {
-       unsigned char **rows;
-       Evas_Pixel_Import_Source ps;
-   
-       ps.format = EVAS_PIXEL_FORMAT_YUV420P_601;
-       ps.w = iw;
-       ps.h = ih;
-      
-       ps.rows = malloc(ps.h * 2 * sizeof(void *));
-       if (!ps.rows)
-         {
-           sd->module->frame_done(sd->video);
-           return;
-         }
-   
-       rows = (unsigned char **)ps.rows;
-      
-       if (sd->module->yuv_rows_get(sd->video, iw, ih,
-             rows, 
-            &rows[ps.h], 
-            &rows[ps.h + (ps.h / 2)]))
+	unsigned char **rows;
+	Evas_Pixel_Import_Source ps;
+	
+	ps.format = EVAS_PIXEL_FORMAT_YUV420P_601;
+	ps.w = iw;
+	ps.h = ih;
+	
+	ps.rows = malloc(ps.h * 2 * sizeof(void *));
+	if (!ps.rows)
+	  {
+	     sd->module->frame_done(sd->video);
+	     return;
+	  }
+	
+	rows = (unsigned char **)ps.rows;
+	
+	if (sd->module->yuv_rows_get(sd->video, iw, ih,
+				     rows, 
+				     &rows[ps.h], 
+				     &rows[ps.h + (ps.h / 2)]))
 	  evas_object_image_pixels_import(obj, &ps);
-       evas_object_image_pixels_dirty_set(obj, 0);
-       free(ps.rows);
-   }
+	evas_object_image_pixels_dirty_set(obj, 0);
+	free(ps.rows);
+     }
    else if (format == EMOTION_FORMAT_BGRA)
      {
-       unsigned char *bgra_data;
-       if (sd->module->bgra_data_get(sd->video, &bgra_data));
-         {
-           evas_object_image_data_set(obj, bgra_data);
-         }
+	if (sd->module->bgra_data_get(sd->video, &bgra_data));
+	  {
+	     evas_object_image_data_set(obj, bgra_data);
+	     evas_object_image_pixels_dirty_set(obj, 0);
+	  }
      }
-
    sd->module->frame_done(sd->video);
+ */ 
 }
 
 /*******************************************/

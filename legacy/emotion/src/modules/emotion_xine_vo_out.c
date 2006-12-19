@@ -440,7 +440,7 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
      {
 	void *buf;
 	int ret;
-	
+
 	if (fr->format == XINE_IMGFMT_YUY2)
 	  {
 	     _emotion_yuy2_to_bgra32(fr->width, fr->height, fr->vo_frame.base[0], fr->frame.bgra_data);

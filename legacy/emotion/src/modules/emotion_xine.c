@@ -239,7 +239,7 @@ em_init(Evas_Object *obj, void **emotion_video)
    ev->video = xine_open_video_driver(ev->decoder, "emotion",
 				      XINE_VISUAL_TYPE_NONE, ev);
    printf("RESULT: xine_open_video_driver() = %p\n", ev->video);
-   //Let xine autodetect the best audio output driver
+   // Let xine autodetect the best audio output driver
    ev->audio = xine_open_audio_driver(ev->decoder, NULL, ev);
 //   ev->audio = xine_open_audio_driver(ev->decoder, "oss", ev);
 // dont use alsa - alsa has oss emulation.   
