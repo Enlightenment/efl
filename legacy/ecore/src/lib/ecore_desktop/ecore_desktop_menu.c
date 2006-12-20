@@ -266,6 +266,7 @@ printf("MENU FILE %d - %s\n", level, file);
 	/* Setup the merge stack. */
 	if (merge_stack->size <= level)
 	  {
+      /* XXX storing a pointer to a static string probably isn't a good idea. this is most likely the cause of the valgrind error mentioned below. (once this function has exited that memory will no longer be valid) */
 	     while (merge_stack->size < level)
 		ecore_desktop_tree_add(merge_stack, "");
 	     ecore_desktop_tree_add(merge_stack, file);
@@ -294,6 +295,9 @@ printf("MENU FILE %d - %s\n", level, file);
  * which is the strcmp just above.  But it doesn't complain about the first two if's, 
  * or the printf, which I inserted to try and track this down.
  * No idea what it actually is complaining about, so I'll comment it for future study.
+ *
+ * This is probably caused by the fact that a static string was passed into the
+ * tree. See the comment above where this occurs.
  */
 		  fprintf(stderr,
 			  "\n### Oops, infinite menu merging loop detected at %s\n",
@@ -1029,11 +1033,12 @@ _ecore_desktop_menu_unxml_moves(Ecore_Desktop_Tree * menu,
 
 	     sprintf(temp, "<MOVE <%s> <%s>", old, new);
 	     ecore_desktop_tree_extend(menu, temp);
-	     free(old);
-	     old = NULL;
-	     free(new);
-	     new = NULL;
 	  }
+
+  if (old) free(old);
+  old = NULL;
+  if (new) free(new);
+  new = NULL;
      }
 }
 
