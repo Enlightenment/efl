@@ -158,6 +158,7 @@ ecore_desktop_menu_for_each(void (*func)
 	     ecore_desktop_tree_foreach(menus, 0, _ecore_desktop_menu_make_apps,
 					func);
 // FIXME: Can't free this just yet, causes major memory corruption.
+// this leaks a LOT (428,200 bytes in one valgrind run...)
 //               ecore_desktop_tree_del(menus);
 	  }
 	free(menu_file);
@@ -246,6 +247,7 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
 
    /* Preperation. */
    data.stack = ecore_desktop_tree_new(NULL);
+   /* FIXME data.base and data.path leak */
    data.base = ecore_file_strip_ext(ecore_file_get_file(file));
    data.path = ecore_file_get_dir(file);
    if ((level == 0) && (merge_stack == NULL))
