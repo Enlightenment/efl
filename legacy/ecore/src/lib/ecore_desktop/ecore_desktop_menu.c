@@ -1036,10 +1036,10 @@ _ecore_desktop_menu_unxml_moves(Ecore_Desktop_Tree * menu,
 	     ecore_desktop_tree_extend(menu, temp);
 	  }
 
-  if (old) free(old);
-  old = NULL;
-  if (new) free(new);
-  new = NULL;
+	if (old) free(old);
+	old = NULL;
+	if (new) free(new);
+	new = NULL;
      }
 }
 
