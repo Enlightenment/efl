@@ -936,6 +936,7 @@ _ecore_desktop_menu_unxml_rules(Ecore_Desktop_Tree * rules,
      {
 	if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
 	  {
+             /* FIXME <All /> or <All foo="bar"> would be valid input (which this won't catch) */
 	     if (strcmp((char *)tree->elements[i].element, "<All/") == 0)
 	       {
 		  sprintf(temp, "%c%cA", type, sub_type);

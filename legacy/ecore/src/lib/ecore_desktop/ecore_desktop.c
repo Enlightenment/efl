@@ -132,7 +132,6 @@ ecore_desktop_ini_get(const char *file)
 	  }
 
      }
-   buffer[0] = (char)0;
 
    fclose(f);
    return result;

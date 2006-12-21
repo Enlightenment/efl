@@ -448,7 +448,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
          theme_path = strdup(icon_theme);
 	 theme_dir = ecore_file_get_dir(theme_path);
 	 if (theme_dir)
-	    icon_theme = (char *)ecore_file_get_file(theme_dir);
+	    icon_theme = ecore_file_get_file(theme_dir);
 #ifdef DEBUG
 	 printf("LOADING THEME %s  -   %s\n", icon_theme, theme_path);
 #endif
@@ -483,7 +483,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
 
    /* According to the spec, name and comment are required, but we can fake those easily enough. */
    value = ecore_hash_get(result->group, "Name");
-   if (!value) value = (char *) icon_theme;
+   if (!value) value = icon_theme;
    result->name = strdup(value);
    value = ecore_hash_get(result->group, "Comment");
    if (!value) value = "No comment provided.";
