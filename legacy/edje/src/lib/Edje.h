@@ -28,20 +28,20 @@
 enum _Edje_Message_Type
 {
    EDJE_MESSAGE_NONE = 0,
-     
+
      EDJE_MESSAGE_SIGNAL = 1, /* DONT USE THIS */
-     
+
      EDJE_MESSAGE_STRING = 2,
      EDJE_MESSAGE_INT = 3,
      EDJE_MESSAGE_FLOAT = 4,
-     
+
      EDJE_MESSAGE_STRING_SET = 5,
      EDJE_MESSAGE_INT_SET = 6,
      EDJE_MESSAGE_FLOAT_SET = 7,
-     
+
      EDJE_MESSAGE_STRING_INT = 8,
      EDJE_MESSAGE_STRING_FLOAT = 9,
-     
+
      EDJE_MESSAGE_STRING_INT_SET = 10,
      EDJE_MESSAGE_STRING_FLOAT_SET = 11
 };
@@ -151,21 +151,21 @@ enum
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
    /* edje_main.c */
    EAPI int          edje_init                       (void);
    EAPI int          edje_shutdown                   (void);
-   
+
    /* edje_program.c */
    EAPI void         edje_frametime_set              (double t);
    EAPI double       edje_frametime_get              (void);
-   
+
    /* edje_util.c */
    EAPI void         edje_freeze                     (void);
    EAPI void         edje_thaw                       (void);
    EAPI void         edje_fontset_append_set         (char *fonts);
    EAPI const char  *edje_fontset_append_get         (void);
-   
+
    /* edje_load.c */
    EAPI Evas_List   *edje_file_collection_list       (const char *file);
    EAPI void         edje_file_collection_list_free  (Evas_List *lst);
@@ -177,28 +177,30 @@ extern "C" {
    EAPI void         edje_collection_cache_set       (int count);
    EAPI int          edje_collection_cache_get       (void);
    EAPI void         edje_collection_cache_flush     (void);
-       
-   
+
+
    /* edje_util.c */
    EAPI void         edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
    EAPI void         edje_color_class_del(const char *color_class);
    EAPI Evas_List *  edje_color_class_list(void);
    EAPI void         edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
+   EAPI void         edje_text_class_del(const char *text_class);
+   EAPI Evas_List *  edje_text_class_list(void);
    EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
    EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
    EAPI void         edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
-       
+
    /* edje_smart.c */
    EAPI Evas_Object *edje_object_add                 (Evas *evas);
-   
+
    /* edje_util.c */
    EAPI const char  *edje_object_data_get            (Evas_Object *obj, const char *key);
-   
+
    /* edje_load.c */
    EAPI int          edje_object_file_set            (Evas_Object *obj, const char *file, const char *part);
    EAPI void         edje_object_file_get            (Evas_Object *obj, const char **file, const char **part);
    EAPI int          edje_object_load_error_get      (Evas_Object *obj);
-   
+
    /* edje_program.c */
    EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *obj, const char *emission, const char *source), void *data);
    EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *obj, const char *emission, const char *source));
@@ -207,7 +209,7 @@ extern "C" {
    EAPI int          edje_object_play_get            (Evas_Object *obj);
    EAPI void         edje_object_animation_set       (Evas_Object *obj, int on);
    EAPI int          edje_object_animation_get       (Evas_Object *obj);
-   
+
    /* edje_util.c */
    EAPI int          edje_object_freeze              (Evas_Object *obj);
    EAPI int          edje_object_thaw                (Evas_Object *obj);
@@ -239,14 +241,14 @@ extern "C" {
    EAPI void         edje_object_part_drag_page_get  (Evas_Object *obj, const char *part, double *dx, double *dy);
    EAPI void         edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
    EAPI void         edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
-   
+
    /* edje_message_queue.c */
    EAPI void         edje_object_message_send           (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
    EAPI void         edje_object_message_handler_set    (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data);
    EAPI void         edje_object_message_signal_process (Evas_Object *obj);
-   
+
    EAPI void         edje_message_signal_process        (void);
-   
+
 #ifdef __cplusplus
 }
 #endif
