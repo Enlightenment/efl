@@ -934,10 +934,8 @@ _ecore_desktop_menu_unxml_rules(Ecore_Desktop_Tree * rules,
    int                 i;
    char                temp[PATH_MAX];
 
-   if (!tree) return;
    for (i = 0; i < tree->size; i++)
      {
-	if (!tree->elements[i]) continue;
 	if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_STRING)
 	  {
              /* FIXME <All /> or <All foo="bar"> would be valid input (which this won't catch) */
