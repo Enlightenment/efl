@@ -442,8 +442,6 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
      }
    else
      {
-	DATA32 *s, *e;
-	
 	if (data != src_data)
 	  conv_func(src_data, data,
 		    0,
@@ -457,6 +455,7 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
 	  {
 	     int i;
 	     DATA32 a;
+	     DATA32 *s, *e;
 	     
 	     for (i = 0; i < obr->h; i++)
 	       {
@@ -666,9 +665,11 @@ evas_software_x11_outbuf_perf_new_x(Display * disp, Window draw, Visual * vis,
 {
    /* create an "empty" perf struct with just the system & display info */
    Outbuf_Perf        *perf;
+#if 0
    Window              root;
    struct utsname      un;
    FILE               *f;
+#endif
 
    perf = calloc(1, sizeof(Outbuf_Perf));
 
@@ -774,12 +775,12 @@ evas_software_x11_outbuf_perf_serialize_info_x(Outbuf_Perf * perf)
 {
    /* get a seriazed string that is a unique identifier for your */
    /* hardware/x/connection setup. */
+   return NULL;
+#if 0   
    char                buf[32768];
    int                 sum1, sum2, i;
    char               *p;
 
-   return NULL;
-#if 0   
    sum1 = 0;
    sum2 = 0;
    snprintf(buf, sizeof(buf),
@@ -806,11 +807,11 @@ void
 evas_software_x11_outbuf_perf_store_x(Outbuf_Perf * perf)
 {
    /* write performance results to x root property */
+   return;
+#if 0   
    Atom                type, format;
    char               *str;
 
-   return;
-#if 0   
    type = XInternAtom(perf->x.disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
    format = XA_STRING;
    str = evas_software_x11_outbuf_perf_serialize_x(perf);
@@ -826,12 +827,14 @@ evas_software_x11_outbuf_perf_restore_x(Display * disp, Window draw, Visual * vi
 				   Colormap cmap, int x_depth)
 {
    /* read performance results from root window */
-   Atom                type, format;
    Outbuf_Perf        *perf;
+#if 0
+   Atom                type, format;
    unsigned char      *retval = NULL;
    Atom                type_ret;
    unsigned long       bytes_after, num_ret;
    int                 format_ret;
+#endif
 
    perf = evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, x_depth);
    return perf;
