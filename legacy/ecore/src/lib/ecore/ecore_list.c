@@ -25,7 +25,8 @@ static void *_ecore_list_goto_index(Ecore_List *list, int index);
 /* Iterative function */
 static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
                                 void *user_data);
-static void *_ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, void *user_data);
+static void *_ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function,
+                              const void *user_data);
 
 /* Private double linked list functions */
 static void *_ecore_dlist_previous(Ecore_DList * list);
@@ -1029,7 +1030,7 @@ _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
  * @return the first matching data node, or NULL if none match
  */
 EAPI void *
-ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, void *user_data)
+ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, const void *user_data)
 {
   CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
@@ -1038,7 +1039,7 @@ ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, void *user_data)
 
 /* The real meat of finding a node via a compare cb */
 static void *
-_ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, void *user_data)
+_ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, const void *user_data)
 {
   void *value;
   if (!list || !function) return NULL;

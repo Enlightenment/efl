@@ -114,7 +114,7 @@ extern "C" {
    /* Traversing the list and returning data */
    EAPI void *ecore_list_next(Ecore_List * list);
    EAPI void *ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function,
-        void *user_data);
+        const void *user_data);
    
    /* Check to see if there is any data in the list */
    EAPI int ecore_list_is_empty(Ecore_List * list);
