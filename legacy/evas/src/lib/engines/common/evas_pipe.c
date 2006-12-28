@@ -188,7 +188,7 @@ evas_common_pipe_flush(RGBA_Image *im)
 {
    
    RGBA_Pipe *p;
-   int i, y, h;
+   int i;
 
    if (!im->pipe) return;
 #ifdef BUILD_PTHREAD
@@ -222,7 +222,7 @@ evas_common_pipe_free(RGBA_Image *im)
    int i;
    
    if (!im->pipe) return;
-   /* FIXME: PTHREAD join all threads here (if not finished) 
+   /* FIXME: PTHREAD join all threads here (if not finished) */
    
    /* free pipe */
    while (im->pipe)

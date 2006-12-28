@@ -4,7 +4,6 @@
    int     *xapoints, *xapp;
    int     *yapoints, *yapp;
    DATA32  *buf, *src_data;
-   RGBA_Image  *line_buf;
    
    RGBA_Gfx_Func      func;
 

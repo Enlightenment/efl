@@ -10,7 +10,6 @@
 
    DATA32      *psrc, *pdst, *pdst_end;
    DATA32      *buf, *pbuf, *pbuf_end;
-   RGBA_Image  *im_buf;
    RGBA_Gfx_Func  func;
 
    /* a scanline buffer */
