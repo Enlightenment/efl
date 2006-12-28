@@ -4154,13 +4154,15 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
 						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
 						 it->w, it->h, it->w, it->h, it->text);
-////#define DRAW_TEXT(ox, oy) \
-////   if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
-////						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-////						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
-////						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-////						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
-////						 it->w, it->h, it->w, it->h, it->text);
+#if 0
+#define DRAW_TEXT(ox, oy) \
+   if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
+						 obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+						 obj->cur.geometry.y + ln->y + yoff + y + (oy), \
+						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
+						 it->w, it->h, it->w, it->h, it->text);
+#endif
    
    pback = 0;
    /* backing */

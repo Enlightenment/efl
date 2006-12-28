@@ -1403,22 +1403,24 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
 		     o->cur.text);
-////#define DRAW_TEXT(ox, oy) \
-////   if ((o->engine_data) && (o->cur.text)) \
-////     ENFN->font_draw(output, \
-////		     context, \
-////		     surface, \
-////		     o->engine_data, \
-////		     obj->cur.cache.geometry.x + x + sl + ox - \
-////		     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text), \
-////		     obj->cur.cache.geometry.y + y + st + oy + \
-////		     (int) \
-////		     (((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h) - 0.5), \
-////		     obj->cur.cache.geometry.w, \
-////		     obj->cur.cache.geometry.h, \
-////		     obj->cur.geometry.w, \
-////		     obj->cur.geometry.h, \
-////		     o->cur.text);
+#if 0
+#define DRAW_TEXT(ox, oy) \
+   if ((o->engine_data) && (o->cur.text)) \
+     ENFN->font_draw(output, \
+		     context, \
+		     surface, \
+		     o->engine_data, \
+		     obj->cur.cache.geometry.x + x + sl + ox - \
+		     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text), \
+		     obj->cur.cache.geometry.y + y + st + oy + \
+		     (int) \
+		     (((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h) - 0.5), \
+		     obj->cur.cache.geometry.w, \
+		     obj->cur.cache.geometry.h, \
+		     obj->cur.geometry.w, \
+		     obj->cur.geometry.h, \
+		     o->cur.text);
+#endif
    /* shadows */
    if (o->cur.style == EVAS_TEXT_STYLE_SHADOW)
      {
