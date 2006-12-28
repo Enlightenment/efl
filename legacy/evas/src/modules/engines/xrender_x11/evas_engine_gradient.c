@@ -198,7 +198,10 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	  {
 	     DATA32  *p = im->image->data, *pe = p + (w * h);
 	     while (p < pe)
-		  *p++ = (*p << 24) + ((*p << 8) & 0xff0000) + ((*p >> 8) & 0xff00) + (*p >> 24);
+	       {
+		  *p = (*p << 24) + ((*p << 8) & 0xff0000) + ((*p >> 8) & 0xff00) + (*p >> 24);
+		  p++;
+	       }
 	  }
 	_xr_image_put(xim, gr->surface->draw, 0, 0, w, h);
 	evas_common_image_free(im);
