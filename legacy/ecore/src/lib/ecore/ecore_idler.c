@@ -10,6 +10,13 @@ static int          idlers_delete_me = 0;
  * @param  data The data to be passed to this @p func call.
  * @return A idler handle if successfully added.  NULL otherwise.
  * @ingroup Idle_Group
+ *
+ * Add an idler handle to the event loop, returning a handle on success and
+ * NULL otherwise.  The function @p func will be called repeatedly while
+ * no other events are ready to be processed, as long as it returns 1. A return
+ * of 0 deletes the idler.
+ *
+ * Idlers are useful for progressively prossessing data without blocking.
  */
 EAPI Ecore_Idler *
 ecore_idler_add(int (*func) (void *data), const void *data)

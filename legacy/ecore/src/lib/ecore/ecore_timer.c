@@ -23,6 +23,15 @@ static double       last_check = 0.0;
  * @param   data Data to pass to @p func when it is called.
  * @return  A timer object on success.  @c NULL on failure.
  * @ingroup Ecore_Time_Group
+ *
+ * This function adds a timer and returns its handle on success and NULL on
+ * failure. The function @p func will be called every @in@ seconds. The
+ * function will be passed the @p data pointer as its parameter.
+ * 
+ * When the timer @p func is called, it must return a value of either 1 or 0. 
+ * If it returns 1, it will be called again at the next tick, or if it returns
+ * 0 it will be deleted automatically making any references/handles for it
+ * invalid.
  */
 EAPI Ecore_Timer *
 ecore_timer_add(double in, int (*func) (void *data), const void *data)
@@ -46,6 +55,9 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
  * @return  The data pointer set for the timer when @ref ecore_timer_add was
  *          called.  @c NULL is returned if the function is unsuccessful.
  * @ingroup Ecore_Time_Group
+ *
+ * Note: @p timer must be a valid handle. If the timer function has already
+ * returned 0, the handle is no longer valid (and does not need to be delete).
  */
 EAPI void *
 ecore_timer_del(Ecore_Timer *timer)
