@@ -682,8 +682,9 @@ evas_common_image_premul(RGBA_Image *im)
      {
 	DATA32  a = 1 + (*s >> 24);
 
-	*s++ = (*s & 0xff000000) + (((((*s) >> 8) & 0xff) * a) & 0xff00) + 
+	*s = (*s & 0xff000000) + (((((*s) >> 8) & 0xff) * a) & 0xff00) + 
 			 (((((*s) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
+	s++;
 	if ((a == 1) || (a == 256))
 	   nas++;
      }
