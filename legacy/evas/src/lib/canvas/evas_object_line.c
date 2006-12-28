@@ -459,13 +459,9 @@ evas_object_line_coords_recalc(Evas_Object *obj)
 
    o = (Evas_Object_Line *)(obj->object_data);
    o->cur.cache.x1 = obj->cur.geometry.x + o->cur.x1;
-   o->cur.cache.y1 = obj->cur.geometry.y + o->cur.y2;
+   o->cur.cache.y1 = obj->cur.geometry.y + o->cur.y1;
    o->cur.cache.x2 = obj->cur.geometry.x + o->cur.x2;
    o->cur.cache.y2 = obj->cur.geometry.y + o->cur.y2;
-////   o->cur.cache.x1 = evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x + o->cur.x1);
-////   o->cur.cache.y1 = evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y + o->cur.y1);
-////   o->cur.cache.x2 = evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x + o->cur.x2);
-////   o->cur.cache.y2 = evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y + o->cur.y2);
    o->cur.cache.object.w = obj->cur.geometry.w;
    o->cur.cache.object.h = obj->cur.geometry.h;
 }
