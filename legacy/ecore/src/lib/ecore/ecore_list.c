@@ -25,6 +25,7 @@ static void *_ecore_list_goto_index(Ecore_List *list, int index);
 /* Iterative function */
 static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
                                 void *user_data);
+static void *_ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, void *user_data);
 
 /* Private double linked list functions */
 static void *_ecore_dlist_previous(Ecore_DList * list);
@@ -1018,6 +1019,35 @@ _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
      function(value, user_data);
 
    return TRUE;
+}
+
+/**
+ * Find data in @p list using the compare function @p func
+ * @param list      The list.
+ * @param function  The function to test each node of @p list with
+ * @param user_data Data to match against (used by @p function)
+ * @return the first matching data node, or NULL if none match
+ */
+EAPI void *
+ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, void *user_data)
+{
+  CHECK_PARAM_POINTER_RETURN("list", list, NULL);
+
+  return _ecore_list_find(list, function, user_data);
+}
+
+/* The real meat of finding a node via a compare cb */
+static void *
+_ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, void *user_data)
+{
+  void *value;
+  if (!list || !function) return NULL;
+
+  _ecore_list_goto_first(list);
+  while ((value = _ecore_list_next(list)) != NULL)
+    if (!function(value, user_data)) return value;
+
+  return NULL;
 }
 
 /* Initialize a node to starting values */
