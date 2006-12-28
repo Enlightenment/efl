@@ -636,7 +636,6 @@ linear_restrict(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 {
    DATA32  *dst_end = dst + dst_len;
    Linear_Data  *gdata = (Linear_Data *)params_data;
-   int      off = gdata->off * (src_len - 1);
    int      yy;
 
    SETUP_LINEAR_FILL
@@ -706,7 +705,6 @@ linear_restrict_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_l
 {
    DATA32  *dst_end = dst + dst_len;
    Linear_Data  *gdata = (Linear_Data *)params_data;
-   int      off = gdata->off * (src_len - 1);
    int      yy;
 
    if (AXIS_ALIGNED)
@@ -777,7 +775,6 @@ linear_restrict_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int d
 {
    DATA32  *dst_end = dst + dst_len;
    Linear_Data  *gdata = (Linear_Data *)params_data;
-   int      off = gdata->off * (src_len - 1);
    int      yy;
 
    SETUP_LINEAR_FILL
@@ -856,7 +853,6 @@ linear_restrict_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, in
 {
    DATA32  *dst_end = dst + dst_len;
    Linear_Data  *gdata = (Linear_Data *)params_data;
-   int      off = gdata->off * (src_len - 1);
    int      yy;
 
    if (AXIS_ALIGNED)
@@ -1439,7 +1435,6 @@ linear_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 {
    DATA32  *dst_end = dst + dst_len;
    Linear_Data  *gdata = (Linear_Data *)params_data;
-   int      off = gdata->off * (src_len - 1);
    int      yy;
 
    SETUP_LINEAR_FILL
@@ -1462,7 +1457,6 @@ linear_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 {
    DATA32  *dst_end = dst + dst_len;
    Linear_Data  *gdata = (Linear_Data *)params_data;
-   int      off = gdata->off * (src_len - 1);
    int      yy;
 
    if (AXIS_ALIGNED)
