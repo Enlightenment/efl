@@ -17,7 +17,6 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
    uint8              *buf = NULL;
    DATA32              pixel;
    DATA32             *data;
-   double              alpha_factor;
    uint32              x, y;
    uint8               r, g, b, a = 0;
    int                 i = 0;
