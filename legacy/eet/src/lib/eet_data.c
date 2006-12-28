@@ -610,7 +610,7 @@ _eet_descriptor_hash_new(Eet_Data_Descriptor *edd)
 	int hash;
 	
 	ede = &(edd->elements.set[i]);
-	hash = eet_hash_gen((char *) ede->name, 6);
+	hash = _eet_hash_gen((char *) ede->name, 6);
 	if (!edd->elements.hash.buckets[hash].element)
 	  edd->elements.hash.buckets[hash].element = ede;
 	else
@@ -651,7 +651,7 @@ _eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name)
    int hash;
    Eet_Data_Descriptor_Hash *bucket;
    
-   hash = eet_hash_gen(name, 6);
+   hash = _eet_hash_gen(name, 6);
    if (!edd->elements.hash.buckets[hash].element) return NULL;
    if (!strcmp(edd->elements.hash.buckets[hash].element->name, name))
      return edd->elements.hash.buckets[hash].element;

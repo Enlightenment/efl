@@ -17,6 +17,7 @@ eet_lib.c \
 eet_data.c \
 eet_image.c \
 eet_memfile.c \
+eet_utils.c \
 Eet_private.h
 
 libeet_la_LIBADD       = -lz -ljpeg @fnmatch_libs@ @winsock_libs@

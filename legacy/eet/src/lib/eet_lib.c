@@ -701,7 +701,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       efn->name = (char*)((uint8_t*)(p + HEADER_SIZE));
 
 	     /* get hash bucket it should go in */
-	     hash = eet_hash_gen(efn->name, ef->header->directory->size);
+	     hash = _eet_hash_gen(efn->name, ef->header->directory->size);
 	     efn->next = ef->header->directory->nodes[hash];
 	     ef->header->directory->nodes[hash] = efn;
 
@@ -1020,7 +1020,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
      }
 
    /* figure hash bucket */
-   hash = eet_hash_gen(name, ef->header->directory->size);
+   hash = _eet_hash_gen(name, ef->header->directory->size);
 
    data_size = compress ? 12 + ((size * 101) / 100) : size;
 
@@ -1124,7 +1124,7 @@ eet_delete(Eet_File *ef, const char *name)
      return 0;
 
    /* figure hash bucket */
-   hash = eet_hash_gen(name, ef->header->directory->size);
+   hash = _eet_hash_gen(name, ef->header->directory->size);
 
    /* Does this node already exist? */
    for (pefn = NULL, efn = ef->header->directory->nodes[hash];
@@ -1252,7 +1252,7 @@ find_node_by_name(Eet_File *ef, const char *name)
    int hash;
 
    /* get hash bucket this should be in */
-   hash = eet_hash_gen(name, ef->header->directory->size);
+   hash = _eet_hash_gen(name, ef->header->directory->size);
 
    for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
      {
