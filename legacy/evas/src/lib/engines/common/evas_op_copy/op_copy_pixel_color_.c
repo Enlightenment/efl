@@ -6,7 +6,8 @@ static void
 _op_copy_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
-	*d++ = MUL4_SYM(c, *s);
+	*d = MUL4_SYM(c, *s);
+	d++;
 	s++;
      }
 }
@@ -16,7 +17,8 @@ _op_copy_p_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c >> 24);
    while (d < e) {
-	*d++ = MUL_256(c, *s);
+	*d = MUL_256(c, *s);
+	d++;
 	s++;
      }
 }
@@ -130,7 +132,8 @@ _op_copy_rel_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	DATA32 cs = MUL4_SYM(c, *s);
-	*d++ = MUL_SYM(*d >> 24, cs);
+	*d = MUL_SYM(*d >> 24, cs);
+	d++;
 	s++;
      }
 }

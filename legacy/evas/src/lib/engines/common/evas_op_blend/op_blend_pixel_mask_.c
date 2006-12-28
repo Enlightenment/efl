@@ -129,8 +129,10 @@ _op_blend_rel_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    while (d < e) {
 	c = MUL_SYM(*m, *s);
 	l = 256 - (c >> 24);
-	*d++ = MUL_SYM(*d >> 24, c) + MUL_256(l, *d);
-	m++;  s++;
+	*d = MUL_SYM(*d >> 24, c) + MUL_256(l, *d);
+	d++;
+	m++;
+      	s++;
      }
 }
 

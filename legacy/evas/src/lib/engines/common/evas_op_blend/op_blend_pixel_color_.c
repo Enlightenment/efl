@@ -8,7 +8,8 @@ _op_blend_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    while (d < e) {
 	DATA32 sc = MUL4_SYM(c, *s);
 	l = 256 - (sc >> 24);
-	*d++ = sc + MUL_256(l, *d);
+	*d = sc + MUL_256(l, *d);
+	d++;
 	s++;
      }
 }
@@ -18,7 +19,8 @@ _op_blend_pan_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    l = 256 - (c >> 24);
    while (d < e) {
-	*d++ = ((c & 0xff000000) + MUL3_SYM(c, *s)) + MUL_256(l, *d);
+	*d = ((c & 0xff000000) + MUL3_SYM(c, *s)) + MUL_256(l, *d);
+	d++;
 	s++;
      }
 }
@@ -28,7 +30,8 @@ _op_blend_p_can_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	l = 256 - (*s >> 24);
-	*d++ = ((*s & 0xff000000) + MUL3_SYM(c, *s)) + MUL_256(l, *d);
+	*d = ((*s & 0xff000000) + MUL3_SYM(c, *s)) + MUL_256(l, *d);
+	d++;
 	s++;
      }
 }
@@ -49,7 +52,8 @@ _op_blend_p_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
   while (d < e) {
 	DATA32 sc = MUL_256(c, *s);
 	l = 256 - (sc >> 24);
-	*d++ = sc + MUL_256(l, *d);
+	*d = sc + MUL_256(l, *d);
+	d++;
 	s++;
      }
 }
@@ -59,7 +63,8 @@ _op_blend_pan_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c & 0xff);
    while (d < e) {
-	*d++ = INTERP_256(c, *s, *d);
+	*d = INTERP_256(c, *s, *d);
+	d++;
 	s++;
      }
 }
@@ -166,7 +171,8 @@ _op_blend_rel_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    while (d < e) {
 	DATA32 sc = MUL4_SYM(c, *s);
 	l = 256 - (sc >> 24);
-	*d++ = MUL_SYM(*d >> 24, sc) + MUL_256(l, *d);
+	*d = MUL_SYM(*d >> 24, sc) + MUL_256(l, *d);
+	d++;
 	s++;
      }
 }

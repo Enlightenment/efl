@@ -6,7 +6,10 @@ static void
 _op_blend_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l, a = 256 - (c >> 24);
    while (d < e)
-	*d++ = c + MUL_256(a, *d);
+     {
+	*d = c + MUL_256(a, *d);
+	d++;
+     }
 }
 
 #define _op_blend_caa_dp _op_blend_c_dp
@@ -61,7 +64,10 @@ _op_blend_rel_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    l = 256 - (c >> 24);
    while (d < e)
-	*d++ = MUL_SYM(*d >> 24, c) + MUL_256(l, *d);
+     {
+	*d = MUL_SYM(*d >> 24, c) + MUL_256(l, *d);
+	d++;
+     }
 }
 
 #define _op_blend_rel_caa_dp _op_blend_rel_c_dp

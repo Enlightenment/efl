@@ -7,7 +7,8 @@ _op_blend_p_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	l = 256 - (*s >> 24);
-	*d++ = *s++ + MUL_256(l, *d);
+	*d = *s++ + MUL_256(l, *d);
+	d++;
      }
 }
 
@@ -89,7 +90,8 @@ _op_blend_rel_p_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    while (d < e) {
 	l = 256 - (*s >> 24);
 	c = 1 + (*d >> 24);
-	*d++ = MUL_256(c, *s) + MUL_256(l, *d);
+	*d = MUL_256(c, *s) + MUL_256(l, *d);
+	d++;
 	s++;
      }
 }
