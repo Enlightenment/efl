@@ -1367,6 +1367,12 @@ EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x
 EAPI int                 ecore_x_screensaver_event_available_get(void);
 EAPI void                ecore_x_screensaver_timeout_set(double timeout);
 EAPI double              ecore_x_screensaver_timeout_get(void);
+EAPI void                ecore_x_screensaver_blank_set(double timeout);
+EAPI double              ecore_x_screensaver_blank_get(void);
+EAPI void                ecore_x_screensaver_expose_set(double timeout);
+EAPI double              ecore_x_screensaver_expose_get(void);
+EAPI void                ecore_x_screensaver_interval_set(double timeout);
+EAPI double              ecore_x_screensaver_interval_get(void);
 EAPI void                ecore_x_screensaver_event_listen_set(int on);
 
 /* FIXME: these funcs need categorising */
