@@ -97,7 +97,7 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 void
 evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h)
 {
-   if ((gc->w == w) && (gc->h == h)) return;
+   //if ((gc->w == w) && (gc->h == h)) return;
    gc->change.size = 1;
    gc->w = w;
    gc->h = h;

@@ -419,8 +419,9 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
    int im_w, im_h, tw, th, y;
    GLenum texfmt;
    GLhandleARB fshad;
-   
-   if (!gc->ext.arb_texture_non_power_of_two) return NULL;
+  
+// on an nv 6600gt this is fast - but on a 5500fx its DEAD SLOW!!!!!   
+//   if (!gc->ext.arb_texture_non_power_of_two) return NULL;
    
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;

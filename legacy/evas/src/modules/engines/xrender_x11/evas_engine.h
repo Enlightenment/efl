@@ -100,6 +100,11 @@ struct _XR_Image
    const char      *comment;
    Tilebuf         *updates;
    RGBA_Image_Loadopts load_opts;
+   struct {
+      int           space;
+      void         *data;
+      unsigned char no_free : 1;
+   } cs;
    unsigned char    alpha : 1;
    unsigned char    dirty : 1;
    unsigned char    free_data : 1;

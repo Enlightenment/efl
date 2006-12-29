@@ -140,6 +140,7 @@ evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int
         im->im->image->data = NULL;
         if (im->tex) evas_gl_common_texture_free(im->tex);
 	im->tex = NULL;
+	im->cs.no_free = 0;
         im->cs.data = calloc(1, im->im->image->h * sizeof(unsigned char *) * 2);
         if ((data) && (im->cs.data))
 	  memcpy(im->cs.data, data, im->im->image->h * sizeof(unsigned char *) * 2);
@@ -254,10 +255,20 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
 	if (!im->tex) return;
 	ow = (dw * im->tex->tw) / sw;
 	oh = (dh * im->tex->th) / sh;
-	tx1 = (double)(sx     ) / (double)(im->tex->w);
-	ty1 = (double)(sy     ) / (double)(im->tex->h);
-	tx2 = (double)(sx + sw) / (double)(im->tex->w);
-	ty2 = (double)(sy + sh) / (double)(im->tex->h);
+	if (im->tex->rectangle)
+	  {
+	     tx1 = sx;
+	     ty1 = sy;
+	     tx2 = sx + sw;
+	     ty2 = sy + sh;
+	  }
+	else
+	  {
+	     tx1 = (double)(sx     ) / (double)(im->tex->w);
+	     ty1 = (double)(sy     ) / (double)(im->tex->h);
+	     tx2 = (double)(sx + sw) / (double)(im->tex->w);
+	     ty2 = (double)(sy + sh) / (double)(im->tex->h);
+	  }
 	evas_gl_common_context_texture_set(gc, im->tex, smooth, ow, oh);
 	break;
       default:

@@ -102,6 +102,7 @@ _xre_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image
      }
    im->xinf = xinf;
    im->xinf->references++;
+   im->cs.space = EVAS_COLORSPACE_ARGB8888;
    im->fkey = strdup(buf);
    im->file = evas_stringshare_add(file);
    if (key) im->key = evas_stringshare_add(key);
@@ -125,11 +126,25 @@ _xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data, int alpha,
    if (!im) return NULL;
    im->xinf = xinf;
    im->xinf->references++;
+   im->cs.space = cspace;
    im->w = w;
    im->h = h;
    im->references = 1;
-   im->data = data;
-   im->alpha = alpha;
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	im->data = data;
+	im->alpha = alpha;
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	im->cs.data = data;
+	im->cs.no_free = 1;
+	break;
+      default:
+	abort();
+	break;
+     }
    im->dirty = 1;
    __xre_image_dirty_hash_add(im);
    return im;
@@ -142,27 +157,43 @@ _xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data, int
 
    im = calloc(1, sizeof(XR_Image));
    if (!im) return NULL;
-   im->data = malloc(w * h * 4);
-   if (!im->data)
+   im->cs.space = cspace;
+   switch (im->cs.space)
      {
-	free(im);
-	return NULL;
-     }
-   if (data)
-     {
-	Gfx_Func_Copy func;
-	
-	func = evas_common_draw_func_copy_get(w * h, 0);
-	if (func) func(data, im->data, w * h);
-	evas_common_cpu_end_opt();
+      case EVAS_COLORSPACE_ARGB8888:
+	im->data = malloc(w * h * 4);
+	if (!im->data)
+	  {
+	     free(im);
+	     return NULL;
+	  }
+	if (data)
+	  {
+	     Gfx_Func_Copy func;
+	     
+	     func = evas_common_draw_func_copy_get(w * h, 0);
+	     if (func) func(data, im->data, w * h);
+	     evas_common_cpu_end_opt();
+	  }
+	im->alpha = alpha;
+	im->free_data = 1;
+        break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        im->cs.no_free = 0;
+        im->cs.data = calloc(1, h * sizeof(unsigned char *) * 2);
+	if ((data) && (im->cs.data))
+	  memcpy(im->cs.data, data, h * sizeof(unsigned char *) * 2);
+	break;
+      default:
+	abort();
+	break;
      }
    im->w = w;
    im->h = h;
    im->references = 1;
    im->xinf = xinf;
    im->xinf->references++;
-   im->free_data = 1;
-   im->alpha = alpha;
    im->dirty = 1;
    __xre_image_dirty_hash_add(im);
    return im;
@@ -184,6 +215,7 @@ _xre_image_new(Ximage_Info *xinf, int w, int h)
    im->w = w;
    im->h = h;
    im->references = 1;
+   im->cs.space = EVAS_COLORSPACE_ARGB8888;
    im->xinf = xinf;
    im->xinf->references++;
    im->free_data = 1;
@@ -196,6 +228,10 @@ _xre_image_new(Ximage_Info *xinf, int w, int h)
 static void
 __xre_image_real_free(XR_Image *im)
 {
+   if (im->cs.data)
+     {
+	if (!im->cs.no_free) free(im->cs.data);
+     }
    if (im->file) evas_stringshare_del(im->file);
    if (im->key) evas_stringshare_del(im->key);
    if (im->fkey) free(im->fkey);
@@ -257,6 +293,7 @@ _xre_image_copy(XR_Image *im)
    XR_Image *im2;
    void *data = NULL;
 
+   /* FIXME: colorspace support */
    if (im->data) data = im->data;
    else
      {
@@ -281,6 +318,7 @@ _xre_image_copy(XR_Image *im)
 void
 _xre_image_resize(XR_Image *im, int w, int h)
 {
+   /* FIXME: colorspace support */
    /* FIXME: ... */
    if ((w == im->w) && (h == im->h)) return;
    if (im->surface)
@@ -389,6 +427,7 @@ _xre_image_data_get(XR_Image *im)
 {
    void *data = NULL;
    
+   /* FIXME: colorspace support */
    if (im->data) data = im->data;
    else
      {
@@ -420,6 +459,7 @@ _xre_image_data_put(XR_Image *im, void *data)
 {
    void *imdata = NULL;
 
+   /* FIXME: colorspace support */
    if (!data) return;
    if (im->data)
      {
@@ -462,6 +502,7 @@ _xre_image_data_put(XR_Image *im, void *data)
 void
 _xre_image_alpha_set(XR_Image *im, int alpha)
 {
+   /* FIXME: colorspace support */
    if (im->alpha == alpha) return;
    im->alpha = alpha;
    if (im->surface)
@@ -488,6 +529,10 @@ _xre_image_alpha_set(XR_Image *im, int alpha)
 int
 _xre_image_alpha_get(XR_Image *im)
 {
+   if (im->im)
+     {
+	if (im->im->cs.space != EVAS_COLORSPACE_ARGB8888) return 0;
+     }
    return im->alpha;
 }
 
@@ -519,6 +564,7 @@ _xre_image_surface_gen(XR_Image *im)
 {
    void *data = NULL;
 
+   /* FIXME: colorspace support */
    if ((im->surface) && (!im->updates)) return;
    if (im->data) data = im->data;
    else

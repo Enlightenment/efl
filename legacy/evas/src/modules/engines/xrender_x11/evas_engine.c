@@ -462,6 +462,130 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
    _xre_gradient_draw(surface, context, gradient, x, y, w, h);
 }
 
+static int
+eng_image_alpha_get(void *data, void *image)
+{
+   if (!image) return 0;
+   return _xre_image_alpha_get((XR_Image *)image);
+}
+
+static int
+eng_image_colorspace_get(void *data, void *image)
+{
+   if (!image) return EVAS_COLORSPACE_ARGB8888;
+   return ((XR_Image *)image)->cs.space;
+}
+
+static void *
+eng_image_alpha_set(void *data, void *image, int has_alpha)
+{
+   XR_Image *im;
+   
+   im = (XR_Image *)image;
+   if (!im) return im;
+   if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return im;
+   if (((im->alpha) && (has_alpha)) || ((!im->alpha) && (!has_alpha))) 
+     return im;
+   if (im->references > 1)
+     {
+	XR_Image *old_im;
+	
+	old_im = im;
+	im = _xre_image_copy(old_im);
+	if (im)
+	  {
+	     im->alpha = old_im->alpha;
+	     _xre_image_free(old_im);
+	  }
+	else
+	  im = old_im;
+     }
+   else
+     _xre_image_dirty(im);
+   _xre_image_alpha_set(im, has_alpha);
+   return im;
+}
+
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   if (!image) return image;
+   _xre_image_border_set((XR_Image *)image, l, r, t, b);
+   return image;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   if (!image) return;
+   _xre_image_border_get((XR_Image *)image, l, r, t, b);
+}
+
+static const char *
+eng_image_comment_get(void *data, void *image, char *key)
+{
+   if (!image) return NULL;
+   return ((XR_Image *)image)->comment;
+}
+
+static char *
+eng_image_format_get(void *data, void *image)
+{
+   if (!image) return NULL;
+   return ((XR_Image *)image)->format;
+}
+
+static void
+eng_image_colorspace_set(void *data, void *image, int cspace)
+{
+   XR_Image *im;
+      
+   if (!image) return;
+   im = (XR_Image *)image;
+   if (im->cs.space == cspace) return;
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->cs.data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	     im->cs.data = NULL;
+	     im->cs.no_free = 0;
+	  }
+	if (im->im) evas_common_image_unref(im->im);
+	im->im = NULL;
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	if (im->im) evas_common_image_unref(im->im);
+	im->im = NULL;
+	if (im->cs.data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	  }
+	im->cs.data = calloc(1, im->h * sizeof(unsigned char *) * 2);
+	im->cs.no_free = 0;
+	break;
+      default:
+	abort();
+	break;
+     }
+   im->cs.space = cspace;
+   _xre_image_dirty(im);
+   _xre_image_region_dirty(im, 0, 0, im->w, im->h);
+}
+
+static void
+eng_image_native_set(void *data, void *image, void *native)
+{
+}
+
+static void *
+eng_image_native_get(void *data, void *image)
+{
+   return NULL;
+}
+
 static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
@@ -514,29 +638,35 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
 static void *
 eng_image_size_set(void *data, void *image, int w, int h)
 {
-   if (!image) return image;
+   XR_Image *im, *im_old;
+
+   if (!image) return NULL;
+   im_old = image;
+   if ((im_old) && (im_old->w == w) && (im_old->h == h))
+     return image;
    if ((w <= 0) || (h <= 0))
      {
 	_xre_image_free((XR_Image *)image);
 	return NULL;
      }
-   if (((XR_Image *)image)->references > 1)
+   if (im_old)
      {
-	XR_Image *old_image;
-
-	old_image = (XR_Image *)image;
-	image = _xre_image_copy((XR_Image *)old_image);
-	if (image)
+	if (im_old->references > 1)
 	  {
-	     ((XR_Image *)image)->alpha = old_image->alpha;
-	     _xre_image_free(old_image);
+	     im = _xre_image_copy(im_old);
+	     if (im)
+	       {
+		  _xre_image_free(im_old);
+		  return im;
+	       }
+	     return image;
 	  }
-	else
-	  image = old_image;
      }
    else
-     _xre_image_dirty((XR_Image *)image);
-   _xre_image_resize((XR_Image *)image, w, h);
+     {
+	_xre_image_dirty((XR_Image *)image);
+	_xre_image_resize((XR_Image *)image, w, h);
+     }
    return image;
 }
 
@@ -552,113 +682,111 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 static void *
 eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 {
-   if (!image) return image;
-   if (to_write)
+   XR_Image *im;
+   
+   if (!image)
      {
-	if (((XR_Image *)image)->references > 1)
+	*image_data = NULL;
+	return NULL;
+     }
+   im = (XR_Image *)image;
+   if (im->im)
+     evas_common_load_image_data_from_file(im->im);
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (to_write)
 	  {
-	     XR_Image *old_image;
-	     
-	     old_image = (XR_Image *)image;
-	     image = _xre_image_copy((XR_Image *)old_image);
-	     if (image)
+	     if (im->references > 1)
 	       {
-		  ((XR_Image *)image)->alpha = old_image->alpha;
-		  _xre_image_free(old_image);
+		  XR_Image *im_old;
+		  
+		  im_old = im;
+		  im = _xre_image_copy(im_old);
+		  if (im)
+		    _xre_image_free(im_old);
+		  else
+		    im = im_old;
 	       }
 	     else
-	       image = old_image;
+	       _xre_image_dirty(im);
 	  }
-	else
-	  _xre_image_dirty((XR_Image *)image);
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	break;
+      default:
+	abort();
+	break;
      }
-   if (image_data) *image_data = _xre_image_data_get((XR_Image *)image);
-   return image;
+   if (image_data) *image_data = _xre_image_data_get(im);
+   return im;
 }
 
 static void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
+   XR_Image *im;
+   
    if (!image) return image;
-   if (_xre_image_data_get((XR_Image *)image) != image_data)
+   im = (XR_Image *)image;
+   
+   switch (im->cs.space)
      {
-	XR_Image *old_image;
-
-	old_image = (XR_Image *)image;
-	image = _xre_image_data_find(image_data);
-	if (image != old_image)
+      case EVAS_COLORSPACE_ARGB8888:
+	if (_xre_image_data_get(im) != image_data)
 	  {
-	     if (!image)
+	     XR_Image *im_old;
+	     
+	     im_old = im;
+	     image = _xre_image_data_find(image_data);
+	     if (image != im_old)
 	       {
-		  image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data, old_image->alpha, EVAS_COLORSPACE_ARGB8888);
-		  if (image)
+		  if (!image)
 		    {
-		       ((XR_Image *)image)->alpha = old_image->alpha;
-		       _xre_image_free(old_image);
+		       image = _xre_image_new_from_data(im_old->xinf, im_old->w, im_old->h, image_data, im_old->alpha, EVAS_COLORSPACE_ARGB8888);
+		       if (image)
+			 {
+			    ((XR_Image *)image)->alpha = im_old->alpha;
+			    _xre_image_free(im_old);
+			 }
+		       else
+			 image = im_old;
 		    }
 		  else
-		    image = old_image;
+		    {
+		       _xre_image_free(im_old);
+		    }
 	       }
 	     else
 	       {
-		  _xre_image_free(old_image);
+		  _xre_image_free(image);
+		  image = im_old;
 	       }
 	  }
-	else
-	  {
-	     _xre_image_free(image);
+        break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	if (_xre_image_data_get(im) != image_data)
+	  {  
+	     if (im->data)
+	       {
+		  if (im->free_data) free(im->data);
+		  im->data = NULL;
+	       }
+             if (im->cs.data)
+	       {
+		  if (!im->cs.no_free) free(im->cs.data);
+	       }
+	     im->cs.data = image_data;
+	     _xre_image_dirty(im);
 	  }
+        break;
+      default:
+	abort();
+	break;
      }
    return image;
-}
-
-static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
-{
-   if (!image) return image;
-   if (((((XR_Image *)image)->alpha) && (has_alpha)) ||
-       ((!((XR_Image *)image)->alpha) && (!has_alpha))) 
-     return image;
-   if (((XR_Image *)image)->references > 1)
-     {
-	XR_Image *old_image;
-	
-	old_image = (XR_Image *)image;
-	image = _xre_image_copy((XR_Image *)old_image);
-	if (image)
-	  {
-	     ((XR_Image *)image)->alpha = old_image->alpha;
-	     _xre_image_free(old_image);
-	  }
-	else
-	  image = old_image;
-     }
-   else
-     _xre_image_dirty((XR_Image *)image);
-   _xre_image_alpha_set((XR_Image *)image, has_alpha);
-   return image;
-}
-
-static int
-eng_image_alpha_get(void *data, void *image)
-{
-   if (!image) return 0;
-   return _xre_image_alpha_get((XR_Image *)image);
-}
-
-static void *
-eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
-{
-   if (!image) return image;
-   _xre_image_border_set((XR_Image *)image, l, r, t, b);
-   return image;
-}
-
-static void
-eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
-{
-   if (!image) return;
-   _xre_image_border_get((XR_Image *)image, l, r, t, b);
 }
 
 static void
@@ -673,42 +801,6 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 				  src_x, src_y, src_w, src_h,
 				  dst_x, dst_y, dst_w, dst_h,
 				  smooth);
-}
-
-static const char *
-eng_image_comment_get(void *data, void *image, char *key)
-{
-   if (!image) return NULL;
-   return ((XR_Image *)image)->comment;
-}
-
-static char *
-eng_image_format_get(void *data, void *image)
-{
-   if (!image) return NULL;
-   return ((XR_Image *)image)->format;
-}
-
-static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
-{
-}
-
-static int
-eng_image_colorspace_get(void *data, void *image)
-{
-   return EVAS_COLORSPACE_ARGB8888;
-}
-
-static void
-eng_image_native_set(void *data, void *image, void *native)
-{
-}
-
-static void *
-eng_image_native_get(void *data, void *image)
-{
-   return NULL;
 }
 
 static void

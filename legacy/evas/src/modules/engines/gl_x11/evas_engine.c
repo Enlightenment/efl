@@ -150,6 +150,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h);
    /* smple bounding box */
    if (!re->win->draw.redraw)
      {
@@ -747,9 +748,10 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 								     eng_image_colorspace_get(data, image));
 		  if (!im_new)
 		    {
-		       return im;
 		       *image_data = NULL;
+		       return im;
 		    }
+		  evas_gl_common_image_free(im);
 		  im = im_new;
 	       }
 	     else
@@ -790,6 +792,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	     im2 = eng_image_new_from_data(data, w, h, image_data,
 					   eng_image_alpha_get(data, image),
 					   eng_image_colorspace_get(data, image));
+	     if (!im2) return im;
 	     evas_gl_common_image_free(im);
 	     im = im2;
 	  }
