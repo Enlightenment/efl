@@ -216,9 +216,9 @@ ecore_path_group_available(int group_id)
 	  {
 	     char ppath[PATH_MAX];
 	     char *ext;
-	     char n[PATH_MAX];
+/*	     char n[PATH_MAX];
 	     int l;
-
+*/
 	     if (!strncmp(d->d_name, ".", 1))
 	       continue;
 
@@ -233,15 +233,16 @@ ecore_path_group_available(int group_id)
 
 	     if (!S_ISREG(st.st_mode))
 	       continue;
-
+/*
 	     l = strlen(d->d_name);
 
 	     strncpy(n, d->d_name, l - 2);
-
+*/
 	     if (!avail)
 	       avail = ecore_list_new();
 
-	     ecore_list_append(avail, strdup(n));
+/*	     ecore_list_append(avail, strdup(n));*/
+	     ecore_list_append(avail, strdup(d->d_name));
 	  }
      }
 
