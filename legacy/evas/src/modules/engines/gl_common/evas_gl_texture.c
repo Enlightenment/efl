@@ -491,7 +491,7 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 		texfmt, GL_UNSIGNED_BYTE, NULL);
    for (y = 0; y < tex->h; y++)
      glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w, tex->h,
+		     0, y, tex->w, 1,
 		     texfmt, GL_UNSIGNED_BYTE, rows[y]);
    
    glGenTextures(1, &(tex->texture2));
@@ -514,7 +514,7 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 		texfmt, GL_UNSIGNED_BYTE, NULL);
    for (y = 0; y < (tex->h / 2); y++)
      glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, tex->h / 2,
+		     0, y, tex->w / 2, 1,
 		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + y]);
    
    glGenTextures(1, &(tex->texture3));
@@ -537,7 +537,7 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 		texfmt, GL_UNSIGNED_BYTE, NULL);
    for (y = 0; y < (tex->h / 2); y++)
      glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, tex->h / 2,
+		     0, y, tex->w / 2, 1,
 		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2) + y]);
    
    glUseProgramObjectARB(0);
@@ -573,7 +573,7 @@ evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **r
      }
    for (y = 0; y < tex->h; y++)
      glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w, tex->h,
+		     0, y, tex->w, 1,
 		     texfmt, GL_UNSIGNED_BYTE, rows[y]);
    
    glBindTexture(GL_TEXTURE_2D, tex->texture2);
@@ -589,7 +589,7 @@ evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **r
      }
    for (y = 0; y < (tex->h / 2); y++)
      glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, tex->h / 2,
+		     0, y, tex->w / 2, 1,
 		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + y]);
    
    glBindTexture(GL_TEXTURE_2D, tex->texture3);
@@ -605,7 +605,7 @@ evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **r
      }
    for (y = 0; y < (tex->h / 2); y++)
      glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, tex->h / 2,
+		     0, y, tex->w / 2, 1,
 		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2) + y]);
 
    if (tex->gc->texture) tex->gc->texture->references--;
