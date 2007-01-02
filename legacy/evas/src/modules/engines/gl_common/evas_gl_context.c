@@ -480,6 +480,7 @@ _evas_gl_common_other_set(Evas_GL_Context *gc)
    glDisable(GL_LINE_SMOOTH);
    glDisable(GL_CULL_FACE);
    glDepthMask(GL_FALSE);
-   glPixelStorei(GL_PACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
    gc->change.other = 0;
 }

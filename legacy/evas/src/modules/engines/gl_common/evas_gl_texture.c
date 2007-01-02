@@ -486,13 +486,16 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      }
-   glTexImage2D(GL_TEXTURE_2D, 0,
-		texfmt, tw, th, 0,
+   glTexImage2D(GL_TEXTURE_2D, 0, texfmt, tex->w, tex->h, 0,
 		texfmt, GL_UNSIGNED_BYTE, NULL);
-   for (y = 0; y < tex->h; y++)
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w, 1,
-		     texfmt, GL_UNSIGNED_BYTE, rows[y]);
+   if (tex->h >= 2)
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tex->w, tex->h,
+		   texfmt, GL_UNSIGNED_BYTE, rows[0]);
+//   for (y = 0; y < tex->h; y++)
+//     glTexSubImage2D(GL_TEXTURE_2D, 0,
+//		     0, y, tex->w, 1,
+//		     texfmt, GL_UNSIGNED_BYTE, rows[y]);
    
    glGenTextures(1, &(tex->texture2));
    glBindTexture(GL_TEXTURE_2D, tex->texture2);
@@ -509,13 +512,16 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      }
-   glTexImage2D(GL_TEXTURE_2D, 0,
-		texfmt, tw / 2, th / 2, 0,
+   glTexImage2D(GL_TEXTURE_2D, 0, texfmt, tex->w / 2, tex->h / 2, 0,
 		texfmt, GL_UNSIGNED_BYTE, NULL);
-   for (y = 0; y < (tex->h / 2); y++)
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, 1,
-		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + y]);
+   if (tex->h >= 4)
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[tex->h + 1] - rows[tex->h]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tex->w / 2, tex->h / 2,
+		   texfmt, GL_UNSIGNED_BYTE, rows[tex->h]);
+//   for (y = 0; y < (tex->h / 2); y++)
+//     glTexSubImage2D(GL_TEXTURE_2D, 0,
+//		     0, y, tex->w / 2, 1,
+//		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + y]);
    
    glGenTextures(1, &(tex->texture3));
    glBindTexture(GL_TEXTURE_2D, tex->texture3);
@@ -533,13 +539,18 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      }
    glTexImage2D(GL_TEXTURE_2D, 0,
-		texfmt, tw / 2, th / 2, 0,
+		texfmt, tex->w / 2, tex->h / 2, 0,
 		texfmt, GL_UNSIGNED_BYTE, NULL);
-   for (y = 0; y < (tex->h / 2); y++)
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, 1,
-		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2) + y]);
+   if (tex->h >= 4)
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[tex->h + (tex->h / 2) + 1] - rows[tex->h + (tex->h / 2)]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tex->w / 2, tex->h / 2,
+		   texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2)]);
+//   for (y = 0; y < (tex->h / 2); y++)
+//     glTexSubImage2D(GL_TEXTURE_2D, 0,
+//		     0, y, tex->w / 2, 1,
+//		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2) + y]);
    
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
    glUseProgramObjectARB(0);
    
    if (gc->texture) gc->texture->references--;
@@ -571,10 +582,14 @@ evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **r
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      }
-   for (y = 0; y < tex->h; y++)
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w, 1,
-		     texfmt, GL_UNSIGNED_BYTE, rows[y]);
+   if (tex->h >= 2)
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tex->w, tex->h,
+		   texfmt, GL_UNSIGNED_BYTE, rows[0]);
+//   for (y = 0; y < tex->h; y++)
+//     glTexSubImage2D(GL_TEXTURE_2D, 0,
+//		     0, y, tex->w, 1,
+//		     texfmt, GL_UNSIGNED_BYTE, rows[y]);
    
    glBindTexture(GL_TEXTURE_2D, tex->texture2);
    if (smooth)
@@ -587,10 +602,14 @@ evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **r
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      }
-   for (y = 0; y < (tex->h / 2); y++)
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, 1,
-		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + y]);
+   if (tex->h >= 4)
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[tex->h + 1] - rows[tex->h]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tex->w / 2, tex->h / 2,
+		   texfmt, GL_UNSIGNED_BYTE, rows[tex->h]);
+//   for (y = 0; y < (tex->h / 2); y++)
+//     glTexSubImage2D(GL_TEXTURE_2D, 0,
+//		     0, y, tex->w / 2, 1,
+//		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + y]);
    
    glBindTexture(GL_TEXTURE_2D, tex->texture3);
    if (smooth)
@@ -603,10 +622,15 @@ evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **r
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      }
-   for (y = 0; y < (tex->h / 2); y++)
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-		     0, y, tex->w / 2, 1,
-		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2) + y]);
+   if (tex->h >= 4)
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[tex->h + (tex->h / 2) + 1] - rows[tex->h + (tex->h / 2)]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tex->w / 2, tex->h / 2,
+		   texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2)]);
+//   for (y = 0; y < (tex->h / 2); y++)
+//     glTexSubImage2D(GL_TEXTURE_2D, 0,
+//		     0, y, tex->w / 2, 1,
+//		     texfmt, GL_UNSIGNED_BYTE, rows[tex->h + (tex->h / 2) + y]);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
    if (tex->gc->texture) tex->gc->texture->references--;
    tex->gc->texture = tex;
