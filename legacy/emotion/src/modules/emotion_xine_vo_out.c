@@ -436,6 +436,10 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
    dv = (Emotion_Driver *)vo_driver;
    fr = (Emotion_Frame *)vo_frame;
 //   printf("emotion: _emotion_frame_display()\n");
+//   printf("EX VO: fq %i %p\n", dv->ev->fq, dv->ev);
+// if my frame queue is too deep ( > 4 frames) simply block and wait for them
+// to drain
+   while (dv->ev->fq > 4) usleep(1);
    if (dv->ev)
      {
 	void *buf;
@@ -450,9 +454,11 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 	fr->frame.timestamp = (double)fr->vo_frame.vpts / 90000.0;
 	fr->frame.done_func = _emotion_frame_data_unlock;
 	fr->frame.done_data = fr;
+//	printf("FRAME FOR %p\n", dv->ev);
 	ret = write(dv->ev->fd, &buf, sizeof(void *));
 //	printf("-- FRAME DEC %p == %i\n", fr->frame.obj, ret);
 	fr->in_use = 1;
+	dv->ev->fq++;
      }
    /* hmm - must find a way to sanely copy data out... FIXME problem */
 //   fr->vo_frame.free(&fr->vo_frame);

@@ -25,10 +25,11 @@ struct _Emotion_Xine_Video
    double                    ratio;
    int                       w, h;
    Evas_Object              *obj;
-   Emotion_Xine_Video_Frame *cur_frame;
+   volatile Emotion_Xine_Video_Frame *cur_frame;
    volatile int              seek_to;
    volatile int              get_poslen;
    volatile double           seek_to_pos;
+   volatile int              fq;
    Emotion_Vis               vis;
    Ecore_Timer              *timer;
    int                       fd_read;

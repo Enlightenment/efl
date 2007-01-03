@@ -1038,7 +1038,10 @@ _pixels_get(void *data, Evas_Object *obj)
 	       }
 	  }
      }
+// no need for this because on any new frame decode info from the decoder
+// module, the previous "current frame" is released (done) for us anyway   
 //   sd->module->frame_done(sd->video);
+
 /*   
    evas_object_image_size_get(obj, &iw, &ih);
    sd->module->video_data_size_get(sd->video, &w, &h);

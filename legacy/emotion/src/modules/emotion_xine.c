@@ -276,7 +276,7 @@ em_shutdown(void *video)
 //   pthread_mutex_lock(&(ev->seek_mutex));
    if (!ev->seek_thread_deleted)
      {
-	printf("closing seek thread\n");
+	printf("closing seek thread %p\n", ev);
 	pthread_cond_broadcast(&(ev->seek_cond));
 	while (ev->seek_to);
      }
@@ -284,20 +284,20 @@ em_shutdown(void *video)
 //   pthread_mutex_lock(&(ev->get_pos_len_mutex));
    if (!ev->get_pos_thread_deleted)
      {
-	printf("closing get_pos thread\n");
+	printf("closing get_pos thread, %p\n", ev);
 	pthread_cond_broadcast(&(ev->get_pos_len_cond));
 	while (ev->get_poslen);
      }
 
-   printf("EX dispose\n");
+   printf("EX dispose %p\n", ev);
    xine_dispose(ev->stream);
-   printf("EX dispose evq\n");
+   printf("EX dispose evq %p\n", ev);
    xine_event_dispose_queue(ev->queue);
-   printf("EX close video drv\n");
+   printf("EX close video drv %p\n", ev);
    if (ev->video) xine_close_video_driver(ev->decoder, ev->video);
-   printf("EX close audio drv\n");
+   printf("EX close audio drv %p\n", ev);
    if (ev->audio) xine_close_audio_driver(ev->decoder, ev->audio);
-   printf("EX del fds\n");
+   printf("EX del fds %p\n", ev);
    ecore_main_fd_handler_del(ev->fd_handler);
    close(ev->fd_write);
    close(ev->fd_read);
@@ -365,18 +365,24 @@ em_file_close(void *ef)
    
    ev = (Emotion_Xine_Video *)ef;
    if (!ev) return;
-   printf("EX pause end...\n");
+   printf("EX pause end... %p\n", ev);
    if (!emotion_object_play_get(ev->obj))
 //   if (xine_get_param(ev->stream, XINE_PARAM_SPEED) == XINE_SPEED_PAUSE)
      {
-	printf("  ... unpause\n");
+	printf("  ... unpause %p\n", ev);
 	xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_NORMAL);
      }
-   printf("EX stop\n");
+//   xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+   printf("EX done %p\n", ev);
+   em_frame_done(ev); 
+//   printf("EX seek 0 %p\n", ev);
+//   xine_play(ev->stream, 0, 0);
+   printf("EX: fq %i %p\n", ev->fq, ev);
+   printf("EX stop %p\n", ev);
    xine_stop(ev->stream);
-   printf("EX close\n");
+   printf("EX close %p\n", ev);
    xine_close(ev->stream);
-   printf("EX del timer\n");
+   printf("EX del timer %p\n", ev);
    if (ev->timer)
      {
 	ecore_timer_del(ev->timer);
@@ -591,13 +597,15 @@ em_frame_done(void *ef)
    ev = (Emotion_Xine_Video *)ef;
    if (ev->cur_frame)
      {
+	ev->fq--;
 	if (ev->cur_frame->done_func)
 	  ev->cur_frame->done_func(ev->cur_frame->done_data);
 	ev->cur_frame = NULL;
      }
 }
 
-static Emotion_Format em_format_get(void *ef)
+static Emotion_Format
+em_format_get(void *ef)
 {
    Emotion_Xine_Video *ev;
    Emotion_Xine_Video_Frame *fr;
@@ -605,8 +613,7 @@ static Emotion_Format em_format_get(void *ef)
    ev = (Emotion_Xine_Video *)ef;
    fr = ev->cur_frame;
 
-   if (fr)
-     return fr->format;
+   if (fr) return fr->format;
    return EMOTION_FORMAT_YV12;
 }
 
@@ -660,7 +667,7 @@ em_bgra_data_get(void *ef, unsigned char **bgra_data)
    if (!fr) return 0;
    if (fr->bgra_data)
      {
-   *bgra_data = fr->bgra_data;
+	*bgra_data = fr->bgra_data;
 	return 1;
      }
    return 0;
@@ -1154,25 +1161,14 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
 	     ev = _emotion_video_get(fr->obj);
 	     if (ev)
 	       {
-		  if (ev->cur_frame)
-		    {
-		       if (ev->cur_frame->done_func)
-			 ev->cur_frame->done_func(ev->cur_frame->done_data);
-		    }
+		  em_frame_done(ev);
 		  ev->cur_frame = fr;
 		  _em_get_pos_len(ev);
 		  if ((xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO)) &&
 		      (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED)))
 		    {
- 
-		       if (ev->video_mute)
-			 {
-			    if (ev->cur_frame->done_func)
-			      ev->cur_frame->done_func(ev->cur_frame->done_data);
-			    ev->cur_frame = NULL;
-			 }
-		       else
-			 _emotion_frame_new(fr->obj);
+ 		       if (ev->video_mute) em_frame_done(ev);
+		       else _emotion_frame_new(fr->obj);
 		    }
 		  _emotion_frame_resize(fr->obj, fr->w, fr->h, fr->ratio);
 		  _emotion_video_pos_update(fr->obj, ev->pos, ev->len);
@@ -1274,7 +1270,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		       xine_audio_level_data_t *e;
 	     
 		       e = (xine_audio_level_data_t *)eev->xine_event;
-             _emotion_audio_level_change(ev->obj);
+		       _emotion_audio_level_change(ev->obj);
 		       printf("EV: Audio Level [FIXME: break this out to emotion api]\n");
 		       // e->left (0->100) 
 		       // e->right
