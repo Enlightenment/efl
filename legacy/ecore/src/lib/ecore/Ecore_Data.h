@@ -238,6 +238,7 @@ extern "C" {
    EAPI int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function);
    EAPI void ecore_hash_destroy(Ecore_Hash *hash);
 
+   EAPI int ecore_hash_count(Ecore_Hash *hash);
    EAPI int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
 				     void *user_data);
    EAPI Ecore_List *ecore_hash_keys(Ecore_Hash *hash);

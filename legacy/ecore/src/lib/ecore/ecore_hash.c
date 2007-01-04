@@ -216,6 +216,20 @@ ecore_hash_destroy(Ecore_Hash *hash)
  */
 
 /**
+ * Counts the number of nodes in a hash table.
+ * @param   hash The hash table to count current nodes.
+ * @return  The number of nodes in the hash.
+ * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
+ */
+EAPI int
+ecore_hash_count(Ecore_Hash *hash)
+{
+   CHECK_PARAM_POINTER_RETURN("hash", hash, 0);
+
+   return hash->nodes;
+}
+
+/**
  * Runs the @p for_each_func function on each entry in the given hash.
  * @param   hash          The given hash.
  * @param   for_each_func The function that each entry is passed to.
