@@ -293,11 +293,12 @@ _xre_image_copy(XR_Image *im)
    XR_Image *im2;
    void *data = NULL;
 
-   /* FIXME: colorspace support */
    if (im->data) data = im->data;
+   else if (im->cs.data) data = im->cs.data;
    else
      {
-	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
+	if (!im->im)
+	  im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
 	if (im->im)
 	  {
 	     evas_common_load_image_data_from_file(im->im);
@@ -305,119 +306,75 @@ _xre_image_copy(XR_Image *im)
 	  }
      }
    if (!data) return NULL;
-   im2 = _xre_image_new_from_copied_data(im->xinf, im->w, im->h, data, im->alpha, EVAS_COLORSPACE_ARGB8888);
-   if (im2) im2->alpha = im->alpha;
-   if ((im->im) && (!im->dirty))
-     {
-	evas_common_image_unref(im->im);
-	im->im = NULL;
-     }
+   im2 = _xre_image_new_from_copied_data(im->xinf, im->w, im->h, data, im->alpha, im->cs.space);
    return im2;
 }
 
 void
 _xre_image_resize(XR_Image *im, int w, int h)
 {
-   /* FIXME: colorspace support */
-   /* FIXME: ... */
    if ((w == im->w) && (h == im->h)) return;
    if (im->surface)
      {
 	Xrender_Surface *old_surface;
-	int x = 0, y = 0, ww, hh;
-	
-	ww = w; hh = h;
-	RECTS_CLIP_TO_RECT(x, y, ww, hh, 0, 0, im->w, im->h);
 	old_surface = im->surface;
 	im->surface = _xr_render_surface_new(old_surface->xinf, w + 2, h + 2, old_surface->fmt, old_surface->alpha);
-	if (im->surface)
-	  _xr_render_surface_copy(old_surface, im->surface, 0, 0, 0, 0, ww + 1, hh + 1);
 	_xr_render_surface_free(old_surface);
-	_xr_render_surface_copy(im->surface, im->surface, 
-				ww, 1, 
-				ww + 1, 1, 
-				1, hh);
-	_xr_render_surface_copy(im->surface, im->surface, 
-				0, hh, 
-				0, hh + 1, 
-				ww + 2, 1);
      }
-   if (im->data)
+   switch (im->cs.space)
      {
-	Gfx_Func_Copy func;
-	int x = 0, y = 0, ww, hh;
-	unsigned int *sp, *dp;
-	void *data;
-	
-	data = malloc(w * h * 4);
-	if (!data)
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->data)
 	  {
-	     if (im->surface)
+	     if (im->free_data)
 	       {
-		  _xr_render_surface_free(im->surface);
-		  im->surface = NULL;
+		  if (im->data) free(im->data);
+		  im->data = malloc(w * h * 4);
 	       }
-	     return;
 	  }
-	ww = w; hh = h;
-	
-	RECTS_CLIP_TO_RECT(x, y, ww, hh, 0, 0, im->w, im->h);
-	func = evas_common_draw_func_copy_get(w * h, 0);
-	if (func)
+	else if (im->im)
 	  {
-	     for (y = 0; y < hh; y++)
+	     evas_common_image_unref(im->im);
+	     im->im = NULL;
+	     if (im->free_data)
 	       {
-		  sp = ((unsigned int *)im->data) + (y * im->w);
-		  dp = ((unsigned int *)data) + (y * w);
-		  func(sp, dp, ww);
+		  if (im->data) free(im->data);
+		  im->data = malloc(w * h * 4);
 	       }
-	     evas_common_cpu_end_opt();
 	  }
-	__xre_image_dirty_hash_del(im);
-	free(im->data);
-	im->data = data;
-	__xre_image_dirty_hash_add(im);
-     }
-   else if (im->im)
-     {
-	RGBA_Image *im_old;
-	
-	im_old = im->im;
-	im->im = evas_common_image_create(w, h);
-	if (!im->im)
+	else
 	  {
-	     im->im = im_old;
-	     if (im->surface)
+	     im->data = malloc(w * h * 4);
+	     im->free_data = 1;
+	  }
+        break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	if (im->data)
+	  {
+	     if (im->free_data)
 	       {
-		  _xr_render_surface_free(im->surface);
-		  im->surface = NULL;
+		  if (im->data) free(im->data);
 	       }
-	     return;
+	     im->data = NULL;
 	  }
-	evas_common_load_image_data_from_file(im_old);
-	if (im_old->image->data)
+	if (im->im)
 	  {
-	     int x = 0, y = 0, ww, hh;
-	     
-	     ww = w; hh = h;
-	     RECTS_CLIP_TO_RECT(x, y, ww, hh, 0, 0, im->w, im->h);
-             evas_common_blit_rectangle(im_old, im->im, 0, 0, ww, hh, 0, 0);
-	     evas_common_cpu_end_opt();
+	     evas_common_image_unref(im->im);
+	     im->im = NULL;
 	  }
-	im->free_data = 1;
-	im->data = im->im->image->data;
-	im->im->image->data = NULL;
-        evas_common_image_unref(im->im);
-	im->im = NULL;
-        evas_common_image_unref(im_old);
-	__xre_image_dirty_hash_add(im);
+	if (!im->cs.no_free)
+	  {
+	     if (im->cs.data) free(im->cs.data);
+	     im->cs.data = calloc(1, h * sizeof(unsigned char *) * 2);
+	  }
+	break;
+      default:
+	abort();
+	break;
      }
-   else
-     {
-	im->data = malloc(w * h * 4);
-	im->free_data = 1;
-	__xre_image_dirty_hash_add(im);
-     }
+   __xre_image_dirty_hash_del(im);
+   __xre_image_dirty_hash_add(im);
    im->w = w;
    im->h = h;
 }
@@ -427,8 +384,8 @@ _xre_image_data_get(XR_Image *im)
 {
    void *data = NULL;
    
-   /* FIXME: colorspace support */
    if (im->data) data = im->data;
+   else if (im->cs.data) data = im->cs.data;
    else
      {
 	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
@@ -459,28 +416,47 @@ _xre_image_data_put(XR_Image *im, void *data)
 {
    void *imdata = NULL;
 
-   /* FIXME: colorspace support */
    if (!data) return;
-   if (im->data)
+   switch (im->cs.space)
      {
-	imdata = im->data;
-	if (data == imdata) return;
-	__xre_image_dirty_hash_del(im);
-	if (im->free_data) free(im->data);
-     }
-   else
-     {
-	if (im->im) imdata = im->im->image->data;
-	if (data == imdata) return;
+      case EVAS_COLORSPACE_ARGB8888:
 	if (im->im)
 	  {
+	     if (data == im->im->image->data) return;
 	     evas_common_image_unref(im->im);
 	     im->im = NULL;
 	  }
+	if (im->cs.data == data) return;
+	if (im->data)
+	  {
+	     if (im->data == data) return;
+	     if (im->free_data) free(im->data);
+	     im->free_data = 0;
+	  }
+	im->data = data;
+	im->free_data = 0;
+        break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+	if (im->data)
+	  {
+	     if (im->free_data) free(im->data);
+	     im->data = NULL;
+	  }
+	im->free_data = 0;
+	if (data == im->cs.data) return;
+	if (!im->cs.no_free)
+	  {
+	     if (im->cs.data) free(im->cs.data);
+	  }
+	im->cs.data = data;
+	break;
+      default:
+	abort();
+	break;
      }
-   im->data = data;
+   __xre_image_dirty_hash_del(im);
    __xre_image_dirty_hash_add(im);
-   im->free_data = 0;
    if (im->surface)
      {
 	_xr_render_surface_free(im->surface);
@@ -502,27 +478,32 @@ _xre_image_data_put(XR_Image *im, void *data)
 void
 _xre_image_alpha_set(XR_Image *im, int alpha)
 {
-   /* FIXME: colorspace support */
    if (im->alpha == alpha) return;
-   im->alpha = alpha;
-   if (im->surface)
+   switch (im->cs.space)
      {
-	Xrender_Surface *old_surface;
-	
-	old_surface = im->surface;
-	im->surface = NULL;
-	if (im->alpha)
-	  im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt32, 1);
-	else
-	  im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt24, 0);
+      case EVAS_COLORSPACE_ARGB8888:
+	im->alpha = alpha;
 	if (im->surface)
-	  _xr_render_surface_copy(old_surface, im->surface, 0, 0, 0, 0, im->w + 2, im->h + 2);
-	_xr_render_surface_free(old_surface);
-     }
-   if (im->updates)
-     {
-	evas_common_tilebuf_free(im->updates);
-	im->updates = NULL;
+	  {
+	     Xrender_Surface *old_surface;
+	     
+	     old_surface = im->surface;
+	     im->surface = NULL;
+	     if (im->alpha)
+	       im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt32, 1);
+	     else
+	       im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt24, 0);
+	     if (im->surface)
+	       _xr_render_surface_copy(old_surface, im->surface, 0, 0, 0, 0, im->w + 2, im->h + 2);
+	     _xr_render_surface_free(old_surface);
+	  }
+	if (im->updates)
+	  {
+	     evas_common_tilebuf_free(im->updates);
+	     im->updates = NULL;
+	  }
+      default:
+	break;
      }
 }
 
@@ -562,9 +543,8 @@ _xre_image_border_get(XR_Image *im, int *l, int *r, int *t, int *b)
 void
 _xre_image_surface_gen(XR_Image *im)
 {
-   void *data = NULL;
+   void *data = NULL, *tdata = NULL;
 
-   /* FIXME: colorspace support */
    if ((im->surface) && (!im->updates)) return;
    if (im->data) data = im->data;
    else
@@ -576,7 +556,31 @@ _xre_image_surface_gen(XR_Image *im)
 	     data = im->im->image->data;
 	  }
      }
-   if (!data) return;
+   if (!data)
+     {
+	switch (im->cs.space)
+	  {
+	   case EVAS_COLORSPACE_ARGB8888:
+	     return;
+	     break;
+	   case EVAS_COLORSPACE_YCBCR422P601_PL:
+	   case EVAS_COLORSPACE_YCBCR422P709_PL:
+	     if ((im->cs.data) && (*((unsigned char **)im->cs.data)))
+	       {
+		  tdata = malloc(im->w * im->h * sizeof(DATA32));
+		  if (tdata)
+		    evas_common_convert_yuv_420p_601_rgba(im->cs.data, 
+							  tdata,
+							  im->w, im->h);
+		  data = tdata;
+	       }
+	     break;
+	   default:
+	     abort();
+	     break;
+	  }
+	if (!data) return;
+     }
    if (im->surface)
      {
 	if (im->updates)
@@ -602,6 +606,7 @@ _xre_image_surface_gen(XR_Image *im)
 	     evas_common_tilebuf_free(im->updates);
 	     im->updates = NULL;
 	  }
+	if (tdata) free(tdata);
 	return;
      }
    if (im->alpha)
@@ -636,6 +641,7 @@ _xre_image_surface_gen(XR_Image *im)
 	evas_common_image_unref(im->im);
 	im->im = NULL;
      }
+   if (tdata) free(tdata);
 }
 
 void

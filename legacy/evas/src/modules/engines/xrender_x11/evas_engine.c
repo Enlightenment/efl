@@ -557,13 +557,16 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+	if ((im->free_data) && (im->data)) free(im->data);
+	im->data = NULL;
 	if (im->im) evas_common_image_unref(im->im);
 	im->im = NULL;
 	if (im->cs.data)
 	  {
 	     if (!im->cs.no_free) free(im->cs.data);
 	  }
-	im->cs.data = calloc(1, im->h * sizeof(unsigned char *) * 2);
+	if (im->h > 0)
+	  im->cs.data = calloc(1, im->h * sizeof(unsigned char *) * 2);
 	im->cs.no_free = 0;
 	break;
       default:
@@ -646,26 +649,14 @@ eng_image_size_set(void *data, void *image, int w, int h)
      return image;
    if ((w <= 0) || (h <= 0))
      {
-	_xre_image_free((XR_Image *)image);
+	_xre_image_free(im_old);
 	return NULL;
      }
    if (im_old)
      {
-	if (im_old->references > 1)
-	  {
-	     im = _xre_image_copy(im_old);
-	     if (im)
-	       {
-		  _xre_image_free(im_old);
-		  return im;
-	       }
-	     return image;
-	  }
-     }
-   else
-     {
-	_xre_image_dirty((XR_Image *)image);
-	_xre_image_resize((XR_Image *)image, w, h);
+	im = _xre_image_new_from_copied_data(im_old->xinf, w, h, NULL, im_old->alpha, im_old->cs.space);
+	_xre_image_free(im_old);
+	return im;
      }
    return image;
 }
