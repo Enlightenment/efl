@@ -737,9 +737,15 @@ _ecore_list_goto_index(Ecore_List *list, int index)
    if (index > ecore_list_nodes(list) || index < 0)
      return NULL;
 
-   _ecore_list_goto_first(list);
+   if (index < list->index) 
+     {
+	_ecore_list_goto_first(list);
+	i = 0;
+     }
+   else
+     i = list->index;
 
-   for (i = 0; i < index && _ecore_list_next(list); i++);
+   for (; i < index && _ecore_list_next(list); i++);
 
    if (i >= list->nodes)
      return NULL;
