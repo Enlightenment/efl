@@ -5,7 +5,8 @@ INCLUDES =
 lib_LTLIBRARIES = libecore.la
 include_HEADERS = \
 Ecore.h \
-Ecore_Data.h
+Ecore_Data.h \
+Ecore_Str.h
 
 libecore_la_SOURCES = \
 ecore.c \
@@ -23,6 +24,7 @@ ecore_path.c \
 ecore_plugin.c \
 ecore_sheap.c \
 ecore_signal.c \
+ecore_str.c \
 ecore_strings.c \
 ecore_time.c \
 ecore_timer.c \
