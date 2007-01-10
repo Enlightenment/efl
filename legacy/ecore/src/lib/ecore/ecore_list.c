@@ -1051,8 +1051,11 @@ _ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, const void *user_d
   if (!list || !function) return NULL;
 
   _ecore_list_goto_first(list);
-  while ((value = _ecore_list_next(list)) != NULL)
+  while ((value = _ecore_list_current(list)) != NULL)
+  {
     if (!function(value, user_data)) return value;
+    ecore_list_next(list);
+  }
 
   return NULL;
 }
