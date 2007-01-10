@@ -23,8 +23,8 @@
 #endif
 
 /**
- * @file Ecore_Data.h
- * @brief Contains threading, list, hash, debugging and tree functions.
+ * @file Ecore_Str.h
+ * @brief Contains useful C string functions.
  */
 
 # ifdef __cplusplus
