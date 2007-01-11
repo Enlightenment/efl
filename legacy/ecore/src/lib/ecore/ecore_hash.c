@@ -155,6 +155,7 @@ ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
    if (node)
      {
 	if (hash->free_key) hash->free_key(key);
+	if (node->value && hash->free_value) hash->free_value(node->value);
 	node->value = value;
 	ret = TRUE;
      }
