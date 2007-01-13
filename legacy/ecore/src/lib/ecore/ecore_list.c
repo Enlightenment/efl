@@ -1431,10 +1431,28 @@ EAPI void *
 ecore_dlist_remove_last(Ecore_DList *list)
 {
    void *ret;
+   Ecore_List_Node *node;
 
    CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
-   ret = _ecore_list_remove_last(list);
+   if (ecore_list_is_empty(list))
+     return NULL;
+
+   node = list->last;
+   list->last = ECORE_LIST_NODE(ECORE_DLIST_NODE(node)->previous);
+   if (list->last)
+     list->last->next = NULL;
+   if (list->first == node)
+     list->first = NULL;
+   if (list->current == node)
+     list->current = NULL;
+
+   ret = node->data;
+   ecore_list_node_destroy(node, NULL);
+
+   list->nodes--;
+   if (list->index >= list->nodes)
+     list->index--;
 
    return ret;
 }
