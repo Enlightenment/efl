@@ -665,9 +665,6 @@ _ecore_list_remove_last(Ecore_List *list)
    if (ecore_list_is_empty(list))
      return NULL;
 
-   if (!list->last)
-     return NULL;
-
    old = list->last;
    if (list->current == old)
      list->current = NULL;
