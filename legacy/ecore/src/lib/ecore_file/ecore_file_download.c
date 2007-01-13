@@ -195,6 +195,7 @@ _ecore_file_download_curl(const char *url, const char *dst,
    int flags;
    int n_remaining, still_running;
    Ecore_File_Download_Job *job;
+   double start = 0.0;
 
    job = calloc(1, sizeof(Ecore_File_Download_Job));
    if (!job) return NULL;
@@ -216,7 +217,7 @@ _ecore_file_download_curl(const char *url, const char *dst,
    curl_easy_setopt(job->curl, CURLOPT_URL, url);
    curl_easy_setopt(job->curl, CURLOPT_WRITEDATA, job->file);
    
-   if(progress_cb)
+   if (progress_cb)
      {
 	curl_easy_setopt(job->curl, CURLOPT_NOPROGRESS, FALSE);   
 	curl_easy_setopt(job->curl, CURLOPT_PROGRESSDATA, job);   
@@ -230,7 +231,11 @@ _ecore_file_download_curl(const char *url, const char *dst,
    ecore_list_append(_job_list, job);
 
    curl_multi_add_handle(curlm, job->curl);
-   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM);
+   start = ecore_time_get();
+   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
+     {
+	if ((ecore_time_get() - start) > 0.2) break;
+     }
 
    /* check for completed jobs */
    while ((curlmsg = curl_multi_info_read(curlm, &n_remaining)) != NULL)
@@ -312,9 +317,13 @@ _ecore_file_download_curl_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd
    Ecore_File_Download_Job *job;
    CURLMsg *curlmsg;
    int n_remaining, still_running;
+   double start = 0.0;
 
-   /* FIXME: Can this run for a long time? Maybe limit how long it can run */
-   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM);
+   start = ecore_time_get();
+   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
+     {
+	if ((ecore_time_get() - start) > 0.2) break;
+     }
 
    /* Loop jobs and check if any are done */
    while ((curlmsg = curl_multi_info_read(curlm, &n_remaining)) != NULL)
