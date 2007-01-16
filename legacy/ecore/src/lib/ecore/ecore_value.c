@@ -67,16 +67,18 @@ EAPI unsigned int
 ecore_str_hash(const void *key)
 {
    int i;
+   unsigned int mask;
    unsigned int value = 0;
    const char *k = key;
 
    if (!k)
      return 0;
 
+   mask = (sizeof(unsigned int) * 8) - 1;
+
    for (i = 0; k[i] != '\0'; i++)
      {
-	value ^= ((unsigned int) k[i] << ((i * 5) %
-					  (sizeof(unsigned int) * 8)));
+	value ^= ((unsigned int) k[i] << ((i * 5) & mask));
      }
 
    return value;

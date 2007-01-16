@@ -248,6 +248,7 @@ extern "C" {
    EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
    EAPI void *ecore_hash_remove(Ecore_Hash *hash, const void *key);
    EAPI void ecore_hash_dump_graph(Ecore_Hash *hash);
+   EAPI void ecore_hash_dump_stats(Ecore_Hash *hash);
 
 
    typedef struct _ecore_path_group Ecore_Path_Group;
@@ -360,6 +361,8 @@ extern "C" {
    EAPI void ecore_string_shutdown(void);
    EAPI const char *ecore_string_instance(const char *string);
    EAPI void ecore_string_release(const char *string);
+   EAPI void ecore_string_hash_dump_graph();
+   EAPI void ecore_string_hash_dump_stats();
    
    
    typedef struct _Ecore_Tree_Node Ecore_Tree_Node;

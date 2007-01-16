@@ -318,6 +318,33 @@ ecore_hash_dump_graph(Ecore_Hash *hash)
      printf("%d\t0\n", i);
 }
 
+/**
+ * Prints the distribution of the given hash table for graphing.
+ * @param hash The given hash table.
+ */
+EAPI void
+ecore_hash_dump_stats(Ecore_Hash *hash)
+{
+   unsigned int i;
+   double variance, sum_n_2 = 0, sum_n = 0;
+
+   for (i = 0; i < ecore_prime_table[hash->size]; i++)
+     {
+	if (hash->buckets[i])
+	  {
+	     int n = 0;
+	     Ecore_Hash_Node *node;
+	     for (node = hash->buckets[i]; node; node = node->next)
+	       n++;
+	     sum_n_2 += ((double)n * (double)n);
+	     sum_n += (double)n;
+	  }
+     }
+   variance = (sum_n_2 - ((sum_n * sum_n) / (double)i)) / (double)i;
+   printf("Average length: %f\n\tvariance^2: %f\n", (sum_n / (double)i),
+		   variance);
+}
+
 static int
 _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd, Ecore_Free_Cb valued)
 {
