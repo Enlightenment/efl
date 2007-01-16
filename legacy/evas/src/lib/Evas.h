@@ -418,6 +418,7 @@ extern "C" {
    EAPI Evas_List        *evas_render_updates               (Evas *e);
    EAPI void              evas_render_updates_free          (Evas_List *updates);
    EAPI void              evas_render                       (Evas *e);
+   EAPI void              evas_norender                     (Evas *e);
 
 /* rectangle objects */
    EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e);

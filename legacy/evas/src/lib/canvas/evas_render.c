@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 static Evas_List *
-evas_render_updates_internal(Evas *e, unsigned char make_updates);
+evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw);
 
 /**
  * To be documented.
@@ -69,12 +69,16 @@ evas_obscured_clear(Evas *e)
 
 
 static void
-_evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active_objects, Evas_List **restack_objects, int restack)
+_evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active_objects, Evas_List **restack_objects, Evas_List **delete_objects, int restack)
 {
    int is_active;
    
 /* if (obj->cur.cache.clip.dirty) */
    evas_object_clip_recalc(obj);
+   /* because of clip objects - delete 2 cycles later */
+   if (obj->delete_me == 2)
+     *delete_objects = evas_list_append(*delete_objects, obj);
+   else if (obj->delete_me != 0) obj->delete_me++;
    /* build active object list */
    is_active = evas_object_is_active(obj);
    if ((is_active) || (obj->delete_me != 0)) 
@@ -99,6 +103,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 		  _evas_render_phase1_object_process(e, obj2, 
 						     active_objects,
 						     restack_objects,
+						     delete_objects,
 						     obj->restack);
 	       }
 	  }
@@ -133,6 +138,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 		       _evas_render_phase1_object_process(e, obj2, 
 							  active_objects, 
 							  restack_objects,
+							  delete_objects,
 							  restack);
 		    }
 	       }
@@ -152,7 +158,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 }
 
 static void
-_evas_render_phase1_process(Evas *e, Evas_List **active_objects, Evas_List **restack_objects)
+_evas_render_phase1_process(Evas *e, Evas_List **active_objects, Evas_List **restack_objects, Evas_List **delete_objects)
 {
    Evas_Object_List *l;
 
@@ -167,13 +173,15 @@ _evas_render_phase1_process(Evas *e, Evas_List **active_objects, Evas_List **res
 	     Evas_Object *obj;
 
 	     obj = (Evas_Object *)l2;
-	     _evas_render_phase1_object_process(e, obj, active_objects, restack_objects, 0);
+	     _evas_render_phase1_object_process(e, obj, active_objects,
+						restack_objects, 
+						delete_objects, 0);
 	  }
      }
 }
 
 static Evas_List *
-evas_render_updates_internal(Evas *e, unsigned char make_updates)
+evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw)
 {
    Evas_List *updates = NULL;
    Evas_List *obscuring_objects = NULL;
@@ -192,7 +200,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates)
    if (!e->changed) return NULL;
 
    /* phase 1. add extra updates for changed objects */
-   _evas_render_phase1_process(e, &active_objects, &restack_objects);
+   _evas_render_phase1_process(e, &active_objects, &restack_objects, &delete_objects);
    /* phase 2. force updates for restacks */
    while (restack_objects)
      {
@@ -325,7 +333,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates)
 				     obj->cur.cache.clip.y + off_y,
 				     obj->cur.cache.clip.w,
 				     obj->cur.cache.clip.h);
-		  if ((w > 0) && (h > 0))
+		  if ((w > 0) && (h > 0) && (do_draw))
 		    {
 		       e->engine.func->context_clip_set(e->engine.data.output,
 							e->engine.data.context,
@@ -372,17 +380,19 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates)
 	
 	obj = (Evas_Object *)(ll->data);
 	obj->pre_render_done = 0;
-	if (obj->changed)
+	if ((obj->changed) && (do_draw))
 	  {
 	     obj->func->render_post(obj);
 	     obj->restack = 0;
 	     obj->changed = 0;
 	  }
+/* moved to other pre-process phase 1
 	if (obj->delete_me == 2)
 	  {
 	     delete_objects = evas_list_append(delete_objects, obj);
 	  }
 	else if (obj->delete_me != 0) obj->delete_me++;
+ */
      }
    /* free our obscuring object list */
    evas_list_free(obscuring_objects_orig);
@@ -436,7 +446,7 @@ evas_render_updates(Evas *e)
    MAGIC_CHECK_END();
    
    if (!e->changed) return NULL;
-   return evas_render_updates_internal(e, 1);
+   return evas_render_updates_internal(e, 1, 1);
 }
 
 /**
@@ -453,5 +463,23 @@ evas_render(Evas *e)
    MAGIC_CHECK_END();
 
    if (!e->changed) return;
-   evas_render_updates_internal(e, 0);
+   evas_render_updates_internal(e, 0, 1);
 }
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_norender(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   
+//   if (!e->changed) return;
+   evas_render_updates_internal(e, 0, 0);
+}
+
