@@ -294,6 +294,8 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	       }
 	  }
      }
+   else
+     evas_norender(ee->evas);
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 }
 

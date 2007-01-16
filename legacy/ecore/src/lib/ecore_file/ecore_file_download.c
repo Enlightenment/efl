@@ -234,7 +234,11 @@ _ecore_file_download_curl(const char *url, const char *dst,
    start = ecore_time_get();
    while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
      {
-	if ((ecore_time_get() - start) > 0.2) break;
+	/* make this 1/100th of a second to keep interactivity high. really
+	 * though this needs to somehow get the fd from curl and use an fd handler
+	 * and thus select
+	 */
+	if ((ecore_time_get() - start) > 0.01) break;
      }
 
    /* check for completed jobs */

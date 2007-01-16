@@ -235,6 +235,8 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	     evas_render(ee->evas);
 	     if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 	  }
+	else
+	  evas_norender(ee->evas);
      }
    if (_ecore_evas_fps_debug)
      {
