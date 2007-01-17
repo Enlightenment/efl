@@ -170,6 +170,49 @@ ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 }
 
 /**
+ * Sets all key-value pairs from set in the given hash table.
+ * @param   hash    The given hash table.
+ * @param   set     The hash table to import.
+ * @return  @c TRUE if successful, @c FALSE if not.
+ * @ingroup Ecore_Data_Hash_ADT_Data_Group
+ */
+EAPI int
+ecore_hash_set_hash(Ecore_Hash *hash, Ecore_Hash *set)
+{
+   unsigned int i;
+   Ecore_Hash_Node *node, *old;
+
+   CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+   CHECK_PARAM_POINTER_RETURN("set", set, FALSE);
+
+   for (i = 0; i < ecore_prime_table[set->size]; i++)
+     {
+	/* Hash into a new list to avoid loops of rehashing the same nodes */
+	while ((old = set->buckets[i]))
+	  {
+	     set->buckets[i] = old->next;
+	     old->next = NULL;
+	     node = _ecore_hash_get_node(hash, old->key);
+	     if (node)
+	       {
+		  /* This key already exists. Delete the old and add the new
+		   * value */
+		  if (hash->free_key) hash->free_key(node->key);
+		  if (hash->free_value) hash->free_key(node->value);
+		  node->key = old->key;
+		  node->value = old->value;
+		  free(old);
+	       }
+	     else
+	       _ecore_hash_add_node(hash, old);
+	  }
+     }
+   FREE(set->buckets);
+   ecore_hash_init(set, set->hash_func, set->compare);
+   return TRUE;
+}
+
+/**
  * Frees the hash table and the data contained inside it.
  * @param   hash The hash table to destroy.
  * @return  @c TRUE on success, @c FALSE on error.
@@ -694,7 +737,7 @@ _ecore_hash_decrease(Ecore_Hash *hash)
  * @brief Rehash the nodes of a table into the hash table
  * @param hash: the hash to place the nodes of the table
  * @param table: the table to remove the nodes from and place in hash
- * @return Returns TRUE on success, FALSE on success
+ * @return Returns TRUE on success, FALSE on error
  */
 inline int
 _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)

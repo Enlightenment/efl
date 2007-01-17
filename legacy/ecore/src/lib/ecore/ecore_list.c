@@ -494,6 +494,71 @@ _ecore_list_insert(Ecore_List *list, Ecore_List_Node *new_node)
 
    return TRUE;
 }
+/**
+ * Append a list to the list.
+ * @param   list The list.
+ * @param   append The list to append.
+ * @return  @c FALSE if an error occurs, @c TRUE if appended successfully
+ * @ingroup Ecore_Data_List_Add_Item_Group
+ */
+
+EAPI int 
+ecore_list_append_list(Ecore_List *list, Ecore_List *append)
+{
+   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("append", append, FALSE);
+
+   if (ecore_list_is_empty(append)) return TRUE;
+
+   if (ecore_list_is_empty(list))
+     {
+	list->first = append->first;
+	list->current = NULL;
+	list->last = append->last;
+	list->nodes = append->nodes;
+     }
+   else
+     {
+	list->last->next = append->first;
+	list->last = append->last;
+	list->nodes += append->nodes;
+     }
+   ecore_list_init(append);
+   return TRUE;
+}
+
+/**
+ * Prepend a list to the beginning of the list.
+ * @param  list The list.
+ * @param  prepend The list to prepend.
+ * @return @c FALSE if an error occurs, @c TRUE if prepended successfully.
+ * @ingroup Ecore_Data_List_Add_Item_Group
+ */
+EAPI int 
+ecore_list_prepend_list(Ecore_List *list, Ecore_List *prepend)
+{
+   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("prepend", prepend, FALSE);
+
+   if (ecore_list_is_empty(prepend)) return TRUE;
+
+   if (ecore_list_is_empty(list))
+     {
+	list->first = prepend->first;
+	list->current = NULL;
+	list->last = prepend->last;
+	list->nodes = prepend->nodes;
+     }
+   else
+     {
+	prepend->last->next = list->first;
+	list->first = prepend->first;
+	list->nodes += prepend->nodes;
+	list->index += prepend->nodes;
+     }
+   ecore_list_init(prepend);
+   return TRUE;
+}
 
 /**
 @defgroup Ecore_Data_List_Remove_Item_Group List Item Removing Functions
@@ -1327,6 +1392,73 @@ ecore_dlist_insert(Ecore_DList *list, void *data)
    ECORE_LIST(list)->nodes++;
 
    return ret;
+}
+
+/**
+ * Appends a list to the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @param   append The list to append.
+ * @return  @c TRUE if the data is successfully appended, @c FALSE otherwise.
+ * @ingroup Ecore_Data_DList_Add_Item_Group
+ */
+EAPI int 
+ecore_dlist_append_list(Ecore_DList *list, Ecore_DList *append)
+{
+   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("append", append, FALSE);
+
+   if (ecore_dlist_is_empty(append)) return TRUE;
+
+   if (ecore_dlist_is_empty(list))
+     {
+	list->first = append->first;
+	list->current = NULL;
+	list->last = append->last;
+	list->nodes = append->nodes;
+     }
+   else
+     {
+	list->last->next = append->first;
+	ECORE_DLIST_NODE(append->first)->previous = ECORE_DLIST_NODE(list->last);
+	list->last = append->last;
+	list->nodes += append->nodes;
+     }
+   ecore_dlist_init(append);
+   return TRUE;
+}
+
+/**
+ * Adds a list to the very beginning of the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @param   prepend The list to prepend.
+ * @return  @c TRUE if the data is successfully prepended, @c FALSE otherwise.
+ * @ingroup Ecore_Data_DList_Add_Item_Group
+ */
+EAPI int 
+ecore_dlist_prepend_list(Ecore_DList *list, Ecore_DList *prepend)
+{
+   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("prepend", prepend, FALSE);
+
+   if (ecore_dlist_is_empty(prepend)) return TRUE;
+
+   if (ecore_dlist_is_empty(list))
+     {
+	list->first = prepend->first;
+	list->current = NULL;
+	list->last = prepend->last;
+	list->nodes = prepend->nodes;
+     }
+   else
+     {
+	prepend->last->next = list->first;
+	ECORE_DLIST_NODE(list->first)->previous = ECORE_DLIST_NODE(prepend->last);
+	list->first = prepend->first;
+	list->nodes += prepend->nodes;
+	list->index += prepend->nodes;
+     }
+   ecore_dlist_init(prepend);
+   return TRUE;
 }
 
 /**

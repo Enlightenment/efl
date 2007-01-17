@@ -89,6 +89,8 @@ extern "C" {
    EAPI int ecore_list_append(Ecore_List * list, void *_data);
    EAPI int ecore_list_prepend(Ecore_List * list, void *_data);
    EAPI int ecore_list_insert(Ecore_List * list, void *_data);
+   EAPI int ecore_list_append_list(Ecore_List * list, Ecore_List * append);
+   EAPI int ecore_list_prepend_list(Ecore_List * list, Ecore_List * prepend);
    
    /* Removing items from the list */
    EAPI int ecore_list_remove_destroy(Ecore_List *list);
@@ -153,6 +155,8 @@ extern "C" {
    EAPI int ecore_dlist_append(Ecore_DList * _e_dlist, void *_data);
    EAPI int ecore_dlist_prepend(Ecore_DList * _e_dlist, void *_data);
    EAPI int ecore_dlist_insert(Ecore_DList * _e_dlist, void *_data);
+   EAPI int ecore_dlist_append_list(Ecore_DList * _e_dlist, Ecore_DList * append);
+   EAPI int ecore_dlist_prepend_list(Ecore_DList * _e_dlist, Ecore_DList * prepend);
    
    /* Info about list's state */
    EAPI void *ecore_dlist_current(Ecore_DList *list);
@@ -246,6 +250,7 @@ extern "C" {
    /* Retrieve and store data into the hash */
    EAPI void *ecore_hash_get(Ecore_Hash *hash, const void *key);
    EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
+   EAPI int ecore_hash_set_hash(Ecore_Hash *hash, Ecore_Hash *set);
    EAPI void *ecore_hash_remove(Ecore_Hash *hash, const void *key);
    EAPI void ecore_hash_dump_graph(Ecore_Hash *hash);
    EAPI void ecore_hash_dump_stats(Ecore_Hash *hash);
