@@ -249,6 +249,9 @@ ecore_file_get_dir(const char *file)
      {
 	return strdup(file);
      }
+
+   if (p == buf) return strdup("/");
+
    *p = 0;
    return strdup(buf);
 }
