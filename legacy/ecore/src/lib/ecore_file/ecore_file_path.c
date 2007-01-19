@@ -22,6 +22,7 @@ ecore_file_path_shutdown(void)
 {
    if (--init != 0) return init;
    ecore_list_destroy(__ecore_file_path_bin);
+   __ecore_file_path_bin = NULL;
    return init;
 }
 
