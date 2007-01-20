@@ -12,3 +12,8 @@ To install (run this as root, or the user who handles installs):
     make install
 
 NOTE: You MUST make install Eet for it to run properly.
+
+NOTE: for compilation with MinGW, fnmatch.h is probably missing.
+      That file can be found here:
+http://www.koders.com/c/fid2B518462CB1EED3D4E31E271DB83CD1582F6EEBE.aspx
+      It should be installed in the mingw include directory.

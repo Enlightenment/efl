@@ -46,7 +46,7 @@ while test $# -gt 0; do
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -leet -lz -ljpeg
+      echo $libdirs -leet -lz -ljpeg @fnmatch_libs@ @winsock_libs@
       ;;
     *)
       echo "${usage}" 1>&2

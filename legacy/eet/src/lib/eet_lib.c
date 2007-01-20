@@ -3,13 +3,31 @@
  */
 
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 
 #include "Eet.h"
 #include "Eet_private.h"
 
 #ifdef HAVE_REALPATH
 #undef HAVE_REALPATH
+#endif
+
+#ifdef _WIN32
+
+#ifndef F_SETFD
+#define F_SETFD 2
+#endif
+
+#ifndef PROT_READ
+#define PROT_READ 1
+#endif
+
+#ifndef FD_CLOEXEC
+#define FD_CLOEXEC 1
+#endif
+
 #endif
 
 #define EET_MAGIC_FILE                  0x1ee7ff00
@@ -471,6 +489,9 @@ eet_open(const char *file, Eet_File_Mode mode)
 {
    Eet_File	*ef;
    struct stat	file_stat;
+#ifdef _WIN32
+   HANDLE       h;
+#endif
    
    if (!file)
      return NULL;
@@ -558,7 +579,15 @@ eet_open(const char *file, Eet_File_Mode mode)
    if (eet_test_close(!ef->fp, ef))
      return NULL;
 
+#ifndef _WIN32
    fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
+#else
+   /* FIXME: check if that code is needed / correct */
+   h = (HANDLE) _get_osfhandle (fileno(ef->fp));
+   if (h == (HANDLE) -1)
+     return NULL;
+   SetHandleInformation (h, HANDLE_FLAG_INHERIT, 0);
+#endif
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
@@ -568,10 +597,29 @@ eet_open(const char *file, Eet_File_Mode mode)
 	int			num_entries;
 	int			byte_entries;
 	int			i;
+#ifdef _WIN32
+	HANDLE                  fm;
+#endif
+
 
 	ef->data_size = file_stat.st_size;
+#ifndef _WIN32
 	ef->data = mmap(NULL, ef->data_size, PROT_READ,
 			MAP_SHARED, fileno(ef->fp), 0);
+#else
+	fm = CreateFileMapping((HANDLE) _get_osfhandle (fileno(ef->fp)),
+			       NULL,
+			       PAGE_READONLY,
+			       0,
+			       0,
+			       NULL);
+	ef->data = MapViewOfFile(fm,
+				 FILE_MAP_READ,
+				 0,
+				 0,
+				 ef->data_size);
+	CloseHandle(fm);
+#endif
 
 	if (eet_test_close((ef->data == (void *)-1) || (ef->data == NULL), ef))
 	  return NULL;
@@ -825,7 +873,11 @@ eet_close(Eet_File *ef)
 	  }
 	free(ef->header);
      }
+#ifndef _WIN32
    if (ef->data) munmap(ef->data, ef->data_size);
+#else
+   if (ef->data) UnmapViewOfFile (ef->data);
+#endif
    if (ef->fp) fclose(ef->fp);
 
    /* zero out ram for struct - caution tactic against stale memory use */
