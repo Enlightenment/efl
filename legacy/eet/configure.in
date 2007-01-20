@@ -31,6 +31,7 @@ case "$host_os" in
 esac
 
 AC_SUBST(winsock_libs)
+AC_SUBST(create_shared_lib)
 
 AC_CHECK_HEADER(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file]))
 
