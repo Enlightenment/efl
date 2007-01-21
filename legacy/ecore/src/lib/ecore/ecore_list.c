@@ -675,9 +675,6 @@ _ecore_list_remove_first(Ecore_List *list)
    if (ecore_list_is_empty(list))
      return NULL;
 
-   if (!list->first)
-     return NULL;
-
    old = list->first;
 
    list->first = list->first->next;
