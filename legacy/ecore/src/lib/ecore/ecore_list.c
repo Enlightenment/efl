@@ -738,12 +738,9 @@ _ecore_list_remove_last(Ecore_List *list)
    if (prev)
      prev->next = NULL;
 
-   if (old)
-     {
-	old->next = NULL;
-	ret = old->data;
-	old->data = NULL;
-     }
+   old->next = NULL;
+   ret = old->data;
+   old->data = NULL;
 
    ecore_list_node_destroy(old, NULL);
    list->nodes--;
