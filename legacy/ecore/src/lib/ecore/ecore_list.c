@@ -736,11 +736,7 @@ _ecore_list_remove_last(Ecore_List *list)
    for (prev = list->first; prev && prev->next != old; prev = prev->next);
    list->last = prev;
    if (prev)
-     {
-	prev->next = NULL;
-	if (list->current == old)
-	  list->current = NULL;
-     }
+     prev->next = NULL;
 
    if (old)
      {
