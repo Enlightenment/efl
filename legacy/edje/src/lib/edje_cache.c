@@ -124,7 +124,7 @@ Edje_File *
 _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
 {
    Edje_File *edf;
-   Evas_List *l;
+   Evas_List *l, *hist;
    Edje_Part_Collection *edc;
 
    edf = evas_hash_find(_edje_file_hash, file);
@@ -183,6 +183,72 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	if (!edc)
 	  {
 	     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
+	  }
+	else
+	  {
+	     for (l = edc->parts; l; l = l->next)
+	       {
+		  Edje_Part *ep, *ep2;
+		  
+		  /* Register any color classes in this parts descriptions. */
+		  ep = l->data;
+		  hist = NULL;
+		  hist = evas_list_append(hist, ep);
+		  ep2 = ep;
+		  while (ep2->dragable.confine_id >= 0)
+		    {
+		       ep2 = evas_list_nth(edc->parts, ep2->dragable.confine_id);
+		       if (evas_list_find(hist, ep2))
+			 {
+			    printf("EDJE ERROR: confine_to loops. invalidating loop.\n");
+			    ep2->dragable.confine_id = -1;
+			    break;
+			 }
+		       hist = evas_list_append(hist, ep2);
+		    }
+		  evas_list_free(hist);
+		  hist = NULL;
+		  hist = evas_list_append(hist, ep);
+		  ep2 = ep;
+		  while (ep2->dragable.events_id >= 0)
+		    {
+		       Edje_Part* prev;
+		       
+		       prev = ep2;
+		       
+		       ep2 = evas_list_nth(edc->parts, ep2->dragable.events_id);
+		       if (!ep2->dragable.x && !ep2->dragable.y)
+			 {
+			    prev->dragable.events_id = -1;
+			    break;
+			 }
+		       
+		       if (evas_list_find(hist, ep2))
+			 {
+			    printf("EDJE ERROR: events_to loops. invalidating loop.\n");
+			    ep2->dragable.events_id = -1;
+			    break;
+			 }
+		       hist = evas_list_append(hist, ep2);
+		    }
+		  evas_list_free(hist);
+		  hist = NULL;
+		  hist = evas_list_append(hist, ep);
+		  ep2 = ep;
+		  while (ep2->clip_to_id >= 0)
+		    {
+		       ep2 = evas_list_nth(edc->parts, ep2->clip_to_id);
+		       if (evas_list_find(hist, ep2))
+			 {
+			    printf("EDJE ERROR: clip_to loops. invalidating loop.\n");
+			    ep2->clip_to_id = -1;
+			    break;
+			 }
+		       hist = evas_list_append(hist, ep2);
+		    }
+		  evas_list_free(hist);
+		  hist = NULL;
+	       }
 	  }
      }
    if (edc_ret) *edc_ret = edc;

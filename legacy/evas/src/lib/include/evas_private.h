@@ -247,6 +247,8 @@ struct _Evas_Callbacks
 {
    unsigned char     deletions_waiting : 1;
    int               walking_list;
+   Evas_Object_List *callbacks;
+/*   
    Evas_Object_List *down;
    Evas_Object_List *up;
    Evas_Object_List *move;
@@ -263,6 +265,7 @@ struct _Evas_Callbacks
    Evas_Object_List *obj_move;
    Evas_Object_List *obj_resize;
    Evas_Object_List *obj_restack;
+ */
 };
 
 struct _Evas
@@ -449,9 +452,10 @@ struct _Evas_Object
 struct _Evas_Func_Node
 {
    Evas_Object_List  _list_data;
-   char delete_me : 1;
    void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info);
    void *data;
+   Evas_Callback_Type type;
+   char delete_me : 1;
 };
 
 struct _Evas_Data_Node

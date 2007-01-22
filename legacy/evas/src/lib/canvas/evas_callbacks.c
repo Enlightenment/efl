@@ -45,6 +45,7 @@ evas_object_event_callback_clear(Evas_Object *obj)
    if (!obj->callbacks) return;
    if (!obj->callbacks->deletions_waiting) return;
    obj->callbacks->deletions_waiting = 0;
+/*   
    evas_object_event_callback_list_post_free(&(obj->callbacks->in));
    evas_object_event_callback_list_post_free(&(obj->callbacks->out));
    evas_object_event_callback_list_post_free(&(obj->callbacks->down));
@@ -81,6 +82,13 @@ evas_object_event_callback_clear(Evas_Object *obj)
 	free(obj->callbacks);
 	obj->callbacks = NULL;
      }
+ */
+   evas_object_event_callback_list_post_free(&obj->callbacks->callbacks);
+   if (!obj->callbacks->callbacks)
+     {
+        free(obj->callbacks);
+	obj->callbacks = NULL;
+     }
 }
 
 void
@@ -88,6 +96,7 @@ evas_object_event_callback_cleanup(Evas_Object *obj)
 {
    /* MEM OK */
    if (!obj->callbacks) return;
+   /*
    evas_object_event_callback_list_free(&(obj->callbacks->in));
    evas_object_event_callback_list_free(&(obj->callbacks->out));
    evas_object_event_callback_list_free(&(obj->callbacks->down));
@@ -106,6 +115,10 @@ evas_object_event_callback_cleanup(Evas_Object *obj)
    evas_object_event_callback_list_free(&(obj->callbacks->obj_restack));
    free(obj->callbacks);
    obj->callbacks = NULL;
+    */
+   evas_object_event_callback_list_post_free(&obj->callbacks->callbacks);
+   free(obj->callbacks);
+   obj->callbacks = NULL;
 }
 
 void
@@ -121,6 +134,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
      
    if (obj->callbacks)
      {
+	/*
         switch (type)
           {
              case EVAS_CALLBACK_MOUSE_IN:
@@ -196,13 +210,46 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
                return;
                break;
           }
+	*/	
+	l_mod = &obj->callbacks->callbacks;
+        switch (type)
+          {
+             case EVAS_CALLBACK_MOUSE_DOWN:
+               {
+                  Evas_Event_Mouse_Down *ev = event_info;
+                  
+                  flags = ev->flags;
+	          if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
+	            {
+	               if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
+	                 ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
+	            }
+                  obj->last_mouse_down_counter = e->last_mouse_down_counter;
+	          break;
+               }
+             case EVAS_CALLBACK_MOUSE_UP:
+               {
+                  Evas_Event_Mouse_Up *ev = event_info;
+                  
+                  flags = ev->flags;
+	          if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
+	            {
+	               if (obj->last_mouse_up_counter < (e->last_mouse_up_counter - 1))
+	                 ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
+	            }
+                  obj->last_mouse_up_counter = e->last_mouse_up_counter;
+	          break;
+               }
+             default:
+               break;
+          }
         obj->callbacks->walking_list++;
         for (l = *l_mod; l; l = l->next)
           {
 	     Evas_Func_Node *fn;
 
 	     fn = (Evas_Func_Node *)l;
-	     if (!fn->delete_me)
+	     if ((fn->type == type) && (!fn->delete_me))
 	       {
 	          if (fn->func)
 	            fn->func(fn->data, obj->layer->evas, obj, event_info);
@@ -226,8 +273,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
      }
    
    if ((obj->no_propagate) && (l_mod) && (*l_mod)) return;
-   if ((obj->smart.parent) &&
-       (type != EVAS_CALLBACK_FREE) &&
+   if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
        (type <= EVAS_CALLBACK_KEY_UP))
      evas_object_event_callback_call(obj->smart.parent, type, event_info);
 }
@@ -417,6 +463,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
    if (!fn) return;
    fn->func = func;
    fn->data = (void *)data;
+   fn->type = type;
 
    if (!obj->callbacks)
      obj->callbacks = evas_mem_calloc(sizeof(Evas_Callbacks));
@@ -425,6 +472,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 	free(fn);
 	return;
      }
+   /*
    switch (type)
      {
       case EVAS_CALLBACK_MOUSE_IN:
@@ -481,6 +529,9 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 	break;
      }
    *l_mod = evas_object_list_append(*l_mod, fn);
+    */
+   obj->callbacks->callbacks = 
+     evas_object_list_append(obj->callbacks->callbacks, fn);
 }
 
 /**
@@ -521,6 +572,7 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 
    if (!obj->callbacks) return NULL;
 
+   /*
    switch (type)
      {
       case EVAS_CALLBACK_MOUSE_IN:
@@ -581,6 +633,24 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 
 	fn = (Evas_Func_Node *)l;
 	if ((fn->func == func) && (!fn->delete_me))
+	  {
+	     void *data;
+
+	     data = fn->data;
+	     fn->delete_me = 1;
+	     obj->callbacks->deletions_waiting = 1;
+	     if (!obj->callbacks->walking_list)
+	       evas_object_event_callback_clear(obj);
+	     return data;
+	  }
+     }
+    */
+   for (l = obj->callbacks->callbacks; l; l = l->next)
+     {
+	Evas_Func_Node *fn;
+
+	fn = (Evas_Func_Node *)l;
+	if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
 	  {
 	     void *data;
 

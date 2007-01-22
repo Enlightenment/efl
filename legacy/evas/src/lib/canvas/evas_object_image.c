@@ -1707,6 +1707,11 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		    }
 		  else
 		    ih = ((int)(idy + idh)) - iy;
+///		  printf("  IMG: %ix%i -> %i %i | %ix%i\n",
+///			 o->cur.image.w, o->cur.image.h,
+///			 obj->cur.geometry.x + idx,
+///			 obj->cur.geometry.y + idy,
+///			 iw, ih);
 		  if ((o->cur.border.l == 0) &&
 		      (o->cur.border.r == 0) &&
 		      (o->cur.border.t == 0) &&

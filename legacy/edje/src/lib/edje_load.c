@@ -55,12 +55,12 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	Evas_List *l;
 	int errors = 0;
 
-	/* check for invalid loops */
+	/* colorclass stuff */
 	for (l = ed->collection->parts; (l && ! errors); l = l->next)
 	  {
 	     Edje_Part *ep;
 	     Evas_List *hist = NULL;
-
+	     
 	     /* Register any color classes in this parts descriptions. */
 	     ep = l->data;
 	     if ((ep->default_desc) && (ep->default_desc->color_class)) 
@@ -72,63 +72,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		  desc = hist->data;
 		  if (desc->color_class) _edje_color_class_member_add(ed, desc->color_class);
 	       }
-	     hist = NULL;
-	     hist = evas_list_append(hist, ep);
-	     while (ep->dragable.confine_id >= 0)
-	       {
-		  ep = evas_list_nth(ed->collection->parts,
-				     ep->dragable.confine_id);
-		  if (evas_list_find(hist, ep))
-		    {
-		       printf("EDJE ERROR: confine_to loops. invalidating loop.\n");
-		       ep->dragable.confine_id = -1;
-		       break;
-		    }
-		  hist = evas_list_append(hist, ep);
-	       }
-	     evas_list_free(hist);
-	     hist = NULL;
-	     hist = evas_list_append(hist, ep);
-	     while (ep->dragable.events_id >= 0)
-	       {
-		  Edje_Part* prev;
-
-		  prev = ep;
-
-		  ep = evas_list_nth(ed->collection->parts,
-				     ep->dragable.events_id);
-		  
-		  if (!ep->dragable.x && !ep->dragable.y)
-		    {
-		       prev->dragable.events_id = -1;
-		       break;
-		    }
-
-		  if (evas_list_find(hist, ep))
-		    {
-		       printf("EDJE ERROR: events_to loops. invalidating loop.\n");
-		       ep->dragable.events_id = -1;
-		       break;
-		    }
-		  hist = evas_list_append(hist, ep);
-	       }
-	     evas_list_free(hist);
-	     hist = NULL;
-	     hist = evas_list_append(hist, ep);
-	     while (ep->clip_to_id >= 0)
-	       {
-		  ep = evas_list_nth(ed->collection->parts,
-				     ep->clip_to_id);
-		  if (evas_list_find(hist, ep))
-		    {
-		       printf("EDJE ERROR: clip_to loops. invalidating loop.\n");
-		       ep->clip_to_id = -1;
-		       break;
-		    }
-		  hist = evas_list_append(hist, ep);
-	       }
-	     evas_list_free(hist);
-	     hist = NULL;
 	  }
 	/* build real parts */
 	for (n = 0, l = ed->collection->parts; l; l = l->next, n++)
@@ -222,6 +165,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	  }
 	if (n > 0)
 	  {
+	     /* FIXME: keeping a table AND a list is just bad - nuke list */
 	     ed->table_parts = malloc(sizeof(Edje_Real_Part *) * n);
 	     ed->table_parts_size = n;
 	     /* FIXME: check malloc return */
@@ -285,6 +229,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	n = evas_list_count(ed->collection->programs);
 	if (n > 0)
 	  {
+	     /* FIXME: keeping a table AND a list is just bad - nuke list */
 	     ed->table_programs = malloc(sizeof(Edje_Program *) * n);
 	     ed->table_programs_size = n;
 	     /* FIXME: check malloc return */

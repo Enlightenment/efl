@@ -278,99 +278,117 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    obscuring_objects_orig = obscuring_objects;
    obscuring_objects = NULL;
    /* phase 6. go thru each update rect and render objects in it*/
-   while ((surface =
-	   e->engine.func->output_redraws_next_update_get(e->engine.data.output,
-							 &ux, &uy, &uw, &uh,
-							 &cx, &cy, &cw, &ch)))
+   if (do_draw)
      {
-	int off_x, off_y;
-
-	if (make_updates)
+	while ((surface =
+		e->engine.func->output_redraws_next_update_get(e->engine.data.output,
+							       &ux, &uy, &uw, &uh,
+							       &cx, &cy, &cw, &ch)))
 	  {
-	    Evas_Rectangle *rect;
-
-	    rect = malloc(sizeof(Evas_Rectangle));
-	    if (rect)
-	      {
-		rect->x = ux; rect->y = uy; rect->w = uw; rect->h = uh;
-		updates = evas_list_append(updates, rect);
-	      }
-	  }
-	off_x = cx - ux;
-	off_y = cy - uy;
-	/* build obscuring objects list (in order from bottom to top) */
-	for (ll = obscuring_objects_orig; ll; ll = ll->next)
-	  {
-	     Evas_Object *obj;
-
-	     obj = (Evas_Object *)(ll->data);
-	     if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
-	       obscuring_objects = evas_list_append(obscuring_objects, obj);
-	  }
-	/* render all object that intersect with rect */
-	for (ll = active_objects; ll; ll = ll->next)
-	  {
-	     Evas_Object *obj;
-	     Evas_List *l3;
-	     obj = (Evas_Object *)(ll->data);
-
-	     /* if it's in our outpout rect and it doesn't clip anything */
-	     if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
-		 (!obj->clip.clipees) &&
-		 (obj->cur.visible) &&
-		 (!obj->delete_me) &&
-		 (obj->cur.cache.clip.visible) &&
-		 (!obj->smart.smart) &&
-		 (obj->cur.color.a > 0))
+	     int off_x, off_y;
+	     
+	     if (make_updates)
 	       {
-		  int x, y, w, h;
-
-		  if ((obscuring_objects) && (obscuring_objects->data == obj))
-		    obscuring_objects = evas_list_remove(obscuring_objects, obj);
-		  x = cx; y = cy; w = cw; h = ch;
-		  RECTS_CLIP_TO_RECT(x, y, w, h,
-				     obj->cur.cache.clip.x + off_x,
-				     obj->cur.cache.clip.y + off_y,
-				     obj->cur.cache.clip.w,
-				     obj->cur.cache.clip.h);
-		  if ((w > 0) && (h > 0) && (do_draw))
+		  Evas_Rectangle *rect;
+		  
+		  rect = malloc(sizeof(Evas_Rectangle));
+		  if (rect)
 		    {
-		       e->engine.func->context_clip_set(e->engine.data.output,
-							e->engine.data.context,
-							x, y, w, h);
-#if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
-		       for (l3 = obscuring_objects; l3; l3 = l3->next)
-			 {
-			    Evas_Object *obj2;
-
-			    obj2 = (Evas_Object *)l3->data;
-			    e->engine.func->context_cutout_add(e->engine.data.output,
-							       e->engine.data.context,
-							       obj2->cur.cache.clip.x + off_x,
-							       obj2->cur.cache.clip.y + off_y,
-							       obj2->cur.cache.clip.w,
-							       obj2->cur.cache.clip.h);
-			 }
-#endif
-		       obj->func->render(obj,
-					 e->engine.data.output,
-					 e->engine.data.context,
-					 surface,
-					 off_x, off_y);
-		       e->engine.func->context_cutout_clear(e->engine.data.output,
-							    e->engine.data.context);
+		       rect->x = ux; rect->y = uy; rect->w = uw; rect->h = uh;
+		       updates = evas_list_append(updates, rect);
 		    }
 	       }
+	     off_x = cx - ux;
+	     off_y = cy - uy;
+	     /* build obscuring objects list (in order from bottom to top) */
+	     for (ll = obscuring_objects_orig; ll; ll = ll->next)
+	       {
+		  Evas_Object *obj;
+		  
+		  obj = (Evas_Object *)(ll->data);
+		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
+		    obscuring_objects = evas_list_append(obscuring_objects, obj);
+	       }
+	     /* render all object that intersect with rect */
+	     for (ll = active_objects; ll; ll = ll->next)
+	       {
+		  Evas_Object *obj;
+		  Evas_List *l3;
+		  obj = (Evas_Object *)(ll->data);
+		  
+		  /* if it's in our outpout rect and it doesn't clip anything */
+		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
+		      (!obj->clip.clipees) &&
+		      (obj->cur.visible) &&
+		      (!obj->delete_me) &&
+		      (obj->cur.cache.clip.visible) &&
+		      (!obj->smart.smart) &&
+		      (obj->cur.color.a > 0))
+		    {
+		       int x, y, w, h;
+		       
+		       if ((obscuring_objects) && (obscuring_objects->data == obj))
+			 obscuring_objects = evas_list_remove(obscuring_objects, obj);
+		       x = cx; y = cy; w = cw; h = ch;
+		       RECTS_CLIP_TO_RECT(x, y, w, h,
+					  obj->cur.cache.clip.x + off_x,
+					  obj->cur.cache.clip.y + off_y,
+					  obj->cur.cache.clip.w,
+					  obj->cur.cache.clip.h);
+		       if ((w > 0) && (h > 0))
+			 {
+///		       printf("CLIP: %p | %i %i, %ix%i | %p %i %i %ix%i\n",
+///			      obj,
+///			      x, y, w, h,
+///			      obj->cur.clipper,
+///			      obj->cur.cache.clip.x + off_x,
+///			      obj->cur.cache.clip.y + off_y,
+///			      obj->cur.cache.clip.w,
+///			      obj->cur.cache.clip.h
+///			      );
+///			    if (((obj->cur.cache.clip.x + off_x) == 0) &&
+///				((obj->cur.cache.clip.w) == 960))
+///			      {
+///				 abort();
+///			      }
+			 
+			    e->engine.func->context_clip_set(e->engine.data.output,
+							     e->engine.data.context,
+							     x, y, w, h);
+#if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
+			    for (l3 = obscuring_objects; l3; l3 = l3->next)
+			      {
+				 Evas_Object *obj2;
+				 
+				 obj2 = (Evas_Object *)l3->data;
+				 e->engine.func->context_cutout_add(e->engine.data.output,
+								    e->engine.data.context,
+								    obj2->cur.cache.clip.x + off_x,
+								    obj2->cur.cache.clip.y + off_y,
+								    obj2->cur.cache.clip.w,
+								    obj2->cur.cache.clip.h);
+			      }
+#endif
+			    obj->func->render(obj,
+					      e->engine.data.output,
+					      e->engine.data.context,
+					      surface,
+					      off_x, off_y);
+			    e->engine.func->context_cutout_clear(e->engine.data.output,
+								 e->engine.data.context);
+			 }
+		    }
+	       }
+	     /* punch rect out */
+	     e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+							     surface,
+							     ux, uy, uw, uh);
+	     /* free obscuring objects list */
+	     obscuring_objects = evas_list_free(obscuring_objects);
 	  }
-	/* punch rect out */
-	e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-						       surface,
-						       ux, uy, uw, uh);
-	/* free obscuring objects list */
-	obscuring_objects = evas_list_free(obscuring_objects);
+	/* flush redraws */
+	e->engine.func->output_flush(e->engine.data.output);
      }
-   /* flush redraws */
-   e->engine.func->output_flush(e->engine.data.output);
    /* clear redraws */
    e->engine.func->output_redraws_clear(e->engine.data.output);
    /* and do a post render pass */

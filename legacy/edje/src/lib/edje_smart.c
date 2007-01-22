@@ -56,6 +56,19 @@ _edje_smart_add(Evas_Object * obj)
    evas_object_smart_data_set(obj, ed);
    ed->obj = obj;
    _edje_edjes = evas_list_append(_edje_edjes, obj);
+/*   
+     {
+	Evas_List *l;
+	
+	printf("--- EDJE DUMP [%i]\n", evas_list_count(_edje_edjes));
+	for (l = _edje_edjes; l; l = l->next)
+	  {
+	     ed = _edje_fetch(l->data);
+	     printf("EDJE: %80s | %80s\n", ed->path, ed->part);
+	  }
+	printf("--- EDJE DUMP [%i]\n", evas_list_count(_edje_edjes));
+     }
+ */
 }
 
 static void
@@ -71,6 +84,7 @@ _edje_smart_del(Evas_Object * obj)
    _edje_edjes = evas_list_remove(_edje_edjes, obj);
    evas_object_smart_data_set(obj, NULL);
    _edje_unref(ed);
+   _edje_file_del(ed);
 }
 
 static void 
