@@ -38,10 +38,17 @@ extern "C" {
 #  endif
 # endif
 
-   /* strlcpy implementation for libc's lacking it */
-   EAPI size_t ecore_strlcpy(char *dst, const char *src, size_t siz);
+
+/* strlcpy implementation for libc's lacking it */
+EAPI size_t ecore_strlcpy(char *dst, const char *src, size_t siz);
+
+EAPI int ecore_str_has_prefix(const char *str, const char *prefix);
+
+EAPI int ecore_str_has_suffix(const char *str, const char *suffix);
+
 
 #ifdef __cplusplus
 }
 #endif
+
 #endif				/* _ECORE_STR_H */

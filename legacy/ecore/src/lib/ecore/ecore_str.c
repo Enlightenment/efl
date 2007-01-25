@@ -29,28 +29,65 @@ size_t
 ecore_strlcpy(char *dst, const char *src, size_t siz)
 {
 #ifdef HAVE_STRLCPY
-	return strlcpy(dst, src, siz);
+   return strlcpy(dst, src, siz);
 #else
-        char *d = dst;
-        const char *s = src;
-        size_t n = siz;
+   char *d = dst;
+   const char *s = src;
+   size_t n = siz;
 
-        /* Copy as many bytes as will fit */
-        if (n != 0) {
-                while (--n != 0) {
-                        if ((*d++ = *s++) == '\0')
-                                break;
-                }
-        }
+   /* Copy as many bytes as will fit */
+   if (n != 0)
+     {
+        while (--n != 0)
+          {
+             if ((*d++ = *s++) == '\0')
+               break;
+          }
+     }
 
-        /* Not enough room in dst, add NUL and traverse rest of src */
-        if (n == 0) {
-                if (siz != 0)
-                        *d = '\0';                /* NUL-terminate dst */
-                while (*s++)
-                        ;
-        }
+   /* Not enough room in dst, add NUL and traverse rest of src */
+   if (n == 0)
+     {
+        if (siz != 0)
+          *d = '\0';                /* NUL-terminate dst */
+        while (*s++)
+          ;
+     }
 
-        return(s - src - 1);        /* count does not include NUL */
+   return(s - src - 1);        /* count does not include NUL */
 #endif
+}
+
+int
+ecore_str_has_prefix(const char *str, const char *prefix)
+{
+   int str_len;
+   int prefix_len;
+
+   if (!str || !prefix)
+     return 0;
+
+   str_len = strlen(str);
+   prefix_len = strlen(prefix);
+   if (prefix_len > str_len)
+     return 0;
+
+   return (strncmp(str, prefix, prefix_len) == 0);
+}
+
+int
+ecore_str_has_suffix(const char *str, const char *suffix)
+{
+   int str_len;
+   int suffix_len;
+
+   if (!str || !suffix)
+     return 0;
+
+   str_len = strlen(str);
+   suffix_len = strlen(suffix);
+   if (suffix_len > str_len)
+     return 0;
+
+   return (strncmp(str + str_len - suffix_len, suffix, suffix_len) == 0);
 }
