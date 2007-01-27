@@ -43,6 +43,11 @@ ecore_plugin_load(int group_id, char *plugin_name)
     * Allocate the new plugin and initialize it's fields
     */
    plugin = malloc(sizeof(Ecore_Plugin));
+   if (!plugin)
+     {
+       dlclose(handle);
+       return NULL;
+     }
    memset(plugin, 0, sizeof(Ecore_Plugin));
 
    plugin->group = group_id;
