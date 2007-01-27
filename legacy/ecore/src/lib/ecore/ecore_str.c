@@ -20,6 +20,8 @@
 #include <sys/types.h>
 #include <string.h>
 
+# include "ecore_private.h"
+
 /*
  * Copy src to string dst of size siz.  At most siz-1 characters
  * will be copied.  Always NUL terminates (unless siz == 0).
@@ -64,8 +66,8 @@ ecore_str_has_prefix(const char *str, const char *prefix)
    int str_len;
    int prefix_len;
 
-   if (!str || !prefix)
-     return 0;
+   CHECK_PARAM_POINTER_RETURN("str", str, 0);
+   CHECK_PARAM_POINTER_RETURN("prefix", prefix, 0);
 
    str_len = strlen(str);
    prefix_len = strlen(prefix);
@@ -81,8 +83,8 @@ ecore_str_has_suffix(const char *str, const char *suffix)
    int str_len;
    int suffix_len;
 
-   if (!str || !suffix)
-     return 0;
+   CHECK_PARAM_POINTER_RETURN("str", str, 0);
+   CHECK_PARAM_POINTER_RETURN("suffix", suffix, 0);
 
    str_len = strlen(str);
    suffix_len = strlen(suffix);
