@@ -117,6 +117,12 @@ extern "C" {
    EAPI void *ecore_list_next(Ecore_List * list);
    EAPI void *ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function,
         const void *user_data);
+
+   /* Sorting the list */
+   EAPI void ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare,
+                                  char order);
+   EAPI void ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare,
+                                  char order);
    
    /* Check to see if there is any data in the list */
    EAPI int ecore_list_is_empty(Ecore_List * list);
