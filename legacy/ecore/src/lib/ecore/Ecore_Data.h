@@ -40,6 +40,9 @@ extern "C" {
    
    EAPI extern const unsigned int ecore_prime_table[];
    
+# define ECORE_SORT_MIN 0
+# define ECORE_SORT_MAX 1
+
    typedef void (*Ecore_For_Each) (void *value, void *user_data);
 # define ECORE_FOR_EACH(function) ((Ecore_For_Each)function)
    
@@ -119,9 +122,11 @@ extern "C" {
         const void *user_data);
 
    /* Sorting the list */
-   EAPI void ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare,
+   EAPI int ecore_list_sort(Ecore_List *list, Ecore_Compare_Cb compare,
                                   char order);
-   EAPI void ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare,
+   EAPI int ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare,
+                                  char order);
+   EAPI int ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare,
                                   char order);
    
    /* Check to see if there is any data in the list */
@@ -326,9 +331,6 @@ extern "C" {
    
    EAPI Ecore_List *ecore_plugin_get_available(int group_id);
 
-
-# define ECORE_SHEAP_MIN 0
-# define ECORE_SHEAP_MAX 1
 
    typedef struct _ecore_heap Ecore_Sheap;
 # define ECORE_HEAP(heap) ((Ecore_Sheap *)heap)

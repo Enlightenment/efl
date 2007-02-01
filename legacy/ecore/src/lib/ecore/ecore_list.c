@@ -2,6 +2,11 @@
 #include "Ecore.h"
 #include "Ecore_Data.h"
 
+/* Some tests showed that beyond that value heap sort is faster than merge sort
+ * (in this implementation). This value has to be changed or at least review
+ * if someone is changing the implementation. */
+#define ECORE_MERGESORT_LIMIT 40000
+
 /* Return information about the list */
 static void *_ecore_list_current(Ecore_List * list);
 
@@ -1121,24 +1126,51 @@ _ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, const void *user_d
 }
 
 /**
- * Sort data in @p list using the compare function @p func
+ * Sort data in @p list using the compare function @p compare
  * @param list      The list.
  * @param compare   The function to compare the data of @p list
  * @param order     The sort direction
  *
+ * @return          true on success
+ *
+ * This is a wrapper function for mergesort and heapsort. It
+ * tries to choose the fastest algorithm depending on the
+ * number of notes. Note: The sort may be unstable.
+ */
+EAPI int
+ecore_list_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
+{
+   CHECK_PARAM_POINTER_RETURN("list", list, 0);
+   
+   if (list->nodes < 2)
+     return 1;
+   if (list->nodes < ECORE_MERGESORT_LIMIT)
+     return ecore_list_mergesort(list, compare, order);
+   if (!ecore_list_heapsort(list, compare, order))
+     return ecore_list_mergesort(list, compare, order);
+  
+   return 1;
+}
+/**
+ * Sort data in @p list using the compare function @p compare
+ * @param list      The list.
+ * @param compare   The function to compare the data of @p list
+ * @param order     The sort direction
+ *
+ * @return          true on success
+ *
  * Mergesort is a stable, in-place sorting algorithm 
  */
-EAPI void
+EAPI int
 ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
 {
    Ecore_List_Node *node;
 
-   CHECK_PARAM_POINTER("list", list);
-   if (!list || list->nodes < 2)
-     {
-	return;
-     }
-   if (order == ECORE_SHEAP_MIN)
+   CHECK_PARAM_POINTER_RETURN("list", list, 0);
+   if (list->nodes < 2)
+     return 1;
+
+   if (order == ECORE_SORT_MIN)
      order = 1;
    else
      order = -1;
@@ -1152,6 +1184,8 @@ ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
    list->last = node;
 
    _ecore_list_goto_first(list);
+
+   return 1;
 }
 
 /* this is the internal recrusive function for the merge sort */
@@ -1170,7 +1204,7 @@ _ecore_list_node_mergesort(Ecore_List_Node *first, int n,
      return first;
    else if (n == 2)
      {
-	if (compare(first->data, first->next->data) == order)
+	if (compare(first->data, first->next->data) * order > 0)
           {
 		/* swap the data */
 		void *data;
@@ -1206,7 +1240,7 @@ _ecore_list_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
 
    /* select the first node outside the loop, because we need to keep
     * a pointer to it */
-   if (compare(first->data, second->data) == order)
+   if (compare(first->data, second->data) * order > 0)
      {
 	list = l = second;
 	second = second->next;
@@ -1220,7 +1254,7 @@ _ecore_list_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
    /* and now start the merging */
    while (first && second)
      {
-	if (compare(first->data, second->data) == order)
+	if (compare(first->data, second->data) * order > 0)
 	  {
 		l = l->next = second;
 		second = second->next;
@@ -1244,26 +1278,31 @@ _ecore_list_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
 }
 
 /**
- * Sort data in @p list using the compare function @p func
+ * Sort data in @p list using the compare function @p compare
  * @param list      The list.
  * @param compare   The function to compare the data of @p list
  * @param order     The sort direction 
  *
+ * @return          true on success
+ *
  * Heapsort is a unstable sorting algorithm, it needs to allocate extra memomry,
  * but there for it is for a great number of nodes faster than mergesort
  */
-EAPI void
+EAPI int
 ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
 {
    Ecore_Sheap *heap;
    Ecore_List_Node *node;
    void *data;
 
-   CHECK_PARAM_POINTER("list", list);
+   CHECK_PARAM_POINTER_RETURN("list", list, 0);
    /*
     * Push the data into a heap.
     */
    heap = ecore_sheap_new(compare, list->nodes);
+   if (!heap)
+     return 0;
+
    ecore_sheap_set_order(heap, order);
    _ecore_list_goto_first(list);
    while ((data = _ecore_list_next(list)))
@@ -1284,6 +1323,7 @@ ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
    ecore_sheap_destroy(heap);
 
    _ecore_list_goto_first(list);
+   return 1;
 }
 
 /* Initialize a node to starting values */
