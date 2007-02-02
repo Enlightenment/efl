@@ -1198,7 +1198,7 @@ _ecore_list_node_mergesort(Ecore_List_Node *first, int n,
    int mid;
    int i;
 
-   mid = n/2;
+   mid = n / 2;
 
    if (n < 2)
      return first;
