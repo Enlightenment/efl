@@ -3,4 +3,6 @@ Type=Application
 Name=Efreet Test Application
 GenericName=Test Application
 Exec=efreet_test %F %i
-Categories=Test
+Categories=Test;Enlightenment;
+Icon=TestIcon
+X-Test=Own key
