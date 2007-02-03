@@ -1,0 +1,602 @@
+#include "Efreet.h"
+#include "efreet_private.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <Ecore_File.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
+#define SIZE "16x16"
+#define THEME "Tango"
+
+static void ef_icon_theme_themes_find(const char *search_dir, 
+                                        Ecore_Hash *themes);
+static void ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, 
+                                                    Ecore_Hash *icons);
+static void ef_read_dir(const char *dir, Ecore_Hash *icons);
+
+int
+ef_cb_efreet_icon_theme(void)
+{
+    int ret = 1;
+    const char *tmp;
+
+    putenv("HOME=/var/tmp");
+
+    tmp = efreet_icon_dir_get();
+    if (strcmp(tmp, "/var/tmp/.icons"))
+    {
+        printf("efreet_icon_dir_get() returned incorrect "
+                "value on HOME=/var/tmp\n");
+        ret = 0;
+    }
+
+    efreet_shutdown();
+    efreet_init();
+
+    putenv("HOME=");
+
+    tmp = efreet_icon_dir_get();
+    if (strcmp(tmp, "/tmp/.icons"))
+    {
+        printf("efreet_icon_dir_get() returned incorrect "
+                "value on HOME=\n");
+        ret = 0;
+    }
+
+    return ret;
+}
+
+int
+ef_cb_efreet_icon_theme_list(void)
+{
+    int ret = 1;
+    Ecore_List *themes;
+    Ecore_Hash *dirs;
+    Efreet_Icon_Theme *theme;
+    Ecore_List *icon_dirs;
+    const char *dir;
+    char buf[PATH_MAX];
+
+    dirs = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    ecore_hash_set_free_key(dirs, free);
+
+    icon_dirs = efreet_data_dirs_get();
+    ecore_list_goto_first(icon_dirs);
+
+    ef_icon_theme_themes_find(efreet_icon_dir_get(), dirs);
+    while ((dir = ecore_list_next(icon_dirs))) 
+    {
+        snprintf(buf, sizeof(buf), "%s/icons", dir);
+        ef_icon_theme_themes_find(buf, dirs);
+    }
+    ef_icon_theme_themes_find("/usr/share/pixmaps", dirs);
+   
+    themes = efreet_icon_theme_list_get();
+    ecore_list_goto_first(themes);
+    while ((theme = ecore_list_next(themes)))
+    {
+        if (ecore_hash_get(dirs, theme->name.internal))
+            ecore_hash_remove(dirs, theme->name.internal);
+        else
+        {
+            printf("efreet_icon_theme_list_get() returned %s which we didn't "
+                    "see when scanning the directories.\n", theme->name.internal);
+            ret = 0;
+        }
+    }
+    ecore_list_destroy(themes);
+
+    themes = ecore_hash_keys(dirs);
+    if (ecore_list_nodes(themes) > 0)
+    {
+        char *dir;
+
+        printf("efreet_icon_theme_list_get() missed: ");
+        ecore_list_goto_first(themes);
+        while ((dir = ecore_list_next(themes)))
+            printf("%s ", dir);
+        printf("\n");
+
+        ret = 0;
+    }
+    ecore_list_destroy(themes);
+    ecore_hash_destroy(dirs);
+
+    return ret;
+}
+
+static void
+ef_icon_theme_themes_find(const char *search_dir, Ecore_Hash *themes)
+{
+    Ecore_List *dirs;
+    char *dir;
+
+    if (!search_dir || !themes) return;
+
+    dirs = ecore_file_ls(search_dir);
+    if (!dirs) return;
+
+    while ((dir = ecore_list_remove_first(dirs)))
+    {
+        char p[PATH_MAX];
+
+        /* if we've already added the theme we're done */
+        if (ecore_hash_get(themes, dir))
+        {
+            free(dir);
+            continue;
+        }
+
+        /* if the index.theme file exists we open it and look for the hidden
+         * flag. */
+        snprintf(p, sizeof(p), "%s/%s/index.theme", search_dir, dir);
+        if (ecore_file_exists(p))
+        {
+            Efreet_Ini *ini;
+            char *d;
+            int skip = 0;
+
+            ini = efreet_ini_new(p);
+            efreet_ini_section_set(ini, "Icon Theme");
+
+            if (efreet_ini_boolean_get(ini, "Hidden")) skip = 1;
+            efreet_ini_free(ini);
+
+            if (!skip)
+            {
+                d = strdup(dir);
+                ecore_hash_set(themes, d, d);
+            }
+        }
+        free(dir);
+    }
+    ecore_list_destroy(dirs);
+}
+
+const char *icons[] = 
+{
+    "address-book-new",
+    "application-exit",
+    "appointment-new",
+    "contact-new",
+    "dialog-apply",
+    "dialog-cancel",
+    "dialog-close",
+    "dialog-ok",
+    "document-new", 
+    "document-open",
+    "document-open-recent",
+    "document-page-setup",
+    "document-print",
+    "document-print-preview",
+    "document-properties",
+    "document-revert",
+    "document-save",
+    "document-save-as",
+    "edit-copy",
+    "edit-cut",
+    "edit-delete",
+    "edit-find",
+    "edit-find-replace",
+    "edit-paste",
+    "edit-redo",
+    "edit-select-all",
+    "edit-undo",
+    "format-indent-less",
+    "format-indent-more",
+    "format-justify-center",
+    "format-justify-fill",
+    "format-justify-left",
+    "format-justify-right",
+    "format-text-direction-ltr",
+    "format-text-direction-rtl",
+    "format-text-bold",
+    "format-text-italic",
+    "format-text-underline",
+    "format-text-strikethrough",
+    "go-bottom",
+    "go-down",
+    "go-first",
+    "go-home",
+    "go-jump",
+    "go-last",
+    "go-next",
+    "go-previous",
+    "go-top",
+    "go-up",
+    "help-about",
+    "help-contents",
+    "help-faq",
+    "insert-image",
+    "insert-link",
+    "insert-object",
+    "insert-text",
+    "list-add",
+    "list-remove",
+    "mail-forward",
+    "mail-mark-important",
+    "mail-mark-junk",
+    "mail-mark-notjunk",
+    "mail-mark-read",
+    "mail-mark-unread",
+    "mail-message-new",
+    "mail-reply-all",
+    "mail-reply-sender",
+    "mail-send-receive",
+    "media-eject",
+    "media-playback-pause",
+    "media-playback-start",
+    "media-playback-stop",
+    "media-record",
+    "media-seek-backward",
+    "media-seek-forward",
+    "media-skip-backward",
+    "media-skip-forward",
+    "system-lock-screen",
+    "system-log-out",
+    "system-run",
+    "system-search",
+    "system-search",
+    "tools-check-spelling",
+    "view-fullscreen",
+    "view-refresh",
+    "view-sort-ascending",
+    "view-sort-descending",
+    "window-close",
+    "window-new",
+    "zoom-best-fit",
+    "zoom-in",
+    "zoom-original",
+    "zoom-out",
+    "process-working",
+    "accessories-calculator",
+    "accessories-character-map",
+    "accessories-dictionary",
+    "accessories-text-editor",
+    "help-browser",
+    "multimedia-volume-control",
+    "preferences-desktop-accessibility",
+    "preferences-desktop-font",
+    "preferences-desktop-keyboard",
+    "preferences-desktop-locale",
+    "preferences-desktop-multimedia",
+    "preferences-desktop-screensaver",
+    "preferences-desktop-theme",
+    "preferences-desktop-wallpaper",
+    "system-file-manager",
+    "system-software-update",
+    "utilities-terminal",
+    "applications-accessories",
+    "applications-development",
+    "applications-games",
+    "applications-graphics",
+    "applications-internet",
+    "applications-multimedia",
+    "applications-office",
+    "applications-other",
+    "applications-system",
+    "applications-utilities",
+    "preferences-desktop",
+    "preferences-desktop-accessibility",
+    "preferences-desktop-peripherals",
+    "preferences-desktop-personal",
+    "preferences-other",
+    "preferences-system",
+    "preferences-system-network",
+    "system-help",
+    "audio-card",
+    "audio-input-microphone",
+    "battery",
+    "camera-photo",
+    "camera-video",
+    "computer",
+    "drive-cdrom",
+    "drive-harddisk",
+    "drive-removable-media",
+    "input-gaming",
+    "input-keyboard",
+    "input-mouse",
+    "media-cdrom",
+    "media-floppy",
+    "multimedia-player",
+    "multimedia-player",
+    "network-wired",
+    "network-wireless",
+    "printer",
+    "emblem-default",
+    "emblem-documents",
+    "emblem-downloads",
+    "emblem-favorite",
+    "emblem-important",
+    "emblem-mail",
+    "emblem-photos",
+    "emblem-readonly",
+    "emblem-shared",
+    "emblem-symbolic-link",
+    "emblem-synchronized",
+    "emblem-system",
+    "emblem-unreadable",
+    "face-angel",
+    "face-crying",
+    "face-devil-grin",
+    "face-devil-sad",
+    "face-glasses",
+    "face-kiss",
+    "face-monkey",
+    "face-plain",
+    "face-sad",
+    "face-smile",
+    "face-smile-big",
+    "face-smirk",
+    "face-surprise",
+    "face-wink",
+    "application-x-executable",
+    "audio-x-generic",
+    "font-x-generic",
+    "image-x-generic",
+    "package-x-generic",
+    "text-html",
+    "text-x-generic",
+    "text-x-generic-template",
+    "text-x-script",
+    "video-x-generic",
+    "x-office-address-book",
+    "x-office-calendar",
+    "x-office-document",
+    "x-office-presentation",
+    "x-office-spreadsheet",
+    "folder",
+    "folder-remote",
+    "network-server",
+    "network-workgroup",
+    "start-here",
+    "user-desktop",
+    "user-home",
+    "user-trash",
+    "appointment-missed",
+    "appointment-soon",
+    "audio-volume-high",
+    "audio-volume-low",
+    "audio-volume-medium",
+    "audio-volume-muted",
+    "battery-caution",
+    "battery-low",
+    "dialog-error",
+    "dialog-information",
+    "dialog-password",
+    "dialog-question",
+    "dialog-warning",
+    "folder-drag-accept",
+    "folder-open",
+    "folder-visiting",
+    "image-loading",
+    "image-missing",
+    "mail-attachment",
+    "mail-unread",
+    "mail-read",
+    "mail-replied",
+    "mail-signed",
+    "mail-signed-verified",
+    "media-playlist-repeat",
+    "media-playlist-shuffle",
+    "network-error",
+    "network-idle",
+    "network-offline",
+    "network-receive",
+    "network-transmit",
+    "network-transmit-receive",
+    "printer-error",
+    "printer-printing",
+    "software-update-available",
+    "software-update-urgent",
+    "sync-error",
+    "sync-synchronizing",
+    "task-due",
+    "task-passed-due",
+    "user-away",
+    "user-idle",
+    "user-offline",
+    "user-online",
+    "user-trash-full",
+    "weather-clear",
+    "weather-clear-night",
+    "weather-few-clouds",
+    "weather-few-clouds-night",
+    "weather-fog",
+    "weather-overcast",
+    "weather-severe-alert",
+    "weather-showers",
+    "weather-showers-scattered",
+    "weather-snow",
+    "weather-storm",
+    NULL
+};
+
+int
+ef_cb_efreet_icon_match(void)
+{
+    int i, ret = 1;
+    Ecore_Hash *icon_hash;
+    Efreet_Icon_Theme *theme;
+    Ecore_List *themes;
+
+    themes = efreet_icon_theme_list_get();
+    ecore_list_goto_first(themes);
+    while ((theme = ecore_list_next(themes)))
+    {
+        if (!strcmp(theme->name.internal, THEME))
+            break;
+    }
+
+    if (!theme)
+    {
+        printf("Theme not installed, SKIPPED.\n");
+        ecore_list_destroy(themes);
+        return 1;
+    }
+
+    icon_hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    ecore_hash_set_free_key(icon_hash, free);
+    ecore_hash_set_free_value(icon_hash, free);
+
+    ef_icons_find(theme, themes, icon_hash); 
+    ecore_list_destroy(themes);
+
+    for (i = 0; icons[i] != NULL; i++)
+    {
+        const char *path;
+        char *t, *s;
+
+        path = efreet_icon_path_find(THEME, icons[i], SIZE);
+
+        if (!path)
+        {
+            if (ecore_hash_get(icon_hash, icons[i]))
+            {
+                printf("NOT FOUND %s\n", icons[i]);
+                ret = 0;
+            }
+            continue;
+        }
+
+        t = strdup(path);
+        s = strrchr(t, '.');
+        if (s) *s = '\0';
+        s = strrchr(t, '/');
+        if (s) s++;
+
+        if (s && strcmp(s, icons[i]))
+        {
+            printf("Name mismatch name (%s) vs ef (%s)\n", icons[i], s);
+            ret = 0;
+        }
+        free(t);
+    }
+    ecore_hash_destroy(icon_hash);
+
+    return ret;
+}
+
+static void
+ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
+{
+    char path[PATH_MAX];
+
+    if (!theme || !icons) return;
+
+    if (theme->paths.count == 1)
+    {
+        Efreet_Icon_Theme_Directory *dir;
+
+        ecore_list_goto_first(theme->directories);
+        while ((dir = ecore_list_next(theme->directories)))
+        {
+            if (theme->paths.count > 1)
+            {
+                Ecore_List *list;
+                char *tmp;
+
+                list = theme->paths.path;
+                ecore_list_goto_first(list);
+                while ((tmp = ecore_list_next(list)))
+                {
+                    snprintf(path, sizeof(path), "%s/%s/", tmp, dir->name);
+                    ef_read_dir(path, icons);
+                }
+            }
+            else if (theme->paths.count == 1)
+            {
+                snprintf(path, sizeof(path), "%s/%s/", (char *)theme->paths.path, dir->name);
+                ef_read_dir(path, icons);
+            }
+        }
+    }
+    else if (theme->paths.count > 1)
+    {
+        const char *theme_path;
+
+        ecore_list_goto_first(theme->paths.path);
+        while ((theme_path = ecore_list_next(theme->paths.path)))
+        {
+            Efreet_Icon_Theme_Directory *dir;
+
+            ecore_list_goto_first(theme->directories);
+            while ((dir = ecore_list_next(theme->directories)))
+            {
+                snprintf(path, sizeof(path), "%s/%s/", theme_path, dir->name);
+                ef_read_dir(path, icons);
+            }
+        }
+    }
+
+    if (theme->inherits)
+    {
+        Efreet_Icon_Theme *parent_theme;
+        char *parent;
+
+        ecore_list_goto_first(theme->inherits);
+        while ((parent = ecore_list_next(theme->inherits)))
+        {
+            ecore_list_goto_first(themes);
+            while ((parent_theme = ecore_list_next(themes)))
+            {
+                if (!strcmp(parent_theme->name.internal, parent))
+                    ef_icons_find(parent_theme, themes, icons);
+            }
+        }
+    }
+    else
+    {
+        Efreet_Icon_Theme *parent_theme;
+
+        ecore_list_goto_first(themes);
+        while ((parent_theme = ecore_list_next(themes)))
+        {
+            if (!strcmp(parent_theme->name.internal, "hicolor"))
+                ef_icons_find(parent_theme, themes, icons);
+        }
+    }
+
+    ef_read_dir("/usr/share/pixmaps", icons);
+}
+
+static void
+ef_read_dir(const char *dir, Ecore_Hash *icons)
+{
+    Ecore_List *files;
+    char *file;
+
+    if (!dir || !icons) return;
+
+    files = ecore_file_ls(dir);
+    if (!files) return;
+
+    while ((file = ecore_list_remove_first(files)))
+    {
+        char *p;
+
+        p = strrchr(file, '.');
+        if (!p) 
+        {
+            FREE(file);
+            continue;
+        }
+
+        if (!strcmp(p, ".png") || !strcmp(p, ".xpm"))
+        {
+            *p = '\0';
+
+            p = strrchr(file, '/');
+            if (p) p++;
+            if (p) ecore_hash_set(icons, strdup(p), strdup(p));
+        }
+
+        FREE(file);
+    }
+    ecore_list_destroy(files);
+}
+

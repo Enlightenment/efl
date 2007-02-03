@@ -1,0 +1,48 @@
+
+rephorm one thing. if you plan to add .desktop editing, according to the
+spec you need to keep EVERYTHING around (even sections / keys you don't know
+/ care about)
+dj2 k
+rephorm but for most usage (read only) thats a waste of memory
+dj2 hm, i guess the best way to do that is keep everything in a hash
+dj2 and write accessor functions
+dj2 or pull the common stuff out to functions and leve the rest in the hash
+rephorm and maybe have a flag for 'readonly' to kill the hash
+dj2 yea, will have to put some tought into the api for that
+
+rephorm ooh. comments need to be preserved also in edits
+
+
+
+
+rephorm efreet_xml has one bug that i see
+rephorm if you have something like <tag>before<child />after</tag>, you
+can't get to the 'after' text
+dj2 hm, will have to look at that
+rephorm (it stores 'before' as the text on 'tag')
+rephorm it should probably create child nodes with the text
+rephorm so tag would have 3 children, text: before, tag: child and text: after
+
+
+efreet_desktop_string_list_parse() needs to optionally use comma (',') as 
+the separator if the desktop version is < 1.0  (but, what if it isn't set??)
+
+
+desktop_command_get:
+  check for needed types (nNfFuU)
+
+  get lists of needed types (dirs, fullpaths, urls, etc)
+
+  if type in uU:
+    create Pending struct
+    start downloads, pass Pending in as data
+  else:
+    if tyep in UF...
+    exec
+
+download cb:
+  if type in fF
+
+  
+
+

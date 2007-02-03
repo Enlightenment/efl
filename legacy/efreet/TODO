@@ -1,0 +1,20 @@
+TODO
+----
+- Efreet_Menu should setup an Ecore_File_Monitor on the .menu files and the
+  app_dir and reload the menu when needed
+
+- .desktop saving
+
+- We need a better system to distinguish between when a user wants to create a
+  new .desktop file and when he wants to parse an existing file.
+
+- The move handling is wrong when moving to a destination with /'s in the
+  name. We should be creating intermediate menus for each of the /'d items
+  instead of just making the name as we do now
+
+
+Notes from the Menu Spec test
+-----------------------------
+- We're appending the / to the menu names in the test case. We should
+  possibly be doing that in the efreet code itself.
+
