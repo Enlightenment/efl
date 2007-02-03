@@ -20,7 +20,7 @@ static Ecore_List *loaded_plugins = NULL;
  * @ingroup Ecore_Plugin
  */
 EAPI Ecore_Plugin *
-ecore_plugin_load(int group_id, char *plugin_name)
+ecore_plugin_load(int group_id, const char *plugin_name)
 {
    char *path;
    char temp[PATH_MAX];
@@ -97,7 +97,7 @@ ecore_plugin_unload(Ecore_Plugin *plugin)
  * @ingroup Ecore_Plugin
  */
 EAPI void *
-ecore_plugin_call(Ecore_Plugin *plugin, char *symbol_name)
+ecore_plugin_call(Ecore_Plugin *plugin, const char *symbol_name)
 {
    void *ret;
 

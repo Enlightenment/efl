@@ -317,7 +317,7 @@ extern "C" {
    /*
     * Load the specified plugin
     */
-   EAPI Ecore_Plugin *ecore_plugin_load(int group_id, char *plugin);
+   EAPI Ecore_Plugin *ecore_plugin_load(int group_id, const char *plugin);
    
    /*
     * Unload the specified plugin
@@ -327,7 +327,7 @@ extern "C" {
    /*
     * Lookup the specified symbol for the plugin
     */
-   EAPI void *ecore_plugin_call(Ecore_Plugin * plugin, char *symbol_name);
+   EAPI void *ecore_plugin_call(Ecore_Plugin * plugin, const char *symbol_name);
    
    EAPI Ecore_List *ecore_plugin_get_available(int group_id);
 
