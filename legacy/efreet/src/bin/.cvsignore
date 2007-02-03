@@ -1,0 +1,6 @@
+.deps
+.libs
+Makefile
+Makefile.in
+efreet_spec_test
+efreet_test
