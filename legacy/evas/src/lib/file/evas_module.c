@@ -257,7 +257,8 @@ evas_module_load(Evas_Module *em)
 	
 	err = dlerror();
 	printf("[evas module] error loading the module %s. %s\n", buf, err);
-	dlclose(handle);
+	if (handle)
+	  dlclose(handle);
 	em->handle = NULL;
 	em->func.open = NULL;
 	em->func.close = NULL;
