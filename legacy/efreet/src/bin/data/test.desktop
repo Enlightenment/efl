@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Efreet Test Application
+GenericName=Test Application
+Exec=efreet_test %F %i
+Categories=Test
