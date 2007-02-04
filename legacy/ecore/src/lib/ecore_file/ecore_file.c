@@ -3,6 +3,7 @@
  */
 #include <ctype.h>
 #include "ecore_file_private.h"
+#include <errno.h>
 
 
 static int init = 0;
@@ -204,15 +205,30 @@ EAPI int
 ecore_file_mv(const char *src, const char *dst)
 {
    if (ecore_file_exists(dst)) return 0;
-   if (rename(src, dst)) return 0;
+   if (rename(src, dst))
+     {
+	if (errno == EXDEV)
+	  {
+	     struct stat st;
+	     
+	     stat(src, &st);
+	     if (S_ISREG(st.st_mode))
+	       {
+		  ecore_file_cp(src, dst);
+		  chmod(dst, st.st_mode);
+		  ecore_file_unlink(src);
+		  return 1;
+	       }
+	  }
+	return 0;
+     }
    return 1;
 }
 
 EAPI int
 ecore_file_symlink(const char *src, const char *dest)
 {
-   if(!symlink(src, dest))
-     return 1;
+   if (!symlink(src, dest)) return 1;
    return 0;
 }
 
