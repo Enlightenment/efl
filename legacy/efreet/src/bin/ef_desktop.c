@@ -17,7 +17,6 @@ ef_cb_desktop_parse(void)
     int ret = 1;
 
     desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test.desktop");
-
     if (!desktop) 
     {
         printf("No desktop found.\n");
@@ -344,3 +343,36 @@ _cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
 
   free(exec);
 }
+
+int
+ef_cb_desktop_type_parse(void)
+{
+    Efreet_Desktop *desktop;
+    int ret = 1, my_type;
+
+    /* add my custom desktop type to efreet */
+    my_type = efreet_desktop_type_add("My_Type"); 
+    if (my_type <= EFREET_DESKTOP_TYPE_MAX)
+    {
+        printf("Error adding desktop type.");
+        return 0;
+    }
+
+    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test_type.desktop");
+    if (!desktop) 
+    {
+        printf("No desktop found.\n");
+        return 0;
+    }
+
+    if (desktop->type != my_type)
+    {
+        printf("Invalid type returned in desktop");
+        return 0;
+    }
+
+    return 1;
+}
+
+
+

@@ -20,7 +20,8 @@ enum Efreet_Desktop_Type
     EFREET_DESKTOP_TYPE_UNKNOWN,
     EFREET_DESKTOP_TYPE_APPLICATION,
     EFREET_DESKTOP_TYPE_LINK,
-    EFREET_DESKTOP_TYPE_DIRECTORY
+    EFREET_DESKTOP_TYPE_DIRECTORY,
+    EFREET_DESKTOP_TYPE_MAX
 };
 
 /**
@@ -109,6 +110,8 @@ void              efreet_desktop_category_add(Efreet_Desktop *desktop,
                                               const char *category);
 int               efreet_desktop_category_del(Efreet_Desktop *desktop,
                                               const char *category);
+
+int               efreet_desktop_type_add(const char *type);
 
 /** 
  * @}

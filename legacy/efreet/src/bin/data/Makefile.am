@@ -6,6 +6,7 @@ test_DATA = \
 test.ini \
 long.ini \
 test.desktop \
+test_type.desktop \
 test.menu \
 preferences.menu
 

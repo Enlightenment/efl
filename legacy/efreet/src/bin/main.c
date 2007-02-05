@@ -15,13 +15,14 @@ int ef_cb_efreet_icon_match(void);
 int ef_cb_ini_parse(void);
 int ef_cb_locale(void);
 int ef_cb_desktop_parse(void);
+int ef_cb_desktop_save(void);
+int ef_cb_desktop_command_get(void);
+int ef_cb_desktop_type_parse(void);
 #if 0
 int ef_cb_desktop_file_id(void);
 #endif
 int ef_cb_menu_get(void);
 int ef_cb_ini_long_line(void);
-int ef_cb_desktop_save(void);
-int ef_cb_desktop_command_get(void);
 
 typedef struct Efreet_Test Efreet_Test;
 struct Efreet_Test
@@ -43,12 +44,13 @@ static Efreet_Test tests[] = {
     {"INI Long Line Parsing", ef_cb_ini_long_line},
     {"Locale Parsing", ef_cb_locale},
     {"Desktop Parsing", ef_cb_desktop_parse},
+    {"Desktop Type Parsing", ef_cb_desktop_type_parse},
+    {"Desktop Save", ef_cb_desktop_save},
+    {"Desktop Command", ef_cb_desktop_command_get},
 #if 0
     {"Desktop File ID", ef_cb_desktop_file_id},
 #endif
     {"Menu Parsing", ef_cb_menu_get},
-    {"Desktop Save", ef_cb_desktop_save},
-    {"Desktop Command", ef_cb_desktop_command_get},
     {NULL, NULL}
 };
 
