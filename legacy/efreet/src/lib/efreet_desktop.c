@@ -409,18 +409,6 @@ efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop __UNUSED__,
 }
 
 /**
- * @param desktop: The desktop to work with
- * @return Returns 1 if the desktop is set to NoDisplay, 0 otherwise
- * @brief Retrives the NoDisplay parameter from the desktop file
- */
-int
-efreet_desktop_no_display_get(Efreet_Desktop *desktop)
-{
-    if (!desktop) return 0;
-    return desktop->no_display;
-}
-
-/**
  * @internal
  * @param environment: the environment name
  * @brief sets the global desktop environment name

@@ -93,8 +93,6 @@ int               efreet_desktop_save_as(Efreet_Desktop *desktop,
 void              efreet_desktop_exec(Efreet_Desktop *desktop, 
                                       Ecore_List *files, void *data);
 
-int               efreet_desktop_no_display_get(Efreet_Desktop *desktop);
-
 void              efreet_desktop_environment_set(const char *environment);
 int               efreet_desktop_command_progress_get(Efreet_Desktop *desktop,
                                          Ecore_List *files,
