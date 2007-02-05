@@ -30,6 +30,18 @@ static int efreet_desktop_command_file_id = 0;
 
 static int init = 0;
 
+/**
+ * @internal
+ * Information about custom types
+ */
+typedef struct Efreet_Desktop_Type_Info Efreet_Desktop_Type_Info;
+struct Efreet_Desktop_Type_Info
+{
+    char *type;
+    Efreet_Desktop_Type_Parse_Cb parse_func;
+    Efreet_Desktop_Type_Free_Cb free_func;
+};
+
 static Efreet_Desktop *efreet_desktop_new(const char *file);
 static Efreet_Desktop_Type efreet_desktop_type_parse(const char *type_str);
 static Ecore_List *efreet_desktop_string_list_parse(const char *string);
@@ -83,6 +95,8 @@ static int efreet_desktop_cb_download_progress(void *data, const char *file,
 static void efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop, 
                                             char *exec, int remaining);
 
+static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
+
 /**
  * @internal
  * @return Returns > 0 on success or 0 on failure
@@ -101,7 +115,7 @@ efreet_desktop_init(void)
                                 ECORE_FREE_CB(efreet_desktop_free));
 
     efreet_desktop_types = ecore_list_new();
-    ecore_list_set_free_cb(efreet_desktop_types, ECORE_FREE_CB(free));
+    ecore_list_set_free_cb(efreet_desktop_types, ECORE_FREE_CB(efreet_desktop_type_info_free));
 
     return init;
 }
@@ -259,7 +273,11 @@ efreet_desktop_new(const char *file)
         }
         else if (desktop->type >= (EFREET_DESKTOP_TYPE_MAX + 1))
         {
-            /* XXX which user fields should we be parsing? */
+            Efreet_Desktop_Type_Info *info;
+            info = ecore_list_goto_index(efreet_desktop_types, 
+                            (desktop->type - (EFREET_DESKTOP_TYPE_MAX + 1)));
+            if (info->parse_func)
+                desktop->type_data = info->parse_func(desktop, ini); 
         }
         else
             error = 1;
@@ -312,10 +330,11 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     }
     else if (desktop->type > EFREET_DESKTOP_TYPE_MAX + 1)
     {
-        ecore_list_goto_index(efreet_desktop_types, 
+        Efreet_Desktop_Type_Info *info;
+        info = ecore_list_goto_index(efreet_desktop_types, 
                             (desktop->type - (EFREET_DESKTOP_TYPE_MAX + 1)));
-        efreet_ini_string_set(ini, "Type",
-                            (char *)ecore_list_current(efreet_desktop_types));
+        if (info) 
+            efreet_ini_string_set(ini, "Type", info->type);
     }
     else
         ok = 0;
@@ -399,6 +418,15 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     IF_FREE_LIST(desktop->mime_types);
 
     IF_FREE_HASH(desktop->x);
+
+    if (desktop->type >= EFREET_DESKTOP_TYPE_MAX + 1 && desktop->type_data)
+    {
+        Efreet_Desktop_Type_Info *info;
+        info = ecore_list_goto_index(efreet_desktop_types, 
+            (desktop->type - (EFREET_DESKTOP_TYPE_MAX + 1)));
+        if (info->free_func)
+            info->free_func(desktop->type_data); 
+    }
 
     FREE(desktop);
 }
@@ -498,18 +526,52 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
 
 /**
  * @param type: The type to add to the list of matching types
- * @return Returns no value
+ * @param parse_func: a function to parse out custom fields
+ * @param free_func: a function to free data returned from @a parse_func
+ * @return Returns the id of the new type 
  * @brief Adds the given type to the list of types in the system
  */
 int
-efreet_desktop_type_add(const char *type)
+efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_func,
+                        Efreet_Desktop_Type_Free_Cb free_func)
 {
     int id;
+    Efreet_Desktop_Type_Info *info;
+
+    info = NEW(Efreet_Desktop_Type_Info, 1);
+    if (!info) return 0;
+
+    info->type = strdup(type);
+    info->parse_func = parse_func;
+    info->free_func = free_func;
 
     id = ecore_list_nodes(efreet_desktop_types);
-    ecore_list_append(efreet_desktop_types, strdup(type));
+    ecore_list_append(efreet_desktop_types, info);
 
     return (id + EFREET_DESKTOP_TYPE_MAX + 1);
+}
+
+/**
+ * @internal
+ * @brief Free an Efreet Desktop_Type_Info struct
+ */
+static void
+efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info)
+{
+    if (!info) return;
+    IF_FREE(info->type);
+    free(info);
+}
+
+/**
+ * @brief get type specific data for custom desktop types
+ * @param desktop the desktop
+ * @return type specific data, or NULL if there is none
+ */
+void *
+efreet_desktop_type_data_get(Efreet_Desktop *desktop)
+{
+    return desktop->type_data;
 }
 
 /**
@@ -521,7 +583,7 @@ efreet_desktop_type_add(const char *type)
 static Efreet_Desktop_Type
 efreet_desktop_type_parse(const char *type_str)
 {
-    char *str;
+    Efreet_Desktop_Type_Info *info;
     int count = 0;
 
     if (!type_str) return EFREET_DESKTOP_TYPE_UNKNOWN;
@@ -535,9 +597,9 @@ efreet_desktop_type_parse(const char *type_str)
    
     /* check the user added types */
     ecore_list_goto_first(efreet_desktop_types);
-    while ((str = ecore_list_next(efreet_desktop_types)))
+    while ((info = ecore_list_next(efreet_desktop_types)))
     {
-        if (!strcmp(str, type_str))
+        if (!strcmp(info->type, type_str))
             return (count + EFREET_DESKTOP_TYPE_MAX + 1);
         count ++;
     }

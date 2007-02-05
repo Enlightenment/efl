@@ -2,6 +2,8 @@
 #ifndef EFREET_DESKTOP_H
 #define EFREET_DESKTOP_H
 
+#include "efreet_ini.h"
+
 /**
  * @file efreet_desktop.h
  * @brief Contains the structures and methods used to support the 
@@ -45,6 +47,16 @@ typedef void (*Efreet_Desktop_Command_Cb) (void *data, Efreet_Desktop *desktop, 
 typedef int (*Efreet_Desktop_Progress_Cb) (void *data, Efreet_Desktop *desktop, char *uri, long int total, long int current);
 
 /**
+ * A callback used to parse data for custom types
+ */
+typedef void *(*Efreet_Desktop_Type_Parse_Cb) (Efreet_Desktop *desktop, Efreet_Ini *ini);
+
+/**
+ * A callback used to free data for custom types
+ */
+typedef void *(*Efreet_Desktop_Type_Free_Cb) (void *data);
+
+/**
  * Efreet_Desktop
  * @brief a parsed representation of a .desktop file
  */
@@ -81,6 +93,7 @@ struct Efreet_Desktop
     unsigned char startup_notify:1;    /**< The starup notify settings of the app */
 
     Ecore_Hash *x; /**< Keep track of all user extensions, keys that begin with X- */
+    void *type_data; /**< Type specific data for custom types */
 };
 
 Efreet_Desktop   *efreet_desktop_get(const char *file);
@@ -111,7 +124,7 @@ void              efreet_desktop_category_add(Efreet_Desktop *desktop,
 int               efreet_desktop_category_del(Efreet_Desktop *desktop,
                                               const char *category);
 
-int               efreet_desktop_type_add(const char *type);
+int               efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_func, Efreet_Desktop_Type_Free_Cb free_func);
 
 /** 
  * @}

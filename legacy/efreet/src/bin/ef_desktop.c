@@ -344,14 +344,24 @@ _cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
   free(exec);
 }
 
+static void *
+cb_type_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
+{
+    const char *val;
+    val = efreet_ini_string_get(ini, "X-Test");
+    if (!val) return NULL;
+    return (void *)strdup(val);
+}
+
 int
 ef_cb_desktop_type_parse(void)
 {
     Efreet_Desktop *desktop;
     int ret = 1, my_type;
+    char *val;
 
     /* add my custom desktop type to efreet */
-    my_type = efreet_desktop_type_add("My_Type"); 
+    my_type = efreet_desktop_type_add("My_Type", cb_type_parse, (Efreet_Desktop_Type_Free_Cb)free); 
     if (my_type <= EFREET_DESKTOP_TYPE_MAX)
     {
         printf("Error adding desktop type.");
@@ -371,6 +381,13 @@ ef_cb_desktop_type_parse(void)
         return 0;
     }
 
+    val = (char *)efreet_desktop_type_data_get(desktop);
+    if (!val || strcmp(val, "Own key"))
+    {
+        printf("Invalid value of custom key (%s).\n", val);
+        return 0;
+    }
+    
     return 1;
 }
 
