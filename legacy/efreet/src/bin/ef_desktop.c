@@ -363,7 +363,7 @@ int
 ef_cb_desktop_type_parse(void)
 {
     Efreet_Desktop *desktop;
-    int ret = 1, my_type;
+    int my_type;
     char *val;
 
     /* add my custom desktop type to efreet */
