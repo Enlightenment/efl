@@ -125,6 +125,12 @@ ef_cb_desktop_save(void)
 
     printf("\n");
     desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test.desktop");
+    if (!desktop)
+    {
+        printf("Failed to get Desktop file\n");
+        return 0;
+    }
+
     printf("save data: %d\n", efreet_desktop_save(desktop));
 
     desktop = efreet_desktop_empty_new("/tmp/test.desktop");
@@ -361,12 +367,8 @@ ef_cb_desktop_type_parse(void)
     char *val;
 
     /* add my custom desktop type to efreet */
-    my_type = efreet_desktop_type_add("My_Type", cb_type_parse, (Efreet_Desktop_Type_Free_Cb)free); 
-    if (my_type <= EFREET_DESKTOP_TYPE_MAX)
-    {
-        printf("Error adding desktop type.");
-        return 0;
-    }
+    my_type = efreet_desktop_type_add("My_Type", cb_type_parse, NULL,
+                                        (Efreet_Desktop_Type_Free_Cb)free); 
 
     desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test_type.desktop");
     if (!desktop) 

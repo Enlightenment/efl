@@ -14,17 +14,9 @@
  * @{
  */
 
-/**
- * Possible types of .desktop files. Unknown files are ignored.
- */
-enum Efreet_Desktop_Type
-{
-    EFREET_DESKTOP_TYPE_UNKNOWN,
-    EFREET_DESKTOP_TYPE_APPLICATION,
-    EFREET_DESKTOP_TYPE_LINK,
-    EFREET_DESKTOP_TYPE_DIRECTORY,
-    EFREET_DESKTOP_TYPE_MAX
-};
+extern int EFREET_DESKTOP_TYPE_APPLICATION;
+extern int EFREET_DESKTOP_TYPE_LINK;
+extern int EFREET_DESKTOP_TYPE_DIRECTORY;
 
 /**
  * Efreet_Desktop_Type
@@ -39,17 +31,24 @@ typedef struct Efreet_Desktop Efreet_Desktop;
 /**
  * A callback used with efreet_desktop_command_get()
  */
-typedef void (*Efreet_Desktop_Command_Cb) (void *data, Efreet_Desktop *desktop, char *command, int remaining);
+typedef void (*Efreet_Desktop_Command_Cb) (void *data, Efreet_Desktop *desktop, 
+                                            char *command, int remaining);
 
 /**
  * A callback used to get download progress of remote uris
  */
-typedef int (*Efreet_Desktop_Progress_Cb) (void *data, Efreet_Desktop *desktop, char *uri, long int total, long int current);
+typedef int (*Efreet_Desktop_Progress_Cb) (void *data, Efreet_Desktop *desktop, 
+                                            char *uri, long int total, long int current);
 
 /**
  * A callback used to parse data for custom types
  */
 typedef void *(*Efreet_Desktop_Type_Parse_Cb) (Efreet_Desktop *desktop, Efreet_Ini *ini);
+
+/**
+ * A callback used to save data for custom types
+ */
+typedef void (*Efreet_Desktop_Type_Save_Cb) (Efreet_Desktop *desktop, Efreet_Ini *ini);
 
 /**
  * A callback used to free data for custom types
@@ -62,7 +61,7 @@ typedef void *(*Efreet_Desktop_Type_Free_Cb) (void *data);
  */
 struct Efreet_Desktop
 {
-    Efreet_Desktop_Type type; /**< type of desktop file */
+    int type;               /**< type of desktop file */
 
     double version;         /**< version of spec file conforms to */
 
@@ -124,7 +123,10 @@ void              efreet_desktop_category_add(Efreet_Desktop *desktop,
 int               efreet_desktop_category_del(Efreet_Desktop *desktop,
                                               const char *category);
 
-int               efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_func, Efreet_Desktop_Type_Free_Cb free_func);
+int               efreet_desktop_type_add(const char *type, 
+                                    Efreet_Desktop_Type_Parse_Cb parse_func, 
+                                    Efreet_Desktop_Type_Save_Cb save_func, 
+                                    Efreet_Desktop_Type_Free_Cb free_func);
 
 /** 
  * @}

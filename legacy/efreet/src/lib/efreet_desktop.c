@@ -30,6 +30,10 @@ static int efreet_desktop_command_file_id = 0;
 
 static int init = 0;
 
+int EFREET_DESKTOP_TYPE_APPLICATION = 0;
+int EFREET_DESKTOP_TYPE_LINK = 0;
+int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
+
 /**
  * @internal
  * Information about custom types
@@ -37,20 +41,22 @@ static int init = 0;
 typedef struct Efreet_Desktop_Type_Info Efreet_Desktop_Type_Info;
 struct Efreet_Desktop_Type_Info
 {
+    int id;
     char *type;
     Efreet_Desktop_Type_Parse_Cb parse_func;
+    Efreet_Desktop_Type_Save_Cb save_func;
     Efreet_Desktop_Type_Free_Cb free_func;
 };
 
 static Efreet_Desktop *efreet_desktop_new(const char *file);
-static Efreet_Desktop_Type efreet_desktop_type_parse(const char *type_str);
+static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
 static Ecore_List *efreet_desktop_string_list_parse(const char *string);
 static char *efreet_desktop_string_list_join(Ecore_List *list);
-static int efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, 
+static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, 
                                                     Efreet_Ini *ini);
 static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop, 
                                                     Efreet_Ini *ini);
-static int efreet_desktop_link_fields_parse(Efreet_Desktop *desktop,
+static void *efreet_desktop_link_fields_parse(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
 static void efreet_desktop_link_fields_save(Efreet_Desktop *desktop, 
                                                 Efreet_Ini *ini);
@@ -115,7 +121,18 @@ efreet_desktop_init(void)
                                 ECORE_FREE_CB(efreet_desktop_free));
 
     efreet_desktop_types = ecore_list_new();
-    ecore_list_set_free_cb(efreet_desktop_types, ECORE_FREE_CB(efreet_desktop_type_info_free));
+    ecore_list_set_free_cb(efreet_desktop_types, 
+                            ECORE_FREE_CB(efreet_desktop_type_info_free));
+
+    EFREET_DESKTOP_TYPE_APPLICATION = efreet_desktop_type_add("Application", 
+                                        efreet_desktop_application_fields_parse, 
+                                        efreet_desktop_application_fields_save, 
+                                        NULL);
+    EFREET_DESKTOP_TYPE_LINK = efreet_desktop_type_add("Link", 
+                                    efreet_desktop_link_fields_parse, 
+                                    efreet_desktop_link_fields_save, NULL);
+    EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL, 
+                                                                NULL, NULL);
 
     return init;
 }
@@ -186,11 +203,6 @@ efreet_desktop_get(const char *file)
 
     desktop = efreet_desktop_new(file);
     if (!desktop) return NULL;
-    if (!desktop->type)
-    {
-        efreet_desktop_free(desktop);
-        return NULL;
-    }
 
     ecore_hash_set(efreet_desktop_cache, strdup(file), desktop);
     return desktop;
@@ -253,29 +265,14 @@ efreet_desktop_new(const char *file)
 
     if (!error)
     {
-        desktop->type = efreet_desktop_type_parse(
-                                efreet_ini_string_get(ini, "Type"));
-        desktop->version = efreet_ini_double_get(ini, "Version");
+        Efreet_Desktop_Type_Info *info;
 
-        if (desktop->type == EFREET_DESKTOP_TYPE_APPLICATION)
+        info = efreet_desktop_type_parse(efreet_ini_string_get(ini, "Type"));
+        if (info)
         {
-            if (!efreet_desktop_application_fields_parse(desktop, ini)) 
-                error = 1;
-        }
-        else if (desktop->type == EFREET_DESKTOP_TYPE_LINK)
-        {
-            if (!efreet_desktop_link_fields_parse(desktop, ini)) 
-                error = 1;
-        }
-        else if (desktop->type == EFREET_DESKTOP_TYPE_DIRECTORY)
-        {
-            /* there are no directory specific fields */
-        }
-        else if (desktop->type >= (EFREET_DESKTOP_TYPE_MAX + 1))
-        {
-            Efreet_Desktop_Type_Info *info;
-            info = ecore_list_goto_index(efreet_desktop_types, 
-                            (desktop->type - (EFREET_DESKTOP_TYPE_MAX + 1)));
+            desktop->type = info->id;
+            desktop->version = efreet_ini_double_get(ini, "Version");
+
             if (info->parse_func)
                 desktop->type_data = info->parse_func(desktop, ini); 
         }
@@ -307,6 +304,7 @@ efreet_desktop_new(const char *file)
 int
 efreet_desktop_save(Efreet_Desktop *desktop)
 {
+    Efreet_Desktop_Type_Info *info;
     Efreet_Ini *ini;
     int ok = 1;
 
@@ -314,27 +312,11 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     efreet_ini_section_add(ini, "Desktop Entry");
     efreet_ini_section_set(ini, "Desktop Entry");
 
-    if (desktop->type == EFREET_DESKTOP_TYPE_APPLICATION)
+    info = ecore_list_goto_index(efreet_desktop_types, desktop->type);
+    if (info) 
     {
-        efreet_ini_string_set(ini, "Type", "Application");
-        efreet_desktop_application_fields_save(desktop, ini);
-    }
-    else if (desktop->type == EFREET_DESKTOP_TYPE_LINK)
-    {
-        efreet_ini_string_set(ini, "Type", "Link");
-        efreet_desktop_link_fields_save(desktop, ini);
-    }
-    else if (desktop->type == EFREET_DESKTOP_TYPE_DIRECTORY)
-    {
-        efreet_ini_string_set(ini, "Type", "Directory");
-    }
-    else if (desktop->type > EFREET_DESKTOP_TYPE_MAX + 1)
-    {
-        Efreet_Desktop_Type_Info *info;
-        info = ecore_list_goto_index(efreet_desktop_types, 
-                            (desktop->type - (EFREET_DESKTOP_TYPE_MAX + 1)));
-        if (info) 
-            efreet_ini_string_set(ini, "Type", info->type);
+        efreet_ini_string_set(ini, "Type", info->type);
+        if (info->save_func) info->save_func(desktop, ini);
     }
     else
         ok = 0;
@@ -419,11 +401,10 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 
     IF_FREE_HASH(desktop->x);
 
-    if (desktop->type >= EFREET_DESKTOP_TYPE_MAX + 1 && desktop->type_data)
+    if (desktop->type_data)
     {
         Efreet_Desktop_Type_Info *info;
-        info = ecore_list_goto_index(efreet_desktop_types, 
-            (desktop->type - (EFREET_DESKTOP_TYPE_MAX + 1)));
+        info = ecore_list_goto_index(efreet_desktop_types, desktop->type);
         if (info->free_func)
             info->free_func(desktop->type_data); 
     }
@@ -527,12 +508,14 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
 /**
  * @param type: The type to add to the list of matching types
  * @param parse_func: a function to parse out custom fields
+ * @param save_func: a function to save data returned from @a parse_func
  * @param free_func: a function to free data returned from @a parse_func
  * @return Returns the id of the new type 
  * @brief Adds the given type to the list of types in the system
  */
 int
 efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_func,
+                        Efreet_Desktop_Type_Save_Cb save_func,
                         Efreet_Desktop_Type_Free_Cb free_func)
 {
     int id;
@@ -541,14 +524,17 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
     info = NEW(Efreet_Desktop_Type_Info, 1);
     if (!info) return 0;
 
+    id = ecore_list_nodes(efreet_desktop_types);
+
+    info->id = id;
     info->type = strdup(type);
     info->parse_func = parse_func;
+    info->save_func = save_func;
     info->free_func = free_func;
 
-    id = ecore_list_nodes(efreet_desktop_types);
     ecore_list_append(efreet_desktop_types, info);
 
-    return (id + EFREET_DESKTOP_TYPE_MAX + 1);
+    return id;
 }
 
 /**
@@ -580,31 +566,21 @@ efreet_desktop_type_data_get(Efreet_Desktop *desktop)
  * @return the parsed type
  * @brief parse the type string into an Efreet_Desktop_Type
  */
-static Efreet_Desktop_Type
+static Efreet_Desktop_Type_Info *
 efreet_desktop_type_parse(const char *type_str)
 {
     Efreet_Desktop_Type_Info *info;
-    int count = 0;
 
-    if (!type_str) return EFREET_DESKTOP_TYPE_UNKNOWN;
+    if (!type_str) return NULL;
 
-    if (!strcmp("Application", type_str)) 
-        return EFREET_DESKTOP_TYPE_APPLICATION;
-    if (!strcmp("Link", type_str)) 
-        return EFREET_DESKTOP_TYPE_LINK;
-    if (!strcmp("Directory", type_str)) 
-        return EFREET_DESKTOP_TYPE_DIRECTORY;
-   
-    /* check the user added types */
     ecore_list_goto_first(efreet_desktop_types);
     while ((info = ecore_list_next(efreet_desktop_types)))
     {
         if (!strcmp(info->type, type_str))
-            return (count + EFREET_DESKTOP_TYPE_MAX + 1);
-        count ++;
+            return info;
     }
 
-    return EFREET_DESKTOP_TYPE_UNKNOWN;
+    return NULL;
 }
 
 /**
@@ -693,10 +669,10 @@ efreet_desktop_string_list_join(Ecore_List *list)
  * @internal
  * @param desktop: the Efreet_Desktop to store parsed fields in
  * @param ini: the Efreet_Ini to parse fields from
- * @return 1 if parsed succesfully, 0 otherwise
+ * @return No value
  * @brief Parse application specific desktop fields
  */
-static int
+static void *
 efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     const char *val;
@@ -721,7 +697,7 @@ efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini
     desktop->terminal = efreet_ini_boolean_get(ini, "Terminal");
     desktop->startup_notify = efreet_ini_boolean_get(ini, "StartupNotify");
 
-    return 1;
+    return NULL;
 }
 
 /**
@@ -770,17 +746,17 @@ efreet_desktop_application_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
  * @internal
  * @param desktop: the Efreet_Desktop to store parsed fields in
  * @param ini: the Efreet_Ini to parse fields from
- * @return 1 if parsed succesfully, 0 otherwise
+ * @return Returns no value
  * @brief Parse link specific desktop fields
  */
-static int
+static void *
 efreet_desktop_link_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     const char *val;
 
     val = efreet_ini_string_get(ini, "URL");
     if (val) desktop->url = strdup(val);
-    return 1;
+    return NULL;
 }
 
 /**
