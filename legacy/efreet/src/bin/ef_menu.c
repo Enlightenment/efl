@@ -64,10 +64,8 @@ ef_cb_menu_get(void)
 #endif
     printf("\n");
     efreet_menu_dump(menu, "");
-#if 0
     unlink("/tmp/test.menu");
     efreet_menu_save(menu, "/tmp/test.menu");
-#endif
     efreet_menu_free(menu);
 
     return 1;
