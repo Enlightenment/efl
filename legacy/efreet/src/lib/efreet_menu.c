@@ -38,14 +38,14 @@ struct Efreet_Menu_Internal
     {
         const char *internal;     /**< The menu name */
         const char *name;         /**< Name to use in the menus */
-    } name;                 /**< The names for this menu */
+    } name;                       /**< The names for this menu */
 
     Efreet_Desktop *directory; /**< The directory */
     Ecore_DList *directories;  /**< All the directories set in the menu file */
 
     Efreet_Menu_Move *current_move; /**< The current move */
 
-    Ecore_List *app_dirs;        /**< .desktop application directories */
+    Ecore_List *app_dirs;           /**< .desktop application directories */
 
     Ecore_List *app_pool;           /**< application pool */
     Ecore_List *applications;       /**< applications in this menu */
@@ -53,14 +53,14 @@ struct Efreet_Menu_Internal
     Ecore_DList *directory_dirs;    /**< .directory file directories */
     Ecore_Hash *directory_cache;    /**< .directory dirs */
 
-    Ecore_List *moves;      /**< List of moves to be handled by the menu */
-    Ecore_List *filters;    /**< Include and Exclude filters */
+    Ecore_List *moves;              /**< List of moves to be handled by the menu */
+    Ecore_List *filters;            /**< Include and Exclude filters */
 
-    Efreet_Menu_Internal *parent;     /**< Our parent menu */
-    Ecore_List           *sub_menus;  /**< Our sub menus */
+    Efreet_Menu_Internal *parent;   /**< Our parent menu */
+    Ecore_List *sub_menus;          /**< Our sub menus */
 
-    Ecore_List *layout;            /**< This menus layout */
-    Ecore_List *default_layout;    /**< Default layout */
+    Ecore_List *layout;             /**< This menus layout */
+    Ecore_List *default_layout;     /**< Default layout */
     char show_empty;    /**< Whether to show empty menus */
     char in_line;       /**< Whether this meny can be inlined */
     char inline_limit;  /**< Number of elements which triggers inline */
