@@ -22,7 +22,10 @@ int ef_cb_desktop_type_parse(void);
 int ef_cb_desktop_file_id(void);
 #endif
 int ef_cb_menu_get(void);
+int ef_cb_menu_save(void);
+int ef_cb_menu_edit(void);
 int ef_cb_ini_long_line(void);
+int ef_cb_utils(void);
 
 typedef struct Efreet_Test Efreet_Test;
 struct Efreet_Test
@@ -51,6 +54,9 @@ static Efreet_Test tests[] = {
     {"Desktop File ID", ef_cb_desktop_file_id},
 #endif
     {"Menu Parsing", ef_cb_menu_get},
+    {"Menu Save", ef_cb_menu_save},
+    {"Menu Edit", ef_cb_menu_edit},
+    {"Utils", ef_cb_utils},
     {NULL, NULL}
 };
 

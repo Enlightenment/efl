@@ -56,6 +56,8 @@ Efreet_Menu     *efreet_menu_parse(const char *path);
 int              efreet_menu_save(Efreet_Menu *menu, const char *path);
 void             efreet_menu_free(Efreet_Menu *menu);
 
+int              efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos);
+
 void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
 
 /**

@@ -794,6 +794,51 @@ efreet_menu_save_indent(FILE *f, int indent)
 
 /**
  * @param menu: The menu to work with
+ * @param desktop: The desktop to insert
+ * @return Returns 1 on success, 0 on failure
+ * @brief Insert a desktop element in a menu structure. Only accepts desktop files
+ * in default directories.
+ */
+int
+efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
+{
+    Efreet_Menu *entry;
+    char *path;
+    char *id;
+
+    if (!desktop || !menu) return 0;
+    path = efreet_util_path_in_default("applications", desktop->orig_path);
+    if (!path) return 0;
+    id = efreet_util_path_to_file_id(path, desktop->orig_path);
+
+    entry = efreet_menu_entry_new();
+    entry->type = EFREET_MENU_ENTRY_DESKTOP;
+    entry->id = ecore_string_instance(id);
+    entry->name = ecore_string_instance(desktop->name);
+    if (desktop->icon) entry->icon = ecore_string_instance(desktop->icon);
+    entry->desktop = desktop;
+
+    if (!menu->entries)
+    {
+        menu->entries = ecore_list_new();
+        ecore_list_set_free_cb(menu->entries, ECORE_FREE_CB(efreet_menu_free));
+    }
+
+    if (pos < 0 || pos >= ecore_list_nodes(menu->entries))
+        ecore_list_append(menu->entries, entry);
+    else
+    {
+        ecore_list_goto_index(menu->entries, pos);
+        ecore_list_insert(menu->entries, entry);
+    }
+
+    free(id);
+    free(path);
+    return 1;
+}
+
+/**
+ * @param menu: The menu to work with
  * @param indent: The indent level to print the menu at
  * @return Returns no value
  * @brief Dumps the contents of the menu to the command line
@@ -820,13 +865,13 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
         while ((entry = ecore_list_next(menu->entries)))
         {
             if (entry->type == EFREET_MENU_ENTRY_SEPARATOR)
-                printf("%s|---\n", indent);
+                printf("%s|---\n", new_indent);
             else if (entry->type == EFREET_MENU_ENTRY_DESKTOP)
-                printf("%s|-%s\n", indent, entry->name);
+                printf("%s|-%s\n", new_indent, entry->name);
             else if (entry->type == EFREET_MENU_ENTRY_MENU)
                 efreet_menu_dump(entry, new_indent);
             else if (entry->type == EFREET_MENU_ENTRY_HEADER)
-                printf("%s|---%s\n", indent, entry->name);
+                printf("%s|---%s\n", new_indent, entry->name);
         }
 
         FREE(new_indent);

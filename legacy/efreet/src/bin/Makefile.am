@@ -15,6 +15,7 @@ ef_ini.c \
 ef_locale.c \
 ef_desktop.c \
 ef_menu.c \
+ef_utils.c \
 main.c
 
 
