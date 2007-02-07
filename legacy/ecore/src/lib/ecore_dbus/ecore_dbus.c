@@ -13,6 +13,7 @@
 /********************************************************************************/
 /* Author: Jorge Luis Zapata							*/
 /* Author: Brian Mattern (rephorm)						*/
+/* Author: Sebastian Dransfeld							*/
 /* Version: 0.3.0								*/
 /********************************************************************************/
 /* Todo										*/
@@ -83,6 +84,8 @@ static int                  init_count = 0;
 static Ecore_List2         *servers = NULL;
 static Ecore_Event_Handler *handler[3];
 
+int words_bigendian = -1;
+
 /* public functions */
 EAPI int
 ecore_dbus_init(void)
@@ -90,6 +93,15 @@ ecore_dbus_init(void)
    int i = 0;
 
    if (++init_count != 1) return init_count;
+
+   if (words_bigendian == -1)
+     {
+	unsigned long int v;
+
+	v = htonl(0x12345678);
+	if (v == 0x12345678) words_bigendian = 1;
+	else words_bigendian = 0;
+     }
 
    ecore_con_init();
 

@@ -7,6 +7,30 @@
 #include "Ecore_Con.h"
 #include "Ecore_Data.h"
 
+extern int words_bigendian;
+
+#define SWAP64(x) (x) = \
+   ((((unsigned long long)(x) & 0x00000000000000ffULL ) << 56) |\
+       (((unsigned long long)(x) & 0x000000000000ff00ULL ) << 40) |\
+       (((unsigned long long)(x) & 0x0000000000ff0000ULL ) << 24) |\
+       (((unsigned long long)(x) & 0x00000000ff000000ULL ) << 8) |\
+       (((unsigned long long)(x) & 0x000000ff00000000ULL ) >> 8) |\
+       (((unsigned long long)(x) & 0x0000ff0000000000ULL ) >> 24) |\
+       (((unsigned long long)(x) & 0x00ff000000000000ULL ) >> 40) |\
+       (((unsigned long long)(x) & 0xff00000000000000ULL ) >> 56))
+#define SWAP32(x) (x) = \
+   ((((unsigned int)(x) & 0x000000ff ) << 24) |\
+       (((unsigned int)(x) & 0x0000ff00 ) << 8) |\
+       (((unsigned int)(x) & 0x00ff0000 ) >> 8) |\
+       (((unsigned int)(x) & 0xff000000 ) >> 24))
+#define SWAP16(x) (x) = \
+   ((((unsigned short)(x) & 0x00ff ) << 8) |\
+       (((unsigned short)(x) & 0xff00 ) >> 8))
+
+#define CONV16(order, x) { if (words_bigendian && (order) != 'B') SWAP16(x); }
+#define CONV32(order, x) { if (words_bigendian && (order) != 'B') SWAP32(x); }
+#define CONV64(order, x) { if (words_bigendian && (order) != 'B') SWAP64(x); }
+
 typedef unsigned char *(*Ecore_DBus_Auth_Transaction)(void *);
 
 typedef struct _Ecore_DBus_Auth                      Ecore_DBus_Auth;

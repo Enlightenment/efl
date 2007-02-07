@@ -462,8 +462,10 @@ _ecore_dbus_message_header(Ecore_DBus_Message *msg, int type, int flags,
    if (!msg) return;
 
    /* endianness (1) */
-   /* XXX we need to detect for endianess and send 'B' for Bigendian machines */
-   msg->buffer[0] = msg->byte_order = 'l';
+   if (words_bigendian)
+     msg->buffer[0] = msg->byte_order = 'B';
+   else
+     msg->buffer[0] = msg->byte_order = 'l';
    /* type (1) */
    msg->buffer[1] = msg->type = (char)type;
    /* flags (1) 0x1 = no reply expected, 0x2 auto activation */

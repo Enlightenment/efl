@@ -83,6 +83,7 @@ _ecore_dbus_message_append_uint32(Ecore_DBus_Message *msg, unsigned int i)
 {
    unsigned char      *c;
 
+   CONV32(msg->byte_order, i)
    c = (unsigned char *)&i;
    _ecore_dbus_message_length_append(msg, 4);
    msg->buffer[msg->length++] = c[0];
@@ -109,6 +110,7 @@ _ecore_dbus_message_read_uint32(Ecore_DBus_Message *msg)
 
    _ecore_dbus_message_length_append(msg, 4);
    i = *(unsigned int *)(msg->buffer + msg->length);
+   CONV32(msg->byte_order, i)
    msg->length += 4;
    return i;
 }
