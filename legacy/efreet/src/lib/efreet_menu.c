@@ -220,9 +220,6 @@ static Ecore_Hash *efreet_menu_move_cbs = NULL;
 static Ecore_Hash *efreet_menu_layout_cbs = NULL;
 
 static const char *efreet_menu_prefix_get(void);
-static Ecore_List *efreet_default_dirs_get(const char *user_dir, 
-                                                    Ecore_List *system_dirs, 
-                                                    const char *suffix);
 
 static Efreet_Menu_Internal *efreet_menu_by_name_find(Efreet_Menu_Internal *internal,
                                                     const char *name, 
@@ -837,6 +834,38 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
 }
 
 /**
+ * @param user_dir: The user directory to work with
+ * @param system_dirs: The system directories to work with
+ * @param suffix: The path suffix to add
+ * @return Returns the list of directories
+ * @brief Creates the list of directories based on the user
+ * dir, system dirs and given suffix.
+ */
+Ecore_List *
+efreet_default_dirs_get(const char *user_dir, Ecore_List *system_dirs, 
+                                                    const char *suffix)
+{
+    const char *xdg_dir;
+    char dir[PATH_MAX];
+    Ecore_List *list;
+
+    list = ecore_list_new();
+    ecore_list_set_free_cb(list, ECORE_FREE_CB(free));
+
+    snprintf(dir, sizeof(dir), "%s/%s", user_dir, suffix);
+    ecore_list_append(list, strdup(dir));
+
+    ecore_list_goto_first(system_dirs);
+    while ((xdg_dir = ecore_list_next(system_dirs)))
+    {
+        snprintf(dir, sizeof(dir), "%s/%s", xdg_dir, suffix);
+        ecore_list_append(list, strdup(dir));
+    }
+
+    return list;
+}
+
+/**
  * @internal
  * @return Returns a new Efreet_Menu_Internal struct
  * @brief Allocates and initializes a new Efreet_Menu_Internal structure 
@@ -908,39 +937,6 @@ efreet_menu_prefix_get(void)
     else efreet_menu_prefix = strdup("");
 
     return efreet_menu_prefix;
-}
-
-/**
- * @internal
- * @param user_dir: The user directory to work with
- * @param system_dirs: The system directories to work with
- * @param suffix: The path suffix to add
- * @return Returns the list of directories
- * @brief Creates the list of directories based on the user
- * dir, system dirs and given suffix.
- */
-static Ecore_List *
-efreet_default_dirs_get(const char *user_dir, Ecore_List *system_dirs, 
-                                                    const char *suffix)
-{
-    const char *xdg_dir;
-    char dir[PATH_MAX];
-    Ecore_List *list;
-
-    list = ecore_list_new();
-    ecore_list_set_free_cb(list, ECORE_FREE_CB(free));
-
-    snprintf(dir, sizeof(dir), "%s/%s", user_dir, suffix);
-    ecore_list_append(list, strdup(dir));
-
-    ecore_list_goto_first(system_dirs);
-    while ((xdg_dir = ecore_list_next(system_dirs)))
-    {
-        snprintf(dir, sizeof(dir), "%s/%s", xdg_dir, suffix);
-        ecore_list_append(list, strdup(dir));
-    }
-
-    return list;
 }
 
 /**

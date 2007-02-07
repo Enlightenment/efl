@@ -32,6 +32,7 @@ extern "C" {
 #include "efreet_icon.h"
 #include "efreet_desktop.h"
 #include "efreet_menu.h"
+#include "efreet_utils.h"
 
 int efreet_init(void);
 int efreet_shutdown(void);

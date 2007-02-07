@@ -14,7 +14,8 @@ Efreet.h \
 efreet_base.h \
 efreet_desktop.h \
 efreet_icon.h \
-efreet_menu.h
+efreet_menu.h \
+efreet_utils.h
 
 EFREETSOURCES = \
 efreet.c \
@@ -24,6 +25,7 @@ efreet_xml.c \
 efreet_ini.c \
 efreet_desktop.c \
 efreet_menu.c \
+efreet_utils.c \
 $(EFREETHEADERS)
 
 libefreet_la_SOURCES = \

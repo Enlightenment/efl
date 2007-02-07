@@ -160,6 +160,9 @@ void efreet_icon_shutdown(void);
 
 int efreet_menu_init(void);
 void efreet_menu_shutdown(void);
+Ecore_List *efreet_default_dirs_get(const char *user_dir, 
+                                    Ecore_List *system_dirs, 
+                                    const char *suffix);
 
 int efreet_ini_init(void);
 int efreet_ini_shutdown(void);
