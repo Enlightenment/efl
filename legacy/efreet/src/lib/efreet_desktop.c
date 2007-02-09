@@ -1315,6 +1315,7 @@ efreet_string_append_char(char *dest, int *size, int *len, char c)
     }
 
     dest[(*len)++] = c;
+    dest[*len] = '\0';
 
     return dest;
 }
