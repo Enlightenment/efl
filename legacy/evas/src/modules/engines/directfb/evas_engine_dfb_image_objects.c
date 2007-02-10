@@ -28,7 +28,7 @@ static RGBA_Image *_dfb_image_find(const char *filename, const char *key, DATA64
  */
 
 void               *
-evas_engine_directfb_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo)
+evas_engine_directfb_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    Render_Engine      *re;
    DFBSurfaceDescription dsc;
@@ -99,13 +99,14 @@ evas_engine_directfb_image_new_from_data(void *data, int w, int h,
 					 DATA32 * image_data, int alpha, int cspace)
 {
    /* FIXME document this peculiarity */
-   return evas_engine_directfb_image_new_from_copied_data(data, w, h, image_data);
+   return evas_engine_directfb_image_new_from_copied_data(data, w, h, image_data, alpha, cspace);
 }
 
 void               *
 evas_engine_directfb_image_new_from_copied_data(void *data, int w, int h,
 						DATA32 * image_data, int alpha, int cspace)
 {
+   /* FIXME use alpha and cspace here or not? */
 
    Render_Engine      *re;
    RGBA_Image         *im = NULL;
@@ -235,7 +236,8 @@ evas_engine_directfb_image_data_put(void *data, void *image,
 	w = im->image->w;
 	h = im->image->h;
 	_dfb_image_unref(im);
-	return evas_engine_directfb_image_new_from_data(data, w, h, image_data);
+        /* FIXME alpha and cspace (0, 0) is not used here yet */
+	return evas_engine_directfb_image_new_from_data(data, w, h, image_data, 0, 0);
      }
    _dfb_image_dirty(im);
 
@@ -539,8 +541,31 @@ evas_engine_directfb_image_format_get(void *data, void *image)
    return NULL;
 }
 
+void
+evas_engine_directfb_image_colorspace_set(void *data, void *image, int cspace)
+{
+   /* FIXME impliment image_colorspace_set */
+}
 
+int
+evas_engine_directfb_image_colorspace_get(void *data, void *image)
+{
+   /* FIXME impliment image_colorspace_get */
+   return 0;
+}
 
+void
+evas_engine_directfb_image_native_set(void *data, void *image, void *native)
+{
+   /* FIXME impliment image_native_set */
+}
+
+void               *
+evas_engine_directfb_image_native_get(void *data, void *image)
+{
+   /* FIXME impliment image_native_get */
+   return NULL;
+}
 
 /*
  * Private routines. These are slightly modified versions of the ones in

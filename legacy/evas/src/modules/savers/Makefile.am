@@ -8,7 +8,7 @@ if BUILD_LOADER_EET
 eet_subdir = eet
 endif
 
-if BUILD_LOADER_JPEG
+if BUILD_SAVER_JPEG
 jpeg_subdir = jpeg
 endif
 

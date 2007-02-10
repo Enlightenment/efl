@@ -40,4 +40,4 @@ libevas_la_DEPENDENCIES = \
 			  file/libevas_file.la \
 			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la 
-libevas_la_LDFLAGS      = -version-info 1:0:0
+libevas_la_LDFLAGS      = @create_shared_lib@ -version-info 1:0:0

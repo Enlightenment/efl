@@ -80,6 +80,10 @@ static Evas_Func evas_engine_directfb_func = {
    evas_engine_directfb_image_draw,
    evas_engine_directfb_image_comment_get,
    evas_engine_directfb_image_format_get,
+   evas_engine_directfb_image_colorspace_set,
+   evas_engine_directfb_image_colorspace_get,
+   evas_engine_directfb_image_native_set,
+   evas_engine_directfb_image_native_get,
 
    evas_engine_directfb_image_cache_flush,
    evas_engine_directfb_image_cache_set,
@@ -771,7 +775,7 @@ evas_engine_directfb_polygon_draw(void *data, void *context, void *surface, void
  *
  * */
 void *
-eng_gradient_new(void *data)
+evas_engine_directfb_gradient_new(void *data)
 {
    return evas_common_gradient_new();
 }
@@ -914,10 +918,10 @@ evas_engine_directfb_gradient_is_visible(void *data, void *context, void *gradie
    re = (Render_Engine *)data;
    if (!context || !gradient)  return 0;
    return 1;
- }
+}
 
-static void
-eng_gradient_render_pre(void *data, void *context, void *gradient)
+void
+evas_engine_directfb_gradient_render_pre(void *data, void *context, void *gradient)
 {
    int  len;
    Render_Engine *re;
@@ -930,8 +934,8 @@ eng_gradient_render_pre(void *data, void *context, void *gradient)
    evas_common_gradient_map(context, gradient, len);
 }
 
-static void
-eng_gradient_render_post(void *data, void *gradient)
+void
+evas_engine_directfb_gradient_render_post(void *data, void *gradient)
 {
 }
 
@@ -965,7 +969,7 @@ evas_engine_directfb_gradient_draw(void *data, void *context, void *surface, voi
  * */
 
 void        *
-evas_engine_directfb_font_load(void *data, char *name, int size)
+evas_engine_directfb_font_load(void *data, const char *name, int size)
 {
    Render_Engine      *re;
 
@@ -983,7 +987,7 @@ evas_engine_directfb_font_memory_load(void *data, char *name, int size, const vo
 }
 
 void *
-evas_engine_directfb_font_add(void *data, void *font, char *name, int size)
+evas_engine_directfb_font_add(void *data, void *font, const char *name, int size)
 {
    Render_Engine *re;
 
@@ -1047,7 +1051,7 @@ evas_engine_directfb_font_max_descent_get(void *data, void *font)
 }
 
 void
-evas_engine_directfb_font_string_size_get(void *data, void *font, char *text,
+evas_engine_directfb_font_string_size_get(void *data, void *font, const char *text,
 					  int *w, int *h)
 {
    Render_Engine      *re;
@@ -1057,7 +1061,7 @@ evas_engine_directfb_font_string_size_get(void *data, void *font, char *text,
 }
 
 int
-evas_engine_directfb_font_inset_get(void *data, void *font, char *text)
+evas_engine_directfb_font_inset_get(void *data, void *font, const char *text)
 {
    Render_Engine      *re;
 
@@ -1066,7 +1070,7 @@ evas_engine_directfb_font_inset_get(void *data, void *font, char *text)
 }
 
 int
-evas_engine_directfb_font_h_advance_get(void *data, void *font, char *text)
+evas_engine_directfb_font_h_advance_get(void *data, void *font, const char *text)
 {
    Render_Engine      *re;
    int                 h, v;
@@ -1077,7 +1081,7 @@ evas_engine_directfb_font_h_advance_get(void *data, void *font, char *text)
 }
 
 int
-evas_engine_directfb_font_v_advance_get(void *data, void *font, char *text)
+evas_engine_directfb_font_v_advance_get(void *data, void *font, const char *text)
 {
    Render_Engine      *re;
    int                 h, v;
@@ -1088,7 +1092,7 @@ evas_engine_directfb_font_v_advance_get(void *data, void *font, char *text)
 }
 
 int
-evas_engine_directfb_font_char_coords_get(void *data, void *font, char *text,
+evas_engine_directfb_font_char_coords_get(void *data, void *font, const char *text,
 					  int pos, int *cx, int *cy, int *cw,
 					  int *ch)
 {
@@ -1099,7 +1103,7 @@ evas_engine_directfb_font_char_coords_get(void *data, void *font, char *text,
 }
 
 int
-evas_engine_directfb_font_char_at_coords_get(void *data, void *font, char *text,
+evas_engine_directfb_font_char_at_coords_get(void *data, void *font, const char *text,
 					     int x, int y, int *cx, int *cy,
 					     int *cw, int *ch)
 {
@@ -1112,7 +1116,7 @@ evas_engine_directfb_font_char_at_coords_get(void *data, void *font, char *text,
 void
 evas_engine_directfb_font_draw(void *data, void *context, void *surface,
 			       void *font, int x, int y, int w, int h, int ow,
-			       int oh, char *text)
+			       int oh, const char *text)
 {
    Render_Engine *re;
    void *p;

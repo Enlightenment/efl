@@ -160,6 +160,7 @@ ecore_con_url_new(const char *url)
     */
    curl_easy_setopt(url_con->curl_easy, CURLOPT_CONNECTTIMEOUT, 30);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEOUT, 300);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_FOLLOWLOCATION, 1);
 
    return url_con;
 #else
@@ -232,10 +233,6 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
 	  }
 	sprintf(tmp, "Content-length: %d", length);
 	url_con->headers = curl_slist_append(url_con->headers, tmp);
-     }
-   else
-     {
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDS, NULL);
      }
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPHEADER, url_con->headers);

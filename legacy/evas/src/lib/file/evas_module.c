@@ -11,10 +11,85 @@
 #endif
 
 #include <dirent.h>	/* DIR, dirent */
+#ifdef _WIN32
+#include <windows.h>
+#include <stdlib.h>
+#include <stdio.h>
+#else
 #include <dlfcn.h> 	/* dlopen,dlclose,etc */
+#endif
 
 #include <evas_common.h>
 #include <evas_private.h>
+
+/* FIXME: that hack is a temporary one. That code will be in MinGW soon */
+#ifdef _WIN32
+
+#define RTLD_LAZY 1 /* lazy function call binding */
+#define RTLD_NOW 2 /* immediate function call binding */
+#define RTLD_GLOBAL 4 /* symbols in this dlopen'ed obj are visible
+			 to other dlopen'ed objs */
+
+static char *dlerr_ptr;
+static char dlerr_data[80];
+
+void *dlopen (const char *file, int mode)
+{
+  HMODULE hmodule;
+
+  hmodule = LoadLibrary(file);
+  if (hmodule == NULL) {
+    int error;
+
+    error = GetLastError();
+    sprintf(dlerr_data, "LoadLibraryEx returned %d.", error);
+    dlerr_ptr = dlerr_data;
+  }
+  return hmodule;
+}
+
+int dlclose (void *handle)
+{
+  if (FreeLibrary(handle)) {
+    return 0;
+  }
+  else {
+    int error;
+
+    error = GetLastError();
+    sprintf(dlerr_data, "FreeLibrary returned %d.", error);
+    dlerr_ptr = dlerr_data;
+    return -1;
+  }
+}
+
+void *dlsym (void *handle, const char *name)
+{
+  FARPROC fp;
+
+  fp = GetProcAddress(handle, name);
+  if (fp == NULL) {
+    int error;
+
+    error = GetLastError();
+    sprintf(dlerr_data, "GetProcAddress returned %d.", error);
+    dlerr_ptr = dlerr_data;
+  }
+  return fp;
+}
+
+char *dlerror (void)
+{
+  if (dlerr_ptr != NULL) {
+    dlerr_ptr = NULL;
+    return dlerr_data;
+  }
+  else {
+    return NULL;
+  }
+}
+
+#endif /* _WIN32 */
 
 Evas_List *evas_modules = NULL;
 static Evas_List *evas_module_paths = NULL;

@@ -7,7 +7,6 @@ INCLUDES	     = -I. \
 		       -I$(top_builddir) \
                        -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include 
-					      
 
 lib_LTLIBRARIES      = libembryo.la
 include_HEADERS      = Embryo.h
@@ -23,4 +22,4 @@ embryo_private.h
 
 libembryo_la_LIBADD       = -lm @fnmatch_libs@
 libembryo_la_DEPENDENCIES = $(top_builddir)/config.h
-libembryo_la_LDFLAGS      = -version-info 9:1:9
+libembryo_la_LDFLAGS      = @create_shared_lib@ -version-info 9:1:9

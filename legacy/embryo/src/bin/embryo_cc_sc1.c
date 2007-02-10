@@ -36,6 +36,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#ifdef WIN32
+#include <sys/stat.h>
+#include <errno.h>
+#include <fcntl.h>
+#endif /* WIN32 */
+
 #include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
 #include "embryo_cc_prefix.h"
@@ -314,7 +320,16 @@ sc_compile(int argc, char *argv[])
    if (!tmpdir) tmpdir = "/tmp";
 
    snprintf(outfname, _MAX_PATH, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
+#ifndef WIN32
    fd_out = mkstemp(outfname);
+#else
+   if (mktemp (outfname))
+     do
+       fd_out = open (outfname, O_CREAT | O_EXCL, S_IREAD | S_IWRITE);
+     while (!(fd_out == -1 && errno == EEXIST) && mktemp (outfname));
+   else
+     fd_out = -1;
+#endif /* WIN32 */
    if (fd_out < 0)
      error(101, outfname);
 

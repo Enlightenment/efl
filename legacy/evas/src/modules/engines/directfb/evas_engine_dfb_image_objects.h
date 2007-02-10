@@ -1,16 +1,16 @@
 #ifndef EVAS_ENGINE_DFB_IMAGE_OBJECTS_H
 #define EVAS_ENGINE_DFB_IMAGE_OBJECTS_H
-void               *evas_engine_directfb_image_load(void *data, char *file,
-						    char *key, int *error, Evas_Image_Load_Opts *lo);
+void               *evas_engine_directfb_image_load(void *data, const char *file,
+						    const char *key, int *error, Evas_Image_Load_Opts *lo);
 void               *evas_engine_directfb_image_new_from_data(void *data, int w,
 							     int h,
-							     DATA32 *
-							     image_data);
+							     DATA32 *image_data, 
+							     int alpha, int cspace);
 void               *evas_engine_directfb_image_new_from_copied_data(void *data,
 								    int w,
 								    int h,
-								    DATA32 *
-								    image_data);
+								    DATA32 *image_data, 
+								    int alpha, int cspace);
 void                evas_engine_directfb_image_free(void *data, void *image);
 void                evas_engine_directfb_image_size_get(void *data, void *image,
 							int *w, int *h);
@@ -47,6 +47,16 @@ char               *evas_engine_directfb_image_comment_get(void *data,
 							   void *image,
 							   char *key);
 char               *evas_engine_directfb_image_format_get(void *data,
+							  void *image);
+void                evas_engine_directfb_image_colorspace_set(void *data, 
+							      void *image, 
+							      int cspace);
+int                 evas_engine_directfb_image_colorspace_get(void *data, 
+							      void *image);
+void                evas_engine_directfb_image_native_set(void *data, 
+							  void *image, 
+							  void *native);
+void               *evas_engine_directfb_image_native_get(void *data, 
 							  void *image);
 void                evas_engine_directfb_image_cache_flush(void *data);
 void                evas_engine_directfb_image_cache_set(void *data, int bytes);

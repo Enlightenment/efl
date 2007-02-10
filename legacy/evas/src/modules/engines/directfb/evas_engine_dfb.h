@@ -152,15 +152,18 @@ void               evas_engine_directfb_gradient_render_post(void *data, void *g
 void               evas_engine_directfb_gradient_draw(void *data, void *context, void *surface,
 						       void *gradient, int x, int y, int w, int h);
 
-void               *evas_engine_directfb_font_load(void *data, char *name,
+void               *evas_engine_directfb_font_load(void *data, const char *name,
 						   int size);
 void               *evas_engine_directfb_font_memory_load(void *data,
 							  char *name,
 							  int size,
 							  const void *fdata,
 							  int fdata_size);
-void *evas_engine_directfb_font_add(void *data, void *font, char *name, int size);
-void *evas_engine_directfb_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
+void                *evas_engine_directfb_font_add(void *data, void *font, const char *name, int size);
+void                *evas_engine_directfb_font_memory_add(void *data, void *font, 
+							  char *name, int size, 
+							  const void *fdata, 
+							  int fdata_size);
 void                evas_engine_directfb_font_free(void *data, void *font);
 int                 evas_engine_directfb_font_ascent_get(void *data,
 							 void *font);
@@ -172,25 +175,25 @@ int                 evas_engine_directfb_font_max_descent_get(void *data,
 							      void *font);
 void                evas_engine_directfb_font_string_size_get(void *data,
 							      void *font,
-							      char *text,
+							      const char *text,
 							      int *w, int *h);
 int                 evas_engine_directfb_font_inset_get(void *data, void *font,
-							char *text);
+							const char *text);
 int                 evas_engine_directfb_font_h_advance_get(void *data,
 							    void *font,
-							    char *text);
+							    const char *text);
 int                 evas_engine_directfb_font_v_advance_get(void *data,
 							    void *font,
-							    char *text);
+							    const char *text);
 int                 evas_engine_directfb_font_char_coords_get(void *data,
 							      void *font,
-							      char *text,
+							      const char *text,
 							      int pos, int *cx,
 							      int *cy, int *cw,
 							      int *ch);
 int                 evas_engine_directfb_font_char_at_coords_get(void *data,
 								 void *font,
-								 char *text,
+								 const char *text,
 								 int x, int y,
 								 int *cx,
 								 int *cy,
@@ -199,7 +202,7 @@ int                 evas_engine_directfb_font_char_at_coords_get(void *data,
 void                evas_engine_directfb_font_draw(void *data, void *context,
 						   void *surface, void *font,
 						   int x, int y, int w, int h,
-						   int ow, int oh, char *text);
+						   int ow, int oh, const char *text);
 void                evas_engine_directfb_font_cache_flush(void *data);
 void                evas_engine_directfb_font_cache_set(void *data, int bytes);
 int                 evas_engine_directfb_font_cache_get(void *data);

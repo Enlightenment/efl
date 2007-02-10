@@ -21,6 +21,14 @@ MODULE_ARCH="$host_os-$host_cpu"
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
+create_shared_lib=""
+case "$host_os" in
+	mingw|mingw32)
+		create_shared_lib="-no-undefined "
+		;;
+esac
+AC_SUBST(create_shared_lib)
+
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
     PACKAGE_BIN_DIR="${ac_default_prefix}/bin"
@@ -117,18 +125,24 @@ fi
 ## dlopen
 
 dlopen_libs=""
-AC_CHECK_FUNCS(dlopen, res=yes, res=no)
-if test "x$res" = "xyes"; then
-  AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
-else
-  AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
-  if test "x$res" = "xyes"; then
-    AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
-    dlopen_libs=-ldl
-  else
-    AC_MSG_ERROR(Cannot find dlopen)
-  fi
-fi
+case "$host_os" in
+  mingw|mingw32)
+    AC_CHECK_HEADER(windows.h, [], [AC_MSG_ERROR(Cannot find windows.h)])
+  ;;
+  *)
+    AC_CHECK_FUNCS(dlopen, res=yes, res=no)
+    if test "x$res" = "xyes"; then
+      AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+    else
+      AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+      if test "x$res" = "xyes"; then
+        AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
+        dlopen_libs=-ldl
+      else
+        AC_MSG_ERROR(Cannot find dlopen)
+      fi
+    fi
+esac
 AC_SUBST(dlopen_libs)
 
 #####################################################################
@@ -715,6 +729,14 @@ AC_CHECK_HEADER(jpeglib.h,
   [ have_jpeg="no" ]
 )
 AC_MSG_CHECKING(whether to enable jpeg image loader)
+dnl Windows has no sigsetjmp function, nor equivalent.
+dnl So we disable the jpeg saver.
+have_jpeg_saver="yes"
+case "$host_os" in
+   mingw|mingw32)
+   have_jpeg_saver="no"
+   ;;
+esac
 AC_ARG_ENABLE(image-loader-jpeg, 
   [  --enable-image-loader-jpeg      enable JPEG image loader], [
       if test x"$enableval" = x"yes" ; then
@@ -741,6 +763,7 @@ if test "x$have_jpeg" = "xyes"; then
 fi
 
 AM_CONDITIONAL(BUILD_LOADER_JPEG, test x$have_jpeg = xyes)
+AM_CONDITIONAL(BUILD_SAVER_JPEG, test x$have_jpeg_saver = xyes)
 
 #######################################
 ## EET
@@ -1444,12 +1467,12 @@ AC_ARG_ENABLE(convert-8-rgb-111,
 ## Convert to 16bpp RGB 565
 conv_16_rgb_565="no"
 conv_16_rgb_565="yes"
-AC_MSG_CHECKING(whether to build 16bpp 565 converter code)
+AC_MSG_CHECKING(whether to build 16bpp 565 rgb converter code)
 AC_ARG_ENABLE(convert-16-rgb-565, 
-  [  --enable-convert-16-rgb-565     enable 16bpp 565 converter code], [
+  [  --enable-convert-16-rgb-565     enable 16bpp rgb 565 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp 565 Converter Support])
+        AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565 Converter Support])
         conv_16_rgb_565="yes"
       else
         AC_MSG_RESULT(no)
@@ -1458,7 +1481,30 @@ AC_ARG_ENABLE(convert-16-rgb-565,
   ], [
       AC_MSG_RESULT($conv_16_rgb_565)
       if test x"$conv_16_rgb_565" = x"yes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp 565 Converter Support])
+        AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565 Converter Support])
+      fi
+  ]
+)
+
+#######################################
+## Convert to 16bpp BGR 565
+conv_16_bgr_565="no"
+conv_16_bgr_565="yes"
+AC_MSG_CHECKING(whether to build 16bpp 565 bgr converter code)
+AC_ARG_ENABLE(convert-16-bgr-565, 
+  [  --enable-convert-16-bgr-565     enable 16bpp bgr 565 converter code], [
+      if test x"$enableval" = x"yes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565 Converter Support])
+        conv_16_bgr_565="yes"
+      else
+        AC_MSG_RESULT(no)
+	conv_16_bgr_565="no"
+      fi
+  ], [
+      AC_MSG_RESULT($conv_16_bgr_565)
+      if test x"$conv_16_bgr_565" = x"yes" ; then
+        AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565 Converter Support])
       fi
   ]
 )
@@ -2020,6 +2066,7 @@ echo "  8bpp RGB 121............: $conv_8_rgb_121"
 echo "  8bpp RGB 111............: $conv_8_rgb_111"
 # FIXME: add grayscale and B&W support
 echo "  16bpp RGB 565...........: $conv_16_rgb_565"
+echo "  16bpp BGR 565...........: $conv_16_bgr_565"
 echo "  16bpp RGB 555...........: $conv_16_rgb_555"
 echo "  16bpp RGB 444...........: $conv_16_rgb_444"
 echo "  16bpp RGB 565 (444 ipaq): $conv_16_rgb_ipq"
