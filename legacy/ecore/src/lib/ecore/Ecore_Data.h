@@ -192,6 +192,14 @@ extern "C" {
    EAPI void *ecore_dlist_next(Ecore_DList * list);
    EAPI void *ecore_dlist_previous(Ecore_DList * list);
    
+   /* Sorting the list */
+   EAPI int ecore_dlist_sort(Ecore_DList *list, Ecore_Compare_Cb compare,
+                                  char order);
+   EAPI int ecore_dlist_mergesort(Ecore_DList *list, Ecore_Compare_Cb compare,
+                                  char order);
+# define ecore_dlist_heapsort(list, compare, order) \
+   ecore_list_heapsort(list, compare, order)
+   
    /* Check to see if there is any data in the list */
    EAPI int ecore_dlist_is_empty(Ecore_DList * _e_dlist);
    

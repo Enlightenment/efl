@@ -40,6 +40,12 @@ static Ecore_List_Node *_ecore_list_node_merge(Ecore_List_Node *first,
                                                Ecore_List_Node *second,
                                                Ecore_Compare_Cb compare,
                                                int order);
+static Ecore_List_Node *_ecore_dlist_node_mergesort(Ecore_List_Node *first,
+                                  int n, Ecore_Compare_Cb compare, int order);
+static Ecore_List_Node *_ecore_dlist_node_merge(Ecore_List_Node *first, 
+                                               Ecore_List_Node *second,
+                                               Ecore_Compare_Cb compare,
+                                               int order);
 
 /* Private double linked list functions */
 static void *_ecore_dlist_previous(Ecore_DList * list);
@@ -1151,6 +1157,7 @@ ecore_list_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
   
    return 1;
 }
+
 /**
  * Sort data in @p list using the compare function @p compare
  * @param list      The list.
@@ -1977,6 +1984,168 @@ ecore_dlist_clear(Ecore_DList *list)
    ecore_list_clear(ECORE_LIST(list));
 
    return TRUE;
+}
+
+/**
+ * Sort data in @p list using the compare function @p compare
+ * @param list      The list.
+ * @param compare   The function to compare the data of @p list
+ * @param order     The sort direction
+ *
+ * @return          true on success
+ *
+ * This is a wrapper function for mergesort and heapsort. It
+ * tries to choose the fastest algorithm depending on the
+ * number of notes. Note: The sort may be unstable.
+ */
+EAPI int
+ecore_dlist_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
+{
+   CHECK_PARAM_POINTER_RETURN("list", list, 0);
+   
+   if (list->nodes < 2)
+     return 1;
+   if (list->nodes < ECORE_MERGESORT_LIMIT)
+     return ecore_dlist_mergesort(list, compare, order);
+   if (!ecore_dlist_heapsort(list, compare, order))
+     return ecore_dlist_mergesort(list, compare, order);
+  
+   return 1;
+}
+
+/**
+ * Sort data in @p list using the compare function @p compare
+ * @param list      The list.
+ * @param compare   The function to compare the data of @p list
+ * @param order     The sort direction
+ *
+ * @return          true on success
+ *
+ * Mergesort is a stable, in-place sorting algorithm 
+ */
+EAPI int
+ecore_dlist_mergesort(Ecore_DList *list, Ecore_Compare_Cb compare, char order)
+{
+   Ecore_List_Node *node;
+
+   CHECK_PARAM_POINTER_RETURN("list", list, 0);
+   if (list->nodes < 2)
+     return 1;
+
+   if (order == ECORE_SORT_MIN)
+     order = 1;
+   else
+     order = -1;
+
+   node = _ecore_dlist_node_mergesort(list->first, list->nodes, compare, order);
+   list->first = node;
+
+   /* maybe there is a better way to do that but our last node has changed */
+   while (node->next)
+     node = node->next;
+   list->last = node;
+
+   _ecore_list_goto_first(list);
+
+   return 1;
+}
+
+/* this is the internal recrusive function for the merge sort */
+static Ecore_List_Node *
+_ecore_dlist_node_mergesort(Ecore_List_Node *first, int n,
+                           Ecore_Compare_Cb compare, int order)
+{
+   Ecore_List_Node *middle;
+   Ecore_List_Node *premid;
+   int mid;
+   int i;
+
+   mid = n/2;
+
+   if (n < 2)
+     return first;
+   else if (n == 2)
+     {
+	if (compare(first->data, first->next->data) * order > 0)
+          {
+		/* swap the data */
+		void *data;
+		data = first->next->data;
+		first->next->data = first->data;
+		first->data = data;
+	  }
+      return first;
+    }
+
+   /* first find the premiddle node*/
+   for (premid = first, i = 0; i < mid - 1; i++)
+     premid = premid->next;
+
+   /* split the list */
+   middle = premid->next;
+   premid->next = NULL;
+   ECORE_DLIST_NODE(middle)->previous = NULL;
+
+   /* sort the the partial lists */
+   first = _ecore_dlist_node_mergesort(first, mid, compare, order);
+   middle = _ecore_dlist_node_mergesort(middle, n - mid, compare, order);
+
+   return _ecore_dlist_node_merge(first, middle, compare, order);
+}
+
+/* this function is used to merge the partial sorted lists */
+static Ecore_List_Node *
+_ecore_dlist_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
+                       Ecore_Compare_Cb compare, int order)
+{
+   Ecore_List_Node *list;
+   Ecore_List_Node *l;
+
+   /* select the first node outside the loop, because we need to keep
+    * a pointer to it */
+   if (compare(first->data, second->data) * order > 0)
+     {
+	list = l = second;
+	second = second->next;
+     }
+   else
+     {
+	list = l = first;
+	first = first->next;
+     }
+
+   /* and now start the merging */
+   while (first && second)
+     {
+	if (compare(first->data, second->data) * order > 0)
+	  {
+		ECORE_DLIST_NODE(second)->previous = ECORE_DLIST_NODE(l);
+		l = l->next = second;
+		second = second->next;
+	  }
+	else
+	  {
+		ECORE_DLIST_NODE(first)->previous = ECORE_DLIST_NODE(l);
+		l = l->next = first;
+		first = first->next;
+	  }
+     }
+
+   /* append the rest or set it to NULL */
+   if (first) 
+     {
+	ECORE_DLIST_NODE(first)->previous = ECORE_DLIST_NODE(l);
+        l->next = first;
+     }
+   else if (second)
+     {
+     	ECORE_DLIST_NODE(second)->previous = ECORE_DLIST_NODE(l);
+	l->next = second;
+     }
+   else
+     l->next = NULL;
+
+   return list;
 }
 
 /*
