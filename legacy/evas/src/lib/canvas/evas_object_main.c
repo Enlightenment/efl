@@ -13,10 +13,10 @@
  */
 #define FORWARD_NOOP_RESIZES_TO_SMART_OBJS
 
-static Evas_Object_List* get_layer_objects_last( Evas_Layer* l )
+static Evas_Object_List *
+get_layer_objects_last(Evas_Layer *l)
 {
-   if( !l || !l->objects )
-	return NULL;
+   if( !l || !l->objects ) return NULL;
 
    return ((Evas_Object_List *)(l->objects))->last;
 }
