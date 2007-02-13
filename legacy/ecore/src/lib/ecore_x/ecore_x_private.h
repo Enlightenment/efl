@@ -146,6 +146,7 @@ typedef struct _Ecore_X_DND_Target
 extern Display *_ecore_x_disp;
 extern double   _ecore_x_double_click_time;
 extern Time     _ecore_x_event_last_time;
+extern Time     _ecore_x_event_last_user_activity_time;
 extern Window   _ecore_x_event_last_win;
 extern int      _ecore_x_event_last_root_x;
 extern int      _ecore_x_event_last_root_y;

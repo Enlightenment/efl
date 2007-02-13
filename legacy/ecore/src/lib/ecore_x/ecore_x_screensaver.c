@@ -19,6 +19,12 @@ ecore_x_screensaver_event_available_get(void)
 }
 
 EAPI void
+ecore_x_screensaver_set(int timeout, int interval, int blank, int expose)
+{
+   XSetScreenSaver(_ecore_x_disp, timeout, interval, blank, expose); 
+}
+
+EAPI void
 ecore_x_screensaver_timeout_set(double timeout)
 {
    int pto, pint, pblank, pexpo;

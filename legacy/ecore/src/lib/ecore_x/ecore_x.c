@@ -37,6 +37,7 @@ static int _ecore_x_grab_count = 0;
 Display *_ecore_x_disp = NULL;
 double   _ecore_x_double_click_time = 0.25;
 Time     _ecore_x_event_last_time = 0;
+Time     _ecore_x_event_last_user_activity_time = 0;
 Window   _ecore_x_event_last_win = 0;
 int      _ecore_x_event_last_root_x = 0;
 int      _ecore_x_event_last_root_y = 0;
@@ -51,7 +52,7 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_TEXT = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_UTF8_STRING = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_COMPOUND_TEXT = 0;
 
-Ecore_X_Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
+Ecore_X_Atom _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 /*
  * GNOME hints.
@@ -646,6 +647,16 @@ EAPI Ecore_X_Time
 ecore_x_current_time_get(void)
 {
    return _ecore_x_event_last_time;
+}
+
+/*
+ * Return the last time a *USER* generated an event
+ *   Should corespond to key-down, key-up, mouse-down, mouse-up, mouse move
+ */
+EAPI Ecore_X_Time
+ecore_x_current_user_activity_time_get()
+{
+   return _ecore_x_event_last_user_activity_time;
 }
 
 static int

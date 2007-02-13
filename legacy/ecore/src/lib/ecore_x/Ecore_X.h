@@ -981,6 +981,7 @@ EAPI void             ecore_x_killall(Ecore_X_Window root);
 EAPI void             ecore_x_kill(Ecore_X_Window win);
 
 EAPI Ecore_X_Time     ecore_x_current_time_get(void);
+EAPI Ecore_X_Time     ecore_x_current_user_activity_time_get(void);
 
 EAPI void             ecore_x_error_handler_set(void (*func) (void *data), const void *data);
 EAPI void             ecore_x_io_error_handler_set(void (*func) (void *data), const void *data);
