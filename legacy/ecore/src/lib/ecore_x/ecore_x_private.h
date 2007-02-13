@@ -18,6 +18,7 @@
 #include <X11/extensions/XShm.h>
 #include <X11/extensions/shape.h>
 #include <X11/extensions/sync.h>
+#include <X11/extensions/dpms.h>
 #ifdef ECORE_XCURSOR
 #include <X11/Xcursor/Xcursor.h>
 #endif
