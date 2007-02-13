@@ -93,8 +93,10 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 	
 	escb = l->data;
 	if ((escb->func == func) && 
-	    (!strcmp(escb->signal, emission)) &&
-	    (!strcmp(escb->source, source)))
+	    ((!escb->signal && !emission[0]) ||
+             (escb->signal && !strcmp(escb->signal, emission))) &&
+	    ((!escb->source && !source[0]) ||
+             (escb->source && !strcmp(escb->source, source))))
 	  {
 	     void *data;
 	     
