@@ -60,6 +60,9 @@ extern "C" {
    
    typedef struct _ecore_list_node Ecore_List_Node;
 # define ECORE_LIST_NODE(node) ((Ecore_List_Node *)node)
+
+   typedef struct _ecore_strbuf Ecore_Strbuf;
+# define ECORE_STRBUF(buf) ((Ecore_Strbuf *)buf)
    
    struct _ecore_list_node {
       void *data;
@@ -475,6 +478,14 @@ extern "C" {
    
    /* Add a function to free the data stored in nodes */
    EAPI int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func);
+
+
+Ecore_Strbuf * ecore_strbuf_new(void);
+Ecore_Strbuf * ecore_strbuf_new(void);
+void ecore_strbuf_free(Ecore_Strbuf *buf);
+void ecore_strbuf_append(Ecore_Strbuf *buf, const char *str);
+void ecore_strbuf_append_char(Ecore_Strbuf *buf, char c);
+const char * ecore_strbuf_string_get(Ecore_Strbuf *buf);
 
 #ifdef __cplusplus
 }

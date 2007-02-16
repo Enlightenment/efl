@@ -25,6 +25,7 @@ ecore_plugin.c \
 ecore_sheap.c \
 ecore_signal.c \
 ecore_str.c \
+ecore_strbuf.c \
 ecore_strings.c \
 ecore_time.c \
 ecore_timer.c \
