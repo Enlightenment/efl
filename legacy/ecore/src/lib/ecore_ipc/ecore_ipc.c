@@ -693,6 +693,23 @@ ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr)
    return ecore_con_server_ip_get(svr->server);
 }
 
+/**
+ * Flushes all pending data to the given server. Will return when done.
+ *
+ * @param   svr           The given server.
+ * @ingroup Ecore_Ipc_Server_Group
+ */
+EAPI void
+ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
+			 "ecore_ipc_server_server_flush");
+	return;
+     }
+   ecore_con_server_flush(svr->server);
+}
 
 #define CLENC(_member) \
    d = _ecore_ipc_dlt_int(msg._member, cl->prev.o._member, &md); \
@@ -936,6 +953,24 @@ ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl)
 	return NULL;
      }
    return ecore_con_client_ip_get(cl->client);
+}
+
+/**
+ * Flushes all pending data to the given client. Will return when done.
+ * 
+ * @param   cl            The given client.
+ * @ingroup Ecore_Ipc_Client_Group
+ */
+EAPI void
+ecore_ipc_client_flush(Ecore_Ipc_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
+     {
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
+			 "ecore_ipc_client_flush");
+	return;
+     }
+   ecore_con_client_flush(cl->client);
 }
 
 /**

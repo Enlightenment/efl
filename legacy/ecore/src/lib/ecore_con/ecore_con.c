@@ -740,6 +740,24 @@ ecore_con_server_ip_get(Ecore_Con_Server *svr)
 }
 
 /**
+ * Flushes all pending data to the given server. Will return when done.
+ * 
+ * @param   svr           The given server.
+ * @ingroup Ecore_Con_Server_Group
+ */
+EAPI void
+ecore_con_server_flush(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
+			 "ecore_con_server_flush");
+	return;
+     }
+   _ecore_con_server_flush(svr);
+}
+
+/**
  * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
  *
  * Functions that operate on Ecore connection client objects.
@@ -900,6 +918,24 @@ ecore_con_client_ip_get(Ecore_Con_Client *cl)
 	return NULL;
      }
    return cl->ip;
+}
+
+/**
+ * Flushes all pending data to the given client. Will return when done.
+ * 
+ * @param   cl            The given client.
+ * @ingroup Ecore_Con_Client_Group
+ */
+EAPI void
+ecore_con_client_flush(Ecore_Con_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
+			 "ecore_con_client_flush");
+	return;
+     }
+   _ecore_con_client_flush(cl);
 }
 
 /**
