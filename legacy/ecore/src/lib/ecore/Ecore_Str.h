@@ -41,6 +41,7 @@ extern "C" {
 
 /* strlcpy implementation for libc's lacking it */
 EAPI size_t ecore_strlcpy(char *dst, const char *src, size_t siz);
+EAPI size_t ecore_strlcat(char *dst, const char *src, size_t siz);
 
 EAPI int ecore_str_has_prefix(const char *str, const char *prefix);
 
