@@ -257,7 +257,10 @@ _ecore_desktop_get(const char *file, const char *lang)
 		    {
 		       *exe = '\0';
 		       exe++;
-		       result->exec_params = strdup(exe);
+		       /* trim the parameter string */
+		       for(; isspace(*exe) && ((exe - result->exec) < PATH_MAX) && (*exe != '\0'); exe++);
+		       if(*exe != '\0')
+		          result->exec_params = strdup(exe);
 		    }
 	       }
 
