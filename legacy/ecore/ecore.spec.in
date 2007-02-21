@@ -22,12 +22,13 @@
 %bcond_without lib_ecore_fb
 %bcond_without lib_ecore_directfb
 
-
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
 
-%define ac_with_lib_ecore_fb  --%{?with_lib_ecore_fb:en}%{!?with_lib_ecore_fb:dis}able-ecore-fb
-%define ac_with_lib_ecore_directfb --%{?with_lib_ecore_directfb:en}%{!?with_lib_ecore_directfb:dis}able-ecore-dfb
+%define breq_lib_ecore_directfb     %{?with_lib_ecore_directfb:DirectFB}
+
+%define ac_with_lib_ecore_fb        --%{?with_lib_ecore_fb:en}%{!?with_lib_ecore_fb:dis}able-ecore-fb
+%define ac_with_lib_ecore_directfb  --%{?with_lib_ecore_directfb:en}%{!?with_lib_ecore_directfb:dis}able-ecore-dfb
 
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@
@@ -41,7 +42,7 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel, XFree86-devel, curl-devel
-BuildRequires: libjpeg-devel, openssl-devel
+BuildRequires: libjpeg-devel, openssl-devel %{?breq_lib_ecore_directfb}
 BuildRequires: evas-devel, eet-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
