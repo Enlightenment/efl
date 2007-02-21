@@ -481,11 +481,13 @@ extern "C" {
 
 
 Ecore_Strbuf * ecore_strbuf_new(void);
-Ecore_Strbuf * ecore_strbuf_new(void);
 void ecore_strbuf_free(Ecore_Strbuf *buf);
 void ecore_strbuf_append(Ecore_Strbuf *buf, const char *str);
 void ecore_strbuf_append_char(Ecore_Strbuf *buf, char c);
+void ecore_strbuf_insert(Ecore_Strbuf *buf, const char *str, size_t pos);
+#define ecore_strbuf_prepend(buf, str) ecore_strbuf_insert(buf, str, 0)
 const char * ecore_strbuf_string_get(Ecore_Strbuf *buf);
+size_t ecore_strbuf_length_get(Ecore_Strbuf *buf);
 
 #ifdef __cplusplus
 }
