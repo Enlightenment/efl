@@ -22,6 +22,9 @@
 # endif
 #endif
 
+/* we need this for size_t */
+#include <stddef.h>
+
 /**
  * @file Ecore_Data.h
  * @brief Contains threading, list, hash, debugging and tree functions.
