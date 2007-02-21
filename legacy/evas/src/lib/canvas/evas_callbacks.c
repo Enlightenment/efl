@@ -92,6 +92,21 @@ evas_object_event_callback_clear(Evas_Object *obj)
 }
 
 void
+evas_object_event_callback_all_del(Evas_Object *obj)
+{
+   Evas_Object_List *l;
+
+   if (!obj->callbacks) return;
+   for (l = obj->callbacks->callbacks; l; l = l->next)
+     {
+	Evas_Func_Node *fn;
+
+	fn = (Evas_Func_Node *)l;
+	fn->delete_me = 1;
+     }
+}
+
+void
 evas_object_event_callback_cleanup(Evas_Object *obj)
 {
    /* MEM OK */

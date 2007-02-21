@@ -56,6 +56,7 @@ evas_object_free(Evas_Object *obj, int clean_layer)
 	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
 	free(r);
      }
+   evas_object_event_callback_all_del(obj);
    evas_object_event_callback_cleanup(obj);
    while (obj->data.elements)
      {
