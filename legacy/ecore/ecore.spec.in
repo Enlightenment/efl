@@ -41,9 +41,9 @@ URL: http://www.enlightenment.org
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel, XFree86-devel, curl-devel
+#BuildSuggests: xorg-x11-devel, XFree86-devel
 BuildRequires: libjpeg-devel, openssl-devel %{?breq_lib_ecore_directfb}
-BuildRequires: evas-devel, eet-devel
+BuildRequires: curl-devel, evas-devel, eet-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -56,7 +56,7 @@ use of the work put into Ecore to make this job easy for applications.
 Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
-Requires: openssl-devel, evas-devel, eet-devel
+Requires: curl-devel, openssl-devel, evas-devel, eet-devel
 Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop,
 Requires: ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt
 Requires: ecore-x %{?with_lib_ecore_fb:ecore-fb} %{?with_lib_ecore_directfb:ecore-directfb}
