@@ -33,7 +33,7 @@
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.%(date '+%Y%m%d')
+Release: 1.20070201
 License: BSD
 Group: User Interface/X
 Source: %{name}-%{version}.tar.gz
@@ -57,7 +57,7 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: curl-devel, openssl-devel, evas-devel, eet-devel
-Requires: ecore-con, ecore-config, ecore-dbus, ecore-desktop,
+Requires: ecore-bin, ecore-con, ecore-config, ecore-dbus, ecore-desktop,
 Requires: ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt
 Requires: ecore-x %{?with_lib_ecore_fb:ecore-fb} %{?with_lib_ecore_directfb:ecore-directfb}
 
