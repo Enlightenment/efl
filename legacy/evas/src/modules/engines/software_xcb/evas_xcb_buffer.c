@@ -62,10 +62,14 @@ evas_software_xcb_x_write_mask_line(Outbuf            *buf,
 int
 evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
 {
+   static xcb_connection_t  *cached_c = NULL;
+   static int                cached_result = 0;
    xcb_get_geometry_reply_t *geom;
    xcb_drawable_t            drawable;
    int                       depth;
 
+   if (c == cached_c) return cached_result;
+   cached_c = c;
    /* FIXME: get the corect screen */
    drawable = xcb_setup_roots_iterator (xcb_get_setup(c)).data->root;
    geom = xcb_get_geometry_reply (c, xcb_get_geometry_unchecked(c, drawable), 0);
@@ -85,10 +89,16 @@ evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
 						      16,
 						      2,
 						      NULL);
-	if (!xcbob) return 0;
+	if (!xcbob)
+	  {
+	     cached_result = 0;
+	     return 0;
+	  }
 	evas_software_xcb_x_output_buffer_free(xcbob, 1);
+	cached_result = 1;
 	return 1;
      }
+   cached_result = 0;
    return 0;
 }
 

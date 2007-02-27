@@ -154,6 +154,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
 		     else
 			pm = PAL_MODE_MONO;
 		  }
+                /* FIXME: only alloc once per display+cmap */
 		buf->priv.pal =
 		   evas_software_xcb_x_color_allocate(conn,
 						      cmap,
@@ -771,14 +772,19 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
 {
    /* create an "empty" perf struct with just the system & display info */
    Outbuf_Perf   *perf;
+#if 0
    xcb_drawable_t root;
    struct utsname un;
    FILE          *f;
+#endif
 
    perf = calloc(1, sizeof(Outbuf_Perf));
 
    perf->x.conn = conn;
 
+   perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
+
+#if 0
    /* FIXME: should use the default screen */
    root = xcb_setup_roots_iterator ((xcb_setup_t *)xcb_get_setup (conn)).data->root;
    if (draw)
@@ -813,8 +819,6 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
    perf->x.release      = (int)((xcb_setup_t *)xcb_get_setup(conn))->release_number;
    perf->x.screen_count = xcb_setup_roots_iterator((xcb_setup_t *)xcb_get_setup(conn)).rem;
    perf->x.depth        = x_depth;
-
-   perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
 
    if (!uname(&un))
      {
@@ -879,9 +883,8 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
      }
    if (!perf->cpu.info)
       perf->cpu.info = strdup("");
+#endif
    return perf;
-   vis = NULL;
-   cmap = 0;
 }
 
 char *
@@ -889,6 +892,8 @@ evas_software_xcb_outbuf_perf_serialize_info_x(Outbuf_Perf *perf)
 {
    /* get a seriazed string that is a unique identifier for your */
    /* hardware/x/connection setup. */
+   return NULL;
+#if 0
    char  buf[32768];
    int   sum1, sum2, i;
    char *p;
@@ -912,12 +917,15 @@ evas_software_xcb_outbuf_perf_serialize_info_x(Outbuf_Perf *perf)
      }
    snprintf(buf, sizeof(buf), "%08x%08x", sum1, sum2);
    return strdup(buf);
+#endif
 }
 
 void
 evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
 {
    /* write performance results to x root property */
+   return;
+#if 0
    xcb_intern_atom_cookie_t     cookie_atom;
    xcb_get_input_focus_cookie_t cookie_focus;
    xcb_intern_atom_reply_t     *reply_atom;
@@ -951,6 +959,7 @@ evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
    free(reply_focus);
    free(str);
    free (reply_atom);
+#endif
 }
 
 Outbuf_Perf *
@@ -961,15 +970,19 @@ evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
 					int               x_depth)
 {
    /* read performance results from root window */
+#if 0
    xcb_intern_atom_reply_t  *type_rep;
    xcb_get_property_cookie_t cookie;
    xcb_get_property_reply_t *prop_rep;
    char                     *type_str;
    xcb_atom_t                type, format;
+#endif
    Outbuf_Perf              *perf;
 
    perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
+   return perf;
 
+#if 0
    type_str = "__EVAS_PERF_ENGINE_SOFTWARE";
    type_rep = xcb_intern_atom_reply(conn,
                                     xcb_intern_atom_unchecked(conn,
@@ -1007,18 +1020,21 @@ evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
      free(prop_rep);
 
    return perf;
+#endif
 }
 
 void
 evas_software_xcb_outbuf_perf_free(Outbuf_Perf *perf)
 {
    /* free the perf struct */
+#if 0
    free(perf->x.display);
    free(perf->x.vendor);
    free(perf->os.name);
    free(perf->os.version);
    free(perf->os.machine);
    free(perf->cpu.info);
+#endif
    free(perf);
 }
 
