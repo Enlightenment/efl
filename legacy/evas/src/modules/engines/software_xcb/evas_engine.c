@@ -20,12 +20,12 @@ struct _Render_Engine
 };
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, int rot, xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualtype_t *vis, xcb_colormap_t cmap, int depth, int debug, int grayscale, int max_colors, xcb_drawable_t mask, int shape_dither, int destination_alpha);
+static void *_output_setup(int w, int h, int rot, xcb_connection_t *conn, xcb_screen_t     *screen, xcb_drawable_t draw, xcb_visualtype_t *vis, xcb_colormap_t cmap, int depth, int debug, int grayscale, int max_colors, xcb_drawable_t mask, int shape_dither, int destination_alpha);
 static xcb_visualtype_t *_best_visual_get(xcb_connection_t *conn, int screen);
 static xcb_colormap_t _best_colormap_get(xcb_connection_t *conn, int screen);
 static int _best_depth_get(xcb_connection_t *conn, int screen);
-static Evas_Performance *_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
-static Evas_Performance *_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
+static Evas_Performance *_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
+static Evas_Performance *_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
 static char *_output_perf_data(Evas_Performance *perf);
 static char *_output_perf_key(Evas_Performance *perf);
 static void _output_perf_free(Evas_Performance *perf);
@@ -50,6 +50,7 @@ _output_setup(int               w,
 	      int               h,
 	      int               rot,
 	      xcb_connection_t *conn,
+              xcb_screen_t     *screen,
 	      xcb_drawable_t    draw,
 	      xcb_visualtype_t *vis,
 	      xcb_colormap_t    cmap,
@@ -85,10 +86,11 @@ _output_setup(int               w,
    evas_software_xcb_outbuf_init();
 
    /* get any stored performance metrics from device (xserver) */
-   perf = evas_software_xcb_outbuf_perf_restore_x(conn, draw, vis, cmap, depth);
+   perf = evas_software_xcb_outbuf_perf_restore_x(conn, screen, draw, vis, cmap, depth);
    re->ob = evas_software_xcb_outbuf_setup_x(w, h, rot,
 					     OUTBUF_DEPTH_INHERIT,
 					     conn,
+                                             screen,
 					     draw,
 					     vis,
 					     cmap,
@@ -184,16 +186,16 @@ _best_depth_get(xcb_connection_t *conn, int screen)
 }
 
 static Evas_Performance *
-_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
+_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
 {
-   return evas_software_xcb_outbuf_perf_x(conn, draw, vis, cmap, depth);
+   return evas_software_xcb_outbuf_perf_x(conn, screen, draw, vis, cmap, depth);
    e = NULL;
 }
 
 static Evas_Performance *
-_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
+_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
 {
-   return evas_software_xcb_outbuf_perf_x(conn, draw, vis, cmap, depth);
+   return evas_software_xcb_outbuf_perf_x(conn, screen, draw, vis, cmap, depth);
    e = NULL;
 }
 
@@ -275,6 +277,7 @@ eng_setup(Evas *e, void *in)
 		   e->output.h,
 		   info->info.rotation,
 		   info->info.conn,
+                   info->info.screen,
 		   info->info.drawable,
 		   info->info.visual,
 		   info->info.colormap,
@@ -294,11 +297,12 @@ eng_setup(Evas *e, void *in)
                                                  info->info.rotation,
                                                  OUTBUF_DEPTH_INHERIT,
                                                  info->info.conn,
+                                                 info->info.screen,
                                                  info->info.drawable,
                                                  info->info.visual,
                                                  info->info.colormap,
                                                  info->info.depth,
-                                                 evas_software_xcb_outbuf_perf_restore_x(info->info.conn, info->info.drawable, info->info.visual, info->info.colormap, info->info.depth),
+                                                 evas_software_xcb_outbuf_perf_restore_x(info->info.conn, info->info.screen, info->info.drawable, info->info.visual, info->info.colormap, info->info.depth),
                                                  info->info.alloc_grayscale,
                                                  info->info.alloc_colors_max,
                                                  info->info.mask,

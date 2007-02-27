@@ -40,6 +40,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
 				 int               rot,
 				 Outbuf_Depth      depth,
 				 xcb_connection_t *conn,
+                                 xcb_screen_t     *screen,
 				 xcb_drawable_t    draw,
 				 xcb_visualtype_t *vis,
 				 xcb_colormap_t    cmap,
@@ -63,6 +64,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
    buf->rot = rot;
 
    buf->priv.x.conn = conn;
+   buf->priv.x.screen = screen;
    buf->priv.x.vis = vis;
    buf->priv.x.cmap = cmap;
    buf->priv.x.depth = x_depth;
@@ -74,7 +76,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
       Gfx_Func_Convert    conv_func;
       Xcb_Output_Buffer  *xcbob;
 
-      buf->priv.x.shm = evas_software_xcb_x_can_do_shm(buf->priv.x.conn);
+      buf->priv.x.shm = evas_software_xcb_x_can_do_shm(buf->priv.x.conn, buf->priv.x.screen);
       xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 						    buf->priv.x.depth,
 						    1, 1,
@@ -765,6 +767,7 @@ evas_software_xcb_outbuf_perf_deserialize_x(Outbuf_Perf *perf,
 
 Outbuf_Perf *
 evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
+                                    xcb_screen_t     *screen,
 				    xcb_drawable_t    draw,
 				    xcb_visualtype_t *vis,
 				    xcb_colormap_t    cmap,
@@ -785,8 +788,7 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
    perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
 
 #if 0
-   /* FIXME: should use the default screen */
-   root = xcb_setup_roots_iterator ((xcb_setup_t *)xcb_get_setup (conn)).data->root;
+   root = screen->root;
    if (draw)
      {
 	xcb_get_geometry_reply_t *geom;
@@ -812,7 +814,7 @@ evas_software_xcb_outbuf_perf_new_x(xcb_connection_t *conn,
      }
    perf->x.root = root;
 
-   perf->x.display      = strdup (":0"); /* FIXME: strdup(DisplayString(disp)); in XCB ? */
+   perf->x.display      = strdup (":0"); /* FIXME: there's no way to get the display value with XCB */
    perf->x.vendor       = strdup(xcb_setup_vendor((xcb_setup_t *)xcb_get_setup(conn)));
    perf->x.version      = (int)((xcb_setup_t *)xcb_get_setup(conn))->protocol_major_version;
    perf->x.revision     = (int)((xcb_setup_t *)xcb_get_setup(conn))->protocol_minor_version;
@@ -964,6 +966,7 @@ evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
 
 Outbuf_Perf *
 evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
+                                        xcb_screen_t     *screen,
 					xcb_drawable_t    draw,
 					xcb_visualtype_t *vis,
 					xcb_colormap_t    cmap,
@@ -979,7 +982,7 @@ evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
 #endif
    Outbuf_Perf              *perf;
 
-   perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
+   perf = evas_software_xcb_outbuf_perf_new_x(conn, screen, draw, vis, cmap, x_depth);
    return perf;
 
 #if 0
@@ -1040,6 +1043,7 @@ evas_software_xcb_outbuf_perf_free(Outbuf_Perf *perf)
 
 Outbuf_Perf *
 evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
+                                xcb_screen_t     *screen,
 				xcb_drawable_t    draw,
 				xcb_visualtype_t *vis,
 				xcb_colormap_t    cmap,
@@ -1054,7 +1058,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
    int                          w, h;
    int                          do_shm = 0;
 
-   perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
+   perf = evas_software_xcb_outbuf_perf_new_x(conn, screen, draw, vis, cmap, x_depth);
 
    mask = XCB_CW_BACK_PIXMAP  | XCB_CW_BORDER_PIXEL |
      XCB_CW_BIT_GRAVITY       | XCB_CW_BACKING_STORE |
@@ -1087,7 +1091,7 @@ evas_software_xcb_outbuf_perf_x(xcb_connection_t *conn,
    xcb_configure_window (conn, win, mask, value2);
    xcb_map_window (conn, win);
 
-   do_shm = evas_software_xcb_x_can_do_shm(conn);
+   do_shm = evas_software_xcb_x_can_do_shm(conn, screen);
 
    /* set it to something ridiculous to start */
    perf->min_shm_image_pixel_count = w * w;

@@ -14,6 +14,7 @@ struct _Evas_Engine_Info_Software_Xcb
    /* engine specific data & parameters it needs to set up */
    struct {
       xcb_connection_t  *conn;
+      xcb_screen_t      *screen;
       xcb_drawable_t     drawable;
       xcb_drawable_t     mask;
       xcb_visualtype_t  *visual;
@@ -38,6 +39,7 @@ struct _Evas_Engine_Info_Software_Xcb
 
       Evas_Performance *(*performance_test)         (Evas             *e,
 						     xcb_connection_t *conn,
+                                                     xcb_screen_t     *screen,
 						     xcb_visualtype_t *vis,
 						     xcb_colormap_t    cmap,
 						     xcb_drawable_t    draw,
@@ -47,6 +49,7 @@ struct _Evas_Engine_Info_Software_Xcb
       char *            (*performance_key_get)      (Evas_Performance *perf);
       Evas_Performance *(*performance_new)          (Evas             *e,
 						     xcb_connection_t *conn,
+                                                     xcb_screen_t     *screen,
 						     xcb_visualtype_t *vis,
 						     xcb_colormap_t    cmap,
 						     xcb_drawable_t    draw,

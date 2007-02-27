@@ -60,31 +60,21 @@ evas_software_xcb_x_write_mask_line(Outbuf            *buf,
 }
 
 int
-evas_software_xcb_x_can_do_shm(xcb_connection_t *c)
+evas_software_xcb_x_can_do_shm(xcb_connection_t *c,
+                               xcb_screen_t     *screen)
 {
    static xcb_connection_t  *cached_c = NULL;
    static int                cached_result = 0;
-   xcb_get_geometry_reply_t *geom;
-   xcb_drawable_t            drawable;
-   int                       depth;
 
    if (c == cached_c) return cached_result;
    cached_c = c;
-   /* FIXME: get the corect screen */
-   drawable = xcb_setup_roots_iterator (xcb_get_setup(c)).data->root;
-   geom = xcb_get_geometry_reply (c, xcb_get_geometry_unchecked(c, drawable), 0);
-   if(!geom)
-     return 0;
-
-   depth = geom->depth;
-   free (geom);
 
    if (xcb_get_extension_data(c, &xcb_shm_id))
      {
 	Xcb_Output_Buffer *xcbob;
 
 	xcbob = evas_software_xcb_x_output_buffer_new(c,
-						      depth,
+						      screen->root_depth,
 						      16,
 						      16,
 						      2,

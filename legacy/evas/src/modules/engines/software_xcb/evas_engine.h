@@ -37,6 +37,7 @@ struct _Outbuf
       Convert_Pal *pal;
       struct {
          xcb_connection_t  *conn;
+         xcb_screen_t      *screen;
 	 xcb_drawable_t     win;
 	 xcb_drawable_t     mask;
 	 xcb_visualtype_t  *vis;
@@ -117,7 +118,8 @@ void               evas_software_xcb_x_write_mask_line         (Outbuf          
 								DATA32            *src,
 								int                w,
 								int                y);
-int                evas_software_xcb_x_can_do_shm              (xcb_connection_t *c);
+int                evas_software_xcb_x_can_do_shm              (xcb_connection_t *c,
+                                                                xcb_screen_t     *screen);
 Xcb_Output_Buffer *evas_software_xcb_x_output_buffer_new       (xcb_connection_t *c,
 								int            depth,
 								int            w,
@@ -158,6 +160,7 @@ Outbuf      *evas_software_xcb_outbuf_setup_x                (int               
 							      int               rot,
 							      Outbuf_Depth      depth,
 							      xcb_connection_t *conn,
+                                                              xcb_screen_t     *screen,
 							      xcb_drawable_t    draw,
 							      xcb_visualtype_t *vis,
 							      xcb_colormap_t    cmap,
@@ -173,6 +176,7 @@ char        *evas_software_xcb_outbuf_perf_serialize_x       (Outbuf_Perf *perf)
 void         evas_software_xcb_outbuf_perf_deserialize_x     (Outbuf_Perf *perf,
 							      const char *data);
 Outbuf_Perf *evas_software_xcb_outbuf_perf_new_x             (xcb_connection_t *conn,
+                                                              xcb_screen_t     *screen,
 							      xcb_drawable_t    draw,
                                                               xcb_visualtype_t *vis,
 							      xcb_colormap_t    cmap,
@@ -181,12 +185,14 @@ Outbuf_Perf *evas_software_xcb_outbuf_perf_new_x             (xcb_connection_t *
 char        *evas_software_xcb_outbuf_perf_serialize_info_x  (Outbuf_Perf *perf);
 void         evas_software_xcb_outbuf_perf_store_x           (Outbuf_Perf *perf);
 Outbuf_Perf *evas_software_xcb_outbuf_perf_restore_x         (xcb_connection_t *conn,
+                                                              xcb_screen_t     *screen,
 							      xcb_drawable_t    draw,
 							      xcb_visualtype_t *vis,
 							      xcb_colormap_t    cmap,
 							      int               x_depth);
 void         evas_software_xcb_outbuf_perf_free              (Outbuf_Perf *perf);
 Outbuf_Perf *evas_software_xcb_outbuf_perf_x                 (xcb_connection_t *conn,
+                                                              xcb_screen_t     *screen,
 							      xcb_drawable_t    draw,
 							      xcb_visualtype_t *vis,
 							      xcb_colormap_t    cmap,
