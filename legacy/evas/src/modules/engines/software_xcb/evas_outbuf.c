@@ -939,7 +939,8 @@ evas_software_xcb_outbuf_perf_store_x(Outbuf_Perf *perf)
    if (!reply_atom) return;
 
    type = reply_atom->atom;
-   format = STRING;
+   /* Atom STRING predefined in xorg. Value : 31 */
+   format = 31;
 
    str = evas_software_xcb_outbuf_perf_serialize_x(perf);
    xcb_change_property(perf->x.conn, XCB_PROP_MODE_REPLACE, perf->x.root,
@@ -980,7 +981,8 @@ evas_software_xcb_outbuf_perf_restore_x(xcb_connection_t *conn,
      return perf;
 
    type = type_rep->atom;
-   format = STRING;
+   /* Atom STRING predefined in xorg. Value : 31 */
+   format = 31;
    free(type_rep);
 
    cookie = xcb_get_property_unchecked(conn, 0, perf->x.root,
