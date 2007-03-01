@@ -264,11 +264,15 @@ Evas_List *
 edje_color_class_list(void)
 {
    Edje_List_Foreach_Data *fdata;
+   Evas_List *list;
 
    fdata = calloc(1, sizeof(Edje_List_Foreach_Data));
    evas_hash_foreach(_edje_color_class_member_hash, _edje_color_class_list_foreach, fdata);
 
-   return fdata->list;
+   list = fdata->list;
+   free(fdata);
+
+   return list;
 }
 
 static Evas_Bool
