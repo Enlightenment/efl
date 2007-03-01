@@ -263,16 +263,12 @@ edje_color_class_del(const char *color_class)
 Evas_List *
 edje_color_class_list(void)
 {
-   Edje_List_Foreach_Data *fdata;
-   Evas_List *list;
+   Edje_List_Foreach_Data fdata;
+   
+   memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
+   evas_hash_foreach(_edje_color_class_member_hash, _edje_color_class_list_foreach, &fdata);
 
-   fdata = calloc(1, sizeof(Edje_List_Foreach_Data));
-   evas_hash_foreach(_edje_color_class_member_hash, _edje_color_class_list_foreach, fdata);
-
-   list = fdata->list;
-   free(fdata);
-
-   return list;
+   return fdata.list;
 }
 
 static Evas_Bool
@@ -527,16 +523,12 @@ edje_text_class_del(const char *text_class)
 Evas_List *
 edje_text_class_list(void)
 {
-   Edje_List_Foreach_Data *fdata;
-   Evas_List *list;
+   Edje_List_Foreach_Data fdata;
+   
+   memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
+   evas_hash_foreach(_edje_text_class_member_hash, _edje_text_class_list_foreach, &fdata);
 
-   fdata = calloc(1, sizeof(Edje_List_Foreach_Data));
-   evas_hash_foreach(_edje_text_class_member_hash, _edje_text_class_list_foreach, fdata);
-
-   list = fdata->list;
-   free(fdata);
-
-   return list;
+   return fdata.list;
 }
 
 static Evas_Bool
