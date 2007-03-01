@@ -331,7 +331,7 @@ ecore_file_ls(const char *dir)
      }
    closedir(dirp);
    
-   ecore_list_sort(list, ECORE_COMPARE_CB(strcasecmp), ECORE_SORT_MIN);
+   ecore_list_sort(list, ECORE_COMPARE_CB(strcoll), ECORE_SORT_MIN);
 
    ecore_list_goto_first(list);
    return list;
