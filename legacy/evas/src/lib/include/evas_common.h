@@ -46,6 +46,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <ctype.h>
 
 #ifdef HAVE_ALLOCA_H
@@ -347,7 +348,7 @@ struct _RGBA_Image
 	char           *comment;
      } info;
    int                  references;
-//   DATA64               timestamp;
+   time_t               timestamp;
    void                *extended_info;
    RGBA_Image_Loadopts  load_opts;
    unsigned char        scale;

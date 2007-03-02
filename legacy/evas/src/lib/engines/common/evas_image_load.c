@@ -31,6 +31,8 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
    im = evas_common_image_new();
    if (!im) return NULL;
    
+   im->timestamp = st.st_mtime;
+   
    if (lo) im->load_opts = *lo;
    
    p = strrchr(file, '.');

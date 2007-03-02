@@ -468,6 +468,7 @@ evas_common_image_unstore(RGBA_Image *im)
    im->flags &= ~RGBA_IMAGE_INDEXED;
 }
 
+#define STAT_GAP 2
 
 EAPI RGBA_Image *
 evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo)
@@ -476,6 +477,8 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
    RGBA_Image *im;
    char buf[4096 + 1024];
    Evas_Object_List *l;
+   struct stat st;
+   static time_t last_stat = 0, t, mt;
 
    if ((!file) && (!key)) return NULL;
    if (!file) return NULL;
@@ -498,29 +501,70 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
 	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, file);
      }
    im = evas_hash_find(images, buf);
-   if (im) return im;
+   t = time();
+   if (im)
+     {
+	if ((t - last_stat) < STAT_GAP)
+	  return im;
+	else
+	  {
+	     struct stat st;
+	     
+	     if (stat(file, &st) != 0) return NULL;
+	     mt = st.st_mtime;
+	     if (mt == im->timestamp)
+	       {
+		  last_stat = t;
+		  return im;
+	       }
+	  }
+     }
+   else
+     {
+        if ((t - last_stat) >= STAT_GAP)
+	  {
+	     if (stat(file, &st) != 0) return NULL;
+	     mt = st.st_mtime;
+	     last_stat = t;
+	  }
+     }
+     
    for (l = cache; l; l = l->next)
      {
 	int ok;
-
+	
 	im = (RGBA_Image *)l;
-	ok = 0;
 	lo2 = &(im->load_opts);
+	ok = 0;
 	if ((file) && (im->info.file) &&
 	    (!strcmp(file, im->info.file)))
 	  ok++;
 	else if ((!file) && (!im->info.file))
 	  ok++;
+	else continue;
+	
 	if ((key) && (im->info.key) &&
 	    (!strcmp(key, im->info.key)))
 	  ok++;
 	else if ((!key) && (!im->info.key))
 	  ok++;
+	else continue;
+	
+        if ((t - last_stat) >= STAT_GAP)
+	  {
+	     if (im->timestamp == mt)
+	       ok++;
+	     else continue;
+	  }
+	else ok++;
+	
 	if ((lo->scale_down_by == lo2->scale_down_by) &&
 	    (lo->dpi == lo2->dpi) && (lo->w == lo2->w) && 
 	    (lo->h == lo2->h))
 	  ok++;
-	if (ok >= 3) return im;
+	else continue;
+	
+	return im;
      }
 /*
    for (l = cache; l; l = l->next)
