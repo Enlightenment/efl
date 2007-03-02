@@ -40,11 +40,9 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
      return NULL;
 
    fb_init(vt_no, dev_no);
-   if (rot == 0)
+   if (rot == 0 || rot == 180)
      buf->priv.fb.fb = fb_setmode(w, h, fb_depth, refresh);
-   else if (rot == 270)
-     buf->priv.fb.fb = fb_setmode(h, w, fb_depth, refresh);
-   else if (rot == 90)
+   else if (rot == 90 || rot == 270)
      buf->priv.fb.fb = fb_setmode(h, w, fb_depth, refresh);
    if (!buf->priv.fb.fb) buf->priv.fb.fb = fb_getmode();
    if (!buf->priv.fb.fb)
@@ -54,17 +52,12 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
      }
    fb_fd = fb_postinit(buf->priv.fb.fb);
 
-   if (rot == 0)
+   if (rot == 0 || rot == 180)
      {
  	buf->w = buf->priv.fb.fb->width;
 	buf->h = buf->priv.fb.fb->height;
      }
-   else if (rot == 270)
-     {
- 	buf->w = buf->priv.fb.fb->height;
-	buf->h = buf->priv.fb.fb->width;
-     }
-   else if (rot == 90)
+   else if (rot == 90 || rot == 270)
      {
  	buf->w = buf->priv.fb.fb->height;
 	buf->h = buf->priv.fb.fb->width;
@@ -88,7 +81,7 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
 	  buf->priv.mask.b |= (1 << (buf->priv.fb.fb->fb_var.blue.offset + i));
 
 	conv_func = NULL;
-	if (buf->rot == 0)
+	if (buf->rot == 0 || buf->rot == 180)
 	  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
 				       buf->priv.fb.fb->fb_var.bits_per_pixel,
 				       buf->priv.mask.r,
@@ -96,15 +89,7 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
 				       buf->priv.mask.b,
 				       PAL_MODE_NONE,
 				       buf->rot);
-	else if (buf->rot == 270)
-	  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-				       buf->priv.fb.fb->fb_var.bits_per_pixel,
-				       buf->priv.mask.r,
-				       buf->priv.mask.g,
-				       buf->priv.mask.b,
-				       PAL_MODE_NONE,
-				       buf->rot);
-	else if (buf->rot == 90)
+	else if (buf->rot == 90 || buf->rot == 270)
 	  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
 				       buf->priv.fb.fb->fb_var.bits_per_pixel,
 				       buf->priv.mask.r,
@@ -163,6 +148,16 @@ evas_fb_outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 					  buf->priv.mask.b, PAL_MODE_NONE,
 					  buf->rot);
 	  }
+        else if (buf->rot == 180)
+          {
+             data = (DATA8 *)buf->priv.fb.fb->mem + buf->priv.fb.fb->mem_offset +
+               buf->priv.fb.fb->bpp *
+               (buf->w - x - w + ((buf->h - y - h) * buf->priv.fb.fb->width));
+             conv_func = evas_common_convert_func_get(data, w, h, buf->priv.fb.fb->fb_var.bits_per_pixel,
+                                          buf->priv.mask.r, buf->priv.mask.g,
+                                          buf->priv.mask.b, PAL_MODE_NONE,
+                                          buf->rot);
+          }
 	else if (buf->rot == 270)
 	  {
 	     data = (DATA8 *)buf->priv.fb.fb->mem + buf->priv.fb.fb->mem_offset +
@@ -188,7 +183,7 @@ evas_fb_outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 	     DATA32 *src_data;
 
 	     src_data = buf->priv.back_buf->image->data + (y * buf->w) + x;
-	     if (buf->rot == 0)
+	     if (buf->rot == 0 || buf->rot == 180)
 	       {
 		  conv_func(src_data, data,
 			    buf->w - w,
@@ -196,15 +191,7 @@ evas_fb_outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 			    w, h,
 			    x, y, NULL);
 	       }
-	     else if (buf->rot == 270)
-	       {
-		  conv_func(src_data, data,
-			    buf->w - w,
-			    buf->priv.fb.fb->width - h,
-			    h, w,
-			    x, y, NULL);
-	       }
-	     else if (buf->rot == 90)
+	     else if (buf->rot == 90 || buf->rot == 270)
 	       {
 		  conv_func(src_data, data,
 			    buf->w - w,
@@ -277,6 +264,18 @@ evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, in
 					  buf->priv.mask.b, PAL_MODE_NONE,
 					  buf->rot);
 	  }
+        else if (buf->rot == 180)  
+          {
+             data = (DATA8 *)buf->priv.fb.fb->mem +
+               buf->priv.fb.fb->mem_offset +
+               buf->priv.fb.fb->bpp *  
+               (buf->w - x - w + ((buf->h - y - h) * buf->priv.fb.fb->width));
+             conv_func = evas_common_convert_func_get(data, w, h,
+                                          buf->priv.fb.fb->fb_var.bits_per_pixel,
+                                          buf->priv.mask.r, buf->priv.mask.g,
+                                          buf->priv.mask.b, PAL_MODE_NONE,
+                                          buf->rot);
+          }
 	else if (buf->rot == 270)
 	  {
 	     data = (DATA8 *)buf->priv.fb.fb->mem +
@@ -306,7 +305,7 @@ evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, in
 	     DATA32 *src_data;
 
 	     src_data = update->image->data;
-	     if (buf->rot == 0)
+	     if (buf->rot == 0 || buf->rot == 180)
 	       {
 		  conv_func(src_data, data,
 			    0,
@@ -314,15 +313,7 @@ evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, in
 			    w, h,
 			    x, y, NULL);
 	       }
-	     else if (buf->rot == 270)
-	       {
-		  conv_func(src_data, data,
-			    0,
-			    buf->priv.fb.fb->width - h,
-			    h, w,
-			    x, y, NULL);
-	       }
-	     else if (buf->rot == 90)
+	     else if (buf->rot == 90 || buf->rot == 270)
 	       {
 		  conv_func(src_data, data,
 			    0,

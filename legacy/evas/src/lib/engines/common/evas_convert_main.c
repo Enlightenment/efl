@@ -208,6 +208,15 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 			 return evas_common_convert_rgba_to_16bpp_rgb_565_dith;
 		    }
 #endif
+#ifdef BUILD_CONVERT_16_RGB_ROT180
+		  if (rotation == 180)
+		    {
+		       if ((!(w & 0x1)) && (!((int)dest & 0x3)))
+			 return evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_180;
+		       else
+			 return evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_180;
+		    }
+#endif
 #ifdef BUILD_CONVERT_16_RGB_ROT270
 		  if (rotation == 270)
 		    {
@@ -238,6 +247,15 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 			 return evas_common_convert_rgba2_to_16bpp_bgr_565_dith;
 		       else
 			 return evas_common_convert_rgba_to_16bpp_bgr_565_dith;
+		    }
+#endif
+#ifdef BUILD_CONVERT_16_RGB_ROT180
+		  if (rotation == 180)
+		    {
+		       if ((!(w & 0x1)) && (!((int)dest & 0x3)))
+			 return evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_180;
+		       else
+			 return evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180;
 		    }
 #endif
 #ifdef BUILD_CONVERT_16_RGB_ROT270
@@ -272,6 +290,15 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
  			 return evas_common_convert_rgba_to_16bpp_rgb_555_dith;
 		    }
 #endif
+#ifdef BUILD_CONVERT_16_RGB_ROT180
+		  if (rotation == 180)
+		    {
+		       if ((!(w & 0x1)) && (!((int)dest & 0x3)))
+			 return evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_180;
+		       else
+			 return evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_180;
+		    }
+#endif
 #ifdef BUILD_CONVERT_16_RGB_ROT270
 		  if (rotation == 270)
 		    {
@@ -302,6 +329,15 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 			 return evas_common_convert_rgba2_to_16bpp_rgb_444_dith;
 		       else
 			 return evas_common_convert_rgba_to_16bpp_rgb_444_dith;
+		    }
+#endif
+#ifdef BUILD_CONVERT_16_RGB_ROT180
+		  if (rotation == 180)
+		    {
+		       if ((!(w & 0x1)) && (!((int)dest & 0x3)))
+			 return evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_180;
+		       else
+			 return evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_180;
 		    }
 #endif
 #ifdef BUILD_CONVERT_16_RGB_ROT270
@@ -337,6 +373,15 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 
 		    }
 #endif
+#ifdef BUILD_CONVERT_16_RGB_ROT180
+		  if (rotation == 180)
+		    {
+		       if ((!(w & 0x1)) && (!((int)dest & 0x3)))
+			 return evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180;
+		       else
+			 return evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180;
+		    }
+#endif
 #ifdef BUILD_CONVERT_16_RGB_ROT270
 		  if (rotation == 270)
 		    {
@@ -370,6 +415,15 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 
 		    }
 #endif
+#ifdef BUILD_CONVERT_16_RGB_ROT180
+		  if (rotation == 180)
+		    {
+		       if ((!(w & 0x1)) && (!((int)dest & 0x3)))
+			 return evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180;
+		       else
+			 return evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180;
+		    }
+#endif
 #ifdef BUILD_CONVERT_16_RGB_ROT270
 		  if (rotation == 270)
 		    {
@@ -400,6 +454,10 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_32bpp_rgb_8888;
 #endif
+#ifdef BUILD_CONVERT_32_RGB_ROT180
+		  if (rotation == 180)
+		    return evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180;
+#endif
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 		  if (rotation == 270)
 		    return evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270;
@@ -416,6 +474,10 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 #ifdef BUILD_CONVERT_32_RGB_ROT0
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_32bpp_rgbx_8888;
+#endif
+#ifdef BUILD_CONVERT_32_RGB_ROT180
+		  if (rotation == 180)
+		    return evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_180;
 #endif
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 		  if (rotation == 270)
@@ -434,6 +496,10 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_32bpp_bgr_8888;
 #endif
+#ifdef BUILD_CONVERT_32_RGB_ROT180
+		  if (rotation == 180)
+		    return evas_common_convert_rgba_to_32bpp_bgr_8888_rot_180;
+#endif
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 		  if (rotation == 270)
 		    return evas_common_convert_rgba_to_32bpp_bgr_8888_rot_270;
@@ -450,6 +516,10 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 #ifdef BUILD_CONVERT_32_RGB_ROT0
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_32bpp_bgrx_8888;
+#endif
+#ifdef BUILD_CONVERT_32_RGB_ROT180
+		  if (rotation == 180)
+		    return evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_180;
 #endif
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 		  if (rotation == 270)

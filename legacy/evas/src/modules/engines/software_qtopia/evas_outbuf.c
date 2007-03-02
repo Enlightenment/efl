@@ -125,6 +125,10 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
 					       d->fb.mask.r, d->fb.mask.g, d->fb.mask.b,
 					       PAL_MODE_NONE, buf->rot);
 	       }
+	     else if (buf->rot == 180)
+	       {
+		 // FIXME
+	       }
 	     else if (buf->rot == 270)
 	       {
                   fb_mem = d->fb.data +
@@ -160,6 +164,10 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
 				 d->fb.width - w,
 				 w, h,
 				 x, y, NULL);
+		    }
+		  else if (buf->rot == 180)
+		    {
+		      // FIXME
 		    }
 		  else if (buf->rot == 270)
 		    {

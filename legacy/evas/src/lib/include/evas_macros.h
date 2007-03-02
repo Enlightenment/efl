@@ -94,6 +94,21 @@
         dst_ptr += dst_jump; \
      }
 
+#define CONVERT_LOOP_START_ROT_180() \
+   src_ptr = src + (w - 1) + ((h - 1) * (w + src_jump)); \
+   for (y = 0; y < h; y++) \
+     { \
+        for (x = 0; x < w; x++) \
+          {
+
+#define CONVERT_LOOP_END_ROT_180() \
+             dst_ptr++; \
+             src_ptr--; \
+          } \
+        src_ptr = src + (w - 1) + ((h - y - 2) * (w + src_jump)); \
+        dst_ptr += dst_jump; \
+     }
+
 #define CONVERT_LOOP_START_ROT_270() \
    src_ptr = src + ((w - 1) * (h + src_jump)); \
    for (y = 0; y < h; y++) \
@@ -140,6 +155,25 @@ x++;
              src_ptr++; \
           } \
         src_ptr += src_jump; \
+        dst_ptr += dst_jump; \
+     }
+
+#define CONVERT_LOOP2_START_ROT_180() \
+   src_ptr = src + (w - 1) + ((h - 1) * (w + src_jump)); \
+   for (y = 0; y < h; y++) \
+     { \
+        for (x = 0; x < w; x++) \
+          {
+
+#define CONVERT_LOOP2_INC_ROT_180() \
+src_ptr--; \
+x++;
+
+#define CONVERT_LOOP2_END_ROT_180() \
+             dst_ptr+=2; \
+             src_ptr--; \
+          } \
+        src_ptr = src + (w - 1) + ((h - y - 2) * (w + src_jump)); \
         dst_ptr += dst_jump; \
      }
 

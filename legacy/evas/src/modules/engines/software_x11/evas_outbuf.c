@@ -147,7 +147,7 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	     }
 	   if (buf->priv.pal)
 	     {
-		if (buf->rot == 0)
+		if (buf->rot == 0 || buf->rot == 180)
 		  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
 							   evas_software_x11_x_output_buffer_depth
 							   (xob), buf->priv.mask.r,
@@ -155,15 +155,7 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 							   buf->priv.mask.b,
 							   buf->priv.pal->colors,
 							   buf->rot);
-		else if (buf->rot == 270)
-		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-							   evas_software_x11_x_output_buffer_depth
-							   (xob), buf->priv.mask.r,
-							   buf->priv.mask.g,
-							   buf->priv.mask.b,
-							   buf->priv.pal->colors,
-							   buf->rot);
-		else if (buf->rot == 90)
+		else if (buf->rot == 90 || buf->rot == 270)
 		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
 							   evas_software_x11_x_output_buffer_depth
 							   (xob), buf->priv.mask.r,
@@ -174,21 +166,14 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	     }
 	   else
 	     {
-		if (buf->rot == 0)
+		if (buf->rot == 0 || buf->rot == 180)
 		  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
 							   evas_software_x11_x_output_buffer_depth
 							   (xob), buf->priv.mask.r,
 							   buf->priv.mask.g,
 						buf->priv.mask.b, PAL_MODE_NONE,
 							   buf->rot);
-		else if (buf->rot == 270)
-		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-							   evas_software_x11_x_output_buffer_depth
-							   (xob), buf->priv.mask.r,
-							   buf->priv.mask.g,
-							   buf->priv.mask.b, PAL_MODE_NONE,
-							   buf->rot);
-		else if (buf->rot == 90)
+		else if (buf->rot == 90 || buf->rot == 270)
 		  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
 							   evas_software_x11_x_output_buffer_depth
 							   (xob), buf->priv.mask.r,
