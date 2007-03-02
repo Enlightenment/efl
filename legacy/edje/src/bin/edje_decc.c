@@ -11,6 +11,7 @@
 
 char *progname = NULL;
 char *file_in = NULL;
+char *file_out = NULL;
 
 Edje_File *edje_file = NULL;
 SrcFile_List *srcfiles = NULL;
@@ -31,7 +32,7 @@ main_help(void)
 {
    printf
      ("Usage:\n"
-      "\t%s input_file.edj \n"
+      "\t%s input_file.edj [-main-out file.edc]\n"
       "\n"
       ,progname);
 }
@@ -48,6 +49,11 @@ main(int argc, char **argv)
      {
 	if (!file_in)
 	  file_in = argv[i];
+	else if ((!strcmp(argv[i], "-main-out")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     file_out = argv[i];
+	  }
      }
    if (!file_in)
      {
@@ -285,6 +291,12 @@ output(void)
 	fprintf(f, "#!/bin/sh\n");
 	fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
 	fclose(f);
+	
+	if (file_out)
+	  {
+	     snprintf(out, sizeof(out), "%s/%s", outdir, file_out);
+	     symlink(sf->name, out);
+	  }
 
 #ifndef WIN32
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
