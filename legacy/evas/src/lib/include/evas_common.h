@@ -348,12 +348,13 @@ struct _RGBA_Image
 	char           *comment;
      } info;
    int                  references;
-   time_t               timestamp;
    void                *extended_info;
    RGBA_Image_Loadopts  load_opts;
    unsigned char        scale;
    RGBA_Pipe           *pipe;
    int                  ref;
+   time_t               timestamp;
+   time_t               laststat;
    struct {
       void                *data;
       int                  space;

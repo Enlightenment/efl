@@ -1,10 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 extern Evas_List *evas_modules;
 
 EAPI RGBA_Image *
@@ -17,6 +13,7 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
    char *loader = NULL;
    Evas_Module *em;
    struct stat st;
+//   time_t t;
    
    if (file == NULL) return NULL;
 
@@ -26,12 +23,14 @@ evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_L
 	evas_common_image_ref(im);
 	return im;
      }
+//   t = time();
    if (stat(file, &st) < 0) return NULL;
    
    im = evas_common_image_new();
    if (!im) return NULL;
    
    im->timestamp = st.st_mtime;
+//   im->last_stat = t;
    
    if (lo) im->load_opts = *lo;
    

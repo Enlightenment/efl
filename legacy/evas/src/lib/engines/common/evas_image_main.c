@@ -478,7 +478,8 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
    char buf[4096 + 1024];
    Evas_Object_List *l;
    struct stat st;
-   static time_t last_stat = 0, t, mt;
+   static time_t last_stat = 0;
+   time_t t, mt = 0;
 
    if ((!file) && (!key)) return NULL;
    if (!file) return NULL;
@@ -500,33 +501,32 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
 	else
 	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, file);
      }
+//   t = time();
    im = evas_hash_find(images, buf);
-   t = time();
    if (im)
      {
-	if ((t - last_stat) < STAT_GAP)
-	  return im;
-	else
+//	if ((t - im->last_stat) < STAT_GAP)
+//	  return im;
+//	else
 	  {
 	     struct stat st;
 	     
-	     if (stat(file, &st) != 0) return NULL;
+	     if (stat(file, &st) < 0) return NULL;
 	     mt = st.st_mtime;
 	     if (mt == im->timestamp)
 	       {
-		  last_stat = t;
+//		  im->last_stat = t;
 		  return im;
 	       }
 	  }
      }
    else
      {
-        if ((t - last_stat) >= STAT_GAP)
-	  {
-	     if (stat(file, &st) != 0) return NULL;
+//        if ((t - last_stat) >= STAT_GAP)
+//	  {
+	     if (stat(file, &st) < 0) return NULL;
 	     mt = st.st_mtime;
-	     last_stat = t;
-	  }
+//	  }
      }
      
    for (l = cache; l; l = l->next)
@@ -550,13 +550,13 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
 	  ok++;
 	else continue;
 	
-        if ((t - last_stat) >= STAT_GAP)
-	  {
+//        if ((t - im->last_stat) >= STAT_GAP)
+//	  {
 	     if (im->timestamp == mt)
 	       ok++;
 	     else continue;
-	  }
-	else ok++;
+//	  }
+//	else ok++;
 	
 	if ((lo->scale_down_by == lo2->scale_down_by) &&
 	    (lo->dpi == lo2->dpi) && (lo->w == lo2->w) && 
@@ -564,6 +564,7 @@ evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA
 	  ok++;
 	else continue;
 	
+//	im->last_stat = t;
 	return im;
      }
 /*
