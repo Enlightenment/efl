@@ -194,6 +194,16 @@ eng_output_redraws_clear(void *data)
 //   printf("GL: finish update cycle!\n");
 }
 
+/* at least the nvidia drivers are so abysmal that copying from the backbuffer
+ * to the front using glCopyPixels() that you literally can WATCH it draw the
+ * pixels slowly across the screen with a window update taking multiple
+ * seconds - so workaround by doing a full buffer render as frankly GL isn't
+ * up to doing anything that isn't done by quake (etc.)
+ */
+#define SLOW_GL_COPY_RECT 1
+/* vsync games - not for now though */
+//#define VSYNC_TO_SCREEN 1
+
 static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
@@ -207,6 +217,24 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 	return NULL;
      }
 //   printf("GL: update....!\n");
+#ifdef SLOW_GL_COPY_RECT
+   /* if any update - just return the whole canvas - works with swap 
+    * buffers then */
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = re->win->w;
+   if (h) *h = re->win->h;
+   if (cx) *cx = 0;
+   if (cy) *cy = 0;
+   if (cw) *cw = re->win->w;
+   if (ch) *ch = re->win->h;
+#else
+   /* 1 update - INCREDIBLY SLOW if combined with swap_rect in flush. a gl
+    * problem where there just is no hardware path for somethnig that
+    * obviously SHOULD be there */
+   /* only 1 update to minimise gl context games and rendering multiple update
+    * regions as evas does with other engines
+    */
    if (x) *x = re->win->draw.x1;
    if (y) *y = re->win->draw.y1;
    if (w) *w = re->win->draw.x2 - re->win->draw.x1 + 1;
@@ -215,6 +243,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cy) *cy = re->win->draw.y1;
    if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
    if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
+#endif   
    return re;
 }
 
@@ -238,14 +267,7 @@ eng_output_flush(void *data)
 //   printf("GL: flush your mush!\n");
    eng_window_use(re->win);
 
-/* SLOW AS ALL HELL! */
-#if 0
-   evas_gl_common_swap_rect(re->win->gl_context,
-			    re->win->draw.x1, re->win->draw.y1,
-			    re->win->draw.x2 - re->win->draw.x1 + 1,
-			    re->win->draw.y2 - re->win->draw.y1 + 1);
-#else
-#if 0
+#ifdef VSYNC_TO_SCREEN
    glFlush();
      {
 	unsigned int rc;
@@ -254,7 +276,14 @@ eng_output_flush(void *data)
 	glXWaitVideoSyncSGI(2, (rc + 1) % 2, &rc);
      }
 #endif   
+#ifdef SLOW_GL_COPY_RECT
    glXSwapBuffers(re->win->disp, re->win->win);
+#else
+   /* SLOW AS ALL HELL! */
+   evas_gl_common_swap_rect(re->win->gl_context,
+			    re->win->draw.x1, re->win->draw.y1,
+			    re->win->draw.x2 - re->win->draw.x1 + 1,
+			    re->win->draw.y2 - re->win->draw.y1 + 1);
 #endif
 //   glFlush();
 //   glXWaitGL();
