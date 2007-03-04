@@ -256,6 +256,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
    /* put back update surface.. in this case just unflag redraw */
 //   printf("GL: update done.\n");
    re->win->draw.redraw = 0;
+   re->win->draw.drew = 1;
 }
 
 static void
@@ -264,6 +265,8 @@ eng_output_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if (!re->win->draw.drew) return;
+   re->win->draw.drew = 0;
 //   printf("GL: flush your mush!\n");
    eng_window_use(re->win);
 

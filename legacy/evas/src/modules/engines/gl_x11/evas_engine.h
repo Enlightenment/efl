@@ -19,6 +19,7 @@ struct _Evas_GL_X11_Window
    Evas_GL_Context *gl_context;
    struct {
       int              redraw : 1;
+      int              drew : 1;
       int              x1, y1, x2, y2;
    } draw;
 };
