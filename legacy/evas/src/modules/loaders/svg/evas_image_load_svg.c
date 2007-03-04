@@ -43,9 +43,31 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
    RsvgHandle         *rsvg;
    RsvgDimensionData   dim;
    int                 w, h;
+   char               *ext;
    
    if (!file) return 0;
-   
+
+   /* ignore all files not called .svg or .svg.gz - because rsvg has a leak
+    * where closing the handle doesn't free mem */
+   ext = strrchr(file, '.');
+   if (!ext) return;
+   if (!strcasecmp(ext, ".gz"))
+     {
+	if (p > file)
+	  {
+	     ext = p - 1;
+	     while ((*p != '.') && (p > file))
+	       {
+		  p--;
+	       }
+	     if (p <= file) return 0;
+	     if (strcasecmp(p, ".svg.gz")) return 0;
+	  }
+	else
+	  return 0;
+     }
+   else if (strcasecmp(ext, ".svg")) return 0;
+
    getcwd(pcwd, sizeof(pcwd));
    strncpy(cwd, file, sizeof(cwd) - 1);
    cwd[sizeof(cwd) - 1] = 0;
@@ -64,7 +86,9 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 	im->image = evas_common_image_surface_new(im);
 	if (!im->image)
 	  {
-	     rsvg_handle_free(rsvg);
+	     rsvg_handle_close(rsvg, NULL);
+	     g_object_unref(rsvg);
+//	     rsvg_handle_free(rsvg);
 	     chdir(pcwd);
 	     return 0;
 	  }
@@ -75,7 +99,11 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
    h = dim.height;
    if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
-	rsvg_handle_free(rsvg);
+	evas_common_image_surface_free(im->image);
+	im->image = NULL;
+	rsvg_handle_close(rsvg, NULL);
+	g_object_unref(rsvg);
+//	rsvg_handle_free(rsvg);
 	chdir(pcwd);
 	return 0;
      }
@@ -109,7 +137,9 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
    im->image->w = w;
    im->image->h = h;
    im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   rsvg_handle_free(rsvg);
+   rsvg_handle_close(rsvg, NULL);
+   g_object_unref(rsvg);
+//   rsvg_handle_free(rsvg);
    chdir(pcwd);
    return 1;
 }
@@ -119,16 +149,36 @@ int
 evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 {
    char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
-   
    RsvgHandle         *rsvg;
    RsvgDimensionData   dim;
    int                 w, h;
-
    cairo_surface_t    *surface;
    cairo_t            *cr;
+   char               *ext;
 
    if (!file) return 0;
    if (!im->image) return 0;
+
+   /* ignore all files not called .svg or .svg.gz - because rsvg has a leak
+    * where closing the handle doesn't free mem */
+   ext = strrchr(file, '.');
+   if (!ext) return;
+   if (!strcasecmp(ext, ".gz"))
+     {
+	if (p > file)
+	  {
+	     ext = p - 1;
+	     while ((*p != '.') && (p > file))
+	       {
+		  p--;
+	       }
+	     if (p <= file) return 0;
+	     if (strcasecmp(p, ".svg.gz")) return 0;
+	  }
+	else
+	  return 0;
+     }
+   else if (strcasecmp(ext, ".svg")) return 0;
 
    getcwd(pcwd, sizeof(pcwd));
    strncpy(cwd, file, sizeof(cwd) - 1);
@@ -151,7 +201,11 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    h = dim.height;
    if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
-	rsvg_handle_free(rsvg);
+	evas_common_image_surface_free(im->image);
+	im->image = NULL;
+	rsvg_handle_close(rsvg, NULL);
+	g_object_unref(rsvg);
+//	rsvg_handle_free(rsvg);
 	chdir(pcwd);
 	return 0;
      }
@@ -190,7 +244,9 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
      {
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_free(rsvg);
+	rsvg_handle_close(rsvg, NULL);
+	g_object_unref(rsvg);
+//	rsvg_handle_free(rsvg);
 	chdir(pcwd);
 	return 0;
      }
@@ -203,7 +259,9 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
      {
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_free(rsvg);
+	rsvg_handle_close(rsvg, NULL);
+	g_object_unref(rsvg);
+//	rsvg_handle_free(rsvg);
 	chdir(pcwd);
 	return 0;
      }
@@ -213,7 +271,9 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	cairo_surface_destroy(surface);
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_free(rsvg);
+	rsvg_handle_close(rsvg, NULL);
+	g_object_unref(rsvg);
+//	rsvg_handle_free(rsvg);
 	chdir(pcwd);
 	return 0;
      }
@@ -225,7 +285,9 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    cairo_surface_destroy(surface);
    /* need to check if this is required... */
    cairo_destroy(cr);
-   rsvg_handle_free(rsvg);
+   rsvg_handle_close(rsvg, NULL);
+   g_object_unref(rsvg);
+//   rsvg_handle_free(rsvg);
    chdir(pcwd);
    evas_common_image_set_alpha_sparse(im);
    return 1;
