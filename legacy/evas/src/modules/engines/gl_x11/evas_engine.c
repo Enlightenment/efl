@@ -648,7 +648,7 @@ eng_image_native_get(void *data, void *image)
 }
 
 static void *
-eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Opts *lo)
+eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    Render_Engine *re;
 
