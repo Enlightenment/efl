@@ -1,7 +1,7 @@
 #include "evas_gl_private.h"
 
 Evas_GL_Image *
-evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key, Evas_Image_Load_Opts *lo)
+evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo)
 {
    Evas_GL_Image *im;
    RGBA_Image *im_im;
