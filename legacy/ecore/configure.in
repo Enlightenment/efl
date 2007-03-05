@@ -161,10 +161,10 @@ have_ecore_x="no";
 ecore_x_cflags="";
 ecore_x_libs="";
 
-#x_dir="";
-#x_includes="";
-#x_cflags="";
-#x_libs="";
+x_dir="";
+x_includes="";
+x_cflags="";
+x_libs="";
 
 if test "x$have_ecore_txt" = "xyes"; then
   AC_MSG_CHECKING(whether ecore_x module is to be built)
