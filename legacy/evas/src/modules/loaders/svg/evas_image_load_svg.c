@@ -86,7 +86,7 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 	im->image = evas_common_image_surface_new(im);
 	if (!im->image)
 	  {
-	     rsvg_handle_close(rsvg, NULL);
+//	     rsvg_handle_close(rsvg, NULL);
 	     g_object_unref(rsvg);
 //	     rsvg_handle_free(rsvg);
 	     chdir(pcwd);
@@ -101,7 +101,7 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
      {
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_close(rsvg, NULL);
+//	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
 	chdir(pcwd);
@@ -137,7 +137,7 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
    im->image->w = w;
    im->image->h = h;
    im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   rsvg_handle_close(rsvg, NULL);
+//   rsvg_handle_close(rsvg, NULL);
    g_object_unref(rsvg);
 //   rsvg_handle_free(rsvg);
    chdir(pcwd);
@@ -203,7 +203,7 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
      {
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_close(rsvg, NULL);
+//	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
 	chdir(pcwd);
@@ -244,7 +244,7 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
      {
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_close(rsvg, NULL);
+//	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
 	chdir(pcwd);
@@ -259,7 +259,7 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
      {
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_close(rsvg, NULL);
+//	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
 	chdir(pcwd);
@@ -271,7 +271,7 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	cairo_surface_destroy(surface);
 	evas_common_image_surface_free(im->image);
 	im->image = NULL;
-	rsvg_handle_close(rsvg, NULL);
+//	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
 	chdir(pcwd);
@@ -285,7 +285,7 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    cairo_surface_destroy(surface);
    /* need to check if this is required... */
    cairo_destroy(cr);
-   rsvg_handle_close(rsvg, NULL);
+//   rsvg_handle_close(rsvg, NULL);
    g_object_unref(rsvg);
 //   rsvg_handle_free(rsvg);
    chdir(pcwd);
