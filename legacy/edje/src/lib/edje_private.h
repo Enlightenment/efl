@@ -229,6 +229,7 @@ struct _Edje_File
    
    Evas_Hash                      *collection_hash;
    Evas_List                      *collection_cache;
+   Evas_Hash                      *data_cache;
 };
 
 struct _Edje_Style

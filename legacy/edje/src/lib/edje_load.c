@@ -426,23 +426,15 @@ edje_file_data_get(const char *file, const char *key)
    char *str = NULL;
    int error_ret = 0;
    
-   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
-   if (edf != NULL)
+   if (key)
      {
-	for (l = edf->data; l; l = l->next)
+	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
+	if ((edf != NULL) && (edf->data_cache != NULL))
 	  {
-	     Edje_Data *di;
-	
-	     di = l->data;
-	     if ((di->key) && (key) && (!strcmp(di->key, key)))
-	       {
-		  if (!di->value) return NULL;
-		  str = strdup(di->value);
-		  break;
-	       }
-     
+	     str = evas_hash_find(edf->data_cache, key);
+	     if (str) str = strdup(str);
+	     _edje_cache_file_unref(edf);
 	  }
-	_edje_cache_file_unref(edf);
      }
    return str;
 }
@@ -581,6 +573,19 @@ _edje_file_del(Edje *ed)
    ed->table_programs = NULL;
    ed->table_programs_size = 0;
 }
+/**
+ * Used to free the cached data values that are stored in the data_cache
+ * hash table.
+ */
+static Evas_Bool data_cache_free(Evas_Hash *hash, const char *key,
+                                  void *data, void *fdata)
+{
+	evas_stringshare_del(data);
+
+	return 1;
+}
+
+
 
 void
 _edje_file_free(Edje_File *edf)
@@ -657,7 +662,13 @@ _edje_file_free(Edje_File *edf)
 	if (edt->value) evas_stringshare_del(edt->value);
 	free(edt);
      }
-   
+   if (edf->data_cache)
+     {
+	evas_hash_foreach(edf->data_cache, data_cache_free, NULL);
+	evas_hash_free(edf->data_cache);
+	edf->data_cache = NULL;
+     }
+
    while (edf->color_classes)
      {
 	Edje_Color_Class *ecc;

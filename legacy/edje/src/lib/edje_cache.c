@@ -69,6 +69,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    Edje_File *edf;
    Edje_Part_Collection *edc;
    Eet_File *ef;
+   Evas_List *l;
    
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -102,6 +103,14 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    edf->references = 1;
 
    _edje_textblock_style_parse_and_fix(edf);
+
+   for (l = edf->data; l; l = evas_list_remove(l, l->data))
+     {
+	Edje_Data *di = l->data;
+	edf->data_cache = evas_hash_add(edf->data_cache, evas_stringshare_add(di->key), di->value);
+	free(di);
+     }
+   edf->data = NULL;
    
    if (!coll)
      {
@@ -117,6 +126,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    if (edc_ret) *edc_ret = edc;
 
    eet_close(ef);
+
    return edf;
 }
 
