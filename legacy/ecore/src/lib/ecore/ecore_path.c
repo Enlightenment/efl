@@ -70,6 +70,9 @@ ecore_path_group_del(int group_id)
 	ecore_list_destroy(group->paths);
      }
 
+   if (ecore_list_goto(group_list, group))
+     ecore_list_remove(group_list);
+
    free(group->name);
    free(group);
 }
