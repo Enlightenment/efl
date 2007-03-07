@@ -22,6 +22,7 @@
 %bcond_with    module_engine_software_qtopia
 %bcond_with    module_engine_software_xcb
 %bcond_with    module_engine_xrender_x11
+%bcond_with    module_engine_xrender_xcb
 %bcond_with    module_loader_svg
 
 ## enabled features
@@ -66,6 +67,7 @@
 %define ac_with_module_engine_directfb --%{?with_module_engine_directfb:en}%{!?with_module_engine_directfb:dis}able-directfb
 %define ac_with_module_engine_software_qtopia --%{?with_module_engine_software_qtopia:en}%{!?with_module_engine_software_qtopia:dis}able-software-qtopia
 %define ac_with_module_engine_software_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
+%define ac_with_module_engine_xrender_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
 
 Summary: Multi-platform Canvas Library
 Name: @PACKAGE@
@@ -305,6 +307,17 @@ Requires: evas
 Software XCB X11 rendering engine module for Evas
 %endif
 
+%if %{with module_engine_xrender_xcb}
+%package module_engine_xrender_xcb
+Summary: Xrender XCB X11 rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: xcb-devel
+Requires: evas-module_engine_xrender_x11
+Requires: evas
+%description module_engine_xrender_xcb
+Xrender XCB X11 rendering engine module for Evas
+%endif
+
 %prep
 %setup -q -n %{name}-%{version}
 
@@ -331,6 +344,7 @@ Software XCB X11 rendering engine module for Evas
     %{?ac_with_module_engine_directfb} \
     %{?ac_with_module_engine_software_qtopia} \
     %{?ac_with_module_engine_software_xcb} \
+    %{?ac_with_module_engine_xrender_xcb} \
     $RPM_CONFIGURE_OPTS
 %{__make} %{?_smp_mflags} %{?mflags}
 test -x `which doxygen` && /bin/sh gendoc || :
@@ -490,6 +504,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_engine_software_xcb
 %defattr(-, root, root)
 %{_libdir}/evas/modules/engines/software_xcb/*/module.so
+%endif
+
+%if %{with module_engine_xrender_xcb}
+%files module_engine_xrender_xcb
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/xrender_xcb/*/module.so
 %endif
 
 %changelog
