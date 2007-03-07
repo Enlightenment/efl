@@ -67,7 +67,7 @@
 %define ac_with_module_engine_directfb --%{?with_module_engine_directfb:en}%{!?with_module_engine_directfb:dis}able-directfb
 %define ac_with_module_engine_software_qtopia --%{?with_module_engine_software_qtopia:en}%{!?with_module_engine_software_qtopia:dis}able-software-qtopia
 %define ac_with_module_engine_software_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
-%define ac_with_module_engine_xrender_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
+%define ac_with_module_engine_xrender_xcb --%{?with_module_engine_xrender_xcb:en}%{!?with_module_engine_xrender_xcb:dis}able-xrender-xcb
 
 Summary: Multi-platform Canvas Library
 Name: @PACKAGE@
