@@ -83,6 +83,12 @@ ecore_plugin_unload(Ecore_Plugin *plugin)
    if (ecore_list_goto(loaded_plugins, plugin))
      ecore_list_remove(loaded_plugins);
 
+   if (ecore_list_is_empty(loaded_plugins))
+     {
+	ecore_list_destroy(loaded_plugins);
+	loaded_plugins = NULL;
+     }
+
    dlclose(plugin->handle);
 
    FREE(plugin->name);
