@@ -73,6 +73,12 @@ ecore_path_group_del(int group_id)
    if (ecore_list_goto(group_list, group))
      ecore_list_remove(group_list);
 
+   if (ecore_list_is_empty(group_list))
+     {
+	ecore_list_destroy(group_list);
+	group_list = NULL;
+     }
+
    free(group->name);
    free(group);
 }
