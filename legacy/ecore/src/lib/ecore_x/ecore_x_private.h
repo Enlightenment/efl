@@ -43,6 +43,9 @@
 #ifdef ECORE_XDAMAGE
 #include <X11/extensions/Xdamage.h>
 #endif
+#ifdef ECORE_XDPMS
+#include <X11/extensions/dpms.h>
+#endif
 
 #include "ecore_private.h"
 #include "Ecore_X.h"
@@ -235,9 +238,10 @@ Ecore_X_Window_State _ecore_x_netwm_state_get(Ecore_X_Atom a);
 int                  _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data);
 int                  _ecore_x_netwm_startup_info(Ecore_X_Window win, char *data);
 
-/* Fixes * Damage */
+/* Fixes * Damage * DPMS */
 void _ecore_x_fixes_init(void);
 void _ecore_x_damage_init(void);
+void _ecore_x_dpms_init(void);
 
 /* from sync */
 

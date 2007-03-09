@@ -6,9 +6,9 @@
 #define _ECORE_X_H
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
-#ifdef WIN32
+#ifdef _MSC_VER
 # ifdef BUILDING_DLL
 #  define EAPI __declspec(dllexport)
 # else
@@ -1173,11 +1173,19 @@ EAPI int              ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y);
 EAPI int              ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b);
 EAPI int              ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b);
 
-
-/* FIXME: these funcs need categorising */
 EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
 EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
 EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
+
+EAPI int  ecore_x_cursor_color_supported_get(void);
+EAPI Ecore_X_Cursor ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);
+EAPI void ecore_x_cursor_free(Ecore_X_Cursor c);
+EAPI Ecore_X_Cursor ecore_x_cursor_shape_get(int shape);
+EAPI void ecore_x_cursor_size_set(int size);
+EAPI int  ecore_x_cursor_size_get(void);
+
+
+/* FIXME: these funcs need categorising */
 EAPI Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
 EAPI Ecore_X_Window  ecore_x_window_root_first_get(void);
 EAPI int             ecore_x_window_manage(Ecore_X_Window win);
@@ -1409,13 +1417,6 @@ EAPI void ecore_x_window_save_set_add(Ecore_X_Window win);
 EAPI void ecore_x_window_save_set_del(Ecore_X_Window win);
 EAPI Ecore_X_Window *ecore_x_window_children_get(Ecore_X_Window win, int *num);
 
-EAPI int  ecore_x_cursor_color_supported_get(void);
-EAPI Ecore_X_Cursor ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);
-EAPI void ecore_x_cursor_free(Ecore_X_Cursor c);
-EAPI Ecore_X_Cursor ecore_x_cursor_shape_get(int shape);
-EAPI void ecore_x_cursor_size_set(int size);
-EAPI int  ecore_x_cursor_size_get(void);
-
 
 EAPI int  ecore_x_pointer_grab(Ecore_X_Window win);
 EAPI int  ecore_x_pointer_confine_grab(Ecore_X_Window win);
@@ -1530,6 +1531,20 @@ EAPI void              ecore_x_damage_del(Ecore_X_Damage damage);
 EAPI void              ecore_x_damage_subtract(Ecore_X_Damage damage, Ecore_X_Region repair, Ecore_X_Region parts);
 
 EAPI int               ecore_x_screen_is_composited(int screen);
+
+EAPI int               ecore_x_dpms_query(void);
+EAPI int               ecore_x_dpms_capable_get(void);
+EAPI int               ecore_x_dpms_enabled_get(void);
+EAPI void              ecore_x_dpms_enabled_set(int enabled);
+EAPI void              ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned int *off);
+EAPI int               ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off);
+EAPI unsigned int      ecore_x_dpms_timeout_standby_get();
+EAPI unsigned int      ecore_x_dpms_timeout_suspend_get();
+EAPI unsigned int      ecore_x_dpms_timeout_off_get();
+EAPI void              ecore_x_dpms_timeout_standby_set(unsigned int new_timeout);
+EAPI void              ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout);
+EAPI void              ecore_x_dpms_timeout_off_set(unsigned int new_timeout);
+
 
 #ifdef __cplusplus
 }

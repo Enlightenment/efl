@@ -52,6 +52,8 @@ ecore_x_gc.c \
 ecore_x_xinerama.c \
 ecore_x_screensaver.c \
 ecore_x_dpms.c \
+ecore_x_drawable.c \
+ecore_x_cursor.c \
 ecore_x_private.h
 
 libecore_x_la_LIBADD = \
@@ -100,4 +102,6 @@ ecore_x_gc.c \
 ecore_x_xinerama.c \
 ecore_x_screensaver.c \
 ecore_x_dpms.c \
+ecore_x_drawable.c \
+ecore_x_cursor.c \
 ecore_x_private.h

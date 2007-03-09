@@ -1,33 +1,85 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-/*
- * DPMS code
- */
-#include "Ecore.h"
-#include "ecore_x_private.h"
-#include "Ecore_X.h"
-#include "Ecore_X_Atoms.h"
 
-/*  Are we capable */
-EAPI int 
-ecore_x_dpms_capable(void)
+#include "ecore_x_private.h"
+
+
+static int _dpms_available;
+#ifdef ECORE_XDPMS
+static int _dpms_major, _dpms_minor;
+#endif
+
+
+void
+_ecore_x_dpms_init(void)
 {
-   return DPMSCapable(_ecore_x_disp);   
+#ifdef ECORE_XDPMS
+   _dpms_major = 1;
+   _dpms_minor = 0;
+
+   if (DpmsGetVersion(_ecore_x_disp, &_dpms_major, &_dpms_minor))
+     _dpms_available = 1;
+   else
+     _dpms_available = 0;
+#else
+   _dpms_available = 0;
+#endif
 }
 
-/* Are we enabled */
+
+/**
+ * @defgroup Ecore_X_DPMS_Group X DPMS Extension Functions
+ *
+ * Functions related to the X DPMS extension.
+ */
+
+
+
+/**
+ * Checks if the X DPMS extension is available on the server.
+ * @return @c 1 if the X DPMS extension is available, @c 0 otherwise.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI int
+ecore_x_dpms_query(void)
+{
+   return _dpms_available;
+}
+
+/**
+ * Checks if the X server is capable of DPMS.
+ * @return @c 1 if the X server is capable of DPMS, @c 0 otherwise.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI int
+ecore_x_dpms_capable_get(void)
+{
+   return DPMSCapable(_ecore_x_disp);
+}
+
+
+/**
+ * Checks the DPMS state of the display.
+ * @return @c 1 if DPMS is enabled, @c 0 otherwise.
+ * @ingroup Ecore_X_DPMS_Group
+ */
 EAPI int
 ecore_x_dpms_enabled_get(void)
 {
    unsigned char state;
    unsigned short power_lvl;
-   
+
    DPMSInfo(_ecore_x_disp, &power_lvl, &state);
    return state;
 }
 
-/* Enable/Disable DPMS */
+
+/**
+ * Sets the DPMS state of the display.
+ * @param enabled @c 0 to disable DPMS characteristics of the server, enable it otherwise.
+ * @ingroup Ecore_X_DPMS_Group
+ */
 EAPI void
 ecore_x_dpms_enabled_set(int enabled)
 {
@@ -37,36 +89,76 @@ ecore_x_dpms_enabled_set(int enabled)
       DPMSDisable(_ecore_x_disp);
 }
 
-/* Set all timeouts to known values */
-EAPI int
-ecore_x_dpms_timeouts_set(int standby, int suspend, int off)
+
+/**
+ * Gets the timeouts. The values are in unit of seconds.
+ * @param standby Amount of time of inactivity before standby mode will be invoked.
+ * @param suspend Amount of time of inactivity before the screen is placed into suspend mode.
+ * @param off     Amount of time of inactivity before the monitor is shut off.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI void
+ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned int *off)
 {
-   return DPMSSetTimeouts(_ecore_x_disp, 
-		        standby, 
-			suspend,
-			off);
+   DPMSGetTimeouts(_ecore_x_disp, (unsigned short *)standby, (unsigned short *)suspend, (unsigned short *)off);
 }
 
-/* Get/Set Timeouts */
-EAPI int 
+
+/**
+ * Sets the timeouts. The values are in unit of seconds.
+ * @param standby Amount of time of inactivity before standby mode will be invoked.
+ * @param suspend Amount of time of inactivity before the screen is placed into suspend mode.
+ * @param off     Amount of time of inactivity before the monitor is shut off.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI int
+ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off)
+{
+   return DPMSSetTimeouts(_ecore_x_disp,
+                          standby,
+                          suspend,
+                          off);
+}
+
+
+/**
+ * Returns the amount of time of inactivity before standby mode is invoked.
+ * @return The standby timeout value.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI unsigned int
 ecore_x_dpms_timeout_standby_get()
 {
    unsigned short standby, suspend, off;
-   
+
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return standby;
 }
 
-EAPI int 
+
+/**
+ * Returns the amount of time of inactivity before the second level of
+ * power saving is invoked.
+ * @return The suspend timeout value.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI unsigned int
 ecore_x_dpms_timeout_suspend_get()
 {
    unsigned short standby, suspend, off;
-   
+
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return suspend;
 }
 
-EAPI int 
+
+/**
+ * Returns the amount of time of inactivity before the third and final
+ * level of power saving is invoked.
+ * @return The off timeout value.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI unsigned int
 ecore_x_dpms_timeout_off_get()
 {
    unsigned short standby, suspend, off;
@@ -75,37 +167,55 @@ ecore_x_dpms_timeout_off_get()
    return off;
 }
 
-EAPI void 
-ecore_x_dpms_timeout_standby_set(int new_timeout)
+
+/**
+ * Sets the standby timeout (in unit of seconds).
+ * @param new_standby Amount of time of inactivity before standby mode will be invoked.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI void
+ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 {
    unsigned short standby, suspend, off;
 
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
-   DPMSSetTimeouts(_ecore_x_disp, 
-                   new_timeout, 
+   DPMSSetTimeouts(_ecore_x_disp,
+                   new_timeout,
                    suspend,
                    off);
 }
 
-EAPI void 
-ecore_x_dpms_timeout_suspend_set(int new_timeout)
+
+/**
+ * Sets the suspend timeout (in unit of seconds).
+ * @param suspend Amount of time of inactivity before the screen is placed into suspend mode.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI void
+ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 {
    unsigned short standby, suspend, off;
-        
+
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
-   DPMSSetTimeouts(_ecore_x_disp, 
+   DPMSSetTimeouts(_ecore_x_disp,
 		standby,
-		new_timeout, 
+		new_timeout,
 		off);
 }
 
-EAPI void 
-ecore_x_dpms_timeout_off_set(int new_timeout)
+
+/**
+ * Sets the off timeout (in unit of seconds).
+ * @param off     Amount of time of inactivity before the monitor is shut off.
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI void
+ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
 {
    unsigned short standby, suspend, off;
 
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
-   DPMSSetTimeouts(_ecore_x_disp, 
+   DPMSSetTimeouts(_ecore_x_disp,
 			standby,
 			suspend,
 			new_timeout);
