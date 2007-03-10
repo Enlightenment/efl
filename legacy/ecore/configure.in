@@ -1164,11 +1164,12 @@ fi
 AC_SUBST(fam_libs)
 AC_SUBST(ecore_file_libs)
 
+have_ecore_desktop="no"
+want_ecore_desktop="no"
 
 if test "x$have_ecore_file" = "xyes"; then
   AC_MSG_CHECKING(whether ecore_desktop module is to be built)
   want_ecore_desktop="yes";
-  have_ecore_desktop="no";
   ecore_desktop_cflags="";
   ecore_desktop_libs="";
 
@@ -1199,7 +1200,6 @@ if test "x$have_ecore_file" = "xyes"; then
   AC_SUBST(ecore_desktop_libs)
 else
   AC_MSG_RESULT(ecore_file not enabled so ecore_desktop will not be enabled)
-  want_ecore_desktop="no"
   AM_CONDITIONAL(BUILD_ECORE_DESKTOP, false)
 fi
 
