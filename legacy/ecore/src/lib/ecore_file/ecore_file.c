@@ -238,7 +238,7 @@ ecore_file_realpath(const char *file)
    char  buf[PATH_MAX];
    struct stat st;
 
-   if (!realpath(file, buf) || stat(buf, &st)) return strdup("");
+   if (!realpath(file, buf)) return strdup("");
    return strdup(buf);
 }
 
