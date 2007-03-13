@@ -50,7 +50,6 @@ EAPI int
 ecore_x_dpms_capable_get(void)
 {
 #ifdef ECORE_XDPMS
-   if (!_dpms_available) return 0;
    return DPMSCapable(_ecore_x_disp);
 #else
    return 0;
@@ -69,7 +68,6 @@ ecore_x_dpms_enabled_get(void)
    unsigned char state;
    unsigned short power_lvl;
 
-   if (!_dpms_available) return 0;
    DPMSInfo(_ecore_x_disp, &power_lvl, &state);
    return state;
 #else
@@ -86,7 +84,6 @@ EAPI void
 ecore_x_dpms_enabled_set(int enabled)
 {
 #ifdef ECORE_XDPMS
-   if (!_dpms_available) return;
    if (enabled)
      DPMSEnable(_ecore_x_disp);
    else
@@ -105,7 +102,6 @@ EAPI void
 ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned int *off)
 {
 #ifdef ECORE_XDPMS
-   if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, (unsigned short *)standby, 
 		   (unsigned short *)suspend, (unsigned short *)off);
 #endif
@@ -122,7 +118,6 @@ EAPI int
 ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off)
 {
 #ifdef ECORE_XDPMS
-   if (!_dpms_available) return 0;
    return DPMSSetTimeouts(_ecore_x_disp, standby, suspend, off);
 #else
    return 0;
@@ -140,7 +135,6 @@ ecore_x_dpms_timeout_standby_get()
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   if (!_dpms_available) return 0;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return standby;
 #else
@@ -160,7 +154,6 @@ ecore_x_dpms_timeout_suspend_get()
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   if (!_dpms_available) return 0;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return suspend;
 #else
@@ -180,7 +173,6 @@ ecore_x_dpms_timeout_off_get()
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   if (!_dpms_available) return 0;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return off;
 #else
@@ -199,7 +191,6 @@ ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, new_timeout, suspend, off);
 #endif
@@ -216,7 +207,6 @@ ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, standby, new_timeout, off);
 #endif
@@ -233,7 +223,6 @@ ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
-   if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, standby, suspend, new_timeout);
 #endif
