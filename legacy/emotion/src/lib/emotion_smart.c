@@ -62,6 +62,8 @@ struct _Smart_Data
       int button_num;
       int button;
    } spu;
+
+   Emotion_Module_Options module_options;
 };
 
 static void _mouse_move(void *data, Evas *ev, Evas_Object *obj, void *event_info);
@@ -95,18 +97,20 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 {
    void *handle;
    char buf[4096];
+   Smart_Data *sd;
    
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    snprintf(buf, sizeof(buf), "%s%s", PACKAGE_LIB_DIR"/emotion/",
    name);
    handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
    if (handle)
      {
-	unsigned char (*func_module_open)(Evas_Object *, Emotion_Video_Module **, void **);
+	unsigned char (*func_module_open)(Evas_Object *, Emotion_Video_Module **, void **, Emotion_Module_Options *);
 	
 	func_module_open = dlsym(handle, "module_open");
 	if (func_module_open)
 	  {
-	     if (func_module_open(obj, mod, video))
+	     if (func_module_open(obj, mod, video, &(sd->module_options)))
 	       {
 		  (*mod)->handle = handle;
 		  return 1;
@@ -132,7 +136,12 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
    handle = mod->handle;
    module_close = dlsym(handle, "module_close");
    if ((module_close) && (video)) module_close(mod, video);
-   dlclose(handle);
+   /* FIXME: we can't go dlclosing here as a thread still may be running from
+    * the module - this in theory will leak- but it shouldnt be too bad and
+    * mean that once a module is dlopened() it cant be closed - its refcount
+    * will just keep going up
+    */
+//   dlclose(handle);
 }
 
 /*******************************/
@@ -146,6 +155,23 @@ emotion_object_add(Evas *evas)
 {
    _smart_init();
    return evas_object_smart_add(evas, smart);   
+}
+
+EAPI void
+emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *val)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if ((!opt) || (!val)) return;
+   if (!strcmp(opt, "video"))
+     {
+	if (!strcmp(val, "off")) sd->module_options.no_video = 1;
+     }
+   else if (!strcmp(opt, "audio"))
+     {
+	if (!strcmp(val, "off")) sd->module_options.no_audio = 1;
+     }
 }
 
 EAPI Evas_Bool
@@ -172,10 +198,12 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->seek_pos = 0;
    sd->len = 0;
 
-   if (!sd->module || !sd->video)
-     if (!_emotion_module_open(module_filename, obj, &sd->module, &sd->video))
-       return 0;
-
+   if ((!sd->module) || (!sd->video))
+     {
+	if (!_emotion_module_open(module_filename, obj,
+				  &sd->module, &sd->video))
+	  return 0;
+     }
    return 1;
 }
 
@@ -1119,6 +1147,7 @@ static void
 _smart_add(Evas_Object * obj)
 {
    Smart_Data *sd;
+   unsigned int *pixel;
    
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
@@ -1130,6 +1159,12 @@ _smart_add(Evas_Object * obj)
    sd->ratio = 1.0;
    sd->spu.button = -1;
    evas_object_image_alpha_set(sd->obj, 0);
+   pixel = evas_object_image_data_get(obj, 1);
+   if (pixel)
+     {
+	*pixel = 0xff000000;
+	evas_object_image_data_set(obj, pixel);
+     }
    evas_object_smart_data_set(obj, sd);
 }
    
@@ -1141,7 +1176,9 @@ _smart_del(Evas_Object * obj)
    if (!sd) return;
    printf("DEL: sd->video = %p\n", sd->video);
    if (sd->video) sd->module->file_close(sd->video);
+   printf("MOD CLOSE: sd->video = %p\n", sd->video);
    _emotion_module_close(sd->module, sd->video);
+   printf("DEL SD: sd = %p\n", sd);
    evas_object_del(sd->obj);
    if (sd->file) free(sd->file);
    if (sd->job) ecore_job_del(sd->job);

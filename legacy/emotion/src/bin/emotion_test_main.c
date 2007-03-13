@@ -477,7 +477,7 @@ video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info)
    emotion_object_size_get(obj, &iw, &ih);
    ratio = emotion_object_ratio_get(obj);
    printf("HANDLE %ix%i @ %3.3f\n", iw, ih, ratio);
-   if (ratio > 0.0) iw = ih * ratio;
+   if (ratio > 0.0) iw = (ih * ratio) + 0.5;
    edje_extern_object_min_size_set(obj, iw, ih);
    edje_object_part_swallow(oe, "video_swallow", obj);
    edje_object_size_min_calc(oe, &w, &h);

@@ -23,6 +23,7 @@
 typedef enum _Emotion_Format Emotion_Format;
 typedef enum _Emotion_Vis Emotion_Vis;
 typedef struct _Emotion_Video_Module Emotion_Video_Module;
+typedef struct _Emotion_Module_Options Emotion_Module_Options;
 
 enum _Emotion_Format
 {
@@ -55,9 +56,15 @@ enum _Emotion_Vis
   EMOTION_VIS_LIBVISUAL_PLASMA
 };
 
+struct _Emotion_Module_Options
+{
+   unsigned char no_video : 1;
+   unsigned char no_audio : 1;
+};
+
 struct _Emotion_Video_Module
 {
-   unsigned char (*init) (Evas_Object *obj, void **video);
+   unsigned char (*init) (Evas_Object *obj, void **video, Emotion_Module_Options *opt);
    int            (*shutdown) (void *video);
    unsigned char  (*file_open) (const char *file, Evas_Object *obj, void *video);
    void           (*file_close) (void *ef);

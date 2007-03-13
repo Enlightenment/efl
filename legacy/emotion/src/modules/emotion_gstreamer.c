@@ -16,7 +16,8 @@ static int   _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh);
 /* Interface */
 
 static unsigned char  em_init                     (Evas_Object     *obj,
-                                                   void           **emotion_video);
+                                                   void           **emotion_video,
+						   Emotion_Module_Options *opt);
 
 static int            em_shutdown                 (void           *video);
 
@@ -224,7 +225,8 @@ static Emotion_Video_Module em_module =
 
 static unsigned char
 em_init(Evas_Object  *obj,
-	void        **emotion_video)
+	void        **emotion_video,
+	Emotion_Module_Options *opt)
 {
    Emotion_Gstreamer_Video *ev;
    GError                  *error;
@@ -1249,7 +1251,8 @@ em_meta_get(void *video, int meta)
 unsigned char
 module_open(Evas_Object           *obj,
 	    Emotion_Video_Module **module,
-	    void                 **video)
+	    void                 **video,
+	    Emotion_Module_Options *opt)
 {
    if (!module)
       return 0;

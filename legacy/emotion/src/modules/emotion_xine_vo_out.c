@@ -185,7 +185,8 @@ _emotion_open(video_driver_class_t *driver_class, const void *visual)
    dv->vo_driver.dispose              = _emotion_dispose;
    dv->vo_driver.redraw_needed        = _emotion_redraw;
    dv->ev                             = (Emotion_Xine_Video *)visual;
-//   printf("driver ret %p\n", &dv->vo_driver);
+   dv->ev->have_vo = 1;
+   printf("emotion: _emotion_open = %p\n", &dv->vo_driver);
    return &dv->vo_driver;
 }    
 
@@ -195,7 +196,8 @@ _emotion_dispose(vo_driver_t *vo_driver)
    Emotion_Driver *dv;
    
    dv = (Emotion_Driver *)vo_driver;
-//   printf("emotion: _emotion_dispose()\n");
+   dv->ev->have_vo = 0;
+   printf("emotion: _emotion_dispose(%p)\n", dv);
    free(dv);
 }
 
@@ -439,12 +441,13 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 //   printf("EX VO: fq %i %p\n", dv->ev->fq, dv->ev);
 // if my frame queue is too deep ( > 4 frames) simply block and wait for them
 // to drain
-   while (dv->ev->fq > 4) usleep(1);
+//   while (dv->ev->fq > 4) usleep(1);
    if (dv->ev)
      {
 	void *buf;
 	int ret;
 
+	if (dv->ev->closing) return;
 	if (fr->format == XINE_IMGFMT_YUY2)
 	  {
 	     _emotion_yuy2_to_bgra32(fr->width, fr->height, fr->vo_frame.base[0], fr->frame.bgra_data);
@@ -455,10 +458,10 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 	fr->frame.done_func = _emotion_frame_data_unlock;
 	fr->frame.done_data = fr;
 //	printf("FRAME FOR %p\n", dv->ev);
-	ret = write(dv->ev->fd, &buf, sizeof(void *));
+	ret = write(dv->ev->fd_write, &buf, sizeof(void *));
 //	printf("-- FRAME DEC %p == %i\n", fr->frame.obj, ret);
 	fr->in_use = 1;
-	dv->ev->fq++;
+//	dv->ev->fq++;
      }
    /* hmm - must find a way to sanely copy data out... FIXME problem */
 //   fr->vo_frame.free(&fr->vo_frame);
