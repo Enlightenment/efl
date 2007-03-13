@@ -490,14 +490,14 @@ if test "x$have_ecore_x" = "xyes"; then
     [
       AC_CHECK_LIB(Xdpms, DPMSQueryExtension,
         [
-          AC_DEFINE(ECORE_DPMS, 1, [Build support for DPMS])
+          AC_DEFINE(ECORE_XDPMS, 1, [Build support for DPMS])
           Xdpms_cflags=""
           Xdpms_libs="-lXdpms"
           use_Xdpms="yes"
         ], [
 	  AC_CHECK_LIB(Xext, DPMSQueryExtension,
 	    [
-              AC_DEFINE(ECORE_DPMS, 1, [Build support for DPMS])
+              AC_DEFINE(ECORE_XDPMS, 1, [Build support for DPMS])
               Xdpms_cflags=""
               Xdpms_libs="-lXext"
               use_Xdpms="yes"	    
