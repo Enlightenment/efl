@@ -12,7 +12,6 @@
 #include <sys/wait.h>
 #include <linux/kd.h>
 #include <linux/vt.h>
-#include <asm/page.h>
 #include <sys/user.h>
 
 #define FB_ACTIVE    0
