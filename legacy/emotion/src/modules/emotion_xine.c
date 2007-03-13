@@ -640,7 +640,7 @@ static Emotion_Format
 em_format_get(void *ef)
 {
    Emotion_Xine_Video *ev;
-   Emotion_Xine_Video_Frame *fr;
+   volatile Emotion_Xine_Video_Frame *fr;
    
    ev = (Emotion_Xine_Video *)ef;
    fr = ev->cur_frame;
@@ -652,7 +652,7 @@ static void
 em_video_data_size_get(void *ef, int *w, int *h)
 {
    Emotion_Xine_Video *ev;
-   Emotion_Xine_Video_Frame *fr;
+   volatile Emotion_Xine_Video_Frame *fr;
    
    ev = (Emotion_Xine_Video *)ef;
    fr = ev->cur_frame;
@@ -670,7 +670,7 @@ static int
 em_yuv_rows_get(void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows)
 {
    Emotion_Xine_Video *ev;
-   Emotion_Xine_Video_Frame *fr;
+   volatile Emotion_Xine_Video_Frame *fr;
    
    ev = (Emotion_Xine_Video *)ef;
    fr = ev->cur_frame;
@@ -691,7 +691,7 @@ static int
 em_bgra_data_get(void *ef, unsigned char **bgra_data)
 {
    Emotion_Xine_Video *ev;
-   Emotion_Xine_Video_Frame *fr;
+   volatile Emotion_Xine_Video_Frame *fr;
    
    ev = (Emotion_Xine_Video *)ef;
    fr = ev->cur_frame;
@@ -1477,7 +1477,7 @@ const static Emotion_Video_Module em_module =
 };
 
 unsigned char
-module_open(Evas_Object *obj, Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
+module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
 {
    if (!module)
       return 0;

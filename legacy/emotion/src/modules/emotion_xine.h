@@ -9,7 +9,7 @@
 
 typedef struct _Emotion_Xine_Video       Emotion_Xine_Video;
 typedef struct _Emotion_Xine_Video_Frame Emotion_Xine_Video_Frame;
-typedef struct _Emotion_Xine_Event Emotion_Xine_Event;
+typedef struct _Emotion_Xine_Event       Emotion_Xine_Event;
 
 struct _Emotion_Xine_Video
 {
@@ -85,7 +85,7 @@ struct _Emotion_Xine_Event
    int   mtype;
 };
 
-unsigned char         module_open(Evas_Object *obj, Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt);
+unsigned char         module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt);
 void                  module_close(Emotion_Video_Module *module, void *video);
 
 #endif
