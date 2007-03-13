@@ -49,8 +49,12 @@ ecore_x_dpms_query(void)
 EAPI int
 ecore_x_dpms_capable_get(void)
 {
+#ifdef ECORE_XDPMS
    if (!_dpms_available) return 0;
    return DPMSCapable(_ecore_x_disp);
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -61,12 +65,16 @@ ecore_x_dpms_capable_get(void)
 EAPI int
 ecore_x_dpms_enabled_get(void)
 {
+#ifdef ECORE_XDPMS
    unsigned char state;
    unsigned short power_lvl;
 
    if (!_dpms_available) return 0;
    DPMSInfo(_ecore_x_disp, &power_lvl, &state);
    return state;
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -77,11 +85,13 @@ ecore_x_dpms_enabled_get(void)
 EAPI void
 ecore_x_dpms_enabled_set(int enabled)
 {
+#ifdef ECORE_XDPMS
    if (!_dpms_available) return;
    if (enabled)
      DPMSEnable(_ecore_x_disp);
    else
      DPMSDisable(_ecore_x_disp);
+#endif
 }
 
 /**
@@ -94,9 +104,11 @@ ecore_x_dpms_enabled_set(int enabled)
 EAPI void
 ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned int *off)
 {
+#ifdef ECORE_XDPMS
    if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, (unsigned short *)standby, 
 		   (unsigned short *)suspend, (unsigned short *)off);
+#endif
 }
 
 /**
@@ -109,8 +121,12 @@ ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned
 EAPI int
 ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off)
 {
+#ifdef ECORE_XDPMS
    if (!_dpms_available) return 0;
    return DPMSSetTimeouts(_ecore_x_disp, standby, suspend, off);
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -121,11 +137,15 @@ ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned i
 EAPI unsigned int
 ecore_x_dpms_timeout_standby_get()
 {
+#ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
    if (!_dpms_available) return 0;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return standby;
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -137,11 +157,15 @@ ecore_x_dpms_timeout_standby_get()
 EAPI unsigned int
 ecore_x_dpms_timeout_suspend_get()
 {
+#ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
    if (!_dpms_available) return 0;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return suspend;
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -153,11 +177,15 @@ ecore_x_dpms_timeout_suspend_get()
 EAPI unsigned int
 ecore_x_dpms_timeout_off_get()
 {
+#ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
    if (!_dpms_available) return 0;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    return off;
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -168,11 +196,13 @@ ecore_x_dpms_timeout_off_get()
 EAPI void
 ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 {
+#ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
    if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, new_timeout, suspend, off);
+#endif
 }
 
 /**
@@ -183,11 +213,13 @@ ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 EAPI void
 ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 {
+#ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
    if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, standby, new_timeout, off);
+#endif
 }
 
 /**
@@ -198,9 +230,11 @@ ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 EAPI void
 ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
 {
+#ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
 
    if (!_dpms_available) return;
    DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
    DPMSSetTimeouts(_ecore_x_disp, standby, suspend, new_timeout);
+#endif
 }
