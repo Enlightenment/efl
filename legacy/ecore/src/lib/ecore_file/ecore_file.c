@@ -236,7 +236,6 @@ EAPI char *
 ecore_file_realpath(const char *file)
 {
    char  buf[PATH_MAX];
-   struct stat st;
 
    if (!realpath(file, buf)) return strdup("");
    return strdup(buf);
