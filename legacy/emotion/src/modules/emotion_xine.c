@@ -450,11 +450,7 @@ static unsigned char
 em_file_open(const char *file, Evas_Object *obj, void *ef)
 {
    Emotion_Xine_Video *ev;
-   int pos_stream = 0;
-   int pos_time = 0;
-   int length_time = 0;
-   uint32_t v;
-   
+
    ev = (Emotion_Xine_Video *)ef;
    if (!ev) return 0;
    _em_slave_event(ev, 2, strdup(file));
@@ -475,9 +471,6 @@ static void
 em_play(void *ef, double pos)
 {
    Emotion_Xine_Video *ev;
-   int pos_stream = 0;
-   int pos_time = 0;
-   int length_time = 0;
    double *ppos;
    
    ev = (Emotion_Xine_Video *)ef;

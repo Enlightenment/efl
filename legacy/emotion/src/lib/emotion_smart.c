@@ -99,7 +99,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    char buf[4096];
    Smart_Data *sd;
    
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    snprintf(buf, sizeof(buf), "%s%s", PACKAGE_LIB_DIR"/emotion/",
    name);
    handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
