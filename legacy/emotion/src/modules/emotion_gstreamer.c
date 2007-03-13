@@ -1257,7 +1257,7 @@ module_open(Evas_Object           *obj,
    if (!module)
       return 0;
 
-   if (!em_module.init(obj, video))
+   if (!em_module.init(obj, video, opt))
       return 0;
 
    *module = &em_module;
