@@ -136,89 +136,45 @@ ecore_str_has_suffix(const char *str, const char *suffix)
  * delimiter. If max_tokens is reached, the final string in the returned
  * string array contains the remainder of string.
  *
- * @param string      A string to split.
- * @param delimiter   A string which specifies the places at which to split the 
+ * @param str         A string to split.
+ * @param delim       A string which specifies the places at which to split the 
  *                    string. The delimiter is not included in any of the 
  *                    resulting strings, unless max_tokens is reached.
  * @param max_tokens  The maximum number of strings to split string into. 
  *                    If this is less than 1, the string is split completely.
  * @return            A newly-allocated NULL-terminated array of strings.
- *                    Use ecore_str_vector_free() to free it.
+ *                    To free it: free the first element of the array
+ *                    and the array itself.
  */
-char**
-ecore_str_split(const char *string, const char *delimiter, int max_tokens)
+char **
+ecore_str_split(const char *str, const char *delim, int max_tokens)
 {
-   char **str_array = NULL;
-   char *s;
-   size_t n = 0;
-   int max = max_tokens;
-   const char *remainder;
-   size_t delimiter_len;   
-
-   CHECK_PARAM_POINTER_RETURN("string", string, NULL);
-   CHECK_PARAM_POINTER_RETURN("delimiter", delimiter, NULL);
-  
-  /* on the first run we just count the number of the strings we'll finally
-   * have */ 
-   remainder = string;
-   s = strstr(remainder, delimiter);
-   if (s)
-   {
-	delimiter_len = strlen(delimiter);   
-	while (--max_tokens && s)
-	{
-	  remainder = s + delimiter_len;
-	  s = strstr(remainder, delimiter);
-	  n++;
-	}
-   }
-   if (*string != '\0') n++;
-   
-   str_array = malloc(sizeof(char *)*(n + 1));
-   str_array[n] = NULL;
-
-   /* reset to the initial values */
-   n = 0;
-   max_tokens = max;
-   remainder = string;
-   s = strstr(remainder, delimiter);
-   if (s)
-   {
-	while (--max_tokens && s)
-	{
-	  size_t len;     
-	  char *new_string;
-
-	  len = s - remainder;
-	  new_string = malloc(sizeof(char)*(len + 1));
-	  memcpy(new_string, remainder, len);
-	  new_string[len] = 0;
-	  str_array[n++] = new_string;
-
-	  remainder = s + delimiter_len;
-	  s = strstr(remainder, delimiter);
-	}
-   }
-   if (*string != '\0') str_array[n] = strdup(remainder);
-
-   return str_array;
-}
-
-/**
- * Free an array of strings and the array itself
- *
- * @param str_array An NULL-terminated array of strings to free.
- */
-void
-ecore_str_vector_free(char **str_array)
-{
-   CHECK_PARAM_POINTER("str_array", str_array);
+   char *s, *sep, **str_array;
+   size_t len, dlen;
    int i;
 
-   for(i=0; str_array[i] != NULL; i++)
-   {
-	FREE(str_array[i]);
-   }
-   FREE(str_array);
+   CHECK_PARAM_POINTER_RETURN("str", str, NULL);
+   CHECK_PARAM_POINTER_RETURN("delim", delim, NULL);
+
+   if (*delim == '\0')
+      return NULL;
+
+   max_tokens = ((max_tokens <= 0) ? (INT_MAX) : (max_tokens - 1));
+   len = strlen(str);
+   dlen = strlen(delim);
+   s = strdup(str);
+   str_array = malloc(sizeof(char *) * (len + 1));
+   for (i = 0; (i < max_tokens) && (sep = strstr(s, delim)); i++) 
+      {
+          str_array[i] = s;
+          s = sep + dlen;
+          *sep = 0;
+      }
+
+   str_array[i++] = s;
+   str_array = realloc(str_array, sizeof(char *) * (i + 1));
+   str_array[i] = NULL;
+ 
+   return str_array;
 }
 
