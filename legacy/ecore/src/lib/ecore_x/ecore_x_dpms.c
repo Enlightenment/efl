@@ -15,7 +15,7 @@ _ecore_x_dpms_init(void)
    _dpms_major = 1;
    _dpms_minor = 0;
 
-   if (DpmsGetVersion(_ecore_x_disp, &_dpms_major, &_dpms_minor))
+   if (DPMSGetVersion(_ecore_x_disp, &_dpms_major, &_dpms_minor))
      _dpms_available = 1;
    else
      _dpms_available = 0;
