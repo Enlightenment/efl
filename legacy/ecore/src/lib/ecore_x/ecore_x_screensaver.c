@@ -9,14 +9,26 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
+static int _screensaver_available = -1;
+
 EAPI int
 ecore_x_screensaver_event_available_get(void)
 {
+   if (_screensaver_available >= 0) return _screensaver_available;
 #ifdef ECORE_XSS
-   return 1;
+   int _screensaver_major, _screensaver_minor;
+
+   _screensaver_major = 1;
+   _screensaver_minor = 0;
+
+   if (XScreenSaverQueryVersion(_ecore_x_disp, &_screensaver_major, &_screensaver_minor))
+     _screensaver_available = 1;
+   else
+     _screensaver_available = 0;
 #else
-   return 0;
+   _screensaver_available = 0;
 #endif
+   return _screensaver_available;
 }
 
 EAPI void
