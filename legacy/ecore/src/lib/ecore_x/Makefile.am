@@ -2,14 +2,13 @@ MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES = \
 @Xcursor_cflags@ \
-@XDAMAGE_CFLAGS@ \
-@XDPMS_CFLAGS@ \
-@XFIXES_CFLAGS@ \
-@XINERAMA_CFLAGS@ \
-@XPRINT_CFLAGS@ \
-@XRANDR_CFLAGS@ \
-@XRENDER_CFLAGS@ \
-@XSS_CFLAGS@ \
+@Xrender_cflags@ \
+@Xprint_cflags@ \
+@Xinerama_cflags@ \
+@Xrandr_cflags@ \
+@Xfixes_cflags@ \
+@Xdamage_cflags@ \
+@Xss_cflags@ \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
@@ -59,14 +58,13 @@ ecore_x_private.h
 
 libecore_x_la_LIBADD = \
 @Xcursor_libs@ \
-@XDAMAGE_LIBS@ \
-@XDPMS_LIBS@ \
-@XFIXES_LIBS@ \
-@XINERAMA_LIBS@ \
-@XPRINT_LIBS@ \
-@XRANDR_LIBS@ \
-@XRENDER_LIBS@ \
-@XSS_LIBS@ \
+@Xrender_libs@ \
+@Xprint_libs@ \
+@Xinerama_libs@ \
+@Xrandr_libs@ \
+@Xfixes_libs@ \
+@Xdamage_libs@ \
+@Xss_libs@ \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la \

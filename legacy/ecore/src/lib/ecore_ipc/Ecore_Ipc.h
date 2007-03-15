@@ -4,7 +4,7 @@
 #ifdef EAPI
 #undef EAPI
 #endif
-#ifdef _MSC_VER
+#ifdef WIN32
 # ifdef BUILDING_DLL
 #  define EAPI __declspec(dllexport)
 # else

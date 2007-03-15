@@ -33,7 +33,7 @@
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.%(date '+%Y%m%d')
+Release: 1.20070314
 License: BSD
 Group: User Interface/X
 Source: %{name}-%{version}.tar.gz

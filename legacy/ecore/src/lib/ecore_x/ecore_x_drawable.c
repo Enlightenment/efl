@@ -1,15 +1,4 @@
-/*
- * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
- */
-
 #include "ecore_x_private.h"
-
-
-/**
- * @defgroup Ecore_X_Drawable_Group X Drawable Functions
- *
- * Functions that operate on drawables.
- */
 
 
 /**
@@ -19,7 +8,6 @@
  * @param y Pointer to an integer into which the Y position is to be stored.
  * @param w Pointer to an integer into which the width is to be stored.
  * @param h Pointer to an integer into which the height is to be stored.
- * @ingroup Ecore_X_Drawable_Group
  */
 EAPI void
 ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h)
@@ -47,7 +35,6 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h
  * Retrieves the width of the border of the given drawable.
  * @param  d The given drawable.
  * @return The border width of the given drawable.
- * @ingroup Ecore_X_Drawable_Group
  */
 EAPI int
 ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
@@ -67,7 +54,6 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
  * Retrieves the depth of the given drawable.
  * @param  d The given drawable.
  * @return The depth of the given drawable.
- * @ingroup Ecore_X_Drawable_Group
  */
 EAPI int
 ecore_x_drawable_depth_get(Ecore_X_Drawable d)
