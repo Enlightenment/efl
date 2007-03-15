@@ -9,6 +9,7 @@ INCLUDES = \
 @XPRINT_CFLAGS@ \
 @XRANDR_CFLAGS@ \
 @XRENDER_CFLAGS@ \
+@XSS_CFLAGS@ \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
@@ -65,6 +66,7 @@ libecore_x_la_LIBADD = \
 @XPRINT_LIBS@ \
 @XRANDR_LIBS@ \
 @XRENDER_LIBS@ \
+@XSS_LIBS@ \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
