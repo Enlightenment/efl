@@ -76,7 +76,7 @@ while test $# -gt 0; do
       ;;
     --libs-evas)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_evas_libs@ @EVAS_LIBS@ @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @Xrender_libs@ @Xprint_libs@ @Xinerama_libs@ @Xrandr_libs@ @Xfixes_libs@ @Xdamage_libs@ @Xss_libs@ @ecore_txt_libs@ @iconv_libs@ @ecore_job_libs@ @ecore_fb_libs@ @tslib_libs@ -lm
+      echo $libdirs -lecore @ecore_evas_libs@ @EVAS_LIBS@ @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@ @ecore_txt_libs@ @iconv_libs@ @ecore_job_libs@ @ecore_fb_libs@ @tslib_libs@ -lm
       ;;
     --libs-fb)
       libdirs=-L@libdir@
@@ -100,7 +100,7 @@ while test $# -gt 0; do
       ;;
     --libs-x)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @Xrender_libs@ @Xprint_libs@ @Xinerama_libs@ @Xrandr_libs@ @Xfixes_libs@ @Xdamage_libs@ @Xss_libs@ @ecore_txt_libs@ @iconv_libs@ @ecore_job_libs@ -lm
+      echo $libdirs -lecore @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@ @ecore_txt_libs@ @iconv_libs@ @ecore_job_libs@ -lm
       ;;
     *)
       usage
