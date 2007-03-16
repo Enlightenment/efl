@@ -11,6 +11,8 @@ static Evas_Bool _edje_file_collection_hash_foreach(Evas_Hash *hash, const char 
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 #endif
 
+static Evas_List *_edje_swallows_collect(Edje *ed);
+
 /************************** API Routines **************************/
 
 /* FIXDOC: Verify/expand doc */
@@ -28,6 +30,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 {
    Edje *ed;
    int n;
+   Evas_List *old_swallows;
    
    ed = _edje_fetch(obj);
    if (!ed) return 0;
@@ -36,7 +39,9 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    if (((ed->path) && (!strcmp(file, ed->path))) &&
 	(ed->part) && (!strcmp(part, ed->part)))
      return 1;
-   
+
+   old_swallows = _edje_swallows_collect(ed);
+
    _edje_file_del(ed);
    
    if (ed->path) evas_stringshare_del(ed->path);
@@ -263,6 +268,25 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	if ((evas_object_clipees_get(ed->clipper)) && 
 	    (evas_object_visible_get(obj)))
 	  evas_object_show(ed->clipper);
+
+	/* reswallow any swallows that existed before setting the file */
+	if (old_swallows)
+	  {
+	     while (old_swallows)
+	       {
+		  const char *name;
+		  Evas_Object *swallow;
+
+		  name = old_swallows->data;
+		  old_swallows = evas_list_remove_list(old_swallows, old_swallows);
+
+		  swallow = old_swallows->data;
+		  old_swallows = evas_list_remove_list(old_swallows, old_swallows);
+
+		  edje_object_part_swallow(obj, name, swallow);
+		  evas_stringshare_del(name);
+	       }
+	  }
 	
 	_edje_recalc(ed);
 	_edje_thaw(ed);
@@ -455,6 +479,25 @@ _edje_file_add(Edje *ed)
 	     ed->file = NULL;
 	  }
      }
+}
+
+static Evas_List *
+_edje_swallows_collect(Edje *ed)
+{
+   Evas_List *swallows = NULL;
+   Evas_List *l;
+   if (!ed->file || !ed->parts) return NULL;
+
+   for (l = ed->parts; l; l = l->next)
+     {
+	Edje_Real_Part *rp;
+
+	rp = l->data;
+	if (!rp->swallowed_object) continue;
+	swallows = evas_list_append(swallows, evas_stringshare_add(rp->part->name));
+	swallows = evas_list_append(swallows, rp->swallowed_object);
+     }
+   return swallows;
 }
 
 void
