@@ -99,6 +99,7 @@ _em_slave(void *par)
 		  break;
 		case 1: /* init */
 		    {
+		       ev->decoder = xine_new();
 		       xine_init(ev->decoder);
 		       xine_register_plugins(ev->decoder, emotion_xine_plugin_info);
 		       if (1)
@@ -373,13 +374,6 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev = calloc(1, sizeof(Emotion_Xine_Video));
    if (!ev) return 0;
    ev->obj = obj;
-   
-   ev->decoder = xine_new();
-   if (!ev->decoder)
-     {
-	free(ev);
-	return 0;
-     }
    
    if (pipe(fds) == 0)
      {
