@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: embryo
-Description: embryo
+Description: A small virtual machine engine and bytecode compiler
 Version: @VERSION@
 Libs: -L${libdir} -lembryo -lm
 Cflags: -I${includedir}
