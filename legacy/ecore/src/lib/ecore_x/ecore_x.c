@@ -1089,6 +1089,21 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
 }
 
 EAPI int
+ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
+{
+   return XChangePointerControl(_ecore_x_disp, 1, 1, 
+				accel_num, accel_denom, threshold);
+}
+
+
+EAPI int
+ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold)
+{
+   return XGetPointerControl(_ecore_x_disp, 
+				accel_num, accel_denom, threshold);
+}
+
+EAPI int
 ecore_x_pointer_grab(Ecore_X_Window win)
 {
    if (XGrabPointer(_ecore_x_disp, win, False,

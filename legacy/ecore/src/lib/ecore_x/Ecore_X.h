@@ -1418,7 +1418,8 @@ EAPI void ecore_x_window_save_set_add(Ecore_X_Window win);
 EAPI void ecore_x_window_save_set_del(Ecore_X_Window win);
 EAPI Ecore_X_Window *ecore_x_window_children_get(Ecore_X_Window win, int *num);
 
-
+EAPI int  ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold);
+EAPI int  ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold);
 EAPI int  ecore_x_pointer_grab(Ecore_X_Window win);
 EAPI int  ecore_x_pointer_confine_grab(Ecore_X_Window win);
 EAPI void ecore_x_pointer_ungrab(void);
