@@ -1,11 +1,12 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
+datadir=@PACKAGE_DATA_DIR@
 libdir=@libdir@
 includedir=@includedir@
+embryoincludedir=@embryoincludedir@
 
 Name: embryo
 Description: A small virtual machine engine and bytecode compiler
 Version: @VERSION@
 Libs: -L${libdir} -lembryo -lm
 Cflags: -I${includedir}
-

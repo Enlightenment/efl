@@ -75,6 +75,9 @@ else
 fi
 AC_SUBST(PACKAGE_DATA_DIR)
 	
+embryoincludedir='${datadir}/include'
+AC_SUBST(embryoincludedir)
+
 AC_OUTPUT([
 Makefile
 embryo.pc
