@@ -803,7 +803,6 @@ AC_MSG_CHECKING(whether to enable eet font loader)
 if test "$want_eet_font_loader" = yes -a "$have_eet" = yes; then
   AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
   have_eet_font_loader=yes
-  requirements="$requirements eet"
 else
   have_eet_font_loader=no
 fi
@@ -813,11 +812,14 @@ AC_MSG_CHECKING(whether to enable eet image loader)
 if test "$want_eet_image_loader" = yes -a "$have_eet" = yes; then
   AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
   have_eet_image_loader=yes
-  requirements="$requirements eet"
 else
   have_eet_image_loader=no
 fi
 AC_MSG_RESULT($have_eet_image_loader)
+
+if test "$have_eet_font_loader" = yes -o "$have_eet_image_loader" = yes; then
+  requirements="$requirements eet"
+fi
 
 AM_CONDITIONAL(BUILD_LOADER_EET, test $have_eet_image_loader = yes)
 
