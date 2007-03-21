@@ -46,7 +46,7 @@ while test $# -gt 0; do
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -ledje @EDJE_LIBS@ @ECORE_LIBS@ @fnmatch_libs@ -lm
+      echo $libdirs -ledje @EDJE_LIBS@ @fnmatch_libs@ -lm
       ;;
     --datadir)
       echo @prefix@/share/edje
