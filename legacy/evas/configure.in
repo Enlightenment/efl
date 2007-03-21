@@ -823,53 +823,36 @@ AM_CONDITIONAL(BUILD_LOADER_EET, test $have_eet_image_loader = yes)
 
 #######################################
 ## EDB
-AC_ARG_WITH(edb-config, [  --with-edb-config=EDB_CONFIG     use edb-config specified ],
-[ EDB_CONFIG=$withval;
-  echo "using "$EDB_CONFIG" for edb-config"; ],
-[ if test -z "$EDB_CONFIG"; then
-    AC_PATH_PROG(EDB_CONFIG, "edb-config", "", $PATH)
-  fi
-])
-if test -z "$EDB_CONFIG" ; then EDB_CONFIG="edb-config"; fi
-edb_cflags=`$EDB_CONFIG --cflags`
-edb_libs=`$EDB_CONFIG --libs`
-edb_version=`$EDB_CONFIG --version`
-
-have_edb="no";
-if test -n "$edb_version" ; then
-  edb_ok="yes";
-  have_edb="yes";
-fi
-
-AC_MSG_CHECKING(whether to enable edb image loader)
-AC_ARG_ENABLE(image-loader-edb, 
-  [  --enable-image-loader-edb       enable EDB image loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_edb="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_edb="no"
-	edb_ok="no"
-	edb_cflags=""
-	edb_libs=""
-      fi
-  ], [
-      AC_MSG_RESULT($have_edb)
-  ]
+#
+# first, check whether the user WANTS to use EDB
+AC_ARG_ENABLE(image-loader-edb,
+  AC_HELP_STRING(
+    [--enable-image-loader-edb],
+    [enable EDB image loader. [[default=enabled]]]
+  ),
+  [want_edb_image_loader=$enableval],
+  [want_edb_image_loader=yes]
 )
 
-AC_MSG_CHECKING(whether to enable edb support)
-if test "x$edb_ok" = "xyes"; then
-  AC_MSG_RESULT(yes)
-  if test "x$have_edb" = "xyes"; then
-    AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
-  fi
+# next, if she does, check whether EDB is available
+if test "$want_edb_image_loader" = yes; then
+  PKG_CHECK_MODULES(EDB, edb, have_edb=yes, have_edb=no)
 else
-  AC_MSG_RESULT(no)
+  have_edb=no
 fi
 
-AM_CONDITIONAL(BUILD_LOADER_EDB, test x$have_edb = xyes)
+# finally, spew out the result
+AC_MSG_CHECKING(whether to enable edb image loader)
+if test "$want_edb_image_loader" = yes -a "$have_edb" = yes; then
+  AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
+  have_edb_image_loader=yes
+  requirements="$requirements edb"
+else
+  have_edb_image_loader=no
+fi
+AC_MSG_RESULT($have_edb_image_loader)
+
+AM_CONDITIONAL(BUILD_LOADER_EDB, test $have_edb_image_loader = yes)
 
 #######################################
 ## TIFF
@@ -1938,8 +1921,6 @@ AC_SUBST(png_cflags)
 AC_SUBST(png_libs)
 AC_SUBST(jpeg_cflags)
 AC_SUBST(jpeg_libs)
-AC_SUBST(edb_cflags)
-AC_SUBST(edb_libs)
 AC_SUBST(tiff_cflags)
 AC_SUBST(tiff_libs)
 AC_SUBST(xpm_cflags)
@@ -1949,9 +1930,6 @@ AC_SUBST(svg_libs)
 
 # Build the list of required libs for evas.pc.in. Only works for libs
 # which install a .pc file of course
-if test "x$edb_libs" != "x"; then
-  requirements="$requirements edb"
-fi
 if test "x$png_libs" != "x"; then
   requirements="$requirements libpng12"
 fi
@@ -2055,7 +2033,7 @@ echo "  GIF.....................: $have_gif"
 echo "  PNG.....................: $have_png"
 echo "  JPEG....................: $have_jpeg"
 echo "  EET.....................: $have_eet_image_loader"
-echo "  EDB.....................: $have_edb"
+echo "  EDB.....................: $have_edb_image_loader"
 echo "  TIFF....................: $have_tiff"
 echo "  XPM.....................: $have_xpm"
 echo "  SVG.....................: $have_svg"
