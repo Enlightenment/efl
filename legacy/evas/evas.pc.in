@@ -7,5 +7,5 @@ Name: evas
 Description: Evas canvas display library
 Requires: @requirements@
 Version: @VERSION@
-Libs: -L${libdir} -levas @pthread_libs@ @dlopen_libs@ @eet_libs@ @FREETYPE_LIBS@
+Libs: -L${libdir} -levas @pthread_libs@ @dlopen_libs@ @FREETYPE_LIBS@
 Cflags: -I${includedir}
