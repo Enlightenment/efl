@@ -13,7 +13,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore-con.pc \
 		       ecore-config.pc \
 		       ecore-dbus.pc \
-		       ecore-desktop.pc \ 
+		       ecore-desktop.pc \
 		       ecore-directfb.pc\
 		       ecore-evas.pc \
 		       ecore-fb.pc \
@@ -32,7 +32,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4
 	     ecore-con.pc.in \
 	     ecore-config.pc.in \
 	     ecore-dbus.pc.in \
-	     ecore-desktop.pc.in \ 
+	     ecore-desktop.pc.in \
 	     ecore-directfb.pc.in\
 	     ecore-evas.pc.in \
 	     ecore-fb.pc.in \
