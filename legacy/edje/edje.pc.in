@@ -7,7 +7,7 @@ datadir=@datadir@/edje
 
 Name: edje
 Description: Enlightened graphical design and layout engine. 
-Requires: ecore evas eet embryo
+Requires: ecore-evas ecore-job eet embryo
 Version: @VERSION@
 Libs: -L${libdir} -ledje
 Cflags: -I${includedir}
