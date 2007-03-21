@@ -771,71 +771,55 @@ AM_CONDITIONAL(BUILD_SAVER_JPEG, test x$have_jpeg_saver = xyes)
 
 #######################################
 ## EET
-AC_ARG_WITH(eet-config, [  --with-eet-config=EET_CONFIG     use eet-config specified],
-[ EET_CONFIG=$withval;
-  echo "using "$EET_CONFIG" for eet-config"; ],
-[ if test -z "$EET_CONFIG"; then
-    AC_PATH_PROG(EET_CONFIG, "eet-config", "", $PATH)
-  fi
-])
-if test -z "$EET_CONFIG" ; then EET_CONFIG="eet-config"; fi
-eet_cflags=`$EET_CONFIG --cflags`
-eet_libs=`$EET_CONFIG --libs`
-eet_version=`$EET_CONFIG --version`
+#
+# first, check whether the user WANTS to use EET
+AC_ARG_ENABLE(image-loader-eet,
+  AC_HELP_STRING(
+    [--enable-image-loader-eet],
+    [enable EET image loader. [[default=enabled]]]
+  ),
+  [want_eet_image_loader=$enableval],
+  [want_eet_image_loader=yes]
+)
 
-have_eet="no";
-have_eet_fonts="no";
-if test -n "$eet_version" ; then
-  eet_ok="yes";
-  have_eet="yes";
-  have_eet_fonts="yes";
+AC_ARG_ENABLE(font-loader-eet,
+  AC_HELP_STRING(
+    [--enable-font-loader-eet],
+    [enable EET font loader. [[default=enabled]]]
+  ),
+  [want_eet_font_loader=$enableval],
+  [want_eet_font_loader=yes]
+)
+
+# next, if she does, check whether EET is available
+if test "$want_eet_image_loader" = yes -o "$want_eet_font_loader" = yes; then
+  PKG_CHECK_MODULES(EET, eet, have_eet=yes, have_eet=no)
+else
+  have_eet=no
 fi
+
+# finally, spew out the result
+AC_MSG_CHECKING(whether to enable eet font loader)
+if test "$want_eet_font_loader" = yes -a "$have_eet" = yes; then
+  AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
+  have_eet_font_loader=yes
+  requirements="$requirements eet"
+else
+  have_eet_font_loader=no
+fi
+AC_MSG_RESULT($have_eet_font_loader)
 
 AC_MSG_CHECKING(whether to enable eet image loader)
-AC_ARG_ENABLE(image-loader-eet, 
-  [  --enable-image-loader-eet       enable EET image loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_eet="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_eet="no"
-	eet_cflags=""
-	eet_libs=""
-      fi
-  ], [
-      AC_MSG_RESULT($have_eet)
-  ]
-)
-AC_MSG_CHECKING(whether to enable eet font loader)
-AC_ARG_ENABLE(font-loader-eet, 
-  [  --enable-font-loader-eet        enable EET font loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_eet_fonts="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_eet_fonts="no"
-      fi
-  ], [
-      AC_MSG_RESULT($have_eet_fonts)
-  ]
-)
-
-AC_MSG_CHECKING(whether to enable eet support)
-if test "x$eet_ok" = "xyes"; then
-  AC_MSG_RESULT(yes)
-  if test "x$have_eet" = "xyes"; then
-    AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
-  fi
-  if test "x$have_eet_fonts" = "xyes"; then
-    AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
-  fi
+if test "$want_eet_image_loader" = yes -a "$have_eet" = yes; then
+  AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
+  have_eet_image_loader=yes
+  requirements="$requirements eet"
 else
-  AC_MSG_RESULT(no)
+  have_eet_image_loader=no
 fi
+AC_MSG_RESULT($have_eet_image_loader)
 
-AM_CONDITIONAL(BUILD_LOADER_EET, test x$have_eet = xyes)
+AM_CONDITIONAL(BUILD_LOADER_EET, test $have_eet_image_loader = yes)
 
 #######################################
 ## EDB
@@ -1954,8 +1938,6 @@ AC_SUBST(png_cflags)
 AC_SUBST(png_libs)
 AC_SUBST(jpeg_cflags)
 AC_SUBST(jpeg_libs)
-AC_SUBST(eet_cflags)
-AC_SUBST(eet_libs)
 AC_SUBST(edb_cflags)
 AC_SUBST(edb_libs)
 AC_SUBST(tiff_cflags)
@@ -1967,9 +1949,6 @@ AC_SUBST(svg_libs)
 
 # Build the list of required libs for evas.pc.in. Only works for libs
 # which install a .pc file of course
-if test "x$eet_libs" != "x"; then
-  requirements="$requirements eet"
-fi
 if test "x$edb_libs" != "x"; then
   requirements="$requirements edb"
 fi
@@ -2075,7 +2054,7 @@ echo "Image Loaders:"
 echo "  GIF.....................: $have_gif"
 echo "  PNG.....................: $have_png"
 echo "  JPEG....................: $have_jpeg"
-echo "  EET.....................: $have_eet"
+echo "  EET.....................: $have_eet_image_loader"
 echo "  EDB.....................: $have_edb"
 echo "  TIFF....................: $have_tiff"
 echo "  XPM.....................: $have_xpm"
@@ -2084,7 +2063,7 @@ echo "  SVG.....................: $have_svg"
 # FIXME: add more image loader modules
 echo
 echo "Font Sourcing Systems:"
-echo "  EET.....................: $have_eet_fonts"
+echo "  EET.....................: $have_eet_font_loader"
 echo
 echo "Font Searching Systems:"
 echo "  FontConfig..............: $have_fontconfig"

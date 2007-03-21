@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @FREETYPE_CFLAGS@ @eet_cflags@ \
+		       @FREETYPE_CFLAGS@ @EET_CFLAGS@ \
 		       @FONTCONFIG_CFLAGS@
 
 noinst_LTLIBRARIES   = libevas_canvas.la

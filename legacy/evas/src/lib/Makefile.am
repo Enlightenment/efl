@@ -8,7 +8,7 @@ INCLUDES	     = -I. \
                        -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
 		       @FREETYPE_CFLAGS@ \
-		       @eet_cflags@ \
+		       @EET_CFLAGS@ \
 		       @FONTCONFIG_CFLAGS@ \
 		       @pthread_cflags@
 
@@ -29,7 +29,7 @@ libevas_la_LIBADD       = \
 			  -lm \
 			  @dlopen_libs@ \
 			  @FREETYPE_LIBS@ \
-			  @eet_libs@ \
+			  @EET_LIBS@ \
 			  @FONTCONFIG_LIBS@ \
 			  @pthread_libs@
 

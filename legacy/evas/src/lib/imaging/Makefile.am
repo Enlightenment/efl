@@ -9,7 +9,7 @@ INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
 		       @FREETYPE_CFLAGS@ \
-                       @eet_cflags@ 
+                       @EET_CFLAGS@ 
 
 noinst_LTLIBRARIES      = libevas_imaging.la
 libevas_imaging_la_SOURCES  = \

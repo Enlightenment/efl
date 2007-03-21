@@ -8,7 +8,7 @@ INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
 		       @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ \
-		       @eet_cflags@ @pthread_cflags@
+		       @EET_CFLAGS@ @pthread_cflags@
 
 noinst_LTLIBRARIES      = libevas_engine_common.la
 libevas_engine_common_la_SOURCES  = \
