@@ -13,7 +13,6 @@ configure
 configure-stamp
 depcomp
 ecore-config
-ecore.pc
 install-sh
 libtool
 ltmain.sh
@@ -29,3 +28,4 @@ README
 *.oe
 *.bb
 *.spec
+*.pc

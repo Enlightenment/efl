@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: ecore
-Description: Ecore event abstraction library
-Requires:
+Name: ecore-fb
+Description: E core library, FB module
+Requires: ecore @requirements_ecore_fb@
 Version: @VERSION@
-Libs: -L${libdir} -lecore -lm
+Libs: -L${libdir} -lecore_fb
 Cflags: -I${includedir}

@@ -57,6 +57,21 @@ if test "x$GCC" = "xyes"; then
 fi
 changequote([,])dnl
 
+# define pkg-config requirements for all our submodules.
+# only the trivial requirements go here.
+requirements_ecore_con=""
+requirements_ecore_config=""
+requirements_ecore_dbus=""
+requirements_ecore_desktop=""
+requirements_ecore_directfb="directfb"
+requirements_ecore_evas="evas"
+requirements_ecore_fb=""
+requirements_ecore_file=""
+requirements_ecore_ipc=""
+requirements_ecore_job=""
+requirements_ecore_txt=""
+requirements_ecore_x=""
+
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
 
@@ -255,6 +270,7 @@ if test "x$have_ecore_x" = "xyes"; then
   AC_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
   AC_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
 
+  requirements_ecore_evas="$requirements_ecore_evas ecore-x"
 fi
 
 AC_SUBST(ecore_x_cflags)
@@ -369,6 +385,7 @@ if test "x$want_ecore_fb" = "xyes"; then
           AC_DEFINE(BUILD_ECORE_FB, 1, [Build Ecore_FB Module])
           have_ecore_fb="yes"
           ecore_fb_libs="-lecore_fb";
+          requirements_ecore_evas="$requirements_ecore_evas ecore-fb"
         ], [
           AM_CONDITIONAL(BUILD_ECORE_FB, false)
         ]
@@ -409,7 +426,7 @@ AC_ARG_ENABLE(ecore-evas,
 )
 
 if test "x$want_ecore_evas" = "xyes"; then
-  AC_PATH_GENERIC(evas, 0.9.9,
+  PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9],
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS, true)
       AC_DEFINE(BUILD_ECORE_EVAS, 1, [Build Ecore_Evas Module])
@@ -659,6 +676,9 @@ if test "x$use_openssl" = "xyes"; then
     [
        use_openssl=yes
        AC_DEFINE(USE_OPENSSL, 1, [Use OpenSSL])
+       requirements_ecore_con="$requirements_ecore_con openssl"
+       # no need to add it to req_ecore_{ipc,dbus}, since they
+       # depends on ecore_con anyway.
     ],
     [ use_openssl=no ]
   )
@@ -774,12 +794,13 @@ AC_ARG_ENABLE(ecore-config,
 )
 
 if test "x$want_ecore_config" = "xyes"; then
-  AC_PATH_GENERIC(eet, 0.9.10,
+  PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
     [
       AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
       AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])
       have_ecore_config="yes"
       ecore_config_libs="-lecore_config";
+      requirements_ecore_config="$requirements_ecore_config eet"
     ], [
       AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
     ]
@@ -924,10 +945,11 @@ if test "x$have_ecore_file" = "xyes"; then
   )
   
   if test "x$use_curl" = "xyes"; then
-    AC_PATH_GENERIC(curl, ,
+    PKG_CHECK_MODULES(CURL, libcurl,
       [
         AC_DEFINE(HAVE_CURL, 1, [ Downloading with CURL ])
         ecore_file_libs="$ecore_file_libs $CURL_LIBS"
+        requirements_ecore_file="$requirements_ecore_file libcurl"
       ], [
         use_curl="no"
       ]
@@ -966,6 +988,7 @@ if test "x$have_ecore_file" = "xyes"; then
     AC_DEFINE(BUILD_ECORE_DESKTOP, 1, [Build Ecore_Desktop Module])
     have_ecore_desktop="yes"
     ecore_desktop_libs="-lecore_desktop";
+	requirements_ecore_desktop="$requirements_ecore_desktop ecore-file"
   else
     AM_CONDITIONAL(BUILD_ECORE_DESKTOP, false)
   fi
@@ -1023,11 +1046,33 @@ dnl Checking for Perl:
 AC_PATH_PROG(PERL,perl,0)
 AC_SUBST(PERL)
 
-requirements=""
-AC_SUBST(requirements)
+AC_SUBST(requirements_ecore_con)
+AC_SUBST(requirements_ecore_config)
+AC_SUBST(requirements_ecore_dbus)
+AC_SUBST(requirements_ecore_desktop)
+AC_SUBST(requirements_ecore_directfb)
+AC_SUBST(requirements_ecore_evas)
+AC_SUBST(requirements_ecore_fb)
+AC_SUBST(requirements_ecore_file)
+AC_SUBST(requirements_ecore_ipc)
+AC_SUBST(requirements_ecore_job)
+AC_SUBST(requirements_ecore_txt)
+AC_SUBST(requirements_ecore_x)
 
 AC_OUTPUT([
 Makefile
+ecore-con.pc
+ecore-config.pc
+ecore-dbus.pc
+ecore-desktop.pc
+ecore-directfb.pc
+ecore-evas.pc
+ecore-fb.pc
+ecore-file.pc
+ecore-ipc.pc
+ecore-job.pc
+ecore-txt.pc
+ecore-x.pc
 ecore.pc
 src/Makefile
 src/bin/Makefile
