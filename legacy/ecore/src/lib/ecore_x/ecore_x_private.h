@@ -51,22 +51,7 @@
 #include "Ecore_X.h"
 
 /* FIXME: this is for simulation only */
-#include "Ecore_Job.h"
 #include "Ecore_Txt.h"
-
-typedef struct _Ecore_X_Reply Ecore_X_Reply;
-
-struct _Ecore_X_Reply
-{
-/* FIXME: this is for simulation only */
-   Ecore_Job *job;
-   
-   void *reply_data;
-   void (*reply_data_free) (void *reply_data);
-   
-   void (*func) (void *data, Ecore_X_Reply *reply, void *reply_data);   
-   void *data;
-};
 
 typedef struct _Ecore_X_Selection_Intern Ecore_X_Selection_Intern;
 

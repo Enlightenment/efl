@@ -13,15 +13,12 @@ INCLUDES = \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
--I$(top_srcdir)/src/lib/ecore_job \
 -I$(top_builddir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore_txt \
--I$(top_builddir)/src/lib/ecore_job
+-I$(top_builddir)/src/lib/ecore_txt
 
 libecore_x_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs \
--L$(top_builddir)/src/lib/ecore_txt/.libs \
--L$(top_builddir)/src/lib/ecore_job/.libs
+-L$(top_builddir)/src/lib/ecore_txt/.libs
 
 if BUILD_ECORE_X
 
@@ -69,13 +66,11 @@ libecore_x_la_LIBADD = \
 @XSS_LIBS@ \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
-$(top_builddir)/src/lib/ecore_job/libecore_job.la
+$(top_builddir)/src/lib/ecore_txt/libecore_txt.la
 
 libecore_x_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
-$(top_builddir)/src/lib/ecore_job/libecore_job.la
+$(top_builddir)/src/lib/ecore_txt/libecore_txt.la
 
 endif
 
