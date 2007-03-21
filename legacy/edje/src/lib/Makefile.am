@@ -8,9 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = \
 -I$(top_srcdir) \
 -I$(top_builddir) \
-@EET_CFLAGS@ \
-@EMBRYO_CFLAGS@ \
-@EVAS_CFLAGS@ \
+@EDJE_CFLAGS@ \
 @ECORE_CFLAGS@
 
 lib_LTLIBRARIES      = \
@@ -39,7 +37,7 @@ edje_private.h \
 edje_cache.c \
 edje_textblock_styles.c
 
-libedje_la_LIBADD       = -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ @fnmatch_libs@
+libedje_la_LIBADD       = -lm @ECORE_LIBS@ @EDJE_LIBS@ @fnmatch_libs@
 libedje_la_CPPFLAGS     =
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
 libedje_la_LDFLAGS      = -version-info 5:0:5

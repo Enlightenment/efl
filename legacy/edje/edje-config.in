@@ -42,11 +42,11 @@ while test $# -gt 0; do
       if test @prefix@/include != /usr/include ; then
         includes="-I@prefix@/include"
       fi
-      echo $includes @EVAS_CFLAGS@
+      echo $includes @EDJE_CFLAGS@
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -ledje @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ @fnmatch_libs@ -lm
+      echo $libdirs -ledje @EDJE_LIBS@ @ECORE_LIBS@ @fnmatch_libs@ -lm
       ;;
     --datadir)
       echo @prefix@/share/edje

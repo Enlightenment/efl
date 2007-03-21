@@ -4,10 +4,8 @@ INCLUDES = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
-@EET_CFLAGS@ \
-@EVAS_CFLAGS@ \
+@EDJE_CFLAGS@ \
 @ECORE_CFLAGS@ \
-@EMBRYO_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
 -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
 -DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\" 
