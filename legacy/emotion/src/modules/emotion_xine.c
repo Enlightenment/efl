@@ -140,7 +140,9 @@ _em_slave(void *par)
 		       if (!ev->get_pos_thread_deleted)
 			 {
 			    printf("closing get_pos thread, %p\n", ev);
+			    pthread_mutex_lock(&(ev->get_pos_len_mutex));
 			    pthread_cond_broadcast(&(ev->get_pos_len_cond));
+			    pthread_mutex_unlock(&(ev->get_pos_len_mutex));
 			    while (ev->get_poslen);
 			 }
 		       printf("EX dispose %p\n", ev);
@@ -1366,10 +1368,11 @@ _em_get_pos_len_th(void *par)
    
    ev = (Emotion_Xine_Video *)par;
    
-   pthread_mutex_lock(&(ev->get_pos_len_mutex));
    for (;;)
      {
+	pthread_mutex_lock(&(ev->get_pos_len_mutex));
 	pthread_cond_wait(&(ev->get_pos_len_cond), &(ev->get_pos_len_mutex));
+	pthread_mutex_unlock(&(ev->get_pos_len_mutex));
 	if (ev->get_poslen)
 	  {
 	     int pos_stream = 0;
@@ -1408,7 +1411,9 @@ _em_get_pos_len(Emotion_Xine_Video *ev)
 {
    if (ev->get_poslen) return;
    ev->get_poslen = 1;
+   pthread_mutex_lock(&(ev->get_pos_len_mutex));
    pthread_cond_broadcast(&(ev->get_pos_len_cond));
+   pthread_mutex_unlock(&(ev->get_pos_len_mutex));
 }
 
 const static Emotion_Video_Module em_module =
