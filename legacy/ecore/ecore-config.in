@@ -100,7 +100,7 @@ while test $# -gt 0; do
       ;;
     --libs-x)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@ @ecore_txt_libs@ @iconv_libs@ @ecore_job_libs@ -lm
+      echo $libdirs -lecore @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@ @ecore_txt_libs@ @iconv_libs@ -lm
       ;;
     *)
       usage
