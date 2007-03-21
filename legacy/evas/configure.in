@@ -58,6 +58,8 @@ else
 fi
 AC_SUBST(PACKAGE_DATA_DIR)
 
+requirements=""
+
 x_dir=""
 x_cflags=""
 x_libs=""
@@ -112,6 +114,8 @@ if test "x$have_fontconfig" = "xyes"; then
 	 [ 
 	     have_fontconfig="yes"
 	     AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
+
+         requirements="$requirements fontconfig"
 	 ],
 	 [ 
 	     have_fontconfig="no"
@@ -1964,7 +1968,7 @@ AC_SUBST(svg_libs)
 # Build the list of required libs for evas.pc.in. Only works for libs
 # which install a .pc file of course
 if test "x$eet_libs" != "x"; then
-  requirements=eet
+  requirements="$requirements eet"
 fi
 if test "x$edb_libs" != "x"; then
   requirements="$requirements edb"
