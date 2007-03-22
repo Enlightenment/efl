@@ -20,10 +20,10 @@ efreet_alloc_LDADD = $(top_builddir)/src/lib/libefreet.la @ECORE_LIBS@
 if HAVE_ECORE_DESKTOP
 ecore_alloc_DEPENDENCIES = 
 ecore_alloc_SOURCES = ecore_alloc.c comp.h
-ecore_alloc_LDADD = @ECORE_LIBS@
+ecore_alloc_LDADD = @ECORE_LIBS@ @ECORE_DESKTOP_LIBS@
 
 compare_results_DEPENDENCIES = $(top_builddir)/src/lib/libefreet.la
 compare_results_SOURCES = compare_results.c comp.h
-compare_results_LDADD = $(top_builddir)/src/lib/libefreet.la @ECORE_LIBS@
+compare_results_LDADD = $(top_builddir)/src/lib/libefreet.la @ECORE_LIBS@ @ECORE_DESKTOP_LIBS@
 endif
 
