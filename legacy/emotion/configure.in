@@ -99,11 +99,11 @@ AC_ARG_ENABLE(xine,
 	[enable_xine=$enableval],[enable_xine=auto])
 HAVE_XINE="no"
 if test "$enable_xine" != "no" ; then
-	AC_PATH_GENERIC(xine, 1.1.1, [HAVE_XINE="yes"])
+	PKG_CHECK_MODULES(XINE, [libxine >= 1.1.1], [HAVE_XINE="yes"])
 
 	if test "$HAVE_XINE" = "yes" ; then
 		requirements="$requirements libxine"
-		xine_plugins=`$XINE_CONFIG --plugindir`
+		xine_plugins=$(pkg-config --variable=plugindir libxine)
 		AC_SUBST(xine_plugins)
 	fi
 fi
