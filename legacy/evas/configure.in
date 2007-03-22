@@ -87,9 +87,9 @@ AC_HELP_STRING([--with-qtdir=QT_DIR],[use qt directory specified]),
   qt_dir="/opt/Qtopia";
 ])
 # check for freetype
-AC_PATH_GENERIC(freetype, 9.3.0,
+PKG_CHECK_MODULES(FREETYPE, freetype2 >= 9.3.0,
   [ ],
-  [
+  [ 
     AC_MSG_ERROR(Freetype isn't installed)
   ]
 )
