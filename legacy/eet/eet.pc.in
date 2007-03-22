@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: eet
 Description: Library for speedy data storage, retrieval, and compression
 Version: @VERSION@
-Libs: -L${libdir} -leet -lz -ljpeg
+Libs: -L${libdir} -leet
+Libs.private: -lz -ljpeg
 Cflags: -I${includedir}
-
