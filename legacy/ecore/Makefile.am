@@ -26,7 +26,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 bin_SCRIPTS = ecore-config
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4 \
+EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
              Doxyfile \
 	     ecore.pc.in \
 	     ecore-con.pc.in \
@@ -61,9 +61,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4
 	     debian/libecore0-x.install \
 	     debian/libecore0.install \
 	     debian/rules
-
-m4datadir = $(datadir)/aclocal
-m4data_DATA = ecore.m4
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ecore.pc
