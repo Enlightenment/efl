@@ -58,8 +58,6 @@ else
 fi
 AC_SUBST(PACKAGE_DATA_DIR)
 
-requirements=""
-
 x_dir=""
 x_cflags=""
 x_libs=""
@@ -114,8 +112,6 @@ if test "x$have_fontconfig" = "xyes"; then
 	 [ 
 	     have_fontconfig="yes"
 	     AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
-
-         requirements="$requirements fontconfig"
 	 ],
 	 [ 
 	     have_fontconfig="no"
@@ -817,10 +813,6 @@ else
 fi
 AC_MSG_RESULT($have_eet_image_loader)
 
-if test "$have_eet_font_loader" = yes -o "$have_eet_image_loader" = yes; then
-  requirements="$requirements eet"
-fi
-
 AM_CONDITIONAL(BUILD_LOADER_EET, test $have_eet_image_loader = yes)
 
 #######################################
@@ -848,7 +840,6 @@ AC_MSG_CHECKING(whether to enable edb image loader)
 if test "$want_edb_image_loader" = yes -a "$have_edb" = yes; then
   AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
   have_edb_image_loader=yes
-  requirements="$requirements edb"
 else
   have_edb_image_loader=no
 fi
@@ -1929,16 +1920,7 @@ AC_SUBST(xpm_cflags)
 AC_SUBST(xpm_libs)
 AC_SUBST(svg_cflags)
 AC_SUBST(svg_libs)
-
-# Build the list of required libs for evas.pc.in. Only works for libs
-# which install a .pc file of course
-if test "x$png_libs" != "x"; then
-  requirements="$requirements libpng12"
-fi
-AC_SUBST(requirements)
-
 AC_SUBST(altivec_cflags)
-
 AC_SUBST(pthread_cflags)
 AC_SUBST(pthread_libs)
 
