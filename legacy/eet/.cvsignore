@@ -12,7 +12,6 @@ config.status
 config.sub
 configure
 configure-stamp
-eet-config
 eet.pc
 eet_docs.tar.gz
 libtool

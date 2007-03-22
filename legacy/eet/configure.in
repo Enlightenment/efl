@@ -131,12 +131,9 @@ eet.pc
 eet.c
 src/Makefile
 src/lib/Makefile
-eet-config
 README
 eet.spec
 debian/changelog
-],[
-chmod +x eet-config
 ])
 
 

@@ -10,8 +10,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       eet.spec \
 		       debian/changelog
 
-bin_SCRIPTS = eet-config
-
 EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.c.in \
 	     README.in README \
 	     eet.pc.in \
@@ -20,7 +18,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.c.in \
 	     debian/changelog.in \
 	     debian/control \
 	     debian/copyright \
-	     debian/eet-config.1 \
 	     debian/libeet0-dev.install \
 	     debian/libeet0.install \
 	     debian/rules
