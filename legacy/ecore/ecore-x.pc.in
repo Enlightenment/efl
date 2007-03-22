@@ -7,5 +7,6 @@ Name: ecore-x
 Description: E core library, X module
 Requires: ecore-txt @requirements_ecore_x@
 Version: @VERSION@
-Libs: -L${libdir} @ecore_x_libs@ @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@
+Libs: -L${libdir} -lecore_x
+Libs.private: @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@
 Cflags: -I${includedir}
