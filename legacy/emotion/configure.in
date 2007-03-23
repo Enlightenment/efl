@@ -103,8 +103,6 @@ if test "$enable_xine" != "no" ; then
 
 	if test "$HAVE_XINE" = "yes" ; then
 		requirements="$requirements libxine"
-		xine_plugins=$(pkg-config --variable=plugindir libxine)
-		AC_SUBST(xine_plugins)
 	fi
 fi
 if test "$enable_xine$HAVE_XINE" = "yesno" ; then
