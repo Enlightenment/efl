@@ -87,20 +87,16 @@ AC_SUBST(winsock_libs)
 
 ecore_txt_cflags=""
 ecore_txt_libs=""
-AC_MSG_CHECKING(whether ecore_txt module should be built)
-AC_ARG_ENABLE(ecore-txt, 
-  [  --disable-ecore-txt           disable the ecore_txt module],
-  [
-    if test "x$enableval" = "xno" ; then  
-      want_ecore_txt=no
-    else
-      want_ecore_txt=yes
-    fi
+AC_ARG_ENABLE(ecore-txt,
+  AC_HELP_STRING(
+    [--enable-ecore-txt],
+    [enable the ecore_txt module. [[default=enabled]]]
+  ), [
+    want_ecore_txt=$enableval
   ], [
     want_ecore_txt=maybe
   ]
 )
-AC_MSG_RESULT($want_ecore_txt)
 
 iconv_cflags=""
 iconv_libs=""
@@ -116,7 +112,6 @@ AC_ARG_WITH(iconv-link,
 )
 
 have_ecore_txt="no"
-AC_MSG_CHECKING(whether ecore_txt module is to be built)
 if test "x$want_ecore_txt" != "xno" ; then
   if test "x$iconv_libs" = "x" ; then 
     AC_CHECK_LIB(iconv, libiconv,
@@ -159,7 +154,11 @@ if test "x$want_ecore_txt" != "xno" ; then
     have_ecore_txt="yes"
   fi
 fi
+
+dnl we already did the tests, now display the result
+AC_MSG_CHECKING(whether ecore_txt module is to be built)
 AC_MSG_RESULT($have_ecore_txt)
+
 if test "x$have_ecore_txt" = "xyes" ; then
   AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
 fi
