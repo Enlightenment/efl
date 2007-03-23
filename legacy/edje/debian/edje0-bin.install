@@ -1,4 +1,4 @@
 debian/tmp/usr/bin/edje_cc
 debian/tmp/usr/bin/edje_decc
 debian/tmp/usr/bin/edje_recc
-debian/tmp/usr/share/embryo/include/edje.inc
+debian/tmp/usr/share/edje/include/edje.inc

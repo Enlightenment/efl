@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
 Suggests: edje0-bin
 Build-Depends: debhelper (>> 4.0.0), cdbs (>= 0.4.3-1.1),  automake1.7 | automaken, libtool, libeet-dev, libecore-dev, libevas-dev, libembryo-dev
-Standards-Version: 3.6.2.2
+Standards-Version: 3.7.2
 
 Package: edje0-bin
 Architecture: any
