@@ -163,7 +163,6 @@ AC_MSG_RESULT($have_ecore_txt)
 if test "x$have_ecore_txt" = "xyes" ; then
   AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
 fi
-AM_CONDITIONAL(BUILD_ECORE_TXT, test "x$have_ecore_txt" = "xyes")
 
 AC_SUBST(iconv_cflags)
 AC_SUBST(iconv_libs)
@@ -204,7 +203,6 @@ if test "x$want_ecore_x" = "xyes"; then
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
     [
-      AM_CONDITIONAL(BUILD_ECORE_X, true)
       AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module])
       have_ecore_x="yes"
       x_dir=${x_dir:-/usr/X11R6}
@@ -212,11 +210,9 @@ if test "x$want_ecore_x" = "xyes"; then
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
       ecore_x_libs="-lecore_x $x_libs";
     ],[
-      AM_CONDITIONAL(BUILD_ECORE_X, false)
+      dummy=no
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ECORE_X, false)
 fi
 
 AC_SUBST(x_cflags)
@@ -298,12 +294,9 @@ AC_ARG_ENABLE(ecore-job,
 )
 
 if test "x$want_ecore_job" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_JOB, true)
   AC_DEFINE(BUILD_ECORE_JOB, 1, [Build Ecore_Job Module])
   have_ecore_job="yes";
   ecore_job_libs="-lecore_job";
-else
-  AM_CONDITIONAL(BUILD_ECORE_JOB, false)
 fi
 
 AC_SUBST(ecore_job_cflags)
@@ -333,17 +326,15 @@ AC_ARG_ENABLE(ecore-dfb,
 if test "x$want_ecore_dfb" = "xyes"; then
 PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
     [
-      AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, true)
       AC_DEFINE(BUILD_ECORE_DIRECTFB, 1, [Build Ecore_DirectFB Module])
       have_ecore_dfb="yes"
       dnl ecore_dfb_libs="-lecore_fb";
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, false)
+      dummy=no
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, false)
 fi
+
 AC_SUBST(ecore_dfb_cflags)
 AC_SUBST(ecore_dfb_libs)
 
@@ -381,21 +372,18 @@ if test "x$want_ecore_fb" = "xyes"; then
     [
       AC_CHECK_HEADER(linux/input.h,
         [
-          AM_CONDITIONAL(BUILD_ECORE_FB, true)
           AC_DEFINE(BUILD_ECORE_FB, 1, [Build Ecore_FB Module])
           have_ecore_fb="yes"
           ecore_fb_libs="-lecore_fb";
           requirements_ecore_evas="$requirements_ecore_evas ecore-fb"
         ], [
-          AM_CONDITIONAL(BUILD_ECORE_FB, false)
+          dummy=no
         ]
       )
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_FB, false)
+      dummy=no
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ECORE_FB, false)
 fi
 
 AC_SUBST(tslib_libs)
@@ -428,16 +416,13 @@ AC_ARG_ENABLE(ecore-evas,
 if test "x$want_ecore_evas" = "xyes"; then
   PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9],
     [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS, true)
       AC_DEFINE(BUILD_ECORE_EVAS, 1, [Build Ecore_Evas Module])
       have_ecore_evas="yes"
       ecore_evas_libs="-lecore_evas";
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS, false)
+      dummy=no
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ECORE_EVAS, false)
 fi
 
 AC_SUBST(ecore_evas_cflags)
@@ -469,17 +454,15 @@ CFLAGS="$EVAS_CFLAGS $CFLAGS"
 if test "x$want_ecore_evas_gl" = "xyes" -a "x$have_ecore_x" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_GL_X11.h,
     [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, true)
       AC_DEFINE(BUILD_ECORE_EVAS_GL, 1, [Support for GL Engine in Ecore_Evas])
       have_ecore_evas_gl="yes";
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
+      dummy=no
     ], [
       #include <Evas.h>
     ]
   )
 else
-  AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
   if test "x$want_ecore_evas_gl" = "xyes"; then
     AC_MSG_WARN(Silly monkey: ecore_evas_gl requires ecore_x ... disabling ecore_evas_gl)
   fi
@@ -511,22 +494,19 @@ CFLAGS="$EVAS_CFLAGS $CFLAGS"
 if test "x$want_ecore_evas_xrender" = "xyes" -a "x$have_ecore_x" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_XRender_X11.h,
     [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, true)
       AC_DEFINE(BUILD_ECORE_EVAS_XRENDER, 1, [Support for XRender Engine in Ecore_Evas])
       have_ecore_evas_xrender="yes";
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, false)
+      dummy=no
     ], [
       #include <Evas.h>
     ]
   )
 else
-  AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, false)
   if test "x$want_ecore_evas_xrender" = "xyes"; then
     AC_MSG_WARN(Silly monkey: ecore_evas_xrender requires ecore_x ... disabling ecore_evas_xrender)
   fi
 fi
-
 
 AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
 AC_ARG_ENABLE(ecore-evas-dfb,
@@ -561,7 +541,6 @@ if test "x$want_ecore_evas_dfb" != "xno" ; then
   )
   CFLAGS="$save_CFLAGS"
 fi
-AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test "x$have_ecore_evas_dfb" = "xyes")
 
 
 want_ecore_evas_fb="no";
@@ -584,17 +563,14 @@ AC_ARG_ENABLE(ecore-evas-fb,
 if test "x$want_ecore_evas_fb" = "xyes" -a "x$have_ecore_fb" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_FB.h,
     [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, true)
       AC_DEFINE(BUILD_ECORE_EVAS_FB, 1, [Support for Linux FB in Ecore_Evas])
       have_ecore_evas_fb="yes"
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
+      dummy=no
     ], [
       #include <Evas.h>
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
 fi
 
 want_ecore_evas_buffer="yes";
@@ -618,17 +594,14 @@ AC_ARG_ENABLE(ecore-evas-buffer,
 if test "x$want_ecore_evas_buffer" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_Buffer.h,
     [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, true)
       AC_DEFINE(BUILD_ECORE_EVAS_BUFFER, 1, [Support for Buffers in Ecore_Evas])
       have_ecore_evas_buffer="yes"
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, false)
+      dummy=no
     ], [
       #include <Evas.h>
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, false)
 fi
 CFLAGS=$PCFLAGS
 
@@ -654,12 +627,9 @@ AC_ARG_ENABLE(ecore-con,
 )
 
 if test "x$want_ecore_con" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_CON, true)
   AC_DEFINE(BUILD_ECORE_CON, 1, [Build Ecore_Con Module])
   have_ecore_con="yes"
   ecore_con_libs="-lecore_con"
-else
-  AM_CONDITIONAL(BUILD_ECORE_CON, false)
 fi
 
 AC_SUBST(ecore_con_cflags)
@@ -715,12 +685,9 @@ else
 fi
 
 if test "x$want_ecore_ipc" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_IPC, true)
   AC_DEFINE(BUILD_ECORE_IPC, 1, [Build Ecore_Ipc Module])
   have_ecore_ipc="yes"
   ecore_ipc_libs="-lecore_ipc"
-else
-  AM_CONDITIONAL(BUILD_ECORE_IPC, false)
 fi
 
 AC_SUBST(ecore_ipc_cflags)
@@ -751,7 +718,6 @@ AC_ARG_ENABLE(ecore-dbus,
 )
 
 if test "x$want_ecore_dbus" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_DBUS, true)
   AC_DEFINE(BUILD_ECORE_DBUS, 1, [Build Ecore_DBus Module])
   have_ecore_dbus="yes"
   #dbus_dir="/usr";
@@ -760,8 +726,6 @@ if test "x$want_ecore_dbus" = "xyes"; then
   #dbus_libs="-L"$dbus_dir"/lib"
   #dbus_ldflags="-ldbus-1";
   ecore_dbus_libs="-lecore_dbus";
-else
-  AM_CONDITIONAL(BUILD_ECORE_DBUS, false)
 fi
 
 AC_SUBST(dbus_cflags)
@@ -796,17 +760,14 @@ AC_ARG_ENABLE(ecore-config,
 if test "x$want_ecore_config" = "xyes"; then
   PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
     [
-      AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
       AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])
       have_ecore_config="yes"
       ecore_config_libs="-lecore_config";
       requirements_ecore_config="$requirements_ecore_config eet"
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
+      dummy=no
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
 fi
 
 AC_SUBST(ecore_config_cflags)
@@ -836,12 +797,9 @@ AC_ARG_ENABLE(ecore-file,
 )
 
 if test "x$want_ecore_file" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_FILE, true)
   ecore_file_libs="-lecore_file"
   have_ecore_file="yes"
   AC_DEFINE(HAVE_POLL, 1, [ File monitoring with polling ])
-else
-  AM_CONDITIONAL(BUILD_ECORE_FILE, false)
 fi
 
 if test "x$have_ecore_file" = "xyes"; then
@@ -984,22 +942,16 @@ if test "x$have_ecore_file" = "xyes"; then
   )
 
   if test "x$want_ecore_desktop" = "xyes"; then
-    AM_CONDITIONAL(BUILD_ECORE_DESKTOP, true)
     AC_DEFINE(BUILD_ECORE_DESKTOP, 1, [Build Ecore_Desktop Module])
-    have_ecore_desktop="yes"
     ecore_desktop_libs="-lecore_desktop";
 	requirements_ecore_desktop="$requirements_ecore_desktop ecore-file"
-  else
-    AM_CONDITIONAL(BUILD_ECORE_DESKTOP, false)
   fi
 
   AC_SUBST(ecore_desktop_cflags)
   AC_SUBST(ecore_desktop_libs)
 else
   AC_MSG_RESULT(ecore_file not enabled so ecore_desktop will not be enabled)
-  AM_CONDITIONAL(BUILD_ECORE_DESKTOP, false)
 fi
-
 
 AC_ARG_ENABLE(pthreads,
   [  --disable-pthreads            disable building with pthread support],
@@ -1058,6 +1010,25 @@ AC_SUBST(requirements_ecore_ipc)
 AC_SUBST(requirements_ecore_job)
 AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
+
+# set up conditionals
+AM_CONDITIONAL(BUILD_ECORE_TXT, test $have_ecore_txt = yes)
+AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes)
+AM_CONDITIONAL(BUILD_ECORE_JOB, test $have_ecore_job = yes)
+AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, test $have_ecore_dfb = yes)
+AM_CONDITIONAL(BUILD_ECORE_FB, test $have_ecore_fb = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS, test $have_ecore_evas = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, test $have_ecore_evas_gl = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, test $have_ecore_evas_xrender = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test $have_ecore_evas_dfb = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, test $have_ecore_evas_fb = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, test $have_ecore_evas_buffer = yes)
+AM_CONDITIONAL(BUILD_ECORE_CON, test $have_ecore_con = yes)
+AM_CONDITIONAL(BUILD_ECORE_IPC, test $have_ecore_ipc = yes)
+AM_CONDITIONAL(BUILD_ECORE_DBUS, test $have_ecore_dbus = yes)
+AM_CONDITIONAL(BUILD_ECORE_CONFIG, test $have_ecore_config = yes)
+AM_CONDITIONAL(BUILD_ECORE_FILE, test $have_ecore_file = yes)
+AM_CONDITIONAL(BUILD_ECORE_DESKTOP, test $have_ecore_desktop = yes)
 
 AC_OUTPUT([
 Makefile
