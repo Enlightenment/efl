@@ -1160,7 +1160,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
     }
 
     ecore_list_goto_first(execs);
-    while((exec = ecore_list_next(execs)))
+    while ((exec = ecore_list_next(execs)))
     {
         command->cb_command(command->data, command->desktop, exec, --num);
     }
