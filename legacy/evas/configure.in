@@ -2018,7 +2018,7 @@ echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_eet_font_loader"
 echo
 echo "Font Searching Systems:"
-echo "  FontConfig..............: $have_fontconfig"
+echo "  Fontconfig..............: $have_fontconfig"
 # FIXME: add non freetype2 font engine support
 # FIXME: make freetype2 optional
 echo
