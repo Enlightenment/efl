@@ -267,26 +267,24 @@ fi
 AC_SUBST(ecore_x_cflags)
 AC_SUBST(ecore_x_libs)
 
-AC_MSG_CHECKING(whether ecore_job module is to be built)
 
-want_ecore_job="yes";
 have_ecore_job="no";
 ecore_job_cflags="";
 ecore_job_libs="";
 
-AC_ARG_ENABLE(ecore-job, 
-  [  --disable-ecore-job           disable the ecore_job module],
-  [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_job="no"
-    fi
+AC_ARG_ENABLE(ecore-job,
+  AC_HELP_STRING(
+    [--enable-ecore-job],
+    [enable the ecore_job module. [[default=enabled]]]
+  ), [
+    want_ecore_job=$enableval
   ], [
-    AC_MSG_RESULT(yes)
+    want_ecore_job=yes
   ]
 )
+
+AC_MSG_CHECKING(whether ecore_job module is to be built)
+AC_MSG_RESULT($want_ecore_job)
 
 if test "x$want_ecore_job" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_JOB, 1, [Build Ecore_Job Module])
@@ -297,26 +295,23 @@ fi
 AC_SUBST(ecore_job_cflags)
 AC_SUBST(ecore_job_libs)
 
-want_ecore_dfb="yes";
 have_ecore_dfb="no";
 ecore_dfb_cflags="";
 ecore_dfb_libs="";
 
-AC_MSG_CHECKING(whether ecore_dfb module is to be built)
-
-AC_ARG_ENABLE(ecore-dfb, 
-  [  --disable-ecore-dfb           disable the ecore_dfb module],
-  [
-    if test "$enableval" = "yes" ; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_dfb="no"
-    fi
+AC_ARG_ENABLE(ecore-dfb,
+  AC_HELP_STRING(
+    [--enable-ecore-dfb],
+    [enable the ecore_dfb module. [[default=enabled]]]
+  ), [
+    want_ecore_dfb=$enableval
   ], [
-    AC_MSG_RESULT(yes)
+    want_ecore_dfb=yes
   ]
 )
+
+AC_MSG_CHECKING(whether ecore_dfb module is to be built)
+AC_MSG_RESULT($want_ecore_dfb)
 
 if test "x$want_ecore_dfb" = "xyes"; then
 PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
@@ -333,26 +328,23 @@ fi
 AC_SUBST(ecore_dfb_cflags)
 AC_SUBST(ecore_dfb_libs)
 
-want_ecore_fb="no";
 have_ecore_fb="no";
 ecore_fb_cflags="";
 ecore_fb_libs="";
 
-AC_MSG_CHECKING(whether ecore_fb module is to be built)
-
-AC_ARG_ENABLE(ecore-fb, 
-  [  --enable-ecore-fb            enable the ecore_fb module],
-  [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
-      want_ecore_fb="yes"
-    else
-      AC_MSG_RESULT(no)
-    fi
+AC_ARG_ENABLE(ecore-fb,
+  AC_HELP_STRING(
+    [--enable-ecore-fb],
+    [enable the ecore_fb module. [[default=disabled]]]
+  ), [
+    want_ecore_fb=$enableval
   ], [
-    AC_MSG_RESULT(no)
+    want_ecore_fb=no
   ]
 )
+
+AC_MSG_CHECKING(whether ecore_fb module is to be built)
+AC_MSG_RESULT($want_ecore_fb)
 
 tslib_libs=""
 if test "x$want_ecore_fb" = "xyes"; then
@@ -380,25 +372,23 @@ AC_SUBST(ecore_fb_libs)
 ecore_evas_cflags="";
 ecore_evas_libs="";
 
-want_ecore_evas="yes"
 have_ecore_evas="no"
 evas_cflags="";
 evas_libs="";
 
-AC_MSG_CHECKING(whether ecore_evas module is to be built)
-AC_ARG_ENABLE(ecore-evas, 
-  [  --disable-ecore-evas          disable the ecore_evas module],
-  [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_evas="no";
-    fi
+AC_ARG_ENABLE(ecore-evas,
+  AC_HELP_STRING(
+    [--enable-ecore-evas],
+    [enable the ecore_evas module. [[default=enabled]]]
+  ), [
+    want_ecore_evas=$enableval
   ], [
-    AC_MSG_RESULT(yes)
+    want_ecore_evas=yes
   ]
 )
+
+AC_MSG_CHECKING(whether ecore_evas module is to be built)
+AC_MSG_RESULT($want_ecore_evas)
 
 if test "x$want_ecore_evas" = "xyes"; then
   PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9],
@@ -415,23 +405,21 @@ fi
 AC_SUBST(ecore_evas_cflags)
 AC_SUBST(ecore_evas_libs)
 
-want_ecore_evas_gl="yes";
 have_ecore_evas_gl="no";
 
-AC_MSG_CHECKING(whether ecore_evas gl support is to be built)
-AC_ARG_ENABLE(ecore-evas-gl, 
-  [  --disable-ecore-evas-gl       disable gl in the ecore_evas module],
-  [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_evas_gl="no"
-    fi
+AC_ARG_ENABLE(ecore-evas-gl,
+  AC_HELP_STRING(
+    [--enable-ecore-evas-gl],
+    [disable GL support in the ecore_evas module. [[default=enabled]]]
+  ), [
+    want_ecore_evas_gl=$enableval
   ], [
-    AC_MSG_RESULT(yes)
+    want_ecore_evas_gl=yes
   ]
 )
+
+AC_MSG_CHECKING(whether ecore_evas gl support is to be built)
+AC_MSG_RESULT($want_ecore_evas_gl)
 
 dnl GL support requires X support, so we should
 dnl handle the case where our user is on crack
@@ -455,23 +443,21 @@ else
   fi
 fi
 
-want_ecore_evas_xrender="yes";
 have_ecore_evas_xrender="no";
 
-AC_MSG_CHECKING(whether ecore_evas xrender support is to be built)
-AC_ARG_ENABLE(ecore-evas-xrender, 
-  [  --disable-ecore-evas-xrender  disable xrender in the ecore_evas module],
-  [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_evas_xrender="no"
-    fi
+AC_ARG_ENABLE(ecore-evas-xrender,
+  AC_HELP_STRING(
+    [--enable-ecore-evas-xrender],
+    [disable XRender support in the ecore_evas module. [[default=enabled]]]
+  ), [
+    want_ecore_evas_xrender=$enableval
   ], [
-    AC_MSG_RESULT(yes)
+    want_ecore_evas_xrender=yes
   ]
 )
+
+AC_MSG_CHECKING(whether ecore_evas xrender support is to be built)
+AC_MSG_RESULT($want_ecore_evas_xrender)
 
 dnl Xrender support requires X support, so we should
 dnl handle the case where our user is on crack
