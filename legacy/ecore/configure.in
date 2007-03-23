@@ -201,18 +201,14 @@ fi
 
 if test "x$want_ecore_x" = "xyes"; then
   AC_PATH_XTRA
-  AC_CHECK_HEADER(X11/X.h,
-    [
+  AC_CHECK_HEADER(X11/X.h, [
       AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module])
       have_ecore_x="yes"
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
       ecore_x_libs="-lecore_x $x_libs";
-    ],[
-      dummy=no
-    ]
-  )
+  ])
 fi
 
 AC_SUBST(x_cflags)
@@ -368,22 +364,14 @@ if test "x$want_ecore_fb" = "xyes"; then
     ]
   )
 
-  AC_CHECK_HEADER(linux/fb.h,
-    [
-      AC_CHECK_HEADER(linux/input.h,
-        [
+  AC_CHECK_HEADER(linux/fb.h, [
+      AC_CHECK_HEADER(linux/input.h, [
           AC_DEFINE(BUILD_ECORE_FB, 1, [Build Ecore_FB Module])
           have_ecore_fb="yes"
           ecore_fb_libs="-lecore_fb";
           requirements_ecore_evas="$requirements_ecore_evas ecore-fb"
-        ], [
-          dummy=no
-        ]
-      )
-    ], [
-      dummy=no
-    ]
-  )
+      ])
+  ])
 fi
 
 AC_SUBST(tslib_libs)
