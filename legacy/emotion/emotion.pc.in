@@ -8,5 +8,5 @@ Description: Emotion evas based multimedia library
 Requires: evas
 Version: @VERSION@
 Libs: -L${libdir} -lemotion
-Libs.private: @EET_LIBS@ @EDJE_LIBS@ @ECORE_LIBS@ @EMBRYO_LIBS@ @XINE_LIBS@ @GST_LIBS@
+Libs.private: @EDJE_LIBS@ @ECORE_LIBS@ @XINE_LIBS@ @GST_LIBS@
 Cflags: -I${includedir}
