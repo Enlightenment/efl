@@ -62,53 +62,55 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
 	     debian/libecore0.install \
 	     debian/rules
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = ecore.pc
-
 if BUILD_ECORE_CON
-pkgconfig_DATA += ecore-con.pc
+pcon = ecore-con.pc
 endif
 
 if BUILD_ECORE_CONFIG
-pkgconfig_DATA += ecore-config.pc
+pconfig = ecore-config.pc
 endif
 
 if BUILD_ECORE_DBUS
-pkgconfig_DATA += ecore-dbus.pc
+pdbus = ecore-dbus.pc
 endif
 
 if BUILD_ECORE_DIRECTFB
-pkgconfig_DATA += ecore-directfb.pc
+pdfb = ecore-directfb.pc
 endif
 
 if BUILD_ECORE_EVAS
-pkgconfig_DATA += ecore-evas.pc
+pevas = ecore-evas.pc
 endif
 
 if BUILD_ECORE_FB
-pkgconfig_DATA += ecore-fb.pc
+pfb = ecore-fb.pc
 endif
 
 if BUILD_ECORE_FILE
-pkgconfig_DATA += ecore-file.pc
+pfile = ecore-file.pc
 endif
 
 if BUILD_ECORE_DESKTOP
-pkgconfig_DATA += ecore-desktop.pc
+pdesktop = ecore-desktop.pc
 endif
 
 if BUILD_ECORE_IPC
-pkgconfig_DATA += ecore-ipc.pc
+pipc = ecore-ipc.pc
 endif
 
 if BUILD_ECORE_JOB
-pkgconfig_DATA += ecore-job.pc
+pjob = ecore-job.pc
 endif
 
 if BUILD_ECORE_TXT
-pkgconfig_DATA += ecore-txt.pc
+ptxt = ecore-txt.pc
 endif
 
 if BUILD_ECORE_X
-pkgconfig_DATA += ecore-x.pc
+px = ecore-x.pc
 endif
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = \
+	ecore.pc $(pcon) $(pconfig) $(pdbus) $(pdfb) $(pevas) \
+	$(pfb) $(pfile) $(pdesktop) $(pipc) $(pjob) $(ptxt) $(px)
