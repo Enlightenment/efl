@@ -8,5 +8,6 @@ embryoincludedir=@embryoincludedir@
 Name: embryo
 Description: A small virtual machine engine and bytecode compiler
 Version: @VERSION@
-Libs: -L${libdir} -lembryo -lm
+Libs: -L${libdir} -lembryo
+Libs.private: -lm
 Cflags: -I${includedir}
