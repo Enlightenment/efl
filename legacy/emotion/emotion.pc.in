@@ -5,7 +5,8 @@ includedir=@includedir@
 
 Name: emotion
 Description: Emotion evas based multimedia library
-Requires: @requirements@
+Requires: evas
 Version: @VERSION@
 Libs: -L${libdir} -lemotion
+Libs.private: @EET_LIBS@ @EDJE_LIBS@ @ECORE_LIBS@ @EMBRYO_LIBS@ @XINE_LIBS@ @GST_LIBS@
 Cflags: -I${includedir}
