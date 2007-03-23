@@ -1,6 +1,6 @@
 FILES = edje.inc
 
-incdir = $(embryoincludedir)
+incdir = $(pkgdatadir)/include
 inc_DATA = $(FILES)
 
 EXTRA_DIST = $(FILES)

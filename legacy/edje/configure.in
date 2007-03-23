@@ -86,9 +86,6 @@ PKG_CHECK_MODULES(EDJE, [
   embryo >= 0.9.1
 ])
 
-embryoincludedir=$(pkg-config --variable=embryoincludedir embryo)
-AC_SUBST(embryoincludedir)
-
 AC_MSG_CHECKING([for location of Vim data files])
 install_vim="yes";
 AC_ARG_WITH(vim,
