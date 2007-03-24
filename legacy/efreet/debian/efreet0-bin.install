@@ -1,0 +1,4 @@
+debian/tmp/usr/bin/efreet_alloc
+debian/tmp/usr/bin/ecore_alloc
+debian/tmp/usr/bin/efreet_menu_alloc
+debian/tmp/usr/bin/compare_results
