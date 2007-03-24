@@ -949,7 +949,7 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
     IF_FREE_LIST(internal->applications);
 
     IF_FREE_DLIST(internal->directories);
-    IF_FREE_DLIST(internal->app_dirs);
+    IF_FREE_LIST(internal->app_dirs);
     IF_FREE_LIST(internal->app_pool);
     IF_FREE_DLIST(internal->directory_dirs);
     IF_FREE_HASH(internal->directory_cache);
@@ -3208,7 +3208,7 @@ efreet_menu_create_app_dirs_list(Efreet_Menu_Internal *internal)
 {
     if (!internal || internal->app_dirs) return;
 
-    internal->app_dirs = ecore_dlist_new();
+    internal->app_dirs = ecore_list_new();
     ecore_list_set_free_cb(internal->app_dirs, 
                         ECORE_FREE_CB(efreet_menu_app_dir_free));
 }
