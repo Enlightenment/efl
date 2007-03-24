@@ -115,11 +115,6 @@ void
 _edje_message_shutdown(void)
 {
    _edje_message_queue_clear();
-   if (job)
-     {
-	ecore_job_del(job);
-	job = NULL;
-     }
 }
 
 void
