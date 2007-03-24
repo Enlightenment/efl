@@ -176,6 +176,9 @@ efreet_icon_theme_list_get(void)
 
         theme = ecore_hash_get(efreet_icon_themes, dir);
         if (theme->hidden || theme->fake) continue;
+#if !STRICT_SPEC
+        if (!theme->name.name) continue;
+#endif
 
         ecore_list_append(list, theme);
     }
