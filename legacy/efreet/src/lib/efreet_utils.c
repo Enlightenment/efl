@@ -73,7 +73,7 @@ efreet_util_desktop_by_file_id_get(const char *file_id)
 
         while (p)
         {
-            snprintf(buf, sizeof(buf), "%s/%s", dir, file_id);
+            snprintf(buf, sizeof(buf), "%s/%s", dir, tmp);
             desktop = efreet_desktop_get(buf);
             if (desktop) break;
             p = strchr(p, '-');

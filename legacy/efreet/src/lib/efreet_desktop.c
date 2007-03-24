@@ -252,7 +252,9 @@ efreet_desktop_new(const char *file)
     if (!ini->data) 
     {
         efreet_ini_free(ini);
-        return desktop;
+        IF_FREE(desktop->orig_path);
+        free(desktop);
+        return NULL;
     }
 
     ok = efreet_ini_section_set(ini, "Desktop Entry");
