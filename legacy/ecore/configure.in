@@ -72,6 +72,10 @@ requirements_ecore_job=""
 requirements_ecore_txt=""
 requirements_ecore_x=""
 
+dnl The first call to PKG_CHECK_MODULES is done conditionally,
+dnl so we should include this here:
+PKG_PROG_PKG_CONFIG
+
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
 
