@@ -8,4 +8,4 @@ Description: Freedesktop standards implementation for the EFL
 Requires: @requirements@
 Version: @VERSION@
 Libs: -L${libdir} -lefreet
-Cflags: -I${includedir}
+Cflags: -I${includedir}/efreet
