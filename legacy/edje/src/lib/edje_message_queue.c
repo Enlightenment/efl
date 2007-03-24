@@ -89,7 +89,6 @@ _edje_dummy_timer(void *data)
 static void
 _edje_job(void *data)
 {
-//   printf("_edje_job()\n");
    job = NULL;
    if (job_loss_timer)
      {
@@ -97,19 +96,13 @@ _edje_job(void *data)
 	job_loss_timer = NULL;
      }
    _edje_message_queue_process();
-//   printf("_edje_job() END\n");
 }
 
 static int
 _edje_job_loss_timer(void *data)
 {
    job_loss_timer = NULL;
-   if (job)
-     {
-//	printf("!!!!!!!!! EDJE!!! EEEK! lost a job!\n");
-//	printf("!!! job = %p\n", job);
-	job = NULL;
-     }
+   if (job) job = NULL;
    return 0;
 }
 
@@ -276,7 +269,6 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 
    if (!job)
      {
-//	printf("no job... add\n");
 	job = ecore_job_add(_edje_job, NULL);
 	if (job_loss_timer) ecore_timer_del(job_loss_timer);
 	job_loss_timer = ecore_timer_add(0.05, _edje_job_loss_timer, NULL);
