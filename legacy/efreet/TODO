@@ -12,9 +12,7 @@ TODO
   name. We should be creating intermediate menus for each of the /'d items
   instead of just making the name as we do now
 
-- Add caching for faster lookup. The caches should be filled by an idler
-  - file-id for .desktop files from default app dirs.
-  - startup_wm_class
+- Need to store a pure exec for the .desktop files we can match on.
 
 - Add support for searching for a list of fallback icons in the current theme BEFORE looking in the inherited themes (e.g. for mime-types that go from specific to general).
 
