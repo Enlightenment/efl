@@ -425,17 +425,22 @@ _efreet_util_cache_fill(void *data)
                 desktop = efreet_desktop_get(buf);
 
                 if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_APPLICATION) continue;
-                ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), desktop);
+                if (!ecore_hash_get(desktop_by_file_id, file_id))
+                    ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id),
+                                                            desktop);
                 exec = ecore_file_app_exe_get(desktop->exec);
                 if (exec)
                 {
                     /* TODO: exec can be with and without full path, we should handle that */
-                    ecore_hash_set(desktop_by_exec, (void *)ecore_string_instance(exec), desktop);
+                    if (!ecore_hash_get(desktop_by_exec, exec))
+                        ecore_hash_set(desktop_by_exec, (void *)ecore_string_instance(exec),
+                                                            desktop);
                     free(exec);
                 }
-                ecore_hash_set(file_id_by_desktop_path,
-                        (void *)ecore_string_instance(desktop->orig_path),
-                        (void *)ecore_string_instance(file_id));
+                if (!ecore_hash_get(file_id_by_desktop_path, desktop->orig_path))
+                    ecore_hash_set(file_id_by_desktop_path,
+                                    (void *)ecore_string_instance(desktop->orig_path),
+                                    (void *)ecore_string_instance(file_id));
             }
         }
         if (!file)
