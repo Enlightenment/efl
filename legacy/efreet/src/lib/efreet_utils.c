@@ -145,7 +145,7 @@ efreet_util_path_to_file_id(const char *path)
 }
 
 Efreet_Desktop *
-efreet_util_desktop_by_file_id_get(const char *file_id)
+efreet_util_desktop_file_id_find(const char *file_id)
 {
     Efreet_Desktop *desktop = NULL;
     Ecore_List *dirs;
@@ -186,7 +186,7 @@ efreet_util_desktop_by_file_id_get(const char *file_id)
 }
 
 Efreet_Desktop *
-efreet_util_desktop_by_exec_get(const char *exec)
+efreet_util_desktop_exec_find(const char *exec)
 {
     Efreet_Desktop *desktop = NULL;
 
