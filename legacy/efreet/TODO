@@ -21,6 +21,9 @@ TODO
   BEFORE looking in the inherited themes (e.g. for mime-types that go from
   specific to general).
 
+- We need to update the cache in efreet. Now it will overwrite user .desktop
+  files with system .desktop files, as the system files are found later.
+
 Notes from the Menu Spec test
 -----------------------------
 - We're appending the / to the menu names in the test case. We should
