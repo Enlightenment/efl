@@ -28,7 +28,7 @@ struct _Efreet_Cache_Search
 
 static int  _efreet_util_cache_fill(void *data);
 static void _efreet_util_cache_dir_free(void *data);
-static void _efreet_util_cache_search_wmclass(void *value, void *data);
+static void _efreet_util_cache_search_wm_class(void *value, void *data);
 static void _efreet_util_cache_search_name(void *value, void *data);
 static void _efreet_util_cache_search_generic_name(void *value, void *data);
 
@@ -162,7 +162,7 @@ efreet_util_path_to_file_id(const char *path)
 }
 
 Efreet_Desktop *
-efreet_util_desktop_wmclass_find(const char *wmname, const char *wmclass)
+efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
 {
     Efreet_Cache_Search search;
 
@@ -170,7 +170,7 @@ efreet_util_desktop_wmclass_find(const char *wmname, const char *wmclass)
     search.desktop = NULL;
     search.what1 = wmname;
     search.what2 = wmclass;
-    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_wmclass, &search);
+    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_wm_class, &search);
     return search.desktop;
 }
 
@@ -382,7 +382,7 @@ _efreet_util_cache_dir_free(void *data)
 }
 
 static void
-_efreet_util_cache_search_wmclass(void *value, void *data)
+_efreet_util_cache_search_wm_class(void *value, void *data)
 {
     Ecore_Hash_Node     *node;
     Efreet_Cache_Search *search;
