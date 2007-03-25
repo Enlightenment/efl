@@ -14,7 +14,12 @@ TODO
 
 - Need to store a pure exec for the .desktop files we can match on.
 
-- Add support for searching for a list of fallback icons in the current theme BEFORE looking in the inherited themes (e.g. for mime-types that go from specific to general).
+- Need to monitor default application directories so we can update the cache if
+  a .desktop file is added or removed.
+
+- Add support for searching for a list of fallback icons in the current theme
+  BEFORE looking in the inherited themes (e.g. for mime-types that go from
+  specific to general).
 
 Notes from the Menu Spec test
 -----------------------------
