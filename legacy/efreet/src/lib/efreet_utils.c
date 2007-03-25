@@ -98,6 +98,8 @@ efreet_util_shutdown(void)
         Efreet_Cache_Fill *fill;
         fill = ecore_idler_del(idler);
         IF_FREE_LIST(fill->dirs);
+        if (fill->current) _efreet_util_cache_dir_free(fill->current);
+        if (fill->files) closedir(fill->files);
         free(fill);
     }
     idler = NULL;
