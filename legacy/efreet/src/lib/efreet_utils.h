@@ -5,5 +5,6 @@
 char           *efreet_util_path_in_default(const char *section, const char *path);
 char           *efreet_util_path_to_file_id(const char *path);
 Efreet_Desktop *efreet_util_desktop_by_file_id_get(const char *file_id);
+Efreet_Desktop *efreet_util_desktop_by_exec_get(const char *exec);
 
 #endif
