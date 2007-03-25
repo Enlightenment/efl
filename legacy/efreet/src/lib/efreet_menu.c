@@ -803,13 +803,10 @@ int
 efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 {
     Efreet_Menu *entry;
-    char *path;
     char *id;
 
     if (!desktop || !menu) return 0;
-    path = efreet_util_path_in_default("applications", desktop->orig_path);
-    if (!path) return 0;
-    id = efreet_util_path_to_file_id(path, desktop->orig_path);
+    id = efreet_util_path_to_file_id(desktop->orig_path);
 
     entry = efreet_menu_entry_new();
     entry->type = EFREET_MENU_ENTRY_DESKTOP;
@@ -833,7 +830,6 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
     }
 
     free(id);
-    free(path);
     return 1;
 }
 

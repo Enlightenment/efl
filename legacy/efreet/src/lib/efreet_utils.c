@@ -41,14 +41,27 @@ efreet_util_path_in_default(const char *section, const char *path)
 }
 
 char *
-efreet_util_path_to_file_id(const char *base, const char *path)
+efreet_util_path_to_file_id(const char *path)
 {
     size_t len;
     char *id, *p;
+    char *base;
+
+    if (!path) return NULL;
+    base = efreet_util_path_in_default("applications", path);
+    if (!base) return NULL;
 
     len = strlen(base);
-    if (strlen(path) <= len) return NULL;
-    if (strncmp(path, base, len)) return NULL;
+    if (strlen(path) <= len)
+    {
+        free(base);
+        return NULL;
+    }
+    if (strncmp(path, base, len))
+    {
+        free(base);
+        return NULL;
+    }
 
     id = strdup(path + len + 1);
     p = id;
@@ -57,6 +70,7 @@ efreet_util_path_to_file_id(const char *base, const char *path)
         if (*p == '/') *p = '-';
         p++;
     }
+    free(base);
     return id;
 }
 

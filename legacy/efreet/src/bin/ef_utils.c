@@ -8,23 +8,21 @@ ef_cb_utils(void)
     Efreet_Desktop *desktop;
     char *tmp;
 
+    printf("\n");
     tmp = efreet_util_path_in_default("applications",
             "/usr/share/applications/test.desktop");
-    if (!tmp || strcmp(tmp, "/usr/share/applications"))
+    if (tmp)
     {
-        if (tmp) free(tmp);
-        return 0;
+        printf("%s\n", tmp);
+        free(tmp);
     }
-    if (tmp) free(tmp);
 
-    tmp = efreet_util_path_to_file_id("/usr/share/applications",
-            "/usr/share/applications/this/tmp/test.desktop");
-    if (!tmp || strcmp(tmp, "this-tmp-test.desktop"))
+    tmp = efreet_util_path_to_file_id("/usr/share/applications/this/tmp/test.desktop");
+    if (tmp)
     {
-        if (tmp) free(tmp);
-        return 0;
+        printf("%s\n", tmp);
+        free(tmp);
     }
-    if (tmp) free(tmp);
 
     desktop = efreet_util_desktop_by_file_id_get("kde-kresources.desktop");
     printf("kde-kresources.desktop: %p\n", desktop);
