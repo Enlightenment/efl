@@ -537,6 +537,40 @@ ecore_hash_remove(Ecore_Hash *hash, const void *key)
    return ret;
 }
 
+/**
+ * Retrieves the first value that matches
+ * table.
+ * @param   hash The given hash table.
+ * @param   key  The key to search for.
+ * @return  The value corresponding to key on success, @c NULL otherwise.
+ * @ingroup Ecore_Data_Hash_ADT_Data_Group
+ */
+EAPI void *
+ecore_hash_find(Ecore_Hash *hash, Ecore_Compare_Cb compare, const void *value)
+{
+   unsigned int i = 0;
+
+   CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
+   CHECK_PARAM_POINTER_RETURN("compare", compare, NULL);
+   CHECK_PARAM_POINTER_RETURN("value", value, NULL);
+
+   while (i < ecore_prime_table[hash->size])
+     {
+	if (hash->buckets[i])
+	  {
+	     Ecore_Hash_Node *node;
+
+	     for (node = hash->buckets[i]; node; node = node->next)
+	       {
+		  if (!compare(node->value, value)) return node->value;
+	       }
+	  }
+	i++;
+     }
+
+   return NULL;
+}
+
 /*
  * @brief Retrieve the node associated with key
  * @param hash: the hash table to search for the key

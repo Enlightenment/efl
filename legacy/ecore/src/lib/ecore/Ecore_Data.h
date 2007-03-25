@@ -277,6 +277,7 @@ extern "C" {
    EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
    EAPI int ecore_hash_set_hash(Ecore_Hash *hash, Ecore_Hash *set);
    EAPI void *ecore_hash_remove(Ecore_Hash *hash, const void *key);
+   EAPI void *ecore_hash_find(Ecore_Hash *hash, Ecore_Compare_Cb compare, const void *value);
    EAPI void ecore_hash_dump_graph(Ecore_Hash *hash);
    EAPI void ecore_hash_dump_stats(Ecore_Hash *hash);
 
