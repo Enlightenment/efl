@@ -115,6 +115,7 @@ void
 _edje_message_shutdown(void)
 {
    _edje_message_queue_clear();
+   job = NULL;
 }
 
 void
