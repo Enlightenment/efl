@@ -2,9 +2,10 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
-typedef struct _Efreet_Cache_Fill     Efreet_Cache_Fill;
-typedef struct _Efreet_Cache_Fill_Dir Efreet_Cache_Fill_Dir;
-typedef struct _Efreet_Cache_Search   Efreet_Cache_Search;
+typedef struct _Efreet_Cache_Fill        Efreet_Cache_Fill;
+typedef struct _Efreet_Cache_Fill_Dir    Efreet_Cache_Fill_Dir;
+typedef struct _Efreet_Cache_Search      Efreet_Cache_Search;
+typedef struct _Efreet_Cache_Search_Mime Efreet_Cache_Search_Mime;
 
 struct _Efreet_Cache_Fill
 {
@@ -21,12 +22,19 @@ struct _Efreet_Cache_Fill_Dir
 
 struct _Efreet_Cache_Search
 {
-    const char     *what1;
-    const char     *what2;
+    const char *what1;
+    const char *what2;
+};
+
+struct _Efreet_Cache_Search_Mime
+{
+    Ecore_List *list;
+    const char *mime;
 };
 
 static int  _efreet_util_cache_fill(void *data);
 static void _efreet_util_cache_dir_free(void *data);
+static void _efreet_util_cache_search_mime(void *value, void *data);
 static int  _efreet_util_cache_search_wm_class(const void *value, const void *data);
 static int  _efreet_util_cache_search_name(const void *value, const void *data);
 static int  _efreet_util_cache_search_generic_name(const void *value, const void *data);
@@ -158,6 +166,20 @@ efreet_util_path_to_file_id(const char *path)
     ecore_hash_set(file_id_by_desktop_path, (void *)ecore_string_instance(path),
                                                         (void *)file_id);
     return file_id;
+}
+
+Ecore_List *
+efreet_util_desktop_mime_list(const char *mime)
+{
+    Efreet_Cache_Search_Mime search;
+
+    search.list = ecore_list_new();
+    search.mime = mime;
+
+    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_mime, &search);
+
+    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
+    return search.list;
 }
 
 Efreet_Desktop *
@@ -372,6 +394,30 @@ _efreet_util_cache_dir_free(void *data)
     IF_FREE(dir->path);
     IF_FREE(dir->file_id);
     free(dir);
+}
+
+static void
+_efreet_util_cache_search_mime(void *value, void *data)
+{
+    Ecore_Hash_Node          *node;
+    Efreet_Cache_Search_Mime *search;
+    Efreet_Desktop           *desktop;
+    const char               *mime;
+
+    node = value;
+    search = data;
+    desktop = node->value;
+
+    if (!desktop->mime_types) return;
+    ecore_list_goto_first(desktop->mime_types);
+    while ((mime = ecore_list_next(desktop->mime_types)))
+    {
+        if (!strcmp(search->mime, mime))
+        {
+            ecore_list_append(search->list, desktop);
+            break;
+        }
+    }
 }
 
 static int

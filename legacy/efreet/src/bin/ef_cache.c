@@ -4,6 +4,7 @@
 static int
 timer(void *data)
 {
+    Ecore_List *list;
     Efreet_Desktop *desktop;
     double start;
 
@@ -16,6 +17,17 @@ timer(void *data)
     start = ecore_time_get();
     desktop = efreet_util_desktop_wm_class_find("Mozilla-firefox-bin", NULL);
     printf("Mozilla-firefox-bin: %p %.3f\n", desktop, (ecore_time_get() - start));
+
+    list = efreet_util_desktop_mime_list("application/ogg");
+    if (list)
+    {
+        ecore_list_goto_first(list);
+        while ((desktop = ecore_list_next(list)))
+        {
+            printf("application/ogg: %s\n", desktop->name);
+        }
+        ecore_list_destroy(list);
+    }
 
     return 0;
 }
