@@ -803,7 +803,7 @@ int
 efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 {
     Efreet_Menu *entry;
-    char *id;
+    const char *id;
 
     if (!desktop || !menu) return 0;
     id = efreet_util_path_to_file_id(desktop->orig_path);
@@ -828,8 +828,6 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
         ecore_list_goto_index(menu->entries, pos);
         ecore_list_insert(menu->entries, entry);
     }
-
-    free(id);
     return 1;
 }
 
