@@ -22,11 +22,13 @@ struct _Efreet_Cache_Fill_Dir
 struct _Efreet_Cache_Search
 {
     Efreet_Desktop *desktop;
-    const char     *what;
+    const char     *what1;
+    const char     *what2;
 };
 
 static int  _efreet_util_cache_fill(void *data);
 static void _efreet_util_cache_dir_free(void *data);
+static void _efreet_util_cache_search_wmclass(void *value, void *data);
 static void _efreet_util_cache_search_name(void *value, void *data);
 static void _efreet_util_cache_search_generic_name(void *value, void *data);
 
@@ -160,6 +162,19 @@ efreet_util_path_to_file_id(const char *path)
 }
 
 Efreet_Desktop *
+efreet_util_desktop_wmclass_find(const char *wmname, const char *wmclass)
+{
+    Efreet_Cache_Search search;
+
+    if ((!wmname) && (!wmclass)) return NULL;
+    search.desktop = NULL;
+    search.what1 = wmname;
+    search.what2 = wmclass;
+    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_wmclass, &search);
+    return search.desktop;
+}
+
+Efreet_Desktop *
 efreet_util_desktop_file_id_find(const char *file_id)
 {
     Efreet_Desktop *desktop = NULL;
@@ -224,7 +239,8 @@ efreet_util_desktop_name_find(const char *name)
 
     if (!name) return NULL;
     search.desktop = NULL;
-    search.what = name;
+    search.what1 = name;
+    search.what2 = NULL;
     ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_name, &search);
     return search.desktop;
 }
@@ -236,7 +252,8 @@ efreet_util_desktop_generic_name_find(const char *generic_name)
 
     if (!generic_name) return NULL;
     search.desktop = NULL;
-    search.what = generic_name;
+    search.what1 = generic_name;
+    search.what2 = NULL;
     ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_generic_name, &search);
     return search.desktop;
 }
@@ -365,6 +382,24 @@ _efreet_util_cache_dir_free(void *data)
 }
 
 static void
+_efreet_util_cache_search_wmclass(void *value, void *data)
+{
+    Ecore_Hash_Node     *node;
+    Efreet_Cache_Search *search;
+    Efreet_Desktop      *desktop;
+
+    node = value;
+    search = data;
+
+    desktop = node->value;
+    if (!desktop->startup_wm_class) return;
+    if ((search->what1) && (!strcmp(desktop->startup_wm_class, search->what1)))
+        search->desktop = desktop;
+    else if ((search->what2) && (!strcmp(desktop->startup_wm_class, search->what2)))
+        search->desktop = desktop;
+}
+
+static void
 _efreet_util_cache_search_name(void *value, void *data)
 {
     Ecore_Hash_Node     *node;
@@ -376,7 +411,7 @@ _efreet_util_cache_search_name(void *value, void *data)
 
     desktop = node->value;
     if (!desktop->name) return;
-    if (!strcmp(desktop->name, search->what)) search->desktop = desktop;
+    if (!strcmp(desktop->name, search->what1)) search->desktop = desktop;
 }
 
 static void
@@ -391,5 +426,5 @@ _efreet_util_cache_search_generic_name(void *value, void *data)
 
     desktop = node->value;
     if (!desktop->generic_name) return;
-    if (!strcmp(desktop->generic_name, search->what)) search->desktop = desktop;
+    if (!strcmp(desktop->generic_name, search->what1)) search->desktop = desktop;
 }
