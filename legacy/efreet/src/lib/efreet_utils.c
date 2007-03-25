@@ -5,7 +5,7 @@
 typedef struct _Efreet_Cache_Fill        Efreet_Cache_Fill;
 typedef struct _Efreet_Cache_Fill_Dir    Efreet_Cache_Fill_Dir;
 typedef struct _Efreet_Cache_Search      Efreet_Cache_Search;
-typedef struct _Efreet_Cache_Search_Mime Efreet_Cache_Search_Mime;
+typedef struct _Efreet_Cache_Search_List Efreet_Cache_Search_List;
 
 struct _Efreet_Cache_Fill
 {
@@ -26,18 +26,26 @@ struct _Efreet_Cache_Search
     const char *what2;
 };
 
-struct _Efreet_Cache_Search_Mime
+struct _Efreet_Cache_Search_List
 {
     Ecore_List *list;
-    const char *mime;
+    const char *what;
 };
 
 static int  _efreet_util_cache_fill(void *data);
 static void _efreet_util_cache_dir_free(void *data);
+
 static void _efreet_util_cache_search_mime(void *value, void *data);
 static int  _efreet_util_cache_search_wm_class(const void *value, const void *data);
 static int  _efreet_util_cache_search_name(const void *value, const void *data);
 static int  _efreet_util_cache_search_generic_name(const void *value, const void *data);
+
+static void _efreet_util_cache_search_name_glob(void *value, void *data);
+static void _efreet_util_cache_search_exec_glob(void *value, void *data);
+static void _efreet_util_cache_search_generic_name_glob(void *value, void *data);
+static void _efreet_util_cache_search_comment_glob(void *value, void *data);
+
+static int  _efreet_util_glob_match(const char *str, const char *glob);
 
 static Ecore_Hash *desktop_by_file_id = NULL;
 static Ecore_Hash *desktop_by_exec = NULL;
@@ -171,10 +179,10 @@ efreet_util_path_to_file_id(const char *path)
 Ecore_List *
 efreet_util_desktop_mime_list(const char *mime)
 {
-    Efreet_Cache_Search_Mime search;
+    Efreet_Cache_Search_List search;
 
     search.list = ecore_list_new();
-    search.mime = mime;
+    search.what = mime;
 
     ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_mime, &search);
 
@@ -271,6 +279,62 @@ efreet_util_desktop_generic_name_find(const char *generic_name)
     search.what1 = generic_name;
     search.what2 = NULL;
     return ecore_hash_find(desktop_by_exec, _efreet_util_cache_search_generic_name, &search);
+}
+
+Ecore_List *
+efreet_util_desktop_name_glob_list(const char *glob)
+{
+    Efreet_Cache_Search_List search;
+
+    search.list = ecore_list_new();
+    search.what = glob;
+
+    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_name_glob, &search);
+
+    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
+    return search.list;
+}
+
+Ecore_List *
+efreet_util_desktop_exec_glob_list(const char *glob)
+{
+    Efreet_Cache_Search_List search;
+
+    search.list = ecore_list_new();
+    search.what = glob;
+
+    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_exec_glob, &search);
+
+    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
+    return search.list;
+}
+
+Ecore_List *
+efreet_util_desktop_generic_name_glob_list(const char *glob)
+{
+    Efreet_Cache_Search_List search;
+
+    search.list = ecore_list_new();
+    search.what = glob;
+
+    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_generic_name_glob, &search);
+
+    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
+    return search.list;
+}
+
+Ecore_List *
+efreet_util_desktop_comment_glob_list(const char *glob)
+{
+    Efreet_Cache_Search_List search;
+
+    search.list = ecore_list_new();
+    search.what = glob;
+
+    ecore_hash_for_each_node(desktop_by_exec, _efreet_util_cache_search_comment_glob, &search);
+
+    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
+    return search.list;
 }
 
 #if 0
@@ -400,7 +464,7 @@ static void
 _efreet_util_cache_search_mime(void *value, void *data)
 {
     Ecore_Hash_Node          *node;
-    Efreet_Cache_Search_Mime *search;
+    Efreet_Cache_Search_List *search;
     Efreet_Desktop           *desktop;
     const char               *mime;
 
@@ -412,7 +476,7 @@ _efreet_util_cache_search_mime(void *value, void *data)
     ecore_list_goto_first(desktop->mime_types);
     while ((mime = ecore_list_next(desktop->mime_types)))
     {
-        if (!strcmp(search->mime, mime))
+        if (!strcmp(search->what, mime))
         {
             ecore_list_append(search->list, desktop);
             break;
@@ -461,4 +525,85 @@ _efreet_util_cache_search_generic_name(const void *value, const void *data)
 
     if (!desktop->generic_name) return 0;
     return (!strcmp(desktop->generic_name, search->what1));
+}
+
+static void
+_efreet_util_cache_search_name_glob(void *value, void *data)
+{
+    Ecore_Hash_Node          *node;
+    Efreet_Cache_Search_List *search;
+    Efreet_Desktop           *desktop;
+
+    node = value;
+    search = data;
+    desktop = node->value;
+
+    if (_efreet_util_glob_match(desktop->name, search->what))
+        ecore_list_append(search->list, desktop);
+}
+
+static void
+_efreet_util_cache_search_exec_glob(void *value, void *data)
+{
+    Ecore_Hash_Node          *node;
+    Efreet_Cache_Search_List *search;
+    Efreet_Desktop           *desktop;
+    char                     *exec;
+
+    node = value;
+    search = data;
+    desktop = node->value;
+
+    exec = ecore_file_app_exe_get(desktop->exec);
+    if (exec)
+    {
+        if (_efreet_util_glob_match(exec, search->what))
+            ecore_list_append(search->list, desktop);
+        free(exec);
+    }
+}
+
+static void
+_efreet_util_cache_search_generic_name_glob(void *value, void *data)
+{
+    Ecore_Hash_Node          *node;
+    Efreet_Cache_Search_List *search;
+    Efreet_Desktop           *desktop;
+
+    node = value;
+    search = data;
+    desktop = node->value;
+
+    if (_efreet_util_glob_match(desktop->generic_name, search->what))
+        ecore_list_append(search->list, desktop);
+}
+
+static void
+_efreet_util_cache_search_comment_glob(void *value, void *data)
+{
+    Ecore_Hash_Node          *node;
+    Efreet_Cache_Search_List *search;
+    Efreet_Desktop           *desktop;
+
+    node = value;
+    search = data;
+    desktop = node->value;
+
+    if (_efreet_util_glob_match(desktop->comment, search->what))
+        ecore_list_append(search->list, desktop);
+}
+
+static int
+_efreet_util_glob_match(const char *str, const char *glob)
+{
+    if (!str || !glob)
+        return 0;
+    if (glob[0] == 0)
+    {
+        if (str[0] == 0) return 1;
+        return 0;
+    }
+    if (!strcmp(glob, "*")) return 1;
+    if (!fnmatch(glob, str, 0)) return 1;
+    return 0;
 }

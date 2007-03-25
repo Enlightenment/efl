@@ -20,6 +20,7 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <fnmatch.h>
 
 #include <Ecore.h>
 #include <Ecore_File.h>
