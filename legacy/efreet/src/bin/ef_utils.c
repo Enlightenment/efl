@@ -6,23 +6,20 @@ int
 ef_cb_utils(void)
 {
     Efreet_Desktop *desktop;
-    char *tmp;
+    char *tmp1;
+    const char *tmp2;
 
     printf("\n");
-    tmp = efreet_util_path_in_default("applications",
+    tmp1 = efreet_util_path_in_default("applications",
             "/usr/share/applications/test.desktop");
-    if (tmp)
+    if (tmp1)
     {
-        printf("%s\n", tmp);
-        free(tmp);
+        printf("%s\n", tmp1);
+        free(tmp1);
     }
 
-    tmp = efreet_util_path_to_file_id("/usr/share/applications/this/tmp/test.desktop");
-    if (tmp)
-    {
-        printf("%s\n", tmp);
-        free(tmp);
-    }
+    tmp2 = efreet_util_path_to_file_id("/usr/share/applications/this/tmp/test.desktop");
+    if (tmp2) printf("%s\n", tmp2);
 
     desktop = efreet_util_desktop_file_id_find("kde-kresources.desktop");
     printf("kde-kresources.desktop: %p\n", desktop);

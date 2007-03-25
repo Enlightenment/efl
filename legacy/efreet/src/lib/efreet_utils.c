@@ -36,7 +36,10 @@ efreet_util_init(void)
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
     desktop_by_exec = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    ecore_hash_set_free_key(desktop_by_exec, ECORE_FREE_CB(ecore_string_release));
     file_id_by_desktop_path = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    ecore_hash_set_free_key(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_set_free_value(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
 
     fill = NEW(Efreet_Cache_Fill, 1);
     fill->dirs = ecore_list_new();
@@ -105,12 +108,13 @@ efreet_util_path_in_default(const char *section, const char *path)
     return ret;
 }
 
-char *
+const char *
 efreet_util_path_to_file_id(const char *path)
 {
     size_t len;
-    char *file_id, *p;
+    char *tmp, *p;
     char *base;
+    const char *file_id = NULL;
 
     if (!path) return NULL;
     file_id = ecore_hash_get(file_id_by_desktop_path, path);
@@ -131,16 +135,18 @@ efreet_util_path_to_file_id(const char *path)
         return NULL;
     }
 
-    file_id = strdup(path + len + 1);
-    p = file_id;
+    tmp = strdup(path + len + 1);
+    p = tmp;
     while (*p)
     {
         if (*p == '/') *p = '-';
         p++;
     }
     free(base);
-    if (file_id) ecore_hash_set(file_id_by_desktop_path, (void *)ecore_string_instance(path),
-                                                        (void *)ecore_string_instance(file_id));
+    file_id = ecore_string_instance(tmp);
+    free(tmp);
+    ecore_hash_set(file_id_by_desktop_path, (void *)ecore_string_instance(path),
+                                                        (void *)file_id);
     return file_id;
 }
 
