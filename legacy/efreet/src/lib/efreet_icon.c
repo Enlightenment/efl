@@ -157,12 +157,7 @@ efreet_icon_theme_list_get(void)
     Ecore_List *list, *theme_list;
     char *dir;
 
-    /* reset the theme hash */
-    ecore_hash_destroy(efreet_icon_themes);
-    efreet_icon_themes = ecore_hash_new(NULL, NULL);
-    ecore_hash_set_free_value(efreet_icon_themes, 
-                              ECORE_FREE_CB(efreet_icon_theme_free));
-
+    /* update the list to include all icon themes */
     efreet_icon_theme_dir_scan_all(NULL);
     efreet_icon_theme_dir_validity_check();
 
