@@ -16,6 +16,7 @@ TODO
   - file-id for .desktop files from default app dirs.
   - startup_wm_class
 
+- Add support for searching for a list of fallback icons in the current theme BEFORE looking in the inherited themes (e.g. for mime-types that go from specific to general).
 
 Notes from the Menu Spec test
 -----------------------------
