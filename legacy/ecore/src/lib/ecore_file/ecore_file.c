@@ -343,6 +343,8 @@ ecore_file_app_exe_get(const char *app)
    char *exe = NULL;
    int in_quot_dbl = 0, in_quot_sing = 0, restart = 0;
 
+   if (!app) return NULL;
+
    p = (char *)app;
 restart:
    while ((*p) && (isspace(*p))) p++;
