@@ -25,6 +25,7 @@ efreet_init(void)
     if (!efreet_ini_init()) return --init;
     if (!efreet_desktop_init()) return --init;
     if (!efreet_menu_init()) return --init;
+    if (!efreet_util_init()) return --init;
     return init;
 }
 
@@ -44,6 +45,7 @@ efreet_shutdown(void)
     efreet_icon_shutdown();
     efreet_xml_shutdown();
     efreet_base_shutdown();
+    efreet_util_shutdown();
 
     IF_FREE(efreet_lang);
     IF_FREE(efreet_lang_country);

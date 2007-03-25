@@ -178,6 +178,10 @@ const char *efreet_lang_modifier_get(void);
 
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
+int  efreet_util_init(void);
+void efreet_util_shutdown(void);
+
+
 /**
  * @}
  */

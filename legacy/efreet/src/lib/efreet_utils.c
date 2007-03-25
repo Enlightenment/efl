@@ -2,6 +2,17 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+int
+efreet_util_init(void)
+{
+    return 1;
+}
+
+void
+efreet_util_shutdown(void)
+{
+}
+
 char *
 efreet_util_path_in_default(const char *section, const char *path)
 {
