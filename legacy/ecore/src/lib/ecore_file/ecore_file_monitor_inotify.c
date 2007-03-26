@@ -198,7 +198,7 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
    char buf[PATH_MAX];
    int isdir;
 
-   if (file)
+   if ((file) && (file[0]))
      snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
    else
      strcpy(buf, em->path);
