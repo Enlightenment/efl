@@ -807,6 +807,7 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 
     if (!desktop || !menu) return 0;
     id = efreet_util_path_to_file_id(desktop->orig_path);
+    if (!id) return 0;
 
     entry = efreet_menu_entry_new();
     entry->type = EFREET_MENU_ENTRY_DESKTOP;
