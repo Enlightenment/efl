@@ -23,7 +23,7 @@ ef_cb_efreet_data_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
-    setenv("XDG_DATA_HOME", "", 1);
+    unsetenv("XDG_DATA_HOME");
     setenv("HOME", "/home/tmp", 1);
     efreet_init();
 
@@ -37,8 +37,8 @@ ef_cb_efreet_data_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
-    setenv("XDG_DATA_HOME", "", 1);
-    setenv("HOME", "", 1);
+    unsetenv("XDG_DATA_HOME");
+    unsetenv("HOME");
     efreet_init();
 
     tmp = efreet_data_home_get();
@@ -72,7 +72,7 @@ ef_cb_efreet_config_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
-    setenv("XDG_CONFIG_HOME", "", 1);
+    unsetenv("XDG_CONFIG_HOME");
     setenv("HOME", "/home/tmp", 1);
     efreet_init();
 
@@ -86,8 +86,8 @@ ef_cb_efreet_config_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
-    setenv("XDG_CONFIG_HOME", "", 1);
-    setenv("HOME", "", 1);
+    unsetenv("XDG_CONFIG_HOME");
+    unsetenv("HOME");
     efreet_init();
 
     tmp = efreet_config_home_get();
@@ -121,7 +121,7 @@ ef_cb_efreet_cache_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
-    setenv("XDG_CACHE_HOME", "", 1);
+    unsetenv("XDG_CACHE_HOME");
     setenv("HOME", "/home/tmp", 1);
     efreet_init();
 
@@ -135,8 +135,8 @@ ef_cb_efreet_cache_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
-    setenv("XDG_CACHE_HOME", "", 1);
-    setenv("HOME", "", 1);
+    unsetenv("XDG_CACHE_HOME");
+    unsetenv("HOME");
     efreet_init();
 
     tmp = efreet_cache_home_get();
@@ -194,7 +194,7 @@ ef_cb_efreet_data_dirs(void)
     }
 
     efreet_shutdown();
-    setenv("XDG_DATA_DIRS", "", 1);
+    unsetenv("XDG_DATA_DIRS");
     efreet_init();
 
     i = 0;
@@ -267,7 +267,7 @@ ef_cb_efreet_config_dirs(void)
     }
 
     efreet_shutdown();
-    setenv("XDG_CONFIG_DIRS", "", 1);
+    unsetenv("XDG_CONFIG_DIRS");
     efreet_init();
 
     i = 0;
