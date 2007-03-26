@@ -1,9 +1,6 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 #include "Efreet.h"
 #include "efreet_private.h"
-#include <Ecore_File.h>
-#include <string.h>
-#include <sys/stat.h>
 
 #define DESKTOP_VERSION 1.0
 

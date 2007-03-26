@@ -1,8 +1,6 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 #include "Efreet.h"
 #include "efreet_private.h"
-#include <sys/stat.h>
-#include <limits.h>
 
 #define NO_MATCH_KEY ((char *)0xdeadbeef)
 

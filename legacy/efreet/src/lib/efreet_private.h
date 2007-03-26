@@ -19,12 +19,14 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <fnmatch.h>
+#include <limits.h>
 
 #include <Ecore.h>
 #include <Ecore_File.h>
-#include "Ecore_Str.h"
+#include <Ecore_Str.h>
 
 #include "config.h"
 #include "efreet_xml.h"
