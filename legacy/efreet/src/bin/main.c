@@ -23,7 +23,9 @@ int ef_cb_desktop_file_id(void);
 #endif
 int ef_cb_menu_get(void);
 int ef_cb_menu_save(void);
+#if 0
 int ef_cb_menu_edit(void);
+#endif
 int ef_cb_ini_long_line(void);
 int ef_cb_utils(void);
 
@@ -55,7 +57,9 @@ static Efreet_Test tests[] = {
 #endif
     {"Menu Parsing", ef_cb_menu_get},
     {"Menu Save", ef_cb_menu_save},
+#if 0
     {"Menu Edit", ef_cb_menu_edit},
+#endif
     {"Utils", ef_cb_utils},
     {NULL, NULL}
 };
