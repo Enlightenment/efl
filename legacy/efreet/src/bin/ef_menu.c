@@ -48,6 +48,7 @@ int
 ef_cb_menu_save(void)
 {
     Efreet_Menu *menu;
+    int ret;
 
 //    menu = efreet_menu_get();
     menu = efreet_menu_parse(PACKAGE_DATA_DIR"/efreet/test/test.menu");
@@ -57,7 +58,9 @@ ef_cb_menu_save(void)
         return 0;
     }
     unlink("/tmp/test.menu");
-    return efreet_menu_save(menu, "/tmp/test.menu");
+    ret = efreet_menu_save(menu, "/tmp/test.menu");
+    efreet_menu_free(menu);
+    return ret;
 }
 
 int
@@ -82,6 +85,7 @@ ef_cb_menu_edit(void)
     desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test.desktop");
     if (!desktop) 
     {
+        efreet_menu_free(menu);
         printf("No desktop found.\n");
         return 0;
     }
@@ -94,7 +98,11 @@ ef_cb_menu_edit(void)
 #endif
     ecore_list_goto_first(menu->entries);
     entry = ecore_list_current(menu->entries);
-    if (desktop != entry->desktop) return 0;
+    if (desktop != entry->desktop)
+    {
+        efreet_menu_free(menu);
+        return 0;
+    }
 
     efreet_menu_desktop_insert(menu, desktop, 2);
 #if 0
@@ -104,7 +112,11 @@ ef_cb_menu_edit(void)
 #endif
     ecore_list_goto_index(menu->entries, 2);
     entry = ecore_list_current(menu->entries);
-    if (desktop != entry->desktop) return 0;
+    if (desktop != entry->desktop)
+    {
+        efreet_menu_free(menu);
+        return 0;
+    }
 
     efreet_menu_desktop_insert(menu, desktop, -1);
 #if 0
@@ -114,8 +126,13 @@ ef_cb_menu_edit(void)
 #endif
     ecore_list_goto_last(menu->entries);
     entry = ecore_list_current(menu->entries);
-    if (desktop != entry->desktop) return 0;
+    if (desktop != entry->desktop)
+    {
+        efreet_menu_free(menu);
+        return 0;
+    }
 
+    efreet_menu_free(menu);
     return 1;
 }
 
