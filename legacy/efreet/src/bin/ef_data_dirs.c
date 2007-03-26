@@ -9,9 +9,8 @@ ef_cb_efreet_data_home(void)
     const char *tmp;
     int ret = 1;
 
-    putenv("XDG_DATA_HOME=/var/tmp");
-
     efreet_shutdown();
+    setenv("XDG_DATA_HOME", "/var/tmp", 1);
     efreet_init();
 
     tmp = efreet_data_home_get();
@@ -24,10 +23,9 @@ ef_cb_efreet_data_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
+    setenv("XDG_DATA_HOME", "", 1);
+    setenv("HOME", "/home/tmp", 1);
     efreet_init();
-
-    putenv("XDG_DATA_HOME=");
-    putenv("HOME=/home/tmp");
 
     tmp = efreet_data_home_get();
     if (strcmp(tmp, "/home/tmp/.local/share"))
@@ -39,10 +37,9 @@ ef_cb_efreet_data_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
+    setenv("XDG_DATA_HOME", "", 1);
+    setenv("HOME", "", 1);
     efreet_init();
-
-    putenv("XDG_DATA_HOME=");
-    putenv("HOME=");
 
     tmp = efreet_data_home_get();
     if (strcmp(tmp, "/tmp/.local/share"))
@@ -61,9 +58,8 @@ ef_cb_efreet_config_home(void)
     const char *tmp;
     int ret = 1;
 
-    putenv("XDG_CONFIG_HOME=/var/tmp");
-
     efreet_shutdown();
+    setenv("XDG_CONFIG_HOME", "/var/tmp", 1);
     efreet_init();
 
     tmp = efreet_config_home_get();
@@ -76,10 +72,9 @@ ef_cb_efreet_config_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
+    setenv("XDG_CONFIG_HOME", "", 1);
+    setenv("HOME", "/home/tmp", 1);
     efreet_init();
-
-    putenv("XDG_CONFIG_HOME=");
-    putenv("HOME=/home/tmp");
 
     tmp = efreet_config_home_get();
     if (strcmp(tmp, "/home/tmp/.config"))
@@ -91,10 +86,9 @@ ef_cb_efreet_config_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
+    setenv("XDG_CONFIG_HOME", "", 1);
+    setenv("HOME", "", 1);
     efreet_init();
-
-    putenv("XDG_CONFIG_HOME=");
-    putenv("HOME=");
 
     tmp = efreet_config_home_get();
     if (strcmp(tmp, "/tmp/.config"))
@@ -113,9 +107,8 @@ ef_cb_efreet_cache_home(void)
     const char *tmp;
     int ret = 1;
 
-    putenv("XDG_CACHE_HOME=/var/tmp");
-
     efreet_shutdown();
+    setenv("XDG_CACHE_HOME", "/var/tmp", 1);
     efreet_init();
 
     tmp = efreet_cache_home_get();
@@ -128,10 +121,9 @@ ef_cb_efreet_cache_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
+    setenv("XDG_CACHE_HOME", "", 1);
+    setenv("HOME", "/home/tmp", 1);
     efreet_init();
-
-    putenv("XDG_CACHE_HOME=");
-    putenv("HOME=/home/tmp");
 
     tmp = efreet_cache_home_get();
     if (strcmp(tmp, "/home/tmp/.cache"))
@@ -143,10 +135,9 @@ ef_cb_efreet_cache_home(void)
 
     /* reset efreet here so we can set a new home dir */
     efreet_shutdown();
+    setenv("XDG_CACHE_HOME", "", 1);
+    setenv("HOME", "", 1);
     efreet_init();
-
-    putenv("XDG_CACHE_HOME=");
-    putenv("HOME=");
 
     tmp = efreet_cache_home_get();
     if (strcmp(tmp, "/tmp/.cache"))
@@ -169,16 +160,14 @@ ef_cb_efreet_data_dirs(void)
     char *def_vals[] = {"/usr/local/share", "/usr/share", NULL};
 
     dirs[0] = '\0';
-    strcat(dirs, "XDG_DATA_DIRS=");
     for (i = 0; vals[i] != NULL; i++)
     {
         if (i > 0) strcat(dirs, ":");
         strcat(dirs, vals[i]);
     }
 
-    putenv(dirs);
-
     efreet_shutdown();
+    setenv("XDG_DATA_DIRS", dirs, 1);
     efreet_init();
 
     i = 0;
@@ -205,9 +194,8 @@ ef_cb_efreet_data_dirs(void)
     }
 
     efreet_shutdown();
+    setenv("XDG_DATA_DIRS", "", 1);
     efreet_init();
-
-    putenv("XDG_DATA_DIRS=");
 
     i = 0;
     tmp = efreet_data_dirs_get();
@@ -245,16 +233,14 @@ ef_cb_efreet_config_dirs(void)
     
     dirs[0] = '\0';
 
-    strcat(dirs, "XDG_CONFIG_DIRS=");
     for (i = 0; vals[i] != NULL; i++)
     {
         if (i > 0) strcat(dirs, ":");
         strcat(dirs, vals[i]);
     }
 
-    putenv(dirs);
-
     efreet_shutdown();
+    setenv("XDG_CONFIG_DIRS", dirs, 1);
     efreet_init();
 
     i = 0;
@@ -281,9 +267,8 @@ ef_cb_efreet_config_dirs(void)
     }
 
     efreet_shutdown();
+    setenv("XDG_CONFIG_DIRS", "", 1);
     efreet_init();
-
-    putenv("XDG_CONFIG_DIRS=");
 
     i = 0;
     tmp = efreet_config_dirs_get();
