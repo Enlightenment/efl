@@ -11,11 +11,14 @@ ef_cb_efreet_data_home(void)
 
     putenv("XDG_DATA_HOME=/var/tmp");
 
+    efreet_shutdown();
+    efreet_init();
+
     tmp = efreet_data_home_get();
     if (strcmp(tmp, "/var/tmp"))
     {
         printf("efreet_data_home_get() returned incorrect "
-                "value on XDG_DATA_HOME=/var/tmp\n");
+                "value (%s) on XDG_DATA_HOME=/var/tmp\n", tmp);
         ret = 0;
     }
 
@@ -30,7 +33,7 @@ ef_cb_efreet_data_home(void)
     if (strcmp(tmp, "/home/tmp/.local/share"))
     {
         printf("efreet_data_home_get() returned incorrect "
-                "value on blank XDG_DATA_HOME\n");
+                "value (%s) on blank XDG_DATA_HOME\n", tmp);
         ret = 0;
     }
 
@@ -60,11 +63,14 @@ ef_cb_efreet_config_home(void)
 
     putenv("XDG_CONFIG_HOME=/var/tmp");
 
+    efreet_shutdown();
+    efreet_init();
+
     tmp = efreet_config_home_get();
     if (strcmp(tmp, "/var/tmp"))
     {
         printf("efreet_config_home_get() returned incorrect "
-                "value on XDG_CONFIG_HOME=/var/tmp\n");
+                "value (%s) on XDG_CONFIG_HOME=/var/tmp\n", tmp);
         ret = 0;
     }
 
@@ -79,7 +85,7 @@ ef_cb_efreet_config_home(void)
     if (strcmp(tmp, "/home/tmp/.config"))
     {
         printf("efreet_config_home_get() returned incorrect "
-                "value on blank XDG_CONFIG_HOME\n");
+                "value (%s) on blank XDG_CONFIG_HOME\n", tmp);
         ret = 0;
     }
 
@@ -109,11 +115,14 @@ ef_cb_efreet_cache_home(void)
 
     putenv("XDG_CACHE_HOME=/var/tmp");
 
+    efreet_shutdown();
+    efreet_init();
+
     tmp = efreet_cache_home_get();
     if (strcmp(tmp, "/var/tmp"))
     {
         printf("efreet_cache_home_get() returned incorrect "
-                "value on XDG_CACHE_HOME=/var/tmp\n");
+                "value (%s) on XDG_CACHE_HOME=/var/tmp\n", tmp);
         ret = 0;
     }
 
@@ -128,7 +137,7 @@ ef_cb_efreet_cache_home(void)
     if (strcmp(tmp, "/home/tmp/.cache"))
     {
         printf("efreet_cache_home_get() returned incorrect "
-                "value on blank XDG_CACHE_HOME\n");
+                "value (%s) on blank XDG_CACHE_HOME\n", tmp);
         ret = 0;
     }
 
@@ -168,6 +177,9 @@ ef_cb_efreet_data_dirs(void)
     }
 
     putenv(dirs);
+
+    efreet_shutdown();
+    efreet_init();
 
     i = 0;
     tmp = efreet_data_dirs_get();
@@ -241,6 +253,9 @@ ef_cb_efreet_config_dirs(void)
     }
 
     putenv(dirs);
+
+    efreet_shutdown();
+    efreet_init();
 
     i = 0;
     tmp = efreet_config_dirs_get();
