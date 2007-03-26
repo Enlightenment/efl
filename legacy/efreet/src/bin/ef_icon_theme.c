@@ -24,7 +24,9 @@ ef_cb_efreet_icon_theme(void)
     int ret = 1;
     const char *tmp;
 
+    efreet_shutdown();
     putenv("HOME=/var/tmp");
+    efreet_init();
 
     tmp = efreet_icon_dir_get();
     if (strcmp(tmp, "/var/tmp/.icons"))
@@ -35,15 +37,14 @@ ef_cb_efreet_icon_theme(void)
     }
 
     efreet_shutdown();
+    unsetenv("HOME");
     efreet_init();
-
-    putenv("HOME=");
 
     tmp = efreet_icon_dir_get();
     if (strcmp(tmp, "/tmp/.icons"))
     {
         printf("efreet_icon_dir_get() returned incorrect "
-                "value on HOME=\n");
+                "value (%s) on HOME=\n", tmp);
         ret = 0;
     }
 
