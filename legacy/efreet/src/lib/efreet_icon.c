@@ -381,7 +381,6 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
     {
         char cache_key[PATH_MAX];
         const char *key;
-        Efreet_Icon *value;
 
         snprintf(cache_key, sizeof(cache_key), "%s@%dx%d", icon_name, real_size, real_size);
         key = ecore_string_instance(cache_key);
