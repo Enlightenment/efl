@@ -14,7 +14,6 @@
 
 #ifdef HAVE_INOTIFY
 
-#include <asm/unistd.h>
 #include <sys/inotify.h>
 
 typedef struct _Ecore_File_Monitor_Inotify Ecore_File_Monitor_Inotify;
