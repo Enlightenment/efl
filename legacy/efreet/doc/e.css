@@ -144,6 +144,7 @@ td.indexvalue {
     padding-left: 2px;
     padding-right: 2px;
     border: 1px dotted #cccccc;
+    background-color: #ffffff;
 }
 .memname {
     white-space: nowrap;
