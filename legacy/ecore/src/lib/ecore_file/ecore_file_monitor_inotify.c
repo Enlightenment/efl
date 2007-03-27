@@ -31,8 +31,8 @@ static Ecore_List2    *_monitors = NULL;
 
 static int                 _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh);
 static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
-static void                _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em,
-							      char *file, int mask);
+static void                _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask);
+static int                 _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path);
 #if 0
 static void                _ecore_file_monitor_inotify_print(char *file, int mask);
 #endif
@@ -104,16 +104,7 @@ ecore_file_monitor_inotify_add(const char *path,
 
    if (ecore_file_exists(em->path))
      {
-	int mask;
-	mask = IN_MODIFY|
-	       IN_MOVED_FROM|IN_MOVED_TO|
-	       IN_DELETE|IN_CREATE|
-	       IN_DELETE_SELF|IN_MOVE_SELF|
-	       IN_UNMOUNT;
-	ECORE_FILE_MONITOR_INOTIFY(em)->wd = inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh),
-							       em->path,
-							       mask);
-	if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
+	if (!_ecore_file_monitor_inotify_monitor(em, em->path))
 	  {
 	     printf("inotify_add_watch error\n");
 	     ecore_file_monitor_inotify_del(em);
@@ -251,6 +242,38 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
 	/* We just call delete. The dir is gone... */
 	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
      }
+   if (mask & IN_IGNORED)
+     {
+	/* The watch is removed. If the file name still exists monitor the new one,
+	 * else delete it */
+	if (ecore_file_exists(em->path))
+	  {
+	     if (!_ecore_file_monitor_inotify_monitor(em, em->path))
+	       em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+	  }
+	else
+	  em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+     }
+}
+
+static int
+_ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
+{
+   int mask;
+   mask = IN_MODIFY|
+	  IN_MOVED_FROM|IN_MOVED_TO|
+	  IN_DELETE|IN_CREATE|
+	  IN_DELETE_SELF|IN_MOVE_SELF|
+	  IN_UNMOUNT;
+   ECORE_FILE_MONITOR_INOTIFY(em)->wd = inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh),
+							  path, mask);
+   if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
+     {
+	printf("inotify_add_watch error\n");
+	ecore_file_monitor_inotify_del(em);
+	return 0;
+     }
+   return 1;
 }
 
 #if 0
