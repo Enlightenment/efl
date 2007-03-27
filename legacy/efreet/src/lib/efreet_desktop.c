@@ -46,6 +46,8 @@ struct Efreet_Desktop_Type_Info
 };
 
 static Efreet_Desktop *efreet_desktop_new(const char *file);
+static int efreet_desktop_read(Efreet_Desktop *desktop);
+static void efreet_desktop_clear(Efreet_Desktop *desktop);
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
 static Ecore_List *efreet_desktop_string_list_parse(const char *string);
 static char *efreet_desktop_string_list_join(Ecore_List *list);
@@ -193,6 +195,10 @@ efreet_desktop_get(const char *file)
             if (efreet_desktop_cache_check(desktop))
                 return desktop;
 
+            efreet_desktop_clear(desktop);
+            if (efreet_desktop_read(desktop))
+                return desktop;
+
             ecore_hash_remove(efreet_desktop_cache, file);
             efreet_desktop_free(desktop);
         }
@@ -235,9 +241,6 @@ static Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop;
-    Efreet_Ini *ini;
-    int error = 0;
-    int ok;
 
     desktop = NEW(Efreet_Desktop, 1);
     if (!desktop) return NULL;
@@ -245,13 +248,32 @@ efreet_desktop_new(const char *file)
     desktop->orig_path = strdup(file);
     desktop->load_time = ecore_time_get();
 
-    ini = efreet_ini_new(file);
+    if (!efreet_desktop_read(desktop))
+    {
+        efreet_desktop_free(desktop);
+        return NULL;
+    }
+    return desktop;
+}
+
+/**
+ * @internal
+ * @param desktop: The desktop to fill
+ * @return Returns 1 on success, 0 on failure
+ * @brief initialize an Efreet_Desktop from the contents of @a file
+ */
+static int
+efreet_desktop_read(Efreet_Desktop *desktop)
+{
+    Efreet_Ini *ini;
+    int error = 0;
+    int ok;
+
+    ini = efreet_ini_new(desktop->orig_path);
     if (!ini->data) 
     {
         efreet_ini_free(ini);
-        IF_FREE(desktop->orig_path);
-        free(desktop);
-        return NULL;
+        return 0;
     }
 
     ok = efreet_ini_section_set(ini, "Desktop Entry");
@@ -287,11 +309,45 @@ efreet_desktop_new(const char *file)
 
     efreet_ini_free(ini);
 
-    if (!error) 
-      return desktop;
+    if (error) return 0;
 
-    efreet_desktop_free(desktop);
-    return NULL;
+    return 1;
+}
+
+/**
+ * @internal
+ * @param desktop: The Efreet_Desktop to work with
+ * @return Returns no value
+ * @brief Frees the Efreet_Desktop's data
+ */
+static void
+efreet_desktop_clear(Efreet_Desktop *desktop)
+{
+    IF_FREE(desktop->name);
+    IF_FREE(desktop->generic_name);
+    IF_FREE(desktop->comment);
+    IF_FREE(desktop->icon);
+    IF_FREE(desktop->url);
+
+    IF_FREE(desktop->try_exec);
+    IF_FREE(desktop->exec);
+    IF_FREE(desktop->path);
+    IF_FREE(desktop->startup_wm_class);
+
+    IF_FREE_LIST(desktop->only_show_in);
+    IF_FREE_LIST(desktop->not_show_in);
+    IF_FREE_LIST(desktop->categories);
+    IF_FREE_LIST(desktop->mime_types);
+
+    IF_FREE_HASH(desktop->x);
+
+    if (desktop->type_data)
+    {
+        Efreet_Desktop_Type_Info *info;
+        info = ecore_list_goto_index(efreet_desktop_types, desktop->type);
+        if (info->free_func)
+            info->free_func(desktop->type_data); 
+    }
 }
 
 /**
