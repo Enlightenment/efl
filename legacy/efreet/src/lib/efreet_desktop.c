@@ -246,7 +246,6 @@ efreet_desktop_new(const char *file)
     if (!desktop) return NULL;
 
     desktop->orig_path = strdup(file);
-    desktop->load_time = ecore_time_get();
 
     if (!efreet_desktop_read(desktop))
     {
@@ -308,6 +307,8 @@ efreet_desktop_read(Efreet_Desktop *desktop)
                 ECORE_FOR_EACH(efreet_desktop_x_fields_parse), desktop);
 
     efreet_ini_free(ini);
+
+    desktop->load_time = ecore_time_get();
 
     if (error) return 0;
 
