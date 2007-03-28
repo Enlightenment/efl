@@ -49,8 +49,6 @@ static Efreet_Desktop *efreet_desktop_new(const char *file);
 static int efreet_desktop_read(Efreet_Desktop *desktop);
 static void efreet_desktop_clear(Efreet_Desktop *desktop);
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
-static Ecore_List *efreet_desktop_string_list_parse(const char *string);
-static char *efreet_desktop_string_list_join(Ecore_List *list);
 static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, 
                                                     Efreet_Ini *ini);
 static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop, 
@@ -403,7 +401,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
         {
             if (desktop != ecore_hash_get(efreet_desktop_cache, desktop->orig_path))
                 ecore_hash_set(efreet_desktop_cache, 
-                                strdup(desktop->orig_path), desktop);
+                    strdup(desktop->orig_path), desktop);
         }
     }
     efreet_ini_free(ini);
@@ -640,12 +638,11 @@ efreet_desktop_type_parse(const char *type_str)
 }
 
 /**
- * @internal
  * @param string: the raw string list
  * @return an Ecore_List of ecore string's
  * @brief Parse ';' separate list of strings according to the desktop spec
  */
-static Ecore_List *
+Ecore_List *
 efreet_desktop_string_list_parse(const char *string)
 {
     Ecore_List *list;
@@ -685,12 +682,11 @@ efreet_desktop_string_list_parse(const char *string)
 }
 
 /**
- * @internal
  * @param list: Ecore_List with strings
  * @return a raw string list
  * @brief Create a ';' separate list of strings according to the desktop spec
  */
-static char *
+char *
 efreet_desktop_string_list_join(Ecore_List *list)
 {
     const char *tmp;
