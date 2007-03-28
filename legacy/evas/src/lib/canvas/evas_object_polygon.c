@@ -303,8 +303,7 @@ evas_object_polygon_render(Evas_Object *obj, void *output, void *context, void *
 	o->engine_data = obj->layer->evas->engine.func->polygon_point_add(obj->layer->evas->engine.data.output,
 									  obj->layer->evas->engine.data.context,
 									  o->engine_data,
-									  p->x + obj->cur.geometry.x + x, 
-                                                                          p->y + obj->cur.geometry.y + y);
+									  p->x + x, p->y + y);
      }
    if (o->engine_data)
      obj->layer->evas->engine.func->polygon_draw(output,
