@@ -14,7 +14,12 @@
 
 #ifdef HAVE_INOTIFY
 
-#include <sys/inotify.h>
+# ifdef HAVE_SYS_INOTIFY
+# include <sys/inotify.h>
+#else
+# include <asm/unistd.h>
+# include <linux/inotify.h>
+#endif
 
 typedef struct _Ecore_File_Monitor_Inotify Ecore_File_Monitor_Inotify;
 

@@ -802,18 +802,33 @@ if test "x$have_ecore_file" = "xyes"; then
   dnl in asm/unistd.h and IN_MOVE_SELF was added to linux/inotify.h
   dnl so with this check you need a very new kernel and kernel-headers!
   if test "x$use_inotify" = "xyes"; then
+    AC_CHECK_LIB(c, inotify_init, [
     AC_TRY_COMPILE(
       [
         #include <asm/unistd.h>
         #include <linux/inotify.h>
       ],
-      [ int a = __NR_inotify_init; int b = IN_MOVE_SELF; ],
+      [ int a = IN_MOVE_SELF; void *f = inotify_init(); ],
       [
         AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
       ], [
-        use_inotify="no"
+        AC_TRY_COMPILE(
+          [
+            #include <sys/inotify.h>
+          ],
+          [ int a = IN_MOVE_SELF; void *f = inotify_nit(); ],
+          [
+            AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
+            AC_DEFINE(HAVE_SYS_INOTIFY, 1, [ File monitoring with Inotify - sys/inotify.h ])
+          ], [
+            use_inotify="no"
+          ]
+	)
       ]
     )
+    ],[
+      use_inotify="no"
+    ])
   fi
   
   #AC_MSG_CHECKING(whether FAM is to be used for filemonitoring)
