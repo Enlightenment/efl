@@ -401,6 +401,7 @@ struct _Edje_Part
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
    int                    clip_to_id; /* the part id to clip this one to */   
+   unsigned char  use_alternate_font_metrics;
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
    struct {

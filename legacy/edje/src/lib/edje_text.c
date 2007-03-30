@@ -10,6 +10,31 @@
 #endif
 #include <assert.h>
 
+/* returns with and height for this part.
+ *
+ * depending on the value of the use_alternate_font_metrics flag, it will
+ * either use evas_object_geometry_get() or the _advance_get() functions.
+ *
+ * The latter is useful if you want to make sure that width and height
+ * are the same value for the same number of characters in the text.
+ * This usually only makes sense for monospaced fonts.
+ *
+ * In future changes to this file, you probably should use this wrapper
+ * function everywhere instead of calling evas_object_geometry_get()
+ * directly.
+ */
+static inline void
+part_get_geometry(Edje_Real_Part *rp, Evas_Coord *w, Evas_Coord *h)
+{
+   if (!rp->part->use_alternate_font_metrics)
+     evas_object_geometry_get(rp->object, NULL, NULL, w, h);
+   else
+     {
+	if (w) *w = evas_object_text_horiz_advance_get(rp->object);
+	if (h) *h = evas_object_text_vert_advance_get(rp->object);
+     }
+}
+
 void
 _edje_text_init(void)
 {
@@ -140,7 +165,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
 
-   evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+   part_get_geometry(ep, &tw, &th);
 
    p = ((sw - tw) * params->text.elipsis);
 
@@ -237,7 +262,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 	_edje_text_fit_set(buf, text, c1, c2);
 
 	evas_object_text_text_set(ep->object, buf);
-	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+	part_get_geometry(ep, &tw, &th);
      }
 
    *free_text = 1;
@@ -352,7 +377,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
-	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+	part_get_geometry(ep, &tw, &th);
 	if (tw > sw)
 	  {
 	     int psize;
@@ -367,7 +392,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  else evas_object_text_font_source_set(ep->object, NULL);
 		  
 		  evas_object_text_font_set(ep->object, font, size);
-		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  part_get_geometry(ep, &tw, &th);
 		  if ((size > 0) && (tw == 0)) break;
 	       }
 	  }
@@ -385,7 +410,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  else evas_object_text_font_source_set(ep->object, NULL);
 		  
 		  evas_object_text_font_set(ep->object, font, size);
-		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  part_get_geometry(ep, &tw, &th);
 		  if ((size > 0) && (tw == 0)) break;
 	       }
 	  }
@@ -403,7 +428,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
-	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+	part_get_geometry(ep, &tw, &th);
 
 	/* only grow the font size if we didn't already reach the max size
 	 * for the x axis
@@ -422,7 +447,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  else evas_object_text_font_source_set(ep->object, NULL);
 		  
 		  evas_object_text_font_set(ep->object, font, size);
-		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  part_get_geometry(ep, &tw, &th);
 		  if ((size > 0) && (th == 0)) break;
 	       }
 	     size -= dif;
@@ -441,7 +466,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  else evas_object_text_font_source_set(ep->object, NULL);
 		  
 		  evas_object_text_font_set(ep->object, font, size);
-		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  part_get_geometry(ep, &tw, &th);
 		  if ((size > 0) && (th == 0)) break;
 	       }
 	  }
@@ -473,7 +498,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
-   evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+   part_get_geometry(ep, &tw, &th);
    ep->offset.x = ((sw - tw) * params->text.align.x);
    ep->offset.y = ((sh - th) * params->text.align.y);
    
