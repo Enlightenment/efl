@@ -371,7 +371,7 @@ embryo_program_free(Embryo_Program *ep)
  * @ingroup Embryo_Func_Group
  */
 EAPI void
-embryo_program_native_call_add(Embryo_Program *ep, char *name, Embryo_Cell (*func) (Embryo_Program *ep, Embryo_Cell *params))
+embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell (*func) (Embryo_Program *ep, Embryo_Cell *params))
 {
    Embryo_Func_Stub *func_entry;
    Embryo_Header    *hdr;
@@ -560,7 +560,7 @@ embryo_swap_32(unsigned int *v)
  * @ingroup Embryo_Func_Group
  */
 EAPI Embryo_Function
-embryo_program_function_find(Embryo_Program *ep, char *name)
+embryo_program_function_find(Embryo_Program *ep, const char *name)
 {
    int            first, last, mid, result;
    char           pname[sNAMEMAX + 1];
@@ -604,7 +604,7 @@ embryo_program_function_find(Embryo_Program *ep, char *name)
  * @ingroup Embryo_Public_Variable_Group
  */
 EAPI Embryo_Cell
-embryo_program_variable_find(Embryo_Program *ep, char *name)
+embryo_program_variable_find(Embryo_Program *ep, const char *name)
 {
    int            first, last, mid, result;
    char           pname[sNAMEMAX + 1];
@@ -863,7 +863,7 @@ embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
  * @ingroup Embryo_Data_String_Group
  */
 EAPI void
-embryo_data_string_set(Embryo_Program *ep, char *src, Embryo_Cell *str_cell)
+embryo_data_string_set(Embryo_Program *ep, const char *src, Embryo_Cell *str_cell)
 {
    int            i;
    Embryo_Header *hdr;
@@ -2272,7 +2272,7 @@ embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell)
  * @ingroup Embryo_Parameter_Group
  */
 EAPI int
-embryo_parameter_string_push(Embryo_Program *ep, char *str)
+embryo_parameter_string_push(Embryo_Program *ep, const char *str)
 {
    Embryo_Param *pr;
    char *str_dup;
