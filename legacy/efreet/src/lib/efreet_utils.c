@@ -53,12 +53,16 @@ static Ecore_Hash *file_id_by_desktop_path = NULL;
 
 static Ecore_Idler *idler = NULL;
 
+int EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = 0;
+
 int
 efreet_util_init(void)
 {
     Efreet_Cache_Fill *fill;
     Ecore_List *dirs;
 
+    if (EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE == 0)
+       EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = ecore_event_type_new();
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
     desktop_by_exec = ecore_hash_new(ecore_str_hash, ecore_str_compare);
@@ -362,6 +366,8 @@ _efreet_util_cache_fill(void *data)
     {
         free(fill);
         idler = NULL;
+       ecore_event_add(EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
+		       
         return 0;
     }
     if (!fill->current)
@@ -378,6 +384,8 @@ _efreet_util_cache_fill(void *data)
             ecore_hash_for_each_node(file_id_by_desktop_path, dump, NULL);
             printf("%d\n", ecore_hash_count(desktop_by_file_id));
 #endif
+            ecore_event_add(EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
+	   
             return 0;
         }
     }
@@ -501,10 +509,12 @@ _efreet_util_cache_search_wm_class(const void *value, const void *data)
     search = data;
 
     if (!desktop->startup_wm_class) return 1;
-    if ((search->what1) && (!strcmp(desktop->startup_wm_class, search->what1)))
+    if ((search->what2) && (!strcmp(desktop->startup_wm_class, search->what2)))
         return 0;
-    else if ((search->what2) && (!strcmp(desktop->startup_wm_class, search->what2)))
+/* this isn't really valid - we look at class only, not name
+    else if ((search->what1) && (!strcmp(desktop->startup_wm_class, search->what1)))
         return 0;
+ */
     return 1;
 }
 
