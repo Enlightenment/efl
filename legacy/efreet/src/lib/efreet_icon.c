@@ -89,7 +89,7 @@ efreet_icon_init(void)
         efreet_icon_themes = ecore_hash_new(NULL, NULL);
         ecore_hash_set_free_value(efreet_icon_themes, 
                             ECORE_FREE_CB(efreet_icon_theme_free));
-       efreet_extra_icon_dirs = ecore_list_new();
+        efreet_extra_icon_dirs = ecore_list_new();
     }
 
     return 1;
@@ -155,7 +155,7 @@ efreet_icon_extension_add(const char *ext)
 Ecore_List *
 efreet_icon_extra_list_get(void)
 {
-   return efreet_extra_icon_dirs;
+    return efreet_extra_icon_dirs;
 }
 
 /**
@@ -526,10 +526,11 @@ efreet_icon_fallback_icon(const char *icon_name)
 
         ecore_list_goto_first(efreet_extra_icon_dirs);
         while ((dir = ecore_list_next(efreet_extra_icon_dirs)))
-	{
-	    icon = efreet_icon_fallback_dir_scan(dir, icon_name);
-	    if (icon) return icon;
-	}
+        {
+            icon = efreet_icon_fallback_dir_scan(dir, icon_name);
+            if (icon) return icon;
+        }
+
         xdg_dirs = efreet_data_dirs_get();
         ecore_list_goto_first(xdg_dirs);
         while ((dir = ecore_list_next(xdg_dirs)))
