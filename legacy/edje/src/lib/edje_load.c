@@ -446,7 +446,6 @@ EAPI char *
 edje_file_data_get(const char *file, const char *key)
 {
    Edje_File *edf;
-   Evas_List *l;
    char *str = NULL;
    int error_ret = 0;
    
