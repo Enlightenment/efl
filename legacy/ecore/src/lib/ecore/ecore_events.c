@@ -135,10 +135,10 @@ _ecore_event_generic_free (void *data __UNUSED__, void *event)
 EAPI Ecore_Event *
 ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data)
 {
-   if (!ev) return NULL;
+/*   if (!ev) return NULL;*/
    if (type <= ECORE_EVENT_NONE) return NULL;
    if (type >= event_id_max) return NULL;
-   if (!func_free) func_free = _ecore_event_generic_free;
+   if ((ev) && (!func_free)) func_free = _ecore_event_generic_free;
    return _ecore_event_add(type, ev, func_free, data);
 }
 
@@ -353,7 +353,7 @@ _ecore_event_del(Ecore_Event *event)
    void *data;
    
    data = event->data;
-   event->func_free(event->data, event->event);
+   if (event->func_free) event->func_free(event->data, event->event);
    events = _ecore_list2_remove(events, event);
    ECORE_MAGIC_SET(event, ECORE_MAGIC_NONE);
    free(event);
