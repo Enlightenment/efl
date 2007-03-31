@@ -11,7 +11,7 @@ Makefile
 libtool
 config.status
 evas-config
-evas.pc
+*.pc
 config.h
 stamp-h1
 evas_docs.tar.gz
