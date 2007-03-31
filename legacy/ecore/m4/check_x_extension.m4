@@ -1,5 +1,5 @@
-dnl use: ECORE_CHECK_X_EXT(Foo, header, lib, func)
-AC_DEFUN([AC_CHECK_X_EXTENSION],
+dnl use: ECORE_CHECK_X_EXTENSION(Foo, header, lib, func)
+AC_DEFUN([ECORE_CHECK_X_EXTENSION],
 [
 pushdef([UP], translit([$1], [a-z], [A-Z]))dnl
 pushdef([DOWN], translit([$1], [A-Z], [a-z]))dnl
