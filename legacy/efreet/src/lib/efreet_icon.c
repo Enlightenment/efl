@@ -8,6 +8,7 @@ static char *efreet_icon_user_dir = NULL;
 static Ecore_Hash *efreet_icon_dirs_cached = NULL;
 static Ecore_Hash *efreet_icon_themes = NULL; 
 Ecore_List *efreet_icon_extensions = NULL;
+static Ecore_List *efreet_extra_icon_dirs = NULL;
 
 static Efreet_Icon *efreet_icon_find_helper(Efreet_Icon_Theme *theme, 
                                                 const char *cache_key,
@@ -88,6 +89,7 @@ efreet_icon_init(void)
         efreet_icon_themes = ecore_hash_new(NULL, NULL);
         ecore_hash_set_free_value(efreet_icon_themes, 
                             ECORE_FREE_CB(efreet_icon_theme_free));
+       efreet_extra_icon_dirs = ecore_list_new();
     }
 
     return 1;
@@ -106,6 +108,7 @@ efreet_icon_shutdown(void)
     IF_FREE_LIST(efreet_icon_extensions);
     IF_FREE_HASH(efreet_icon_themes);
     IF_FREE_HASH(efreet_icon_dirs_cached);
+    IF_FREE_LIST(efreet_extra_icon_dirs);
 
     ecore_shutdown();
 }
@@ -139,6 +142,20 @@ void
 efreet_icon_extension_add(const char *ext)
 {
     ecore_list_append(efreet_icon_extensions, strdup(ext));
+}
+
+/**
+ * @return Returns a list of strings that are paths to other icon directories
+ * @brief Gets the list of all extra directories to look for icons. These
+ * directories are used to look for icons after looking in the user icon dir
+ * and before looking in standard system directories. The order of search is
+ * from first to last directory in this list. the strings in the list should
+ * be created with ecore_string_instance().
+ */
+Ecore_List *
+efreet_icon_extra_list_get(void)
+{
+   return efreet_extra_icon_dirs;
 }
 
 /**
@@ -507,6 +524,12 @@ efreet_icon_fallback_icon(const char *icon_name)
         const char *dir;
         char path[PATH_MAX];
 
+        ecore_list_goto_first(efreet_extra_icon_dirs);
+        while ((dir = ecore_list_next(efreet_extra_icon_dirs)))
+	{
+	    icon = efreet_icon_fallback_dir_scan(dir, icon_name);
+	    if (icon) return icon;
+	}
         xdg_dirs = efreet_data_dirs_get();
         ecore_list_goto_first(xdg_dirs);
         while ((dir = ecore_list_next(xdg_dirs)))

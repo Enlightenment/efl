@@ -162,6 +162,7 @@ struct Efreet_Icon_Point
 const char        *efreet_icon_dir_get(void);
 void               efreet_icon_extension_add(const char *ext);
 
+Ecore_List        *efreet_icon_extra_list_get(void);
 Ecore_List        *efreet_icon_theme_list_get(void);
 Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
 Efreet_Icon       *efreet_icon_find(const char *theme_name, const char *icon, 
