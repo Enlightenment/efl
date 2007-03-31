@@ -63,7 +63,7 @@ requirements_ecore_con=""
 requirements_ecore_config=""
 requirements_ecore_dbus=""
 requirements_ecore_desktop=""
-requirements_ecore_directfb="directfb"
+requirements_ecore_directfb=""
 requirements_ecore_evas="evas"
 requirements_ecore_fb=""
 requirements_ecore_file=""
@@ -89,134 +89,80 @@ esac
 
 AC_SUBST(winsock_libs)
 
-ecore_txt_cflags=""
-ecore_txt_libs=""
-AC_ARG_ENABLE(ecore-txt,
-  AC_HELP_STRING(
-    [--enable-ecore-txt],
-    [enable the ecore_txt module. [[default=enabled]]]
-  ), [
-    want_ecore_txt=$enableval
-  ], [
-    want_ecore_txt=maybe
-  ]
-)
-
 iconv_cflags=""
 iconv_libs=""
-AC_MSG_CHECKING(for explicit iconv link options)
+have_iconv="no"
 AC_ARG_WITH(iconv-link,
   [  --with-iconv-link=ICONV_LINK     explicitly specify an iconv link option],
   [
     iconv_libs=$withval
-    AC_MSG_RESULT($iconv_libs)
-  ],[
-    AC_MSG_RESULT(none)
+    have_iconv="yes"
   ]
 )
+AC_MSG_CHECKING(for explicit iconv link options)
+AC_MSG_RESULT($iconv_libs)
 
-have_ecore_txt="no"
-if test "x$want_ecore_txt" != "xno" ; then
-  if test "x$iconv_libs" = "x" ; then 
-    AC_CHECK_LIB(iconv, libiconv,
+if test "x$have_iconv" = "xno" ; then
+  AC_CHECK_LIB(iconv, libiconv,
+    [
+     iconv_libs="-liconv"
+     have_iconv="yes"
+    ]
+  )
+  
+  if test "x$have_iconv" != "xyes"; then
+    AC_CHECK_LIB(iconv, iconv,
       [
-        iconv_libs="-liconv"
-        ecore_txt_libs="-lecore_txt "$iconv_libs
-        have_ecore_txt="yes"
+       iconv_libs="-liconv"
+       have_iconv="yes"
       ]
     )
-  
-    if test "x$have_ecore_txt" != "xyes"; then
-      AC_CHECK_LIB(iconv, iconv,
-        [
-          iconv_libs="-liconv"
-          ecore_txt_libs="-lecore_txt "$iconv_libs
-          have_ecore_txt="yes"
-        ]
-      )
-    fi
-
-    if test "x$have_ecore_txt" != "xyes"; then
-      AC_CHECK_LIB(c, libiconv,
-        [
-          ecore_txt_libs="-lecore_txt "$iconv_libs
-          have_ecore_txt="yes"
-        ]
-      )
-    fi
-
-    if test "x$have_ecore_txt" != "xyes"; then
-      AC_CHECK_LIB(c, iconv,
-        [
-          ecore_txt_libs="-lecore_txt "$iconv_libs
-          have_ecore_txt="yes"
-        ]
-      )
-    fi
-  else
-    ecore_txt_libs="-lecore_txt "$iconv_libs
-    have_ecore_txt="yes"
   fi
-fi
 
-dnl we already did the tests, now display the result
-AC_MSG_CHECKING(whether ecore_txt module is to be built)
-AC_MSG_RESULT($have_ecore_txt)
+  if test "x$have_ecore_txt" != "xyes"; then
+    AC_CHECK_LIB(c, libiconv,
+      [
+       have_iconv="yes"
+      ]
+    )
+  fi
 
-if test "x$have_ecore_txt" = "xyes" ; then
-  AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
+  if test "x$have_ecore_txt" != "xyes"; then
+    AC_CHECK_LIB(c, iconv,
+      [
+       have_iconv="yes"
+      ]
+    )
+  fi
 fi
 
 AC_SUBST(iconv_cflags)
 AC_SUBST(iconv_libs)
 
-AC_SUBST(ecore_txt_cflags)
-AC_SUBST(ecore_txt_libs)
+ECORE_CHECK_MODULE([Txt], [yes], [$have_iconv],
+  [ecore_txt_libs="$ecore_txt_libs $iconv_libs"])
 
-have_ecore_x="no";
-ecore_x_cflags="";
-ecore_x_libs="";
-
+have_x="no"
 x_dir="";
 x_includes="";
 x_cflags="";
 x_libs="";
-
-AC_ARG_ENABLE(ecore-x,
-  AC_HELP_STRING(
-    [--enable-ecore-x],
-    [enable the ecore_x module. [[default=enabled]]]
-  ), [
-    want_ecore_x=$enableval
-  ], [
-    want_ecore_x=yes
+AC_PATH_XTRA
+AC_CHECK_HEADER(X11/X.h,
+  [
+   have_x="yes"
+   x_dir=${x_dir:-/usr/X11R6}
+   x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+   x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
   ]
 )
-
-AC_MSG_CHECKING(whether ecore_x module is to be built)
-
-if test "x$have_ecore_txt" = "xyes"; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT([no (ecore_txt not enabled)])
-  want_ecore_x="no"
-fi
-
-if test "x$want_ecore_x" = "xyes"; then
-  AC_PATH_XTRA
-  AC_CHECK_HEADER(X11/X.h, [
-      AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module])
-      have_ecore_x="yes"
-      x_dir=${x_dir:-/usr/X11R6}
-      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-      ecore_x_libs="-lecore_x $x_libs";
-  ])
-fi
 
 AC_SUBST(x_cflags)
 AC_SUBST(x_includes)
 AC_SUBST(x_libs)
+
+ECORE_CHECK_MODULE([X], [yes], [$have_x],
+  [ecore_x_libs="$ecore_x_libs $x_libs"])
 
 if test "x$have_ecore_x" = "xyes"; then
   Xcursor_libs=""
@@ -268,146 +214,43 @@ if test "x$have_ecore_x" = "xyes"; then
   requirements_ecore_evas="$requirements_ecore_evas ecore-x"
 fi
 
-AC_SUBST(ecore_x_cflags)
-AC_SUBST(ecore_x_libs)
+ECORE_CHECK_MODULE([Job], [yes])
 
-
-have_ecore_job="no";
-ecore_job_cflags="";
-ecore_job_libs="";
-
-AC_ARG_ENABLE(ecore-job,
-  AC_HELP_STRING(
-    [--enable-ecore-job],
-    [enable the ecore_job module. [[default=enabled]]]
-  ), [
-    want_ecore_job=$enableval
-  ], [
-    want_ecore_job=yes
-  ]
-)
-
-AC_MSG_CHECKING(whether ecore_job module is to be built)
-AC_MSG_RESULT($want_ecore_job)
-
-if test "x$want_ecore_job" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_JOB, 1, [Build Ecore_Job Module])
-  have_ecore_job="yes";
-  ecore_job_libs="-lecore_job";
-fi
-
-AC_SUBST(ecore_job_cflags)
-AC_SUBST(ecore_job_libs)
-
-have_ecore_dfb="no";
-ecore_dfb_cflags="";
-ecore_dfb_libs="";
-
-AC_ARG_ENABLE(ecore-dfb,
-  AC_HELP_STRING(
-    [--enable-ecore-dfb],
-    [enable the ecore_dfb module. [[default=enabled]]]
-  ), [
-    want_ecore_dfb=$enableval
-  ], [
-    want_ecore_dfb=yes
-  ]
-)
-
-AC_MSG_CHECKING(whether ecore_dfb module is to be built)
-AC_MSG_RESULT($want_ecore_dfb)
-
-if test "x$want_ecore_dfb" = "xyes"; then
 PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
-    [
-      AC_DEFINE(BUILD_ECORE_DIRECTFB, 1, [Build Ecore_DirectFB Module])
-      have_ecore_dfb="yes"
-      dnl ecore_dfb_libs="-lecore_fb";
-    ], [
-      dummy=no
-    ]
-  )
-fi
+  [ have_directfb="yes" ],
+  [ have_directfb="no" ]
+)
 
-AC_SUBST(ecore_dfb_cflags)
-AC_SUBST(ecore_dfb_libs)
+ECORE_CHECK_MODULE([DirectFB], [yes], [$have_directfb],
+  [requirements_ecore_directfb="directfb"])
 
-have_ecore_fb="no";
-ecore_fb_cflags="";
-ecore_fb_libs="";
-
-AC_ARG_ENABLE(ecore-fb,
-  AC_HELP_STRING(
-    [--enable-ecore-fb],
-    [enable the ecore_fb module. [[default=disabled]]]
-  ), [
-    want_ecore_fb=$enableval
-  ], [
-    want_ecore_fb=no
+have_fb="no"
+AC_CHECK_HEADER(linux/fb.h,
+  [
+   AC_CHECK_HEADER(linux/input.h, [ have_fb="yes" ])
   ]
 )
 
-AC_MSG_CHECKING(whether ecore_fb module is to be built)
-AC_MSG_RESULT($want_ecore_fb)
+ECORE_CHECK_MODULE([FB], [no], [$have_fb],
+  [requirements_ecore_evas="$requirements_ecore_evas ecore-fb"])
 
 tslib_libs=""
-if test "x$want_ecore_fb" = "xyes"; then
-  AC_CHECK_HEADER(tslib.h,
-    [
-      tslib_libs="-ltslib"
-      AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
-    ]
-  )
-
-  AC_CHECK_HEADER(linux/fb.h, [
-      AC_CHECK_HEADER(linux/input.h, [
-          AC_DEFINE(BUILD_ECORE_FB, 1, [Build Ecore_FB Module])
-          have_ecore_fb="yes"
-          ecore_fb_libs="-lecore_fb";
-          requirements_ecore_evas="$requirements_ecore_evas ecore-fb"
-      ])
-  ])
-fi
-
-AC_SUBST(tslib_libs)
-AC_SUBST(ecore_fb_cflags)
-AC_SUBST(ecore_fb_libs)
-
-ecore_evas_cflags="";
-ecore_evas_libs="";
-
-have_ecore_evas="no"
-evas_cflags="";
-evas_libs="";
-
-AC_ARG_ENABLE(ecore-evas,
-  AC_HELP_STRING(
-    [--enable-ecore-evas],
-    [enable the ecore_evas module. [[default=enabled]]]
-  ), [
-    want_ecore_evas=$enableval
-  ], [
-    want_ecore_evas=yes
+if test "x$have_ecore_fb" = "xyes" ; then
+AC_CHECK_HEADER(tslib.h,
+  [
+   tslib_libs="-ltslib"
+   AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
   ]
 )
-
-AC_MSG_CHECKING(whether ecore_evas module is to be built)
-AC_MSG_RESULT($want_ecore_evas)
-
-if test "x$want_ecore_evas" = "xyes"; then
-  PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9],
-    [
-      AC_DEFINE(BUILD_ECORE_EVAS, 1, [Build Ecore_Evas Module])
-      have_ecore_evas="yes"
-      ecore_evas_libs="-lecore_evas";
-    ], [
-      dummy=no
-    ]
-  )
 fi
+AC_SUBST(tslib_libs)
 
-AC_SUBST(ecore_evas_cflags)
-AC_SUBST(ecore_evas_libs)
+PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9],
+  [ have_evas="yes" ],
+  [ have_evas="no" ]
+)
+
+ECORE_CHECK_MODULE([Evas], [yes], [$have_evas])
 
 have_ecore_evas_gl="no";
 
@@ -582,38 +425,11 @@ if test "x$want_ecore_evas_buffer" = "xyes"; then
 fi
 CFLAGS=$PCFLAGS
 
-AC_MSG_CHECKING(whether ecore_con module is to be built)
-
-want_ecore_con="yes";
-have_ecore_con="no";
-ecore_con_cflags="";
-ecore_con_libs="";
-
-AC_ARG_ENABLE(ecore-con, 
-  [  --disable-ecore-con           disable the ecore_con module],
-  [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_con="no"
-    fi
-  ], [
-    AC_MSG_RESULT(yes)
-  ]
-)
-
-if test "x$want_ecore_con" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_CON, 1, [Build Ecore_Con Module])
-  have_ecore_con="yes"
-  ecore_con_libs="-lecore_con"
-fi
-
-AC_SUBST(ecore_con_cflags)
-AC_SUBST(ecore_con_libs)
-
 AC_ARG_ENABLE(openssl,
-  [  --enable-openssl              enable openssl support @<:@default=auto@:>@],
+  AC_HELP_STRING(
+    [--enable-openssl],
+    [enable openssl support @<:@default=auto@:>@]
+  ),
   [ use_openssl=$enableval ],
   [ use_openssl=yes ]
 )
@@ -636,147 +452,26 @@ AC_ABSTRACT_SOCKET_TEST(
   []
 )
 
-want_ecore_ipc="yes";
-have_ecore_ipc="no";
-ecore_ipc_cflags="";
-ecore_ipc_libs="";
+ECORE_CHECK_MODULE([Con], [yes])
 
-if test "x$have_ecore_con" = "xyes"; then
-  AC_MSG_CHECKING(whether ecore_ipc module is to be built)
-    AC_ARG_ENABLE(ecore-ipc, 
-    [  --disable-ecore-ipc           disable the ecore_ipc module],
-    [
-      if test x"$enableval" = x"yes" ; then  
-        AC_MSG_RESULT(yes)
-      else
-        AC_MSG_RESULT(no)
-        want_ecore_ipc="no"
-      fi
-    ], [
-      AC_MSG_RESULT(yes)
-    ]
-  )
-else
-  AC_MSG_RESULT(ecore_con not enabled so ecore_ipc will not be enabled)
-  want_ecore_ipc="no"
-fi
+ECORE_CHECK_MODULE([Ipc], [yes], [$have_ecore_con])
 
-if test "x$want_ecore_ipc" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_IPC, 1, [Build Ecore_Ipc Module])
-  have_ecore_ipc="yes"
-  ecore_ipc_libs="-lecore_ipc"
-fi
+ECORE_CHECK_MODULE([DBus], [yes])
 
-AC_SUBST(ecore_ipc_cflags)
-AC_SUBST(ecore_ipc_libs)
-
-AC_MSG_CHECKING(whether ecore_dbus module is to be built)
-want_ecore_dbus="yes";
-have_ecore_dbus="no";
-ecore_dbus_cflags="";
-ecore_dbus_libs="";
-dbus_dir="";
-dbus_includes="";
-dbus_cflags="";
-dbus_libs="";
-
-AC_ARG_ENABLE(ecore-dbus,
-  [  --disable-ecore-dbus          disable the ecore_dbus module],
-  [
-    if test x"$enableval" = x"yes" ; then
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_dbus="no"
-    fi
-  ], [
-    AC_MSG_RESULT(yes)
-  ]
+PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
+  [ have_eet="yes" ],
+  [ have_eet="no" ]
 )
 
-if test "x$want_ecore_dbus" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_DBUS, 1, [Build Ecore_DBus Module])
-  have_ecore_dbus="yes"
-  #dbus_dir="/usr";
-  #dbus_includes="";
-  #dbus_cflags="-I"$dbus_dir"/include/dbus-1.0 -I"$dbus_dir"/lib/dbus-1.0/include"
-  #dbus_libs="-L"$dbus_dir"/lib"
-  #dbus_ldflags="-ldbus-1";
-  ecore_dbus_libs="-lecore_dbus";
-fi
+ECORE_CHECK_MODULE([Config], [yes], [$have_eet],
+  [requirements_ecore_config="$requirements_ecore_config eet"])
 
-AC_SUBST(dbus_cflags)
-AC_SUBST(dbus_includes)
-AC_SUBST(dbus_ldflags)
-AC_SUBST(dbus_libs)
+ECORE_CHECK_MODULE([File], [yes])
 
-AC_SUBST(ecore_dbus_cflags)
-AC_SUBST(ecore_dbus_libs)
-
-AC_MSG_CHECKING(whether ecore_config module is to be built)
-
-want_ecore_config="yes";
-have_ecore_config="no";
-ecore_config_cflags="";
-ecore_config_libs="";
-
-AC_ARG_ENABLE(ecore-config, 
-  [  --disable-ecore-config        disable the ecore_config module],
-  [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_config="no";
-    fi
-  ], [
-    AC_MSG_RESULT(yes)
-  ]
-)
-
-if test "x$want_ecore_config" = "xyes"; then
-  PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
-    [
-      AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])
-      have_ecore_config="yes"
-      ecore_config_libs="-lecore_config";
-      requirements_ecore_config="$requirements_ecore_config eet"
-    ], [
-      dummy=no
-    ]
-  )
-fi
-
-AC_SUBST(ecore_config_cflags)
-AC_SUBST(ecore_config_libs)
-
-want_ecore_file="yes"
-have_ecore_file="no"
-ecore_file_libs=""
 use_fam="no"
 use_inotify="yes"
 use_poll="yes"
 use_curl="yes"
-
-AC_MSG_CHECKING(whether ecore_file module is to be built)
-AC_ARG_ENABLE(ecore-file, 
-  [  --disable-ecore-file          disable the ecore_file module],
-  [
-    if test "$enableval" = "yes"; then  
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_file="no"
-    fi
-  ], [
-    AC_MSG_RESULT(yes)
-  ]
-)
-
-if test "x$want_ecore_file" = "xyes"; then
-  ecore_file_libs="-lecore_file"
-  have_ecore_file="yes"
-fi
 
 if test "x$have_ecore_file" = "xyes"; then
   dnl We need to check if the right inotify version is accessible
@@ -907,42 +602,9 @@ if test "x$have_ecore_file" = "xyes"; then
 fi
 
 AC_SUBST(fam_libs)
-AC_SUBST(ecore_file_libs)
 
-have_ecore_desktop="no"
-ecore_desktop_cflags="";
-ecore_desktop_libs="";
-
-AC_ARG_ENABLE(ecore-desktop,
-  AC_HELP_STRING(
-    [--enable-ecore-desktop],
-    [enable the ecore_desktop module. [[default=enabled]]]
-  ), [
-    want_ecore_desktop=$enableval
-  ], [
-    want_ecore_desktop=yes
-  ]
-)
-
-AC_MSG_CHECKING(whether ecore_desktop module is to be built)
-
-if test $want_ecore_desktop != yes; then
-  AC_MSG_RESULT(no)
-elif test $have_ecore_file = yes; then
-  AC_MSG_RESULT(yes)
-  have_ecore_desktop=yes
-else
-  AC_MSG_RESULT([no (ecore_file not enabled)])
-fi
-
-if test "x$want_ecore_desktop" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_DESKTOP, 1, [Build Ecore_Desktop Module])
-  ecore_desktop_libs="-lecore_desktop";
-  requirements_ecore_desktop="$requirements_ecore_desktop ecore-file"
-fi
-
-AC_SUBST(ecore_desktop_cflags)
-AC_SUBST(ecore_desktop_libs)
+ECORE_CHECK_MODULE([Desktop], [yes], [$have_ecore_file],
+  [requirements_ecore_desktop="ecore-file"])
 
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
 AC_SUBST(dlopen_libs)
@@ -965,23 +627,11 @@ AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
 
 # set up conditionals
-AM_CONDITIONAL(BUILD_ECORE_TXT, test $have_ecore_txt = yes)
-AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes)
-AM_CONDITIONAL(BUILD_ECORE_JOB, test $have_ecore_job = yes)
-AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, test $have_ecore_dfb = yes)
-AM_CONDITIONAL(BUILD_ECORE_FB, test $have_ecore_fb = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS, test $have_ecore_evas = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, test $have_ecore_evas_gl = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, test $have_ecore_evas_xrender = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test $have_ecore_evas_dfb = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, test $have_ecore_evas_fb = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, test $have_ecore_evas_buffer = yes)
-AM_CONDITIONAL(BUILD_ECORE_CON, test $have_ecore_con = yes)
-AM_CONDITIONAL(BUILD_ECORE_IPC, test $have_ecore_ipc = yes)
-AM_CONDITIONAL(BUILD_ECORE_DBUS, test $have_ecore_dbus = yes)
-AM_CONDITIONAL(BUILD_ECORE_CONFIG, test $have_ecore_config = yes)
-AM_CONDITIONAL(BUILD_ECORE_FILE, test $have_ecore_file = yes)
-AM_CONDITIONAL(BUILD_ECORE_DESKTOP, test $have_ecore_desktop = yes)
 
 AC_OUTPUT([
 Makefile
@@ -1032,7 +682,7 @@ echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $use_openssl)"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 echo "  Ecore_X......................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms)"
 echo "  Ecore_FB.....................: $have_ecore_fb"
-echo "  Ecore_DFB....................: $have_ecore_dfb"
+echo "  Ecore_DFB....................: $have_ecore_directfb"
 echo "  Ecore_Evas...................: $have_ecore_evas"
 echo "  Ecore_Evas GL Support........: $have_ecore_evas_gl"
 echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
