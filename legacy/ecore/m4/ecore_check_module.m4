@@ -1,4 +1,4 @@
-dnl use: AC_CHECK_ECORE_MODULE(Foo, default-enabled[, dependancy[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]])
+dnl use: ECORE_CHECK_MODULE(Foo, default-enabled[, dependancy[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]])
 AC_DEFUN([ECORE_CHECK_MODULE],
 [
 pushdef([UP], translit([$1], [a-z], [A-Z]))dnl
@@ -32,6 +32,7 @@ AC_MSG_CHECKING(whether ecore_[]DOWN module is to be built)
 
 if test "x$want_ecore_[]DOWN" = "xyes" ; then
   if test "x$3" = "x" -o "x$3" = "xyes" ; then
+    AC_DEFINE(BUILD_ECORE_[]UP, 1, [Build Ecore_$1 Module])
     have_ecore_[]DOWN="yes"
     ecore_[]DOWN[]_libs="-lecore_[]DOWN"
     AC_MSG_RESULT([yes])
