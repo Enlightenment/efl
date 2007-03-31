@@ -45,7 +45,7 @@ struct _Code_Lookup
 };
 
 static void data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest);
-static void data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val));
+static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val));
 
 Edje_File *edje_file = NULL;
 Evas_List *edje_collections = NULL;
@@ -1008,7 +1008,7 @@ data_process_lookups(void)
 }
 
 static void
-data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val))
+data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val))
 {
    char *p;
    char *key;

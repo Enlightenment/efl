@@ -1067,7 +1067,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    if (ep->calculating & flags)
      {
 #if 1
-	char *axes = "NONE", *faxes = "NONE";
+	const char *axes = "NONE", *faxes = "NONE";
 	
 	if ((ep->calculating & FLAG_X) && 
 	    (ep->calculating & FLAG_Y))

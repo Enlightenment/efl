@@ -15,13 +15,13 @@ typedef struct _SrcFile_List          SrcFile_List;
 
 struct _New_Object_Handler
 {
-   char *type;
+   const char *type;
    void (*func)(void);
 };
 
 struct _New_Statement_Handler
 {
-   char *type;
+   const char *type;
    void (*func)(void);
 };
 
