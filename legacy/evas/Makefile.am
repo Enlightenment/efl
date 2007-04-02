@@ -8,17 +8,17 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       stamp-h.in build-stamp configure-stamp depcomp \
 		       evas_docs.tar.gz evas.c \
 		       README \
-		       evas-cairo-x11.pc
-		       evas-directfb.pc
-		       evas-framebuffer.pc
-		       evas-glitz-x11.pc
-		       evas-opengl-x11.pc
-		       evas-software-buffer.pc
-		       evas-software-qtopia.pc
-		       evas-software-x11.pc
-		       evas-software-xcb.pc
-		       evas-xrender-x11.pc
-		       evas-xrender-xcb.pc
+		       evas-cairo-x11.pc \
+		       evas-directfb.pc \
+		       evas-framebuffer.pc \
+		       evas-glitz-x11.pc \
+		       evas-opengl-x11.pc \
+		       evas-software-buffer.pc \
+		       evas-software-qtopia.pc \
+		       evas-software-x11.pc \
+		       evas-software-xcb.pc \
+		       evas-xrender-x11.pc \
+		       evas-xrender-xcb.pc \
 		       evas.pc \
 		       evas.spec \
 		       debian/changelog
@@ -29,17 +29,17 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
              Doxyfile \
 	     README.in README \
 	     evas.pc.in \
-	     evas-cairo-x11.pc
-	     evas-directfb.pc
-	     evas-framebuffer.pc
-	     evas-glitz-x11.pc
-	     evas-opengl-x11.pc
-	     evas-software-buffer.pc
-	     evas-software-qtopia.pc
-	     evas-software-x11.pc
-	     evas-software-xcb.pc
-	     evas-xrender-x11.pc
-	     evas-xrender-xcb.pc
+	     evas-cairo-x11.pc \
+	     evas-directfb.pc \
+	     evas-framebuffer.pc \
+	     evas-glitz-x11.pc \
+	     evas-opengl-x11.pc \
+	     evas-software-buffer.pc \
+	     evas-software-qtopia.pc \
+	     evas-software-x11.pc \
+	     evas-software-xcb.pc \
+	     evas-xrender-x11.pc \
+	     evas-xrender-xcb.pc \
 	     evas.pc \
 	     evas.spec.in evas.spec \
 	     debian/changelog \
