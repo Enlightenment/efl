@@ -528,7 +528,7 @@ _efreet_util_cache_search_name(const void *value, const void *data)
     search = data;
 
     if (!desktop->name) return 1;
-    return (!strcmp(desktop->name, search->what1));
+    return strcmp(desktop->name, search->what1);
 }
 
 static int
@@ -540,8 +540,8 @@ _efreet_util_cache_search_generic_name(const void *value, const void *data)
     desktop = value;
     search = data;
 
-    if (!desktop->generic_name) return 0;
-    return (!strcmp(desktop->generic_name, search->what1));
+    if (!desktop->generic_name) return 1;
+    return strcmp(desktop->generic_name, search->what1);
 }
 
 static void
