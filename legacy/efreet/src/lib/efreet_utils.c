@@ -61,8 +61,8 @@ efreet_util_init(void)
     Efreet_Cache_Fill *fill;
     Ecore_List *dirs;
 
-    if (EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE == 0)
-       EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = ecore_event_type_new();
+    if (!EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE)
+        EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = ecore_event_type_new();
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
     desktop_by_exec = ecore_hash_new(ecore_str_hash, ecore_str_compare);
@@ -366,8 +366,8 @@ _efreet_util_cache_fill(void *data)
     {
         free(fill);
         idler = NULL;
-       ecore_event_add(EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
-		       
+        ecore_event_add(EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
+
         return 0;
     }
     if (!fill->current)
