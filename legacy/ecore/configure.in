@@ -499,21 +499,21 @@ if test "x$have_ecore_file" = "xyes"; then
     AC_CHECK_LIB(c, inotify_init, [
     AC_TRY_COMPILE(
       [
-        #include <asm/unistd.h>
-        #include <linux/inotify.h>
+        #include <sys/inotify.h>
       ],
       [ int a = IN_MOVE_SELF; void *f = inotify_init(); ],
       [
         AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
+        AC_DEFINE(HAVE_SYS_INOTIFY, 1, [ File monitoring with Inotify - sys/inotify.h ])
       ], [
         AC_TRY_COMPILE(
           [
-            #include <sys/inotify.h>
+            #include <asm/unistd.h>
+            #include <linux/inotify.h>
           ],
-          [ int a = IN_MOVE_SELF; void *f = inotify_nit(); ],
+          [ int a = IN_MOVE_SELF; void *f = inotify_init(); ],
           [
             AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
-            AC_DEFINE(HAVE_SYS_INOTIFY, 1, [ File monitoring with Inotify - sys/inotify.h ])
           ], [
             use_inotify="no"
           ]
