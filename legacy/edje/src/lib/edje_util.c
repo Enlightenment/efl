@@ -784,6 +784,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 				       EVAS_CALLBACK_FREE,
 				       _edje_object_part_swallow_free_cb);
 	evas_object_clip_unset(rp->swallowed_object);
+	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 	rp->swallowed_object = NULL;
      }
    if (!obj_swallow) return;
@@ -842,7 +843,21 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 	rp->swallow_params.aspect.mode = am;
 	rp->swallow_params.aspect.w = aw;
 	rp->swallow_params.aspect.h = ah;
+	evas_object_data_set(rp->swallowed_object, "\377 edje.swallowing_part", rp);
      }
+   ed->dirty = 1;
+   _edje_recalc(ed);
+}
+
+static void
+_recalc_extern_parent(Evas_Object *obj)
+{
+   Evas_Object *parent;
+   Edje *ed;
+
+   parent = evas_object_smart_parent_get(obj);
+   ed = _edje_fetch(parent);
+
    ed->dirty = 1;
    _edje_recalc(ed);
 }
@@ -858,6 +873,7 @@ EAPI void
 edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
    int mw, mh;
+   Edje_Real_Part *rp;
 
    mw = minw;
    mh = minh;
@@ -871,6 +887,15 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
      evas_object_data_set(obj, "\377 edje.minh", (void *)mh);
    else
      evas_object_data_del(obj, "\377 edje.minh");
+
+   rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
+   if (rp)
+     {
+	rp->swallow_params.min.w = mw;
+	rp->swallow_params.min.h = mh;
+
+	_recalc_extern_parent(obj);
+     }
 }
 
 /** Set the object maximum size
@@ -884,6 +909,7 @@ EAPI void
 edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh)
 {
    int mw, mh;
+   Edje_Real_Part *rp;
 
    mw = maxw;
    mh = maxh;
@@ -895,6 +921,15 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
      evas_object_data_set(obj, "\377 edje.maxh", (void *)mh);
    else
      evas_object_data_del(obj, "\377 edje.maxh");
+
+   rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
+   if (rp)
+     {
+	rp->swallow_params.max.w = mw >= 0 ? mw : -1;
+	rp->swallow_params.max.h = mh >= 0 ? mh : -1;
+
+	_recalc_extern_parent(obj);
+     }
 }
 
 /** Set the object aspect size
@@ -913,6 +948,7 @@ edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas
 {
    int mw, mh;
    int mc;
+   Edje_Real_Part *rp;
 
    mc = aspect;
    mw = aw;
@@ -929,6 +965,16 @@ edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas
      evas_object_data_set(obj, "\377 edje.asph", (void *)mh);
    else
      evas_object_data_del(obj, "\377 edje.asph");
+
+   rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
+   if (rp)
+     {
+	rp->swallow_params.aspect.mode = mc > 0 ? mc : 0;
+	rp->swallow_params.aspect.w = mw > 0 ? mw : 0;
+	rp->swallow_params.aspect.h = mh > 0 ? mh : 0;
+
+        _recalc_extern_parent(obj);
+     }
 }
 
 /** Unswallow an object
@@ -957,6 +1003,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 					    EVAS_CALLBACK_FREE,
 					    _edje_object_part_swallow_free_cb);
 	     evas_object_clip_unset(rp->swallowed_object);
+	     evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 	     rp->swallowed_object = NULL;
 	     rp->swallow_params.min.w = 0;
 	     rp->swallow_params.min.h = 0;
