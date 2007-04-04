@@ -265,7 +265,7 @@ efreet_icon_find(const char *theme_name, const char *icon, const char *size)
 #ifdef STRICT_SPEC
                     printf("[Efreet]: Requesting an icon with an extension: %s\n", icon);
 #endif
-                    *ext = 0;
+                    *ext = '\0';
                     break;
                 }
             }
