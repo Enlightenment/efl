@@ -511,7 +511,7 @@ if test "x$have_ecore_file" = "xyes"; then
             #include <asm/unistd.h>
             #include <linux/inotify.h>
           ],
-          [ int a = __NR_inotify_init; int b = IN_IGNORED; ],
+          [ int a = __NR_inotify_init; int b = IN_MOVE_SELF; ],
           [
             AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
           ], [
