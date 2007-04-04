@@ -290,7 +290,7 @@ efreet_xml_tag_parse(char **data, int *size, const char **tag)
 
     if (buf_size > 256) buf_size = 256;
     memcpy(buf, start, buf_size - 1);
-    buf[buf_size - 1] = 0;
+    buf[buf_size - 1] = '\0';
     *tag = ecore_string_instance(buf);
 
     return 1;
@@ -338,7 +338,7 @@ efreet_xml_attributes_parse(char **data, int *size,
 
             if (buf_size > 256) buf_size = 256;
             memcpy(buf, start, buf_size - 1);
-            buf[buf_size - 1] = 0;
+            buf[buf_size - 1] = '\0';
             attr[count].key = ecore_string_instance(buf);
 
             /* search for '=', key/value seperator */
@@ -412,7 +412,7 @@ efreet_xml_attributes_parse(char **data, int *size,
 
             if (buf_size > 256) buf_size = 256;
             memcpy(buf, start, buf_size - 1);
-            buf[buf_size - 1] = 0;
+            buf[buf_size - 1] = '\0';
             attr[count].value = ecore_string_instance(buf);
 
             count++;
@@ -484,7 +484,7 @@ efreet_xml_text_parse(char **data, int *size, char **text)
 
     *text = malloc(buf_size);
     memcpy(*text, start, buf_size - 1);
-    (*text)[buf_size - 1] = 0;
+    (*text)[buf_size - 1] = '\0';
 }
 
 static int

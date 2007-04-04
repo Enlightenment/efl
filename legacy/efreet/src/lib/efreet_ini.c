@@ -432,7 +432,7 @@ efreet_ini_double_set(Efreet_Ini *ini, const char *key, double value)
     snprintf(str, 512, "%.6f", value);
     len = strlen(str) - 1;
     /* Strip trailing zero's */
-    while (str[len] == '0' && str[len - 1] != '.') str[len--] = 0;
+    while (str[len] == '0' && str[len - 1] != '.') str[len--] = '\0';
     efreet_ini_string_set(ini, key, str);
 }
 

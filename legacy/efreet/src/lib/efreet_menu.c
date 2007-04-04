@@ -3104,7 +3104,7 @@ efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *path)
     p = strrchr(tmp, '/');
     if (p)
     {
-        *p = 0;
+        *p = '\0';
         p++;
 
         internal->file.path = strdup(tmp);
@@ -3288,7 +3288,7 @@ efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix)
     }
 
     len = strlen(path);
-    while (path[len] == '/') path[len--] = 0;
+    while (path[len] == '/') path[len--] = '\0';
 
     return strdup(path);
 }
