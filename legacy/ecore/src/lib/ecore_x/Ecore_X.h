@@ -981,7 +981,6 @@ EAPI void             ecore_x_killall(Ecore_X_Window root);
 EAPI void             ecore_x_kill(Ecore_X_Window win);
 
 EAPI Ecore_X_Time     ecore_x_current_time_get(void);
-EAPI Ecore_X_Time     ecore_x_current_user_activity_time_get(void);
 
 EAPI void             ecore_x_error_handler_set(void (*func) (void *data), const void *data);
 EAPI void             ecore_x_io_error_handler_set(void (*func) (void *data), const void *data);
@@ -1374,6 +1373,7 @@ EAPI int                 ecore_x_xinerama_screen_count_get(void);
 EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h);
 
 EAPI int                 ecore_x_screensaver_event_available_get(void);
+EAPI int		 ecore_x_screensaver_idle_time_get(void);
 EAPI void                ecore_x_screensaver_set(int timeout, int interval, int blank, int expose);
 EAPI void                ecore_x_screensaver_timeout_set(double timeout);
 EAPI double              ecore_x_screensaver_timeout_get(void);

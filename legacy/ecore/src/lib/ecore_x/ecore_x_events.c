@@ -228,7 +228,6 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    e->time = xevent->xkey.time;
    e->modifiers = xevent->xkey.state;
    _ecore_x_event_last_time = e->time;
-   _ecore_x_event_last_user_activity_time = e->time;
    ecore_event_add(ECORE_X_EVENT_KEY_DOWN, e, _ecore_x_event_free_key_down, NULL);
 }
 
@@ -280,7 +279,6 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
    e->time = xevent->xkey.time;
    e->modifiers = xevent->xkey.state;
    _ecore_x_event_last_time = e->time;
-   _ecore_x_event_last_user_activity_time = e->time;
    ecore_event_add(ECORE_X_EVENT_KEY_UP, e, _ecore_x_event_free_key_up, NULL);
 }
 
@@ -334,7 +332,6 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	e->event_win = xevent->xbutton.window;
 	e->time = xevent->xbutton.time;
 	_ecore_x_event_last_time = e->time;
-	_ecore_x_event_last_user_activity_time = e->time;
 	_ecore_x_event_last_win = e->win;
 	_ecore_x_event_last_root_x = e->root.x;
 	_ecore_x_event_last_root_y = e->root.y;
@@ -379,7 +376,6 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
 	     _ecore_x_event_last_time = e->time;
-	     _ecore_x_event_last_user_activity_time = e->time;
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
@@ -435,7 +431,6 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
              if (!e->double_click && !e->triple_click)
                _ecore_x_mouse_up_count = 0;
 	     _ecore_x_event_last_time = e->time;
-	     _ecore_x_event_last_user_activity_time = e->time;
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
@@ -502,7 +497,6 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
 	     _ecore_x_event_last_time = e->time;
-	     _ecore_x_event_last_user_activity_time = e->time;
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
@@ -544,7 +538,6 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
                     e->triple_click = 1;
 	       }
 	     _ecore_x_event_last_time = e->time;
-	     _ecore_x_event_last_user_activity_time = e->time;
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
@@ -570,7 +563,6 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    e->event_win = xevent->xmotion.window;
    e->time = xevent->xmotion.time;
    _ecore_x_event_last_time = e->time;
-   _ecore_x_event_last_user_activity_time = e->time;
    _ecore_x_event_last_win = e->win;
    _ecore_x_event_last_root_x = e->root.x;
    _ecore_x_event_last_root_y = e->root.y;

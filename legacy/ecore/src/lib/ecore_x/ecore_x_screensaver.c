@@ -31,6 +31,24 @@ ecore_x_screensaver_event_available_get(void)
    return _screensaver_available;
 }
 
+EAPI int 
+ecore_x_screensaver_idle_time_get(void)
+{
+#ifdef ECORE_XSS   
+   XScreenSaverInfo *xss;
+   int idle;
+
+   xss = XScreenSaverAllocInfo();
+   XScreenSaverQueryInfo(_ecore_x_disp, RootWindow(_ecore_x_disp, DefaultScreen(_ecore_x_disp)), xss); 
+   idle = xss->idle / 1000;
+   XFree(xss);
+
+   return idle;
+#endif
+
+   return 0;
+}
+
 EAPI void
 ecore_x_screensaver_set(int timeout, int interval, int blank, int expose)
 {
