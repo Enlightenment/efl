@@ -1800,7 +1800,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
     efreet_menu_create_app_dirs_list(legacy_internal);
     ecore_list_append(legacy_internal->app_dirs, app_dir);
-#if !STRICT_SPEC
+#ifndef STRICT_SPEC
     if (root)
     {
         /* XXX This seems wrong, but it makes efreet pass the fdo tests */
@@ -1999,7 +1999,7 @@ efreet_menu_handle_old(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
     /* If we already moved this menu, remove the old move */
     /* XXX This seems wrong, but it makes efreet pass the fdo tests */
-#if !STRICT_SPEC
+#ifndef STRICT_SPEC
     move = ecore_list_find(parent->moves,
             ECORE_COMPARE_CB(efreet_menu_cb_move_compare), xml->text);
     if (move) ecore_list_remove_destroy(parent->moves);
@@ -3494,7 +3494,7 @@ efreet_menu_directory_get(Efreet_Menu_Internal *internal, const char *path)
 static int
 efreet_menu_cb_md_compare(Efreet_Menu_Desktop *a, Efreet_Menu_Desktop *b)
 {
-#if STRICT_SPEC
+#ifdef STRICT_SPEC
     return strcmp(ecore_file_get_file(a->desktop->orig_path), ecore_file_get_file(b->desktop->orig_path));
 #else
     return strcasecmp(a->desktop->name, b->desktop->name);

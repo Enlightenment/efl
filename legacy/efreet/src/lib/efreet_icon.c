@@ -184,7 +184,7 @@ efreet_icon_theme_list_get(void)
 
         theme = ecore_hash_get(efreet_icon_themes, dir);
         if (theme->hidden || theme->fake) continue;
-#if !STRICT_SPEC
+#ifndef STRICT_SPEC
         if (!theme->name.name) continue;
 #endif
 
@@ -583,7 +583,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
         if (ecore_file_exists(path))
         {
             icon = efreet_icon_new(path);
-#if STRICT_SPEC
+#ifdef STRICT_SPEC
             if (icon)
                 printf("[Efreet]: Found an icon that already has an extension: %s\n", path);
 #endif

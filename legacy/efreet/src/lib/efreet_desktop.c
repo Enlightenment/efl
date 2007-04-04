@@ -669,7 +669,7 @@ efreet_desktop_string_list_parse(const char *string)
     /* If this is true, the .desktop file does not follow the standard */
     if (*s)
     {
-#if STRICT_SPEC
+#ifdef STRICT_SPEC
         printf("[Efreet]: Found a string list without ';' "
                 "at the end: %s\n", string);
 #endif
@@ -1191,7 +1191,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         exec[len++] = *p;
                         break;
                     default:
-#if STRICT_SPEC
+#ifdef STRICT_SPEC
                         printf("[Efreet]: Unknown conversion character: '%c'\n", *p);
 #endif
                         break;
