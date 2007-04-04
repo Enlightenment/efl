@@ -671,6 +671,7 @@ efreet_icon_directory_cache(Efreet_Icon_Theme *theme,
             name_strs[0] = name;
 
             /* Drop the extension to cache icon name */
+            ext = strrchr(name, '.');
             if (!ext)
             {
                 FREE(name);
