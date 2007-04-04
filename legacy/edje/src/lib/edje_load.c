@@ -131,31 +131,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		    {
 		       if (ep->mouse_events)
 			 {
-			    evas_object_event_callback_add(rp->object, 
-							   EVAS_CALLBACK_MOUSE_IN,
-							   _edje_mouse_in_cb,
-							   ed);
-			    evas_object_event_callback_add(rp->object, 
-							   EVAS_CALLBACK_MOUSE_OUT,
-							   _edje_mouse_out_cb,
-							   ed);
-			    evas_object_event_callback_add(rp->object, 
-							   EVAS_CALLBACK_MOUSE_DOWN,
-							   _edje_mouse_down_cb,
-							   ed);
-			    evas_object_event_callback_add(rp->object, 
-							   EVAS_CALLBACK_MOUSE_UP,
-							   _edje_mouse_up_cb,
-							   ed);
-			    evas_object_event_callback_add(rp->object, 
-							   EVAS_CALLBACK_MOUSE_MOVE,
-							   _edje_mouse_move_cb,
-							   ed);
-			    evas_object_event_callback_add(rp->object, 
-							   EVAS_CALLBACK_MOUSE_WHEEL,
-							   _edje_mouse_wheel_cb,
-							   ed);
-			    evas_object_data_set(rp->object, "real_part", rp);
+			    _edje_callbacks_add(rp->object, ed, rp);
 			    if (ep->repeat_events)
 			      evas_object_repeat_events_set(rp->object, 1);
 			 }
@@ -537,25 +513,8 @@ _edje_file_del(Edje *ed)
 	     ed->parts = evas_list_remove(ed->parts, rp);
 	     if (rp->object)
 	       {
-		  evas_object_event_callback_del(rp->object, 
-						 EVAS_CALLBACK_MOUSE_IN,
-						 _edje_mouse_in_cb);
-		  evas_object_event_callback_del(rp->object, 
-						 EVAS_CALLBACK_MOUSE_OUT,
-						 _edje_mouse_out_cb);
-		  evas_object_event_callback_del(rp->object, 
-						 EVAS_CALLBACK_MOUSE_DOWN,
-					    _edje_mouse_down_cb);
-		  evas_object_event_callback_del(rp->object, 
-						 EVAS_CALLBACK_MOUSE_UP,
-						 _edje_mouse_up_cb);
-		  evas_object_event_callback_del(rp->object, 
-						 EVAS_CALLBACK_MOUSE_MOVE,
-						 _edje_mouse_move_cb);
-		  evas_object_event_callback_del(rp->object, 
-						 EVAS_CALLBACK_MOUSE_WHEEL,
-						 _edje_mouse_wheel_cb);
 		  _edje_text_real_part_on_del(ed, rp);
+		  _edje_callbacks_del(rp->object);
 		  evas_object_del(rp->object);
 	       }
 	     if (rp->swallowed_object)
@@ -565,6 +524,8 @@ _edje_file_del(Edje *ed)
 						 EVAS_CALLBACK_FREE,
 						 _edje_object_part_swallow_free_cb);
 		  evas_object_clip_unset(rp->swallowed_object);
+		  if (rp->part->mouse_events)
+		     _edje_callbacks_del(rp->swallowed_object);
 		  rp->swallowed_object = NULL;
 /* I think it would be better swallowed objects dont get deleted */
 /*		  evas_object_del(rp->swallowed_object);*/

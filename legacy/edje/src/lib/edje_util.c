@@ -785,6 +785,8 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 				       _edje_object_part_swallow_free_cb);
 	evas_object_clip_unset(rp->swallowed_object);
 	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
+        if (rp->part->mouse_events)
+          _edje_callbacks_del(rp->swallowed_object);
 	rp->swallowed_object = NULL;
      }
    if (!obj_swallow) return;
@@ -845,6 +847,17 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 	rp->swallow_params.aspect.h = ah;
 	evas_object_data_set(rp->swallowed_object, "\377 edje.swallowing_part", rp);
      }
+
+   if (rp->part->mouse_events)
+     {
+        _edje_callbacks_add(obj_swallow, ed, rp);
+	if (rp->part->repeat_events)
+           evas_object_repeat_events_set(obj_swallow, 1);
+     }
+   else
+     evas_object_pass_events_set(obj_swallow, 1);
+
+
    ed->dirty = 1;
    _edje_recalc(ed);
 }
@@ -1004,6 +1017,10 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 					    _edje_object_part_swallow_free_cb);
 	     evas_object_clip_unset(rp->swallowed_object);
 	     evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
+
+             if (rp->part->mouse_events)
+               _edje_callbacks_del(rp->swallowed_object);
+
 	     rp->swallowed_object = NULL;
 	     rp->swallow_params.min.w = 0;
 	     rp->swallow_params.min.h = 0;

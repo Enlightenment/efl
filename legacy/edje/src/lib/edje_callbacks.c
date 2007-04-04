@@ -364,3 +364,57 @@ _edje_pending_timer_cb(void *data)
    free(pp);
    return 0;
 }
+
+void
+_edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)
+{
+   evas_object_event_callback_add(obj,
+                                  EVAS_CALLBACK_MOUSE_IN,
+                                  _edje_mouse_in_cb,
+                                  ed);
+   evas_object_event_callback_add(obj,
+                                  EVAS_CALLBACK_MOUSE_OUT,
+                                  _edje_mouse_out_cb,
+                                  ed);
+   evas_object_event_callback_add(obj,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _edje_mouse_down_cb,
+                                  ed);
+   evas_object_event_callback_add(obj,
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _edje_mouse_up_cb,
+                                  ed);
+   evas_object_event_callback_add(obj,
+                                  EVAS_CALLBACK_MOUSE_MOVE,
+                                  _edje_mouse_move_cb,
+                                  ed);
+   evas_object_event_callback_add(obj,
+                                  EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _edje_mouse_wheel_cb,
+                                  ed);
+   evas_object_data_set(obj, "real_part", rp);
+}
+
+void
+_edje_callbacks_del(Evas_Object *obj)
+{
+   evas_object_event_callback_del(obj,
+                                  EVAS_CALLBACK_MOUSE_IN,
+                                  _edje_mouse_in_cb);
+   evas_object_event_callback_del(obj,
+                                  EVAS_CALLBACK_MOUSE_OUT,
+                                  _edje_mouse_out_cb);
+   evas_object_event_callback_del(obj,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _edje_mouse_down_cb);
+   evas_object_event_callback_del(obj,
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _edje_mouse_up_cb);
+   evas_object_event_callback_del(obj,
+                                  EVAS_CALLBACK_MOUSE_MOVE,
+                                  _edje_mouse_move_cb);
+   evas_object_event_callback_del(obj,
+                                  EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _edje_mouse_wheel_cb);
+   evas_object_data_del(obj, "real_part");
+}
