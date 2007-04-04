@@ -10,9 +10,10 @@ evas_common_rectangle_init(void)
 EAPI void
 evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
-   int c, cx, cy, cw, ch;
-   Cutout_Rect *rects, *r;
-   Evas_Object_List *l;
+   Cutout_Rects *rects;
+   Cutout_Rect  *r;
+   int          c, cx, cy, cw, ch;
+   int          i;
    /* handle cutouts here! */
 
    if ((w <= 0) || (h <= 0)) return;
@@ -35,13 +36,13 @@ evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 	return;
      }
    rects = evas_common_draw_context_apply_cutouts(dc);
-   for (l = (Evas_Object_List *)rects; l; l = l->next)
+   for (i = 0; i < rects->active; ++i)
      {
-	r = (Cutout_Rect *)l;
+	r = rects->rects + i;
 	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 	rectangle_draw_internal(dst, dc, x, y, w, h);
      }
-   evas_common_draw_context_apply_free_cutouts(rects);
+   evas_common_draw_context_apply_clear_cutouts(rects);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }

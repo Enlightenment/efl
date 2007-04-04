@@ -283,23 +283,23 @@ _xr_render_surface_clips_set(Xrender_Surface *rs, RGBA_Draw_Context *dc, int rx,
      }
    else
      {
-	int i;
-	Cutout_Rect *rects, *r;
-	Evas_Object_List *l;
-	
-	rects = evas_common_draw_context_apply_cutouts(dc);
-	for (num = 0, l = (Evas_Object_List *)rects; l; l = l->next) num++;
+        Cutout_Rects    *rects;
+	Cutout_Rect     *r;
+        int i;
+
+        rects = evas_common_draw_context_apply_cutouts(dc);
+        num = rects->active;
 	rect = malloc(num * sizeof(XRectangle));
 	if (!rect) return;
-	for (i = 0, l = (Evas_Object_List *)rects; l; l = l->next, i++)
+	for (i = 0; i < num; i++)
 	  {
-	     r = (Cutout_Rect *)l;
+	     r = rects->rects + i;
 	     rect[i].x = r->x;
 	     rect[i].y = r->y;
 	     rect[i].width = r->w;
 	     rect[i].height = r->h;
 	  }
-	evas_common_draw_context_apply_free_cutouts(rects);
+	evas_common_draw_context_apply_clear_cutouts(rects);
      }
    if (!rect) return;
    XRenderSetPictureClipRectangles(rs->xinf->disp, rs->pic, 0, 0, rect, num);

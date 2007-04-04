@@ -140,6 +140,7 @@ typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
 typedef struct _RGBA_Gfx_Compositor   RGBA_Gfx_Compositor;
 
 typedef struct _Cutout_Rect           Cutout_Rect;
+typedef struct _Cutout_Rects            Cutout_Rects;
 
 typedef struct _Convert_Pal           Convert_Pal;
 
@@ -235,6 +236,18 @@ struct _Evas_Hash_El
    void             *data;
 };
 
+struct _Cutout_Rect
+{
+   int               x, y, w, h;
+};
+
+struct _Cutout_Rects
+{
+   Cutout_Rect*      rects;
+   int               active;
+   int               max;
+};
+
 struct _RGBA_Draw_Context
 {
    struct {
@@ -248,9 +261,7 @@ struct _RGBA_Draw_Context
       char   use : 1;
       int    x, y, w, h;
    } clip;
-   struct {
-     Cutout_Rect *rects;
-   } cutout;
+   Cutout_Rects cutout;
    struct {
       struct {
 	 void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg);
@@ -572,11 +583,6 @@ struct _Regionspan
    int x1, x2;
 };
 */
-struct _Cutout_Rect
-{
-   Evas_Object_List  _list_data;
-   int               x, y, w, h;
-};
 
 struct _Convert_Pal
 {
@@ -1012,11 +1018,9 @@ EAPI void               evas_common_draw_context_set_multiplier    (RGBA_Draw_Co
 EAPI void               evas_common_draw_context_unset_multiplier  (RGBA_Draw_Context *dc);
 EAPI void               evas_common_draw_context_add_cutout        (RGBA_Draw_Context *dc, int x, int y, int w, int h);
 EAPI void               evas_common_draw_context_clear_cutouts     (RGBA_Draw_Context *dc);
-EAPI Cutout_Rect       *evas_common_draw_context_apply_cutouts     (RGBA_Draw_Context *dc);
-EAPI void               evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects);
-EAPI Cutout_Rect       *evas_common_draw_context_cutouts_split     (Cutout_Rect *in, Cutout_Rect *split);
-EAPI Cutout_Rect       *evas_common_draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
-EAPI Cutout_Rect       *evas_common_draw_context_cutout_merge      (Cutout_Rect *in, Cutout_Rect *merge);
+EAPI Cutout_Rects      *evas_common_draw_context_apply_cutouts     (RGBA_Draw_Context *dc);
+EAPI void               evas_common_draw_context_apply_clear_cutouts(Cutout_Rects* rects);
+EAPI void               evas_common_draw_context_apply_clean_cutouts(Cutout_Rects* rects);
 EAPI void               evas_common_draw_context_set_anti_alias    (RGBA_Draw_Context *dc, unsigned char aa);
 EAPI void               evas_common_draw_context_set_color_interpolation(RGBA_Draw_Context *dc, int color_space);
 EAPI void               evas_common_draw_context_set_render_op     (RGBA_Draw_Context *dc, int op);

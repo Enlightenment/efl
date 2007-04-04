@@ -596,10 +596,11 @@ void
 evas_engine_directfb_draw_rectangle(void *data, void *context, void *surface,
 				    int x, int y, int w, int h)
 {
+   int                 i;
    int                 c, cx, cy, cw, ch;
-   Cutout_Rect        *rects, *r;
+   Cutout_Rects       *rects;
+   Cutout_Rect        *r;
    RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
-   Evas_Object_List   *l;
    Render_Engine      *re = (Render_Engine *) data;
 
    /* handle cutouts here! */
@@ -629,13 +630,13 @@ evas_engine_directfb_draw_rectangle(void *data, void *context, void *surface,
 	return;
      }
    rects = evas_common_draw_context_apply_cutouts(dc);
-   for (l = (Evas_Object_List *) rects; l; l = l->next)
+   for (i = 0; i < rects->active; ++i)
      {
-	r = (Cutout_Rect *) l;
+	r = rects->rects + i;
 	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 	rectangle_draw_internal(data, dc, x, y, w, h);
      }
-   evas_common_draw_context_apply_free_cutouts(rects);
+   evas_common_draw_context_clear_cutouts(rects);
    /* restore clip info */
    dc->clip.use = c;
    dc->clip.x = cx;

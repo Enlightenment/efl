@@ -413,23 +413,23 @@ _xr_render_surface_clips_set(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int 
      }
    else
      {
-	int i;
-	Cutout_Rect *rects, *r;
-	Evas_Object_List *l;
+        Cutout_Rect     *rects;
+	Cutout_Rect     *r;
+	int             i;
 
 	rects = evas_common_draw_context_apply_cutouts(dc);
-	for (num = 0, l = (Evas_Object_List *)rects; l; l = l->next) num++;
+	num = rects->active;
 	rect = malloc(num * sizeof(xcb_rectangle_t));
 	if (!rect) return;
-	for (i = 0, l = (Evas_Object_List *)rects; l; l = l->next, i++)
+	for (i = 0; i < num; i++)
 	  {
-	     r = (Cutout_Rect *)l;
+	     r = rects->rects + i;
 	     rect[i].x = r->x;
 	     rect[i].y = r->y;
 	     rect[i].width = r->w;
 	     rect[i].height = r->h;
 	  }
-	evas_common_draw_context_apply_free_cutouts(rects);
+	evas_common_draw_context_apply_clear_cutouts(rects);
      }
    if (!rect) return;
    xcb_render_set_picture_clip_rectangles(rs->xcbinf->conn, rs->pic, 0, 0, num, rect);

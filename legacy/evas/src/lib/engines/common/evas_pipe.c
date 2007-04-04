@@ -38,27 +38,16 @@ static void
 evas_common_pipe_draw_context_copy(RGBA_Draw_Context *dc, RGBA_Pipe_Op *op)
 {
    Cutout_Rect *r, *r2;
-   
+
    memcpy(&(op->context), dc, sizeof(RGBA_Draw_Context));
-   op->context.cutout.rects = NULL;
-   for (r = dc->cutout.rects; r; r = (Cutout_Rect *)((Evas_Object_List *)r)->next)
-     {
-	r2 = calloc(1, sizeof(Cutout_Rect));
-	if (r2)
-	  {
-	     r2->x = r->x;
-	     r2->y = r->y;
-	     r2->w = r->w;
-	     r2->h = r->h;
-	     op->context.cutout.rects = evas_object_list_append(op->context.cutout.rects, r2);
-	  }
-     }
+   op->context.cutout.rects = malloc(sizeof(Cutout_Rect) * op->context.cutout.active);
+   memcpy(op->context.cutout.rects, dc->cutout.rects, sizeof(Cutout_Rect) * op->context.cutout.active);
 }
 
 static void
 evas_common_pipe_op_free(RGBA_Pipe_Op *op)
 {
-   evas_common_draw_context_apply_free_cutouts(op->context.cutout.rects);
+   evas_common_draw_context_apply_clean_cutouts(&op->context.cutout);
 }
 
 /* main api calls */

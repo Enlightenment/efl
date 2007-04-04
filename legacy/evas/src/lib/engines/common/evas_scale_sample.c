@@ -30,9 +30,10 @@ evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
 				 int dst_region_x, int dst_region_y,
 				 int dst_region_w, int dst_region_h)
 {
-   int c, cx, cy, cw, ch;
-   Cutout_Rect *rects, *r;
-   Evas_Object_List *l;
+   Cutout_Rects *rects;
+   Cutout_Rect  *r;
+   int          c, cx, cy, cw, ch;
+   int          i;
    /* handle cutouts here! */
 
    if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
@@ -59,9 +60,9 @@ evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
 	return;
      }
    rects = evas_common_draw_context_apply_cutouts(dc);
-   for (l = (Evas_Object_List *)rects; l; l = l->next)
+   for (i = 0; i < rects->active; ++i)
      {
-	r = (Cutout_Rect *)l;
+	r = rects->rects + i;
 	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 	scale_rgba_in_to_out_clip_sample_internal(src, dst, dc,
 						  src_region_x, src_region_y,
@@ -70,7 +71,7 @@ evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
 						  dst_region_w, dst_region_h);
 
      }
-   evas_common_draw_context_apply_free_cutouts(rects);
+   evas_common_draw_context_apply_clear_cutouts(rects);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
