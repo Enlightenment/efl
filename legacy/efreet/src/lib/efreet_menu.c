@@ -548,6 +548,8 @@ efreet_menu_shutdown(void)
     IF_FREE_HASH(efreet_merged_menus);
     IF_FREE_HASH(efreet_merged_dirs);
 
+    IF_RELEASE(efreet_tag_menu);
+
     efreet_xml_shutdown();
     ecore_string_shutdown();
 }
