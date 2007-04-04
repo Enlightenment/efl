@@ -14,12 +14,19 @@
 
 #ifdef HAVE_INOTIFY
 
-# ifdef HAVE_SYS_INOTIFY
+#ifdef HAVE_SYS_INOTIFY
 # include <sys/inotify.h>
 #else
 # include <asm/unistd.h>
 # include <linux/inotify.h>
 #endif
+
+#ifndef HAVE_SYS_INOTIFY
+static inline int inotify_init(void);
+static inline int inotify_add_watch(int fd, const char *name, __u32 mask);
+static inline int inotify_rm_watch(int fd, __u32 wd);
+#endif
+
 
 typedef struct _Ecore_File_Monitor_Inotify Ecore_File_Monitor_Inotify;
 
@@ -280,6 +287,26 @@ _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
      }
    return 1;
 }
+
+#ifndef HAVE_SYS_INOTIFY
+static inline int
+inotify_init(void)
+{
+   return syscall(__NR_inotify_init);
+}
+
+static inline int
+inotify_add_watch(int fd, const char *name, __u32 mask)
+{
+   return syscall(__NR_inotify_add_watch, fd, name, mask);
+}
+
+static inline int
+inotify_rm_watch(int fd, __u32 wd)
+{
+   return syscall(__NR_inotify_rm_watch, fd, wd);
+}
+#endif
 
 #if 0
 static void
