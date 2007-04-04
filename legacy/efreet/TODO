@@ -24,6 +24,13 @@ TODO
 - We need to update the cache in efreet. Now it will overwrite user .desktop
   files with system .desktop files, as the system files are found later.
 
+- When files are added by the monitor, check if the file should be preferred
+  over one existing (if the user adds a file in the home dir it should be
+  preferred over one in the system dir).
+
+- When adding a new dir for monitoring, scan the dir first as it might have files
+  before we register a monitor
+
 Notes from the Menu Spec test
 -----------------------------
 - We're appending the / to the menu names in the test case. We should

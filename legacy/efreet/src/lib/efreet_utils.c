@@ -6,6 +6,7 @@ typedef struct Efreet_Cache_Fill        Efreet_Cache_Fill;
 typedef struct Efreet_Cache_Fill_Dir    Efreet_Cache_Fill_Dir;
 typedef struct Efreet_Cache_Search      Efreet_Cache_Search;
 typedef struct Efreet_Cache_Search_List Efreet_Cache_Search_List;
+typedef struct Efreet_Monitor           Efreet_Monitor;
 
 struct Efreet_Cache_Fill
 {
@@ -32,11 +33,21 @@ struct Efreet_Cache_Search_List
     const char *what;
 };
 
+struct Efreet_Monitor
+{
+    char *file_id;
+    Ecore_File_Monitor *monitor;
+};
+
 static int  efreet_util_cache_fill(void *data);
+static void efreet_util_cache_add(const char *path, const char *file_id);
+static void efreet_util_cache_remove(const char *path, const char *file_id);
+static void efreet_util_cache_reload(const char *path, const char *file_id);
 static void efreet_util_cache_dir_free(void *data);
 
 static void efreet_util_cache_search_mime(void *value, void *data);
 static int  efreet_util_cache_search_wm_class(const void *value, const void *data);
+static int  efreet_util_cache_search_exec(const void *value, const void *data);
 static int  efreet_util_cache_search_name(const void *value, const void *data);
 static int  efreet_util_cache_search_generic_name(const void *value, const void *data);
 
@@ -47,11 +58,17 @@ static void efreet_util_cache_search_comment_glob(void *value, void *data);
 
 static int  efreet_util_glob_match(const char *str, const char *glob);
 
+static void efreet_util_monitor(const char *path, const char *file_id);
+static void efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor,
+                                    Ecore_File_Event event, const char *path);
+static void efreet_util_monitor_free(void *data);
+
 static Ecore_Hash *desktop_by_file_id = NULL;
-static Ecore_Hash *desktop_by_exec = NULL;
 static Ecore_Hash *file_id_by_desktop_path = NULL;
 
 static Ecore_Idler *idler = NULL;
+
+static Ecore_List *monitors = NULL;
 
 int EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = 0;
 
@@ -65,11 +82,12 @@ efreet_util_init(void)
         EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = ecore_event_type_new();
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
-    desktop_by_exec = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(desktop_by_exec, ECORE_FREE_CB(ecore_string_release));
     file_id_by_desktop_path = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_set_free_value(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
+
+    monitors = ecore_list_new();
+    ecore_list_set_free_cb(monitors, efreet_util_monitor_free);
 
     fill = NEW(Efreet_Cache_Fill, 1);
     fill->dirs = ecore_list_new();
@@ -109,8 +127,9 @@ efreet_util_shutdown(void)
     idler = NULL;
 
     IF_FREE_HASH(desktop_by_file_id);
-    IF_FREE_HASH(desktop_by_exec);
     IF_FREE_HASH(file_id_by_desktop_path);
+
+    IF_FREE_LIST(monitors);
 }
 
 char *
@@ -190,7 +209,7 @@ efreet_util_desktop_mime_list(const char *mime)
     search.list = ecore_list_new();
     search.what = mime;
 
-    ecore_hash_for_each_node(desktop_by_exec, efreet_util_cache_search_mime, &search);
+    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_mime, &search);
 
     if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
     return search.list;
@@ -204,7 +223,7 @@ efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
     if ((!wmname) && (!wmclass)) return NULL;
     search.what1 = wmname;
     search.what2 = wmclass;
-    return ecore_hash_find(desktop_by_exec, efreet_util_cache_search_wm_class, &search);
+    return ecore_hash_find(desktop_by_file_id, efreet_util_cache_search_wm_class, &search);
 }
 
 Efreet_Desktop *
@@ -251,18 +270,12 @@ efreet_util_desktop_file_id_find(const char *file_id)
 Efreet_Desktop *
 efreet_util_desktop_exec_find(const char *exec)
 {
-    Efreet_Desktop *desktop = NULL;
+    Efreet_Cache_Search search;
 
     if (!exec) return NULL;
-    desktop = ecore_hash_get(desktop_by_exec, exec);
-    if (desktop) return desktop;
-    desktop = NULL;
-
-    /* TODO: Try to search for the .desktop file. But if it isn't in the cache it will be
-     * timeconsuming.*/
-
-    if (desktop) ecore_hash_set(desktop_by_exec, (void *)ecore_string_instance(exec), desktop);
-    return desktop;
+    search.what1 = exec;
+    search.what2 = NULL;
+    return ecore_hash_find(desktop_by_file_id, efreet_util_cache_search_exec, &search);
 }
 
 Efreet_Desktop *
@@ -273,7 +286,7 @@ efreet_util_desktop_name_find(const char *name)
     if (!name) return NULL;
     search.what1 = name;
     search.what2 = NULL;
-    return ecore_hash_find(desktop_by_exec, efreet_util_cache_search_name, &search);
+    return ecore_hash_find(desktop_by_file_id, efreet_util_cache_search_name, &search);
 }
 
 Efreet_Desktop *
@@ -284,7 +297,7 @@ efreet_util_desktop_generic_name_find(const char *generic_name)
     if (!generic_name) return NULL;
     search.what1 = generic_name;
     search.what2 = NULL;
-    return ecore_hash_find(desktop_by_exec, efreet_util_cache_search_generic_name, &search);
+    return ecore_hash_find(desktop_by_file_id, efreet_util_cache_search_generic_name, &search);
 }
 
 Ecore_List *
@@ -295,7 +308,7 @@ efreet_util_desktop_name_glob_list(const char *glob)
     search.list = ecore_list_new();
     search.what = glob;
 
-    ecore_hash_for_each_node(desktop_by_exec, efreet_util_cache_search_name_glob, &search);
+    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_name_glob, &search);
 
     if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
     return search.list;
@@ -309,7 +322,7 @@ efreet_util_desktop_exec_glob_list(const char *glob)
     search.list = ecore_list_new();
     search.what = glob;
 
-    ecore_hash_for_each_node(desktop_by_exec, efreet_util_cache_search_exec_glob, &search);
+    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_exec_glob, &search);
 
     if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
     return search.list;
@@ -323,7 +336,7 @@ efreet_util_desktop_generic_name_glob_list(const char *glob)
     search.list = ecore_list_new();
     search.what = glob;
 
-    ecore_hash_for_each_node(desktop_by_exec, efreet_util_cache_search_generic_name_glob, &search);
+    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_generic_name_glob, &search);
 
     if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
     return search.list;
@@ -337,7 +350,7 @@ efreet_util_desktop_comment_glob_list(const char *glob)
     search.list = ecore_list_new();
     search.what = glob;
 
-    ecore_hash_for_each_node(desktop_by_exec, efreet_util_cache_search_comment_glob, &search);
+    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_comment_glob, &search);
 
     if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
     return search.list;
@@ -380,7 +393,6 @@ efreet_util_cache_fill(void *data)
             idler = NULL;
 #if 0
             ecore_hash_for_each_node(desktop_by_file_id, dump, NULL);
-            ecore_hash_for_each_node(desktop_by_exec, dump, NULL);
             ecore_hash_for_each_node(file_id_by_desktop_path, dump, NULL);
             printf("%d\n", ecore_hash_count(desktop_by_file_id));
 #endif
@@ -423,37 +435,12 @@ efreet_util_cache_fill(void *data)
                 ecore_list_append(fill->dirs, dir);
             }
             else
-            {
-                Efreet_Desktop *desktop;
-                char *ext;
-                char *exec;
-
-                ext = strrchr(buf, '.');
-                if (!ext || strcmp(ext, ".desktop")) continue;
-                desktop = efreet_desktop_get(buf);
-
-                if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_APPLICATION) continue;
-                if (!ecore_hash_get(desktop_by_file_id, file_id))
-                    ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id),
-                                                            desktop);
-                exec = ecore_file_app_exe_get(desktop->exec);
-                if (exec)
-                {
-                    /* TODO: exec can be with and without full path, we should handle that */
-                    if (!ecore_hash_get(desktop_by_exec, exec))
-                        ecore_hash_set(desktop_by_exec, (void *)ecore_string_instance(exec),
-                                                            desktop);
-                    free(exec);
-                }
-                if (!ecore_hash_get(file_id_by_desktop_path, desktop->orig_path))
-                    ecore_hash_set(file_id_by_desktop_path,
-                                    (void *)ecore_string_instance(desktop->orig_path),
-                                    (void *)ecore_string_instance(file_id));
-            }
+                efreet_util_cache_add(buf, file_id);
         }
         if (!file)
         {
             /* This dir has been search through */
+            efreet_util_monitor(fill->current->path, fill->current->file_id);
             efreet_util_cache_dir_free(fill->current);
             fill->current = NULL;
             closedir(fill->files);
@@ -462,6 +449,53 @@ efreet_util_cache_fill(void *data)
     }
 
     return 1;
+}
+
+static void
+efreet_util_cache_add(const char *path, const char *file_id)
+{
+    Efreet_Desktop *desktop;
+    char *ext;
+
+    ext = strrchr(path, '.');
+    if (!ext || strcmp(ext, ".desktop")) return;
+    desktop = efreet_desktop_get(path);
+
+    if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_APPLICATION) return;
+    if (!ecore_hash_get(desktop_by_file_id, file_id))
+        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), desktop);
+    if (!ecore_hash_get(file_id_by_desktop_path, desktop->orig_path))
+        ecore_hash_set(file_id_by_desktop_path,
+                        (void *)ecore_string_instance(desktop->orig_path),
+                        (void *)ecore_string_instance(file_id));
+}
+
+static void
+efreet_util_cache_remove(const char *path, const char *file_id)
+{
+    char *ext;
+
+    ext = strrchr(path, '.');
+    if (!ext || strcmp(ext, ".desktop")) return;
+    ecore_hash_remove(desktop_by_file_id, file_id);
+    ecore_hash_remove(file_id_by_desktop_path, path);
+}
+
+static void
+efreet_util_cache_reload(const char *path, const char *file_id)
+{
+    Efreet_Desktop *desktop;
+    char *ext;
+
+    ext = strrchr(path, '.');
+    if (!ext || strcmp(ext, ".desktop")) return;
+    desktop = efreet_desktop_get(path);
+
+    if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_APPLICATION) return;
+    /* Check if the pointer is the same. The pointer shouldn't change if the
+     * path is the same */
+    if (desktop != ecore_hash_get(desktop_by_file_id, file_id)) return;
+    ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), desktop);
 }
 
 static void
@@ -515,6 +549,36 @@ efreet_util_cache_search_wm_class(const void *value, const void *data)
     else if ((search->what1) && (!strcmp(desktop->startup_wm_class, search->what1)))
         return 0;
  */
+    return 1;
+}
+
+static int
+efreet_util_cache_search_exec(const void *value, const void *data)
+{
+    const Efreet_Cache_Search *search;
+    const Efreet_Desktop      *desktop;
+    char                      *exec;
+    const char                *file;
+
+    desktop = value;
+    search = data;
+
+    if (!desktop->exec) return 1;
+    exec = ecore_file_app_exe_get(desktop->exec);
+    if (!exec) return 1;
+    if (!strcmp(exec, search->what1))
+    {
+       free(exec);
+       return 0;
+    }
+
+    file = ecore_file_get_file(exec);
+    if (file && !strcmp(file, search->what1))
+    {
+       free(exec);
+       return 0;
+    }
+    free(exec);
     return 1;
 }
 
@@ -624,3 +688,67 @@ efreet_util_glob_match(const char *str, const char *glob)
     if (!fnmatch(glob, str, 0)) return 1;
     return 0;
 }
+
+static void
+efreet_util_monitor(const char *path, const char *file_id)
+{
+    Efreet_Monitor *em;
+
+    em = NEW(Efreet_Monitor, 1);
+    if (!em) return;
+    em->monitor = ecore_file_monitor_add(path, efreet_util_monitor_cb, em);
+    if (file_id) em->file_id = strdup(file_id);
+    ecore_list_append(monitors, em);
+}
+
+static void
+efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor __UNUSED__,
+                        Ecore_File_Event event, const char *path)
+{
+    Efreet_Monitor *em;
+    char file_id[PATH_MAX];
+
+    em = data;
+    if (em->file_id)
+        snprintf(file_id, sizeof(file_id), "%s-%s", em->file_id, ecore_file_get_file(path));
+    else
+        strcpy(file_id, ecore_file_get_file(path));
+    switch (event)
+    {
+        case ECORE_FILE_EVENT_NONE:
+            /* Ignore */
+            break;
+        case ECORE_FILE_EVENT_CREATED_FILE:
+            efreet_util_cache_add(path, file_id);
+            break;
+        case ECORE_FILE_EVENT_CREATED_DIRECTORY:
+            efreet_util_monitor(path, file_id);
+            break;
+        case ECORE_FILE_EVENT_DELETED_FILE:
+            efreet_util_cache_remove(path, file_id);
+            break;
+        case ECORE_FILE_EVENT_DELETED_DIRECTORY:
+            /* Ignore, we should already have a monitor on any subdir */
+            break;
+        case ECORE_FILE_EVENT_DELETED_SELF:
+            ecore_list_goto(monitors, em);
+            ecore_list_remove(monitors);
+            efreet_util_monitor_free(em);
+            break;
+        case ECORE_FILE_EVENT_MODIFIED:
+            efreet_util_cache_reload(path, file_id);
+            break;
+    }
+}
+
+static void
+efreet_util_monitor_free(void *data)
+{
+    Efreet_Monitor *em;
+
+    em = data;
+    if (em->monitor) ecore_file_monitor_del(em->monitor);
+    IF_FREE(em->file_id);
+    free(em);
+}
+
