@@ -141,7 +141,7 @@ efreet_icon_dir_get(void)
 void
 efreet_icon_extension_add(const char *ext)
 {
-    ecore_list_append(efreet_icon_extensions, strdup(ext));
+    ecore_list_prepend(efreet_icon_extensions, strdup(ext));
 }
 
 /**
