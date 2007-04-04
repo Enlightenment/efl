@@ -18,8 +18,6 @@ TODO
 - When adding a new dir for monitoring, scan the dir first as it might have files
   before we register a monitor.
 
-- Strip known extension from icons before searching.
-
 - If a theme has several icon types (png, xpm..) prefer the first in the
   extension list.
 
