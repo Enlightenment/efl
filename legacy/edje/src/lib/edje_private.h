@@ -221,13 +221,14 @@ struct _Edje_File
    Evas_List                      *data;
    Evas_List                      *styles;
    Evas_List                      *color_classes;
-   
+
    int                             references;
    char                           *compiler;
    int                             version;
    int                             feature_ver;
    
    Evas_Hash                      *collection_hash;
+   Evas_Hash			  *font_hash;
    Evas_List                      *collection_cache;
    Evas_Hash                      *data_cache;
 };
@@ -265,7 +266,8 @@ struct _Edje_Font_Directory
 
 struct _Edje_Font_Directory_Entry
 {
-   char *entry; /* the name of the font */
+   const char *entry; /* the name of the font */
+   char *path;
 };
 
 	

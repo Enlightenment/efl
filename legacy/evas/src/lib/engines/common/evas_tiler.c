@@ -81,16 +81,24 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
    if (tilebuf_x_intersect(tb, x, w, &tx1, &tx2, &tfx1, &tfx2) &&
        tilebuf_y_intersect(tb, y, h, &ty1, &ty2, &tfy1, &tfy2))
      {
-	for (yy = ty1; yy <= ty2; yy++)
-	  {
-	     Tilebuf_Tile *tbt;
+        Tilebuf_Tile    *tbt;
+        int             delta_x;
+        int             delta_y;
 
-	     tbt = &(TILE(tb, tx1, yy));
-	     for (xx = tx1; xx <= tx2; xx++)
+        tbt = &(TILE(tb, tx1, ty1));
+        delta_x = tx2 - tx1 + 1;
+        delta_y = ty2 - ty1 + 1;
+	for (yy = delta_y; yy > 0; yy--)
+	  {
+	     Tilebuf_Tile *tbti;
+
+	     tbti = tbt;
+	     for (xx = delta_x; xx > 0; xx--)
 	       {
-		  tbt->redraw = 1;
-		  tbt++;
+		  tbti->redraw = 1;
+		  tbti++;
 	       }
+             tbt += tb->tiles.w;
 	  }
 	num = (tx2 - tx1 + 1) * (ty2 - ty1 + 1);
      }
@@ -115,20 +123,29 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    if (tilebuf_x_intersect(tb, x, w, &tx1, &tx2, &tfx1, &tfx2) &&
        tilebuf_y_intersect(tb, y, h, &ty1, &ty2, &tfy1, &tfy2))
      {
-	if (!tfx1) tx1++;
+        Tilebuf_Tile    *tbt;
+        int             delta_y;
+        int             delta_x;
+
+        if (!tfx1) tx1++;
 	if (!tfx2) tx2--;
 	if (!tfy1) ty1++;
 	if (!tfy2) ty2--;
-	for (yy = ty1; yy <= ty2; yy++)
-	  {
-	     Tilebuf_Tile *tbt;
 
-	     tbt = &(TILE(tb, tx1, yy));
-	     for (xx = tx1; xx <= tx2; xx++)
+        tbt = &(TILE(tb, tx1, ty1));
+        delta_x = tx2 - tx1 + 1;
+        delta_y = ty2 - ty1 + 1;
+	for (yy = delta_y; yy > 0; yy--)
+	  {
+	     Tilebuf_Tile       *tbti;
+
+	     tbti = tbt;
+	     for (xx = delta_x; xx > 0; xx--)
 	       {
-		  tbt->redraw = 0;
-		  tbt++;
+		  tbti->redraw = 0;
+		  tbti++;
 	       }
+             tbt += tb->tiles.w;
 	  }
 	num = (tx2 - tx1 + 1) * (ty2 - ty1 + 1);
      }
@@ -166,42 +183,56 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
    return evas_common_regionbuf_rects_get(tb->rb);
 #else
    Tilebuf_Rect *rects = NULL;
+   Tilebuf_Tile *tbt;
    int x, y;
 
+   tbt = &(TILE(tb, 0, 0));
    for (y = 0; y < tb->tiles.h; y++)
      {
-	for (x = 0; x < tb->tiles.w; x++)
+	for (x = 0; x < tb->tiles.w; x++, tbt++)
 	  {
-	     if (TILE(tb, x, y).redraw)
+	     if (tbt->redraw)
 	       {
+                  Tilebuf_Tile *tbti;
 		  int can_expand_x = 1, can_expand_y = 1;
 		  Tilebuf_Rect *r = NULL;
 		  int xx = 0, yy = 0;
-		  r = calloc(1, sizeof(Tilebuf_Rect));
+		  r = malloc(sizeof(Tilebuf_Rect));
+                  r->_list_data.next = NULL;
+                  r->_list_data.prev = NULL;
+                  r->_list_data.last = NULL;
+
 /* amalgamate tiles */
 #if 1
+                  tbti = tbt;
 		  while (can_expand_x)
 		    {
+                       tbti++;
 		       xx++;
 		       if ((x + xx) >= tb->tiles.w)
 			 can_expand_x = 0;
-		       else if (!(TILE(tb, x + xx, y).redraw))
+		       else if (!(tbti->redraw))
 			 can_expand_x = 0;
 		       if (can_expand_x)
-			 TILE(tb, x + xx, y).redraw = 0;
+			 tbti->redraw = 0;
 		    }
+                  tbti = tbt;
 		  while (can_expand_y)
 		    {
 		       int i;
 
+                       tbti += tb->tiles.w;
 		       yy++;
 		       if ((y + yy) >= tb->tiles.h)
 			 can_expand_y = 0;
 		       if (can_expand_y)
 			 {
-			    for (i = x; i < x + xx; i++)
+                            Tilebuf_Tile *tbtj;
+
+                            tbtj = tbti;
+			    for (i = x; i < x + xx; i++, tbtj++)
 			      {
-				 if (!(TILE(tb, i, y + yy).redraw))
+				 if (!(tbtj->redraw))
 				   {
 				      can_expand_y = 0;
 				      break;
@@ -210,11 +241,14 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 			 }
 		       if (can_expand_y)
 			 {
-			    for (i = x; i < x + xx; i++)
-			      TILE(tb, i, y + yy).redraw = 0;
+                            Tilebuf_Tile *tbtj;
+
+                            tbtj = tbti;
+			    for (i = x; i < x + xx; i++, tbtj++)
+			      tbtj->redraw = 0;
 			 }
 		    }
-		  TILE(tb, x, y).redraw = 0;
+		  tbt->redraw = 0;
 #else
 		  xx = 1;
 		  yy = 1;
@@ -225,6 +259,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 		  r->h = (yy) * tb->tile_size.h;
 		  rects = evas_object_list_append(rects, r);
 		  x = x + (xx - 1);
+                  tbt += xx - 1;
 	       }
 	  }
      }

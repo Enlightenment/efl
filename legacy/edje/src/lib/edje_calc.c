@@ -602,7 +602,6 @@ _edje_part_recalc_single(Edje *ed,
 	const char	*font;
 	int		 size;
 	Evas_Coord	 tw, th;
-	char		 buf[4096];
 	int		 inlined_font = 0;
 
 	/* Update a object_text part */	
@@ -683,24 +682,14 @@ _edje_part_recalc_single(Edje *ed,
 	if (!text) text = "";
 	
         /* check if the font is embedded in the .eet */
-        /* FIXME: we should cache this result */
-        if (ed->file->font_dir)
+        if (ed->file->font_hash)
 	  {
-	     Evas_List *l;
-	     
-	     for (l = ed->file->font_dir->entries; l; l = l->next)
-	       {
-		  Edje_Font_Directory_Entry *fnt = l->data;
+	     Edje_Font_Directory_Entry *fnt = evas_hash_find (ed->file->font_hash, font);
 
-		  if ((fnt->entry) && (!strcmp(fnt->entry, font)))
-		    {
-		       strcpy(buf, "fonts/");
-		       strncpy(buf + 6, font, sizeof(buf) - 7);
-		       buf[sizeof(buf) - 1] = 0;
-		       font = buf;
-		       inlined_font = 1;
-		       break;
-		    }
+	     if (fnt)
+	       {
+		  font = fnt->path;
+		  inlined_font = 1;
 	       }
 	  }
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);

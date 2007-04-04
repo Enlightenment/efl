@@ -600,9 +600,10 @@ _edje_file_free(Edje_File *edf)
 	     Edje_Font_Directory_Entry *fe;
 	     
 	     fe = edf->font_dir->entries->data;
-	     edf->font_dir->entries = 
+	     edf->font_dir->entries =
 	       evas_list_remove_list(edf->font_dir->entries, edf->font_dir->entries);
-	     if (fe->entry) evas_stringshare_del(fe->entry);
+	     edf->font_hash = evas_hash_del(edf->font_hash, fe->entry, NULL);
+	     if (fe->path) evas_stringshare_del(fe->path);
 	     free(fe);
 	  }
 	free(edf->font_dir);
