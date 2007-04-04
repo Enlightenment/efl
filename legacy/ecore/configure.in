@@ -447,10 +447,21 @@ if test "x$use_openssl" = "xyes"; then
   )
 fi
 
-AC_ABSTRACT_SOCKET_TEST(
-  [AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract socket namespace])],
-  []
+want_abstract_sockets="yes"
+AC_ARG_ENABLE(abstract-sockets,
+  AC_HELP_STRING(
+    [--disable-abstract-sockets],
+    [disable abstract sockets. [[default=enabled]]]
+    ),
+  [ want_abstract_sockets=$enableval ],
+  [ want_abstract_sockets="yes"]
 )
+if test "x$want_abstract_sockets" = "xyes"; then
+  AC_ABSTRACT_SOCKET_TEST(
+    [AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract sockets namespace])],
+    []
+  )
+fi
 
 ECORE_CHECK_MODULE([Con], [yes])
 
