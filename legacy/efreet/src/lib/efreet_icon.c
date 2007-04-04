@@ -248,7 +248,35 @@ efreet_icon_find(const char *theme_name, const char *icon, const char *size)
     efreet_array_cat(cache_key, sizeof(cache_key), key_list);
 
     share_key = ecore_string_instance(cache_key);
+#ifdef SLOPPY_SPEC
+    {
+        char *tmp, *ext;
+
+        tmp = strdup(icon);
+        ext = strrchr(tmp, '.');
+        if (ext)
+        {
+            const char *ext2;
+            ecore_list_goto_first(efreet_icon_extensions);
+            while ((ext2 = ecore_list_next(efreet_icon_extensions)))
+            {
+                if (!strcmp(ext, ext2))
+                {
+#ifdef STRICT_SPEC
+                    printf("[Efreet]: Requesting an icon with an extension: %s\n", icon);
+#endif
+                    *ext = 0;
+                    break;
+                }
+            }
+        }
+
+        value = efreet_icon_find_helper(theme, share_key, tmp, size);
+        free(tmp);
+    }
+#else
     value = efreet_icon_find_helper(theme, share_key, icon, size);
+#endif
 
     /* we didn't find the icon in the theme or in the inherited directories
      * then just look for a non theme icon */
@@ -575,6 +603,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
         }
     }
     /* This is to catch non-conforming .desktop files */
+#ifdef SLOPPY_SPEC
     if (!icon)
     {
         const char *icon_path[] = { dir, "/", icon_name, NULL };
@@ -589,6 +618,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
 #endif
         }
     }
+#endif
 
     return icon;
 }
