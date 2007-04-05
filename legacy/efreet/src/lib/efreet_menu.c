@@ -835,6 +835,32 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 }
 
 /**
+ * @param desktop: The desktop to remove
+ * @return Returns 1 on success, 0 on failure
+ * @brief Remove a desktop element in a menu structure. Only accepts desktop files
+ * in default directories.
+ */
+int 
+efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop) 
+{
+    Efreet_Menu *entry;
+
+    if (!desktop || !menu) return 0;
+
+    entry = ecore_list_find(menu->entries,
+                            ECORE_COMPARE_CB(efreet_menu_cb_entry_compare_desktop),
+                            desktop);
+    if (entry)
+    {
+        ecore_list_remove(menu->entries);
+        efreet_menu_free(entry);
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * @param menu: The menu to work with
  * @param menu: The menu to work with
  * @param indent: The indent level to print the menu at
  * @return Returns no value

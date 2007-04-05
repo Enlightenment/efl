@@ -57,6 +57,7 @@ int              efreet_menu_save(Efreet_Menu *menu, const char *path);
 void             efreet_menu_free(Efreet_Menu *menu);
 
 int              efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos);
+int              efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop);
 
 void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
 
