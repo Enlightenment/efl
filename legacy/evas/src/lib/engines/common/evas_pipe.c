@@ -37,8 +37,6 @@ evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op)
 static void
 evas_common_pipe_draw_context_copy(RGBA_Draw_Context *dc, RGBA_Pipe_Op *op)
 {
-   Cutout_Rect *r, *r2;
-
    memcpy(&(op->context), dc, sizeof(RGBA_Draw_Context));
    op->context.cutout.rects = malloc(sizeof(Cutout_Rect) * op->context.cutout.active);
    memcpy(op->context.cutout.rects, dc->cutout.rects, sizeof(Cutout_Rect) * op->context.cutout.active);
