@@ -80,6 +80,7 @@ static Ecore_Idler *idler = NULL;
 static Ecore_List *monitors = NULL;
 
 int EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = 0;
+int EFREET_EVENT_UTIL_DESKTOP_CHANGE = 0;
 
 int
 efreet_util_init(void)
@@ -89,6 +90,8 @@ efreet_util_init(void)
 
     if (!EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE)
         EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = ecore_event_type_new();
+    if (!EFREET_EVENT_UTIL_DESKTOP_CHANGE)
+        EFREET_EVENT_UTIL_DESKTOP_CHANGE = ecore_event_type_new();
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_set_free_value(desktop_by_file_id, free);
@@ -616,7 +619,7 @@ efreet_util_cache_search_wm_class(const void *value, const void *data)
     if (!ud->desktop->startup_wm_class) return 1;
     if ((search->what2) && (!strcmp(ud->desktop->startup_wm_class, search->what2)))
         return 0;
-    else if ((search->what1) && (!strcmp(desktop->startup_wm_class, search->what1)))
+    else if ((search->what1) && (!strcmp(ud->desktop->startup_wm_class, search->what1)))
         return 0;
     return 1;
 }
