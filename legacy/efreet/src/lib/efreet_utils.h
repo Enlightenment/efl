@@ -2,6 +2,23 @@
 #ifndef EFREET_UTILS_H
 #define EFREET_UTILS_H
 
+typedef enum Efreet_Desktop_Change Efreet_Desktop_Change;
+
+enum Efreet_Desktop_Change
+{
+    EFREET_DESKTOP_CHANGE_ADD,
+    EFREET_DESKTOP_CHANGE_REMOVE,
+    EFREET_DESKTOP_CHANGE_UPDATE
+};
+
+typedef struct Efreet_Event_Desktop_Change Efreet_Event_Desktop_Change;
+
+struct Efreet_Event_Desktop_Change
+{
+    Efreet_Desktop *desktop;
+    Efreet_Desktop_Change change;
+};
+
 char           *efreet_util_path_in_default(const char *section, const char *path);
 const char     *efreet_util_path_to_file_id(const char *path);
 

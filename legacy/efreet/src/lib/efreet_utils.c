@@ -79,8 +79,8 @@ static Ecore_Idler *idler = NULL;
 
 static Ecore_List *monitors = NULL;
 
-int EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = 0;
-int EFREET_EVENT_UTIL_DESKTOP_CHANGE = 0;
+int EFREET_EVENT_DESKTOP_LIST_CHANGE = 0;
+int EFREET_EVENT_DESKTOP_CHANGE = 0;
 
 int
 efreet_util_init(void)
@@ -88,10 +88,10 @@ efreet_util_init(void)
     Efreet_Cache_Fill *fill;
     Ecore_List *dirs;
 
-    if (!EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE)
-        EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE = ecore_event_type_new();
-    if (!EFREET_EVENT_UTIL_DESKTOP_CHANGE)
-        EFREET_EVENT_UTIL_DESKTOP_CHANGE = ecore_event_type_new();
+    if (!EFREET_EVENT_DESKTOP_LIST_CHANGE)
+        EFREET_EVENT_DESKTOP_LIST_CHANGE = ecore_event_type_new();
+    if (!EFREET_EVENT_DESKTOP_CHANGE)
+        EFREET_EVENT_DESKTOP_CHANGE = ecore_event_type_new();
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_set_free_value(desktop_by_file_id, free);
@@ -285,13 +285,17 @@ efreet_util_desktop_file_id_find(const char *file_id)
     ecore_list_destroy(dirs);
     if (desktop)
     {
+        Efreet_Event_Desktop_Change *ev;
+
         ud = NEW(Efreet_Util_Desktop, 1);
-        if (ud)
-        {
-            ud->priority = priority;
-            ud->desktop = desktop;
-            ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
-        }
+        ud->priority = priority;
+        ud->desktop = desktop;
+        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+
+        ev = NEW(Efreet_Event_Desktop_Change, 1);
+        ev->desktop = desktop;
+        ev->change = EFREET_DESKTOP_CHANGE_ADD;
+        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
     }
     return desktop;
 }
@@ -417,7 +421,7 @@ efreet_util_cache_fill(void *data)
     {
         free(fill);
         idler = NULL;
-        ecore_event_add(EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
+        ecore_event_add(EFREET_EVENT_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
 
         return 0;
     }
@@ -434,7 +438,7 @@ efreet_util_cache_fill(void *data)
             ecore_hash_for_each_node(file_id_by_desktop_path, dump, NULL);
             printf("%d\n", ecore_hash_count(desktop_by_file_id));
 #endif
-            ecore_event_add(EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
+            ecore_event_add(EFREET_EVENT_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
 	   
             return 0;
         }
@@ -506,16 +510,27 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority)
     ud = ecore_hash_get(desktop_by_file_id, file_id);
     if (!ud)
     {
+        Efreet_Event_Desktop_Change *ev;
+
         ud = NEW(Efreet_Util_Desktop, 1);
-        if (ud)
-        {
-            ud->priority = priority;
-            ud->desktop = desktop;
-            ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
-        }
+        ud->priority = priority;
+        ud->desktop = desktop;
+        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+
+        ev = NEW(Efreet_Event_Desktop_Change, 1);
+        ev->desktop = desktop;
+        ev->change = EFREET_DESKTOP_CHANGE_ADD;
+        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
     }
     else if (priority < ud->priority)
     {
+        Efreet_Event_Desktop_Change *ev;
+
+        ev = NEW(Efreet_Event_Desktop_Change, 1);
+        ev->desktop = desktop;
+        ev->change = EFREET_DESKTOP_CHANGE_ADD;
+        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
+
         ud->desktop = desktop;
     }
     if (!ecore_hash_get(file_id_by_desktop_path, desktop->orig_path))
@@ -535,8 +550,17 @@ efreet_util_cache_remove(const char *path, const char *file_id, int priority)
     ud = ecore_hash_get(desktop_by_file_id, file_id);
     if (ud && (ud->priority >= priority))
     {
+        Efreet_Event_Desktop_Change *ev;
+
         ecore_hash_remove(desktop_by_file_id, file_id);
+
+        ev = NEW(Efreet_Event_Desktop_Change, 1);
+        ev->desktop = ud->desktop;
+        ev->change = EFREET_DESKTOP_CHANGE_REMOVE;
+        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
+
         free(ud);
+
         /* This call will search application dirs and add the file to cache if it
          * exists. */
         efreet_util_desktop_file_id_find(file_id);
@@ -559,16 +583,33 @@ efreet_util_cache_reload(const char *path, const char *file_id, int priority)
     ud = ecore_hash_get(desktop_by_file_id, file_id);
     if (ud)
     {
+        Efreet_Event_Desktop_Change *ev;
+
         if (ud->priority < priority) return;
+
+        ev = NEW(Efreet_Event_Desktop_Change, 1);
+        ev->desktop = desktop;
+        if (ud->desktop == desktop)
+            ev->change = EFREET_DESKTOP_CHANGE_UPDATE;
+        else
+            ev->change = EFREET_DESKTOP_CHANGE_ADD;
+        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
+
         ud->desktop = desktop;
     }
     else
     {
+        Efreet_Event_Desktop_Change *ev;
+
         ud = NEW(Efreet_Util_Desktop, 1);
-        if (!ud) return;
         ud->priority = priority;
         ud->desktop = desktop;
         ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+
+        ev = NEW(Efreet_Event_Desktop_Change, 1);
+        ev->desktop = desktop;
+        ev->change = EFREET_DESKTOP_CHANGE_ADD;
+        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
     }
 }
 
@@ -768,7 +809,6 @@ efreet_util_monitor(const char *path, const char *file_id, int priority)
     Efreet_Monitor *em;
 
     em = NEW(Efreet_Monitor, 1);
-    if (!em) return;
     em->monitor = ecore_file_monitor_add(path, efreet_util_monitor_cb, em);
     if (file_id) em->file_id = strdup(file_id);
     em->priority = priority;
