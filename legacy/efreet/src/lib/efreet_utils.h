@@ -35,7 +35,7 @@ Ecore_List     *efreet_util_desktop_exec_glob_list(const char *glob);
 Ecore_List     *efreet_util_desktop_generic_name_glob_list(const char *glob);
 Ecore_List     *efreet_util_desktop_comment_glob_list(const char *glob);
 
-extern int EFREET_EVENT_UTIL_DESKTOP_LIST_CHANGE;
-extern int EFREET_EVENT_UTIL_DESKTOP_CHANGE;
+extern int EFREET_EVENT_DESKTOP_LIST_CHANGE;
+extern int EFREET_EVENT_DESKTOP_CHANGE;
 
 #endif
