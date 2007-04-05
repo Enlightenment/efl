@@ -616,10 +616,8 @@ efreet_util_cache_search_wm_class(const void *value, const void *data)
     if (!ud->desktop->startup_wm_class) return 1;
     if ((search->what2) && (!strcmp(ud->desktop->startup_wm_class, search->what2)))
         return 0;
-/* this isn't really valid - we look at class only, not name
     else if ((search->what1) && (!strcmp(desktop->startup_wm_class, search->what1)))
         return 0;
- */
     return 1;
 }
 
