@@ -127,7 +127,7 @@ _ecore_event_generic_free (void *data __UNUSED__, void *event)
  * to the queue for processing by event handlers added by 
  * ecore_event_handler_add(). The @p ev parameter will be a pointer to the event
  * private data that is specific to that event type. When the event is no
- * longer needed, @p func_free will be called and passed the private sructure
+ * longer needed, @p func_free will be called and passed the private structure
  * pointer for cleaning up. If @p func_free is NULL, free() will be called
  * with the private structure pointer.
  * func_free is passed @p data as its data parameter.
