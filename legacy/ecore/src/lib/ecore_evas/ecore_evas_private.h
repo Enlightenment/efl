@@ -164,8 +164,6 @@ struct _Ecore_Evas
    char        should_be_visible : 1;
    char        alpha  : 1;
 
-   Ecore_Idle_Enterer *delete_idle_enterer;
-   
    Evas_Hash  *data;
 
    struct {

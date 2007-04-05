@@ -6,8 +6,6 @@
 
 static int _ecore_evas_init_count = 0;
 
-static int _ecore_evas_idle_enter_delete(void *data);
-
 /**
  * Query if a particular renginering engine target has support
  * @param  engine The engine to check support for
@@ -139,9 +137,7 @@ ecore_evas_free(Ecore_Evas *ee)
 			 "ecore_evas_free");
 	return;
      }
-   if (ee->delete_idle_enterer) return;
-   ee->delete_idle_enterer = 
-     ecore_idle_enterer_add(_ecore_evas_idle_enter_delete, ee);
+   _ecore_evas_free(ee);
    return;
 }
 
@@ -1764,11 +1760,6 @@ void
 _ecore_evas_free(Ecore_Evas *ee)
 {
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
-   if (ee->delete_idle_enterer)
-     {
-	ecore_idle_enterer_del(ee->delete_idle_enterer);
-	ee->delete_idle_enterer = NULL;
-     }
    while (ee->sub_ecore_evas)
      {
 	_ecore_evas_free(ee->sub_ecore_evas->data);
@@ -1792,14 +1783,4 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->evas = NULL;
    if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
    free(ee);
-}
-
-static int
-_ecore_evas_idle_enter_delete(void *data)
-{
-   Ecore_Evas *ee;
-   
-   ee = (Ecore_Evas *)data;
-   _ecore_evas_free(ee);
-   return 0;
 }
