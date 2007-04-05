@@ -58,18 +58,7 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
 static Ecore_Evas *
 _ecore_evas_fb_match(void)
 {
-   Ecore_List2 *l;
-   
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
-     {
-	Ecore_Evas *ee;
-	
-	ee = (Ecore_Evas *)l;
-	if (ee->delete_idle_enterer) continue;
-	else
-	  return ee;
-     }
-   return NULL;
+   return ecore_evases;
 }
 
 static void
