@@ -21,6 +21,9 @@ TODO
 - If a theme has several icon types (png, xpm..) prefer the first in the
   extension list.
 
+- Make efreet_util optional (the user must init/shutdown in addition to main
+  efreet).
+
 Notes from the Menu Spec test
 -----------------------------
 - We're appending the / to the menu names in the test case. We should
