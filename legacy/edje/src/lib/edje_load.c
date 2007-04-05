@@ -524,6 +524,7 @@ _edje_file_del(Edje *ed)
 						 EVAS_CALLBACK_FREE,
 						 _edje_object_part_swallow_free_cb);
 		  evas_object_clip_unset(rp->swallowed_object);
+		  evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 		  if (rp->part->mouse_events)
 		     _edje_callbacks_del(rp->swallowed_object);
 		  rp->swallowed_object = NULL;
