@@ -15,7 +15,8 @@ typedef struct Efreet_Event_Desktop_Change Efreet_Event_Desktop_Change;
 
 struct Efreet_Event_Desktop_Change
 {
-    Efreet_Desktop *desktop;
+    Efreet_Desktop *current;
+    Efreet_Desktop *previous;
     Efreet_Desktop_Change change;
 };
 
