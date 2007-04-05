@@ -8,33 +8,9 @@
 static int
 _edje_font_is_embedded(Edje_File *edf, char *font)
 {
-   Edje_Font_Directory_Entry *fnt = NULL;
-   
    if (!edf->font_dir) return 0;
-/*    fnt = evas_hash_find (edf->font_hash, font); */
-/*    if (fnt) */
-/*      if (fnt->entry && (!strcmp(fnt->entry, font))) */
-/*        return 1; */
-     return 1;
+   return 1;
 }
-
-#if 0
-static char *
-_edje_str_deescape(char *str)
-{
-   char *s2, *s, *d;
-   
-   s2 = malloc(strlen(str) + 1);
-   if (!s2) return NULL;
-   for (s = str, d = s2; *s != 0; s++, d++)
-     {
-	if ((*s == '\\') && (s[1] != 0)) s++;
-	*d = *s;
-     }
-   *d = 0;
-   return s2;
-}
-#endif
 
 /* Put a \ before and Space( ), \ or ' in a string. 
  * A newly allocated string is returned.  

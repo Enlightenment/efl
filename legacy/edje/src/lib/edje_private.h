@@ -267,7 +267,7 @@ struct _Edje_Font_Directory
 struct _Edje_Font_Directory_Entry
 {
    const char *entry; /* the name of the font */
-   char *path;
+   const char *path;
 };
 
 	

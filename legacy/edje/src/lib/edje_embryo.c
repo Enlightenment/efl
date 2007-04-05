@@ -353,7 +353,7 @@ _edje_embryo_fn_count(Embryo_Program *ep, Embryo_Cell *params)
 
    CHKPARAM(1);
 
-   return (Embryo_Cell) _edje_var_list_count_get(ed, (int) params[1]);
+   return (Embryo_Cell)_edje_var_list_count_get(ed, (int) params[1]);
 }
 
 /* remove(id, n) */

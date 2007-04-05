@@ -682,9 +682,11 @@ _edje_part_recalc_single(Edje *ed,
 	if (!text) text = "";
 	
         /* check if the font is embedded in the .eet */
-        if (ed->file->font_hash)
+	if (ed->file->font_hash)
 	  {
-	     Edje_Font_Directory_Entry *fnt = evas_hash_find (ed->file->font_hash, font);
+	     Edje_Font_Directory_Entry *fnt;
+
+	     fnt = evas_hash_find(ed->file->font_hash, font);
 
 	     if (fnt)
 	       {
