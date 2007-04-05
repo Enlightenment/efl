@@ -414,8 +414,6 @@ _xre_image_data_find(void *data)
 void
 _xre_image_data_put(XR_Image *im, void *data)
 {
-   void *imdata = NULL;
-
    if (!data) return;
    switch (im->cs.space)
      {
