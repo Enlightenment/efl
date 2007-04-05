@@ -1,23 +1,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static void evas_object_event_callback_list_free(Evas_Object_List **list);
 static void evas_object_event_callback_list_post_free(Evas_Object_List **list);
 static void evas_object_event_callback_clear(Evas_Object *obj);
-
-static void
-evas_object_event_callback_list_free(Evas_Object_List **list)
-{
-   /* MEM OK */
-   while (*list)
-     {
-	Evas_Func_Node *fn;
-
-	fn = (Evas_Func_Node *)(*list);
-	*list = evas_object_list_remove(*list, fn);
-	free(fn);
-     }
-}
 
 static void
 evas_object_event_callback_list_post_free(Evas_Object_List **list)
@@ -466,7 +451,6 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 {
    /* MEM OK */
    Evas_Func_Node *fn;
-   Evas_Object_List **l_mod;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -577,7 +561,7 @@ EAPI void *
 evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
 {
    /* MEM OK */
-   Evas_Object_List **l_mod, *l;
+   Evas_Object_List *l;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
