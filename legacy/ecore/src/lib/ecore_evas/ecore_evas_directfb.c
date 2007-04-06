@@ -99,7 +99,6 @@ _ecore_evas_directfb_match(DFBWindowID win)
    Ecore_Evas *ee;
    
    ee = evas_hash_find(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(win));
-   if ((ee) && (ee->delete_idle_enterer)) return NULL;
    return ee;
 }
 	
