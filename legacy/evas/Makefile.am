@@ -119,4 +119,4 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pframebuffer) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
-	$(pxrenderx11) $(pglitzx11)
+	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11)
