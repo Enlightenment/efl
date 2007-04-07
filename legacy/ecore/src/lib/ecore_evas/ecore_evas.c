@@ -744,12 +744,14 @@ ecore_evas_shaped_get(Ecore_Evas *ee)
 /**
  * Set whether an Ecore_Evas has an alpha channel or not. 
  * @param ee The Ecore_Evas to shape
- * @param shaped 1 to add alpha, 0 to not
+ * @param alpha 1 to enable the alpha channel, 0 to disable it
  *
- * This function allows one to make an Ecore_Evas translucent using alpha
- * channels. See ecore_evas_shaped_set() for details. The differency with
- * alpha is it supports multiple levels of transparencye, not just a
- * single outline.
+ * This function allows you to make an Ecore_Evas translucent using an
+ * alpha channel. See ecore_evas_shaped_set() for details. The difference
+ * between a shaped window and a window with an alpha channel is that an
+ * alpha channel supports multiple levels of transpararency, as opposed to
+ * the 1 bit transparency of a shaped window (a pixel is either opaque, or
+ * it's transparent).
  */
 EAPI void
 ecore_evas_alpha_set(Ecore_Evas *ee, int alpha)
@@ -765,11 +767,12 @@ ecore_evas_alpha_set(Ecore_Evas *ee, int alpha)
 }
 
 /**
- * Query whether an Ecore_Evas is alpha or not.
+ * Query whether an Ecore_Evas has an alpha channel.
  * @param ee The Ecore_Evas to query.
- * @return 1 if alpha, 0 if not.
+ * @return 1 if ee has an alpha channel, 0 if it does not.
  *
- * This function returns 1 if @p ee is alpha, and 0 if not.
+ * This function returns 1 if @p ee has an alpha channel, and 0 if
+ * it does not.
  */
 EAPI int
 ecore_evas_alpha_get(Ecore_Evas *ee)
