@@ -30,7 +30,7 @@
 /* FIXME:
  * to do soon:
  * - iconfication api needs to work
- * - maximization api nees to work
+ * - maximization api needs to work
  * - document all calls
  * 
  * later:
