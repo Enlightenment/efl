@@ -25,7 +25,6 @@ efreet_init(void)
     if (!efreet_ini_init()) return --init;
     if (!efreet_desktop_init()) return --init;
     if (!efreet_menu_init()) return --init;
-    if (!efreet_util_init()) return --init;
     return init;
 }
 
@@ -39,7 +38,6 @@ int
 efreet_shutdown(void)
 {
     if (--init) return init;
-    efreet_util_shutdown();
     efreet_menu_shutdown();
     efreet_desktop_shutdown();
     efreet_ini_shutdown();

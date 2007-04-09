@@ -31,6 +31,8 @@ Efreet_Desktop *efreet_util_desktop_exec_find(const char *exec);
 Efreet_Desktop *efreet_util_desktop_name_find(const char *name);
 Efreet_Desktop *efreet_util_desktop_generic_name_find(const char *generic_name);
 
+int             efreet_util_init(void);
+int             efreet_util_shutdown(void);
 Ecore_List     *efreet_util_desktop_name_glob_list(const char *glob);
 Ecore_List     *efreet_util_desktop_exec_glob_list(const char *glob);
 Ecore_List     *efreet_util_desktop_generic_name_glob_list(const char *glob);

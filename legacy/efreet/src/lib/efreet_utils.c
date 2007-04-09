@@ -79,6 +79,8 @@ static Ecore_Idler *idler = NULL;
 
 static Ecore_List *monitors = NULL;
 
+static int init = 0;
+
 int EFREET_EVENT_DESKTOP_LIST_CHANGE = 0;
 int EFREET_EVENT_DESKTOP_CHANGE = 0;
 
@@ -87,6 +89,8 @@ efreet_util_init(void)
 {
     Efreet_Cache_Fill *fill;
     Ecore_List *dirs;
+
+    if (init++) return init;
 
     if (!EFREET_EVENT_DESKTOP_LIST_CHANGE)
         EFREET_EVENT_DESKTOP_LIST_CHANGE = ecore_event_type_new();
@@ -124,12 +128,14 @@ efreet_util_init(void)
         ecore_list_goto_first(fill->dirs);
     }
     idler = ecore_idler_add(efreet_util_cache_fill, fill);
-    return 1;
+    return init;
 }
 
-void
+int
 efreet_util_shutdown(void)
 {
+    if (--init) return init;
+
     if (idler)
     {
         Efreet_Cache_Fill *fill;
@@ -145,6 +151,7 @@ efreet_util_shutdown(void)
     IF_FREE_HASH(file_id_by_desktop_path);
 
     IF_FREE_LIST(monitors);
+    return init;
 }
 
 char *
