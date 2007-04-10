@@ -517,22 +517,20 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
     ud = ecore_hash_get(desktop_by_file_id, file_id);
     if (!ud)
     {
+        ud = NEW(Efreet_Util_Desktop, 1);
+        ud->priority = priority;
+        ud->desktop = desktop;
+
+        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
         if (event)
         {
             Efreet_Event_Desktop_Change *ev;
-
-            ud = NEW(Efreet_Util_Desktop, 1);
-            ud->priority = priority;
-            ud->desktop = desktop;
-            ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
 
             ev = NEW(Efreet_Event_Desktop_Change, 1);
             ev->current = desktop;
             ev->change = EFREET_DESKTOP_CHANGE_ADD;
             ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
         }
-        else
-            ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
     }
     else if (priority < ud->priority)
     {
