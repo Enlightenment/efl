@@ -49,7 +49,7 @@ struct Efreet_Util_Desktop
 };
 
 static int  efreet_util_cache_fill(void *data);
-static void efreet_util_cache_add(const char *path, const char *file_id, int priority);
+static void efreet_util_cache_add(const char *path, const char *file_id, int priority, int event);
 static void efreet_util_cache_remove(const char *path, const char *file_id, int priority);
 static void efreet_util_cache_reload(const char *path, const char *file_id, int priority);
 static void efreet_util_cache_dir_free(void *data);
@@ -485,7 +485,7 @@ efreet_util_cache_fill(void *data)
                 ecore_list_append(fill->dirs, dir);
             }
             else
-                efreet_util_cache_add(buf, file_id, fill->current->priority);
+                efreet_util_cache_add(buf, file_id, fill->current->priority, 0);
         }
         if (!file)
         {
@@ -503,7 +503,7 @@ efreet_util_cache_fill(void *data)
 }
 
 static void
-efreet_util_cache_add(const char *path, const char *file_id, int priority)
+efreet_util_cache_add(const char *path, const char *file_id, int priority, int event)
 {
     Efreet_Desktop *desktop;
     Efreet_Util_Desktop *ud;
@@ -517,29 +517,38 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority)
     ud = ecore_hash_get(desktop_by_file_id, file_id);
     if (!ud)
     {
-        Efreet_Event_Desktop_Change *ev;
+        if (event)
+        {
+            Efreet_Event_Desktop_Change *ev;
 
-        ud = NEW(Efreet_Util_Desktop, 1);
-        ud->priority = priority;
-        ud->desktop = desktop;
-        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+            ud = NEW(Efreet_Util_Desktop, 1);
+            ud->priority = priority;
+            ud->desktop = desktop;
+            ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
 
-        ev = NEW(Efreet_Event_Desktop_Change, 1);
-        ev->current = desktop;
-        ev->change = EFREET_DESKTOP_CHANGE_ADD;
-        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
+            ev = NEW(Efreet_Event_Desktop_Change, 1);
+            ev->current = desktop;
+            ev->change = EFREET_DESKTOP_CHANGE_ADD;
+            ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
+        }
+        else
+            ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
     }
     else if (priority < ud->priority)
     {
-        Efreet_Event_Desktop_Change *ev;
+        if (event)
+        {
+            Efreet_Event_Desktop_Change *ev;
 
-        ev = NEW(Efreet_Event_Desktop_Change, 1);
-        ev->current = desktop;
-        ev->previous = ud->desktop;
-        ev->change = EFREET_DESKTOP_CHANGE_UPDATE;
-        ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
-
-        ud->desktop = desktop;
+            ev = NEW(Efreet_Event_Desktop_Change, 1);
+            ev->current = desktop;
+            ev->previous = ud->desktop;
+            ev->change = EFREET_DESKTOP_CHANGE_UPDATE;
+            ud->desktop = desktop;
+            ecore_event_add(EFREET_EVENT_DESKTOP_CHANGE, ev, NULL, NULL);
+        }
+        else
+            ud->desktop = desktop;
     }
     if (!ecore_hash_get(file_id_by_desktop_path, desktop->orig_path))
         ecore_hash_set(file_id_by_desktop_path,
@@ -839,7 +848,7 @@ efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor __UNUSED__,
             /* Ignore */
             break;
         case ECORE_FILE_EVENT_CREATED_FILE:
-            efreet_util_cache_add(path, file_id, em->priority);
+            efreet_util_cache_add(path, file_id, em->priority, 1);
             break;
         case ECORE_FILE_EVENT_CREATED_DIRECTORY:
             efreet_util_monitor(path, file_id, em->priority);
