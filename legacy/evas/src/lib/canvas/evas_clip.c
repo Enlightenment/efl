@@ -169,6 +169,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    return;
    MAGIC_CHECK_END();
    if (obj->cur.clipper == clip) return;
+   if (obj == clip) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->clip_set)
