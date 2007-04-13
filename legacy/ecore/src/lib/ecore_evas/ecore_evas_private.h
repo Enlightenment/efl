@@ -23,19 +23,30 @@
 #endif
 
 #ifdef BUILD_ECORE_X
-#include "Ecore_X.h"
-#include <Evas_Engine_Software_X11.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#ifdef ECORE_XRENDER
-#include <X11/extensions/Xrender.h>
-#endif
-#ifdef BUILD_ECORE_EVAS_GL
-#include <Evas_Engine_GL_X11.h>
-#endif
-#ifdef BUILD_ECORE_EVAS_XRENDER
-#include <Evas_Engine_XRender_X11.h>
-#endif
+# include "Ecore_X.h"
+# ifdef HAVE_ECORE_X_XCB
+#  include <Evas_Engine_Software_Xcb.h>
+#  include <xcb/xcb.h>
+#  ifdef ECORE_XCB_RENDER
+#   include <xcb/render.h>
+#  endif
+#  ifdef BUILD_ECORE_EVAS_XRENDER
+#   include <Evas_Engine_XRender_Xcb.h>
+#  endif
+# else
+#  include <Evas_Engine_Software_X11.h>
+#  include <X11/Xlib.h>
+#  include <X11/Xutil.h>
+#  ifdef ECORE_XRENDER
+#   include <X11/extensions/Xrender.h>
+#  endif
+#  ifdef BUILD_ECORE_EVAS_GL
+#   include <Evas_Engine_GL_X11.h>
+#  endif
+#  ifdef BUILD_ECORE_EVAS_XRENDER
+#   include <Evas_Engine_XRender_X11.h>
+#  endif
+# endif /* HAVE_ECORE_X_XCB */
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
 #include <Evas_Engine_FB.h>
@@ -112,7 +123,11 @@ struct _Ecore_Evas_Engine
       Ecore_X_Pixmap pmap;
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;
+#ifdef HAVE_ECORE_X_XCB
+#warning [XCB] No Region code
+#else
       Region         damages;
+#endif /* HAVE_ECORE_X_XCB */
       int            px, py, pw, ph;
       unsigned char  direct_resize : 1;
       unsigned char  using_bg_pixmap : 1;

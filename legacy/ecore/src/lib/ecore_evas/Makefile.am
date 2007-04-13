@@ -38,7 +38,8 @@ INCLUDES = \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
-@EVAS_CFLAGS@ 
+@EVAS_CFLAGS@ \
+@XCB_CFLAGS@
 
 libecore_evas_la_LDFLAGS = -version-info 1:0:0 \
 $(ECORE_X_LDF) \
@@ -65,7 +66,8 @@ $(ECORE_X_LIB) \
 $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@EVAS_LIBS@
+@EVAS_LIBS@ \
+@XCB_LIBS@
 
 libecore_evas_la_DEPENDENCIES = \
 $(ECORE_X_LIB) \

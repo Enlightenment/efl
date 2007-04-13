@@ -142,11 +142,92 @@ AC_SUBST(iconv_libs)
 ECORE_CHECK_MODULE([Txt], [yes], [$have_iconv],
   [ecore_txt_libs="$ecore_txt_libs $iconv_libs"])
 
+dnl Check for XCB
+have_ecore_x="no"
+have_ecore_x_xcb="no"
+
+AC_ARG_ENABLE(ecore-x-xcb,
+  AC_HELP_STRING(
+    [--enable-ecore-x-xcb],
+    [enable the ecore_x module with XCB backend. [[default=disabled]]]),
+  [ want_ecore_x_xcb=$enableval ],
+  [ want_ecore_x_xcb="no" ])
+
+AC_MSG_CHECKING(whether ecore_x with XCB backend is to be built)
+AC_MSG_RESULT($want_ecore_x_xcb)
+
+if test "x$want_ecore_x_xcb" = "xyes" ; then
+  PKG_CHECK_MODULES(XCB, xcb xcb-icccm xcb-image xcb-keysyms,
+    [ have_ecore_x_xcb="yes" ],
+    [ have_ecore_x_xcb="no" ])
+
+  if test "x$have_ecore_x_xcb" = "xyes" ; then
+    PKG_CHECK_MODULES(XCB_DAMAGE, xcb-damage,
+      [ have_ecore_x_xcb_damage="yes"
+      AC_DEFINE(ECORE_XCB_DAMAGE, 1, [Build support for XCB damage]) ],
+      [ have_ecore_x_xcb_damage="no" ])
+
+    PKG_CHECK_MODULES(XCB_DPMS, xcb-dpms,
+      [ have_ecore_x_xcb_dpms="yes"
+      AC_DEFINE(ECORE_XCB_DPMS, 1, [Build support for XCB dpms]) ],
+      [ have_ecore_x_xcb_dpms="no" ])
+
+    PKG_CHECK_MODULES(XCB_RANDR, xcb-randr,
+      [ have_ecore_x_xcb_randr="yes"
+      AC_DEFINE(ECORE_XCB_RANDR, 1, [Build support for XCB randr]) ],
+      [ have_ecore_x_xcb_randr="no" ])
+
+    PKG_CHECK_MODULES(XCB_RENDER, xcb-render,
+      [ have_ecore_x_xcb_render="yes"
+      AC_DEFINE(ECORE_XCB_RENDER, 1, [Build support for XCB render]) ],
+      [ have_ecore_x_xcb_render="no" ])
+
+    PKG_CHECK_MODULES(XCB_SCREENSAVER, xcb-screensaver,
+      [ have_ecore_x_xcb_screensaver="yes"
+      AC_DEFINE(ECORE_XCB_SCREENSAVER, 1, [Build support for XCB screensaver]) ],
+      [ have_ecore_x_xcb_screensaver="no" ])
+
+    PKG_CHECK_MODULES(XCB_SHAPE, xcb-shape,
+      [ have_ecore_x_xcb_shape="yes"
+      AC_DEFINE(ECORE_XCB_SHAPE, 1, [Build support for XCB shape]) ],
+      [ have_ecore_x_xcb_shape="no" ])
+
+    PKG_CHECK_MODULES(XCB_SYNC, xcb-sync,
+      [ have_ecore_x_xcb_sync="yes"
+      AC_DEFINE(ECORE_XCB_SYNC, 1, [Build support for XCB sync]) ],
+      [ have_ecore_x_xcb_sync="no" ])
+
+    PKG_CHECK_MODULES(XCB_XFIXES, xcb-xfixes,
+      [ have_ecore_x_xcb_xfixes="yes"
+      AC_DEFINE(ECORE_XCB_FIXES, 1, [Build support for XCB xfixes]) ],
+      [ have_ecore_x_xcb_xfixes="no" ])
+
+    PKG_CHECK_MODULES(XCB_XINERAMA, xcb-xinerama,
+      [ have_ecore_x_xcb_xinerama="yes"
+      AC_DEFINE(ECORE_XCB_XINERAMA, 1, [Build support for XCB xinerama]) ],
+      [ have_ecore_x_xcb_xinerama="no" ])
+
+    PKG_CHECK_MODULES(XCB_XPRINT, xcb-xprint,
+      [ have_ecore_x_xcb_xprint="yes"
+      AC_DEFINE(ECORE_XCB_XPRINT, 1, [Build support for XCB xprint]) ],
+      [ have_ecore_x_xcb_xprint="no" ])
+
+    AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module (XCB backend)])
+    AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB backend is enabled.])
+
+    requirements_ecore_evas="$requirements_ecore_evas ecore-x"
+    have_ecore_x_xcb_define="-DHAVE_ECORE_X_XCB"
+    have_ecore_x="yes"
+    AC_SUBST(have_ecore_x_xcb_define)
+  fi
+fi
+
 have_x="no"
 x_dir="";
 x_includes="";
 x_cflags="";
 x_libs="";
+if test "x$have_ecore_x_xcb" != "xyes" ; then
 AC_PATH_XTRA
 AC_CHECK_HEADER(X11/X.h,
   [
@@ -212,6 +293,8 @@ if test "x$have_ecore_x" = "xyes"; then
   ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
 
   requirements_ecore_evas="$requirements_ecore_evas ecore-x"
+fi
+
 fi
 
 ECORE_CHECK_MODULE([Job], [yes])
@@ -630,6 +713,8 @@ AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
 
 # set up conditionals
+AM_CONDITIONAL(BUILD_ECORE_X, test "x$have_ecore_x" = "xyes")
+AM_CONDITIONAL(BUILD_ECORE_X_XCB, test "x$have_ecore_x_xcb" = "xyes")
 AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, test $have_ecore_evas_gl = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, test $have_ecore_evas_xrender = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test $have_ecore_evas_dfb = yes)
@@ -683,7 +768,11 @@ echo
 echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $use_openssl)"
 echo "  Ecore_Txt....................: $have_ecore_txt"
-echo "  Ecore_X......................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms)"
+if test "x$have_ecore_x_xcb" = "xyes" ; then
+echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_xcb_xprint) (Xinerama: $have_ecore_x_xcb_xinerama) (Xrandr: $have_ecore_x_xcb_randr) (Xscreensaver: $have_ecore_x_xcb_screensaver) (Xshape: $have_ecore_x_xcb_shape) (Xsync: $have_ecore_x_xcb_sync) (Xrender: $have_ecore_x_xcb_render) (Xfixes: $have_ecore_x_xcb_xfixes) (Xdamage: $have_ecore_x_xcb_damage) (Xdpms: $have_ecore_x_xcb_dpms)"
+else
+  echo "  Ecore_X (Xlib backend).......: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms)"
+fi
 echo "  Ecore_FB.....................: $have_ecore_fb"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
 echo "  Ecore_Evas...................: $have_ecore_evas"
