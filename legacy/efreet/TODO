@@ -11,10 +11,6 @@ TODO
   BEFORE looking in the inherited themes (e.g. for mime-types that go from
   specific to general).
 
-- When files are added by the monitor, check if the file should be preferred
-  over one existing (if the user adds a file in the home dir it should be
-  preferred over one in the system dir).
-
 - When adding a new dir for monitoring, scan the dir first as it might have files
   before we register a monitor.
 
