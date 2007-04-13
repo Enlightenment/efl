@@ -125,7 +125,6 @@ efreet_util_init(void)
             ecore_list_append(fill->dirs, dir);
         }
         ecore_list_destroy(dirs);
-        ecore_list_goto_first(fill->dirs);
     }
     idler = ecore_idler_add(efreet_util_cache_fill, NULL);
     return init;
@@ -863,7 +862,6 @@ efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor __UNUSED__,
                 dir->file_id = strdup(file_id);
                 dir->priority = em->priority;
                 ecore_list_append(fill->dirs, dir);
-                ecore_list_goto_first(fill->dirs);
 
                 if (!idler)
                     idler = ecore_idler_add(efreet_util_cache_fill, NULL);
