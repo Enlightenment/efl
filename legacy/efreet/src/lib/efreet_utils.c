@@ -76,6 +76,7 @@ static Ecore_Hash *desktop_by_file_id = NULL;
 static Ecore_Hash *file_id_by_desktop_path = NULL;
 
 static Ecore_Idler *idler = NULL;
+static Efreet_Cache_Fill *fill = NULL;
 
 static Ecore_List *monitors = NULL;
 
@@ -87,7 +88,6 @@ int EFREET_EVENT_DESKTOP_CHANGE = 0;
 int
 efreet_util_init(void)
 {
-    Efreet_Cache_Fill *fill;
     Ecore_List *dirs;
 
     if (init++) return init;
@@ -127,7 +127,7 @@ efreet_util_init(void)
         ecore_list_destroy(dirs);
         ecore_list_goto_first(fill->dirs);
     }
-    idler = ecore_idler_add(efreet_util_cache_fill, fill);
+    idler = ecore_idler_add(efreet_util_cache_fill, NULL);
     return init;
 }
 
@@ -138,8 +138,7 @@ efreet_util_shutdown(void)
 
     if (idler)
     {
-        Efreet_Cache_Fill *fill;
-        fill = ecore_idler_del(idler);
+        ecore_idler_del(idler);
         IF_FREE_LIST(fill->dirs);
         if (fill->current) efreet_util_cache_dir_free(fill->current);
         if (fill->files) closedir(fill->files);
@@ -416,18 +415,17 @@ dump(void *value, void *data __UNUSED__)
 #endif
 
 static int
-efreet_util_cache_fill(void *data)
+efreet_util_cache_fill(void *data __UNUSED__)
 {
-    Efreet_Cache_Fill *fill;
     struct dirent *file = NULL;
     double start;
     char buf[PATH_MAX];
 
-    fill = data;
     if (!fill->dirs)
     {
         free(fill);
         idler = NULL;
+        fill = NULL;
         ecore_event_add(EFREET_EVENT_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
 
         return 0;
@@ -440,6 +438,7 @@ efreet_util_cache_fill(void *data)
             IF_FREE_LIST(fill->dirs);
             free(fill);
             idler = NULL;
+            fill = NULL;
 #if 0
             ecore_hash_for_each_node(desktop_by_file_id, dump, NULL);
             ecore_hash_for_each_node(file_id_by_desktop_path, dump, NULL);
@@ -849,7 +848,26 @@ efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor __UNUSED__,
             efreet_util_cache_add(path, file_id, em->priority, 1);
             break;
         case ECORE_FILE_EVENT_CREATED_DIRECTORY:
-            efreet_util_monitor(path, file_id, em->priority);
+            {
+                Efreet_Cache_Fill_Dir *dir;
+
+                if (!fill)
+                {
+                    fill = NEW(Efreet_Cache_Fill, 1);
+                    fill->dirs = ecore_list_new();
+                    ecore_list_set_free_cb(fill->dirs, efreet_util_cache_dir_free);
+                }
+
+                dir = NEW(Efreet_Cache_Fill_Dir, 1);
+                dir->path = strdup(path);
+                dir->file_id = strdup(file_id);
+                dir->priority = em->priority;
+                ecore_list_append(fill->dirs, dir);
+                ecore_list_goto_first(fill->dirs);
+
+                if (!idler)
+                    idler = ecore_idler_add(efreet_util_cache_fill, NULL);
+            }
             break;
         case ECORE_FILE_EVENT_DELETED_FILE:
             efreet_util_cache_remove(path, file_id, em->priority);
