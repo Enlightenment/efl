@@ -11,9 +11,6 @@ TODO
   BEFORE looking in the inherited themes (e.g. for mime-types that go from
   specific to general).
 
-- When adding a new dir for monitoring, scan the dir first as it might have files
-  before we register a monitor.
-
 - If a theme has several icon types (png, xpm..) prefer the first in the
   extension list.
 
