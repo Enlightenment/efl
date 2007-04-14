@@ -1,5 +1,5 @@
-#ifndef _EVAS_ENGINE_XRENDER_X11_H
-#define _EVAS_ENGINE_XRENDER_X11_H
+#ifndef __EVAS_ENGINE_XRENDER_XCB_H__
+#define __EVAS_ENGINE_XRENDER_XCB_H__
 
 #include <xcb/xcb.h>
 
@@ -20,6 +20,5 @@ struct _Evas_Engine_Info_XRender_Xcb
       unsigned char     destination_alpha : 1;
    } info;
 };
-#endif
 
-
+#endif /* __EVAS_ENGINE_XRENDER_XCB_H__ */
