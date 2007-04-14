@@ -389,6 +389,16 @@ _xr_image_info_free(Xcb_Image_Info *xcbinf)
    xcbinf->references--;
    if (xcbinf->references != 0) return;
    _xr_render_surface_free(xcbinf->mul);
+   if (xcbinf->fmt1)
+     free(xcbinf->fmt1);
+   if (xcbinf->fmt4)
+     free(xcbinf->fmt4);
+   if (xcbinf->fmt8)
+     free(xcbinf->fmt8);
+   if (xcbinf->fmt24)
+     free(xcbinf->fmt24);
+   if (xcbinf->fmt32)
+     free(xcbinf->fmt32);
    free(xcbinf);
    _image_info_list = evas_list_remove(_image_info_list, xcbinf);
 }

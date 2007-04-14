@@ -91,7 +91,13 @@ _xr_render_surface_new(Xcb_Image_Info *xcbinf, int w, int h, xcb_render_pictform
    rs->xcbinf = xcbinf;
    rs->w = w;
    rs->h = h;
-   rs->fmt = fmt;
+   rs->fmt = (xcb_render_pictforminfo_t *)malloc (sizeof (xcb_render_pictforminfo_t));
+   if (!rs->fmt)
+     {
+        free(rs);
+        return NULL;
+     }
+   memcpy (rs->fmt, fmt, sizeof (xcb_render_pictforminfo_t));
    rs->alpha = alpha;
    rs->depth = fmt->depth;
    rs->allocated = 1;
@@ -99,6 +105,7 @@ _xr_render_surface_new(Xcb_Image_Info *xcbinf, int w, int h, xcb_render_pictform
    xcb_create_pixmap(xcbinf->conn, fmt->depth, rs->draw, xcbinf->root, w, h);
    if (rs->draw == 0)
      {
+       free(rs->fmt);
        free(rs);
        return NULL;
      }
@@ -113,6 +120,7 @@ _xr_render_surface_new(Xcb_Image_Info *xcbinf, int w, int h, xcb_render_pictform
      {
        xcb_free_pixmap(rs->xcbinf->conn, rs->draw);
        rs->xcbinf->references--;
+       free(rs->fmt);
        free(rs);
        return NULL;
      }
@@ -124,13 +132,10 @@ Xcb_Render_Surface *
 _xr_render_surface_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int w, int h, int alpha)
 {
    Xcb_Render_Surface        *rs;
-   xcb_render_pictforminfo_t *fmt;
    uint32_t                   mask;
    uint32_t                   values[3];
 
    if ((!xcbinf) || (draw == 0) || (w < 1) || (h < 1)) return NULL;
-   fmt = xcb_render_find_visual_format(xcbinf->conn, xcbinf->vis);
-   if (!fmt) return NULL;
    rs = calloc(1, sizeof(Xcb_Render_Surface));
    if (!rs) return NULL;
    rs->xcbinf = xcbinf;
@@ -148,11 +153,15 @@ _xr_render_surface_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int w, int
 /*      rs->fmt = xcbinf->fmt1; */
 /*    free(fmt); */
 
-   rs->fmt = fmt;
-
+   rs->fmt = xcb_render_find_visual_format(xcbinf->conn, xcbinf->vis);
+   if (!rs->fmt)
+     {
+        free(rs);
+        return NULL;
+     }
    rs->alpha = alpha;
-   rs->depth = fmt->depth;
-   if (fmt->depth == 32) rs->alpha = 1;
+   rs->depth = rs->fmt->depth;
+   if (rs->fmt->depth == 32) rs->alpha = 1;
    rs->allocated = 0;
    rs->draw = draw;
    rs->xcbinf->references++;
@@ -161,10 +170,11 @@ _xr_render_surface_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int w, int
    values[1] = 0;
    values[2] = 0;
    rs->pic = xcb_generate_id(xcbinf->conn);
-   xcb_render_create_picture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
+   xcb_render_create_picture(xcbinf->conn, rs->pic, rs->draw, rs->fmt->id, mask, values);
    if (rs->pic == 0)
      {
        rs->xcbinf->references--;
+       free(rs->fmt);
        free(rs);
        return NULL;
      }
@@ -185,7 +195,8 @@ _xr_render_surface_format_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int
    rs->xcbinf = xcbinf;
    rs->w = w;
    rs->h = h;
-   rs->fmt = fmt;
+   rs->fmt = (xcb_render_pictforminfo_t *)malloc (sizeof (xcb_render_pictforminfo_t));
+   memcpy (rs->fmt, fmt, sizeof (xcb_render_pictforminfo_t));
    rs->alpha = alpha;
    rs->depth = fmt->depth;
    if (fmt->depth == 32) rs->alpha = 1;
@@ -196,11 +207,12 @@ _xr_render_surface_format_adopt(Xcb_Image_Info *xcbinf, xcb_drawable_t draw, int
    values[0] = 0;
    values[1] = 0;
    values[2] = 0;
-   rs->pic = xcb_render_picture_new(xcbinf->conn);
+   rs->pic = xcb_generate_id(xcbinf->conn);
    xcb_render_create_picture(xcbinf->conn, rs->pic, rs->draw, fmt->id, mask, values);
    if (rs->pic == 0)
      {
        rs->xcbinf->references--;
+       free(rs->fmt);
        free(rs);
        return NULL;
      }
@@ -221,6 +233,7 @@ _xr_render_surface_free(Xcb_Render_Surface *rs)
        _xr_image_info_free(rs->xcbinf);
        rs->xcbinf = NULL;
      }
+   free(rs->fmt);
    free(rs);
 }
 
@@ -413,7 +426,7 @@ _xr_render_surface_clips_set(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int 
      }
    else
      {
-        Cutout_Rect     *rects;
+        Cutout_Rects    *rects;
 	Cutout_Rect     *r;
 	int             i;
 
