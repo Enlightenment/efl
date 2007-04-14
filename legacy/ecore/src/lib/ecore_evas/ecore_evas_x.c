@@ -631,7 +631,7 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Property *e;
 
-   printf ("_ecore_evas_x_event_property_change\n");
+//   printf ("_ecore_evas_x_event_property_change\n");
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
