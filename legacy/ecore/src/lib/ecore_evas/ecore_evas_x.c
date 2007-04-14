@@ -898,6 +898,20 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 #ifdef HAVE_ECORE_X_XCB
 #warning [XCB] No Region code
 #else
+	XRectangle xr;
+	Region tmpr;
+	
+	if (!ee->engine.x.damages) ee->engine.x.damages = XCreateRegion();
+	tmpr = XCreateRegion();
+	xr.x = e->x;
+	xr.y = e->y;
+	xr.width = e->w;
+	xr.height = e->h;
+	XUnionRectWithRegion(&xr, ee->engine.x.damages, tmpr);
+	XDestroyRegion(ee->engine.x.damages);
+	ee->engine.x.damages = tmpr;
+/* no - this breaks things badly. disable. Ecore_X_Rectangle != XRectangle - see
+ *  the typedefs in x's headers and ecore_x's. also same with Region - it's a pointer in x - not an X ID
 	Ecore_X_Rectangle rect;
 	Ecore_X_Region    tmpr;
 
@@ -910,6 +924,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 	XUnionRectWithRegion(&rect, ee->engine.x.damages, tmpr);
 	XDestroyRegion(ee->engine.x.damages);
 	ee->engine.x.damages = tmpr;
+ */
 #endif /* HAVE_ECORE_X_XCB */
      }
    else
