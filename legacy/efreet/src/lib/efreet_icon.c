@@ -4,6 +4,7 @@
 
 #define NO_MATCH_KEY ((char *)0xdeadbeef)
 
+static char *efreet_icon_deprecated_user_dir = NULL;
 static char *efreet_icon_user_dir = NULL;
 static Ecore_Hash *efreet_icon_dirs_cached = NULL;
 static Ecore_Hash *efreet_icon_themes = NULL; 
@@ -118,17 +119,33 @@ efreet_icon_shutdown(void)
  * @brief Returns the user icon directory
  */
 const char *
-efreet_icon_dir_get(void)
+efreet_icon_deprecated_user_dir_get(void)
+{
+    const char *user;
+    int len;
+
+    if (efreet_icon_deprecated_user_dir) return efreet_icon_deprecated_user_dir;
+
+    user = efreet_home_dir_get();
+    len = strlen(user) + strlen("/.icons") + 1;
+    efreet_icon_deprecated_user_dir = malloc(sizeof(char) * len);
+    snprintf(efreet_icon_deprecated_user_dir, len, "%s/.icons", user);
+
+    return efreet_icon_deprecated_user_dir;
+}
+
+const char *
+efreet_icon_user_dir_get(void)
 {
     const char *user;
     int len;
 
     if (efreet_icon_user_dir) return efreet_icon_user_dir;
 
-    user = efreet_home_dir_get();
-    len = strlen(user) + strlen("/.icons") + 1;
+    user = efreet_data_home_get();
+    len = strlen(user) + strlen("/icons") + 1;
     efreet_icon_user_dir = malloc(sizeof(char) * len);
-    snprintf(efreet_icon_user_dir, len, "%s/.icons", user);
+    snprintf(efreet_icon_user_dir, len, "%s/icons", user);
 
     return efreet_icon_user_dir;
 }
@@ -545,7 +562,9 @@ efreet_icon_fallback_icon(const char *icon_name)
 
     if (!icon_name) return NULL;
 
-    icon = efreet_icon_fallback_dir_scan(efreet_icon_dir_get(), icon_name);
+    icon = efreet_icon_fallback_dir_scan(efreet_icon_deprecated_user_dir_get(), icon_name);
+    if (!icon)
+        icon = efreet_icon_fallback_dir_scan(efreet_icon_user_dir_get(), icon_name);
     if (!icon)
     {
         Ecore_List *xdg_dirs;
@@ -1122,8 +1141,8 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
     Ecore_List *xdg_dirs;
     char path[PATH_MAX], *dir;
 
-    efreet_icon_theme_dir_scan(efreet_icon_dir_get(), theme_name);
-    efreet_icon_theme_dir_scan(efreet_data_home_get(), theme_name);
+    efreet_icon_theme_dir_scan(efreet_icon_deprecated_user_dir_get(), theme_name);
+    efreet_icon_theme_dir_scan(efreet_icon_user_dir_get(), theme_name);
 
     xdg_dirs = efreet_data_dirs_get();
     ecore_list_goto_first(xdg_dirs);
