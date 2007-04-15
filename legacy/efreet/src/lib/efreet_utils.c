@@ -230,9 +230,10 @@ efreet_util_desktop_mime_list(const char *mime)
     Efreet_Cache_Search_List search;
 
     search.list = ecore_list_new();
-    search.what = mime;
+    search.what = ecore_string_instance(mime);
 
     ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_mime, &search);
+    ecore_string_release(search.what);
 
     if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
     return search.list;
@@ -695,7 +696,7 @@ efreet_util_cache_search_mime(void *value, void *data)
     ecore_list_goto_first(ud->desktop->mime_types);
     while ((mime = ecore_list_next(ud->desktop->mime_types)))
     {
-        if (!strcmp(search->what, mime))
+        if (search->what == mime)
         {
             ecore_list_append(search->list, ud->desktop);
             break;
