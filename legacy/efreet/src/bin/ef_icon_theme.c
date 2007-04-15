@@ -28,10 +28,10 @@ ef_cb_efreet_icon_theme(void)
     putenv("HOME=/var/tmp");
     efreet_init();
 
-    tmp = efreet_icon_dir_get();
+    tmp = efreet_icon_user_dir_get();
     if (strcmp(tmp, "/var/tmp/.icons"))
     {
-        printf("efreet_icon_dir_get() returned incorrect "
+        printf("efreet_icon_user_dir_get() returned incorrect "
                 "value on HOME=/var/tmp\n");
         ret = 0;
     }
@@ -40,10 +40,10 @@ ef_cb_efreet_icon_theme(void)
     unsetenv("HOME");
     efreet_init();
 
-    tmp = efreet_icon_dir_get();
+    tmp = efreet_icon_user_dir_get();
     if (strcmp(tmp, "/tmp/.icons"))
     {
-        printf("efreet_icon_dir_get() returned incorrect "
+        printf("efreet_icon_user_dir_get() returned incorrect "
                 "value (%s) on HOME=\n", tmp);
         ret = 0;
     }
@@ -68,7 +68,7 @@ ef_cb_efreet_icon_theme_list(void)
     icon_dirs = efreet_data_dirs_get();
     ecore_list_goto_first(icon_dirs);
 
-    ef_icon_theme_themes_find(efreet_icon_dir_get(), dirs);
+    ef_icon_theme_themes_find(efreet_icon_user_dir_get(), dirs);
     while ((dir = ecore_list_next(icon_dirs))) 
     {
         snprintf(buf, sizeof(buf), "%s/icons", dir);
