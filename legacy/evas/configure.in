@@ -2038,7 +2038,7 @@ echo "  Fallback C Code.........: $build_cpu_c"
 echo "  MMX.....................: $build_cpu_mmx"
 echo "  SSE.....................: $build_cpu_sse"
 echo "  ALTIVEC.................: $build_cpu_altivec"
-echo "  Thread Support,.........: $build_pthreads"
+echo "  Thread Support..........: $build_pthreads"
 echo
 echo "ARGB Software Engine Options:"
 echo "  Sampling Scaler.........: $scaler_sample"
