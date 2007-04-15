@@ -26,8 +26,9 @@ static Evas_Bool _edje_text_class_list_foreach(Evas_Hash *hash, const char *key,
 
 /* FIXDOC: These all need to be looked over, Verified/Expanded upon.  I just got lazy and stopped putting FIXDOC next to each function in this file. */
 
-/* FIXDOC: Expand */
-/** Freeze all objects in the Edje.
+/** Freeze all Edje objects in the current process.
+ *
+ * See edje_object_freeze() for more.
  */
 EAPI void
 edje_freeze(void)
@@ -38,8 +39,9 @@ edje_freeze(void)
      edje_object_freeze((Evas_Object *)(l->data));
 }
 
-/* FIXDOC: Expand */
-/** Thaw all objects in Edje.
+/** Thaw all Edje objects in the current process.
+ *
+ * See edje_object_thaw() for more.
  */
 EAPI void
 edje_thaw(void)
@@ -71,6 +73,23 @@ edje_fontset_append_get(void)
  * @param obj A valid Evas_Object handle
  * @param key The data key
  * @return The data string
+ *
+ * This fetches data specified at the object level.
+ *
+ * In EDC this comes from a data block within the group block that @a obj
+ * was loaded from. E.g.
+ *
+ * @code
+ * collections {
+ *   group {
+ *     name: "a_group";
+ *     data {
+ *	 item: "key1" "value1";
+ *	 item: "key2" "value2";
+ *     }
+ *   }
+ * }
+ * @endcode
  */
 EAPI const char *
 edje_object_data_get(Evas_Object *obj, const char *key)
@@ -634,7 +653,7 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
  * Gets the Evas_Object corresponding to a given part.
  * You should never modify the state of the returned object
  * (with evas_object_move() or evas_object_hide() for example),
- * but you can safely query infos about its current state
+ * but you can safely query info about its current state
  * (with evas_object_visible_get() or evas_object_color_get() for example)
  *
  * @param obj A valid Evas_Object handle
@@ -655,7 +674,7 @@ edje_object_part_object_get(Evas_Object *obj, const char *part)
    return rp->object;
 }
 
-/** Get Edje part geometry
+/** Get the geometry of an Edje part
  * @param obj A valid Evas_Object handle
  * @param part The Edje part
  * @param x The x coordinate pointer
@@ -663,7 +682,10 @@ edje_object_part_object_get(Evas_Object *obj, const char *part)
  * @param w The width pointer
  * @param h The height pointer
  *
- * Gets the Edje part geometry
+ * Gets the geometry of an Edje part
+ *
+ * It is valid to pass NULL as any of @a x, @a y, @a w or @a h, whose
+ * values you are uninterested in.
  */
 EAPI void
 edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
@@ -765,6 +787,9 @@ edje_object_part_text_get(Evas_Object *obj, const char *part)
  * Swallows the object into the edje part so that all geometry changes
  * for the part affect the swallowed object. (e.g. resize, move, show,
  * raise/lower, etc.).
+ *
+ * If an object has already been swallowed into this part, then it will
+ * first be unswallowed before the new object is swallowed.
  */
 EAPI void
 edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
@@ -954,7 +979,7 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
  * This sets the desired aspect ratio to keep an object that will be swallowed
  * by Edje. The width and height define a preferred size ASPECT and the
  * object may be scaled to be larger or smaller, but retaining the relative
- * scale of both aspwct width and height.
+ * scale of both aspect width and height.
  */
 EAPI void
 edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah)
@@ -1033,10 +1058,10 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
      }
 }
 
-/** Get the swallowed part ?!
+/** Get the object currently swallowed by a part
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @return The swallowed object
+ * @return The swallowed object, or NULL if there is none.
  */
 EAPI Evas_Object *
 edje_object_part_swallow_get(Evas_Object *obj, const char *part)
@@ -1254,7 +1279,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 }
 
 /** Returns the state of the Edje part
- * @param obj A valid Evas_Objectart handle
+ * @param obj A valid Evas_Object handle
  * @param part The part name
  * @param val_ret
  *
