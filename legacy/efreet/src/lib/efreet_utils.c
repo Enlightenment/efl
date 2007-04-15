@@ -66,6 +66,8 @@ static void efreet_util_cache_search_generic_name_glob(void *value, void *data);
 static void efreet_util_cache_search_comment_glob(void *value, void *data);
 
 static int  efreet_util_glob_match(const char *str, const char *glob);
+static void efreet_util_cache_search_categories(void *value, void *data);
+static void efreet_util_cache_search_category(void *value, void *data);
 
 static void efreet_util_monitor(const char *path, const char *file_id, int priority);
 static void efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor,
@@ -404,6 +406,46 @@ efreet_util_desktop_comment_glob_list(const char *glob)
     return search.list;
 }
 
+/**
+ * Find all desktop categories
+ *
+ * @return an Ecore_List of category names (const char *)
+ */
+Ecore_List *
+efreet_util_desktop_categories_list()
+{
+    Efreet_Cache_Search_List search;
+    // XXX this list could be build as the cache is filled. for now we run through the cache each time this is called
+
+    search.list = ecore_list_new();
+    ecore_list_set_free_cb(search.list, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_categories, &search);
+
+    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
+    return search.list;
+}
+
+/**
+ * Find all desktops in a given category
+ * @param category the category name
+ * @return a list of desktops
+ */
+Ecore_List *
+efreet_util_desktop_category_list(const char *category)
+{
+    Efreet_Cache_Search_List search;
+
+    search.list = ecore_list_new();
+    search.what = ecore_string_instance(category);
+
+    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_category, &search);
+    ecore_string_release(search.what);
+
+    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
+    return search.list;
+
+}
+
 #if 0
 static void
 dump(void *value, void *data __UNUSED__)
@@ -455,6 +497,7 @@ efreet_util_cache_fill(void *data __UNUSED__)
     if (!fill->files)
     {
         /* Couldn't open this dir, continue to next */
+        efreet_util_cache_dir_free(fill->current);
         fill->current = NULL;
     }
     else
@@ -813,6 +856,48 @@ efreet_util_glob_match(const char *str, const char *glob)
     if (!strcmp(glob, "*")) return 1;
     if (!fnmatch(glob, str, 0)) return 1;
     return 0;
+}
+
+static void
+efreet_util_cache_search_categories(void *value, void *data)
+{
+    Ecore_Hash_Node          *node;
+    Efreet_Cache_Search_List *search;
+    Efreet_Util_Desktop      *ud;
+    const char               *category;
+
+    node = value;
+    search = data;
+    ud = node->value;
+
+    if (!ud->desktop->categories) return;
+    ecore_list_goto_first(ud->desktop->categories);
+    while ((category = ecore_list_next(ud->desktop->categories)))
+    {
+        if (!ecore_list_goto(search->list, category))
+            ecore_list_append(search->list, (void *)ecore_string_instance(category));
+    }
+}
+
+static void
+efreet_util_cache_search_category(void *value, void *data)
+{
+    Ecore_Hash_Node          *node;
+    Efreet_Cache_Search_List *search;
+    Efreet_Util_Desktop      *ud;
+    const char               *category;
+
+    node = value;
+    search = data;
+    ud = node->value;
+
+    if (!ud->desktop->categories) return;
+    ecore_list_goto_first(ud->desktop->categories);
+    while ((category = ecore_list_next(ud->desktop->categories)))
+    {
+        if (category == search->what)
+            ecore_list_append(search->list, ud->desktop);
+    }
 }
 
 static void
