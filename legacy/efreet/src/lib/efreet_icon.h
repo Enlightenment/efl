@@ -159,7 +159,7 @@ struct Efreet_Icon_Point
     int y;          /**< y coord */
 };
 
-const char        *efreet_icon_dir_get(void);
+const char        *efreet_icon_user_dir_get(void);
 void               efreet_icon_extension_add(const char *ext);
 
 Ecore_List        *efreet_icon_extra_list_get(void);
