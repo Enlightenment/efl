@@ -16,14 +16,16 @@ static Evas_List *_edje_swallows_collect(Edje *ed);
 /************************** API Routines **************************/
 
 /* FIXDOC: Verify/expand doc */
-/** Sets the EET file to be used
+/** Sets the EET file and group to load @a obj from
  * @param obj A valid Evas_Object handle
  * @param file The path to the EET file
  * @param part The group name in the Edje
  * @return 0 on Error\n
  * 1 on Success and sets EDJE_LOAD_ERROR_NONE
  *
- * This loads the EET file and sets up the Edje.
+ * Edje uses EET files, conventionally ending in .edj, to store object
+ * descriptions. A single file contains multiple named groups. This function
+ * specifies the file and group name to load @a obj from.
  */
 EAPI int
 edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
@@ -281,12 +283,18 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 }
 
 /* FIXDOC: Verify/expand doc. */
-/** Get the EET location and group for the Evas Object. ?! Assuming eet file
+/** Get the file and group name that @a obj was loaded from
  * @param obj A valid Evas_Object handle
- * @param file The EET file location pointer
- * @param part The EET part pointer
+ * @param file A pointer to store a pointer to the filename in
+ * @param part A pointer to store a pointer to the group name in
  *
  * This gets the EET file location and group for the given Evas_Object.
+ * If @a obj is either not an edje file, or has not had its file/group set
+ * using edje_object_file_set(), then both @a file and @a part will be set
+ * to NULL.
+ *
+ * It is valid to pass in NULL for either @a file or @a part if you are not
+ * interested in one of the values.
  */
 EAPI void
 edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
@@ -328,11 +336,13 @@ edje_object_load_error_get(Evas_Object *obj)
    return ed->load_error;
 }
 
-/* FIXDOC: Verify/expand */
-/** Get the collection list from the edje file ?
- * @param file The file path?
+/** Get a list of groups in an edje file
+ * @param file The path to the edje file
  *
- * @return The Evas_List of files
+ * @return The Evas_List of group names (char *)
+ *
+ * Note: the list must be freed using edje_file_collection_list_free()
+ * when you are done with it.
  */   
 EAPI Evas_List *
 edje_file_collection_list(const char *file)
@@ -362,11 +372,10 @@ edje_file_collection_list(const char *file)
    return lst;
 }
 
-/* FIXDOC: Verify/Expand */
-/** Free file collection
- * @param lst The Evas_List of files
+/** Free file collection list
+ * @param lst The Evas_List of groups
  *
- * Frees the file collection.
+ * Frees the list returned by edje_file_collection_list().
  */
 EAPI void
 edje_file_collection_list_free(Evas_List *lst)
@@ -412,11 +421,20 @@ edje_file_group_exists(const char *file, const char *glob)
 }
 
 
-/* FIXDOC: Verify/Expand */
-/** Get edje file data
- * @param file The file
+/** Get data from the file level data block of an edje file
+ * @param file The path to the .edj file
  * @param key The data key
- * @return The file data string
+ * @return The string value of the data
+ *
+ * If an edje file is built from the following edc:
+ *
+ * data {
+ *   item: "key1" "value1";
+ *   item: "key2" "value2";
+ * }
+ * collections { ... }
+ * 
+ * Then, edje_file_data_get("key1") will return "value1"
  */
 EAPI char *
 edje_file_data_get(const char *file, const char *key)
