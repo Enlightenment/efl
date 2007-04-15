@@ -3608,7 +3608,11 @@ efreet_menu_layout_menu(Efreet_Menu_Internal *internal)
                 if ((sub->directory && sub->directory->no_display) || sub->deleted) continue;
                 sub_entry = efreet_menu_layout_menu(sub);
                 /* Don't show empty menus */
-                if (!sub_entry->entries) continue;
+                if (!sub_entry->entries)
+                {
+                    efreet_menu_free(sub_entry);
+                    continue;
+                }
                 ecore_list_append(entry->entries, sub_entry);
             }
         }
