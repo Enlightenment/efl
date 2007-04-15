@@ -13,7 +13,7 @@ Evas_List      *_edje_animators = NULL;
 /** Set the frametime
  * @param t The frametime
  *
- * Sets the frametime in seconds, by default this is 1/30.
+ * Sets the global frametime in seconds, by default this is 1/30.
  */
 EAPI void
 edje_frametime_set(double t)
@@ -34,14 +34,50 @@ edje_frametime_get(void)
 }
 
 /* FIXDOC: Expand */
-/** Adds a callback for the object.
+/** Add a callback for a signal emitted by @a obj.
  * @param obj A valid Evas_Object handle
- * @param emission Signal to activate callback FIXDOC: Naming Convention?
- * @param source Source of signal
- * @param func The function to be executed when the callback is signaled
- * @param data ? FIXDOC
+ * @param emission The signal name
+ * @param source The signal source
+ * @param func The callback function to be executed when the signal is emitted
+ * @param data A pointer to data to pass in to the callback function
  *
- * Creates a callback for the object to execute the given function.
+ * Connects a callback function to a signal emitted by @a obj.
+ * In EDC, a program can emit a signal as follows:
+ *
+ * @code
+ * program {
+ *   name: "emit_example";
+ *   action: SIGNAL_EMIT "a_signal" "a_source";
+ * }
+ * @endcode
+ *
+ * Assuming a function with the following declaration is definded:
+ *
+ * @code
+ * void cb_signal(void *data, Evas_Object *o, const char *emission, const char *source);
+ * @endcode
+ *
+ * a callback is attached using:
+ *
+ * @code
+ * edje_object_callback_add(obj, "a_signal", "a_source", cb_signal, data);
+ * @endcode
+ *
+ * Here, @a data is an arbitrary pointer to be used as desired.
+ * Note that @a emission and @a source correspond respectively to first and
+ * second parameters to the SIGNAL_EMIT action.
+ *
+ * Internal edje signals can also be attached to, and globs can be in either
+ * the emission or source name. e.g.
+ *
+ * @code
+ * edje_object_callback_add(obj, "mouse,down,*", "button.*", NULL);
+ * @endcode
+ *
+ * Here, any mouse down events on an edje part whose name begins with 
+ * "button." will trigger the callback. The actual signal and source name
+ * will be passed in to the @a emission and @a source parameters of the
+ * callback function. (e.g. "mouse,down,2" and "button.close").
  */
 EAPI void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
@@ -68,14 +104,17 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
      }
 }
 
-/* FIXDOC: Expand */
-/** Delete an object's callback
+/** Remove a callback from an object
  * @param obj A valid Evas_Object handle
- * @param emission ? FIXDOC
- * @param source ? FIXDOC
- * @param func ? FIXDOC
+ * @param emission the emission string
+ * @param source the source string
+ * @param func the callback function
+ * @return the data pointer
  *
- * Deletes an existing callback
+ * Removes a callback from an object. The parameters @a emission, @a source
+ * and @a func must match exactly those passed to a previous call to
+ * edje_object_signal_callback_add(). The data pointer that was passed to 
+ * this call will be returned.
  */
 EAPI void *
 edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
@@ -120,13 +159,32 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 }
 
 /* FIXDOC: Verify/Expand */
-/** Send a signal to the Edje
+/** Send a signal to the Edje object
  * @param obj A vaild Evas_Object handle
  * @param emission The signal
  * @param source The signal source
  *
- * This sends a signal to the edje.  These are defined in the programs
- * section of an edc.
+ * This sends a signal to the edje object.
+ * 
+ * An edje program can respond to a signal by specifying matching 'signal'
+ * and 'source' fields.
+ *
+ * E.g.
+ *
+ * @code
+ * edje_object_signal_emit(obj, "a_signal", "");
+ * @endcode
+ *
+ * will trigger a program whose edc is:
+ *
+ * @code
+ * program {
+ *  name: "a_program";
+ *  signal: "a_signal";
+ *  source: "";
+ *  action: ...
+ * }
+ * @endcode
  */
 EAPI void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
