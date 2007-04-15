@@ -71,6 +71,7 @@ static void efreet_util_monitor(const char *path, const char *file_id, int prior
 static void efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor,
                                     Ecore_File_Event event, const char *path);
 static void efreet_util_monitor_free(void *data);
+static void efreet_util_menus_find_helper(Ecore_List *menus, const char *config_dir);
 
 static Ecore_Hash *desktop_by_file_id = NULL;
 static Ecore_Hash *file_id_by_desktop_path = NULL;
@@ -895,3 +896,49 @@ efreet_util_monitor_free(void *data)
     free(em);
 }
 
+/**
+ * Returns a list of .menu files found in the various config dirs.
+ * @return An ecore list of menu file paths (const char *). This must be freed with ecore_list_destroy().
+ */
+Ecore_List *
+efreet_util_menus_find()
+{
+    Ecore_List *menus, *dirs;
+    const char *dir;
+
+    menus = ecore_list_new();
+    ecore_list_set_free_cb(menus, ECORE_FREE_CB(free));
+
+    efreet_util_menus_find_helper(menus, efreet_config_home_get());
+
+    dirs = efreet_config_dirs_get();
+    ecore_list_goto_first(dirs);
+    while ((dir = ecore_list_next(dirs)))
+        efreet_util_menus_find_helper(menus, dir);
+
+    return menus;
+}
+
+static void
+efreet_util_menus_find_helper(Ecore_List *menus, const char *config_dir)
+{
+    DIR *files = NULL;
+    struct dirent *file = NULL;
+    char dbuf[PATH_MAX], fbuf[PATH_MAX];
+
+    snprintf(dbuf, sizeof(dbuf), "%s/menus", config_dir);
+    files = opendir(dbuf);
+    if (!files) return;
+    while ((file = readdir(files))) {
+        const char *exten;
+        exten = strrchr(file->d_name, '.');
+        if (!exten) continue;
+        if (strcmp(".menu", exten)) continue;
+
+        snprintf(fbuf, PATH_MAX, "%s/%s", dbuf, file->d_name);
+        if (ecore_file_is_dir(fbuf)) continue;
+
+        ecore_list_append(menus, strdup(fbuf));
+    }
+    closedir(files);
+}
