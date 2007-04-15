@@ -24,7 +24,7 @@ static void *_ecore_list_remove_last(Ecore_List * list);
 static void *_ecore_list_next(Ecore_List * list);
 static void *_ecore_list_goto_last(Ecore_List * list);
 static void *_ecore_list_goto_first(Ecore_List * list);
-static void *_ecore_list_goto(Ecore_List * list, void *data);
+static void *_ecore_list_goto(Ecore_List * list, const void *data);
 static void *_ecore_list_goto_index(Ecore_List *list, int index);
 
 /* Iterative functions */
@@ -834,7 +834,7 @@ _ecore_list_goto_index(Ecore_List *list, int index)
  * @ingroup Ecore_Data_List_Traverse_Group
  */
 EAPI inline void *
-ecore_list_goto(Ecore_List *list, void *data)
+ecore_list_goto(Ecore_List *list, const void *data)
 {
    void *ret;
 
@@ -847,7 +847,7 @@ ecore_list_goto(Ecore_List *list, void *data)
 
 /* Set the current position to the node containing data */
 static void *
-_ecore_list_goto(Ecore_List *list, void *data)
+_ecore_list_goto(Ecore_List *list, const void *data)
 {
    int index;
    Ecore_List_Node *node;

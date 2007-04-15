@@ -120,7 +120,7 @@ extern "C" {
    EAPI void *ecore_list_goto_first(Ecore_List * list);
    EAPI void *ecore_list_goto_last(Ecore_List * list);
    EAPI void *ecore_list_goto_index(Ecore_List * list, int index);
-   EAPI void *ecore_list_goto(Ecore_List * list, void *_data);
+   EAPI void *ecore_list_goto(Ecore_List * list, const void *_data);
    
    /* Traversing the list and returning data */
    EAPI void *ecore_list_next(Ecore_List * list);
