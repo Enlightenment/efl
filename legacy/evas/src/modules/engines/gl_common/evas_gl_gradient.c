@@ -89,26 +89,26 @@ evas_gl_common_gradient_fill_spread_set(Evas_GL_Gradient *gr, int spread)
 }
 
 void
-evas_gl_common_gradient_angle_set(Evas_GL_Gradient *gr, double angle)
+evas_gl_common_gradient_map_angle_set(Evas_GL_Gradient *gr, double angle)
 {
    if (!gr) return;
-   evas_common_gradient_angle_set(gr->grad, angle);
+   evas_common_gradient_map_angle_set(gr->grad, angle);
    gr->changed = 1;
 }
 
 void
-evas_gl_common_gradient_offset_set(Evas_GL_Gradient *gr, float offset)
+evas_gl_common_gradient_map_offset_set(Evas_GL_Gradient *gr, float offset)
 {
    if (!gr) return;
-   evas_common_gradient_offset_set(gr->grad, offset);
+   evas_common_gradient_map_offset_set(gr->grad, offset);
    gr->changed = 1;
 }
 
 void
-evas_gl_common_gradient_direction_set(Evas_GL_Gradient *gr, int direction)
+evas_gl_common_gradient_map_direction_set(Evas_GL_Gradient *gr, int direction)
 {
    if (!gr) return;
-   evas_common_gradient_direction_set(gr->grad, direction);
+   evas_common_gradient_map_direction_set(gr->grad, direction);
    gr->changed = 1;
 }
 
