@@ -372,6 +372,7 @@ else
     AC_MSG_WARN(Silly monkey: ecore_evas_gl requires ecore_x ... disabling ecore_evas_gl)
   fi
 fi
+PCFLAGS=$CFLAGS
 
 have_ecore_evas_xrender="no";
 
@@ -410,6 +411,7 @@ else
     AC_MSG_WARN(Silly monkey: ecore_evas_xrender requires ecore_x ... disabling ecore_evas_xrender)
   fi
 fi
+PCFLAGS=$CFLAGS
 
 AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
 AC_ARG_ENABLE(ecore-evas-dfb,
@@ -506,7 +508,6 @@ if test "x$want_ecore_evas_buffer" = "xyes"; then
     ]
   )
 fi
-CFLAGS=$PCFLAGS
 
 AC_ARG_ENABLE(openssl,
   AC_HELP_STRING(

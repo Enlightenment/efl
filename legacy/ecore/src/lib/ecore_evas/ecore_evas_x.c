@@ -631,7 +631,6 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Property *e;
 
-//   printf ("_ecore_evas_x_event_property_change\n");
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
@@ -642,7 +641,6 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 	Ecore_X_Window_State *state;
 	int sticky;
 
-        printf ("_ecore_evas_x_event_property_change2\n");
 #ifdef HAVE_ECORE_X_XCB
         ecore_x_netwm_window_state_get_prefetch(e->win);
 #endif /* HAVE_ECORE_X_XCB */
