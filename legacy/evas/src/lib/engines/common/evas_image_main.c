@@ -336,9 +336,11 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
 	  }
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
+#ifdef BUILD_CONVERT_YUV
 	if ((im->image->data) && (*((unsigned char **)im->cs.data)))
 	  evas_common_convert_yuv_420p_601_rgba(im->cs.data, im->image->data,
 						im->image->w, im->image->h);
+#endif
 	break;
       case EVAS_COLORSPACE_YCBCR422P709_PL:
 	break;
