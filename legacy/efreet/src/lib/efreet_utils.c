@@ -503,7 +503,7 @@ efreet_util_cache_fill(void *data __UNUSED__)
     }
     else
     {
-        while ((ecore_time_get() - start) < 0.01)
+        do
         {
             char file_id[PATH_MAX];
 
@@ -529,7 +529,8 @@ efreet_util_cache_fill(void *data __UNUSED__)
             }
             else
                 efreet_util_cache_add(buf, file_id, fill->current->priority, 0);
-        }
+        } while ((ecore_time_get() - start) < 0.01);
+
         if (!file)
         {
             /* This dir has been search through */
