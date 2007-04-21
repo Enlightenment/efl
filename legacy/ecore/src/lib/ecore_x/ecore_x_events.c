@@ -1136,7 +1136,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
 
 	     if (!ecore_x_selection_convert(xevent->xselectionrequest.selection,
 					    xevent->xselectionrequest.target,
-					    &data) == -1)
+					    &data))
 	       {
 		  /* Refuse selection, conversion to requested target failed */
 		  property = None;

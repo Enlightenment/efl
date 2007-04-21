@@ -1317,7 +1317,7 @@ _ecore_x_event_handle_selection_request(xcb_generic_event_t *event)
        (sd->win == ev->owner))
      {
 	if (!ecore_x_selection_convert(ev->selection, ev->target,
-                                       &data) == -1)
+                                       &data))
 	  {
 	     /* Refuse selection, conversion to requested target failed */
 	     sn_event.property = XCB_NONE;

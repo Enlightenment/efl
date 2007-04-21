@@ -477,11 +477,15 @@ ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **da
 	  }
      }
 
-   /* Default, just return the data */
+   /* ICCCM says "If the selection cannot be converted into a form based on the target (and parameters, if any), the owner should refuse the SelectionRequest as previously described." */
+   return 0; 
+
+   /* Default, just return the data 
    *data_ret = malloc(sel->length);
    memcpy(*data_ret, sel->data, sel->length);
    free(tgt_str);
    return 1;
+   */
 }
 
 /* TODO: We need to work out a mechanism for automatic conversion to any requested
