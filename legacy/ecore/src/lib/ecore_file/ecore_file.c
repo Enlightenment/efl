@@ -183,6 +183,7 @@ ecore_file_cp(const char *src, const char *dst)
    char                realpath1[PATH_MAX];
    char                realpath2[PATH_MAX];
    size_t              num;
+   int                 ret = 1;
 
    if (!realpath(src, realpath1)) return 0;
    if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return 0;
@@ -195,10 +196,13 @@ ecore_file_cp(const char *src, const char *dst)
 	fclose(f1);
 	return 0;
      }
-   while ((num = fread(buf, 1, sizeof(buf), f1)) > 0) fwrite(buf, 1, num, f2);
+   while ((num = fread(buf, 1, sizeof(buf), f1)) > 0)
+     {
+	if (fwrite(buf, 1, num, f2) != num) ret = 0;
+     }
    fclose(f1);
    fclose(f2);
-   return 1;
+   return ret;
 }
 
 EAPI int
