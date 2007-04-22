@@ -287,6 +287,13 @@ evas_common_image_free(RGBA_Image *im)
    if (im->info.key) evas_stringshare_del(im->info.key);
 //   if (im->info.comment) evas_stringshare_del(im->info.comment);
    if (im->info.module) evas_module_unref((Evas_Module *)im->info.module);
+   /* memset the image to 0x99 because i recently saw a segv where an
+    * seemed to be used BUT its contents were wrong - it looks like it was
+    * overwritten by something from efreet - as there was an execute command
+    * for a command there and some other signs - but to make sure, I am
+    * going to empty this struct out in case this happens again so i know
+    * that something else is overwritign this struct - or not */
+   memset(im, 0x99, sizeof(im));
    free(im);
 }
 
