@@ -27,6 +27,8 @@ efreet_ini.c \
 efreet_desktop.c \
 efreet_menu.c \
 efreet_utils.c \
+efreet_private.h \
+efreet_xml.h \
 $(EFREETHEADERS)
 
 libefreet_la_SOURCES = \

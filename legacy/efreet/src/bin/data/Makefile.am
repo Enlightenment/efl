@@ -10,3 +10,4 @@ test_type.desktop \
 test.menu \
 preferences.menu
 
+EXTRA_DIST = $(test_DATA)
