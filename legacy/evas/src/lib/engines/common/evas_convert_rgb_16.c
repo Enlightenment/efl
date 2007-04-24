@@ -1,10 +1,12 @@
 #include "evas_common.h"
 
+#ifndef BUILD_NO_DITHER_MASK
 #ifdef USE_DITHER_44
 extern const DATA8 _evas_dither_44[4][4];
 #endif
 #ifdef USE_DITHER_128128
 extern const DATA8 _evas_dither_128128[128][128];
+#endif
 #endif
 
 #ifdef BUILD_CONVERT_16_RGB_565
@@ -17,7 +19,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -26,21 +30,25 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
    CONVERT_LOOP2_INC_ROT_0();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -68,7 +76,9 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -77,11 +87,14 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 11) | (g << 5) | (b);
 
@@ -102,7 +115,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -111,22 +126,28 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_180();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -154,7 +175,9 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -163,11 +186,14 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 11) | (g << 5) | (b);
 
@@ -188,7 +214,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -197,22 +225,28 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_270();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -240,7 +274,9 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -249,11 +285,14 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 11) | (g << 5) | (b);
 
@@ -274,7 +313,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -283,22 +324,28 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_90();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -326,7 +373,9 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -335,11 +384,14 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 11) | (g << 5) | (b);
 
@@ -360,7 +412,9 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int sr
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -369,22 +423,28 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int sr
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_0();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -412,7 +472,9 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -421,11 +483,14 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
@@ -446,7 +511,9 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -455,22 +522,28 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_180();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -498,7 +571,9 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -509,11 +584,14 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
@@ -534,7 +612,9 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -543,22 +623,28 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_270();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -586,7 +672,9 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -595,11 +683,14 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
@@ -620,7 +711,9 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -629,22 +722,28 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 2;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith ) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 2)) >= dith2) && (g1 < 0x3f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith ) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_90();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 2;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith ) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 2)) >= dith2) && (g2 < 0x3f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith ) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -672,7 +771,9 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith, dith2;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -681,11 +782,14 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 2;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(6);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith ) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 2)) >= dith2) && (g < 0x3f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith ) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
@@ -706,7 +810,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int sr
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -715,20 +821,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int sr
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_0();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -756,7 +868,9 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -765,10 +879,13 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
@@ -789,7 +906,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -798,20 +917,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_180();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -839,7 +964,9 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -848,10 +975,13 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
@@ -872,7 +1002,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -881,20 +1013,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_270();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -922,7 +1060,9 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -931,10 +1071,13 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
@@ -955,7 +1098,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst,
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -964,20 +1109,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst,
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_90();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1005,7 +1156,9 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1014,10 +1167,13 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
@@ -1038,7 +1194,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1047,20 +1205,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_0();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1088,7 +1252,9 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int 
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1097,10 +1263,13 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int 
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
@@ -1121,7 +1290,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1130,20 +1301,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_180();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1171,7 +1348,9 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *d
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1180,10 +1359,13 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *d
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
@@ -1205,7 +1387,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1214,20 +1398,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_270();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1255,7 +1445,9 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *d
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1264,10 +1456,13 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *d
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
@@ -1288,7 +1483,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *d
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1297,20 +1494,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *d
    r1 = (R_VAL(src_ptr)) >> 4;
    g1 = (G_VAL(src_ptr)) >> 4;
    b1 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r1 << 4)) >= dith ) && (r1 < 0x0f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 4)) >= dith ) && (g1 < 0x0f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 4)) >= dith ) && (b1 < 0x0f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_90();
 
    r2 = (R_VAL(src_ptr)) >> 4;
    g2 = (G_VAL(src_ptr)) >> 4;
    b2 = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r2 << 4)) >= dith ) && (r2 < 0x0f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 4)) >= dith ) && (g2 < 0x0f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 4)) >= dith ) && (b2 < 0x0f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1338,7 +1541,9 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *ds
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1347,10 +1552,13 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *ds
    r = (R_VAL(src_ptr)) >> 4;
    g = (G_VAL(src_ptr)) >> 4;
    b = (B_VAL(src_ptr)) >> 4;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(4);
    if (((R_VAL(src_ptr) - (r << 4)) >= dith ) && (r < 0x0f)) r++;
    if (((G_VAL(src_ptr) - (g << 4)) >= dith ) && (g < 0x0f)) g++;
    if (((B_VAL(src_ptr) - (b << 4)) >= dith ) && (b < 0x0f)) b++;
+#endif
 
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
@@ -1371,7 +1579,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int sr
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1380,20 +1590,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int sr
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 3;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 3)) >= dith) && (g1 < 0x1f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_0();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 3;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 3)) >= dith) && (g2 < 0x1f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1421,7 +1637,9 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1430,10 +1648,13 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 3;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 3)) >= dith) && (g < 0x1f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
@@ -1454,7 +1675,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1463,20 +1686,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 3;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 3)) >= dith) && (g1 < 0x1f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_180();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 3;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 3)) >= dith) && (g2 < 0x1f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1504,7 +1733,9 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1513,10 +1744,13 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 3;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 3)) >= dith) && (g < 0x1f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
@@ -1537,7 +1771,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1546,20 +1782,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 3;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 3)) >= dith) && (g1 < 0x1f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_270();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 3;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 3)) >= dith) && (g2 < 0x1f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1587,7 +1829,9 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst,
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1596,10 +1840,13 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst,
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 3;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 3)) >= dith) && (g < 0x1f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
@@ -1620,7 +1867,9 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst,
    int x, y;
    DATA8 r1, g1, b1;
    DATA8 r2, g2, b2;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1629,20 +1878,26 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst,
    r1 = (R_VAL(src_ptr)) >> 3;
    g1 = (G_VAL(src_ptr)) >> 3;
    b1 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r1 << 3)) >= dith) && (r1 < 0x1f)) r1++;
    if (((G_VAL(src_ptr) - (g1 << 3)) >= dith) && (g1 < 0x1f)) g1++;
    if (((B_VAL(src_ptr) - (b1 << 3)) >= dith) && (b1 < 0x1f)) b1++;
+#endif
 
    CONVERT_LOOP2_INC_ROT_90();
 
    r2 = (R_VAL(src_ptr)) >> 3;
    g2 = (G_VAL(src_ptr)) >> 3;
    b2 = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r2 << 3)) >= dith) && (r2 < 0x1f)) r2++;
    if (((G_VAL(src_ptr) - (g2 << 3)) >= dith) && (g2 < 0x1f)) g2++;
    if (((B_VAL(src_ptr) - (b2 << 3)) >= dith) && (b2 < 0x1f)) b2++;
+#endif
 
 #ifndef WORDS_BIGENDIAN
    *((DATA32 *)dst_ptr) =
@@ -1670,7 +1925,9 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    DATA16 *dst_ptr;
    int x, y;
    DATA8 r, g, b;
+#ifndef BUILD_NO_DITHER_MASK
    DATA8 dith;
+#endif
 
    dst_ptr = (DATA16 *)dst;
 
@@ -1679,10 +1936,13 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    r = (R_VAL(src_ptr)) >> 3;
    g = (G_VAL(src_ptr)) >> 3;
    b = (B_VAL(src_ptr)) >> 3;
+
+#ifndef BUILD_NO_DITHER_MASK
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(5);
    if (((R_VAL(src_ptr) - (r << 3)) >= dith) && (r < 0x1f)) r++;
    if (((G_VAL(src_ptr) - (g << 3)) >= dith) && (g < 0x1f)) g++;
    if (((B_VAL(src_ptr) - (b << 3)) >= dith) && (b < 0x1f)) b++;
+#endif
 
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
