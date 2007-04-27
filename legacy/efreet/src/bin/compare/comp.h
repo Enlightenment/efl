@@ -1,7 +1,7 @@
 #ifndef COMP_H
 #define COMP_H
 
-#define LOOPS 1
+#define LOOPS 1000
 #define THEME "Tango"
 #define SIZE "16x16"
 
