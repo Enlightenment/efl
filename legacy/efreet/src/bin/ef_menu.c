@@ -60,21 +60,6 @@ ef_cb_menu_with_slashes(void)
 }
 
 int
-ef_cb_menu_with_bad_comment(void)
-{
-    Efreet_Menu *menu;
-
-    menu = efreet_menu_parse(PACKAGE_DATA_DIR"/efreet/test/test_menu_bad_comment.menu");
-    if (!menu)
-    {
-        printf("efreet_menu_get() returned NULL\n");
-        return 0;
-    }
-
-    return 1;
-}
-
-int
 ef_cb_menu_save(void)
 {
     Efreet_Menu *menu;
