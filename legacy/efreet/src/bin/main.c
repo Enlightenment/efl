@@ -22,6 +22,8 @@ int ef_cb_desktop_type_parse(void);
 int ef_cb_desktop_file_id(void);
 #endif
 int ef_cb_menu_get(void);
+int ef_cb_menu_with_slashes(void);
+int ef_cb_menu_with_bad_comment(void);
 int ef_cb_menu_save(void);
 #if 0
 int ef_cb_menu_edit(void);
@@ -56,6 +58,8 @@ static Efreet_Test tests[] = {
     {"Desktop File ID", ef_cb_desktop_file_id},
 #endif
     {"Menu Parsing", ef_cb_menu_get},
+    {"Menu Incorrect Names", ef_cb_menu_with_slashes},
+    {"Menu Bad Comment", ef_cb_menu_with_bad_comment},
     {"Menu Save", ef_cb_menu_save},
 #if 0
     {"Menu Edit", ef_cb_menu_edit},
