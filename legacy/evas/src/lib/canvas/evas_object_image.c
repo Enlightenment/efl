@@ -580,10 +580,11 @@ evas_object_image_load_error_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
+ * Sets the raw image data.
+ * load for the given image object.
+ * @param obj The given image object.
+ * @param data The given data as 32 bit unsigned integer in format ARGB.
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_data_set(Evas_Object *obj, void *data)
@@ -640,10 +641,12 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
+ * Retrieves the raw image data.
+ * load for the given image object.
+ * @param obj The given image object.
+ * @param for_writing FIXME: who knows?
+ * @return  A pointer to the raw data as 32 bit unsigned integer in format ARGB.
+ * @ingroup Evas_Object_Image
  */
 EAPI void *
 evas_object_image_data_get(Evas_Object *obj, Evas_Bool for_writing)
@@ -712,10 +715,13 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
+ * Update a rectangle after putting data into the image
+ * @param obj The given image object.
+ * @param x The x coordinate of the update rectangle.
+ * @param y The y coordinate of the update rectangle.
+ * @param w The width of the update rectangle.
+ * @param h The height of the update rectangle.
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
