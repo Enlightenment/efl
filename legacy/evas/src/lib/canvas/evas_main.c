@@ -692,7 +692,7 @@ evas_render_method_list(void)
 {
    Evas_List *methods = NULL;
 
-   /* FIXME: get from modules */
+   /* FIXME: get from modules - this is currently coded-in */
 #ifdef BUILD_ENGINE_SOFTWARE_X11
    methods = evas_list_append(methods, strdup("software_x11"));
 #endif
@@ -704,6 +704,9 @@ evas_render_method_list(void)
 #endif
 #ifdef BUILD_ENGINE_XRENDER_XCB
    methods = evas_list_append(methods, strdup("xrender_xcb"));
+#endif
+#ifdef BUILD_ENGINE_SOFTWARE_16_X11
+   methods = evas_list_append(methods, strdup("software_16_x11"));
 #endif
 #ifdef BUILD_ENGINE_GL_X11
    methods = evas_list_append(methods, strdup("gl_x11"));

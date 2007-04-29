@@ -178,6 +178,53 @@ fi
 AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, test "x$have_evas_software_x11" = "xyes")
 
 #######################################
+## Check if we should build the software_x11 engine
+have_evas_software_16_x11="no";
+## Automatic check...
+# -- disable software_16 by default - its usefulness as a speedup in 16bit
+#    seems dubious at this stage.
+#AC_CHECK_HEADER(X11/X.h,
+#  [ have_evas_software_16_x11="yes" ],
+#  [ have_evas_software_16_x11="no" ]
+#)
+## Manual override
+AC_MSG_CHECKING(whether software 16bit x11 backend is to be built)
+AC_ARG_ENABLE(software-16-x11,
+AC_HELP_STRING([--enable-software-16-x11],[enable the Software 16bit X11 rendering backend]), [
+	   if test x"$enableval" = x"yes" ; then
+	     AC_MSG_RESULT(yes)
+	     have_evas_software_16_x11="yes"
+	   else
+	     AC_MSG_RESULT(no)
+	     have_evas_software_16_x11="no"
+	   fi
+        ], [
+	   AC_MSG_RESULT($have_evas_software_16_x11)
+	]
+)
+if test "x$have_evas_software_16_x11" = "xyes"; then
+  AC_PATH_XTRA
+  AC_CHECK_HEADER(X11/X.h,
+    [
+      AC_DEFINE(BUILD_ENGINE_SOFTWARE_16_X11, 1, [Software 16bit X11 Rendering Backend])
+      x_dir=${x_dir:-/usr/X11R6}
+      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
+    ],
+    [
+      AC_MSG_RESULT(disabling software 16bit X11 engine)
+      have_evas_software_16_x11="no"
+    ]
+  )
+fi
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16_X11, test "x$have_evas_software_16_x11" = "xyes")
+
+### if software 16 x11 is enabled - build software_16 (the generic 16bit
+### engine). later enable it fb_16 or other "16" bit engines are enabled.
+have_evas_software_16=$have_evas_software_16_x11
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16, test "x$have_evas_software_16" = "xyes")
+
+#######################################
 ## Check if we should build the software_xcb engine
 have_evas_software_xcb="no";
 ## Automatic check...
@@ -1985,6 +2032,8 @@ src/modules/engines/cairo_x11/Makefile
 src/modules/engines/xrender_x11/Makefile
 src/modules/engines/xrender_xcb/Makefile
 src/modules/engines/glitz_x11/Makefile
+src/modules/engines/software_16/Makefile
+src/modules/engines/software_16_x11/Makefile
 src/modules/loaders/Makefile
 src/modules/loaders/edb/Makefile
 src/modules/loaders/eet/Makefile
@@ -2033,6 +2082,7 @@ echo "  Cairo X11...............: $have_evas_cairo_x11"
 echo "  XRender X11.............: $have_evas_xrender_x11"
 echo "  XRender Xcb.............: $have_evas_xrender_xcb"
 echo "  Glitz X11...............: $have_evas_glitz_x11"
+echo "  Software 16bit X11......: $have_evas_software_16_x11"
 # FIXME: opengl engine needs to be fixed and tested lots for all drivers
 # FIXME: xrender engine to be written
 echo

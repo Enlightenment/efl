@@ -425,7 +425,7 @@ evas_common_image_get_cache(void)
 EAPI void
 evas_common_image_store(RGBA_Image *im)
 {
-   char buf[4096 + 1204];
+   char buf[4096 + 1024];
 
    if (im->flags & RGBA_IMAGE_IS_DIRTY) return;
    if (im->flags & RGBA_IMAGE_INDEXED) return;
