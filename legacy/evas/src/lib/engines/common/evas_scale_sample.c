@@ -225,24 +225,21 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    if (dst_clip_h <= 0) return;
 
    /* allocate scale lookup tables */
-   lin_ptr = malloc(dst_clip_w * sizeof(int));
-   if (!lin_ptr) goto no_lin_ptr;
-   row_ptr = malloc(dst_clip_h * sizeof(DATA32 *));
-   if (!row_ptr) goto no_row_ptr;
+   lin_ptr = alloca(dst_clip_w * sizeof(int));
+   row_ptr = alloca(dst_clip_h * sizeof(DATA32 *));
 
    /* figure out dst jump */
    dst_jump = dst_w - dst_clip_w;
 
    /* figure out dest start ptr */
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
-
+   
    if (dc->mul.use)
-	func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
+     func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
    else
-	func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
+     func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
 
-   if ((dst_region_w == src_region_w) &&
-	(dst_region_h == src_region_h))
+   if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
      {
 	ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
 	for (y = 0; y < dst_clip_h; y++)
@@ -273,8 +270,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	     (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
 	     (!dc->mul.use))
 	  {
-	    for (y = 0; y < dst_clip_h; y++)
-	      {
+	     for (y = 0; y < dst_clip_h; y++)
+	       {
 #ifdef EVAS_SLI
 		 if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
 #endif
@@ -295,8 +292,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	  {
 	    /* a scanline buffer */
 	    buf = alloca(dst_clip_w * sizeof(DATA32));
-	    if (!buf) goto no_buf;
-
 	    for (y = 0; y < dst_clip_h; y++)
 	      {
 #ifdef EVAS_SLI
@@ -317,15 +312,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	      }
 	  }
      }
-
-   no_buf:
-   /* free scale tables */
-   free(row_ptr);
-   no_row_ptr:
-   free(lin_ptr);
-
-   //_WIN32_WCE
-   no_lin_ptr: ;
 }
 #else
 #ifdef BUILD_SCALE_SMOOTH
