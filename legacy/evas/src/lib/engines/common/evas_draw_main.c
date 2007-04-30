@@ -95,6 +95,8 @@ evas_common_draw_context_new(void)
 EAPI void
 evas_common_draw_context_free(RGBA_Draw_Context *dc)
 {
+   if (!dc) return;
+
    evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
    free(dc);
 }

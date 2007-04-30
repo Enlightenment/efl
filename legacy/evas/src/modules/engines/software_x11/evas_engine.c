@@ -253,6 +253,8 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
+   if (!data) return;
+
    re = (Render_Engine *)data;
    evas_software_x11_outbuf_free(re->ob);
    evas_common_tilebuf_free(re->tb);
