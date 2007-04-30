@@ -85,7 +85,9 @@ evas_free(Evas *e)
    return;
    MAGIC_CHECK_END();
 
+   if (e->walking_list > 0) return;
    del = 1;
+   e->walking_list++;
    while (del)
      {
 	del = 0;
@@ -101,6 +103,13 @@ evas_free(Evas *e)
 		  Evas_Object *o;
 
 		  o = (Evas_Object *)ll;
+		  if ((o->callbacks) && (o->callbacks->walking_list))
+		    {
+		       /* Defer free */
+		       e->delete_me = 1;
+		       e->walking_list--;
+		       return;
+		    }
 		  if (!o->delete_me)
 		    del = 1;
 	       }
@@ -114,7 +123,8 @@ evas_free(Evas *e)
 	evas_layer_del(lay);
 	evas_layer_free(lay);
      }
-
+   e->walking_list--;
+   
    evas_font_path_clear(e);
    e->pointer.object.in = evas_list_free(e->pointer.object.in);
 
@@ -958,3 +968,17 @@ evas_data_attach_get(Evas *e)
    MAGIC_CHECK_END();
    return e->attach_data;
 }
+
+void
+_evas_walk(Evas *e)
+{
+   e->walking_list++;
+}
+
+void
+_evas_unwalk(Evas *e)
+{
+   e->walking_list--;
+   if ((e->walking_list == 0) && (e->delete_me)) evas_free(e);
+}
+

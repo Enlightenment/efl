@@ -309,8 +309,8 @@ struct _Evas
    Evas_Hash        *name_hash;
 
    unsigned char     changed : 1;
-   unsigned char     walking_layers : 1;
 
+   int               walking_list;
    int               events_frozen;
 
    struct {
@@ -340,6 +340,7 @@ struct _Evas
    int            last_mouse_down_counter;
    int            last_mouse_up_counter;
    Evas_Font_Hinting_Flags hinting;
+   unsigned char  delete_me : 1;
 };
 
 struct _Evas_Layer
@@ -455,7 +456,7 @@ struct _Evas_Func_Node
    void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info);
    void *data;
    Evas_Callback_Type type;
-   char delete_me : 1;
+   unsigned char delete_me : 1;
 };
 
 struct _Evas_Data_Node
@@ -770,6 +771,9 @@ void evas_module_use(Evas_Module *em);
 void evas_module_clean(void);
 void evas_module_shutdown(void);
 
+void _evas_walk(Evas *e);
+void _evas_unwalk(Evas *e);
+       
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
        
 #define EVAS_API_OVERRIDE(func, api, prefix) \

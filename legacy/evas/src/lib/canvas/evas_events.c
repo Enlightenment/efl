@@ -235,6 +235,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
+   _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
      {
@@ -259,9 +260,11 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
 	ev.timestamp = timestamp;
 	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
+	if (e->delete_me) break;
      }
    if (copy) copy = evas_list_free(copy);
    e->last_mouse_down_counter++;
+   _evas_unwalk(e);
 }
 
 /**
@@ -286,6 +289,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
    
+   _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
      {
@@ -311,6 +315,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	ev.timestamp = timestamp;
 	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
+	if (e->delete_me) break;
      }
    if (copy) copy = evas_list_free(copy);
    e->last_mouse_up_counter++;
@@ -348,6 +353,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
+	     if (e->delete_me) break;
 	  }
 	if (copy) copy = evas_list_free(copy);
 	if (e->pointer.inside)
@@ -377,6 +383,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 		    }
+		  if (e->delete_me) break;
 	       }
 	  }
 	else
@@ -394,6 +401,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
      {
 	e->pointer.mouse_grabbed = 0;
      }
+   _evas_unwalk(e);
 }
 
 /**
@@ -414,6 +422,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
+   _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
    
    for (l = copy; l; l = l->next)
@@ -435,10 +444,11 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
 	ev.timestamp = timestamp;
 	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
+	if (e->delete_me) break;
      }
    if (copy) copy = evas_list_free(copy);
 
-   return;
+   _evas_unwalk(e);
 }
 
 /**
@@ -472,6 +482,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 ////   e->pointer.canvas_x = evas_coord_screen_x_to_world(e, x);
 ////   e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
+   _evas_walk(e);
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed > 0)
      {
@@ -517,6 +528,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	       }
 	     else
 	       outs = evas_list_append(outs, obj);
+	     if (e->delete_me) break;
 	  }
 	if (copy) copy = evas_list_free(copy);
 	while (outs)
@@ -525,7 +537,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 
 	     obj = outs->data;
 	     outs = evas_list_remove(outs, obj);
-	     if (!obj->mouse_grabbed)
+	     if ((!obj->mouse_grabbed) && (!e->delete_me))
 	       {
 		  e->pointer.object.in = evas_list_remove(e->pointer.object.in, obj);
 		    {
@@ -619,6 +631,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
+	     if (e->delete_me) break;
 	  }
 	if (copy) copy = evas_list_free(copy);
 	/* go thru our current list of ins */
@@ -647,12 +660,14 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
+	     if (e->delete_me) break;
 	  }
 	/* free our old list of ins */
 	evas_list_free(e->pointer.object.in);
 	/* and set up the new one */
 	e->pointer.object.in = ins;
      }
+   _evas_unwalk(e);
 }
 
 /**
@@ -677,6 +692,7 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
 
    if (e->pointer.mouse_grabbed != 0) return;
 
+   _evas_walk(e);
    /* get new list of ins */
    ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
    for (l = ins; l; l = l->next)
@@ -704,12 +720,14 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
 	     if (e->events_frozen <= 0)
 	       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	  }
+	if (e->delete_me) break;
      }
    /* free our old list of ins */
    e->pointer.object.in = evas_list_free(e->pointer.object.in);
    /* and set up the new one */
    e->pointer.object.in = ins;
    evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, timestamp, data);
+   _evas_unwalk(e);
 }
 
 /**
@@ -729,6 +747,7 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
+   _evas_walk(e);
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed == 0)
      {
@@ -759,11 +778,13 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
+	     if (e->delete_me) break;
 	  }
 	if (copy) copy = evas_list_free(copy);
 	/* free our old list of ins */
 	e->pointer.object.in =  evas_list_free(e->pointer.object.in);
      }
+   _evas_unwalk(e);
 }
 
 /**
@@ -781,6 +802,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
    if (!keyname) return;
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
+   _evas_walk(e);
      {
 	Evas_Event_Key_Down ev;
 	int exclusive;
@@ -821,6 +843,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 			    if (g->exclusive) exclusive = 1;
 			 }
 		    }
+		  if (e->delete_me) break;
 	       }
 	     e->walking_grabs--;
 	     if (e->walking_grabs <= 0)
@@ -848,6 +871,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
 	  }
      }
+   _evas_unwalk(e);
 }
 
 /**
@@ -865,6 +889,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
    if (!keyname) return;
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
+   _evas_walk(e);
      {
 	Evas_Event_Key_Up ev;
 	int exclusive;
@@ -904,6 +929,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
 		       if (g->exclusive) exclusive = 1;
 		    }
+		  if (e->delete_me) break;
 	       }
 	     e->walking_grabs--;
 	     if (e->walking_grabs <= 0)
@@ -931,6 +957,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
 	  }
      }
+   _evas_unwalk(e);
 }
 
 /**
