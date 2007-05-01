@@ -2080,7 +2080,7 @@ echo "  DirectFB................: $have_evas_directfb"
 echo "  OpenGL X11..............: $have_evas_gl_x11"
 echo "  Cairo X11...............: $have_evas_cairo_x11"
 echo "  XRender X11.............: $have_evas_xrender_x11"
-echo "  XRender Xcb.............: $have_evas_xrender_xcb"
+echo "  XRender XCB.............: $have_evas_xrender_xcb"
 echo "  Glitz X11...............: $have_evas_glitz_x11"
 echo "  Software 16bit X11......: $have_evas_software_16_x11"
 # FIXME: opengl engine needs to be fixed and tested lots for all drivers
