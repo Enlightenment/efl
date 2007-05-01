@@ -242,9 +242,9 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	  }
 	else /* Base font loaded, append others */
 	  {
+#ifdef BUILD_FONT_LOADER_EET
 	     void *ok = NULL;
 
-#ifdef BUILD_FONT_LOADER_EET
 	     if (source)
 	       {
 		  Eet_File *ef;
