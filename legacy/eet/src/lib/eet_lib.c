@@ -309,11 +309,8 @@ eet_flush(Eet_File *ef)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  {
-	     if (efn->compression >= 0)
-	       {
-		  size += 20 + strlen(efn->name) + 1;
-		  count++;
-	       }
+	     size += 20 + strlen(efn->name) + 1;
+	     count++;
 	  }
      }
 
@@ -323,11 +320,8 @@ eet_flush(Eet_File *ef)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  {
-	     if (efn->compression >= 0)
-	       {
-		  efn->offset = 12 + size + offset;
-		  offset += efn->size;
-	       }
+	     efn->offset = 12 + size + offset;
+	     offset += efn->size;
 	  }
      }
 
@@ -344,25 +338,22 @@ eet_flush(Eet_File *ef)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  {
-	     if (efn->compression >= 0)
-	       {
-		  uint32_t	ibuf[5];
-		  int		name_size;
-		  
-		  name_size = strlen(efn->name) + 1;
-		  
-		  ibuf[0] = (int) htonl ((uint32_t) efn->offset);
-		  ibuf[1] = (int) htonl ((uint32_t) efn->compression);
-		  ibuf[2] = (int) htonl ((uint32_t) efn->size);
-		  ibuf[3] = (int) htonl ((uint32_t) efn->data_size);
-		  ibuf[4] = (int) htonl ((uint32_t) name_size);
-		  
-		  
-		  if (fwrite(ibuf, sizeof(ibuf), 1, ef->fp) != 1)
-		    goto write_error;
-		  if (fwrite(efn->name, name_size, 1, ef->fp) != 1)
-		    goto write_error;
-	       }
+	     uint32_t	ibuf[5];
+	     int		name_size;
+	     
+	     name_size = strlen(efn->name) + 1;
+	     
+	     ibuf[0] = (int) htonl ((uint32_t) efn->offset);
+	     ibuf[1] = (int) htonl ((uint32_t) efn->compression);
+	     ibuf[2] = (int) htonl ((uint32_t) efn->size);
+	     ibuf[3] = (int) htonl ((uint32_t) efn->data_size);
+	     ibuf[4] = (int) htonl ((uint32_t) name_size);
+	     
+	     
+	     if (fwrite(ibuf, sizeof(ibuf), 1, ef->fp) != 1)
+	       goto write_error;
+	     if (fwrite(efn->name, name_size, 1, ef->fp) != 1)
+	       goto write_error;
 	  }
      }
    
@@ -371,11 +362,8 @@ eet_flush(Eet_File *ef)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  {
-	     if (efn->compression >= 0)
-	       {
-		  if (fwrite(efn->data, efn->size, 1, ef->fp) != 1)
-		    goto write_error;
-	       }
+	     if (fwrite(efn->data, efn->size, 1, ef->fp) != 1)
+	       goto write_error;
 	  }
      }
 
