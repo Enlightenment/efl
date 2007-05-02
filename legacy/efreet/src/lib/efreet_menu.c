@@ -3690,47 +3690,50 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                 sub_entry = efreet_menu_layout_menu(sub);
                 if (!show_empty && !sub_entry->entries)
                     efreet_menu_free(sub_entry);
-#if 0
                 else if (in_line &&
                         ((inline_limit == 0) ||
-                         (!sub->entries || (ecore_list_nodes(sub->entries) <= inline_limit))))
+                         (!sub_entry->entries || (ecore_list_nodes(sub_entry->entries) <= inline_limit))))
                 {
-                    /* We don't delete the submenu when inlining, as we use information
-                     * from it. */
                     /* Inline */
-                    if (!sub->entries)
+                    if (!sub_entry->entries)
                     {
                         /* Can't inline an empty submenu */
-                        entry = efreet_menu_entry_new();
-                        entry->type = EFREET_MENU_ENTRY_MENU;
-                        entry->name = sub->name.name;
-                        if (sub->directory) entry->icon = sub->directory->icon;
-                        entry->content.menu = sub;
-                        ecore_list_append(internal->entries, entry);
+                        ecore_list_append(entry->entries, sub_entry);
                     }
-                    else if (inline_alias && (ecore_list_nodes(sub->entries) == 1))
+                    else if (inline_alias && (ecore_list_nodes(sub_entry->entries) == 1))
                     {
-                        entry = ecore_list_remove_first(sub->entries);
-                        entry->name = sub->name.name;
-                        if (sub->directory) entry->icon = sub->directory->icon;
-                        ecore_list_append(internal->entries, entry);
+                        Efreet_Menu *tmp;
+
+                        tmp = ecore_list_remove_first(sub_entry->entries);
+                        IF_RELEASE(tmp->name);
+                        tmp->name = sub_entry->name;
+                        sub_entry->name = NULL;
+                        IF_RELEASE(tmp->icon);
+                        tmp->icon = sub_entry->icon;
+                        sub_entry->icon = NULL;
+                        ecore_list_append(entry->entries, tmp);
+                        efreet_menu_free(sub_entry);
                     }
                     else
                     {
+                        Efreet_Menu *tmp;
+
                         if (inline_header)
                         {
-                            entry = efreet_menu_entry_new();
-                            entry->type = EFREET_MENU_ENTRY_HEADER;
-                            entry->name = sub->name.name;
-                            if (sub->directory) entry->icon = sub->directory->icon;
-                            ecore_list_append(internal->entries, entry);
+                            tmp = efreet_menu_entry_new();
+                            tmp->type = EFREET_MENU_ENTRY_HEADER;
+                            tmp->name = sub_entry->name;
+                            sub_entry->name = NULL;
+                            tmp->icon = sub_entry->icon;
+                            sub_entry->icon = NULL;
+                            ecore_list_append(entry->entries, tmp);
                         }
-                        ecore_list_goto_first(sub->entries);
-                        while ((entry = ecore_list_remove_first(sub->entries)))
-                            ecore_list_append(internal->entries, entry);
+                        ecore_list_goto_first(sub_entry->entries);
+                        while ((tmp = ecore_list_remove_first(sub_entry->entries)))
+                            ecore_list_append(entry->entries, tmp);
+                        efreet_menu_free(sub_entry);
                     }
                 }
-#endif
                 else
                     ecore_list_append(entry->entries, sub_entry);
             }
@@ -3790,47 +3793,53 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                     sub_entry = efreet_menu_layout_menu(sub);
                     if (!internal->show_empty && !sub_entry->entries)
                         efreet_menu_free(sub_entry);
-#if 0
                     else if (internal->in_line &&
                             ((internal->inline_limit == 0) ||
-                             (!sub->entries || (ecore_list_nodes(sub->entries) <= internal->inline_limit))))
+                             (!sub_entry->entries || (ecore_list_nodes(sub_entry->entries) <= internal->inline_limit))))
                     {
-                        /* We don't delete the submenu when inlining, as we
-                         * use information from it. */
                         /* Inline */
-                        if (!sub->entries)
+                        if (!sub_entry->entries)
                         {
                             /* Can't inline an empty submenu */
-                            entry = efreet_menu_entry_new();
-                            entry->type = EFREET_MENU_ENTRY_MENU;
-                            entry->name = sub->name.name;
-                            if (sub->directory) entry->icon = sub->directory->icon;
-                            entry->content.menu = sub;
-                            ecore_list_append(internal->entries, entry);
+                            ecore_list_append(entry->entries, sub_entry);
                         }
-                        else if (internal->inline_alias && (ecore_list_nodes(sub->entries) == 1))
+                        else if (internal->inline_alias && (ecore_list_nodes(sub_entry->entries) == 1))
                         {
-                            entry = ecore_list_remove_first(sub->entries);
-                            entry->name = sub->name.name;
-                            if (sub->directory) entry->icon = sub->directory->icon;
-                            ecore_list_append(internal->entries, entry);
+                            Efreet_Menu *tmp;
+
+                            tmp = ecore_list_remove_first(sub_entry->entries);
+                            ecore_string_release(tmp->name);
+                            tmp->name = sub_entry->name;
+                            sub_entry->name = NULL;
+                            IF_RELEASE(tmp->icon);
+                            if (sub_entry->icon)
+                            {
+                                tmp->icon = sub_entry->icon;
+                                sub_entry->icon = NULL;
+                            }
+                            ecore_list_append(entry->entries, tmp);
+                            efreet_menu_free(sub_entry);
                         }
                         else
                         {
+                            Efreet_Menu *tmp;
+
                             if (internal->inline_header)
                             {
-                                entry = efreet_menu_entry_new();
-                                entry->type = EFREET_MENU_ENTRY_HEADER;
-                                entry->name = sub->name.name;
-                                if (sub->directory) entry->icon = sub->directory->icon;
-                                ecore_list_append(internal->entries, entry);
+                                tmp = efreet_menu_entry_new();
+                                tmp->type = EFREET_MENU_ENTRY_HEADER;
+                                tmp->name = sub_entry->name;
+                                sub_entry->name = NULL;
+                                if (sub_entry->icon) tmp->icon = sub_entry->icon;
+                                sub_entry->icon = NULL;
+                                ecore_list_append(entry->entries, tmp);
                             }
-                            ecore_list_goto_first(sub->entries);
-                            while ((entry = ecore_list_remove_first(sub->entries)))
-                                ecore_list_append(internal->entries, entry);
+                            ecore_list_goto_first(sub_entry->entries);
+                            while ((tmp = ecore_list_remove_first(sub_entry->entries)))
+                                ecore_list_append(entry->entries, tmp);
+                            efreet_menu_free(sub_entry);
                         }
                     }
-#endif
                     else
                         ecore_list_append(entry->entries, sub_entry);
                 }
