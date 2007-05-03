@@ -641,7 +641,7 @@ _edje_part_recalc_single(Edje *ed,
 		  if (tc)
 		    {
 		       if (tc->font) font = tc->font;
-		       if (tc->size > 0) size = tc->size;
+		       size = _edje_text_size_calc(size, tc);
 		    }
 	       }
 	  }
@@ -655,7 +655,7 @@ _edje_part_recalc_single(Edje *ed,
 		  if (tc)
 		    {
 		       if (tc->font) font = tc->font;
-		       if (tc->size > 0) size = tc->size;
+		       size = _edje_text_size_calc(size, tc);
 		    }
 	       }
 	  }

@@ -281,12 +281,12 @@ _edje_textblock_style_all_update(Edje *ed)
 		  buf = _edje_strbuf_append(buf, "font_source=", &buflen, &bufalloc);
 		  buf = _edje_strbuf_append(buf, fontsource, &buflen, &bufalloc);
 	       } 
-	     if (tag->font_size > 0)
+	     if (tag->font_size != 0)
 	       {
 		  char font_size[32];
 		  
 		  if (found)
-		    snprintf(font_size, sizeof(font_size), "%f", tc->size);
+		    snprintf(font_size, sizeof(font_size), "%f", (double) _edje_text_size_calc(tag->font_size, tc));
 		  else
 		    snprintf(font_size, sizeof(font_size), "%f", tag->font_size);
 		  

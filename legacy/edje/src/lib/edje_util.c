@@ -442,7 +442,6 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    Edje_Text_Class *tc;
 
    if (!text_class) return;
-   if (size < 0) size = 0;
    if (!font) font = "";
 
    tc = evas_hash_find(_edje_text_class_hash, text_class);
@@ -577,8 +576,6 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!text_class)) return;
-
-   if (size < 0.0) size = 0.0;
 
    /* for each text_class in the edje */
    for (l = ed->text_classes; l; l = l->next)

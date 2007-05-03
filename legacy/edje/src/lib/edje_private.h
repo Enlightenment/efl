@@ -776,9 +776,9 @@ struct _Edje_Color_Class
 
 struct _Edje_Text_Class
 {
-   const char   *name;
-   const char   *font;
-   double        size;
+   const char     *name;
+   const char     *font;
+   Evas_Font_Size  size;
 };
 
 struct _Edje_Var_Int
@@ -940,13 +940,14 @@ void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig,
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void  _edje_emit_handle(Edje *ed, const char *sig, const char *src);
 
-void  _edje_text_init(void);
-void  _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
-void  _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep);
-void  _edje_text_part_on_del(Edje *ed, Edje_Part *ep);
-void  _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep);
-void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
-    
+void           _edje_text_init(void);
+void           _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
+void           _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep);
+void           _edje_text_part_on_del(Edje *ed, Edje_Part *ep);
+void           _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep);
+void           _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
+Evas_Font_Size _edje_text_size_calc(Evas_Font_Size size, Edje_Text_Class *tc);
+
 Edje_Real_Part   *_edje_real_part_get(Edje *ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(Edje *ed, const char *color_class);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);

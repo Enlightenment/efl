@@ -296,7 +296,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	if (tc)
 	  {
 	     if (tc->font) font = tc->font;
-	     if (tc->size > 0) size = tc->size;
+	     size = _edje_text_size_calc(size, tc);
 	  }
      }
    
@@ -584,4 +584,24 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      free((char *)text);
    if (font2)
      free(font2);
+}
+
+Evas_Font_Size
+_edje_text_size_calc(Evas_Font_Size size, Edje_Text_Class *tc)
+{
+   int val;
+
+   if (tc->size == 0)
+     {
+	val = size;
+     }
+   else if (tc->size > 0.0)
+     {
+	val = tc->size;
+     }
+   else
+     {
+	val = (size * -tc->size) / 100;
+     }
+   return val;
 }

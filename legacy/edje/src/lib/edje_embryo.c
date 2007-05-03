@@ -1138,7 +1138,7 @@ _edje_embryo_fn_set_text_class(Embryo_Program *ep, Embryo_Cell *params)
    GETSTR(class, params[1]);
    GETSTR(font, params[2]);
    if( !class || !font ) return 0;
-   fsize = (Evas_Font_Size)EMBRYO_CELL_TO_FLOAT(params[3]);
+   fsize = (Evas_Font_Size) EMBRYO_CELL_TO_FLOAT(params[3]);
    edje_object_text_class_set(ed->obj, class, font, fsize);
    return 0;
 }
