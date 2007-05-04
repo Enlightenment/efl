@@ -24,15 +24,16 @@ ef_cb_efreet_icon_theme(void)
     int ret = 1;
     const char *tmp;
 
+    unsetenv("XDG_DATA_HOME");
     efreet_shutdown();
     putenv("HOME=/var/tmp");
     efreet_init();
 
     tmp = efreet_icon_user_dir_get();
-    if (strcmp(tmp, "/var/tmp/.icons"))
+    if (strcmp(tmp, "/var/tmp/.local/share/icons"))
     {
         printf("efreet_icon_user_dir_get() returned incorrect "
-                "value on HOME=/var/tmp\n");
+                "value (%s) on HOME=/var/tmp\n", tmp);
         ret = 0;
     }
 
@@ -41,7 +42,7 @@ ef_cb_efreet_icon_theme(void)
     efreet_init();
 
     tmp = efreet_icon_user_dir_get();
-    if (strcmp(tmp, "/tmp/.icons"))
+    if (strcmp(tmp, "/tmp/.local/share/icons"))
     {
         printf("efreet_icon_user_dir_get() returned incorrect "
                 "value (%s) on HOME=\n", tmp);
