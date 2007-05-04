@@ -102,7 +102,7 @@ efreet_ini_parse(const char *file)
 
     /* if a line is longer than the buffer size, this \n will get overwritten. */
     read_buf[read_len - 2] = '\n';
-    while(fgets(read_buf, read_len, f) != NULL) 
+    while (fgets(read_buf, read_len, f) != NULL) 
     {
         char *key, *value, *p;
         char *sep;
