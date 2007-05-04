@@ -496,7 +496,7 @@ void
 efreet_desktop_environment_set(const char *environment)
 {
     if (desktop_environment) ecore_string_release(desktop_environment);
-    if (environment) ecore_string_instance(environment);
+    if (environment) desktop_environment = ecore_string_instance(environment);
     else desktop_environment = NULL;
 }
 
@@ -706,7 +706,7 @@ efreet_desktop_string_list_join(Ecore_List *list)
         /* +1 for ';' */
         if ((len + pos + 1) >= size)
         {
-            size += 1024;
+            size = len + pos + 1024;
             string = realloc(string, size);
         }
         strcpy(string + pos, tmp);
@@ -1138,7 +1138,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         {
             if (len >= size - 1) 
             {
-                size += 1024;
+                size = len + 1024;
                 exec = realloc(exec, size);
             }
 
