@@ -405,6 +405,9 @@ evas_module_clean(void)
      }
    if (noclean == 1) return;
    
+   /* disable module cleaning for now - may cause instability with some modules */
+   return;
+   
    /* incriment use counter = 28bits */
    use_count++;
    if (use_count > 0x0fffffff) use_count = 0;
