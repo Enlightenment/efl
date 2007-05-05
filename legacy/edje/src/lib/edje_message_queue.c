@@ -69,6 +69,7 @@ edje_object_message_signal_process(Evas_Object *obj)
 	
 	em = tmp_msgq->data;
 	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	em->edje->message.num--;
 	_edje_message_process(em);
 	_edje_message_free(em);
      }
@@ -251,7 +252,6 @@ _edje_message_free(Edje_Message *em)
 	     break;
 	  }
      }
-   em->edje->message.num--;
    free(em);
 }
 
@@ -580,7 +580,7 @@ _edje_message_queue_process(void)
 	     tmp_msgq = msgq;
 	     msgq = NULL;
 	  }
-	
+
 	while (tmp_msgq)
 	  {
 	     Edje_Message *em;
@@ -588,11 +588,17 @@ _edje_message_queue_process(void)
 	     
 	     em = tmp_msgq->data;
 	     ed = em->edje;
-	     ed->processing_messages++;
 	     tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
-	     _edje_message_process(em);
-	     _edje_message_free(em);
-	     ed->processing_messages--;
+	     em->edje->message.num--;
+	     if (!ed->delete_me)
+	       {
+		  ed->processing_messages++;
+		  _edje_message_process(em);
+		  _edje_message_free(em);
+		  ed->processing_messages--;
+	       }
+	     else
+	       _edje_message_free(em);
 	     if (ed->processing_messages == 0)
 	       {
 		  if (ed->delete_me) _edje_del(ed);
@@ -615,6 +621,7 @@ _edje_message_queue_clear(void)
 	
 	em = msgq->data;
 	msgq = evas_list_remove_list(msgq, msgq);
+	em->edje->message.num--;
 	_edje_message_free(em);
      }
    while (tmp_msgq)
@@ -623,6 +630,7 @@ _edje_message_queue_clear(void)
 	
 	em = tmp_msgq->data;
 	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	em->edje->message.num--;
 	_edje_message_free(em);
      }
 }
@@ -645,6 +653,7 @@ _edje_message_del(Edje *ed)
 	if (em->edje == ed)
 	  {
 	     msgq = evas_list_remove_list(msgq, lp);
+	     em->edje->message.num--;
 	     _edje_message_free(em);
 	  }
 	if (ed->message.num <= 0) return;
@@ -661,6 +670,7 @@ _edje_message_del(Edje *ed)
 	if (em->edje == ed)
 	  {
 	     tmp_msgq = evas_list_remove_list(tmp_msgq, lp);
+	     em->edje->message.num--;
 	     _edje_message_free(em);
 	  }
 	if (ed->message.num <= 0) return;
