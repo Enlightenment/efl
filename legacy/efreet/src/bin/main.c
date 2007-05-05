@@ -1,3 +1,4 @@
+/* vim: set sw=4 ts=4 sts=4 et: */
 #include "Efreet.h"
 #include <Ecore.h>
 #include <stdio.h>
@@ -110,7 +111,18 @@ main(int argc, char ** argv)
     {
         run = ecore_list_new();
         for (i = 1; i < argc; i++)
+        {
+            if ((!strcmp(argv[i], "-h")) ||
+                (!strcmp(argv[i], "--help")))
+            {
+                for (i = 0; tests[i].name != NULL; i++)
+                {
+                    printf("%s\n", tests[i].name);
+                }
+                return 1;
+            }
             ecore_list_append(run, argv[i]);
+        }
     }
 
     environment_store();
