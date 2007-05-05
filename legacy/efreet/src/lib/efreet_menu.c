@@ -707,19 +707,11 @@ efreet_menu_save_menu(Efreet_Menu *menu, FILE *f, int indent)
         fprintf(f, "<DefaultDirectoryDirs/>\n");
     }
 
-    /* XXX: This should be in the menu struct
-    if (internal->directories)
+    if (menu->desktop)
     {
-        const char *dir;
-
-        ecore_list_goto_first(internal->directories);
-        while ((dir = ecore_list_next(internal->directories)))
-        {
-            efreet_menu_save_indent(f, indent + 1);
-            fprintf(f, "<Directory>%s</Directory>\n", dir);
-        }
+        efreet_menu_save_indent(f, indent + 1);
+        fprintf(f, "<Directory>%s</Directory>\n", menu->desktop->orig_path);
     }
-    */
 
     if (menu->entries)
     {
@@ -3575,6 +3567,7 @@ efreet_menu_layout_menu(Efreet_Menu_Internal *internal)
     entry->id = ecore_string_instance(internal->name.internal);
     entry->name = ecore_string_instance(internal->name.name);
     if (internal->directory) entry->icon = ecore_string_instance(internal->directory->icon);
+    entry->desktop = internal->directory;
     entry->entries = ecore_list_new();
     ecore_list_set_free_cb(entry->entries, ECORE_FREE_CB(efreet_menu_free));
 
