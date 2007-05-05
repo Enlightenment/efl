@@ -158,6 +158,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	       }
 	  }
      }
+
    for (l = fonts_zero; l; l = l->next)
      {
 	fd = l->data;
@@ -330,8 +331,8 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	     FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);
 
 	     if (font)
-	       evas->engine.func->font_add(evas->engine.data.output, font, (char *)filename.u.s, size);
-	     else
+	       evas->engine.func->font_add(evas->engine.data.output, font, (char *)filename.u.s, size);     	  
+	     else 	  
 	       font = evas->engine.func->font_load(evas->engine.data.output, (char *)filename.u.s, size);
 	  }
 
@@ -350,6 +351,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	fd->ref = 1;
 	fonts_cache = evas_list_prepend(fonts_cache, fd);
      }
+
    if (font)
      evas->engine.func->font_hinting_set(evas->engine.data.output, font,
 					 evas->hinting);

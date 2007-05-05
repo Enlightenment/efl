@@ -69,11 +69,20 @@ evas_common_font_source_load_complete(RGBA_Font_Source *fs)
    int error;
  
    error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));	
-   if (error) return error;
+   if (error) 
+     {
+	fs->ft.face = NULL;
+	return error;
+     }
    
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
-   if (error) return error;
-   
+   if (error) 
+     {
+	FT_Done_Face(fs->ft.face);
+	fs->ft.face = NULL;
+	return error;
+     }
+
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    return error;
 }
@@ -123,6 +132,7 @@ evas_common_font_size_use(RGBA_Font *fn)
 	RGBA_Font_Int *fi;
 
 	fi = l->data;
+	
 	if (fi->src->current_size != fi->size)
 	  {
 	     FT_Activate_Size(fi->ft.size);
@@ -278,6 +288,7 @@ evas_common_font_load(const char *name, int size)
 
    fi = evas_common_font_int_load(name, size);
    if (!fi) return NULL;
+  
    /* First font, complete load */ 
    if (!fi->ft.size)
      {
@@ -285,9 +296,12 @@ evas_common_font_load(const char *name, int size)
 	  {
 	     if (evas_common_font_source_load_complete(fi->src))
 	       {
-		  fonts = evas_object_list_remove(fonts, fi);
-		  evas_common_font_source_free(fi->src);
-		  free(fi);
+		  fi->references--;
+		  if (fi->references == 0)
+		    {
+		       evas_common_font_int_modify_cache_by(fi, 1);
+		       evas_common_font_flush();
+		    }
 		  return NULL;
 	       }
 	  }
@@ -297,7 +311,12 @@ evas_common_font_load(const char *name, int size)
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
      {
-	free(fi);
+	fi->references--;	  
+	if (fi->references == 0)	    
+	  {
+	     evas_common_font_int_modify_cache_by(fi, 1);
+	     evas_common_font_flush();
+	  }
 	return NULL;
      }
    fn->fonts = evas_list_append(fn->fonts, fi);
@@ -472,6 +491,10 @@ font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
    key = 0;
 }
 
+/* when the fi->references == 0 we increase this instead of really deleting
+ * we then check if the cache_useage size is larger than allowed 
+ * !If the cache is NOT too large we dont delete font_int 
+ * !If the cache is too large we really delete font_int */
 EAPI void
 evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir)
 {
@@ -519,6 +542,9 @@ font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fda
    fdata = 0;
 }
 
+/* We run this when the cache gets larger than allowed size
+ * We check cache size each time a fi->references goes to 0
+ * PERFORMS: Find font_int(s) with references == 0 and delete them */
 EAPI void
 evas_common_font_flush_last(void)
 {
