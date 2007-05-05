@@ -3842,7 +3842,14 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
         }
         else if (internal->sub_menus && !strcmp(layout->name, "all"))
         {
-            /* XXX: Add all menus and files, and sort them. */
+            char *orig;
+           
+            orig = layout->name;
+            layout->name = "menus";
+            efreet_menu_layout_entries_get(entry, internal, layout);
+            layout->name = "files";
+            efreet_menu_layout_entries_get(entry, internal, layout);
+            layout->name = orig;
         }
     }
     else if (layout->type == EFREET_MENU_LAYOUT_SEPARATOR)
