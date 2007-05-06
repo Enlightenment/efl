@@ -5,8 +5,8 @@ includedir=@includedir@
 
 Name: ecore-x
 Description: E core library, X module
-Requires: ecore-txt @requirements_ecore_x@
+Requires: @requirements_ecore_x@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_x
-Libs.private: @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@
+Libs.private: @x_libs@ @Xcursor_libs@ @XRENDER_LIBS@ @XPRINT_LIBS@ @XINERAMA_LIBS@ @XRANDR_LIBS@ @XFIXES_LIBS@ @XDAMAGE_LIBS@ @XSS_LIBS@ @ecore_txt_libs@
 Cflags: -I${includedir} @have_ecore_x_xcb_define@
