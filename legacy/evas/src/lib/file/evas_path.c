@@ -77,7 +77,7 @@ evas_file_path_is_dir(const char *path)
 }
 
 Evas_List *
-evas_file_path_list(char *path, char *match, int match_case)
+evas_file_path_list(char *path, const char *match, int match_case)
 {
    Evas_List *files = NULL;
    DIR *dir;

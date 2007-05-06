@@ -171,7 +171,7 @@ evas_debug_generic(const char *str)
    if (_evas_debug_abort) abort();
 }
 
-char *
+const char *
 evas_debug_magic_string_get(DATA32 magic)
 {
    switch (magic)

@@ -27,7 +27,7 @@ static void evas_object_smart_free(Evas_Object *obj);
 static void evas_object_smart_render_pre(Evas_Object *obj);
 static void evas_object_smart_render_post(Evas_Object *obj);
 
-static Evas_Object_Func object_func =
+static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_smart_free,

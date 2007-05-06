@@ -38,7 +38,7 @@ static int evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord
 static int evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 static void evas_object_line_coords_recalc(Evas_Object *obj);
 
-static Evas_Object_Func object_func =
+static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_line_free,

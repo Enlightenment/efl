@@ -148,7 +148,7 @@ static int evas_object_textblock_was_opaque(Evas_Object *obj);
 
 static void evas_object_textblock_coords_recalc(Evas_Object *obj);
 
-static Evas_Object_Func object_func =
+static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_textblock_free,

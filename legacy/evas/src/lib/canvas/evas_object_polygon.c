@@ -35,7 +35,7 @@ static int evas_object_polygon_was_opaque(Evas_Object *obj);
 static int evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 static int evas_object_polygon_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
-static Evas_Object_Func object_func =
+static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_polygon_free,

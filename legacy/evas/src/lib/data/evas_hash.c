@@ -109,7 +109,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 	return hash;
      };
    el->key = ((char *)el) + sizeof(struct _Evas_Hash_El);
-   strcpy(el->key, key);
+   strcpy((char *) el->key, key);
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
    hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);

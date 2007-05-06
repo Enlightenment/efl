@@ -47,7 +47,7 @@ static void evas_object_gradient_render_post(Evas_Object *obj);
 static int evas_object_gradient_is_opaque(Evas_Object *obj);
 static int evas_object_gradient_was_opaque(Evas_Object *obj);
 
-static Evas_Object_Func object_func =
+static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_gradient_free,

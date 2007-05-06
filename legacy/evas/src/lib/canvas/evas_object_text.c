@@ -45,7 +45,7 @@ static void evas_object_text_render_post(Evas_Object *obj);
 static int evas_object_text_is_opaque(Evas_Object *obj);
 static int evas_object_text_was_opaque(Evas_Object *obj);
 
-static Evas_Object_Func object_func =
+static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_text_free,

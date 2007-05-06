@@ -316,7 +316,7 @@ evas_common_gradient_alpha_data_set(RGBA_Gradient *gr, DATA8 *data, int len)
 }
 
 EAPI void
-evas_common_gradient_type_set(RGBA_Gradient *gr, char *name, char *params)
+evas_common_gradient_type_set(RGBA_Gradient *gr, const char *name, char *params)
 {
    RGBA_Gradient_Type   *geometer;
 
@@ -394,7 +394,7 @@ evas_common_gradient_map_angle_set(RGBA_Gradient *gr, float angle)
 }
 
 EAPI RGBA_Gradient_Type  *
-evas_common_gradient_geometer_get(char *name)
+evas_common_gradient_geometer_get(const char *name)
 {
    RGBA_Gradient_Type  *geom = NULL;
 

@@ -95,7 +95,7 @@ Evas_List *evas_modules = NULL;
 static Evas_List *evas_module_paths = NULL;
 
 static void
-_evas_module_path_append(Evas_Module_Type type, char *path, char *subdir)
+_evas_module_path_append(Evas_Module_Type type, char *path, const char *subdir)
 {
    Evas_Module_Path *mp;
    char *buf;

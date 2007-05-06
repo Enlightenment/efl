@@ -32,7 +32,7 @@ static int evas_object_rectangle_is_inside(Evas_Object *obj, double x, double y)
 static int evas_object_rectangle_was_inside(Evas_Object *obj, double x, double y);
 #endif
 
-static Evas_Object_Func object_func =
+static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_rectangle_free,

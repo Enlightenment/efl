@@ -415,7 +415,7 @@ struct _Evas_Object
       Evas_List   *changes;
    } clip;
 
-   Evas_Object_Func *func;
+   const Evas_Object_Func *func;
 
    void             *object_data;
 
@@ -687,7 +687,7 @@ char *evas_file_path_join(const char *path, const char *end);
 int evas_file_path_exists(const char *path);
 int evas_file_path_is_file(const char *path);
 int evas_file_path_is_dir(const char *path);
-Evas_List *evas_file_path_list(char *path, char *match, int match_case);
+Evas_List *evas_file_path_list(char *path, const char *match, int match_case);
 DATA64 evas_file_modified_time(const char *file);
 char *evas_file_path_resolve(const char *file);
 int evas_mem_free(int mem_required);
@@ -697,7 +697,7 @@ void evas_debug_input_null(void);
 void evas_debug_magic_null(void);
 void evas_debug_magic_wrong(DATA32 expected, DATA32 supplied);
 void evas_debug_generic(const char *str);
-char *evas_debug_magic_string_get(DATA32 magic);
+const char *evas_debug_magic_string_get(DATA32 magic);
 void evas_object_smart_use(Evas_Smart *s);
 void evas_object_smart_unuse(Evas_Smart *s);
 void evas_object_smart_del(Evas_Object *obj);

@@ -232,7 +232,7 @@ struct _Evas_Hash
 struct _Evas_Hash_El
 {
    Evas_Object_List  _list_data;
-   char             *key;
+   const char       *key;
    void             *data;
 };
 
@@ -435,7 +435,7 @@ struct _RGBA_Gradient
 
 struct _RGBA_Gradient_Type
 {
-   char                   *name;
+   const char              *name;
    void                    (*init)(void);
    void                    (*shutdown)(void);
    void                    (*geom_init)(RGBA_Gradient *gr);
@@ -513,7 +513,7 @@ struct _RGBA_Font_Glyph
 
 struct _RGBA_Gfx_Compositor
 {
-   char               *name;
+   const char *name;
 
    void              (*init)(void);
    void              (*shutdown)(void);
@@ -895,7 +895,7 @@ EAPI void           evas_common_gradient_color_stop_add   (RGBA_Gradient *gr, in
 EAPI void           evas_common_gradient_alpha_stop_add   (RGBA_Gradient *gr, int a, int dist);
 EAPI void           evas_common_gradient_color_data_set   (RGBA_Gradient *gr, DATA32 *data, int len, int alpha_flags);
 EAPI void           evas_common_gradient_alpha_data_set   (RGBA_Gradient *gr, DATA8 *adata, int len);
-EAPI void           evas_common_gradient_type_set         (RGBA_Gradient *gr, char *name, char *params);
+EAPI void           evas_common_gradient_type_set         (RGBA_Gradient *gr, const char *name, char *params);
 EAPI void           evas_common_gradient_fill_set         (RGBA_Gradient *gr, int x, int y, int w, int h);
 EAPI void           evas_common_gradient_fill_angle_set   (RGBA_Gradient *gr, float angle);
 EAPI void           evas_common_gradient_fill_spread_set  (RGBA_Gradient *gr, int spread);
@@ -905,7 +905,7 @@ EAPI void           evas_common_gradient_map_direction_set(RGBA_Gradient *gr, in
 EAPI void           evas_common_gradient_map              (RGBA_Draw_Context *dc, RGBA_Gradient *gr, int len);
 EAPI void           evas_common_gradient_draw             (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr);
 
-RGBA_Gradient_Type *evas_common_gradient_geometer_get    (char *name);
+RGBA_Gradient_Type *evas_common_gradient_geometer_get    (const char *name);
 RGBA_Gradient_Type *evas_common_gradient_linear_get      (void);
 RGBA_Gradient_Type *evas_common_gradient_radial_get      (void);
 RGBA_Gradient_Type *evas_common_gradient_angular_get     (void);
