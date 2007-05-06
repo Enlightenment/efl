@@ -852,6 +852,7 @@ em_video_channel_count(void *ef)
    int v;
    
    ev = (Emotion_Xine_Video *)ef;
+   if (ev->opening) return 0;
    v = xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_CHANNELS);
    if ((v < 1) &&
        xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO)) return 1;
@@ -875,6 +876,7 @@ em_video_channel_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
+   if (ev->opening) return 0;
    return xine_get_param(ev->stream, XINE_PARAM_VIDEO_CHANNEL);
 }
 
@@ -911,6 +913,7 @@ em_audio_channel_count(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
+   if (ev->opening) return 0;
    return xine_get_stream_info(ev->stream, XINE_STREAM_INFO_MAX_AUDIO_CHANNEL);
 }
 
@@ -931,6 +934,7 @@ em_audio_channel_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
+   if (ev->opening) return 0;
    return xine_get_param(ev->stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL);
 }
 
@@ -941,6 +945,7 @@ em_audio_channel_name_get(void *ef, int channel)
    static char lang[XINE_LANG_MAX + 1];
    
    ev = (Emotion_Xine_Video *)ef;
+   if (ev->opening) return NULL;
    lang[0] = 0;
    if (xine_get_audio_lang(ev->stream, channel, lang)) return lang;
    return NULL;
