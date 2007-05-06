@@ -807,7 +807,7 @@ emotion_object_meta_info_get(Evas_Object *obj, Emotion_Meta_Info meta)
 /* Utility calls for modules */
 /*****************************/
 
-void *
+EAPI void *
 _emotion_video_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -816,7 +816,7 @@ _emotion_video_get(Evas_Object *obj)
    return sd->video;
 }
 
-void
+EAPI void
 _emotion_frame_new(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -825,7 +825,7 @@ _emotion_frame_new(Evas_Object *obj)
    evas_object_image_pixels_dirty_set(sd->obj, 1);
 }
 
-void
+EAPI void
 _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
 {
    Smart_Data *sd;
@@ -840,7 +840,7 @@ _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
    if (nlen) evas_object_smart_callback_call(obj, "length_change", NULL);
 }
 
-void
+EAPI void
 _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 {
    Smart_Data *sd;
@@ -864,7 +864,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
    if (changed) evas_object_smart_callback_call(obj, "frame_resize", NULL);
 }
 
-void
+EAPI void
 _emotion_decode_stop(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -877,18 +877,19 @@ _emotion_decode_stop(Evas_Object *obj)
      }
 }
 
-void
+EAPI void
 _emotion_playback_finished(Evas_Object *obj)
 {
    evas_object_smart_callback_call(obj, "playback_finished", NULL);
 }
 
-void _emotion_audio_level_change(Evas_Object *obj)
+EAPI void
+_emotion_audio_level_change(Evas_Object *obj)
 {
    evas_object_smart_callback_call(obj, "audio_level_change", NULL);
 }
 
-void
+EAPI void
 _emotion_channels_change(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -897,7 +898,7 @@ _emotion_channels_change(Evas_Object *obj)
    evas_object_smart_callback_call(obj, "channels_change", NULL);
 }
 
-void
+EAPI void
 _emotion_title_set(Evas_Object *obj, char *title)
 {
    Smart_Data *sd;
@@ -908,7 +909,7 @@ _emotion_title_set(Evas_Object *obj, char *title)
    evas_object_smart_callback_call(obj, "title_change", NULL);
 }
 
-void
+EAPI void
 _emotion_progress_set(Evas_Object *obj, char *info, double stat)
 {
    Smart_Data *sd;
@@ -920,7 +921,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double stat)
    evas_object_smart_callback_call(obj, "progress_change", NULL);
 }
 
-void
+EAPI void
 _emotion_file_ref_set(Evas_Object *obj, char *file, int num)
 {
    Smart_Data *sd;
@@ -932,7 +933,7 @@ _emotion_file_ref_set(Evas_Object *obj, char *file, int num)
    evas_object_smart_callback_call(obj, "ref_change", NULL);
 }
 
-void
+EAPI void
 _emotion_spu_button_num_set(Evas_Object *obj, int num)
 {
    Smart_Data *sd;
@@ -942,7 +943,7 @@ _emotion_spu_button_num_set(Evas_Object *obj, int num)
    evas_object_smart_callback_call(obj, "button_num_change", NULL);
 }
 
-void
+EAPI void
 _emotion_spu_button_set(Evas_Object *obj, int button)
 {
    Smart_Data *sd;
