@@ -229,161 +229,160 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD       = 0;
    _ecore_xcb_atom_init_finalize. The first one gets the cookies and
    the second one gets the replies and set the atoms. */
 
+#define FETCH_ATOM(s) \
+   ecore_xcb_atom_init_cookies[i] = \
+      xcb_intern_atom(_ecore_xcb_conn, 0, sizeof(s), s); \
+   i++
+
 void
 _ecore_x_atom_init(void)
 {
-   const char *atom_names[ECORE_X_ATOMS_COUNT] = {
-     /* generic atoms */
-     "COMPOUND_TEXT",
-     "FILE_NAME",
-     "TEXT",
-     "UTF8_STRING",
+   int i = 0;
 
-     /* dnd atoms */
-     "JXSelectionWindowProperty",
-     "XdndSelection",
-     "XdndAware",
-     "XdndEnter",
-     "XdndTypeList",
-     "XdndPosition",
-     "XdndActionCopy",
-     "XdndActionMove",
-     "XdndActionPrivate",
-     "XdndActionAsk",
-     "XdndActionList",
-     "XdndActionLink",
-     "XdndActionDescription",
-     "XdndProxy",
-     "XdndStatus",
-     "XdndLeave",
-     "XdndDrop",
-     "XdndFinished",
+   /* generic atoms */
+   FETCH_ATOM("COMPOUND_TEXT");
+   FETCH_ATOM("FILE_NAME");
+   FETCH_ATOM("TEXT");
+   FETCH_ATOM("UTF8_STRING");
 
-     /* old E atom */
-     "_E_FRAME_SIZE",
+   /* dnd atoms */
+   FETCH_ATOM("JXSelectionWindowProperty");
+   FETCH_ATOM("XdndSelection");
+   FETCH_ATOM("XdndAware");
+   FETCH_ATOM("XdndEnter");
+   FETCH_ATOM("XdndTypeList");
+   FETCH_ATOM("XdndPosition");
+   FETCH_ATOM("XdndActionCopy");
+   FETCH_ATOM("XdndActionMove");
+   FETCH_ATOM("XdndActionPrivate");
+   FETCH_ATOM("XdndActionAsk");
+   FETCH_ATOM("XdndActionList");
+   FETCH_ATOM("XdndActionLink");
+   FETCH_ATOM("XdndActionDescription");
+   FETCH_ATOM("XdndProxy");
+   FETCH_ATOM("XdndStatus");
+   FETCH_ATOM("XdndLeave");
+   FETCH_ATOM("XdndDrop");
+   FETCH_ATOM("XdndFinished");
 
-     /* old Gnome atom */
-     "_WIN_LAYER",
+   /* old E atom */
+   FETCH_ATOM("_E_FRAME_SIZE");
 
-     /* ICCCM */
-     "WM_PROTOCOLS",
-     "WM_COLORMAP_WINDOWS",
+   /* old Gnome atom */
+   FETCH_ATOM("_WIN_LAYER");
 
-     "WM_STATE",
+   /* ICCCM */
+   FETCH_ATOM("WM_PROTOCOLS");
+   FETCH_ATOM("WM_COLORMAP_WINDOWS");
 
-     "WM_CHANGE_STATE",
+   FETCH_ATOM("WM_STATE");
 
-     "WM_TAKE_FOCUS",
-     "WM_SAVE_YOURSELF",
-     "WM_DELETE_WINDOW",
+   FETCH_ATOM("WM_CHANGE_STATE");
 
-     "WM_COLORMAP_NOTIFY",
+   FETCH_ATOM("WM_TAKE_FOCUS");
+   FETCH_ATOM("WM_SAVE_YOURSELF");
+   FETCH_ATOM("WM_DELETE_WINDOW");
 
-     "SM_CLIENT_ID",
-     "WM_CLIENT_LEADER",
-     "WM_WINDOW_ROLE",
+   FETCH_ATOM("WM_COLORMAP_NOTIFY");
 
-     /* Motif WM atom */
-     "_MOTIF_WM_HINTS",
+   FETCH_ATOM("SM_CLIENT_ID");
+   FETCH_ATOM("WM_CLIENT_LEADER");
+   FETCH_ATOM("WM_WINDOW_ROLE");
 
-     /* NetWM atoms */
-     "_NET_SUPPORTED",
-     "_NET_CLIENT_LIST",
-     "_NET_CLIENT_LIST_STACKING",
-     "_NET_NUMBER_OF_DESKTOPS",
-     "_NET_DESKTOP_GEOMETRY",
-     "_NET_DESKTOP_VIEWPORT",
-     "_NET_CURRENT_DESKTOP",
-     "_NET_DESKTOP_NAMES",
-     "_NET_ACTIVE_WINDOW",
-     "_NET_WORKAREA",
-     "_NET_SUPPORTING_WM_CHECK",
-     "_NET_VIRTUAL_ROOTS",
-     "_NET_DESKTOP_LAYOUT",
-     "_NET_SHOWING_DESKTOP",
+   /* Motif WM atom */
+   FETCH_ATOM("_MOTIF_WM_HINTS");
 
-     "_NET_CLOSE_WINDOW",
-     "_NET_MOVERESIZE_WINDOW",
-     "_NET_WM_MOVERESIZE",
-     "_NET_RESTACK_WINDOW",
-     "_NET_REQUEST_FRAME_EXTENTS",
+   /* NetWM atoms */
+   FETCH_ATOM("_NET_SUPPORTED");
+   FETCH_ATOM("_NET_CLIENT_LIST");
+   FETCH_ATOM("_NET_CLIENT_LIST_STACKING");
+   FETCH_ATOM("_NET_NUMBER_OF_DESKTOPS");
+   FETCH_ATOM("_NET_DESKTOP_GEOMETRY");
+   FETCH_ATOM("_NET_DESKTOP_VIEWPORT");
+   FETCH_ATOM("_NET_CURRENT_DESKTOP");
+   FETCH_ATOM("_NET_DESKTOP_NAMES");
+   FETCH_ATOM("_NET_ACTIVE_WINDOW");
+   FETCH_ATOM("_NET_WORKAREA");
+   FETCH_ATOM("_NET_SUPPORTING_WM_CHECK");
+   FETCH_ATOM("_NET_VIRTUAL_ROOTS");
+   FETCH_ATOM("_NET_DESKTOP_LAYOUT");
+   FETCH_ATOM("_NET_SHOWING_DESKTOP");
 
-     "_NET_WM_NAME",
-     "_NET_WM_VISIBLE_NAME",
-     "_NET_WM_ICON_NAME",
-     "_NET_WM_VISIBLE_ICON_NAME",
-     "_NET_WM_DESKTOP",
+   FETCH_ATOM("_NET_CLOSE_WINDOW");
+   FETCH_ATOM("_NET_MOVERESIZE_WINDOW");
+   FETCH_ATOM("_NET_WM_MOVERESIZE");
+   FETCH_ATOM("_NET_RESTACK_WINDOW");
+   FETCH_ATOM("_NET_REQUEST_FRAME_EXTENTS");
 
-     "_NET_WM_WINDOW_TYPE",
-     "_NET_WM_WINDOW_TYPE_DESKTOP",
-     "_NET_WM_WINDOW_TYPE_DOCK",
-     "_NET_WM_WINDOW_TYPE_TOOLBAR",
-     "_NET_WM_WINDOW_TYPE_MENU",
-     "_NET_WM_WINDOW_TYPE_UTILITY",
-     "_NET_WM_WINDOW_TYPE_SPLASH",
-     "_NET_WM_WINDOW_TYPE_DIALOG",
-     "_NET_WM_WINDOW_TYPE_NORMAL",
+   FETCH_ATOM("_NET_WM_NAME");
+   FETCH_ATOM("_NET_WM_VISIBLE_NAME");
+   FETCH_ATOM("_NET_WM_ICON_NAME");
+   FETCH_ATOM("_NET_WM_VISIBLE_ICON_NAME");
+   FETCH_ATOM("_NET_WM_DESKTOP");
 
-     "_NET_WM_STATE",
-     "_NET_WM_STATE_MODAL",
-     "_NET_WM_STATE_STICKY",
-     "_NET_WM_STATE_MAXIMIZED_VERT",
-     "_NET_WM_STATE_MAXIMIZED_HORZ",
-     "_NET_WM_STATE_SHADED",
-     "_NET_WM_STATE_SKIP_TASKBAR",
-     "_NET_WM_STATE_SKIP_PAGER",
-     "_NET_WM_STATE_HIDDEN",
-     "_NET_WM_STATE_FULLSCREEN",
-     "_NET_WM_STATE_ABOVE",
-     "_NET_WM_STATE_BELOW",
-     "_NET_WM_STATE_DEMANDS_ATTENTION",
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_DESKTOP");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_DOCK");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_TOOLBAR");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_MENU");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_UTILITY");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_SPLASH");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_DIALOG");
+   FETCH_ATOM("_NET_WM_WINDOW_TYPE_NORMAL");
 
-     "_NET_WM_ALLOWED_ACTIONS",
-     "_NET_WM_ACTION_MOVE",
-     "_NET_WM_ACTION_RESIZE",
-     "_NET_WM_ACTION_MINIMIZE",
-     "_NET_WM_ACTION_SHADE",
-     "_NET_WM_ACTION_STICK",
-     "_NET_WM_ACTION_MAXIMIZE_HORZ",
-     "_NET_WM_ACTION_MAXIMIZE_VERT",
-     "_NET_WM_ACTION_FULLSCREEN",
-     "_NET_WM_ACTION_CHANGE_DESKTOP",
-     "_NET_WM_ACTION_CLOSE",
+   FETCH_ATOM("_NET_WM_STATE");
+   FETCH_ATOM("_NET_WM_STATE_MODAL");
+   FETCH_ATOM("_NET_WM_STATE_STICKY");
+   FETCH_ATOM("_NET_WM_STATE_MAXIMIZED_VERT");
+   FETCH_ATOM("_NET_WM_STATE_MAXIMIZED_HORZ");
+   FETCH_ATOM("_NET_WM_STATE_SHADED");
+   FETCH_ATOM("_NET_WM_STATE_SKIP_TASKBAR");
+   FETCH_ATOM("_NET_WM_STATE_SKIP_PAGER");
+   FETCH_ATOM("_NET_WM_STATE_HIDDEN");
+   FETCH_ATOM("_NET_WM_STATE_FULLSCREEN");
+   FETCH_ATOM("_NET_WM_STATE_ABOVE");
+   FETCH_ATOM("_NET_WM_STATE_BELOW");
+   FETCH_ATOM("_NET_WM_STATE_DEMANDS_ATTENTION");
 
-     "_NET_WM_STRUT",
-     "_NET_WM_STRUT_PARTIAL",
-     "_NET_WM_ICON_GEOMETRY",
-     "_NET_WM_ICON",
-     "_NET_WM_PID",
-     "_NET_WM_HANDLED_ICONS",
-     "_NET_WM_USER_TIME",
-     "_NET_STARTUP_ID",
-     "_NET_FRAME_EXTENTS",
+   FETCH_ATOM("_NET_WM_ALLOWED_ACTIONS");
+   FETCH_ATOM("_NET_WM_ACTION_MOVE");
+   FETCH_ATOM("_NET_WM_ACTION_RESIZE");
+   FETCH_ATOM("_NET_WM_ACTION_MINIMIZE");
+   FETCH_ATOM("_NET_WM_ACTION_SHADE");
+   FETCH_ATOM("_NET_WM_ACTION_STICK");
+   FETCH_ATOM("_NET_WM_ACTION_MAXIMIZE_HORZ");
+   FETCH_ATOM("_NET_WM_ACTION_MAXIMIZE_VERT");
+   FETCH_ATOM("_NET_WM_ACTION_FULLSCREEN");
+   FETCH_ATOM("_NET_WM_ACTION_CHANGE_DESKTOP");
+   FETCH_ATOM("_NET_WM_ACTION_CLOSE");
 
-     "_NET_WM_PING",
-     "_NET_WM_SYNC_REQUEST",
-     "_NET_WM_SYNC_REQUEST_COUNTER",
+   FETCH_ATOM("_NET_WM_STRUT");
+   FETCH_ATOM("_NET_WM_STRUT_PARTIAL");
+   FETCH_ATOM("_NET_WM_ICON_GEOMETRY");
+   FETCH_ATOM("_NET_WM_ICON");
+   FETCH_ATOM("_NET_WM_PID");
+   FETCH_ATOM("_NET_WM_HANDLED_ICONS");
+   FETCH_ATOM("_NET_WM_USER_TIME");
+   FETCH_ATOM("_NET_STARTUP_ID");
+   FETCH_ATOM("_NET_FRAME_EXTENTS");
 
-     "_NET_WM_WINDOW_OPACITY",
-     "_NET_WM_WINDOW_SHADOW",
-     "_NET_WM_WINDOW_SHADE",
+   FETCH_ATOM("_NET_WM_PING");
+   FETCH_ATOM("_NET_WM_SYNC_REQUEST");
+   FETCH_ATOM("_NET_WM_SYNC_REQUEST_COUNTER");
 
-     "_NET_STARTUP_INFO_BEGIN",
-     "_NET_STARTUP_INFO",
+   FETCH_ATOM("_NET_WM_WINDOW_OPACITY");
+   FETCH_ATOM("_NET_WM_WINDOW_SHADOW");
+   FETCH_ATOM("_NET_WM_WINDOW_SHADE");
 
-     /* selection atoms */
-     "TARGETS",
-     "CLIPBOARD",
-     "_ECORE_SELECTION_PRIMARY",
-     "_ECORE_SELECTION_SECONDARY",
-     "_ECORE_SELECTION_CLIPBOARD"
-   };
-   int         i;
+   FETCH_ATOM("_NET_STARTUP_INFO_BEGIN");
+   FETCH_ATOM("_NET_STARTUP_INFO");
 
-   for (i = 0; i < ECORE_X_ATOMS_COUNT; i++)
-     ecore_xcb_atom_init_cookies[i] = xcb_intern_atom(_ecore_xcb_conn, 0,
-                                                      strlen(atom_names[i]),
-                                                      atom_names[i]);
+   /* selection atoms */
+   FETCH_ATOM("TARGETS");
+   FETCH_ATOM("CLIPBOARD");
+   FETCH_ATOM("_ECORE_SELECTION_PRIMARY");
+   FETCH_ATOM("_ECORE_SELECTION_SECONDARY");
+   FETCH_ATOM("_ECORE_SELECTION_CLIPBOARD");
 
    /* These atoms are already internally defined */
    ECORE_X_ATOM_SELECTION_PRIMARY   = 1;
