@@ -26,7 +26,7 @@ emotion_decoder_xine_la_SOURCES      = \
 emotion_xine.c \
 emotion_xine.h \
 emotion_xine_vo_out.c
-emotion_decoder_xine_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@ @XINE_LIBS@ -lpthread
+emotion_decoder_xine_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@ @XINE_LIBS@ $(top_builddir)/src/lib/libemotion.la -lpthread
 emotion_decoder_xine_la_LDFLAGS      = -module -avoid-version \
 				       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 emotion_decoder_xine_la_DEPENDENCIES = $(top_builddir)/config.h
@@ -38,7 +38,7 @@ emotion_gstreamer.c \
 emotion_gstreamer.h \
 emotion_gstreamer_pipeline.c \
 emotion_gstreamer_pipeline.h
-emotion_decoder_gstreamer_la_LIBADD  = @EVAS_LIBS@ @ECORE_LIBS@ @GST_LIBS@
+emotion_decoder_gstreamer_la_LIBADD  = @EVAS_LIBS@ @ECORE_LIBS@ @GST_LIBS@ $(top_builddir)/src/lib/libemotion.la
 emotion_decoder_gstreamer_la_LDFLAGS = -module -avoid-version \
 				       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 emotion_decoder_gstreamer_la_DEPENDENCIES = $(top_builddir)/config.h
