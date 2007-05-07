@@ -110,6 +110,10 @@ if BUILD_ECORE_X
 px = ecore-x.pc
 endif
 
+if BUILD_ECORE_X_XCB
+px = ecore-x.pc
+endif
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	ecore.pc $(pcon) $(pconfig) $(pdbus) $(pdfb) $(pevas) \
