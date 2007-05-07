@@ -714,8 +714,8 @@ AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
 
 # set up conditionals
-AM_CONDITIONAL(BUILD_ECORE_X, test "x$have_ecore_x" = "xyes")
-AM_CONDITIONAL(BUILD_ECORE_X_XCB, test "x$have_ecore_x_xcb" = "xyes")
+AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes -a test $have_ecore_x_xcb = no)
+AM_CONDITIONAL(BUILD_ECORE_X_XCB, test $have_ecore_x_xcb = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, test $have_ecore_evas_gl = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, test $have_ecore_evas_xrender = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test $have_ecore_evas_dfb = yes)
