@@ -227,8 +227,10 @@ extern Ecore_X_Atom ECORE_X_ATOM_WINDOW;
 extern Ecore_X_Atom ECORE_X_ATOM_E_FRAME_SIZE;
 extern Ecore_X_Atom ECORE_X_ATOM_WM_SIZE_HINTS;
 
-void _ecore_x_atom_init          (void);
-void _ecore_x_atom_init_finalize (void);
+#define ECORE_X_ATOMS_COUNT 115
+
+void _ecore_x_atom_init          (xcb_intern_atom_cookie_t *);
+void _ecore_x_atom_init_finalize (xcb_intern_atom_cookie_t *);
 
 
 /* damage */

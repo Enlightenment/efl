@@ -11,10 +11,6 @@
  * Functions that operate on atoms.
  */
 
-#define ECORE_X_ATOMS_COUNT 115
-static xcb_intern_atom_cookie_t ecore_xcb_atom_init_cookies[ECORE_X_ATOMS_COUNT];
-
-
 /*********/
 /* Atoms */
 /*********/
@@ -230,12 +226,11 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD       = 0;
    the second one gets the replies and set the atoms. */
 
 #define FETCH_ATOM(s) \
-   ecore_xcb_atom_init_cookies[i] = \
-      xcb_intern_atom(_ecore_xcb_conn, 0, sizeof(s), s); \
+   atom_cookies[i] = xcb_intern_atom(_ecore_xcb_conn, 0, sizeof(s), s); \
    i++
 
 void
-_ecore_x_atom_init(void)
+_ecore_x_atom_init(xcb_intern_atom_cookie_t *atom_cookies)
 {
    int i = 0;
 
@@ -411,7 +406,7 @@ _ecore_x_atom_init(void)
 }
 
 void
-_ecore_x_atom_init_finalize(void)
+_ecore_x_atom_init_finalize(xcb_intern_atom_cookie_t *atom_cookies)
 {
    xcb_intern_atom_reply_t *replies[ECORE_X_ATOMS_COUNT];
    int                      i;
@@ -420,7 +415,7 @@ _ecore_x_atom_init_finalize(void)
       xcb_generic_error_t *error = NULL;
 
       replies[i] = xcb_intern_atom_reply(_ecore_xcb_conn,
-                                         ecore_xcb_atom_init_cookies[i],
+                                         atom_cookies[i],
                                          &error);
       if (!replies[i]) {
         printf ("pas de reply %d\n", i);

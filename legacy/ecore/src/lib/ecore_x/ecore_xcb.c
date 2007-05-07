@@ -182,6 +182,8 @@ ecore_x_init(const char *name)
    const xcb_query_extension_reply_t *reply_xprint;
 #endif /* ECORE_XCB_XPRINT */
 
+   xcb_intern_atom_cookie_t atom_cookies[ECORE_X_ATOMS_COUNT];
+
    if (_ecore_xcb_init_count > 0)
      {
 	_ecore_xcb_init_count++;
@@ -205,8 +207,9 @@ ecore_x_init(const char *name)
     *
     */
 
+
    /* We request the atoms (non blocking) */
-   _ecore_x_atom_init();
+   _ecore_x_atom_init(atom_cookies);
 
    /* We prefetch all the extension data (non blocking) */
 
@@ -277,7 +280,7 @@ ecore_x_init(const char *name)
     */
 
    /* We get the atoms (blocking) */
-   _ecore_x_atom_init_finalize();
+   _ecore_x_atom_init_finalize(atom_cookies);
 
    /* We then ask for the extension data (blocking) */
    reply_big_requests = xcb_get_extension_data(_ecore_xcb_conn, &xcb_big_requests_id);
