@@ -155,6 +155,8 @@ evas_common_cpu_has_feature(unsigned int feature)
 int
 evas_common_cpu_have_cpuid(void)
 {
+   return 0;
+/*   
 #ifdef BUILD_MMX
    unsigned int have_cpu_id;
 
@@ -164,6 +166,7 @@ evas_common_cpu_have_cpuid(void)
 #else
    return 0;
 #endif
+ */
 }
 
 EAPI void
