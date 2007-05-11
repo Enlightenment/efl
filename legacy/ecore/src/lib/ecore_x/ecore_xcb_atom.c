@@ -226,7 +226,7 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD       = 0;
    the second one gets the replies and set the atoms. */
 
 #define FETCH_ATOM(s) \
-   atom_cookies[i] = xcb_intern_atom(_ecore_xcb_conn, 0, sizeof(s), s); \
+   atom_cookies[i] = xcb_intern_atom(_ecore_xcb_conn, 0, strlen(s), s); \
    i++
 
 void
