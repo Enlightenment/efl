@@ -1761,6 +1761,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 		  einfo->info.destination_alpha = 0;
 	       }
 # ifdef HAVE_ECORE_X_XCB
+	     cookie_geom = xcb_get_geometry_unchecked(ecore_x_connection_get(), ee->engine.x.win);
+	     cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
+
              reply_geom = xcb_get_geometry_reply(ecore_x_connection_get(), cookie_geom, NULL);
              reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
 	     einfo->info.visual = xcb_visualtype_get(ecore_x_default_screen_get(), reply_attr->visual);
