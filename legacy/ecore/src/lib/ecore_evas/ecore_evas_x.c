@@ -1717,7 +1717,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 {
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha)))
      return;
-   if (!strcmp(ee->driver, "software_x11"))
+   if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
 #ifdef BUILD_ECORE_X
 # ifdef HAVE_ECORE_X_XCB
@@ -1789,7 +1789,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	  }
 #endif /* BUILD_ECORE_X */
      }
-   else if (!strcmp(ee->driver, "xrender_x11"))
+   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
      {
 #ifdef BUILD_ECORE_EVAS_XRENDER
 # ifdef HAVE_ECORE_X_XCB
