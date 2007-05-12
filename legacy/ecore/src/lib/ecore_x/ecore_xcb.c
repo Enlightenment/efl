@@ -830,7 +830,6 @@ _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         response_type = _ecore_xcb_event_buffered->response_type & ~0x80;
         if (response_type < _ecore_xcb_event_handlers_num)
           {
-             printf ("event buffered: %d\n", response_type);
              if (_ecore_xcb_event_handlers[response_type])
                _ecore_xcb_event_handlers[response_type] (_ecore_xcb_event_buffered);
           }
@@ -838,7 +837,6 @@ _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    while ((ev = xcb_poll_for_event(c)))
      {
         response_type = ev->response_type & ~0x80;
-        printf ("event non buffered: %d\n", response_type);
         if (response_type < _ecore_xcb_event_handlers_num)
 	  {
              if (_ecore_xcb_event_handlers[response_type])
