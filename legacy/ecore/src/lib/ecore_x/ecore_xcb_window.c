@@ -1725,8 +1725,8 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
 
          iter_forminfo = xcb_render_query_pict_formats_formats_iterator(rep_pict_format);
          for (; iter_forminfo.rem; xcb_render_pictforminfo_next(&iter_forminfo)) {
-            if ((iter_forminfo.data->type == XCB_RENDER_PICT_TYPE_DIRECT) &&
-                (iter_forminfo.data->direct.alpha_mask)) {
+            if (iter_forminfo.data->type == XCB_RENDER_PICT_TYPE_DIRECT &&
+                iter_forminfo.data->direct.alpha_mask && iter_forminfo.data->depth == 32) {
                pict_format = iter_forminfo.data->id;
                break;
             }
