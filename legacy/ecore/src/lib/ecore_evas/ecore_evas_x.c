@@ -1715,8 +1715,18 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 static void
 _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 {
+# ifdef HAVE_ECORE_X_XCB
+   xcb_get_geometry_cookie_t          cookie_geom;
+   xcb_get_window_attributes_cookie_t cookie_attr;
+   xcb_get_geometry_reply_t          *reply_geom;
+   xcb_get_window_attributes_reply_t *reply_attr;
+#else
+   XWindowAttributes att;
+#endif /* HAVE_ECORE_X_XCB */
+
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha)))
      return;
+
    if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
 #ifdef BUILD_ECORE_X
@@ -1729,67 +1739,60 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
 #endif /* HAVE_ECORE_X_XCB */
-	if (einfo)
+
+	if (!einfo) return;
+
+	ee->shaped = 0;
+	ee->alpha = alpha;
+	ecore_x_window_del(ee->engine.x.win);
+	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	if (ee->alpha)
 	  {
-# ifdef HAVE_ECORE_X_XCB
-             xcb_get_geometry_cookie_t          cookie_geom;
-             xcb_get_window_attributes_cookie_t cookie_attr;
-             xcb_get_geometry_reply_t          *reply_geom;
-             xcb_get_window_attributes_reply_t *reply_attr;
-#else
-	     XWindowAttributes att;
-#endif /* HAVE_ECORE_X_XCB */
-
-	     ee->shaped = 0;
-	     ee->alpha = alpha;
-	     ecore_x_window_del(ee->engine.x.win);
-	     ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
-	     if (ee->alpha)
-	       {
-		  if (ee->prop.override)
-		    ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  else
-		    ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  einfo->info.destination_alpha = 1;
-	       }
+	     if (ee->prop.override)
+	       ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
-	       {
-		  if (ee->prop.override)
-		    ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  else
-		    ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  einfo->info.destination_alpha = 0;
-	       }
-# ifdef HAVE_ECORE_X_XCB
-	     cookie_geom = xcb_get_geometry_unchecked(ecore_x_connection_get(), ee->engine.x.win);
-	     cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
-
-             reply_geom = xcb_get_geometry_reply(ecore_x_connection_get(), cookie_geom, NULL);
-             reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
-	     einfo->info.visual = xcb_visualtype_get(ecore_x_default_screen_get(), reply_attr->visual);
-	     einfo->info.colormap = reply_attr->colormap;
-	     einfo->info.depth = reply_geom->depth;
-             free(reply_geom);
-             free(reply_attr);
-# else
-	     XGetWindowAttributes(ecore_x_display_get(), ee->engine.x.win, &att);
-	     einfo->info.visual = att.visual;
-	     einfo->info.colormap = att.colormap;
-	     einfo->info.depth = att.depth;
-# endif /* HAVE_ECORE_X_XCB */
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
-	     ee->engine.x.mask = 0;
-	     einfo->info.mask = 0;
-	     einfo->info.drawable = ee->engine.x.win;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-	     ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
-	     ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
-	     if (ee->prop.borderless)
-	       ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
-	     if (ee->visible) ecore_x_window_show(ee->engine.x.win);
-	     if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
+	       ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	  }
+	else
+	  {
+	     if (ee->prop.override)
+	       ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     else
+	       ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	  }
+
+	einfo->info.destination_alpha = alpha;
+
+# ifdef HAVE_ECORE_X_XCB
+	cookie_geom = xcb_get_geometry_unchecked(ecore_x_connection_get(), ee->engine.x.win);
+	cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
+
+	reply_geom = xcb_get_geometry_reply(ecore_x_connection_get(), cookie_geom, NULL);
+	reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
+	einfo->info.visual = xcb_visualtype_get(ecore_x_default_screen_get(), reply_attr->visual);
+	einfo->info.colormap = reply_attr->colormap;
+	einfo->info.depth = reply_geom->depth;
+	free(reply_geom);
+	free(reply_attr);
+# else
+	XGetWindowAttributes(ecore_x_display_get(), ee->engine.x.win, &att);
+	einfo->info.visual = att.visual;
+	einfo->info.colormap = att.colormap;
+	einfo->info.depth = att.depth;
+# endif /* HAVE_ECORE_X_XCB */
+
+	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	ee->engine.x.mask = 0;
+	einfo->info.mask = 0;
+	einfo->info.drawable = ee->engine.x.win;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
+	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	if (ee->prop.borderless)
+	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
+	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
+	if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
 #endif /* BUILD_ECORE_X */
      }
    else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
@@ -1804,59 +1807,56 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
 # endif /* HAVE_ECORE_X_XCB */
-	if (einfo)
+
+	if (!einfo) return;
+
+# ifdef HAVE_ECORE_X_XCB
+	cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
+# endif /* HAVE_ECORE_X_XCB */
+
+	ee->shaped = 0;
+	ee->alpha = alpha;
+	ecore_x_window_del(ee->engine.x.win);
+	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	if (ee->alpha)
 	  {
-# ifdef HAVE_ECORE_X_XCB
-             xcb_get_window_attributes_cookie_t cookie_attr;
-             xcb_get_window_attributes_reply_t *reply_attr;
-
-	     cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
-# else
-	     XWindowAttributes att;
-# endif /* HAVE_ECORE_X_XCB */
-
-	     ee->shaped = 0;
-	     ee->alpha = alpha;
-	     ecore_x_window_del(ee->engine.x.win);
-	     ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
-	     if (ee->alpha)
-	       {
-		  if (ee->prop.override)
-		    ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  else
-		    ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  einfo->info.destination_alpha = 1;
-	       }
+	     if (ee->prop.override)
+	       ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
-	       {
-		  if (ee->prop.override)
-		    ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  else
-		    ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-		  einfo->info.destination_alpha = 0;
-	       }
-# ifdef HAVE_ECORE_X_XCB
-             reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
-
-	     einfo->info.visual = reply_attr->visual;
-             free(reply_attr);
-# else
-	     XGetWindowAttributes(ecore_x_display_get(), ee->engine.x.win, &att);
-	     einfo->info.visual = att.visual;
-# endif /* HAVE_ECORE_X_XCB */
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
-	     ee->engine.x.mask = 0;
-	     einfo->info.mask = 0;
-	     einfo->info.drawable = ee->engine.x.win;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-	     ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
-	     ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
-	     if (ee->prop.borderless)
-	       ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
-	     if (ee->visible) ecore_x_window_show(ee->engine.x.win);
-	     if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
+	       ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	  }
+	else
+	  {
+	     if (ee->prop.override)
+	       ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     else
+	       ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	  }
+
+	einfo->info.destination_alpha = alpha;
+
+# ifdef HAVE_ECORE_X_XCB
+	reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
+
+	einfo->info.visual = reply_attr->visual;
+	free(reply_attr);
+# else
+	XGetWindowAttributes(ecore_x_display_get(), ee->engine.x.win, &att);
+	einfo->info.visual = att.visual;
+# endif /* HAVE_ECORE_X_XCB */
+
+	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	ee->engine.x.mask = 0;
+	einfo->info.mask = 0;
+	einfo->info.drawable = ee->engine.x.win;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
+	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	if (ee->prop.borderless)
+	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
+	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
+	if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
 #endif
      }
 }
