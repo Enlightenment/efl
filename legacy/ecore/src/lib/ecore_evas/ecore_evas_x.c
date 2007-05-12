@@ -1810,10 +1810,6 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	if (!einfo) return;
 
-# ifdef HAVE_ECORE_X_XCB
-	cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
-# endif /* HAVE_ECORE_X_XCB */
-
 	ee->shaped = 0;
 	ee->alpha = alpha;
 	ecore_x_window_del(ee->engine.x.win);
@@ -1836,6 +1832,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	einfo->info.destination_alpha = alpha;
 
 # ifdef HAVE_ECORE_X_XCB
+	cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
 	reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
 
 	einfo->info.visual = reply_attr->visual;
