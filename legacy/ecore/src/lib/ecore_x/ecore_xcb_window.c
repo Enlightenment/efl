@@ -1762,7 +1762,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
      return win;
 
    colormap = xcb_generate_id(_ecore_xcb_conn);
-   xcb_create_colormap(_ecore_xcb_conn, XCB_COLORMAP_ALLOC_NONE, colormap, win, vis);
+   xcb_create_colormap_checked(_ecore_xcb_conn, XCB_COLORMAP_ALLOC_NONE, colormap, parent, vis);
 
    value_mask =
      XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL  | XCB_CW_BIT_GRAVITY       |
