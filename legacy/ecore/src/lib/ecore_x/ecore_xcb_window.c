@@ -1654,7 +1654,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                                   uint8_t        save_under)
 {
    uint32_t                               value_list[10];
-   xcb_screen_iterator_t                  iter_screen;
+   xcb_depth_iterator_t                   iter_depth;
    xcb_visualtype_iterator_t              iter_visualtype;
    xcb_render_query_pict_formats_cookie_t cookie_pict_format;
    xcb_render_query_pict_formats_reply_t *rep_pict_format;
@@ -1702,19 +1702,12 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
      return win;
 
    /* we get the X visual types */
-   iter_screen = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
-   for (; iter_screen.rem; xcb_screen_next(&iter_screen)) {
-      if (iter_screen.data == screen) {
-         xcb_depth_iterator_t iter_depth;
-
-         iter_depth = xcb_screen_allowed_depths_iterator(iter_screen.data);
-         for (; iter_depth.rem; xcb_depth_next(&iter_depth)) {
-            if (iter_depth.data->depth == 32) {
-               iter_visualtype = xcb_depth_visuals_iterator(iter_depth.data);
-               break;
-            }
-         }
-      }
+   iter_depth = xcb_screen_allowed_depths_iterator(screen);
+   for (; iter_depth.rem; xcb_depth_next(&iter_depth)) {
+	if (iter_depth.data->depth == 32) {
+	     iter_visualtype = xcb_depth_visuals_iterator(iter_depth.data);
+	     break;
+	}
    }
 
    /* we get the X render visual id */
