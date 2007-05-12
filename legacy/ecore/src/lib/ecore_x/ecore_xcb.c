@@ -814,35 +814,34 @@ ecore_x_current_time_get(void)
    return _ecore_xcb_event_last_time;
 }
 
+static void
+handle_event(xcb_generic_event_t *ev)
+{
+   uint8_t response_type = ev->response_type & ~0x80;
+
+   if (response_type < _ecore_xcb_event_handlers_num)
+     {
+	if (_ecore_xcb_event_handlers[response_type])
+	  _ecore_xcb_event_handlers[response_type] (ev);
+     }
+}
+
 static int
 _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    xcb_connection_t    *c;
    xcb_generic_event_t *ev;
-   uint8_t              response_type;
 
    c = (xcb_connection_t *)data;
 
 /*    printf ("nbr events: %d\n", _ecore_xcb_event_handlers_num); */
+
    /* We check if _ecore_xcb_event_buffered is NULL or not */
    if (_ecore_xcb_event_buffered)
-     {
-        response_type = _ecore_xcb_event_buffered->response_type & ~0x80;
-        if (response_type < _ecore_xcb_event_handlers_num)
-          {
-             if (_ecore_xcb_event_handlers[response_type])
-               _ecore_xcb_event_handlers[response_type] (_ecore_xcb_event_buffered);
-          }
-     }
+     handle_event(_ecore_xcb_event_buffered);
+
    while ((ev = xcb_poll_for_event(c)))
-     {
-        response_type = ev->response_type & ~0x80;
-        if (response_type < _ecore_xcb_event_handlers_num)
-	  {
-             if (_ecore_xcb_event_handlers[response_type])
-	       _ecore_xcb_event_handlers[response_type] (ev);
-	  }
-     }
+     handle_event(ev);
 
    return 1;
 }
