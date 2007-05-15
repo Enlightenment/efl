@@ -598,7 +598,7 @@ static const char *_escapes[] =
      "&phi;", "φ",
      "&chi;", "χ",
      "&psi;", "ψ",
-     "&omega;", "ω"
+     "&omega;", "ω",
      "&Alpha;", "Α",
      "&Beta;", "Β",
      "&Gamma;", "Γ",
