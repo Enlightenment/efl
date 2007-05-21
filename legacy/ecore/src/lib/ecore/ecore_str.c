@@ -23,7 +23,13 @@
 #include "ecore_private.h"
 #include "Ecore_Data.h"
 
-/*
+/**
+ * @param dst the destination
+ * @param src the source
+ * @param siz the size of the destination
+ * @return the length of the source string
+ * @brief copy a c-string
+ *
  * Copy src to string dst of size siz.  At most siz-1 characters
  * will be copied.  Always NUL terminates (unless siz == 0).
  * Returns strlen(src); if retval >= siz, truncation occurred.
@@ -61,7 +67,13 @@ ecore_strlcpy(char *dst, const char *src, size_t siz)
 #endif
 }
 
-/*
+/**
+ * @param dst the destination
+ * @param src the source
+ * @param siz the size of the destination
+ * @return the length of the source string plus MIN(siz, strlen(initial dst)) 
+ * @brief append a c-string
+ *
  * Appends src to string dst of size siz (unlike strncat, siz is the
  * full size of dst, not space left).  At most siz-1 characters
  * will be copied.  Always NUL terminates (unless siz <= strlen(dst)).
@@ -96,12 +108,17 @@ ecore_strlcat(char *dst, const char *src, size_t siz)
         return(dlen + (s - src));        /* count does not include NUL */
 }
 
-
+/**
+ * @param str the string to work with
+ * @param prefix the prefix to check for
+ * @return true if str has the given prefix
+ * @brief checks if the string has the given prefix
+ */
 int
 ecore_str_has_prefix(const char *str, const char *prefix)
 {
-   int str_len;
-   int prefix_len;
+   size_t str_len;
+   size_t prefix_len;
 
    CHECK_PARAM_POINTER_RETURN("str", str, 0);
    CHECK_PARAM_POINTER_RETURN("prefix", prefix, 0);
@@ -114,11 +131,17 @@ ecore_str_has_prefix(const char *str, const char *prefix)
    return (strncmp(str, prefix, prefix_len) == 0);
 }
 
+/**
+ * @param str the string to work with
+ * @param suffix the suffix to check for
+ * @return true if str has the given suffix
+ * @brief checks if the string has the given suffix
+ */
 int
 ecore_str_has_suffix(const char *str, const char *suffix)
 {
-   int str_len;
-   int suffix_len;
+   size_t str_len;
+   size_t suffix_len;
 
    CHECK_PARAM_POINTER_RETURN("str", str, 0);
    CHECK_PARAM_POINTER_RETURN("suffix", suffix, 0);
