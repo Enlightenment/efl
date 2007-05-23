@@ -398,7 +398,7 @@ extern "C" {
    struct _Ecore_Tree_Node {
       
       /* The actual data for each node */
-      void *key;
+      const void *key;
       void *value;
       
       /* Pointers to surrounding nodes */
@@ -436,17 +436,17 @@ extern "C" {
    EAPI int ecore_tree_is_empty(Ecore_Tree * tree);
    
    /* Retrieve the value associated with key */
-   EAPI void *ecore_tree_get(Ecore_Tree * tree, void *key);
-   EAPI Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key);
+   EAPI void *ecore_tree_get(Ecore_Tree * tree, const void *key);
+   EAPI Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, const void *key);
    /* Retrieve the value of node with key greater than or equal to key */
-   EAPI void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key);
+   EAPI void *ecore_tree_get_closest_larger(Ecore_Tree * tree, const void *key);
    /* Retrieve the value of node with key less than or equal to key */
-   EAPI void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key);
+   EAPI void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, const void *key);
    
    /* Set the value associated with key to value */
-   EAPI int ecore_tree_set(Ecore_Tree * tree, void *key, void *value);
+   EAPI int ecore_tree_set(Ecore_Tree * tree, const void *key, void *value);
    /* Remove the key from the tree */
-   EAPI int ecore_tree_remove(Ecore_Tree * tree, void *key);
+   EAPI int ecore_tree_remove(Ecore_Tree * tree, const void *key);
    
    /* Add a node to the tree */
    EAPI int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node);
@@ -471,9 +471,9 @@ extern "C" {
    EAPI int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb free_data);
    
    /* Set the node's key to key */
-   EAPI int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key);
+   EAPI int ecore_tree_node_key_set(Ecore_Tree_Node * node, const void *key);
    /* Retrieve the key in node */
-   EAPI void *ecore_tree_node_key_get(Ecore_Tree_Node * node);
+   EAPI const void *ecore_tree_node_key_get(Ecore_Tree_Node * node);
    
    /* Set the node's value to value */
    EAPI int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value);

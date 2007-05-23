@@ -7,8 +7,8 @@
 
 /* Utility functions for searching the tree and returning a node, or its
  * parent */
-static Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, void *key);
-static Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, void *key);
+static Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, const void *key);
+static Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, const void *key);
 
 /* Balancing functions, keep the tree balanced within a one node height
  * difference */
@@ -185,7 +185,7 @@ ecore_tree_node_value_get(Ecore_Tree_Node *node)
  * @return Returns TRUE if the node is set successfully, FALSE if not.
  */
 EAPI int 
-ecore_tree_node_key_set(Ecore_Tree_Node *node, void *key)
+ecore_tree_node_key_set(Ecore_Tree_Node *node, const void *key)
 {
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
@@ -200,10 +200,10 @@ ecore_tree_node_key_set(Ecore_Tree_Node *node, void *key)
  *
  * @return Returns NULL if an error occurs, otherwise the key is returned
  */
-EAPI void *
+EAPI const void *
 ecore_tree_node_key_get(Ecore_Tree_Node *node)
 {
-   void *ret;
+   const void *ret;
 
    CHECK_PARAM_POINTER_RETURN("node", node, NULL);
    ret = node->key;
@@ -243,7 +243,7 @@ ecore_tree_destroy(Ecore_Tree *tree)
  * @return Returns the node corresponding to the key if found, otherwise NULL.
  */
 EAPI Ecore_Tree_Node *
-ecore_tree_get_node(Ecore_Tree *tree, void *key)
+ecore_tree_get_node(Ecore_Tree *tree, const void *key)
 {
    Ecore_Tree_Node *ret;
 
@@ -261,7 +261,7 @@ ecore_tree_get_node(Ecore_Tree *tree, void *key)
  * @return Returns the value corresponding to the key if found, otherwise NULL.
  */
 EAPI void *
-ecore_tree_get(Ecore_Tree *tree, void *key)
+ecore_tree_get(Ecore_Tree *tree, const void *key)
 {
    void *ret;
    Ecore_Tree_Node *node;
@@ -282,7 +282,7 @@ ecore_tree_get(Ecore_Tree *tree, void *key)
  *         equal to the key
  */
 EAPI void *
-ecore_tree_get_closest_larger(Ecore_Tree *tree, void *key)
+ecore_tree_get_closest_larger(Ecore_Tree *tree, const void *key)
 {
    Ecore_Tree_Node *node;
 
@@ -309,7 +309,7 @@ ecore_tree_get_closest_larger(Ecore_Tree *tree, void *key)
  * @return Returns NULL if no valid nodes, otherwise the node <= key
  */
 EAPI void *
-ecore_tree_get_closest_smaller(Ecore_Tree *tree, void *key)
+ecore_tree_get_closest_smaller(Ecore_Tree *tree, const void *key)
 {
    Ecore_Tree_Node *node;
 
@@ -334,7 +334,7 @@ ecore_tree_get_closest_smaller(Ecore_Tree *tree, void *key)
  * @return TRUE if successful, FALSE if not.
  */
 EAPI int 
-ecore_tree_set(Ecore_Tree *tree, void *key, void *value)
+ecore_tree_set(Ecore_Tree *tree, const void *key, void *value)
 {
    Ecore_Tree_Node *node = NULL;
 
@@ -521,7 +521,7 @@ ecore_tree_remove_node(Ecore_Tree *tree, Ecore_Tree_Node *node)
  * @return TRUE on a successful remove, FALSE otherwise.
  */
 EAPI int 
-ecore_tree_remove(Ecore_Tree *tree, void *key)
+ecore_tree_remove(Ecore_Tree *tree, const void *key)
 {
    Ecore_Tree_Node *node;
 
@@ -598,7 +598,7 @@ ecore_tree_for_each_node(Ecore_Tree *tree, Ecore_For_Each for_each_func, void *u
 
 /* Find the parent for the key */
 static Ecore_Tree_Node *
-tree_node_find_parent(Ecore_Tree *tree, void *key)
+tree_node_find_parent(Ecore_Tree *tree, const void *key)
 {
    Ecore_Tree_Node *parent, *travel;
 
@@ -635,7 +635,7 @@ tree_node_find_parent(Ecore_Tree *tree, void *key)
 
 /* Search for the node with a specified key */
 static Ecore_Tree_Node *
-tree_node_find(Ecore_Tree *tree, void *key)
+tree_node_find(Ecore_Tree *tree, const void *key)
 {
    int compare;
    Ecore_Tree_Node *node;
