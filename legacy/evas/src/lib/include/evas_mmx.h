@@ -582,6 +582,7 @@ typedef	union {
 #define CPUID_SSE  (1 << 25) /* flags: xmm */
 #define CPUID_SSE2 (1 << 26) /* flags: ? */
 
+/*
 #ifdef __amd64
 #define have_cpuid(cpuid_ret) \
          __asm__ __volatile__ ( \
@@ -661,6 +662,8 @@ typedef	union {
 				  : "=m" (cpuid_ret)           \
 				  );
 #endif
+ */
+
 #define prefetch(var) \
 	__asm__ __volatile__ ( \
 				 "prefetchnta (%0) \n" \

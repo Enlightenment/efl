@@ -1101,21 +1101,18 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
      memcpy(data2, data, size);
 
    /* Does this node already exist? */
-   if (ef->mode == EET_FILE_MODE_READ_WRITE)
+   for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
      {
-	for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
+	/* if it matches */
+	if ((efn->name) && (eet_string_match(efn->name, name)))
 	  {
-	     /* if it matches */
-	     if ((efn->name) && (eet_string_match(efn->name, name)))
-	       {
-		  free(efn->data);
-		  efn->compression = !!compress;
-		  efn->size = data_size;
-		  efn->data_size = size;
-		  efn->data = data2;
-		  exists_already = 1;
-		  break;
-	       }
+	     free(efn->data);
+	     efn->compression = !!compress;
+	     efn->size = data_size;
+	     efn->data_size = size;
+	     efn->data = data2;
+	     exists_already = 1;
+	     break;
 	  }
      }
    if (!exists_already)
