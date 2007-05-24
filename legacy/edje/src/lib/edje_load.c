@@ -145,6 +145,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       }
 	     rp->drag.step.x = ep->dragable.step_x;
 	     rp->drag.step.y = ep->dragable.step_y;
+	     rp->gradient_id = -1;
 	  }
 	if (n > 0)
 	  {

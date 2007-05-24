@@ -1339,7 +1339,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	     if (p3.gradient.type && p3.gradient.type[0])
 	       evas_object_gradient_type_set(ep->object, p3.gradient.type, NULL);
 
-	     if (ed->file->spectrum_dir && ed->file->spectrum_dir->entries)
+	     if (ed->file->spectrum_dir && ed->file->spectrum_dir->entries && p3.gradient.id != ep->gradient_id)
 	       {
 		  Edje_Spectrum_Directory_Entry *se;
 		  Evas_List *l;
@@ -1347,7 +1347,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		  se = evas_list_nth(ed->file->spectrum_dir->entries, p3.gradient.id);
 		  if (se) 
 		    {
-		       // XXX only do this if we NEED to (e.g. gradient changed)
 		       evas_object_gradient_clear(ep->object);
 		       for (l = se->color_list; l; l = l->next)
 			 {
@@ -1358,6 +1357,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 			    evas_object_gradient_alpha_stop_add(ep->object,
 								sc->a, sc->d);
 			 }
+		       ep->gradient_id = p3.gradient.id;
 		    }
 	       }
 	  }

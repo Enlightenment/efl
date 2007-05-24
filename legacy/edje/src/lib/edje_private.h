@@ -674,6 +674,9 @@ struct _Edje_Real_Part
       Edje_Real_Part        *source;
       Edje_Real_Part        *text_source;
    } text;
+
+   int                       gradient_id;
+
    double                    description_pos;
    Edje_Part_Description    *chosen_description;
    struct {
