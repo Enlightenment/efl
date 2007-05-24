@@ -834,8 +834,11 @@ _edje_part_recalc_single(Edje *ed,
 	if (flags & FLAG_X)
 	  {
 	     v = ep->drag.size.x * confine_to->w;
-	     if ((((minw > 0) && (v > minw)) || (minw <= 0)) &&
-		 (((maxw >= 0) && (v < maxw)) || (maxw < 0))) params->w = v;
+
+	     if ((minw > 0) && (v < minw)) params->w = minw;
+	     else if ((maxw >= 0) && (v > maxw)) params->w = maxw;
+	     else params->w = v;
+
 	     offset = (ep->drag.x * (confine_to->w - params->w)) +
 	       ep->drag.tmp.x;
 	     if (ep->part->dragable.step_x > 0)
@@ -856,8 +859,11 @@ _edje_part_recalc_single(Edje *ed,
 	if (flags & FLAG_Y)
 	  {
 	     v = ep->drag.size.y * confine_to->h;
-	     if ((((minh > 0) && (v > minh)) || (minh <= 0)) &&
-		 (((maxh >= 0) && (v < maxh)) || (maxh < 0))) params->h = v;
+
+	     if ((minh > 0) && (v < minh)) params->h = minh;
+	     else if ((maxh >= 0) && (v > maxh)) params->h = maxh;
+	     else params->h = v;
+
 	     offset = (ep->drag.y * (confine_to->h - params->h)) +
 	       ep->drag.tmp.y;
 	     if (ep->part->dragable.step_y > 0)
