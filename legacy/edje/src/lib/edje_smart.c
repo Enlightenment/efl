@@ -91,7 +91,7 @@ static void
 _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 {
    Edje *ed;
-   Evas_List *l;
+   int i;
    
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
@@ -100,12 +100,12 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
    ed->y = y;
 //   evas_object_move(ed->clipper, ed->x, ed->y);
    
-   for (l = ed->parts; l; l = l->next)
+   for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *ep;
 	Evas_Coord ox, oy;
 	
-	ep = l->data;
+	ep = ed->table_parts[i];
 	evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
 	evas_object_move(ep->object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
 	if (ep->swallowed_object)

@@ -32,6 +32,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 {
    Edje *ed;
    int n;
+   Evas_List *parts = NULL;
    Evas_List *old_swallows;
    
    ed = _edje_fetch(obj);
@@ -60,6 +61,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    if (ed->collection)
      {
 	Evas_List *l;
+	int i;
 	int errors = 0;
 
 	/* colorclass stuff */
@@ -94,7 +96,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	          return 0;
 	       }
 	     rp->part = ep;
-	     ed->parts = evas_list_append(ed->parts, rp);
+	     parts = evas_list_append(parts, rp);
 	     rp->param1.description = ep->default_desc;
 	     rp->chosen_description = rp->param1.description;
 	     if (!rp->param1.description)
@@ -149,30 +151,33 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	  }
 	if (n > 0)
 	  {
-	     /* FIXME: keeping a table AND a list is just bad - nuke list */
+	     Edje_Real_Part *rp;
 	     ed->table_parts = malloc(sizeof(Edje_Real_Part *) * n);
 	     ed->table_parts_size = n;
 	     /* FIXME: check malloc return */
 	     n = 0;
-	     for (l = ed->parts; l; l = l->next)
+	     for (l = parts; l; l = l->next)
 	       {
-		  Edje_Real_Part *rp;
-		  
 		  rp = l->data;
 		  ed->table_parts[n] = rp;
 		  n++;
+	       }
+	     evas_list_free(parts);
+	     for (i = 0; i < ed->table_parts_size; i++)
+	       {
+		  rp = ed->table_parts[i];
 		  if (rp->param1.description->rel1.id_x >= 0)
-		    rp->param1.rel1_to_x = evas_list_nth(ed->parts, rp->param1.description->rel1.id_x);
+		    rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->rel1.id_x % ed->table_parts_size];
 		  if (rp->param1.description->rel1.id_y >= 0)
-		    rp->param1.rel1_to_y = evas_list_nth(ed->parts, rp->param1.description->rel1.id_y);
+		    rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->rel1.id_y % ed->table_parts_size];
 		  if (rp->param1.description->rel2.id_x >= 0)
-		    rp->param1.rel2_to_x = evas_list_nth(ed->parts, rp->param1.description->rel2.id_x);
+		    rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->rel2.id_x % ed->table_parts_size];
 		  if (rp->param1.description->rel2.id_y >= 0)
-		    rp->param1.rel2_to_y = evas_list_nth(ed->parts, rp->param1.description->rel2.id_y);
+		    rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->rel2.id_y % ed->table_parts_size];
 		  _edje_text_part_on_add_clippers(ed, rp);
 		  if (rp->part->clip_to_id >= 0)
 		    {
-		       rp->clip_to = evas_list_nth(ed->parts, rp->part->clip_to_id);
+		       rp->clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
 		       if (rp->clip_to)
 			 {
 			    evas_object_pass_events_set(rp->clip_to->object, 1);
@@ -180,14 +185,13 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 			 }
 		    }
 		  if (rp->part->dragable.confine_id >= 0)
-		    rp->confine_to = evas_list_nth(ed->parts, rp->part->dragable.confine_id);
+		    rp->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
 		  
 		  /* replay events for dragable */
 		  if (rp->part->dragable.events_id >= 0)
 		    {
 		       rp->events_to = 
-			  evas_list_nth(ed->parts,
-				rp->part->dragable.events_id);
+			  ed->table_parts[rp->part->dragable.events_id % ed->table_parts_size];
 		       /* events_to may be used only with dragable */
 		       if (!rp->events_to->part->dragable.x &&
 			   !rp->events_to->part->dragable.y)
@@ -205,9 +209,9 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		       rp->param1.description->text.id_text_source = -1;
 		    }
 		  if (rp->param1.description->text.id_source >= 0)
-		    rp->text.source = evas_list_nth(ed->parts, rp->param1.description->text.id_source);
+		    rp->text.source = ed->table_parts[rp->param1.description->text.id_source % ed->table_parts_size];
 		  if (rp->param1.description->text.id_text_source >= 0)
-		    rp->text.text_source = evas_list_nth(ed->parts, rp->param1.description->text.id_text_source);
+		    rp->text.text_source = ed->table_parts[rp->param1.description->text.id_text_source % ed->table_parts_size];
 	       }
 	  }
 	n = evas_list_count(ed->collection->programs);
@@ -232,11 +236,11 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_freeze(ed);
 	if (ed->collection->script) _edje_embryo_script_init(ed);
 	_edje_var_init(ed);
-	for (l = ed->parts; l; l = l->next)
+	for (i = 0; i < ed->table_parts_size; i++)
 	  {
 	     Edje_Real_Part *rp;
 	     
-	     rp = l->data;
+	     rp = ed->table_parts[i];
 	     evas_object_show(rp->object);
 	     if (_edje_block_break(ed)) break;
 	     if (rp->part->dragable.x < 0) rp->drag.val.x = 1.0;
@@ -479,14 +483,14 @@ static Evas_List *
 _edje_swallows_collect(Edje *ed)
 {
    Evas_List *swallows = NULL;
-   Evas_List *l;
-   if (!ed->file || !ed->parts) return NULL;
+   int i;
+   if (!ed->file || !ed->table_parts) return NULL;
 
-   for (l = ed->parts; l; l = l->next)
+   for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp;
 
-	rp = l->data;
+	rp = ed->table_parts[i];
 	if (!rp->swallowed_object) continue;
 	swallows = evas_list_append(swallows, evas_stringshare_add(rp->part->name));
 	swallows = evas_list_append(swallows, rp->swallowed_object);
@@ -522,14 +526,14 @@ _edje_file_del(Edje *ed)
 	_edje_cache_file_unref(ed->file);
 	ed->file = NULL;
      }
-   if (ed->parts)
+   if (ed->table_parts)
      {
-	while (ed->parts)
+	int i;
+	for (i = 0; i < ed->table_parts_size; i++)
 	  {
 	     Edje_Real_Part *rp;
 
-	     rp = ed->parts->data;
-	     ed->parts = evas_list_remove(ed->parts, rp);
+	     rp = ed->table_parts[i];
 	     if (rp->object)
 	       {
 		  _edje_text_real_part_on_del(ed, rp);
@@ -562,7 +566,6 @@ _edje_file_del(Edje *ed)
 
 	     free(rp);
 	  }
-	ed->parts = NULL;
      }
    if (ed->actions)
      {

@@ -585,7 +585,6 @@ struct _Edje
    Evas_Object          *clipper; /* a big rect to clip this Edje to */
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
-   Evas_List            *parts; /* private list of parts */
    Evas_List            *actions; /* currently running actions */   
    Evas_List            *callbacks;
    Evas_List            *pending_actions;

@@ -75,7 +75,7 @@ _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep)
 	o = l->data;
 	if (ep->part->clip_to_id >= 0)
 	  {
-	     ep->clip_to = evas_list_nth(ed->parts, ep->part->clip_to_id);
+	     ep->clip_to = ed->table_parts[ep->part->clip_to_id % ed->table_parts_size];
 	     if (ep->clip_to)
 	       {
 		  evas_object_pass_events_set(ep->clip_to->object, 1);

@@ -1022,15 +1022,15 @@ EAPI void
 edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 {
    Edje *ed;
-   Evas_List *l;
+   int i;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!obj_swallow)) return;
-   for (l = ed->parts; l; l = l->next)
+   for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp;
 	
-	rp = l->data;
+	rp = ed->table_parts[i];
 	if (rp->swallowed_object == obj_swallow)
 	  {
 	     evas_object_smart_member_del(rp->swallowed_object);
@@ -1195,7 +1195,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    ok = 1;
    while (ok)
      {
-	Evas_List *l;
+	int i;
 	
 	ok = 0;
 	ed->dirty = 1;
@@ -1206,13 +1206,13 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	     maxh = 0;
 	  }
 	pep = NULL;
-	for (l = ed->parts; l; l = l->next)
+	for (i = 0; i < ed->table_parts_size; i++)
 	  {
 	     Edje_Real_Part *ep;
 	     int w, h;
 	     int didw;
 	
-	     ep = l->data;
+	     ep = ed->table_parts[i];
 	     w = ep->w - ep->req.w;
 	     h = ep->h - ep->req.h;
 	     didw = 0;
@@ -1710,13 +1710,13 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
 Edje_Real_Part *
 _edje_real_part_get(Edje *ed, const char *part)
 {
-   Evas_List *l;
+   int i;
 
-   for (l = ed->parts; l; l = l->next)
+   for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp;
 	
-	rp = l->data;
+	rp = ed->table_parts[i];
 	if ((rp->part->name) && (!strcmp(rp->part->name, part))) return rp;
      }
    return NULL;

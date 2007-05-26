@@ -137,7 +137,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 void
 _edje_recalc(Edje *ed)
 {
-   Evas_List *l;
+   int i;
    
    if (!ed->dirty) return;
    if (ed->freeze)
@@ -145,19 +145,19 @@ _edje_recalc(Edje *ed)
 	ed->recalc = 1;
 	if (!ed->calc_only) return;
      }
-   for (l = ed->parts; l; l = l->next)
+   for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *ep;
 	
-	ep = l->data;
+	ep = ed->table_parts[i];
 	ep->calculated = FLAG_NONE;
 	ep->calculating = FLAG_NONE;
      }
-   for (l = ed->parts; l; l = l->next)
+   for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *ep;
 	
-	ep = l->data;
+	ep = ed->table_parts[i];
 	if (ep->calculated != FLAG_XY)
 	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
      }
