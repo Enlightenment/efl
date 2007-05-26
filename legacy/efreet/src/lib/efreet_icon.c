@@ -340,6 +340,7 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme, const char *cache_key,
                                                 const char *size)
 {
     Efreet_Icon *value;
+   static int recurse = 0;
 
     efreet_icon_theme_cache_check(theme);
 
@@ -350,6 +351,10 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme, const char *cache_key,
     /* go no further if this theme is fake */
     if (theme->fake || !theme->valid) return NULL;
 
+    /* limit recursion in finding themes and inherited themes to 256 levels */
+    if (recurse > 256) return NULL;
+    recurse++;
+   
     value = efreet_icon_lookup_icon(theme, icon, size);    
 
     /* we didin't find the image check the inherited themes */
@@ -365,7 +370,7 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme, const char *cache_key,
                 Efreet_Icon_Theme *parent_theme;
 
                 parent_theme = efreet_icon_theme_find(parent);
-                if (!parent_theme) continue;
+                if ((!parent_theme) || (parent_theme == theme)) continue;
 
                 value = efreet_icon_find_helper(parent_theme, cache_key, 
                                                             icon, size);
@@ -385,6 +390,7 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme, const char *cache_key,
         }
     }
 
+    recurse--;
     return value;
 }
 
