@@ -703,6 +703,9 @@ evas_render_method_list(void)
    Evas_List *methods = NULL;
 
    /* FIXME: get from modules - this is currently coded-in */
+#ifdef BUILD_ENGINE_SOFTWARE_DDRAW
+   methods = evas_list_append(methods, strdup("software_ddraw"));
+#endif
 #ifdef BUILD_ENGINE_SOFTWARE_X11
    methods = evas_list_append(methods, strdup("software_x11"));
 #endif

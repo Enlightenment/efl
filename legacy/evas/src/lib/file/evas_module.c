@@ -299,7 +299,11 @@ evas_module_load(Evas_Module *em)
    if (em->loaded) return 1;
 
 //   printf("LOAD %s\n", em->name);
+#ifdef WIN32
+   snprintf(buf, sizeof(buf), "%s/%s/%s/module.dll", em->path, em->name, MODULE_ARCH);
+#else
    snprintf(buf, sizeof(buf), "%s/%s/%s/module.so", em->path, em->name, MODULE_ARCH);
+#endif
    if (!evas_file_path_exists(buf))
      {
 	printf("[evas module] error loading the module %s. It doesnt exists\n", buf);

@@ -27,6 +27,7 @@ libevas_la_LIBADD       = \
 			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la \
 			  -lm \
+			  @fnmatch_libs@ \
 			  @dlopen_libs@ \
 			  @FREETYPE_LIBS@ \
 			  @EET_LIBS@ \

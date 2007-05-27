@@ -11,6 +11,7 @@ gl_common \
 gl_x11 \
 software_qtopia \
 software_win32_gdi \
+software_ddraw \
 software_x11 \
 software_xcb \
 xrender_x11 \
