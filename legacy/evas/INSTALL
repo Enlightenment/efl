@@ -6,3 +6,8 @@ NB: you will need pkgconfig package (available for debian and for redhat -
 try www.rpmfind.net if you're lost, or go to the pkgconfig website:
 http://www.freedesktop.org/software/pkgconfig/ ) if your are taking this from 
 CVS and having to run ./autogen.sh)
+
+NOTE: for compilation with MinGW, fnmatch.h is probably missing.
+      That file can be found here:
+http://www.koders.com/c/fid2B518462CB1EED3D4E31E271DB83CD1582F6EEBE.aspx
+      It should be installed in the mingw include directory.
