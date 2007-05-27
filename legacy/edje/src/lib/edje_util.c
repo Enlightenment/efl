@@ -1,6 +1,8 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+#include <stddef.h>
+#include <Ecore_Str.h>
 #include "Edje.h"
 #include "edje_private.h"
 
@@ -21,6 +23,8 @@ struct _Edje_List_Foreach_Data
 
 static Evas_Bool _edje_color_class_list_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata);
 static Evas_Bool _edje_text_class_list_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata);
+
+Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
 
 /************************** API Routines **************************/
 
@@ -125,9 +129,17 @@ EAPI int
 edje_object_freeze(Evas_Object *obj)
 {
    Edje *ed;
+   int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_freeze(rp->swallowed_object);
+     }
    return _edje_freeze(ed);
 }
 
@@ -142,9 +154,17 @@ EAPI int
 edje_object_thaw(Evas_Object *obj)
 {
    Edje *ed;
+   int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_thaw(rp->swallowed_object);
+     }
    return _edje_thaw(ed);
 }
 
@@ -329,6 +349,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    Edje *ed;
    Evas_List *l;
    Edje_Color_Class *cc;
+   int i;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!color_class)) return;
@@ -391,6 +412,15 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    cc->a3 = a3;
    ed->color_classes = evas_list_append(ed->color_classes, cc);
    ed->dirty = 1;
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_color_class_set(rp->swallowed_object, color_class, r, g, b, a, r2, g2, b2, a2, r3, g3, b3, a3);
+     }
+
    _edje_recalc(ed);
 }
 
@@ -406,6 +436,7 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
    Edje *ed;
    Evas_List *l;
    Edje_Color_Class *cc = NULL;
+   int i;
 
    if (!color_class) return;
 
@@ -422,7 +453,14 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 	  }
      }
 
-   ed = _edje_fetch(obj);
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_color_class_del(rp->swallowed_object, color_class);
+     }
+
    ed->dirty = 1;
    _edje_recalc(ed);
 }
@@ -573,6 +611,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    Edje *ed;
    Evas_List *l;
    Edje_Text_Class *tc;
+   int i;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!text_class)) return;
@@ -620,6 +659,14 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    else tc->font = NULL;
    tc->size = size;
 
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_text_class_set(rp->swallowed_object, text_class, font, size);
+     }
+
    /* Add to edje's text class list */
    ed->text_classes = evas_list_append(ed->text_classes, tc);
    ed->dirty = 1;
@@ -641,7 +688,7 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return 0;
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return 0;
    return 1;
 }
@@ -666,7 +713,7 @@ edje_object_part_object_get(Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    return rp->object;
 }
@@ -699,7 +746,7 @@ edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x,
 	if (h) *h = 0;
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	if (x) *x = 0;
@@ -719,11 +766,20 @@ EAPI void
 edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data)
 {
    Edje *ed;
+   int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
    ed->text_change.func = func;
    ed->text_change.data = data;
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_text_change_cb_set(rp->swallowed_object, func, data);
+     }
 }
 
 /** Sets the text for an object part
@@ -739,7 +795,7 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
@@ -751,9 +807,9 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
    if (rp->text.text) evas_stringshare_del(rp->text.text);
    if (text) rp->text.text = evas_stringshare_add(text);
    else rp->text.text = NULL;
-   ed->dirty = 1;
-   _edje_recalc(ed);
-   if (ed->text_change.func) ed->text_change.func(ed->text_change.data, obj, part);
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+   if (rp->edje->text_change.func) rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
 }
 
 /** Returns the text of the object part
@@ -769,7 +825,7 @@ edje_object_part_text_get(Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    if (rp->part->type == EDJE_PART_TYPE_TEXT)
      return rp->text.text;
@@ -793,95 +849,13 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 {
    Edje *ed;
    Edje_Real_Part *rp;
-   char *type;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
-   if (rp->swallowed_object)
-     {
-	evas_object_smart_member_del(rp->swallowed_object);
-	evas_object_event_callback_del(rp->swallowed_object,
-				       EVAS_CALLBACK_FREE,
-				       _edje_object_part_swallow_free_cb);
-	evas_object_clip_unset(rp->swallowed_object);
-	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
-        if (rp->part->mouse_events)
-          _edje_callbacks_del(rp->swallowed_object);
-	rp->swallowed_object = NULL;
-     }
-   if (!obj_swallow) return;
-   rp->swallowed_object = obj_swallow;
-   evas_object_smart_member_add(rp->swallowed_object, ed->obj);
-   if (rp->clip_to)
-     evas_object_clip_set(rp->swallowed_object, rp->clip_to->object);
-   else evas_object_clip_set(rp->swallowed_object, ed->clipper);
-   evas_object_stack_above(rp->swallowed_object, rp->object);
-   evas_object_event_callback_add(rp->swallowed_object,
-				  EVAS_CALLBACK_FREE,
-				  _edje_object_part_swallow_free_cb,
-				  obj);
-   type = (char *)evas_object_type_get(obj_swallow);
-   rp->swallow_params.min.w = 0;
-   rp->swallow_params.min.w = 0;
-   rp->swallow_params.max.w = -1;
-   rp->swallow_params.max.h = -1;
-   if ((type) && (!strcmp(type, "edje")))
-     {
-	Evas_Coord w, h;
-	
-	edje_object_size_min_get(obj_swallow, &w, &h);
-	rp->swallow_params.min.w = w;
-	rp->swallow_params.min.h = h;
-	edje_object_size_max_get(obj_swallow, &w, &h);
-	rp->swallow_params.max.w = w;
-	rp->swallow_params.max.h = h;
-     }
-   else if ((type) && ((!strcmp(type, "text")) ||
-		       (!strcmp(type, "polygon")) ||
-		       (!strcmp(type, "line"))))
-     {
-	Evas_Coord w, h;
-	
-	evas_object_geometry_get(obj_swallow, NULL, NULL, &w, &h);
-	rp->swallow_params.min.w = w;
-	rp->swallow_params.min.h = h;
-	rp->swallow_params.max.w = w;
-	rp->swallow_params.max.h = h;
-     }
-     {
-	int w1, h1, w2, h2, am, aw, ah;
-	
-	w1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
-	h1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
-	w2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
-	h2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
-	am = (int)evas_object_data_get(obj_swallow, "\377 edje.aspm");
-	aw = (int)evas_object_data_get(obj_swallow, "\377 edje.aspw");
-	ah = (int)evas_object_data_get(obj_swallow, "\377 edje.asph");
-	rp->swallow_params.min.w = w1;
-	rp->swallow_params.min.h = h1;
-	if (w2 > 0) rp->swallow_params.max.w = w2;
-	if (h2 > 0) rp->swallow_params.max.h = h2;
-	rp->swallow_params.aspect.mode = am;
-	rp->swallow_params.aspect.w = aw;
-	rp->swallow_params.aspect.h = ah;
-	evas_object_data_set(rp->swallowed_object, "\377 edje.swallowing_part", rp);
-     }
-
-   if (rp->part->mouse_events)
-     {
-        _edje_callbacks_add(obj_swallow, ed, rp);
-	if (rp->part->repeat_events)
-           evas_object_repeat_events_set(obj_swallow, 1);
-     }
-   else
-     evas_object_pass_events_set(obj_swallow, 1);
-
-
-   ed->dirty = 1;
-   _edje_recalc(ed);
+   if (rp->part->type != EDJE_PART_TYPE_SWALLOW) return;
+   _edje_real_part_swallow(rp, obj_swallow);
 }
 
 static void
@@ -1022,36 +996,31 @@ EAPI void
 edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 {
    Edje *ed;
-   int i;
+   Edje_Real_Part *rp;
 
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!obj_swallow)) return;
-   for (i = 0; i < ed->table_parts_size; i++)
+   if (!obj_swallow) return;
+
+   rp = (Edje_Real_Part *)evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
+   if (rp && rp->swallowed_object == obj_swallow)
      {
-	Edje_Real_Part *rp;
-	
-	rp = ed->table_parts[i];
-	if (rp->swallowed_object == obj_swallow)
-	  {
-	     evas_object_smart_member_del(rp->swallowed_object);
-	     evas_object_event_callback_del(rp->swallowed_object,
-					    EVAS_CALLBACK_FREE,
-					    _edje_object_part_swallow_free_cb);
-	     evas_object_clip_unset(rp->swallowed_object);
-	     evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
+	evas_object_smart_member_del(rp->swallowed_object);
+	evas_object_event_callback_del(rp->swallowed_object,
+	      EVAS_CALLBACK_FREE,
+	      _edje_object_part_swallow_free_cb);
+	evas_object_clip_unset(rp->swallowed_object);
+	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 
-             if (rp->part->mouse_events)
-               _edje_callbacks_del(rp->swallowed_object);
+	if (rp->part->mouse_events)
+	  _edje_callbacks_del(rp->swallowed_object);
 
-	     rp->swallowed_object = NULL;
-	     rp->swallow_params.min.w = 0;
-	     rp->swallow_params.min.h = 0;
-	     rp->swallow_params.max.w = 0;
-	     rp->swallow_params.max.h = 0;
-	     ed->dirty = 1;
-	     _edje_recalc(ed);
-	     return;
-	  }
+	rp->swallowed_object = NULL;
+	rp->swallow_params.min.w = 0;
+	rp->swallow_params.min.h = 0;
+	rp->swallow_params.max.w = 0;
+	rp->swallow_params.max.h = 0;
+	rp->edje->dirty = 1;
+	_edje_recalc(rp->edje);
+	return;
      }
 }
 
@@ -1068,7 +1037,7 @@ edje_object_part_swallow_get(Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    return rp->swallowed_object;
 }
@@ -1297,7 +1266,7 @@ edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
 	if (val_ret) *val_ret = 0;
 	return "";
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	if (val_ret) *val_ret = 0;
@@ -1344,7 +1313,7 @@ edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
      {
 	return EDJE_DRAG_DIR_NONE;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	return EDJE_DRAG_DIR_NONE;
@@ -1374,7 +1343,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
      {
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	return;
@@ -1390,8 +1359,8 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
    if ((rp->drag.val.x == dx) && (rp->drag.val.y == dy)) return;
    rp->drag.val.x = dx;
    rp->drag.val.y = dy;
-   _edje_dragable_pos_set(ed, rp, dx, dy);
-   _edje_emit(ed, "drag,set", rp->part->name);
+   _edje_dragable_pos_set(rp->edje, rp, dx, dy);
+   _edje_emit(rp->edje, "drag,set", rp->part->name);
 }
 
 /** Get the dragable object location
@@ -1417,7 +1386,7 @@ edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, 
 	if (dy) *dy = 0;
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	if (dx) *dx = 0;
@@ -1451,7 +1420,7 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
      {
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	return;
@@ -1463,8 +1432,8 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
    if ((rp->drag.size.x == dw) && (rp->drag.size.y == dh)) return;
    rp->drag.size.x = dw;
    rp->drag.size.y = dh;
-   ed->dirty = 1;
-   _edje_recalc(ed);
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
 }
 
 /** Get the dragable object size
@@ -1488,7 +1457,7 @@ edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, d
 	if (dh) *dh = 0;
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	if (dw) *dw = 0;
@@ -1518,7 +1487,7 @@ edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, do
      {
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	return;
@@ -1552,7 +1521,7 @@ edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, d
 	if (dy) *dy = 0;
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	if (dx) *dx = 0;
@@ -1582,7 +1551,7 @@ edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, do
      {
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	return;
@@ -1616,7 +1585,7 @@ edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, d
 	if (dy) *dy = 0;
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	if (dx) *dx = 0;
@@ -1648,7 +1617,7 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
      {
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	return;
@@ -1661,8 +1630,8 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
    rp->drag.val.x = CLAMP (rp->drag.val.x, 0.0, 1.0);
    rp->drag.val.y = CLAMP (rp->drag.val.y, 0.0, 1.0);
    if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
-   _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
-   _edje_emit(ed, "drag,step", rp->part->name);
+   _edje_dragable_pos_set(rp->edje, rp, rp->drag.val.x, rp->drag.val.y);
+   _edje_emit(rp->edje, "drag,step", rp->part->name);
 }
 
 /** Pages x,y steps
@@ -1686,7 +1655,7 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
      {
 	return;
      }
-   rp = _edje_real_part_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	return;
@@ -1699,10 +1668,43 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
    rp->drag.val.x = CLAMP (rp->drag.val.x, 0.0, 1.0);
    rp->drag.val.y = CLAMP (rp->drag.val.y, 0.0, 1.0);
    if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
-   _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
-   _edje_emit(ed, "drag,page", rp->part->name);
+   _edje_dragable_pos_set(rp->edje, rp, rp->drag.val.x, rp->drag.val.y);
+   _edje_emit(rp->edje, "drag,page", rp->part->name);
 }
 
+Edje_Real_Part *
+_edje_real_part_recursive_get(Edje *ed, const char *part)
+{
+   Edje_Real_Part *rp;
+   char **path;
+   path = ecore_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
+   if (!path) return NULL;
+
+   //printf("recursive get: %s\n", part);
+   rp = _edje_real_part_recursive_get_helper(ed, path);
+
+   free(*path);
+   free(path);
+   return rp;
+}
+
+Edje_Real_Part *
+_edje_real_part_recursive_get_helper(Edje *ed, char **path)
+{
+   Edje_Real_Part *rp;
+   //printf("  lookup: %s on %s\n", path[0], ed->parent ? ed->parent : "-");
+   rp = _edje_real_part_get(ed, path[0]);
+   if (path[1] == NULL)
+     return rp;
+
+   if (!rp || rp->part->type != EDJE_PART_TYPE_GROUP || !rp->swallowed_object) return NULL;
+
+   ed = _edje_fetch(rp->swallowed_object);
+   if (!ed) return NULL;
+
+   path++;
+   return _edje_real_part_recursive_get_helper(ed, path);
+}
 
 
 /* Private Routines */
@@ -2034,3 +2036,94 @@ _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *e
    e = NULL;
    event_info = NULL;
 }
+
+void
+_edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
+{
+   char *type;
+
+   if (rp->swallowed_object)
+     {
+	evas_object_smart_member_del(rp->swallowed_object);
+	evas_object_event_callback_del(rp->swallowed_object,
+				       EVAS_CALLBACK_FREE,
+				       _edje_object_part_swallow_free_cb);
+	evas_object_clip_unset(rp->swallowed_object);
+	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
+        if (rp->part->mouse_events)
+          _edje_callbacks_del(rp->swallowed_object);
+	rp->swallowed_object = NULL;
+     }
+   if (!obj_swallow) return;
+   rp->swallowed_object = obj_swallow;
+   evas_object_smart_member_add(rp->swallowed_object, rp->edje->obj);
+   if (rp->clip_to)
+     evas_object_clip_set(rp->swallowed_object, rp->clip_to->object);
+   else evas_object_clip_set(rp->swallowed_object, rp->edje->clipper);
+   evas_object_stack_above(rp->swallowed_object, rp->object);
+   evas_object_event_callback_add(rp->swallowed_object,
+				  EVAS_CALLBACK_FREE,
+				  _edje_object_part_swallow_free_cb,
+				  rp->edje->obj);
+   type = (char *)evas_object_type_get(obj_swallow);
+   rp->swallow_params.min.w = 0;
+   rp->swallow_params.min.w = 0;
+   rp->swallow_params.max.w = -1;
+   rp->swallow_params.max.h = -1;
+   if ((type) && (!strcmp(type, "edje")))
+     {
+	Evas_Coord w, h;
+	
+	edje_object_size_min_get(obj_swallow, &w, &h);
+	rp->swallow_params.min.w = w;
+	rp->swallow_params.min.h = h;
+	edje_object_size_max_get(obj_swallow, &w, &h);
+	rp->swallow_params.max.w = w;
+	rp->swallow_params.max.h = h;
+     }
+   else if ((type) && ((!strcmp(type, "text")) ||
+		       (!strcmp(type, "polygon")) ||
+		       (!strcmp(type, "line"))))
+     {
+	Evas_Coord w, h;
+	
+	evas_object_geometry_get(obj_swallow, NULL, NULL, &w, &h);
+	rp->swallow_params.min.w = w;
+	rp->swallow_params.min.h = h;
+	rp->swallow_params.max.w = w;
+	rp->swallow_params.max.h = h;
+     }
+     {
+	int w1, h1, w2, h2, am, aw, ah;
+	
+	w1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
+	h1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
+	w2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
+	h2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
+	am = (int)evas_object_data_get(obj_swallow, "\377 edje.aspm");
+	aw = (int)evas_object_data_get(obj_swallow, "\377 edje.aspw");
+	ah = (int)evas_object_data_get(obj_swallow, "\377 edje.asph");
+	rp->swallow_params.min.w = w1;
+	rp->swallow_params.min.h = h1;
+	if (w2 > 0) rp->swallow_params.max.w = w2;
+	if (h2 > 0) rp->swallow_params.max.h = h2;
+	rp->swallow_params.aspect.mode = am;
+	rp->swallow_params.aspect.w = aw;
+	rp->swallow_params.aspect.h = ah;
+	evas_object_data_set(rp->swallowed_object, "\377 edje.swallowing_part", rp);
+     }
+
+   if (rp->part->mouse_events)
+     {
+        _edje_callbacks_add(obj_swallow, rp->edje, rp);
+	if (rp->part->repeat_events)
+           evas_object_repeat_events_set(obj_swallow, 1);
+     }
+   else
+     evas_object_pass_events_set(obj_swallow, 1);
+
+
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+}
+

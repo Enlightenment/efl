@@ -45,6 +45,7 @@ static void st_collections_group_parts_part_mouse_events(void);
 static void st_collections_group_parts_part_repeat_events(void);
 static void st_collections_group_parts_part_use_alternate_font_metrics(void);
 static void st_collections_group_parts_part_clip_to_id(void);
+static void st_collections_group_parts_part_source(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
@@ -179,6 +180,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
      {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
      {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
+     {"collections.group.parts.part.source", st_collections_group_parts_part_source},
      {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
      {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
@@ -949,6 +951,7 @@ st_collections_group_parts_part_type(void)
 			 "SWALLOW", EDJE_PART_TYPE_SWALLOW,
 			 "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
 			 "GRADIENT", EDJE_PART_TYPE_GRADIENT,
+			 "GROUP", EDJE_PART_TYPE_GROUP,
 			 NULL);
 }
 
@@ -1008,6 +1011,29 @@ st_collections_group_parts_part_clip_to_id(void)
 	data_queue_part_lookup(pc, name, &(ep->clip_to_id));
 	free(name);
      }
+}
+
+static void
+st_collections_group_parts_part_source(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_GROUP)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"source attribute in non-GROUP part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   //XXX validate this somehow (need to decide on the format also)
+   ep->source = parse_str(0);
 }
 
 static void

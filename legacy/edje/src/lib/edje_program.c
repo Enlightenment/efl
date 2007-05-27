@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "Edje.h"
 #include "edje_private.h"
 
@@ -185,6 +188,8 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
  *  action: ...
  * }
  * @endcode
+ *
+ * FIXME should this signal be sent to children also?
  */
 EAPI void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
@@ -212,6 +217,7 @@ edje_object_play_set(Evas_Object *obj, int play)
    Edje *ed;
    double t;
    Evas_List *l;
+   int i;
    
    ed = _edje_fetch(obj);
    if (!ed) return;
@@ -234,6 +240,14 @@ edje_object_play_set(Evas_Object *obj, int play)
 	if (ed->paused) return;
 	ed->paused = 1;
 	ed->paused_at = ecore_time_get();
+     }
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_play_set(rp->swallowed_object, play);
      }
 }
 
@@ -267,6 +281,7 @@ edje_object_animation_set(Evas_Object *obj, int on)
 {
    Edje *ed;
    Evas_List *l;
+   int i;
    
    ed = _edje_fetch(obj);
    if (!ed) return;   
@@ -304,6 +319,15 @@ edje_object_animation_set(Evas_Object *obj, int on)
 	  }
      }
    break_prog:
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  edje_object_animation_set(rp->swallowed_object, on);
+     }
+
    _edje_thaw(ed);
    _edje_unblock(ed);
 }

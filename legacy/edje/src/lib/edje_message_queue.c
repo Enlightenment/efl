@@ -8,6 +8,7 @@ static Ecore_Timer *job_loss_timer = NULL;
 static Evas_List *msgq = NULL;
 static Evas_List *tmp_msgq = NULL;
 
+/* FIXME pass messages on to children? */
 EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {

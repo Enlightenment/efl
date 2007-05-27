@@ -85,6 +85,7 @@ _edje_del(Edje *ed)
    _edje_file_del(ed);
    if (ed->path) evas_stringshare_del(ed->path);
    if (ed->part) evas_stringshare_del(ed->part);
+   if (ed->parent) evas_stringshare_del(ed->parent);
    ed->path = NULL;
    ed->part = NULL;
    if ((ed->actions) || (ed->pending_actions))

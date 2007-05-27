@@ -132,7 +132,8 @@ typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 #define EDJE_PART_TYPE_SWALLOW   4
 #define EDJE_PART_TYPE_TEXTBLOCK 5
 #define EDJE_PART_TYPE_GRADIENT  6
-#define EDJE_PART_TYPE_LAST      7
+#define EDJE_PART_TYPE_GROUP     7
+#define EDJE_PART_TYPE_LAST      8
 
 #define EDJE_TEXT_EFFECT_NONE                0
 #define EDJE_TEXT_EFFECT_PLAIN               1
@@ -208,6 +209,8 @@ typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 #define EDJE_STATE_PARAM_VISIBLE      31
 #define EDJE_STATE_PARAM_LAST         32
 
+#define EDJE_PART_PATH_SEPARATOR ':'
+#define EDJE_PART_PATH_SEPARATOR_STRING ":"
 /*----------*/
 
 struct _Edje_File
@@ -421,6 +424,7 @@ struct _Edje_Part
       /* davinchi */
       int		  events_id; /* If it is used as scrollbar */
    } dragable;
+   char                  *source;
 };
 
 struct _Edje_Part_Image_Id
@@ -562,6 +566,7 @@ struct _Edje
 {
    const char           *path;
    const char           *part;
+   const char           *parent;
    
    Evas_Coord            x, y, w, h;
    struct {
@@ -617,6 +622,7 @@ struct _Edje
 
 struct _Edje_Real_Part
 {
+   Edje                     *edje;
    int                       x, y, w, h;
    struct {
       int                    x, y, w, h;
@@ -951,6 +957,7 @@ void           _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_P
 Evas_Font_Size _edje_text_size_calc(Evas_Font_Size size, Edje_Text_Class *tc);
 
 Edje_Real_Part   *_edje_real_part_get(Edje *ed, const char *part);
+Edje_Real_Part   *_edje_real_part_recursive_get(Edje *ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(Edje *ed, const char *color_class);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);
 void              _edje_color_class_member_del(Edje *ed, const char *color_class);
@@ -973,6 +980,7 @@ int               _edje_unblock(Edje *ed);
 int               _edje_block_break(Edje *ed);
 void              _edje_block_violate(Edje *ed);    
 void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+void              _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow);
 
 void          _edje_embryo_script_init      (Edje *ed);
 void          _edje_embryo_script_shutdown  (Edje *ed);
