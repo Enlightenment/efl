@@ -962,8 +962,8 @@ efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor __UNUSED__,
             /* Ignore, we should already have a monitor on any subdir */
             break;
         case ECORE_FILE_EVENT_DELETED_SELF:
-            ecore_list_goto(monitors, em);
-            ecore_list_remove(monitors);
+            if (ecore_list_goto(monitors, em))
+                ecore_list_remove(monitors);
             efreet_util_monitor_free(em);
             break;
         case ECORE_FILE_EVENT_MODIFIED:
