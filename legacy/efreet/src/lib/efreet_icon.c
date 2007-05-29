@@ -940,7 +940,6 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
     if (tmp)
     {
         char *t, *s, *p;
-        int last = 0;
 
         icon->attach_points = ecore_list_new();
         ecore_list_set_free_cb(icon->attach_points, 
@@ -949,11 +948,12 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
         t = strdup(tmp);
         s = t;
         p = t;
-        while (!last)
+        while (s)
         {
             Efreet_Icon_Point *point;
 
             p = strchr(s, ',');
+            /* If this happens there is something wrong with the .icon file */
             if (!p) break;
 
             point = NEW(Efreet_Icon_Point, 1);
@@ -963,14 +963,13 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
 
             s = ++p;
             p = strchr(s, '|');
-
-            if (!p) last = 1;
-            else *p = '\0';
+            if (p) *p = '\0';
 
             point->y = atoi(s);
             ecore_list_append(icon->attach_points, point);
 
-            if (!last) s = ++p;
+            if (p) s = ++p;
+            else s = NULL;
         }
         FREE(t);
     }
