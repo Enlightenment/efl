@@ -838,7 +838,16 @@ efreet_icon_new(const char *path)
             efreet_icon_populate(icon, ico_path);
     }
 
-    if (!icon->name) icon->name = strdup(path);
+    if (!icon->name)
+    {
+        char *file;
+
+        file = ecore_file_get_file(icon->path);
+        p = strrchr(icon->path, '.');
+        if (p) *p = '\0';
+        icon->name = strdup(file);
+        if (p) *p = '.';
+    }
 
     return icon;
 }
