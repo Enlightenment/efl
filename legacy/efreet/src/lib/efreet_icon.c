@@ -922,18 +922,20 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
         s = t;
         for (i = 0; i < 4; i++)
         {
-            p = strchr(s, ',');
+            if (s)
+            {
+                p = strchr(s, ',');
 
-            if (!p) 
+                if (p) *p = '\0';
+                points[i] = atoi(s);
+
+                if (p) s = ++p;
+                else s = NULL;
+            }
+            else
             {
                 points[i] = 0;
-                continue;
             }
-
-            *p = '\0';
-            points[i] = atoi(p);
-
-            s = ++p;
         }
 
         icon->has_embedded_text_rectangle = 1;
