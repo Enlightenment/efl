@@ -645,7 +645,7 @@ evas_software_xcb_outbuf_debug_show(Outbuf        *buf,
 	    }
       free (geom);
    }
-   for (i = 0; i < 10; i++)
+   for (i = 0; i < 20; i++)
      {
 	xcb_image_t    *image;
 	xcb_rectangle_t rect = { x, y, w, h};
@@ -660,9 +660,9 @@ evas_software_xcb_outbuf_debug_show(Outbuf        *buf,
         /* we sync */
         reply = xcb_get_input_focus_reply(buf->priv.x.conn, xcb_get_input_focus_unchecked(buf->priv.x.conn), NULL);
         free(reply);
-	image = xcb_image_get(buf->priv.x.conn, draw, x, y, w, h, XCB_ALL_PLANES, XCB_IMAGE_FORMAT_Z_PIXMAP);
-	if (image)
-	   xcb_image_destroy(image);
+//	image = xcb_image_get(buf->priv.x.conn, draw, x, y, w, h, XCB_ALL_PLANES, XCB_IMAGE_FORMAT_Z_PIXMAP);
+//	if (image)
+//	   xcb_image_destroy(image);
         /* we sync */
         reply = xcb_get_input_focus_reply(buf->priv.x.conn, xcb_get_input_focus_unchecked(buf->priv.x.conn), NULL);
         free(reply);
@@ -674,9 +674,9 @@ evas_software_xcb_outbuf_debug_show(Outbuf        *buf,
         /* we sync */
         reply = xcb_get_input_focus_reply(buf->priv.x.conn, xcb_get_input_focus_unchecked(buf->priv.x.conn), NULL);
         free(reply);
-	image = xcb_image_get(buf->priv.x.conn, draw, x, y, w, h, XCB_ALL_PLANES, XCB_IMAGE_FORMAT_Z_PIXMAP);
-	if (image)
-	   xcb_image_destroy(image);
+//	image = xcb_image_get(buf->priv.x.conn, draw, x, y, w, h, XCB_ALL_PLANES, XCB_IMAGE_FORMAT_Z_PIXMAP);
+//	if (image)
+//	   xcb_image_destroy(image);
         /* we sync */
         reply = xcb_get_input_focus_reply(buf->priv.x.conn, xcb_get_input_focus_unchecked(buf->priv.x.conn), NULL);
         free(reply);
