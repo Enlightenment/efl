@@ -559,7 +559,7 @@ evas_software_x11_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, i
 	XGetWindowAttributes(buf->priv.x.disp, root, &wattr);
 	screen_num = XScreenNumberOfScreen(wattr.screen);
      }
-   for (i = 0; i < 10; i++)
+   for (i = 0; i < 20; i++)
      {
 	XImage             *xim;
 
@@ -567,19 +567,19 @@ evas_software_x11_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, i
 		       BlackPixel(buf->priv.x.disp, screen_num));
 	XFillRectangle(buf->priv.x.disp, draw, buf->priv.x.gc, x, y, w, h);
 	XSync(buf->priv.x.disp, False);
-	xim =
-	  XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
-	if (xim)
-	  XDestroyImage(xim);
+//	xim =
+//	  XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
+//	if (xim)
+//	  XDestroyImage(xim);
 	XSync(buf->priv.x.disp, False);
 	XSetForeground(buf->priv.x.disp, buf->priv.x.gc,
 		       WhitePixel(buf->priv.x.disp, screen_num));
 	XFillRectangle(buf->priv.x.disp, draw, buf->priv.x.gc, x, y, w, h);
 	XSync(buf->priv.x.disp, False);
-	xim =
-	  XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
-	if (xim)
-	  XDestroyImage(xim);
+//	xim =
+//	  XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
+//	if (xim)
+//	  XDestroyImage(xim);
 	XSync(buf->priv.x.disp, False);
      }
 }

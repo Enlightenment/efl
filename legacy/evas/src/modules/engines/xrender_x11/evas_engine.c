@@ -645,6 +645,9 @@ eng_image_size_set(void *data, void *image, int w, int h)
 
    if (!image) return NULL;
    im_old = image;
+   if ((im_old->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (im_old->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
+     w &= ~0x1;
    if ((im_old) && (im_old->w == w) && (im_old->h == h))
      return image;
    if ((w <= 0) || (h <= 0))

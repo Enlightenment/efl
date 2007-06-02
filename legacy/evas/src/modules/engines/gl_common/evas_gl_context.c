@@ -39,6 +39,41 @@ evas_gl_common_context_new(void)
    gc->change.clip    = 1;
    gc->change.buf     = 1;
    gc->change.other   = 1;
+   
+   gc->yuv422p.prog = glCreateProgramObjectARB();
+// on an nv 6600gt this is fast - but on a 5500fx its DEAD SLOW!!!!!   
+// if (!gc->ext.arb_texture_non_power_of_two) return NULL;
+   /* BEGIN LEAK */
+   gc->yuv422p.fshad = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+     {
+	const char *code =
+	  "uniform sampler2D ytex, utex, vtex;\n"
+	  "void main(void) {\n"
+	  "  float r, g, b, y, u, v;\n"
+	  "  y = texture2D(ytex, gl_TexCoord[0].st).r;\n"
+	  "  u = texture2D(utex, gl_TexCoord[0].st).r;\n"
+	  "  v = texture2D(vtex, gl_TexCoord[0].st).r;\n"
+	  "  y = (y - 0.0625) * 1.164;\n"
+	  "  u = u - 0.5;\n"
+	  "  v = v - 0.5;\n"
+	  "  r = y + (1.402   * v);\n"
+	  "  g = y - (0.34414 * u) - (0.71414 * v);\n"
+	  "  b = y + (1.772   * u);\n"
+	  "  gl_FragColor = vec4(r * gl_Color.r * gl_Color.a, g * gl_Color.g * gl_Color.a, b * gl_Color.b * gl_Color.a, gl_Color.a);\n"
+	  "}\n";
+	glShaderSourceARB(gc->yuv422p.fshad, 1, &code, NULL);
+     }
+   glCompileShaderARB(gc->yuv422p.fshad);
+   glAttachObjectARB(gc->yuv422p.prog, gc->yuv422p.fshad);
+   /* END LEAK - something in the above leaks... beats me what. */
+   glLinkProgramARB(gc->yuv422p.prog);
+   
+   glUseProgramObjectARB(gc->yuv422p.prog);
+   glUniform1iARB(glGetUniformLocationARB(gc->yuv422p.prog, "ytex"), 0);
+   glUniform1iARB(glGetUniformLocationARB(gc->yuv422p.prog, "utex"), 1);
+   glUniform1iARB(glGetUniformLocationARB(gc->yuv422p.prog, "vtex"), 2);
+   glUseProgramObjectARB(0);
+   
    return gc;
 }
 
@@ -47,7 +82,15 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
 {
    gc->references--;
    if (gc->references > 0) return;
-
+   if (gc->yuv422p.fshad)
+     {
+	glDeleteObjectARB(gc->yuv422p.fshad);
+     }
+   if (gc->yuv422p.prog)
+     {
+	glDeleteObjectARB(gc->yuv422p.prog);
+     }
+   
    if (gc == _evas_gl_common_context) _evas_gl_common_context = NULL;
    free(gc);
 }

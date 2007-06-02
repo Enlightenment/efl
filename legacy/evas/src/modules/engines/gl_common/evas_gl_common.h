@@ -86,6 +86,10 @@ struct _Evas_GL_Context
    Evas_List      *tex_pool;
 
    RGBA_Draw_Context  *dc;
+   
+   struct {
+      GLhandleARB  prog, fshad;
+   } yuv422p;
 };
 
 struct _Evas_GL_Texture
@@ -96,7 +100,6 @@ struct _Evas_GL_Texture
    int              uw, uh;
 
    GLuint           texture, texture2, texture3;
-   GLhandleARB      prog;
 
    unsigned char    smooth : 1;
    unsigned char    changed : 1;
@@ -106,6 +109,7 @@ struct _Evas_GL_Texture
    unsigned char    opt : 1;
 
    int              references;
+   GLhandleARB      prog;
 };
 
 struct _Evas_GL_Image

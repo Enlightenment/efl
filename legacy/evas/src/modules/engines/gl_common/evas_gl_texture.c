@@ -296,8 +296,16 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
    glDeleteTextures(1, &tex->texture);
    if (tex->texture2) glDeleteTextures(1, &tex->texture2);
    if (tex->texture3) glDeleteTextures(1, &tex->texture3);
+/*   
+   if (tex->fshad)
+     {
+	glDeleteObjectARB(tex->fshad);
+     }
    if (tex->prog)
-     glDeleteObjectARB(tex->prog);
+     {
+	glDeleteObjectARB(tex->prog);
+     }
+ */
    free(tex);
 }
 
@@ -418,7 +426,6 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
    Evas_GL_Texture *tex;
    int im_w, im_h, tw, th, y;
    GLenum texfmt;
-   GLhandleARB fshad;
   
 // on an nv 6600gt this is fast - but on a 5500fx its DEAD SLOW!!!!!   
 //   if (!gc->ext.arb_texture_non_power_of_two) return NULL;
@@ -436,40 +443,13 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
    tex->references = 0;
    tex->smooth = 0;
    tex->changed = 1;
-   
-   tex->prog = glCreateProgramObjectARB();
-   fshad = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
-     {
-	const char *code =
-	  "uniform sampler2D ytex, utex, vtex;\n"
-	  "void main(void) {\n"
-	  "  float r, g, b, y, u, v;\n"
-	  "  y = texture2D(ytex, gl_TexCoord[0].st).r;\n"
-	  "  u = texture2D(utex, gl_TexCoord[0].st).r;\n"
-	  "  v = texture2D(vtex, gl_TexCoord[0].st).r;\n"
-	  "  y = (y - 0.0625) * 1.164;\n"
-	  "  u = u - 0.5;\n"
-	  "  v = v - 0.5;\n"
-	  "  r = y + (1.402   * v);\n"
-	  "  g = y - (0.34414 * u) - (0.71414 * v);\n"
-	  "  b = y + (1.772   * u);\n"
-	  "  gl_FragColor = vec4(r * gl_Color.r * gl_Color.a, g * gl_Color.g * gl_Color.a, b * gl_Color.b * gl_Color.a, gl_Color.a);\n"
-	  "}\n";
-	glShaderSourceARB(fshad, 1, &code, NULL);
-     }
-   
-   glCompileShaderARB(fshad);
-   glAttachObjectARB(tex->prog, fshad);
-   glLinkProgramARB(tex->prog);
+   tex->prog = gc->yuv422p.prog;
    
    glEnable(GL_TEXTURE_2D);
    texfmt = GL_LUMINANCE;
 
    glUseProgramObjectARB(tex->prog);
-   glUniform1iARB(glGetUniformLocationARB(tex->prog, "ytex"), 0);
-   glUniform1iARB(glGetUniformLocationARB(tex->prog, "utex"), 1);
-   glUniform1iARB(glGetUniformLocationARB(tex->prog, "vtex"), 2);
    
    glGenTextures(1, &(tex->texture));
    glBindTexture(GL_TEXTURE_2D, tex->texture);

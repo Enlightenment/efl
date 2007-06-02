@@ -105,6 +105,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data,
     im->cached = 1;
     gc->images = evas_list_prepend(gc->images, im);
     */
+   printf("new im cs = %i\n", im->cs.space);
    return im;
 }
 
@@ -166,6 +167,33 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspac
 	free(im);
 	return NULL;
      }
+   im->gc = gc;
+   im->cs.space = cspace;
+   if (alpha)
+     im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   else
+     im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+//	if (data)
+//	  memcpy(im->im->image->data, data, w * h * sizeof(DATA32));
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        evas_common_image_surface_dealloc(im->im->image);
+        im->im->image->data = NULL;
+//        if (im->tex) evas_gl_common_texture_free(im->tex);
+	im->tex = NULL;
+	im->cs.no_free = 0;
+        im->cs.data = calloc(1, im->im->image->h * sizeof(unsigned char *) * 2);
+//        if ((data) && (im->cs.data))
+//	  memcpy(im->cs.data, data, im->im->image->h * sizeof(unsigned char *) * 2);
+	break;
+      default:
+	abort();
+	break;
+     }
    return im;
 }
 
@@ -215,6 +243,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
 	r = g = b = a = 255;
      }
    evas_common_load_image_data_from_file(im->im);
+/* leak in this switch */
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -251,7 +280,9 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
 	     im->dirty = 0;
 	  }
 	if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
-	  im->tex = evas_gl_common_ycbcr601pl_texture_new(gc, im->cs.data, im->im->image->w, im->im->image->h, smooth);
+	  {
+	     im->tex = evas_gl_common_ycbcr601pl_texture_new(gc, im->cs.data, im->im->image->w, im->im->image->h, smooth);
+	  }
 	if (!im->tex) return;
 	ow = (dw * im->tex->tw) / sw;
 	oh = (dh * im->tex->th) / sh;
@@ -270,11 +301,13 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
 	     ty2 = (double)(sy + sh) / (double)(im->tex->h);
 	  }
 	evas_gl_common_context_texture_set(gc, im->tex, smooth, ow, oh);
+
 	break;
       default:
 	abort();
 	break;
     }
+
 //   if ((!im->tex->have_mipmaps) && (smooth) &&
 //       ((im->tex->uw < im->tex->tw) || (im->tex->uh < im->tex->th)) &&
 //       (!gc->ext.sgis_generate_mipmap))
