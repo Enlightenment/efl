@@ -801,8 +801,8 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 
    rect_init(&r, x, y, w, h);
    //fprintf(stderr, "ACCOUNTING: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
-   //testing on my core2 duo desktop - fuzz of 48 is best.
-#define FUZZ 48
+   //testing on my core2 duo desktop - fuzz of 32 or 48 is best.
+#define FUZZ 32
    rect_list_add_split_fuzzy_and_merge(&tb->rects, r, FUZZ * FUZZ, FUZZ * FUZZ);
    return 1;
 #else
