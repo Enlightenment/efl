@@ -1,6 +1,14 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
+#ifndef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS  64
+#endif
+#ifndef __USE_FILE_OFFSET64 /* for large file support */
+#define __USE_FILE_OFFSET64
+#endif
+
 #include <ctype.h>
 #include "ecore_file_private.h"
 #include <errno.h>
@@ -43,7 +51,7 @@ ecore_file_shutdown()
    return init;
 }
 
-EAPI time_t
+EAPI long long
 ecore_file_mod_time(const char *file)
 {
    struct stat st;
@@ -52,7 +60,7 @@ ecore_file_mod_time(const char *file)
    return st.st_mtime;
 }
 
-EAPI int
+EAPI long long
 ecore_file_size(const char *file)
 {
    struct stat st;
