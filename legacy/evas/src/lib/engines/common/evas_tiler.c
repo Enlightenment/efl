@@ -244,6 +244,58 @@ _split_strict(list_t *dirty, const rect_t current, rect_t r)
 }
 
 void
+rect_list_del_split_strict(list_t *rects, const rect_t del_r)
+{
+   list_t modified = list_zeroed;
+   list_node_t *cur_node, *prev_node;
+   
+   prev_node = NULL;
+   cur_node = rects->head;
+   while (cur_node)
+     {
+        int intra_width, intra_height;
+        rect_t current;
+        
+        current = ((rect_node_t*)cur_node)->rect;
+	
+        _calc_intra_rect_area(del_r, current, &intra_width, &intra_height);
+        if ((intra_width <= 0) || (intra_height <= 0))
+          {
+             /*  .---.current      .---.del_r
+              *  |   |             |   |
+              *  `---+---.del_r    `---+---.current
+              *      |   |             |   |
+              *      `---'             `---'
+              * no interception, nothing to do
+              */
+              prev_node = cur_node;
+              cur_node = cur_node->next;
+          }
+        else if ((intra_width == current.width) &&
+                 (intra_height == current.height))
+          {
+             /*  .-------.del_r
+              *  | .---. |
+              *  | |   | |
+              *  | `---'current
+              *  `-------'
+              * current is contained, remove from rects
+              */
+              cur_node = cur_node->next;
+              rect_list_del_next(rects, prev_node);
+          }
+        else
+          {
+              _split_strict(&modified, del_r, current);
+              cur_node = cur_node->next;
+              rect_list_del_next(rects, prev_node);
+          }
+     }
+
+   rect_list_concat(rects, &modified);
+}
+
+void
 rect_list_add_split_strict(list_t *rects, list_node_t *node)
 {
    list_t dirty = list_zeroed;
@@ -469,7 +521,7 @@ _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
 }
 
 list_node_t *
-rect_list_add_split_fuzzy(list_t *rects, const rect_t r, int accepted_error)
+rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 {
    list_t dirty = list_zeroed;
    list_node_t *old_last;
@@ -478,11 +530,11 @@ rect_list_add_split_fuzzy(list_t *rects, const rect_t r, int accepted_error)
    
    if (!rects->head)
      {
-        rect_list_append(rects, r);
+        rect_list_append_node(rects, node);
         return old_last;
      }
    
-   rect_list_append(&dirty, r);
+   rect_list_append_node(&dirty, node);
    while (dirty.head)
      {
 	list_node_t *d_node, *cur_node, *prev_cur_node;
@@ -692,13 +744,14 @@ rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
 }
 
 void
-rect_list_add_split_fuzzy_and_merge(list_t *rects, const rect_t r,
+rect_list_add_split_fuzzy_and_merge(list_t *rects,
+                                    list_node_t *node,
                                     int split_accepted_error,
                                     int merge_accepted_error)
 {
    list_node_t *n;
    
-   n = rect_list_add_split_fuzzy(rects, r, split_accepted_error);
+   n = rect_list_add_split_fuzzy(rects, node, split_accepted_error);
    if (n && n->next)
      {
         list_t to_merge;
@@ -774,6 +827,33 @@ evas_common_tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
    if (th) *th = tb->tile_size.h;
 }
 
+static inline int
+_add_redraw(list_t *rects, int max_w, int max_h, int x, int y, int w, int h)
+{
+   rect_node_t *rn;
+
+   if ((w <= 0) || (h <= 0)) return 0;
+   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, max_w, max_h);
+   if ((w <= 0) || (h <= 0)) return 0;
+
+   x >>= 1;
+   y >>= 1;
+   w += 2;
+   w >>= 1;
+   h += 2;
+   h >>= 1;
+
+   rn = malloc(sizeof(rect_node_t));
+   rn->_lst = list_node_zeroed;
+   rect_init(&rn->rect, x, y, w, h);
+   //fprintf(stderr, "ACCOUNTING: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
+   //testing on my core2 duo desktop - fuzz of 32 or 48 is best.
+#define FUZZ 32
+   rect_list_add_split_fuzzy_and_merge(rects, (list_node_t *)rn,
+                                       FUZZ * FUZZ, FUZZ * FUZZ);
+   return 1;
+}
+
 EAPI int
 evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
@@ -787,24 +867,7 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
      evas_common_regionbuf_span_add(tb->rb, x, x + w - 1, y + i);
    return 1;
 #elif defined(EVAS_RECT_SPLIT)
-   rect_t r;
-   if ((w <= 0) || (h <= 0)) return 0;
-   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
-   if ((w <= 0) || (h <= 0)) return 0;
-
-   x >>= 1;
-   y >>= 1;
-   w += 2;
-   w >>= 1;
-   h += 2;
-   h >>= 1;
-
-   rect_init(&r, x, y, w, h);
-   //fprintf(stderr, "ACCOUNTING: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
-   //testing on my core2 duo desktop - fuzz of 32 or 48 is best.
-#define FUZZ 32
-   rect_list_add_split_fuzzy_and_merge(&tb->rects, r, FUZZ * FUZZ, FUZZ * FUZZ);
-   return 1;
+   return _add_redraw(&tb->rects, tb->outbuf_w, tb->outbuf_h, x, y, w, h);
 #else
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
@@ -851,9 +914,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    for (i = 0; i < h; i++)
      evas_common_regionbuf_span_del(tb->rb, x, x + w - 1, y + i);
 #elif defined(EVAS_RECT_SPLIT)
-   list_node_t *lst;
-   rect_node_t n;
-
+   rect_t r;
    
    if (!tb->rects.head) return 0;
    if ((w <= 0) || (h <= 0)) return 0;
@@ -871,28 +932,11 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    
    if ((w <= 0) || (h <= 0)) return 0;
 
-   rect_init(&n.rect, x, y, w, h);
+   rect_init(&r, x, y, w, h);
    //fprintf(stderr, "ACCOUNTING: del_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
 
-   lst = tb->rects.head;
-
-   n._lst = list_node_zeroed;
-   tb->rects.head = (list_node_t *)&n;
-   tb->rects.tail = (list_node_t *)&n;
-
-   while (lst)
-     {
-	list_node_t *tmp;
-	rect_t r;
-	
-	tmp = lst->next;
-	lst->next = NULL;
-	rect_list_add_split_strict(&tb->rects, lst);
-	lst = tmp;
-     }
-   /* remove deleted rectangle */
-   rect_list_unlink_next(&tb->rects, NULL);
-
+   rect_list_del_split_strict(&tb->rects, r);
+   tb->need_merge = 1;
    return 0;
 #else
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
@@ -936,6 +980,20 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 EAPI int
 evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha)
 {
+#ifdef EVAS_RECT_SPLIT
+   list_t lr = list_zeroed;
+   int num;
+
+   num = _add_redraw(&lr, tb->outbuf_w, tb->outbuf_h, x, y, w, h);
+   num += _add_redraw(&lr, tb->outbuf_w, tb->outbuf_h, x + dx, y + dy, w, h);
+   while (lr.head != NULL)
+     {
+        list_node_t *node = rect_list_unlink_next(&lr, NULL);
+        rect_list_add_split_fuzzy_and_merge(&tb->rects, node,
+                                            FUZZ * FUZZ, FUZZ * FUZZ);
+     }
+   return num;
+#else
    /* FIXME: need to actually impliment motion vectors. for now it just */
    /*        implements redraws */
    int num;
@@ -943,6 +1001,7 @@ evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, i
    num = evas_common_tilebuf_add_redraw(tb, x, y, w, h);
    num += evas_common_tilebuf_add_redraw(tb, x + dx, y + dy, w, h);
    return num;
+#endif
 }
 
 EAPI void
@@ -952,6 +1011,7 @@ evas_common_tilebuf_clear(Tilebuf *tb)
    evas_common_regionbuf_clear(tb->rb);
 #elif defined(EVAS_RECT_SPLIT)
    rect_list_clear(&tb->rects);
+   tb->need_merge = 0;
 #else
    if (!tb->tiles.tiles) return;
    memset(tb->tiles.tiles, 0, tb->tiles.w * tb->tiles.h * sizeof(Tilebuf_Tile));
@@ -964,9 +1024,17 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 #ifdef RECTUPDATE
    return evas_common_regionbuf_rects_get(tb->rb);
 #elif defined(EVAS_RECT_SPLIT)
-
    list_node_t *n;
    Tilebuf_Rect *rects = NULL;
+
+   if (tb->need_merge) {
+       list_t to_merge;
+       to_merge = tb->rects;
+       tb->rects = list_zeroed;
+       rect_list_merge_rects(&tb->rects, &to_merge, FUZZ * FUZZ);
+       tb->need_merge = 0;
+   }
+
    for (n = tb->rects.head; n != NULL; n = n->next) {
        rect_t cur;
        Tilebuf_Rect *r;
