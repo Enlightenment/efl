@@ -66,8 +66,6 @@ static void efreet_util_cache_search_generic_name_glob(void *value, void *data);
 static void efreet_util_cache_search_comment_glob(void *value, void *data);
 
 static int  efreet_util_glob_match(const char *str, const char *glob);
-static void efreet_util_cache_search_categories(void *value, void *data);
-static void efreet_util_cache_search_category(void *value, void *data);
 
 static void efreet_util_monitor(const char *path, const char *file_id, int priority);
 static void efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor,
@@ -75,10 +73,14 @@ static void efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor,
 static void efreet_util_monitor_free(void *data);
 static void efreet_util_menus_find_helper(Ecore_List *menus, const char *config_dir);
 
+static void efreet_util_desktops_by_category_add(Efreet_Desktop *desktop);
+static void efreet_util_desktops_by_category_remove(Efreet_Desktop *desktop);
+
 static Ecore_Hash *desktop_by_file_id = NULL;
 static Ecore_Hash *file_id_by_desktop_path = NULL;
+static Ecore_Hash *desktops_by_category = NULL;
 
-static Ecore_Idler *idler = NULL;
+static Ecore_Idler       *idler = NULL;
 static Efreet_Cache_Fill *fill = NULL;
 
 static Ecore_List *monitors = NULL;
@@ -102,9 +104,14 @@ efreet_util_init(void)
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_set_free_value(desktop_by_file_id, free);
+
     file_id_by_desktop_path = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_set_free_value(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
+
+    desktops_by_category = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    ecore_hash_set_free_key(desktops_by_category, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_set_free_value(desktops_by_category, ECORE_FREE_CB(ecore_list_destroy));
 
     monitors = ecore_list_new();
     ecore_list_set_free_cb(monitors, efreet_util_monitor_free);
@@ -152,6 +159,9 @@ efreet_util_shutdown(void)
     IF_FREE_HASH(file_id_by_desktop_path);
 
     IF_FREE_LIST(monitors);
+
+    IF_FREE_HASH(desktops_by_category);
+
     return init;
 }
 
@@ -299,7 +309,9 @@ efreet_util_desktop_file_id_find(const char *file_id)
         ud = NEW(Efreet_Util_Desktop, 1);
         ud->priority = priority;
         ud->desktop = desktop;
+
         ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+        efreet_util_desktops_by_category_add(desktop);
 
         ev = NEW(Efreet_Event_Desktop_Change, 1);
         ev->current = desktop;
@@ -415,15 +427,7 @@ efreet_util_desktop_comment_glob_list(const char *glob)
 Ecore_List *
 efreet_util_desktop_categories_list()
 {
-    Efreet_Cache_Search_List search;
-    // XXX this list could be build as the cache is filled. for now we run through the cache each time this is called
-
-    search.list = ecore_list_new();
-    ecore_list_set_free_cb(search.list, ECORE_FREE_CB(ecore_string_release));
-    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_categories, &search);
-
-    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
-    return search.list;
+    return ecore_hash_keys(desktops_by_category);
 }
 
 /**
@@ -431,19 +435,10 @@ efreet_util_desktop_categories_list()
  * @param category the category name
  * @return a list of desktops
  */
-Ecore_List *
+const Ecore_List *
 efreet_util_desktop_category_list(const char *category)
 {
-    Efreet_Cache_Search_List search;
-
-    search.list = ecore_list_new();
-    search.what = ecore_string_instance(category);
-
-    ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_category, &search);
-    ecore_string_release(search.what);
-
-    if (ecore_list_is_empty(search.list)) IF_FREE_LIST(search.list);
-    return search.list;
+    return ecore_hash_get(desktops_by_category, category);
 
 }
 
@@ -566,6 +561,8 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
         ud->desktop = desktop;
 
         ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+        efreet_util_desktops_by_category_add(desktop);
+
         if (event)
         {
             Efreet_Event_Desktop_Change *ev;
@@ -578,6 +575,9 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
     }
     else if (priority < ud->priority)
     {
+        efreet_util_desktops_by_category_remove(ud->desktop);
+        efreet_util_desktops_by_category_add(desktop);
+
         if (event)
         {
             Efreet_Event_Desktop_Change *ev;
@@ -612,6 +612,7 @@ efreet_util_cache_remove(const char *path, const char *file_id, int priority)
         Efreet_Event_Desktop_Change *ev;
 
         ecore_hash_remove(desktop_by_file_id, file_id);
+        efreet_util_desktops_by_category_remove(ud->desktop);
 
         ev = NEW(Efreet_Event_Desktop_Change, 1);
         ev->current = ud->desktop;
@@ -646,6 +647,9 @@ efreet_util_cache_reload(const char *path, const char *file_id, int priority)
 
         if (ud->priority < priority) return;
 
+        efreet_util_desktops_by_category_remove(ud->desktop);
+        efreet_util_desktops_by_category_add(desktop);
+
         ev = NEW(Efreet_Event_Desktop_Change, 1);
         ev->current = desktop;
         ev->previous = ud->desktop;
@@ -661,7 +665,10 @@ efreet_util_cache_reload(const char *path, const char *file_id, int priority)
         ud = NEW(Efreet_Util_Desktop, 1);
         ud->priority = priority;
         ud->desktop = desktop;
+
         ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+        efreet_util_desktops_by_category_remove(ud->desktop);
+        efreet_util_desktops_by_category_add(desktop);
 
         ev = NEW(Efreet_Event_Desktop_Change, 1);
         ev->current = desktop;
@@ -861,48 +868,6 @@ efreet_util_glob_match(const char *str, const char *glob)
 }
 
 static void
-efreet_util_cache_search_categories(void *value, void *data)
-{
-    Ecore_Hash_Node          *node;
-    Efreet_Cache_Search_List *search;
-    Efreet_Util_Desktop      *ud;
-    const char               *category;
-
-    node = value;
-    search = data;
-    ud = node->value;
-
-    if (!ud->desktop->categories) return;
-    ecore_list_goto_first(ud->desktop->categories);
-    while ((category = ecore_list_next(ud->desktop->categories)))
-    {
-        if (!ecore_list_goto(search->list, category))
-            ecore_list_append(search->list, (void *)ecore_string_instance(category));
-    }
-}
-
-static void
-efreet_util_cache_search_category(void *value, void *data)
-{
-    Ecore_Hash_Node          *node;
-    Efreet_Cache_Search_List *search;
-    Efreet_Util_Desktop      *ud;
-    const char               *category;
-
-    node = value;
-    search = data;
-    ud = node->value;
-
-    if (!ud->desktop->categories) return;
-    ecore_list_goto_first(ud->desktop->categories);
-    while ((category = ecore_list_next(ud->desktop->categories)))
-    {
-        if (category == search->what)
-            ecore_list_append(search->list, ud->desktop);
-    }
-}
-
-static void
 efreet_util_monitor(const char *path, const char *file_id, int priority)
 {
     Efreet_Monitor *em;
@@ -1028,4 +993,50 @@ efreet_util_menus_find_helper(Ecore_List *menus, const char *config_dir)
         ecore_list_append(menus, strdup(fbuf));
     }
     closedir(files);
+}
+
+static void
+efreet_util_desktops_by_category_add(Efreet_Desktop *desktop)
+{
+    const char *category;
+
+    if (!desktop->categories) return;
+
+    ecore_list_goto_first(desktop->categories);
+    while ((category = ecore_list_next(desktop->categories)))
+    {
+        Ecore_List *list;
+        list = ecore_hash_get(desktops_by_category, category);
+        if (!list)
+        {
+            list = ecore_list_new();
+            ecore_hash_set(desktops_by_category, 
+                    (void *)ecore_string_instance(category), list);
+        }
+        if (!ecore_list_goto(list, desktop))
+            ecore_list_append(list, desktop);
+    }
+}
+
+static void
+efreet_util_desktops_by_category_remove(Efreet_Desktop *desktop)
+{
+    const char *category;
+
+    if (!desktop->categories) return;
+
+    ecore_list_goto_first(desktop->categories);
+    while ((category = ecore_list_next(desktop->categories)))
+    {
+        Ecore_List *list;
+        list = ecore_hash_get(desktops_by_category, category);
+        if (!list) continue;
+        if (ecore_list_goto(list, desktop))
+            ecore_list_remove(list);
+        if (ecore_list_is_empty(list))
+        {
+            ecore_hash_remove(desktops_by_category, category);
+            ecore_list_destroy(list);
+        }
+    }
 }
