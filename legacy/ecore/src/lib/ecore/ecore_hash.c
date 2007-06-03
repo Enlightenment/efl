@@ -4,17 +4,17 @@
 
 #define PRIME_TABLE_MAX 21
 #define PRIME_MIN 17
-#define PRIME_MAX 1677721
+#define PRIME_MAX 16777213
 
 #define ECORE_HASH_CHAIN_MAX 3
 
 #define ECORE_COMPUTE_HASH(hash, key) hash->hash_func(key) % \
 					ecore_prime_table[hash->size];
 
-#define ECORE_HASH_INCREASE(hash) ((hash && hash->size < PRIME_MAX) ? \
+#define ECORE_HASH_INCREASE(hash) ((hash && ecore_prime_table[hash->size] < PRIME_MAX) ? \
 		(hash->nodes / ecore_prime_table[hash->size]) > \
 		ECORE_HASH_CHAIN_MAX : FALSE)
-#define ECORE_HASH_REDUCE(hash) ((hash && hash->size > PRIME_MIN) ? \
+#define ECORE_HASH_REDUCE(hash) ((hash && ecore_prime_table[hash->size] > PRIME_MIN) ? \
 		(double)hash->nodes / (double)ecore_prime_table[hash->size-1] \
 		< ((double)ECORE_HASH_CHAIN_MAX * 0.375) : FALSE)
 
