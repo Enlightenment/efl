@@ -2273,7 +2273,7 @@ _ecore_evas_x_shutdown(void)
 	int i;
 
 	while (ecore_evases) _ecore_evas_free(ecore_evases);
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < 17; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);
 	ecore_evas_idle_enterer = NULL;
