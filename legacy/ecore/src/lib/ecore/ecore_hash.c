@@ -4,19 +4,17 @@
 
 #define PRIME_TABLE_MAX 21
 #define PRIME_MIN 17
-#define PRIME_MAX 1677721
+#define PRIME_MAX 16777213
 
 #define ECORE_HASH_CHAIN_MAX 3
 
 #define ECORE_COMPUTE_HASH(hash, key) hash->hash_func(key) % \
 					ecore_prime_table[hash->size];
 
-//#define ECORE_HASH_INCREASE(hash) ((hash && ecore_prime_table[hash->size] < PRIME_MAX) ?
-#define ECORE_HASH_INCREASE(hash) ((hash && hash->size < PRIME_MAX) ? \
+#define ECORE_HASH_INCREASE(hash) ((hash && ecore_prime_table[hash->size] < PRIME_MAX) ? \
 		(hash->nodes / ecore_prime_table[hash->size]) > \
 		ECORE_HASH_CHAIN_MAX : FALSE)
-//#define ECORE_HASH_REDUCE(hash) ((hash && ecore_prime_table[hash->size] > PRIME_MIN) ?
-#define ECORE_HASH_REDUCE(hash) ((hash && hash->size > PRIME_MIN) ? \
+#define ECORE_HASH_REDUCE(hash) ((hash && ecore_prime_table[hash->size] > PRIME_MIN) ? \
 		(double)hash->nodes / (double)ecore_prime_table[hash->size-1] \
 		< ((double)ECORE_HASH_CHAIN_MAX * 0.375) : FALSE)
 
@@ -677,8 +675,7 @@ _ecore_hash_increase(Ecore_Hash *hash)
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
    /* Max size reached so return FALSE */
-   //if ((ecore_prime_table[hash->size] == PRIME_MAX) || (hash->size == PRIME_TABLE_MAX))
-   if (hash->size == PRIME_TABLE_MAX)
+   if ((ecore_prime_table[hash->size] == PRIME_MAX) || (hash->size == PRIME_TABLE_MAX))
      return FALSE;
 
    /*
@@ -761,7 +758,7 @@ _ecore_hash_decrease(Ecore_Hash *hash)
 
    hash->nodes = 0;
 
-   if (_ecore_hash_rehash(hash, old, hash->size - 1))
+   if (_ecore_hash_rehash(hash, old, hash->size + 1))
      {
 	FREE(old);
 	return TRUE;
