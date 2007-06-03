@@ -675,7 +675,7 @@ _ecore_hash_increase(Ecore_Hash *hash)
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
    /* Max size reached so return FALSE */
-   if (hash->size == PRIME_TABLE_MAX)
+   if ((ecore_prime_table[hash->size] == PRIME_MAX) || (hash->size == PRIME_TABLE_MAX))
      return FALSE;
 
    /*
