@@ -2,6 +2,7 @@
 #define _FILE_OFFSET_BITS  64
 #endif
 
+#include <features.h>
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "Ecore_File.h"

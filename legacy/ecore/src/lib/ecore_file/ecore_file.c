@@ -6,6 +6,7 @@
 #define _FILE_OFFSET_BITS  64
 #endif
 
+#include <features.h>
 #include <ctype.h>
 #include "ecore_file_private.h"
 #include <errno.h>
