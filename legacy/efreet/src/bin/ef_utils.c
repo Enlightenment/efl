@@ -9,6 +9,7 @@ ef_cb_utils(void)
     char *tmp1;
     const char *tmp2;
 
+    if (!efreet_util_init()) return 0;
     printf("\n");
     tmp1 = efreet_util_path_in_default("applications",
             "/usr/share/applications/test.desktop");
@@ -27,5 +28,6 @@ ef_cb_utils(void)
     printf("mplayer.desktop: %p\n", desktop);
     desktop = efreet_util_desktop_file_id_find("nautilus-computer.desktop");
     printf("nautilus-computer.desktop: %p\n", desktop);
+    efreet_util_shutdown();
     return 1;
 }
