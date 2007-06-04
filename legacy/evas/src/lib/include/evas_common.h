@@ -69,6 +69,11 @@
 // BROKEN in gcc 4 on amd64
 //#  pragma GCC visibility push(hidden)
 # endif
+#define LIKELY(x)   __builtin_expect(!!(x), 1)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#define LIKELY(x)   (x)
+#define UNLIKELY(x) (x)
 #endif
 
 /*****************************************************************************/

@@ -265,13 +265,13 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	Evas_Object *obj;
 
 	obj = (Evas_Object *)(ll->data);
-	if (evas_object_is_opaque(obj) &&
-	    evas_object_is_visible(obj) &&
-	    (!obj->clip.clipees) &&
-	    (obj->cur.visible) &&
-	    (!obj->delete_me) &&
-	    (obj->cur.cache.clip.visible) &&
-	    (!obj->smart.smart))
+	if (UNLIKELY(evas_object_is_opaque(obj) &&
+                     evas_object_is_visible(obj) &&
+                     (!obj->clip.clipees) &&
+                     (obj->cur.visible) &&
+                     (!obj->delete_me) &&
+                     (obj->cur.cache.clip.visible) &&
+                     (!obj->smart.smart)))
 	  obscuring_objects = evas_list_append(obscuring_objects, obj);
      }
    /* save this list */
