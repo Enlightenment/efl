@@ -5,6 +5,81 @@
 static const list_node_t list_node_zeroed = {.next = NULL};
 static const list_t list_zeroed = {.head = NULL, .tail = NULL};
 
+
+typedef struct list_node_pool
+{
+   list_node_t *node;
+   int len;
+   int max;
+} list_node_pool_t;
+
+static list_node_pool_t list_node_pool = {
+   .node = NULL, .len = 0, .max = 1024
+};
+
+void
+rect_list_node_pool_set_max(int max)
+{
+   int diff;
+
+   diff = list_node_pool.len - max;
+   for (; diff > 0 && list_node_pool.node != NULL; diff--)
+     {
+        list_node_t *node;
+
+        node = list_node_pool.node;
+        list_node_pool.node = node->next;
+        list_node_pool.len--;
+
+        free(node);
+     }
+
+   list_node_pool.max = max;
+}
+
+void
+rect_list_node_pool_flush(void)
+{
+   while (list_node_pool.node)
+     {
+        list_node_t *node;
+
+        node = list_node_pool.node;
+        list_node_pool.node = node->next;
+        list_node_pool.len--;
+
+        free(node);
+     }
+}
+
+inline list_node_t *
+rect_list_node_pool_get(void)
+{
+   if (list_node_pool.node)
+     {
+        list_node_t *node;
+
+        node = list_node_pool.node;
+        list_node_pool.node = node->next;
+        list_node_pool.len--;
+
+        return node;
+     }
+   else return malloc(sizeof(rect_node_t));
+}
+
+inline void
+rect_list_node_pool_put(list_node_t *node)
+{
+   if (list_node_pool.len < list_node_pool.max)
+     {
+        node->next = list_node_pool.node;
+        list_node_pool.node = node;
+        list_node_pool.len++;
+     }
+   else free(node);
+}
+
 inline void
 rect_init(rect_t *r, int x, int y, int w, int h)
 {
@@ -73,7 +148,7 @@ rect_list_append(list_t *rects, const rect_t r)
 {
    rect_node_t *rect_node;
    
-   rect_node = malloc(sizeof(rect_node_t));
+   rect_node = (rect_node_t *)rect_list_node_pool_get();
    rect_node->rect = r;
    rect_node->_lst = list_node_zeroed;
    
@@ -135,7 +210,7 @@ rect_list_del_next(list_t *rects, list_node_t *parent_node)
     list_node_t *node;
 
     node = rect_list_unlink_next(rects, parent_node);
-    free(node);
+    rect_list_node_pool_put(node);
 }
 
 void
@@ -149,7 +224,7 @@ rect_list_clear(list_t *rects)
         list_node_t *aux;
 	
         aux = node->next;
-        free(node);
+        rect_list_node_pool_put(node);
         node = aux;
      }
    *rects = list_zeroed;
@@ -654,8 +729,8 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 	       }
 	  }
 	
-        if (keep_dirty) rect_list_append_node(rects, d_node);
-        else free(d_node);
+        if (UNLIKELY(keep_dirty)) rect_list_append_node(rects, d_node);
+        else rect_list_node_pool_put(d_node);
     }
 
     return old_last;
@@ -844,7 +919,7 @@ _add_redraw(list_t *rects, int max_w, int max_h, int x, int y, int w, int h)
    h += 2;
    h >>= 1;
 
-   rn = malloc(sizeof(rect_node_t));
+   rn = (rect_node_t *)rect_list_node_pool_get();
    rn->_lst = list_node_zeroed;
    rect_init(&rn->rect, x, y, w, h);
    //fprintf(stderr, "ACCOUNTING: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);

@@ -571,6 +571,10 @@ struct rect_node
     struct rect rect;
 };
 
+void rect_list_node_pool_set_max(int max);
+void rect_list_node_pool_flush(void);
+list_node_t *rect_list_node_pool_get(void);
+void rect_list_node_pool_put(list_node_t *node);
 
 void rect_init(rect_t *r, int x, int y, int w, int h);
 void rect_list_append_node(list_t *rects, list_node_t *node);
