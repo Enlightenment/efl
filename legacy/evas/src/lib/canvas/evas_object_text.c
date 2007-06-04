@@ -68,10 +68,15 @@ static const Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * To be documented.
+ * Creates a new text @c Evas_Object on the provided @c Evas canvas.
  *
- * FIXME: To be fixed.
+ * @param e The @c Evas canvas to create the text object upon.
  *
+ * @see evas_object_text_font_source_set
+ * @see evas_object_text_font_set
+ * @see evas_object_text_text_set
+ *
+ * @returns NULL on error, A pointer to a new @c Evas_Object on success.
  */
 EAPI Evas_Object *
 evas_object_text_add(Evas *e)
@@ -246,10 +251,16 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 }
 
 /**
- * To be documented.
+ * Query evas for font information of a text @c Evas_Object.
  *
- * FIXME: To be fixed.
- *
+ * This function allows the font name and size of a text @c Evas_Object as
+ * created with evas_object_text_add() to be queried. Be aware that the font
+ * name string is still owned by Evas and should NOT have free() called on
+ * it by the caller of the function.
+ * 
+ * @param obj	The evas text object to query for font information.
+ * @param font	A pointer to the location to store the font name in (may be NULL).
+ * @param size	A pointer to the location to store the font size in (may be NULL).
  */
 EAPI void
 evas_object_text_font_get(Evas_Object *obj, const char **font, Evas_Font_Size *size)
@@ -511,10 +522,22 @@ evas_object_text_vert_advance_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Retrieve position and dimension information of a character within a text @c Evas_Object.
  *
- * FIXME: To be fixed.
+ * This function is used to obtain the X, Y, width and height of a the character
+ * located at @p pos within the @c Evas_Object @p obj. @p obj must be a text object
+ * as created with evas_object_text_add(). Any of the @c Evas_Coord parameters (@p cx,
+ * @p cy, @p cw, @p ch) may be NULL in which case no value will be assigned to that
+ * parameter.
  *
+ * @param obj	The text object to retrieve position information for.
+ * @param pos	The character position to request co-ordinates for.
+ * @param cx	A pointer to an @c Evas_Coord to store the X value in (can be NULL).
+ * @param cy	A pointer to an @c Evas_Coord to store the Y value in (can be NULL).
+ * @param cw	A pointer to an @c Evas_Coord to store the Width value in (can be NULL).
+ * @param ch	A pointer to an @c Evas_Coord to store the Height value in (can be NULL).
+ *
+ * @returns 0 on error, 1 on success.
  */
 EAPI int
 evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)

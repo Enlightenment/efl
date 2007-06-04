@@ -111,7 +111,7 @@ ecore_evas_shutdown(void)
 }
 
 /**
- * Return the Ecore_Evase for this Evas
+ * Return the Ecore_Evas for this Evas
  * 
  * @param e The Evas to get the Ecore_Evas from
  * @return The Ecore_Evas that holds this Evas
@@ -141,6 +141,19 @@ ecore_evas_free(Ecore_Evas *ee)
    return;
 }
 
+/**
+ * Retrieve user data associated with an Ecore_Evas.
+ * @param ee The Ecore_Evas to retrieve the user data from.
+ * @param key The key which the user data to be retrieved is associated with.
+ *
+ * This function retrieves user specific data that has been stored within an
+ * Ecore_Evas structure with ecore_evas_data_set().
+ *
+ * @returns NULL on error or no data found, A pointer to the user data on
+ *     success.
+ * 
+ * @see ecore_evas_data_set
+ */
 EAPI void *
 ecore_evas_data_get(Ecore_Evas *ee, const char *key)
 {
@@ -156,6 +169,21 @@ ecore_evas_data_get(Ecore_Evas *ee, const char *key)
    return evas_hash_find(ee->data, key);
 }
 
+/**
+ * Store user data in an Ecore_Evas structure.
+ *
+ * @param eeThe Ecore_Evas to store the user data in.
+ * @param keyA unique string to associate the user data against. Cannot
+ * be NULL.
+ * @param dataA pointer to the user data to store.
+ *
+ * This function associates the @p data with a @p key which is stored by
+ * the Ecore_Evas @p ee. Be aware that a call to ecore_evas_free() will
+ * not free any memory for the associated user data, this is the responsibility
+ * of the caller.
+ *
+ * @see ecore_evas_free
+ */
 EAPI void
 ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
 {

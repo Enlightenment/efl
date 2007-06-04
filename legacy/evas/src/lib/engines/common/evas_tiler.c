@@ -827,6 +827,7 @@ evas_common_tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
    if (th) *th = tb->tile_size.h;
 }
 
+#ifdef EVAS_RECT_SPLIT
 static inline int
 _add_redraw(list_t *rects, int max_w, int max_h, int x, int y, int w, int h)
 {
@@ -853,6 +854,7 @@ _add_redraw(list_t *rects, int max_w, int max_h, int x, int y, int w, int h)
                                        FUZZ * FUZZ, FUZZ * FUZZ);
    return 1;
 }
+#endif
 
 EAPI int
 evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)

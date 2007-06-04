@@ -8,10 +8,22 @@
 /* public calls */
 
 /**
- * To be documented.
+ * Sets focus to the given object.
+ * 
+ * @param obj The object to be focused or unfocused.
+ * @param focus set or remove focus to the object.
  *
- * FIXME: To be fixed.
+ * Changing focus only affects where key events go.
+ * There can be only one object focused at any time.
+ * <p>
+ * If the parameter (@p focus) is set, the passed object will be set as the
+ * currently focused object.  It will receive all keyboard events that are not
+ * exclusive key grabs on other objects.
  *
+ * @see evas_object_focus_get
+ * @see evas_focus_get
+ * @see evas_object_key_grab
+ * @see evas_object_key_ungrab
  */
 EAPI void
 evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
@@ -39,10 +51,19 @@ evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
 }
 
 /**
- * To be documented.
+ * Test if the object has focus.
  *
- * FIXME: To be fixed.
+ * @param obj The object to be tested.
+ * 
+ * If the passed object is the currently focused object 1 is returned,
+ * 0 otherwise.
+ * 
+ * @see evas_object_focus_set
+ * @see evas_focus_get
+ * @see evas_object_key_grab
+ * @see evas_object_key_ungrab
  *
+ * @return 1 if the object has the focus, 0 otherwise.
  */
 EAPI Evas_Bool
 evas_object_focus_get(Evas_Object *obj)
@@ -54,10 +75,18 @@ evas_object_focus_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Retrieve the object that currently has focus.
  *
- * FIXME: To be fixed.
+ * @param e The @c Evas canvas to query focus on.
+ * 
+ * Returns the object that currently has focus, NULL otherwise.
+ * 
+ * @see evas_object_focus_set
+ * @see evas_object_focus_get
+ * @see evas_object_key_grab
+ * @see evas_object_key_ungrab
  *
+ * @return The object that has focus or NULL is there is not one.
  */
 EAPI Evas_Object *
 evas_focus_get(Evas *e)

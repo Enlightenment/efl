@@ -141,10 +141,41 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
 /* public calls */
 
 /**
- * To be documented.
+ * Requests @p keyname key events be directed to @p obj.
  *
- * FIXME: To be fixed.
+ * Key grabs allow an object to receive key events for specific key strokes
+ * even if another object has focus.  If the grab is non-exclusive then all
+ * objects that have grabs on the key will get the event, however if the
+ * grab is exclusive, no other object can get a grab on the key and only
+ * that object will get the event.
  *
+ * @p keyname is a platform dependent symbolic name for the key pressed.
+ * It is sometimes possible to convert the string to an ASCII value of the
+ * key, but not always for example the enter key may be returned as the
+ * string 'Enter'.
+ *
+ * Typical platforms are Linux frame buffer (Ecore_FB) and X server (Ecore_X)
+ * when using Evas with Ecore and Ecore_Evas.
+ *
+ * For a list of keynames for the Linux frame buffer, please refer to the
+ * Ecore_FB documentation.
+ * 
+ * @p modifiers and @p not_modifiers are bit masks of all the modifiers that are required and
+ * not required respectively for the new grab.  Modifiers can be things such as shift and ctrl
+ * as well as user defigned types via evas_key_modifier_add.
+ *
+ * @see evas_object_key_ungrab
+ * @see evas_object_focus_set
+ * @see evas_object_focus_get
+ * @see evas_focus_get
+ * @see evas_key_modifier_add
+ * 
+ * @param obj the object to direct @p keyname events to.
+ * @param keyname the key to request events for.
+ * @param modifiers a mask of modifiers that should be present to trigger the event.
+ * @param not_modifiers a mask of modifiers that should not be present to trigger the event.
+ * @param exclusive request that the @p obj is the only object receiving the @p keyname events.
+ * @return Boolean indicating whether the grab succeeded
  */
 EAPI Evas_Bool
 evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive)
@@ -167,10 +198,20 @@ evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask m
 }
 
 /**
- * To be documented.
+ * Request that the grab on @p obj be removed.
+ * 
+ * Removes the grab on @p obj if @p keyname, @p modifiers, and @p not_modifiers
+ * match.
+ * 
+ * @see evas_object_key_grab
+ * @see evas_object_focus_set
+ * @see evas_object_focus_get
+ * @see evas_focus_get
  *
- * FIXME: To be fixed.
- *
+ * @param obj the object that has an existing grab.
+ * @param keyname the key the grab is for.
+ * @param modifiers a mask of modifiers that should be present to trigger the event.
+ * @param not_modifiers a mask of modifiers that should not be present to trigger the event.
  */
 EAPI void
 evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)

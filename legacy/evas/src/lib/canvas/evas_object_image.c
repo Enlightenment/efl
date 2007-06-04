@@ -677,10 +677,39 @@ evas_object_image_data_get(Evas_Object *obj, Evas_Bool for_writing)
 }
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Image_Data Image Object Image Data Functions
  *
- * FIXME: To be fixed.
+ * Functions that allow you to access or modify the image pixel data of an
+ * image object.
+ */
+
+/**
+ * Replaces an image object's internal image data buffer.
  *
+ * This function lets the application replace an image object's internal pixel
+ * buffer with a user-allocated one.  For best results, you should generally
+ * first call evas_object_image_size_set() with the width and height for the
+ * new buffer.
+ *
+ * This call is best suited for when you will be using image data with
+ * different dimensions than the existing image data, if any.  If you only need
+ * to modify the existing image in some fashion, then using
+ * evas_object_image_data_get() is probably what you are after.
+ *
+ * The buffer should be a single planar array (not 2-dimensional), with
+ * consecutive rows following on from each other.  Pixels should be in 32-bit
+ * ARGB format.
+ * 
+ * Note that the caller is responsible for freeing the buffer when finished
+ * with it, as user-set image data will not be automatically freed when the
+ * image object is deleted.
+ * 
+ * @see evas_object_image_data_get
+ *
+ * @param   obj  The given image object.
+ * @param   data pointer to the new pixel buffer
+ * @ingroup Evas_Object_Image_Data
+ * @ingroup Evas_Object_Image_Size
  */
 EAPI void
 evas_object_image_data_copy_set(Evas_Object *obj, void *data)
@@ -745,10 +774,24 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
 }
 
 /**
- * To be documented.
+ * Get a pointer to an image object's internal image data buffer.
  *
- * FIXME: To be fixed.
+ * This function returns a pointer to an image object's internal pixel buffer,
+ * for reading only or read/write.  If you request it for writing, the image
+ * will be marked dirty so that it gets redrawn at the next update.
  *
+ * Note that this is best suited when you want to modify an existing image,
+ * without changing its dimensions.  If you need to modify an image's
+ * dimensions at the same time, you will need to allocate your own buffer and
+ * call evas_object_image_data_set() to instruct the image object to use it.
+ * 
+ * @see evas_object_image_data_set
+ *
+ * @param   obj         The given image object.
+ * @param   for_writing Boolean indicating whether or not we desire the buffer for writing
+ * @return  Pointer to the image object's image data
+ * @ingroup Evas_Object_Image_Data
+ * 
  */
 EAPI void
 evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
@@ -796,10 +839,20 @@ evas_object_image_alpha_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Mark a sub-region of an image to be redrawn.
  *
- * FIXME: To be fixed.
+ * This function schedules a particular rectangular region of an image object
+ * to be updated (redrawn) at the next render.
+ * 
+ * @see evas_object_image_dirty_set
  *
+ * @param   obj The given image object.
+ * @param   x   X-offset of region to be updated
+ * @param   y   Y-offset of region to be updated
+ * @param   w   Width of region to be updated
+ * @param   h   Height of region to be updated
+ * @ingroup Evas_Object_Image_Data
+ * 
  */
 EAPI void
 evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
@@ -842,10 +895,25 @@ evas_object_image_smooth_scale_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Image_Alpha Image Object Image Alpha Functions
  *
- * FIXME: To be fixed.
+ * Functions that change the alpha of an image object.
+ */
+
+/**
+ * Enable or disable alpha channel on an image.
  *
+ * This function sets a flag on an image object indicating whether or not to
+ * use alpha channel data.  A value of 1 indicates to use alpha channel data,
+ * and 0 indicates to ignore any alpha channel data. Note that this has
+ * nothing to do with an object's color as manipulated by
+ * evas_object_color_set().
+ *
+ * @see evas_object_image_alpha_get
+ *
+ * @param   obj       The given image object.
+ * @param   has_alpha Boolean flag indicating to use alpha or not
+ * @ingroup Evas_Object_Image_Alpha
  */
 EAPI void
 evas_object_image_reload(Evas_Object *obj)
@@ -871,10 +939,17 @@ evas_object_image_reload(Evas_Object *obj)
 }
 
 /**
- * To be documented.
+ * Obtain alpha channel setting of an image object
+ * 
+ * This function returns 1 if the image object's alpha channel is being used,
+ * or 0 otherwise.  Note that this has nothing to do with an object's color as
+ * manipulated by evas_object_color_set().
  *
- * FIXME: To be fixed.
+ * @see evas_object_image_alpha_set
  *
+ * @param   obj       The given image object.
+ * @return  Boolean indicating if the alpha channel is being used
+ * @ingroup Evas_Object_Image_Alpha
  */
 EAPI Evas_Bool
 evas_object_image_save(Evas_Object *obj, const char *file, const char *key, const char *flags)
@@ -1026,9 +1101,23 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
 }
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Image_Scale Image Object Image Scaling Functions
  *
- * FIXME: To be fixed.
+ * Functions that change the scaling quality of an image object.
+ */
+
+/**
+ * Set/unset the use of high-quality image scaling
+ *
+ * When enabled, a higher quality image scaling algorithm is used when scaling
+ * images to sizes other than the source image.  This gives better results but
+ * is more computationally expensive.
+ * 
+ * @see evas_object_image_smooth_scale_get
+ *
+ * @param   obj          The given image object.
+ * @param   smooth_scale Boolean flag indicating to use alpha or not.
+ * @ingroup Evas_Object_Image_Scale
  *
  */
 EAPI void
@@ -1072,9 +1161,16 @@ evas_object_image_pixels_dirty_set(Evas_Object *obj, Evas_Bool dirty)
 }
 
 /**
- * To be documented.
+ * Test if smooth scaling is enabled on an image object
  *
- * FIXME: To be fixed.
+ * This function returns 1 if smooth scaling is enabled on the image object,
+ * or 0 otherwise.
+ *
+ * @see evas_object_image_smooth_scale_set
+ *
+ * @param   obj          The given image object.
+ * @return  Boolean indicating if smooth scaling is enabled.
+ * @ingroup Evas_Object_Image_Scale
  *
  */
 EAPI Evas_Bool
