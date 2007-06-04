@@ -73,11 +73,27 @@ ecore_tree_init(Ecore_Tree *new_tree, Ecore_Compare_Cb compare_func)
  * @return Returns TRUE on successful set, FALSE otherwise.
  */
 EAPI int 
-ecore_tree_set_free_cb(Ecore_Tree *tree, Ecore_Free_Cb free_func)
+ecore_tree_set_free_value(Ecore_Tree *tree, Ecore_Free_Cb free_value)
 {
    CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
-   tree->free_func = free_func;
+   tree->free_value = free_value;
+
+   return TRUE;
+}
+
+/*
+ * @brief Add a function to be called at node destroy time
+ * @param tree: the tree that will use this function when nodes are destroyed
+ * @param free_key: the function that will be passed the node being freed
+ * @return Returns TRUE on successful set, FALSE otherwise.
+ */
+EAPI int 
+ecore_tree_set_free_key(Ecore_Tree *tree, Ecore_Free_Cb free_key)
+{
+   CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
+
+   tree->free_key = free_key;
 
    return TRUE;
 }
@@ -134,12 +150,14 @@ ecore_tree_node_new()
  * If you don't want the children free'd then you need to remove the node first.
  */
 EAPI int 
-ecore_tree_node_destroy(Ecore_Tree_Node *node, Ecore_Free_Cb data_free)
+ecore_tree_node_destroy(Ecore_Tree_Node *node, Ecore_Free_Cb value_free, Ecore_Free_Cb key_free)
 {
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
-   if (data_free)
-     data_free(node->value);
+   if (key_free)
+     key_free(node->key);
+   if (value_free)
+     value_free(node->value);
 
    FREE(node);
 
@@ -185,7 +203,7 @@ ecore_tree_node_value_get(Ecore_Tree_Node *node)
  * @return Returns TRUE if the node is set successfully, FALSE if not.
  */
 EAPI int 
-ecore_tree_node_key_set(Ecore_Tree_Node *node, const void *key)
+ecore_tree_node_key_set(Ecore_Tree_Node *node, void *key)
 {
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
@@ -200,10 +218,10 @@ ecore_tree_node_key_set(Ecore_Tree_Node *node, const void *key)
  *
  * @return Returns NULL if an error occurs, otherwise the key is returned
  */
-EAPI const void *
+EAPI void *
 ecore_tree_node_key_get(Ecore_Tree_Node *node)
 {
-   const void *ret;
+   void *ret;
 
    CHECK_PARAM_POINTER_RETURN("node", node, NULL);
    ret = node->key;
@@ -227,7 +245,7 @@ ecore_tree_destroy(Ecore_Tree *tree)
    while ((node = tree->tree))
      {
 	ecore_tree_remove_node(tree, node);
-	ecore_tree_node_destroy(node, tree->free_func);
+	ecore_tree_node_destroy(node, tree->free_value, tree->free_key);
      }
 
    FREE(tree);
@@ -334,7 +352,7 @@ ecore_tree_get_closest_smaller(Ecore_Tree *tree, const void *key)
  * @return TRUE if successful, FALSE if not.
  */
 EAPI int 
-ecore_tree_set(Ecore_Tree *tree, const void *key, void *value)
+ecore_tree_set(Ecore_Tree *tree, void *key, void *value)
 {
    Ecore_Tree_Node *node = NULL;
 
@@ -348,6 +366,14 @@ ecore_tree_set(Ecore_Tree *tree, const void *key, void *value)
 	if (!ecore_tree_add_node(tree, node))
 	  return FALSE;
      }
+   else 
+     {
+        if (tree->free_key) 
+	  tree->free_key(key);
+        if (node->value && tree->free_value)
+	  tree->free_value(node->value);
+     }
+
    ecore_tree_node_value_set(node, value);
 
    for (; node; node = node->parent)
@@ -537,7 +563,7 @@ ecore_tree_remove(Ecore_Tree *tree, const void *key)
    if (!ecore_tree_remove_node(tree, node))
      return FALSE;
 
-   ecore_tree_node_destroy(node, tree->free_func);
+   ecore_tree_node_destroy(node, tree->free_value, tree->free_key);
 
    return TRUE;
 }

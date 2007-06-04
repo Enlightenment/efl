@@ -252,10 +252,10 @@ extern "C" {
       int index;    /* The current index into the bucket table */
       
       Ecore_Compare_Cb compare;	/* The function used to compare node values */
-      Ecore_Hash_Cb hash_func;	/* The function used to compare node values */
+      Ecore_Hash_Cb hash_func;	/* The callback function to determine hash */
       
       Ecore_Free_Cb free_key;	/* The callback function to free key */
-      Ecore_Free_Cb free_value;	/* The callback function to determine hash */
+      Ecore_Free_Cb free_value;	/* The callback function to free value */
    };
    
    /* Create and initialize a hash */
@@ -398,7 +398,7 @@ extern "C" {
    struct _Ecore_Tree_Node {
       
       /* The actual data for each node */
-      const void *key;
+      void *key;
       void *value;
       
       /* Pointers to surrounding nodes */
@@ -421,7 +421,9 @@ extern "C" {
       Ecore_Compare_Cb compare_func;
       
       /* Callback for freeing node data, default is NULL */
-      Ecore_Free_Cb free_func;
+      Ecore_Free_Cb free_value;
+      /* Callback for freeing node key, default is NULL */
+      Ecore_Free_Cb free_key;
    };
    
    /* Some basic tree functions */
@@ -444,7 +446,7 @@ extern "C" {
    EAPI void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, const void *key);
    
    /* Set the value associated with key to value */
-   EAPI int ecore_tree_set(Ecore_Tree * tree, const void *key, void *value);
+   EAPI int ecore_tree_set(Ecore_Tree * tree, void *key, void *value);
    /* Remove the key from the tree */
    EAPI int ecore_tree_remove(Ecore_Tree * tree, const void *key);
    
@@ -468,12 +470,13 @@ extern "C" {
    /* Allocate and initialize a new node */
    EAPI Ecore_Tree_Node *ecore_tree_node_new(void);
    /* Free the desired node */
-   EAPI int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb free_data);
+   EAPI int ecore_tree_node_destroy(Ecore_Tree_Node * node, 
+		   Ecore_Free_Cb free_value, Ecore_Free_Cb free_key);
    
    /* Set the node's key to key */
-   EAPI int ecore_tree_node_key_set(Ecore_Tree_Node * node, const void *key);
+   EAPI int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key);
    /* Retrieve the key in node */
-   EAPI const void *ecore_tree_node_key_get(Ecore_Tree_Node * node);
+   EAPI void *ecore_tree_node_key_get(Ecore_Tree_Node * node);
    
    /* Set the node's value to value */
    EAPI int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value);
@@ -481,7 +484,9 @@ extern "C" {
    EAPI void *ecore_tree_node_value_get(Ecore_Tree_Node * node);
    
    /* Add a function to free the data stored in nodes */
-   EAPI int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func);
+   EAPI int ecore_tree_set_free_value(Ecore_Tree * tree, Ecore_Free_Cb free_value);
+   /* Add a function to free the keys stored in nodes */
+   EAPI int ecore_tree_set_free_key(Ecore_Tree * tree, Ecore_Free_Cb free_key);
 
 
    EAPI Ecore_Strbuf * ecore_strbuf_new(void);
