@@ -881,6 +881,7 @@ evas_common_tilebuf_free(Tilebuf *tb)
    evas_common_regionbuf_free(tb->rb);
 #elif defined(EVAS_RECT_SPLIT)
    rect_list_clear(&tb->rects);
+   rect_list_node_pool_flush();
 #else
    if (tb->tiles.tiles) free(tb->tiles.tiles);
 #endif
