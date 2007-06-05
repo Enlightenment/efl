@@ -6,7 +6,9 @@
 #define _FILE_OFFSET_BITS  64
 #endif
 
+#ifndef __FreeBSD__
 #include <features.h>
+#endif
 #include <ctype.h>
 #include "ecore_file_private.h"
 #include <errno.h>

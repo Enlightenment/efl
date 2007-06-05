@@ -2,7 +2,9 @@
 #define _FILE_OFFSET_BITS  64
 #endif
 
+#ifndef __FreeBSD__
 #include <features.h>
+#endif
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "Ecore_File.h"
