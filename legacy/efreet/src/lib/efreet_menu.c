@@ -554,6 +554,15 @@ efreet_menu_shutdown(void)
     ecore_string_shutdown();
 }
 
+Efreet_Menu *
+efreet_menu_new(void)
+{
+    Efreet_Menu *menu;
+    menu = efreet_menu_entry_new();
+    menu->type = EFREET_MENU_ENTRY_MENU;
+    return menu;
+}
+
 /**
  * @return Returns the Efreet_Menu_Internal representation of the default menu or
  * NULL if none found

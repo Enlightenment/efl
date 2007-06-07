@@ -840,7 +840,7 @@ efreet_icon_new(const char *path)
 
     if (!icon->name)
     {
-        char *file;
+        const char *file;
 
         file = ecore_file_get_file(icon->path);
         p = strrchr(icon->path, '.');

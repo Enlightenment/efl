@@ -421,6 +421,7 @@ efreet_util_desktop_comment_glob_list(const char *glob)
 
 /**
  * Find all desktop categories
+ * This list must be freed using ecore_list_destroy()
  *
  * @return an Ecore_List of category names (const char *)
  */
@@ -432,10 +433,13 @@ efreet_util_desktop_categories_list()
 
 /**
  * Find all desktops in a given category
+ *
+ * Note: this returns a pointer to an internal list. Do not add to, remove from, or delete this list.
+ *
  * @param category the category name
  * @return a list of desktops
  */
-const Ecore_List *
+Ecore_List *
 efreet_util_desktop_category_list(const char *category)
 {
     return ecore_hash_get(desktops_by_category, category);

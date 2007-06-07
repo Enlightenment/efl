@@ -51,6 +51,7 @@ struct Efreet_Menu
 
 int              efreet_menu_kde_legacy_init(void);
 
+Efreet_Menu     *efreet_menu_new(void);
 Efreet_Menu     *efreet_menu_get(void);
 Efreet_Menu     *efreet_menu_parse(const char *path);
 int              efreet_menu_save(Efreet_Menu *menu, const char *path);
