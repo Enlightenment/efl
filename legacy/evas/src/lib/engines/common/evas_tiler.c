@@ -1115,23 +1115,31 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 
    for (n = tb->rects.head; n != NULL; n = n->next) {
        rect_t cur;
-       Tilebuf_Rect *r;
 
        cur = ((rect_node_t *)n)->rect;
 
-       r = malloc(sizeof(Tilebuf_Rect));
-       r->_list_data.next = NULL;
-       r->_list_data.prev = NULL;
-       r->_list_data.last = NULL;
-       r->x = cur.left << 1;
-       r->y = cur.top << 1;
-       r->w = cur.width << 1;
-       r->h = cur.height << 1;
+       cur.left <<= 1;
+       cur.top <<= 1;
+       cur.width <<= 1;
+       cur.height <<= 1;
 
-/*        fprintf(stderr, "\tclear: %4d,%4d %3dx%3d\n", */
-/*                r->x, r->y, r->w, r->h); */
+       RECTS_CLIP_TO_RECT(cur.left, cur.top, cur.width, cur.height,
+			  0, 0, tb->outbuf_w, tb->outbuf_h);
+       if ((cur.width > 0) && (cur.height > 0))
+	 {
+	    Tilebuf_Rect *r;
 
-       rects = evas_object_list_append(rects, r);
+	    r = malloc(sizeof(Tilebuf_Rect));
+	    r->_list_data.next = NULL;
+	    r->_list_data.prev = NULL;
+	    r->_list_data.last = NULL;
+	    r->x = cur.left;
+	    r->y = cur.top;
+	    r->w = cur.width;
+	    r->h = cur.height;
+
+	    rects = evas_object_list_append(rects, r);
+	 }
    }
    return rects;
 
