@@ -14,6 +14,7 @@ evas_software_x11_x_write_mask_line(Outbuf *buf, X_Output_Buffer *xob, DATA32 *s
    src_ptr = src;
    dst_ptr = evas_software_x11_x_output_buffer_data(xob, &bpl);
    dst_ptr = dst_ptr + (bpl * y);
+   w -= 7;
    if (buf->priv.x.bit_swap)
      {
 	for (x = 0; x < w; x += 8)
@@ -48,6 +49,7 @@ evas_software_x11_x_write_mask_line(Outbuf *buf, X_Output_Buffer *xob, DATA32 *s
 	     dst_ptr++;
 	  }
      }
+   w += 7;
    for (; x < w; x ++)
      {
 	XPutPixel(xob->xim, x, y, A_VAL(src_ptr) >> 7);
