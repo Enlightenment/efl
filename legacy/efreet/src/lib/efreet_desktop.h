@@ -62,6 +62,9 @@ typedef void *(*Efreet_Desktop_Type_Free_Cb) (void *data);
 struct Efreet_Desktop
 {
     int type;               /**< type of desktop file */
+   
+    int ref;                /**< reference count - internal */
+    int cache_flush;        /**< cache flush value - internal */
 
     double version;         /**< version of spec file conforms to */
 
@@ -90,6 +93,7 @@ struct Efreet_Desktop
     unsigned char hidden:1;            /**< User delete the item */
     unsigned char terminal:1;          /**< Does the program run in a terminal */
     unsigned char startup_notify:1;    /**< The starup notify settings of the app */
+    unsigned char cached:1;            /**< The desktop file is cached by Efreet */
 
     Ecore_Hash *x; /**< Keep track of all user extensions, keys that begin with X- */
     void *type_data; /**< Type specific data for custom types */
@@ -131,7 +135,8 @@ void             *efreet_desktop_type_data_get(Efreet_Desktop *desktop);
 
 Ecore_List       *efreet_desktop_string_list_parse(const char *string);
 char             *efreet_desktop_string_list_join(Ecore_List *list);
-
+void              efreet_desktop_cache_flush(void);
+    
 /** 
  * @}
  */

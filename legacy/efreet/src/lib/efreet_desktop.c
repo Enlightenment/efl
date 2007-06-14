@@ -26,6 +26,7 @@ static Ecore_List *efreet_desktop_types = NULL;
 static int efreet_desktop_command_file_id = 0;
 
 static int init = 0;
+static int cache_flush = 0;
 
 int EFREET_DESKTOP_TYPE_APPLICATION = 0;
 int EFREET_DESKTOP_TYPE_LINK = 0;
@@ -167,8 +168,10 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
     if (!desktop) return 0;
 
     /* have we modified this file since we last read it in? */
-    if (stat(desktop->orig_path, &buf) || (buf.st_mtime > desktop->load_time))
-        return 0;
+    if ((desktop->cache_flush != cache_flush) || 
+	(stat(desktop->orig_path, &buf) ||
+	 (buf.st_mtime > desktop->load_time)))
+     return 0;
 
     return 1;
 }
@@ -191,12 +194,20 @@ efreet_desktop_get(const char *file)
         if (desktop)
         {
             if (efreet_desktop_cache_check(desktop))
+	     {
+		desktop->ref++;
                 return desktop;
+	     }
 
             efreet_desktop_clear(desktop);
             if (efreet_desktop_read(desktop))
+	     {
+		desktop->ref++;
+		desktop->cache_flush = cache_flush;
                 return desktop;
+	     }
 
+	    desktop->cached = 0;
             ecore_hash_remove(efreet_desktop_cache, file);
             efreet_desktop_free(desktop);
         }
@@ -206,8 +217,8 @@ efreet_desktop_get(const char *file)
     if (!desktop) return NULL;
 
     ecore_hash_set(efreet_desktop_cache, strdup(file), desktop);
+    desktop->cached = 1;
     return desktop;
-
 }
 
 /**
@@ -225,6 +236,9 @@ efreet_desktop_empty_new(const char *file)
 
     desktop->orig_path = strdup(file);
     desktop->load_time = ecore_time_get();
+   
+    desktop->ref = 1;
+   
     return desktop;
 }
 
@@ -250,6 +264,10 @@ efreet_desktop_new(const char *file)
         efreet_desktop_free(desktop);
         return NULL;
     }
+   
+    desktop->ref = 1;
+    desktop->cache_flush = cache_flush;
+   
     return desktop;
 }
 
@@ -400,8 +418,11 @@ efreet_desktop_save(Efreet_Desktop *desktop)
         else
         {
             if (desktop != ecore_hash_get(efreet_desktop_cache, desktop->orig_path))
+	     {
+		desktop->cached = 1;
                 ecore_hash_set(efreet_desktop_cache, 
                     strdup(desktop->orig_path), desktop);
+	     }
         }
     }
     efreet_ini_free(ini);
@@ -418,7 +439,10 @@ int
 efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 {
     if (desktop == ecore_hash_get(efreet_desktop_cache, desktop->orig_path))
+     {
+	desktop->cached = 0;
         ecore_hash_remove(efreet_desktop_cache, desktop->orig_path);
+     }
     FREE(desktop->orig_path);
     desktop->orig_path = strdup(file);
     return efreet_desktop_save(desktop);
@@ -435,6 +459,12 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 {
     if (!desktop) return;
 
+    desktop->ref--;
+    if (desktop->ref > 0) return;
+   
+    if (desktop->cached)
+     ecore_hash_remove(efreet_desktop_cache, desktop->orig_path);
+   
     IF_FREE(desktop->orig_path);
 
     IF_FREE(desktop->name);
@@ -715,6 +745,19 @@ efreet_desktop_string_list_join(Ecore_List *list)
         pos += 1;
     }
     return string;
+}
+
+/**
+ * @brief Tell Efreet to flush any cached desktop entries so it reloads on get.
+ * 
+ * This flags the cache to be invalid, so next time a desktop file is fetched
+ * it will force it to be re-read off disk next time efreet_desktop_get() is
+ * called.
+ */
+void
+efreet_desktop_cache_flush(void)
+{
+   cache_flush++;
 }
 
 /**
