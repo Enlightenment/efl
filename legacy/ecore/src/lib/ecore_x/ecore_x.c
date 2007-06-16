@@ -10,12 +10,8 @@
 static int _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_x_key_mask_get(KeySym sym);
-static void *_ecore_x_event_filter_start(void *data);
-static int   _ecore_x_event_filter_filter(void *data, void *loop_data,int type, void *event);
-static void  _ecore_x_event_filter_end(void *data, void *loop_data);
 
 static Ecore_Fd_Handler *_ecore_x_fd_handler_handle = NULL;
-static Ecore_Event_Filter *_ecore_x_filter_handler = NULL;
 static int _ecore_x_event_shape_id = 0;
 static int _ecore_x_event_screensaver_id = 0;
 static int _ecore_x_event_sync_id = 0;
@@ -404,7 +400,6 @@ ecore_x_init(const char *name)
 	_ecore_x_event_handlers = NULL;
 	return 0;
      }
-   _ecore_x_filter_handler = ecore_event_filter_add(_ecore_x_event_filter_start, _ecore_x_event_filter_filter, _ecore_x_event_filter_end, NULL);
 
    ECORE_X_ATOM_COMPOUND_TEXT      = XInternAtom(_ecore_x_disp, "COMPOUND_TEXT", False);
    ECORE_X_ATOM_UTF8_STRING        = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
@@ -464,9 +459,7 @@ _ecore_x_shutdown(int close_display)
       close(ConnectionNumber(_ecore_x_disp));
    free(_ecore_x_event_handlers);
    ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
-   ecore_event_filter_del(_ecore_x_filter_handler);
    _ecore_x_fd_handler_handle = NULL;
-   _ecore_x_filter_handler = NULL;
    _ecore_x_disp = NULL;
    _ecore_x_event_handlers = NULL;
    _ecore_x_selection_shutdown();
@@ -718,50 +711,6 @@ _ecore_x_key_mask_get(KeySym sym)
 	XFree(mod);
      }
   return 0;
-}
-
-typedef struct _Ecore_X_Filter_Data Ecore_X_Filter_Data;
-
-struct _Ecore_X_Filter_Data
-{
-   int last_event_type;
-};
-
-static void *
-_ecore_x_event_filter_start(void *data __UNUSED__)
-{
-   Ecore_X_Filter_Data *filter_data;
-   
-   filter_data = calloc(1, sizeof(Ecore_X_Filter_Data));
-   return filter_data;
-}
-
-static int
-_ecore_x_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, void *event __UNUSED__)
-{
-   Ecore_X_Filter_Data *filter_data;
-   
-   filter_data = loop_data;
-   if (!filter_data) return 1;
-   if (type == ECORE_X_EVENT_MOUSE_MOVE)
-     {
-	if ((filter_data->last_event_type) == ECORE_X_EVENT_MOUSE_MOVE) 
-	  {
-	     filter_data->last_event_type = type;
-	     return 0;
-	  }
-     }
-   filter_data->last_event_type = type;
-   return 1;
-}
-
-static void
-_ecore_x_event_filter_end(void *data __UNUSED__, void *loop_data)
-{
-   Ecore_X_Filter_Data *filter_data;
-   
-   filter_data = loop_data;
-   if (filter_data) free(filter_data);
 }
 
 
