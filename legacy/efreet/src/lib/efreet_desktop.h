@@ -69,7 +69,7 @@ struct Efreet_Desktop
     double version;         /**< version of spec file conforms to */
 
     char *orig_path;        /**< original path to .desktop file */
-    double load_time;       /**< when the .desktop was loaded from disk */ 
+    long long load_time;    /**< modified time of .desktop on disk */ 
 
     char *name;             /**< Specific name of the application */
     char *generic_name;     /**< Generic name of the application */

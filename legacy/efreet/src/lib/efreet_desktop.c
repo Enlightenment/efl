@@ -163,15 +163,12 @@ efreet_desktop_shutdown(void)
 static int
 efreet_desktop_cache_check(Efreet_Desktop *desktop)
 {
-    struct stat buf;
-
     if (!desktop) return 0;
 
     /* have we modified this file since we last read it in? */
     if ((desktop->cache_flush != cache_flush) || 
-        (stat(desktop->orig_path, &buf) ||
-        (buf.st_mtime > desktop->load_time)))
-        return 0;
+        (ecore_file_mod_time(desktop->orig_path) != desktop->load_time))
+     return 0;
 
     return 1;
 }
@@ -235,7 +232,7 @@ efreet_desktop_empty_new(const char *file)
     if (!desktop) return NULL;
 
     desktop->orig_path = strdup(file);
-    desktop->load_time = ecore_time_get();
+    desktop->load_time = ecore_file_mod_time(file);
 
     desktop->ref = 1;
 
@@ -324,7 +321,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
 
     efreet_ini_free(ini);
 
-    desktop->load_time = ecore_time_get();
+    desktop->load_time = ecore_file_mod_time(desktop->orig_path);
 
     if (error) return 0;
 
