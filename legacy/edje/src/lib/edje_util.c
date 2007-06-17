@@ -995,7 +995,6 @@ edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas
 EAPI void
 edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 {
-   Edje *ed;
    Edje_Real_Part *rp;
 
    if (!obj_swallow) return;
