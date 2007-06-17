@@ -622,7 +622,7 @@ compile(void)
    char buf[4096];
    char inc[4096];
    static char tmpn[4096];
-   
+
    strcpy(tmpn, "/tmp/edje_cc.edc-tmp-XXXXXX");
    strncpy(inc, file_in, 4000);
    inc[4001] = 0;

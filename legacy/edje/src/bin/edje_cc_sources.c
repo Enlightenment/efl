@@ -56,15 +56,17 @@ source_edd(void)
    EET_DATA_DESCRIPTOR_ADD_LIST(_font_list_edd, Font_List, "list", list, _font_edd);
 }
 
+static void source_fetch_file(const char *fil, const char *filname);
+
 static void
-source_fetch_file(char *fil, char *filname)
+source_fetch_file(const char *fil, const char *filname)
 {
    FILE *f;
-   char buf[256 * 1024], *dir = NULL;
+   char buf[16 * 1024], *dir = NULL;
    long sz;
    ssize_t dir_len = 0;
    SrcFile *sf;
-   
+
    f = fopen(fil, "rb");
    if (!f)
      {
@@ -86,12 +88,13 @@ source_fetch_file(char *fil, char *filname)
 
    while (fgets(buf, sizeof(buf), f))
      {
-	char *p = buf, *pp;
+	char *p, *pp;
 	int got_hash = 0;
 	int forgetit = 0;
 	int haveinclude = 0;
 	char *file = NULL, *fname = NULL;
 	
+	p = buf;
 	while ((!forgetit) && (*p))
 	  {
 	     if (!got_hash)
@@ -122,7 +125,7 @@ source_fetch_file(char *fil, char *filname)
 			* since according to the standard, preprocessor
 			* statements need to be put in column 0.
 			*/
-		       else if (!strncmp (p, "#include", 8))
+		       else if (!strncmp(p, "#include", 8))
 			 {
 			    haveinclude = 1;
 			    p += 8;
@@ -137,10 +140,8 @@ source_fetch_file(char *fil, char *filname)
 		    {
 		       char end = '\0';
 
-		       if (*p == '"')
-			    end = '"';
-		       else if (*p == '<')
-			    end = '>';
+		       if (*p == '"') end = '"';
+		       else if (*p == '<') end = '>';
 
 		       if (end)
 			 {
@@ -155,17 +156,17 @@ source_fetch_file(char *fil, char *filname)
 				 /* get the directory of the current file
 				  * if we haven't already done so
 				  */
-				 if (!dir && strrchr(fil, '/'))
+				 if ((!dir) && (strrchr(fil, '/')))
 				   {
 				      dir = mem_strdup(fil);
 				      slash = strrchr(dir, '/');
 				      *slash = '\0';
 				      dir_len = strlen(dir);
 				   }
-
+				 
 				 l = pp - p + dir_len + 1;
 				 file = mem_alloc(l);
-
+				 
 				 if (!dir_len)
 				   snprintf(file, l - 1, "%s", p + 1);
 				 else
@@ -193,7 +194,7 @@ source_fetch_file(char *fil, char *filname)
 	     free(fname);
 	  }
      }
-   free (dir);
+   free(dir);
    fclose(f);
 }
 
