@@ -381,7 +381,6 @@ eng_output_idle_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_software_x11_outbuf_flush(re->ob);
 }
 
 
