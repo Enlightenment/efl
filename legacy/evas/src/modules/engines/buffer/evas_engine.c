@@ -33,6 +33,7 @@ static void eng_output_redraws_clear(void *data);
 static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
 static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
 static void eng_output_flush(void *data);
+static void eng_output_idle_flush(void *data);
 
 /* internal engine routines */
 static void *

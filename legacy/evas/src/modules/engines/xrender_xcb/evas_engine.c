@@ -327,6 +327,14 @@ eng_output_flush(void *data)
 }
 
 static void
+eng_output_idle_flush(void *data)
+{
+   Render_Engine               *re;
+
+   re = (Render_Engine *)data;
+}
+
+static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    _xr_render_surface_rectangle_draw((Xcb_Render_Surface *)surface,
@@ -807,6 +815,7 @@ module_open(Evas_Module *em)
    ORD(output_redraws_next_update_get);
    ORD(output_redraws_next_update_push);
    ORD(output_flush);
+   ORD(output_idle_flush);
    ORD(rectangle_draw);
    ORD(line_draw);
    ORD(polygon_draw);
