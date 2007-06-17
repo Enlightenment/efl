@@ -114,6 +114,7 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+	_ecore_evas_idle_timeout_update(ee2);
      }
    if (ee->engine.buffer.image)
      {

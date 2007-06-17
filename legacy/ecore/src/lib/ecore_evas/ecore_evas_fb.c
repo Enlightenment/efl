@@ -229,6 +229,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	  }
 	else
 	  evas_norender(ee->evas);
+	_ecore_evas_idle_timeout_update(ee);
      }
    if (_ecore_evas_fps_debug)
      {

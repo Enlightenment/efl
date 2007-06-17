@@ -59,6 +59,8 @@
 #include <Evas_Engine_Buffer.h>
 #endif
 
+#define IDLE_FLUSH_TIME 0.5
+
 typedef struct _Ecore_Evas             Ecore_Evas;
 typedef struct _Ecore_Evas_Engine      Ecore_Evas_Engine;
 typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
@@ -163,6 +165,7 @@ struct _Ecore_Evas_Engine
       Ecore_DirectFB_Window *window;
    } directfb;
 #endif
+   Ecore_Timer *idle_flush_timer;
 };
   
 struct _Ecore_Evas
@@ -261,5 +264,6 @@ void _ecore_evas_fps_debug_init(void);
 void _ecore_evas_fps_debug_shutdown(void);
 void _ecore_evas_fps_debug_rendertime_add(double t);
 void _ecore_evas_free(Ecore_Evas *ee);
-
+void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
+    
 #endif

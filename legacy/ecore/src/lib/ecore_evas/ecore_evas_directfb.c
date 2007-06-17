@@ -21,8 +21,20 @@ static Ecore_Idle_Enterer *ecore_evas_directfb_idle_enterer = NULL;
 static void
 _ecore_evas_directfb_render(Ecore_Evas *ee)
 {
-   Evas_List *updates;
+   Evas_List *updates, *ll;
    
+#ifdef BUILD_ECORE_EVAS_BUFFER
+   for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+     {
+	Ecore_Evas *ee2;
+	
+	ee2 = ll->data;
+	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+	_ecore_evas_buffer_render(ee2);
+	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+	_ecore_evas_idle_timeout_update(ee2);
+     }
+#endif
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    updates = evas_render_updates(ee->evas);
    if (updates)
@@ -45,6 +57,8 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 	  }
 	evas_render_updates_free(updates);
      }
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+   _ecore_evas_idle_timeout_update(ee);
 }
 
 static int

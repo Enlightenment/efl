@@ -53,7 +53,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_GL 1
 #define HAVE_ECORE_EVAS_DIRECTFB 1
 
-typedef enum
+typedef enum _Ecore_Evas_Engine_Type
 {
    ECORE_EVAS_ENGINE_SOFTWARE_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
@@ -70,12 +70,12 @@ typedef unsigned int Ecore_X_Window;
    
 #ifndef _ECORE_DIRECTFB_H
 #define _ECORE_DIRECTFB_WINDOW_PREDEF
-typedef void Ecore_DirectFB_Window;
+typedef struct _Ecore_DirectFB_Window Ecore_DirectFB_Window;
 #endif
    
 #ifndef _ECORE_EVAS_PRIVATE_H
 /* basic data types */
-typedef void Ecore_Evas;
+typedef struct _Ecore_Evas Ecore_Evas;
 #endif
 
 /* module setup/shutdown calls */

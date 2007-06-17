@@ -1812,6 +1812,29 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->prop.cursor.file = NULL;
    ee->prop.cursor.object = NULL;
    ee->evas = NULL;
+   if (ee->engine.idle_flush_timer)
+     ecore_timer_del(ee->engine.idle_flush_timer);
    if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
    free(ee);
+}
+
+static int
+_ecore_evas_cb_idle_flush(void *data)
+{
+   Ecore_Evas *ee;
+   
+   ee = (Ecore_Evas *)data;
+   evas_render_idle_flush(ee);
+   ee->engine.idle_flush_timer = NULL;
+   return 0;
+}
+
+void
+_ecore_evas_idle_timeout_update(Ecore_Evas *ee)
+{
+   if (ee->engine.idle_flush_timer)
+     ecore_timer_del(ee->engine.idle_flush_timer);
+   ee->engine.idle_flush_timer = ecore_timer_add(IDLE_FLUSH_TIME,
+						 _ecore_evas_cb_idle_flush,
+						 ee);
 }
