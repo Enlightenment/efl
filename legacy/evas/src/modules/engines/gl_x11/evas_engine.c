@@ -295,6 +295,14 @@ eng_output_flush(void *data)
 }
 
 static void
+eng_output_idle_flush(void *data)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+}
+
+static void
 eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
@@ -958,6 +966,7 @@ module_open(Evas_Module *em)
    ORD(context_cutout_add);
    ORD(context_cutout_clear);
    ORD(output_flush);
+   ORD(output_idle_flush);
    ORD(rectangle_draw);
    ORD(line_draw);
    ORD(polygon_point_add);

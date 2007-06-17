@@ -33,6 +33,7 @@ static void eng_output_redraws_clear(void *data);
 static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
 static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
 static void eng_output_flush(void *data);
+static void eng_output_idle_flush(void *data);
 
 /* internal engine routines */
 static void *
@@ -247,6 +248,14 @@ eng_output_flush(void *data)
    re = (Render_Engine *)data;
 }
 
+static void
+eng_output_idle_flush(void *data)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+}
+
 /* module advertising code */
 EAPI int
 module_open(Evas_Module *em)
@@ -270,6 +279,7 @@ module_open(Evas_Module *em)
    ORD(output_redraws_next_update_get);
    ORD(output_redraws_next_update_push);
    ORD(output_flush);
+   ORD(output_idle_flush);
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;

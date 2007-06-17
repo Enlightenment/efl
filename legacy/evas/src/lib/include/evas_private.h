@@ -530,6 +530,7 @@ struct _Evas_Func
    void *(*output_redraws_next_update_get) (void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
    void (*output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h);
    void (*output_flush)                    (void *data);
+   void (*output_idle_flush)               (void *data);
 
    void *(*context_new)                    (void *data);
    void (*context_free)                    (void *data, void *context);

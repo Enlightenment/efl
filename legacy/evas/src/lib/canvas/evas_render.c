@@ -67,7 +67,6 @@ evas_obscured_clear(Evas *e)
      }
 }
 
-
 static void
 _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active_objects, Evas_List **restack_objects, Evas_List **delete_objects, int restack)
 {
@@ -501,3 +500,20 @@ evas_norender(Evas *e)
    evas_render_updates_internal(e, 0, 0);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_render_idle_flush(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
+       (e->engine.data.output))
+     e->engine.func->output_idle_flush(e->engine.data.output);
+}

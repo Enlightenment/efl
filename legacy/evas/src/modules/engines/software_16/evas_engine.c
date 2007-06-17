@@ -632,6 +632,7 @@ static Evas_Func func =
      NULL,
      NULL,
      NULL,
+     NULL,
      /* draw context virtual methods */
      eng_context_new,
      eng_context_free,

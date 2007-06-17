@@ -59,6 +59,7 @@ void                evas_engine_directfb_output_redraws_next_update_push(void
 									 int w,
 									 int h);
 void                evas_engine_directfb_output_flush(void *data);
+void                evas_engine_directfb_output_idle_flush(void *data);
 void               *evas_engine_directfb_context_new(void *data);
 void                evas_engine_directfb_context_free(void *data,
 						      void *context);

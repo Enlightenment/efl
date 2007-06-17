@@ -15,6 +15,7 @@ static Evas_Func evas_engine_directfb_func = {
    evas_engine_directfb_output_redraws_next_update_get,
    evas_engine_directfb_output_redraws_next_update_push,
    evas_engine_directfb_output_flush,
+   evas_engine_directfb_output_idle_flush,
    /* draw context virtual methods */
    evas_engine_directfb_context_new,
    evas_engine_directfb_context_free,
@@ -385,6 +386,14 @@ evas_engine_directfb_output_redraws_next_update_push(void *data, void *surface,
 
 void
 evas_engine_directfb_output_flush(void *data)
+{
+   Render_Engine      *re;
+
+   re = (Render_Engine *) data;
+}
+
+void
+evas_engine_directfb_output_idle_flush(void *data)
 {
    Render_Engine      *re;
 
