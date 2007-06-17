@@ -1824,7 +1824,7 @@ _ecore_evas_cb_idle_flush(void *data)
    Ecore_Evas *ee;
    
    ee = (Ecore_Evas *)data;
-   evas_render_idle_flush(ee);
+   evas_render_idle_flush(ee->evas);
    ee->engine.idle_flush_timer = NULL;
    return 0;
 }
