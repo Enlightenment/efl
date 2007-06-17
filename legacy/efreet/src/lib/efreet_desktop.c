@@ -46,7 +46,6 @@ struct Efreet_Desktop_Type_Info
     Efreet_Desktop_Type_Free_Cb free_func;
 };
 
-static Efreet_Desktop *efreet_desktop_new(const char *file);
 static int efreet_desktop_read(Efreet_Desktop *desktop);
 static void efreet_desktop_clear(Efreet_Desktop *desktop);
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
@@ -246,7 +245,7 @@ efreet_desktop_empty_new(const char *file)
  * @brief Creates a new Efreet_Desktop structure initialized from the
  * contents of @a file or NULL on failure
  */
-static Efreet_Desktop *
+Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop;
