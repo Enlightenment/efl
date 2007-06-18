@@ -156,6 +156,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
                  Evas_Coord sw, int *free_text)
 {
    Evas_Coord tw = 0, th = 0, p;
+   int l, r;
    char *buf;
    int c1 = -1, c2 = -1, loop = 0, extra;
    size_t orig_len;
@@ -166,6 +167,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    evas_object_text_text_set(ep->object, text);
 
    part_get_geometry(ep, &tw, &th);
+   evas_object_text_style_pad_get(ep->object, &l, &r, NULL, NULL);
 
    p = ((sw - tw) * params->text.elipsis);
 
@@ -174,12 +176,12 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
      {
 	if (params->text.elipsis != 0.0)
 	  c1 = evas_object_text_char_coords_get(ep->object,
-		-p, th / 2,
+		-p + l, th / 2,
 		NULL, NULL, NULL, NULL);
 	if (params->text.elipsis != 1.0)
 	  c2 = evas_object_text_char_coords_get(ep->object,
-		-p + sw, th / 2,
-		NULL, NULL, NULL, NULL);
+		-p + sw - r, th / 2,
+		NULL, NULL, N*ULL, NULL);
 	if ((c1 < 0) && (c2 < 0))
 	  {
 	     c1 = 0;
@@ -447,7 +449,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     
 	     dif = (th - sh) / 4;
 	     if (dif < 1) dif = 1;
-	     while ((th > sh) && (sw >= 0.0))
+	     while ((th > sh) && (sw >= 0))
 	       {
 		  size -= dif;
 		  if (size <= 0) break;
