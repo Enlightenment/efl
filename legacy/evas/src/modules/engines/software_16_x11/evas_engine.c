@@ -20,6 +20,7 @@ struct _Render_Engine
    Tilebuf_Rect     *rects;
    Tilebuf_Rect     *cur_rect;
    X_Output_Buffer  *shbuf;
+   Region            clip_rects;
    unsigned char     end : 1;
    unsigned char     shm : 1;
 };
@@ -143,6 +144,8 @@ eng_output_free(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if (re->shbuf) evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+   if (re->clip_rects) XDestroyRegion(re->clip_rects);
    if (re->gc) XFreeGC(re->disp, re->gc);
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
@@ -158,12 +161,25 @@ eng_output_resize(void *data, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+
+   if ((re->w == w) && (re->h == h)) return;
+
    evas_common_tilebuf_free(re->tb);
    re->w = w;
    re->h = h;
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   if (re->shbuf)
+     {
+        evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+	re->shbuf = NULL;
+     }
+   if (re->clip_rects)
+     {
+	XDestroyRegion(re->clip_rects);
+	re->clip_rects = NULL;
+     }
 }
 
 static void
@@ -206,48 +222,31 @@ static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
-   Soft16_Image *surface = NULL;
    Tilebuf_Rect *rect;
    int ux, uy, uw, uh;
 
    re = (Render_Engine *)data;
    if (re->end)
      {
-	if (re->shbuf)
-	  {
-	     evas_software_x11_x_output_buffer_free(re->shbuf, 0);
-	     re->shbuf = NULL;
-	  }
 	re->end = 0;
 	return NULL;
      }
    if (!re->rects)
      {
-	int mw, mh;
-	
-	mw = 0;
-	mh = 0;
 	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+	if (!re->rects) return NULL;
+
 	re->cur_rect = re->rects;
-	for (rect = re->cur_rect; rect; rect = (Tilebuf_Rect *)(rect->_list_data.next))
-	  {
-	     if (rect->w > mw) mw = rect->w;
-	     if (rect->h > mh) mh = rect->h;
-	  }
-	if (re->rects)
+	if (!re->shbuf)
 	  re->shbuf = evas_software_x11_x_output_buffer_new
 	  (re->disp, DefaultVisual(re->disp, DefaultScreen(re->disp)),
-	   DefaultDepth(re->disp, DefaultScreen(re->disp)), mw, mh, 1, NULL);
+	   DefaultDepth(re->disp, DefaultScreen(re->disp)),
+	   re->w, re->h, 1, NULL);
      }
-   if ((!re->cur_rect) || (!re->shbuf))
+   if (!re->cur_rect)
      {
 	if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
 	re->rects = NULL;
-	if (re->shbuf)
-	  {
-	     evas_software_x11_x_output_buffer_free(re->shbuf, 0);
-	     re->shbuf = NULL;
-	  }
 	return NULL;
      }
    rect = re->cur_rect;
@@ -259,26 +258,28 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 	re->rects = NULL;
 	re->end = 1;
      }
-   surface = re->shbuf;
-   surface->w = uw;
-   surface->h = uh;
 
-   *cx = 0; *cy = 0; *cw = uw; *ch = uh;
+   *cx = ux; *cy = uy; *cw = uw; *ch = uh;
    *x = ux; *y = uy; *w = uw; *h = uh;
-   return surface;
+   return &re->shbuf->im;
 }
 
 static void
 eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
+   XRectangle r;
 
    re = (Render_Engine *)data;
-   evas_software_x11_x_output_buffer_paste(surface, re->draw, re->gc,
-					   x, y, w, h, 1);
-//   evas_software_x11_outbuf_push_updated_region(re->ob, surface, x, y, w, h);
-//   evas_software_x11_outbuf_free_region_for_update(re->ob, surface);
-//   evas_common_cpu_end_opt();
+
+   if (!re->clip_rects)
+      re->clip_rects = XCreateRegion();
+
+   r.x = x;
+   r.y = y;
+   r.width = w;
+   r.height = h;
+   XUnionRectWithRegion(&r, re->clip_rects, re->clip_rects);
 }
 
 static void
@@ -287,9 +288,17 @@ eng_output_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   /* FIXME: later on defer the eng_output_redraws_next_update_push() until
-    * flush and keep a list */
-//   evas_software_x11_outbuf_flush(re->ob);
+   if (re->clip_rects)
+     {
+ 	XSetRegion(re->disp, re->gc, re->clip_rects);
+	XDestroyRegion(re->clip_rects);
+	re->clip_rects = NULL;
+     }
+   else return;
+
+   evas_software_x11_x_output_buffer_paste(re->shbuf, re->draw, re->gc,
+					   0, 0, re->w, re->h, 0);
+   XSetClipMask(re->disp, re->gc, None);
 }
 
 static void
