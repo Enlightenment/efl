@@ -40,6 +40,7 @@ void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
 		       int dst_region_x, int dst_region_y,
 		       int dst_region_w, int dst_region_h,
 		       int smooth);
-  
-    
+
+void soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
+                           int x, int y, int w, int h);
 #endif

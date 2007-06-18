@@ -16,6 +16,12 @@
    ((((g) >> 2) & 0x3f) << 5) |                                         \
    (((b) >> 3) & 0x1f))
 
+#define UNROLL2(op...) op op
+#define UNROLL4(op...) UNROLL2(op) UNROLL2(op)
+#define UNROLL8(op...) UNROLL4(op) UNROLL4(op)
+#define UNROLL16(op...) UNROLL8(op) UNROLL8(op)
+
+
 #if defined(__ARMEL__)
 /* tested on ARMv6 (arm1136j-s), Nokia N800 CPU */
 #define pld(addr, off)                                                  \
@@ -33,6 +39,17 @@
 static inline void _soft16_scanline_blend_solid_solid(DATA16 *src, DATA16 *dst, int size);
 static inline void _soft16_scanline_blend_transp_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size);
 
+static inline void _soft16_scanline_blend_solid_solid_mul_alpha(DATA16 *src, DATA16 *dst, int size, char rel_alpha);
+static inline void _soft16_scanline_blend_transp_solid_mul_alpha(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, char rel_alpha);
+
+static inline void _soft16_scanline_blend_solid_solid_mul_color_transp(DATA16 *src, DATA16 *dst, int size, char rel_alpha, short r, short g, short b);
+static inline void _soft16_scanline_blend_transp_solid_mul_color_transp(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, char rel_alpha, short r, short g, short b);
+
+static inline void _soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int size, short r, short g, short b);
+static inline void _soft16_scanline_blend_transp_solid_mul_color_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, short r, short g, short b);
+
+static inline void _soft16_scanline_fill_solid_solid(DATA16 *dst, int size, DATA16 rgb565);
+static inline void _soft16_scanline_fill_transp_solid(DATA16 *dst, int size, DATA32 rgb565_unpack, char alpha);
 
 static Evas_Hash *_soft16_image_cache_hash = NULL;
 
@@ -470,6 +487,231 @@ _soft16_image_draw_unscaled_transp_solid(Soft16_Image *src, Soft16_Image *dst,
      }
 }
 
+static inline void
+_soft16_image_draw_unscaled_no_mul(Soft16_Image *src, Soft16_Image *dst,
+                                   RGBA_Draw_Context *dc,
+                                   int src_offset, int dst_offset,
+                                   int width, int height)
+{
+   if (src->have_alpha && (!dst->have_alpha))
+      _soft16_image_draw_unscaled_transp_solid(src, dst, dc,
+                                               src_offset, dst_offset,
+                                               width, height);
+   else if ((!src->have_alpha) && (!dst->have_alpha))
+      _soft16_image_draw_unscaled_solid_solid(src, dst, dc,
+                                              src_offset, dst_offset,
+                                              width, height);
+   else
+      fprintf(stderr,
+              "Unsupported draw of unscaled images src->have_alpha=%d, "
+              "dst->have_alpha=%d, WITHOUT COLOR MUL\n",
+              src->have_alpha, dst->have_alpha);
+}
+
+static void
+_soft16_image_draw_unscaled_solid_solid_mul_alpha(Soft16_Image *src,
+                                                  Soft16_Image *dst,
+                                                  RGBA_Draw_Context *dc,
+                                                  int src_offset,
+                                                  int dst_offset,
+                                                  int w, int h)
+{
+   DATA16 *src_itr, *dst_itr;
+   int y, rel_alpha;
+
+   src_itr = src->pixels + src_offset;
+   dst_itr = dst->pixels + dst_offset;
+
+   rel_alpha = A_VAL(&dc->mul.col) >> 3;
+   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
+   rel_alpha = 31 - rel_alpha;
+
+   for (y = 0; y < h; y++)
+     {
+	_soft16_scanline_blend_solid_solid_mul_alpha(src_itr, dst_itr, w,
+                                                     rel_alpha);
+	src_itr += src->stride;
+	dst_itr += dst->stride;
+     }
+}
+
+static void
+_soft16_image_draw_unscaled_transp_solid_mul_alpha(Soft16_Image *src,
+                                                   Soft16_Image *dst,
+                                                   RGBA_Draw_Context *dc,
+                                                   int src_offset,
+                                                   int dst_offset,
+                                                   int w, int h)
+
+{
+   DATA16 *src_itr, *dst_itr;
+   DATA8 *alpha_itr;
+   int y, rel_alpha;
+
+   src_itr = src->pixels + src_offset;
+   alpha_itr = src->alpha + src_offset;
+   dst_itr = dst->pixels + dst_offset;
+
+   rel_alpha = A_VAL(&dc->mul.col) >> 3;
+   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
+   rel_alpha = 31 - rel_alpha;
+
+   for (y = 0; y < h; y++)
+     {
+	_soft16_scanline_blend_transp_solid_mul_alpha(src_itr, alpha_itr,
+                                                      dst_itr, w, rel_alpha);
+	src_itr += src->stride;
+	alpha_itr += src->stride;
+	dst_itr += dst->stride;
+     }
+}
+
+static inline void
+_soft16_image_draw_unscaled_mul_alpha(Soft16_Image *src, Soft16_Image *dst,
+                                      RGBA_Draw_Context *dc,
+                                      int src_offset, int dst_offset,
+                                      int width, int height)
+{
+   if (src->have_alpha && (!dst->have_alpha))
+      _soft16_image_draw_unscaled_transp_solid_mul_alpha
+         (src, dst, dc, src_offset, dst_offset, width, height);
+   else if ((!src->have_alpha) && (!dst->have_alpha))
+      _soft16_image_draw_unscaled_solid_solid_mul_alpha
+         (src, dst, dc, src_offset, dst_offset, width, height);
+   else
+      fprintf(stderr,
+              "Unsupported draw of unscaled images src->have_alpha=%d, "
+              "dst->have_alpha=%d, WITH ALPHA MUL %d\n",
+              src->have_alpha, dst->have_alpha, A_VAL(&dc->mul.col));
+}
+
+static void
+_soft16_image_draw_unscaled_solid_solid_mul_color(Soft16_Image *src,
+                                                  Soft16_Image *dst,
+                                                  RGBA_Draw_Context *dc,
+                                                  int src_offset,
+                                                  int dst_offset,
+                                                  int w, int h)
+{
+   DATA16 *src_itr, *dst_itr;
+   int y, rel_alpha, r, g, b;
+
+   src_itr = src->pixels + src_offset;
+   dst_itr = dst->pixels + dst_offset;
+
+   rel_alpha = A_VAL(&dc->mul.col) >> 3;
+   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
+
+   r = R_VAL(&dc->mul.col);
+   g = G_VAL(&dc->mul.col);
+   b = B_VAL(&dc->mul.col);
+   /* we'll divide by 256 to make it faster, try to improve things a bit */
+   if (r > 127) r++;
+   if (g > 127) g++;
+   if (b > 127) b++;
+
+   if (rel_alpha == 31)
+      for (y = 0; y < h; y++)
+         {
+            _soft16_scanline_blend_solid_solid_mul_color_solid
+               (src_itr, dst_itr, w, r, g, b);
+            src_itr += src->stride;
+            dst_itr += dst->stride;
+         }
+   else
+      for (y = 0; y < h; y++)
+         {
+            _soft16_scanline_blend_solid_solid_mul_color_transp
+               (src_itr, dst_itr, w, rel_alpha, r, g, b);
+            src_itr += src->stride;
+            dst_itr += dst->stride;
+         }
+}
+
+static void
+_soft16_image_draw_unscaled_transp_solid_mul_color(Soft16_Image *src,
+                                                   Soft16_Image *dst,
+                                                   RGBA_Draw_Context *dc,
+                                                   int src_offset,
+                                                   int dst_offset,
+                                                   int w, int h)
+
+{
+   DATA16 *src_itr, *dst_itr;
+   DATA8 *alpha_itr;
+   int y, rel_alpha, r, g, b;
+
+   src_itr = src->pixels + src_offset;
+   alpha_itr = src->alpha + src_offset;
+   dst_itr = dst->pixels + dst_offset;
+
+   rel_alpha = A_VAL(&dc->mul.col) >> 3;
+   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
+   rel_alpha = 31 - rel_alpha;
+
+   r = R_VAL(&dc->mul.col);
+   g = G_VAL(&dc->mul.col);
+   b = B_VAL(&dc->mul.col);
+   /* we'll divide by 256 to make it faster, try to improve things a bit */
+   if (r > 127) r++;
+   if (g > 127) g++;
+   if (b > 127) b++;
+
+   if (rel_alpha == 0)
+      for (y = 0; y < h; y++)
+         {
+            _soft16_scanline_blend_transp_solid_mul_color_solid
+               (src_itr, alpha_itr, dst_itr, w, r, g, b);
+            src_itr += src->stride;
+            alpha_itr += src->stride;
+            dst_itr += dst->stride;
+         }
+   else
+      for (y = 0; y < h; y++)
+         {
+            _soft16_scanline_blend_transp_solid_mul_color_transp
+               (src_itr, alpha_itr, dst_itr, w, rel_alpha, r, g, b);
+            src_itr += src->stride;
+            alpha_itr += src->stride;
+            dst_itr += dst->stride;
+         }
+}
+
+static inline void
+_soft16_image_draw_unscaled_mul_color(Soft16_Image *src, Soft16_Image *dst,
+                                      RGBA_Draw_Context *dc,
+                                      int src_offset, int dst_offset,
+                                      int width, int height)
+{
+   if (src->have_alpha && (!dst->have_alpha))
+      _soft16_image_draw_unscaled_transp_solid_mul_color
+         (src, dst, dc, src_offset, dst_offset, width, height);
+   else if ((!src->have_alpha) && (!dst->have_alpha))
+      _soft16_image_draw_unscaled_solid_solid_mul_color
+         (src, dst, dc, src_offset, dst_offset, width, height);
+   else
+      fprintf(stderr,
+              "Unsupported draw of unscaled images src->have_alpha=%d, "
+              "dst->have_alpha=%d, WITH COLOR MUL 0x%08x\n",
+              src->have_alpha, dst->have_alpha, dc->mul.col);
+}
+
+static inline void
+_soft16_image_draw_unscaled_mul(Soft16_Image *src, Soft16_Image *dst,
+                                RGBA_Draw_Context *dc,
+                                int src_offset, int dst_offset,
+                                int width, int height)
+{
+   if ((A_VAL(&dc->mul.col) == R_VAL(&dc->mul.col)) &&
+       (A_VAL(&dc->mul.col) == G_VAL(&dc->mul.col)) &&
+       (A_VAL(&dc->mul.col) == B_VAL(&dc->mul.col)))
+      _soft16_image_draw_unscaled_mul_alpha(src, dst, dc, src_offset,
+                                            dst_offset, width, height);
+   else
+      _soft16_image_draw_unscaled_mul_color(src, dst, dc, src_offset,
+                                            dst_offset, width, height);
+}
+
 static void
 _soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst,
 			    RGBA_Draw_Context *dc,
@@ -484,19 +726,12 @@ _soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst,
 
    dst_offset = cr.x + (cr.y * dst->stride);
 
-   if (src->have_alpha && (!dst->have_alpha))
-      _soft16_image_draw_unscaled_transp_solid(src, dst, dc,
-					       src_offset, dst_offset,
-					       cr.w, cr.h);
-   else if ((!src->have_alpha) && (!dst->have_alpha))
-     _soft16_image_draw_unscaled_solid_solid(src, dst, dc,
-					     src_offset, dst_offset,
-					     cr.w, cr.h);
-   else
-     fprintf(stderr,
-	     "Unsupported draw of unscaled images src->have_alpha=%d, "
-	     "dst->have_alpha=%d\n",
-	     src->have_alpha, dst->have_alpha);
+   if ((!dc->mul.use) || (dc->mul.col == 0xffffffff))
+       _soft16_image_draw_unscaled_no_mul(src, dst, dc, src_offset, dst_offset,
+                                          cr.w, cr.h);
+   else if (dc->mul.col != 0x00000000)
+       _soft16_image_draw_unscaled_mul(src, dst, dc, src_offset, dst_offset,
+                                       cr.w, cr.h);
 }
 
 static void
@@ -706,16 +941,213 @@ soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
 
+static inline void
+_soft16_rectangle_draw_solid_solid(Soft16_Image *dst, RGBA_Draw_Context *dc,
+                                   int offset, int w, int h)
+{
+   DATA16 *dst_itr, rgb565;
+   int i;
 
+   dst_itr = dst->pixels + offset;
+   rgb565 = RGB_565_FROM_COMPONENTS(R_VAL(&dc->col.col),
+                                    G_VAL(&dc->col.col),
+                                    B_VAL(&dc->col.col));
+
+   for (i = 0; i < h; i++, dst_itr += dst->stride)
+      _soft16_scanline_fill_solid_solid(dst_itr, w, rgb565);
+}
+
+static inline void
+_soft16_rectangle_draw_transp_solid(Soft16_Image *dst, RGBA_Draw_Context *dc,
+                                    int offset, int w, int h)
+{
+   char alpha;
+
+   alpha = A_VAL(&dc->col.col) >> 3;
+   if (alpha == 31) _soft16_rectangle_draw_solid_solid(dst, dc, offset, w, h);
+   else if (alpha != 0)
+      {
+         DATA16 *dst_itr;
+         DATA32 rgb565;
+         int i;
+
+         dst_itr = dst->pixels + offset;
+         rgb565 = RGB_565_FROM_COMPONENTS(R_VAL(&dc->col.col),
+                                          G_VAL(&dc->col.col),
+                                          B_VAL(&dc->col.col));
+         rgb565 = RGB_565_UNPACK(rgb565);
+
+         for (i = 0; i < h; i++, dst_itr += dst->stride)
+            _soft16_scanline_fill_transp_solid(dst_itr, w, rgb565, alpha);
+      }
+}
+
+static void
+_soft16_rectangle_draw_int(Soft16_Image *dst, RGBA_Draw_Context *dc,
+                           Evas_Rectangle dr)
+{
+   int dst_offset;
+
+   if (_is_empty_rectangle(&dr)) return;
+   RECTS_CLIP_TO_RECT(dr.x, dr.y, dr.w, dr.h, 0, 0, dst->w, dst->h);
+   if (_is_empty_rectangle(&dr)) return;
+
+   if (dc->clip.use)
+      RECTS_CLIP_TO_RECT(dr.x, dr.y, dr.w, dr.h, dc->clip.x,
+                         dc->clip.y, dc->clip.w, dc->clip.h);
+   if (_is_empty_rectangle(&dr)) return;
+   if (A_VAL(&dc->col.col) == 0) return;
+
+   dst_offset = dr.x + (dr.y * dst->w);
+
+   if (!dst->have_alpha)
+      {
+         if (A_VAL(&dc->col.col) == 255)
+            _soft16_rectangle_draw_solid_solid
+               (dst, dc, dst_offset, dr.w, dr.h);
+         else
+            _soft16_rectangle_draw_transp_solid
+               (dst, dc, dst_offset, dr.w, dr.h);
+      }
+   else
+      fprintf(stderr,
+              "Unsupported feature: drawing rectangle to non-opaque "
+              "destination.\n");
+}
+
+void
+soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
+                      int x, int y, int w, int h)
+{
+   Evas_Rectangle dr;
+   Cutout_Rects *rects;
+   Cutout_Rect  *r;
+   int c, cx, cy, cw, ch;
+   int i;
+
+   /* handle cutouts here! */
+   dr.x = x;
+   dr.y = y;
+   dr.w = w;
+   dr.h = h;
+
+   if (_is_empty_rectangle(&dr)) return;
+   if (!(RECTS_INTERSECT(dr.x, dr.y, dr.w, dr.h, 0, 0, dst->w, dst->h)))
+     return;
+
+   /* no cutouts - cut right to the chase */
+   if (!dc->cutout.rects)
+     {
+        _soft16_rectangle_draw_int(dst, dc, dr);
+	return;
+     }
+
+   /* save out clip info */
+   c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->w, dst->h);
+   evas_common_draw_context_clip_clip(dc, x, y, w, h);
+   /* our clip is 0 size.. abort */
+   if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
+     {
+	dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+	return;
+     }
+   rects = evas_common_draw_context_apply_cutouts(dc);
+   for (i = 0; i < rects->active; ++i)
+     {
+	r = rects->rects + i;
+	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
+        _soft16_rectangle_draw_int(dst, dc, dr);
+     }
+   evas_common_draw_context_apply_clear_cutouts(rects);
+   /* restore clip info */
+   dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+}
+
+
+/*****************************************************************************
+ * Scanline processing
+ *
+ *    _soft16_scanline_<description>_<src>_<dst>[_<modifier>]()
+ *
+ ****************************************************************************/
+
+/***********************************************************************
+ * fill operations
+ */
+static inline void
+_soft16_scanline_fill_solid_solid(DATA16 *dst, int size, DATA16 rgb565)
+{
+   DATA16 *start, *end;
+   DATA32 rgb565_double;
+
+   start = dst;
+   end = start + (size & ~7);
+
+   rgb565_double = (rgb565 << 16) | rgb565;
+
+   while (start < end)
+     {
+        DATA32 *p = (DATA32 *)start;
+
+        p[0] = rgb565_double;
+        p[1] = rgb565_double;
+        p[2] = rgb565_double;
+        p[3] = rgb565_double;
+
+        start += 8;
+     }
+
+   end = start + (size & 7);
+   for (; start < end; start++)
+      *start = rgb565;
+}
+
+static inline void
+_soft16_scanline_fill_transp_solid(DATA16 *dst, int size, DATA32 rgb565_unpack, char alpha)
+{
+    DATA16 *start, *end;
+    DATA32 a;
+
+    start = dst;
+    pld(start, 0);
+    end = start + (size & ~7);
+
+    while (start < end) {
+      pld(start, 32);
+      UNROLL8({
+        DATA32 b;
+        b = RGB_565_UNPACK(*start);
+        b = RGB_565_UNPACKED_BLEND(rgb565_unpack, b, alpha);
+        *start = RGB_565_PACK(b);
+        start++;
+      });
+    }
+
+    size &= 7;
+
+    while (size--) {
+      DATA32 b;
+      b = RGB_565_UNPACK(*start);
+      b = RGB_565_UNPACKED_BLEND(rgb565_unpack, b, alpha);
+      *start = RGB_565_PACK(b);
+      start++;
+    }
+}
+
+/***********************************************************************
+ * Regular blend operations
+ */
 static inline void
 _soft16_scanline_blend_transp_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size)
 {
    DATA16 *start, *end;
 
-   pld(alpha, 0);
-   pld(src, 0);
    start = dst;
    end = start + (size & ~7);
+
+   pld(alpha, 0);
+   pld(src, 0);
 
 #define BLEND(dst, src, alpha)                                          \
    if (UNLIKELY(alpha == 31))                                           \
@@ -771,7 +1203,7 @@ _soft16_scanline_blend_transp_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int 
    /* remaining pixels (up to 7) */
    end = start + (size & 7);
    for (; start < end; start++, src++, alpha++)
-	BLEND(*start, *src, *alpha);
+      BLEND(*start, *src, *alpha);
 #undef BLEND
 }
 
@@ -779,4 +1211,328 @@ static inline void
 _soft16_scanline_blend_solid_solid(DATA16 *src, DATA16 *dst, int size)
 {
    memcpy(dst, src, size * sizeof(DATA16));
+}
+
+/***********************************************************************
+ * Blend operations taking an extra alpha (fade in, out)
+ */
+static inline void _soft16_scanline_blend_transp_solid_mul_alpha(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, char rel_alpha)
+{
+   DATA16 *start, *end;
+
+   start = dst;
+   end = start + (size & ~7);
+
+   pld(alpha, 0);
+   pld(src, 0);
+
+#define BLEND(dst, src, alpha)                                          \
+   if (alpha > rel_alpha)                                               \
+     {                                                                  \
+        DATA32 a, b;                                                    \
+        a = RGB_565_UNPACK(src);                                        \
+        b = RGB_565_UNPACK(dst);                                        \
+        b = RGB_565_UNPACKED_BLEND(a, b, alpha - rel_alpha);            \
+        dst = RGB_565_PACK(b);                                          \
+     }
+
+   while (start < end)
+     {
+	DATA8 alpha1, alpha2;
+
+	alpha1 = alpha[0];
+	alpha += 8;
+
+	pld(alpha, 8);
+	pld(src, 32);
+
+	src += 8;
+	start += 8;
+
+	alpha2 = alpha[-7];
+	BLEND(start[-8], src[-8], alpha1);
+
+	alpha1 = alpha[-6];
+	BLEND(start[-7], src[-7], alpha2);
+
+	alpha2 = alpha[-5];
+	BLEND(start[-6], src[-6], alpha1);
+
+	alpha1 = alpha[-4];
+	BLEND(start[-5], src[-5], alpha2);
+
+	alpha2 = alpha[-3];
+	BLEND(start[-4], src[-4], alpha1);
+
+	alpha1 = alpha[-2];
+	BLEND(start[-3], src[-3], alpha2);
+
+	alpha2 = alpha[-1];
+	BLEND(start[-2], src[-2], alpha1);
+
+	BLEND(start[-1], src[-1], alpha2);
+     }
+
+   end = start + (size & 7);
+   for (; start < end; start++, src++, alpha++)
+      BLEND(*start, *src, *alpha);
+#undef BLEND
+}
+
+static inline void
+_soft16_scanline_blend_solid_solid_mul_alpha(DATA16 *src, DATA16 *dst, int size, char rel_alpha)
+{
+   DATA16 *start, *end;
+
+   start = dst;
+   end = start + (size & ~7);
+
+   pld(src, 0);
+
+#define BLEND(dst, src)                                                 \
+   {                                                                    \
+   DATA32 a, b;                                                         \
+   a = RGB_565_UNPACK(src);                                             \
+   b = RGB_565_UNPACK(dst);                                             \
+   b = RGB_565_UNPACKED_BLEND(a, b, rel_alpha);                         \
+   dst = RGB_565_PACK(b);                                               \
+   }
+
+   while (start < end)
+     {
+	pld(src, 32);
+        UNROLL8({
+           BLEND(*start, *src);
+           start++;
+           src++;
+        });
+     }
+
+   end = start + (size & 7);
+   for (; start < end; start++, src++)
+      BLEND(*start, *src);
+#undef BLEND
+}
+
+/***********************************************************************
+ * Blend operations with extra alpha and multiply color
+ */
+static inline void _soft16_scanline_blend_transp_solid_mul_color_transp(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, char rel_alpha, short r, short g, short b)
+{
+   DATA16 *start, *end;
+
+   start = dst;
+   end = start + (size & ~7);
+
+   pld(alpha, 0);
+   pld(src, 0);
+
+   /* rel_alpha is always > 0, so (alpha - rel_alpha) is always < 31 */
+#define BLEND(dst, src, alpha)                                          \
+   if ((alpha) > rel_alpha)                                             \
+     {                                                                  \
+        short r1, g1, b1;                                               \
+        int rgb, d;                                                     \
+        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;                         \
+        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;                          \
+        b1 = (((src) & 0x1f) * b) >> 8;                                 \
+        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;   \
+        d = RGB_565_UNPACK(dst);                                        \
+        d = RGB_565_UNPACKED_BLEND(rgb, d, alpha - rel_alpha);          \
+        dst = RGB_565_PACK(d);                                          \
+     }
+
+   while (start < end)
+     {
+	DATA8 alpha1, alpha2;
+
+	alpha1 = alpha[0];
+	alpha += 8;
+
+        pld(src, 32);
+        pld(start, 32);
+
+	src += 8;
+	start += 8;
+
+	alpha2 = alpha[-7];
+	BLEND(start[-8], src[-8], alpha1);
+
+	alpha1 = alpha[-6];
+	BLEND(start[-7], src[-7], alpha2);
+
+	alpha2 = alpha[-5];
+	BLEND(start[-6], src[-6], alpha1);
+
+	alpha1 = alpha[-4];
+	BLEND(start[-5], src[-5], alpha2);
+
+	alpha2 = alpha[-3];
+	BLEND(start[-4], src[-4], alpha1);
+
+	alpha1 = alpha[-2];
+	BLEND(start[-3], src[-3], alpha2);
+
+	alpha2 = alpha[-1];
+	BLEND(start[-2], src[-2], alpha1);
+
+	BLEND(start[-1], src[-1], alpha2);
+     }
+
+   end = start + (size & 7);
+   for (; start < end; start++, src++, alpha++)
+      BLEND(*start, *src, *alpha);
+#undef BLEND
+}
+
+static inline void
+_soft16_scanline_blend_solid_solid_mul_color_transp(DATA16 *src, DATA16 *dst, int size, char rel_alpha, short r, short g, short b)
+{
+   DATA16 *start, *end;
+
+   start = dst;
+   end = start + (size & ~7);
+
+   pld(src, 0);
+
+#define BLEND(dst, src)                                                 \
+     {                                                                  \
+        short r1, g1, b1;                                               \
+        int rgb, d;                                                     \
+        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;                         \
+        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;                          \
+        b1 = (((src) & 0x1f) * b) >> 8;                                 \
+        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;   \
+        d = RGB_565_UNPACK(dst);                                        \
+        d = RGB_565_UNPACKED_BLEND(rgb, d, rel_alpha);                  \
+        dst = RGB_565_PACK(d);                                          \
+     }
+
+   while (start < end)
+     {
+	pld(src, 32);
+        UNROLL8({
+           BLEND(*start, *src);
+           start++;
+           src++;
+        });
+     }
+
+   end = start + (size & 7);
+   for (; start < end; start++, src++)
+      BLEND(*start, *src);
+#undef BLEND
+}
+
+/***********************************************************************
+ * Blend operations with extra multiply color
+ */
+static inline void _soft16_scanline_blend_transp_solid_mul_color_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, short r, short g, short b)
+{
+   DATA16 *start, *end;
+
+   start = dst;
+   end = start + (size & ~7);
+
+   pld(alpha, 0);
+   pld(src, 0);
+
+#define BLEND(dst, src, alpha)                                          \
+   if (UNLIKELY(alpha == 31))                                           \
+     {                                                                  \
+        short r1, g1, b1;                                               \
+        r1 = (((((src) >> 11) & 0x1f) * r) >> 8) & 0x1f;                \
+        g1 = (((((src) >> 5) & 0x3f) * g) >> 8) & 0x3f;                 \
+        b1 = ((((src) & 0x1f) * b) >> 8) & 0x1f;                        \
+        dst = ((r1 << 11) | (g1 << 5) | b1);                            \
+     }                                                                  \
+   else if (alpha != 0)                                                 \
+     {                                                                  \
+        short r1, g1, b1;                                               \
+        int rgb, d;                                                     \
+        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;                         \
+        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;                          \
+        b1 = (((src) & 0x1f) * b) >> 8;                                 \
+        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;   \
+        d = RGB_565_UNPACK(dst);                                        \
+        d = RGB_565_UNPACKED_BLEND(rgb, d, alpha);                      \
+        dst = RGB_565_PACK(d);                                          \
+     }
+
+   while (start < end)
+     {
+	DATA8 alpha1, alpha2;
+
+	alpha1 = alpha[0];
+	alpha += 8;
+
+	pld(alpha, 8);
+	pld(src, 32);
+
+	src += 8;
+	start += 8;
+
+	alpha2 = alpha[-7];
+	BLEND(start[-8], src[-8], alpha1);
+
+	alpha1 = alpha[-6];
+	BLEND(start[-7], src[-7], alpha2);
+
+	alpha2 = alpha[-5];
+	BLEND(start[-6], src[-6], alpha1);
+
+	alpha1 = alpha[-4];
+	BLEND(start[-5], src[-5], alpha2);
+
+	alpha2 = alpha[-3];
+	BLEND(start[-4], src[-4], alpha1);
+
+	alpha1 = alpha[-2];
+	BLEND(start[-3], src[-3], alpha2);
+
+	alpha2 = alpha[-1];
+	BLEND(start[-2], src[-2], alpha1);
+
+	BLEND(start[-1], src[-1], alpha2);
+     }
+
+   end = start + (size & 7);
+   for (; start < end; start++, src++, alpha++)
+      BLEND(*start, *src, *alpha);
+#undef BLEND
+}
+
+static inline void
+_soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int size, short r, short g, short b)
+{
+   DATA16 *start, *end;
+
+   start = dst;
+   end = start + (size & ~7);
+
+   pld(src, 0);
+
+#define BLEND(dst, src)                                                 \
+  {                                                                     \
+     short r1, g1, b1;                                                  \
+     r1 = (((((src) >> 11) & 0x1f) * r) >> 8) & 0x1f;                   \
+     g1 = (((((src) >> 5) & 0x3f) * g) >> 8) & 0x3f;                    \
+     b1 = ((((src) & 0x1f) * b) >> 8) & 0x1f;                           \
+     dst = ((r1 << 11) | (g1 << 5) | b1);                               \
+  }
+
+   while (start < end)
+     {
+	pld(src, 32);
+        UNROLL8({
+           BLEND(*start, *src);
+           start++;
+           src++;
+        });
+     }
+
+   end = start + (size & 7);
+   for (; start < end; start++, src++)
+      BLEND(*start, *src);
+#undef BLEND
 }

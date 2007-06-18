@@ -143,8 +143,7 @@ eng_context_render_op_get(void *data, void *context)
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
-//   evas_common_rectangle_draw(surface, context, x, y, w, h);
-//   evas_common_cpu_end_opt();
+    soft16_rectangle_draw(surface, context, x, y, w, h);
 }
 
 static void
