@@ -307,8 +307,16 @@ eng_output_idle_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   /* FIXME: clean up any resources kept around between renders in case
-    * we are animating a lot and want high fps */
+   if (re->shbuf)
+     {
+	evas_software_x11_x_output_buffer_free(re->shbuf, 0);
+	re->shbuf = NULL;
+     }
+   if (re->clip_rects)
+     {
+	XDestroyRegion(re->clip_rects);
+	re->clip_rects = NULL;
+     }
 }
 
 
