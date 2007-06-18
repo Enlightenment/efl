@@ -52,7 +52,8 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 
-        chr_x = (pen_x + (fg->glyph_out->left));
+	if (kern < 0) kern = 0;
+	chr_x = ((pen_x - kern) + (fg->glyph_out->left));
 	chr_y = (pen_y + (fg->glyph_out->top));
 //	chr_w = fg->glyph_out->bitmap.width;
 	chr_w = fg->glyph_out->bitmap.width + kern;
