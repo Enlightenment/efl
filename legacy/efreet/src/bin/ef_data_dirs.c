@@ -199,6 +199,12 @@ ef_cb_efreet_data_dirs(void)
 
     i = 0;
     tmp = efreet_data_dirs_get();
+    if (ecore_list_nodes(tmp) != 2)
+    {
+        printf("efreet_data_dirs_get() nodes is differnet from expected default\n");
+        ret = 0;
+    }
+
     ecore_list_goto_first(tmp);
     while ((val = ecore_list_next(tmp)))
     {
