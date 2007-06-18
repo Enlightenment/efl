@@ -1,5 +1,6 @@
 TODO
 ----
+- efreet_desktop_command_* should free the exec strings for you (set free cb on execs list in _build()). need to make sure users of this function are updated when this change is made (e.g. e17's exec cb)
 - Efreet_Menu should setup an Ecore_File_Monitor on the .menu files and the
   app_dir and reload the menu when needed
 

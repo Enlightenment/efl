@@ -68,7 +68,7 @@ static char *efreet_string_append(char *dest, int *size,
                                     int *len, const char *src);
 static char *efreet_string_append_char(char *dest, int *size, 
                                         int *len, char c);
-static void  efreet_desktop_command_build(Efreet_Desktop_Command *command);
+static Ecore_List *efreet_desktop_command_build(Efreet_Desktop_Command *command);
 static void efreet_desktop_command_free(Efreet_Desktop_Command *command);
 static char *efreet_desktop_command_append_quoted(char *dest, int *size, 
                                                     int *len, char *src);
@@ -99,6 +99,8 @@ static void efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
                                             char *exec, int remaining);
 
 static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
+static int efreet_desktop_command_flags_get(Efreet_Desktop *desktop);
+static void efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List *execs);
 
 /**
  * @internal
@@ -1045,6 +1047,58 @@ efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files,
     return efreet_desktop_command_progress_get(desktop, files, func, NULL, data);
 }
 
+/**
+ * @param desktop: the desktop entry
+ * @param files an ecore list of local files, as absolute paths, local paths, or file:// uris (or NULL to get exec string with no files appended)
+ * @return Returns an ecore list of exec strings
+ * @brief Get the command to use to execute a desktop entry
+ *
+ * The returned list and each of its elements must be freed.
+ */
+Ecore_List *
+efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
+{
+    Efreet_Desktop_Command *command;
+    char *file;
+    Ecore_List *execs;
+
+    if (!desktop || !desktop->exec) return NULL;
+
+    command = NEW(Efreet_Desktop_Command, 1);
+    if (!command) return 0;
+
+    command->files = ecore_list_new();
+    command->desktop = desktop;
+
+    ecore_list_set_free_cb(command->files, 
+                            ECORE_FREE_CB(efreet_desktop_command_file_free));
+
+    command->flags = efreet_desktop_command_flags_get(desktop);
+    /* get the required info for each file passed in */
+    if (files)
+    {
+        ecore_list_goto_first(files);
+        while ((file = ecore_list_next(files)))
+        {
+            Efreet_Desktop_Command_File *dcf;
+
+            dcf = efreet_desktop_command_file_process(command, file);
+            if (!dcf) continue;
+            if (dcf->pending)
+            {
+                efreet_desktop_command_file_free(dcf);
+                continue;
+            }
+            ecore_list_append(command->files, dcf);
+        }
+    }
+
+    execs = efreet_desktop_command_build(command);
+    efreet_desktop_command_free(command);
+
+    return execs;
+}
+
 
 /**
  * @param desktop: the desktop entry
@@ -1063,7 +1117,6 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
                                     Efreet_Desktop_Progress_Cb cb_progress,  
                                     void *data)
 {
-    char *p;
     Efreet_Desktop_Command *command;
     char *file;
 
@@ -1081,39 +1134,7 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
     ecore_list_set_free_cb(command->files, 
                             ECORE_FREE_CB(efreet_desktop_command_file_free));
 
-    /* first, determine which fields are present in the Exec string */
-    p = strchr(desktop->exec, '%');
-    while (p)
-    {
-        p++;
-        switch(*p)
-        {
-            case 'f':
-            case 'F':
-                command->flags |= EFREET_DESKTOP_EXEC_FLAG_FULLPATH;
-                break;
-            case 'u':
-            case 'U':
-                command->flags |= EFREET_DESKTOP_EXEC_FLAG_URI;
-                break;
-            case 'd':
-            case 'D':
-                command->flags |= EFREET_DESKTOP_EXEC_FLAG_DIR;
-                break;
-            case 'n':
-            case 'N':
-                command->flags |= EFREET_DESKTOP_EXEC_FLAG_FILE;
-                break;
-            case '%':
-                p++;
-                break;
-            default:
-                break;
-        }
-
-        p = strchr(p, '%');
-    }
-
+    command->flags = efreet_desktop_command_flags_get(desktop);
     /* get the required info for each file passed in */
     if (files)
     {
@@ -1129,9 +1150,84 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
         }
     }
 
-    if (command->num_pending == 0) efreet_desktop_command_build(command);
+    if (command->num_pending == 0)
+    {
+        Ecore_List *execs;
+        execs = efreet_desktop_command_build(command);
+        efreet_desktop_command_execs_process(command, execs);
+        ecore_list_destroy(execs);
+        efreet_desktop_command_free(command);
+    }
 
     return 1;
+}
+
+/**
+ * @internal
+ *
+ * @brief Determine which file related field codes are present in the Exec string of a .desktop
+ * @params desktop and Efreet Desktop
+ * @return a bitmask of file field codes present in exec string
+ */
+static int
+efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
+{
+    int flags = 0;
+    const char *p;
+    /* first, determine which fields are present in the Exec string */
+    p = strchr(desktop->exec, '%');
+    while (p)
+    {
+        p++;
+        switch(*p)
+        {
+            case 'f':
+            case 'F':
+                flags |= EFREET_DESKTOP_EXEC_FLAG_FULLPATH;
+                break;
+            case 'u':
+            case 'U':
+                flags |= EFREET_DESKTOP_EXEC_FLAG_URI;
+                break;
+            case 'd':
+            case 'D':
+                flags |= EFREET_DESKTOP_EXEC_FLAG_DIR;
+                break;
+            case 'n':
+            case 'N':
+                flags |= EFREET_DESKTOP_EXEC_FLAG_FILE;
+                break;
+            case '%':
+                p++;
+                break;
+            default:
+                break;
+        }
+
+        p = strchr(p, '%');
+    }
+    return flags;
+}
+
+
+/**
+ * @internal
+ *
+ * @brief Call the command callback for each exec in the list
+ * @param command 
+ * @param execs
+ */
+static void
+efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List *execs)
+{
+    char *exec;
+    int num;
+    num = ecore_list_nodes(execs);
+    ecore_list_goto_first(execs);
+    while ((exec = ecore_list_next(execs)))
+    {
+        command->cb_command(command->data, command->desktop, exec, --num);
+    }
 }
 
 
@@ -1141,14 +1237,13 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
  * efreet_desktop_command_get is called for each exec string created.
  *
  * @param command: the command to build
- * @return Nothing is returned
+ * @return a list of executable strings
  */
-static void
+static Ecore_List *
 efreet_desktop_command_build(Efreet_Desktop_Command *command)
 {
     Efreet_Desktop_Command_File *file = NULL;
     int first = 1;
-    int num = 0;
     Ecore_List *execs;
     char *exec;
 
@@ -1243,21 +1338,13 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         exec[len++] = '\0';
 
         ecore_list_append(execs, exec);
-        num++;
 
         /* If no file was added, then the Exec field doesn't contain any file 
          * fields (fFuUdDnN). We only want to run the app once in this case. */
         if (!file_added) break;
     }
 
-    ecore_list_goto_first(execs);
-    while ((exec = ecore_list_next(execs)))
-    {
-        command->cb_command(command->data, command->desktop, exec, --num);
-    }
-
-    efreet_desktop_command_free(command);
-    ecore_list_destroy(execs);
+    return execs;
 }
 
 static void
@@ -1459,7 +1546,6 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
 
             snprintf(buf, PATH_MAX, "/tmp/%d-%d-%s", getpid(), 
                             efreet_desktop_command_file_id++, base);
-            printf("nonlocal fullpath: %s\n", buf);
             f->fullpath = strdup(buf);
             f->pending = 1;
 
@@ -1580,7 +1666,13 @@ efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__,
     f->command->num_pending--;
 
     if (f->command->num_pending <= 0)
-        efreet_desktop_command_build(f->command);
+    {
+        Ecore_List *execs;
+        execs = efreet_desktop_command_build(f->command);
+        efreet_desktop_command_execs_process(f->command, execs);
+        ecore_list_destroy(execs);
+        efreet_desktop_command_free(f->command);
+    }
 }
 
 static int

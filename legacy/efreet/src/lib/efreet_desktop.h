@@ -121,6 +121,8 @@ int               efreet_desktop_command_get(Efreet_Desktop *desktop,
                                          Ecore_List *files,
                                          Efreet_Desktop_Command_Cb func,
                                          void *data);
+Ecore_List *      efreet_desktop_command_local_get(Efreet_Desktop *desktop,
+                                         Ecore_List *files);
 
 unsigned int      efreet_desktop_category_count_get(Efreet_Desktop *desktop);
 void              efreet_desktop_category_add(Efreet_Desktop *desktop,
