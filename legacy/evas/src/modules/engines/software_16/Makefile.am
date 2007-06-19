@@ -12,7 +12,8 @@ pkg_LTLIBRARIES = module.la
 module_la_SOURCES  = \
 evas_engine.c \
 evas_soft16.h \
-evas_soft16_main.c
+evas_soft16_main.c \
+evas_soft16_font.c
 
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
@@ -23,4 +24,5 @@ endif
 EXTRA_DIST = \
 evas_engine.c \
 evas_soft16.h \
-evas_soft16_main.c
+evas_soft16_main.c \
+evas_soft16_font.c

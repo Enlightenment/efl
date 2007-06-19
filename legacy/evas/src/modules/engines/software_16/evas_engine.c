@@ -574,8 +574,28 @@ eng_font_char_at_coords_get(void *data, void *font, const char *text, int x, int
 static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
-//   evas_common_font_draw(surface, context, font, x, y, text);
-//   evas_common_cpu_end_opt();
+   static RGBA_Image *im = NULL;
+   Soft16_Image *dst = surface;
+
+   if (!im)
+     {
+	im = evas_common_image_new();
+	im->image = evas_common_image_surface_new(im);
+	im->image->no_free = 1;
+     }
+   im->image->w = dst->w;
+   im->image->h = dst->h;
+   evas_common_draw_context_font_ext_set(context,
+					 surface,
+					 soft16_font_glyph_new,
+					 soft16_font_glyph_free,
+					 soft16_font_glyph_draw);
+   evas_common_font_draw(im, context, font, x, y, text);
+   evas_common_draw_context_font_ext_set(context,
+					 NULL,
+					 NULL,
+					 NULL,
+					 NULL);
 }
 
 static void

@@ -5,6 +5,35 @@
 #include "evas_private.h"
 #include "evas_common.h"
 
+#define RGB_565_UNPACKED_MASK 0x07e0f81f
+#define RGB_565_UNPACK(rgb)                                             \
+   (((rgb) | ((rgb) << 16)) & RGB_565_UNPACKED_MASK)
+#define RGB_565_PACK(rgb)                                               \
+  ((((rgb) & RGB_565_UNPACKED_MASK) |                                   \
+   ((rgb) & RGB_565_UNPACKED_MASK) >> 16) & 0xffff)
+#define RGB_565_UNPACKED_BLEND(a, b, alpha)                             \
+   ((b) + ((((a) - (b)) * (alpha)) >> 5))
+
+#define RGB_565_FROM_COMPONENTS(r, g, b)                                \
+  (((((r) >> 3) & 0x1f) << 11) |                                        \
+   ((((g) >> 2) & 0x3f) << 5) |                                         \
+   (((b) >> 3) & 0x1f))
+
+#define UNROLL2(op...) op op
+#define UNROLL4(op...) UNROLL2(op) UNROLL2(op)
+#define UNROLL8(op...) UNROLL4(op) UNROLL4(op)
+#define UNROLL16(op...) UNROLL8(op) UNROLL8(op)
+
+
+#if defined(__ARMEL__)
+/* tested on ARMv6 (arm1136j-s), Nokia N800 CPU */
+#define pld(addr, off)                                                  \
+   __asm__("pld [%[address], %[offset]]"::                              \
+           [address] "r" (addr), [offset] "i" (off))
+#else
+#define pld(addr, off)
+#endif /* __ARMEL__ */
+
 typedef struct _Soft16_Image Soft16_Image;
   
 struct _Soft16_Image
@@ -43,4 +72,10 @@ void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
 
 void soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
                            int x, int y, int w, int h);
+
+
+
+void *soft16_font_glyph_new(void *data, RGBA_Font_Glyph *fg);
+void  soft16_font_glyph_free(void *ext_dat);
+void  soft16_font_glyph_draw(Soft16_Image *dst, void *data, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
 #endif
