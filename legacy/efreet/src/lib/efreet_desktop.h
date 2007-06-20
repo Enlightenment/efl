@@ -134,6 +134,8 @@ int               efreet_desktop_type_add(const char *type,
                                     Efreet_Desktop_Type_Parse_Cb parse_func, 
                                     Efreet_Desktop_Type_Save_Cb save_func, 
                                     Efreet_Desktop_Type_Free_Cb free_func);
+int               efreet_desktop_type_alias (int from_type,
+                                             const char *alias);
 void             *efreet_desktop_type_data_get(Efreet_Desktop *desktop);
 
 Ecore_List       *efreet_desktop_string_list_parse(const char *string);

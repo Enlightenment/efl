@@ -620,6 +620,24 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
 }
 
 /**
+ * @brief Add an alias for an existing desktop type.
+ * @param from_type the type to alias (e.g. EFREE_DESKTOP_TYPE_APPLICATION)
+ * @param alias the alias
+ * @return the new type id, or -1 if @p from_type was not valid
+ *
+ * This allows applications to add non-standard types that behave exactly as standard types. 
+ */
+int
+efreet_desktop_type_alias (int from_type, const char *alias)
+{
+    Efreet_Desktop_Type_Info *info;
+    info = ecore_list_goto_index(efreet_desktop_types, from_type);
+    if (!info) return -1;
+
+    return efreet_desktop_type_add(alias, info->parse_func, info->save_func, info->free_func);
+}
+
+/**
  * @internal
  * @brief Free an Efreet Desktop_Type_Info struct
  */
