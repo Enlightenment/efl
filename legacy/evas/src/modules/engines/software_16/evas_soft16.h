@@ -2,8 +2,8 @@
 #define EVAS_SOFT16_H
 
 #include "Evas.h"
-#include "evas_private.h"
 #include "evas_common.h"
+#include "evas_private.h"
 
 #define RGB_565_UNPACKED_MASK 0x07e0f81f
 #define RGB_565_UNPACK(rgb)                                             \
@@ -35,7 +35,7 @@
 #endif /* __ARMEL__ */
 
 typedef struct _Soft16_Image Soft16_Image;
-  
+
 struct _Soft16_Image
 {
    const char    *file;       // file source - optional
@@ -50,31 +50,31 @@ struct _Soft16_Image
    RGBA_Image    *source_im;  // original source rgba image - if still reffed
 
    Evas_Image_Load_Opts lo;   // load options
-   
+
    unsigned char  have_alpha  : 1; // 1 if we have halpha
    unsigned char  free_pixels : 1; // 1 if pixels should be freed
    unsigned char  free_alpha  : 1; // 1 if alpha mask should be freed
 };
 
-Soft16_Image *soft16_image_new(int w, int h, int stride, int have_alpha,
-			       DATA16 *pixels, int copy);
+/**
+ * Image (evas_soft16_main.c)
+ */
+Soft16_Image *soft16_image_new(int w, int h, int stride, int have_alpha, DATA16 *pixels, int copy);
 void soft16_image_free(Soft16_Image *im);
-Soft16_Image *soft16_image_load(const char *file, const char *key, int *error,
-				Evas_Image_Load_Opts *lo);
+Soft16_Image *soft16_image_load(const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
 void soft16_image_load_data(Soft16_Image *im);
-void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
-		       RGBA_Draw_Context *dc,
-		       int src_region_x, int src_region_y,
-		       int src_region_w, int src_region_h,
-		       int dst_region_x, int dst_region_y,
-		       int dst_region_w, int dst_region_h,
-		       int smooth);
+void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
 
+/**
+ * Rectangle (evas_soft16_rectangle.c)
+ */
 void soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
                            int x, int y, int w, int h);
 
 
-
+/**
+ * Font (evas_soft16_font.c)
+ */
 void *soft16_font_glyph_new(void *data, RGBA_Font_Glyph *fg);
 void  soft16_font_glyph_free(void *ext_dat);
 void  soft16_font_glyph_draw(Soft16_Image *dst, void *data, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);

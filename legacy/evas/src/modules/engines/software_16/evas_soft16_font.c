@@ -1,5 +1,3 @@
-#include "evas_common.h"
-#include "evas_private.h"
 #include "evas_soft16.h"
 
 static inline void
