@@ -1,11 +1,29 @@
 /** NOTE: This file is meant to be included by users **/
 
+/** NOTE2: r, g, b parameters are 16bits, so you can pass 0 to 256 inclusive.
+ **        this is due our division by 256 when multiplying the color.
+ **/
+
 /*****************************************************************************
  * Scanline processing
  *
  *    _soft16_scanline_<description>_<src>_<dst>[_<modifier>]()
  *
  ****************************************************************************/
+
+static inline void
+_soft16_pt_blend_transp_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha)
+{
+   if (alpha == 31) *p_dst = src;
+   else if (alpha != 0)
+     {
+        DATA32 a, b;
+        a = RGB_565_UNPACK(src);
+        b = RGB_565_UNPACK(*p_dst);
+        b = RGB_565_UNPACKED_BLEND(a, b, alpha);
+        *p_dst = RGB_565_PACK(b);
+     }
+}
 
 /***********************************************************************
  * Regular blend operations
@@ -20,18 +38,6 @@ _soft16_scanline_blend_transp_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int 
 
    pld(alpha, 0);
    pld(src, 0);
-
-#define BLEND(dst, src, alpha)                                          \
-   if (UNLIKELY(alpha == 31))                                           \
-     (dst) = (src);                                                     \
-   else if (alpha != 0)                                                 \
-     {                                                                  \
-        DATA32 a, b;                                                    \
-        a = RGB_565_UNPACK(src);                                        \
-        b = RGB_565_UNPACK(dst);                                        \
-        b = RGB_565_UNPACKED_BLEND(a, b, alpha);                        \
-        dst = RGB_565_PACK(b);                                          \
-     }
 
    /* work on 8 pixels per time, do data preload */
    while (start < end)
@@ -49,34 +55,39 @@ _soft16_scanline_blend_transp_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int 
 	start += 8;
 
 	alpha2 = alpha[-7];
-	BLEND(start[-8], src[-8], alpha1);
+        _soft16_pt_blend_transp_solid(start - 8, src[-8], alpha1);
 
 	alpha1 = alpha[-6];
-	BLEND(start[-7], src[-7], alpha2);
+        _soft16_pt_blend_transp_solid(start - 7, src[-7], alpha2);
 
 	alpha2 = alpha[-5];
-	BLEND(start[-6], src[-6], alpha1);
+	_soft16_pt_blend_transp_solid(start - 6, src[-6], alpha1);
 
 	alpha1 = alpha[-4];
-	BLEND(start[-5], src[-5], alpha2);
+	_soft16_pt_blend_transp_solid(start - 5, src[-5], alpha2);
 
 	alpha2 = alpha[-3];
-	BLEND(start[-4], src[-4], alpha1);
+	_soft16_pt_blend_transp_solid(start - 4, src[-4], alpha1);
 
 	alpha1 = alpha[-2];
-	BLEND(start[-3], src[-3], alpha2);
+	_soft16_pt_blend_transp_solid(start - 3, src[-3], alpha2);
 
 	alpha2 = alpha[-1];
-	BLEND(start[-2], src[-2], alpha1);
+	_soft16_pt_blend_transp_solid(start - 2, src[-2], alpha1);
 
-	BLEND(start[-1], src[-1], alpha2);
+	_soft16_pt_blend_transp_solid(start - 1, src[-1], alpha2);
      }
 
    /* remaining pixels (up to 7) */
    end = start + (size & 7);
    for (; start < end; start++, src++, alpha++)
-      BLEND(*start, *src, *alpha);
-#undef BLEND
+      _soft16_pt_blend_transp_solid(start, *src, *alpha);
+}
+
+static inline void
+_soft16_pt_blend_solid_solid(DATA16 *p_dst, DATA16 src)
+{
+   *p_dst = src;
 }
 
 static inline void
@@ -88,7 +99,23 @@ _soft16_scanline_blend_solid_solid(DATA16 *src, DATA16 *dst, int size)
 /***********************************************************************
  * Blend operations taking an extra alpha (fade in, out)
  */
-static inline void _soft16_scanline_blend_transp_solid_mul_alpha(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, char rel_alpha)
+
+static inline void
+_soft16_pt_blend_transp_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 rel_alpha)
+{
+   /* rel_alpha is always > 0, so (alpha - rel_alpha) is always < 31 */
+   if (alpha > rel_alpha)
+     {
+        DATA32 a, b;
+        a = RGB_565_UNPACK(src);
+        b = RGB_565_UNPACK(*p_dst);
+        b = RGB_565_UNPACKED_BLEND(a, b, alpha - rel_alpha);
+        *p_dst = RGB_565_PACK(b);
+     }
+}
+
+static inline void
+_soft16_scanline_blend_transp_solid_mul_alpha(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, const DATA8 rel_alpha)
 {
    DATA16 *start, *end;
 
@@ -97,16 +124,6 @@ static inline void _soft16_scanline_blend_transp_solid_mul_alpha(DATA16 *src, DA
 
    pld(alpha, 0);
    pld(src, 0);
-
-#define BLEND(dst, src, alpha)                                          \
-   if (alpha > rel_alpha)                                               \
-     {                                                                  \
-        DATA32 a, b;                                                    \
-        a = RGB_565_UNPACK(src);                                        \
-        b = RGB_565_UNPACK(dst);                                        \
-        b = RGB_565_UNPACKED_BLEND(a, b, alpha - rel_alpha);            \
-        dst = RGB_565_PACK(b);                                          \
-     }
 
    while (start < end)
      {
@@ -122,37 +139,54 @@ static inline void _soft16_scanline_blend_transp_solid_mul_alpha(DATA16 *src, DA
 	start += 8;
 
 	alpha2 = alpha[-7];
-	BLEND(start[-8], src[-8], alpha1);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 8, src[-8], alpha1, rel_alpha);
 
 	alpha1 = alpha[-6];
-	BLEND(start[-7], src[-7], alpha2);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 7, src[-7], alpha2, rel_alpha);
 
 	alpha2 = alpha[-5];
-	BLEND(start[-6], src[-6], alpha1);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 6, src[-6], alpha1, rel_alpha);
 
 	alpha1 = alpha[-4];
-	BLEND(start[-5], src[-5], alpha2);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 5, src[-5], alpha2, rel_alpha);
 
 	alpha2 = alpha[-3];
-	BLEND(start[-4], src[-4], alpha1);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 4, src[-4], alpha1, rel_alpha);
 
 	alpha1 = alpha[-2];
-	BLEND(start[-3], src[-3], alpha2);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 3, src[-3], alpha2, rel_alpha);
 
 	alpha2 = alpha[-1];
-	BLEND(start[-2], src[-2], alpha1);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 2, src[-2], alpha1, rel_alpha);
 
-	BLEND(start[-1], src[-1], alpha2);
+	_soft16_pt_blend_transp_solid_mul_alpha
+           (start - 1, src[-1], alpha2, rel_alpha);
      }
 
    end = start + (size & 7);
    for (; start < end; start++, src++, alpha++)
-      BLEND(*start, *src, *alpha);
-#undef BLEND
+      _soft16_pt_blend_transp_solid_mul_alpha(start, *src, *alpha, rel_alpha);
 }
 
 static inline void
-_soft16_scanline_blend_solid_solid_mul_alpha(DATA16 *src, DATA16 *dst, int size, char rel_alpha)
+_soft16_pt_blend_solid_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 rel_alpha)
+{
+   DATA32 a, b;
+   a = RGB_565_UNPACK(src);
+   b = RGB_565_UNPACK(*p_dst);
+   b = RGB_565_UNPACKED_BLEND(a, b, rel_alpha);
+   *p_dst = RGB_565_PACK(b);
+}
+
+static inline void
+_soft16_scanline_blend_solid_solid_mul_alpha(DATA16 *src, DATA16 *dst, int size, DATA8 rel_alpha)
 {
    DATA16 *start, *end;
 
@@ -161,20 +195,11 @@ _soft16_scanline_blend_solid_solid_mul_alpha(DATA16 *src, DATA16 *dst, int size,
 
    pld(src, 0);
 
-#define BLEND(dst, src)                                                 \
-   {                                                                    \
-   DATA32 a, b;                                                         \
-   a = RGB_565_UNPACK(src);                                             \
-   b = RGB_565_UNPACK(dst);                                             \
-   b = RGB_565_UNPACKED_BLEND(a, b, rel_alpha);                         \
-   dst = RGB_565_PACK(b);                                               \
-   }
-
    while (start < end)
      {
 	pld(src, 32);
         UNROLL8({
-           BLEND(*start, *src);
+           _soft16_pt_blend_solid_solid_mul_alpha(start, *src, rel_alpha);
            start++;
            src++;
         });
@@ -182,14 +207,33 @@ _soft16_scanline_blend_solid_solid_mul_alpha(DATA16 *src, DATA16 *dst, int size,
 
    end = start + (size & 7);
    for (; start < end; start++, src++)
-      BLEND(*start, *src);
-#undef BLEND
+     _soft16_pt_blend_solid_solid_mul_alpha(start, *src, rel_alpha);
 }
 
 /***********************************************************************
  * Blend operations with extra alpha and multiply color
  */
-static inline void _soft16_scanline_blend_transp_solid_mul_color_transp(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, char rel_alpha, short r, short g, short b)
+
+static inline void
+_soft16_pt_blend_transp_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 rel_alpha, DATA16 r, DATA16 g, DATA16 b)
+{
+   /* rel_alpha is always > 0, so (alpha - rel_alpha) is always < 31 */
+   if (alpha > rel_alpha)
+     {
+        int r1, g1, b1;
+        DATA32 rgb, d;
+        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;
+        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;
+        b1 = (((src) & 0x1f) * b) >> 8;
+        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;
+        d = RGB_565_UNPACK(*p_dst);
+        d = RGB_565_UNPACKED_BLEND(rgb, d, alpha - rel_alpha);
+        *p_dst = RGB_565_PACK(d);
+     }
+}
+
+static inline void
+_soft16_scanline_blend_transp_solid_mul_color_transp(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, DATA8 rel_alpha, DATA16 r, DATA16 g, DATA16 b)
 {
    DATA16 *start, *end;
 
@@ -198,21 +242,6 @@ static inline void _soft16_scanline_blend_transp_solid_mul_color_transp(DATA16 *
 
    pld(alpha, 0);
    pld(src, 0);
-
-   /* rel_alpha is always > 0, so (alpha - rel_alpha) is always < 31 */
-#define BLEND(dst, src, alpha)                                          \
-   if ((alpha) > rel_alpha)                                             \
-     {                                                                  \
-        short r1, g1, b1;                                               \
-        int rgb, d;                                                     \
-        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;                         \
-        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;                          \
-        b1 = (((src) & 0x1f) * b) >> 8;                                 \
-        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;   \
-        d = RGB_565_UNPACK(dst);                                        \
-        d = RGB_565_UNPACKED_BLEND(rgb, d, alpha - rel_alpha);          \
-        dst = RGB_565_PACK(d);                                          \
-     }
 
    while (start < end)
      {
@@ -228,37 +257,61 @@ static inline void _soft16_scanline_blend_transp_solid_mul_color_transp(DATA16 *
 	start += 8;
 
 	alpha2 = alpha[-7];
-	BLEND(start[-8], src[-8], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 8, src[-8], alpha1, rel_alpha, r, g, b);
 
 	alpha1 = alpha[-6];
-	BLEND(start[-7], src[-7], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 7, src[-7], alpha2, rel_alpha, r, g, b);
 
 	alpha2 = alpha[-5];
-	BLEND(start[-6], src[-6], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 6, src[-6], alpha1, rel_alpha, r, g, b);
 
 	alpha1 = alpha[-4];
-	BLEND(start[-5], src[-5], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 5, src[-5], alpha2, rel_alpha, r, g, b);
 
 	alpha2 = alpha[-3];
-	BLEND(start[-4], src[-4], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 4, src[-4], alpha1, rel_alpha, r, g, b);
 
 	alpha1 = alpha[-2];
-	BLEND(start[-3], src[-3], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 3, src[-3], alpha2, rel_alpha, r, g, b);
 
 	alpha2 = alpha[-1];
-	BLEND(start[-2], src[-2], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 2, src[-2], alpha1, rel_alpha, r, g, b);
 
-	BLEND(start[-1], src[-1], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_transp
+           (start - 1, src[-1], alpha2, rel_alpha, r, g, b);
      }
 
    end = start + (size & 7);
    for (; start < end; start++, src++, alpha++)
-      BLEND(*start, *src, *alpha);
-#undef BLEND
+      _soft16_pt_blend_transp_solid_mul_color_transp
+         (start, *src, *alpha, rel_alpha, r, g, b);
 }
 
 static inline void
-_soft16_scanline_blend_solid_solid_mul_color_transp(DATA16 *src, DATA16 *dst, int size, char rel_alpha, short r, short g, short b)
+_soft16_pt_blend_solid_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 rel_alpha, DATA16 r, DATA16 g, DATA16 b)
+{
+   int r1, g1, b1;
+   DATA32 rgb, d;
+
+   r1 = ((((src) >> 11) & 0x1f) * r) >> 8;
+   g1 = ((((src) >> 5) & 0x3f) * g) >> 8;
+   b1 = (((src) & 0x1f) * b) >> 8;
+
+   rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;
+   d = RGB_565_UNPACK(*p_dst);
+   d = RGB_565_UNPACKED_BLEND(rgb, d, rel_alpha);
+   *p_dst = RGB_565_PACK(d);
+}
+
+static inline void
+_soft16_scanline_blend_solid_solid_mul_color_transp(DATA16 *src, DATA16 *dst, int size, DATA8 rel_alpha, DATA16 r, DATA16 g, DATA16 b)
 {
    DATA16 *start, *end;
 
@@ -267,24 +320,12 @@ _soft16_scanline_blend_solid_solid_mul_color_transp(DATA16 *src, DATA16 *dst, in
 
    pld(src, 0);
 
-#define BLEND(dst, src)                                                 \
-     {                                                                  \
-        short r1, g1, b1;                                               \
-        int rgb, d;                                                     \
-        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;                         \
-        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;                          \
-        b1 = (((src) & 0x1f) * b) >> 8;                                 \
-        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;   \
-        d = RGB_565_UNPACK(dst);                                        \
-        d = RGB_565_UNPACKED_BLEND(rgb, d, rel_alpha);                  \
-        dst = RGB_565_PACK(d);                                          \
-     }
-
    while (start < end)
      {
 	pld(src, 32);
         UNROLL8({
-           BLEND(*start, *src);
+           _soft16_pt_blend_solid_solid_mul_color_transp
+              (start, *src, rel_alpha, r, g, b);
            start++;
            src++;
         });
@@ -292,14 +333,38 @@ _soft16_scanline_blend_solid_solid_mul_color_transp(DATA16 *src, DATA16 *dst, in
 
    end = start + (size & 7);
    for (; start < end; start++, src++)
-      BLEND(*start, *src);
-#undef BLEND
+      _soft16_pt_blend_solid_solid_mul_color_transp
+         (start, *src, rel_alpha, r, g, b);
 }
 
 /***********************************************************************
  * Blend operations with extra multiply color
  */
-static inline void _soft16_scanline_blend_transp_solid_mul_color_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, short r, short g, short b)
+static inline void
+_soft16_pt_blend_transp_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA16 r, DATA16 g, DATA16 b)
+{
+   int r1, g1, b1;
+
+   if (alpha == 0) return;
+
+   r1 = ((((src >> 11) & 0x1f) * r) >> 8) & 0x1f;
+   g1 = ((((src >> 5) & 0x3f) * g) >> 8) & 0x3f;
+   b1 = (((src & 0x1f) * b) >> 8) & 0x1f;
+
+   if (alpha == 31) *p_dst = (r1 << 11) | (g1 << 5) | b1;
+   else
+     {
+        DATA32 rgb_unpack, d;
+
+        rgb_unpack = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;
+        d = RGB_565_UNPACK(*p_dst);
+        d = RGB_565_UNPACKED_BLEND(rgb_unpack, d, alpha);
+        *p_dst = RGB_565_PACK(d);
+     }
+}
+
+static inline void
+_soft16_scanline_blend_transp_solid_mul_color_solid(DATA16 *src, DATA8 *alpha, DATA16 *dst, int size, DATA16 r, DATA16 g, DATA16 b)
 {
    DATA16 *start, *end;
 
@@ -308,28 +373,6 @@ static inline void _soft16_scanline_blend_transp_solid_mul_color_solid(DATA16 *s
 
    pld(alpha, 0);
    pld(src, 0);
-
-#define BLEND(dst, src, alpha)                                          \
-   if (UNLIKELY(alpha == 31))                                           \
-     {                                                                  \
-        short r1, g1, b1;                                               \
-        r1 = (((((src) >> 11) & 0x1f) * r) >> 8) & 0x1f;                \
-        g1 = (((((src) >> 5) & 0x3f) * g) >> 8) & 0x3f;                 \
-        b1 = ((((src) & 0x1f) * b) >> 8) & 0x1f;                        \
-        dst = ((r1 << 11) | (g1 << 5) | b1);                            \
-     }                                                                  \
-   else if (alpha != 0)                                                 \
-     {                                                                  \
-        short r1, g1, b1;                                               \
-        int rgb, d;                                                     \
-        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;                         \
-        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;                          \
-        b1 = (((src) & 0x1f) * b) >> 8;                                 \
-        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;   \
-        d = RGB_565_UNPACK(dst);                                        \
-        d = RGB_565_UNPACKED_BLEND(rgb, d, alpha);                      \
-        dst = RGB_565_PACK(d);                                          \
-     }
 
    while (start < end)
      {
@@ -345,37 +388,57 @@ static inline void _soft16_scanline_blend_transp_solid_mul_color_solid(DATA16 *s
 	start += 8;
 
 	alpha2 = alpha[-7];
-	BLEND(start[-8], src[-8], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 8, src[-8], alpha1, r, g, b);
 
 	alpha1 = alpha[-6];
-	BLEND(start[-7], src[-7], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 7, src[-7], alpha2, r, g, b);
 
 	alpha2 = alpha[-5];
-	BLEND(start[-6], src[-6], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 6, src[-6], alpha1, r, g, b);
 
 	alpha1 = alpha[-4];
-	BLEND(start[-5], src[-5], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 5, src[-5], alpha2, r, g, b);
 
 	alpha2 = alpha[-3];
-	BLEND(start[-4], src[-4], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 4, src[-4], alpha1, r, g, b);
 
 	alpha1 = alpha[-2];
-	BLEND(start[-3], src[-3], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 3, src[-3], alpha2, r, g, b);
 
 	alpha2 = alpha[-1];
-	BLEND(start[-2], src[-2], alpha1);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 2, src[-2], alpha1, r, g, b);
 
-	BLEND(start[-1], src[-1], alpha2);
+        _soft16_pt_blend_transp_solid_mul_color_solid
+           (start - 1, src[-1], alpha2, r, g, b);
      }
 
    end = start + (size & 7);
    for (; start < end; start++, src++, alpha++)
-      BLEND(*start, *src, *alpha);
-#undef BLEND
+     _soft16_pt_blend_transp_solid_mul_color_solid
+        (start, *src, *alpha, r, g, b);
 }
 
 static inline void
-_soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int size, short r, short g, short b)
+_soft16_pt_blend_solid_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA16 r, DATA16 g, DATA16 b)
+{
+   int r1, g1, b1;
+
+   r1 = ((((src >> 11) & 0x1f) * r) >> 8) & 0x1f;
+   g1 = ((((src >> 5) & 0x3f) * g) >> 8) & 0x3f;
+   b1 = (((src & 0x1f) * b) >> 8) & 0x1f;
+
+   *p_dst = (r1 << 11) | (g1 << 5) | b1;
+}
+
+static inline void
+_soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int size, DATA16 r, DATA16 g, DATA16 b)
 {
    DATA16 *start, *end;
 
@@ -384,20 +447,11 @@ _soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int
 
    pld(src, 0);
 
-#define BLEND(dst, src)                                                 \
-  {                                                                     \
-     short r1, g1, b1;                                                  \
-     r1 = (((((src) >> 11) & 0x1f) * r) >> 8) & 0x1f;                   \
-     g1 = (((((src) >> 5) & 0x3f) * g) >> 8) & 0x3f;                    \
-     b1 = ((((src) & 0x1f) * b) >> 8) & 0x1f;                           \
-     dst = ((r1 << 11) | (g1 << 5) | b1);                               \
-  }
-
    while (start < end)
      {
 	pld(src, 32);
         UNROLL8({
-           BLEND(*start, *src);
+           _soft16_pt_blend_solid_solid_mul_color_solid(start, *src, r, g, b);
            start++;
            src++;
         });
@@ -405,6 +459,5 @@ _soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int
 
    end = start + (size & 7);
    for (; start < end; start++, src++)
-      BLEND(*start, *src);
-#undef BLEND
+     _soft16_pt_blend_solid_solid_mul_color_solid(start, *src, r, g, b);
 }
