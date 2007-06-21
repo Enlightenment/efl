@@ -262,7 +262,7 @@ struct _RGBA_Draw_Context
    struct {
       DATA32 col;
    } col;
-   struct {
+   struct RGBA_Draw_Context_clip {
       char   use : 1;
       int    x, y, w, h;
    } clip;
