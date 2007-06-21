@@ -65,11 +65,14 @@ Soft16_Image *soft16_image_load(const char *file, const char *key, int *error, E
 void soft16_image_load_data(Soft16_Image *im);
 void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
 
+void soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);
+void soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);
+
+
 /**
  * Rectangle (evas_soft16_rectangle.c)
  */
-void soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
-                           int x, int y, int w, int h);
+void soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 
 /**
@@ -78,4 +81,5 @@ void soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
 void *soft16_font_glyph_new(void *data, RGBA_Font_Glyph *fg);
 void  soft16_font_glyph_free(void *ext_dat);
 void  soft16_font_glyph_draw(Soft16_Image *dst, void *data, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
+
 #endif

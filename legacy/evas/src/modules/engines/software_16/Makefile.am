@@ -13,6 +13,8 @@ module_la_SOURCES  = \
 evas_engine.c \
 evas_soft16.h \
 evas_soft16_main.c \
+evas_soft16_image_unscaled.c \
+evas_soft16_image_scaled_sampled.c \
 evas_soft16_font.c \
 evas_soft16_rectangle.c
 
@@ -26,6 +28,8 @@ EXTRA_DIST = \
 evas_engine.c \
 evas_soft16.h \
 evas_soft16_main.c \
+evas_soft16_image_unscaled.c \
+evas_soft16_image_scaled_sampled.c \
 evas_soft16_font.c \
 evas_soft16_rectangle.c \
 evas_soft16_scanline_fill.c \
