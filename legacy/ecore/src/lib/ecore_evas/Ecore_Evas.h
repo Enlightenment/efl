@@ -51,6 +51,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_X 1
 #define HAVE_ECORE_EVAS_FB 1
 #define HAVE_ECORE_EVAS_GL 1
+#define HAVE_ECORE_EVAS_X11_16 1
 #define HAVE_ECORE_EVAS_DIRECTFB 1
 
 typedef enum _Ecore_Evas_Engine_Type
@@ -60,7 +61,8 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_GL_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_BUFFER,
    ECORE_EVAS_ENGINE_XRENDER_X11,
-   ECORE_EVAS_ENGINE_DIRECTFB
+   ECORE_EVAS_ENGINE_DIRECTFB,
+   ECORE_EVAS_ENGINE_SOFTWARE_X11_16,
 } Ecore_Evas_Engine_Type;
 
 #ifndef _ECORE_X_H
@@ -106,6 +108,13 @@ EAPI Ecore_X_Window  ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee);
 EAPI void            ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on);
 EAPI int             ecore_evas_xrender_x11_direct_resize_get(Ecore_Evas *ee);
 EAPI void            ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
+
+EAPI Ecore_Evas     *ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
+EAPI Ecore_X_Window  ecore_evas_software_x11_16_window_get(Ecore_Evas *ee);
+EAPI Ecore_X_Window  ecore_evas_software_x11_16_subwindow_get(Ecore_Evas *ee);
+EAPI void            ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on);
+EAPI int             ecore_evas_software_x11_16_direct_resize_get(Ecore_Evas *ee);
+EAPI void            ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
 EAPI Ecore_Evas     *ecore_evas_fb_new(char *disp_name, int rotation, int w, int h);
 

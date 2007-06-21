@@ -46,6 +46,9 @@
 #  ifdef BUILD_ECORE_EVAS_XRENDER
 #   include <Evas_Engine_XRender_X11.h>
 #  endif
+#  ifdef BUILD_ECORE_EVAS_X11_16
+#   include <Evas_Engine_Software_16_X11.h>
+#  endif
 # endif /* HAVE_ECORE_X_XCB */
 #endif
 #ifdef BUILD_ECORE_EVAS_FB

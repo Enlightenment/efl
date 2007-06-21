@@ -46,6 +46,13 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif	
+
+      case ECORE_EVAS_ENGINE_SOFTWARE_X11_16:
+#ifdef BUILD_ECORE_EVAS_X11_16
+	return 1;
+#else
+	return 0;
+#endif	
 	break;
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
 #ifdef BUILD_ECORE_EVAS_BUFFER
