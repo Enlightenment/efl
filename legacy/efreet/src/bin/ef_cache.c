@@ -36,8 +36,10 @@ int
 main(int argc, char **argv)
 {
     if (!efreet_init()) return 1;
+    if (!efreet_util_init()) return 1;
     ecore_timer_add(2.0, timer, NULL);
     ecore_main_loop_begin();
+    efreet_util_shutdown();
     efreet_shutdown();
     return 0;
 }
