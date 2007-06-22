@@ -803,7 +803,7 @@ efreet_icon_cache_set(Efreet_Icon_Theme *theme, const char *key, void *value)
         ecore_hash_set(theme->icon_cache, (void *)key, NO_MATCH_KEY);
     else 
     {
-        if (value != NO_MATCH_KEY) ((Efreet_Icon *)value)->ref_count ++;
+        if (value != NO_MATCH_KEY) ((Efreet_Icon *)value)->ref_count++;
 
         ecore_hash_set(theme->icon_cache, (void *)key, value);
     }
@@ -1021,9 +1021,9 @@ efreet_icon_theme_free(Efreet_Icon_Theme *theme)
     IF_FREE(theme->example_icon);
 
     if (theme->paths.count == 1)
-        IF_FREE(theme->paths.path)
+        IF_FREE(theme->paths.path);
     else
-        IF_FREE_LIST(theme->paths.path)
+        IF_FREE_LIST(theme->paths.path);
 
     IF_FREE_LIST(theme->inherits);
     IF_FREE_LIST(theme->directories);
@@ -1063,7 +1063,7 @@ efreet_icon_theme_path_add(Efreet_Icon_Theme *theme, const char *path)
         ecore_list_append(theme->paths.path, old);
         ecore_list_append(theme->paths.path, strdup(path));
     }
-    theme->paths.count ++;
+    theme->paths.count++;
 }
 
 /**

@@ -42,37 +42,57 @@
  * @def FREE(x) 
  * Free x and set to NULL
  */
-#define FREE(x) { free(x); x = NULL; }
+#define FREE(x) do { free(x); x = NULL; } while (0)
 
 /**
  * @def IF_FREE(x) 
  * If x is set, free x and set to NULL 
  */
-#define IF_FREE(x) { if (x) FREE(x) }
+#define IF_FREE(x) do { if (x) FREE(x); } while (0)
 
 /**
  * @def IF_RELEASE(x)
  * If x is set, ecore_string_release x and set to NULL
  */
-#define IF_RELEASE(x) { if (x) ecore_string_release(x); x = NULL; }
+#define IF_RELEASE(x) do { \
+    if (x) { \
+        const char *__tmp; __tmp = (x); (x) = NULL; ecore_string_release(__tmp); \
+    } \
+    (x) = NULL; \
+} while (0)
 
 /**
  * @def IF_FREE_LIST(x) 
  * If x is a valid pointer destroy x and set to NULL
  */
-#define IF_FREE_LIST(x) { if (x) ecore_list_destroy(x); x = NULL; }
+#define IF_FREE_LIST(x) do { \
+    if (x) { \
+        Ecore_List *__tmp; __tmp = (x); (x) = NULL; ecore_list_destroy(__tmp); \
+    } \
+    (x) = NULL; \
+} while (0)
 
 /**
  * @def IF_FREE_DLIST(x) 
  * If x is a valid pointer destroy x and set to NULL
  */
-#define IF_FREE_DLIST(x) { if (x) ecore_dlist_destroy(x); x = NULL; }
+#define IF_FREE_DLIST(x) do { \
+    if (x) { \
+        Ecore_DList *__tmp; __tmp = (x); (x) = NULL; ecore_dlist_destroy(__tmp); \
+    } \
+    (x) = NULL; \
+} while (0)
 
 /**
  * @def IF_FREE_HASH(x) 
  * If x is a valid pointer destroy x and set to NULL
  */
-#define IF_FREE_HASH(x) { if (x) ecore_hash_destroy(x); x = NULL; }
+#define IF_FREE_HASH(x) do { \
+    if (x) { \
+        Ecore_Hash *__tmp; __tmp = (x); (x) = NULL; ecore_hash_destroy(__tmp); \
+    } \
+    (x) = NULL; \
+} while (0)
 
 /**
  * @def __UNUSED__
