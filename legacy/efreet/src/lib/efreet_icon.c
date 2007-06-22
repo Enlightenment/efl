@@ -105,6 +105,7 @@ void
 efreet_icon_shutdown(void)
 {
     IF_FREE(efreet_icon_user_dir);
+    IF_FREE(efreet_icon_deprecated_user_dir);
 
     IF_FREE_LIST(efreet_icon_extensions);
     IF_FREE_HASH(efreet_icon_themes);
