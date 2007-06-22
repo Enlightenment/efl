@@ -116,8 +116,10 @@ efreet_desktop_init(void)
 
     efreet_desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_set_free_key(efreet_desktop_cache, ECORE_FREE_CB(free));
+#if 0
     ecore_hash_set_free_value(efreet_desktop_cache, 
                                 ECORE_FREE_CB(efreet_desktop_free));
+#endif
 
     efreet_desktop_types = ecore_list_new();
     ecore_list_set_free_cb(efreet_desktop_types, 
@@ -217,6 +219,18 @@ efreet_desktop_get(const char *file)
     ecore_hash_set(efreet_desktop_cache, strdup(file), desktop);
     desktop->cached = 1;
     return desktop;
+}
+
+/**
+ * @param desktop: The Efreet_Desktop to ref
+ * @return Returns the new reference count
+ */
+int
+efreet_desktop_ref(Efreet_Desktop *desktop)
+{
+    if (!desktop) return 0;
+    desktop->ref++;
+    return desktop->ref;
 }
 
 /**
@@ -460,7 +474,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     desktop->ref--;
     if (desktop->ref > 0) return;
 
-    if (desktop->cached)
+    if (desktop->cached && efreet_desktop_cache)
         ecore_hash_remove(efreet_desktop_cache, desktop->orig_path);
 
     IF_FREE(desktop->orig_path);

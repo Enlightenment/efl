@@ -100,6 +100,7 @@ struct Efreet_Desktop
 };
 
 Efreet_Desktop   *efreet_desktop_get(const char *file);
+int               efreet_desktop_ref(Efreet_Desktop *desktop);
 Efreet_Desktop   *efreet_desktop_empty_new(const char *file);
 Efreet_Desktop   *efreet_desktop_new(const char *file);
 void              efreet_desktop_free(Efreet_Desktop *desktop);
