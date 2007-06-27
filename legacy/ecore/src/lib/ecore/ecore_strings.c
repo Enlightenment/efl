@@ -103,13 +103,13 @@ ecore_string_release(const char *string)
 }
 
 EAPI void
-ecore_string_hash_dump_graph()
+ecore_string_hash_dump_graph(void)
 {
 	ecore_hash_dump_graph(ecore_strings);
 }
 
 EAPI void
-ecore_string_hash_dump_stats()
+ecore_string_hash_dump_stats(void)
 {
 	ecore_hash_dump_stats(ecore_strings);
 }

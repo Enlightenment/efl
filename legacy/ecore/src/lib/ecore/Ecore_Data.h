@@ -389,8 +389,8 @@ extern "C" {
    EAPI void ecore_string_shutdown(void);
    EAPI const char *ecore_string_instance(const char *string);
    EAPI void ecore_string_release(const char *string);
-   EAPI void ecore_string_hash_dump_graph();
-   EAPI void ecore_string_hash_dump_stats();
+   EAPI void ecore_string_hash_dump_graph(void);
+   EAPI void ecore_string_hash_dump_stats(void);
    
    
    typedef struct _Ecore_Tree_Node Ecore_Tree_Node;

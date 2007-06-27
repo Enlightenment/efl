@@ -426,7 +426,7 @@ efreet_util_desktop_comment_glob_list(const char *glob)
  * @return an Ecore_List of category names (const char *)
  */
 Ecore_List *
-efreet_util_desktop_categories_list()
+efreet_util_desktop_categories_list(void)
 {
     return ecore_hash_keys(desktops_by_category);
 }
@@ -957,7 +957,7 @@ efreet_util_monitor_free(void *data)
  * @return An ecore list of menu file paths (const char *). This must be freed with ecore_list_destroy().
  */
 Ecore_List *
-efreet_util_menus_find()
+efreet_util_menus_find(void)
 {
     Ecore_List *menus, *dirs;
     const char *dir;

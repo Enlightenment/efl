@@ -1052,7 +1052,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
     * for us. so that means EXCESS elements are all declared as OP_NONE to
     * keep them innocuous.
     */
-   const static void *switchtable[256] =
+   static const void *switchtable[256] =
      {
 	   &&SWITCHTABLE_EMBRYO_OP_NONE,
 	       &&SWITCHTABLE_EMBRYO_OP_LOAD_PRI,

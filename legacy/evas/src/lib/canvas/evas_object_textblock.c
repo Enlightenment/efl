@@ -863,7 +863,7 @@ static const char *stylestr;
 static const char *tabstopsstr;
 
 static void
-_format_command_init()
+_format_command_init(void)
 {
    fontstr = evas_stringshare_add("font");
    font_fallbacksstr = evas_stringshare_add("font_fallbacks");
@@ -891,7 +891,7 @@ _format_command_init()
 }
 
 static void
-_format_command_shutdown()
+_format_command_shutdown(void)
 {
    evas_stringshare_del(fontstr);
    evas_stringshare_del(font_fallbacksstr);

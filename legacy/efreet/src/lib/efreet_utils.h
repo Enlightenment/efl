@@ -38,10 +38,10 @@ Ecore_List     *efreet_util_desktop_exec_glob_list(const char *glob);
 Ecore_List     *efreet_util_desktop_generic_name_glob_list(const char *glob);
 Ecore_List     *efreet_util_desktop_comment_glob_list(const char *glob);
 
-Ecore_List       *efreet_util_desktop_categories_list();
+Ecore_List       *efreet_util_desktop_categories_list(void);
 Ecore_List *efreet_util_desktop_category_list(const char *category);
 
-Ecore_List *efreet_util_menus_find();
+Ecore_List *efreet_util_menus_find(void);
 extern int EFREET_EVENT_DESKTOP_LIST_CHANGE;
 extern int EFREET_EVENT_DESKTOP_CHANGE;
 

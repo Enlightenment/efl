@@ -332,7 +332,7 @@ evas_module_load(Evas_Module *em)
      }
    error_dl:	
      {
-	char *err;
+	const char *err;
 	
 	err = dlerror();
 	printf("[evas module] error loading the module %s. %s\n", buf, err);
