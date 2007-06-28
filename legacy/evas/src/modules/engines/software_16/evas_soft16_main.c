@@ -185,8 +185,8 @@ soft16_image_load(const char *file, const char *key, int *error,
    Soft16_Image *im;
    char buf[4096 + 1024];
 
-   if (!file) return NULL;
    *error = 0;
+   if (!file) return NULL;
    soft16_image_cache_key(lo, key, file, buf, sizeof(buf));
    im = soft16_image_cache_get(buf);
    if (im) return im;
