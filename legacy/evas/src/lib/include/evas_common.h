@@ -263,8 +263,8 @@ struct _RGBA_Draw_Context
       DATA32 col;
    } col;
    struct RGBA_Draw_Context_clip {
-      char   use : 1;
       int    x, y, w, h;
+      char   use : 1;
    } clip;
    Cutout_Rects cutout;
    struct {
@@ -289,8 +289,8 @@ struct _RGBA_Surface
 {
    int                w, h;
    DATA32            *data;
-   char               no_free : 1;
    RGBA_Image        *im;
+   char               no_free : 1;
 };
 
 struct _RGBA_Pipe_Op
@@ -358,17 +358,16 @@ struct _RGBA_Image
      {
 	void           *module;
 	void           *loader;
-//	int             format;
 	char           *file;
 	char           *real_file;
 	char           *key;
 	char           *comment;
+//	int             format;
      } info;
-   int                  references;
    void                *extended_info;
-   RGBA_Image_Loadopts  load_opts;
-   unsigned char        scale;
    RGBA_Pipe           *pipe;
+   int                  references;
+   RGBA_Image_Loadopts  load_opts;
    int                  ref;
    time_t               timestamp;
    time_t               laststat;
@@ -378,6 +377,7 @@ struct _RGBA_Image
       unsigned char        no_free : 1;
       unsigned char        dirty : 1;
    } cs;
+   unsigned char        scale;
 };
 
 struct _RGBA_Gradient_Color_Stop
@@ -400,26 +400,24 @@ struct _RGBA_Gradient
      {
 	DATA32        *data;
 	int            len;
-	unsigned char  has_alpha : 1;
 	float          angle;
 	int            direction;
 	float          offset;
+	unsigned char  has_alpha : 1;
      } map;
 
    struct {
 	Evas_Object_List *stops;
-	int               nstops;
 	DATA32           *data;
+	int               nstops;
 	int               len;
    }  color;
    struct {
 	Evas_Object_List *stops;
-	int               nstops;
 	DATA8            *data;
+	int               nstops;
 	int               len;
    }  alpha;
-   unsigned char     imported_data : 1;
-   unsigned char     has_alpha : 1;
 
    struct
      {
@@ -436,6 +434,9 @@ struct _RGBA_Gradient
      } type;
    
    int references;
+   
+   unsigned char     imported_data : 1;
+   unsigned char     has_alpha : 1;
 };
 
 struct _RGBA_Gradient_Type

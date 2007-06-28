@@ -31,9 +31,6 @@ struct _Evas_Object_Image
       char           has_alpha :1;
    } cur, prev;
 
-   char              changed : 1;
-   char              dirty_pixels : 1;
-
    int               pixels_checked_out;
    int               load_error;
    Evas_List        *pixel_updates;
@@ -50,6 +47,9 @@ struct _Evas_Object_Image
    } func;
 
    void             *engine_data;
+
+   char              changed : 1;
+   char              dirty_pixels : 1;
 };
 
 /* private methods for image objects */

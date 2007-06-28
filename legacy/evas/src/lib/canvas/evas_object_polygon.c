@@ -12,9 +12,10 @@ struct _Evas_Object_Polygon
 {
    DATA32            magic;
    Evas_List        *points;
-   char              changed : 1;
-
+   
    void             *engine_data;
+
+   char              changed : 1;
 };
 
 struct _Evas_Polygon_Point

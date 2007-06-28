@@ -26,14 +26,14 @@ struct _Evas_Object_Gradient
          char       *name;
          char       *params;
       } type;
-   unsigned char    gradient_opaque : 1;
+      unsigned char    gradient_opaque : 1;
    } cur, prev;
+
+   void             *engine_data;
 
    unsigned char     changed : 1;
    unsigned char     gradient_changed : 1;
    unsigned char     type_changed : 1;
-
-   void             *engine_data;
 };
 
 /* private methods for gradient objects */

@@ -400,19 +400,12 @@ struct _Edje_Part_Collection
 struct _Edje_Part
 {
    char                  *name; /* the name if any of the part */
-   int                    id; /* its id number */
-   unsigned char          type; /* what type (image, rect, text) */
-   unsigned char          effect; /* 0 = plain... */
-   unsigned char          mouse_events; /* it will affect/respond to mouse events */
-   unsigned char          repeat_events; /* it will repeat events to objects below */
-   int                    clip_to_id; /* the part id to clip this one to */   
-   unsigned char  use_alternate_font_metrics;
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
+   char                  *source;
+   int                    id; /* its id number */
+   int                    clip_to_id; /* the part id to clip this one to */   
    struct {
-      signed char         x; /* can u click & drag this bit in x dir */
-      signed char         y; /* can u click & drag this bit in y dir */
-      
       int                 step_x; /* drag jumps n pixels (0 = no limit) */
       int                 step_y; /* drag jumps n pixels (0 = no limit) */
       
@@ -423,8 +416,15 @@ struct _Edje_Part
 
       /* davinchi */
       int		  events_id; /* If it is used as scrollbar */
+      
+      char                x; /* can u click & drag this bit in x dir */
+      char                y; /* can u click & drag this bit in y dir */
    } dragable;
-   char                  *source;
+   unsigned char          type; /* what type (image, rect, text) */
+   unsigned char          effect; /* 0 = plain... */
+   unsigned char          mouse_events; /* it will affect/respond to mouse events */
+   unsigned char          repeat_events; /* it will repeat events to objects below */
+   unsigned char          use_alternate_font_metrics;
 };
 
 struct _Edje_Part_Image_Id
@@ -435,12 +435,10 @@ struct _Edje_Part_Image_Id
 struct _Edje_Part_Description
 {
    struct {
-      char          *name; /* the named state if any */
       double         value; /* the value of the state (for ranges) */
+      char          *name; /* the named state if any */
    } state;
    
-   unsigned char     visible; /* is it shown */
-
    struct {
       double         x, y; /* 0 <-> 1.0 alignment within allocated space */
    } align;
@@ -472,14 +470,14 @@ struct _Edje_Part_Description
    } rel1, rel2;
 
    struct {
-      int            id; /* the image id to use */   
       Evas_List     *tween_list; /* list of Edje_Part_Image_Id */
+      int            id; /* the image id to use */   
    } image;
 
    struct {
-      int            id; /* the spectrum id to use */
       char          *type; /* type of spectrum - 'linear', 'radial', etc */
       char          *params; /* params for spectrum type */
+      int            id; /* the spectrum id to use */
       int            use_rel; /* 1 - use rel1,rel2; 0 - use fill */
       struct {
          double      relative_x;
@@ -495,32 +493,35 @@ struct _Edje_Part_Description
    } border;
 
    struct {
-      char           smooth; /* fill with smooth scaling or not */
       double         pos_rel_x; /* fill offset x relative to area */
-      int            pos_abs_x; /* fill offset x added to fill offset */
       double         rel_x; /* relative size compared to area */
-      int            abs_x; /* size of fill added to relative fill */
       double         pos_rel_y; /* fill offset y relative to area */
-      int            pos_abs_y; /* fill offset y added to fill offset */
       double         rel_y; /* relative size compared to area */
+      int            pos_abs_x; /* fill offset x added to fill offset */
+      int            abs_x; /* size of fill added to relative fill */
+      int            pos_abs_y; /* fill offset y added to fill offset */
       int            abs_y; /* size of fill added to relative fill */
       int            angle; /* angle of fill -- currently only used by grads */
       int            spread; /* spread of fill -- currently only used by grads */
+      char           smooth; /* fill with smooth scaling or not */
    } fill;
    
    char             *color_class; /* how to modify the color */
    
-   struct {
-      unsigned char  r, g, b, a; /* color for rect or text, shadow etc. */
-   } color, color2, color3;
-
    struct {
       char          *text; /* if "" or NULL, then leave text unchanged */
       char          *text_class; /* how to apply/modify the font */
       char          *style; /* the text style if a textblock */
       char          *font; /* if a specific font is asked for */
       
+      struct {
+	 double      x, y; /* text alignment within bounds */
+      } align;
+      
+      double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
       int            size; /* 0 = use user set size */
+      int            id_source; /* -1 if none */
+      int            id_text_source; /* -1 if none */
       
       unsigned char  fit_x; /* resize font size down to fit in x dir */
       unsigned char  fit_y; /* resize font size down to fit in y dir */
@@ -529,14 +530,13 @@ struct _Edje_Part_Description
       unsigned char  max_x; /* if text size should be part max size */
       unsigned char  max_y; /* if text size should be part max size */
       
-      struct {
-	 double      x, y; /* text alignment within bounds */
-      } align;
-      
-      int            id_source; /* -1 if none */
-      int            id_text_source; /* -1 if none */
-      double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
    } text;
+   
+   struct {
+      unsigned char  r, g, b, a; /* color for rect or text, shadow etc. */
+   } color, color2, color3;
+
+   unsigned char     visible; /* is it shown */
 };
 
 
@@ -572,6 +572,42 @@ struct _Edje
    struct {
       Evas_Coord         w, h;
    } min;
+   double                paused_at;
+   Evas                 *evas; /* the Evas this Edje belongs to */
+   Evas_Object          *obj; /* the smart object */
+   Evas_Object          *clipper; /* a big rect to clip this Edje to */
+   Edje_File            *file; /* the file the data comes form */
+   Edje_Part_Collection *collection; /* the description being used */
+   Evas_List            *actions; /* currently running actions */   
+   Evas_List            *callbacks;
+   Evas_List            *pending_actions;
+   Evas_List            *color_classes;
+   Evas_List            *text_classes;
+   /* variable pool for Edje Embryo scripts */
+   Edje_Var_Pool        *var_pool;
+   /* for faster lookups to avoid nth list walks */
+   Edje_Real_Part      **table_parts;
+   Edje_Program        **table_programs;
+   int                   table_programs_size;
+   int                   table_parts_size;
+   
+   int                   references;
+   int                   block;
+   int                   load_error;
+   int                   freeze;
+
+   struct {
+      void (*func) (void *data, Evas_Object *obj, const char *part);
+      void *data;
+   } text_change;
+   
+   struct {
+      void                (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
+      void                 *data;
+      int                   num;
+   } message;
+   int                      processing_messages;
+
    unsigned short        dirty : 1;
    unsigned short        recalc : 1;
    unsigned short        walking_callbacks : 1;
@@ -584,45 +620,15 @@ struct _Edje
    unsigned short        walking_actions : 1;
    unsigned short        block_break : 1;
    unsigned short        delete_me : 1;
-   double                paused_at;
-   Evas                 *evas; /* the Evas this Edje belongs to */
-   Evas_Object          *obj; /* the smart object */
-   Evas_Object          *clipper; /* a big rect to clip this Edje to */
-   Edje_File            *file; /* the file the data comes form */
-   Edje_Part_Collection *collection; /* the description being used */
-   Evas_List            *actions; /* currently running actions */   
-   Evas_List            *callbacks;
-   Evas_List            *pending_actions;
-   Evas_List            *color_classes;
-   Evas_List            *text_classes;
-   int                   references;
-   int                   block;
-   int                   load_error;
-   int                   freeze;
-   /* variable pool for Edje Embryo scripts */
-   Edje_Var_Pool        *var_pool;
-   /* for faster lookups to avoid nth list walks */
-   int                   table_parts_size;
-   Edje_Real_Part      **table_parts;
-   int                   table_programs_size;
-   Edje_Program        **table_programs;
-
-   struct {
-      void (*func) (void *data, Evas_Object *obj, const char *part);
-      void *data;
-   } text_change;
-   
-   int                      processing_messages;
-   struct {
-      int                   num;
-      void                (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
-      void                 *data;
-   } message;
 };
 
 struct _Edje_Real_Part
 {
    Edje                     *edje;
+   Evas_Object              *object;
+   Evas_List                *extra_objects;
+   Evas_Object              *swallowed_object;
+   Edje_Part                *part;
    int                       x, y, w, h;
    struct {
       int                    x, y, w, h;
@@ -630,38 +636,32 @@ struct _Edje_Real_Part
    struct {
       int                    x, y;
    } offset;
-   Evas_Object              *object;
-   Evas_List                *extra_objects;
-   Evas_Object              *swallowed_object;
    struct {
       struct {
 	 int                 w, h;
       } min, max;
       struct {
-	 unsigned char       mode;
 	 int                 w, h;
+	 unsigned char       mode;
       } aspect;
    } swallow_params;
-   unsigned char             calculated;
-   unsigned char             calculating;
-   int                       clicked_button;
-   unsigned char             still_in   : 1;
-   Edje_Part                *part;
    struct {
+      double        x, y;
       struct {
-	 unsigned count;
+	 double x, y;
+      } val, size, step, page;
+      struct {
+	 unsigned int count;
 	 int  x, y;
       } down;
       struct {
 	 int  x, y;
       } tmp;
-      double        x, y;
       unsigned char need_reset : 1;
-      struct {
-	 double x, y;
-      } val, size, step, page;
    } drag;
    struct {
+      Edje_Real_Part        *source;
+      Edje_Real_Part        *text_source;
       const char            *text;
       const char	    *font;
       const char	    *style;
@@ -676,11 +676,7 @@ struct _Edje_Real_Part
 	 double              elipsis;
 	 int                 fit_x, fit_y;
       } cache;
-      Edje_Real_Part        *source;
-      Edje_Real_Part        *text_source;
    } text;
-
-   int                       gradient_id;
 
    double                    description_pos;
    Edje_Part_Description    *chosen_description;
@@ -697,6 +693,14 @@ struct _Edje_Real_Part
    
    Edje_Running_Program     *program;
    Edje_Real_Part           *events_to;
+   
+   int                       clicked_button;
+   int                       gradient_id;
+
+   unsigned char             calculated;
+   unsigned char             calculating;
+   
+   unsigned char             still_in   : 1;
 };
 
 struct _Edje_Running_Program
@@ -726,8 +730,6 @@ struct _Edje_Calc_Params
    struct {
       int           x, y, w, h;
    } req_drag;
-   unsigned char    visible : 1; 
-   unsigned char    smooth : 1;
    struct {
       int           x, y, w, h;
       int           angle;
@@ -749,6 +751,8 @@ struct _Edje_Calc_Params
      int             id;
      char           *type;
    } gradient;
+   unsigned char    visible : 1; 
+   unsigned char    smooth : 1;
 };
 
 struct _Edje_Pending_Program
@@ -845,7 +849,6 @@ struct _Edje_Var_Pool
 
 struct _Edje_Var
 {
-   unsigned char type;
    union {
       Edje_Var_Int    i;
       Edje_Var_Float  f;
@@ -853,6 +856,7 @@ struct _Edje_Var
       Edje_Var_List   l;
       Edje_Var_Hash   h;
    } data;
+   unsigned char type;
 };
 
 

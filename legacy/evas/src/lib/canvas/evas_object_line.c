@@ -19,9 +19,10 @@ struct _Evas_Object_Line
       } cache;
       Evas_Coord         x1, y1, x2, y2;
    } cur, prev;
-   char              changed : 1;
 
    void             *engine_data;
+
+   char              changed : 1;
 };
 
 /* private methods for line objects */

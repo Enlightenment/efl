@@ -26,12 +26,13 @@ struct _Evas_Object_Text
 
       unsigned char     style;
    } cur, prev;
-   char                 changed : 1;
 
    float                ascent, descent;
    float                max_ascent, max_descent;
 
    void                *engine_data;
+   
+   char                 changed : 1;
 };
 
 /* private methods for text objects */

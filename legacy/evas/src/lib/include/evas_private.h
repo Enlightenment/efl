@@ -39,19 +39,20 @@ struct _Evas_Module
    void			*handle;	/* the dlopen handle */
    char			*path;		/* the path where this modules is */
    char			*name;		/* the name of the dir where this module is */
-   Evas_Module_Type	type;		/* the type detected by the path */
    struct
      {
 	int (*open)(Evas_Module *);
 	void (*close)(Evas_Module *);
      } func;
-   unsigned char	loaded : 1;
-   
    void		*functions;	/* this are the functions exported by the module */
    void		*data;		/* some internal data for the module i.e the id for engines */
 
+   Evas_Module_Type	type;		/* the type detected by the path */
+   
    int           ref; /* how many refs */
    int           last_used; /* the cycle count when it was last used */
+   
+   unsigned char	loaded : 1;
 };
 
 
@@ -219,10 +220,11 @@ struct _Evas_Smart
 
    int               usage;
 
+   Evas_Smart_Class *smart_class;
+
    unsigned char     delete_me : 1;
    unsigned char     class_allocated : 1;
 
-   Evas_Smart_Class *smart_class;
 };
 
 struct _Evas_Modifier
@@ -245,9 +247,9 @@ struct _Evas_Lock
 
 struct _Evas_Callbacks
 {
-   unsigned char     deletions_waiting : 1;
-   int               walking_list;
    Evas_Object_List *callbacks;
+   int               walking_list;
+   unsigned char     deletions_waiting : 1;
 /*   
    Evas_Object_List *down;
    Evas_Object_List *up;
@@ -299,8 +301,6 @@ struct _Evas
       unsigned char  changed : 1;
    } output;
 
-   int               output_validity;
-
    Evas_List        *damages;
    Evas_List        *obscures;
 
@@ -308,7 +308,7 @@ struct _Evas
 
    Evas_Hash        *name_hash;
 
-   unsigned char     changed : 1;
+   int               output_validity;
 
    int               walking_list;
    int               events_frozen;
@@ -333,13 +333,14 @@ struct _Evas
    Evas_List     *font_path;
 
    Evas_Object   *focused;
+   void          *attach_data;
    Evas_Modifier  modifiers;
    Evas_Lock      locks;
    unsigned int   last_timestamp;
-   void          *attach_data;
    int            last_mouse_down_counter;
    int            last_mouse_up_counter;
    Evas_Font_Hinting_Flags hinting;
+   unsigned char     changed : 1;
    unsigned char  delete_me : 1;
 };
 
@@ -477,7 +478,6 @@ struct _Evas_Font_Dir
 
 struct _Evas_Font
 {
-   char     type;
    struct {
       const char *prop[14];
    } x;
@@ -485,6 +485,7 @@ struct _Evas_Font
       const char *name;
    } simple;
    const char *path;
+   char     type;
 };
 
 struct _Evas_Font_Alias

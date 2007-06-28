@@ -34,8 +34,8 @@ struct _Evas_Object_Style_Tag
 
 struct _Evas_Object_Textblock_Node
 {  Evas_Object_List _list_data;
-   int   type;
    char *text;
+   int   type;
    int   len, alloc;
 };
 
@@ -50,13 +50,13 @@ struct _Evas_Object_Textblock_Line
 
 struct _Evas_Object_Textblock_Item
 {  Evas_Object_List _list_data;
-   unsigned char                 type;
    char                         *text;
-   int                           x, w, h;
-   int                           inset, baseline;
    Evas_Object_Textblock_Format *format;
    Evas_Object_Textblock_Node   *source_node;
+   int                           x, w, h;
+   int                           inset, baseline;
    int                           source_pos;
+   unsigned char                 type;
 };
 
 struct _Evas_Object_Textblock_Format_Item
@@ -126,13 +126,13 @@ struct _Evas_Object_Textblock
       int                       l, r, t, b;
    } style_pad;
    char                        *markup_text;
-   char                         changed : 1;
    void                        *engine_data;
    struct {
       int                       w, h;
       unsigned char             valid : 1;
    } formatted, native;
    unsigned char                redraw : 1;
+   unsigned char                changed : 1;
 };
 
 /* private methods for textblock objects */

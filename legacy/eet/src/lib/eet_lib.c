@@ -39,22 +39,20 @@ typedef struct _Eet_File_Directory      Eet_File_Directory;
 
 struct _Eet_File
 {
+   char            *path;
+   FILE            *fp;
+   Eet_File_Header *header;
+   uint8_t	   *data;
+   
    int              magic;
    int              references;
 
-   char            *path;
-
-   FILE            *fp;
    Eet_File_Mode    mode;
+   int		    data_size;
+   time_t	    mtime;
 
    unsigned char    writes_pending : 1;
    unsigned char    delete_me_now : 1;
-
-   Eet_File_Header *header;
-
-   uint8_t	   *data;
-   int		    data_size;
-   time_t	    mtime;
 };
 
 struct _Eet_File_Header
@@ -71,16 +69,16 @@ struct _Eet_File_Directory
 
 struct _Eet_File_Node
 {
-   unsigned char  free_name : 1;
-   unsigned char  compression : 1;
-
+   char          *name;
+   void          *data;
+   Eet_File_Node *next; /* FIXME: make buckets linked lists */
+   
    int            offset;
    int            size;
    int            data_size;
 
-   char          *name;
-   void          *data;
-   Eet_File_Node *next; /* FIXME: make buckets linked lists */
+   unsigned char  free_name : 1;
+   unsigned char  compression : 1;
 };
 
 #if 0
