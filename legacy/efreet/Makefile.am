@@ -9,4 +9,4 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 bin_SCRIPTS = efreet-config
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = efreet.pc
+pkgconfig_DATA = efreet.pc efreet-mime.pc

@@ -1,5 +1,6 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 #include "Efreet.h"
+#include "Efreet_Mime.h"
 #include <Ecore.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +31,7 @@ int ef_cb_menu_edit(void);
 #endif
 int ef_cb_ini_long_line(void);
 int ef_cb_utils(void);
+int ef_mime_cb_get(void);
 
 typedef struct Efreet_Test Efreet_Test;
 struct Efreet_Test
@@ -64,6 +66,7 @@ static Efreet_Test tests[] = {
     {"Menu Edit", ef_cb_menu_edit},
 #endif
     {"Utils", ef_cb_utils},
+    {"Mime", ef_mime_cb_get},
     {NULL, NULL}
 };
 

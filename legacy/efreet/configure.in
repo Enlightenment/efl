@@ -65,6 +65,7 @@ AC_SUBST(requirements)
 AC_OUTPUT([
 efreet-config
 efreet.pc
+efreet-mime.pc
 Makefile
 src/Makefile
 src/lib/Makefile

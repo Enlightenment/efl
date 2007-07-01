@@ -29,7 +29,7 @@ efreet_base_init(void)
 /**
  * @internal
  * @return Returns no value
- * @brief Cleans up the efree base settings system
+ * @brief Cleans up the efreet base settings system
  */
 void
 efreet_base_shutdown(void)
