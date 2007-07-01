@@ -10,7 +10,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       embryo.spec \
 		       debian/changelog
 
-bin_SCRIPTS = embryo-config
+bin_SCRIPTS = 
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN embryo.c.in gendoc \
              Doxyfile \

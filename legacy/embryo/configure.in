@@ -85,10 +85,7 @@ include/Makefile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
-embryo-config
 README
 embryo.spec
 debian/changelog
-],[
-chmod +x embryo-config
 ])
