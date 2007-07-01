@@ -23,7 +23,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas.spec \
 		       debian/changelog
 
-bin_SCRIPTS = evas-config
+bin_SCRIPTS = 
 
 EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
              Doxyfile \

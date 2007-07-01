@@ -2112,12 +2112,9 @@ src/modules/savers/jpeg/Makefile
 src/modules/savers/png/Makefile
 src/modules/savers/tiff/Makefile
 src/lib/include/Makefile
-evas-config
 README
 evas.spec
 debian/changelog
-],[
-chmod +x evas-config
 ])
 
 #####################################################################
