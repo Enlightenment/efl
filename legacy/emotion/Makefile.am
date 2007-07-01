@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess emotion.spec \
 		       stamp-h.in emotion_docs.tar emotion_docs.tar.gz \
 		       emotion.c acconfig.h debian/changelog
 
-bin_SCRIPTS = emotion-config
+bin_SCRIPTS = 
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN \
 	emotion.spec emotion.spec.in emotion.c.in gendoc Doxyfile \

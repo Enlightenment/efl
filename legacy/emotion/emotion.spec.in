@@ -63,7 +63,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(-, root, root)
 %doc doc/html
-%{_bindir}/emotion-config
 %{_libdir}/pkgconfig/emotion.pc
 %{_libdir}/libemotion.so
 %{_libdir}/libemotion.la
