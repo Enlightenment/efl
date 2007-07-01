@@ -14,7 +14,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 #	  cp -p $(srcdir)/data/edc.vim $(DESTDIR)$(vimdir)/syntax/; \
 #	fi
 
-bin_SCRIPTS = edje-config
+bin_SCRIPTS = 
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec \
 	edje.spec.in edje.pc.in edje.c.in gendoc Doxyfile \

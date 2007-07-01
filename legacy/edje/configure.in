@@ -144,8 +144,5 @@ data/include/Makefile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
-edje-config
 debian/changelog
-],[
-chmod +x edje-config
 ])
