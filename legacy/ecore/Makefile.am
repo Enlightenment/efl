@@ -24,7 +24,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore-x.pc \
 		       ecore.pc
 
-bin_SCRIPTS = ecore-config
+bin_SCRIPTS = 
 
 EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
              Doxyfile \

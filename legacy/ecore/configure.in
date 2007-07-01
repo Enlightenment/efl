@@ -793,12 +793,9 @@ src/lib/ecore_file/Makefile
 src/lib/ecore_dbus/Makefile
 src/lib/ecore_desktop/Makefile
 src/lib/ecore_directfb/Makefile
-ecore-config
 README
 ecore.spec
 debian/changelog
-],[
-chmod +x ecore-config
 ])
 
 echo
