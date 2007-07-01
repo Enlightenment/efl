@@ -6,7 +6,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			stamp-h.in debian/changelog depcomp efreet_doxy_warnings.txt \
 			debian/changelog
 
-bin_SCRIPTS = efreet-config
+bin_SCRIPTS = 
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = efreet.pc efreet-mime.pc
