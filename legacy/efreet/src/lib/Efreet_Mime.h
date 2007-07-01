@@ -25,16 +25,18 @@ extern "C" {
 /**
  * @{
  */
-    
-typedef enum Efreet_Mime_Method
+
+enum Efreet_Mime_Method
 {
-    EFREET_MIME_FLAG_GLOB=1,
-    EFREET_MIME_FLAG_MAGIC=2,
-    EFREET_MIME_FLAG_TYPES=4
-} Efreet_Mime_Method;
+    EFREET_MIME_FLAG_GLOB  = 1,
+    EFREET_MIME_FLAG_MAGIC = 2,
+    EFREET_MIME_FLAG_TYPES = 4
+};
+typedef enum Efreet_Mime_Method Efreet_Mime_Method;
 
 int         efreet_mime_init(void);
 void        efreet_mime_shutdown(void);
+
 const char *efreet_mime_get(const char *file, int flags);
 
 /**
