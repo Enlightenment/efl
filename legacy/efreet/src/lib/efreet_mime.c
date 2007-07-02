@@ -292,7 +292,7 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
     globs = ecore_list_new();    
     ecore_list_set_free_cb(globs, efreet_mime_glob_free);
    
-    datadir = datahome
+    datadir = datahome;
     ecore_list_goto_first(datadirs);
     while (datadir)
     {
