@@ -12,7 +12,6 @@ config.status
 config.sub
 configure
 depcomp
-efreet-config
 install-sh
 libtool
 ltmain.sh

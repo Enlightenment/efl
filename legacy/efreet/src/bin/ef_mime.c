@@ -6,17 +6,6 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-double
-calc_time(const struct timeval *start, const struct timeval *end)
-{
-    double s, e;
-    
-    s = ((double)start->tv_sec) + ((double)start->tv_usec / 1000000.0);
-    e = ((double)end->tv_sec) + ((double)end->tv_usec / 1000000.0);
-    
-    return e - s;
-}
-
 int
 ef_mime_cb_get(void)
 {

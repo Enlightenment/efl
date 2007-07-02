@@ -7,7 +7,7 @@
 
 static Ecore_List *globs = NULL;     /* contains Efreet_Mime_Glob structs */
 static Ecore_List *magics = NULL;    /* contains Efreet_Mime_Magic structs */
-static Ecore_List *monitors = NULL;  /* contains Efreet_Mime_Monitor structs */
+static Ecore_Hash *monitors = NULL;  /* contains file monitors */
 
 /**
  * @internal
@@ -27,13 +27,6 @@ static enum
  * current set of magic rules.  This setting is only here for the future.
  */
 #define EFREET_MIME_MAGIC_BUFFER_SIZE 512
-
-typedef struct Efreet_Mime_Monitor Efreet_Mime_Monitor;
-struct Efreet_Mime_Monitor
-{
-    const char *file;
-    Ecore_File_Monitor *monitor;
-};
 
 /**
  * Efreet_Mime_Glob
@@ -81,10 +74,6 @@ static void         efreet_mime_shared_mimeinfo_magic_load(const char *file);
 static const char * efreet_mime_magic_check_priority(const char *file, 
                                                       unsigned int start, 
                                                       unsigned int end);
-static void         efreet_mime_update_file_cb(void *data, 
-                                        Ecore_File_Monitor *monitor,
-                                        Ecore_File_Event event, 
-                                        const char *path);
 static int          efreet_mime_init_files(void);
 static const char * efreet_mime_special_check(const char *file);
 static void         efreet_mime_glob_free(void *data);
@@ -93,8 +82,11 @@ static int          efreet_mime_glob_match(const char *str, const char *glob);
 static int          efreet_mime_glob_case_match(char *str, const char *glob);
 static int          efreet_mime_endian_check(void);
 
-static void         efreet_mime_monitor_del(const char *file);
-static void         efreet_mime_monitor_free(void *data);
+static void         efreet_mime_monitor_add(const char *file);
+static void         efreet_mime_cb_update_file(void *data, 
+                                        Ecore_File_Monitor *monitor,
+                                        Ecore_File_Event event, 
+                                        const char *path);
 
 /**
  * @return Returns 1 on success or 0 on failure
@@ -114,8 +106,10 @@ efreet_mime_init(void)
     
     efreet_mime_endianess = efreet_mime_endian_check();
     
-    monitors = ecore_list_new();
-    ecore_list_set_free_cb(monitors, efreet_mime_monitor_free);
+    monitors = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    ecore_hash_set_free_key(monitors, ECORE_FREE_CB(free));
+    ecore_hash_set_free_value(monitors,
+                    ECORE_FREE_CB(ecore_file_monitor_del));
 
     if (!efreet_mime_init_files())
         return 0;
@@ -132,8 +126,8 @@ efreet_mime_shutdown(void)
 {
     IF_FREE_LIST(magics);
     IF_FREE_LIST(globs);
-    IF_FREE_LIST(monitors);
-    
+    IF_FREE_HASH(monitors);
+
     efreet_shutdown();
     ecore_file_shutdown();
     ecore_shutdown();
@@ -209,69 +203,22 @@ efreet_mime_endian_check(void)
 /**
  * @internal
  * @param file: File to monitor
- * @return Returns the monitor, see Efreet_Mime_Monitor
- * @brief Create/Add a new file monitor
+ * @return Returns no value.
+ * @brief Creates a new file monitor if we aren't already monitoring the
+ * given file
  */
-static Efreet_Mime_Monitor *
+static void
 efreet_mime_monitor_add(const char *file) 
 {
-    Efreet_Mime_Monitor *mm = NULL;
     Ecore_File_Monitor *fm = NULL;
 
-    efreet_mime_monitor_del(file);
-    mm = NEW(Efreet_Mime_Monitor, 1);
-    
-    if ((fm = ecore_file_monitor_add(file, efreet_mime_update_file_cb, mm)))
-    {      
-        mm->file = strdup(file);
-        mm->monitor = fm;
-        
-        ecore_list_append(monitors, mm);
-    }
-    else
-        FREE(mm);
-    
-    return mm;
-}
+    /* if this is already in our hash then we're already monitoring so no
+     * reason to re-monitor */
+    if (ecore_hash_get(monitors, file))
+        return;
 
-/**
- * @internal
- * @param file: File to discontinue monitoring
- * @return Returns no value
- * @brief Delete a file monitor
- */
-static void
-efreet_mime_monitor_del(const char *file)
-{
-    Efreet_Mime_Monitor *mm = NULL;
-    
-    ecore_list_goto_first(monitors);
-    while ((mm = ecore_list_current(monitors)))
-    {
-        if (!strcmp(mm->file, file))
-        {
-            ecore_list_remove_destroy(monitors);
-            break;
-        }
-        ecore_list_next(monitors);
-    }
-}
-
-/**
- * @internal
- * @param data: Pointer to the monitor to free
- * @return Returns no value
- * @brief Free a file monitor structure.
- * Destroy callback for monitors.
- */
-static void
-efreet_mime_monitor_free(void *data)
-{
-    Efreet_Mime_Monitor *mm = NULL;
-
-    mm = data;
-    if (mm->monitor) ecore_file_monitor_del(mm->monitor);
-    FREE(mm);
+    if ((fm = ecore_file_monitor_add(file, efreet_mime_cb_update_file, NULL)))
+        ecore_hash_set(monitors, strdup(file), fm);
 }
 
 /**
@@ -350,7 +297,7 @@ efreet_mime_load_magics(Ecore_List *datadirs, const char *datahome)
  * the globs are updated.
  */
 static void
-efreet_mime_update_file_cb(void *data __UNUSED__, 
+efreet_mime_cb_update_file(void *data __UNUSED__, 
                     Ecore_File_Monitor *monitor __UNUSED__,
                     Ecore_File_Event event __UNUSED__, 
                     const char *path)
@@ -366,7 +313,6 @@ efreet_mime_update_file_cb(void *data __UNUSED__,
 
     if (strstr(path, "magic"))
         efreet_mime_load_magics(datadirs, datahome);
-
     else 
         efreet_mime_load_globs(datadirs, datahome);
 }
@@ -391,8 +337,10 @@ efreet_mime_init_files(void)
     if (!(datadirs = efreet_data_dirs_get()))
         return 0;
     
-    /* Add our file monitors */
-    /* We watch the directories so we can watch for new files? */
+    /* 
+     * Add our file monitors 
+     * We watch the directories so we can watch for new files
+     */
     datadir = datahome;
     ecore_list_goto_first(datadirs);
     while (datadir)
