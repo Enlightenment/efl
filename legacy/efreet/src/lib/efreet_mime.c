@@ -17,9 +17,9 @@ static Ecore_List *monitors = NULL;  /* contains Efreet_Mime_Monitor structs */
  */
 static enum 
 { 
-    BIG = 0, 
-    LITTLE = 1 
-} efreet_mime_endianess = BIG;        
+    EFREET_ENDIAN_BIG = 0, 
+    EFREET_ENDIAN_LITTLE = 1 
+} efreet_mime_endianess = EFREET_ENDIAN_BIG;
 
 
 /*
@@ -103,8 +103,6 @@ static void         efreet_mime_monitor_free(void *data);
 int
 efreet_mime_init(void)
 {            
-    Efreet_Mime_Monitor *mm = NULL;
-
     if (!ecore_init())
         return 0;
     
@@ -118,17 +116,9 @@ efreet_mime_init(void)
     
     monitors = ecore_list_new();
     ecore_list_set_free_cb(monitors, efreet_mime_monitor_free);
-    
+
     if (!efreet_mime_init_files())
         return 0;
-    
-    /* Can be used to debug monitors*/
-    if (monitors)
-    {
-        ecore_list_goto_first(monitors);
-        while ((mm = ecore_list_next(monitors)))
-            printf("Watching: %s\n", mm->file);
-    }
     
     return 1;
 }
@@ -168,8 +158,8 @@ efreet_mime_get(const char *file, int methods)
   
     if (methods & EFREET_MIME_FLAG_MAGIC)
     {
-      if ((type = efreet_mime_magic_check_priority(file, 0, 80)))
-          return type;
+        if ((type = efreet_mime_magic_check_priority(file, 0, 80)))
+            return type;
     }
     
     if ((methods & EFREET_MIME_FLAG_GLOB) 
@@ -301,18 +291,15 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
     IF_FREE_LIST(globs);
     globs = ecore_list_new();    
     ecore_list_set_free_cb(globs, efreet_mime_glob_free);
-    
+   
+    datadir = datahome
     ecore_list_goto_first(datadirs);
-    while ((datadir = ecore_list_next(datadirs)))
+    while (datadir)
     {
         snprintf(buf, sizeof(buf), "%s/mime/globs", datadir);
         efreet_mime_shared_mimeinfo_globs_load(buf);
-    }
-    
-    if (datahome && (datahome[0] != '\0'))
-    {
-        snprintf(buf, sizeof(buf), "%s/mime/globs", datahome);
-        efreet_mime_shared_mimeinfo_globs_load(buf);
+
+        datadir = ecore_list_next(datadirs);
     }
     
     /*
@@ -338,18 +325,15 @@ efreet_mime_load_magics(Ecore_List *datadirs, const char *datahome)
     IF_FREE_LIST(magics);
     magics = ecore_list_new();
     ecore_list_set_free_cb(magics, efreet_mime_magic_free);    
-    
+  
+    datadir = datahome;
     ecore_list_goto_first(datadirs);
-    while ((datadir = ecore_list_next(datadirs)))
+    while (datadir)
     {
         snprintf(buf, sizeof(buf), "%s/mime/magic", datadir);
         efreet_mime_shared_mimeinfo_magic_load(buf);
-    }
 
-    if (datahome && (datahome[0] != '\0'))
-    {    
-        snprintf(buf, sizeof(buf), "%s/mime/magic", datahome);
-        efreet_mime_shared_mimeinfo_magic_load(buf);
+        datadir = ecore_list_next(datadirs);
     }
 }
 
@@ -399,7 +383,7 @@ efreet_mime_init_files(void)
 {
     Ecore_List *datadirs = NULL; 
     char buf[PATH_MAX];
-    const char *datahome = NULL, *datadir = NULL;
+    const char *datahome, *datadir = NULL;
     
     if (!(datahome = efreet_data_home_get()))
         return 0;
@@ -409,24 +393,21 @@ efreet_mime_init_files(void)
     
     /* Add our file monitors */
     /* We watch the directories so we can watch for new files? */
+    datadir = datahome;
     ecore_list_goto_first(datadirs);
-    while ((datadir = ecore_list_next(datadirs)))
+    while (datadir)
     {
-        snprintf(buf,PATH_MAX,"%s/mime", datadir);
+        snprintf(buf, PATH_MAX, "%s/mime", datadir);
         efreet_mime_monitor_add(buf);
+
+        datadir = ecore_list_next(datadirs);
     }
-    
-    snprintf(buf,PATH_MAX,"%s/mime", datahome);
-    efreet_mime_monitor_add(buf);
-    
     efreet_mime_monitor_add("/etc/mime.types");
     
-    /*
-     * Load our mime information
-     */
+    /* Load our mime information */
     efreet_mime_load_globs(datadirs, datahome);
     efreet_mime_load_magics(datadirs, datahome);
-    
+
     return 1;
 }
 
@@ -691,14 +672,12 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
 static int
 efreet_mime_count_digits(int in)
 {
-  int i = 1, j = in;
+    int i = 1, j = in;
   
-  if (j < 10)
-      return 1;
-  
-  while ((j /= 10) > 0) ++i;
+    if (j < 10) return 1;
+    while ((j /= 10) > 0) ++i;
     
-  return i;
+    return i;
 }
 
 /**
@@ -756,13 +735,15 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
     
     /* Check for magic string.  Will also move us to first section */
     if (fread(buf, 1, 12, f))
-      if (memcmp(buf, "MIME-Magic\0\n", 12)) return;
+    {
+        if (memcmp(buf, "MIME-Magic\0\n", 12)) return;
+    }
       
     /* Begin reading in sections and mime data */
     while ((bytes_read = fread(buf, 1, sizeof(buf), f)))
-    {        
-        for (i=0; i < bytes_read;)
-        {        
+    {
+        for (i = 0; i < bytes_read;)
+        {
             if (buf[i] == '[')
             {
                 IF_FREE(entry);
@@ -826,7 +807,12 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                         break;
 
                     case VALUE:
-                        entry->value_len = ntohs(buf[i + 1] << 8 | (short)(buf[i]));
+
+                        if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
+                            entry->value_len = ntohs(buf[i + 1] << 8 | (short)(buf[i]));
+                        else
+                            entry->value_len = ntohs((short)(buf[i + 1]) | buf[i] << 8);
+
                         i += 2;
 
                         entry->value = NEW(1, entry->value_len);        
@@ -856,7 +842,7 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                             break;
                         }
                         
-                        if (efreet_mime_endianess == LITTLE)
+                        if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
                         {
                             int j;
                             for (j = 0; j < entry->value_len; j += entry->word_size)
@@ -930,7 +916,7 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
             
             /* Create our new structure */
             if (buf[i] == '\n')
-            {                                    
+            {
                 if (entry) ecore_list_append(mime->entries, entry);
 
                 if (!(entry = NEW(Efreet_Mime_Magic_Entry, 1)))
@@ -1000,20 +986,21 @@ efreet_mime_magic_check_priority(const char *file,
         {                    
             if ((level < e->indent) && !match)
                 continue;
+
             if ((level >= e->indent) && !match)
                 level = e->indent;
+
             else if ((level > e->indent) && match)
             {
                 fclose(f);
               
-                if (last_mime)
-                    return last_mime;
+                if (last_mime) return last_mime;
             }
             
             for (offset = e->offset; offset < e->offset+e->range_len; ++offset)
             {
                 if (((offset+e->value_len) > bytes_read) && 
-                    (fseek(f, offset, SEEK_SET) == -1))
+                        (fseek(f, offset, SEEK_SET) == -1))
                     break;
                 
                 match = 1;
@@ -1025,7 +1012,6 @@ efreet_mime_magic_check_priority(const char *file,
                         c = buf[offset + i];
                     
                     v = e->value[i];
-                    
                     if (e->mask)
                         v &= e->mask[i];
 
