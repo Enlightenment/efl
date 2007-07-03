@@ -67,24 +67,25 @@ struct Efreet_Mime_Magic_Entry
     char *value;
 };
 
-static int          efreet_mime_glob_remove(const char *glob);
-static void         efreet_mime_mime_types_load(const char *file);
-static void         efreet_mime_shared_mimeinfo_globs_load(const char *file);
-static void         efreet_mime_shared_mimeinfo_magic_load(const char *file);
+static int efreet_mime_glob_remove(const char *glob);
+static void efreet_mime_mime_types_load(const char *file);
+static void efreet_mime_shared_mimeinfo_globs_load(const char *file);
+static void efreet_mime_shared_mimeinfo_magic_load(const char *file);
+static void efreet_mime_shared_mimeinfo_magic_parse(char *data, int size);
 static const char * efreet_mime_magic_check_priority(const char *file, 
                                                       unsigned int start, 
                                                       unsigned int end);
-static int          efreet_mime_init_files(void);
+static int efreet_mime_init_files(void);
 static const char * efreet_mime_special_check(const char *file);
-static void         efreet_mime_glob_free(void *data);
-static void         efreet_mime_magic_free(void *data);
-static void         efreet_mime_magic_entry_free(void *data);
-static int          efreet_mime_glob_match(const char *str, const char *glob);
-static int          efreet_mime_glob_case_match(char *str, const char *glob);
-static int          efreet_mime_endian_check(void);
+static void efreet_mime_glob_free(void *data);
+static void efreet_mime_magic_free(void *data);
+static void efreet_mime_magic_entry_free(void *data);
+static int efreet_mime_glob_match(const char *str, const char *glob);
+static int efreet_mime_glob_case_match(char *str, const char *glob);
+static int efreet_mime_endian_check(void);
 
-static void         efreet_mime_monitor_add(const char *file);
-static void         efreet_mime_cb_update_file(void *data, 
+static void efreet_mime_monitor_add(const char *file);
+static void efreet_mime_cb_update_file(void *data, 
                                         Ecore_File_Monitor *monitor,
                                         Ecore_File_Event event, 
                                         const char *path);
@@ -268,7 +269,7 @@ efreet_mime_load_magics(Ecore_List *datadirs, const char *datahome)
     IF_FREE_LIST(magics);
     magics = ecore_list_new();
     ecore_list_set_free_cb(magics, efreet_mime_magic_free);    
-  
+ 
     datadir = datahome;
     ecore_list_goto_first(datadirs);
     while (datadir)
@@ -627,8 +628,40 @@ efreet_mime_count_digits(int in)
 /**
  * @internal
  * @param file: File to parse
- * @return Returns number of digits
- * @brief Parses a magic file and adds information to magics list
+ * @return Returns no value
+ * @brief Loads a magic file and adds information to magics list
+ */
+static void
+efreet_mime_shared_mimeinfo_magic_load(const char *file)
+{
+    int fd = -1, size;
+    char *data = (void *)-1;
+   
+    if (!file) return;
+
+    size = ecore_file_size(file);
+    if (size <= 0) return;
+
+    fd = open(file, O_RDONLY);
+    if (fd == -1) return;
+
+    data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+    if (data == (void *)-1)
+    {
+        close(fd);
+        return;
+    }
+
+    efreet_mime_shared_mimeinfo_magic_parse(data, size);
+
+    munmap(data, size);
+    close(fd);
+}
+
+/** 
+ * @param data: The data from the file
+ * @return Returns no value
+ * @brief Parses a magic file
  * @note Format:
  *
  * ----------------------------------------------------------------------
@@ -663,202 +696,60 @@ efreet_mime_count_digits(int in)
  * quicker, uses less memory and will acheive the same exact effect.
  */
 static void
-efreet_mime_shared_mimeinfo_magic_load(const char *file)
+efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 {
-    FILE *f = NULL;
-    int priority = 0, i = 0;
-    char buf[4096], mimetype[4096];
     Efreet_Mime_Magic *mime = NULL;
     Efreet_Mime_Magic_Entry *entry = NULL;
-    int bytes_read = 0, last_section = 0;
-    
-    f = fopen(file, "rb");
-    if (!f) return;
-    
-    /* Check for magic string.  Will also move us to first section */
-    if (fread(buf, 1, 12, f))
+    char *ptr;
+
+    ptr = data;
+
+    /* make sure we're a magic file */
+    if (!ptr || strncmp(ptr, "MIME-Magic\0\n", 12))
+        return;
+
+    ptr += 12;
+
+    for (; (ptr - data) < size; )
     {
-        if (memcmp(buf, "MIME-Magic\0\n", 12))
-            return;
-    }
-      
-    while ((bytes_read = fread(buf, 1, sizeof(buf), f)))
-    {
-        for (i = 0; i < bytes_read; )
+        if (*ptr == '[')
         {
-            if (buf[i] == '[')
+            char *val, buf[512];
+
+            /* Append Mime to list of magics */
+            if (mime)
             {
-                char *val;
-
-                if (entry)
-                {
-                    IF_FREE(entry->mask);
-                    IF_FREE(entry->value);
-                    FREE(entry);
-                }
-                
-                last_section = i;
-                i++;
-                val = strtok(&(buf[i]), ":");
-                if (val)
-                {
-                    priority = atoi(val);
-
-                    val = strtok(NULL, "]");
-                    if (val)
-                    {
-                        strncpy(mimetype, val, sizeof(mimetype));
-  
-                        mime = NEW(Efreet_Mime_Magic, 1);
-                        mime->mime = ecore_string_instance(mimetype);
-                        mime->priority = priority;
-                        mime->entries = ecore_list_new();
-                        ecore_list_set_free_cb(mime->entries,
-                                          efreet_mime_magic_entry_free);
-                
-                        while (i < bytes_read && buf[i] != '\n') ++i;
-                    } else 
-                        i = 4096; /* forward to force buffer to get filled again */
-                }
-                else 
-                    i = 4096; /* forward to force buffer to get filled again */
-
+                ecore_list_append(magics, mime);
+                mime = NULL;
             }
-            else
-            {
-                if (!mime) continue;
+
+            mime = NEW(Efreet_Mime_Magic, 1);
+            mime->entries = ecore_list_new();
+            ecore_list_set_free_cb(mime->entries,
+                                  efreet_mime_magic_entry_free);
+
+            val = ++ptr;
+            while ((*val != ':')) val++;
+            memcpy(&buf, ptr, val - ptr);
+            buf[val - ptr] = '\0';
+
+            mime->priority = atoi(buf);
+            ptr = ++val;
+
+            while ((*val != ']')) val++;
+            memcpy(&buf, ptr, val - ptr);
+            buf[val - ptr] = '\0';
+
+            mime->mime = ecore_string_instance(buf);
+            ptr = ++val;
                 
-                i++;
-                switch(buf[i - 1])
-                {
-                    case '>':
-                        entry->offset = atoi(&buf[i]);
-                        i += efreet_mime_count_digits(entry->offset);
-                        break;
-
-                    case '=':
-                        if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
-                            entry->value_len = ntohs(buf[i + 1] << 8 | (short)(buf[i]));
-                        else
-                            entry->value_len = ntohs((short)(buf[i + 1]) | buf[i] << 8);
-                    
-                        i += 2;
-
-                        entry->value = NEW(1, entry->value_len);        
-                        memcpy(entry->value, &(buf[i]), entry->value_len);
-                        i += entry->value_len;
-                        break;
-
-                    case '&':
-                        entry->mask = NEW(1, entry->value_len);
-                        memcpy(entry->mask, &(buf[i]), entry->value_len);
-                        i += entry->value_len;
-                        break;
-
-                    case '~':
-                        entry->word_size = atoi(&(buf[i]));
-                        if (((entry->word_size != 0) 
-                                && (entry->word_size != 1)
-                                && (entry->word_size != 2) 
-                                && (entry->word_size != 4))
-                                || (entry->value_len % entry->word_size))
-                        {
-                            /* Invalid, Destroy */
-                            FREE(entry->value);
-                            FREE(entry->mask);
-                            FREE(entry);
-                            while ((i < bytes_read) && (buf[i] != '\n')) ++i;
-                            break;
-                        }
-                        
-                        if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
-                        {
-                            int j;
-                            for (j = 0; j < entry->value_len; j += entry->word_size)
-                            {                                                                                                    
-                                if (entry->word_size == 2)
-                                {
-                                    ((short*)entry->value)[j] = 
-                                              ntohs(((short*)entry->value)[j]);
-                                  
-                                    if (entry->mask)
-                                        ((short*)entry->mask)[j] = 
-                                              ntohs(((short*)entry->mask)[j]);
-                                }
-                                else if (entry->word_size == 4)
-                                {
-                                    ((long*)entry->value)[j] = 
-                                              ntohl(((long*)entry->value)[j]);
-                                  
-                                    if (entry->mask)
-                                        ((long*)entry->mask)[j] = 
-                                              ntohl(((long*)entry->mask)[j]);
-                                }
-                            }
-                        }
-                        
-                        i += efreet_mime_count_digits(entry->word_size);
-                        break;
-
-                    case '+':
-                        entry->range_len = atoi(&(buf[i]));
-                        i += efreet_mime_count_digits(entry->range_len);
-                        break;
-
-                    default:
-                        if (isdigit(buf[i]))
-                        {
-                            i--;
-                            entry->indent = atoi(&buf[i]);
-                            i += efreet_mime_count_digits(entry->indent);
-                        }
-                        break;
-                }
-            }            
-            
-            /*
-             * Reached the end of the file.  Need to go back to the last 
-             * section.  This can probably be elmiminated if the file is
-             * read another way which allows random access without having
-             * to read the file in chunks.  This works fine for now though.
-             */
-            if (i >= 4096)        
+            while (*ptr != '\n') ptr++;
+        }
+        else
+        {
+            if (!mime) continue;
+            if (!entry)
             {
-                /* If we have a mime, clean it up */
-                if (mime)
-                {
-                    Efreet_Mime_Magic *m;
-                  
-                    IF_FREE_LIST(mime->entries);
-                    
-                    m = ecore_list_goto_last(magics);
-                    if (m && !(strcmp(m->mime,mimetype)))
-                        ecore_list_remove_destroy(magics);
-                    
-                    FREE(mime);
-                }
-                
-                /*
-                 * If we finished in the middle of an entry, make sure to
-                 * clean it up as well.
-                 */
-                if (entry)
-                {
-                    IF_FREE(entry->value);
-                    IF_FREE(entry->mask);
-                    FREE(entry);
-                }
-                
-                fseek(f, last_section - 4096, SEEK_CUR);
-                break;
-            }
-            
-            /* Create our new structure */
-            if (buf[i] == '\n')
-            {
-                if (mime->mime && entry) 
-                    ecore_list_append(mime->entries, entry);
-
                 if (!(entry = NEW(Efreet_Mime_Magic_Entry, 1)))
                 {
                     IF_FREE_LIST(magics);
@@ -872,17 +763,111 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                 entry->range_len = 1;
                 entry->mask = NULL;
                 entry->value = NULL;
-                i++;
-            }
-            
-            /* Append Mime to list of magics */
-            if (mime && ((buf[i] == '[') || (i >= bytes_read)))
+                ptr++;
+
+                ecore_list_append(mime->entries, entry);
+           }
+                
+            switch(*ptr)
             {
-                ecore_list_append(magics, mime);
-                mime = NULL;
+                case '>':
+                    ptr ++;
+                    entry->offset = atoi(ptr);
+                    ptr += efreet_mime_count_digits(entry->offset);
+                    break;
+
+                case '=':
+                    ptr++;
+
+                    if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
+                        entry->value_len = (*ptr) << 8 | (unsigned short)(*(ptr + 1));
+                    else
+                        entry->value_len = (*(ptr + 1)) << 8 | (unsigned short)(*ptr);
+
+                    ptr += 2;
+
+                    entry->value = NEW(1, entry->value_len);
+                    memcpy(entry->value, ptr, entry->value_len);
+                    ptr += entry->value_len;
+                    break;
+
+                case '&':
+                    ptr++;
+                    entry->mask = NEW(1, entry->value_len);
+                    memcpy(entry->mask, ptr, entry->value_len);
+                    ptr += entry->value_len;
+                    break;
+
+                case '~':
+                    ptr++;
+                    entry->word_size = atoi(ptr);
+                    if (((entry->word_size != 0) 
+                            && (entry->word_size != 1)
+                            && (entry->word_size != 2) 
+                            && (entry->word_size != 4))
+                            || (entry->value_len % entry->word_size))
+                    {
+                        /* Invalid, Destroy */
+                        FREE(entry->value);
+                        FREE(entry->mask);
+                        FREE(entry);
+
+                        while (*ptr != '\n') ptr++;
+                        break;
+                    }
+                        
+                    if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
+                    {
+                        int j;
+
+                        for (j = 0; j < entry->value_len; j += entry->word_size)
+                        {
+                            if (entry->word_size == 2)
+                            {
+                                ((short*)entry->value)[j] = 
+                                              ntohs(((short*)entry->value)[j]);
+                                  
+                                if (entry->mask)
+                                    ((short*)entry->mask)[j] = 
+                                              ntohs(((short*)entry->mask)[j]);
+                            }
+                            else if (entry->word_size == 4)
+                            {
+                                ((long*)entry->value)[j] = 
+                                              ntohl(((long*)entry->value)[j]);
+                                  
+                                if (entry->mask)
+                                    ((long*)entry->mask)[j] = 
+                                              ntohl(((long*)entry->mask)[j]);
+                            }
+                        }
+                    }
+                        
+                    ptr += efreet_mime_count_digits(entry->word_size);
+                    break;
+
+                case '+':
+                    ptr++;
+                    entry->range_len = atoi(ptr);
+                    ptr += efreet_mime_count_digits(entry->range_len);
+                    break;
+    
+                case '\n':
+                    ptr++;
+                    entry = NULL;
+                    break;
+
+                default:
+                    if (isdigit(*ptr))
+                    {
+                        entry->indent = atoi(ptr);
+                        ptr += efreet_mime_count_digits(entry->indent);
+                    }
+                    break;
             }
         }
-    }        
+    }
+
     if (entry)
     {
         IF_FREE(entry->value);
@@ -911,7 +896,7 @@ efreet_mime_magic_check_priority(const char *file,
     unsigned int i = 0, offset = 0,level = 0, match = 0, bytes_read = 0;
     const char *last_mime = NULL;
     char c, v, buf[EFREET_MIME_MAGIC_BUFFER_SIZE];
-              
+
     f = fopen(file, "rb");
     if (!f) return NULL;
       
@@ -926,7 +911,7 @@ efreet_mime_magic_check_priority(const char *file,
     {
         if ((start != 0) && (m->priority > start))
             continue;
-        
+       
         if (m->priority < end)                        
             break;
         
@@ -946,23 +931,29 @@ efreet_mime_magic_check_priority(const char *file,
                 if (last_mime) return last_mime;
             }
             
-            for (offset = e->offset; offset < e->offset+e->range_len; ++offset)
+            for (offset = e->offset; offset < e->offset + e->range_len; offset++)
             {
-                if (((offset+e->value_len) > bytes_read) && 
+                if (((offset + e->value_len) > bytes_read) && 
                         (fseek(f, offset, SEEK_SET) == -1))
                     break;
-                
+
                 match = 1;
+
+                if (e->value_len == 0)
+                {
+                    printf("0 value_len %s\n", m->mime);
+                    match = 0;
+                }
+
                 for (i = 0; i < e->value_len; ++i)
                 {
-                    if (offset+e->value_len > bytes_read)
+                    if (offset + e->value_len > bytes_read)
                         c = fgetc(f);
                     else
                         c = buf[offset + i];
                     
                     v = e->value[i];
-                    if (e->mask)
-                        v &= e->mask[i];
+                    if (e->mask) v &= e->mask[i];
 
                     if (!(c == v))
                     {
