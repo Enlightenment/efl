@@ -168,7 +168,7 @@ _ecore_file_monitor_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh
 	em = _ecore_file_monitor_inotify_monitor_find(event->wd);
 	if (!em) continue;
 
-	_ecore_file_monitor_inotify_events(em, event->name, event->mask);
+	_ecore_file_monitor_inotify_events(em, (event->len ? event->name : NULL), event->mask);
      }
 
    return 1;
