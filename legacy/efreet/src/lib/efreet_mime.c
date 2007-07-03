@@ -72,12 +72,12 @@ static void efreet_mime_mime_types_load(const char *file);
 static void efreet_mime_shared_mimeinfo_globs_load(const char *file);
 static void efreet_mime_shared_mimeinfo_magic_load(const char *file);
 static void efreet_mime_shared_mimeinfo_magic_parse(char *data, int size);
-static const char * efreet_mime_magic_check_priority(const char *file, 
+static const char *efreet_mime_magic_check_priority(const char *file, 
                                                       unsigned int start, 
                                                       unsigned int end);
 static int efreet_mime_init_files(void);
-static const char * efreet_mime_special_check(const char *file);
-static const char * efreet_mime_fallback_check(const char *file);
+static const char *efreet_mime_special_check(const char *file);
+static const char *efreet_mime_fallback_check(const char *file);
 static void efreet_mime_glob_free(void *data);
 static void efreet_mime_magic_free(void *data);
 static void efreet_mime_magic_entry_free(void *data);
@@ -441,24 +441,21 @@ efreet_mime_special_check(const char *file)
 /**
  * @internal
  * @param file: File to examine
- * @return Returns mime type.  Will only return
- * null if file does not exist.
- * @brief Return a fallback mime type.  Returns
- * text/plain if the file appears to contain text
- * and returns application/octet-stream if it
- * appears to be binary.
+ * @return Returns mime type or NULL if the file doesn't exist
+ * @brief Returns text/plain if the file appears to contain text and 
+ * returns application/octet-stream if it appears to be binary.
  */
 static const char *
 efreet_mime_fallback_check(const char *file)
 {
     FILE *f = NULL;
     char buf[32];
-    int i=0;
+    int i;
   
     if (!(f = fopen(file, "r")))
         return NULL;
     
-    i = fread(buf,1,sizeof(buf),f);
+    i = fread(buf, 1, sizeof(buf), f);
     fclose(f);
     
     /*
@@ -466,7 +463,7 @@ efreet_mime_fallback_check(const char *file)
      * New lines and carriage returns are ignored as they are
      * quite common in text files.
      */
-    for (i-=1; i >= 0; --i)
+    for (i -= 1; i >= 0; --i)
     {
         if ((buf[i] < 0x20) && (buf[i] != '\n') && (buf[i] != '\r')) 
             return "application/octet-stream";
