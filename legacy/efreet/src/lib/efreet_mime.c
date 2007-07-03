@@ -895,6 +895,12 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                 ecore_list_append(magics, mime);
         }
     }        
+    if(entry)
+    {
+        IF_FREE(entry->value);
+        IF_FREE(entry->mask);
+        IF_FREE(entry);
+    }
 }
 
 /**
