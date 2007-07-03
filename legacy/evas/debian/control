@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
 Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libxpm-dev, libgl-dev, librsvg2-dev
-Standards-Version: 3.6.2.2
+Standards-Version: 3.7.2
 
 Package: libevas0
 Section: libs
