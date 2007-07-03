@@ -1,4 +1,3 @@
-debian/tmp/usr/bin/embryo-config
 debian/tmp/usr/include/*
 debian/tmp/usr/lib/pkgconfig/*
 debian/tmp/usr/lib/lib*.a
