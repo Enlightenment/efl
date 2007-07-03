@@ -77,6 +77,7 @@ static const char * efreet_mime_magic_check_priority(const char *file,
                                                       unsigned int end);
 static int efreet_mime_init_files(void);
 static const char * efreet_mime_special_check(const char *file);
+static const char * efreet_mime_fallback_check(const char *file);
 static void efreet_mime_glob_free(void *data);
 static void efreet_mime_magic_free(void *data);
 static void efreet_mime_magic_entry_free(void *data);
@@ -182,7 +183,7 @@ efreet_mime_type_get(const char *file)
     if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
         return type;
     
-    return NULL;
+    return efreet_mime_fallback_check(file);
 }
 
 /**
@@ -358,8 +359,7 @@ efreet_mime_init_files(void)
 
 /**
  * @internal
- * @param datadirs: List of XDG data dirs
- * @param datahome: Path to XDG data home directory
+ * @param file: File to examine
  * @return Returns mime type if special file, else NULL
  * @brief Returns a mime type based on the stat of a file.
  * This is used first to catch directories and other special
@@ -436,6 +436,43 @@ efreet_mime_special_check(const char *file)
     }
     
     return NULL;
+}
+
+/**
+ * @internal
+ * @param file: File to examine
+ * @return Returns mime type.  Will only return
+ * null if file does not exist.
+ * @brief Return a fallback mime type.  Returns
+ * text/plain if the file appears to contain text
+ * and returns application/octet-stream if it
+ * appears to be binary.
+ */
+static const char *
+efreet_mime_fallback_check(const char *file)
+{
+    FILE *f = NULL;
+    char buf[32];
+    int i=0;
+  
+    if (!(f = fopen(file, "r")))
+        return NULL;
+    
+    i = fread(buf,1,sizeof(buf),f);
+    fclose(f);
+    
+    /*
+     * Check for ASCII control characters in the first 32 bytes.
+     * New lines and carriage returns are ignored as they are
+     * quite common in text files.
+     */
+    for (i-=1; i >= 0; --i)
+    {
+        if ((buf[i] < 0x20) && (buf[i] != '\n') && (buf[i] != '\r')) 
+            return "application/octet-stream";
+    }
+    
+    return "text/plain";
 }
 
 /**
@@ -715,7 +752,6 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
         if (*ptr == '[')
         {
             char *val, buf[512];
-
 
             mime = NEW(Efreet_Mime_Magic, 1);
             mime->entries = ecore_list_new();
