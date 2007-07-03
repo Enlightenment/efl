@@ -3,4 +3,3 @@ debian/tmp/usr/lib/libecore*.a
 debian/tmp/usr/lib/libecore*.la
 debian/tmp/usr/lib/libecore*.so
 debian/tmp/usr/lib/pkgconfig/*
-debian/tmp/usr/bin/*-config

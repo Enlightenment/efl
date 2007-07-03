@@ -1,11 +1,10 @@
 #!/usr/bin/make -f
-# Simple debian/rules rewrote for cdbs
-
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
-DEB_MAKE_CLEAN_TARGET := clean
 DEB_CONFIGURE_EXTRA_FLAGS :=  --disable-ecore-evas-dfb --disable-ecore-dfb --enable-ecore-fb
-clean::
-	if [ -f $(CURDIR)/../../snapshot ]; then ./autogen.sh --prefix=/usr --disable-ecore-evas-dfb --disable-ecore-dfb --enable-ecore-fb; fi
+
+debian/stamp-autotools-files:
+	./autogen.sh --prefix=/usr --disable-ecore-evas-dfb --disable-ecore-dfb --enable-ecore-fb
+	touch debian/stamp-autotools-files
