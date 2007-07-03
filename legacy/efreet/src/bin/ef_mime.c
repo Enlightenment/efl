@@ -11,9 +11,17 @@ ef_mime_cb_get(void)
 {
     const char *mime = NULL;
     int misses = 0, i = 0;
-    const char *files[] = {PACKAGE_DATA_DIR"/efreet/test/test_type.desktop",
-                           PACKAGE_DATA_DIR"/efreet/test/test_type.desktop",
-                           PACKAGE_DATA_DIR"/efreet/test/sub"};
+    struct 
+    {
+        char *file;
+        char *mime;
+    } files[] = {
+        {PACKAGE_DATA_DIR"/efreet/test/test_type.desktop", "application/x-desktop"},
+        {PACKAGE_DATA_DIR"/efreet/test/entry.png", "image/png"},
+        {PACKAGE_DATA_DIR"/efreet/test/entry", "image/png"},
+        {PACKAGE_DATA_DIR"/efreet/test/sub", "inode/directory"},
+        {NULL, NULL}
+    };
     
     
     if (!efreet_mime_init())
@@ -22,12 +30,17 @@ ef_mime_cb_get(void)
         return 1;
     }
 
-    for (i = 0; i < (sizeof(files) / sizeof(const char *)); ++i)
+    for (i = 0; files[i].file != NULL; ++i)
     {    
-        mime = efreet_mime_type_get(files[i]);
+        mime = efreet_mime_type_get(files[i].file);
         if (!mime)
+        { 
+            printf("Got %s as null instead of %s\n", files[i].file, files[i].mime);
+            misses ++;
+        }
+        else if (strcmp(mime, files[i].mime))
         {
-            printf("Missed %s\n", files[i]);
+            printf("Got %s as %s instead of %s\n", files[i].file, mime, files[i].mime);
             misses ++;
         }
     }
