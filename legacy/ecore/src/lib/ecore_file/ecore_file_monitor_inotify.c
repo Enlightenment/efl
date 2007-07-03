@@ -114,6 +114,8 @@ ecore_file_monitor_inotify_add(const char *path,
    if (em->path[len - 1] == '/' && strcmp(em->path, "/"))
      em->path[len - 1] = 0;
 
+   _monitors = _ecore_list2_append(_monitors, em);
+
    if (ecore_file_exists(em->path))
      {
 	if (!_ecore_file_monitor_inotify_monitor(em, em->path))
@@ -128,8 +130,6 @@ ecore_file_monitor_inotify_add(const char *path,
 	ecore_file_monitor_inotify_del(em);
 	return NULL;
      }
-
-   _monitors = _ecore_list2_append(_monitors, em);
 
    return em;
 }
