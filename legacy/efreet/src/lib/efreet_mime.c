@@ -690,7 +690,12 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
         {
             if (buf[i] == '[')
             {
-                IF_FREE(entry);
+                if(entry)
+                {
+                    IF_FREE(entry->mask);
+                    IF_FREE(entry->value);
+                    FREE(entry);
+                }
                 
                 last_section = i;
                 i++;
@@ -753,7 +758,6 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                         break;
 
                     case VALUE:
-                        entry->value_len = 0;
                         if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
                             entry->value_len = ntohs(buf[i + 1] << 8 | (short)(buf[i]));
                         else
@@ -839,22 +843,26 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                 if (mime)
                 {
                     Efreet_Mime_Magic *m;
-                    m = ecore_list_goto_last(magics);
                   
+                    IF_FREE_LIST(mime->entries);
+                    
+                    m = ecore_list_goto_last(magics);
                     if (m && !(strcmp(m->mime,mimetype)))
-                    {
-                        efreet_mime_magic_free(m);
-                        ecore_list_remove(magics);
-                    }
-                
-                    FREE(mime);
+                        ecore_list_remove_destroy(magics);
+                    
+                    IF_FREE(mime);
                 }
                 
                 /*
                  * If we finished in the middle of an entry, make sure to
                  * clean it up as well.
                  */
-                IF_FREE(entry);
+                if(entry)
+                {
+                    IF_FREE(entry->value);
+                    IF_FREE(entry->mask);
+                    IF_FREE(entry);
+                }
                 
                 fseek(f, last_section-4096, SEEK_CUR);
                 break;
