@@ -9,7 +9,6 @@
 int
 ef_mime_cb_get(void)
 {
-    Efreet_Mime_Method flags = EFREET_MIME_FLAG_GLOB;
     const char *mime = NULL;
     int misses = 0, i = 0;
     const char *files[] = {PACKAGE_DATA_DIR"/efreet/test/test_type.desktop",
@@ -25,13 +24,12 @@ ef_mime_cb_get(void)
 
     for (i = 0; i < (sizeof(files) / sizeof(const char *)); ++i)
     {    
-        mime = efreet_mime_get(files[i], flags);
+        mime = efreet_mime_type_get(files[i]);
         if (!mime)
         {
             printf("Missed %s\n", files[i]);
             misses ++;
         }
-        flags <<= 1;
     }
     
     efreet_mime_shutdown();

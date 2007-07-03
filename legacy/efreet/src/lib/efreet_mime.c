@@ -78,6 +78,7 @@ static int          efreet_mime_init_files(void);
 static const char * efreet_mime_special_check(const char *file);
 static void         efreet_mime_glob_free(void *data);
 static void         efreet_mime_magic_free(void *data);
+static void         efreet_mime_magic_entry_free(void *data);
 static int          efreet_mime_glob_match(const char *str, const char *glob);
 static int          efreet_mime_glob_case_match(char *str, const char *glob);
 static int          efreet_mime_endian_check(void);
@@ -124,8 +125,8 @@ efreet_mime_init(void)
 void
 efreet_mime_shutdown(void)
 {
-    IF_FREE_LIST(magics);
     IF_FREE_LIST(globs);
+    IF_FREE_LIST(magics);
     IF_FREE_HASH(monitors);
 
     efreet_shutdown();
@@ -140,50 +141,45 @@ efreet_mime_shutdown(void)
  * @brief Retreive the mime type of a file
  */
 const char *
-efreet_mime_get(const char *file, int methods)
+efreet_mime_type_get(const char *file)
 {   
     const char *type = NULL;
-  
-    if (!methods)
-        methods = EFREET_MIME_FLAG_GLOB | EFREET_MIME_FLAG_TYPES;
-      
+    Efreet_Mime_Glob *g;
+    char *s;
+    
     if ((type = efreet_mime_special_check(file)))
         return type;
   
-    if (methods & EFREET_MIME_FLAG_MAGIC)
-    {
-        if ((type = efreet_mime_magic_check_priority(file, 0, 80)))
-            return type;
-    }
+    /*
+     * Check magics with priority > 80
+     */
+    if ((type = efreet_mime_magic_check_priority(file, 0, 80)))
+        return type;
     
-    if ((methods & EFREET_MIME_FLAG_GLOB) 
-            || (methods & EFREET_MIME_FLAG_TYPES))
+    /*
+     * Check globs
+     */
+    ecore_list_goto_first(globs);
+    while ((g = ecore_list_next(globs)))
     {
-        Efreet_Mime_Glob *g;
-        char *s;
-        
-        ecore_list_goto_first(globs);
-        while ((g = ecore_list_next(globs)))
-        {
-            if (efreet_mime_glob_match(file, g->glob))
-                return g->mime;
-        }
+        if (efreet_mime_glob_match(file, g->glob))
+            return g->mime;
+    }
 
-        s = strdup(file);
-        ecore_list_goto_first(globs);
-        while ((g = ecore_list_next(globs)))
-        {                
-            if (efreet_mime_glob_case_match(s, g->glob))
-                return g->mime;
-        }
-        FREE(s);
+    s = strdup(file);
+    ecore_list_goto_first(globs);
+    while ((g = ecore_list_next(globs)))
+    {                
+        if (efreet_mime_glob_case_match(s, g->glob))
+            return g->mime;
     }
+    FREE(s);
     
-    if (methods & EFREET_MIME_FLAG_MAGIC)
-    {
-        if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
-            return type;
-    }
+    /*
+     * Check rest of magics
+     */
+    if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
+        return type;
     
     return NULL;
 }
@@ -705,6 +701,8 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                 mime->mime = ecore_string_instance(mimetype);
                 mime->priority = priority;
                 mime->entries = ecore_list_new();
+                ecore_list_set_free_cb(mime->entries,
+                                          efreet_mime_magic_entry_free);
                 
                 while (i < bytes_read && buf[i] != '\n') ++i;
             }
@@ -755,12 +753,12 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                         break;
 
                     case VALUE:
-
+                        entry->value_len = 0;
                         if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
                             entry->value_len = ntohs(buf[i + 1] << 8 | (short)(buf[i]));
                         else
                             entry->value_len = ntohs((short)(buf[i + 1]) | buf[i] << 8);
-
+                    
                         i += 2;
 
                         entry->value = NEW(1, entry->value_len);        
@@ -865,7 +863,8 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
             /* Create our new structure */
             if (buf[i] == '\n')
             {
-                if (entry) ecore_list_append(mime->entries, entry);
+                if (mime->mime && entry) 
+                    ecore_list_append(mime->entries, entry);
 
                 if (!(entry = NEW(Efreet_Mime_Magic_Entry, 1)))
                 {
@@ -997,6 +996,7 @@ efreet_mime_glob_free(void *data)
 
     IF_RELEASE(m->mime);
     IF_RELEASE(m->glob);
+    IF_FREE(m);
 }
 
 /**
@@ -1009,22 +1009,28 @@ static void
 efreet_mime_magic_free(void *data)
 {
     Efreet_Mime_Magic *m = data;
-    Efreet_Mime_Magic_Entry *e;
     
     IF_RELEASE(m->mime);
-    
-    if (m->entries)
-    {
-        ecore_list_goto_first(m->entries);
-        while ((e = ecore_list_next(m->entries)))
-        {
-            IF_FREE(e->mask);
-            IF_FREE(e->value);
-        }
-
-        IF_FREE_LIST(m->entries);
-    }
+    IF_FREE_LIST(m->entries);
+    IF_FREE(m);
 }
+
+/**
+ * @internal
+ * @param data: Data pointer that is being destroyed
+ * @return Returns no value
+ * @brief Callback for magic entry destroy
+ */
+static void
+efreet_mime_magic_entry_free(void *data)
+{
+    Efreet_Mime_Magic_Entry *e = data;
+    
+    IF_FREE(e->mask);
+    IF_FREE(e->value);
+    IF_FREE(e);
+}
+
 
 /**
  * @internal
