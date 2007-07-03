@@ -938,13 +938,6 @@ efreet_mime_magic_check_priority(const char *file,
                     break;
 
                 match = 1;
-
-                if (e->value_len == 0)
-                {
-                    printf("0 value_len %s\n", m->mime);
-                    match = 0;
-                }
-
                 for (i = 0; i < e->value_len; ++i)
                 {
                     if (offset + e->value_len > bytes_read)
