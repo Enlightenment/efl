@@ -680,13 +680,13 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
     /* Check for magic string.  Will also move us to first section */
     if (fread(buf, 1, 12, f))
     {
-        if (memcmp(buf, "MIME-Magic\0\n", 12)) return;
+        if (memcmp(buf, "MIME-Magic\0\n", 12))
+            return;
     }
       
-    /* Begin reading in sections and mime data */
     while ((bytes_read = fread(buf, 1, sizeof(buf), f)))
     {
-        for (i = 0; i < bytes_read;)
+        for (i = 0; i < bytes_read; )
         {
             if (buf[i] == '[')
             {
@@ -850,18 +850,18 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                     if (m && !(strcmp(m->mime,mimetype)))
                         ecore_list_remove_destroy(magics);
                     
-                    IF_FREE(mime);
+                    FREE(mime);
                 }
                 
                 /*
                  * If we finished in the middle of an entry, make sure to
                  * clean it up as well.
                  */
-                if(entry)
+                if (entry)
                 {
                     IF_FREE(entry->value);
                     IF_FREE(entry->mask);
-                    IF_FREE(entry);
+                    FREE(entry);
                 }
                 
                 fseek(f, last_section-4096, SEEK_CUR);
@@ -895,11 +895,11 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
                 ecore_list_append(magics, mime);
         }
     }        
-    if(entry)
+    if (entry)
     {
         IF_FREE(entry->value);
         IF_FREE(entry->mask);
-        IF_FREE(entry);
+        FREE(entry);
     }
 }
 
