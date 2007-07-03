@@ -716,17 +716,12 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
         {
             char *val, buf[512];
 
-            /* Append Mime to list of magics */
-            if (mime)
-            {
-                ecore_list_append(magics, mime);
-                mime = NULL;
-            }
 
             mime = NEW(Efreet_Mime_Magic, 1);
             mime->entries = ecore_list_new();
             ecore_list_set_free_cb(mime->entries,
                                   efreet_mime_magic_entry_free);
+            ecore_list_append(magics, mime);
 
             val = ++ptr;
             while ((*val != ':')) val++;
