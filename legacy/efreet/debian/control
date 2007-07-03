@@ -8,7 +8,7 @@ Standards-Version: 3.7.2
 Package: libefreet0-dev
 Section: libdevel
 Architecture: any
-Depends: ${shlibs:Depends}, libecore0-dev, libefreet0-dev (= ${Source-Version})
+Depends: libecore0-dev, libefreet0-dev (= ${Source-Version})
 Provides: libefreet-dev
 Description: Efreet headers and development files
  Efreet is an implementation of several specifications from freedesktop.org
@@ -45,6 +45,7 @@ Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, libecore0
 Provides: libefreet
+Recommends: menu-xdg
 Description: E17 library providing freedesktop.org specifications
  Efreet is an implementation of several specifications from freedesktop.org
  intended for use in Enlightenment DR17 (e17) and other applications using
