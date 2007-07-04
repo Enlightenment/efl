@@ -303,8 +303,6 @@ efreet_mime_cb_update_file(void *data __UNUSED__,
     Ecore_List *datadirs = NULL; 
     const char *datahome = NULL;
     
-    printf("Updated: %s\n", path);    
-    
     if (!(datahome = efreet_data_home_get()))
         return;
     
@@ -808,7 +806,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                 case '=':
                     ptr++;
-                    entry->value_len = ntohs(*((short*)(ptr)));                
+                    entry->value_len = ntohs(*((short*)(ptr)));             
                     ptr += 2;
 
                     entry->value = NEW(1, entry->value_len);
