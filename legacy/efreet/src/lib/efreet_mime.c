@@ -806,12 +806,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                 case '=':
                     ptr++;
-
-                    if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
-                        entry->value_len = (*ptr) << 8 | (unsigned short)(*(ptr + 1));
-                    else
-                        entry->value_len = (*(ptr + 1)) << 8 | (unsigned short)(*ptr);
-
+                    entry->value_len = (*ptr) << 8 | (unsigned short)(*(ptr + 1));
                     ptr += 2;
 
                     entry->value = NEW(1, entry->value_len);
