@@ -5,6 +5,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore
 
 libecore_job_la_LDFLAGS = -version-info 1:0:0 \
+@create_shared_lib@ \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_JOB
