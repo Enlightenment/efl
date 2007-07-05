@@ -81,13 +81,17 @@ AC_CHECK_FUNCS(strlcpy)
 
 AC_CHECK_HEADERS(netinet/in.h)
 
+winsock_libs=""
+create_shared_lib=""
 case "$host_os" in
 	mingw|mingw32)
 		winsock_libs="-lwsock32"
+		create_shared_lib="-no-undefined"
 		;;
 esac
 
 AC_SUBST(winsock_libs)
+AC_SUBST(create_shared_lib)
 
 iconv_cflags=""
 iconv_libs=""
