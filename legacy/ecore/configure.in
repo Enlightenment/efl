@@ -57,6 +57,8 @@ if test "x$GCC" = "xyes"; then
 fi
 changequote([,])dnl
 
+AC_HEADER_SYS_WAIT
+
 # define pkg-config requirements for all our submodules.
 # only the trivial requirements go here.
 requirements_ecore_con=""

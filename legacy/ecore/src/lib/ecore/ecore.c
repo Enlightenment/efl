@@ -1,5 +1,7 @@
 #include <locale.h>
+#ifndef WIN32
 #include <langinfo.h>
+#endif /* WIN32 */
 #include "ecore_private.h"
 #include "Ecore.h"
 

@@ -1,5 +1,7 @@
 #include <errno.h>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif /* HAVE_SYS_WAIT_H */
 #include "ecore_private.h"
 #include "Ecore.h"
 
