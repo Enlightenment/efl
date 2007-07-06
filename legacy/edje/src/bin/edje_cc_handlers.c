@@ -83,6 +83,7 @@ static void st_collections_group_parts_part_description_fill_size_relative(void)
 static void st_collections_group_parts_part_description_fill_size_offset(void);
 static void st_collections_group_parts_part_description_fill_angle(void);
 static void st_collections_group_parts_part_description_fill_spread(void);
+static void st_collections_group_parts_part_description_fill_type(void);
 static void st_collections_group_parts_part_description_color_class(void);
 static void st_collections_group_parts_part_description_color(void);
 static void st_collections_group_parts_part_description_color2(void);
@@ -229,6 +230,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.fill.size.offset", st_collections_group_parts_part_description_fill_size_offset},
      {"collections.group.parts.part.description.fill.angle", st_collections_group_parts_part_description_fill_angle},
      {"collections.group.parts.part.description.fill.spread", st_collections_group_parts_part_description_fill_spread},
+     {"collections.group.parts.part.description.fill.type", st_collections_group_parts_part_description_fill_type},
      {"collections.group.parts.part.description.color_class", st_collections_group_parts_part_description_color_class},
      {"collections.group.parts.part.description.color", st_collections_group_parts_part_description_color},
      {"collections.group.parts.part.description.color2", st_collections_group_parts_part_description_color2},
@@ -1151,6 +1153,7 @@ ob_collections_group_parts_part_description(void)
    ed->fill.abs_y = 0;
    ed->fill.angle = 0;
    ed->fill.spread = 0;
+   ed->fill.type = EDJE_FILL_TYPE_SCALE;
    ed->color_class = NULL;
    ed->color.r = 255;
    ed->color.g = 255;
@@ -1801,7 +1804,7 @@ st_collections_group_parts_part_description_fill_smooth(void)
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill attributes in non-IMAGE part.\n",
+		"fill.type attribute in non-IMAGE part.\n",
 		progname, file_in, line - 1);
 	exit(-1);
      }
@@ -2656,6 +2659,34 @@ st_collections_group_programs_program_in(void)
    ep = evas_list_data(evas_list_last(pc->programs));
    ep->in.from = parse_float_range(0, 0.0, 999999999.0);
    ep->in.range = parse_float_range(1, 0.0, 999999999.0);
+}
+
+static void
+st_collections_group_parts_part_description_fill_type(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"fill attributes in non-IMAGE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed->fill.type = parse_enum(0,
+                              "SCALE", EDJE_FILL_TYPE_SCALE,
+                              "TILE", EDJE_FILL_TYPE_TILE,
+                              NULL);
 }
 
 static void

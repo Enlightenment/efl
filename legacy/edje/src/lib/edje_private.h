@@ -504,6 +504,7 @@ struct _Edje_Part_Description
       int            angle; /* angle of fill -- currently only used by grads */
       int            spread; /* spread of fill -- currently only used by grads */
       char           smooth; /* fill with smooth scaling or not */
+      unsigned char  type; /* fill coordinate from container (SCALE) or from source image (TILE) */
    } fill;
    
    char             *color_class; /* how to modify the color */
@@ -883,6 +884,12 @@ struct _Edje_Message
    int                id;
    unsigned char     *msg;
 };
+
+typedef enum _Edje_Fill
+{
+   EDJE_FILL_TYPE_SCALE = 0,
+     EDJE_FILL_TYPE_TILE
+} Edje_Fill;
 
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style;
