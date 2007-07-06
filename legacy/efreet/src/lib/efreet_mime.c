@@ -4,9 +4,12 @@
 #include <Efreet_Mime.h>
 #include "efreet_private.h"
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/time.h>
 
 static Ecore_List *globs = NULL;     /* contains Efreet_Mime_Glob structs */
 static Ecore_List *magics = NULL;    /* contains Efreet_Mime_Magic structs */
+static Ecore_Hash *wild = NULL;      /* contains *.ext and mime.types globs*/
 static Ecore_Hash *monitors = NULL;  /* contains file monitors */
 
 /**
@@ -20,7 +23,6 @@ static enum
     EFREET_ENDIAN_BIG = 0, 
     EFREET_ENDIAN_LITTLE = 1 
 } efreet_mime_endianess = EFREET_ENDIAN_BIG;
-
 
 /*
  * Buffer sized used for magic checks.  The default is good enough for the 
@@ -113,7 +115,7 @@ efreet_mime_init(void)
     ecore_hash_set_free_key(monitors, ECORE_FREE_CB(free));
     ecore_hash_set_free_value(monitors,
                     ECORE_FREE_CB(ecore_file_monitor_del));
-
+    
     if (!efreet_mime_init_files())
         return 0;
     
@@ -138,7 +140,6 @@ efreet_mime_shutdown(void)
 
 /**
  * @param file: The file to check the mime type
- * @param methods: The methods to use, see Efreet_Mime_Method structure
  * @return Returns mime type as a string
  * @brief Retreive the mime type of a file
  */
@@ -146,8 +147,6 @@ const char *
 efreet_mime_type_get(const char *file)
 {   
     const char *type = NULL;
-    Efreet_Mime_Glob *g;
-    char *s;
     
     if ((type = efreet_mime_special_check(file)))
         return type;
@@ -160,6 +159,56 @@ efreet_mime_type_get(const char *file)
     
     /*
      * Check globs
+     */    
+    if ((type = efreet_mime_globs_type_get(file)))
+        return type;
+    
+    /*
+     * Check rest of magics
+     */
+    if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
+        return type;
+    
+    return efreet_mime_fallback_check(file);
+}
+
+/**
+ * @param file: The file to check the mime type
+ * @return Returns mime type as a string
+ * @brief Retreive the mime type of a file using magic
+ */
+const char *efreet_mime_magic_type_get(const char *file)
+{
+    return efreet_mime_magic_check_priority(file,0,0);   
+}
+
+/**
+ * @param file: The file to check the mime type
+ * @return Returns mime type as a string
+ * @brief Retreive the mime type of a file using globs
+ */
+const char *efreet_mime_globs_type_get(const char *file)
+{
+    Efreet_Mime_Glob *g;
+    char *s;
+    const char *ext, *mime;
+    
+    /*
+     * Check in the extension hash for the type
+     */
+    ext = strchr(file,'.');
+    while(ext)
+    {
+        ++ext;
+        
+        if(ext && (mime = ecore_hash_get(wild, ext)))
+            return mime;
+        
+        ext = strchr(ext,'.');
+    }
+    
+    /*
+     * Fallback to the other globs if not found
      */
     ecore_list_goto_first(globs);
     while ((g = ecore_list_next(globs)))
@@ -177,12 +226,28 @@ efreet_mime_type_get(const char *file)
     }
     FREE(s);
     
-    /*
-     * Check rest of magics
-     */
-    if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
-        return type;
-    
+    return NULL;    
+}
+
+/**
+ * @param file: The file to check the mime type
+ * @param methods: The methods to use, see Efreet_Mime_Method structure
+ * @return Returns mime type as a string
+ * @brief Retreive the special mime type of a file
+ */
+const char *efreet_mime_special_type_get(const char *file)
+{
+    return efreet_mime_special_check(file);
+}
+
+/**
+ * @param file: The file to check the mime type
+ * @param methods: The methods to use, see Efreet_Mime_Method structure
+ * @return Returns mime type as a string
+ * @brief Retreive the fallback mime type of a file
+ */
+const char *efreet_mime_fallback_type_get(const char *file)
+{
     return efreet_mime_fallback_check(file);
 }
 
@@ -233,10 +298,24 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
     char buf[4096];
     const char *datadir = NULL;
         
+    IF_FREE_HASH(wild);
+    wild = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    ecore_hash_set_free_key(wild, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_set_free_value(wild,
+                    ECORE_FREE_CB(ecore_string_release));
     IF_FREE_LIST(globs);
     globs = ecore_list_new();    
     ecore_list_set_free_cb(globs, efreet_mime_glob_free);
    
+    
+    /*
+     * This is here for legacy reasons.  It is mentioned briefly
+     * in the spec and seems to still be quite valid.  It is
+     * loaded first so the globs files will override anything
+     * in here.
+    */
+    efreet_mime_mime_types_load("/etc/mime.types");
+    
     datadir = datahome;
     ecore_list_goto_first(datadirs);
     while (datadir)
@@ -246,12 +325,6 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
 
         datadir = ecore_list_next(datadirs);
     }
-    
-    /*
-     * This is here for legacy reasons.  It is mentioned briefly
-     * in the spec and seems to still be quite valid.
-    */
-    efreet_mime_mime_types_load("/etc/mime.types");
 }
 
 /**
@@ -514,9 +587,8 @@ static void
 efreet_mime_mime_types_load(const char *file)
 {
     FILE *f = NULL;
-    char buf[4096], buf2[4096], mimetype[4096];
+    char buf[4096], mimetype[4096];
     char ext[4096], *p = NULL, *pp = NULL;
-    Efreet_Mime_Glob *mime = NULL;
 
     f = fopen(file, "rb");
     if (!f) return;
@@ -546,25 +618,9 @@ efreet_mime_mime_types_load(const char *file)
 
             strncpy(ext, pp, (p - pp));
             ext[p - pp] = 0;
-
-            mime = NEW(Efreet_Mime_Glob,1);
-            if (mime)
-            {
-                mime->mime = ecore_string_instance(mimetype);
-                snprintf(buf2, sizeof(buf2), "*.%s", ext);
-                mime->glob = ecore_string_instance(buf2);
-                if ((!mime->mime) || (!mime->glob))
-                {
-                    IF_RELEASE(mime->mime);
-                    IF_RELEASE(mime->glob);
-                    FREE(mime);
-                }
-                else
-                {
-                    efreet_mime_glob_remove(buf2);
-                    ecore_list_append(globs, mime);
-                }
-            }
+            
+            ecore_hash_set(wild, (void*)ecore_string_instance(ext),
+                                            (void*)ecore_string_instance(mimetype));
         }
         while ((*p != '\n') && (*p != 0));
     }
@@ -619,21 +675,29 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
 
         *pp = 0;
 
-        mime = NEW(Efreet_Mime_Glob, 1);
-        if (mime)
+        if(ext[0] == '*' && ext[1] == '.')
+        {            
+            ecore_hash_set(wild, (void*)ecore_string_instance(&(ext[2])),
+                                      (void*)ecore_string_instance(mimetype));
+        }
+        else
         {
-            mime->mime = ecore_string_instance(mimetype);
-            mime->glob = ecore_string_instance(ext);
-            if ((!mime->mime) || (!mime->glob))
+            mime = NEW(Efreet_Mime_Glob, 1);
+            if (mime)
             {
-                IF_RELEASE(mime->mime);
-                IF_RELEASE(mime->glob);
-                FREE(mime);
-            }
-            else
-            {
-                efreet_mime_glob_remove(ext);
-                ecore_list_append(globs, mime);
+                mime->mime = ecore_string_instance(mimetype);
+                mime->glob = ecore_string_instance(ext);
+                if ((!mime->mime) || (!mime->glob))
+                {
+                    IF_RELEASE(mime->mime);
+                    IF_RELEASE(mime->glob);
+                    FREE(mime);
+                }
+                else
+                {
+                    efreet_mime_glob_remove(ext);
+                    ecore_list_append(globs, mime);
+                }
             }
         }
     }

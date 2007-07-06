@@ -30,6 +30,10 @@ int         efreet_mime_init(void);
 void        efreet_mime_shutdown(void);
 
 const char *efreet_mime_type_get(const char *file);
+const char *efreet_mime_magic_type_get(const char *file);
+const char *efreet_mime_globs_type_get(const char *file);
+const char *efreet_mime_special_type_get(const char *file);
+const char *efreet_mime_fallback_type_get(const char *file);
 
 /**
  * @}
