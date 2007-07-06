@@ -100,6 +100,13 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    Edje_Part_Collection *edc;
    Eet_File *ef;
    Evas_List *l;
+   struct stat st;
+
+   if (stat(file, &st) != 0)
+     {
+	*error_ret = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
+	return NULL;
+     }
    
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
