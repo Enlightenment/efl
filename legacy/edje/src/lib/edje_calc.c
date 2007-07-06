@@ -1377,6 +1377,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	
 	if (ep->swallowed_object)
 	  {
+	     evas_object_color_set(ep->swallowed_object,
+				   (p3.color.r * p3.color.a) / 255,
+				   (p3.color.g * p3.color.a) / 255,
+				   (p3.color.b * p3.color.a) / 255,
+				   p3.color.a);
+
 	     evas_object_move(ep->swallowed_object, ed->x + p3.x, ed->y + p3.y);
 	     evas_object_resize(ep->swallowed_object, p3.w, p3.h);
 	     if (p3.visible) evas_object_show(ep->swallowed_object);
