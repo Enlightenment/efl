@@ -143,7 +143,10 @@ typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 #define EDJE_TEXT_EFFECT_SOFT_SHADOW         5
 #define EDJE_TEXT_EFFECT_OUTLINE_SHADOW      6
 #define EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW 7
-#define EDJE_TEXT_EFFECT_LAST                8
+#define EDJE_TEXT_EFFECT_FAR_SHADOW          8
+#define EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     9
+#define EDJE_TEXT_EFFECT_GLOW               10
+#define EDJE_TEXT_EFFECT_LAST               11
 
 #define EDJE_ACTION_TYPE_NONE          0
 #define EDJE_ACTION_TYPE_STATE_SET     1

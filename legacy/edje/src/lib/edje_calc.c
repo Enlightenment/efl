@@ -735,6 +735,12 @@ _edje_part_recalc_single(Edje *ed,
 	       style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
 	     else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW)
 	       style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_FAR_SHADOW)
+	       style = EVAS_TEXT_STYLE_FAR_SHADOW;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW)
+	       style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
+	     else if (ep->part->effect == EDJE_TEXT_EFFECT_GLOW)
+	       style = EVAS_TEXT_STYLE_GLOW;
 	     evas_object_text_style_set(ep->object, style);
 	     evas_object_text_text_set(ep->object, text);
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);

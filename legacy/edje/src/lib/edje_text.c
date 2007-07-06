@@ -579,6 +579,38 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 					       (params->color3.b * params->color3.a) / 255,
 					       params->color3.a);
 	  }
+	else if (ep->part->effect == EDJE_TEXT_EFFECT_FAR_SHADOW)
+	  {
+	     style = EVAS_TEXT_STYLE_FAR_SHADOW;
+	     evas_object_text_shadow_color_set(ep->object,
+					       (params->color3.r * params->color3.a) / 255,
+					       (params->color3.g * params->color3.a) / 255,
+					       (params->color3.b * params->color3.a) / 255,
+					       params->color3.a);
+	  }
+	else if (ep->part->effect == EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW)
+	  {
+	     style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
+	     evas_object_text_shadow_color_set(ep->object,
+					       (params->color3.r * params->color3.a) / 255,
+					       (params->color3.g * params->color3.a) / 255,
+					       (params->color3.b * params->color3.a) / 255,
+					       params->color3.a);
+	  }
+	else if (ep->part->effect == EDJE_TEXT_EFFECT_GLOW)
+	  {
+	     style = EVAS_TEXT_STYLE_GLOW;
+	     evas_object_text_glow_color_set(ep->object,
+						(params->color2.r * params->color2.a) / 255,
+						(params->color2.g * params->color2.a) / 255,
+						(params->color2.b * params->color2.a) / 255,
+						params->color2.a);
+	     evas_object_text_glow2_color_set(ep->object,
+					       (params->color3.r * params->color3.a) / 255,
+					       (params->color3.g * params->color3.a) / 255,
+					       (params->color3.b * params->color3.a) / 255,
+					       params->color3.a);
+	  }
 	evas_object_text_style_set(ep->object, style);
      }
 
