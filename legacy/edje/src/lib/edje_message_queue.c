@@ -8,15 +8,22 @@ static Ecore_Timer *job_loss_timer = NULL;
 static Evas_List *msgq = NULL;
 static Evas_List *tmp_msgq = NULL;
 
-/* FIXME pass messages on to children? */
 EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
    Edje *ed;
+   int i;
    
    ed = _edje_fetch(obj);
    if (!ed) return;
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg);
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp = ed->table_parts[i];
+	if ((rp->part->type == EDJE_PART_TYPE_GROUP) && (rp->swallowed_object))
+	  edje_object_message_send(rp->swallowed_object, type, id, msg);
+     }
 }
 
 EAPI void
