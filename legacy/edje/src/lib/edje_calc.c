@@ -718,29 +718,25 @@ _edje_part_recalc_single(Edje *ed,
 	  {
 	     int mw, mh;
 	     Evas_Text_Style_Type style;
+	     const Evas_Text_Style_Type styles[] = {
+		EVAS_TEXT_STYLE_PLAIN,
+		EVAS_TEXT_STYLE_PLAIN,
+		EVAS_TEXT_STYLE_OUTLINE,
+		EVAS_TEXT_STYLE_SOFT_OUTLINE,
+		EVAS_TEXT_STYLE_SHADOW,
+		EVAS_TEXT_STYLE_SOFT_SHADOW,
+		EVAS_TEXT_STYLE_OUTLINE_SHADOW,
+		EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW,
+		EVAS_TEXT_STYLE_FAR_SHADOW,
+		EVAS_TEXT_STYLE_FAR_SOFT_SHADOW,
+		EVAS_TEXT_STYLE_GLOW
+	     };
 	     
-	     style = EVAS_TEXT_STYLE_PLAIN;
-	     if ((ep->part->effect == EDJE_TEXT_EFFECT_NONE) ||
-		 (ep->part->effect == EDJE_TEXT_EFFECT_PLAIN))
+	     if (ep->part->effect < EDJE_TEXT_EFFECT_LAST)
+	       style = styles[ep->part->effect];
+	     else
 	       style = EVAS_TEXT_STYLE_PLAIN;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE)
-	       style = EVAS_TEXT_STYLE_OUTLINE;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_SOFT_OUTLINE)
-	       style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_SHADOW)
-	       style = EVAS_TEXT_STYLE_SHADOW;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_SOFT_SHADOW)
-	       style = EVAS_TEXT_STYLE_SOFT_SHADOW;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE_SHADOW)
-	       style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW)
-	       style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_FAR_SHADOW)
-	       style = EVAS_TEXT_STYLE_FAR_SHADOW;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW)
-	       style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
-	     else if (ep->part->effect == EDJE_TEXT_EFFECT_GLOW)
-	       style = EVAS_TEXT_STYLE_GLOW;
+	     
 	     evas_object_text_style_set(ep->object, style);
 	     evas_object_text_text_set(ep->object, text);
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
