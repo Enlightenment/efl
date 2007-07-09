@@ -164,9 +164,9 @@ evas_object_layer_set(Evas_Object *obj, int l)
 	evas_object_inform_call_restack(obj);
 	return;
      }
+   evas_object_change(obj);
    if (!obj->smart.smart)
      {
-	evas_object_change(obj);
 	if (evas_object_is_in_output_rect(obj,
 					  obj->layer->evas->pointer.x,
 					  obj->layer->evas->pointer.y, 1, 1) &&
