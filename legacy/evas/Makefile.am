@@ -44,7 +44,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas.spec.in evas.spec \
 	     debian/changelog \
 	     debian/changelog.in \
-	     debian/compat \
 	     debian/control \
 	     debian/copyright \
 	     debian/libevas0-all.install \

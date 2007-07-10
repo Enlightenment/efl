@@ -38,7 +38,8 @@ EFREETMIMEHEADERS = \
 Efreet_Mime.h
 
 EFREETMIMESOURCES = \
-efreet_mime.c
+efreet_mime.c \
+$(EFREETMIMEHEADERS)
 
 libefreet_mime_la_SOURCES = \
 $(EFREETMIMESOURCES)

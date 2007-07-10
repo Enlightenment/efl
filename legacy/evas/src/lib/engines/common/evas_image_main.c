@@ -349,8 +349,6 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
 						im->image->w, im->image->h);
 #endif
 	break;
-      case EVAS_COLORSPACE_YCBCR422P709_PL:
-	break;
       default:
 	break;
      }

@@ -67,7 +67,6 @@ typedef enum _Evas_Colorspace
      /* these are not currently supported - but planned for the future */
    EVAS_COLORSPACE_YCBCR422P601_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
    EVAS_COLORSPACE_YCBCR422P709_PL,/**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
-   EVAS_COLORSPACE_RGB565, /**< 16bit rgb565 */
    EVAS_COLORSPACE_RGB565_A5P /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
