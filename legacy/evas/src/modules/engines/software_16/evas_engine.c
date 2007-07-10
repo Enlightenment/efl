@@ -320,12 +320,7 @@ eng_image_alpha_get(void *data, void *image)
 static int
 eng_image_colorspace_get(void *data, void *image)
 {
-   Soft16_Image *im;
-   
-   if (!image) return EVAS_COLORSPACE_RGB565;
-   im = image;
-   if (im->have_alpha) return EVAS_COLORSPACE_RGB565_A5P;
-   return EVAS_COLORSPACE_RGB565;
+   return EVAS_COLORSPACE_RGB565_A5P;
 }
 
 static void *
@@ -431,8 +426,31 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 static void *
 eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 {
-   // FIXME: implement
-   *image_data = NULL;
+   Soft16_Image *im;
+
+   if (!image)
+     {
+	*image_data = NULL;
+	return NULL;
+     }
+
+   im = image;
+
+   if (to_write)
+     {
+	if (im->references > 1)
+	  {
+	     Soft16_Image *im_new;
+
+	     im_new = soft16_image_new(im->w, im->h, im->stride, im->have_alpha, im->pixels, 1);
+	     if (!im_new) return im;
+	     soft16_image_free(im);
+	     im = im_new;
+	  }
+     }
+
+   if (image_data) *image_data = (DATA32 *) im->pixels;
+
    return image;
 }
 
