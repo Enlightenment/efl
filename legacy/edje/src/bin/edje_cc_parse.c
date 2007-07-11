@@ -7,7 +7,6 @@
 static void  new_object(void);
 static void  new_statement(void);
 static char *perform_math (char *input);
-static void  preprocess_params (void);
 static int   isdelim(char c);
 static char *next_token(char *p, char *end, char **new_p, int *delim);
 static char *stack_id(void);
@@ -118,30 +117,6 @@ new_statement(void)
 	exit(-1);
      }
    free(id);
-}
-
-static void
-preprocess_params (void)
-{
-   Evas_List *l;
-
-   /* a formula will never be spread across multiple params */
-   for (l = params; l; l = l->next) {
-	char *data = l->data;
-	char *replace = NULL;
-
-	/* if the token begins with a opening parens, the user wants us
-	 * to do some math :)
-	 */
-	if (*data == '(')
-	  {
-	     replace = perform_math (data);
-
-	     free (l->data);
-	     l->data = replace;
-	  }
-
-   }
 }
 
 static char *
@@ -364,6 +339,14 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	       p++;
 	  }
      }
+   else if (tok && *tok == '(')
+     {
+	char *tmp;
+	tmp = tok;
+	tok = perform_math(tok);
+	free(tmp);
+     }
+
    return tok;
 }
 
@@ -452,7 +435,6 @@ parse(char *data, off_t size)
 		  if (do_params)
 		    {
 		       do_params = 0;
-		       preprocess_params ();
 		       new_statement();
 		       /* clear out params */
 		       while (params)
