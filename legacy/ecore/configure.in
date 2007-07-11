@@ -63,7 +63,6 @@ AC_HEADER_SYS_WAIT
 # only the trivial requirements go here.
 requirements_ecore_con=""
 requirements_ecore_config=""
-requirements_ecore_dbus=""
 requirements_ecore_desktop=""
 requirements_ecore_directfb=""
 requirements_ecore_evas="evas"
@@ -747,7 +746,6 @@ AC_SUBST(PERL)
 
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
-AC_SUBST(requirements_ecore_dbus)
 AC_SUBST(requirements_ecore_desktop)
 AC_SUBST(requirements_ecore_directfb)
 AC_SUBST(requirements_ecore_evas)
@@ -772,7 +770,6 @@ AC_OUTPUT([
 Makefile
 ecore-con.pc
 ecore-config.pc
-ecore-dbus.pc
 ecore-desktop.pc
 ecore-directfb.pc
 ecore-evas.pc
@@ -796,7 +793,6 @@ src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
 src/lib/ecore_file/Makefile
-src/lib/ecore_dbus/Makefile
 src/lib/ecore_desktop/Makefile
 src/lib/ecore_directfb/Makefile
 README
@@ -828,7 +824,6 @@ echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
 echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
 echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $use_openssl)"
 echo "  Ecore_Config.................: $have_ecore_config"
-echo "  Ecore_DBUS...................: $have_ecore_dbus"
 echo "  Ecore_Desktop................: $have_ecore_desktop"
 #echo "  Ecore_File...................: $have_ecore_file (Inotify: $use_inotify) (FAM: $use_fam) (Poll: $use_poll)"
 echo "  Ecore_File...................: $have_ecore_file (Inotify: $use_inotify) (Poll: $use_poll) (CURL: $use_curl)"

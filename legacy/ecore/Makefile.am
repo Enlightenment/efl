@@ -12,7 +12,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       debian/changelog \
 		       ecore-con.pc \
 		       ecore-config.pc \
-		       ecore-dbus.pc \
 		       ecore-desktop.pc \
 		       ecore-directfb.pc\
 		       ecore-evas.pc \
@@ -31,7 +30,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
 	     ecore.pc.in \
 	     ecore-con.pc.in \
 	     ecore-config.pc.in \
-	     ecore-dbus.pc.in \
 	     ecore-desktop.pc.in \
 	     ecore-directfb.pc.in\
 	     ecore-evas.pc.in \
@@ -49,7 +47,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
 	     debian/ecore0-bin.install \
 	     debian/libecore0-con.install \
 	     debian/libecore0-config.install \
-	     debian/libecore0-dbus.install \
 	     debian/libecore0-desktop.install \
 	     debian/libecore0-dev.install \
 	     debian/libecore0-evas.install \
@@ -68,10 +65,6 @@ endif
 
 if BUILD_ECORE_CONFIG
 pconfig = ecore-config.pc
-endif
-
-if BUILD_ECORE_DBUS
-pdbus = ecore-dbus.pc
 endif
 
 if BUILD_ECORE_DIRECTFB
@@ -116,5 +109,5 @@ endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
-	ecore.pc $(pcon) $(pconfig) $(pdbus) $(pdfb) $(pevas) \
+	ecore.pc $(pcon) $(pconfig) $(pdfb) $(pevas) \
 	$(pfb) $(pfile) $(pdesktop) $(pipc) $(pjob) $(ptxt) $(px)

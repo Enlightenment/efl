@@ -11,5 +11,4 @@ ecore_ipc \
 ecore_evas \
 ecore_config \
 ecore_file \
-ecore_desktop \
-ecore_dbus 
+ecore_desktop
