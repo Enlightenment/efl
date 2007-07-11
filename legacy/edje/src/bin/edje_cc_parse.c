@@ -165,6 +165,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
    int in_comment_cpp = 0;
    int in_comment_sa  = 0;
    int had_quote = 0;
+   int is_escaped = 0;
    char *cpp_token_line = NULL;
    char *cpp_token_file = NULL;
 
@@ -255,15 +256,19 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	       {
 		  if (in_quote)
 		    {
-		       if (((*p) == '"') && (*(p - 1) != '\\'))
+		       if ((*p) == '\\')
+			 is_escaped = !is_escaped;
+		       else if (((*p) == '"') && (!is_escaped))
 			 {
 			    in_quote = 0;
 			    had_quote = 1;
 			 }
+		       else if (is_escaped)
+			 is_escaped = 0;
 		    }
 		  else if (in_parens)
 		    {
-		       if (((*p) == ')') && (*(p - 1) != '\\'))
+		       if (((*p) == ')') && (!is_escaped))
 			 in_parens--;
 		    }
 		  else
@@ -307,15 +312,15 @@ next_token(char *p, char *end, char **new_p, int *delim)
    tok = mem_alloc(tok_end - tok_start + 2);
    strncpy(tok, tok_start, tok_end - tok_start + 1);
    tok[tok_end - tok_start + 1] = 0;
-   
+
    if (had_quote)
      {
+	is_escaped = 0;
 	p = tok;
-	
+
 	while (*p)
 	  {
-	     if ((*p == '\"') && 
-		 ((p == tok) || ((p > tok) && (*(p - 1) != '\\'))))
+	     if ((*p == '\"') && (!is_escaped))
 	       {
 		  memmove(p, p + 1, strlen(p));
 	       }
@@ -332,11 +337,14 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	     else if (*p == '\\')
 	       {
 		  memmove(p, p + 1, strlen(p));
-		  p++;
 		  if (*p == '\\') p++;
+		  else is_escaped = 1;
 	       }
 	     else
-	       p++;
+	       {
+		  if (is_escaped) is_escaped = 0;
+		  p++;
+	       }
 	  }
      }
    else if (tok && *tok == '(')
