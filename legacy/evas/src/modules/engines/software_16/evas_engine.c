@@ -435,6 +435,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
      }
 
    im = image;
+   soft16_image_load_data(im);
 
    if (to_write)
      {
