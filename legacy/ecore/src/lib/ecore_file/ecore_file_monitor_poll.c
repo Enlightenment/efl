@@ -176,13 +176,16 @@ ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
    free(em->path);
    free(em);
    
-   if ((!_monitors) && (_timer))
+   if (_timer)
      {
-	ecore_timer_del(_timer);
-	_timer = NULL;
+	if (!_monitors)
+	  {
+	     ecore_timer_del(_timer);
+	     _timer = NULL;
+	  }
+	else
+	  ecore_timer_interval_set(_timer, ECORE_FILE_INTERVAL_MIN);
      }
-   else
-     ecore_timer_interval_set(_timer, ECORE_FILE_INTERVAL_MIN);
 }
 
 static int
