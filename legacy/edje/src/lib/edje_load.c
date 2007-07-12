@@ -443,7 +443,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	     Edje_Real_Part *rp;
 
 	     rp = ed->table_parts[i];
-	     if (!rp->part->type == EDJE_PART_TYPE_GROUP) continue;
+	     if (rp->part->type != EDJE_PART_TYPE_GROUP) continue;
 	     if (rp->part->source)
 	       {
 		  Evas_List *l;
