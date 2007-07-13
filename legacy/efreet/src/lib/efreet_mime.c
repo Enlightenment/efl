@@ -531,6 +531,8 @@ efreet_mime_fallback_check(const char *file)
     i = fread(buf, 1, sizeof(buf), f);
     fclose(f);
     
+    if (i == 0)
+        return "application/octet-stream";
     /*
      * Check for ASCII control characters in the first 32 bytes.
      * New lines and carriage returns are ignored as they are
@@ -992,8 +994,13 @@ efreet_mime_magic_check_priority(const char *file,
         fclose(f);
         return NULL;
     }
-    
-    bytes_read = fread(buf, 1, sizeof(buf), f);
+           
+    if ((bytes_read = fread(buf, 1, sizeof(buf), f)) == 0)
+    {
+        fclose(f);
+        return NULL;
+    }
+   
     while ((m = ecore_list_next(magics)))
     {
         if ((start != 0) && (m->priority > start))
