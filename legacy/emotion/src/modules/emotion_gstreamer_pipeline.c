@@ -77,6 +77,11 @@ cb_handoff (GstElement *fakesrc,
       buf[1] = buffer;
       write(ev->fd_ev_write, buf, sizeof(buf));
    }
+   else {
+     Emotion_Audio_Sink *asink; 
+     asink = (Emotion_Audio_Sink *)ecore_list_goto_index (ev->audio_sinks, ev->audio_sink_nbr);
+     _emotion_video_pos_update(ev->obj, ev->position, asink->length_time);
+   }
 
    query = gst_query_new_position (GST_FORMAT_TIME);
    if (gst_pad_query (gst_pad_get_peer (pad), query)) {
