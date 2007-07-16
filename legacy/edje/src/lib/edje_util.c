@@ -58,7 +58,7 @@ edje_thaw(void)
 
 /* FIXDOC: Expand */
 EAPI void
-edje_fontset_append_set(char *fonts)
+edje_fontset_append_set(const char *fonts)
 {
    if (_edje_fontset_append)
      free(_edje_fontset_append);
