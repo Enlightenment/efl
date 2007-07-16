@@ -151,8 +151,7 @@ evas_software_ddraw_outbuf_new_region_for_update(Outbuf *buf,
        (buf->priv.mask.g == 0x00ff00) &&
        (buf->priv.mask.b == 0x0000ff))
      {
-        im = evas_common_image_new();
-        im->image = evas_common_image_surface_new(im);
+        im = evas_cache_image_empty(evas_common_image_cache_get());
         im->image->w = width;
         im->image->h = height;
         im->image->data = NULL;
@@ -166,7 +165,10 @@ evas_software_ddraw_outbuf_new_region_for_update(Outbuf *buf,
      }
    else
      {
-        im = evas_common_image_create(width, height);
+        im = evas_cache_image_empty(evas_common_image_cache_get());
+        im->image->w = width;
+        im->image->h = height;
+        evas_common_image_surface_alloc(im->image);
         im->extended_info = ddob;
         if ((buf->rot == 0) || (buf->rot == 180))
           ddob = evas_software_ddraw_output_buffer_new(buf->priv.dd.depth,
@@ -244,7 +246,7 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf)
         buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes,
                                                          buf->priv.pending_writes);
         ddob = im->extended_info;
-        evas_common_image_free(im);
+        evas_cache_image_drop(im);
         if (ddob) evas_software_ddraw_output_buffer_free(ddob);
      }
    evas_common_cpu_end_opt();
