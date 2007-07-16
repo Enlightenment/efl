@@ -19,6 +19,8 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas-software-xcb.pc \
 		       evas-xrender-x11.pc \
 		       evas-xrender-xcb.pc \
+		       evas-software-ddraw.pc \
+		       evas-sdl.pc \
 		       evas.pc \
 		       evas.spec \
 		       debian/changelog
@@ -40,6 +42,8 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas-software-xcb.pc \
 	     evas-xrender-x11.pc \
 	     evas-xrender-xcb.pc \
+	     evas-software-ddraw.pc \
+	     evas-sdl.pc \
 	     evas.pc \
 	     evas.spec.in evas.spec \
 	     debian/changelog \
@@ -114,8 +118,16 @@ if BUILD_ENGINE_XRENDER_XCB
 pxrenderxcb = evas-xrender-xcb.pc
 endif
 
+if BUILD_ENGINE_SOFTWARE_DDRAW
+psoftwareddraw = evas-software-ddraw.pc
+endif
+
+if BUILD_ENGINE_SDL
+psdl = evas-sdl.pc
+endif
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pframebuffer) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
-	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11)
+	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psdl)

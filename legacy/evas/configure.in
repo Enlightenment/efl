@@ -50,7 +50,7 @@ else
   PACKAGE_LIB_DIR="${libdir}"
 fi
 AC_SUBST(PACKAGE_LIB_DIR)
-		
+
 if test "x${prefix}" = "xNONE"; then
   PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
 else
@@ -69,7 +69,7 @@ gl_cflags=""
 gl_libs=""
 qt_dir=""
 qt_cflags=""
-qt_libs=""				 
+qt_libs=""
 qt_moc="moc"
 sdl_cflags=""
 sdl_libs=""
@@ -80,7 +80,7 @@ sdl_libs=""
 # qtdir setting
 AC_ARG_WITH(qtdir,
 AC_HELP_STRING([--with-qtdir=QT_DIR],[use qt directory specified]),
-[ 
+[
   qt_dir=$withval;
   echo "using "$qt_dir" for qt directory.";
 ],[
@@ -105,7 +105,7 @@ AC_ARG_ENABLE(fontconfig,
 
 if test "x$have_fontconfig" = "xyes"; then
   # Check if really available
-  PKG_CHECK_MODULES(FONTCONFIG, fontconfig, [ 
+  PKG_CHECK_MODULES(FONTCONFIG, fontconfig, [
     have_fontconfig="yes"
     AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
   ], [
@@ -113,7 +113,7 @@ if test "x$have_fontconfig" = "xyes"; then
   ])
 fi
 
-###############   
+###############
 ## dlopen
 
 dlopen_libs=""
@@ -795,7 +795,7 @@ AC_CHECK_HEADER(gif_lib.h,
   [ have_gif="no" ]
 )
 AC_MSG_CHECKING(whether to enable gif image loader)
-AC_ARG_ENABLE(image-loader-gif, 
+AC_ARG_ENABLE(image-loader-gif,
   [  --enable-image-loader-gif       enable GIF image loader], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -839,7 +839,7 @@ elif pkg-config --exists libpng; then
   have_png="yes";
 fi
 
-AC_ARG_ENABLE(image-loader-png, 
+AC_ARG_ENABLE(image-loader-png,
   [  --enable-image-loader-png       enable PNG image loader], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -887,7 +887,7 @@ case "$host_os" in
    have_jpeg_saver="no"
    ;;
 esac
-AC_ARG_ENABLE(image-loader-jpeg, 
+AC_ARG_ENABLE(image-loader-jpeg,
   [  --enable-image-loader-jpeg      enable JPEG image loader], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1005,7 +1005,7 @@ AC_CHECK_HEADER(tiffio.h,
   [ have_tiff="no" ]
 )
 AC_MSG_CHECKING(whether to enable tiff image loader)
-AC_ARG_ENABLE(image-loader-tiff, 
+AC_ARG_ENABLE(image-loader-tiff,
   [  --enable-image-loader-tiff      enable TIFF image loader], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1045,7 +1045,7 @@ AM_CONDITIONAL(BUILD_LOADER_TIFF, test x$have_tiff = xyes)
 have_xpm="yes";
 AC_MSG_CHECKING(whether to enable xpm image loader)
 
-AC_ARG_ENABLE(image-loader-xpm, 
+AC_ARG_ENABLE(image-loader-xpm,
   [  --enable-image-loader-xpm       enable XPM image loader], [
       if test x"$enableval" = x"yes" ; then
           have_xpm="yes"
@@ -1066,7 +1066,7 @@ AM_CONDITIONAL(BUILD_LOADER_XPM, test x$have_xpm = xyes)
 have_svg="yes";
 AC_MSG_CHECKING(whether to enable svg image loader)
 
-AC_ARG_ENABLE(image-loader-svg, 
+AC_ARG_ENABLE(image-loader-svg,
   [  --enable-image-loader-svg       enable SVG image loader], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1084,35 +1084,35 @@ svg_libs=""
 if test "x$have_svg" = "xyes"; then
    # Check if really available
    PKG_CHECK_MODULES(SVG, librsvg-2.0 >= 2.14.0,
-	 [ 
+	 [
 	     have_svg="yes"
 	 ],
-	 [ 
+	 [
 	     have_svg="no"
 	 ]
     )
    if test "x$have_svg" = "xyes"; then
       PKG_CHECK_MODULES(CAIRO_SVG, cairo-svg,
-	 [ 
+	 [
 	    have_svg="yes"
 	    svg_cflags="$SVG_CFLAGS $CAIRO_SVG_CFLAGS"
 	    svg_libs="$SVG_LIBS $CAIRO_SVG_LIBS"
 	 ],
-	 [ 
+	 [
             PKG_CHECK_MODULES(LIBSVG_CAIRO, libsvg-cairo,
-	       [ 
+	       [
 	          have_svg="yes"
 	          svg_cflags="$SVG_CFLAGS $LIBSVG_CAIRO_CFLAGS"
 	          svg_libs="$SVG_LIBS $LIBSVG_CAIRO_LIBS"
 	       ],
-	       [ 
+	       [
 	          have_svg="no"
 	       ]
             )
 	 ]
       )
    fi
-else 
+else
    AC_MSG_RESULT(no)
 fi
 
@@ -1128,13 +1128,13 @@ pthread_libs=""
 build_pthreads="no"
 # sched_getaffinity pthread_attr_setaffinity_np
 AC_CHECK_HEADER(pthread.h,
-  [ 
+  [
     AC_CHECK_HEADER(sched.h,
-      [ 
-        AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np, 
+      [
+        AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
 	  [
-            AC_CHECK_LIB(pthread, pthread_barrier_wait, 
-  	      [ build_pthreads="yes" ],
+            AC_CHECK_LIB(pthread, pthread_barrier_wait,
+	      [ build_pthreads="yes" ],
               [ build_pthreads="no" ]
             )
 	  ],
@@ -1150,7 +1150,7 @@ AC_CHECK_HEADER(pthread.h,
 # barriers (makes no sense)
 #build_pthreads="no"
 AC_MSG_CHECKING(whether to build pthread code)
-AC_ARG_ENABLE(pthreads, 
+AC_ARG_ENABLE(pthreads,
   [  --enable-pthreads               enable threaded rendering], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1163,7 +1163,7 @@ AC_ARG_ENABLE(pthreads,
         build_pthreads="no"
       fi
   ],
-  [ 
+  [
     AC_MSG_RESULT($build_pthreads)
     if test x"$build_pthreads" = x"yes" ; then
       AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
@@ -1185,7 +1185,7 @@ case $host_cpu in
     ;;
 esac
 AC_MSG_CHECKING(whether to build mmx code)
-AC_ARG_ENABLE(cpu-mmx, 
+AC_ARG_ENABLE(cpu-mmx,
   [  --enable-cpu-mmx                enable mmx code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1216,7 +1216,7 @@ case $host_cpu in
     ;;
 esac
 AC_MSG_CHECKING(whether to build sse code)
-AC_ARG_ENABLE(cpu-sse, 
+AC_ARG_ENABLE(cpu-sse,
   [  --enable-cpu-sse                enable sse code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1227,7 +1227,7 @@ AC_ARG_ENABLE(cpu-sse,
         build_cpu_sse="no"
       fi
   ],
-  [ 
+  [
     AC_MSG_RESULT($build_cpu_sse)
     if test x"$build_cpu_sse" = x"yes" ; then
       AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
@@ -1245,7 +1245,7 @@ case $host_cpu in
 esac
 altivec_cflags=""
 AC_MSG_CHECKING(whether to build altivec code)
-AC_ARG_ENABLE(cpu-altivec, 
+AC_ARG_ENABLE(cpu-altivec,
   [  --enable-cpu-altivec            enable altivec code], [
      build_cpu_altivec=$enableval
   ]
@@ -1300,7 +1300,7 @@ fi
 build_cpu_c="no"
 build_cpu_c="yes"
 AC_MSG_CHECKING(whether to build c code)
-AC_ARG_ENABLE(cpu-c, 
+AC_ARG_ENABLE(cpu-c,
   [  --enable-cpu-c                  enable C code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1326,7 +1326,7 @@ AC_ARG_ENABLE(cpu-c,
 scaler_sample="no"
 scaler_sample="yes"
 AC_MSG_CHECKING(whether to build sampling scaler)
-AC_ARG_ENABLE(scale-sample, 
+AC_ARG_ENABLE(scale-sample,
   [  --enable-scale-sample           enable sampling scaler code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1349,7 +1349,7 @@ AC_ARG_ENABLE(scale-sample,
 scaler_smooth="no"
 scaler_smooth="yes"
 AC_MSG_CHECKING(whether to build smooth scaler)
-AC_ARG_ENABLE(scale-smooth, 
+AC_ARG_ENABLE(scale-smooth,
   [  --enable-scale-smooth           enable smooth scaler code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1372,7 +1372,7 @@ AC_ARG_ENABLE(scale-smooth,
 conv_yuv="no"
 conv_yuv="yes"
 AC_MSG_CHECKING(whether to build yuv converter code)
-AC_ARG_ENABLE(convert-yuv, 
+AC_ARG_ENABLE(convert-yuv,
   [  --enable-convert-yuv            enable yuv converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1398,11 +1398,11 @@ AC_ARG_ENABLE(convert-yuv,
 conv_small_dither="no"
 conv_small_dither="no"
 AC_MSG_CHECKING(whether to build small dither mask code)
-AC_ARG_ENABLE(small-dither-mask, 
+AC_ARG_ENABLE(small-dither-mask,
   [  --enable-small-dither-mask      enable small dither mask code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
-      	AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
+	AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
         conv_small_dither="yes"
       else
         AC_MSG_RESULT(no)
@@ -1425,7 +1425,7 @@ AC_ARG_ENABLE(no-dither-mask,
   [  --enable-no-dither-mask         enable conversion to 16bpp without dither mask], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
-      	AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
+	AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
         conv_no_dither="yes"
       else
         AC_MSG_RESULT(no)
@@ -1444,7 +1444,7 @@ AC_ARG_ENABLE(no-dither-mask,
 conv_8_rgb_332="no"
 conv_8_rgb_332="yes"
 AC_MSG_CHECKING(whether to build 8bpp 332 converter code)
-AC_ARG_ENABLE(convert-8-rgb-332, 
+AC_ARG_ENABLE(convert-8-rgb-332,
   [  --enable-convert-8-rgb-332      enable 8bpp 332 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1467,7 +1467,7 @@ AC_ARG_ENABLE(convert-8-rgb-332,
 conv_8_rgb_666="no"
 conv_8_rgb_666="yes"
 AC_MSG_CHECKING(whether to build 8bpp 666 converter code)
-AC_ARG_ENABLE(convert-8-rgb-666, 
+AC_ARG_ENABLE(convert-8-rgb-666,
   [  --enable-convert-8-rgb-666      enable 8bpp 666 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1490,7 +1490,7 @@ AC_ARG_ENABLE(convert-8-rgb-666,
 conv_8_rgb_232="no"
 conv_8_rgb_232="yes"
 AC_MSG_CHECKING(whether to build 8bpp 232 converter code)
-AC_ARG_ENABLE(convert-8-rgb-232, 
+AC_ARG_ENABLE(convert-8-rgb-232,
   [  --enable-convert-8-rgb-232      enable 8bpp 232 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1513,7 +1513,7 @@ AC_ARG_ENABLE(convert-8-rgb-232,
 conv_8_rgb_222="no"
 conv_8_rgb_222="yes"
 AC_MSG_CHECKING(whether to build 8bpp 222 converter code)
-AC_ARG_ENABLE(convert-8-rgb-222, 
+AC_ARG_ENABLE(convert-8-rgb-222,
   [  --enable-convert-8-rgb-222      enable 8bpp 222 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1536,7 +1536,7 @@ AC_ARG_ENABLE(convert-8-rgb-222,
 conv_8_rgb_221="no"
 conv_8_rgb_221="yes"
 AC_MSG_CHECKING(whether to build 8bpp 221 converter code)
-AC_ARG_ENABLE(convert-8-rgb-221, 
+AC_ARG_ENABLE(convert-8-rgb-221,
   [  --enable-convert-8-rgb-221      enable 8bpp 221 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1559,7 +1559,7 @@ AC_ARG_ENABLE(convert-8-rgb-221,
 conv_8_rgb_121="no"
 conv_8_rgb_121="yes"
 AC_MSG_CHECKING(whether to build 8bpp 121 converter code)
-AC_ARG_ENABLE(convert-8-rgb-121, 
+AC_ARG_ENABLE(convert-8-rgb-121,
   [  --enable-convert-8-rgb-121      enable 8bpp 121 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1582,7 +1582,7 @@ AC_ARG_ENABLE(convert-8-rgb-121,
 conv_8_rgb_111="no"
 conv_8_rgb_111="yes"
 AC_MSG_CHECKING(whether to build 8bpp 111 converter code)
-AC_ARG_ENABLE(convert-8-rgb-111, 
+AC_ARG_ENABLE(convert-8-rgb-111,
   [  --enable-convert-8-rgb-111      enable 8bpp 111 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1605,7 +1605,7 @@ AC_ARG_ENABLE(convert-8-rgb-111,
 conv_16_rgb_565="no"
 conv_16_rgb_565="yes"
 AC_MSG_CHECKING(whether to build 16bpp 565 rgb converter code)
-AC_ARG_ENABLE(convert-16-rgb-565, 
+AC_ARG_ENABLE(convert-16-rgb-565,
   [  --enable-convert-16-rgb-565     enable 16bpp rgb 565 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1628,7 +1628,7 @@ AC_ARG_ENABLE(convert-16-rgb-565,
 conv_16_bgr_565="no"
 conv_16_bgr_565="yes"
 AC_MSG_CHECKING(whether to build 16bpp 565 bgr converter code)
-AC_ARG_ENABLE(convert-16-bgr-565, 
+AC_ARG_ENABLE(convert-16-bgr-565,
   [  --enable-convert-16-bgr-565     enable 16bpp bgr 565 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1651,7 +1651,7 @@ AC_ARG_ENABLE(convert-16-bgr-565,
 conv_16_rgb_555="no"
 conv_16_rgb_555="yes"
 AC_MSG_CHECKING(whether to build 16bpp 555 converter code)
-AC_ARG_ENABLE(convert-16-rgb-555, 
+AC_ARG_ENABLE(convert-16-rgb-555,
   [  --enable-convert-16-rgb-555     enable 16bpp 555 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1674,7 +1674,7 @@ AC_ARG_ENABLE(convert-16-rgb-555,
 conv_16_rgb_444="no"
 conv_16_rgb_444="yes"
 AC_MSG_CHECKING(whether to build 16bpp 444 converter code)
-AC_ARG_ENABLE(convert-16-rgb-444, 
+AC_ARG_ENABLE(convert-16-rgb-444,
   [  --enable-convert-16-rgb-444     enable 16bpp 444 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1697,7 +1697,7 @@ AC_ARG_ENABLE(convert-16-rgb-444,
 conv_16_rgb_ipq="no"
 conv_16_rgb_ipq="yes"
 AC_MSG_CHECKING(whether to build 16bpp 565 (444 ipaq) converter code)
-AC_ARG_ENABLE(convert-16-rgb-ipq, 
+AC_ARG_ENABLE(convert-16-rgb-ipq,
   [  --enable-convert-16-rgb-ipq     enable 16bpp 565 (444 ipaq) converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1720,7 +1720,7 @@ AC_ARG_ENABLE(convert-16-rgb-ipq,
 conv_16_rgb_rot_0="no"
 conv_16_rgb_rot_0="yes"
 AC_MSG_CHECKING(whether to build 16bpp rotation 0 converter code)
-AC_ARG_ENABLE(convert-16-rgb-rot-0, 
+AC_ARG_ENABLE(convert-16-rgb-rot-0,
   [  --enable-convert-16-rgb-rot-0   enable 16bpp rotation 0 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1766,7 +1766,7 @@ AC_ARG_ENABLE(convert-16-rgb-rot-180,
 conv_16_rgb_rot_270="no"
 conv_16_rgb_rot_270="yes"
 AC_MSG_CHECKING(whether to build 16bpp rotation 270 converter code)
-AC_ARG_ENABLE(convert-16-rgb-rot-270, 
+AC_ARG_ENABLE(convert-16-rgb-rot-270,
   [  --enable-convert-16-rgb-rot-270 enable 16bpp rotation 270 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1789,7 +1789,7 @@ AC_ARG_ENABLE(convert-16-rgb-rot-270,
 conv_16_rgb_rot_90="no"
 conv_16_rgb_rot_90="yes"
 AC_MSG_CHECKING(whether to build 16bpp rotation 90 converter code)
-AC_ARG_ENABLE(convert-16-rgb-rot-90, 
+AC_ARG_ENABLE(convert-16-rgb-rot-90,
   [  --enable-convert-16-rgb-rot-90  enable 16bpp rotation 90 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1812,7 +1812,7 @@ AC_ARG_ENABLE(convert-16-rgb-rot-90,
 conv_24_rgb_888="no"
 conv_24_rgb_888="yes"
 AC_MSG_CHECKING(whether to build 24bpp 888 rgb converter code)
-AC_ARG_ENABLE(convert-24-rgb-888, 
+AC_ARG_ENABLE(convert-24-rgb-888,
   [  --enable-convert-24-rgb-888     enable 24bpp rgb 888 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1835,7 +1835,7 @@ AC_ARG_ENABLE(convert-24-rgb-888,
 conv_24_bgr_888="no"
 conv_24_bgr_888="yes"
 AC_MSG_CHECKING(whether to build 24bpp 888 bgr converter code)
-AC_ARG_ENABLE(convert-24-bgr-888, 
+AC_ARG_ENABLE(convert-24-bgr-888,
   [  --enable-convert-24-bgr-888     enable 24bpp bgr 888 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1858,7 +1858,7 @@ AC_ARG_ENABLE(convert-24-bgr-888,
 conv_32_rgb_8888="no"
 conv_32_rgb_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 rgb converter code)
-AC_ARG_ENABLE(convert-32-rgb-8888, 
+AC_ARG_ENABLE(convert-32-rgb-8888,
   [  --enable-convert-32-rgb-8888    enable 32bpp rgb 8888 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1881,7 +1881,7 @@ AC_ARG_ENABLE(convert-32-rgb-8888,
 conv_32_rgbx_8888="no"
 conv_32_rgbx_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 rgbx converter code)
-AC_ARG_ENABLE(convert-32-rgbx-8888, 
+AC_ARG_ENABLE(convert-32-rgbx-8888,
   [  --enable-convert-32-rgbx-8888   enable 32bpp rgbx 8888 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1904,7 +1904,7 @@ AC_ARG_ENABLE(convert-32-rgbx-8888,
 conv_32_bgr_8888="no"
 conv_32_bgr_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 bgr converter code)
-AC_ARG_ENABLE(convert-32-bgr-8888, 
+AC_ARG_ENABLE(convert-32-bgr-8888,
   [  --enable-convert-32-bgr-8888    enable 32bpp bgr 8888 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1927,7 +1927,7 @@ AC_ARG_ENABLE(convert-32-bgr-8888,
 conv_32_bgrx_8888="no"
 conv_32_bgrx_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 bgrx converter code)
-AC_ARG_ENABLE(convert-32-bgrx-8888, 
+AC_ARG_ENABLE(convert-32-bgrx-8888,
   [  --enable-convert-32-bgrx-8888   enable 32bpp bgrx 8888 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1950,7 +1950,7 @@ AC_ARG_ENABLE(convert-32-bgrx-8888,
 conv_32_rgb_rot_0="no"
 conv_32_rgb_rot_0="yes"
 AC_MSG_CHECKING(whether to build 32bpp rotation 0 converter code)
-AC_ARG_ENABLE(convert-32-rgb-rot-0, 
+AC_ARG_ENABLE(convert-32-rgb-rot-0,
   [  --enable-convert-32-rgb-rot-0   enable 32bpp rotation 0 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -1996,7 +1996,7 @@ AC_ARG_ENABLE(convert-32-rgb-rot-180,
 conv_32_rgb_rot_270="no"
 conv_32_rgb_rot_270="yes"
 AC_MSG_CHECKING(whether to build 32bpp rotation 270 converter code)
-AC_ARG_ENABLE(convert-32-rgb-rot-270, 
+AC_ARG_ENABLE(convert-32-rgb-rot-270,
   [  --enable-convert-32-rgb-rot-270 enable 32bpp rotation 270 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -2019,7 +2019,7 @@ AC_ARG_ENABLE(convert-32-rgb-rot-270,
 conv_32_rgb_rot_90="no"
 conv_32_rgb_rot_90="yes"
 AC_MSG_CHECKING(whether to build 32bpp rotation 90 converter code)
-AC_ARG_ENABLE(convert-32-rgb-rot-90, 
+AC_ARG_ENABLE(convert-32-rgb-rot-90,
   [  --enable-convert-32-rgb-rot-90  enable 32bpp rotation 90 converter code], [
       if test x"$enableval" = x"yes" ; then
         AC_MSG_RESULT(yes)
@@ -2118,6 +2118,8 @@ evas-software-x11.pc
 evas-software-xcb.pc
 evas-xrender-x11.pc
 evas-xrender-xcb.pc
+evas-software-ddraw.pc
+evas-sdl.pc
 evas.pc
 src/Makefile
 src/lib/Makefile
