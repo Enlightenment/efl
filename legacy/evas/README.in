@@ -14,6 +14,7 @@ Optional:
   X11R6
   XCB
   DirectFB
+  SDL
   OpenGL (underway at the moment)
   Linux
   Qtopia
@@ -126,6 +127,12 @@ people making set-top boxes or just wanting an alternative to X this is
 really good. it may also be useful for embedded devices supported by
 directfb that offer acceleration (otherwise the fb driver will likely be
 faster).
+
+--enable-sdl
+
+this is the sdl engine that uses sdl library (http://www.libsdl.org). This
+library should work on many operating system.
+
 
 CPU:
 --enable-cpu-c

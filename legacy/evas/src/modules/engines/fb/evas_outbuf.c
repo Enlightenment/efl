@@ -14,7 +14,7 @@ evas_fb_outbuf_fb_free(Outbuf *buf)
    /* FIXME: impliment */
    printf("destroying fb info.. not implemented!!!! WARNING. LEAK!\n");
    if (buf->priv.back_buf)
-     evas_common_image_free(buf->priv.back_buf);
+     evas_common_image_delete(buf->priv.back_buf);
    free(buf);
 }
 
@@ -231,7 +231,7 @@ evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h,
 void
 evas_fb_outbuf_fb_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
-   if (update != buf->priv.back_buf) evas_common_image_free(update);
+   if (update != buf->priv.back_buf) evas_common_image_delete(update);
 }
 
 void
@@ -333,7 +333,7 @@ evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth d
      return;
    if (buf->priv.back_buf)
      {
-	evas_common_image_free(buf->priv.back_buf);
+	evas_common_image_delete(buf->priv.back_buf);
 	buf->priv.back_buf = NULL;
      }
    if (buf->priv.fb.fb)
@@ -382,7 +382,7 @@ evas_fb_outbuf_fb_set_have_backbuf(Outbuf *buf, int have_backbuf)
    if (buf->priv.back_buf)
      {
 	if (have_backbuf) return;
-	evas_common_image_free(buf->priv.back_buf);
+	evas_common_image_delete(buf->priv.back_buf);
 	buf->priv.back_buf = NULL;
      }
    else

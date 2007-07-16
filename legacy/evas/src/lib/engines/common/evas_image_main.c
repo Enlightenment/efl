@@ -9,70 +9,50 @@
 #include <memcheck.h>
 #endif
 
-static Evas_Hash        * images = NULL;
-static Evas_Object_List * cache = NULL;
-static int                cache_size = 0;
-static int                cache_usage = 0;
+static Evas_Cache_Image * eci = NULL;
+static int                reference = 0;
 
-static RGBA_Image *evas_rgba_line_buffer = NULL;
+/* static RGBA_Image *evas_rgba_line_buffer = NULL; */
 
 #define  EVAS_RGBA_LINE_BUFFER_MIN_LEN  256
 #define  EVAS_RGBA_LINE_BUFFER_MAX_LEN  2048
 
-static RGBA_Image *evas_alpha_line_buffer = NULL;
+/* static RGBA_Image *evas_alpha_line_buffer = NULL; */
 
 #define  EVAS_ALPHA_LINE_BUFFER_MIN_LEN  256
 #define  EVAS_ALPHA_LINE_BUFFER_MAX_LEN  2048
 
-#if 0
-int
-image_debug_hash_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
+/* The cache is doing the allocation and deallocation, you must just do the rest. */
+static void         _evas_common_image_unload(RGBA_Image* im);
+
+static void         _evas_common_image_dirty_region(RGBA_Image* im, int x, int y, int w, int h);
+
+/* Only called when references > 0. Need to provide a fresh copie of im. */
+/* The destination surface does have a surface, but no allocated pixel data. */
+static int          _evas_common_image_dirty(RGBA_Image* dst, const RGBA_Image* src);
+
+static const Evas_Cache_Image_Func      _evas_common_image_func =
 {
-   RGBA_Image *im;
-
-   im = data;
-   printf("  [%i] %3ix%3i %6i %6i [%2x %2x] %i %s\n",
-	  im->references,
-	  im->image->w, im->image->h,
-	  im->image->w * im->image->h * 4,
-	  evas_common_image_ram_usage(im),
-	  im->flags & RGBA_IMAGE_IS_DIRTY,
-	  im->flags & RGBA_IMAGE_INDEXED,
-	  im->info.format,
-	  im->info.file);
-}
-
-static void
-image_debug(void)
-{
-   Evas_Object_List *l;
-
-   printf("active images:\n");
-   evas_hash_foreach(images, image_debug_hash_cb, NULL);
-   printf("cache size: %i\n", cache_size);
-   printf("cache usage: %i\n", cache_usage);
-   printf("cached images:\n");
-   for (l = cache; l; l = l->next)
-     {
-	RGBA_Image *im;
-
-	im = l;
-	printf("  [%i] %3ix%3i %6i %6i [%2x %2x] %i %s\n",
-	       im->references,
-	       im->image->w, im->image->h,
-	       im->image->w * im->image->h * 4,
-	       evas_common_image_ram_usage(im),
-	       im->flags & RGBA_IMAGE_IS_DIRTY,
-	       im->flags & RGBA_IMAGE_INDEXED,
-	       im->info.format,
-	       im->info.file);
-     }
-}
-#endif
+   .constructor = evas_common_load_image_module_from_file,
+   .destructor = _evas_common_image_unload,
+   .dirty_region = _evas_common_image_dirty_region,
+   .dirty = _evas_common_image_dirty,
+   .copied_data = evas_common_image_from_copied_data,
+   .color_space = evas_common_image_colorspace_set,
+   .data = evas_common_image_from_data,
+   .size_set = evas_common_image_size_set,
+   .load = evas_common_load_image_data_from_file,
+   .mem_size_get = evas_common_image_ram_usage,
+   .debug = NULL
+};
 
 EAPI void
 evas_common_image_init(void)
 {
+   if (!eci)
+     eci = evas_cache_image_init(&_evas_common_image_func);
+   reference++;
+
 #ifdef BUILD_LOADER_EET
    eet_init();
 #endif
@@ -81,9 +61,67 @@ evas_common_image_init(void)
 EAPI void
 evas_common_image_shutdown(void)
 {
+   if (--reference == 0)
+     {
+        evas_cache_image_shutdown(eci);
+        eci = NULL;
+     }
+
 #ifdef BUILD_LOADER_EET
    eet_shutdown();
 #endif
+}
+
+static void
+_evas_common_image_unload(RGBA_Image* im)
+{
+}
+
+static void
+_evas_common_image_dirty_region(RGBA_Image* im, int x, int y, int w, int h)
+{
+}
+
+void
+evas_common_image_delete(RGBA_Image* im)
+{
+   if ((im->cs.data) && (im->image->data))
+     {
+	if (im->cs.data != im->image->data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	  }
+     }
+   else if (im->cs.data)
+     {
+	if (!im->cs.no_free) free(im->cs.data);
+     }
+
+   im->cs.data = NULL;
+   evas_common_pipe_free(im);
+   if (im->image) evas_common_image_surface_free(im->image);
+   if (im->info.file) evas_stringshare_del(im->info.file);
+   if (im->info.key) evas_stringshare_del(im->info.key);
+   if (im->info.module) evas_module_unref((Evas_Module *)im->info.module);
+   /* memset the image to 0x99 because i recently saw a segv where an
+    * seemed to be used BUT its contents were wrong - it looks like it was
+    * overwritten by something from efreet - as there was an execute command
+    * for a command there and some other signs - but to make sure, I am
+    * going to empty this struct out in case this happens again so i know
+    * that something else is overwritign this struct - or not */
+   memset(im, 0x99, sizeof(im));
+   free(im);
+}
+
+/* Only called when references > 0. Need to provide a fresh copie of im. */
+static int
+_evas_common_image_dirty(RGBA_Image* dst, const RGBA_Image* src)
+{
+   evas_common_image_colorspace_normalize(dst);
+   evas_common_blit_rectangle(src, dst, 0, 0, src->image->w, src->image->h, 0, 0);
+   evas_common_cpu_end_opt();
+
+   return 0;
 }
 
 #if 0
@@ -174,6 +212,8 @@ evas_common_image_surface_alloc(RGBA_Surface *is)
 {
    size_t siz = 0;
 
+   if (is->data) return ;
+
    if (is->im->flags & RGBA_IMAGE_ALPHA_ONLY)
      siz = is->w * is->h * sizeof(DATA8);
    else
@@ -206,7 +246,7 @@ evas_common_image_create(int w, int h)
    im->image = evas_common_image_surface_new(im);
    if (!im->image)
      {
-	evas_common_image_free(im);
+	evas_common_image_delete(im);
 	return NULL;
      }
    im->image->w = w;
@@ -214,7 +254,7 @@ evas_common_image_create(int w, int h)
    evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
-	evas_common_image_free(im);
+	evas_common_image_delete(im);
 	return NULL;
      }
    im->flags = RGBA_IMAGE_IS_DIRTY;
@@ -232,7 +272,7 @@ evas_common_image_alpha_create(int w, int h)
    im->image = evas_common_image_surface_new(im);
    if (!im->image)
      {
-	evas_common_image_free(im);
+	evas_common_image_delete(im);
 	return NULL;
      }
    im->image->w = w;
@@ -241,7 +281,7 @@ evas_common_image_alpha_create(int w, int h)
    evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
-	evas_common_image_free(im);
+	evas_common_image_delete(im);
 	return NULL;
      }
    im->flags = RGBA_IMAGE_IS_DIRTY;
@@ -263,72 +303,6 @@ evas_common_image_new(void)
 }
 
 EAPI void
-evas_common_image_free(RGBA_Image *im)
-{
-   im->ref--;
-   if (im->ref > 0) return;
-   if ((im->cs.data) && (im->image->data)) 
-     {
-	if (im->cs.data != im->image->data)
-	  {
-	     if (!im->cs.no_free) free(im->cs.data);
-	  }
-     }
-   else if (im->cs.data) 
-     {
-	if (!im->cs.no_free) free(im->cs.data);
-     }
-   
-   im->cs.data = NULL;
-   evas_common_pipe_free(im);
-   if (im->image) evas_common_image_surface_free(im->image);
-   if (im->info.file) evas_stringshare_del(im->info.file);
-//   if (im->info.real_file) evas_stringshare_del(im->info.real_file);
-   if (im->info.key) evas_stringshare_del(im->info.key);
-//   if (im->info.comment) evas_stringshare_del(im->info.comment);
-   if (im->info.module) evas_module_unref((Evas_Module *)im->info.module);
-   /* memset the image to 0x99 because i recently saw a segv where an
-    * seemed to be used BUT its contents were wrong - it looks like it was
-    * overwritten by something from efreet - as there was an execute command
-    * for a command there and some other signs - but to make sure, I am
-    * going to empty this struct out in case this happens again so i know
-    * that something else is overwritign this struct - or not */
-   memset(im, 0x99, sizeof(im));
-   free(im);
-}
-
-EAPI void
-evas_common_image_ref(RGBA_Image *im)
-{
-   im->references++;
-   if (im->references == 1) /* we were in cache - take us out */
-     {
-	evas_common_image_uncache(im);
-	evas_common_image_store(im);
-     }
-}
-
-EAPI void
-evas_common_image_unref(RGBA_Image *im)
-{
-   im->references--;
-   if (im->references <= 0) /* we were are now in cache - put us in */
-     {
-	evas_common_image_unstore(im);
-	if ((cache_size > 0) &&
-	    (!(im->flags & RGBA_IMAGE_IS_DIRTY)))
-	  {
-	     evas_common_image_cache(im);
-	     evas_common_image_flush_cache();
-	  }
-	else
-	  {
-	     evas_common_image_free(im);
-	  }
-     }
-}
-
-EAPI void
 evas_common_image_colorspace_normalize(RGBA_Image *im)
 {
    if ((!im->cs.data) || (!im->cs.dirty)) return;
@@ -345,7 +319,7 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
       case EVAS_COLORSPACE_YCBCR422P601_PL:
 #ifdef BUILD_CONVERT_YUV
 	if ((im->image->data) && (*((unsigned char **)im->cs.data)))
-	  evas_common_convert_yuv_420p_601_rgba(im->cs.data, im->image->data,
+	  evas_common_convert_yuv_420p_601_rgba(im->cs.data, (DATA8*) im->image->data,
 						im->image->w, im->image->h);
 #endif
 	break;
@@ -362,236 +336,26 @@ evas_common_image_colorspace_dirty(RGBA_Image *im)
 }
 
 EAPI void
-evas_common_image_cache(RGBA_Image *im)
-{
-   int ram;
-
-   if (im->flags & RGBA_IMAGE_INDEXED) return;
-   im->flags |= RGBA_IMAGE_INDEXED;
-   cache = evas_object_list_prepend(cache, im);
-   ram = evas_common_image_ram_usage(im);
-   cache_usage += ram;
-   evas_common_image_flush_cache();
-}
-
-EAPI void
-evas_common_image_uncache(RGBA_Image *im)
-{
-   int ram;
-
-   if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
-   im->flags &= ~RGBA_IMAGE_INDEXED;
-   cache = evas_object_list_remove(cache, im);
-   ram = evas_common_image_ram_usage(im);
-   cache_usage -= ram;
-}
-
-EAPI void
-evas_common_image_flush_cache(void)
-{
-   Evas_Object_List *l, *l_next;
-
-   if (!cache) return;
-   if (cache_usage < cache_size) return;
-
-   for (l = cache->last; l;)
-     {
-	RGBA_Image *im;
-
-	l_next = l->prev;
-	im = (RGBA_Image *)l;
-	evas_common_image_uncache(im);
-	evas_common_image_free(im);
-	if (cache_usage <= cache_size) return;
-	l = l_next;
-     }
-}
-
-EAPI void
 evas_common_image_set_cache(int size)
 {
-   cache_size = size;
-   evas_common_image_flush_cache();
+   if (eci != NULL)
+     evas_cache_image_set(eci, size);
 }
-
 EAPI int
 evas_common_image_get_cache(void)
 {
-   return cache_size;
-}
-
-EAPI void
-evas_common_image_store(RGBA_Image *im)
-{
-   char buf[4096 + 1024];
-
-   if (im->flags & RGBA_IMAGE_IS_DIRTY) return;
-   if (im->flags & RGBA_IMAGE_INDEXED) return;
-   if ((!im->info.file) && (!im->info.key)) return;
-   if ((im->load_opts.scale_down_by == 0) &&
-       (im->load_opts.dpi == 0.0) &&
-       ((im->load_opts.w == 0) || (im->load_opts.h == 0)))
-     {
-	if (im->info.key)
-	  snprintf(buf, sizeof(buf), "%s//://%s", im->info.file, im->info.key);
-	else
-	  snprintf(buf, sizeof(buf), "%s", im->info.file);
-     }
-   else
-     {
-	if (im->info.key)
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s//://%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file, im->info.key);
-	else
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file);
-     }
-   images = evas_hash_add(images, buf, im);
-   im->flags |= RGBA_IMAGE_INDEXED;
-}
-
-EAPI void
-evas_common_image_unstore(RGBA_Image *im)
-{
-   char buf[4096 + 1024];
-
-   if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
-   if ((!im->info.file) && (!im->info.key)) return;
-   if ((im->load_opts.scale_down_by == 0) &&
-       (im->load_opts.dpi == 0.0) &&
-       ((im->load_opts.w == 0) || (im->load_opts.h == 0)))
-     {
-	if (im->info.key)
-	  snprintf(buf, sizeof(buf), "%s//://%s", im->info.file, im->info.key);
-	else
-	  snprintf(buf, sizeof(buf), "%s", im->info.file);
-     }
-   else
-     {
-	if (im->info.key)
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s//://%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file, im->info.key);
-	else
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", im->load_opts.scale_down_by, im->load_opts.dpi, im->load_opts.w, im->load_opts.h, im->info.file);
-     }
-   images = evas_hash_del(images, buf, im);
-   im->flags &= ~RGBA_IMAGE_INDEXED;
+   return evas_cache_image_get(eci);
 }
 
 #define STAT_GAP 2
 
 EAPI RGBA_Image *
-evas_common_image_find(const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo)
+evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo)
 {
-   RGBA_Image_Loadopts *lo2;
-   RGBA_Image *im;
-   char buf[4096 + 1024];
-   Evas_Object_List *l;
-   struct stat st;
-   static time_t laststat = 0;
-   time_t t, mt = 0;
+   int error;
 
-   if ((!file) && (!key)) return NULL;
-   if (!file) return NULL;
-   if ((!lo) || 
-       ((lo) && 
-	(lo->scale_down_by == 0) &&
-	(lo->dpi == 0.0) &&
-	((lo->w == 0) || (lo->h == 0))))
-     {
-	if (key)
-	  snprintf(buf, sizeof(buf), "%s//://%s", file, key);
-	else
-	  snprintf(buf, sizeof(buf), "%s", file);
-     }
-   else
-     {
-	if (key)
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s//://%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, file, key);
-	else
-	  snprintf(buf, sizeof(buf), "//@/%i/%1.5f/%ix%i//%s", lo->scale_down_by, lo->dpi, lo->w, lo->h, file);
-     }
-   im = evas_hash_find(images, buf);
-   t = time(NULL);
-   if (im)
-     {
-	if ((t - im->laststat) < STAT_GAP)
-	  return im;
-	else
-	  {
-	     struct stat st;
-	     
-	     if (stat(file, &st) < 0) return NULL;
-	     mt = st.st_mtime;
-	     if (mt == im->timestamp)
-	       {
-		  im->laststat = t;
-		  laststat = t;
-		  return im;
-	       }
-	  }
-     }
-   for (l = cache; l; l = l->next)
-     {
-	int ok;
-	
-	im = (RGBA_Image *)l;
-	lo2 = &(im->load_opts);
-	ok = 0;
-	if ((file) && (im->info.file) &&
-	    (!strcmp(file, im->info.file)))
-	  ok++;
-	else if ((!file) && (!im->info.file))
-	  ok++;
-	else continue;
-	
-	if ((key) && (im->info.key) &&
-	    (!strcmp(key, im->info.key)))
-	  ok++;
-	else if ((!key) && (!im->info.key))
-	  ok++;
-	else continue;
-	
-	if ((lo->scale_down_by == lo2->scale_down_by) &&
-	    (lo->dpi == lo2->dpi) && (lo->w == lo2->w) && 
-	    (lo->h == lo2->h))
-	  ok++;
-	else continue;
-	
-        if ((t - im->laststat) >= STAT_GAP)
-	  {
-	     if (stat(file, &st) < 0) continue;
-	     mt = st.st_mtime;
-	     if (im->timestamp == mt)
-	       ok++;
-	     else continue;
-	  }
-	else ok++;
-     
-	laststat = t;
-	im->laststat = t;
-	return im;
-     }
-/*
-   for (l = cache; l; l = l->next)
-     {
-	int ok;
-
-	im = (RGBA_Image *)l;
-	ok = 0;
-	if ((file) && (im->info.file) &&
-	    (!strcmp(file, im->info.file)))
-	  ok++;
-	if ((!file) && (!im->info.file))
-	  ok++;
-	if ((key) && (im->info.key) &&
-	    (!strcmp(key, im->info.key)))
-	  ok++;
-	if ((!key) && (!im->info.key))
-	  ok++;
-//	if (im->timestamp == timestamp)
-//	  ok++;
-	if (ok >= 2) return im;
-     }
- */
-   return NULL;
+   if (file == NULL) return NULL;
+   return evas_cache_image_request(eci, file, key, lo, &error);
 }
 
 EAPI int
@@ -610,16 +374,15 @@ evas_common_image_ram_usage(RGBA_Image *im)
 }
 
 EAPI void
-evas_common_image_dirty(RGBA_Image *im)
-{
-   evas_common_image_unstore(im);
-   im->flags |= RGBA_IMAGE_IS_DIRTY;
-}
-
-EAPI void
 evas_common_image_cache_free(void)
 {
    evas_common_image_set_cache(0);
+}
+
+EAPI Evas_Cache_Image*
+evas_common_image_cache_get(void)
+{
+   return eci;
 }
 
 EAPI RGBA_Image *
@@ -653,7 +416,7 @@ evas_common_image_line_buffer_obtain(int len)
 EAPI void
 evas_common_image_line_buffer_release(RGBA_Image *im)
 {
-   evas_common_image_free(im);
+   evas_common_image_delete(im);
 /*   
    if (!evas_rgba_line_buffer) return;
    if (EVAS_RGBA_LINE_BUFFER_MAX_LEN < evas_rgba_line_buffer->image->w)
@@ -673,7 +436,7 @@ evas_common_image_line_buffer_release(RGBA_Image *im)
 EAPI void
 evas_common_image_line_buffer_free(RGBA_Image *im)
 {
-   evas_common_image_free(im);
+   evas_common_image_delete(im);
 /*   
    if (!evas_rgba_line_buffer) return;
    evas_common_image_free(evas_rgba_line_buffer);
@@ -711,7 +474,7 @@ evas_common_image_alpha_line_buffer_obtain(int len)
 EAPI void
 evas_common_image_alpha_line_buffer_release(RGBA_Image *im)
 {
-   evas_common_image_free(im);
+   evas_common_image_delete(im);
 /*   
    if (!evas_alpha_line_buffer) return;
    if (EVAS_ALPHA_LINE_BUFFER_MAX_LEN < evas_alpha_line_buffer->image->w)
@@ -725,17 +488,6 @@ evas_common_image_alpha_line_buffer_release(RGBA_Image *im)
 	   evas_alpha_line_buffer = NULL;
 	  }
      }
- */
-}
-
-EAPI void
-evas_common_image_alpha_line_buffer_free(RGBA_Image *im)
-{
-   evas_common_image_free(im);
-/*   
-   if (!evas_alpha_line_buffer) return;
-   evas_common_image_free(evas_alpha_line_buffer);
-   evas_alpha_line_buffer = NULL;
  */
 }
 

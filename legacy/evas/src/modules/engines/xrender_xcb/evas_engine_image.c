@@ -199,7 +199,7 @@ __xre_image_real_free(XR_Image *im)
    if (im->file) evas_stringshare_del(im->file);
    if (im->key) evas_stringshare_del(im->key);
    if (im->fkey) free(im->fkey);
-   if (im->im) evas_common_image_unref(im->im);
+   if (im->im) evas_cache_image_drop(im->im);
    if ((im->data) && (im->dirty)) __xre_image_dirty_hash_del(im);
    if ((im->free_data) && (im->data)) free(im->data);
    if (im->surface) _xr_render_surface_free(im->surface);
@@ -272,7 +272,7 @@ _xre_image_copy(XR_Image *im)
    if (im2) im2->alpha = im->alpha;
    if ((im->im) && (!im->dirty))
      {
-	evas_common_image_unref(im->im);
+	evas_cache_image_drop(im->im);
 	im->im = NULL;
      }
    return im2;
@@ -335,9 +335,9 @@ _xre_image_resize(XR_Image *im, int w, int h)
    else if (im->im)
      {
 	RGBA_Image *im_old;
-	
+
 	im_old = im->im;
-	im->im = evas_common_image_create(w, h);
+	im->im = evas_cache_image_empty(evas_common_image_cache_get());
 	if (!im->im)
 	  {
 	     im->im = im_old;
@@ -348,22 +348,26 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	       }
 	     return;
 	  }
+        im->im->image->w = w;
+        im->im->image->h = h;
+        evas_common_image_surface_alloc(im->im->image);
 	evas_common_load_image_data_from_file(im_old);
 	if (im_old->image->data)
 	  {
 	     int x = 0, y = 0, ww, hh;
-	     
+
 	     ww = w; hh = h;
 	     RECTS_CLIP_TO_RECT(x, y, ww, hh, 0, 0, im->w, im->h);
              evas_common_blit_rectangle(im_old, im->im, 0, 0, ww, hh, 0, 0);
 	     evas_common_cpu_end_opt();
 	  }
 	im->free_data = 1;
+        /* FIXME: Hum ? */
 	im->data = im->im->image->data;
 	im->im->image->data = NULL;
-        evas_common_image_unref(im->im);
+        evas_cache_image_drop(im->im);
 	im->im = NULL;
-        evas_common_image_unref(im_old);
+        evas_cache_image_drop(im_old);
 	__xre_image_dirty_hash_add(im);
      }
    else
@@ -426,7 +430,7 @@ _xre_image_data_put(XR_Image *im, void *data)
 	if (data == imdata) return;
 	if (im->im)
 	  {
-	     evas_common_image_unref(im->im);
+             evas_cache_image_drop(im->im);
 	     im->im = NULL;
 	  }
      }
@@ -580,7 +584,7 @@ _xre_image_surface_gen(XR_Image *im)
                           1, 1);
    if ((im->im) && (!im->dirty))
      {
-	evas_common_image_unref(im->im);
+        evas_cache_image_drop(im->im);
 	im->im = NULL;
      }
 }

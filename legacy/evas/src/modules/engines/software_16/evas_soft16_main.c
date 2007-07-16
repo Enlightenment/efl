@@ -163,7 +163,7 @@ soft16_image_load_new(const char *file, const char *key,
 			   _calc_stride(sim->image->w), have_alpha, 0);
    if (!im)
      {
-	evas_common_image_unref(sim);
+        evas_cache_image_drop(sim);
 	return NULL;
      }
 
@@ -263,7 +263,8 @@ soft16_image_load_data(Soft16_Image *im)
 	if (!im->pixels) soft16_image_alloc_pixels(im);
 	if (im->pixels) _soft16_image_rgba32_import(im, im->source_im->image->data);
      }
-   evas_common_image_unref(im->source_im);
+   done:
+   evas_cache_image_drop(im->source_im);
    im->source_im = NULL;
 }
 

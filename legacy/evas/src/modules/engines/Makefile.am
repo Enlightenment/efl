@@ -16,6 +16,7 @@ software_x11 \
 software_xcb \
 xrender_x11 \
 xrender_xcb \
+software_sdl \
 glitz_x11 \
 software_16 \
 software_16_x11

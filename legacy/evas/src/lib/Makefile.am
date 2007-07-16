@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = canvas data file engines imaging include
+SUBDIRS = canvas data cache file engines imaging include
 
 AUTOMAKE_OPTIONS     = 1.4 foreign
 
@@ -24,6 +24,7 @@ libevas_la_LIBADD       = \
                           canvas/libevas_canvas.la \
 			  data/libevas_data.la \
 			  file/libevas_file.la \
+			  cache/libevas_cache.la \
 			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la \
 			  -lm \
@@ -39,6 +40,9 @@ libevas_la_DEPENDENCIES = \
                           canvas/libevas_canvas.la \
 			  data/libevas_data.la \
 			  file/libevas_file.la \
+			  cache/libevas_cache.la \
 			  imaging/libevas_imaging.la \
-			  engines/common/libevas_engine_common.la 
+			  engines/common/libevas_engine_common.la
+
 libevas_la_LDFLAGS      = @create_shared_lib@ -version-info 1:0:0
+

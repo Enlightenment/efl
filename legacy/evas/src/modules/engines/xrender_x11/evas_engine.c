@@ -560,14 +560,14 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 	     im->cs.data = NULL;
 	     im->cs.no_free = 0;
 	  }
-	if (im->im) evas_common_image_unref(im->im);
+	if (im->im) evas_cache_image_drop(im->im);
 	im->im = NULL;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
 	if ((im->free_data) && (im->data)) free(im->data);
 	im->data = NULL;
-	if (im->im) evas_common_image_unref(im->im);
+	if (im->im) evas_cache_image_drop(im->im);
 	im->im = NULL;
 	if (im->cs.data)
 	  {

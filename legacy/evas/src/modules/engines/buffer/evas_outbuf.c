@@ -12,7 +12,7 @@ evas_buffer_outbuf_buf_free(Outbuf *buf)
 {
    if (buf->priv.back_buf)
      {
-	evas_common_image_free(buf->priv.back_buf);
+	evas_common_image_delete(buf->priv.back_buf);
      }
    free(buf);
 }
@@ -119,7 +119,7 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 void
 evas_buffer_outbuf_buf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
-   if (update != buf->priv.back_buf) evas_common_image_free(update);
+   if (update != buf->priv.back_buf) evas_common_image_delete(update);
 }
 
 void
@@ -263,7 +263,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	  {
 	     DATA32 *dest, *src, *dst;
 	     int yy, row_bytes;
-	     
+
 	     row_bytes = buf->dest_row_bytes;
 	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
 	     if (buf->func.new_update_region)

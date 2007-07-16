@@ -45,6 +45,7 @@ evas_gradient_sinusoidal.c \
 evas_image_load.c \
 evas_image_save.c \
 evas_image_main.c \
+evas_image_data.c \
 evas_line_main.c \
 evas_polygon_main.c \
 evas_rectangle_main.c \

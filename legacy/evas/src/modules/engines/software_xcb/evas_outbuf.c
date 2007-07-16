@@ -281,8 +281,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
        (buf->priv.mask.g == 0x00ff00) &&
        (buf->priv.mask.b == 0x0000ff))
      {
-	im = evas_common_image_new();
-	im->image = evas_common_image_surface_new(im);
+	im = evas_cache_image_empty(evas_common_image_cache_get());
 	im->image->w = w;
 	im->image->h = h;
 	im->image->data = NULL;
@@ -305,7 +304,10 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
      }
    else
      {
-        im = evas_common_image_create(w, h);
+        im = evas_cache_image_empty(evas_common_image_cache_get());
+	im->image->w = w;
+	im->image->h = h;
+        evas_common_image_surface_alloc(im->image);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
 	   obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
@@ -391,7 +393,7 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
 	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes,
 							 buf->priv.pending_writes);
 	obr = im->extended_info;
-	evas_common_image_free(im);
+	evas_cache_image_drop(im);
 	if (obr->xcbob) evas_software_xcb_x_output_buffer_free(obr->xcbob, 0);
 	if (obr->mxcbob) evas_software_xcb_x_output_buffer_free(obr->mxcbob, 0);
 	free(obr);

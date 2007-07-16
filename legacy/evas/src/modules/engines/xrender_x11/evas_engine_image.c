@@ -235,7 +235,7 @@ __xre_image_real_free(XR_Image *im)
    if (im->file) evas_stringshare_del(im->file);
    if (im->key) evas_stringshare_del(im->key);
    if (im->fkey) free(im->fkey);
-   if (im->im) evas_common_image_unref(im->im);
+   if (im->im) evas_cache_image_drop(im->im);
    if ((im->data) && (im->dirty)) __xre_image_dirty_hash_del(im);
    if ((im->free_data) && (im->data)) free(im->data);
    if (im->surface) _xr_render_surface_free(im->surface);
@@ -334,7 +334,7 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	  }
 	else if (im->im)
 	  {
-	     evas_common_image_unref(im->im);
+	     evas_cache_image_drop(im->im);
 	     im->im = NULL;
 	     if (im->free_data)
 	       {
@@ -360,7 +360,7 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	  }
 	if (im->im)
 	  {
-	     evas_common_image_unref(im->im);
+	     evas_cache_image_drop(im->im);
 	     im->im = NULL;
 	  }
 	if (!im->cs.no_free)
@@ -421,7 +421,7 @@ _xre_image_data_put(XR_Image *im, void *data)
 	if (im->im)
 	  {
 	     if (data == im->im->image->data) return;
-	     evas_common_image_unref(im->im);
+	     evas_cache_image_drop(im->im);
 	     im->im = NULL;
 	  }
 	if (im->cs.data == data) return;
@@ -636,7 +636,7 @@ _xre_image_surface_gen(XR_Image *im)
 			   im->w + 2, 1);
    if ((im->im) && (!im->dirty))
      {
-	evas_common_image_unref(im->im);
+	evas_cache_image_drop(im->im);
 	im->im = NULL;
      }
    if (tdata) free(tdata);

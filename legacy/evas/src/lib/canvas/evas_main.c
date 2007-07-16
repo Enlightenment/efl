@@ -742,6 +742,9 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
    methods = evas_list_append(methods, strdup("software_qtopia"));
 #endif
+#ifdef BUILD_ENGINE_SDL
+   methods = evas_list_append(methods, strdup("software_sdl"));
+#endif
 
    return methods;
 }

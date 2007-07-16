@@ -109,27 +109,28 @@
 /*****************************************************************************/
 
 #ifndef _WIN32_WCE
-typedef unsigned long long            DATA64;
+typedef unsigned long long		DATA64;
 #else
-typedef unsigned __int64              DATA64;
+typedef unsigned __int64		DATA64;
 #define strdup _strdup
 #define snprintf _snprintf
 #define rewind(f) fseek(f, 0, SEEK_SET)
 #endif
 
-typedef unsigned int                  DATA32;
-typedef unsigned short                DATA16;
-typedef unsigned char                 DATA8;
+typedef unsigned int			DATA32;
+typedef unsigned short			DATA16;
+typedef unsigned char                   DATA8;
 
-typedef struct _Evas_Object_List      Evas_Object_List;
+typedef struct _Evas_Object_List        Evas_Object_List;
 
-typedef struct _Evas_Hash_El          Evas_Hash_El;
+typedef struct _Evas_Hash_El            Evas_Hash_El;
 
 typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
 typedef struct _RGBA_Pipe_Op          RGBA_Pipe_Op;
 typedef struct _RGBA_Pipe             RGBA_Pipe;
 typedef struct _RGBA_Pipe_Thread_Info RGBA_Pipe_Thread_Info;
 typedef struct _RGBA_Image            RGBA_Image;
+typedef struct _RGBA_Engine_Image     RGBA_Engine_Image;
 typedef struct _RGBA_Surface          RGBA_Surface;
 typedef struct _RGBA_Image_Span       RGBA_Image_Span;
 typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
@@ -147,18 +148,24 @@ typedef struct _RGBA_Gfx_Compositor   RGBA_Gfx_Compositor;
 typedef struct _Cutout_Rect           Cutout_Rect;
 typedef struct _Cutout_Rects            Cutout_Rects;
 
-typedef struct _Convert_Pal           Convert_Pal;
+typedef struct _Convert_Pal             Convert_Pal;
 
-typedef struct _Tilebuf               Tilebuf;
-typedef struct _Tilebuf_Tile          Tilebuf_Tile;
-typedef struct _Tilebuf_Rect          Tilebuf_Rect;
+typedef struct _Tilebuf                 Tilebuf;
+typedef struct _Tilebuf_Tile            Tilebuf_Tile;
+typedef struct _Tilebuf_Rect		Tilebuf_Rect;
 
-typedef struct _Evas_Array_Hash       Evas_Array_Hash;
+typedef struct _Evas_Array_Hash		Evas_Array_Hash;
+typedef struct _Evas_Array_Hash         Evas_Array_Double_Hash;
 
 /*
 typedef struct _Regionbuf             Regionbuf;
 typedef struct _Regionspan            Regionspan;
 */
+
+typedef struct _Evas_Cache_Image                Evas_Cache_Image;
+typedef struct _Evas_Cache_Image_Func           Evas_Cache_Image_Func;
+typedef struct _Evas_Cache_Engine_Image         Evas_Cache_Engine_Image;
+typedef struct _Evas_Cache_Engine_Image_Func    Evas_Cache_Engine_Image_Func;
 
 typedef void (*RGBA_Gfx_Func)    (DATA32 *src, DATA8 *mask, DATA32 col, DATA32 *dst, int len);
 typedef void (*RGBA_Gfx_Pt_Func) (DATA32 src, DATA8 mask, DATA32 col, DATA32 *dst);
@@ -181,7 +188,8 @@ typedef enum _RGBA_Image_Flags
    RGBA_IMAGE_INDEXED       = (1 << 2),
    RGBA_IMAGE_ALPHA_ONLY    = (1 << 3),
    RGBA_IMAGE_ALPHA_TILES   = (1 << 4),
-   RGBA_IMAGE_ALPHA_SPARSE  = (1 << 5)
+   RGBA_IMAGE_ALPHA_SPARSE  = (1 << 5),
+   RGBA_IMAGE_LOADED        = (1 << 6)
 } RGBA_Image_Flags;
 
 typedef enum _Convert_Pal_Mode
@@ -364,11 +372,16 @@ struct _RGBA_Image
 	char           *comment;
 //	int             format;
      } info;
+
    void                *extended_info;
    RGBA_Pipe           *pipe;
    int                  references;
    RGBA_Image_Loadopts  load_opts;
+   unsigned char        scale;
+
    int                  ref;
+
+   /* Colorspace stuff. */
    time_t               timestamp;
    time_t               laststat;
    struct {
@@ -377,7 +390,32 @@ struct _RGBA_Image
       unsigned char        no_free : 1;
       unsigned char        dirty : 1;
    } cs;
-   unsigned char        scale;
+
+   /* Cache stuff. */
+   Evas_Cache_Image     *cache;
+   char                 *cache_key;
+};
+
+struct _RGBA_Engine_Image
+{
+   Evas_Object_List     _list_data;
+
+   /* Engine specific data. */
+   void                         *engine_data;
+
+   /* Upper Engine data. */
+   RGBA_Image                   *src;
+
+   /* Cache stuff. */
+   int                          references;
+   struct
+   {
+      int                       dirty : 1;
+      int                       loaded : 1;
+   } flags;
+
+   Evas_Cache_Engine_Image      *cache;
+   const char                   *cache_key;
 };
 
 struct _RGBA_Gradient_Color_Stop
@@ -659,6 +697,82 @@ struct _Convert_Pal
    void             *data;
 };
 
+/****/
+struct _Evas_Cache_Image_Func
+{
+   /* The cache is doing the allocation and deallocation, you must just do the rest. */
+   int          (*constructor)(RGBA_Image* im);
+   void         (*destructor)(RGBA_Image* im);
+
+   void         (*dirty_region)(RGBA_Image* im, int x, int y, int w, int h);
+   /* Only called when references > 0. Need to provide a fresh copie of im. */
+   /* The destination surface does have a surface, but no allocated pixel data. */
+   int          (*dirty)(RGBA_Image* dst, const RGBA_Image* src);
+   /* Only called when references == 1. We will call drop on `im'. */
+   /* The destination surface does not have any surface. */
+   int          (*size_set)(RGBA_Image* dst, const RGBA_Image* src, int w, int h);
+
+   /* The destination surface does not have any surface. */
+   int          (*copied_data)(RGBA_Image* dst, int w, int h, DATA32 *image_data, int alpha, int cspace);
+   /* The destination surface does not have any surface. */
+   int          (*data)(RGBA_Image* dst, int w, int h, DATA32 *image_data, int alpha, int cspace);
+   int          (*color_space)(RGBA_Image* dst, int cspace);
+
+   void         (*load)(RGBA_Image* im);
+   int          (*mem_size_get)(RGBA_Image* im);
+   void         (*debug)(const char* context, RGBA_Image* im);
+};
+
+struct _Evas_Cache_Image
+{
+   int                          usage;
+   int                          limit;
+   int                          references;
+
+   Evas_Cache_Image_Func        func;
+
+   Evas_Object_List*            dirty;
+
+   Evas_Object_List*            lru;
+   Evas_Hash*                   inactiv;
+   Evas_Hash*                   activ;
+};
+
+struct _Evas_Cache_Engine_Image_Func
+{
+   /* Must return a char* allocated with evas_stringshare_add. */
+   char*        (*key)(RGBA_Image *im, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error);
+
+   int          (*constructor)(RGBA_Engine_Image*, void* data);
+   void         (*destructor)(RGBA_Engine_Image *eim);
+
+   void         (*dirty_region)(RGBA_Engine_Image *eim, int x, int y, int w, int h);
+   /* Only called when references > 0. Need to provide a fresh copie of im. */
+   int          (*dirty)(RGBA_Engine_Image *dst, const RGBA_Engine_Image *src);
+   /* Only called when references == 1. We will call drop on `im'. */
+   int          (*size_set)(RGBA_Engine_Image *dst, const RGBA_Engine_Image *src);
+
+   int          (*update_data)(RGBA_Engine_Image* dst, void* data);
+
+   void         (*load)(RGBA_Engine_Image *eim, const RGBA_Image* im);
+   int          (*mem_size_get)(RGBA_Engine_Image *eim);
+   void         (*debug)(const char* context, RGBA_Engine_Image *eim);
+};
+
+struct _Evas_Cache_Engine_Image
+{
+   int                          usage;
+   int                          limit;
+
+   Evas_Cache_Engine_Image_Func func;
+
+   Evas_Object_List*            dirty;
+
+   Evas_Hash*                   activ;
+
+   Evas_Cache_Image*            parent;
+};
+
 /*****************************************************************************/
 #include "evas_macros.h"
 
@@ -906,45 +1020,38 @@ EAPI void          evas_common_image_surface_free      (RGBA_Surface *is);/*2*/
 EAPI void          evas_common_image_surface_alloc     (RGBA_Surface *is);/*2*/
 EAPI void          evas_common_image_surface_dealloc   (RGBA_Surface *is);/*2*/
 EAPI void          evas_common_image_colorspace_normalize(RGBA_Image *im);
-EAPI void          evas_common_image_colorspace_dirty    (RGBA_Image *im);
-EAPI void          evas_common_image_cache             (RGBA_Image *im); /*2*/
-EAPI void          evas_common_image_uncache           (RGBA_Image *im); /*2*/
-EAPI void          evas_common_image_store             (RGBA_Image *im); /*2*/
-EAPI void          evas_common_image_unstore           (RGBA_Image *im); /*2*/
-EAPI RGBA_Image   *evas_common_image_find              (const char *file, const char *key, DATA64 timestamp, RGBA_Image_Loadopts *lo); /*2*/
+EAPI void          evas_common_image_colorspace_dirty  (RGBA_Image *im);
 EAPI void          evas_common_image_cache_free        (void); /*2*/
-EAPI void          evas_common_image_premul             (RGBA_Image *im); /*2*/
-EAPI void          evas_common_image_set_alpha_sparse   (RGBA_Image *im); /*2*/
-
-/*done*/
+EAPI void          evas_common_image_premul            (RGBA_Image *im); /*2*/
+EAPI void          evas_common_image_set_alpha_sparse  (RGBA_Image *im); /*2*/
 EAPI RGBA_Image   *evas_common_image_alpha_create      (int w, int h);
 EAPI RGBA_Image   *evas_common_image_create            (int w, int h);
 EAPI RGBA_Image   *evas_common_image_new               (void);
+EAPI void          evas_common_image_delete            (RGBA_Image *im);
+EAPI Evas_Cache_Image*  evas_common_image_cache_get    (void);
+EAPI int           evas_common_load_image_module_from_file (RGBA_Image *im);
+EAPI void          evas_common_load_image_data_from_file   (RGBA_Image *im);
+EAPI int           evas_common_image_colorspace_set    (RGBA_Image* dst, int cspace);
 
-EAPI void          evas_common_image_free              (RGBA_Image *im);
-EAPI void          evas_common_image_ref               (RGBA_Image *im);
-EAPI void          evas_common_image_unref             (RGBA_Image *im);
-EAPI void          evas_common_image_flush_cache       (void);
+EAPI int           evas_common_image_size_set          (RGBA_Image* dst, const RGBA_Image* im, int w, int h);
+EAPI int           evas_common_image_from_copied_data  (RGBA_Image* dst, int w, int h, DATA32 *image_data, int alpha, int cspace);
+EAPI int           evas_common_image_from_data         (RGBA_Image* dst, int w, int h, DATA32 *image_data, int alpha, int cspace);
+
+/*done*/
 EAPI void          evas_common_image_set_cache         (int size);
 EAPI int           evas_common_image_get_cache         (void);
 EAPI int           evas_common_image_ram_usage         (RGBA_Image *im);
-EAPI void          evas_common_image_dirty             (RGBA_Image *im);
 
 EAPI RGBA_Image   *evas_common_image_line_buffer_obtain        (int len);
 EAPI void          evas_common_image_line_buffer_release       (RGBA_Image *im);
-EAPI void          evas_common_image_line_buffer_free          (RGBA_Image *im);
 
 EAPI RGBA_Image   *evas_common_image_alpha_line_buffer_obtain  (int len);
 EAPI void          evas_common_image_alpha_line_buffer_release (RGBA_Image *im);
 EAPI void          evas_common_image_alpha_line_buffer_free    (RGBA_Image *im);
 
 /*done*/
-EAPI RGBA_Image   *evas_common_load_image_from_file     (const char *file, const char *key, RGBA_Image_Loadopts *lo);
-EAPI void          evas_common_load_image_data_from_file(RGBA_Image *im);
-EAPI int           evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
-
-
-
+EAPI RGBA_Image   *evas_common_load_image_from_file        (const char *file, const char *key, RGBA_Image_Loadopts *lo);
+EAPI int           evas_common_save_image_to_file          (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
 /****/
 EAPI void           evas_common_rectangle_init          (void);
@@ -1115,7 +1222,47 @@ int		 evas_common_array_hash_search	(Evas_Array_Hash *hash, int key);
 
 void evas_stringshare_init(void);
 void evas_stringshare_shutdown(void);
-       
+
+/****/
+Evas_Cache_Image*               evas_cache_image_init(const Evas_Cache_Image_Func* cb);
+void                            evas_cache_image_shutdown(Evas_Cache_Image* cache);
+RGBA_Image*                     evas_cache_image_request(Evas_Cache_Image* cache, const char* file, const char* key, RGBA_Image_Loadopts* lo, int* error);
+void                            evas_cache_image_drop(RGBA_Image* im);
+int                             evas_cache_image_flush(Evas_Cache_Image* cache);
+
+int                             evas_cache_image_usage_get(Evas_Cache_Image* cache);
+int                             evas_cache_image_get(Evas_Cache_Image* cache);
+void                            evas_cache_image_set(Evas_Cache_Image* cache, int size);
+
+RGBA_Image*                     evas_cache_image_alone(RGBA_Image *im);
+RGBA_Image*                     evas_cache_image_dirty(RGBA_Image* im, int x, int y, int w, int h);
+void                            evas_cache_image_load_data(RGBA_Image* im);
+RGBA_Image*                     evas_cache_image_copied_data(Evas_Cache_Image* cache, int w, int h, DATA32* image_data, int alpha, int cspace);
+RGBA_Image*                     evas_cache_image_data(Evas_Cache_Image* cache, int w, int h, DATA32* image_data, int alpha, int cspace);
+void                            evas_cache_image_colorspace(RGBA_Image* im, int cspace);
+RGBA_Image*                     evas_cache_image_empty(Evas_Cache_Image* cache);
+
+RGBA_Image*                     evas_cache_image_size_set(RGBA_Image* im, int w, int h);
+/****/
+Evas_Cache_Engine_Image*        evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_Image *parent);
+void                            evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image* cache);
+
+int                             evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image* cache);
+int                             evas_cache_engine_image_get(Evas_Cache_Engine_Image* cache);
+void                            evas_cache_engine_image_set(Evas_Cache_Engine_Image* cache, int limit);
+
+RGBA_Engine_Image*              evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache, const char *file, const char *key,
+                                                                RGBA_Image_Loadopts *lo, void *engine_data, int *error);
+RGBA_Engine_Image*              evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data);
+void                            evas_cache_engine_image_drop(RGBA_Engine_Image *eim);
+RGBA_Engine_Image*              evas_cache_engine_image_dirty(RGBA_Engine_Image *eim, int x, int y, int w, int h);
+RGBA_Engine_Image*              evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void* engine_data);
+RGBA_Engine_Image*              evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void* engine_data);
+void                            evas_cache_engine_colorspace(RGBA_Engine_Image *eim, int cspace, void* engine_data);
+RGBA_Engine_Image*              evas_cache_engine_image_size_set(RGBA_Engine_Image *eim, int w, int h);
+
+void                            evas_cache_engine_image_load_data(RGBA_Engine_Image *eim);
+
 /*****************************************************************************/
 
 #ifdef __cplusplus

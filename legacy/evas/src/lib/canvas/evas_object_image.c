@@ -1061,20 +1061,18 @@ evas_object_image_save(Evas_Object *obj, const char *file, const char *key, cons
 	     else break;
 	  }
      }
-   im = evas_common_image_new();
+   im = evas_cache_image_empty(evas_common_image_cache_get());
    if (im)
      {
 	if (o->cur.has_alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-	im->image = evas_common_image_surface_new(im);
-	if (im->image)
-	  {
-	     im->image->data = data;
-	     im->image->w = o->cur.image.w;
-	     im->image->h = o->cur.image.h;
-	     im->image->no_free = 1;
-	     ok = evas_common_save_image_to_file(im, file, key, quality, compress);
-	  }
-	evas_common_image_free(im);
+
+        im->image->data = data;
+        im->image->w = o->cur.image.w;
+        im->image->h = o->cur.image.h;
+        im->image->no_free = 1;
+        ok = evas_common_save_image_to_file(im, file, key, quality, compress);
+
+	evas_cache_image_drop(im);
      }
    return ok;
 }

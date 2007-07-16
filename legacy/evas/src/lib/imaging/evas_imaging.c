@@ -20,7 +20,7 @@ evas_imaging_image_load(const char *file, const char *key)
    im = calloc(1, sizeof(Evas_Imaging_Image));
    if (!im)
      {
-	evas_common_image_free(image);
+        evas_cache_image_drop(image);
 	return NULL;
      }
    im->image = image;
@@ -31,7 +31,7 @@ EAPI void
 evas_imaging_image_free(Evas_Imaging_Image *im)
 {
    if (!im) return;
-   evas_common_image_unref(im->image);
+   evas_cache_image_drop(im->image);
    free(im);
 }
 

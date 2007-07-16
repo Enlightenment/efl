@@ -170,7 +170,7 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	im->image = evas_common_image_surface_new(im);
 	if (!im->image) 
 	  {
-	    evas_common_image_free(im);
+	    evas_common_image_delete(im);
 	    _xr_render_surface_free(gr->surface);
 	    gr->surface = NULL;
 	    return;
@@ -178,7 +178,7 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	xim = _xr_image_new(gr->xinf, w, h, gr->surface->depth);
 	if (!xim)
 	  {
-	    evas_common_image_free(im);
+	    evas_common_image_delete(im);
 	    _xr_render_surface_free(gr->surface);
 	    gr->surface = NULL;
 	    return;
@@ -204,7 +204,7 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	       }
 	  }
 	_xr_image_put(xim, gr->surface->draw, 0, 0, w, h);
-	evas_common_image_free(im);
+	evas_common_image_delete(im);
 	dc->render_op = op;
 	dc->clip.use = cuse;
      }
