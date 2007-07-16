@@ -1101,7 +1101,7 @@ EAPI void                evas_common_polygon_draw         (RGBA_Image *dst, RGBA
 /****/
 EAPI void     evas_common_blit_init               (void);
 
-EAPI void     evas_common_blit_rectangle          (RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
+EAPI void     evas_common_blit_rectangle          (const RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
 /****/
 
