@@ -30,6 +30,16 @@ ECORE_DIRECTFB_LIB =
 ECORE_DIRECTFB_LDF = 
 endif
 
+if BUILD_ECORE_SDL
+ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl
+ECORE_SDL_LIB = $(top_builddir)/src/lib/ecore_sdl/libecore_sdl.la
+ECORE_SDL_LDF = -L$(top_builddir)/src/lib/ecore_sdl/.libs
+else
+ECORE_SDL_INC =
+ECORE_SDL_LIB =
+ECORE_SDL_LDF =
+endif
+
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
@@ -38,6 +48,7 @@ INCLUDES = \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
+$(ECORE_SDL_INC) \
 @EVAS_CFLAGS@ \
 @XCB_CFLAGS@
 
@@ -45,6 +56,7 @@ libecore_evas_la_LDFLAGS = -version-info 1:0:0 \
 $(ECORE_X_LDF) \
 $(ECORE_FB_LDF) \
 $(ECORE_DIRECTFB_LDF) \
+$(ECORE_SDL_LDF) \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_EVAS
@@ -59,12 +71,14 @@ ecore_evas_private.h \
 ecore_evas_x.c \
 ecore_evas_fb.c \
 ecore_evas_buffer.c \
-ecore_evas_directfb.c
+ecore_evas_directfb.c \
+ecore_evas_sdl.c
 
 libecore_evas_la_LIBADD = \
 $(ECORE_X_LIB) \
 $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
+$(ECORE_SDL_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @XCB_LIBS@
@@ -73,6 +87,7 @@ libecore_evas_la_DEPENDENCIES = \
 $(ECORE_X_LIB) \
 $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
+$(ECORE_SDL_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la
 
 endif
@@ -83,5 +98,5 @@ ecore_evas_private.h \
 ecore_evas_x.c \
 ecore_evas_fb.c \
 ecore_evas_buffer.c \
-ecore_evas_directfb.c
-
+ecore_evas_directfb.c \
+ecore_evas_sdl.c

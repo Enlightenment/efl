@@ -63,6 +63,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_XRENDER_X11,
    ECORE_EVAS_ENGINE_DIRECTFB,
    ECORE_EVAS_ENGINE_SOFTWARE_X11_16,
+   ECORE_EVAS_ENGINE_SDL
 } Ecore_Evas_Engine_Type;
 
 #ifndef _ECORE_X_H
@@ -125,6 +126,8 @@ EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
 EAPI const int      *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
        
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
+
+EAPI Ecore_Evas     *ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
 
 /* generic manipulation calls */
 EAPI Ecore_Evas *ecore_evas_ecore_evas_get(Evas *e);

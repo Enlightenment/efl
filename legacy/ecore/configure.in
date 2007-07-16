@@ -72,6 +72,7 @@ requirements_ecore_ipc=""
 requirements_ecore_job=""
 requirements_ecore_txt=""
 requirements_ecore_x=""
+requirements_ecore_sdl=""
 
 dnl The first call to PKG_CHECK_MODULES is done conditionally,
 dnl so we should include this here:
@@ -491,7 +492,6 @@ if test "x$want_ecore_evas_dfb" != "xno" ; then
   CFLAGS="$save_CFLAGS"
 fi
 
-
 want_ecore_evas_fb="no";
 have_ecore_evas_fb="no";
 
@@ -521,6 +521,62 @@ if test "x$want_ecore_evas_fb" = "xyes" -a "x$have_ecore_fb" = "xyes"; then
     ]
   )
 fi
+
+## SDL
+AC_ARG_WITH(sdl-config, [  --with-sdl-config=SDL_CONFIG     use sdl-config specified],
+[ SDL_CONFIG=$withval;
+  echo "using "$SDL_CONFIG" for sdl-config"; ],
+[ if test -z "$SDL_CONFIG"; then
+    AC_PATH_PROG(SDL_CONFIG, "sdl-config", "", $PATH)
+  fi
+])
+if test -z "$SDL_CONFIG" ; then SDL_CONFIG="sdl-config"; fi
+
+have_sdl="no"
+AC_CHECK_HEADER(SDL/SDL.h,
+	[ have_sdl="yes" ],
+	[ have_sdl="no" ]
+)
+
+ECORE_CHECK_MODULE([SDL], [yes], [$have_sdl],
+  [requirements_ecore_evas="$requirements_ecore_evas ecore-sdl"])
+
+want_ecore_evas_sdl="yes";
+have_ecore_evas_sdl="no";
+sdl_cflags="";
+sdl_libs="";
+
+AC_MSG_CHECKING(whether ecore_evas sdl support is to be built)
+AC_ARG_ENABLE(ecore-evas-sdl,
+  [  --enable-ecore-evas-sdl	   enable sdl in the ecore_evas module],
+  [
+    if test x"$enableval" = x"yes"; then
+      AC_MSG_RESULT(yes)
+      want_ecore_evas_sdl="yes"
+    else
+      AC_MSG_RESULT(no)
+    fi
+  ], [
+    AC_MSG_RESULT(no)
+  ]
+)
+if test "x$want_ecore_evas_sdl" = "xyes"; then
+  AC_CHECK_HEADER(Evas_Engine_SDL.h,
+    [
+      AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL in Ecore_Evas])
+      have_ecore_evas_sdl="yes"
+      sdl_cflags=`$SDL_CONFIG --cflags`
+      sdl_libs=`$SDL_CONFIG --libs`
+    ], [
+      dummy=no
+    ], [
+      #include <Evas.h>
+    ]
+  )
+fi
+
+AC_SUBST(sdl_cflags)
+AC_SUBST(sdl_libs)
 
 want_ecore_evas_buffer="yes";
 have_ecore_evas_buffer="no";
@@ -585,10 +641,7 @@ AC_ARG_ENABLE(abstract-sockets,
   [ want_abstract_sockets="yes"]
 )
 if test "x$want_abstract_sockets" = "xyes"; then
-  AC_ABSTRACT_SOCKET_TEST(
-    [AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract sockets namespace])],
-    []
-  )
+  AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract sockets namespace])
 fi
 
 ECORE_CHECK_MODULE([Con], [yes])
@@ -755,6 +808,7 @@ AC_SUBST(requirements_ecore_ipc)
 AC_SUBST(requirements_ecore_job)
 AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
+AC_SUBST(requirements_ecore_sdl)
 
 # set up conditionals
 AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes -a $have_ecore_x_xcb = no)
@@ -779,6 +833,7 @@ ecore-ipc.pc
 ecore-job.pc
 ecore-txt.pc
 ecore-x.pc
+ecore-sdl.pc
 ecore.pc
 src/Makefile
 src/bin/Makefile
@@ -787,6 +842,7 @@ src/lib/ecore/Makefile
 src/lib/ecore_job/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_fb/Makefile
+src/lib/ecore_sdl/Makefile
 src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Makefile
 src/lib/ecore_ipc/Makefile
@@ -815,11 +871,13 @@ else
 fi
 echo "  Ecore_FB.....................: $have_ecore_fb"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
+echo "  Ecore_SDL....................: $have_ecore_sdl"
 echo "  Ecore_Evas...................: $have_ecore_evas"
 echo "  Ecore_Evas GL Support........: $have_ecore_evas_gl"
 echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
 echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_16_x11"
 echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
+echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
 echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
 echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
 echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $use_openssl)"

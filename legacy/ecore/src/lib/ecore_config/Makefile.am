@@ -33,6 +33,8 @@ Ecore_Config.h
 #config_DATA = $(DB)
 #configdir = $(pkgdatadir)
 
+if BUILD_ECORE_IPC
+
 libecore_config_la_SOURCES = \
 ecore_config.c \
 ecore_config_ipc_main.c \
@@ -52,6 +54,26 @@ $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 libecore_config_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
+
+else
+
+libecore_config_la_SOURCES = \
+ecore_config.c \
+ecore_config_util.c \
+ecore_config_storage.c \
+ecore_config_extra.c \
+ecore_config_db.c \
+ecore_config_private.h
+
+libecore_config_la_LIBADD = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+@EET_LIBS@ \
+@EVAS_LIBS@
+
+libecore_config_la_DEPENDENCIES = \
+$(top_builddir)/src/lib/ecore/libecore.la
+
+endif
 
 
 endif

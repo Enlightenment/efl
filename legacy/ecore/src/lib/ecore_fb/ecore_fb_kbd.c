@@ -134,7 +134,6 @@ static void
 _ecore_fb_event_free_key_down(void *data __UNUSED__, void *ev)
 {
    Ecore_Fb_Event_Key_Up *e;
-   
    e = ev;
    free(e->keyname);
    if (e->keysymbol) free(e->keysymbol);

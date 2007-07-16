@@ -21,6 +21,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore-job.pc \
 		       ecore-txt.pc \
 		       ecore-x.pc \
+		       ecore-sdl.pc \
 		       ecore.pc
 
 bin_SCRIPTS = 
@@ -39,6 +40,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
 	     ecore-job.pc.in \
 	     ecore-txt.pc.in \
 	     ecore-x.pc.in \
+	     ecore-sdl.pc.in \
 	     ecore.spec.in ecore.spec \
 	     debian/changelog \
 	     debian/changelog.in \
@@ -103,6 +105,10 @@ if BUILD_ECORE_X
 px = ecore-x.pc
 endif
 
+if BUILD_ECORE_SDL
+psdl = ecore-sdl.pc
+endif
+
 if BUILD_ECORE_X_XCB
 px = ecore-x.pc
 endif
@@ -110,4 +116,4 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	ecore.pc $(pcon) $(pconfig) $(pdfb) $(pevas) \
-	$(pfb) $(pfile) $(pdesktop) $(pipc) $(pjob) $(ptxt) $(px)
+	$(pfb) $(pfile) $(pdesktop) $(pipc) $(pjob) $(ptxt) $(px) $(psdl)
