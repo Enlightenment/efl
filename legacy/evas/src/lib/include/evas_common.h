@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #ifndef EVAS_COMMON_H
 #define EVAS_COMMON_H
 
@@ -29,11 +33,11 @@
 //#define EVAS_SLI 1
 
 #else
-# define LK(x)  
-# define LKI(x) 
-# define LKD(x) 
-# define LKL(x) 
-# define LKU(x) 
+# define LK(x)
+# define LKI(x)
+# define LKD(x)
+# define LKL(x)
+# define LKU(x)
 # define TH(x)
 # define THI(x)
 # define TH_MAX 0
@@ -51,7 +55,20 @@
 #include <ctype.h>
 
 #ifdef HAVE_ALLOCA_H
-#include <alloca.h>
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
 #endif
 
 #ifdef _WIN32_WCE
@@ -173,7 +190,7 @@ typedef void (*Gfx_Func_Copy)    (DATA32 *src, DATA32 *dst, int len);
 
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
-typedef void (*Gfx_Func_Gradient_Fill)(DATA32 *src, int src_len, 
+typedef void (*Gfx_Func_Gradient_Fill)(DATA32 *src, int src_len,
                                          DATA32 *dst, DATA8 *mask, int len,
                                          int x, int y, int axx, int axy, int ayx, int ayy,
                                          void *geom_data);
@@ -306,7 +323,7 @@ struct _RGBA_Pipe_Op
    RGBA_Draw_Context         context;
    void                    (*op_func) (RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info);
    void                    (*free_func) (RGBA_Pipe_Op *op);
-				   
+
    union {
       struct {
 	 int                 x, y, w, h;
@@ -470,9 +487,9 @@ struct _RGBA_Gradient
 	RGBA_Gradient_Type *geometer;
 	void          *gdata;
      } type;
-   
+
    int references;
-   
+
    unsigned char     imported_data : 1;
    unsigned char     has_alpha : 1;
 };
@@ -537,7 +554,7 @@ struct _RGBA_Font_Source
    int               data_size;
    int               current_size;
    Evas_Array_Hash  *charmap;
-   
+
    struct {
       int           orig_upem;
       FT_Face       face;
@@ -851,7 +868,7 @@ int  evas_common_cpu_has_feature                        (unsigned int feature);
 EAPI void evas_common_cpu_can_do                        (int *mmx, int *sse, int *sse2);
 EAPI void evas_common_cpu_end_opt                       (void);
 EAPI int evas_common_cpu_count                          (void);
-       
+
 /****/
 EAPI void evas_common_blend_init                        (void);
 
@@ -1172,7 +1189,7 @@ void          evas_common_regionbuf_span_add  (Regionbuf *rb, int x1, int x2, in
 void          evas_common_regionbuf_span_del  (Regionbuf *rb, int x1, int x2, int y);
 Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 */
-   
+
 /****/
 EAPI void               evas_common_draw_init                      (void);
 
@@ -1198,7 +1215,7 @@ EAPI void               evas_common_draw_context_set_anti_alias    (RGBA_Draw_Co
 EAPI void               evas_common_draw_context_set_color_interpolation(RGBA_Draw_Context *dc, int color_space);
 EAPI void               evas_common_draw_context_set_render_op     (RGBA_Draw_Context *dc, int op);
 EAPI void               evas_common_draw_context_set_sli           (RGBA_Draw_Context *dc, int y, int h);
-       
+
 /****/
 /* image rendering pipelines... new optional system - non-immediate and
  * threadable
@@ -1212,7 +1229,7 @@ EAPI void evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGB
 EAPI void evas_common_pipe_grad_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr);
 EAPI void evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
 EAPI void evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int smooth, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
-     
+
 void              evas_font_dir_cache_free(void);
 
 Evas_Array_Hash	*evas_common_array_hash_new	(void);
