@@ -1275,7 +1275,7 @@ void                            evas_cache_engine_image_drop(RGBA_Engine_Image *
 RGBA_Engine_Image*              evas_cache_engine_image_dirty(RGBA_Engine_Image *eim, int x, int y, int w, int h);
 RGBA_Engine_Image*              evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void* engine_data);
 RGBA_Engine_Image*              evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void* engine_data);
-void                            evas_cache_engine_colorspace(RGBA_Engine_Image *eim, int cspace, void* engine_data);
+void                            evas_cache_engine_image_colorspace(RGBA_Engine_Image *eim, int cspace, void* engine_data);
 RGBA_Engine_Image*              evas_cache_engine_image_size_set(RGBA_Engine_Image *eim, int w, int h);
 
 void                            evas_cache_engine_image_load_data(RGBA_Engine_Image *eim);
