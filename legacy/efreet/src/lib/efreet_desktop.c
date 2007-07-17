@@ -543,6 +543,17 @@ efreet_desktop_environment_set(const char *environment)
 }
 
 /**
+ * @internal
+ * @return environment: the environment name
+ * @brief sets the global desktop environment name
+ */
+const char *
+efreet_desktop_environment_get(void)
+{
+    return desktop_environment;
+}
+
+/**
  * @param desktop: The desktop to work with
  * @return Returns the number of categories assigned to this desktop
  * @brief Retrieves the number of categories the given @a desktop belongs

@@ -201,6 +201,8 @@ const char *efreet_lang_modifier_get(void);
 
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
+const char *efreet_desktop_environment_get(void);
+
 /**
  * @}
  */
