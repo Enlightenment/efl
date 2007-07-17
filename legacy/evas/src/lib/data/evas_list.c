@@ -893,6 +893,7 @@ evas_list_reverse(Evas_List *list)
 EAPI Evas_List *
 evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 {
+   Evas_List*   last;
    unsigned int	list_number;
    unsigned int	middle;
    int		list_size;
@@ -905,6 +906,7 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
        (size > ((Evas_List_Accounting *)(list->accounting))->count))
      size = ((Evas_List_Accounting *)(list->accounting))->count;
 
+   last = ((Evas_List_Accounting *)(list->accounting))->last;
    middle = size - size / 2;
 
    for (list_number = middle, list_size = 1;
@@ -976,7 +978,9 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 			   --size2;
 
                            if (head1 == list)
-			     list = head2;
+                             list = head2;
+                           if (head2 == last)
+                             last = prev2;
 
 			   head2 = next;
 			}
@@ -985,7 +989,8 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 	  }
      }
 
-   return(list);
+   ((Evas_List_Accounting *)(list->accounting))->last = last;
+   return list;
 }
 /**
  * Return the memory allocation failure flag after any operation needin allocation
