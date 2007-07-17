@@ -354,7 +354,7 @@ evas_engine_sdl_image_colorspace_set(void *data, void *image, int cspace)
    if (!eim) return;
    if (eim->src->cs.space == cspace) return;
 
-   evas_cache_engine_colorspace(eim, cspace, NULL);
+   evas_cache_image_colorspace(eim, cspace);
 }
 
 static void*

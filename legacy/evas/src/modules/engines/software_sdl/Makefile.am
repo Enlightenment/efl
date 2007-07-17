@@ -15,7 +15,7 @@ evas_engine.c \
 evas_engine.h
 
 module_la_LIBADD = @sdl_libs@ $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
+module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_SDL.h
