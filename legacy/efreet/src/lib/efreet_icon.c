@@ -11,10 +11,26 @@ static Ecore_Hash *efreet_icon_themes = NULL;
 Ecore_List *efreet_icon_extensions = NULL;
 static Ecore_List *efreet_extra_icon_dirs = NULL;
 
+static char *efreet_icon_remove_extension(const char *icon);
+static Efreet_Icon_Theme *efreet_icon_find_theme_check(const char *theme_name);
+
+
+static Efreet_Icon *efreet_icon_find_fallback(Efreet_Icon_Theme *theme, 
+                                              const char *cache_key, 
+                                              const char *icon, 
+                                              const char *size);
+static Efreet_Icon *efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme, 
+                                                    Ecore_List *cache_keys, 
+                                                    Ecore_List *icons, 
+                                                    const char *size);
 static Efreet_Icon *efreet_icon_find_helper(Efreet_Icon_Theme *theme, 
                                                 const char *cache_key,
                                                 const char *icon,
                                                 const char *size);
+static Efreet_Icon *efreet_icon_list_find_helper(Efreet_Icon_Theme *theme, 
+                                                    Ecore_List *cache_keys,
+                                                    Ecore_List *icons, 
+                                                    const char *size);
 static Efreet_Icon *efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, 
                                                     const char *icon_name, 
                                                     const char *size);
@@ -238,6 +254,63 @@ efreet_icon_theme_find(const char *theme_name)
 }
 
 /**
+ * @internal
+ * @param icon: The icon name to strip extension
+ * @return Extension removed if in list of extensions, else untouched.
+ * @brief Removes extension from icon name if in list of extensions.
+ */
+static char *
+efreet_icon_remove_extension(const char *icon)
+{
+    char *tmp = NULL, *ext = NULL;
+
+    tmp = strdup(icon);
+    ext = strrchr(tmp, '.');
+    if (ext)
+    {
+        const char *ext2;
+        ecore_list_goto_first(efreet_icon_extensions);
+        while ((ext2 = ecore_list_next(efreet_icon_extensions)))
+        {
+            if (!strcmp(ext, ext2))
+            {
+#ifdef STRICT_SPEC
+                printf("[Efreet]: Requesting an icon with an extension: %s\n", 
+                                                                        icon);
+#endif
+                *ext = '\0';
+                break;
+            }
+        }
+    }
+
+    return tmp;
+}
+
+/**
+ * @internal
+ * @param theme_name: The icon theme to look for
+ * @return Returns the Efreet_Icon_Theme structure representing this theme
+ * or a new blank theme if not found
+ * @brief Retrieves a theme, or creates a blank one if not found.
+ */
+static Efreet_Icon_Theme *
+efreet_icon_find_theme_check(const char *theme_name)
+{
+    Efreet_Icon_Theme *theme = NULL;
+    theme = efreet_icon_theme_find(theme_name);
+    if (!theme)
+    {
+        theme = efreet_icon_theme_new();
+        theme->fake = 1;
+        theme->name.internal = ecore_string_instance(theme_name);
+        ecore_hash_set(efreet_icon_themes, (void *)theme->name.internal, theme);
+    }   
+    
+    return theme;
+}
+
+/**
  * @param theme_name: The icon theme to look for
  * @param icon: The icon to look for
  * @param size; The icon size to look for
@@ -254,54 +327,104 @@ efreet_icon_find(const char *theme_name, const char *icon, const char *size)
     Efreet_Icon_Theme *theme;
     const char *key_list[] = { icon, "@", size, NULL };
 
-    theme = efreet_icon_theme_find(theme_name);
-    if (!theme)
-    {
-        theme = efreet_icon_theme_new();
-        theme->fake = 1;
-        theme->name.internal = ecore_string_instance(theme_name);
-        ecore_hash_set(efreet_icon_themes, (void *)theme->name.internal, theme);
-    }
+    theme = efreet_icon_find_theme_check(theme_name);
 
     efreet_array_cat(cache_key, sizeof(cache_key), key_list);
 
     share_key = ecore_string_instance(cache_key);
 #ifdef SLOPPY_SPEC
     {
-        char *tmp, *ext;
-
-        tmp = strdup(icon);
-        ext = strrchr(tmp, '.');
-        if (ext)
-        {
-            const char *ext2;
-            ecore_list_goto_first(efreet_icon_extensions);
-            while ((ext2 = ecore_list_next(efreet_icon_extensions)))
-            {
-                if (!strcmp(ext, ext2))
-                {
-#ifdef STRICT_SPEC
-                    printf("[Efreet]: Requesting an icon with an extension: %s\n", icon);
-#endif
-                    *ext = '\0';
-                    break;
-                }
-            }
-        }
-
+        char *tmp;
+    
+        tmp = efreet_icon_remove_extension(icon);
         value = efreet_icon_find_helper(theme, share_key, tmp, size);
-        free(tmp);
+        FREE(tmp);
     }
 #else
     value = efreet_icon_find_helper(theme, share_key, icon, size);
 #endif
 
     /* we didn't find the icon in the theme or in the inherited directories
-     * then just look for a non theme icon */
+     * then just look for a non theme icon 
+     */
     if (!value) value = efreet_icon_fallback_icon(icon);
 
     efreet_icon_cache_set(theme, share_key, value);
 
+    if (value == (void *)NO_MATCH_KEY)
+        value = NULL;
+
+    return value;
+}
+
+/**
+ * @param theme_name: The icon theme to look for
+ * @param icon: List of icons to look for
+ * @param size; The icon size to look for
+ * @return Returns the Efreet_Icon structure representing first found icon or 
+ * NULL if none of the icons are found
+ * @brief Retrieves all of the information about the first found icon in 
+ * the list.
+ * @note This function will search the given theme for all icons before falling
+ * back.  This is useful when searching for mimetype icons.
+ */
+Efreet_Icon *
+efreet_icon_list_find(const char *theme_name, Ecore_List *icons, 
+                                                            const char *size)
+{
+    Ecore_List *share_keys;
+    char cache_key[PATH_MAX]; 
+    const char *icon = NULL;
+    const char *share_key = NULL;
+    Efreet_Icon *value = NULL;
+    Efreet_Icon_Theme *theme;
+    
+    theme = efreet_icon_find_theme_check(theme_name);
+    
+    share_keys = ecore_list_new();
+    ecore_list_set_free_cb(share_keys,free);
+    ecore_list_goto_first(icons);
+    
+    while ((icon = ecore_list_next(icons)))
+    {        
+        snprintf(cache_key, sizeof(cache_key),"%s@%s", icon, size); 
+        ecore_list_append(share_keys, strdup(cache_key));
+    }
+#ifdef SLOPPY_SPEC
+    {
+        Ecore_List *tmps = NULL;
+
+        tmps = ecore_list_new();
+        ecore_list_set_free_cb(tmps, free);
+        ecore_list_goto_first(icons);
+        while ((icon = ecore_list_next(icons)))
+            ecore_list_append(tmps, efreet_icon_remove_extension(icon));
+        
+        value = efreet_icon_list_find_helper(theme, share_keys, tmps, size);
+        ecore_list_destroy(tmps);
+    }
+#else
+    value = efreet_icon_list_find_helper(theme, share_keys, icons, size);
+#endif
+
+    /* we didn't find the icons in the theme or in the inherited directories
+     * then just look for a non theme icon 
+     */
+    if(!value)
+    {
+        ecore_list_goto_first(icons);
+        while ((icon = ecore_list_next(icons)))
+        {
+            if ((value = efreet_icon_fallback_icon(icon)))
+                break;
+        }
+    }
+    
+    ecore_list_goto_first(share_keys);
+    while ((share_key = ecore_list_next(share_keys)))
+        efreet_icon_cache_set(theme, ecore_string_instance(share_key), value);
+    ecore_list_destroy(share_keys);
+    
     if (value == (void *)NO_MATCH_KEY)
         value = NULL;
 
@@ -333,6 +456,53 @@ efreet_icon_path_find(const char *theme, const char *icon, const char *size)
  * @param size: The size to search for
  * @return Returns the icon matching the given information or NULL if no
  * icon found
+ * @brief Scans inheriting themes for the given icon
+ */
+static Efreet_Icon *
+efreet_icon_find_fallback(Efreet_Icon_Theme *theme, const char *cache_key, 
+                                          const char *icon, const char *size)
+{
+    char *parent = NULL;
+    Efreet_Icon *value = NULL;
+      
+    if (theme->inherits)
+    {
+        ecore_list_goto_first(theme->inherits);
+        while ((parent = ecore_list_next(theme->inherits)))
+        {
+            Efreet_Icon_Theme *parent_theme;
+
+            parent_theme = efreet_icon_theme_find(parent);
+            if ((!parent_theme) || (parent_theme == theme)) continue;
+
+            value = efreet_icon_find_helper(parent_theme, cache_key, 
+                                                        icon, size);
+            if (value) break;
+        }
+    }
+    /* if this isn't the hicolor theme, and we have no other fallbacks
+     * check hicolor */
+    else if (strcmp(theme->name.internal, "hicolor"))
+    {
+        Efreet_Icon_Theme *parent_theme;
+
+        parent_theme = efreet_icon_theme_find("hicolor");
+        if (parent_theme)
+            value = efreet_icon_find_helper(parent_theme, cache_key, 
+                                                        icon, size);
+    }
+    
+    return value;
+}
+
+/**
+ * @internal
+ * @param theme: The theme to search in
+ * @param cache_key: The cache key to use  (icon\@sizexsize ecore_string)
+ * @param icon: The icon to search for
+ * @param size: The size to search for
+ * @return Returns the icon matching the given information or NULL if no
+ * icon found
  * @brief Scans the theme and any inheriting themes for the given icon
  */
 static Efreet_Icon *
@@ -341,7 +511,7 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme, const char *cache_key,
                                                 const char *size)
 {
     Efreet_Icon *value;
-   static int recurse = 0;
+    static int recurse = 0;
 
     efreet_icon_theme_cache_check(theme);
 
@@ -360,36 +530,108 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme, const char *cache_key,
 
     /* we didin't find the image check the inherited themes */
     if (!value)
+        value = efreet_icon_find_fallback(theme, cache_key, icon, size);
+
+    recurse--;
+    return value;
+}
+
+/**
+ * @internal
+ * @param theme: The theme to search in
+ * @param cache_keys: The cache keys to use  (icon\@sizexsize ecore_string)
+ * @param icons: The icons to search for
+ * @param size: The size to search for
+ * @return Returns the icon matching the given information or NULL if no
+ * icon found
+ * @brief Scans inheriting themes for the given icons
+ */
+static Efreet_Icon *
+efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme, Ecore_List *cache_keys, 
+                                          Ecore_List *icons, const char *size)
+{
+    char *parent = NULL;
+    Efreet_Icon *value = NULL;
+
+    if (theme->inherits)
     {
-        char *parent;
-
-        if (theme->inherits)
-        {
-            ecore_list_goto_first(theme->inherits);
-            while ((parent = ecore_list_next(theme->inherits)))
-            {
-                Efreet_Icon_Theme *parent_theme;
-
-                parent_theme = efreet_icon_theme_find(parent);
-                if ((!parent_theme) || (parent_theme == theme)) continue;
-
-                value = efreet_icon_find_helper(parent_theme, cache_key, 
-                                                            icon, size);
-                if (value) break;
-            }
-        }
-        /* if this isn't the hicolor theme, and we have no other fallbacks
-         * check hicolor */
-        else if (strcmp(theme->name.internal, "hicolor"))
+        ecore_list_goto_first(theme->inherits);
+        while ((parent = ecore_list_next(theme->inherits)))
         {
             Efreet_Icon_Theme *parent_theme;
 
-            parent_theme = efreet_icon_theme_find("hicolor");
-            if (parent_theme)
-                value = efreet_icon_find_helper(parent_theme, cache_key, 
-                                                            icon, size);
+            parent_theme = efreet_icon_theme_find(parent);
+            if ((!parent_theme) || (parent_theme == theme)) continue;
+
+            value = efreet_icon_list_find_helper(parent_theme, cache_keys, 
+                                                        icons, size);
+            if (value) break;
         }
     }
+    
+    /* if this isn't the hicolor theme, and we have no other fallbacks
+     * check hicolor 
+     */
+    else if (strcmp(theme->name.internal, "hicolor"))
+    {
+        Efreet_Icon_Theme *parent_theme;
+
+        parent_theme = efreet_icon_theme_find("hicolor");
+        if (parent_theme)
+            value = efreet_icon_list_find_helper(parent_theme, cache_keys, 
+                                                        icons, size);
+    }
+    
+    return value;
+}
+
+/**
+ * @internal
+ * @param theme: The theme to search in
+ * @param cache_keys: The cache keys to use  (icon\@sizexsize ecore_string)
+ * @param icons: The icons to search for
+ * @param size: The size to search for
+ * @return Returns the icon matching the given information or NULL if no
+ * icon found
+ * @brief Scans the theme and any inheriting themes for the given icons
+ */
+static Efreet_Icon *
+efreet_icon_list_find_helper(Efreet_Icon_Theme *theme, Ecore_List *cache_keys,
+                                                        Ecore_List *icons, 
+                                                        const char *size)
+{
+    Efreet_Icon *value = NULL;
+    const char *icon = NULL;
+    const char *cache_key = NULL;
+    static int recurse = 0;
+
+    efreet_icon_theme_cache_check(theme);
+
+    /* see if this is in the cache already */
+    ecore_list_goto_first(cache_keys);
+    while ((cache_key = ecore_list_next(cache_keys)))
+    {
+        if ((value = efreet_icon_cache_get(theme, cache_key)))
+            return value;
+    }
+
+    /* go no further if this theme is fake */
+    if (theme->fake || !theme->valid) return NULL;
+
+    /* limit recursion in finding themes and inherited themes to 256 levels */
+    if (recurse > 256) return NULL;
+    recurse++;
+   
+    ecore_list_goto_first(icons);
+    while ((icon = ecore_list_next(icons)))
+    {
+        if ((value = efreet_icon_lookup_icon(theme, icon, size)))
+            break;
+    }
+
+    /* we didn't find the image check the inherited themes */
+    if (!value)
+        value = efreet_icon_list_find_fallback(theme, cache_keys, icons, size);
 
     recurse--;
     return value;
@@ -800,7 +1042,7 @@ efreet_icon_cache_set(Efreet_Icon_Theme *theme, const char *key, void *value)
     /* XXX this is a bit inefficient as I'll end up adding back to the cache
      * even if I found the item in the cache. Not a big deal at the moment
      * tho. */
-    if (!value) 
+    if (!value)
         ecore_hash_set(theme->icon_cache, (void *)key, NO_MATCH_KEY);
     else 
     {

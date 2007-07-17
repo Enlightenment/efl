@@ -109,6 +109,9 @@ efreet_mime_init(void)
     if (!efreet_init())
         return 0;
     
+    if (!efreet_icon_init())
+        return 0;
+    
     efreet_mime_endianess = efreet_mime_endian_check();
     
     monitors = ecore_hash_new(ecore_str_hash, ecore_str_compare);
@@ -133,13 +136,14 @@ efreet_mime_shutdown(void)
     IF_FREE_LIST(magics);
     IF_FREE_HASH(monitors);
 
+    efreet_icon_shutdown();
     efreet_shutdown();
     ecore_file_shutdown();
     ecore_shutdown();
 }
 
 /**
- * @param file: The file to check the mime type
+ * @param file: The file to find the mime type
  * @return Returns mime type as a string
  * @brief Retreive the mime type of a file
  */
@@ -170,6 +174,76 @@ efreet_mime_type_get(const char *file)
         return type;
     
     return efreet_mime_fallback_check(file);
+}
+
+/**
+ * @param file: The file to find the mime type icon
+ * @return Returns mime type icon path as a string
+ * @brief Retreive the mime type icon for a file
+ */
+const char *
+efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
+{
+    Efreet_Icon *icon = NULL;
+    Ecore_List *icons  = NULL;
+    const char *env = NULL;
+    char *p = NULL, *pp = NULL, *ppp = NULL;
+    char buf[PATH_MAX];
+    
+    if (!mime || !theme || !size)
+        return NULL;
+    
+    icons = ecore_list_new();    
+    ecore_list_set_free_cb(icons, free);
+
+    /* Standard icon name */
+    p = strdup(mime);
+    pp = p;
+    while (*pp)
+    {
+        if (*pp == '/')
+            *pp = '-';
+        pp++;
+    }
+    ecore_list_append(icons, p);
+    
+    /* Environment Based icon names */
+    if ((env = efreet_desktop_environment_get()))
+    {
+        snprintf(buf, sizeof(buf), "%s-mime-%s", env, p);
+        ecore_list_append(icons, strdup(buf));
+        
+        snprintf(buf, sizeof(buf), "%s-%s", env, p);
+        ecore_list_append(icons, strdup(buf));
+    }
+    
+    /* Mime prefixed icon names */
+    snprintf(buf, sizeof(buf), "mime-%s", p);
+    ecore_list_append(icons, strdup(buf));
+
+    /* Generic icons */
+    pp = strdup(p);
+    while ((ppp = strrchr(pp, '-')))
+    {
+        *ppp = '\0';
+        
+        snprintf(buf, sizeof(buf), "%s-generic", pp);
+        ecore_list_append(icons, strdup(buf));
+        
+        snprintf(buf, sizeof(buf), "%s", pp);
+        ecore_list_append(icons, strdup(buf));
+    }
+    FREE(pp);
+    
+    /* Search for icons using list */
+    icon = efreet_icon_list_find(theme, icons, size);
+      
+    ecore_list_destroy(icons);
+    
+    if (icon)
+        return icon->path;
+    
+    return NULL;
 }
 
 /**
@@ -535,12 +609,15 @@ efreet_mime_fallback_check(const char *file)
         return "application/octet-stream";
     /*
      * Check for ASCII control characters in the first 32 bytes.
-     * New lines and carriage returns are ignored as they are
-     * quite common in text files.
+     * Line Feeds, carriage returns, and tabs are ignored as they are
+     * quite common in text files in the first 32 chars.
      */
     for (i -= 1; i >= 0; --i)
     {
-        if ((buf[i] < 0x20) && (buf[i] != '\n') && (buf[i] != '\r')) 
+        if ((buf[i] < 0x20) && 
+            (buf[i] != '\n') &&     /* Line Feed */
+            (buf[i] != '\r') &&     /* Carriage Return */
+            (buf[i] != '\t'))       /* Tab */
             return "application/octet-stream";
     }
     

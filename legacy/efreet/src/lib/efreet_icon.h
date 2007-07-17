@@ -167,7 +167,9 @@ Ecore_List        *efreet_icon_theme_list_get(void);
 Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
 Efreet_Icon       *efreet_icon_find(const char *theme_name, const char *icon, 
                                                         const char *size);
-
+Efreet_Icon       *efreet_icon_list_find(const char *theme_name, 
+                                                        Ecore_List *icons, 
+                                                        const char *size);
 const char        *efreet_icon_path_find(const char *theme, const char *icon,
                                                         const char *size);
 
