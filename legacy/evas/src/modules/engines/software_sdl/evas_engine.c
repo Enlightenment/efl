@@ -5,7 +5,7 @@
 #include <time.h>
 #include <SDL/SDL.h>
 
-#include "evas_engine_sdl.h"
+#include "evas_engine.h"
 
 /* #define DEBUG_SDL */
 

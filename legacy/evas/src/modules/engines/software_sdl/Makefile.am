@@ -11,8 +11,8 @@ pkgdir = $(libdir)/evas/modules/engines/software_sdl/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES  = \
-evas_engine_sdl.c \
-evas_engine_sdl.h
+evas_engine.c \
+evas_engine.h
 
 module_la_LIBADD = @sdl_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
@@ -23,6 +23,6 @@ include_HEADERS = Evas_Engine_SDL.h
 endif
 
 EXTRA_DIST = \
-evas_engine_sdl.c \
-evas_engine_sdl.h \
+evas_engine.c \
+evas_engine.h \
 Evas_Engine_SDL.h
