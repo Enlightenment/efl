@@ -1,8 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_ECORE_CONFIG
+ECORE_CONFIG_PROG = ecore_config
 ECORE_CONFIG_LIB = $(top_builddir)/src/lib/ecore_config/libecore_config.la
 else
+ECORE_CONFIG_PROG =
 ECORE_CONFIG_LIB =
 endif
 
@@ -16,8 +18,7 @@ INCLUDES = \
 -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
 -DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
 
-bin_PROGRAMS = \
-ecore_config
+bin_PROGRAMS = $(ECORE_CONFIG_PROG)
 
 ecore_config_SOURCES = \
 ecore_config.c
