@@ -306,7 +306,8 @@ evas_common_image_new(void)
 EAPI void
 evas_common_image_colorspace_normalize(RGBA_Image *im)
 {
-   if ((!im->cs.data) || (!im->cs.dirty)) return;
+   if ((!im->cs.data) || 
+       ((!im->cs.dirty) && (!(im->flags & RGBA_IMAGE_IS_DIRTY)))) return;
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:

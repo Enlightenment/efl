@@ -27,8 +27,8 @@ struct _Evas_Object_Image
       const char    *key;
       int            cspace;
 
-      char           smooth_scale : 1;
-      char           has_alpha :1;
+      unsigned char  smooth_scale : 1;
+      unsigned char  has_alpha :1;
    } cur, prev;
 
    int               pixels_checked_out;
@@ -48,8 +48,8 @@ struct _Evas_Object_Image
 
    void             *engine_data;
 
-   char              changed : 1;
-   char              dirty_pixels : 1;
+   unsigned char     changed : 1;
+   unsigned char     dirty_pixels : 1;
 };
 
 /* private methods for image objects */
