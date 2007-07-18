@@ -461,7 +461,7 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 	ret = write(dv->ev->fd_write, &buf, sizeof(void *));
 //	printf("-- FRAME DEC %p == %i\n", fr->frame.obj, ret);
 	fr->in_use = 1;
-//	dv->ev->fq++;
+	dv->ev->fq++;
      }
    /* hmm - must find a way to sanely copy data out... FIXME problem */
 //   fr->vo_frame.free(&fr->vo_frame);

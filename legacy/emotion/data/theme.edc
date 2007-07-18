@@ -138,7 +138,6 @@ collections {
 		  relative: 0.0  0.0;
 		  offset:   14   14;
 	       }
-	       color: 0 0 0 0;
 	    }
 	 }
 	 part {
@@ -771,7 +770,6 @@ collections {
 		  relative: 0.0  1.0;
 		  offset:   7    -25;
 	       }
-	       color: 0 0 0 0;
 	    }
 	 }
 	 part {

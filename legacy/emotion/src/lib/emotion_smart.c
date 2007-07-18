@@ -822,6 +822,7 @@ _emotion_frame_new(Evas_Object *obj)
    Smart_Data *sd;
    
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+//   printf("pix get set 1 %p\n", sd->obj);
    evas_object_image_pixels_dirty_set(sd->obj, 1);
 }
 
@@ -1036,6 +1037,7 @@ _pixels_get(void *data, Evas_Object *obj)
      }
    if ((iw < 1) || (ih < 1))
      {
+//	printf("pix get set 0 (1)\n");
 	evas_object_image_pixels_dirty_set(obj, 0);
      }
    else
@@ -1056,6 +1058,7 @@ _pixels_get(void *data, Evas_Object *obj)
 		    evas_object_image_data_update_add(obj, 0, 0, iw, ih);
 	       }
 	     evas_object_image_data_set(obj, rows);
+//	     printf("pix get set 0 (2)\n");
 	     evas_object_image_pixels_dirty_set(obj, 0);
 	  }
 	else if (format == EMOTION_FORMAT_BGRA)
@@ -1063,6 +1066,7 @@ _pixels_get(void *data, Evas_Object *obj)
 	     if (sd->module->bgra_data_get(sd->video, &bgra_data));
 	       {
 		  evas_object_image_data_set(obj, bgra_data);
+//		  printf("pix get set 0 (3)\n");
 		  evas_object_image_pixels_dirty_set(obj, 0);
 	       }
 	  }
