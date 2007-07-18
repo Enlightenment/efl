@@ -79,7 +79,6 @@ evas_common_load_image_module_from_file(RGBA_Image *im)
 	  }
      }
 
-   evas_common_image_delete(im);
    return -1;
 
   ok:
