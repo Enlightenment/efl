@@ -51,6 +51,7 @@ struct _Emotion_Xine_Video
    volatile unsigned char    opening : 1;
    volatile unsigned char    closing : 1;
    volatile unsigned char    have_vo : 1;
+   volatile unsigned char    play_ok : 1;
    
    pthread_t                 get_pos_len_th;
    pthread_cond_t            get_pos_len_cond;

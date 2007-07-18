@@ -128,6 +128,7 @@ _em_slave(void *par)
 		       ev->queue = xine_event_new_queue(ev->stream);
 		       xine_event_create_listener_thread(ev->queue, _em_event, ev);
 		       ev->opening = 0;
+		       ev->play_ok = 1;
 		       _em_module_event(ev, 1); /* event - open done */
 		    }
 		  break;
@@ -405,6 +406,7 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev->delete_me = 0;
    ev->get_pos_thread_deleted = 0;
    ev->opening = 1;
+   ev->play_ok = 0;
    
    if (opt)
      {
@@ -471,6 +473,7 @@ em_play(void *ef, double pos)
    
    ev = (Emotion_Xine_Video *)ef;
    ev->play = 1;
+   ev->play_ok = 0;
    ppos = malloc(sizeof(double));
    *ppos = pos;
    _em_slave_event(ev, 4, ppos);
@@ -483,6 +486,7 @@ em_stop(void *ef)
    
    ev = (Emotion_Xine_Video *)ef;
    ev->play = 0;
+   ev->play_ok = 0;
    _em_slave_event(ev, 5, NULL);
 }
 
@@ -591,7 +595,7 @@ em_video_handled(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO) &&
       xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED));
 }
@@ -602,7 +606,7 @@ em_audio_handled(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_AUDIO) &&
       xine_get_stream_info(ev->stream, XINE_STREAM_INFO_AUDIO_HANDLED));
 }
@@ -613,7 +617,7 @@ em_seekable(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return xine_get_stream_info(ev->stream, XINE_STREAM_INFO_SEEKABLE);
 }
 
@@ -707,7 +711,7 @@ em_event_feed(void *ef, int event)
    xine_event_t xine_event;
 
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return;
+   if ((ev->opening) || (!ev->play_ok)) return;
    xine_event.data_length = 0;
    xine_event.data        = NULL;
    xine_event.stream      = ev->stream;
@@ -813,7 +817,7 @@ em_event_mouse_button_feed(void *ef, int button, int x, int y)
    xine_input_data_t xine_input;
 
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return;
+   if ((ev->opening) || (!ev->play_ok)) return;
    xine_event.stream      = ev->stream;
    gettimeofday(&xine_event.tv, NULL);
    xine_event.type = XINE_EVENT_INPUT_MOUSE_BUTTON;
@@ -833,7 +837,7 @@ em_event_mouse_move_feed(void *ef, int x, int y)
    xine_input_data_t xine_input;
 
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return;
+   if ((ev->opening) || (!ev->play_ok)) return;
    xine_event.stream      = ev->stream;
    gettimeofday(&xine_event.tv, NULL);
    xine_event.type = XINE_EVENT_INPUT_MOUSE_MOVE;
@@ -852,7 +856,7 @@ em_video_channel_count(void *ef)
    int v;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    v = xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_CHANNELS);
    if ((v < 1) &&
        xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO)) return 1;
@@ -876,7 +880,7 @@ em_video_channel_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return xine_get_param(ev->stream, XINE_PARAM_VIDEO_CHANNEL);
 }
 
@@ -913,7 +917,7 @@ em_audio_channel_count(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return xine_get_stream_info(ev->stream, XINE_STREAM_INFO_MAX_AUDIO_CHANNEL);
 }
 
@@ -934,7 +938,7 @@ em_audio_channel_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return xine_get_param(ev->stream, XINE_PARAM_AUDIO_CHANNEL_LOGICAL);
 }
 
@@ -988,7 +992,7 @@ em_audio_channel_volume_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return (double)xine_get_param(ev->stream, XINE_PARAM_AUDIO_VOLUME) / 100.0;
 }
 
@@ -998,7 +1002,7 @@ em_spu_channel_count(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return xine_get_stream_info(ev->stream, XINE_STREAM_INFO_MAX_SPU_CHANNEL);
 }
 
@@ -1019,7 +1023,7 @@ em_spu_channel_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    return xine_get_param(ev->stream, XINE_PARAM_SPU_CHANNEL);
 }
 
@@ -1061,7 +1065,7 @@ em_chapter_count(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return 0;
+   if (ev->opening || (!ev->play_ok)) return 0;
    if (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_CHAPTERS))
      return 99;
    return 0;
@@ -1126,7 +1130,7 @@ em_meta_get(void *ef, int meta)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening) return NULL;
+   if ((ev->opening) || (!ev->play_ok)) return NULL;
    switch (meta)
      {
       case META_TRACK_TITLE:
@@ -1254,6 +1258,44 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 	     eev = buf[1];
 	     if (eev->mtype != 0)
 	       {
+		  switch (eev->mtype)
+		    {
+		     case 1: /* init done */
+		       ev->play_ok = 1;
+		       break;
+		     case 2: /* open done */
+		       ev->play_ok = 1;
+		       break;
+		     case 3: /* shutdown done */
+		       ev->play_ok = 1;
+		       break;
+		     case 4: /* play done */
+		       ev->play_ok = 1;
+		       break;
+		     case 5: /* stop done */
+		       ev->play_ok = 1;
+		       break;
+		     case 6: /* seek done */
+		       ev->play_ok = 1;
+		       break;
+		     case 7: /* eject done */
+		       ev->play_ok = 1;
+		       break;
+		     case 8: /* spu mute done */
+		       ev->play_ok = 1;
+		       break;
+		     case 9: /* channel done */
+		       ev->play_ok = 1;
+		       break;
+		     case 10: /* volume done */
+		       ev->play_ok = 1;
+		       break;
+		     case 11: /* close done */
+		       ev->play_ok = 1;
+		       break;
+		     default:
+		       break;
+		    }
 	       }
 	     else
 	       {
