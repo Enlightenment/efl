@@ -11,6 +11,8 @@ static Ecore_Hash *efreet_icon_themes = NULL;
 Ecore_List *efreet_icon_extensions = NULL;
 static Ecore_List *efreet_extra_icon_dirs = NULL;
 
+static int efreet_icon_init_count = 0;
+
 static char *efreet_icon_remove_extension(const char *icon);
 static Efreet_Icon_Theme *efreet_icon_find_theme_check(const char *theme_name);
 
@@ -89,12 +91,19 @@ static int efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme,
 int 
 efreet_icon_init(void)
 {
+    if (efreet_icon_init_count++ > 0)
+        return efreet_icon_init_count;
+
     if (!efreet_icon_themes)
     {
         const char *default_exts[] = {".png", ".xpm", NULL};
         int i;
 
-        if (!ecore_init()) return 0;
+        if (!ecore_init())
+        {
+            efreet_icon_init_count--;
+            return 0;
+        }
 
         /* setup the default extension list */
         efreet_icon_extensions = ecore_list_new();
@@ -120,6 +129,9 @@ efreet_icon_init(void)
 void
 efreet_icon_shutdown(void)
 {
+    if (--efreet_icon_init_count)
+        return;
+
     IF_FREE(efreet_icon_user_dir);
     IF_FREE(efreet_icon_deprecated_user_dir);
 
@@ -129,6 +141,7 @@ efreet_icon_shutdown(void)
     IF_FREE_LIST(efreet_extra_icon_dirs);
 
     ecore_shutdown();
+    efreet_icon_init_count = 0;
 }
 
 /**
