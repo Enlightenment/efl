@@ -109,9 +109,6 @@ efreet_mime_init(void)
     if (!efreet_init())
         return 0;
     
-    if (!efreet_icon_init())
-        return 0;
-    
     efreet_mime_endianess = efreet_mime_endian_check();
     
     monitors = ecore_hash_new(ecore_str_hash, ecore_str_compare);
@@ -136,7 +133,6 @@ efreet_mime_shutdown(void)
     IF_FREE_LIST(magics);
     IF_FREE_HASH(monitors);
 
-    efreet_icon_shutdown();
     efreet_shutdown();
     ecore_file_shutdown();
     ecore_shutdown();
