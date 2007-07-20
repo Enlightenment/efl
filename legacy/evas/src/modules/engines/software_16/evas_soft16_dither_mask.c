@@ -1,12 +1,12 @@
 #include "evas_soft16.h"
 
-#define DM_SIZE      128
-#define DM_BITS      6
-#define DM_DIV       64
-#define DM_MSK       (DM_SIZE - 1)
-#define DM_SHF(_b)   (DM_BITS - (8 - _b))
+#define S16_DM_SIZE      128
+#define S16_DM_BITS      6
+#define S16_DM_DIV       64
+#define S16_DM_MSK       (S16_DM_SIZE - 1)
+#define S16_DM_SHF(_b)   (S16_DM_BITS - (8 - _b))
 
-static const DATA8 dither_table[DM_SIZE][DM_SIZE] =
+static const DATA8 dither_table[S16_DM_SIZE][S16_DM_SIZE] =
 {
      { 0, 41, 23, 5, 17, 39, 7, 15, 62, 23, 40, 51, 31, 47, 9, 32, 52, 27, 57, 25, 6, 61, 27, 52, 37, 7, 40, 63, 18, 36, 10, 42, 25, 62, 45, 34, 20, 42, 37, 14, 35, 29, 50, 10, 61, 2, 40, 8, 37, 12, 58, 22, 5, 41, 10, 39, 0, 60, 11, 46, 2, 55, 38, 17, 36, 59, 13, 54, 37, 56, 8, 29, 16, 13, 63, 22, 41, 55, 7, 20, 49, 14, 23, 55, 37, 23, 19, 36, 15, 49, 23, 63, 30, 14, 38, 27, 53, 13, 22, 41, 19, 31, 7, 19, 50, 30, 49, 16, 3, 32, 56, 40, 29, 34, 8, 48, 19, 45, 4, 51, 12, 46, 35, 49, 16, 42, 12, 62 },
      { 30, 57, 36, 54, 47, 34, 52, 27, 43, 4, 28, 7, 17, 36, 62, 13, 44, 7, 18, 48, 33, 21, 44, 14, 30, 47, 12, 33, 5, 55, 31, 58, 13, 30, 4, 17, 52, 10, 60, 26, 46, 0, 39, 27, 42, 22, 47, 25, 60, 32, 9, 38, 48, 17, 59, 30, 49, 18, 34, 25, 51, 19, 5, 48, 21, 8, 28, 46, 1, 32, 41, 19, 54, 47, 37, 18, 28, 11, 44, 30, 39, 56, 2, 33, 8, 42, 61, 28, 58, 8, 46, 9, 41, 4, 58, 7, 21, 48, 59, 10, 52, 14, 42, 57, 12, 25, 7, 53, 42, 24, 11, 50, 17, 59, 42, 2, 36, 60, 32, 17, 63, 29, 21, 7, 59, 32, 24, 39 },
@@ -142,7 +142,7 @@ static inline void
 _soft16_convert_from_rgba_pt(const DATA32 *src, DATA16 *dst, DATA8 *alpha,
 			     const int x, const int y)
 {
-   DATA8 orig_r, orig_g, orig_b, orig_a, r, g, b, a, dith5, dith6;
+   DATA8 orig_r, orig_g, orig_b, orig_a, r, g, b, a, dith5, dith6, dith;
 
    orig_r = R_VAL(src);
    orig_g = G_VAL(src);
@@ -154,8 +154,9 @@ _soft16_convert_from_rgba_pt(const DATA32 *src, DATA16 *dst, DATA8 *alpha,
    b = orig_b >> 3;
    a = orig_a >> 3;
 
-   dith5 = dither_table[x & DM_MSK][y & DM_MSK] >> DM_SHF(5);
-   dith6 = dither_table[x & DM_MSK][y & DM_MSK] >> DM_SHF(6);
+   dith = dither_table[x & S16_DM_MSK][y & S16_DM_MSK];
+   dith5 = dith >> S16_DM_SHF(5);
+   dith6 = dith >> S16_DM_SHF(6);
 
    if (((orig_r - (r << 3)) >= dith5) && (r < 0x1f)) r++;
    if (((orig_g - (g << 2)) >= dith6) && (g < 0x3f)) g++;
@@ -166,29 +167,53 @@ _soft16_convert_from_rgba_pt(const DATA32 *src, DATA16 *dst, DATA8 *alpha,
    *alpha = a;
 }
 
+static inline void
+_soft16_convert_from_rgba_scanline(const DATA32 *src, DATA16 *dst,
+				   DATA8 *alpha, const int y, const int w)
+{
+   int x, m;
+
+   m = (w & ~7);
+   x = 0;
+   pld(src, 0);
+
+   while (x < m)
+     {
+	pld(src, 32);
+	UNROLL8({
+	   _soft16_convert_from_rgba_pt(src, dst, alpha, x, y);
+	   src++;
+	   dst++;
+	   alpha++;
+	   x++;
+	});
+     }
+
+   for (; x < w; x++, src++, dst++, alpha++)
+     _soft16_convert_from_rgba_pt(src, dst, alpha, x, y);
+}
+
 void
 soft16_image_convert_from_rgba(Soft16_Image *im, const DATA32 *src)
 {
    const DATA32 *sp;
    DATA16 *dp;
    DATA8 *ap;
-   int x, y, pad;
+   int y;
 
    sp = src;
    dp = im->pixels;
    ap = im->alpha;
-   pad = im->stride - im->w;
 
-   for (y = 0; y < im->h; y++, dp += pad, ap += pad)
-     for (x = 0; x < im->w; x++, sp++, dp++, ap++)
-       _soft16_convert_from_rgba_pt(sp, dp, ap, x, y);
+   for (y = 0; y < im->h; y++, sp += im->w, dp += im->stride, ap += im->stride)
+     _soft16_convert_from_rgba_scanline(sp, dp, ap, y, im->w);
 }
 
 static inline void
 _soft16_convert_from_rgb_pt(const DATA32 *src, DATA16 *dst,
 			    const int x, const int y)
 {
-   DATA8 orig_r, orig_g, orig_b, r, g, b, dith5, dith6;
+   DATA8 orig_r, orig_g, orig_b, r, g, b, dith5, dith6, dith;
 
    orig_r = R_VAL(src);
    orig_g = G_VAL(src);
@@ -198,14 +223,40 @@ _soft16_convert_from_rgb_pt(const DATA32 *src, DATA16 *dst,
    g = orig_g >> 2;
    b = orig_b >> 3;
 
-   dith5 = dither_table[x & DM_MSK][y & DM_MSK] >> DM_SHF(5);
-   dith6 = dither_table[x & DM_MSK][y & DM_MSK] >> DM_SHF(6);
+   dith = dither_table[x & S16_DM_MSK][y & S16_DM_MSK];
+   dith5 = dith >> S16_DM_SHF(5);
+   dith6 = dith >> S16_DM_SHF(6);
 
    if (((orig_r - (r << 3)) >= dith5) && (r < 0x1f)) r++;
    if (((orig_g - (g << 2)) >= dith6) && (g < 0x3f)) g++;
    if (((orig_b - (b << 3)) >= dith5) && (b < 0x1f)) b++;
 
    *dst = (r << 11) | (g << 5) | b;
+}
+
+static inline void
+_soft16_convert_from_rgb_scanline(const DATA32 *src, DATA16 *dst, const int y,
+				  const int w)
+{
+   int x, m;
+
+   m = (w & ~7);
+   x = 0;
+   pld(src, 0);
+
+   while (x < m)
+     {
+	pld(src, 32);
+	UNROLL8({
+	   _soft16_convert_from_rgb_pt(src, dst, x, y);
+	   src++;
+	   dst++;
+	   x++;
+	});
+     }
+
+   for (; x < w; x++, src++, dst++)
+     _soft16_convert_from_rgb_pt(src, dst, x, y);
 }
 
 void
@@ -219,7 +270,6 @@ soft16_image_convert_from_rgb(Soft16_Image *im, const DATA32 *src)
    dp = im->pixels;
    pad = im->stride - im->w;
 
-   for (y = 0; y < im->h; y++, dp += pad)
-     for (x = 0; x < im->w; x++, sp++, dp++)
-       _soft16_convert_from_rgb_pt(sp, dp, x, y);
+   for (y = 0; y < im->h; y++, sp += im->w, dp += im->stride)
+     _soft16_convert_from_rgb_scanline(sp, dp, y, im->w);
 }
