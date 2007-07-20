@@ -90,6 +90,10 @@ void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *
 void soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);
 void soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);
 
+/* convert/dither functions */
+void soft16_image_convert_from_rgb(Soft16_Image *im, const DATA32 *src);
+void soft16_image_convert_from_rgba(Soft16_Image *im, const DATA32 *src);
+
 
 /**
  * Rectangle (evas_soft16_rectangle.c)

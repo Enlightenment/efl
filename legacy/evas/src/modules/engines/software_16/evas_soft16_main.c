@@ -203,51 +203,12 @@ _soft16_image_rgba32_import(Soft16_Image *im, DATA32 *src)
    DATA32 *sp;
    DATA16 *dpl;
 
-   /* FIXME: dither and optimize */
    sp = src;
    dpl = im->pixels;
    if (im->alpha)
-     {
-	DATA8 *dal;
-	dal = im->alpha;
-	int y;
-
-	for (y = 0; y < im->h; y++)
-	  {
-	     DATA16 *dp, *dp_end;
-	     DATA8 *da;
-
-	     dp = dpl;
-	     dp_end = dp + im->w;
-	     da = dal;
-
-	     for (; dp < dp_end; da++, dp++, sp++)
-	       {
-		  *da = A_VAL(sp) >> 3;
-		  *dp = RGB_565_FROM_COMPONENTS(R_VAL(sp), G_VAL(sp), B_VAL(sp));
-	       }
-
-	     dpl += im->stride;
-	     dal += im->stride;
-	  }
-     }
+     soft16_image_convert_from_rgba(im, src);
    else
-     {
-	int y;
-
-	for (y = 0; y < im->h; y++)
-	  {
-	     DATA16 *dp, *dp_end;
-
-	     dp = dpl;
-	     dp_end = dp + im->w;
-
-	     for (; dp < dp_end; dp++, sp++)
-		*dp = RGB_565_FROM_COMPONENTS(R_VAL(sp), G_VAL(sp), B_VAL(sp));
-
-	     dpl += im->stride;
-	  }
-     }
+     soft16_image_convert_from_rgb(im, src);
 }
 
 void
