@@ -627,48 +627,6 @@ static const char escape_strings[] =
 	"&Omega;\0\xce\xa9\0"
 ;
 
-static const unsigned short escape_offsets[] = {
-	0, 4, 5, 9, 10, 15, 16, 22, 23, 29, 30, 36,
-	38, 43, 45, 53, 56, 64, 66, 74, 76, 84, 86,
-	94, 96, 103, 105, 112, 114, 121, 123, 128, 130,
-	135, 137, 144, 146, 153, 155, 160, 162, 167,
-	169, 175, 177, 184, 186, 194, 196, 201, 203,
-	209, 212, 218, 220, 226, 228, 235, 237, 244,
-	246, 253, 255, 263, 265, 273, 275, 281, 283,
-	289, 291, 298, 300, 306, 308, 315, 318, 323,
-	326, 331, 334, 340, 343, 349, 352, 356, 359,
-	364, 367, 374, 377, 381, 384, 392, 395, 402,
-	405, 412, 415, 421, 424, 430, 433, 439, 442,
-	448, 451, 457, 460, 466, 469, 475, 478, 486,
-	488, 496, 498, 505, 507, 515, 517, 523, 525,
-	531, 533, 539, 541, 549, 551, 559, 561, 569,
-	571, 576, 578, 586, 588, 596, 598, 606, 608,
-	616, 618, 626, 628, 636, 638, 646, 648, 656,
-	658, 666, 668, 676, 678, 686, 688, 696, 698,
-	705, 707, 714, 716, 723, 725, 732, 734, 741,
-	743, 750, 752, 759, 761, 768, 770, 777, 779,
-	786, 788, 796, 798, 806, 808, 816, 818, 826,
-	828, 836, 838, 846, 848, 856, 858, 866, 868,
-	876, 878, 886, 888, 894, 896, 902, 904, 910,
-	912, 918, 920, 926, 928, 934, 936, 942, 944,
-	950, 952, 958, 960, 966, 968, 976, 978, 986,
-	988, 996, 998, 1006, 1008, 1015, 1017, 1024, 1026,
-	1034, 1036, 1044, 1046, 1053, 1055, 1062, 1064, 1072,
-	1074, 1082, 1084, 1092, 1094, 1102, 1104, 1111, 1113,
-	1120, 1122, 1129, 1131, 1136, 1138, 1143, 1145, 1152,
-	1154, 1160, 1162, 1169, 1171, 1178, 1180, 1189, 1191,
-	1197, 1199, 1204, 1206, 1213, 1215, 1221, 1223, 1230,
-	1232, 1240, 1242, 1246, 1248, 1252, 1254, 1263, 1265,
-	1269, 1271, 1275, 1277, 1282, 1284, 1291, 1293, 1298,
-	1300, 1309, 1311, 1316, 1318, 1323, 1325, 1330, 1332,
-	1339, 1341, 1348, 1350, 1356, 1358, 1365, 1367, 1374,
-	1376, 1385, 1387, 1393, 1395, 1400, 1402, 1409, 1411,
-	1417, 1419, 1426, 1428, 1436, 1438, 1442, 1444, 1448,
-	1450, 1459, 1461, 1465, 1467, 1471, 1473, 1478, 1480,
-	1487, 1489, 1494, 1496, 1505, 1507, 1512, 1514, 1519,
-	1521, 1526, 1528, 1535
-};
-
 
 static int
 _is_white(int c)
@@ -2462,6 +2420,55 @@ evas_object_textblock_style_get(Evas_Object *obj)
    return o->style;
 }
 
+static inline void
+_advance_after_end_of_string(const char **p_buf)
+{
+   while (**p_buf != '\0')
+     (*p_buf)++;
+
+   if (**p_buf == '\0')
+     (*p_buf)++;
+}
+
+static inline int
+_is_eq_and_advance(const char *s, const char *s_end,
+		   const char **p_m, const char *m_end)
+{
+   for (;((s < s_end) && (*p_m < m_end)); s++, (*p_m)++)
+     if (*s != **p_m)
+       {
+	  _advance_after_end_of_string(p_m);
+	  return 0;
+       }
+
+   if (*p_m < m_end)
+     _advance_after_end_of_string(p_m);
+
+   return s == s_end;
+}
+
+static inline void
+_append_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
+		     const char *s_end)
+{
+   const char *map_itr, *map_end;
+
+   map_itr = escape_strings;
+   map_end = map_itr + sizeof(escape_strings);
+
+   while (map_itr < map_end)
+     {
+	if (_is_eq_and_advance(s, s_end, &map_itr, map_end))
+	  {
+	     evas_textblock_cursor_text_append(cur, map_itr);
+	     return;
+	  }
+
+	if (map_itr < map_itr)
+	  _advance_after_end_of_string(&map_itr);
+     }
+}
+
 EAPI void
 evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 {
@@ -2535,19 +2542,7 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 		    }
 		  else if (esc_end)
 		    {
-		       int i;
-		       
-		       for (i = 0; i < (int)(sizeof(escape_offsets) / sizeof(escape_offsets[0])); i += 2)
-			 {
-			    const char *in = escape_strings + escape_offsets[i];
-			    const char *out = escape_strings + escape_offsets[i + 1];
-
-			    if (!strncmp(in, esc_start, esc_end - esc_start + 1))
-			      {
-				 evas_textblock_cursor_text_append(o->cursor, out);
-				 break;
-			      }
-			 }
+		       _append_escaped_char(o->cursor, esc_start, esc_end);
 		       esc_start = esc_end = NULL;
 		    }
 		  else if (*p == 0)
@@ -2612,87 +2607,6 @@ EAPI const char *
 evas_object_textblock_text_markup_get(Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
-   if (!o->markup_text)
-     {
-	Evas_Textblock_Cursor *cur;
-	int slen = 0;
-	int salloc = 0;
-	
-	cur = evas_object_textblock_cursor_new(obj);
-	evas_textblock_cursor_node_first(cur);
-	do
-	  {
-	     char *s, *p, *ps;
-	     
-	     s = (char *)evas_textblock_cursor_node_text_get(cur);
-	     if (s)
-	       {
-		  p = s;
-		  ps = p;
-		  for (;;)
-		    {
-		       if (*p == 0)
-			 {
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    ps,
-							    &slen, &salloc);
-			    break;
-			 }
-		       else
-			 {
-			    int i;
-
-			    for (i = 1; i < (int)(sizeof(escape_offsets) / sizeof(escape_offsets[0])); i += 2)
-			      {
-			    const char *in = escape_strings + escape_offsets[i];
-			    const char *out = escape_strings + escape_offsets[i - 1];
-
-				 if (!strncmp(in, p, strlen(in)))
-				   {
-				      o->markup_text = _strbuf_append_n(o->markup_text,
-									ps, p - ps,
-									&slen, &salloc);
-				      o->markup_text = _strbuf_append(o->markup_text,
-								      out,
-								      &slen, &salloc);
-				      ps = p + strlen(in);
-				      p += strlen(in) - 1;
-				   }
-			      }
-			 }
-		       /* FIXME: strip extra whitespace ala HTML */
-		       p++;
-		    }
-	       }
-	     else
-	       {
-		  s = (char *)evas_textblock_cursor_node_format_get(cur);
-		  if (s)
-		    {
-		       char *stag;
-		       
-		       o->markup_text = _strbuf_append(o->markup_text,
-						       "<",
-						       &slen, &salloc);
-		       stag = _style_match_replace(o->style, s);
-		       if (stag)
-			 o->markup_text = _strbuf_append(o->markup_text,
-							 stag,
-							 &slen, &salloc);
-		       else
-			 o->markup_text = _strbuf_append(o->markup_text,
-							 s,
-							 &slen, &salloc);
-		       o->markup_text = _strbuf_append(o->markup_text,
-						       ">",
-						       &slen, &salloc);
-		    }
-	       }
-	     
-	  }
-	while (evas_textblock_cursor_node_next(cur));
-	evas_textblock_cursor_free(cur);
-     }
    return o->markup_text;
 }
 
