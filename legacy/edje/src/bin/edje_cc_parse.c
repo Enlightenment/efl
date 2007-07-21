@@ -212,7 +212,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
 		  pp++;
 	       }
 	     l = pp - p;
-	     tmpstr = malloc(l + 1);
+	     tmpstr = alloca(l + 1);
 	     if (!tmpstr)
 	       {
 		  fprintf(stderr, "%s: Error. %s:%i malloc %i bytes failed\n",
@@ -228,7 +228,6 @@ next_token(char *p, char *end, char **new_p, int *delim)
 		  line = nm;
 		  file_in = file_buf;
 	       }
-	     free(tmpstr);
 	  }
 	else if ((!in_comment_ss) && (!in_comment_sa) && (!in_comment_cpp))
 	  {

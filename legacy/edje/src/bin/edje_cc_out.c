@@ -700,7 +700,12 @@ data_write(void)
 			    data = malloc(size);
 			    if (data)
 			      {
-				 fread(data, size, 1, f);
+				 if (fread(data, size, 1, f) != 1)
+				   {
+				      fprintf(stderr, "%s: Error. unable to read all of script object \"%s\"\n",
+					      progname, tmpo);
+				      ABORT_WRITE(ef, file_out);
+				   }
 				 snprintf(buf, sizeof(buf), "scripts/%i", i);
 				 bt = eet_write(ef, buf, data, size, 1);
 				 free(data);
@@ -1084,12 +1089,12 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 					{
 					   /* concat strings like "foo""bar" to "foobar" */
 					   if (*(pp + 1) == '\"')
-					      pp++;
+					     pp++;
 					   else
-					   {
-					      name[i] = 0;
-					      break;
-					   }
+					     {
+						name[i] = 0;
+						break;
+					     }
 					}
 				      else
 					{
