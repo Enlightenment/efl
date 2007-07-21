@@ -2423,11 +2423,8 @@ evas_object_textblock_style_get(Evas_Object *obj)
 static inline void
 _advance_after_end_of_string(const char **p_buf)
 {
-   while (**p_buf != '\0')
-     (*p_buf)++;
-
-   if (**p_buf == '\0')
-     (*p_buf)++;
+   while (**p_buf != 0) (*p_buf)++;
+   (*p_buf)++;
 }
 
 static inline int
@@ -2435,12 +2432,14 @@ _is_eq_and_advance(const char *s, const char *s_end,
 		   const char **p_m, const char *m_end)
 {
    for (;((s < s_end) && (*p_m < m_end)); s++, (*p_m)++)
-     if (*s != **p_m)
-       {
-	  _advance_after_end_of_string(p_m);
-	  return 0;
-       }
-
+     {
+	if (*s != **p_m)
+	  {
+	     _advance_after_end_of_string(p_m);
+	     return 0;
+	  }
+     }
+   
    if (*p_m < m_end)
      _advance_after_end_of_string(p_m);
 
@@ -2463,7 +2462,7 @@ _append_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 	     evas_textblock_cursor_text_append(cur, map_itr);
 	     return;
 	  }
-
+	
 	if (map_itr < map_itr)
 	  _advance_after_end_of_string(&map_itr);
      }
