@@ -52,6 +52,7 @@ evas_common_image_init(void)
    if (!eci)
      eci = evas_cache_image_init(&_evas_common_image_func);
    reference++;
+////   printf("REF++=%i\n", reference);
 
 #ifdef BUILD_LOADER_EET
    eet_init();
@@ -63,8 +64,22 @@ evas_common_image_shutdown(void)
 {
    if (--reference == 0)
      {
-        evas_cache_image_shutdown(eci);
-        eci = NULL;
+////	printf("REF--=%i\n", reference);
+// DISABLE for now - something wrong with cache shutdown freeing things
+// still in use - rage_thumb segv's now.
+// 
+// actually - i think i see it. cache ref goes to 0 (and thus gets freed)
+// because in eng_setup() when a buffer changes size it is FIRST freed
+// THEN allocated again - thus brignhjing ref to 0 then back to 1 immediately
+// where it should stay at 1. - see evas_engine.c in the buffer enigne for
+// example. eng_output_free() is called BEFORE _output_setup(). although this
+// is only a SIGNE of the problem. we can patch this up with either freeing
+// after the setup (so we just pt a ref of 2 then back to 1), or just 
+// evas_common_image_init() at the start and evas_common_image_shutdown()
+// after it all. really ref 0 should only be reached when no more canvases
+// with no more objects exist anywhere.
+//        evas_cache_image_shutdown(eci);
+//        eci = NULL;
      }
 
 #ifdef BUILD_LOADER_EET
