@@ -119,11 +119,7 @@ ecore_file_monitor_inotify_add(const char *path,
    if (ecore_file_exists(em->path))
      {
 	if (!_ecore_file_monitor_inotify_monitor(em, em->path))
-	  {
-	     printf("inotify_add_watch error\n");
-	     ecore_file_monitor_inotify_del(em);
-	     return NULL;
-	  }
+	  return NULL;
      }
    else
      {
