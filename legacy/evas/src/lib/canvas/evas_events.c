@@ -57,7 +57,9 @@ _evas_event_object_list_in_get(Evas *e, Evas_List *in, Evas_Object_List *list, E
 		    }
 		  else
 		    {
-		       if (evas_object_is_in_output_rect(obj, x, y, 1, 1))
+		       if (evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
+		           ((!obj->precise_is_inside) ||
+			    (evas_object_is_inside(obj, x, y))))
 			 {
 			    in = evas_list_append(in, obj);
 			    if (!obj->repeat_events)
@@ -584,7 +586,9 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		 (evas_object_clippers_is_visible(obj)) &&
 		 (evas_list_find(ins, obj)) &&
 		 (!evas_event_passes_through(obj)) &&
-		 (!obj->clip.clipees))
+		 (!obj->clip.clipees) &&
+		 ((!obj->precise_is_inside) ||
+		  (evas_object_is_inside(obj, x, y))))
 	       {
 		  if ((px != x) || (py != y))
 		    {
@@ -989,7 +993,11 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
    evas_object_smart_member_cache_invalidate(obj);
    if (evas_object_is_in_output_rect(obj,
 				     obj->layer->evas->pointer.x,
-				     obj->layer->evas->pointer.y, 1, 1))
+				     obj->layer->evas->pointer.y, 1, 1) &&
+       ((!obj->precise_is_inside) ||
+	(evas_object_is_inside(obj,
+                               obj->layer->evas->pointer.x,
+                               obj->layer->evas->pointer.y))))
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,
@@ -1036,7 +1044,11 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
    obj->repeat_events = repeat;
    if (evas_object_is_in_output_rect(obj,
 				     obj->layer->evas->pointer.x,
-				     obj->layer->evas->pointer.y, 1, 1))
+				     obj->layer->evas->pointer.y, 1, 1) &&
+       ((!obj->precise_is_inside) ||
+	(evas_object_is_inside(obj,
+                               obj->layer->evas->pointer.x,
+                               obj->layer->evas->pointer.y))))
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,

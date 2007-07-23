@@ -16,7 +16,7 @@ struct _Evas_Object_Image
 	 Evas_Coord  x, y, w, h;
       } fill;
       struct {
-	 short       w, h;
+	 short       w, h, stride;
       } image;
       struct {
 	 short         l, r, t, b;
@@ -67,6 +67,7 @@ static void evas_object_image_render_post(Evas_Object *obj);
 
 static int evas_object_image_is_opaque(Evas_Object *obj);
 static int evas_object_image_was_opaque(Evas_Object *obj);
+static int evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
 static const Evas_Object_Func object_func =
 {
@@ -82,7 +83,7 @@ static const Evas_Object_Func object_func =
      NULL,
      evas_object_image_is_opaque,
      evas_object_image_was_opaque,
-     NULL,
+     evas_object_image_is_inside,
      NULL,
      NULL
 };
@@ -241,15 +242,22 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    if (o->engine_data)
      {
 	int w, h;
+	int stride;
 
 	obj->layer->evas->engine.func->image_size_get(obj->layer->evas->engine.data.output,
 						      o->engine_data, &w, &h);
+	if (obj->layer->evas->engine.func->image_stride_get)
+	  obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+							  o->engine_data, &stride);
+	else
+	  stride = w;
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output,
 									  o->engine_data);
 	o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
 									    o->engine_data);
 	o->cur.image.w = w;
 	o->cur.image.h = h;
+	o->cur.image.stride = stride;
      }
    else
      {
@@ -258,6 +266,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 	o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
 	o->cur.image.w = 0;
 	o->cur.image.h = 0;
+	o->cur.image.stride = 0;
      }
    o->changed = 1;
    evas_object_change(obj);
@@ -562,6 +571,7 @@ EAPI void
 evas_object_image_size_set(Evas_Object *obj, int w, int h)
 {
    Evas_Object_Image *o;
+   int stride;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -586,6 +596,14 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
      o->engine_data = obj->layer->evas->engine.func->image_new_from_copied_data
      (obj->layer->evas->engine.data.output, w, h, NULL, o->cur.has_alpha,
       o->cur.cspace);
+
+   if (obj->layer->evas->engine.func->image_stride_get)
+     obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+						     o->engine_data, &stride);
+   else
+     stride = w;
+   o->cur.image.stride = stride;
+
 /* FIXME - in engine call above
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
@@ -624,6 +642,28 @@ evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
    MAGIC_CHECK_END();
    if (w) *w = o->cur.image.w;
    if (h) *h = o->cur.image.h;
+}
+
+/**
+ * Retrieves the row stride, which is the number of units between the start of a row and the start of the next row.
+ * @param   obj    The given image object.
+ * @param   stride A pointer to an integer in which to store the stride.  Can be
+ *                 @c NULL.
+ * @ingroup Evas_Object_Image_Size
+ */
+EAPI int
+evas_object_image_stride_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0;
+   MAGIC_CHECK_END();
+   return o->cur.image.stride;
 }
 
 /**
@@ -693,6 +733,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
 	o->load_error = EVAS_LOAD_ERROR_NONE;
 	o->cur.image.w = 0;
 	o->cur.image.h = 0;
+	o->cur.image.stride = 0;
 	o->engine_data = NULL;
      }
 /* FIXME - in engine call above
@@ -1641,6 +1682,7 @@ evas_object_image_unload(Evas_Object *obj)
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
    o->cur.image.w = 0;
    o->cur.image.h = 0;
+   o->cur.image.stride = 0;
 }
 
 static void
@@ -1664,15 +1706,22 @@ evas_object_image_load(Evas_Object *obj)
    if (o->engine_data)
      {
 	int w, h;
+	int stride;
 
 	obj->layer->evas->engine.func->image_size_get(obj->layer->evas->engine.data.output,
 						      o->engine_data, &w, &h);
+	if (obj->layer->evas->engine.func->image_stride_get)
+	  obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
+							  o->engine_data, &stride);
+	else
+	  stride = w;
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output,
 									  o->engine_data);
 	o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
 									    o->engine_data);
 	o->cur.image.w = w;
 	o->cur.image.h = h;
+	o->cur.image.stride = stride;
      }
    else
      {
@@ -2317,4 +2366,53 @@ evas_object_image_was_opaque(Evas_Object *obj)
    if (obj->prev.render_op != EVAS_RENDER_BLEND)
 	return 0;
    return 1;
+}
+
+static int
+evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   Evas_Object_Image *o;
+   void *data;
+   int w, h, stride;
+   int a;
+
+   o = (Evas_Object_Image *)(obj->object_data);
+
+   x -= obj->cur.cache.clip.x;
+   y -= obj->cur.cache.clip.y;
+   w = o->cur.image.w;
+   h = o->cur.image.h;
+
+   if ((x > w) || (y > h))
+     return 0;
+
+   if (!o->cur.has_alpha)
+     return 1;
+
+   stride = o->cur.image.stride;
+
+   o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
+								  o->engine_data,
+								  0,
+								  (DATA32**) &data);
+   if (!data)
+     return 0;
+
+   switch (o->cur.cspace)
+     {
+	case EVAS_COLORSPACE_ARGB8888:
+	  data = ((DATA32*)(data) + ((y * stride) + x));
+	  a = (*((DATA32*)(data)) >> 24) & 0xff;
+	  break;
+	case EVAS_COLORSPACE_RGB565_A5P:
+	  data = ((DATA16*)(data) + (h * stride));
+	  data = ((DATA8*)(data) + ((y * stride) + x));
+	  a = (*((DATA8*)(data))) & 0x1f;
+	  break;
+	default:
+	  return 1;
+	  break;
+     }
+
+   return (a != 0);
 }

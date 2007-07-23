@@ -416,6 +416,17 @@ eng_image_size_set(void *data, void *image, int w, int h)
    return image;
 }
 
+static void
+eng_image_stride_get(void *data, void *image, int *stride)
+{
+   Soft16_Image *im;
+
+   if (stride) *stride = 0;
+   if (!image) return;
+   im = image;
+   if (stride) *stride = im->stride;
+}
+
 static void *
 eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
@@ -726,6 +737,7 @@ static Evas_Func func =
      eng_image_free,
      eng_image_size_get,
      eng_image_size_set,
+     eng_image_stride_get,
      eng_image_dirty_region,
      eng_image_data_get,
      eng_image_data_put,

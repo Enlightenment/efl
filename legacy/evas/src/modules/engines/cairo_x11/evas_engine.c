@@ -193,6 +193,7 @@ static Evas_Func eng_func =
      eng_image_free,
      eng_image_size_get,
      eng_image_size_set,
+     NULL,
      eng_image_dirty_region,
      eng_image_data_get,
      eng_image_data_put,

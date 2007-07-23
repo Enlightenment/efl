@@ -419,6 +419,23 @@ evas_object_was_opaque(Evas_Object *obj)
    return 0;
 }
 
+int
+evas_object_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   if (obj->smart.smart) return 0;
+   if (obj->func->is_inside)
+     return obj->func->is_inside(obj, x, y);
+   return 0;
+}
+
+int
+evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   if (obj->smart.smart) return 0;
+   if (obj->func->was_inside)
+     return obj->func->was_inside(obj, x, y);
+   return 0;
+}
 /* routines apps will call */
 
 /**
@@ -1220,4 +1237,34 @@ evas_object_type_get(Evas_Object *obj)
    MAGIC_CHECK_END();
    if (obj->delete_me) return "";
    return obj->type;
+}
+
+/**
+ * Set whether to use a precise (usually expensive) point collision detection.
+ * @param obj The given object.
+ * @param precise wheter to use a precise point collision detection or not
+ * The default value is false.
+ * @ingroup Evas_Object_Group
+ */
+EAPI void
+evas_object_precise_is_inside_set(Evas_Object *obj, Evas_Bool precise)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   obj->precise_is_inside = precise;
+}
+
+/**
+ * Determine whether an object is set to use a precise point collision detection.
+ * @param obj The given object.
+ * @ingroup Evas_Object_Group
+ */
+EAPI Evas_Bool
+evas_object_precise_is_inside_get(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   return obj->precise_is_inside;
 }

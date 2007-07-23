@@ -469,6 +469,7 @@ extern "C" {
    EAPI void              evas_object_image_fill_get        (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void              evas_object_image_size_set        (Evas_Object *obj, int w, int h);
    EAPI void              evas_object_image_size_get        (Evas_Object *obj, int *w, int *h);
+   EAPI int               evas_object_image_stride_get      (Evas_Object *obj);
    EAPI int               evas_object_image_load_error_get  (Evas_Object *obj);
    EAPI void              evas_object_image_data_set        (Evas_Object *obj, void *data);
    EAPI void             *evas_object_image_data_get        (Evas_Object *obj, Evas_Bool for_writing);
@@ -767,6 +768,9 @@ extern "C" {
    EAPI void              evas_object_propagate_events_set  (Evas_Object *obj, Evas_Bool prop);
    EAPI Evas_Bool         evas_object_propagate_events_get  (Evas_Object *obj);
        
+   EAPI void              evas_object_precise_is_inside_set (Evas_Object *obj, Evas_Bool precise);
+   EAPI Evas_Bool         evas_object_precise_is_inside_get (Evas_Object *obj);
+
    EAPI void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data);
    EAPI void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info));
 

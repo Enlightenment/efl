@@ -448,6 +448,8 @@ struct _Evas_Object
    unsigned short              in_layer : 1;
    unsigned short              no_propagate : 1;
 
+   unsigned short              precise_is_inside : 1;
+
    unsigned char               delete_me;
 };
 
@@ -587,6 +589,7 @@ struct _Evas_Func
    void (*image_free)                      (void *data, void *image);
    void (*image_size_get)                  (void *data, void *image, int *w, int *h);
    void *(*image_size_set)                 (void *data, void *image, int w, int h);
+   void (*image_stride_get)                (void *data, void *image, int *stride);
    void *(*image_dirty_region)             (void *data, void *image, int x, int y, int w, int h);
    void *(*image_data_get)                 (void *data, void *image, int to_write, DATA32 **image_data);
    void *(*image_data_put)                 (void *data, void *image, DATA32 *image_data);
@@ -678,6 +681,8 @@ int evas_object_is_visible(Evas_Object *obj);
 int evas_object_was_visible(Evas_Object *obj);
 int evas_object_is_opaque(Evas_Object *obj);
 int evas_object_was_opaque(Evas_Object *obj);
+int evas_object_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+int evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 //void evas_object_recalc_clippees(Evas_Object *obj);
 int evas_object_clippers_is_visible(Evas_Object *obj);
 int evas_object_clippers_was_visible(Evas_Object *obj);

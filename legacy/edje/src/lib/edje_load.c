@@ -326,6 +326,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 			 }
 		       else
 			 evas_object_pass_events_set(rp->object, 1);
+		       if (ep->precise_is_inside)
+		         evas_object_precise_is_inside_set(rp->object, 1);
 		    }
 		  if (rp->part->clip_to_id < 0)
 		    evas_object_clip_set(rp->object, ed->clipper);

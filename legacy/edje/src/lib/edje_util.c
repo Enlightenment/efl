@@ -2121,6 +2121,8 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
    else
      evas_object_pass_events_set(obj_swallow, 1);
 
+   if (rp->part->precise_is_inside)
+     evas_object_precise_is_inside_set(obj_swallow, 1);
 
    rp->edje->dirty = 1;
    _edje_recalc(rp->edje);
