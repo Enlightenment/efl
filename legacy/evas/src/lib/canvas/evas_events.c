@@ -245,8 +245,11 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
 	Evas_Event_Mouse_Down ev;
 
 	obj = l->data;
-	obj->mouse_grabbed++;
-	e->pointer.mouse_grabbed++;
+	if (obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB)
+	  {
+	     obj->mouse_grabbed++;
+	     e->pointer.mouse_grabbed++;
+	  }
 
 	ev.button = b;
 	ev.output.x = e->pointer.x;
@@ -299,10 +302,12 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	Evas_Event_Mouse_Up ev;
 
 	obj = l->data;
-//	if (obj->mouse_grabbed > 0) 
-	  obj->mouse_grabbed--;
-//	if (e->pointer.mouse_grabbed > 0) 
-	  e->pointer.mouse_grabbed--;
+	if ((obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB) &&
+	    (obj->mouse_in) && (obj->mouse_grabbed > 0))
+	  {
+	     obj->mouse_grabbed--;
+	     e->pointer.mouse_grabbed--;
+	  }
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
@@ -399,6 +404,11 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	if (e->pointer.inside)
 	  evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, timestamp, data);
      }
+
+   if (e->pointer.mouse_grabbed < 0)
+     fprintf(stderr, "BUG? e->pointer.mouse_grabbed (=%d) < 0!\n",
+	     e->pointer.mouse_grabbed);
+
    if ((e->pointer.button == 0) && (e->pointer.mouse_grabbed))
      {
 	e->pointer.mouse_grabbed = 0;
@@ -1113,4 +1123,44 @@ evas_object_propagate_events_get(Evas_Object *obj)
    return 0;
    MAGIC_CHECK_END();
    return !(obj->no_propagate);
+}
+
+/**
+ * Set pointer behavior.
+ *
+ * @param obj
+ * @param setting desired behavior.
+ *
+ * This function has direct effect on event callbacks related to mouse.
+ *
+ * If @p setting is EVAS_OBJECT_POINTER_MODE_AUTOGRAB, then when mouse is
+ * down at this object, events will be restricted to it as source, mouse
+ * moves, for example, will be emitted even if outside this object area.
+ *
+ * If @p setting is EVAS_OBJECT_POINTER_MODE_NOGRAB, then events will be
+ * emitted just when inside this object area.
+ *
+ * The default value is EVAS_OBJECT_POINTER_MODE_AUTOGRAB.
+ */
+EAPI void
+evas_object_pointer_mode_set(Evas_Object *obj, Evas_Object_Pointer_Mode setting)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   obj->pointer_mode = setting;
+}
+
+/**
+ * Determine how pointer will behave.
+ * @param obj
+ * @return pointer behavior.
+ */
+EAPI Evas_Object_Pointer_Mode
+evas_object_pointer_mode_get(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   return obj->pointer_mode;
 }

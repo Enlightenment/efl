@@ -429,6 +429,7 @@ struct _Edje_Part
    unsigned char          repeat_events; /* it will repeat events to objects below */
    unsigned char          precise_is_inside;
    unsigned char          use_alternate_font_metrics;
+   Evas_Object_Pointer_Mode pointer_mode;
 };
 
 struct _Edje_Part_Image_Id

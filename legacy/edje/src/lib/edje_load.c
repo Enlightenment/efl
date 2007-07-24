@@ -303,6 +303,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		  rp->object = evas_object_rectangle_add(ed->evas);
 		  evas_object_color_set(rp->object, 0, 0, 0, 0);
 		  evas_object_pass_events_set(rp->object, 1);
+		  evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
 	       }
 	     else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
 	       rp->object = evas_object_textblock_add(ed->evas);
@@ -323,9 +324,15 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 			    _edje_callbacks_add(rp->object, ed, rp);
 			    if (ep->repeat_events)
 			      evas_object_repeat_events_set(rp->object, 1);
+
+			    if (ep->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
+			      evas_object_pointer_mode_set(rp->object, ep->pointer_mode);
 			 }
 		       else
-			 evas_object_pass_events_set(rp->object, 1);
+			 {
+			    evas_object_pass_events_set(rp->object, 1);
+			    evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+			 }
 		       if (ep->precise_is_inside)
 		         evas_object_precise_is_inside_set(rp->object, 1);
 		    }
@@ -368,6 +375,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		       if (rp->clip_to)
 			 {
 			    evas_object_pass_events_set(rp->clip_to->object, 1);
+			    evas_object_pointer_mode_set(rp->clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
 			    evas_object_clip_set(rp->object, rp->clip_to->object);
 			 }
 		    }

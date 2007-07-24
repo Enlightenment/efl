@@ -218,12 +218,14 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * EVAS_CALLBACK_MOUSE_DOWN: event_info = pointer to Evas_Event_Mouse_Down
  *
  * This event is triggered by a mouse button being depressed while over an
- * object. This causes this object to passively grab the mouse until all mouse
- * buttons have been released. That means if this mouse button is the first to
- * be pressed, all future mouse events will be reported to only this object
- * until no buttons are down. That includes mouse move events, in and out
- * events, and further button presses. When all buttons are released, event
- * propagation occurs as normal.
+ * object. If pointermode is EVAS_OBJECT_POINTER_MODE_AUTOGRAB (default)
+ * this causes this object to passively grab the mouse until all mouse
+ * buttons have been released.
+ * That means if this mouse button is the first to be pressed, all future
+ * mouse events will be reported to only this object until no buttons are
+ * down. That includes mouse move events, in and out events, and further
+ * button presses. When all buttons are released, event propagation occurs
+ * as normal.
  *
  * EVAS_CALLBACK_MOUSE_UP: event_info = pointer to Evas_Event_Mouse_Up
  *

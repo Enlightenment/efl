@@ -330,6 +330,12 @@ struct _Evas_Event_Key_Up /** Key release event */
    unsigned int   timestamp;
 };
 
+typedef enum _Evas_Object_Pointer_Mode
+{
+   EVAS_OBJECT_POINTER_MODE_AUTOGRAB, /**< default, X11-like */
+   EVAS_OBJECT_POINTER_MODE_NOGRAB
+} Evas_Object_Pointer_Mode;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -767,6 +773,9 @@ extern "C" {
    EAPI Evas_Bool         evas_object_repeat_events_get     (Evas_Object *obj);
    EAPI void              evas_object_propagate_events_set  (Evas_Object *obj, Evas_Bool prop);
    EAPI Evas_Bool         evas_object_propagate_events_get  (Evas_Object *obj);
+   EAPI void              evas_object_pointer_mode_set      (Evas_Object *obj, Evas_Object_Pointer_Mode setting);
+   EAPI Evas_Object_Pointer_Mode evas_object_pointer_mode_get(Evas_Object *obj);
+
        
    EAPI void              evas_object_precise_is_inside_set (Evas_Object *obj, Evas_Bool precise);
    EAPI Evas_Bool         evas_object_precise_is_inside_get (Evas_Object *obj);

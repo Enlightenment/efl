@@ -43,6 +43,7 @@ static void st_collections_group_parts_part_type(void);
 static void st_collections_group_parts_part_effect(void);
 static void st_collections_group_parts_part_mouse_events(void);
 static void st_collections_group_parts_part_repeat_events(void);
+static void st_collections_group_parts_part_pointer_mode(void);
 static void st_collections_group_parts_part_precise_is_inside(void);
 static void st_collections_group_parts_part_use_alternate_font_metrics(void);
 static void st_collections_group_parts_part_clip_to_id(void);
@@ -180,6 +181,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
      {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
      {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
+     {"collections.group.parts.part.pointer_mode", st_collections_group_parts_part_pointer_mode},
      {"collections.group.parts.part.precise_is_inside", st_collections_group_parts_part_precise_is_inside},
      {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
      {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
@@ -901,6 +903,7 @@ ob_collections_group_parts_part(void)
    ep->type = EDJE_PART_TYPE_IMAGE;
    ep->mouse_events = 1;
    ep->repeat_events = 0;
+   ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
    ep->use_alternate_font_metrics = 0;
    ep->clip_to_id = -1;
@@ -984,6 +987,22 @@ st_collections_group_parts_part_repeat_events(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->repeat_events = parse_bool(0);
+}
+
+static void
+st_collections_group_parts_part_pointer_mode(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->pointer_mode = parse_enum(0,
+				 "AUTOGRAB", EVAS_OBJECT_POINTER_MODE_AUTOGRAB,
+				 "NOGRAB", EVAS_OBJECT_POINTER_MODE_NOGRAB,
+				 NULL);
 }
 
 static void

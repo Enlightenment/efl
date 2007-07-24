@@ -450,6 +450,8 @@ struct _Evas_Object
 
    unsigned short              precise_is_inside : 1;
 
+   Evas_Object_Pointer_Mode    pointer_mode;
+
    unsigned char               delete_me;
 };
 
