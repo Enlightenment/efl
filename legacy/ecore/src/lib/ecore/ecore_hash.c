@@ -101,7 +101,7 @@ ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb comp
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 EAPI int
-ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
+ecore_hash_free_key_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
    CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
@@ -119,7 +119,7 @@ ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 EAPI int
-ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
+ecore_hash_free_value_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
    CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
@@ -177,7 +177,7 @@ ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 EAPI int
-ecore_hash_set_hash(Ecore_Hash *hash, Ecore_Hash *set)
+ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
 {
    unsigned int i;
    Ecore_Hash_Node *node, *old;
@@ -334,7 +334,7 @@ ecore_hash_keys(Ecore_Hash *hash)
 	  }
 	i++;
      }
-   ecore_list_goto_first(keys);
+   ecore_list_first_goto(keys);
 
    return keys;
 }

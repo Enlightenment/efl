@@ -97,8 +97,8 @@ efreet_ini_parse(const char *file)
     if (!f) return NULL;
 
     data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(data, ECORE_FREE_CB(ecore_string_release));
-    ecore_hash_set_free_value(data, ECORE_FREE_CB(ecore_hash_destroy));
+    ecore_hash_free_key_cb_set(data, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_value_cb_set(data, ECORE_FREE_CB(ecore_hash_destroy));
 
     /* if a line is longer than the buffer size, this \n will get overwritten. */
     read_buf[read_len - 2] = '\n';
@@ -156,8 +156,8 @@ efreet_ini_parse(const char *file)
                 Ecore_Hash *old;
                 *p = '\0';
                 section = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-                ecore_hash_set_free_key(section, ECORE_FREE_CB(ecore_string_release));
-                ecore_hash_set_free_value(section, ECORE_FREE_CB(free));
+                ecore_hash_free_key_cb_set(section, ECORE_FREE_CB(ecore_string_release));
+                ecore_hash_free_value_cb_set(section, ECORE_FREE_CB(free));
 
                 old = ecore_hash_remove(data, header);
                 //if (old) printf("[efreet] Warning: duplicate section '%s' in file '%s'\n", header, file);
@@ -309,14 +309,14 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
     if (!ini->data)
     {
         ini->data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-        ecore_hash_set_free_key(ini->data, ECORE_FREE_CB(ecore_string_release));
-        ecore_hash_set_free_value(ini->data, ECORE_FREE_CB(ecore_hash_destroy));
+        ecore_hash_free_key_cb_set(ini->data, ECORE_FREE_CB(ecore_string_release));
+        ecore_hash_free_value_cb_set(ini->data, ECORE_FREE_CB(ecore_hash_destroy));
     }
     if (ecore_hash_get(ini->data, section)) return;
 
     hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(hash, ECORE_FREE_CB(ecore_string_release));
-    ecore_hash_set_free_value(hash, ECORE_FREE_CB(free));
+    ecore_hash_free_key_cb_set(hash, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_value_cb_set(hash, ECORE_FREE_CB(free));
     ecore_hash_set(ini->data, (void *)ecore_string_instance(section), hash);
 }
 

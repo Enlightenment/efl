@@ -188,7 +188,7 @@ efreet_dirs_get(const char *key, const char *fallback)
     if (!path || (path[0] == '\0')) path = fallback;
 
     dirs = ecore_list_new();
-    ecore_list_set_free_cb(dirs, ECORE_FREE_CB(ecore_string_release));
+    ecore_list_free_cb_set(dirs, ECORE_FREE_CB(ecore_string_release));
     if (!path) return dirs;
 
     tmp = strdup(path);

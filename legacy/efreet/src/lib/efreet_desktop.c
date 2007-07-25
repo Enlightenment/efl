@@ -115,14 +115,14 @@ efreet_desktop_init(void)
     if (!ecore_file_init()) return --init;
 
     efreet_desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(efreet_desktop_cache, ECORE_FREE_CB(free));
+    ecore_hash_free_key_cb_set(efreet_desktop_cache, ECORE_FREE_CB(free));
 #if 0
-    ecore_hash_set_free_value(efreet_desktop_cache, 
+    ecore_hash_free_value_cb_set(efreet_desktop_cache, 
                                 ECORE_FREE_CB(efreet_desktop_free));
 #endif
 
     efreet_desktop_types = ecore_list_new();
-    ecore_list_set_free_cb(efreet_desktop_types, 
+    ecore_list_free_cb_set(efreet_desktop_types, 
                             ECORE_FREE_CB(efreet_desktop_type_info_free));
 
     EFREET_DESKTOP_TYPE_APPLICATION = efreet_desktop_type_add("Application", 
@@ -373,7 +373,7 @@ efreet_desktop_clear(Efreet_Desktop *desktop)
     if (desktop->type_data)
     {
         Efreet_Desktop_Type_Info *info;
-        info = ecore_list_goto_index(efreet_desktop_types, desktop->type);
+        info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
         if (info->free_func)
             info->free_func(desktop->type_data); 
     }
@@ -396,7 +396,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     efreet_ini_section_add(ini, "Desktop Entry");
     efreet_ini_section_set(ini, "Desktop Entry");
 
-    info = ecore_list_goto_index(efreet_desktop_types, desktop->type);
+    info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
     if (info) 
     {
         efreet_ini_string_set(ini, "Type", info->type);
@@ -500,7 +500,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     if (desktop->type_data)
     {
         Efreet_Desktop_Type_Info *info;
-        info = ecore_list_goto_index(efreet_desktop_types, desktop->type);
+        info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
         if (info->free_func)
             info->free_func(desktop->type_data); 
     }
@@ -563,7 +563,7 @@ unsigned int
 efreet_desktop_category_count_get(Efreet_Desktop *desktop)
 {
     if (!desktop || !desktop->categories) return 0;
-    return ecore_list_nodes(desktop->categories);
+    return ecore_list_count(desktop->categories);
 }
 
 /**
@@ -579,7 +579,7 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
     if (!desktop->categories)
     {
         desktop->categories = ecore_list_new();
-        ecore_list_set_free_cb(desktop->categories, 
+        ecore_list_free_cb_set(desktop->categories, 
                                 ECORE_FREE_CB(ecore_string_release));
     }
     else
@@ -631,7 +631,7 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
     info = NEW(Efreet_Desktop_Type_Info, 1);
     if (!info) return 0;
 
-    id = ecore_list_nodes(efreet_desktop_types);
+    id = ecore_list_count(efreet_desktop_types);
 
     info->id = id;
     info->type = strdup(type);
@@ -656,7 +656,7 @@ int
 efreet_desktop_type_alias (int from_type, const char *alias)
 {
     Efreet_Desktop_Type_Info *info;
-    info = ecore_list_goto_index(efreet_desktop_types, from_type);
+    info = ecore_list_index_goto(efreet_desktop_types, from_type);
     if (!info) return -1;
 
     return efreet_desktop_type_add(alias, info->parse_func, info->save_func, info->free_func);
@@ -698,7 +698,7 @@ efreet_desktop_type_parse(const char *type_str)
 
     if (!type_str) return NULL;
 
-    ecore_list_goto_first(efreet_desktop_types);
+    ecore_list_first_goto(efreet_desktop_types);
     while ((info = ecore_list_next(efreet_desktop_types)))
     {
         if (!strcmp(info->type, type_str))
@@ -725,7 +725,7 @@ efreet_desktop_string_list_parse(const char *string)
     list = ecore_list_new();
     if (!list) return NULL;
 
-    ecore_list_set_free_cb(list, ECORE_FREE_CB(ecore_string_release));
+    ecore_list_free_cb_set(list, ECORE_FREE_CB(ecore_string_release));
 
     tmp = strdup(string);
     s = tmp;
@@ -764,13 +764,13 @@ efreet_desktop_string_list_join(Ecore_List *list)
     char *string;
     size_t size, pos, len;
 
-    if (ecore_list_is_empty(list)) return strdup("");
+    if (ecore_list_empty_is(list)) return strdup("");
 
     size = 1024;
     string = malloc(size);
     pos = 0;
 
-    ecore_list_goto_first(list);
+    ecore_list_first_goto(list);
     while ((tmp = ecore_list_next(list)))
     {
         len = strlen(tmp);
@@ -1003,9 +1003,9 @@ efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
     if (!desktop->x)
     {
         desktop->x = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-        ecore_hash_set_free_key(desktop->x, 
+        ecore_hash_free_key_cb_set(desktop->x, 
                             ECORE_FREE_CB(ecore_string_release));
-        ecore_hash_set_free_value(desktop->x, 
+        ecore_hash_free_value_cb_set(desktop->x, 
                             ECORE_FREE_CB(ecore_string_release));
     }
     ecore_hash_set(desktop->x, (void *)ecore_string_instance(node->key),
@@ -1033,7 +1033,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
 
         if (desktop_environment) 
         {
-            ecore_list_goto_first(list);
+            ecore_list_first_goto(list);
             while ((val = ecore_list_next(list)))
             {
                 if (!strcmp(val, desktop_environment)) 
@@ -1055,7 +1055,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
         list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "NotShowIn"));
         if (list)
         {
-            ecore_list_goto_first(list);
+            ecore_list_first_goto(list);
             while ((val = ecore_list_next(list)))
             {
                 if (!strcmp(val, desktop_environment)) 
@@ -1113,14 +1113,14 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
     command->files = ecore_list_new();
     command->desktop = desktop;
 
-    ecore_list_set_free_cb(command->files, 
+    ecore_list_free_cb_set(command->files, 
                             ECORE_FREE_CB(efreet_desktop_command_file_free));
 
     command->flags = efreet_desktop_command_flags_get(desktop);
     /* get the required info for each file passed in */
     if (files)
     {
-        ecore_list_goto_first(files);
+        ecore_list_first_goto(files);
         while ((file = ecore_list_next(files)))
         {
             Efreet_Desktop_Command_File *dcf;
@@ -1174,14 +1174,14 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
     command->files = ecore_list_new();
     command->desktop = desktop;
 
-    ecore_list_set_free_cb(command->files, 
+    ecore_list_free_cb_set(command->files, 
                             ECORE_FREE_CB(efreet_desktop_command_file_free));
 
     command->flags = efreet_desktop_command_flags_get(desktop);
     /* get the required info for each file passed in */
     if (files)
     {
-        ecore_list_goto_first(files);
+        ecore_list_first_goto(files);
         while ((file = ecore_list_next(files)))
         {
             Efreet_Desktop_Command_File *dcf;
@@ -1265,8 +1265,8 @@ efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List
 {
     char *exec;
     int num;
-    num = ecore_list_nodes(execs);
-    ecore_list_goto_first(execs);
+    num = ecore_list_count(execs);
+    ecore_list_first_goto(execs);
     while ((exec = ecore_list_next(execs)))
     {
         command->cb_command(command->data, command->desktop, exec, --num);
@@ -1292,7 +1292,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 
     execs = ecore_list_new();
 
-    ecore_list_goto_first(command->files);
+    ecore_list_first_goto(command->files);
 
     /* if the Exec field appends multiple, that will run the list to the end, 
      * causing this loop to only run once. otherwise, this loop will generate a 
@@ -1437,7 +1437,7 @@ efreet_desktop_command_append_multiple(char *dest, int *size, int *len,
 
     if (!command->files) return dest;
 
-    ecore_list_goto_first(command->files);
+    ecore_list_first_goto(command->files);
     while ((file = ecore_list_next(command->files)))
     {
         if (first)
@@ -1566,7 +1566,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
     if(!strncmp(file, "http://", 7) || !strncmp(file, "ftp://", 6))
     {
         uri = file;
-        base = ecore_file_get_file(file);
+        base = ecore_file_file_get(file);
 
         nonlocal = 1;
     }
@@ -1617,9 +1617,9 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
             f->uri = strdup(buf);
         }
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR) 
-            f->dir = ecore_file_get_dir(abs);
+            f->dir = ecore_file_dir_get(abs);
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE) 
-            f->file = strdup(ecore_file_get_file(file));
+            f->file = strdup(ecore_file_file_get(file));
 
         free(abs);
     }

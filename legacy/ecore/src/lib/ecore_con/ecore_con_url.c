@@ -109,10 +109,10 @@ ecore_con_url_shutdown(void)
    init_count--;
    if (_url_con_list)
      {
-	if (!ecore_list_is_empty(_url_con_list))
+	if (!ecore_list_empty_is(_url_con_list))
 	  {
 	     Ecore_Con_Url *url_con;
-	     while ((url_con = ecore_list_remove_first(_url_con_list)))
+	     while ((url_con = ecore_list_first_remove(_url_con_list)))
 	       {
 		  ecore_con_url_destroy(url_con);
 	       }
@@ -356,7 +356,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 	if (curlmsg->msg != CURLMSG_DONE) continue;
 
 	/* find the job which is done */
-	ecore_list_goto_first(_url_con_list);
+	ecore_list_first_goto(_url_con_list);
 	while ((url_con = ecore_list_current(_url_con_list)))
 	  {
 	     if (curlmsg->easy_handle == url_con->curl_easy)

@@ -71,7 +71,7 @@ ecore_x_netwm_init(void)
    startup_info = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
    if (startup_info)
      {
-	ecore_hash_set_free_value(startup_info, _ecore_x_netwm_startup_info_free);
+	ecore_hash_free_value_cb_set(startup_info, _ecore_x_netwm_startup_info_free);
      }
 }
 

@@ -73,7 +73,7 @@ ecore_tree_init(Ecore_Tree *new_tree, Ecore_Compare_Cb compare_func)
  * @return Returns TRUE on successful set, FALSE otherwise.
  */
 EAPI int 
-ecore_tree_set_free_value(Ecore_Tree *tree, Ecore_Free_Cb free_value)
+ecore_tree_free_value_cb_set(Ecore_Tree *tree, Ecore_Free_Cb free_value)
 {
    CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
@@ -89,7 +89,7 @@ ecore_tree_set_free_value(Ecore_Tree *tree, Ecore_Free_Cb free_value)
  * @return Returns TRUE on successful set, FALSE otherwise.
  */
 EAPI int 
-ecore_tree_set_free_key(Ecore_Tree *tree, Ecore_Free_Cb free_key)
+ecore_tree_free_key_cb_set(Ecore_Tree *tree, Ecore_Free_Cb free_key)
 {
    CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
@@ -244,7 +244,7 @@ ecore_tree_destroy(Ecore_Tree *tree)
 
    while ((node = tree->tree))
      {
-	ecore_tree_remove_node(tree, node);
+	ecore_tree_node_remove(tree, node);
 	ecore_tree_node_destroy(node, tree->free_value, tree->free_key);
      }
 
@@ -300,7 +300,7 @@ ecore_tree_get(Ecore_Tree *tree, const void *key)
  *         equal to the key
  */
 EAPI void *
-ecore_tree_get_closest_larger(Ecore_Tree *tree, const void *key)
+ecore_tree_closest_larger_get(Ecore_Tree *tree, const void *key)
 {
    Ecore_Tree_Node *node;
 
@@ -327,7 +327,7 @@ ecore_tree_get_closest_larger(Ecore_Tree *tree, const void *key)
  * @return Returns NULL if no valid nodes, otherwise the node <= key
  */
 EAPI void *
-ecore_tree_get_closest_smaller(Ecore_Tree *tree, const void *key)
+ecore_tree_closest_smaller_get(Ecore_Tree *tree, const void *key)
 {
    Ecore_Tree_Node *node;
 
@@ -363,7 +363,7 @@ ecore_tree_set(Ecore_Tree *tree, void *key, void *value)
      {
 	node = ecore_tree_node_new();
 	ecore_tree_node_key_set(node, key);
-	if (!ecore_tree_add_node(tree, node))
+	if (!ecore_tree_node_add(tree, node))
 	  return FALSE;
      }
    else 
@@ -389,7 +389,7 @@ ecore_tree_set(Ecore_Tree *tree, void *key, void *value)
  * @return TRUE on a successful add, FALSE otherwise.
  */
 EAPI int 
-ecore_tree_add_node(Ecore_Tree *tree, Ecore_Tree_Node *node)
+ecore_tree_node_add(Ecore_Tree *tree, Ecore_Tree_Node *node)
 {
    Ecore_Tree_Node *travel = NULL;
 
@@ -428,7 +428,7 @@ ecore_tree_add_node(Ecore_Tree *tree, Ecore_Tree_Node *node)
  * @return TRUE on a successful remove, FALSE otherwise.
  */
 EAPI int 
-ecore_tree_remove_node(Ecore_Tree *tree, Ecore_Tree_Node *node)
+ecore_tree_node_remove(Ecore_Tree *tree, Ecore_Tree_Node *node)
 {
    Ecore_Tree_Node *traverse;
 
@@ -560,7 +560,7 @@ ecore_tree_remove(Ecore_Tree *tree, const void *key)
    if (!node)
      return FALSE;
 
-   if (!ecore_tree_remove_node(tree, node))
+   if (!ecore_tree_node_remove(tree, node))
      return FALSE;
 
    ecore_tree_node_destroy(node, tree->free_value, tree->free_key);
@@ -574,7 +574,7 @@ ecore_tree_remove(Ecore_Tree *tree, const void *key)
  * @return Returns TRUE if no nodes exist, FALSE otherwise
  */
 EAPI int 
-ecore_tree_is_empty(Ecore_Tree *tree)
+ecore_tree_empty_is(Ecore_Tree *tree)
 {
    CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 

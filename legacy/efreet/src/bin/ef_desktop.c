@@ -48,7 +48,7 @@ ef_cb_desktop_parse(void)
         const char *cat;
         int num_categories = 2, i = 0;
 
-        ecore_list_goto_first(desktop->categories);
+        ecore_list_first_goto(desktop->categories);
         while ((cat = ecore_list_next(desktop->categories)))
         {
             if (i >= num_categories) 
@@ -139,7 +139,7 @@ ef_cb_desktop_save(void)
     desktop->generic_name = strdup("Test Application");
     desktop->exec = strdup("efreet_test");
     desktop->categories = ecore_list_new();
-    ecore_list_set_free_cb(desktop->categories, ECORE_FREE_CB(free));
+    ecore_list_free_cb_set(desktop->categories, ECORE_FREE_CB(free));
     ecore_list_append(desktop->categories, strdup("Test"));
     ecore_list_append(desktop->categories, strdup("Enlightenment"));
     printf("save test: %d\n", efreet_desktop_save(desktop));
@@ -199,7 +199,7 @@ ef_cb_desktop_command_get(void)
     ecore_list_append(expected, "app '/tmp/absolute_uri'");
     ecore_list_append(expected, "app '/relative_uri'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -212,7 +212,7 @@ ef_cb_desktop_command_get(void)
     ecore_list_append(expected, "app 'file:///tmp/absolute_uri'");
     ecore_list_append(expected, "app 'file:///relative_uri'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -225,7 +225,7 @@ ef_cb_desktop_command_get(void)
     ecore_list_append(expected, "app '/tmp'");
     ecore_list_append(expected, "app '/'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -239,7 +239,7 @@ ef_cb_desktop_command_get(void)
     ecore_list_append(expected, "app 'absolute_uri'");
     ecore_list_append(expected, "app 'relative_uri'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -249,7 +249,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %F");
     ecore_list_append(expected, "app '/tmp/absolute_path' '/relative_path' '/tmp/absolute_uri' '/relative_uri'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -259,7 +259,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %U");
     ecore_list_append(expected, "app 'file:///tmp/absolute_path' 'file:///relative_path' 'file:///tmp/absolute_uri' 'file:///relative_uri'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -269,7 +269,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %D");
     ecore_list_append(expected, "app '/tmp' '/' '/tmp' '/'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -279,7 +279,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %N");
     ecore_list_append(expected, "app 'absolute_path' 'relative_path' 'absolute_uri' 'relative_uri'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -289,7 +289,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %i");
     ecore_list_append(expected, "app --icon 'icon.png'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -299,7 +299,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %c");
     ecore_list_append(expected, "app 'App Name'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
     ecore_list_clear(expected);
 
@@ -309,7 +309,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %k");
     ecore_list_append(expected, "app 'test.desktop'");
 
-    ecore_list_goto_first(expected);
+    ecore_list_first_goto(expected);
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
     ecore_list_clear(expected);
 

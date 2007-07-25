@@ -99,7 +99,7 @@ ecore_sheap_destroy(Ecore_Sheap *heap)
  * @return @c TRUE on successful set, @c FALSE otherwise.
  */
 EAPI int 
-ecore_sheap_set_free_cb(Ecore_Sheap *heap, Ecore_Free_Cb free_func)
+ecore_sheap_free_cb_set(Ecore_Sheap *heap, Ecore_Free_Cb free_func)
 {
    CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
@@ -283,7 +283,7 @@ ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
  * by the new comparison.
  */
 EAPI int 
-ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
+ecore_sheap_compare_set(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
 {
    CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
@@ -306,7 +306,7 @@ ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
  * order. The default order is a min heap.
  */
 EAPI void 
-ecore_sheap_set_order(Ecore_Sheap *heap, char order)
+ecore_sheap_order_set(Ecore_Sheap *heap, char order)
 {
    CHECK_PARAM_POINTER("heap", heap);
 

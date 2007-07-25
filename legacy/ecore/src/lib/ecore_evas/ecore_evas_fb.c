@@ -74,7 +74,7 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
 	ee = (Ecore_Evas *)l;
 	ee->visible = 0;
      }
-   ecore_list_goto_first(ecore_evas_input_devices);
+   ecore_list_first_goto(ecore_evas_input_devices);
    dev = ecore_list_current(ecore_evas_input_devices);
    do
    {
@@ -99,7 +99,7 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
 	else
 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
-   ecore_list_goto_first(ecore_evas_input_devices);
+   ecore_list_first_goto(ecore_evas_input_devices);
    dev = ecore_list_current(ecore_evas_input_devices);
    do
    {
@@ -486,7 +486,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
    {
       Ecore_Fb_Input_Device *dev;
 
-      ecore_list_goto_first(ecore_evas_input_devices);
+      ecore_list_first_goto(ecore_evas_input_devices);
       dev = ecore_list_current(ecore_evas_input_devices);
       do
       {

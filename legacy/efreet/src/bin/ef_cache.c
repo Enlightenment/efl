@@ -21,7 +21,7 @@ timer(void *data)
     list = efreet_util_desktop_mime_list("application/ogg");
     if (list)
     {
-        ecore_list_goto_first(list);
+        ecore_list_first_goto(list);
         while ((desktop = ecore_list_next(list)))
         {
             printf("application/ogg: %s\n", desktop->name);

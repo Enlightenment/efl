@@ -1042,7 +1042,7 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	     svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
 	     ecore_list_goto(svr->client_list, cl);
 	     ecore_list_remove(svr->client_list);
-	     ecore_list_goto_first(svr->client_list);
+	     ecore_list_first_goto(svr->client_list);
 	     if (!cl->delete_me)
 	       {
 		  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));

@@ -43,7 +43,7 @@ ecore_path_group_new(char *group_name)
    group->name = strdup(group_name);
    ecore_list_append(group_list, group);
 
-   last = ecore_list_goto_last(group_list);
+   last = ecore_list_last_goto(group_list);
    group->id = last->id + 1;
 
    return group->id;
@@ -73,7 +73,7 @@ ecore_path_group_del(int group_id)
    if (ecore_list_goto(group_list, group))
      ecore_list_remove(group_list);
 
-   if (ecore_list_is_empty(group_list))
+   if (ecore_list_empty_is(group_list))
      {
 	ecore_list_destroy(group_list);
 	group_list = NULL;
@@ -129,7 +129,7 @@ ecore_path_group_remove(int group_id, char *path)
    /*
     * Find the path in the list of available paths
     */
-   ecore_list_goto_first(group->paths);
+   ecore_list_first_goto(group->paths);
 
    while ((found = ecore_list_current(group->paths)) && strcmp(found, path))
      ecore_list_next(group->paths);
@@ -168,7 +168,7 @@ ecore_path_group_find(int group_id, char *name)
    /*
     * Search the paths of the path group for the specified file name
     */
-   ecore_list_goto_first(group->paths);
+   ecore_list_first_goto(group->paths);
    p = ecore_list_next(group->paths);
    do
      {
@@ -200,10 +200,10 @@ ecore_path_group_available(int group_id)
 
    group = __ecore_path_group_find_id(group_id);
 
-   if (!group || !group->paths || ecore_list_is_empty(group->paths))
+   if (!group || !group->paths || ecore_list_empty_is(group->paths))
      return NULL;
 
-   ecore_list_goto_first(group->paths);
+   ecore_list_first_goto(group->paths);
 
    while ((path = ecore_list_next(group->paths)) != NULL)
      {
@@ -268,7 +268,7 @@ __ecore_path_group_find(char *name)
 
    CHECK_PARAM_POINTER_RETURN("name", name, NULL);
 
-   ecore_list_goto_first(group_list);
+   ecore_list_first_goto(group_list);
 
    while ((group = ecore_list_next(group_list)) != NULL)
      if (!strcmp(group->name, name))
@@ -285,7 +285,7 @@ __ecore_path_group_find_id(int id)
 {
    Ecore_Path_Group *group;
 
-   ecore_list_goto_first(group_list);
+   ecore_list_first_goto(group_list);
 
    while ((group = ecore_list_next(group_list)) != NULL)
      if (group->id == id)

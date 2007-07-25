@@ -29,7 +29,7 @@ ecore_string_init()
 	ecore_strings = ecore_hash_new(ecore_str_hash, ecore_str_compare);
 	if (!ecore_strings)
 	  return 0;
-	ecore_hash_set_free_value(ecore_strings, ecore_string_free_cb);
+	ecore_hash_free_value_cb_set(ecore_strings, ecore_string_free_cb);
      }
    ecore_string_init_count++;
 

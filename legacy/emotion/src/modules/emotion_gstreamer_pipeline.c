@@ -79,7 +79,7 @@ cb_handoff (GstElement *fakesrc,
    }
    else {
      Emotion_Audio_Sink *asink; 
-     asink = (Emotion_Audio_Sink *)ecore_list_goto_index (ev->audio_sinks, ev->audio_sink_nbr);
+     asink = (Emotion_Audio_Sink *)ecore_list_index_goto (ev->audio_sinks, ev->audio_sink_nbr);
      _emotion_video_pos_update(ev->obj, ev->position, asink->length_time);
    }
 
@@ -216,8 +216,8 @@ emotion_pipeline_dvd_build (void *video, const char *device)
    no_more_pads = 0;
 
    /* We get the informations of streams */
-   ecore_list_goto_first (ev->video_sinks);
-   ecore_list_goto_first (ev->audio_sinks);
+   ecore_list_first_goto (ev->video_sinks);
+   ecore_list_first_goto (ev->audio_sinks);
 
    {
       GstIterator *it;
@@ -321,7 +321,7 @@ emotion_pipeline_dvd_build (void *video, const char *device)
    {
       Emotion_Video_Sink *vsink;
 
-      vsink = (Emotion_Video_Sink *)ecore_list_goto_first (ev->video_sinks);
+      vsink = (Emotion_Video_Sink *)ecore_list_first_goto (ev->video_sinks);
       if (vsink && vsink->sink) {
          g_object_set (G_OBJECT (vsink->sink), "sync", TRUE, NULL);
          g_object_set (G_OBJECT (vsink->sink), "signal-handoffs", TRUE, NULL);
@@ -373,8 +373,8 @@ emotion_pipeline_file_build (void *video, const char *file)
      goto failure_gstreamer_pause;
 
    /* We get the informations of streams */
-   ecore_list_goto_first (ev->video_sinks);
-   ecore_list_goto_first (ev->audio_sinks);
+   ecore_list_first_goto (ev->video_sinks);
+   ecore_list_first_goto (ev->audio_sinks);
 
    {
       GstIterator *it;
@@ -453,7 +453,7 @@ emotion_pipeline_file_build (void *video, const char *file)
 
             index = ecore_list_index (ev->audio_sinks);
 
-            if (ecore_list_nodes (ev->video_sinks) == 0) {
+            if (ecore_list_count (ev->video_sinks) == 0) {
               if (index == 1) {
                  Emotion_Video_Sink *vsink;
 
@@ -493,7 +493,7 @@ emotion_pipeline_file_build (void *video, const char *file)
    {
       Emotion_Video_Sink *vsink;
 
-      vsink = (Emotion_Video_Sink *)ecore_list_goto_first (ev->video_sinks);
+      vsink = (Emotion_Video_Sink *)ecore_list_first_goto (ev->video_sinks);
       if (vsink && vsink->sink) {
          g_object_set (G_OBJECT (vsink->sink), "sync", TRUE, NULL);
          g_object_set (G_OBJECT (vsink->sink), "signal-handoffs", TRUE, NULL);
@@ -594,7 +594,7 @@ file_new_decoded_pad_cb (GstElement *decodebin,
       videopad = gst_element_get_pad (queue, "sink");
       gst_pad_link (new_pad, videopad);
       gst_object_unref (videopad);
-      if (ecore_list_nodes(ev->video_sinks) == 1) {
+      if (ecore_list_count(ev->video_sinks) == 1) {
          ev->ratio = (double)vsink->width / (double)vsink->height;
       }
       gst_element_set_state (queue, GST_STATE_PAUSED);
@@ -655,7 +655,7 @@ dvd_pad_added_cb (GstElement *dvddemuxer,
       videopad = gst_element_get_pad (queue, "sink");
       gst_pad_link (GST_PAD (new_pad), videopad);
       gst_object_unref (videopad);
-      if (ecore_list_nodes(ev->video_sinks) == 1) {
+      if (ecore_list_count(ev->video_sinks) == 1) {
          ev->ratio = (double)vsink->width / (double)vsink->height;
       }
       gst_element_set_state (queue, GST_STATE_PAUSED);

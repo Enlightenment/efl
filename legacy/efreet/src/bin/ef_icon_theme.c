@@ -64,10 +64,10 @@ ef_cb_efreet_icon_theme_list(void)
     char buf[PATH_MAX];
 
     dirs = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(dirs, free);
+    ecore_hash_free_key_cb_set(dirs, free);
 
     icon_dirs = efreet_data_dirs_get();
-    ecore_list_goto_first(icon_dirs);
+    ecore_list_first_goto(icon_dirs);
 
     ef_icon_theme_themes_find(efreet_icon_user_dir_get(), dirs);
     while ((dir = ecore_list_next(icon_dirs))) 
@@ -78,7 +78,7 @@ ef_cb_efreet_icon_theme_list(void)
     ef_icon_theme_themes_find("/usr/share/pixmaps", dirs);
    
     themes = efreet_icon_theme_list_get();
-    ecore_list_goto_first(themes);
+    ecore_list_first_goto(themes);
     while ((theme = ecore_list_next(themes)))
     {
         if (ecore_hash_get(dirs, theme->name.internal))
@@ -93,12 +93,12 @@ ef_cb_efreet_icon_theme_list(void)
     ecore_list_destroy(themes);
 
     themes = ecore_hash_keys(dirs);
-    if (ecore_list_nodes(themes) > 0)
+    if (ecore_list_count(themes) > 0)
     {
         char *dir;
 
         printf("efreet_icon_theme_list_get() missed: ");
-        ecore_list_goto_first(themes);
+        ecore_list_first_goto(themes);
         while ((dir = ecore_list_next(themes)))
             printf("%s ", dir);
         printf("\n");
@@ -122,7 +122,7 @@ ef_icon_theme_themes_find(const char *search_dir, Ecore_Hash *themes)
     dirs = ecore_file_ls(search_dir);
     if (!dirs) return;
 
-    while ((dir = ecore_list_remove_first(dirs)))
+    while ((dir = ecore_list_first_remove(dirs)))
     {
         char p[PATH_MAX];
 
@@ -427,7 +427,7 @@ ef_cb_efreet_icon_match(void)
     Ecore_List *themes;
 
     themes = efreet_icon_theme_list_get();
-    ecore_list_goto_first(themes);
+    ecore_list_first_goto(themes);
     while ((theme = ecore_list_next(themes)))
     {
         if (!strcmp(theme->name.internal, THEME))
@@ -442,8 +442,8 @@ ef_cb_efreet_icon_match(void)
     }
 
     icon_hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(icon_hash, free);
-    ecore_hash_set_free_value(icon_hash, free);
+    ecore_hash_free_key_cb_set(icon_hash, free);
+    ecore_hash_free_value_cb_set(icon_hash, free);
 
     ef_icons_find(theme, themes, icon_hash); 
     ecore_list_destroy(themes);
@@ -494,7 +494,7 @@ ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
     {
         Efreet_Icon_Theme_Directory *dir;
 
-        ecore_list_goto_first(theme->directories);
+        ecore_list_first_goto(theme->directories);
         while ((dir = ecore_list_next(theme->directories)))
         {
             if (theme->paths.count > 1)
@@ -503,7 +503,7 @@ ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
                 char *tmp;
 
                 list = theme->paths.path;
-                ecore_list_goto_first(list);
+                ecore_list_first_goto(list);
                 while ((tmp = ecore_list_next(list)))
                 {
                     snprintf(path, sizeof(path), "%s/%s/", tmp, dir->name);
@@ -521,12 +521,12 @@ ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
     {
         const char *theme_path;
 
-        ecore_list_goto_first(theme->paths.path);
+        ecore_list_first_goto(theme->paths.path);
         while ((theme_path = ecore_list_next(theme->paths.path)))
         {
             Efreet_Icon_Theme_Directory *dir;
 
-            ecore_list_goto_first(theme->directories);
+            ecore_list_first_goto(theme->directories);
             while ((dir = ecore_list_next(theme->directories)))
             {
                 snprintf(path, sizeof(path), "%s/%s/", theme_path, dir->name);
@@ -540,10 +540,10 @@ ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
         Efreet_Icon_Theme *parent_theme;
         char *parent;
 
-        ecore_list_goto_first(theme->inherits);
+        ecore_list_first_goto(theme->inherits);
         while ((parent = ecore_list_next(theme->inherits)))
         {
-            ecore_list_goto_first(themes);
+            ecore_list_first_goto(themes);
             while ((parent_theme = ecore_list_next(themes)))
             {
                 if (!strcmp(parent_theme->name.internal, parent))
@@ -555,7 +555,7 @@ ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
     {
         Efreet_Icon_Theme *parent_theme;
 
-        ecore_list_goto_first(themes);
+        ecore_list_first_goto(themes);
         while ((parent_theme = ecore_list_next(themes)))
         {
             if (!strcmp(parent_theme->name.internal, "hicolor"))
@@ -577,7 +577,7 @@ ef_read_dir(const char *dir, Ecore_Hash *icons)
     files = ecore_file_ls(dir);
     if (!files) return;
 
-    while ((file = ecore_list_remove_first(files)))
+    while ((file = ecore_list_first_remove(files)))
     {
         char *p;
 

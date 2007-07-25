@@ -25,6 +25,38 @@
 /* we need this for size_t */
 #include <stddef.h>
 
+/* NOTE: these aliases will be removed! DO NOT USE THEM! */
+#define ecore_list_nodes(l) ecore_list_count(l)
+#define ecore_list_is_empty(l) ecore_list_empty_is(l)
+#define ecore_list_set_free_cb(l, f) ecore_list_free_cb_set(l, f)
+#define ecore_dlist_nodes(l) ecore_dlist_count(l)
+#define ecore_dlist_is_empty(l) ecore_dlist_empty_is(l)
+#define ecore_dlist_set_free_cb(l, f) ecore_dlist_free_cb_set(l, f)
+#define ecore_hash_set_free_key(l, f) ecore_hash_free_key_cb_set(l, f)
+#define ecore_hash_set_free_value(l, f) ecore_hash_free_value_cb_set(l, f)
+#define ecore_hash_set_hash(l, k, v) ecore_hash_hash_set(l, k, v)
+#define ecore_plugin_get_available(id) ecore_plugin_available_get(id)
+#define ecore_sheap_set_free_cb(s, f) ecore_sheap_free_cb_set(s, f)
+#define ecore_sheap_set_compare(s, f) ecore_sheap_compare_set(s, f)
+#define ecore_sheap_set_order(s, o) ecore_sheap_order_set(s, o)
+#define ecore_tree_is_empty(t) ecore_tree_empty_is(t)
+#define ecore_tree_get_closest_larger(t) ecore_tree_closest_larger_get(t)
+#define ecore_tree_get_closest_smaller(t) ecore_tree_closest_smaller_get(t)
+#define ecore_tree_add_node(t, n) ecore_tree_node_add(t, n);
+#define ecore_tree_remove_node(t, n) ecore_tree_node_remove(t, n)
+#define ecore_tree_set_free_value(t, f) ecore_tree_free_value_cb_set(t, f)
+#define ecore_tree_set_free_key(t, f) ecore_tree_free_key_cb_set(t, f)
+#define ecore_list_remove_first(l) ecore_list_first_remove(l)
+#define ecore_list_remove_last(l) ecore_list_last_remove(l)
+#define ecore_list_goto_first(l) ecore_list_first_goto(l)
+#define ecore_list_goto_last(l) ecore_list_last_goto(l)
+#define ecore_list_goto_index(l) ecore_list_index_goto(l)
+#define ecore_dlist_remove_first(l) ecore_dlist_first_remove(l)
+#define ecore_dlist_remove_last(l) ecore_dlist_last_remove(l)
+#define ecore_dlist_goto_first(l) ecore_dlist_first_goto(l)
+#define ecore_dlist_goto_last(l) ecore_dlist_last_goto(l)
+#define ecore_dlist_goto_index(l) ecore_dlist_index_goto(l)
+
 /**
  * @file Ecore_Data.h
  * @brief Contains threading, list, hash, debugging and tree functions.
@@ -104,22 +136,22 @@ extern "C" {
    /* Removing items from the list */
    EAPI int ecore_list_remove_destroy(Ecore_List *list);
    EAPI void *ecore_list_remove(Ecore_List * list);
-   EAPI void *ecore_list_remove_first(Ecore_List * list);
-   EAPI void *ecore_list_remove_last(Ecore_List * list);
+   EAPI void *ecore_list_first_remove(Ecore_List * list);
+   EAPI void *ecore_list_last_remove(Ecore_List * list);
    
    /* Retrieve the current position in the list */
    EAPI void *ecore_list_current(Ecore_List * list);
    EAPI void *ecore_list_first(Ecore_List * list);
    EAPI void *ecore_list_last(Ecore_List * list);
    EAPI int ecore_list_index(Ecore_List * list);
-   EAPI int ecore_list_nodes(Ecore_List * list);
+   EAPI int ecore_list_count(Ecore_List * list);
    
    /* Traversing the list */
    EAPI int ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
 				void *user_data);
-   EAPI void *ecore_list_goto_first(Ecore_List * list);
-   EAPI void *ecore_list_goto_last(Ecore_List * list);
-   EAPI void *ecore_list_goto_index(Ecore_List * list, int index);
+   EAPI void *ecore_list_first_goto(Ecore_List * list);
+   EAPI void *ecore_list_last_goto(Ecore_List * list);
+   EAPI void *ecore_list_index_goto(Ecore_List * list, int index);
    EAPI void *ecore_list_goto(Ecore_List * list, const void *_data);
    
    /* Traversing the list and returning data */
@@ -136,7 +168,7 @@ extern "C" {
                                   char order);
    
    /* Check to see if there is any data in the list */
-   EAPI int ecore_list_is_empty(Ecore_List * list);
+   EAPI int ecore_list_empty_is(Ecore_List * list);
    
    /* Remove every node in the list without freeing the list itself */
    EAPI int ecore_list_clear(Ecore_List * list);
@@ -150,7 +182,7 @@ extern "C" {
    /* Destroying nodes */
    EAPI int ecore_list_node_destroy(Ecore_List_Node * _e_node, Ecore_Free_Cb free_func);
    
-   EAPI int ecore_list_set_free_cb(Ecore_List * list, Ecore_Free_Cb free_func);
+   EAPI int ecore_list_free_cb_set(Ecore_List * list, Ecore_Free_Cb free_func);
    
    typedef Ecore_List Ecore_DList;
 # define ECORE_DLIST(dlist) ((Ecore_DList *)dlist)
@@ -178,20 +210,20 @@ extern "C" {
    /* Info about list's state */
    EAPI void *ecore_dlist_current(Ecore_DList *list);
    EAPI int ecore_dlist_index(Ecore_DList *list);
-# define ecore_dlist_nodes(list) ecore_list_nodes(ECORE_LIST(list))
+# define ecore_dlist_count(list) ecore_list_count(ECORE_LIST(list))
    
    /* Removing items from the list */
    EAPI void *ecore_dlist_remove(Ecore_DList * _e_dlist);
-   EAPI void *ecore_dlist_remove_first(Ecore_DList * _e_dlist);
+   EAPI void *ecore_dlist_first_remove(Ecore_DList * _e_dlist);
    EAPI int ecore_dlist_remove_destroy(Ecore_DList *list);
-   EAPI void *ecore_dlist_remove_last(Ecore_DList * _e_dlist);
+   EAPI void *ecore_dlist_last_remove(Ecore_DList * _e_dlist);
    
    /* Traversing the list */
 # define ecore_dlist_for_each(list, function, user_data) \
    ecore_list_for_each(ECORE_LIST(list), function, user_data)
-   EAPI void *ecore_dlist_goto_first(Ecore_DList * _e_dlist);
-   EAPI void *ecore_dlist_goto_last(Ecore_DList * _e_dlist);
-   EAPI void *ecore_dlist_goto_index(Ecore_DList * _e_dlist, int index);
+   EAPI void *ecore_dlist_first_goto(Ecore_DList * _e_dlist);
+   EAPI void *ecore_dlist_last_goto(Ecore_DList * _e_dlist);
+   EAPI void *ecore_dlist_index_goto(Ecore_DList * _e_dlist, int index);
    EAPI void *ecore_dlist_goto(Ecore_DList * _e_dlist, void *_data);
    
    /* Traversing the list and returning data */
@@ -207,7 +239,7 @@ extern "C" {
    ecore_list_heapsort(list, compare, order)
    
    /* Check to see if there is any data in the list */
-   EAPI int ecore_dlist_is_empty(Ecore_DList * _e_dlist);
+   EAPI int ecore_dlist_empty_is(Ecore_DList * _e_dlist);
    
    /* Remove every node in the list without free'ing it */
    EAPI int ecore_dlist_clear(Ecore_DList * _e_dlist);
@@ -219,7 +251,7 @@ extern "C" {
    /* Destroying nodes */
    EAPI int ecore_dlist_node_destroy(Ecore_DList_Node * node, Ecore_Free_Cb free_func);
    
-   EAPI int ecore_dlist_set_free_cb(Ecore_DList * dlist, Ecore_Free_Cb free_func);
+   EAPI int ecore_dlist_free_cb_set(Ecore_DList * dlist, Ecore_Free_Cb free_func);
    
    
    
@@ -263,8 +295,8 @@ extern "C" {
    EAPI int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare);
    
    /* Functions related to freeing the data in the hash table */
-   EAPI int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function);
-   EAPI int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function);
+   EAPI int ecore_hash_free_key_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function);
+   EAPI int ecore_hash_free_value_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function);
    EAPI void ecore_hash_destroy(Ecore_Hash *hash);
 
    EAPI int ecore_hash_count(Ecore_Hash *hash);
@@ -275,7 +307,7 @@ extern "C" {
    /* Retrieve and store data into the hash */
    EAPI void *ecore_hash_get(Ecore_Hash *hash, const void *key);
    EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
-   EAPI int ecore_hash_set_hash(Ecore_Hash *hash, Ecore_Hash *set);
+   EAPI int ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set);
    EAPI void *ecore_hash_remove(Ecore_Hash *hash, const void *key);
    EAPI void *ecore_hash_find(Ecore_Hash *hash, Ecore_Compare_Cb compare, const void *value);
    EAPI void ecore_hash_dump_graph(Ecore_Hash *hash);
@@ -344,7 +376,7 @@ extern "C" {
     */
    EAPI void *ecore_plugin_call(Ecore_Plugin * plugin, const char *symbol_name);
    
-   EAPI Ecore_List *ecore_plugin_get_available(int group_id);
+   EAPI Ecore_List *ecore_plugin_available_get(int group_id);
 
 
    typedef struct _ecore_heap Ecore_Sheap;
@@ -367,13 +399,13 @@ extern "C" {
    EAPI Ecore_Sheap *ecore_sheap_new(Ecore_Compare_Cb compare, int size);
    EAPI void ecore_sheap_destroy(Ecore_Sheap *heap);
    EAPI int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size);
-   EAPI int ecore_sheap_set_free_cb(Ecore_Sheap *heap, Ecore_Free_Cb free_func);
+   EAPI int ecore_sheap_free_cb_set(Ecore_Sheap *heap, Ecore_Free_Cb free_func);
    EAPI int ecore_sheap_insert(Ecore_Sheap *heap, void *data);
    EAPI void *ecore_sheap_extract(Ecore_Sheap *heap);
    EAPI void *ecore_sheap_extreme(Ecore_Sheap *heap);
    EAPI int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval);
-   EAPI int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare);
-   EAPI void ecore_sheap_set_order(Ecore_Sheap *heap, char order);
+   EAPI int ecore_sheap_compare_set(Ecore_Sheap *heap, Ecore_Compare_Cb compare);
+   EAPI void ecore_sheap_order_set(Ecore_Sheap *heap, char order);
    EAPI void ecore_sheap_sort(Ecore_Sheap *heap);
    
    EAPI void *ecore_sheap_item(Ecore_Sheap *heap, int i);
@@ -435,15 +467,15 @@ extern "C" {
    /* Free the tree */
    EAPI int ecore_tree_destroy(Ecore_Tree * tree);
    /* Check to see if the tree has any nodes in it */
-   EAPI int ecore_tree_is_empty(Ecore_Tree * tree);
+   EAPI int ecore_tree_empty_is(Ecore_Tree * tree);
    
    /* Retrieve the value associated with key */
    EAPI void *ecore_tree_get(Ecore_Tree * tree, const void *key);
    EAPI Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, const void *key);
    /* Retrieve the value of node with key greater than or equal to key */
-   EAPI void *ecore_tree_get_closest_larger(Ecore_Tree * tree, const void *key);
+   EAPI void *ecore_tree_closest_larger_get(Ecore_Tree * tree, const void *key);
    /* Retrieve the value of node with key less than or equal to key */
-   EAPI void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, const void *key);
+   EAPI void *ecore_tree_closest_smaller_get(Ecore_Tree * tree, const void *key);
    
    /* Set the value associated with key to value */
    EAPI int ecore_tree_set(Ecore_Tree * tree, void *key, void *value);
@@ -451,9 +483,9 @@ extern "C" {
    EAPI int ecore_tree_remove(Ecore_Tree * tree, const void *key);
    
    /* Add a node to the tree */
-   EAPI int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node);
+   EAPI int ecore_tree_node_add(Ecore_Tree * tree, Ecore_Tree_Node * node);
    /* Remove a node from the tree */
-   EAPI int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node);
+   EAPI int ecore_tree_node_remove(Ecore_Tree * tree, Ecore_Tree_Node * node);
    
    /* For each node in the tree perform the for_each_func function */
    /* For this one pass in the node */
@@ -484,9 +516,9 @@ extern "C" {
    EAPI void *ecore_tree_node_value_get(Ecore_Tree_Node * node);
    
    /* Add a function to free the data stored in nodes */
-   EAPI int ecore_tree_set_free_value(Ecore_Tree * tree, Ecore_Free_Cb free_value);
+   EAPI int ecore_tree_free_value_cb_set(Ecore_Tree * tree, Ecore_Free_Cb free_value);
    /* Add a function to free the keys stored in nodes */
-   EAPI int ecore_tree_set_free_key(Ecore_Tree * tree, Ecore_Free_Cb free_key);
+   EAPI int ecore_tree_free_key_cb_set(Ecore_Tree * tree, Ecore_Free_Cb free_key);
 
 
    EAPI Ecore_Strbuf * ecore_strbuf_new(void);

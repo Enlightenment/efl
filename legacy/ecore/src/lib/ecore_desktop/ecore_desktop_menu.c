@@ -248,8 +248,8 @@ _ecore_desktop_menu_get0(char *file, Ecore_Desktop_Tree * merge_stack,
    /* Preperation. */
    data.stack = ecore_desktop_tree_new(NULL);
    /* FIXME data.base and data.path leak */
-   data.base = ecore_file_strip_ext(ecore_file_get_file(file));
-   data.path = ecore_file_get_dir(file);
+   data.base = ecore_file_strip_ext(ecore_file_file_get(file));
+   data.path = ecore_file_dir_get(file);
    if ((level == 0) && (merge_stack == NULL))
       merge_stack = ecore_desktop_tree_new(NULL);
 #ifdef DEBUG
@@ -658,10 +658,10 @@ _ecore_desktop_menu_create_menu()
    apps = ecore_hash_new(ecore_str_hash, ecore_str_compare);
    if ((menu) && (rules) && (pool) && (apps))
      {
-	ecore_hash_set_free_key(pool, free);
-	ecore_hash_set_free_value(pool, free);
-	ecore_hash_set_free_key(apps, free);
-	ecore_hash_set_free_value(apps, free);
+	ecore_hash_free_key_cb_set(pool, free);
+	ecore_hash_free_value_cb_set(pool, free);
+	ecore_hash_free_key_cb_set(apps, free);
+	ecore_hash_free_value_cb_set(apps, free);
 	ecore_desktop_tree_extend(menu, "<MENU <    > <> <>");
 	ecore_desktop_tree_extend(menu, "<MENU_PATH ");
 	ecore_desktop_tree_add_hash(menu, pool);
@@ -1052,7 +1052,7 @@ _ecore_desktop_menu_add_dirs(Ecore_Desktop_Tree * tree, Ecore_List * paths,
    char                t[PATH_MAX], *this_path;
 
    /* reverse the order of the dirs. */
-   ecore_list_goto_first(paths);
+   ecore_list_first_goto(paths);
    while ((this_path = ecore_list_next(paths)) != NULL)
      {
 	if (extra)
@@ -1277,7 +1277,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 		   */
 
 		  merge_path[0] = '\0';
-	          ecore_list_goto_first(ecore_desktop_paths_config);
+	          ecore_list_first_goto(ecore_desktop_paths_config);
 	          while ((xdg_path = ecore_list_next(ecore_desktop_paths_config)) != NULL)
 	            {
 		       if (found < 0)

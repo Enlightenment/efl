@@ -172,7 +172,7 @@ ef_cb_efreet_data_dirs(void)
 
     i = 0;
     tmp = efreet_data_dirs_get();
-    ecore_list_goto_first(tmp);
+    ecore_list_first_goto(tmp);
     while ((val = ecore_list_next(tmp)))
     {
         if (vals[i] == NULL)
@@ -199,13 +199,13 @@ ef_cb_efreet_data_dirs(void)
 
     i = 0;
     tmp = efreet_data_dirs_get();
-    if (ecore_list_nodes(tmp) != 2)
+    if (ecore_list_count(tmp) != 2)
     {
         printf("efreet_data_dirs_get() nodes is differnet from expected default\n");
         ret = 0;
     }
 
-    ecore_list_goto_first(tmp);
+    ecore_list_first_goto(tmp);
     while ((val = ecore_list_next(tmp)))
     {
         if (def_vals[i] == NULL)
@@ -251,7 +251,7 @@ ef_cb_efreet_config_dirs(void)
 
     i = 0;
     tmp = efreet_config_dirs_get();
-    ecore_list_goto_first(tmp);
+    ecore_list_first_goto(tmp);
     while ((val = ecore_list_next(tmp)))
     {
         if (vals[i] == NULL)
@@ -278,7 +278,7 @@ ef_cb_efreet_config_dirs(void)
 
     i = 0;
     tmp = efreet_config_dirs_get();
-    ecore_list_goto_first(tmp);
+    ecore_list_first_goto(tmp);
     while ((val = ecore_list_next(tmp)))
     {
         if (def_vals[i] == NULL)

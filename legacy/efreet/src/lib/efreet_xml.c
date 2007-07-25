@@ -166,7 +166,7 @@ efreet_xml_dump(Efreet_Xml *xml, int level)
 
         printf(">\n");
 
-        ecore_dlist_goto_first(xml->children);
+        ecore_dlist_first_goto(xml->children);
         while ((child = ecore_dlist_next(xml->children)))
             efreet_xml_dump(child, level + 1);
 
@@ -197,7 +197,7 @@ efreet_xml_parse(char **data, int *size)
     }
 
     xml->children = ecore_dlist_new();
-    ecore_dlist_set_free_cb(xml->children, efreet_xml_cb_attribute_free);
+    ecore_dlist_free_cb_set(xml->children, efreet_xml_cb_attribute_free);
 
     xml->tag = tag;
     efreet_xml_attributes_parse(data, size, &(xml->attributes));

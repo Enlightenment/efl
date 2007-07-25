@@ -62,9 +62,9 @@ ecore_file_download_shutdown(void)
 #ifdef HAVE_CURL
    Ecore_File_Download_Job *job;
 
-   if (!ecore_list_is_empty(_job_list))
+   if (!ecore_list_empty_is(_job_list))
      {
-	ecore_list_goto_first(_job_list);
+	ecore_list_first_goto(_job_list);
 	while ((job = ecore_list_next(_job_list)))
 	  {
 	     ecore_main_fd_handler_del(job->fd_handler);
@@ -91,7 +91,7 @@ ecore_file_download_abort_all(void)
    if (!_job_list)
      return;
    
-   ecore_list_goto_first(_job_list);
+   ecore_list_first_goto(_job_list);
    while ((job = ecore_list_next(_job_list)))
      {
 	ecore_main_fd_handler_del(job->fd_handler);
@@ -111,7 +111,7 @@ ecore_file_download(const char *url, const char *dst,
 		    int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 		    void *data)
 {
-   if (!ecore_file_is_dir(ecore_file_get_dir((char *)dst))) return 0;
+   if (!ecore_file_is_dir(ecore_file_dir_get((char *)dst))) return 0;
    if (ecore_file_exists(dst)) return 0;
 
    /* FIXME: Add handlers for http and ftp! */
@@ -249,7 +249,7 @@ _ecore_file_download_curl(const char *url, const char *dst,
 	if (curlmsg->msg != CURLMSG_DONE) continue;
 
 	/* find the job which is done */
-	ecore_list_goto_first(_job_list);
+	ecore_list_first_goto(_job_list);
 	while ((current = ecore_list_current(_job_list)))
 	  {
 	     if (curlmsg->easy_handle == current->curl)
@@ -335,7 +335,7 @@ _ecore_file_download_curl_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd
 	if (curlmsg->msg != CURLMSG_DONE) continue;
 
 	/* find the job which is done */
-	ecore_list_goto_first(_job_list);
+	ecore_list_first_goto(_job_list);
 	while ((job = ecore_list_current(_job_list)))
 	  {
 	     if (curlmsg->easy_handle == job->curl)

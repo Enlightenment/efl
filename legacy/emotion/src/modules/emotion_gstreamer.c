@@ -259,11 +259,11 @@ em_init(Evas_Object  *obj,
    ev->video_sinks = ecore_list_new ();
    if (!ev->video_sinks)
      goto failure_video_sinks;
-   ecore_list_set_free_cb(ev->video_sinks, ECORE_FREE_CB(free));
+   ecore_list_free_cb_set(ev->video_sinks, ECORE_FREE_CB(free));
    ev->audio_sinks = ecore_list_new ();
    if (!ev->audio_sinks)
      goto failure_audio_sinks;
-   ecore_list_set_free_cb(ev->audio_sinks, ECORE_FREE_CB(free));
+   ecore_list_free_cb_set(ev->audio_sinks, ECORE_FREE_CB(free));
 
    *emotion_video = ev;
 
@@ -403,7 +403,7 @@ em_file_open(const char   *file,
      Emotion_Video_Sink *vsink;
      Emotion_Audio_Sink *asink;
 
-     vsink = (Emotion_Video_Sink *)ecore_list_goto_first (ev->video_sinks);
+     vsink = (Emotion_Video_Sink *)ecore_list_first_goto (ev->video_sinks);
      if (vsink) {
         g_print ("video : \n");
         g_print ("  size   : %dx%d\n", vsink->width, vsink->height);
@@ -413,7 +413,7 @@ em_file_open(const char   *file,
                  GST_TIME_ARGS ((guint64)(vsink->length_time * GST_SECOND)));
      }
 
-     asink = (Emotion_Audio_Sink *)ecore_list_goto_first (ev->audio_sinks);
+     asink = (Emotion_Audio_Sink *)ecore_list_first_goto (ev->audio_sinks);
      if (asink) {
         g_print ("audio : \n");
         g_print ("  chan   : %d\n", asink->channels);
@@ -535,7 +535,7 @@ em_size_get(void  *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
    if (vsink) {
       if (width) *width = vsink->width;
       if (height) *height = vsink->height;
@@ -558,8 +558,8 @@ em_pos_set(void   *video,
 
    if (ev->seek_to_pos == pos) return;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
-   asink = (Emotion_Audio_Sink *)ecore_list_goto_index (ev->video_sinks, ev->audio_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
+   asink = (Emotion_Audio_Sink *)ecore_list_index_goto (ev->video_sinks, ev->audio_sink_nbr);
 
    if (vsink) {
       gst_element_seek(vsink->sink, 1.0,
@@ -602,7 +602,7 @@ em_len_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
       return (double)vsink->length_time;
 
@@ -617,7 +617,7 @@ em_fps_num_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
       return vsink->fps_num;
 
@@ -632,7 +632,7 @@ em_fps_den_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
       return vsink->fps_den;
 
@@ -647,7 +647,7 @@ em_fps_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
       return (double)vsink->fps_num / (double)vsink->fps_den;
 
@@ -691,7 +691,7 @@ em_video_handled(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ecore_list_is_empty (ev->video_sinks))
+   if (ecore_list_empty_is (ev->video_sinks))
      return 0;
 
    return 1;
@@ -704,7 +704,7 @@ em_audio_handled(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ecore_list_is_empty (ev->audio_sinks))
+   if (ecore_list_empty_is (ev->audio_sinks))
      return 0;
 
    return 1;
@@ -736,7 +736,7 @@ em_format_get (void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
    if (vsink) {
       switch (vsink->fourcc) {
       case GST_MAKE_FOURCC ('I','4','2','0'):
@@ -762,7 +762,7 @@ em_video_data_size_get(void *video, int *w, int *h)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
    if (vsink) {
       *w = vsink->width;
       *h = vsink->height;
@@ -863,7 +863,7 @@ em_video_channel_count(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   return ecore_list_nodes(ev->video_sinks);
+   return ecore_list_count(ev->video_sinks);
 }
 
 static void
@@ -929,7 +929,7 @@ em_audio_channel_count(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   return ecore_list_nodes(ev->audio_sinks);
+   return ecore_list_count(ev->audio_sinks);
 }
 
 static void
@@ -1293,7 +1293,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
              frame_data = buf[0];
              buffer = buf[1];
              _emotion_frame_new(ev->obj);
-             vsink = (Emotion_Video_Sink *)ecore_list_goto_index (ev->video_sinks, ev->video_sink_nbr);
+             vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
              _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
           }
      }

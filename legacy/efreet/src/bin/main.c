@@ -83,7 +83,7 @@ environment_store(void)
     else
     {
         environment = ecore_list_new();
-        ecore_list_set_free_cb(environment, ECORE_FREE_CB(free));
+        ecore_list_free_cb_set(environment, ECORE_FREE_CB(free));
     }
 
     for (e = environ; *e; e++)
@@ -97,7 +97,7 @@ environment_restore(void)
     if (!environment) return;
 
     *environ = NULL;
-    ecore_list_goto_first(environment);
+    ecore_list_first_goto(environment);
     while ((e = ecore_list_next(environment)))
         putenv(e);
 }

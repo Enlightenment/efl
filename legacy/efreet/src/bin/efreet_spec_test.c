@@ -37,7 +37,7 @@ dump(Efreet_Menu *menu, const char *path)
 
     if (!menu || !menu->entries) return;
 
-    ecore_list_goto_first(menu->entries);
+    ecore_list_first_goto(menu->entries);
     while ((entry = ecore_list_next(menu->entries)))
     {
         if (entry->type == EFREET_MENU_ENTRY_DESKTOP)

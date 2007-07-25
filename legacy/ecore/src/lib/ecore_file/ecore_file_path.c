@@ -13,7 +13,7 @@ ecore_file_path_init(void)
 {
    if (++init != 1) return init;
    __ecore_file_path_bin = _ecore_file_path_from_env("PATH");
-   ecore_list_set_free_cb(__ecore_file_path_bin, free);
+   ecore_list_free_cb_set(__ecore_file_path_bin, free);
    return init;
 }
 
@@ -65,7 +65,7 @@ ecore_file_path_dir_exists(const char *in_dir)
    char *dir;
 
    if (!__ecore_file_path_bin) return 0;
-   ecore_list_goto_first(__ecore_file_path_bin);
+   ecore_list_first_goto(__ecore_file_path_bin);
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
 	if (!strcmp(dir, in_dir)) return 1;
@@ -82,7 +82,7 @@ ecore_file_app_installed(const char *exe)
    if (!exe) return 0;
    if (ecore_file_can_exec(exe)) return 1;
 
-   ecore_list_goto_first(__ecore_file_path_bin);
+   ecore_list_first_goto(__ecore_file_path_bin);
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
 	snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
@@ -99,14 +99,14 @@ ecore_file_app_list(void)
    
    list = ecore_list_new();
    if (!list) return NULL;
-   ecore_list_set_free_cb(list, free);
-   ecore_list_goto_first(__ecore_file_path_bin);
+   ecore_list_free_cb_set(list, free);
+   ecore_list_first_goto(__ecore_file_path_bin);
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
 	files = ecore_file_ls(dir);
 	if (files)
 	  {
-	     ecore_list_goto_first(files);
+	     ecore_list_first_goto(files);
 	     while ((exe = ecore_list_next(files)) != NULL)
 	       {
 		  snprintf(buf, sizeof(buf), "%s/%s", dir, exe);

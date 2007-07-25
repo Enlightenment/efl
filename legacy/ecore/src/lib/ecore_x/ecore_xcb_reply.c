@@ -43,7 +43,7 @@ _ecore_x_reply_init ()
         return 0;
      }
 
-   if (!ecore_list_set_free_cb(_ecore_xcb_cookies, ECORE_FREE_CB(free)))
+   if (!ecore_list_free_cb_set(_ecore_xcb_cookies, ECORE_FREE_CB(free)))
      {
         ecore_list_destroy(_ecore_xcb_cookies);
         return 0;
@@ -94,7 +94,7 @@ _ecore_xcb_cookie_get (void)
    if (!_ecore_xcb_cookies)
      return 0;
 
-   data = ecore_list_remove_first(_ecore_xcb_cookies);
+   data = ecore_list_first_remove(_ecore_xcb_cookies);
    if (data)
      {
         cookie = data->cookie;

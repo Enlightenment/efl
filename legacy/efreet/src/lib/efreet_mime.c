@@ -112,8 +112,8 @@ efreet_mime_init(void)
     efreet_mime_endianess = efreet_mime_endian_check();
     
     monitors = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(monitors, ECORE_FREE_CB(free));
-    ecore_hash_set_free_value(monitors,
+    ecore_hash_free_key_cb_set(monitors, ECORE_FREE_CB(free));
+    ecore_hash_free_value_cb_set(monitors,
                     ECORE_FREE_CB(ecore_file_monitor_del));
     
     if (!efreet_mime_init_files())
@@ -190,7 +190,7 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
         return NULL;
     
     icons = ecore_list_new();    
-    ecore_list_set_free_cb(icons, free);
+    ecore_list_free_cb_set(icons, free);
 
     /* Standard icon name */
     p = strdup(mime);
@@ -280,7 +280,7 @@ const char *efreet_mime_globs_type_get(const char *file)
     /*
      * Fallback to the other globs if not found
      */
-    ecore_list_goto_first(globs);
+    ecore_list_first_goto(globs);
     while ((g = ecore_list_next(globs)))
     {
         if (efreet_mime_glob_match(file, g->glob))
@@ -288,7 +288,7 @@ const char *efreet_mime_globs_type_get(const char *file)
     }
 
     s = strdup(file);
-    ecore_list_goto_first(globs);
+    ecore_list_first_goto(globs);
     while ((g = ecore_list_next(globs)))
     {                
         if (efreet_mime_glob_case_match(s, g->glob))
@@ -370,12 +370,12 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
         
     IF_FREE_HASH(wild);
     wild = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_set_free_key(wild, ECORE_FREE_CB(ecore_string_release));
-    ecore_hash_set_free_value(wild,
+    ecore_hash_free_key_cb_set(wild, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_value_cb_set(wild,
                     ECORE_FREE_CB(ecore_string_release));
     IF_FREE_LIST(globs);
     globs = ecore_list_new();    
-    ecore_list_set_free_cb(globs, efreet_mime_glob_free);
+    ecore_list_free_cb_set(globs, efreet_mime_glob_free);
    
     
     /*
@@ -387,7 +387,7 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
     efreet_mime_mime_types_load("/etc/mime.types");
     
     datadir = datahome;
-    ecore_list_goto_first(datadirs);
+    ecore_list_first_goto(datadirs);
     while (datadir)
     {
         snprintf(buf, sizeof(buf), "%s/mime/globs", datadir);
@@ -412,10 +412,10 @@ efreet_mime_load_magics(Ecore_List *datadirs, const char *datahome)
     
     IF_FREE_LIST(magics);
     magics = ecore_list_new();
-    ecore_list_set_free_cb(magics, efreet_mime_magic_free);    
+    ecore_list_free_cb_set(magics, efreet_mime_magic_free);    
  
     datadir = datahome;
-    ecore_list_goto_first(datadirs);
+    ecore_list_first_goto(datadirs);
     while (datadir)
     {
         snprintf(buf, sizeof(buf), "%s/mime/magic", datadir);
@@ -483,7 +483,7 @@ efreet_mime_init_files(void)
      * We watch the directories so we can watch for new files
      */    
     datadir = datahome;
-    ecore_list_goto_first(datadirs);
+    ecore_list_first_goto(datadirs);
     while (datadir)
     {
         snprintf(buf, PATH_MAX, "%s/mime", datadir);
@@ -631,7 +631,7 @@ efreet_mime_glob_remove(const char *glob)
 {
     Efreet_Mime_Glob *mime = NULL;
   
-    mime = ecore_list_goto_first(globs);
+    mime = ecore_list_first_goto(globs);
     while ((mime = ecore_list_current(globs)))
     {
         if (!strcmp(glob, mime->glob))
@@ -891,7 +891,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
             mime = NEW(Efreet_Mime_Magic, 1);
             mime->entries = ecore_list_new();
-            ecore_list_set_free_cb(mime->entries,
+            ecore_list_free_cb_set(mime->entries,
                                   efreet_mime_magic_entry_free);
             ecore_list_append(magics, mime);
 
@@ -1062,7 +1062,7 @@ efreet_mime_magic_check_priority(const char *file,
     f = fopen(file, "rb");
     if (!f) return NULL;
       
-    if (!(m = ecore_list_goto_first(magics)))
+    if (!(m = ecore_list_first_goto(magics)))
     {
         fclose(f);
         return NULL;
@@ -1082,7 +1082,7 @@ efreet_mime_magic_check_priority(const char *file,
         if (m->priority < end)                        
             break;
         
-        ecore_list_goto_first(m->entries);
+        ecore_list_first_goto(m->entries);
         while ((e = ecore_list_next(m->entries)))
         {                    
             if ((level < e->indent) && !match)

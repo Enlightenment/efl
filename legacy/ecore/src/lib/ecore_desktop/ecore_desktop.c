@@ -60,8 +60,8 @@ ecore_desktop_ini_get(const char *file)
 	ecore_hash_destroy(result);
 	return NULL;
      }
-   ecore_hash_set_free_key(result, free);
-   ecore_hash_set_free_value(result, (Ecore_Free_Cb) ecore_hash_destroy);
+   ecore_hash_free_key_cb_set(result, free);
+   ecore_hash_free_value_cb_set(result, (Ecore_Free_Cb) ecore_hash_destroy);
    *buffer = '\0';
 #ifdef DEBUG
    fprintf(stdout, "PARSING INI %s\n", file);
@@ -87,8 +87,8 @@ ecore_desktop_ini_get(const char *file)
 	     current = ecore_hash_new(ecore_str_hash, ecore_str_compare);
 	     if (current)
 	       {
-		  ecore_hash_set_free_key(current, free);
-		  ecore_hash_set_free_value(current, free);
+		  ecore_hash_free_key_cb_set(current, free);
+		  ecore_hash_free_value_cb_set(current, free);
 		  ecore_hash_set(result, strdup(key), current);
 #ifdef DEBUG
 		  fprintf(stdout, "  GROUP [%s]\n", key);
@@ -222,7 +222,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	  {
 	     int                 size = 0;
 
-	     value = (char *) ecore_file_get_file(result->original_path);
+	     value = (char *) ecore_file_file_get(result->original_path);
 	     /* Figure out the eap_name. */
 	     if (value)
 	       {
@@ -275,7 +275,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 		    {
 		       char               *p;
 
-		       value = (char *)ecore_file_get_file(tmp);	/* In case the exe included a path. */
+		       value = (char *)ecore_file_file_get(tmp);	/* In case the exe included a path. */
 		       p = value;
 		       while ((*p != '\0') && (*p != ' '))
 			 {
@@ -322,7 +322,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 			    char               *dir;
 
 			    dir =
-			       ecore_file_get_dir(result->original_path);
+			       ecore_file_dir_get(result->original_path);
 			    if (dir)
 			      {
 				 sprintf(temp, "%s/%s", dir, result->icon);
@@ -383,7 +383,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 			 {
 			    char               *tmp;
 
-			    tmp = strdup(ecore_file_get_file(result->exec));
+			    tmp = strdup(ecore_file_file_get(result->exec));
 			    if (tmp)
 			      {
 				 char               *p2;
@@ -534,8 +534,8 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	     desktop->group = ecore_hash_new(ecore_str_hash, ecore_str_compare);
 	     if (desktop->group)
 	       {
-		  ecore_hash_set_free_key(desktop->group, free);
-		  ecore_hash_set_free_value(desktop->group, free);
+		  ecore_hash_free_key_cb_set(desktop->group, free);
+		  ecore_hash_free_value_cb_set(desktop->group, free);
 	       }
 	  }
      }
@@ -669,7 +669,7 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 		fprintf(f, "[Trash Info]\n");
 	     else
 		fprintf(f, "[Desktop Entry]\n");
-	     ecore_list_goto_first(list);
+	     ecore_list_first_goto(list);
 	     while ((key = (char *)ecore_list_next(list)))
 	       {
 		  char               *value;
@@ -714,8 +714,8 @@ ecore_desktop_init()
 	desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
 	if (desktop_cache)
 	  {
-	     ecore_hash_set_free_key(desktop_cache, free);
-	     ecore_hash_set_free_value(desktop_cache,
+	     ecore_hash_free_key_cb_set(desktop_cache, free);
+	     ecore_hash_free_value_cb_set(desktop_cache,
 				       (Ecore_Free_Cb) _ecore_desktop_destroy);
 	  }
      }
@@ -847,7 +847,7 @@ ecore_desktop_get_command(Ecore_Desktop * desktop, Ecore_List * files, int fill)
 
    result = ecore_list_new();
    if (!result) return NULL;
-   ecore_list_set_free_cb(result, free);
+   ecore_list_free_cb_set(result, free);
 
    if (desktop->exec_params)
       params = strdup(desktop->exec_params);
@@ -857,14 +857,14 @@ if (files)
   {
      char *file;
 
-     ecore_list_goto_first(files);
+     ecore_list_first_goto(files);
      while((file = ecore_list_next(files)) != NULL)
         printf("FILE FOR COMMAND IS - %s\n", file);
   }
 #endif
 
    if (files)
-      ecore_list_goto_first(files);
+      ecore_list_first_goto(files);
 
    /* FIXME: The string handling could be better, but it's good enough for now. */
    do
@@ -879,7 +879,7 @@ if (files)
 	   command = ecore_dlist_new();
 	   if (!command) goto error;
 
-	   ecore_dlist_set_free_cb(command, free);
+	   ecore_dlist_free_cb_set(command, free);
            /* Grab a fresh copy of the params.  The default is %F as per rasters request. */
            if (params) free(params);
            if (desktop->exec_params)
@@ -910,9 +910,9 @@ if (files)
 	   t = NULL;
 	   p = NULL;
 	   /* Check the bits for replacables. */
-	   if (!ecore_dlist_is_empty(command))
+	   if (!ecore_dlist_empty_is(command))
 	     {
-	        ecore_dlist_goto_first(command);
+	        ecore_dlist_first_goto(command);
 	        while ((p = ecore_dlist_next(command)) != NULL)
 	          {
 	             int is_URL = 0, is_directory = 0, is_file = 0;
@@ -1025,10 +1025,10 @@ if (files)
                                      *    thus %d/%D would be ./ implicitly (but may need to be explicit
                                      *    in the command line)
                                      */
-			            text = ecore_file_get_dir(file);
+			            text = ecore_file_dir_get(file);
 			         }
 			       else if (is_file)
-			          text = strdup(ecore_file_get_file(file));
+			          text = strdup(ecore_file_file_get(file));
 			       else
 			         {
 			            /* FIXME: If the file is on the net, download 
@@ -1089,7 +1089,7 @@ if (files)
 	        if (params)
 	          {
 		     params[0] = '\0';
-		     ecore_dlist_goto_first(command);
+		     ecore_dlist_first_goto(command);
 		     while ((p = ecore_dlist_next(command)) != NULL)
 		       {
 		          if (p[0] == '%')

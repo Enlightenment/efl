@@ -102,8 +102,8 @@ ecore_con_shutdown(void)
 {
    if (--init_count != 0) return init_count;
 
-   while (!ecore_list_is_empty(servers))
-     _ecore_con_server_free(ecore_list_remove_first(servers));
+   while (!ecore_list_empty_is(servers))
+     _ecore_con_server_free(ecore_list_first_remove(servers));
    ecore_list_destroy(servers);
    servers = NULL;
 
@@ -974,8 +974,8 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 	  }
      }
    if (svr->write_buf) free(svr->write_buf);
-   while (!ecore_list_is_empty(svr->clients))
-     _ecore_con_client_free(ecore_list_remove_first(svr->clients));
+   while (!ecore_list_empty_is(svr->clients))
+     _ecore_con_client_free(ecore_list_first_remove(svr->clients));
    ecore_list_destroy(svr->clients);
    if ((svr->created) && (svr->path) && (svr->ppid == getpid())) unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
@@ -1034,7 +1034,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    if (svr->delete_me) return 1;
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients))
      {
-	if (ecore_list_nodes(svr->clients) >= svr->client_limit) return 1;
+	if (ecore_list_count(svr->clients) >= svr->client_limit) return 1;
      }
    /* a new client */
    size_in = sizeof(struct sockaddr_in);

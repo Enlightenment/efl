@@ -254,7 +254,7 @@ ecore_file_realpath(const char *file)
 }
 
 EAPI const char *
-ecore_file_get_file(const char *path)
+ecore_file_file_get(const char *path)
 {
    char *result = NULL;
 
@@ -265,7 +265,7 @@ ecore_file_get_file(const char *path)
 }
 
 EAPI char *
-ecore_file_get_dir(const char *file)
+ecore_file_dir_get(const char *file)
 {
    char               *p;
    char                buf[PATH_MAX];
@@ -330,7 +330,7 @@ ecore_file_ls(const char *dir)
    if (!dirp) return NULL;
 
    list = ecore_list_new();
-   ecore_list_set_free_cb(list, free);
+   ecore_list_free_cb_set(list, free);
 
    while ((dp = readdir(dirp)))
      {
@@ -344,7 +344,7 @@ ecore_file_ls(const char *dir)
    
    ecore_list_sort(list, ECORE_COMPARE_CB(strcoll), ECORE_SORT_MIN);
 
-   ecore_list_goto_first(list);
+   ecore_list_first_goto(list);
    return list;
 }
 
