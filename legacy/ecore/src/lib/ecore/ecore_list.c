@@ -1135,8 +1135,8 @@ _ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function, const void *user_d
  * Sort data in @p list using the compare function @p compare
  * @param list      The list.
  * @param compare   The function to compare the data of @p list
- * @param order     The sort direction
- *
+ * @param order     The sort direction, possible values are ECORE_SORT_MIN and
+ *                  ECORE_SORT_MAX
  * @return          true on success
  *
  * This is a wrapper function for mergesort and heapsort. It
@@ -1162,8 +1162,8 @@ ecore_list_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
  * Sort data in @p list using the compare function @p compare
  * @param list      The list.
  * @param compare   The function to compare the data of @p list
- * @param order     The sort direction
- *
+ * @param order     The sort direction, possible values are ECORE_SORT_MIN and
+ *                  ECORE_SORT_MAX
  * @return          true on success
  *
  * Mergesort is a stable, in-place sorting algorithm 
@@ -1288,8 +1288,8 @@ _ecore_list_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
  * Sort data in @p list using the compare function @p compare
  * @param list      The list.
  * @param compare   The function to compare the data of @p list
- * @param order     The sort direction 
- *
+ * @param order     The sort direction, possible values are ECORE_SORT_MIN and
+ *                  ECORE_SORT_MAX
  * @return          true on success
  *
  * Heapsort is a unstable sorting algorithm, it needs to allocate extra memomry,
@@ -1990,8 +1990,8 @@ ecore_dlist_clear(Ecore_DList *list)
  * Sort data in @p list using the compare function @p compare
  * @param list      The list.
  * @param compare   The function to compare the data of @p list
- * @param order     The sort direction
- *
+ * @param order     The sort direction, possible values are ECORE_SORT_MIN and
+ *                  ECORE_SORT_MAX
  * @return          true on success
  *
  * This is a wrapper function for mergesort and heapsort. It
@@ -2017,8 +2017,8 @@ ecore_dlist_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
  * Sort data in @p list using the compare function @p compare
  * @param list      The list.
  * @param compare   The function to compare the data of @p list
- * @param order     The sort direction
- *
+ * @param order     The sort direction, possible values are ECORE_SORT_MIN and
+ *                  ECORE_SORT_MAX
  * @return          true on success
  *
  * Mergesort is a stable, in-place sorting algorithm 
