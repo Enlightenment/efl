@@ -3596,8 +3596,8 @@ efreet_menu_layout_menu(Efreet_Menu_Internal *internal)
     {
         entry->icon = ecore_string_instance(internal->directory->icon);
         efreet_desktop_ref(internal->directory);
+        entry->desktop = internal->directory;
     }
-    entry->desktop = internal->directory;
     entry->entries = ecore_list_new();
     ecore_list_free_cb_set(entry->entries, ECORE_FREE_CB(efreet_menu_free));
 
