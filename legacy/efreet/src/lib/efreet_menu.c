@@ -817,6 +817,7 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
     entry->id = ecore_string_instance(id);
     entry->name = ecore_string_instance(desktop->name);
     if (desktop->icon) entry->icon = ecore_string_instance(desktop->icon);
+    efreet_desktop_ref(desktop);
     entry->desktop = desktop;
 
     if (!menu->entries)
@@ -2509,6 +2510,7 @@ efreet_menu_free(Efreet_Menu *entry)
     IF_RELEASE(entry->icon);
     IF_FREE_LIST(entry->entries);
     IF_RELEASE(entry->id);
+    if (entry->desktop) efreet_desktop_free(entry->desktop);
     FREE(entry);
 }
 
@@ -3590,7 +3592,11 @@ efreet_menu_layout_menu(Efreet_Menu_Internal *internal)
     entry->type = EFREET_MENU_ENTRY_MENU;
     entry->id = ecore_string_instance(internal->name.internal);
     entry->name = ecore_string_instance(internal->name.name);
-    if (internal->directory) entry->icon = ecore_string_instance(internal->directory->icon);
+    if (internal->directory)
+    {
+        entry->icon = ecore_string_instance(internal->directory->icon);
+        efreet_desktop_ref(internal->directory);
+    }
     entry->desktop = internal->directory;
     entry->entries = ecore_list_new();
     ecore_list_free_cb_set(entry->entries, ECORE_FREE_CB(efreet_menu_free));
@@ -3665,6 +3671,7 @@ efreet_menu_layout_desktop(Efreet_Menu_Desktop *md)
     entry->id = ecore_string_instance(md->id);
     entry->name = ecore_string_instance(md->desktop->name);
     if (md->desktop->icon) entry->icon = ecore_string_instance(md->desktop->icon);
+    efreet_desktop_ref(md->desktop);
     entry->desktop = md->desktop;
 
     return entry;
