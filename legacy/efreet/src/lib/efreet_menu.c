@@ -2472,6 +2472,7 @@ static void
 efreet_menu_desktop_free(Efreet_Menu_Desktop *md)
 {
     IF_RELEASE(md->id);
+    if (md->desktop) efreet_desktop_free(md->desktop);
     FREE(md);
 }
 
@@ -3414,6 +3415,7 @@ efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal)
     {
         internal->directory_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
         ecore_hash_free_key_cb_set(internal->directory_cache, ECORE_FREE_CB(free));
+        ecore_hash_free_value_cb_set(internal->directory_cache, ECORE_FREE_CB(efreet_desktop_free));
 
         ecore_dlist_last_goto(internal->directory_dirs);
         while ((path = ecore_dlist_previous(internal->directory_dirs)))

@@ -76,6 +76,8 @@ static void efreet_util_menus_find_helper(Ecore_List *menus, const char *config_
 static void efreet_util_desktops_by_category_add(Efreet_Desktop *desktop);
 static void efreet_util_desktops_by_category_remove(Efreet_Desktop *desktop);
 
+static void efreet_util_desktop_free(Efreet_Util_Desktop *ud);
+
 static Ecore_Hash *desktop_by_file_id = NULL;
 static Ecore_Hash *file_id_by_desktop_path = NULL;
 static Ecore_Hash *desktops_by_category = NULL;
@@ -103,7 +105,7 @@ efreet_util_init(void)
         EFREET_EVENT_DESKTOP_CHANGE = ecore_event_type_new();
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_free_key_cb_set(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
-    ecore_hash_free_value_cb_set(desktop_by_file_id, free);
+    ecore_hash_free_value_cb_set(desktop_by_file_id, ECORE_FREE_CB(efreet_util_desktop_free));
 
     file_id_by_desktop_path = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_free_key_cb_set(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
@@ -1043,4 +1045,13 @@ efreet_util_desktops_by_category_remove(Efreet_Desktop *desktop)
             ecore_list_destroy(list);
         }
     }
+}
+
+static void
+efreet_util_desktop_free(Efreet_Util_Desktop *ud)
+{
+    if (!ud) return;
+
+    efreet_desktop_free(ud->desktop);
+    free(ud);
 }

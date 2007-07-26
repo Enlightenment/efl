@@ -68,6 +68,8 @@ ef_cb_desktop_parse(void)
     }
     else ret = 0;
 
+    efreet_desktop_free(desktop);
+
     return ret;
 }
 
@@ -132,6 +134,7 @@ ef_cb_desktop_save(void)
     }
 
     printf("save data: %d\n", efreet_desktop_save(desktop));
+    efreet_desktop_free(desktop);
 
     desktop = efreet_desktop_empty_new("/tmp/test.desktop");
     desktop->name = strdup("Efreet Test Application");
@@ -144,12 +147,7 @@ ef_cb_desktop_save(void)
     ecore_list_append(desktop->categories, strdup("Enlightenment"));
     printf("save test: %d\n", efreet_desktop_save(desktop));
     unlink("/tmp/test.desktop");
-#if 0
-    /* After saving a .desktop, it should be in the cache. This should then
-     * be destroyed with it. */
-    ecore_list_destroy(desktop->categories);
-    desktop->categories = NULL;
-#endif
+    efreet_desktop_free(desktop);
 
     return 1;
 }
@@ -365,6 +363,7 @@ ef_cb_desktop_type_parse(void)
     Efreet_Desktop *desktop;
     int my_type;
     char *val;
+    int ret = 1;
 
     /* add my custom desktop type to efreet */
     my_type = efreet_desktop_type_add("My_Type", cb_type_parse, NULL,
@@ -380,17 +379,18 @@ ef_cb_desktop_type_parse(void)
     if (desktop->type != my_type)
     {
         printf("Invalid type returned in desktop");
-        return 0;
+        ret = 0;
     }
 
     val = (char *)efreet_desktop_type_data_get(desktop);
     if (!val || strcmp(val, "Own key"))
     {
         printf("Invalid value of custom key (%s).\n", val);
-        return 0;
+        ret = 0;
     }
     
-    return 1;
+    efreet_desktop_free(desktop);
+    return ret;
 }
 
 
