@@ -79,7 +79,6 @@ struct Efreet_Icon_Theme
     Ecore_List *directories;    /**< List of subdirectories for this theme */
 
     double last_cache_check;    /**< Last time the cache was checked */
-    Ecore_Hash *icon_cache;     /**< Cache of the icon data */
 
     unsigned char hidden:1;     /**< Should this theme be hidden from users */
     unsigned char valid:1;      /**< Have we seen an index for this theme */
@@ -167,11 +166,12 @@ Ecore_List        *efreet_icon_theme_list_get(void);
 Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
 Efreet_Icon       *efreet_icon_find(const char *theme_name, const char *icon, 
                                                         const char *size);
-Efreet_Icon       *efreet_icon_list_find(const char *theme_name, 
+char              *efreet_icon_list_find(const char *theme_name, 
                                                         Ecore_List *icons, 
                                                         const char *size);
-const char        *efreet_icon_path_find(const char *theme, const char *icon,
+char              *efreet_icon_path_find(const char *theme, const char *icon,
                                                         const char *size);
+void               efreet_icon_free(Efreet_Icon *icon);
 
 /** 
  * @}

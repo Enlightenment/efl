@@ -1,12 +1,13 @@
 #include <Efreet.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "comp.h"
 
 int
 main(int argc, char **argv)
 {
     int i = 0, k;
-    const char *path;
+    char *path;
 
     efreet_init();
 
@@ -16,6 +17,7 @@ main(int argc, char **argv)
         {
             path = efreet_icon_path_find(THEME, icons[i], SIZE);
 //            printf("%s: %s\n", icons[i], (path ? path : "NOT FOUND"));
+            if (path) free(path);
         }
     }
 

@@ -35,7 +35,7 @@ const char *efreet_mime_globs_type_get(const char *file);
 const char *efreet_mime_special_type_get(const char *file);
 const char *efreet_mime_fallback_type_get(const char *file);
  
-const char *efreet_mime_type_icon_get(const char *mime, const char *theme, 
+char *efreet_mime_type_icon_get(const char *mime, const char *theme, 
                                                               const char *size);
 
 /**

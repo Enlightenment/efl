@@ -9,7 +9,7 @@
 #define PATH_MAX 4096
 #endif
 
-#define SIZE "16x16"
+#define SIZE "128x128"
 #define THEME "Tango"
 
 static void ef_icon_theme_themes_find(const char *search_dir, 
@@ -450,8 +450,7 @@ ef_cb_efreet_icon_match(void)
 
     for (i = 0; icons[i] != NULL; i++)
     {
-        const char *path;
-        char *t, *s;
+        char *path, *s;
 
         path = efreet_icon_path_find(THEME, icons[i], SIZE);
 
@@ -465,10 +464,9 @@ ef_cb_efreet_icon_match(void)
             continue;
         }
 
-        t = strdup(path);
-        s = strrchr(t, '.');
+        s = strrchr(path, '.');
         if (s) *s = '\0';
-        s = strrchr(t, '/');
+        s = strrchr(path, '/');
         if (s) s++;
 
         if (s && strcmp(s, icons[i]))
@@ -476,7 +474,7 @@ ef_cb_efreet_icon_match(void)
             printf("Name mismatch name (%s) vs ef (%s)\n", icons[i], s);
             ret = 0;
         }
-        free(t);
+        free(path);
     }
     ecore_hash_destroy(icon_hash);
 

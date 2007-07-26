@@ -132,6 +132,7 @@ efreet_mime_shutdown(void)
     IF_FREE_LIST(globs);
     IF_FREE_LIST(magics);
     IF_FREE_HASH(monitors);
+    IF_FREE_HASH(wild);
 
     efreet_shutdown();
     ecore_file_shutdown();
@@ -177,10 +178,10 @@ efreet_mime_type_get(const char *file)
  * @return Returns mime type icon path as a string
  * @brief Retreive the mime type icon for a file
  */
-const char *
+char *
 efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
 {
-    Efreet_Icon *icon = NULL;
+    char *icon = NULL;
     Ecore_List *icons  = NULL;
     const char *env = NULL;
     char *p = NULL, *pp = NULL, *ppp = NULL;
@@ -236,10 +237,7 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
       
     ecore_list_destroy(icons);
     
-    if (icon)
-        return icon->path;
-    
-    return NULL;
+    return icon;
 }
 
 /**
