@@ -266,6 +266,8 @@ efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop;
 
+    if (!ecore_file_exists(file)) return NULL;
+
     desktop = NEW(Efreet_Desktop, 1);
     if (!desktop) return NULL;
 
