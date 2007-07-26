@@ -1895,7 +1895,10 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
             legacy_internal->directory = efreet_desktop_get(file_path);
             if (legacy_internal->directory
                     && legacy_internal->directory->type != EFREET_DESKTOP_TYPE_DIRECTORY)
+            {
+                efreet_desktop_free(legacy_internal->directory);
                 legacy_internal->directory = NULL;
+            }
             continue;
         }
 
@@ -1910,6 +1913,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
         if (efreet_desktop_category_count_get(desktop) != 0)
             continue;
 
+        /* XXX: This will disappear when the .desktop is free'd */
         efreet_desktop_category_add(desktop, "Legacy");
 
         if (prefix)
@@ -1920,7 +1924,8 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
         else
             ecore_list_append(filter->op->filenames, strdup(file->d_name));
 
-        count ++;
+        count++;
+        efreet_desktop_free(desktop);
     }
     closedir(files);
     
@@ -3384,7 +3389,11 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
             if (!ext || strcmp(ext, ".desktop")) continue;
             desktop = efreet_desktop_get(buf);
 
-            if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_APPLICATION) continue;
+            if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_APPLICATION)
+            {
+                if (desktop) efreet_desktop_free(desktop);
+                continue;
+            }
             /* Don't add two files with the same id in the app pool */
             if (ecore_list_find(internal->app_pool,
                     ECORE_COMPARE_CB(efreet_menu_cb_md_compare_ids), buf2)) continue;
@@ -3479,7 +3488,11 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
             if (!ext || strcmp(ext, ".directory")) continue;
 
             desktop = efreet_desktop_get(buf);
-            if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_DIRECTORY) continue;
+            if (!desktop || desktop->type != EFREET_DESKTOP_TYPE_DIRECTORY)
+            {
+                efreet_desktop_free(desktop);
+                continue;
+            }
 
             ecore_hash_set(cache, (void *)strdup(buf2), desktop);
         }
