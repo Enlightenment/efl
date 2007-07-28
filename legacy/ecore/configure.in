@@ -655,8 +655,12 @@ PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
   [ have_eet="no" ]
 )
 
-ECORE_CHECK_MODULE([Config], [yes], [$have_eet],
-  [requirements_ecore_config="$requirements_ecore_config eet"])
+ecore_config_deps="no"
+if test "x$have_eet" = "xyes" -a "x$have_ecore_ipc" = "xyes" ; then
+  ecore_config_deps="yes"
+fi
+ECORE_CHECK_MODULE([Config], [yes], [$ecore_config_deps],
+  [requirements_ecore_config="$requirements_ecore_config ecore-ipc eet"])
 
 ECORE_CHECK_MODULE([File], [yes])
 
