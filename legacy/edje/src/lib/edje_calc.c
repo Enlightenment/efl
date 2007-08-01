@@ -1325,7 +1325,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	     if (p3.visible) evas_object_show(ep->object);
 	     else evas_object_hide(ep->object);
 	  }
-	else if (ep->part->type == EDJE_PART_TYPE_SWALLOW || ep->part->type == EDJE_PART_TYPE_GROUP)
+	else if ((ep->part->type == EDJE_PART_TYPE_SWALLOW) || 
+		 (ep->part->type == EDJE_PART_TYPE_GROUP))
 	  {
 	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
 	     evas_object_resize(ep->object, p3.w, p3.h);
@@ -1379,12 +1380,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	
 	if (ep->swallowed_object)
 	  {
-	     evas_object_color_set(ep->swallowed_object,
-				   (p3.color.r * p3.color.a) / 255,
-				   (p3.color.g * p3.color.a) / 255,
-				   (p3.color.b * p3.color.a) / 255,
-				   p3.color.a);
-
+//// the below really is wrong - swallow color shouldnt affect swallowed object
+//// color - the edje color as a WHOLE should though - and that should be
+//// done via the clipper anyway. this created bugs when objects had their
+//// colro set and were swallowed - then had their color changed.
+//	     evas_object_color_set(ep->swallowed_object,
+//				   (p3.color.r * p3.color.a) / 255,
+//				   (p3.color.g * p3.color.a) / 255,
+//				   (p3.color.b * p3.color.a) / 255,
+//				   p3.color.a);
 	     evas_object_move(ep->swallowed_object, ed->x + p3.x, ed->y + p3.y);
 	     evas_object_resize(ep->swallowed_object, p3.w, p3.h);
 	     if (p3.visible) evas_object_show(ep->swallowed_object);
