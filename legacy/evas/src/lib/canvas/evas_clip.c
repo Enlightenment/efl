@@ -8,6 +8,7 @@ evas_object_clip_recalc(Evas_Object *obj)
    int nx, ny, nw, nh, nvis, nr, ng, nb, na;
 
    if (obj->layer->evas->events_frozen > 0) return;
+//   if (!obj->cur.clipper->cur.cache.clip.dirty) return;
    evas_object_coords_recalc(obj);
    cx = obj->cur.geometry.x; cy = obj->cur.geometry.y;
    cw = obj->cur.geometry.w; ch = obj->cur.geometry.h;
