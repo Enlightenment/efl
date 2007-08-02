@@ -11,6 +11,19 @@ static int ecore_string_init_count = 0;
  *
  * These functions allow you to store one copy of a string, and use it
  * throughout your program.
+ *
+ * This is a method to reduce the number of duplicated strings kept in
+ * memory. It's pretty common for the same strings to be dynamically
+ * allocated repeatedly between applications and libraries, especially in
+ * circumstances where you could have multiple copies of a structure that
+ * allocates the string. So rather than duplicating and freeing these
+ * strings, you request a read-only pointer to an existing string and
+ * only incur the overhead of a hash lookup.
+ *
+ * It sounds like micro-optimizing, but profiling has shown this can have
+ * a significant impact as you scale the number of copies up. It improves
+ * string creation/destruction speed, reduces memory use and decreases
+ * memory fragmentation, so a win all-around.
  */
 
 /**
