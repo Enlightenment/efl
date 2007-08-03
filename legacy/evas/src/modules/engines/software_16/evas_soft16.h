@@ -86,6 +86,9 @@ void soft16_image_free(Soft16_Image *im);
 Soft16_Image *soft16_image_load(const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
 void soft16_image_load_data(Soft16_Image *im);
 void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
+void soft16_image_alpha_set(Soft16_Image *im, int have_alpha);
+Soft16_Image *soft16_image_size_set(Soft16_Image *im, int w, int h);
+
 
 void soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);
 void soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);

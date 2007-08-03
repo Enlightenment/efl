@@ -10,6 +10,11 @@
  *****
  */
 
+#define NOT_IMPLEMENTED()                                               \
+   fprintf(stderr, "NOT_IMPLEMENTED: %s() at %s:%d\n",                  \
+           __FUNCTION__, __FILE__, __LINE__)
+
+
 static int cpunum = 0;
 
 static void *
@@ -149,6 +154,7 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
 static void
 eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_line_draw(surface, context, x1, y1, x2, y2);
 //   evas_common_cpu_end_opt();
 }
@@ -156,6 +162,7 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
 static void *
 eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 {
+   NOT_IMPLEMENTED();
    return NULL;
 //   return evas_common_polygon_point_add(polygon, x, y);
 }
@@ -163,6 +170,7 @@ eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 static void *
 eng_polygon_points_clear(void *data, void *context, void *polygon)
 {
+   NOT_IMPLEMENTED();
    return NULL;
 //   return evas_common_polygon_points_clear(polygon);
 }
@@ -170,6 +178,7 @@ eng_polygon_points_clear(void *data, void *context, void *polygon)
 static void
 eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_polygon_draw(surface, context, polygon);
 //   evas_common_cpu_end_opt();
 }
@@ -177,6 +186,7 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 static void *
 eng_gradient_new(void *data)
 {
+   NOT_IMPLEMENTED();
    return NULL;
 //   return evas_common_gradient_new();
 }
@@ -184,84 +194,98 @@ eng_gradient_new(void *data)
 static void
 eng_gradient_free(void *data, void *gradient)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_free(gradient);
 }
 
 static void
 eng_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_color_stop_add(gradient, r, g, b, a, delta);
 }
 
 static void
 eng_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_alpha_stop_add(gradient, a, delta);
 }
 
 static void
 eng_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_color_data_set(gradient, map, len, has_alpha);
 }
 
 static void
 eng_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_alpha_data_set(gradient, alpha_map, len);
 }
 
 static void
 eng_gradient_clear(void *data, void *gradient)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_clear(gradient);
 }
 
 static void
 eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_fill_set(gradient, x, y, w, h);
 }
 
 static void
 eng_gradient_fill_angle_set(void *data, void *gradient, double angle)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_fill_angle_set(gradient, angle);
 }
 
 static void
 eng_gradient_fill_spread_set(void *data, void *gradient, int spread)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_fill_spread_set(gradient, spread);
 }
 
 static void
 eng_gradient_angle_set(void *data, void *gradient, double angle)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_map_angle_set(gradient, angle);
 }
 
 static void
 eng_gradient_offset_set(void *data, void *gradient, float offset)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_map_offset_set(gradient, offset);
 }
 
 static void
 eng_gradient_direction_set(void *data, void *gradient, int direction)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_map_direction_set(gradient, direction);
 }
 
 static void
 eng_gradient_type_set(void *data, void *gradient, char *name, char *params)
 {
+   NOT_IMPLEMENTED();
 //   evas_common_gradient_type_set(gradient, name, params);
 }
 
 static int
 eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h)
 {
+   NOT_IMPLEMENTED();
    return 0;
 //   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
 //   RGBA_Gradient *gr = (RGBA_Gradient *)gradient;
@@ -274,6 +298,7 @@ eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, 
 static int
 eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h)
 {
+   NOT_IMPLEMENTED();
    return 0;
 //   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
 //
@@ -292,11 +317,13 @@ eng_gradient_render_pre(void *data, void *context, void *gradient)
 //   gr->type.geometer->geom_set(gr);
 //   len = gr->type.geometer->get_map_len(gr);
 //   evas_common_gradient_map(dc, gr, len);
+   NOT_IMPLEMENTED();
 }
 
 static void
 eng_gradient_render_post(void *data, void *gradient)
 {
+   NOT_IMPLEMENTED();
 }
 
 static void
@@ -304,13 +331,14 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 {
 //   evas_common_gradient_draw(surface, context, x, y, w, h, gradient);
 //   evas_common_cpu_end_opt();
+   NOT_IMPLEMENTED();
 }
 
 static int
 eng_image_alpha_get(void *data, void *image)
 {
    Soft16_Image *im;
-   
+
    if (!image) return 0;
    im = image;
    if (im->have_alpha) return 1;
@@ -324,9 +352,11 @@ eng_image_colorspace_get(void *data, void *image)
 }
 
 static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
+eng_image_alpha_set(void *data, void *image, int have_alpha)
 {
-   // FIXME: implement
+   if (!image) return NULL;
+   have_alpha = !!have_alpha;
+   soft16_image_alpha_set(image, have_alpha);
    return image;
 }
 
@@ -356,7 +386,7 @@ eng_image_format_get(void *data, void *image)
 static void
 eng_image_colorspace_set(void *data, void *image, int cspace)
 {
-// FIXME: implement
+   NOT_IMPLEMENTED();
 }
 
 static void
@@ -379,15 +409,25 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
 static void *
 eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
-   // FIXME: implement
-   return NULL;
+   if ((image_data) && (cspace != EVAS_COLORSPACE_RGB565_A5P))
+     {
+	fprintf(stderr, "Unsupported colorspace %d in %s() (%s:%d)\n",
+		cspace, __FUNCTION__, __FILE__, __LINE__);
+	return NULL;
+     }
+   return soft16_image_new(w, h, -1, alpha, (DATA16 *)image_data, 0);
 }
 
 static void *
 eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
-   // FIXME: implement
-   return NULL;
+   if ((image_data) && (cspace != EVAS_COLORSPACE_RGB565_A5P))
+     {
+	fprintf(stderr, "Unsupported colorspace %d in %s() (%s:%d)\n",
+		cspace, __FUNCTION__, __FILE__, __LINE__);
+	return NULL;
+     }
+   return soft16_image_new(w, h, -1, alpha, (DATA16 *)image_data, 1);
 }
 
 static void
@@ -412,8 +452,13 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
 static void *
 eng_image_size_set(void *data, void *image, int w, int h)
 {
-   // FIXME: implement
-   return image;
+   if (!image) return NULL;
+   if ((w <= 0) || (h <= 0))
+     {
+	soft16_image_free(image);
+	return NULL;
+     }
+   return soft16_image_size_set(image, w, h);
 }
 
 static void
@@ -430,7 +475,8 @@ eng_image_stride_get(void *data, void *image, int *stride)
 static void *
 eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
-   // FIXME: implement
+   /* FIXME: is this required? */
+   //NOT_IMPLEMENTED();
    return image;
 }
 
@@ -469,8 +515,17 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 static void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
-   // FIXME: implement
-   return image;
+   Soft16_Image *old_im, *new_im;
+
+   if (!image) return NULL;
+
+   old_im = image;
+   if ((DATA16 *)image_data == old_im->pixels) return old_im;
+
+   new_im = soft16_image_new(old_im->w, old_im->h, old_im->stride,
+			     old_im->have_alpha, (DATA16 *)image_data, 0);
+   soft16_image_free(old_im);
+   return new_im;
 }
 
 static void
@@ -805,10 +860,10 @@ module_close(void)
 {
 }
 
-EAPI Evas_Module_Api evas_modapi = 
+EAPI Evas_Module_Api evas_modapi =
 {
-   EVAS_MODULE_API_VERSION, 
-     EVAS_MODULE_TYPE_ENGINE,
-     "software_16",
-     "none"
+  EVAS_MODULE_API_VERSION,
+  EVAS_MODULE_TYPE_ENGINE,
+  "software_16",
+  "none"
 };

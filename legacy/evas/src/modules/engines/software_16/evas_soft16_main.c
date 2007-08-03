@@ -57,14 +57,20 @@ soft16_image_new(int w, int h, int stride, int have_alpha, DATA16 *pixels,
 {
    Soft16_Image *im;
 
+   if (stride < 0) stride = _calc_stride(w);
+
    im = soft16_image_alloc(w, h, stride, have_alpha, copy);
    if (!im) return NULL;
 
-   if (copy) memcpy(im->pixels, pixels, IMG_BYTE_SIZE(stride, h, have_alpha));
-   else
+   if (pixels)
      {
-	im->pixels = pixels;
-	if (have_alpha) im->alpha = (DATA8 *)(im->pixels + (stride * h));
+	if (copy)
+	  memcpy(im->pixels, pixels, IMG_BYTE_SIZE(stride, h, have_alpha));
+	else
+	  {
+	     im->pixels = pixels;
+	     if (have_alpha) im->alpha = (DATA8 *)(im->pixels + (stride * h));
+	  }
      }
    return im;
 }
@@ -442,3 +448,81 @@ soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
    dc->clip = clip_bkp;
 }
 
+void
+soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
+{
+   if (im->have_alpha == have_alpha) return;
+   im->have_alpha = have_alpha;
+
+   if ((im->pixels) && (im->free_pixels))
+     {
+	int size;
+
+	size = im->stride * im->h;
+	if (!im->have_alpha)
+	  {
+	     im->pixels = realloc(im->pixels, size * 2);
+	     im->alpha = NULL;
+	  }
+	else
+	  {
+	     im->pixels = realloc(im->pixels, size * 3);
+	     im->alpha = (DATA8*)(im->pixels + size);
+	     memset(im->alpha, 0x1f, size);
+	  }
+     }
+}
+
+Soft16_Image *
+soft16_image_size_set(Soft16_Image *old_im, int w, int h)
+{
+   Soft16_Image *new_im;
+   DATA16 *dp, *sp;
+   int i, cw, ch, ew;
+
+   if ((old_im->w == w) && (old_im->h == h)) return old_im;
+
+   new_im = soft16_image_new(w, h, -1, old_im->have_alpha, NULL, 1);
+
+   if (old_im->w < new_im->w)
+     cw = old_im->w;
+   else
+     cw = new_im->w;
+
+   ew = new_im->w - cw;
+
+   if (old_im->h < new_im->h)
+     ch = old_im->h;
+   else
+     ch = new_im->h;
+
+   dp = new_im->pixels;
+   sp = old_im->pixels;
+   for (i = 0; i < ch; i++)
+     {
+	memcpy(dp, sp, cw * sizeof(DATA16));
+	if (ew > 0) memset(dp, 0, ew * sizeof(DATA16));
+
+	dp += new_im->stride;
+	sp += old_im->stride;
+     }
+
+   if (old_im->have_alpha)
+     {
+	DATA8 *dp, *sp;
+
+	dp = new_im->alpha;
+	sp = old_im->alpha;
+	for (i = 0; i < ch; i++)
+	  {
+	     memcpy(dp, sp, cw * sizeof(DATA8));
+	     if (ew > 0) memset(dp, 0, ew * sizeof(DATA8));
+
+	     dp += new_im->stride;
+	     sp += old_im->stride;
+	  }
+     }
+
+   soft16_image_free(old_im);
+   return new_im;
+}
