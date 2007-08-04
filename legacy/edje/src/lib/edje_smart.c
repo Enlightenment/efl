@@ -29,18 +29,22 @@ edje_object_add(Evas *evas)
 {
    if (!_edje_smart)
      {
-	_edje_smart = evas_smart_new("edje",
-				     _edje_smart_add,
-				     _edje_smart_del,
-				     NULL, NULL, NULL, NULL, NULL,
-				     _edje_smart_move,
-				     _edje_smart_resize,
-				     _edje_smart_show,
-				     _edje_smart_hide,
-				     _edje_smart_color_set,
-				     _edje_smart_clip_set, 
-				     _edje_smart_clip_unset, 
-				     NULL);
+        static const Evas_Smart_Class sc =
+	  {
+	     "edje",
+	       EVAS_SMART_CLASS_VERSION,
+	       _edje_smart_add,
+	       _edje_smart_del,
+	       _edje_smart_move,
+	       _edje_smart_resize,
+	       _edje_smart_show,
+	       _edje_smart_hide,
+	       _edje_smart_color_set,
+	       _edje_smart_clip_set, 
+	       _edje_smart_clip_unset, 
+	       NULL
+	  };
+	_edje_smart = evas_smart_class_new(&sc);
      }
    return evas_object_smart_add(evas, _edje_smart);
 }

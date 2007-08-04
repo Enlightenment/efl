@@ -59,6 +59,9 @@ evas_smart_new(const char *name,
 {
    Evas_Smart *s;
 
+   printf("----- WARNING. evas_smart_new() will be deprecated and removed soon\n",
+	  "----- Please use evas_smart_class_new() instead\n");
+   
    if (!name) return NULL;
 
    s = evas_mem_calloc(sizeof(Evas_Smart));
@@ -117,7 +120,7 @@ evas_smart_free(Evas_Smart *s)
  * @return an Evas_Smart
  */
 EAPI Evas_Smart *
-evas_smart_class_new(Evas_Smart_Class *sc)
+evas_smart_class_new(const Evas_Smart_Class *sc)
 {
    Evas_Smart *s;
 
@@ -142,7 +145,7 @@ evas_smart_class_new(Evas_Smart_Class *sc)
  * @param s the Evas_Smart
  * @return the Evas_Smart_Class
  */
-EAPI Evas_Smart_Class *
+EAPI const Evas_Smart_Class *
 evas_smart_class_get(Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
