@@ -385,7 +385,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 						       im2->image->data,
 						       pw, ph);
 	  }
-	if (im1 != im) evas_common_image_delete(im1);
+	if (im1 != im) evas_cache_image_drop(im1);
 	im1 = NULL;
 
 	im_data = im2->image->data;
