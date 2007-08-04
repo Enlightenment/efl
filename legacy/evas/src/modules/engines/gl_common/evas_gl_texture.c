@@ -385,7 +385,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 						       im2->image->data,
 						       pw, ph);
 	  }
-	if (im1 != im) evas_common_image_free(im1);
+	if (im1 != im) evas_common_image_delete(im1);
 	im1 = NULL;
 
 	im_data = im2->image->data;
@@ -413,7 +413,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 	im1 = im2;
 	im2 = NULL;
      }
-   if ((im1 != im) && (im1)) evas_common_image_free(im1);
+   if ((im1 != im) && (im1)) evas_common_image_delete(im1);
    tex->have_mipmaps = 1;
 #ifdef BUILD_MMX
    if (mmx) evas_common_cpu_end_opt();

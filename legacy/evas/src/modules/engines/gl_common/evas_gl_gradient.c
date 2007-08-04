@@ -219,7 +219,7 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, i
 	else
 	   evas_gl_common_texture_update(gr->tex, im, 0);
 
-	evas_common_image_free(im);
+	evas_common_image_delete(im);
 	dc->render_op = op;
 	dc->clip.use = cuse;
 	if (!gr->tex) return;
