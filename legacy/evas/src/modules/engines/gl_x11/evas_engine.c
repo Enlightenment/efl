@@ -421,7 +421,7 @@ eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
 static void
 eng_gradient_fill_angle_set(void *data, void *gradient, double angle)
 {
-   evas_common_gradient_fill_angle_set(gradient, angle);
+   evas_gl_common_gradient_fill_angle_set(gradient, angle);
 }
 
 static void
