@@ -163,15 +163,18 @@ evas_gl_common_gradient_render_post(Evas_GL_Gradient *gr)
 }
 
 void
-evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, int y, int w, int h)
+evas_gl_common_gradient_draw(Evas_GL_Context *gc,
+			     Evas_GL_Gradient *gr,
+			     int x, int y, int w, int h)
 {
    int r, g, b, a;
    RGBA_Draw_Context *dc;
-
+   double  tx2, ty2;
+   
    if ((w < 1) || (h < 1)) return;
    if (!gr || !gc || !gc->dc) return;
    if (!gr->grad || !gr->grad->type.geometer) return;
-
+   
    dc = gc->dc;
    if (dc->mul.use)
      {
@@ -185,10 +188,10 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, i
 	r = g = b = a = 255;
      }
    evas_gl_common_context_color_set(gc, r, g, b, a);
-
+   
    a = !evas_gl_common_gradient_is_opaque(gc, gr, x, y, w, h);
    evas_gl_common_context_blend_set(gc, a);
-
+   
    if (dc->clip.use)
      evas_gl_common_context_clip_set(gc, 1,
 				     dc->clip.x, dc->clip.y,
@@ -196,7 +199,7 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, i
    else
      evas_gl_common_context_clip_set(gc, 0,
 				     0, 0, 0, 0);
-
+   
    if (!gr->tex) gr->changed = 1;
    if (((w != gr->tw) || (h != gr->th)) && gr->tex)
      {
@@ -208,33 +211,45 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, i
      {
 	RGBA_Image *im;
 	int op = dc->render_op, cuse = dc->clip.use;
-
+	
 	im = evas_common_image_create(w, h);
 	if (!im) return;
 	dc->render_op = _EVAS_RENDER_FILL;
 	dc->clip.use = 0;
 	evas_common_gradient_draw(im, dc, 0, 0, w, h, gr->grad);
 	if (!gr->tex)
-	   gr->tex = evas_gl_common_texture_new(gc, im, 0);
+	  gr->tex = evas_gl_common_texture_new(gc, im, 0);
 	else
-	   evas_gl_common_texture_update(gr->tex, im, 0);
-
+	  evas_gl_common_texture_update(gr->tex, im, 0);
+	
 	evas_common_image_delete(im);
 	dc->render_op = op;
 	dc->clip.use = cuse;
 	if (!gr->tex) return;
      }
-
-   evas_gl_common_context_texture_set(gc, gr->tex, 0, w, h);
-
+   
+   if (gr->tex->rectangle)
+     {
+	tx2 = w;
+	ty2 = h;
+     }
+   else
+     {
+	tx2 = (double)w / (double)(gr->tex->w);
+	ty2 = (double)h / (double)(gr->tex->h);
+     }
+   
+   evas_gl_common_context_texture_set(gc, gr->tex, 0,
+				      gr->tex->tw, gr->tex->th);
+   
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
-
+   
    glBegin(GL_QUADS);
    glTexCoord2d(0.0,  0.0); glVertex2i(x, y);
-   glTexCoord2d(1.0,  0.0); glVertex2i(x + w, y);
-   glTexCoord2d(1.0,  1.0); glVertex2i(x + w, y + h);
-   glTexCoord2d(0.0,  1.0); glVertex2i(x, y + h);
+   glTexCoord2d(tx2,  0.0); glVertex2i(x + w, y);
+   glTexCoord2d(tx2,  ty2); glVertex2i(x + w, y + h);
+   glTexCoord2d(0.0,  ty2); glVertex2i(x, y + h);
    glEnd();
    gr->changed = 0;
    gr->tw = w;  gr->th = h;
