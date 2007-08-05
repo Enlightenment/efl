@@ -20,12 +20,17 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#ifndef WIN32
+# include <X11/Xlib.h>
+# include <X11/Xatom.h>
+# include <X11/Xutil.h>
+#else
+# include <windows.h>
+# include <GL/glew.h>
+#endif /* WIN32 */
+
 #include <GL/gl.h>
 #include <GL/glu.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
 
 typedef struct _Evas_GL_Context                      Evas_GL_Context;
 typedef struct _Evas_GL_Texture                      Evas_GL_Texture;

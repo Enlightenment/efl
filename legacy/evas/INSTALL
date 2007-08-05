@@ -11,3 +11,7 @@ NOTE: for compilation with MinGW, fnmatch.h is probably missing.
       That file can be found here:
 http://www.koders.com/c/fid2B518462CB1EED3D4E31E271DB83CD1582F6EEBE.aspx
       It should be installed in the mingw include directory.
+
+NOTE: for the OpenGL engine on Windows, the glew library:
+http://glew.sourceforge.net/
+      is needed.
