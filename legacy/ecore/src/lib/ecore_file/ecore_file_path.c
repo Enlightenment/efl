@@ -59,6 +59,11 @@ _ecore_file_path_from_env(const char *env)
    return path;
 }
 
+/**
+ * Check if the given directory is in PATH
+ * @param The name of the directory to search in PATH
+ * @return 1 if the directory exist in PATH, 0 otherwise
+ */
 EAPI int
 ecore_file_path_dir_exists(const char *in_dir)
 {
@@ -73,6 +78,13 @@ ecore_file_path_dir_exists(const char *in_dir)
    return 0;
 }
 
+/**
+ * Check if the given application is installed
+ * @param  exe The name of the application
+ * @return 1 if the exe is in PATH and is executable
+ * 
+ * This function check if the given name exist in PATH and is executable 
+ */
 EAPI int
 ecore_file_app_installed(const char *exe)
 {
@@ -91,6 +103,10 @@ ecore_file_app_installed(const char *exe)
    return 0;
 }
 
+/**
+ * Get a list of all the applications installed on the system
+ * @return An Ecore_List containing all the executable files in the system
+ */
 EAPI Ecore_List *
 ecore_file_app_list(void)
 {

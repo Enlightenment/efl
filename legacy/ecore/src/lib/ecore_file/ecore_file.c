@@ -60,6 +60,11 @@ ecore_file_mod_time(const char *file)
    return st.st_mtime;
 }
 
+/**
+ * Get the size of the given file
+ * @param  file The name of the file
+ * @return The size of the file in byte
+ */
 EAPI long long
 ecore_file_size(const char *file)
 {
@@ -69,6 +74,11 @@ ecore_file_size(const char *file)
    return st.st_size;
 }
 
+/**
+ * Check if file exists
+ * @param  file The name of the file
+ * @return 1 if file exists on local filesystem, 0 otherwise
+ */
 EAPI int
 ecore_file_exists(const char *file)
 {
@@ -79,6 +89,11 @@ ecore_file_exists(const char *file)
    return 1;
 }
 
+/**
+ * Check if file is a directory
+ * @param  file The name of the file
+ * @return 1 if file exist and is a directory, 0 otherwise
+ */
 EAPI int
 ecore_file_is_dir(const char *file)
 {
@@ -90,7 +105,13 @@ ecore_file_is_dir(const char *file)
 }
 
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-
+/**
+ * Create a new directory
+ * @param  dir The name of the directory to create
+ * @return 1 on successfull creation, 0 on failure
+ *
+ * The directory is created with the mode: S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
+ */
 EAPI int
 ecore_file_mkdir(const char *dir)
 {
@@ -98,6 +119,11 @@ ecore_file_mkdir(const char *dir)
    return 1;
 }
 
+/**
+ * Delete the given dir
+ * @param  dir The name of the directory to delete
+ * @return 1 on success, 0 on failure
+ */
 EAPI int
 ecore_file_rmdir(const char *dir)
 {
@@ -105,6 +131,11 @@ ecore_file_rmdir(const char *dir)
    return 1;
 }
 
+/**
+ * Delete the given file
+ * @param  file The name of the file to delete
+ * @return 1 on success, 0 on failure
+ */
 EAPI int
 ecore_file_unlink(const char *file)
 {
@@ -112,6 +143,13 @@ ecore_file_unlink(const char *file)
    return 1;
 }
 
+/**
+ * Delete a directory and all its contents
+ * @param  dir The name of the directory to delete
+ * @return 1 on success, 0 on failure
+ * 
+ * If dir is a link only the link is removed
+ */
 EAPI int
 ecore_file_recursive_rm(const char *dir)
 {
@@ -156,6 +194,11 @@ ecore_file_recursive_rm(const char *dir)
    return 1;
 }
 
+/**
+ * Create a complete path
+ * @param  path The path to create
+ * @return 1 on success, 0 on failure
+ */
 EAPI int
 ecore_file_mkpath(const char *path)
 {
@@ -183,6 +226,12 @@ ecore_file_mkpath(const char *path)
    return 1;
 }
 
+/**
+ * Copy a file
+ * @param  src The name of the source file
+ * @param  dst The name of the destination file
+ * @return 1 on success, 0 on failure
+ */
 EAPI int
 ecore_file_cp(const char *src, const char *dst)
 {
@@ -213,6 +262,12 @@ ecore_file_cp(const char *src, const char *dst)
    return ret;
 }
 
+/**
+ * Move a file
+ * @param  src The name of the source file
+ * @param  dst The name of the destination file
+ * @return 1 on success, 0 on failure
+ */
 EAPI int
 ecore_file_mv(const char *src, const char *dst)
 {
@@ -237,6 +292,12 @@ ecore_file_mv(const char *src, const char *dst)
    return 1;
 }
 
+/**
+ * Create a symbolic link
+ * @param  src The name of the file to link
+ * @param  dest The name of link
+ * @return 1 on success, 0 on failure
+ */
 EAPI int
 ecore_file_symlink(const char *src, const char *dest)
 {
@@ -244,6 +305,11 @@ ecore_file_symlink(const char *src, const char *dest)
    return 0;
 }
 
+/**
+ * Get the canonicalized absolute pathname
+ * @param  file The file path
+ * @return The canonicalized absolute pathname
+ */
 EAPI char *
 ecore_file_realpath(const char *file)
 {
@@ -253,6 +319,11 @@ ecore_file_realpath(const char *file)
    return strdup(buf);
 }
 
+/**
+ * Get the filename from a give path
+ * @param  path The complete path
+ * @return Only the file name
+ */
 EAPI const char *
 ecore_file_file_get(const char *path)
 {
@@ -264,6 +335,11 @@ ecore_file_file_get(const char *path)
    return result;
 }
 
+/**
+ * Get the directory where file reside
+ * @param  file The name of the file
+ * @return The directory name
+ */
 EAPI char *
 ecore_file_dir_get(const char *file)
 {
@@ -283,6 +359,11 @@ ecore_file_dir_get(const char *file)
    return strdup(buf);
 }
 
+/**
+ * Check if file can be read
+ * @param  file The name of the file
+ * @return 1 if the file is readable, 0 otherwise
+ */
 EAPI int
 ecore_file_can_read(const char *file)
 {
@@ -291,6 +372,11 @@ ecore_file_can_read(const char *file)
    return 0;
 }
 
+/**
+ * Check if file can be written
+ * @param  file The name of the file
+ * @return 1 if the file is writable, 0 otherwise
+ */
 EAPI int
 ecore_file_can_write(const char *file)
 {
@@ -299,6 +385,11 @@ ecore_file_can_write(const char *file)
    return 0;
 }
 
+/**
+ * Check if file can be executed
+ * @param  file The name of the file
+ * @return 1 if the file can be executed, 0 otherwise
+ */
 EAPI int
 ecore_file_can_exec(const char *file)
 {
@@ -307,6 +398,11 @@ ecore_file_can_exec(const char *file)
    return 0;
 }
 
+/**
+ * Get the path pointed by link
+ * @param  link The name of the link
+ * @return The path pointed by link or NULL
+ */
 EAPI char *
 ecore_file_readlink(const char *link)
 {
@@ -318,6 +414,11 @@ ecore_file_readlink(const char *link)
    return strdup(buf);
 }
 
+/**
+ * Get the list of the files in a given directory
+ * @param  dir The name of the directory to list
+ * @return An Ecore_List containing all the file in the directory
+ */
 EAPI Ecore_List *
 ecore_file_ls(const char *dir)
 {
@@ -493,6 +594,11 @@ restart:
    return exe;
 }
 
+/**
+ * Add the escape sequence ('\\') to the given filename
+ * @param  filename The file name
+ * @return The file name with special characters escaped
+ */
 EAPI char *
 ecore_file_escape_name(const char *filename)
 {
@@ -527,6 +633,11 @@ ecore_file_escape_name(const char *filename)
    return strdup(buf);
 }
 
+/**
+ * Remove the extension from a given path
+ * @param  path The name of the file
+ * @return A newly allocated string with the extension stripped out or NULL on errors
+ */
 EAPI char *
 ecore_file_strip_ext(const char *path)
 {

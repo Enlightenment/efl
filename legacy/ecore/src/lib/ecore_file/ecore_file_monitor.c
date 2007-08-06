@@ -74,6 +74,13 @@ ecore_file_monitor_shutdown(void)
    return init;
 }
 
+/**
+ * Monitor a path using inotify, fam or polling
+ * @param  path The path to monitor
+ * @param  func The function to call on changes
+ * @param  data The data passed to func
+ * @return An Ecore_File_Monitor pointer or NULL on failure
+ */
 EAPI Ecore_File_Monitor *
 ecore_file_monitor_add(const char *path,
 			    void (*func) (void *data, Ecore_File_Monitor *em,
@@ -101,6 +108,10 @@ ecore_file_monitor_add(const char *path,
    return NULL;
 }
 
+/**
+ * Stop monitoring a path
+ * @param  em The Ecore_File_Monitor to stop
+ */
 EAPI void
 ecore_file_monitor_del(Ecore_File_Monitor *em)
 {
@@ -126,6 +137,11 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
      }
 }
 
+/**
+ * Get the monitored path
+ * @param  em The Ecore_File_Monitor to query
+ * @return The path that is monitored by @p em
+ */
 EAPI const char *
 ecore_file_monitor_path_get(Ecore_File_Monitor *em)
 {

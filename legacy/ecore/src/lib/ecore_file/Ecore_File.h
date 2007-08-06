@@ -30,6 +30,11 @@
 # endif
 #endif
 
+/**
+ * @file Ecore_File.h
+ * @brief Files utility functions
+ */
+
 #include <Ecore_Data.h>
 
 #ifdef __cplusplus

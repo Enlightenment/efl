@@ -105,6 +105,19 @@ ecore_file_download_abort_all(void)
 #endif
 }
 
+
+/**
+ * Download @p url to the given @p dst
+ * @param  url The complete url to download
+ * @param  dst The local file to save the downloaded to
+ * @param  completion_cb A callback called on download complete
+ * @param  progress_cb A callback called during the download operation
+ * @return 1 if the download start or 0 on failure
+ *
+ * You must provide the full url, including 'http://', 'ftp://' or 'file://'.\n
+ * If @p dst already exist it will not be overwritten and the function will fail.\n
+ * Ecore must be compiled with CURL to download using http and ftp protocols. 
+ */
 EAPI int
 ecore_file_download(const char *url, const char *dst,
 		    void (*completion_cb)(void *data, const char *file, int status),
@@ -151,6 +164,14 @@ ecore_file_download(const char *url, const char *dst,
 #endif
 }
 
+/**
+ * Check if the given protocol is available
+ * @param  protocol The protocol to check
+ * @return 1 if protocol is handled or 0 if not
+ *
+ * @p protocol can be 'http://', 'ftp://' or 'file://'.\n
+ * Ecore must be compiled with CURL to handle http and ftp protocols. 
+ */
 EAPI int
 ecore_file_download_protocol_available(const char *protocol)
 {
