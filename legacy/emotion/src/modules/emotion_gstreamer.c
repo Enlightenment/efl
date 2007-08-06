@@ -1276,7 +1276,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 {
    int fd;
    int len;
-   void *buf[1];
+   void *buf[2];
    unsigned char *frame_data;
    Emotion_Gstreamer_Video *ev;
    GstBuffer  *buffer;
