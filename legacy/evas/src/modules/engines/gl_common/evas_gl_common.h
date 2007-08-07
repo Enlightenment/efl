@@ -20,13 +20,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#ifndef WIN32
-# include <X11/Xlib.h>
-# include <X11/Xatom.h>
-# include <X11/Xutil.h>
-#else
+#ifdef BUILD_ENGINE_GL_GLEW
 # include <GL/glew.h>
-#endif /* WIN32 */
+#endif /* BUILD_ENGINE_GL_GLEW */
 
 #include <GL/gl.h>
 #include <GL/glu.h>

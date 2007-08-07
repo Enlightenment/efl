@@ -1,6 +1,10 @@
 #ifndef EVAS_ENGINE_H
 #define EVAS_ENGINE_H
 
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <X11/Xutil.h>
+
 #include "evas_gl_common.h"
 
 typedef struct _Evas_GL_X11_Window Evas_GL_X11_Window;
