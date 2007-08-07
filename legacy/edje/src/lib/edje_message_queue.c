@@ -44,7 +44,7 @@ edje_object_message_signal_process(Evas_Object *obj)
    
    ed = _edje_fetch(obj);
    if (!ed) return;
-   
+
    for (l = msgq; l; l = l->next)
      {
 	Edje_Message *em;
