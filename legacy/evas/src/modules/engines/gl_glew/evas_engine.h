@@ -1,6 +1,8 @@
 #ifndef __EVAS_ENGINE_H__
 #define __EVAS_ENGINE_H__
 
+#include <windows.h>
+
 #include "evas_gl_common.h"
 
 

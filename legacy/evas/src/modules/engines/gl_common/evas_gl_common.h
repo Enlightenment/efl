@@ -25,7 +25,6 @@
 # include <X11/Xatom.h>
 # include <X11/Xutil.h>
 #else
-# include <windows.h>
 # include <GL/glew.h>
 #endif /* WIN32 */
 
