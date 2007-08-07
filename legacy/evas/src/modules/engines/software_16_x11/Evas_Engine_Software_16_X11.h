@@ -15,6 +15,7 @@ struct _Evas_Engine_Info_Software_16_X11
    struct {
       Display  *display;
       Drawable  drawable;
+      int rotation;
    } info;
 };
 #endif

@@ -15,11 +15,12 @@ struct _Render_Engine
    Display          *disp;
    Drawable          draw;
    GC                gc;
-   int               w, h;
+   int               w, h, rot;
    Tilebuf          *tb;
    Tilebuf_Rect     *rects;
    Tilebuf_Rect     *cur_rect;
    X_Output_Buffer  *shbuf;
+   Soft16_Image     *tmp_out; /* used by indirect render, like rotation */
    Region            clip_rects;
    unsigned char     end : 1;
    unsigned char     shm : 1;
@@ -64,6 +65,52 @@ eng_info_free(Evas *e, void *info)
 }
 
 static void
+_tmp_out_free(Soft16_Image *tmp_out)
+{
+   free(tmp_out->pixels);
+   free(tmp_out);
+}
+
+static void
+_tmp_out_alloc(Render_Engine *re)
+{
+   Tilebuf_Rect *r;
+   int w = 0, h = 0;
+
+   for (r = re->rects; r; r = (Tilebuf_Rect *)(r->_list_data.next))
+     {
+	if (r->w > w) w = r->w;
+	if (r->h > h) h = r->h;
+     }
+
+   if (re->tmp_out)
+     {
+	if ((re->tmp_out->w < w) || (re->tmp_out->h < h))
+	  {
+	     _tmp_out_free(re->tmp_out);
+	     re->tmp_out = NULL;
+	  }
+     }
+
+   if (!re->tmp_out)
+     {
+	Soft16_Image *im;
+
+	im = calloc(1, sizeof(Soft16_Image));
+	im->w = w;
+	im->h = h;
+	im->stride = w + ((w % 4) ? (4 - (w % 4)) : 0);
+	im->have_alpha = 0;
+	im->references = 1;
+	im->free_pixels = 1;
+	im->pixels = malloc(h * im->stride * sizeof(DATA16));
+
+	re->tmp_out = im;
+     }
+}
+
+
+static void
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -106,6 +153,7 @@ eng_setup(Evas *e, void *in)
 	re->gc = XCreateGC(re->disp, re->draw, 0, &gcv);
 	re->w = e->output.w;
 	re->h = e->output.h;
+	re->rot = info->info.rotation;
 	re->tb = evas_common_tilebuf_new(e->output.w, e->output.h);
 	if (re->tb)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
@@ -125,9 +173,15 @@ eng_setup(Evas *e, void *in)
 	re->gc = XCreateGC(re->disp, re->draw, 0, &gcv);
 	re->w = e->output.w;
 	re->h = e->output.h;
+	re->rot = info->info.rotation;
 	re->tb = evas_common_tilebuf_new(e->output.w, e->output.h);
 	if (re->tb)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+	if (re->tmp_out)
+	  {
+	     _tmp_out_free(re->tmp_out);
+	     re->tmp_out = NULL;
+	  }
      }
    if (!e->engine.data.output) return;
    /* add a draw context if we dont have one */
@@ -149,6 +203,7 @@ eng_output_free(void *data)
    if (re->gc) XFreeGC(re->disp, re->gc);
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
+   if (re->tmp_out) _tmp_out_free(re->tmp_out);
    free(re);
 
    evas_common_font_shutdown();
@@ -179,6 +234,11 @@ eng_output_resize(void *data, int w, int h)
      {
 	XDestroyRegion(re->clip_rects);
 	re->clip_rects = NULL;
+     }
+   if (re->tmp_out)
+     {
+	_tmp_out_free(re->tmp_out);
+	re->tmp_out = NULL;
      }
 }
 
@@ -218,6 +278,29 @@ eng_output_redraws_clear(void *data)
    evas_common_tilebuf_clear(re->tb);
 }
 
+static inline void
+_output_buffer_alloc(Render_Engine *re)
+{
+   int w, h;
+   if (re->shbuf) return;
+
+   if ((re->rot == 0) || (re->rot == 180))
+     {
+	w = re->w;
+	h = re->h;
+     }
+   else
+     {
+	w = re->h;
+	h = re->w;
+     }
+
+   re->shbuf = evas_software_x11_x_output_buffer_new
+     (re->disp, DefaultVisual(re->disp, DefaultScreen(re->disp)),
+      DefaultDepth(re->disp, DefaultScreen(re->disp)),
+      w, h, 1, NULL);
+}
+
 static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
@@ -237,11 +320,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 	if (!re->rects) return NULL;
 
 	re->cur_rect = re->rects;
-	if (!re->shbuf)
-	  re->shbuf = evas_software_x11_x_output_buffer_new
-	  (re->disp, DefaultVisual(re->disp, DefaultScreen(re->disp)),
-	   DefaultDepth(re->disp, DefaultScreen(re->disp)),
-	   re->w, re->h, 1, NULL);
+	_output_buffer_alloc(re);
+	if (re->rot != 0) _tmp_out_alloc(re); /* grows if required */
      }
    if (!re->cur_rect)
      {
@@ -259,9 +339,128 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 	re->end = 1;
      }
 
-   *cx = ux; *cy = uy; *cw = uw; *ch = uh;
    *x = ux; *y = uy; *w = uw; *h = uh;
-   return &re->shbuf->im;
+   if (re->rot == 0)
+     {
+	*cx = ux; *cy = uy; *cw = uw; *ch = uh;
+	return &re->shbuf->im;
+     }
+   else
+     {
+	*cx = 0; *cy = 0; *cw = uw; *ch = uh;
+	return re->tmp_out;
+     }
+}
+
+static void
+_blit_rot_90(Soft16_Image *dst, const Soft16_Image *src,
+	     int out_x, int out_y, int w, int h)
+{
+   DATA16 *dp, *sp;
+   int x, y;
+
+   sp = src->pixels;
+   dp = dst->pixels + (out_x +
+		       (w + out_y - 1) * dst->stride);
+
+   for (y = 0; y < h; y++)
+     {
+	DATA16 *dp_itr, *sp_itr;
+
+	sp_itr = sp;
+	dp_itr = dp;
+
+	for (x = 0; x < w; x++)
+	  {
+	     *dp_itr = *sp_itr;
+
+	     sp_itr++;
+	     dp_itr -= dst->stride;
+	  }
+	sp += src->stride;
+	dp++;
+     }
+}
+
+static void
+_blit_rot_180(Soft16_Image *dst, const Soft16_Image *src,
+	      int out_x, int out_y, int w, int h)
+{
+   DATA16 *dp, *sp;
+   int x, y;
+
+   sp = src->pixels;
+   dp = dst->pixels + ((w + out_x - 1) +
+		       (h + out_y - 1) * dst->stride);
+
+   for (y = 0; y < h; y++)
+     {
+	DATA16 *dp_itr, *sp_itr;
+
+	sp_itr = sp;
+	dp_itr = dp;
+
+	for (x = 0; x < w; x++)
+	  {
+	     *dp_itr = *sp_itr;
+
+	     sp_itr++;
+	     dp_itr--;
+	  }
+	sp += src->stride;
+	dp -= dst->stride;
+     }
+}
+
+static void
+_blit_rot_270(Soft16_Image *dst, const Soft16_Image *src,
+	      int out_x, int out_y, int w, int h)
+{
+   DATA16 *dp, *sp;
+   int x, y;
+
+   sp = src->pixels;
+   dp = dst->pixels + ((h + out_x - 1) +
+		       out_y * dst->stride);
+
+   for (y = 0; y < h; y++)
+     {
+	DATA16 *dp_itr, *sp_itr;
+
+	sp_itr = sp;
+	dp_itr = dp;
+
+	for (x = 0; x < w; x++)
+	  {
+	     *dp_itr = *sp_itr;
+
+	     sp_itr++;
+	     dp_itr += dst->stride;
+	  }
+	sp += src->stride;
+	dp--;
+     }
+}
+
+static void
+_tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
+{
+   Soft16_Image *d, *s;
+   DATA16 *dp, *sp;
+   int y, x, d_dir;
+
+   d = &re->shbuf->im;
+   s = re->tmp_out;
+
+   if ((w < 1) || (h < 1) || (out_x >= d->w) || (out_y >= d->h))
+     return;
+
+   if (re->rot == 90)
+     _blit_rot_90(d, s, out_x, out_y, w, h);
+   else if (re->rot == 180)
+     _blit_rot_180(d, s, out_x, out_y, w, h);
+   else if (re->rot == 270)
+     _blit_rot_270(d, s, out_x, out_y, w, h);
 }
 
 static void
@@ -275,10 +474,37 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
    if (!re->clip_rects)
       re->clip_rects = XCreateRegion();
 
-   r.x = x;
-   r.y = y;
-   r.width = w;
-   r.height = h;
+   if (re->rot == 0)
+     {
+	r.x = x;
+	r.y = y;
+	r.width = w;
+	r.height = h;
+     }
+   else if (re->rot == 90)
+     {
+	r.x = y;
+	r.y = re->w - w - x;
+	r.width = h;
+	r.height = w;
+     }
+   else if (re->rot == 180)
+     {
+	r.x = re->w - w - x;
+	r.y = re->h - h - y;
+	r.width = w;
+	r.height = h;
+     }
+   else if (re->rot == 270)
+     {
+	r.x = re->h - h - y;
+	r.y = x;
+	r.width = h;
+	r.height = w;
+     }
+
+   if (re->rot != 0)
+     _tmp_out_process(re, r.x, r.y, w, h);
    XUnionRectWithRegion(&r, re->clip_rects, re->clip_rects);
 }
 
@@ -286,6 +512,7 @@ static void
 eng_output_flush(void *data)
 {
    Render_Engine *re;
+   int w, h;
 
    re = (Render_Engine *)data;
    if (re->clip_rects)
@@ -296,8 +523,8 @@ eng_output_flush(void *data)
      }
    else return;
 
-   evas_software_x11_x_output_buffer_paste(re->shbuf, re->draw, re->gc,
-					   0, 0, re->w, re->h, 0);
+   evas_software_x11_x_output_buffer_paste
+     (re->shbuf, re->draw, re->gc, 0, 0, re->shbuf->im.w, re->shbuf->im.h, 0);
    XSetClipMask(re->disp, re->gc, None);
 }
 
@@ -316,6 +543,11 @@ eng_output_idle_flush(void *data)
      {
 	XDestroyRegion(re->clip_rects);
 	re->clip_rects = NULL;
+     }
+   if (re->tmp_out)
+     {
+	_tmp_out_free(re->tmp_out);
+	re->tmp_out = NULL;
      }
 }
 
