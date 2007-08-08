@@ -63,14 +63,14 @@ evas_common_array_hash_add(Evas_Array_Hash *hash, int key, int data)
    if (!el) 
      {
 	el = malloc(sizeof(Evas_Array_Hash_El));
-	el->data_max = 1 << 5;
+	el->data_max = 4;
 	el->data = malloc(sizeof(int) * el->data_max);
 	el->data_count = 0;
 	hash->buckets[hash_val] = el;
      }
    else if (el->data_count == el->data_max)
      {
-	el->data_max = el->data_max << 1;
+	el->data_max = el->data_max *= 2;
 	el->data = realloc(el->data, sizeof(int) * el->data_max);
      }
 	

@@ -164,6 +164,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
         cache->lru = evas_object_list_remove(cache->lru, im);
         cache->inactiv = evas_hash_del(cache->inactiv, hkey, im);
         cache->activ = evas_hash_add(cache->activ, hkey, im);
+	cache->usage -= cache->func.mem_size_get(im);
 
         goto on_ok;
      }
@@ -199,11 +200,10 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    im->cache_key = strdup(hkey);
    im->cache = cache;
 
-   cache->usage += strlen(im->cache_key) + 1 + cache->func.mem_size_get(im);
-
   on_ok:
    *error = 0;
    im->references++;
+//   printf("IM++ %s, cache = %i\n", im->cache_key, cache->usage);
    return im;
 }
 
@@ -219,12 +219,11 @@ evas_cache_image_drop(RGBA_Image *im)
    im->references--;
    cache = im->cache;
 
+//   if (im->cache_key) printf("DROP %s -> ref = %i\n", im->cache_key, im->references);
    if ((im->flags & RGBA_IMAGE_IS_DIRTY) == RGBA_IMAGE_IS_DIRTY)
      {
-        int             size;
-
-        size = cache->func.mem_size_get(im);
-        cache->usage -= size;
+        cache->usage = cache->func.mem_size_get(im);
+//	if (im->cache_key) printf("IM-- %s, cache = %i\n", im->cache_key, cache->usage);
         cache->dirty = evas_object_list_remove(cache->dirty, im);
         if (cache->func.debug)
           cache->func.debug("drop", im);
@@ -243,7 +242,9 @@ evas_cache_image_drop(RGBA_Image *im)
         cache->inactiv = evas_hash_add(cache->inactiv, hkey, im);
         cache->lru = evas_object_list_prepend(cache->lru, im);
 
-        /* FIXME: Enforce cache limit. */
+	cache->usage += cache->func.mem_size_get(im);
+//	printf("FLUSH!\n");
+	evas_cache_image_flush(cache);
      }
 }
 
@@ -264,8 +265,6 @@ evas_cache_image_dirty(RGBA_Image *im, int x, int y, int w, int h)
           {
              hkey = im->cache_key;
              cache->activ = evas_hash_del(cache->activ, hkey, im);
-
-             cache->usage -= strlen(hkey) + 1;
 
              free(hkey);
 
@@ -293,7 +292,7 @@ evas_cache_image_dirty(RGBA_Image *im, int x, int y, int w, int h)
              im_dirty->cache = cache;
              im_dirty->references = 1;
 
-             cache->usage += cache->func.mem_size_get(im_dirty);
+//             cache->usage += cache->func.mem_size_get(im_dirty);
 
              evas_cache_image_drop(im);
           }
@@ -335,7 +334,6 @@ evas_cache_image_alone(RGBA_Image *im)
              hkey = im->cache_key;
              cache->activ = evas_hash_del(cache->activ, hkey, im);
 
-             cache->usage -= strlen(hkey) + 1;
              free(hkey);
 
              im_dirty->cache_key = NULL;
@@ -399,7 +397,8 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *imag
 
    assert(cache);
 
-   if (cspace != EVAS_COLORSPACE_ARGB8888)
+   if ((cspace == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (cspace == EVAS_COLORSPACE_YCBCR422P709_PL))
      w &= ~0x1;
 
    im = evas_common_image_create(w, h);
@@ -476,7 +475,7 @@ evas_cache_image_size_set(RGBA_Image *im, int w, int h)
    new->cache_key = NULL;
 
    new->references = 1;
-   cache->usage += cache->func.mem_size_get(new);
+//   cache->usage += cache->func.mem_size_get(new);
 
    if ((im->flags & RGBA_IMAGE_IS_DIRTY) == RGBA_IMAGE_IS_DIRTY
        || im->references > 1)
@@ -492,7 +491,6 @@ evas_cache_image_size_set(RGBA_Image *im, int w, int h)
         new->cache_key = cache_key;
 
         cache->activ = evas_hash_add(cache->activ, cache_key, new);
-        cache->usage += strlen(new->cache_key) + 1;
      }
 
    evas_cache_image_drop(im);
@@ -521,9 +519,9 @@ evas_cache_image_load_data(RGBA_Image *im)
    if (cache->func.debug)
      cache->func.debug("load", im);
 
-   size = cache->func.mem_size_get(im);
+//   size = cache->func.mem_size_get(im);
    cache->func.load(im);
-   cache->usage += cache->func.mem_size_get(im) - size;
+//   cache->usage += cache->func.mem_size_get(im) - size;
 
    im->flags |= RGBA_IMAGE_LOADED;
 
@@ -538,15 +536,17 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
    if (cache->limit == -1)
      return -1;
 
-   while (cache->lru && cache->limit < cache->usage)
+//   printf("cache->limit = %i\n", cache->limit);
+//   printf("cache->usage = %i\n", cache->usage);
+   while ((cache->lru) && (cache->limit < cache->usage))
      {
         RGBA_Image*     im;
 
         im = (RGBA_Image*) cache->lru->last;
+//	printf("IM-- [flush] %s, cache = %i\n", im->cache_key, cache->usage);
         cache->lru = evas_object_list_remove(cache->lru, im);
         cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
 
-        cache->usage -= strlen(im->cache_key) + 1;
         cache->usage -= cache->func.mem_size_get(im);
 
         free(im->cache_key);

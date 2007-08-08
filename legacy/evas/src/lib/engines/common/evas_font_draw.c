@@ -84,7 +84,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 	  {
 	     if (evas_common_font_source_load_complete(fi->src))
 	       return 0;
-
+#if 0 /* FIXME: disable this. this can eat a LOT of memory and in my tests with expedite at any rate shows no visible improvements */
 	     index = FT_Get_Char_Index(fi->src->ft.face, gl);
 	     if (index == 0)
 	       {
@@ -93,11 +93,11 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 		  FT_UInt   gindex;
 		 
 		  fi->src->charmap = evas_common_array_hash_new();
-		  charcode = FT_Get_First_Char(fi->src->ft.face, &gindex );
-		  while ( gindex != 0 )
+		  charcode = FT_Get_First_Char(fi->src->ft.face, &gindex);
+		  while (gindex != 0)
 		    {
 		       evas_common_array_hash_add(fi->src->charmap, charcode, gindex);
-		       charcode = FT_Get_Next_Char(fi->src->ft.face, charcode, &gindex );
+		       charcode = FT_Get_Next_Char(fi->src->ft.face, charcode, &gindex);
 		    }
 		  
 		  /* Free face */
@@ -111,6 +111,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 		  *fi_ret = fi;
 		  return index;
 	       }
+#endif	     
 	  }
 	else /* Charmap not loaded, FS loaded */
 	  {

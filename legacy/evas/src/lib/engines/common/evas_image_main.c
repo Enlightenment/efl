@@ -380,10 +380,10 @@ evas_common_image_ram_usage(RGBA_Image *im)
 {
    int ram = 0;
 
-   ram += sizeof(struct _RGBA_Image);
-   if (im->info.file) ram += strlen(im->info.file);
+//   ram += sizeof(struct _RGBA_Image);
+//   if (im->info.file) ram += strlen(im->info.file);
 //   if (im->info.real_file) ram += strlen(im->info.real_file);
-   if (im->info.key) ram += strlen(im->info.key);
+//   if (im->info.key) ram += strlen(im->info.key);
 //   if (im->info.comment) ram += strlen(im->info.comment);
    if ((im->image) && (im->image->data) && (!im->image->no_free))
      ram += im->image->w * im->image->h * sizeof(DATA32);
