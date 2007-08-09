@@ -222,7 +222,7 @@ evas_cache_image_drop(RGBA_Image *im)
 //   if (im->cache_key) printf("DROP %s -> ref = %i\n", im->cache_key, im->references);
    if ((im->flags & RGBA_IMAGE_IS_DIRTY) == RGBA_IMAGE_IS_DIRTY)
      {
-        cache->usage = cache->func.mem_size_get(im);
+        cache->usage -= cache->func.mem_size_get(im);
 //	if (im->cache_key) printf("IM-- %s, cache = %i\n", im->cache_key, cache->usage);
         cache->dirty = evas_object_list_remove(cache->dirty, im);
         if (cache->func.debug)
