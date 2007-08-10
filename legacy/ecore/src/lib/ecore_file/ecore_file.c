@@ -324,7 +324,8 @@ ecore_file_symlink(const char *src, const char *dest)
 /**
  * Get the canonicalized absolute pathname
  * @param  file The file path
- * @return The canonicalized absolute pathname
+ * @return The canonicalized absolute pathname; on failure it will return
+ *         an empty string
  */
 EAPI char *
 ecore_file_realpath(const char *file)
@@ -621,7 +622,8 @@ restart:
 /**
  * Add the escape sequence ('\\') to the given filename
  * @param  filename The file name
- * @return The file name with special characters escaped
+ * @return The file name with special characters escaped; if the length of the
+ *         resulting string is longer than PATH_MAX it will return NULL
  */
 EAPI char *
 ecore_file_escape_name(const char *filename)
