@@ -17,6 +17,12 @@
 static int init = 0;
 
 /* externally accessible functions */
+/**
+ * Initialize Ecore_File and the services it will use. Call this function
+ * once before you use any of the ecore file functions.
+ * @return Return the number howoften ecore_file_init() was call succesfully;
+ *         0 if it failed.
+ */
 EAPI int
 ecore_file_init()
 {
@@ -39,6 +45,10 @@ error:
    return --init;
 }
 
+/**
+ * Shutdown the Ecore_File
+ * @return returns the number of libraries that still uses Ecore_File
+ */
 EAPI int
 ecore_file_shutdown()
 {
@@ -51,6 +61,12 @@ ecore_file_shutdown()
    return init;
 }
 
+/**
+ * Get the time of the last modification to the give file
+ * @param file The name of the file
+ * @return Return the time of the last data modification, if an error should 
+ *         occur it will return 0
+ */
 EAPI long long
 ecore_file_mod_time(const char *file)
 {
@@ -415,9 +431,14 @@ ecore_file_readlink(const char *link)
 }
 
 /**
- * Get the list of the files in a given directory
+ * Get the list of the files and directories in a given directory. The list 
+ * will be sorted with strcoll as compare function. That means that you may
+ * want to set the current locale for the category LC_COLLATE with setlocale().
+ * For more information see the manual pages of strcoll and setlocale.
+ * The list will not contain the directory entries for '.' and '..'.
  * @param  dir The name of the directory to list
- * @return An Ecore_List containing all the file in the directory
+ * @return Return an Ecore_List containing all the files in the directory; 
+ *         on failure it returns NULL.
  */
 EAPI Ecore_List *
 ecore_file_ls(const char *dir)
@@ -449,6 +470,9 @@ ecore_file_ls(const char *dir)
    return list;
 }
 
+/**
+ * FIXME: To be documented.
+ */
 EAPI char *
 ecore_file_app_exe_get(const char *app)
 {
