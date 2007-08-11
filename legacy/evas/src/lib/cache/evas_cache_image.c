@@ -151,8 +151,24 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    hkey = alloca(sizeof (char) * size);
    snprintf(hkey, size, format, file, key, lo->scale_down_by, lo->dpi, lo->w, lo->h);
 
-   if (stat(file, &st) < 0) return NULL;
-   /* FIXME: Handle timestamp correctly. */
+   if (stat(file, &st) < 0)
+     {
+	im = evas_hash_find(cache->inactiv, hkey);
+	if (im)
+	  {
+	     cache->lru = evas_object_list_remove(cache->lru, im);
+	     cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
+	     cache->usage -= cache->func.mem_size_get(im);
+	     if (im->cache_key)
+	       {
+		  evas_stringshare_del(im->cache_key);
+		  im->cache_key = NULL;
+	       }
+	     cache->func.destructor(im);
+	     evas_common_image_delete(im);
+	  }
+	return NULL;
+     }
 
    im = evas_hash_find(cache->activ, hkey);
    if (im)
@@ -171,6 +187,19 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 	     cache->activ = evas_hash_direct_add(cache->activ, im->cache_key, im);
 	     cache->usage -= cache->func.mem_size_get(im);
 	     goto on_ok;
+	  }
+	else
+	  {
+	     cache->lru = evas_object_list_remove(cache->lru, im);
+	     cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
+	     cache->usage -= cache->func.mem_size_get(im);
+	     if (im->cache_key)
+	       {
+		  evas_stringshare_del(im->cache_key);
+		  im->cache_key = NULL;
+	       }
+	     cache->func.destructor(im);
+	     evas_common_image_delete(im);
 	  }
      }
 
