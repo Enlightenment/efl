@@ -258,23 +258,26 @@ const char *efreet_mime_magic_type_get(const char *file)
 const char *efreet_mime_globs_type_get(const char *file)
 {
     Efreet_Mime_Glob *g;
-    char *s;
+    char *s, *sl;
     const char *ext, *mime;
-    
+
     /*
      * Check in the extension hash for the type
      */
-    ext = strchr(file,'.');
-    while(ext)
-    {
+   sl = alloca(strlen(file) + 1);
+   strcpy(sl, file);
+   for (s = sl; *s; s++) *s = tolower(*s);
+   ext = strchr(sl,'.');
+   while(ext)
+     {
         ++ext;
         
-        if(ext && (mime = ecore_hash_get(wild, ext)))
-            return mime;
+        if (ext && (mime = ecore_hash_get(wild, ext)))
+	  return mime;
         
         ext = strchr(ext,'.');
-    }
-    
+     }
+   
     /*
      * Fallback to the other globs if not found
      */
