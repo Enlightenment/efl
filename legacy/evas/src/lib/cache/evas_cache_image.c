@@ -156,17 +156,22 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 
    im = evas_hash_find(cache->activ, hkey);
    if (im)
-     goto on_ok;
+     {
+	if (st.st_mtime == im->timestamp)
+	  goto on_ok;
+     }
 
    im = evas_hash_find(cache->inactiv, hkey);
    if (im)
      {
-        cache->lru = evas_object_list_remove(cache->lru, im);
-        cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
-        cache->activ = evas_hash_direct_add(cache->activ, im->cache_key, im);
-	cache->usage -= cache->func.mem_size_get(im);
-
-        goto on_ok;
+	if (st.st_mtime == im->timestamp)
+	  {
+	     cache->lru = evas_object_list_remove(cache->lru, im);
+	     cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
+	     cache->activ = evas_hash_direct_add(cache->activ, im->cache_key, im);
+	     cache->usage -= cache->func.mem_size_get(im);
+	     goto on_ok;
+	  }
      }
 
    im = evas_common_image_new();
