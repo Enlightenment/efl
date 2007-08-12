@@ -752,7 +752,7 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
 
         *pp = 0;
 
-        if(ext[0] == '*' && ext[1] == '.')
+        if (ext[0] == '*' && ext[1] == '.')
         {            
             ecore_hash_set(wild, (void*)ecore_string_instance(&(ext[2])),
                                       (void*)ecore_string_instance(mimetype));
