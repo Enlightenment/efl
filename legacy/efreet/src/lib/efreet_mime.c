@@ -257,48 +257,48 @@ const char *efreet_mime_magic_type_get(const char *file)
  */
 const char *efreet_mime_globs_type_get(const char *file)
 {
-   Efreet_Mime_Glob *g;
-   char *s, *sl, *p;
-   const char *ext, *mime;
-   
+    Efreet_Mime_Glob *g;
+    char *s, *sl, *p;
+    const char *ext, *mime;
+
     /*
      * Check in the extension hash for the type
      */
-   ext = strchr(file, '.');
-   if (ext)
-     {
-	sl = alloca(strlen(ext) + 1);
-	for (s = ext, p = sl; *s; s++, p++) *p = tolower(*s);
-	*p = 0;
-	p = sl;
-	while (p)
-	  {
-	     p++;
-	     if (p && (mime = ecore_hash_get(wild, p))) return mime;
-	     p = strchr(p, '.');
-	  }
-     }
-   
-   /*
-    * Fallback to the other globs if not found
-    */
-   ecore_list_first_goto(globs);
-   while ((g = ecore_list_next(globs)))
-     {
+    ext = strchr(file, '.');
+    if (ext)
+    {
+        sl = alloca(strlen(ext) + 1);
+        for (s = ext, p = sl; *s; s++, p++) *p = tolower(*s);
+        *p = 0;
+        p = sl;
+        while (p)
+        {
+            p++;
+            if (p && (mime = ecore_hash_get(wild, p))) return mime;
+            p = strchr(p, '.');
+        }
+    }
+
+    /*
+     * Fallback to the other globs if not found
+     */
+    ecore_list_first_goto(globs);
+    while ((g = ecore_list_next(globs)))
+    {
         if (efreet_mime_glob_match(file, g->glob))
-	  return g->mime;
-     }
-   
-   ext = alloca(strlen(file) + 1);
-   for (s = file, p = ext; *s; s++, p++) *p = tolower(*s);
-   *p = 0;
-   ecore_list_first_goto(globs);
-   while ((g = ecore_list_next(globs)))
-     {
+            return g->mime;
+    }
+
+    ext = alloca(strlen(file) + 1);
+    for (s = file, p = ext; *s; s++, p++) *p = tolower(*s);
+    *p = 0;
+    ecore_list_first_goto(globs);
+    while ((g = ecore_list_next(globs)))
+    {
         if (efreet_mime_glob_case_match(ext, g->glob))
-	  return g->mime;
-     }
-   return NULL;    
+            return g->mime;
+    }
+    return NULL;    
 }
 
 /**
@@ -701,7 +701,7 @@ efreet_mime_mime_types_load(const char *file)
         }
         while ((*p != '\n') && (*p != 0));
     }
-   fclose(f);
+    fclose(f);
 }
 
 /**
@@ -1197,14 +1197,14 @@ efreet_mime_magic_entry_free(void *data)
 static int
 efreet_mime_glob_match(const char *str, const char *glob)
 {
-   if (!str || !glob) return 0;
-   if (glob[0] == 0)
-     {
+    if (!str || !glob) return 0;
+    if (glob[0] == 0)
+    {
         if (str[0] == 0) return 1;
         return 0;
-     }
-   if (!fnmatch(glob, str, 0)) return 1;
-   return 0;
+    }
+    if (!fnmatch(glob, str, 0)) return 1;
+    return 0;
 }
 
 /**
@@ -1217,19 +1217,19 @@ efreet_mime_glob_match(const char *str, const char *glob)
 static int
 efreet_mime_glob_case_match(char *str, const char *glob)
 {
-   const char *p;
-   char *tglob, *tp;
-   
-   if (!str || !glob) return 0;
-   if (glob[0] == 0)
-     {
+    const char *p;
+    char *tglob, *tp;
+
+    if (!str || !glob) return 0;
+    if (glob[0] == 0)
+    {
         if (str[0] == 0) return 1;
         return 0;
-     }
-   tglob = alloca(strlen(glob) + 1);
-   for (tp = tglob, p = glob; *p; p++, tp++) *tp = tolower(*p);
-   *tp = 0;
-   if (!fnmatch(str, tglob, 0)) return 1;
-   return 0;
+    }
+    tglob = alloca(strlen(glob) + 1);
+    for (tp = tglob, p = glob; *p; p++, tp++) *tp = tolower(*p);
+    *tp = 0;
+    if (!fnmatch(str, tglob, 0)) return 1;
+    return 0;
 }
 
