@@ -265,15 +265,18 @@ const char *efreet_mime_globs_type_get(const char *file)
      * Check in the extension hash for the type
      */
    ext = strchr(file, '.');
-   sl = alloca(strlen(ext) + 1);
-   for (s = ext, p = sl; *s; s++, p++) *p = tolower(*s);
-   *p = 0;
-   p = sl;
-   while (p)
+   if (ext)
      {
-        p++;
-        if (p && (mime = ecore_hash_get(wild, p))) return mime;
-        p = strchr(p, '.');
+	sl = alloca(strlen(ext) + 1);
+	for (s = ext, p = sl; *s; s++, p++) *p = tolower(*s);
+	*p = 0;
+	p = sl;
+	while (p)
+	  {
+	     p++;
+	     if (p && (mime = ecore_hash_get(wild, p))) return mime;
+	     p = strchr(p, '.');
+	  }
      }
    
    /*
