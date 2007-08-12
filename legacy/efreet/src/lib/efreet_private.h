@@ -11,6 +11,7 @@
  * @{
  */
 
+#include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,11 +25,14 @@
 #include <fnmatch.h>
 #include <limits.h>
 
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
+
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Ecore_Str.h>
 
-#include "config.h"
 #include "efreet_xml.h"
 #include "efreet_ini.h"
 
