@@ -145,7 +145,10 @@ output(void)
 	     Edje_Image_Directory_Entry *ei;
 	     
 	     ei = l->data;
-	     if ((ei->source_type) && (ei->entry))
+	     if ((ei->source_type > EDJE_IMAGE_SOURCE_TYPE_NONE) && 
+		 (ei->source_type < EDJE_IMAGE_SOURCE_TYPE_LAST) &&
+		 (ei->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
+		 (ei->entry))
 	       {
 		  Ecore_Evas *ee;
 		  Evas *evas;
