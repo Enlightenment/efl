@@ -70,7 +70,7 @@ evas_common_array_hash_add(Evas_Array_Hash *hash, int key, int data)
      }
    else if (el->data_count == el->data_max)
      {
-	el->data_max = el->data_max *= 2;
+	el->data_max *= 2;
 	el->data = realloc(el->data, sizeof(int) * el->data_max);
      }
 	
