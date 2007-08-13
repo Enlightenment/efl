@@ -245,9 +245,10 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
  * @return Returns mime type as a string
  * @brief Retreive the mime type of a file using magic
  */
-const char *efreet_mime_magic_type_get(const char *file)
+const char *
+efreet_mime_magic_type_get(const char *file)
 {
-    return efreet_mime_magic_check_priority(file,0,0);   
+    return efreet_mime_magic_check_priority(file, 0, 0);   
 }
 
 /**
@@ -255,7 +256,8 @@ const char *efreet_mime_magic_type_get(const char *file)
  * @return Returns mime type as a string
  * @brief Retreive the mime type of a file using globs
  */
-const char *efreet_mime_globs_type_get(const char *file)
+const char *
+efreet_mime_globs_type_get(const char *file)
 {
     Efreet_Mime_Glob *g;
     char *s, *sl, *p;
@@ -307,7 +309,8 @@ const char *efreet_mime_globs_type_get(const char *file)
  * @return Returns mime type as a string
  * @brief Retreive the special mime type of a file
  */
-const char *efreet_mime_special_type_get(const char *file)
+const char *
+efreet_mime_special_type_get(const char *file)
 {
     return efreet_mime_special_check(file);
 }
@@ -318,7 +321,8 @@ const char *efreet_mime_special_type_get(const char *file)
  * @return Returns mime type as a string
  * @brief Retreive the fallback mime type of a file
  */
-const char *efreet_mime_fallback_type_get(const char *file)
+const char *
+efreet_mime_fallback_type_get(const char *file)
 {
     return efreet_mime_fallback_check(file);
 }
