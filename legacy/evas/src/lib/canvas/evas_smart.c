@@ -59,7 +59,7 @@ evas_smart_new(const char *name,
 {
    Evas_Smart *s;
 
-   printf("----- WARNING. evas_smart_new() will be deprecated and removed soon\n",
+   printf("----- WARNING. evas_smart_new() will be deprecated and removed soon\n"
 	  "----- Please use evas_smart_class_new() instead\n");
    
    if (!name) return NULL;
