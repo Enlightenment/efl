@@ -6,13 +6,13 @@
 
 #include <setjmp.h>
 
-#ifndef WIN32
+#ifndef _WIN32
 static sigjmp_buf detect_buf;
 #endif
 
 static int cpu_feature_mask = 0;
 
-#ifndef WIN32
+#ifndef _WIN32
 static void evas_common_cpu_catch_ill(int sig);
 static void evas_common_cpu_catch_segv(int sig);
 
@@ -81,7 +81,7 @@ evas_common_cpu_vis_test(void)
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
-#ifndef WIN32
+#ifndef _WIN32
    int enabled = 1;
    struct sigaction act, oact, oact2;
 

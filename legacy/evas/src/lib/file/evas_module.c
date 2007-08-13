@@ -12,11 +12,11 @@
 
 #include <dirent.h>	/* DIR, dirent */
 #ifdef _WIN32
-#include <windows.h>
-#include <stdlib.h>
-#include <stdio.h>
+# include <windows.h>
+# include <stdlib.h>
+# include <stdio.h>
 #else
-#include <dlfcn.h> 	/* dlopen,dlclose,etc */
+# include <dlfcn.h>	/* dlopen,dlclose,etc */
 #endif
 
 #include <evas_common.h>
@@ -25,9 +25,9 @@
 /* FIXME: that hack is a temporary one. That code will be in MinGW soon */
 #ifdef _WIN32
 
-#define RTLD_LAZY 1 /* lazy function call binding */
-#define RTLD_NOW 2 /* immediate function call binding */
-#define RTLD_GLOBAL 4 /* symbols in this dlopen'ed obj are visible
+# define RTLD_LAZY 1 /* lazy function call binding */
+# define RTLD_NOW 2 /* immediate function call binding */
+# define RTLD_GLOBAL 4 /* symbols in this dlopen'ed obj are visible
 			 to other dlopen'ed objs */
 
 static char *dlerr_ptr;
@@ -99,7 +99,7 @@ _evas_module_path_append(Evas_Module_Type type, char *path, const char *subdir)
 {
    Evas_Module_Path *mp;
    char *buf;
-   
+
    buf = evas_file_path_join(path, subdir);
    if (!buf) return;
    if (evas_file_path_exists(buf))
@@ -122,11 +122,11 @@ _evas_module_path_append(Evas_Module_Type type, char *path, const char *subdir)
 void
 evas_module_paths_init(void)
 {
-   
+
    char *prefix;
    char *path;
    Evas_List *paths = NULL;
-   
+
    /* 1. ~/.evas/modules/ */
    prefix = getenv("HOME");
    if (prefix)
@@ -151,15 +151,15 @@ evas_module_paths_init(void)
 	if (dladdr(evas_module_paths_init, &evas_dl))
 	  {
 	     int length;
-	     
+
 	     if (strrchr(evas_dl.dli_fname, '/'))
 	       {
 		  length = strlen(strrchr(evas_dl.dli_fname, '/'));
-		  path = malloc(strlen(evas_dl.dli_fname) - length + 
+		  path = malloc(strlen(evas_dl.dli_fname) - length +
 				strlen("/evas/modules") + 1);
 		  if (path)
 		    {
-		       strncpy(path, evas_dl.dli_fname, 
+		       strncpy(path, evas_dl.dli_fname,
 			       strlen(evas_dl.dli_fname) - length);
 		       path[strlen(evas_dl.dli_fname) - length] = 0;
 		       strcat(path, "/evas/modules");
@@ -173,7 +173,7 @@ evas_module_paths_init(void)
      }
 #else
    /* 3. PREFIX/evas/modules/ */
-   prefix = PACKAGE_LIB_DIR; 
+   prefix = PACKAGE_LIB_DIR;
    path = malloc(strlen(prefix) + 1 + strlen("/evas/modules"));
    if (path)
      {
@@ -185,7 +185,7 @@ evas_module_paths_init(void)
 	  free(path);
      }
 #endif
-   
+
    /* append all the module types subdirs */
    while (paths)
      {
@@ -201,14 +201,14 @@ evas_module_paths_init(void)
      }
 }
 
-/* this will alloc an Evas_Module struct for each module 
+/* this will alloc an Evas_Module struct for each module
  * it finds on the paths */
 void
 evas_module_init(void)
 {
    Evas_List *l;
    int new_id_engine = 1;
-   
+
 /*    printf("[init modules]\n"); */
    evas_module_paths_init();
    for (l = evas_module_paths; l; l = l->next)
@@ -216,15 +216,15 @@ evas_module_init(void)
 	Evas_Module_Path *mp;
 	DIR *dir;
 	struct dirent *de;
-	
+
 	mp = l->data;
-	
+
 	if (!(dir = opendir(mp->path))) break;
-/* 	printf("[evas module] searching modules on %s\n", mp->path); */
+/*	printf("[evas module] searching modules on %s\n", mp->path); */
 	while ((de = readdir(dir)))
 	  {
 	     char *buf;
-	     
+
 	     if ((!strcmp(de->d_name, ".")) || (!strcmp(de->d_name, "..")))
 	       continue;
 	     buf = malloc(strlen(mp->path) + 1 + strlen(de->d_name) + 1);
@@ -232,7 +232,7 @@ evas_module_init(void)
 	     if (evas_file_path_is_dir(buf))
 	       {
 		  Evas_Module *em;
-		  
+
 		  em = calloc(1, sizeof(Evas_Module));
 		  if (!em) continue;
 		  em->name = strdup(de->d_name);
@@ -244,7 +244,7 @@ evas_module_init(void)
 		  if (em->type == EVAS_MODULE_TYPE_ENGINE)
 		    {
 		       Evas_Module_Engine *eme;
-		       
+
 		       eme = malloc(sizeof(Evas_Module_Engine));
 		       if (eme)
 			 {
@@ -259,7 +259,7 @@ evas_module_init(void)
                   else if (em->type == EVAS_MODULE_TYPE_IMAGE_SAVER)
 		    {
 		    }
-/* 		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
+/*		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
 		  evas_modules = evas_list_append(evas_modules, em);
 	       }
 	     free(buf);
@@ -272,11 +272,11 @@ Evas_Module *
 evas_module_find_type(Evas_Module_Type type, const char *name)
 {
    Evas_List *l;
-   
+
    for (l = evas_modules; l; l = l->next)
      {
 	Evas_Module *em;
-	
+
 	em = (Evas_Module*)l->data;
 	if ((type == em->type) && (!strcmp(name,em->name)))
 	  {
@@ -295,11 +295,11 @@ evas_module_load(Evas_Module *em)
 {
    char buf[4096];
    void *handle;
-   
+
    if (em->loaded) return 1;
 
-//   printf("LOAD %s\n", em->name);
-#ifdef WIN32
+/*   printf("LOAD %s\n", em->name); */
+#ifdef _WIN32
    snprintf(buf, sizeof(buf), "%s/%s/%s/module.dll", em->path, em->name, MODULE_ARCH);
 #else
    snprintf(buf, sizeof(buf), "%s/%s/%s/module.so", em->path, em->name, MODULE_ARCH);
@@ -309,7 +309,7 @@ evas_module_load(Evas_Module *em)
 	printf("[evas module] error loading the module %s. It doesnt exists\n", buf);
 	return 0;
      }
-   
+
    handle = dlopen(buf, RTLD_LAZY);
    if (handle)
      {
@@ -317,7 +317,7 @@ evas_module_load(Evas_Module *em)
 	em->func.open = dlsym(em->handle, "module_open");
 	em->func.close = dlsym(em->handle, "module_close");
 	em->api = dlsym(em->handle, "evas_modapi");
-	
+
 	if ((!em->func.open) || (!em->api) || (!em->func.close))
 	  goto error_dl;
 	/* check the api */
@@ -330,10 +330,10 @@ evas_module_load(Evas_Module *em)
 	em->loaded = 1;
 	return 1;
      }
-   error_dl:	
+   error_dl:
      {
 	const char *err;
-	
+
 	err = dlerror();
 	printf("[evas module] error loading the module %s. %s\n", buf, err);
 	if (handle)
@@ -367,14 +367,14 @@ void
 evas_module_ref(Evas_Module *em)
 {
    em->ref++;
-//   printf("M: %s ref++ = %i\n", em->name, em->ref);
+/*   printf("M: %s ref++ = %i\n", em->name, em->ref); */
 }
 
 void
 evas_module_unref(Evas_Module *em)
 {
    em->ref--;
-//   printf("M: %s ref-- = %i\n", em->name, em->ref);
+/*   printf("M: %s ref-- = %i\n", em->name, em->ref); */
 }
 
 static int use_count = 0;
@@ -408,20 +408,20 @@ evas_module_clean(void)
 	noclean = 0;
      }
    if (noclean == 1) return;
-   
+
    /* disable module cleaning for now - may cause instability with some modules */
    return;
-   
+
    /* incriment use counter = 28bits */
    use_count++;
    if (use_count > 0x0fffffff) use_count = 0;
-   
-//   printf("CLEAN!\n");
+
+   /* printf("CLEAN!\n"); */
    /* go through all modules */
    for (l = evas_modules; l; l = l->next)
      {
 	em = l->data;
-//	printf("M %s %i %i\n", em->name, em->ref, em->loaded);
+        /* printf("M %s %i %i\n", em->name, em->ref, em->loaded); */
 	/* if the module is refernced - skip */
 	if ((em->ref > 0) || (!em->loaded)) continue;
 	/* how many clean cycles ago was this module last used */
@@ -430,7 +430,7 @@ evas_module_clean(void)
 	/* if it was used last more than N clean cycles ago - unload */
 	if (ago > 5)
 	  {
-//	     printf("  UNLOAD %s\n", em->name);
+            /* printf("  UNLOAD %s\n", em->name); */
 	     evas_module_unload(em);
 	  }
      }
@@ -441,7 +441,7 @@ void
 evas_module_shutdown(void)
 {
    Evas_Module *em;
-   
+
 /*    printf("[shutdown modules]\n"); */
    while (evas_modules)
      {
@@ -477,7 +477,7 @@ EAPI int
 _evas_module_engine_inherit(Evas_Func *funcs, char *name)
 {
    Evas_Module *em;
-   
+
    em = evas_module_find_type(EVAS_MODULE_TYPE_ENGINE, name);
    if (em)
      {
