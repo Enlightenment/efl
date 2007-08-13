@@ -410,7 +410,7 @@ struct _RGBA_Image
 
    /* Cache stuff. */
    Evas_Cache_Image     *cache;
-   char                 *cache_key;
+   const char           *cache_key;
 };
 
 struct _RGBA_Engine_Image

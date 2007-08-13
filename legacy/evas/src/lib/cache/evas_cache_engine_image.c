@@ -5,7 +5,7 @@
 #include "evas_private.h"
 
 EAPI int
-evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image* cache)
+evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache)
 {
    assert(cache != NULL);
 
@@ -13,7 +13,7 @@ evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image* cache)
 }
 
 EAPI int
-evas_cache_engine_image_get(Evas_Cache_Engine_Image* cache)
+evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache)
 {
    assert(cache != NULL);
 
@@ -21,17 +21,17 @@ evas_cache_engine_image_get(Evas_Cache_Engine_Image* cache)
 }
 
 EAPI void
-evas_cache_engine_image_set(Evas_Cache_Engine_Image* cache, int limit)
+evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit)
 {
    assert(cache != NULL);
 
    cache->limit = limit;
 }
 
-EAPI Evas_Cache_Engine_Image*
+EAPI Evas_Cache_Engine_Image *
 evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_Image *parent)
 {
-   Evas_Cache_Engine_Image*     new;
+   Evas_Cache_Engine_Image     *new;
 
    new = malloc(sizeof (Evas_Cache_Engine_Image));
    if (!new)
@@ -54,9 +54,9 @@ evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_
 static Evas_Bool
 _evas_cache_engine_image_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
-   Evas_Cache_Engine_Image*     cache = fdata;
-   RGBA_Engine_Image*           eim = data;
-   RGBA_Image*                  im;
+   Evas_Cache_Engine_Image     *cache = fdata;
+   RGBA_Engine_Image           *eim = data;
+   RGBA_Image                  *im;
 
    if (cache->func.debug)
      cache->func.debug("shutdown-engine-activ", eim);
@@ -73,17 +73,17 @@ _evas_cache_engine_image_free_cb(Evas_Hash *hash, const char *key, void *data, v
 }
 
 EAPI void
-evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image* cache)
+evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
 {
-   RGBA_Engine_Image*   eim;
-   RGBA_Image*          im;
+   RGBA_Engine_Image   *eim;
+   RGBA_Image          *im;
 
    assert(cache != NULL);
 
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
      {
-        eim = (RGBA_Engine_Image*) cache->dirty;
+        eim = (RGBA_Engine_Image *) cache->dirty;
         im = eim->src;
 
         cache->dirty = evas_object_list_remove(cache->dirty, eim);
@@ -99,13 +99,13 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image* cache)
    evas_hash_free(cache->activ);
 }
 
-EAPI RGBA_Engine_Image*
+EAPI RGBA_Engine_Image *
 evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache, const char *file, const char *key,
                                 RGBA_Image_Loadopts *lo, void *data, int *error)
 {
-   RGBA_Engine_Image*   eim;
-   RGBA_Image*          im;
-   const char*          ekey;
+   RGBA_Engine_Image   *eim;
+   RGBA_Image          *im;
+   const char          *ekey;
 
    assert(cache != NULL);
 
@@ -162,7 +162,7 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache, const char *file
 }
 
 static void
-_evas_cache_engine_image_free(Evas_Cache_Engine_Image* cache, RGBA_Engine_Image *eim)
+_evas_cache_engine_image_free(Evas_Cache_Engine_Image *cache, RGBA_Engine_Image *eim)
 {
    int                     size;
 
@@ -180,7 +180,7 @@ _evas_cache_engine_image_free(Evas_Cache_Engine_Image* cache, RGBA_Engine_Image 
 EAPI void
 evas_cache_engine_image_drop(RGBA_Engine_Image *eim)
 {
-   Evas_Cache_Engine_Image*     cache;
+   Evas_Cache_Engine_Image     *cache;
 
    assert(eim);
    assert(eim->cache);
@@ -205,13 +205,13 @@ evas_cache_engine_image_drop(RGBA_Engine_Image *eim)
      }
 }
 
-EAPI RGBA_Engine_Image*
+EAPI RGBA_Engine_Image *
 evas_cache_engine_image_dirty(RGBA_Engine_Image *eim, int x, int y, int w, int h)
 {
-   RGBA_Engine_Image*           eim_dirty = eim;
-   RGBA_Image*                  im;
-   RGBA_Image*                  im_dirty;
-   Evas_Cache_Engine_Image*     cache;
+   RGBA_Engine_Image           *eim_dirty = eim;
+   RGBA_Image                  *im;
+   RGBA_Image                  *im_dirty;
+   Evas_Cache_Engine_Image     *cache;
 
    assert(eim);
    assert(eim->cache);
@@ -227,7 +227,7 @@ evas_cache_engine_image_dirty(RGBA_Engine_Image *eim, int x, int y, int w, int h
           {
              if (eim->references == 1)
                {
-                  const char*   hkey;
+                  const char   *hkey;
 
                   hkey = eim->cache_key;
                   cache->activ = evas_hash_del(cache->activ, hkey, eim);
@@ -289,8 +289,8 @@ evas_cache_engine_image_dirty(RGBA_Engine_Image *eim, int x, int y, int w, int h
    return NULL;
 }
 
-static RGBA_Engine_Image*
-_evas_cache_engine_image_push_dirty(Evas_Cache_Engine_Image *cache, RGBA_Image *im, void* engine_data)
+static RGBA_Engine_Image *
+_evas_cache_engine_image_push_dirty(Evas_Cache_Engine_Image *cache, RGBA_Image *im, void *engine_data)
 {
    RGBA_Engine_Image    *eim;
    int                  error;
@@ -323,8 +323,8 @@ _evas_cache_engine_image_push_dirty(Evas_Cache_Engine_Image *cache, RGBA_Image *
    return NULL;
 }
 
-EAPI RGBA_Engine_Image*
-evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void* engine_data)
+EAPI RGBA_Engine_Image *
+evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
 {
    RGBA_Image           *im;
 
@@ -335,8 +335,8 @@ evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, int w, int h
    return _evas_cache_engine_image_push_dirty(cache, im, engine_data);
 }
 
-EAPI RGBA_Engine_Image*
-evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void* engine_data)
+EAPI RGBA_Engine_Image *
+evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
 {
    RGBA_Image           *im;
 
@@ -347,12 +347,12 @@ evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, int w, int h, DATA3
    return _evas_cache_engine_image_push_dirty(cache, im, engine_data);
 }
 
-EAPI RGBA_Engine_Image*
+EAPI RGBA_Engine_Image *
 evas_cache_engine_image_size_set(RGBA_Engine_Image *eim, int w, int h)
 {
-   Evas_Cache_Engine_Image*     cache;
-   RGBA_Engine_Image*           new;
-   RGBA_Image*                  im;
+   Evas_Cache_Engine_Image     *cache;
+   RGBA_Engine_Image           *new;
+   RGBA_Image                  *im;
    int                          error;
 
    assert(eim);
@@ -396,7 +396,7 @@ evas_cache_engine_image_size_set(RGBA_Engine_Image *eim, int w, int h)
      }
    else
      {
-        char*                   cache_key = NULL;
+        const char *cache_key = NULL;
 
         cache_key = eim->cache_key ? evas_stringshare_add(eim->cache_key) : NULL;
         new->cache_key = cache_key;
@@ -422,7 +422,7 @@ evas_cache_engine_image_size_set(RGBA_Engine_Image *eim, int w, int h)
 EAPI void
 evas_cache_engine_image_load_data(RGBA_Engine_Image *eim)
 {
-   Evas_Cache_Engine_Image*     cache;
+   Evas_Cache_Engine_Image     *cache;
    int                          size;
 
    assert(eim);
@@ -445,10 +445,10 @@ evas_cache_engine_image_load_data(RGBA_Engine_Image *eim)
    eim->flags.loaded = 1;
 }
 
-EAPI RGBA_Engine_Image*
+EAPI RGBA_Engine_Image *
 evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data)
 {
-   RGBA_Engine_Image*   eim;
+   RGBA_Engine_Image   *eim;
    int                  error;
 
    eim = malloc(sizeof(RGBA_Engine_Image));
@@ -481,9 +481,9 @@ evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data
 }
 
 EAPI void
-evas_cache_engine_image_colorspace(RGBA_Engine_Image* eim, int cspace, void* engine_data)
+evas_cache_engine_image_colorspace(RGBA_Engine_Image *eim, int cspace, void *engine_data)
 {
-   Evas_Cache_Engine_Image*     cache = eim->cache;
+   Evas_Cache_Engine_Image     *cache = eim->cache;
 
    assert(cache);
 

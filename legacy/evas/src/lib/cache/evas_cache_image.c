@@ -29,10 +29,10 @@ evas_cache_image_set(Evas_Cache_Image *cache, int limit)
    cache->limit = limit;
 }
 
-EAPI Evas_Cache_Image*
+EAPI Evas_Cache_Image *
 evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 {
-   Evas_Cache_Image*    new;
+   Evas_Cache_Image    *new;
 
    new = malloc(sizeof (Evas_Cache_Image));
    if (!new)
@@ -56,14 +56,17 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 static Evas_Bool
 _evas_cache_image_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
-   Evas_Cache_Image*    cache = fdata;
-   RGBA_Image*          im = data;
+   Evas_Cache_Image    *cache = fdata;
+   RGBA_Image          *im = data;
 
    if (cache->func.debug)
      cache->func.debug("shutdown-activ", im);
 
-   free(im->cache_key);
-   im->cache_key = NULL;
+   if (im->cache_key)
+     {
+	evas_stringshare_del(im->cache_key);
+	im->cache_key = NULL;
+     }
 
    cache->func.destructor(im);
    evas_common_image_delete(im);
@@ -73,7 +76,7 @@ _evas_cache_image_free_cb(Evas_Hash *hash, const char *key, void *data, void *fd
 EAPI void
 evas_cache_image_shutdown(Evas_Cache_Image *cache)
 {
-   RGBA_Image*  im;
+   RGBA_Image  *im;
 
    assert(cache != NULL);
    cache->references--;
@@ -83,11 +86,14 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 
    while (cache->lru)
      {
-        im = (RGBA_Image*) cache->lru;
+        im = (RGBA_Image *) cache->lru;
         cache->lru = evas_object_list_remove(cache->lru, im);
 
-        free(im->cache_key);
-        im->cache_key = NULL;
+	if (im->cache_key)
+	  {
+	     evas_stringshare_del(im->cache_key);
+	     im->cache_key = NULL;
+	  }
 
         if (cache->func.debug)
           cache->func.debug("shutdown-lru", im);
@@ -98,7 +104,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
      {
-        im = (RGBA_Image*) cache->dirty;
+        im = (RGBA_Image *) cache->dirty;
         cache->dirty = evas_object_list_remove(cache->dirty, im);
 
         if (cache->func.debug)
@@ -114,15 +120,15 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    free(cache);
 }
 
-EAPI RGBA_Image*
+EAPI RGBA_Image *
 evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error)
 {
-   const char*          format;
-   char*                hkey;
-   RGBA_Image*          im;
-   Evas_Image_Load_Opts prevent;
-   int                  size;
-   struct stat          st;
+   const char           *format;
+   char                 *hkey;
+   RGBA_Image           *im;
+   Evas_Image_Load_Opts  prevent;
+   int                   size;
+   struct stat           st;
 
    assert(cache != NULL);
 
@@ -243,7 +249,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 EAPI void
 evas_cache_image_drop(RGBA_Image *im)
 {
-   Evas_Cache_Image*    cache;
+   Evas_Cache_Image    *cache;
 
    assert(im);
    assert(im->cache);
@@ -278,11 +284,11 @@ evas_cache_image_drop(RGBA_Image *im)
      }
 }
 
-EAPI RGBA_Image*
+EAPI RGBA_Image *
 evas_cache_image_dirty(RGBA_Image *im, int x, int y, int w, int h)
 {
-   RGBA_Image*          im_dirty = im;
-   Evas_Cache_Image*    cache;
+   RGBA_Image          *im_dirty = im;
+   Evas_Cache_Image    *cache;
 
    assert(im);
    assert(im->cache);
@@ -342,12 +348,11 @@ evas_cache_image_dirty(RGBA_Image *im, int x, int y, int w, int h)
    return NULL;
 }
 
-EAPI RGBA_Image*
+EAPI RGBA_Image *
 evas_cache_image_alone(RGBA_Image *im)
 {
-   RGBA_Image*          im_dirty = im;
-   Evas_Cache_Image*    cache;
-   char*                hkey;
+   RGBA_Image          *im_dirty = im;
+   Evas_Cache_Image    *cache;
 
    assert(im);
    assert(im->cache);
@@ -407,8 +412,8 @@ evas_cache_image_alone(RGBA_Image *im)
    return NULL;
 }
 
-static RGBA_Image*
-_evas_cache_image_push_dirty(Evas_Cache_Image *cache, RGBA_Image* im)
+static RGBA_Image *
+_evas_cache_image_push_dirty(Evas_Cache_Image *cache, RGBA_Image *im)
 {
    cache->dirty = evas_object_list_prepend(cache->dirty, im);
 
@@ -422,10 +427,10 @@ _evas_cache_image_push_dirty(Evas_Cache_Image *cache, RGBA_Image* im)
    return im;
 }
 
-EAPI RGBA_Image*
+EAPI RGBA_Image *
 evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
-   RGBA_Image*  im;
+   RGBA_Image  *im;
 
    assert(cache);
 
@@ -445,10 +450,10 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *imag
    return _evas_cache_image_push_dirty(cache, im);
 }
 
-EAPI RGBA_Image*
+EAPI RGBA_Image *
 evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
-   RGBA_Image*  im;
+   RGBA_Image  *im;
 
    assert(cache);
 
@@ -470,11 +475,11 @@ evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data,
    return _evas_cache_image_push_dirty(cache, im);
 }
 
-EAPI RGBA_Image*
+EAPI RGBA_Image *
 evas_cache_image_size_set(RGBA_Image *im, int w, int h)
 {
-   Evas_Cache_Image*    cache;
-   RGBA_Image*          new;
+   Evas_Cache_Image    *cache;
+   RGBA_Image          *new;
    int                  error;
 
    assert(im);
@@ -533,8 +538,7 @@ evas_cache_image_size_set(RGBA_Image *im, int w, int h)
 EAPI void
 evas_cache_image_load_data(RGBA_Image *im)
 {
-   Evas_Cache_Image*    cache;
-   int                  size;
+   Evas_Cache_Image    *cache;
 
    assert(im);
    assert(im->image);
@@ -562,9 +566,9 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
 
    while ((cache->lru) && (cache->limit < cache->usage))
      {
-        RGBA_Image*     im;
+        RGBA_Image     *im;
 
-        im = (RGBA_Image*) cache->lru->last;
+        im = (RGBA_Image *) cache->lru->last;
         cache->lru = evas_object_list_remove(cache->lru, im);
         cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
         cache->usage -= cache->func.mem_size_get(im);
@@ -580,10 +584,10 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
    return cache->usage;
 }
 
-EAPI RGBA_Image*
-evas_cache_image_empty(Evas_Cache_Image* cache)
+EAPI RGBA_Image *
+evas_cache_image_empty(Evas_Cache_Image *cache)
 {
-   RGBA_Image*  new;
+   RGBA_Image  *new;
 
    new = evas_common_image_new();
    if (!new) goto on_error;
@@ -606,7 +610,7 @@ evas_cache_image_empty(Evas_Cache_Image* cache)
 }
 
 EAPI void
-evas_cache_image_colorspace(RGBA_Image* im, int cspace)
+evas_cache_image_colorspace(RGBA_Image *im, int cspace)
 {
    if (!im) return ;
    if (im->cs.space == cspace) return ;
