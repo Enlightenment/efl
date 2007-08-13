@@ -260,8 +260,9 @@ const char *
 efreet_mime_globs_type_get(const char *file)
 {
     Efreet_Mime_Glob *g;
-    char *s, *sl, *p;
-    const char *ext, *mime;
+    char *sl, *p;
+    const char *s;
+    char *ext, *mime;
 
     /*
      * Check in the extension hash for the type
