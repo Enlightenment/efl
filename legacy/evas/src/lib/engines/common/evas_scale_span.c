@@ -3,7 +3,7 @@
 static void
 evas_common_scale_rgba_span_(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
-   int  mul = 0, step = 1;;
+   int  mul = 0, step = 1;
    DATA32 *pdst = dst;
 
    if (!src || !dst) return;
@@ -476,7 +476,7 @@ evas_common_scale_clip_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul
 EAPI void
 evas_common_scale_hsva_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
-   int  mul = 0, step = 1;;
+   int  mul = 0, step = 1;
    DATA32 *pdst = dst;
 
    if (!src || !dst) return;
@@ -559,7 +559,7 @@ evas_common_scale_hsva_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_co
 EAPI void
 evas_common_scale_hsva_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
-   int  mul = 0, step = 1;;
+   int  mul = 0, step = 1;
    DATA32 *pdst = dst;
 
    if (!src || !mask || !dst) return;

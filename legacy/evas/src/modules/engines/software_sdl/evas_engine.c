@@ -305,7 +305,7 @@ evas_engine_sdl_output_idle_flush               (void *data)
 static void*
 evas_engine_sdl_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
-   Render_Engine*	re = (Render_Engine*) data;;
+   Render_Engine*	re = (Render_Engine*) data;
 
    *error = 0;
    return evas_cache_engine_image_request(re->cache, file, key, lo, NULL, error);

@@ -11,31 +11,31 @@ struct _Sinusoidal_Data
    int    len;
 };
 
-static void 
+static void
 sinusoidal_init(void);
 
-static void 
+static void
 sinusoidal_shutdown(void);
 
-static void 
+static void
 sinusoidal_init_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 sinusoidal_setup_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 sinusoidal_free_geom(void *gdata);
 
-static int 
+static int
 sinusoidal_has_alpha(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 sinusoidal_has_mask(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 sinusoidal_get_map_len(RGBA_Gradient *gr);
 
-static Gfx_Func_Gradient_Fill 
+static Gfx_Func_Gradient_Fill
 sinusoidal_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa);
 
 static RGBA_Gradient_Type  sinusoidal = {"sinusoidal", sinusoidal_init, sinusoidal_shutdown,
@@ -109,24 +109,24 @@ evas_common_gradient_sinusoidal_get(void)
     return &sinusoidal;
 }
 
-static void 
+static void
 sinusoidal_init(void)
 {
 }
 
-static void 
+static void
 sinusoidal_shutdown(void)
 {
 }
 
-static void 
+static void
 sinusoidal_free_geom(void *gdata)
 {
    Sinusoidal_Data *data = (Sinusoidal_Data *)gdata;
    if (data) free(data);
 }
 
-static void 
+static void
 sinusoidal_setup_geom(RGBA_Gradient *gr)
 {
    Sinusoidal_Data   *sinusoidal_data;
@@ -141,7 +141,7 @@ sinusoidal_setup_geom(RGBA_Gradient *gr)
    sinusoidal_data->len = gr->fill.h;
 }
 
-static void 
+static void
 sinusoidal_init_geom(RGBA_Gradient *gr)
 {
    Sinusoidal_Data   *sinusoidal_data;
@@ -202,14 +202,14 @@ sinusoidal_init_geom(RGBA_Gradient *gr)
 }
 
 
-static int 
+static int
 sinusoidal_has_alpha(RGBA_Gradient *gr, int op)
 {
    if (!gr || (gr->type.geometer != &sinusoidal)) return 0;
 
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
    if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
@@ -219,11 +219,11 @@ sinusoidal_has_alpha(RGBA_Gradient *gr, int op)
    return 0;
 }
 
-static int 
+static int
 sinusoidal_has_mask(RGBA_Gradient *gr, int op)
 {
    if (!gr || (gr->type.geometer != &sinusoidal)) return 0;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
 	if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
@@ -235,7 +235,7 @@ sinusoidal_has_mask(RGBA_Gradient *gr, int op)
    return 0;
 }
 
-static int 
+static int
 sinusoidal_get_map_len(RGBA_Gradient *gr)
 {
    Sinusoidal_Data   *sinusoidal_data;
@@ -246,7 +246,7 @@ sinusoidal_get_map_len(RGBA_Gradient *gr)
    return sinusoidal_data->len;
 }
 
-static Gfx_Func_Gradient_Fill 
+static Gfx_Func_Gradient_Fill
 sinusoidal_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 {
    Sinusoidal_Data   *sinusoidal_data;
@@ -259,7 +259,7 @@ sinusoidal_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
    if (!sinusoidal_data) return sfunc;
 
    sinusoidal_data->off = gr->map.offset;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
 
@@ -513,7 +513,7 @@ sinusoidal_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mas
 
    while (dst < dst_end)
      {
-	float  r = (yf - (sa * sin(xf))) + off, s = r - off;;
+	float  r = (yf - (sa * sin(xf))) + off, s = r - off;
 	int    l = s;
 
 	*dst = 0;
@@ -599,7 +599,7 @@ sinusoidal_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DAT
 
    while (dst < dst_end)
      {
-	float  r = (yf - (sa * sin(xf))) + off, s = r - off;;
+	float  r = (yf - (sa * sin(xf))) + off, s = r - off;
 	int    l = s;
 
 	*dst = 0;  *mask = 0;
@@ -673,7 +673,7 @@ sinusoidal_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask
 
    while (dst < dst_end)
      {
-	float  r = (yf - (sa * sin(xf))) + off, s = r - off;;
+	float  r = (yf - (sa * sin(xf))) + off, s = r - off;
 	int    l = s;
 
 	*dst = 0;
@@ -749,7 +749,7 @@ sinusoidal_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA
 
    while (dst < dst_end)
      {
-	float  r = (yf - (sa * sin(xf))) + off, s = r - off;;
+	float  r = (yf - (sa * sin(xf))) + off, s = r - off;
 	int    l = s;
 
 	*dst = 0;  *mask = 0;
