@@ -16,6 +16,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas-software-buffer.pc \
 		       evas-software-qtopia.pc \
 		       evas-software-x11.pc \
+		       evas-software-16-x11.pc \
 		       evas-software-xcb.pc \
 		       evas-xrender-x11.pc \
 		       evas-xrender-xcb.pc \
@@ -39,6 +40,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas-software-buffer.pc \
 	     evas-software-qtopia.pc \
 	     evas-software-x11.pc \
+	     evas-software-16-x11.pc \
 	     evas-software-xcb.pc \
 	     evas-xrender-x11.pc \
 	     evas-xrender-xcb.pc \
@@ -76,6 +78,10 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 
 if BUILD_ENGINE_SOFTWARE_X11
 psoftwarex11 = evas-software-x11.pc
+endif
+
+if BUILD_ENGINE_SOFTWARE_16_X11
+psoftware16x11 = evas-software-16-x11.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_XCB
@@ -130,4 +136,5 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pframebuffer) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
-	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psdl)
+	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psdl) \
+	$(psoftware16x11)
