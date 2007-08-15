@@ -8,8 +8,17 @@ static Ecore_Hash *efreet_icon_dirs_cached = NULL;
 static Ecore_Hash *efreet_icon_themes = NULL;
 Ecore_List *efreet_icon_extensions = NULL;
 static Ecore_List *efreet_extra_icon_dirs = NULL;
+static Ecore_List *efreet_icon_cache = NULL;
 
 static int efreet_icon_init_count = 0;
+
+typedef struct Efreet_Icon_Cache Efreet_Icon_Cache;
+struct Efreet_Icon_Cache
+{
+    char *key;
+    char *path;
+    time_t lasttime;
+};
 
 static char *efreet_icon_remove_extension(const char *icon);
 static Efreet_Icon_Theme *efreet_icon_find_theme_check(const char *theme_name);
@@ -65,6 +74,10 @@ static void efreet_icon_theme_cache_check(Efreet_Icon_Theme *theme);
 static int efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme,
                                                         const char *dir);
 
+static int efreet_icon_cache_find(Efreet_Icon_Cache *value, const char *key);
+static void efreet_icon_cache_flush(void);
+static void efreet_icon_cache_free(Efreet_Icon_Cache *value);
+
 /**
  * @internal
  * @return Returns 1 on success or 0 on failure
@@ -98,6 +111,9 @@ efreet_icon_init(void)
         ecore_hash_free_value_cb_set(efreet_icon_themes,
                             ECORE_FREE_CB(efreet_icon_theme_free));
         efreet_extra_icon_dirs = ecore_list_new();
+
+        efreet_icon_cache = ecore_list_new();
+        ecore_list_free_cb_set(efreet_icon_cache, ECORE_FREE_CB(efreet_icon_cache_free));
     }
 
     return 1;
@@ -121,6 +137,8 @@ efreet_icon_shutdown(void)
     IF_FREE_HASH(efreet_icon_themes);
     IF_FREE_HASH(efreet_icon_dirs_cached);
     IF_FREE_LIST(efreet_extra_icon_dirs);
+
+    IF_FREE_LIST(efreet_icon_cache);
 
     ecore_shutdown();
     efreet_icon_init_count = 0;
@@ -309,15 +327,31 @@ efreet_icon_find_theme_check(const char *theme_name)
  * @param theme_name: The icon theme to look for
  * @param icon: The icon to look for
  * @param size; The icon size to look for
- * @return Returns the Efreet_Icon structure representing this icon or NULL
- * if the icon is not found
- * @brief Retrieves all of the information about the given icon.
+ * @return Returns the path to the given icon or NULL if none found
+ * @brief Retrives the path to the given icon.
  */
 char *
 efreet_icon_path_find(const char *theme_name, const char *icon, const char *size)
 {
+    struct stat st;
     char *value = NULL;
+    char key[4096];
+    Efreet_Icon_Cache *cache;
     Efreet_Icon_Theme *theme;
+    
+    snprintf(key, sizeof(key), "%s %s %s", theme_name, icon, size);
+    cache = ecore_list_find(efreet_icon_cache, ECORE_COMPARE_CB(efreet_icon_cache_find), key);
+    if (cache)
+    {
+        ecore_list_remove(efreet_icon_cache);
+        if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
+        {
+            ecore_list_prepend(efreet_icon_cache, cache);
+            return strdup(cache->path);
+        }
+        else
+            efreet_icon_cache_free(cache);
+    }
 
     theme = efreet_icon_find_theme_check(theme_name);
 
@@ -337,6 +371,18 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
      * then just look for a non theme icon
      */
     if (!value) value = efreet_icon_fallback_icon(icon);
+
+    if ((value) && !stat(value, &st))
+    {
+        Efreet_Icon_Cache *cache;
+
+        cache = NEW(Efreet_Icon_Cache, 1);
+        cache->key = strdup(key);
+        cache->path = strdup(value);
+        cache->lasttime = st.st_mtime;
+        ecore_list_prepend(efreet_icon_cache, cache);
+        efreet_icon_cache_flush();
+    }
 
     return value;
 }
@@ -400,8 +446,9 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
  * @param theme: The icon theme to look for
  * @param icon: The icon to look for
  * @param size: The icon size to look for
- * @return Returns the path to the given icon or NULL if none found
- * @brief Retrives the path to the given icon.
+ * @return Returns the Efreet_Icon structure representing this icon or NULL
+ * if the icon is not found
+ * @brief Retrieves all of the information about the given icon.
  */
 Efreet_Icon *
 efreet_icon_find(const char *theme, const char *icon, const char *size)
@@ -1503,3 +1550,35 @@ efreet_icon_theme_directory_free(Efreet_Icon_Theme_Directory *dir)
     FREE(dir);
 }
 
+static int
+efreet_icon_cache_find(Efreet_Icon_Cache *value, const char *key)
+{
+    if (!value || !key) return -1;
+    return strcmp(value->key, key);
+}
+
+static void
+efreet_icon_cache_flush(void)
+{
+    /* TODO:
+     * * Dynamic cache size
+     * * Maybe add references to cache, so that we sort on how often a value is used
+     */
+    while (ecore_list_count(efreet_icon_cache) > 100)
+    {
+        Efreet_Icon_Cache *cache;
+
+        cache = ecore_list_remove_last(efreet_icon_cache);
+        efreet_icon_cache_free(cache);
+    }
+}
+
+static void
+efreet_icon_cache_free(Efreet_Icon_Cache *value)
+{
+    if (!value) return;
+
+    IF_FREE(value->key);
+    IF_FREE(value->path);
+    free(value);
+}
