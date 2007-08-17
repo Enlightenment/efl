@@ -25,9 +25,9 @@ ecore_config.c
 
 ecore_config_LDADD = \
 $(ECORE_CONFIG_LIB) \
-../lib/ecore_ipc/.libs/libecore_ipc.so \
-../lib/ecore_con/.libs/libecore_con.so \
-../lib/ecore/.libs/libecore.so
+../lib/ecore_ipc/.libs/libecore_ipc.la \
+../lib/ecore_con/.libs/libecore_con.la \
+../lib/ecore/.libs/libecore.la
 
 ecore_config_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
