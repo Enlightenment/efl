@@ -66,7 +66,7 @@ _ecore_x_dnd_init(void)
 	ECORE_X_EVENT_XDND_DROP               = ecore_event_type_new();
 	ECORE_X_EVENT_XDND_FINISHED           = ecore_event_type_new();
 
-	ECORE_X_ATOM_SELECTION_PROP_XDND      = XInternAtom(_ecore_x_disp, "JXSelectionWindowProperty", False);
+	ECORE_X_ATOM_SELECTION_PROP_XDND      = XInternAtom(_ecore_x_disp, "XSelectionWindowProperty", False);
 	ECORE_X_ATOM_SELECTION_XDND           = XInternAtom(_ecore_x_disp, "XdndSelection", False);
 	ECORE_X_ATOM_XDND_AWARE               = XInternAtom(_ecore_x_disp, "XdndAware", False);
 	ECORE_X_ATOM_XDND_TYPE_LIST           = XInternAtom(_ecore_x_disp, "XdndTypeList", False);
@@ -112,6 +112,36 @@ _ecore_x_dnd_shutdown(void)
    _target = NULL;
 
    _ecore_x_dnd_init_count = 0;
+}
+
+static int
+_ecore_x_dnd_converter_copy(char *target, void *data, int size, void **data_ret, int *size_ret)
+{
+   XTextProperty text_prop;
+   char *mystr;
+   XICCEncodingStyle style = XTextStyle;
+
+   if (!data || !size)
+     return 0;
+
+   if (!(mystr = strdup(data)))
+     return 0;
+
+   if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
+     {
+	int bufsize = strlen(text_prop.value) + 1;
+	*data_ret = malloc(bufsize);
+	memcpy(*data_ret, text_prop.value, bufsize);
+	*size_ret = bufsize;
+	XFree(text_prop.value);
+	free(mystr);
+	return 1;
+     }
+   else
+     {
+	free(mystr);
+	return 0;
+     }
 }
 
 EAPI void
@@ -245,10 +275,35 @@ ecore_x_dnd_types_set(Ecore_X_Window win, char **types, unsigned int num_types)
 	if (!newset) return;
 	data = (unsigned char *)newset;
 	for (i = 0; i < num_types; i++)
-	  newset[i] = ecore_x_atom_get(types[i]);
+	  {
+	     newset[i] = ecore_x_atom_get(types[i]);
+	     ecore_x_selection_converter_atom_add(newset[i], _ecore_x_dnd_converter_copy);
+	  }
 	ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST,
 					 XA_ATOM, 32, data, num_types);
 	free(newset);
+     }
+}
+
+EAPI void
+ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int num_actions)
+{
+   unsigned int      i;
+   unsigned char     *data = NULL;
+
+   if (!num_actions)
+     {
+	ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_ACTION_LIST);
+     }
+   else
+     {
+	data = (unsigned char *)actions;
+	for (i = 0; i < num_actions; i++)
+	  {
+	     ecore_x_selection_converter_atom_add(actions[i], _ecore_x_dnd_converter_copy);
+	  }
+	ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_ACTION_LIST,
+					 XA_ATOM, 32, data, num_actions);
      }
 }
 
@@ -280,9 +335,11 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    _source->state = ECORE_X_DND_SOURCE_DRAGGING;
    _source->time = _ecore_x_event_last_time;
 
-   /* Default Accepted Action: ask */
-   _source->action = ECORE_X_ATOM_XDND_ACTION_COPY;
+   /* Default Accepted Action: move */
+   _source->action = ECORE_X_ATOM_XDND_ACTION_MOVE;
    _source->accepted_action = None;
+   _source->dest = None;
+
    return 1;
 }
 
@@ -325,9 +382,6 @@ ecore_x_dnd_drop(void)
 	_source->state = ECORE_X_DND_SOURCE_IDLE;
      }
    ecore_x_window_ignore_set(_source->win, 0);
-
-   _source->dest = None; 
-
 
    return status;
 }
@@ -503,4 +557,3 @@ _ecore_x_dnd_drag(int x, int y)
 
    _source->dest = win;
 }
-
