@@ -181,11 +181,11 @@ _ecore_fps_debug_init(void)
    _ecore_fps_debug_init_count++;
    if (_ecore_fps_debug_init_count > 1) return;
    snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
-   _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR);
+   _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
    if (_ecore_fps_debug_fd < 0)
      {
 	unlink(buf);
-	_ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR);
+	_ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
      }
    if (_ecore_fps_debug_fd >= 0)
      {
