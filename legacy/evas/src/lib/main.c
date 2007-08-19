@@ -329,7 +329,7 @@ evas_mempool_free(Evas_Mempool *pool, void *ptr)
    for (p = (Pool *)(pool->first); p; p = p->next) // look 4 pool
      {
 	pmem = (void *)(((unsigned char *)p) + sizeof(Pool)); // pool mem base
-	if ((ptr >= pmem) && (ptr < (pmem + psize))) // is it in pool mem?
+	if ((ptr >= pmem) && ((unsigned char *)ptr < (((unsigned char *)pmem) + psize))) // is it in pool mem?
 	  {
 	     *((void **)ptr) = p->base; // freed node points to prev free node
 	     p->base = ptr; // next free node is now the one we freed
