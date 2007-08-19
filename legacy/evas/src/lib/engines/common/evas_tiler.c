@@ -2,8 +2,8 @@
 
 #ifdef EVAS_RECT_SPLIT
 
-static const list_node_t list_node_zeroed = {.next = NULL};
-static const list_t list_zeroed = {.head = NULL, .tail = NULL};
+static const list_node_t list_node_zeroed = { NULL };
+static const list_t list_zeroed = { NULL, NULL };
 
 
 typedef struct list_node_pool
@@ -13,9 +13,7 @@ typedef struct list_node_pool
    int max;
 } list_node_pool_t;
 
-static list_node_pool_t list_node_pool = {
-   .node = NULL, .len = 0, .max = 1024
-};
+static list_node_pool_t list_node_pool = { NULL, 0, 1024 };
 
 void
 rect_list_node_pool_set_max(int max)
