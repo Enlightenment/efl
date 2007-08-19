@@ -1176,10 +1176,6 @@ em_meta_get(void *video, int meta)
          break;
 
       switch (GST_MESSAGE_TYPE (message)) {
-      case GST_MESSAGE_ERROR:
-      case GST_MESSAGE_EOS:
-         gst_message_unref (message);
-         break;
       case GST_MESSAGE_TAG: {
          GstTagList *new_tags;
 
