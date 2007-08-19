@@ -1568,7 +1568,7 @@ efreet_icon_cache_flush(void)
     {
         Efreet_Icon_Cache *cache;
 
-        cache = ecore_list_remove_last(efreet_icon_cache);
+        cache = ecore_list_last_remove(efreet_icon_cache);
         efreet_icon_cache_free(cache);
     }
 }
