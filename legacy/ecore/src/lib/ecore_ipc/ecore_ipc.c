@@ -127,7 +127,7 @@ _ecore_ipc_dlt_int(int out, int prev, int *mode)
    if (!(dlt & 0xffff0000))
      {
 	*mode = DLT_ADD16;
-	return dlt & 0xfffff;
+	return dlt & 0xffff;
      }
    dlt = prev - out;
    if (!(dlt & 0xffff0000))
@@ -1134,7 +1134,7 @@ _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	dv[1] = *(cl->buf + offset + s + 1); \
 	dv[2] = *(cl->buf + offset + s + 2); \
 	dv[3] = *(cl->buf + offset + s + 3); \
-	d = (int)ntohl(d); \
+	d = (int)ntohl(v); \
 	s += 4; \
      } \
    else if (md >= DLT_ADD16) \
