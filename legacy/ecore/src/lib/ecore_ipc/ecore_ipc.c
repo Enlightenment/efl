@@ -1326,7 +1326,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	dv[1] = *(svr->buf + offset + s + 1); \
 	dv[2] = *(svr->buf + offset + s + 2); \
 	dv[3] = *(svr->buf + offset + s + 3); \
-	d = (int)ntohl(d); \
+	d = (int)ntohl(v); \
 	s += 4; \
      } \
    else if (md >= DLT_ADD16) \
