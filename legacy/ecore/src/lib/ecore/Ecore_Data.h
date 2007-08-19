@@ -25,38 +25,6 @@
 /* we need this for size_t */
 #include <stddef.h>
 
-/* NOTE: these aliases will be removed! DO NOT USE THEM! */
-#define ecore_list_nodes(l) ecore_list_count(l)
-#define ecore_list_is_empty(l) ecore_list_empty_is(l)
-#define ecore_list_set_free_cb(l, f) ecore_list_free_cb_set(l, f)
-#define ecore_dlist_nodes(l) ecore_dlist_count(l)
-#define ecore_dlist_is_empty(l) ecore_dlist_empty_is(l)
-#define ecore_dlist_set_free_cb(l, f) ecore_dlist_free_cb_set(l, f)
-#define ecore_hash_set_free_key(l, f) ecore_hash_free_key_cb_set(l, f)
-#define ecore_hash_set_free_value(l, f) ecore_hash_free_value_cb_set(l, f)
-#define ecore_hash_set_hash(l, k, v) ecore_hash_hash_set(l, k, v)
-#define ecore_plugin_get_available(id) ecore_plugin_available_get(id)
-#define ecore_sheap_set_free_cb(s, f) ecore_sheap_free_cb_set(s, f)
-#define ecore_sheap_set_compare(s, f) ecore_sheap_compare_set(s, f)
-#define ecore_sheap_set_order(s, o) ecore_sheap_order_set(s, o)
-#define ecore_tree_is_empty(t) ecore_tree_empty_is(t)
-#define ecore_tree_get_closest_larger(t) ecore_tree_closest_larger_get(t)
-#define ecore_tree_get_closest_smaller(t) ecore_tree_closest_smaller_get(t)
-#define ecore_tree_add_node(t, n) ecore_tree_node_add(t, n);
-#define ecore_tree_remove_node(t, n) ecore_tree_node_remove(t, n)
-#define ecore_tree_set_free_value(t, f) ecore_tree_free_value_cb_set(t, f)
-#define ecore_tree_set_free_key(t, f) ecore_tree_free_key_cb_set(t, f)
-#define ecore_list_remove_first(l) ecore_list_first_remove(l)
-#define ecore_list_remove_last(l) ecore_list_last_remove(l)
-#define ecore_list_goto_first(l) ecore_list_first_goto(l)
-#define ecore_list_goto_last(l) ecore_list_last_goto(l)
-#define ecore_list_goto_index(l) ecore_list_index_goto(l)
-#define ecore_dlist_remove_first(l) ecore_dlist_first_remove(l)
-#define ecore_dlist_remove_last(l) ecore_dlist_last_remove(l)
-#define ecore_dlist_goto_first(l) ecore_dlist_first_goto(l)
-#define ecore_dlist_goto_last(l) ecore_dlist_last_goto(l)
-#define ecore_dlist_goto_index(l) ecore_dlist_index_goto(l)
-
 /**
  * @file Ecore_Data.h
  * @brief Contains threading, list, hash, debugging and tree functions.
