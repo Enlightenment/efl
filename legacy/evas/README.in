@@ -108,7 +108,7 @@ libraries. For the test programs, XCBICCCM is also needed.
 
 --enable-fb
 
-this is the software framebuffer drivign engine. this uses the linxu
+this is the software framebuffer drivign engine. this uses the linux
 framebuffer device (/dev/fb<x>) and will currently just inherit the current
 framebuffer settings on the fb device and use them to run in. this engine is
 almost fully functional except for the fb management itself. i'd be quite
@@ -150,7 +150,7 @@ considerable speedups, souse it if you can. ppc owners just have to live with
 the c fallback functions unfortunately as no one has provided any ALTIVEC asm 
 routines yet. :) arm owners will also have to rely on the c fallback
 routines as i haven't managed to come up with any arm assembly that actually
-can beat the c code (when compiled whht all optimisations) in speed.
+can beat the c code (when compiled with all optimisations) in speed.
 
 --enable-cpu-sse
 
