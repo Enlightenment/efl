@@ -96,6 +96,7 @@ typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
 typedef struct _Evas_Intercept_Func_SizePos Evas_Intercept_Func_SizePos;
 typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
 typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
+typedef struct _Evas_Intercept_Func_Color   Evas_Intercept_Func_Color;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
@@ -190,6 +191,12 @@ struct _Evas_Intercept_Func_Int
    void *data;
 };
 
+struct _Evas_Intercept_Func_Color
+{
+   void (*func) (void *data, Evas_Object *obj, int r, int g, int b, int a);
+   void *data;
+};
+
 struct _Evas_Key_Grab
 {
    char               *keyname;
@@ -212,6 +219,9 @@ struct _Evas_Intercept_Func
    Evas_Intercept_Func_Obj     stack_above;
    Evas_Intercept_Func_Obj     stack_below;
    Evas_Intercept_Func_Int     layer_set;
+   Evas_Intercept_Func_Color   color_set;
+   Evas_Intercept_Func_Obj     clip_set;
+   Evas_Intercept_Func_Basic   clip_unset;
 };
 
 struct _Evas_Smart
@@ -729,6 +739,9 @@ int evas_object_intercept_call_lower(Evas_Object *obj);
 int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above);
 int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below);
 int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
+int evas_object_intercept_call_color_set(Evas_Object *obj, int r, int g, int b, int a);
+int evas_object_intercept_call_clip_set(Evas_Object *obj, Evas_Object *clip);
+int evas_object_intercept_call_clip_unset(Evas_Object *obj);
 void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);

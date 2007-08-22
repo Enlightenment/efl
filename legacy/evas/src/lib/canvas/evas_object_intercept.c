@@ -27,7 +27,10 @@ evas_object_intercept_deinit(Evas_Object *obj)
        (obj->interceptors->lower.func) ||
        (obj->interceptors->stack_above.func) ||
        (obj->interceptors->stack_below.func) ||
-       (obj->interceptors->layer_set.func))
+       (obj->interceptors->layer_set.func) ||
+       (obj->interceptors->color_set.func) ||
+       (obj->interceptors->clip_set.func) ||
+       (obj->interceptors->clip_unset.func))
      return;
    free(obj->interceptors);
    obj->interceptors = NULL;
@@ -182,6 +185,54 @@ evas_object_intercept_call_layer_set(Evas_Object *obj, int l)
    ret = (int)obj->interceptors->layer_set.func;
    if (obj->interceptors->layer_set.func)
      obj->interceptors->layer_set.func(obj->interceptors->layer_set.data, obj, l);
+   obj->intercepted = 0;
+   return ret;
+}
+
+int
+evas_object_intercept_call_color_set(Evas_Object *obj, int r, int g, int b, int a)
+{
+   /* MEM OK */
+   int ret;
+
+   if (!obj->interceptors) return 0;
+   if (obj->intercepted) return 0;
+   obj->intercepted = 1;
+   ret = (int)obj->interceptors->color_set.func;
+   if (obj->interceptors->color_set.func)
+     obj->interceptors->color_set.func(obj->interceptors->color_set.data, obj, r, g, b, a);
+   obj->intercepted = 0;
+   return ret;
+}
+
+int
+evas_object_intercept_call_clip_set(Evas_Object *obj, Evas_Object *clip)
+{
+   /* MEM OK */
+   int ret;
+
+   if (!obj->interceptors) return 0;
+   if (obj->intercepted) return 0;
+   obj->intercepted = 1;
+   ret = (int)obj->interceptors->clip_set.func;
+   if (obj->interceptors->clip_set.func)
+     obj->interceptors->clip_set.func(obj->interceptors->clip_set.data, obj, clip);
+   obj->intercepted = 0;
+   return ret;
+}
+
+int
+evas_object_intercept_call_clip_unset(Evas_Object *obj)
+{
+   /* MEM OK */
+   int ret;
+
+   if (!obj->interceptors) return 0;
+   if (obj->intercepted) return 0;
+   obj->intercepted = 1;
+   ret = (int)obj->interceptors->clip_unset.func;
+   if (obj->interceptors->clip_unset.func)
+     obj->interceptors->clip_unset.func(obj->interceptors->clip_unset.data, obj);
    obj->intercepted = 0;
    return ret;
 }
@@ -581,6 +632,138 @@ evas_object_intercept_layer_set_callback_del(Evas_Object *obj, void (*func) (voi
    obj->interceptors->layer_set.func = NULL;
    data = obj->interceptors->layer_set.data;
    obj->interceptors->layer_set.data = NULL;
+   evas_object_intercept_deinit(obj);
+   return data;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_object_intercept_color_set_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int r, int g, int b, int a), const void *data)
+{
+   /* MEM OK */
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (!func) return;
+   evas_object_intercept_init(obj);
+   if (!obj->interceptors) return;
+   obj->interceptors->color_set.func = func;
+   obj->interceptors->color_set.data = (void *)data;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void *
+evas_object_intercept_color_set_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int r, int g, int b, int a))
+{
+   /* MEM OK */
+   void *data;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (!func) return NULL;
+   if (!obj->interceptors) return NULL;
+   obj->interceptors->color_set.func = NULL;
+   data = obj->interceptors->color_set.data;
+   obj->interceptors->color_set.data = NULL;
+   evas_object_intercept_deinit(obj);
+   return data;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_object_intercept_clip_set_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *clip), const void *data)
+{
+   /* MEM OK */
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (!func) return;
+   evas_object_intercept_init(obj);
+   if (!obj->interceptors) return;
+   obj->interceptors->clip_set.func = func;
+   obj->interceptors->clip_set.data = (void *)data;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void *
+evas_object_intercept_clip_set_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *clip))
+{
+   /* MEM OK */
+   void *data;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (!func) return NULL;
+   if (!obj->interceptors) return NULL;
+   obj->interceptors->clip_set.func = NULL;
+   data = obj->interceptors->clip_set.data;
+   obj->interceptors->clip_set.data = NULL;
+   evas_object_intercept_deinit(obj);
+   return data;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_object_intercept_clip_unset_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
+{
+   /* MEM OK */
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (!func) return;
+   evas_object_intercept_init(obj);
+   if (!obj->interceptors) return;
+   obj->interceptors->clip_unset.func = func;
+   obj->interceptors->clip_unset.data = (void *)data;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void *
+evas_object_intercept_clip_unset_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj))
+{
+   /* MEM OK */
+   void *data;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (!func) return NULL;
+   if (!obj->interceptors) return NULL;
+   obj->interceptors->clip_unset.func = NULL;
+   data = obj->interceptors->clip_unset.data;
+   obj->interceptors->clip_unset.data = NULL;
    evas_object_intercept_deinit(obj);
    return data;
 }
