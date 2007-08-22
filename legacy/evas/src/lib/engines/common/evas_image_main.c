@@ -33,17 +33,17 @@ static int          _evas_common_image_dirty(RGBA_Image* dst, const RGBA_Image* 
 
 static const Evas_Cache_Image_Func      _evas_common_image_func =
 {
-   .constructor = evas_common_load_image_module_from_file,
-   .destructor = _evas_common_image_unload,
-   .dirty_region = _evas_common_image_dirty_region,
-   .dirty = _evas_common_image_dirty,
-   .copied_data = evas_common_image_from_copied_data,
-   .color_space = evas_common_image_colorspace_set,
-   .data = evas_common_image_from_data,
-   .size_set = evas_common_image_size_set,
-   .load = evas_common_load_image_data_from_file,
-   .mem_size_get = evas_common_image_ram_usage,
-   .debug = NULL
+   evas_common_load_image_module_from_file,
+   _evas_common_image_unload,
+   _evas_common_image_dirty_region,
+   _evas_common_image_dirty,
+   evas_common_image_size_set,
+   evas_common_image_from_copied_data,
+   evas_common_image_from_data,
+   evas_common_image_colorspace_set,
+   evas_common_load_image_data_from_file,
+   evas_common_image_ram_usage,
+   NULL
 };
 
 EAPI void
