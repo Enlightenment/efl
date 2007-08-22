@@ -108,7 +108,7 @@ libraries. For the test programs, XCBICCCM is also needed.
 
 --enable-fb
 
-this is the software framebuffer drivign engine. this uses the linux
+this is the software framebuffer driving engine. this uses the linux
 framebuffer device (/dev/fb<x>) and will currently just inherit the current
 framebuffer settings on the fb device and use them to run in. this engine is
 almost fully functional except for the fb management itself. i'd be quite
