@@ -21,7 +21,7 @@
 #include <string.h>
 
 #include "ecore_private.h"
-#include "Ecore_Data.h"
+#include "Ecore_Str.h"
 
 /**
  * @param dst the destination
