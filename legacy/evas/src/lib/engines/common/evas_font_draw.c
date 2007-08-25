@@ -37,7 +37,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 	free(fg);
 	return NULL;
      }
-   if (fg->glyph->format != ft_glyph_format_bitmap)
+   if (fg->glyph->format != FT_GLYPH_FORMAT_BITMAP)
      {
 	error = FT_Glyph_To_Bitmap(&(fg->glyph), ft_render_mode_normal, 0, 1);
 	if (error)

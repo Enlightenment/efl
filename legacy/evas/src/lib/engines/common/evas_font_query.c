@@ -96,6 +96,20 @@ evas_common_font_query_inset(RGBA_Font *fn, const char *text)
    index = evas_common_font_glyph_search(fn, &fi, gl);
    fg = evas_common_font_int_cache_glyph_get(fi, index);
    if (!fg) return 0;
+/*   
+   printf("fg->glyph_out->left = %i\n"
+	  "fi->src->ft.face->glyph->bitmap_left = %i\n"
+	  "fi->src->ft.face->glyph->metrics.horiBearingX = %i\n"
+	  "fi->src->ft.face->glyph->metrics.horiBearingY = %i\n"
+	  "fi->src->ft.face->glyph->metrics.horiAdvance = %i\n"
+	  ,
+	  (int)fg->glyph_out->left, 
+	  (int)fi->src->ft.face->glyph->bitmap_left,
+	  (int)fi->src->ft.face->glyph->metrics.horiBearingX >> 6,
+	  (int)fi->src->ft.face->glyph->metrics.horiBearingY >> 6,
+	  (int)fi->src->ft.face->glyph->metrics.horiAdvance >> 6
+	  );
+ */
    return fg->glyph_out->left;
 }
 
