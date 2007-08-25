@@ -61,6 +61,7 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
    if (!rgb_txt) rgb_txt = fopen("/usr/lib/X11/rgb.txt", "r");
    if (!rgb_txt) rgb_txt = fopen("/usr/X11/lib/X11/rgb.txt", "r");
    if (!rgb_txt) rgb_txt = fopen("/usr/X11R6/lib/X11/rgb.txt", "r");
+   if (!rgb_txt) rgb_txt = fopen("/usr/openwin/lib/X11/rgb.txt", "r");
    if (!rgb_txt) return;
    fseek(rgb_txt, 0, SEEK_SET);
    while (fgets(buf, sizeof(buf), rgb_txt))
