@@ -2,6 +2,11 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef _WIN32
+# include <windows.h>
+#endif /* _WIN32 */
+
+
 #include "edje_cc.h"
 
 typedef struct _Part_Lookup Part_Lookup;
@@ -156,14 +161,14 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 static void
 check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
-   switch (ep->action) 
+   switch (ep->action)
      {
       case EDJE_ACTION_TYPE_STATE_SET:
       case EDJE_ACTION_TYPE_ACTION_STOP:
       case EDJE_ACTION_TYPE_DRAG_VAL_SET:
       case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
       case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-	 if (!ep->targets) 
+	 if (!ep->targets)
 	   {
 	      fprintf(stderr, "%s: Error. collection %i: "
 		    "target missing in program %s\n",
@@ -179,7 +184,7 @@ check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 static void
 check_spectrum (Edje_Spectrum_Directory_Entry *se, Eet_File *ef)
 {
-   if (!se->entry) 
+   if (!se->entry)
      fprintf(stderr, "%s: Error. Spectrum missing a name.\n", progname);
    else if (!se->color_list)
      fprintf(stderr, "%s: Error. Spectrum %s is empty. At least one color must be given.", progname, se->entry);
@@ -204,7 +209,7 @@ data_write(void)
    int font_num;
    int collection_num;
    int i;
-   
+
    bytes = 0;
    input_bytes = 0;
    total_bytes = 0;
@@ -224,7 +229,7 @@ data_write(void)
    if (edje_file)
      {
 
-	if (edje_file->collection_dir) 
+	if (edje_file->collection_dir)
 	  {
 	     /* copy aliases into collection directory */
 	     while (aliases)
@@ -237,7 +242,7 @@ data_write(void)
 	if (bytes <= 0)
 	  {
 	     fprintf(stderr, "%s: Error. unable to write \"edje_file\" entry to \"%s\" \n",
-		     progname, file_out);	
+		     progname, file_out);
 	     ABORT_WRITE(ef, file_out);
 	  }
 	else
@@ -255,13 +260,13 @@ data_write(void)
 	int fsize = 0;
 	Evas_List *ll;
 	FILE *f;
-	
+
 	fn = l->data;
 	f = fopen(fn->file, "rb");
 	if (f)
 	  {
 	     long pos;
-	     
+
 	     fseek(f, 0, SEEK_END);
 	     pos = ftell(f);
 	     rewind(f);
@@ -283,13 +288,13 @@ data_write(void)
 	     for (ll = fnt_dirs; ll; ll = ll->next)
 	       {
 		  char buf[4096];
-		  
+
 		  snprintf(buf, sizeof(buf), "%s/%s", (char *)(ll->data), fn->file);
 		  f = fopen(buf, "rb");
 		  if (f)
 		    {
 		       long pos;
-		       
+
 		       fseek(f, 0, SEEK_END);
 		       pos = ftell(f);
 		       rewind(f);
@@ -318,13 +323,13 @@ data_write(void)
 	else
 	  {
 	     char buf[4096];
-	     
+
 	     snprintf(buf, sizeof(buf), "fonts/%s", fn->name);
 	     bytes = eet_write(ef, buf, fdata, fsize, 1);
 	     if (bytes <= 0)
 	       {
 		  fprintf(stderr, "%s: Error. unable to write font part \"%s\" as \"%s\" part entry to %s \n",
-			  progname, fn->file, buf, file_out);	
+			  progname, fn->file, buf, file_out);
 		  ABORT_WRITE(ef, file_out);
 	       }
 	     else
@@ -348,7 +353,7 @@ data_write(void)
      {
 	Ecore_Evas *ee;
 	Evas *evas;
-	
+
 	ecore_init();
 	ecore_evas_init();
 	ee = ecore_evas_buffer_new(1, 1);
@@ -361,8 +366,8 @@ data_write(void)
 	for (l = edje_file->image_dir->entries; l; l = l->next)
 	  {
 	     Edje_Image_Directory_Entry *img;
-	     
-	     img = l->data;	
+
+	     img = l->data;
 	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
 	       {
 	       }
@@ -370,19 +375,19 @@ data_write(void)
 	       {
 		  Evas_Object *im;
 		  Evas_List *ll;
-		  
+
 		  im = NULL;
 		  for (ll = img_dirs; ll; ll = ll->next)
 		    {
 		       char buf[4096];
-		       
-		       snprintf(buf, sizeof(buf), "%s/%s", 
+
+		       snprintf(buf, sizeof(buf), "%s/%s",
 				(char *)(ll->data), img->entry);
 		       im = evas_object_image_add(evas);
 		       if (im)
 			 {
 			    evas_object_image_file_set(im, buf, NULL);
-			    if (evas_object_image_load_error_get(im) == 
+			    if (evas_object_image_load_error_get(im) ==
 				EVAS_LOAD_ERROR_NONE)
 			      {
 				 break;
@@ -397,7 +402,7 @@ data_write(void)
 		       if (im)
 			 {
 			    evas_object_image_file_set(im, img->entry, NULL);
-			    if (evas_object_image_load_error_get(im) != 
+			    if (evas_object_image_load_error_get(im) !=
 				EVAS_LOAD_ERROR_NONE)
 			      {
 				 evas_object_del(im);
@@ -411,14 +416,14 @@ data_write(void)
 		       int  im_w, im_h;
 		       int  im_alpha;
 		       char buf[256];
-		       
+
 		       evas_object_image_size_get(im, &im_w, &im_h);
 		       im_alpha = evas_object_image_alpha_get(im);
 		       im_data = evas_object_image_data_get(im, 0);
 		       if ((im_data) && (im_w > 0) && (im_h > 0))
 			 {
 			    int mode, qual;
-			    
+
 			    snprintf(buf, sizeof(buf), "images/%i", img->id);
 			    mode = 2;
 			    qual = 80;
@@ -452,24 +457,24 @@ data_write(void)
 				 if (qual > max_quality) qual = max_quality;
 			      }
 			    if (mode == 0)
-			      bytes = eet_data_image_write(ef, buf, 
+			      bytes = eet_data_image_write(ef, buf,
 							   im_data, im_w, im_h,
-							   im_alpha, 
+							   im_alpha,
 							   0, 0, 0);
 			    else if (mode == 1)
-			      bytes = eet_data_image_write(ef, buf, 
+			      bytes = eet_data_image_write(ef, buf,
 							   im_data, im_w, im_h,
-							   im_alpha, 
+							   im_alpha,
 							   1, 0, 0);
 			    else if (mode == 2)
-			      bytes = eet_data_image_write(ef, buf, 
+			      bytes = eet_data_image_write(ef, buf,
 							   im_data, im_w, im_h,
 							   im_alpha,
 							   0, qual, 1);
 			    if (bytes <= 0)
 			      {
 				 fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s\n",
-					 progname, img->entry, buf, file_out);	
+					 progname, img->entry, buf, file_out);
 				 ABORT_WRITE(ef, file_out);
 			      }
 			    else
@@ -481,14 +486,14 @@ data_write(void)
 		       else
 			 {
 			    fprintf(stderr, "%s: Error. unable to load image for image part \"%s\" as \"%s\" part entry to %s\n",
-				    progname, img->entry, buf, file_out);	
+				    progname, img->entry, buf, file_out);
 			    ABORT_WRITE(ef, file_out);
 			 }
 		       if (verbose)
 			 {
 			    struct stat st;
 			    const char *file = NULL;
-		       
+
 			    evas_object_image_file_get(im, &file, NULL);
 			    if ((file) && (stat(file, &st) != 0))
 			      st.st_size = 0;
@@ -505,7 +510,7 @@ data_write(void)
 		  else
 		    {
 		       fprintf(stderr, "%s: Error. unable to load image for image \"%s\" part entry to %s. Missing PNG or JPEG loader modules for Evas or file does not exist, or is not readable.\n",
-			       progname, img->entry, file_out);	
+			       progname, img->entry, file_out);
 		       ABORT_WRITE(ef, file_out);
 		    }
 	       }
@@ -542,7 +547,7 @@ data_write(void)
      {
 	Edje_Part_Collection *pc;
 	Evas_List *ll;
-	
+
 	pc = l->data;
 	for (ll = pc->parts; ll; ll = ll->next)
 	  check_part (pc, ll->data, ef);
@@ -553,14 +558,14 @@ data_write(void)
      {
 	Edje_Part_Collection *pc;
 	char buf[4096];
-	
+
 	pc = l->data;
 	snprintf(buf, sizeof(buf), "collections/%i", pc->id);
 	bytes = eet_data_write(ef, edd_edje_part_collection, buf, pc, 1);
 	if (bytes <= 0)
 	  {
 	     fprintf(stderr, "%s: Error. unable to write \"%s\" part entry to %s \n",
-		     progname, buf, file_out);	
+		     progname, buf, file_out);
 	     ABORT_WRITE(ef, file_out);
 	  }
 	else
@@ -578,27 +583,44 @@ data_write(void)
      {
 	Code *cd;
 	int ln = 0;
-	
+
 	cd = l->data;
 	if ((cd->shared) || (cd->programs))
 	  {
 	     int fd;
+#ifdef _WIN32
+	     int ret;
+	     char path[4096];
+#endif /* _WIN32 */
 	     char tmpn[4096];
-	     
+
+#ifdef _WIN32
+	     ret = GetTempPath(_MAX_PATH, path);
+	     if ((ret > _MAX_PATH) || (ret == 0))
+               fd = -1;
+             else
+               {
+                  if (!GetTempFileName(path, "edj", 0, tmpn))
+                    fd = -1;
+                  else
+                    fd = open(tmpn, _O_RDWR | _O_BINARY | _O_CREAT, 0444);
+               }
+#else
 	     strcpy(tmpn, "/tmp/edje_cc.sma-tmp-XXXXXX");
 	     fd = mkstemp(tmpn);
+#endif /* _WIN32 */
 	     if (fd >= 0)
 	       {
 		  FILE *f;
 		  char buf[4096];
 		  char tmpo[4096];
 		  int ret;
-		  
+
 		  f = fopen(tmpn, "w");
 		  if (f)
 		    {
 		       Evas_List *ll;
-		       
+
 		       fprintf(f, "#include <edje>\n");
 		       ln = 2;
 		       if (cd->shared)
@@ -612,7 +634,7 @@ data_write(void)
 				 char *sp;
 				 int hash = 0;
 				 int newlined = 0;
-				 
+
 				 for (sp = cd->shared; *sp; sp++)
 				   {
 				      if ((sp[0] == '#') && (newlined))
@@ -631,7 +653,7 @@ data_write(void)
 		       for (ll = cd->programs; ll; ll = ll->next)
 			 {
 			    Code_Program *cp;
-			    
+
 			    cp = ll->data;
 			    if (cp->script)
 			      {
@@ -647,7 +669,7 @@ data_write(void)
 				      char *sp;
 				      int hash = 0;
 				      int newlined = 0;
-				      
+
 				      for (sp = cp->script; *sp; sp++)
 					{
 					   if ((sp[0] == '#') && (newlined))
@@ -667,8 +689,21 @@ data_write(void)
 		       fclose(f);
 		    }
 		  close(fd);
+#ifdef _WIN32
+                  ret = GetTempPath(_MAX_PATH, path);
+                  if ((ret > _MAX_PATH) || (ret == 0))
+                    fd = -1;
+                  else
+                    {
+                       if (!GetTempFileName(path, "edj", 0, tmpo))
+                         fd = -1;
+                       else
+                         fd = open(tmpo, _O_RDWR | _O_BINARY | _O_CREAT, 0444);
+                    }
+#else
 		  strcpy(tmpo, "/tmp/edje_cc.amx-tmp-XXXXXX");
 		  fd = mkstemp(tmpo);
+#endif /* _WIN32 */
 		  if (fd >= 0)
 		    {
 		       snprintf(buf, sizeof(buf),
@@ -679,7 +714,7 @@ data_write(void)
 		       if (ret < 0 || ret > 1)
 			 {
 			    fprintf(stderr, "%s: Warning. Compiling script code not clean.\n",
-				    progname);	
+				    progname);
 			    ABORT_WRITE(ef, file_out);
 			 }
 		       close(fd);
@@ -689,14 +724,14 @@ data_write(void)
 		    {
 		       int size;
 		       void *data;
-		       
+
 		       fseek(f, 0, SEEK_END);
 		       size = ftell(f);
 		       rewind(f);
 		       if (size > 0)
 			 {
 			    int bt;
-			    
+
 			    data = malloc(size);
 			    if (data)
 			      {
@@ -726,7 +761,7 @@ data_write(void)
    if (verbose)
      {
 	struct stat st;
-	
+
 	if (stat(file_in, &st) != 0)
 	  st.st_size = 0;
 	input_bytes += st.st_size;
@@ -768,7 +803,7 @@ void
 data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest)
 {
    Part_Lookup *pl;
-   
+
    pl = mem_alloc(SZ(Part_Lookup));
    part_lookups = evas_list_append(part_lookups, pl);
    pl->pc = pc;
@@ -780,7 +815,7 @@ void
 data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest)
 {
    Program_Lookup *pl;
-   
+
    pl = mem_alloc(SZ(Program_Lookup));
    program_lookups = evas_list_append(program_lookups, pl);
    pl->pc = pc;
@@ -792,7 +827,7 @@ void
 data_queue_image_lookup(char *name, int *dest)
 {
    Image_Lookup *il;
-   
+
    il = mem_alloc(SZ(Image_Lookup));
    image_lookups = evas_list_append(image_lookups, il);
    il->name = mem_strdup(name);
@@ -803,7 +838,7 @@ void
 data_queue_spectrum_lookup(char *name, int *dest)
 {
    Spectrum_Lookup *sl;
-   
+
    sl = mem_alloc(SZ(Spectrum_Lookup));
    spectrum_lookups = evas_list_append(spectrum_lookups, sl);
    sl->name = mem_strdup(name);
@@ -861,17 +896,17 @@ void
 data_process_lookups(void)
 {
    Evas_List *l;
-   
+
    while (part_lookups)
      {
 	Part_Lookup *pl;
-	
+
 	pl = part_lookups->data;
-	
+
 	for (l = pl->pc->parts; l; l = l->next)
 	  {
 	     Edje_Part *ep;
-	     
+
 	     ep = l->data;
 	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
 	       {
@@ -894,13 +929,13 @@ data_process_lookups(void)
    while (program_lookups)
      {
 	Program_Lookup *pl;
-	
+
 	pl = program_lookups->data;
-	
+
 	for (l = pl->pc->programs; l; l = l->next)
 	  {
 	     Edje_Program *ep;
-	     
+
 	     ep = l->data;
 	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
 	       {
@@ -918,13 +953,13 @@ data_process_lookups(void)
 	free(pl->name);
 	free(pl);
      }
-   
+
    while (image_lookups)
      {
 	Image_Lookup *il;
-	
+
 	il = image_lookups->data;
-	
+
 	if (!edje_file->image_dir)
 	  l = NULL;
 	else
@@ -932,7 +967,7 @@ data_process_lookups(void)
 	     for (l = edje_file->image_dir->entries; l; l = l->next)
 	       {
 		  Edje_Image_Directory_Entry *de;
-		  
+
 		  de = l->data;
 		  if ((de->entry) && (!strcmp(de->entry, il->name)))
 		    {
@@ -945,7 +980,7 @@ data_process_lookups(void)
 		    }
 	       }
 	  }
-	
+
 	if (!l)
 	  {
 	     fprintf(stderr, "%s: Error. unable to find image name %s\n",
@@ -960,7 +995,7 @@ data_process_lookups(void)
    while (spectrum_lookups)
      {
 	Spectrum_Lookup *il;
-	
+
 	il = spectrum_lookups->data;
 
 	if (!edje_file->spectrum_dir)
@@ -970,7 +1005,7 @@ data_process_lookups(void)
 	     for (l = edje_file->spectrum_dir->entries; l; l = l->next)
 	       {
 		  Edje_Spectrum_Directory_Entry *de;
-		  
+
 		  de = l->data;
 		  *(il->dest) = 1;
 		  if ((de->entry) && (!strcmp(de->entry, il->name)))
@@ -981,7 +1016,7 @@ data_process_lookups(void)
 		    }
 	       }
 	  }
-	
+
 	if (!l)
 	  {
 	     fprintf(stderr, "%s: Error. unable to find spectrum name %s\n",
@@ -1019,7 +1054,7 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
    char *key;
    int keyl;
    int quote, escape;
-   
+
    key = alloca(strlen(prefix) + 2 + 1);
    if (!key) return;
    strcpy(key, prefix);
@@ -1042,13 +1077,13 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 	     if (!strncmp(p, key, keyl))
 	       {
 		  Code_Lookup *cl;
-		  
+
 		  cl = mem_alloc(SZ(Code_Lookup));
 		  if (cl)
 		    {
 		       int inesc = 0;
 		       char *name;
-		       
+
 		       cl->ptr = p;
 		       p += keyl;
 		       while ((*p))
@@ -1075,7 +1110,7 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 			 {
 			    char *pp;
 			    int i;
-			    
+
 			    name[0] = 0;
 			    pp = cl->ptr + keyl;
 			    inesc = 0;
@@ -1145,18 +1180,18 @@ void
 data_process_scripts(void)
 {
    Evas_List *l, *l2;
-   
+
    for (l = codes, l2 = edje_collections; (l) && (l2); l = l->next, l2 = l2->next)
      {
 	Code *cd;
 	Edje_Part_Collection *pc;
-	
+
 	cd = l->data;
 	pc = l2->data;
 	if ((cd->shared) || (cd->programs))
 	  {
 	     Evas_List *ll;
-	     
+
 	     if (cd->shared)
 	       {
 		  data_process_string(pc, "PART",    cd->shared, data_queue_part_lookup);
@@ -1166,7 +1201,7 @@ data_process_scripts(void)
 	     for (ll = cd->programs; ll; ll = ll->next)
 	       {
 		  Code_Program *cp;
-		  
+
 		  cp = ll->data;
 		  if (cp->script)
 		    {
@@ -1183,7 +1218,7 @@ void
 data_process_script_lookups(void)
 {
    Evas_List *l;
-   
+
    for (l = code_lookups; l; l = l->next)
      {
 	Code_Lookup *cl;

@@ -8,6 +8,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#ifdef _WIN32
+# include <windows.h>
+#endif /* _WIN32 */
 
 char *progname = NULL;
 char *file_in = NULL;
@@ -43,7 +46,7 @@ main(int argc, char **argv)
    int i;
 
    setlocale(LC_NUMERIC, "C");
-   
+
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
@@ -65,7 +68,7 @@ main(int argc, char **argv)
    edje_init();
    eet_init();
    source_edd();
-   
+
    if (!decomp()) return -1;
    output();
 
@@ -83,7 +86,7 @@ decomp(void)
 	printf("ERROR: cannot open %s\n", file_in);
 	return 0;
      }
-   
+
    srcfiles = source_load(ef);
    if (!srcfiles || !srcfiles->list)
      {
@@ -125,7 +128,7 @@ output(void)
    Evas_List *l;
    Eet_File *ef;
    char *outdir, *p;
-   
+
    p = strrchr(file_in, '/');
    if (p)
      outdir = strdup(p + 1);
@@ -133,9 +136,9 @@ output(void)
      outdir = strdup(file_in);
    p = strrchr(outdir, '.');
    if (p) *p = 0;
-   
+
    e_file_mkpath(outdir);
-   
+
    ef = eet_open(file_in, EET_FILE_MODE_READ);
 
    if (edje_file->image_dir)
@@ -143,9 +146,9 @@ output(void)
 	for (l = edje_file->image_dir->entries; l; l = l->next)
 	  {
 	     Edje_Image_Directory_Entry *ei;
-	     
+
 	     ei = l->data;
-	     if ((ei->source_type > EDJE_IMAGE_SOURCE_TYPE_NONE) && 
+	     if ((ei->source_type > EDJE_IMAGE_SOURCE_TYPE_NONE) &&
 		 (ei->source_type < EDJE_IMAGE_SOURCE_TYPE_LAST) &&
 		 (ei->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
 		 (ei->entry))
@@ -156,7 +159,7 @@ output(void)
 		  char buf[4096];
 		  char out[4096];
 		  char *pp;
-		  
+
 		  ecore_init();
 		  ecore_evas_init();
 		  ee = ecore_evas_buffer_new(1, 1);
@@ -205,7 +208,7 @@ output(void)
 	char out[4096];
 	FILE *f;
 	char *pp;
-	
+
 	sf = l->data;
 	snprintf(out, sizeof(out), "%s/%s", outdir, sf->name);
 	printf("Output Source File: %s\n", out);
@@ -225,7 +228,7 @@ output(void)
 	     exit (-1);
 	  }
 	f = fopen(out, "w");
-	if (!f) 
+	if (!f)
 	  {
 	     printf("ERROR: unable to write file (%s).\n", out);
 	     exit (-1);
@@ -245,7 +248,7 @@ output(void)
 	     void *font;
 	     int fontsize;
 	     char out[4096];
-	     
+
 	     fn = l->data;
 	     snprintf(out, sizeof(out), "fonts/%s", fn->name);
 	     font = eet_read(ef, out, &fontsize);
@@ -253,7 +256,7 @@ output(void)
 	       {
 		  FILE *f;
 		  char *pp;
-		  
+
 		  snprintf(out, sizeof(out), "%s/%s", outdir, fn->file);
 		  printf("Output Font: %s\n", out);
 		  pp = strdup(out);
@@ -282,7 +285,7 @@ output(void)
 	char out[4096];
 	FILE *f;
 	SrcFile *sf = srcfiles->list->data;
-	
+
 	snprintf(out, sizeof(out), "%s/build.sh", outdir);
 	printf("Output Build Script: %s\n", out);
 	if (strstr(out, "../"))
@@ -294,16 +297,20 @@ output(void)
 	fprintf(f, "#!/bin/sh\n");
 	fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
 	fclose(f);
-	
+
 	if (file_out)
 	  {
 	     snprintf(out, sizeof(out), "%s/%s", outdir, file_out);
+#ifdef _WIN32
+	     CopyFile(sf->name, out, TRUE);
+#else
 	     symlink(sf->name, out);
+#endif /* _WIN32 */
 	  }
 
-#ifndef WIN32
+#ifndef _WIN32
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
-#endif
+#endif /* _WIN32 */
 
 	printf("\n*** CAUTION ***\n"
 	      "Please check the build script for anything malicious "
@@ -316,7 +323,7 @@ int
 e_file_is_dir(char *file)
 {
    struct stat st;
-   
+
    if (stat(file, &st) < 0) return 0;
    if (S_ISDIR(st.st_mode)) return 1;
    return 0;
@@ -325,13 +332,13 @@ e_file_is_dir(char *file)
 int
 e_file_mkdir(char *dir)
 {
-#ifndef WIN32
+#ifndef _WIN32
    static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 
    if (mkdir(dir, default_mode) < 0) return 0;
 #else
    if (mkdir(dir) < 0) return 0;
-#endif
+#endif /* _WIN32 */
    return 1;
 }
 
@@ -340,7 +347,7 @@ e_file_mkpath(char *path)
 {
    char ss[PATH_MAX];
    int  i, ii;
-   
+
    ss[0] = 0;
    i = 0;
    ii = 0;

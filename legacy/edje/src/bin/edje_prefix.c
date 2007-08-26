@@ -11,16 +11,13 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/param.h>
-#include <dlfcn.h>
 #include <math.h>
 #include <fnmatch.h>
 #include <limits.h>
 #include <ctype.h>
 #include <time.h>
 #include <dirent.h>
-#include <pwd.h>
-#include <grp.h>
-#include <glob.h>
+
 #include "edje_prefix.h"
 
 /* local subsystem functions */
@@ -377,7 +374,11 @@ _e_prefix_try_argv(char *argv0)
 	if (getcwd(buf3, sizeof(buf3)))
 	  {
 	     snprintf(buf2, sizeof(buf2), "%s/%s", buf3, argv0);
+#ifdef _WIN32
+	     if (_fullpath(buf2, buf, _MAX_PATH))
+#else
 	     if (realpath(buf2, buf))
+#endif /* _WIN32 */
 	       {
 		  _exe_path = strdup(buf);
 		  if (access(_exe_path, X_OK) == 0) return 1;
@@ -401,7 +402,11 @@ _e_prefix_try_argv(char *argv0)
 	     strncpy(s, cp, len);
 	     s[len] = '/';
 	     strcpy(s + len + 1, argv0);
+#ifdef _WIN32
+	     if (_fullpath(s, buf, _MAX_PATH))
+#else
 	     if (realpath(s, buf))
+#endif /* _WIN32 */
 	       {
 		  if (access(buf, X_OK) == 0)
 		    {
@@ -421,7 +426,11 @@ _e_prefix_try_argv(char *argv0)
 	strncpy(s, cp, len);
 	s[len] = '/';
 	strcpy(s + len + 1, argv0);
+#ifdef _WIN32
+	if (_fullpath(s, buf, _MAX_PATH))
+#else
 	if (realpath(s, buf))
+#endif /* _WIN32 */
 	  {
 	     if (access(buf, X_OK) == 0)
 	       {

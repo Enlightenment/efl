@@ -12,24 +12,38 @@ AM_CONFIG_HEADER(config.h)
 
 AC_PROG_CC
 AM_PROG_CC_STDC
+AM_PROG_CC_C_O
 AC_HEADER_STDC
 AC_C_CONST
 AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
 AC_FUNC_ALLOCA
 
+create_shared_lib=""
+case "$host_os" in
+	mingw|mingw32)
+		create_shared_lib="-no-undefined "
+		;;
+esac
+
+AC_SUBST(create_shared_lib)
+
 AC_CHECK_FUNCS(realpath)
 
-AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
+AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file MinGW users: see the INSTALL file]))
 
+fnmatch_libs=""
 AC_CHECK_FUNCS(fnmatch, res=yes, res=no)
 if test "x$res" = "xno"; then
-  AC_CHECK_LIB(fnmatch, fnmatch, res=yes, res=no)
-  if test "x$res" = "xno"; then
-    AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch])
-  else
-    fnmatch_libs="-lfnmatch"
-  fi
+	AC_CHECK_LIB(fnmatch, fnmatch, res=yes fnmatch_libs="-lfnmatch", res=no)
+dnl Test for compilation with MinGW.
+dnl fnmatch function is in the libiberty library
+	if test "x$res" = "xno"; then
+		AC_CHECK_LIB(iberty, fnmatch, res=yes fnmatch_libs="-liberty", res=no)
+	fi
+	if test "x$res" = "xno"; then
+		AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty])
+	fi
 fi
 
 AC_SUBST(fnmatch_libs)
