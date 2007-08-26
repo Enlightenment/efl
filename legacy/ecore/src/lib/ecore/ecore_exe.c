@@ -1,11 +1,11 @@
 #include <errno.h>
 #ifdef HAVE_SYS_WAIT_H
-#include <sys/wait.h>
+# include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
 #include "ecore_private.h"
 #include "Ecore.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 
 /* TODO: Something to let people build a command line and does auto escaping -
  *
@@ -15,7 +15,7 @@
  *
  * cmd = ecore_exe_comand_parameter_append(cmd, "firefox");
  * cmd = ecore_exe_comand_parameter_append(cmd, "http://www.foo.com/bar.html?baz=yes");
- * each parameter appended is one argument, and it gets escaped, quoted, and 
+ * each parameter appended is one argument, and it gets escaped, quoted, and
  * appended with a preceeding space.  The first is the command off course.
  */
 
@@ -262,12 +262,12 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * This function does the same thing as ecore_exe_run(), but also makes the
  * standard in and/or out as wel las stderr from the child process available
  * for reading or writing.  To write use ecore_exe_send().  To read listen to
- * ECORE_EXE_EVENT_DATA or ECORE_EXE_EVENT_ERROR events (set up handlers).  
- * Ecore may buffer read and error data until a newline character if asked 
- * for with the @p flags.  All data will be included in the events (newlines 
- * will be replaced with NULLS if line buffered).  ECORE_EXE_EVENT_DATA events 
- * will only happen if the process is run with ECORE_EXE_PIPE_READ enabled 
- * in the flags.  The same with the error version.  Writing will only be 
+ * ECORE_EXE_EVENT_DATA or ECORE_EXE_EVENT_ERROR events (set up handlers).
+ * Ecore may buffer read and error data until a newline character if asked
+ * for with the @p flags.  All data will be included in the events (newlines
+ * will be replaced with NULLS if line buffered).  ECORE_EXE_EVENT_DATA events
+ * will only happen if the process is run with ECORE_EXE_PIPE_READ enabled
+ * in the flags.  The same with the error version.  Writing will only be
  * allowed with ECORE_EXE_PIPE_WRITE enabled in the flags.
  *
  * @param   exe_cmd The command to run with @c /bin/sh.
@@ -532,11 +532,11 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
 /**
  * Sends data to the given child process which it recieves on stdin.
- * 
+ *
  * This function writes to a child processes standard in, with unlimited
  * buffering. This call will never block. It may fail if the system runs out
  * of memory.
- * 
+ *
  * @param exe  The child process to send to
  * @param data The data to send
  * @param size The size of the data to send, in bytes
@@ -564,7 +564,7 @@ ecore_exe_send(Ecore_Exe * exe, void *data, int size)
 
 /**
  * The stdin of the given child process will close when the write buffer is empty.
- * 
+ *
  * @param exe  The child process
  * @ingroup Ecore_Exe_Basic_Group
  */
@@ -608,17 +608,17 @@ ecore_exe_auto_limits_set(Ecore_Exe * exe, int start_bytes, int end_bytes,
     *
     * capture stderr & stdout internally
     *
-    * raster and onefang keep moving the goal posts on this one.  It started out as 
+    * raster and onefang keep moving the goal posts on this one.  It started out as
     * "show users the error output if an exe fails" and is rapidly approaching
     * "alternative method of getting the data, poll vs event driven".  Some serious
     * thinking needs to be applied to this.  Do we really want to go that far?  If
     * so, we should change the names.  The basic design will probably remain the
     * same which ever way we go.  The constant goal post moving is probably due to
     * generic design methods leading to feature creep as we inspired each other to
-    * more generic designs.  It does seem like the closer we get to poll driven, 
+    * more generic designs.  It does seem like the closer we get to poll driven,
     * the more issues and corner cases there are.
     *
-    * Instead of doing the usual register an event handler thing, we are ecore_exe, 
+    * Instead of doing the usual register an event handler thing, we are ecore_exe,
     * we can take some short cuts.  Don't send the events, just leave the exe buffers
     * as is until the user asks for them, then return the event.
     *
@@ -648,7 +648,7 @@ ecore_exe_auto_limits_set(Ecore_Exe * exe, int start_bytes, int end_bytes,
  * Gets the auto pipe data for the given process handle
  *
  * @param   exe The given process handle.
- * @param   flags   Is this a ECORE_EXE_PIPE_READ or ECORE_EXE_PIPE_ERROR? 
+ * @param   flags   Is this a ECORE_EXE_PIPE_READ or ECORE_EXE_PIPE_ERROR?
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Event_Data *
@@ -801,7 +801,7 @@ ecore_exe_tag_set(Ecore_Exe * exe, const char *tag)
  * free it as it just returns the internal pointer value. This value is only
  * valid as long as the @p exe is valid or until the tag is set to something
  * else on this @p exe.
- * 
+ *
  * @param   exe The given process handle.
  * @return  The string attached to @p exe.
  * @ingroup Ecore_Exe_Basic_Group
@@ -846,7 +846,7 @@ ecore_exe_free(Ecore_Exe * exe)
    if (exe->doomsday_clock)
      {
 	struct _ecore_exe_dead_exe *dead;
-	
+
 	ecore_timer_del(exe->doomsday_clock);
 	exe->doomsday_clock = NULL;
 	dead = exe->doomsday_clock_dead;
@@ -876,7 +876,7 @@ ecore_exe_free(Ecore_Exe * exe)
    IF_FREE(exe->read_data_buf);
    IF_FREE(exe->error_data_buf);
    IF_FREE(exe->cmd);
-   
+
    exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    IF_FREE(exe->tag);
@@ -1090,22 +1090,22 @@ _ecore_exe_is_it_alive(pid_t pid)
 {
    Ecore_Exe          *exe = NULL;
 
-   /* FIXME: There is no nice, safe, OS independant way to tell if a 
+   /* FIXME: There is no nice, safe, OS independant way to tell if a
     * particular PID is still alive.  I have written code to do so
-    * for my urunlevel busybox applet (http://urunlevel.sourceforge.net/), 
+    * for my urunlevel busybox applet (http://urunlevel.sourceforge.net/),
     * but it's for linux only, and still not guaranteed.
     *
-    * So for now, we just check that a valid Ecore_Exe structure 
+    * So for now, we just check that a valid Ecore_Exe structure
     * exists for it.  Even that is not a guarantee, as the structure
     * can be freed without killing the process.
     *
     * I think we can safely put exe's into two categories, those users
     * that care about the life of the exe, and the run and forget type.
-    * The run and forget type starts up the exe, then free's the 
-    * Ecore_Exe structure straight away.  They can never call any of 
+    * The run and forget type starts up the exe, then free's the
+    * Ecore_Exe structure straight away.  They can never call any of
     * the functions that can call this, so we don't worry about them.
     *
-    * Those user's that care about the life of exe's will keep the 
+    * Those user's that care about the life of exe's will keep the
     * Ecore_Exe structure around, terminate them eventually, or
     * register for exit events.  For these ones the assumption
     * that valid Ecore_Exe struct == live exe is almost valid.
@@ -1259,7 +1259,7 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 
 	     if (!(buf = strdup(exe_cmd)))
 	       return;
-	     
+
 	     token = strtok(buf, " \t\n\v");
 	     use_sh = 0;
 	     if (!(args = (char **)calloc(num_tokens + 1, sizeof(char *))))
@@ -1276,7 +1276,7 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 	     args[num_tokens] = NULL;
 	  }
      }
-   
+
    setsid();
    if ((flags & ECORE_EXE_USE_SH))
      {
@@ -1423,8 +1423,8 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
 				  ("There are %d bytes left unsent from the dead exe %s.\n",
 				   exe->error_data_size, exe->cmd);
 			 }
-		       /* Thought about this a bit.  If the exe has actually 
-		        * died, this won't do any harm as it must have died 
+		       /* Thought about this a bit.  If the exe has actually
+		        * died, this won't do any harm as it must have died
 		        * recently and the pid has not had a chance to recycle.
 		        * It is also a paranoid catchall, coz the usual ecore_signal
 		        * mechenism should kick in.  But let's give it a good

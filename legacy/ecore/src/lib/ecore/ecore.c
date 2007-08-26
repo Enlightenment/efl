@@ -1,14 +1,14 @@
 #include <locale.h>
-#ifndef WIN32
-#include <langinfo.h>
-#endif /* WIN32 */
+#ifndef _WIN32
+# include <langinfo.h>
+#endif /* _WIN32 */
 #include "ecore_private.h"
 #include "Ecore.h"
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
 
-#ifndef WIN32
+#ifndef _WIN32
 int _ecore_fps_debug = 0;
 #endif
 
@@ -17,23 +17,23 @@ int _ecore_fps_debug = 0;
  */
 
 #ifndef CODESET
-#define CODESET "INVALID"
+# define CODESET "INVALID"
 #endif
 
 /**
  * Set up connections, signal handlers, sockets etc.
  * @return 1 or greater on success, 0 otherwise
- * 
+ *
  * This function sets up all singal handlers and the basic event loop. If it
  * succeeds, 1 will be returned, otherwise 0 will be returned.
- * 
+ *
  * @code
  * #include <Ecore.h>
- * 
+ *
  * int main(int argc, char **argv)
  * {
  *   if (!ecore_init())
- *   { 
+ *   {
  *     printf("ERROR: Cannot init Ecore!\n");
  *     return -1;
  *   }
@@ -53,8 +53,8 @@ ecore_init(void)
 	  {
 	     printf("WARNING: not a utf8 locale!\n");
 	  }
-	 */ 
-#ifndef WIN32
+	 */
+#ifndef _WIN32
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();
 	_ecore_signal_init();
@@ -67,11 +67,11 @@ ecore_init(void)
 
 /**
  * Shut down connections, signal handlers sockets etc.
- * 
+ *
  * This function shuts down all things set up in ecore_init() and cleans up all
  * event queues, handlers, filters, timers, idlers, idle enterers/exiters
  * etc. set up after ecore_init() was called.
- * 
+ *
  * Do not call this function from any callback that may be called from the main
  * loop, as the main loop will then fall over and not function properly.
  */
@@ -81,11 +81,11 @@ ecore_shutdown(void)
    if (--_ecore_init_count)
       return _ecore_init_count;
 
-#ifndef WIN32
+#ifndef _WIN32
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
 #endif
    _ecore_animator_shutdown();
-#ifndef WIN32
+#ifndef _WIN32
    _ecore_exe_shutdown();
 #endif
    _ecore_idle_enterer_shutdown();
@@ -94,7 +94,7 @@ ecore_shutdown(void)
    _ecore_timer_shutdown();
    _ecore_event_shutdown();
    _ecore_main_shutdown();
-#ifndef WIN32
+#ifndef _WIN32
    _ecore_signal_shutdown();
 #endif
 
@@ -104,7 +104,7 @@ ecore_shutdown(void)
 EAPI void
 _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname)
 {
-   fprintf(stderr, 
+   fprintf(stderr,
 	   "\n"
 	   "*** ECORE ERROR: Ecore Magic Check Failed!!!\n"
 	   "*** IN FUNCTION: %s()\n", fname);
@@ -118,7 +118,7 @@ _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname)
 	             "    Supplied: %08x - %s\n",
 	     (unsigned int)req_m, _ecore_magic_string_get(req_m),
 	     (unsigned int)m, _ecore_magic_string_get(m));
-   fprintf(stderr, 
+   fprintf(stderr,
 	   "*** NAUGHTY PROGRAMMER!!!\n"
 	   "*** SPANK SPANK SPANK!!!\n"
 	   "*** Now go fix your code. Tut tut tut!\n"
@@ -164,7 +164,7 @@ _ecore_magic_string_get(Ecore_Magic m)
    return "<UNKNOWN>";
 }
 
-#ifndef WIN32
+#ifndef _WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* "running" (and the inverse being time spent running)... this does not */
 /* account for other apps and multitasking... */
@@ -177,7 +177,7 @@ void
 _ecore_fps_debug_init(void)
 {
    char buf[4096];
-   
+
    _ecore_fps_debug_init_count++;
    if (_ecore_fps_debug_init_count > 1) return;
    snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
@@ -190,7 +190,7 @@ _ecore_fps_debug_init(void)
    if (_ecore_fps_debug_fd >= 0)
      {
 	unsigned int zero = 0;
-	
+
 	write(_ecore_fps_debug_fd, &zero, sizeof(unsigned int));
 	_ecore_fps_runtime_mmap = mmap(NULL, sizeof(unsigned int),
 				       PROT_READ | PROT_WRITE,
@@ -207,7 +207,7 @@ _ecore_fps_debug_shutdown(void)
    if (_ecore_fps_debug_fd >= 0)
      {
 	char buf[4096];
-	
+
 	snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
 	unlink(buf);
 	if (_ecore_fps_runtime_mmap)
@@ -223,11 +223,11 @@ _ecore_fps_debug_shutdown(void)
 void
 _ecore_fps_debug_runtime_add(double t)
 {
-   if ((_ecore_fps_debug_fd >= 0) && 
+   if ((_ecore_fps_debug_fd >= 0) &&
        (_ecore_fps_runtime_mmap))
      {
 	unsigned int tm;
-	
+
 	tm = (unsigned int)(t * 1000000.0);
 	/* i know its not 100% theoretically guaranteed, but i'd say a write */
 	/* of an int could be considered atomic for all practical purposes */

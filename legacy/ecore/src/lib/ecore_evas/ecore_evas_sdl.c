@@ -14,7 +14,9 @@
 /* static Ecore_List *ecore_evas_input_devices = NULL; */
 
 static int                      _ecore_evas_init_count = 0;
+#ifndef _WIN32
 static int                      _ecore_evas_fps_debug = 0;
+#endif /* _WIN32 */
 static Ecore_Evas               *ecore_evases = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[10] = {
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
@@ -216,10 +218,12 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
    double       t1 = 0.;
    double       t2 = 0.;
 
+#ifndef _WIN32
    if (_ecore_evas_fps_debug)
      {
 	t1 = ecore_time_get();
      }
+#endif /* _WIN32 */
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
@@ -236,11 +240,13 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	else
 	  evas_norender(ee->evas);
      }
+#ifndef _WIN32
    if (_ecore_evas_fps_debug)
      {
 	t2 = ecore_time_get();
 	_ecore_evas_fps_debug_rendertime_add(t2 - t1);
      }
+#endif /* _WIN32 */
    return 1;
 }
 
@@ -258,10 +264,14 @@ _ecore_evas_sdl_init(int w, int h)
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
 
+#ifndef _WIN32
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
+#endif /* _WIN32 */
    ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
    ecore_evas_event = ecore_timer_add(0.008, _ecore_evas_sdl_event, NULL);
+#ifndef _WIN32
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
+#endif /* _WIN32 */
 
    ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_SDL_EVENT_KEY_DOWN, _ecore_evas_sdl_event_key_down, NULL);
    ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_SDL_EVENT_KEY_UP, _ecore_evas_sdl_event_key_up, NULL);
@@ -292,7 +302,9 @@ _ecore_evas_sdl_shutdown(void)
 	ecore_evas_idle_enterer = NULL;
         ecore_timer_del(ecore_evas_event);
         ecore_evas_event = NULL;
+#ifndef _WIN32
 	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
+#endif /* _WIN32 */
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;

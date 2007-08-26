@@ -13,16 +13,16 @@
 #include <limits.h>
 #include <dirent.h>
 
-#ifndef WIN32
-#include <sys/mman.h>
+#ifndef _WIN32
+# include <sys/mman.h>
 #endif
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
 #ifdef _MSC_VER
 # ifdef BUILDING_DLL
@@ -50,29 +50,29 @@
 #endif
 
 #if HAVE___ATTRIBUTE__
-#define __UNUSED__ __attribute__((unused))
+# define __UNUSED__ __attribute__((unused))
 #else
-#define __UNUSED__
+# define __UNUSED__
 #endif
 
 #ifndef PATH_MAX
-#define PATH_MAX 4096
+# define PATH_MAX 4096
 #endif
 
 #ifndef MIN
-#define MIN(x, y) (((x) > (y)) ? (y) : (x))
+# define MIN(x, y) (((x) > (y)) ? (y) : (x))
 #endif
 
 #ifndef MAX
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+# define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
 
 #ifndef ABS
-#define ABS(x) ((x) < 0 ? -(x) : (x))
+# define ABS(x) ((x) < 0 ? -(x) : (x))
 #endif
 
 #ifndef CLAMP
-#define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
+# define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
 #define READBUFSIZ 65536
@@ -115,7 +115,7 @@ inline void ecore_print_warning(const char *function, const char *sparam);
 	    ecore_print_warning(__FUNCTION__, sparam); \
 	    return ret; \
 	 }
-   
+
 #undef CHECK_PARAM_POINTER
 #define CHECK_PARAM_POINTER(sparam, param) \
      if (!(param)) \
@@ -168,14 +168,14 @@ enum _Ecore_Exe_Flags
     *
     * Document that the exe must be respawnable, in other words, there is no
     * state that it cannot regenerate by just killing it and starting it again.
-    * This includes state that the user code knows about, as the respawn is 
-    * transparent to that code.  On the other hand, maybe a respawn event might 
-    * be useful, or maybe resend the currently non existant add event.  For 
+    * This includes state that the user code knows about, as the respawn is
+    * transparent to that code.  On the other hand, maybe a respawn event might
+    * be useful, or maybe resend the currently non existant add event.  For
     * consistancy with ecore_con, an add event is good anyway.
     *
     * The Ecore_exe structure is reused for respawning, so that the (opaque)
     * pointer held by the user remains valid.  This means that the Ecore_Exe
-    * init and del functions may need to be split into two parts each to avoid 
+    * init and del functions may need to be split into two parts each to avoid
     * duplicating code - common code part, and the rest.  This implies that
     * the unchanging members mentioned next should NEVER change.
     *
@@ -212,17 +212,17 @@ enum _Ecore_Exe_Flags
     *   close_write       - state that must be regenerated, zap it
     *
     * There is the problem that an exe that fell over and needs respawning
-    * might keep falling over, keep needing to be respawned, and tie up system 
-    * resources with the constant respawning.  An exponentially increasing 
+    * might keep falling over, keep needing to be respawned, and tie up system
+    * resources with the constant respawning.  An exponentially increasing
     * timeout (with maximum timeout) between respawns should take care of that.
-    * Although this is not a "contention for a resource" problem, the exe falling 
-    * over may be, so a random element added to the timeout may help, and won't 
-    * hurt.  The user code may need to be informed that a timeout is in progress. 
+    * Although this is not a "contention for a resource" problem, the exe falling
+    * over may be, so a random element added to the timeout may help, and won't
+    * hurt.  The user code may need to be informed that a timeout is in progress.
     */
 };
 typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
-#ifndef WIN32
+#ifndef _WIN32
 typedef struct _Ecore_Exe           Ecore_Exe;
 #endif
 typedef struct _Ecore_Timer         Ecore_Timer;
@@ -235,7 +235,7 @@ typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
 typedef struct _Ecore_Event         Ecore_Event;
 typedef struct _Ecore_Animator      Ecore_Animator;
 
-#ifndef WIN32
+#ifndef _WIN32
 struct _Ecore_Exe
 {
    Ecore_List2   __list_data;
@@ -248,8 +248,8 @@ struct _Ecore_Exe
    Ecore_Fd_Handler *write_fd_handler; /* the fd_handler to handle write to child - if this was used, or NULL if not */
    Ecore_Fd_Handler *read_fd_handler; /* the fd_handler to handle read from child - if this was used, or NULL if not */
    Ecore_Fd_Handler *error_fd_handler; /* the fd_handler to handle errors from child - if this was used, or NULL if not */
-   void        *write_data_buf; /* a data buffer for data to write to the child - 
-                                 * realloced as needed for more data and flushed when the fd handler says writes are possible 
+   void        *write_data_buf; /* a data buffer for data to write to the child -
+                                 * realloced as needed for more data and flushed when the fd handler says writes are possible
 				 */
    int          write_data_size; /* the size in bytes of the data buffer */
    int          write_data_offset; /* the offset in bytes in the data buffer */
@@ -289,7 +289,7 @@ struct _Ecore_Idler
    Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
-   int        (*func) (void *data);   
+   int        (*func) (void *data);
    void        *data;
 };
 
@@ -298,7 +298,7 @@ struct _Ecore_Idle_Enterer
    Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
-   int        (*func) (void *data);   
+   int        (*func) (void *data);
    void        *data;
 };
 
@@ -307,7 +307,7 @@ struct _Ecore_Idle_Exiter
    Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
-   int        (*func) (void *data);   
+   int        (*func) (void *data);
    void        *data;
 };
 
@@ -376,7 +376,7 @@ struct _Ecore_Animator
 EAPI void          _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
 
 void          _ecore_timer_shutdown(void);
-void          _ecore_timer_cleanup(void);    
+void          _ecore_timer_cleanup(void);
 void          _ecore_timer_enable_new(void);
 double        _ecore_timer_next_get(void);
 int           _ecore_timer_call(double when);
@@ -394,7 +394,7 @@ void          _ecore_idle_exiter_call(void);
 int           _ecore_idle_exiter_exist(void);
 
 void          _ecore_event_shutdown(void);
-int           _ecore_event_exist(void);    
+int           _ecore_event_exist(void);
 Ecore_Event  *_ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data);
 void         *_ecore_event_del(Ecore_Event *event);
 void          _ecore_event_call(void);
@@ -406,13 +406,13 @@ void         *_ecore_event_signal_power_new(void);
 void         *_ecore_event_signal_realtime_new(void);
 
 void          _ecore_main_shutdown(void);
-    
+
 void          _ecore_signal_shutdown(void);
 void          _ecore_signal_init(void);
 int           _ecore_signal_count_get(void);
 void          _ecore_signal_call(void);
 
-#ifndef WIN32
+#ifndef _WIN32
 void          _ecore_exe_init(void);
 void          _ecore_exe_shutdown(void);
 Ecore_Exe    *_ecore_exe_find(pid_t pid);
@@ -421,7 +421,7 @@ void          _ecore_exe_event_del_free(void *data, void *ev);
 #endif
 
 void          _ecore_animator_shutdown(void);
-    
+
 
 EAPI void         *_ecore_list2_append           (void *in_list, void *in_item);
 EAPI void         *_ecore_list2_prepend          (void *in_list, void *in_item);

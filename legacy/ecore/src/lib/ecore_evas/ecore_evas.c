@@ -10,7 +10,7 @@ static int _ecore_evas_init_count = 0;
  * Query if a particular renginering engine target has support
  * @param  engine The engine to check support for
  * @return 1 if the particualr engine is supported, 0 if it is not
- * 
+ *
  * Query if engine @param engine is supported by ecore_evas. 1 is returned if
  * it is, and 0 is returned if it is not supported.
  */
@@ -24,42 +24,42 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 	return 1;
 #else
 	return 0;
-#endif	
+#endif
 	break;
       case ECORE_EVAS_ENGINE_SOFTWARE_FB:
 #ifdef BUILD_ECORE_EVAS_FB
 	return 1;
 #else
 	return 0;
-#endif	
+#endif
 	break;
       case ECORE_EVAS_ENGINE_GL_X11:
 #ifdef BUILD_ECORE_EVAS_GL
 	return 1;
 #else
 	return 0;
-#endif	
+#endif
 	break;
       case ECORE_EVAS_ENGINE_XRENDER_X11:
 #ifdef BUILD_ECORE_EVAS_XRENDER
 	return 1;
 #else
 	return 0;
-#endif	
+#endif
 
       case ECORE_EVAS_ENGINE_SOFTWARE_X11_16:
 #ifdef BUILD_ECORE_EVAS_X11_16
 	return 1;
 #else
 	return 0;
-#endif	
+#endif
 	break;
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
 #ifdef BUILD_ECORE_EVAS_BUFFER
 	return 1;
 #else
 	return 0;
-#endif	
+#endif
 	break;
       case ECORE_EVAS_ENGINE_DIRECTFB:
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
@@ -83,7 +83,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 /**
  * Init the Evas system.
  * @return greater than 0 on success, 0 on failure
- * 
+ *
  * Set up the Evas wrapper system.
  */
 EAPI int
@@ -97,7 +97,7 @@ ecore_evas_init(void)
 /**
  * Shut down the Evas system.
  * @return 0 if ecore evas is fully shut down, or > 0 if it still needs to be shut down
- * 
+ *
  * This closes the Evas system down.
  */
 EAPI int
@@ -118,7 +118,7 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 	while (_ecore_evas_directfb_shutdown());
 #endif
-	evas_shutdown(); 
+	evas_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
@@ -126,7 +126,7 @@ ecore_evas_shutdown(void)
 
 /**
  * Return the Ecore_Evas for this Evas
- * 
+ *
  * @param e The Evas to get the Ecore_Evas from
  * @return The Ecore_Evas that holds this Evas
  */
@@ -140,7 +140,7 @@ ecore_evas_ecore_evas_get(Evas *e)
  * Free an Ecore_Evas
  * @param ee The Ecore_Evas to free
  *
- * This frees up any memory used by the Ecore_Evas. 
+ * This frees up any memory used by the Ecore_Evas.
  */
 EAPI void
 ecore_evas_free(Ecore_Evas *ee)
@@ -165,7 +165,7 @@ ecore_evas_free(Ecore_Evas *ee)
  *
  * @returns NULL on error or no data found, A pointer to the user data on
  *     success.
- * 
+ *
  * @see ecore_evas_data_set
  */
 EAPI void *
@@ -209,7 +209,7 @@ ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
      }
 
    if (!key) return;
-   
+
    ee->data = evas_hash_del(ee->data, key, NULL);
    if (data)
      ee->data = evas_hash_add(ee->data, key, data);
@@ -219,10 +219,10 @@ ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
 #define IFE            return;}
 
 /**
- * Set a callback for Ecore_Evas resize events. 
+ * Set a callback for Ecore_Evas resize events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is resized.
  */
@@ -241,10 +241,10 @@ ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas move events. 
+ * Set a callback for Ecore_Evas move events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is moved.
  */
@@ -263,10 +263,10 @@ ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas show events. 
+ * Set a callback for Ecore_Evas show events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is shown.
  */
@@ -285,10 +285,10 @@ ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas hide events. 
+ * Set a callback for Ecore_Evas hide events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is hidden.
  */
@@ -307,10 +307,10 @@ ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas delete request events. 
+ * Set a callback for Ecore_Evas delete request events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee gets a delete request.
  */
@@ -329,10 +329,10 @@ ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas 
 }
 
 /**
- * Set a callback for Ecore_Evas destroy events. 
+ * Set a callback for Ecore_Evas destroy events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is destroyed.
  */
@@ -351,10 +351,10 @@ ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas focus in events. 
+ * Set a callback for Ecore_Evas focus in events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee gets focus.
  */
@@ -373,10 +373,10 @@ ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas focus out events. 
+ * Set a callback for Ecore_Evas focus out events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee loses focus.
  */
@@ -398,7 +398,7 @@ ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  * Set a callback for Ecore_Evas sticky events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee becomes sticky.
  */
@@ -420,7 +420,7 @@ ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  * Set a callback for Ecore_Evas un-sticky events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee becomes un-sticky.
  */
@@ -439,10 +439,10 @@ ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas mouse in events. 
+ * Set a callback for Ecore_Evas mouse in events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever the mouse enters @p ee.
  */
@@ -461,10 +461,10 @@ ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas mouse out events. 
+ * Set a callback for Ecore_Evas mouse out events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever the mouse leaves @p ee.
  */
@@ -483,10 +483,10 @@ ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 /**
- * Set a callback for Ecore_Evas mouse pre render events. 
+ * Set a callback for Ecore_Evas mouse pre render events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called just before the evas in @p ee is rendered.
  */
@@ -505,10 +505,10 @@ ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee)
 }
 
 /**
- * Set a callback for Ecore_Evas mouse post render events. 
+ * Set a callback for Ecore_Evas mouse post render events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
- 
+
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called just after the evas in @p ee is rendered.
  */
@@ -527,10 +527,10 @@ ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee
 }
 
 /**
- * Get an Ecore_Evas's Evas 
+ * Get an Ecore_Evas's Evas
  * @param ee The Ecore_Evas whose Evas you wish to get
  * @return The Evas wrapped by @p ee
- * 
+ *
  * This function returns the Evas contained within @p ee.
  */
 EAPI Evas *
@@ -740,7 +740,7 @@ ecore_evas_rotation_get(Ecore_Evas *ee)
 }
 
 /**
- * Set whether an Ecore_Evas is shaped or not. 
+ * Set whether an Ecore_Evas is shaped or not.
  * @param ee The Ecore_Evas to shape
  * @param shaped 1 to shape, 0 to not
  *
@@ -784,7 +784,7 @@ ecore_evas_shaped_get(Ecore_Evas *ee)
 }
 
 /**
- * Set whether an Ecore_Evas has an alpha channel or not. 
+ * Set whether an Ecore_Evas has an alpha channel or not.
  * @param ee The Ecore_Evas to shape
  * @param alpha 1 to enable the alpha channel, 0 to disable it
  *
@@ -829,7 +829,7 @@ ecore_evas_alpha_get(Ecore_Evas *ee)
 }
 
 /**
- * Show an Ecore_Evas' window 
+ * Show an Ecore_Evas' window
  * @param ee The Ecore_Evas to show.
  *
  * This function makes @p ee visible.
@@ -848,7 +848,7 @@ ecore_evas_show(Ecore_Evas *ee)
 }
 
 /**
- * Hide an Ecore_Evas' window 
+ * Hide an Ecore_Evas' window
  * @param ee The Ecore_Evas to show.
  *
  * This function makes @p ee hidden.
@@ -927,7 +927,7 @@ ecore_evas_lower(Ecore_Evas *ee)
  * Set the title of an Ecore_Evas' window
  * @param ee The Ecore_Evas whose title you wish to set.
  * @param t The title
- * 
+ *
  * This function sets the title of @p ee to @p t.
  */
 EAPI void
@@ -1253,7 +1253,7 @@ ecore_evas_size_step_get(Ecore_Evas *ee, int *w, int *h)
  * @param layer
  * @param hot_x The x coordinate of the cursor's hot spot
  * @param hot_y The y coordinate of the cursor's hot spot
- * 
+ *
  * This function makes the mouse cursor over @p ee be the image specified by
  * @p file. The actual point within the image that the mouse is at is specified
  * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
@@ -1568,12 +1568,12 @@ ecore_evas_fullscreen_get(Ecore_Evas *ee)
    return ee->prop.fullscreen ? 1:0;
 }
 
-/** 
- * Set whether or not an Ecore_Evas' window should avoid damage  
+/**
+ * Set whether or not an Ecore_Evas' window should avoid damage
  *
  * @param ee The Ecore_Evas
  * @param on 1 to avoid damage, 0 to not
- * 
+ *
  * This function causes @p ee to be drawn to a pixmap to avoid recalculations.
  * On expose events it will copy from the pixmap to the window.
  */
@@ -1623,7 +1623,7 @@ ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
          "ecore_evas_withdrawn_set");
       return;
    }
-   
+
    IFC(ee, fn_withdrawn_set) (ee, withdrawn);
    IFE;
 }
@@ -1662,14 +1662,14 @@ ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
          "ecore_evas_sticky_set");
       return;
    }
-   
+
    IFC(ee, fn_sticky_set) (ee, sticky);
    IFE;
 }
 
 /**
  * Returns the sticky state of an Ecore_Evas' window.
- * 
+ *
  * @param ee The Ecore_Evas whose window's sticky state is returned.
  * @return The Ecore_Evas window's sticky state.
  *
@@ -1702,14 +1702,14 @@ ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore)
          "ecore_evas_ignore_events_set");
       return;
    }
-   
+
    IFC(ee, fn_ignore_events_set) (ee, ignore);
    IFE;
 }
 
 /**
  * Returns the ignore state of an Ecore_Evas' window.
- * 
+ *
  * @param ee The Ecore_Evas whose window's ignore events state is returned.
  * @return The Ecore_Evas window's ignore state.
  *
@@ -1726,7 +1726,7 @@ ecore_evas_ignore_events_get(Ecore_Evas *ee)
       return ee->ignore_events ? 1 : 0;
 }
 
-#ifndef WIN32
+#ifndef _WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
@@ -1738,7 +1738,7 @@ void
 _ecore_evas_fps_debug_init(void)
 {
    char buf[4096];
-   
+
    _ecore_evas_fps_debug_init_count++;
    if (_ecore_evas_fps_debug_init_count > 1) return;
    snprintf(buf, sizeof(buf), "/tmp/.ecore_evas_fps_debug-%i", (int)getpid());
@@ -1751,7 +1751,7 @@ _ecore_evas_fps_debug_init(void)
    if (_ecore_evas_fps_debug_fd >= 0)
      {
 	unsigned int zero = 0;
-	
+
 	write(_ecore_evas_fps_debug_fd, &zero, sizeof(unsigned int));
 	_ecore_evas_fps_rendertime_mmap = mmap(NULL, sizeof(unsigned int),
 					       PROT_READ | PROT_WRITE,
@@ -1768,7 +1768,7 @@ _ecore_evas_fps_debug_shutdown(void)
    if (_ecore_evas_fps_debug_fd >= 0)
      {
 	char buf[4096];
-	
+
 	snprintf(buf, sizeof(buf), "/tmp/.ecore_evas_fps_debug-%i", (int)getpid());
 	unlink(buf);
 	if (_ecore_evas_fps_rendertime_mmap)
@@ -1784,11 +1784,11 @@ _ecore_evas_fps_debug_shutdown(void)
 void
 _ecore_evas_fps_debug_rendertime_add(double t)
 {
-   if ((_ecore_evas_fps_debug_fd >= 0) && 
+   if ((_ecore_evas_fps_debug_fd >= 0) &&
        (_ecore_evas_fps_rendertime_mmap))
      {
 	unsigned int tm;
-	
+
 	tm = (unsigned int)(t * 1000000.0);
 	/* i know its not 100% theoretically guaranteed, but i'd say a write */
 	/* of an int could be considered atomic for all practical purposes */
@@ -1836,7 +1836,7 @@ static int
 _ecore_evas_cb_idle_flush(void *data)
 {
    Ecore_Evas *ee;
-   
+
    ee = (Ecore_Evas *)data;
    evas_render_idle_flush(ee->evas);
    ee->engine.idle_flush_timer = NULL;

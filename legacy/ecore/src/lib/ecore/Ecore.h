@@ -74,7 +74,7 @@ extern "C" {
    EAPI extern int ECORE_EXE_EVENT_DATA; /**< Data from a child process. */
    EAPI extern int ECORE_EXE_EVENT_ERROR; /**< Errors from a child process. */
 
-#ifndef _ECORE_PRIVATE_H   
+#ifndef _ECORE_PRIVATE_H
    enum _Ecore_Fd_Handler_Flags
      {
 	ECORE_FD_READ = 1, /**< Fd Read mask */
@@ -82,7 +82,7 @@ extern "C" {
 	ECORE_FD_ERROR = 4 /**< Fd Error mask */
      };
    typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
-   
+
    enum _Ecore_Exe_Flags /* flags for executing a child with its stdin and/or stdout piped back */
      {
 
@@ -96,8 +96,8 @@ extern "C" {
    ECORE_EXE_USE_SH = 128 /**< Use /bin/sh to run the command. */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
-   
-#ifndef WIN32
+
+#ifndef _WIN32
    typedef void Ecore_Exe; /**< A handle for spawned processes */
 #endif
    typedef void Ecore_Timer; /**< A handle for timers */
@@ -120,7 +120,7 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
 
-#ifndef WIN32
+#ifndef _WIN32
 #endif
 
    struct _Ecore_Event_Signal_User /** User signal event */
@@ -128,20 +128,20 @@ extern "C" {
 	int   number; /**< The signal number. Either 1 or 2 */
 	void *ext_data; /**< Extension data - not used */
 
-#ifndef WIN32
+#ifndef _WIN32
 	siginfo_t data; /**< Signal info */
 #endif
      };
-   
+
    struct _Ecore_Event_Signal_Hup /** Hup signal event */
      {
 	void *ext_data; /**< Extension data - not used */
 
-#ifndef WIN32
+#ifndef _WIN32
 	siginfo_t data; /**< Signal info */
 #endif
      };
-   
+
    struct _Ecore_Event_Signal_Exit /** Exit request event */
      {
 	int   interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
@@ -149,7 +149,7 @@ extern "C" {
 	int   terminate : 1; /**< Set if the exit request was a terminate singal */
 	void *ext_data;	/**< Extension data - not used */
 
-#ifndef WIN32
+#ifndef _WIN32
 	siginfo_t data; /**< Signal info */
 #endif
      };
@@ -158,7 +158,7 @@ extern "C" {
      {
 	void *ext_data;	/**< Extension data - not used */
 
-#ifndef WIN32
+#ifndef _WIN32
 	siginfo_t data; /**< Signal info */
 #endif
      };
@@ -167,12 +167,12 @@ extern "C" {
      {
 	int num; /**< The realtime signal's number */
 
-#ifndef WIN32
+#ifndef _WIN32
 	siginfo_t data; /**< Signal info */
 #endif
      };
 
-#ifndef WIN32
+#ifndef _WIN32
    struct _Ecore_Exe_Event_Add /** Process add event */
      {
 	Ecore_Exe *exe; /**< The handle to the added process */
@@ -205,10 +205,10 @@ extern "C" {
 	Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
      };
 #endif
-   
+
    EAPI int  ecore_init(void);
    EAPI int  ecore_shutdown(void);
-       
+
    EAPI void ecore_app_args_set(int argc, const char **argv);
    EAPI void ecore_app_args_get(int *argc, char ***argv);
    EAPI void ecore_app_restart(void);
@@ -222,9 +222,9 @@ extern "C" {
    EAPI void                *ecore_event_filter_del(Ecore_Event_Filter *ef);
    EAPI int                  ecore_event_current_type_get(void);
    EAPI void                *ecore_event_current_event_get(void);
-       
-       
-#ifndef WIN32
+
+
+#ifndef _WIN32
    EAPI Ecore_Exe  *ecore_exe_run(const char *exe_cmd, const void *data);
    EAPI Ecore_Exe  *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data);
    EAPI int         ecore_exe_send(Ecore_Exe *exe, void *data, int size);
@@ -245,10 +245,10 @@ extern "C" {
    EAPI void        ecore_exe_signal(Ecore_Exe *exe, int num);
    EAPI void        ecore_exe_hup(Ecore_Exe *exe);
 #endif
-       
+
    EAPI Ecore_Idler *ecore_idler_add(int (*func) (void *data), const void *data);
    EAPI void        *ecore_idler_del(Ecore_Idler *idler);
-   
+
    EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(int (*func) (void *data), const void *data);
    EAPI void               *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
@@ -264,18 +264,18 @@ extern "C" {
    EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
-   
+
    EAPI double ecore_time_get(void);
-       
+
    EAPI Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
    EAPI void        *ecore_timer_del(Ecore_Timer *timer);
    EAPI void         ecore_timer_interval_set(Ecore_Timer *timer, double in);
-   
+
    EAPI Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
    EAPI void            ecore_animator_frametime_set(double frametime);
    EAPI double          ecore_animator_frametime_get(void);
-       
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,31 +1,9 @@
-#include <sys/time.h>
-#ifdef WIN32
-#include <sys/timeb.h>
-#endif
-#include "ecore_private.h"
-#include "Ecore.h"
-
-#ifndef HAVE_GETTIMEOFDAY
-#ifdef WIN32
-
-static int
-gettimeofday(struct timeval *tv, void *unused)
-{
-   struct _timeb t;
-   
-   if (!tv) return -1;
-
-   _ftime (&t);
-   
-   tv->tv_sec = t.time;
-   tv->tv_usec = t.millitm * 1000;
-   
-   return 0;
-}
+#ifdef _WIN32
+# include <windows.h>
 #else
-# error "Your platform isn't supported yet"
+# include <sys/time.h>
 #endif
-#endif
+#include "Ecore.h"
 
 /**
  * Retrieves the current system time as a floating point value in seconds.
@@ -35,8 +13,16 @@ gettimeofday(struct timeval *tv, void *unused)
 EAPI double
 ecore_time_get(void)
 {
+#ifdef _WIN32
+   return (double)GetTickCount() / 1000.0;
+#else
+# ifdef HAVE_GETTIMEOFDAY
    struct timeval      timev;
 
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+# else
+#  error "Your platform isn't supported yet"
+# endif
+#endif /* _WIN32 */
 }

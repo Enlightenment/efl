@@ -32,7 +32,7 @@
  * - iconfication api needs to work
  * - maximization api needs to work
  * - document all calls
- * 
+ *
  * later:
  * - buffer back-end that renders to an evas_image_object ???
  * - qt back-end ???
@@ -53,6 +53,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_GL 1
 #define HAVE_ECORE_EVAS_X11_16 1
 #define HAVE_ECORE_EVAS_DIRECTFB 1
+#define HAVE_ECORE_EVAS_WIN32 1
 
 typedef enum _Ecore_Evas_Engine_Type
 {
@@ -63,6 +64,8 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_XRENDER_X11,
    ECORE_EVAS_ENGINE_DIRECTFB,
    ECORE_EVAS_ENGINE_SOFTWARE_X11_16,
+   ECORE_EVAS_ENGINE_SOFTWARE_DDRAW,
+   ECORE_EVAS_ENGINE_DIRECT3D,
    ECORE_EVAS_ENGINE_SDL
 } Ecore_Evas_Engine_Type;
 
@@ -70,12 +73,16 @@ typedef enum _Ecore_Evas_Engine_Type
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
 #endif
-   
+
 #ifndef _ECORE_DIRECTFB_H
 #define _ECORE_DIRECTFB_WINDOW_PREDEF
 typedef struct _Ecore_DirectFB_Window Ecore_DirectFB_Window;
 #endif
-   
+
+#ifndef __ECORE_WIN32_H__
+typedef void Ecore_Win32_Window;
+#endif
+
 #ifndef _ECORE_EVAS_PRIVATE_H
 /* basic data types */
 typedef struct _Ecore_Evas Ecore_Evas;
@@ -84,7 +91,7 @@ typedef struct _Ecore_Evas Ecore_Evas;
 /* module setup/shutdown calls */
 
 EAPI int         ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine);
-       
+
 EAPI int         ecore_evas_init(void);
 EAPI int         ecore_evas_shutdown(void);
 
@@ -95,7 +102,7 @@ EAPI Ecore_X_Window  ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee);
 EAPI void            ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on);
 EAPI int             ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee);
 EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
-   
+
 EAPI Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window  ecore_evas_gl_x11_window_get(Ecore_Evas *ee);
 EAPI Ecore_X_Window  ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee);
@@ -124,8 +131,20 @@ EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
 EAPI const int      *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
-       
+
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
+
+EAPI Ecore_Evas     *ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
+                                                   int                 x,
+                                                   int                 y,
+                                                   int                 width,
+                                                   int                 height);
+
+EAPI Ecore_Evas     *ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
+                                             int                 x,
+                                             int                 y,
+                                             int                 width,
+                                             int                 height);
 
 EAPI Ecore_Evas     *ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
 
@@ -161,10 +180,10 @@ EAPI int         ecore_evas_shaped_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, int alpha);
 EAPI int         ecore_evas_alpha_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_show(Ecore_Evas *ee);
-EAPI void        ecore_evas_hide(Ecore_Evas *ee);   
+EAPI void        ecore_evas_hide(Ecore_Evas *ee);
 EAPI int         ecore_evas_visibility_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_raise(Ecore_Evas *ee);
-EAPI void        ecore_evas_lower(Ecore_Evas *ee);       
+EAPI void        ecore_evas_lower(Ecore_Evas *ee);
 EAPI void        ecore_evas_title_set(Ecore_Evas *ee, const char *t);
 EAPI const char *ecore_evas_title_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c);

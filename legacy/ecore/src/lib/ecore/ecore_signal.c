@@ -1,4 +1,4 @@
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
@@ -14,7 +14,7 @@
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
-static void _ecore_signal_callback_set(int sig, Signal_Handler func); 
+static void _ecore_signal_callback_set(int sig, Signal_Handler func);
 static void _ecore_signal_callback_ignore(int sig, siginfo_t *si, void *foo);
 static void _ecore_signal_callback_sigchld(int sig, siginfo_t *si, void *foo);
 static void _ecore_signal_callback_sigusr1(int sig, siginfo_t *si, void *foo);
@@ -66,7 +66,7 @@ _ecore_signal_shutdown(void)
 #ifdef SIGRTMIN
    int i, num = SIGRTMAX - SIGRTMIN;
 #endif
-   
+
    _ecore_signal_callback_set(SIGPIPE, (Signal_Handler) SIG_DFL);
    _ecore_signal_callback_set(SIGALRM, (Signal_Handler) SIG_DFL);
    _ecore_signal_callback_set(SIGCHLD, (Signal_Handler) SIG_DFL);
@@ -136,7 +136,7 @@ _ecore_signal_init(void)
 
    sigrt_info = calloc(1, sizeof(siginfo_t) * num);
    assert(sigrt_info);
-   
+
    for (i = 0; i < num; i++)
       _ecore_signal_callback_set(SIGRTMIN + i, _ecore_signal_callback_sigrt);
 #endif
@@ -154,18 +154,18 @@ _ecore_signal_call(void)
 #ifdef SIGRTMIN
    int i, num = SIGRTMAX - SIGRTMIN;
 #endif
-   
+
    while (sigchld_count > 0)
      {
 	pid_t pid;
 	int status;
-	
+
 	while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
 	  {
 	     Ecore_Exe_Event_Del *e;
-	     
+
 	     /* FIXME: If this process is set respawn, respawn with a suitable backoff
-	      * period for those that need too much respawning. 
+	      * period for those that need too much respawning.
 	      */
 	     e = _ecore_exe_event_del_new();
 	     if (e)
@@ -182,10 +182,10 @@ _ecore_signal_call(void)
 		    }
 		  e->pid = pid;
 		  e->exe = _ecore_exe_find(pid);
-		  
+
 		  if (sigchld_info.si_signo)
 		    e->data = sigchld_info; /* No need to clone this. */
-		  
+
                   if ((e->exe) && (e->exe->flags & (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
                      {
 		        /* We want to report the Last Words of the exe, so delay this event.
@@ -196,17 +196,17 @@ _ecore_signal_call(void)
 			 *  3 There are Last Words, they are ready to be read.
 			 *
 			 * For 1 we don't want to delay, for 3 we want to delay.
-			 * 2 is the problem.  If we check for data now and there 
+			 * 2 is the problem.  If we check for data now and there
 			 * is none, then there is no way to differentiate 1 and 2.
-			 * If we don't delay, we may loose data, but if we do delay, 
+			 * If we don't delay, we may loose data, but if we do delay,
 			 * there may not be data and the exit event never gets sent.
-			 * 
-			 * Any way you look at it, there has to be some time passed 
+			 *
+			 * Any way you look at it, there has to be some time passed
 			 * before the exit event gets sent.  So the strategy here is
 			 * to setup a timer event that will send the exit event after
 			 * an arbitrary, but brief, time.
 			 *
-			 * This is probably paranoid, for the less paraniod, we could 
+			 * This is probably paranoid, for the less paraniod, we could
 			 * check to see for Last Words, and only delay if there are any.
 			 * This has it's own set of problems.
 			 */
@@ -215,7 +215,7 @@ _ecore_signal_call(void)
                      }
 		  else
 		    {
-		       _ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
+		       _ecore_event_add(ECORE_EXE_EVENT_DEL, e,
 				   _ecore_exe_event_del_free, NULL);
 		    }
 	       }
@@ -226,15 +226,15 @@ _ecore_signal_call(void)
    while (sigusr1_count > 0)
      {
 	Ecore_Event_Signal_User *e;
-	
+
 	e = _ecore_event_signal_user_new();
 	if (e)
 	  {
 	     e->number = 1;
 
 	     if (sigusr1_info.si_signo)
-	       e->data = sigusr1_info;	 
-	     
+	       e->data = sigusr1_info;
+
 	     ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
 	  }
 	sigusr1_count--;
@@ -243,15 +243,15 @@ _ecore_signal_call(void)
    while (sigusr2_count > 0)
      {
 	Ecore_Event_Signal_User *e;
-	
+
 	e = _ecore_event_signal_user_new();
 	if (e)
 	  {
 	     e->number = 2;
-	     
+
 	     if (sigusr2_info.si_signo)
-	       e->data = sigusr2_info;	 
-	     
+	       e->data = sigusr2_info;
+
 	     ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
 	  }
 	sigusr2_count--;
@@ -260,13 +260,13 @@ _ecore_signal_call(void)
    while (sighup_count > 0)
      {
 	Ecore_Event_Signal_Hup *e;
-	
+
 	e = _ecore_event_signal_hup_new();
 	if (e)
 	  {
 	     if (sighup_info.si_signo)
 	       e->data = sighup_info;
-	     
+
 	     ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e, NULL, NULL);
 	  }
 	sighup_count--;
@@ -275,7 +275,7 @@ _ecore_signal_call(void)
    while (sigquit_count > 0)
      {
 	Ecore_Event_Signal_Exit *e;
-	
+
 	e = _ecore_event_signal_exit_new();
 	if (e)
 	  {
@@ -283,7 +283,7 @@ _ecore_signal_call(void)
 
 	     if (sigquit_info.si_signo)
 	       e->data = sigquit_info;
-	     
+
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
 	sigquit_count--;
@@ -292,15 +292,15 @@ _ecore_signal_call(void)
    while (sigint_count > 0)
      {
 	Ecore_Event_Signal_Exit *e;
-	
+
 	e = _ecore_event_signal_exit_new();
 	if (e)
 	  {
 	     e->interrupt = 1;
-	     
+
 	     if (sigint_info.si_signo)
 	       e->data = sigint_info;
-	     
+
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
 	sigint_count--;
@@ -309,15 +309,15 @@ _ecore_signal_call(void)
    while (sigterm_count > 0)
      {
 	Ecore_Event_Signal_Exit *e;
-	
+
 	e = _ecore_event_signal_exit_new();
 	if (e)
 	  {
 	     e->terminate = 1;
-	     
+
 	     if (sigterm_info.si_signo)
 	       e->data = sigterm_info;
-	     
+
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
 	sigterm_count--;
@@ -327,13 +327,13 @@ _ecore_signal_call(void)
    while (sigpwr_count > 0)
      {
 	Ecore_Event_Signal_Power *e;
-	
+
 	e = _ecore_event_signal_power_new();
 	if (e)
 	  {
 	     if (sigpwr_info.si_signo)
 	       e->data = sigpwr_info;
-	     
+
 	     ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e, NULL, NULL);
 	  }
 	sigpwr_count--;
@@ -347,17 +347,17 @@ _ecore_signal_call(void)
 	while (sigrt_count[i] > 0)
 	  {
 	     Ecore_Event_Signal_Realtime *e;
-	     
+
 	     if ((e = _ecore_event_signal_realtime_new()))
 	       {
 		  e->num = i;
-		  
+
 		  if (sigrt_info[i].si_signo)
 		    e->data = sigrt_info[i];
-		  
+
 		  ecore_event_add(ECORE_EVENT_SIGNAL_REALTIME, e, NULL, NULL);
 	       }
-	     
+
 	     sigrt_count[i]--;
 	     sig_count--;
 	  }
@@ -373,7 +373,7 @@ _ecore_signal_callback_set(int sig, Signal_Handler func)
    sa.sa_sigaction = func;
    sa.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&sa.sa_mask);
-   sigaction(sig, &sa, NULL); 
+   sigaction(sig, &sa, NULL);
 }
 
 static void
@@ -388,7 +388,7 @@ _ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UN
      sigchld_info = *si;
    else
      sigchld_info.si_signo = 0;
-   
+
    sigchld_count++;
    sig_count++;
 }
@@ -400,7 +400,7 @@ _ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UN
      sigusr1_info = *si;
    else
      sigusr1_info.si_signo = 0;
-   
+
    sigusr1_count++;
    sig_count++;
 }
@@ -412,7 +412,7 @@ _ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UN
      sigusr2_info = *si;
    else
      sigusr2_info.si_signo = 0;
-   
+
    sigusr2_count++;
    sig_count++;
 }
@@ -424,7 +424,7 @@ _ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
      sighup_info = *si;
    else
      sighup_info.si_signo = 0;
-   
+
    sighup_count++;
    sig_count++;
 }
@@ -473,7 +473,7 @@ _ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
      sigpwr_info = *si;
    else
      sigpwr_info.si_signo = 0;
-   
+
    sigpwr_count++;
    sig_count++;
 }
@@ -487,7 +487,7 @@ _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
      sigrt_info[sig - SIGRTMIN] = *si;
    else
      sigrt_info[sig - SIGRTMIN].si_signo = 0;
-   
+
    sigrt_count[sig - SIGRTMIN]++;
    sig_count++;
 }
@@ -497,12 +497,12 @@ static int
 _ecore_signal_exe_exit_delay(void *data)
 {
    Ecore_Exe_Event_Del *e;
-   
+
    e = data;
    if (e)
      {
 	e->exe->doomsday_clock = NULL;
-	_ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
+	_ecore_event_add(ECORE_EXE_EVENT_DEL, e,
 			 _ecore_exe_event_del_free, NULL);
      }
    return 0;

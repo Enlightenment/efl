@@ -20,7 +20,7 @@ Ecore_Sdl_Keys.h
 
 libecore_sdl_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@sdl_libs@
+@sdl_libs@ @create_shared_lib@
 
 libecore_sdl_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

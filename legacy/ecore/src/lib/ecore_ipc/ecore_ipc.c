@@ -7,8 +7,8 @@
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
-#elif WIN32
-#include <winsock.h>
+#elif _WIN32
+#include <winsock2.h>
 #endif
 
 #define DLT_ZERO   0
@@ -33,7 +33,7 @@ EAPI unsigned short
 _ecore_ipc_swap_16(unsigned short v)
 {
    unsigned char *s, t;
-   
+
    s = (unsigned char *)(&v);
    t = s[0]; s[0] = s[1]; s[1] = t;
    return v;
@@ -43,7 +43,7 @@ EAPI unsigned int
 _ecore_ipc_swap_32(unsigned int v)
 {
    unsigned char *s, t;
-   
+
    s = (unsigned char *)(&v);
    t = s[0]; s[0] = s[3]; s[3] = t;
    t = s[1]; s[1] = s[2]; s[2] = t;
@@ -54,7 +54,7 @@ EAPI unsigned long long
 _ecore_ipc_swap_64(unsigned long long v)
 {
    unsigned char *s, t;
-   
+
    s = (unsigned char *)(&v);
    t = s[0]; s[0] = s[7]; s[7] = t;
    t = s[1]; s[1] = s[6]; s[6] = t;
@@ -223,7 +223,7 @@ static void _ecore_ipc_event_client_data_free(void *data, void *ev);
 static void _ecore_ipc_event_server_add_free(void *data, void *ev);
 static void _ecore_ipc_event_server_del_free(void *data, void *ev);
 static void _ecore_ipc_event_server_data_free(void *data, void *ev);
-    
+
 EAPI int ECORE_IPC_EVENT_CLIENT_ADD = 0;
 EAPI int ECORE_IPC_EVENT_CLIENT_DEL = 0;
 EAPI int ECORE_IPC_EVENT_SERVER_ADD = 0;
@@ -275,7 +275,7 @@ ecore_ipc_init(void)
 					  _ecore_ipc_event_client_data, NULL);
    handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
 					  _ecore_ipc_event_server_data, NULL);
-   return init_count;   
+   return init_count;
 }
 
 /**
@@ -327,7 +327,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
    Ecore_Ipc_Server *svr;
    Ecore_Ipc_Type type;
    Ecore_Con_Type extra = 0;
-   
+
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
    type = compl_type;
@@ -385,7 +385,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
    Ecore_Ipc_Server *svr;
    Ecore_Ipc_Type type;
    Ecore_Con_Type extra = 0;
-   
+
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
    type = compl_type;
@@ -439,7 +439,7 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
    svr->data = NULL;
    svr->delete_me = 1;
    if (svr->event_count == 0)
-     {	
+     {
 	while (svr->clients)
 	  ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
 	ecore_con_server_del(svr->server);
@@ -564,7 +564,7 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
    int ret;
    int *head, md = 0, d, s;
    unsigned char dat[sizeof(Ecore_Ipc_Msg_Head)];
-   
+
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
      {
 	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
@@ -635,7 +635,7 @@ ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char 
 
 /**
  * Sets the max data payload size for an Ipc message in bytes
- * 
+ *
  * @param   svr           The given server.
  * @param   size          The maximum data payload size in bytes.
  * @ingroup Ecore_Ipc_Server_Group
@@ -654,7 +654,7 @@ ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size)
 
 /**
  * Gets the max data payload size for an Ipc message in bytes
- * 
+ *
  * @param   svr           The given server.
  * @return The maximum data payload in bytes.
  * @ingroup Ecore_Ipc_Server_Group
@@ -673,7 +673,7 @@ ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
 
 /**
  * Gets the IP address of a server that has been connected to.
- * 
+ *
  * @param   svr           The given server.
  * @return  A pointer to an internal string that contains the IP address of
  *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
@@ -772,7 +772,7 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
    int ret;
    int *head, md = 0, d, s;
    unsigned char dat[sizeof(Ecore_Ipc_Msg_Head)];
-   
+
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
      {
 	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
@@ -837,7 +837,7 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
 {
    void *data;
    Ecore_Ipc_Server *svr;
-   
+
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
      {
 	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
@@ -867,7 +867,7 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
  */
 EAPI void
 ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
-{  
+{
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
      {
 	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
@@ -875,7 +875,7 @@ ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
 	return;
      }
    cl->data = (void *)data;
-}  
+}
 
 /**
  * Retrieves the data that has been associated with the given IPC client.
@@ -885,7 +885,7 @@ ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
  */
 EAPI void *
 ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
-{  
+{
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
      {
 	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,
@@ -897,7 +897,7 @@ ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
 
 /**
  * Sets the max data payload size for an Ipc message in bytes
- * 
+ *
  * @param   client        The given client.
  * @param   size          The maximum data payload size in bytes.
  * @ingroup Ecore_Ipc_Client_Group
@@ -916,7 +916,7 @@ ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size)
 
 /**
  * Sets the max data payload size for an Ipc message in bytes
- * 
+ *
  * @param   cl            The given client.
  * @param   size          The maximum data payload size in bytes.
  * @ingroup Ecore_Ipc_Client_Group
@@ -935,7 +935,7 @@ ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
 
 /**
  * Gets the IP address of a client that has been connected to.
- * 
+ *
  * @param   cl            The given client.
  * @return  A pointer to an internal string that contains the IP address of
  *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
@@ -957,7 +957,7 @@ ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl)
 
 /**
  * Flushes all pending data to the given client. Will return when done.
- * 
+ *
  * @param   cl            The given client.
  * @ingroup Ecore_Ipc_Client_Group
  */
@@ -989,14 +989,14 @@ static int
 _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Add *e;
-   
+
    e = ev;
    if (!_ecore_list2_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
 	Ecore_Ipc_Server *svr;
-	
+
 	cl = calloc(1, sizeof(Ecore_Ipc_Client));
 	if (!cl) return 0;
 	svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
@@ -1009,7 +1009,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	if (!cl->delete_me)
 	  {
 	     Ecore_Ipc_Event_Client_Add *e2;
-	     
+
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Add));
 	     if (e2)
 	       {
@@ -1027,13 +1027,13 @@ static int
 _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Del *e;
-   
+
    e = ev;
    if (!_ecore_list2_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
-	
+
 	cl = ecore_con_client_data_get(e->client);
 	  {
 	     Ecore_Ipc_Event_Client_Del *e2;
@@ -1063,18 +1063,18 @@ static int
 _ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Add *e;
-   
+
    e = ev;
    if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;
-	
+
 	svr = ecore_con_server_data_get(e->server);
 	if (!svr->delete_me)
 	  {
 	     Ecore_Ipc_Event_Server_Add *e2;
-	     
+
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Add));
 	     if (e2)
 	       {
@@ -1092,18 +1092,18 @@ static int
 _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Del *e;
-   
+
    e = ev;
    if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;
-	
+
 	svr = ecore_con_server_data_get(e->server);
 	if (!svr->delete_me)
 	  {
 	     Ecore_Ipc_Event_Server_Del *e2;
-	     
+
 	     e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Del));
 	     if (e2)
 	       {
@@ -1171,9 +1171,9 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	Ecore_Ipc_Msg_Head msg;
 	int offset = 0;
 	unsigned char *buf;
-	
+
 	cl = ecore_con_client_data_get(e->client);
-	
+
 	if (!cl->buf)
 	  {
 	     cl->buf_size = e->size;
@@ -1200,7 +1200,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	  {
 	     int s, md, d = 0, head;
 	     unsigned char *dd;
-	     
+
 	     dd = (unsigned char *)&head;
 	     dd[0] = *(cl->buf + offset + 0);
 	     dd[1] = *(cl->buf + offset + 1);
@@ -1220,7 +1220,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		  if (offset > 0) goto scroll;
 		  return 0;
 	       }
-	     
+
 	     s = 4;
 	     CLDEC(0, major);
 	     CLDEC(1, minor);
@@ -1235,7 +1235,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		  Ecore_Ipc_Event_Client_Data *e2;
 		  Ecore_Ipc_Server *svr;
 		  int max, max2;
-		  
+
 		  buf = NULL;
 		  svr = ecore_con_server_data_get(ecore_con_client_server_get(cl->client));
 		  max = svr->max_buf_size;
@@ -1363,9 +1363,9 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	Ecore_Ipc_Msg_Head msg;
 	int offset = 0;
 	unsigned char *buf;
-	
+
 	svr = ecore_con_server_data_get(e->server);
-	
+
 	if (!svr->buf)
 	  {
 	     svr->buf_size = e->size;
@@ -1392,7 +1392,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	  {
 	     int s, md, d = 0, head;
 	     unsigned char *dd;
-	     
+
 	     dd = (unsigned char *)&head;
 	     dd[0] = *(svr->buf + offset + 0);
 	     dd[1] = *(svr->buf + offset + 1);
@@ -1412,7 +1412,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 		  if (offset > 0) goto scroll;
 		  return 0;
 	       }
-	     
+
 	     s = 4;
 	     SVDEC(0, major);
 	     SVDEC(1, minor);
@@ -1426,7 +1426,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	       {
 		  Ecore_Ipc_Event_Server_Data *e2;
 		  int max;
-		  
+
 		  buf = NULL;
 		  max = svr->max_buf_size;
 		  if ((max < 0) || (msg.size <= max))
@@ -1494,7 +1494,7 @@ static void
 _ecore_ipc_event_client_add_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Client_Add *e;
-   
+
    e = ev;
    e->client->event_count--;
    if ((e->client->event_count == 0) && (e->client->delete_me))
@@ -1506,7 +1506,7 @@ static void
 _ecore_ipc_event_client_del_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Client_Del *e;
-   
+
    e = ev;
    e->client->event_count--;
    if ((e->client->event_count == 0) && (e->client->delete_me))
@@ -1518,7 +1518,7 @@ static void
 _ecore_ipc_event_client_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Client_Data *e;
-   
+
    e = ev;
    e->client->event_count--;
    if (e->data) free(e->data);
@@ -1531,7 +1531,7 @@ static void
 _ecore_ipc_event_server_add_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Server_Add *e;
-   
+
    e = ev;
    e->server->event_count--;
    if ((e->server->event_count == 0) && (e->server->delete_me))
@@ -1543,7 +1543,7 @@ static void
 _ecore_ipc_event_server_del_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Server_Add *e;
-   
+
    e = ev;
    e->server->event_count--;
    if ((e->server->event_count == 0) && (e->server->delete_me))
@@ -1555,7 +1555,7 @@ static void
 _ecore_ipc_event_server_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Server_Data *e;
-   
+
    e = ev;
    if (e->data) free(e->data);
    e->server->event_count--;

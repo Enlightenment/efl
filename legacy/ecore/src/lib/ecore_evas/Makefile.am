@@ -30,6 +30,16 @@ ECORE_DIRECTFB_LIB =
 ECORE_DIRECTFB_LDF = 
 endif
 
+if BUILD_ECORE_WIN32
+ECORE_WIN32_INC = -I$(top_srcdir)/src/lib/ecore_win32
+ECORE_WIN32_LIB = $(top_builddir)/src/lib/ecore_win32/libecore_win32.la
+ECORE_WIN32_LDF = -L$(top_builddir)/src/lib/ecore_win32/.libs
+else
+ECORE_WIN32_INC =
+ECORE_WIN32_LIB = 
+ECORE_WIN32_LDF = 
+endif
+
 if BUILD_ECORE_SDL
 ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl
 ECORE_SDL_LIB = $(top_builddir)/src/lib/ecore_sdl/libecore_sdl.la
@@ -48,6 +58,7 @@ INCLUDES = \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
+$(ECORE_WIN32_INC) \
 $(ECORE_SDL_INC) \
 @EVAS_CFLAGS@ \
 @XCB_CFLAGS@
@@ -56,6 +67,7 @@ libecore_evas_la_LDFLAGS = -version-info 1:0:0 \
 $(ECORE_X_LDF) \
 $(ECORE_FB_LDF) \
 $(ECORE_DIRECTFB_LDF) \
+$(ECORE_WIN32_LDF) \
 $(ECORE_SDL_LDF) \
 -L$(top_builddir)/src/lib/ecore/.libs
 
@@ -72,21 +84,25 @@ ecore_evas_x.c \
 ecore_evas_fb.c \
 ecore_evas_buffer.c \
 ecore_evas_directfb.c \
+ecore_evas_win32.c \
 ecore_evas_sdl.c
 
 libecore_evas_la_LIBADD = \
 $(ECORE_X_LIB) \
 $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
+$(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
-@XCB_LIBS@
+@XCB_LIBS@ \
+@create_shared_lib@
 
 libecore_evas_la_DEPENDENCIES = \
 $(ECORE_X_LIB) \
 $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
+$(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la
 
@@ -99,4 +115,5 @@ ecore_evas_x.c \
 ecore_evas_fb.c \
 ecore_evas_buffer.c \
 ecore_evas_directfb.c \
+ecore_evas_win32.c \
 ecore_evas_sdl.c

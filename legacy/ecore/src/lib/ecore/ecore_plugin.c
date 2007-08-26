@@ -1,4 +1,4 @@
-#ifndef WIN32
+#ifndef _WIN32
 # include <dlfcn.h>
 # include "ecore_private.h"
 # include "Ecore_Data.h"

@@ -10,8 +10,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifndef WIN32
-#include <sys/mman.h>
+#ifndef _WIN32
+# include <sys/mman.h>
 #endif
 
 #include <Evas.h>
@@ -52,15 +52,25 @@
 # endif /* HAVE_ECORE_X_XCB */
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
-#include <Evas_Engine_FB.h>
+# include <Evas_Engine_FB.h>
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
-#include <Evas_Engine_DirectFB.h>
-#include "Ecore_DirectFB.h"
+# include <Evas_Engine_DirectFB.h>
+# include "Ecore_DirectFB.h"
 #endif
 #ifdef BUILD_ECORE_EVAS_BUFFER
-#include <Evas_Engine_Buffer.h>
+# include <Evas_Engine_Buffer.h>
 #endif
+#ifdef BUILD_ECORE_WIN32
+# include "Ecore_Win32.h"
+# ifdef HAVE_DIRECTDRAW
+#  include <Evas_Engine_Software_DDraw.h>
+# endif
+# ifdef HAVE_DIRECT3D
+#  include <Evas_Engine_Direct3D.h>
+# endif
+#endif
+
 
 #define IDLE_FLUSH_TIME 0.5
 
@@ -70,7 +80,7 @@ typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
 
 struct _Ecore_Evas_Engine_Func
 {
-   void        (*fn_free) (Ecore_Evas *ee);      
+   void        (*fn_free) (Ecore_Evas *ee);
    void        (*fn_callback_resize_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_move_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_show_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
@@ -82,7 +92,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_callback_mouse_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_mouse_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_sticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void        (*fn_callback_unsticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));   
+   void        (*fn_callback_unsticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_pre_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_post_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_move) (Ecore_Evas *ee, int x, int y);
@@ -119,7 +129,7 @@ struct _Ecore_Evas_Engine_Func
 struct _Ecore_Evas_Engine
 {
    Ecore_Evas_Engine_Func *func;
-   
+
 #ifdef BUILD_ECORE_X
    struct {
       Ecore_X_Window win_root;
@@ -150,7 +160,7 @@ struct _Ecore_Evas_Engine
 	   unsigned char below : 1;
       } state;
    } x;
-#endif   
+#endif
 #ifdef BUILD_ECORE_EVAS_FB
    struct {
       int real_w;
@@ -168,9 +178,16 @@ struct _Ecore_Evas_Engine
       Ecore_DirectFB_Window *window;
    } directfb;
 #endif
+#ifdef BUILD_ECORE_WIN32
+   struct {
+      Ecore_Win32_Window *parent;
+      Ecore_Win32_Window *window;
+   } win32;
+#endif
+
    Ecore_Timer *idle_flush_timer;
 };
-  
+
 struct _Ecore_Evas
 {
    Ecore_List  __list_data;
@@ -194,7 +211,7 @@ struct _Ecore_Evas
    struct {
       int      w, h;
    } expecting_resize;
-   
+
    struct {
       char           *title;
       char           *name;
@@ -202,8 +219,8 @@ struct _Ecore_Evas
       struct {
 	 int          w, h;
       } min,
-	max, 
-	base, 
+	max,
+	base,
 	step;
       struct {
 	 Evas_Object *object;
@@ -225,7 +242,7 @@ struct _Ecore_Evas
       char            sticky       : 1;
       char            request_pos  : 1;
    } prop;
-   
+
    struct {
       void          (*fn_resize) (Ecore_Evas *ee);
       void          (*fn_move) (Ecore_Evas *ee);
@@ -236,13 +253,13 @@ struct _Ecore_Evas
       void          (*fn_focus_in) (Ecore_Evas *ee);
       void          (*fn_focus_out) (Ecore_Evas *ee);
       void          (*fn_sticky) (Ecore_Evas *ee);
-      void          (*fn_unsticky) (Ecore_Evas *ee);      
+      void          (*fn_unsticky) (Ecore_Evas *ee);
       void          (*fn_mouse_in) (Ecore_Evas *ee);
       void          (*fn_mouse_out) (Ecore_Evas *ee);
       void          (*fn_pre_render) (Ecore_Evas *ee);
       void          (*fn_post_render) (Ecore_Evas *ee);
    } func;
-   
+
    Ecore_Evas_Engine engine;
    Evas_List *sub_ecore_evas;
 
@@ -268,5 +285,5 @@ void _ecore_evas_fps_debug_shutdown(void);
 void _ecore_evas_fps_debug_rendertime_add(double t);
 void _ecore_evas_free(Ecore_Evas *ee);
 void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
-    
+
 #endif

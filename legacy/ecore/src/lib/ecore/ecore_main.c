@@ -1,5 +1,5 @@
-#ifdef WIN32
-#include <winsock.h>
+#ifdef _WIN32
+#include <windows.h>
 #endif
 
 #include <math.h>
@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define FIX_HZ 1   
+#define FIX_HZ 1
 
 #ifdef FIX_HZ
 #include <sys/param.h>
@@ -46,7 +46,7 @@ static double            t2 = 0.0;
  * concurrency.  A properly written, event-driven program using this
  * kind of programming does not need threads.  It makes the program very
  * robust and easy to follow.
- * 
+ *
  * Here is an example of simple program and its basic event loop flow:
  * @image html prog_flow.png
  *
@@ -104,9 +104,9 @@ ecore_main_loop_quit(void)
  * @p func will be called during the execution of @ref ecore_main_loop_begin
  * when the file descriptor is available for reading, or writing, or both.
  *
- * Normally the return value from the @p func is "zero means this handler is 
+ * Normally the return value from the @p func is "zero means this handler is
  * finished and can be deleted" as is usual for handler callbacks.  However,
- * if the @p buf_func is supplied, then the return value from the @p func is "non 
+ * if the @p buf_func is supplied, then the return value from the @p func is "non
  * zero means the handler should be called again in a tight loop".
  *
  * @p buf_func is called during event loop handling to check if data that has
@@ -166,7 +166,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
-	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER, 
+	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
 			 "ecore_main_fd_handler_del");
 	return NULL;
      }
@@ -180,7 +180,7 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
-	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER, 
+	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
 			 "ecore_main_fd_handler_prepare_callback_set");
 	return;
      }
@@ -199,7 +199,7 @@ ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
-	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER, 
+	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
 			 "ecore_main_fd_handler_fd_get");
 	return -1;
      }
@@ -219,10 +219,10 @@ EAPI int
 ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
    int ret;
-   
+
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
-	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER, 
+	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
 			 "ecore_main_fd_handler_active_get");
 	return 0;
      }
@@ -265,7 +265,7 @@ _ecore_main_shutdown(void)
    while (fd_handlers)
      {
 	Ecore_Fd_Handler *fdh;
-	
+
 	fdh = fd_handlers;
 	fd_handlers = _ecore_list2_remove(fd_handlers, fdh);
 	ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
@@ -298,10 +298,10 @@ _ecore_main_select(double timeout)
 	timeout += (0.5 / HZ);
 	sec = (int)timeout;
 	usec = (int)((timeout - (double)sec) * 1000000);
-#else	
+#else
 	sec = (int)timeout;
 	usec = (int)((timeout - (double)sec) * 1000000);
-#endif	
+#endif
 	tv.tv_sec = sec;
 	tv.tv_usec = usec;
 	t = &tv;
@@ -315,7 +315,7 @@ _ecore_main_select(double timeout)
    for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
-	
+
 	fdh = (Ecore_Fd_Handler *)l;
 
 	if (!fdh->delete_me && fdh->prep_func)
@@ -324,7 +324,7 @@ _ecore_main_select(double timeout)
    for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
-	
+
 	fdh = (Ecore_Fd_Handler *)l;
 	if (fdh->flags & ECORE_FD_READ)
 	  {
@@ -342,7 +342,7 @@ _ecore_main_select(double timeout)
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
      }
-#ifndef WIN32
+#ifndef _WIN32
    if (_ecore_signal_count_get()) return -1;
 #endif
    ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
@@ -355,7 +355,7 @@ _ecore_main_select(double timeout)
 	for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
 	  {
 	     Ecore_Fd_Handler *fdh;
-	     
+
 	     fdh = (Ecore_Fd_Handler *)l;
 	     if (!fdh->delete_me)
 	       {
@@ -368,7 +368,7 @@ _ecore_main_select(double timeout)
 	       }
 	  }
 	_ecore_main_fd_handlers_cleanup();
- 	return 1;
+	return 1;
      }
    return 0;
 }
@@ -377,12 +377,12 @@ static void
 _ecore_main_fd_handlers_cleanup(void)
 {
    Ecore_List2 *l;
-   
+
    if (!fd_handlers_delete_me) return;
    for (l = (Ecore_List2 *)fd_handlers; l;)
      {
 	Ecore_Fd_Handler *fdh;
-	
+
 	fdh = (Ecore_Fd_Handler *)l;
 	l = l->next;
 	if (fdh->delete_me)
@@ -399,16 +399,16 @@ static void
 _ecore_main_fd_handlers_call(void)
 {
    Ecore_List2    *l;
-   
+
    for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
-	
+
 	fdh = (Ecore_Fd_Handler *)l;
 	if (!fdh->delete_me)
 	  {
-	     if ((fdh->read_active) || 
-		 (fdh->write_active) || 
+	     if ((fdh->read_active) ||
+		 (fdh->write_active) ||
 		 (fdh->error_active))
 	       {
 		  if (!fdh->func(fdh->data, fdh))
@@ -429,12 +429,12 @@ _ecore_main_fd_handlers_buf_call(void)
 {
    Ecore_List2    *l;
    int ret;
-   
+
    ret = 0;
    for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
-	
+
 	fdh = (Ecore_Fd_Handler *)l;
 	if (!fdh->delete_me)
 	  {
@@ -454,29 +454,32 @@ _ecore_main_fd_handlers_buf_call(void)
 static void
 _ecore_main_loop_iterate_internal(int once_only)
 {
+#ifdef _WIN32
+   MSG msg;
+#endif
    double next_time;
    int    have_event = 0;
    int    have_signal;
-   
+
    in_main_loop++;
    /* expire any timers */
      {
 	double now;
-	
+
 	now = ecore_time_get();
 	while (_ecore_timer_call(now));
 	_ecore_timer_cleanup();
      }
    /* any timers re-added as a result of these are allowed to go */
    _ecore_timer_enable_new();
-#ifndef WIN32
+#ifndef _WIN32
    /* process signals into events .... */
    while (_ecore_signal_count_get()) _ecore_signal_call();
 #endif
    if (_ecore_event_exist())
      {
 	int ret;
-	
+
 	have_event = 1;
 	have_signal = 1;
 	ret = _ecore_main_select(0);
@@ -493,7 +496,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 	ret = _ecore_main_select(0);
 
 	if (ret > 0) have_event = 1;
-#ifndef WIN32
+#ifndef _WIN32
 	if (_ecore_signal_count_get() > 0) have_signal = 1;
 #endif
 
@@ -507,7 +510,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (_ecore_event_exist())
      {
 	int ret;
-	
+
 	have_event = 1;
 	have_signal = 1;
 	ret = _ecore_main_select(0);
@@ -519,8 +522,8 @@ _ecore_main_loop_iterate_internal(int once_only)
 	in_main_loop--;
 	return;
      }
-   
-#ifndef WIN32
+
+#ifndef _WIN32
    if (_ecore_fps_debug)
      {
 	t2 = ecore_time_get();
@@ -529,7 +532,7 @@ _ecore_main_loop_iterate_internal(int once_only)
      }
 #endif
    start_loop:
-   if (do_quit) 
+   if (do_quit)
      {
 	in_main_loop--;
 	return;
@@ -538,7 +541,7 @@ _ecore_main_loop_iterate_internal(int once_only)
      {
 	/* init flags */
 	have_event = have_signal = 0;
-	next_time = _ecore_timer_next_get();	
+	next_time = _ecore_timer_next_get();
 	/* no timers */
 	if (next_time < 0)
 	  {
@@ -546,10 +549,10 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     if (!_ecore_idler_exist())
 	       {
 		  int ret;
-		  
+
 		  ret = _ecore_main_select(-1);
 		  if (ret > 0) have_event = 1;
-#ifndef WIN32
+#ifndef _WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 #endif
 	       }
@@ -559,12 +562,12 @@ _ecore_main_loop_iterate_internal(int once_only)
 		  for (;;)
 		    {
 		       int ret;
-		       
+
 		       if (!_ecore_idler_call()) goto start_loop;
 		       if (_ecore_event_exist()) break;
 		       ret = _ecore_main_select(0);
 		       if (ret > 0) have_event = 1;
-#ifndef WIN32
+#ifndef _WIN32
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
 #endif
 		       if (have_event || have_signal) break;
@@ -581,10 +584,10 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     if (!_ecore_idler_exist())
 	       {
 		  int ret;
-		  
+
 		  ret = _ecore_main_select(next_time);
 		  if (ret > 0) have_event = 1;
-#ifndef WIN32
+#ifndef _WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 #endif
 	       }
@@ -595,12 +598,12 @@ _ecore_main_loop_iterate_internal(int once_only)
 		    {
 		       double cur_time, t;
 		       int ret;
-		       
+
 		       if (!_ecore_idler_call()) goto start_loop;
 		       if (_ecore_event_exist()) break;
 		       ret = _ecore_main_select(0);
 		       if (ret > 0) have_event = 1;
-#ifndef WIN32
+#ifndef _WIN32
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
 #endif
 		       if ((have_event) || (have_signal)) break;
@@ -614,7 +617,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 	       }
 	  }
      }
-#ifndef WIN32
+#ifndef _WIN32
    if (_ecore_fps_debug)
      {
 	t1 = ecore_time_get();
@@ -630,16 +633,23 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (have_event) _ecore_main_fd_handlers_call();
    do
      {
-#ifndef WIN32
+#ifndef _WIN32
 	/* process signals into events .... */
 	while (_ecore_signal_count_get()) _ecore_signal_call();
 #endif
-	
+
 	/* handle events ... */
-	_ecore_event_call();	
+	_ecore_event_call();
 	_ecore_main_fd_handlers_cleanup();
      }
    while (_ecore_main_fd_handlers_buf_call());
+#ifdef _WIN32
+   while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+     {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+     }
+#endif
    if (once_only) _ecore_idle_enterer_call();
    in_main_loop--;
 }
