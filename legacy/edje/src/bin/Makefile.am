@@ -16,8 +16,8 @@ EXTRA_DIST = @EDJE_RECC_PRG@
 EXTRA_SCRIPTS = edje_recc
 
 bin_PROGRAMS = \
-edje_cc \
-edje_decc
+@EDJE_CC_PRG@ \
+@EDJE_DECC_PRG@
 
 EXTRA_PROGRAMS = \
 edje_cc \
