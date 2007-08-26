@@ -1417,8 +1417,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     context, \
 		     surface, \
 		     o->engine_data, \
-		     obj->cur.geometry.x + x + sl + ox - \
-		     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text), \
+		     obj->cur.geometry.x + x + sl + ox, \
 		     obj->cur.geometry.y + y + st + oy + \
 		     (int) \
 		     (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h) - 0.5), \
