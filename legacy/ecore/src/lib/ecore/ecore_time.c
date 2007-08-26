@@ -3,6 +3,7 @@
 #else
 # include <sys/time.h>
 #endif
+#include "ecore_private.h"
 #include "Ecore.h"
 
 /**
