@@ -25,21 +25,18 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
-	break;
       case ECORE_EVAS_ENGINE_SOFTWARE_FB:
 #ifdef BUILD_ECORE_EVAS_FB
 	return 1;
 #else
 	return 0;
 #endif
-	break;
       case ECORE_EVAS_ENGINE_GL_X11:
 #ifdef BUILD_ECORE_EVAS_GL
 	return 1;
 #else
 	return 0;
 #endif
-	break;
       case ECORE_EVAS_ENGINE_XRENDER_X11:
 #ifdef BUILD_ECORE_EVAS_XRENDER
 	return 1;
@@ -53,16 +50,26 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
-	break;
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
 #ifdef BUILD_ECORE_EVAS_BUFFER
 	return 1;
 #else
 	return 0;
 #endif
-	break;
       case ECORE_EVAS_ENGINE_DIRECTFB:
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_SOFTWARE_DDRAW:
+#ifdef BUILD_ECORE_EVAS_DIRECTDRAW
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_DIRECT3D:
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
 	return 1;
 #else
 	return 0;

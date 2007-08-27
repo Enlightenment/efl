@@ -328,6 +328,13 @@ fi
 ECORE_CHECK_MODULE([Win32], [no], [$have_win32],
   [ecore_win32_libs="$ecore_win32_libs $ddraw_libs $direct3d_libs"])
 
+if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw}" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW, 1, [Support for DirectDraw Engine in Ecore_Evas])
+fi
+
+if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_EVAS_DIRECT3D, 1, [Support for Direct3D Engine in Ecore_Evas])
+fi
 
 ECORE_CHECK_MODULE([Job], [yes])
 
