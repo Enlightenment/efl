@@ -706,7 +706,11 @@ compile(void)
 	free(def);
  */
      }
-   fd = open(file_in, O_RDONLY | _O_BINARY);
+#ifdef _WIN32
+   fd = open(file_in, _O_RDONLY | _O_BINARY);
+#else
+   fd = open(file_in, O_RDONLY);
+#endif /* _WIN32 */
    if (fd < 0)
      {
 	fprintf(stderr, "%s: Error. cannot open file \"%s\" for input. %s\n",
