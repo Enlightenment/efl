@@ -20,6 +20,14 @@
 
 #include "edje_prefix.h"
 
+#ifdef _WIN32
+# define EDJE_DIR_SEPARATOR '\\'
+# define EDJE_DIR_SEPARATOR_S "\\"
+#else
+# define EDJE_DIR_SEPARATOR '/'
+# define EDJE_DIR_SEPARATOR_S "/"
+#endif /* _WIN32 */
+
 /* local subsystem functions */
 static int _e_prefix_share_hunt(void);
 static int _e_prefix_fallbacks(void);
@@ -55,21 +63,21 @@ e_prefix_determine(char *argv0)
      {
 	_prefix_path = strdup(getenv("E_PREFIX"));
 	if (getenv("E_BIN_DIR"))
-	  snprintf(buf, sizeof(buf), "%s/bin", getenv("E_BIN_DIR"));
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", getenv("E_BIN_DIR"));
 	else
-	  snprintf(buf, sizeof(buf), "%s/bin", _prefix_path);
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", _prefix_path);
 	_prefix_path_bin = strdup(buf);
 
 	if (getenv("E_LIB_DIR"))
-	  snprintf(buf, sizeof(buf), "%s/lib", getenv("E_LIB_DIR"));
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", getenv("E_LIB_DIR"));
 	else
-	  snprintf(buf, sizeof(buf), "%s/lib", _prefix_path);
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", _prefix_path);
 	_prefix_path_lib = strdup(buf);
-	
+
 	if (getenv("E_DATA_DIR"))
-	  snprintf(buf, sizeof(buf), "%s/"SHARE_D, getenv("E_DATA_DIR"));
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, getenv("E_DATA_DIR"));
 	else
-	  snprintf(buf, sizeof(buf), "%s/"SHARE_D, _prefix_path);
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, _prefix_path);
 	_prefix_path_data = strdup(buf);
 	return 1;
      }
@@ -91,13 +99,13 @@ e_prefix_determine(char *argv0)
     * data_dir   = /blah/whatever/share/enlightenment
     * lib_dir    = /blah/whatever/lib
     */
-   p = strrchr(_exe_path, '/');
+   p = strrchr(_exe_path, EDJE_DIR_SEPARATOR);
    if (p)
      {
 	p--;
 	while (p >= _exe_path)
 	  {
-	     if (*p == '/')
+	     if (*p == EDJE_DIR_SEPARATOR)
 	       {
 		  _prefix_path = malloc(p - _exe_path + 1);
 		  if (_prefix_path)
@@ -106,16 +114,16 @@ e_prefix_determine(char *argv0)
 		       _prefix_path[p - _exe_path] = 0;
 
 		       /* bin and lib always together */
-		       snprintf(buf, sizeof(buf), "%s/bin", _prefix_path);
+		       snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", _prefix_path);
 		       _prefix_path_bin = strdup(buf);
-		       snprintf(buf, sizeof(buf), "%s/lib", _prefix_path);
+		       snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", _prefix_path);
 		       _prefix_path_lib = strdup(buf);
-		       
+
 		       /* check if AUTHORS file is there - then our guess is right */
-		       snprintf(buf, sizeof(buf), "%s/"MAGIC_DAT, _prefix_path);
+		       snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S MAGIC_DAT, _prefix_path);
 		       if (stat(buf, &st) == 0)
 			 {
-			    snprintf(buf, sizeof(buf), "%s/"SHARE_D, _prefix_path);
+			    snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, _prefix_path);
 			    _prefix_path_data = strdup(buf);
 			 }
 		       /* AUTHORS file not there. time to start hunting! */
@@ -155,7 +163,7 @@ e_prefix_shutdown(void)
    E_FREE(_prefix_path_data);
    E_FREE(_prefix_path_lib);
 }
-   
+
 void
 e_prefix_fallback(void)
 {
@@ -196,18 +204,18 @@ _e_prefix_share_hunt(void)
 
    /* sometimes this isnt the case - so we need to do a more exhaustive search
     * through more parent and subdirs. hre is an example i have seen:
-    * 
+    *
     * /blah/whatever/exec/bin/exe
     * ->
     * /blah/whatever/exec/bin
     * /blah/whatever/common/share/enlightenment
     * /blah/whatever/exec/lib
     */
-   
+
    /* this is pure black magic to try and find data shares */
    /* 2. cache file doesn't exist or is invalid - we need to search - this is
     * where the real black magic begins */
-   
+
    /* BLACK MAGIC 1:
     * /blah/whatever/dir1/bin
     * /blah/whatever/dir2/share/enlightenment
@@ -216,7 +224,7 @@ _e_prefix_share_hunt(void)
      {
 	DIR                *dirp;
 	struct dirent      *dp;
-	
+
 	snprintf(buf, sizeof(buf), "%s", _prefix_path);
 	p = strrchr(buf, '/');
 	if (p) *p = 0;
@@ -224,7 +232,7 @@ _e_prefix_share_hunt(void)
 	if (dirp)
 	  {
 	     char *file;
-	     
+
 	     while ((dp = readdir(dirp)))
 	       {
 		  if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
@@ -242,7 +250,7 @@ _e_prefix_share_hunt(void)
 	     closedir(dirp);
 	  }
      }
-   
+
    /* BLACK MAGIC 2:
     * /blah/whatever/dir1/bin
     * /blah/whatever/share/enlightenment
@@ -259,13 +267,13 @@ _e_prefix_share_hunt(void)
 	     _prefix_path_data = strdup(buf2);
 	  }
      }
-   
+
    /* add more black magic as required as we discover weridnesss - remember
     * this is to save users having to set environment variables to tell
     * e where it lives, so e auto-adapts. so these code snippets are just
     * logic to figure that out for the user
     */
-   
+
    /* done. we found it - write cache file */
    if (_prefix_path_data)
      {
@@ -310,14 +318,14 @@ _e_prefix_try_proc(void)
    void *func = NULL;
 
    func = (void *)_e_prefix_try_proc;
-   f = fopen("/proc/self/maps", "r");
+   f = fopen("/proc/self/maps", "rb");
    if (!f) return 0;
    while (fgets(buf, sizeof(buf), f))
      {
 	int len;
 	char *p, mode[5] = "";
 	unsigned long ptr1 = 0, ptr2 = 0;
-	
+
 	len = strlen(buf);
 	if (buf[len - 1] == '\n')
 	  {
@@ -358,9 +366,13 @@ _e_prefix_try_argv(char *argv0)
    char *path, *p, *cp, *s;
    int len, lenexe;
    char buf[4096], buf2[4096], buf3[4096];
-   
+
    /* 1. is argv0 abs path? */
+#ifdef _WIN32
+   if (argv0[1] == ':')
+#else
    if (argv0[0] == '/')
+#endif
      {
 	_exe_path = strdup(argv0);
 	if (access(_exe_path, X_OK) == 0) return 1;
@@ -375,7 +387,7 @@ _e_prefix_try_argv(char *argv0)
 	  {
 	     snprintf(buf2, sizeof(buf2), "%s/%s", buf3, argv0);
 #ifdef _WIN32
-	     if (_fullpath(buf2, buf, _MAX_PATH))
+	     if (_fullpath(buf, buf2, _MAX_PATH))
 #else
 	     if (realpath(buf2, buf))
 #endif /* _WIN32 */
@@ -403,7 +415,7 @@ _e_prefix_try_argv(char *argv0)
 	     s[len] = '/';
 	     strcpy(s + len + 1, argv0);
 #ifdef _WIN32
-	     if (_fullpath(s, buf, _MAX_PATH))
+	     if (_fullpath(buf, s, _MAX_PATH))
 #else
 	     if (realpath(s, buf))
 #endif /* _WIN32 */
@@ -427,7 +439,7 @@ _e_prefix_try_argv(char *argv0)
 	s[len] = '/';
 	strcpy(s + len + 1, argv0);
 #ifdef _WIN32
-	if (_fullpath(s, buf, _MAX_PATH))
+	if (_fullpath(buf, s, _MAX_PATH))
 #else
 	if (realpath(s, buf))
 #endif /* _WIN32 */

@@ -706,7 +706,7 @@ compile(void)
 	free(def);
  */
      }
-   fd = open(file_in, O_RDONLY);
+   fd = open(file_in, O_RDONLY | _O_BINARY);
    if (fd < 0)
      {
 	fprintf(stderr, "%s: Error. cannot open file \"%s\" for input. %s\n",
@@ -722,7 +722,7 @@ compile(void)
    size = lseek(fd, 0, SEEK_END);
    lseek(fd, 0, SEEK_SET);
    data = malloc(size);
-   if (data && read(fd, data, size) == size)
+   if (data && (read(fd, data, size) == size))
 	parse(data, size);
    else
      {

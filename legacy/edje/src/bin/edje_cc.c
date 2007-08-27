@@ -49,7 +49,7 @@ main(int argc, char **argv)
    char rpath[PATH_MAX], rpath2[PATH_MAX];
 
    setlocale(LC_NUMERIC, "C");
-   
+
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
@@ -120,12 +120,16 @@ main(int argc, char **argv)
      }
 
    e_prefix_determine(argv[0]);
-   
+
    /* check whether file_in exists */
 #ifdef HAVE_REALPATH
    if (!realpath(file_in, rpath) || stat(rpath, &st) || !S_ISREG(st.st_mode))
 #else
+# ifdef _WIN32
+   if (!_fullpath(rpath, file_in, _MAX_PATH) || stat(rpath, &st) || !S_ISREG(st.st_mode))
+# else
    if (stat(file_in, &st) || !S_ISREG(st.st_mode))
+# endif /* _WIN32 */
 #endif
      {
 	fprintf(stderr, "%s: Error: file not found: %s.\n", progname, file_in);
@@ -136,7 +140,7 @@ main(int argc, char **argv)
    if (!file_out)
       {
          char *suffix;
-      
+
          if ((suffix = strstr(file_in,".edc")) && (suffix[4] == 0))
             {
                file_out = strdup(file_in);
@@ -157,7 +161,11 @@ main(int argc, char **argv)
 #ifdef HAVE_REALPATH
    if (realpath(file_out, rpath2) && !strcmp (rpath, rpath2))
 #else
+# ifdef _WIN32
+   if (_fullpath(rpath2, file_out, _MAX_PATH) && !strcmp (rpath, rpath2))
+# else
    if (!strcmp (file_in, file_out))
+# endif /* _WIN32 */
 #endif
      {
 	fprintf(stderr, "%s: Error: input file equals output file.\n", progname);
@@ -175,11 +183,11 @@ main(int argc, char **argv)
 				* does not load nicely as a NULL or 0 value
 				* and needs a special fallback initialization
 				*/
-   
+
    source_edd();
    source_fetch();
-   
-   data_setup();   
+
+   data_setup();
    compile();
    data_process_scripts();
    data_process_lookups();
@@ -187,6 +195,6 @@ main(int argc, char **argv)
    data_write();
 
    edje_shutdown();
-   
+
    return 0;
 }
