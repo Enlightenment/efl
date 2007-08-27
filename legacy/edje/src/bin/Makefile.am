@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES = \
+AM_CFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
@@ -16,8 +16,8 @@ EXTRA_DIST = @EDJE_RECC_PRG@
 EXTRA_SCRIPTS = edje_recc
 
 bin_PROGRAMS = \
-@EDJE_CC_PRG@ \
-@EDJE_DECC_PRG@
+edje_cc \
+edje_decc
 
 EXTRA_PROGRAMS = \
 edje_cc \
