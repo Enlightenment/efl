@@ -366,20 +366,28 @@ em_file_open(const char   *file,
          device = NULL;
          sscanf (file,"cdda://%d", &track);
       }
-      printf ("build cdda pipeline\n");
+      fprintf (stderr, "[Emotion] [gst] build CD Audio pipeline\n");
       if (!(emotion_pipeline_cdda_build (ev, device, track))) {
-        printf ("error building CA Audio pipeline\n");
+        fprintf (stderr, "[Emotion] [gst] error while building CD Audio pipeline\n");
         return 0;
       }
    }
    /* Dvd */
    else if (strstr (file, "dvd://")) {
 
-      printf ("build dvd pipeline \n");
+      fprintf (stderr, "[Emotion] [gst] build DVD pipeline \n");
       if (!(emotion_pipeline_dvd_build (ev, NULL))) {
-        printf ("error building DVD pipeline\n");
+        fprintf (stderr, "[Emotion] [gst] error while building DVD pipeline\n");
         return 0;
       }
+   }
+   /* http */
+   else if (strstr (file, "http://")) {
+     fprintf (stderr, "[Emotion] [gst] build URI pipeline \n");
+     if (!(emotion_pipeline_uri_build (ev, file))) {
+       fprintf (stderr, "[Emotion] [gst] error while building URI pipeline\n");
+       return 0;
+     }
    }
    /* Normal media file */
    else {
@@ -389,9 +397,9 @@ em_file_open(const char   *file,
         ? file + strlen ("file://")
         : file;
 
-      printf ("build file pipeline \n");
+      fprintf (stderr, "[Emotion] [gst] build file pipeline \n");
       if (!(emotion_pipeline_file_build (ev, filename))) {
-        printf ("error building File pipeline\n");
+        fprintf (stderr, "[Emotion] [gst] error while building File pipeline\n");
         return 0;
       }
    }

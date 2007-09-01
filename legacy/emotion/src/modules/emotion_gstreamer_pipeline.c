@@ -26,13 +26,17 @@ static void cb_handoff (GstElement *fakesrc,
 
 
 static Emotion_Video_Sink * _emotion_video_sink_new (Emotion_Gstreamer_Video *ev);
-static void                 _emotion_video_sink_free (Emotion_Gstreamer_Video *ev, Emotion_Video_Sink *asink);
+static void                 _emotion_video_sink_free (Emotion_Gstreamer_Video *ev, Emotion_Video_Sink *vsink);
+static void                 _emotion_video_sink_fill (Emotion_Video_Sink *vsink, GstPad *pad, GstCaps *caps);
+
 static Emotion_Audio_Sink * _emotion_audio_sink_new (Emotion_Gstreamer_Video *ev);
 static void                 _emotion_audio_sink_free (Emotion_Gstreamer_Video *ev, Emotion_Audio_Sink *asink);
+static GstElement         * _emotion_audio_sink_create (Emotion_Gstreamer_Video *ev, int index);
+static void                 _emotion_audio_sink_fill (Emotion_Audio_Sink *asink, GstPad *pad, GstCaps *caps);
 
 static Emotion_Video_Sink * _emotion_visualization_sink_create (Emotion_Gstreamer_Video *ev, Emotion_Audio_Sink *asink);
-static GstElement         * _emotion_audio_sink_create (Emotion_Gstreamer_Video *ev, int index);
 
+static void                 _emotion_streams_sinks_get (Emotion_Gstreamer_Video *ev, GstElement *decoder);
 
 gboolean
 emotion_pipeline_pause (GstElement *pipeline)
@@ -78,7 +82,7 @@ cb_handoff (GstElement *fakesrc,
       write(ev->fd_ev_write, buf, sizeof(buf));
    }
    else {
-     Emotion_Audio_Sink *asink; 
+     Emotion_Audio_Sink *asink;
      asink = (Emotion_Audio_Sink *)ecore_list_index_goto (ev->audio_sinks, ev->audio_sink_nbr);
      _emotion_video_pos_update(ev->obj, ev->position, asink->length_time);
    }
@@ -211,7 +215,7 @@ emotion_pipeline_dvd_build (void *video, const char *device)
    if (!emotion_pipeline_pause (ev->pipeline))
      goto failure_gstreamer_pause;
 
-   while (no_more_pads == 0) { 
+   while (no_more_pads == 0) {
    g_print ("toto\n");}
    no_more_pads = 0;
 
@@ -237,9 +241,6 @@ emotion_pipeline_dvd_build (void *video, const char *device)
          /* video stream */
          if (g_str_has_prefix (str, "video/mpeg")) {
             Emotion_Video_Sink *vsink;
-            GstStructure       *structure;
-            const GValue       *val;
-            GstQuery           *query;
             GstPad             *sink_pad;
             GstCaps            *sink_caps;
 
@@ -248,70 +249,27 @@ emotion_pipeline_dvd_build (void *video, const char *device)
             sink_caps = gst_pad_get_caps (sink_pad);
             str = gst_caps_to_string (sink_caps);
             g_print (" ** caps v !! %s\n", str);
-            structure = gst_caps_get_structure (sink_caps, 0);
 
-            gst_structure_get_int (structure, "width", &vsink->width);
-            gst_structure_get_int (structure, "height", &vsink->height);
+            _emotion_video_sink_fill (vsink, sink_pad, sink_caps);
 
-            vsink->fps_num = 1;
-            vsink->fps_den = 1;
-            val = gst_structure_get_value (structure, "framerate");
-            if (val) {
-               vsink->fps_num = gst_value_get_fraction_numerator (val);
-               vsink->fps_den = gst_value_get_fraction_denominator (val);
-            }
-            if (g_str_has_prefix(str, "video/x-raw-yuv")) {
-               val = gst_structure_get_value (structure, "format");
-               vsink->fourcc = gst_value_get_fourcc (val);
-            }
-            else if (g_str_has_prefix(str, "video/x-raw-rgb")) {
-              vsink->fourcc = GST_MAKE_FOURCC ('A','R','G','B');
-            }
-            else
-               vsink->fourcc = 0;
-
-            query = gst_query_new_duration (GST_FORMAT_TIME);
-            if (gst_pad_query (sink_pad, query)) {
-               gint64 time;
-
-               gst_query_parse_duration (query, NULL, &time);
-               vsink->length_time = (double)time / (double)GST_SECOND;
-            }
-            gst_query_unref (query);
             gst_caps_unref (sink_caps);
             gst_object_unref (sink_pad);
          }
          /* audio stream */
          else if (g_str_has_prefix (str, "audio/")) {
             Emotion_Audio_Sink *asink;
-            GstStructure       *structure;
-            GstQuery           *query;
             GstPad             *sink_pad;
             GstCaps            *sink_caps;
 
             asink = (Emotion_Audio_Sink *)ecore_list_next (ev->audio_sinks);
             sink_pad = gst_element_get_pad (gst_bin_get_by_name (GST_BIN (ev->pipeline), "a52dec"), "src");
             sink_caps = gst_pad_get_caps (sink_pad);
-            str = gst_caps_to_string (sink_caps);
-            g_print (" ** caps a !! %s\n", str);
 
-            structure = gst_caps_get_structure (GST_CAPS (sink_caps), 0);
-            gst_structure_get_int (structure, "channels", &asink->channels);
-            gst_structure_get_int (structure, "rate", &asink->samplerate);
-
-            query = gst_query_new_duration (GST_FORMAT_TIME);
-            if (gst_pad_query (sink_pad, query)) {
-               gint64 time;
-
-               gst_query_parse_duration (query, NULL, &time);
-               asink->length_time = (double)time / (double)GST_SECOND;
-            }
-            gst_query_unref (query);
+            _emotion_audio_sink_fill (asink, sink_pad, sink_caps);
          }
-      finalize:
-          gst_caps_unref (caps);
-          g_free (str);
-          gst_object_unref (pad);
+         gst_caps_unref (caps);
+         g_free (str);
+         gst_object_unref (pad);
       }
       gst_iterator_free (it);
    }
@@ -345,6 +303,66 @@ emotion_pipeline_dvd_build (void *video, const char *device)
 }
 
 int
+emotion_pipeline_uri_build (void *video, const char *uri)
+{
+   GstElement              *src;
+   GstElement              *decodebin;
+   Emotion_Gstreamer_Video *ev;
+
+   ev = (Emotion_Gstreamer_Video *)video;
+   if (!ev) return 0;
+
+   if (gst_uri_protocol_is_supported(GST_URI_SRC, uri))
+     goto failure_src;
+   src = gst_element_make_from_uri (GST_URI_SRC, uri, "src");
+   if (!src)
+     goto failure_src;
+   g_object_set (G_OBJECT (src), "location", uri, NULL);
+
+   decodebin = gst_element_factory_make ("decodebin", "decodebin");
+   if (!decodebin)
+     goto failure_decodebin;
+   g_signal_connect (decodebin, "new-decoded-pad",
+                     G_CALLBACK (file_new_decoded_pad_cb), ev);
+
+   gst_bin_add_many (GST_BIN (ev->pipeline), src, decodebin, NULL);
+   if (!gst_element_link (src, decodebin))
+     goto failure_link;
+
+   if (!emotion_pipeline_pause (ev->pipeline))
+     goto failure_gstreamer_pause;
+
+   _emotion_streams_sinks_get (ev, decodebin);
+
+   /* The first vsink is a valid Emotion_Video_Sink * */
+   /* If no video stream is found, it's a visualisation sink */
+   {
+      Emotion_Video_Sink *vsink;
+
+      vsink = (Emotion_Video_Sink *)ecore_list_first_goto (ev->video_sinks);
+      if (vsink && vsink->sink) {
+         g_object_set (G_OBJECT (vsink->sink), "sync", TRUE, NULL);
+         g_object_set (G_OBJECT (vsink->sink), "signal-handoffs", TRUE, NULL);
+         g_signal_connect (G_OBJECT (vsink->sink),
+                           "handoff",
+                           G_CALLBACK (cb_handoff), ev);
+      }
+   }
+
+   return 1;
+
+ failure_gstreamer_pause:
+ failure_link:
+   gst_element_set_state (ev->pipeline, GST_STATE_NULL);
+   gst_bin_remove (GST_BIN (ev->pipeline), decodebin);
+ failure_decodebin:
+   gst_bin_remove (GST_BIN (ev->pipeline), src);
+ failure_src:
+
+   return 0;
+}
+
+int
 emotion_pipeline_file_build (void *video, const char *file)
 {
    GstElement              *filesrc;
@@ -372,121 +390,7 @@ emotion_pipeline_file_build (void *video, const char *file)
    if (!emotion_pipeline_pause (ev->pipeline))
      goto failure_gstreamer_pause;
 
-   /* We get the informations of streams */
-   ecore_list_first_goto (ev->video_sinks);
-   ecore_list_first_goto (ev->audio_sinks);
-
-   {
-      GstIterator *it;
-      gpointer     data;
-
-      it = gst_element_iterate_src_pads (decodebin);
-      while (gst_iterator_next (it, &data) == GST_ITERATOR_OK) {
-         GstPad  *pad;
-         GstCaps *caps;
-         gchar   *str;
-
-         pad = GST_PAD (data);
-
-         caps = gst_pad_get_caps (pad);
-         str = gst_caps_to_string (caps);
-         /* video stream */
-         if (g_str_has_prefix (str, "video/")) {
-            Emotion_Video_Sink *vsink;
-            GstStructure       *structure;
-            const GValue       *val;
-            GstQuery           *query;
-
-            vsink = (Emotion_Video_Sink *)ecore_list_next (ev->video_sinks);
-            structure = gst_caps_get_structure (GST_CAPS (caps), 0);
-
-            gst_structure_get_int (structure, "width", &vsink->width);
-            gst_structure_get_int (structure, "height", &vsink->height);
-
-            vsink->fps_num = 1;
-            vsink->fps_den = 1;
-            val = gst_structure_get_value (structure, "framerate");
-            if (val) {
-               vsink->fps_num = gst_value_get_fraction_numerator (val);
-               vsink->fps_den = gst_value_get_fraction_denominator (val);
-            }
-            if (g_str_has_prefix(str, "video/x-raw-yuv")) {
-               val = gst_structure_get_value (structure, "format");
-               vsink->fourcc = gst_value_get_fourcc (val);
-            }
-            else if (g_str_has_prefix(str, "video/x-raw-rgb")) {
-              vsink->fourcc = GST_MAKE_FOURCC ('A','R','G','B');
-            }
-            else
-               vsink->fourcc = 0;
-
-            query = gst_query_new_duration (GST_FORMAT_TIME);
-            if (gst_pad_query (pad, query)) {
-               gint64 time;
-
-               gst_query_parse_duration (query, NULL, &time);
-               vsink->length_time = (double)time / (double)GST_SECOND;
-            }
-            gst_query_unref (query);
-         }
-         /* audio stream */
-         else if (g_str_has_prefix (str, "audio/")) {
-            Emotion_Audio_Sink *asink;
-            GstStructure       *structure;
-            GstQuery           *query;
-            gint                index;
-
-            asink = (Emotion_Audio_Sink *)ecore_list_next (ev->audio_sinks);
-
-            structure = gst_caps_get_structure (GST_CAPS (caps), 0);
-            gst_structure_get_int (structure, "channels", &asink->channels);
-            gst_structure_get_int (structure, "rate", &asink->samplerate);
-
-            query = gst_query_new_duration (GST_FORMAT_TIME);
-            if (gst_pad_query (pad, query)) {
-               gint64 time;
-
-               gst_query_parse_duration (query, NULL, &time);
-               asink->length_time = (double)time / (double)GST_SECOND;
-            }
-            gst_query_unref (query);
-
-            index = ecore_list_index (ev->audio_sinks);
-
-            if (ecore_list_count (ev->video_sinks) == 0) {
-              if (index == 1) {
-                 Emotion_Video_Sink *vsink;
-
-                 vsink = _emotion_visualization_sink_create (ev, asink);
-                 if (!vsink) goto finalize;
-              }
-            }
-            else {
-               gchar               buf[128];
-               GstElement         *visbin;
-
-               g_snprintf (buf, 128, "visbin%d", index);
-               visbin = gst_bin_get_by_name (GST_BIN (ev->pipeline), buf);
-               if (visbin) {
-                  GstPad *srcpad;
-                  GstPad *sinkpad;
-
-                  sinkpad = gst_element_get_pad (visbin, "sink");
-                  srcpad = gst_pad_get_peer (sinkpad);
-                  gst_pad_unlink (srcpad, sinkpad);
-
-                  gst_object_unref (srcpad);
-                  gst_object_unref (sinkpad);
-               }
-            }
-         }
-      finalize:
-          gst_caps_unref (caps);
-          g_free (str);
-          gst_object_unref (pad);
-      }
-      gst_iterator_free (it);
-   }
+   _emotion_streams_sinks_get (ev, decodebin);
 
    /* The first vsink is a valid Emotion_Video_Sink * */
    /* If no video stream is found, it's a visualisation sink */
@@ -976,3 +880,140 @@ _emotion_audio_sink_create (Emotion_Gstreamer_Video *ev, int index)
 
    return bin;
 }
+
+static void
+_emotion_streams_sinks_get (Emotion_Gstreamer_Video *ev, GstElement *decoder)
+{
+   GstIterator *it;
+   gpointer     data;
+
+   ecore_list_first_goto (ev->video_sinks);
+   ecore_list_first_goto (ev->audio_sinks);
+
+   it = gst_element_iterate_src_pads (decoder);
+   while (gst_iterator_next (it, &data) == GST_ITERATOR_OK) {
+      GstPad  *pad;
+      GstCaps *caps;
+      gchar   *str;
+
+      pad = GST_PAD (data);
+
+      caps = gst_pad_get_caps (pad);
+      str = gst_caps_to_string (caps);
+      g_print ("caps !! %s\n", str);
+
+      /* video stream */
+      if (g_str_has_prefix (str, "video/")) {
+         Emotion_Video_Sink *vsink;
+
+         vsink = (Emotion_Video_Sink *)ecore_list_next (ev->video_sinks);
+
+         _emotion_video_sink_fill (vsink, pad, caps);
+      }
+      /* audio stream */
+      else if (g_str_has_prefix (str, "audio/")) {
+         Emotion_Audio_Sink *asink;
+         gint                index;
+
+         asink = (Emotion_Audio_Sink *)ecore_list_next (ev->audio_sinks);
+
+         _emotion_audio_sink_fill (asink, pad, caps);
+
+         index = ecore_list_index (ev->audio_sinks);
+
+         if (ecore_list_count (ev->video_sinks) == 0) {
+            if (index == 1) {
+               Emotion_Video_Sink *vsink;
+
+               vsink = _emotion_visualization_sink_create (ev, asink);
+               if (!vsink) goto finalize;
+            }
+         }
+         else {
+            gchar       buf[128];
+            GstElement *visbin;
+
+            g_snprintf (buf, 128, "visbin%d", index);
+            visbin = gst_bin_get_by_name (GST_BIN (ev->pipeline), buf);
+            if (visbin) {
+               GstPad *srcpad;
+               GstPad *sinkpad;
+
+               sinkpad = gst_element_get_pad (visbin, "sink");
+               srcpad = gst_pad_get_peer (sinkpad);
+               gst_pad_unlink (srcpad, sinkpad);
+
+               gst_object_unref (srcpad);
+               gst_object_unref (sinkpad);
+            }
+         }
+      }
+   finalize:
+      gst_caps_unref (caps);
+      g_free (str);
+      gst_object_unref (pad);
+   }
+   gst_iterator_free (it);
+}
+
+static void
+_emotion_video_sink_fill (Emotion_Video_Sink *vsink, GstPad *pad, GstCaps *caps)
+{
+   GstStructure *structure;
+   GstQuery     *query;
+   const GValue *val;
+   gchar        *str;
+
+   structure = gst_caps_get_structure (caps, 0);
+   str = gst_caps_to_string (caps);
+
+   gst_structure_get_int (structure, "width", &vsink->width);
+   gst_structure_get_int (structure, "height", &vsink->height);
+
+   vsink->fps_num = 1;
+   vsink->fps_den = 1;
+   val = gst_structure_get_value (structure, "framerate");
+   if (val) {
+      vsink->fps_num = gst_value_get_fraction_numerator (val);
+      vsink->fps_den = gst_value_get_fraction_denominator (val);
+   }
+   if (g_str_has_prefix(str, "video/x-raw-yuv")) {
+      val = gst_structure_get_value (structure, "format");
+      vsink->fourcc = gst_value_get_fourcc (val);
+   }
+   else if (g_str_has_prefix(str, "video/x-raw-rgb"))
+     vsink->fourcc = GST_MAKE_FOURCC ('A','R','G','B');
+   else
+     vsink->fourcc = 0;
+
+   query = gst_query_new_duration (GST_FORMAT_TIME);
+   if (gst_pad_query (pad, query)) {
+      gint64 time;
+
+      gst_query_parse_duration (query, NULL, &time);
+      vsink->length_time = (double)time / (double)GST_SECOND;
+   }
+   g_free (str);
+   gst_query_unref (query);
+}
+
+static void
+_emotion_audio_sink_fill (Emotion_Audio_Sink *asink, GstPad *pad, GstCaps *caps)
+{
+   GstStructure *structure;
+   GstQuery     *query;
+
+   structure = gst_caps_get_structure (caps, 0);
+
+   gst_structure_get_int (structure, "channels", &asink->channels);
+   gst_structure_get_int (structure, "rate", &asink->samplerate);
+
+   query = gst_query_new_duration (GST_FORMAT_TIME);
+   if (gst_pad_query (pad, query)) {
+      gint64 time;
+
+      gst_query_parse_duration (query, NULL, &time);
+      asink->length_time = (double)time / (double)GST_SECOND;
+   }
+   gst_query_unref (query);
+ }
