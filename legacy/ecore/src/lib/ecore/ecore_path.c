@@ -1,5 +1,9 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "ecore_private.h"
 #include "Ecore_Data.h"
+#include "Ecore_Str.h"
 
 static Ecore_List *group_list = NULL;
 
@@ -23,28 +27,35 @@ Ecore_Path_Group *__ecore_path_group_find_id(int id);
 EAPI int
 ecore_path_group_new(const char *group_name)
 {
-   Ecore_Path_Group *last;
+   int lastid;
    Ecore_Path_Group *group;
 
    CHECK_PARAM_POINTER_RETURN("group_name", group_name, -1);
 
    if (!group_list)
-     group_list = ecore_list_new();
+     {
+	group_list = ecore_list_new();
+	lastid = 0;
+     }
    else
      {
+	Ecore_Path_Group *last;
+
 	group = __ecore_path_group_find(group_name);
 	if (group)
 	  return -1;
+
+	last = ecore_list_last_goto(group_list);
+	lastid = last->id;
      }
 
    group = (Ecore_Path_Group *)malloc(sizeof(Ecore_Path_Group));
    memset(group, 0, sizeof(Ecore_Path_Group));
 
    group->name = strdup(group_name);
-   ecore_list_append(group_list, group);
+   group->id = lastid + 1;
 
-   last = ecore_list_last_goto(group_list);
-   group->id = last->id + 1;
+   ecore_list_append(group_list, group);
 
    return group->id;
 }
@@ -258,6 +269,78 @@ ecore_path_group_available(int group_id)
    return avail;
 }
 
+/**
+ * Retrieves a list of all available plugins in the given path.
+ * @param   group_id The identifier for the given path.
+ * @return  A pointer to a newly allocated list of all plugins found in the 
+ *          paths identified by @p group_id.  @c NULL otherwise.
+ * @ingroup Ecore_Plugin
+ */
+EAPI Ecore_List *
+ecore_plugin_available_get(int group_id)
+{
+   Ecore_List *avail = NULL;
+   Ecore_Hash *plugins = NULL;
+   Ecore_Path_Group *group;
+   char *path;
+
+   group = __ecore_path_group_find_id(group_id);
+
+   if (!group || !group->paths || ecore_list_empty_is(group->paths))
+     return NULL;
+
+   ecore_list_first_goto(group->paths);
+   plugins = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+   ecore_hash_free_key_cb_set(plugins, free);
+
+   while ((path = ecore_list_next(group->paths)) != NULL)
+     {
+	DIR *dir;
+	struct stat st;
+	struct dirent *d;
+
+	stat(path, &st);
+
+	if (!S_ISDIR(st.st_mode))
+	  continue;
+
+	dir = opendir(path);
+
+	if (!dir)
+	  continue;
+
+	while ((d = readdir(dir)) != NULL)
+	  {
+	     char ppath[PATH_MAX];
+	     char *ext;
+	     
+	     if (*d->d_name == '.')
+	       continue;
+
+	     if (!ecore_str_has_suffix(d->d_name, ".so"))
+	       continue;
+
+	     snprintf(ppath, PATH_MAX, "%s/%s", path, d->d_name);
+
+	     stat(ppath, &st);
+
+	     if (!S_ISREG(st.st_mode))
+	       continue;
+
+	     ecore_strlcpy(ppath, d->d_name, sizeof(ppath));
+	     ext = strrchr(ppath, '.');
+	     *ext = '\0';
+	     
+	     ecore_hash_set(plugins, strdup(ppath), (void *)1);
+	  }
+     }
+   ecore_hash_free_key_cb_set(plugins, NULL);
+   avail = ecore_hash_keys(plugins);
+   ecore_list_free_cb_set(avail, free);
+   ecore_hash_destroy(plugins);
+
+   return avail;
+}
 /*
  * Find the specified group name
  */
