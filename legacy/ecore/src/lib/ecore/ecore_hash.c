@@ -96,7 +96,8 @@ ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb comp
 /**
  * Sets the function to destroy the keys of the given hash.
  * @param   hash     The given hash.
- * @param   function The function used to free the node keys.
+ * @param   function The function used to free the node keys. NULL is a
+ *          valid value and means that no function will be called.
  * @return  @c TRUE on success, @c FALSE on error.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
@@ -104,7 +105,6 @@ EAPI int
 ecore_hash_free_key_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
-   CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
 
    hash->free_key = function;
 
@@ -114,7 +114,8 @@ ecore_hash_free_key_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
 /**
  * Sets the function to destroy the values in the given hash.
  * @param   hash     The given hash.
- * @param   function The function that will free the node values.
+ * @param   function The function that will free the node values. NULL is a
+ *          valid value and means that no function will be called.
  * @return  @c TRUE on success, @c FALSE on error
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
@@ -122,7 +123,6 @@ EAPI int
 ecore_hash_free_value_cb_set(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
-   CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
 
    hash->free_value = function;
 
