@@ -293,7 +293,7 @@ extern "C" {
    /*
     * Create a new path group
     */
-   EAPI int ecore_path_group_new(char *group_name);
+   EAPI int ecore_path_group_new(const char *group_name);
    
    /*
     * Destroy a previous path group
@@ -303,17 +303,17 @@ extern "C" {
    /*
     * Add a directory to be searched for files
     */
-   EAPI void ecore_path_group_add(int group_id, char *path);
+   EAPI void ecore_path_group_add(int group_id, const char *path);
    
    /*
     * Remove a directory to be searched for files
     */
-   EAPI void ecore_path_group_remove(int group_id, char *path);
+   EAPI void ecore_path_group_remove(int group_id, const char *path);
    
    /*
     * Find the absolute path if it exists in the group of paths
     */
-   EAPI char * ecore_path_group_find(int group_id, char *name);
+   EAPI char * ecore_path_group_find(int group_id, const char *name);
    
    /*
     * Get a list of all the available files in a path set

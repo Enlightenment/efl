@@ -3,7 +3,7 @@
 
 static Ecore_List *group_list = NULL;
 
-Ecore_Path_Group *__ecore_path_group_find(char *name);
+Ecore_Path_Group *__ecore_path_group_find(const char *name);
 Ecore_Path_Group *__ecore_path_group_find_id(int id);
 
 /**
@@ -21,7 +21,7 @@ Ecore_Path_Group *__ecore_path_group_find_id(int id);
  * @ingroup Ecore_Path_Group
  */
 EAPI int
-ecore_path_group_new(char *group_name)
+ecore_path_group_new(const char *group_name)
 {
    Ecore_Path_Group *last;
    Ecore_Path_Group *group;
@@ -90,7 +90,7 @@ ecore_path_group_del(int group_id)
  * @ingroup Ecore_Path_Group
  */
 EAPI void
-ecore_path_group_add(int group_id, char *path)
+ecore_path_group_add(int group_id, const char *path)
 {
    Ecore_Path_Group *group;
 
@@ -114,7 +114,7 @@ ecore_path_group_add(int group_id, char *path)
  * @ingroup Ecore_Path_Group
  */
 EAPI void
-ecore_path_group_remove(int group_id, char *path)
+ecore_path_group_remove(int group_id, const char *path)
 {
    char *found;
    Ecore_Path_Group *group;
@@ -153,7 +153,7 @@ ecore_path_group_remove(int group_id, char *path)
  * @ingroup Ecore_Path_Group
  */
 EAPI char *
-ecore_path_group_find(int group_id, char *name)
+ecore_path_group_find(int group_id, const char *name)
 {
    int r;
    char *p;
@@ -262,7 +262,7 @@ ecore_path_group_available(int group_id)
  * Find the specified group name
  */
 Ecore_Path_Group *
-__ecore_path_group_find(char *name)
+__ecore_path_group_find(const char *name)
 {
    Ecore_Path_Group *group;
 
