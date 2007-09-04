@@ -324,15 +324,13 @@ extern "C" {
    typedef struct _ecore_plugin Ecore_Plugin;
    struct _ecore_plugin
      {
-	int group;
-	char *name;
 	void *handle;
      };
    
    /*
     * Load the specified plugin
     */
-   EAPI Ecore_Plugin *ecore_plugin_load(int group_id, const char *plugin);
+   EAPI Ecore_Plugin *ecore_plugin_load(int group_id, const char *plugin, const char *version);
    
    /*
     * Unload the specified plugin
@@ -342,8 +340,8 @@ extern "C" {
    /*
     * Lookup the specified symbol for the plugin
     */
-   EAPI void *ecore_plugin_call(Ecore_Plugin * plugin, const char *symbol_name);
-   
+   EAPI void *ecore_plugin_symbol_get(Ecore_Plugin * plugin, const char *symbol_name);
+
    EAPI Ecore_List *ecore_plugin_available_get(int group_id);
 
 

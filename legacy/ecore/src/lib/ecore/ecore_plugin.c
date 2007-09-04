@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #ifndef _WIN32
 # include <dlfcn.h>
 # include "ecore_private.h"
@@ -15,12 +18,14 @@ static Ecore_List *loaded_plugins = NULL;
  * Loads the specified plugin from the specified path group.
  * @param   group_id    The path group to search for the plugin to load
  * @param   plugin_name The name of the plugin to load.
+ * @param   version     The interface version of the plugin. With version
+ *                      equal to NULL the default will be loaded.
  * @return  A pointer to the newly loaded plugin on success, @c NULL on
  *          failure.
  * @ingroup Ecore_Plugin
  */
 EAPI Ecore_Plugin *
-ecore_plugin_load(int group_id, const char *plugin_name)
+ecore_plugin_load(int group_id, const char *plugin_name, const char *version)
 {
    char *path;
    char temp[PATH_MAX];
@@ -30,14 +35,28 @@ ecore_plugin_load(int group_id, const char *plugin_name)
 
    CHECK_PARAM_POINTER_RETURN("plugin_name", plugin_name, NULL);
 
-   snprintf(temp, PATH_MAX, "%s.so", plugin_name);
+   if (!version || *version == '\0')
+     snprintf(temp, sizeof(temp), "%s.so", plugin_name);
+   else
+     snprintf(temp, sizeof(temp), "%s.so.%s", plugin_name, version);
+
    path = ecore_path_group_find(group_id, temp);
+   if (!path && version)
+     {
+	/* if this file doesn't exist try a different order */
+	snprintf(temp, sizeof(temp), "%s.%s.so", plugin_name, version);
+	path = ecore_path_group_find(group_id, temp);
+     }
+   
    if (!path)
      return NULL;
 
    handle = dlopen(path, RTLD_LAZY);
    if (!handle)
-     return NULL;
+     {
+	FREE(path);
+	return NULL;
+     }
 
    /*
     * Allocate the new plugin and initialize it's fields
@@ -46,12 +65,11 @@ ecore_plugin_load(int group_id, const char *plugin_name)
    if (!plugin)
      {
        dlclose(handle);
+       FREE(path);
        return NULL;
      }
    memset(plugin, 0, sizeof(Ecore_Plugin));
 
-   plugin->group = group_id;
-   plugin->name = strdup(plugin_name);
    plugin->handle = handle;
 
    /*
@@ -91,7 +109,6 @@ ecore_plugin_unload(Ecore_Plugin *plugin)
 
    dlclose(plugin->handle);
 
-   FREE(plugin->name);
    FREE(plugin);
 }
 
@@ -103,7 +120,7 @@ ecore_plugin_unload(Ecore_Plugin *plugin)
  * @ingroup Ecore_Plugin
  */
 EAPI void *
-ecore_plugin_call(Ecore_Plugin *plugin, const char *symbol_name)
+ecore_plugin_symbol_get(Ecore_Plugin *plugin, const char *symbol_name)
 {
    void *ret;
 

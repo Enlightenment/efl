@@ -331,7 +331,13 @@ ecore_plugin_available_get(int group_id)
 	     ext = strrchr(ppath, '.');
 	     *ext = '\0';
 	     
-	     ecore_hash_set(plugins, strdup(ppath), (void *)1);
+	     if (!ecore_hash_get(plugins, ppath))
+	       {
+		  char *key;
+
+		  key = strdup(ppath);
+		  ecore_hash_set(plugins, key, key);
+	       }
 	  }
      }
    ecore_hash_free_key_cb_set(plugins, NULL);
