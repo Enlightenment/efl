@@ -50,3 +50,4 @@ installed_headers_DATA = $(EFREETHEADERS) $(EFREETMIMEHEADERS)
 libefreet_la_LIBADD = @ECORE_LIBS@
 libefreet_la_LDFLAGS = -version-info 1:0:0
 
+libefreet_mime_la_LIBADD = @ECORE_LIBS@ libefreet.la
