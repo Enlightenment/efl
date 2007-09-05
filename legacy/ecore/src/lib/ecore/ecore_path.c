@@ -339,7 +339,9 @@ ecore_plugin_available_get(int group_id)
 		  ecore_hash_set(plugins, key, key);
 	       }
 	  }
+	closedir(dir);
      }
+
    ecore_hash_free_key_cb_set(plugins, NULL);
    avail = ecore_hash_keys(plugins);
    ecore_list_free_cb_set(avail, free);
