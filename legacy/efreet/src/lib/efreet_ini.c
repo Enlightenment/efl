@@ -43,7 +43,7 @@ efreet_ini_shutdown(void)
  * @internal
  * @param file: The file to parse
  * @return Returns a new Efreet_Ini structure initialized with the contents
- * of @a file, or NULL on failure
+ * of @a file, or NULL on memory allocation failure
  * @brief Creates and initializes a new Ini structure with the contents of
  * @a file, or NULL on failure 
  */ 
@@ -56,6 +56,11 @@ efreet_ini_new(const char *file)
     if (!ini) return NULL;
 
     ini->data = efreet_ini_parse(file);
+    if (!ini->data)
+    {
+        FREE(ini);
+        return NULL;
+    }
 
     return ini;
 }
@@ -93,12 +98,14 @@ efreet_ini_parse(const char *file)
     buf = read_buf = static_buf;
     read_len = static_buf_len;
 
-    f = fopen(file, "r");
-    if (!f) return NULL;
-
     data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+    if (!data) return NULL;
+
     ecore_hash_free_key_cb_set(data, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_free_value_cb_set(data, ECORE_FREE_CB(ecore_hash_destroy));
+
+    f = fopen(file, "rb");
+    if (!f) return data;
 
     /* if a line is longer than the buffer size, this \n will get overwritten. */
     read_buf[read_len - 2] = '\n';
@@ -268,7 +275,7 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
     FILE *f;
     if (!ini) return 0;
 
-    f = fopen(file, "w");
+    f = fopen(file, "wb");
     if (!f) return 0;
     ecore_hash_for_each_node(ini->data, ECORE_FOR_EACH(efreet_ini_section_save), f);
     fclose(f);
