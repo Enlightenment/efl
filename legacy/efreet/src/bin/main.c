@@ -135,9 +135,9 @@ main(int argc, char ** argv)
         double start;
 
         /* we've been given specific tests and it isn't in the list */
-        if (run && !ecore_list_find(run, ECORE_COMPARE_CB(strcasecmp), 
+        if (run && !ecore_list_find(run, ECORE_COMPARE_CB(strcasecmp),
                                                         tests[i].name))
-            continue; 
+            continue;
 
         if (!efreet_init())
         {
@@ -147,11 +147,11 @@ main(int argc, char ** argv)
 
         num_tests ++;
 
-        printf("%s:\t\t", tests[i].name); 
+        printf("%s:\t\t", tests[i].name);
         fflush(stdout);
         start = ecore_time_get();
         ret = tests[i].cb();
-        printf("%s in %.3f seconds\n", (ret ? "PASSED" : "FAILED"), 
+        printf("%s in %.3f seconds\n", (ret ? "PASSED" : "FAILED"),
                                             ecore_time_get() - start);
         passed += ret;
 
@@ -168,4 +168,3 @@ main(int argc, char ** argv)
     printf("Total run: %.3f seconds\n", ecore_time_get() - total);
     return 0;
 }
-

@@ -11,7 +11,7 @@ ef_mime_cb_get(void)
 {
     const char *mime = NULL;
     int misses = 0, i = 0;
-    struct 
+    struct
     {
         char *file;
         char *mime;
@@ -22,8 +22,8 @@ ef_mime_cb_get(void)
         {PACKAGE_DATA_DIR"/efreet/test/sub", "inode/directory"},
         {NULL, NULL}
     };
-    
-    
+
+
     if (!efreet_mime_init())
     {
         printf("Could not init efreet\n");
@@ -31,10 +31,10 @@ ef_mime_cb_get(void)
     }
 
     for (i = 0; files[i].file != NULL; ++i)
-    {    
+    {
         mime = efreet_mime_type_get(files[i].file);
         if (!mime)
-        { 
+        {
             printf("Got %s as null instead of %s\n", files[i].file, files[i].mime);
             misses ++;
         }
@@ -44,8 +44,8 @@ ef_mime_cb_get(void)
             misses ++;
         }
     }
-    
+
     efreet_mime_shutdown();
-    
+
     return !misses;
 }

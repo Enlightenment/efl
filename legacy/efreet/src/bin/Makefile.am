@@ -1,4 +1,6 @@
+
 SUBDIRS = data compare
+
 MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES = \

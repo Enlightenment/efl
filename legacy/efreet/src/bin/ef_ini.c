@@ -13,7 +13,7 @@ ef_cb_ini_parse(void)
     putenv("LC_ALL=en_US");
 
     ini = efreet_ini_new(PACKAGE_DATA_DIR"/efreet/test/test.ini");
-    if (!ini) 
+    if (!ini)
     {
         printf("efreet_ini_parse() Failed to initialize Efreet_Ini\n");
         return 0;
@@ -26,14 +26,14 @@ ef_cb_ini_parse(void)
         unsigned int bval;
 
         val = efreet_ini_string_get(ini, "Name");
-        if (!val || strcmp(val, "Foo Bar")) 
+        if (!val || strcmp(val, "Foo Bar"))
         {
             printf("efreet_ini_string_get() Name parsed incorrectly\n");
             ret = 0;
         }
 
         val = efreet_ini_localestring_get(ini, "Name");
-        if (!val || strcmp(val, "English Foo Bar")) 
+        if (!val || strcmp(val, "English Foo Bar"))
         {
             printf("efreet_ini_localestring_get() Name parsed incorrectly\n");
             ret = 0;
@@ -88,7 +88,7 @@ ef_cb_ini_parse(void)
             ret = 0;
         }
     }
-    else 
+    else
     {
         printf("efreet_ini_section_set() Failed to set 'contact' section\n");
         ret = 0;
@@ -105,7 +105,7 @@ ef_cb_ini_long_line(void)
   Efreet_Ini *ini;
   int ret = 1;
 
-  struct 
+  struct
   {
     char *key;
     int len;
@@ -113,7 +113,7 @@ ef_cb_ini_long_line(void)
     {"key", 5099},
     {"key2", 5099},
     {NULL, 0}
-  }; 
+  };
 
   ini = efreet_ini_new(PACKAGE_DATA_DIR"/efreet/test/long.ini");
   if (!ini)
@@ -121,7 +121,7 @@ ef_cb_ini_long_line(void)
     printf("Ini failed to parse.\n");
     ret = 0;
   }
-  
+
   if (ret) ret = efreet_ini_section_set(ini, "section");
   if (ret)
   {

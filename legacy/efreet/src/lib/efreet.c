@@ -32,7 +32,7 @@ efreet_init(void)
  * @return Returns the number of times the init function as been called
  * minus the corresponding init call.
  * @brief Shuts down Efreet if a balanced number of init/shutdown calls have
- * been made 
+ * been made
  */
 int
 efreet_shutdown(void)
@@ -106,7 +106,7 @@ static void
 efreet_parse_locale(void)
 {
     efreet_parsed_locale = 1;
-    
+
     if (efreet_parse_locale_setting("LC_ALL"))
         return;
 
@@ -187,5 +187,3 @@ efreet_array_cat(char *buffer, size_t size, const char *strs[])
     }
     return n;
 }
-
-

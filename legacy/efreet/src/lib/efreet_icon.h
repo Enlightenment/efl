@@ -6,8 +6,8 @@
  * @file efreet_icon.h
  * @brief Contains the structures and methods used to support the FDO icon
  * theme specificiation.
- * @addtogroup Efreet_Icon Efreet_Icon: The FDO Icon Theme 
- *                  Specification functions and structures 
+ * @addtogroup Efreet_Icon Efreet_Icon: The FDO Icon Theme
+ *                  Specification functions and structures
  *
  * @{
  */
@@ -30,9 +30,9 @@ enum Efreet_Icon_Theme_Context
 typedef enum Efreet_Icon_Theme_Context Efreet_Icon_Theme_Context;
 
 /**
- * The possible size types for an icon directory 
+ * The possible size types for an icon directory
  */
-enum Efreet_Icon_Size_Type 
+enum Efreet_Icon_Size_Type
 {
     EFREET_ICON_SIZE_TYPE_NONE,
     EFREET_ICON_SIZE_TYPE_FIXED,
@@ -51,8 +51,8 @@ typedef enum Efreet_Icon_Size_Type Efreet_Icon_Size_Type;
 typedef struct Efreet_Icon_Theme Efreet_Icon_Theme;
 
 /**
- * Efreet_Icon_Theme 
- * @brief contains all of the known information about a given theme 
+ * Efreet_Icon_Theme
+ * @brief contains all of the known information about a given theme
  */
 struct Efreet_Icon_Theme
 {
@@ -82,8 +82,8 @@ struct Efreet_Icon_Theme
 
     unsigned char hidden:1;     /**< Should this theme be hidden from users */
     unsigned char valid:1;      /**< Have we seen an index for this theme */
-    unsigned char fake:1;       /**< This isnt' a real theme but the user has 
-                                        tried to query from it. We create the 
+    unsigned char fake:1;       /**< This isnt' a real theme but the user has
+                                        tried to query from it. We create the
                                         fake one to give us the theme cache. */
 };
 
@@ -93,7 +93,7 @@ struct Efreet_Icon_Theme
 typedef struct Efreet_Icon_Theme_Directory Efreet_Icon_Theme_Directory;
 
 /**
- * Efreet_Icon_Theme_Directory 
+ * Efreet_Icon_Theme_Directory
  * @brief Contains all the information about a sub-directory of a theme
  */
 struct Efreet_Icon_Theme_Directory
@@ -112,18 +112,18 @@ struct Efreet_Icon_Theme_Directory
 };
 
 /**
- * Efreet_Icon 
+ * Efreet_Icon
  */
 typedef struct Efreet_Icon Efreet_Icon;
 
 /**
- * Efreet_Icon 
+ * Efreet_Icon
  * @brief Contains all the information about a given icon
  */
 struct Efreet_Icon
 {
     char *path;       /**< Full path to the icon */
-    char *name;       /**< Translated UTF8 string that can 
+    char *name;       /**< Translated UTF8 string that can
                                     be used for the icon name */
 
     struct
@@ -132,10 +132,10 @@ struct Efreet_Icon
             y0,             /**< y0 position */
             x1,             /**< x1 position */
             y1;             /**< y1 position */
-    } embedded_text_rectangle;  /**< Rectangle where text can 
+    } embedded_text_rectangle;  /**< Rectangle where text can
                                         be displayed on the icon */
 
-    Ecore_List *attach_points; /**< List of points to be used as anchor 
+    Ecore_List *attach_points; /**< List of points to be used as anchor
                                         points for emblems/overlays */
 
     unsigned int ref_count;    /**< References to this icon */
@@ -149,7 +149,7 @@ struct Efreet_Icon
 typedef struct Efreet_Icon_Point Efreet_Icon_Point;
 
 /**
- * Efreet_Point 
+ * Efreet_Point
  * @brief Stores an x, y point.
  */
 struct Efreet_Icon_Point
@@ -164,18 +164,17 @@ void               efreet_icon_extension_add(const char *ext);
 Ecore_List        *efreet_icon_extra_list_get(void);
 Ecore_List        *efreet_icon_theme_list_get(void);
 Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
-Efreet_Icon       *efreet_icon_find(const char *theme_name, const char *icon, 
+Efreet_Icon       *efreet_icon_find(const char *theme_name, const char *icon,
                                                         const char *size);
-char              *efreet_icon_list_find(const char *theme_name, 
-                                                        Ecore_List *icons, 
+char              *efreet_icon_list_find(const char *theme_name,
+                                                        Ecore_List *icons,
                                                         const char *size);
 char              *efreet_icon_path_find(const char *theme, const char *icon,
                                                         const char *size);
 void               efreet_icon_free(Efreet_Icon *icon);
 
-/** 
+/**
  * @}
  */
 
 #endif
-

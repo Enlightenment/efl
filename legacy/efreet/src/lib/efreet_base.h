@@ -4,9 +4,9 @@
 
 /**
  * @file efreet_base.h
- * @brief Contains the methods used to support the FDO base directory 
+ * @brief Contains the methods used to support the FDO base directory
  * specification.
- * @addtogroup Efreet_Base Efreet_Base: The XDG Base Directory Specification 
+ * @addtogroup Efreet_Base Efreet_Base: The XDG Base Directory Specification
  * functions
  *
  * @{
@@ -28,4 +28,3 @@ const char *efreet_cache_home_get(void);
  */
 
 #endif
-

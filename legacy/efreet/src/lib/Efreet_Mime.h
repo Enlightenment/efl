@@ -3,9 +3,9 @@
 #define EFREET_MIME_H
 
 /**
- * @file Efreet_Mime.h 
+ * @file Efreet_Mime.h
  * @brief The file that must be included by any project wishing to use
- * Efreet_Mime. Efreet_Mime.h provides all of the necessary headers and 
+ * Efreet_Mime. Efreet_Mime.h provides all of the necessary headers and
  * includes to work with Efreet_Mime.
  */
 
@@ -14,7 +14,7 @@
  *
  * @section intro Introduction
  *
- * Efreet Mime is a library designed to help apps work with the 
+ * Efreet Mime is a library designed to help apps work with the
  * Freedesktop.org Shared Mime Info standard.
  */
 
@@ -34,8 +34,8 @@ const char *efreet_mime_magic_type_get(const char *file);
 const char *efreet_mime_globs_type_get(const char *file);
 const char *efreet_mime_special_type_get(const char *file);
 const char *efreet_mime_fallback_type_get(const char *file);
- 
-char *efreet_mime_type_icon_get(const char *mime, const char *theme, 
+
+char *efreet_mime_type_icon_get(const char *mime, const char *theme,
                                                               const char *size);
 
 /**

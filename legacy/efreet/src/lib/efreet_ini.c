@@ -45,8 +45,8 @@ efreet_ini_shutdown(void)
  * @return Returns a new Efreet_Ini structure initialized with the contents
  * of @a file, or NULL on memory allocation failure
  * @brief Creates and initializes a new Ini structure with the contents of
- * @a file, or NULL on failure 
- */ 
+ * @a file, or NULL on failure
+ */
 Efreet_Ini *
 efreet_ini_new(const char *file)
 {
@@ -91,7 +91,7 @@ efreet_ini_parse(const char *file)
 
     /* the current buffer to parse */
     char *buf;
-   
+
     Ecore_Hash *data, *section = NULL;
 
     /* start with the static buffer */
@@ -109,7 +109,7 @@ efreet_ini_parse(const char *file)
 
     /* if a line is longer than the buffer size, this \n will get overwritten. */
     read_buf[read_len - 2] = '\n';
-    while (fgets(read_buf, read_len, f) != NULL) 
+    while (fgets(read_buf, read_len, f) != NULL)
     {
         char *key, *value, *p;
         char *sep;
@@ -120,7 +120,7 @@ efreet_ini_parse(const char *file)
             int len;
             len = strlen(buf);
 
-            if (!big_buf) 
+            if (!big_buf)
             {
               /* create new big buffer and copy in contents of static buf */
               big_buf_len = 2 * big_buf_step;
@@ -169,7 +169,7 @@ efreet_ini_parse(const char *file)
                 old = ecore_hash_remove(data, header);
                 //if (old) printf("[efreet] Warning: duplicate section '%s' in file '%s'\n", header, file);
                 IF_FREE_HASH(old);
-                ecore_hash_set(data, (void *)ecore_string_instance(header), 
+                ecore_hash_set(data, (void *)ecore_string_instance(header),
                                                                 section);
             }
             else
@@ -202,7 +202,7 @@ efreet_ini_parse(const char *file)
             while (p > value && (*p == '\n' || *p == '\r')) p--;
             *(p + 1) = '\0';
 
-            if (key && value && *key && *value) 
+            if (key && value && *key && *value)
             {
                 char *old;
 
@@ -210,7 +210,7 @@ efreet_ini_parse(const char *file)
                 //if (old) printf("[efreet] Warning: duplicate key '%s' in file '%s'\n", key, file);
                 IF_FREE(old);
 
-                ecore_hash_set(section, (void *)ecore_string_instance(key), 
+                ecore_hash_set(section, (void *)ecore_string_instance(key),
                                efreet_ini_unescape(value));
             }
         }
@@ -484,7 +484,7 @@ efreet_ini_boolean_set(Efreet_Ini *ini, const char *key, unsigned int value)
  * @internal
  * @param ini: The ini struct to work with
  * @param key: The key to search for
- * @return Returns the utf8 encoded string associated with @a key, or NULL 
+ * @return Returns the utf8 encoded string associated with @a key, or NULL
  *         if none found
  * @brief Retrieves the utf8 encoded string associated with @a key in the current locale or NULL if none found
  */

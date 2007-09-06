@@ -236,7 +236,7 @@ ef_cb_efreet_config_dirs(void)
     char dirs[128], *val;
     char *vals[] = {"/var/tmp/a", "/tmp/b", "/usr/local/share", "/etc", NULL};
     char *def_vals[] = {"/etc/xdg", NULL};
-    
+
     dirs[0] = '\0';
 
     for (i = 0; vals[i] != NULL; i++)
@@ -300,4 +300,3 @@ ef_cb_efreet_config_dirs(void)
     }
     return ret;
 }
-

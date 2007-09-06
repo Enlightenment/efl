@@ -18,14 +18,14 @@ static Ecore_Hash *monitors = NULL;  /* contains file monitors */
  * @note This is set during efreet_mime_init based on
  * a runtime check.
  */
-static enum 
-{ 
-    EFREET_ENDIAN_BIG = 0, 
-    EFREET_ENDIAN_LITTLE = 1 
+static enum
+{
+    EFREET_ENDIAN_BIG = 0,
+    EFREET_ENDIAN_LITTLE = 1
 } efreet_mime_endianess = EFREET_ENDIAN_BIG;
 
 /*
- * Buffer sized used for magic checks.  The default is good enough for the 
+ * Buffer sized used for magic checks.  The default is good enough for the
  * current set of magic rules.  This setting is only here for the future.
  */
 #define EFREET_MIME_MAGIC_BUFFER_SIZE 512
@@ -74,8 +74,8 @@ static void efreet_mime_mime_types_load(const char *file);
 static void efreet_mime_shared_mimeinfo_globs_load(const char *file);
 static void efreet_mime_shared_mimeinfo_magic_load(const char *file);
 static void efreet_mime_shared_mimeinfo_magic_parse(char *data, int size);
-static const char *efreet_mime_magic_check_priority(const char *file, 
-                                                      unsigned int start, 
+static const char *efreet_mime_magic_check_priority(const char *file,
+                                                      unsigned int start,
                                                       unsigned int end);
 static int efreet_mime_init_files(void);
 static const char *efreet_mime_special_check(const char *file);
@@ -88,9 +88,9 @@ static int efreet_mime_glob_case_match(char *str, const char *glob);
 static int efreet_mime_endian_check(void);
 
 static void efreet_mime_monitor_add(const char *file);
-static void efreet_mime_cb_update_file(void *data, 
+static void efreet_mime_cb_update_file(void *data,
                                         Ecore_File_Monitor *monitor,
-                                        Ecore_File_Event event, 
+                                        Ecore_File_Event event,
                                         const char *path);
 
 /**
@@ -99,26 +99,26 @@ static void efreet_mime_cb_update_file(void *data,
  */
 int
 efreet_mime_init(void)
-{            
+{
     if (!ecore_init())
         return 0;
-    
+
     if (!ecore_file_init())
         return 0;
-  
+
     if (!efreet_init())
         return 0;
-    
+
     efreet_mime_endianess = efreet_mime_endian_check();
-    
+
     monitors = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_free_key_cb_set(monitors, ECORE_FREE_CB(free));
     ecore_hash_free_value_cb_set(monitors,
                     ECORE_FREE_CB(ecore_file_monitor_del));
-    
+
     if (!efreet_mime_init_files())
         return 0;
-    
+
     return 1;
 }
 
@@ -146,30 +146,30 @@ efreet_mime_shutdown(void)
  */
 const char *
 efreet_mime_type_get(const char *file)
-{   
+{
     const char *type = NULL;
-    
+
     if ((type = efreet_mime_special_check(file)))
         return type;
-  
+
     /*
      * Check magics with priority > 80
      */
     if ((type = efreet_mime_magic_check_priority(file, 0, 80)))
         return type;
-    
+
     /*
      * Check globs
-     */    
+     */
     if ((type = efreet_mime_globs_type_get(file)))
         return type;
-    
+
     /*
      * Check rest of magics
      */
     if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
         return type;
-    
+
     return efreet_mime_fallback_check(file);
 }
 
@@ -186,11 +186,11 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
     const char *env = NULL;
     char *p = NULL, *pp = NULL, *ppp = NULL;
     char buf[PATH_MAX];
-    
+
     if (!mime || !theme || !size)
         return NULL;
-    
-    icons = ecore_list_new();    
+
+    icons = ecore_list_new();
     ecore_list_free_cb_set(icons, free);
 
     /* Standard icon name */
@@ -203,17 +203,17 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
         pp++;
     }
     ecore_list_append(icons, p);
-    
+
     /* Environment Based icon names */
     if ((env = efreet_desktop_environment_get()))
     {
         snprintf(buf, sizeof(buf), "%s-mime-%s", env, p);
         ecore_list_append(icons, strdup(buf));
-        
+
         snprintf(buf, sizeof(buf), "%s-%s", env, p);
         ecore_list_append(icons, strdup(buf));
     }
-    
+
     /* Mime prefixed icon names */
     snprintf(buf, sizeof(buf), "mime-%s", p);
     ecore_list_append(icons, strdup(buf));
@@ -223,20 +223,20 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
     while ((ppp = strrchr(pp, '-')))
     {
         *ppp = '\0';
-        
+
         snprintf(buf, sizeof(buf), "%s-generic", pp);
         ecore_list_append(icons, strdup(buf));
-        
+
         snprintf(buf, sizeof(buf), "%s", pp);
         ecore_list_append(icons, strdup(buf));
     }
     FREE(pp);
-    
+
     /* Search for icons using list */
     icon = efreet_icon_list_find(theme, icons, size);
-      
+
     ecore_list_destroy(icons);
-    
+
     return icon;
 }
 
@@ -248,7 +248,7 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
 const char *
 efreet_mime_magic_type_get(const char *file)
 {
-    return efreet_mime_magic_check_priority(file, 0, 0);   
+    return efreet_mime_magic_check_priority(file, 0, 0);
 }
 
 /**
@@ -301,7 +301,7 @@ efreet_mime_globs_type_get(const char *file)
         if (efreet_mime_glob_case_match(ext, g->glob))
             return g->mime;
     }
-    return NULL;    
+    return NULL;
 }
 
 /**
@@ -348,7 +348,7 @@ efreet_mime_endian_check(void)
  * given file
  */
 static void
-efreet_mime_monitor_add(const char *file) 
+efreet_mime_monitor_add(const char *file)
 {
     Ecore_File_Monitor *fm = NULL;
 
@@ -374,17 +374,17 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
 {
     char buf[4096];
     const char *datadir = NULL;
-        
+
     IF_FREE_HASH(wild);
     wild = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_free_key_cb_set(wild, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_free_value_cb_set(wild,
                     ECORE_FREE_CB(ecore_string_release));
     IF_FREE_LIST(globs);
-    globs = ecore_list_new();    
+    globs = ecore_list_new();
     ecore_list_free_cb_set(globs, efreet_mime_glob_free);
-   
-    
+
+
     /*
      * This is here for legacy reasons.  It is mentioned briefly
      * in the spec and seems to still be quite valid.  It is
@@ -392,7 +392,7 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
      * in here.
     */
     efreet_mime_mime_types_load("/etc/mime.types");
-    
+
     datadir = datahome;
     ecore_list_first_goto(datadirs);
     while (datadir)
@@ -411,16 +411,16 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
  * @return Returns no value
  * @brief Read all magic files in XDG data/home dirs.
  */
-static void 
+static void
 efreet_mime_load_magics(Ecore_List *datadirs, const char *datahome)
 {
     char buf[4096];
     const char *datadir = NULL;
-    
+
     IF_FREE_LIST(magics);
     magics = ecore_list_new();
-    ecore_list_free_cb_set(magics, efreet_mime_magic_free);    
- 
+    ecore_list_free_cb_set(magics, efreet_mime_magic_free);
+
     datadir = datahome;
     ecore_list_first_goto(datadirs);
     while (datadir)
@@ -445,23 +445,23 @@ efreet_mime_load_magics(Ecore_List *datadirs, const char *datahome)
  * the globs are updated.
  */
 static void
-efreet_mime_cb_update_file(void *data __UNUSED__, 
+efreet_mime_cb_update_file(void *data __UNUSED__,
                     Ecore_File_Monitor *monitor __UNUSED__,
-                    Ecore_File_Event event __UNUSED__, 
+                    Ecore_File_Event event __UNUSED__,
                     const char *path)
 {
-    Ecore_List *datadirs = NULL; 
+    Ecore_List *datadirs = NULL;
     const char *datahome = NULL;
-    
+
     if (!(datahome = efreet_data_home_get()))
         return;
-    
+
     if (!(datadirs = efreet_data_dirs_get()))
         return;
 
     if (strstr(path, "magic"))
         efreet_mime_load_magics(datadirs, datahome);
-    else 
+    else
         efreet_mime_load_globs(datadirs, datahome);
 }
 
@@ -475,20 +475,20 @@ efreet_mime_cb_update_file(void *data __UNUSED__,
 static int
 efreet_mime_init_files(void)
 {
-    Ecore_List *datadirs = NULL; 
+    Ecore_List *datadirs = NULL;
     char buf[PATH_MAX];
     const char *datahome, *datadir = NULL;
-    
+
     if (!(datahome = efreet_data_home_get()))
         return 0;
-    
+
     if (!(datadirs = efreet_data_dirs_get()))
         return 0;
-    
-    /* 
-     * Add our file monitors 
+
+    /*
+     * Add our file monitors
      * We watch the directories so we can watch for new files
-     */    
+     */
     datadir = datahome;
     ecore_list_first_goto(datadirs);
     while (datadir)
@@ -499,7 +499,7 @@ efreet_mime_init_files(void)
         datadir = ecore_list_next(datadirs);
     }
     efreet_mime_monitor_add("/etc/mime.types");
-    
+
     /* Load our mime information */
     efreet_mime_load_globs(datadirs, datahome);
     efreet_mime_load_magics(datadirs, datahome);
@@ -532,59 +532,59 @@ efreet_mime_init_files(void)
  */
 static const char *
 efreet_mime_special_check(const char *file)
-{  
+{
     struct stat s;
     int path_len = 0;
-    
+
     if (!lstat(file, &s))
     {
         if (S_ISREG(s.st_mode))
             return NULL;
-        
+
         if (S_ISLNK(s.st_mode))
             return "inode/symlink";
-        
+
         if (S_ISFIFO(s.st_mode))
             return "inode/fifo";
-        
+
         if (S_ISCHR(s.st_mode))
             return "inode/chardevice";
-        
+
         if (S_ISBLK(s.st_mode))
             return "inode/blockdevice";
-        
+
         if (S_ISSOCK(s.st_mode))
             return "inode/socket";
-        
+
         if (S_ISDIR(s.st_mode))
         {
-            struct stat s2;                    
+            struct stat s2;
             char parent[PATH_MAX];
             char path[PATH_MAX];
-          
+
             strncpy(path, file, PATH_MAX);
-          
+
             path_len = strlen(file);
             strncpy(parent, path, PATH_MAX);
-          
+
             /* Kill any trailing slash */
-            parent[--path_len] = '\0';  
-          
+            parent[--path_len] = '\0';
+
             /* Truncate to last slash */
             while (parent[--path_len] != '/') parent[path_len] = '\0';
-            
+
             if (!lstat(parent, &s2))
             {
                 if (s.st_dev != s2.st_dev)
                     return "inode/mount-point";
             }
-            
+
             return "inode/directory";
         }
-        
+
         return NULL;
     }
-    
+
     return NULL;
 }
 
@@ -592,7 +592,7 @@ efreet_mime_special_check(const char *file)
  * @internal
  * @param file: File to examine
  * @return Returns mime type or NULL if the file doesn't exist
- * @brief Returns text/plain if the file appears to contain text and 
+ * @brief Returns text/plain if the file appears to contain text and
  * returns application/octet-stream if it appears to be binary.
  */
 static const char *
@@ -601,13 +601,13 @@ efreet_mime_fallback_check(const char *file)
     FILE *f = NULL;
     char buf[32];
     int i;
-  
+
     if (!(f = fopen(file, "r")))
         return NULL;
-    
+
     i = fread(buf, 1, sizeof(buf), f);
     fclose(f);
-    
+
     if (i == 0)
         return "application/octet-stream";
     /*
@@ -617,13 +617,13 @@ efreet_mime_fallback_check(const char *file)
      */
     for (i -= 1; i >= 0; --i)
     {
-        if ((buf[i] < 0x20) && 
+        if ((buf[i] < 0x20) &&
             (buf[i] != '\n') &&     /* Line Feed */
             (buf[i] != '\r') &&     /* Carriage Return */
             (buf[i] != '\t'))       /* Tab */
             return "application/octet-stream";
     }
-    
+
     return "text/plain";
 }
 
@@ -637,7 +637,7 @@ static int
 efreet_mime_glob_remove(const char *glob)
 {
     Efreet_Mime_Glob *mime = NULL;
-  
+
     mime = ecore_list_first_goto(globs);
     while ((mime = ecore_list_current(globs)))
     {
@@ -651,7 +651,7 @@ efreet_mime_glob_remove(const char *glob)
         }
         ecore_list_next(globs);
     }
-    
+
     return 0;
 }
 
@@ -659,7 +659,7 @@ efreet_mime_glob_remove(const char *glob)
  * @internal
  * @param file: mime.types file to load
  * @return Returns no value
- * @brief Loads values from a mime.types style file 
+ * @brief Loads values from a mime.types style file
  * into the globs list.
  * @note Format:
  * application/msaccess     mdb
@@ -688,7 +688,7 @@ efreet_mime_mime_types_load(const char *file)
         if ((*p == '\n') || (*p == 0)) continue;
         strncpy(mimetype, pp, (p - pp));
         mimetype[p - pp] = 0;
-        
+
         do
         {
             while (isspace(*p) && (*p != 0) && (*p != '\n')) p++;
@@ -700,7 +700,7 @@ efreet_mime_mime_types_load(const char *file)
 
             strncpy(ext, pp, (p - pp));
             ext[p - pp] = 0;
-            
+
             ecore_hash_set(wild, (void*)ecore_string_instance(ext),
                                             (void*)ecore_string_instance(mimetype));
         }
@@ -713,7 +713,7 @@ efreet_mime_mime_types_load(const char *file)
  * @internal
  * @param file: globs file to load
  * @return Returns no value
- * @brief Loads values from a mime.types style file 
+ * @brief Loads values from a mime.types style file
  * into the globs list.
  * @note Format:
  * text/vnd.wap.wml:*.wml
@@ -730,7 +730,7 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
 
     f = fopen(file, "rb");
     if (!f) return;
-      
+
     while (fgets(buf, sizeof(buf), f))
     {
         p = buf;
@@ -747,7 +747,7 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
         mimetype[p - pp] = 0;
         p++;
         pp = ext;
-        
+
         while ((*p != 0) && (*p != '\n'))
         {
             *pp = *p;
@@ -758,7 +758,7 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
         *pp = 0;
 
         if (ext[0] == '*' && ext[1] == '.')
-        {            
+        {
             ecore_hash_set(wild, (void*)ecore_string_instance(&(ext[2])),
                                       (void*)ecore_string_instance(mimetype));
         }
@@ -783,7 +783,7 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
             }
         }
     }
-    
+
     fclose(f);
 }
 
@@ -798,10 +798,10 @@ static int
 efreet_mime_count_digits(int in)
 {
     int i = 1, j = in;
-  
+
     if (j < 10) return 1;
     while ((j /= 10) > 0) ++i;
-    
+
     return i;
 }
 
@@ -816,7 +816,7 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
 {
     int fd = -1, size;
     char *data = (void *)-1;
-   
+
     if (!file) return;
 
     size = ecore_file_size(file);
@@ -838,7 +838,7 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
     close(fd);
 }
 
-/** 
+/**
  * @param data: The data from the file
  * @return Returns no value
  * @brief Parses a magic file
@@ -856,23 +856,23 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
  * ----------------------------------------------------------------------
  *
  * indent
- *   The nesting depth of the rule, corresponding to the number of '>' 
+ *   The nesting depth of the rule, corresponding to the number of '>'
  *   characters in the traditional file format.
- * ">" start-offset 
+ * ">" start-offset
  *     The offset into the file to look for a match.
  * "=" value
- *     Two bytes giving the (big-endian) length of the value, followed by the 
- *     value itself. 
- * "&" mask    
- *     The mask, which (if present) is exactly the same length as the value. 
- * "~" word-size    
+ *     Two bytes giving the (big-endian) length of the value, followed by the
+ *     value itself.
+ * "&" mask
+ *     The mask, which (if present) is exactly the same length as the value.
+ * "~" word-size
  *     On little-endian machines, the size of each group to byte-swap.
- * "+" range-length 
+ * "+" range-length
  *     The length of the region in the file to check.
  *
- * The indent, range-length, word-size and mask components are optional. 
- * If missing, indent defaults to 0, range-length to 1, the word-size to 1, 
- * and the mask to all 'one' bits.  In our case, mask is null as it is 
+ * The indent, range-length, word-size and mask components are optional.
+ * If missing, indent defaults to 0, range-length to 1, the word-size to 1,
+ * and the mask to all 'one' bits.  In our case, mask is null as it is
  * quicker, uses less memory and will acheive the same exact effect.
  */
 static void
@@ -916,7 +916,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
             mime->mime = ecore_string_instance(buf);
             ptr = ++val;
-                
+
             while (*ptr != '\n') ptr++;
         }
         else
@@ -941,7 +941,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                 ecore_list_append(mime->entries, entry);
            }
-                
+
             switch(*ptr)
             {
                 case '>':
@@ -952,7 +952,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                 case '=':
                     ptr++;
-                    entry->value_len = ntohs(*((short*)(ptr)));             
+                    entry->value_len = ntohs(*((short*)(ptr)));
                     ptr += 2;
 
                     entry->value = NEW(1, entry->value_len);
@@ -970,9 +970,9 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                 case '~':
                     ptr++;
                     entry->word_size = atoi(ptr);
-                    if (((entry->word_size != 0) 
+                    if (((entry->word_size != 0)
                             && (entry->word_size != 1)
-                            && (entry->word_size != 2) 
+                            && (entry->word_size != 2)
                             && (entry->word_size != 4))
                             || (entry->value_len % entry->word_size))
                     {
@@ -984,7 +984,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                         while (*ptr != '\n') ptr++;
                         break;
                     }
-                        
+
                     if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
                     {
                         int j;
@@ -993,25 +993,25 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                         {
                             if (entry->word_size == 2)
                             {
-                                ((short*)entry->value)[j] = 
+                                ((short*)entry->value)[j] =
                                               ntohs(((short*)entry->value)[j]);
-                                  
+
                                 if (entry->mask)
-                                    ((short*)entry->mask)[j] = 
+                                    ((short*)entry->mask)[j] =
                                               ntohs(((short*)entry->mask)[j]);
                             }
                             else if (entry->word_size == 4)
                             {
-                                ((long*)entry->value)[j] = 
+                                ((long*)entry->value)[j] =
                                               ntohl(((long*)entry->value)[j]);
-                                  
+
                                 if (entry->mask)
-                                    ((long*)entry->mask)[j] = 
+                                    ((long*)entry->mask)[j] =
                                               ntohl(((long*)entry->mask)[j]);
                             }
                         }
                     }
-                        
+
                     ptr += efreet_mime_count_digits(entry->word_size);
                     break;
 
@@ -1020,7 +1020,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                     entry->range_len = atoi(ptr);
                     ptr += efreet_mime_count_digits(entry->range_len);
                     break;
-    
+
                 case '\n':
                     ptr++;
                     entry = NULL;
@@ -1055,8 +1055,8 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
  * @brief Applies magic rules to a file given a start and end priority
  */
 static const char *
-efreet_mime_magic_check_priority(const char *file, 
-                                  unsigned int start, 
+efreet_mime_magic_check_priority(const char *file,
+                                  unsigned int start,
                                   unsigned int end)
 {
     Efreet_Mime_Magic *m = NULL;
@@ -1068,30 +1068,30 @@ efreet_mime_magic_check_priority(const char *file,
 
     f = fopen(file, "rb");
     if (!f) return NULL;
-      
+
     if (!(m = ecore_list_first_goto(magics)))
     {
         fclose(f);
         return NULL;
     }
-           
+
     if ((bytes_read = fread(buf, 1, sizeof(buf), f)) == 0)
     {
         fclose(f);
         return NULL;
     }
-   
+
     while ((m = ecore_list_next(magics)))
     {
         if ((start != 0) && (m->priority > start))
             continue;
-       
-        if (m->priority < end)                        
+
+        if (m->priority < end)
             break;
-        
+
         ecore_list_first_goto(m->entries);
         while ((e = ecore_list_next(m->entries)))
-        {                    
+        {
             if ((level < e->indent) && !match)
                 continue;
 
@@ -1101,13 +1101,13 @@ efreet_mime_magic_check_priority(const char *file,
             else if ((level > e->indent) && match)
             {
                 fclose(f);
-              
+
                 if (last_mime) return last_mime;
             }
-            
+
             for (offset = e->offset; offset < e->offset + e->range_len; offset++)
             {
-                if (((offset + e->value_len) > bytes_read) && 
+                if (((offset + e->value_len) > bytes_read) &&
                         (fseek(f, offset, SEEK_SET) == -1))
                     break;
 
@@ -1118,7 +1118,7 @@ efreet_mime_magic_check_priority(const char *file,
                         c = fgetc(f);
                     else
                         c = buf[offset + i];
-                    
+
                     v = e->value[i];
                     if (e->mask) v &= e->mask[i];
 
@@ -1128,8 +1128,8 @@ efreet_mime_magic_check_priority(const char *file,
                         break;
                     }
                 }
-                
-                if (match) 
+
+                if (match)
                 {
                     level += 1;
                     last_mime = m->mime;
@@ -1169,7 +1169,7 @@ static void
 efreet_mime_magic_free(void *data)
 {
     Efreet_Mime_Magic *m = data;
-    
+
     IF_RELEASE(m->mime);
     IF_FREE_LIST(m->entries);
     IF_FREE(m);
@@ -1185,7 +1185,7 @@ static void
 efreet_mime_magic_entry_free(void *data)
 {
     Efreet_Mime_Magic_Entry *e = data;
-    
+
     IF_FREE(e->mask);
     IF_FREE(e->value);
     IF_FREE(e);
@@ -1237,4 +1237,3 @@ efreet_mime_glob_case_match(char *str, const char *glob)
     if (!fnmatch(str, tglob, 0)) return 1;
     return 0;
 }
-

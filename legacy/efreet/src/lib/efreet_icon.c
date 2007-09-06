@@ -338,7 +338,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
     char key[4096];
     Efreet_Icon_Cache *cache;
     Efreet_Icon_Theme *theme;
-    
+
     snprintf(key, sizeof(key), "%s %s %s", theme_name, icon, size);
     cache = ecore_list_find(efreet_icon_cache, ECORE_COMPARE_CB(efreet_icon_cache_find), key);
     if (cache)

@@ -12,9 +12,9 @@
 #define SIZE "128x128"
 #define THEME "Tango"
 
-static void ef_icon_theme_themes_find(const char *search_dir, 
+static void ef_icon_theme_themes_find(const char *search_dir,
                                         Ecore_Hash *themes);
-static void ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, 
+static void ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes,
                                                     Ecore_Hash *icons);
 static void ef_read_dir(const char *dir, Ecore_Hash *icons);
 
@@ -70,13 +70,13 @@ ef_cb_efreet_icon_theme_list(void)
     ecore_list_first_goto(icon_dirs);
 
     ef_icon_theme_themes_find(efreet_icon_user_dir_get(), dirs);
-    while ((dir = ecore_list_next(icon_dirs))) 
+    while ((dir = ecore_list_next(icon_dirs)))
     {
         snprintf(buf, sizeof(buf), "%s/icons", dir);
         ef_icon_theme_themes_find(buf, dirs);
     }
     ef_icon_theme_themes_find("/usr/share/pixmaps", dirs);
-   
+
     themes = efreet_icon_theme_list_get();
     ecore_list_first_goto(themes);
     while ((theme = ecore_list_next(themes)))
@@ -159,7 +159,7 @@ ef_icon_theme_themes_find(const char *search_dir, Ecore_Hash *themes)
     ecore_list_destroy(dirs);
 }
 
-const char *icons[] = 
+const char *icons[] =
 {
     "address-book-new",
     "application-exit",
@@ -169,7 +169,7 @@ const char *icons[] =
     "dialog-cancel",
     "dialog-close",
     "dialog-ok",
-    "document-new", 
+    "document-new",
     "document-open",
     "document-open-recent",
     "document-page-setup",
@@ -445,7 +445,7 @@ ef_cb_efreet_icon_match(void)
     ecore_hash_free_key_cb_set(icon_hash, free);
     ecore_hash_free_value_cb_set(icon_hash, free);
 
-    ef_icons_find(theme, themes, icon_hash); 
+    ef_icons_find(theme, themes, icon_hash);
     ecore_list_destroy(themes);
 
     for (i = 0; icons[i] != NULL; i++)
@@ -580,7 +580,7 @@ ef_read_dir(const char *dir, Ecore_Hash *icons)
         char *p;
 
         p = strrchr(file, '.');
-        if (!p) 
+        if (!p)
         {
             FREE(file);
             continue;
@@ -599,4 +599,3 @@ ef_read_dir(const char *dir, Ecore_Hash *icons)
     }
     ecore_list_destroy(files);
 }
-

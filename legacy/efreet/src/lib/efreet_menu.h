@@ -4,7 +4,7 @@
 
 /**
  * @file efreet_menu.h
- * @brief Contains the structures and methods to support the Desktop 
+ * @brief Contains the structures and methods to support the Desktop
  * Menu Specification.
  * @addtogroup Efreet_Menu Efreet_Menu: The FDO Desktop Menu Specification
  * functions and structures
@@ -67,4 +67,3 @@ void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
  */
 
 #endif
-

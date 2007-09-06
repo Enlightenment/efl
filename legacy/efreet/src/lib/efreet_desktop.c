@@ -10,7 +10,7 @@
 static const char *desktop_environment = NULL;
 
 /**
- * A cache of all loaded desktops, hashed by file name. 
+ * A cache of all loaded desktops, hashed by file name.
  * Values are Efreet_Desktop structures
  */
 static Ecore_Hash *efreet_desktop_cache = NULL;
@@ -49,53 +49,53 @@ struct Efreet_Desktop_Type_Info
 static int efreet_desktop_read(Efreet_Desktop *desktop);
 static void efreet_desktop_clear(Efreet_Desktop *desktop);
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
-static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, 
+static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
-static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop, 
+static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
 static void *efreet_desktop_link_fields_parse(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
-static void efreet_desktop_link_fields_save(Efreet_Desktop *desktop, 
+static void efreet_desktop_link_fields_save(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
-static int efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, 
+static int efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
-static void efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, 
+static void efreet_desktop_generic_fields_save(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
-static void efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, 
+static void efreet_desktop_x_fields_parse(Ecore_Hash_Node *node,
                                             Efreet_Desktop *desktop);
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
-static char *efreet_string_append(char *dest, int *size, 
+static char *efreet_string_append(char *dest, int *size,
                                     int *len, const char *src);
-static char *efreet_string_append_char(char *dest, int *size, 
+static char *efreet_string_append_char(char *dest, int *size,
                                         int *len, char c);
 static Ecore_List *efreet_desktop_command_build(Efreet_Desktop_Command *command);
 static void efreet_desktop_command_free(Efreet_Desktop_Command *command);
-static char *efreet_desktop_command_append_quoted(char *dest, int *size, 
+static char *efreet_desktop_command_append_quoted(char *dest, int *size,
                                                     int *len, char *src);
 static char *efreet_desktop_command_append_icon(char *dest, int *size, int *len,
                                                 Efreet_Desktop *desktop);
-static char *efreet_desktop_command_append_single(char *dest, int *size, int *len, 
-                                                Efreet_Desktop_Command_File *file, 
+static char *efreet_desktop_command_append_single(char *dest, int *size, int *len,
+                                                Efreet_Desktop_Command_File *file,
                                                 char type);
-static char *efreet_desktop_command_append_multiple(char *dest, int *size, int *len, 
-                                                    Efreet_Desktop_Command *command, 
+static char *efreet_desktop_command_append_multiple(char *dest, int *size, int *len,
+                                                    Efreet_Desktop_Command *command,
                                                     char type);
 
 static char *efreet_desktop_command_path_absolute(const char *path);
 static Efreet_Desktop_Command_File *efreet_desktop_command_file_process(
-                                                    Efreet_Desktop_Command *command, 
+                                                    Efreet_Desktop_Command *command,
                                                     const char *file);
 static const char *efreet_desktop_command_file_uri_process(const char *uri);
 static void efreet_desktop_command_file_free(Efreet_Desktop_Command_File *file);
 
-static void efreet_desktop_cb_download_complete(void *data, const char *file, 
+static void efreet_desktop_cb_download_complete(void *data, const char *file,
                                                                 int status);
 static int efreet_desktop_cb_download_progress(void *data, const char *file,
                                            long int dltotal, long int dlnow,
                                            long int ultotal, long int ulnow);
 
 
-static void efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop, 
+static void efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
                                             char *exec, int remaining);
 
 static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
@@ -117,22 +117,22 @@ efreet_desktop_init(void)
     efreet_desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_free_key_cb_set(efreet_desktop_cache, ECORE_FREE_CB(free));
 #if 0
-    ecore_hash_free_value_cb_set(efreet_desktop_cache, 
+    ecore_hash_free_value_cb_set(efreet_desktop_cache,
                                 ECORE_FREE_CB(efreet_desktop_free));
 #endif
 
     efreet_desktop_types = ecore_list_new();
-    ecore_list_free_cb_set(efreet_desktop_types, 
+    ecore_list_free_cb_set(efreet_desktop_types,
                             ECORE_FREE_CB(efreet_desktop_type_info_free));
 
-    EFREET_DESKTOP_TYPE_APPLICATION = efreet_desktop_type_add("Application", 
-                                        efreet_desktop_application_fields_parse, 
-                                        efreet_desktop_application_fields_save, 
+    EFREET_DESKTOP_TYPE_APPLICATION = efreet_desktop_type_add("Application",
+                                        efreet_desktop_application_fields_parse,
+                                        efreet_desktop_application_fields_save,
                                         NULL);
-    EFREET_DESKTOP_TYPE_LINK = efreet_desktop_type_add("Link", 
-                                    efreet_desktop_link_fields_parse, 
+    EFREET_DESKTOP_TYPE_LINK = efreet_desktop_type_add("Link",
+                                    efreet_desktop_link_fields_parse,
                                     efreet_desktop_link_fields_save, NULL);
-    EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL, 
+    EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL,
                                                                 NULL, NULL);
 
     return init;
@@ -161,7 +161,7 @@ efreet_desktop_shutdown(void)
  * @internal
  * @param desktop: The desktop to check
  * @return Returns 1 if the cache is still valid, 0 otherwise
- * @brief This will check if the desktop cache is still valid. 
+ * @brief This will check if the desktop cache is still valid.
  */
 static int
 efreet_desktop_cache_check(Efreet_Desktop *desktop)
@@ -169,7 +169,7 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
     if (!desktop) return 0;
 
     /* have we modified this file since we last read it in? */
-    if ((desktop->cache_flush != cache_flush) || 
+    if ((desktop->cache_flush != cache_flush) ||
         (ecore_file_mod_time(desktop->orig_path) != desktop->load_time))
      return 0;
 
@@ -178,7 +178,7 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
 
 /**
  * @param file: The file to get the Efreet_Desktop from
- * @return Returns a reference to a cached Efreet_Desktop on success, NULL 
+ * @return Returns a reference to a cached Efreet_Desktop on success, NULL
  * on failure. This reference should not be freed.
  * @brief Gets a reference to an Efreet_Desktop structure representing the
  * contents of @a file or NULL if @a file is not a valid .desktop file.
@@ -188,7 +188,7 @@ efreet_desktop_get(const char *file)
 {
     Efreet_Desktop *desktop;
 
-    if (efreet_desktop_cache) 
+    if (efreet_desktop_cache)
     {
         desktop = ecore_hash_get(efreet_desktop_cache, file);
         if (desktop)
@@ -299,7 +299,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
     int ok;
 
     ini = efreet_ini_new(desktop->orig_path);
-    if (!ini->data) 
+    if (!ini->data)
     {
         efreet_ini_free(ini);
         return 0;
@@ -307,7 +307,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
 
     ok = efreet_ini_section_set(ini, "Desktop Entry");
     if (!ok) ok = efreet_ini_section_set(ini, "KDE Desktop Entry");
-    if (!ok) 
+    if (!ok)
     {
         printf("efreet_desktop_new error: no Desktop Entry section\n");
         error = 1;
@@ -324,7 +324,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
             desktop->version = efreet_ini_double_get(ini, "Version");
 
             if (info->parse_func)
-                desktop->type_data = info->parse_func(desktop, ini); 
+                desktop->type_data = info->parse_func(desktop, ini);
         }
         else
             error = 1;
@@ -377,7 +377,7 @@ efreet_desktop_clear(Efreet_Desktop *desktop)
         Efreet_Desktop_Type_Info *info;
         info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
         if (info->free_func)
-            info->free_func(desktop->type_data); 
+            info->free_func(desktop->type_data);
     }
 }
 
@@ -399,7 +399,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     efreet_ini_section_set(ini, "Desktop Entry");
 
     info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
-    if (info) 
+    if (info)
     {
         efreet_ini_string_set(ini, "Type", info->type);
         if (info->save_func) info->save_func(desktop, ini);
@@ -434,7 +434,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
             if (desktop != ecore_hash_get(efreet_desktop_cache, desktop->orig_path))
             {
                 desktop->cached = 1;
-                ecore_hash_set(efreet_desktop_cache, 
+                ecore_hash_set(efreet_desktop_cache,
                                 strdup(desktop->orig_path), desktop);
             }
         }
@@ -504,7 +504,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
         Efreet_Desktop_Type_Info *info;
         info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
         if (info->free_func)
-            info->free_func(desktop->type_data); 
+            info->free_func(desktop->type_data);
     }
 
     FREE(desktop);
@@ -524,7 +524,7 @@ efreet_desktop_exec(Efreet_Desktop *desktop, Ecore_List *files, void *data)
 }
 
 static void
-efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop __UNUSED__, 
+efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop __UNUSED__,
                                 char *exec, int remaining __UNUSED__)
 {
     ecore_exe_run(exec, data);
@@ -581,14 +581,14 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
     if (!desktop->categories)
     {
         desktop->categories = ecore_list_new();
-        ecore_list_free_cb_set(desktop->categories, 
+        ecore_list_free_cb_set(desktop->categories,
                                 ECORE_FREE_CB(ecore_string_release));
     }
     else
-        if (ecore_list_find(desktop->categories, 
+        if (ecore_list_find(desktop->categories,
                                 ECORE_COMPARE_CB(strcmp), category)) return;
 
-    ecore_list_append(desktop->categories, 
+    ecore_list_append(desktop->categories,
                         (void *)ecore_string_instance(category));
 }
 
@@ -604,8 +604,8 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
     int found = 0;
     if (!desktop || !desktop->categories) return 0;
 
-    if (ecore_list_find(desktop->categories, 
-                            ECORE_COMPARE_CB(strcmp), category)) 
+    if (ecore_list_find(desktop->categories,
+                            ECORE_COMPARE_CB(strcmp), category))
     {
         found = 1;
         ecore_list_remove(desktop->categories);
@@ -619,7 +619,7 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
  * @param parse_func: a function to parse out custom fields
  * @param save_func: a function to save data returned from @a parse_func
  * @param free_func: a function to free data returned from @a parse_func
- * @return Returns the id of the new type 
+ * @return Returns the id of the new type
  * @brief Adds the given type to the list of types in the system
  */
 int
@@ -652,7 +652,7 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
  * @param alias the alias
  * @return the new type id, or -1 if @p from_type was not valid
  *
- * This allows applications to add non-standard types that behave exactly as standard types. 
+ * This allows applications to add non-standard types that behave exactly as standard types.
  */
 int
 efreet_desktop_type_alias (int from_type, const char *alias)
@@ -792,7 +792,7 @@ efreet_desktop_string_list_join(Ecore_List *list)
 
 /**
  * @brief Tell Efreet to flush any cached desktop entries so it reloads on get.
- * 
+ *
  * This flags the cache to be invalid, so next time a desktop file is fetched
  * it will force it to be re-read off disk next time efreet_desktop_get() is
  * called.
@@ -850,13 +850,13 @@ efreet_desktop_application_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     char *val;
 
-    if (desktop->try_exec) 
+    if (desktop->try_exec)
         efreet_ini_string_set(ini, "TryExec", desktop->try_exec);
 
-    if (desktop->exec) 
+    if (desktop->exec)
         efreet_ini_string_set(ini, "Exec", desktop->exec);
 
-    if (desktop->path) 
+    if (desktop->path)
         efreet_ini_string_set(ini, "Path", desktop->path);
 
     if (desktop->startup_wm_class)
@@ -924,7 +924,7 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
     val = efreet_ini_localestring_get(ini, "Name");
     if (val) desktop->name = strdup(val);
-    else 
+    else
     {
         printf("efreet_desktop_generic_fields_parse error: no Name\n");
         return 0;
@@ -1005,9 +1005,9 @@ efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
     if (!desktop->x)
     {
         desktop->x = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-        ecore_hash_free_key_cb_set(desktop->x, 
+        ecore_hash_free_key_cb_set(desktop->x,
                             ECORE_FREE_CB(ecore_string_release));
-        ecore_hash_free_value_cb_set(desktop->x, 
+        ecore_hash_free_value_cb_set(desktop->x,
                             ECORE_FREE_CB(ecore_string_release));
     }
     ecore_hash_set(desktop->x, (void *)ecore_string_instance(node->key),
@@ -1019,7 +1019,7 @@ efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
  * @internal
  * @param ini: The Efreet_Ini to parse values from
  * @return 1 if desktop should be included in current environement, 0 otherwise
- * @brief Determines if a desktop should be included in the current environment, 
+ * @brief Determines if a desktop should be included in the current environment,
  * based on the values of the OnlyShowIn and NotShowIn fields
  */
 static int
@@ -1033,12 +1033,12 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
     {
         int found = 0;
 
-        if (desktop_environment) 
+        if (desktop_environment)
         {
             ecore_list_first_goto(list);
             while ((val = ecore_list_next(list)))
             {
-                if (!strcmp(val, desktop_environment)) 
+                if (!strcmp(val, desktop_environment))
                 {
                     found = 1;
                     break;
@@ -1050,7 +1050,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
         return found;
     }
 
-    if (desktop_environment) 
+    if (desktop_environment)
     {
         int found = 0;
 
@@ -1060,7 +1060,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
             ecore_list_first_goto(list);
             while ((val = ecore_list_next(list)))
             {
-                if (!strcmp(val, desktop_environment)) 
+                if (!strcmp(val, desktop_environment))
                 {
                     found = 1;
                     break;
@@ -1086,7 +1086,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
  * @brief Get a command to use to execute a desktop entry.
  */
 int
-efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files, 
+efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files,
                             Efreet_Desktop_Command_Cb func, void *data)
 {
     return efreet_desktop_command_progress_get(desktop, files, func, NULL, data);
@@ -1115,7 +1115,7 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
     command->files = ecore_list_new();
     command->desktop = desktop;
 
-    ecore_list_free_cb_set(command->files, 
+    ecore_list_free_cb_set(command->files,
                             ECORE_FREE_CB(efreet_desktop_command_file_free));
 
     command->flags = efreet_desktop_command_flags_get(desktop);
@@ -1147,19 +1147,19 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
 
 /**
  * @param desktop: the desktop entry
- * @param files: an ecore list of file names to execute, as either absolute paths, 
+ * @param files: an ecore list of file names to execute, as either absolute paths,
  * relative paths, or uris
  * @param cb_command: a callback to call for each prepared command line
  * @param cb_progress: a callback to get progress for the downloads
  * @param data: user data passed to the callback
  * @return Returns 1 on success or 0 on failure
- * @brief Get a command to use to execute a desktop entry, and receive progress 
+ * @brief Get a command to use to execute a desktop entry, and receive progress
  * updates for downloading of remote URI's passed in.
  */
 int
-efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files, 
-                                    Efreet_Desktop_Command_Cb cb_command, 
-                                    Efreet_Desktop_Progress_Cb cb_progress,  
+efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
+                                    Efreet_Desktop_Command_Cb cb_command,
+                                    Efreet_Desktop_Progress_Cb cb_progress,
                                     void *data)
 {
     Efreet_Desktop_Command *command;
@@ -1176,7 +1176,7 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
     command->files = ecore_list_new();
     command->desktop = desktop;
 
-    ecore_list_free_cb_set(command->files, 
+    ecore_list_free_cb_set(command->files,
                             ECORE_FREE_CB(efreet_desktop_command_file_free));
 
     command->flags = efreet_desktop_command_flags_get(desktop);
@@ -1259,7 +1259,7 @@ efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
  * @internal
  *
  * @brief Call the command callback for each exec in the list
- * @param command 
+ * @param command
  * @param execs
  */
 static void
@@ -1277,8 +1277,8 @@ efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List
 
 
 /**
- * @brief Builds the actual exec string from the raw string and a list of 
- * processed filename information. The callback passed in to 
+ * @brief Builds the actual exec string from the raw string and a list of
+ * processed filename information. The callback passed in to
  * efreet_desktop_command_get is called for each exec string created.
  *
  * @param command: the command to build
@@ -1296,9 +1296,9 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 
     ecore_list_first_goto(command->files);
 
-    /* if the Exec field appends multiple, that will run the list to the end, 
-     * causing this loop to only run once. otherwise, this loop will generate a 
-     * command for each file in the list. if the list is empty, this 
+    /* if the Exec field appends multiple, that will run the list to the end,
+     * causing this loop to only run once. otherwise, this loop will generate a
+     * command for each file in the list. if the list is empty, this
      * will run once, removing any file field codes */
     while ((file = ecore_list_next(command->files)) || first)
     {
@@ -1315,7 +1315,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 
         while (*p)
         {
-            if (len >= size - 1) 
+            if (len >= size - 1)
             {
                 size = len + 1024;
                 exec = realloc(exec, size);
@@ -1328,42 +1328,42 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                 switch (*p)
                 {
                     case 'f':
-                    case 'u': 
-                    case 'd': 
-                    case 'n': 
-                        if (file) 
+                    case 'u':
+                    case 'd':
+                    case 'n':
+                        if (file)
                         {
-                            exec = efreet_desktop_command_append_single(exec, &size, 
+                            exec = efreet_desktop_command_append_single(exec, &size,
                                                                     &len, file, *p);
                             file_added = 1;
                         }
                         break;
-                    case 'F': 
-                    case 'U': 
-                    case 'D': 
-                    case 'N': 
-                        if (file) 
+                    case 'F':
+                    case 'U':
+                    case 'D':
+                    case 'N':
+                        if (file)
                         {
-                            exec = efreet_desktop_command_append_multiple(exec, &size, 
+                            exec = efreet_desktop_command_append_multiple(exec, &size,
                                                                     &len, command, *p);
                             file_added = 1;
                         }
                         break;
-                    case 'i': 
-                        exec = efreet_desktop_command_append_icon(exec, &size, &len, 
+                    case 'i':
+                        exec = efreet_desktop_command_append_icon(exec, &size, &len,
                                                                     command->desktop);
                         break;
-                    case 'c': 
+                    case 'c':
                         exec = efreet_desktop_command_append_quoted(exec, &size, &len,
                                                                 command->desktop->name);
                         break;
-                    case 'k': 
-                        exec = efreet_desktop_command_append_quoted(exec, &size, &len, 
+                    case 'k':
+                        exec = efreet_desktop_command_append_quoted(exec, &size, &len,
                                                             command->desktop->orig_path);
                         break;
-                    case 'v': 
-                    case 'm': 
-                        printf("[Efreet]: Deprecated conversion char: '%c' in file '%s'\n", 
+                    case 'v':
+                    case 'm':
+                        printf("[Efreet]: Deprecated conversion char: '%c' in file '%s'\n",
                                                             *p, command->desktop->orig_path);
                         break;
                     case '%':
@@ -1384,7 +1384,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 
         ecore_list_append(execs, exec);
 
-        /* If no file was added, then the Exec field doesn't contain any file 
+        /* If no file was added, then the Exec field doesn't contain any file
          * fields (fFuUdDnN). We only want to run the app once in this case. */
         if (!file_added) break;
     }
@@ -1397,7 +1397,7 @@ efreet_desktop_command_free(Efreet_Desktop_Command *command)
 {
     if (!command) return;
 
-    IF_FREE_LIST(command->files); 
+    IF_FREE_LIST(command->files);
     FREE(command);
 }
 
@@ -1430,8 +1430,8 @@ efreet_desktop_command_append_quoted(char *dest, int *size, int *len, char *src)
 }
 
 static char *
-efreet_desktop_command_append_multiple(char *dest, int *size, int *len, 
-                                        Efreet_Desktop_Command *command, 
+efreet_desktop_command_append_multiple(char *dest, int *size, int *len,
+                                        Efreet_Desktop_Command *command,
                                         char type)
 {
     Efreet_Desktop_Command_File *file;
@@ -1447,7 +1447,7 @@ efreet_desktop_command_append_multiple(char *dest, int *size, int *len,
         else
             dest = efreet_string_append_char(dest, size, len, ' ');
 
-        dest = efreet_desktop_command_append_single(dest, size, len, 
+        dest = efreet_desktop_command_append_single(dest, size, len,
                                                     file, tolower(type));
     }
 
@@ -1455,8 +1455,8 @@ efreet_desktop_command_append_multiple(char *dest, int *size, int *len,
 }
 
 static char *
-efreet_desktop_command_append_single(char *dest, int *size, int *len, 
-                                        Efreet_Desktop_Command_File *file, 
+efreet_desktop_command_append_single(char *dest, int *size, int *len,
+                                        Efreet_Desktop_Command_File *file,
                                         char type)
 {
     char *str;
@@ -1488,7 +1488,7 @@ efreet_desktop_command_append_single(char *dest, int *size, int *len,
 }
 
 static char *
-efreet_desktop_command_append_icon(char *dest, int *size, int *len, 
+efreet_desktop_command_append_icon(char *dest, int *size, int *len,
                                             Efreet_Desktop *desktop)
 {
     if (!desktop->icon || !desktop->icon[0]) return dest;
@@ -1511,7 +1511,7 @@ efreet_string_append(char *dest, int *size, int *len, const char *src)
 
     l = ecore_strlcpy(dest + *len, src, *size - *len);
 
-    while (l > *size - *len) 
+    while (l > *size - *len)
     {
         /* we successfully appended this much */
         off += *size - *len - 1;
@@ -1553,7 +1553,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
     const char *uri, *base;
     int nonlocal = 0;
 /*
-    printf("FLAGS: %d, %d, %d, %d\n", 
+    printf("FLAGS: %d, %d, %d, %d\n",
         command->flags & EFREET_DESKTOP_EXEC_FLAG_FULLPATH ? 1 : 0,
         command->flags & EFREET_DESKTOP_EXEC_FLAG_URI ? 1 : 0,
         command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR ? 1 : 0,
@@ -1589,20 +1589,20 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
         {
             char buf[PATH_MAX];
 
-            snprintf(buf, PATH_MAX, "/tmp/%d-%d-%s", getpid(), 
+            snprintf(buf, PATH_MAX, "/tmp/%d-%d-%s", getpid(),
                             efreet_desktop_command_file_id++, base);
             f->fullpath = strdup(buf);
             f->pending = 1;
 
-            ecore_file_download(uri, f->fullpath, efreet_desktop_cb_download_complete, 
+            ecore_file_download(uri, f->fullpath, efreet_desktop_cb_download_complete,
                                             efreet_desktop_cb_download_progress, f);
         }
 
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_URI) 
+        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_URI)
             f->uri = strdup(uri);
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR) 
+        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR)
             f->dir = strdup("/tmp");
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE) 
+        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE)
             f->file = strdup(base);
     }
     else
@@ -1618,9 +1618,9 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
             snprintf(buf, sizeof(buf), "file://%s", abs);
             f->uri = strdup(buf);
         }
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR) 
+        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR)
             f->dir = ecore_file_dir_get(abs);
-        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE) 
+        if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FILE)
             f->file = strdup(ecore_file_file_get(file));
 
         free(abs);
@@ -1637,7 +1637,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
 /**
  * @brief Find the local path portion of a file uri.
  * @param uri: a uri beginning with "file:"
- * @return the location of the path portion of the uri, 
+ * @return the location of the path portion of the uri,
  * or NULL if the file is not on this machine
  */
 static const char *
@@ -1647,7 +1647,7 @@ efreet_desktop_command_file_uri_process(const char *uri)
     int len = strlen(uri);
 
     /* uri:foo/bar => relative path foo/bar*/
-    if (len >= 4 && uri[5] != '/') 
+    if (len >= 4 && uri[5] != '/')
         path = uri + strlen("file:");
 
     /* uri:/foo/bar => absolute path /foo/bar */
@@ -1664,14 +1664,14 @@ efreet_desktop_command_file_uri_process(const char *uri)
         if (p)
         {
             *p = '\0';
-            if (!strcmp(tmp, "localhost")) 
+            if (!strcmp(tmp, "localhost"))
                 path = uri + strlen("file://localhost");
-            else 
+            else
             {
                 int ret;
 
-                ret = gethostname(hostname, PATH_MAX); 
-                if ((ret == 0) && !strcmp(tmp, hostname)) 
+                ret = gethostname(hostname, PATH_MAX);
+                if ((ret == 0) && !strcmp(tmp, hostname))
                     path = uri + strlen("file://") + strlen(hostname);
             }
         }
@@ -1700,7 +1700,7 @@ efreet_desktop_command_file_free(Efreet_Desktop_Command_File *file)
 
 
 static void
-efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__, 
+efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__,
                                                         int status __UNUSED__)
 {
     Efreet_Desktop_Command_File *f;
@@ -1731,8 +1731,8 @@ efreet_desktop_cb_download_progress(void *data,
 
     dcf = data;
     if (dcf->command->cb_progress)
-        return dcf->command->cb_progress(dcf->command->data, 
-                                        dcf->command->desktop, 
+        return dcf->command->cb_progress(dcf->command->data,
+                                        dcf->command->desktop,
                                         dcf->uri, dltotal, dlnow);
 
     return 0;

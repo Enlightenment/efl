@@ -43,14 +43,14 @@
 #define NEW(x, c) calloc(c, sizeof(x))
 
 /**
- * @def FREE(x) 
+ * @def FREE(x)
  * Free x and set to NULL
  */
 #define FREE(x) do { free(x); x = NULL; } while (0)
 
 /**
- * @def IF_FREE(x) 
- * If x is set, free x and set to NULL 
+ * @def IF_FREE(x)
+ * If x is set, free x and set to NULL
  */
 #define IF_FREE(x) do { if (x) FREE(x); } while (0)
 
@@ -66,7 +66,7 @@
 } while (0)
 
 /**
- * @def IF_FREE_LIST(x) 
+ * @def IF_FREE_LIST(x)
  * If x is a valid pointer destroy x and set to NULL
  */
 #define IF_FREE_LIST(x) do { \
@@ -77,7 +77,7 @@
 } while (0)
 
 /**
- * @def IF_FREE_DLIST(x) 
+ * @def IF_FREE_DLIST(x)
  * If x is a valid pointer destroy x and set to NULL
  */
 #define IF_FREE_DLIST(x) do { \
@@ -88,7 +88,7 @@
 } while (0)
 
 /**
- * @def IF_FREE_HASH(x) 
+ * @def IF_FREE_HASH(x)
  * If x is a valid pointer destroy x and set to NULL
  */
 #define IF_FREE_HASH(x) do { \
@@ -120,7 +120,7 @@
  * @internal
  * The different types of commands in an Exec entry
  */
-enum Efreet_Desktop_Command_Flag 
+enum Efreet_Desktop_Command_Flag
 {
     EFREET_DESKTOP_EXEC_FLAG_FULLPATH = 0x0001,
     EFREET_DESKTOP_EXEC_FLAG_URI      = 0x0002,
@@ -187,8 +187,8 @@ void efreet_icon_shutdown(void);
 
 int efreet_menu_init(void);
 void efreet_menu_shutdown(void);
-Ecore_List *efreet_default_dirs_get(const char *user_dir, 
-                                    Ecore_List *system_dirs, 
+Ecore_List *efreet_default_dirs_get(const char *user_dir,
+                                    Ecore_List *system_dirs,
                                     const char *suffix);
 
 int efreet_ini_init(void);
@@ -212,4 +212,3 @@ const char *efreet_desktop_environment_get(void);
  */
 
 #endif
-

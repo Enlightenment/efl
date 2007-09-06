@@ -10,7 +10,7 @@ static Ecore_List *xdg_data_dirs = NULL;
 static Ecore_List *xdg_config_dirs = NULL;
 
 static const char *efreet_dir_get(const char *key, const char *fallback);
-static Ecore_List *efreet_dirs_get(const char *key, 
+static Ecore_List *efreet_dirs_get(const char *key,
                                         const char *fallback);
 
 /**
@@ -89,7 +89,7 @@ Ecore_List *
 efreet_data_dirs_get(void)
 {
     if (xdg_data_dirs) return xdg_data_dirs;
-    xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS", 
+    xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
                             "/usr/local/share:/usr/share");
     return xdg_data_dirs;
 }
@@ -154,7 +154,7 @@ efreet_dir_get(const char *key, const char *fallback)
     {
         int len;
         const char *user;
-        
+
         user = efreet_home_dir_get();
         len = strlen(user) + strlen(fallback) + 1;
         dir = malloc(sizeof(char) * len);
@@ -209,4 +209,3 @@ efreet_dirs_get(const char *key, const char *fallback)
 
     return dirs;
 }
-

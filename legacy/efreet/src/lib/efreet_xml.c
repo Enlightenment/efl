@@ -6,7 +6,7 @@ static void efreet_xml_dump(Efreet_Xml *xml, int level);
 
 static Efreet_Xml *efreet_xml_parse(char **data, int *size);
 static int efreet_xml_tag_parse(char **data, int *size, const char **tag);
-static void efreet_xml_attributes_parse(char **data, int *size, 
+static void efreet_xml_attributes_parse(char **data, int *size,
                                         Efreet_Xml_Attribute ***attributes);
 static void efreet_xml_text_parse(char **data, int *size, char **text);
 
@@ -117,7 +117,7 @@ efreet_xml_del(Efreet_Xml *xml)
     IF_FREE(xml->text);
     FREE(xml);
 }
-   
+
 /**
  * @param xml: The xml struct to work with
  * @param key: The attribute key to look for
@@ -150,7 +150,7 @@ efreet_xml_dump(Efreet_Xml *xml, int level)
 {
     int i;
 
-    for (i = 0; i < level; i++) 
+    for (i = 0; i < level; i++)
         printf("\t");
     printf("<%s", xml->tag);
     if (xml->attributes)
@@ -170,7 +170,7 @@ efreet_xml_dump(Efreet_Xml *xml, int level)
         while ((child = ecore_dlist_next(xml->children)))
             efreet_xml_dump(child, level + 1);
 
-        for (i = 0; i < level; i++) 
+        for (i = 0; i < level; i++)
             printf("\t");
         printf("</%s>\n", xml->tag);
     }
@@ -234,7 +234,7 @@ efreet_xml_tag_parse(char **data, int *size, const char **tag)
             if (*(*data + 1) == '/') return 0;
 
             /* skip comments */
-            if (*size > 3 && *(*data + 1) == '!' && *(*data + 2) == '-' && *(*data + 3) == '-') 
+            if (*size > 3 && *(*data + 1) == '!' && *(*data + 2) == '-' && *(*data + 3) == '-')
             {
                 (*data) += 3;
                 (*size) -= 3;
@@ -562,7 +562,7 @@ efreet_xml_tag_close(char **data, int *size, const char *tag)
     return 0;
 }
 
-static void 
+static void
 efreet_xml_comment_skip(char **data, int *size)
 {
     while (*size > 2)

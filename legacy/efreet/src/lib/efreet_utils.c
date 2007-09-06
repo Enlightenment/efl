@@ -491,7 +491,7 @@ efreet_util_cache_fill(void *data __UNUSED__)
             printf("%d\n", ecore_hash_count(desktop_by_file_id));
 #endif
             ecore_event_add(EFREET_EVENT_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);
-	   
+
             return 0;
         }
     }
@@ -1047,7 +1047,7 @@ efreet_util_desktops_by_category_add(Efreet_Desktop *desktop)
         if (!list)
         {
             list = ecore_list_new();
-            ecore_hash_set(desktops_by_category, 
+            ecore_hash_set(desktops_by_category,
                     (void *)ecore_string_instance(category), list);
         }
         if (!ecore_list_goto(list, desktop))

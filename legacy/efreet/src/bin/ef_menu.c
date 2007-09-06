@@ -98,7 +98,7 @@ ef_cb_menu_edit(void)
 #endif
 
     desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test.desktop");
-    if (!desktop) 
+    if (!desktop)
     {
         efreet_menu_free(menu);
         printf("No desktop found.\n");
@@ -150,4 +150,3 @@ ef_cb_menu_edit(void)
     efreet_menu_free(menu);
     return 1;
 }
-

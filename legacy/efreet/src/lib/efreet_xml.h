@@ -6,18 +6,18 @@
  * @internal
  * @file efreet_xml.h
  * @brief A simple and fast XML parser
- * @addtogroup Efreet_Xml Efreet_Xml: An XML parser 
+ * @addtogroup Efreet_Xml Efreet_Xml: An XML parser
  *
  * @{
  */
 
 /**
- * Efreet_Xml_Attributes 
+ * Efreet_Xml_Attributes
  */
 typedef struct Efreet_Xml_Attribute Efreet_Xml_Attribute;
 
 /**
- * Efreet_Xml_Attributes 
+ * Efreet_Xml_Attributes
  * @brief Contains information about a given XML attribute
  */
 struct Efreet_Xml_Attribute
@@ -32,7 +32,7 @@ struct Efreet_Xml_Attribute
 typedef struct Efreet_Xml Efreet_Xml;
 
 /**
- * Efreet_Xml 
+ * Efreet_Xml
  * @brief Contains the XML tree for a given XML document
  */
 struct Efreet_Xml
@@ -58,4 +58,3 @@ const char *efreet_xml_attribute_get(Efreet_Xml *xml, const char *key);
  */
 
 #endif
-

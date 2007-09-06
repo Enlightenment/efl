@@ -43,7 +43,7 @@ dump(Efreet_Menu *menu, const char *path)
         if (entry->type == EFREET_MENU_ENTRY_DESKTOP)
         {
             if (!path || !*path) path = "/";
-            printf("%s\t%s\t%s\n", path, entry->id, 
+            printf("%s\t%s\t%s\n", path, entry->id,
                                     entry->desktop->orig_path);
         }
         else if (entry->type == EFREET_MENU_ENTRY_MENU)
@@ -55,4 +55,3 @@ dump(Efreet_Menu *menu, const char *path)
         }
     }
 }
-

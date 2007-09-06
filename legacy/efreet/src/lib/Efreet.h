@@ -3,7 +3,7 @@
 #define EFREET_H
 
 /**
- * @file Efreet.h 
+ * @file Efreet.h
  * @brief The file that must be included by any project wishing to use
  * Efreet. Efreet.h provides all of the necessary headers and includes to
  * work with Efreet.
@@ -17,7 +17,7 @@
  * Efreet is a library designed to help apps work several of the
  * Freedesktop.org standards regarding Icons, Desktop files and Menus. To
  * that end it implements the following specifications:
- *   
+ *
  * @li XDG Base Directory Specification
  * @li Icon Theme Specification
  * @li Desktop Entry Specification
@@ -42,4 +42,3 @@ int efreet_shutdown(void);
 #endif
 
 #endif
-
