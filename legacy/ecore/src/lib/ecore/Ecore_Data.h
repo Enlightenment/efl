@@ -176,6 +176,8 @@ extern "C" {
    EAPI int ecore_dlist_prepend_list(Ecore_DList * _e_dlist, Ecore_DList * prepend);
    
    /* Info about list's state */
+# define ecore_dlist_first(list) ecore_list_first(ECORE_LIST(list))
+# define ecore_dlist_last(list) ecore_list_last(ECORE_LIST(list))
    EAPI void *ecore_dlist_current(Ecore_DList *list);
    EAPI int ecore_dlist_index(Ecore_DList *list);
 # define ecore_dlist_count(list) ecore_list_count(ECORE_LIST(list))
