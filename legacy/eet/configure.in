@@ -131,6 +131,7 @@ eet.pc
 eet.c
 src/Makefile
 src/lib/Makefile
+src/bin/Makefile
 README
 eet.spec
 debian/changelog

@@ -629,8 +629,8 @@ eet_open(const char *file, Eet_File_Mode mode)
 	EXTRACT_INT(byte_entries, ef->data, index);
 
 	/* we cant have <= 0 values here - invalid */
-	if (eet_test_close((num_entries <= 0) || (byte_entries <= 0), ef))
-	  return NULL;
+//     if (eet_test_close((num_entries <= 0) || (byte_entries <= 0), ef))
+//	  return NULL;
 
 	/* we can't have more entires than minimum bytes for those! invalid! */
 	if (eet_test_close((num_entries * 20) > byte_entries, ef))
