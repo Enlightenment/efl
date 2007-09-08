@@ -824,7 +824,7 @@ fi
 
 AC_SUBST(fam_libs)
 
-ECORE_CHECK_MODULE([Desktop], [yes], [$have_ecore_file],
+ECORE_CHECK_MODULE([Desktop], [no], [$have_ecore_file],
   [requirements_ecore_desktop="ecore-file"])
 
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
