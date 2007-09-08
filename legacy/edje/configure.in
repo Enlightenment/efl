@@ -20,13 +20,16 @@ AM_PROG_LIBTOOL
 AC_FUNC_ALLOCA
 
 create_shared_lib=""
+edje_decc_lib=""
 case "$host_os" in
 	mingw|mingw32)
 		create_shared_lib="-no-undefined "
+		edje_decc_lib="-lole32 -luuid"
 		;;
 esac
 
 AC_SUBST(create_shared_lib)
+AC_SUBST(edje_decc_lib)
 
 AC_CHECK_FUNCS(realpath)
 

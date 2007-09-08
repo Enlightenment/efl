@@ -1,13 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-AM_CFLAGS = \
+INCLUDES = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
 @EDJE_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
 -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
--DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\" 
+-DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
 
 bin_SCRIPTS = \
 @EDJE_RECC_PRG@
@@ -48,6 +48,6 @@ edje_cc_mem.c \
 edje_cc_sources.c
 
 edje_decc_LDADD = \
-$(top_builddir)/src/lib/libedje.la
+$(top_builddir)/src/lib/libedje.la @edje_decc_lib@
 
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la

@@ -10,6 +10,8 @@
 #include <unistd.h>
 #ifdef _WIN32
 # include <windows.h>
+# include <shlobj.h>
+# include <objidl.h>
 #endif /* _WIN32 */
 
 char *progname = NULL;
@@ -39,6 +41,49 @@ main_help(void)
       "\n"
       ,progname);
 }
+
+#ifdef _WIN32
+int
+symlink (const char *oldpath, const char newpath)
+{
+   IShellLink   *pISL;
+   IPersistFile *pIPF;
+
+   if (FAILED(CoInitialize(NULL)))
+     return 0;
+
+   if (FAILED(CoCreateInstance(&CLSID_ShellLink,
+                               NULL,
+                               CLSCTX_INPROC_SERVER,
+                               &IID_IShellLink,
+                               (PVOID *)&pISL)))
+     goto no_instance;
+
+   if (FAILED(pISL->lpVtbl->SetPath(pISL, oldpath)))
+     goto no_setpath;
+
+   if (FAILED(pISL->lpVtbl->QueryInterface(pISL, &IID_IPersistFile, (PVOID *) &pIPF)))
+     goto no_queryinterface;
+
+   if (FAILED(pIPF->lpVtbl->Save(pIPF, newpath, FALSE)))
+     goto no_save;
+
+   pIPF->lpVtbl->Release(pIPF);
+   pISL->lpVtbl->Release(pISL);
+   CoUninitialize();
+
+   return 1;
+
+ no_save:
+   pIPF->lpVtbl->Release(pIPF);
+ no_queryinterface:
+ no_setpath:
+   pISL->lpVtbl->Release(pISL);
+ no_instance:
+   CoUninitialize();
+   return 0;
+}
+#endif /* _WIN32 */
 
 int
 main(int argc, char **argv)
@@ -301,11 +346,7 @@ output(void)
 	if (file_out)
 	  {
 	     snprintf(out, sizeof(out), "%s/%s", outdir, file_out);
-#ifdef _WIN32
-	     CopyFile(sf->name, out, TRUE);
-#else
 	     symlink(sf->name, out);
-#endif /* _WIN32 */
 	  }
 
 #ifndef _WIN32
