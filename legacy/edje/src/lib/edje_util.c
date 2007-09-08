@@ -108,7 +108,7 @@ edje_object_data_get(Evas_Object *obj, const char *key)
    for (l = ed->collection->data; l; l = l->next)
      {
 	Edje_Data *di;
-	
+
 	di = l->data;
 	if ((di->key) && (!strcmp(di->key, key)))
 	  return (const char *)di->value;
@@ -303,7 +303,7 @@ Evas_List *
 edje_color_class_list(void)
 {
    Edje_List_Foreach_Data fdata;
-   
+
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
    evas_hash_foreach(_edje_color_class_member_hash, _edje_color_class_list_foreach, &fdata);
 
@@ -580,7 +580,7 @@ Evas_List *
 edje_text_class_list(void)
 {
    Edje_List_Foreach_Data fdata;
-   
+
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
    evas_hash_foreach(_edje_text_class_member_hash, _edje_text_class_list_foreach, &fdata);
 
@@ -1164,7 +1164,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    while (ok)
      {
 	int i;
-	
+
 	ok = 0;
 	ed->dirty = 1;
 	_edje_recalc(ed);
@@ -1179,7 +1179,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	     Edje_Real_Part *ep;
 	     int w, h;
 	     int didw;
-	
+
 	     ep = ed->table_parts[i];
 	     w = ep->w - ep->req.w;
 	     h = ep->h - ep->req.h;
@@ -1716,7 +1716,7 @@ _edje_real_part_get(Edje *ed, const char *part)
    for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp;
-	
+
 	rp = ed->table_parts[i];
 	if ((rp->part->name) && (!strcmp(rp->part->name, part))) return rp;
      }
@@ -1855,7 +1855,7 @@ _edje_text_class_find(Edje *ed, const char *text_class)
    for (l = ed->text_classes; l; l = l->next)
      {
 	Edje_Text_Class *tc;
-	
+
 	tc = l->data;
 	if ((tc->name) && (!strcmp(text_class, tc->name))) return tc;
      }
@@ -2072,7 +2072,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
    if ((type) && (!strcmp(type, "edje")))
      {
 	Evas_Coord w, h;
-	
+
 	edje_object_size_min_get(obj_swallow, &w, &h);
 	rp->swallow_params.min.w = w;
 	rp->swallow_params.min.h = h;
@@ -2085,7 +2085,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
 		       (!strcmp(type, "line"))))
      {
 	Evas_Coord w, h;
-	
+
 	evas_object_geometry_get(obj_swallow, NULL, NULL, &w, &h);
 	rp->swallow_params.min.w = w;
 	rp->swallow_params.min.h = h;
@@ -2094,7 +2094,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
      }
      {
 	int w1, h1, w2, h2, am, aw, ah;
-	
+
 	w1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
 	h1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
 	w2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
@@ -2129,4 +2129,3 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
    rp->edje->dirty = 1;
    _edje_recalc(rp->edje);
 }
-

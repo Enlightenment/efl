@@ -17,7 +17,7 @@ _edje_var_timer_cb(void *data)
    Edje_Var_Timer *et;
    Edje *ed;
    Embryo_Function fn;
-   
+
    et = data;
    if (!et) return 0;
    ed = et->edje;
@@ -30,14 +30,14 @@ _edje_var_timer_cb(void *data)
    free(et);
      {
 	void *pdata;
-	
+
 	pdata = embryo_program_data_get(ed->collection->script);
-	embryo_program_data_set(ed->collection->script, ed);	
+	embryo_program_data_set(ed->collection->script, ed);
         embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
 	embryo_program_run(ed->collection->script, fn);
 	embryo_program_data_set(ed->collection->script, pdata);
 	embryo_program_vm_pop(ed->collection->script);
-   	_edje_recalc(ed);
+	_edje_recalc(ed);
      }
    return 0;
 }
@@ -47,7 +47,7 @@ _edje_var_anim_cb(void *data)
 {
    Evas_List *l, *tl = NULL;
    double t;
-   
+
    t = ecore_time_get();
    for (l = _edje_anim_list; l; l = l->next)
      tl = evas_list_append(tl, l->data);
@@ -55,7 +55,7 @@ _edje_var_anim_cb(void *data)
      {
 	Edje *ed;
 	Evas_List *tl2;
-	
+
 	ed = tl->data;
 	_edje_ref(ed);
 	_edje_block(ed);
@@ -69,7 +69,7 @@ _edje_var_anim_cb(void *data)
 	while (tl2)
 	  {
 	     Edje_Var_Animator *ea;
-	     
+
 	     ea = tl2->data;
 	     if ((ed->var_pool) && (!ea->delete_me))
 	       {
@@ -77,7 +77,7 @@ _edje_var_anim_cb(void *data)
 		    {
 		       Embryo_Function fn;
 		       float v;
-		       
+
 		       v = (t - ea->start)  / ea->len;
 		       if (v > 1.0) v= 1.0;
 //		       _edje_embryo_script_reset(ed);
@@ -88,9 +88,9 @@ _edje_var_anim_cb(void *data)
 		       fn = ea->func;
 			 {
 			    void *pdata;
-			    
+
 			    pdata = embryo_program_data_get(ed->collection->script);
-			    embryo_program_data_set(ed->collection->script, ed);	
+			    embryo_program_data_set(ed->collection->script, ed);
 			    embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
 			    embryo_program_run(ed->collection->script, fn);
 			    embryo_program_data_set(ed->collection->script, pdata);
@@ -111,7 +111,7 @@ _edje_var_anim_cb(void *data)
 	for (l = ed->var_pool->animators; l;)
 	  {
 	     Edje_Var_Animator *ea;
-	     
+
 	     ea = l->data;
 	     if (ea->delete_me)
 	       {
@@ -180,7 +180,7 @@ _edje_var_shutdown(Edje *ed)
    if (ed->var_pool->vars)
      {
 	int i;
-	
+
 	for (i = 0; i < ed->var_pool->size; i++)
 	  {
 	     if (ed->var_pool->vars[i].type == EDJE_VAR_STRING)
@@ -205,7 +205,7 @@ _edje_var_shutdown(Edje *ed)
    while (ed->var_pool->timers)
      {
 	Edje_Var_Timer *et;
-	
+
 	et = ed->var_pool->timers->data;
 	ecore_timer_del(et->timer);
 	free(et);
@@ -226,7 +226,7 @@ _edje_var_shutdown(Edje *ed)
    while (ed->var_pool->animators)
      {
 	Edje_Var_Animator *ea;
-	
+
 	ea = ed->var_pool->animators->data;
 	free(ea);
 	ed->var_pool->animators = evas_list_remove(ed->var_pool->animators, ea);
@@ -239,7 +239,7 @@ int
 _edje_var_string_id_get(Edje *ed, const char *string)
 {
    Embryo_Cell cell, *cptr;
-   
+
    if (!ed) return 0;
    if (!ed->collection) return 0;
    if (!ed->collection->script) return 0;
@@ -260,7 +260,7 @@ _edje_var_var_int_get(Edje *ed, Edje_Var *var)
 	if (var->data.s.v)
 	  {
 	     double f;
-	
+
 	     f = atof(var->data.s.v);
 	     free(var->data.s.v);
 	     var->data.s.v = NULL;
@@ -329,7 +329,7 @@ _edje_var_var_float_get(Edje *ed, Edje_Var *var)
 	if (var->data.s.v)
 	  {
 	     double f;
-	
+
 	     f = atof(var->data.s.v);
 	     free(var->data.s.v);
 	     var->data.s.v = NULL;
@@ -397,7 +397,7 @@ _edje_var_var_str_get(Edje *ed, Edje_Var *var)
    if (var->type == EDJE_VAR_INT)
      {
 	char buf[64];
-	
+
 	snprintf(buf, sizeof(buf), "%i", var->data.i.v);
 	var->data.s.v = strdup(buf);
 	var->type = EDJE_VAR_STRING;
@@ -405,7 +405,7 @@ _edje_var_var_str_get(Edje *ed, Edje_Var *var)
    else if (var->type == EDJE_VAR_FLOAT)
      {
 	char buf[64];
-	
+
 	snprintf(buf, sizeof(buf), "%f", var->data.f.v);
 	var->data.s.v = strdup(buf);
 	var->type = EDJE_VAR_STRING;
@@ -604,7 +604,7 @@ _edje_var_list_remove_nth(Edje *ed, int id, int n)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Evas_List *nth;
-	
+
 	nth = evas_list_nth_list(ed->var_pool->vars[id].data.l.v, n);
 	if (nth)
 	  {
@@ -626,7 +626,7 @@ _edje_var_list_nth_int_get(Edje *ed, int id, int n)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return 0;
      {
 	Edje_Var *var;
-	
+
 	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return 0;
@@ -646,7 +646,7 @@ _edje_var_list_nth_int_set(Edje *ed, int id, int n, int v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return;
@@ -666,7 +666,7 @@ _edje_var_list_int_append(Edje *ed, int id, int v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -687,7 +687,7 @@ _edje_var_list_int_prepend(Edje *ed, int id, int v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -708,7 +708,7 @@ _edje_var_list_int_insert(Edje *ed, int id, int n, int v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var, *var_rel;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -733,7 +733,7 @@ _edje_var_list_nth_float_get(Edje *ed, int id, int n)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return 0;
      {
 	Edje_Var *var;
-	
+
 	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return 0;
@@ -753,7 +753,7 @@ _edje_var_list_nth_float_set(Edje *ed, int id, int n, double v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return;
@@ -773,7 +773,7 @@ _edje_var_list_float_append(Edje *ed, int id, double v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -794,7 +794,7 @@ _edje_var_list_float_prepend(Edje *ed, int id, double v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -815,7 +815,7 @@ _edje_var_list_float_insert(Edje *ed, int id, int n, double v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var, *var_rel;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -840,7 +840,7 @@ _edje_var_list_nth_str_get(Edje *ed, int id, int n)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return NULL;
      {
 	Edje_Var *var;
-	
+
 	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return NULL;
@@ -860,7 +860,7 @@ _edje_var_list_nth_str_set(Edje *ed, int id, int n, const char *v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return;
@@ -880,7 +880,7 @@ _edje_var_list_str_append(Edje *ed, int id, const char *v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -901,7 +901,7 @@ _edje_var_list_str_prepend(Edje *ed, int id, const char *v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -922,7 +922,7 @@ _edje_var_list_str_insert(Edje *ed, int id, int n, const char *v)
    else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return;
      {
 	Edje_Var *var, *var_rel;
-	
+
 	var = _edje_var_new();
 	if (!var) return;
 	id += EDJE_VAR_MAGIC_BASE;
@@ -940,7 +940,7 @@ _edje_var_timer_add(Edje *ed, double in, const char *fname, int val)
 {
    Edje_Var_Timer *et;
    Embryo_Function fn;
-   
+
    if (!ed->var_pool) return 0;
    fn = embryo_program_function_find(ed->collection->script, (char *)fname);
    if (fn == EMBRYO_FUNCTION_NONE) return 0;
@@ -995,7 +995,7 @@ _edje_var_anim_add(Edje *ed, double len, const char *fname, int val)
 {
    Edje_Var_Animator *ea;
    Embryo_Function fn;
-   
+
    if (!ed->var_pool) return 0;
    if (len <= 0.0) return 0;
    fn = embryo_program_function_find(ed->collection->script, (char *)fname);

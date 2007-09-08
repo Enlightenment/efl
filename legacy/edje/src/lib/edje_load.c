@@ -53,7 +53,7 @@ EAPI void
 edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
 {
    Edje *ed;
-   
+
    ed = _edje_fetch(obj);
    if (!ed)
      {
@@ -83,7 +83,7 @@ EAPI int
 edje_object_load_error_get(Evas_Object *obj)
 {
    Edje *ed;
-   
+
    ed = _edje_fetch(obj);
    if (!ed) return EDJE_LOAD_ERROR_NONE;
    return ed->load_error;
@@ -96,7 +96,7 @@ edje_object_load_error_get(Evas_Object *obj)
  *
  * Note: the list must be freed using edje_file_collection_list_free()
  * when you are done with it.
- */   
+ */
 EAPI Evas_List *
 edje_file_collection_list(const char *file)
 {
@@ -111,16 +111,16 @@ edje_file_collection_list(const char *file)
 	if (edf->collection_dir)
 	  {
 	     Evas_List *l;
-	
+
 	     for (l = edf->collection_dir->entries; l; l = l->next)
 	       {
 		  Edje_Part_Collection_Directory_Entry *ce;
-	     
+
 		  ce = l->data;
 		  lst = evas_list_append(lst, evas_stringshare_add(ce->entry));
 	       }
 	  }
-	_edje_cache_file_unref(edf);   
+	_edje_cache_file_unref(edf);
      }
    return lst;
 }
@@ -142,10 +142,10 @@ edje_file_collection_list_free(Evas_List *lst)
 
 /** Determine whether a group matching glob exists in an edje file.
  * @param file The file path
- * @param glob A glob to match on 
+ * @param glob A glob to match on
  *
  * @return 1 if a match is found, 0 otherwise
- */   
+ */
 EAPI int
 edje_file_group_exists(const char *file, const char *glob)
 {
@@ -159,16 +159,16 @@ edje_file_group_exists(const char *file, const char *glob)
 	if (edf->collection_dir)
 	  {
 	     Evas_List *l;
-	
+
 	     for (l = edf->collection_dir->entries; l; l = l->next)
 	       {
 		  Edje_Part_Collection_Directory_Entry *ce;
-	     
+
 		  ce = l->data;
 		  if (_edje_glob_match(ce->entry, glob)) return 1;
 	       }
 	  }
-	_edje_cache_file_unref(edf);   
+	_edje_cache_file_unref(edf);
      }
    return 0;
 }
@@ -186,7 +186,7 @@ edje_file_group_exists(const char *file, const char *glob)
  *   item: "key2" "value2";
  * }
  * collections { ... }
- * 
+ *
  * Then, edje_file_data_get("key1") will return "value1"
  */
 EAPI char *
@@ -195,7 +195,7 @@ edje_file_data_get(const char *file, const char *key)
    Edje_File *edf;
    char *str = NULL;
    int error_ret = 0;
-   
+
    if (key)
      {
 	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
@@ -217,7 +217,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
    Evas_List *parts = NULL;
    Evas_List *old_swallows;
    int group_path_started = 0;
-   
+
    ed = _edje_fetch(obj);
    if (!ed) return 0;
    if (!file) file = "";
@@ -229,18 +229,18 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
    old_swallows = _edje_swallows_collect(ed);
 
    _edje_file_del(ed);
-   
+
    if (ed->path) evas_stringshare_del(ed->path);
    if (ed->part) evas_stringshare_del(ed->part);
    ed->path = evas_stringshare_add(file);
    ed->part = evas_stringshare_add(part);
-   
+
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
-  
+
    _edje_textblock_styles_add(ed);
    _edje_textblock_style_all_update(ed);
-   
+
    if (ed->collection)
      {
 	Evas_List *l;
@@ -252,10 +252,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	  {
 	     Edje_Part *ep;
 	     Evas_List *hist = NULL;
-	     
+
 	     /* Register any color classes in this parts descriptions. */
 	     ep = l->data;
-	     if ((ep->default_desc) && (ep->default_desc->color_class)) 
+	     if ((ep->default_desc) && (ep->default_desc->color_class))
 	       _edje_color_class_member_add(ed, ep->default_desc->color_class);
 	     for (hist = ep->other_desc; hist; hist = hist->next)
 	       {
@@ -270,7 +270,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	  {
 	     Edje_Part *ep;
 	     Edje_Real_Part *rp;
-	     
+
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
 	     if (!rp)
@@ -381,11 +381,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		    }
 		  if (rp->part->dragable.confine_id >= 0)
 		    rp->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
-		  
+
 		  /* replay events for dragable */
 		  if (rp->part->dragable.events_id >= 0)
 		    {
-		       rp->events_to = 
+		       rp->events_to =
 			  ed->table_parts[rp->part->dragable.events_id % ed->table_parts_size];
 		       /* events_to may be used only with dragable */
 		       if (!rp->events_to->part->dragable.x &&
@@ -397,7 +397,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		  rp->swallow_params.min.w = 0;
 		  rp->swallow_params.max.w = -1;
 		  rp->swallow_params.max.h = -1;
-		  
+
 		  if (ed->file->feature_ver < 1)
 		    {
 		       rp->param1.description->text.id_source = -1;
@@ -420,7 +420,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	     for (l = ed->collection->programs; l; l = l->next)
 	       {
 		  Edje_Program *pr;
-		  
+
 		  pr = l->data;
 		  ed->table_programs[n] = pr;
 		  n++;
@@ -434,7 +434,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	for (i = 0; i < ed->table_parts_size; i++)
 	  {
 	     Edje_Real_Part *rp;
-	     
+
 	     rp = ed->table_parts[i];
 	     evas_object_show(rp->object);
 	     if (_edje_block_break(ed)) break;
@@ -443,7 +443,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	     _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
 	  }
 	ed->dirty = 1;
-	if ((evas_object_clipees_get(ed->clipper)) && 
+	if ((evas_object_clipees_get(ed->clipper)) &&
 	    (evas_object_visible_get(obj)))
 	  evas_object_show(ed->clipper);
 
@@ -466,7 +466,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		       group_path_started = 1;
 		    }
 		  /* make sure that this group isn't already in the tree of parents */
-		  for (l = group_path; l; l = l->next) 
+		  for (l = group_path; l; l = l->next)
 		    {
 		       if (l->data == group_path_entry)
 			 {
@@ -544,7 +544,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		  evas_stringshare_del(name);
 	       }
 	  }
-	
+
 	_edje_recalc(ed);
 	_edje_thaw(ed);
 	_edje_unblock(ed);
@@ -565,10 +565,10 @@ void
 _edje_file_add(Edje *ed)
 {
    if (_edje_edd_edje_file == NULL) return;
-   ed->file = _edje_cache_file_coll_open(ed->path, ed->part, 
-					 &(ed->load_error), 
+   ed->file = _edje_cache_file_coll_open(ed->path, ed->part,
+					 &(ed->load_error),
 					 &(ed->collection));
-  
+
    if (!ed->collection)
      {
 	if (ed->file)
@@ -609,11 +609,11 @@ _edje_file_del(Edje *ed)
      {
 	Evas_List *l;
 
-	_edje_textblock_styles_del(ed); 
+	_edje_textblock_styles_del(ed);
 	for (l = ed->collection->parts; l; l = l->next)
 	  {
 	     Edje_Part *ep;
-	     
+
 	     ep = l->data;
 	     _edje_text_part_on_del(ed, ep);
 	     _edje_color_class_on_del(ed, ep);
@@ -659,7 +659,7 @@ _edje_file_del(Edje *ed)
 	     if (rp->text.text) evas_stringshare_del(rp->text.text);
 	     if (rp->text.font) evas_stringshare_del(rp->text.font);
 	     if (rp->text.cache.in_str) evas_stringshare_del(rp->text.cache.in_str);
-	     if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);	     
+	     if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);
 
 	     if (rp->custom.description)
 	       {
@@ -675,7 +675,7 @@ _edje_file_del(Edje *ed)
 	while (ed->actions)
 	  {
 	     Edje_Running_Program *runp;
-	     
+
 	     _edje_anim_count--;
 	     runp = ed->actions->data;
 	     ed->actions = evas_list_remove(ed->actions, runp);
@@ -688,7 +688,7 @@ _edje_file_del(Edje *ed)
 	while (ed->pending_actions)
 	  {
 	     Edje_Pending_Program *pp;
-	     
+
 	     pp = ed->pending_actions->data;
 	     ed->pending_actions = evas_list_remove(ed->pending_actions, pp);
 	     ecore_timer_del(pp->timer);
@@ -724,7 +724,7 @@ _edje_file_free(Edje_File *edf)
 	while (edf->font_dir->entries)
 	  {
 	     Edje_Font_Directory_Entry *fe;
-	     
+
 	     fe = edf->font_dir->entries->data;
 	     edf->font_dir->entries =
 	       evas_list_remove_list(edf->font_dir->entries, edf->font_dir->entries);
@@ -739,9 +739,9 @@ _edje_file_free(Edje_File *edf)
 	while (edf->image_dir->entries)
 	  {
 	     Edje_Image_Directory_Entry *ie;
-	     
+
 	     ie = edf->image_dir->entries->data;
-	     edf->image_dir->entries = 
+	     edf->image_dir->entries =
 	       evas_list_remove_list(edf->image_dir->entries, edf->image_dir->entries);
 	     if (ie->entry) evas_stringshare_del(ie->entry);
 	     free(ie);
@@ -753,9 +753,9 @@ _edje_file_free(Edje_File *edf)
 	while (edf->collection_dir->entries)
 	  {
 	     Edje_Part_Collection_Directory_Entry *ce;
-	     
+
 	     ce = edf->collection_dir->entries->data;
-	     edf->collection_dir->entries = 
+	     edf->collection_dir->entries =
 	       evas_list_remove_list(edf->collection_dir->entries, edf->collection_dir->entries);
 	     if (ce->entry) evas_stringshare_del(ce->entry);
 	     free(ce);
@@ -769,7 +769,7 @@ _edje_file_free(Edje_File *edf)
 	     Edje_Spectrum_Directory_Entry *se;
 
 	     se = edf->spectrum_dir->entries->data;
-	     edf->spectrum_dir->entries = 
+	     edf->spectrum_dir->entries =
 	       evas_list_remove_list(edf->spectrum_dir->entries, edf->spectrum_dir->entries);
 	     while (se->color_list)
 	       {
@@ -808,7 +808,7 @@ _edje_file_free(Edje_File *edf)
 	if (ecc->name) evas_stringshare_del(ecc->name);
 	free(ecc);
      }
-   
+
    /* FIXME: free collection_hash and collection_cache */
    if (edf->collection_hash)
      {
@@ -849,7 +849,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	while (pr->targets)
 	  {
 	     Edje_Program_Target *prt;
-	     
+
 	     prt = pr->targets->data;
 	     pr->targets = evas_list_remove_list(pr->targets, pr->targets);
 	     free(prt);
@@ -879,7 +879,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	while (ep->other_desc)
 	  {
 	     Edje_Part_Description *desc;
-	     
+
 	     desc = ep->other_desc->data;
 	     ep->other_desc = evas_list_remove(ep->other_desc, desc);
 	     _edje_collection_free_part_description_free(desc);
@@ -891,7 +891,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	while (ec->data)
 	  {
 	     Edje_Data *edt;
-	     
+
 	     edt = ec->data->data;
 	     ec->data = evas_list_remove(ec->data, edt);
 	     if (edt->key) evas_stringshare_del(edt->key);
@@ -904,12 +904,12 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
    if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
      {
-	evas_hash_foreach(ec->prog_cache.matches, 
-			  _edje_collection_free_prog_cache_matches_free_cb, 
+	evas_hash_foreach(ec->prog_cache.matches,
+			  _edje_collection_free_prog_cache_matches_free_cb,
 			  NULL);
 	evas_hash_free(ec->prog_cache.matches);
      }
-#endif   
+#endif
    if (ec->script) embryo_program_free(ec->script);
    free(ec);
 }
@@ -921,7 +921,7 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
    while (desc->image.tween_list)
      {
 	Edje_Part_Image_Id *pi;
-	
+
 	pi = desc->image.tween_list->data;
 	desc->image.tween_list = evas_list_remove(desc->image.tween_list, pi);
 	free(pi);
@@ -941,7 +941,7 @@ _edje_file_collection_hash_foreach(Evas_Hash *hash, const char *key, void *data,
 {
    Edje_File *edf;
    Edje_Part_Collection *coll;
-   
+
    edf = fdata;
    coll = data;
    printf("EEK: EDJE FILE: \"%s\" ref(%i) PART: \"%s\" ref(%i) \n",

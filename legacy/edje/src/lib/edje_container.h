@@ -41,20 +41,20 @@ struct _Smart_Data
    Evas_Coord     contents_w, contents_h;
    Evas_Coord     min_row_h, max_row_h;
    Evas_Coord     min_w, max_w, min_h, max_h;
-   
+
    Smart_Data_Colinfo *colinfo;
-   
+
    int            freeze;
-   
+
    double         scroll_x, scroll_y;
    double         align_x, align_y;
-   
+
    unsigned char  changed : 1;
    unsigned char  change_child : 1;
    unsigned char  change_child_list : 1;
    unsigned char  change_cols : 1;
    unsigned char  change_scroll : 1;
-   
+
    unsigned char  need_layout : 1;
 
    unsigned char  homogenous : 1;
@@ -93,23 +93,23 @@ struct _Edje_Item
 {
    Edje_Item_Class *class;
    void            *class_data;
-   
+
    void            *sd;
-   
+
    void            *data;
-   
+
    Evas_Object     *object;
    Evas_Object     *overlay_object;
    int              freeze;
    Evas_Coord       y, h;
 
    Evas_Coord       minh, maxh;
-   
+
    int              cells_num;
    Edje_Item_Cell  *cells;
-   
+
    unsigned char    accessible : 1;
-   
+
    unsigned char    recalc : 1;
    unsigned char    selected : 1;
    unsigned char    disabled : 1;
@@ -128,7 +128,7 @@ struct _Edje_Item_Cell
 
 /*
  *             COL 0                 COL 1          COL 2
- * 
+ *
  * +-----------------------------+ +-------+ +----------------+
  * |          pad_top            | |       | |                |
  * | pad_left  OBJECT  pad_right | |  OBJ  | |     OBJECT     | ROW 0
@@ -142,11 +142,11 @@ struct _Edje_Item_Cell
  * |                             | |       | |                | ROW 1
  * |                             | |       | |                |
  * +-----------------------------+ +-------+ +----------------+
- * 
+ *
  * spacer object:
  * 1 Edje object goes in-between each row as a spacer object (opt)
  * 1 Edje object goes in-between each column as a spacer object (opt)
- * 
+ *
  * surround object:
  * 1 Edje object goes around each item - item swallowed into "item" part (opt)
  *   if no "item" part then just underlay it
@@ -154,13 +154,13 @@ struct _Edje_Item_Cell
  *   on unselect send "unselect" "" signal
  *   on focus send "focus" "" signal
  *   on unfocus send "unfocus" signal
- * 
+ *
  *   if any list item/cell is an Edje object emit this to them too.
- * 
+ *
  *   also call callbacks.
  *   if a surround object emits such a signal itself then call callbacks too
- * 
+ *
  * only 1 or 0 items can be focused
  * disabled items cannot be focused or selected/deselected
- * 
+ *
  */

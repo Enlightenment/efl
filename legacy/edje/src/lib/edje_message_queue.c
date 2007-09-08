@@ -13,7 +13,7 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
 {
    Edje *ed;
    int i;
-   
+
    ed = _edje_fetch(obj);
    if (!ed) return;
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg);
@@ -30,7 +30,7 @@ EAPI void
 edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
 {
    Edje *ed;
-   
+
    ed = _edje_fetch(obj);
    if (!ed) return;
    _edje_message_cb_set(ed, func, data);
@@ -41,14 +41,14 @@ edje_object_message_signal_process(Evas_Object *obj)
 {
    Evas_List *l, *tmpq = NULL;
    Edje *ed;
-   
+
    ed = _edje_fetch(obj);
    if (!ed) return;
 
    for (l = msgq; l; l = l->next)
      {
 	Edje_Message *em;
-	
+
 	em = l->data;
 	if (em->edje == ed)
 	  tmpq = evas_list_append(tmpq, em);
@@ -70,11 +70,11 @@ edje_object_message_signal_process(Evas_Object *obj)
 	tmp_msgq = tmpq;
 	tmpq = NULL;
      }
-   
+
    while (tmp_msgq)
      {
 	Edje_Message *em;
-	
+
 	em = tmp_msgq->data;
 	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
 	em->edje->message.num--;
@@ -138,7 +138,7 @@ Edje_Message *
 _edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id)
 {
    Edje_Message *em;
-   
+
    em = calloc(1, sizeof(Edje_Message));
    if (!em) return NULL;
    em->edje = ed;
@@ -155,13 +155,13 @@ _edje_message_free(Edje_Message *em)
    if (em->msg)
      {
 	int i;
-	
+
 	switch (em->type)
 	  {
 	   case EDJE_MESSAGE_STRING:
 	       {
 		  Edje_Message_String *emsg;
-		  
+
 		  emsg = (Edje_Message_String *)em->msg;
 		  free(emsg->str);
 		  free(emsg);
@@ -170,7 +170,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_INT:
 	       {
 		  Edje_Message_Int *emsg;
-		  
+
 		  emsg = (Edje_Message_Int *)em->msg;
 		  free(emsg);
 	       }
@@ -178,7 +178,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_FLOAT:
 	       {
 		  Edje_Message_Float *emsg;
-		  
+
 		  emsg = (Edje_Message_Float *)em->msg;
 		  free(emsg);
 	       }
@@ -186,7 +186,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_INT_SET:
 	       {
 		  Edje_Message_Int_Set *emsg;
-		  
+
 		  emsg = (Edje_Message_Int_Set *)em->msg;
 		  free(emsg);
 	       }
@@ -194,7 +194,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_FLOAT_SET:
 	       {
 		  Edje_Message_Float_Set *emsg;
-		  
+
 		  emsg = (Edje_Message_Float_Set *)em->msg;
 		  free(emsg);
 	       }
@@ -202,7 +202,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_STRING_FLOAT:
 	       {
 		  Edje_Message_String_Float *emsg;
-		  
+
 		  emsg = (Edje_Message_String_Float *)em->msg;
 		  free(emsg->str);
 		  free(emsg);
@@ -211,7 +211,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_STRING_INT:
 	       {
 		  Edje_Message_String_Int *emsg;
-		  
+
 		  emsg = (Edje_Message_String_Int *)em->msg;
 		  free(emsg->str);
 		  free(emsg);
@@ -220,7 +220,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_STRING_FLOAT_SET:
 	       {
 		  Edje_Message_String_Float_Set *emsg;
-		  
+
 		  emsg = (Edje_Message_String_Float_Set *)em->msg;
 		  free(emsg->str);
 		  free(emsg);
@@ -229,7 +229,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_STRING_INT_SET:
 	       {
 		  Edje_Message_String_Int_Set *emsg;
-		  
+
 		  emsg = (Edje_Message_String_Int_Set *)em->msg;
 		  free(emsg->str);
 		  free(emsg);
@@ -238,7 +238,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_SIGNAL:
 	       {
 		  Edje_Message_Signal *emsg;
-		  
+
 		  emsg = (Edje_Message_Signal *)em->msg;
 		  if (emsg->sig) evas_stringshare_del(emsg->sig);
 		  if (emsg->src) evas_stringshare_del(emsg->src);
@@ -248,7 +248,7 @@ _edje_message_free(Edje_Message *em)
 	   case EDJE_MESSAGE_STRING_SET:
 	       {
 		  Edje_Message_String_Set *emsg;
-		  
+
 		  emsg = (Edje_Message_String_Set *)em->msg;
 		  for (i = 0; i < emsg->count; i++)
 		    free(emsg->str[i]);
@@ -286,7 +286,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_SIGNAL:
 	  {
 	     Edje_Message_Signal *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_Signal *)emsg;
 	     emsg3 = calloc(1, sizeof(Edje_Message_Signal));
 	     if (emsg2->sig) emsg3->sig = evas_stringshare_add(emsg2->sig);
@@ -297,7 +297,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_STRING:
 	  {
 	     Edje_Message_String *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_String *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_String));
 	     emsg3->str = strdup(emsg2->str);
@@ -307,7 +307,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_INT:
 	  {
 	     Edje_Message_Int *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_Int *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_Int));
 	     emsg3->val = emsg2->val;
@@ -317,7 +317,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_FLOAT:
 	  {
 	     Edje_Message_Float *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_Float *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_Float));
 	     emsg3->val = emsg2->val;
@@ -327,7 +327,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_STRING_SET:
 	  {
 	     Edje_Message_String_Set *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_String_Set *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_String_Set) + ((emsg2->count - 1) * sizeof(char *)));
 	     emsg3->count = emsg2->count;
@@ -339,7 +339,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_INT_SET:
 	  {
 	     Edje_Message_Int_Set *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_Int_Set *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_Int_Set) + ((emsg2->count - 1) * sizeof(int)));
 	     emsg3->count = emsg2->count;
@@ -351,7 +351,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_FLOAT_SET:
 	  {
 	     Edje_Message_Float_Set *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_Float_Set *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_Float_Set) + ((emsg2->count - 1) * sizeof(double)));
 	     emsg3->count = emsg2->count;
@@ -363,7 +363,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_STRING_INT:
 	  {
 	     Edje_Message_String_Int *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_String_Int *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_String_Int));
 	     emsg3->str = strdup(emsg2->str);
@@ -374,7 +374,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_STRING_FLOAT:
 	  {
 	     Edje_Message_String_Float *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_String_Float *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_String_Float));
 	     emsg3->str = strdup(emsg2->str);
@@ -385,7 +385,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_STRING_INT_SET:
 	  {
 	     Edje_Message_String_Int_Set *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_String_Int_Set *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_String_Int_Set) + ((emsg2->count - 1) * sizeof(int)));
 	     emsg3->str = strdup(emsg2->str);
@@ -398,7 +398,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       case EDJE_MESSAGE_STRING_FLOAT_SET:
 	  {
 	     Edje_Message_String_Float_Set *emsg2, *emsg3;
-	     
+
 	     emsg2 = (Edje_Message_String_Float_Set *)emsg;
 	     emsg3 = malloc(sizeof(Edje_Message_String_Float_Set) + ((emsg2->count - 1) * sizeof(double)));
 	     emsg3->str = strdup(emsg2->str);
@@ -411,7 +411,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
       default:
 	break;
      }
-   
+
    em->msg = msg;
    msgq = evas_list_append(msgq, em);
 }
@@ -422,12 +422,12 @@ _edje_message_process(Edje_Message *em)
    Embryo_Function fn;
    void *pdata;
    int i;
-   
+
    /* signals are only handled one way */
    if (em->type == EDJE_MESSAGE_SIGNAL)
      {
-	_edje_emit_handle(em->edje, 
-			  ((Edje_Message_Signal *)em->msg)->sig, 
+	_edje_emit_handle(em->edje,
+			  ((Edje_Message_Signal *)em->msg)->sig,
 			  ((Edje_Message_Signal *)em->msg)->src);
 	return;
      }
@@ -450,7 +450,7 @@ _edje_message_process(Edje_Message *em)
    embryo_parameter_cell_push(em->edje->collection->script,
 			      (Embryo_Cell)em->type);
    /* 2nd param is the integer of the event id - always there */
-   embryo_parameter_cell_push(em->edje->collection->script, 
+   embryo_parameter_cell_push(em->edje->collection->script,
 			      (Embryo_Cell)em->id);
    /* the rest is varags of whatever is in the msg */
    switch (em->type)
@@ -458,13 +458,13 @@ _edje_message_process(Edje_Message *em)
       case EDJE_MESSAGE_NONE:
 	break;
       case EDJE_MESSAGE_STRING:
-	embryo_parameter_string_push(em->edje->collection->script, 
+	embryo_parameter_string_push(em->edje->collection->script,
 				     ((Edje_Message_String *)em->msg)->str);
 	break;
       case EDJE_MESSAGE_INT:
 	  {
 	     Embryo_Cell v;
-	     
+
 	     v = (Embryo_Cell)((Edje_Message_Int *)em->msg)->val;
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
@@ -473,7 +473,7 @@ _edje_message_process(Edje_Message *em)
 	  {
 	     Embryo_Cell v;
 	     float fv;
-	     
+
 	     fv = ((Edje_Message_Float *)em->msg)->val;
 	     v = EMBRYO_FLOAT_TO_CELL(fv);
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
@@ -481,14 +481,14 @@ _edje_message_process(Edje_Message *em)
 	break;
       case EDJE_MESSAGE_STRING_SET:
 	for (i = 0; i < ((Edje_Message_String_Set *)em->msg)->count; i++)
-	  embryo_parameter_string_push(em->edje->collection->script, 
+	  embryo_parameter_string_push(em->edje->collection->script,
 				       ((Edje_Message_String_Set *)em->msg)->str[i]);
 	break;
       case EDJE_MESSAGE_INT_SET:
 	for (i = 0; i < ((Edje_Message_Int_Set *)em->msg)->count; i++)
 	  {
 	     Embryo_Cell v;
-	     
+
 	     v = (Embryo_Cell)((Edje_Message_Int_Set *)em->msg)->val[i];
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
@@ -498,53 +498,53 @@ _edje_message_process(Edje_Message *em)
 	  {
 	     Embryo_Cell v;
 	     float fv;
-	     
+
 	     fv = ((Edje_Message_Float_Set *)em->msg)->val[i];
 	     v = EMBRYO_FLOAT_TO_CELL(fv);
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       case EDJE_MESSAGE_STRING_INT:
-	embryo_parameter_string_push(em->edje->collection->script, 
+	embryo_parameter_string_push(em->edje->collection->script,
 				     ((Edje_Message_String_Int *)em->msg)->str);
 	  {
 	     Embryo_Cell v;
-	     
+
 	     v = (Embryo_Cell)((Edje_Message_String_Int *)em->msg)->val;
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       case EDJE_MESSAGE_STRING_FLOAT:
-	embryo_parameter_string_push(em->edje->collection->script, 
+	embryo_parameter_string_push(em->edje->collection->script,
 				     ((Edje_Message_String_Float *)em->msg)->str);
 	  {
 	     Embryo_Cell v;
 	     float fv;
-	     
+
 	     fv = ((Edje_Message_String_Float *)em->msg)->val;
 	     v = EMBRYO_FLOAT_TO_CELL(fv);
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       case EDJE_MESSAGE_STRING_INT_SET:
-	embryo_parameter_string_push(em->edje->collection->script, 
+	embryo_parameter_string_push(em->edje->collection->script,
 				     ((Edje_Message_String_Int_Set *)em->msg)->str);
 	for (i = 0; i < ((Edje_Message_String_Int_Set *)em->msg)->count; i++)
 	  {
 	     Embryo_Cell v;
-	     
+
 	     v = (Embryo_Cell)((Edje_Message_String_Int_Set *)em->msg)->val[i];
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       case EDJE_MESSAGE_STRING_FLOAT_SET:
-	embryo_parameter_string_push(em->edje->collection->script, 
+	embryo_parameter_string_push(em->edje->collection->script,
 				     ((Edje_Message_String_Float_Set *)em->msg)->str);
 	for (i = 0; i < ((Edje_Message_String_Float_Set *)em->msg)->count; i++)
 	  {
 	     Embryo_Cell v;
 	     float fv;
-	     
+
 	     fv = ((Edje_Message_String_Float_Set *)em->msg)->val[i];
 	     v = EMBRYO_FLOAT_TO_CELL(fv);
 	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
@@ -567,7 +567,7 @@ void
 _edje_message_queue_process(void)
 {
    int i;
-   
+
    if (msgq == NULL) return;
 
    /* allow the message queue to feed itself up to 8 times before forcing */
@@ -593,7 +593,7 @@ _edje_message_queue_process(void)
 	  {
 	     Edje_Message *em;
 	     Edje *ed;
-	     
+
 	     em = tmp_msgq->data;
 	     ed = em->edje;
 	     tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
@@ -613,7 +613,7 @@ _edje_message_queue_process(void)
 	       }
 	  }
      }
-   
+
    /* if the message queue filled again set a timer to expire in 0.0 sec */
    /* to get the idle enterer to be run again */
    if (msgq)
@@ -626,7 +626,7 @@ _edje_message_queue_clear(void)
    while (msgq)
      {
 	Edje_Message *em;
-	
+
 	em = msgq->data;
 	msgq = evas_list_remove_list(msgq, msgq);
 	em->edje->message.num--;
@@ -635,7 +635,7 @@ _edje_message_queue_clear(void)
    while (tmp_msgq)
      {
 	Edje_Message *em;
-	
+
 	em = tmp_msgq->data;
 	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
 	em->edje->message.num--;
@@ -654,7 +654,7 @@ _edje_message_del(Edje *ed)
      {
 	Edje_Message *em;
 	Evas_List *lp;
-	
+
 	em = l->data;
 	lp = l;
 	l = l->next;
@@ -671,7 +671,7 @@ _edje_message_del(Edje *ed)
      {
 	Edje_Message *em;
 	Evas_List *lp;
-	
+
 	em = l->data;
 	lp = l;
 	l = l->next;
