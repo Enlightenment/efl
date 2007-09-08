@@ -776,6 +776,65 @@ extern "C" {
    EAPI int eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const void *data, int compress);
 
    /**
+    * Dump an eet encoded data structure into ascii text
+    * @param data_in The pointer to the data to decode into a struct.
+    * @param size_in The size of the data pointed to in bytes.
+    * @param dumpfunc The function to call passed a string when new data is converted to text
+    * @param dumpdata The data to pass to the @p dumpfunc callback.
+    * @return 1 on success, 0 on failure
+    *
+    * This function will take a chunk of data encoded by
+    * eet_data_descriptor_encode() and convert it into human readable ascii text.
+    * It does this by calling the @p dumpfunc callback for all new text that is
+    * generated. This callback should append to any existing text buffer and
+    * will be passed the pointer @p dumpdata as a parameter as well as a string
+    * with new text to be appended.
+    * 
+    * Example:
+    * 
+    * @code
+    * 
+    * void output(void *data, const char *string)
+    * {
+    *   printf("%s", string);
+    * }
+    * 
+    * void dump(const char *file)
+    * {
+    *   FILE *f;
+    *   int len;
+    *   void *data;
+    * 
+    *   f = fopen(file, "r");
+    *   fseek(f, 0, SEEK_END);
+    *   len = ftell(f);
+    *   rewind(f);
+    *   data = malloc(len);
+    *   fread(data, len, 1, f);
+    *   fclose(f);
+    *   eet_data_text_dump(data, len, output, NULL);
+    * }
+    * @endcode
+    * 
+    */
+   EAPI int eet_data_text_dump(const void *data_in, int size_in, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
+
+   /**
+    * Take an ascii encoding from eet_data_text_dump() and re-encode in binary.
+    * @param text The pointer to the string data to parse and encode.
+    * @param textlen The size of the string in bytes (not including 0 byte terminator).
+    * @param size_ret This gets filled in with the encoded data blob size in bytes.
+    * @return The encoded data on success, NULL on failure.
+    *
+    * This function will parse the string pointed to by @p text and return
+    * an encoded data lump the same way eet_data_descriptor_encode() takes an
+    * in-memory data struct and encodes into a binary blob. @p text is a normal
+    * C string.
+    * 
+    */
+   EAPI void *eet_data_text_undump(const char *text, int textlen, int *size_ret);
+
+   /**
     * Decode a data structure from an arbitary location in memory.
     * @param edd The data  descriptor to use when decoding.
     * @param data_in The pointer to the data to decode into a struct.
