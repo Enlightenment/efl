@@ -109,12 +109,21 @@ DDraw_Output_Buffer *evas_software_ddraw_output_buffer_new(int   depth,
 							   void *data);
 void   evas_software_ddraw_output_buffer_free(DDraw_Output_Buffer *ddob);
 void   evas_software_ddraw_output_buffer_paste(DDraw_Output_Buffer *ddob,
-					       DDSURFACEDESC2      *surface_desc,
+                                               void                *ddraw_data,
+                                               int                  ddraw_width,
+                                               int                  ddraw_height,
+                                               int                  ddraw_pitch,
+                                               int                  ddraw_depth,
 					       int                  x,
 					       int                  y);
 DATA8 *evas_software_ddraw_output_buffer_data(DDraw_Output_Buffer *ddob,
 					      int                 *bytes_per_line_ret);
 int    evas_software_ddraw_output_buffer_depth(DDraw_Output_Buffer *ddob);
+
+int   evas_software_ddraw_masks_get(Outbuf *buf);
+void *evas_software_ddraw_lock(Outbuf *buf, int *ddraw_width, int *ddraw_height, int *ddraw_pitch, int *ddraw_depth);
+void  evas_software_ddraw_unlock_and_flip(Outbuf *buf);
+void  evas_software_ddraw_surface_resize(Outbuf *buf);
 
 
 #endif /* __EVAS_ENGINE_H__ */

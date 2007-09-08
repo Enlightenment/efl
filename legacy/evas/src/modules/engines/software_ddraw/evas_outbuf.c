@@ -1,34 +1,6 @@
 #include "evas_engine.h"
 
 
-static void
-_ddraw_surface_flip(HWND                window,
-                    LPDIRECTDRAWSURFACE surface_primary,
-                    LPDIRECTDRAWSURFACE surface_back,
-                    int                 width,
-                    int                 height)
-{
-   HRESULT res;
-   RECT    dst_rect;
-   RECT    src_rect;
-   POINT   p;
-
-   /* we figure out where on the primary surface our window lives */
-   p.x = 0;
-   p.y = 0;
-   ClientToScreen (window, &p);
-   GetClientRect (window, &dst_rect);
-   OffsetRect (&dst_rect, p.x, p.y);
-   SetRect (&src_rect, 0, 0, width, height);
-   res = IDirectDrawSurface7_Blt (surface_primary, &dst_rect,
-                                  surface_back, &src_rect,
-                                  DDBLT_WAIT, NULL);
-   if (FAILED(res))
-     {
-     }
-}
-
-
 void
 evas_software_ddraw_outbuf_init(void)
 {
@@ -77,35 +49,29 @@ evas_software_ddraw_outbuf_setup_dd(int                 width,
       conv_func = NULL;
       if (ddob)
         {
-           DDPIXELFORMAT pixel_format;
-
-           ZeroMemory(&pixel_format, sizeof(pixel_format));
-           pixel_format.dwSize = sizeof(pixel_format);
-           IDirectDrawSurface7_GetPixelFormat(surface_primary, &pixel_format);
-           buf->priv.mask.r = pixel_format.dwRBitMask;
-           buf->priv.mask.g = pixel_format.dwGBitMask;
-           buf->priv.mask.b = pixel_format.dwBBitMask;
-
-           if ((rotation == 0) || (rotation == 180))
-             conv_func = evas_common_convert_func_get(0,
-                                                      width,
-                                                      height,
-                                                      evas_software_ddraw_output_buffer_depth (ddob),
-                                                      buf->priv.mask.r,
-                                                      buf->priv.mask.g,
-                                                      buf->priv.mask.b,
-                                                      PAL_MODE_NONE,
-                                                      rotation);
-           else if ((rotation == 90) || (rotation == 270))
-             conv_func = evas_common_convert_func_get(0,
-                                                      height,
-                                                      width,
-                                                      evas_software_ddraw_output_buffer_depth (ddob),
-                                                      buf->priv.mask.r,
-                                                      buf->priv.mask.g,
-                                                      buf->priv.mask.b,
-                                                      PAL_MODE_NONE,
-                                                      rotation);
+           if (evas_software_ddraw_masks_get(buf))
+             {
+                if ((rotation == 0) || (rotation == 180))
+                  conv_func = evas_common_convert_func_get(0,
+                                                           width,
+                                                           height,
+                                                           evas_software_ddraw_output_buffer_depth (ddob),
+                                                           buf->priv.mask.r,
+                                                           buf->priv.mask.g,
+                                                           buf->priv.mask.b,
+                                                           PAL_MODE_NONE,
+                                                           rotation);
+                else if ((rotation == 90) || (rotation == 270))
+                  conv_func = evas_common_convert_func_get(0,
+                                                           height,
+                                                           width,
+                                                           evas_software_ddraw_output_buffer_depth (ddob),
+                                                           buf->priv.mask.r,
+                                                           buf->priv.mask.g,
+                                                           buf->priv.mask.b,
+                                                           PAL_MODE_NONE,
+                                                           rotation);
+             }
            evas_software_ddraw_output_buffer_free(ddob);
            if (!conv_func)
              {
@@ -198,17 +164,20 @@ evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf,
 void
 evas_software_ddraw_outbuf_flush(Outbuf *buf)
 {
-   DDSURFACEDESC2 surface_desc;
-   HRESULT        res;
-   Evas_List     *l;
-
-   ZeroMemory(&surface_desc, sizeof(surface_desc));
-   surface_desc.dwSize = sizeof(surface_desc);
+   Evas_List *l;
+   void      *ddraw_data;
+   int        ddraw_width;
+   int        ddraw_height;
+   int        ddraw_pitch;
+   int        ddraw_depth;
 
    /* lock the back surface */
-   res = IDirectDrawSurface7_Lock (buf->priv.dd.surface_back, NULL, &surface_desc,
-                                   DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR, NULL);
-   if (FAILED(res)) goto free_images;
+   if (!(ddraw_data = evas_software_ddraw_lock(buf,
+                                               &ddraw_width,
+                                               &ddraw_height,
+                                               &ddraw_pitch,
+                                               &ddraw_depth)))
+     goto free_images;
 
    /* copy safely the images that need to be drawn onto the back surface */
    for (l = buf->priv.pending_writes; l; l = l->next)
@@ -220,21 +189,17 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf)
 	ddob = im->extended_info;
 	/* paste now */
 	evas_software_ddraw_output_buffer_paste(ddob,
-						&surface_desc,
+                                                ddraw_data,
+                                                ddraw_width,
+                                                ddraw_height,
+                                                ddraw_pitch,
+                                                ddraw_depth,
 						ddob->x,
 						ddob->y);
      }
 
-   /* unlock the back surface */
-   res = IDirectDrawSurface7_Unlock (buf->priv.dd.surface_back, NULL);
-   if (FAILED(res)) goto free_images;
-
-   /* flip the surfaces */
-   _ddraw_surface_flip(buf->priv.dd.window,
-		       buf->priv.dd.surface_primary,
-		       buf->priv.dd.surface_back,
-		       buf->width,
-		       buf->height);
+   /* unlock the back surface and flip the surface */
+   evas_software_ddraw_unlock_and_flip(buf);
 
  free_images:
    while (buf->priv.pending_writes)
@@ -346,6 +311,7 @@ evas_software_ddraw_outbuf_reconfigure(Outbuf      *buf,
    buf->width = width;
    buf->height = height;
    buf->rot = rotation;
+   evas_software_ddraw_surface_resize(buf);
 }
 
 int

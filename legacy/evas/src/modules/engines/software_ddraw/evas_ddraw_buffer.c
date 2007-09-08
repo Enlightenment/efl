@@ -42,32 +42,36 @@ evas_software_ddraw_output_buffer_free(DDraw_Output_Buffer *ddob)
 
 void
 evas_software_ddraw_output_buffer_paste(DDraw_Output_Buffer *ddob,
-                                        DDSURFACEDESC2      *surface_desc,
-                                        int                 x,
-                                        int                 y)
+                                        void                *ddraw_data,
+                                        int                  ddraw_width,
+                                        int                  ddraw_height,
+                                        int                  ddraw_pitch,
+                                        int                  ddraw_depth,
+                                        int                  x,
+                                        int                  y)
 {
-   DATA8         *dd_data;
-   DATA8         *evas_data;
-   int            width;
-   int            height;
-   int            pitch;
-   int            j;
+   DATA8 *dd_data;
+   DATA8 *evas_data;
+   int    width;
+   int    height;
+   int    pitch;
+   int    j;
 
-   if ((x >= surface_desc->dwWidth) || (y >= surface_desc->dwHeight))
+   if ((x >= ddraw_width) || (y >= ddraw_height))
      return;
 
    /* compute the size of the data to copy on the back surface */
-   width = ((x + ddob->width) > surface_desc->dwWidth)
-     ? surface_desc->dwWidth - x
+   width = ((x + ddob->width) > ddraw_width)
+     ? ddraw_width - x
      : ddob->width;
-   height = ((y + ddob->height) > surface_desc->dwHeight)
-     ? surface_desc->dwHeight - y
+   height = ((y + ddob->height) > ddraw_height)
+     ? ddraw_height - y
      : ddob->height;
    pitch = width * ddob->depth / 8;
 
-   dd_data = (DATA8 *)surface_desc->lpSurface + y * surface_desc->lPitch + x * surface_desc->ddpfPixelFormat.dwRGBBitCount / 8;
+   dd_data = (DATA8 *)ddraw_data + y * ddraw_pitch + x * ddraw_depth;
    evas_data = (unsigned char *)ddob->image;
-   for (j = 0; j < height; j++, evas_data += ddob->pitch, dd_data += surface_desc->lPitch)
+   for (j = 0; j < height; j++, evas_data += ddob->pitch, dd_data += ddraw_pitch)
      memcpy(dd_data, evas_data, pitch);
 }
 
