@@ -14,7 +14,20 @@
 #include <fnmatch.h>
 
 #ifdef HAVE_ALLOCA_H
-#include <alloca.h>
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
 #endif
 
 #include <stdlib.h>
@@ -72,14 +85,14 @@
 #define EDJE_FILE_VERSION 2
 
 /* FIXME:
- * 
+ *
  * More example Edje files
- * 
+ *
  * ? programs can do multiple actions from one signal
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? text entry widget (single line only)
  * ? reduce linked list walking and list_nth calls
- * 
+ *
  * ? recursions, unsafe callbacks outside Edje etc. with freeze, ref/unref and block/unblock and break_programs needs to be redesigned & fixed
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
@@ -213,7 +226,7 @@ typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 struct _Edje_File
 {
    const char                     *path;
-   
+
    Edje_Font_Directory            *font_dir;
    Edje_Image_Directory           *image_dir;
    Edje_Spectrum_Directory        *spectrum_dir;
@@ -226,7 +239,7 @@ struct _Edje_File
    char                           *compiler;
    int                             version;
    int                             feature_ver;
-   
+
    Evas_Hash                      *collection_hash;
    Evas_Hash			  *font_hash;
    Evas_List                      *collection_cache;
@@ -270,7 +283,7 @@ struct _Edje_Font_Directory_Entry
    const char *path;
 };
 
-	
+
 /*----------*/
 
 struct _Edje_Image_Directory
@@ -313,30 +326,30 @@ struct _Edje_Spectrum_Color
 
 struct _Edje_Program /* a conditional program to be run */
 {
-   int        id; /* id of program */   
+   int        id; /* id of program */
    char      *name; /* name of the action */
-   
+
    char      *signal; /* if signal emission name matches the glob here... */
    char      *source; /* if part that emitted this (name) matches this glob */
-   
+
    struct {
       double  from;
       double  range;
    } in;
-   
+
    int        action; /* type - set state, stop action, set drag pos etc. */
    char      *state; /* what state of alternates to apply, NULL = default */
    char      *state2; /* what other state to use - for signal emit action */
    double     value; /* value of state to apply (if multiple names match) */
    double     value2; /* other value for drag actions */
-   
+
    struct {
       int     mode; /* how to tween - linear, sinusoidal etc. */
       double  time; /* time to graduate between current and new state */
    } tween;
-   
+
    Evas_List *targets; /* list of target parts to apply the state to */
-   
+
    Evas_List *after; /* list of actions to run at the end of this, for looping */
 };
 
@@ -372,25 +385,25 @@ struct _Edje_Part_Collection
    Evas_List *programs; /* a list of Edje_Program */
    Evas_List *parts; /* a list of Edje_Part */
    Evas_List *data;
-   
+
    int        id; /* the collection id */
-   
+
    struct {
       struct {
 	 int w, h;
       } min, max;
    } prop;
-   
+
    int        references;
-#ifdef EDJE_PROGRAM_CACHE   
+#ifdef EDJE_PROGRAM_CACHE
    struct {
       Evas_Hash                   *no_matches;
       Evas_Hash                   *matches;
    } prog_cache;
-#endif   
-   
+#endif
+
    Embryo_Program   *script; /* all the embryo script code for this group */
-   
+
    const char       *part;
 };
 
@@ -401,19 +414,19 @@ struct _Edje_Part
    Evas_List             *other_desc; /* other possible descriptors */
    char                  *source;
    int                    id; /* its id number */
-   int                    clip_to_id; /* the part id to clip this one to */   
+   int                    clip_to_id; /* the part id to clip this one to */
    struct {
       int                 step_x; /* drag jumps n pixels (0 = no limit) */
       int                 step_y; /* drag jumps n pixels (0 = no limit) */
-      
+
       int                 count_x; /* drag area divided by n (0 = no limit) */
       int                 count_y; /* drag area divided by n (0 = no limit) */
-      
+
       int                 confine_id; /* dragging within this bit, -1 = no */
 
       /* davinchi */
       int		  events_id; /* If it is used as scrollbar */
-      
+
       char                x; /* can u click & drag this bit in x dir */
       char                y; /* can u click & drag this bit in y dir */
    } dragable;
@@ -437,15 +450,15 @@ struct _Edje_Part_Description
       double         value; /* the value of the state (for ranges) */
       char          *name; /* the named state if any */
    } state;
-   
+
    struct {
       double         x, y; /* 0 <-> 1.0 alignment within allocated space */
    } align;
-   
+
    struct {
       unsigned char  w, h; /* width or height is fixed in side (cannot expand with Edje object size) */
    } fixed;
-   
+
    struct {
       int            w, h; /* min & max size, 0 = none */
    } min, max;
@@ -458,7 +471,7 @@ struct _Edje_Part_Description
       double         min, max; /* aspect = w/h */
       unsigned char  prefer; /* NEITHER = 0, VERTICAL = 1, HORIZONTAL = 2 */
    } aspect;
-   
+
    struct {
       double         relative_x;
       double         relative_y;
@@ -470,7 +483,7 @@ struct _Edje_Part_Description
 
    struct {
       Evas_List     *tween_list; /* list of Edje_Part_Image_Id */
-      int            id; /* the image id to use */   
+      int            id; /* the image id to use */
    } image;
 
    struct {
@@ -485,7 +498,7 @@ struct _Edje_Part_Description
          int         offset_y;
       } rel1, rel2; /* linear gradient fill options */
    } gradient;
-   
+
    struct {
       int            l, r, t, b; /* border scaling on image fill */
       unsigned char  no_fill; /* do we fill the center of the image if bordered? 1 == NO!!!! */
@@ -505,33 +518,33 @@ struct _Edje_Part_Description
       char           smooth; /* fill with smooth scaling or not */
       unsigned char  type; /* fill coordinate from container (SCALE) or from source image (TILE) */
    } fill;
-   
+
    char             *color_class; /* how to modify the color */
-   
+
    struct {
       char          *text; /* if "" or NULL, then leave text unchanged */
       char          *text_class; /* how to apply/modify the font */
       char          *style; /* the text style if a textblock */
       char          *font; /* if a specific font is asked for */
-      
+
       struct {
 	 double      x, y; /* text alignment within bounds */
       } align;
-      
+
       double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
       int            size; /* 0 = use user set size */
       int            id_source; /* -1 if none */
       int            id_text_source; /* -1 if none */
-      
+
       unsigned char  fit_x; /* resize font size down to fit in x dir */
       unsigned char  fit_y; /* resize font size down to fit in y dir */
       unsigned char  min_x; /* if text size should be part min size */
       unsigned char  min_y; /* if text size should be part min size */
       unsigned char  max_x; /* if text size should be part max size */
       unsigned char  max_y; /* if text size should be part max size */
-      
+
    } text;
-   
+
    struct {
       unsigned char  r, g, b, a; /* color for rect or text, shadow etc. */
    } color, color2, color3;
@@ -567,7 +580,7 @@ struct _Edje
    const char           *path;
    const char           *part;
    const char           *parent;
-   
+
    Evas_Coord            x, y, w, h;
    struct {
       Evas_Coord         w, h;
@@ -578,7 +591,7 @@ struct _Edje
    Evas_Object          *clipper; /* a big rect to clip this Edje to */
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
-   Evas_List            *actions; /* currently running actions */   
+   Evas_List            *actions; /* currently running actions */
    Evas_List            *callbacks;
    Evas_List            *pending_actions;
    Evas_List            *color_classes;
@@ -590,7 +603,7 @@ struct _Edje
    Edje_Program        **table_programs;
    int                   table_programs_size;
    int                   table_parts_size;
-   
+
    int                   references;
    int                   block;
    int                   load_error;
@@ -600,7 +613,7 @@ struct _Edje
       void (*func) (void *data, Evas_Object *obj, const char *part);
       void *data;
    } text_change;
-   
+
    struct {
       void                (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
       void                 *data;
@@ -690,16 +703,16 @@ struct _Edje_Real_Part
 
    Edje_Real_Part           *confine_to;
    Edje_Real_Part           *clip_to;
-   
+
    Edje_Running_Program     *program;
    Edje_Real_Part           *events_to;
-   
+
    int                       clicked_button;
    int                       gradient_id;
 
    unsigned char             calculated;
    unsigned char             calculating;
-   
+
    unsigned char             still_in   : 1;
 };
 
@@ -738,7 +751,7 @@ struct _Edje_Calc_Params
    struct {
       unsigned char r, g, b, a;
    } color, color2, color3;
-   struct {   
+   struct {
       int           l, r, t, b;
    } border;
    struct {
@@ -751,7 +764,7 @@ struct _Edje_Calc_Params
      int             id;
      char           *type;
    } gradient;
-   unsigned char    visible : 1; 
+   unsigned char    visible : 1;
    unsigned char    smooth : 1;
 };
 
@@ -923,7 +936,7 @@ void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char  *d1
 void  _edje_recalc(Edje *ed);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y);
 void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y);
-    
+
 void  _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 void  _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 void  _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
@@ -951,7 +964,7 @@ void  _edje_unref(Edje *ed);
 void  _edje_clean_objects(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
-    
+
 int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc);
@@ -988,7 +1001,7 @@ int               _edje_thaw(Edje *ed);
 int               _edje_block(Edje *ed);
 int               _edje_unblock(Edje *ed);
 int               _edje_block_break(Edje *ed);
-void              _edje_block_violate(Edje *ed);    
+void              _edje_block_violate(Edje *ed);
 void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 void              _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow);
 
@@ -1040,13 +1053,13 @@ void          _edje_var_list_nth_str_set(Edje *ed, int id, int n, const char *v)
 void          _edje_var_list_str_append(Edje *ed, int id, const char *v);
 void          _edje_var_list_str_prepend(Edje *ed, int id, const char *v);
 void          _edje_var_list_str_insert(Edje *ed, int id, int n, const char *v);
-    
+
 int           _edje_var_timer_add           (Edje *ed, double in, const char *fname, int val);
 void          _edje_var_timer_del           (Edje *ed, int id);
 
 int           _edje_var_anim_add            (Edje *ed, double len, const char *fname, int val);
 void          _edje_var_anim_del            (Edje *ed, int id);
-    
+
 void          _edje_message_init            (void);
 void          _edje_message_shutdown        (void);
 void          _edje_message_cb_set          (Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data);
