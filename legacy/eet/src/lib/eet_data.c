@@ -1135,6 +1135,7 @@ _eet_data_string_escape(const char *str)
    for (strp = str; *strp; strp++)
      {
 	if (*strp == '\"') sz += 2; 
+	else if (*strp == '\\') sz += 2; 
 	else sz += 1;
      }
    s = malloc(sz + 1);
@@ -1142,6 +1143,11 @@ _eet_data_string_escape(const char *str)
    for (strp = str, sp = s; *strp; strp++, sp++)
      {
 	if (*strp == '\"')
+	  {
+	     *sp = '\\';
+	     sp++;
+	  }
+	else if (*strp == '\\')
 	  {
 	     *sp = '\\';
 	     sp++;
@@ -1195,6 +1201,10 @@ _eet_data_dump_token_get(char *src, int *len)
 		       in_quote = 0;
 		    }
 		  else if ((p[0] == '\\') && (*len > 1) && (p[1] == '\"'))
+		    {
+		       /* skip */
+		    }
+		  else if ((p[0] == '\\') && (p > src) && (p[-1] == '\\'))
 		    {
 		       /* skip */
 		    }
