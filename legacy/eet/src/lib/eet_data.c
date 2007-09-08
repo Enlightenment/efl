@@ -2016,7 +2016,7 @@ _eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	     
 	     if ((echnk.type > EET_T_UNKNOW) &&
 		 (echnk.type < EET_T_LAST))
-	       type = echnk.type;
+       type = echnk.type;
 	     else if ((echnk.group_type > EET_G_UNKNOWN) &&
 		      (echnk.group_type < EET_G_LAST))
 	       group_type = echnk.group_type;
@@ -2060,7 +2060,7 @@ _eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			    dumpfunc(dumpdata, tbuf); break;
 			  case EET_T_DOUBLE:
 			    dumpfunc(dumpdata, "double: ");
-			    snprintf(tbuf, sizeof(tbuf), "%1.25fl", *((double *)dd));
+			    snprintf(tbuf, sizeof(tbuf), "%1.25f", *((double *)dd));
 			    dumpfunc(dumpdata, tbuf); break;
 			  case EET_T_UCHAR:
 			    dumpfunc(dumpdata, "uchar: ");
