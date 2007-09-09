@@ -86,15 +86,18 @@ AC_CHECK_HEADERS(netinet/in.h)
 
 winsock_libs=""
 create_shared_lib=""
+ecore_file_win32_lib=""
 case "$host_os" in
 	mingw|mingw32)
 		winsock_libs="-lwsock32"
 		create_shared_lib="-no-undefined"
+		ecore_file_win32_lib="-lole32 -luuid"
 		;;
 esac
 
 AC_SUBST(winsock_libs)
 AC_SUBST(create_shared_lib)
+AC_SUBST(ecore_file_win32_lib)
 
 iconv_cflags=""
 iconv_libs=""

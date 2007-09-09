@@ -5,7 +5,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore \
 @CURL_CFLAGS@
 
-libecore_file_la_LDFLAGS = -version-info 1:0:0 \
+libecore_file_la_LDFLAGS = @create_shared_lib@ -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_FILE
@@ -25,7 +25,7 @@ ecore_file_download.c
 
 libecore_file_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@fam_libs@ @CURL_LIBS@
+@fam_libs@ @CURL_LIBS@ @ecore_file_win32_lib@
 
 endif
 

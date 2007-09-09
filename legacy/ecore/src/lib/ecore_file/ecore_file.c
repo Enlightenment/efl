@@ -3,18 +3,77 @@
  */
 
 #ifndef _FILE_OFFSET_BITS
-#define _FILE_OFFSET_BITS  64
+# define _FILE_OFFSET_BITS  64
 #endif
 
 #ifdef __linux__
-#include <features.h>
+# include <features.h>
 #endif
 #include <ctype.h>
 #include "ecore_file_private.h"
 #include <errno.h>
 
+#ifdef _WIN32
+# include <windows.h>
+# include <shlobj.h>
+# include <objidl.h>
+#endif /* _WIN32 */
+
 
 static int init = 0;
+
+/* FIXME: Windows has no symbolic link. */
+/*        Nevertheless, it can creates .lnk files */
+#ifdef _WIN32
+static int
+symlink (const char *oldpath, const char *newpath)
+{
+   IShellLink    *pISL;
+   IShellLink   **shell_link;
+   IPersistFile  *pIPF;
+   IPersistFile **persit_file;
+   wchar_t        new_path[MB_CUR_MAX];
+
+   /* Hack to cleanly remove a warning */
+   shell_link = &pISL;
+   if (FAILED(CoInitialize(NULL)))
+     return -1;
+
+   if (FAILED(CoCreateInstance(&CLSID_ShellLink,
+                               NULL,
+                               CLSCTX_INPROC_SERVER,
+                               &IID_IShellLink,
+                               (void **)shell_link)))
+     goto no_instance;
+
+   if (FAILED(pISL->lpVtbl->SetPath(pISL, oldpath)))
+     goto no_setpath;
+
+   /* Hack to cleanly remove a warning */
+   persit_file = &pIPF;
+   if (FAILED(pISL->lpVtbl->QueryInterface(pISL, &IID_IPersistFile, (void **)persit_file)))
+     goto no_queryinterface;
+
+   mbstowcs(new_path, newpath, MB_CUR_MAX);
+   if (FAILED(pIPF->lpVtbl->Save(pIPF, new_path, FALSE)))
+     goto no_save;
+
+   pIPF->lpVtbl->Release(pIPF);
+   pISL->lpVtbl->Release(pISL);
+   CoUninitialize();
+
+   return 0;
+
+ no_save:
+   pIPF->lpVtbl->Release(pIPF);
+ no_queryinterface:
+ no_setpath:
+   pISL->lpVtbl->Release(pISL);
+ no_instance:
+   CoUninitialize();
+   return -1;
+}
+#endif /* _WIN32 */
 
 /* externally accessible functions */
 /**
@@ -64,7 +123,7 @@ ecore_file_shutdown()
 /**
  * Get the time of the last modification to the give file
  * @param file The name of the file
- * @return Return the time of the last data modification, if an error should 
+ * @return Return the time of the last data modification, if an error should
  *         occur it will return 0
  */
 EAPI long long
@@ -120,7 +179,9 @@ ecore_file_is_dir(const char *file)
    return 0;
 }
 
+#ifndef _WIN32
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+#endif /* _WIN32 */
 /**
  * Create a new directory
  * @param  dir The name of the directory to create
@@ -131,7 +192,11 @@ static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S
 EAPI int
 ecore_file_mkdir(const char *dir)
 {
+#ifndef _WIN32
    if (mkdir(dir, default_mode) < 0) return 0;
+#else
+   if (mkdir(dir) < 0) return 0;
+#endif /* _WIN32 */
    return 1;
 }
 
@@ -163,7 +228,7 @@ ecore_file_unlink(const char *file)
  * Delete a directory and all its contents
  * @param  dir The name of the directory to delete
  * @return 1 on success, 0 on failure
- * 
+ *
  * If dir is a link only the link is removed
  */
 EAPI int
@@ -171,14 +236,21 @@ ecore_file_recursive_rm(const char *dir)
 {
    DIR                *dirp;
    struct dirent      *dp;
-   char               path[PATH_MAX], buf[PATH_MAX];;
+   char               path[PATH_MAX];
+#ifndef _WIN32
+   char               buf[PATH_MAX];
+#endif /* _WIN32 */
    struct             stat st;
    int                ret;
 
+   /* On Windows, no link */
+#ifndef _WIN32
    if (readlink(dir, buf, sizeof(buf)) > 0)
      {
 	return ecore_file_unlink(dir);
      }
+#endif /* _WIN32 */
+
    ret = stat(dir, &st);
    if ((ret == 0) && (S_ISDIR(st.st_mode)))
      {
@@ -258,8 +330,13 @@ ecore_file_cp(const char *src, const char *dst)
    size_t              num;
    int                 ret = 1;
 
+#ifndef _WIN32
    if (!realpath(src, realpath1)) return 0;
    if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return 0;
+#else
+   if (!_fullpath(realpath1, src, _MAX_PATH)) return 0;
+   if (_fullpath(realpath2, dst, _MAX_PATH) && !strcmp(realpath1, realpath2)) return 0;
+#endif /* _WIN32 */
 
    f1 = fopen(src, "rb");
    if (!f1) return 0;
@@ -293,7 +370,7 @@ ecore_file_mv(const char *src, const char *dst)
 	if (errno == EXDEV)
 	  {
 	     struct stat st;
-	     
+
 	     stat(src, &st);
 	     if (S_ISREG(st.st_mode))
 	       {
@@ -318,6 +395,7 @@ EAPI int
 ecore_file_symlink(const char *src, const char *dest)
 {
    if (!symlink(src, dest)) return 1;
+
    return 0;
 }
 
@@ -332,7 +410,12 @@ ecore_file_realpath(const char *file)
 {
    char  buf[PATH_MAX];
 
+#ifndef _WIN32
    if (!realpath(file, buf)) return strdup("");
+#else
+   if (!_fullpath(buf, file, _MAX_PATH)) return strdup("");
+#endif /* _WIN32 */
+
    return strdup(buf);
 }
 
@@ -423,22 +506,26 @@ ecore_file_can_exec(const char *file)
 EAPI char *
 ecore_file_readlink(const char *link)
 {
+#ifndef _WIN32
    char                buf[PATH_MAX];
    int                 count;
 
    if ((count = readlink(link, buf, sizeof(buf))) < 0) return NULL;
    buf[count] = 0;
    return strdup(buf);
+#else
+   return NULL;
+#endif /* _WIN32 */
 }
 
 /**
- * Get the list of the files and directories in a given directory. The list 
+ * Get the list of the files and directories in a given directory. The list
  * will be sorted with strcoll as compare function. That means that you may
  * want to set the current locale for the category LC_COLLATE with setlocale().
  * For more information see the manual pages of strcoll and setlocale.
  * The list will not contain the directory entries for '.' and '..'.
  * @param  dir The name of the directory to list
- * @return Return an Ecore_List containing all the files in the directory; 
+ * @return Return an Ecore_List containing all the files in the directory;
  *         on failure it returns NULL.
  */
 EAPI Ecore_List *
@@ -464,7 +551,7 @@ ecore_file_ls(const char *dir)
 	  }
      }
    closedir(dirp);
-   
+
    ecore_list_sort(list, ECORE_COMPARE_CB(strcoll), ECORE_SORT_MIN);
 
    ecore_list_first_goto(list);
@@ -631,7 +718,7 @@ ecore_file_escape_name(const char *filename)
    const char *p;
    char *q;
    char buf[PATH_MAX];
-   
+
    p = filename;
    q = buf;
    while (*p)
