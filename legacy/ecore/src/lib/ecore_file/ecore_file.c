@@ -26,7 +26,7 @@ static int init = 0;
 /*        Nevertheless, it can creates .lnk files */
 #ifdef _WIN32
 static int
-symlink (const char *oldpath, const char *newpath)
+symlink(const char *oldpath, const char *newpath)
 {
    IShellLink    *pISL;
    IShellLink   **shell_link;
@@ -35,10 +35,10 @@ symlink (const char *oldpath, const char *newpath)
    wchar_t        new_path[MB_CUR_MAX];
 
    /* Hack to cleanly remove a warning */
-   shell_link = &pISL;
    if (FAILED(CoInitialize(NULL)))
      return -1;
 
+   shell_link = &pISL;
    if (FAILED(CoCreateInstance(&CLSID_ShellLink,
                                NULL,
                                CLSCTX_INPROC_SERVER,
@@ -69,6 +69,62 @@ symlink (const char *oldpath, const char *newpath)
  no_queryinterface:
  no_setpath:
    pISL->lpVtbl->Release(pISL);
+ no_instance:
+   CoUninitialize();
+   return -1;
+}
+
+static int
+readlink(const char *path, char *buf, size_t bufsiz)
+{
+   IShellLink    *pISL;
+   IShellLink   **shell_link;
+   IPersistFile  *pIPF;
+   IPersistFile **persit_file;
+   wchar_t        old_path[MB_CUR_MAX];
+   char           new_path[MB_CUR_MAX];
+   int            length;
+
+   /* Hack to cleanly remove a warning */
+   if (FAILED(CoInitialize(NULL)))
+     return -1;
+
+   persit_file = &pIPF;
+   if (FAILED(CoCreateInstance(&CLSID_ShellLink,
+                               NULL,
+                               CLSCTX_INPROC_SERVER,
+                               &IID_IPersistFile,
+                               (void **)persit_file)))
+     goto no_instance;
+
+   mbstowcs(old_path, path, MB_CUR_MAX);
+   if (FAILED(pIPF->lpVtbl->Load(pIPF, old_path, STGM_READWRITE)))
+     goto no_load;
+
+   shell_link = &pISL;
+   if (FAILED(pIPF->lpVtbl->QueryInterface(pIPF, &IID_IShellLink, (void **)shell_link)))
+     goto no_queryinterface;
+
+   if (FAILED(pISL->lpVtbl->GetPath(pISL, new_path, MB_CUR_MAX, NULL, 0)))
+     goto no_getpath;
+
+   length = strlen(new_path);
+   if (length > bufsiz)
+     length = bufsiz;
+
+   memcpy(buf, new_path, length);
+
+   pISL->lpVtbl->Release(pISL);
+   pIPF->lpVtbl->Release(pIPF);
+   CoUninitialize();
+
+   return length;
+
+ no_getpath:
+   pISL->lpVtbl->Release(pISL);
+ no_queryinterface:
+ no_load:
+   pIPF->lpVtbl->Release(pIPF);
  no_instance:
    CoUninitialize();
    return -1;
@@ -237,19 +293,14 @@ ecore_file_recursive_rm(const char *dir)
    DIR                *dirp;
    struct dirent      *dp;
    char               path[PATH_MAX];
-#ifndef _WIN32
    char               buf[PATH_MAX];
-#endif /* _WIN32 */
    struct             stat st;
    int                ret;
 
-   /* On Windows, no link */
-#ifndef _WIN32
    if (readlink(dir, buf, sizeof(buf)) > 0)
      {
 	return ecore_file_unlink(dir);
      }
-#endif /* _WIN32 */
 
    ret = stat(dir, &st);
    if ((ret == 0) && (S_ISDIR(st.st_mode)))
@@ -506,16 +557,12 @@ ecore_file_can_exec(const char *file)
 EAPI char *
 ecore_file_readlink(const char *link)
 {
-#ifndef _WIN32
    char                buf[PATH_MAX];
    int                 count;
 
    if ((count = readlink(link, buf, sizeof(buf))) < 0) return NULL;
    buf[count] = 0;
    return strdup(buf);
-#else
-   return NULL;
-#endif /* _WIN32 */
 }
 
 /**
