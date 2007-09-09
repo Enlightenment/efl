@@ -212,7 +212,6 @@ eet_data_get_char(void *src, void *src_end, void *dst)
    if (((char *)src + sizeof(char)) > (char *)src_end) return -1;
    s = (char *)src;
    d = (char *)dst;
-   if (*s == 0) return NULL;
    *d = *s;
    CONV8(*d);
    return sizeof(char);
@@ -226,7 +225,7 @@ eet_data_put_char(const void *src, int *size_ret)
    d = (char *)malloc(sizeof(char));
    if (!d) return NULL;
    s = (char *)src;
-   if (*s == 0) return NULL;
+//   if (*s == 0) return NULL;
    *d = *s;
    CONV8(*d);
    *size_ret = sizeof(char);
@@ -254,7 +253,7 @@ eet_data_put_short(const void *src, int *size_ret)
    d = (short *)malloc(sizeof(short));
    if (!d) return NULL;
    s = (short *)src;
-   if (*s == 0) return NULL;
+//   if (*s == 0) return NULL;
    *d = *s;
    CONV16(*d);
    *size_ret = sizeof(short);
@@ -282,7 +281,7 @@ eet_data_put_int(const void *src, int *size_ret)
    d = (int *)malloc(sizeof(int));
    if (!d) return NULL;
    s = (int *)src;
-   if (*s == 0) return NULL;
+//   if (*s == 0) return NULL;
    *d = *s;
    CONV32(*d);
    *size_ret = sizeof(int);
@@ -310,7 +309,7 @@ eet_data_put_long_long(const void *src, int *size_ret)
    d = (unsigned long long *)malloc(sizeof(unsigned long long));
    if (!d) return NULL;
    s = (unsigned long long *)src;
-   if (*s == 0) return NULL;
+//   if (*s == 0) return NULL;
    *d = *s;
    CONV64(*d);
    *size_ret = sizeof(unsigned long long);
@@ -395,7 +394,7 @@ eet_data_put_float(const void *src, int *size_ret)
    int len;
 
    s = (float *)src;
-   if (*s == 0.0) return NULL;
+//   if (*s == 0.0) return NULL;
    prev_locale = setlocale(LC_NUMERIC, "C");
    snprintf(buf, sizeof(buf), "%a", (double)(*s));
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
@@ -443,7 +442,7 @@ eet_data_put_double(const void *src, int *size_ret)
    int len;
 
    s = (double *)src;
-   if (*s == 0.0) return NULL;
+//   if (*s == 0.0) return NULL;
    prev_locale = setlocale(LC_NUMERIC, "C");
    snprintf(buf, sizeof(buf), "%a", (double)(*s));
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
@@ -1836,6 +1835,8 @@ _eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	       {
 		  int group_type = EET_G_UNKNOWN, type = EET_T_UNKNOW;
 
+		  group_type = ede->group_type;
+		  type = ede->type;
 		  if ((echnk.type == 0) && (echnk.group_type == 0))
 		    {
 		       type = ede->type;
@@ -2026,7 +2027,7 @@ _eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	     
 	     if ((echnk.type > EET_T_UNKNOW) &&
 		 (echnk.type < EET_T_LAST))
-       type = echnk.type;
+	       type = echnk.type;
 	     else if ((echnk.group_type > EET_G_UNKNOWN) &&
 		      (echnk.group_type < EET_G_LAST))
 	       group_type = echnk.group_type;
