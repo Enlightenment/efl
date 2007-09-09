@@ -817,6 +817,7 @@ if test "x$have_ecore_file" = "xyes"; then
       [
         AC_DEFINE(HAVE_CURL, 1, [ Downloading with CURL ])
         ecore_file_libs="$ecore_file_libs $CURL_LIBS"
+        ecore_file_win32_lib="$ecore_file_win32_lib $winsock_libs"
         requirements_ecore_file="$requirements_ecore_file libcurl"
       ], [
         use_curl="no"
