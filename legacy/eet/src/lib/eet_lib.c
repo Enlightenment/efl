@@ -42,7 +42,7 @@ struct _Eet_File
    char            *path;
    FILE            *fp;
    Eet_File_Header *header;
-   uint8_t	   *data;
+   unsigned char   *data;
    
    int              magic;
    int              references;
@@ -324,9 +324,9 @@ eet_flush(Eet_File *ef)
      }
 
    /* go thru and write the header */
-   head[0] = (int) htonl ((uint32_t) EET_MAGIC_FILE);
-   head[1] = (int) htonl ((uint32_t) count);
-   head[2] = (int) htonl ((uint32_t) size);
+   head[0] = (int) htonl ((unsigned int) EET_MAGIC_FILE);
+   head[1] = (int) htonl ((unsigned int) count);
+   head[2] = (int) htonl ((unsigned int) size);
 
    fseek(ef->fp, 0, SEEK_SET);
    if (fwrite(head, 12, 1, ef->fp) != 1)
@@ -336,16 +336,16 @@ eet_flush(Eet_File *ef)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  {
-	     uint32_t	ibuf[5];
+	     unsigned int	ibuf[5];
 	     int		name_size;
 	     
 	     name_size = strlen(efn->name) + 1;
 	     
-	     ibuf[0] = (int) htonl ((uint32_t) efn->offset);
-	     ibuf[1] = (int) htonl ((uint32_t) efn->compression);
-	     ibuf[2] = (int) htonl ((uint32_t) efn->size);
-	     ibuf[3] = (int) htonl ((uint32_t) efn->data_size);
-	     ibuf[4] = (int) htonl ((uint32_t) name_size);
+	     ibuf[0] = (int) htonl ((unsigned int) efn->offset);
+	     ibuf[1] = (int) htonl ((unsigned int) efn->compression);
+	     ibuf[2] = (int) htonl ((unsigned int) efn->size);
+	     ibuf[3] = (int) htonl ((unsigned int) efn->data_size);
+	     ibuf[4] = (int) htonl ((unsigned int) name_size);
 	     
 	     
 	     if (fwrite(ibuf, sizeof(ibuf), 1, ef->fp) != 1)
