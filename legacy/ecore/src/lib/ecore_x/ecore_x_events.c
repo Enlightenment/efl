@@ -1466,13 +1466,13 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	    (source->dest != (Window)xevent->xclient.data.l[0]))
 	  return;
 
-	if ((source->version >= 5) && (xevent->xclient.data.l[1] & 0x1UL))
+	if ((source->version < 5) || (xevent->xclient.data.l[1] & 0x1UL))
 	  {
 	     /* Target successfully performed drop action */
 	     ecore_x_selection_xdnd_clear();
 	     source->state = ECORE_X_DND_SOURCE_IDLE;
 	  }
-	else
+	else if (source->version >= 5)
 	  {
 	       completed = 0;
 	       source->state = ECORE_X_DND_SOURCE_CONVERTING;
