@@ -1259,7 +1259,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	       {
 		  Edje_Image_Directory_Entry *ie;
 
-		  ie = evas_list_nth(ed->file->image_dir->entries, (-image_id) - 1);
+		  if (!ed->file->image_dir) ie = NULL;
+		  else ie = evas_list_nth(ed->file->image_dir->entries, (-image_id) - 1);
 		  if ((ie) &&
 		      (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
 		      (ie->entry))
