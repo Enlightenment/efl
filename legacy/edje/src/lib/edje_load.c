@@ -650,11 +650,12 @@ _edje_file_del(Edje *ed)
 		  evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 		  if (rp->part->mouse_events)
 		     _edje_callbacks_del(rp->swallowed_object);
-		  rp->swallowed_object = NULL;
 
 /* Objects swallowed by the app do not get deleted, but those internally swallowed (GROUP type) do. */
 		  if (rp->part->type == EDJE_PART_TYPE_GROUP)
 		    evas_object_del(rp->swallowed_object);
+
+		  rp->swallowed_object = NULL;
 	       }
 	     if (rp->text.text) evas_stringshare_del(rp->text.text);
 	     if (rp->text.font) evas_stringshare_del(rp->text.font);
