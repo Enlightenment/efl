@@ -1,7 +1,7 @@
 #include "evas_common.h"
 
 EAPI Cutout_Rects*
-evas_common_draw_context_cutouts_new()
+evas_common_draw_context_cutouts_new(void)
 {
    Cutout_Rects *rects;
 
