@@ -1496,7 +1496,7 @@ _layout_word_start(char *str, int start)
      }
    p = start;
    tp = p;
-   while (p >= 0)
+   while (p > 0)
      {
 	chr = evas_common_font_utf8_get_prev((unsigned char *)(str), &p);
 	if (_is_white(chr)) break;
