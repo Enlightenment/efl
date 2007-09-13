@@ -13,7 +13,8 @@ void
 evas_software_x11_outbuf_free(Outbuf * buf)
 {
    evas_software_x11_outbuf_flush(buf);
-   XFreeGC(buf->priv.x.disp, buf->priv.x.gc);
+   if (buf->priv.x.gc)
+      XFreeGC(buf->priv.x.disp, buf->priv.x.gc);
    if (buf->priv.x.gcm)
       XFreeGC(buf->priv.x.disp, buf->priv.x.gcm);
    if (buf->priv.pal)
