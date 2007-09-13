@@ -142,11 +142,11 @@ evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *dst_end, *dst_end_pre;
 #ifdef ALIGN_FIX
-   int src_align;
-   int dst_align;
+   intptr_t src_align;
+   intptr_t dst_align;
 
-   src_align = (int)src & 0x3f; /* 64 byte alignment */
-   dst_align = (int)dst & 0x3f; /* 64 byte alignment */
+   src_align = (intptr_t)src & 0x3f; /* 64 byte alignment */
+   dst_align = (intptr_t)dst & 0x3f; /* 64 byte alignment */
 
    if ((src_align != dst_align) ||
        ((src_align & 0x3) != 0))
@@ -185,11 +185,11 @@ evas_common_copy_pixels_mmx2(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *dst_end, *dst_end_pre;
 #ifdef ALIGN_FIX
-   int src_align;
-   int dst_align;
+   intptr_t src_align;
+   intptr_t dst_align;
 
-   src_align = (int)src & 0x3f; /* 64 byte alignment */
-   dst_align = (int)dst & 0x3f; /* 64 byte alignment */
+   src_align = (intptr_t)src & 0x3f; /* 64 byte alignment */
+   dst_align = (intptr_t)dst & 0x3f; /* 64 byte alignment */
 
    if ((src_align != dst_align) ||
        ((src_align & 0x3) != 0))
