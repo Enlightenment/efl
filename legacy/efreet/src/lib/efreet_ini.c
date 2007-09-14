@@ -56,11 +56,6 @@ efreet_ini_new(const char *file)
     if (!ini) return NULL;
 
     ini->data = efreet_ini_parse(file);
-    if (!ini->data)
-    {
-        FREE(ini);
-        return NULL;
-    }
 
     return ini;
 }
@@ -98,14 +93,12 @@ efreet_ini_parse(const char *file)
     buf = read_buf = static_buf;
     read_len = static_buf_len;
 
-    data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    if (!data) return NULL;
+    f = fopen(file, "rb");
+    if (!f) return NULL;
 
+    data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_free_key_cb_set(data, ECORE_FREE_CB(ecore_string_release));
     ecore_hash_free_value_cb_set(data, ECORE_FREE_CB(ecore_hash_destroy));
-
-    f = fopen(file, "rb");
-    if (!f) return data;
 
     /* if a line is longer than the buffer size, this \n will get overwritten. */
     read_buf[read_len - 2] = '\n';
@@ -273,7 +266,7 @@ int
 efreet_ini_save(Efreet_Ini *ini, const char *file)
 {
     FILE *f;
-    if (!ini) return 0;
+    if (!ini || !ini->data) return 0;
 
     f = fopen(file, "wb");
     if (!f) return 0;
@@ -293,7 +286,7 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
 int
 efreet_ini_section_set(Efreet_Ini *ini, const char *section)
 {
-    if (!ini || !section) return 0;
+    if (!ini || !ini->data || !section) return 0;
 
     ini->section = ecore_hash_get(ini->data, section);
     return (ini->section ? 1 : 0);
