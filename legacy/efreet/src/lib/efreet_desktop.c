@@ -209,7 +209,10 @@ efreet_desktop_get(const char *file)
 
             desktop->cached = 0;
             ecore_hash_remove(efreet_desktop_cache, file);
+            /*
+             * TODO: We can't free the desktop here, as someone still might have references to it.
             efreet_desktop_free(desktop);
+            */
         }
     }
 
