@@ -1131,7 +1131,7 @@ _eet_data_string_escape(const char *str)
 	else sz += 1;
      }
    s = malloc(sz + 1);
-   if (!s) return;
+   if (!s) return NULL;
    for (strp = str, sp = s; *strp; strp++, sp++)
      {
 	if (*strp == '\"')
@@ -1151,7 +1151,7 @@ _eet_data_string_escape(const char *str)
 }
 
 static void
-_eet_data_dump_string_escape(void *dumpdata, void *dumpfunc(void *data, const char *str), const char *str)
+_eet_data_dump_string_escape(void *dumpdata, void dumpfunc(void *data, const char *str), const char *str)
 {
    char *s;
    
@@ -1164,9 +1164,10 @@ _eet_data_dump_string_escape(void *dumpdata, void *dumpfunc(void *data, const ch
 }
 
 static char *
-_eet_data_dump_token_get(char *src, int *len)
+_eet_data_dump_token_get(const char *src, int *len)
 {
-   char *p, *tok = NULL;
+   const char *p;
+   char *tok = NULL;
    int in_token = 0;
    int in_quote = 0;
    int tlen = 0, tsize = 0;
@@ -1310,7 +1311,6 @@ _eet_data_dump_encode(Node *node,
 {
    Eet_Data_Chunk *chnk = NULL, *echnk = NULL;
    Eet_Data_Stream *ds;
-   int i;
    void *cdata, *data;
    int csize, size;
    Node *n;
@@ -1515,15 +1515,14 @@ _eet_data_dump_encode(Node *node,
 
 static void *
 _eet_data_dump_parse(int *size_ret,
-		     char *src,
+		     const char *src,
 		     int size)
 {
    void *cdata = NULL;
-   char *p;
+   const char *p;
 #define M_NONE 0
 #define M_STRUCT 1
 #define M_ 2
-   int mode = M_NONE;
    int left, jump;
    Node *node_base = NULL;
    Node *node = NULL;
@@ -1745,8 +1744,8 @@ _eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			    void *dumpdata)
 {
    void *data = NULL;
-   char *p, *buf, tbuf[256], *ts;
-   int size, i, dump, bsize;
+   char *p, *buf, tbuf[256];
+   int size, i, dump;
    Eet_Data_Chunk chnk;
 
    if (words_bigendian == -1)
@@ -2153,7 +2152,7 @@ _eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			    if ((type >= EET_T_CHAR) &&
 				(type <= EET_T_STRING))
 			      {
-				 data_ret = 1;
+				 data_ret = (void *)1;
 				 ret = eet_data_get_type(type,
 							 echnk.data,
 							 ((char *)echnk.data) + echnk.size,
@@ -2196,7 +2195,7 @@ _eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			    if ((type >= EET_T_CHAR) &&
 				(type <= EET_T_STRING))
 			      {
-				 data_ret = 1;
+				 data_ret = (void *)1;
 				 ret = eet_data_get_type(type,
 							 echnk.data,
 							 ((char *)echnk.data) + echnk.size,

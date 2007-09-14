@@ -15,6 +15,7 @@
 #if HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#include <ctype.h>
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
