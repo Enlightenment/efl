@@ -885,7 +885,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
     ptr = data;
 
     /* make sure we're a magic file */
-    if (!ptr || strncmp(ptr, "MIME-Magic\0\n", 12))
+    if (!ptr || (size < 12) || strncmp(ptr, "MIME-Magic\0\n", 12))
         return;
 
     ptr += 12;
