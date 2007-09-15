@@ -521,15 +521,18 @@ data_write(void)
      }
 
    /* check that all groups have names */
-   for (l = edje_file->collection_dir->entries; l; l = l->next)
+   if (edje_file->collection_dir)
      {
-	Edje_Part_Collection_Directory_Entry *de;
-	de = l->data;
-	if (!de->entry)
+	for (l = edje_file->collection_dir->entries; l; l = l->next)
 	  {
-	     fprintf(stderr, "%s: Error. collection %i: name missing.\n",
-		   progname, de->id);
-	     ABORT_WRITE(ef, file_out);
+	     Edje_Part_Collection_Directory_Entry *de;
+	     de = l->data;
+	     if (!de->entry)
+	       {
+		  fprintf(stderr, "%s: Error. collection %i: name missing.\n",
+			progname, de->id);
+		  ABORT_WRITE(ef, file_out);
+	       }
 	  }
      }
    /* check that all spectra are valid */
