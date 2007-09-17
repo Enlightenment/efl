@@ -600,6 +600,7 @@ _edje_part_recalc_single(Edje *ed,
      {
 	const char	*text;
 	const char	*font;
+	char            *sfont = NULL;
 	int		 size;
 	Evas_Coord	 tw, th;
 	int		 inlined_font = 0;
@@ -640,7 +641,35 @@ _edje_part_recalc_single(Edje *ed,
 		  tc = _edje_text_class_find(ed, ep->text.source->chosen_description->text.text_class);
 		  if (tc)
 		    {
-		       if (tc->font) font = tc->font;
+		       if ((tc->font) && (chosen_desc->text.font))
+			 {
+			    char *tok, *tok2, *e;
+			    
+			    tok = strstr(chosen_desc->text.font, ":style=");
+			    tok2 = strstr(tc->font, ":style=");
+			    if ((tok) && (!tok2))
+			      {
+				 char *stl;
+				 int tclen;
+				 
+				 e = strchr(tok, ',');
+				 stl = alloca(e - tok + 1);
+				 strncpy(stl, tok, e - tok);
+				 stl[e - tok] = 0;
+				 font = tc->font;
+				 tclen = strlen(tc->font);
+				 sfont = malloc(tclen + e - tok + 1);
+				 strcpy(sfont, tc->font);
+				 strcpy(sfont + tclen, stl);
+				 font = sfont;
+			      }
+			    else
+			      font = tc->font;
+			 }       
+		       else
+			 {
+			    if (tc->font) font = tc->font;
+			 }
 		       size = _edje_text_size_calc(size, tc);
 		    }
 	       }
@@ -654,7 +683,35 @@ _edje_part_recalc_single(Edje *ed,
 		  tc = _edje_text_class_find(ed, chosen_desc->text.text_class);
 		  if (tc)
 		    {
-		       if (tc->font) font = tc->font;
+		       if ((tc->font) && (chosen_desc->text.font))
+			 {
+			    char *tok, *tok2, *e;
+			    
+			    tok = strstr(chosen_desc->text.font, ":style=");
+			    tok2 = strstr(tc->font, ":style=");
+			    if ((tok) && (!tok2))
+			      {
+				 char *stl;
+				 int tclen;
+				 
+				 e = strchr(tok, ',');
+				 stl = alloca(e - tok + 1);
+				 strncpy(stl, tok, e - tok);
+				 stl[e - tok] = 0;
+				 font = tc->font;
+				 tclen = strlen(tc->font);
+				 sfont = malloc(tclen + e - tok + 1);
+				 strcpy(sfont, tc->font);
+				 strcpy(sfont + tclen, stl);
+				 font = sfont;
+			      }
+			    else
+			      font = tc->font;
+			 }       
+		       else
+			 {
+			    if (tc->font) font = tc->font;
+			 }
 		       size = _edje_text_size_calc(size, tc);
 		    }
 	       }
@@ -769,6 +826,7 @@ _edje_part_recalc_single(Edje *ed,
 		  if (mh > minh) minh = mh;
 	       }
 	  }
+	if (sfont) free(sfont);
      }
    /* rememebr what our size is BEFORE we go limit it */
    params->req.x = params->x;
