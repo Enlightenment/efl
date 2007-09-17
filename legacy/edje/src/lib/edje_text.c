@@ -280,6 +280,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    const char	*text;
    const char	*font;
    char		*font2 = NULL;
+   char         *sfont = NULL;
    int		 size;
    Evas_Coord	 tw, th;
    Evas_Coord	 sw, sh;
@@ -297,7 +298,41 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	tc = _edje_text_class_find(ed, chosen_desc->text.text_class);
 	if (tc)
 	  {
-	     if (tc->font) font = tc->font;
+	     /* if the existing font spec in edje has a :style=XXX in it then
+	      * its hinting that it wants to remain in that style even when
+	      * a textclass is applied. if the textclass does not explicitly
+	      * state a style, then snarf the old style out of the font spec
+	      * and apply it to the text class being applie
+	      */
+	     if ((tc->font) && (chosen_desc->text.font))
+	       {
+		  char *tok, *tok2, *e;
+	     
+		  tok = strstr(chosen_desc->text.font, ":style=");
+		  tok2 = strstr(tc->font, ":style=");
+		  if ((tok) && (!tok2))
+		    {
+		       char *stl;
+		       int tclen;
+		       
+		       e = strchr(tok, ',');
+		       stl = alloca(e - tok + 1);
+		       strncpy(stl, tok, e - tok);
+		       stl[e - tok] = 0;
+		       font = tc->font;
+		       tclen = strlen(tc->font);
+		       sfont = malloc(tclen + e - tok + 1);
+		       strcpy(sfont, tc->font);
+		       strcpy(sfont + tclen, stl);
+		       font = sfont;
+		    }
+		  else
+		    font = tc->font;
+	       }
+	     else
+	       {
+		  if (tc->font) font = tc->font;
+	       }
 	     size = _edje_text_size_calc(size, tc);
 	  }
      }
@@ -618,6 +653,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      free((char *)text);
    if (font2)
      free(font2);
+   if (sfont)
+     free(sfont);
 }
 
 Evas_Font_Size
