@@ -370,6 +370,7 @@ _soft16_image_draw_scaled_transp_solid_mul_color(Soft16_Image *src,
 	      (d, s[offset_x[x]], a[offset_x[x]], r, g, b);
        }
    else
+     for (y = 0; y < h; y++, dst_itr += dst->stride)
        {
 	  DATA16 *d, *s;
 	  DATA8 *a;
