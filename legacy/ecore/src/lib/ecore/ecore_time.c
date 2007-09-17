@@ -6,6 +6,8 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
+/* FIXME: clock_gettime() is an option... */
+
 /**
  * Retrieves the current system time as a floating point value in seconds.
  * @return  The number of seconds since 12.00AM 1st January 1970.
