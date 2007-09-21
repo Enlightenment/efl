@@ -22,9 +22,10 @@
 
 static int init = 0;
 
-/* FIXME: Windows has no symbolic link. */
-/*        Nevertheless, it can creates .lnk files */
 #ifdef _WIN32
+
+/* FIXME: Windows has no symbolic link. */
+/*        Nevertheless, it can create and read .lnk files */
 static int
 symlink(const char *oldpath, const char *newpath)
 {
@@ -129,6 +130,11 @@ readlink(const char *path, char *buf, size_t bufsiz)
    CoUninitialize();
    return -1;
 }
+
+#define realpath(file_name, resolved_name) _fullpath((resolved_name), (file_name), PATH_MAX)
+
+#define mkdir(path, mode) _mkdir((path))
+
 #endif /* _WIN32 */
 
 /* externally accessible functions */
@@ -248,11 +254,7 @@ static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S
 EAPI int
 ecore_file_mkdir(const char *dir)
 {
-#ifndef _WIN32
    if (mkdir(dir, default_mode) < 0) return 0;
-#else
-   if (mkdir(dir) < 0) return 0;
-#endif /* _WIN32 */
    return 1;
 }
 
@@ -381,13 +383,8 @@ ecore_file_cp(const char *src, const char *dst)
    size_t              num;
    int                 ret = 1;
 
-#ifndef _WIN32
    if (!realpath(src, realpath1)) return 0;
    if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return 0;
-#else
-   if (!_fullpath(realpath1, src, _MAX_PATH)) return 0;
-   if (_fullpath(realpath2, dst, _MAX_PATH) && !strcmp(realpath1, realpath2)) return 0;
-#endif /* _WIN32 */
 
    f1 = fopen(src, "rb");
    if (!f1) return 0;
@@ -461,11 +458,7 @@ ecore_file_realpath(const char *file)
 {
    char  buf[PATH_MAX];
 
-#ifndef _WIN32
    if (!realpath(file, buf)) return strdup("");
-#else
-   if (!_fullpath(buf, file, _MAX_PATH)) return strdup("");
-#endif /* _WIN32 */
 
    return strdup(buf);
 }
