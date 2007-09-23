@@ -6,6 +6,7 @@ INCLUDES = \
 
 libecore_win32_la_LDFLAGS = \
 -version-info 1:0:0 \
+@create_shared_lib@  \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 
@@ -17,6 +18,7 @@ Ecore_Win32.h
 
 libecore_win32_la_SOURCES = \
 ecore_win32.c \
+ecore_win32_cursor.c \
 ecore_win32_direct3d.cpp \
 ecore_win32_ddraw.c \
 ecore_win32_event.c \
@@ -25,7 +27,7 @@ ecore_win32_private.h
 
 libecore_win32_la_LIBADD = \
 @ddraw_libs@ @direct3d_libs@ \
-@create_shared_lib@ -lwsock32 \
+-lwsock32 \
 $(top_builddir)/src/lib/ecore/libecore.la
 
 endif
@@ -33,6 +35,7 @@ endif
 EXTRA_DIST = \
 Ecore_Win32.h \
 ecore_win32.c \
+ecore_win32_cursor.c \
 ecore_win32_direct3d.cpp \
 ecore_win32_ddraw.c \
 ecore_win32_event.c \

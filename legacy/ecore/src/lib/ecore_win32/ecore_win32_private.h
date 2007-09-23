@@ -7,9 +7,13 @@
 
 
 #include <windows.h>
-#include <ddraw.h>
-#include <d3d9.h>
-#include <d3dx9.h>
+#ifdef HAVE_DIRECTDRAW
+# include <ddraw.h>
+#endif /* HAVE_DIRECTDRAW */
+#ifdef HAVE_DIRECT3D
+# include <d3d9.h>
+# include <d3dx9.h>
+#endif /* HAVE_DIRECT3D */
 
 #include <Ecore_Data.h>
 
@@ -95,10 +99,13 @@ void  _ecore_win32_event_handle_leave_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_focus_in(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_focus_out(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_expose(Ecore_Win32_Callback_Data *msg);
+void  _ecore_win32_event_handle_create_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_destroy_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_map_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg);
-void  _ecore_win32_event_handle_delete(Ecore_Win32_Callback_Data *msg);
+void  _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg);
+void  _ecore_win32_event_handle_resize(Ecore_Win32_Callback_Data *msg);
+void  _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg);
 
 
 #endif /* __ECORE_WIN32_PRIVATE_H__ */

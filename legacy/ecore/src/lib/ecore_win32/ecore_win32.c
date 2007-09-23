@@ -53,6 +53,7 @@ _ecore_win32_window_procedure(HWND   window,
 
    switch (data->message)
      {
+       /* Keyboard input notifications */
      case WM_KEYDOWN:
        printf (" * ecore message : keystroke down\n");
        _ecore_win32_event_handle_key_press(data, 1);
@@ -64,6 +65,15 @@ _ecore_win32_window_procedure(HWND   window,
        printf (" * ecore message : keystroke up\n");
        _ecore_win32_event_handle_key_release(data, 1);
        return 0;
+     case WM_SETFOCUS:
+       printf (" * ecore message : focus in\n");
+       _ecore_win32_event_handle_focus_in(data);
+       return 0;
+     case WM_KILLFOCUS:
+       printf (" * ecore message : focus out\n");
+       _ecore_win32_event_handle_focus_out(data);
+       return 0;
+       /* Mouse input notifications */
      case WM_LBUTTONDOWN:
        printf (" * ecore message : lbuttondown\n");
        _ecore_win32_event_handle_button_press(data, 1);
@@ -131,6 +141,15 @@ _ecore_win32_window_procedure(HWND   window,
 
           return 0;
        }
+     case WM_MOUSEWHEEL:
+       printf (" * ecore message : mouse wheel\n");
+       _ecore_win32_event_handle_button_press(data, 4);
+       return 0;
+       /* Window notifications */
+     case WM_CREATE:
+       printf (" * ecore message : create\n");
+       _ecore_win32_event_handle_create_notify(data);
+       return 0;
      case WM_DESTROY:
        printf (" * ecore message : destroy\n");
        _ecore_win32_event_handle_destroy_notify(data);
@@ -147,6 +166,37 @@ _ecore_win32_window_procedure(HWND   window,
          _ecore_win32_event_handle_unmap_notify(data);
 
        return 0;
+     case WM_CLOSE:
+       printf (" * ecore message : close\n");
+       _ecore_win32_event_handle_delete_request(data);
+       return 0;
+     case WM_MOVING:
+       printf (" * ecore message : moving\n");
+       return TRUE;
+     case WM_MOVE:
+       printf (" * ecore message : moved\n");
+       return 0;
+     case WM_SIZING:
+       printf (" * ecore message : sizing\n");
+       _ecore_win32_event_handle_resize(data);
+       return TRUE;
+     case WM_SIZE:
+       printf (" * ecore message : sized\n");
+       return 0;
+     case WM_WINDOWPOSCHANGING:
+       printf (" * ecore message : WM_WINDOWPOSCHANGING\n");
+       return 0;
+     case WM_WINDOWPOSCHANGED:
+       printf (" * ecore message : WM_WINDOWPOSCHANGED\n");
+       _ecore_win32_event_handle_configure_notify(data);
+       return 0;
+     case WM_ENTERSIZEMOVE :
+       printf (" * ecore message : WM_ENTERSIZEMOVE \n");
+       return 0;
+     case WM_EXITSIZEMOVE:
+       printf (" * ecore message : WM_EXITSIZEMOVE\n");
+       return 0;
+       /* GDI notifications */
      case WM_PAINT:
        {
          RECT rect;
@@ -158,34 +208,29 @@ _ecore_win32_window_procedure(HWND   window,
               HDC         hdc;
 
               hdc = BeginPaint(window, &ps);
+              data->update = rect;
+              _ecore_win32_event_handle_expose(data);
               EndPaint(window, &ps);
-              printf ("%ld %ld %ld %ld\n",
+              printf (" *    %ld %ld %ld %ld\n",
                       rect.left,
                       rect.top,
                       rect.right - rect.left,
                       rect.bottom - rect.top);
-              data->update = rect;
-              _ecore_win32_event_handle_expose(data);
            }
          return 0;
        }
-     case WM_CLOSE:
-       printf (" * ecore message : close\n");
-       _ecore_win32_event_handle_delete(data);
+     case WM_SETREDRAW:
+       printf (" * ecore message : WM_SETREDRAW\n");
        return 0;
-     case WM_SETFOCUS:
-       printf (" * ecore message : focus in\n");
-       _ecore_win32_event_handle_focus_in(data);
-       return 0;
-     case WM_KILLFOCUS:
-       printf (" * ecore message : focus out\n");
-       _ecore_win32_event_handle_focus_out(data);
+     case WM_SYNCPAINT:
+       printf (" * ecore message : WM_SYNCPAINT\n");
        return 0;
      default:
        return DefWindowProc(window, message, window_param, data_param);
      }
 
 }
+
 /*
   Events:
 
@@ -199,31 +244,37 @@ x * mouse button down right
 x * mouse button up left
 x * mouse button up middle
 x * mouse button up right
-  * mouse move (contains enter)
-  * mouse leave
-  * focus in
-  * focus out
-  * expose
-  * create
-  * destroy
-  * resize
+x * mouse move (contains enter)
+x * mouse leave
+x * focus in
+x * focus out
+x * expose
+x * create
+x * destroy
+x * configure
+x * resize
+x * delete
 
 */
 
-EAPI int ECORE_WIN32_EVENT_KEY_DOWN          = 0;
-EAPI int ECORE_WIN32_EVENT_KEY_UP            = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_BUTTON_UP   = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_MOVE        = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_IN          = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_OUT         = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN   = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT  = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_DAMAGE     = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_DESTROY    = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_SHOW       = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_HIDE       = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_DELETE     = 0;
+EAPI int ECORE_WIN32_EVENT_KEY_DOWN              = 0;
+EAPI int ECORE_WIN32_EVENT_KEY_UP                = 0;
+EAPI int ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = 0;
+EAPI int ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = 0;
+EAPI int ECORE_WIN32_EVENT_MOUSE_MOVE            = 0;
+EAPI int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
+EAPI int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
+EAPI int ECORE_WIN32_EVENT_MOUSE_WHEEL           = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_DAMAGE         = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_CREATE         = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_DESTROY        = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_SHOW           = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_HIDE           = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_RESIZE         = 0;
+EAPI int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
 
 
 EAPI int
@@ -270,20 +321,24 @@ ecore_win32_init()
 
    if (!ECORE_WIN32_EVENT_KEY_DOWN)
      {
-        ECORE_WIN32_EVENT_KEY_DOWN          = ecore_event_type_new();
-        ECORE_WIN32_EVENT_KEY_UP            = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_BUTTON_UP   = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_MOVE        = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_IN          = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_OUT         = ecore_event_type_new();
-	ECORE_WIN32_EVENT_WINDOW_FOCUS_IN   = ecore_event_type_new();
-	ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT  = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DAMAGE     = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DESTROY    = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_SHOW       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_HIDE       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DELETE     = ecore_event_type_new();
+        ECORE_WIN32_EVENT_KEY_DOWN              = ecore_event_type_new();
+        ECORE_WIN32_EVENT_KEY_UP                = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_MOVE            = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_WHEEL           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_CREATE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DESTROY        = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_SHOW           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
      }
 
    _ecore_win32_init_count++;

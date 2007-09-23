@@ -345,7 +345,8 @@ _ecore_win32_event_window_get(HWND window)
 }
 
 void
-_ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg, int is_keystroke)
+_ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
+                                    int                        is_keystroke)
 {
    Ecore_Win32_Event_Key_Down *e;
 
@@ -386,7 +387,8 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg, int is_keyst
 }
 
 void
-_ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg, int is_keystroke)
+_ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
+                                      int                        is_keystroke)
 {
    Ecore_Win32_Event_Key_Up *e;
 
@@ -428,85 +430,107 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg, int is_key
 
 void
 _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
-                                       int  button)
+                                       int                        button)
 {
    Ecore_Win32_Window *window;
 
    window = _ecore_win32_event_window_get(msg->window);
 
-   {
-      Ecore_Win32_Event_Mouse_Move *e;
+   if (button > 3)
+     {
+        Ecore_Win32_Event_Mouse_Wheel *e;
 
-      e = (Ecore_Win32_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Move));
-      if (!e) return;
+        e = (Ecore_Win32_Event_Mouse_Wheel *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Wheel));
+        if (!e) return;
 
-      e->window = window;
-      e->x = GET_X_LPARAM(msg->data_param);
-      e->y = GET_Y_LPARAM(msg->data_param);
-      e->time = (double)msg->time / 1000.0;
+	e->direction = 0;
+        /* wheel delta is positive or negative, never 0 */
+	e->z = GET_WHEEL_DELTA_WPARAM(msg->window_param) > 0 ? 1 : -1;
+	e->x = GET_X_LPARAM(msg->data_param);
+	e->y = GET_Y_LPARAM(msg->data_param);
+        e->time = (double)msg->time / 1000.0;
 
-      _ecore_win32_event_last_time = e->time;
-      _ecore_win32_event_last_window = e->window;
+        _ecore_win32_event_last_time = e->time;
+        _ecore_win32_event_last_window = e->window;
 
-      ecore_event_add(ECORE_WIN32_EVENT_MOUSE_MOVE, e, NULL, NULL);
-   }
+        ecore_event_add(ECORE_WIN32_EVENT_MOUSE_WHEEL, e, NULL, NULL);
+     }
+   else
+     {
+       {
+          Ecore_Win32_Event_Mouse_Move *e;
 
-   {
-      Ecore_Win32_Event_Mouse_Button_Down *e;
+          e = (Ecore_Win32_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Move));
+          if (!e) return;
 
-      if (_ecore_win32_mouse_down_did_triple)
-        {
-           _ecore_win32_mouse_down_last_window = NULL;
-           _ecore_win32_mouse_down_last_last_window = NULL;
-           _ecore_win32_mouse_down_last_time = 0.0;
-           _ecore_win32_mouse_down_last_last_time = 0.0;
-        }
+          e->window = window;
+          e->x = GET_X_LPARAM(msg->data_param);
+          e->y = GET_Y_LPARAM(msg->data_param);
+          e->time = (double)msg->time / 1000.0;
 
-      e = (Ecore_Win32_Event_Mouse_Button_Down *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Button_Down));
-      if (!e) return;
+          _ecore_win32_event_last_time = e->time;
+          _ecore_win32_event_last_window = e->window;
 
-      e->window = window;
-      e->button = button;
-      e->x = GET_X_LPARAM(msg->data_param);
-      e->y = GET_Y_LPARAM(msg->data_param);
-      e->time = (double)msg->time / 1000.0;
+          ecore_event_add(ECORE_WIN32_EVENT_MOUSE_MOVE, e, NULL, NULL);
+       }
 
-      if (((e->time - _ecore_win32_mouse_down_last_time) <= _ecore_win32_double_click_time) &&
-          (e->window == _ecore_win32_mouse_down_last_window))
-        e->double_click = 1;
+       {
+          Ecore_Win32_Event_Mouse_Button_Down *e;
 
-      if (((e->time - _ecore_win32_mouse_down_last_last_time) <= (2.0 * _ecore_win32_double_click_time)) &&
-          (e->window == _ecore_win32_mouse_down_last_window) &&
-          (e->window == _ecore_win32_mouse_down_last_last_window))
-        {
-           e->triple_click = 1;
-           _ecore_win32_mouse_down_did_triple = 1;
-        }
-      else
-        _ecore_win32_mouse_down_did_triple = 0;
+          if (_ecore_win32_mouse_down_did_triple)
+            {
+               _ecore_win32_mouse_down_last_window = NULL;
+               _ecore_win32_mouse_down_last_last_window = NULL;
+               _ecore_win32_mouse_down_last_time = 0.0;
+               _ecore_win32_mouse_down_last_last_time = 0.0;
+            }
 
-      if (!e->double_click && !e->triple_click)
-        _ecore_win32_mouse_up_count = 0;
+          e = (Ecore_Win32_Event_Mouse_Button_Down *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Button_Down));
+          if (!e) return;
 
-      _ecore_win32_event_last_time = e->time;
-      _ecore_win32_event_last_window = e->window;
+          e->window = window;
+          e->button = button;
+          e->x = GET_X_LPARAM(msg->data_param);
+          e->y = GET_Y_LPARAM(msg->data_param);
+          e->time = (double)msg->time / 1000.0;
 
-      if (!_ecore_win32_mouse_down_did_triple)
-        {
-           _ecore_win32_mouse_down_last_last_window = _ecore_win32_mouse_down_last_window;
-           _ecore_win32_mouse_down_last_window = e->window;
-           _ecore_win32_mouse_down_last_last_time = _ecore_win32_mouse_down_last_time;
-           _ecore_win32_mouse_down_last_time = e->time;
-        }
+          if (((e->time - _ecore_win32_mouse_down_last_time) <= _ecore_win32_double_click_time) &&
+              (e->window == _ecore_win32_mouse_down_last_window))
+            e->double_click = 1;
 
-      ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
-   }
+          if (((e->time - _ecore_win32_mouse_down_last_last_time) <= (2.0 * _ecore_win32_double_click_time)) &&
+              (e->window == _ecore_win32_mouse_down_last_window) &&
+              (e->window == _ecore_win32_mouse_down_last_last_window))
+            {
+               e->triple_click = 1;
+               _ecore_win32_mouse_down_did_triple = 1;
+            }
+          else
+            _ecore_win32_mouse_down_did_triple = 0;
+
+          if (!e->double_click && !e->triple_click)
+            _ecore_win32_mouse_up_count = 0;
+
+          _ecore_win32_event_last_time = e->time;
+          _ecore_win32_event_last_window = e->window;
+
+          if (!_ecore_win32_mouse_down_did_triple)
+            {
+               _ecore_win32_mouse_down_last_last_window = _ecore_win32_mouse_down_last_window;
+               _ecore_win32_mouse_down_last_window = e->window;
+               _ecore_win32_mouse_down_last_last_time = _ecore_win32_mouse_down_last_time;
+               _ecore_win32_mouse_down_last_time = e->time;
+            }
+
+          ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
+       }
+     }
    printf (" * ecore event button press\n");
 }
 
 void
 _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
-                                       int  button)
+                                       int                          button)
 {
    Ecore_Win32_Window *window;
 
@@ -557,7 +581,7 @@ _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
       _ecore_win32_event_last_time = e->time;
       _ecore_win32_event_last_window = e->window;
 
-      ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
+      ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
    }
 
    Ecore_Win32_Event_Mouse_Button_Up *e;
@@ -719,6 +743,20 @@ _ecore_win32_event_handle_expose(Ecore_Win32_Callback_Data *msg)
 }
 
 void
+_ecore_win32_event_handle_create_notify(Ecore_Win32_Callback_Data *msg)
+{
+   Ecore_Win32_Event_Window_Create *e;
+
+   e = calloc(1, sizeof(Ecore_Win32_Event_Window_Create));
+   if (!e) return;
+
+   e->window = _ecore_win32_event_window_get(msg->window);
+   e->time = _ecore_win32_event_last_time;
+
+   ecore_event_add(ECORE_WIN32_EVENT_WINDOW_CREATE, e, NULL, NULL);
+}
+
+void
 _ecore_win32_event_handle_destroy_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Destroy *e;
@@ -762,15 +800,64 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
 }
 
 void
-_ecore_win32_event_handle_delete(Ecore_Win32_Callback_Data *msg)
+_ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
 {
-   Ecore_Win32_Event_Window_Delete *e;
+   RECT                                rect;
+   Ecore_Win32_Event_Window_Configure *e;
+   WINDOWPOS                          *window_pos;
 
-   e = calloc(1, sizeof(Ecore_Win32_Event_Window_Delete));
+   e = calloc(1, sizeof(Ecore_Win32_Event_Window_Configure));
+   if (!e) return;
+
+   window_pos = (WINDOWPOS *)msg->data_param;
+   if (!GetClientRect(window_pos->hwnd, &rect))
+     {
+        free(e);
+        return;
+     }
+
+   e->window = _ecore_win32_event_window_get(window_pos->hwnd);
+   e->abovewin = _ecore_win32_event_window_get(window_pos->hwndInsertAfter);
+   e->x = rect.left;
+   e->y = rect.top;
+   e->width = rect.right - rect.left;
+   e->height = rect.bottom - rect.top;
+   e->time = _ecore_win32_event_last_time;
+
+   ecore_event_add(ECORE_WIN32_EVENT_WINDOW_CONFIGURE, e, NULL, NULL);
+}
+
+void
+_ecore_win32_event_handle_resize(Ecore_Win32_Callback_Data *msg)
+{
+   RECT                             rect;
+   Ecore_Win32_Event_Window_Resize *e;
+
+   if (!GetClientRect(msg->window, &rect))
+     return;
+
+   e = calloc(1, sizeof(Ecore_Win32_Event_Window_Resize));
+   if (!e) return;
+
+   e->window = _ecore_win32_event_window_get(msg->window);
+   e->width = rect.right - rect.left;
+   e->height = rect.bottom - rect.top;
+   e->time = _ecore_win32_event_last_time;
+   printf (" * _ecore_win32_event_handle_resize %d %d\n", e->width, e->height);
+
+   ecore_event_add(ECORE_WIN32_EVENT_WINDOW_RESIZE, e, NULL, NULL);
+}
+
+void
+_ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
+{
+   Ecore_Win32_Event_Window_Delete_Request *e;
+
+   e = calloc(1, sizeof(Ecore_Win32_Event_Window_Delete_Request));
    if (!e) return;
 
    e->window = _ecore_win32_event_window_get(msg->window);
    e->time = _ecore_win32_event_last_time;
 
-   ecore_event_add(ECORE_WIN32_EVENT_WINDOW_DELETE, e, NULL, NULL);
+   ecore_event_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
 }

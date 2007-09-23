@@ -79,14 +79,14 @@ ecore_win32_window_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   w->min_width = width;
-   w->min_height = height;
-   w->max_width = width;
-   w->max_height = height;
-   w->base_width = 0;
-   w->base_height = 0;
-   w->step_width = 1;
-   w->step_height = 1;
+   w->min_width = 0;
+   w->min_height = 0;
+   w->max_width = 32767;
+   w->max_height = 32767;
+   w->base_width = -1;
+   w->base_height = -1;
+   w->step_width = -1;
+   w->step_height = -1;
 
    w->pointer_is_in = 0;
    w->borderless = 0;
@@ -240,13 +240,71 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
 }
 
 EAPI void
+ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
+                                int                *x,
+                                int                *y,
+                                int                *width,
+                                int                *height)
+{
+   RECT rect;
+   int  w;
+   int  h;
+
+   if (!window)
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (width) *width = GetSystemMetrics(SM_CXSCREEN);
+        if (height) *height = GetSystemMetrics(SM_CYSCREEN);
+
+        return;
+     }
+
+   if (!GetClientRect(((struct _Ecore_Win32_Window *)window)->window,
+                      &rect))
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (width) *width = 0;
+        if (height) *height = 0;
+
+        return;
+     }
+
+   w = rect.right - rect.left;
+   h = rect.bottom - rect.top;
+
+   if (!GetWindowRect(((struct _Ecore_Win32_Window *)window)->window,
+                      &rect))
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (width) *width = 0;
+        if (height) *height = 0;
+
+        return;
+     }
+
+   if (x) *x = rect.left;
+   if (y) *y = rect.top;
+   if (width) *width = w;
+   if (height) *height = h;
+}
+
+EAPI void
 ecore_win32_window_size_get(Ecore_Win32_Window *window,
                             int                *width,
                             int                *height)
 {
    RECT rect;
 
-   if (!window) return;
+   if (!window)
+     {
+        if (width) *width = GetSystemMetrics(SM_CXSCREEN);
+        if (height) *height = GetSystemMetrics(SM_CYSCREEN);
+
+        return;
+     }
 
    if (!GetClientRect(((struct _Ecore_Win32_Window *)window)->window,
                       &rect))
@@ -454,27 +512,38 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
        ((!ew->fullscreen) && (!on)))
      return;
 
+   ew->fullscreen = on;
    w = ew->window;
 
    if (on)
      {
-       if (!GetWindowRect(w, &ew->rect)) return;
+        if (!GetWindowRect(w, &ew->rect)) return;
+        ew->style = GetWindowLong(w, GWL_STYLE);
         width = GetSystemMetrics (SM_CXSCREEN);
         height = GetSystemMetrics (SM_CYSCREEN);
-        ew->style = GetWindowLong(w, GWL_STYLE);
-        SetWindowLong(w, GWL_STYLE, (ew->style & ~WS_OVERLAPPEDWINDOW) | WS_POPUP);
+        if (!SetWindowLong(w, GWL_STYLE,
+                           (ew->style & ~WS_OVERLAPPEDWINDOW) | WS_POPUP))
+          return;
         SetWindowPos(w, HWND_TOP, 0, 0, width, height,
                      SWP_NOCOPYBITS | SWP_SHOWWINDOW);
      }
    else
      {
-        SetWindowLong(w, GWL_STYLE, ew->style);
+        if (!SetWindowLong(w, GWL_STYLE, ew->style))
+          return;
         SetWindowPos(w, HWND_NOTOPMOST,
                      ew->rect.left,
                      ew->rect.top,
                      ew->rect.right - ew->rect.left,
-                     ew->rect.bottom - ew->rect.right,
+                     ew->rect.bottom - ew->rect.top,
                      SWP_NOCOPYBITS | SWP_SHOWWINDOW);
      }
-   ew->fullscreen = on;
+}
+
+EAPI void
+ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
+                              Ecore_Win32_Cursor *cursor)
+{
+   SetClassLong(((struct _Ecore_Win32_Window *)window)->window,
+                GCL_HCURSOR, (LONG)cursor);
 }
