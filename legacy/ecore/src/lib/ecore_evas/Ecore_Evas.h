@@ -140,11 +140,15 @@ EAPI Ecore_Evas     *ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                                                    int                 width,
                                                    int                 height);
 
+EAPI Ecore_Win32_Window *ecore_evas_software_ddraw_window_get(Ecore_Evas *ee);
+
 EAPI Ecore_Evas     *ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
                                              int                 x,
                                              int                 y,
                                              int                 width,
                                              int                 height);
+
+EAPI Ecore_Win32_Window *ecore_evas_direct3d_window_get(Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
 

@@ -182,6 +182,9 @@ struct _Ecore_Evas_Engine
    struct {
       Ecore_Win32_Window *parent;
       Ecore_Win32_Window *window;
+     struct {
+       unsigned char fullscreen : 1;
+     } state;
    } win32;
 #endif
 

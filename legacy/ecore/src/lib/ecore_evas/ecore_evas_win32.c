@@ -10,14 +10,14 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 #ifdef BUILD_ECORE_WIN32
-#include "Ecore_Win32.h"
-#include "ecore_win32_private.h"
-#endif
+# include "Ecore_Win32.h"
+# include "ecore_win32_private.h"
+#endif /* BUILD_ECORE_WIN32 */
 
 
 #ifdef BUILD_ECORE_WIN32
 
-#define ECORE_EVAS_EVENT_COUNT 12
+#define ECORE_EVAS_EVENT_COUNT 14
 
 static int _ecore_evas_init_count = 0;
 static int _ecore_evas_fps_debug  = 0;
@@ -35,6 +35,8 @@ static int _ecore_evas_win32_event_mouse_button_down(void *data __UNUSED__, int 
 
 static int _ecore_evas_win32_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event);
 
+static int _ecore_evas_win32_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event);
+
 static int _ecore_evas_win32_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event);
 
 static int _ecore_evas_win32_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
@@ -49,7 +51,9 @@ static int _ecore_evas_win32_event_window_show(void *data __UNUSED__, int type _
 
 static int _ecore_evas_win32_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *event);
 
-static int _ecore_evas_win32_event_window_delete(void *data __UNUSED__, int type __UNUSED__, void *event);
+static int _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event);
+
+static int _ecore_evas_win32_event_window_delete_request(void *data __UNUSED__, int type __UNUSED__, void *event);
 
 /* Private functions */
 
@@ -146,14 +150,16 @@ _ecore_evas_win32_init(void)
    ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_WIN32_EVENT_KEY_UP, _ecore_evas_win32_event_key_up, NULL);
    ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_win32_event_mouse_button_down, NULL);
    ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_UP, _ecore_evas_win32_event_mouse_button_up, NULL);
-   ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_MOVE, _ecore_evas_win32_event_mouse_move, NULL);
-   ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_IN, _ecore_evas_win32_event_mouse_in, NULL);
-   ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_OUT, _ecore_evas_win32_event_mouse_out, NULL);
-   ecore_evas_event_handlers[7]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DAMAGE, _ecore_evas_win32_event_window_damage, NULL);
-   ecore_evas_event_handlers[8]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DESTROY, _ecore_evas_win32_event_window_destroy, NULL);
-   ecore_evas_event_handlers[9]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_SHOW, _ecore_evas_win32_event_window_show, NULL);
-   ecore_evas_event_handlers[10]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_HIDE, _ecore_evas_win32_event_window_hide, NULL);
-   ecore_evas_event_handlers[11]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DELETE, _ecore_evas_win32_event_window_delete, NULL);
+   ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_WHEEL, _ecore_evas_win32_event_mouse_wheel, NULL);
+   ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_MOVE, _ecore_evas_win32_event_mouse_move, NULL);
+   ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_IN, _ecore_evas_win32_event_mouse_in, NULL);
+   ecore_evas_event_handlers[7]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_OUT, _ecore_evas_win32_event_mouse_out, NULL);
+   ecore_evas_event_handlers[8]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DAMAGE, _ecore_evas_win32_event_window_damage, NULL);
+   ecore_evas_event_handlers[9]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DESTROY, _ecore_evas_win32_event_window_destroy, NULL);
+   ecore_evas_event_handlers[10]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_SHOW, _ecore_evas_win32_event_window_show, NULL);
+   ecore_evas_event_handlers[11]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_HIDE, _ecore_evas_win32_event_window_hide, NULL);
+   ecore_evas_event_handlers[12]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_CONFIGURE, _ecore_evas_win32_event_window_configure, NULL);
+   ecore_evas_event_handlers[13]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_win32_event_window_delete_request, NULL);
 
    return _ecore_evas_init_count;
 }
@@ -258,7 +264,7 @@ _ecore_evas_win32_event_mouse_button_down(void *data __UNUSED__, int type __UNUS
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    evas_event_feed_mouse_down(ee->evas, e->button, flags, e->time, NULL);
 
-   printf (" * ee event button down %f\n", e->time);
+   printf (" * ee event button down %f %d %d\n", e->time, e->x, e->y);
 
    return 1;
 }
@@ -281,6 +287,23 @@ _ecore_evas_win32_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED
    evas_event_feed_mouse_up(ee->evas, e->button, flags, e->time, NULL);
 
    printf (" * ee event button up\n");
+
+   return 1;
+}
+
+static int
+_ecore_evas_win32_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas                    *ee;
+   Ecore_Win32_Event_Mouse_Wheel *e;
+
+   e = event;
+   ee = _ecore_evas_win32_match(e->window);
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if (e->window != ee->engine.win32.window) return 1;
+   /* FIXME to do */
+/*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
+   evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, e->time, NULL);
 
    return 1;
 }
@@ -396,6 +419,7 @@ _ecore_evas_win32_event_window_damage(void *data __UNUSED__, int type __UNUSED__
      }
    else
      {
+       printf (" * ee window event damage\n");
         if (ee->rotation == 0)
           evas_damage_rectangle_add(ee->evas,
                                     e->x,
@@ -478,10 +502,70 @@ _ecore_evas_win32_event_window_hide(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static int
-_ecore_evas_win32_event_window_delete(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_Evas *ee;
-   Ecore_Win32_Event_Window_Delete *e;
+   Ecore_Evas                         *ee;
+   Ecore_Win32_Event_Window_Configure *e;
+
+   e = event;
+   ee = _ecore_evas_win32_match(e->window);
+   if (!ee) return 1; /* pass on event */
+   if (e->window != ee->engine.win32.window) return 1;
+
+   if ((ee->x != e->x) || (ee->y != e->y))
+     {
+        ee->x = e->x;
+        ee->y = e->y;
+        if (ee->func.fn_move) ee->func.fn_move(ee);
+     }
+
+   if ((ee->w != e->width) || (ee->h != e->height))
+     {
+       printf (" * ee resize : 1\n");
+        ee->w = e->width;
+        ee->h = e->height;
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             evas_output_size_set(ee->evas, ee->h, ee->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+          }
+        else
+          {
+            printf (" * ee resize : 2\n");
+             evas_output_size_set(ee->evas, ee->w, ee->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+          }
+        if (ee->prop.avoid_damage)
+          {
+             ecore_evas_avoid_damage_set(ee, 0);
+             ecore_evas_avoid_damage_set(ee, 1);
+          }
+        /* FIXME: to do... */
+/* 	if (ee->shaped) */
+/* 	  _ecore_evas_x_resize_shape(ee); */
+        if ((ee->expecting_resize.w > 0) &&
+            (ee->expecting_resize.h > 0))
+          {
+            printf (" * ee resize : 3\n");
+             if ((ee->expecting_resize.w == ee->w) &&
+                 (ee->expecting_resize.h == ee->h))
+               _ecore_evas_win32_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+                                                    ecore_win32_current_time_get());
+             ee->expecting_resize.w = 0;
+             ee->expecting_resize.h = 0;
+          }
+        printf (" * ee resize : 4\n");
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+     }
+
+   return 1;
+}
+
+static int
+_ecore_evas_win32_event_window_delete_request(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas                              *ee;
+   Ecore_Win32_Event_Window_Delete_Request *e;
 
    e = event;
    ee = _ecore_evas_win32_match(e->window);
@@ -528,6 +612,7 @@ _ecore_evas_win32_move(Ecore_Evas *ee, int x, int y)
 static void
 _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
 {
+  printf (" * _ecore_evas_win32_resize %d %d\n", width, height);
    if ((ee->w != width) || (ee->h != height))
      {
         ee->w = width;
@@ -552,6 +637,7 @@ _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
 static void
 _ecore_evas_win32_move_resize(Ecore_Evas *ee, int x, int y, int width, int height)
 {
+  printf (" * _ecore_evas_win32_resize\n");
    if ((ee->w != width) || (ee->h != height) || (x != ee->x) || (y != ee->y))
      {
         int change_size = 0;
@@ -641,7 +727,7 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
 	     ecore_evas_size_base_set(ee, baseh, basew);
 	     ecore_evas_size_step_set(ee, steph, stepw);
 	     _ecore_evas_win32_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-					      ecore_win32_current_time_get());
+                                                  ecore_win32_current_time_get());
 	  }
 	else
 	  {
@@ -773,6 +859,22 @@ _ecore_evas_win32_borderless_set(Ecore_Evas *ee, int on)
    ecore_win32_window_borderless_set(ee->engine.win32.window, ee->prop.borderless);
 }
 
+static void
+_ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
+{
+   if ((ee->prop.fullscreen && on) ||
+      (!ee->prop.fullscreen && !on)) return;
+
+   ee->engine.win32.state.fullscreen = on;
+   ecore_win32_window_fullscreen_set(ee->engine.win32.window, ee->prop.borderless);
+   /* FIXME: what to do with that code ?? */
+/*    if (ee->should_be_visible) */
+/*      ecore_x_netwm_state_request_send(ee->engine.x.win, ee->engine.x.win_root, */
+/* 				      ECORE_X_WINDOW_STATE_FULLSCREEN, -1, on); */
+/*    else */
+/*      _ecore_evas_win32_state_update(ee); */
+}
+
 
 static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
 {
@@ -814,7 +916,7 @@ static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_borderless_set,
      NULL, /* _ecore_evas_x_override_set */
      NULL,
-     NULL, /* _ecore_evas_x_fullscreen_set */
+     _ecore_evas_win32_fullscreen_set,
      NULL, /* _ecore_evas_x_avoid_damage_set */
      NULL, /* _ecore_evas_x_withdrawn_set */
      NULL, /* _ecore_evas_x_sticky_set */
@@ -932,6 +1034,16 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
 #endif /* BUILD_ECORE_WIN32 */
 }
 
+EAPI Ecore_Win32_Window *
+ecore_evas_software_ddraw_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_WIN32
+   return ee->engine.win32.window;
+#else
+   return NULL;
+#endif /* BUILD_ECORE_WIN32 */
+}
+
 EAPI Ecore_Evas *
 ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
                         int                 x,
@@ -1036,5 +1148,15 @@ ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
    y = 0;
    width = 0;
    height = 0;
+#endif /* BUILD_ECORE_WIN32 */
+}
+
+EAPI Ecore_Win32_Window *
+ecore_evas_direct3d_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_WIN32
+   return ee->engine.win32.window;
+#else
+   return NULL;
 #endif /* BUILD_ECORE_WIN32 */
 }
