@@ -14,22 +14,6 @@
 #undef HAVE_REALPATH
 #endif
 
-#ifdef _WIN32
-
-#ifndef F_SETFD
-#define F_SETFD 2
-#endif
-
-#ifndef PROT_READ
-#define PROT_READ 1
-#endif
-
-#ifndef FD_CLOEXEC
-#define FD_CLOEXEC 1
-#endif
-
-#endif
-
 #define EET_MAGIC_FILE                  0x1ee7ff00
 #define EET_MAGIC_FILE_HEADER           0x1ee7ff01
 
@@ -711,10 +695,10 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       }
 
 	     /* This code is useless if we dont want backward compatibility */
-	     for (k = name_size; k > 0 && ((uint8_t) * (p + HEADER_SIZE + k)) != 0; --k)
+	     for (k = name_size; k > 0 && ((unsigned char) * (p + HEADER_SIZE + k)) != 0; --k)
 	       ;
 
-	     efn->free_name = ((uint8_t) * (p + HEADER_SIZE + k)) != 0;
+	     efn->free_name = ((unsigned char) * (p + HEADER_SIZE + k)) != 0;
 
 	     if (efn->free_name)
 	       {
@@ -732,7 +716,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       }
 	     else
 	       /* The only really usefull peace of code for efn->name (no backward compatibility) */
-	       efn->name = (char*)((uint8_t*)(p + HEADER_SIZE));
+	       efn->name = (char*)((unsigned char *)(p + HEADER_SIZE));
 
 	     /* get hash bucket it should go in */
 	     hash = _eet_hash_gen(efn->name, ef->header->directory->size);

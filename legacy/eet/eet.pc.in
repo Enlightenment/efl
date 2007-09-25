@@ -7,5 +7,5 @@ Name: eet
 Description: Library for speedy data storage, retrieval, and compression
 Version: @VERSION@
 Libs: -L${libdir} -leet
-Libs.private: -lz -ljpeg
+Libs.private: -lz -ljpeg @fnmatch_libs@ @winsock_libs@ -lm
 Cflags: -I${includedir}

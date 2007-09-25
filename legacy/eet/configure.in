@@ -72,28 +72,6 @@ int main (int argc, char **argv) {
 ], AC_MSG_WARN([Cannot check when cross-compiling -- assuming null is okay])
 )
 
-AC_MSG_CHECKING([OS libc C99 '%a' support])
-AC_TRY_RUN([
-#include <stdio.h>
-int main(int argc, char **argv) {
-  char buf[4096];
-  float ival = 0.1234, oval = 0.0;
-  snprintf(buf, sizeof(buf), "%a", (double)ival);
-  sscanf(buf, "%a", &oval);
-  if (ival != oval) return -1;
-  return 0;
-}
-], AC_MSG_RESULT([yes]), [
-	AC_MSG_RESULT([no])
-	AC_MSG_ERROR([Unsupported Operating System!
-Your OS does not support C99's '%a' string format. Eet cannot function without
-it. Please contact your OS vendor to get updates for C99 '%a' floating point
-format read/write support or change operating systems for one with support
-for an already very old standard. (Linux is known to support this, as is
-Solaris 10)])
-], AC_MSG_WARN([Cannot check when cross-compiling -- assuming C99 '%a' support is OK])
-)
-
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
     PACKAGE_BIN_DIR="${ac_default_prefix}/bin"
@@ -115,7 +93,7 @@ else
   PACKAGE_LIB_DIR="${libdir}"
 fi
 AC_SUBST(PACKAGE_LIB_DIR)
-		
+
 if test "x${prefix}" = "xNONE"; then
   PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
 else
@@ -156,9 +134,6 @@ echo "  Compilation..........: make"
 echo
 echo "  Installation.........: make install"
 echo
-echo "    prefix.........: $prefix"
-echo "    binaries.......: $bindir"
-echo "    libraries......: $libdir"
-echo "    headers........: $includedir"
+echo "    prefix.............: $prefix"
 #echo "    documentation..: $datadir/$PACKAGE/doc"
 echo

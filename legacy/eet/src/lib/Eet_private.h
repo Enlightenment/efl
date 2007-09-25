@@ -18,9 +18,9 @@
 #include <ctype.h>
 
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#elif __MINGW32__
-#include <winsock.h>
+# include <netinet/in.h>
+#elif _WIN32
+# include <winsock2.h>
 #endif
 
 #include <zlib.h>
@@ -43,6 +43,8 @@ FILE *_eet_memfile_write_open(void **data, size_t *size);
 void  _eet_memfile_write_close(FILE *f);
 void  _eet_memfile_shutdown(void);
 int   _eet_hash_gen(const char *key, int hash_size);
+int   _eet_string_to_double_convert(const char *src, long long *m, long *e);
+void  _eet_double_to_string_convert(char *des, double d);
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096

@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -358,8 +360,9 @@ static int
 eet_data_get_float(void *src, void *src_end, void *dst)
 {
    float *d;
-   float tf;
-   char *s, *str, *p, *prev_locale;
+   long long mantisse;
+   long      exponent;
+   char *s, *str, *p;
    int len;
 
    s = (char *)src;
@@ -369,14 +372,10 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
    str = alloca(len + 1);
    memcpy(str, s, len);
-   str[len] = 0;
+   str[len] = '\0';
 
-   prev_locale = setlocale(LC_NUMERIC, "C");
-/* solaris atof is broken and doesnt understand %a format as a float */   
-/*   *d = (float)atof(str); */
-   sscanf(str, "%a", &tf);
-   *d = (float)tf;
-   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+   _eet_string_to_double_convert(str, &mantisse, &exponent);
+   *d = (float)ldexp((double)mantisse, exponent);
    
    return len + 1;
 }
@@ -384,19 +383,17 @@ eet_data_get_float(void *src, void *src_end, void *dst)
 static void *
 eet_data_put_float(const void *src, int *size_ret)
 {
-   float *s;
-   char *d, buf[64], *prev_locale;
-   int len;
+   char   buf[64];
+   char  *d;
+   int    len;
 
-   s = (float *)src;
-   prev_locale = setlocale(LC_NUMERIC, "C");
-   snprintf(buf, sizeof(buf), "%a", (double)(*s));
-   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+   _eet_double_to_string_convert(buf, (double)(*(float *)src));
    len = strlen(buf);
    d = malloc(len + 1);
    if (!d) return NULL;
    strcpy(d, buf);
    *size_ret = len + 1;
+
    return d;
 }
 
@@ -404,9 +401,10 @@ eet_data_put_float(const void *src, int *size_ret)
 static int
 eet_data_get_double(void *src, void *src_end, void *dst)
 {
-   double *d;
-   float tf;
-   char *s, *str, *p, *prev_locale;
+   double   *d;
+   long long mantisse;
+   long      exponent;
+   char *s, *str, *p;
    int len;
 
    s = (char *)src;
@@ -416,14 +414,10 @@ eet_data_get_double(void *src, void *src_end, void *dst)
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
    str = alloca(len + 1);
    memcpy(str, s, len);
-   str[len] = 0;
+   str[len] = '\0';
 
-   prev_locale = setlocale(LC_NUMERIC, "C");
-/* solaris atof is broken and doesnt understand %a format as a float */   
-/*   *d = (double)atof(str); */
-   sscanf(str, "%a", &tf);
-   *d = (double)tf;
-   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+   _eet_string_to_double_convert(str, &mantisse, &exponent);
+   *d = ldexp((double)mantisse, exponent);
 
    return len + 1;
 }
@@ -431,19 +425,17 @@ eet_data_get_double(void *src, void *src_end, void *dst)
 static void *
 eet_data_put_double(const void *src, int *size_ret)
 {
-   double *s;
-   char *d, buf[128], *prev_locale;
-   int len;
+   char    buf[128];
+   char   *d;
+   int     len;
 
-   s = (double *)src;
-   prev_locale = setlocale(LC_NUMERIC, "C");
-   snprintf(buf, sizeof(buf), "%a", (double)(*s));
-   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+   _eet_double_to_string_convert(buf, (double)(*(double *)src));
    len = strlen(buf);
    d = malloc(len + 1);
    if (!d) return NULL;
    strcpy(d, buf);
    *size_ret = len + 1;
+
    return d;
 }
 

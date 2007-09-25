@@ -6,8 +6,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES	     = -I. \
-                       -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/lib/include 
+                       -I$(top_srcdir)/src/lib
 
 lib_LTLIBRARIES      = libeet.la
 include_HEADERS      = Eet.h
@@ -19,6 +18,6 @@ eet_memfile.c \
 eet_utils.c \
 Eet_private.h
 
-libeet_la_LIBADD       = -lz -ljpeg @fnmatch_libs@ @winsock_libs@
+libeet_la_LIBADD       = -lz -ljpeg @fnmatch_libs@ @winsock_libs@ -lm
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h
 libeet_la_LDFLAGS      = @create_shared_lib@ -version-info 9:10:9
