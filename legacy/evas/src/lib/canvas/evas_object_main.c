@@ -478,11 +478,11 @@ evas_object_del(Evas_Object *obj)
    obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
    obj->mouse_grabbed = 0;
    evas_object_hide(obj);
-   evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
    evas_object_grabs_cleanup(obj);
    while (obj->clip.clipees) evas_object_clip_unset(obj->clip.clipees->data);
    if (obj->cur.clipper) evas_object_clip_unset(obj);
    if (obj->smart.smart) evas_object_smart_del(obj);
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
    evas_object_smart_cleanup(obj);
    obj->delete_me = 1;
    evas_object_change(obj);
