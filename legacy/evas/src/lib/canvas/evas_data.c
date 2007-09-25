@@ -103,7 +103,7 @@ evas_object_data_get(Evas_Object *obj, const char *key)
 	node = l->data;
 	if (!strcmp(node->key, key))
 	  {
-	     obj->data.elements = evas_list_remove(obj->data.elements, node);
+	     obj->data.elements = evas_list_remove_list(obj->data.elements, l);
 	     obj->data.elements = evas_list_prepend(obj->data.elements, node);
 	     return node->data;
 	  }
@@ -150,7 +150,7 @@ evas_object_data_del(Evas_Object *obj, const char *key)
 	     void *data;
 
 	     data = node->data;
-	     obj->data.elements = evas_list_remove(obj->data.elements, node);
+	     obj->data.elements = evas_list_remove_list(obj->data.elements, l);
 	     free(node);
 	     return data;
 	  }
