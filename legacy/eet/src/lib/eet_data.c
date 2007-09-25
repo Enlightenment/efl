@@ -402,8 +402,8 @@ static int
 eet_data_get_double(void *src, void *src_end, void *dst)
 {
    double   *d;
-   long long mantisse;
-   long      exponent;
+   long long mantisse = 0;
+   long      exponent = 0;
    char *s, *str, *p;
    int len;
 

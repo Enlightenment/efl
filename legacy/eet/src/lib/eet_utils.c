@@ -73,20 +73,20 @@ _eet_string_to_double_convert(const char *src, long long *m, long *e)
         sign = -1;
         str++;
      }
-   else if (*str == '0')
+   if (*str == '0')
      {
         str++;
         if (*str == 'x')
           str++;
         else
           {
-             fprintf(stderr, "[Eet] Error during conversion\n");
+             fprintf(stderr, "[Eet] Error 1 during conversion of '%s'\n", src);
              return 0;
           }
      }
    else
      {
-        fprintf(stderr, "[Eet] Error during conversion\n");
+        fprintf(stderr, "[Eet] Error 2 during conversion of '%s'\n", src);
         return 0;
      }
 
@@ -108,7 +108,8 @@ _eet_string_to_double_convert(const char *src, long long *m, long *e)
      mantisse = -mantisse;
    if (*str != 'p')
      {
-        fprintf(stderr, "[Eet] Error during conversion\n");
+        fprintf(stderr, "[Eet] Error 3 during conversion '%s'\n", src);
+	abort();
         return 0;
      }
    sign = +1;
