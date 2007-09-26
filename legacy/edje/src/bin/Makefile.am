@@ -36,7 +36,7 @@ edje_prefix.h \
 edje_main.h
 
 edje_cc_LDADD = \
-$(top_builddir)/src/lib/libedje.la
+$(top_builddir)/src/lib/libedje.la $(EDJE_LIBS)
 
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -48,6 +48,6 @@ edje_cc_mem.c \
 edje_cc_sources.c
 
 edje_decc_LDADD = \
-$(top_builddir)/src/lib/libedje.la @edje_decc_lib@
+$(top_builddir)/src/lib/libedje.la @edje_decc_lib@ $(EDJE_LIBS)
 
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
