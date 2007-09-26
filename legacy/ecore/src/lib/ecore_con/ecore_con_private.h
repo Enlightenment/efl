@@ -6,6 +6,7 @@
 
 #define ECORE_MAGIC_CON_SERVER             0x77665544
 #define ECORE_MAGIC_CON_CLIENT             0x77556677
+#define ECORE_MAGIC_CON_URL                0x77074255
 
 #if USE_OPENSSL
 #include <openssl/ssl.h>
@@ -66,12 +67,18 @@ struct _Ecore_Con_Server
 #ifdef HAVE_CURL
 struct _Ecore_Con_Url
 {
-   /* FIXME: ECORE_MAGIC ? */
-   CURL             *curl_easy;
-   char             *url;
+   ECORE_MAGIC;
+   CURL              *curl_easy;
    struct curl_slist *headers;
-   Ecore_Fd_Handler *fd_handler;
-   char              active : 1;
+   char              *url;
+
+   Ecore_Con_Url_Time condition;
+   time_t             time;
+   const void        *data;
+
+   Ecore_Fd_Handler  *fd_handler;
+
+   unsigned char      active : 1;
 };
 #endif
 

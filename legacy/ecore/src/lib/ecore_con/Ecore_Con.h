@@ -76,7 +76,15 @@ extern "C" {
 	ECORE_CON_REMOTE_SYSTEM,
 	ECORE_CON_USE_SSL = 16
      } Ecore_Con_Type;
-   
+
+   typedef enum _Ecore_Con_Url_Time
+     {
+        ECORE_CON_URL_TIME_NONE = 0,
+        ECORE_CON_URL_TIME_IFMODSINCE,
+        ECORE_CON_URL_TIME_IFUNMODSINCE,
+        ECORE_CON_URL_TIME_LASTMOD
+     } Ecore_Con_Url_Time;
+
    typedef struct _Ecore_Con_Event_Client_Add  Ecore_Con_Event_Client_Add;
    typedef struct _Ecore_Con_Event_Client_Del  Ecore_Con_Event_Client_Del;
    typedef struct _Ecore_Con_Event_Server_Add  Ecore_Con_Event_Server_Add;
@@ -85,6 +93,7 @@ extern "C" {
    typedef struct _Ecore_Con_Event_Server_Data Ecore_Con_Event_Server_Data;
    typedef struct _Ecore_Con_Event_Url_Data Ecore_Con_Event_Url_Data;
    typedef struct _Ecore_Con_Event_Url_Complete Ecore_Con_Event_Url_Complete;
+   typedef struct _Ecore_Con_Event_Url_Progress Ecore_Con_Event_Url_Progress;
 
    struct _Ecore_Con_Event_Client_Add
      {
@@ -123,8 +132,8 @@ extern "C" {
    struct _Ecore_Con_Event_Url_Data
      {
 	Ecore_Con_Url    *url_con;
-	void             *data;
 	int               size;
+        unsigned char     data[1];
      };
 	 
    struct _Ecore_Con_Event_Url_Complete
@@ -132,7 +141,14 @@ extern "C" {
 	Ecore_Con_Url    *url_con;
 	int               status;
      };
-	 
+
+   struct _Ecore_Con_Event_Url_Progress
+     {
+        Ecore_Con_Url                   *url_con;
+        double                           total;
+        double                           now;
+     };
+
    EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
    EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
    EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
@@ -141,6 +157,8 @@ extern "C" {
    EAPI extern int ECORE_CON_EVENT_SERVER_DATA;
    EAPI extern int ECORE_CON_EVENT_URL_DATA;
    EAPI extern int ECORE_CON_EVENT_URL_COMPLETE;
+   EAPI extern int ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD;
+   EAPI extern int ECORE_CON_EVENT_URL_PROGRESS_UPLOAD;
    
    EAPI int               ecore_con_init(void);
    EAPI int               ecore_con_shutdown(void);
@@ -171,8 +189,11 @@ extern "C" {
    EAPI int               ecore_con_url_shutdown(void);
    EAPI Ecore_Con_Url    *ecore_con_url_new(const char *url);
    EAPI void              ecore_con_url_destroy(Ecore_Con_Url *url_con);
+   EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con, const void *data);
+   EAPI void             *ecore_con_url_data_get(Ecore_Con_Url *url_con);
    EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
    EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type);
+   EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm);
 
    EAPI int               ecore_con_dns_lookup(const char *name,
 					       void (*done_cb)(void *data, struct hostent *hostent),

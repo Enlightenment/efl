@@ -44,17 +44,52 @@
 static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_url_perform(Ecore_Con_Url *url_con);
 static size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp);
-static void _ecore_con_event_url_complete_free(void *data __UNUSED__, void *ev);
-static void _ecore_con_event_url_data_free(void *data __UNUSED__, void *ev);
+static int _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+static void _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
 
 int ECORE_CON_EVENT_URL_DATA = 0;
 int ECORE_CON_EVENT_URL_COMPLETE = 0;
+int ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD = 0;
+int ECORE_CON_EVENT_URL_PROGRESS_UPLOAD = 0;
 
 static CURLM *curlm = NULL;
 static Ecore_List *_url_con_list = NULL;
 static fd_set _current_fd_set;
 static int init_count = 0;
+
+struct _little_ecore_con_url_event_s
+{
+  int    type;
+  void  *ev;
+};
+typedef struct _little_ecore_con_url_event_s     _little_ecore_con_url_event_t;
+
+static int
+_url_complete_idler_cb(void *data)
+{
+   _little_ecore_con_url_event_t *lev;
+
+   lev = data;
+
+   ecore_event_add(lev->type, lev->ev, _ecore_con_event_url_free, NULL);
+   free(lev);
+
+   return 0;
+}
+
+static void
+_url_complete_push_event(int type, void *ev)
+{
+   _little_ecore_con_url_event_t *lev;
+
+   lev = malloc(sizeof (_little_ecore_con_url_event_t));
+   lev->type = type;
+   lev->ev = ev;
+
+   ecore_idler_add(_url_complete_idler_cb, lev);
+}
+
 #endif
 
 EAPI int
@@ -65,6 +100,8 @@ ecore_con_url_init(void)
      {
 	ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
 	ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
+        ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD = ecore_event_type_new();
+        ECORE_CON_EVENT_URL_PROGRESS_UPLOAD = ecore_event_type_new();
      }
 
    if (!_url_con_list)
@@ -149,11 +186,18 @@ ecore_con_url_new(const char *url)
 	free(url_con);
 	return NULL;
      }
-   
+
+   ECORE_MAGIC_SET(url_con, ECORE_MAGIC_CON_URL);
+
    ecore_con_url_url_set(url_con, url);
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_WRITEFUNCTION, _ecore_con_url_data_cb);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_WRITEDATA, url_con);
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, _ecore_con_url_progress_cb);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSDATA, url_con);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, FALSE);
+
    /*
     * FIXME: Check that these timeouts are sensible defaults
     * FIXME: Provide a means to change these timeouts
@@ -174,7 +218,13 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
 {
 #ifdef HAVE_CURL
    if (!url_con) return;
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_destroy");
+        return ;
+     }
 
+   ECORE_MAGIC_SET(url_con, ECORE_MAGIC_NONE);
    if (url_con->fd_handler)
      ecore_main_fd_handler_del(url_con->fd_handler);
    if (url_con->curl_easy)
@@ -195,6 +245,12 @@ EAPI int
 ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 {
 #ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_url_set");
+        return 0;
+     }
+
    if (url_con->active) return 0;
 
    free(url_con->url);
@@ -209,11 +265,73 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
    return 1;
 }
 
+EAPI void
+ecore_con_url_data_set(Ecore_Con_Url *url_con, const void *data)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_data_set");
+        return ;
+     }
+
+   url_con->data = data;
+#else
+   (void*) url_con;
+   (const void*) data;
+
+   return ;
+#endif
+}
+
+EAPI void*
+ecore_con_url_data_get(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_data_get");
+        return NULL;
+     }
+
+   return (void*) url_con->data;
+#else
+   (void*) url_con;
+
+   return NULL;
+#endif
+}
+
+EAPI void
+ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_time");
+        return ;
+     }
+
+   url_con->condition = condition;
+   url_con->time = tm;
+#else
+   (void*) url_con;
+   condition;
+   tm;
+#endif
+}
+
 EAPI int
 ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type)
 {
 #ifdef HAVE_CURL
    char tmp[256];
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_send");
+        return 0;
+     }
 
    if (url_con->active) return 0;
    if (!url_con->url) return 0;
@@ -233,6 +351,25 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
 	  }
 	sprintf(tmp, "Content-length: %d", length);
 	url_con->headers = curl_slist_append(url_con->headers, tmp);
+     }
+
+   switch (url_con->condition)
+     {
+      case ECORE_CON_URL_TIME_NONE:
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_NONE);
+         break;
+      case ECORE_CON_URL_TIME_IFMODSINCE:
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+         break;
+      case ECORE_CON_URL_TIME_IFUNMODSINCE:
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFUNMODSINCE);
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+         break;
+      case ECORE_CON_URL_TIME_LASTMOD:
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_LASTMOD);
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+         break;
      }
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPHEADER, url_con->headers);
@@ -256,24 +393,45 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp)
    size_t real_size = size * nmemb;
 
    url_con = (Ecore_Con_Url *)userp;
-   e = calloc(1, sizeof(Ecore_Con_Event_Url_Data));
+   e = malloc(sizeof(Ecore_Con_Event_Url_Data) + sizeof(unsigned char) * (real_size - 1));
    if (e)
      {
 	e->url_con = url_con;
-	e->data = buffer;
 	e->size = real_size;
+        memcpy(e->data, buffer, real_size);
 	ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
-			_ecore_con_event_url_data_free, NULL);
+			_ecore_con_event_url_free, NULL);
      }
    return real_size;
 }
 
-/*
- * FIXME: Use
- *   CURLOPT_PROGRESSFUNCTION and CURLOPT_PROGRESSDATA to
- *   get reports on progress.
- * And maybe other nifty functions...
- */
+#define ECORE_CON_URL_TRANSMISSION(Transmit, Event, Url_con, Total, Now) \
+        { \
+                Ecore_Con_Event_Url_Progress *e; \
+                if (Total != 0 || Now != 0) { \
+                        e = calloc(1, sizeof(Ecore_Con_Event_Url_Progress)); \
+                        if (e) { \
+                                e->url_con = url_con; \
+                                e->total = Total; \
+                                e->now = Now; \
+                                ecore_event_add(Event, e, _ecore_con_event_url_free, NULL); \
+                        } \
+                } \
+        }
+
+static int
+_ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
+{
+   Ecore_Con_Url *url_con;
+
+   url_con = clientp;
+
+   ECORE_CON_URL_TRANSMISSION(Download, ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD, url_con, dltotal, dlnow);
+   ECORE_CON_URL_TRANSMISSION(Upload, ECORE_CON_EVENT_URL_PROGRESS_UPLOAD, url_con, ultotal, ulnow);
+
+   return 0;
+}
+
 static int
 _ecore_con_url_perform(Ecore_Con_Url *url_con)
 {
@@ -373,7 +531,6 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		       url_con->fd_handler = NULL;
 		    }
 		  ecore_list_remove(_url_con_list);
-		  curl_multi_remove_handle(curlm, url_con->curl_easy);
 		  url_con->active = 0;
 		    {
 		       Ecore_Con_Event_Url_Complete *e;
@@ -381,11 +538,14 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		       if (e)
 			 {
 			    e->url_con = url_con;
-			    e->status = curlmsg->data.result;
-			    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e,
-					    _ecore_con_event_url_complete_free, NULL);
+
+                            e->status = 0;
+                            curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &e->status);
+
+                            _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
 			 }
 		    }
+		  curl_multi_remove_handle(curlm, url_con->curl_easy);
 		  break;
 	       }
 	     ecore_list_next(_url_con_list);
@@ -394,20 +554,9 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
    return job_matched;
 }
 static void
-_ecore_con_event_url_data_free(void *data __UNUSED__, void *ev)
+_ecore_con_event_url_free(void *data __UNUSED__, void *ev)
 {
-   Ecore_Con_Event_Url_Data *e;
-
-   e = ev;
-   free(e);
+   free(ev);
 }
 
-static void
-_ecore_con_event_url_complete_free(void *data __UNUSED__, void *ev)
-{
-   Ecore_Con_Event_Url_Complete *e;
-
-   e = ev;
-   free(e);
-}
 #endif
