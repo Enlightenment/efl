@@ -109,7 +109,6 @@ _eet_string_to_double_convert(const char *src, long long *m, long *e)
    if (*str != 'p')
      {
         fprintf(stderr, "[Eet] Error 3 during conversion '%s'\n", src);
-	abort();
         return 0;
      }
    sign = +1;
