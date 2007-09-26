@@ -446,7 +446,6 @@ _ecore_evas_directfb_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int lay
 
    evas_pointer_output_xy_get(ee->evas, &x, &y);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
-   evas_object_color_set(ee->prop.cursor.object, 255, 255, 255, 255);
    evas_object_move(ee->prop.cursor.object,x - ee->prop.cursor.hot.x,y - ee->prop.cursor.hot.y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
