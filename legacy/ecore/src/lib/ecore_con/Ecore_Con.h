@@ -79,10 +79,10 @@ extern "C" {
 
    typedef enum _Ecore_Con_Url_Time
      {
-        ECORE_CON_URL_TIME_NONE = 0,
-        ECORE_CON_URL_TIME_IFMODSINCE,
-        ECORE_CON_URL_TIME_IFUNMODSINCE,
-        ECORE_CON_URL_TIME_LASTMOD
+	ECORE_CON_URL_TIME_NONE = 0,
+	ECORE_CON_URL_TIME_IFMODSINCE,
+	ECORE_CON_URL_TIME_IFUNMODSINCE,
+	ECORE_CON_URL_TIME_LASTMOD
      } Ecore_Con_Url_Time;
 
    typedef struct _Ecore_Con_Event_Client_Add  Ecore_Con_Event_Client_Add;
@@ -133,7 +133,7 @@ extern "C" {
      {
 	Ecore_Con_Url    *url_con;
 	int               size;
-        unsigned char     data[1];
+	unsigned char     data[1];
      };
 	 
    struct _Ecore_Con_Event_Url_Complete
@@ -144,9 +144,9 @@ extern "C" {
 
    struct _Ecore_Con_Event_Url_Progress
      {
-        Ecore_Con_Url                   *url_con;
-        double                           total;
-        double                           now;
+	Ecore_Con_Url    *url_con;
+	double            total;
+	double            now;
      };
 
    EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
