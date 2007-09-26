@@ -189,7 +189,7 @@ extern "C" {
    EAPI int               ecore_con_url_shutdown(void);
    EAPI Ecore_Con_Url    *ecore_con_url_new(const char *url);
    EAPI void              ecore_con_url_destroy(Ecore_Con_Url *url_con);
-   EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con, const void *data);
+   EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data);
    EAPI void             *ecore_con_url_data_get(Ecore_Con_Url *url_con);
    EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
    EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type);

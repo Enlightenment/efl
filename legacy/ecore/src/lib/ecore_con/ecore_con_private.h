@@ -74,7 +74,7 @@ struct _Ecore_Con_Url
 
    Ecore_Con_Url_Time condition;
    time_t             time;
-   const void        *data;
+   void              *data;
 
    Ecore_Fd_Handler  *fd_handler;
 

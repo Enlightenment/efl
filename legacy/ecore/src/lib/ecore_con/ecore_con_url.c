@@ -58,17 +58,17 @@ static Ecore_List *_url_con_list = NULL;
 static fd_set _current_fd_set;
 static int init_count = 0;
 
-struct _little_ecore_con_url_event_s
+struct _Ecore_Con_Url_Event
 {
   int    type;
   void  *ev;
 };
-typedef struct _little_ecore_con_url_event_s     _little_ecore_con_url_event_t;
+typedef struct _Ecore_Con_Url_Event Ecore_Con_Url_Event;
 
 static int
 _url_complete_idler_cb(void *data)
 {
-   _little_ecore_con_url_event_t *lev;
+   Ecore_Con_Url_Event *lev;
 
    lev = data;
 
@@ -81,9 +81,9 @@ _url_complete_idler_cb(void *data)
 static void
 _url_complete_push_event(int type, void *ev)
 {
-   _little_ecore_con_url_event_t *lev;
+   Ecore_Con_Url_Event *lev;
 
-   lev = malloc(sizeof (_little_ecore_con_url_event_t));
+   lev = malloc(sizeof(Ecore_Con_Url_Event));
    lev->type = type;
    lev->ev = ev;
 
@@ -100,8 +100,8 @@ ecore_con_url_init(void)
      {
 	ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
 	ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
-        ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD = ecore_event_type_new();
-        ECORE_CON_EVENT_URL_PROGRESS_UPLOAD = ecore_event_type_new();
+	ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD = ecore_event_type_new();
+	ECORE_CON_EVENT_URL_PROGRESS_UPLOAD = ecore_event_type_new();
      }
 
    if (!_url_con_list)
@@ -208,8 +208,8 @@ ecore_con_url_new(const char *url)
 
    return url_con;
 #else
-   url = NULL;
    return NULL;
+   url = NULL;
 #endif
 }
 
@@ -220,8 +220,8 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
    if (!url_con) return;
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_destroy");
-        return ;
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_destroy");
+	return;
      }
 
    ECORE_MAGIC_SET(url_con, ECORE_MAGIC_NONE);
@@ -237,6 +237,7 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
    free(url_con->url);
    free(url_con);
 #else
+   return;
    url_con = NULL;
 #endif
 }
@@ -247,8 +248,8 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_url_set");
-        return 0;
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_url_set");
+	return 0;
      }
 
    if (url_con->active) return 0;
@@ -258,47 +259,46 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
    if (url)
      url_con->url = strdup(url);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_URL, url_con->url);
+   return 1;
 #else
+   return 0;
    url_con = NULL;
    url = NULL;
 #endif
-   return 1;
 }
 
 EAPI void
-ecore_con_url_data_set(Ecore_Con_Url *url_con, const void *data)
+ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
 {
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_data_set");
-        return ;
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_data_set");
+	return;
      }
 
    url_con->data = data;
 #else
-   (void*) url_con;
-   (const void*) data;
-
-   return ;
+   return;
+   url_con = NULL;
+   data = NULL;
 #endif
 }
 
-EAPI void*
+EAPI void *
 ecore_con_url_data_get(Ecore_Con_Url *url_con)
 {
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_data_get");
-        return NULL;
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_data_get");
+	return NULL;
      }
 
-   return (void*) url_con->data;
+   return url_con->data;
 #else
-   (void*) url_con;
-
    return NULL;
+   url_con = NULL;
 #endif
 }
 
@@ -308,16 +308,17 @@ ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t 
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_time");
-        return ;
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_time");
+	return;
      }
 
    url_con->condition = condition;
    url_con->time = tm;
 #else
-   (void*) url_con;
-   condition;
-   tm;
+   return;
+   url_con = NULL;
+   condition = 0;
+   tm = 0;
 #endif
 }
 
@@ -329,8 +330,8 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
 
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_send");
-        return 0;
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_send");
+	return 0;
      }
 
    if (url_con->active) return 0;
@@ -356,31 +357,31 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
    switch (url_con->condition)
      {
       case ECORE_CON_URL_TIME_NONE:
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_NONE);
-         break;
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_NONE);
+	 break;
       case ECORE_CON_URL_TIME_IFMODSINCE:
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
-         break;
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+	 break;
       case ECORE_CON_URL_TIME_IFUNMODSINCE:
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFUNMODSINCE);
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
-         break;
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFUNMODSINCE);
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+	 break;
       case ECORE_CON_URL_TIME_LASTMOD:
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_LASTMOD);
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
-         break;
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_LASTMOD);
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+	 break;
      }
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPHEADER, url_con->headers);
 
    return _ecore_con_url_perform(url_con);
 #else
+   return 0;
    url_con = NULL;
    data = NULL;
    length = 0;
    content_type = NULL;
-   return 0;
 #endif
 }
 
@@ -398,7 +399,7 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp)
      {
 	e->url_con = url_con;
 	e->size = real_size;
-        memcpy(e->data, buffer, real_size);
+	memcpy(e->data, buffer, real_size);
 	ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
 			_ecore_con_event_url_free, NULL);
      }
@@ -406,18 +407,20 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp)
 }
 
 #define ECORE_CON_URL_TRANSMISSION(Transmit, Event, Url_con, Total, Now) \
-        { \
-                Ecore_Con_Event_Url_Progress *e; \
-                if (Total != 0 || Now != 0) { \
-                        e = calloc(1, sizeof(Ecore_Con_Event_Url_Progress)); \
-                        if (e) { \
-                                e->url_con = url_con; \
-                                e->total = Total; \
-                                e->now = Now; \
-                                ecore_event_add(Event, e, _ecore_con_event_url_free, NULL); \
-                        } \
-                } \
-        }
+{ \
+   Ecore_Con_Event_Url_Progress *e; \
+   if ((Total != 0) || (Now != 0)) \
+     { \
+	e = calloc(1, sizeof(Ecore_Con_Event_Url_Progress)); \
+	if (e) \
+	  { \
+	     e->url_con = url_con; \
+	     e->total = Total; \
+	     e->now = Now; \
+	     ecore_event_add(Event, e, _ecore_con_event_url_free, NULL); \
+	  } \
+     } \
+}
 
 static int
 _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
@@ -539,10 +542,10 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 			 {
 			    e->url_con = url_con;
 
-                            e->status = 0;
-                            curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &e->status);
+			    e->status = 0;
+			    curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &e->status);
 
-                            _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
+			    _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
 			 }
 		    }
 		  curl_multi_remove_handle(curlm, url_con->curl_easy);
