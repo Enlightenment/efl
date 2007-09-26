@@ -111,7 +111,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_size_max_set) (Ecore_Evas *ee, int w, int h);
    void        (*fn_size_base_set) (Ecore_Evas *ee, int w, int h);
    void        (*fn_size_step_set) (Ecore_Evas *ee, int w, int h);
-   void        (*fn_cursor_set) (Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y);
+   void        (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
    void        (*fn_layer_set) (Ecore_Evas *ee, int layer);
    void        (*fn_focus_set) (Ecore_Evas *ee, int on);
    void        (*fn_iconified_set) (Ecore_Evas *ee, int on);
@@ -227,7 +227,6 @@ struct _Ecore_Evas
 	step;
       struct {
 	 Evas_Object *object;
-	 char        *file;
 	 int          layer;
 	 struct {
 	    int       x, y;

@@ -408,24 +408,22 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
 }
 
 static void
-_ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
+_ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
    
-   if (!file)
+   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
+
+   if (obj == NULL)
      {
-	if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-	if (ee->prop.cursor.file) free(ee->prop.cursor.file);
 	ee->prop.cursor.object = NULL;
-	ee->prop.cursor.file = NULL;
 	ee->prop.cursor.layer = 0;
 	ee->prop.cursor.hot.x = 0;
 	ee->prop.cursor.hot.y = 0;
 	return;
      }
-   if (!ee->prop.cursor.object) ee->prop.cursor.object = evas_object_image_add(ee->evas);
-   if (ee->prop.cursor.file) free(ee->prop.cursor.file);
-   ee->prop.cursor.file = strdup(file);
+
+   ee->prop.cursor.object = obj;
    ee->prop.cursor.layer = layer;
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
@@ -435,10 +433,6 @@ _ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, i
    evas_object_move(ee->prop.cursor.object, 
 		    x - ee->prop.cursor.hot.x,
 		    y - ee->prop.cursor.hot.y);
-   evas_object_image_file_set(ee->prop.cursor.object, ee->prop.cursor.file, NULL);
-   evas_object_image_size_get(ee->prop.cursor.object, &x, &y);
-   evas_object_resize(ee->prop.cursor.object, x, y);
-   evas_object_image_fill_set(ee->prop.cursor.object, 0, 0, x, y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
@@ -551,7 +545,7 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      NULL,
      NULL,
-     _ecore_evas_cursor_set,
+     _ecore_evas_object_cursor_set,
      NULL,
      NULL,
      NULL,

@@ -420,16 +420,15 @@ _ecore_evas_directfb_shaped_set(Ecore_Evas *ee, int shaped)
 }
 
 static void
-_ecore_evas_directfb_cursor_set(Ecore_Evas *ee, const char *file, int layer __UNUSED__, int hot_x, int hot_y)
+_ecore_evas_directfb_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
    
-   if (!file)
+   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
+
+   if (obj == NULL)
      {
-	if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-	if (ee->prop.cursor.file) free(ee->prop.cursor.file);
 	ee->prop.cursor.object = NULL;
-	ee->prop.cursor.file = NULL;
 	ee->prop.cursor.layer = 0;
 	ee->prop.cursor.hot.x = 0;
 	ee->prop.cursor.hot.y = 0;
@@ -437,21 +436,18 @@ _ecore_evas_directfb_cursor_set(Ecore_Evas *ee, const char *file, int layer __UN
 	return;
 	
      }
-   ecore_directfb_window_cursor_show(ee->engine.directfb.window, 0);
-   if (!ee->prop.cursor.object) ee->prop.cursor.object = evas_object_image_add(ee->evas);
-   if (ee->prop.cursor.file) free(ee->prop.cursor.file);
-   ee->prop.cursor.file = strdup(file);
+
+   ee->prop.cursor.object = obj;
    ee->prop.cursor.layer = layer;
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
+
+   ecore_directfb_window_cursor_show(ee->engine.directfb.window, 0);
+
    evas_pointer_output_xy_get(ee->evas, &x, &y);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
    evas_object_color_set(ee->prop.cursor.object, 255, 255, 255, 255);
    evas_object_move(ee->prop.cursor.object,x - ee->prop.cursor.hot.x,y - ee->prop.cursor.hot.y);
-   evas_object_image_file_set(ee->prop.cursor.object, ee->prop.cursor.file, NULL);
-   evas_object_image_size_get(ee->prop.cursor.object, &x, &y);
-   evas_object_resize(ee->prop.cursor.object, x, y);
-   evas_object_image_fill_set(ee->prop.cursor.object, 0, 0, x, y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
@@ -537,7 +533,7 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* size max */
      NULL,				/* size base */
      NULL,				/* size step */
-     _ecore_evas_directfb_cursor_set,   /* cursor set */
+     _ecore_evas_directfb_object_cursor_set, /* set cursor to an evas object */
      NULL,				/* layer set */
      _ecore_evas_directfb_focus_set,	/* focus */
      NULL,				/* iconified */

@@ -1269,20 +1269,60 @@ ecore_evas_size_step_get(Ecore_Evas *ee, int *w, int *h)
 EAPI void
 ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
 {
+   Evas_Object  *obj = NULL;
+
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_cursor_set");
 	return;
      }
-   IFC(ee, fn_cursor_set) (ee, file, layer, hot_x, hot_y);
+
+   if (file)
+     {
+        int x, y;
+
+        obj = evas_object_image_add(ee->evas);
+        evas_object_image_file_set(obj, file, NULL);
+        evas_object_image_size_get(obj, &x, &y);
+        evas_object_resize(obj, x, y);
+        evas_object_image_fill_set(obj, 0, 0, x, y);
+     }
+
+   IFC(ee, fn_object_cursor_set) (ee, obj, layer, hot_x, hot_y);
+   IFE;
+}
+
+/**
+ * Set the cursor of an Ecore_Evas
+ * @param ee The Ecore_Evas
+ * @param obj The Evas_Object for the cursor
+ * @param layer
+ * @param hot_x The x coordinate of the cursor's hot spot
+ * @param hot_y The y coordinate of the cursor's hot spot
+ * 
+ * This function makes the mouse cursor over @p ee be the image specified by
+ * @p file. The actual point within the image that the mouse is at is specified
+ * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
+ * corner of the cursor image.
+ */
+EAPI void
+ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_cursor_set");
+	return;
+     }
+   IFC(ee, fn_object_cursor_set) (ee, obj, layer, hot_x, hot_y);
    IFE;
 }
 
 /**
  * Get information about an Ecore_Evas' cursor
  * @param ee The Ecore_Evas to set
- * @param file A pointer to a string to place the cursor file name in.
+ * @param obj A pointer to an Evas_Object to place the cursor Evas_Object.
  * @param layer A pointer to an int to place the cursor's layer in..
  * @param hot_x A pointer to an int to place the cursor's hot_x coordinate in.
  * @param hot_y A pointer to an int to place the cursor's hot_y coordinate in.
@@ -1290,7 +1330,7 @@ ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, in
  * This function queries information about an Ecore_Evas' cursor.
  */
 EAPI void
-ecore_evas_cursor_get(Ecore_Evas *ee, char **file, int *layer, int *hot_x, int *hot_y)
+ecore_evas_cursor_get(Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1298,7 +1338,7 @@ ecore_evas_cursor_get(Ecore_Evas *ee, char **file, int *layer, int *hot_x, int *
 			 "ecore_evas_cursor_get");
 	return;
      }
-   if (file) *file = ee->prop.cursor.file;
+   if (obj) *obj = ee->prop.cursor.object;
    if (layer) *layer = ee->prop.cursor.layer;
    if (hot_x) *hot_x = ee->prop.cursor.hot.x;
    if (hot_y) *hot_y = ee->prop.cursor.hot.y;
@@ -1821,7 +1861,6 @@ _ecore_evas_free(Ecore_Evas *ee)
    if (ee->prop.title) free(ee->prop.title);
    if (ee->prop.name) free(ee->prop.name);
    if (ee->prop.clas) free(ee->prop.clas);
-   if (ee->prop.cursor.file) free(ee->prop.cursor.file);
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
    if (ee->evas) evas_free(ee->evas);
    ee->data = NULL;
@@ -1830,7 +1869,6 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->prop.title = NULL;
    ee->prop.name = NULL;
    ee->prop.clas = NULL;
-   ee->prop.cursor.file = NULL;
    ee->prop.cursor.object = NULL;
    ee->evas = NULL;
    if (ee->engine.idle_flush_timer)

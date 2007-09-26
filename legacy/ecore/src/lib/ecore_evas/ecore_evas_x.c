@@ -2086,39 +2086,35 @@ _ecore_evas_x_size_step_set(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_x_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
+_ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
 
-   if (!file)
+   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
+
+   if (obj == NULL)
      {
-	if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-	if (ee->prop.cursor.file) free(ee->prop.cursor.file);
 	ee->prop.cursor.object = NULL;
-	ee->prop.cursor.file = NULL;
 	ee->prop.cursor.layer = 0;
 	ee->prop.cursor.hot.x = 0;
 	ee->prop.cursor.hot.y = 0;
 	ecore_x_window_cursor_show(ee->engine.x.win, 1);
 	return;
      }
-   ecore_x_window_cursor_show(ee->engine.x.win, 0);
-   if (!ee->prop.cursor.object) ee->prop.cursor.object = evas_object_image_add(ee->evas);
-   if (ee->prop.cursor.file) free(ee->prop.cursor.file);
-   ee->prop.cursor.file = strdup(file);
+
+   ee->prop.cursor.object = obj;
    ee->prop.cursor.layer = layer;
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
+
+   ecore_x_window_cursor_show(ee->engine.x.win, 0);
+
    evas_pointer_output_xy_get(ee->evas, &x, &y);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
    evas_object_color_set(ee->prop.cursor.object, 255, 255, 255, 255);
    evas_object_move(ee->prop.cursor.object,
 		    x - ee->prop.cursor.hot.x,
 		    y - ee->prop.cursor.hot.y);
-   evas_object_image_file_set(ee->prop.cursor.object, ee->prop.cursor.file, NULL);
-   evas_object_image_size_get(ee->prop.cursor.object, &x, &y);
-   evas_object_resize(ee->prop.cursor.object, x, y);
-   evas_object_image_fill_set(ee->prop.cursor.object, 0, 0, x, y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
@@ -2489,7 +2485,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_size_max_set,
      _ecore_evas_x_size_base_set,
      _ecore_evas_x_size_step_set,
-     _ecore_evas_x_cursor_set,
+     _ecore_evas_x_object_cursor_set,
      _ecore_evas_x_layer_set,
      _ecore_evas_x_focus_set,
      _ecore_evas_x_iconified_set,
