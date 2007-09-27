@@ -769,7 +769,7 @@ _ecore_x_event_handle_graphics_expose(XEvent *xevent)
 void
 _ecore_x_event_handle_visibility_notify(XEvent *xevent)
 {
-   if (xevent->xvisibility.state != VisibilityPartiallyObscured)
+//   if (xevent->xvisibility.state != VisibilityPartiallyObscured)
    {
       Ecore_X_Event_Window_Visibility_Change *e;
       
