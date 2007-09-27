@@ -18,7 +18,7 @@ static int _ecore_evas_fps_debug = 0;
 
 static Ecore_Evas *ecore_evases = NULL;
 static Evas_Hash *ecore_evases_hash = NULL;
-static Ecore_Event_Handler *ecore_evas_event_handlers[17];
+static Ecore_Event_Handler *ecore_evas_event_handlers[18];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 
@@ -286,7 +286,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	     if (updates) evas_render_updates_free(updates);
 	  }
      }
-   else if ((ee->visible) ||
+   else if (((ee->visible) && (ee->draw_ok)) ||
 	    ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
 	    ((ee->should_be_visible) && (ee->prop.override)))
      {
@@ -750,6 +750,22 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static int
+_ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_X_Event_Window_Visibility_Change *e;
+
+   e = event;
+   ee = _ecore_evas_x_match(e->win);
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if (e->win != ee->engine.x.win) return 1;
+//   printf("VIS CHANGE OBSCURED: %p %i\n", ee, e->fully_obscured);
+   if (e->fully_obscured) ee->draw_ok = 0;
+   else ee->draw_ok = 1;
+   return 1;
+}
+
+static int
 _ecore_evas_x_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
@@ -914,6 +930,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
    if (!ee) return 1; /* pass on event */
    if (e->win != ee->engine.x.win) return 1;
    if (ee->engine.x.using_bg_pixmap) return 1;
+//   printf("EXPOSE %p [%i] %i %i %ix%i\n", ee, ee->prop.avoid_damage, e->x, e->y, e->w, e->h);
    if (ee->prop.avoid_damage)
      {
 #ifdef HAVE_ECORE_X_XCB
@@ -1071,7 +1088,9 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
    if (!ee) return 1; /* pass on event */
    if (e->win != ee->engine.x.win) return 1;
    if (ee->visible) return 0; /* dont pass it on */
+//   printf("SHOW EVENT %p\n", ee);
    ee->visible = 1;
+   ee->draw_ok = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
    return 1;
 }
@@ -1088,6 +1107,7 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
    if (e->win != ee->engine.x.win) return 1;
    if (!ee->visible) return 0; /* dont pass it on */
    ee->visible = 0;
+   ee->draw_ok = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
    return 1;
 }
@@ -1302,6 +1322,7 @@ _ecore_evas_x_init(void)
    ecore_evas_event_handlers[14] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_HIDE, _ecore_evas_x_event_window_hide, NULL);
    ecore_evas_event_handlers[15] = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_WHEEL, _ecore_evas_x_event_mouse_wheel, NULL);
    ecore_evas_event_handlers[16] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY, _ecore_evas_x_event_property_change, NULL);
+   ecore_evas_event_handlers[17] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE, _ecore_evas_x_event_visibility_change, NULL);
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    return _ecore_evas_init_count;
 }
@@ -2441,7 +2462,7 @@ _ecore_evas_x_shutdown(void)
 	int i;
 
 	while (ecore_evases) _ecore_evas_free(ecore_evases);
-	for (i = 0; i < 17; i++)
+	for (i = 0; i < 18; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);
 	ecore_evas_idle_enterer = NULL;

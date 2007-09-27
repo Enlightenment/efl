@@ -202,6 +202,7 @@ struct _Ecore_Evas
    short       rotation;
    char        shaped  : 1;
    char        visible : 1;
+   char        draw_ok : 1;
    char        should_be_visible : 1;
    char        alpha  : 1;
 
