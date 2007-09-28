@@ -839,7 +839,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
         exit(-1);
      }
 
-   SDL_FillRect(re->surface->pixels, NULL, 0);
+   SDL_FillRect(re->surface, NULL, 0);
 
    re->alpha = alpha;
    re->hwsurface = hwsurface;
