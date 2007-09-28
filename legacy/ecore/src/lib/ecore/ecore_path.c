@@ -42,7 +42,7 @@ ecore_path_group_new(const char *group_name)
 	Ecore_Path_Group *last;
 
 	group = __ecore_path_group_find(group_name);
-	if (!group)
+	if (group)
 	  return -1;
 
 	last = ecore_list_last_goto(group_list);
