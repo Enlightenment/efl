@@ -112,15 +112,24 @@ ecore_win32_ddraw_shutdown(Ecore_Win32_Window *window)
    w = (struct _Ecore_Win32_Window *)window;
 
    if (w->ddraw.surface_primary)
-     IDirectDrawSurface7_Release(w->ddraw.surface_primary);
+     {
+        IDirectDrawSurface7_Release(w->ddraw.surface_primary);
+        w->ddraw.surface_primary = NULL;
+     }
 
    /* no need to release the back surface. the previous call free its memory */
 
    if (w->ddraw.clipper)
-     IDirectDrawClipper_Release(w->ddraw.clipper);
+     {
+        IDirectDrawClipper_Release(w->ddraw.clipper);
+        w->ddraw.clipper = NULL;
+     }
 
    if (w->ddraw.object)
-     IDirectDraw7_Release(w->ddraw.object);
+     {
+        IDirectDraw7_Release(w->ddraw.object);
+        w->ddraw.object = NULL;
+     }
 #endif /* HAVE_DIRECTDRAW */
 }
 
