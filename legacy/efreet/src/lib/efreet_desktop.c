@@ -116,10 +116,6 @@ efreet_desktop_init(void)
 
     efreet_desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
     ecore_hash_free_key_cb_set(efreet_desktop_cache, ECORE_FREE_CB(free));
-#if 0
-    ecore_hash_free_value_cb_set(efreet_desktop_cache,
-                                ECORE_FREE_CB(efreet_desktop_free));
-#endif
 
     efreet_desktop_types = ecore_list_new();
     ecore_list_free_cb_set(efreet_desktop_types,
@@ -209,10 +205,6 @@ efreet_desktop_get(const char *file)
 
             desktop->cached = 0;
             ecore_hash_remove(efreet_desktop_cache, file);
-            /*
-             * TODO: We can't free the desktop here, as someone still might have references to it.
-            efreet_desktop_free(desktop);
-            */
         }
     }
 
