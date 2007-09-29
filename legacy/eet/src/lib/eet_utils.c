@@ -59,7 +59,6 @@ int
 _eet_string_to_double_convert(const char *src, long long *m, long *e)
 {
    const char *str;
-   double      val;
    long long   mantisse;
    long        exponent;
    int         nbr_decimals;
@@ -151,8 +150,6 @@ _eet_double_to_string_convert(char *des, double d)
                                         'a', 'b', 'c', 'd', 'e', 'f'};
    int p;
    int i;
-
-   char *str = des;
 
    if (d < 0.0)
      {
