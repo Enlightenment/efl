@@ -1090,7 +1090,6 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
    if (ee->visible) return 0; /* dont pass it on */
 //   printf("SHOW EVENT %p\n", ee);
    ee->visible = 1;
-   ee->draw_ok = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
    return 1;
 }
@@ -1108,7 +1107,6 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
    if (!ee->visible) return 0; /* dont pass it on */
 //   printf("HIDE EVENT %p\n", ee);
    ee->visible = 0;
-   ee->draw_ok = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
    return 1;
 }
