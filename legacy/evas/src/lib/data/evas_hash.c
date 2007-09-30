@@ -129,7 +129,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
  * @p key is expected to be a unique string within the hash table.
  * Otherwise, you cannot be sure which inserted data pointer will be
  * accessed with @ref evas_hash_find , and removed with
- * @ref evas_hash_del . This call does nto make a copy of the key so it must
+ * @ref evas_hash_del . This call does not make a copy of the key so it must
  * be a string constant or stored elsewhere (in the object being added) etc.
  *
  * Key strings are case sensitive.
