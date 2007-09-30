@@ -175,6 +175,7 @@ EAPI Evas_Object *
 evas_object_image_add(Evas *e)
 {
    Evas_Object *obj;
+   Evas_Object_Image *o;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -182,6 +183,9 @@ evas_object_image_add(Evas *e)
    obj = evas_object_new();
    evas_object_image_init(obj);
    evas_object_inject(obj, e);
+   o = (Evas_Object_Image *)(obj->object_data);
+   o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
+								       o->engine_data);
    return obj;
 }
 
@@ -1491,8 +1495,7 @@ evas_object_image_colorspace_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return EVAS_COLORSPACE_ARGB8888;
    MAGIC_CHECK_END();
-   return obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
-							      o->engine_data);
+   return o->cur.cspace;
 }
 
 /**
