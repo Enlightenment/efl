@@ -272,7 +272,7 @@ ecore_path_group_available(int group_id)
 /**
  * Retrieves a list of all available plugins in the given path.
  * @param   group_id The identifier for the given path.
- * @return  A pointer to a newly allocated list of all plugins found in the 
+ * @return  A pointer to a newly allocated list of all plugins found in the
  *          paths identified by @p group_id.  @c NULL otherwise.
  * @ingroup Ecore_Plugin
  */
@@ -313,7 +313,7 @@ ecore_plugin_available_get(int group_id)
 	  {
 	     char ppath[PATH_MAX];
 	     char *ext;
-	     
+
 	     if (*d->d_name == '.')
 	       continue;
 
@@ -330,7 +330,7 @@ ecore_plugin_available_get(int group_id)
 	     ecore_strlcpy(ppath, d->d_name, sizeof(ppath));
 	     ext = strrchr(ppath, '.');
 	     *ext = '\0';
-	     
+
 	     if (!ecore_hash_get(plugins, ppath))
 	       {
 		  char *key;

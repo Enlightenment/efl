@@ -1,5 +1,11 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #ifdef _WIN32
+# define WIN32_LEAN_AND_MEAN
 # include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
 #else
 # include <sys/time.h>
 #endif
