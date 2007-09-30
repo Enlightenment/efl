@@ -244,7 +244,11 @@ ecore_path_group_available(int group_id)
 
 	     ext = strrchr(d->d_name, '.');
 
+#ifndef _WIN32
 	     if (!ext || strncmp(ext, ".so", 3))
+#else
+	     if (!ext || strncmp(ext, ".dll", 4))
+#endif /* _WIN32 */
 	       continue;
 
 	     snprintf(ppath, PATH_MAX, "%s/%s", path, d->d_name);
@@ -317,7 +321,11 @@ ecore_plugin_available_get(int group_id)
 	     if (*d->d_name == '.')
 	       continue;
 
+#ifndef _WIN32
 	     if (!ecore_str_has_suffix(d->d_name, ".so"))
+#else
+	     if (!ecore_str_has_suffix(d->d_name, ".dll"))
+#endif /* _WIN32 */
 	       continue;
 
 	     snprintf(ppath, PATH_MAX, "%s/%s", path, d->d_name);
