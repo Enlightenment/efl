@@ -618,7 +618,7 @@ fi
 if test "x$have_ecore_evas_sdl" = "xyes"; then
   PKG_CHECK_MODULES(SDL, sdl >= 1.3.0,
     [ AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL]) ],
-    [ dummy=no ]);
+    [ dummy=no ])
 fi
 
 AC_SUBST(sdl_cflags)
