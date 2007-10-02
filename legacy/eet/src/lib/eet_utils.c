@@ -62,7 +62,7 @@ _eet_string_to_double_convert(const char *src, long long *m, long *e)
    long long   mantisse;
    long        exponent;
    int         nbr_decimals;
-   char        sign;
+   int         sign;
 
    str = src;
    sign = +1;
