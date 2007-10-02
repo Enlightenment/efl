@@ -25,17 +25,19 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 {
    Cutout_Rect* rect;
 
-   if (rects->max < rects->active + 1) {
-      rects->max += 8;
-      rects->rects = realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
-   }
+   if (rects->max < (rects->active + 1))
+     {
+	rects->max += 32;
+	rects->rects = realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
+     }
 
-   rect = rects->rects + rects->active++;
+   rect = rects->rects + rects->active;
    rect->x = x;
    rect->y = y;
    rect->w = w;
    rect->h = h;
-
+   rects->active++;
+   
    return rect;
 }
 
@@ -43,11 +45,13 @@ EAPI void
 evas_common_draw_context_cutouts_del(Cutout_Rects* rects,
                                      int index)
 {
-   if (index >= 0 && index < rects->active)
+   if ((index >= 0) && (index < rects->active))
      {
-        Cutout_Rect*    rect = rects->rects + index;
-
-        memmove(rect, rect + 1, sizeof (Cutout_Rect) * (rects->active - index - 1));
+        Cutout_Rect*    rect;
+	
+	rect = rects->rects + index;
+        memmove(rect, rect + 1, 
+		sizeof(Cutout_Rect) * (rects->active - index - 1));
         rects->active--;
      }
 }
@@ -176,6 +180,12 @@ evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
 EAPI void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
+   if (dc->clip.use)
+     {
+        RECTS_CLIP_TO_RECT(x, y, w, h,
+			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
+	if ((w < 1) || (h < 1)) return;
+     }
    evas_common_draw_context_cutouts_add(&dc->cutout, x, y, w, h);
 }
 

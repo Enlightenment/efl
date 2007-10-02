@@ -326,7 +326,8 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		    {
 		       int x, y, w, h;
 		       
-		       if ((obscuring_objects) && (obscuring_objects->data == obj))
+		       if ((obscuring_objects) && 
+			   (obscuring_objects->data == obj))
 			 obscuring_objects = evas_list_remove(obscuring_objects, obj);
 		       x = cx; y = cy; w = cw; h = ch;
 		       RECTS_CLIP_TO_RECT(x, y, w, h,

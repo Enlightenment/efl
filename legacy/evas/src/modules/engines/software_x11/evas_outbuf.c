@@ -12,6 +12,7 @@ evas_software_x11_outbuf_init(void)
 void
 evas_software_x11_outbuf_free(Outbuf * buf)
 {
+   evas_software_x11_outbuf_idle_flush(buf);
    evas_software_x11_outbuf_flush(buf);
    if (buf->priv.x.gc)
       XFreeGC(buf->priv.x.disp, buf->priv.x.gc);
@@ -20,7 +21,6 @@ evas_software_x11_outbuf_free(Outbuf * buf)
    if (buf->priv.pal)
       evas_software_x11_x_color_deallocate(buf->priv.x.disp, buf->priv.x.cmap,
 					   buf->priv.x.vis, buf->priv.pal);
-   evas_software_x11_outbuf_perf_free(buf->perf);
    free(buf);
 }
 
@@ -33,7 +33,7 @@ evas_software_x11_outbuf_rotation_set(Outbuf *buf, int rot)
 Outbuf             *
 evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 				 Display * disp, Drawable draw, Visual * vis,
-				 Colormap cmap, int x_depth, Outbuf_Perf * perf,
+				 Colormap cmap, int x_depth,
 				 int grayscale, int max_colors, Pixmap mask,
 				 int shape_dither, int destination_alpha)
 {
@@ -201,19 +201,132 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
       evas_software_x11_outbuf_drawable_set(buf, draw);
       evas_software_x11_outbuf_mask_set(buf, mask);
    }
-
-   buf->perf = perf;
    return buf;
 }
 
 RGBA_Image         *
-evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
+evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image         *im;
    Outbuf_Region      *obr;
    int                 bpl = 0;
    int                 use_shm = 1;
 
+   if ((buf->onebuf) && (buf->priv.x.shm))
+     {
+	Evas_Rectangle *rect;
+	
+	rect = malloc(sizeof(Evas_Rectangle));
+	RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
+	rect->x = x;
+	rect->y = y;
+	rect->w = w;
+	rect->h = h;
+	buf->priv.onebuf_regions = evas_list_append(buf->priv.onebuf_regions, rect);
+	if (buf->priv.onebuf)
+	  {
+	     *cx = x;
+	     *cy = y;
+	     *cw = w;
+	     *ch = h;
+	     if (!buf->priv.synced)
+	       {
+		  XSync(buf->priv.x.disp, False);
+		  buf->priv.synced = 1;
+	       }
+	     if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
+	       {
+		  int yy;
+		  
+		  im = buf->priv.onebuf;
+		  for (yy = y; yy < (y + h); yy++)
+		    {
+		       memset(im->image->data + (im->image->w * yy) + x,
+			      0, w * sizeof(DATA32));
+		    }
+	       }
+	     return buf->priv.onebuf;
+	  }
+	obr = calloc(1, sizeof(Outbuf_Region));
+	obr->x = 0;
+	obr->y = 0;
+	obr->w = buf->w;
+	obr->h = buf->h;
+	*cx = x;
+	*cy = y;
+	*cw = w;
+	*ch = h;
+	
+	use_shm = buf->priv.x.shm;
+	if ((buf->rot == 0) &&
+	    (buf->priv.mask.r == 0xff0000) &&
+	    (buf->priv.mask.g == 0x00ff00) &&
+	    (buf->priv.mask.b == 0x0000ff))
+	  {
+	     im = evas_cache_image_empty(evas_common_image_cache_get());
+	     im->image->w = buf->w;
+	     im->image->h = buf->h;
+	     im->image->data = NULL;
+	     im->image->no_free = 1;
+	     im->extended_info = obr;
+	     obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+							      buf->priv.x.vis,
+							      buf->priv.x.depth,
+							      buf->w, buf->h,
+							      use_shm,
+							      NULL);
+	     im->image->data = (DATA32 *) evas_software_x11_x_output_buffer_data(obr->xob, &bpl);
+	     if (buf->priv.x.mask)
+	       obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+								 buf->priv.x.vis,
+								 1, buf->w, buf->h,
+								 use_shm,
+								 NULL);
+	  }
+	else
+	  {
+	     im = evas_cache_image_empty(evas_common_image_cache_get());
+	     im->image->w = buf->w;
+	     im->image->h = buf->h;
+	     evas_common_image_surface_alloc(im->image);
+	     im->extended_info = obr;
+	     if ((buf->rot == 0) || (buf->rot == 180))
+	       obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+								buf->priv.x.vis,
+								buf->priv.x.depth,
+								buf->w, buf->h,
+								use_shm,
+								NULL);
+	     else if ((buf->rot == 90) || (buf->rot == 270))
+	       obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+								buf->priv.x.vis,
+								buf->priv.x.depth,
+								buf->h, buf->w,
+								use_shm,
+								NULL);
+	     if (buf->priv.x.mask)
+	       obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+								 buf->priv.x.vis,
+								 1, buf->w, buf->h,
+								 use_shm,
+								 NULL);
+	  }
+	if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
+	  {
+	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	     /* FIXME: faster memset! */
+	     memset(im->image->data, 0, w * h * sizeof(DATA32));
+	  }
+	buf->priv.onebuf = im;
+	return im;
+     }
+   
+   
+   
+   
+   
+   
+   
    obr = calloc(1, sizeof(Outbuf_Region));
    obr->x = x;
    obr->y = y;
@@ -225,14 +338,11 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w
    *ch = h;
 
    use_shm = buf->priv.x.shm;
-   if (buf->perf)
-     {
-	if ((w * h) < buf->perf->min_shm_image_pixel_count) use_shm = 0;
-     }
-   else
-     {
-	if ((w * h) < (200 * 200)) use_shm = 0;
-     }
+   /* FIXME: magic - i found if shm regions are smaller than 200x200 its
+    * faster to use ximages over unix sockets - trial and error
+    */
+   if ((w * h) < (200 * 200)) use_shm = 0;
+
    if ((buf->rot == 0) &&
        (buf->priv.mask.r == 0xff0000) &&
        (buf->priv.mask.g == 0x00ff00) &&
@@ -307,41 +417,103 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 {
    Evas_List *l;
 
-   for (l = buf->priv.pending_writes; l; l = l->next)
+   if ((buf->priv.onebuf) && (buf->priv.onebuf_regions))
      {
 	RGBA_Image *im;
-	Outbuf_Region      *obr;
-
-	im = l->data;
+	Outbuf_Region *obr;
+	Region tmpr;
+	
+	im = buf->priv.onebuf;
 	obr = im->extended_info;
-	/* paste now */
-	if (buf->priv.debug)
-	  evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
-					      obr->x, obr->y, obr->w, obr->h);
+	tmpr = XCreateRegion();
+	while (buf->priv.onebuf_regions)
+	  {
+	     Evas_Rectangle *rect;
+	     XRectangle xr;
+	     
+	     rect = buf->priv.onebuf_regions->data;
+	     buf->priv.onebuf_regions = evas_list_remove_list(buf->priv.onebuf_regions, buf->priv.onebuf_regions);
+	     xr.x = rect->x;
+	     xr.y = rect->y;
+	     xr.width = rect->w;
+	     xr.height = rect->h;
+	     free(rect);
+	     XUnionRectWithRegion(&xr, tmpr, tmpr);
+	     if (buf->priv.debug)
+	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
+						   rect->x, rect->y, rect->w, rect->h);
+	  }
+	XSetRegion(buf->priv.x.disp, buf->priv.x.gc, tmpr);
 	evas_software_x11_x_output_buffer_paste(obr->xob, buf->priv.x.win,
 						buf->priv.x.gc,
-						obr->x, obr->y, 0);
+						0, 0, 0);
 	if (obr->mxob)
-	  evas_software_x11_x_output_buffer_paste(obr->mxob,
-						  buf->priv.x.mask,
-						  buf->priv.x.gcm,
-						  obr->x, obr->y, 0);
+	  {
+	     XSetRegion(buf->priv.x.disp, buf->priv.x.gcm, tmpr);
+	     evas_software_x11_x_output_buffer_paste(obr->mxob,
+						     buf->priv.x.mask,
+						     buf->priv.x.gcm,
+						     0, 0, 0);
+	  }
+	XDestroyRegion(tmpr);
+	buf->priv.synced = 0;
      }
-   XSync(buf->priv.x.disp, False);
-   while (buf->priv.pending_writes)
+   else
+     {
+	for (l = buf->priv.pending_writes; l; l = l->next)
+	  {
+	     RGBA_Image *im;
+	     Outbuf_Region *obr;
+	     
+	     im = l->data;
+	     obr = im->extended_info;
+	     /* paste now */
+	     if (buf->priv.debug)
+	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
+						   obr->x, obr->y, obr->w, obr->h);
+	     evas_software_x11_x_output_buffer_paste(obr->xob, buf->priv.x.win,
+						     buf->priv.x.gc,
+						     obr->x, obr->y, 0);
+	     if (obr->mxob)
+	       evas_software_x11_x_output_buffer_paste(obr->mxob,
+						       buf->priv.x.mask,
+						       buf->priv.x.gcm,
+						       obr->x, obr->y, 0);
+	  }
+	XSync(buf->priv.x.disp, False);
+	while (buf->priv.pending_writes)
+	  {
+	     RGBA_Image *im;
+	     Outbuf_Region *obr;
+	     
+	     im = buf->priv.pending_writes->data;
+	     buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
+	     obr = im->extended_info;
+	     evas_cache_image_drop(im);
+	     if (obr->xob) evas_software_x11_x_output_buffer_free(obr->xob, 0);
+	     if (obr->mxob) evas_software_x11_x_output_buffer_free(obr->mxob, 0);
+	     free(obr);
+	  }
+     }
+   evas_common_cpu_end_opt();
+}
+
+void
+evas_software_x11_outbuf_idle_flush(Outbuf *buf)
+{
+   if (buf->priv.onebuf)
      {
         RGBA_Image *im;
-	Outbuf_Region      *obr;
+	Outbuf_Region *obr;
 
-	im = buf->priv.pending_writes->data;
-	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
+	im = buf->priv.onebuf;
+	buf->priv.onebuf = NULL;
 	obr = im->extended_info;
 	evas_cache_image_drop(im);
 	if (obr->xob) evas_software_x11_x_output_buffer_free(obr->xob, 0);
 	if (obr->mxob) evas_software_x11_x_output_buffer_free(obr->mxob, 0);
 	free(obr);
      }
-   evas_common_cpu_end_opt();
 }
 
 void
@@ -481,6 +653,7 @@ evas_software_x11_outbuf_reconfigure(Outbuf * buf, int w, int h, int rot,
    buf->w = w;
    buf->h = h;
    buf->rot = rot;
+   evas_software_x11_outbuf_idle_flush(buf);
 }
 
 int
@@ -586,385 +759,3 @@ evas_software_x11_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, i
 	XSync(buf->priv.x.disp, False);
      }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* used for performance tester code */
-static double
-_evas_get_time(void)
-{
-   struct timeval      timev;
-
-   gettimeofday(&timev, NULL);
-   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-}
-
-char               *
-evas_software_x11_outbuf_perf_serialize_x(Outbuf_Perf * perf)
-{
-   /* take performance results and turn it inot a munged string that can be */
-   /* written out somewhere by a program */
-   char                buf[256];
-
-   snprintf(buf, sizeof(buf), "%i", perf->min_shm_image_pixel_count);
-   return strdup(buf);
-}
-
-void
-evas_software_x11_outbuf_perf_deserialize_x(Outbuf_Perf * perf, const char *data)
-{
-   /* take a munged string that is the result of outbuf_perf_serialize_x() */
-   /* and turn it back into a structure  and fill the provided perf struct */
-   /* with it. the perf struct is assumed to be pristine from */
-   /* outbuf_perf_new_x() */
-   int                 val;
-
-   val = 200 * 200;
-   if (sscanf(data, "%i", &val) != 1)
-      val = 200 * 200;
-   if (val < 0)
-      val = 200 * 200;
-   perf->min_shm_image_pixel_count = val;
-   return;
-}
-
-Outbuf_Perf        *
-evas_software_x11_outbuf_perf_new_x(Display * disp, Window draw, Visual * vis,
-			       Colormap cmap, int x_depth)
-{
-   /* create an "empty" perf struct with just the system & display info */
-   Outbuf_Perf        *perf;
-#if 0
-   Window              root;
-   struct utsname      un;
-   FILE               *f;
-#endif
-
-   perf = calloc(1, sizeof(Outbuf_Perf));
-
-   perf->x.disp = disp;
-
-   perf->min_shm_image_pixel_count = 200 * 200;	/* default hard-coded */
-
-#if 0   
-   root = DefaultRootWindow(disp);
-   if (draw)
-     {
-	int                 wx, wy;
-	unsigned int        ww, wh, bd, dp;
-	Window              wdum;
-	XWindowAttributes   wattr;
-
-	XGetGeometry(disp, draw, &root, &wx, &wy, &ww, &wh, &bd, &dp);
-	XGetGeometry(disp, root, &wdum, &wx, &wy, &ww, &wh, &bd, &dp);
-	XGetWindowAttributes(disp, root, &wattr);
-	perf->x.w = (int)ww;
-	perf->x.h = (int)wh;
-	perf->x.screen_num = XScreenNumberOfScreen(wattr.screen);
-     }
-   perf->x.root = root;
-
-   perf->x.display = strdup(DisplayString(disp));
-   perf->x.vendor = strdup(ServerVendor(disp));
-   perf->x.version = ProtocolVersion(disp);
-   perf->x.revision = ProtocolRevision(disp);
-   perf->x.release = VendorRelease(disp);
-   perf->x.screen_count = ScreenCount(disp);
-   perf->x.depth = x_depth;
-   
-   if (!uname(&un))
-     {
-	perf->os.name = strdup(un.sysname);
-	perf->os.version = strdup(un.release);
-	perf->os.machine = strdup(un.machine);
-     }
-   /* for linux */
-   f = fopen("/proc/cpuinfo", "r");
-   if (f)
-     {
-	char                buf[16384];
-	size_t              sz;
-
-	/* read up tothe first 16k of it... shoudl be nice and fast and easy */
-	sz = fread(buf, 1, 16380, f);
-	if (sz > 0)
-	  {
-	     perf->cpu.info = malloc(sz + 1);
-	     strncpy(perf->cpu.info, buf, sz);
-	     perf->cpu.info[sz] = 0;
-	  }
-	fclose(f);
-     }
-   else
-     {
-	/* for FreeBSD... maybe */
-	f = fopen("/var/run/dmesg.boot", "r");
-	/* for NetBSD... maybe */
-	if (!f)
-	   f = fopen("/kern/msgbuf", "r");
-	if (f)
-	  {
-	     char                buf[4096];
-	     int                 l;
-
-	     l = 0;
-	     while (fgets(buf, sizeof(buf), f))
-	       {
-		  int                 len;
-
-		  /* to read lines like: */
-		  /* CPU: AMD-K7(tm) Processor (698.65-MHz 686-class CPU) */
-		  /* Features=0x81f9ff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,SEP,MTRR,PGE,MCA,CMOV,PAT,MMX> */
-		  if ((!strncmp(buf, "CPU: ", 5)) ||
-		      (!strncmp(buf, "Features=", 9)))
-		    {
-		       len = strlen(buf);
-		       l += len;
-		       if (!perf->cpu.info)
-			  perf->cpu.info = strdup(buf);
-		       else
-			 {
-			    perf->cpu.info = realloc(perf->cpu.info, l + 1);
-			    if (perf->cpu.info)
-			       strcat(perf->cpu.info, buf);
-			 }
-		    }
-	       }
-	     fclose(f);
-	  }
-     }
-   if (!perf->cpu.info)
-      perf->cpu.info = strdup("");
-#endif   
-   return perf;
-}
-
-char               *
-evas_software_x11_outbuf_perf_serialize_info_x(Outbuf_Perf * perf)
-{
-   /* get a seriazed string that is a unique identifier for your */
-   /* hardware/x/connection setup. */
-   return NULL;
-#if 0   
-   char                buf[32768];
-   int                 sum1, sum2, i;
-   char               *p;
-
-   sum1 = 0;
-   sum2 = 0;
-   snprintf(buf, sizeof(buf),
-	    "%s|%s|%i|%i|%i|%i|%i|%i|%i|%i|%s|%s|%s|%s",
-	    perf->x.display, perf->x.vendor, perf->x.version, perf->x.revision,
-	    perf->x.release, perf->x.w, perf->x.h, perf->x.screen_count,
-	    perf->x.depth, perf->x.screen_num,
-	    perf->os.name, perf->os.version, perf->os.machine, perf->cpu.info);
-   p = buf;
-   i = 0;
-   while (*p)
-     {
-	sum1 += (int)(*p) << (i % 24);
-	sum2 ^= ((int)(*p) << (i % 24)) * ((int)(*p));
-	i++;
-	p++;
-     }
-   snprintf(buf, sizeof(buf), "%08x%08x", sum1, sum2);
-   return strdup(buf);
-#endif   
-}
-
-void
-evas_software_x11_outbuf_perf_store_x(Outbuf_Perf * perf)
-{
-   /* write performance results to x root property */
-   return;
-#if 0   
-   Atom                type, format;
-   char               *str;
-
-   type = XInternAtom(perf->x.disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
-   format = XA_STRING;
-   str = evas_software_x11_outbuf_perf_serialize_x(perf);
-   XChangeProperty(perf->x.disp, perf->x.root, type, format, 8,
-		   PropModeReplace, (unsigned char *)str, strlen(str));
-   XSync(perf->x.disp, False);
-   free(str);
-#endif   
-}
-
-Outbuf_Perf        *
-evas_software_x11_outbuf_perf_restore_x(Display * disp, Window draw, Visual * vis,
-				   Colormap cmap, int x_depth)
-{
-   /* read performance results from root window */
-   Outbuf_Perf        *perf;
-#if 0
-   Atom                type, format;
-   unsigned char      *retval = NULL;
-   Atom                type_ret;
-   unsigned long       bytes_after, num_ret;
-   int                 format_ret;
-#endif
-
-   perf = evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, x_depth);
-   return perf;
-#if 0   
-   type = XInternAtom(disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
-   format = XA_STRING;
-   XGetWindowProperty(disp, perf->x.root, type, 0, 16384, False, format,
-		      &type_ret, &format_ret, &num_ret, &bytes_after, &retval);
-   if (format_ret == 8 && type_ret == type)
-     {
-	char *s;
-
-	s = malloc(num_ret + 1);
-	strncpy(s, retval, num_ret);
-	s[num_ret] = 0;
-	evas_software_x11_outbuf_perf_deserialize_x(perf, s);
-	free(s);
-     }
-
-   if (retval) XFree(retval);
-   return perf;
-#endif   
-}
-
-void
-evas_software_x11_outbuf_perf_free(Outbuf_Perf * perf)
-{
-   /* free the perf struct */
-#if 0   
-   free(perf->x.display);
-   free(perf->x.vendor);
-   free(perf->os.name);
-   free(perf->os.version);
-   free(perf->os.machine);
-   free(perf->cpu.info);
-#endif
-   free(perf);
-}
-
-Outbuf_Perf        *
-evas_software_x11_outbuf_perf_x(Display * disp, Window draw, Visual * vis,
-			   Colormap cmap, int x_depth)
-{
-   Outbuf_Perf        *perf;
-   XSetWindowAttributes attr;
-   Window              win;
-   int                 w, h;
-   int                 do_shm = 0;
-
-   perf = evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, x_depth);
-
-   attr.backing_store = Always;
-   attr.colormap = cmap;
-   attr.border_pixel = 0;
-   attr.background_pixmap = None;
-   attr.event_mask = 0;
-   attr.bit_gravity = ForgetGravity;
-   attr.override_redirect = True;
-   w = perf->x.w;
-   h = perf->x.h;
-   win = XCreateWindow(disp,
-		       perf->x.root,
-		       0, 0, w, h, 0,
-		       x_depth,
-		       InputOutput,
-		       vis,
-		       CWBackingStore | CWColormap |
-		       CWBackPixmap | CWBorderPixel |
-		       CWBitGravity | CWEventMask | CWOverrideRedirect, &attr);
-   XSync(disp, False);
-   XMapRaised(disp, win);
-
-   do_shm = evas_software_x11_x_can_do_shm(disp);
-
-   /* set it to something ridiculous to start */
-   perf->min_shm_image_pixel_count = w * w;
-
-   if (do_shm)
-     {
-	X_Output_Buffer    *xob;
-	GC                  gc;
-	XGCValues           gcv;
-	int                 i;
-	int                 max;
-	int                 error;
-	int                 chosen;
-
-	chosen = 0;
-	error = 0;
-	max = w;
-	if (w > h)
-	   max = h;
-	gc = XCreateGC(disp, win, 0, &gcv);
-	for (i = 16; i < max; i += 16)
-	  {
-	     int                 l;
-	     double              t0, t1, t2;
-	     int                 loops;
-
-	     loops = (h * h * 5) / (i * i);
-	     t0 = _evas_get_time();
-	     for (l = 0; l < loops; l++)
-	       {
-		  xob = evas_software_x11_x_output_buffer_new(disp, vis, x_depth,
-							 i, i, do_shm, NULL);
-		  if (!xob)
-		     error = 1;
-		  else
-		    {
-		       evas_software_x11_x_output_buffer_paste(xob, win, gc, 0, 0, 1);
-		       evas_software_x11_x_output_buffer_free(xob, 1);
-		    }
-	       }
-	     XSync(disp, False);
-	     t1 = _evas_get_time() - t0;
-	     t0 = _evas_get_time();
-	     for (l = 0; l < loops; l++)
-	       {
-		  xob = evas_software_x11_x_output_buffer_new(disp, vis, x_depth,
-							 i, i, 0, NULL);
-		  if (!xob)
-		     error = 1;
-		  else
-		    {
-		       evas_software_x11_x_output_buffer_paste(xob, win, gc, 0, 0, 1);
-		       evas_software_x11_x_output_buffer_free(xob, 1);
-		    }
-	       }
-	     XSync(disp, False);
-	     t2 = _evas_get_time() - t0;
-	     if ((!chosen) && (!error))
-	       {
-		  if ((t1 / t2) < 1.0)
-		    {
-		       perf->min_shm_image_pixel_count = (i - 8) * (i - 8);
-		       chosen = 1;
-		    }
-	       }
-	  }
-	XFreeGC(disp, gc);
-     }
-   XDestroyWindow(disp, win);
-   return perf;
-}
-

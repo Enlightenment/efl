@@ -9,7 +9,6 @@
 #include <sys/shm.h>
 
 typedef struct _Outbuf                Outbuf;
-typedef struct _Outbuf_Perf           Outbuf_Perf;
 typedef struct _Outbuf_Region         Outbuf_Region;
 typedef struct _X_Output_Buffer       X_Output_Buffer;
 
@@ -32,7 +31,7 @@ struct _Outbuf
    Outbuf_Depth    depth;
    int             w, h;
    int             rot;
-   Outbuf_Perf    *perf;
+   int             onebuf;
 
    struct {
       Convert_Pal *pal;
@@ -52,45 +51,19 @@ struct _Outbuf
       struct {
 	 DATA32    r, g, b;
       } mask;
-      /* lets not do back buf for now */
-      /* RGBA_Image  *back_buf; */
+
+      /* 1 big buffer for updates - flush on idle_flush */
+      RGBA_Image  *onebuf;
+      Evas_List   *onebuf_regions;
 
       /* a list of pending regions to write to the target */
       Evas_List   *pending_writes;
 
-      int          mask_dither : 1;
-      int          destination_alpha : 1;
-
-      int          debug : 1;
+      unsigned char mask_dither : 1;
+      unsigned char destination_alpha : 1;
+      unsigned char debug : 1;
+      unsigned char synced : 1;
    } priv;
-};
-
-struct _Outbuf_Perf
-{
-   struct {
-      Display *disp;
-      Window   root;
-
-      char *display;
-      char *vendor;
-      int   version;
-      int   revision;
-      int   release;
-      int   w, h;
-      int   screen_count;
-      int   depth;
-      int   screen_num;
-   } x;
-   struct{
-      char *name;
-      char *version;
-      char *machine;
-   } os;
-   struct {
-      char *info;
-   } cpu;
-
-   int   min_shm_image_pixel_count;
 };
 
 struct _Outbuf_Region
@@ -127,20 +100,12 @@ void             evas_software_x11_x_color_deallocate            (Display *disp,
 void             evas_software_x11_outbuf_init                   (void);
 void             evas_software_x11_outbuf_free                   (Outbuf *buf);
 
-Outbuf          *evas_software_x11_outbuf_setup_x                (int w, int h, int rot, Outbuf_Depth depth, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int x_depth, Outbuf_Perf *perf, int grayscale, int max_colors, Pixmap mask, int shape_dither, int destination_alpha);
-
-char            *evas_software_x11_outbuf_perf_serialize_x       (Outbuf_Perf *perf);
-void             evas_software_x11_outbuf_perf_deserialize_x     (Outbuf_Perf *perf, const char *data);
-Outbuf_Perf     *evas_software_x11_outbuf_perf_new_x             (Display *disp, Window draw, Visual *vis, Colormap cmap,  int x_depth);
-char            *evas_software_x11_outbuf_perf_serialize_info_x  (Outbuf_Perf *perf);
-void             evas_software_x11_outbuf_perf_store_x           (Outbuf_Perf *perf);
-Outbuf_Perf     *evas_software_x11_outbuf_perf_restore_x         (Display *disp, Window draw, Visual *vis, Colormap cmap, int x_depth);
-void             evas_software_x11_outbuf_perf_free              (Outbuf_Perf *perf);
-Outbuf_Perf     *evas_software_x11_outbuf_perf_x                 (Display *disp, Window draw, Visual *vis, Colormap cmap, int x_depth);
+Outbuf          *evas_software_x11_outbuf_setup_x                (int w, int h, int rot, Outbuf_Depth depth, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int x_depth, int grayscale, int max_colors, Pixmap mask, int shape_dither, int destination_alpha);
 
 RGBA_Image      *evas_software_x11_outbuf_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void             evas_software_x11_outbuf_free_region_for_update (Outbuf *buf, RGBA_Image *update);
 void             evas_software_x11_outbuf_flush                  (Outbuf *buf);
+void             evas_software_x11_outbuf_idle_flush             (Outbuf *buf);
 void             evas_software_x11_outbuf_push_updated_region    (Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
 void             evas_software_x11_outbuf_reconfigure            (Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth);
 int              evas_software_x11_outbuf_get_width              (Outbuf *buf);

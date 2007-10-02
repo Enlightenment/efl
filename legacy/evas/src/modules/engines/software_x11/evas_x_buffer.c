@@ -92,6 +92,8 @@ x_output_tmp_x_err(Display * d, XErrorEvent * ev)
    return;
 }
 
+//static int creates = 0;
+
 X_Output_Buffer *
 evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data)
 {
@@ -135,6 +137,11 @@ evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, i
 			    XSetErrorHandler((XErrorHandler)ph);
 			    if (!_x_err)
 			      {
+//				 printf("SHM++ ID=%i -> %i bytes [%i creates]\n",
+//					xob->shm_info->shmid,
+//					xob->xim->bytes_per_line * xob->xim->height,
+//					creates);
+//				 creates++;
 				 return xob;
 			      }
 			 }
@@ -178,6 +185,10 @@ evas_software_x11_x_output_buffer_free(X_Output_Buffer *xob, int sync)
 {
    if (xob->shm_info)
      {
+//	printf("SHM-- ID=%i -> %i bytes, [sync=%i]\n",
+//	       xob->shm_info->shmid,
+//	       xob->xim->bytes_per_line * xob->xim->height,
+//	       sync);
 	if (sync) XSync(xob->display, False);
 	XShmDetach(xob->display, xob->shm_info);
 	XDestroyImage(xob->xim);
