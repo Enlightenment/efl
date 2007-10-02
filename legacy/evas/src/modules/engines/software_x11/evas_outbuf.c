@@ -10,7 +10,7 @@ evas_software_x11_outbuf_init(void)
 }
 
 void
-evas_software_x11_outbuf_free(Outbuf * buf)
+evas_software_x11_outbuf_free(Outbuf *buf)
 {
    evas_software_x11_outbuf_idle_flush(buf);
    evas_software_x11_outbuf_flush(buf);
@@ -32,7 +32,7 @@ evas_software_x11_outbuf_rotation_set(Outbuf *buf, int rot)
 
 Outbuf             *
 evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
-				 Display * disp, Drawable draw, Visual * vis,
+				 Display *disp, Drawable draw, Visual *vis,
 				 Colormap cmap, int x_depth,
 				 int grayscale, int max_colors, Pixmap mask,
 				 int shape_dither, int destination_alpha)
@@ -279,7 +279,8 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 	     if (buf->priv.x.mask)
 	       obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 								 buf->priv.x.vis,
-								 1, buf->w, buf->h,
+								 1, 
+								 buf->w, buf->h,
 								 use_shm,
 								 NULL);
 	  }
@@ -407,7 +408,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 }
 
 void
-evas_software_x11_outbuf_free_region_for_update(Outbuf * buf, RGBA_Image * update)
+evas_software_x11_outbuf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
    /* no need to do anything - they are cleaned up on flush */
 }
@@ -517,7 +518,7 @@ evas_software_x11_outbuf_idle_flush(Outbuf *buf)
 }
 
 void
-evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, int x, int y, int w, int h)
+evas_software_x11_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
 {
    Gfx_Func_Convert    conv_func = NULL;
    Outbuf_Region      *obr;
