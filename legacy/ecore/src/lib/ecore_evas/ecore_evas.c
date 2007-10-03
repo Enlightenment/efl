@@ -1625,7 +1625,7 @@ ecore_evas_fullscreen_get(Ecore_Evas *ee)
  * On expose events it will copy from the pixmap to the window.
  */
 EAPI void
-ecore_evas_avoid_damage_set(Ecore_Evas *ee, int on)
+ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1643,7 +1643,7 @@ ecore_evas_avoid_damage_set(Ecore_Evas *ee, int on)
  * @return 1 if @p ee avoids damage, 0 if not.
  *
  */
-EAPI int
+EAPI Ecore_Evas_Avoid_Damage_Type
 ecore_evas_avoid_damage_get(Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
@@ -1652,7 +1652,7 @@ ecore_evas_avoid_damage_get(Ecore_Evas *ee)
 			 "ecore_evas_avoid_damage_get");
 	return 0;
      }
-   return ee->prop.avoid_damage ? 1:0;
+   return ee->prop.avoid_damage;
 }
 
 /**

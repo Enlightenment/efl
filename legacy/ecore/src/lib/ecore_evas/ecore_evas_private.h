@@ -234,13 +234,13 @@ struct _Ecore_Evas
 	 } hot;
       } cursor;
       int             layer;
+      unsigned char   avoid_damage;
       char            focused      : 1;
       char            iconified    : 1;
       char            borderless   : 1;
       char            override     : 1;
       char            maximized    : 1;
       char            fullscreen   : 1;
-      char            avoid_damage : 1;
       char            withdrawn    : 1;
       char            sticky       : 1;
       char            request_pos  : 1;

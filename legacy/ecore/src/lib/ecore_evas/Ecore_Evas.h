@@ -69,6 +69,13 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SDL
 } Ecore_Evas_Engine_Type;
 
+typedef enum _Ecore_Evas_Avoid_Damage_Type
+{
+   ECORE_EVAS_AVOID_DAMAGE_NONE = 0,
+   ECORE_EVAS_AVOID_DAMAGE_EXPOSE = 1,
+   ECORE_EVAS_AVOID_DAMAGE_BUILT_IN = 2
+} Ecore_Evas_Avoid_Damage_Type;
+   
 #ifndef _ECORE_X_H
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
@@ -217,8 +224,8 @@ EAPI void        ecore_evas_maximized_set(Ecore_Evas *ee, int on);
 EAPI int         ecore_evas_maximized_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_fullscreen_set(Ecore_Evas *ee, int on);
 EAPI int         ecore_evas_fullscreen_get(Ecore_Evas *ee);
-EAPI void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, int on);
-EAPI int         ecore_evas_avoid_damage_get(Ecore_Evas *ee);
+EAPI void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on);
+EAPI Ecore_Evas_Avoid_Damage_Type ecore_evas_avoid_damage_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn);
 EAPI int         ecore_evas_withdrawn_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, int sticky);

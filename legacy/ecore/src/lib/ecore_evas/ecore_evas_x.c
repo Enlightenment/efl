@@ -158,13 +158,16 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 
 	updates = evas_render_updates(ee->evas);
 #if 0
-	for (l = updates; l; l = l->next)
+//	if (ee->w == 640)
 	  {
-	     Evas_Rectangle *r;
-
-	     r = l->data;
-	     printf("DMG render [%p] %ix%i, [%i %i %ix%i]\n",
-		    ee, ee->w, ee->h, r->x, r->y, r->w, r->h);
+	     for (l = updates; l; l = l->next)
+	       {
+		  Evas_Rectangle *r;
+		  
+		  r = l->data;
+		  printf("  UP render [%p] %ix%i, [%i %i %ix%i]\n",
+			 ee, ee->w, ee->h, r->x, r->y, r->w, r->h);
+	       }
 	  }
 #endif
 	if (ee->engine.x.using_bg_pixmap)
@@ -232,6 +235,10 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	       }
 	     if (ee->engine.x.damages)
 	       {
+#if 0
+//		  if (ee->w == 640)
+		    printf("    --COPY PIXMAP\n");
+#endif	       
 		  /* if we have a damage pixmap - we can avoid exposures by
 		   * disabling them just for setting the mask */
 		  ecore_x_event_mask_set(ee->engine.x.win,
@@ -309,17 +316,20 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	     if (updates)
 	       {
 #if 0
-		  Evas_List *l;
-
-		  printf("RENDER [%p] [%i] %ix%i\n",
-			 ee, ee->visible, ee->w, ee->h);
-		  for (l = updates; l; l = l->next)
+//		  if (ee->w == 640)
 		    {
-		       Evas_Rectangle *r;
-
-		       r = l->data;
-		       printf("   render [%i %i %ix%i]\n",
-			      r->x, r->y, r->w, r->h);
+		       Evas_List *l;
+		       
+		       printf("RENDER [%p] [%i] %ix%i\n",
+			      ee, ee->visible, ee->w, ee->h);
+		       for (l = updates; l; l = l->next)
+			 {
+			    Evas_Rectangle *r;
+			    
+			    r = l->data;
+			    printf("   render [%i %i %ix%i]\n",
+				   r->x, r->y, r->w, r->h);
+			 }
 		    }
 #endif
 		  evas_render_updates_free(updates);
@@ -1043,8 +1053,11 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
 	  }
 	if (ee->prop.avoid_damage)
 	  {
+	     int pdam;
+	     
+	     pdam = ecore_evas_avoid_damage_get(ee);
 	     ecore_evas_avoid_damage_set(ee, 0);
-	     ecore_evas_avoid_damage_set(ee, 1);
+	     ecore_evas_avoid_damage_set(ee, pdam);
 	  }
 	if (ee->shaped)
 	  _ecore_evas_x_resize_shape(ee);
@@ -1455,8 +1468,11 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 	       }
 	     if (ee->prop.avoid_damage)
 	       {
+		  int pdam;
+		  
+		  pdam = ecore_evas_avoid_damage_get(ee);
 		  ecore_evas_avoid_damage_set(ee, 0);
-		  ecore_evas_avoid_damage_set(ee, 1);
+		  ecore_evas_avoid_damage_set(ee, pdam);
 	       }
 	     if (ee->shaped)
 	       {
@@ -1503,8 +1519,11 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 	       }
 	     if (ee->prop.avoid_damage)
 	       {
+		  int pdam;
+		  
+		  pdam = ecore_evas_avoid_damage_get(ee);
 		  ecore_evas_avoid_damage_set(ee, 0);
-		  ecore_evas_avoid_damage_set(ee, 1);
+		  ecore_evas_avoid_damage_set(ee, pdam);
 	       }
 	     if (ee->shaped)
 	       {
@@ -2351,9 +2370,7 @@ _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 static void
 _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 {
-   if (((ee->prop.avoid_damage) && (on)) ||
-       ((!ee->prop.avoid_damage) && (!on)))
-     return;
+   if (ee->prop.avoid_damage == on) return;
    if (!strcmp(ee->driver, "gl_x11")) return;
 
    if ((!strcmp(ee->driver, "software_x11")) || (!strcmp(ee->driver, "software_xcb")))
@@ -2382,6 +2399,12 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		    evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
 		  else
 		    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+		  if (ee->prop.avoid_damage == ECORE_EVAS_AVOID_DAMAGE_BUILT_IN)
+		    {
+		       ee->engine.x.using_bg_pixmap = 1;
+		       ecore_x_window_pixmap_set(ee->engine.x.win, ee->engine.x.pmap);
+		       ecore_x_window_area_expose(ee->engine.x.win, 0, 0, ee->w, ee->h);
+		    }
 		  if (ee->engine.x.direct_resize)
 		    {
 		       /* Turn this off for now
@@ -2398,6 +2421,7 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		    {
 		       ecore_x_window_pixmap_set(ee->engine.x.win, 0);
 		       ee->engine.x.using_bg_pixmap = 0;
+		       ecore_x_window_area_expose(ee->engine.x.win, 0, 0, ee->w, ee->h);
 		    }
 		  ee->engine.x.pmap = 0;
 		  ee->engine.x.gc = 0;
@@ -2834,9 +2858,11 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 	  }
 	else
 	  {
+/* turn this off too- bg pixmap is controlled by avoid damage directly	     
 	     ee->engine.x.using_bg_pixmap = 0;
 	     ecore_x_window_pixmap_set(ee->engine.x.win, 0);
 	     ecore_x_window_area_expose(ee->engine.x.win, 0, 0, ee->w, ee->h);
+ */
 	  }
      }
 #else
@@ -3487,9 +3513,11 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
 	  }
 	else
 	  {
+/* turn this off too- bg pixmap is controlled by avoid damage directly	     
 	     ee->engine.x.using_bg_pixmap = 0;
 	     ecore_x_window_pixmap_set(ee->engine.x.win, 0);
 	     ecore_x_window_area_expose(ee->engine.x.win, 0, 0, ee->w, ee->h);
+ */
 	  }
      }
 #else
