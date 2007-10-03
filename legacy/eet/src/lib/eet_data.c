@@ -355,6 +355,46 @@ eet_data_put_string(const void *src, int *size_ret)
    return d;
 }
 
+/**
+ * Fast lookups of simple doubles/floats.
+ *
+ * These aren't properly a cache because they don't store pre-calculated
+ * values, but have a so simple math that is almost as fast.
+ */
+static inline int
+_eet_data_float_cache_get(char *s, int len, float *d)
+{
+   /* fast handle of simple case 0xMp+E*/
+   if ((len == 6) && (s[0] == '0') && (s[1] == 'x') && (s[3] == 'p'))
+     {
+	int mantisse = (s[2] >= 'a') ? (s[2] - 'a' + 10) : (s[2] - '0');
+	int exponent = (s[5] - '0');
+
+	if (s[4] == '+') *d = (float)(mantisse << exponent);
+	else             *d = (float)mantisse / (float)(1 << exponent);
+
+	return 1;
+     }
+   return 0;
+}
+
+static inline int
+_eet_data_double_cache_get(char *s, int len, double *d)
+{
+   /* fast handle of simple case 0xMp+E*/
+   if ((len == 6) && (s[0] == '0') && (s[1] == 'x') && (s[3] == 'p'))
+     {
+	int mantisse = (s[2] >= 'a') ? (s[2] - 'a' + 10) : (s[2] - '0');
+	int exponent = (s[5] - '0');
+
+	if (s[4] == '+') *d = (double)(mantisse << exponent);
+	else             *d = (double)mantisse / (double)(1 << exponent);
+
+	return 1;
+     }
+   return 0;
+}
+
 /* FLOAT TYPE */
 static int
 eet_data_get_float(void *src, void *src_end, void *dst)
@@ -371,17 +411,7 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    len = 0;
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
 
-   /* fast handle of simple case 0xMp+E*/
-   if ((len == 6) && (s[0] == '0') && (s[1] == 'x') && (s[3] == 'p'))
-     {
-	int mantisse = (s[2] >= 'a') ? (s[2] - 'a' + 10) : (s[2] - '0');
-	int exponent = 1 << (s[5] - '0');
-
-	if (s[4] == '+') *d = ((float)mantisse) * (float)exponent;
-	else             *d = ((float)mantisse) / (float)exponent;
-
-	return len + 1;
-     }
+   if (_eet_data_float_cache_get(s, len, d) != 0) return len + 1;
 
    str = alloca(len + 1);
    memcpy(str, s, len);
@@ -425,6 +455,9 @@ eet_data_get_double(void *src, void *src_end, void *dst)
    p = s;
    len = 0;
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
+
+   if (_eet_data_double_cache_get(s, len, d) != 0) return len + 1;
+
    str = alloca(len + 1);
    memcpy(str, s, len);
    str[len] = '\0';
