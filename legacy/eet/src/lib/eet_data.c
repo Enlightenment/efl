@@ -370,6 +370,19 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    p = s;
    len = 0;
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
+
+   /* fast handle of simple case 0xMp+E*/
+   if ((len == 6) && (s[0] == '0') && (s[1] == 'x') && (s[3] == 'p'))
+     {
+	int mantisse = (s[2] >= 'a') ? (s[2] - 'a' + 10) : (s[2] - '0');
+	int exponent = 1 << (s[5] - '0');
+
+	if (s[4] == '+') *d = ((float)mantisse) * (float)exponent;
+	else             *d = ((float)mantisse) / (float)exponent;
+
+	return len + 1;
+     }
+
    str = alloca(len + 1);
    memcpy(str, s, len);
    str[len] = '\0';
