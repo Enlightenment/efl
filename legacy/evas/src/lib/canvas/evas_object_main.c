@@ -463,6 +463,7 @@ evas_object_del(Evas_Object *obj)
 
    if (obj->delete_me) return;
 
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_DEL, NULL);
    if (obj->name) evas_object_name_set(obj, NULL);
    if (!obj->layer)
      {

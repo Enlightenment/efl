@@ -35,7 +35,7 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_MOUSE_UP, /**< Mouse Button Up Event */
    EVAS_CALLBACK_MOUSE_MOVE, /**< Mouse Move Event */
    EVAS_CALLBACK_MOUSE_WHEEL, /**< Mouse Wheel Event */
-   EVAS_CALLBACK_FREE, /**< Object Being Freed */
+   EVAS_CALLBACK_FREE, /**< Object Being Freed (Called after Del) */
    EVAS_CALLBACK_KEY_DOWN, /**< Key Press Event */
    EVAS_CALLBACK_KEY_UP, /**< Key Release Event */
    EVAS_CALLBACK_FOCUS_IN, /**< Focus In Event */
@@ -44,7 +44,8 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_HIDE, /**< Hide Event */
    EVAS_CALLBACK_MOVE, /**< Move Event */
    EVAS_CALLBACK_RESIZE, /**< Resize Event */
-   EVAS_CALLBACK_RESTACK /**< Restack Event */
+   EVAS_CALLBACK_RESTACK, /**< Restack Event */
+   EVAS_CALLBACK_DEL /**< Object Being Deleted (called before Free) */
 } Evas_Callback_Type; /**< The type of event to trigger the callback */
 
 typedef enum _Evas_Button_Flags
