@@ -7,6 +7,34 @@ static int _ecore_job_event_handler(void *data, int type, void *ev);
 static void _ecore_job_event_free(void *data, void *ev);
     
 static int ecore_event_job_type = 0;
+static int _ecore_init_job_count = 0;
+static Ecore_Event_Handler* _ecore_job_handler = NULL;
+
+EAPI int
+ecore_job_init()
+{
+   if (++_ecore_init_job_count == 1)
+     {
+        ecore_init();
+	ecore_event_job_type = ecore_event_type_new();
+	_ecore_job_handler = ecore_event_handler_add(ecore_event_job_type, _ecore_job_event_handler, NULL);
+     }
+
+   return _ecore_init_job_count;
+}
+
+EAPI int
+ecore_job_shutdown()
+{
+   if (--_ecore_init_job_count)
+     return _ecore_init_job_count;
+
+   ecore_event_handler_del(_ecore_job_handler);
+   _ecore_job_handler = NULL;
+   ecore_shutdown();
+
+   return _ecore_init_job_count;
+}
 
 /**
  * Add a job to the event queue.
@@ -24,11 +52,7 @@ ecore_job_add(void (*func) (void *data), const void *data)
    Ecore_Job *job;
    
    if (!func) return NULL;
-   if (!ecore_event_job_type)
-     {
-	ecore_event_job_type = ecore_event_type_new();
-	ecore_event_handler_add(ecore_event_job_type, _ecore_job_event_handler, NULL);
-     }
+
    job = calloc(1, sizeof(Ecore_Job));
    if (!job) return NULL;
    ECORE_MAGIC_SET(job, ECORE_MAGIC_JOB);

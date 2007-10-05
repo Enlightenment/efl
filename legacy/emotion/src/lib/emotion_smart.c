@@ -193,12 +193,15 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->seek_pos = 0;
    sd->len = 0;
 
+   ecore_job_init();
+
    if ((!sd->module) || (!sd->video))
      {
 	if (!_emotion_module_open(module_filename, obj,
 				  &sd->module, &sd->video))
 	  return 0;
      }
+
    return 1;
 }
 
@@ -1183,6 +1186,8 @@ _smart_del(Evas_Object * obj)
    if (sd->progress.info) free(sd->progress.info);
    if (sd->ref.file) free(sd->ref.file);
    free(sd);
+
+   ecore_job_shutdown();
 }
 
 static void

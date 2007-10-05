@@ -124,7 +124,12 @@ void
 _edje_message_shutdown(void)
 {
    _edje_message_queue_clear();
+   if (job_loss_timer)
+     ecore_timer_del(job_loss_timer);
+   if (job)
+     ecore_job_del(job);
    job = NULL;
+   job_loss_timer = NULL;
 }
 
 void

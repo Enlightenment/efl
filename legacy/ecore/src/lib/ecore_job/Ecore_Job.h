@@ -35,6 +35,8 @@ extern "C" {
 typedef void Ecore_Job; /**< A job handle */
 #endif
 
+EAPI int        ecore_job_init();
+EAPI int        ecore_job_shutdown();
 EAPI Ecore_Job *ecore_job_add(void (*func) (void *data), const void *data);    
 EAPI void      *ecore_job_del(Ecore_Job *job);
 
