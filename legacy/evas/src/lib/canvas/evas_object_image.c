@@ -1786,10 +1786,10 @@ evas_object_image_init(Evas_Object *obj)
    obj->cur.color.g = 255;
    obj->cur.color.b = 255;
    obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0.0;
-   obj->cur.geometry.y = 0.0;
-   obj->cur.geometry.w = 32.0;
-   obj->cur.geometry.h = 32.0;
+   obj->cur.geometry.x = 0;
+   obj->cur.geometry.y = 0;
+   obj->cur.geometry.w = 0;
+   obj->cur.geometry.h = 0;
    obj->cur.layer = 0;
    obj->cur.anti_alias = 0;
    obj->cur.render_op = EVAS_RENDER_BLEND;
@@ -1808,8 +1808,8 @@ evas_object_image_new(void)
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Image));
    o->magic = MAGIC_OBJ_IMAGE;
-   o->cur.fill.w = 32.0;
-   o->cur.fill.h = 32.0;
+   o->cur.fill.w = 1;
+   o->cur.fill.h = 1;
    o->cur.smooth_scale = 1;
    o->cur.border.fill = 1;
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;

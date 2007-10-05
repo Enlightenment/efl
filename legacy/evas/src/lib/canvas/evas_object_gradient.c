@@ -779,10 +779,10 @@ evas_object_gradient_init(Evas_Object *obj)
    obj->cur.color.g = 255;
    obj->cur.color.b = 255;
    obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0.0;
-   obj->cur.geometry.y = 0.0;
-   obj->cur.geometry.w = 32.0;
-   obj->cur.geometry.h = 32.0;
+   obj->cur.geometry.x = 0;
+   obj->cur.geometry.y = 0;
+   obj->cur.geometry.w = 0;
+   obj->cur.geometry.h = 0;
    obj->cur.layer = 0;
    obj->cur.anti_alias = 1;
    obj->cur.interpolation.color_space = EVAS_COLOR_SPACE_ARGB;
@@ -809,8 +809,8 @@ evas_object_gradient_new(void)
    o->cur.map.direction = 1;
    o->cur.fill.x = 0;
    o->cur.fill.y = 0;
-   o->cur.fill.w = 32;
-   o->cur.fill.h = 32;
+   o->cur.fill.w = 1;
+   o->cur.fill.h = 1;
    o->cur.fill.angle = 0.0;
    o->cur.fill.spread = EVAS_TEXTURE_REFLECT;
    o->cur.type.name = strdup("linear");
