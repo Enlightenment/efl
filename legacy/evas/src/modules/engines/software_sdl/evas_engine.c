@@ -177,8 +177,6 @@ evas_engine_sdl_output_resize	(void *data, int w, int h)
 
    SDL_FillRect(re->surface, NULL, 0);
 
-   memset(re->surface->pixels, 0, w * h * 4);
-
    /* Destroy the copy */
    evas_cache_engine_image_drop(eim);
 }
@@ -257,13 +255,6 @@ evas_engine_sdl_output_redraws_next_update_get	(void *data,
 
    SDL_FillRect(re->surface, &rect, 0);
 
-   rect.x = *x;
-   rect.y = *y;
-   rect.w = *w;
-   rect.h = *h;
-
-   SDL_FillRect(re->surface, &rect, 0);
-
    /* Return the "fake" surface so it is passed to the drawing routines. */
    return re->rgba_engine_image;
 }
@@ -323,7 +314,7 @@ evas_engine_sdl_output_idle_flush               (void *data)
 static void*
 evas_engine_sdl_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
-   Render_Engine*	re = (Render_Engine*) data;;
+   Render_Engine*	re = (Render_Engine*) data;
 
    *error = 0;
    return evas_cache_engine_image_request(re->cache, file, key, lo, NULL, error);
@@ -849,8 +840,6 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
      }
 
    SDL_FillRect(re->surface, NULL, 0);
-
-   memset(re->surface->pixels, 0, w * h * 4);
 
    re->alpha = alpha;
    re->hwsurface = hwsurface;
