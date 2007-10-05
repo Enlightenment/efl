@@ -285,7 +285,6 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 							  ux, uy, uw, uh,
 							  cx, cy, cw, ch);
    *x = ux; *y = uy; *w = uw; *h = uh;
-   printf("BUF: up %i %i %ix%i\n", ux, uy, uw, uh);
    return surface;
 }
 
