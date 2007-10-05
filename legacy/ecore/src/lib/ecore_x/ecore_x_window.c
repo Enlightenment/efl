@@ -875,11 +875,8 @@ _ecore_x_window_shadow_tree_at_xy_get_shadow(Shadow *s, int bx, int by, int x, i
    
    wx = s->x + bx;
    wy = s->y + by;
-   printf("is %i %i in [%x][%ix%i %i %i]\n", 
-	  x, y, s->win, s->w, s->h, wx, wy);
    if (!((x >= wx) && (y >= wy) && (x < (wx + s->w)) && (y < (wy + s->h))))
      return 0;
-   printf("  check children...\n");
    if (s->children)
      {
 	int skipit = 0;
@@ -909,7 +906,6 @@ _ecore_x_window_shadow_tree_at_xy_get_shadow(Shadow *s, int bx, int by, int x, i
 	       }
 	  }
      }
-   printf("    IS IN %x\n", s->win);
    return s->win;
 }
 
