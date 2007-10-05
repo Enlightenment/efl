@@ -51,13 +51,14 @@ edje_object_add(Evas *evas)
 
 /* Private Routines */
 static void
-_edje_smart_add(Evas_Object * obj)
+_edje_smart_add(Evas_Object *obj)
 {
    Edje *ed;
 
    ed = _edje_add(obj);
    if (!ed) return;
    evas_object_smart_data_set(obj, ed);
+   evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;
    _edje_edjes = evas_list_append(_edje_edjes, obj);
 /*
