@@ -359,7 +359,7 @@ evas_list_remove(Evas_List *list, const void *data)
  * @param remove_list The list node which is to be removed
  * @return A new list handle to replace the old one
  *
- * Calling this function takes the list note @p remove_list and removes it
+ * Calling this function takes the list node @p remove_list and removes it
  * from the list @p list, freeing the list node structure @p remove_list.
  *
  * Example:
