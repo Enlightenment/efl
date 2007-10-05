@@ -729,12 +729,11 @@ _ecore_x_window_tree_walk(Window win)
 {
    Window           *list = NULL;
    Window            parent_win = 0, root_win = 0;
-   int               i;
+   int               i, j;
    unsigned int      num;
-   Shadow           *s;
+   Shadow           *s, **sl;
    XWindowAttributes att;
 
-   printf("_ecore_x_window_tree_walk(%x)\n", win);
    if (!XGetWindowAttributes(_ecore_x_disp, win, &att)) return NULL;
 //   if (att.class == InputOnly) return NULL;
    if (att.map_state != IsViewable) return NULL;
@@ -755,9 +754,30 @@ _ecore_x_window_tree_walk(Window win)
 	     s->children_num = num;
 	     for (i = 0; i < num; i++)
 	       s->children[i] = _ecore_x_window_tree_walk(list[i]);
+	     /* compress list down */
+	     j = 0;
+	     for (i = 0; i < num; i++)
+	       {
+		  if (s->children[i])
+		    {
+		       s->children[j] = s->children[i];
+		       j++;
+		    }
+	       }
+	     if (j == 0)
+	       {
+		  free(s->children);
+		  s->children = NULL;
+		  s->children_num = 0;
+	       }
+	     else
+	       {
+		  s->children_num = j;
+		  sl = realloc(s->children, sizeof(Shadow *) * j);
+		  if (sl) s->children = sl;
+	       }
 	  }
      }
-   printf("ADD SHADOW %x %ix%i %i %i\n", s->win, s->w, s->h, s->x, s->y);
    return s;
 }
 

@@ -124,8 +124,9 @@ _ecore_x_dnd_converter_copy(char *target, void *data, int size, void **data_ret,
    if (!data || !size)
      return 0;
 
-   if (!(mystr = strdup(data)))
-     return 0;
+   mystr = calloc(1, size + 1);
+   if (!mystr) return 0;
+   memcpy(mystr, data, size);
 
    if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
      {
