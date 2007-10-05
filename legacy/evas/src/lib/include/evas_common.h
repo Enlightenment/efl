@@ -986,7 +986,7 @@ void evas_common_convert_rgba_to_4bpp_gry_1_dith               (DATA32 *src, DAT
 
 void evas_common_convert_rgba_to_1bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
-void evas_common_convert_yuv_420p_601_rgba                     (DATA8 **src, DATA8 *dst, int w, int h);
+EAPI void evas_common_convert_yuv_420p_601_rgba                     (DATA8 **src, DATA8 *dst, int w, int h);
 
 EAPI void evas_common_convert_argb_premul                          (DATA32 *src, unsigned int len);
 EAPI void evas_common_convert_argb_unpremul                        (DATA32 *src, unsigned int len);
