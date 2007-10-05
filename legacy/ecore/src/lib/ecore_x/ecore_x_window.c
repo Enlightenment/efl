@@ -708,6 +708,267 @@ ecore_x_window_visible_get(Ecore_X_Window win)
            (attr.map_state == IsViewable));
 }
 
+
+
+typedef struct _Shadow Shadow;
+struct _Shadow
+{
+   Shadow        **children;
+   Window          win;
+   int             children_num;
+   short           x, y;
+   unsigned short  w, h;
+};
+
+static int shadow_count = 0;
+static Shadow **shadow_base = NULL;
+static int shadow_num = 0;
+
+static Shadow *
+_ecore_x_window_tree_walk(Window win)
+{
+   Window           *list = NULL;
+   Window            parent_win = 0, root_win = 0;
+   int               i;
+   unsigned int      num;
+   Shadow           *s;
+   XWindowAttributes att;
+
+   printf("_ecore_x_window_tree_walk(%x)\n", win);
+   if (!XGetWindowAttributes(_ecore_x_disp, win, &att)) return NULL;
+//   if (att.class == InputOnly) return NULL;
+   if (att.map_state != IsViewable) return NULL;
+   
+   s = calloc(1, sizeof(Shadow));
+   if (!s) return NULL;
+   s->win = win;
+   s->x = att.x;
+   s->y = att.y;
+   s->w = att.width;
+   s->h = att.height;
+   if (XQueryTree(_ecore_x_disp, s->win, &root_win, &parent_win,
+		   &list, &num))
+     {
+	s->children = calloc(1, sizeof(Shadow *) * num);
+	if (s->children)
+	  {
+	     s->children_num = num;
+	     for (i = 0; i < num; i++)
+	       s->children[i] = _ecore_x_window_tree_walk(list[i]);
+	  }
+     }
+   printf("ADD SHADOW %x %ix%i %i %i\n", s->win, s->w, s->h, s->x, s->y);
+   return s;
+}
+
+static void
+_ecore_x_window_tree_shadow_free1(Shadow *s)
+{
+   int i;
+
+   if (!s) return;
+   if (s->children)
+     {
+	for (i = 0; i < s->children_num; i++)
+	  {
+	     if (s->children[i])
+	       _ecore_x_window_tree_shadow_free1(s->children[i]);
+	  }
+	free(s->children);
+     }
+   free(s);
+}
+
+static void
+_ecore_x_window_tree_shadow_free(void)
+{
+   int i;
+   
+   if (!shadow_base) return;
+   for (i = 0; i < shadow_num; i++)
+     {
+	if (!shadow_base[i]) continue;
+	_ecore_x_window_tree_shadow_free1(shadow_base[i]);
+     }
+   free(shadow_base);
+   shadow_base = NULL;
+   shadow_num = 0;
+}
+
+static void
+_ecore_x_window_tree_shadow_populate(void)
+{
+   Ecore_X_Window   *roots;
+   int               i, num;
+   
+   roots = ecore_x_window_root_list(&num);
+   if (roots)
+     {
+	shadow_base = calloc(1, sizeof(Shadow *) * num);
+	if (shadow_base)
+	  {
+	     shadow_num = num;
+	     for (i = 0; i < num; i++)
+	       shadow_base[i] = _ecore_x_window_tree_walk(roots[i]);
+	  }
+	free(roots);
+     }
+}
+
+static void
+_ecore_x_window_tree_shadow_start(void)
+{
+   shadow_count++;
+   if (shadow_count > 1) return;
+   _ecore_x_window_tree_shadow_populate();
+}
+
+static void
+_ecore_x_window_tree_shadow_stop(void)
+{
+   shadow_count--;
+   if (shadow_count != 0) return;
+   _ecore_x_window_tree_shadow_free();
+}
+
+Shadow *
+_ecore_x_window_shadow_tree_find_shadow(Shadow *s, Window win)
+{
+   Shadow *ss;
+   int i;
+
+   if (s->win == win) return s;
+   if (s->children)
+     {
+	for (i = 0; i < s->children_num; i++)
+	  {
+	     if (!s->children[i]) continue;
+	     if ((ss = _ecore_x_window_shadow_tree_find_shadow(s->children[i], win)))
+	       return ss;
+	  }
+     }
+   return NULL;
+}
+
+Shadow *
+_ecore_x_window_shadow_tree_find(Window base)
+{
+   Shadow *s;
+   int i;
+
+   for (i = 0; i < shadow_num; i++)
+     {
+	if (!shadow_base[i]) continue;
+	if ((s = _ecore_x_window_shadow_tree_find_shadow(shadow_base[i], base)))
+	  return s;
+     }
+   return NULL;
+}
+
+static Window
+_ecore_x_window_shadow_tree_at_xy_get_shadow(Shadow *s, int bx, int by, int x, int y,
+					     Ecore_X_Window *skip, int skip_num)
+{
+   Window child;
+   int i, j;
+   int wx, wy;
+   
+   wx = s->x + bx;
+   wy = s->y + by;
+   printf("is %i %i in [%x][%ix%i %i %i]\n", 
+	  x, y, s->win, s->w, s->h, wx, wy);
+   if (!((x >= wx) && (y >= wy) && (x < (wx + s->w)) && (y < (wy + s->h))))
+     return 0;
+   printf("  check children...\n");
+   if (s->children)
+     {
+	int skipit = 0;
+	
+	for (i = s->children_num - 1; i >= 0; --i)
+	  {
+	     if (!s->children[i]) continue;
+	     skipit = 0;
+	     if (skip)
+	       {
+		  for (j = 0; j < skip_num; j++)
+		    {
+		       if (s->children[i]->win == skip[j])
+			 {
+			    skipit = 1;
+			    goto onward;
+			 }
+		    }
+	       }
+	     onward:
+	     if (!skipit)
+	       {
+		  if ((child = _ecore_x_window_shadow_tree_at_xy_get_shadow(s->children[i], wx, wy, x, y, skip, skip_num)))
+		    {
+		       return child;
+		    }
+	       }
+	  }
+     }
+   printf("    IS IN %x\n", s->win);
+   return s->win;
+}
+
+static Window
+_ecore_x_window_shadow_tree_at_xy_get(Window base, int bx, int by, int x, int y,
+				      Ecore_X_Window *skip, int skip_num)
+{
+   Shadow *s;
+   
+   if (!shadow_base) _ecore_x_window_tree_shadow_populate();
+   if (!shadow_base) return 0;
+   s = _ecore_x_window_shadow_tree_find(base);
+   if (!s) return 0;
+   return _ecore_x_window_shadow_tree_at_xy_get_shadow(s, bx, by, x, y, skip, skip_num);
+}
+
+/**
+ * Retrieves the top, visible window at the given location,
+ * but skips the windows in the list. This uses a shadow tree built from the
+ * window tree that is only updated the first time
+ * ecore_x_window_shadow_tree_at_xy_with_skip_get() is called, or the next time
+ * it is called after a  ecore_x_window_shadow_tree_flush()
+ * @param   base The base window to start searching from (normally root).
+ * @param   x The given X position.
+ * @param   y The given Y position.
+ * @return  The window at that position.
+ * @ingroup Ecore_X_Window_Geometry_Group
+ */
+EAPI Ecore_X_Window
+ecore_x_window_shadow_tree_at_xy_with_skip_get(Ecore_X_Window base, int x, int y, Ecore_X_Window *skip, int skip_num)
+{
+   return _ecore_x_window_shadow_tree_at_xy_get(base, 0, 0, x, y, skip, skip_num);
+}
+
+/**
+ * Flushes the window shadow tree so nothing is stored.
+ * @ingroup Ecore_X_Window_Geometry_Group
+ */
+EAPI void
+ecore_x_window_shadow_tree_flush(void)
+{
+   _ecore_x_window_tree_shadow_free();
+}
+
+/**
+ * Retrieves the root window a given window is on.
+ * @param   win The window to get the root window of
+ * @return  The root window of @p win
+ * @ingroup Ecore_X_Window_Geometry_Group
+ */
+EAPI Ecore_X_Window
+ecore_x_window_root_get(Ecore_X_Window win)
+{
+   XWindowAttributes att;
+
+   if (!XGetWindowAttributes(_ecore_x_disp, win, &att)) return 0;
+   return att.root;
+}
+
 static Window
 _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y,
 			  Ecore_X_Window *skip, int skip_num)
@@ -728,42 +989,39 @@ _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y,
      return 0;
 
    if (!XQueryTree(_ecore_x_disp, base, &root_win, &parent_win, &list, &num))
-     {
-	if (skip)
-	  {
-	     for (i = 0; i < skip_num; i++)
-	       if (base == skip[i])
-		 return 0;
-	  }
-	return base;
-     }
+     return base;
 
    if (list)
      {
+	int skipit = 0;
+	
 	for (i = num - 1; i >= 0; --i)
 	  {
+	     skipit = 0;
+	     
 	     if (skip)
 	       {
 		  for (j = 0; j < skip_num; j++)
-		    if (list[i] == skip[j])
-		      continue;
+		    {
+		       if (list[i] == skip[j])
+			 {
+			    skipit = 1;
+			    goto onward;
+			 }
+		    }
 	       }
-	     if ((child = _ecore_x_window_at_xy_get(list[i], wx, wy, x, y, skip, skip_num)))
+	     onward:
+	     if (!skipit)
 	       {
-		  XFree(list);
-		  return child;
+		  if ((child = _ecore_x_window_at_xy_get(list[i], wx, wy, x, y, skip, skip_num)))
+		    {
+		       XFree(list);
+		       return child;
+		    }
 	       }
 	  }
 	XFree(list);
      }
-
-   if (skip)
-     {
-	for (i = 0; i < skip_num; i++)
-	  if (base == skip[i])
-	    return 0;
-     }
-
    return base;
 }
 
