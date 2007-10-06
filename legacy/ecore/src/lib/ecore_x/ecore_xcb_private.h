@@ -23,6 +23,9 @@
 #ifdef ECORE_XCB_DAMAGE
 # include <xcb/damage.h>
 #endif /* ECORE_XCB_DAMAGE */
+#ifdef ECORE_XCB_COMPOSITE
+# include <xcb/composite.h>
+#endif /* ECORE_XCB_COMPOSITE */
 #ifdef ECORE_XCB_DPMS
 # include <xcb/dpms.h>
 #endif /* ECORE_XCB_DPMS */
@@ -237,6 +240,9 @@ void _ecore_x_atom_init_finalize (xcb_intern_atom_cookie_t *);
 void _ecore_x_damage_init          (const xcb_query_extension_reply_t *reply);
 void _ecore_x_damage_init_finalize (void);
 
+/* composite */
+void _ecore_x_composite_init       (const xcb_query_extension_reply_t *reply);
+void _ecore_x_composite_init_finalize (void);
 
 /* from dnd */
 void                _ecore_x_dnd_init       (void);

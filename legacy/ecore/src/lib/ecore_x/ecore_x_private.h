@@ -40,6 +40,9 @@
 #ifdef ECORE_XFIXES
 #include <X11/extensions/Xfixes.h>
 #endif
+#ifdef ECORE_XCOMPOSITE
+#include <X11/extensions/Xcomposite.h>
+#endif
 #ifdef ECORE_XDAMAGE
 #include <X11/extensions/Xdamage.h>
 #endif
@@ -222,9 +225,10 @@ Ecore_X_Window_State _ecore_x_netwm_state_get(Ecore_X_Atom a);
 int                  _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data);
 int                  _ecore_x_netwm_startup_info(Ecore_X_Window win, char *data);
 
-/* Fixes * Damage * DPMS */
+/* Fixes * Damage * Composite * DPMS */
 void _ecore_x_fixes_init(void);
 void _ecore_x_damage_init(void);
+void _ecore_x_composite_init(void);
 void _ecore_x_dpms_init(void);
 
 /* from sync */

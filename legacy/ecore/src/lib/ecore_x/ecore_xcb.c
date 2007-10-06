@@ -155,6 +155,9 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XCB_DAMAGE
    const xcb_query_extension_reply_t *reply_damage;
 #endif /* ECORE_XCB_DAMAGE */
+#ifdef ECORE_XCB_COMPOSITE
+   const xcb_query_extension_reply_t *reply_composite;
+#endif /* ECORE_XCB_COMPOSITE */
 #ifdef ECORE_XCB_DPMS
    const xcb_query_extension_reply_t *reply_dpms;
 #endif /* ECORE_XCB_DPMS */
@@ -218,6 +221,10 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XCB_DAMAGE
    xcb_prefetch_extension_data(_ecore_xcb_conn, &xcb_damage_id);
 #endif /* ECORE_XCB_DAMAGE */
+
+#ifdef ECORE_XCB_COMPOSITE
+   xcb_prefetch_extension_data(_ecore_xcb_conn, &xcb_composite_id);
+#endif /* ECORE_XCB_COMPOSITE */
 
 #ifdef ECORE_XCB_DPMS
    xcb_prefetch_extension_data(_ecore_xcb_conn, &xcb_dpms_id);
@@ -293,9 +300,13 @@ ecore_x_init(const char *name)
      _ecore_xcb_event_handlers_num = _ecore_xcb_event_damage_id + 1;
 #endif /* ECORE_XCB_DAMAGE */
 
+#ifdef ECORE_XCB_COMPOSITE
+   reply_composite = xcb_get_extension_data(_ecore_xcb_conn, &xcb_composite_id);
+#endif /* ECORE_XCB_COMPOSITE */
+
 #ifdef ECORE_XCB_DPMS
    reply_dpms = xcb_get_extension_data(_ecore_xcb_conn, &xcb_dpms_id);
-#endif /* ECORE_XCB_DAMAGE */
+#endif /* ECORE_XCB_DPMS */
 
 #ifdef ECORE_XCB_RANDR
    reply_randr = xcb_get_extension_data(_ecore_xcb_conn, &xcb_randr_id);
@@ -359,6 +370,7 @@ ecore_x_init(const char *name)
 
    /* We ask for the QueryVersion request of the extensions */
    _ecore_x_damage_init(reply_damage);
+   _ecore_x_composite_init(reply_composite);
    _ecore_x_dpms_init(reply_dpms);
    _ecore_x_randr_init(reply_randr);
    _ecore_x_shape_init(reply_shape);
@@ -374,6 +386,7 @@ ecore_x_init(const char *name)
      {
         /* We get the replies of the QueryVersion request because we leave */
         _ecore_x_damage_init_finalize();
+        _ecore_x_composite_init_finalize();
         _ecore_x_dpms_init_finalize();
         _ecore_x_randr_init_finalize();
         _ecore_x_shape_init_finalize();
@@ -553,6 +566,7 @@ ecore_x_init(const char *name)
      {
         /* We get the replies of the QueryVersion request because we leave */
         _ecore_x_damage_init_finalize();
+        _ecore_x_composite_init_finalize();
         _ecore_x_dpms_init_finalize();
         _ecore_x_randr_init_finalize();
         _ecore_x_shape_init_finalize();
@@ -582,6 +596,7 @@ ecore_x_init(const char *name)
 
    /* We finally get the replies of the QueryVersion request */
    _ecore_x_damage_init_finalize();
+   _ecore_x_composite_init_finalize();
    _ecore_x_dpms_init_finalize();
    _ecore_x_randr_init_finalize();
    _ecore_x_shape_init_finalize();

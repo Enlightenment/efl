@@ -1858,6 +1858,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	if (!einfo) return;
 
+	if (!ecore_x_composite_query()) return;
+
 	ee->shaped = 0;
 	ee->alpha = alpha;
 	ecore_x_window_del(ee->engine.x.win);
@@ -1925,6 +1927,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 # endif /* HAVE_ECORE_X_XCB */
 
 	if (!einfo) return;
+	if (!ecore_x_composite_query()) return;
 
 	ee->shaped = 0;
 	ee->alpha = alpha;

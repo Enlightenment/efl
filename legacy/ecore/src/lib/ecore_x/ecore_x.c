@@ -438,6 +438,7 @@ ecore_x_init(const char *name)
    _ecore_x_dnd_init();
    _ecore_x_fixes_init();
    _ecore_x_damage_init();
+   _ecore_x_composite_init();
    _ecore_x_dpms_init();
    
    _ecore_x_init_count++;

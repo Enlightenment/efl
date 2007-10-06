@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 if BUILD_ECORE_X_XCB
 INCLUDES = \
 @XCB_DAMAGE_CFLAGS@ \
+@XCB_COMPOSITE_CFLAGS@ \
 @XCB_DPMS_CFLAGS@ \
 @XCB_RANDR_CFLAGS@ \
 @XCB_RENDER_CFLAGS@ \
@@ -21,6 +22,7 @@ else
 INCLUDES = \
 @Xcursor_cflags@ \
 @XDAMAGE_CFLAGS@ \
+@XCOMPOSITE_CFLAGS@ \
 @XDPMS_CFLAGS@ \
 @XFIXES_CFLAGS@ \
 @XINERAMA_CFLAGS@ \
@@ -51,6 +53,7 @@ libecore_x_la_SOURCES = \
 ecore_xcb_atom.c \
 ecore_xcb_cursor.c \
 ecore_xcb_damage.c \
+ecore_xcb_composite.c \
 ecore_xcb_dnd.c \
 ecore_xcb_dpms.c \
 ecore_xcb_drawable.c \
@@ -76,6 +79,7 @@ ecore_xcb_private.h
 
 libecore_x_la_LIBADD = \
 @XCB_DAMAGE_LIBS@ \
+@XCB_COMPOSITE_LIBS@ \
 @XCB_DPMS_LIBS@ \
 @XCB_RANDR_LIBS@ \
 @XCB_RENDER_LIBS@ \
@@ -110,6 +114,7 @@ ecore_x_sync.c \
 ecore_x_randr.c \
 ecore_x_fixes.c \
 ecore_x_damage.c \
+ecore_x_composite.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
@@ -132,6 +137,7 @@ ecore_x_private.h
 libecore_x_la_LIBADD = \
 @Xcursor_libs@ \
 @XDAMAGE_LIBS@ \
+@XCOMPOSITE_LIBS@ \
 @XDPMS_LIBS@ \
 @XFIXES_LIBS@ \
 @XINERAMA_LIBS@ \
@@ -159,6 +165,7 @@ ecore_x_sync.c \
 ecore_x_randr.c \
 ecore_x_fixes.c \
 ecore_x_damage.c \
+ecore_x_composite.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
