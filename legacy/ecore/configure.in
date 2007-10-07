@@ -740,7 +740,6 @@ ECORE_CHECK_MODULE([File], [yes])
 use_fam="no"
 use_inotify="yes"
 use_poll="yes"
-use_curl="yes"
 
 if test "x$have_ecore_file" = "xyes"; then
   dnl We need to check if the right inotify version is accessible
