@@ -40,7 +40,7 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 
    new->func = *cb;
 
-   new->limit = -1;
+   new->limit = 4 * 1024 * 1024;
    new->usage = 0;
 
    new->dirty = NULL;
