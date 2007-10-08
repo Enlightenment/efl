@@ -706,6 +706,9 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_SOFTWARE_DDRAW
    methods = evas_list_append(methods, strdup("software_ddraw"));
 #endif
+#ifdef BUILD_ENGINE_SOFTWARE_16_DDRAW
+   methods = evas_list_append(methods, strdup("software_16_ddraw"));
+#endif
 #ifdef BUILD_ENGINE_DIRECT3D
    methods = evas_list_append(methods, strdup("direct3d"));
 #endif

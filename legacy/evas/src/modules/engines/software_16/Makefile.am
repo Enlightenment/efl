@@ -20,7 +20,7 @@ evas_soft16_font.c \
 evas_soft16_rectangle.c
 
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
+module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 endif

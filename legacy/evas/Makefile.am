@@ -21,6 +21,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas-xrender-x11.pc \
 		       evas-xrender-xcb.pc \
 		       evas-software-ddraw.pc \
+		       evas-software-16-ddraw.pc \
 		       evas-direct3d.pc \
 		       evas-sdl.pc \
 		       evas.pc \
@@ -46,6 +47,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas-xrender-x11.pc \
 	     evas-xrender-xcb.pc \
 	     evas-software-ddraw.pc \
+	     evas-software-16-ddraw.pc \
 	     evas-direct3d.pc \
 	     evas-sdl.pc \
 	     evas.pc \
@@ -130,6 +132,10 @@ if BUILD_ENGINE_SOFTWARE_DDRAW
 psoftwareddraw = evas-software-ddraw.pc
 endif
 
+if BUILD_ENGINE_SOFTWARE_16_DDRAW
+psoftwared16draw = evas-software-16-ddraw.pc
+endif
+
 if BUILD_ENGINE_DIRECT3D
 pdirect3d = evas-direct3d.pc
 endif
@@ -143,4 +149,4 @@ pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pframebuffer) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
 	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psdl) \
-	$(psoftware16x11) $(pdirect3d)
+	$(psoftware16x11) $(pdirect3d) $(psoftwared16draw)

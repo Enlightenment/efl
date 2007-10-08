@@ -21,4 +21,5 @@ software_sdl \
 glitz_x11 \
 software_16 \
 software_16_x11 \
-direct3d
+direct3d \
+software_16_ddraw
