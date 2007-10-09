@@ -387,7 +387,7 @@ have_ecore_evas_gl="no";
 
 AC_ARG_ENABLE(ecore-evas-gl,
   AC_HELP_STRING(
-    [--enable-ecore-evas-gl],
+    [--disable-ecore-evas-gl],
     [disable GL support in the ecore_evas module. [[default=enabled]]]
   ), [
     want_ecore_evas_gl=$enableval
@@ -426,7 +426,7 @@ have_ecore_evas_xrender="no";
 
 AC_ARG_ENABLE(ecore-evas-xrender,
   AC_HELP_STRING(
-    [--enable-ecore-evas-xrender],
+    [--disable-ecore-evas-xrender],
     [disable XRender support in the ecore_evas module. [[default=enabled]]]
   ), [
     want_ecore_evas_xrender=$enableval
