@@ -260,16 +260,18 @@ _edje_part_recalc_single(Edje *ed,
 	minw = desc->min.w;
 	if (ep->swallow_params.min.w > desc->min.w) minw = ep->swallow_params.min.w;
 	maxw = desc->max.w;
-	if ((ep->swallow_params.max.w >= 0) &&
-	    (ep->swallow_params.max.w < maxw)) maxw = ep->swallow_params.max.w;
+	if (((ep->swallow_params.max.w >= 0) && (desc->max.w >= 0) &&
+	     (ep->swallow_params.max.w < maxw)) ||
+	    (ep->swallow_params.max.w >= 0)) maxw = ep->swallow_params.max.w;
      }
 //   if (flags & FLAG_Y)
      {
 	minh = desc->min.h;
 	if (ep->swallow_params.min.h > desc->min.h) minh = ep->swallow_params.min.h;
 	maxh = desc->max.h;
-	if ((ep->swallow_params.max.h >= 0) &&
-	    (ep->swallow_params.max.h < maxh)) maxh = ep->swallow_params.max.h;
+	if (((ep->swallow_params.max.h >= 0) && (desc->max.h >= 0) &&
+	     (ep->swallow_params.max.h < maxh)) ||
+	    (ep->swallow_params.max.h >= 0)) maxh = ep->swallow_params.max.h;
      }
    /* relative coords of top left & bottom right */
    if (flags & FLAG_X)
