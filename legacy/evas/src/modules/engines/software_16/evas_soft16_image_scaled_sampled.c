@@ -111,14 +111,11 @@ _soft16_image_draw_scaled_solid_solid_mul_alpha(Soft16_Image *src,
 						Soft16_Image *dst,
 						RGBA_Draw_Context *dc,
 						int dst_offset, int w, int h,
-						int *offset_x, int *offset_y)
+						int *offset_x, int *offset_y,
+						DATA8 alpha)
 {
    DATA16 *dst_itr;
-   int y, w_align, rel_alpha;
-
-   rel_alpha = A_VAL(&dc->mul.col) >> 3;
-   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
-   rel_alpha = 31 - rel_alpha;
+   int y, w_align;
 
    w_align = w & ~7;
 
@@ -141,7 +138,7 @@ _soft16_image_draw_scaled_solid_solid_mul_alpha(Soft16_Image *src,
 
 	     UNROLL8({
 		_soft16_pt_blend_solid_solid_mul_alpha
-		  (d, s[offset_x[x]], rel_alpha);
+		  (d, s[offset_x[x]], alpha);
 		x++;
 		d++;
 	     });
@@ -149,7 +146,7 @@ _soft16_image_draw_scaled_solid_solid_mul_alpha(Soft16_Image *src,
 
 	for (; x < w; x++, d++)
 	  _soft16_pt_blend_solid_solid_mul_alpha
-	    (d, s[offset_x[x]], rel_alpha);
+	    (d, s[offset_x[x]], alpha);
      }
 }
 
@@ -158,14 +155,11 @@ _soft16_image_draw_scaled_transp_solid_mul_alpha(Soft16_Image *src,
 						 Soft16_Image *dst,
 						 RGBA_Draw_Context *dc,
 						 int dst_offset, int w, int h,
-						 int *offset_x, int *offset_y)
+						 int *offset_x, int *offset_y,
+						 DATA8 alpha)
 {
    DATA16 *dst_itr;
-   int y, w_align, rel_alpha;
-
-   rel_alpha = A_VAL(&dc->mul.col) >> 3;
-   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
-   rel_alpha = 31 - rel_alpha;
+   int y, w_align;
 
    w_align = w & ~7;
 
@@ -193,7 +187,7 @@ _soft16_image_draw_scaled_transp_solid_mul_alpha(Soft16_Image *src,
 	     UNROLL8({
 		int off_x = offset_x[x];
 		_soft16_pt_blend_transp_solid_mul_alpha
-		  (d, s[off_x], a[off_x], rel_alpha);
+		  (d, s[off_x], a[off_x], alpha);
 		x++;
 		d++;
 	     });
@@ -201,7 +195,7 @@ _soft16_image_draw_scaled_transp_solid_mul_alpha(Soft16_Image *src,
 
 	for (; x < w; x++, d++)
 	  _soft16_pt_blend_transp_solid_mul_alpha
-	    (d, s[offset_x[x]], a[offset_x[x]], rel_alpha);
+	    (d, s[offset_x[x]], a[offset_x[x]], alpha);
      }
 }
 
@@ -209,14 +203,14 @@ static inline void
 _soft16_image_draw_scaled_mul_alpha(Soft16_Image *src, Soft16_Image *dst,
 				    RGBA_Draw_Context *dc,
 				    int dst_offset, int w, int h,
-				    int *offset_x, int *offset_y)
+				    int *offset_x, int *offset_y, DATA8 a)
 {
    if (src->have_alpha && (!dst->have_alpha))
       _soft16_image_draw_scaled_transp_solid_mul_alpha
-         (src, dst, dc, dst_offset, w, h, offset_x, offset_y);
+         (src, dst, dc, dst_offset, w, h, offset_x, offset_y, a);
    else if ((!src->have_alpha) && (!dst->have_alpha))
       _soft16_image_draw_scaled_solid_solid_mul_alpha
-         (src, dst, dc, dst_offset, w, h, offset_x, offset_y);
+         (src, dst, dc, dst_offset, w, h, offset_x, offset_y, a);
    else
       fprintf(stderr,
               "Unsupported draw of scaled images src->have_alpha=%d, "
@@ -229,27 +223,18 @@ _soft16_image_draw_scaled_solid_solid_mul_color(Soft16_Image *src,
 						Soft16_Image *dst,
 						RGBA_Draw_Context *dc,
 						int dst_offset, int w, int h,
-						int *offset_x, int *offset_y)
+						int *offset_x, int *offset_y,
+						DATA8 r, DATA8 g, DATA8 b,
+						DATA8 alpha)
 {
    DATA16 *dst_itr;
-   int y, w_align, rel_alpha, r, g, b;
-
-   rel_alpha = A_VAL(&dc->mul.col) >> 3;
-   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
-
-   r = R_VAL(&dc->mul.col);
-   g = G_VAL(&dc->mul.col);
-   b = B_VAL(&dc->mul.col);
-   /* we'll divide by 256 to make it faster, try to improve things a bit */
-   if (r > 127) r++;
-   if (g > 127) g++;
-   if (b > 127) b++;
+   int y, w_align;
 
    w_align = w & ~7;
 
    dst_itr = dst->pixels + dst_offset;
 
-   if (rel_alpha == 31)
+   if (alpha == 31)
      for (y = 0; y < h; y++, dst_itr += dst->stride)
        {
 	  DATA16 *d, *s;
@@ -297,7 +282,7 @@ _soft16_image_draw_scaled_solid_solid_mul_color(Soft16_Image *src,
 
 	       UNROLL8({
 		  _soft16_pt_blend_solid_solid_mul_color_transp
-		    (d, s[offset_x[x]], rel_alpha, r, g, b);
+		    (d, s[offset_x[x]], alpha, r, g, b);
 		  x++;
 		  d++;
 	       });
@@ -305,7 +290,7 @@ _soft16_image_draw_scaled_solid_solid_mul_color(Soft16_Image *src,
 
 	  for (; x < w; x++, d++)
 	    _soft16_pt_blend_solid_solid_mul_color_transp
-	      (d, s[offset_x[x]], rel_alpha, r, g, b);
+	      (d, s[offset_x[x]], alpha, r, g, b);
        }
 }
 
@@ -314,28 +299,18 @@ _soft16_image_draw_scaled_transp_solid_mul_color(Soft16_Image *src,
 						 Soft16_Image *dst,
 						 RGBA_Draw_Context *dc,
 						 int dst_offset, int w, int h,
-						 int *offset_x, int *offset_y)
+						 int *offset_x, int *offset_y,
+						 DATA8 r, DATA8 g, DATA8 b,
+						 DATA8 alpha)
 {
    DATA16 *dst_itr;
-   int y, w_align, rel_alpha, r, g, b;
-
-   rel_alpha = A_VAL(&dc->mul.col) >> 3;
-   if ((rel_alpha < 1) || (rel_alpha > 31)) return;
-   rel_alpha = 31 - rel_alpha;
-
-   r = R_VAL(&dc->mul.col);
-   g = G_VAL(&dc->mul.col);
-   b = B_VAL(&dc->mul.col);
-   /* we'll divide by 256 to make it faster, try to improve things a bit */
-   if (r > 127) r++;
-   if (g > 127) g++;
-   if (b > 127) b++;
+   int y, w_align;
 
    w_align = w & ~7;
 
    dst_itr = dst->pixels + dst_offset;
 
-   if (rel_alpha == 0)
+   if (alpha == 31)
      for (y = 0; y < h; y++, dst_itr += dst->stride)
        {
 	  DATA16 *d, *s;
@@ -393,7 +368,7 @@ _soft16_image_draw_scaled_transp_solid_mul_color(Soft16_Image *src,
 	       UNROLL8({
 		  int off_x = offset_x[x];
 		  _soft16_pt_blend_transp_solid_mul_color_transp
-		    (d, s[off_x], a[off_x], rel_alpha, r, g, b);
+		    (d, s[off_x], a[off_x], alpha, r, g, b);
 		  x++;
 		  d++;
 	       });
@@ -401,7 +376,7 @@ _soft16_image_draw_scaled_transp_solid_mul_color(Soft16_Image *src,
 
 	  for (; x < w; x++, d++)
 	    _soft16_pt_blend_transp_solid_mul_color_transp
-	      (d, s[offset_x[x]], a[offset_x[x]], rel_alpha, r, g, b);
+	      (d, s[offset_x[x]], a[offset_x[x]], alpha, r, g, b);
        }
 }
 
@@ -409,14 +384,15 @@ static inline void
 _soft16_image_draw_scaled_mul_color(Soft16_Image *src, Soft16_Image *dst,
 				    RGBA_Draw_Context *dc,
 				    int dst_offset, int w, int h,
-				    int *offset_x, int *offset_y)
+				    int *offset_x, int *offset_y,
+				    DATA8 r, DATA8 g, DATA8 b, DATA8 a)
 {
    if (src->have_alpha && (!dst->have_alpha))
       _soft16_image_draw_scaled_transp_solid_mul_color
-         (src, dst, dc, dst_offset, w, h, offset_x, offset_y);
+         (src, dst, dc, dst_offset, w, h, offset_x, offset_y, r, g, b, a);
    else if ((!src->have_alpha) && (!dst->have_alpha))
       _soft16_image_draw_scaled_solid_solid_mul_color
-         (src, dst, dc, dst_offset, w, h, offset_x, offset_y);
+         (src, dst, dc, dst_offset, w, h, offset_x, offset_y, r, g, b, a);
    else
       fprintf(stderr,
               "Unsupported draw of scaled images src->have_alpha=%d, "
@@ -428,16 +404,15 @@ static inline void
 _soft16_image_draw_scaled_mul(Soft16_Image *src, Soft16_Image *dst,
 			      RGBA_Draw_Context *dc,
 			      int dst_offset, int w, int h,
-			      int *offset_x, int *offset_y)
+			      int *offset_x, int *offset_y, DATA8 r, DATA8 g,
+			      DATA8 b, DATA8 a)
 {
-   if ((A_VAL(&dc->mul.col) == R_VAL(&dc->mul.col)) &&
-       (A_VAL(&dc->mul.col) == G_VAL(&dc->mul.col)) &&
-       (A_VAL(&dc->mul.col) == B_VAL(&dc->mul.col)))
+   if ((a == r) && (a == (g >> 1)) && (a == b))
       _soft16_image_draw_scaled_mul_alpha
-	(src, dst, dc, dst_offset, w, h, offset_x, offset_y);
+	(src, dst, dc, dst_offset, w, h, offset_x, offset_y, a);
    else
       _soft16_image_draw_scaled_mul_color
-	(src, dst, dc, dst_offset, w, h, offset_x, offset_y);
+	(src, dst, dc, dst_offset, w, h, offset_x, offset_y, r, g, b, a);
 }
 
 void
@@ -448,6 +423,31 @@ soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
 				 const Evas_Rectangle cr)
 {
    int x, y, dst_offset, *offset_x, *offset_y;
+   DATA16 mul_rgb565;
+   DATA8 r, g, b, a;
+
+   if (!dc->mul.use)
+     {
+	r = b = a = 31;
+	g = 63;
+	mul_rgb565 = 0xffff;
+     }
+   else
+     {
+	a = A_VAL(&dc->mul.col) >> 3;
+	if (a == 0)
+	  return;
+
+	r = R_VAL(&dc->mul.col) >> 3;
+	g = G_VAL(&dc->mul.col) >> 2;
+	b = B_VAL(&dc->mul.col) >> 3;
+
+	if (r > a) r = a;
+	if (g > (a << 1)) g = (a << 1);
+	if (b > a) b = a;
+
+	mul_rgb565 = (r << 11) || (g << 5) | b;
+     }
 
    /* pre-calculated scale tables */
    offset_x = alloca(cr.w * sizeof(*offset_x));
@@ -461,10 +461,11 @@ soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
 
    dst_offset = cr.x + (cr.y * dst->stride);
 
-   if ((!dc->mul.use) || (dc->mul.col == 0xffffffff))
+
+   if (mul_rgb565 == 0xffff)
      _soft16_image_draw_scaled_no_mul
        (src, dst, dc, dst_offset, cr.w, cr.h, offset_x, offset_y);
-   else if (dc->mul.col != 0x00000000)
+   else
      _soft16_image_draw_scaled_mul
-       (src, dst, dc, dst_offset, cr.w, cr.h, offset_x, offset_y);
+       (src, dst, dc, dst_offset, cr.w, cr.h, offset_x, offset_y, r, g, b, a);
 }

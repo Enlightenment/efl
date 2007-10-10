@@ -18,6 +18,9 @@ _soft16_pt_blend_transp_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha)
    else if (alpha != 0)
      {
         DATA32 a, b;
+
+	DATA32 dst = *p_dst;
+
         a = RGB_565_UNPACK(src);
         b = RGB_565_UNPACK(*p_dst);
         b = RGB_565_UNPACKED_BLEND(a, b, alpha);
@@ -103,15 +106,18 @@ _soft16_scanline_blend_solid_solid(DATA16 *src, DATA16 *dst, int size)
 static inline void
 _soft16_pt_blend_transp_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 rel_alpha)
 {
-   /* rel_alpha is always > 0, so (alpha - rel_alpha) is always < 31 */
-   if (alpha > rel_alpha)
-     {
-        DATA32 a, b;
-        a = RGB_565_UNPACK(src);
-        b = RGB_565_UNPACK(*p_dst);
-        b = RGB_565_UNPACKED_BLEND(a, b, alpha - rel_alpha);
-        *p_dst = RGB_565_PACK(b);
-     }
+   DATA32 a, b;
+
+   alpha = (alpha * rel_alpha) >> 5;
+   if (alpha == 0)
+     return;
+
+   alpha++;
+
+   a = ((RGB_565_UNPACK(src) * rel_alpha) >> 5) & RGB_565_UNPACKED_MASK;
+   b = RGB_565_UNPACK(*p_dst);
+   b = RGB_565_UNPACKED_BLEND(a, b, alpha);
+   *p_dst = RGB_565_PACK(b);
 }
 
 static inline void
@@ -181,7 +187,7 @@ _soft16_pt_blend_solid_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 rel_alph
    DATA32 a, b;
    a = RGB_565_UNPACK(src);
    b = RGB_565_UNPACK(*p_dst);
-   b = RGB_565_UNPACKED_BLEND(a, b, rel_alpha);
+   b = RGB_565_UNPACKED_BLEND_UNMUL(a, b, rel_alpha);
    *p_dst = RGB_565_PACK(b);
 }
 
@@ -217,19 +223,23 @@ _soft16_scanline_blend_solid_solid_mul_alpha(DATA16 *src, DATA16 *dst, int size,
 static inline void
 _soft16_pt_blend_transp_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 rel_alpha, DATA16 r, DATA16 g, DATA16 b)
 {
-   /* rel_alpha is always > 0, so (alpha - rel_alpha) is always < 31 */
-   if (alpha > rel_alpha)
-     {
-        int r1, g1, b1;
-        DATA32 rgb, d;
-        r1 = ((((src) >> 11) & 0x1f) * r) >> 8;
-        g1 = ((((src) >> 5) & 0x3f) * g) >> 8;
-        b1 = (((src) & 0x1f) * b) >> 8;
-        rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;
-        d = RGB_565_UNPACK(*p_dst);
-        d = RGB_565_UNPACKED_BLEND(rgb, d, alpha - rel_alpha);
-        *p_dst = RGB_565_PACK(d);
-     }
+   DATA32 rgb, d;
+   int r1, g1, b1;
+
+   alpha = (alpha * rel_alpha) >> 5;
+   if (alpha == 0)
+     return;
+
+   alpha++;
+
+   r1 = ((((src) >> 11) & 0x1f) * r) >> 5;
+   g1 = ((((src) >> 5) & 0x3f) * g) >> 6;
+   b1 = (((src) & 0x1f) * b) >> 5;
+   rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;
+   d = RGB_565_UNPACK(*p_dst);
+   d = RGB_565_UNPACKED_BLEND(rgb, d, alpha);
+
+   *p_dst = RGB_565_PACK(d);
 }
 
 static inline void
@@ -300,9 +310,9 @@ _soft16_pt_blend_solid_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 r
    int r1, g1, b1;
    DATA32 rgb, d;
 
-   r1 = ((((src) >> 11) & 0x1f) * r) >> 8;
-   g1 = ((((src) >> 5) & 0x3f) * g) >> 8;
-   b1 = (((src) & 0x1f) * b) >> 8;
+   r1 = ((((src) >> 11) & 0x1f) * r) >> 5;
+   g1 = ((((src) >> 5) & 0x3f) * g) >> 6;
+   b1 = (((src) & 0x1f) * b) >> 5;
 
    rgb = ((r1 << 11) | (g1 << 21) | b1) & RGB_565_UNPACKED_MASK;
    d = RGB_565_UNPACK(*p_dst);
@@ -341,15 +351,15 @@ _soft16_scanline_blend_solid_solid_mul_color_transp(DATA16 *src, DATA16 *dst, in
  * Blend operations with extra multiply color
  */
 static inline void
-_soft16_pt_blend_transp_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA16 r, DATA16 g, DATA16 b)
+_soft16_pt_blend_transp_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 r, DATA8 g, DATA8 b)
 {
    int r1, g1, b1;
 
    if (alpha == 0) return;
 
-   r1 = ((((src >> 11) & 0x1f) * r) >> 8) & 0x1f;
-   g1 = ((((src >> 5) & 0x3f) * g) >> 8) & 0x3f;
-   b1 = (((src & 0x1f) * b) >> 8) & 0x1f;
+   r1 = ((((src >> 11) & 0x1f) * r) >> 5) & 0x1f;
+   g1 = ((((src >> 5) & 0x3f) * g) >> 6) & 0x3f;
+   b1 = (((src & 0x1f) * b) >> 5) & 0x1f;
 
    if (alpha == 31) *p_dst = (r1 << 11) | (g1 << 5) | b1;
    else
@@ -430,15 +440,15 @@ _soft16_pt_blend_solid_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA16 r
 {
    int r1, g1, b1;
 
-   r1 = ((((src >> 11) & 0x1f) * r) >> 8) & 0x1f;
-   g1 = ((((src >> 5) & 0x3f) * g) >> 8) & 0x3f;
-   b1 = (((src & 0x1f) * b) >> 8) & 0x1f;
+   r1 = ((((src >> 11) & 0x1f) * r) >> 5) & 0x1f;
+   g1 = ((((src >> 5) & 0x3f) * g) >> 6) & 0x3f;
+   b1 = (((src & 0x1f) * b) >> 5) & 0x1f;
 
    *p_dst = (r1 << 11) | (g1 << 5) | b1;
 }
 
 static inline void
-_soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int size, DATA16 r, DATA16 g, DATA16 b)
+_soft16_scanline_blend_solid_solid_mul_color_solid(DATA16 *src, DATA16 *dst, int size, DATA8 r, DATA8 g, DATA8 b)
 {
    DATA16 *start, *end;
 

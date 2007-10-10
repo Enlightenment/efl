@@ -12,6 +12,8 @@
   ((((rgb) & RGB_565_UNPACKED_MASK) |                                   \
    ((rgb) & RGB_565_UNPACKED_MASK) >> 16) & 0xffff)
 #define RGB_565_UNPACKED_BLEND(a, b, alpha)                             \
+   ((b) + (a) - ((((b) * (alpha)) >> 5) & RGB_565_UNPACKED_MASK))
+#define RGB_565_UNPACKED_BLEND_UNMUL(a, b, alpha)                       \
    ((b) + ((((a) - (b)) * (alpha)) >> 5))
 
 #define RGB_565_FROM_COMPONENTS(r, g, b)                                \

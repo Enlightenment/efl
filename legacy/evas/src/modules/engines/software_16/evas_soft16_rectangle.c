@@ -42,6 +42,7 @@ _soft16_rectangle_draw_transp_solid(Soft16_Image *dst, RGBA_Draw_Context *dc,
                                           G_VAL(&dc->col.col),
                                           B_VAL(&dc->col.col));
          rgb565 = RGB_565_UNPACK(rgb565);
+	 alpha++;
 
          for (i = 0; i < h; i++, dst_itr += dst->stride)
             _soft16_scanline_fill_transp_solid(dst_itr, w, rgb565, alpha);

@@ -142,29 +142,48 @@ static inline void
 _soft16_convert_from_rgba_pt(const DATA32 *src, DATA16 *dst, DATA8 *alpha,
 			     const int x, const int y)
 {
-   DATA8 orig_r, orig_g, orig_b, orig_a, r, g, b, a, dith5, dith6, dith;
+   DATA8 orig_r, orig_g, orig_b, orig_a;
 
    orig_r = R_VAL(src);
    orig_g = G_VAL(src);
    orig_b = B_VAL(src);
    orig_a = A_VAL(src);
 
-   r = orig_r >> 3;
-   g = orig_g >> 2;
-   b = orig_b >> 3;
-   a = orig_a >> 3;
+   if (orig_a == 255)
+     {
+	DATA8 dith5, dith6, dith, r, g, b;
 
-   dith = dither_table[x & S16_DM_MSK][y & S16_DM_MSK];
-   dith5 = dith >> S16_DM_SHF(5);
-   dith6 = dith >> S16_DM_SHF(6);
+	dith = dither_table[x & S16_DM_MSK][y & S16_DM_MSK];
+	dith5 = dith >> S16_DM_SHF(5);
+	dith6 = dith >> S16_DM_SHF(6);
 
-   if (((orig_r - (r << 3)) >= dith5) && (r < 0x1f)) r++;
-   if (((orig_g - (g << 2)) >= dith6) && (g < 0x3f)) g++;
-   if (((orig_b - (b << 3)) >= dith5) && (b < 0x1f)) b++;
-   if (((orig_a - (a << 3)) >= dith5) && (a < 0x1f)) a++;
+	r = orig_r >> 3;
+	g = orig_g >> 2;
+	b = orig_b >> 3;
 
-   *dst = (r << 11) | (g << 5) | b;
-   *alpha = a;
+	if (((orig_r - (r << 3)) >= dith5) && (r < 0x1f)) r++;
+	if (((orig_g - (g << 2)) >= dith6) && (g < 0x3f)) g++;
+	if (((orig_b - (b << 3)) >= dith5) && (b < 0x1f)) b++;
+
+	*dst = (r << 11) | (g << 5) | b;
+	*alpha = 31;
+     }
+   else if (orig_a == 0)
+     {
+	*dst = 0;
+	*alpha = 0;
+     }
+   else
+     {
+	DATA8 r, g, b, a;
+	r = orig_r >> 3;
+	g = orig_g >> 2;
+	b = orig_b >> 3;
+	a = (orig_a >> 3) + 1;
+
+	*dst = (r << 11) | (g << 5) | b;
+	*alpha = a;
+     }
 }
 
 static inline void

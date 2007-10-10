@@ -1,4 +1,5 @@
 #include "evas_soft16.h"
+#include "evas_soft16_scanline_blend.c"
 
 static inline void
 _glyph_pt_mask_solid_solid(DATA16 *dst,
@@ -6,15 +7,15 @@ _glyph_pt_mask_solid_solid(DATA16 *dst,
 			   const DATA32 rgb565_unpack,
 			   const DATA8 *mask)
 {
-   DATA8 alpha = *mask;
+   DATA8 alpha = *mask >> 3;
 
-   if (alpha == 255) *dst = rgb565;
-   else if (alpha > 8)
+   if (alpha == 31) *dst = rgb565;
+   else if (alpha > 0)
      {
 	DATA32 d;
 
 	d = RGB_565_UNPACK(*dst);
-	d = RGB_565_UNPACKED_BLEND(rgb565_unpack, d, alpha >> 3);
+	d = RGB_565_UNPACKED_BLEND_UNMUL(rgb565_unpack, d, alpha);
 	*dst = RGB_565_PACK(d);
      }
 }
@@ -51,29 +52,24 @@ _glyph_scanline_mask_solid_solid(DATA16 *dst,
 
 static inline void
 _glyph_pt_mask_transp_solid(DATA16 *dst,
-			    const DATA32 rgb565_unpack,
-			    const DATA8 rel_alpha,
+			    DATA32 rgb565_unpack,
+			    DATA8 alpha,
 			    const DATA8 *mask)
 {
-   DATA32 d;
-   DATA8 alpha;
+   DATA32 a, b;
+   int rel_alpha;
 
-   if (*mask == 255) alpha = rel_alpha >> 3;
-   else if (*mask == 0) return;
-   else
-     {
-	/* doing multiply to avoid too much error, it's acceptable to do:
-	 *     alpha - (max_alpha - rel_alpha)
-	 * on images because error is not that important/noticeable, but
-	 * on texts, with many edges, it's unacceptable.
-	 */
-	alpha = (*mask * rel_alpha) >> 11;
-	if (alpha == 0) return;
-     }
+   rel_alpha = *mask >> 3;
+   alpha = (alpha * rel_alpha) >> 5;
+   if (alpha == 0)
+     return;
 
-   d = RGB_565_UNPACK(*dst);
-   d = RGB_565_UNPACKED_BLEND(rgb565_unpack, d, alpha);
-   *dst = RGB_565_PACK(d);
+   alpha++;
+
+   a = ((rgb565_unpack * rel_alpha) >> 5) & RGB_565_UNPACKED_MASK;
+   b = RGB_565_UNPACK(*dst);
+   b = RGB_565_UNPACKED_BLEND(a, b, alpha);
+   *dst = RGB_565_PACK(b);
 }
 
 static inline void
@@ -143,10 +139,10 @@ _calc_ext(const Soft16_Image *dst, const RGBA_Draw_Context *dc,
 }
 
 static inline void
-_glyph_scaline(Soft16_Image *dst, const DATA8 *p_mask,
-	       const Evas_Rectangle ext, int dx, int dy, int max_x, int max_y,
-	       int w, DATA8 alpha, const DATA16 rgb565,
-	       const DATA32 rgb565_unpack)
+_glyph_scanline(Soft16_Image *dst, const DATA8 *p_mask,
+		const Evas_Rectangle ext, int dx, int dy, int max_x, int max_y,
+		int w, DATA8 alpha, const DATA16 rgb565,
+		const DATA32 rgb565_unpack)
 {
    int size, in_x, in_w;
    DATA16 *p_pixels;
@@ -171,7 +167,7 @@ _glyph_scaline(Soft16_Image *dst, const DATA8 *p_mask,
 
    if (size > 1)
      {
-	if (alpha == 255)
+	if (alpha == 31)
 	   _glyph_scanline_mask_solid_solid
 	       (p_pixels, size, rgb565, rgb565_unpack, p_mask);
 	else if (alpha != 0)
@@ -180,7 +176,7 @@ _glyph_scaline(Soft16_Image *dst, const DATA8 *p_mask,
      }
    else if (size == 1)
      {
-	if (alpha == 255)
+	if (alpha == 31)
 	   _glyph_pt_mask_solid_solid(p_pixels, rgb565, rgb565_unpack, p_mask);
 	else if (alpha != 0)
 	   _glyph_pt_mask_transp_solid(p_pixels, rgb565_unpack, alpha, p_mask);
@@ -201,8 +197,8 @@ _soft16_font_glyph_draw_grayscale(Soft16_Image *dst,
    max_y = ext.y + ext.h;
 
    for (i = 0; i < bh; i++, bitmap += bpitch)
-      _glyph_scaline(dst, bitmap, ext, x, y + i, max_x, max_y, bw,
-		     alpha, rgb565, rgb565_unpack);
+      _glyph_scanline(dst, bitmap, ext, x, y + i, max_x, max_y, bw,
+		      alpha, rgb565, rgb565_unpack);
 }
 
 static inline void
@@ -244,8 +240,8 @@ _soft16_font_glyph_draw_mono(Soft16_Image *dst,
    for (i = 0; i < bh; i++, bitmap += bpitch)
      {
 	_glyph_create_mask_line(mask, bitmap, bw);
-	_glyph_scaline(dst, mask, ext, x, y + i, max_x, max_y, bw,
-		       alpha, rgb565, rgb565_unpack);
+	_glyph_scanline(dst, mask, ext, x, y + i, max_x, max_y, bw,
+			alpha, rgb565, rgb565_unpack);
      }
 }
 
@@ -255,17 +251,23 @@ soft16_font_glyph_draw(Soft16_Image *dst, void *data,
 		       int x, int y)
 {
    const DATA8 *bitmap;
-   DATA8 alpha;
+   DATA8 alpha, r, g, b;
    DATA16 rgb565;
    Evas_Rectangle ext;
    int bpitch, bw, bh;
 
-   alpha = A_VAL(&dc->col.col);
-   if (alpha < 8) return; /* precision is 5 bits, 3 bits lost */
+   alpha = A_VAL(&dc->col.col) >> 3;
+   if (alpha == 0) return; /* precision is 5 bits, 3 bits lost */
 
-   rgb565 = RGB_565_FROM_COMPONENTS(R_VAL(&dc->col.col),
-				    G_VAL(&dc->col.col),
-				    B_VAL(&dc->col.col));
+   r = R_VAL(&dc->col.col) >> 3;
+   g = G_VAL(&dc->col.col) >> 2;
+   b = B_VAL(&dc->col.col) >> 3;
+
+   if (r > alpha) r = alpha;
+   if (g > (alpha << 1)) g = (alpha << 1);
+   if (b > alpha) b = alpha;
+
+   rgb565 = (r << 11) | (g << 5) | b;
 
    bitmap = fg->glyph_out->bitmap.buffer;
    bh = fg->glyph_out->bitmap.rows;
