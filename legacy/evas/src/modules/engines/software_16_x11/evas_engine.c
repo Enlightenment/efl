@@ -524,7 +524,7 @@ eng_output_flush(void *data)
    else return;
 
    evas_software_x11_x_output_buffer_paste
-     (re->shbuf, re->draw, re->gc, 0, 0, re->shbuf->im.w, re->shbuf->im.h, 0);
+     (re->shbuf, re->draw, re->gc, 0, 0, re->shbuf->im.w, re->shbuf->im.h, 1);
    XSetClipMask(re->disp, re->gc, None);
 }
 
