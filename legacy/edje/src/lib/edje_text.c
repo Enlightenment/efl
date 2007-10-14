@@ -341,13 +341,26 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->text.font) font = ep->text.font;
    if (ep->text.size > 0) size = ep->text.size;
 
+   if (ep->text.text_source)
+     {
+	text = ep->text.text_source->chosen_description->text.text;
+	if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
+     }
+   if (ep->text.source)
+     {
+	font = ep->text.source->chosen_description->text.font;
+	size = ep->text.source->chosen_description->text.size;
+	if (ep->text.source->text.font) font = ep->text.source->text.font;
+	if (ep->text.source->text.size > 0) size = ep->text.source->text.size;
+     }
+   
    if (!text) text = "";
    if (!font) font = "";
 
    /* check if the font is embedded in the .eet */
    if (ed->file->font_hash)
      {
-	Edje_Font_Directory_Entry *fnt = evas_hash_find (ed->file->font_hash, font);
+	Edje_Font_Directory_Entry *fnt = evas_hash_find(ed->file->font_hash, font);
 
 	if (fnt)
 	  {
@@ -386,7 +399,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (ep->text.cache.fit_x == chosen_desc->text.fit_x) &&
        (ep->text.cache.fit_y == chosen_desc->text.fit_y))
      {
-	text = (char *) ep->text.cache.out_str;
+	text = (char *)ep->text.cache.out_str;
 	size = ep->text.cache.out_size;
 
 	if (!text) text = "";

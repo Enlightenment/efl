@@ -728,6 +728,7 @@ _edje_part_recalc_single(Edje *ed,
 	  {
 	     if (ep->text.text) text = ep->text.text;
 	  }
+	
 	if (ep->text.source)
 	  {
 	     if (ep->text.source->text.font) font = ep->text.source->text.font;
@@ -1182,6 +1183,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	if (ep->param2.rel2_to_y)  _edje_part_recalc(ed, ep->param2.rel2_to_y, FLAG_Y);
      }
    if (ep->confine_to)        _edje_part_recalc(ed, ep->confine_to, flags);
+//   if (ep->text.source)       _edje_part_recalc(ed, ep->text.source, flags);
+//   if (ep->text.text_source)  _edje_part_recalc(ed, ep->text.text_source, flags);
 
    /* actually calculate now */
    chosen_desc = ep->chosen_description;
