@@ -117,8 +117,9 @@ _evas_module_path_append(Evas_Module_Type type, char *path, const char *subdir)
 /* this will alloc a list of paths to search for the modules */
 /* by now these are:  */
 /* 1. ~/.evas/modules/ */
-/* 2. PREFIX/evas/modules/ */
+/* 2. $(EVAS_MODULE_DIR)/evas/modules/ */
 /* 3. dladdr/evas/modules/ */
+/* 4. PREFIX/evas/modules/ */
 void
 evas_module_paths_init(void)
 {
@@ -137,6 +138,23 @@ evas_module_paths_init(void)
 	     path[0] = 0;
 	     strcpy(path, prefix);
 	     strcat(path, "/.evas/modules");
+	     if (evas_file_path_exists(path))
+	       paths = evas_list_append(paths, path);
+	     else
+	       free(path);
+	  }
+     }
+
+   /* 2. $(EVAS_MODULE_DIR)/evas/modules/ */
+   prefix = getenv("EVAS_MODULES_DIR");
+   if (prefix)
+     {
+	path = malloc(strlen(prefix) + 1 + strlen("/evas/modules"));
+	if (path)
+	  {
+	     path[0] = 0;
+	     strcpy(path, prefix);
+	     strcat(path, "/evas/modules");
 	     if (evas_file_path_exists(path))
 	       paths = evas_list_append(paths, path);
 	     else
@@ -172,7 +190,7 @@ evas_module_paths_init(void)
 	  }
      }
 #else
-   /* 3. PREFIX/evas/modules/ */
+   /* 4. PREFIX/evas/modules/ */
    prefix = PACKAGE_LIB_DIR;
    path = malloc(strlen(prefix) + 1 + strlen("/evas/modules"));
    if (path)
