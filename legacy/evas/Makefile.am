@@ -13,6 +13,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas-framebuffer.pc \
 		       evas-glitz-x11.pc \
 		       evas-opengl-x11.pc \
+		       evas-opengl-glew.pc \
 		       evas-software-buffer.pc \
 		       evas-software-qtopia.pc \
 		       evas-software-x11.pc \
@@ -39,6 +40,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas-framebuffer.pc \
 	     evas-glitz-x11.pc \
 	     evas-opengl-x11.pc \
+	     evas-opengl-glew.pc \
 	     evas-software-buffer.pc \
 	     evas-software-qtopia.pc \
 	     evas-software-x11.pc \
@@ -116,6 +118,10 @@ if BUILD_ENGINE_GL_X11
 popenglx11 = evas-opengl-x11.pc
 endif
 
+if BUILD_ENGINE_GL_GLEW
+popenglglew = evas-opengl-glew.pc
+endif
+
 if BUILD_ENGINE_CAIRO_X11
 pcairox11 = evas-cairo-x11.pc
 endif
@@ -149,4 +155,4 @@ pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pframebuffer) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
 	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psdl) \
-	$(psoftware16x11) $(pdirect3d) $(psoftwared16draw)
+	$(psoftware16x11) $(pdirect3d) $(psoftwared16draw) $(popenglglew)
