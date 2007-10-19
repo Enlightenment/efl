@@ -2119,6 +2119,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
            evas_object_repeat_events_set(obj_swallow, 1);
 	if (rp->part->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
 	  evas_object_pointer_mode_set(obj_swallow, rp->part->pointer_mode);
+	evas_object_pass_events_set(obj_swallow, 0);
      }
    else
      evas_object_pass_events_set(obj_swallow, 1);
