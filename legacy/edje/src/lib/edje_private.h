@@ -126,6 +126,9 @@ typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 
 #define PI 3.14159265358979323846
 
+#define EDJE_INF_MAX_W 100000
+#define EDJE_INF_MAX_H 100000
+
 #define EDJE_IMAGE_SOURCE_TYPE_NONE           0
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT 1
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY   2

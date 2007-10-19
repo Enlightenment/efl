@@ -1087,7 +1087,8 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
      }
    if (ed->collection->prop.max.w == 0)
      {
-	if (maxw) *maxw = 100000;
+	/* XXX TODO: convert maxw to 0, fix things that break. */
+	if (maxw) *maxw = EDJE_INF_MAX_W;
      }
    else
      {
@@ -1095,7 +1096,8 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
      }
    if (ed->collection->prop.max.h == 0)
      {
-	if (maxh) *maxh = 100000;
+	/* XXX TODO: convert maxh to 0, fix things that break. */
+	if (maxh) *maxh = EDJE_INF_MAX_H;
      }
    else
      {
