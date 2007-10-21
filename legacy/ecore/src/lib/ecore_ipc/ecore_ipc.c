@@ -558,7 +558,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
  * @todo Fix up the documentation: Make sure what ref_to and response are.
  */
 EAPI int
-ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, void *data, int size)
+ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, const void *data, int size)
 {
    Ecore_Ipc_Msg_Head msg;
    int ret;
@@ -766,7 +766,7 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
  * @todo    Make sure ref_to and response parameters are described correctly.
  */
 EAPI int
-ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, void *data, int size)
+ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, const void *data, int size)
 {
    Ecore_Ipc_Msg_Head msg;
    int ret;

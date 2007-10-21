@@ -298,7 +298,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
    EAPI int               ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
    EAPI Ecore_List       *ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr);
    /* FIXME: this needs to become an ipc message */
-   EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, void *data, int size);
+   EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
    EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients);
    EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *srv, int size);
    EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *srv);
@@ -306,7 +306,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
    EAPI void              ecore_ipc_server_flush(Ecore_Ipc_Server *svr);
        
    /* FIXME: this needs to become an ipc message */
-   EAPI int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, void *data, int size);
+   EAPI int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
    EAPI Ecore_Ipc_Server *ecore_ipc_client_server_get(Ecore_Ipc_Client *cl);
    EAPI void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
    EAPI void              ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data);

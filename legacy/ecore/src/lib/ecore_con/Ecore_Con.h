@@ -175,7 +175,7 @@ extern "C" {
    EAPI char             *ecore_con_server_ip_get(Ecore_Con_Server *svr);
    EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
    
-   EAPI int               ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size);
+   EAPI int               ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size);
    EAPI Ecore_Con_Server *ecore_con_client_server_get(Ecore_Con_Client *cl);
    EAPI void             *ecore_con_client_del(Ecore_Con_Client *cl);
    EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data);

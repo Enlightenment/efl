@@ -773,7 +773,7 @@ ecore_con_server_flush(Ecore_Con_Server *svr)
  * @ingroup Ecore_Con_Client_Group
  */
 EAPI int
-ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
+ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
