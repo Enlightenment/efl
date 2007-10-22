@@ -493,21 +493,48 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	  }
 	else if (th > sh)
 	  {
-	     int dif;
+	     int current;
 
-	     dif = (th - sh) / 4;
-	     if (dif < 1) dif = 1;
-	     while ((th > sh) && (sw >= 0))
+	     evas_object_text_font_set(ep->object, font, 10);
+	     part_get_geometry(ep, &tw, &th);
+
+	     if (th == sh)
+	       current = 10;
+	     else
 	       {
-		  size -= dif;
-		  if (size <= 0) break;
-		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
-		  else evas_object_text_font_source_set(ep->object, NULL);
+		  int bottom, top;
 
-		  evas_object_text_font_set(ep->object, font, size);
-		  part_get_geometry(ep, &tw, &th);
-		  if ((size > 0) && (th == 0)) break;
+		  if (th < sh)
+		    bottom = 10;
+		  else if (th > sh)
+		    {
+		       bottom = 1;
+		       top = 10;
+		    }
+
+		  top = size;
+		  /* search one that fits (binary search) */
+		  do
+		    {
+		       current = (top + bottom) / 2;
+
+		       evas_object_text_font_set(ep->object, font, current);
+		       part_get_geometry(ep, &tw, &th);
+
+		       if      (th < sh) bottom = current + 1;
+		       else if (th > sh) top    = current - 1;
+		    } while ((bottom < top) && (th != sh));
 	       }
+
+	     /* search the larger one that fits (linear search) */
+	     do
+	       {
+		  current++;
+
+		  evas_object_text_font_set(ep->object, font, current);
+		  part_get_geometry(ep, &tw, &th);
+	       } while (th <= sh);
+	     size = current - 1;
 	  }
      }
    if (size < 1) size = 1;
