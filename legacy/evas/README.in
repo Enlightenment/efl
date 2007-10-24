@@ -144,7 +144,7 @@ code.
 
 --enable-cpu-mmx
 
-this enables the mmx optimised routines. this works for penitum, pentium2,
+this enables the mmx optimised routines. this works for pentium, pentium2,
 pentium3, pentium4, athlon and duron processors. it can get quite
 considerable speedups, souse it if you can. ppc owners just have to live with
 the c fallback functions unfortunately as no one has provided any ALTIVEC asm 
@@ -154,19 +154,19 @@ can beat the c code (when compiled with all optimisations) in speed.
 
 --enable-cpu-sse
 
-this enables sse optimisations availbale in he pentium3 and 4 cpus (not
+this enables sse optimizations availbale in he pentium3 and 4 cpus (not
 athlon and duron or pentium 2 or pentium cpu's). ppc owners just have to
 live with the c fallback functions unfortunately as no one has provided any
 ALTIVEC asm routines yet. :) arm owners will also have to rely on the c
 fallback routines as i haven't managed to come up with any arm assembly that 
-actually can beat the c code (when compiled whht all optimisations) in speed.
+actually can beat the c code (when compiled with all optimizations) in speed.
 
 IMAGE LOADERS:
 --enable-image-loader-png
 
 this enables the loader code that loads png files using libpng. there may be
 call for embedded devices later that have custom written small image
-loaders that use sless disk space than libpng to load custom format images.
+loaders that uses less disk space than libpng to load custom format images.
 for now this is the only loader so you may as well include it.
 
 --enable-image-loader-jpeg
@@ -210,14 +210,14 @@ dislpays similar qualities of the ipaq for display purposes.
 --enable-convert-16-rgb-rot-0
 
 this enables the 16bpp converters to run with 0 degrees rotation - this is 
-normal disp;ay and you shoudl really include this (though it is optional if you
+normal display and you should really include this (though it is optional if you
 only ever want to do portrait mode - perhaps like on an ipaq embedded device)
 
 --enable-convert-16-rgb-rot-270
 
 this enables the portrait mode (270 degree rotation) converteres for 16bpp.
 this is the standard display mode for things like pocketpc on the ipaq and
-the zaurus etc. thsi si a optimised part of the rendering pipeline to allow
+the zaurus etc. thsi si a optimized part of the rendering pipeline to allow
 portrait display with a much lower overhead than doing it through X.
 
 --enable-convert-24-rgb-888
@@ -280,5 +280,5 @@ where you first untarred the source tarball.
 
 NOTES:
 
-For the arm optimisations you want to try:
+For the arm optimizations you want to try:
   export CFLAGS="-O2 -march=armv5te -mcpu=arm1136jf-s -fomit-frame-pointer"
