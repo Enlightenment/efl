@@ -234,7 +234,7 @@ _soft16_image_draw_scaled_solid_solid_mul_color(Soft16_Image *src,
 
    dst_itr = dst->pixels + dst_offset;
 
-   if (alpha == 32)
+   if (alpha == 31)
      for (y = 0; y < h; y++, dst_itr += dst->stride)
        {
 	  DATA16 *d, *s;
@@ -310,7 +310,7 @@ _soft16_image_draw_scaled_transp_solid_mul_color(Soft16_Image *src,
 
    dst_itr = dst->pixels + dst_offset;
 
-   if (alpha == 32)
+   if (alpha == 31)
      for (y = 0; y < h; y++, dst_itr += dst->stride)
        {
 	  DATA16 *d, *s;
@@ -407,7 +407,7 @@ _soft16_image_draw_scaled_mul(Soft16_Image *src, Soft16_Image *dst,
 			      int *offset_x, int *offset_y, DATA8 r, DATA8 g,
 			      DATA8 b, DATA8 a)
 {
-   if ((r == b) && (r == (g >> 1)) && (r == (a - 1)))
+   if ((a == r) && (a == (g >> 1)) && (a == b))
       _soft16_image_draw_scaled_mul_alpha
 	(src, dst, dc, dst_offset, w, h, offset_x, offset_y, a);
    else
@@ -428,8 +428,7 @@ soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
 
    if (!dc->mul.use)
      {
-	a = 32;
-	r = b = 31;
+	r = b = a = 31;
 	g = 63;
 	mul_rgb565 = 0xffff;
      }
@@ -446,7 +445,6 @@ soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
 	if (r > a) r = a;
 	if (g > (a << 1)) g = (a << 1);
 	if (b > a) b = a;
-	a++;
 
 	mul_rgb565 = (r << 11) || (g << 5) | b;
      }
@@ -462,6 +460,7 @@ soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
 		    * src->stride);
 
    dst_offset = cr.x + (cr.y * dst->stride);
+
 
    if (mul_rgb565 == 0xffff)
      _soft16_image_draw_scaled_no_mul
