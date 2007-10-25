@@ -11,7 +11,7 @@ static int _ecore_init_job_count = 0;
 static Ecore_Event_Handler* _ecore_job_handler = NULL;
 
 EAPI int
-ecore_job_init()
+ecore_job_init(void)
 {
    if (++_ecore_init_job_count == 1)
      {
@@ -24,7 +24,7 @@ ecore_job_init()
 }
 
 EAPI int
-ecore_job_shutdown()
+ecore_job_shutdown(void)
 {
    if (--_ecore_init_job_count)
      return _ecore_init_job_count;
