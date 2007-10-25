@@ -1060,7 +1060,7 @@ _pixels_get(void *data, Evas_Object *obj)
 	  }
 	else if (format == EMOTION_FORMAT_BGRA)
 	  {
-	     if (sd->module->bgra_data_get(sd->video, &bgra_data));
+	     if (sd->module->bgra_data_get(sd->video, &bgra_data))
 	       {
 		  evas_object_image_data_set(obj, bgra_data);
 //		  printf("pix get set 0 (3)\n");
@@ -1163,7 +1163,7 @@ _smart_add(Evas_Object * obj)
    sd->ratio = 1.0;
    sd->spu.button = -1;
    evas_object_image_alpha_set(sd->obj, 0);
-   pixel = evas_object_image_data_get(obj, 1);
+   pixel = evas_object_image_data_get(sd->obj, 1);
    if (pixel)
      {
 	*pixel = 0xff000000;
