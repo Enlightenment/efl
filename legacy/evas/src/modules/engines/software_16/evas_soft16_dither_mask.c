@@ -283,7 +283,7 @@ soft16_image_convert_from_rgb(Soft16_Image *im, const DATA32 *src)
 {
    const DATA32 *sp;
    DATA16 *dp;
-   int x, y, pad;
+   int y, pad;
 
    sp = src;
    dp = im->pixels;

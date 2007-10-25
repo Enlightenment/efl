@@ -148,39 +148,31 @@ eng_context_render_op_get(void *data, void *context)
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
-    soft16_rectangle_draw(surface, context, x, y, w, h);
+   soft16_rectangle_draw(surface, context, x, y, w, h);
 }
 
 static void
 eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
-   NOT_IMPLEMENTED();
-//   evas_common_line_draw(surface, context, x1, y1, x2, y2);
-//   evas_common_cpu_end_opt();
+   soft16_line_draw(surface, context, x1, y1, x2, y2);
 }
 
 static void *
 eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 {
-   NOT_IMPLEMENTED();
-   return NULL;
-//   return evas_common_polygon_point_add(polygon, x, y);
+   return evas_common_polygon_point_add(polygon, x, y);
 }
 
 static void *
 eng_polygon_points_clear(void *data, void *context, void *polygon)
 {
-   NOT_IMPLEMENTED();
-   return NULL;
-//   return evas_common_polygon_points_clear(polygon);
+   return evas_common_polygon_points_clear(polygon);
 }
 
 static void
 eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
-   NOT_IMPLEMENTED();
-//   evas_common_polygon_draw(surface, context, polygon);
-//   evas_common_cpu_end_opt();
+   soft16_polygon_draw(surface, context, polygon);
 }
 
 static void *

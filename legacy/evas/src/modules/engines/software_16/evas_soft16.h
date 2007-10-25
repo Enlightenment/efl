@@ -105,6 +105,18 @@ void soft16_image_convert_from_rgba(Soft16_Image *im, const DATA32 *src);
  */
 void soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
+/**
+ * Polygon (evas_soft16_polygon.c)
+ */
+void
+soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+
+/**
+ * Line (evas_soft16_line.c)
+ */
+void
+soft16_line_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1);
+
 
 /**
  * Font (evas_soft16_font.c)

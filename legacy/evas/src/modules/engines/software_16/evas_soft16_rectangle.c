@@ -8,45 +8,32 @@ _is_empty_rectangle(const Evas_Rectangle *r)
 }
 
 static inline void
-_soft16_rectangle_draw_solid_solid(Soft16_Image *dst, RGBA_Draw_Context *dc,
-                                   int offset, int w, int h)
+_soft16_rectangle_draw_solid_solid(Soft16_Image *dst, int offset, int w, int h,
+				   DATA16 rgb565)
 {
-   DATA16 *dst_itr, rgb565;
+   DATA16 *dst_itr;
    int i;
 
    dst_itr = dst->pixels + offset;
-   rgb565 = RGB_565_FROM_COMPONENTS(R_VAL(&dc->col.col),
-                                    G_VAL(&dc->col.col),
-                                    B_VAL(&dc->col.col));
 
    for (i = 0; i < h; i++, dst_itr += dst->stride)
       _soft16_scanline_fill_solid_solid(dst_itr, w, rgb565);
 }
 
 static inline void
-_soft16_rectangle_draw_transp_solid(Soft16_Image *dst, RGBA_Draw_Context *dc,
-                                    int offset, int w, int h)
+_soft16_rectangle_draw_transp_solid(Soft16_Image *dst, int offset, int w, int h,
+				    DATA16 rgb565, DATA8 alpha)
 {
-   char alpha;
+   DATA16 *dst_itr;
+   DATA32 rgb565_unpack;
+   int i;
 
-   alpha = A_VAL(&dc->col.col) >> 3;
-   if (alpha == 31) _soft16_rectangle_draw_solid_solid(dst, dc, offset, w, h);
-   else if (alpha != 0)
-      {
-         DATA16 *dst_itr;
-         DATA32 rgb565;
-         int i;
+   dst_itr = dst->pixels + offset;
+   rgb565_unpack = RGB_565_UNPACK(rgb565);
+   alpha++;
 
-         dst_itr = dst->pixels + offset;
-         rgb565 = RGB_565_FROM_COMPONENTS(R_VAL(&dc->col.col),
-                                          G_VAL(&dc->col.col),
-                                          B_VAL(&dc->col.col));
-         rgb565 = RGB_565_UNPACK(rgb565);
-	 alpha++;
-
-         for (i = 0; i < h; i++, dst_itr += dst->stride)
-            _soft16_scanline_fill_transp_solid(dst_itr, w, rgb565, alpha);
-      }
+   for (i = 0; i < h; i++, dst_itr += dst->stride)
+     _soft16_scanline_fill_transp_solid(dst_itr, w, rgb565_unpack, alpha);
 }
 
 static void
@@ -69,12 +56,19 @@ _soft16_rectangle_draw_int(Soft16_Image *dst, RGBA_Draw_Context *dc,
 
    if (!dst->have_alpha)
       {
-         if (A_VAL(&dc->col.col) == 255)
-            _soft16_rectangle_draw_solid_solid
-               (dst, dc, dst_offset, dr.w, dr.h);
-         else
-            _soft16_rectangle_draw_transp_solid
-               (dst, dc, dst_offset, dr.w, dr.h);
+	 DATA16 rgb565;
+	 DATA8 alpha;
+
+	 alpha = A_VAL(&dc->col.col) >> 3;
+	 rgb565 = RGB_565_FROM_COMPONENTS(R_VAL(&dc->col.col),
+					  G_VAL(&dc->col.col),
+					  B_VAL(&dc->col.col));
+         if (alpha == 31)
+	   _soft16_rectangle_draw_solid_solid
+	     (dst, dst_offset, dr.w, dr.h, rgb565);
+         else if (alpha > 0)
+	   _soft16_rectangle_draw_transp_solid
+	     (dst, dst_offset, dr.w, dr.h, rgb565, alpha);
       }
    else
       fprintf(stderr,

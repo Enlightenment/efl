@@ -19,8 +19,6 @@ _soft16_pt_blend_transp_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha)
      {
         DATA32 a, b;
 
-	DATA32 dst = *p_dst;
-
         a = RGB_565_UNPACK(src);
         b = RGB_565_UNPACK(*p_dst);
         b = RGB_565_UNPACKED_BLEND(a, b, alpha);

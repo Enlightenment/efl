@@ -230,7 +230,6 @@ soft16_image_load_data(Soft16_Image *im)
 	if (!im->pixels) soft16_image_alloc_pixels(im);
 	if (im->pixels) _soft16_image_rgba32_import(im, im->source_im->image->data);
      }
-   done:
    evas_cache_image_drop(im->source_im);
    im->source_im = NULL;
 }

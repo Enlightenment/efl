@@ -58,7 +58,6 @@ static inline void
 _soft16_scanline_fill_transp_solid(DATA16 *dst, int size, DATA32 rgb565_unpack, DATA8 alpha)
 {
    DATA16 *start, *end;
-   DATA32 a;
 
    start = dst;
    pld(start, 0);
