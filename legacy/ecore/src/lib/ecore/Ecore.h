@@ -144,10 +144,10 @@ extern "C" {
 
    struct _Ecore_Event_Signal_Exit /** Exit request event */
      {
-	int   interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
-	int   quit      : 1; /**< set if the exit request was a quit signal */
-	int   terminate : 1; /**< Set if the exit request was a terminate singal */
-	void *ext_data;	/**< Extension data - not used */
+	unsigned int   interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
+	unsigned int   quit      : 1; /**< set if the exit request was a quit signal */
+	unsigned int   terminate : 1; /**< Set if the exit request was a terminate singal */
+	void          *ext_data;	/**< Extension data - not used */
 
 #ifndef _WIN32
 	siginfo_t data; /**< Signal info */
@@ -181,14 +181,14 @@ extern "C" {
 
    struct _Ecore_Exe_Event_Del /** Process exit event */
      {
-	pid_t      pid; /**< The process ID of the process that exited */
-	int        exit_code; /**< The exit code of the process */
-	Ecore_Exe *exe; /**< The handle to the exited process, or NULL if not found */
-	int        exit_signal; /** < The signal that caused the process to exit */
-	char       exited    : 1; /** < set to 1 if the process exited of its own accord */
-	char       signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
-	void      *ext_data; /**< Extension data - not used */
-	siginfo_t  data; /**< Signal info */
+	pid_t         pid; /**< The process ID of the process that exited */
+	int           exit_code; /**< The exit code of the process */
+	Ecore_Exe    *exe; /**< The handle to the exited process, or NULL if not found */
+	int           exit_signal; /** < The signal that caused the process to exit */
+	unsigned char exited    : 1; /** < set to 1 if the process exited of its own accord */
+	unsigned char signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
+	void         *ext_data; /**< Extension data - not used */
+	siginfo_t     data; /**< Signal info */
      };
 
    struct _Ecore_Exe_Event_Data_Line /**< Lines from a child process */
