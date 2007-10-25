@@ -14,7 +14,7 @@
 static inline void
 _soft16_pt_blend_transp_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha)
 {
-   if (alpha == 31) *p_dst = src;
+   if (alpha == 32) *p_dst = src;
    else if (alpha != 0)
      {
         DATA32 a, b;
@@ -359,7 +359,7 @@ _soft16_pt_blend_transp_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA8 a
    g1 = ((((src >> 5) & 0x3f) * g) >> 6) & 0x3f;
    b1 = (((src & 0x1f) * b) >> 5) & 0x1f;
 
-   if (alpha == 31) *p_dst = (r1 << 11) | (g1 << 5) | b1;
+   if (alpha == 32) *p_dst = (r1 << 11) | (g1 << 5) | b1;
    else
      {
         DATA32 rgb_unpack, d;

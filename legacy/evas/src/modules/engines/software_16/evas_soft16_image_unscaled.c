@@ -149,7 +149,7 @@ _soft16_image_draw_unscaled_solid_solid_mul_color(Soft16_Image *src,
    src_itr = src->pixels + src_offset;
    dst_itr = dst->pixels + dst_offset;
 
-   if (a == 31)
+   if (a == 32)
       for (y = 0; y < h; y++)
          {
             _soft16_scanline_blend_solid_solid_mul_color_solid
@@ -185,7 +185,7 @@ _soft16_image_draw_unscaled_transp_solid_mul_color(Soft16_Image *src,
    alpha_itr = src->alpha + src_offset;
    dst_itr = dst->pixels + dst_offset;
 
-   if (a == 31)
+   if (a == 32)
       for (y = 0; y < h; y++)
          {
             _soft16_scanline_blend_transp_solid_mul_color_solid
@@ -232,7 +232,7 @@ _soft16_image_draw_unscaled_mul(Soft16_Image *src, Soft16_Image *dst,
                                 int width, int height, DATA8 r, DATA8 g,
 				DATA8 b, DATA8 a)
 {
-   if ((a == r) && (a == (g >> 1)) && (a == b))
+   if ((r == b) && (r == (g >> 1)) && (r == (a - 1)))
       _soft16_image_draw_unscaled_mul_alpha(src, dst, dc, src_offset,
                                             dst_offset, width, height, a);
    else
@@ -254,7 +254,8 @@ soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst,
 
    if (!dc->mul.use)
      {
-	r = b = a = 31;
+	a = 32;
+	r = b = 31;
 	g = 63;
 	mul_rgb565 = 0xffff;
      }
@@ -271,6 +272,7 @@ soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst,
 	if (r > a) r = a;
 	if (g > (a << 1)) g = (a << 1);
 	if (b > a) b = a;
+	a++;
 
 	mul_rgb565 = (r << 11) || (g << 5) | b;
      }
