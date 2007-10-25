@@ -14,9 +14,6 @@
    fprintf(stderr, "NOT_IMPLEMENTED: %s() at %s:%d\n",                  \
            __FUNCTION__, __FILE__, __LINE__)
 
-
-static int cpunum = 0;
-
 static void *
 eng_context_new(void *data)
 {
@@ -333,8 +330,7 @@ eng_image_alpha_get(void *data, void *image)
 
    if (!image) return 0;
    im = image;
-   if (im->have_alpha) return 1;
-   return 0;
+   return im->have_alpha;
 }
 
 static int
@@ -348,7 +344,7 @@ eng_image_alpha_set(void *data, void *image, int have_alpha)
 {
    if (!image) return NULL;
    have_alpha = !!have_alpha;
-   soft16_image_alpha_set(image, have_alpha);
+   image = soft16_image_alpha_set(image, have_alpha);
    return image;
 }
 
@@ -372,6 +368,7 @@ eng_image_comment_get(void *data, void *image, char *key)
 static char *
 eng_image_format_get(void *data, void *image)
 {
+   NOT_IMPLEMENTED();
    return NULL;
 }
 
@@ -384,11 +381,13 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 static void
 eng_image_native_set(void *data, void *image, void *native)
 {
+   NOT_IMPLEMENTED();
 }
 
 static void *
 eng_image_native_get(void *data, void *image)
 {
+   NOT_IMPLEMENTED();
    return NULL;
 }
 
@@ -843,7 +842,6 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    em->functions = (void *)(&func);
-   cpunum = evas_common_cpu_count();
    return 1;
 }
 

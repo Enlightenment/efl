@@ -88,7 +88,7 @@ void soft16_image_free(Soft16_Image *im);
 Soft16_Image *soft16_image_load(const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
 void soft16_image_load_data(Soft16_Image *im);
 void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
-void soft16_image_alpha_set(Soft16_Image *im, int have_alpha);
+Soft16_Image *soft16_image_alpha_set(Soft16_Image *im, int have_alpha);
 Soft16_Image *soft16_image_size_set(Soft16_Image *im, int w, int h);
 
 
@@ -123,6 +123,6 @@ soft16_line_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
  */
 void *soft16_font_glyph_new(void *data, RGBA_Font_Glyph *fg);
 void  soft16_font_glyph_free(void *ext_dat);
-void  soft16_font_glyph_draw(Soft16_Image *dst, void *data, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
+void  soft16_font_glyph_draw(void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y);
 
 #endif

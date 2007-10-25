@@ -246,15 +246,19 @@ _soft16_font_glyph_draw_mono(Soft16_Image *dst,
 }
 
 void
-soft16_font_glyph_draw(Soft16_Image *dst, void *data,
-		       RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg,
-		       int x, int y)
+soft16_font_glyph_draw(void *data, void *dest, void *context,
+		       RGBA_Font_Glyph *fg, int x, int y)
 {
+   Soft16_Image *dst;
+   RGBA_Draw_Context *dc;
    const DATA8 *bitmap;
    DATA8 alpha, r, g, b;
    DATA16 rgb565;
    Evas_Rectangle ext;
    int bpitch, bw, bh;
+
+   dst = data;
+   dc = context;
 
    alpha = A_VAL(&dc->col.col) >> 3;
    if (alpha == 0) return; /* precision is 5 bits, 3 bits lost */

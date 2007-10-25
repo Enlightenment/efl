@@ -447,10 +447,10 @@ soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
    dc->clip = clip_bkp;
 }
 
-void
+Soft16_Image *
 soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 {
-   if (im->have_alpha == have_alpha) return;
+   if (im->have_alpha == have_alpha) return im;
    im->have_alpha = have_alpha;
 
    if ((im->pixels) && (im->free_pixels))
@@ -469,6 +469,16 @@ soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 	     im->alpha = (DATA8*)(im->pixels + size);
 	     memset(im->alpha, 0x1f, size);
 	  }
+	return im;
+     }
+   else
+     {
+	Soft16_Image *im_new;
+
+	im_new = soft16_image_new(im->w, im->h, im->stride, have_alpha,
+				  im->pixels, 1);
+	soft16_image_free(im);
+	return im_new;
      }
 }
 
