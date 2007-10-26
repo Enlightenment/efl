@@ -1,10 +1,5 @@
 #include "evas_soft16.h"
 
-#define IMG_BYTE_SIZE(stride, height, has_alpha)                       \
-   ((stride) * (height) * (!(has_alpha) ? 2 : 3))
-
-static Evas_Hash *_soft16_image_cache_hash = NULL;
-
 static inline int
 _calc_stride(int w)
 {
@@ -109,48 +104,26 @@ soft16_image_cache_key_from_img(const Soft16_Image *im, char *buf,
 void
 soft16_image_free(Soft16_Image *im)
 {
-   if (!im) return;
+   if (!im)
+     return;
+
    im->references--;
-   if (im->references > 0) return;
-   if (im->file)
-     {
-	char buf[4096 + 1024];
-	soft16_image_cache_key_from_img(im, buf, sizeof(buf));
-	_soft16_image_cache_hash = evas_hash_del(_soft16_image_cache_hash,
-						 buf, im);
-     }
+   if (im->references > 0)
+     return;
+
+   if (im->cache_key)
+     soft16_image_cache_put(im);
+   else
+     soft16_image_destroy(im);
+}
+
+void
+soft16_image_destroy(Soft16_Image *im)
+{
    if (im->file) evas_stringshare_del(im->file);
    if (im->key) evas_stringshare_del(im->key);
    if (im->free_pixels) free(im->pixels);
    free(im);
-}
-
-#define STAT_GAP 2
-
-static Soft16_Image *
-soft16_image_cache_get(const char *cache_key)
-{
-   Soft16_Image *im;
-
-   im = evas_hash_find(_soft16_image_cache_hash, cache_key);
-   if (im)
-     {
-	time_t t;
-
-	t = time(NULL);
-	if ((t - im->laststat) > STAT_GAP)
-	  {
-	     struct stat st;
-
-	     if (stat(im->file, &st) < 0) return NULL;
-	     if (st.st_mtime != im->timestamp) return NULL;
-
-	     im->laststat = t;
-	  }
-	im->references++;
-     }
-
-   return im;
 }
 
 static Soft16_Image *
@@ -192,13 +165,17 @@ soft16_image_load(const char *file, const char *key, int *error,
    char buf[4096 + 1024];
 
    *error = 0;
-   if (!file) return NULL;
+   if (!file)
+     return NULL;
+
    soft16_image_cache_key(lo, key, file, buf, sizeof(buf));
    im = soft16_image_cache_get(buf);
-   if (im) return im;
+   if (im)
+     return im;
 
    im = soft16_image_load_new(file, key, lo);
-   if (im) _soft16_image_cache_hash = evas_hash_add(_soft16_image_cache_hash, buf, im);
+   if (im)
+     soft16_image_cache_add(im, buf);
 
    return im;
 }
@@ -453,7 +430,7 @@ soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
    if (im->have_alpha == have_alpha) return im;
    im->have_alpha = have_alpha;
 
-   if ((im->pixels) && (im->free_pixels))
+   if ((im->pixels) && (im->free_pixels) && (im->references == 1))
      {
 	int size;
 
@@ -469,6 +446,9 @@ soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 	     im->alpha = (DATA8*)(im->pixels + size);
 	     memset(im->alpha, 0x1f, size);
 	  }
+
+	if (im->cache_key)
+	  soft16_image_cache_remove(im);
 	return im;
      }
    else

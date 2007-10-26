@@ -58,6 +58,9 @@
 #define pld(addr, off)
 #endif /* __ARMEL__ */
 
+#define IMG_BYTE_SIZE(stride, height, has_alpha)                       \
+   ((stride) * (height) * (!(has_alpha) ? 2 : 3))
+
 typedef struct _Soft16_Image Soft16_Image;
 
 struct _Soft16_Image
@@ -75,9 +78,10 @@ struct _Soft16_Image
 
    Evas_Image_Load_Opts lo;   // load options
 
+   const char *cache_key;
+
    unsigned char  have_alpha  : 1; // 1 if we have halpha
    unsigned char  free_pixels : 1; // 1 if pixels should be freed
-   unsigned char  free_alpha  : 1; // 1 if alpha mask should be freed
 };
 
 /**
@@ -85,6 +89,7 @@ struct _Soft16_Image
  */
 Soft16_Image *soft16_image_new(int w, int h, int stride, int have_alpha, DATA16 *pixels, int copy);
 void soft16_image_free(Soft16_Image *im);
+void soft16_image_destroy(Soft16_Image *im);
 Soft16_Image *soft16_image_load(const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
 void soft16_image_load_data(Soft16_Image *im);
 void soft16_image_draw(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
@@ -99,6 +104,17 @@ void soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst, RGBA
 void soft16_image_convert_from_rgb(Soft16_Image *im, const DATA32 *src);
 void soft16_image_convert_from_rgba(Soft16_Image *im, const DATA32 *src);
 
+/**
+ * Image cache (evas_soft16_image_cache.c)
+ */
+void soft16_image_cache_flush(void);
+int soft16_image_cache_size_get(void);
+void soft16_image_cache_size_set(int limit);
+
+Soft16_Image *soft16_image_cache_get(const char *cache_key);
+void soft16_image_cache_put(Soft16_Image *im);
+void soft16_image_cache_add(Soft16_Image *im, const char *cache_key);
+void soft16_image_cache_del(Soft16_Image *im);
 
 /**
  * Rectangle (evas_soft16_rectangle.c)

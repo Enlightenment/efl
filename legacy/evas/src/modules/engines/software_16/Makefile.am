@@ -14,6 +14,7 @@ evas_engine.c \
 evas_soft16.h \
 evas_soft16_dither_mask.c \
 evas_soft16_main.c \
+evas_soft16_image_cache.c \
 evas_soft16_image_unscaled.c \
 evas_soft16_image_scaled_sampled.c \
 evas_soft16_font.c \
@@ -32,6 +33,7 @@ evas_engine.c \
 evas_soft16.h \
 evas_soft16_dither_mask.c \
 evas_soft16_main.c \
+evas_soft16_image_cache.c \
 evas_soft16_image_unscaled.c \
 evas_soft16_image_scaled_sampled.c \
 evas_soft16_font.c \

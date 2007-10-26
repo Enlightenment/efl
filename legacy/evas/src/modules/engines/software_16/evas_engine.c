@@ -491,16 +491,23 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 	  {
 	     Soft16_Image *im_new;
 
-	     im_new = soft16_image_new(im->w, im->h, im->stride, im->have_alpha, im->pixels, 1);
-	     if (!im_new) return im;
+	     im_new = soft16_image_new(im->w, im->h, im->stride, im->have_alpha,
+				       im->pixels, 1);
+	     if (!im_new)
+	       {
+		  if (image_data) *image_data = NULL;
+		  return im;
+	       }
 	     soft16_image_free(im);
 	     im = im_new;
 	  }
+	if (im->cache_key)
+	  soft16_image_cache_del(im);
      }
 
    if (image_data) *image_data = (DATA32 *) im->pixels;
 
-   return image;
+   return im;
 }
 
 static void *
@@ -532,23 +539,19 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 static void
 eng_image_cache_flush(void *data)
 {
-   int tmp_size;
-
-   tmp_size = evas_common_image_get_cache();
-   evas_common_image_set_cache(0);
-   evas_common_image_set_cache(tmp_size);
+   soft16_image_cache_flush();
 }
 
 static void
 eng_image_cache_set(void *data, int bytes)
 {
-   evas_common_image_set_cache(bytes);
+   soft16_image_cache_size_set(bytes);
 }
 
 static int
 eng_image_cache_get(void *data)
 {
-   return evas_common_image_get_cache();
+   return soft16_image_cache_size_get();
 }
 
 static void *
