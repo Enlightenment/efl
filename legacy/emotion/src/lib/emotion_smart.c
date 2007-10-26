@@ -107,8 +107,11 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 	  {
 	     if (func_module_open(obj, mod, video, &(sd->module_options)))
 	       {
-		  (*mod)->handle = handle;
-		  return 1;
+		  if (*mod)
+		    {
+		       (*mod)->handle = handle;
+		       return 1;
+		    }
 	       }
 	  }
 	dlclose(handle);
