@@ -1,6 +1,10 @@
 #include <locale.h>
 #ifndef _WIN32
 # include <langinfo.h>
+#else
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
 #endif /* _WIN32 */
 #include "ecore_private.h"
 #include "Ecore.h"
@@ -8,9 +12,7 @@
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
 
-#ifndef _WIN32
 int _ecore_fps_debug = 0;
-#endif
 
 /** OpenBSD does not define CODESET
  * FIXME ??
@@ -54,9 +56,9 @@ ecore_init(void)
 	     printf("WARNING: not a utf8 locale!\n");
 	  }
 	 */
-#ifndef _WIN32
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();
+#ifndef _WIN32
 	_ecore_signal_init();
         _ecore_exe_init();
 #endif
@@ -81,9 +83,7 @@ ecore_shutdown(void)
    if (--_ecore_init_count)
       return _ecore_init_count;
 
-#ifndef _WIN32
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
-#endif
    _ecore_animator_shutdown();
 #ifndef _WIN32
    _ecore_exe_shutdown();
@@ -164,22 +164,32 @@ _ecore_magic_string_get(Ecore_Magic m)
    return "<UNKNOWN>";
 }
 
-#ifndef _WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* "running" (and the inverse being time spent running)... this does not */
 /* account for other apps and multitasking... */
 
 static int _ecore_fps_debug_init_count = 0;
+#ifndef _WIN32
 static int _ecore_fps_debug_fd = -1;
 unsigned int *_ecore_fps_runtime_mmap = NULL;
+#else
+static HANDLE _ecore_fps_debug_fd = NULL;
+static HANDLE _ecore_fps_debug_fm = NULL;
+unsigned int *_ecore_fps_runtime_mmap = NULL;
+#endif /* _WIN32 */
 
 void
 _ecore_fps_debug_init(void)
 {
    char buf[4096];
+#ifdef _WIN32
+   char *tmp;
+#endif /* _WIN32 */
 
    _ecore_fps_debug_init_count++;
    if (_ecore_fps_debug_init_count > 1) return;
+
+#ifndef _WIN32
    snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
    _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
    if (_ecore_fps_debug_fd < 0)
@@ -197,6 +207,45 @@ _ecore_fps_debug_init(void)
 				       MAP_SHARED,
 				       _ecore_fps_debug_fd, 0);
      }
+#else
+   tmp = getenv("TMP");
+   if (!tmp) tmp = getenv("TEMP");
+   if (!tmp) tmp = getenv("USERPROFILE");
+   if (!tmp) tmp = getenv("windir");
+   if (!tmp) tmp = "C:";
+   snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, (int)GetCurrentProcessId());
+   _ecore_fps_debug_fd = CreateFile(buf,
+                                    FILE_READ_DATA | FILE_WRITE_DATA,
+                                    FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                    NULL,
+                                    CREATE_NEW,// | TRUNCATE_EXISTING,
+                                    FILE_ATTRIBUTE_NORMAL,
+                                    NULL);
+   if (_ecore_fps_debug_fd)
+     {
+	unsigned int zero = 0;
+        DWORD        out;
+
+        _ecore_fps_debug_fm = CreateFileMapping(_ecore_fps_debug_fd,
+                                                NULL,
+                                                PAGE_READWRITE,
+                                                0,
+                                                (DWORD)sizeof(unsigned int),
+                                                NULL);
+        if (_ecore_fps_debug_fm)
+          {
+             WriteFile(_ecore_fps_debug_fd,
+                       &zero, sizeof(unsigned int),
+                       &out, NULL);
+             _ecore_fps_runtime_mmap = MapViewOfFile(_ecore_fps_debug_fm,
+                                                     FILE_MAP_WRITE,
+                                                     0, 0,
+                                                     sizeof(unsigned int));
+          }
+        else
+          CloseHandle(_ecore_fps_debug_fd);
+     }
+#endif /* _WIN32 */
 }
 
 void
@@ -207,7 +256,26 @@ _ecore_fps_debug_shutdown(void)
    if (_ecore_fps_debug_fd >= 0)
      {
 	char buf[4096];
+#ifdef _WIN32
+        char *tmp;
 
+        tmp = getenv("TMP");
+        if (!tmp) tmp = getenv("TEMP");
+        if (!tmp) tmp = getenv("USERPROFILE");
+        if (!tmp) tmp = getenv("windir");
+        if (!tmp) tmp = "C:/";
+	snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, (int)GetCurrentProcessId());
+	if (_ecore_fps_runtime_mmap)
+	  {
+	     UnmapViewOfFile(_ecore_fps_runtime_mmap);
+	     _ecore_fps_runtime_mmap = NULL;
+	  }
+        CloseHandle(_ecore_fps_debug_fm);
+        CloseHandle(_ecore_fps_debug_fd);
+	_ecore_fps_debug_fd = NULL;
+	_ecore_fps_debug_fm = NULL;
+	_unlink(buf);
+#else
 	snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
 	unlink(buf);
 	if (_ecore_fps_runtime_mmap)
@@ -217,6 +285,7 @@ _ecore_fps_debug_shutdown(void)
 	  }
 	close(_ecore_fps_debug_fd);
 	_ecore_fps_debug_fd = -1;
+#endif /* _WIN32 */
      }
 }
 
@@ -238,4 +307,3 @@ _ecore_fps_debug_runtime_add(double t)
 	*(_ecore_fps_runtime_mmap) += tm;
      }
 }
-#endif
