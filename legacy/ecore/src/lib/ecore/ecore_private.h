@@ -95,7 +95,7 @@
 #define ECORE_MAGIC_CHECK(d, m)     ((d) && ((d)->__magic == (m)))
 #define ECORE_MAGIC_FAIL(d, m, fn)  _ecore_magic_fail((d), (d) ? (d)->__magic : 0, (m), (fn));
 
-/* undef the following, we want out version */
+/* undef the following, we want our version */
 #undef FREE
 #define FREE(ptr) free(ptr); ptr = NULL;
 
