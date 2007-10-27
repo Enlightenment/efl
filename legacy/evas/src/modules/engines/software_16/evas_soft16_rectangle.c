@@ -83,7 +83,7 @@ soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
    Evas_Rectangle dr;
    Cutout_Rects *rects;
    Cutout_Rect  *r;
-   int c, cx, cy, cw, ch;
+   struct RGBA_Draw_Context_clip c_bkp;
    int i;
 
    /* handle cutouts here! */
@@ -103,14 +103,14 @@ soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
 	return;
      }
 
-   /* save out clip info */
-   c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
+   c_bkp = dc->clip;
+
    evas_common_draw_context_clip_clip(dc, 0, 0, dst->w, dst->h);
    evas_common_draw_context_clip_clip(dc, x, y, w, h);
    /* our clip is 0 size.. abort */
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
      {
-	dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+	dc->clip = c_bkp;
 	return;
      }
    rects = evas_common_draw_context_apply_cutouts(dc);
@@ -121,7 +121,6 @@ soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
         _soft16_rectangle_draw_int(dst, dc, dr);
      }
    evas_common_draw_context_apply_clear_cutouts(rects);
-   /* restore clip info */
-   dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+   dc->clip = c_bkp;
 }
 
