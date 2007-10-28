@@ -132,6 +132,8 @@ evas_common_image_delete(RGBA_Image* im)
 static int
 _evas_common_image_dirty(RGBA_Image* dst, const RGBA_Image* src)
 {
+   evas_common_load_image_data_from_file(src);
+   evas_common_image_colorspace_normalize(src);
    evas_common_image_colorspace_normalize(dst);
    evas_common_image_surface_alloc(dst->image);
    evas_common_blit_rectangle(src, dst, 0, 0, src->image->w, src->image->h, 0, 0);
