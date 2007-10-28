@@ -1027,6 +1027,8 @@ _pixels_get(void *data, Evas_Object *obj)
    sd = data;
    evas_object_image_size_get(obj, &iw, &ih);
    sd->module->video_data_size_get(sd->video, &w, &h);
+   w = (w >> 1) << 1;
+   h = (h >> 1) << 1;
    if ((w != iw) || (h != ih))
      {
 	evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
