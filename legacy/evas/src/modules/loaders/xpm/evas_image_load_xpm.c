@@ -128,7 +128,12 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
         xpm_parse_done();
         return 0;
      }
-   fread(s, 1, 9, f);
+   if (fread(s, 9, 1, f) != 1)
+     {
+        fclose(f);
+	xpm_parse_done();
+	return 0;
+     }
    rewind(f);
    s[9] = 0;
    if (strcmp("/* XPM */", s))

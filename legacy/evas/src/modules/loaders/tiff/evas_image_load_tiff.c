@@ -126,7 +126,11 @@ evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key
    if (!ffile)
       return 0;
 
-   fread(&magic_number, sizeof(uint16), 1, ffile);
+   if (fread(&magic_number, sizeof(uint16), 1, ffile) != 1)
+     {
+        fclose(ffile);
+        return 0;
+     }
    /* Apparently rewind(f) isn't sufficient */
    fseek(ffile, (long)0, SEEK_SET);
 
