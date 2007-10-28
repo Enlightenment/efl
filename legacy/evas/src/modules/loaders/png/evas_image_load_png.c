@@ -39,7 +39,7 @@ evas_image_load_file_head_png(RGBA_Image *im, const char *file, const char *key)
    if (!f) return 0;
 
    /* if we havent read the header before, set the header data */
-   if (fread(buf, 1, PNG_BYTES_TO_CHECK, f) != 1)
+   if (fread(buf, PNG_BYTES_TO_CHECK, 1, f) != 1)
      {
 	fclose(f);
 	return 0;
