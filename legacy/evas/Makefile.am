@@ -24,7 +24,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas-software-ddraw.pc \
 		       evas-software-16-ddraw.pc \
 		       evas-direct3d.pc \
-		       evas-sdl.pc \
+		       evas-software-sdl.pc \
 		       evas.pc \
 		       evas.spec \
 		       debian/changelog
@@ -51,7 +51,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas-software-ddraw.pc \
 	     evas-software-16-ddraw.pc \
 	     evas-direct3d.pc \
-	     evas-sdl.pc \
+	     evas-software-sdl.pc \
 	     evas.pc \
 	     evas.spec.in evas.spec \
 	     debian/changelog \
@@ -147,12 +147,12 @@ pdirect3d = evas-direct3d.pc
 endif
 
 if BUILD_ENGINE_SDL
-psdl = evas-sdl.pc
+psoftwaresdl = evas-software-sdl.pc
 endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pframebuffer) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
-	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psdl) \
+	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psoftwaresdl) \
 	$(psoftware16x11) $(pdirect3d) $(psoftwared16draw) $(popenglglew)

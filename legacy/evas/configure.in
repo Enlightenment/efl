@@ -2223,7 +2223,7 @@ evas-xrender-xcb.pc
 evas-software-ddraw.pc
 evas-software-16-ddraw.pc
 evas-direct3d.pc
-evas-sdl.pc
+evas-software-sdl.pc
 evas.pc
 src/Makefile
 src/lib/Makefile
@@ -2306,7 +2306,7 @@ echo "  Software Framebuffer.......: $have_evas_fb"
 echo "  Software Qtopia............: $have_evas_qtopia"
 echo "  Software Memory Buffer.....: $have_evas_buffer"
 echo "  DirectFB...................: $have_evas_directfb"
-echo "  SDL........................: $have_evas_sdl"
+echo "  Software SDL...............: $have_evas_sdl"
 echo "  OpenGL Glew................: $have_evas_gl_glew"
 echo "  OpenGL X11.................: $have_evas_gl_x11"
 echo "  Cairo X11..................: $have_evas_cairo_x11"
