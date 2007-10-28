@@ -220,7 +220,9 @@ static Emotion_Video_Module em_module =
    em_speed_set, /* speed_set */
    em_speed_get, /* speed_get */
    em_eject, /* eject */
-   em_meta_get /* meta_get */
+   em_meta_get, /* meta_get */
+     
+     NULL /* handle */
 };
 
 static unsigned char

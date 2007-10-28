@@ -1463,7 +1463,7 @@ _em_get_pos_len(Emotion_Xine_Video *ev)
    pthread_mutex_unlock(&(ev->get_pos_len_mutex));
 }
 
-const static Emotion_Video_Module em_module =
+static Emotion_Video_Module em_module =
 {
    em_init, /* init */
      em_shutdown, /* shutdown */
@@ -1519,7 +1519,9 @@ const static Emotion_Video_Module em_module =
      em_speed_set, /* speed_set */
      em_speed_get, /* speed_get */
      em_eject, /* eject */
-     em_meta_get /* meta_get */
+     em_meta_get, /* meta_get */
+     
+     NULL /* handle */
 };
 
 unsigned char
