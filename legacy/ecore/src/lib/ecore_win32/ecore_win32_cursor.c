@@ -47,46 +47,46 @@ ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape)
 
    switch (shape)
      {
-       case ECORE_WIN32_CURSO_SHAPE_APP_STARTING:
+       case ECORE_WIN32_CURSOR_SHAPE_APP_STARTING:
          cursor_name = IDC_APPSTARTING;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_ARROW:
+       case ECORE_WIN32_CURSOR_SHAPE_ARROW:
          cursor_name = IDC_ARROW;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_CROSS:
+       case ECORE_WIN32_CURSOR_SHAPE_CROSS:
          cursor_name = IDC_CROSS;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_HAND:
+       case ECORE_WIN32_CURSOR_SHAPE_HAND:
          cursor_name = IDC_HAND;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_HELP:
+       case ECORE_WIN32_CURSOR_SHAPE_HELP:
          cursor_name = IDC_HELP;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_I_BEAM:
+       case ECORE_WIN32_CURSOR_SHAPE_I_BEAM:
          cursor_name = IDC_IBEAM;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_NO:
+       case ECORE_WIN32_CURSOR_SHAPE_NO:
          cursor_name = IDC_NO;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_SIZE_ALL:
+       case ECORE_WIN32_CURSOR_SHAPE_SIZE_ALL:
          cursor_name = IDC_SIZEALL;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_SIZE_NESW:
+       case ECORE_WIN32_CURSOR_SHAPE_SIZE_NESW:
          cursor_name = IDC_SIZENESW;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_SIZE_NS:
+       case ECORE_WIN32_CURSOR_SHAPE_SIZE_NS:
          cursor_name = IDC_SIZENS;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_SIZE_NWSE:
+       case ECORE_WIN32_CURSOR_SHAPE_SIZE_NWSE:
          cursor_name = IDC_SIZENWSE;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_SIZE_WE:
+       case ECORE_WIN32_CURSOR_SHAPE_SIZE_WE:
          cursor_name = IDC_SIZEWE;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_UP_ARROW:
+       case ECORE_WIN32_CURSOR_SHAPE_UP_ARROW:
          cursor_name = IDC_UPARROW;
          break;
-       case ECORE_WIN32_CURSO_SHAPE_WAIT:
+       case ECORE_WIN32_CURSOR_SHAPE_WAIT:
          cursor_name = IDC_WAIT;
          break;
      default:
