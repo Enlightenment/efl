@@ -313,32 +313,51 @@ fi
 
 fi
 
-AC_CHECK_HEADER(ddraw.h,
+
+AC_MSG_CHECKING(for Evas Software DirectDraw engine)
+PKG_CHECK_EXISTS(evas-software-ddraw >= 0.9.9.41,
   [ have_ddraw="yes"
     AC_DEFINE(HAVE_DIRECTDRAW, 1, [Build Ecore_Win32 with DirectDraw Code])
     ddraw_libs="-lddraw -ldxguid" ],
   [ have_ddraw="no" ]
 )
+AC_MSG_RESULT($have_ddraw)
 AC_SUBST(ddraw_libs)
 
-AC_CHECK_HEADERS(d3d9.h d3dx9.h,
+AC_MSG_CHECKING(for Evas 16bpp Software DirectDraw engine)
+PKG_CHECK_EXISTS(evas-software-16-ddraw >= 0.9.9.41,
+  [ have_ddraw_16="yes"
+    AC_DEFINE(HAVE_DIRECTDRAW_16, 1, [Build Ecore_Win32 with 16 bpp DirectDraw Code])
+    ddraw_16_libs="-lddraw -ldxguid" ],
+  [ have_ddraw_16="no" ]
+)
+AC_MSG_RESULT($have_ddraw_16)
+AC_SUBST(ddraw_16_libs)
+
+AC_MSG_CHECKING(for Evas Direct3D engine)
+PKG_CHECK_EXISTS(evas-direct3d >= 0.9.9.41,
   [ have_direct3d="yes"
     AC_DEFINE(HAVE_DIRECT3D, 1, [Build Ecore_Win32 with Direct3D Code])
     direct3d_libs="-ld3d9 -ld3dx9d" ],
   [ have_direct3d="no" ]
 )
+AC_MSG_RESULT($have_direct3d)
 AC_SUBST(direct3d_libs)
 
 have_win32="no"
-if test "x${have_ddraw}" = "xyes" -o "x${have_direct3d}" = "xyes"; then
+if test "x${have_ddraw}" = "xyes" -o "x${have_ddraw_16}" = "xyes" -o "x${have_direct3d}" = "xyes"; then
   have_win32="yes"
 fi
 
 ECORE_CHECK_MODULE([Win32], [no], [$have_win32],
-  [ecore_win32_libs="$ecore_win32_libs $ddraw_libs $direct3d_libs"])
+  [ecore_win32_libs="$ecore_win32_libs $ddraw_libs $ddraw_16_libs $direct3d_libs"])
 
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw}" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW, 1, [Support for DirectDraw Engine in Ecore_Evas])
+fi
+
+if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw_16}" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW_16, 1, [Support for 16 bpp DirectDraw Engine in Ecore_Evas])
 fi
 
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
@@ -919,7 +938,7 @@ echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_
 else
   echo "  Ecore_X (Xlib backend).......: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xcomposite: $use_xcomposite) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms)"
 fi
-echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (Direct3D: ${have_direct3d})"
+echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d})"
 
 echo "  Ecore_FB.....................: $have_ecore_fb"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
