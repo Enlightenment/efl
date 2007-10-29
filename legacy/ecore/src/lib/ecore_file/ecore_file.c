@@ -14,7 +14,6 @@
 #include <errno.h>
 
 #ifdef _WIN32
-# include <windows.h>
 # include <shlobj.h>
 # include <objidl.h>
 #endif /* _WIN32 */

@@ -25,7 +25,7 @@ ecore_file_download.c
 
 libecore_file_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@fam_libs@ @CURL_LIBS@ @ecore_file_win32_lib@
+@fam_libs@ @CURL_LIBS@ @ecore_file_win32_lib@ @winsock_libs@
 
 endif
 

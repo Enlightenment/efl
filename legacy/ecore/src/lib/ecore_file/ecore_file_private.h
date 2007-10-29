@@ -1,9 +1,9 @@
 #ifndef _FILE_OFFSET_BITS
-#define _FILE_OFFSET_BITS  64
+# define _FILE_OFFSET_BITS  64
 #endif
 
 #ifdef __linux__
-#include <features.h>
+# include <features.h>
 #endif
 #include "ecore_private.h"
 #include "Ecore.h"
