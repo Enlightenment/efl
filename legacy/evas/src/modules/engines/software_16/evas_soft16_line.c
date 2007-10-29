@@ -425,7 +425,7 @@ soft16_line_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 
 	t = y0;
 	y0 = y1;
-	y1 = y0;
+	y1 = t;
      }
 
    if (dx == 0 && dy == 0)
