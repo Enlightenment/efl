@@ -23,6 +23,14 @@ _soft16_scanline_fill_solid_solid(DATA16 *dst, int size, DATA16 rgb565)
    DATA32 rgb565_double;
 
    start = dst;
+
+   if ((long)start & 0x2)
+     {
+	*start = rgb565;
+	start++;
+	size--;
+     }
+
    end = start + (size & ~7);
 
    rgb565_double = (rgb565 << 16) | rgb565;
