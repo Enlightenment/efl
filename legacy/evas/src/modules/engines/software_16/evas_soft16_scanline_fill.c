@@ -10,13 +10,13 @@
  *    _soft16_scanline_<description>_<src>_<dst>[_<modifier>]()
  *
  ****************************************************************************/
-static inline void
+static always_inline void
 _soft16_pt_fill_solid_solid(DATA16 *dst, DATA16 rgb565)
 {
    *dst = rgb565;
 }
 
-static inline void
+static void
 _soft16_scanline_fill_solid_solid(DATA16 *dst, int size, DATA16 rgb565)
 {
    DATA16 *start, *end;
@@ -52,7 +52,7 @@ _soft16_scanline_fill_solid_solid(DATA16 *dst, int size, DATA16 rgb565)
       *start = rgb565;
 }
 
-static inline void
+static always_inline void
 _soft16_pt_fill_transp_solid(DATA16 *dst, DATA32 rgb565_unpack, DATA8 alpha)
 {
    DATA32 d;
@@ -62,7 +62,7 @@ _soft16_pt_fill_transp_solid(DATA16 *dst, DATA32 rgb565_unpack, DATA8 alpha)
    *dst = RGB_565_PACK(d);
 }
 
-static inline void
+static void
 _soft16_scanline_fill_transp_solid(DATA16 *dst, int size, DATA32 rgb565_unpack, DATA8 alpha)
 {
    DATA16 *start, *end;

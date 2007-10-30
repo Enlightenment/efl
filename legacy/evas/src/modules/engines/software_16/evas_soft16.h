@@ -58,6 +58,14 @@
 #define pld(addr, off)
 #endif /* __ARMEL__ */
 
+#ifndef always_inline
+#if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
+#    define always_inline __attribute__((always_inline)) inline
+#else
+#    define always_inline inline
+#endif
+#endif
+
 #define IMG_BYTE_SIZE(stride, height, has_alpha)                       \
    ((stride) * (height) * (!(has_alpha) ? 2 : 3))
 

@@ -1,7 +1,7 @@
 #include "evas_soft16.h"
 #include "evas_soft16_scanline_blend.c"
 
-static inline void
+static always_inline void
 _glyph_pt_mask_solid_solid(DATA16 *dst,
 			   const DATA16 rgb565,
 			   const DATA32 rgb565_unpack,
@@ -20,7 +20,7 @@ _glyph_pt_mask_solid_solid(DATA16 *dst,
      }
 }
 
-static inline void
+static void
 _glyph_scanline_mask_solid_solid(DATA16 *dst,
 				 int size,
 				 const DATA16 rgb565,
@@ -50,7 +50,7 @@ _glyph_scanline_mask_solid_solid(DATA16 *dst,
       _glyph_pt_mask_solid_solid(start, rgb565, rgb565_unpack, mask);
 }
 
-static inline void
+static always_inline void
 _glyph_pt_mask_transp_solid(DATA16 *dst,
 			    DATA32 rgb565_unpack,
 			    DATA8 alpha,
@@ -72,7 +72,7 @@ _glyph_pt_mask_transp_solid(DATA16 *dst,
    *dst = RGB_565_PACK(b);
 }
 
-static inline void
+static void
 _glyph_scanline_mask_transp_solid(DATA16 *dst,
 				  int size,
 				  const DATA32 rgb565_unpack,
@@ -183,7 +183,7 @@ _glyph_scanline(Soft16_Image *dst, const DATA8 *p_mask,
      }
 }
 
-static inline void
+static void
 _soft16_font_glyph_draw_grayscale(Soft16_Image *dst,
 				  RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg,
 				  int x, int y, DATA8 alpha, DATA16 rgb565,
@@ -222,7 +222,7 @@ _glyph_create_mask_line(DATA8 *mask, const DATA8 *bitmap, int w)
      }
 }
 
-static inline void
+static void
 _soft16_font_glyph_draw_mono(Soft16_Image *dst,
 			     RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg,
 			     int x, int y, DATA8 alpha, DATA16 rgb565,

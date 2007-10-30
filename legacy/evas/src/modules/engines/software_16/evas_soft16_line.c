@@ -56,7 +56,7 @@ _is_empty_clip(const struct RGBA_Draw_Context_clip clip)
    return clip.w < 1 || clip.h < 1;
 }
 
-static inline void
+static void
 _soft16_line_point(Soft16_Image *dst, RGBA_Draw_Context *dc, int x, int y)
 {
    DATA16 rgb565, *dst_itr;
@@ -86,7 +86,7 @@ _soft16_line_point(Soft16_Image *dst, RGBA_Draw_Context *dc, int x, int y)
      }
 }
 
-static inline void
+static void
 _soft16_line_horiz(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int x1, int y)
 {
    DATA16 rgb565, *dst_itr;
@@ -124,7 +124,7 @@ _soft16_line_horiz(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int x1, int
      }
 }
 
-static inline void
+static void
 _soft16_line_vert(Soft16_Image *dst, RGBA_Draw_Context *dc, int x, int y0, int y1)
 {
    DATA16 rgb565, *dst_itr;
@@ -281,7 +281,7 @@ _soft16_line_45deg(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int
      }
 }
 
-static inline void
+static always_inline void
 _soft16_line_aliased_pt(DATA16 *dst_itr, DATA16 rgb565, DATA32 rgb565_unpack, DATA8 alpha)
 {
    if (alpha == 32)
@@ -290,7 +290,7 @@ _soft16_line_aliased_pt(DATA16 *dst_itr, DATA16 rgb565, DATA32 rgb565_unpack, DA
      _soft16_pt_fill_transp_solid(dst_itr, rgb565_unpack, alpha);
 }
 
-static inline void
+static void
 _soft16_line_aliased(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1)
 {
    int dx, dy, step_y, step_dst_itr;
