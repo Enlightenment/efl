@@ -448,7 +448,7 @@ soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 	  }
 
 	if (im->cache_key)
-	  soft16_image_cache_remove(im);
+	  soft16_image_cache_del(im);
 	return im;
      }
    else
