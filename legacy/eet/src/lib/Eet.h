@@ -38,7 +38,7 @@ extern "C" {
 
 /***************************************************************************/
 
-#define EET_T_UNKNOW     0 /**< Unknown data encding type */
+#define EET_T_UNKNOW     0 /**< Unknown data encoding type */
 #define EET_T_CHAR       1 /**< Data type: char */
 #define EET_T_SHORT      2 /**< Data type: short */
 #define EET_T_INT        3 /**< Data type: int */
@@ -87,7 +87,7 @@ extern "C" {
    typedef struct _Eet_Data_Descriptor       Eet_Data_Descriptor;
 
    typedef struct _Eet_Data_Descriptor_Class Eet_Data_Descriptor_Class;
-   
+
 #define EET_DATA_DESCRIPTOR_CLASS_VERSION 1
    struct _Eet_Data_Descriptor_Class
      {
@@ -108,7 +108,7 @@ extern "C" {
 	   void    (*hash_free) (void *h);
 	} func;
      };
-   
+
 /***************************************************************************/
 
    /**
@@ -707,12 +707,12 @@ extern "C" {
    EAPI Eet_Data_Descriptor *eet_data_descriptor_new(const char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h));
    /*
     * FIXME:
-    * 
+    *
     * moving to this api from the old above. this will break things when the
     * move happens - but be warned
     */
    EAPI Eet_Data_Descriptor *eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc);
-       
+
    /**
     * This function frees a data descriptor when it is not needed anymore.
     * @param edd The data descriptor to free.
@@ -789,22 +789,22 @@ extern "C" {
     * generated. This callback should append to any existing text buffer and
     * will be passed the pointer @p dumpdata as a parameter as well as a string
     * with new text to be appended.
-    * 
+    *
     * Example:
-    * 
+    *
     * @code
-    * 
+    *
     * void output(void *data, const char *string)
     * {
     *   printf("%s", string);
     * }
-    * 
+    *
     * void dump(const char *file)
     * {
     *   FILE *f;
     *   int len;
     *   void *data;
-    * 
+    *
     *   f = fopen(file, "r");
     *   fseek(f, 0, SEEK_END);
     *   len = ftell(f);
@@ -815,7 +815,7 @@ extern "C" {
     *   eet_data_text_dump(data, len, output, NULL);
     * }
     * @endcode
-    * 
+    *
     */
    EAPI int eet_data_text_dump(const void *data_in, int size_in, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
 
@@ -830,7 +830,7 @@ extern "C" {
     * an encoded data lump the same way eet_data_descriptor_encode() takes an
     * in-memory data struct and encodes into a binary blob. @p text is a normal
     * C string.
-    * 
+    *
     */
    EAPI void *eet_data_text_undump(const char *text, int textlen, int *size_ret);
 
