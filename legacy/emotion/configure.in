@@ -47,7 +47,7 @@ if test "x${libdir}" = 'x${exec_prefix}/lib'; then
     fi
   fi
 fi
-							
+
 dnl Set PACKAGE_DATA_DIR in config.h.
 if test "x${prefix}" = "xNONE"; then
   AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Shared Data Directory])
@@ -169,9 +169,6 @@ fi
 AM_CONDITIONAL([BUILD_XINE_MODULE], [test "$HAVE_XINE" = yes])
 AM_CONDITIONAL([BUILD_GSTREAMER_MODULE], [test "$HAVE_GSTREAMER" = yes])
 
-AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
-AC_SUBST(dlopen_libs)
-
 AC_OUTPUT([
 Makefile
 emotion.pc
@@ -213,4 +210,3 @@ echo "    binaries.......: $bindir"
 echo "    libraries......: $libdir"
 echo "    headers........: $includedir"
 echo
-

@@ -4,6 +4,8 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Job.h>
+#include <Ecore_Data.h>
+#include <Ecore_Str.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -64,7 +66,7 @@ struct _Emotion_Module_Options
 
 struct _Emotion_Video_Module
 {
-   unsigned char (*init) (Evas_Object *obj, void **video, Emotion_Module_Options *opt);
+   unsigned char  (*init) (Evas_Object *obj, void **video, Emotion_Module_Options *opt);
    int            (*shutdown) (void *video);
    unsigned char  (*file_open) (const char *file, Evas_Object *obj, void *video);
    void           (*file_close) (void *ef);
@@ -119,8 +121,9 @@ struct _Emotion_Video_Module
    double         (*speed_get) (void *ef);
    int            (*eject) (void *ef);
    const char *   (*meta_get) (void *ef, int meta);
-   
-   void          *handle;
+
+   Ecore_Plugin    *plugin;
+   int              group_id;
 };
 
 EAPI void *_emotion_video_get(Evas_Object *obj);
@@ -136,5 +139,5 @@ EAPI void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
 EAPI void  _emotion_file_ref_set(Evas_Object *obj, char *file, int num);
 EAPI void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
 EAPI void  _emotion_spu_button_set(Evas_Object *obj, int button);
-    
+
 #endif

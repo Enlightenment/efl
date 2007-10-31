@@ -328,6 +328,7 @@ em_shutdown(void *video)
    ecore_list_destroy (ev->audio_sinks);
 
    /* FIXME: and the evas object ? */
+   if (ev->obj_data) free(ev->obj_data);
 
    ecore_main_fd_handler_del(ev->fd_ev_handler);
    close(ev->fd_ev_write);
