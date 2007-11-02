@@ -36,8 +36,8 @@ evas_software_ddraw_output_buffer_new(int   depth,
 void
 evas_software_ddraw_output_buffer_free(DDraw_Output_Buffer *ddob)
 {
-  if (ddob->image) free(ddob->image);
-  free(ddob);
+   if (ddob->image) free(ddob->image);
+   free(ddob);
 }
 
 void
