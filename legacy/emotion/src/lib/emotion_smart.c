@@ -85,17 +85,18 @@ static void _smart_clip_unset(Evas_Object * obj);
 /* Globals for the E Video Object */
 /**********************************/
 static Evas_Smart  *smart = NULL;
+static group_id = -1;
 
 static unsigned char
 _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
 {
    Ecore_Plugin *plugin;
-   int group_id;
    char *tmp = NULL;
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   group_id = ecore_path_group_new("emotion_module");
+   if (group_id < 0)
+     group_id = ecore_path_group_new("emotion_module");
    tmp = getenv("EMOTION_MODULES_DIR");
    if (tmp)
      ecore_path_group_add(group_id, tmp);
@@ -123,7 +124,9 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    else
      printf ("Unable to load module %s\n", name);
 
-   ecore_path_group_del(group_id);
+   if (group_id > 0)
+     ecore_path_group_del(group_id);
+
    return 0;
 }
 
@@ -143,8 +146,8 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
     */
    /*
    ecore_plugin_unload(plugin);
-   ecore_path_group_del(group_id);
    */
+   ecore_path_group_del(group_id);
 }
 
 /*******************************/
