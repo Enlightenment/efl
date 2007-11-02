@@ -175,6 +175,8 @@ ecore_path_group_find(int group_id, const char *name)
    CHECK_PARAM_POINTER_RETURN("name", name, NULL);
 
    group = __ecore_path_group_find_id(group_id);
+   if (!group)
+     return NULL;
 
    /*
     * Search the paths of the path group for the specified file name
