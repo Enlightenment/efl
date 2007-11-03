@@ -16,6 +16,7 @@ syn keyword	cStructure	images data fonts collections group
 syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script styles style base
+syn keyword	cStructure	spectra spectrum
 syn match	cType		"+ + +;" contained 
 
 syn keyword	cLabel		item name min max type effect
