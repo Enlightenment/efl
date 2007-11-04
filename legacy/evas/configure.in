@@ -76,13 +76,10 @@ want_fontconfig="yes"
 have_fontconfig="no"
 AC_ARG_ENABLE(fontconfig,
   AC_HELP_STRING(
-    [--enable-fontconfig],
-    [enable fontconfig for finding fonts. [[default=enabled]]]
-  ), [
-    want_fontconfig=$enableval
-  ], [
-    want_fontconfig=yes
-  ]
+    [--disable-fontconfig],
+    [disable fontconfig for finding fonts. [[default=enabled]]]
+  ),
+  [ want_fontconfig=$enableval ]
 )
 
 if test "x$want_fontconfig" = "xyes"; then
@@ -227,7 +224,7 @@ have_evas_software_x11="no";
 
 AC_MSG_CHECKING(whether software x11 backend is to be built)
 AC_ARG_ENABLE(software-x11,
-  AC_HELP_STRING([--enable-software-x11], [enable the Software X11 rendering backend]),
+  AC_HELP_STRING([--disable-software-x11], [disable the Software X11 rendering backend]),
   [ want_evas_software_x11=$enableval ]
 )
 AC_MSG_RESULT($want_evas_software_x11)
@@ -393,7 +390,7 @@ have_evas_buffer="no"
 
 AC_MSG_CHECKING(whether buffer backend is to be built)
 AC_ARG_ENABLE(buffer,
-  AC_HELP_STRING([--enable-buffer], [enable the Buffer rendering backend]),
+  AC_HELP_STRING([--disable-buffer], [disable the Buffer rendering backend]),
   [ want_evas_buffer=$enableval ]
 )
 AC_MSG_RESULT($want_evas_buffer)
@@ -547,7 +544,7 @@ have_evas_xrender_x11="no";
 
 AC_MSG_CHECKING(whether xrender x11 backend is to be built)
 AC_ARG_ENABLE(xrender-x11,
-  AC_HELP_STRING([--enable-xrender-x11], [enable the XRender X11 rendering backend]),
+  AC_HELP_STRING([--disable-xrender-x11], [disable the XRender X11 rendering backend]),
   [ want_evas_xrender_x11=$enableval ]
 )
 AC_MSG_RESULT($want_evas_xrender_x11)
@@ -641,7 +638,7 @@ have_gif="no";
 
 AC_MSG_CHECKING(whether to enable gif image loader)
 AC_ARG_ENABLE(image-loader-gif,
-  AC_HELP_STRING([--enable-image-loader-gif], [enable GIF image loader]),
+  AC_HELP_STRING([--disable-image-loader-gif], [disable GIF image loader]),
   [ want_gif=$enableval ]
 )
 AC_MSG_RESULT($want_gif)
@@ -680,7 +677,7 @@ want_png="yes";
 have_png="no";
 
 AC_ARG_ENABLE(image-loader-png,
-  AC_HELP_STRING([--enable-image-loader-png], [enable PNG image loader]),
+  AC_HELP_STRING([--disable-image-loader-png], [disable PNG image loader]),
   [ want_png=$enableval ]
 )
 AC_MSG_RESULT($want_png)
@@ -703,7 +700,7 @@ have_jpeg="no";
 
 AC_MSG_CHECKING(whether to enable jpeg image loader)
 AC_ARG_ENABLE(image-loader-jpeg,
-  AC_HELP_STRING([--enable-image-loader-jpeg], [enable JPEG image loader]),
+  AC_HELP_STRING([--disable-image-loader-jpeg], [disable JPEG image loader]),
   [ want_jpeg=$enableval ]
 )
 AC_MSG_RESULT($want_jpeg)
@@ -736,8 +733,8 @@ AM_CONDITIONAL(BUILD_SAVER_JPEG, test x$have_jpeg_saver = xyes)
 have_eet=no
 AC_ARG_ENABLE(image-loader-eet,
   AC_HELP_STRING(
-    [--enable-image-loader-eet],
-    [enable EET image loader. [[default=enabled]]]
+    [--disable-image-loader-eet],
+    [disable EET image loader. [[default=enabled]]]
   ),
   [want_eet_image_loader=$enableval],
   [want_eet_image_loader=yes]
@@ -745,8 +742,8 @@ AC_ARG_ENABLE(image-loader-eet,
 
 AC_ARG_ENABLE(font-loader-eet,
   AC_HELP_STRING(
-    [--enable-font-loader-eet],
-    [enable EET font loader. [[default=enabled]]]
+    [--disable-font-loader-eet],
+    [disable EET font loader. [[default=enabled]]]
   ),
   [want_eet_font_loader=$enableval],
   [want_eet_font_loader=yes]
@@ -789,7 +786,7 @@ AC_ARG_ENABLE(image-loader-edb,
     [enable EDB image loader. [[default=enabled]]]
   ),
   [want_edb_image_loader=$enableval],
-  [want_edb_image_loader=yes]
+  [want_edb_image_loader=no]
 )
 
 # next, if she does, check whether EDB is available
@@ -816,7 +813,7 @@ have_tiff="no";
 
 AC_MSG_CHECKING(whether to enable tiff image loader)
 AC_ARG_ENABLE(image-loader-tiff,
-  AC_HELP_STRING([--enable-image-loader-tiff], [enable TIFF image loader]),
+  AC_HELP_STRING([--disable-image-loader-tiff], [disable TIFF image loader]),
   [ want_tiff=$enableval ]
 )
 AC_MSG_RESULT($want_tiff)
@@ -864,7 +861,7 @@ AM_CONDITIONAL(BUILD_LOADER_TIFF, test x$have_tiff = xyes)
 have_xpm="yes";
 AC_MSG_CHECKING(whether to enable xpm image loader)
 AC_ARG_ENABLE(image-loader-xpm,
-  AC_HELP_STRING([--enable-image-loader-xpm], [enable XPM image loader]),
+  AC_HELP_STRING([--disable-image-loader-xpm], [disable XPM image loader]),
   [
     if test "x$enableval" = "xyes" ; then
       have_xpm="yes"
@@ -887,7 +884,7 @@ have_svg="no";
 
 AC_MSG_CHECKING(whether to enable svg image loader)
 AC_ARG_ENABLE(image-loader-svg,
-  AC_HELP_STRING([--enable-image-loader-svg], [enable SVG image loader]),
+  AC_HELP_STRING([--disable-image-loader-svg], [disable SVG image loader]),
   [ want_svg=$enableval ]
 )
 AC_MSG_RESULT($want_svg)
