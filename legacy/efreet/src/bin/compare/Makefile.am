@@ -1,7 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = \
--I. -I$(top_srcdir)/src/lib @ECORE_CFLAGS@
+AM_CPPFLAGS = \
+-I. \
+-I$(top_srcdir)/src/lib \
+@ECORE_CFLAGS@
 
 bin_PROGRAMS = efreet_alloc efreet_menu_alloc
 

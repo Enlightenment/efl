@@ -1,10 +1,9 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = \
+AM_CPPFLAGS = \
 -I$(top_builddir) \
 -I$(top_srcdir) \
--g -O0 -W -Wall \
 @ECORE_CFLAGS@
 
 lib_LTLIBRARIES = libefreet.la libefreet_mime.la
@@ -48,6 +47,6 @@ installed_headersdir = $(prefix)/include/efreet
 installed_headers_DATA = $(EFREETHEADERS) $(EFREETMIMEHEADERS)
 
 libefreet_la_LIBADD = @ECORE_LIBS@
-libefreet_la_LDFLAGS = -version-info 1:0:0
+libefreet_la_LDFLAGS = -version-info @version_info@
 
 libefreet_mime_la_LIBADD = @ECORE_LIBS@ libefreet.la

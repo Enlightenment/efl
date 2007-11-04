@@ -1,4 +1,5 @@
 SUBDIRS = sub
+
 MAINTAINERCLEANFILES = Makefile.in
 
 testdir = $(pkgdatadir)/test
