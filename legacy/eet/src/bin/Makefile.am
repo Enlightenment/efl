@@ -1,9 +1,13 @@
-## Process this file with automake to produce Makefile.in
 
-AM_CFLAGS = \
+MAINTAINERCLEANFILES = Makefile.in
+
+AM_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
--I$(top_srcdir)/src/lib
+-I$(top_srcdir)/src/lib \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
 
 bin_PROGRAMS = eet
 

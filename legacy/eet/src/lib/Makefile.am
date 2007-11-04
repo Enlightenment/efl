@@ -1,12 +1,12 @@
-## Process this file with automake to produce Makefile.in
 
-AUTOMAKE_OPTIONS     = 1.4 foreign
-
-# A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = -I. \
-                       -I$(top_srcdir)/src/lib
+AM_CPPFLAGS = \
+-I. \
+-I$(top_srcdir)/src/lib \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
 
 lib_LTLIBRARIES      = libeet.la
 include_HEADERS      = Eet.h
@@ -20,4 +20,4 @@ Eet_private.h
 
 libeet_la_LIBADD       = -lz -ljpeg @fnmatch_libs@ @winsock_libs@ -lm
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h
-libeet_la_LDFLAGS      = @create_shared_lib@ -version-info 9:10:9
+libeet_la_LDFLAGS      = @create_shared_lib@ -version-info @version_info@
