@@ -1887,8 +1887,6 @@ AC_SUBST(qt_moc)
 
 AC_SUBST(gif_cflags)
 AC_SUBST(gif_libs)
-AC_SUBST(png_cflags)
-AC_SUBST(png_libs)
 AC_SUBST(jpeg_cflags)
 AC_SUBST(jpeg_libs)
 AC_SUBST(tiff_cflags)
