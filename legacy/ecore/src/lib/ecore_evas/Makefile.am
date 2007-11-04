@@ -33,7 +33,7 @@ ECORE_WIN32_LIB =
 endif
 
 if BUILD_ECORE_SDL
-ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl @sdl_cflags@
+ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl @SDL_CFLAGS@
 ECORE_SDL_LIB = $(top_builddir)/src/lib/ecore_sdl/libecore_sdl.la
 else
 ECORE_SDL_INC =
@@ -77,7 +77,7 @@ $(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
-@sdl_libs@ \
+@SDL_LIBS@ \
 @XCB_LIBS@ \
 @create_shared_lib@
 
