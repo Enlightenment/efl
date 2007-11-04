@@ -35,6 +35,7 @@ ecore_path_group_new(const char *group_name)
    if (!group_list)
      {
 	group_list = ecore_list_new();
+	if (!group_list) return 0;
 	lastid = 0;
      }
    else
@@ -43,7 +44,7 @@ ecore_path_group_new(const char *group_name)
 
 	group = __ecore_path_group_find(group_name);
 	if (group)
-	  return -1;
+	  return 0;
 
 	last = ecore_list_last_goto(group_list);
 	lastid = last->id;
