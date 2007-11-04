@@ -1,11 +1,7 @@
-## Process this file with automake to produce Makefile.in
 
-AUTOMAKE_OPTIONS     = 1.4 foreign
-
-# A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = -I. \
+AM_CPPFLAGS	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
 		       @FREETYPE_CFLAGS@ @CAIRO_CFLAGS@

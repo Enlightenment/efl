@@ -1,8 +1,12 @@
-AUTOMAKE_OPTIONS     = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include -I$(top_srcdir)/src/modules/engines/gl_common @FREETYPE_CFLAGS@
+AM_CPPFLAGS = \
+-I. \
+-I$(top_srcdir)/src/lib \
+-I$(top_srcdir)/src/lib/include \
+-I$(top_srcdir)/src/modules/engines/gl_common \
+@FREETYPE_CFLAGS@
 
 if BUILD_ENGINE_GL_GLEW
 
@@ -16,7 +20,7 @@ evas_engine.c \
 evas_glew_main.c
 
 module_la_LIBADD = $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la $(top_builddir)/src/lib/libevas.la @gl_libs@ @glew_libs@
-module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
+module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_GL_Glew.h

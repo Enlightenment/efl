@@ -1,13 +1,12 @@
-## Process this file with automake to produce Makefile.in
 
-AUTOMAKE_OPTIONS     = 1.4 foreign
-
-# A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = -I. \
+AM_CPPFLAGS	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       -DPACKAGE_BIN_DIR=\"$(bindir)\" \
+		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 		       @FREETYPE_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_cache.la

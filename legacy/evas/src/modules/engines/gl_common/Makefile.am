@@ -1,8 +1,12 @@
-AUTOMAKE_OPTIONS     = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include @FREETYPE_CFLAGS@ @gl_cflags@
+AM_CPPFLAGS = \
+-I. \
+-I$(top_srcdir)/src/lib \
+-I$(top_srcdir)/src/lib/include \
+@FREETYPE_CFLAGS@ \
+@gl_cflags@
 
 if BUILD_ENGINE_GL_COMMON
 
@@ -21,7 +25,6 @@ evas_gl_rectangle.c \
 evas_gl_texture.c
 
 libevas_engine_gl_common_la_LIBADD = @gl_libs@ $(top_builddir)/src/lib/libevas.la
-
 libevas_engine_gl_common_la_DEPENDENCIES = $(top_builddir)/config.h
 
 endif

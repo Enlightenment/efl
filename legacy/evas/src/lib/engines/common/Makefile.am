@@ -1,12 +1,14 @@
-AUTOMAKE_OPTIONS     = 1.4 foreign
 
-SUBDIRS = evas_op_add evas_op_blend evas_op_copy evas_op_mask evas_op_mul evas_op_sub 
+SUBDIRS = evas_op_add evas_op_blend evas_op_copy evas_op_mask evas_op_mul evas_op_sub
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = -I. \
+AM_CPPFLAGS	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       -DPACKAGE_BIN_DIR=\"$(bindir)\" \
+		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 		       @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ \
 		       @EET_CFLAGS@ @pthread_cflags@
 
