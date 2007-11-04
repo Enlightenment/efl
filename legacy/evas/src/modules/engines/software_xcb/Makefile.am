@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
-@xcb_cflags@
+@XCB_CFLAGS@
 
 if BUILD_ENGINE_SOFTWARE_XCB
 
@@ -22,7 +22,7 @@ evas_xcb_buffer.c \
 evas_xcb_color.c \
 evas_xcb_main.c
 
-module_la_LIBADD = @xcb_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @XCB_LIBS@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 

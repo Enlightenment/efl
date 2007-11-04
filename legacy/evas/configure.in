@@ -37,18 +37,15 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 create_shared_lib=""
 case "$host_os" in
-	mingw|mingw32)
-		create_shared_lib="-no-undefined "
-		;;
+        mingw|mingw32)
+                create_shared_lib="-no-undefined "
+                ;;
 esac
 AC_SUBST(create_shared_lib)
 
 x_dir=""
 x_cflags=""
 x_libs=""
-xcb_dir=""
-xcb_cflags=""
-xcb_libs=""
 gl_dir=""
 gl_cflags=""
 gl_libs=""
@@ -56,19 +53,17 @@ qt_dir=""
 qt_cflags=""
 qt_libs=""
 qt_moc="moc"
-sdl_cflags=""
-sdl_libs=""
 
 #####################################################################
 
 # blah-config style checks
 # qtdir setting
 AC_ARG_WITH(qtdir,
-AC_HELP_STRING([--with-qtdir=QT_DIR],[use qt directory specified]),
+AC_HELP_STRING([--with-qtdir=QT_DIR], [use qt directory specified]),
 [
   qt_dir=$withval;
   echo "using "$qt_dir" for qt directory.";
-],[
+], [
   qt_dir="/opt/Qtopia";
 ])
 # check for freetype
@@ -77,18 +72,20 @@ PKG_CHECK_MODULES(FREETYPE, freetype2 >= 9.3.0)
 #######################################
 ## FontConfig
 
+want_fontconfig="yes"
+have_fontconfig="no"
 AC_ARG_ENABLE(fontconfig,
   AC_HELP_STRING(
     [--enable-fontconfig],
     [enable fontconfig for finding fonts. [[default=enabled]]]
   ), [
-    have_fontconfig=$enableval
+    want_fontconfig=$enableval
   ], [
-    have_fontconfig=yes
+    want_fontconfig=yes
   ]
 )
 
-if test "x$have_fontconfig" = "xyes"; then
+if test "x$want_fontconfig" = "xyes"; then
   # Check if really available
   PKG_CHECK_MODULES(FONTCONFIG, fontconfig, [
     have_fontconfig="yes"
@@ -122,20 +119,20 @@ case "$host_os" in
 esac
 AC_SUBST(dlopen_libs)
 
-AC_CHECK_HEADER(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file]))
+AC_CHECK_HEADER(fnmatch.h, , AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file]))
 
 fnmatch_libs=""
 AC_CHECK_FUNCS(fnmatch, res=yes, res=no)
 if test "x$res" = "xno"; then
-	AC_CHECK_LIB(fnmatch, fnmatch, res=yes fnmatch_libs="-lfnmatch", res=no)
-dnl Test for compilation with MinGW.
-dnl fnmatch function is in the libiberty library
-	if test "x$res" = "xno"; then
-		AC_CHECK_LIB(iberty, fnmatch, res=yes fnmatch_libs="-liberty", res=no)
-	fi
-	if test "x$res" = "xno"; then
-		AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty])
-	fi
+  AC_CHECK_LIB(fnmatch, fnmatch, res=yes fnmatch_libs="-lfnmatch", res=no)
+  dnl Test for compilation with MinGW.
+  dnl fnmatch function is in the libiberty library
+  if test "x$res" = "xno"; then
+    AC_CHECK_LIB(iberty, fnmatch, res=yes fnmatch_libs="-liberty", res=no)
+  fi
+  if test "x$res" = "xno"; then
+    AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty])
+  fi
 fi
 
 AC_SUBST(fnmatch_libs)
@@ -145,63 +142,46 @@ AC_SUBST(fnmatch_libs)
 
 #######################################
 ## Check if we should build the software_ddraw engine
+want_evas_software_ddraw="no";
 have_evas_software_ddraw="no";
-## Automatic check...
-AC_CHECK_HEADER(ddraw.h,
-  [ have_evas_software_ddraw="yes" ],
-  [ have_evas_software_ddraw="no" ]
-)
-## Manual override
-AC_MSG_CHECKING(whether software directdraw backend is to be built)
-AC_ARG_ENABLE(software-ddraw, AC_HELP_STRING([--enable-software-ddraw],[enable the Software DirectDraw rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     have_evas_software_ddraw="yes"
-	   else
-	     have_evas_software_ddraw="no"
-	   fi
-        ]
-)
-AC_MSG_RESULT($have_evas_software_ddraw)
 
-if test "x$have_evas_software_ddraw" = "xyes"; then
+AC_MSG_CHECKING(whether software directdraw backend is to be built)
+AC_ARG_ENABLE(software-ddraw,
+  AC_HELP_STRING([--enable-software-ddraw], [enable the Software DirectDraw rendering backend]),
+  [ want_evas_software_ddraw=$enableval ]
+)
+AC_MSG_RESULT($want_evas_software_ddraw)
+
+if test "x$want_evas_software_ddraw" = "xyes"; then
   AC_CHECK_HEADER(ddraw.h,
     [
+      have_evas_software_ddraw="yes"
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_DDRAW, 1, [Software DirectDraw Rendering Backend])
       ddraw_libs="-lddraw"
     ],
-    [
-      AC_MSG_RESULT(disabling software DirectDraw engine)
-      have_evas_software_ddraw="no"
-    ]
+    [ have_evas_software_ddraw="no" ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_DDRAW, test "x$have_evas_software_ddraw" = "xyes")
 
 #######################################
 ## Check if we should build the 16bit software_ddraw engine
+want_evas_software_16_ddraw="no";
 have_evas_software_16_ddraw="no";
-## Automatic check...
-AC_CHECK_HEADER(ddraw.h,
-  [ have_evas_software_16_ddraw="yes" ],
-  [ have_evas_software_16_ddraw="no" ]
-)
-## Manual override
-AC_MSG_CHECKING(whether 16bit software directdraw backend is to be built)
-AC_ARG_ENABLE(software-16-ddraw, AC_HELP_STRING([--enable-software-16-ddraw],[enable the 16bit Software DirectDraw rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     have_evas_software_16_ddraw="yes"
-	   else
-	     have_evas_software_16_ddraw="no"
-	   fi
-        ]
-)
-AC_MSG_RESULT($have_evas_software_16_ddraw)
 
-if test "x$have_evas_software_16_ddraw" = "xyes"; then
+AC_MSG_CHECKING(whether 16 bit software directdraw backend is to be built)
+AC_ARG_ENABLE(software-16-ddraw,
+  AC_HELP_STRING([--enable-software-16-ddraw], [enable the 16bit Software DirectDraw rendering backend]),
+  [ want_evas_software_16_ddraw=$enableval ]
+)
+AC_MSG_RESULT($want_evas_software_16_ddraw)
+
+if test "x$want_evas_software_16_ddraw" = "xyes"; then
   AC_CHECK_HEADER(ddraw.h,
     [
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_16_DDRAW, 1, [16bit Software DirectDraw Rendering Backend])
       ddraw_16_libs="-lddraw -lgdi32"
+      have_evas_software_16_ddraw="yes"
     ],
     [
       AC_MSG_RESULT(disabling software DirectDraw engine)
@@ -214,31 +194,22 @@ AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16_DDRAW, test "x$have_evas_software_16_ddr
 
 #######################################
 ## Check if we should build the direct3d engine
+want_evas_direct3d="no";
 have_evas_direct3d="no";
-## Automatic check...
-AC_CHECK_HEADERS(d3d9.h d3dx9.h,
-  [ have_evas_direct3d="yes" ],
-  [ have_evas_direct3d="no" ]
-)
-## Manual override
+
 AC_MSG_CHECKING(whether direct3d backend is to be built)
-AC_ARG_ENABLE(direct3d, AC_HELP_STRING([--enable-direct3d],[enable the Direct3D rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_direct3d="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_direct3d="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_direct3d)
-	]
+AC_ARG_ENABLE(direct3d,
+  AC_HELP_STRING([--enable-direct3d], [enable the Direct3D rendering backend]),
+  [ want_evas_direct3d=$enableval ]
 )
-if test "x$have_evas_direct3d" = "xyes"; then
+AC_MSG_RESULT($want_evas_direct3d)
+
+if test "x$want_evas_direct3d" = "xyes"; then
   AC_CHECK_HEADERS(d3d9.h d3dx9.h,
     [
       AC_DEFINE(BUILD_ENGINE_DIRECT3D, 1, [Direct3D Rendering Backend])
       direct3d_libs="-ld3d9 -ld3dx9d"
+      have_evas_direct3d="yes"
     ],
     [
       AC_MSG_RESULT(disabling Direct3D engine)
@@ -251,27 +222,17 @@ AM_CONDITIONAL(BUILD_ENGINE_DIRECT3D, test "x$have_evas_direct3d" = "xyes")
 
 #######################################
 ## Check if we should build the software_x11 engine
+want_evas_software_x11="yes";
 have_evas_software_x11="no";
-## Automatic check...
-AC_CHECK_HEADER(X11/X.h,
-  [ have_evas_software_x11="yes" ],
-  [ have_evas_software_x11="no" ]
-)
-## Manual override
+
 AC_MSG_CHECKING(whether software x11 backend is to be built)
-AC_ARG_ENABLE(software-x11, AC_HELP_STRING([--enable-software-x11],[enable the Software X11 rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_software_x11="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_software_x11="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_software_x11)
-	]
+AC_ARG_ENABLE(software-x11,
+  AC_HELP_STRING([--enable-software-x11], [enable the Software X11 rendering backend]),
+  [ want_evas_software_x11=$enableval ]
 )
-if test "x$have_evas_software_x11" = "xyes"; then
+AC_MSG_RESULT($want_evas_software_x11)
+
+if test "x$want_evas_software_x11" = "xyes"; then
   AC_PATH_X
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
@@ -280,9 +241,9 @@ if test "x$have_evas_software_x11" = "xyes"; then
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
+      have_evas_software_x11="yes"
     ],
     [
-      AC_MSG_RESULT(disabling software X11 engine)
       have_evas_software_x11="no"
     ]
   )
@@ -291,30 +252,17 @@ AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, test "x$have_evas_software_x11" = "xye
 
 #######################################
 ## Check if we should build the software_x11 16bit engine
+want_evas_software_16_x11="no";
 have_evas_software_16_x11="no";
-## Automatic check...
-# -- disable software_16 by default - its usefulness as a speedup in 16bit
-#    seems dubious at this stage.
-#AC_CHECK_HEADER(X11/X.h,
-#  [ have_evas_software_16_x11="yes" ],
-#  [ have_evas_software_16_x11="no" ]
-#)
-## Manual override
+
 AC_MSG_CHECKING(whether software 16bit x11 backend is to be built)
 AC_ARG_ENABLE(software-16-x11,
-AC_HELP_STRING([--enable-software-16-x11],[enable the Software 16bit X11 rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_software_16_x11="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_software_16_x11="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_software_16_x11)
-	]
+  AC_HELP_STRING([--enable-software-16-x11], [enable the Software 16bit X11 rendering backend]),
+  [ want_evas_software_16_x11=$enableval ]
 )
-if test "x$have_evas_software_16_x11" = "xyes"; then
+AC_MSG_RESULT($want_evas_software_16_x11)
+
+if test "x$want_evas_software_16_x11" = "xyes"; then
   AC_PATH_X
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
@@ -323,9 +271,9 @@ if test "x$have_evas_software_16_x11" = "xyes"; then
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
+      have_evas_software_16_x11="yes"
     ],
     [
-      AC_MSG_RESULT(disabling software 16bit X11 engine)
       have_evas_software_16_x11="no"
     ]
   )
@@ -342,73 +290,48 @@ AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16, test "x$have_evas_software_16" = "xyes"
 
 #######################################
 ## Check if we should build the software_xcb engine
+want_evas_software_xcb="no";
 have_evas_software_xcb="no";
-## Automatic check...
-PKG_CHECK_MODULES(
-  XCB,
-  xcb xcb-shm xcb-image,
-  [have_evas_software_xcb="yes"],
-  [have_evas_software_xcb="no"],
-  [ have_evas_software_xcb="no" ])
 
-## manually disable xcb engine by default - not auto detected.
-have_evas_software_xcb="no"
-## Manual override
 AC_MSG_CHECKING(whether software xcb backend is to be built)
-AC_ARG_ENABLE(software-xcb, AC_HELP_STRING([--enable-software-xcb],[enable the Software XCB rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_software_xcb="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_software_xcb="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_software_xcb)
-	]
+AC_ARG_ENABLE(software-xcb,
+  AC_HELP_STRING([--enable-software-xcb], [enable the Software XCB rendering backend]),
+  [ want_evas_software_xcb=$enableval ]
 )
-if test "x$have_evas_software_xcb" = "xyes"; then
+AC_MSG_RESULT($want_evas_software_xcb)
+
+if test "x$want_evas_software_xcb" = "xyes"; then
   PKG_CHECK_MODULES(
     XCB,
     xcb xcb-shm xcb-image,
-    [AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
-     xcb_cflags=$XCB_CFLAGS
-     xcb_libs=$XCB_LIBS],
-    [AC_MSG_RESULT(disabling software XCB engine)
-     have_evas_software_xcb="no"])
+    [
+      AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
+      have_evas_software_xcb="yes"
+    ], [
+      have_evas_software_xcb="no"
+    ]
+  )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, test "x$have_evas_software_xcb" = "xyes")
 
 #######################################
 ## Check if we should build the directfb engine
+want_evas_directfb="no";
 have_evas_directfb="no";
-## Automatic check...
-PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
-  [ have_evas_directfb="yes" ],
-  [ have_evas_directfb="no" ]
-)
-## manually disable directfb engine by default - not auto detected.
-have_evas_directfb="no"
-## Manual override
+
 AC_MSG_CHECKING(whether directfb backend is to be built)
-AC_ARG_ENABLE(directfb, AC_HELP_STRING([--enable-directfb],[enable the DirectFB rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_directfb="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_directfb="no"
-	   fi
-	], [
-	   AC_MSG_RESULT($have_evas_directfb)
-	]
+AC_ARG_ENABLE(directfb,
+  AC_HELP_STRING([--enable-directfb], [enable the DirectFB rendering backend]),
+  [ want_evas_directfb=$enableval ]
 )
-if test "x$have_evas_directfb" = "xyes"; then
+AC_MSG_RESULT($want_evas_directfb)
+
+if test "x$want_evas_directfb" = "xyes"; then
   PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
     [
       AC_DEFINE(BUILD_ENGINE_DIRECTFB, 1, [DirectFB Rendering Backend])
+      have_evas_directfb="yes"
     ], [
-      AC_MSG_RESULT(disabling directfb engine)
       have_evas_directfb="no"
     ]
   )
@@ -416,163 +339,93 @@ fi
 AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, test "x$have_evas_directfb" = "xyes")
 
 #######################################
-## SDL
-AC_ARG_WITH(sdl-config, [  --with-sdl-config=SDL_CONFIG     use sdl-config specified],
-[ SDL_CONFIG=$withval;
-  echo "using "$SDL_CONFIG" for sdl-config"; ],
-[ if test -z "$SDL_CONFIG"; then
-    AC_PATH_PROG(SDL_CONFIG, "sdl-config", "", $PATH)
-  fi
-])
-if test -z "$SDL_CONFIG" ; then SDL_CONFIG="sdl-config"; fi
-
-#######################################
 ## Check if we should build the sdl engine
+want_evas_sdl="no";
 have_evas_sdl="no";
 ENGINE_SDL_PRG="";
-## Automatic check...
-AC_CHECK_HEADER(SDL/SDL.h,
-	[ have_evas_sdl="yes" ],
-	[ have_evas_sdl="no" ]
-)
 
-# Manual override
 AC_MSG_CHECKING(whether SDL backend is to be built)
-AC_ARG_ENABLE(sdl, AC_HELP_STRING([--enable-sdl],[enable the SDL rendering backend]), [
-           if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_sdl="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_sdl="no"
-	   fi
-        ], [
-           AC_MSG_RESULT($have_evas_sdl)
-	]
+AC_ARG_ENABLE(sdl,
+  AC_HELP_STRING([--enable-sdl], [enable the SDL rendering backend]),
+  [ want_evas_sdl=$enableval ]
 )
-if test "x$have_evas_sdl" = "xyes"; then
-  if test "x$SDL_CONFIG" = "xno" ; then
-    have_evas_sdl= "no"
-    AM_CONDITIONAL(BUILD_ENGINE_SDL, false)
-    AC_MSG_RESULT(disabling sdl engine)
-  else
-    ENGINE_SDL_PRG="evas_sdl_test"
-    sdl_cflags=`$SDL_CONFIG --cflags`
-    sdl_libs=`$SDL_CONFIG --libs`
-    AM_CONDITIONAL(BUILD_ENGINE_SDL, true)
-    AC_DEFINE(BUILD_ENGINE_SDL, 1, [SDL Rendering Backend])
-  fi
-else
-  AM_CONDITIONAL(BUILD_ENGINE_SDL, false)
-  have_evas_sdl="no"
+AC_MSG_RESULT($want_evas_sdl)
+
+if test "x$want_evas_sdl" = "xyes"; then
+  PKG_CHECK_MODULES(SDL, sdl >= 1.2.0,
+    [
+      have_evas_sdl="yes"
+      ENGINE_SDL_PRG="evas_sdl_test"
+      AC_DEFINE(BUILD_ENGINE_SDL, 1, [SDL Rendering Backend])
+    ],
+    [ have_evas_sdl="no" ]
+  )
 fi
+AM_CONDITIONAL(BUILD_ENGINE_SDL, test "x$have_evas_sdl" = "xyes")
 
 #######################################
 ## Check if we should build the fb engine
+want_evas_fb="no";
 have_evas_fb="no";
-## Automatic check...
-AC_CHECK_HEADER(linux/fb.h,
-  [ have_evas_fb="yes" ],
-  [ have_evas_fb="no" ]
-)
-## Manual override
+
 AC_MSG_CHECKING(whether fb backend is to be built)
-AC_ARG_ENABLE(fb, AC_HELP_STRING([--enable-fb],[enable the FB rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_fb="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_fb="no"
-	   fi
-	], [
-	   AC_MSG_RESULT($have_evas_fb)
-	]
+AC_ARG_ENABLE(fb,
+  AC_HELP_STRING([--enable-fb], [enable the FB rendering backend]),
+  [ want_evas_fb=$enableval ]
 )
-if test "x$have_evas_fb" = "xyes"; then
+AC_MSG_RESULT($want_evas_fb)
+
+if test "x$want_evas_fb" = "xyes"; then
   AC_CHECK_HEADER(linux/fb.h,
     [
-      AM_CONDITIONAL(BUILD_ENGINE_FB, true)
       AC_DEFINE(BUILD_ENGINE_FB, 1, [Linux FB Rendering Backend])
-    ], [
-      AM_CONDITIONAL(BUILD_ENGINE_FB, false)
-      AC_MSG_RESULT(disabling fb engine)
-      have_evas_fb="no"
-    ]
+      have_evas_fb="yes"
+    ],
+    [ have_evas_fb="no" ]
   )
-else
-  AM_CONDITIONAL(BUILD_ENGINE_FB, false)
-  have_evas_fb="no"
 fi
+AM_CONDITIONAL(BUILD_ENGINE_FB, test "x$have_evas_fb" = "xyes")
 
 #######################################
 ## Check if we should build the buffer engine
-have_evas_buffer="no";
-## Automatic check...
-have_evas_buffer="yes"
-## Manual override
+want_evas_buffer="yes"
+have_evas_buffer="no"
+
 AC_MSG_CHECKING(whether buffer backend is to be built)
-AC_ARG_ENABLE(buffer, AC_HELP_STRING([--enable-buffer],[enable the Buffer rendering backend]), [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_buffer="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_buffer="no"
-	   fi
-	], [
-	   AC_MSG_RESULT($have_evas_buffer)
-	]
+AC_ARG_ENABLE(buffer,
+  AC_HELP_STRING([--enable-buffer], [enable the Buffer rendering backend]),
+  [ want_evas_buffer=$enableval ]
 )
-if test "x$have_evas_buffer" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ENGINE_BUFFER, true)
+AC_MSG_RESULT($want_evas_buffer)
+
+if test "x$want_evas_buffer" = "xyes"; then
   AC_DEFINE(BUILD_ENGINE_BUFFER, 1, [Buffer Rendering Backend])
-else
-  AM_CONDITIONAL(BUILD_ENGINE_BUFFER, false)
+  have_evas_buffer="yes"
 fi
+AM_CONDITIONAL(BUILD_ENGINE_BUFFER, test "x$have_evas_buffer" = "xyes")
 
 #######################################
 ## Check if we should build the software_qtopia engine
+want_evas_qtopia="no";
 have_evas_qtopia="no";
-## Automatic check...
-AC_CHECK_HEADER(qdirectpainter_qws.h,
-  [ have_evas_qtopia="yes" ],
-  [ have_evas_qtopia="no" ],
-  [
-    #include <qwidget.h>
-    #include <qnamespace.h>
-    #include <qbrush.h>
-    #include <qpainter.h>
-  ]
-)
-## manually disable qtopia engine by default - not auto detected.
-have_evas_qtopia="no"
-## Manual override
+
 AC_MSG_CHECKING(whether software qtopia backend is to be built)
-AC_ARG_ENABLE(software-qtopia, [  --enable-software-qtopia        enable the Software Qtopia rendering backend], [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_qtopia="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_qtopia="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_qtopia)
-	]
+AC_ARG_ENABLE(software-qtopia,
+  AC_HELP_STRING([--enable-software-qtopia], [enable the Software Qtopia rendering backend]),
+  [ want_evas_qtopia=$enableval ]
 )
-if test "x$have_evas_qtopia" = "xyes"; then
+AC_MSG_RESULT($want_evas_qtopia)
+
+if test "x$want_evas_qtopia" = "xyes"; then
   AC_LANG_PUSH(C++)
   AC_CHECK_HEADER(qdirectpainter_qws.h,
     [
-      AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, test "$enableval" = "yes")
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_QTOPIA, 1, [Qtopia Rendering Backend])
       qt_cflags="-fno-exceptions -fno-rtti -I"$qt_dir"/include"
       qt_libs="-L"$qt_dir"/lib -lqte -lqpe"
       qt_moc=$qt_dir"/bin/moc"
+      have_evas_qtopia="yes"
     ], [
-      AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, false)
-      AC_MSG_RESULT(disabling qtopia engine)
       have_evas_qtopia="no"
     ],
     [
@@ -583,175 +436,123 @@ if test "x$have_evas_qtopia" = "xyes"; then
     ]
   )
   AC_LANG_POP(C++)
-else
-  AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, false)
 fi
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, test "x$have_evas_qtopia" = "xyes")
 
 #######################################
 ## Check if we should build the gl_x11 engine
-have_evas_gl_common="no"
+want_evas_gl_x11="no";
 have_evas_gl_x11="no";
-## Automatic check...
-AC_CHECK_HEADERS(GL/gl.h GL/glu.h X11/X.h,
-  [ have_evas_gl_x11="yes" ],
-  [ have_evas_gl_x11="no" ]
-)
-## manually disable gl engine by default - not auto detected.
-have_evas_gl_x11="no"
-## Manual override
-AC_ARG_ENABLE(gl-x11, [  --enable-gl-x11                 enable the OpenGL X11 display engine], [
-	   if test x"$enableval" = x"yes" ; then
-	     have_evas_gl_x11="yes"
-	   else
-	     have_evas_gl_x11="no"
-	   fi
-        ]
-)
-AC_MSG_CHECKING(whether gl x11 backend is to be built)
-AC_MSG_RESULT($have_evas_gl_x11)
 
-if test "x$have_evas_gl_x11" = "xyes"; then
-  AC_CHECK_HEADERS(GL/gl.h GL/glu.h,
-    [ have_evas_gl_common="yes" ],
+AC_MSG_CHECKING(whether gl x11 backend is to be built)
+AC_ARG_ENABLE(gl-x11,
+  AC_HELP_STRING([--enable-gl-x11], [enable the OpenGL X11 display engine]),
+  [ want_evas_gl_x11=$enableval ]
+)
+AC_MSG_RESULT($want_evas_gl_x11)
+
+if test "x$want_evas_gl_x11" = "xyes"; then
+  AC_CHECK_HEADER(GL/gl.h GL/glu.h X11/X.h,
+    [
+      AC_DEFINE(BUILD_ENGINE_GL_X11, 1, [OpenGL X11 Rendering Backend])
+      x_dir=${x_dir:-/usr/X11R6};
+      x_cflags=${x_cflags:--I$x_dir/include}
+      x_libs="${x_libs:--L$x_dir/lib -lX11 -lXext}"
+      gl_cflags="-I/usr/include"
+      gl_libs="-lGL -lGLU -lpthread"
+      gl_dir=""
+      have_evas_gl_x11="yes"
+    ],
     [ have_evas_gl_x11="no" ]
   )
-  if test "x$have_evas_gl_common" = "xyes"; then
-    AC_CHECK_HEADER(X11/X.h,
-      [
-        AC_DEFINE(BUILD_ENGINE_GL_X11, 1, [OpenGL X11 Rendering Backend])
-        AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
-        x_dir=${x_dir:-/usr/X11R6};
-        x_cflags=${x_cflags:--I$x_dir/include}
-        x_libs="${x_libs:--L$x_dir/lib -lX11 -lXext}"
-        gl_cflags="-I/usr/include"
-        gl_libs="-lGL -lGLU -lpthread"
-        gl_dir=""
-      ],
-      [
-        have_evas_gl_x11="no"
-        have_evas_gl_common="no"
-      ]
-    )
-  fi
 fi
-AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "x$have_evas_gl_common" = "xyes")
 AM_CONDITIONAL(BUILD_ENGINE_GL_X11, test "x$have_evas_gl_x11" = "xyes")
-
-
 
 #######################################
 ## Check if we should build the gl_glew engine
+want_evas_gl_glew="no";
 have_evas_gl_glew="no";
-## Automatic check...
-AC_CHECK_HEADERS(GL/gl.h GL/glu.h GL/glew.h,
-  [ have_evas_gl_glew="yes" ],
-  [ have_evas_gl_glew="no" ]
-)
-## manually disable gl engine by default - not auto detected.
-have_evas_gl_glew="no"
-## Manual override
-AC_ARG_ENABLE(gl-glew, [  --enable-gl-glew                 enable the OpenGL Glew display engine], [
-	   if test x"$enableval" = x"yes" ; then
-	     have_evas_gl_glew="yes"
-	   else
-	     have_evas_gl_glew="no"
-	   fi
-        ]
-)
-AC_MSG_CHECKING(whether gl glew backend is to be built)
-AC_MSG_RESULT($have_evas_gl_glew)
 
-if test "x$have_evas_gl_glew" = "xyes" ; then
-  AC_CHECK_HEADERS(GL/gl.h GL/glu.h,
-    [ have_evas_gl_common="yes" ],
+AC_MSG_CHECKING(whether gl glew backend is to be built)
+AC_ARG_ENABLE(gl-glew,
+  AC_HELP_STRING([--enable-gl-glew], [enable the OpenGL Glew display engine]),
+  [ want_evas_gl_glew=$enableval ]
+)
+AC_MSG_RESULT($want_evas_gl_glew)
+
+if test "x$want_evas_gl_glew" = "xyes" ; then
+  AC_CHECK_HEADER(GL/gl.h GL/glu.h GL/glew.h,
+    [
+      AC_DEFINE(BUILD_ENGINE_GL_GLEW, 1, [OpenGL Glew Rendering Backend])
+      glew_libs="-lglew32 -lopengl32 -lgdi32"
+      gl_libs="-lglu32"
+    ],
     [ have_evas_gl_glew="no" ]
   )
-  if test "x$have_evas_gl_common" = "xyes" ; then
-    AC_CHECK_HEADER(GL/glew.h,
-      [
-        AC_DEFINE(BUILD_ENGINE_GL_GLEW, 1, [OpenGL Glew Rendering Backend])
-        AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
-        glew_libs="-lglew32 -lopengl32 -lgdi32"
-        gl_libs="-lglu32"
-      ],
-      [
-        have_evas_gl_glew="no"
-        have_evas_gl_common="no"
-      ]
-    )
-  fi
 fi
-AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "x$have_evas_gl_common" = "xyes")
 AM_CONDITIONAL(BUILD_ENGINE_GL_GLEW, test "x$have_evas_gl_glew" = "xyes")
 
-
+# common gl
+have_evas_gl_common="no"
+if test "x$have_evas_gl_x11" = "xyes" -o "x$have_evas_gl_glew" = "xyes"; then
+  AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
+  have_evas_gl_common="yes"
+fi
+AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "x$have_evas_gl_common" = "xyes")
 
 #######################################
 ## Check if we should build the cairo_x11 engine
+have_evas_cairo_common="no";
+want_evas_cairo_x11="no";
 have_evas_cairo_x11="no";
-# Automatic check...
-#PKG_CHECK_MODULES(CAIRO, cairo >= 1.0.0,
-#  [ have_evas_cairo_x11="yes" ],
-#  [ have_evas_cairo_x11="no" ]
-#)
-# Manual override
+
 #AC_MSG_CHECKING(whether cairo x11 backend is to be built)
-#AC_ARG_ENABLE(cairo-x11, [  --enable-cairo-x11              enable the Cairo X11 display engine], [
-#	   if test x"$enableval" = x"yes" ; then
-#	     AC_MSG_RESULT(yes)
-#	     have_evas_cairo_x11="yes"
-#	   else
-#	     AC_MSG_RESULT(no)
-#	     have_evas_cairo_x11="no"
-#	   fi
-#        ], [
-#	   AC_MSG_RESULT($have_evas_cairo_x11)
-#	]
+#AC_ARG_ENABLE(cairo-x11,
+#  AC_HELP_STRING([--enable-cairo-x11], [enable the Cairo X11 display engine]),
+#  [ want_evas_cairo_x11=$enableval ]
 #)
-if test "x$have_evas_cairo_x11" = "xyes"; then
-  AC_CHECK_HEADER(X11/X.h,
+#AC_MSG_RESULT($want_evas_cairo_x11)
+
+if test "x$want_evas_cairo_x11" = "xyes"; then
+  PKG_CHECK_MODULES(CAIRO, cairo >= 1.0.0,
     [
-      AM_CONDITIONAL(BUILD_ENGINE_CAIRO_X11, true)
-      AC_DEFINE(BUILD_ENGINE_CAIRO_X11, 1, [Cairo X11 Rendering Backend])
-      AM_CONDITIONAL(BUILD_ENGINE_CAIRO_COMMON, true)
-      AC_DEFINE(BUILD_ENGINE_CAIRO_COMMON, 1, [Generic Cairo Rendering Support])
-      x_dir="/usr/X11R6";
-      x_cflags="-I"$x_dir"/include"
-      x_libs="-L"$x_dir"/lib -lX11 -lXext"
-    ], [
-      AM_CONDITIONAL(BUILD_ENGINE_CAIRO_X11, false)
-      AM_CONDITIONAL(BUILD_ENGINE_CAIRO_COMMON, false)
-      AC_MSG_RESULT(disabling Cairo X11 engine)
+      have_evas_cairo_common="yes"
+      AC_CHECK_HEADER(X11/X.h,
+        [
+          AC_DEFINE(BUILD_ENGINE_CAIRO_X11, 1, [Cairo X11 Rendering Backend])
+          AC_DEFINE(BUILD_ENGINE_CAIRO_COMMON, 1, [Generic Cairo Rendering Support])
+          x_dir="/usr/X11R6";
+          x_cflags="-I"$x_dir"/include"
+          x_libs="-L"$x_dir"/lib -lX11 -lXext"
+          have_evas_cairo_x11="yes"
+        ], [
+          have_evas_cairo_common="no"
+          have_evas_cairo_x11="no"
+        ]
+      )
+    ],
+    [
+      have_evas_cairo_common="no"
+      have_evas_cairo_x11="no"
     ]
   )
-else
-  AM_CONDITIONAL(BUILD_ENGINE_CAIRO_X11, false)
-  AM_CONDITIONAL(BUILD_ENGINE_CAIRO_COMMON, false)
 fi
+AM_CONDITIONAL(BUILD_ENGINE_CAIRO_X11, test "x$have_evas_cairo_x11" = "xyes")
+AM_CONDITIONAL(BUILD_ENGINE_CAIRO_COMMON, test "x$have_evas_cairo_common" = "xyes")
 
 #######################################
 ## Check if we should build the xrender_x11 engine
+want_evas_xrender_x11="yes";
 have_evas_xrender_x11="no";
-## Automatic check...
-AC_CHECK_HEADER(X11/X.h,
-  [ have_evas_xrender_x11="yes" ],
-  [ have_evas_xrender_x11="no" ]
-)
-## Manual override
+
 AC_MSG_CHECKING(whether xrender x11 backend is to be built)
-AC_ARG_ENABLE(xrender-x11, [  --enable-xrender-x11            enable the XRender X11 rendering backend], [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_xrender_x11="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_xrender_x11="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_xrender_x11)
-	]
+AC_ARG_ENABLE(xrender-x11,
+  AC_HELP_STRING([--enable-xrender-x11], [enable the XRender X11 rendering backend]),
+  [ want_evas_xrender_x11=$enableval ]
 )
-if test "x$have_evas_xrender_x11" = "xyes"; then
+AC_MSG_RESULT($want_evas_xrender_x11)
+
+if test "x$want_evas_xrender_x11" = "xyes"; then
   AC_PATH_X
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
@@ -762,106 +563,70 @@ if test "x$have_evas_xrender_x11" = "xyes"; then
           x_dir=${x_dir:-/usr/X11R6}
           x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
           x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
-	],
-	[
-          AC_MSG_RESULT(disabling xrender X11 engine)
-          have_evas_xrender_x11="no"
-	]
+          have_evas_xrender_x11="yes"
+        ],
+        [ have_evas_xrender_x11="no" ]
       )
     ],
-    [
-      AC_MSG_RESULT(disabling xrender X11 engine)
-      have_evas_xrender_x11="no"
-    ]
+    [ have_evas_xrender_x11="no" ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, test "x$have_evas_xrender_x11" = "xyes")
 
 #######################################
 ## Check if we should build the xrender_xcb engine
+want_evas_xrender_xcb="no";
 have_evas_xrender_xcb="no";
-## Automatic check...
-PKG_CHECK_MODULES(
-  XCBRENDER,
-  xcb xcb-shm xcb-render xcb-image,
-  [have_evas_xrender_xcb="yes"],
-  [have_evas_xrender_xcb="no"],
-  [ have_evas_xrender_xcb="no" ])
 
-## manually disable xcb engine by default - not auto detected.
-have_evas_xrender_xcb="no"
-## Manual override
 AC_MSG_CHECKING(whether xrender xcb backend is to be built)
-AC_ARG_ENABLE(xrender-xcb, [  --enable-xrender-xcb            enable the Xrender XCB rendering backend], [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_xrender_xcb="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_xrender_xcb="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_xrender_xcb)
-	]
+AC_ARG_ENABLE(xrender-xcb,
+  AC_HELP_STRING([--enable-xrender-xcb], [enable the Xrender XCB rendering backend]),
+  [ want_evas_xrender_xcb=$enableval ]
 )
-if test "x$have_evas_xrender_xcb" = "xyes"; then
+AC_MSG_RESULT($want_evas_xrender_xcb)
+
+if test "x$want_evas_xrender_xcb" = "xyes"; then
   PKG_CHECK_MODULES(
     XCBRENDER,
     xcb xcb-shm xcb-render xcb-image,
-    [AC_DEFINE(BUILD_ENGINE_XRENDER_XCB, 1, [Xrender XCB Rendering Backend])
-     xcbrender_cflags=$XCBRENDER_CFLAGS
-     xcbrender_libs=$XCBRENDER_LIBS],
-    [AC_MSG_RESULT(disabling xrender XCB engine)
-     have_evas_xrender_xcb="no"])
+    [
+      AC_DEFINE(BUILD_ENGINE_XRENDER_XCB, 1, [Xrender XCB Rendering Backend])
+      have_evas_xrender_xcb="yes"
+    ],
+    [ have_evas_xrender_xcb="no"]
+  )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_XRENDER_XCB, test "x$have_evas_xrender_xcb" = "xyes")
 
 #######################################
 ## Check if we should build the glitz_x11 engine
+want_evas_glitz_x11="no";
 have_evas_glitz_x11="no";
-## Automatic check...
-AC_CHECK_HEADER(glitz-glx.h,
-  [ have_evas_glitz_x11="yes" ],
-  [ have_evas_glitz_x11="no" ]
-)
-# maually disable glitz engine for now - as it does nothing.
-have_evas_glitz_x11="no";
-## Manual override
+
 AC_MSG_CHECKING(whether glitz x11 backend is to be built)
-AC_ARG_ENABLE(glitz-x11, [  --enable-glitz-x11                enable the Glitz X11 rendering backend], [
-	   if test x"$enableval" = x"yes" ; then
-	     AC_MSG_RESULT(yes)
-	     have_evas_glitz_x11="yes"
-	   else
-	     AC_MSG_RESULT(no)
-	     have_evas_glitz_x11="no"
-	   fi
-        ], [
-	   AC_MSG_RESULT($have_evas_glitz_x11)
-	]
+AC_ARG_ENABLE(glitz-x11,
+  AC_HELP_STRING([--enable-glitz-x11], [enable the Glitz X11 rendering backend]),
+  [ want_evas_glitz_x11=$enableval ]
 )
-if test "x$have_evas_glitz_x11" = "xyes"; then
+AC_MSG_RESULT($want_evas_glitz_x11)
+
+if test "x$want_evas_glitz_x11" = "xyes"; then
   AC_PATH_X
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
     [
       PKG_CHECK_MODULES(GLITZ, glitz glitz-glx,
-	[
+        [
           x_dir=${x_dir:-/usr/X11R6}
           x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
           x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
           AC_DEFINE(BUILD_ENGINE_GLITZ_X11, 1, [Glitz X11 Rendering Backend])
+          have_evas_glitz_x11="yes"
         ],
-        [
-          AC_MSG_RESULT(disabling glitz X11 engine)
-          have_evas_glitz_x11="no"
-        ]
+        [ have_evas_glitz_x11="no" ]
       )
     ],
-    [
-      AC_MSG_RESULT(disabling glitz X11 engine)
-      have_evas_glitz_x11="no"
-    ]
+    [ have_evas_glitz_x11="no" ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_GLITZ_X11, test "x$have_evas_glitz_x11" = "xyes")
@@ -871,34 +636,35 @@ AM_CONDITIONAL(BUILD_ENGINE_GLITZ_X11, test "x$have_evas_glitz_x11" = "xyes")
 
 #######################################
 ## GIF
+want_gif="yes";
 have_gif="no";
-AC_CHECK_HEADER(gif_lib.h,
-  [ have_gif="yes" ],
-  [ have_gif="no" ]
-)
+
 AC_MSG_CHECKING(whether to enable gif image loader)
 AC_ARG_ENABLE(image-loader-gif,
-  [  --enable-image-loader-gif       enable GIF image loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_gif="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_gif="no"
-      fi
-  ], [
-      AC_MSG_RESULT($have_gif)
-  ]
+  AC_HELP_STRING([--enable-image-loader-gif], [enable GIF image loader]),
+  [ want_gif=$enableval ]
 )
-if test "x$have_gif" = "xyes"; then
+AC_MSG_RESULT($want_gif)
+
+if test "x$want_gif" = "xyes"; then
   AC_CHECK_HEADER(gif_lib.h,
-    [ AC_CHECK_LIB(gif, DGifOpenFileName,
-       [ gif_libs="-lgif"
-         have_gif="yes" ],
-       [ AC_CHECK_LIB(ungif, DGifOpenFileName,
-          [ gif_libs="-lungif"
-            have_gif="yes" ],
-          [ have_gif="no" ]) ]) ],
+    [
+      AC_CHECK_LIB(gif, DGifOpenFileName,
+        [
+          gif_libs="-lgif"
+          have_gif="yes"
+        ],
+        [
+          AC_CHECK_LIB(ungif, DGifOpenFileName,
+            [
+              gif_libs="-lungif"
+              have_gif="yes"
+            ],
+            [ have_gif="no" ]
+          )
+        ]
+     )
+    ],
     [ have_gif="no" ]
   )
 fi
@@ -906,94 +672,60 @@ if test "x$have_gif" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_GIF, 1, [GIF Image Loader Support])
   gif_cflags=""
 fi
-
 AM_CONDITIONAL(BUILD_LOADER_GIF, test x$have_gif = xyes)
 
 #######################################
 ## PNG
+want_png="yes";
 have_png="no";
-AC_MSG_CHECKING(whether to enable png image loader)
-if   pkg-config --exists libpng12; then
-  have_png="yes";
-elif pkg-config --exists libpng10; then
-  have_png="yes";
-elif pkg-config --exists libpng; then
-  have_png="yes";
-fi
 
 AC_ARG_ENABLE(image-loader-png,
-  [  --enable-image-loader-png       enable PNG image loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_png="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_png="no"
-      fi
-  ], [
-      AC_MSG_RESULT($have_png)
-  ]
+  AC_HELP_STRING([--enable-image-loader-png], [enable PNG image loader]),
+  [ want_png=$enableval ]
 )
-if test "x$have_png" = "xyes"; then
-  if   pkg-config --exists libpng12; then
-    png_cflags=`pkg-config --cflags libpng12`
-    png_libs=`pkg-config --libs libpng12`
-    AC_MSG_CHECKING(libpng 1.2.x)
-  elif pkg-config --exists libpng10; then
-    png_cflags=`pkg-config --cflags libpng10`
-    png_libs=`pkg-config --libs libpng10`
-    AC_MSG_CHECKING(libpng 1.0.x)
-  elif pkg-config --exists libpng; then
-    png_cflags=`pkg-config --cflags libpng`
-    png_libs=`pkg-config --libs libpng`
-    AC_MSG_CHECKING(generic system libpng)
-  fi
-  AC_MSG_RESULT($have_png)
-fi
+AC_MSG_RESULT($want_png)
 
+if test "x$want_png" = "xyes"; then
+  if pkg-config --exists libpng12; then
+    PKG_CHECK_MODULES(PNG, libpng12, [ have_png="yes" ], [ have_png="no"])
+  elif pkg-config --exists libpng10; then
+    PKG_CHECK_MODULES(PNG, libpng10, [ have_png="yes" ], [ have_png="no"])
+  else
+    PKG_CHECK_MODULES(PNG, libpng, [ have_png="yes" ], [ have_png="no"])
+  fi
+fi
 AM_CONDITIONAL(BUILD_LOADER_PNG, test x$have_png = xyes)
 
 #######################################
 ## JPEG
+want_jpeg="yes";
 have_jpeg="no";
-AC_CHECK_HEADER(jpeglib.h,
-  [ have_jpeg="yes" ],
-  [ have_jpeg="no" ]
-)
+
 AC_MSG_CHECKING(whether to enable jpeg image loader)
+AC_ARG_ENABLE(image-loader-jpeg,
+  AC_HELP_STRING([--enable-image-loader-jpeg], [enable JPEG image loader]),
+  [ want_jpeg=$enableval ]
+)
+AC_MSG_RESULT($want_jpeg)
+if test "x$want_jpeg" = "xyes"; then
+  AC_CHECK_HEADER(jpeglib.h,
+    [
+      AC_DEFINE(BUILD_LOADER_JPEG, 1, [JPEG Image Loader Support])
+      jpeg_cflags=""
+      jpeg_libs="-ljpeg"
+      have_jpeg="yes"
+      have_jpeg_saver="yes"
+    ],
+    [ have_jpeg="no" ]
+  )
+fi
 dnl Windows has no sigsetjmp function, nor equivalent.
 dnl So we disable the jpeg saver.
-have_jpeg_saver="yes"
 case "$host_os" in
    mingw|mingw32)
    have_jpeg_saver="no"
    ;;
 esac
-AC_ARG_ENABLE(image-loader-jpeg,
-  [  --enable-image-loader-jpeg      enable JPEG image loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_jpeg="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_jpeg="no"
-      fi
-  ], [
-      AC_MSG_RESULT($have_jpeg)
-  ]
-)
-if test "x$have_jpeg" = "xyes"; then
-  AC_CHECK_HEADER(jpeglib.h,
-    [ have_jpeg="yes" ],
-    [ have_jpeg="no" ]
-  )
-fi
-if test "x$have_jpeg" = "xyes"; then
-  AC_DEFINE(BUILD_LOADER_JPEG, 1, [JPEG Image Loader Support])
-  jpeg_cflags=""
-  jpeg_libs="-ljpeg"
-fi
-
 AM_CONDITIONAL(BUILD_LOADER_JPEG, test x$have_jpeg = xyes)
 AM_CONDITIONAL(BUILD_SAVER_JPEG, test x$have_jpeg_saver = xyes)
 
@@ -1001,6 +733,7 @@ AM_CONDITIONAL(BUILD_SAVER_JPEG, test x$have_jpeg_saver = xyes)
 ## EET
 #
 # first, check whether the user WANTS to use EET
+have_eet=no
 AC_ARG_ENABLE(image-loader-eet,
   AC_HELP_STRING(
     [--enable-image-loader-eet],
@@ -1022,8 +755,6 @@ AC_ARG_ENABLE(font-loader-eet,
 # next, if she does, check whether EET is available
 if test "$want_eet_image_loader" = yes -o "$want_eet_font_loader" = yes; then
   PKG_CHECK_MODULES(EET, eet, have_eet=yes, have_eet=no)
-else
-  have_eet=no
 fi
 
 # finally, spew out the result
@@ -1051,6 +782,7 @@ AM_CONDITIONAL(BUILD_LOADER_EET, test $have_eet_image_loader = yes)
 ## EDB
 #
 # first, check whether the user WANTS to use EDB
+have_edb=no
 AC_ARG_ENABLE(image-loader-edb,
   AC_HELP_STRING(
     [--enable-image-loader-edb],
@@ -1063,8 +795,6 @@ AC_ARG_ENABLE(image-loader-edb,
 # next, if she does, check whether EDB is available
 if test "$want_edb_image_loader" = yes; then
   PKG_CHECK_MODULES(EDB, edb, have_edb=yes, have_edb=no)
-else
-  have_edb=no
 fi
 
 # finally, spew out the result
@@ -1081,37 +811,45 @@ AM_CONDITIONAL(BUILD_LOADER_EDB, test $have_edb_image_loader = yes)
 
 #######################################
 ## TIFF
+want_tiff="yes";
 have_tiff="no";
-AC_CHECK_HEADER(tiffio.h,
-  [ have_tiff="yes" ],
-  [ have_tiff="no" ]
-)
+
 AC_MSG_CHECKING(whether to enable tiff image loader)
 AC_ARG_ENABLE(image-loader-tiff,
-  [  --enable-image-loader-tiff      enable TIFF image loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_tiff="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_tiff="no"
-      fi
-  ], [
-      AC_MSG_RESULT($have_tiff)
-  ]
+  AC_HELP_STRING([--enable-image-loader-tiff], [enable TIFF image loader]),
+  [ want_tiff=$enableval ]
 )
-if test "x$have_tiff" = "xyes"; then
+AC_MSG_RESULT($want_tiff)
+
+if test "x$want_tiff" = "xyes"; then
   AC_CHECK_HEADER(tiffio.h,
-    [ AC_CHECK_LIB(tiff, TIFFReadScanline,
-       [ tiff_libs="-ltiff"
-         have_tiff="yes" ],
-       [ AC_CHECK_LIB(tiff, TIFFReadScanline,
-          [ tiff_libs="-ltiff -ljpeg -lz -lm"
-            have_tiff="yes" ],
-          [ AC_CHECK_LIB(tiff34, TIFFReadScanline,
-             [ tiff_libs="-ltiff34 -ljpeg -lz -lm"
-               have_tiff="yes" ],
-             [ have_tiff="no" ]) ]) ]) ],
+    [
+      AC_CHECK_LIB(tiff, TIFFReadScanline,
+        [
+          tiff_libs="-ltiff"
+          have_tiff="yes"
+        ],
+        [
+          AC_CHECK_LIB(tiff, TIFFReadScanline,
+            [
+              tiff_libs="-ltiff -ljpeg -lz -lm"
+              have_tiff="yes"
+            ],
+            [
+              AC_CHECK_LIB(tiff34, TIFFReadScanline,
+                [
+                  tiff_libs="-ltiff34 -ljpeg -lz -lm"
+                  have_tiff="yes"
+                ],
+                [
+                  have_tiff="no"
+                ]
+              )
+            ]
+          )
+        ]
+      )
+    ],
     [ have_tiff="no" ]
   )
 fi
@@ -1119,21 +857,20 @@ if test "x$have_tiff" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_TIFF, 1, [TIFF Image Loader Support])
   tiff_cflags=""
 fi
-
 AM_CONDITIONAL(BUILD_LOADER_TIFF, test x$have_tiff = xyes)
 
 #######################################
 ## XPM
 have_xpm="yes";
 AC_MSG_CHECKING(whether to enable xpm image loader)
-
 AC_ARG_ENABLE(image-loader-xpm,
-  [  --enable-image-loader-xpm       enable XPM image loader], [
-      if test x"$enableval" = x"yes" ; then
-          have_xpm="yes"
-      else
-          have_xpm="no"
-      fi
+  AC_HELP_STRING([--enable-image-loader-xpm], [enable XPM image loader]),
+  [
+    if test "x$enableval" = "xyes" ; then
+      have_xpm="yes"
+    else
+      have_xpm="no"
+    fi
   ]
 )
 AC_MSG_RESULT($have_xpm)
@@ -1145,59 +882,46 @@ AM_CONDITIONAL(BUILD_LOADER_XPM, test x$have_xpm = xyes)
 
 #######################################
 ## SVG
-have_svg="yes";
-AC_MSG_CHECKING(whether to enable svg image loader)
+want_svg="yes";
+have_svg="no";
 
+AC_MSG_CHECKING(whether to enable svg image loader)
 AC_ARG_ENABLE(image-loader-svg,
-  [  --enable-image-loader-svg       enable SVG image loader], [
-      if test x"$enableval" = x"yes" ; then
-        AC_MSG_RESULT(yes)
-	have_svg="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_svg="no"
-      fi
-  ], [
-      AC_MSG_RESULT($have_svg)
-  ]
+  AC_HELP_STRING([--enable-image-loader-svg], [enable SVG image loader]),
+  [ want_svg=$enableval ]
 )
+AC_MSG_RESULT($want_svg)
+
 svg_cflags=""
 svg_libs=""
-if test "x$have_svg" = "xyes"; then
-   # Check if really available
-   PKG_CHECK_MODULES(SVG, librsvg-2.0 >= 2.14.0,
-	 [
-	     have_svg="yes"
-	 ],
-	 [
-	     have_svg="no"
-	 ]
+if test "x$want_svg" = "xyes"; then
+  # Check if really available
+  PKG_CHECK_MODULES(SVG, librsvg-2.0 >= 2.14.0,
+    [ have_svg="yes" ],
+    [ have_svg="no" ]
+  )
+  if test "x$have_svg" = "xyes"; then
+    PKG_CHECK_MODULES(CAIRO_SVG, cairo-svg,
+      [
+        have_svg="yes"
+        svg_cflags="$SVG_CFLAGS $CAIRO_SVG_CFLAGS"
+        svg_libs="$SVG_LIBS $CAIRO_SVG_LIBS"
+      ],
+      [
+        PKG_CHECK_MODULES(LIBSVG_CAIRO, libsvg-cairo,
+          [
+            have_svg="yes"
+            svg_cflags="$SVG_CFLAGS $LIBSVG_CAIRO_CFLAGS"
+            svg_libs="$SVG_LIBS $LIBSVG_CAIRO_LIBS"
+          ],
+          [
+            have_svg="no"
+          ]
+        )
+      ]
     )
-   if test "x$have_svg" = "xyes"; then
-      PKG_CHECK_MODULES(CAIRO_SVG, cairo-svg,
-	 [
-	    have_svg="yes"
-	    svg_cflags="$SVG_CFLAGS $CAIRO_SVG_CFLAGS"
-	    svg_libs="$SVG_LIBS $CAIRO_SVG_LIBS"
-	 ],
-	 [
-            PKG_CHECK_MODULES(LIBSVG_CAIRO, libsvg-cairo,
-	       [
-	          have_svg="yes"
-	          svg_cflags="$SVG_CFLAGS $LIBSVG_CAIRO_CFLAGS"
-	          svg_libs="$SVG_LIBS $LIBSVG_CAIRO_LIBS"
-	       ],
-	       [
-	          have_svg="no"
-	       ]
-            )
-	 ]
-      )
-   fi
-else
-   AC_MSG_RESULT(no)
+  fi
 fi
-
 AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
 
 #####################################################################
@@ -1214,12 +938,12 @@ AC_CHECK_HEADER(pthread.h,
     AC_CHECK_HEADER(sched.h,
       [
         AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
-	  [
+          [
             AC_CHECK_LIB(pthread, pthread_barrier_wait,
-	      [ build_pthreads="yes" ],
+              [ build_pthreads="yes" ],
               [ build_pthreads="no" ]
             )
-	  ],
+          ],
           [ build_pthreads="no" ]
         )
       ],
@@ -1234,7 +958,7 @@ AC_CHECK_HEADER(pthread.h,
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads,
   [  --enable-pthreads               enable threaded rendering], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
         build_pthreads="yes"
@@ -1247,7 +971,7 @@ AC_ARG_ENABLE(pthreads,
   ],
   [
     AC_MSG_RESULT($build_pthreads)
-    if test x"$build_pthreads" = x"yes" ; then
+    if test "x$build_pthreads" = "xyes" ; then
       AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
       pthread_cflags=""
       pthread_libs="-lpthread"
@@ -1269,7 +993,7 @@ esac
 AC_MSG_CHECKING(whether to build mmx code)
 AC_ARG_ENABLE(cpu-mmx,
   [  --enable-cpu-mmx                enable mmx code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
         build_cpu_mmx="yes"
@@ -1280,7 +1004,7 @@ AC_ARG_ENABLE(cpu-mmx,
   ],
   [
     AC_MSG_RESULT($build_cpu_mmx)
-    if test x"$build_cpu_mmx" = x"yes" ; then
+    if test "x$build_cpu_mmx" = "xyes" ; then
       AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
     fi
   ]
@@ -1300,7 +1024,7 @@ esac
 AC_MSG_CHECKING(whether to build sse code)
 AC_ARG_ENABLE(cpu-sse,
   [  --enable-cpu-sse                enable sse code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
         build_cpu_sse="yes"
@@ -1311,7 +1035,7 @@ AC_ARG_ENABLE(cpu-sse,
   ],
   [
     AC_MSG_RESULT($build_cpu_sse)
-    if test x"$build_cpu_sse" = x"yes" ; then
+    if test "x$build_cpu_sse" = "xyes" ; then
       AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
     fi
   ]
@@ -1363,7 +1087,7 @@ if test "x$build_cpu_altivec" = "xyes"; then
 fi
 if test "x$build_cpu_altivec" = "xyes"; then
    AC_MSG_CHECKING(whether to use altivec compiler flag)
-   if test x"$GCC" = x"yes"; then
+   if test "x$GCC" = "xyes"; then
       if echo "int main(){return 0;}" | ${CPP} -faltivec - > /dev/null 2>&1; then
          altivec_cflags="-faltivec"
          AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
@@ -1384,17 +1108,17 @@ build_cpu_c="yes"
 AC_MSG_CHECKING(whether to build c code)
 AC_ARG_ENABLE(cpu-c,
   [  --enable-cpu-c                  enable C code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_C, 1, [Build plain C code])
-	build_cpu_c="yes"
+        build_cpu_c="yes"
       else
         AC_MSG_RESULT(no)
-	build_cpu_c="no"
+        build_cpu_c="no"
       fi
   ], [
       AC_MSG_RESULT($build_cpu_c)
-      if test x"$build_cpu_c" = x"yes" ; then
+      if test "x$build_cpu_c" = "xyes" ; then
         AC_DEFINE(BUILD_C, 1, [Build plain C code])
       fi
   ]
@@ -1410,7 +1134,7 @@ scaler_sample="yes"
 AC_MSG_CHECKING(whether to build sampling scaler)
 AC_ARG_ENABLE(scale-sample,
   [  --enable-scale-sample           enable sampling scaler code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [Sampling Scaler Support])
         scaler_sample="yes"
@@ -1420,7 +1144,7 @@ AC_ARG_ENABLE(scale-sample,
       fi
   ], [
       AC_MSG_RESULT($scaler_sample)
-      if test x"$scaler_sample" = x"yes" ; then
+      if test "x$scaler_sample" = "xyes" ; then
         AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [Sampling Scaler Support])
       fi
   ]
@@ -1433,7 +1157,7 @@ scaler_smooth="yes"
 AC_MSG_CHECKING(whether to build smooth scaler)
 AC_ARG_ENABLE(scale-smooth,
   [  --enable-scale-smooth           enable smooth scaler code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [Smooth Scaler Support])
         scaler_smooth="yes"
@@ -1443,7 +1167,7 @@ AC_ARG_ENABLE(scale-smooth,
       fi
   ], [
       AC_MSG_RESULT($scaler_smooth)
-      if test x"$scaler_smooth" = x"yes" ; then
+      if test "x$scaler_smooth" = "xyes" ; then
         AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [Smooth Scaler Support])
       fi
   ]
@@ -1456,17 +1180,17 @@ conv_yuv="yes"
 AC_MSG_CHECKING(whether to build yuv converter code)
 AC_ARG_ENABLE(convert-yuv,
   [  --enable-convert-yuv            enable yuv converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV Converter Support])
-	conv_yuv="yes"
+        conv_yuv="yes"
       else
         AC_MSG_RESULT(no)
-	conv_yuv="no"
+        conv_yuv="no"
       fi
   ], [
       AC_MSG_RESULT($conv_yuv)
-      if test x"$conv_yuv" = x"yes" ; then
+      if test "x$conv_yuv" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV Converter Support])
       fi
   ]
@@ -1482,9 +1206,9 @@ conv_small_dither="no"
 AC_MSG_CHECKING(whether to build small dither mask code)
 AC_ARG_ENABLE(small-dither-mask,
   [  --enable-small-dither-mask      enable small dither mask code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
-	AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
+        AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
         conv_small_dither="yes"
       else
         AC_MSG_RESULT(no)
@@ -1492,7 +1216,7 @@ AC_ARG_ENABLE(small-dither-mask,
       fi
   ], [
       AC_MSG_RESULT($conv_small_dither)
-      if test x"$conv_small_dither" = x"yes" ; then
+      if test "x$conv_small_dither" = "xyes" ; then
         AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
       fi
   ]
@@ -1505,9 +1229,9 @@ conv_no_dither="no"
 AC_MSG_CHECKING(whether to build without dither mask for 16bpp)
 AC_ARG_ENABLE(no-dither-mask,
   [  --enable-no-dither-mask         enable conversion to 16bpp without dither mask], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
-	AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
+        AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
         conv_no_dither="yes"
       else
         AC_MSG_RESULT(no)
@@ -1515,7 +1239,7 @@ AC_ARG_ENABLE(no-dither-mask,
       fi
   ], [
       AC_MSG_RESULT($conv_no_dither)
-      if test x"$conv_no_dither" = x"yes" ; then
+      if test "x$conv_no_dither" = "xyes" ; then
         AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
       fi
   ]
@@ -1528,17 +1252,17 @@ conv_8_rgb_332="yes"
 AC_MSG_CHECKING(whether to build 8bpp 332 converter code)
 AC_ARG_ENABLE(convert-8-rgb-332,
   [  --enable-convert-8-rgb-332      enable 8bpp 332 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp 332 Converter Support])
         conv_8_rgb_332="yes"
       else
         AC_MSG_RESULT(no)
-	conv_8_rgb_332="no"
+        conv_8_rgb_332="no"
       fi
   ], [
       AC_MSG_RESULT($conv_8_rgb_332)
-      if test x"$conv_8_rgb_332" = x"yes" ; then
+      if test "x$conv_8_rgb_332" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp 332 Converter Support])
       fi
   ]
@@ -1551,17 +1275,17 @@ conv_8_rgb_666="yes"
 AC_MSG_CHECKING(whether to build 8bpp 666 converter code)
 AC_ARG_ENABLE(convert-8-rgb-666,
   [  --enable-convert-8-rgb-666      enable 8bpp 666 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp 666 Converter Support])
         conv_8_rgb_666="yes"
       else
         AC_MSG_RESULT(no)
-	conv_8_rgb_666="no"
+        conv_8_rgb_666="no"
       fi
   ], [
       AC_MSG_RESULT($conv_8_rgb_666)
-      if test x"$conv_8_rgb_666" = x"yes" ; then
+      if test "x$conv_8_rgb_666" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp 666 Converter Support])
       fi
   ]
@@ -1574,17 +1298,17 @@ conv_8_rgb_232="yes"
 AC_MSG_CHECKING(whether to build 8bpp 232 converter code)
 AC_ARG_ENABLE(convert-8-rgb-232,
   [  --enable-convert-8-rgb-232      enable 8bpp 232 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp 232 Converter Support])
         conv_8_rgb_232="yes"
       else
         AC_MSG_RESULT(no)
-	conv_8_rgb_232="no"
+        conv_8_rgb_232="no"
       fi
   ], [
       AC_MSG_RESULT($conv_8_rgb_232)
-      if test x"$conv_8_rgb_232" = x"yes" ; then
+      if test "x$conv_8_rgb_232" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp 232 Converter Support])
       fi
   ]
@@ -1597,17 +1321,17 @@ conv_8_rgb_222="yes"
 AC_MSG_CHECKING(whether to build 8bpp 222 converter code)
 AC_ARG_ENABLE(convert-8-rgb-222,
   [  --enable-convert-8-rgb-222      enable 8bpp 222 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp 222 Converter Support])
         conv_8_rgb_222="yes"
       else
         AC_MSG_RESULT(no)
-	conv_8_rgb_222="no"
+        conv_8_rgb_222="no"
       fi
   ], [
       AC_MSG_RESULT($conv_8_rgb_222)
-      if test x"$conv_8_rgb_222" = x"yes" ; then
+      if test "x$conv_8_rgb_222" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp 222 Converter Support])
       fi
   ]
@@ -1620,17 +1344,17 @@ conv_8_rgb_221="yes"
 AC_MSG_CHECKING(whether to build 8bpp 221 converter code)
 AC_ARG_ENABLE(convert-8-rgb-221,
   [  --enable-convert-8-rgb-221      enable 8bpp 221 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp 221 Converter Support])
         conv_8_rgb_221="yes"
       else
         AC_MSG_RESULT(no)
-	conv_8_rgb_221="no"
+        conv_8_rgb_221="no"
       fi
   ], [
       AC_MSG_RESULT($conv_8_rgb_221)
-      if test x"$conv_8_rgb_221" = x"yes" ; then
+      if test "x$conv_8_rgb_221" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp 221 Converter Support])
       fi
   ]
@@ -1643,17 +1367,17 @@ conv_8_rgb_121="yes"
 AC_MSG_CHECKING(whether to build 8bpp 121 converter code)
 AC_ARG_ENABLE(convert-8-rgb-121,
   [  --enable-convert-8-rgb-121      enable 8bpp 121 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_8_RGB_121, 1, [8bpp 121 Converter Support])
         conv_8_rgb_121="yes"
       else
         AC_MSG_RESULT(no)
-	conv_8_rgb_121="no"
+        conv_8_rgb_121="no"
       fi
   ], [
       AC_MSG_RESULT($conv_8_rgb_121)
-      if test x"$conv_8_rgb_121" = x"yes" ; then
+      if test "x$conv_8_rgb_121" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_8_RGB_121, 1, [8bpp 121 Converter Support])
       fi
   ]
@@ -1666,17 +1390,17 @@ conv_8_rgb_111="yes"
 AC_MSG_CHECKING(whether to build 8bpp 111 converter code)
 AC_ARG_ENABLE(convert-8-rgb-111,
   [  --enable-convert-8-rgb-111      enable 8bpp 111 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp 111 Converter Support])
         conv_8_rgb_111="yes"
       else
         AC_MSG_RESULT(no)
-	conv_8_rgb_111="no"
+        conv_8_rgb_111="no"
       fi
   ], [
       AC_MSG_RESULT($conv_8_rgb_111)
-      if test x"$conv_8_rgb_111" = x"yes" ; then
+      if test "x$conv_8_rgb_111" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp 111 Converter Support])
       fi
   ]
@@ -1689,17 +1413,17 @@ conv_16_rgb_565="yes"
 AC_MSG_CHECKING(whether to build 16bpp 565 rgb converter code)
 AC_ARG_ENABLE(convert-16-rgb-565,
   [  --enable-convert-16-rgb-565     enable 16bpp rgb 565 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565 Converter Support])
         conv_16_rgb_565="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_rgb_565="no"
+        conv_16_rgb_565="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_565)
-      if test x"$conv_16_rgb_565" = x"yes" ; then
+      if test "x$conv_16_rgb_565" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565 Converter Support])
       fi
   ]
@@ -1712,17 +1436,17 @@ conv_16_bgr_565="yes"
 AC_MSG_CHECKING(whether to build 16bpp 565 bgr converter code)
 AC_ARG_ENABLE(convert-16-bgr-565,
   [  --enable-convert-16-bgr-565     enable 16bpp bgr 565 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565 Converter Support])
         conv_16_bgr_565="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_bgr_565="no"
+        conv_16_bgr_565="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_bgr_565)
-      if test x"$conv_16_bgr_565" = x"yes" ; then
+      if test "x$conv_16_bgr_565" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565 Converter Support])
       fi
   ]
@@ -1735,17 +1459,17 @@ conv_16_rgb_555="yes"
 AC_MSG_CHECKING(whether to build 16bpp 555 converter code)
 AC_ARG_ENABLE(convert-16-rgb-555,
   [  --enable-convert-16-rgb-555     enable 16bpp 555 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp 555 Converter Support])
         conv_16_rgb_555="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_rgb_555="no"
+        conv_16_rgb_555="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_555)
-      if test x"$conv_16_rgb_555" = x"yes" ; then
+      if test "x$conv_16_rgb_555" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp 555 Converter Support])
       fi
   ]
@@ -1758,17 +1482,17 @@ conv_16_rgb_444="yes"
 AC_MSG_CHECKING(whether to build 16bpp 444 converter code)
 AC_ARG_ENABLE(convert-16-rgb-444,
   [  --enable-convert-16-rgb-444     enable 16bpp 444 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp 444 Converter Support])
         conv_16_rgb_444="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_rgb_444="no"
+        conv_16_rgb_444="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_444)
-      if test x"$conv_16_rgb_444" = x"yes" ; then
+      if test "x$conv_16_rgb_444" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp 444 Converter Support])
       fi
   ]
@@ -1781,17 +1505,17 @@ conv_16_rgb_ipq="yes"
 AC_MSG_CHECKING(whether to build 16bpp 565 (444 ipaq) converter code)
 AC_ARG_ENABLE(convert-16-rgb-ipq,
   [  --enable-convert-16-rgb-ipq     enable 16bpp 565 (444 ipaq) converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
         conv_16_rgb_ipq="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_rgb_ipq="no"
+        conv_16_rgb_ipq="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_ipq)
-      if test x"$conv_16_rgb_ipq" = x"yes" ; then
+      if test "x$conv_16_rgb_ipq" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
       fi
   ]
@@ -1804,17 +1528,17 @@ conv_16_rgb_rot_0="yes"
 AC_MSG_CHECKING(whether to build 16bpp rotation 0 converter code)
 AC_ARG_ENABLE(convert-16-rgb-rot-0,
   [  --enable-convert-16-rgb-rot-0   enable 16bpp rotation 0 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp Rotation 0 Converter Code])
-	conv_16_rgb_rot_0="yes"
+        conv_16_rgb_rot_0="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_rgb_rot_0="no"
+        conv_16_rgb_rot_0="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_rot_0)
-      if test x"$conv_16_rgb_rot_0" = x"yes" ; then
+      if test "x$conv_16_rgb_rot_0" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp Rotation 0 Converter Code])
       fi
   ]
@@ -1827,7 +1551,7 @@ conv_16_rgb_rot_180="yes"
 AC_MSG_CHECKING(whether to build 16bpp rotation 180 converter code)
 AC_ARG_ENABLE(convert-16-rgb-rot-180,
   [  --enable-convert-16-rgb-rot-180 enable 16bpp rotation 180 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT180, 1, [16bpp Rotation 180 Converter Code])
         conv_16_rgb_rot_180="yes"
@@ -1837,7 +1561,7 @@ AC_ARG_ENABLE(convert-16-rgb-rot-180,
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_rot_180)
-      if test x"$conv_16_rgb_rot_180" = x"yes" ; then
+      if test "x$conv_16_rgb_rot_180" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT180, 1, [16bpp Rotation 180 Converter Code])
       fi
   ]
@@ -1850,17 +1574,17 @@ conv_16_rgb_rot_270="yes"
 AC_MSG_CHECKING(whether to build 16bpp rotation 270 converter code)
 AC_ARG_ENABLE(convert-16-rgb-rot-270,
   [  --enable-convert-16-rgb-rot-270 enable 16bpp rotation 270 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp Rotation 270 Converter Code])
-	conv_16_rgb_rot_270="yes"
+        conv_16_rgb_rot_270="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_rgb_rot_270="no"
+        conv_16_rgb_rot_270="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_rot_270)
-      if test x"$conv_16_rgb_rot_270" = x"yes" ; then
+      if test "x$conv_16_rgb_rot_270" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp Rotation 270 Converter Code])
       fi
   ]
@@ -1873,17 +1597,17 @@ conv_16_rgb_rot_90="yes"
 AC_MSG_CHECKING(whether to build 16bpp rotation 90 converter code)
 AC_ARG_ENABLE(convert-16-rgb-rot-90,
   [  --enable-convert-16-rgb-rot-90  enable 16bpp rotation 90 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp Rotation 90 Converter Code])
-	conv_16_rgb_rot_90="yes"
+        conv_16_rgb_rot_90="yes"
       else
         AC_MSG_RESULT(no)
-	conv_16_rgb_rot_90="no"
+        conv_16_rgb_rot_90="no"
       fi
   ], [
       AC_MSG_RESULT($conv_16_rgb_rot_90)
-      if test x"$conv_16_rgb_rot_90" = x"yes" ; then
+      if test "x$conv_16_rgb_rot_90" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp Rotation 90 Converter Code])
       fi
   ]
@@ -1896,17 +1620,17 @@ conv_24_rgb_888="yes"
 AC_MSG_CHECKING(whether to build 24bpp 888 rgb converter code)
 AC_ARG_ENABLE(convert-24-rgb-888,
   [  --enable-convert-24-rgb-888     enable 24bpp rgb 888 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888 Converter Support])
-	conv_24_rgb_888="yes"
+        conv_24_rgb_888="yes"
       else
         AC_MSG_RESULT(no)
-	conv_24_rgb_888="no"
+        conv_24_rgb_888="no"
       fi
   ], [
       AC_MSG_RESULT($conv_24_rgb_888)
-      if test x"$conv_24_rgb_888" = x"yes" ; then
+      if test "x$conv_24_rgb_888" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888 Converter Support])
       fi
   ]
@@ -1919,17 +1643,17 @@ conv_24_bgr_888="yes"
 AC_MSG_CHECKING(whether to build 24bpp 888 bgr converter code)
 AC_ARG_ENABLE(convert-24-bgr-888,
   [  --enable-convert-24-bgr-888     enable 24bpp bgr 888 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888 Converter Support])
-	conv_24_bgr_888="yes"
+        conv_24_bgr_888="yes"
       else
         AC_MSG_RESULT(no)
-	conv_24_bgr_888="no"
+        conv_24_bgr_888="no"
       fi
   ], [
       AC_MSG_RESULT(yes)
-      if test x"$conv_24_bgr_888" = x"yes" ; then
+      if test "x$conv_24_bgr_888" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888 Converter Support])
       fi
   ]
@@ -1942,17 +1666,17 @@ conv_32_rgb_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 rgb converter code)
 AC_ARG_ENABLE(convert-32-rgb-8888,
   [  --enable-convert-32-rgb-8888    enable 32bpp rgb 8888 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888 Converter Support])
-	conv_32_rgb_8888="yes"
+        conv_32_rgb_8888="yes"
       else
         AC_MSG_RESULT(no)
-	conv_32_rgb_8888="no"
+        conv_32_rgb_8888="no"
       fi
   ], [
       AC_MSG_RESULT($conv_32_rgb_8888)
-      if test x"$conv_32_rgb_8888" = x"yes" ; then
+      if test "x$conv_32_rgb_8888" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888 Converter Support])
       fi
   ]
@@ -1965,17 +1689,17 @@ conv_32_rgbx_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 rgbx converter code)
 AC_ARG_ENABLE(convert-32-rgbx-8888,
   [  --enable-convert-32-rgbx-8888   enable 32bpp rgbx 8888 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RGBX 8888 Converter Support])
-	conv_32_rgbx_8888="yes"
+        conv_32_rgbx_8888="yes"
       else
         AC_MSG_RESULT(no)
-	conv_32_rgbx_8888="no"
+        conv_32_rgbx_8888="no"
       fi
   ], [
       AC_MSG_RESULT($conv_32_rgbx_8888)
-      if test x"$conv_32_rgbx_8888" = x"yes" ; then
+      if test "x$conv_32_rgbx_8888" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RBGX 8888 Converter Support])
       fi
   ]
@@ -1988,17 +1712,17 @@ conv_32_bgr_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 bgr converter code)
 AC_ARG_ENABLE(convert-32-bgr-8888,
   [  --enable-convert-32-bgr-8888    enable 32bpp bgr 8888 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888 Converter Support])
-	conv_32_bgr_8888="yes"
+        conv_32_bgr_8888="yes"
       else
         AC_MSG_RESULT(no)
-	conv_32_bgr_8888="no"
+        conv_32_bgr_8888="no"
       fi
   ], [
       AC_MSG_RESULT($conv_32_bgr_8888)
-      if test x"$conv_32_bgr_8888" = x"yes" ; then
+      if test "x$conv_32_bgr_8888" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888 Converter Support])
       fi
   ]
@@ -2011,17 +1735,17 @@ conv_32_bgrx_8888="yes"
 AC_MSG_CHECKING(whether to build 32bpp 8888 bgrx converter code)
 AC_ARG_ENABLE(convert-32-bgrx-8888,
   [  --enable-convert-32-bgrx-8888   enable 32bpp bgrx 8888 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp BGRX 8888 Converter Support])
-	conv_32_bgrx_8888="yes"
+        conv_32_bgrx_8888="yes"
       else
         AC_MSG_RESULT(no)
-	conv_32_bgrx_8888="no"
+        conv_32_bgrx_8888="no"
       fi
   ], [
       AC_MSG_RESULT($conv_32_bgrx_8888)
-      if test x"$conv_32_bgrx_8888" = x"yes" ; then
+      if test "x$conv_32_bgrx_8888" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp RBGX 8888 Converter Support])
       fi
   ]
@@ -2034,17 +1758,17 @@ conv_32_rgb_rot_0="yes"
 AC_MSG_CHECKING(whether to build 32bpp rotation 0 converter code)
 AC_ARG_ENABLE(convert-32-rgb-rot-0,
   [  --enable-convert-32-rgb-rot-0   enable 32bpp rotation 0 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp Rotation 0 Converter Support])
-	conv_32_rgb_rot_0="yes"
+        conv_32_rgb_rot_0="yes"
       else
         AC_MSG_RESULT(no)
-	conv_32_rgb_rot_0="no"
+        conv_32_rgb_rot_0="no"
       fi
   ], [
       AC_MSG_RESULT($conv_32_rgb_rot_0)
-      if test x"$conv_32_rgb_rot_0" = x"yes" ; then
+      if test "x$conv_32_rgb_rot_0" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp Rotation 0 Converter Support])
       fi
   ]
@@ -2057,7 +1781,7 @@ conv_32_rgb_rot_180="yes"
 AC_MSG_CHECKING(whether to build 32bpp rotation 180 converter code)
 AC_ARG_ENABLE(convert-32-rgb-rot-180,
   [  --enable-convert-32-rgb-rot-180 enable 32bpp rotation 180 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT180, 1, [32bpp Rotation 180 Converter Support])
         conv_32_rgb_rot_180="yes"
@@ -2067,7 +1791,7 @@ AC_ARG_ENABLE(convert-32-rgb-rot-180,
       fi
   ], [
       AC_MSG_RESULT($conv_32_rgb_rot_180)
-      if test x"$conv_32_rgb_rot_180" = x"yes" ; then
+      if test "x$conv_32_rgb_rot_180" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT180, 1, [32bpp Rotation 180 Converter Support])
       fi
   ]
@@ -2080,17 +1804,17 @@ conv_32_rgb_rot_270="yes"
 AC_MSG_CHECKING(whether to build 32bpp rotation 270 converter code)
 AC_ARG_ENABLE(convert-32-rgb-rot-270,
   [  --enable-convert-32-rgb-rot-270 enable 32bpp rotation 270 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp Rotation 270 Converter Support])
-	conv_32_rgb_rot_270="yes"
+        conv_32_rgb_rot_270="yes"
       else
         AC_MSG_RESULT(no)
-	conv_32_rgb_rot_270="no"
+        conv_32_rgb_rot_270="no"
       fi
   ], [
       AC_MSG_RESULT($conv_32_rgb_rot_270)
-      if test x"$conv_32_rgb_rot_270" = x"yes" ; then
+      if test "x$conv_32_rgb_rot_270" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp Rotation 270 Converter Support])
       fi
   ]
@@ -2103,17 +1827,17 @@ conv_32_rgb_rot_90="yes"
 AC_MSG_CHECKING(whether to build 32bpp rotation 90 converter code)
 AC_ARG_ENABLE(convert-32-rgb-rot-90,
   [  --enable-convert-32-rgb-rot-90  enable 32bpp rotation 90 converter code], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp Rotation 90 Converter Support])
-	conv_32_rgb_rot_90="yes"
+        conv_32_rgb_rot_90="yes"
       else
         AC_MSG_RESULT(no)
-	conv_32_rgb_rot_90="no"
+        conv_32_rgb_rot_90="no"
       fi
   ], [
       AC_MSG_RESULT($conv_32_rgb_rot_90)
-      if test x"$conv_32_rgb_rot_90" = x"yes" ; then
+      if test "x$conv_32_rgb_rot_90" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp Rotation 90 Converter Support])
       fi
   ]
@@ -2128,7 +1852,7 @@ VALGRIND_LIBS="" # dont use LIBS
 
 AC_ARG_ENABLE(valgrind,
   [  --enable-valgrind               enable valgrind fixes to stop false reports], [
-      if test x"$enableval" = x"yes" ; then
+      if test "x$enableval" = "xyes" ; then
         have_valgrind="yes"
       else
         have_valgrind="no"
@@ -2156,14 +1880,6 @@ AC_SUBST(glew_libs)
 
 AC_SUBST(x_cflags)
 AC_SUBST(x_libs)
-
-AC_SUBST(sdl_cflags)
-AC_SUBST(sdl_libs)
-
-AC_SUBST(xcb_cflags)
-AC_SUBST(xcb_libs)
-AC_SUBST(xcbrender_cflags)
-AC_SUBST(xcbrender_libs)
 
 AC_SUBST(gl_cflags)
 AC_SUBST(gl_libs)

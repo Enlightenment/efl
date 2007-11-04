@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
-@sdl_cflags@
+@SDL_CFLAGS@
 
 if BUILD_ENGINE_SDL
 
@@ -19,7 +19,7 @@ module_la_SOURCES  = \
 evas_engine.c \
 evas_engine.h
 
-module_la_LIBADD = @sdl_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @SDL_LIBS@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
