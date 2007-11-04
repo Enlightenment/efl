@@ -4,7 +4,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in edje_docs.tar edje_docs.tar.gz edje.c \
-		       debian/changelog edje.spec
+		       debian/changelog edje.spec depcomp compile
 
 ### this is all fine and great - but edje should not be going and installing
 ### data in another software's data dir - it's just wrong. not to mention this

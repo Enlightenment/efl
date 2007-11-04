@@ -1,13 +1,14 @@
-## Process this file with automake to produce Makefile.in
 
-INCLUDES = \
+MAINTAINERCLEANFILES = Makefile.in
+
+AM_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
-@EDJE_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EDJE_CFLAGS@
 
 bin_SCRIPTS = \
 @EDJE_RECC_PRG@

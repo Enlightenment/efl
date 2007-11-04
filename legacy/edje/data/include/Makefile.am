@@ -1,3 +1,6 @@
+
+MAINTAINERCLEANFILES = Makefile.in
+
 FILES = edje.inc
 
 incdir = $(pkgdatadir)/include
