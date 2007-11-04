@@ -49,8 +49,6 @@ struct Efreet_Desktop_Type_Info
 static int efreet_desktop_read(Efreet_Desktop *desktop);
 static void efreet_desktop_clear(Efreet_Desktop *desktop);
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
-static Ecore_List *efreet_desktop_string_list_parse(const char *string);
-static char *efreet_desktop_string_list_join(Ecore_List *list);
 static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
 static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop,
@@ -710,7 +708,7 @@ efreet_desktop_type_parse(const char *type_str)
  * @return an Ecore_List of ecore string's
  * @brief Parse ';' separate list of strings according to the desktop spec
  */
-static Ecore_List *
+EAPI Ecore_List *
 efreet_desktop_string_list_parse(const char *string)
 {
     Ecore_List *list;
@@ -754,7 +752,7 @@ efreet_desktop_string_list_parse(const char *string)
  * @return a raw string list
  * @brief Create a ';' separate list of strings according to the desktop spec
  */
-static char *
+EAPI char *
 efreet_desktop_string_list_join(Ecore_List *list)
 {
     const char *tmp;

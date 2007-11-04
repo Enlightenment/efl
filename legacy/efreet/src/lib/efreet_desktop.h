@@ -138,6 +138,9 @@ EAPI int               efreet_desktop_type_alias (int from_type,
                                              const char *alias);
 EAPI void             *efreet_desktop_type_data_get(Efreet_Desktop *desktop);
 
+EAPI Ecore_List       *efreet_desktop_string_list_parse(const char *string);
+EAPI char             *efreet_desktop_string_list_join(Ecore_List *list);
+
 EAPI void              efreet_desktop_cache_flush(void);
 
 /**
