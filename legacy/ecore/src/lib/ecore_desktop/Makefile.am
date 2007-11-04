@@ -1,16 +1,12 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = \
+AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_file \
 -I$(top_builddir)/src/lib/ecore_desktop \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_desktop
-
-libecore_desktop_la_LDFLAGS = -version-info 1:0:0 \
--L$(top_builddir)/src/lib/ecore/.libs \
--L$(top_builddir)/src/lib/ecore_file/.libs
 
 if BUILD_ECORE_DESKTOP
 
@@ -30,6 +26,8 @@ ecore_desktop_private.h
 libecore_desktop_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_file/libecore_file.la
+
+libecore_desktop_la_LDFLAGS = -version-info @version_info@
 
 libecore_desktop_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \

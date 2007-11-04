@@ -1,12 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = \
+AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
 @sdl_cflags@
-
-libecore_sdl_la_LDFLAGS = -version-info 1:0:0 \
--L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_SDL
 
@@ -21,6 +18,8 @@ Ecore_Sdl_Keys.h
 libecore_sdl_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @sdl_libs@ @create_shared_lib@
+
+libecore_sdl_la_LDFLAGS = -version-info @version_info@
 
 libecore_sdl_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES =
+AM_CPPFLAGS =
 
 lib_LTLIBRARIES = libecore.la
 include_HEADERS = \
@@ -33,5 +33,5 @@ ecore_tree.c \
 ecore_value.c \
 ecore_private.h
 
-libecore_la_LIBADD = -lm @dlopen_libs@ @winsock_libs@ @create_shared_lib@
-libecore_la_LDFLAGS = -version-info 1:0:0
+libecore_la_LIBADD = @dlopen_libs@ @winsock_libs@ -lm
+libecore_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@

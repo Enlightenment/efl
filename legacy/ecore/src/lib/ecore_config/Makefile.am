@@ -1,21 +1,18 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = \
+AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_srcdir)/ \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_ipc \
 -I$(top_builddir)/ \
-@EVAS_CFLAGS@ @EET_CFLAGS@ \
--DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
--DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
--DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EVAS_CFLAGS@ @EET_CFLAGS@
 
 CLEANFILES = $(DB)
-
-libecore_config_la_LDFLAGS = -version-info 1:0:0 \
--L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_CONFIG
 
@@ -29,6 +26,8 @@ if BUILD_ECORE_CONFIG
 lib_LTLIBRARIES = libecore_config.la
 include_HEADERS = \
 Ecore_Config.h
+
+libecore_config_la_LDFLAGS = -version-info @version_info@
 
 #config_DATA = $(DB)
 #configdir = $(pkgdatadir)
@@ -74,7 +73,6 @@ libecore_config_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la
 
 endif
-
 
 endif
 

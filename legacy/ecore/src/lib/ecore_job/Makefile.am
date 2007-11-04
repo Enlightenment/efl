@@ -1,12 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = \
+AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore
-
-libecore_job_la_LDFLAGS = -version-info 1:0:0 \
-@create_shared_lib@ \
--L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_JOB
 
@@ -20,6 +16,8 @@ ecore_job_private.h
 
 libecore_job_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la
+
+libecore_job_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@
 
 libecore_job_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_ECORE_X_XCB
-INCLUDES = \
+AM_CPPFLAGS = \
 @XCB_DAMAGE_CFLAGS@ \
 @XCB_COMPOSITE_CFLAGS@ \
 @XCB_DPMS_CFLAGS@ \
@@ -19,7 +19,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_txt
 else
-INCLUDES = \
+AM_CPPFLAGS = \
 @Xcursor_cflags@ \
 @XDAMAGE_CFLAGS@ \
 @XCOMPOSITE_CFLAGS@ \
@@ -36,10 +36,6 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_txt
 endif
-
-libecore_x_la_LDFLAGS = -version-info 1:0:0 \
--L$(top_builddir)/src/lib/ecore/.libs \
--L$(top_builddir)/src/lib/ecore_txt/.libs
 
 if BUILD_ECORE_X_XCB
 
@@ -93,11 +89,13 @@ libecore_x_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la
 
+libecore_x_la_LDFLAGS = -version-info @version_info@
+
 libecore_x_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la
 
-endif
+else
 
 if BUILD_ECORE_X
 
@@ -149,9 +147,13 @@ libecore_x_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la
 
+libecore_x_la_LDFLAGS = -version-info @version_info@
+
 libecore_x_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la
+
+endif
 
 endif
 

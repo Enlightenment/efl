@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = \
+AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_builddir)/src/lib/ecore_ipc \
@@ -8,10 +8,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 @SSL_CFLAGS@
-
-libecore_ipc_la_LDFLAGS = -version-info 1:0:0 \
--L$(top_builddir)/src/lib/ecore/.libs \
--L$(top_builddir)/src/lib/ecore_con/.libs
 
 if BUILD_ECORE_IPC
 
@@ -27,6 +23,8 @@ libecore_ipc_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la \
 @SSL_LIBS@ @winsock_libs@
+
+libecore_ipc_la_LDFLAGS = -version-info @version_info@
 
 libecore_ipc_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
