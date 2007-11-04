@@ -1,9 +1,14 @@
+
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = -DLINUX -I$(top_srcdir)/src/lib -I$(top_srcdir) -I$(top_builddir) \
-           -DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
-	   -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
-	   -DPACKAGE_DATA_DIR=\"@PACKAGE_DATA_DIR@\"
+AM_CPPFLAGS = \
+-I. \
+-I$(top_srcdir)/src/lib \
+-I$(top_srcdir) \
+-I$(top_builddir) \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
 
 bin_PROGRAMS = embryo_cc
 
@@ -24,8 +29,8 @@ embryo_cc_scvars.c \
 embryo_cc_prefix.c \
 embryo_cc_prefix.h
 
-embryo_cc_LDADD = 
-embryo_cc_DEPENDENCIES = 
+embryo_cc_LDADD = -lm
+embryo_cc_DEPENDENCIES =
 
 EXTRA_DIST = \
 embryo_cc_sc5.scp \

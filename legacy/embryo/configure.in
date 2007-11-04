@@ -1,11 +1,14 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(configure.in)
+AC_INIT(embryo, 0.9.1.041, enlightenment-devel@lists.sourceforge.net)
+AC_PREREQ(2.52)
+AC_CONFIG_SRCDIR(configure.in)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
-AM_INIT_AUTOMAKE(embryo, 0.9.1.041)
+
+AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
 AC_C_BIGENDIAN
@@ -13,8 +16,19 @@ AC_PROG_CC
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
-AM_ENABLE_SHARED
-AM_PROG_LIBTOOL
+
+AC_LIBTOOL_WIN32_DLL
+define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
+define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
+AC_PROG_LIBTOOL
+
+VMAJ=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $1);}'`
+VMIN=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $2);}'`
+VMIC=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $3);}'`
+SNAP=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $4);}'`
+version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+AC_SUBST(version_info)
+
 AC_FUNC_ALLOCA
 
 AC_CHECK_FUNCS(gettimeofday)
@@ -46,35 +60,6 @@ fi
 
 AC_SUBST(fnmatch_libs)
 
-if test "x${bindir}" = 'xNONE'; then
-  if test "x${prefix}" = "xNONE"; then
-    PACKAGE_BIN_DIR="${ac_default_prefix}/bin"
-  else
-    PACKAGE_BIN_DIR="${prefix}/bin"
-  fi
-else
-  PACKAGE_BIN_DIR="${bindir}"
-fi
-AC_SUBST(PACKAGE_BIN_DIR)
-
-if test "x${libdir}" = 'xNONE'; then
-  if test "x${prefix}" = "xNONE"; then
-    PACKAGE_LIB_DIR="${ac_default_prefix}/lib"
-  else
-    PACKAGE_LIB_DIR="${prefix}/lib"
-  fi
-else
-  PACKAGE_LIB_DIR="${libdir}"
-fi
-AC_SUBST(PACKAGE_LIB_DIR)
-		
-if test "x${prefix}" = "xNONE"; then
-  PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
-else
-  PACKAGE_DATA_DIR="${prefix}/share/${PACKAGE}"
-fi
-AC_SUBST(PACKAGE_DATA_DIR)
-	
 embryoincludedir='${datadir}/include'
 AC_SUBST(embryoincludedir)
 
@@ -89,3 +74,23 @@ README
 embryo.spec
 debian/changelog
 ])
+
+
+#####################################################################
+## Info
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE $VERSION"
+echo "------------------------------------------------------------------------"
+echo
+echo "Configuration Options Summary:"
+echo
+echo "  Compilation..........: make"
+echo
+echo "  Installation.........: make install"
+echo
+echo "    prefix.............: $prefix"
+echo
