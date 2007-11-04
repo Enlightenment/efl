@@ -207,6 +207,8 @@ size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
 const char *efreet_desktop_environment_get(void);
 
+const char *efreet_util_path_to_file_id(const char *path);
+
 /**
  * @}
  */

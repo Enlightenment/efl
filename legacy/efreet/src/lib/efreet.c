@@ -15,7 +15,7 @@ static int efreet_parse_locale_setting(const char *env);
  * @return Returns > 0 if the initialization was successful, 0 otherwise
  * @brief Initializes the Efreet system
  */
-int
+EAPI int
 efreet_init(void)
 {
     if (init++) return init;
@@ -34,7 +34,7 @@ efreet_init(void)
  * @brief Shuts down Efreet if a balanced number of init/shutdown calls have
  * been made
  */
-int
+EAPI int
 efreet_shutdown(void)
 {
     if (--init) return init;

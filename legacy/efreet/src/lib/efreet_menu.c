@@ -486,7 +486,7 @@ efreet_menu_init(void)
  * @brief Initialize legacy kde support. This function blocks while
  * the kde-config script is run.
  */
-int
+EAPI int
 efreet_menu_kde_legacy_init(void)
 {
     FILE *f;
@@ -554,7 +554,7 @@ efreet_menu_shutdown(void)
     ecore_string_shutdown();
 }
 
-Efreet_Menu *
+EAPI Efreet_Menu *
 efreet_menu_new(void)
 {
     Efreet_Menu *menu;
@@ -568,7 +568,7 @@ efreet_menu_new(void)
  * NULL if none found
  * @brief Creates the default menu representation
  */
-Efreet_Menu *
+EAPI Efreet_Menu *
 efreet_menu_get(void)
 {
     char menu[PATH_MAX];
@@ -601,7 +601,7 @@ efreet_menu_get(void)
  * failure
  * @brief Parses the given .menu file and creates the menu representation
  */
-Efreet_Menu *
+EAPI Efreet_Menu *
 efreet_menu_parse(const char *path)
 {
     Efreet_Xml *xml;
@@ -683,7 +683,7 @@ efreet_menu_parse(const char *path)
  * @return Returns 1 on success, 0 on failure
  * @brief Saves the menu to file
  */
-int
+EAPI int
 efreet_menu_save(Efreet_Menu *menu, const char *path)
 {
     FILE *f;
@@ -802,7 +802,7 @@ efreet_menu_save_indent(FILE *f, int indent)
  * @brief Insert a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
  */
-int
+EAPI int
 efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 {
     Efreet_Menu *entry;
@@ -842,7 +842,7 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
  * @brief Remove a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
  */
-int
+EAPI int
 efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
 {
     Efreet_Menu *entry;
@@ -868,7 +868,7 @@ efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
  * @return Returns no value
  * @brief Dumps the contents of the menu to the command line
  */
-void
+EAPI void
 efreet_menu_dump(Efreet_Menu *menu, const char *indent)
 {
     printf("%s%s: ", indent, menu->name);
@@ -2503,7 +2503,7 @@ efreet_menu_entry_new(void)
  * @return Returns no value
  * @brief Frees the given structure
  */
-void
+EAPI void
 efreet_menu_free(Efreet_Menu *entry)
 {
     IF_RELEASE(entry->name);

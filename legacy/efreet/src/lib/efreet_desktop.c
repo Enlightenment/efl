@@ -28,9 +28,9 @@ static int efreet_desktop_command_file_id = 0;
 static int init = 0;
 static int cache_flush = 0;
 
-int EFREET_DESKTOP_TYPE_APPLICATION = 0;
-int EFREET_DESKTOP_TYPE_LINK = 0;
-int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
+EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
+EAPI int EFREET_DESKTOP_TYPE_LINK = 0;
+EAPI int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
 
 /**
  * @internal
@@ -49,6 +49,8 @@ struct Efreet_Desktop_Type_Info
 static int efreet_desktop_read(Efreet_Desktop *desktop);
 static void efreet_desktop_clear(Efreet_Desktop *desktop);
 static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str);
+static Ecore_List *efreet_desktop_string_list_parse(const char *string);
+static char *efreet_desktop_string_list_join(Ecore_List *list);
 static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
 static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop,
@@ -179,7 +181,7 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
  * @brief Gets a reference to an Efreet_Desktop structure representing the
  * contents of @a file or NULL if @a file is not a valid .desktop file.
  */
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_desktop_get(const char *file)
 {
     Efreet_Desktop *desktop;
@@ -220,7 +222,7 @@ efreet_desktop_get(const char *file)
  * @param desktop: The Efreet_Desktop to ref
  * @return Returns the new reference count
  */
-int
+EAPI int
 efreet_desktop_ref(Efreet_Desktop *desktop)
 {
     if (!desktop) return 0;
@@ -233,7 +235,7 @@ efreet_desktop_ref(Efreet_Desktop *desktop)
  * @return Returns a new empty_Efreet_Desktop on success, NULL on failure
  * @brief Creates a new empty Efreet_Desktop structure or NULL on failure
  */
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_desktop_empty_new(const char *file)
 {
     Efreet_Desktop *desktop;
@@ -256,7 +258,7 @@ efreet_desktop_empty_new(const char *file)
  * @brief Creates a new Efreet_Desktop structure initialized from the
  * contents of @a file or NULL on failure
  */
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop;
@@ -382,7 +384,7 @@ efreet_desktop_clear(Efreet_Desktop *desktop)
  * @brief Saves any changes made to @a desktop back to the file on the
  * filesystem
  */
-int
+EAPI int
 efreet_desktop_save(Efreet_Desktop *desktop)
 {
     Efreet_Desktop_Type_Info *info;
@@ -444,7 +446,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
  * @return Returns 1 on success or 0 on failure
  * @brief Saves @a desktop to @a file
  */
-int
+EAPI int
 efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 {
     if (desktop == ecore_hash_get(efreet_desktop_cache, desktop->orig_path))
@@ -463,7 +465,7 @@ efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
  * @return Returns no value
  * @brief Frees the Efreet_Desktop structure and all of it's data
  */
-void
+EAPI void
 efreet_desktop_free(Efreet_Desktop *desktop)
 {
     if (!desktop) return;
@@ -512,7 +514,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
  * @return Returns the Ecore_Exce for @a desktop
  * @brief Parses the @a desktop exec line and returns an Ecore_Exe.
  */
-void
+EAPI void
 efreet_desktop_exec(Efreet_Desktop *desktop, Ecore_List *files, void *data)
 {
     efreet_desktop_command_get(desktop, files, efreet_desktop_exec_cb, data);
@@ -527,11 +529,10 @@ efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop __UNUSED__,
 }
 
 /**
- * @internal
  * @param environment: the environment name
  * @brief sets the global desktop environment name
  */
-void
+EAPI void
 efreet_desktop_environment_set(const char *environment)
 {
     if (desktop_environment) ecore_string_release(desktop_environment);
@@ -540,11 +541,10 @@ efreet_desktop_environment_set(const char *environment)
 }
 
 /**
- * @internal
  * @return environment: the environment name
  * @brief sets the global desktop environment name
  */
-const char *
+EAPI const char *
 efreet_desktop_environment_get(void)
 {
     return desktop_environment;
@@ -556,7 +556,7 @@ efreet_desktop_environment_get(void)
  * @brief Retrieves the number of categories the given @a desktop belongs
  * too
  */
-unsigned int
+EAPI unsigned int
 efreet_desktop_category_count_get(Efreet_Desktop *desktop)
 {
     if (!desktop || !desktop->categories) return 0;
@@ -568,7 +568,7 @@ efreet_desktop_category_count_get(Efreet_Desktop *desktop)
  * @param category: the category name
  * @brief add a category to a desktop
  */
-void
+EAPI void
 efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
 {
     if (!desktop) return;
@@ -593,7 +593,7 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
  * @brief removes a category from a desktop
  * @return 1 if the desktop had his category listed, 0 otherwise
  */
-int
+EAPI int
 efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
 {
     int found = 0;
@@ -617,7 +617,7 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
  * @return Returns the id of the new type
  * @brief Adds the given type to the list of types in the system
  */
-int
+EAPI int
 efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_func,
                         Efreet_Desktop_Type_Save_Cb save_func,
                         Efreet_Desktop_Type_Free_Cb free_func)
@@ -649,8 +649,8 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
  *
  * This allows applications to add non-standard types that behave exactly as standard types.
  */
-int
-efreet_desktop_type_alias (int from_type, const char *alias)
+EAPI int
+efreet_desktop_type_alias(int from_type, const char *alias)
 {
     Efreet_Desktop_Type_Info *info;
     info = ecore_list_index_goto(efreet_desktop_types, from_type);
@@ -676,7 +676,7 @@ efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info)
  * @param desktop the desktop
  * @return type specific data, or NULL if there is none
  */
-void *
+EAPI void *
 efreet_desktop_type_data_get(Efreet_Desktop *desktop)
 {
     return desktop->type_data;
@@ -710,7 +710,7 @@ efreet_desktop_type_parse(const char *type_str)
  * @return an Ecore_List of ecore string's
  * @brief Parse ';' separate list of strings according to the desktop spec
  */
-Ecore_List *
+static Ecore_List *
 efreet_desktop_string_list_parse(const char *string)
 {
     Ecore_List *list;
@@ -754,7 +754,7 @@ efreet_desktop_string_list_parse(const char *string)
  * @return a raw string list
  * @brief Create a ';' separate list of strings according to the desktop spec
  */
-char *
+static char *
 efreet_desktop_string_list_join(Ecore_List *list)
 {
     const char *tmp;
@@ -792,7 +792,7 @@ efreet_desktop_string_list_join(Ecore_List *list)
  * it will force it to be re-read off disk next time efreet_desktop_get() is
  * called.
  */
-void
+EAPI void
 efreet_desktop_cache_flush(void)
 {
     cache_flush++;
@@ -1080,7 +1080,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
  * @return Returns 1 on success or 0 on failure
  * @brief Get a command to use to execute a desktop entry.
  */
-int
+EAPI int
 efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files,
                             Efreet_Desktop_Command_Cb func, void *data)
 {
@@ -1095,7 +1095,7 @@ efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files,
  *
  * The returned list and each of its elements must be freed.
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
 {
     Efreet_Desktop_Command *command;
@@ -1151,7 +1151,7 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
  * @brief Get a command to use to execute a desktop entry, and receive progress
  * updates for downloading of remote URI's passed in.
  */
-int
+EAPI int
 efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
                                     Efreet_Desktop_Command_Cb cb_command,
                                     Efreet_Desktop_Progress_Cb cb_progress,

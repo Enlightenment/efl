@@ -68,7 +68,7 @@ efreet_home_dir_get(void)
  * @return Returns the XDG Data Home directory
  * @brief Retrieves the XDG Data Home directory
  */
-const char *
+EAPI const char *
 efreet_data_home_get(void)
 {
     if (xdg_data_home) return xdg_data_home;
@@ -85,7 +85,7 @@ efreet_data_home_get(void)
  * list then the next call to efreet_data_dirs_get() will return your
  * modified values. DO NOT free this list.
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_data_dirs_get(void)
 {
     if (xdg_data_dirs) return xdg_data_dirs;
@@ -98,7 +98,7 @@ efreet_data_dirs_get(void)
  * @return Returns the XDG Config Home directory
  * @brief Retrieves the XDG Config Home directory
  */
-const char *
+EAPI const char *
 efreet_config_home_get(void)
 {
     if (xdg_config_home) return xdg_config_home;
@@ -115,7 +115,7 @@ efreet_config_home_get(void)
  * list then the next call to efreet_config_dirs_get() will return your
  * modified values. DO NOT free this list.
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_config_dirs_get(void)
 {
     if (xdg_config_dirs) return xdg_config_dirs;
@@ -127,7 +127,7 @@ efreet_config_dirs_get(void)
  * @return Returns the XDG Cache Home directory
  * @brief Retrieves the XDG Cache Home directory
  */
-const char *
+EAPI const char *
 efreet_cache_home_get(void)
 {
     if (xdg_cache_home) return xdg_cache_home;

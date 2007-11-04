@@ -1,8 +1,9 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 #include "Efreet.h"
 #include "Efreet_Mime.h"
-#include "efreet_private.h"
+#include "config.h"
 #include <stdio.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/time.h>
 

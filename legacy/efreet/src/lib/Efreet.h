@@ -24,18 +24,40 @@
  * @li Desktop Menu Specification
  */
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef _MSC_VER
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "efreet_base.h"
+#include "efreet_ini.h"
 #include "efreet_icon.h"
 #include "efreet_desktop.h"
 #include "efreet_menu.h"
 #include "efreet_utils.h"
 
-int efreet_init(void);
-int efreet_shutdown(void);
+EAPI int efreet_init(void);
+EAPI int efreet_shutdown(void);
 
 #ifdef __cplusplus
 }

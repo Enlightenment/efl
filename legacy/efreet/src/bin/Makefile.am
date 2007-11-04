@@ -17,13 +17,16 @@ efreet_test_SOURCES = \
 ef_data_dirs.c \
 ef_icon_theme.c \
 ef_ini.c \
-ef_locale.c \
 ef_desktop.c \
 ef_menu.c \
-ef_utils.c \
 ef_mime.c \
 main.c
 
+if DEFAULT_VISIBILITY
+efreet_test_SOURCES += \
+ef_utils.c \
+ef_locale.c
+endif
 
 efreet_spec_test_DEPENDENCIES = $(top_builddir)/src/lib/libefreet.la
 efreet_spec_test_LDADD = $(top_builddir)/src/lib/libefreet.la

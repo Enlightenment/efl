@@ -48,6 +48,8 @@ struct Efreet_Util_Desktop
     int priority;
 };
 
+static char *efreet_util_path_in_default(const char *section, const char *path);
+
 static int  efreet_util_cache_fill(void *data);
 static void efreet_util_cache_add(const char *path, const char *file_id, int priority, int event);
 static void efreet_util_cache_remove(const char *path, const char *file_id, int priority);
@@ -90,10 +92,10 @@ static Ecore_List *monitors = NULL;
 
 static int init = 0;
 
-int EFREET_EVENT_DESKTOP_LIST_CHANGE = 0;
-int EFREET_EVENT_DESKTOP_CHANGE = 0;
+EAPI int EFREET_EVENT_DESKTOP_LIST_CHANGE = 0;
+EAPI int EFREET_EVENT_DESKTOP_CHANGE = 0;
 
-int
+EAPI int
 efreet_util_init(void)
 {
     Ecore_List *dirs;
@@ -143,7 +145,7 @@ efreet_util_init(void)
     return init;
 }
 
-int
+EAPI int
 efreet_util_shutdown(void)
 {
     if (--init) return init;
@@ -168,7 +170,7 @@ efreet_util_shutdown(void)
     return init;
 }
 
-char *
+static char *
 efreet_util_path_in_default(const char *section, const char *path)
 {
     Ecore_List *dirs;
@@ -237,7 +239,7 @@ efreet_util_path_to_file_id(const char *path)
     return file_id;
 }
 
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_desktop_mime_list(const char *mime)
 {
     Efreet_Cache_Search_List search;
@@ -252,7 +254,7 @@ efreet_util_desktop_mime_list(const char *mime)
     return search.list;
 }
 
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
 {
     Efreet_Cache_Search search;
@@ -266,7 +268,7 @@ efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
     return NULL;
 }
 
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_util_desktop_file_id_find(const char *file_id)
 {
     Efreet_Desktop *desktop = NULL;
@@ -325,7 +327,7 @@ efreet_util_desktop_file_id_find(const char *file_id)
     return desktop;
 }
 
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_util_desktop_exec_find(const char *exec)
 {
     Efreet_Cache_Search search;
@@ -339,7 +341,7 @@ efreet_util_desktop_exec_find(const char *exec)
     return NULL;
 }
 
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_util_desktop_name_find(const char *name)
 {
     Efreet_Cache_Search search;
@@ -353,7 +355,7 @@ efreet_util_desktop_name_find(const char *name)
     return NULL;
 }
 
-Efreet_Desktop *
+EAPI Efreet_Desktop *
 efreet_util_desktop_generic_name_find(const char *generic_name)
 {
     Efreet_Cache_Search search;
@@ -367,7 +369,7 @@ efreet_util_desktop_generic_name_find(const char *generic_name)
     return NULL;
 }
 
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_desktop_name_glob_list(const char *glob)
 {
     Efreet_Cache_Search_List search;
@@ -381,7 +383,7 @@ efreet_util_desktop_name_glob_list(const char *glob)
     return search.list;
 }
 
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_desktop_exec_glob_list(const char *glob)
 {
     Efreet_Cache_Search_List search;
@@ -395,7 +397,7 @@ efreet_util_desktop_exec_glob_list(const char *glob)
     return search.list;
 }
 
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_desktop_generic_name_glob_list(const char *glob)
 {
     Efreet_Cache_Search_List search;
@@ -409,7 +411,7 @@ efreet_util_desktop_generic_name_glob_list(const char *glob)
     return search.list;
 }
 
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_desktop_comment_glob_list(const char *glob)
 {
     Efreet_Cache_Search_List search;
@@ -429,7 +431,7 @@ efreet_util_desktop_comment_glob_list(const char *glob)
  *
  * @return an Ecore_List of category names (const char *)
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_desktop_categories_list(void)
 {
     return ecore_hash_keys(desktops_by_category);
@@ -443,7 +445,7 @@ efreet_util_desktop_categories_list(void)
  * @param category the category name
  * @return a list of desktops
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_desktop_category_list(const char *category)
 {
     return ecore_hash_get(desktops_by_category, category);
@@ -989,7 +991,7 @@ efreet_util_monitor_free(void *data)
  * Returns a list of .menu files found in the various config dirs.
  * @return An ecore list of menu file paths (const char *). This must be freed with ecore_list_destroy().
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_util_menus_find(void)
 {
     Ecore_List *menus, *dirs;

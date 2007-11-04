@@ -164,7 +164,7 @@ efreet_icon_deprecated_user_dir_get(void)
     return efreet_icon_deprecated_user_dir;
 }
 
-const char *
+EAPI const char *
 efreet_icon_user_dir_get(void)
 {
     const char *user;
@@ -185,7 +185,7 @@ efreet_icon_user_dir_get(void)
  * @return Returns no value.
  * @brief Adds the given extension to the list of possible icon extensions
  */
-void
+EAPI void
 efreet_icon_extension_add(const char *ext)
 {
     ecore_list_prepend(efreet_icon_extensions, strdup(ext));
@@ -199,7 +199,7 @@ efreet_icon_extension_add(const char *ext)
  * from first to last directory in this list. the strings in the list should
  * be created with ecore_string_instance().
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_icon_extra_list_get(void)
 {
     return efreet_extra_icon_dirs;
@@ -211,7 +211,7 @@ efreet_icon_extra_list_get(void)
  * @brief Retrieves all of the non-hidden icon themes available on the system.
  * The returned list must be freed. Do not free the list data.
  */
-Ecore_List *
+EAPI Ecore_List *
 efreet_icon_theme_list_get(void)
 {
     Ecore_List *list, *theme_list;
@@ -248,7 +248,7 @@ efreet_icon_theme_list_get(void)
  * none exists.
  * @brief Tries to get the icon theme structure for the given theme name
  */
-Efreet_Icon_Theme *
+EAPI Efreet_Icon_Theme *
 efreet_icon_theme_find(const char *theme_name)
 {
     const char *key;
@@ -330,7 +330,7 @@ efreet_icon_find_theme_check(const char *theme_name)
  * @return Returns the path to the given icon or NULL if none found
  * @brief Retrives the path to the given icon.
  */
-char *
+EAPI char *
 efreet_icon_path_find(const char *theme_name, const char *icon, const char *size)
 {
     struct stat st;
@@ -398,7 +398,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
  * @note This function will search the given theme for all icons before falling
  * back. This is useful when searching for mimetype icons.
  */
-char *
+EAPI char *
 efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
                                                             const char *size)
 {
@@ -450,7 +450,7 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
  * if the icon is not found
  * @brief Retrieves all of the information about the given icon.
  */
-Efreet_Icon *
+EAPI Efreet_Icon *
 efreet_icon_find(const char *theme, const char *icon, const char *size)
 {
     char *path;
@@ -961,7 +961,7 @@ efreet_icon_new(const char *path)
  * @return Returns no value.
  * @brief Free's the given icon and all its internal data.
  */
-void
+EAPI void
 efreet_icon_free(Efreet_Icon *icon)
 {
     if (!icon) return;

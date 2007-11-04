@@ -1,5 +1,8 @@
-#include <Efreet.h>
+#include "Efreet.h"
 #include "efreet_private.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 int
 ef_cb_locale(void)

@@ -15,7 +15,10 @@ int ef_cb_efreet_icon_theme(void);
 int ef_cb_efreet_icon_theme_list(void);
 int ef_cb_efreet_icon_match(void);
 int ef_cb_ini_parse(void);
+int ef_cb_ini_long_line(void);
+#if DEFAULT_VISIBILITY
 int ef_cb_locale(void);
+#endif
 int ef_cb_desktop_parse(void);
 int ef_cb_desktop_save(void);
 int ef_cb_desktop_command_get(void);
@@ -29,8 +32,9 @@ int ef_cb_menu_save(void);
 #if 0
 int ef_cb_menu_edit(void);
 #endif
-int ef_cb_ini_long_line(void);
+#ifndef HIDDEN_VISIBILITY
 int ef_cb_utils(void);
+#endif
 int ef_mime_cb_get(void);
 
 typedef struct Efreet_Test Efreet_Test;
@@ -51,7 +55,9 @@ static Efreet_Test tests[] = {
     {"Icon Matching", ef_cb_efreet_icon_match},
     {"INI Parsing", ef_cb_ini_parse},
     {"INI Long Line Parsing", ef_cb_ini_long_line},
+#if DEFAULT_VISIBILITY
     {"Locale Parsing", ef_cb_locale},
+#endif
     {"Desktop Parsing", ef_cb_desktop_parse},
     {"Desktop Type Parsing", ef_cb_desktop_type_parse},
     {"Desktop Save", ef_cb_desktop_save},
@@ -65,7 +71,9 @@ static Efreet_Test tests[] = {
 #if 0
     {"Menu Edit", ef_cb_menu_edit},
 #endif
+#if DEFAULT_VISIBILITY
     {"Utils", ef_cb_utils},
+#endif
     {"Mime", ef_mime_cb_get},
     {NULL, NULL}
 };

@@ -97,7 +97,7 @@ static void efreet_mime_cb_update_file(void *data,
  * @return Returns 1 on success or 0 on failure
  * @brief Initializes the efreet mime settings
  */
-int
+EAPI int
 efreet_mime_init(void)
 {
     if (!ecore_init())
@@ -126,7 +126,7 @@ efreet_mime_init(void)
  * @return Returns no value
  * @brief Cleans up the efreet mime settings system
  */
-void
+EAPI void
 efreet_mime_shutdown(void)
 {
     IF_FREE_LIST(globs);
@@ -144,7 +144,7 @@ efreet_mime_shutdown(void)
  * @return Returns mime type as a string
  * @brief Retreive the mime type of a file
  */
-const char *
+EAPI const char *
 efreet_mime_type_get(const char *file)
 {
     const char *type = NULL;
@@ -178,7 +178,7 @@ efreet_mime_type_get(const char *file)
  * @return Returns mime type icon path as a string
  * @brief Retreive the mime type icon for a file
  */
-char *
+EAPI char *
 efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
 {
     char *icon = NULL;
@@ -245,7 +245,7 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
  * @return Returns mime type as a string
  * @brief Retreive the mime type of a file using magic
  */
-const char *
+EAPI const char *
 efreet_mime_magic_type_get(const char *file)
 {
     return efreet_mime_magic_check_priority(file, 0, 0);
@@ -256,7 +256,7 @@ efreet_mime_magic_type_get(const char *file)
  * @return Returns mime type as a string
  * @brief Retreive the mime type of a file using globs
  */
-const char *
+EAPI const char *
 efreet_mime_globs_type_get(const char *file)
 {
     Efreet_Mime_Glob *g;
@@ -310,7 +310,7 @@ efreet_mime_globs_type_get(const char *file)
  * @return Returns mime type as a string
  * @brief Retreive the special mime type of a file
  */
-const char *
+EAPI const char *
 efreet_mime_special_type_get(const char *file)
 {
     return efreet_mime_special_check(file);
@@ -322,7 +322,7 @@ efreet_mime_special_type_get(const char *file)
  * @return Returns mime type as a string
  * @brief Retreive the fallback mime type of a file
  */
-const char *
+EAPI const char *
 efreet_mime_fallback_type_get(const char *file)
 {
     return efreet_mime_fallback_check(file);

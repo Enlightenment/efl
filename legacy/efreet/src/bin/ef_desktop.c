@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
-#include "../lib/efreet_private.h"
+
+#define IF_FREE(x) do { if (x) free(x); x = NULL; } while (0);
+#define NEW(x, c) calloc(c, sizeof(x))
 
 static void _cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining);
 

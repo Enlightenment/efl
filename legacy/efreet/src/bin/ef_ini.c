@@ -1,8 +1,8 @@
 #include "Efreet.h"
-#include "efreet_private.h"
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 int
 ef_cb_ini_parse(void)

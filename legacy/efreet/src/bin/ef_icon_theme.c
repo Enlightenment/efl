@@ -1,5 +1,4 @@
 #include "Efreet.h"
-#include "efreet_private.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -11,6 +10,7 @@
 
 #define SIZE "128x128"
 #define THEME "Tango"
+#define FREE(x) do { free(x); x = NULL; } while (0);
 
 static void ef_icon_theme_themes_find(const char *search_dir,
                                         Ecore_Hash *themes);

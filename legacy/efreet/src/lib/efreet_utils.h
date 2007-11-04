@@ -20,29 +20,28 @@ struct Efreet_Event_Desktop_Change
     Efreet_Desktop_Change change;
 };
 
-char           *efreet_util_path_in_default(const char *section, const char *path);
-const char     *efreet_util_path_to_file_id(const char *path);
+EAPI int efreet_util_init(void);
+EAPI int efreet_util_shutdown(void);
 
-Ecore_List     *efreet_util_desktop_mime_list(const char *mime);
+EAPI Ecore_List *efreet_util_desktop_mime_list(const char *mime);
 
-Efreet_Desktop *efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass);
-Efreet_Desktop *efreet_util_desktop_file_id_find(const char *file_id);
-Efreet_Desktop *efreet_util_desktop_exec_find(const char *exec);
-Efreet_Desktop *efreet_util_desktop_name_find(const char *name);
-Efreet_Desktop *efreet_util_desktop_generic_name_find(const char *generic_name);
+EAPI Efreet_Desktop *efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass);
+EAPI Efreet_Desktop *efreet_util_desktop_file_id_find(const char *file_id);
+EAPI Efreet_Desktop *efreet_util_desktop_exec_find(const char *exec);
+EAPI Efreet_Desktop *efreet_util_desktop_name_find(const char *name);
+EAPI Efreet_Desktop *efreet_util_desktop_generic_name_find(const char *generic_name);
 
-int             efreet_util_init(void);
-int             efreet_util_shutdown(void);
-Ecore_List     *efreet_util_desktop_name_glob_list(const char *glob);
-Ecore_List     *efreet_util_desktop_exec_glob_list(const char *glob);
-Ecore_List     *efreet_util_desktop_generic_name_glob_list(const char *glob);
-Ecore_List     *efreet_util_desktop_comment_glob_list(const char *glob);
+EAPI Ecore_List *efreet_util_desktop_name_glob_list(const char *glob);
+EAPI Ecore_List *efreet_util_desktop_exec_glob_list(const char *glob);
+EAPI Ecore_List *efreet_util_desktop_generic_name_glob_list(const char *glob);
+EAPI Ecore_List *efreet_util_desktop_comment_glob_list(const char *glob);
 
-Ecore_List       *efreet_util_desktop_categories_list(void);
-Ecore_List *efreet_util_desktop_category_list(const char *category);
+EAPI Ecore_List *efreet_util_desktop_categories_list(void);
+EAPI Ecore_List *efreet_util_desktop_category_list(const char *category);
 
-Ecore_List *efreet_util_menus_find(void);
-extern int EFREET_EVENT_DESKTOP_LIST_CHANGE;
-extern int EFREET_EVENT_DESKTOP_CHANGE;
+EAPI Ecore_List *efreet_util_menus_find(void);
+
+EAPI extern int EFREET_EVENT_DESKTOP_LIST_CHANGE;
+EAPI extern int EFREET_EVENT_DESKTOP_CHANGE;
 
 #endif

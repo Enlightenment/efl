@@ -49,18 +49,21 @@ struct Efreet_Menu
     Ecore_List     *entries;   /**< The menu items */
 };
 
-int              efreet_menu_kde_legacy_init(void);
+EAPI int              efreet_menu_kde_legacy_init(void);
 
-Efreet_Menu     *efreet_menu_new(void);
-Efreet_Menu     *efreet_menu_get(void);
-Efreet_Menu     *efreet_menu_parse(const char *path);
-int              efreet_menu_save(Efreet_Menu *menu, const char *path);
-void             efreet_menu_free(Efreet_Menu *menu);
+EAPI Efreet_Menu     *efreet_menu_new(void);
+EAPI Efreet_Menu     *efreet_menu_get(void);
+EAPI Efreet_Menu     *efreet_menu_parse(const char *path);
+EAPI int              efreet_menu_save(Efreet_Menu *menu, const char *path);
+EAPI void             efreet_menu_free(Efreet_Menu *menu);
 
-int              efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos);
-int              efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop);
+EAPI int              efreet_menu_desktop_insert(Efreet_Menu *menu,
+                                                    Efreet_Desktop *desktop,
+                                                    int pos);
+EAPI int              efreet_menu_desktop_remove(Efreet_Menu *menu,
+                                                    Efreet_Desktop *desktop);
 
-void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
+EAPI void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
 
 /**
  * @}

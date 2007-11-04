@@ -1,11 +1,13 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 #include "Efreet.h"
-#include "efreet_private.h"
+#include "config.h"
+#include <stdio.h>
+#include <unistd.h>
 
+#if 0
 static void
 ef_menu_desktop_exec(Efreet_Menu *menu)
 {
-#if 0
     if (menu->entries)
     {
         Efreet_Desktop *desktop;
@@ -22,8 +24,8 @@ ef_menu_desktop_exec(Efreet_Menu *menu)
         while ((sub_menu = ecore_list_next(menu->sub_menus)))
             ef_menu_desktop_exec(sub_menu);
     }
-#endif
 }
+#endif
 
 int
 ef_cb_menu_get(void)
