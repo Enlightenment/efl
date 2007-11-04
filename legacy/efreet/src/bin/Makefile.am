@@ -17,6 +17,7 @@ efreet_test_SOURCES = \
 ef_data_dirs.c \
 ef_icon_theme.c \
 ef_ini.c \
+ef_utils.c \
 ef_desktop.c \
 ef_menu.c \
 ef_mime.c \
@@ -24,7 +25,6 @@ main.c
 
 if DEFAULT_VISIBILITY
 efreet_test_SOURCES += \
-ef_utils.c \
 ef_locale.c
 endif
 

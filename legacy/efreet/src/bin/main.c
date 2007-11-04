@@ -32,9 +32,7 @@ int ef_cb_menu_save(void);
 #if 0
 int ef_cb_menu_edit(void);
 #endif
-#ifndef HIDDEN_VISIBILITY
 int ef_cb_utils(void);
-#endif
 int ef_mime_cb_get(void);
 
 typedef struct Efreet_Test Efreet_Test;
@@ -71,9 +69,7 @@ static Efreet_Test tests[] = {
 #if 0
     {"Menu Edit", ef_cb_menu_edit},
 #endif
-#if DEFAULT_VISIBILITY
     {"Utils", ef_cb_utils},
-#endif
     {"Mime", ef_mime_cb_get},
     {NULL, NULL}
 };

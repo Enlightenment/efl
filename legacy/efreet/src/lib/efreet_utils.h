@@ -23,6 +23,8 @@ struct Efreet_Event_Desktop_Change
 EAPI int efreet_util_init(void);
 EAPI int efreet_util_shutdown(void);
 
+EAPI const char *efreet_util_path_to_file_id(const char *path);
+
 EAPI Ecore_List *efreet_util_desktop_mime_list(const char *mime);
 
 EAPI Efreet_Desktop *efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass);

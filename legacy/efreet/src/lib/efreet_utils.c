@@ -197,7 +197,7 @@ efreet_util_path_in_default(const char *section, const char *path)
     return ret;
 }
 
-const char *
+EAPI const char *
 efreet_util_path_to_file_id(const char *path)
 {
     size_t len;
