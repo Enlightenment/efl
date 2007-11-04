@@ -39,6 +39,8 @@ if test "x$want_ecore_[]DOWN" = "xyes" ; then
   else
     AC_MSG_RESULT([no (dependancy failed)])
   fi
+else
+  AC_MSG_RESULT([no])
 fi
 
 AM_CONDITIONAL(BUILD_ECORE_[]UP, test $have_ecore_[]DOWN = yes)
