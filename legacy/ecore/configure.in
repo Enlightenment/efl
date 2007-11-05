@@ -192,6 +192,14 @@ AC_SUBST(iconv_libs)
 ECORE_CHECK_MODULE([Txt], [yes], [$have_iconv],
   [ecore_txt_libs="$ecore_txt_libs $iconv_libs"])
 
+dnl ecore_evas
+PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9],
+  [ have_evas="yes" ],
+  [ have_evas="no" ]
+)
+
+ECORE_CHECK_MODULE([Evas], [yes], [$have_evas])
+
 dnl ecore_x{cb}
 have_ecore_x="no"
 have_ecore_x_xcb="no"
@@ -352,92 +360,6 @@ if test "x$have_ecore_x_xcb" != "xyes" ; then
   fi
 fi
 
-
-AC_MSG_CHECKING(for Evas Software DirectDraw engine)
-PKG_CHECK_EXISTS(evas-software-ddraw >= 0.9.9.41,
-  [ have_ddraw="yes"
-    AC_DEFINE(HAVE_DIRECTDRAW, 1, [Build Ecore_Win32 with DirectDraw Code])
-    ddraw_libs="-lddraw -ldxguid" ],
-  [ have_ddraw="no" ]
-)
-AC_MSG_RESULT($have_ddraw)
-AC_SUBST(ddraw_libs)
-
-AC_MSG_CHECKING(for Evas 16bpp Software DirectDraw engine)
-PKG_CHECK_EXISTS(evas-software-16-ddraw >= 0.9.9.41,
-  [ have_ddraw_16="yes"
-    AC_DEFINE(HAVE_DIRECTDRAW_16, 1, [Build Ecore_Win32 with 16 bpp DirectDraw Code])
-    ddraw_16_libs="-lddraw -ldxguid" ],
-  [ have_ddraw_16="no" ]
-)
-AC_MSG_RESULT($have_ddraw_16)
-AC_SUBST(ddraw_16_libs)
-
-AC_MSG_CHECKING(for Evas Direct3D engine)
-PKG_CHECK_EXISTS(evas-direct3d >= 0.9.9.41,
-  [ have_direct3d="yes"
-    AC_DEFINE(HAVE_DIRECT3D, 1, [Build Ecore_Win32 with Direct3D Code])
-    direct3d_libs="-ld3d9 -ld3dx9d" ],
-  [ have_direct3d="no" ]
-)
-AC_MSG_RESULT($have_direct3d)
-AC_SUBST(direct3d_libs)
-
-have_win32="no"
-if test "x${have_ddraw}" = "xyes" -o "x${have_ddraw_16}" = "xyes" -o "x${have_direct3d}" = "xyes"; then
-  have_win32="yes"
-fi
-
-ECORE_CHECK_MODULE([Win32], [no], [$have_win32],
-  [ecore_win32_libs="$ecore_win32_libs $ddraw_libs $ddraw_16_libs $direct3d_libs"])
-
-if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw}" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW, 1, [Support for DirectDraw Engine in Ecore_Evas])
-fi
-
-if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw_16}" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW_16, 1, [Support for 16 bpp DirectDraw Engine in Ecore_Evas])
-fi
-
-if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_EVAS_DIRECT3D, 1, [Support for Direct3D Engine in Ecore_Evas])
-fi
-
-PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
-  [ have_directfb="yes" ],
-  [ have_directfb="no" ]
-)
-
-ECORE_CHECK_MODULE([DirectFB], [no], [$have_directfb],
-  [requirements_ecore_directfb="directfb"])
-
-have_fb="no"
-AC_CHECK_HEADER(linux/fb.h,
-  [
-   AC_CHECK_HEADER(linux/input.h, [ have_fb="yes" ])
-  ]
-)
-
-ECORE_CHECK_MODULE([FB], [no], [$have_fb])
-
-tslib_libs=""
-if test "x$have_ecore_fb" = "xyes" ; then
-AC_CHECK_HEADER(tslib.h,
-  [
-   tslib_libs="-ltslib"
-   AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
-  ]
-)
-fi
-AC_SUBST(tslib_libs)
-
-PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9],
-  [ have_evas="yes" ],
-  [ have_evas="no" ]
-)
-
-ECORE_CHECK_MODULE([Evas], [yes], [$have_evas])
-
 have_ecore_evas_gl="no";
 
 AC_ARG_ENABLE(ecore-evas-gl,
@@ -555,132 +477,188 @@ else
 fi
 PCFLAGS=$CFLAGS
 
-want_ecore_evas_dfb="yes"
-AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
-AC_ARG_ENABLE(ecore-evas-dfb,
-  AC_HELP_STRING([--disable-ecore-evas-dfb], [disable DirectFB in the ecore_evas module]),
-  [ want_ecore_evas_dfb=$enableval ]
+dnl ecore_win32
+# TODO: We should first check if we have win32 available before checking for win32 evas
+AC_MSG_CHECKING(for Evas Software DirectDraw engine)
+PKG_CHECK_EXISTS(evas-software-ddraw >= 0.9.9.41,
+  [ have_ddraw="yes"
+    AC_DEFINE(HAVE_DIRECTDRAW, 1, [Build Ecore_Win32 with DirectDraw Code])
+    ddraw_libs="-lddraw -ldxguid" ],
+  [ have_ddraw="no" ]
 )
-AC_MSG_RESULT($want_ecore_evas_dfb)
+AC_MSG_RESULT($have_ddraw)
+AC_SUBST(ddraw_libs)
 
-have_ecore_evas_dfb="no"
-if test "x$want_ecore_evas_dfb" = "xyes" -a "x$have_ecore_directfb" = "xyes" ; then
-  save_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS $DIRECTFB_CFLAGS"
-  AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
-    [
-      AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
-      have_ecore_evas_dfb="yes"
-      requirements_ecore_evas="$requirements_ecore_evas ecore-directfb"
-    ], [
-      if test "x$want_ecore_evas_dfb" = "xyes" ; then
-        AC_MSG_ERROR(DirectFB requested but support not found)
-      fi
-    ], [
-      #include <Evas.h>
-    ]
-  )
-  CFLAGS="$save_CFLAGS"
+AC_MSG_CHECKING(for Evas 16bpp Software DirectDraw engine)
+PKG_CHECK_EXISTS(evas-software-16-ddraw >= 0.9.9.41,
+  [ have_ddraw_16="yes"
+    AC_DEFINE(HAVE_DIRECTDRAW_16, 1, [Build Ecore_Win32 with 16 bpp DirectDraw Code])
+    ddraw_16_libs="-lddraw -ldxguid" ],
+  [ have_ddraw_16="no" ]
+)
+AC_MSG_RESULT($have_ddraw_16)
+AC_SUBST(ddraw_16_libs)
+
+AC_MSG_CHECKING(for Evas Direct3D engine)
+PKG_CHECK_EXISTS(evas-direct3d >= 0.9.9.41,
+  [ have_direct3d="yes"
+    AC_DEFINE(HAVE_DIRECT3D, 1, [Build Ecore_Win32 with Direct3D Code])
+    direct3d_libs="-ld3d9 -ld3dx9d" ],
+  [ have_direct3d="no" ]
+)
+AC_MSG_RESULT($have_direct3d)
+AC_SUBST(direct3d_libs)
+
+have_win32="no"
+if test "x${have_ddraw}" = "xyes" -o "x${have_ddraw_16}" = "xyes" -o "x${have_direct3d}" = "xyes"; then
+  have_win32="yes"
 fi
 
-want_ecore_evas_fb="no";
-have_ecore_evas_fb="no";
+ECORE_CHECK_MODULE([Win32], [no], [$have_win32],
+  [ecore_win32_libs="$ecore_win32_libs $ddraw_libs $ddraw_16_libs $direct3d_libs"])
 
-AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
-AC_ARG_ENABLE(ecore-evas-fb,
-  [  --enable-ecore-evas-fb       enable fb in the ecore_evas module],
+if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw}" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW, 1, [Support for DirectDraw Engine in Ecore_Evas])
+fi
+
+if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw_16}" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW_16, 1, [Support for 16 bpp DirectDraw Engine in Ecore_Evas])
+fi
+
+if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_EVAS_DIRECT3D, 1, [Support for Direct3D Engine in Ecore_Evas])
+fi
+
+dnl ecore_dfb
+PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
+  [ have_directfb="yes" ],
+  [ have_directfb="no" ]
+)
+
+ECORE_CHECK_MODULE([DirectFB], [no], [$have_directfb],
+  [requirements_ecore_directfb="directfb"])
+
+dnl ecore_evas_dfb
+have_ecore_evas_dfb="no"
+if test "x$have_ecore_directfb" = "xyes" ; then
+  want_ecore_evas_dfb="yes"
+  AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
+  AC_ARG_ENABLE(ecore-evas-dfb,
+    AC_HELP_STRING([--disable-ecore-evas-dfb], [disable DirectFB in the ecore_evas module]),
+    [ want_ecore_evas_dfb=$enableval ]
+  )
+  AC_MSG_RESULT($want_ecore_evas_dfb)
+  
+  if test "x$want_ecore_evas_dfb" = "xyes" -a "x$have_ecore_directfb" = "xyes" ; then
+    save_CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS $DIRECTFB_CFLAGS"
+    AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
+      [
+        AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
+        have_ecore_evas_dfb="yes"
+        requirements_ecore_evas="$requirements_ecore_evas ecore-directfb"
+      ], [
+        if test "x$want_ecore_evas_dfb" = "xyes" ; then
+          AC_MSG_ERROR(DirectFB requested but support not found)
+        fi
+      ], [
+        #include <Evas.h>
+      ]
+    )
+    CFLAGS="$save_CFLAGS"
+  fi
+fi
+
+dnl ecore_fb
+have_fb="no"
+AC_CHECK_HEADER(linux/fb.h,
+  [ AC_CHECK_HEADER(linux/input.h, [ have_fb="yes" ]) ]
+)
+ECORE_CHECK_MODULE([FB], [no], [$have_fb])
+
+tslib_libs=""
+if test "x$have_ecore_fb" = "xyes" ; then
+AC_CHECK_HEADER(tslib.h,
   [
-    if test x"$enableval" = x"yes" ; then
-      AC_MSG_RESULT(yes)
-      want_ecore_evas_fb="yes"
-    else
-      AC_MSG_RESULT(no)
-    fi
-  ], [
-    AC_MSG_RESULT(no)
+   tslib_libs="-ltslib"
+   AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
   ]
 )
-if test "x$want_ecore_evas_fb" = "xyes" -a "x$have_ecore_fb" = "xyes"; then
-  AC_CHECK_HEADER(Evas_Engine_FB.h,
-    [
-      AC_DEFINE(BUILD_ECORE_EVAS_FB, 1, [Support for Linux FB in Ecore_Evas])
-      have_ecore_evas_fb="yes"
-      requirements_ecore_evas="$requirements_ecore_evas ecore-fb"
-    ], [
-      dummy=no
-    ], [
-      #include <Evas.h>
-    ]
+fi
+AC_SUBST(tslib_libs)
+
+dnl ecore_evas_fb
+have_ecore_evas_fb="no";
+if test "x$have_ecore_fb" = "xyes"; then
+  want_ecore_evas_fb="no";
+  AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
+  AC_ARG_ENABLE(ecore-evas-fb,
+    AC_HELP_STRING([--enable-ecore-evas-fb], [enable fb in the ecore_evas module]),
+    [ want_ecore_evas_fb=$enableval ]
   )
+  AC_MSG_RESULT($want_ecore_evas_fb)
+  
+  if test "x$want_ecore_evas_fb" = "xyes"; then
+    PKG_CHECK_EXISTS(evas-framebuffer
+      [
+        AC_DEFINE(BUILD_ECORE_EVAS_FB, 1, [Support for Linux FB in Ecore_Evas])
+        have_ecore_evas_fb="yes"
+        requirements_ecore_evas="$requirements_ecore_evas ecore-fb"
+      ]
+    )
+  fi
 fi
 
-## SDL
+dnl ecore_sdl
 PKG_CHECK_MODULES(SDL, sdl >= 1.2.0,
     [ have_sdl="yes" ],
     [ have_sdl="no" ])
 
-ECORE_CHECK_MODULE([SDL], [yes], [$have_sdl])
+ECORE_CHECK_MODULE([SDL], [no], [$have_sdl])
 
-want_ecore_evas_sdl="yes";
+dnl ecore_evas_sdl
 have_ecore_evas_sdl="no";
-
-AC_MSG_CHECKING(whether ecore_evas sdl support is to be built)
-AC_ARG_ENABLE(ecore-evas-sdl,
-  [  --enable-ecore-evas-sdl	   enable sdl in the ecore_evas module],
-  [ want_ecore_evas_sdl=$enableval ]
-)
-AC_MSG_RESULT($want_ecore_evas_sdl)
-
-if test "x$want_ecore_evas_sdl" = "xyes" -a "x$have_sdl" = "xyes"; then
-  save_CFLAGS=$CFLAGS
-  CFLAGS=$CFLAGS" $SDL_CFLAGS"
-  AC_CHECK_HEADER(Evas_Engine_SDL.h,
-    [
-      AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL in Ecore_Evas])
-      have_ecore_evas_sdl="yes"
-      requirements_ecore_evas="$requirements_ecore_evas ecore-sdl"
-    ], [
-      dummy=no
-    ], [
-      #include <Evas.h>
-    ]
+if test "x$have_sdl" = "xyes"; then
+  want_ecore_evas_sdl="yes";
+  AC_MSG_CHECKING(whether ecore_evas sdl support is to be built)
+  AC_ARG_ENABLE(ecore-evas-sdl,
+    AC_HELP_STRING([--disable-ecore-evas-sdl], [disable sdl in the ecore_evas module]),
+    [ want_ecore_evas_sdl=$enableval ]
   )
-  CFLAGS=$save_CFLAGS
+  AC_MSG_RESULT($want_ecore_evas_sdl)
+  
+  if test "x$want_ecore_evas_sdl" = "xyes"; then
+    save_CFLAGS=$CFLAGS
+    CFLAGS="$CFLAGS $SDL_CFLAGS"
+    PKG_CHECK_EXISTS(evas-sdl
+      [
+        AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL in Ecore_Evas])
+        have_ecore_evas_sdl="yes"
+        requirements_ecore_evas="$requirements_ecore_evas ecore-sdl"
+        PKG_CHECK_MODULES(SDL, sdl >= 1.3.0,
+          [ AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL]) ],
+	  [ dummy="no" ])
+      ]
+    )
+    CFLAGS=$save_CFLAGS
+  fi
 fi
 
-if test "x$have_ecore_evas_sdl" = "xyes"; then
-  PKG_CHECK_MODULES(SDL, sdl >= 1.3.0,
-    [ AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL]) ],
-    [ dummy=no ])
-fi
-
+dnl ecore_evas_buffer
 want_ecore_evas_buffer="yes";
 have_ecore_evas_buffer="no";
-
 AC_MSG_CHECKING(whether ecore_evas buffer support is to be built)
 AC_ARG_ENABLE(ecore-evas-buffer,
-  [  --disable-ecore-evas-buffer   disable buffer in the ecore_evas module],
-  [
-    if test x"$enableval" = x"yes" ; then
-      AC_MSG_RESULT(yes)
-    else
-      AC_MSG_RESULT(no)
-      want_ecore_evas_buffer="no"
-    fi
-  ], [
-    AC_MSG_RESULT(yes)
-  ]
+  AC_HELP_STRING([--disable-ecore-evas-buffer], [disable buffer in the ecore_evas module]),
+  [ want_ecore_evas_buffer=$enableval ]
 )
+AC_MSG_RESULT($want_ecore_evas_buffer)
 
 if test "x$want_ecore_evas_buffer" = "xyes"; then
-  AC_CHECK_HEADER(Evas_Engine_Buffer.h,
+  PKG_CHECK_EXISTS(evas-software-buffer
     [
       AC_DEFINE(BUILD_ECORE_EVAS_BUFFER, 1, [Support for Buffers in Ecore_Evas])
       have_ecore_evas_buffer="yes"
-    ], [
-      dummy=no
-    ], [
-      #include <Evas.h>
     ]
   )
 fi
@@ -816,29 +794,32 @@ echo "Optional Modules:"
 echo
 echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $have_openssl) (CURL: $have_curl)"
+echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $have_openssl)"
+echo "  Ecore_Config.................: $have_ecore_config"
 echo "  Ecore_Txt....................: $have_ecore_txt"
+
+echo "  Ecore_Evas...................: $have_ecore_evas"
 if test "x$have_ecore_x_xcb" = "xyes" ; then
   echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_xcb_xprint) (Xinerama: $have_ecore_x_xcb_xinerama) (Xrandr: $have_ecore_x_xcb_randr) (Xscreensaver: $have_ecore_x_xcb_screensaver) (Xshape: $have_ecore_x_xcb_shape) (Xsync: $have_ecore_x_xcb_sync) (Xrender: $have_ecore_x_xcb_render) (Xfixes: $have_ecore_x_xcb_xfixes) (Xcomposite: $have_ecore_x_xcb_composite) (Xdamage: $have_ecore_x_xcb_damage) (Xdpms: $have_ecore_x_xcb_dpms)"
 else
   echo "  Ecore_X (Xlib backend).......: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xcomposite: $use_xcomposite) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms)"
 fi
-echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d})"
 
-echo "  Ecore_FB.....................: $have_ecore_fb"
+echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d})"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
+echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
+echo "  Ecore_FB.....................: $have_ecore_fb"
+echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
 echo "  Ecore_SDL....................: $have_ecore_sdl"
-echo "  Ecore_Evas...................: $have_ecore_evas"
+echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
+echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
+
 echo "  Ecore_Evas GL Support........: $have_ecore_evas_gl"
 echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
 echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_x11_16"
-echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
-echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
-echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
-echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
-echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $have_openssl)"
-echo "  Ecore_Config.................: $have_ecore_config"
-echo "  Ecore_Desktop................: $have_ecore_desktop"
+
 echo "  Ecore_File...................: $have_ecore_file (Inotify: $have_inotify) (Poll: $have_poll) (CURL: $have_curl)"
+echo "  Ecore_Desktop................: $have_ecore_desktop"
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
 echo
