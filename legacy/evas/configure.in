@@ -783,7 +783,7 @@ have_edb=no
 AC_ARG_ENABLE(image-loader-edb,
   AC_HELP_STRING(
     [--enable-image-loader-edb],
-    [enable EDB image loader. [[default=enabled]]]
+    [enable EDB image loader.]
   ),
   [want_edb_image_loader=$enableval],
   [want_edb_image_loader=no]
