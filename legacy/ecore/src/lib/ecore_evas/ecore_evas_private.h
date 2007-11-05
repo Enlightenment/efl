@@ -40,7 +40,7 @@
 #  ifdef ECORE_XRENDER
 #   include <X11/extensions/Xrender.h>
 #  endif
-#  ifdef BUILD_ECORE_EVAS_GL
+#  ifdef BUILD_ECORE_EVAS_X11_GL
 #   include <Evas_Engine_GL_X11.h>
 #  endif
 #  ifdef BUILD_ECORE_EVAS_XRENDER

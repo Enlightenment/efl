@@ -32,7 +32,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 	return 0;
 #endif
       case ECORE_EVAS_ENGINE_GL_X11:
-#ifdef BUILD_ECORE_EVAS_GL
+#ifdef BUILD_ECORE_EVAS_X11_GL
 	return 1;
 #else
 	return 0;

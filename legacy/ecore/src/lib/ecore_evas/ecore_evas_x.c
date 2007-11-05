@@ -47,7 +47,7 @@ xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 }
 #endif /* HAVE_ECORE_X_XCB*/
 
-#ifdef BUILD_ECORE_EVAS_GL
+#ifdef BUILD_ECORE_EVAS_X11_GL
 # ifdef HAVE_ECORE_X_XCB
 /* noop */
 # else
@@ -2329,7 +2329,7 @@ _ecore_evas_x_reinit_win(Ecore_Evas *ee)
      }
    else if (!strcmp(ee->driver, "gl_x11"))
      {
-#ifdef BUILD_ECORE_EVAS_GL
+#ifdef BUILD_ECORE_EVAS_X11_GL
 	Evas_Engine_Info_GL_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
@@ -2920,7 +2920,7 @@ EAPI Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 		      int x, int y, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_GL
+#ifdef BUILD_ECORE_EVAS_X11_GL
 # ifdef HAVE_ECORE_X_XCB
    Ecore_Evas *ee = NULL;
 # else

@@ -278,19 +278,18 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
     AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module (XCB backend)])
     AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB backend is enabled.])
 
-    requirements_ecore_evas="$requirements_ecore_evas ecore-x"
     have_ecore_x_xcb_define="-DHAVE_ECORE_X_XCB"
     have_ecore_x="yes"
     AC_SUBST(have_ecore_x_xcb_define)
   fi
 fi
 
-have_x="no"
 x_dir="";
 x_includes="";
 x_cflags="";
 x_libs="";
 if test "x$have_ecore_x_xcb" != "xyes" ; then
+  have_x="no"
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
     [
@@ -360,122 +359,78 @@ if test "x$have_ecore_x_xcb" != "xyes" ; then
   fi
 fi
 
-have_ecore_evas_gl="no";
-
-AC_ARG_ENABLE(ecore-evas-gl,
-  AC_HELP_STRING(
-    [--disable-ecore-evas-gl],
-    [disable GL support in the ecore_evas module. [[default=enabled]]]
-  ), [
-    want_ecore_evas_gl=$enableval
-  ], [
-    want_ecore_evas_gl=yes
-  ]
-)
-
-AC_MSG_CHECKING(whether ecore_evas gl support is to be built)
-AC_MSG_RESULT($want_ecore_evas_gl)
-
-dnl GL support requires X support, so we should
-dnl handle the case where our user is on crack
-dnl i.e. user disables X but enables GL
-PCFLAGS=$CFLAGS
-CFLAGS="$EVAS_CFLAGS $CFLAGS"
-if test "x$want_ecore_evas_gl" = "xyes" -a "x$have_ecore_x" = "xyes"; then
-  AC_CHECK_HEADER(Evas_Engine_GL_X11.h,
-    [
-      AC_DEFINE(BUILD_ECORE_EVAS_GL, 1, [Support for GL Engine in Ecore_Evas])
-      have_ecore_evas_gl="yes";
-    ], [
-      dummy=no
-    ], [
-      #include <Evas.h>
-    ]
-  )
-else
-  if test "x$want_ecore_evas_gl" = "xyes"; then
-    AC_MSG_WARN(Silly monkey: ecore_evas_gl requires ecore_x ... disabling ecore_evas_gl)
-  fi
-fi
-PCFLAGS=$CFLAGS
-
+dnl ecore_evas_x11
+# TODO: have_ecore_evas_x11="no"
+have_ecore_evas_x11_gl="no";
 have_ecore_evas_xrender="no";
-
-AC_ARG_ENABLE(ecore-evas-xrender,
-  AC_HELP_STRING(
-    [--disable-ecore-evas-xrender],
-    [disable XRender support in the ecore_evas module. [[default=enabled]]]
-  ), [
-    want_ecore_evas_xrender=$enableval
-  ], [
-    want_ecore_evas_xrender=yes
-  ]
-)
-
-AC_MSG_CHECKING(whether ecore_evas xrender support is to be built)
-AC_MSG_RESULT($want_ecore_evas_xrender)
-
-dnl Xrender support requires X support, so we should
-dnl handle the case where our user is on crack
-dnl i.e. user disables X but enables Xrender
-PCFLAGS=$CFLAGS
-CFLAGS="$EVAS_CFLAGS $CFLAGS"
-if test "x$want_ecore_evas_xrender" = "xyes" -a "x$have_ecore_x" = "xyes"; then
-  AC_CHECK_HEADER(Evas_Engine_XRender_X11.h,
-    [
-      AC_DEFINE(BUILD_ECORE_EVAS_XRENDER, 1, [Support for XRender Engine in Ecore_Evas])
-      have_ecore_evas_xrender="yes";
-    ], [
-      dummy=no
-    ], [
-      #include <Evas.h>
-    ]
-  )
-else
-  if test "x$want_ecore_evas_xrender" = "xyes"; then
-    AC_MSG_WARN(Silly monkey: ecore_evas_xrender requires ecore_x ... disabling ecore_evas_xrender)
-  fi
-fi
-PCFLAGS=$CFLAGS
-
 have_ecore_evas_x11_16="no";
-
-AC_ARG_ENABLE(ecore-evas-x11-16,
-  AC_HELP_STRING(
-    [--enable-ecore-evas-x11-16],
-    [enable 16bpp optimized mode support in the ecore_evas module. [[default=disabled]]]
-  ), [
-    want_ecore_evas_x11_16=$enableval
-  ], [
-    want_ecore_evas_x11_16=no
-  ]
-)
-
-AC_MSG_CHECKING(whether ecore_evas x11-16 support is to be built)
-AC_MSG_RESULT($want_ecore_evas_x11_16)
-
-dnl X11 16bpp support requires X support, so we should
-dnl handle the case where our user is on crack
-dnl i.e. user disables X but enables X11 16bpp
-PCFLAGS=$CFLAGS
-CFLAGS="$EVAS_CFLAGS $CFLAGS"
-if test "x$want_ecore_evas_x11_16" = "xyes" -a "x$have_ecore_x" = "xyes"; then
-  AC_CHECK_HEADER(Evas_Engine_Software_16_X11.h,
-    [
-      AC_DEFINE(BUILD_ECORE_EVAS_X11_16, 1, [Support for X11 16bpp Engine in Ecore_Evas])
-      have_ecore_evas_x11_16="yes";
-    ], [
-      dummy=no
-    ], [
-      #include <Evas.h>
-    ]
+if test "x$have_ecore_x" = "xyes"; then
+  dnl ecore_evas_x11_gl
+  want_ecore_evas_x11_gl=no
+  AC_ARG_ENABLE(ecore-evas-x11-gl,
+    AC_HELP_STRING(
+      [--enable-ecore-evas-x11-gl],
+      [enable X11 GL support in the ecore_evas module.]
+    ),
+    [ want_ecore_evas_x11_gl=$enableval ]
   )
-else
-  if test "x$want_ecore_evas_x11_16" = "xyes"; then
-    AC_MSG_WARN(Silly monkey: ecore_evas_x11_16 requires ecore_x ... disabling ecore_evas_x11_16)
+  AC_MSG_CHECKING(whether ecore_evas x11 gl support is to be built)
+  AC_MSG_RESULT($want_ecore_evas_x11_gl)
+  
+  if test "x$want_ecore_evas_x11_gl" = "xyes"; then
+    PKG_CHECK_EXISTS(evas-opengl-x11,
+      [
+        AC_DEFINE(BUILD_ECORE_EVAS_X11_GL, 1, [Support for GL Engine in Ecore_Evas])
+        have_ecore_evas_x11_gl="yes";
+      ]
+    )
   fi
+
+  dnl ecore_evas_xrender
+  want_ecore_evas_xrender=yes
+  AC_ARG_ENABLE(ecore-evas-xrender,
+    AC_HELP_STRING(
+      [--disable-ecore-evas-xrender],
+      [disable XRender support in the ecore_evas module. [[default=enabled]]]
+    ),
+    [ want_ecore_evas_xrender=$enableval ]
+  )
+  
+  AC_MSG_CHECKING(whether ecore_evas xrender support is to be built)
+  AC_MSG_RESULT($want_ecore_evas_xrender)
+  
+  if test "x$want_ecore_evas_xrender" = "xyes"; then
+    PKG_CHECK_EXISTS(evas-xrender-x11,
+      [
+        AC_DEFINE(BUILD_ECORE_EVAS_XRENDER, 1, [Support for XRender Engine in Ecore_Evas])
+        have_ecore_evas_xrender="yes";
+      ]
+    )
+  fi
+
+  dnl ecore_evas_x11_16
+  want_ecore_evas_x11_16=no
+  AC_ARG_ENABLE(ecore-evas-x11-16,
+    AC_HELP_STRING(
+      [--enable-ecore-evas-x11-16],
+      [enable 16bpp optimized mode support in the ecore_evas module. [[default=disabled]]]
+    ),
+    [ want_ecore_evas_x11_16=$enableval ]
+  )
+
+  AC_MSG_CHECKING(whether ecore_evas x11-16 support is to be built)
+  AC_MSG_RESULT($want_ecore_evas_x11_16)
+  
+  if test "x$want_ecore_evas_x11_16" = "xyes"; then
+    PKG_CHECK_EXISTS(evas-software-16-x11,
+      [
+        AC_DEFINE(BUILD_ECORE_EVAS_X11_16, 1, [Support for X11 16bpp Engine in Ecore_Evas])
+        have_ecore_evas_x11_16="yes";
+      ]
+    )
+  fi
+  requirements_ecore_evas="$requirements_ecore_evas ecore-x"
 fi
-PCFLAGS=$CFLAGS
 
 dnl ecore_win32
 # TODO: We should first check if we have win32 available before checking for win32 evas
@@ -740,7 +695,7 @@ AC_SUBST(requirements_ecore_sdl)
 # set up conditionals
 AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes -a $have_ecore_x_xcb = no)
 AM_CONDITIONAL(BUILD_ECORE_X_XCB, test $have_ecore_x_xcb = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, test $have_ecore_evas_gl = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS_X11_GL, test $have_ecore_evas_x11_gl = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, test $have_ecore_evas_xrender = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_X11_16, test $have_ecore_evas_x11_16 = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test $have_ecore_evas_dfb = yes)
@@ -812,7 +767,7 @@ echo "  Ecore_SDL....................: $have_ecore_sdl"
 echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
 echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
 
-echo "  Ecore_Evas GL Support........: $have_ecore_evas_gl"
+echo "  Ecore_Evas X11 GL Support....: $have_ecore_evas_x11_gl"
 echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
 echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_x11_16"
 
