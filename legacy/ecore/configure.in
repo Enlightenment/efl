@@ -556,17 +556,11 @@ if test "x$have_ecore_directfb" = "xyes" ; then
   if test "x$want_ecore_evas_dfb" = "xyes" -a "x$have_ecore_directfb" = "xyes" ; then
     save_CFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS $DIRECTFB_CFLAGS"
-    AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
+    PKG_CHECK_EXISTS(evas-directfb
       [
         AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
         have_ecore_evas_dfb="yes"
         requirements_ecore_evas="$requirements_ecore_evas ecore-directfb"
-      ], [
-        if test "x$want_ecore_evas_dfb" = "xyes" ; then
-          AC_MSG_ERROR(DirectFB requested but support not found)
-        fi
-      ], [
-        #include <Evas.h>
       ]
     )
     CFLAGS="$save_CFLAGS"
