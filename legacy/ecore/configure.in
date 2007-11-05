@@ -57,6 +57,68 @@ dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
 AC_CHECK_HEADERS(netinet/in.h)
+AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
+AC_SUBST(dlopen_libs)
+
+dnl openssl
+want_openssl="yes"
+have_openssl="no"
+AC_ARG_ENABLE(openssl,
+  AC_HELP_STRING(
+    [--disable-openssl],
+    [disable openssl support]
+  ),
+  [ want_openssl=$enableval ]
+)
+
+if test "x$want_openssl" = "xyes"; then
+  PKG_CHECK_MODULES(SSL, openssl,
+    [
+       AC_DEFINE(USE_OPENSSL, 1, [Use OpenSSL])
+       requirements_ecore_con="$requirements_ecore_con openssl"
+       # no need to add it to req_ecore_ipc, since they
+       # depends on ecore_con anyway.
+       have_openssl="yes"
+    ],
+    [ have_openssl="no" ]
+  )
+fi
+
+dnl curl
+want_curl="yes"
+have_curl="no"
+AC_ARG_ENABLE(curl,
+  AC_HELP_STRING(
+    [--disable-curl],
+    [disable curl support]
+  ),
+  [ want_curl=$enableval ]
+)
+
+if test "x$want_curl" = "xyes"; then
+  PKG_CHECK_MODULES(CURL, libcurl,
+    [
+      AC_DEFINE(HAVE_CURL, 1, [ Downloading with CURL ])
+      requirements_ecore_file="$requirements_ecore_file libcurl"
+      requirements_ecore_con="$requirements_ecore_con libcurl"
+      have_curl="yes"
+    ],
+    [ have_curl="no" ]
+  )
+fi
+
+dnl abstract sockets
+want_abstract_sockets="yes"
+AC_ARG_ENABLE(abstract-sockets,
+  AC_HELP_STRING(
+    [--disable-abstract-sockets],
+    [disable abstract sockets.]
+  ),
+  [ want_abstract_sockets=$enableval ]
+)
+if test "x$want_abstract_sockets" = "xyes"; then
+  AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract sockets namespace])
+fi
 
 dnl add windows requirements
 winsock_libs=""
@@ -623,67 +685,9 @@ if test "x$want_ecore_evas_buffer" = "xyes"; then
   )
 fi
 
-AC_ARG_ENABLE(openssl,
-  AC_HELP_STRING(
-    [--enable-openssl],
-    [enable openssl support @<:@default=auto@:>@]
-  ),
-  [ use_openssl=$enableval ],
-  [ use_openssl=yes ]
-)
-
-if test "x$use_openssl" = "xyes"; then
-  PKG_CHECK_MODULES(SSL, openssl,
-    [
-       use_openssl=yes
-       AC_DEFINE(USE_OPENSSL, 1, [Use OpenSSL])
-       requirements_ecore_con="$requirements_ecore_con openssl"
-       # no need to add it to req_ecore_{ipc,dbus}, since they
-       # depends on ecore_con anyway.
-    ],
-    [ use_openssl=no ]
-  )
-fi
-
-AC_ARG_ENABLE(curl,
-  AC_HELP_STRING(
-    [--enable-curl],
-    [enable curl support @<:@default=auto@:>@]
-  ),
-  [ use_curl=$enableval ],
-  [ use_curl=yes ]
-)
-
-if test "x$use_curl" = "xyes"; then
-  PKG_CHECK_MODULES(CURL, libcurl,
-    [
-      AC_DEFINE(HAVE_CURL, 1, [ Downloading with CURL ])
-      requirements_ecore_file="$requirements_ecore_file libcurl"
-      requirements_ecore_con="$requirements_ecore_con libcurl"
-    ], [
-      use_curl=no
-    ]
-  )
-fi
-
-want_abstract_sockets="yes"
-AC_ARG_ENABLE(abstract-sockets,
-  AC_HELP_STRING(
-    [--disable-abstract-sockets],
-    [disable abstract sockets. [[default=enabled]]]
-    ),
-  [ want_abstract_sockets=$enableval ],
-  [ want_abstract_sockets="yes"]
-)
-if test "x$want_abstract_sockets" = "xyes"; then
-  AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract sockets namespace])
-fi
-
 ECORE_CHECK_MODULE([Con], [yes])
 
 ECORE_CHECK_MODULE([Ipc], [yes], [$have_ecore_con])
-
-ECORE_CHECK_MODULE([DBus], [yes])
 
 PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
   [ have_eet="yes" ],
@@ -697,37 +701,32 @@ fi
 ECORE_CHECK_MODULE([Config], [yes], [$ecore_config_deps],
   [requirements_ecore_config="$requirements_ecore_config ecore-ipc eet"])
 
+
+dnl ecore_file
 ECORE_CHECK_MODULE([File], [yes])
-
-use_inotify="yes"
-use_poll="yes"
-
+have_inotify="no"
+have_poll="no"
 if test "x$have_ecore_file" = "xyes"; then
+
   dnl We need to check if the right inotify version is accessible
+  want_inotify="yes"
   AC_MSG_CHECKING(whether inotify is to be used for filemonitoring)
   AC_ARG_ENABLE(inotify,
-    [  --disable-inotify             disable inotify in the ecore_file module],
-    [
-      if test "$enableval" = "yes"; then
-        AC_MSG_RESULT(yes)
-      else
-        AC_MSG_RESULT(no)
-        use_inotify="no"
-      fi
-    ], [
-      AC_MSG_RESULT(yes)
-    ]
+    AC_HELP_STRING([--disable-inotify], [disable inotify in the ecore_file module]),
+    [ want_inotify=$enableval ]
   )
+  AC_MSG_RESULT($want_inotify)
 
   dnl It's hard to find a good test on how to check the correct
   dnl inotify version. They changed the headers a lot.
   dnl in kernel 2.6.13 __NR_inotify_init was added to the defined syscalls
   dnl in asm/unistd.h and IN_MOVE_SELF was added to linux/inotify.h
   dnl so with this check you need a very new kernel and kernel-headers!
-  if test "x$use_inotify" = "xyes"; then
+  if test "x$want_inotify" = "xyes"; then
     AC_CHECK_LIB(c, inotify_init, [
         AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
         AC_DEFINE(HAVE_SYS_INOTIFY, 1, [ File monitoring with Inotify - sys/inotify.h ])
+	have_inotify="yes"
       ],
       [
         AC_TRY_COMPILE(
@@ -738,40 +737,34 @@ if test "x$have_ecore_file" = "xyes"; then
           [ int a = __NR_inotify_init; int b = IN_MOVE_SELF; ],
           [
             AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
+	    have_inotify="yes"
           ], [
-            use_inotify="no"
+            have_inotify="no"
           ]
 	)
       ]
     )
   fi
 
+  want_poll="yes"
   AC_MSG_CHECKING(whether polling is to be used for filemonitoring)
   AC_ARG_ENABLE(poll,
     [  --disable-poll                disable poll in the ecore_file module],
-    [
-      if test "$enableval" = "yes"; then
-        AC_MSG_RESULT(yes)
-      else
-        AC_MSG_RESULT(no)
-        use_poll="no"
-      fi
-    ], [
-      AC_MSG_RESULT(yes)
-    ]
+    [ want_poll=$enableval ]
   )
+  AC_MSG_RESULT($want_poll)
 
-  if test "x$use_poll" = "xyes"; then
+  if test "x$want_poll" = "xyes"; then
     AC_DEFINE(HAVE_POLL, 1, [ File monitoring with polling ])
+    have_poll="yes"
   fi
 fi
 
+dnl ecore_desktop
 ECORE_CHECK_MODULE([Desktop], [no], [$have_ecore_file],
   [requirements_ecore_desktop="ecore-file"])
 
-AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
-AC_SUBST(dlopen_libs)
-
+dnl requirements
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
 AC_SUBST(requirements_ecore_desktop)
@@ -839,10 +832,10 @@ echo
 echo "Optional Modules:"
 echo
 echo "  Ecore_Job....................: $have_ecore_job"
-echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $use_openssl) (CURL: $use_curl)"
+echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $have_openssl) (CURL: $have_curl)"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 if test "x$have_ecore_x_xcb" = "xyes" ; then
-echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_xcb_xprint) (Xinerama: $have_ecore_x_xcb_xinerama) (Xrandr: $have_ecore_x_xcb_randr) (Xscreensaver: $have_ecore_x_xcb_screensaver) (Xshape: $have_ecore_x_xcb_shape) (Xsync: $have_ecore_x_xcb_sync) (Xrender: $have_ecore_x_xcb_render) (Xfixes: $have_ecore_x_xcb_xfixes) (Xcomposite: $have_ecore_x_xcb_composite) (Xdamage: $have_ecore_x_xcb_damage) (Xdpms: $have_ecore_x_xcb_dpms)"
+  echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_xcb_xprint) (Xinerama: $have_ecore_x_xcb_xinerama) (Xrandr: $have_ecore_x_xcb_randr) (Xscreensaver: $have_ecore_x_xcb_screensaver) (Xshape: $have_ecore_x_xcb_shape) (Xsync: $have_ecore_x_xcb_sync) (Xrender: $have_ecore_x_xcb_render) (Xfixes: $have_ecore_x_xcb_xfixes) (Xcomposite: $have_ecore_x_xcb_composite) (Xdamage: $have_ecore_x_xcb_damage) (Xdpms: $have_ecore_x_xcb_dpms)"
 else
   echo "  Ecore_X (Xlib backend).......: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xcomposite: $use_xcomposite) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms)"
 fi
@@ -859,10 +852,10 @@ echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
 echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
 echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
 echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
-echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $use_openssl)"
+echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $have_openssl)"
 echo "  Ecore_Config.................: $have_ecore_config"
 echo "  Ecore_Desktop................: $have_ecore_desktop"
-echo "  Ecore_File...................: $have_ecore_file (Inotify: $use_inotify) (Poll: $use_poll) (CURL: $use_curl)"
+echo "  Ecore_File...................: $have_ecore_file (Inotify: $have_inotify) (Poll: $have_poll) (CURL: $have_curl)"
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
 echo
