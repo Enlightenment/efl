@@ -449,7 +449,9 @@ AC_ARG_ENABLE(gl-x11,
 AC_MSG_RESULT($want_evas_gl_x11)
 
 if test "x$want_evas_gl_x11" = "xyes"; then
-  AC_CHECK_HEADER(GL/gl.h GL/glu.h X11/X.h,
+  AC_PATH_X
+  AC_PATH_XTRA
+  AC_CHECK_HEADERS(GL/gl.h GL/glu.h X11/X.h,
     [
       AC_DEFINE(BUILD_ENGINE_GL_X11, 1, [OpenGL X11 Rendering Backend])
       x_dir=${x_dir:-/usr/X11R6};
@@ -478,7 +480,7 @@ AC_ARG_ENABLE(gl-glew,
 AC_MSG_RESULT($want_evas_gl_glew)
 
 if test "x$want_evas_gl_glew" = "xyes" ; then
-  AC_CHECK_HEADER(GL/gl.h GL/glu.h GL/glew.h,
+  AC_CHECK_HEADERS(GL/gl.h GL/glu.h GL/glew.h,
     [
       AC_DEFINE(BUILD_ENGINE_GL_GLEW, 1, [OpenGL Glew Rendering Backend])
       glew_libs="-lglew32 -lopengl32 -lgdi32"
@@ -552,18 +554,13 @@ AC_MSG_RESULT($want_evas_xrender_x11)
 if test "x$want_evas_xrender_x11" = "xyes"; then
   AC_PATH_X
   AC_PATH_XTRA
-  AC_CHECK_HEADER(X11/X.h,
+  AC_CHECK_HEADERS(X11/X.h X11/extensions/Xrender.h,
     [
-      AC_CHECK_HEADER(X11/extensions/Xrender.h,
-        [
-          AC_DEFINE(BUILD_ENGINE_XRENDER_X11, 1, [XRender X11 Rendering Backend])
-          x_dir=${x_dir:-/usr/X11R6}
-          x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-          x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
-          have_evas_xrender_x11="yes"
-        ],
-        [ have_evas_xrender_x11="no" ]
-      )
+      AC_DEFINE(BUILD_ENGINE_XRENDER_X11, 1, [XRender X11 Rendering Backend])
+      x_dir=${x_dir:-/usr/X11R6}
+      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
+      have_evas_xrender_x11="yes"
     ],
     [ have_evas_xrender_x11="no" ]
   )
@@ -683,13 +680,15 @@ AC_ARG_ENABLE(image-loader-png,
 AC_MSG_RESULT($want_png)
 
 if test "x$want_png" = "xyes"; then
-  if pkg-config --exists libpng12; then
-    PKG_CHECK_MODULES(PNG, libpng12, [ have_png="yes" ], [ have_png="no"])
-  elif pkg-config --exists libpng10; then
-    PKG_CHECK_MODULES(PNG, libpng10, [ have_png="yes" ], [ have_png="no"])
-  else
-    PKG_CHECK_MODULES(PNG, libpng, [ have_png="yes" ], [ have_png="no"])
-  fi
+  PKG_CHECK_EXISTS(libpng12,
+    [ PKG_CHECK_MODULES(PNG, libpng12, [ have_png="yes" ], [ have_png="no"]) ],
+    [
+      PKG_CHECK_EXISTS(libpng10,
+        [ PKG_CHECK_MODULES(PNG, libpng10, [ have_png="yes" ], [ have_png="no"]) ],
+        [ PKG_CHECK_MODULES(PNG, libpng, [ have_png="yes" ], [ have_png="no"]) ]
+      )
+    ]
+  )
 fi
 AM_CONDITIONAL(BUILD_LOADER_PNG, test x$have_png = xyes)
 
@@ -930,9 +929,7 @@ pthread_cflags=""
 pthread_libs=""
 build_pthreads="no"
 # sched_getaffinity pthread_attr_setaffinity_np
-AC_CHECK_HEADER(pthread.h,
-  [
-    AC_CHECK_HEADER(sched.h,
+AC_CHECK_HEADERS(pthread.h sched.h,
       [
         AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
           [
@@ -945,9 +942,6 @@ AC_CHECK_HEADER(pthread.h,
         )
       ],
       [ build_pthreads="no" ]
-    )
-  ],
-  [ build_pthreads="no" ]
 )
 ### disable pthreads by default for now - some wierd deadlock issue with
 # barriers (makes no sense)
@@ -1199,10 +1193,10 @@ AC_ARG_ENABLE(convert-yuv,
 #######################################
 ## Small dither mask instead of big one (lower quality)
 conv_small_dither="no"
-conv_small_dither="no"
 AC_MSG_CHECKING(whether to build small dither mask code)
 AC_ARG_ENABLE(small-dither-mask,
-  [  --enable-small-dither-mask      enable small dither mask code], [
+  AC_HELP_STRING([--enable-small-dither-mask], [enable small dither mask code]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
@@ -1222,10 +1216,10 @@ AC_ARG_ENABLE(small-dither-mask,
 #######################################
 ## No dither mask at all for 16bpp
 conv_no_dither="no"
-conv_no_dither="no"
 AC_MSG_CHECKING(whether to build without dither mask for 16bpp)
 AC_ARG_ENABLE(no-dither-mask,
-  [  --enable-no-dither-mask         enable conversion to 16bpp without dither mask], [
+  AC_HELP_STRING([--enable-no-dither-mask], [enable conversion to 16bpp without dither mask]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
@@ -1244,630 +1238,106 @@ AC_ARG_ENABLE(no-dither-mask,
 
 #######################################
 ## Convert to 8bpp RGB 332
-conv_8_rgb_332="no"
-conv_8_rgb_332="yes"
-AC_MSG_CHECKING(whether to build 8bpp 332 converter code)
-AC_ARG_ENABLE(convert-8-rgb-332,
-  [  --enable-convert-8-rgb-332      enable 8bpp 332 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp 332 Converter Support])
-        conv_8_rgb_332="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_8_rgb_332="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_8_rgb_332)
-      if test "x$conv_8_rgb_332" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp 332 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(8, RGB, 332, [yes])
 ## Convert to 8bpp RGB 666
-conv_8_rgb_666="no"
-conv_8_rgb_666="yes"
-AC_MSG_CHECKING(whether to build 8bpp 666 converter code)
-AC_ARG_ENABLE(convert-8-rgb-666,
-  [  --enable-convert-8-rgb-666      enable 8bpp 666 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp 666 Converter Support])
-        conv_8_rgb_666="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_8_rgb_666="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_8_rgb_666)
-      if test "x$conv_8_rgb_666" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp 666 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(8, RGB, 666, [yes])
 ## Convert to 8bpp RGB 232
-conv_8_rgb_232="no"
-conv_8_rgb_232="yes"
-AC_MSG_CHECKING(whether to build 8bpp 232 converter code)
-AC_ARG_ENABLE(convert-8-rgb-232,
-  [  --enable-convert-8-rgb-232      enable 8bpp 232 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp 232 Converter Support])
-        conv_8_rgb_232="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_8_rgb_232="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_8_rgb_232)
-      if test "x$conv_8_rgb_232" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp 232 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(8, RGB, 232, [yes])
 ## Convert to 8bpp RGB 222
-conv_8_rgb_222="no"
-conv_8_rgb_222="yes"
-AC_MSG_CHECKING(whether to build 8bpp 222 converter code)
-AC_ARG_ENABLE(convert-8-rgb-222,
-  [  --enable-convert-8-rgb-222      enable 8bpp 222 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp 222 Converter Support])
-        conv_8_rgb_222="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_8_rgb_222="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_8_rgb_222)
-      if test "x$conv_8_rgb_222" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp 222 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(8, RGB, 222, [yes])
 ## Convert to 8bpp RGB 221
-conv_8_rgb_221="no"
-conv_8_rgb_221="yes"
-AC_MSG_CHECKING(whether to build 8bpp 221 converter code)
-AC_ARG_ENABLE(convert-8-rgb-221,
-  [  --enable-convert-8-rgb-221      enable 8bpp 221 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp 221 Converter Support])
-        conv_8_rgb_221="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_8_rgb_221="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_8_rgb_221)
-      if test "x$conv_8_rgb_221" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp 221 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(8, RGB, 221, [yes])
 ## Convert to 8bpp RGB 121
-conv_8_rgb_121="no"
-conv_8_rgb_121="yes"
-AC_MSG_CHECKING(whether to build 8bpp 121 converter code)
-AC_ARG_ENABLE(convert-8-rgb-121,
-  [  --enable-convert-8-rgb-121      enable 8bpp 121 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_121, 1, [8bpp 121 Converter Support])
-        conv_8_rgb_121="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_8_rgb_121="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_8_rgb_121)
-      if test "x$conv_8_rgb_121" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_8_RGB_121, 1, [8bpp 121 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(8, RGB, 121, [yes])
 ## Convert to 8bpp RGB 111
-conv_8_rgb_111="no"
-conv_8_rgb_111="yes"
-AC_MSG_CHECKING(whether to build 8bpp 111 converter code)
-AC_ARG_ENABLE(convert-8-rgb-111,
-  [  --enable-convert-8-rgb-111      enable 8bpp 111 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp 111 Converter Support])
-        conv_8_rgb_111="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_8_rgb_111="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_8_rgb_111)
-      if test "x$conv_8_rgb_111" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp 111 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(8, RGB, 111, [yes])
 ## Convert to 16bpp RGB 565
-conv_16_rgb_565="no"
-conv_16_rgb_565="yes"
-AC_MSG_CHECKING(whether to build 16bpp 565 rgb converter code)
-AC_ARG_ENABLE(convert-16-rgb-565,
-  [  --enable-convert-16-rgb-565     enable 16bpp rgb 565 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565 Converter Support])
-        conv_16_rgb_565="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_rgb_565="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_rgb_565)
-      if test "x$conv_16_rgb_565" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(16, RGB, 565)
 ## Convert to 16bpp BGR 565
-conv_16_bgr_565="no"
-conv_16_bgr_565="yes"
-AC_MSG_CHECKING(whether to build 16bpp 565 bgr converter code)
-AC_ARG_ENABLE(convert-16-bgr-565,
-  [  --enable-convert-16-bgr-565     enable 16bpp bgr 565 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565 Converter Support])
-        conv_16_bgr_565="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_bgr_565="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_bgr_565)
-      if test "x$conv_16_bgr_565" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(16, BGR, 565)
 ## Convert to 16bpp RGB 555
-conv_16_rgb_555="no"
-conv_16_rgb_555="yes"
-AC_MSG_CHECKING(whether to build 16bpp 555 converter code)
-AC_ARG_ENABLE(convert-16-rgb-555,
-  [  --enable-convert-16-rgb-555     enable 16bpp 555 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp 555 Converter Support])
-        conv_16_rgb_555="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_rgb_555="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_rgb_555)
-      if test "x$conv_16_rgb_555" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp 555 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(16, RGB, 555)
 ## Convert to 16bpp RGB 444
-conv_16_rgb_444="no"
-conv_16_rgb_444="yes"
-AC_MSG_CHECKING(whether to build 16bpp 444 converter code)
-AC_ARG_ENABLE(convert-16-rgb-444,
-  [  --enable-convert-16-rgb-444     enable 16bpp 444 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp 444 Converter Support])
-        conv_16_rgb_444="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_rgb_444="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_rgb_444)
-      if test "x$conv_16_rgb_444" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp 444 Converter Support])
-      fi
-  ]
-)
+EVAS_CONVERT_COLOR(16, RGB, 444)
 
 #######################################
 ## Convert to 16bpp RGB 565 (444 ipaq)
-conv_16_rgb_ipq="no"
 conv_16_rgb_ipq="yes"
 AC_MSG_CHECKING(whether to build 16bpp 565 (444 ipaq) converter code)
 AC_ARG_ENABLE(convert-16-rgb-ipq,
-  [  --enable-convert-16-rgb-ipq     enable 16bpp 565 (444 ipaq) converter code], [
+  AC_HELP_STRING([--disable-convert-16-rgb-ipq], [disable 16bpp 565 (444 ipaq) converter code]),
+  [
       if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
         conv_16_rgb_ipq="yes"
       else
-        AC_MSG_RESULT(no)
         conv_16_rgb_ipq="no"
       fi
   ], [
-      AC_MSG_RESULT($conv_16_rgb_ipq)
       if test "x$conv_16_rgb_ipq" = "xyes" ; then
         AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
       fi
   ]
 )
+AC_MSG_RESULT($conv_16_rgb_ipq)
 
 #######################################
 ## Convert to 16bpp RGB with rotation of 0
-conv_16_rgb_rot_0="no"
-conv_16_rgb_rot_0="yes"
-AC_MSG_CHECKING(whether to build 16bpp rotation 0 converter code)
-AC_ARG_ENABLE(convert-16-rgb-rot-0,
-  [  --enable-convert-16-rgb-rot-0   enable 16bpp rotation 0 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp Rotation 0 Converter Code])
-        conv_16_rgb_rot_0="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_rgb_rot_0="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_rgb_rot_0)
-      if test "x$conv_16_rgb_rot_0" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp Rotation 0 Converter Code])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_ROT(16, RGB, 0)
 ## Convert to 16bpp RGB with rotation of 180
-conv_16_rgb_rot_180="no"
-conv_16_rgb_rot_180="yes"
-AC_MSG_CHECKING(whether to build 16bpp rotation 180 converter code)
-AC_ARG_ENABLE(convert-16-rgb-rot-180,
-  [  --enable-convert-16-rgb-rot-180 enable 16bpp rotation 180 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT180, 1, [16bpp Rotation 180 Converter Code])
-        conv_16_rgb_rot_180="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_rgb_rot_180="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_rgb_rot_180)
-      if test "x$conv_16_rgb_rot_180" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT180, 1, [16bpp Rotation 180 Converter Code])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_ROT(16, RGB, 180)
 ## Convert to 16bpp RGB with rotation of 270
-conv_16_rgb_rot_270="no"
-conv_16_rgb_rot_270="yes"
-AC_MSG_CHECKING(whether to build 16bpp rotation 270 converter code)
-AC_ARG_ENABLE(convert-16-rgb-rot-270,
-  [  --enable-convert-16-rgb-rot-270 enable 16bpp rotation 270 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp Rotation 270 Converter Code])
-        conv_16_rgb_rot_270="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_rgb_rot_270="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_rgb_rot_270)
-      if test "x$conv_16_rgb_rot_270" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp Rotation 270 Converter Code])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_ROT(16, RGB, 270)
 ## Convert to 16bpp RGB with rotation of 90
-conv_16_rgb_rot_90="no"
-conv_16_rgb_rot_90="yes"
-AC_MSG_CHECKING(whether to build 16bpp rotation 90 converter code)
-AC_ARG_ENABLE(convert-16-rgb-rot-90,
-  [  --enable-convert-16-rgb-rot-90  enable 16bpp rotation 90 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp Rotation 90 Converter Code])
-        conv_16_rgb_rot_90="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_16_rgb_rot_90="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_16_rgb_rot_90)
-      if test "x$conv_16_rgb_rot_90" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp Rotation 90 Converter Code])
-      fi
-  ]
-)
+EVAS_CONVERT_ROT(16, RGB, 90)
 
 #######################################
 ## Convert to 24bpp RGB 888
-conv_24_rgb_888="no"
-conv_24_rgb_888="yes"
-AC_MSG_CHECKING(whether to build 24bpp 888 rgb converter code)
-AC_ARG_ENABLE(convert-24-rgb-888,
-  [  --enable-convert-24-rgb-888     enable 24bpp rgb 888 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888 Converter Support])
-        conv_24_rgb_888="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_24_rgb_888="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_24_rgb_888)
-      if test "x$conv_24_rgb_888" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(24, RGB, 888)
 ## Convert to 24bpp BGR 888
-conv_24_bgr_888="no"
-conv_24_bgr_888="yes"
-AC_MSG_CHECKING(whether to build 24bpp 888 bgr converter code)
-AC_ARG_ENABLE(convert-24-bgr-888,
-  [  --enable-convert-24-bgr-888     enable 24bpp bgr 888 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888 Converter Support])
-        conv_24_bgr_888="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_24_bgr_888="no"
-      fi
-  ], [
-      AC_MSG_RESULT(yes)
-      if test "x$conv_24_bgr_888" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(24, BGR, 888)
 ## Convert to 32bpp RGB 8888
-conv_32_rgb_8888="no"
-conv_32_rgb_8888="yes"
-AC_MSG_CHECKING(whether to build 32bpp 8888 rgb converter code)
-AC_ARG_ENABLE(convert-32-rgb-8888,
-  [  --enable-convert-32-rgb-8888    enable 32bpp rgb 8888 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888 Converter Support])
-        conv_32_rgb_8888="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_rgb_8888="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_rgb_8888)
-      if test "x$conv_32_rgb_8888" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(32, RGB, 8888)
 ## Convert to 32bpp RGBX 8888
-conv_32_rgbx_8888="no"
-conv_32_rgbx_8888="yes"
-AC_MSG_CHECKING(whether to build 32bpp 8888 rgbx converter code)
-AC_ARG_ENABLE(convert-32-rgbx-8888,
-  [  --enable-convert-32-rgbx-8888   enable 32bpp rgbx 8888 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RGBX 8888 Converter Support])
-        conv_32_rgbx_8888="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_rgbx_8888="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_rgbx_8888)
-      if test "x$conv_32_rgbx_8888" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RBGX 8888 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(32, RGBX, 8888)
 ## Convert to 32bpp BGR 8888
-conv_32_bgr_8888="no"
-conv_32_bgr_8888="yes"
-AC_MSG_CHECKING(whether to build 32bpp 8888 bgr converter code)
-AC_ARG_ENABLE(convert-32-bgr-8888,
-  [  --enable-convert-32-bgr-8888    enable 32bpp bgr 8888 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888 Converter Support])
-        conv_32_bgr_8888="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_bgr_8888="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_bgr_8888)
-      if test "x$conv_32_bgr_8888" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_COLOR(32, BGR, 8888)
 ## Convert to 32bpp BGRX 8888
-conv_32_bgrx_8888="no"
-conv_32_bgrx_8888="yes"
-AC_MSG_CHECKING(whether to build 32bpp 8888 bgrx converter code)
-AC_ARG_ENABLE(convert-32-bgrx-8888,
-  [  --enable-convert-32-bgrx-8888   enable 32bpp bgrx 8888 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp BGRX 8888 Converter Support])
-        conv_32_bgrx_8888="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_bgrx_8888="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_bgrx_8888)
-      if test "x$conv_32_bgrx_8888" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp RBGX 8888 Converter Support])
-      fi
-  ]
-)
+EVAS_CONVERT_COLOR(32, BGRX, 8888)
 
 #######################################
 ## Convert to 32bpp RGB with rotation of 0
-conv_32_rgb_rot_0="no"
-conv_32_rgb_rot_0="yes"
-AC_MSG_CHECKING(whether to build 32bpp rotation 0 converter code)
-AC_ARG_ENABLE(convert-32-rgb-rot-0,
-  [  --enable-convert-32-rgb-rot-0   enable 32bpp rotation 0 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp Rotation 0 Converter Support])
-        conv_32_rgb_rot_0="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_rgb_rot_0="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_rgb_rot_0)
-      if test "x$conv_32_rgb_rot_0" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp Rotation 0 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_ROT(32, RGB, 0)
 ## Convert to 32bpp RGB with rotation of 180
-conv_32_rgb_rot_180="no"
-conv_32_rgb_rot_180="yes"
-AC_MSG_CHECKING(whether to build 32bpp rotation 180 converter code)
-AC_ARG_ENABLE(convert-32-rgb-rot-180,
-  [  --enable-convert-32-rgb-rot-180 enable 32bpp rotation 180 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT180, 1, [32bpp Rotation 180 Converter Support])
-        conv_32_rgb_rot_180="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_rgb_rot_180="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_rgb_rot_180)
-      if test "x$conv_32_rgb_rot_180" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT180, 1, [32bpp Rotation 180 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_ROT(32, RGB, 180)
 ## Convert to 32bpp RGB with rotation of 270
-conv_32_rgb_rot_270="no"
-conv_32_rgb_rot_270="yes"
-AC_MSG_CHECKING(whether to build 32bpp rotation 270 converter code)
-AC_ARG_ENABLE(convert-32-rgb-rot-270,
-  [  --enable-convert-32-rgb-rot-270 enable 32bpp rotation 270 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp Rotation 270 Converter Support])
-        conv_32_rgb_rot_270="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_rgb_rot_270="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_rgb_rot_270)
-      if test "x$conv_32_rgb_rot_270" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp Rotation 270 Converter Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CONVERT_ROT(32, RGB, 270)
 ## Convert to 32bpp RGB with rotation of 90
-conv_32_rgb_rot_90="no"
-conv_32_rgb_rot_90="yes"
-AC_MSG_CHECKING(whether to build 32bpp rotation 90 converter code)
-AC_ARG_ENABLE(convert-32-rgb-rot-90,
-  [  --enable-convert-32-rgb-rot-90  enable 32bpp rotation 90 converter code], [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp Rotation 90 Converter Support])
-        conv_32_rgb_rot_90="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_32_rgb_rot_90="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_32_rgb_rot_90)
-      if test "x$conv_32_rgb_rot_90" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp Rotation 90 Converter Support])
-      fi
-  ]
-)
+EVAS_CONVERT_ROT(32, RGB, 90)
 
-# Setting have_valgrind to "no" seems pointless, but we just need to
-# put something in as the 4th parameter, so configure doesn't abort
-# when valgrind.pc isn't found.
+## valgrind
+want_valgrind="no"
 have_valgrind="no"
-PKG_CHECK_MODULES(VALGRIND, valgrind >= 2.4.0, have_valgrind=yes, have_valgrind=no)
-VALGRIND_LIBS="" # dont use LIBS
 
+AC_MSG_CHECKING(whether to enable build with valgrind)
 AC_ARG_ENABLE(valgrind,
-  [  --enable-valgrind               enable valgrind fixes to stop false reports], [
-      if test "x$enableval" = "xyes" ; then
-        have_valgrind="yes"
-      else
-        have_valgrind="no"
-        VALGRIND_CFLAGS=""
-      fi
-  ], [
-    have_valgrind=$have_valgrind
-  ]
+  AC_HELP_STRING([--enable-valgrind], [enable valgrind fixes to stop false reports]),
+  [ want_valgrind=$enableval ]
 )
+AC_MSG_RESULT($want_valgrind)
 
-if test x$have_valgrind = "xyes"; then
-  AC_DEFINE(HAVE_VALGRIND, 1, [Valgrind support])
+if test x$want_valgrind = "xyes"; then
+  PKG_CHECK_MODULES(VALGRIND, valgrind >= 2.4.0,
+    [
+      AC_DEFINE(HAVE_VALGRIND, 1, [Valgrind support])
+      have_valgrind=yes
+    ],
+    [ have_valgrind=no ]
+  )
 fi
 
 #####################################################################
 ## Fill in flags
-
-AC_SUBST(VALGRIND_CFLAGS)
 
 AC_SUBST(ddraw_libs)
 AC_SUBST(ddraw_16_libs)
