@@ -10,9 +10,6 @@ typedef enum {
 #ifdef HAVE_INOTIFY
      ECORE_FILE_MONITOR_TYPE_INOTIFY,
 #endif
-#ifdef HAVE_FAM
-     ECORE_FILE_MONITOR_TYPE_FAM,
-#endif
 #ifdef HAVE_POLL
      ECORE_FILE_MONITOR_TYPE_POLL
 #endif
@@ -29,13 +26,6 @@ ecore_file_monitor_init(void)
    monitor_type = ECORE_FILE_MONITOR_TYPE_INOTIFY;
    if (ecore_file_monitor_inotify_init())
      return init;
-#endif
-#ifdef HAVE_FAM
-#if 0
-   monitor_type = ECORE_FILE_MONITOR_TYPE_FAM;
-   if (ecore_file_monitor_fam_init())
-     return init;
-#endif
 #endif
 #ifdef HAVE_POLL
    monitor_type = ECORE_FILE_MONITOR_TYPE_POLL;
@@ -60,11 +50,6 @@ ecore_file_monitor_shutdown(void)
 	 ecore_file_monitor_inotify_shutdown();
 	 break;
 #endif
-#ifdef HAVE_FAM
-      case ECORE_FILE_MONITOR_TYPE_FAM:
-	 ecore_file_monitor_fam_shutdown();
-	 break;
-#endif
 #ifdef HAVE_POLL
       case ECORE_FILE_MONITOR_TYPE_POLL:
 	 ecore_file_monitor_poll_shutdown();
@@ -75,7 +60,7 @@ ecore_file_monitor_shutdown(void)
 }
 
 /**
- * Monitor a path using inotify, fam or polling
+ * Monitor a path using inotify or polling
  * @param  path The path to monitor
  * @param  func The function to call on changes
  * @param  data The data passed to func
@@ -95,10 +80,6 @@ ecore_file_monitor_add(const char *path,
 #ifdef HAVE_INOTIFY
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
 	 return ecore_file_monitor_inotify_add(path, func, data);
-#endif
-#ifdef HAVE_FAM
-      case ECORE_FILE_MONITOR_TYPE_FAM:
-	 return ecore_file_monitor_fam_add(path, func, data);
 #endif
 #ifdef HAVE_POLL
       case ECORE_FILE_MONITOR_TYPE_POLL:
@@ -122,11 +103,6 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
 #ifdef HAVE_INOTIFY
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
 	 ecore_file_monitor_inotify_del(em);
-	 break;
-#endif
-#ifdef HAVE_FAM
-      case ECORE_FILE_MONITOR_TYPE_FAM:
-	 ecore_file_monitor_fam_del(em);
 	 break;
 #endif
 #ifdef HAVE_POLL

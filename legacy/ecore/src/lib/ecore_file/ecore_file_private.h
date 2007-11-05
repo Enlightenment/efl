@@ -40,18 +40,6 @@ Ecore_File_Monitor *ecore_file_monitor_inotify_add(const char *path,
 void                ecore_file_monitor_inotify_del(Ecore_File_Monitor *ecore_file_monitor);
 #endif
 
-#ifdef HAVE_FAM
-int                 ecore_file_monitor_fam_init(void);
-int                 ecore_file_monitor_fam_shutdown(void);
-Ecore_File_Monitor *ecore_file_monitor_fam_add(const char *path,
-						    void (*func) (void *data,
-								  Ecore_File_Monitor *ecore_file_monitor,
-								  Ecore_File_Event event,
-								  const char *path),
-						    void *data);
-void                ecore_file_monitor_fam_del(Ecore_File_Monitor *ecore_file_monitor);
-#endif
-
 #ifdef HAVE_POLL
 int                 ecore_file_monitor_poll_init(void);
 int                 ecore_file_monitor_poll_shutdown(void);
