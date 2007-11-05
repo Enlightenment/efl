@@ -362,7 +362,7 @@ have_ecore_evas_x11="no"
 have_ecore_evas_x11_gl="no";
 have_ecore_evas_xrender="no";
 have_ecore_evas_x11_16="no";
-if test "x$have_ecore_x" = "xyes"; then
+if test "x$have_ecore_x" = "xyes" -a "x$have_evas" = "xyes"; then
   dnl ecore_evas_x11
   want_ecore_evas_x11=yes
   dnl disabling this will make things go haywire
@@ -459,6 +459,7 @@ fi
 
 dnl ecore_win32
 # TODO: We should first check if we have win32 available before checking for win32 evas
+# TODO: Need to check if we have evas before testing win32 evas engines
 AC_MSG_CHECKING(for Evas Software DirectDraw engine)
 PKG_CHECK_EXISTS(evas-software-ddraw >= 0.9.9.41,
   [ have_ddraw="yes"
@@ -524,7 +525,7 @@ ECORE_CHECK_MODULE([DirectFB], [no], [$have_directfb],
 
 dnl ecore_evas_dfb
 have_ecore_evas_dfb="no"
-if test "x$have_ecore_directfb" = "xyes" ; then
+if test "x$have_ecore_directfb" = "xyes" -a "x$have_evas" = "xyes"; then
   want_ecore_evas_dfb="yes"
   AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
   AC_ARG_ENABLE(ecore-evas-dfb,
@@ -567,7 +568,7 @@ AC_SUBST(tslib_libs)
 
 dnl ecore_evas_fb
 have_ecore_evas_fb="no";
-if test "x$have_ecore_fb" = "xyes"; then
+if test "x$have_ecore_fb" = "xyes" -a "x$have_evas" = "xyes"; then
   want_ecore_evas_fb="yes";
   AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
   AC_ARG_ENABLE(ecore-evas-fb,
@@ -596,7 +597,7 @@ ECORE_CHECK_MODULE([SDL], [no], [$have_sdl])
 
 dnl ecore_evas_sdl
 have_ecore_evas_sdl="no";
-if test "x$have_sdl" = "xyes"; then
+if test "x$have_sdl" = "xyes" -a "x$have_evas" = "xyes"; then
   want_ecore_evas_sdl="yes";
   AC_MSG_CHECKING(whether ecore_evas sdl support is to be built)
   AC_ARG_ENABLE(ecore-evas-sdl,
@@ -632,7 +633,7 @@ AC_ARG_ENABLE(ecore-evas-buffer,
 )
 AC_MSG_RESULT($want_ecore_evas_buffer)
 
-if test "x$want_ecore_evas_buffer" = "xyes"; then
+if test "x$want_ecore_evas_buffer" = "xyes" -a "x$have_evas" = "xyes"; then
   PKG_CHECK_EXISTS(evas-software-buffer
     [
       AC_DEFINE(BUILD_ECORE_EVAS_BUFFER, 1, [Support for Buffers in Ecore_Evas])
