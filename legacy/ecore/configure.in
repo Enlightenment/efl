@@ -20,6 +20,7 @@ AC_C_CONST
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 AC_C___ATTRIBUTE__
+AC_HEADER_SYS_WAIT
 
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -31,18 +32,6 @@ VMIC=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
-
-dnl Use -Wall if we have gcc.
-changequote(,)dnl
-if test "x$GCC" = "xyes"; then
-  case " $CFLAGS " in
-  *[\ \	]-Wall[\ \	]*) ;;
-  *) CFLAGS="$CFLAGS -Wall" ;;
-  esac
-fi
-changequote([,])dnl
-
-AC_HEADER_SYS_WAIT
 
 # define pkg-config requirements for all our submodules.
 # only the trivial requirements go here.
@@ -812,10 +801,6 @@ ECORE_CHECK_MODULE([Desktop], [no], [$have_ecore_file],
 
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
 AC_SUBST(dlopen_libs)
-
-dnl Checking for Perl:
-AC_PATH_PROG(PERL,perl,0)
-AC_SUBST(PERL)
 
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
