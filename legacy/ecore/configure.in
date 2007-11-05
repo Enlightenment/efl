@@ -53,11 +53,12 @@ dnl The first call to PKG_CHECK_MODULES is done conditionally,
 dnl so we should include this here:
 PKG_PROG_PKG_CONFIG
 
+dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
-
 AC_CHECK_HEADERS(netinet/in.h)
 
+dnl add windows requirements
 winsock_libs=""
 create_shared_lib=""
 ecore_file_win32_lib=""
@@ -73,18 +74,17 @@ AC_SUBST(winsock_libs)
 AC_SUBST(create_shared_lib)
 AC_SUBST(ecore_file_win32_lib)
 
+dnl ecore_txt
 iconv_cflags=""
 iconv_libs=""
 have_iconv="no"
 AC_ARG_WITH(iconv-link,
-  [  --with-iconv-link=ICONV_LINK     explicitly specify an iconv link option],
+  AC_HELP_STRING([--with-iconv-link=ICONV_LINK], [explicitly specify an iconv link option]),
   [
     iconv_libs=$withval
     have_iconv="yes"
   ]
 )
-AC_MSG_CHECKING(for explicit iconv link options)
-AC_MSG_RESULT($iconv_libs)
 
 if test "x$have_iconv" = "xno" ; then
   AC_CHECK_LIB(iconv, libiconv,
@@ -103,7 +103,7 @@ if test "x$have_iconv" = "xno" ; then
     )
   fi
 
-  if test "x$have_ecore_txt" != "xyes"; then
+  if test "x$have_iconv" != "xyes"; then
     AC_CHECK_LIB(c, libiconv,
       [
        have_iconv="yes"
@@ -111,7 +111,7 @@ if test "x$have_iconv" = "xno" ; then
     )
   fi
 
-  if test "x$have_ecore_txt" != "xyes"; then
+  if test "x$have_iconv" != "xyes"; then
     AC_CHECK_LIB(c, iconv,
       [
        have_iconv="yes"
@@ -119,6 +119,8 @@ if test "x$have_iconv" = "xno" ; then
     )
   fi
 fi
+AC_MSG_CHECKING(for explicit iconv link options)
+AC_MSG_RESULT($iconv_libs)
 
 AC_SUBST(iconv_cflags)
 AC_SUBST(iconv_libs)
@@ -126,7 +128,7 @@ AC_SUBST(iconv_libs)
 ECORE_CHECK_MODULE([Txt], [yes], [$have_iconv],
   [ecore_txt_libs="$ecore_txt_libs $iconv_libs"])
 
-dnl Check for XCB
+dnl ecore_x{cb}
 have_ecore_x="no"
 have_ecore_x_xcb="no"
 
@@ -217,74 +219,73 @@ x_includes="";
 x_cflags="";
 x_libs="";
 if test "x$have_ecore_x_xcb" != "xyes" ; then
-AC_PATH_XTRA
-AC_CHECK_HEADER(X11/X.h,
-  [
-   have_x="yes"
-   x_dir=${x_dir:-/usr/X11R6}
-   x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-   x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-  ]
-)
-
-AC_SUBST(x_cflags)
-AC_SUBST(x_includes)
-AC_SUBST(x_libs)
-
-ECORE_CHECK_MODULE([X], [yes], [$have_x],
-  [ecore_x_libs="$ecore_x_libs $x_libs"])
-
-if test "x$have_ecore_x" = "xyes"; then
-  Xcursor_libs=""
-  Xcursor_cflags=""
-  use_Xcursor="no"
-  PCFLAGS=$CFLAGS
-  CFLAGS=$x_cflags" "$x_includes
-  AC_CHECK_HEADER(X11/Xcursor/Xcursor.h,
+  AC_PATH_XTRA
+  AC_CHECK_HEADER(X11/X.h,
     [
-      AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor,
-        [
-          AC_DEFINE(ECORE_XCURSOR, 1, [Build support for Xcursor])
-          Xcursor_cflags=""
-          Xcursor_libs="-lXcursor"
-          use_Xcursor="yes"
-        ], [
-          Xcursor_cflags=""
-          Xcursor_libs=""
-          use_Xcursor="no"
-        ], [
-          $x_libs -lXrender
-        ]
-      )
-    ], [
-      Xcursor_cflags=""
-      Xcursor_libs=""
-      use_Xcursor="no"
-    ], [
-      #include <X11/Xlib.h>
+     have_x="yes"
+     x_dir=${x_dir:-/usr/X11R6}
+     x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+     x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
     ]
   )
-  CFLAGS=$PCFLAGS
-
-  AC_SUBST(Xcursor_cflags)
-  AC_SUBST(Xcursor_libs)
-
-  ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension])
-  ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract])
-  ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xdpms], [DPMSQueryExtension])
-  if test "x$use_xdpms" = "xno" ; then
-    ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xext], [DPMSQueryExtension])
+  
+  AC_SUBST(x_cflags)
+  AC_SUBST(x_includes)
+  AC_SUBST(x_libs)
+  
+  ECORE_CHECK_MODULE([X], [yes], [$have_x],
+    [ecore_x_libs="$ecore_x_libs $x_libs"])
+  
+  if test "x$have_ecore_x" = "xyes"; then
+    Xcursor_libs=""
+    Xcursor_cflags=""
+    use_Xcursor="no"
+    PCFLAGS=$CFLAGS
+    CFLAGS=$x_cflags" "$x_includes
+    AC_CHECK_HEADER(X11/Xcursor/Xcursor.h,
+      [
+        AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor,
+          [
+            AC_DEFINE(ECORE_XCURSOR, 1, [Build support for Xcursor])
+            Xcursor_cflags=""
+            Xcursor_libs="-lXcursor"
+            use_Xcursor="yes"
+          ], [
+            Xcursor_cflags=""
+            Xcursor_libs=""
+            use_Xcursor="no"
+          ], [
+            $x_libs -lXrender
+          ]
+        )
+      ], [
+        Xcursor_cflags=""
+        Xcursor_libs=""
+        use_Xcursor="no"
+      ], [
+        #include <X11/Xlib.h>
+      ]
+    )
+    CFLAGS=$PCFLAGS
+  
+    AC_SUBST(Xcursor_cflags)
+    AC_SUBST(Xcursor_libs)
+  
+    ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension])
+    ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract])
+    ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xdpms], [DPMSQueryExtension])
+    if test "x$use_xdpms" = "xno" ; then
+      ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xext], [DPMSQueryExtension])
+    fi
+    ECORE_CHECK_X_EXTENSION([Xfixes], [Xfixes.h], [Xfixes], [XFixesExpandRegion])
+    ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens])
+    ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens])
+    ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRSizes])
+    ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
+    ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
+  
+    requirements_ecore_evas="$requirements_ecore_evas ecore-x"
   fi
-  ECORE_CHECK_X_EXTENSION([Xfixes], [Xfixes.h], [Xfixes], [XFixesExpandRegion])
-  ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens])
-  ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens])
-  ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRSizes])
-  ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
-  ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
-
-  requirements_ecore_evas="$requirements_ecore_evas ecore-x"
-fi
-
 fi
 
 
