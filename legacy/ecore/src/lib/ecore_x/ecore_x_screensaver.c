@@ -31,10 +31,10 @@ ecore_x_screensaver_event_available_get(void)
    return _screensaver_available;
 }
 
-EAPI int 
+EAPI int
 ecore_x_screensaver_idle_time_get(void)
 {
-#ifdef ECORE_XSS   
+#ifdef ECORE_XSS
    XScreenSaverInfo *xss;
    int idle;
 
@@ -50,85 +50,81 @@ ecore_x_screensaver_idle_time_get(void)
 }
 
 EAPI void
-ecore_x_screensaver_set(int timeout, int interval, int blank, int expose)
+ecore_x_screensaver_set(int timeout, int interval, int prefer_blanking, int allow_exposures)
 {
-   XSetScreenSaver(_ecore_x_disp, timeout, interval, blank, expose); 
+   XSetScreenSaver(_ecore_x_disp, timeout, interval, prefer_blanking, allow_exposures);
 }
 
 EAPI void
-ecore_x_screensaver_timeout_set(double timeout)
+ecore_x_screensaver_timeout_set(int timeout)
 {
    int pto, pint, pblank, pexpo;
-   
-   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);  
-   XSetScreenSaver(_ecore_x_disp, (int)timeout, 
-		   pint, pblank, pexpo);
+
+   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
+   XSetScreenSaver(_ecore_x_disp, timeout, pint, pblank, pexpo);
 }
 
-EAPI double
+EAPI int
 ecore_x_screensaver_timeout_get(void)
 {
    int pto, pint, pblank, pexpo;
-   
+
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
-   return (double)pto;
+   return pto;
 }
 
 EAPI void
-ecore_x_screensaver_blank_set(double blank)
+ecore_x_screensaver_blank_set(int blank)
 {
    int pto, pint, pblank, pexpo;
-   
-   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);  
-   XSetScreenSaver(_ecore_x_disp, pto, 
-		   pint, (int)blank, pexpo);
+
+   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
+   XSetScreenSaver(_ecore_x_disp, pto, pint, blank, pexpo);
 }
 
-EAPI double
+EAPI int
 ecore_x_screensaver_blank_get(void)
 {
    int pto, pint, pblank, pexpo;
-   
+
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
-   return (double)pblank;
+   return pblank;
 }
 
 EAPI void
-ecore_x_screensaver_expose_set(double expose)
+ecore_x_screensaver_expose_set(int expose)
 {
    int pto, pint, pblank, pexpo;
-   
-   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);  
-   XSetScreenSaver(_ecore_x_disp, pto, 
-		   pint, pblank, (int)expose);
+
+   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
+   XSetScreenSaver(_ecore_x_disp, pto, pint, pblank, expose);
 }
 
 EAPI double
 ecore_x_screensaver_expose_get(void)
 {
    int pto, pint, pblank, pexpo;
-   
+
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    return (double)pexpo;
 }
 
 EAPI void
-ecore_x_screensaver_interval_set(double interval)
+ecore_x_screensaver_interval_set(int interval)
 {
    int pto, pint, pblank, pexpo;
-   
-   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);  
-   XSetScreenSaver(_ecore_x_disp, pto, 
-		   (int)interval, pblank, pexpo);
+
+   XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
+   XSetScreenSaver(_ecore_x_disp, pto, interval, pblank, pexpo);
 }
 
-EAPI double
+EAPI int
 ecore_x_screensaver_interval_get(void)
 {
    int pto, pint, pblank, pexpo;
-   
+
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
-   return (double)pint;
+   return pint;
 }
 
 EAPI void
@@ -136,7 +132,7 @@ ecore_x_screensaver_event_listen_set(int on)
 {
 #ifdef ECORE_XSS
    Ecore_X_Window root;
-   
+
    root = DefaultRootWindow(_ecore_x_disp);
    if (on)
      XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
@@ -144,5 +140,5 @@ ecore_x_screensaver_event_listen_set(int on)
      XScreenSaverSelectInput(_ecore_x_disp, root, 0);
 #else
    on = 0;
-#endif   
+#endif
 }

@@ -325,8 +325,8 @@ struct _Ecore_X_Event_Mouse_Button_Down
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
    Ecore_X_Time    time;
-   int     double_click : 1;
-   int     triple_click : 1;
+   unsigned int    double_click : 1;
+   unsigned int    triple_click : 1;
 };
 
 struct _Ecore_X_Event_Mouse_Button_Up
@@ -340,8 +340,8 @@ struct _Ecore_X_Event_Mouse_Button_Up
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
    Ecore_X_Time    time;
-   int     double_click : 1;
-   int     triple_click : 1;
+   unsigned int    double_click : 1;
+   unsigned int    triple_click : 1;
 };
 
 struct _Ecore_X_Event_Mouse_Move
@@ -481,8 +481,8 @@ struct _Ecore_X_Event_Window_Configure
    Ecore_X_Window  abovewin;
    int             x, y, w, h;
    int             border;
-   int             override : 1;
-   int             from_wm : 1;
+   unsigned int    override : 1;
+   unsigned int    from_wm : 1;
    Ecore_X_Time    time;
 };
 
@@ -1485,15 +1485,15 @@ EAPI void                ecore_x_screensaver_idle_time_fetch(void);
 EAPI int                 ecore_x_screensaver_idle_time_get(void);
 EAPI void                ecore_x_get_screensaver_prefetch(void);
 EAPI void                ecore_x_get_screensaver_fetch(void);
-EAPI void                ecore_x_screensaver_set(int timeout, int interval, int blank, int expose);
-EAPI void                ecore_x_screensaver_timeout_set(double timeout);
-EAPI double              ecore_x_screensaver_timeout_get(void);
-EAPI void                ecore_x_screensaver_blank_set(double timeout);
-EAPI double              ecore_x_screensaver_blank_get(void);
-EAPI void                ecore_x_screensaver_expose_set(double timeout);
-EAPI double              ecore_x_screensaver_expose_get(void);
-EAPI void                ecore_x_screensaver_interval_set(double timeout);
-EAPI double              ecore_x_screensaver_interval_get(void);
+EAPI void                ecore_x_screensaver_set(int timeout, int interval, int prefer_blanking, int allow_exposures);
+EAPI void                ecore_x_screensaver_timeout_set(int timeout);
+EAPI int                 ecore_x_screensaver_timeout_get(void);
+EAPI void                ecore_x_screensaver_blank_set(int timeout);
+EAPI int                 ecore_x_screensaver_blank_get(void);
+EAPI void                ecore_x_screensaver_expose_set(int timeout);
+EAPI int                 ecore_x_screensaver_expose_get(void);
+EAPI void                ecore_x_screensaver_interval_set(int timeout);
+EAPI int                 ecore_x_screensaver_interval_get(void);
 EAPI void                ecore_x_screensaver_event_listen_set(int on);
 
 /* FIXME: these funcs need categorising */
@@ -1504,11 +1504,11 @@ typedef struct _Ecore_X_Window_Attributes
    int                x, y, w, h;
    int                border;
    int                depth;
-   char               visible : 1;
-   char               viewable : 1;
-   char               override : 1;
-   char               input_only : 1;
-   char               save_under : 1;
+   unsigned char      visible : 1;
+   unsigned char      viewable : 1;
+   unsigned char      override : 1;
+   unsigned char      input_only : 1;
+   unsigned char      save_under : 1;
    struct {
 	Ecore_X_Event_Mask mine;
 	Ecore_X_Event_Mask all;
