@@ -519,14 +519,17 @@ ECORE_CHECK_MODULE([Win32], [no], [$have_win32],
 
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw}" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW, 1, [Support for DirectDraw Engine in Ecore_Evas])
+  requirements_ecore_evas="$requirements_ecore_evas ecore-software-ddraw"
 fi
 
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw_16}" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW_16, 1, [Support for 16 bpp DirectDraw Engine in Ecore_Evas])
+  requirements_ecore_evas="$requirements_ecore_evas ecore-software-16-ddraw"
 fi
 
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_DIRECT3D, 1, [Support for Direct3D Engine in Ecore_Evas])
+  requirements_ecore_evas="$requirements_ecore_evas ecore-direct3d"
 fi
 
 dnl ecore_dfb
