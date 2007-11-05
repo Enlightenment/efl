@@ -100,7 +100,7 @@ ecore_x_screensaver_expose_set(int expose)
    XSetScreenSaver(_ecore_x_disp, pto, pint, pblank, expose);
 }
 
-EAPI double
+EAPI int
 ecore_x_screensaver_expose_get(void)
 {
    int pto, pint, pblank, pexpo;
