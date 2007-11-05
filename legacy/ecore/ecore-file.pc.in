@@ -7,5 +7,5 @@ Name: ecore-file
 Description: E core library, File module
 Requires: ecore @requirements_ecore_file@
 Version: @VERSION@
-Libs: -L${libdir} -lecore_file @fam_libs@
+Libs: -L${libdir} -lecore_file
 Cflags: -I${includedir}
