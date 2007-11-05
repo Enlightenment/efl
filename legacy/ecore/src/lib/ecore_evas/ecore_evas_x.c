@@ -49,6 +49,7 @@ xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 
 #ifdef BUILD_ECORE_EVAS_GL
 # ifdef HAVE_ECORE_X_XCB
+/* noop */
 # else
 static Ecore_X_Window
 _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override)
@@ -129,7 +130,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
      }
    return win;
 }
-#endif /* HAVE_ECORE_X_XCB*/
+#endif /* HAVE_ECORE_X_XCB */
 #endif
 
 static void
