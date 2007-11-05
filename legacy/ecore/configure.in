@@ -171,9 +171,7 @@ AC_ARG_WITH(iconv-link,
 
 if test "x$have_iconv" = "xno" ; then
   AC_CHECK_LIB(c, iconv,
-    [
-     have_iconv="yes"
-    ]
+    [ have_iconv="yes" ]
   )
 
   if test "x$have_iconv" != "xyes"; then
