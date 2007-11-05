@@ -136,6 +136,27 @@ AC_SUBST(winsock_libs)
 AC_SUBST(create_shared_lib)
 AC_SUBST(ecore_file_win32_lib)
 
+dnl ecore_job
+ECORE_CHECK_MODULE([Job], [yes])
+
+dnl ecore_con
+ECORE_CHECK_MODULE([Con], [yes])
+
+dnl ecore_ipc
+ECORE_CHECK_MODULE([Ipc], [yes], [$have_ecore_con])
+
+dnl ecore_config
+PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
+  [ have_eet="yes" ],
+  [ have_eet="no" ]
+)
+ecore_config_deps="no"
+if test "x$have_eet" = "xyes" -a "x$have_ecore_ipc" = "xyes" ; then
+  ecore_config_deps="yes"
+fi
+ECORE_CHECK_MODULE([Config], [yes], [$ecore_config_deps],
+  [requirements_ecore_config="$requirements_ecore_config ecore-ipc eet"])
+
 dnl ecore_txt
 iconv_cflags=""
 iconv_libs=""
@@ -149,9 +170,8 @@ AC_ARG_WITH(iconv-link,
 )
 
 if test "x$have_iconv" = "xno" ; then
-  AC_CHECK_LIB(iconv, libiconv,
+  AC_CHECK_LIB(c, iconv,
     [
-     iconv_libs="-liconv"
      have_iconv="yes"
     ]
   )
@@ -160,22 +180,6 @@ if test "x$have_iconv" = "xno" ; then
     AC_CHECK_LIB(iconv, iconv,
       [
        iconv_libs="-liconv"
-       have_iconv="yes"
-      ]
-    )
-  fi
-
-  if test "x$have_iconv" != "xyes"; then
-    AC_CHECK_LIB(c, libiconv,
-      [
-       have_iconv="yes"
-      ]
-    )
-  fi
-
-  if test "x$have_iconv" != "xyes"; then
-    AC_CHECK_LIB(c, iconv,
-      [
        have_iconv="yes"
       ]
     )
@@ -400,8 +404,6 @@ fi
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_DIRECT3D, 1, [Support for Direct3D Engine in Ecore_Evas])
 fi
-
-ECORE_CHECK_MODULE([Job], [yes])
 
 PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
   [ have_directfb="yes" ],
@@ -684,23 +686,6 @@ if test "x$want_ecore_evas_buffer" = "xyes"; then
     ]
   )
 fi
-
-ECORE_CHECK_MODULE([Con], [yes])
-
-ECORE_CHECK_MODULE([Ipc], [yes], [$have_ecore_con])
-
-PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
-  [ have_eet="yes" ],
-  [ have_eet="no" ]
-)
-
-ecore_config_deps="no"
-if test "x$have_eet" = "xyes" -a "x$have_ecore_ipc" = "xyes" ; then
-  ecore_config_deps="yes"
-fi
-ECORE_CHECK_MODULE([Config], [yes], [$ecore_config_deps],
-  [requirements_ecore_config="$requirements_ecore_config ecore-ipc eet"])
-
 
 dnl ecore_file
 ECORE_CHECK_MODULE([File], [yes])
