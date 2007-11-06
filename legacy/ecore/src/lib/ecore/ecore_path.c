@@ -5,11 +5,6 @@
 #include "Ecore_Data.h"
 #include "Ecore_Str.h"
 
-static Ecore_List *group_list = NULL;
-
-Ecore_Path_Group *__ecore_path_group_find(const char *name);
-Ecore_Path_Group *__ecore_path_group_find_id(int id);
-
 /**
  * @defgroup Ecore_Path_Group Path Group Functions
  *
@@ -24,118 +19,69 @@ Ecore_Path_Group *__ecore_path_group_find_id(int id);
  * @return  @c 0 on error, the integer id of the new group on success.
  * @ingroup Ecore_Path_Group
  */
-EAPI int
-ecore_path_group_new(const char *group_name)
+EAPI Ecore_Path_Group *
+ecore_path_group_new(void)
 {
-   int lastid;
    Ecore_Path_Group *group;
-
-   CHECK_PARAM_POINTER_RETURN("group_name", group_name, -1);
-
-   if (!group_list)
-     {
-	group_list = ecore_list_new();
-	if (!group_list) return 0;
-	lastid = 0;
-     }
-   else
-     {
-	Ecore_Path_Group *last;
-
-	group = __ecore_path_group_find(group_name);
-	if (group)
-	  return 0;
-
-	last = ecore_list_last_goto(group_list);
-	lastid = last->id;
-     }
-
+   
    group = (Ecore_Path_Group *)malloc(sizeof(Ecore_Path_Group));
    memset(group, 0, sizeof(Ecore_Path_Group));
 
-   group->name = strdup(group_name);
-   group->id = lastid + 1;
-
-   ecore_list_append(group_list, group);
-
-   return group->id;
+   return group;
 }
 
 /**
  * Destroys a previously created path group
- * @param   group_id The unique identifier for the group.
+ * @param   group The group to delete.
  * @ingroup Ecore_Path_Group
  */
 EAPI void
-ecore_path_group_del(int group_id)
+ecore_path_group_del(Ecore_Path_Group *group)
 {
-   Ecore_Path_Group *group;
-
-   group = __ecore_path_group_find_id(group_id);
-
-   if (!group)
-     return;
+   CHECK_PARAM_POINTER("group", group);
 
    if (group->paths)
-     {
-	ecore_list_for_each(group->paths, ECORE_FOR_EACH(free), NULL);
-	ecore_list_destroy(group->paths);
-     }
+     ecore_list_destroy(group->paths);
 
-   if (ecore_list_goto(group_list, group))
-     ecore_list_remove(group_list);
-
-   if (ecore_list_empty_is(group_list))
-     {
-	ecore_list_destroy(group_list);
-	group_list = NULL;
-     }
-
-   free(group->name);
    free(group);
 }
 
 /**
  * Adds a directory to be searched for files.
- * @param   group_id The unique identifier for the group to add the path.
+ * @param   group    The group to add the path.
  * @param   path     The new path to be added to the group.
  * @ingroup Ecore_Path_Group
  */
 EAPI void
-ecore_path_group_add(int group_id, const char *path)
+ecore_path_group_add(Ecore_Path_Group *group, const char *path)
 {
-   Ecore_Path_Group *group;
-
+   CHECK_PARAM_POINTER("group", group);
    CHECK_PARAM_POINTER("path", path);
 
-   group = __ecore_path_group_find_id(group_id);
-
-   if (!group)
-     return;
-
    if (!group->paths)
-     group->paths = ecore_list_new();
+     { 
+     	group->paths = ecore_list_new();
+	ecore_list_free_cb_set(group->paths, free);
+     }
 
    ecore_list_append(group->paths, strdup(path));
 }
 
 /**
  * Removes the given directory from the given group.
- * @param   group_id The identifier for the given group.
+ * @param   group    The group to remove the path from.
  * @param   path     The path of the directory to be removed.
  * @ingroup Ecore_Path_Group
  */
 EAPI void
-ecore_path_group_remove(int group_id, const char *path)
+ecore_path_group_remove(Ecore_Path_Group *group, const char *path)
 {
    char *found;
-   Ecore_Path_Group *group;
 
+   CHECK_PARAM_POINTER("group", group);
    CHECK_PARAM_POINTER("path", path);
 
-   group = __ecore_path_group_find_id(group_id);
-
-   if (!group || !group->paths)
+   if (!group->paths)
      return;
 
    /*
@@ -150,33 +96,29 @@ ecore_path_group_remove(int group_id, const char *path)
     * If the path is found, remove and free it
     */
    if (found)
-     {
-	ecore_list_remove(group->paths);
-	free(found);
-     }
+     ecore_list_remove_destroy(group->paths);
 }
 
 /**
  * Finds a file in a group of paths.
- * @param   group_id The path group id to search.
+ * @param   group    The group to search.
  * @param   name     The name of the file to find.
  * @return  A pointer to a newly allocated path location of the found file
  *          on success.  @c NULL on failure.
  * @ingroup Ecore_Path_Group
  */
 EAPI char *
-ecore_path_group_find(int group_id, const char *name)
+ecore_path_group_find(Ecore_Path_Group *group, const char *name)
 {
    int r;
    char *p;
    struct stat st;
    char path[PATH_MAX];
-   Ecore_Path_Group *group;
 
+   CHECK_PARAM_POINTER_RETURN("group", group, NULL);
    CHECK_PARAM_POINTER_RETURN("name", name, NULL);
 
-   group = __ecore_path_group_find_id(group_id);
-   if (!group)
+   if (!group->paths)
      return NULL;
 
    /*
@@ -209,10 +151,10 @@ EAPI Ecore_List *
 ecore_path_group_available(int group_id)
 {
    Ecore_List *avail = NULL;
-   Ecore_Path_Group *group;
+   Ecore_Path_Group *group = NULL;
    char *path;
 
-   group = __ecore_path_group_find_id(group_id);
+   //group = __ecore_path_group_find_id(group_id);
 
    if (!group || !group->paths || ecore_list_empty_is(group->paths))
      return NULL;
@@ -284,16 +226,15 @@ ecore_path_group_available(int group_id)
  * @ingroup Ecore_Plugin
  */
 EAPI Ecore_List *
-ecore_plugin_available_get(int group_id)
+ecore_plugin_available_get(Ecore_Path_Group *group)
 {
    Ecore_List *avail = NULL;
    Ecore_Hash *plugins = NULL;
-   Ecore_Path_Group *group;
    char *path;
 
-   group = __ecore_path_group_find_id(group_id);
+   CHECK_PARAM_POINTER_RETURN("group", group, NULL);
 
-   if (!group || !group->paths || ecore_list_empty_is(group->paths))
+   if (!group->paths || ecore_list_empty_is(group->paths))
      return NULL;
 
    ecore_list_first_goto(group->paths);
@@ -360,38 +301,4 @@ ecore_plugin_available_get(int group_id)
 
    return avail;
 }
-/*
- * Find the specified group name
- */
-Ecore_Path_Group *
-__ecore_path_group_find(const char *name)
-{
-   Ecore_Path_Group *group;
 
-   CHECK_PARAM_POINTER_RETURN("name", name, NULL);
-
-   ecore_list_first_goto(group_list);
-
-   while ((group = ecore_list_next(group_list)) != NULL)
-     if (!strcmp(group->name, name))
-       return group;
-
-   return NULL;
-}
-
-/*
- * Find the specified group id
- */
-Ecore_Path_Group *
-__ecore_path_group_find_id(int id)
-{
-   Ecore_Path_Group *group;
-
-   ecore_list_first_goto(group_list);
-
-   while ((group = ecore_list_next(group_list)) != NULL)
-     if (group->id == id)
-       return group;
-
-   return NULL;
-}

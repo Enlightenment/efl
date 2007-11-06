@@ -285,37 +285,37 @@ extern "C" {
 
 
    typedef struct _ecore_path_group Ecore_Path_Group;
+# define ECORE_PATH_GROUP(group) ((Ecore_Path_Group *)(group))
+
    struct _ecore_path_group
      {
-	int id;
-	char *name;
 	Ecore_List *paths;
      };
    
    /*
     * Create a new path group
     */
-   EAPI int ecore_path_group_new(const char *group_name);
+   EAPI Ecore_Path_Group *ecore_path_group_new(void);
    
    /*
     * Destroy a previous path group
     */
-   EAPI void ecore_path_group_del(int group_id);
+   EAPI void ecore_path_group_del(Ecore_Path_Group *group);
    
    /*
     * Add a directory to be searched for files
     */
-   EAPI void ecore_path_group_add(int group_id, const char *path);
+   EAPI void ecore_path_group_add(Ecore_Path_Group *group, const char *path);
    
    /*
     * Remove a directory to be searched for files
     */
-   EAPI void ecore_path_group_remove(int group_id, const char *path);
+   EAPI void ecore_path_group_remove(Ecore_Path_Group *group, const char *path);
    
    /*
     * Find the absolute path if it exists in the group of paths
     */
-   EAPI char * ecore_path_group_find(int group_id, const char *name);
+   EAPI char * ecore_path_group_find(Ecore_Path_Group *group, const char *name);
    
    /*
     * Get a list of all the available files in a path set
@@ -332,7 +332,7 @@ extern "C" {
    /*
     * Load the specified plugin
     */
-   EAPI Ecore_Plugin *ecore_plugin_load(int group_id, const char *plugin, const char *version);
+   EAPI Ecore_Plugin *ecore_plugin_load(Ecore_Path_Group *group, const char *plugin, const char *version);
    
    /*
     * Unload the specified plugin
@@ -344,7 +344,7 @@ extern "C" {
     */
    EAPI void *ecore_plugin_symbol_get(Ecore_Plugin * plugin, const char *symbol_name);
 
-   EAPI Ecore_List *ecore_plugin_available_get(int group_id);
+   EAPI Ecore_List *ecore_plugin_available_get(Ecore_Path_Group *group);
 
 
    typedef struct _ecore_heap Ecore_Sheap;

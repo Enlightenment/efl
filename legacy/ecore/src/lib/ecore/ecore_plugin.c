@@ -99,7 +99,7 @@ static Ecore_List *loaded_plugins = NULL;
 
 /**
  * Loads the specified plugin from the specified path group.
- * @param   group_id    The path group to search for the plugin to load
+ * @param   group       The path group to search for the plugin to load
  * @param   plugin_name The name of the plugin to load.
  * @param   version     The interface version of the plugin. With version
  *                      equal to NULL the default will be loaded.
@@ -108,7 +108,7 @@ static Ecore_List *loaded_plugins = NULL;
  * @ingroup Ecore_Plugin
  */
 EAPI Ecore_Plugin *
-ecore_plugin_load(int group_id, const char *plugin_name, const char *version)
+ecore_plugin_load(Ecore_Path_Group *group, const char *plugin_name, const char *version)
 {
    char *path;
    char temp[PATH_MAX];
@@ -130,14 +130,14 @@ ecore_plugin_load(int group_id, const char *plugin_name, const char *version)
      snprintf(temp, sizeof(temp), "%s-%s.dll", plugin_name, version);
 #endif /* _WIN32 */
 
-   path = ecore_path_group_find(group_id, temp);
+   path = ecore_path_group_find(group, temp);
 
 #ifndef _WIN32
    if (!path && version)
      {
 	/* if this file doesn't exist try a different order */
 	snprintf(temp, sizeof(temp), "%s.%s.so", plugin_name, version);
-	path = ecore_path_group_find(group_id, temp);
+	path = ecore_path_group_find(group, temp);
      }
 #endif /* _WIN32 */
 
