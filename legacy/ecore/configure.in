@@ -362,7 +362,7 @@ have_ecore_evas_x11="no"
 have_ecore_evas_x11_gl="no";
 have_ecore_evas_xrender="no";
 have_ecore_evas_x11_16="no";
-if test "x$have_ecore_x" = "xyes" -a "x$have_evas" = "xyes"; then
+if test "x$have_ecore_x" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   dnl ecore_evas_x11
   want_ecore_evas_x11=yes
   dnl disabling this will make things go haywire
@@ -525,7 +525,7 @@ ECORE_CHECK_MODULE([DirectFB], [no], [$have_directfb],
 
 dnl ecore_evas_dfb
 have_ecore_evas_dfb="no"
-if test "x$have_ecore_directfb" = "xyes" -a "x$have_evas" = "xyes"; then
+if test "x$have_ecore_directfb" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   want_ecore_evas_dfb="yes"
   AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
   AC_ARG_ENABLE(ecore-evas-dfb,
@@ -537,7 +537,7 @@ if test "x$have_ecore_directfb" = "xyes" -a "x$have_evas" = "xyes"; then
   if test "x$want_ecore_evas_dfb" = "xyes" -a "x$have_ecore_directfb" = "xyes" ; then
     save_CFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS $DIRECTFB_CFLAGS"
-    PKG_CHECK_EXISTS(evas-directfb
+    PKG_CHECK_EXISTS(evas-directfb,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
         have_ecore_evas_dfb="yes"
@@ -568,7 +568,7 @@ AC_SUBST(tslib_libs)
 
 dnl ecore_evas_fb
 have_ecore_evas_fb="no";
-if test "x$have_ecore_fb" = "xyes" -a "x$have_evas" = "xyes"; then
+if test "x$have_ecore_fb" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   want_ecore_evas_fb="yes";
   AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
   AC_ARG_ENABLE(ecore-evas-fb,
@@ -578,7 +578,7 @@ if test "x$have_ecore_fb" = "xyes" -a "x$have_evas" = "xyes"; then
   AC_MSG_RESULT($want_ecore_evas_fb)
   
   if test "x$want_ecore_evas_fb" = "xyes"; then
-    PKG_CHECK_EXISTS(evas-framebuffer
+    PKG_CHECK_EXISTS(evas-framebuffer,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_FB, 1, [Support for Linux FB in Ecore_Evas])
         have_ecore_evas_fb="yes"
@@ -597,7 +597,7 @@ ECORE_CHECK_MODULE([SDL], [no], [$have_sdl])
 
 dnl ecore_evas_sdl
 have_ecore_evas_sdl="no";
-if test "x$have_sdl" = "xyes" -a "x$have_evas" = "xyes"; then
+if test "x$have_sdl" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   want_ecore_evas_sdl="yes";
   AC_MSG_CHECKING(whether ecore_evas sdl support is to be built)
   AC_ARG_ENABLE(ecore-evas-sdl,
@@ -609,7 +609,7 @@ if test "x$have_sdl" = "xyes" -a "x$have_evas" = "xyes"; then
   if test "x$want_ecore_evas_sdl" = "xyes"; then
     save_CFLAGS=$CFLAGS
     CFLAGS="$CFLAGS $SDL_CFLAGS"
-    PKG_CHECK_EXISTS(evas-sdl
+    PKG_CHECK_EXISTS(evas-sdl,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL in Ecore_Evas])
         have_ecore_evas_sdl="yes"
@@ -633,8 +633,8 @@ AC_ARG_ENABLE(ecore-evas-buffer,
 )
 AC_MSG_RESULT($want_ecore_evas_buffer)
 
-if test "x$want_ecore_evas_buffer" = "xyes" -a "x$have_evas" = "xyes"; then
-  PKG_CHECK_EXISTS(evas-software-buffer
+if test "x$want_ecore_evas_buffer" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
+  PKG_CHECK_EXISTS(evas-software-buffer,
     [
       AC_DEFINE(BUILD_ECORE_EVAS_BUFFER, 1, [Support for Buffers in Ecore_Evas])
       have_ecore_evas_buffer="yes"
