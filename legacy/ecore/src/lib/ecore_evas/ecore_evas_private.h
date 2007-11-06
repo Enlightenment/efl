@@ -22,7 +22,7 @@
 #undef BUILD_ECORE_EVAS_DIRECTFB
 #endif
 
-#ifdef BUILD_ECORE_X
+#ifdef BUILD_ECORE_EVAS_X11
 # include "Ecore_X.h"
 # ifdef HAVE_ECORE_X_XCB
 #  include <Evas_Engine_Software_Xcb.h>
@@ -130,7 +130,7 @@ struct _Ecore_Evas_Engine
 {
    Ecore_Evas_Engine_Func *func;
 
-#ifdef BUILD_ECORE_X
+#ifdef BUILD_ECORE_EVAS_X11
    struct {
       Ecore_X_Window win_root;
       Ecore_X_Window win;
@@ -269,7 +269,7 @@ struct _Ecore_Evas
    unsigned char ignore_events : 1;
 };
 
-#ifdef BUILD_ECORE_X
+#ifdef BUILD_ECORE_EVAS_X11
 int _ecore_evas_x_shutdown(void);
 #endif
 #ifdef BUILD_ECORE_EVAS_FB

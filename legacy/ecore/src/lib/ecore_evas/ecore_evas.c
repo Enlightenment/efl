@@ -20,7 +20,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
    switch (engine)
      {
       case ECORE_EVAS_ENGINE_SOFTWARE_X11:
-#ifdef BUILD_ECORE_X
+#ifdef BUILD_ECORE_EVAS_X11
 	return 1;
 #else
 	return 0;
@@ -113,7 +113,7 @@ ecore_evas_shutdown(void)
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
-#ifdef BUILD_ECORE_X
+#ifdef BUILD_ECORE_EVAS_X11
 	while (_ecore_evas_x_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
