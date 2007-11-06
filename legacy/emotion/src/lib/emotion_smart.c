@@ -85,7 +85,7 @@ static void _smart_clip_unset(Evas_Object * obj);
 /* Globals for the E Video Object */
 /**********************************/
 static Evas_Smart  *smart = NULL;
-static group_id = -1;
+static int group_id = -1;
 
 static unsigned char
 _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
