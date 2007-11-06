@@ -861,13 +861,7 @@ have_xpm="yes";
 AC_MSG_CHECKING(whether to enable xpm image loader)
 AC_ARG_ENABLE(image-loader-xpm,
   AC_HELP_STRING([--disable-image-loader-xpm], [disable XPM image loader]),
-  [
-    if test "x$enableval" = "xyes" ; then
-      have_xpm="yes"
-    else
-      have_xpm="no"
-    fi
-  ]
+  [ have_xpm=$enableval ]
 )
 AC_MSG_RESULT($have_xpm)
 
@@ -948,7 +942,8 @@ AC_CHECK_HEADERS(pthread.h sched.h,
 #build_pthreads="no"
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads,
-  [  --enable-pthreads               enable threaded rendering], [
+  AC_HELP_STRING([--enable-pthreads], [enable threaded rendering]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
@@ -983,7 +978,8 @@ case $host_cpu in
 esac
 AC_MSG_CHECKING(whether to build mmx code)
 AC_ARG_ENABLE(cpu-mmx,
-  [  --enable-cpu-mmx                enable mmx code], [
+  AC_HELP_STRING([--enable-cpu-mmx], [enable mmx code]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
@@ -1014,7 +1010,8 @@ case $host_cpu in
 esac
 AC_MSG_CHECKING(whether to build sse code)
 AC_ARG_ENABLE(cpu-sse,
-  [  --enable-cpu-sse                enable sse code], [
+  AC_HELP_STRING([--enable-cpu-sse], [enable sse code]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
@@ -1043,9 +1040,8 @@ esac
 altivec_cflags=""
 AC_MSG_CHECKING(whether to build altivec code)
 AC_ARG_ENABLE(cpu-altivec,
-  [  --enable-cpu-altivec            enable altivec code], [
-     build_cpu_altivec=$enableval
-  ]
+  AC_HELP_STRING([--enable-cpu-altivec], [enable altivec code]),
+  [ build_cpu_altivec=$enableval ]
 )
 AC_MSG_RESULT($build_cpu_altivec)
 if test "x$build_cpu_altivec" = "xyes"; then
@@ -1098,7 +1094,8 @@ build_cpu_c="no"
 build_cpu_c="yes"
 AC_MSG_CHECKING(whether to build c code)
 AC_ARG_ENABLE(cpu-c,
-  [  --enable-cpu-c                  enable C code], [
+  AC_HELP_STRING([--enable-cpu-c], [enable C code]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_C, 1, [Build plain C code])
@@ -1124,7 +1121,8 @@ scaler_sample="no"
 scaler_sample="yes"
 AC_MSG_CHECKING(whether to build sampling scaler)
 AC_ARG_ENABLE(scale-sample,
-  [  --enable-scale-sample           enable sampling scaler code], [
+  AC_HELP_STRING([--enable-scale-sample], [enable sampling scaler code]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [Sampling Scaler Support])
@@ -1147,7 +1145,8 @@ scaler_smooth="no"
 scaler_smooth="yes"
 AC_MSG_CHECKING(whether to build smooth scaler)
 AC_ARG_ENABLE(scale-smooth,
-  [  --enable-scale-smooth           enable smooth scaler code], [
+  AC_HELP_STRING([--enable-scale-smooth], [enable smooth scaler code]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [Smooth Scaler Support])
@@ -1170,7 +1169,8 @@ conv_yuv="no"
 conv_yuv="yes"
 AC_MSG_CHECKING(whether to build yuv converter code)
 AC_ARG_ENABLE(convert-yuv,
-  [  --enable-convert-yuv            enable yuv converter code], [
+  AC_HELP_STRING([--enable-convert-yuv], [enable yuv converter code]),
+  [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
         AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV Converter Support])
