@@ -85,7 +85,7 @@ static void _smart_clip_unset(Evas_Object * obj);
 /* Globals for the E Video Object */
 /**********************************/
 static Evas_Smart  *smart = NULL;
-static int group_id = -1;
+static Ecore_Path_Group *path_group = NULL;
 
 static unsigned char
 _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
@@ -95,13 +95,13 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (group_id < 0)
-     group_id = ecore_path_group_new("emotion_module");
+   if (!path_group)
+     path_group = ecore_path_group_new();
    tmp = getenv("EMOTION_MODULES_DIR");
    if (tmp)
-     ecore_path_group_add(group_id, tmp);
-   ecore_path_group_add(group_id, PACKAGE_LIB_DIR"/emotion/");
-   plugin = ecore_plugin_load(group_id, name, NULL);
+     ecore_path_group_add(path_group, tmp);
+   ecore_path_group_add(path_group, PACKAGE_LIB_DIR"/emotion/");
+   plugin = ecore_plugin_load(path_group, name, NULL);
    if (plugin)
      {
 	unsigned char (*func_module_open)(Evas_Object *, Emotion_Video_Module **, void **, Emotion_Module_Options *);
@@ -114,7 +114,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 		  if (*mod)
 		    {
 		       (*mod)->plugin = plugin;
-		       (*mod)->group_id = group_id;
+		       (*mod)->path_group = path_group;
 		       return 1;
 		    }
 	       }
@@ -124,8 +124,8 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    else
      printf ("Unable to load module %s\n", name);
 
-   if (group_id > 0)
-     ecore_path_group_del(group_id);
+   if (path_group)
+     ecore_path_group_del(path_group);
 
    return 0;
 }
@@ -147,7 +147,7 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
    /*
    ecore_plugin_unload(plugin);
    */
-   ecore_path_group_del(group_id);
+   ecore_path_group_del(path_group);
 }
 
 /*******************************/

@@ -123,7 +123,7 @@ struct _Emotion_Video_Module
    const char *   (*meta_get) (void *ef, int meta);
 
    Ecore_Plugin    *plugin;
-   int              group_id;
+   Ecore_Path_Group *path_group;
 };
 
 EAPI void *_emotion_video_get(Evas_Object *obj);
