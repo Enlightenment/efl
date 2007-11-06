@@ -106,7 +106,7 @@ ecore_x_screensaver_expose_get(void)
    int pto, pint, pblank, pexpo;
 
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
-   return (double)pexpo;
+   return pexpo;
 }
 
 EAPI void
