@@ -22,10 +22,10 @@ AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
 
-VMAJ=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $1);}'`
-VMIN=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $2);}'`
-VMIC=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $3);}'`
-SNAP=`echo $PACKAGE_VERSION | awk -F . '{printf("%s", $4);}'`
+VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
+VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
+VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
+SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
