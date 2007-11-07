@@ -16,19 +16,22 @@
 %endif
 
 ## disabled features
+%bcond_with lib_ecore_directfb
+%bcond_with lib_ecore_sdl
 
 ## enabled features
 ##%bcond_without module_engine_software_x11
 %bcond_without lib_ecore_fb
-%bcond_without lib_ecore_directfb
 
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
 
 %define breq_lib_ecore_directfb     %{?with_lib_ecore_directfb:DirectFB}
+%define breq_lib_ecore_sdl          %{?with_lib_ecore_sdl:SDL-devel}
 
 %define ac_with_lib_ecore_fb        --%{?with_lib_ecore_fb:en}%{!?with_lib_ecore_fb:dis}able-ecore-fb
-%define ac_with_lib_ecore_directfb  --%{?with_lib_ecore_directfb:en}%{!?with_lib_ecore_directfb:dis}able-ecore-dfb
+%define ac_with_lib_ecore_directfb  --%{?with_lib_ecore_directfb:en}%{!?with_lib_ecore_directfb:dis}able-ecore-directfb
+%define ac_with_lib_ecore_sdl       --%{?with_lib_ecore_sdl:en}%{!?with_lib_ecore_sdl:dis}able-ecore-sdl
 
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@
@@ -43,7 +46,7 @@ Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project 
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel, XFree86-devel
 BuildRequires: libjpeg-devel, openssl-devel %{?breq_lib_ecore_directfb}
-BuildRequires: curl-devel, evas-devel, eet-devel
+BuildRequires: curl-devel, evas-devel, eet-devel %{?breq_lib_ecore_sdl}
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -57,8 +60,7 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: curl-devel, openssl-devel, evas-devel, eet-devel
-Requires: ecore-bin, ecore-con, ecore-config, ecore-dbus, ecore-desktop,
-Requires: ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt
+Requires: ecore-bin, ecore-con, ecore-config, ecore-evas, ecore-file, ecore-ipc, ecore-job, ecore-txt
 Requires: ecore-x %{?with_lib_ecore_fb:ecore-fb} %{?with_lib_ecore_directfb:ecore-directfb}
 
 %description devel
@@ -87,22 +89,6 @@ Requires: %{name} = %{version}
 
 %description config
 Ecore Enlightened Property Library
-
-%package dbus
-Summary: Ecore DBus Library
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description dbus
-Ecore DBus Library
-
-%package desktop
-Summary: Ecore freedesktop.org .desktop, icon, menu parsing Library
-Group: Development/Libraries
-Requires: %{name} = %{version}
-
-%description desktop
-Ecore freedesktop.org .desktop, icon, menu parsing Library
 
 %if %{with lib_ecore_directfb}
 %package directfb
@@ -177,7 +163,11 @@ Ecore functions for dealing with the X Windows System
 CFLAGS="-I/usr/kerberos/include -I/usr/X11R6/include/X11/extensions"
 LDFLAGS="-L/usr/kerberos/lib -L/usr/X11R6/%{_lib}"
 export CFLAGS LDFLAGS
-%{configure} --prefix=%{_prefix} %{?ac_with_lib_ecore_fb} %{?ac_with_lib_ecore_directfb}
+%{configure} --prefix=%{_prefix} \
+    %{?ac_with_lib_ecore_fb} \
+    %{?ac_with_lib_ecore_directfb} \
+    %{?ac_with_lib_ecore_sdl}
+
 %{__make} %{?_smp_mflags} %{?mflags}
 
 %install
@@ -204,7 +194,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.la
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*
-%{_datadir}/aclocal/*
+#%{_datadir}/aclocal/*
 %{_includedir}/*.h
 
 %files bin
@@ -218,14 +208,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files config
 %defattr(-, root, root)
 %{_libdir}/libecore_config.so.*
-
-%files dbus
-%defattr(-, root, root)
-%{_libdir}/libecore_dbus.so.*
-
-%files desktop
-%defattr(-, root, root)
-%{_libdir}/libecore_desktop.so.*
 
 %if %{with lib_ecore_directfb}
 %files directfb

@@ -20,6 +20,7 @@
 %bcond_with    module_engine_directfb
 %bcond_with    module_engine_gl_x11
 %bcond_with    module_engine_software_qtopia
+%bcond_with    module_engine_software_sdl
 %bcond_with    module_engine_software_xcb
 %bcond_with    module_engine_xrender_x11
 %bcond_with    module_engine_xrender_xcb
@@ -66,6 +67,7 @@
 %define ac_with_module_engine_gl_x11 --%{?with_module_engine_gl_x11:en}%{!?with_module_engine_gl_x11:dis}able-gl-x11
 %define ac_with_module_engine_directfb --%{?with_module_engine_directfb:en}%{!?with_module_engine_directfb:dis}able-directfb
 %define ac_with_module_engine_software_qtopia --%{?with_module_engine_software_qtopia:en}%{!?with_module_engine_software_qtopia:dis}able-software-qtopia
+%define ac_with_module_engine_software_sdl --%{?with_module_engine_software_sdl:en}%{!?with_module_engine_software_sdl:dis}able-sdl
 %define ac_with_module_engine_software_xcb --%{?with_module_engine_software_xcb:en}%{!?with_module_engine_software_xcb:dis}able-software-xcb
 %define ac_with_module_engine_xrender_xcb --%{?with_module_engine_xrender_xcb:en}%{!?with_module_engine_xrender_xcb:dis}able-xrender-xcb
 
@@ -296,6 +298,17 @@ Requires: evas
 Qtopia rendering engine module for Evas
 %endif
 
+%if %{with module_engine_software_sdl}
+%package module_engine_software_sdl
+Summary: Software SDL X11 rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: SDL-devel
+Requires: evas-module_engine_software_generic
+Requires: evas
+%description module_engine_software_sdl
+Software SDL X11 rendering engine module for Evas
+%endif
+
 %if %{with module_engine_software_xcb}
 %package module_engine_software_xcb
 Summary: Software XCB X11 rendering engine module for Evas
@@ -343,6 +356,7 @@ Xrender XCB X11 rendering engine module for Evas
     %{?ac_with_module_engine_gl_x11} \
     %{?ac_with_module_engine_directfb} \
     %{?ac_with_module_engine_software_qtopia} \
+    %{?ac_with_module_engine_software_sdl} \
     %{?ac_with_module_engine_software_xcb} \
     %{?ac_with_module_engine_xrender_xcb} \
     $RPM_CONFIGURE_OPTS
@@ -372,7 +386,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/*.a
-%{_bindir}/evas-config
 %{_libdir}/pkgconfig/*
 %{_includedir}/*.h
 
@@ -498,6 +511,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_engine_software_qtopia
 %defattr(-, root, root)
 %{_libdir}/evas/modules/engines/software_qtopia/*/module.so
+%endif
+
+%if %{with module_engine_software_sdl}
+%files module_engine_software_sdl
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/software_sdl/*/module.so
 %endif
 
 %if %{with module_engine_software_xcb}

@@ -66,6 +66,7 @@ AM_CONDITIONAL(DEFAULT_VISIBILITY, test "x$enable_hidden_visibility" != "xyes")
 
 AC_SUBST(requirements)
 AC_OUTPUT([
+efreet.spec
 efreet.pc
 efreet-mime.pc
 Makefile
