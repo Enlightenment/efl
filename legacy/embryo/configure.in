@@ -72,7 +72,6 @@ src/lib/Makefile
 src/bin/Makefile
 README
 embryo.spec
-debian/changelog
 ])
 
 

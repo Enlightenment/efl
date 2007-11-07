@@ -26,8 +26,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       evas-direct3d.pc \
 		       evas-software-sdl.pc \
 		       evas.pc \
-		       evas.spec \
-		       debian/changelog
+		       evas.spec
 
 bin_SCRIPTS = 
 
@@ -54,33 +53,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     evas-software-sdl.pc \
 	     evas.pc \
 	     evas.spec.in evas.spec \
-	     debian/changelog \
-	     debian/changelog.in \
-	     debian/control \
-	     debian/copyright \
-	     debian/libevas0-all.install \
-	     debian/libevas0-dev.install \
-	     debian/libevas0-engine-buffer.install \
-	     debian/libevas0-engine-fb.install \
-	     debian/libevas0-engine-software-generic.install \
-	     debian/libevas0-engine-software-x11.install \
-	     debian/libevas0-engine-xrender.install \
-	     debian/libevas0-engines-all.install \
-	     debian/libevas0-loader-eet.install \
-	     debian/libevas0-loader-gif.install \
-	     debian/libevas0-loader-jpeg.install \
-	     debian/libevas0-loader-png.install \
-	     debian/libevas0-loader-svg.install \
-	     debian/libevas0-loader-tiff.install \
-	     debian/libevas0-loader-xpm.install \
-	     debian/libevas0-loaders-all.install \
-	     debian/libevas0-saver-eet.install \
-	     debian/libevas0-saver-jpeg.install \
-	     debian/libevas0-saver-png.install \
-	     debian/libevas0-saver-tiff.install \
-	     debian/libevas0-savers-all.install \
-	     debian/libevas0.install \
-	     debian/rules
+	     doc gendoc
 
 if BUILD_ENGINE_SOFTWARE_X11
 psoftwarex11 = evas-software-x11.pc

@@ -76,6 +76,5 @@ src/bin/Makefile
 src/bin/data/Makefile
 src/bin/data/sub/Makefile
 src/bin/compare/Makefile
-debian/changelog
 ], []
 )

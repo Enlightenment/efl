@@ -9,7 +9,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore_docs.tar.gz ecore.c \
 		       README \
 		       ecore.spec \
-		       debian/changelog \
 		       ecore-con.pc \
 		       ecore-config.pc \
 		       ecore-desktop.pc \
@@ -44,24 +43,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
 	     ecore-win32.pc.in \
 	     ecore-sdl.pc.in \
 	     ecore.spec.in ecore.spec \
-	     debian/changelog \
-	     debian/changelog.in \
-	     debian/control \
-	     debian/copyright \
-	     debian/ecore0-bin.install \
-	     debian/libecore0-con.install \
-	     debian/libecore0-config.install \
-	     debian/libecore0-desktop.install \
-	     debian/libecore0-dev.install \
-	     debian/libecore0-evas.install \
-	     debian/libecore0-fb.install \
-	     debian/libecore0-file.install \
-	     debian/libecore0-ipc.install \
-	     debian/libecore0-job.install \
-	     debian/libecore0-txt.install \
-	     debian/libecore0-x.install \
-	     debian/libecore0.install \
-	     debian/rules
+	     doc gendoc
 
 if BUILD_ECORE_CON
 pcon = ecore-con.pc

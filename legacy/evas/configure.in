@@ -1449,7 +1449,6 @@ src/modules/savers/tiff/Makefile
 src/lib/include/Makefile
 README
 evas.spec
-debian/changelog
 ])
 
 #####################################################################

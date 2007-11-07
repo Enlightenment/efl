@@ -764,7 +764,6 @@ src/lib/ecore_directfb/Makefile
 src/lib/ecore_win32/Makefile
 README
 ecore.spec
-debian/changelog
 ])
 
 echo

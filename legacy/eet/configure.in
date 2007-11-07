@@ -97,7 +97,6 @@ src/lib/Makefile
 src/bin/Makefile
 README
 eet.spec
-debian/changelog
 ])
 
 
