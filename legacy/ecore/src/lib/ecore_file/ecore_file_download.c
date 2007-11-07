@@ -90,7 +90,7 @@ ecore_file_download_abort_all(void)
 
    if (!_job_list)
      return;
-   
+
    ecore_list_first_goto(_job_list);
    while ((job = ecore_list_next(_job_list)))
      {
@@ -116,7 +116,7 @@ ecore_file_download_abort_all(void)
  *
  * You must provide the full url, including 'http://', 'ftp://' or 'file://'.\n
  * If @p dst already exist it will not be overwritten and the function will fail.\n
- * Ecore must be compiled with CURL to download using http and ftp protocols. 
+ * Ecore must be compiled with CURL to download using http and ftp protocols.
  */
 EAPI int
 ecore_file_download(const char *url, const char *dst,
@@ -124,7 +124,14 @@ ecore_file_download(const char *url, const char *dst,
 		    int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 		    void *data)
 {
-   if (!ecore_file_is_dir(ecore_file_dir_get((char *)dst))) return 0;
+   char *dir = ecore_file_dir_get(dst);
+
+   if (!ecore_file_is_dir(dir))
+     {
+	free(dir);
+	return 0;
+     }
+   free(dir);
    if (ecore_file_exists(dst)) return 0;
 
    /* FIXME: Add handlers for http and ftp! */
@@ -145,7 +152,7 @@ ecore_file_download(const char *url, const char *dst,
      {
 	/* download */
 	Ecore_File_Download_Job *job;
-	
+
 	job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data);
 	if (job)
 	  return 1;
@@ -170,7 +177,7 @@ ecore_file_download(const char *url, const char *dst,
  * @return 1 if protocol is handled or 0 if not
  *
  * @p protocol can be 'http://', 'ftp://' or 'file://'.\n
- * Ecore must be compiled with CURL to handle http and ftp protocols. 
+ * Ecore must be compiled with CURL to handle http and ftp protocols.
  */
 EAPI int
 ecore_file_download_protocol_available(const char *protocol)
@@ -185,15 +192,15 @@ ecore_file_download_protocol_available(const char *protocol)
 }
 
 #ifdef HAVE_CURL
-/* this reports the downloads progress. if we return 0, then download 
+/* this reports the downloads progress. if we return 0, then download
  * continues, if we return anything else, then the download stops */
 static int
 _ecore_file_download_curl_progress_func(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
-{  
+{
    Ecore_File_Download_Job *job;
-   
+
    job = clientp;
-   
+
    if(job->progress_cb)
      return job->progress_cb(job->data, job->dst, (long int)dltotal, (long int)dlnow, (long int)ultotal, (long int)ulnow);
    return 0;
@@ -203,9 +210,9 @@ Ecore_File_Download_Job *
 _ecore_file_download_curl(const char *url, const char *dst,
 			  void (*completion_cb)(void *data, const char *file,
 						int status),
-			  int (*progress_cb)(void *data, const char *file, 
+			  int (*progress_cb)(void *data, const char *file,
 					     long int dltotal, long int dlnow,
-					     long int ultotal, 
+					     long int ultotal,
 					     long int ulnow),
 			  void *data)
 {
@@ -234,17 +241,17 @@ _ecore_file_download_curl(const char *url, const char *dst,
 	free(job);
 	return NULL;
      }
-   
+
    curl_easy_setopt(job->curl, CURLOPT_URL, url);
    curl_easy_setopt(job->curl, CURLOPT_WRITEDATA, job->file);
-   
+
    if (progress_cb)
      {
-	curl_easy_setopt(job->curl, CURLOPT_NOPROGRESS, FALSE);   
-	curl_easy_setopt(job->curl, CURLOPT_PROGRESSDATA, job);   
+	curl_easy_setopt(job->curl, CURLOPT_NOPROGRESS, FALSE);
+	curl_easy_setopt(job->curl, CURLOPT_PROGRESSDATA, job);
 	curl_easy_setopt(job->curl, CURLOPT_PROGRESSFUNCTION, _ecore_file_download_curl_progress_func);
      }
-   
+
    job->data = data;
    job->completion_cb = completion_cb;
    job->progress_cb = progress_cb;
