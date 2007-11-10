@@ -32,9 +32,68 @@
 (defvar edje-mode-hook nil)
 
 (defun number-or-nil-to-string (v &optional default)
-  (if (not (eq 'nil v)) (number-to-string v) (number-to-string default)))
+  (cond ((numberp v) (number-to-string v))
+        ((stringp v) (if (string= v "") (number-to-string default) v))
+        (t           (number-to-string default))))
+
+(defun non-empty-string (s)
+  (and (not (eq 'nil s))
+       (not (string= "" s))))
+
+(defun edje-new-program-action-signal-emit (source emission)
+  "Insert new program SIGNAL_EMIT"
+  (interactive "ssource: \nsemission: ")
+  (insert
+   (concat
+    "               action: SIGNAL_EMIT \"" source "\" \"" emission "\";\n"
+    )))
+
+(defun edje-new-program-action-state-set (state value target)
+  "Insert new program STATE_SET"
+  (interactive "sstate: \nvalue (0.0): \nstarget: ")
+  (insert
+   (concat
+    "               action: STATE_SET \"" state "\" "
+       (number-or-nil-to-string value 0.0) ";\n"
+    "               target: \"" target "\";\n"
+    )))
+
+(defun edje-new-program-action (action)
+  "Insert new program action"
+  (interactive "saction: ")
+  (setq action (upcase action))
+  (cond ((string= action "STATE_SET")
+         (edje-new-program-action-state-set "" 0.0 ""))
+        ((string= action "SIGNAL_EMIT")
+         (edje-new-program-action-signal-emit "" ""))
+        ))
+
+(defun edje-new-program (name signal source action)
+  "Insert new program block"
+  (interactive "sname: \nssignal: \nssource: \nsaction: ")
+  (insert
+   (concat
+    "\n"
+    "            program {\n"
+    "               name: \"" name "\";\n"
+
+    (if (non-empty-string signal)
+        (concat "               signal: \"" signal "\";\n"))
+
+    (if (non-empty-string source)
+        (concat "               source: \"" source "\";\n"))
+    ))
+
+  (edje-new-program-action action)
+
+  (insert
+   (concat
+    "            }\n"
+    "\n"
+    )))
 
 (defun edje-new-desc-relative (x y &optional defx defy)
+  "Insert new part description 'relative' line"
   (interactive "sx: \nsy: ")
   (insert
    (concat
@@ -44,6 +103,7 @@
     )))
 
 (defun edje-new-desc-offset (x y &optional defx defy)
+  "Insert new part description 'offset' line"
   (interactive "sx: \nsy: ")
   (insert
    (concat
@@ -52,18 +112,63 @@
     (number-or-nil-to-string y defy) ";\n"
     )))
 
+(defun edje-new-desc-inherit (name val)
+  "Insert new part description 'inherit' line"
+  (interactive "sname: \nsvalue: ")
+  (insert
+   (concat
+    "               inherit: \"" name "\" "
+    (number-or-nil-to-string val 0.0) ";\n"
+    )))
+
+(defun edje-new-desc-text (font size text)
+  "Insert new part description 'text' block"
+  (interactive "sfont: \nssize: \nstext: ")
+  (insert
+   (concat
+    "               text {\n"
+    "                  font: \"" font "\";\n"
+    "                  size: " (number-or-nil-to-string size) ";\n"
+    "                  text: \"" text "\";\n"
+    "               }\n"
+    )))
+
+(defun edje-new-desc-image (name)
+  "Insert new part description 'image' block"
+  (interactive "sname: ")
+  (insert
+   (concat
+    "               image {\n"
+    "                  normal: \"" name "\";\n"
+    "               }\n"
+    )))
+
+(defun edje-new-desc-color (r g b a &optional defr defg defb defa)
+  "Insert new part description 'color' line"
+  (interactive "sred: \nsgreen: \nsblue: \nsalpha: ")
+  (insert
+   (concat
+    "               color: "
+    (number-or-nil-to-string r defr) " "
+    (number-or-nil-to-string g defg) " "
+    (number-or-nil-to-string b defb) " "
+    (number-or-nil-to-string a defa) ";\n"
+    )))
+
 (defun edje-new-desc (name val &optional
                            r1_rx r1_ry
                            r2_rx r2_ry
                            r1_ox r1_oy
-                           r2_ox r2_oy)
+                           r2_ox r2_oy
+                           part_type)
+  "Insert new part description block"
   (interactive "sName: \nsValue: ")
   (insert
    (concat
     "            description {\n"
-    "               state: \"" name "\" " (number-to-string val) ";\n"
-    "               rel1 {\n"
-    ))
+    "               state: \"" name "\" " (number-or-nil-to-string val 0.0) ";\n"))
+  (if (string= part_type "RECT") (edje-new-desc-color 255 255 255 255))
+  (insert "               rel1 {\n")
   (edje-new-desc-relative r1_rx r1_ry 0.0 0.0)
   (edje-new-desc-offset r1_ox r1_oy 0 0)
   (insert
@@ -73,30 +178,44 @@
     ))
   (edje-new-desc-relative r2_rx r2_ry 1.0 1.0)
   (edje-new-desc-offset r2_ox r2_oy -1 -1)
-  (insert
-   (concat
-    "               }\n"
-    "            }\n"
-    )))
+  (insert "               }\n")
+  (cond ((string= part_type "IMAGE") (edje-new-desc-image ""))
+        ((string= part_type "TEXT") (edje-new-desc-text "" 10 "contents"))
+        )
+  (insert "            }\n")
+  )
 
 (defun edje-new-part (name type &optional
                            r1_rx r1_ry
                            r2_rx r2_ry
                            r1_ox r1_oy
                            r2_ox r2_oy)
+  "Insert new part"
   (interactive "sName: \nsType: ")
+  (setq type (upcase type))
   (insert
    (concat
     "\n"
     "         part {\n"
     "            name: \"" name "\";\n"
-    "            type: " (upcase type) ";\n"
+    "            type: " type ";\n"
+    "            mouse_events: 0;\n"
     ))
-  (edje-new-desc "default" 0.0 r1_rx r1_ry r2_rx r2_ry r1_ox r1_oy r2_ox r2_oy)
+  (edje-new-desc "default" 0.0 r1_rx r1_ry r2_rx r2_ry r1_ox r1_oy r2_ox r2_oy type)
   (insert
    (concat
     "         }\n"
     )))
+
+(defun edje-setup-compile ()
+  (set (make-local-variable 'compile-command)
+       (concat "edje_cc " (buffer-file-name))
+  ))
+
+(defun edje-cc ()
+  "Runs edje_cc with current buffer."
+  (interactive)
+  (compile (edje-setup-compile)))
 
 (defvar edje-mode-map
   (let ((edje-mode-map (make-sparse-keymap)))
@@ -105,10 +224,18 @@
     (define-key edje-mode-map "\C-cd" 'edje-new-desc)
     (define-key edje-mode-map "\C-cr" 'edje-new-desc-relative)
     (define-key edje-mode-map "\C-co" 'edje-new-desc-offset)
+    (define-key edje-mode-map "\C-ch" 'edje-new-desc-inherit)
+    (define-key edje-mode-map "\C-cc" 'edje-new-desc-color)
+    (define-key edje-mode-map "\C-ci" 'edje-new-desc-image)
+    (define-key edje-mode-map "\C-ct" 'edje-new-desc-text)
+    (define-key edje-mode-map "\C-cg" 'edje-new-program)
+    (define-key edje-mode-map "\C-ca" 'edje-new-program-action)
+    (define-key edje-mode-map "\C-cs" 'edje-new-program-action-state-set)
+    (define-key edje-mode-map "\C-ce" 'edje-new-program-action-signal-emit)
     edje-mode-map)
   "Keymap for Edje major mode")
 
-
+(add-hook 'c-mode-hook 'edje-setup-compile)
 (add-to-list 'auto-mode-alist '("\\.edc$" . edje-mode))
 
 (defconst edje-font-lock-keywords-1
