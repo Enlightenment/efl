@@ -16,18 +16,13 @@
 /**
  * Creates a new path group.
  * @param   group_name The name of the new group.
- * @return  @c 0 on error, the integer id of the new group on success.
+ * @return  @c NULL on error, the handle of the new group on success.
  * @ingroup Ecore_Path_Group
  */
 EAPI Ecore_Path_Group *
 ecore_path_group_new(void)
 {
-   Ecore_Path_Group *group;
-   
-   group = (Ecore_Path_Group *)malloc(sizeof(Ecore_Path_Group));
-   memset(group, 0, sizeof(Ecore_Path_Group));
-
-   return group;
+   return calloc(1, sizeof(Ecore_Path_Group));
 }
 
 /**
@@ -148,15 +143,14 @@ ecore_path_group_find(Ecore_Path_Group *group, const char *name)
  * @ingroup Ecore_Path_Group
  */
 EAPI Ecore_List *
-ecore_path_group_available(int group_id)
+ecore_path_group_available(Ecore_Path_Group *group)
 {
    Ecore_List *avail = NULL;
-   Ecore_Path_Group *group = NULL;
    char *path;
 
-   //group = __ecore_path_group_find_id(group_id);
+   CHECK_PARAM_POINTER_RETURN("group", group, NULL);
 
-   if (!group || !group->paths || ecore_list_empty_is(group->paths))
+   if (!group->paths || ecore_list_empty_is(group->paths))
      return NULL;
 
    ecore_list_first_goto(group->paths);
