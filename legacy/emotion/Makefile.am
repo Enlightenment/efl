@@ -6,9 +6,9 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess emotion.spec \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in emotion_docs.tar emotion_docs.tar.gz \
-		       emotion.c acconfig.h debian/changelog
+		       emotion.c acconfig.h debian/changelog depcomp
 
-bin_SCRIPTS = 
+bin_SCRIPTS =
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN \
 	emotion.spec emotion.spec.in emotion.c.in gendoc Doxyfile \

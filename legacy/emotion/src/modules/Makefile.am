@@ -1,4 +1,5 @@
-## Process this file with automake to produce Makefile.in
+
+MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_XINE_MODULE
 XINE_LIB_NAME = xine.la
@@ -8,18 +9,21 @@ if BUILD_GSTREAMER_MODULE
 GSTREAMER_LIB_NAME = gstreamer.la
 endif
 
-#AUTOMAKE_OPTIONS     = 1.4 foreign
+AM_CPPFLAGS = \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib \
+-I$(top_srcdir)/src/modules \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EVAS_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@XINE_CFLAGS@ \
+@GST_CFLAGS@
 
-MAINTAINERCLEANFILES = Makefile.in
+pkgdir = $(libdir)/emotion
 
-INCLUDES	     = -I$(top_srcdir) \
-		       -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/modules \
-		       @EVAS_CFLAGS@ @ECORE_CFLAGS@ @XINE_CFLAGS@ @GST_CFLAGS@
-
-pkgdir                               = $(libdir)/emotion
-
-pkg_LTLIBRARIES                      = $(XINE_LIB_NAME) $(GSTREAMER_LIB_NAME)
+pkg_LTLIBRARIES = $(XINE_LIB_NAME) $(GSTREAMER_LIB_NAME)
 
 if BUILD_XINE_MODULE
 xine_la_SOURCES      = \
@@ -27,8 +31,7 @@ emotion_xine.c \
 emotion_xine.h \
 emotion_xine_vo_out.c
 xine_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@ @XINE_LIBS@ $(top_builddir)/src/lib/libemotion.la -lpthread
-xine_la_LDFLAGS      = -module -avoid-version \
-		       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
+xine_la_LDFLAGS      = -module -avoid-version
 xine_la_DEPENDENCIES = $(top_builddir)/config.h
 endif
 
@@ -39,7 +42,6 @@ emotion_gstreamer.h \
 emotion_gstreamer_pipeline.c \
 emotion_gstreamer_pipeline.h
 gstreamer_la_LIBADD  = @EVAS_LIBS@ @ECORE_LIBS@ @GST_LIBS@ $(top_builddir)/src/lib/libemotion.la
-gstreamer_la_LDFLAGS = -module -avoid-version \
-		       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
+gstreamer_la_LDFLAGS = -module -avoid-version
 gstreamer_la_DEPENDENCIES = $(top_builddir)/config.h
 endif
