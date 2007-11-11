@@ -125,7 +125,10 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
      printf ("Unable to load module %s\n", name);
 
    if (path_group)
-     ecore_path_group_del(path_group);
+     {
+        ecore_path_group_del(path_group);
+        path_group = NULL;
+     }
 
    return 0;
 }
@@ -147,7 +150,11 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
    /*
    ecore_plugin_unload(plugin);
    */
-   ecore_path_group_del(path_group);
+   if (path_group)
+     {
+        ecore_path_group_del(path_group);
+        path_group = NULL;
+     }
 }
 
 /*******************************/
