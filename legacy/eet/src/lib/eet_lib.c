@@ -497,6 +497,10 @@ eet_open(const char *file, Eet_File_Mode mode)
 	else
 	  return NULL;
      }
+   else if (file_stat.st_size == 0)
+     {
+	return NULL;
+     }
 
    /* We found one */
    if (ef && (file_stat.st_mtime != ef->mtime))
