@@ -19,7 +19,7 @@ evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
    rects->active = 0;
 }
 
-EAPI Cutout_Rect*
+static Cutout_Rect*
 evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
                                      int x, int y, int w, int h)
 {
