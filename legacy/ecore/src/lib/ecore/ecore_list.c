@@ -236,7 +236,7 @@ Functions that create, initialize and destroy Ecore_Lists.
  * @ingroup Ecore_Data_List_Creation_Group
  */
 EAPI Ecore_List *
-ecore_list_new()
+ecore_list_new(void)
 {
    Ecore_List *list;
 
