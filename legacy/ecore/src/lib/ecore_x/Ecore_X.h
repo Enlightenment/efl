@@ -1090,6 +1090,7 @@ EAPI void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 EAPI void             ecore_x_window_defaults_set(Ecore_X_Window win);
 EAPI int              ecore_x_window_visible_get(Ecore_X_Window win);
 EAPI Ecore_X_Window   ecore_x_window_shadow_tree_at_xy_with_skip_get(Ecore_X_Window base, int x, int y, Ecore_X_Window *skip, int skip_num);
+EAPI Ecore_X_Window   ecore_x_window_shadow_parent_get(Ecore_X_Window root, Ecore_X_Window win);
 EAPI void             ecore_x_window_shadow_tree_flush(void);
 EAPI Ecore_X_Window   ecore_x_window_root_get(Ecore_X_Window win);
 EAPI Ecore_X_Window   ecore_x_window_at_xy_get(int x, int y);

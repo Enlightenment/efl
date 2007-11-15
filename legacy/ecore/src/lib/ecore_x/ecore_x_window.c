@@ -713,6 +713,7 @@ ecore_x_window_visible_get(Ecore_X_Window win)
 typedef struct _Shadow Shadow;
 struct _Shadow
 {
+   Shadow         *parent;
    Shadow        **children;
    Window          win;
    int             children_num;
@@ -753,7 +754,10 @@ _ecore_x_window_tree_walk(Window win)
 	  {
 	     s->children_num = num;
 	     for (i = 0; i < num; i++)
-	       s->children[i] = _ecore_x_window_tree_walk(list[i]);
+	       {
+		  s->children[i] = _ecore_x_window_tree_walk(list[i]);
+		  if (s->children[i]) s->children[i]->parent = s;
+	       }
 	     /* compress list down */
 	     j = 0;
 	     for (i = 0; i < num; i++)
@@ -935,8 +939,11 @@ _ecore_x_window_shadow_tree_at_xy_get(Window base, int bx, int by, int x, int y,
 {
    Shadow *s;
    
-   if (!shadow_base) _ecore_x_window_tree_shadow_populate();
-   if (!shadow_base) return 0;
+   if (!shadow_base)
+     {
+	_ecore_x_window_tree_shadow_populate();
+	if (!shadow_base) return 0;
+     }
    s = _ecore_x_window_shadow_tree_find(base);
    if (!s) return 0;
    return _ecore_x_window_shadow_tree_at_xy_get_shadow(s, bx, by, x, y, skip, skip_num);
@@ -958,6 +965,38 @@ EAPI Ecore_X_Window
 ecore_x_window_shadow_tree_at_xy_with_skip_get(Ecore_X_Window base, int x, int y, Ecore_X_Window *skip, int skip_num)
 {
    return _ecore_x_window_shadow_tree_at_xy_get(base, 0, 0, x, y, skip, skip_num);
+}
+
+/**
+ * Retrieves the parent window a given window has. This uses the shadow window
+ * tree.
+ * @param   root The root window of @p win - if 0, this will be automatically determined with extra processing overhead
+ * @param   win The window to get the parent window of
+ * @return  The parent window of @p win
+ * @ingroup Ecore_X_Window_Geometry_Group
+ */
+EAPI Ecore_X_Window
+ecore_x_window_shadow_parent_get(Ecore_X_Window root, Ecore_X_Window win)
+{
+   Shadow *s;
+   int i;
+   
+   if (!shadow_base)
+     {
+	_ecore_x_window_tree_shadow_populate();
+	if (!shadow_base) return 0;
+     }
+   for (i = 0; i < shadow_num; i++)
+     {
+	if (!shadow_base[i]) continue;
+	s = _ecore_x_window_shadow_tree_find_shadow(shadow_base[i], win);
+	if (s)
+	  {
+	     if (!s->parent) return 0;
+	     return s->parent->win;
+	  }
+     }
+   return 0;
 }
 
 /**

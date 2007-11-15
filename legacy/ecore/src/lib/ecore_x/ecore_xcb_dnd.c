@@ -611,7 +611,8 @@ ecore_x_dnd_send_finished(void)
 }
 
 void
-_ecore_x_dnd_drag(int x,
+_ecore_x_dnd_drag(Ecore_X_Window root,
+		  int x,
                   int y)
 {
    xcb_client_message_event_t ev;
@@ -627,7 +628,8 @@ _ecore_x_dnd_drag(int x,
 
    /* Attempt to find a DND-capable window under the cursor */
    skip = ecore_x_window_ignore_list(&num);
-   win = ecore_x_window_at_xy_with_skip_get(x, y, skip, num);
+//   win = ecore_x_window_at_xy_with_skip_get(x, y, skip, num);
+   win = ecore_x_window_shadow_tree_at_xy_with_skip_get(root, x, y, skip, num);
    while (win)
      {
         xcb_query_tree_cookie_t cookie_tree;

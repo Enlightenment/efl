@@ -43,6 +43,14 @@ static Ecore_X_DND_Source *_source = NULL;
 static Ecore_X_DND_Target *_target = NULL;
 static int _ecore_x_dnd_init_count = 0;
 
+typedef struct _Version_Cache_Item
+{
+   Ecore_X_Window win;
+   int ver;
+} Version_Cache_Item;
+static Version_Cache_Item *_version_cache = NULL;
+static int _version_cache_num = 0, _version_cache_alloc = 0;
+
 void
 _ecore_x_dnd_init(void)
 {
@@ -163,15 +171,50 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
    unsigned char *prop_data;
    int num;
 
+   // this looks hacky - and it is, but we need a way of caching info about
+   // a window while dragging, because we literally query this every mouse
+   // move and going to and from x multiple times per move is EXPENSIVE
+   // and slows things down, puts lots of load on x etc.
+   if (_source->state == ECORE_X_DND_SOURCE_DRAGGING)
+     {
+	if (_version_cache)
+	  {
+	     int i;
+	     
+	     for (i = 0; i < _version_cache_num; i++)
+	       {
+		  if (_version_cache[i].win == win)
+		    return _version_cache[i].ver;
+	       }
+	  }
+     }
+     
    if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_AWARE,
                                         XA_ATOM, 32, &prop_data, &num))
      {
 	int version = (int) *prop_data;
 	free(prop_data);
+	if (_source->state == ECORE_X_DND_SOURCE_DRAGGING)
+	  {
+	     _version_cache_num++;
+	     if (_version_cache_num > _version_cache_alloc)
+	       _version_cache_alloc += 16;
+	     _version_cache = realloc(_version_cache, _version_cache_alloc * sizeof(Version_Cache_Item));
+	     _version_cache[_version_cache_num - 1].win = win;
+	     _version_cache[_version_cache_num - 1].ver = version;
+	  }
 	return version;
      }
-   else
-     return 0;
+   if (_source->state == ECORE_X_DND_SOURCE_DRAGGING)
+     {
+	_version_cache_num++;
+	if (_version_cache_num > _version_cache_alloc)
+	  _version_cache_alloc += 16;
+	_version_cache = realloc(_version_cache, _version_cache_alloc * sizeof(Version_Cache_Item));
+	_version_cache[_version_cache_num - 1].win = win;
+	_version_cache[_version_cache_num - 1].ver = 0;
+     }
+   return 0;
 }
 
 EAPI int
@@ -331,6 +374,15 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    if (!ecore_x_selection_xdnd_set(source, data, size))
      return 0;
 
+   if (_version_cache)
+     {
+	free(_version_cache);
+	_version_cache = NULL;
+	_version_cache_num = 0;
+	_version_cache_alloc = 0;
+     }
+   ecore_x_window_shadow_tree_flush();
+   
    _source->win = source;
    ecore_x_window_ignore_set(_source->win, 1);
    _source->state = ECORE_X_DND_SOURCE_DRAGGING;
@@ -462,7 +514,7 @@ ecore_x_dnd_send_finished(void)
 }
 
 void
-_ecore_x_dnd_drag(int x, int y)
+_ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
 {
    XEvent          xev;
    Ecore_X_Window  win;
@@ -480,9 +532,17 @@ _ecore_x_dnd_drag(int x, int y)
 
    /* Attempt to find a DND-capable window under the cursor */
    skip = ecore_x_window_ignore_list(&num);
-   win = ecore_x_window_at_xy_with_skip_get(x, y, skip, num);
+// WARNING - this function is HEAVY. it goes to and from x a LOT walking the
+// window tree - use the SHADOW version - makes a 1-off tree copy, then uses
+// that instead.
+//   win = ecore_x_window_at_xy_with_skip_get(x, y, skip, num);
+   win = ecore_x_window_shadow_tree_at_xy_with_skip_get(root, x, y, skip, num);
+
+// NOTE: This now uses the shadow version to find parent windows
+//   while ((win) && !(ecore_x_dnd_version_get(win)))
+//     win = ecore_x_window_parent_get(win);
    while ((win) && !(ecore_x_dnd_version_get(win)))
-     win = ecore_x_window_parent_get(win);
+     win = ecore_x_window_shadow_parent_get(root, win);
 
    /* Send XdndLeave to current destination window if we have left it */
    if ((_source->dest) && (win != _source->dest))

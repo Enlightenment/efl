@@ -568,7 +568,7 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    _ecore_x_event_last_root_y = e->root.y;
 
    /* Xdnd handling */
-   _ecore_x_dnd_drag(e->root.x, e->root.y);
+   _ecore_x_dnd_drag(xevent->xmotion.root, e->root.x, e->root.y);
 
    ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 }

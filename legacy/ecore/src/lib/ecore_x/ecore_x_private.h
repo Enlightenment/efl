@@ -217,7 +217,7 @@ void _ecore_x_key_grab_remove(Ecore_X_Window win);
 void _ecore_x_dnd_init(void);
 Ecore_X_DND_Source *_ecore_x_dnd_source_get(void);
 Ecore_X_DND_Target *_ecore_x_dnd_target_get(void);
-void _ecore_x_dnd_drag(int x, int y);
+void _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y);
 void _ecore_x_dnd_shutdown(void);
 
 /* from netwm */
