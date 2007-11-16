@@ -1244,6 +1244,13 @@ efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
 
         p = strchr(p, '%');
     }
+   /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
+    * do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
+    * unlikely to be fixed in distributions etc. in the long run as gnome/kde
+    * seem to have workarounds too so no one notices.
+    */
+   if (!flags) flags |= EFREET_DESKTOP_EXEC_FLAG_FULLPATH;
+   
     return flags;
 }
 
@@ -1285,6 +1292,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
     Ecore_List *execs;
     char *exec;
 
+   printf("efreet_desktop_command_build()\n");
     execs = ecore_list_new();
 
     ecore_list_first_goto(command->files);
@@ -1373,6 +1381,32 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
             p++;
         }
 
+       /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
+	* do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
+	* unlikely to be fixed in distributions etc. in the long run as gnome/kde
+	* seem to have workarounds too so no one notices.
+	*/
+       if ((file) && (!file_added))
+	 {
+	    printf("EFREET WARNING:\n"
+		   "  %s\n"
+		   "command:\n"
+		   "  %s\n"
+		   "has no file path/uri spec info for executing this app WITH a\n"
+		   "file/uri as a parameter. This is unlikely to be the intent.\n"
+		   "please check the .desktop file and fix it by adding a %%U or %%F\n"
+		   "or something.",
+		   command->desktop->orig_path, command->desktop->exec);
+            if (len >= size - 1)
+	      {
+		 size = len + 1024;
+		 exec = realloc(exec, size);
+	      }
+	    exec[len++] = ' ';
+	    exec = efreet_desktop_command_append_multiple(exec, &size,
+							  &len, command, 'F');
+	    file_added = 1;
+	 }
         exec[len++] = '\0';
 
         ecore_list_append(execs, exec);
