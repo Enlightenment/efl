@@ -443,9 +443,10 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
         e = (Ecore_Win32_Event_Mouse_Wheel *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Wheel));
         if (!e) return;
 
+        e->window = window;
 	e->direction = 0;
         /* wheel delta is positive or negative, never 0 */
-	e->z = GET_WHEEL_DELTA_WPARAM(msg->window_param) > 0 ? 1 : -1;
+	e->z = GET_WHEEL_DELTA_WPARAM(msg->window_param) > 0 ? -1 : 1;
 	e->x = GET_X_LPARAM(msg->data_param);
 	e->y = GET_Y_LPARAM(msg->data_param);
         e->time = (double)msg->time / 1000.0;
@@ -530,7 +531,7 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
 
 void
 _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
-                                       int                          button)
+                                         int                          button)
 {
    Ecore_Win32_Window *window;
 
@@ -584,18 +585,6 @@ _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
       ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
    }
 
-   Ecore_Win32_Event_Mouse_Button_Up *e;
-
-   e = (Ecore_Win32_Event_Mouse_Button_Up *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Button_Up));
-   if (!e) return;
-
-   e->window = _ecore_win32_event_window_get(msg->window);
-   e->button = button;
-   e->x = GET_X_LPARAM(msg->data_param);
-   e->y = GET_Y_LPARAM(msg->data_param);
-   e->time = (double)msg->time / 1000.0;
-
-   ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
    printf (" * ecore event button release\n");
 }
 
@@ -751,6 +740,7 @@ _ecore_win32_event_handle_create_notify(Ecore_Win32_Callback_Data *msg)
    if (!e) return;
 
    e->window = _ecore_win32_event_window_get(msg->window);
+
    e->time = _ecore_win32_event_last_time;
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_CREATE, e, NULL, NULL);
@@ -765,6 +755,7 @@ _ecore_win32_event_handle_destroy_notify(Ecore_Win32_Callback_Data *msg)
    if (!e) return;
 
    e->window = _ecore_win32_event_window_get(msg->window);
+
    e->time = _ecore_win32_event_last_time;
    if (e->window == _ecore_win32_event_last_window) _ecore_win32_event_last_window = NULL;
 
@@ -780,6 +771,7 @@ _ecore_win32_event_handle_map_notify(Ecore_Win32_Callback_Data *msg)
    if (!e) return;
 
    e->window = _ecore_win32_event_window_get(msg->window);
+
    e->time = _ecore_win32_event_last_time;
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_SHOW, e, NULL, NULL);
@@ -794,6 +786,7 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
    if (!e) return;
 
    e->window = _ecore_win32_event_window_get(msg->window);
+
    e->time = _ecore_win32_event_last_time;
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_HIDE, e, NULL, NULL);
@@ -802,7 +795,7 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
 void
 _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
 {
-   RECT                                rect;
+   WINDOWINFO                          wi;
    Ecore_Win32_Event_Window_Configure *e;
    WINDOWPOS                          *window_pos;
 
@@ -810,18 +803,20 @@ _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
    if (!e) return;
 
    window_pos = (WINDOWPOS *)msg->data_param;
-   if (!GetClientRect(window_pos->hwnd, &rect))
+   wi.cbSize = sizeof(WINDOWINFO);
+   if (!GetWindowInfo(window_pos->hwnd, &wi))
      {
         free(e);
         return;
      }
 
+   printf ("_ecore_win32_event_handle_configure_notify\n");
    e->window = _ecore_win32_event_window_get(window_pos->hwnd);
    e->abovewin = _ecore_win32_event_window_get(window_pos->hwndInsertAfter);
-   e->x = rect.left;
-   e->y = rect.top;
-   e->width = rect.right - rect.left;
-   e->height = rect.bottom - rect.top;
+   e->x = wi.rcClient.left;
+   e->y = wi.rcClient.top;
+   e->width = wi.rcClient.right - wi.rcClient.left;
+   e->height = wi.rcClient.bottom - wi.rcClient.top;
    e->time = _ecore_win32_event_last_time;
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_CONFIGURE, e, NULL, NULL);

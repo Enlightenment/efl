@@ -8,17 +8,6 @@
 #include "ecore_win32_private.h"
 
 
-/*
-<raster> hmmm
-<raster> yeah window's way of doing eventys is very different
-<raster> not select + timeout
-<raster> to doa timeout u need to queue up a timed message
-<raster> for timers
-<raster> etc.
-*/
-
-/* typedef LRESULT CALLBACK _ecore_win32_event_callback(HWND, UINT, WPARAM, LPARAM); */
-
 Ecore_List         *_ecore_win32_windows_list = NULL;
 HINSTANCE           _ecore_win32_instance = NULL;
 double              _ecore_win32_double_click_time = 0.25;
@@ -147,7 +136,12 @@ _ecore_win32_window_procedure(HWND   window,
        return 0;
        /* Window notifications */
      case WM_CREATE:
-       printf (" * ecore message : create\n");
+       {
+         RECT rect;
+         GetClientRect(window, &rect);
+         printf (" *** ecore message : create %ld %ld\n",
+                 rect.right - rect.left, rect.bottom - rect.top);
+       }
        _ecore_win32_event_handle_create_notify(data);
        return 0;
      case WM_DESTROY:
@@ -155,7 +149,12 @@ _ecore_win32_window_procedure(HWND   window,
        _ecore_win32_event_handle_destroy_notify(data);
        return 0;
      case WM_SHOWWINDOW:
-       printf (" * ecore message : show\n");
+       {
+         RECT rect;
+         GetClientRect(window, &rect);
+         printf (" *** ecore message : show %ld %ld\n",
+                 rect.right - rect.left, rect.bottom - rect.top);
+       }
        if ((data->data_param == SW_OTHERUNZOOM) ||
            (data->data_param == SW_OTHERUNZOOM))
          return 0;
@@ -179,15 +178,27 @@ _ecore_win32_window_procedure(HWND   window,
      case WM_SIZING:
        printf (" * ecore message : sizing\n");
        _ecore_win32_event_handle_resize(data);
+       _ecore_win32_event_handle_configure_notify(data);
        return TRUE;
      case WM_SIZE:
        printf (" * ecore message : sized\n");
        return 0;
-     case WM_WINDOWPOSCHANGING:
-       printf (" * ecore message : WM_WINDOWPOSCHANGING\n");
-       return 0;
+/*      case WM_WINDOWPOSCHANGING: */
+/*        { */
+/*          RECT rect; */
+/*          GetClientRect(window, &rect); */
+/*          printf (" *** ecore message : WINDOWPOSCHANGING %ld %ld\n", */
+/*                  rect.right - rect.left, rect.bottom - rect.top); */
+/*        } */
+/*        _ecore_win32_event_handle_configure_notify(data); */
+/*        return 0; */
      case WM_WINDOWPOSCHANGED:
-       printf (" * ecore message : WM_WINDOWPOSCHANGED\n");
+       {
+         RECT rect;
+         GetClientRect(window, &rect);
+         printf (" *** ecore message : WINDOWPOSCHANGED %ld %ld\n",
+                 rect.right - rect.left, rect.bottom - rect.top);
+       }
        _ecore_win32_event_handle_configure_notify(data);
        return 0;
      case WM_ENTERSIZEMOVE :
@@ -288,6 +299,7 @@ ecore_win32_init()
 	return _ecore_win32_init_count;
      }
 
+   printf (" *** ecore_win32_init\n");
    _ecore_win32_instance = GetModuleHandle(0);
    if (!_ecore_win32_instance)
      return 0;
@@ -340,6 +352,17 @@ ecore_win32_init()
         ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
      }
+
+#ifdef HAVE_OPENGL_GLEW
+   if (GLEW_VERSION_2_0)
+     {
+        printf ("pas 2.0\n");
+        return 0;
+     }
+   else {
+      printf ("2.0 !!\n");
+   }
+#endif /* HAVE_OPENGL_GLEW */
 
    _ecore_win32_init_count++;
 

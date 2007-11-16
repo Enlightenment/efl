@@ -5,6 +5,7 @@
 #include "config.h"
 #include "ecore_win32_private.h"
 #include "Ecore_Win32.h"
+#include <cstdio>
 
 
 extern "C" {
@@ -26,6 +27,13 @@ ecore_win32_direct3d_init(Ecore_Win32_Window *window)
      return 0;
 
    w = (struct _Ecore_Win32_Window *)window;
+
+   printf ("ecore_win32_direct3d_init debut : %p (%d %d) (%d %d)\n",
+           w,
+           w->min_width,
+           w->min_height,
+           w->max_width,
+           w->max_height);
 
    w->d3d.object = Direct3DCreate9 (D3D_SDK_VERSION);
    if (!w->d3d.object)
@@ -96,6 +104,15 @@ ecore_win32_direct3d_init(Ecore_Win32_Window *window)
      goto no_supported_depth;
    }
 
+   w->backend = ECORE_WIN32_BACKEND_DIRECT3D;
+
+   printf ("ecore_win32_direct3d_init fin : %p (%d %d) (%d %d)\n",
+           w,
+           w->min_width,
+           w->min_height,
+           w->max_width,
+           w->max_height);
+
    return 1;
 
  no_supported_depth:
@@ -126,17 +143,24 @@ ecore_win32_direct3d_shutdown(Ecore_Win32_Window *window)
 
    w = (struct _Ecore_Win32_Window *)window;
 
+   printf ("0\n");
    if (w->d3d.texture)
      w->d3d.texture->Release();
 
-   if (w->d3d.sprite)
-     w->d3d.sprite->Release();
+   printf ("1\n");
+//    if (w->d3d.sprite)
+//      w->d3d.sprite->OnLostDevice();
 
-   if (w->d3d.device)
-     w->d3d.device->Release();
+   printf ("2\n");
+//    if (w->d3d.device)
+//      w->d3d.device->Release();
 
+   printf ("3\n");
    if (w->d3d.object)
      w->d3d.object->Release();
+
+   printf ("4\n");
+   w->backend = ECORE_WIN32_BACKEND_NONE;
 #endif /* HAVE_DIRECT3D */
 }
 

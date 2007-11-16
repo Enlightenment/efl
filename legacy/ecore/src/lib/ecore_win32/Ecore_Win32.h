@@ -36,25 +36,84 @@ typedef void Ecore_Win32_Direct3D_Object;
 typedef void Ecore_Win32_Direct3D_Device;
 typedef void Ecore_Win32_Direct3D_Sprite;
 typedef void Ecore_Win32_Direct3D_Texture;
+typedef void Ecore_Win32_Glew_DC;
+
+/* Window state */
+
+typedef enum
+{
+   /** The window is iconified. */
+   ECORE_WIN32_WINDOW_STATE_ICONIFIED,
+   /** The window is a modal dialog box. */
+   ECORE_WIN32_WINDOW_STATE_MODAL,
+   /** The window manager should keep the window's position fixed
+    * even if the virtual desktop scrolls. */
+   ECORE_WIN32_WINDOW_STATE_STICKY,
+   /** The window has the maximum vertical size. */
+   ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT,
+   /** The window has the maximum horizontal size. */
+   ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ,
+   /** The window has the maximum horizontal and vertical size. */
+   ECORE_WIN32_WINDOW_STATE_MAXIMIZED,
+   /** The window is shaded. */
+   ECORE_WIN32_WINDOW_STATE_SHADED,
+   /** The window is invisible (i.e. minimized/iconified) */
+   ECORE_WIN32_WINDOW_STATE_HIDDEN,
+   /** The window should fill the entire screen and have no
+    * window border/decorations */
+   ECORE_WIN32_WINDOW_STATE_FULLSCREEN,
+   /* The following are not documented because they are not
+    * intended for use in applications. */
+   ECORE_WIN32_WINDOW_STATE_ABOVE,
+   ECORE_WIN32_WINDOW_STATE_BELOW,
+   /* FIXME: Documentation */
+   ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION,
+   /* Unknown state */
+   ECORE_WIN32_WINDOW_STATE_UNKNOWN
+} Ecore_Win32_Window_State;
+
+/* Window type */
+
+typedef enum
+{
+   /* Desktop feature*/
+   ECORE_WIN32_WINDOW_TYPE_DESKTOP,
+   /* Dock window (should be on top of other windows */
+   ECORE_WIN32_WINDOW_TYPE_DOCK,
+   /* Toolbar window */
+   ECORE_WIN32_WINDOW_TYPE_TOOLBAR,
+   /* Menu window */
+   ECORE_WIN32_WINDOW_TYPE_MENU,
+   /* Small persistent utility window, such as a palette or toolbox */
+   ECORE_WIN32_WINDOW_TYPE_UTILITY,
+   /* Splash screen window displayed as an application is starting up */
+   ECORE_WIN32_WINDOW_TYPE_SPLASH,
+   /* Dialog window */
+   ECORE_WIN32_WINDOW_TYPE_DIALOG,
+   /* Normal top-level window */
+   ECORE_WIN32_WINDOW_TYPE_NORMAL,
+   /* Unknown type */
+   ECORE_WIN32_WINDOW_TYPE_UNKNOWN
+} Ecore_Win32_Window_Type;
 
 /*cursor shapes */
 
 typedef enum
 {
-   ECORE_WIN32_CURSO_SHAPE_APP_STARTING, /* Standard arrow and small hourglass */
-   ECORE_WIN32_CURSO_SHAPE_ARROW,        /* Standard arrow */
-   ECORE_WIN32_CURSO_SHAPE_CROSS,        /* Crosshair */
-   ECORE_WIN32_CURSO_SHAPE_HAND,         /* Hand */
-   ECORE_WIN32_CURSO_SHAPE_HELP,         /* Arrow and question mark */
-   ECORE_WIN32_CURSO_SHAPE_I_BEAM,       /* I-beam */
-   ECORE_WIN32_CURSO_SHAPE_NO,           /* Slashed circle */
-   ECORE_WIN32_CURSO_SHAPE_SIZE_ALL,     /* Four-pointed arrow pointing north, south, east, and west */
-   ECORE_WIN32_CURSO_SHAPE_SIZE_NESW,    /* Double-pointed arrow pointing northeast and southwest */
-   ECORE_WIN32_CURSO_SHAPE_SIZE_NS,      /* Double-pointed arrow pointing north and south */
-   ECORE_WIN32_CURSO_SHAPE_SIZE_NWSE,    /* Double-pointed arrow pointing northwest and southeast */
-   ECORE_WIN32_CURSO_SHAPE_SIZE_WE,      /* Double-pointed arrow pointing west and east */
-   ECORE_WIN32_CURSO_SHAPE_UP_ARROW,     /* Vertical arrow */
-   ECORE_WIN32_CURSO_SHAPE_WAIT          /* Hourglass */
+   ECORE_WIN32_CURSOR_SHAPE_APP_STARTING, /* Standard arrow and small hourglass */
+   ECORE_WIN32_CURSOR_SHAPE_ARROW,        /* Standard arrow */
+   ECORE_WIN32_CURSOR_SHAPE_CROSS,        /* Crosshair */
+   ECORE_WIN32_CURSOR_SHAPE_HAND,         /* Hand */
+   ECORE_WIN32_CURSOR_SHAPE_HELP,         /* Arrow and question mark */
+   ECORE_WIN32_CURSOR_SHAPE_I_BEAM,       /* I-beam */
+   ECORE_WIN32_CURSOR_SHAPE_NO,           /* Slashed circle */
+   ECORE_WIN32_CURSOR_SHAPE_SIZE_ALL,     /* Four-pointed arrow pointing north, south, east, and west */
+   ECORE_WIN32_CURSOR_SHAPE_SIZE_NESW,    /* Double-pointed arrow pointing northeast and southwest */
+   ECORE_WIN32_CURSOR_SHAPE_SIZE_NS,      /* Double-pointed arrow pointing north and south */
+   ECORE_WIN32_CURSOR_SHAPE_SIZE_NWSE,    /* Double-pointed arrow pointing northwest and southeast */
+   ECORE_WIN32_CURSOR_SHAPE_SIZE_WE,      /* Double-pointed arrow pointing west and east */
+   ECORE_WIN32_CURSOR_SHAPE_UP_ARROW,     /* Vertical arrow */
+   ECORE_WIN32_CURSOR_SHAPE_WAIT          /* Hourglass */
 } Ecore_Win32_Cursor_Shape;
 
 /* Events */
@@ -257,6 +316,11 @@ EAPI Ecore_Win32_Window *ecore_win32_window_new(Ecore_Win32_Window *parent,
                                                 int                 y,
                                                 int                 width,
                                                 int                 height);
+EAPI Ecore_Win32_Window *ecore_win32_window_override_new(Ecore_Win32_Window *parent,
+                                                         int                 x,
+                                                         int                 y,
+                                                         int                 width,
+                                                         int                 height);
 
 EAPI void ecore_win32_window_del(Ecore_Win32_Window *window);
 
@@ -285,20 +349,36 @@ EAPI void ecore_win32_window_size_get(Ecore_Win32_Window *window,
                                       int                *height);
 
 EAPI void ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
-                                          int                 min_width,
-                                          int                 min_height);
+                                          unsigned int        min_width,
+                                          unsigned int        min_height);
+
+EAPI void ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
+                                          unsigned int       *min_width,
+                                          unsigned int       *min_height);
 
 EAPI void ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
-                                          int                 max_width,
-                                          int                 max_height);
+                                          unsigned int        max_width,
+                                          unsigned int        max_height);
+
+EAPI void ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
+                                          unsigned int       *max_width,
+                                          unsigned int       *max_height);
 
 EAPI void ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
-                                           int                 base_width,
-                                           int                 base_height);
+                                           unsigned int        base_width,
+                                           unsigned int        base_height);
+
+EAPI void ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
+                                           unsigned int       *base_width,
+                                           unsigned int       *base_height);
 
 EAPI void ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
-                                           int                 step_width,
-                                           int                 step_height);
+                                           unsigned int        step_width,
+                                           unsigned int        step_height);
+
+EAPI void ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
+                                           unsigned int       *step_width,
+                                           unsigned int       *step_height);
 
 EAPI void ecore_win32_window_show(Ecore_Win32_Window *window);
 
@@ -325,6 +405,17 @@ EAPI void ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
 EAPI void ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
                                         Ecore_Win32_Cursor *cursor);
 
+EAPI void ecore_win32_window_state_set(Ecore_Win32_Window       *window,
+                                       Ecore_Win32_Window_State *state,
+                                       unsigned int              num);
+
+EAPI void ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
+                                                Ecore_Win32_Window_State state,
+                                                unsigned int             set);
+
+EAPI void ecore_win32_window_type_set(Ecore_Win32_Window      *window,
+                                      Ecore_Win32_Window_Type  type);
+
 /* Cursor */
 
 EAPI Ecore_Win32_Cursor *ecore_win32_cursor_new(const void *pixels_and,
@@ -344,6 +435,8 @@ EAPI int                 ecore_win32_cursor_size_get(void);
 
 EAPI int                        ecore_win32_ddraw_init(Ecore_Win32_Window *window);
 
+EAPI int                        ecore_win32_ddraw_16_init(Ecore_Win32_Window *window);
+
 EAPI void                       ecore_win32_ddraw_shutdown(Ecore_Win32_Window *window);
 
 EAPI Ecore_Win32_DDraw_Object  *ecore_win32_ddraw_object_get(Ecore_Win32_Window *window);
@@ -351,6 +444,8 @@ EAPI Ecore_Win32_DDraw_Object  *ecore_win32_ddraw_object_get(Ecore_Win32_Window 
 EAPI Ecore_Win32_DDraw_Surface *ecore_win32_ddraw_surface_primary_get(Ecore_Win32_Window *window);
 
 EAPI Ecore_Win32_DDraw_Surface *ecore_win32_ddraw_surface_back_get(Ecore_Win32_Window *window);
+
+EAPI Ecore_Win32_DDraw_Surface *ecore_win32_ddraw_surface_source_get(Ecore_Win32_Window *window);
 
 EAPI int                        ecore_win32_ddraw_depth_get(Ecore_Win32_Window *window);
 
@@ -377,5 +472,16 @@ EAPI int                           ecore_win32_direct3d_depth_get(Ecore_Win32_Wi
 #ifdef __cplusplus
 }
 #endif
+
+/* OpenGL Glew */
+
+EAPI int                  ecore_win32_glew_init(Ecore_Win32_Window *window);
+
+EAPI void                 ecore_win32_glew_shutdown(Ecore_Win32_Window *window);
+
+EAPI Ecore_Win32_Glew_DC *ecore_win32_glew_dc_get(Ecore_Win32_Window *window);
+
+EAPI int                  ecore_win32_glew_depth_get(Ecore_Win32_Window *window);
+
 
 #endif /* __ECORE_WIN32_H__ */

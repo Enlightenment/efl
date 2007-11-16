@@ -18,11 +18,12 @@ ecore_win32_cursor.c \
 ecore_win32_direct3d.cpp \
 ecore_win32_ddraw.c \
 ecore_win32_event.c \
+ecore_win32_glew.c \
 ecore_win32_window.c \
 ecore_win32_private.h
 
 libecore_win32_la_LIBADD = \
-@ddraw_libs@ @direct3d_libs@ \
+@ddraw_libs@ @direct3d_libs@ @glew_libs@ \
 -lwsock32 \
 $(top_builddir)/src/lib/ecore/libecore.la
 
@@ -37,5 +38,6 @@ ecore_win32_cursor.c \
 ecore_win32_direct3d.cpp \
 ecore_win32_ddraw.c \
 ecore_win32_event.c \
+ecore_win32_glew.c \
 ecore_win32_window.c \
 ecore_win32_private.h
