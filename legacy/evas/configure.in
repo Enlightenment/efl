@@ -66,6 +66,7 @@ AC_HELP_STRING([--with-qtdir=QT_DIR], [use qt directory specified]),
 ], [
   qt_dir="/opt/Qtopia";
 ])
+
 # check for freetype
 PKG_CHECK_MODULES(FREETYPE, freetype2 >= 9.3.0)
 
@@ -155,10 +156,11 @@ if test "x$want_evas_software_ddraw" = "xyes"; then
       have_evas_software_ddraw="yes"
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_DDRAW, 1, [Software DirectDraw Rendering Backend])
       ddraw_libs="-lddraw"
-    ],
-    [ have_evas_software_ddraw="no" ]
+    ]
   )
 fi
+AC_MSG_CHECKING(whether software directdraw backend will be built)
+AC_MSG_RESULT($have_evas_software_ddraw)
 AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_DDRAW, test "x$have_evas_software_ddraw" = "xyes")
 
 #######################################
@@ -179,13 +181,11 @@ if test "x$want_evas_software_16_ddraw" = "xyes"; then
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_16_DDRAW, 1, [16bit Software DirectDraw Rendering Backend])
       ddraw_16_libs="-lddraw -lgdi32"
       have_evas_software_16_ddraw="yes"
-    ],
-    [
-      AC_MSG_RESULT(disabling software DirectDraw engine)
-      have_evas_software_16_ddraw="no"
     ]
   )
 fi
+AC_MSG_CHECKING(whether 16 bits software directdraw backend will be built)
+AC_MSG_RESULT($have_evas_software_16_ddraw)
 AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16_DDRAW, test "x$have_evas_software_16_ddraw" = "xyes")
 
 
@@ -207,13 +207,11 @@ if test "x$want_evas_direct3d" = "xyes"; then
       AC_DEFINE(BUILD_ENGINE_DIRECT3D, 1, [Direct3D Rendering Backend])
       direct3d_libs="-ld3d9 -ld3dx9d"
       have_evas_direct3d="yes"
-    ],
-    [
-      AC_MSG_RESULT(disabling Direct3D engine)
-      have_evas_direct3d="no"
     ]
   )
 fi
+AC_MSG_CHECKING(whether direct3d backend will be built)
+AC_MSG_RESULT($have_evas_direct3d)
 AM_CONDITIONAL(BUILD_ENGINE_DIRECT3D, test "x$have_evas_direct3d" = "xyes")
 
 
@@ -482,13 +480,15 @@ AC_MSG_RESULT($want_evas_gl_glew)
 if test "x$want_evas_gl_glew" = "xyes" ; then
   AC_CHECK_HEADERS(GL/gl.h GL/glu.h GL/glew.h,
     [
+      have_evas_gl_glew="yes"
       AC_DEFINE(BUILD_ENGINE_GL_GLEW, 1, [OpenGL Glew Rendering Backend])
       glew_libs="-lglew32 -lopengl32 -lgdi32"
       gl_libs="-lglu32"
-    ],
-    [ have_evas_gl_glew="no" ]
+    ]
   )
 fi
+AC_MSG_CHECKING(whether gl glew backend will be built)
+AC_MSG_RESULT($have_evas_gl_glew)
 AM_CONDITIONAL(BUILD_ENGINE_GL_GLEW, test "x$have_evas_gl_glew" = "xyes")
 
 # common gl
