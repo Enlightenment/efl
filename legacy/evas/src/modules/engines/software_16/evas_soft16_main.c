@@ -123,6 +123,7 @@ soft16_image_destroy(Soft16_Image *im)
    if (im->file) evas_stringshare_del(im->file);
    if (im->key) evas_stringshare_del(im->key);
    if (im->free_pixels) free(im->pixels);
+   if (im->source_im) evas_cache_image_drop(im->source_im);
    free(im);
 }
 
