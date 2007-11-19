@@ -106,7 +106,7 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
      {
 	ecore_list_first_goto(ecore_evas_input_devices);
 	while ((dev = ecore_list_next(ecore_evas_input_devices)))
-	  ecore_fb_input_device_listen(dev, 0);
+	  ecore_fb_input_device_listen(dev, 1);
      }
 }
 
