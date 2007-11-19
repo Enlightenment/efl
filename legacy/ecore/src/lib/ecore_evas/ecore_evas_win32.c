@@ -874,8 +874,19 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 /*    else */
 /*      _ecore_evas_win32_state_update(ee); */
 }
+#endif
 
+static void *
+_ecore_evas_win32_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_WIN32
+   return ee->engine.win32.window;
+#else
+   return NULL;
+#endif /* BUILD_ECORE_WIN32 */
+}
 
+#ifdef BUILD_ECORE_WIN32
 static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
 {
    _ecore_evas_win32_free,
@@ -921,7 +932,8 @@ static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL, /* _ecore_evas_x_withdrawn_set */
      NULL, /* _ecore_evas_x_sticky_set */
      NULL, /* _ecore_evas_x_ignore_events_set */
-     NULL  /* _ecore_evas_x_alpha_set */
+     NULL, /* _ecore_evas_x_alpha_set */
+     _ecore_evas_win32_window_get
 };
 
 #endif /* BUILD_ECORE_WIN32 */
@@ -1037,11 +1049,7 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
 EAPI Ecore_Win32_Window *
 ecore_evas_software_ddraw_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_WIN32
-   return ee->engine.win32.window;
-#else
-   return NULL;
-#endif /* BUILD_ECORE_WIN32 */
+   return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
 }
 
 EAPI Ecore_Evas *
@@ -1154,9 +1162,5 @@ ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
 EAPI Ecore_Win32_Window *
 ecore_evas_direct3d_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_WIN32
-   return ee->engine.win32.window;
-#else
-   return NULL;
-#endif /* BUILD_ECORE_WIN32 */
+   return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
 }

@@ -419,6 +419,7 @@ static const Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL,
    NULL,
    NULL,
+   NULL,
    NULL
 };
 #endif

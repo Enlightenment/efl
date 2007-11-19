@@ -1773,6 +1773,20 @@ ecore_evas_ignore_events_get(Ecore_Evas *ee)
       return ee->ignore_events ? 1 : 0;
 }
 
+EAPI void *
+ecore_evas_window_get(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+   {
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+         "ecore_evas_window_get");
+      return NULL;
+   }
+
+   if (ee->engine.func->fn_window_get) return ee->engine.func->fn_window_get(ee);
+   return NULL;
+}
+
 #ifndef _WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */

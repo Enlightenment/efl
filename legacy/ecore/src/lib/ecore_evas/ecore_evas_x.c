@@ -2026,6 +2026,16 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
      }
 }
 
+static void *
+_ecore_evas_x_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   return (void *) ee->engine.x.win;
+#else
+   return 0;
+#endif
+}
+
 static void
 _ecore_evas_x_show(Ecore_Evas *ee)
 {
@@ -2544,7 +2554,8 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_withdrawn_set,
      _ecore_evas_x_sticky_set,
      _ecore_evas_x_ignore_events_set,
-     _ecore_evas_x_alpha_set
+     _ecore_evas_x_alpha_set,
+     _ecore_evas_x_window_get
 };
 #endif
 
@@ -2819,11 +2830,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_software_x11_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**
@@ -2834,11 +2841,7 @@ ecore_evas_software_x11_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**
@@ -3012,11 +3015,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**
@@ -3027,11 +3026,7 @@ ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**
@@ -3264,11 +3259,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**
@@ -3279,11 +3270,7 @@ ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**
@@ -3474,11 +3461,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_software_x11_16_window_get(Ecore_Evas *ee)
 {
-#if BUILD_ECORE_EVAS_X11_16
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**
@@ -3489,11 +3472,7 @@ ecore_evas_software_x11_16_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_software_x11_16_subwindow_get(Ecore_Evas *ee)
 {
-#if BUILD_ECORE_EVAS_X11_16
-   return ee->engine.x.win;
-#else
-   return 0;
-#endif
+   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
 }
 
 /**

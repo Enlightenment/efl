@@ -497,8 +497,19 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
 	if(ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
+#endif
 
+static void *
+_ecore_evas_directfb_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+   return ee->engine.directfb.window;
+#else
+   return 0;
+#endif
+}
 
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
 static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
 {
    _ecore_evas_directfb_free,	/* free an ecore_evas */
@@ -544,7 +555,8 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* withdrawn */
      NULL,      			/* sticky */
      NULL,                              /* ignore events */
-     NULL                               /* alpha */
+     NULL,                              /* alpha */
+     _ecore_evas_directfb_window_get    /* window_get */
 };
 #endif
 
@@ -554,15 +566,9 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
 Ecore_DirectFB_Window *
 ecore_evas_directfb_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-   return ee->engine.directfb.window;
-#else
-   ee = NULL;
-   return NULL;
-#endif   
+   return (Ecore_DirectFB_Window *) _ecore_evas_directfb_window_get(ee);
 }
 
-	
 EAPI Ecore_Evas *
 ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h)
 {
