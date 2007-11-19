@@ -532,7 +532,7 @@ ecore_list_append_list(Ecore_List *list, Ecore_List *append)
    if (ecore_list_empty_is(list))
      {
 	list->first = append->first;
-	list->current = NULL;
+	list->current = list->first;
 	list->last = append->last;
 	list->nodes = append->nodes;
      }
