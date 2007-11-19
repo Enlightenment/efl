@@ -261,49 +261,53 @@ _ecore_evas_fb_init(int w, int h)
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    /* register all input devices */
    input_dir = opendir("/dev/input/");
-   if(!input_dir) return _ecore_evas_init_count;
+   if (!input_dir) return _ecore_evas_init_count;
    
    ecore_evas_input_devices = ecore_list_new();
-   while((input_entry = readdir(input_dir)))
-   {
-      char device_path[256];
-      if (strncmp(input_entry->d_name, "event", 5) != 0)
-         continue;
-      
-      snprintf(device_path, 256, "/dev/input/%s", input_entry->d_name);
-      if (!(device = ecore_fb_input_device_open(device_path)))
-         continue;
-         
-      caps = ecore_fb_input_device_cap_get(device);
-         
-      /* Mouse */
-      if (caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE)
-      {
-         ecore_fb_input_device_axis_size_set(device, w, h);
-         ecore_fb_input_device_listen(device,1);
-	 ecore_list_append(ecore_evas_input_devices, device);
-         if (!mouse_handled)
-         {
-            ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
-            ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
-            ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
-           ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_WHEEL, _ecore_evas_event_mouse_wheel, NULL);
-           mouse_handled = 1;
-         }
-      }
-      /* Keyboard */
-      else if ((caps & ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS) && !(caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
-      {
-         ecore_fb_input_device_listen(device,1);
-	 ecore_list_append(ecore_evas_input_devices, device);
-         if (!keyboard_handled)
-         {
-            ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_DOWN, _ecore_evas_event_key_down, NULL);
-            ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_UP, _ecore_evas_event_key_up, NULL);
-            keyboard_handled = 1;
-         }
-      }
-   }
+   while ((input_entry = readdir(input_dir)))
+     {
+	char device_path[256];
+	
+	if (strncmp(input_entry->d_name, "event", 5) != 0)
+	  continue;
+	
+	snprintf(device_path, 256, "/dev/input/%s", input_entry->d_name);
+	if (!(device = ecore_fb_input_device_open(device_path)))
+	  continue;
+	
+	caps = ecore_fb_input_device_cap_get(device);
+
+	if (ecore_evas_input_devices)
+	  {
+	     /* Mouse */
+	     if (caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE)
+	       {
+		  ecore_fb_input_device_axis_size_set(device, w, h);
+		  ecore_fb_input_device_listen(device,1);
+		  ecore_list_append(ecore_evas_input_devices, device);
+		  if (!mouse_handled)
+		    {
+		       ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
+		       ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
+		       ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
+		       ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_WHEEL, _ecore_evas_event_mouse_wheel, NULL);
+		       mouse_handled = 1;
+		    }
+	       }
+	     /* Keyboard */
+	     else if ((caps & ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS) && !(caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
+	       {
+		  ecore_fb_input_device_listen(device,1);
+		  ecore_list_append(ecore_evas_input_devices, device);
+		  if (!keyboard_handled)
+		    {
+		       ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_DOWN, _ecore_evas_event_key_down, NULL);
+		       ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_UP, _ecore_evas_event_key_up, NULL);
+		       keyboard_handled = 1;
+		    }
+	       }
+	  }
+     }
    return _ecore_evas_init_count;
 }
 
@@ -479,16 +483,17 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
      }
    ee->prop.fullscreen = on;
    /* rescale the input device area */
-   {
-      Ecore_Fb_Input_Device *dev;
-
-      ecore_list_first_goto(ecore_evas_input_devices);
-      dev = ecore_list_current(ecore_evas_input_devices);
-      do
-      {
-         ecore_fb_input_device_axis_size_set(dev, ee->w, ee->h);
-      }while((dev = ecore_list_next(ecore_evas_input_devices)));
-   }
+   if (ecore_evas_input_devices)
+     {
+	Ecore_Fb_Input_Device *dev;
+	
+	ecore_list_first_goto(ecore_evas_input_devices);
+	dev = ecore_list_current(ecore_evas_input_devices);
+	do
+	  {
+	     ecore_fb_input_device_axis_size_set(dev, ee->w, ee->h);
+	  } while ((dev = ecore_list_next(ecore_evas_input_devices)));
+     }
    if (resized)
      {
 	if (ee->func.fn_resize) ee->func.fn_resize(ee); 
