@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "config.h"
 #include "Ecore.h"
 #include "ecore_private.h"
@@ -74,12 +77,12 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
 	ee = (Ecore_Evas *)l;
 	ee->visible = 0;
      }
-   ecore_list_first_goto(ecore_evas_input_devices);
-   dev = ecore_list_current(ecore_evas_input_devices);
-   do
-   {
-      ecore_fb_input_device_listen(dev, 0);
-   }while((dev = ecore_list_next(ecore_evas_input_devices)));
+   if (ecore_evas_input_devices)
+     {
+	ecore_list_first_goto(ecore_evas_input_devices);
+	while ((dev = ecore_list_next(ecore_evas_input_devices)))
+	  ecore_fb_input_device_listen(dev, 0);
+     }
 }
 
 static void
@@ -99,12 +102,12 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
 	else
 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
-   ecore_list_first_goto(ecore_evas_input_devices);
-   dev = ecore_list_current(ecore_evas_input_devices);
-   do
-   {
-      ecore_fb_input_device_listen(dev, 1);
-   }while((dev = ecore_list_next(ecore_evas_input_devices)));
+   if (ecore_evas_input_devices)
+     {
+	ecore_list_first_goto(ecore_evas_input_devices);
+	while ((dev = ecore_list_next(ecore_evas_input_devices)))
+	  ecore_fb_input_device_listen(dev, 0);
+     }
 }
 
 static int
