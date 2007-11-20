@@ -488,11 +488,8 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	Ecore_Fb_Input_Device *dev;
 	
 	ecore_list_first_goto(ecore_evas_input_devices);
-	dev = ecore_list_current(ecore_evas_input_devices);
-	do
-	  {
-	     ecore_fb_input_device_axis_size_set(dev, ee->w, ee->h);
-	  } while ((dev = ecore_list_next(ecore_evas_input_devices)));
+	while ((dev = ecore_list_next(ecore_evas_input_devices)))
+	  ecore_fb_input_device_axis_size_set(dev, ee->w, ee->h);
      }
    if (resized)
      {
