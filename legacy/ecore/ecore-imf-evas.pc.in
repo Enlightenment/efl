@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: ecore-imf
-Description: E core library, IMF module
-Requires: ecore
+Name: ecore-imf-evas
+Description: E core library, IMF Evas module
+Requires: ecore-imf evas
 Version: @VERSION@
-Libs: -L${libdir} -lecore_imf
+Libs: -L${libdir} -lecore_imf_evas
 Cflags: -I${includedir}

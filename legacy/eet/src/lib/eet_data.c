@@ -542,8 +542,8 @@ eet_data_chunk_get(Eet_Data_Chunk *chnk, const void *src, int size)
 	  }
 	else
 	  chnk->group_type = EET_G_UNKNOWN;
-	if ((chnk->type < EET_T_UNKNOW) || (chnk->type >= EET_T_LAST) ||
-	    (chnk->group_type < EET_G_UNKNOWN) || (chnk->group_type >= EET_G_LAST))
+	if ((chnk->type >= EET_T_LAST) ||
+	    (chnk->group_type >= EET_G_LAST))
 	  {
 	     chnk->type = 0;
 	     chnk->group_type = 0;

@@ -715,7 +715,14 @@ ECORE_CHECK_MODULE([Desktop], [no], [$have_ecore_file],
   [requirements_ecore_desktop="ecore-file"])
 
 dnl ecore_imf
-ECORE_CHECK_MODULE([IMF], [yes], [$have_evas])
+ECORE_CHECK_MODULE([IMF], [yes])
+
+try_ecore_imf_evas=no
+if test "x$have_ecore_imf" = xyes -a "x$have_evas" = "xyes"; then
+  try_ecore_imf_evas=yes
+fi
+
+ECORE_CHECK_MODULE([IMF_EVAS], [yes], [$try_ecore_imf_evas])
 
 dnl requirements
 AC_SUBST(requirements_ecore_con)
@@ -752,6 +759,7 @@ ecore-evas.pc
 ecore-fb.pc
 ecore-file.pc
 ecore-imf.pc
+ecore-imf-evas.pc
 ecore-ipc.pc
 ecore-job.pc
 ecore-txt.pc
@@ -770,6 +778,7 @@ src/lib/ecore_sdl/Makefile
 src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Makefile
 src/lib/ecore_imf/Makefile
+src/lib/ecore_imf_evas/Makefile
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
@@ -816,6 +825,7 @@ echo "  Ecore_File...................: $have_ecore_file (Inotify: $have_inotify)
 echo "  Ecore_Desktop................: $have_ecore_desktop"
 
 echo "  Ecore_IMF....................: $have_ecore_imf"
+echo "  Ecore_IMF_Evas...............: $have_ecore_imf_evas"
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
 echo

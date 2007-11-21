@@ -91,11 +91,22 @@ Ecore_IMF_Context *
 ecore_imf_module_context_create(const char *ctx_id)
 {
    Ecore_IMF_Module *module;
+   Ecore_IMF_Context *ctx = NULL;
 
    if (!modules) return NULL;
    module = ecore_hash_get(modules, ctx_id);
-   if (module) return module->create();
-   return NULL;
+   if (module)
+     {
+	ctx = module->create();
+	if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+	  {
+	     ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+			      "ecore_imf_module_context_create");
+	     return NULL;
+	  }
+	ctx->module = module;
+     }
+   return ctx;
 }
 
 Ecore_List *
@@ -103,6 +114,38 @@ ecore_imf_module_context_ids_get(void)
 {
    if (!modules) return NULL;
    return ecore_hash_keys(modules);
+}
+
+Ecore_List *
+ecore_imf_module_context_ids_by_canvas_type_get(const char *canvas_type)
+{
+   Ecore_List *values;
+   unsigned int i = 0;
+
+   if (!modules) return NULL;
+
+   if (!canvas_type)
+     return ecore_imf_module_context_ids_get();
+
+   values = ecore_list_new();
+   while (i < ecore_prime_table[modules->size])
+     {
+	if (modules->buckets[i])
+	  {
+	     Ecore_Hash_Node *node;
+
+	     for (node = modules->buckets[i]; node; node = node->next)
+	       {
+		  Ecore_IMF_Module *module = node->value;
+		  if (strcmp(module->info->canvas_type, canvas_type) == 0)
+		    ecore_list_append(values, (void *) module->info->id);
+	       }
+	  }
+	i++;
+     }
+   ecore_list_first_goto(values);
+
+   return values;
 }
 
 static void

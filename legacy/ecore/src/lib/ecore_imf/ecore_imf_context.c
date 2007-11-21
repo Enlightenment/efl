@@ -32,6 +32,12 @@ ecore_imf_context_available_ids_get(void)
    return ecore_imf_module_context_ids_get();
 }
 
+EAPI Ecore_List *
+ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type)
+{
+   return ecore_imf_module_context_ids_by_canvas_type_get(canvas_type);
+}
+
 /*
  * Match @locale against @against.
  *
@@ -67,6 +73,11 @@ _ecore_imf_context_match_locale(const char *locale, const char *against, int aga
 EAPI const char *
 ecore_imf_context_default_id_get(void)
 {
+   return ecore_imf_context_default_id_by_canvas_type_get(NULL);
+}
+
+EAPI const char *ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
+{
    const char *id;
    Ecore_List *modules;
    Ecore_IMF_Module *module;
@@ -95,6 +106,10 @@ ecore_imf_context_default_id_get(void)
    ecore_list_first_goto(modules);
    while ((module = ecore_list_next(modules)))
      {
+	if (canvas_type &&
+	    strcmp(module->info->canvas_type, canvas_type) == 0)
+	  continue;
+
 	const char *p = module->info->default_locales;
 	while (p)
 	  {
@@ -162,6 +177,26 @@ ecore_imf_context_add(const char *id)
 }
 
 /**
+ * Retrieve the info for the given Input Method Context.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return Return a #Ecore_IMF_Context_Info for the given Input Method Context;
+ *         on failure it returns NULL.
+ * @ingroup Ecore_IMF_Context_Group
+ */
+EAPI const Ecore_IMF_Context_Info *
+ecore_imf_context_info_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+			 "ecore_imf_context_info_get");
+	return NULL;
+     }
+   return ctx->module->info;
+}
+
+/**
  * Delete the given Input Method Context and free its memory.
  *
  * @param ctx An #Ecore_IMF_Context.
@@ -183,7 +218,7 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
 
 /**
  * Set the client window for the Input Method Context; this is the
- * Evas canvas in which the input appears.
+ * Ecore_X_Window when using X11, Ecore_Win32_Window when using Win32, etc.
  * This window is used in order to correctly position status windows, and may
  * also be used for purposes internal to the Input Method Context.
  *
@@ -193,7 +228,7 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI void
-ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, Evas *evas)
+ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
@@ -201,7 +236,32 @@ ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, Evas *evas)
 			 "ecore_imf_context_client_window_set");
 	return;
      }
-   if (ctx->klass->client_window_set) ctx->klass->client_window_set(ctx, evas);
+   if (ctx->klass->client_window_set) ctx->klass->client_window_set(ctx, window);
+}
+
+/**
+ * Set the client canvas for the Input Method Context; this is the
+ * canvas in which the input appears.
+ * The canvas type can be determined by using the context canvas type.
+ * Actually only canvas with type "evas" (Evas *) is supported.
+ * This canvas may be used in order to correctly position status windows, and may
+ * also be used for purposes internal to the Input Method Context.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param canas The client canvas. This may be NULL to indicate
+ *              that the previous client canvas no longer exists.
+ * @ingroup Ecore_IMF_Context_Group
+ */
+EAPI void
+ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+			 "ecore_imf_context_client_window_set");
+	return;
+     }
+   if (ctx->klass->client_canvas_set) ctx->klass->client_canvas_set(ctx, canvas);
 }
 
 /**
@@ -449,15 +509,13 @@ ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx)
  * obligation of any events to be submitted to this function.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @param type The type of event defined in #Evas_Callback_Type
- * @param event_info The event itself; This should be one of
- *                   Evas_Event_* types or NULL for some event types as
- *                   EVAS_CALLBACK_SHOW/HIDE for example.
+ * @param type The type of event defined by #Ecore_IMF_Event_Type.
+ * @param event The event itself.
  * @return 1 if the event was handled; otherwise 0.
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI int
-ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Evas_Callback_Type type, void *event_info)
+ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
@@ -465,7 +523,7 @@ ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Evas_Callback_Type type, 
 			 "ecore_imf_context_filter_event");
 	return 0;
      }
-   if (ctx->klass->filter_event) return ctx->klass->filter_event(ctx, type, event_info);
+   if (ctx->klass->filter_event) return ctx->klass->filter_event(ctx, type, event);
    return 0;
 }
 

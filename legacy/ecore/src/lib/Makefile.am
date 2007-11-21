@@ -14,4 +14,5 @@ ecore_evas \
 ecore_config \
 ecore_file \
 ecore_desktop \
-ecore_imf
+ecore_imf \
+ecore_imf_evas
