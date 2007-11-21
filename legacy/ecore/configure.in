@@ -490,8 +490,18 @@ PKG_CHECK_EXISTS(evas-direct3d >= 0.9.9.41,
 AC_MSG_RESULT($have_direct3d)
 AC_SUBST(direct3d_libs)
 
+AC_MSG_CHECKING(for Evas OpenGL Glew engine)
+PKG_CHECK_EXISTS(evas-opengl-glew >= 0.9.9.41,
+  [ have_opengl_glew="yes"
+    AC_DEFINE(HAVE_OPENGL_GLEW, 1, [Build Ecore_Win32 with OpenGL Glew Code])
+    glew_libs="-lglew32 -lgdi32" ],
+  [ have_opengl_glew="no" ]
+)
+AC_MSG_RESULT($have_opengl_glew)
+AC_SUBST(glew_libs)
+
 have_win32="no"
-if test "x${have_ddraw}" = "xyes" -o "x${have_ddraw_16}" = "xyes" -o "x${have_direct3d}" = "xyes"; then
+if test "x${have_ddraw}" = "xyes" -o "x${have_ddraw_16}" = "xyes" -o "x${have_direct3d}" = "xyes" -o "x${have_opengl_glew}" = "xyes"; then
   have_win32="yes"
 fi
 
@@ -793,7 +803,7 @@ echo "  Ecore_Evas X11 GL Support....: $have_ecore_evas_x11_gl"
 echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
 echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_x11_16"
 
-echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d})"
+echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d}) (OpenGL Glew: ${have_opengl_glew})"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
 echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
 echo "  Ecore_FB.....................: $have_ecore_fb"

@@ -54,6 +54,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_X11_16 1
 #define HAVE_ECORE_EVAS_DIRECTFB 1
 #define HAVE_ECORE_EVAS_WIN32 1
+#define HAVE_ECORE_EVAS_SDL 1
 
 typedef enum _Ecore_Evas_Engine_Type
 {
@@ -65,6 +66,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_DIRECTFB,
    ECORE_EVAS_ENGINE_SOFTWARE_X11_16,
    ECORE_EVAS_ENGINE_SOFTWARE_DDRAW,
+   ECORE_EVAS_ENGINE_SOFTWARE_DDRAW_16,
    ECORE_EVAS_ENGINE_DIRECT3D,
    ECORE_EVAS_ENGINE_SDL
 } Ecore_Evas_Engine_Type;
@@ -148,6 +150,14 @@ EAPI Ecore_Evas     *ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                                                    int                 height);
 
 EAPI Ecore_Win32_Window *ecore_evas_software_ddraw_window_get(Ecore_Evas *ee);
+
+EAPI Ecore_Evas     *ecore_evas_software_ddraw_16_new(Ecore_Win32_Window *parent,
+                                                      int                 x,
+                                                      int                 y,
+                                                      int                 width,
+                                                      int                 height);
+
+EAPI Ecore_Win32_Window *ecore_evas_software_ddraw_16_window_get(Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
                                              int                 x,

@@ -66,6 +66,9 @@
 # ifdef HAVE_DIRECTDRAW
 #  include <Evas_Engine_Software_DDraw.h>
 # endif
+# ifdef HAVE_DIRECTDRAW_16
+#  include <Evas_Engine_Software_16_DDraw.h>
+# endif
 # ifdef HAVE_DIRECT3D
 #  include <Evas_Engine_Direct3D.h>
 # endif

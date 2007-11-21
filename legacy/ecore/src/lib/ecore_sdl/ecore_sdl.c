@@ -84,6 +84,7 @@ ecore_sdl_feed_events(void)
              ev->y = event.motion.y;
              ev->time = time;
 
+             printf (" * ecore message : SDL_MOUSEMOTION\n");
              ecore_event_add(ECORE_SDL_EVENT_MOUSE_MOVE, ev, NULL, NULL);
              break;
           }
@@ -117,6 +118,7 @@ ecore_sdl_feed_events(void)
 
                   ecore_event_add(ECORE_SDL_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
                }
+             printf (" * ecore message : SDL_MOUSEBUTTONDOWN\n");
              break;
           }
           case SDL_MOUSEBUTTONUP:
@@ -132,6 +134,7 @@ ecore_sdl_feed_events(void)
              ev->time = time;
 
              ecore_event_add(ECORE_SDL_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+             printf (" * ecore message : SDL_MOUSEBUTTONUP\n");
              break;
           }
           case SDL_VIDEORESIZE:
@@ -143,10 +146,12 @@ ecore_sdl_feed_events(void)
              ev->h = event.resize.h;
 
              ecore_event_add(ECORE_SDL_EVENT_RESIZE, ev, NULL, NULL);
+             printf (" * ecore message : SDL_VIDEORESIZE\n");
              break;
           }
           case SDL_VIDEOEXPOSE:
              ecore_event_add(ECORE_SDL_EVENT_EXPOSE, NULL, NULL, NULL);
+             printf (" * ecore message : SDL_VIDEOEXPOSE\n");
              break;
           case SDL_QUIT:
              ecore_main_loop_quit();

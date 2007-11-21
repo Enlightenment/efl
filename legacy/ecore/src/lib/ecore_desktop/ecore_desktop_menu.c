@@ -1187,7 +1187,7 @@ _ecore_desktop_menu_merge(const void *data, Ecore_Desktop_Tree * tree,
 	     legacy_data.menu = (char *)tree->elements[0].element;
 	     legacy_data.menu += 14;
 	     legacy_data.menu_length =
-		index(legacy_data.menu, '>') - legacy_data.menu;
+		strchr(legacy_data.menu, '>') - legacy_data.menu;
 	     legacy_data.menu[legacy_data.menu_length] = '\0';
 	     if (strncmp(string, "prefix=\"", 8) == 0)
 	       {

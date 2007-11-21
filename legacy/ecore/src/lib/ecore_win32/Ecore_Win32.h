@@ -42,24 +42,24 @@ typedef void Ecore_Win32_Glew_DC;
 
 typedef enum
 {
-   /** The window is iconified. */
+   /* The window is iconified. */
    ECORE_WIN32_WINDOW_STATE_ICONIFIED,
-   /** The window is a modal dialog box. */
+   /* The window is a modal dialog box. */
    ECORE_WIN32_WINDOW_STATE_MODAL,
-   /** The window manager should keep the window's position fixed
+   /* The window manager should keep the window's position fixed
     * even if the virtual desktop scrolls. */
    ECORE_WIN32_WINDOW_STATE_STICKY,
-   /** The window has the maximum vertical size. */
+   /* The window has the maximum vertical size. */
    ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT,
-   /** The window has the maximum horizontal size. */
+   /* The window has the maximum horizontal size. */
    ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ,
-   /** The window has the maximum horizontal and vertical size. */
+   /* The window has the maximum horizontal and vertical size. */
    ECORE_WIN32_WINDOW_STATE_MAXIMIZED,
-   /** The window is shaded. */
+   /* The window is shaded. */
    ECORE_WIN32_WINDOW_STATE_SHADED,
-   /** The window is invisible (i.e. minimized/iconified) */
+   /* The window is invisible (i.e. minimized/iconified) */
    ECORE_WIN32_WINDOW_STATE_HIDDEN,
-   /** The window should fill the entire screen and have no
+   /* The window should fill the entire screen and have no
     * window border/decorations */
    ECORE_WIN32_WINDOW_STATE_FULLSCREEN,
    /* The following are not documented because they are not
