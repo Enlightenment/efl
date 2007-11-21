@@ -183,7 +183,7 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
 
 /**
  * Set the client window for the Input Method Context; this is the
- * window returned by ecore_evas_window_get() in which the input appears.
+ * Evas canvas in which the input appears.
  * This window is used in order to correctly position status windows, and may
  * also be used for purposes internal to the Input Method Context.
  *
@@ -193,7 +193,7 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI void
-ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
+ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, Evas *evas)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
@@ -201,7 +201,7 @@ ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 			 "ecore_imf_context_client_window_set");
 	return;
      }
-   if (ctx->klass->client_window_set) ctx->klass->client_window_set(ctx, window);
+   if (ctx->klass->client_window_set) ctx->klass->client_window_set(ctx, evas);
 }
 
 /**

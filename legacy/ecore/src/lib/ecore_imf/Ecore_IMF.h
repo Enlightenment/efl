@@ -92,7 +92,7 @@ extern "C" {
      {
 	void (*add)                 (Ecore_IMF_Context *ctx);
 	void (*del)                 (Ecore_IMF_Context *ctx);
-	void (*client_window_set)   (Ecore_IMF_Context *ctx, void *window);
+	void (*client_window_set)   (Ecore_IMF_Context *ctx, Evas *evas);
 	void (*show)                (Ecore_IMF_Context *ctx);
 	void (*hide)                (Ecore_IMF_Context *ctx);
 	void (*preedit_string_get)  (Ecore_IMF_Context *ctx, char **str, int *cursor_pos);
@@ -121,7 +121,7 @@ extern "C" {
 
    EAPI Ecore_IMF_Context            *ecore_imf_context_add(const char *id);
    EAPI void                          ecore_imf_context_del(Ecore_IMF_Context *ctx);
-   EAPI void                          ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window);
+   EAPI void                          ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, Evas *evas);
    EAPI void                          ecore_imf_context_show(Ecore_IMF_Context *ctx);
    EAPI void                          ecore_imf_context_hide(Ecore_IMF_Context *ctx);
    EAPI void                          ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cursor_pos);
