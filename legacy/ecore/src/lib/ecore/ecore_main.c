@@ -521,7 +521,6 @@ _ecore_main_loop_iterate_internal(int once_only)
    int    have_signal;
    int    have_msg = 0;
 
-/*    printf ("_ecore_main_loop_iterate_internal\n"); */
    in_main_loop++;
    /* expire any timers */
      {
