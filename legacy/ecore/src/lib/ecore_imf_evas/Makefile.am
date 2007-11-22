@@ -2,6 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_ECORE_IMF_EVAS
 AM_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_imf \
 @EVAS_CFLAGS@
 
