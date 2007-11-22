@@ -157,13 +157,12 @@ _ecore_imf_module_load_all(void)
    const Ecore_IMF_Context_Info *info = NULL;
    int (*imf_module_init)(const Ecore_IMF_Context_Info **info);
    Ecore_IMF_Context *(*imf_module_create)(void);
-   Ecore_IMF_Module *module;
 
    avail = ecore_plugin_available_get(ecore_imf_modules_path);
    if (!avail) return;
 
    ecore_list_first_goto(avail);
-   while (filename = ecore_list_next(avail))
+   while ((filename = ecore_list_next(avail)))
      {
 	plugin = ecore_plugin_load(ecore_imf_modules_path, filename, NULL);
 	if (!plugin)
@@ -187,7 +186,7 @@ _ecore_imf_module_load_all(void)
 	  {
 	     fprintf(stderr, "** ecore_imf: Error loading input method plugin %s! "
 			     "Plugin with id='%s' already exists!",
-		     info->id);
+		     filename, info->id);
 	     ecore_plugin_unload(plugin);
 	     continue;
 	  }

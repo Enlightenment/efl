@@ -5,6 +5,9 @@
 #include "config.h"
 
 #include "Ecore_IMF.h"
+#include "ecore_imf_private.h"
+
+#include <Ecore.h>
 
 EAPI int ECORE_IMF_EVENT_PREEDIT_START = 0;
 EAPI int ECORE_IMF_EVENT_PREEDIT_END = 0;

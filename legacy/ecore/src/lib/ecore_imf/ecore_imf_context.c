@@ -10,6 +10,8 @@
 #include "Ecore_IMF.h"
 #include "ecore_imf_private.h"
 
+#include <Ecore.h>
+
 /**
  * @defgroup Ecore_IMF_Context_Group Ecore Input Method Context Functions
  *
@@ -598,7 +600,7 @@ EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
      {
 	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
 			 "ecore_imf_context_data_get");
-	return;
+	return NULL;
      }
    return ctx->data;
 }
