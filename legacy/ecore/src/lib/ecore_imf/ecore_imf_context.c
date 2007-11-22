@@ -78,7 +78,8 @@ ecore_imf_context_default_id_get(void)
    return ecore_imf_context_default_id_by_canvas_type_get(NULL);
 }
 
-EAPI const char *ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
+EAPI const char *
+ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
 {
    const char *id;
    Ecore_List *modules;
