@@ -1074,6 +1074,31 @@ st_collections_group_parts_part_source(void)
 }
 
 static void
+st_collections_group_parts_part_effect(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->effect = parse_enum(0, 
+               "NONE", EDJE_TEXT_EFFECT_NONE,
+               "PLAIN", EDJE_TEXT_EFFECT_PLAIN,
+               "OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
+               "SOFT_OUTLINE", EDJE_TEXT_EFFECT_SOFT_OUTLINE,
+               "SHADOW", EDJE_TEXT_EFFECT_SHADOW,
+               "SOFT_SHADOW", EDJE_TEXT_EFFECT_SOFT_SHADOW,
+               "OUTLINE_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SHADOW,
+               "OUTLINE_SOFT_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW,
+               "FAR_SHADOW", EDJE_TEXT_EFFECT_FAR_SHADOW,
+               "FAR_SOFT_SHADOW", EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW,
+               "GLOW", EDJE_TEXT_EFFECT_GLOW,
+               NULL);
+}
+
+static void
 st_collections_group_parts_part_dragable_x(void)
 {
    Edje_Part_Collection *pc;
@@ -1505,6 +1530,79 @@ st_collections_group_parts_part_description_aspect_preference(void)
 }
 
 static void
+st_collections_group_parts_part_description_color_class(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->color_class = parse_str(0);
+}
+
+static void
+st_collections_group_parts_part_description_color(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(4);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->color.r = parse_int_range(0, 0, 255);
+   ed->color.g = parse_int_range(1, 0, 255);
+   ed->color.b = parse_int_range(2, 0, 255);
+   ed->color.a = parse_int_range(3, 0, 255);
+}
+
+static void
+st_collections_group_parts_part_description_color2(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(4);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->color2.r = parse_int_range(0, 0, 255);
+   ed->color2.g = parse_int_range(1, 0, 255);
+   ed->color2.b = parse_int_range(2, 0, 255);
+   ed->color2.a = parse_int_range(3, 0, 255);
+}
+
+static void
+st_collections_group_parts_part_description_color3(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(4);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->color3.r = parse_int_range(0, 0, 255);
+   ed->color3.g = parse_int_range(1, 0, 255);
+   ed->color3.b = parse_int_range(2, 0, 255);
+   ed->color3.a = parse_int_range(3, 0, 255);
+}
+
+static void
 st_collections_group_parts_part_description_rel1_relative(void)
 {
    Edje_Part_Collection *pc;
@@ -1850,6 +1948,86 @@ st_collections_group_parts_part_description_fill_smooth(void)
 }
 
 static void
+st_collections_group_parts_part_description_fill_spread(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   /* XXX this will need to include IMAGES when spread support is added to evas images */
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.spread = parse_int_range(0, 0, 1);
+}
+
+static void
+st_collections_group_parts_part_description_fill_angle(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   /* XXX this will need to include IMAGES when angle support is added to evas images */
+   if (ep->type != EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"gradient attributes in non-GRADIENT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.angle = parse_int_range(0, 0, 360);
+}
+
+static void
+st_collections_group_parts_part_description_fill_type(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"fill attributes in non-IMAGE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed->fill.type = parse_enum(0,
+                              "SCALE", EDJE_FILL_TYPE_SCALE,
+                              "TILE", EDJE_FILL_TYPE_TILE,
+                              NULL);
+}
+
+static void
 st_collections_group_parts_part_description_fill_origin_relative(void)
 {
    Edje_Part_Collection *pc;
@@ -1951,79 +2129,6 @@ st_collections_group_parts_part_description_fill_size_offset(void)
 
    ed->fill.abs_x = parse_int(0);
    ed->fill.abs_y = parse_int(1);
-}
-
-static void
-st_collections_group_parts_part_description_color_class(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-   
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->color_class = parse_str(0);
-}
-
-static void
-st_collections_group_parts_part_description_color(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(4);
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->color.r = parse_int_range(0, 0, 255);
-   ed->color.g = parse_int_range(1, 0, 255);
-   ed->color.b = parse_int_range(2, 0, 255);
-   ed->color.a = parse_int_range(3, 0, 255);
-}
-
-static void
-st_collections_group_parts_part_description_color2(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(4);
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->color2.r = parse_int_range(0, 0, 255);
-   ed->color2.g = parse_int_range(1, 0, 255);
-   ed->color2.b = parse_int_range(2, 0, 255);
-   ed->color2.a = parse_int_range(3, 0, 255);
-}
-
-static void
-st_collections_group_parts_part_description_color3(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(4);
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->color3.r = parse_int_range(0, 0, 255);
-   ed->color3.g = parse_int_range(1, 0, 255);
-   ed->color3.b = parse_int_range(2, 0, 255);
-   ed->color3.a = parse_int_range(3, 0, 255);
 }
 
 static void
@@ -2165,31 +2270,6 @@ st_collections_group_parts_part_description_text_size(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.size = parse_int_range(0, 0, 255);
-}
-
-static void
-st_collections_group_parts_part_effect(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-
-   check_arg_count(1);
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ep->effect = parse_enum(0, 
-			   "NONE", EDJE_TEXT_EFFECT_NONE,
-			   "PLAIN", EDJE_TEXT_EFFECT_PLAIN,
-			   "OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
-			   "SOFT_OUTLINE", EDJE_TEXT_EFFECT_SOFT_OUTLINE,
-			   "SHADOW", EDJE_TEXT_EFFECT_SHADOW,
-			   "SOFT_SHADOW", EDJE_TEXT_EFFECT_SOFT_SHADOW,
-			   "OUTLINE_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SHADOW,
-			   "OUTLINE_SOFT_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW,
-			   "FAR_SHADOW", EDJE_TEXT_EFFECT_FAR_SHADOW,
-			   "FAR_SOFT_SHADOW", EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW,
-			   "GLOW", EDJE_TEXT_EFFECT_GLOW,
-			   NULL);
 }
 
 static void
@@ -2360,58 +2440,6 @@ st_collections_group_parts_part_description_text_text_source(void)
 	data_queue_part_lookup(pc, name, &(ed->text.id_text_source));
 	free(name);
      }
-}
-
-static void
-st_collections_group_parts_part_description_fill_angle(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-
-   /* XXX this will need to include IMAGES when angle support is added to evas images */
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->fill.angle = parse_int_range(0, 0, 360);
-}
-
-static void
-st_collections_group_parts_part_description_fill_spread(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-
-   /* XXX this will need to include IMAGES when spread support is added to evas images */
-   if (ep->type != EDJE_PART_TYPE_GRADIENT)
-     {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->fill.spread = parse_int_range(0, 0, 1);
 }
 
 static void
@@ -2697,34 +2725,6 @@ st_collections_group_programs_program_in(void)
    ep = evas_list_data(evas_list_last(pc->programs));
    ep->in.from = parse_float_range(0, 0.0, 999999999.0);
    ep->in.range = parse_float_range(1, 0.0, 999999999.0);
-}
-
-static void
-st_collections_group_parts_part_description_fill_type(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   check_arg_count(1);
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-
-   if (ep->type != EDJE_PART_TYPE_IMAGE)
-     {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed->fill.type = parse_enum(0,
-                              "SCALE", EDJE_FILL_TYPE_SCALE,
-                              "TILE", EDJE_FILL_TYPE_TILE,
-                              NULL);
 }
 
 static void

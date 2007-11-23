@@ -176,3 +176,14 @@ div.diag
  text-align: center;
  font-size: 8; 
 }
+table.edcref {
+ border-collapse: collapse;
+}
+table.edcref td {
+ border-style: hidden;
+ vertical-align:top;
+ padding: 0.5em;
+}
+td.property {
+    width: 5em;
+}
