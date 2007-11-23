@@ -63,6 +63,8 @@ static void efreet_desktop_generic_fields_save(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
 static void efreet_desktop_x_fields_parse(Ecore_Hash_Node *node,
                                             Efreet_Desktop *desktop);
+static void efreet_desktop_x_fields_save(Ecore_Hash_Node *node,
+                                            Efreet_Ini *ini);
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
 static char *efreet_string_append(char *dest, int *size,
                                     int *len, const char *src);
@@ -981,6 +983,10 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
     efreet_ini_boolean_set(ini, "NoDisplay", desktop->no_display);
     efreet_ini_boolean_set(ini, "Hidden", desktop->hidden);
+
+    if (desktop->x) ecore_hash_for_each_node(desktop->x,
+                                             ECORE_FOR_EACH(efreet_desktop_x_fields_save),
+                                             ini);
 }
 
 /**
@@ -988,7 +994,7 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
  * @param node: The node to work with
  * @param desktop: The desktop file to work with
  * @return Returns no value
- * @brief Parses out an X- deys from @a node and stores in @a desktop
+ * @brief Parses out an X- key from @a node and stores in @a desktop
  */
 static void
 efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
@@ -1005,6 +1011,19 @@ efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
     }
     ecore_hash_set(desktop->x, (void *)ecore_string_instance(node->key),
             (void *)ecore_string_instance(node->value));
+}
+
+/**
+ * @internal
+ * @param node: The node to work with
+ * @param ini: The ini file to work with
+ * @return Returns no value
+ * @brief Stores an X- key from @a node and stores in @a ini
+ */
+static void
+efreet_desktop_x_fields_save(Ecore_Hash_Node *node, Efreet_Ini *ini)
+{
+    efreet_ini_string_set(ini, node->key, node->value);
 }
 
 
