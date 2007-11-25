@@ -36,11 +36,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifdef WIN32
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#endif /* WIN32 */
+#ifdef _WIN32
+# include <fcntl.h>
+# include <io.h>
+# include <share.h>
+# include <sys/stat.h>
+#endif /* _WIN32 */
 
 #include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
@@ -291,7 +292,7 @@ sc_compile(int argc, char *argv[])
    void               *inpfmark;
    char                lcl_ctrlchar;
    int                 lcl_packstr, lcl_needsemicolon, lcl_tabsize;
-   char *tmpdir;
+   char               *tmpdir;
 
    /* set global variables to their initial value */
    binf = NULL;
@@ -316,20 +317,31 @@ sc_compile(int argc, char *argv[])
    setopt(argc, argv, inpfname, binfname, incfname, reportname);
 
    /* open the output file */
+
+#ifndef _WIN32
    tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
 
    snprintf(outfname, _MAX_PATH, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
-#ifndef WIN32
    fd_out = mkstemp(outfname);
 #else
-   if (mktemp (outfname))
-     do
-       fd_out = open (outfname, O_CREAT | O_EXCL, S_IREAD | S_IWRITE);
-     while (!(fd_out == -1 && errno == EEXIST) && mktemp (outfname));
-   else
-     fd_out = -1;
-#endif /* WIN32 */
+   tmpdir = getenv("TMP");
+   if (!tmpdir) tmpdir = getenv("TEMP");
+   if (!tmpdir) tmpdir = getenv("USERPROFILE");
+   if (!tmpdir) tmpdir = getenv("WINDIR");
+   if (!tmpdir) error(101, "embryo_cc.asm-tmp-XXXXXX (unable to get a valid temp path)");
+
+   snprintf(outfname, _MAX_PATH, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
+# ifdef __MINGW32__
+   if (!mktemp(outfname))
+     error(101, outfname);
+   fd_out = _sopen(outfname, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+# else
+   if (_mktemp_s(outfname, _MAX_PATH))
+     error(101, outfname);
+   _sopen_s(&fd_out, outfname, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+# endif /* __MINGW32__ */
+#endif /* _WIN32 */
    if (fd_out < 0)
      error(101, outfname);
 
