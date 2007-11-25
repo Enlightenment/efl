@@ -3,7 +3,8 @@
  */
 
 #ifdef _WIN32
-# include <windows.h>
+# include <share.h>
+# include <sys/stat.h>
 #endif /* _WIN32 */
 
 
@@ -590,24 +591,32 @@ data_write(void)
 	cd = l->data;
 	if ((cd->shared) || (cd->programs))
 	  {
+	     char tmpn[4096];
 	     int fd;
 #ifdef _WIN32
-	     int ret;
-	     char path[4096];
+	     char *tmpdir;
 #endif /* _WIN32 */
-	     char tmpn[4096];
 
 #ifdef _WIN32
-	     ret = GetTempPath(_MAX_PATH, path);
-	     if ((ret > _MAX_PATH) || (ret == 0))
-               fd = -1;
-             else
+	     tmpdir = getenv("TMP");
+	     if (!tmpdir) tmpdir = getenv("TEMP");
+	     if (!tmpdir) tmpdir = getenv("USERPROFILE");
+	     if (!tmpdir) tmpdir = getenv("WINDIR");
+	     if (tmpdir)
                {
-                  if (!GetTempFileName(path, "edj", 0, tmpn))
-                    fd = -1;
+                  snprintf(tmpn, _MAX_PATH, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
+# ifdef __MINGW32__
+                  if (_mktemp(tmpn))
+                    fd = _sopen(tmpn, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+# else
+                  if (!_mktemp_s(tmpn, _MAX_PATH))
+                    _sopen_s(&fd, tmpn, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+# endif /* __MINGW32__ */
                   else
-                    fd = open(tmpn, _O_RDWR | _O_BINARY | _O_CREAT, 0444);
+                    fd = -1;
                }
+             else
+               fd= -1;
 #else
 	     strcpy(tmpn, "/tmp/edje_cc.sma-tmp-XXXXXX");
 	     fd = mkstemp(tmpn);
@@ -693,16 +702,25 @@ data_write(void)
 		    }
 		  close(fd);
 #ifdef _WIN32
-                  ret = GetTempPath(_MAX_PATH, path);
-                  if ((ret > _MAX_PATH) || (ret == 0))
-                    fd = -1;
-                  else
+                  tmpdir = getenv("TMP");
+                  if (!tmpdir) tmpdir = getenv("TEMP");
+                  if (!tmpdir) tmpdir = getenv("USERPROFILE");
+                  if (!tmpdir) tmpdir = getenv("WINDIR");
+                  if (tmpdir)
                     {
-                       if (!GetTempFileName(path, "edj", 0, tmpo))
-                         fd = -1;
+                       snprintf(tmpo, _MAX_PATH, "%s/edje_cc.amx-tmp-XXXXXX", tmpdir);
+# ifdef __MINGW32__
+                       if (_mktemp(tmpo))
+                         fd = _sopen(tmpo, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+# else
+                       if (!_mktemp_s(tmpo, _MAX_PATH))
+                         _sopen_s(&fd, tmpo, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+# endif /* __MINGW32__ */
                        else
-                         fd = open(tmpo, _O_RDWR | _O_BINARY | _O_CREAT, 0444);
+                         fd = -1;
                     }
+                  else
+                    fd= -1;
 #else
 		  strcpy(tmpo, "/tmp/edje_cc.amx-tmp-XXXXXX");
 		  fd = mkstemp(tmpo);

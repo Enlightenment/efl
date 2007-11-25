@@ -163,10 +163,10 @@ source_fetch_file(const char *fil, const char *filname)
 				      *slash = '\0';
 				      dir_len = strlen(dir);
 				   }
-				 
+
 				 l = pp - p + dir_len + 1;
 				 file = mem_alloc(l);
-				 
+
 				 if (!dir_len)
 				   snprintf(file, l - 1, "%s", p + 1);
 				 else
@@ -174,7 +174,7 @@ source_fetch_file(const char *fil, const char *filname)
 
 				 fname = strdup(p + 1);
 				 pp = strrchr(fname, end);
-				 if (pp) *pp = 0;
+				 if (pp) *pp = '\0';
 				 forgetit = 1;
 			      }
 			 }
