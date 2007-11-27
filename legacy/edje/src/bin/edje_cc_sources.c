@@ -168,13 +168,20 @@ source_fetch_file(const char *fil, const char *filname)
 				 file = mem_alloc(l);
 
 				 if (!dir_len)
-				   snprintf(file, l - 1, "%s", p + 1);
+				   {
+				      snprintf(file, l - 1, "%s", p + 1);
+				      file[l - 2] = 0;
+				   }
 				 else
-				   snprintf(file, l, "%s/%s", dir, p + 1);
-
+				   {
+				      snprintf(file, l, "%s/%s", dir, p + 1);
+				      file[l - 1] = 0;
+				   }
+				 
+				 
 				 fname = strdup(p + 1);
 				 pp = strrchr(fname, end);
-				 if (pp) *pp = '\0';
+				 if (pp) *pp = 0;
 				 forgetit = 1;
 			      }
 			 }
