@@ -40,9 +40,9 @@
  * There are two main objects in the @c Ecore_Con library: the @c
  * Ecore_Con_Server and the @c Ecore_Con_Client.
  *
- * The @c Ecore_Con_Server represents a server to connect to.  It is
- * represents a server that can be connected to.  It is used regardless
- * of whether the program is acting as a server or client itself.
+ * The @c Ecore_Con_Server represents a server that can be connected to.  
+ * It is used regardless of whether the program is acting as a server or 
+ * client itself.
  *
  * To create a listening server, call @c ecore_con_server_add().
  *
