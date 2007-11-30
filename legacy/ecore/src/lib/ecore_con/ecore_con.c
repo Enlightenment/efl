@@ -147,9 +147,7 @@ ecore_con_shutdown(void)
  * @ingroup Ecore_Con_Server_Group
  */
 EAPI Ecore_Con_Server *
-ecore_con_server_add(Ecore_Con_Type compl_type,
-		     const char *name,
-		     int port,
+ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 		     const void *data)
 {
    Ecore_Con_Server   *svr;
@@ -172,8 +170,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    type &= ~ECORE_CON_USE_SSL;
 #endif
 
-   if ((type == ECORE_CON_LOCAL_USER) ||
-       (type == ECORE_CON_LOCAL_SYSTEM) ||
+   if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      {
 	const char *homedir;
@@ -182,9 +179,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	int socket_unix_len;
 
 	if (!name) goto error;
-	mask =
-	  S_IRGRP | S_IWGRP | S_IXGRP |
-	  S_IROTH | S_IWOTH | S_IXOTH;
+	mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
 
 	if (type == ECORE_CON_LOCAL_USER)
 	  {
@@ -197,9 +192,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	     snprintf(buf, sizeof(buf), "%s/.ecore/%s", homedir, name);
 	     if (stat(buf, &st) < 0) mkdir(buf, mask);
 	     snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, name, port);
-	     mask =
-	       S_IRGRP | S_IWGRP | S_IXGRP |
-	       S_IROTH | S_IWOTH | S_IXOTH;
+	     mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
 	  }
 	else if (type == ECORE_CON_LOCAL_SYSTEM)
 	  {
@@ -210,9 +203,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
 	  }
 	else if (type == ECORE_CON_LOCAL_ABSTRACT)
-	  {
-	     strncpy(buf, name, sizeof(buf));
-	  }
+	  strncpy(buf, name, sizeof(buf));
 	pmode = umask(mask);
 	start:
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -263,7 +254,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	     if (connect(svr->fd, (struct sockaddr *)&socket_unix,
 			 socket_unix_len) < 0)
 	       {
-		  if ((type == ECORE_CON_LOCAL_USER) ||
+		  if ((type == ECORE_CON_LOCAL_USER) || 
 		      (type == ECORE_CON_LOCAL_SYSTEM))
 		    {
 		       if (unlink(buf) < 0)
@@ -297,10 +288,9 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	     umask(pmode);
 	     goto error;
 	  }
-	svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-						    ECORE_FD_READ,
-						    _ecore_con_svr_handler, svr,
-						    NULL, NULL);
+	svr->fd_handler = 
+	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+				    _ecore_con_svr_handler, svr, NULL, NULL);
 	umask(pmode);
 	if (!svr->fd_handler) goto error;
      }
@@ -318,10 +308,9 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 	socket_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	if (bind(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0) goto error;
 	if (listen(svr->fd, 4096) < 0) goto error;
-	svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-						    ECORE_FD_READ,
-						    _ecore_con_svr_handler, svr,
-						    NULL, NULL);
+	svr->fd_handler = 
+	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+				    _ecore_con_svr_handler, svr, NULL, NULL);
 	if (!svr->fd_handler) goto error;
      }
 
@@ -403,9 +392,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
  * @ingroup Ecore_Con_Server_Group
  */
 EAPI Ecore_Con_Server *
-ecore_con_server_connect(Ecore_Con_Type compl_type,
-			 const char *name,
-			 int port,
+ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 			 const void *data)
 {
    Ecore_Con_Server   *svr;
@@ -428,8 +415,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 #endif
    if ((type == ECORE_CON_REMOTE_SYSTEM) && (port < 0)) return NULL;
 
-   if ((type == ECORE_CON_LOCAL_USER) ||
-       (type == ECORE_CON_LOCAL_SYSTEM) ||
+   if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      {
 	const char *homedir;
@@ -460,9 +446,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	       }
 	  }
 	else if (type == ECORE_CON_LOCAL_ABSTRACT)
-	  {
-	     strncpy(buf, name, sizeof(buf));
-	  }
+	  strncpy(buf, name, sizeof(buf));
 
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (svr->fd < 0) goto error;
@@ -492,10 +476,9 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	if (connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) goto error;
 	svr->path = strdup(buf);
 	if (!svr->path) goto error;
-	svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-						    ECORE_FD_READ,
-						    _ecore_con_cl_handler, svr,
-						    NULL, NULL);
+	svr->fd_handler = 
+	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+				    _ecore_con_cl_handler, svr, NULL, NULL);
 	if (!svr->fd_handler) goto error;
 
 	if (!svr->delete_me)
@@ -560,8 +543,7 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_del");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_del");
 	return NULL;
      }
    data = svr->data;
@@ -594,8 +576,7 @@ ecore_con_server_data_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_data_get");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_data_get");
 	return NULL;
      }
    return svr->data;
@@ -613,8 +594,7 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_connected_get");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_connected_get");
 	return 0;
      }
    if (svr->connecting) return 0;
@@ -632,8 +612,7 @@ ecore_con_server_clients_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_clients_get");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_clients_get");
 	return NULL;
      }
    return svr->clients;
@@ -653,8 +632,7 @@ ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_send");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_send");
 	return 0;
      }
    if (svr->dead) return 0;
@@ -709,8 +687,7 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char 
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_client_limit_set");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_client_limit_set");
 	return;
      }
    svr->client_limit = client_limit;
@@ -732,8 +709,7 @@ ecore_con_server_ip_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_ip_get");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_ip_get");
 	return NULL;
      }
    return svr->ip;
@@ -750,8 +726,7 @@ ecore_con_server_flush(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_flush");
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_flush");
 	return;
      }
    _ecore_con_server_flush(svr);
@@ -777,8 +752,7 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
-			 "ecore_con_client_send");
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_send");
 	return 0;
      }
    if (cl->dead) return 0;
@@ -818,8 +792,7 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
-			 "ecore_con_client_server_get");
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_server_get");
 	return NULL;
      }
    return cl->server;
@@ -838,8 +811,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
-			 "ecore_con_client_del");
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_del");
 	return NULL;
      }
    data = cl->data;
@@ -873,8 +845,7 @@ ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
-			 "ecore_con_client_data_set");
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_data_set");
 	return;
      }
    cl->data = (void *)data;
@@ -891,8 +862,7 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
-			 "ecore_con_client_data_get");
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_data_get");
 	return NULL;
      }
    return cl->data;
@@ -913,8 +883,7 @@ ecore_con_client_ip_get(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
-			 "ecore_con_client_ip_get");
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_ip_get");
 	return NULL;
      }
    return cl->ip;
@@ -931,8 +900,7 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
-			 "ecore_con_client_flush");
+	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_flush");
 	return;
      }
    _ecore_con_client_flush(cl);
@@ -977,7 +945,8 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    while (!ecore_list_empty_is(svr->clients))
      _ecore_con_client_free(ecore_list_first_remove(svr->clients));
    ecore_list_destroy(svr->clients);
-   if ((svr->created) && (svr->path) && (svr->ppid == getpid())) unlink(svr->path);
+   if ((svr->created) && (svr->path) && (svr->ppid == getpid())) 
+     unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
 #if USE_OPENSSL
    if (svr->ssl)
@@ -1061,10 +1030,9 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	fcntl(new_fd, F_SETFD, FD_CLOEXEC);
 	cl->fd = new_fd;
 	cl->server = svr;
-	cl->fd_handler = ecore_main_fd_handler_add(cl->fd,
-						   ECORE_FD_READ,
-						   _ecore_con_svr_cl_handler,
-						   cl, NULL, NULL);
+	cl->fd_handler = 
+	  ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
+				    _ecore_con_svr_cl_handler, cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	ecore_list_append(svr->clients, cl);
 	if (!svr->path)
@@ -1166,7 +1134,8 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
    if (svr->fd < 0) goto error;
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) 
+     goto error;
    socket_addr.sin_family = AF_INET;
    socket_addr.sin_port = htons(svr->port);
    memcpy((struct in_addr *)&socket_addr.sin_addr,
@@ -1176,16 +1145,14 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
 	if (errno != EINPROGRESS)
 	  goto error;
 	svr->connecting = 1;
-	svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-						    ECORE_FD_READ | ECORE_FD_WRITE,
-						    _ecore_con_cl_handler, svr,
-						    NULL, NULL);
+	svr->fd_handler = 
+	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ | ECORE_FD_WRITE,
+				    _ecore_con_cl_handler, svr, NULL, NULL);
      }
    else
-     svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-						 ECORE_FD_READ,
-						 _ecore_con_cl_handler, svr,
-						 NULL, NULL);
+     svr->fd_handler = 
+     ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+			       _ecore_con_cl_handler, svr, NULL, NULL);
 
    if (!svr->fd_handler) goto error;
    ip = socket_addr.sin_addr.s_addr;
@@ -1269,21 +1236,21 @@ static int svr_try_connect(Ecore_Con_Server *svr)
 {
 #if USE_OPENSSL
    if (!svr->ssl)
-   {
+     {
 #endif
-      return svr_try_connect_plain(svr);
+	return svr_try_connect_plain(svr);
 #if USE_OPENSSL
-   }
+     }
    else
-      switch (svr_try_connect_ssl(svr)) {
-	 case 1:
-	    return svr_try_connect_plain(svr);
-	 case -1:
-	    kill_server(svr);
-	    return 0;
-	 default:
-	    return 0;
-      }
+     switch (svr_try_connect_ssl(svr)) {
+      case 1:
+	return svr_try_connect_plain(svr);
+      case -1:
+	kill_server(svr);
+	return 0;
+      default:
+	return 0;
+     }
 #endif
 }
 
@@ -1395,7 +1362,6 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
      {
 	if (svr->connecting && !svr_try_connect (svr))
 	   return 1;
-
 	_ecore_con_server_flush(svr);
      }
 
@@ -1507,8 +1473,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 	count = write(svr->fd, svr->write_buf + svr->write_buf_offset, num);
 	if (count < 1)
 	  lost_server = (errno == EIO || errno == EBADF ||
-			 errno == EPIPE || errno == EINVAL ||
-			 errno == ENOSPC);
+			 errno == EPIPE || errno == EINVAL || errno == ENOSPC);
 #if USE_OPENSSL
      }
    else
