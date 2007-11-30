@@ -2025,6 +2025,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 #endif /* BUILD_ECORE_EVAS_X11_16 */
      }
 }
+#endif
 
 static void *
 _ecore_evas_x_window_get(Ecore_Evas *ee)
@@ -2036,6 +2037,7 @@ _ecore_evas_x_window_get(Ecore_Evas *ee)
 #endif
 }
 
+#ifdef BUILD_ECORE_EVAS_X11
 static void
 _ecore_evas_x_show(Ecore_Evas *ee)
 {
