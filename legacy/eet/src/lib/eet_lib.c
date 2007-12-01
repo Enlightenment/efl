@@ -497,7 +497,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	else
 	  return NULL;
      }
-   else if (file_stat.st_size == 0)
+   else if ((mode == EET_FILE_MODE_READ) && (file_stat.st_size == 0))
      {
 	return NULL;
      }
