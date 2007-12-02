@@ -94,7 +94,7 @@ evas_common_load_image_data_from_file(RGBA_Image *im)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
 
-   if ((im->flags & RGBA_IMAGE_LOADED) == RGBA_IMAGE_LOADED) return ;
+   if ((im->flags & RGBA_IMAGE_LOADED) == RGBA_IMAGE_LOADED) return;
    if (!im->info.module) return;
 
    evas_image_load_func = im->info.loader;
