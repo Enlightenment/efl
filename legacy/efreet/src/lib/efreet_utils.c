@@ -449,7 +449,6 @@ EAPI Ecore_List *
 efreet_util_desktop_category_list(const char *category)
 {
     return ecore_hash_get(desktops_by_category, category);
-
 }
 
 #if 0
