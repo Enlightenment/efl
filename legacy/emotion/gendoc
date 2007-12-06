@@ -9,6 +9,7 @@ done
 rm -rf ./doc/html ./doc/latex ./doc/man
 doxygen
 cp doc/img/*.png doc/html/
+cp doc/img/*.gif doc/html/
 rm -f emotion_docs.tar emotion_docs.tar.gz
 tar -cvf emotion_docs.tar doc/html doc/man doc/latex
 gzip -9 emotion_docs.tar
