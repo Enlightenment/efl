@@ -8,6 +8,7 @@ rm -rf ./doc/html ./doc/latex ./doc/man
 mkdir -p ./doc/html ./doc/latex ./doc/man
 doxygen
 cp doc/img/*.png doc/html/
+cp doc/img/*.gif doc/html/
 rm -f edje_docs.tar edje_docs.tar.gz
 tar -cvf edje_docs.tar doc/html doc/man doc/latex
 gzip -9 edje_docs.tar
