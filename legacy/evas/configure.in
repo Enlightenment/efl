@@ -54,6 +54,16 @@ qt_cflags=""
 qt_libs=""
 qt_moc="moc"
 
+dnl when used, that option makes configure script fails when
+dnl a requirement is selected, but not met.
+AC_ARG_ENABLE(strict,
+  AC_HELP_STRING(
+    [enable strict mode]),
+  [use_strict="yes"],
+  [use_strict="no"]
+)
+
+
 #####################################################################
 
 # blah-config style checks
@@ -73,7 +83,7 @@ PKG_CHECK_MODULES(FREETYPE, freetype2 >= 9.3.0)
 #######################################
 ## FontConfig
 
-want_fontconfig="yes"
+want_fontconfig="auto"
 have_fontconfig="no"
 AC_ARG_ENABLE(fontconfig,
   AC_HELP_STRING(
@@ -83,14 +93,18 @@ AC_ARG_ENABLE(fontconfig,
   [ want_fontconfig=$enableval ]
 )
 
-if test "x$want_fontconfig" = "xyes"; then
+if test "x$want_fontconfig" = "xyes" -o "x$want_fontconfig" = "xauto" ; then
   # Check if really available
-  PKG_CHECK_MODULES(FONTCONFIG, fontconfig, [
-    have_fontconfig="yes"
-    AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
-  ], [
-    have_fontconfig="no"
-  ])
+  PKG_CHECK_MODULES(FONTCONFIG, fontconfig,
+    [
+      have_fontconfig="yes"
+      AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
+    ],
+    [
+      if test "x$want_fontconfig" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Fontconfig not found (strict dependencies checking)])
+      fi
+    ])
 fi
 
 ###############
@@ -140,7 +154,7 @@ AC_SUBST(fnmatch_libs)
 
 #######################################
 ## Check if we should build the software_ddraw engine
-want_evas_software_ddraw="no";
+want_evas_software_ddraw="auto";
 have_evas_software_ddraw="no";
 
 AC_MSG_CHECKING(whether software directdraw backend is to be built)
@@ -150,12 +164,17 @@ AC_ARG_ENABLE(software-ddraw,
 )
 AC_MSG_RESULT($want_evas_software_ddraw)
 
-if test "x$want_evas_software_ddraw" = "xyes"; then
+if test "x$want_evas_software_ddraw" = "xyes" -o "x$want_evas_software_ddraw" = "xauto" ; then
   AC_CHECK_HEADER(ddraw.h,
     [
       have_evas_software_ddraw="yes"
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_DDRAW, 1, [Software DirectDraw Rendering Backend])
       ddraw_libs="-lddraw"
+    ],
+    [
+      if test "x$want_evas_software_ddraw"  = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([DirectDraw not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -165,7 +184,7 @@ AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_DDRAW, test "x$have_evas_software_ddraw" = 
 
 #######################################
 ## Check if we should build the 16bit software_ddraw engine
-want_evas_software_16_ddraw="no";
+want_evas_software_16_ddraw="auto";
 have_evas_software_16_ddraw="no";
 
 AC_MSG_CHECKING(whether 16 bit software directdraw backend is to be built)
@@ -175,12 +194,17 @@ AC_ARG_ENABLE(software-16-ddraw,
 )
 AC_MSG_RESULT($want_evas_software_16_ddraw)
 
-if test "x$want_evas_software_16_ddraw" = "xyes"; then
+if test "x$want_evas_software_16_ddraw" = "xyes" -o "x$want_evas_software_16_ddraw" = "xauto"; then
   AC_CHECK_HEADER(ddraw.h,
     [
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_16_DDRAW, 1, [16bit Software DirectDraw Rendering Backend])
       ddraw_16_libs="-lddraw -lgdi32"
       have_evas_software_16_ddraw="yes"
+    ],
+    [
+      if test "x$want_evas_software_16_ddraw"  = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([DirectDraw not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -191,7 +215,7 @@ AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16_DDRAW, test "x$have_evas_software_16_ddr
 
 #######################################
 ## Check if we should build the direct3d engine
-want_evas_direct3d="no";
+want_evas_direct3d="auto";
 have_evas_direct3d="no";
 
 AC_MSG_CHECKING(whether direct3d backend is to be built)
@@ -207,6 +231,11 @@ if test "x$want_evas_direct3d" = "xyes"; then
       AC_DEFINE(BUILD_ENGINE_DIRECT3D, 1, [Direct3D Rendering Backend])
       direct3d_libs="-ld3d9 -ld3dx9d"
       have_evas_direct3d="yes"
+    ],
+    [
+      if test "x$want_evas_direct3d"  = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Direct3D not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -217,7 +246,7 @@ AM_CONDITIONAL(BUILD_ENGINE_DIRECT3D, test "x$have_evas_direct3d" = "xyes")
 
 #######################################
 ## Check if we should build the software_x11 engine
-want_evas_software_x11="yes";
+want_evas_software_x11="auto";
 have_evas_software_x11="no";
 
 AC_MSG_CHECKING(whether software x11 backend is to be built)
@@ -227,7 +256,7 @@ AC_ARG_ENABLE(software-x11,
 )
 AC_MSG_RESULT($want_evas_software_x11)
 
-if test "x$want_evas_software_x11" = "xyes"; then
+if test "x$want_evas_software_x11" = "xyes" -o "x$want_evas_software_x11" = "xauto"; then
   AC_PATH_X
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
@@ -239,7 +268,9 @@ if test "x$want_evas_software_x11" = "xyes"; then
       have_evas_software_x11="yes"
     ],
     [
-      have_evas_software_x11="no"
+      if test "x$want_evas_software_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([X11 not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -269,7 +300,9 @@ if test "x$want_evas_software_16_x11" = "xyes"; then
       have_evas_software_16_x11="yes"
     ],
     [
-      have_evas_software_16_x11="no"
+      if test "x$want_evas_sofware_16_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([X11 not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -302,8 +335,11 @@ if test "x$want_evas_software_xcb" = "xyes"; then
     [
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
       have_evas_software_xcb="yes"
-    ], [
-      have_evas_software_xcb="no"
+    ],
+    [
+      if test "x$want_evas_software_xcb" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([XCB not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -326,8 +362,11 @@ if test "x$want_evas_directfb" = "xyes"; then
     [
       AC_DEFINE(BUILD_ENGINE_DIRECTFB, 1, [DirectFB Rendering Backend])
       have_evas_directfb="yes"
-    ], [
-      have_evas_directfb="no"
+    ],
+    [
+      if test "x$want_evas_directfb" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([DirectFB not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -353,7 +392,11 @@ if test "x$want_evas_sdl" = "xyes"; then
       ENGINE_SDL_PRG="evas_sdl_test"
       AC_DEFINE(BUILD_ENGINE_SDL, 1, [SDL Rendering Backend])
     ],
-    [ have_evas_sdl="no" ]
+    [
+      if test "x$want_evas_sdl" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Sdl not found (strict dependencies checking)])
+      fi
+    ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_SDL, test "x$have_evas_sdl" = "xyes")
@@ -376,7 +419,11 @@ if test "x$want_evas_fb" = "xyes"; then
       AC_DEFINE(BUILD_ENGINE_FB, 1, [Linux FB Rendering Backend])
       have_evas_fb="yes"
     ],
-    [ have_evas_fb="no" ]
+    [
+      if test "x$want_evas_fb" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([FB not found (strict dependencies checking)])
+      fi
+    ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_FB, test "x$have_evas_fb" = "xyes")
@@ -420,8 +467,11 @@ if test "x$want_evas_qtopia" = "xyes"; then
       qt_libs="-L"$qt_dir"/lib -lqte -lqpe"
       qt_moc=$qt_dir"/bin/moc"
       have_evas_qtopia="yes"
-    ], [
-      have_evas_qtopia="no"
+    ],
+    [
+      if test "x$want_evas_qtopia" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Qtopia not found (strict dependencies checking)])
+      fi
     ],
     [
       #include <qwidget.h>
@@ -460,14 +510,18 @@ if test "x$want_evas_gl_x11" = "xyes"; then
       gl_dir=""
       have_evas_gl_x11="yes"
     ],
-    [ have_evas_gl_x11="no" ]
+    [
+      if test "x$want_evas_gl_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([OpenGL X11 not found (strict dependencies checking)])
+      fi
+    ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_GL_X11, test "x$have_evas_gl_x11" = "xyes")
 
 #######################################
 ## Check if we should build the gl_glew engine
-want_evas_gl_glew="no";
+want_evas_gl_glew="auto";
 have_evas_gl_glew="no";
 
 AC_MSG_CHECKING(whether gl glew backend is to be built)
@@ -477,13 +531,18 @@ AC_ARG_ENABLE(gl-glew,
 )
 AC_MSG_RESULT($want_evas_gl_glew)
 
-if test "x$want_evas_gl_glew" = "xyes" ; then
+if test "x$want_evas_gl_glew" = "xyes" -o "x$want_evas_gl_glew" = "xauto"; then
   AC_CHECK_HEADERS(GL/gl.h GL/glu.h GL/glew.h,
     [
-      have_evas_gl_glew="yes"
       AC_DEFINE(BUILD_ENGINE_GL_GLEW, 1, [OpenGL Glew Rendering Backend])
       glew_libs="-lglew32 -lopengl32 -lgdi32"
       gl_libs="-lglu32"
+      have_evas_gl_glew="yes"
+    ],
+    [
+      if test "x$want_evas_gl_glew" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([OpenGL Glew not found (strict dependencies checking)])
+      fi
     ]
   )
 fi
@@ -541,7 +600,7 @@ AM_CONDITIONAL(BUILD_ENGINE_CAIRO_COMMON, test "x$have_evas_cairo_common" = "xye
 
 #######################################
 ## Check if we should build the xrender_x11 engine
-want_evas_xrender_x11="yes";
+want_evas_xrender_x11="auto";
 have_evas_xrender_x11="no";
 
 AC_MSG_CHECKING(whether xrender x11 backend is to be built)
@@ -551,7 +610,7 @@ AC_ARG_ENABLE(xrender-x11,
 )
 AC_MSG_RESULT($want_evas_xrender_x11)
 
-if test "x$want_evas_xrender_x11" = "xyes"; then
+if test "x$want_evas_xrender_x11" = "xyes" -o "x$want_evas_xrender_x11" = "xauto"; then
   AC_PATH_X
   AC_PATH_XTRA
   AC_CHECK_HEADERS(X11/X.h X11/extensions/Xrender.h,
@@ -562,7 +621,11 @@ if test "x$want_evas_xrender_x11" = "xyes"; then
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
       have_evas_xrender_x11="yes"
     ],
-    [ have_evas_xrender_x11="no" ]
+    [
+      if test "x$want_evas_xrender_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([XRender X11 not found (strict dependencies checking)])
+      fi
+    ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, test "x$have_evas_xrender_x11" = "xyes")
@@ -587,7 +650,11 @@ if test "x$want_evas_xrender_xcb" = "xyes"; then
       AC_DEFINE(BUILD_ENGINE_XRENDER_XCB, 1, [Xrender XCB Rendering Backend])
       have_evas_xrender_xcb="yes"
     ],
-    [ have_evas_xrender_xcb="no"]
+    [
+      if test "x$want_evas_xrender_xcb" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([XRender XCB not found (strict dependencies checking)])
+      fi
+    ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_XRENDER_XCB, test "x$have_evas_xrender_xcb" = "xyes")
@@ -617,10 +684,18 @@ if test "x$want_evas_glitz_x11" = "xyes"; then
           AC_DEFINE(BUILD_ENGINE_GLITZ_X11, 1, [Glitz X11 Rendering Backend])
           have_evas_glitz_x11="yes"
         ],
-        [ have_evas_glitz_x11="no" ]
+        [
+          if test "x$want_evas_glitz_gl_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
+            AC_MSG_ERROR([Glitz X11 not found (strict dependencies checking)])
+          fi
+        ]
       )
     ],
-    [ have_evas_glitz_x11="no" ]
+    [
+      if test "x$want_evas_glitz_gl_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Glitz X11 not found (strict dependencies checking)])
+      fi
+    ]
   )
 fi
 AM_CONDITIONAL(BUILD_ENGINE_GLITZ_X11, test "x$have_evas_glitz_x11" = "xyes")
@@ -630,7 +705,7 @@ AM_CONDITIONAL(BUILD_ENGINE_GLITZ_X11, test "x$have_evas_glitz_x11" = "xyes")
 
 #######################################
 ## GIF
-want_gif="yes";
+want_gif="auto";
 have_gif="no";
 
 AC_MSG_CHECKING(whether to enable gif image loader)
@@ -640,7 +715,7 @@ AC_ARG_ENABLE(image-loader-gif,
 )
 AC_MSG_RESULT($want_gif)
 
-if test "x$want_gif" = "xyes"; then
+if test "x$want_gif" = "xyes" -o "x$want_gif" = "xauto"; then
   AC_CHECK_HEADER(gif_lib.h,
     [
       AC_CHECK_LIB(gif, DGifOpenFileName,
@@ -662,24 +737,31 @@ if test "x$want_gif" = "xyes"; then
     [ have_gif="no" ]
   )
 fi
+
 if test "x$have_gif" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_GIF, 1, [GIF Image Loader Support])
   gif_cflags=""
+else
+  if test "x$want_gif" = "xyes" -a "x$use_strict" = "xyes" ; then
+    AC_MSG_ERROR([GIF not found (strict dependencies checking)])
+  fi
 fi
-AM_CONDITIONAL(BUILD_LOADER_GIF, test x$have_gif = xyes)
+
+AM_CONDITIONAL(BUILD_LOADER_GIF, test "x$have_gif" = "xyes")
 
 #######################################
 ## PNG
-want_png="yes";
+want_png="auto";
 have_png="no";
 
+AC_MSG_CHECKING(whether to enable png image loader)
 AC_ARG_ENABLE(image-loader-png,
   AC_HELP_STRING([--disable-image-loader-png], [disable PNG image loader]),
   [ want_png=$enableval ]
 )
 AC_MSG_RESULT($want_png)
 
-if test "x$want_png" = "xyes"; then
+if test "x$want_png" = "xyes" -o "x$want_png" = "xauto"; then
   PKG_CHECK_EXISTS(libpng12,
     [ PKG_CHECK_MODULES(PNG, libpng12, [ have_png="yes" ], [ have_png="no"]) ],
     [
@@ -690,11 +772,16 @@ if test "x$want_png" = "xyes"; then
     ]
   )
 fi
-AM_CONDITIONAL(BUILD_LOADER_PNG, test x$have_png = xyes)
+
+if test "x$want_png" = "xyes" -a ! "x$have_png" = "xyes" -a "x$use_strict" = "xyes" ; then
+  AC_MSG_ERROR([PNG not found (strict dependencies checking)])
+fi
+
+AM_CONDITIONAL(BUILD_LOADER_PNG, test "x$have_png" = "xyes")
 
 #######################################
 ## JPEG
-want_jpeg="yes";
+want_jpeg="auto";
 have_jpeg="no";
 
 AC_MSG_CHECKING(whether to enable jpeg image loader)
@@ -703,7 +790,8 @@ AC_ARG_ENABLE(image-loader-jpeg,
   [ want_jpeg=$enableval ]
 )
 AC_MSG_RESULT($want_jpeg)
-if test "x$want_jpeg" = "xyes"; then
+
+if test "x$want_jpeg" = "xyes" -o "x$want_jpeg" = "xauto"; then
   AC_CHECK_HEADER(jpeglib.h,
     [
       AC_DEFINE(BUILD_LOADER_JPEG, 1, [JPEG Image Loader Support])
@@ -712,7 +800,11 @@ if test "x$want_jpeg" = "xyes"; then
       have_jpeg="yes"
       have_jpeg_saver="yes"
     ],
-    [ have_jpeg="no" ]
+    [
+      if test "x$want_jpeg" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR(JPEG not found (strict dependencies checking))
+      fi
+    ]
   )
 fi
 dnl Windows has no sigsetjmp function, nor equivalent.
@@ -722,21 +814,22 @@ case "$host_os" in
    have_jpeg_saver="no"
    ;;
 esac
-AM_CONDITIONAL(BUILD_LOADER_JPEG, test x$have_jpeg = xyes)
-AM_CONDITIONAL(BUILD_SAVER_JPEG, test x$have_jpeg_saver = xyes)
+AM_CONDITIONAL(BUILD_LOADER_JPEG, test "x$have_jpeg" = "xyes")
+AM_CONDITIONAL(BUILD_SAVER_JPEG, test "x$have_jpeg_saver" = "xyes")
 
 #######################################
 ## EET
 #
 # first, check whether the user WANTS to use EET
+want_eet_image_loader="auto"
+want_eet_font_loader="auto"
 have_eet=no
 AC_ARG_ENABLE(image-loader-eet,
   AC_HELP_STRING(
     [--disable-image-loader-eet],
     [disable EET image loader. [[default=enabled]]]
   ),
-  [want_eet_image_loader=$enableval],
-  [want_eet_image_loader=yes]
+  [want_eet_image_loader=$enableval]
 )
 
 AC_ARG_ENABLE(font-loader-eet,
@@ -744,35 +837,40 @@ AC_ARG_ENABLE(font-loader-eet,
     [--disable-font-loader-eet],
     [disable EET font loader. [[default=enabled]]]
   ),
-  [want_eet_font_loader=$enableval],
-  [want_eet_font_loader=yes]
+  [want_eet_font_loader=$enableval]
 )
 
 # next, if she does, check whether EET is available
-if test "$want_eet_image_loader" = yes -o "$want_eet_font_loader" = yes; then
-  PKG_CHECK_MODULES(EET, eet, have_eet=yes, have_eet=no)
+if test "x$want_eet_image_loader" = "xyes" -o "x$want_eet_font_loader" = "xyes" -o "x$want_eet_image_loader" = "xauto" -o "x$want_eet_font_loader" = "xauto"; then
+  PKG_CHECK_MODULES(EET, eet, [have_eet="yes"],
+    [
+      if test "x$want_eet_image_loader" = "xyes" -a "x$use_strict" = "xyes" -o "x$want_eet_font_loader" = "xyes" -a "x$use_strict" = "xyes"; then
+        AC_MSG_ERROR([EET not found (strict dependencies checking)])
+      fi
+    ]
+  )
 fi
 
 # finally, spew out the result
 AC_MSG_CHECKING(whether to enable eet font loader)
-if test "$want_eet_font_loader" = yes -a "$have_eet" = yes; then
+if test "x$want_eet_font_loader" = "xyes" -o "x$want_eet_font_loader" = "xauto" -a "x$have_eet" = "xyes"; then
   AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
-  have_eet_font_loader=yes
+  have_eet_font_loader="yes"
 else
-  have_eet_font_loader=no
+  have_eet_font_loader="no"
 fi
 AC_MSG_RESULT($have_eet_font_loader)
 
 AC_MSG_CHECKING(whether to enable eet image loader)
-if test "$want_eet_image_loader" = yes -a "$have_eet" = yes; then
+if test "x$want_eet_image_loader" = "xyes" -o "x$want_eet_image_loader" = "xauto" -a "x$have_eet" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
-  have_eet_image_loader=yes
+  have_eet_image_loader="yes"
 else
-  have_eet_image_loader=no
+  have_eet_image_loader="no"
 fi
 AC_MSG_RESULT($have_eet_image_loader)
 
-AM_CONDITIONAL(BUILD_LOADER_EET, test $have_eet_image_loader = yes)
+AM_CONDITIONAL(BUILD_LOADER_EET, test "x$have_eet_image_loader" = "xyes")
 
 #######################################
 ## EDB
@@ -807,7 +905,7 @@ AM_CONDITIONAL(BUILD_LOADER_EDB, test $have_edb_image_loader = yes)
 
 #######################################
 ## TIFF
-want_tiff="yes";
+want_tiff="auto";
 have_tiff="no";
 
 AC_MSG_CHECKING(whether to enable tiff image loader)
@@ -817,7 +915,7 @@ AC_ARG_ENABLE(image-loader-tiff,
 )
 AC_MSG_RESULT($want_tiff)
 
-if test "x$want_tiff" = "xyes"; then
+if test "x$want_tiff" = "xyes" -o "x$want_tiff" = "xauto"; then
   AC_CHECK_HEADER(tiffio.h,
     [
       AC_CHECK_LIB(tiff, TIFFReadScanline,
@@ -849,10 +947,16 @@ if test "x$want_tiff" = "xyes"; then
     [ have_tiff="no" ]
   )
 fi
+
 if test "x$have_tiff" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_TIFF, 1, [TIFF Image Loader Support])
   tiff_cflags=""
+else
+  if test "x$want_tiff" = "xyes" -a "x$use_strict" = "xyes" ; then
+    AC_MSG_ERROR([TIFF not found (strict dependencies checking)])
+  fi
 fi
+
 AM_CONDITIONAL(BUILD_LOADER_TIFF, test x$have_tiff = xyes)
 
 #######################################
@@ -872,7 +976,7 @@ AM_CONDITIONAL(BUILD_LOADER_XPM, test x$have_xpm = xyes)
 
 #######################################
 ## SVG
-want_svg="yes";
+want_svg="auto";
 have_svg="no";
 
 AC_MSG_CHECKING(whether to enable svg image loader)
@@ -884,7 +988,7 @@ AC_MSG_RESULT($want_svg)
 
 svg_cflags=""
 svg_libs=""
-if test "x$want_svg" = "xyes"; then
+if test "x$want_svg" = "xyes" -o "x$want_svg" = "xauto"; then
   # Check if really available
   PKG_CHECK_MODULES(SVG, librsvg-2.0 >= 2.14.0,
     [ have_svg="yes" ],
@@ -912,6 +1016,11 @@ if test "x$want_svg" = "xyes"; then
     )
   fi
 fi
+
+if test "x$want_svg" = "xyes" -a ! "x$have_svg" = "xyes" -a "x$use_strict" = "xyes" ; then
+  AC_MSG_ERROR([SVG not found (strict dependencies checking)])
+fi
+
 AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
 
 #####################################################################
@@ -1034,16 +1143,22 @@ AC_ARG_ENABLE(cpu-sse,
 build_cpu_altivec="no"
 case $host_cpu in
   *power* | *ppc*)
-    build_cpu_altivec="yes"
+    build_cpu_altivec="auto"
     ;;
 esac
 altivec_cflags=""
 AC_MSG_CHECKING(whether to build altivec code)
 AC_ARG_ENABLE(cpu-altivec,
   AC_HELP_STRING([--enable-cpu-altivec], [enable altivec code]),
-  [ build_cpu_altivec=$enableval ]
+  [ build_cpu_altivec=$enableval ],
+  [
+    if test ! "x$build_cpu_altivec" = "xauto"; then
+      build_cpu_altivec="no"
+    fi
+  ]
 )
 AC_MSG_RESULT($build_cpu_altivec)
+
 if test "x$build_cpu_altivec" = "xyes"; then
    AC_CHECK_HEADER(altivec.h,
      [
@@ -1064,6 +1179,9 @@ if test "x$build_cpu_altivec" = "xyes"; then
             build_cpu_altivec="yes"
          ],
          [
+            if test "x$build_cpu_altivec" = "xyes" -a "x$use_strict" = "xyes" ; then
+              AC_MSG_ERROR(Altivec not found (strict dependencies checking))
+            fi
             build_cpu_altivec="no"
          ]
        )
@@ -1072,6 +1190,7 @@ if test "x$build_cpu_altivec" = "xyes"; then
      ]
    )
 fi
+
 if test "x$build_cpu_altivec" = "xyes"; then
    AC_MSG_CHECKING(whether to use altivec compiler flag)
    if test "x$GCC" = "xyes"; then
@@ -1332,7 +1451,11 @@ if test x$want_valgrind = "xyes"; then
       AC_DEFINE(HAVE_VALGRIND, 1, [Valgrind support])
       have_valgrind=yes
     ],
-    [ have_valgrind=no ]
+    [
+      if test "x$want_valgrind" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Valgrind not found (strict dependencies checking)])
+      fi
+    ]
   )
 fi
 
