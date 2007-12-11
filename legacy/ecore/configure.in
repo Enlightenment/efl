@@ -619,7 +619,7 @@ if test "x$have_sdl" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   if test "x$want_ecore_evas_sdl" = "xyes"; then
     save_CFLAGS=$CFLAGS
     CFLAGS="$CFLAGS $SDL_CFLAGS"
-    PKG_CHECK_EXISTS(evas-sdl,
+    PKG_CHECK_EXISTS(evas-software-sdl,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL in Ecore_Evas])
         have_ecore_evas_sdl="yes"
