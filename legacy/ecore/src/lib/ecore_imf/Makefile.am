@@ -18,7 +18,7 @@ ecore_imf_private.h
 libecore_imf_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la
 
-libecore_imf_la_LDFLAGS = -version-info @version_info@
+libecore_imf_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@
 endif
 
 EXTRA_DIST = \

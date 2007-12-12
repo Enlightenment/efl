@@ -20,7 +20,7 @@ $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
 libecore_imf_evas_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore_imf/libecore_imf.la
 
-libecore_imf_evas_la_LDFLAGS = -version-info @version_info@
+libecore_imf_evas_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@
 endif
 
 EXTRA_DIST = \
