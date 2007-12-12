@@ -13,8 +13,7 @@ EAPI int ECORE_IMF_EVENT_PREEDIT_START = 0;
 EAPI int ECORE_IMF_EVENT_PREEDIT_END = 0;
 EAPI int ECORE_IMF_EVENT_PREEDIT_CHANGED = 0;
 EAPI int ECORE_IMF_EVENT_COMMIT = 0;
-EAPI int ECORE_IMF_EVENT_RETRIEVE_SURROUNDIND = 0;
-EAPI int ECORE_IMF_EVENT_DELETE_SURROUNDIND = 0;
+EAPI int ECORE_IMF_EVENT_DELETE_SURROUNDING = 0;
 
 static int init_count = 0;
 
@@ -43,8 +42,7 @@ ecore_imf_init(void)
    ECORE_IMF_EVENT_PREEDIT_END = ecore_event_type_new();
    ECORE_IMF_EVENT_PREEDIT_CHANGED = ecore_event_type_new();
    ECORE_IMF_EVENT_COMMIT = ecore_event_type_new();
-   ECORE_IMF_EVENT_RETRIEVE_SURROUNDIND = ecore_event_type_new();
-   ECORE_IMF_EVENT_DELETE_SURROUNDIND = ecore_event_type_new();
+   ECORE_IMF_EVENT_DELETE_SURROUNDING = ecore_event_type_new();
 
    return init_count;
 }

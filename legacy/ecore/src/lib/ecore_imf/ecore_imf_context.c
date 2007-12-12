@@ -773,7 +773,7 @@ _ecore_imf_event_free_delete_surrounding(void *data __UNUSED__, void *event)
 }
 
 /**
- * Adds ECORE_IMF_EVENT_DELETE_SURROUNDIND to the event queue.
+ * Adds ECORE_IMF_EVENT_DELETE_SURROUNDING to the event queue.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param offset The start offset of surrounding to be deleted.
@@ -796,6 +796,6 @@ ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offse
    ev->ctx = ctx;
    ev->offset = offset;
    ev->n_chars = n_chars;
-   ecore_event_add(ECORE_IMF_EVENT_DELETE_SURROUNDIND,
+   ecore_event_add(ECORE_IMF_EVENT_DELETE_SURROUNDING,
 		   ev, _ecore_imf_event_free_delete_surrounding, NULL);
 }

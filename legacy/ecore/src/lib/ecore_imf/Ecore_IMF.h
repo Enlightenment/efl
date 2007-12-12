@@ -57,7 +57,7 @@ extern "C" {
    EAPI extern int ECORE_IMF_EVENT_PREEDIT_END;
    EAPI extern int ECORE_IMF_EVENT_PREEDIT_CHANGED;
    EAPI extern int ECORE_IMF_EVENT_COMMIT;
-   EAPI extern int ECORE_IMF_EVENT_DELETE_SURROUNDIND;
+   EAPI extern int ECORE_IMF_EVENT_DELETE_SURROUNDING;
 
    typedef enum
      {
