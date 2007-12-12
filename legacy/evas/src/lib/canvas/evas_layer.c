@@ -193,5 +193,9 @@ evas_object_layer_get(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
+   if (obj->smart.parent)
+     {
+        return obj->smart.parent->cur.layer;
+     }
    return obj->cur.layer;
 }
