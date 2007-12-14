@@ -25,8 +25,9 @@ EAPI void
 evas_cache_image_set(Evas_Cache_Image *cache, int limit)
 {
    assert(cache != NULL);
-
+   if (cache->limit == limit) return;
    cache->limit = limit;
+   evas_cache_image_flush(cache);
 }
 
 EAPI Evas_Cache_Image *

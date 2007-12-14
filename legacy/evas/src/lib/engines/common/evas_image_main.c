@@ -360,13 +360,12 @@ evas_common_image_set_cache(int size)
    if (eci != NULL)
      evas_cache_image_set(eci, size);
 }
+
 EAPI int
 evas_common_image_get_cache(void)
 {
    return evas_cache_image_get(eci);
 }
-
-#define STAT_GAP 2
 
 EAPI RGBA_Image *
 evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo)
