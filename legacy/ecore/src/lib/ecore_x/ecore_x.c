@@ -624,7 +624,7 @@ ecore_x_killall(Ecore_X_Window root)
 /**
  * Kill a specific client
  *
- * You can kill a specific client woning window @p win
+ * You can kill a specific client owning window @p win
  *
  * @param win Window of the client to be killed
  */
@@ -654,6 +654,10 @@ _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	XEvent ev;
 	
 	XNextEvent(d, &ev);
+
+	/* Filter event for XIM */
+	if (XFilterEvent(&ev, ev.xkey.window)) continue;
+
 	if ((ev.type >= 0) && (ev.type < _ecore_x_event_handlers_num))
 	  {
 	     if (_ecore_x_event_handlers[ev.type])

@@ -1,7 +1,8 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-#include "langinfo.h"
+#include <langinfo.h>
+
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
