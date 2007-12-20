@@ -151,8 +151,8 @@ extern "C" {
     * writing or a memory error occurs, NULL is returned.
     *
     * You can also open the file for read/write. If you then write a key that
-    * not exist it will be created, if the key exist it will be replaced by 
-    * the new data.
+    * does not exist it will be created, if the key exists it will be replaced
+    * by the new data.
     *
     * Example:
     * @code
