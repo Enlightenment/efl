@@ -137,7 +137,7 @@ extern "C" {
    /**
     * Open an eet file on disk, and returns a handle to it.
     * @param file The file path to the eet file. eg: "/tmp/file.eet".
-    * @param mode The mode for opening. Either EET_FILE_MODE_READ or EET_FILE_MODE_WRITE, but not both.
+    * @param mode The mode for opening. Either EET_FILE_MODE_READ, EET_FILE_MODE_WRITE or EET_FILE_MODE_READ_WRITE.
     * @return An opened eet file handle.
     *
     * This function will open an exiting eet file for reading, and build
@@ -149,6 +149,10 @@ extern "C" {
     * delete the original file and replace it with a new empty file, till
     * the eet file handle is closed or flushed. If it cannot be opened for
     * writing or a memory error occurs, NULL is returned.
+    *
+    * You can also open the file for read/write. If you then write a key that
+    * not exist it will be created, if the key exist it will be replaced by 
+    * the new data.
     *
     * Example:
     * @code
