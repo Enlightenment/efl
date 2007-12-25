@@ -224,6 +224,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
    int r, g, b, a;
    double tx1, ty1, tx2, ty2;
    int    ow, oh;
+   int    space;
 
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
@@ -239,8 +240,29 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
      {
 	r = g = b = a = 255;
      }
+   
+   if (!gc->ext.arb_program && (im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL
+      || im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
+     {
+        if ((im->cs.data) && (*((unsigned char **)im->cs.data)))
+          {
+             if (im->dirty || !im->im->image->data)
+               {
+                  free(im->im->image->data);
+                  im->im->image->data = malloc(im->im->image->w * im->im->image->h * sizeof(DATA32));
+                  if (im->im->image->data)
+                    evas_common_convert_yuv_420p_601_rgba(im->cs.data, 
+                                                          (void *)im->im->image->data,
+                                                          im->im->image->w, im->im->image->h);
+               }
+          }
+        space = EVAS_COLORSPACE_ARGB8888;
+     }
+   else
+     space = im->cs.space;
+   
 /* leak in this switch */
-   switch (im->cs.space)
+   switch (space)
      {
       case EVAS_COLORSPACE_ARGB8888:
         evas_cache_image_load_data(im->im);

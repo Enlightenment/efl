@@ -67,6 +67,7 @@ struct _Evas_GL_Context
       int sgis_generate_mipmap : 1;
       int nv_texture_rectangle : 1;
       int arb_texture_non_power_of_two : 1;
+      int arb_program : 1;
    } ext;
 
    GLenum          read_buf;
