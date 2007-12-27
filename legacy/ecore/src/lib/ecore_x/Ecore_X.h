@@ -1579,6 +1579,7 @@ struct _Ecore_X_Screen_Refresh_Rate
    int rate;
 };
 
+EAPI int                     ecore_x_randr_present();
 EAPI int                     ecore_x_randr_events_select(Ecore_X_Window win, int on);
 EAPI void                    ecore_x_randr_get_screen_info_prefetch(Ecore_X_Window window);
 EAPI void                    ecore_x_randr_get_screen_info_fetch(void);

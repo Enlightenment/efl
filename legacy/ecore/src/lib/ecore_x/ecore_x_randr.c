@@ -1,7 +1,24 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
 #include "ecore_x_private.h"
+
+EAPI int
+ecore_x_randr_present()
+{
+#ifdef ECORE_XRANDR
+   int randr_base = 0;
+   int randr_err_base = 0;
+
+   if (XRRQueryExtension(_ecore_x_disp, &randr_base, &randr_err_base))
+     return 1;
+   else
+     return 0;
+#else
+   return 0;
+#endif
+}
 
 EAPI int
 ecore_x_randr_events_select(Ecore_X_Window win, int on)
