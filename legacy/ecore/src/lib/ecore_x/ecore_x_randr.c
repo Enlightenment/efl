@@ -5,7 +5,7 @@
 #include "ecore_x_private.h"
 
 EAPI int
-ecore_x_randr_present()
+ecore_x_randr_query()
 {
 #ifdef ECORE_XRANDR
    int randr_base = 0;
