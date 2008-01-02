@@ -308,7 +308,7 @@ _soft16_adjust_areas(Evas_Rectangle *src,
    if (dst_clip->w <= 0) return 0;
    if (dst_clip->x >= dst_max_x) return 0;
 
-   _shrink(&dst_clip->x, &dst_clip->w, dst->x, dst_max_x);
+   _shrink(&dst_clip->x, &dst_clip->w, 0, dst_max_x);
    if (dst_clip->w <= 0) return 0;
 
    /* sanitise y */
@@ -335,7 +335,7 @@ _soft16_adjust_areas(Evas_Rectangle *src,
    if (dst_clip->h <= 0) return 0;
    if (dst_clip->y >= dst_max_y) return 0;
 
-   _shrink(&dst_clip->y, &dst_clip->h, dst->y, dst_max_y);
+   _shrink(&dst_clip->y, &dst_clip->h, 0, dst_max_y);
    if (dst_clip->h <= 0) return 0;
 
    return 1;
