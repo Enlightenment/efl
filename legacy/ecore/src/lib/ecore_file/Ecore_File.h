@@ -71,9 +71,6 @@ extern "C" {
    EAPI int         ecore_file_symlink      (const char *src, const char *dest);
    EAPI char       *ecore_file_realpath     (const char *file);
    EAPI int         ecore_file_unlink       (const char *file);
-/* NOTE: these aliases will be removed! DO NOT USE THEM */
-#define ecore_file_get_file(path) ecore_file_file_get(path)
-#define ecore_file_get_dir(path) ecore_file_dir_get(path)
    EAPI const char *ecore_file_file_get     (const char *path);
    EAPI char       *ecore_file_dir_get      (const char *path);
 
