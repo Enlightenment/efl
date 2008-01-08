@@ -134,6 +134,8 @@ extern "C" {
                                   char order);
    EAPI int ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare,
                                   char order);
+   EAPI void ecore_list_merge(Ecore_List *list, Ecore_List *l2, 
+                                  Ecore_Compare_Cb, char order);
    
    /* Check to see if there is any data in the list */
    EAPI int ecore_list_empty_is(Ecore_List * list);
@@ -207,6 +209,8 @@ extern "C" {
                                   char order);
 # define ecore_dlist_heapsort(list, compare, order) \
    ecore_list_heapsort(list, compare, order)
+   EAPI void ecore_dlist_merge(Ecore_DList *list, Ecore_DList *l2, 
+                                  Ecore_Compare_Cb, char order);
    
    /* Check to see if there is any data in the list */
    EAPI int ecore_dlist_empty_is(Ecore_DList * _e_dlist);

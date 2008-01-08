@@ -1195,6 +1195,45 @@ ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
    return 1;
 }
 
+/**
+ * Merge the @p l2 into the @p list using the compare function @p compare.
+ * Both lists need to be sorted else a corrupt list could be the result.
+ * @param list      The list.
+ * @param l2        The second list, this list will be empty after the merge
+ * @param compare   The function to compare the data of @p list and @p l2
+ * @param order     The sort direction, possible values are ECORE_SORT_MIN and
+ *                  ECORE_SORT_MAX
+ */
+EAPI void
+ecore_list_merge(Ecore_List *list, Ecore_List *l2, Ecore_Compare_Cb compare, char order)
+{
+   Ecore_List_Node *node;
+
+   CHECK_PARAM_POINTER("list", list);
+   CHECK_PARAM_POINTER("l2", l2);
+
+   if (ecore_list_empty_is(l2)) return;
+
+   if (ecore_list_empty_is(list))
+     {
+       ecore_list_append_list(list, l2);
+       return;
+     }
+   
+   if (order == ECORE_SORT_MIN)
+     order = 1;
+   else
+     order = -1;
+
+   list->first = _ecore_list_node_merge(list->first, l2->first, compare, order);
+   
+   if ((order * compare(list->last->data, l2->last->data)) < 0)
+     list->last = l2->last;
+
+   list->nodes += l2->nodes;
+   ecore_list_init(l2);
+}
+
 /* this is the internal recrusive function for the merge sort */
 static Ecore_List_Node *
 _ecore_list_node_mergesort(Ecore_List_Node *first, int n,
@@ -2048,6 +2087,43 @@ ecore_dlist_mergesort(Ecore_DList *list, Ecore_Compare_Cb compare, char order)
    _ecore_list_first_goto(list);
 
    return 1;
+}
+
+/**
+ * Merge the @p l2 into the @p list using the compare function @p compare.
+ * Both lists need to be sorted else a corrupt list could be the result.
+ * @param list      The list.
+ * @param l2        The second list, this list will be empty after the merge
+ * @param compare   The function to compare the data of @p list and @p l2
+ * @param order     The sort direction, possible values are ECORE_SORT_MIN and
+ *                  ECORE_SORT_MAX
+ */
+EAPI void
+ecore_dlist_merge(Ecore_DList *list, Ecore_DList *l2, Ecore_Compare_Cb compare, char order)
+{
+   CHECK_PARAM_POINTER("list", list);
+   CHECK_PARAM_POINTER("l2", l2);
+
+   if (ecore_dlist_empty_is(l2)) return;
+
+   if (ecore_dlist_empty_is(list))
+     {
+       ecore_dlist_append_list(list, l2);
+       return;
+     }
+   
+   if (order == ECORE_SORT_MIN)
+     order = 1;
+   else
+     order = -1;
+
+   list->first = _ecore_dlist_node_merge(list->first, l2->first, compare, order);
+   
+   if ((order * compare(list->last->data, l2->last->data)) < 0)
+     list->last = l2->last;
+
+   list->nodes += l2->nodes;
+   ecore_dlist_init(l2);
 }
 
 /* this is the internal recrusive function for the merge sort */
