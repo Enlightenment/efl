@@ -334,6 +334,10 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
 		goto error;
 	      break;
+	   case ECORE_CON_USE_TLS:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())))
+		goto error;
+	      break;
 	  }
 
 	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
@@ -1190,6 +1194,10 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
 	      break;
 	   case ECORE_CON_USE_SSL3:
 	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
+		goto error;
+	      break;
+	   case ECORE_CON_USE_TLS:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())))
 		goto error;
 	      break;
 	  }
