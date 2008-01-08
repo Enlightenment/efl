@@ -167,7 +167,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    type = compl_type;
 #if USE_OPENSSL
    /* unset the SSL flag for the following checks */
-   type &= ~ECORE_CON_USE_SSL;
+   type &= ECORE_CON_TYPE;
 #endif
 
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
@@ -315,7 +315,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
      }
 
 #if USE_OPENSSL
-   if (compl_type & ECORE_CON_USE_SSL)
+   if (compl_type & ECORE_CON_SSL)
      {
 	if (!ssl_init_count)
 	  {
@@ -324,9 +324,17 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	  }
 	ssl_init_count++;
 
-	/* SSLv3 gives *weird* results on my box, don't use it yet */
-	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
-	  goto error;
+	switch (compl_type & ECORE_CON_SSL)
+	  {
+	   case ECORE_CON_USE_SSL2:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+		goto error;
+	      break;
+	   case ECORE_CON_USE_SSL3:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
+		goto error;
+	      break;
+	  }
 
 	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
 	  goto error;
@@ -411,7 +419,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    type = compl_type;
 #if USE_OPENSSL
    /* unset the SSL flag for the following checks */
-   type &= ~ECORE_CON_USE_SSL;
+   type &= ECORE_CON_TYPE;
 #endif
    if ((type == ECORE_CON_REMOTE_SYSTEM) && (port < 0)) return NULL;
 
@@ -1165,7 +1173,7 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
    svr->ip = strdup(buf);
 
 #if USE_OPENSSL
-   if (svr->type & ECORE_CON_USE_SSL)
+   if (svr->type & ECORE_CON_SSL)
      {
 	if (!ssl_init_count)
 	  {
@@ -1174,9 +1182,17 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
 	  }
 	ssl_init_count++;
 
-	/* SSLv3 gives *weird* results on my box, don't use it yet */
-	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
-	  goto error;
+	switch (svr->type & ECORE_CON_SSL)
+	  {
+	   case ECORE_CON_USE_SSL2:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+		goto error;
+	      break;
+	   case ECORE_CON_USE_SSL3:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
+		goto error;
+	      break;
+	  }
 
 	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
 	  goto error;
@@ -1306,6 +1322,19 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		    {
 		       ssl_err = SSL_get_error(svr->ssl, num);
 		       lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
+		       if (ssl_err == SSL_ERROR_SYSCALL)
+			 {
+			    if (num == 0) lost_server = 1;
+			    else
+			      {
+				 lost_server = ((errno == EIO) ||
+						(errno == EBADF) ||
+					       	(errno == EPIPE) ||
+					       	(errno == EINVAL) ||
+					       	(errno == ENOSPC) ||
+						(errno == ECONNRESET));
+			      }
+			 }
 		    }
 		  else
 		    ssl_err = SSL_ERROR_NONE;

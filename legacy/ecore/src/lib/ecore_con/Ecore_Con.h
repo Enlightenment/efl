@@ -74,8 +74,10 @@ extern "C" {
 	ECORE_CON_LOCAL_SYSTEM,
 	ECORE_CON_LOCAL_ABSTRACT,
 	ECORE_CON_REMOTE_SYSTEM,
-	ECORE_CON_USE_SSL = 16
+	ECORE_CON_USE_SSL2 = (1 << 4),
+	ECORE_CON_USE_SSL3 = (1 << 5)
      } Ecore_Con_Type;
+#define ECORE_CON_USE_SSL ECORE_CON_USE_SSL2
 
    typedef enum _Ecore_Con_Url_Time
      {

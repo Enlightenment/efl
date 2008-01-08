@@ -8,6 +8,9 @@
 #define ECORE_MAGIC_CON_CLIENT             0x77556677
 #define ECORE_MAGIC_CON_URL                0x77074255
 
+#define ECORE_CON_TYPE 0x0f
+#define ECORE_CON_SSL  0xf0
+
 #if USE_OPENSSL
 #include <openssl/ssl.h>
 #endif
