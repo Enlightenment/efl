@@ -216,6 +216,7 @@ evas_debug_magic_string_get(DATA32 magic)
 
 
 
+//#define NOPOOL
 
 typedef struct _Pool Pool;
 
@@ -228,6 +229,12 @@ struct _Pool
 
 Pool *
 _evas_mp_pool_new(Evas_Mempool *pool)
+#ifdef NOPOOL
+{
+   static Pool thepool;
+   return &thepool;
+}
+#else
 {
    Pool *p;
    void **ptr;
@@ -246,14 +253,19 @@ _evas_mp_pool_new(Evas_Mempool *pool)
    *ptr = NULL;
    return p;
 }
+#endif
 
 void
 _evas_mp_pool_free(Pool *p)
+#ifdef NOPOOL
+{
+}
+#else
 {
    free(p);
 }
+#endif
 
-//#define NOPOOL
 void *
 evas_mempool_malloc(Evas_Mempool *pool, int size)
 #ifdef NOPOOL
@@ -364,6 +376,11 @@ evas_mempool_free(Evas_Mempool *pool, void *ptr)
 
 void *
 evas_mempool_calloc(Evas_Mempool *pool, int size)
+#ifdef NOPOOL
+{
+   return calloc(1, size);
+}
+#else   
 {
    void *mem;
    
@@ -371,3 +388,4 @@ evas_mempool_calloc(Evas_Mempool *pool, int size)
    memset(mem, 0, size);
    return mem;
 }
+#endif   

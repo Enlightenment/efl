@@ -231,10 +231,16 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	ee = (Ecore_Evas *)l;
 	if (ee->visible)
 	  {
+	     Evas_List *updates;
+	     
 	     if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
-	     evas_render(ee->evas);
-
+	     updates = evas_render_updates(ee->evas);
+	     if (updates)
+	       {
+		  evas_render_updates_free(updates);
+		  _ecore_evas_idle_timeout_update(ee);
+	       }
              if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 	  }
 	else

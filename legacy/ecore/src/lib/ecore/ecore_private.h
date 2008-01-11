@@ -88,6 +88,7 @@
 #define ECORE_MAGIC_EVENT_FILTER    0xf78218ff
 #define ECORE_MAGIC_EVENT           0xf77119fe
 #define ECORE_MAGIC_ANIMATOR        0xf7643ea5
+#define ECORE_MAGIC_POLLER          0xf7568127
 
 #define ECORE_MAGIC                 Ecore_Magic  __magic
 
@@ -221,6 +222,11 @@ enum _Ecore_Exe_Flags
     */
 };
 typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
+enum _Ecore_Poller_Type
+{
+   ECORE_POLLER_CORE = 0
+};
+typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
 #ifndef _WIN32
 typedef struct _Ecore_Exe           Ecore_Exe;
@@ -234,6 +240,7 @@ typedef struct _Ecore_Event_Handler Ecore_Event_Handler;
 typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
 typedef struct _Ecore_Event         Ecore_Event;
 typedef struct _Ecore_Animator      Ecore_Animator;
+typedef struct _Ecore_Poller        Ecore_Poller;
 
 #ifndef _WIN32
 struct _Ecore_Exe
@@ -371,6 +378,16 @@ struct _Ecore_Animator
    void        *data;
 };
 
+struct _Ecore_Poller
+{
+   Ecore_List2   __list_data;
+   ECORE_MAGIC;
+   int          ibit;
+   signed char  delete_me : 1;
+   int        (*func) (void *data);
+   void        *data;
+};
+
 #endif
 
 EAPI void          _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
@@ -422,7 +439,8 @@ void          _ecore_exe_event_del_free(void *data, void *ev);
 
 void          _ecore_animator_shutdown(void);
 
-
+void          _ecore_poller_shutdown(void);
+    
 EAPI void         *_ecore_list2_append           (void *in_list, void *in_item);
 EAPI void         *_ecore_list2_prepend          (void *in_list, void *in_item);
 EAPI void         *_ecore_list2_append_relative  (void *in_list, void *in_item, void *in_relative);

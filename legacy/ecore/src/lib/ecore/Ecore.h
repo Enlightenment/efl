@@ -85,18 +85,23 @@ extern "C" {
 
    enum _Ecore_Exe_Flags /* flags for executing a child with its stdin and/or stdout piped back */
      {
-
-   ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
-   ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
-   ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
-   ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and delivered 1 event per line */
-   ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and delivered 1 event per line */
-   ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
-   ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
-   ECORE_EXE_USE_SH = 128 /**< Use /bin/sh to run the command. */
+	ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
+	ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
+	ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
+	ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and delivered 1 event per line */
+	ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and delivered 1 event per line */
+	ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
+	ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
+	ECORE_EXE_USE_SH = 128 /**< Use /bin/sh to run the command. */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
+   enum _Ecore_Poller_Type /* Poller types */
+     {
+	ECORE_POLLER_CORE = 0 /**< The core poller interval */
+     };
+   typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
+   
 #ifndef _WIN32
    typedef void Ecore_Exe; /**< A handle for spawned processes */
 #endif
@@ -109,6 +114,7 @@ extern "C" {
    typedef void Ecore_Event_Filter; /**< A handle for an event filter */
    typedef void Ecore_Event; /**< A handle for an event */
    typedef void Ecore_Animator; /**< A handle for animators */
+   typedef void Ecore_Poller; /**< A handle for pollers */
 #endif
    typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
    typedef struct _Ecore_Event_Signal_Hup      Ecore_Event_Signal_Hup; /**< Hup signal event */
@@ -250,6 +256,7 @@ extern "C" {
    EAPI void        *ecore_idler_del(Ecore_Idler *idler);
 
    EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(int (*func) (void *data), const void *data);
+   EAPI Ecore_Idle_Enterer *ecore_idle_enterer_before_add(int (*func) (void *data), const void *data);
    EAPI void               *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
    EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(int (*func) (void *data), const void *data);
@@ -276,6 +283,12 @@ extern "C" {
    EAPI void            ecore_animator_frametime_set(double frametime);
    EAPI double          ecore_animator_frametime_get(void);
 
+   EAPI void          ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
+   EAPI double        ecore_poller_poll_interval_get(Ecore_Poller_Type type);
+   EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, int (*func) (void *data), const void *data);
+   EAPI void         *ecore_poller_del(Ecore_Poller *poller);
+
+   
 #ifdef __cplusplus
 }
 #endif

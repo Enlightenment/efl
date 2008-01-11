@@ -84,6 +84,7 @@ ecore_shutdown(void)
       return _ecore_init_count;
 
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
+   _ecore_poller_shutdown();
    _ecore_animator_shutdown();
 #ifndef _WIN32
    _ecore_exe_shutdown();

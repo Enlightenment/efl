@@ -149,7 +149,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-        _ecore_evas_idle_timeout_update(ee2);
      }
 #endif
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
@@ -184,8 +183,14 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		    }
 		  if ((ee->shaped) && (updates))
 		    ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
+		  if ((ee->alpha) && (updates))
+		    ecore_x_window_shape_input_mask_set(ee->engine.x.win, ee->engine.x.mask);
 	       }
-	     if (updates) evas_render_updates_free(updates);
+	     if (updates)
+	       {
+		  evas_render_updates_free(updates);
+		  _ecore_evas_idle_timeout_update(ee);
+	       }
 	  }
 	else
 	  {
@@ -291,7 +296,11 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		  ee->engine.x.damages = 0;
 	       }
 #endif /* HAVE_ECORE_X_XCB */
-	     if (updates) evas_render_updates_free(updates);
+	     if (updates)
+	       {
+		  evas_render_updates_free(updates);
+		  _ecore_evas_idle_timeout_update(ee);
+	       }
 	  }
      }
    else if (((ee->visible) && (ee->draw_ok)) ||
@@ -307,6 +316,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	       {
 		  ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
 		  evas_render_updates_free(updates);
+		  _ecore_evas_idle_timeout_update(ee);
 	       }
 	  }
 	else
@@ -334,13 +344,15 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		    }
 #endif
 		  evas_render_updates_free(updates);
+		  if (ee->alpha)
+		    ecore_x_window_shape_input_mask_set(ee->engine.x.win, ee->engine.x.mask);
+		  _ecore_evas_idle_timeout_update(ee);
 	       }
 	  }
      }
    else
      evas_norender(ee->evas);
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-   _ecore_evas_idle_timeout_update(ee);
 }
 
 static void
@@ -459,7 +471,6 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-
 	  }
 #endif /* BUILD_ECORE_EVAS_X11 */
      }
@@ -1060,7 +1071,7 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
 	     ecore_evas_avoid_damage_set(ee, 0);
 	     ecore_evas_avoid_damage_set(ee, pdam);
 	  }
-	if (ee->shaped)
+	if ((ee->shaped) || (ee->alpha))
 	  _ecore_evas_x_resize_shape(ee);
 	if ((ee->expecting_resize.w > 0) &&
 	    (ee->expecting_resize.h > 0))
@@ -1475,10 +1486,8 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 		  ecore_evas_avoid_damage_set(ee, 0);
 		  ecore_evas_avoid_damage_set(ee, pdam);
 	       }
-	     if (ee->shaped)
-	       {
-		  _ecore_evas_x_resize_shape(ee);
-	       }
+	     if ((ee->shaped) || (ee->alpha))
+	       _ecore_evas_x_resize_shape(ee);
 	     if (ee->func.fn_resize) ee->func.fn_resize(ee);
 	  }
      }
@@ -1526,10 +1535,8 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 		  ecore_evas_avoid_damage_set(ee, 0);
 		  ecore_evas_avoid_damage_set(ee, pdam);
 	       }
-	     if (ee->shaped)
-	       {
-		  _ecore_evas_x_resize_shape(ee);
-	       }
+	     if ((ee->shaped) || (ee->alpha))
+	       _ecore_evas_x_resize_shape(ee);
 	     if (change_pos)
 	       {
 		  if (ee->func.fn_move) ee->func.fn_move(ee);
@@ -1685,7 +1692,8 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  XGCValues gcv;
 #endif /* HAVE_ECORE_X_XCB */
 
-		  ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
+		  if (!ee->engine.x.mask)
+		    ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
 # ifdef HAVE_ECORE_X_XCB
                   gc = xcb_generate_id(ecore_x_connection_get());
 		  value_list = 0;
@@ -1713,6 +1721,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+		  ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	       }
 	     else
 	       {
@@ -1721,6 +1730,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  einfo->info.mask = 0;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
+		  ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	       }
 	  }
 #endif /* BUILD_ECORE_EVAS_X11 */
@@ -1753,7 +1763,8 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  XGCValues gcv;
 # endif /* HAVE_ECORE_X_XCB */
 
-		  ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
+		  if (!ee->engine.x.mask)
+		    ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
 # ifdef HAVE_ECORE_X_XCB
                   gc = xcb_generate_id(ecore_x_connection_get());
 		  value_list = 0;
@@ -1781,6 +1792,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+		  ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	       }
 	     else
 	       {
@@ -1789,6 +1801,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  einfo->info.mask = 0;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
+		  ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	       }
 	  }
 #endif
@@ -1844,7 +1857,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha)))
      return;
 
-   if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
+   if (!strcmp(ee->driver, "software_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_X11
 # ifdef HAVE_ECORE_X_XCB
@@ -1871,6 +1884,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     if (!ee->engine.x.mask)
+	       ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
 	  }
 	else
 	  {
@@ -1878,6 +1893,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     ee->engine.x.mask = 0;
+	     ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	  }
 
 	einfo->info.destination_alpha = alpha;
@@ -1900,9 +1918,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	einfo->info.depth = att.depth;
 # endif /* HAVE_ECORE_X_XCB */
 
-	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
-	ee->engine.x.mask = 0;
-	einfo->info.mask = 0;
+//	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+//	ee->engine.x.mask = 0;
+	einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->engine.x.win;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1914,7 +1932,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
 #endif /* BUILD_ECORE_EVAS_X11 */
      }
-   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
+   else if (!strcmp(ee->driver, "xrender_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_XRENDER
 # ifdef HAVE_ECORE_X_XCB
@@ -1940,6 +1958,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     if (!ee->engine.x.mask)
+	       ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
 	  }
 	else
 	  {
@@ -1947,6 +1967,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     ee->engine.x.mask = 0;
+	     ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	  }
 
 	einfo->info.destination_alpha = alpha;
@@ -1962,9 +1985,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	einfo->info.visual = att.visual;
 # endif /* HAVE_ECORE_X_XCB */
 
-	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
-	ee->engine.x.mask = 0;
-	einfo->info.mask = 0;
+//	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+//	ee->engine.x.mask = 0;
+        einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->engine.x.win;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1994,6 +2017,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->engine.x.win = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->engine.x.win = ecore_x_window_argb_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     if (!ee->engine.x.mask)
+	       ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
 	  }
 	else
 	  {
@@ -2001,6 +2026,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->engine.x.win = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
+	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     ee->engine.x.mask = 0;
+	     ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	  }
 
 #if 0 /* XXX no alpha window support for software_16_x11 */
@@ -2008,9 +2036,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 #endif /* XXX no alpha window support for software_16_x11 */
 
 #if 0 /* XXX no shaped window support for software_16_x11 */
-	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
-	ee->engine.x.mask = 0;
-	einfo->info.mask = 0;
+//	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+//	ee->engine.x.mask = 0;
+        einfo->info.mask = ee->engine.x.mask;
 #endif /* XXX no shaped window support for software_16_x11 */
 
 	einfo->info.drawable = ee->engine.x.win;

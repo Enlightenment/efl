@@ -58,6 +58,8 @@ struct _Outbuf
 
       /* a list of pending regions to write to the target */
       Evas_List   *pending_writes;
+      /* a list of previous frame pending regions to write to the target */
+      Evas_List   *prev_pending_writes;
 
       unsigned char mask_dither : 1;
       unsigned char destination_alpha : 1;
@@ -77,7 +79,10 @@ struct _X_Output_Buffer
    Display         *display;
    XImage          *xim;
    XShmSegmentInfo *shm_info;
+   Visual          *visual;
    void            *data;
+   int              w, h, bpl;
+   int              psize;
 };
 
 /****/

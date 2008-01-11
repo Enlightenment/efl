@@ -211,6 +211,8 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	ee = (Ecore_Evas *)l;
 	if (ee->visible)
 	  {
+	     Evas_List *updates;
+	     
 #ifdef BUILD_ECORE_EVAS_BUFFER
 	     Evas_List *ll;
 #endif
@@ -227,12 +229,16 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 		  if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
 	       }
 #endif	     
-	     evas_render(ee->evas);
+ 	     updates = evas_render_updates(ee->evas);
+	     if (updates)
+	       {
+		  evas_render_updates_free(updates);
+		  _ecore_evas_idle_timeout_update(ee);
+	       }
 	     if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 	  }
 	else
 	  evas_norender(ee->evas);
-	_ecore_evas_idle_timeout_update(ee);
      }
    if (_ecore_evas_fps_debug)
      {

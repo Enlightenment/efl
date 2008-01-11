@@ -260,7 +260,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * terminated event have been called, the handle will be freed by Ecore.
  *
  * This function does the same thing as ecore_exe_run(), but also makes the
- * standard in and/or out as wel las stderr from the child process available
+ * standard in and/or out as well as stderr from the child process available
  * for reading or writing.  To write use ecore_exe_send().  To read listen to
  * ECORE_EXE_EVENT_DATA or ECORE_EXE_EVENT_ERROR events (set up handlers).
  * Ecore may buffer read and error data until a newline character if asked
@@ -288,16 +288,14 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    int                 ok = 1;
    int                 result;
 
-   if (!exe_cmd)
-      return NULL;
-
+   if (!exe_cmd) return NULL;
    exe = calloc(1, sizeof(Ecore_Exe));
-   if (exe == NULL)
-      return NULL;
+   if (exe == NULL) return NULL;
 
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
        && (!(flags & ECORE_EXE_PIPE_READ)))
-      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;	/* We need something to auto pipe. */
+     /* We need something to auto pipe. */
+     flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR; 
 
    exe->child_fd_error = -1;
    exe->child_fd_read = -1;
@@ -308,37 +306,44 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    /*  Create some pipes. */
    if (ok)
-      E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
      {
+	E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
+	  {
+	  }
      }
    if (ok && (flags & ECORE_EXE_PIPE_ERROR))
-      E_IF_NO_ERRNO_NOLOOP(result, pipe(errorPipe), ok)
      {
-	exe->child_fd_error = errorPipe[0];
-	exe->child_fd_error_x = errorPipe[1];
+	E_IF_NO_ERRNO_NOLOOP(result, pipe(errorPipe), ok)
+	  {
+	     exe->child_fd_error = errorPipe[0];
+	     exe->child_fd_error_x = errorPipe[1];
+	  }
      }
    if (ok && (flags & ECORE_EXE_PIPE_READ))
-      E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe), ok)
      {
-	exe->child_fd_read = readPipe[0];
-	exe->child_fd_read_x = readPipe[1];
+	E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe), ok)
+	  {
+	     exe->child_fd_read = readPipe[0];
+	     exe->child_fd_read_x = readPipe[1];
+	  }
      }
    if (ok && (flags & ECORE_EXE_PIPE_WRITE))
-      E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
      {
-	exe->child_fd_write = writePipe[1];
-	exe->child_fd_write_x = writePipe[0];
+	E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
+	  {
+	     exe->child_fd_write = writePipe[1];
+	     exe->child_fd_write_x = writePipe[0];
+	  }
      }
-
    if (ok)
      {
 	pid_t               pid = 0;
 	volatile int        vfork_exec_errno = 0;
-
+	
 	/* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
 	/* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
 	pid = fork();
-
+	
 	if (pid == -1)
 	  {
 	     fprintf(stderr, "Failed to fork process\n");
@@ -346,8 +351,9 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	  }
 	else if (pid == 0)	/* child */
 	  {
-	     /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the second pipe if it's open. */
-	     /* On the other hand, there was the Great FD Leak Scare of '06, so let's be paranoid. */
+	     /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the
+	      * second pipe if it's open. On the other hand, there was the
+	      * Great FD Leak Scare of '06, so let's be paranoid. */
 	     if (ok && (flags & ECORE_EXE_PIPE_ERROR))
 	       {
 		  E_NO_ERRNO(result, close(STDERR_FILENO), ok);
@@ -369,10 +375,10 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		  /* Setup the status pipe. */
 		  E_NO_ERRNO(result, close(statusPipe[0]), ok);
 		  E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)	/* close on exec shows sucess */
-		  {
-		     /* Run the actual command. */
-		     _ecore_exe_exec_it(exe_cmd, flags);	/* Should not return from this. */
-		  }
+		    {
+		       /* Run the actual command. */
+		       _ecore_exe_exec_it(exe_cmd, flags); /* no return */
+		    }
 	       }
 
 	     /* Something went 'orribly wrong. */
@@ -380,13 +386,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
 	     /* Close the pipes. */
 	     if (flags & ECORE_EXE_PIPE_ERROR)
-		E_NO_ERRNO(result, close(errorPipe[1]), ok);
+	       E_NO_ERRNO(result, close(errorPipe[1]), ok);
 	     if (flags & ECORE_EXE_PIPE_READ)
-		E_NO_ERRNO(result, close(readPipe[1]), ok);
+	       E_NO_ERRNO(result, close(readPipe[1]), ok);
 	     if (flags & ECORE_EXE_PIPE_WRITE)
-		E_NO_ERRNO(result, close(writePipe[0]), ok);
+	       E_NO_ERRNO(result, close(writePipe[0]), ok);
 	     E_NO_ERRNO(result, close(statusPipe[1]), ok);
-
+	     
 	     _exit(-1);
 	  }
 	else			/* parent */
@@ -394,13 +400,28 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	     /* Close the unused pipes. */
 	     E_NO_ERRNO(result, close(statusPipe[1]), ok);
 
-	     /* FIXME: after having a good look at the current e fd handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
+	     /* FIXME: after having a good look at the current e fd 
+	      * handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
+	     /* FIXME: above F_SETSIG etc. - this is async SIGIO based IO
+	      * which is also linux specific so we probably don't want to
+	      * do this as long as select() is working fine. the only time
+	      * we really want to think of SIGIO async IO is when it all
+	      * actually works basically everywhere and we can turn all 
+	      * IO into DMA async activities (i.e. you do a read() then
+	      * the read is complete not on return but when you get a
+	      * SIGIO - the read() just starts the transfer and it is
+	      * completed in the background by DMA (or whatever mechanism
+	      * the kernel choses)) */
 
 	     /* Wait for it to start executing. */
-	     while (1)
+	     /* FIXME: this doesn't seem very nice - we sit and block
+	      * waiting on a child process... even though it's just
+	      * the segment between the fork() and the exec) it just feels
+	      * wrong */
+	     for (;;)
 	       {
 		  char                buf;
-
+		  
 		  E_NO_ERRNO(result, read(statusPipe[0], &buf, 1), ok);
 		  if (result == 0)
 		    {
@@ -433,7 +454,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	     if ((exe->cmd = strdup(exe_cmd)))
 	       {
 		  if (flags & ECORE_EXE_PIPE_ERROR)
-		    {		/* Setup the error stuff. */
+		    { /* Setup the error stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_error, F_SETFL,
 					   O_NONBLOCK), ok) {}
@@ -454,7 +475,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		       }
 		    }
 		  if (ok && (flags & ECORE_EXE_PIPE_READ))
-		    {		/* Setup the read stuff. */
+		    { /* Setup the read stuff. */
 		       E_IF_NO_ERRNO(result,
 				     fcntl(exe->child_fd_read, F_SETFL,
 					   O_NONBLOCK), ok) {}
@@ -497,35 +518,34 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 			     ok = 0;
 		       }
 		    }
-
+		  
 		  exes = _ecore_list2_append(exes, exe);
 		  n = 0;
 	       }
 	     else
-		ok = 0;
+	       ok = 0;
 	  }
 	else
-	   ok = 0;
+	  ok = 0;
      }
 
    if (!ok)
-     {				/* Something went wrong, so pull down everything. */
-	if (exe->pid)
-	   ecore_exe_terminate(exe);
+     { /* Something went wrong, so pull down everything. */
+	if (exe->pid) ecore_exe_terminate(exe);
 	IF_FN_DEL(ecore_exe_free, exe);
      }
    else
      {
 	Ecore_Exe_Event_Add *e;
-
+	
 	e = _ecore_exe_event_add_new();
 	e->exe = exe;
-	if (e)			/* Send the event. */
-	   ecore_event_add(ECORE_EXE_EVENT_ADD, e,
-			   _ecore_exe_event_add_free, NULL);
+	if (e) /* Send the event. */
+	  ecore_event_add(ECORE_EXE_EVENT_ADD, e,
+			  _ecore_exe_event_add_free, NULL);
 	/* printf("Running as %d for %s.\n", exe->pid, exe->cmd); */
      }
-
+   
    errno = n;
    return exe;
 }
@@ -549,8 +569,7 @@ ecore_exe_send(Ecore_Exe * exe, void *data, int size)
    void               *buf;
 
    buf = realloc(exe->write_data_buf, exe->write_data_size + size);
-   if (buf == NULL)
-      return 0;
+   if (buf == NULL) return 0;
 
    exe->write_data_buf = buf;
    memcpy((char *)exe->write_data_buf + exe->write_data_size, data, size);
@@ -1365,7 +1384,10 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
 
 	     lost_exe = 0;
 	     errno = 0;
-	     if ((num = read(child_fd, buf, READBUFSIZ)) < 1)	/* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE (currently 64k) to inbuf, use that instead of buf, and save ourselves a memcpy(). */
+	     if ((num = read(child_fd, buf, READBUFSIZ)) < 1)
+	       /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE 
+		* (currently 64k) to inbuf, use that instead of buf, and
+		* save ourselves a memcpy(). */
 	       {
 		  lost_exe = ((errno == EIO) ||
 			      (errno == EBADF) ||

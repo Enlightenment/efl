@@ -31,6 +31,7 @@ ecore_time.c \
 ecore_timer.c \
 ecore_tree.c \
 ecore_value.c \
+ecore_poll.c \
 ecore_private.h
 
 libecore_la_LIBADD = @dlopen_libs@ @winsock_libs@ -lm

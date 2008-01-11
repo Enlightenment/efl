@@ -169,3 +169,21 @@ ecore_x_window_shape_events_select(Ecore_X_Window win, int on)
    else
      XShapeSelectInput(_ecore_x_disp, win, 0);
 }
+
+/**
+ * Sets the input shape of the given window to that given by the pixmap @p mask.
+ * @param   win  The given window.
+ * @param   mask A 2-bit depth pixmap that provides the new input shape of the
+ *               window.
+ * @ingroup Ecore_X_Window_Shape
+ */
+EAPI void
+ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
+{
+#ifdef ShapeInput
+   XShapeCombineMask(_ecore_x_disp, win, ShapeInput, 0, 0, mask, ShapeSet);
+#else   
+   XShapeCombineMask(_ecore_x_disp, win, ShapeBounding, 0, 0, mask, ShapeSet);
+#endif
+}
+

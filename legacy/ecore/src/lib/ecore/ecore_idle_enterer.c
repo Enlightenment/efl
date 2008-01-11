@@ -28,6 +28,29 @@ ecore_idle_enterer_add(int (*func) (void *data), const void *data)
 }
 
 /**
+ * Add an idle enterer handler at the start of the list so it gets called earlier than others.
+ * @param   func The function to call when entering an idle state.
+ * @param   data The data to be passed to the @p func call
+ * @return  A handle to the idle enterer callback if successful.  Otherwise,
+ *          NULL is returned.
+ * @ingroup Idle_Group
+ */
+EAPI Ecore_Idle_Enterer *
+ecore_idle_enterer_before_add(int (*func) (void *data), const void *data)
+{
+   Ecore_Idle_Enterer *ie;
+
+   if (!func) return NULL;
+   ie = calloc(1, sizeof(Ecore_Idle_Enterer));
+   if (!ie) return NULL;
+   ECORE_MAGIC_SET(ie, ECORE_MAGIC_IDLE_ENTERER);
+   ie->func = func;
+   ie->data = (void *)data;
+   idle_enterers = _ecore_list2_prepend(idle_enterers, ie);
+   return ie;
+}
+
+/**
  * Delete an idle enterer callback.
  * @param   idle_enterer The idle enterer to delete
  * @return  The data pointer passed to the idler enterer callback on success.

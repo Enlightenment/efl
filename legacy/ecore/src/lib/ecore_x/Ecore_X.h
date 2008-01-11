@@ -1216,6 +1216,7 @@ EAPI void               ecore_x_window_shape_rectangles_get_prefetch(Ecore_X_Win
 EAPI void               ecore_x_window_shape_rectangles_get_fetch(void);
 EAPI Ecore_X_Rectangle *ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret);
 EAPI void               ecore_x_window_shape_events_select(Ecore_X_Window win, int on);
+EAPI void               ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
 
 EAPI Ecore_X_Pixmap   ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep);
 EAPI void             ecore_x_pixmap_del(Ecore_X_Pixmap pmap);

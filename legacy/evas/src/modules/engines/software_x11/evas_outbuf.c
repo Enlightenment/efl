@@ -4,6 +4,110 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 
+static Evas_List *shmpool = NULL;
+static int shmsize = 0;
+
+static X_Output_Buffer *
+_find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
+{
+   Evas_List *l, *xl;
+   X_Output_Buffer *xob = NULL;
+   int fitness = 0x7fffffff;
+   int sz, lbytes, bpp;
+   
+//   return evas_software_x11_x_output_buffer_new(d, v, depth, w, h, shm, data);
+   if (!shm)
+     return evas_software_x11_x_output_buffer_new(d, v, depth, w, h, shm, data);
+   if (depth > 1)
+     {
+	bpp = depth / 8;
+	if (bpp == 3) bpp = 4;
+	lbytes = (((w * bpp) + 3) / 4) * 4;
+     }
+   else
+     lbytes = ((w + 31) / 32) * 4;
+   sz = lbytes * h;
+   for (l = shmpool; l; l = l->next)
+     {
+	X_Output_Buffer *xob2;
+	int szdif;
+	
+	xob2 = l->data;
+	if ((xob2->xim->depth != depth) || (xob2->visual != v) ||
+	    (xob2->display != d))
+	  continue;
+	szdif = xob2->psize - sz;
+	if (szdif < 0) continue;
+	if (szdif == 0)
+	  {
+	     xob = xob2;
+	     xl = l;
+	     goto have_xob;
+	  }
+	if (szdif < fitness)
+	  {
+	     fitness = szdif;
+	     xob = xob2;
+	     xl = l;
+	  }
+     }
+   if ((fitness > (100 * 100)) || (!xob))
+     return evas_software_x11_x_output_buffer_new(d, v, depth, w, h, shm, data);
+   
+   have_xob:
+   shmpool = evas_list_remove_list(shmpool, xl);
+   xob->w = w;
+   xob->h = h;
+   xob->bpl = lbytes;
+   xob->xim->width = xob->w;
+   xob->xim->height = xob->h;
+   xob->xim->bytes_per_line = xob->bpl;
+   shmsize -= xob->psize * (xob->xim->depth / 8);
+   return xob;
+}
+
+static void
+_unfind_xob(X_Output_Buffer *xob, int sync)
+{
+//   evas_software_x11_x_output_buffer_free(xob, sync); return;
+   if (xob->shm_info)
+     {
+	shmpool = evas_list_prepend(shmpool, xob);
+	shmsize += xob->psize * xob->xim->depth / 8;
+	while ((shmsize > (1024 * 4096)) ||
+	       (evas_list_count(shmpool) > 32))
+	  {
+	     Evas_List *xl;
+	     
+	     xl = evas_list_last(shmpool);
+	     if (!xl)
+	       {
+		  shmsize = 0;
+		  break;
+	       }
+	     xob = xl->data;
+	     shmpool = evas_list_remove_list(shmpool, xl);
+	     evas_software_x11_x_output_buffer_free(xob, sync);
+	  }
+     }
+   else 
+     evas_software_x11_x_output_buffer_free(xob, sync);
+}
+
+static void
+_clear_xob(int sync)
+{
+   while (shmpool)
+     {
+	X_Output_Buffer *xob;
+	
+	xob = shmpool->data;
+	shmpool = evas_list_remove_list(shmpool, shmpool);
+	evas_software_x11_x_output_buffer_free(xob, sync);
+     }
+   shmsize = 0;
+}
+
 void
 evas_software_x11_outbuf_init(void)
 {
@@ -12,6 +116,19 @@ evas_software_x11_outbuf_init(void)
 void
 evas_software_x11_outbuf_free(Outbuf *buf)
 {
+   while (buf->priv.pending_writes)
+     {
+	RGBA_Image *im;
+	Outbuf_Region *obr;
+	
+	im = buf->priv.pending_writes->data;
+	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
+	obr = im->extended_info;
+	evas_cache_image_drop(im);
+	if (obr->xob) _unfind_xob(obr->xob, 0);
+	if (obr->mxob) _unfind_xob(obr->mxob, 0);
+	free(obr);
+     }
    evas_software_x11_outbuf_idle_flush(buf);
    evas_software_x11_outbuf_flush(buf);
    if (buf->priv.x.gc)
@@ -22,6 +139,7 @@ evas_software_x11_outbuf_free(Outbuf *buf)
       evas_software_x11_x_color_deallocate(buf->priv.x.disp, buf->priv.x.cmap,
 					   buf->priv.x.vis, buf->priv.pal);
    free(buf);
+   _clear_xob(0);
 }
 
 void
@@ -190,7 +308,7 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 		       "  At depth         %i:\n"
 		       "  RGB format mask: %08x, %08x, %08x\n"
 		       "  Palette mode:    %i\n"
-		       "  Not supported by and compiled in converters!\n"
+		       "  Not supported by compiled in converters!\n"
 		       " }\n",
 		       buf->priv.x.depth,
 		       buf->priv.mask.r,
@@ -342,7 +460,8 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
    /* FIXME: magic - i found if shm regions are smaller than 200x200 its
     * faster to use ximages over unix sockets - trial and error
     */
-   if ((w * h) < (200 * 200)) use_shm = 0;
+//   use_shm = 0; /* 630 -> 1006 fps */
+//   if ((w * h) < (200 * 200)) use_shm = 0; /* 630 -> 962 fps */
 
    if ((buf->rot == 0) &&
        (buf->priv.mask.r == 0xff0000) &&
@@ -355,19 +474,34 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 	im->image->data = NULL;
 	im->image->no_free = 1;
 	im->extended_info = obr;
+	obr->xob = _find_xob(buf->priv.x.disp,
+			     buf->priv.x.vis,
+			     buf->priv.x.depth,
+			     w, h,
+			     use_shm,
+			     NULL);
+ /*	
 	obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 							 buf->priv.x.vis,
 							 buf->priv.x.depth,
 							 w, h,
 							 use_shm,
 							 NULL);
+ */
 	im->image->data = (DATA32 *) evas_software_x11_x_output_buffer_data(obr->xob, &bpl);
 	if (buf->priv.x.mask)
+	  obr->mxob = _find_xob(buf->priv.x.disp,
+				buf->priv.x.vis,
+				1, w, h,
+				use_shm,
+				NULL);
+/*	  
 	  obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 							    buf->priv.x.vis,
 							    1, w, h,
 							    use_shm,
 							    NULL);
+ */
      }
    else
      {
@@ -377,25 +511,48 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
         evas_common_image_surface_alloc(im->image);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
+	  obr->xob = _find_xob(buf->priv.x.disp,
+			       buf->priv.x.vis,
+			       buf->priv.x.depth,
+			       w, h,
+			       use_shm,
+			       NULL);
+/*	
 	  obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 							   buf->priv.x.vis,
 							   buf->priv.x.depth,
 							   w, h,
 							   use_shm,
 							   NULL);
+ */
 	else if ((buf->rot == 90) || (buf->rot == 270))
+	  obr->xob = _find_xob(buf->priv.x.disp,
+			       buf->priv.x.vis,
+			       buf->priv.x.depth,
+			       h, w,
+			       use_shm,
+			       NULL);
+/*	
 	  obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 							   buf->priv.x.vis,
 							   buf->priv.x.depth,
 							   h, w,
 							   use_shm,
 							   NULL);
+ */
 	if (buf->priv.x.mask)
+	  obr->mxob = _find_xob(buf->priv.x.disp,
+				buf->priv.x.vis,
+				1, w, h,
+				use_shm,
+				NULL);
+/*	
 	  obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 							    buf->priv.x.vis,
 							    1, w, h,
 							    use_shm,
 							    NULL);
+ */
      }
    if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
      {
@@ -461,6 +618,8 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
      }
    else
      {
+#if 1	
+	XSync(buf->priv.x.disp, False);
 	for (l = buf->priv.pending_writes; l; l = l->next)
 	  {
 	     RGBA_Image *im;
@@ -468,7 +627,6 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	     
 	     im = l->data;
 	     obr = im->extended_info;
-	     /* paste now */
 	     if (buf->priv.debug)
 	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
 						   obr->x, obr->y, obr->w, obr->h);
@@ -481,7 +639,53 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 						       buf->priv.x.gcm,
 						       obr->x, obr->y, 0);
 	  }
+	while (buf->priv.prev_pending_writes)
+	  {
+	     RGBA_Image *im;
+	     Outbuf_Region *obr;
+	     
+	     im = buf->priv.prev_pending_writes->data;
+	     buf->priv.prev_pending_writes = 
+	       evas_list_remove_list(buf->priv.prev_pending_writes, 
+				     buf->priv.prev_pending_writes);
+	     obr = im->extended_info;
+	     evas_cache_image_drop(im);
+	     if (obr->xob) _unfind_xob(obr->xob, 0);
+	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
+/*	     
+	     if (obr->xob) evas_software_x11_x_output_buffer_free(obr->xob, 0);
+	     if (obr->mxob) evas_software_x11_x_output_buffer_free(obr->mxob, 0);
+ */
+	     free(obr);
+	  }
+	buf->priv.prev_pending_writes = buf->priv.pending_writes;
+	buf->priv.pending_writes = NULL;
+	XFlush(buf->priv.x.disp);
+#else	
+	/* XX async push - disable */
+	/*
+	for (l = buf->priv.pending_writes; l; l = l->next)
+	  {
+	     RGBA_Image *im;
+	     Outbuf_Region *obr;
+	     
+	     im = l->data;
+	     obr = im->extended_info;
+	     if (buf->priv.debug)
+	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
+						   obr->x, obr->y, obr->w, obr->h);
+	     evas_software_x11_x_output_buffer_paste(obr->xob, buf->priv.x.win,
+						     buf->priv.x.gc,
+						     obr->x, obr->y, 0);
+	     if (obr->mxob)
+	       evas_software_x11_x_output_buffer_paste(obr->mxob,
+						       buf->priv.x.mask,
+						       buf->priv.x.gcm,
+						       obr->x, obr->y, 0);
+	  }
+	 */
 	XSync(buf->priv.x.disp, False);
+	
 	while (buf->priv.pending_writes)
 	  {
 	     RGBA_Image *im;
@@ -491,10 +695,15 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	     buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	     obr = im->extended_info;
 	     evas_cache_image_drop(im);
+	     if (obr->xob) _unfind_xob(obr->xob, 0);
+	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
+/*	     
 	     if (obr->xob) evas_software_x11_x_output_buffer_free(obr->xob, 0);
 	     if (obr->mxob) evas_software_x11_x_output_buffer_free(obr->mxob, 0);
+ */
 	     free(obr);
 	  }
+#endif	
      }
    evas_common_cpu_end_opt();
 }
@@ -514,6 +723,26 @@ evas_software_x11_outbuf_idle_flush(Outbuf *buf)
 	if (obr->xob) evas_software_x11_x_output_buffer_free(obr->xob, 0);
 	if (obr->mxob) evas_software_x11_x_output_buffer_free(obr->mxob, 0);
 	free(obr);
+     }
+   else
+     {
+	if (buf->priv.prev_pending_writes) XSync(buf->priv.x.disp, False);
+	while (buf->priv.prev_pending_writes)
+	  {
+	     RGBA_Image *im;
+	     Outbuf_Region *obr;
+	     
+	     im = buf->priv.prev_pending_writes->data;
+	     buf->priv.prev_pending_writes = 
+	       evas_list_remove_list(buf->priv.prev_pending_writes, 
+				     buf->priv.prev_pending_writes);
+	     obr = im->extended_info;
+	     evas_cache_image_drop(im);
+	     if (obr->xob) _unfind_xob(obr->xob, 0);
+	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
+	     free(obr);
+	  }
+	_clear_xob(0);
      }
 }
 
@@ -609,38 +838,40 @@ evas_software_x11_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
 		    bpl /
 		    ((evas_software_x11_x_output_buffer_depth(obr->xob) /
 		      8)) - obr->w, obr->w, obr->h, x, y, NULL);
-#if 0
-	/* FIXME: this is evil - but it makes ARGB targets look correct */
-	if ((buf->priv.destination_alpha) && (!obr->mxob) &&
-	    (evas_software_x11_x_output_buffer_depth(obr->xob) == 32))
-	  {
-	     int i;
-	     DATA32 a;
-	     DATA32 *s, *e;
-	     
-	     for (i = 0; i < obr->h; i++)
-	       {
-		  s = ((DATA32 *)data) + ((bpl * i) / sizeof(DATA32));
-		  e = s + obr->w;
-		  while (s < e)
-		    {
-		       a = A_VAL(s) + 1;
-		       R_VAL(s) = (R_VAL(s) * a) >> 8;
-		       G_VAL(s) = (G_VAL(s) * a) >> 8;
-		       B_VAL(s) = (B_VAL(s) * a) >> 8;
-		       s++;
-		    }
-	       }
-	  }
-#endif
      }
+#if 1
+#else   
+   /* XX async push */
+   if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions)))
+     {     
+	if (buf->priv.debug)
+	  evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
+					      obr->x, obr->y, obr->w, obr->h);
+	evas_software_x11_x_output_buffer_paste(obr->xob, buf->priv.x.win,
+						buf->priv.x.gc,
+						obr->x, obr->y, 0);
+     }
+#endif   
    if (obr->mxob)
      {
 	for (yy = 0; yy < obr->h; yy++)
 	  evas_software_x11_x_write_mask_line(buf, obr->mxob,
 					      src_data +
 					      (yy * obr->w), obr->w, yy);
+#if 1
+#else   
+	/* XX async push */
+	if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions)))
+	  evas_software_x11_x_output_buffer_paste(obr->mxob,
+						  buf->priv.x.mask,
+						  buf->priv.x.gcm,
+						  obr->x, obr->y, 0);
+#endif	
      }
+#if 1
+#else
+   XFlush(buf->priv.x.disp);
+#endif   
 }
 
 void

@@ -153,10 +153,15 @@ _ecore_timer_next_get(void)
 {
    double now;
    double in;
+   Ecore_Timer *timer;
    
    if (!timers) return -1;
    now = ecore_time_get();
-   in = timers->at - now;
+   timer = (Ecore_Timer *)timers;
+   while ((timer) && ((timer->delete_me) || (timer->just_added)))
+     timer = (Ecore_Timer *)((Ecore_List2 *)timer)->next;
+   if (!timer) return -1;
+   in = timer->at - now;
    if (in < 0) in = 0;
    return in;
 }  
@@ -166,7 +171,7 @@ _ecore_timer_call(double when)
 {
    Ecore_List2 *l;   
    Ecore_Timer *timer;
-   
+
    if (!timers) return 0;
    if (last_check > when)
      {
@@ -189,13 +194,18 @@ _ecore_timer_call(double when)
 	     _ecore_timer_call(when);
 	     if ((!timer->delete_me) && (timer->func(timer->data)))
 	       {
-		  /* if the timer would have gone off more than 30 seconds ago,
+		  /* if the timer would have gone off more than 15 seconds ago,
 		   * assume that the system hung and set the timer to go off
-		   * timer->in from now.
+		   * timer->in from now. this handles system hangs, suspends
+		   * and more, so ecore will only "replay" the timers while
+		   * the system is suspended if it is suspended for less than
+		   * 15 seconds (basically). this also handles if the process
+		   * is stopped in a debugger or IO and other handling gets
+		   * really slow within the main loop.
 		   */
 		  if (!timer->delete_me)
 		    {
-		       if ((timer->at + timer->in) < (when - 30.0))
+		       if ((timer->at + timer->in) < (when - 15.0))
 			 _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
 		       else
 			 _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);

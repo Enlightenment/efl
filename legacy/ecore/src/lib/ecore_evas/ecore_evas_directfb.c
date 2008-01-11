@@ -32,7 +32,6 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-	_ecore_evas_idle_timeout_update(ee2);
      }
 #endif
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
@@ -56,9 +55,9 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 	     surface->Flip(surface, &region,DSFLIP_BLIT);
 	  }
 	evas_render_updates_free(updates);
+	_ecore_evas_idle_timeout_update(ee);
      }
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-   _ecore_evas_idle_timeout_update(ee);
 }
 
 static int

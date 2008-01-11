@@ -26,8 +26,8 @@
  *
  * * Need more buffer overflow checks.
  */
-#include "Ecore.h"
 #include "ecore_private.h"
+#include "Ecore.h"
 #include "ecore_con_private.h"
 
 #include <ctype.h>

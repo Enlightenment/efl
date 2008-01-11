@@ -1313,7 +1313,6 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
     Ecore_List *execs;
     char *exec;
 
-   printf("efreet_desktop_command_build()\n");
     execs = ecore_list_new();
 
     ecore_list_first_goto(command->files);
