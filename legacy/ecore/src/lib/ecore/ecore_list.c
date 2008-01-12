@@ -1207,8 +1207,6 @@ ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
 EAPI void
 ecore_list_merge(Ecore_List *list, Ecore_List *l2, Ecore_Compare_Cb compare, char order)
 {
-   Ecore_List_Node *node;
-
    CHECK_PARAM_POINTER("list", list);
    CHECK_PARAM_POINTER("l2", l2);
 
