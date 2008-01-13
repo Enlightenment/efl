@@ -44,7 +44,7 @@ main_help(void)
 
 #ifdef _WIN32
 int
-symlink (const char *oldpath, const char newpath)
+symlink (const char *oldpath, const char *newpath)
 {
    IShellLink   *pISL;
    IPersistFile *pIPF;
