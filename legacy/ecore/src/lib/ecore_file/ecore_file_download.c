@@ -244,7 +244,8 @@ _ecore_file_download_curl(const char *url, const char *dst,
 
    curl_easy_setopt(job->curl, CURLOPT_URL, url);
    curl_easy_setopt(job->curl, CURLOPT_WRITEDATA, job->file);
-
+   curl_easy_setopt(job->curl, CURLOPT_FOLLOWLOCATION, TRUE);
+   
    if (progress_cb)
      {
 	curl_easy_setopt(job->curl, CURLOPT_NOPROGRESS, FALSE);
