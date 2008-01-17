@@ -264,6 +264,7 @@ static Efreet_Menu *efreet_menu_layout_menu(Efreet_Menu_Internal *internal);
 static Efreet_Menu *efreet_menu_layout_desktop(Efreet_Menu_Desktop *md);
 static void efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *internal,
                                             Efreet_Menu_Layout *layout);
+static int efreet_menu_layout_is_empty(Efreet_Menu *entry);
 
 static Efreet_Menu_Internal *efreet_menu_internal_new(void);
 static void efreet_menu_internal_free(Efreet_Menu_Internal *internal);
@@ -3712,7 +3713,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
             if (!(sub->directory && sub->directory->no_display) && !sub->deleted)
             {
                 sub_entry = efreet_menu_layout_menu(sub);
-                if (!show_empty && !sub_entry->entries)
+                if (!show_empty && efreet_menu_layout_is_empty(sub_entry))
                     efreet_menu_free(sub_entry);
                 else if (in_line &&
                         ((inline_limit == 0) ||
@@ -3815,7 +3816,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                 if (!sub_entry)
                 {
                     sub_entry = efreet_menu_layout_menu(sub);
-                    if (!internal->show_empty && !sub_entry->entries)
+                    if (!internal->show_empty && efreet_menu_layout_is_empty(sub_entry))
                         efreet_menu_free(sub_entry);
                     else if (internal->in_line &&
                             ((internal->inline_limit == 0) ||
@@ -3909,4 +3910,20 @@ static int
 efreet_menu_cb_move_compare(Efreet_Menu_Move *move, const char *old)
 {
     return ecore_str_compare(move->old_name, old);
+}
+
+static int
+efreet_menu_layout_is_empty(Efreet_Menu *entry)
+{
+    Efreet_Menu *sub_entry;
+
+    if (!entry->entries) return 1;
+
+    ecore_list_first_goto(entry->entries);
+    while ((sub_entry = ecore_list_next(entry->entries)))
+    {
+        if (sub_entry->type == EFREET_MENU_ENTRY_MENU) return 0;
+        if (sub_entry->type == EFREET_MENU_ENTRY_DESKTOP) return 0;
+    }
+    return 1;
 }
