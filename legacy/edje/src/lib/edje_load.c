@@ -158,15 +158,16 @@ edje_file_group_exists(const char *file, const char *glob)
      {
 	if (edf->collection_dir)
 	  {
-	     Evas_List *l;
+             Edje_Patterns      *patterns;
 
-	     for (l = edf->collection_dir->entries; l; l = l->next)
-	       {
-		  Edje_Part_Collection_Directory_Entry *ce;
-
-		  ce = l->data;
-		  if (_edje_glob_match(ce->entry, glob)) return 1;
-	       }
+             patterns = edje_match_collection_dir_init(edf->collection_dir->entries);
+             if (edje_match_collection_dir_exec(patterns,
+                                                glob))
+               {
+                  edje_match_patterns_free(patterns);
+                  return 1;
+               }
+             edje_match_patterns_free(patterns);
 	  }
 	_edje_cache_file_unref(edf);
      }

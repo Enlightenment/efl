@@ -34,6 +34,7 @@ edje_container.h \
 edje_message_queue.c \
 edje_private.h \
 edje_cache.c \
+edje_match.c \
 edje_textblock_styles.c
 
 libedje_la_LIBADD       = -lm @EDJE_LIBS@ @fnmatch_libs@

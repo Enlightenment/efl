@@ -1951,20 +1951,6 @@ _edje_fetch(Evas_Object *obj)
 }
 
 int
-_edje_glob_match(const char *str, const char *glob)
-{
-   if ((!glob) || (glob[0] == 0))
-     {
-	if ((!str) || (str[0] == 0)) return 1;
-	if ((glob) && (glob[0] == '*')) return 1;
-	return 0;
-     }
-   if (glob[0] == '*') return 1;
-   if ((glob) && (str) && (!fnmatch(glob, str, 0))) return 1;
-   return 0;
-}
-
-int
 _edje_freeze(Edje *ed)
 {
    ed->freeze++;

@@ -906,6 +906,48 @@ typedef enum _Edje_Fill
      EDJE_FILL_TYPE_TILE
 } Edje_Fill;
 
+typedef enum _Edje_Match_Error
+{
+   EDJE_MATCH_OK,
+     EDJE_MATCH_ALLOC_ERROR,
+     EDJE_MATCH_SYNTAX_ERROR
+     
+} Edje_Match_Error;
+
+typedef struct _Edje_Patterns   Edje_Patterns;
+struct _Edje_Patterns
+{
+   const char    **patterns;
+   size_t          patterns_size;
+   size_t          max_length;
+   size_t          finals[];
+   
+};
+
+Edje_Patterns   *edje_match_collection_dir_init(Evas_List *lst);
+Edje_Patterns   *edje_match_programs_signal_init(Evas_List *lst);
+Edje_Patterns   *edje_match_programs_source_init(Evas_List *lst);
+Edje_Patterns   *edje_match_callback_signal_init(Evas_List *lst);
+Edje_Patterns   *edje_match_callback_source_init(Evas_List *lst);
+
+int              edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
+						const char               *string);
+int              edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
+					  const Edje_Patterns    *ppat_source,
+					  const char             *signal,
+					  const char             *source,
+					  Evas_List              *programs,
+					  int (*func)(Edje_Program *pr, void *data),
+					  void                   *data);
+int              edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
+					  const Edje_Patterns    *ppat_source,
+					  const char             *signal,
+					  const char             *source,
+					  Evas_List              *callbacks,
+					  Edje                   *ed);
+
+void             edje_match_patterns_free(Edje_Patterns *ppat);
+
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style_tag;
@@ -998,7 +1040,6 @@ void              _edje_text_class_members_free(void);
 void              _edje_text_class_hash_free(void);
 
 Edje             *_edje_fetch(Evas_Object *obj);
-int               _edje_glob_match(const char *str, const char *glob);
 int               _edje_freeze(Edje *ed);
 int               _edje_thaw(Edje *ed);
 int               _edje_block(Edje *ed);

@@ -823,12 +823,46 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
 }
 
+struct _Edje_Program_Data
+{
+#ifdef EDJE_PROGRAM_CACHE
+  Evas_List     *matches;
+  int            matched;
+#endif
+  Edje          *ed;
+  const char    *signal;
+  const char    *source;
+};
+
+static int _edje_glob_callback(Edje_Program *pr, void *dt)
+{
+   struct _Edje_Program_Data    *data = dt;
+
+#ifdef EDJE_PROGRAM_CACHE
+   data->matched++;
+#endif
+
+   _edje_program_run(data->ed, pr, 0, data->signal, data->source);
+   if (_edje_block_break(data->ed))
+     {
+#ifdef EDJE_PROGRAM_CACHE
+        evas_list_free(data->matches);
+        data->matches = NULL;
+#endif
+        return 1;
+     }
+
+#ifdef EDJE_PROGRAM_CACHE
+   data->matches = evas_list_append(data->matches, pr);
+#endif
+
+   return 0;
+}
+
 /* FIXME: what if we delete the evas object??? */
 void
 _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 {
-   Evas_List *l;
-
    if (ed->delete_me) return;
    if (!sig) sig = "";
    if (!src) src = "";
@@ -883,35 +917,40 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 #endif
 	if (!done)
 	  {
-#ifdef EDJE_PROGRAM_CACHE
-	     int matched = 0;
-	     Evas_List *matches = NULL;
-#endif
+             struct _Edje_Program_Data  data;
 
-	     for (l = ed->collection->programs; l; l = l->next)
-	       {
-		  Edje_Program *pr;
+             data.ed = ed;
+             data.source = src;
+             data.signal = sig;
+#ifdef EDJE_PROGRAM_CACHE
+	     data.matched = 0;
+	     data.matches = NULL;
+#endif
+             Edje_Patterns      *signals_patterns;
+             Edje_Patterns      *sources_patterns;
 
-		  pr = l->data;
-		  if ((_edje_glob_match(sig, pr->signal)) &&
-		      (_edje_glob_match(src, pr->source)))
-		    {
-#ifdef EDJE_PROGRAM_CACHE
-		       matched++;
-#endif
-		       _edje_program_run(ed, pr, 0, sig, src);
-		       if (_edje_block_break(ed))
-			 {
-#ifdef EDJE_PROGRAM_CACHE
-			    evas_list_free(matches);
-#endif
-			    goto break_prog;
-			 }
-#ifdef EDJE_PROGRAM_CACHE
-		       matches = evas_list_append(matches, pr);
-#endif
-		    }
-	       }
+             if (ed->collection->programs)
+               {
+                  signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
+                  sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+
+                  if (edje_match_programs_exec(signals_patterns,
+                                               sources_patterns,
+                                               sig,
+                                               src,
+                                               ed->collection->programs,
+                                               _edje_glob_callback,
+                                               &data) == 0)
+                    {
+                       edje_match_patterns_free(signals_patterns);
+                       edje_match_patterns_free(sources_patterns);
+                       goto break_prog;
+                    }
+
+                  edje_match_patterns_free(signals_patterns);
+                  edje_match_patterns_free(sources_patterns);
+               }
+
 #ifdef EDJE_PROGRAM_CACHE
 	     if (tmps)
 	       {
@@ -920,7 +959,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 		    evas_hash_add(ec->prog_cache.no_matches, tmps, ed);
 		  else
 		    ec->prog_cache.matches =
-		    evas_hash_add(ec->prog_cache.matches, tmps, matches);
+		    evas_hash_add(ec->prog_cache.matches, tmps, data.matches);
 	       }
 #endif
 	  }
@@ -940,25 +979,41 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 static void
 _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 {
-   Evas_List *l;
+   Edje_Patterns        *signals_patterns;
+   Edje_Patterns        *sources_patterns;
+   Evas_List            *l;
 
    if (ed->delete_me) return;
    _edje_ref(ed);
    _edje_freeze(ed);
    _edje_block(ed);
    ed->walking_callbacks = 1;
-   for (l = ed->callbacks; l; l = l->next)
-     {
-	Edje_Signal_Callback *escb;
 
-	escb = l->data;
-	if ((!escb->just_added) &&
-	    (!escb->delete_me) &&
-	    (_edje_glob_match(sig, escb->signal)) &&
-	    (_edje_glob_match(src, escb->source)))
-	  escb->func(escb->data, ed->obj, sig, src);
-	if (_edje_block_break(ed)) goto break_prog;
+   if (ed->callbacks)
+     {
+        int     r;
+
+        signals_patterns = edje_match_callback_signal_init(ed->callbacks);
+        sources_patterns = edje_match_callback_source_init(ed->callbacks);
+
+        r = edje_match_callback_exec(signals_patterns,
+                                     sources_patterns,
+                                     sig,
+                                     src,
+                                     ed->callbacks,
+                                     ed);
+
+        if (!r)
+          {
+             edje_match_patterns_free(signals_patterns);
+             edje_match_patterns_free(sources_patterns);
+             goto break_prog;
+          }
+
+        edje_match_patterns_free(signals_patterns);
+        edje_match_patterns_free(sources_patterns);
      }
+
    ed->walking_callbacks = 0;
    if ((ed->delete_callbacks) || (ed->just_added_callbacks))
      {
