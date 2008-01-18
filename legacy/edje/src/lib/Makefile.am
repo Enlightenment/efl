@@ -37,7 +37,7 @@ edje_cache.c \
 edje_match.c \
 edje_textblock_styles.c
 
-libedje_la_LIBADD       = -lm @EDJE_LIBS@ @fnmatch_libs@
+libedje_la_LIBADD       = -lm @EDJE_LIBS@
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
 libedje_la_LDFLAGS      = @create_shared_lib@ -version-info @version_info@
 
