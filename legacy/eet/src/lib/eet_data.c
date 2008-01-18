@@ -55,7 +55,7 @@ typedef struct _Eet_Data_Encode_Hash_Info   Eet_Data_Encode_Hash_Info;
 struct _Eet_Data_Basic_Type_Decoder
 {
    int     size;
-   int   (*get) (void *src, void *src_end, void *dest);
+   int   (*get) (const void *src, const void *src_end, void *dest);
    void *(*put) (const void *src, int *size_ret);
 };
 
@@ -129,22 +129,22 @@ struct _Eet_Data_Encode_Hash_Info
 
 /*---*/
 
-static int   eet_data_get_char(void *src, void *src_end, void *dest);
+static int   eet_data_get_char(const void *src, const void *src_end, void *dest);
 static void *eet_data_put_char(const void *src, int *size_ret);
-static int   eet_data_get_short(void *src, void *src_end, void *dest);
+static int   eet_data_get_short(const void *src, const void *src_end, void *dest);
 static void *eet_data_put_short(const void *src, int *size_ret);
-static int   eet_data_get_int(void *src, void *src_end, void *dest);
+static int   eet_data_get_int(const void *src, const void *src_end, void *dest);
 static void *eet_data_put_int(const void *src, int *size_ret);
-static int   eet_data_get_long_long(void *src, void *src_end, void *dest);
+static int   eet_data_get_long_long(const void *src, const void *src_end, void *dest);
 static void *eet_data_put_long_long(const void *src, int *size_ret);
-static int   eet_data_get_float(void *src, void *src_end, void *dest);
+static int   eet_data_get_float(const void *src, const void *src_end, void *dest);
 static void *eet_data_put_float(const void *src, int *size_ret);
-static int   eet_data_get_double(void *src, void *src_end, void *dest);
+static int   eet_data_get_double(const void *src, const void *src_end, void *dest);
 static void *eet_data_put_double(const void *src, int *size_ret);
-static int   eet_data_get_string(void *src, void *src_end, void *dest);
+static int   eet_data_get_string(const void *src, const void *src_end, void *dest);
 static void *eet_data_put_string(const void *src, int *size_ret);
 
-static int   eet_data_get_type(int type, void *src, void *src_end, void *dest);
+static int   eet_data_get_type(int type, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_type(int type, const void *src, int *size_ret);
 
 static void            eet_data_chunk_get(Eet_Data_Chunk *chnk, const void *src, int size);
@@ -207,7 +207,7 @@ static int words_bigendian = -1;
 
 /* CHAR TYPE */
 static int
-eet_data_get_char(void *src, void *src_end, void *dst)
+eet_data_get_char(const void *src, const void *src_end, void *dst)
 {
    char *s, *d;
 
@@ -235,7 +235,7 @@ eet_data_put_char(const void *src, int *size_ret)
 
 /* SHORT TYPE */
 static int
-eet_data_get_short(void *src, void *src_end, void *dst)
+eet_data_get_short(const void *src, const void *src_end, void *dst)
 {
    short *d;
 
@@ -262,7 +262,7 @@ eet_data_put_short(const void *src, int *size_ret)
 
 /* INT TYPE */
 static int
-eet_data_get_int(void *src, void *src_end, void *dst)
+eet_data_get_int(const void *src, const void *src_end, void *dst)
 {
    int *d;
 
@@ -289,7 +289,7 @@ eet_data_put_int(const void *src, int *size_ret)
 
 /* LONG LONG TYPE */
 static int
-eet_data_get_long_long(void *src, void *src_end, void *dst)
+eet_data_get_long_long(const void *src, const void *src_end, void *dst)
 {
    unsigned long long *d;
 
@@ -316,7 +316,7 @@ eet_data_put_long_long(const void *src, int *size_ret)
 
 /* STRING TYPE */
 static int
-eet_data_get_string(void *src, void *src_end, void *dst)
+eet_data_get_string(const void *src, const void *src_end, void *dst)
 {
    char *s, **d, *p;
    int len;
@@ -397,7 +397,7 @@ _eet_data_double_cache_get(char *s, int len, double *d)
 
 /* FLOAT TYPE */
 static int
-eet_data_get_float(void *src, void *src_end, void *dst)
+eet_data_get_float(const void *src, const void *src_end, void *dst)
 {
    float *d;
    long long mantisse;
@@ -442,7 +442,7 @@ eet_data_put_float(const void *src, int *size_ret)
 
 /* DOUBLE TYPE */
 static int
-eet_data_get_double(void *src, void *src_end, void *dst)
+eet_data_get_double(const void *src, const void *src_end, void *dst)
 {
    double   *d;
    long long mantisse = 0;
@@ -486,7 +486,7 @@ eet_data_put_double(const void *src, int *size_ret)
 }
 
 static int
-eet_data_get_type(int type, void *src, void *src_end, void *dest)
+eet_data_get_type(int type, const void *src, const void *src_end, void *dest)
 {
    int ret;
 
@@ -556,7 +556,7 @@ eet_data_chunk_get(Eet_Data_Chunk *chnk, const void *src, int size)
 	     return;
 	  }
      }
-   ret1 = eet_data_get_type(EET_T_INT, (void *)(s + 4), (void *)(s + size), &(chnk->size));
+   ret1 = eet_data_get_type(EET_T_INT, (s + 4), (s + size), &(chnk->size));
    if (ret1 <= 0)
      {
 	return;
@@ -565,7 +565,7 @@ eet_data_chunk_get(Eet_Data_Chunk *chnk, const void *src, int size)
      {
 	return;
      }
-   ret2 = eet_data_get_type(EET_T_STRING, (void *)(s + 8), (void *)(s + size), &(chnk->name));
+   ret2 = eet_data_get_type(EET_T_STRING, (s + 8), (s + size), &(chnk->name));
    if (ret2 <= 0)
      {
 	return;
