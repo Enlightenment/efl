@@ -444,10 +444,11 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
 		  buf = _edje_strbuf_append(buf, "font=", &buflen, &bufalloc);
 		  tmp = _edje_str_escape(tag->font);
-		  if (tmp) {
-		     buf = _edje_strbuf_append(buf, tmp, &buflen, &bufalloc);
-		     free(tmp);
-		  }
+		  if (tmp)
+		    {
+		       buf = _edje_strbuf_append(buf, tmp, &buflen, &bufalloc);
+		       free(tmp);
+		    }
 	       }
 	     buf = _edje_strbuf_append(buf, "'", &buflen, &bufalloc);
 	  }
