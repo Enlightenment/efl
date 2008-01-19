@@ -68,10 +68,10 @@ ecore_file_monitor_shutdown(void)
  */
 EAPI Ecore_File_Monitor *
 ecore_file_monitor_add(const char *path,
-			    void (*func) (void *data, Ecore_File_Monitor *em,
-					  Ecore_File_Event event,
-					  const char *path),
-			    void *data)
+                void (*func) (void *data, Ecore_File_Monitor *em,
+                      Ecore_File_Event event,
+                      const char *path),
+                void *data)
 {
    switch (monitor_type)
      {

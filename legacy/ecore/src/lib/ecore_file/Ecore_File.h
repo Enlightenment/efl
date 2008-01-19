@@ -83,12 +83,11 @@ extern "C" {
    EAPI char       *ecore_file_escape_name  (const char *filename);
    EAPI char       *ecore_file_strip_ext    (const char *file);
    
-   EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
-						   void (*func) (void *data,
-								 Ecore_File_Monitor *ecore_file_monitor,
-								 Ecore_File_Event event,
-								 const char *path),
-						   void *data);
+   EAPI Ecore_File_Monitor * ecore_file_monitor_add(const char *path,
+                void (*func) (void *data, Ecore_File_Monitor *em,
+                      Ecore_File_Event event,
+                      const char *path),
+                void *data);
    EAPI void        ecore_file_monitor_del(Ecore_File_Monitor *ecore_file_monitor);
    EAPI const char *ecore_file_monitor_path_get(Ecore_File_Monitor *ecore_file_monitor);
 
