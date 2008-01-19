@@ -613,6 +613,30 @@ _edje_part_recalc_single(Edje *ed,
 		    }
 	       }
 	  }
+	if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
+	  {
+	     int mw = 0, mh = 0;
+
+	     tw = th = 0;
+	     if (!chosen_desc->text.max_x)
+	       {
+		  evas_object_resize(ep->object, params->w, params->h);
+		  evas_object_textblock_size_formatted_get(ep->object, &tw, &th);
+	       }
+	     else
+	       evas_object_textblock_size_native_get(ep->object, &tw, &th);
+	     evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r, &ins_t, &ins_b);
+	     mw = ins_l + tw + ins_r;
+	     mh = ins_t + th + ins_b;
+	     if (chosen_desc->text.max_x)
+	       {
+		  if (mw > maxw) maxw = mw;
+	       }
+	     if (chosen_desc->text.max_y)
+	       {
+		  if (mh > maxw) maxh = mh;
+	       }
+	  }
      }
    else if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
      {
