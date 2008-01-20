@@ -48,12 +48,12 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    if ((buf->depth == OUTBUF_DEPTH_RGB_24BPP_888_888) ||
        (buf->depth == OUTBUF_DEPTH_BGR_24BPP_888_888))
      bpp = 3;
-   for (y = 0; y < h; y++)
-     memset(((unsigned char *)(buf->dest)) + (y * buf->dest_row_bytes), 
-	    0, w * bpp);
    if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
+	for (y = 0; y < h; y++)
+	  memset(((unsigned char *)(buf->dest)) + (y * buf->dest_row_bytes), 
+		 0, w * bpp);
 	buf->priv.back_buf = evas_common_image_new();
 	buf->priv.back_buf->image = evas_common_image_surface_new(buf->priv.back_buf);
 	buf->priv.back_buf->image->w = w;
