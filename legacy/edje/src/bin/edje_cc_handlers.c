@@ -48,6 +48,7 @@ static void st_images_image(void);
 static void st_fonts_font(void);
 
 static void st_data_item(void);
+static void st_data_file(void);
 
 static void ob_styles_style(void);
 static void st_styles_style_name(void);
@@ -167,6 +168,7 @@ New_Statement_Handler statement_handlers[] =
      {"images.image", st_images_image},
      {"fonts.font", st_fonts_font},
      {"data.item", st_data_item},
+     {"data.file", st_data_file},
      {"styles.style.name", st_styles_style_name},
      {"styles.style.base", st_styles_style_base},
      {"styles.style.tag", st_styles_style_tag},
@@ -699,6 +701,92 @@ st_data_item(void)
    di->key = parse_str(0);
    di->value = parse_str(1);
    edje_file->data = evas_list_append(edje_file->data, di);
+}
+
+/**
+    @page edcref
+    @block
+        data
+    @context
+        data {
+            file: "arbitraryname" "filename";
+            file: "othername" "otherfilename";
+            ..
+        }
+    @description
+        The "data" block is used to pass arbitrary parameters from the theme to
+        the application. Unlike the "images" and "fonts" blocks, additional
+        "data" blocks can only be included inside the "group" block.
+    @endblock
+
+    @property
+        file
+    @parameters
+        [parameter name] [parameter filename]
+    @effect
+        Defines each additional parameter.
+    @endproperty
+ */
+static void
+st_data_file(void)
+{
+   const char *data;
+   const char *over;
+   Edje_Data *di;
+   char *filename;
+   char *value;
+   int fd;
+   int i;
+   struct stat buf;
+
+   check_arg_count(2);
+
+   di = mem_alloc(SZ(Edje_Data));
+   di->key = parse_str(0);
+   filename = parse_str(1);
+
+   fd = open(filename, O_RDONLY);
+   if (fd < 0)
+     {
+        fprintf(stderr, "%s: Error. %s:%i when opening file \"%s\": \"%s\"\n",
+                progname, file_in, line, filename, strerror(errno));
+        exit(-1);
+     }
+
+   if (fstat(fd, &buf))
+     {
+        fprintf(stderr, "%s: Error. %s:%i when stating file \"%s\": \"%s\"\n",
+                progname, file_in, line, filename, strerror(errno));
+        exit(-1);
+     }
+
+   data = mmap(NULL, buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+   if (!data)
+     {
+        fprintf(stderr, "%s: Error. %s:%i when mapping file \"%s\": \"%s\"\n",
+                progname, file_in, line, filename, strerror(errno));
+        exit(-1);
+     }
+
+   over = data;
+   for (i = 0; i < buf.st_size; ++i, ++over)
+     if (*over == '\0')
+       {
+          fprintf(stderr, "%s: Error. %s:%i file \"%s\" is a binary file.\n",
+                  progname, file_in, line, filename);
+          exit(-1);
+       }
+
+   value = malloc(sizeof (char) * buf.st_size + 1);
+   snprintf(value, buf.st_size + 1, "%s", data);
+
+   munmap((void*)data, buf.st_size);
+   close(fd);
+
+   di->value = value;
+   edje_file->data = evas_list_append(edje_file->data, di);
+
+   free(filename);
 }
 
 /**
