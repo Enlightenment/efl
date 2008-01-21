@@ -253,7 +253,7 @@ extern "C" {
     * If the eet file handle is not valid NULL is returned and size_ret is
     * filled with 0.
     */
-   EAPI void	 *eet_read_direct  (Eet_File *ef, const char *name, int *size_ret);
+   EAPI const void *eet_read_direct(Eet_File *ef, const char *name, int *size_ret);
 
    /**
     * Write a specified entry to an eet file handle

@@ -906,7 +906,7 @@ EAPI void *
 eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
 {
    void *data_dec;
-   void *data;
+   const void *data;
    int	size;
    int	required_free = 0;
 
