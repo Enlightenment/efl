@@ -16,12 +16,14 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 
    if (fg->ext_dat) return fg->ext_dat;
    
+   w = fg->glyph_out->bitmap.width;
+   h = fg->glyph_out->bitmap.rows;
+   
+   if ((w == 0) || (h == 0)) return NULL;
    ft = calloc(1, sizeof(Evas_GL_Font_Texture));
    if (!ft) return NULL;
 
    data = fg->glyph_out->bitmap.buffer;
-   w = fg->glyph_out->bitmap.width;
-   h = fg->glyph_out->bitmap.rows;
    j = fg->glyph_out->bitmap.pitch;
    if (j < w) j = w;
 
