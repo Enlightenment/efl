@@ -55,6 +55,12 @@ typedef enum _Evas_Button_Flags
    EVAS_BUTTON_TRIPLE_CLICK = (1 << 1) /**< This mouse button press was the 3rd press of a triple click */
 } Evas_Button_Flags; /**< Flags for Mouse Button events */
 
+typedef enum _Evas_Event_Flags
+{
+   EVAS_EVENT_FLAG_NONE = 0, /**< No fancy flags set */
+   EVAS_EVENT_FLAG_ON_HOLD = (1 << 0) /**< This event is being delivered but should be put "on hold" until the on hold flag is unset. the event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
+} Evas_Event_Flags; /**< Flags for Events */
+
 typedef enum _Evas_Font_Hinting_Flags
 {
    EVAS_FONT_HINTING_NONE, /**< No font hinting */
@@ -220,6 +226,7 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
 
    Evas_Button_Flags flags;
    unsigned int      timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 struct _Evas_Event_Mouse_Up /** Mouse butotn relase event */
@@ -237,6 +244,7 @@ struct _Evas_Event_Mouse_Up /** Mouse butotn relase event */
 
    Evas_Button_Flags flags;
    unsigned int      timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 struct _Evas_Event_Mouse_In /** Mouse enter event */
@@ -252,6 +260,7 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
    unsigned int   timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 struct _Evas_Event_Mouse_Out /** Mouse leave event */
@@ -267,6 +276,7 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
    unsigned int   timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 struct _Evas_Event_Mouse_Move /** Mouse button down event */
@@ -284,6 +294,7 @@ struct _Evas_Event_Mouse_Move /** Mouse button down event */
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
    unsigned int   timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */
@@ -303,6 +314,7 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
    Evas_Modifier *modifiers;
    Evas_Lock	 *locks;
    unsigned int   timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 struct _Evas_Event_Key_Down /** Key press event */
@@ -316,6 +328,7 @@ struct _Evas_Event_Key_Down /** Key press event */
    const char    *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
    const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
    unsigned int   timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 struct _Evas_Event_Key_Up /** Key release event */
@@ -329,6 +342,7 @@ struct _Evas_Event_Key_Up /** Key release event */
    const char    *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
    const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
    unsigned int   timestamp;
+   Evas_Event_Flags  event_flags;
 };
 
 typedef enum _Evas_Object_Pointer_Mode
