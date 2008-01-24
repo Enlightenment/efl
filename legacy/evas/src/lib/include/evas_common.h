@@ -53,6 +53,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <ctype.h>
+#include <stdint.h>
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>

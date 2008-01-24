@@ -58,6 +58,7 @@ evas_stringshare_add(const char *str)
    char *el_str;
    Evas_Stringshare_El *el, *pel = NULL;
 
+   if (!str) return NULL;
    hash_num = _evas_stringshare_hash_gen(str, &slen);
    for (el = share.buckets[hash_num]; el; pel = el, el = el->next)
      {
@@ -91,6 +92,7 @@ evas_stringshare_del(const char *str)
    char *el_str;
    Evas_Stringshare_El *el, *pel = NULL;
 
+   if (!str) return;
    hash_num = _evas_stringshare_hash_gen(str, &slen);
    for (el = share.buckets[hash_num]; el; pel = el, el = el->next)
      {
