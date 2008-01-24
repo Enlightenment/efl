@@ -56,7 +56,7 @@ struct _Eet_File_Node
    char          *name;
    void          *data;
    Eet_File_Node *next; /* FIXME: make buckets linked lists */
-   
+
    int            offset;
    int            size;
    int            data_size;
@@ -165,7 +165,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
      {
 	Eet_File	*del_ef = NULL;
 	int		i;
-	
+
 	new_cache = *cache;
 	for (i = 0; i < new_cache_num; i++)
 	  {
@@ -175,7 +175,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 		  break;
 	       }
 	  }
-	
+
 	if (del_ef)
 	  {
 	     del_ef->delete_me_now = 1;
@@ -216,7 +216,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
    new_cache_alloc = *cache_alloc;
    if (new_cache_num <= 0)
      return;
-   
+
    for (i = 0; i < new_cache_num; i++)
      {
 	if (new_cache[i] == ef)
@@ -322,23 +322,23 @@ eet_flush(Eet_File *ef)
 	  {
 	     unsigned int	ibuf[5];
 	     int		name_size;
-	     
+
 	     name_size = strlen(efn->name) + 1;
-	     
+
 	     ibuf[0] = (int) htonl ((unsigned int) efn->offset);
 	     ibuf[1] = (int) htonl ((unsigned int) efn->compression);
 	     ibuf[2] = (int) htonl ((unsigned int) efn->size);
 	     ibuf[3] = (int) htonl ((unsigned int) efn->data_size);
 	     ibuf[4] = (int) htonl ((unsigned int) name_size);
-	     
-	     
+
+
 	     if (fwrite(ibuf, sizeof(ibuf), 1, ef->fp) != 1)
 	       goto write_error;
 	     if (fwrite(efn->name, name_size, 1, ef->fp) != 1)
 	       goto write_error;
 	  }
      }
-   
+
    /* write data */
    for (i = 0; i < num; i++)
      {
@@ -351,9 +351,9 @@ eet_flush(Eet_File *ef)
 
    /* no more writes pending */
    ef->writes_pending = 0;
-   
+
    return EET_ERROR_NONE;
-   
+
 write_error:
    switch (ferror(ef->fp))
      {
@@ -406,7 +406,7 @@ eet_clearcache(void)
 {
    int	num = 0;
    int	i;
-   
+
    /*
      We need to compute the list of eet file to close separately from the cache,
      due to eet_close removing them from the cache after each call.
@@ -416,7 +416,7 @@ eet_clearcache(void)
 	if (eet_writers[i]->references <= 0)
 	  num++;
      }
-   
+
    for (i = 0; i < eet_readers_num; i++)
      {
 	if (eet_readers[i]->references <= 0)
@@ -426,7 +426,7 @@ eet_clearcache(void)
    if (num > 0)
      {
 	Eet_File **closelist = NULL;
-	
+
 	closelist = alloca(num * sizeof(Eet_File *));
 	num = 0;
 	for (i = 0; i < eet_writers_num; i++)
@@ -438,7 +438,7 @@ eet_clearcache(void)
 		  num++;
 	       }
 	  }
-	
+
 	for (i = 0; i < eet_readers_num; i++)
 	  {
 	     if (eet_readers[i]->references <= 0)
@@ -669,7 +669,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	  }
 	ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
      }
-   else if ((mode == EET_FILE_MODE_WRITE) || 
+   else if ((mode == EET_FILE_MODE_WRITE) ||
 	    (mode == EET_FILE_MODE_READ_WRITE))
      {
 	ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
@@ -706,7 +706,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	unlink(file);
 	fp = fopen(file, "wb");
      }
-   
+
    /* We found one */
    if (ef && (file_stat.st_mtime != ef->mtime))
      {
@@ -749,10 +749,11 @@ eet_open(const char *file, Eet_File_Mode mode)
    fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
 #else
    /* FIXME: check if that code is needed / correct */
-   h = (HANDLE) _get_osfhandle (fileno(ef->fp));
-   if (h == (HANDLE) -1)
+   h = (HANDLE) _get_osfhandle(fileno(ef->fp));
+   if (h == INVALID_HANDLE_VALUE)
      return NULL;
-   SetHandleInformation (h, HANDLE_FLAG_INHERIT, 0);
+   if (!SetHandleInformation(h, HANDLE_FLAG_INHERIT, 0))
+     return NULL;
 #endif
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
@@ -790,11 +791,11 @@ eet_open(const char *file, Eet_File_Mode mode)
    if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
 	int i;
-	
+
 	for (i = 0; i < ef->header->directory->size; i++)
 	  {
 	     Eet_File_Node      *efn;
-	     
+
 	     for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	       {
 		  if (!efn->free_name)
@@ -850,7 +851,7 @@ eet_close(Eet_File *ef)
    /* if not urgent to delete it - dont free it - leave it in cache */
    if ((!ef->delete_me_now) && (ef->mode == EET_FILE_MODE_READ))
      return EET_ERROR_NONE;
-   
+
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
@@ -865,12 +866,12 @@ eet_close(Eet_File *ef)
 	     if (ef->header->directory->nodes)
 	       {
 		  int i, num;
-	       
+
 		  num = (1 << ef->header->directory->size);
 		  for (i = 0; i < num; i++)
 		    {
 		       Eet_File_Node *efn;
-		       
+
 		       while ((efn = ef->header->directory->nodes[i]))
 			 {
 			    if (efn->data)
@@ -1012,7 +1013,7 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    const void	*data = NULL;
    int		 size = 0;
    Eet_File_Node *efn;
-   
+
    if (size_ret)
      *size_ret = 0;
 
@@ -1177,7 +1178,7 @@ eet_delete(Eet_File *ef, const char *name)
    Eet_File_Node	*pefn;
    int			hash;
    int			exists_already = 0;
-   
+
    /* check to see its' an eet file pointer */
    if (eet_check_pointer(ef))
      return 0;
@@ -1257,26 +1258,26 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
 	       {
 		  /* add it to our list */
 		  list_count++;
-		  
+
 		  /* only realloc in 32 entry chunks */
 		  if (list_count > list_count_alloc)
 		    {
 		       char	**new_list = NULL;
-		       
+
 		       list_count_alloc += 64;
 		       new_list = realloc(list_ret, list_count_alloc * (sizeof(char *)));
 		       if (!new_list)
 			 {
 			    free(list_ret);
-			    
+
 			    if (count_ret)
 			      *count_ret = 0;
-			    
+
 			    return NULL;
 			 }
 		       list_ret = new_list;
 		    }
-		  
+
 		  /* put pointer of name string in */
 		  list_ret[list_count - 1] = efn->name;
 	       }
@@ -1344,7 +1345,7 @@ read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len)
 	/* seek to data location */
 	if (fseek(ef->fp, efn->offset, SEEK_SET) < 0)
 	  return 0;
-	
+
 	/* read it */
 	len = fread(buf, len, 1, ef->fp);
      }
