@@ -43,16 +43,15 @@
 extern "C" {
 #endif
 
-
 typedef struct _Ecore_Fb_Input_Device Ecore_Fb_Input_Device; /* an input device handler */
 
 /* device capabilities */
 enum _Ecore_Fb_Input_Device_Cap
 {
-	ECORE_FB_INPUT_DEVICE_CAP_NONE            = 0x00000000,
-	ECORE_FB_INPUT_DEVICE_CAP_RELATIVE        = 0x00000001,
-	ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE        = 0x00000002,
-	ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS = 0x00000004
+   ECORE_FB_INPUT_DEVICE_CAP_NONE            = 0x00000000,
+     ECORE_FB_INPUT_DEVICE_CAP_RELATIVE        = 0x00000001,
+     ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE        = 0x00000002,
+     ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS = 0x00000004
 };
 typedef enum   _Ecore_Fb_Input_Device_Cap Ecore_Fb_Input_Device_Cap;
 
@@ -72,52 +71,53 @@ typedef struct _Ecore_Fb_Event_Mouse_Wheel       Ecore_Fb_Event_Mouse_Wheel; /**
 
 struct _Ecore_Fb_Event_Key_Down /** FB Key Down event */
 {
-	Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
-	char   *keyname; /**< The name of the key that was pressed */
-	char   *keysymbol; /**< The logical symbol of the key that was pressed */
-	char   *key_compose; /**< The UTF-8 string conversion if any */
+   Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
+   char   *keyname; /**< The name of the key that was pressed */
+   char   *keysymbol; /**< The logical symbol of the key that was pressed */
+   char   *key_compose; /**< The UTF-8 string conversion if any */
 };
    
 struct _Ecore_Fb_Event_Key_Up /** FB Key Up event */
 {
-	Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
-	char   *keyname; /**< The name of the key that was released */
-	char   *keysymbol; /**< The logical symbol of the key that was pressed */
-	char   *key_compose; /**< The UTF-8 string conversion if any */
+   Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
+   char   *keyname; /**< The name of the key that was released */
+   char   *keysymbol; /**< The logical symbol of the key that was pressed */
+   char   *key_compose; /**< The UTF-8 string conversion if any */
 };
    
 struct _Ecore_Fb_Event_Mouse_Button_Down /** FB Mouse Down event */
 {
-	Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
-	int     button; /**< Mouse button that was pressed (1 - 32) */
-	int     x; /**< Mouse co-ordinates when mouse button was pressed */
-	int     y; /**< Mouse co-ordinates when mouse button was pressed */
-	int     double_click : 1; /**< Set if click was a double click */
-	int     triple_click : 1; /**< Set if click was a triple click  */
+   Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
+   int     button; /**< Mouse button that was pressed (1 - 32) */
+   int     x; /**< Mouse co-ordinates when mouse button was pressed */
+   int     y; /**< Mouse co-ordinates when mouse button was pressed */
+   int     double_click : 1; /**< Set if click was a double click */
+   int     triple_click : 1; /**< Set if click was a triple click  */
 };
    
 struct _Ecore_Fb_Event_Mouse_Button_Up /** FB Mouse Up event */
 {
-	Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
-	int     button; /**< Mouse button that was released (1 - 32) */
-	int     x; /**< Mouse co-ordinates when mouse button was raised */
-	int     y; /**< Mouse co-ordinates when mouse button was raised */
+   Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
+   int     button; /**< Mouse button that was released (1 - 32) */
+   int     x; /**< Mouse co-ordinates when mouse button was raised */
+   int     y; /**< Mouse co-ordinates when mouse button was raised */
 };
    
 struct _Ecore_Fb_Event_Mouse_Move /** FB Mouse Move event */ 
 {
-	Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
-	int     x; /**< Mouse co-ordinates where the mouse cursor moved to */
-	int     y; /**< Mouse co-ordinates where the mouse cursor moved to */
+   Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
+   int     x; /**< Mouse co-ordinates where the mouse cursor moved to */
+   int     y; /**< Mouse co-ordinates where the mouse cursor moved to */
 };
-
+   
 struct _Ecore_Fb_Event_Mouse_Wheel /** FB Mouse Wheel event */
 {
-	Ecore_Fb_Input_Device *dev;
-	int x,y;
-	int direction; /* 0 = vertical, 1 = horizontal */
-	int wheel; /* value 1 (left/up), -1 (right/down) */
+   Ecore_Fb_Input_Device *dev;
+   int x,y;
+   int direction; /* 0 = vertical, 1 = horizontal */
+   int wheel; /* value 1 (left/up), -1 (right/down) */
 };
+
 /* ecore_fb_vt.c */
 EAPI void ecore_fb_callback_gain_set(void (*func) (void *data), void *data);
 EAPI void ecore_fb_callback_lose_set(void (*func) (void *data), void *data);
@@ -134,27 +134,10 @@ EAPI double                           ecore_fb_input_threshold_click_get(Ecore_F
 EAPI int    ecore_fb_init(const char *name);
 EAPI int    ecore_fb_shutdown(void);
 EAPI void   ecore_fb_size_get(int *w, int *h);   
-   
-/* DEPRECATED */
-#if 0
+
 EAPI void   ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap);
 EAPI void   ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap);
-
-EAPI void   ecore_fb_backlight_set(int on);
-EAPI int    ecore_fb_backlight_get(void);
-
-EAPI void   ecore_fb_backlight_brightness_set(double br);
-EAPI double ecore_fb_backlight_brightness_get(void);
-
-EAPI void   ecore_fb_led_set(int on);
-EAPI void   ecore_fb_led_blink_set(double speed);
-
-EAPI void   ecore_fb_contrast_set(double cr);
-EAPI double ecore_fb_contrast_get(void);
-
-EAPI double ecore_fb_light_sensor_get(void);
-#endif
-       
+   
 #ifdef __cplusplus
 }
 #endif

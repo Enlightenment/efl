@@ -8,6 +8,7 @@
 #include "Ecore_Evas.h"
 #ifdef BUILD_ECORE_EVAS_FB
 #include "Ecore_Fb.h"
+#include "ecore_fb_private.h"
 #endif
 
 #ifdef BUILD_ECORE_EVAS_FB
@@ -314,6 +315,16 @@ _ecore_evas_fb_init(int w, int h)
 	       }
 	  }
      }
+   if (!mouse_handled)
+     {
+	if (ecore_fb_ts_init())
+	  {
+	     ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
+	     ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
+	     ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
+	     mouse_handled = 1;
+	  }
+     }
    return _ecore_evas_init_count;
 }
 
@@ -517,6 +528,7 @@ _ecore_evas_fb_shutdown(void)
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);
 	ecore_evas_idle_enterer = NULL;
 	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
+	ecore_fb_ts_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
