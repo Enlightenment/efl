@@ -59,7 +59,6 @@ struct _Ecore_Fb_Ts_Flite
 static int _ecore_fb_ts_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_fb_ts_fd = 0;
 static int _ecore_fb_ts_event_byte_count = 0;
-static int _ecore_fb_ts_cal = 0;
 static int _ecore_fb_ts_apply_cal = 0;
 static Ecore_Fb_Ts_Event _ecore_fb_ts_event;
 static Ecore_Fb_Ts_Calibrate _ecore_fb_ts_cal = {1,1,0,0,0};
