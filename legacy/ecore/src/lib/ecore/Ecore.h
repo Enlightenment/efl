@@ -61,6 +61,9 @@
 extern "C" {
 #endif
 
+#define ECORE_CALLBACK_CANCEL 0; /**< Return value to remove a callback */
+#define ECORE_CALLBACK_RENEW 1; /**< Return value to keep a callback */ 
+
 #define ECORE_EVENT_NONE            0
 #define ECORE_EVENT_SIGNAL_USER     1 /**< User signal event */
 #define ECORE_EVENT_SIGNAL_HUP      2 /**< Hup signal event */

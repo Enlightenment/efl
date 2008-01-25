@@ -21,9 +21,9 @@ static double          animators_frametime = 1.0 / 30.0;
  * be passed the @p data pointer as its parameter.
  * 
  * When the animator @p func is called, it must return a value of either 1 or 0. 
- * If it returns 1, it will be called again at the next tick, or if it returns
- * 0 it will be deleted automatically making any references/handles for it
- * invalid.
+ * If it returns 1 (or ECORE_CALLBACK_RENEW), it will be called again at the 
+ * next tick, or if it returns 0 (or ECORE_CALLBACK_CANCEL) it will be deleted 
+ * automatically making any references/handles for it invalid.
  */
 EAPI Ecore_Animator *
 ecore_animator_add(int (*func) (void *data), const void *data)

@@ -35,10 +35,11 @@ static void                *ecore_raw_event_event =  NULL;
  * provided in this call as the @p data parameter.
  * 
  * When the callback @p func is called, it must return 1 or 0. If it returns 
- * 1, It will keep being called as per normal, for each handler set up for that
- * event type. If it returns 0, it will cease processing handlers for that
- * particular event, so all handler set to handle that event type that have not
- * already been called, will not be.
+ * 1 (or ECORE_CALLBACK_RENEW), It will keep being called as per normal, for 
+ * each handler set up for that event type. If it returns 0 (or 
+ * ECORE_CALLBACK_CANCEL), it will cease processing handlers for that particular
+ * event, so all handler set to handle that event type that have not already 
+ * been called, will not be.
  */
 EAPI Ecore_Event_Handler *
 ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event), const void *data)

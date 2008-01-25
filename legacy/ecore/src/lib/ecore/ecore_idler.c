@@ -13,8 +13,9 @@ static int          idlers_delete_me = 0;
  *
  * Add an idler handle to the event loop, returning a handle on success and
  * NULL otherwise.  The function @p func will be called repeatedly while
- * no other events are ready to be processed, as long as it returns 1. A return
- * of 0 deletes the idler.
+ * no other events are ready to be processed, as long as it returns 1 
+ * (or ECORE_CALLBACK_RENEW). A return of 0 (or ECORE_CALLBACK_CANCEL) deletes 
+ * the idler.
  *
  * Idlers are useful for progressively prossessing data without blocking.
  */

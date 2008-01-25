@@ -28,7 +28,8 @@ static double       last_check = 0.0;
  * failure. The function @p func will be called every @in@ seconds. The
  * function will be passed the @p data pointer as its parameter.
  * 
- * When the timer @p func is called, it must return a value of either 1 or 0. 
+ * When the timer @p func is called, it must return a value of either 1 
+ * (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL). 
  * If it returns 1, it will be called again at the next tick, or if it returns
  * 0 it will be deleted automatically making any references/handles for it
  * invalid.
