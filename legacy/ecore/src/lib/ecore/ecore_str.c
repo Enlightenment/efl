@@ -23,6 +23,8 @@
 #include "ecore_private.h"
 #include "Ecore_Str.h"
 
+static int ecore_str_has_suffix_helper(const char *str, const char *suffix, 
+		int (*cmp)(const char *, const char *));
 /**
  * @param dst the destination
  * @param src the source
@@ -140,18 +142,47 @@ ecore_str_has_prefix(const char *str, const char *prefix)
 int
 ecore_str_has_suffix(const char *str, const char *suffix)
 {
-   size_t str_len;
-   size_t suffix_len;
-
    CHECK_PARAM_POINTER_RETURN("str", str, 0);
    CHECK_PARAM_POINTER_RETURN("suffix", suffix, 0);
+   
+   return ecore_str_has_suffix_helper(str, suffix, strcmp);
+}
+
+/**
+ * This function does the same like ecore_str_has_suffix(), but with a
+ * case insensitive compare.
+ *
+ * @param str the string to work with
+ * @param ext the  extension to check for
+ * @return true if str has the given extension
+ * @brief checks if the string has the given extension
+ */
+int
+ecore_str_has_extension(const char *str, const char *ext)
+{
+   CHECK_PARAM_POINTER_RETURN("str", str, 0);
+   CHECK_PARAM_POINTER_RETURN("ext", ext, 0);
+   
+   return ecore_str_has_suffix_helper(str, ext, strcasecmp);
+}
+
+/*
+ * Internal helper function used by ecore_str_has_suffix() and 
+ * ecore_str_has_extension()
+ */
+static int
+ecore_str_has_suffix_helper(const char *str, const char *suffix, 
+		int (*cmp)(const char *, const char *))
+{
+   size_t str_len;
+   size_t suffix_len;
 
    str_len = strlen(str);
    suffix_len = strlen(suffix);
    if (suffix_len > str_len)
      return 0;
 
-   return (strncmp(str + str_len - suffix_len, suffix, suffix_len) == 0);
+   return cmp(str + str_len - suffix_len, suffix) == 0;
 }
 
 /**

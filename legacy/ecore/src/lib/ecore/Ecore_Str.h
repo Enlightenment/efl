@@ -46,6 +46,8 @@ EAPI size_t ecore_strlcat(char *dst, const char *src, size_t siz);
 EAPI int ecore_str_has_prefix(const char *str, const char *prefix);
 
 EAPI int ecore_str_has_suffix(const char *str, const char *suffix);
+EAPI int ecore_str_has_extension(const char *str, const char *ext);
+
 EAPI char **ecore_str_split(const char *string, const char *delimiter, 
                             int max_tokens);
 
