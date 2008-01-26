@@ -1,11 +1,16 @@
-#include <locale.h>
-#ifndef _WIN32
+#include <config.h>
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#endif
+#ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
-#else
+#endif
+#ifdef HAVE_WINDOWS_H
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # undef WIN32_LEAN_AND_MEAN
-#endif /* _WIN32 */
+#endif
+
 #include "ecore_private.h"
 #include "Ecore.h"
 

@@ -1,6 +1,10 @@
 #ifndef _ECORE_PRIVATE_H
 #define _ECORE_PRIVATE_H
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,12 +17,8 @@
 #include <limits.h>
 #include <dirent.h>
 
-#ifndef _WIN32
+#ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
-#endif
-
-#ifdef HAVE_CONFIG_H
-# include <config.h>
 #endif
 
 #ifdef EAPI

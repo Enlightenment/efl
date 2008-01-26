@@ -2,9 +2,11 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#ifdef _WIN32
+#include <config.h>
+
+#ifdef HAVE_WINSOCK2_H
 # include <winsock2.h>
-#endif /* _WIN32 */
+#endif
 
 #include <math.h>
 #include <sys/time.h>

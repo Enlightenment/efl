@@ -129,9 +129,6 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
 
-#ifndef _WIN32
-#endif
-
    struct _Ecore_Event_Signal_User /** User signal event */
      {
 	int   number; /**< The signal number. Either 1 or 2 */

@@ -2,11 +2,13 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <config.h>
+
 #ifndef _FILE_OFFSET_BITS
 # define _FILE_OFFSET_BITS  64
 #endif
 
-#ifdef __linux__
+#ifdef HAVE_FEATURES_H
 # include <features.h>
 #endif
 #include <ctype.h>

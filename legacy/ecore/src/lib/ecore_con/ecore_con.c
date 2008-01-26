@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <netdb.h>
 
-#include "config.h"
+#include <config.h>
 
 #if USE_OPENSSL
 #include <time.h>
@@ -21,9 +21,10 @@
 #include "ecore_con_private.h"
 
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#elif _WIN32
-#include <winsock2.h>
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_WINSOCK2_H
+# include <winsock2.h>
 #endif
 
 static void _ecore_con_cb_dns_lookup(void *data, struct hostent *he);

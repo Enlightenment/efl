@@ -2,11 +2,13 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#ifdef _WIN32
+#include <config.h>
+#ifdef HAVE_WINDOWS_H
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # undef WIN32_LEAN_AND_MEAN
-#else
+#endif
+#ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
 #endif
 #include "ecore_private.h"

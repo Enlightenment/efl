@@ -2,21 +2,26 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#ifndef _WIN32
+#include <config.h>
+
+#ifdef HAVE_DLFCN_H
 # include <dlfcn.h>
-#else
+#endif
+
+#ifdef HAVE_WINDOWS_H
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # undef WIN32_LEAN_AND_MEAN
-# include <stdlib.h>
-# include <stdio.h>
-#endif /* _WIN32 */
+#endif
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "ecore_private.h"
 #include "Ecore_Data.h"
 
 /* FIXME: that hack is a temporary one. That code will be in MinGW soon */
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(HAVE_DLFCN_H)
 
 # define RTLD_LAZY 1   /* lazy function call binding */
 # define RTLD_NOW 2    /* immediate function call binding */
@@ -86,7 +91,7 @@ char *dlerror (void)
      return NULL;
 }
 
-#endif /* _WIN32 */
+#endif
 
 
 static Ecore_List *loaded_plugins = NULL;
@@ -118,28 +123,19 @@ ecore_plugin_load(Ecore_Path_Group *group, const char *plugin_name, const char *
 
    CHECK_PARAM_POINTER_RETURN("plugin_name", plugin_name, NULL);
 
-#ifndef _WIN32
    if (!version || *version == '\0')
-     snprintf(temp, sizeof(temp), "%s.so", plugin_name);
+     snprintf(temp, sizeof(temp), "%s" SHARED_LIB_SUFFIX, plugin_name);
    else
-     snprintf(temp, sizeof(temp), "%s.so.%s", plugin_name, version);
-#else
-   if (!version || *version == '\0')
-     snprintf(temp, sizeof(temp), "%s.dll", plugin_name);
-   else
-     snprintf(temp, sizeof(temp), "%s-%s.dll", plugin_name, version);
-#endif /* _WIN32 */
+     snprintf(temp, sizeof(temp), "%s" SHARED_LIB_SUFFIX ".%s", plugin_name, version);
 
    path = ecore_path_group_find(group, temp);
 
-#ifndef _WIN32
    if (!path && version)
      {
 	/* if this file doesn't exist try a different order */
-	snprintf(temp, sizeof(temp), "%s.%s.so", plugin_name, version);
+	snprintf(temp, sizeof(temp), "%s.%s" SHARED_LIB_SUFFIX, plugin_name, version);
 	path = ecore_path_group_find(group, temp);
      }
-#endif /* _WIN32 */
 
    if (!path)
      return NULL;
