@@ -67,7 +67,6 @@ AC_SUBST(fnmatch_libs)
 
 dnl These are needed for fmemopen/open_memstream
 AC_DEFINE(_GNU_SOURCE, , [Enable GNU extensions])
-AC_DEFINE(__USE_GNU, , [Enable GNU extensions])
 
 AC_CHECK_FUNCS(fmemopen open_memstream realpath)
 
