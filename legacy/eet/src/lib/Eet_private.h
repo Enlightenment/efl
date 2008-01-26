@@ -1,7 +1,7 @@
 #ifndef _EET_PRIVATE_H
 #define _EET_PRIVATE_H
 
-#include "config.h"
+#include <config.h>
 
 #include <stdio.h>
 #include <unistd.h>
@@ -32,7 +32,8 @@ void *alloca (size_t);
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#elif _WIN32
+#endif
+#ifdef HAVE_WINSOCK2_H
 # include <winsock2.h>
 #endif
 

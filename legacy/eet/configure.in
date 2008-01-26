@@ -33,7 +33,7 @@ AC_FUNC_ALLOCA
 AC_CHECK_HEADER(zlib.h,, AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
 AC_CHECK_HEADER(jpeglib.h,, AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
 
-AC_CHECK_HEADERS(netinet/in.h)
+AC_CHECK_HEADERS_ONCE(netinet/in.h sys/mman.h windows.h winsock2.h)
 
 winsock_libs=""
 create_shared_lib=""
