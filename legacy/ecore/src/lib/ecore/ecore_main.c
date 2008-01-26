@@ -349,9 +349,7 @@ _ecore_main_select(double timeout)
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
      }
-#ifndef _WIN32
    if (_ecore_signal_count_get()) return -1;
-#endif /* _WIN32 */
    ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
    if (ret < 0)
      {
@@ -535,10 +533,8 @@ _ecore_main_loop_iterate_internal(int once_only)
      }
    /* any timers re-added as a result of these are allowed to go */
    _ecore_timer_enable_new();
-#ifndef _WIN32
    /* process signals into events .... */
    while (_ecore_signal_count_get()) _ecore_signal_call();
-#endif /* _WIN32 */
    if (_ecore_event_exist())
      {
 	have_event = 1;
@@ -558,9 +554,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 	if (_ecore_main_select(0.0) > 0) have_event = 1;
 
 	if (_ecore_main_win32_message(0.0) > 0) have_msg = 1;
-#ifndef _WIN32
 	if (_ecore_signal_count_get() > 0) have_signal = 1;
-#endif /* _WIN32 */
 
 	if (have_signal || have_event || have_msg)
 	  goto process_events;
@@ -611,9 +605,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 	       {
 		  if (_ecore_main_select(-1.0) > 0) have_event = 1;
 		  if (_ecore_main_win32_message(-1.0) > 0) have_msg = 1;
-#ifndef _WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
-#endif /* _WIN32 */
 	       }
 	     /* idlers */
 	     else
@@ -624,9 +616,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (_ecore_event_exist()) break;
 		       if (_ecore_main_select(0.0) > 0) have_event = 1;
 		       if (_ecore_main_win32_message(0.0) > 0) have_msg = 1;
-#ifndef _WIN32
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
-#endif /* _WIN32 */
 		       if (have_event || have_signal || have_msg) break;
 		       next_time = _ecore_timer_next_get();
 		       if (next_time >= 0) goto start_loop;
@@ -642,9 +632,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 	       {
 		  if (_ecore_main_select(next_time) > 0) have_event = 1;
 		  if (_ecore_main_win32_message(next_time) > 0) have_msg = 1;
-#ifndef _WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
-#endif /* _WIN32 */
 	       }
 	     /* idlers */
 	     else
@@ -657,9 +645,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (_ecore_event_exist()) break;
 		       if (_ecore_main_select(0.0) > 0) have_event = 1;
 		       if (_ecore_main_win32_message(0.0) > 0) have_msg = 1;
-#ifndef _WIN32
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
-#endif /* _WIN32 */
 		       if (have_event || have_signal || have_msg) break;
 		       cur_time = ecore_time_get();
 		       t = ecore_time_get() - cur_time;
@@ -685,10 +671,8 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (have_event) _ecore_main_fd_handlers_call();
    do
      {
-#ifndef _WIN32
 	/* process signals into events .... */
 	while (_ecore_signal_count_get()) _ecore_signal_call();
-#endif /* _WIN32 */
 
 	/* handle events ... */
 	_ecore_event_call();

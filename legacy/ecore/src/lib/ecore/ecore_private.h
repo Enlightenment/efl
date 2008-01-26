@@ -424,10 +424,17 @@ void         *_ecore_event_signal_realtime_new(void);
 
 void          _ecore_main_shutdown(void);
 
+#ifdef _WIN32F
+static inline void _ecore_signal_shutdown(void) { }
+static inline void _ecore_signal_init(void) { }
+static inline int  _ecore_signal_count_get(void) { return 0; }
+static inline void _ecore_signal_call(void) { }
+#else
 void          _ecore_signal_shutdown(void);
 void          _ecore_signal_init(void);
 int           _ecore_signal_count_get(void);
 void          _ecore_signal_call(void);
+#endif
 
 #ifndef _WIN32
 void          _ecore_exe_init(void);
