@@ -1,13 +1,7 @@
-#ifdef __GNUC__
-# ifndef __USE_GNU
-#  define __USE_GNU
-# endif
-# ifndef _GNU_SOURCE
-#  define _GNU_SOURCE
-# endif
-# ifndef _BSD_SOURCE
-#  define _BSD_SOURCE
-# endif
+#include <config.h>
+
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
 #endif
 
 #include <dirent.h>	/* DIR, dirent */
