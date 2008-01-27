@@ -906,11 +906,11 @@ EAPI void *
 eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
 {
    void *data_dec;
-   const void *data;
+   void *data;
    int	size;
    int	required_free = 0;
 
-   data = eet_read_direct(ef, name, &size);
+   data = (void *)eet_read_direct(ef, name, &size);
    if (!data)
      {
 	required_free = 1;

@@ -733,7 +733,7 @@ eet_data_image_read(Eet_File *ef, const char *name,
    unsigned int *d = NULL;
    int		free_data = 0;
 
-   data = (void*) eet_read_direct (ef, name, &size);
+   data = (void *)eet_read_direct (ef, name, &size);
    if (!data)
      {
 	data = eet_read(ef, name, &size);
@@ -759,7 +759,7 @@ eet_data_image_header_read(Eet_File *ef, const char *name,
    int	d;
    int	free_data = 0;
 
-   data = (void*) eet_read_direct (ef, name, &size);
+   data = (void *)eet_read_direct (ef, name, &size);
    if (!data)
      {
 	data = eet_read(ef, name, &size);
