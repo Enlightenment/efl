@@ -1,7 +1,7 @@
 #include <math.h>
 
-#include "Eet.h"
 #include "Eet_private.h"
+#include "Eet.h"
 
 /*
  * routines for doing data -> struct and struct -> data conversion

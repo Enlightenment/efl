@@ -2,14 +2,13 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include <config.h>
+#include "Eet_private.h"
+#include "Eet.h"
+
 #include <sys/types.h>
 #ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
 #endif
-
-#include "Eet.h"
-#include "Eet_private.h"
 
 #ifdef HAVE_REALPATH
 #undef HAVE_REALPATH

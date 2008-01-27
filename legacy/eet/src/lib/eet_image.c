@@ -1,5 +1,5 @@
-#include "Eet.h"
 #include "Eet_private.h"
+#include "Eet.h"
 
 /*---*/
 

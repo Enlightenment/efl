@@ -1,11 +1,11 @@
-#include "Eet.h"
 #include "Eet_private.h"
+#include "Eet.h"
 
 FILE *
 _eet_memfile_read_open(const void *data, size_t size)
 {
 #ifdef HAVE_FMEMOPEN
-   return (FILE *)fmemopen((void*)data, size, "rb");
+   return fmemopen((void*)data, size, "rb");
 #else
    FILE *f;
 
