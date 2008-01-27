@@ -456,7 +456,7 @@ eet_clearcache(void)
 }
 
 static Eet_File*
-eet_internal_read (Eet_File *ef)
+eet_internal_read(Eet_File *ef)
 {
    const unsigned char	*dyn_buf = NULL;
    const unsigned char	*p = NULL;
