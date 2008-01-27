@@ -237,7 +237,7 @@ extern "C" {
 
    /**
 
-        * Read a specified entry from an eet file and return data
+    * Read a specified entry from an eet file and return data
     * @param ef A valid eet file handle opened for reading.
     * @param name Name of the entry. eg: "/base/file_i_want".
     * @param size_ret Number of bytes read from entry and returned.
