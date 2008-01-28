@@ -436,7 +436,10 @@ int           _ecore_signal_count_get(void);
 void          _ecore_signal_call(void);
 #endif
 
-#ifndef _WIN32
+#ifdef _WIN32
+static inline void _ecore_exe_init(void) { }
+static inline void _ecore_exe_shutdown(void) { }
+#else
 void          _ecore_exe_init(void);
 void          _ecore_exe_shutdown(void);
 Ecore_Exe    *_ecore_exe_find(pid_t pid);

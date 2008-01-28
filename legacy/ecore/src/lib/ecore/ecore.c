@@ -64,9 +64,7 @@ ecore_init(void)
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();
 	_ecore_signal_init();
-#ifndef _WIN32
 	_ecore_exe_init();
-#endif
      }
 
    return _ecore_init_count;
@@ -91,9 +89,7 @@ ecore_shutdown(void)
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
    _ecore_poller_shutdown();
    _ecore_animator_shutdown();
-#ifndef _WIN32
    _ecore_exe_shutdown();
-#endif
    _ecore_idle_enterer_shutdown();
    _ecore_idle_exiter_shutdown();
    _ecore_idler_shutdown();
