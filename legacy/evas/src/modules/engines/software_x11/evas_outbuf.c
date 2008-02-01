@@ -969,7 +969,7 @@ evas_software_x11_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, i
      }
    for (i = 0; i < 20; i++)
      {
-	XImage             *xim;
+//	XImage             *xim;
 
 	XSetForeground(buf->priv.x.disp, buf->priv.x.gc,
 		       BlackPixel(buf->priv.x.disp, screen_num));
