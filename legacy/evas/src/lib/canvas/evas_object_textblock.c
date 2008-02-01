@@ -213,6 +213,7 @@ _style_clear(Evas_Textblock_Style *ts)
 }
 
 /* setting a textblock via markup */
+/*
 static char *
 _style_match_replace(Evas_Textblock_Style *ts, char *s)
 {
@@ -227,6 +228,7 @@ _style_match_replace(Evas_Textblock_Style *ts, char *s)
      }
    return NULL;
 }
+*/
 
 static char *
 _style_match_tag(Evas_Textblock_Style *ts, char *s)
