@@ -157,7 +157,7 @@ evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key
         return 0;
      }
    strcpy(txt, "Evas Tiff loader: cannot begin reading tiff");
-   if (!TIFFRGBAImageBegin(& tiff_image, tif, 0, txt))
+   if (!TIFFRGBAImageBegin(& tiff_image, tif, 1, txt))
      {
         TIFFClose(tif);
         return 0;
@@ -308,14 +308,13 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
    /*	if (rgba_image.rgba.samplesperpixel == 8)*/
    if (rgba_image.rgba.bitspersample == 8)
      {
-        if (!TIFFRGBAImageGet((TIFFRGBAImage *) & rgba_image, rast,
+        if (!TIFFRGBAImageGet((TIFFRGBAImage *) &rgba_image, rast,
                               rgba_image.rgba.width, rgba_image.rgba.height))
           {
              evas_common_image_surface_free(im->image);
              _TIFFfree(rast);
              TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
              TIFFClose(tif);
-
              return 0;
           }
      }
