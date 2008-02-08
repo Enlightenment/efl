@@ -89,7 +89,7 @@ evas_object_focus_get(Evas_Object *obj)
  * @return The object that has focus or NULL is there is not one.
  */
 EAPI Evas_Object *
-evas_focus_get(Evas *e)
+evas_focus_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;

@@ -1037,7 +1037,7 @@ evas_object_evas_get(Evas_Object *obj)
  * @ingroup Evas_Object_Finders
  */
 EAPI Evas_Object *
-evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_Object_List *l;
    int xx, yy;
@@ -1079,7 +1079,7 @@ evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include
  * @ingroup Evas_Object_Finders
  */
 EAPI Evas_Object *
-evas_object_top_at_pointer_get(Evas *e)
+evas_object_top_at_pointer_get(const Evas *e)
 {
 ////   return evas_object_top_at_xy_get(e, e->pointer.canvas_x, e->pointer.canvas_y, 0, 0);
    return evas_object_top_at_xy_get(e, e->pointer.x, e->pointer.y, 1, 1);
@@ -1092,7 +1092,7 @@ evas_object_top_at_pointer_get(Evas *e)
  * @ingroup Evas_Object_Finders
  */
 EAPI Evas_Object *
-evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_Object_List *l;
    int xx, yy, ww, hh;
@@ -1140,7 +1140,7 @@ evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord
  * @ingroup Evas_Object_Finders
  */
 EAPI Evas_List *
-evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
    Evas_Object_List *l;
@@ -1183,7 +1183,7 @@ evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pa
  * @ingroup Evas_Object_Finders
  */
 EAPI Evas_List *
-evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
    Evas_Object_List *l;

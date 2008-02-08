@@ -398,7 +398,7 @@ evas_object_below_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Object *
-evas_object_bottom_get(Evas *e)
+evas_object_bottom_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -425,7 +425,7 @@ evas_object_bottom_get(Evas *e)
  *
  */
 EAPI Evas_Object *
-evas_object_top_get(Evas *e)
+evas_object_top_get(const Evas *e)
 {
    Evas_Object *obj = NULL;
    Evas_Object_List *list;

@@ -148,7 +148,7 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
  * @return the Evas_Smart_Class
  */
 EAPI const Evas_Smart_Class *
-evas_smart_class_get(Evas_Smart *s)
+evas_smart_class_get(const Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
    return NULL;
@@ -167,7 +167,7 @@ evas_smart_class_get(Evas_Smart *s)
  *
  */
 EAPI void *
-evas_smart_data_get(Evas_Smart *s)
+evas_smart_data_get(const Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
    return NULL;

@@ -3,11 +3,8 @@
 
 /* private calls */
 
-static int evas_key_modifier_number(Evas_Modifier *m, const char *keyname);
-static int evas_key_lock_number(Evas_Lock *l, const char *keyname);
-
 static int
-evas_key_modifier_number(Evas_Modifier *m, const char *keyname)
+evas_key_modifier_number(const Evas_Modifier *m, const char *keyname)
 {
    int i;
 
@@ -19,7 +16,7 @@ evas_key_modifier_number(Evas_Modifier *m, const char *keyname)
 }
 
 static int
-evas_key_lock_number(Evas_Lock *l, const char *keyname)
+evas_key_lock_number(const Evas_Lock *l, const char *keyname)
 {
    int i;
 
@@ -50,8 +47,8 @@ evas_key_lock_number(Evas_Lock *l, const char *keyname)
  * @return An Evas_Modifier handle to query the modifier subsystem with
  * 	evas_key_modifier_is_set_get, or NULL on error.
  */
-EAPI Evas_Modifier *
-evas_key_modifier_get(Evas *e)
+EAPI const Evas_Modifier *
+evas_key_modifier_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -74,8 +71,8 @@ evas_key_modifier_get(Evas *e)
  * @return An Evas_Lock handle to query the lock subsystem with
  * 	evas_key_lock_is_set_get, or NULL on error.
  */
-EAPI Evas_Lock *
-evas_key_lock_get(Evas *e)
+EAPI const Evas_Lock *
+evas_key_lock_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -405,7 +402,7 @@ evas_key_lock_off(Evas *e, const char *keyname)
  * @returns the bit mask or 0 if the @p keyname wasn't registered as a modifier.
  */
 EAPI Evas_Modifier_Mask
-evas_key_modifier_mask_get(Evas *e, const char *keyname)
+evas_key_modifier_mask_get(const Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    int n;

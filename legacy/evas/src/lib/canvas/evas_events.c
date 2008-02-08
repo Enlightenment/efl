@@ -1165,7 +1165,7 @@ evas_object_pointer_mode_set(Evas_Object *obj, Evas_Object_Pointer_Mode setting)
  * @return pointer behavior.
  */
 EAPI Evas_Object_Pointer_Mode
-evas_object_pointer_mode_get(Evas_Object *obj)
+evas_object_pointer_mode_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;

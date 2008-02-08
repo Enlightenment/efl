@@ -57,7 +57,7 @@ evas_object_name_get(Evas_Object *obj)
  * @ingroup Evas_Object_Name_Group
  */
 EAPI Evas_Object *
-evas_object_name_find(Evas *e, const char *name)
+evas_object_name_find(const Evas *e, const char *name)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;

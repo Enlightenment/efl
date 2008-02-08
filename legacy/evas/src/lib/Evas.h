@@ -677,8 +677,8 @@ extern "C" {
    EAPI void              evas_object_stack_below           (Evas_Object *obj, Evas_Object *below);
    EAPI Evas_Object      *evas_object_above_get             (Evas_Object *obj);
    EAPI Evas_Object      *evas_object_below_get             (Evas_Object *obj);
-   EAPI Evas_Object      *evas_object_bottom_get            (Evas *e);
-   EAPI Evas_Object      *evas_object_top_get               (Evas *e);
+   EAPI Evas_Object      *evas_object_bottom_get            (const Evas *e);
+   EAPI Evas_Object      *evas_object_top_get               (const Evas *e);
 
    EAPI void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    EAPI void              evas_object_resize                (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
@@ -711,24 +711,24 @@ extern "C" {
 
    EAPI void              evas_object_name_set              (Evas_Object *obj, const char *name);
    EAPI const char       *evas_object_name_get              (Evas_Object *obj);
-   EAPI Evas_Object      *evas_object_name_find             (Evas *e, const char *name);
+   EAPI Evas_Object      *evas_object_name_find             (const Evas *e, const char *name);
 
    EAPI Evas             *evas_object_evas_get              (Evas_Object *obj);
 
-   EAPI Evas_Object      *evas_object_top_at_xy_get         (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
-   EAPI Evas_Object      *evas_object_top_at_pointer_get    (Evas *e);
-   EAPI Evas_Object      *evas_object_top_in_rectangle_get  (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
+   EAPI Evas_Object      *evas_object_top_at_xy_get         (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
+   EAPI Evas_Object      *evas_object_top_at_pointer_get    (const Evas *e);
+   EAPI Evas_Object      *evas_object_top_in_rectangle_get  (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
 
-   EAPI Evas_List        *evas_objects_at_xy_get            (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
-   EAPI Evas_List        *evas_objects_in_rectangle_get     (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
+   EAPI Evas_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
+   EAPI Evas_List        *evas_objects_in_rectangle_get     (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
 
 /* smart objects */
    EAPI Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
    EAPI void              evas_smart_free                   (Evas_Smart *s);
    EAPI Evas_Smart       *evas_smart_class_new              (const Evas_Smart_Class *sc);
-   EAPI const Evas_Smart_Class *evas_smart_class_get        (Evas_Smart *s);
+   EAPI const Evas_Smart_Class *evas_smart_class_get        (const Evas_Smart *s);
 
-   EAPI void             *evas_smart_data_get               (Evas_Smart *s);
+   EAPI void             *evas_smart_data_get               (const Evas_Smart *s);
 
    EAPI Evas_Object      *evas_object_smart_add             (Evas *e, Evas_Smart *s);
    EAPI void              evas_object_smart_member_add      (Evas_Object *obj, Evas_Object *smart_obj);
@@ -758,10 +758,10 @@ extern "C" {
    EAPI void              evas_object_focus_set             (Evas_Object *obj, Evas_Bool focus);
    EAPI Evas_Bool         evas_object_focus_get             (Evas_Object *obj);
 
-   EAPI Evas_Object      *evas_focus_get                    (Evas *e);
+   EAPI Evas_Object      *evas_focus_get                    (const Evas *e);
 
-   EAPI Evas_Modifier    *evas_key_modifier_get             (Evas *e);
-   EAPI Evas_Lock        *evas_key_lock_get                 (Evas *e);
+   EAPI const Evas_Modifier *evas_key_modifier_get             (const Evas *e);
+   EAPI const Evas_Lock     *evas_key_lock_get                 (const Evas *e);
 
    EAPI Evas_Bool         evas_key_modifier_is_set          (Evas_Modifier *m, const char *keyname);
 
@@ -777,7 +777,7 @@ extern "C" {
    EAPI void              evas_key_lock_on                  (Evas *e, const char *keyname);
    EAPI void              evas_key_lock_off                 (Evas *e, const char *keyname);
 
-   EAPI Evas_Modifier_Mask evas_key_modifier_mask_get       (Evas *e, const char *keyname);
+   EAPI Evas_Modifier_Mask evas_key_modifier_mask_get       (const Evas *e, const char *keyname);
 
    EAPI Evas_Bool         evas_object_key_grab              (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive);
    EAPI void              evas_object_key_ungrab            (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
@@ -789,7 +789,7 @@ extern "C" {
    EAPI void              evas_object_propagate_events_set  (Evas_Object *obj, Evas_Bool prop);
    EAPI Evas_Bool         evas_object_propagate_events_get  (Evas_Object *obj);
    EAPI void              evas_object_pointer_mode_set      (Evas_Object *obj, Evas_Object_Pointer_Mode setting);
-   EAPI Evas_Object_Pointer_Mode evas_object_pointer_mode_get(Evas_Object *obj);
+   EAPI Evas_Object_Pointer_Mode evas_object_pointer_mode_get(const Evas_Object *obj);
 
        
    EAPI void              evas_object_precise_is_inside_set (Evas_Object *obj, Evas_Bool precise);
