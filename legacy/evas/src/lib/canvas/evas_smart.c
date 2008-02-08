@@ -134,7 +134,7 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
 
    s->magic = MAGIC_SMART;
 
-   s->smart_class = sc;
+   s->smart_class = (Evas_Smart_Class *)sc;
 
    return s;
 }
