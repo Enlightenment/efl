@@ -488,9 +488,9 @@ evas_list_promote_list(Evas_List *list, Evas_List *move_list)
  * @ingroup Evas_List_Find_Group
  */
 EAPI void *
-evas_list_find(Evas_List *list, const void *data)
+evas_list_find(const Evas_List *list, const void *data)
 {
-   Evas_List *l;
+   const Evas_List *l;
 
    for (l = list; l; l = l->next)
      {
@@ -525,13 +525,13 @@ evas_list_find(Evas_List *list, const void *data)
  * @ingroup Evas_List_Find_Group
  */
 EAPI Evas_List *
-evas_list_find_list(Evas_List *list, const void *data)
+evas_list_find_list(const Evas_List *list, const void *data)
 {
-   Evas_List *l;
+   const Evas_List *l;
 
    for (l = list; l; l = l->next)
      {
-	if (l->data == data) return l;
+	if (l->data == data) return (Evas_List *)l;
      }
    return NULL;
 }
@@ -599,7 +599,7 @@ evas_list_free(Evas_List *list)
  * @ingroup Evas_List_Traverse_Group
  */
 EAPI Evas_List *
-evas_list_last(Evas_List *list)
+evas_list_last(const Evas_List *list)
 {
    if (!list) return NULL;
    return list->accounting->last;
@@ -627,7 +627,7 @@ evas_list_last(Evas_List *list)
  * @ingroup Evas_List_Traverse_Group
  */
 EAPI Evas_List *
-evas_list_next(Evas_List *list)
+evas_list_next(const Evas_List *list)
 {
    if (!list) return NULL;
    return list->next;
@@ -656,7 +656,7 @@ evas_list_next(Evas_List *list)
  * @ingroup Evas_List_Traverse_Group
  */
 EAPI Evas_List *
-evas_list_prev(Evas_List *list)
+evas_list_prev(const Evas_List *list)
 {
    if (!list) return NULL;
    return list->prev;
@@ -690,7 +690,7 @@ evas_list_prev(Evas_List *list)
  * @ingroup Evas_List_General_Group
  */
 EAPI void *
-evas_list_data(Evas_List *list)
+evas_list_data(const Evas_List *list)
 {
    if (!list) return NULL;
    return list->data;
@@ -716,7 +716,7 @@ evas_list_data(Evas_List *list)
  * @ingroup Evas_List_General_Group
  */
 EAPI int
-evas_list_count(Evas_List *list)
+evas_list_count(const Evas_List *list)
 {
    if (!list) return 0;
    return list->accounting->count;
@@ -745,7 +745,7 @@ evas_list_count(Evas_List *list)
  * @ingroup Evas_List_Find_Group
  */
 EAPI void *
-evas_list_nth(Evas_List *list, int n)
+evas_list_nth(const Evas_List *list, int n)
 {
    Evas_List *l;
    
@@ -776,10 +776,10 @@ evas_list_nth(Evas_List *list, int n)
  * @ingroup Evas_List_Find_Group
  */
 EAPI Evas_List *
-evas_list_nth_list(Evas_List *list, int n)
+evas_list_nth_list(const Evas_List *list, int n)
 {
    int i;
-   Evas_List *l;
+   const Evas_List *l;
 
    /* check for non-existing nodes */
    if ((!list) || (n < 0) || 
@@ -796,14 +796,14 @@ evas_list_nth_list(Evas_List *list, int n)
 	     l; 
 	     l = l->prev, i--)
 	  {
-	     if (i == n) return l;
+	     if (i == n) return (Evas_List *)l;
 	  }
      }
    else
      {
 	for (i = 0, l = list; l; l = l->next, i++)
 	  {
-	     if (i == n) return l;
+	     if (i == n) return (Evas_List *)l;
 	  }
      }
    return NULL;
