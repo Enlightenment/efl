@@ -129,7 +129,7 @@ _xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
 }
 
 static Evas_Bool
-_xre_font_pool_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
+_xre_font_pool_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    char             buf[256];
    Evas_Hash       *pool;
