@@ -11,8 +11,8 @@ static int                font_cache = 0;
 static Evas_Object_List * fonts_src = NULL;
 static Evas_Object_List * fonts = NULL;
 
-static Evas_Bool font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
-static Evas_Bool font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Evas_Bool font_modify_cache_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Evas_Bool font_flush_free_glyph_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata);
 
 EAPI RGBA_Font_Source *
 evas_common_font_source_memory_load(const char *name, const void *data, int data_size)
@@ -476,7 +476,7 @@ evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *name, int size, c
 }
 
 static Evas_Bool
-font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
+font_modify_cache_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    int *dir;
    RGBA_Font_Glyph *fg;
@@ -527,7 +527,7 @@ evas_common_font_flush(void)
 }
 
 static Evas_Bool
-font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
+font_flush_free_glyph_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    RGBA_Font_Glyph *fg;
 

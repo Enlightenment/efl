@@ -266,7 +266,7 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
  * @ingroup Evas_Hash_Data
  */
 EAPI void *
-evas_hash_find(Evas_Hash *hash, const char *key)
+evas_hash_find(const Evas_Hash *hash, const char *key)
 {
    int hash_num;
    Evas_Hash_El *el;
@@ -282,8 +282,12 @@ evas_hash_find(Evas_Hash *hash, const char *key)
 	  {
 	     if (l != hash->buckets[hash_num])
 	       {
-		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+		  Evas_Object_List *bucket;
+
+		  bucket = hash->buckets[hash_num];
+		  bucket = evas_object_list_remove(bucket, el);
+		  bucket = evas_object_list_prepend(bucket, el);
+		  ((Evas_Hash *)hash)->buckets[hash_num] = bucket;
 	       }
 	     return el->data;
 	  }
@@ -344,7 +348,7 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
  * @ingroup Evas_Hash_General_Group
  */
 EAPI int
-evas_hash_size(Evas_Hash *hash)
+evas_hash_size(const Evas_Hash *hash)
 {
    if (!hash) return 0;
    return 256;
@@ -429,7 +433,7 @@ evas_hash_free(Evas_Hash *hash)
  * @ingroup Evas_Hash_General_Group
  */
 EAPI void
-evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
+evas_hash_foreach(const Evas_Hash *hash, Evas_Bool (*func) (const Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
 {
    int i, size;
 
