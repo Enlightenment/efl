@@ -52,7 +52,7 @@ evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_
 }
 
 static Evas_Bool
-_evas_cache_engine_image_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
+_evas_cache_engine_image_free_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    Evas_Cache_Engine_Image     *cache = fdata;
    RGBA_Engine_Image           *eim = data;
