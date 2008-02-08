@@ -573,17 +573,17 @@ extern "C" {
    EAPI void              evas_font_path_clear              (Evas *e);
    EAPI void              evas_font_path_append             (Evas *e, const char *path);
    EAPI void              evas_font_path_prepend            (Evas *e, const char *path);
-   EAPI const Evas_List  *evas_font_path_list               (Evas *e);
+   EAPI const Evas_List  *evas_font_path_list               (const Evas *e);
    
    EAPI void              evas_font_hinting_set             (Evas *e, Evas_Font_Hinting_Flags hinting);
-   EAPI Evas_Font_Hinting_Flags evas_font_hinting_get       (Evas *e);
-   EAPI Evas_Bool         evas_font_hinting_can_hint        (Evas *e, Evas_Font_Hinting_Flags hinting);
+   EAPI Evas_Font_Hinting_Flags evas_font_hinting_get       (const Evas *e);
+   EAPI Evas_Bool         evas_font_hinting_can_hint        (const Evas *e, Evas_Font_Hinting_Flags hinting);
 
    EAPI void              evas_font_cache_flush             (Evas *e);
    EAPI void              evas_font_cache_set               (Evas *e, int size);
-   EAPI int               evas_font_cache_get               (Evas *e);
+   EAPI int               evas_font_cache_get               (const Evas *e);
 
-   EAPI Evas_List	 *evas_font_available_list	    (Evas *e);
+   EAPI Evas_List	 *evas_font_available_list	    (const Evas *e);
    EAPI void		  evas_font_available_list_free	    (Evas *e, Evas_List *available);
    
 /* textblock objects */

@@ -366,7 +366,7 @@ evas_font_load_hinting_set(Evas *evas, void *font, int hinting)
 }
 
 Evas_List *
-evas_font_dir_available_list(Evas *evas)
+evas_font_dir_available_list(const Evas *evas)
 {
    Evas_List *l;
    Evas_List *ll;

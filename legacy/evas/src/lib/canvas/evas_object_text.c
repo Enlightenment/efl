@@ -997,7 +997,7 @@ evas_font_path_prepend(Evas *e, const char *path)
  * @ingroup Evas_Font_Path_Group
  */
 EAPI const Evas_List *
-evas_font_path_list(Evas *e)
+evas_font_path_list(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -1054,7 +1054,7 @@ evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
 }
 
 EAPI Evas_Font_Hinting_Flags
-evas_font_hinting_get(Evas *e)
+evas_font_hinting_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return EVAS_FONT_HINTING_BYTECODE;
@@ -1063,7 +1063,7 @@ evas_font_hinting_get(Evas *e)
 }
 
 EAPI Evas_Bool
-evas_font_hinting_can_hint(Evas *e, Evas_Font_Hinting_Flags hinting)
+evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -1118,7 +1118,7 @@ evas_font_cache_set(Evas *e, int size)
  *
  */
 EAPI int
-evas_font_cache_get(Evas *e)
+evas_font_cache_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -1134,7 +1134,7 @@ evas_font_cache_get(Evas *e)
  *
  */
 EAPI Evas_List *
-evas_font_available_list(Evas *e)
+evas_font_available_list(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;

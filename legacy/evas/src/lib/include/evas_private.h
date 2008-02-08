@@ -746,7 +746,7 @@ void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);
 const char *evas_font_dir_cache_find(char *dir, char *font);
-Evas_List *evas_font_dir_available_list(Evas* evas);
+Evas_List *evas_font_dir_available_list(const Evas* evas);
 void evas_font_dir_available_list_free(Evas_List *available);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
