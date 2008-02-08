@@ -230,7 +230,7 @@ struct _Evas_Smart
 
    int               usage;
 
-   Evas_Smart_Class *smart_class;
+   const Evas_Smart_Class *smart_class;
 
    unsigned char     delete_me : 1;
    unsigned char     class_allocated : 1;

@@ -58,6 +58,7 @@ evas_smart_new(const char *name,
 	       const void *data)
 {
    Evas_Smart *s;
+   Evas_Smart_Class *sc;
 
    printf("----- WARNING. evas_smart_new() will be deprecated and removed soon\n"
 	  "----- Please use evas_smart_class_new() instead\n");
@@ -71,23 +72,24 @@ evas_smart_new(const char *name,
 
    s->class_allocated = 1;
 
-   s->smart_class = evas_mem_calloc(sizeof(Evas_Smart_Class));
-   if (!s->smart_class)
+   sc = evas_mem_calloc(sizeof(Evas_Smart_Class));
+   if (!sc)
      {
 	free(s);
 	return NULL;
      }
-   s->smart_class->name = name;
-   s->smart_class->add = func_add;
-   s->smart_class->del = func_del;
-   s->smart_class->move = func_move;
-   s->smart_class->resize = func_resize;
-   s->smart_class->show = func_show;
-   s->smart_class->hide = func_hide;
-   s->smart_class->color_set = func_color_set;
-   s->smart_class->clip_set = func_clip_set;
-   s->smart_class->clip_unset = func_clip_unset;
-   s->smart_class->data = (void *)data;
+   sc->name = name;
+   sc->add = func_add;
+   sc->del = func_del;
+   sc->move = func_move;
+   sc->resize = func_resize;
+   sc->show = func_show;
+   sc->hide = func_hide;
+   sc->color_set = func_color_set;
+   sc->clip_set = func_clip_set;
+   sc->clip_unset = func_clip_unset;
+   sc->data = (void *)data;
+   s->smart_class = sc;
 
    return s;
 }
@@ -109,7 +111,7 @@ evas_smart_free(Evas_Smart *s)
    MAGIC_CHECK_END();
    s->delete_me = 1;
    if (s->usage > 0) return;
-   if (s->class_allocated) free(s->smart_class);
+   if (s->class_allocated) free((void *)s->smart_class);
    free(s);
 }
 
@@ -134,7 +136,7 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
 
    s->magic = MAGIC_SMART;
 
-   s->smart_class = (Evas_Smart_Class *)sc;
+   s->smart_class = sc;
 
    return s;
 }
