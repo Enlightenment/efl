@@ -83,16 +83,16 @@ evas_list_append(Evas_List *list, const void *data)
 	     evas_mempool_free(&_evas_list_mempool, new_l);
 	     return list;
 	  }
-	((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
-	((Evas_List_Accounting *)(new_l->accounting))->count = 1;
+	new_l->accounting->last = new_l;
+	new_l->accounting->count = 1;
 	return new_l;
      }
-   l = ((Evas_List_Accounting *)(list->accounting))->last;
+   l = list->accounting->last;
    l->next = new_l;
    new_l->prev = l;
    new_l->accounting = list->accounting;
-   ((Evas_List_Accounting *)(list->accounting))->last = new_l;
-   ((Evas_List_Accounting *)(list->accounting))->count++;
+   list->accounting->last = new_l;
+   list->accounting->count++;
    return list;
 }
 
@@ -146,14 +146,14 @@ evas_list_prepend(Evas_List *list, const void *data)
 	     evas_mempool_free(&_evas_list_mempool, new_l);
 	     return list;
 	  }
-	((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
-	((Evas_List_Accounting *)(new_l->accounting))->count = 1;
+	new_l->accounting->last = new_l;
+	new_l->accounting->count = 1;
 	return new_l;
      }
    new_l->next = list;
    list->prev = new_l;
    new_l->accounting = list->accounting;
-   ((Evas_List_Accounting *)(list->accounting))->count++;
+   list->accounting->count++;
    return new_l;
 }
 
@@ -232,9 +232,9 @@ evas_list_append_relative_list(Evas_List *list, const void *data, Evas_List *rel
    relative->next = new_l;
    new_l->prev = relative;
    new_l->accounting = list->accounting;
-   ((Evas_List_Accounting *)(list->accounting))->count++;
+   list->accounting->count++;
    if (!new_l->next)
-     ((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
+     new_l->accounting->last = new_l;
    return list;
 }
 
@@ -315,7 +315,7 @@ evas_list_prepend_relative_list(Evas_List *list, const void *data, Evas_List *re
    if (relative->prev) relative->prev->next = new_l;
    relative->prev = new_l;
    new_l->accounting = list->accounting;
-   ((Evas_List_Accounting *)(list->accounting))->count++;
+   list->accounting->count++;
    if (new_l->prev)
      return list;
    return new_l;
@@ -394,10 +394,10 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
      }
    else
      return_l = remove_list->next;
-   if (remove_list == ((Evas_List_Accounting *)(list->accounting))->last)
-     ((Evas_List_Accounting *)(list->accounting))->last = remove_list->prev;
-   ((Evas_List_Accounting *)(list->accounting))->count--;
-   if (((Evas_List_Accounting *)(list->accounting))->count == 0)
+   if (remove_list == list->accounting->last)
+     list->accounting->last = remove_list->prev;
+   list->accounting->count--;
+   if (list->accounting->count == 0)
      evas_mempool_free(&_evas_list_accounting_mempool, list->accounting);
    evas_mempool_free(&_evas_list_mempool, remove_list);
    return return_l;
@@ -447,8 +447,8 @@ evas_list_promote_list(Evas_List *list, Evas_List *move_list)
      }
    else
      return_l = move_list->next;
-   if (move_list == ((Evas_List_Accounting *)(list->accounting))->last)
-     ((Evas_List_Accounting *)(list->accounting))->last = move_list->prev;
+   if (move_list == list->accounting->last)
+     list->accounting->last = move_list->prev;
    move_list->prev = return_l->prev;
    if (return_l->prev)
      return_l->prev->next = move_list;
@@ -602,7 +602,7 @@ EAPI Evas_List *
 evas_list_last(Evas_List *list)
 {
    if (!list) return NULL;
-   return ((Evas_List_Accounting *)(list->accounting))->last;
+   return list->accounting->last;
 }
 
 /**
@@ -719,7 +719,7 @@ EAPI int
 evas_list_count(Evas_List *list)
 {
    if (!list) return 0;
-   return ((Evas_List_Accounting *)(list->accounting))->count;
+   return list->accounting->count;
 }
 
 /**
@@ -783,16 +783,16 @@ evas_list_nth_list(Evas_List *list, int n)
 
    /* check for non-existing nodes */
    if ((!list) || (n < 0) || 
-       (n > ((Evas_List_Accounting *)(list->accounting))->count - 1))
+       (n > (list->accounting->count - 1)))
      return NULL;
 
    /* if the node is in the 2nd half of the list, search from the end
     * else, search from the beginning.
     */
-   if (n > (((Evas_List_Accounting *)(list->accounting))->count / 2))
+   if (n > (list->accounting->count / 2))
      {
-	for (i = ((Evas_List_Accounting *)(list->accounting))->count - 1,
-	     l = ((Evas_List_Accounting *)(list->accounting))->last; 
+	for (i = list->accounting->count - 1,
+	     l = list->accounting->last;
 	     l; 
 	     l = l->prev, i--)
 	  {
@@ -838,7 +838,7 @@ evas_list_reverse(Evas_List *list)
 
    if (!list) return NULL;
    l1 = list;
-   l2 = ((Evas_List_Accounting *)(list->accounting))->last;
+   l2 = list->accounting->last;
    while (l1 != l2)
      {
 	void *data;
@@ -903,10 +903,10 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 
    /* if the caller specified an invalid size, sort the whole list */
    if ((size <= 0) ||
-       (size > ((Evas_List_Accounting *)(list->accounting))->count))
-     size = ((Evas_List_Accounting *)(list->accounting))->count;
+       (size > list->accounting->count))
+     size = list->accounting->count;
 
-   last = ((Evas_List_Accounting *)(list->accounting))->last;
+   last = list->accounting->last;
    middle = size - size / 2;
 
    for (list_number = middle, list_size = 1;
@@ -989,7 +989,7 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 	  }
      }
 
-   ((Evas_List_Accounting *)(list->accounting))->last = last;
+   list->accounting->last = last;
    return list;
 }
 /**
