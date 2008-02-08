@@ -1,11 +1,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Evas_Object *evas_object_above_get_internal(Evas_Object *obj);
-static Evas_Object *evas_object_below_get_internal(Evas_Object *obj);
-
 static Evas_Object *
-evas_object_above_get_internal(Evas_Object *obj)
+evas_object_above_get_internal(const Evas_Object *obj)
 {
    if (((Evas_Object_List *)obj)->next)
      return (Evas_Object *)(((Evas_Object_List *)obj)->next);
@@ -23,7 +20,7 @@ evas_object_above_get_internal(Evas_Object *obj)
 }
 
 static Evas_Object *
-evas_object_below_get_internal(Evas_Object *obj)
+evas_object_below_get_internal(const Evas_Object *obj)
 {
    if (((Evas_Object_List *)obj)->prev)
      return (Evas_Object *)(((Evas_Object_List *)obj)->prev);
@@ -334,7 +331,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
  *
  */
 EAPI Evas_Object *
-evas_object_above_get(Evas_Object *obj)
+evas_object_above_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -344,7 +341,7 @@ evas_object_above_get(Evas_Object *obj)
 	do
 	  {
 	     obj = (Evas_Object *)(((Evas_Object_List *)(obj))->next);
-	     if ((obj) && (!obj->delete_me)) return obj;
+	     if ((obj) && (!obj->delete_me)) return (Evas_Object *)obj;
 	  }
 	while (obj);
 	return NULL;
@@ -352,7 +349,7 @@ evas_object_above_get(Evas_Object *obj)
    obj = evas_object_above_get_internal(obj);
    while (obj)
      {
-	if (!obj->delete_me) return obj;
+	if (!obj->delete_me) return (Evas_Object *)obj;
 	obj = evas_object_above_get_internal(obj);
      }
    return NULL;
@@ -366,7 +363,7 @@ evas_object_above_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Object *
-evas_object_below_get(Evas_Object *obj)
+evas_object_below_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -376,7 +373,7 @@ evas_object_below_get(Evas_Object *obj)
 	do
 	  {
 	     obj = (Evas_Object *)(((Evas_Object_List *)(obj))->prev);
-	     if ((obj) && (!obj->delete_me)) return obj;
+	     if ((obj) && (!obj->delete_me)) return (Evas_Object *)obj;
 	  }
 	while (obj);
 	return NULL;
@@ -384,7 +381,7 @@ evas_object_below_get(Evas_Object *obj)
    obj = evas_object_below_get_internal(obj);
    while (obj)
      {
-	if (!obj->delete_me) return obj;
+	if (!obj->delete_me) return (Evas_Object *)obj;
 	obj = evas_object_below_get_internal(obj);
      }
    return NULL;

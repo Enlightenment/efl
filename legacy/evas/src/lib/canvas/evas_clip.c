@@ -238,7 +238,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
  * @ingroup Evas_Clip_Group
  */
 EAPI Evas_Object *
-evas_object_clip_get(Evas_Object *obj)
+evas_object_clip_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -354,7 +354,7 @@ evas_object_clip_unset(Evas_Object *obj)
  * @ingroup Evas_Clip_Group
  */
 EAPI const Evas_List *
-evas_object_clipees_get(Evas_Object *obj)
+evas_object_clipees_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;

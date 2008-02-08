@@ -66,7 +66,7 @@ evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
  * @return 1 if the object has the focus, 0 otherwise.
  */
 EAPI Evas_Bool
-evas_object_focus_get(Evas_Object *obj)
+evas_object_focus_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;

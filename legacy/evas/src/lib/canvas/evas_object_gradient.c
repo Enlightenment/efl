@@ -334,7 +334,7 @@ evas_object_gradient_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas
  * @ingroup Evas_Object_Gradient_Fill_Group
  */
 EAPI void
-evas_object_gradient_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+evas_object_gradient_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Gradient *o;
 
@@ -393,7 +393,7 @@ evas_object_gradient_fill_angle_set(Evas_Object *obj, Evas_Angle angle)
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI Evas_Angle
-evas_object_gradient_fill_angle_get(Evas_Object *obj)
+evas_object_gradient_fill_angle_get(const Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
 
@@ -440,7 +440,7 @@ evas_object_gradient_fill_spread_set(Evas_Object *obj, int spread)
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI int
-evas_object_gradient_fill_spread_get(Evas_Object *obj)
+evas_object_gradient_fill_spread_get(const Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
 
@@ -489,7 +489,7 @@ evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI Evas_Angle
-evas_object_gradient_angle_get(Evas_Object *obj)
+evas_object_gradient_angle_get(const Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
 
@@ -534,7 +534,7 @@ evas_object_gradient_offset_set(Evas_Object *obj, float offset)
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI float
-evas_object_gradient_offset_get(Evas_Object *obj)
+evas_object_gradient_offset_get(const Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
 
@@ -580,7 +580,7 @@ evas_object_gradient_direction_set(Evas_Object *obj, int direction)
  * @ingroup Evas_Object_Gradient_Group
  */
 EAPI int
-evas_object_gradient_direction_get(Evas_Object *obj)
+evas_object_gradient_direction_get(const Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
 
@@ -685,7 +685,7 @@ evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *pa
  * @ingroup Evas_Object_Gradient_Type_Group
  */
 EAPI void
-evas_object_gradient_type_get(Evas_Object *obj, char **name, char **params)
+evas_object_gradient_type_get(const Evas_Object *obj, char **name, char **params)
 {
    Evas_Object_Gradient *o;
 

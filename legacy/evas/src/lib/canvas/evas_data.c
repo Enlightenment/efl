@@ -87,7 +87,7 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
  * @ingroup Evas_Object_Data_Group
  */
 EAPI void *
-evas_object_data_get(Evas_Object *obj, const char *key)
+evas_object_data_get(const Evas_Object *obj, const char *key)
 {
    Evas_List *l;
 
@@ -103,8 +103,10 @@ evas_object_data_get(Evas_Object *obj, const char *key)
 	node = l->data;
 	if (!strcmp(node->key, key))
 	  {
-	     obj->data.elements = evas_list_remove_list(obj->data.elements, l);
-	     obj->data.elements = evas_list_prepend(obj->data.elements, node);
+	     Evas_List *lst;
+	     lst = obj->data.elements;
+	     lst = evas_list_promote_list(lst, l);
+	     ((Evas_Object *)obj)->data.elements = lst;
 	     return node->data;
 	  }
      }

@@ -127,7 +127,7 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
  *
  */
 EAPI const char *
-evas_object_text_font_source_get(Evas_Object *obj)
+evas_object_text_font_source_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -264,7 +264,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
  * @param size	A pointer to the location to store the font size in (may be NULL).
  */
 EAPI void
-evas_object_text_font_get(Evas_Object *obj, const char **font, Evas_Font_Size *size)
+evas_object_text_font_get(const Evas_Object *obj, const char **font, Evas_Font_Size *size)
 {
    Evas_Object_Text *o;
 
@@ -355,7 +355,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
  * @return The text currently being displayed.  Do not free it.
  */
 EAPI const char *
-evas_object_text_text_get(Evas_Object *obj)
+evas_object_text_text_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -376,7 +376,7 @@ evas_object_text_text_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_ascent_get(Evas_Object *obj)
+evas_object_text_ascent_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -397,7 +397,7 @@ evas_object_text_ascent_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_descent_get(Evas_Object *obj)
+evas_object_text_descent_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -418,7 +418,7 @@ evas_object_text_descent_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_max_ascent_get(Evas_Object *obj)
+evas_object_text_max_ascent_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -439,7 +439,7 @@ evas_object_text_max_ascent_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_max_descent_get(Evas_Object *obj)
+evas_object_text_max_descent_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -460,7 +460,7 @@ evas_object_text_max_descent_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_inset_get(Evas_Object *obj)
+evas_object_text_inset_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -483,7 +483,7 @@ evas_object_text_inset_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_horiz_advance_get(Evas_Object *obj)
+evas_object_text_horiz_advance_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -506,7 +506,7 @@ evas_object_text_horiz_advance_get(Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_vert_advance_get(Evas_Object *obj)
+evas_object_text_vert_advance_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -541,7 +541,7 @@ evas_object_text_vert_advance_get(Evas_Object *obj)
  * @returns 0 on error, 1 on success.
  */
 EAPI int
-evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Text *o;
    int l = 0, r = 0, t = 0, b = 0;
@@ -594,7 +594,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Co
  *
  */
 EAPI int
-evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Text *o;
    int l = 0, r = 0, t = 0, b = 0;
@@ -682,7 +682,7 @@ evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
  *
  */
 EAPI Evas_Text_Style_Type
-evas_object_text_style_get(Evas_Object *obj)
+evas_object_text_style_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
@@ -731,7 +731,7 @@ evas_object_text_shadow_color_set(Evas_Object *obj, int r, int g, int b, int a)
  *
  */
 EAPI void
-evas_object_text_shadow_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
+evas_object_text_shadow_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
 
@@ -783,7 +783,7 @@ evas_object_text_glow_color_set(Evas_Object *obj, int r, int g, int b, int a)
  *
  */
 EAPI void
-evas_object_text_glow_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
+evas_object_text_glow_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
 
@@ -835,7 +835,7 @@ evas_object_text_glow2_color_set(Evas_Object *obj, int r, int g, int b, int a)
  *
  */
 EAPI void
-evas_object_text_glow2_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
+evas_object_text_glow2_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
 
@@ -887,7 +887,7 @@ evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a)
  *
  */
 EAPI void
-evas_object_text_outline_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
+evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
 
@@ -911,7 +911,7 @@ evas_object_text_outline_color_get(Evas_Object *obj, int *r, int *g, int *b, int
  *
  */
 EAPI void
-evas_object_text_style_pad_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
+evas_object_text_style_pad_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    int sl = 0, sr = 0, st = 0, sb = 0;
    Evas_Object_Text *o;

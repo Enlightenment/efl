@@ -90,7 +90,7 @@ evas_object_smart_data_set(Evas_Object *obj, void *data)
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void *
-evas_object_smart_data_get(Evas_Object *obj)
+evas_object_smart_data_get(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
 
@@ -112,7 +112,7 @@ evas_object_smart_data_get(Evas_Object *obj)
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Smart *
-evas_object_smart_smart_get(Evas_Object *obj)
+evas_object_smart_smart_get(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
 
@@ -219,7 +219,7 @@ evas_object_smart_member_del(Evas_Object *obj)
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Object *
-evas_object_smart_parent_get(Evas_Object *obj)
+evas_object_smart_parent_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -235,7 +235,7 @@ evas_object_smart_parent_get(Evas_Object *obj)
  * The returned list should be freed with evas_list_free() when you no longer need it
  */
 EAPI Evas_List *
-evas_object_smart_members_get(Evas_Object *obj)
+evas_object_smart_members_get(const Evas_Object *obj)
 {
    Evas_List *members;
    Evas_Object_List *member;

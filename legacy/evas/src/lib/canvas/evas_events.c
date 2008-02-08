@@ -207,7 +207,7 @@ evas_event_thaw(Evas *e)
  * @ingroup Evas_Event_Freezing_Group
  */
 EAPI int
-evas_event_freeze_get(Evas *e)
+evas_event_freeze_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -1031,7 +1031,7 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
  * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Evas_Bool
-evas_object_pass_events_get(Evas_Object *obj)
+evas_object_pass_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -1082,7 +1082,7 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
  * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Evas_Bool
-evas_object_repeat_events_get(Evas_Object *obj)
+evas_object_repeat_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -1125,7 +1125,7 @@ evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
  * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI Evas_Bool
-evas_object_propagate_events_get(Evas_Object *obj)
+evas_object_propagate_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;

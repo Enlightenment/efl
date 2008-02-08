@@ -188,7 +188,7 @@ evas_object_layer_set(Evas_Object *obj, int l)
  * @ingroup Evas_Object_Layer_Group
  */
 EAPI int
-evas_object_layer_get(Evas_Object *obj)
+evas_object_layer_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;

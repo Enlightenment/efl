@@ -373,7 +373,7 @@ _strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
 }
 
 static void
-_nodes_clear(Evas_Object *obj)
+_nodes_clear(const Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
 
@@ -390,7 +390,7 @@ _nodes_clear(Evas_Object *obj)
 }
 
 static void
-_format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
+_format_free(const Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 {
    fmt->ref--;
    if (fmt->ref > 0) return;
@@ -402,7 +402,7 @@ _format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 }
 
 static void
-_line_free(Evas_Object *obj, Evas_Object_Textblock_Line *ln)
+_line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 {
    while (ln->items)
      {
@@ -427,7 +427,7 @@ _line_free(Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 }
 
 static void
-_lines_clear(Evas_Object *obj, Evas_Object_Textblock_Line *lines)
+_lines_clear(const Evas_Object *obj, Evas_Object_Textblock_Line *lines)
 {
    Evas_Object_Textblock *o;
 
@@ -1942,7 +1942,7 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node *n, char *item)
 }
 
 static void
-_layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
+_layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 {
    Evas_Object_Textblock *o;
    Ctxt ctxt, *c;
@@ -1954,7 +1954,7 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
    /* setup context */
    o = (Evas_Object_Textblock *)(obj->object_data);
    c = &ctxt;
-   c->obj =obj;
+   c->obj = (Evas_Object *)obj;
    c->o = o;
    c->lines = c->ln = NULL;
    c->format_stack = NULL;
@@ -2137,7 +2137,7 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 }
 
 static void
-_relayout(Evas_Object *obj)
+_relayout(const Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *lines;
@@ -2216,7 +2216,7 @@ _find_layout_format_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node
 }
 
 static Evas_Object_Textblock_Line *
-_find_layout_line_num(Evas_Object *obj, int line)
+_find_layout_line_num(const Evas_Object *obj, int line)
 {
    Evas_Object_List *l;
    Evas_Object_Textblock *o;
@@ -2380,7 +2380,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 }
 
 EAPI const char *
-evas_textblock_style_get(Evas_Textblock_Style *ts)
+evas_textblock_style_get(const Evas_Textblock_Style *ts)
 {
    if (!ts) return NULL;
    return ts->style_text;
@@ -2416,7 +2416,7 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
 }
 
 EAPI const Evas_Textblock_Style *
-evas_object_textblock_style_get(Evas_Object *obj)
+evas_object_textblock_style_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->style;
@@ -2605,7 +2605,7 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 }
 
 EAPI const char *
-evas_object_textblock_text_markup_get(Evas_Object *obj)
+evas_object_textblock_text_markup_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->markup_text;
@@ -2613,7 +2613,7 @@ evas_object_textblock_text_markup_get(Evas_Object *obj)
 
 /* cursors */
 EAPI const Evas_Textblock_Cursor *
-evas_object_textblock_cursor_get(Evas_Object *obj)
+evas_object_textblock_cursor_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->cursor;
@@ -2853,7 +2853,7 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
 }
 
 EAPI int
-evas_textblock_cursor_pos_get(Evas_Textblock_Cursor *cur)
+evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
 {
    if (!cur) return -1;
    return cur->pos;
@@ -2905,7 +2905,7 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 }
 
 EAPI int
-evas_textblock_cursor_compare(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
+evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
    Evas_Object_List *l1, *l2;
    
@@ -2933,7 +2933,7 @@ evas_textblock_cursor_compare(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor
 }
 
 EAPI void
-evas_textblock_cursor_copy(Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest)
+evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest)
 {
    if (!cur) return;
    if (!cur_dest) return;
@@ -3510,7 +3510,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 }
 
 EAPI const char *
-evas_textblock_cursor_node_text_get(Evas_Textblock_Cursor *cur)
+evas_textblock_cursor_node_text_get(const Evas_Textblock_Cursor *cur)
 {
    if (!cur) return NULL;
    if (!cur->node) return NULL;
@@ -3522,7 +3522,7 @@ evas_textblock_cursor_node_text_get(Evas_Textblock_Cursor *cur)
 }
 
 EAPI int
-evas_textblock_cursor_node_text_length_get(Evas_Textblock_Cursor *cur)
+evas_textblock_cursor_node_text_length_get(const Evas_Textblock_Cursor *cur)
 {
    if (!cur) return 0;
    if (!cur->node) return 0;
@@ -3534,7 +3534,7 @@ evas_textblock_cursor_node_text_length_get(Evas_Textblock_Cursor *cur)
 }
 
 EAPI const char *
-evas_textblock_cursor_node_format_get(Evas_Textblock_Cursor *cur)
+evas_textblock_cursor_node_format_get(const Evas_Textblock_Cursor *cur)
 {
    if (!cur) return NULL;
    if (!cur->node) return NULL;
@@ -3546,7 +3546,7 @@ evas_textblock_cursor_node_format_get(Evas_Textblock_Cursor *cur)
 }
 
 EAPI char *
-evas_textblock_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
+evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n1, *n2, *n;
@@ -3560,7 +3560,7 @@ evas_textblock_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock
    o = (Evas_Object_Textblock *)(cur1->obj->object_data);
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
-	Evas_Textblock_Cursor *tc;
+	const Evas_Textblock_Cursor *tc;
 	
 	tc = cur1;
 	cur1 = cur2;
@@ -3617,7 +3617,7 @@ evas_textblock_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock
 }
 
 EAPI int
-evas_textblock_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
@@ -3671,7 +3671,7 @@ evas_textblock_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *
 }
 
 EAPI int
-evas_textblock_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
@@ -3796,7 +3796,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 }
 
 EAPI Evas_List *
-evas_textblock_cursor_range_geometry_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
+evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
    Evas_Object_Textblock *o;
    Evas_List *rects = NULL;
@@ -3810,7 +3810,7 @@ evas_textblock_cursor_range_geometry_get(Evas_Textblock_Cursor *cur1, Evas_Textb
    o = (Evas_Object_Textblock *)(cur1->obj->object_data);
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
-	Evas_Textblock_Cursor *tc;
+	const Evas_Textblock_Cursor *tc;
 	
 	tc = cur1;
 	cur1 = cur2;
@@ -3891,7 +3891,7 @@ evas_textblock_cursor_range_geometry_get(Evas_Textblock_Cursor *cur1, Evas_Textb
 
 /* general controls */
 EAPI Evas_Bool
-evas_object_textblock_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock_Line *ln;
    
@@ -3940,7 +3940,7 @@ evas_object_textblock_clear(Evas_Object *obj)
 }
 
 EAPI void
-evas_object_textblock_size_formatted_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    TB_HEAD();
    if (!o->formatted.valid) _relayout(obj);
@@ -3949,7 +3949,7 @@ evas_object_textblock_size_formatted_get(Evas_Object *obj, Evas_Coord *w, Evas_C
 }
 
 EAPI void
-evas_object_textblock_size_native_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    TB_HEAD();
    if (!o->native.valid)
@@ -3965,7 +3965,7 @@ evas_object_textblock_size_native_get(Evas_Object *obj, Evas_Coord *w, Evas_Coor
 }
 
 EAPI void
-evas_object_textblock_style_insets_get(Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
+evas_object_textblock_style_insets_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
 {
    TB_HEAD();
    if (!o->formatted.valid) _relayout(obj);

@@ -290,7 +290,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
  * @ingroup Evas_Object_Image_File_Group
  */
 EAPI void
-evas_object_image_file_get(Evas_Object *obj, const char **file, const char **key)
+evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key)
 {
    Evas_Object_Image *o;
 
@@ -376,7 +376,7 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
  * @ingroup Evas_Object_Image_Border_Group
  */
 EAPI void
-evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
+evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    Evas_Object_Image *o;
 
@@ -452,7 +452,7 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
  * @ingroup Evas_Object_Image_Fill_Group
  */
 EAPI Evas_Bool
-evas_object_image_border_center_fill_get(Evas_Object *obj)
+evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -527,7 +527,7 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
  * @ingroup Evas_Object_Image_Fill_Group
  */
 EAPI void
-evas_object_image_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Image *o;
 
@@ -631,7 +631,7 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
  * @ingroup Evas_Object_Image_Size
  */
 EAPI void
-evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
+evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
    Evas_Object_Image *o;
 
@@ -661,7 +661,7 @@ evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
  * @ingroup Evas_Object_Image_Size
  */
 EAPI int
-evas_object_image_stride_get(Evas_Object *obj)
+evas_object_image_stride_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -686,7 +686,7 @@ evas_object_image_stride_get(Evas_Object *obj)
  * @ingroup Evas_Object_Image
  */
 EAPI int
-evas_object_image_load_error_get(Evas_Object *obj)
+evas_object_image_load_error_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -788,7 +788,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
  * @ingroup Evas_Object_Image_Data
  */
 EAPI void *
-evas_object_image_data_get(Evas_Object *obj, Evas_Bool for_writing)
+evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
 {
    Evas_Object_Image *o;
    DATA32 *data;
@@ -961,7 +961,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
  * @ingroup Evas_Object_Image_Alpha
  */
 EAPI Evas_Bool
-evas_object_image_alpha_get(Evas_Object *obj)
+evas_object_image_alpha_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -1022,7 +1022,7 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
  * @ingroup Evas_Object_Image_Scale
  */
 EAPI Evas_Bool
-evas_object_image_smooth_scale_get(Evas_Object *obj)
+evas_object_image_smooth_scale_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -1083,7 +1083,7 @@ evas_object_image_reload(Evas_Object *obj)
  * @ingroup Evas_Object_Image
  */
 EAPI Evas_Bool
-evas_object_image_save(Evas_Object *obj, const char *file, const char *key, const char *flags)
+evas_object_image_save(const Evas_Object *obj, const char *file, const char *key, const char *flags)
 {
    Evas_Object_Image *o;
    DATA32 *data = NULL;
@@ -1284,7 +1284,7 @@ evas_object_image_pixels_dirty_set(Evas_Object *obj, Evas_Bool dirty)
  * @ingroup Evas_Object_Image
  */
 EAPI Evas_Bool
-evas_object_image_pixels_dirty_get(Evas_Object *obj)
+evas_object_image_pixels_dirty_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -1334,7 +1334,7 @@ evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
  *
  */
 EAPI double
-evas_object_image_load_dpi_get(Evas_Object *obj)
+evas_object_image_load_dpi_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -1378,7 +1378,7 @@ evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
 }
 
 EAPI void
-evas_object_image_load_size_get(Evas_Object *obj, int *w, int *h)
+evas_object_image_load_size_get(const Evas_Object *obj, int *w, int *h)
 {
    Evas_Object_Image *o;
 
@@ -1428,7 +1428,7 @@ evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
  *
  */
 EAPI int
-evas_object_image_load_scale_down_get(Evas_Object *obj)
+evas_object_image_load_scale_down_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -1474,7 +1474,7 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
  *
  */
 EAPI Evas_Colorspace
-evas_object_image_colorspace_get(Evas_Object *obj)
+evas_object_image_colorspace_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
@@ -1518,7 +1518,7 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
  *
  */
 EAPI Evas_Native_Surface *
-evas_object_image_native_surface_get(Evas_Object *obj)
+evas_object_image_native_surface_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 

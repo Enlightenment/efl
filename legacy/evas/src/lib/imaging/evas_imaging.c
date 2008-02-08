@@ -36,7 +36,7 @@ evas_imaging_image_free(Evas_Imaging_Image *im)
 }
 
 EAPI void
-evas_imaging_image_size_get(Evas_Imaging_Image *im, int *w, int *h)
+evas_imaging_image_size_get(const Evas_Imaging_Image *im, int *w, int *h)
 {
    if (!im) return;
    if (w) *w = im->image->image->w;
@@ -44,7 +44,7 @@ evas_imaging_image_size_get(Evas_Imaging_Image *im, int *w, int *h)
 }
 
 EAPI Evas_Bool
-evas_imaging_image_alpha_get(Evas_Imaging_Image *im)
+evas_imaging_image_alpha_get(const Evas_Imaging_Image *im)
 {
    if (!im) return 0;
    if (im->image->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
@@ -143,61 +143,61 @@ evas_imaging_font_free(Evas_Imaging_Font *fn)
 }
 
 EAPI int
-evas_imaging_font_ascent_get(Evas_Imaging_Font *fn)
+evas_imaging_font_ascent_get(const Evas_Imaging_Font *fn)
 {
    return evas_common_font_ascent_get(fn->font);
 }
 
 EAPI int
-evas_imaging_font_descent_get(Evas_Imaging_Font *fn)
+evas_imaging_font_descent_get(const Evas_Imaging_Font *fn)
 {
    return evas_common_font_descent_get(fn->font);
 }
 
 EAPI int
-evas_imaging_font_max_ascent_get(Evas_Imaging_Font *fn)
+evas_imaging_font_max_ascent_get(const Evas_Imaging_Font *fn)
 {
    return evas_common_font_max_ascent_get(fn->font);
 }
 
 EAPI int
-evas_imaging_font_max_descent_get(Evas_Imaging_Font *fn)
+evas_imaging_font_max_descent_get(const Evas_Imaging_Font *fn)
 {
    return evas_common_font_max_descent_get(fn->font);
 }
 
 EAPI int
-evas_imaging_font_line_advance_get(Evas_Imaging_Font *fn)
+evas_imaging_font_line_advance_get(const Evas_Imaging_Font *fn)
 {
    return evas_common_font_get_line_advance(fn->font);
 }
 
 EAPI void
-evas_imaging_font_string_advance_get(Evas_Imaging_Font *fn, char *str, int *x, int *y)
+evas_imaging_font_string_advance_get(const Evas_Imaging_Font *fn, char *str, int *x, int *y)
 {
    evas_common_font_query_advance(fn->font, str, x, y);
 }
 
 EAPI void
-evas_imaging_font_string_size_query(Evas_Imaging_Font *fn, char *str, int *w, int *h)
+evas_imaging_font_string_size_query(const Evas_Imaging_Font *fn, char *str, int *w, int *h)
 {
    evas_common_font_query_size(fn->font, str, w, h);
 }
 
 EAPI int
-evas_imaging_font_string_inset_get(Evas_Imaging_Font *fn, char *str)
+evas_imaging_font_string_inset_get(const Evas_Imaging_Font *fn, char *str)
 {
    return evas_common_font_query_inset(fn->font, str);
 }
 
 EAPI int
-evas_imaging_font_string_char_coords_get(Evas_Imaging_Font *fn, char *str, int pos, int *cx, int *cy, int *cw, int *ch)
+evas_imaging_font_string_char_coords_get(const Evas_Imaging_Font *fn, char *str, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_char_coords(fn->font, str, pos, cx, cy, cw, ch);
 }
 
 EAPI int
-evas_imaging_font_string_char_at_coords_get(Evas_Imaging_Font *fn, char *str, int x, int y, int *cx, int *cy, int *cw, int *ch)
+evas_imaging_font_string_char_at_coords_get(const Evas_Imaging_Font *fn, char *str, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_text_at_pos(fn->font, str, x, y, cx, cy, cw, ch);
 }

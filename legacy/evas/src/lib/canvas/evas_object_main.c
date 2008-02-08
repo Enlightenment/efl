@@ -653,7 +653,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
  * @ingroup Evas_Object_Group
  */
 EAPI void
-evas_object_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
@@ -817,7 +817,7 @@ evas_object_hide(Evas_Object *obj)
  * @ingroup Evas_Object_Visibility_Group
  */
 EAPI Evas_Bool
-evas_object_visible_get(Evas_Object *obj)
+evas_object_visible_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -882,7 +882,7 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
  * @ingroup Evas_Object_Group
  */
 EAPI void
-evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
+evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    if (r) *r = 0; if (g) *g = 0; if (b) *b = 0; if (a) *a = 0;
@@ -926,7 +926,7 @@ evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
  * @ingroup Evas_Object_Group
  */
 EAPI Evas_Bool
-evas_object_anti_alias_get(Evas_Object *obj)
+evas_object_anti_alias_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -962,7 +962,7 @@ evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
  * @ingroup Evas_Object_Group
  */
 EAPI int
-evas_object_color_interpolation_get(Evas_Object *obj)
+evas_object_color_interpolation_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -998,7 +998,7 @@ evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op)
  * @ingroup Evas_Object_Group
  */
 EAPI Evas_Render_Op
-evas_object_render_op_get(Evas_Object *obj)
+evas_object_render_op_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -1014,7 +1014,7 @@ evas_object_render_op_get(Evas_Object *obj)
  * @ingroup Evas_Object_Group
  */
 EAPI Evas *
-evas_object_evas_get(Evas_Object *obj)
+evas_object_evas_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -1232,7 +1232,7 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
  * @ingroup Evas_Object_Group
  */
 EAPI const char *
-evas_object_type_get(Evas_Object *obj)
+evas_object_type_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -1263,7 +1263,7 @@ evas_object_precise_is_inside_set(Evas_Object *obj, Evas_Bool precise)
  * @ingroup Evas_Object_Group
  */
 EAPI Evas_Bool
-evas_object_precise_is_inside_get(Evas_Object *obj)
+evas_object_precise_is_inside_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
