@@ -411,27 +411,27 @@ extern "C" {
    EAPI void              evas_render_method_list_free      (Evas_List *list);
 
    EAPI void              evas_output_method_set            (Evas *e, int render_method);
-   EAPI int               evas_output_method_get            (Evas *e);
+   EAPI int               evas_output_method_get            (const Evas *e);
 
-   EAPI Evas_Engine_Info *evas_engine_info_get              (Evas *e);
+   EAPI Evas_Engine_Info *evas_engine_info_get              (const Evas *e);
    EAPI void              evas_engine_info_set              (Evas *e, Evas_Engine_Info *info);
 
    EAPI void              evas_output_size_set              (Evas *e, int w, int h);
-   EAPI void              evas_output_size_get              (Evas *e, int *w, int *h);
+   EAPI void              evas_output_size_get              (const Evas *e, int *w, int *h);
    EAPI void              evas_output_viewport_set          (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
-   EAPI void              evas_output_viewport_get          (Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_output_viewport_get          (const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
-   EAPI Evas_Coord        evas_coord_screen_x_to_world      (Evas *e, int x);
-   EAPI Evas_Coord        evas_coord_screen_y_to_world      (Evas *e, int y);
-   EAPI int               evas_coord_world_x_to_screen      (Evas *e, Evas_Coord x);
-   EAPI int               evas_coord_world_y_to_screen      (Evas *e, Evas_Coord y);
+   EAPI Evas_Coord        evas_coord_screen_x_to_world      (const Evas *e, int x);
+   EAPI Evas_Coord        evas_coord_screen_y_to_world      (const Evas *e, int y);
+   EAPI int               evas_coord_world_x_to_screen      (const Evas *e, Evas_Coord x);
+   EAPI int               evas_coord_world_y_to_screen      (const Evas *e, Evas_Coord y);
 
-   EAPI void              evas_pointer_output_xy_get        (Evas *e, int *x, int *y);
-   EAPI void              evas_pointer_canvas_xy_get        (Evas *e, Evas_Coord *x, Evas_Coord *y);
-   EAPI int               evas_pointer_button_down_mask_get (Evas *e);
-   EAPI Evas_Bool         evas_pointer_inside_get           (Evas *e);
+   EAPI void              evas_pointer_output_xy_get        (const Evas *e, int *x, int *y);
+   EAPI void              evas_pointer_canvas_xy_get        (const Evas *e, Evas_Coord *x, Evas_Coord *y);
+   EAPI int               evas_pointer_button_down_mask_get (const Evas *e);
+   EAPI Evas_Bool         evas_pointer_inside_get           (const Evas *e);
    EAPI void              evas_data_attach_set              (Evas *e, void *data);
-   EAPI void             *evas_data_attach_get              (Evas *e);
+   EAPI void             *evas_data_attach_get              (const Evas *e);
        
 /* DOC UP TO HERE */
    EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y, int w, int h);
@@ -521,7 +521,7 @@ extern "C" {
    EAPI void              evas_image_cache_flush            (Evas *e);
    EAPI void              evas_image_cache_reload           (Evas *e);
    EAPI void              evas_image_cache_set              (Evas *e, int size);
-   EAPI int               evas_image_cache_get              (Evas *e);
+   EAPI int               evas_image_cache_get              (const Evas *e);
 
 /* text objects */
    typedef enum _Evas_Text_Style_Type

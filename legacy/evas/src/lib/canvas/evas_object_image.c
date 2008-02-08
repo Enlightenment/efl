@@ -1633,7 +1633,7 @@ evas_image_cache_set(Evas *e, int size)
  *
  */
 EAPI int
-evas_image_cache_get(Evas *e)
+evas_image_cache_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;

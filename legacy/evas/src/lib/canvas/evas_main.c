@@ -246,7 +246,7 @@ evas_output_method_set(Evas *e, int render_method)
  * @ingroup Evas_Output_Method
  */
 EAPI int
-evas_output_method_get(Evas *e)
+evas_output_method_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return RENDER_METHOD_INVALID;
@@ -269,7 +269,7 @@ evas_output_method_get(Evas *e)
  * @ingroup Evas_Output_Method
  */
 EAPI Evas_Engine_Info *
-evas_engine_info_get(Evas *e)
+evas_engine_info_get(const Evas *e)
 {
    Evas_Engine_Info *info;
 
@@ -280,7 +280,7 @@ evas_engine_info_get(Evas *e)
    if (!e->engine.info) return NULL;
 
    info = e->engine.info;
-   e->engine.info_magic = info->magic;
+   ((Evas *)e)->engine.info_magic = info->magic;
 
    return info;
 }
@@ -370,7 +370,7 @@ evas_output_size_set(Evas *e, int w, int h)
  * @ingroup Evas_Output_Size
  */
 EAPI void
-evas_output_size_get(Evas *e, int *w, int *h)
+evas_output_size_get(const Evas *e, int *w, int *h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    if (w) *w = 0;
@@ -450,7 +450,7 @@ evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
  * @endcode
  */
 EAPI void
-evas_output_viewport_get(Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+evas_output_viewport_get(const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    if (x) *x = 0;
@@ -496,7 +496,7 @@ evas_output_viewport_get(Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, E
  * @endcode
  */
 EAPI Evas_Coord
-evas_coord_screen_x_to_world(Evas *e, int x)
+evas_coord_screen_x_to_world(const Evas *e, int x)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -528,7 +528,7 @@ evas_coord_screen_x_to_world(Evas *e, int x)
  * @endcode
  */
 EAPI Evas_Coord
-evas_coord_screen_y_to_world(Evas *e, int y)
+evas_coord_screen_y_to_world(const Evas *e, int y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -560,7 +560,7 @@ evas_coord_screen_y_to_world(Evas *e, int y)
  * @endcode
  */
 EAPI int
-evas_coord_world_x_to_screen(Evas *e, Evas_Coord x)
+evas_coord_world_x_to_screen(const Evas *e, Evas_Coord x)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -592,7 +592,7 @@ evas_coord_world_x_to_screen(Evas *e, Evas_Coord x)
  * @endcode
  */
 EAPI int
-evas_coord_world_y_to_screen(Evas *e, Evas_Coord y)
+evas_coord_world_y_to_screen(const Evas *e, Evas_Coord y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -828,7 +828,7 @@ evas_render_method_list_free(Evas_List *list)
  * @endcode
  */
 EAPI void
-evas_pointer_output_xy_get(Evas *e, int *x, int *y)
+evas_pointer_output_xy_get(const Evas *e, int *x, int *y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    if (x) *x = 0;
@@ -862,7 +862,7 @@ evas_pointer_output_xy_get(Evas *e, int *x, int *y)
  * @endcode
  */
 EAPI void
-evas_pointer_canvas_xy_get(Evas *e, Evas_Coord *x, Evas_Coord *y)
+evas_pointer_canvas_xy_get(const Evas *e, Evas_Coord *x, Evas_Coord *y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    if (x) *x = 0;
@@ -910,7 +910,7 @@ evas_pointer_canvas_xy_get(Evas *e, Evas_Coord *x, Evas_Coord *y)
  * @endcode
  */
 EAPI int
-evas_pointer_button_down_mask_get(Evas *e)
+evas_pointer_button_down_mask_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -946,7 +946,7 @@ evas_pointer_button_down_mask_get(Evas *e)
  * @endcode
  */
 EAPI Evas_Bool
-evas_pointer_inside_get(Evas *e)
+evas_pointer_inside_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
@@ -976,7 +976,7 @@ evas_data_attach_set(Evas *e, void *data)
  * @return The pointer attached
  */
 EAPI void *
-evas_data_attach_get(Evas *e)
+evas_data_attach_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
