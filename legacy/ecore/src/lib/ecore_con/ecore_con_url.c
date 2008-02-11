@@ -40,6 +40,14 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
+/**
+ * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
+ *
+ * Utility functions that set up, use and shut down the Ecore URL 
+ * Connection library.
+ * FIXME: write detailed description
+ */
+
 #ifdef HAVE_CURL
 static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_url_perform(Ecore_Con_Url *url_con);
@@ -92,6 +100,12 @@ _url_complete_push_event(int type, void *ev)
 
 #endif
 
+/**
+ * Initialises the Ecore_Con_Url library.
+ * @return Number of times the library has been initialised without being
+ *          shut down.
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI int
 ecore_con_url_init(void)
 {
@@ -135,6 +149,11 @@ ecore_con_url_init(void)
 #endif
 }
 
+/**
+ * Shuts down the Ecore_Con_Url library.
+ * @return  Number of calls that still uses Ecore_Con_Url
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI int
 ecore_con_url_shutdown(void)
 {
@@ -169,6 +188,11 @@ ecore_con_url_shutdown(void)
    return 1;
 }
 
+/**
+ * Creates and initializes a new Ecore_Con_Url.
+ * @return  NULL on error, a new Ecore_Con_Url on success.
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
@@ -213,6 +237,11 @@ ecore_con_url_new(const char *url)
 #endif
 }
 
+/**
+ * Frees the Ecore_Con_Url.
+ * @return  FIXME: To be documented. 
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI void
 ecore_con_url_destroy(Ecore_Con_Url *url_con)
 {
@@ -242,6 +271,11 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
 #endif
 }
 
+/**
+ * FIXME: To be documented.
+ * @return  FIXME: To be documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI int
 ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 {
@@ -267,6 +301,11 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 #endif
 }
 
+/**
+ * FIXME: To be documented.
+ * @return  FIXME: To be documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI void
 ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
 {
@@ -285,6 +324,11 @@ ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
 #endif
 }
 
+/**
+ * FIXME: To be documented.
+ * @return  FIXME: To be documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI void *
 ecore_con_url_data_get(Ecore_Con_Url *url_con)
 {
@@ -302,6 +346,11 @@ ecore_con_url_data_get(Ecore_Con_Url *url_con)
 #endif
 }
 
+/**
+ * FIXME: To be documented.
+ * @return  FIXME: To be documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI void
 ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm)
 {
@@ -322,6 +371,11 @@ ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t 
 #endif
 }
 
+/**
+ * FIXME: To be documented.
+ * @return  FIXME: To be documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
 EAPI int
 ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type)
 {
@@ -556,6 +610,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
      }
    return job_matched;
 }
+
 static void
 _ecore_con_event_url_free(void *data __UNUSED__, void *ev)
 {

@@ -58,6 +58,7 @@
  * @li @ref Ecore_Con_Lib_Group
  * @li @ref Ecore_Con_Server_Group
  * @li @ref Ecore_Con_Client_Group
+ * @li @ref Ecore_Con_Url_Group
  */
 
 #ifdef __cplusplus
