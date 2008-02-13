@@ -16,7 +16,7 @@ evas_x_main.c
 
 module_la_LIBADD = @CAIRO_LIBS@ @x_libs@ $(top_builddir)/src/modules/engines/cairo_common/libevas_engine_cairo_common.la $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
-
+module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_Cairo_X11.h

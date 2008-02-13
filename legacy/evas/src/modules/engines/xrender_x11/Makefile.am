@@ -14,6 +14,7 @@ if BUILD_ENGINE_XRENDER_X11
 pkgdir = $(libdir)/evas/modules/engines/xrender_x11/$(MODULE_ARCH)
 
 pkg_LTLIBRARIES	= module.la
+
 module_la_SOURCES = \
 evas_engine.h \
 evas_engine.c \
@@ -25,6 +26,7 @@ evas_engine_gradient.c
 
 module_la_LIBADD = @x_libs@ -lXrender $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_XRender_X11.h

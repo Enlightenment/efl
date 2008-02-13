@@ -14,7 +14,7 @@ module_la_SOURCES      = evas_image_load_edb.c
 
 module_la_LIBADD       = @EDB_LIBS@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = @create_shared_lib@ -module -avoid-version
-
+module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 EXTRA_DIST             = evas_image_load_edb.c

@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @qt_cflags@
 
-AM_CXXFLAGS = $(CFLAGS) -DQT_QWS_EBX -DQT_QWS_CUSTOM -DQWS -DNO_DEBUG 
+AM_CXXFLAGS = $(CFLAGS) -DQT_QWS_EBX -DQT_QWS_CUSTOM -DQWS -DNO_DEBUG
 
 if BUILD_ENGINE_SOFTWARE_QTOPIA
 
@@ -24,6 +24,7 @@ evas_qt_main.cpp
 
 module_la_LIBADD = @qt_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_Software_Qtopia.h

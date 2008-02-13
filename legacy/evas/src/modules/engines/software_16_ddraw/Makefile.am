@@ -23,6 +23,7 @@ evas_ddraw_main.c
 
 module_la_LIBADD = @ddraw_16_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_Software_16_DDraw.h

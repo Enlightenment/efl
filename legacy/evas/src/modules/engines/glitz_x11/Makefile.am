@@ -26,6 +26,7 @@ evas_engine_gradient.c
 
 module_la_LIBADD = @x_libs@ @GLITZ_LIBS@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_Glitz_X11.h

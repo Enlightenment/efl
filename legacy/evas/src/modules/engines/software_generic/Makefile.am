@@ -16,4 +16,5 @@ evas_engine.c
 
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
