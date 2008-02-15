@@ -25,7 +25,12 @@ evas_common_font_shutdown(void)
 
    initialised--;
    if (initialised != 0) return;
+
+   evas_common_font_cache_set(0);
+   evas_common_font_flush();
+
    error = FT_Done_FreeType(evas_ft_lib);
+   evas_ft_lib = 0;
 }
 
 EAPI int
