@@ -259,7 +259,7 @@ _strbuf_append(char *s, const char *s2, int *len, int *alloc)
 	return strdup("");
      }
    l2 = strlen(s2);
-   tlen = *len + l2;
+   tlen = *len + l2 + 1;
    if (tlen > *alloc)
      {
 	char *ts;
