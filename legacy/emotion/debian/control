@@ -1,7 +1,7 @@
 Source: emotion
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: cdbs, debhelper (>= 5), libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev
+Build-Depends: cdbs, debhelper (>= 5), pkg-config, libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev
 Standards-Version: 3.7.2
 
 Package: libemotion0
