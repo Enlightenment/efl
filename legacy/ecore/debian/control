@@ -2,7 +2,7 @@ Source: ecore
 Section: libs
 Priority: optional
 Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: cdbs, debhelper (>= 5), libeet-dev, libevas-dev, libssl-dev, libcurl3-dev, libxcursor-dev, libxss-dev | xlibs-static-dev, libx11-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, x-dev, libxp-dev, libfreetype6-dev, libjpeg62-dev
+Build-Depends: cdbs, debhelper (>= 5), automake1.7 | automaken, libtool, libeet-dev, libevas-dev, libssl-dev, libcurl3-dev, libxcursor-dev, libxss-dev | xlibs-static-dev, libx11-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, x-dev, libxp-dev, libfreetype6-dev, libjpeg62-dev
 Standards-Version: 3.7.2
 
 Package: libecore0
