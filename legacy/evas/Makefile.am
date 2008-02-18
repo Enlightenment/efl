@@ -30,7 +30,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 bin_SCRIPTS = 
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
+EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN autogen.sh evas.c.in gendoc \
              Doxyfile \
 	     README.in README \
 	     evas.pc.in \
