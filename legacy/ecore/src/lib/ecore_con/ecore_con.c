@@ -1333,8 +1333,6 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		       lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
 		       if (ssl_err == SSL_ERROR_SYSCALL)
 			 {
-			    perror("SSL read");
-			    printf("SSL_ERROR_SYSCALL: num = %d, errno = %d\n", num, errno);
 			    if (num == 0) lost_server = 1;
 			    else
 			      {
@@ -1524,21 +1522,6 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 	  {
 	     ssl_err = SSL_get_error(svr->ssl, count);
 	     lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
-	     if (ssl_err == SSL_ERROR_SYSCALL)
-	       {
-		  perror("SSL write");
-		  printf("SSL_ERROR_SYSCALL: num = %d, errno = %d\n", num, errno);
-		  if (num == 0) lost_server = 1;
-		  else
-		    {
-		       lost_server = ((errno == EIO) ||
-				      (errno == EBADF) ||
-				      (errno == EPIPE) ||
-				      (errno == EINVAL) ||
-				      (errno == ENOSPC) ||
-				      (errno == ECONNRESET));
-		    }
-	       }
 	  }
      }
 #endif
