@@ -6,5 +6,5 @@ include /usr/share/cdbs/1/class/autotools.mk
 DEB_CONFIGURE_EXTRA_FLAGS :=  --disable-ecore-evas-dfb --disable-ecore-dfb --enable-ecore-fb
 
 debian/stamp-autotools-files:
-	./autogen.sh --prefix=/usr --disable-ecore-evas-dfb --disable-ecore-dfb --enable-ecore-fb
+	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS)
 	touch debian/stamp-autotools-files
