@@ -11,7 +11,8 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 bin_SCRIPTS = 
 
-EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN embryo.c.in gendoc \
+EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN \
+	     autogen.sh embryo.c.in gendoc \
              Doxyfile \
 	     README.in README \
 	     embryo.pc.in \
