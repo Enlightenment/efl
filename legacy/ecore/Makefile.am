@@ -30,7 +30,8 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 bin_SCRIPTS = 
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp \
+EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
+	     autogen.sh ecore.c.in gendoc ecore.supp \
              Doxyfile \
 	     ecore.pc.in \
 	     ecore-con.pc.in \
