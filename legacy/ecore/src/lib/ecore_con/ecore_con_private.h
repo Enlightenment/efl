@@ -22,7 +22,6 @@
 
 struct _Ecore_Con_Client
 {
-   Ecore_List        __list_data;
    ECORE_MAGIC;
    int               fd;
    Ecore_Con_Server *server;
@@ -39,7 +38,6 @@ struct _Ecore_Con_Client
 
 struct _Ecore_Con_Server
 {
-   Ecore_List        __list_data;
    ECORE_MAGIC;
    int               fd;
    Ecore_Con_Type    type;
