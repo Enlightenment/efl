@@ -1094,7 +1094,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
  * relative paths, or uris
  * @param func: a callback to call for each prepared command line
  * @param data: user data passed to the callback
- * @return Returns 1 on success or 0 on failure
+ * @return Returns the return value of @p func on success or NULL on failure
  * @brief Get a command to use to execute a desktop entry.
  */
 EAPI void *
