@@ -102,7 +102,7 @@ static void efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
 
 static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
 static int efreet_desktop_command_flags_get(Efreet_Desktop *desktop);
-static void efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List *execs);
+static void *efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List *execs);
 
 /**
  * @internal
@@ -1097,7 +1097,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
  * @return Returns 1 on success or 0 on failure
  * @brief Get a command to use to execute a desktop entry.
  */
-EAPI int
+EAPI void *
 efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files,
                             Efreet_Desktop_Command_Cb func, void *data)
 {
@@ -1168,7 +1168,7 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
  * @brief Get a command to use to execute a desktop entry, and receive progress
  * updates for downloading of remote URI's passed in.
  */
-EAPI int
+EAPI void *
 efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
                                     Efreet_Desktop_Command_Cb cb_command,
                                     Efreet_Desktop_Progress_Cb cb_progress,
@@ -1176,11 +1176,12 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
 {
     Efreet_Desktop_Command *command;
     char *file;
+    void *ret = NULL;
 
-    if (!desktop || !cb_command || !desktop->exec) return 0;
+    if (!desktop || !cb_command || !desktop->exec) return NULL;
 
     command = NEW(Efreet_Desktop_Command, 1);
-    if (!command) return 0;
+    if (!command) return NULL;
 
     command->cb_command = cb_command;
     command->cb_progress = cb_progress;
@@ -1211,12 +1212,12 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
     {
         Ecore_List *execs;
         execs = efreet_desktop_command_build(command);
-        efreet_desktop_command_execs_process(command, execs);
+        ret = efreet_desktop_command_execs_process(command, execs);
         ecore_list_destroy(execs);
         efreet_desktop_command_free(command);
     }
 
-    return 1;
+    return ret;
 }
 
 /**
@@ -1283,17 +1284,20 @@ efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
  * @param command
  * @param execs
  */
-static void
+static void *
 efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List *execs)
 {
     char *exec;
     int num;
+    void *ret = NULL;
+   
     num = ecore_list_count(execs);
     ecore_list_first_goto(execs);
     while ((exec = ecore_list_next(execs)))
     {
-        command->cb_command(command->data, command->desktop, exec, --num);
+        ret = command->cb_command(command->data, command->desktop, exec, --num);
     }
+    return ret;
 }
 
 

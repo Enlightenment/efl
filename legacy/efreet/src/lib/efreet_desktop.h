@@ -29,7 +29,7 @@ typedef struct Efreet_Desktop Efreet_Desktop;
 /**
  * A callback used with efreet_desktop_command_get()
  */
-typedef void (*Efreet_Desktop_Command_Cb) (void *data, Efreet_Desktop *desktop,
+typedef void *(*Efreet_Desktop_Command_Cb) (void *data, Efreet_Desktop *desktop,
                                             char *command, int remaining);
 
 /**
@@ -112,12 +112,12 @@ EAPI void              efreet_desktop_exec(Efreet_Desktop *desktop,
 
 EAPI void              efreet_desktop_environment_set(const char *environment);
 EAPI const char       *efreet_desktop_environment_get(void);
-EAPI int               efreet_desktop_command_progress_get(Efreet_Desktop *desktop,
+EAPI void             *efreet_desktop_command_progress_get(Efreet_Desktop *desktop,
                                          Ecore_List *files,
                                          Efreet_Desktop_Command_Cb cb_command,
                                          Efreet_Desktop_Progress_Cb cb_prog,
                                          void *data);
-EAPI int               efreet_desktop_command_get(Efreet_Desktop *desktop,
+EAPI void              *efreet_desktop_command_get(Efreet_Desktop *desktop,
                                          Ecore_List *files,
                                          Efreet_Desktop_Command_Cb func,
                                          void *data);
