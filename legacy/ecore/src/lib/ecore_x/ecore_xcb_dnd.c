@@ -637,7 +637,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
 
         ecore_x_dnd_version_get_prefetch(win);
         cookie_tree = xcb_query_tree_unchecked(_ecore_xcb_conn, win);
-        
+
         ecore_x_dnd_version_get_fetch();
         /* We found the correct window ? */
         if (ecore_x_dnd_version_get(win))
@@ -675,7 +675,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
 
         ecore_x_dnd_version_get_prefetch(win);
         ecore_x_dnd_type_get_prefetch(_source->win);
-        
+
         ecore_x_dnd_version_get_fetch();
         if (!ecore_x_dnd_version_get(win))
           {
