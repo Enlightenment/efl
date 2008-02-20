@@ -163,13 +163,13 @@ ecore_x_get_screensaver_fetch(void)
  * @ingroup Ecore_X_ScrenSaver_Group
  */
 EAPI void
-ecore_x_screensaver_timeout_set(double timeout)
+ecore_x_screensaver_timeout_set(int timeout)
 {
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply) return;
-   
+
    xcb_set_screen_saver(_ecore_xcb_conn,
                         (int16_t)timeout,
                         reply->interval,
@@ -189,7 +189,7 @@ ecore_x_screensaver_timeout_set(double timeout)
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
  * @ingroup Ecore_X_ScrenSaver_Group
  */
-EAPI double
+EAPI int
 ecore_x_screensaver_timeout_get(void)
 {
    xcb_get_screen_saver_reply_t *reply;
@@ -197,7 +197,7 @@ ecore_x_screensaver_timeout_get(void)
    reply = _ecore_xcb_reply_get();
    if (!reply) return 0.0;
 
-   return (double)reply->timeout;
+   return (int)reply->timeout;
 }
 
 
@@ -213,13 +213,13 @@ ecore_x_screensaver_timeout_get(void)
  * @ingroup Ecore_X_ScrenSaver_Group
  */
 EAPI void
-ecore_x_screensaver_interval_set(double interval)
+ecore_x_screensaver_interval_set(int interval)
 {
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply) return;
-   
+
    xcb_set_screen_saver(_ecore_xcb_conn,
                         reply->timeout,
                         (int16_t)interval,
@@ -239,7 +239,7 @@ ecore_x_screensaver_interval_set(double interval)
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
  * @ingroup Ecore_X_ScrenSaver_Group
  */
-EAPI double
+EAPI int
 ecore_x_screensaver_interval_get(void)
 {
    xcb_get_screen_saver_reply_t *reply;
@@ -247,7 +247,7 @@ ecore_x_screensaver_interval_get(void)
    reply = _ecore_xcb_reply_get();
    if (!reply) return 0.0;
 
-   return (double)reply->interval;
+   return (int)reply->interval;
 }
 
 
@@ -263,13 +263,13 @@ ecore_x_screensaver_interval_get(void)
  * @ingroup Ecore_X_ScrenSaver_Group
  */
 EAPI void
-ecore_x_screensaver_blank_set(double blank)
+ecore_x_screensaver_blank_set(int blank)
 {
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply) return;
-   
+
    xcb_set_screen_saver(_ecore_xcb_conn,
                         reply->timeout,
                         reply->interval,
@@ -289,7 +289,7 @@ ecore_x_screensaver_blank_set(double blank)
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
  * @ingroup Ecore_X_ScrenSaver_Group
  */
-EAPI double
+EAPI int
 ecore_x_screensaver_blank_get(void)
 {
    xcb_get_screen_saver_reply_t *reply;
@@ -297,7 +297,7 @@ ecore_x_screensaver_blank_get(void)
    reply = _ecore_xcb_reply_get();
    if (!reply) return 0.0;
 
-   return (double)reply->prefer_blanking;
+   return (int)reply->prefer_blanking;
 }
 
 
@@ -313,13 +313,13 @@ ecore_x_screensaver_blank_get(void)
  * @ingroup Ecore_X_ScrenSaver_Group
  */
 EAPI void
-ecore_x_screensaver_expose_set(double expose)
+ecore_x_screensaver_expose_set(int expose)
 {
    xcb_get_screen_saver_reply_t *reply;
 
    reply = _ecore_xcb_reply_get();
    if (!reply) return;
-   
+
    xcb_set_screen_saver(_ecore_xcb_conn,
                         reply->timeout,
                         reply->interval,
@@ -339,7 +339,7 @@ ecore_x_screensaver_expose_set(double expose)
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
  * @ingroup Ecore_X_ScrenSaver_Group
  */
-EAPI double
+EAPI int
 ecore_x_screensaver_expose_get(void)
 {
    xcb_get_screen_saver_reply_t *reply;
@@ -347,7 +347,7 @@ ecore_x_screensaver_expose_get(void)
    reply = _ecore_xcb_reply_get();
    if (!reply) return 0.0;
 
-   return (double)reply->allow_exposures;
+   return (int)reply->allow_exposures;
 }
 
 
