@@ -122,6 +122,7 @@ typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
 typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
+typedef struct _Edje_Patterns                        Edje_Patterns;
 
 #define PI 3.14159265358979323846
 
@@ -606,6 +607,17 @@ struct _Edje
    int                   table_programs_size;
    int                   table_parts_size;
 
+   struct {
+      struct {
+	 Edje_Patterns                  *signals_patterns;
+	 Edje_Patterns                  *sources_patterns;
+      } callbacks;
+      struct {
+	 Edje_Patterns                  *signals_patterns;
+	 Edje_Patterns                  *sources_patterns;
+      } programs;
+   } patterns;
+
    int                   references;
    int                   block;
    int                   load_error;
@@ -913,14 +925,16 @@ typedef enum _Edje_Match_Error
      
 } Edje_Match_Error;
 
-typedef struct _Edje_Patterns   Edje_Patterns;
+typedef struct _Edje_States     Edje_States;
 struct _Edje_Patterns
 {
    const char    **patterns;
+
+   Edje_States    *states;
+
    size_t          patterns_size;
    size_t          max_length;
    size_t          finals[];
-   
 };
 
 Edje_Patterns   *edje_match_collection_dir_init(Evas_List *lst);

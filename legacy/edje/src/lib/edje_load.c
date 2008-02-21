@@ -410,6 +410,15 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		    rp->text.text_source = ed->table_parts[rp->param1.description->text.id_text_source % ed->table_parts_size];
 	       }
 	  }
+
+	if (ed->patterns.programs.signals_patterns)
+	  {
+	     edje_match_patterns_free(ed->patterns.programs.signals_patterns);
+	     edje_match_patterns_free(ed->patterns.programs.sources_patterns);
+	  }
+	ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
+	ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+
 	n = evas_list_count(ed->collection->programs);
 	if (n > 0)
 	  {
