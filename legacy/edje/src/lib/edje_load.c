@@ -6,7 +6,7 @@
 #include "edje_private.h"
 
 static void _edje_collection_free_part_description_free(Edje_Part_Description *desc);
-static Evas_Bool _edje_file_collection_hash_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Evas_Bool _edje_file_collection_hash_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata);
 #ifdef EDJE_PROGRAM_CACHE
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 #endif
@@ -158,11 +158,11 @@ edje_file_group_exists(const char *file, const char *glob)
      {
 	if (edf->collection_dir)
 	  {
-             Edje_Patterns      *patterns;
+             Edje_Patterns *patterns;
 
-             patterns = edje_match_collection_dir_init(edf->collection_dir->entries);
-             if (edje_match_collection_dir_exec(patterns,
-                                                glob))
+             patterns = 
+               edje_match_collection_dir_init(edf->collection_dir->entries);
+             if (edje_match_collection_dir_exec(patterns, glob))
                {
                   edje_match_patterns_free(patterns);
                   return 1;
@@ -263,7 +263,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		  Edje_Part_Description *desc;
 
 		  desc = hist->data;
-		  if (desc->color_class) _edje_color_class_member_add(ed, desc->color_class);
+		  if (desc->color_class) 
+                    _edje_color_class_member_add(ed, desc->color_class);
 	       }
 	  }
 	/* build real parts */
@@ -286,9 +287,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	     rp->param1.description = ep->default_desc;
 	     rp->chosen_description = rp->param1.description;
 	     if (!rp->param1.description)
-	       {
-		  printf("EDJE ERROR: no default part description!\n");
-	       }
+               printf("EDJE ERROR: no default part description!\n");
 	     if (ep->type == EDJE_PART_TYPE_RECTANGLE)
 	       rp->object = evas_object_rectangle_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_IMAGE)
@@ -311,9 +310,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	     else if (ep->type == EDJE_PART_TYPE_GRADIENT)
 	       rp->object = evas_object_gradient_add(ed->evas);
 	     else
-	       {
-		  printf("EDJE ERROR: wrong part type %i!\n", ep->type);
-	       }
+               printf("EDJE ERROR: wrong part type %i!\n", ep->type);
 	     if (rp->object)
 	       {
 		  evas_object_smart_member_add(rp->object, ed->obj);
@@ -490,7 +487,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 				 evas_stringshare_del(group_path->data);
 				 evas_list_free(group_path);
 			      }
-
 			    ed->load_error = EDJE_LOAD_ERROR_RECURSIVE_REFERENCE;
 			    return 0;
 			 }
@@ -564,9 +560,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	return 1;
      }
    else
-     {
-	return 0;
-     }
+     return 0;
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    return 1;
 }
@@ -594,8 +588,8 @@ _edje_swallows_collect(Edje *ed)
 {
    Evas_List *swallows = NULL;
    int i;
-   if (!ed->file || !ed->table_parts) return NULL;
 
+   if (!ed->file || !ed->table_parts) return NULL;
    for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp;
@@ -661,7 +655,8 @@ _edje_file_del(Edje *ed)
 		  if (rp->part->mouse_events)
 		     _edje_callbacks_del(rp->swallowed_object);
 
-/* Objects swallowed by the app do not get deleted, but those internally swallowed (GROUP type) do. */
+                  /* Objects swallowed by the app do not get deleted, 
+                   but those internally swallowed (GROUP type) do. */
 		  if (rp->part->type == EDJE_PART_TYPE_GROUP)
 		    evas_object_del(rp->swallowed_object);
 
@@ -673,9 +668,7 @@ _edje_file_del(Edje *ed)
 	     if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);
 
 	     if (rp->custom.description)
-	       {
-		  _edje_collection_free_part_description_free(rp->custom.description);
-	       }
+               _edje_collection_free_part_description_free(rp->custom.description);
 
 	     _edje_unref(rp->edje);
 	     free(rp);
@@ -717,15 +710,12 @@ _edje_file_del(Edje *ed)
  * Used to free the cached data values that are stored in the data_cache
  * hash table.
  */
-static Evas_Bool data_cache_free(Evas_Hash *hash, const char *key,
-                                  void *data, void *fdata)
+static Evas_Bool 
+data_cache_free(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
-	evas_stringshare_del(data);
-
-	return 1;
+   evas_stringshare_del(data);
+   return 1;
 }
-
-
 
 void
 _edje_file_free(Edje_File *edf)
@@ -785,7 +775,8 @@ _edje_file_free(Edje_File *edf)
 	     while (se->color_list)
 	       {
 		  free(se->color_list->data);
-		  se->color_list = evas_list_remove_list(se->color_list, se->color_list);
+		  se->color_list = 
+                    evas_list_remove_list(se->color_list, se->color_list);
 	       }
 	     if (se->entry) evas_stringshare_del(se->entry);
 	     if (se->filename) evas_stringshare_del(se->filename);
@@ -815,7 +806,8 @@ _edje_file_free(Edje_File *edf)
 	Edje_Color_Class *ecc;
 
 	ecc = edf->color_classes->data;
-	edf->color_classes = evas_list_remove_list(edf->color_classes, edf->color_classes);
+	edf->color_classes = 
+          evas_list_remove_list(edf->color_classes, edf->color_classes);
 	if (ecc->name) evas_stringshare_del(ecc->name);
 	free(ecc);
      }
@@ -833,7 +825,8 @@ _edje_file_free(Edje_File *edf)
 	       "before calling edje_shutdown().\n"
 	       "The following errors are the edje object files and parts that are still\n"
 	       "hanging around, with their reference counts\n");
-	evas_hash_foreach(edf->collection_hash, _edje_file_collection_hash_foreach, edf);
+	evas_hash_foreach(edf->collection_hash, 
+                          _edje_file_collection_hash_foreach, edf);
 	evas_hash_free(edf->collection_hash);
      }
    if (edf->path) evas_stringshare_del(edf->path);
@@ -948,7 +941,7 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
 }
 
 static Evas_Bool
-_edje_file_collection_hash_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata)
+_edje_file_collection_hash_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    Edje_File *edf;
    Edje_Part_Collection *coll;
@@ -984,7 +977,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
    parent = data;
    ed = _edje_fetch(obj);
    if (!ed) return;
-   snprintf(new_src, sizeof(new_src), "%s%c%s", ed->parent, EDJE_PART_PATH_SEPARATOR, source);
-
+   snprintf(new_src, sizeof(new_src), "%s%c%s", ed->parent, 
+            EDJE_PART_PATH_SEPARATOR, source);
    edje_object_signal_emit(parent, signal, new_src);
 }
