@@ -113,32 +113,10 @@ _ecore_signal_shutdown(void)
 void
 _ecore_signal_init(void)
 {
-   sigset_t blockset;
-   int ret;
 #ifdef SIGRTMIN
    int i, num = SIGRTMAX - SIGRTMIN;
 #endif
 
-   sigemptyset(&blockset);
-   sigaddset(&blockset, SIGPIPE);
-   sigaddset(&blockset, SIGALRM);
-   sigaddset(&blockset, SIGCHLD);
-   sigaddset(&blockset, SIGUSR1);
-   sigaddset(&blockset, SIGUSR2);
-   sigaddset(&blockset, SIGHUP);
-   sigaddset(&blockset, SIGQUIT);
-   sigaddset(&blockset, SIGINT);
-   sigaddset(&blockset, SIGTERM);
-#ifdef SIGPWR
-   sigaddset(&blockset, SIGPWR);
-#endif
-
-#ifdef SIGRTMIN
-   for (i = 0; i < num; i++)
-     sigaddset(&blockset, SIGRTMIN + i);
-#endif
-   sigprocmask(SIG_BLOCK, &blockset, NULL);
-     
    _ecore_signal_callback_set(SIGPIPE, _ecore_signal_callback_ignore);
    _ecore_signal_callback_set(SIGALRM, _ecore_signal_callback_ignore);
    _ecore_signal_callback_set(SIGCHLD, _ecore_signal_callback_sigchld);
