@@ -97,7 +97,7 @@ static int efreet_desktop_cb_download_progress(void *data, const char *file,
                                            long int ultotal, long int ulnow);
 
 
-static void efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
+static void *efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
                                             char *exec, int remaining);
 
 static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
@@ -520,12 +520,13 @@ efreet_desktop_exec(Efreet_Desktop *desktop, Ecore_List *files, void *data)
     efreet_desktop_command_get(desktop, files, efreet_desktop_exec_cb, data);
 }
 
-static void
+static void *
 efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop __UNUSED__,
                                 char *exec, int remaining __UNUSED__)
 {
     ecore_exe_run(exec, data);
     free(exec);
+    return NULL;
 }
 
 /**
