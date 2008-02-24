@@ -9,7 +9,7 @@
 #define IF_FREE(x) do { if (x) free(x); x = NULL; } while (0);
 #define NEW(x, c) calloc(c, sizeof(x))
 
-static void _cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining);
+static void *_cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining);
 
 
 int
@@ -326,7 +326,7 @@ ef_cb_desktop_command_get(void)
     return ret;
 }
 
-static void
+static void *
 _cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
 {
   Test_Info *info = data;
@@ -348,6 +348,7 @@ _cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
   }
 
   free(exec);
+  return NULL;
 }
 
 static void *
