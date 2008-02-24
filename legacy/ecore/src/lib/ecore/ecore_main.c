@@ -284,34 +284,35 @@ _ecore_main_shutdown(void)
 static int
 _ecore_main_select(double timeout)
 {
-   struct timeval tv, *t;
-   fd_set         rfds, wfds, exfds;
-   int            max_fd;
-   int            ret;
-   Ecore_List2    *l;
+   sigset_t        emptyset;
+   struct timespec ts, *t;
+   fd_set          rfds, wfds, exfds;
+   int             max_fd;
+   int             ret;
+   Ecore_List2     *l;
 
    t = NULL;
    if ((!finite(timeout)) || (timeout == 0.0))  /* finite() tests for NaN, too big, too small, and infinity.  */
      {
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
-	t = &tv;
+	ts.tv_sec = 0;
+	ts.tv_nsec = 0;
+	t = &ts;
      }
    else if (timeout > 0.0)
      {
-	int sec, usec;
+	int sec, nsec;
 
 #ifdef FIX_HZ
 	timeout += (0.5 / HZ);
 	sec = (int)timeout;
-	usec = (int)((timeout - (double)sec) * 1000000);
+	nsec = (int)((timeout - (double)sec) * 1000000000);
 #else
 	sec = (int)timeout;
-	usec = (int)((timeout - (double)sec) * 1000000);
+	nsec = (int)((timeout - (double)sec) * 1000000000);
 #endif
-	tv.tv_sec = sec;
-	tv.tv_usec = usec;
-	t = &tv;
+	ts.tv_sec = sec;
+	ts.tv_nsec = nsec;
+	t = &ts;
      }
    max_fd = 0;
    FD_ZERO(&rfds);
@@ -350,7 +351,9 @@ _ecore_main_select(double timeout)
 	  }
      }
    if (_ecore_signal_count_get()) return -1;
-   ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
+   sigemptyset(&emptyset);
+   ret = pselect(max_fd + 1, &rfds, &wfds, &exfds, t, &emptyset);
+   
    if (ret < 0)
      {
 	if (errno == EINTR) return -1;
