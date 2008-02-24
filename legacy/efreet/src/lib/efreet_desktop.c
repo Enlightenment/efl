@@ -1766,6 +1766,7 @@ efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__,
     {
         Ecore_List *execs;
         execs = efreet_desktop_command_build(f->command);
+        /* TODO: Need to handle the return value from efreet_desktop_command_execs_process */
         efreet_desktop_command_execs_process(f->command, execs);
         ecore_list_destroy(execs);
         efreet_desktop_command_free(f->command);
