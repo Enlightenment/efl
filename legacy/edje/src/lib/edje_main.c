@@ -146,6 +146,11 @@ _edje_del(Edje *ed)
 	if (tc->font) evas_stringshare_del(tc->font);
 	free(tc);
      }
+   if (ed->patterns.callbacks.signals_patterns)
+     {
+	edje_match_patterns_free(ed->patterns.callbacks.signals_patterns);
+	edje_match_patterns_free(ed->patterns.callbacks.sources_patterns);
+     }
    free(ed);
 }
 

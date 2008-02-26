@@ -408,11 +408,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	       }
 	  }
 
-	if (ed->patterns.programs.signals_patterns)
-	  {
-	     edje_match_patterns_free(ed->patterns.programs.signals_patterns);
-	     edje_match_patterns_free(ed->patterns.programs.sources_patterns);
-	  }
 	ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
 	ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
 
@@ -714,6 +709,14 @@ _edje_file_del(Edje *ed)
    if (ed->table_programs) free(ed->table_programs);
    ed->table_programs = NULL;
    ed->table_programs_size = 0;
+
+   if (ed->patterns.programs.signals_patterns)
+     {
+        edje_match_patterns_free(ed->patterns.programs.signals_patterns);
+        edje_match_patterns_free(ed->patterns.programs.sources_patterns);
+     }
+   ed->patterns.programs.signals_patterns = NULL;
+   ed->patterns.programs.sources_patterns = NULL;
 }
 /**
  * Used to free the cached data values that are stored in the data_cache
