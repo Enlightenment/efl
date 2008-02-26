@@ -210,6 +210,25 @@ edje_file_data_get(const char *file, const char *key)
    return str;
 }
 
+static void
+_edje_programs_patterns_clean(Edje *ed)
+{
+   _edje_signals_sources_patterns_clean(&ed->patterns.programs);
+}
+
+static void
+_edje_programs_patterns_init(Edje *ed)
+{
+   Edje_Signals_Sources_Patterns *ssp = &ed->patterns.programs;
+   Evas_List *programs = ed->collection->programs;
+
+   if (ssp->signals_patterns)
+     return;
+
+   ssp->signals_patterns = edje_match_programs_signal_init(programs);
+   ssp->sources_patterns = edje_match_programs_source_init(programs);
+}
+
 static int
 _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *part, Evas_List *group_path)
 {
@@ -408,8 +427,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	       }
 	  }
 
-	ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
-	ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+	_edje_programs_patterns_init(ed);
 
 	n = evas_list_count(ed->collection->programs);
 	if (n > 0)
@@ -603,14 +621,7 @@ _edje_file_del(Edje *ed)
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
-
-   if (ed->patterns.programs.signals_patterns)
-     {
-        edje_match_patterns_free(ed->patterns.programs.signals_patterns);
-        edje_match_patterns_free(ed->patterns.programs.sources_patterns);
-     }
-   ed->patterns.programs.signals_patterns = NULL;
-   ed->patterns.programs.sources_patterns = NULL;
+   _edje_programs_patterns_clean(ed);
 
    if (!((ed->file) && (ed->collection))) return;
    if ((ed->file) && (ed->collection))
@@ -709,14 +720,6 @@ _edje_file_del(Edje *ed)
    if (ed->table_programs) free(ed->table_programs);
    ed->table_programs = NULL;
    ed->table_programs_size = 0;
-
-   if (ed->patterns.programs.signals_patterns)
-     {
-        edje_match_patterns_free(ed->patterns.programs.signals_patterns);
-        edje_match_patterns_free(ed->patterns.programs.sources_patterns);
-     }
-   ed->patterns.programs.signals_patterns = NULL;
-   ed->patterns.programs.sources_patterns = NULL;
 }
 /**
  * Used to free the cached data values that are stored in the data_cache

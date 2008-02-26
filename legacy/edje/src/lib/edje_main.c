@@ -90,7 +90,7 @@ _edje_del(Edje *ed)
 	return;
      }
    _edje_message_del(ed);
-   _edje_clean_callbacks_patterns(ed);
+   _edje_callbacks_patterns_clean(ed);
    _edje_file_del(ed);
    if (ed->path) evas_stringshare_del(ed->path);
    if (ed->part) evas_stringshare_del(ed->part);
@@ -145,11 +145,6 @@ _edje_del(Edje *ed)
 	if (tc->name) evas_stringshare_del(tc->name);
 	if (tc->font) evas_stringshare_del(tc->font);
 	free(tc);
-     }
-   if (ed->patterns.callbacks.signals_patterns)
-     {
-	edje_match_patterns_free(ed->patterns.callbacks.signals_patterns);
-	edje_match_patterns_free(ed->patterns.callbacks.sources_patterns);
      }
    free(ed);
 }

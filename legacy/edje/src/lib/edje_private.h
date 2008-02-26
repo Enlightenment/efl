@@ -578,6 +578,14 @@ typedef struct _Edje_Var_Animator Edje_Var_Animator;
 typedef struct _Edje_Var_Timer Edje_Var_Timer;
 typedef struct _Edje_Var_Pool Edje_Var_Pool;
 
+struct _Edje_Signals_Sources_Patterns
+{
+   Edje_Patterns *signals_patterns;
+   Edje_Patterns *sources_patterns;
+};
+
+typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
+
 struct _Edje
 {
    const char           *path;
@@ -608,14 +616,8 @@ struct _Edje
    int                   table_parts_size;
 
    struct {
-      struct {
-	 Edje_Patterns                  *signals_patterns;
-	 Edje_Patterns                  *sources_patterns;
-      } callbacks;
-      struct {
-	 Edje_Patterns                  *signals_patterns;
-	 Edje_Patterns                  *sources_patterns;
-      } programs;
+      Edje_Signals_Sources_Patterns callbacks;
+      Edje_Signals_Sources_Patterns programs;
    } patterns;
 
    int                   references;
@@ -1028,7 +1030,8 @@ void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void  _edje_emit_handle(Edje *ed, const char *sig, const char *src);
-void  _edje_clean_callbacks_patterns(Edje *ed);
+void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
+void  _edje_callbacks_patterns_clean(Edje *ed);
 
 void           _edje_text_init(void);
 void           _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);

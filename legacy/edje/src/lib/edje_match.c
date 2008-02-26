@@ -546,3 +546,14 @@ edje_match_patterns_free(Edje_Patterns *ppat)
    free(ppat);
 }
 
+void
+_edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp)
+{
+   if (!ssp->signals_patterns)
+     return;
+
+   edje_match_patterns_free(ssp->signals_patterns);
+   edje_match_patterns_free(ssp->sources_patterns);
+   ssp->signals_patterns = NULL;
+   ssp->sources_patterns = NULL;
+}

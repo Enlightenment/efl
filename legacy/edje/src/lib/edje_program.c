@@ -106,7 +106,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
 	ed->just_added_callbacks = 1;
      }
    else
-     _edje_clean_callbacks_patterns(ed);
+     _edje_callbacks_patterns_clean(ed);
 }
 
 /** Remove a callback from an object
@@ -152,7 +152,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 	       }
 	     else
 	       {
-		  _edje_clean_callbacks_patterns(ed);
+		  _edje_callbacks_patterns_clean(ed);
 
 		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
 		  if (escb->signal) evas_stringshare_del(escb->signal);
@@ -863,6 +863,25 @@ static int _edje_glob_callback(Edje_Program *pr, void *dt)
    return 0;
 }
 
+
+void
+_edje_callbacks_patterns_clean(Edje *ed)
+{
+   _edje_signals_sources_patterns_clean(&ed->patterns.callbacks);
+}
+
+static void
+_edje_callbacks_patterns_init(Edje *ed)
+{
+   Edje_Signals_Sources_Patterns *ssp = &ed->patterns.callbacks;
+
+   if (ssp->signals_patterns)
+     return;
+
+   ssp->signals_patterns = edje_match_callback_signal_init(ed->callbacks);
+   ssp->sources_patterns = edje_match_callback_source_init(ed->callbacks);
+}
+
 /* FIXME: what if we delete the evas object??? */
 void
 _edje_emit_handle(Edje *ed, const char *sig, const char *src)
@@ -978,7 +997,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
    _edje_block(ed);
 
    if (ed->just_added_callbacks)
-     _edje_clean_callbacks_patterns(ed);
+     _edje_callbacks_patterns_clean(ed);
 
    ed->walking_callbacks = 1;
 
@@ -986,12 +1005,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
      {
         int     r;
 
-        if (!ed->patterns.callbacks.signals_patterns)
-          {
-             ed->patterns.callbacks.signals_patterns = edje_match_callback_signal_init(ed->callbacks);
-             ed->patterns.callbacks.sources_patterns = edje_match_callback_source_init(ed->callbacks);
-          }
-
+	_edje_callbacks_patterns_init(ed);
         r = edje_match_callback_exec(ed->patterns.callbacks.signals_patterns,
                                      ed->patterns.callbacks.sources_patterns,
                                      sig,
@@ -1027,23 +1041,10 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 	     l = next_l;
 	  }
 
-        _edje_clean_callbacks_patterns(ed);
+        _edje_callbacks_patterns_clean(ed);
      }
    break_prog:
    _edje_unblock(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
 }
-
-void
-_edje_clean_callbacks_patterns(Edje *ed)
-{
-   if (ed->patterns.callbacks.signals_patterns)
-     {
-	edje_match_patterns_free(ed->patterns.callbacks.signals_patterns);
-	edje_match_patterns_free(ed->patterns.callbacks.sources_patterns);
-	ed->patterns.callbacks.signals_patterns = NULL;
-	ed->patterns.callbacks.sources_patterns = NULL;
-     }
-}
-
