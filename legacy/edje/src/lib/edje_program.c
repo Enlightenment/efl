@@ -5,7 +5,6 @@
 #include "edje_private.h"
 
 static void _edje_emit_cb(Edje *ed, const char *sig, const char *src);
-static void _edje_clean_callbacks_patterns(Edje *ed);
 
 int             _edje_anim_count = 0;
 Ecore_Animator *_edje_timer = NULL;
@@ -1036,7 +1035,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
    _edje_unref(ed);
 }
 
-static void
+void
 _edje_clean_callbacks_patterns(Edje *ed)
 {
    if (ed->patterns.callbacks.signals_patterns)

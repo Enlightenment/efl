@@ -1028,6 +1028,7 @@ void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void  _edje_emit_handle(Edje *ed, const char *sig, const char *src);
+void  _edje_clean_callbacks_patterns(Edje *ed);
 
 void           _edje_text_init(void);
 void           _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);

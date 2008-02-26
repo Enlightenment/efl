@@ -90,6 +90,7 @@ _edje_del(Edje *ed)
 	return;
      }
    _edje_message_del(ed);
+   _edje_clean_callbacks_patterns(ed);
    _edje_file_del(ed);
    if (ed->path) evas_stringshare_del(ed->path);
    if (ed->part) evas_stringshare_del(ed->part);

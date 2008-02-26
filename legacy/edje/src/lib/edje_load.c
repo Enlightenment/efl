@@ -608,6 +608,15 @@ _edje_file_del(Edje *ed)
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
+
+   if (ed->patterns.programs.signals_patterns)
+     {
+        edje_match_patterns_free(ed->patterns.programs.signals_patterns);
+        edje_match_patterns_free(ed->patterns.programs.sources_patterns);
+     }
+   ed->patterns.programs.signals_patterns = NULL;
+   ed->patterns.programs.sources_patterns = NULL;
+
    if (!((ed->file) && (ed->collection))) return;
    if ((ed->file) && (ed->collection))
      {
