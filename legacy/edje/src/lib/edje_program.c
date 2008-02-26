@@ -106,7 +106,8 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
 	escb->just_added = 1;
 	ed->just_added_callbacks = 1;
      }
-   _edje_clean_callbacks_patterns(ed);
+   else
+     _edje_clean_callbacks_patterns(ed);
 }
 
 /** Remove a callback from an object
@@ -976,6 +977,10 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
    _edje_ref(ed);
    _edje_freeze(ed);
    _edje_block(ed);
+
+   if (ed->just_added_callbacks)
+     _edje_clean_callbacks_patterns(ed);
+
    ed->walking_callbacks = 1;
 
    if (ed->callbacks)
@@ -1015,8 +1020,6 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 	       escb->just_added = 0;
 	     if (escb->delete_me)
 	       {
-		  _edje_clean_callbacks_patterns(ed);
-
 		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
 		  if (escb->signal) evas_stringshare_del(escb->signal);
 		  if (escb->source) evas_stringshare_del(escb->source);
@@ -1024,6 +1027,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 	       }
 	     l = next_l;
 	  }
+
+        _edje_clean_callbacks_patterns(ed);
      }
    break_prog:
    _edje_unblock(ed);
