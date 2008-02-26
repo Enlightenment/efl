@@ -124,7 +124,10 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
           }
         obj->callbacks->walking_list--;
         if (!obj->callbacks->walking_list)
-          evas_object_event_callback_clear(obj);
+	  {
+	     evas_object_event_callback_clear(obj);
+	     l_mod = NULL;
+	  }
         
         if (type == EVAS_CALLBACK_MOUSE_DOWN)
           {
