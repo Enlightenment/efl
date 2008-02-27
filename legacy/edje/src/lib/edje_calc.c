@@ -1288,7 +1288,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 static void
 _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 {
-   Edje_Calc_Params p1, p2, p3;
+   Edje_Calc_Params p1, p2, p3, *pf;
    Edje_Part_Description *chosen_desc;
    double pos = 0.0;
 
@@ -1421,16 +1421,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
 	p3.gradient.id = pos > 0.5 ? p2.gradient.id : p1.gradient.id;
 	p3.gradient.type = pos > 0.5 ? p2.gradient.type : p1.gradient.type;
+
+	pf = &p3;
      }
    else
      {
-	p3 = p1;
+	pf = &p1;
      }
 
-   ep->req.x = p3.req.x;
-   ep->req.y = p3.req.y;
-   ep->req.w = p3.req.w;
-   ep->req.h = p3.req.h;
+   ep->req = pf->req;
 
    if (ep->drag.need_reset)
      {
@@ -1455,18 +1454,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	   case EDJE_PART_TYPE_GRADIENT:
 	      evas_object_color_set(ep->object,
-				    (p3.color.r * p3.color.a) / 255,
-				    (p3.color.g * p3.color.a) / 255,
-				    (p3.color.b * p3.color.a) / 255,
-				    p3.color.a);
-	      if (p3.visible) evas_object_show(ep->object);
+				    (pf->color.r * pf->color.a) / 255,
+				    (pf->color.g * pf->color.a) / 255,
+				    (pf->color.b * pf->color.a) / 255,
+				    pf->color.a);
+	      if (pf->visible) evas_object_show(ep->object);
 	      else evas_object_hide(ep->object);
 	      /* move and resize are needed for all previous object => no break here. */
 	   case EDJE_PART_TYPE_SWALLOW:
 	   case EDJE_PART_TYPE_GROUP:
 	      /* visibility and color have no meaning on SWALLOW and GROUP part. */
-	      evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
-	      evas_object_resize(ep->object, p3.w, p3.h);
+	      evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
+	      evas_object_resize(ep->object, pf->w, pf->h);
 	      break;
 	   case EDJE_PART_TYPE_TEXT:
 	      /* This is correctly handle in _edje_text_recalc_apply at the moment. */
@@ -1477,13 +1476,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	switch (ep->part->type)
 	  {
 	   case EDJE_PART_TYPE_TEXT:
-	      _edje_text_recalc_apply(ed, ep, &p3, chosen_desc);
+	      _edje_text_recalc_apply(ed, ep, pf, chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_IMAGE:
-	      _edje_image_recalc_apply(ed, ep, &p3, chosen_desc, pos);
+	      _edje_image_recalc_apply(ed, ep, pf, chosen_desc, pos);
 	      break;
 	   case EDJE_PART_TYPE_GRADIENT:
-	      _edje_gradient_recalc_apply(ed, ep, &p3, chosen_desc);
+	      _edje_gradient_recalc_apply(ed, ep, pf, chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_SWALLOW:
@@ -1500,21 +1499,21 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 //// done via the clipper anyway. this created bugs when objects had their
 //// colro set and were swallowed - then had their color changed.
 //	     evas_object_color_set(ep->swallowed_object,
-//				   (p3.color.r * p3.color.a) / 255,
-//				   (p3.color.g * p3.color.a) / 255,
-//				   (p3.color.b * p3.color.a) / 255,
-//				   p3.color.a);
-	     evas_object_move(ep->swallowed_object, ed->x + p3.x, ed->y + p3.y);
-	     evas_object_resize(ep->swallowed_object, p3.w, p3.h);
-	     if (p3.visible) evas_object_show(ep->swallowed_object);
+//				   (pf->color.r * pf->color.a) / 255,
+//				   (pf->color.g * pf->color.a) / 255,
+//				   (pf->color.b * pf->color.a) / 255,
+//				   pf->color.a);
+	     evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
+	     evas_object_resize(ep->swallowed_object, pf->w, pf->h);
+	     if (pf->visible) evas_object_show(ep->swallowed_object);
 	     else evas_object_hide(ep->swallowed_object);
 	  }
      }
 
-   ep->x = p3.x;
-   ep->y = p3.y;
-   ep->w = p3.w;
-   ep->h = p3.h;
+   ep->x = pf->x;
+   ep->y = pf->y;
+   ep->w = pf->w;
+   ep->h = pf->h;
 
    ep->calculated |= flags;
    ep->calculating = FLAG_NONE;
