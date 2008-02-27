@@ -1,0 +1,96 @@
+
+AC_INIT(evil, 0.0.1, enlightenment-devel@lists.sourceforge.net)
+AC_PREREQ(2.52)
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_HEADERS([config.h])
+AC_CANONICAL_HOST
+
+dnl If the host is not windows, we exit,
+dnl otherwise, we set the correct flags
+dnl for each platform.
+mingw_libs=""
+cegcc_libs=""
+case "$host_os" in
+  mingw|mingw32)
+    mingw_libs="-lole32 -luuid -lws2_32"
+    ;;
+  cegcc)
+    cegcc_cflags="-mwin32"
+    ;;
+  *)
+    AC_MSG_ERROR([OS must be Windows. Exiting...])
+    ;;
+esac
+win32_cflags="${cegcc_cflags}"
+win32_libs="${mingw_libs}"
+AC_SUBST(win32_cflags)
+AC_SUBST(win32_libs)
+
+AM_INIT_AUTOMAKE(1.6 dist-bzip2)
+
+AC_LIBTOOL_WIN32_DLL
+define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
+define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
+AC_PROG_LIBTOOL
+
+VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
+VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
+VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
+SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
+version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+AC_SUBST(version_info)
+
+AC_LANG(C)
+AC_PROG_CPP
+AC_PROG_CC
+AC_C_CONST
+
+AC_MSG_CHECKING([for __attribute__])
+AC_CACHE_VAL(have___attribute__,
+  [
+    AC_TRY_COMPILE([#include <stdlib.h>],
+      [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
+      [have___attribute__="yes"],
+      [have___attribute__="no"])
+  ]
+)
+
+if test "x${have___attribute__}" = "xyes" ; then
+   AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
+fi
+AC_MSG_RESULT(${have___attribute__})
+
+
+AC_CONFIG_FILES([
+Makefile
+evil.pc
+src/Makefile
+src/bin/Makefile
+src/lib/Makefile
+src/lib/dlfcn/Makefile
+src/lib/mman/Makefile
+])
+
+AC_OUTPUT
+
+
+#####################################################################
+## Info
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE_NAME $PACKAGE_VERSION $PACKAGE_TARNAME"
+echo "------------------------------------------------------------------------"
+echo
+echo "Configuration Options Summary:"
+echo
+echo "  OS...................: ${host_os}"
+echo
+echo "  Compilation..........: make"
+echo
+echo "  Installation.........: make install"
+echo
+echo "    prefix.............: $prefix"
+echo

@@ -1,0 +1,11 @@
+
+The Evil library tried to port some convenient Unix functions
+to the Windows (XP, maybe below, or Mobile) platform. They
+are planned to be used in the Enlightenment Fundations Libaries.
+
+To get the description of the API, behavior, etc.. run
+doxygen.exe in the top level directory, then open in your
+favorite browser named Firefox the file index.html located in
+the subdirectory doc/html/.
+
+Enjoy !
