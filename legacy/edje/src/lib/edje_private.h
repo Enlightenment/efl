@@ -102,6 +102,57 @@ void *alloca (size_t);
 #define EDJE_PROGRAM_CACHE
 */
 
+struct _Edje_Position_Scale
+{
+   double x, y;
+};
+
+struct _Edje_Position
+{
+   int x, y;
+};
+
+struct _Edje_Size
+{
+   int w, h;
+};
+
+struct _Edje_Rectangle
+{
+   int x, y, w, h;
+};
+
+struct _Edje_Color
+{
+   unsigned char  r, g, b, a;
+};
+
+struct _Edje_Aspect_Prefer
+{
+   double min, max;
+   enum {
+     EDJE_ASPECT_PREFER_NONE,
+     EDJE_ASPECT_PREFER_VERTICAL,
+     EDJE_ASPECT_PREFER_HORIZONTAL,
+     EDJE_ASPECT_PREFER_BOTH
+   } prefer;
+};
+
+struct _Edje_Aspect
+{
+   int w, h;
+   Edje_Aspect_Control mode;
+};
+
+typedef struct _Edje_Position_Scale                  Edje_Alignment;
+typedef struct _Edje_Position_Scale                  Edje_Position_Scale;
+typedef struct _Edje_Position                        Edje_Position;
+typedef struct _Edje_Size                            Edje_Size;
+typedef struct _Edje_Rectangle                       Edje_Rectangle;
+typedef struct _Edje_Color                           Edje_Color;
+typedef struct _Edje_Aspect_Prefer                   Edje_Aspect_Prefer;
+typedef struct _Edje_Aspect                          Edje_Aspect;
+
 typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Style                           Edje_Style;
 typedef struct _Edje_Style_Tag                       Edje_Style_Tag;
@@ -182,10 +233,6 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 #define EDJE_VAR_LIST   4
 #define EDJE_VAR_HASH   5
 
-#define EDJE_ASPECT_PREFER_NONE       0
-#define EDJE_ASPECT_PREFER_VERTICAL   1
-#define EDJE_ASPECT_PREFER_HORIZONTAL 2
-#define EDJE_ASPECT_PREFER_BOTH       3
 #define EDJE_VAR_MAGIC_BASE 0x12fe84ba
 
 #define EDJE_STATE_PARAM_NONE         0
@@ -392,9 +439,7 @@ struct _Edje_Part_Collection
    int        id; /* the collection id */
 
    struct {
-      struct {
-	 int w, h;
-      } min, max;
+      Edje_Size min, max;
    } prop;
 
    int        references;
@@ -454,26 +499,15 @@ struct _Edje_Part_Description
       char          *name; /* the named state if any */
    } state;
 
-   struct {
-      double         x, y; /* 0 <-> 1.0 alignment within allocated space */
-   } align;
+   Edje_Alignment align; /* 0 <-> 1.0 alignment within allocated space */
 
    struct {
       unsigned char  w, h; /* width or height is fixed in side (cannot expand with Edje object size) */
    } fixed;
 
-   struct {
-      int            w, h; /* min & max size, 0 = none */
-   } min, max;
-
-   struct {
-      int            x, y; /* size stepping by n pixels, 0 = none */
-   } step;
-
-   struct {
-      double         min, max; /* aspect = w/h */
-      unsigned char  prefer; /* NEITHER = 0, VERTICAL = 1, HORIZONTAL = 2 */
-   } aspect;
+   Edje_Size min, max;
+   Edje_Position step; /* size stepping by n pixels, 0 = none */
+   Edje_Aspect_Prefer aspect;
 
    struct {
       double         relative_x;
@@ -530,9 +564,7 @@ struct _Edje_Part_Description
       char          *style; /* the text style if a textblock */
       char          *font; /* if a specific font is asked for */
 
-      struct {
-	 double      x, y; /* text alignment within bounds */
-      } align;
+      Edje_Alignment align; /* text alignment within bounds */
 
       double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
       int            size; /* 0 = use user set size */
@@ -548,9 +580,7 @@ struct _Edje_Part_Description
 
    } text;
 
-   struct {
-      unsigned char  r, g, b, a; /* color for rect or text, shadow etc. */
-   } color, color2, color3;
+   Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
 
    unsigned char     visible; /* is it shown */
 };
@@ -593,9 +623,7 @@ struct _Edje
    const char           *parent;
 
    Evas_Coord            x, y, w, h;
-   struct {
-      Evas_Coord         w, h;
-   } min;
+   Edje_Size             min;
    double                paused_at;
    Evas                 *evas; /* the Evas this Edje belongs to */
    Evas_Object          *obj; /* the smart object */
@@ -659,26 +687,15 @@ struct _Edje_Real_Part
    Evas_Object              *swallowed_object;
    Edje_Part                *part;
    int                       x, y, w, h;
+   Edje_Rectangle            req;
+   Edje_Position             offset;
    struct {
-      int                    x, y, w, h;
-   } req;
-   struct {
-      int                    x, y;
-   } offset;
-   struct {
-      struct {
-	 int                 w, h;
-      } min, max;
-      struct {
-	 int                 w, h;
-	 unsigned char       mode;
-      } aspect;
+      Edje_Size min, max;
+      Edje_Aspect aspect;
    } swallow_params;
    struct {
       double        x, y;
-      struct {
-	 double x, y;
-      } val, size, step, page;
+      Edje_Position_Scale val, size, step, page;
       struct {
 	 unsigned int count;
 	 int  x, y;
@@ -753,27 +770,19 @@ struct _Edje_Signal_Callback
 struct _Edje_Calc_Params
 {
    int              x, y, w, h;
-   struct {
-      int           x, y, w, h;
-   } req;
-   struct {
-      int           x, y, w, h;
-   } req_drag;
+   Edje_Rectangle   req;
+   Edje_Rectangle   req_drag;
    struct {
       int           x, y, w, h;
       int           angle;
       int           spread;
    } fill;
-   struct {
-      unsigned char r, g, b, a;
-   } color, color2, color3;
+   Edje_Color color, color2, color3;
    struct {
       int           l, r, t, b;
    } border;
    struct {
-      struct {
-         double      x, y; /* text alignment within bounds */
-      } align;
+      Edje_Alignment align; /* text alignment within bounds */
       double         elipsis;
    } text;
    struct {

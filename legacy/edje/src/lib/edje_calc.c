@@ -1429,10 +1429,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	pf = &p1;
      }
 
-   ep->req.x = pf->req.x;
-   ep->req.y = pf->req.y;
-   ep->req.w = pf->req.w;
-   ep->req.h = pf->req.h;
+   ep->req = pf->req;
 
    if (ep->drag.need_reset)
      {
