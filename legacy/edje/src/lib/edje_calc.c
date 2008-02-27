@@ -1357,9 +1357,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
      _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y, ep->confine_to, &p1, flags);
    if (ep->param2.description)
      {
+	int beginning_pos, part_type;
+
 	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y, ep->confine_to, &p2, flags);
 
 	pos = ep->description_pos;
+	beginning_pos = (pos < 0.5);
+	part_type = ep->part->type;
 
 	/* visible is special */
 	if ((p1.visible) && (!p2.visible))
@@ -1369,10 +1373,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	else
 	  p3.visible = p1.visible;
 
-	p3.smooth = (pos < 0.5) ? p1.smooth : p2.smooth;
+	p3.smooth = (beginning_pos) ? p1.smooth : p2.smooth;
 
 	/* FIXME: do x and y separately base on flag */
-#define INTP(_x1, _x2, _p) ((_x1) + (((_x2) - (_x1)) * _p))
+#define INTP(_x1, _x2, _p) (((_x1) == (_x2)) ? (_x1) : ((_x1) + (((_x2) - (_x1)) * (_p))))
 	p3.x = INTP(p1.x, p2.x, pos);
 	p3.y = INTP(p1.y, p2.y, pos);
 	p3.w = INTP(p1.w, p2.w, pos);
@@ -1383,44 +1387,55 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	p3.req.w = INTP(p1.req.w, p2.req.w, pos);
 	p3.req.h = INTP(p1.req.h, p2.req.h, pos);
 
+	/* FIXME: detect when we do not have dragable set. */
 	p3.req_drag.x = INTP(p1.req_drag.x, p2.req_drag.x, pos);
 	p3.req_drag.y = INTP(p1.req_drag.y, p2.req_drag.y, pos);
 	p3.req_drag.w = INTP(p1.req_drag.w, p2.req_drag.w, pos);
 	p3.req_drag.h = INTP(p1.req_drag.h, p2.req_drag.h, pos);
-
-	p3.fill.x = INTP(p1.fill.x, p2.fill.x, pos);
-	p3.fill.y = INTP(p1.fill.y, p2.fill.y, pos);
-	p3.fill.w = INTP(p1.fill.w, p2.fill.w, pos);
-	p3.fill.h = INTP(p1.fill.h, p2.fill.h, pos);
-	p3.fill.angle = INTP(p1.fill.angle, p2.fill.angle, pos);
-	p3.fill.spread = pos > 0.5 ? p2.fill.spread : p1.fill.spread;
 
 	p3.color.r = INTP(p1.color.r, p2.color.r, pos);
 	p3.color.g = INTP(p1.color.g, p2.color.g, pos);
 	p3.color.b = INTP(p1.color.b, p2.color.b, pos);
 	p3.color.a = INTP(p1.color.a, p2.color.a, pos);
 
-	p3.color2.r = INTP(p1.color2.r, p2.color2.r, pos);
-	p3.color2.g = INTP(p1.color2.g, p2.color2.g, pos);
-	p3.color2.b = INTP(p1.color2.b, p2.color2.b, pos);
-	p3.color2.a = INTP(p1.color2.a, p2.color2.a, pos);
+	if ((part_type == EDJE_PART_TYPE_IMAGE) ||
+	    (part_type == EDJE_PART_TYPE_GRADIENT))
+	  {
+	     p3.fill.x = INTP(p1.fill.x, p2.fill.x, pos);
+	     p3.fill.y = INTP(p1.fill.y, p2.fill.y, pos);
+	     p3.fill.w = INTP(p1.fill.w, p2.fill.w, pos);
+	     p3.fill.h = INTP(p1.fill.h, p2.fill.h, pos);
+	     if (part_type == EDJE_PART_TYPE_GRADIENT)
+	       {
+		  p3.fill.angle = INTP(p1.fill.angle, p2.fill.angle, pos);
+		  p3.fill.spread = (beginning_pos) ? p1.fill.spread : p2.fill.spread;
+		  p3.gradient = (beginning_pos) ? p1.gradient : p2.gradient;
+	       }
+	     else
+	       {
+		  p3.border.l = INTP(p1.border.l, p2.border.l, pos);
+		  p3.border.r = INTP(p1.border.r, p2.border.r, pos);
+		  p3.border.t = INTP(p1.border.t, p2.border.t, pos);
+		  p3.border.b = INTP(p1.border.b, p2.border.b, pos);
+	       }
+	  }
+	else if ((part_type == EDJE_PART_TYPE_TEXT) ||
+		 (part_type == EDJE_PART_TYPE_TEXTBLOCK))
+	  {
+	     p3.color2.r = INTP(p1.color2.r, p2.color2.r, pos);
+	     p3.color2.g = INTP(p1.color2.g, p2.color2.g, pos);
+	     p3.color2.b = INTP(p1.color2.b, p2.color2.b, pos);
+	     p3.color2.a = INTP(p1.color2.a, p2.color2.a, pos);
 
-	p3.color3.r = INTP(p1.color3.r, p2.color3.r, pos);
-	p3.color3.g = INTP(p1.color3.g, p2.color3.g, pos);
-	p3.color3.b = INTP(p1.color3.b, p2.color3.b, pos);
-	p3.color3.a = INTP(p1.color3.a, p2.color3.a, pos);
+	     p3.color3.r = INTP(p1.color3.r, p2.color3.r, pos);
+	     p3.color3.g = INTP(p1.color3.g, p2.color3.g, pos);
+	     p3.color3.b = INTP(p1.color3.b, p2.color3.b, pos);
+	     p3.color3.a = INTP(p1.color3.a, p2.color3.a, pos);
 
-	p3.border.l = INTP(p1.border.l, p2.border.l, pos);
-	p3.border.r = INTP(p1.border.r, p2.border.r, pos);
-	p3.border.t = INTP(p1.border.t, p2.border.t, pos);
-	p3.border.b = INTP(p1.border.b, p2.border.b, pos);
-
-	p3.text.align.x = INTP(p1.text.align.x, p2.text.align.x, pos);
-	p3.text.align.y = INTP(p1.text.align.y, p2.text.align.y, pos);
-	p3.text.elipsis = INTP(p1.text.elipsis, p2.text.elipsis, pos);
-
-	p3.gradient.id = pos > 0.5 ? p2.gradient.id : p1.gradient.id;
-	p3.gradient.type = pos > 0.5 ? p2.gradient.type : p1.gradient.type;
+	     p3.text.align.x = INTP(p1.text.align.x, p2.text.align.x, pos);
+	     p3.text.align.y = INTP(p1.text.align.y, p2.text.align.y, pos);
+	     p3.text.elipsis = INTP(p1.text.elipsis, p2.text.elipsis, pos);
+	  }
 
 	pf = &p3;
      }
