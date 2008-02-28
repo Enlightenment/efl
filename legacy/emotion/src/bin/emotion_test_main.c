@@ -21,8 +21,8 @@ typedef struct _Frame_Data Frame_Data;
 
 struct _Frame_Data
 {
-   char       moving : 1;
-   char       resizing : 1;
+   unsigned char moving : 1;
+   unsigned char resizing : 1;
    int        button;
    Evas_Coord x, y;
 };
@@ -33,19 +33,19 @@ static void main_resize(Ecore_Evas *ee);
 static int  main_signal_exit(void *data, int ev_type, void *ev);
 static void main_delete_request(Ecore_Evas *ee);
 
-void        bg_setup(void);
-void        bg_resize(Evas_Coord w, Evas_Coord h);
+static void bg_setup(void);
+static void bg_resize(Evas_Coord w, Evas_Coord h);
 static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info);
 
 static Evas_Object *o_bg = NULL;
 
-double       start_time = 0.0;
-Ecore_Evas  *ecore_evas = NULL;
-Evas        *evas       = NULL;
-int          startw     = 800;
-int          starth     = 600;
+static double       start_time = 0.0;
+static Ecore_Evas  *ecore_evas = NULL;
+static Evas        *evas       = NULL;
+static int          startw     = 800;
+static int          starth     = 600;
 
-Evas_List   *video_objs = NULL;
+static Evas_List   *video_objs = NULL;
 
 static int
 main_start(int argc, char **argv)
@@ -133,6 +133,8 @@ main_start(int argc, char **argv)
 static void
 main_stop(void)
 {
+   main_signal_exit(NULL, 0, NULL);
+   edje_shutdown();
    ecore_evas_shutdown();
    ecore_shutdown();
 }
