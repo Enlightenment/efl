@@ -1049,6 +1049,8 @@ void           _edje_text_part_on_del(Edje *ed, Edje_Part *ep);
 void           _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep);
 void           _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
 Evas_Font_Size _edje_text_size_calc(Evas_Font_Size size, Edje_Text_Class *tc);
+const char *   _edje_text_class_font_get(Edje *ed, Edje_Part_Description *chosen_desc, int *size, char **free_later);
+
 
 Edje_Real_Part   *_edje_real_part_get(Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(Edje *ed, const char *part);

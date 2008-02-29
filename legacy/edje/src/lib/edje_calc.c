@@ -663,101 +663,12 @@ _edje_part_recalc_single(Edje *ed,
 	  text = ep->text.text_source->chosen_description->text.text;
 	else
 	  text = chosen_desc->text.text;
-	if (ep->text.source)
-	  {
-	     font = ep->text.source->chosen_description->text.font;
-	     size = ep->text.source->chosen_description->text.size;
-	  }
-	else
-	  {
-	     font = chosen_desc->text.font;
-	     size = chosen_desc->text.size;
-	  }
-	if (ep->text.source)
-	  {
-	     if ((ep->text.source->chosen_description->text.text_class) &&
-		 (*ep->text.source->chosen_description->text.text_class))
-	       {
-		  Edje_Text_Class *tc;
 
-		  tc = _edje_text_class_find(ed, ep->text.source->chosen_description->text.text_class);
-		  if (tc)
-		    {
-		       if ((tc->font) && (chosen_desc->text.font))
-			 {
-			    char *tok, *tok2, *e;
-			    
-			    tok = strstr(chosen_desc->text.font, ":style=");
-			    tok2 = strstr(tc->font, ":style=");
-			    if ((tok) && (!tok2))
-			      {
-				 char *stl;
-				 int tclen;
-				 
-				 e = strchr(tok, ',');
-				 stl = alloca(e - tok + 1);
-				 strncpy(stl, tok, e - tok);
-				 stl[e - tok] = 0;
-				 font = tc->font;
-				 tclen = strlen(tc->font);
-				 sfont = malloc(tclen + e - tok + 1);
-				 strcpy(sfont, tc->font);
-				 strcpy(sfont + tclen, stl);
-				 font = sfont;
-			      }
-			    else
-			      font = tc->font;
-			 }       
-		       else
-			 {
-			    if (tc->font) font = tc->font;
-			 }
-		       size = _edje_text_size_calc(size, tc);
-		    }
-	       }
-	  }
+	if (ep->text.source)
+	  font = _edje_text_class_font_get(ed, ep->text.source->chosen_description, &size, &sfont);
 	else
-	  {
-	     if ((chosen_desc->text.text_class) && (*chosen_desc->text.text_class))
-	       {
-		  Edje_Text_Class *tc;
+	  font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
 
-		  tc = _edje_text_class_find(ed, chosen_desc->text.text_class);
-		  if (tc)
-		    {
-		       if ((tc->font) && (chosen_desc->text.font))
-			 {
-			    char *tok, *tok2, *e;
-			    
-			    tok = strstr(chosen_desc->text.font, ":style=");
-			    tok2 = strstr(tc->font, ":style=");
-			    if ((tok) && (!tok2))
-			      {
-				 char *stl;
-				 int tclen;
-				 
-				 e = strchr(tok, ',');
-				 stl = alloca(e - tok + 1);
-				 strncpy(stl, tok, e - tok);
-				 stl[e - tok] = 0;
-				 font = tc->font;
-				 tclen = strlen(tc->font);
-				 sfont = malloc(tclen + e - tok + 1);
-				 strcpy(sfont, tc->font);
-				 strcpy(sfont + tclen, stl);
-				 font = sfont;
-			      }
-			    else
-			      font = tc->font;
-			 }       
-		       else
-			 {
-			    if (tc->font) font = tc->font;
-			 }
-		       size = _edje_text_size_calc(size, tc);
-		    }
-	       }
-	  }
 	if (!font) font = "";
 
 	if (ep->text.text_source)
