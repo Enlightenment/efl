@@ -1,3 +1,25 @@
+2008-02-29  Vincent Torri  <doursse at users dot sf dot net>
+
+	* AUTHORS:
+	Add Tor Lillqvist as author as he kindly gave me
+	the right to use his code for pipe(). Thanks a lot !
+
+	* src/bin/test_dlfcn.c (main):
+	read module and symbol from command line
+
+	* src/bin/test_pipe.c (thread), (main):
+	change output
+
+	* src/lib/Evil.h:
+	* src/lib/dlfcn/dlfcn.h:
+	* src/lib/evil.c (mkstemp), (realpath), (evil_sockets_init),
+	(evil_sockets_shutdown):
+	* src/lib/mman/sys/mman.h:
+	update documentation, add unlink() function, realpath()
+	becomes a function instead of a macro, add functions to
+	init / shutdown the socket system of Windows, undef EAPI
+	at the end of each header files.
+
 2008-02-27 Vincent Torri  <doursse at users dot sf dot net>
 
 	* initial release

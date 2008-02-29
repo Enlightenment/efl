@@ -93,14 +93,19 @@ int fcntl(int fd, int cmd, ...)
 int
 mkstemp(char *template)
 {
-   char *filename;
    int fd;
 
-   filename = _mktemp(template);
-   if (!filename)
+#ifdef __MINGW32__
+   if (!_mktemp(template))
      return -1;
 
-   fd = _sopen(filename, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+   fd = _sopen(template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+#else
+   if (_mktemp_s(template, _MAX_PATH) != 0)
+     return -1;
+
+   _sopen_s(&fd, template, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
+#endif /* ! __MINGW32__ */
 
    return fd;
 }
@@ -224,6 +229,10 @@ readlink(const char *path, char *buf, size_t bufsiz)
    return -1;
 }
 
+/*
+ * The code of the following functions has been kindly offered
+ * by Tor Lillqvist.
+ */
 int
 pipe(int *fds)
 {
@@ -333,6 +342,26 @@ pipe(int *fds)
 #endif /* ! __CEGCC__ */
 
 char *
+realpath(const char *file_name, char *resolved_name)
+{
+  return _fullpath(resolved_name, file_name, PATH_MAX);
+}
+
+int
+evil_sockets_init(void)
+{
+   WSADATA wsa_data;
+
+   return (WSAStartup(MAKEWORD( 2, 2 ), &wsa_data) == 0) ? 1 : 0;
+}
+
+void
+evil_sockets_shutdown(void)
+{
+   WSACleanup();
+}
+
+const char *
 evil_tmpdir_get(void)
 {
    char *tmpdir;

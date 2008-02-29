@@ -18,10 +18,45 @@ extern "C" {
 #endif
 
 
+/**
+ * @def PROT_NONE
+ * Data can not be accessed.
+ */
+
+/**
+ * @def PROT_READ
+ * Data can be read.
+ */
+
+/**
+ * @def PROT_WRITE
+ * Data can be written.
+ */
+
+/**
+ * @def PROT_EXEC
+ * Data can be executed.
+ */
+
 #define PROT_NONE  0x00
 #define PROT_READ  0x01
 #define PROT_WRITE 0x02
 #define PROT_EXEC  0x04
+
+/**
+ * @def MAP_SHARED
+ * Changes are shared.
+ */
+
+/**
+ * @def MAP_PRIVATE
+ * Changes are private.
+ */
+
+/**
+ * @def MAP_FIXED
+ * Interpret the address (addr) exactly.
+ */
 
 #define MAP_SHARED  0x0001
 #define MAP_PRIVATE 0x0002
@@ -110,6 +145,11 @@ EAPI int   munmap(void  *addr,
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef _WIN32
+# undef EAPI
+# define EAPI
+#endif /* _WIN32 */
 
 #endif /* __E_WIN32_SYS_MMAN_H__ */
 

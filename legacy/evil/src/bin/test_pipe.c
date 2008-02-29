@@ -25,9 +25,7 @@ thread (void *param)
    Sleep (2 * 1000);
    d = (data *)param;
    buf[0] = d;
-   printf ("writing...\n");
    send(d->fd_write, (char *)buf, sizeof(buf), 0);
-   printf ("end of writing...\n");
 
    return 0;
 }
@@ -60,13 +58,11 @@ main (int argc, char *argv[])
    d = (data *)malloc(sizeof (data));
    d->val = 14;
    d->fd_write = sockets[FDWRITE];
-   printf (" pointeur 0 : %p\n", d);
+   printf (" pointeur sent........: %p\n", d);
 
    h = CreateThread (NULL, 0, thread, d, 0, &thread_id);
 
-   printf (" * select : %d %d\n", sockets[0], sockets[1]);
    ret = select(sockets[FDREAD] + 1, &rfds, NULL, NULL, &t);
-   printf (" * select : ret %d\n", ret);
 
    if (ret < 0) return -1;
 
@@ -81,16 +77,14 @@ main (int argc, char *argv[])
         int j = 0;
         void *buf[1];
 
-        printf ("bon \n");
         while ((len = recv(sockets[FDREAD], (char *)buf, sizeof(buf), 0)) > 0)
           {
-             printf ("len : %d\n", len);
              if (len == sizeof(buf))
                {
                   d = buf[0];
-                  printf (" pointeur 1 : %p\n", d);
+                  printf (" pointeur received....: %p\n", d);
                   j = d->val;
-                  printf ("reussite : %d\n", j);
+                  printf (" value (should be 14) : %d\n", j);
                }
           }
      }

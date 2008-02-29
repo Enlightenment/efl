@@ -17,6 +17,20 @@
 extern "C" {
 #endif
 
+/**
+ * @def RTLD_LAZY
+ * Lazy function call binding
+ */
+
+/**
+ * @def RTLD_NOW
+ * Immediate function call binding
+ */
+
+/**
+ * @def RTLD_GLOBAL
+ * Symbols in this dlopen'ed obj are visible to other dlopen'ed objs
+ */
 
 # define RTLD_LAZY 1   /* lazy function call binding */
 # define RTLD_NOW 2    /* immediate function call binding */
@@ -170,5 +184,10 @@ EAPI char *dlerror (void);
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef _WIN32
+# undef EAPI
+# define EAPI
+#endif /* _WIN32 */
 
 #endif /* __E_WIN32_DLFCN_H__ */

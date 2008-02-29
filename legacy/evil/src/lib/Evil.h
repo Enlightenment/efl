@@ -20,6 +20,8 @@ extern "C" {
 
 /**
  * @mainpage Evil
+ * @author Vincent Torri
+ * @date 2008
  *
  * @section intro_sec Introduction
  *
@@ -52,6 +54,7 @@ extern "C" {
 
 #include <stdlib.h>
 #include <sys/time.h>
+#include <limits.h>
 
 #ifndef __CEGCC__
 
@@ -86,6 +89,21 @@ extern "C" {
 # define F_SETFD    2
 # define F_SETLK    6
 # define F_SETLKW   7
+
+/**
+ * @def F_RDLCK
+ * Read (or shared) lock
+ */
+
+/**
+ * @def F_WRLCK
+ * Write (or exclusive) lock
+ */
+
+/**
+ * @def F_UNLCK
+ * Remove lock
+ */
 
 # ifndef F_RDLCK
 #  define F_RDLCK     0
@@ -157,6 +175,7 @@ EAPI int fcntl(int fd, int cmd, ...);
  * On success, the function returns the file descriptor of the
  * temporary file. Otherwise, it returns -1 and errno is set to the
  * following values:
+ * - EINVAL: @p template has an invalid format.
  * - EACCESS: Given path is a directory, or file is read-only, but an
  * open-for-writing operation was attempted.
  * - EEXISTS: File name already exists.
@@ -229,6 +248,23 @@ EAPI int symlink(const char *oldpath, const char *newpath);
  */
 EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 
+/**
+ * @brief Create a pair of sockets.
+ *
+ * @param fds A pointer that contains two sockets.
+ *
+ * Create a pair of sockets that can be use with select().
+ * Hence, evil_sockets_init() must have been caled at least
+ * once before. Contrary to Unix, that functions does not
+ * create a pair of file descriptors.
+ *
+ * Conformity: Not applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
 EAPI int pipe(int *fds);
 
 #endif /* ! __CEGCC__ */
@@ -236,21 +272,109 @@ EAPI int pipe(int *fds);
 #if defined(__MSDOS__) || defined(__EMX__) || \
    (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
 # if defined(_MSC_VER) || defined(__MINGW32__)
-#  define open(path,flag,mode) EAPI _open((path),(flag),(mode))
-#  define close(fd) EAPI _close(fd)
-#  define read(fd,buffer,count) EAPI _read((fd),(buffer),(count))
-#  define write(fd,buffer,count) EAPI _write((fd),(buffer),(count))
-#  define mkdir(p,m) EAPI _mkdir(p)
+#  define S_IRGRP S_IRUSR
+#  define S_IROTH S_IRUSR
+#  define S_IWGRP S_IWUSR
+#  define S_IWOTH S_IWUSR
+#  define S_IXGRP S_IXUSR
+#  define S_IXOTH S_IXUSR
+#  define open(path,flag,mode) _open((path),(flag),(mode))
+#  define close(fd) _close(fd)
+#  define read(fd,buffer,count) _read((fd),(buffer),(count))
+#  define write(fd,buffer,count) _write((fd),(buffer),(count))
+#  define unlink(filename) _unlink((filename))
+#  define mkdir(p,m) _mkdir(p)
 # endif
 #endif
 
-#define realpath(file_name, resolved_name) EAPI _fullpath((resolved_name), (file_name), PATH_MAX)
+/**
+ * @brief Return aan absolute or full path name for a specified relative path name.
+ *
+ * @param file_name The absolute path name.
+ * @param resolved_name The relative path name.
+ * @return @c NULL on failure, a pointer to the absolute path name otherwise.
+ *
+ * The function expands the relative path name @p file_name to its
+ * fully qualified or absolute path and store it in the buffer pointed
+ * by @p resolved_name. The buffer is at most @c PATH_MAX bytes long.
+ * If @p resolved_name is @c NULL, malloc() is used to allocate a
+ * buffer of sufficient length to hold the path name. In that case, it
+ * is the responsability of the caller to free this buffer with free().
+ *
+ * That function can be used to obtain the absolute path name for
+ * relative paths (relPath) that include "./" or "../" in their names.
+ *
+ * Conformity: None.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI char *realpath(const char *file_name, char *resolved_name);
 
-EAPI char *evil_tmpdir_get(void);
+/**
+ * @brief Initiates the use of Windows sockets.
+ *
+ * @return 1 on success, 0 otherwise.
+ *
+ * Initiates the use of Windows sockets. If the function succeeds,
+ * it returns 1, otherwise it return 0.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI int evil_sockets_init(void);
+
+/**
+ * @brief Shutdown the Windows socket system.
+ *
+ * Shutdown the Windows socket system.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI void evil_sockets_shutdown(void);
+
+/**
+ * @brief Return a dir to store temporary files.
+ *
+ * @return The directory to store temporary files.
+ *
+ * Return a directory to store temporary files. The function gets
+ * the value of the followig environment variables, and in that order:
+ * - TMP
+ * - TEMP
+ * - USERPROFILE
+ * - WINDIR
+ * and returns its value if it exists. If none exists, the function
+ * returns "C:\".
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI const char *evil_tmpdir_get(void);
 
 
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef _WIN32
+# undef EAPI
+# define EAPI
+#endif /* _WIN32 */
 
 #endif /* __E_WIN32_H__ */

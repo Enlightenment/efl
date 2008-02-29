@@ -9,46 +9,44 @@
 
 
 int
-main()
+main(int argc, char *argv[])
 {
-   struct timeval tv;
-   void          *module;
-   double         t1 = 0.0;
-   double         t2 = 0.0;
+   void *module;
+   void *symbol;
 
-   int (*time)(struct timeval *tv, void *tz);
+   if (argc < 3)
+     {
+        printf ("Usage: %s file.dll symbol\n\n", argv[0]);
+        return EXIT_FAILURE;
+     }
 
-   module = dlopen("d:\\msys\\1.0\\local\\bin\\libevil-0.dll", 0);
+   printf ("opening module %s\n", argv[1]);
+   module = dlopen(argv[1], 0);
    if (!module)
      {
         printf ("%s\n", dlerror());
         return EXIT_FAILURE;
      }
+   printf ("opening module %s successful\n", argv[1]);
 
-   time = dlsym(module, "gettimeofday");
-   if (!time)
+   printf ("getting symbol %s\n", argv[2]);
+   symbol = dlsym(module, argv[2]);
+   if (!symbol)
      {
         printf ("%s\n", dlerror());
         if (dlclose(module))
           printf ("%s\n", dlerror());
         return EXIT_FAILURE;
      }
+   printf ("getting symbol %s successful\n", argv[2]);
 
-   if (time(&tv, NULL) == 0)
-     t1 = tv.tv_sec + tv.tv_usec / 1000000.0;
-
-   Sleep(3000);
-
-   if (time(&tv, NULL) == 0)
-     t2 = tv.tv_sec + tv.tv_usec / 1000000.0;
-
-   printf ("3 seconds ? %f\n", t2 - t1);
-
+   printf ("closing module %s\n", argv[1]);
    if (dlclose(module))
      {
         printf ("%s\n", dlerror());
         return EXIT_FAILURE;
      }
+   printf ("closing module %s successful\n", argv[1]);
 
    return EXIT_SUCCESS;
 }
