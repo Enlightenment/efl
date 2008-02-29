@@ -1387,11 +1387,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	p3.req.w = INTP(p1.req.w, p2.req.w, pos);
 	p3.req.h = INTP(p1.req.h, p2.req.h, pos);
 
-	/* FIXME: detect when we do not have dragable set. */
-	p3.req_drag.x = INTP(p1.req_drag.x, p2.req_drag.x, pos);
-	p3.req_drag.y = INTP(p1.req_drag.y, p2.req_drag.y, pos);
-	p3.req_drag.w = INTP(p1.req_drag.w, p2.req_drag.w, pos);
-	p3.req_drag.h = INTP(p1.req_drag.h, p2.req_drag.h, pos);
+	if (ep->part->dragable.x)
+	  {
+	     p3.req_drag.x = INTP(p1.req_drag.x, p2.req_drag.x, pos);
+	     p3.req_drag.w = INTP(p1.req_drag.w, p2.req_drag.w, pos);
+	  }
+	if (ep->part->dragable.y)
+	  {
+	     p3.req_drag.y = INTP(p1.req_drag.y, p2.req_drag.y, pos);
+	     p3.req_drag.h = INTP(p1.req_drag.h, p2.req_drag.h, pos);
+	  }
 
 	p3.color.r = INTP(p1.color.r, p2.color.r, pos);
 	p3.color.g = INTP(p1.color.g, p2.color.g, pos);
