@@ -23,8 +23,8 @@ source_edd(void)
 					  (void  (*) (void *, int (*) (void *, const char *, void *, void *), void *))evas_hash_foreach,
 					  (void *(*) (void *, const char *, void *))evas_hash_add,
 					  (void  (*) (void *))evas_hash_free);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "file", file, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_INLINED_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "file", file, EET_T_INLINED_STRING);
    _srcfile_list_edd = eet_data_descriptor_new("srcfile_list", sizeof(SrcFile_List),
 					       (void *(*) (void *))evas_list_next,
 					       (void *(*) (void *, void *))evas_list_append,
@@ -43,8 +43,8 @@ source_edd(void)
 				       (void  (*) (void *, int (*) (void *, const char *, void *, void *), void *))evas_hash_foreach,
 				       (void *(*) (void *, const char *, void *))evas_hash_add,
 				       (void  (*) (void *))evas_hash_free);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "file", file, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "file", file, EET_T_INLINED_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "name", name, EET_T_INLINED_STRING);
    _font_list_edd = eet_data_descriptor_new("font_list", sizeof(Font_List),
 					    (void *(*) (void *))evas_list_next,
 					    (void *(*) (void *, void *))evas_list_append,

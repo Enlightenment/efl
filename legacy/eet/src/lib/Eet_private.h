@@ -51,6 +51,51 @@ void *alloca (size_t);
 # endif
 #endif
 
+typedef struct _Eet_String              Eet_String;
+
+struct _Eet_String
+{
+  const char            *mmap;
+  char                  *str;
+
+  struct
+  {
+    unsigned int         converted : 1;
+    unsigned int         is_float : 1;
+  } flags;
+  union
+  {
+    float                f;
+    double               d;
+  } convert;
+
+  int                    hash;
+  int                    len;
+
+  int                    next;
+  int                    prev;
+};
+struct _Eet_Dictionary
+{
+  Eet_String   *all;
+
+  int           size;
+  int           offset;
+
+  int           hash[256];
+
+  int           count;
+  int           total;
+};
+
+Eet_Dictionary  *eet_dictionary_add(void);
+void             eet_dictionary_free(Eet_Dictionary *ed);
+int              eet_dictionary_string_add(Eet_Dictionary *ed, const char *string);
+int              eet_dictionary_string_get_size(const Eet_Dictionary *ed, int index);
+const char      *eet_dictionary_string_get_char(const Eet_Dictionary *ed, int index);
+int              eet_dictionary_string_get_float(const Eet_Dictionary *ed, int index, float *result);
+int              eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *result);
+
 FILE *_eet_memfile_read_open(const void *data, size_t size);
 void  _eet_memfile_read_close(FILE *f);
 FILE *_eet_memfile_write_open(void **data, size_t *size);

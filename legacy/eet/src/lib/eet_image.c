@@ -1,5 +1,5 @@
-#include "Eet_private.h"
 #include "Eet.h"
+#include "Eet_private.h"
 
 /*---*/
 
@@ -728,10 +728,11 @@ eet_data_image_read(Eet_File *ef, const char *name,
 		    unsigned int *w, unsigned int *h, int *alpha,
 		    int *compress, int *quality, int *lossy)
 {
-   void		*data;
-   int		size;
    unsigned int *d = NULL;
-   int		free_data = 0;
+   void		*data;
+   int		 size;
+   int		 free_data = 0;
+
 
    data = (void *)eet_read_direct(ef, name, &size);
    if (!data)

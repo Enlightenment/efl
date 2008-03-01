@@ -38,19 +38,20 @@ extern "C" {
 
 /***************************************************************************/
 
-#define EET_T_UNKNOW     0 /**< Unknown data encoding type */
-#define EET_T_CHAR       1 /**< Data type: char */
-#define EET_T_SHORT      2 /**< Data type: short */
-#define EET_T_INT        3 /**< Data type: int */
-#define EET_T_LONG_LONG  4 /**< Data type: long long */
-#define EET_T_FLOAT      5 /**< Data type: float */
-#define EET_T_DOUBLE     6 /**< Data type: double */
-#define EET_T_UCHAR      7 /**< Data type: unsigned char */
-#define EET_T_USHORT     8 /**< Data type: unsigned short */
-#define EET_T_UINT       9 /**< Data type: unsigned int */
-#define EET_T_ULONG_LONG 10 /**< Data type: unsigned long long */
-#define EET_T_STRING     11 /**< Data type: char * */
-#define EET_T_LAST       12 /**< Last data type */
+#define EET_T_UNKNOW            0 /**< Unknown data encoding type */
+#define EET_T_CHAR              1 /**< Data type: char */
+#define EET_T_SHORT             2 /**< Data type: short */
+#define EET_T_INT               3 /**< Data type: int */
+#define EET_T_LONG_LONG         4 /**< Data type: long long */
+#define EET_T_FLOAT             5 /**< Data type: float */
+#define EET_T_DOUBLE            6 /**< Data type: double */
+#define EET_T_UCHAR             7 /**< Data type: unsigned char */
+#define EET_T_USHORT            8 /**< Data type: unsigned short */
+#define EET_T_UINT              9 /**< Data type: unsigned int */
+#define EET_T_ULONG_LONG        10 /**< Data type: unsigned long long */
+#define EET_T_STRING            11 /**< Data type: char * */
+#define EET_T_INLINED_STRING    12 /**< Data type: char * (but compressed inside the resulting eet) */
+#define EET_T_LAST              13 /**< Last data type */
 
 #define EET_G_UNKNOWN    100 /**< Unknown group data encoding type */
 #define EET_G_ARRAY      101 /**< Fixed size array group type */
@@ -84,11 +85,12 @@ extern "C" {
      } Eet_Error;
 
    typedef struct _Eet_File                  Eet_File;
+   typedef struct _Eet_Dictionary            Eet_Dictionary;
    typedef struct _Eet_Data_Descriptor       Eet_Data_Descriptor;
 
    typedef struct _Eet_Data_Descriptor_Class Eet_Data_Descriptor_Class;
 
-#define EET_DATA_DESCRIPTOR_CLASS_VERSION 1
+#define EET_DATA_DESCRIPTOR_CLASS_VERSION 2
    struct _Eet_Data_Descriptor_Class
      {
 	int         version;
@@ -97,7 +99,7 @@ extern "C" {
 	struct {
 	   void   *(*mem_alloc) (size_t size);
 	   void    (*mem_free) (void *mem);
-	   char   *(*str_alloc) (const char *str);
+           char   *(*str_alloc) (const char *str);
 	   void    (*str_free) (const char *str);
 	   void   *(*list_next) (void *l);
 	   void   *(*list_append) (void *l, void *d);
@@ -106,6 +108,8 @@ extern "C" {
 	   void    (*hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt);
 	   void   *(*hash_add) (void *h, const char *k, void *d);
 	   void    (*hash_free) (void *h);
+           char   *(*str_direct_alloc) (const char *str);
+           void    (*str_direct_free) (const char *str);
 	} func;
      };
 
@@ -215,6 +219,9 @@ extern "C" {
     * If the eet file handle is not valid nothing will be done.
     */
    EAPI Eet_Error eet_close(Eet_File *ef);
+
+   /* FIXME: Add some documentation */
+   EAPI Eet_Dictionary* eet_dictionary_get(Eet_File *ef);
 
    /**
     * Read a specified entry from an eet file and return data
@@ -667,12 +674,6 @@ extern "C" {
     *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
     *
     *    data = eet_data_descriptor_encode(edd, &blah, &size);
-    *    f = fopen("out", "w");
-    *    if (f)
-    *      {
-    *         fwrite(data, size, 1, f);
-    *         fclose(f);
-    *      }
     *    printf("-----DECODING\n");
     *    blah_in = eet_data_descriptor_decode(edd, data, size);
     *
@@ -716,6 +717,7 @@ extern "C" {
     * move happens - but be warned
     */
    EAPI Eet_Data_Descriptor *eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc);
+   EAPI Eet_Data_Descriptor *eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc);
 
    /**
     * This function frees a data descriptor when it is not needed anymore.

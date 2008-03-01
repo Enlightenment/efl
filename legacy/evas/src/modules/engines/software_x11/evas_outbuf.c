@@ -6,7 +6,8 @@
 
 static Evas_List *shmpool = NULL;
 static int shmsize = 0;
-
+static int shmmemlimit = 10 * 1024 * 1024;
+static int shmcountlimit = 32;
 static X_Output_Buffer *
 _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
 {
@@ -74,8 +75,8 @@ _unfind_xob(X_Output_Buffer *xob, int sync)
      {
 	shmpool = evas_list_prepend(shmpool, xob);
 	shmsize += xob->psize * xob->xim->depth / 8;
-	while ((shmsize > (1024 * 4096)) ||
-	       (evas_list_count(shmpool) > 32))
+	while ((shmsize > (shmmemlimit)) ||
+	       (evas_list_count(shmpool) > shmcountlimit))
 	  {
 	     Evas_List *xl;
 	     

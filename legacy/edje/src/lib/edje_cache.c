@@ -12,11 +12,11 @@ static Evas_List   *_edje_file_cache = NULL;
 static int          _edje_collection_cache_size = 16;
 
 static Edje_Part_Collection *
-_edje_file_coll_open(Edje_File *edf, Eet_File *ef, const char *coll)
+_edje_file_coll_open(Edje_File *edf, const char *coll)
 {
    Edje_Part_Collection *edc = NULL;
    Evas_List *l = NULL;
-   int id = -1, close_eet = 0, size = 0;
+   int id = -1, size = 0;
    char buf[256];
    void *data;
 
@@ -33,23 +33,12 @@ _edje_file_coll_open(Edje_File *edf, Eet_File *ef, const char *coll)
      }
    if (id < 0) return NULL;
 
-   if (!ef)
-     {
-	ef = eet_open(edf->path, EET_FILE_MODE_READ);
-	if (!ef) return NULL;
-	close_eet = 1;
-     }
    snprintf(buf, sizeof(buf), "collections/%i", id);
-   edc = eet_data_read(ef, _edje_edd_edje_part_collection, buf);
-   if (!edc)
-     {
-	if (close_eet) eet_close(ef);
-	return NULL;
-     }
+   edc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
+   if (!edc) return NULL;
 
    snprintf(buf, sizeof(buf), "scripts/%i", id);
-   data = eet_read(ef, buf, &size);
-   if (close_eet) eet_close(ef);
+   data = eet_read(edf->ef, buf, &size);
 
    if (data)
      {
@@ -83,7 +72,8 @@ _edje_font_hash(Edje_File *edf)
 
 	     snprintf(tmp, length, "fonts/%s", fnt->entry);
 	     fnt->path = evas_stringshare_add(tmp);
-	     evas_stringshare_del(fnt->entry);
+             if (edf->free_strings)
+               evas_stringshare_del(fnt->entry);
 	     fnt->entry = fnt->path + 6;
 	     edf->font_hash = evas_hash_direct_add(edf->font_hash, fnt->entry, fnt);
 
@@ -121,18 +111,21 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 	eet_close(ef);
 	return NULL;
      }
+
+   edf->free_strings = eet_dictionary_get(ef) ? 0 : 1;
+
+   edf->ef = ef;
+
    if (edf->version != EDJE_FILE_VERSION)
      {
 	*error_ret = EDJE_LOAD_ERROR_INCOMPATIBLE_FILE;
 	_edje_file_free(edf);
-	eet_close(ef);
 	return NULL;
      }
    if (!edf->collection_dir)
      {
 	*error_ret = EDJE_LOAD_ERROR_CORRUPT_FILE;
 	_edje_file_free(edf);
-	eet_close(ef);
 	return NULL;
      }
 
@@ -151,7 +144,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 
    if (coll)
      {
-	edc = _edje_file_coll_open(edf, ef, coll);
+	edc = _edje_file_coll_open(edf, coll);
 	if (!edc)
 	  {
 	     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
@@ -162,8 +155,6 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    edf->font_hash = NULL;
 
    _edje_font_hash(edf);
-
-   eet_close(ef);
 
    return edf;
 }
@@ -227,7 +218,7 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
      }
    if (!edc)
      {
-	edc = _edje_file_coll_open(edf, NULL, coll);
+	edc = _edje_file_coll_open(edf, coll);
 	if (!edc)
 	  {
 	     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;

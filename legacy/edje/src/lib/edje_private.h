@@ -294,6 +294,10 @@ struct _Edje_File
    Evas_Hash			  *font_hash;
    Evas_List                      *collection_cache;
    Evas_Hash                      *data_cache;
+
+   Eet_File                       *ef;
+
+   unsigned int                    free_strings : 1;
 };
 
 struct _Edje_Style

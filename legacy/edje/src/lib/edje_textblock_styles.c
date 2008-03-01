@@ -410,7 +410,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	     /* Add and Handle tag parsed data */
 	     if (ts)
 	       {
-		  evas_stringshare_del(tag->value);
+                  /* FIXME: How to know if the previous value was a stringshare */
+/* 		  evas_stringshare_del(tag->value); */
 		  tag->value = evas_stringshare_add(ts);
 		  buf = _edje_strbuf_append(buf, tag->value, &buflen, &bufalloc);
 		  free(ts);
@@ -476,13 +477,17 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 
 	     tag = stl->tags->data;
 	     stl->tags = evas_list_remove_list(stl->tags, stl->tags);
-	     if (tag->key) evas_stringshare_del(tag->key);
-	     if (tag->value) evas_stringshare_del(tag->value);
-	     if (tag->text_class) evas_stringshare_del(tag->text_class);
-	     if (tag->font) evas_stringshare_del(tag->font);
-	     free(tag);
+             if (edf->free_strings)
+               {
+                  if (tag->key) evas_stringshare_del(tag->key);
+/*                FIXME: Find a proper way to handle it. */
+                  if (tag->value) evas_stringshare_del(tag->value);
+                  if (tag->text_class) evas_stringshare_del(tag->text_class);
+                  if (tag->font) evas_stringshare_del(tag->font);
+               }
+             free(tag);
 	  }
-	if (stl->name) evas_stringshare_del(stl->name);
+        if (edf->free_strings && stl->name) evas_stringshare_del(stl->name);
 	if (stl->style) evas_textblock_style_free(stl->style);
 	free(stl);
      }

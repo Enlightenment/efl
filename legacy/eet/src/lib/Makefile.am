@@ -15,6 +15,7 @@ eet_lib.c \
 eet_data.c \
 eet_image.c \
 eet_memfile.c \
+eet_dictionary.c \
 eet_utils.c \
 Eet_private.h
 

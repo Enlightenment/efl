@@ -1,5 +1,7 @@
-#include "Eet_private.h"
+#define _GNU_SOURCE
+
 #include "Eet.h"
+#include "Eet_private.h"
 
 FILE *
 _eet_memfile_read_open(const void *data, size_t size)
