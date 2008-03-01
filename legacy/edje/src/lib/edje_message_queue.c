@@ -98,13 +98,13 @@ _edje_dummy_timer(void *data)
 static void
 _edje_job(void *data)
 {
-   job = NULL;
    if (job_loss_timer)
      {
 	ecore_timer_del(job_loss_timer);
 	job_loss_timer = NULL;
      }
    _edje_message_queue_process();
+   job = NULL;
 }
 
 static int
@@ -620,7 +620,9 @@ _edje_message_queue_process(void)
    /* if the message queue filled again set a timer to expire in 0.0 sec */
    /* to get the idle enterer to be run again */
    if (msgq)
-     ecore_timer_add(0.0, _edje_dummy_timer, NULL);
+     {
+	ecore_timer_add(0.0, _edje_dummy_timer, NULL);
+     }
 }
 
 void
