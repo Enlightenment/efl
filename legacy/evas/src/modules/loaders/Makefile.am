@@ -32,4 +32,9 @@ if BUILD_LOADER_SVG
 svg_subdir = svg
 endif
 
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir) $(xpm_subdir) $(svg_subdir)
+if BUILD_LOADER_PMAPS
+pmaps_subdir = pmaps
+endif
+
+
+SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir) $(xpm_subdir) $(svg_subdir) $(pmaps_subdir)

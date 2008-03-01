@@ -1055,6 +1055,22 @@ fi
 
 AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
 
+#######################################
+## PMAPS
+have_pmaps="yes";
+AC_MSG_CHECKING(whether to enable pmaps image loader)
+AC_ARG_ENABLE(image-loader-pmaps,
+  AC_HELP_STRING([--disable-image-loader-pmaps], [disable PMAPS image loader]),
+  [ have_pmaps=$enableval ]
+)
+AC_MSG_RESULT($have_pmaps)
+
+pmaps_cflags=""
+pmaps_libs=""
+
+AM_CONDITIONAL(BUILD_LOADER_PMAPS, test x$have_pmaps = xyes)
+
+
 #####################################################################
 ## Cpu based optimizations
 
@@ -1520,6 +1536,8 @@ AC_SUBST(xpm_cflags)
 AC_SUBST(xpm_libs)
 AC_SUBST(svg_cflags)
 AC_SUBST(svg_libs)
+AC_SUBST(pmaps_cflags)
+AC_SUBST(pmaps_libs)
 AC_SUBST(altivec_cflags)
 AC_SUBST(pthread_cflags)
 AC_SUBST(pthread_libs)
@@ -1595,6 +1613,7 @@ src/modules/loaders/png/Makefile
 src/modules/loaders/tiff/Makefile
 src/modules/loaders/xpm/Makefile
 src/modules/loaders/svg/Makefile
+src/modules/loaders/pmaps/Makefile
 src/modules/savers/Makefile
 src/modules/savers/edb/Makefile
 src/modules/savers/eet/Makefile
@@ -1648,6 +1667,7 @@ echo "  EDB.....................: $have_edb_image_loader"
 echo "  TIFF....................: $have_tiff"
 echo "  XPM.....................: $have_xpm"
 echo "  SVG.....................: $have_svg"
+echo "  PMAPS...................: $have_pmaps"
 # FIXME: need to add modular image loader system
 # FIXME: add more image loader modules
 echo

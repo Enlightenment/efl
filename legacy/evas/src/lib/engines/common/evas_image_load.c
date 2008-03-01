@@ -22,7 +22,11 @@ static struct ext_loader_s	loaders[] = {
    { "tif", "tiff" },
    { "svg", "svg" },
    { "svgz", "svg" },
-   { "gif", "gif" }
+   { "gif", "gif" },
+   { "pbm", "pmaps" },
+   { "pgm", "pmaps" },
+   { "ppm", "pmaps" },
+   { "pnm", "pmaps" }
 };
 
 EAPI int
