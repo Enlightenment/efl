@@ -642,11 +642,6 @@ _edje_file_del(Edje *ed)
 	_edje_cache_coll_unref(ed->file, ed->collection);
 	ed->collection = NULL;
      }
-   if (ed->file)
-     {
-	_edje_cache_file_unref(ed->file);
-	ed->file = NULL;
-     }
    if (ed->table_parts)
      {
 	int i;
@@ -690,6 +685,11 @@ _edje_file_del(Edje *ed)
 	     _edje_unref(rp->edje);
 	     free(rp);
 	  }
+     }
+   if (ed->file)
+     {
+	_edje_cache_file_unref(ed->file);
+	ed->file = NULL;
      }
    if (ed->actions)
      {
