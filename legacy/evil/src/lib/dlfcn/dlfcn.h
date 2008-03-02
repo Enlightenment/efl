@@ -1,5 +1,5 @@
-#ifndef __E_WIN32_DLFCN_H__
-#define __E_WIN32_DLFCN_H__
+#ifndef __EVIL_DLFCN_H__
+#define __EVIL_DLFCN_H__
 
 #ifdef EAPI
 # undef EAPI
@@ -190,4 +190,4 @@ EAPI char *dlerror (void);
 # define EAPI
 #endif /* _WIN32 */
 
-#endif /* __E_WIN32_DLFCN_H__ */
+#endif /* __EVIL_DLFCN_H__ */

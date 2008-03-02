@@ -1,5 +1,5 @@
-#ifndef __E_WIN32_H__
-#define __E_WIN32_H__
+#ifndef __EVIL_H__
+#define __EVIL_H__
 
 #ifdef EAPI
 # undef EAPI
@@ -377,4 +377,4 @@ EAPI const char *evil_tmpdir_get(void);
 # define EAPI
 #endif /* _WIN32 */
 
-#endif /* __E_WIN32_H__ */
+#endif /* __EVIL_H__ */
