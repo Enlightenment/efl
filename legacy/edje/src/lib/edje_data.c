@@ -60,16 +60,14 @@ _edje_edd_free(void)
 }
 
 static char *
-_edge_str_direct_alloc(const char *str)
+_edje_str_direct_alloc(const char *str)
 {
-   
-   return (char *) str;
+   return (char *)str;
 }
 
 static void
 _edje_str_direct_free(const char *str)
 {
-   (void) str;
 }
 
 void
@@ -89,7 +87,7 @@ _edje_edd_setup(void)
    eddc.func.hash_foreach = evas_hash_foreach;
    eddc.func.hash_add = evas_hash_add;
    eddc.func.hash_free = evas_hash_free;
-   eddc.func.str_direct_alloc = _edge_str_direct_alloc;
+   eddc.func.str_direct_alloc = _edje_str_direct_alloc;
    eddc.func.str_direct_free = _edje_str_direct_free;
 
    /* font directory */

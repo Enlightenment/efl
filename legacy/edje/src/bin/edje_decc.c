@@ -85,6 +85,9 @@ symlink (const char *oldpath, const char *newpath)
 }
 #endif /* _WIN32 */
 
+Eet_File *ef;
+Eet_Dictionary *ed;
+
 int
 main(int argc, char **argv)
 {
@@ -117,6 +120,7 @@ main(int argc, char **argv)
    if (!decomp()) return -1;
    output();
 
+   eet_close(ef);
    eet_shutdown();
    return 0;
 }
@@ -124,7 +128,6 @@ main(int argc, char **argv)
 int
 decomp(void)
 {
-   Eet_File *ef;
    ef = eet_open(file_in, EET_FILE_MODE_READ);
    if (!ef)
      {
@@ -163,7 +166,6 @@ decomp(void)
 	return 0;
      }
    fontlist = source_fontmap_load(ef);
-   eet_close(ef);
    return 1;
 }
 
