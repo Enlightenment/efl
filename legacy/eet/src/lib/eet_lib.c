@@ -668,7 +668,9 @@ eet_clearcache(void)
 	  }
 
 	for (i = 0; i < num; i++)
-	  eet_close(closelist[i]);
+	  {
+	     eet_close(closelist[i]);
+	  }
      }
 }
 
@@ -1134,6 +1136,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    if (ef && (file_stat.st_mtime != ef->mtime))
      {
 	ef->delete_me_now = 1;
+	ef->references++;
 	eet_close(ef);
 	ef = NULL;
      }
@@ -1235,11 +1238,13 @@ eet_open(const char *file, Eet_File_Mode mode)
         if (ef->ed)
           {
              for (i = 0; i < ef->ed->count; ++i)
-               if (ef->ed->all[i].mmap)
-                 {
-                    ef->ed->all[i].str = strdup(ef->ed->all[i].mmap);
-                    ef->ed->all[i].mmap = NULL;
-                 }
+	       {
+		  if (ef->ed->all[i].mmap)
+		    {
+		       ef->ed->all[i].str = strdup(ef->ed->all[i].mmap);
+		       ef->ed->all[i].mmap = NULL;
+		    }
+	       }
           }
 
 	fclose(ef->fp);
