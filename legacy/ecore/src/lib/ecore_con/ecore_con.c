@@ -199,7 +199,12 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	  {
 	     mask = 0;
 	     if (name[0] == '/')
-	       snprintf(buf, sizeof(buf), "%s|%i", name, port);
+	       {
+		  if (port >= 0)
+		    snprintf(buf, sizeof(buf), "%s|%i", name, port);
+		  else
+		    snprintf(buf, sizeof(buf), "%s", name);
+	       }
 	     else
 	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
 	  }
