@@ -240,7 +240,8 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
 	struct stat st;
 	struct dirent *d;
 
-	stat(path, &st);
+	if (stat(path, &st) < 0)
+	  continue;
 
 	if (!S_ISDIR(st.st_mode))
 	  continue;
