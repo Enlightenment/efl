@@ -703,7 +703,7 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
    return d;
 }
 
-EAPI int
+EAPI_DEF int
 eet_data_image_write(Eet_File *ef, const char *name,
 		     const void *data, unsigned int w, unsigned int h, int alpha,
 		     int compress, int quality, int lossy)
@@ -723,7 +723,7 @@ eet_data_image_write(Eet_File *ef, const char *name,
    return 0;
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_data_image_read(Eet_File *ef, const char *name,
 		    unsigned int *w, unsigned int *h, int *alpha,
 		    int *compress, int *quality, int *lossy)
@@ -750,7 +750,7 @@ eet_data_image_read(Eet_File *ef, const char *name,
    return d;
 }
 
-EAPI int
+EAPI_DEF int
 eet_data_image_header_read(Eet_File *ef, const char *name,
 			   unsigned int *w, unsigned int *h, int *alpha,
 			   int *compress, int *quality, int *lossy)
@@ -775,7 +775,7 @@ eet_data_image_header_read(Eet_File *ef, const char *name,
    return d;
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy)
 {
    void *d = NULL;
@@ -799,7 +799,7 @@ eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned 
    return d;
 }
 
-EAPI int
+EAPI_DEF int
 eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
 {
    int header[8];
@@ -883,7 +883,7 @@ eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsign
    return 0;
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_data_image_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
 {
    unsigned int *d = NULL;

@@ -6,9 +6,7 @@
 #include "Eet_private.h"
 
 #include <sys/types.h>
-#ifdef HAVE_SYS_MMAN_H
-# include <sys/mman.h>
-#endif
+#include <sys/mman.h>
 
 #ifdef HAVE_REALPATH
 #undef HAVE_REALPATH
@@ -601,13 +599,13 @@ write_error:
    return EET_ERROR_WRITE_ERROR;
 }
 
-EAPI int
+EAPI_DEF int
 eet_init(void)
 {
    return ++eet_initcount;
 }
 
-EAPI int
+EAPI_DEF int
 eet_shutdown(void)
 {
    if (--eet_initcount == 0)
@@ -619,7 +617,7 @@ eet_shutdown(void)
    return eet_initcount;
 }
 
-EAPI void
+EAPI_DEF void
 eet_clearcache(void)
 {
    int	num = 0;
@@ -1040,7 +1038,7 @@ eet_internal_read(Eet_File *ef)
    return NULL;
 }
 
-EAPI Eet_File *
+EAPI_DEF Eet_File *
 eet_memopen_read(const void *data, size_t size)
 {
    Eet_File	*ef;
@@ -1067,16 +1065,12 @@ eet_memopen_read(const void *data, size_t size)
    return eet_internal_read(ef);
 }
 
-EAPI Eet_File *
+EAPI_DEF Eet_File *
 eet_open(const char *file, Eet_File_Mode mode)
 {
    FILE         *fp;
    Eet_File	*ef;
    struct stat	 file_stat;
-
-#ifdef _WIN32
-   HANDLE        h;
-#endif
 
    if (!file)
      return NULL;
@@ -1174,42 +1168,13 @@ eet_open(const char *file, Eet_File_Mode mode)
    if (eet_test_close(!ef->fp, ef))
      return NULL;
 
-#ifndef _WIN32
    fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
-#else
-   /* FIXME: check if that code is needed / correct */
-   h = (HANDLE) _get_osfhandle(fileno(ef->fp));
-   if (h == INVALID_HANDLE_VALUE)
-     return NULL;
-   if (!SetHandleInformation(h, HANDLE_FLAG_INHERIT, 0))
-     return NULL;
-#endif
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
-#ifdef _WIN32
-	HANDLE                  fm;
-#endif
-
-
 	ef->data_size = file_stat.st_size;
-#ifndef _WIN32
 	ef->data = mmap(NULL, ef->data_size, PROT_READ,
 			MAP_SHARED, fileno(ef->fp), 0);
-#else
-	fm = CreateFileMapping((HANDLE) _get_osfhandle (fileno(ef->fp)),
-			       NULL,
-			       PAGE_READONLY,
-			       0,
-			       0,
-			       NULL);
-	ef->data = MapViewOfFile(fm,
-				 FILE_MAP_READ,
-				 0,
-				 0,
-				 ef->data_size);
-	CloseHandle(fm);
-#endif
 
 	ef = eet_internal_read(ef);
 	if (!ef)
@@ -1265,7 +1230,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    return ef;
 }
 
-EAPI Eet_File_Mode
+EAPI_DEF Eet_File_Mode
 eet_mode_get(Eet_File *ef)
 {
    /* check to see its' an eet file pointer */
@@ -1275,7 +1240,7 @@ eet_mode_get(Eet_File *ef)
      return ef->mode;
 }
 
-EAPI Eet_Error
+EAPI_DEF Eet_Error
 eet_close(Eet_File *ef)
 {
    Eet_Error err;
@@ -1336,11 +1301,7 @@ eet_close(Eet_File *ef)
 
    eet_dictionary_free(ef->ed);
 
-#ifndef _WIN32
    if (ef->data) munmap((void*)ef->data, ef->data_size);
-#else
-   if (ef->data) UnmapViewOfFile (ef->data);
-#endif
 
    if (ef->fp) fclose(ef->fp);
 
@@ -1352,7 +1313,7 @@ eet_close(Eet_File *ef)
    return err;
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_read(Eet_File *ef, const char *name, int *size_ret)
 {
    void			*data = NULL;
@@ -1451,7 +1412,7 @@ eet_read(Eet_File *ef, const char *name, int *size_ret)
    return data;
 }
 
-EAPI const void *
+EAPI_DEF const void *
 eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
 {
    const void	*data = NULL;
@@ -1496,7 +1457,7 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    return data;
 }
 
-EAPI int
+EAPI_DEF int
 eet_write(Eet_File *ef, const char *name, const void *data, int size, int compress)
 {
    Eet_File_Node	*efn;
@@ -1617,7 +1578,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
    return data_size;
 }
 
-EAPI int
+EAPI_DEF int
 eet_delete(Eet_File *ef, const char *name)
 {
    Eet_File_Node	*efn;
@@ -1671,7 +1632,7 @@ eet_delete(Eet_File *ef, const char *name)
    return exists_already;
 }
 
-EAPI Eet_Dictionary*
+EAPI_DEF Eet_Dictionary*
 eet_dictionary_get(Eet_File *ef)
 {
    if (eet_check_pointer(ef)) return NULL;
@@ -1680,7 +1641,7 @@ eet_dictionary_get(Eet_File *ef)
 }
 
 
-EAPI char **
+EAPI_DEF char **
 eet_list(Eet_File *ef, const char *glob, int *count_ret)
 {
    Eet_File_Node	*efn;
@@ -1748,7 +1709,7 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
    return list_ret;
 }
 
-EAPI int
+EAPI_DEF int
 eet_num_entries(Eet_File *ef)
 {
    int i, num, ret = 0;

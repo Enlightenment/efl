@@ -6,7 +6,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EVIL_CFLAGS@
 
 lib_LTLIBRARIES      = libeet.la
 include_HEADERS      = Eet.h
@@ -19,6 +20,6 @@ eet_dictionary.c \
 eet_utils.c \
 Eet_private.h
 
-libeet_la_LIBADD       = -lz -ljpeg @fnmatch_libs@ @winsock_libs@ -lm
+libeet_la_LIBADD       = @EVIL_LIBS@ -lz -ljpeg @fnmatch_libs@ @win32_libs@ -lm
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h
 libeet_la_LDFLAGS      = @create_shared_lib@ -version-info @version_info@

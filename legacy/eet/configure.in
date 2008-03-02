@@ -30,22 +30,23 @@ AC_SUBST(version_info)
 
 AC_FUNC_ALLOCA
 
-AC_CHECK_HEADER(zlib.h,, AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
-AC_CHECK_HEADER(jpeglib.h,, AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
-
-AC_CHECK_HEADERS_ONCE(netinet/in.h sys/mman.h windows.h winsock2.h)
-
-winsock_libs=""
+win32_libs=""
 create_shared_lib=""
 case "$host_os" in
 	mingw|mingw32)
-		winsock_libs="-lwsock32"
+		PKG_CHECK_MODULES([EVIL], [evil])
+		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+		win32_libs="-lws2_32"
 		create_shared_lib="-no-undefined "
 		;;
 esac
-
-AC_SUBST(winsock_libs)
+AC_SUBST(win32_libs)
 AC_SUBST(create_shared_lib)
+
+AC_CHECK_HEADER(zlib.h,, AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
+AC_CHECK_HEADER(jpeglib.h,, AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
+
+AC_CHECK_HEADERS(netinet/in.h)
 
 AC_CHECK_HEADER(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file]))
 

@@ -6,12 +6,13 @@
 #ifdef EAPI
 #undef EAPI
 #endif
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
+#ifdef _WIN32
+# ifdef DLL_EXPORT
 #  define EAPI __declspec(dllexport)
 # else
 #  define EAPI __declspec(dllimport)
 # endif
+# define EAPI_DEF
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -22,6 +23,7 @@
 # else
 #  define EAPI
 # endif
+# define EAPI_DEF EAPI
 #endif
 
 #ifdef __cplusplus

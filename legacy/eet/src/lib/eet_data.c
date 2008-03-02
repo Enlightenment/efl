@@ -878,7 +878,7 @@ _eet_str_free(const char *str)
 
 /*---*/
 
-EAPI Eet_Data_Descriptor *
+EAPI_DEF Eet_Data_Descriptor *
 eet_data_descriptor_new(const char *name,
 			int size,
 			void *(*func_list_next) (void *l),
@@ -914,7 +914,7 @@ eet_data_descriptor_new(const char *name,
 }
 
 /* new replcement */
-EAPI Eet_Data_Descriptor *
+EAPI_DEF Eet_Data_Descriptor *
 eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc)
 {
    Eet_Data_Descriptor *edd;
@@ -949,7 +949,7 @@ eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc)
    return edd;
 }
 
-EAPI Eet_Data_Descriptor *
+EAPI_DEF Eet_Data_Descriptor *
 eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc)
 {
    Eet_Data_Descriptor *edd;
@@ -988,7 +988,7 @@ eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc)
    return edd;
 }
 
-EAPI void
+EAPI_DEF void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
    _eet_descriptor_hash_free(edd);
@@ -996,7 +996,7 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
    free(edd);
 }
 
-EAPI void
+EAPI_DEF void
 eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, 
 				const char *name, int type,
 				int group_type,
@@ -1023,7 +1023,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede->subtype = subtype;
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
 {
    const Eet_Dictionary *ed = NULL;
@@ -1049,7 +1049,7 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name)
    return data_dec;
 }
 
-EAPI int
+EAPI_DEF int
 eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const void *data, int compress)
 {
    Eet_Dictionary       *ed;
@@ -2457,7 +2457,7 @@ error:
    return NULL;
 }
 
-EAPI int
+EAPI_DEF int
 eet_data_text_dump(const void *data_in,
 		   int size_in,
 		   void (*dumpfunc) (void *data, const char *str),
@@ -2469,7 +2469,7 @@ eet_data_text_dump(const void *data_in,
    return 0;
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_data_text_undump(const char *text,
 		     int textlen,
 		     int *size_ret)
@@ -2477,7 +2477,7 @@ eet_data_text_undump(const char *text,
    return _eet_data_dump_parse(NULL, size_ret, text, textlen);
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			   const void *data_in,
 			   int size_in)
@@ -2617,7 +2617,7 @@ _eet_data_descriptor_encode(Eet_Dictionary *ed,
    return cdata;
 }
 
-EAPI void *
+EAPI_DEF void *
 eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 			   const void *data_in,
 			   int *size_ret)

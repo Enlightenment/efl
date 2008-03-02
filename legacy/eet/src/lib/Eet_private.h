@@ -33,8 +33,9 @@ void *alloca (size_t);
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
-#ifdef HAVE_WINSOCK2_H
-# include <winsock2.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
 #endif
 
 #include <zlib.h>
