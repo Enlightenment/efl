@@ -430,8 +430,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	_edje_programs_patterns_init(ed);
 
 	n = evas_list_count(ed->collection->programs);
-        ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
-        ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
 	if (n > 0)
 	  {
 	     /* FIXME: keeping a table AND a list is just bad - nuke list */
