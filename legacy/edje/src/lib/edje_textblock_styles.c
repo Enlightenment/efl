@@ -133,6 +133,21 @@ _edje_strbuf_append(char *s, const char *s2, int *len, int *alloc)
 }
 
 static char *
+_edje_strbuf_append_escaped(char *s, const char *unescaped_s, int *len, int *alloc)
+{
+   char *tmp;
+
+   tmp = _edje_str_escape(unescaped_s);
+   if (!tmp)
+     return s;
+
+   s = _edje_strbuf_append(s, tmp, len, alloc);
+   free(tmp);
+
+   return s;
+}
+
+static char *
 _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 {
    char *s2;
@@ -297,12 +312,13 @@ _edje_textblock_style_all_update(Edje *ed)
 	     /* Add font name last to save evas from multiple loads */
 	     if (tag->font)
 	       {
+		  const char *f;
+
 		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
 		  buf = _edje_strbuf_append(buf, "font=", &buflen, &bufalloc);
-		  if (found)
-		    buf = _edje_strbuf_append(buf, tc->font, &buflen, &bufalloc);
-		  else
-		    buf = _edje_strbuf_append(buf, tag->font, &buflen, &bufalloc);
+
+		  f = (found) ? tc->font : tag->font;
+		  buf = _edje_strbuf_append_escaped(buf, f, &buflen, &bufalloc);
 	       }
 	     found = 0;
 
@@ -441,15 +457,9 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	     /* Add font name last to save evas from multiple loads */
 	     if (tag->font)
 	       {
-		  char *tmp;
 		  buf = _edje_strbuf_append(buf, " ", &buflen, &bufalloc);
 		  buf = _edje_strbuf_append(buf, "font=", &buflen, &bufalloc);
-		  tmp = _edje_str_escape(tag->font);
-		  if (tmp)
-		    {
-		       buf = _edje_strbuf_append(buf, tmp, &buflen, &bufalloc);
-		       free(tmp);
-		    }
+		  buf = _edje_strbuf_append_escaped(buf, tag->font, &buflen, &bufalloc);
 	       }
 	     buf = _edje_strbuf_append(buf, "'", &buflen, &bufalloc);
 	  }
