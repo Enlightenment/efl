@@ -1,3 +1,10 @@
+2008-03-03  Vincent Torri  <doursse at users dot sf dot net>
+
+	* COPYING:
+	* COPYING-PLAIN:
+	* Makefile.am:
+	update the COPYING file
+
 2008-02-29  Vincent Torri  <doursse at users dot sf dot net>
 
 	* AUTHORS:

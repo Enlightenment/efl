@@ -21,6 +21,8 @@ maintainer-clean-local:
 SUBDIRS = src
 
 EXTRA_DIST = \
+COPYING \
+COPYING-PLAIN \
 Doxyfile \
 evil.pc.in
 
