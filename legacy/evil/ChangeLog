@@ -1,3 +1,27 @@
+2008-03-05  Vincent Torri  <doursse at users dot sf dot net>
+
+	fix compilation with cegcc and minor fixing
+
+	* COPYING:
+	copyright update
+
+	* configure.ac:
+	* src/lib/Evil.h:
+	* src/lib/dlfcn/dlfcn.h:
+	* src/lib/mman/sys/mman.h:
+	define EFL_EVIL_BUILD in config.h for managing correctly EAPI
+
+	* src/bin/test_pipe.c:
+	stdio.h is needed after winsock2.h for mingw32ce
+
+	* src/lib/dlfcn/dlfcn.c (get_last_error), (dlopen), (dlsym):
+	* src/lib/evil.c:
+	fix some heafer files inclusion on cegc platform.
+	first step of mingw32ce support
+
+	* src/lib/mman/mman.c:
+	define _get_osfhandle for mingw32ce
+
 2008-03-03  Vincent Torri  <doursse at users dot sf dot net>
 
 	* COPYING:

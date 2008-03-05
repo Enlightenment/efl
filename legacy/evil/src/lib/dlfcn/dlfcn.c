@@ -4,6 +4,10 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
+#ifdef __MINGW32CE__
+# include <limits.h>
+#endif /* __MINGW32CE__ */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -18,7 +22,7 @@
 static char *dl_err = NULL;
 static int dl_err_viewed = 0;
 
-#ifdef __CEGCC__
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
 
 static wchar_t *
 string_to_wchar(const char *text)
@@ -61,8 +65,7 @@ wchar_to_string(const wchar_t *text)
    return atext;
 }
 
-
-#endif /* __CEGCC__ */
+#endif /* __CEGCC__ || __MINGW32CE__ */
 
 static void
 get_last_error(char *desc)
@@ -79,11 +82,11 @@ get_last_error(char *desc)
                  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                  (LPTSTR)&str, 0, NULL);
 
-#ifdef __CEGCC__
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
    str2 = wchar_to_string(str);
 #else
    str2 = str;
-#endif /* __CEGCC__ */
+#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
 
    l1 = strlen(desc);
    l2 = strlen(str2);
@@ -139,7 +142,7 @@ dlopen(const char* path, int mode __UNUSED__)
              else
                new_path[i] = path[i];
           }
-#ifdef __CEGCC__
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
         {
            wchar_t *wpath;
 
@@ -151,7 +154,7 @@ dlopen(const char* path, int mode __UNUSED__)
 #else
         module = LoadLibraryEx(new_path, NULL,
                                LOAD_WITH_ALTERED_SEARCH_PATH);
-#endif /* __CEGCC__ */
+#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
         if (!module)
           get_last_error("LoadLibraryEx returned: ");
 
@@ -178,7 +181,7 @@ dlsym(void *handle, const char *symbol)
 {
    FARPROC fp;
 
-#ifdef __CEGCC__
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
    {
       wchar_t *wsymbol;
 
@@ -188,7 +191,7 @@ dlsym(void *handle, const char *symbol)
    }
 #else
    fp = GetProcAddress(handle, symbol);
-#endif /* __CEGCC__ */
+#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
    if (!fp)
      get_last_error("GetProcAddress returned: ");
 

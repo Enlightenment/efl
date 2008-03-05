@@ -20,10 +20,12 @@
 # define __UNUSED__
 #endif /* HAVE___ATTRIBUTE__ */
 
-#ifdef __CEGCC__
+#if defined(__CEGCC__)
 # define CreateFileMapping CreateFileMappingW
 # define _get_osfhandle get_osfhandle
-#endif /* __CEGCC__ */
+elif defined (__MINGW32CE__)
+# define _get_osfhandle(FILEDES) ((long)FILEDES)
+#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
 
 
 void *

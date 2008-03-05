@@ -6,11 +6,15 @@
 #endif /* EAPI */
 
 #ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+# ifdef EFL_EVIL_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_EVIL_BUILD */
 #endif /* _WIN32 */
 
 #ifdef __cplusplus

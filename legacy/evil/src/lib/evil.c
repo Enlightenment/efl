@@ -1,16 +1,20 @@
 #include <stdio.h>
 
+#define WIN32_LEAN_AND_MEAN
+#include <winsock2.h>
+#undef WIN32_LEAN_AND_MEAN
+
 #ifndef __CEGCC__
 # include <errno.h>
-# define WIN32_LEAN_AND_MEAN
-# include <winsock2.h>
-# undef WIN32_LEAN_AND_MEAN
 # include <sys/locking.h>
 # include <io.h>
 # include <share.h>
 # include <shlobj.h>
 # include <objidl.h>
-#endif /* ! __CEGCC__ */
+#else
+# include <sys/syslimits.h>
+#endif /* __CEGCC__ */
+
 #include <sys/types.h>
 #include <sys/timeb.h>
 #include <fcntl.h>
