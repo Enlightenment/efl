@@ -266,13 +266,13 @@ _strbuf_append(char *s, const char *s2, int *len, int *alloc)
 	int talloc;
 	  
 	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc + 1);
+	ts = realloc(s, talloc);
 	if (!ts) return s;
 	s = ts;
 	*alloc = talloc;
      }
    strcpy(s + *len, s2);
-   *len = tlen;
+   *len += l2;
    return s;
 }
 
@@ -290,21 +290,21 @@ _strbuf_append_n(char *s, char *s2, int n, int *len, int *alloc)
 	char *p;
 	for (p = s2; (l2 < n) && (*p != 0); p++, l2++);
      }
-   tlen = *len + l2;
+   tlen = *len + l2 + 1;
    if (tlen > *alloc)
      {
 	char *ts;
 	int talloc;
 	  
 	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc + 1);
+	ts = realloc(s, talloc);
 	if (!ts) return s;
 	s = ts;
 	*alloc = talloc;
      }
    strncpy(s + *len, s2, l2);
-   *len = tlen;
-   s[tlen] = 0;
+   *len += l2;
+   s[*len] = 0;
    return s;
 }
 
@@ -319,14 +319,14 @@ _strbuf_insert(char *s, char *s2, int pos, int *len, int *alloc)
    else if (pos < 0) pos = 0;
    else if (pos > *len) pos = *len;
    l2 = strlen(s2);
-   tlen = *len + l2;
+   tlen = *len + l2 + 1;
    if (tlen > *alloc)
      {
 	char *ts;
 	int talloc;
 	  
 	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc + 1);
+	ts = realloc(s, talloc);
 	if (!ts) return s;
 	s = ts;
 	*alloc = talloc;
@@ -335,8 +335,8 @@ _strbuf_insert(char *s, char *s2, int pos, int *len, int *alloc)
    strncpy(tbuf, s + pos, *len - pos);
    strncpy(s + pos, s2, l2);   
    strncpy(s + pos + l2, tbuf, *len - pos);
-   *len = tlen;
-   s[tlen] = 0;
+   *len += l2;
+   s[*len] = 0;
    return s;
 }
 
@@ -356,19 +356,20 @@ _strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
    tbuf = alloca(*len - p2 + 1);
    strcpy(tbuf, s + p2);
    strcpy(s + p, tbuf);
-   tlen = *len - (p2 - p);
+   tlen = *len - (p2 - p) + 1;
    if (tlen < ((*alloc >> 5) << 15))
      {
 	char *ts;
 	int talloc;
 	  
 	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc + 1);
+	ts = realloc(s, talloc);
 	if (!ts) return s;
 	s = ts;
 	*alloc = talloc;
      }
-   *len = tlen;
+   *len += (p2 - p);
+   s[*len] = 0;
    return s;
 }
 
