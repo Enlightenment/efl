@@ -48,6 +48,11 @@
  * FIXME: write detailed description
  */
 
+int ECORE_CON_EVENT_URL_DATA = 0;
+int ECORE_CON_EVENT_URL_COMPLETE = 0;
+int ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD = 0;
+int ECORE_CON_EVENT_URL_PROGRESS_UPLOAD = 0;
+
 #ifdef HAVE_CURL
 static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_url_perform(Ecore_Con_Url *url_con);
@@ -55,11 +60,6 @@ static size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, vo
 static int _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 static void _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
-
-int ECORE_CON_EVENT_URL_DATA = 0;
-int ECORE_CON_EVENT_URL_COMPLETE = 0;
-int ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD = 0;
-int ECORE_CON_EVENT_URL_PROGRESS_UPLOAD = 0;
 
 static CURLM *curlm = NULL;
 static Ecore_List *_url_con_list = NULL;
