@@ -1,5 +1,16 @@
 2008-03-05  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/Evil.h:
+	* src/lib/evil.c:
+	cegcc or mingwce32 does not like relative path,
+	so _fullpath or other similar function do not exist
+	on Winodws mobile.
+
+	* src/lib/mman/mman.c:
+	missing #
+
+2008-03-05  Vincent Torri  <doursse at users dot sf dot net>
+
 	fix compilation with cegcc and minor fixing
 
 	* COPYING:

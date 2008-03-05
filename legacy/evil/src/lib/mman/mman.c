@@ -23,7 +23,7 @@
 #if defined(__CEGCC__)
 # define CreateFileMapping CreateFileMappingW
 # define _get_osfhandle get_osfhandle
-elif defined (__MINGW32CE__)
+# elif defined (__MINGW32CE__)
 # define _get_osfhandle(FILEDES) ((long)FILEDES)
 #endif /* ! __CEGCC__ && ! __MINGW32CE__ */
 

@@ -291,8 +291,9 @@ EAPI int pipe(int *fds);
 # endif
 #endif
 
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
 /**
- * @brief Return aan absolute or full path name for a specified relative path name.
+ * @brief Return an absolute or full path name for a specified relative path name.
  *
  * @param file_name The absolute path name.
  * @param resolved_name The relative path name.
@@ -316,6 +317,7 @@ EAPI int pipe(int *fds);
  * @ingroup Evil
  */
 EAPI char *realpath(const char *file_name, char *resolved_name);
+#endif /* ! __CEGCC__  && ! __MINGW32CE__ */
 
 /**
  * @brief Initiates the use of Windows sockets.

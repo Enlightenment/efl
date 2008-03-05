@@ -1,8 +1,8 @@
-#include <stdio.h>
-
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
+
+#include <stdio.h>
 
 #ifndef __CEGCC__
 # include <errno.h>
@@ -345,11 +345,13 @@ pipe(int *fds)
 
 #endif /* ! __CEGCC__ */
 
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
 char *
 realpath(const char *file_name, char *resolved_name)
 {
   return _fullpath(resolved_name, file_name, PATH_MAX);
 }
+#endif /* ! __CEGCC__  && ! __MINGW32CE__ */
 
 int
 evil_sockets_init(void)
