@@ -1,0 +1,3386 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+/*
+ * TODO
+ * -----------------------------------------------------------------
+ * Modify edje so that also ebryo source is included in the eet file
+ * Write decompile info (print source) back to edje file
+ * Remove images/fonts
+ * Gradients
+ * Draggies
+ * 
+ */
+
+#include <locale.h>
+#include <errno.h>
+#include <Ecore_Evas.h>
+#include "Edje.h"
+#include "edje_private.h"
+#include "../bin/edje_cc.h"
+#include "Edje_Edit.h"
+
+#define MAX_PATH 4096
+
+/* Get ed(Edje*) from obj(Evas_Object*) */
+#define GET_ED_OR_RETURN(RET) \
+   Edje *ed; \
+   ed = _edje_fetch(obj); \
+   if (!ed) return RET;
+
+/* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
+#define GET_RP_OR_RETURN(RET) \
+   Edje *ed; \
+   Edje_Real_Part *rp; \
+   ed = _edje_fetch(obj); \
+   if (!ed) return RET; \
+   rp = _edje_real_part_get(ed, part); \
+   if (!rp) return RET;
+
+/* Get pd(Edje_Part_Description*) from obj(Evas_Object*), part(char*) and state (char*) */
+#define GET_PD_OR_RETURN(RET) \
+   Edje *ed; \
+   Edje_Part_Description *pd; \
+   ed = _edje_fetch(obj); \
+   if (!ed) return RET; \
+   pd = _edje_part_description_find_byname(ed, part, state); \
+   if (!pd) return RET;
+
+/* Get epr(Edje_Program*) from obj(Evas_Object*) and prog(char*)*/
+#define GET_EPR_OR_RETURN(RET) \
+   Edje_Program *epr; \
+   epr = _edje_program_get_byname(obj, prog); \
+   if (!epr) return RET;
+
+void *
+mem_alloc(size_t size)
+{
+   void *mem;
+   
+   mem = calloc(1, size);
+   if (mem) return mem;
+   fprintf(stderr, "Edje_Edit: Error. memory allocation of %i bytes failed. %s\n",
+           size, strerror(errno));
+   exit(-1);
+   return NULL;
+}
+
+char *
+mem_strdup(const char *s)
+{
+   void *str;
+   
+   str = strdup(s);
+   if (str) return str;
+   fprintf(stderr, "Edje_Edit: Error. memory allocation of %i bytes failed. %s."
+        "string being duplicated: \"%s\"\n", strlen(s) + 1, strerror(errno), s);
+   exit(-1);
+   return NULL;
+}
+
+
+/*************/
+/* INTERNALS */
+/*************/
+
+static Edje_Part_Description *
+_edje_part_description_find_byname(Edje *ed, const char *part, const char *state) //state include the value in the string (ex. "default 0.00")
+{
+   Edje_Real_Part *rp;
+   Edje_Part_Description *pd;
+   char *delim;
+   double value;
+   char *name;
+   
+   if (!ed || !part || !state) return NULL;
+   
+   rp = _edje_real_part_get(ed, part);
+   if (!rp) return NULL;
+   
+   name = strdup(state);
+   delim = strrchr(name, (int)' ');
+   if (!delim)
+   {
+      free(name);
+      return NULL;
+   }
+   
+   if (sscanf(delim,"%lf", &value) != 1)
+   {
+      free(name);
+      return NULL;
+   }
+   
+   delim[0] = '\0';
+   //printf("SEARCH DESC(%s): %s %f\n", state, state, value);
+   pd = _edje_part_description_find(ed, rp, name, value);
+
+   free(name);
+   
+   if (!pd) return NULL;
+   return pd;
+}
+
+static int
+_edje_image_id_find(Evas_Object *obj, const char *image_name)
+{
+   Edje_Image_Directory_Entry *i;
+   Evas_List *l;
+    
+   GET_ED_OR_RETURN(-1);
+   
+   if (!ed->file) return -1;
+   if (!ed->file->image_dir) return -1;
+   
+   //printf("SEARCH IMAGE %s\n",image_name);
+    
+   l = ed->file->image_dir->entries;
+   while (l)
+   {
+      i = l->data;
+      if (strcmp(image_name,i->entry) == 0)
+      {
+         //printf("   Found id: %d \n", i->id);
+         return i->id;
+      }
+      l = l->next;
+   }
+    
+   return -1;
+}
+
+static const char*
+_edje_image_name_find(Evas_Object *obj, int image_id)
+{
+   Edje_Image_Directory_Entry *i;
+   Evas_List *l;
+   
+   GET_ED_OR_RETURN(NULL);
+   
+   if (!ed->file) return NULL;
+   if (!ed->file->image_dir) return NULL;
+   
+   //printf("SEARCH IMAGE ID %d\n", image_id);
+   
+   l = ed->file->image_dir->entries;
+   while (l)
+   {
+      i = l->data;
+      if (image_id == i->id)
+      {
+         return i->entry;
+      }
+      l = l->next;
+   }
+   
+   return NULL;
+}
+
+static void
+_edje_real_part_free(Edje_Real_Part *rp)
+{
+   Evas_List *l;
+   
+   if (!rp) return;
+   
+   if (rp->object)
+   {
+      _edje_text_real_part_on_del(rp->edje, rp);
+      _edje_callbacks_del(rp->object);
+      evas_object_del(rp->object);
+   }
+   
+   l = rp->extra_objects;
+   while (rp->extra_objects)
+   {
+      evas_object_del(rp->extra_objects->data);
+      rp->extra_objects = evas_list_remove_list(rp->extra_objects,
+                                                rp->extra_objects);
+   }
+   
+   if (rp->swallowed_object)
+   {
+      evas_object_smart_member_del(rp->swallowed_object);
+      evas_object_event_callback_del(rp->swallowed_object,
+                                     EVAS_CALLBACK_FREE,
+                                     _edje_object_part_swallow_free_cb);
+      evas_object_clip_unset(rp->swallowed_object);
+      evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
+      if (rp->part->mouse_events)
+         _edje_callbacks_del(rp->swallowed_object);
+      
+      if (rp->part->type == EDJE_PART_TYPE_GROUP)
+         evas_object_del(rp->swallowed_object);
+
+      rp->swallowed_object = NULL;
+   }
+   
+   /*if (rp->text.text) evas_stringshare_del(rp->text.text);
+   if (rp->text.font) evas_stringshare_del(rp->text.font);
+   if (rp->text.cache.in_str) evas_stringshare_del(rp->text.cache.in_str);
+   if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);
+   TODO FIXME */
+   
+   if (rp->custom.description)
+   {
+      _edje_collection_free_part_description_free(rp->custom.description);
+   }
+
+   _edje_unref(rp->edje);
+   free(rp);
+
+}
+
+static unsigned char
+_edje_import_image_file(Edje *ed, const char *path, int id)
+{
+   Evas_Object *im;
+   Eet_File *eetf;
+   
+   /* Try to load the file */
+   im = evas_object_image_add(ed->evas);
+   if (!im) return 0;
+
+   evas_object_image_file_set(im, path, NULL);
+   if (evas_object_image_load_error_get(im) != EVAS_LOAD_ERROR_NONE)
+   {
+      fprintf(stderr, "Edje_Edit: Error. unable to load image \"%s\"."
+                      "Missing PNG or JPEG loader modules for Evas or "
+                      "file does not exist, or is not readable.\n", path);
+      evas_object_del(im);
+      im = NULL;
+      return 0;
+   }
+   
+   if (!im) return 0;
+   
+   /* Write the loaded image to the edje file */
+   void *im_data;
+   int  im_w, im_h;
+   int  im_alpha;
+   int bytes;
+   char buf[256];
+
+   evas_object_image_size_get(im, &im_w, &im_h);
+   im_alpha = evas_object_image_alpha_get(im);
+   im_data = evas_object_image_data_get(im, 0);
+   if ((!im_data) || !(im_w > 0) || !(im_h > 0))
+   {
+      evas_object_del(im);
+      return 0;
+   }
+
+   /* open the eet file */
+   eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+   {
+      fprintf(stderr,
+              "Edje_Edit: Error. unable to open \"%s\" for writing output\n",
+              ed->path);
+      evas_object_del(im);
+      return 0;
+   }
+    
+   snprintf(buf, sizeof(buf), "images/%i", id);
+   
+   /* write the image data */
+   printf("***********  Writing images/%i to edj ******************\n", id);
+   bytes = eet_data_image_write(eetf, buf,
+               im_data, im_w, im_h,
+               im_alpha,
+               0, 100, 1);
+   if (bytes <= 0)
+   {
+      fprintf(stderr, "Edje_Edit: Error. unable to write image part \"%s\" "
+                      "part entry to %s\n", buf, ed->path);
+      evas_object_del(im);
+      return 0;
+   }
+   
+   /* Rewrite Edje_File to edj */
+   evas_object_del(im);
+   
+   printf("***********  Writing Edje_File* ed->file ******************\n");
+   bytes = eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ed->file, 1);
+   if (bytes <= 0)
+   {
+      fprintf(stderr, "Edje_Edit: Error. unable to write \"edje_file\" "
+                      "entry to \"%s\" \n", ed->path);
+      eet_close(eetf);
+      return 0;
+   }
+    
+   eet_close(eetf);
+   return 1;
+
+}
+static int
+_edje_part_id_find(Edje *ed, const char *part)
+{
+   int id;
+   for (id = 0; id < ed->table_parts_size; id++)
+   {
+      Edje_Real_Part *rp = ed->table_parts[id];
+      if (!strcmp(rp->part->name, part))
+         return id;
+   }
+   return -1;
+}
+
+static void
+_edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
+{
+   /* This function change the id of a given real_part.
+    * All the depedency will be updated too.
+    * Also the table_parts is updated, and the current *rp in the table 
+    * is lost.
+    * If new Id = -1 then all the depencies will be deleted
+    */
+   int old_id;
+   Edje_Part *part;
+   Evas_List *l, *ll;
+   
+   part = rp->part;
+   
+   if (!part) return;
+   printf("CHANGE ID OF PART %s TO %d\n", part->name, new_id);
+   
+   if (!ed || !part || new_id < -1) return;
+   
+   if (part->id == new_id) return;
+   
+   old_id = part->id;
+   part->id = new_id;
+   
+   /* Fix all the dependecies in all parts... */
+   for (l = ed->collection->parts; l; l = l->next)
+   {
+      Edje_Part *p;
+      p = l->data;
+      //printf("   search id: %d in %s\n", old_id, p->name);
+      if (p->clip_to_id == old_id) p->clip_to_id = new_id;
+      if (p->dragable.confine_id == old_id) p->dragable.confine_id = new_id;
+      
+      /* ...in default description */
+      Edje_Part_Description *d;
+      d = p->default_desc;
+      //printf("      search in %s (%s)\n", p->name, d->state.name);
+      if (d->rel1.id_x == old_id) d->rel1.id_x = new_id;
+      if (d->rel1.id_y == old_id) d->rel1.id_y = new_id;
+      if (d->rel2.id_x == old_id) d->rel2.id_x = new_id;
+      if (d->rel2.id_y == old_id) d->rel2.id_y = new_id;
+      if (d->text.id_source == old_id) d->text.id_source = new_id;
+      if (d->text.id_text_source == old_id) d->text.id_text_source = new_id;
+      /* ...and in all other descriptions */
+      for (ll = p->other_desc; ll; ll = ll->next)
+      {
+         d = ll->data;
+         //printf("      search in %s (%s)\n", p->name, d->state.name);
+         if (d->rel1.id_x == old_id) d->rel1.id_x = new_id;
+         if (d->rel1.id_y == old_id) d->rel1.id_y = new_id;
+         if (d->rel2.id_x == old_id) d->rel2.id_x = new_id;
+         if (d->rel2.id_y == old_id) d->rel2.id_y = new_id;
+         if (d->text.id_source == old_id) d->text.id_source = new_id;
+         if (d->text.id_text_source == old_id) d->text.id_text_source = new_id;
+      }
+   }
+   
+   /*...and also in programs targets */
+   for (l = ed->collection->programs; l; l = l->next)
+   {
+      Edje_Program *epr;
+      
+      epr = l->data;
+      if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
+         continue;
+      
+      for (ll = epr->targets; ll; ll = ll->next)
+      {
+         Edje_Program_Target *pt;
+         
+         pt = ll->data;
+         if (pt->id == old_id)
+            if (new_id == -1)
+               epr->targets = evas_list_remove(epr->targets, pt);
+            else
+               pt->id = new_id;
+      }
+   }
+   
+   /* Adjust table_parts */
+   if (new_id >= 0)
+      ed->table_parts[new_id] = rp;
+}
+
+static void
+_edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
+{
+   /* This function switch the id of two parts.
+    * All the depedency will be updated too.
+    * Also the table_parts is updated,
+    * The parts list isn't touched
+    */
+   int id1;
+   int id2;
+   Evas_List *l, *ll;
+   
+   printf("SWITCH ID OF PART %d AND %d\n", rp1->part->id, rp2->part->id);
+   
+   if (!ed || !rp1 || !rp2) return;
+   if (rp1 == rp2) return;
+   
+   id1 = rp1->part->id;
+   id2 = rp2->part->id;
+   
+   /* Switch ids */
+   rp1->part->id = id2;
+   rp2->part->id = id1;
+   
+   /* adjust table_parts */
+   ed->table_parts[id1] = rp2;
+   ed->table_parts[id2] = rp1;
+   
+   // Fix all the dependecies in all parts...
+   for (l = ed->collection->parts; l; l = l->next)
+   {
+      Edje_Part *p;
+      p = l->data;
+      //printf("   search id: %d in %s\n", old_id, p->name);
+      if (p->clip_to_id == id1) p->clip_to_id = id2;
+      else if (p->clip_to_id == id2) p->clip_to_id = id1;
+      if (p->dragable.confine_id == id1) p->dragable.confine_id = id2;
+      else if (p->dragable.confine_id == id2) p->dragable.confine_id = id1;
+      
+      // ...in default description
+      Evas_List *ll;
+      Edje_Part_Description *d;
+      d = p->default_desc;
+     // printf("      search in %s (%s)\n", p->name, d->state.name);
+      if (d->rel1.id_x == id1) d->rel1.id_x = id2;
+      else if (d->rel1.id_x == id2) d->rel1.id_x = id1;
+      if (d->rel1.id_y == id1) d->rel1.id_y = id2;
+      else if (d->rel1.id_y == id2) d->rel1.id_y = id1;
+      if (d->rel2.id_x == id1) d->rel2.id_x = id2;
+      else if (d->rel2.id_x == id2) d->rel2.id_x = id1;
+      if (d->rel2.id_y == id1) d->rel2.id_y = id2;
+      else if (d->rel2.id_y == id2) d->rel2.id_y = id1;
+      if (d->text.id_source == id1) d->text.id_source = id2;
+      else if (d->text.id_source == id2) d->text.id_source = id1;
+      if (d->text.id_text_source == id1) d->text.id_text_source = id2;
+      else if (d->text.id_text_source == id2) d->text.id_text_source = id2;
+      // ...and in all other descriptions
+      for (ll = p->other_desc; ll; ll = ll->next)
+      {
+         d = ll->data;
+         //printf("      search in %s (%s)\n", p->name, d->state.name);
+         if (d->rel1.id_x == id1) d->rel1.id_x = id2;
+         else if (d->rel1.id_x == id2) d->rel1.id_x = id1;
+         if (d->rel1.id_y == id1) d->rel1.id_y = id2;
+         else if (d->rel1.id_y == id2) d->rel1.id_y = id1;
+         if (d->rel2.id_x == id1) d->rel2.id_x = id2;
+         else if (d->rel2.id_x == id2) d->rel2.id_x = id1;
+         if (d->rel2.id_y == id1) d->rel2.id_y = id2;
+         else if (d->rel2.id_y == id2) d->rel2.id_y = id1;
+         if (d->text.id_source == id1) d->text.id_source = id2;
+         else if (d->text.id_source == id2) d->text.id_source = id1;
+         if (d->text.id_text_source == id1) d->text.id_text_source = id2;
+         else if (d->text.id_text_source == id2) d->text.id_text_source = id2;
+      }
+   }
+   //...and also in programs targets
+   for (l = ed->collection->programs; l; l = l->next)
+   {
+      Edje_Program *epr;
+      
+      epr = l->data;
+      if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
+         continue;
+      
+      for (ll = epr->targets; ll; ll = ll->next)
+      {
+         Edje_Program_Target *pt;
+         
+         pt = ll->data;
+         if (pt->id == id1) pt->id = id2;
+         else if (pt->id == id2) pt->id = id1;
+      }
+   }
+   //TODO Real part dependencies are ok?
+}
+
+static void
+_edje_fix_parts_id(Edje *ed)
+{
+   /* We use this to clear the id hole leaved when a part is removed.
+    * After the execution of this function all parts will have a right
+    * (uniqe & ordered) id. The table_parts is also updated.
+    */
+   Evas_List *l;
+   int correct_id;
+   int count;
+   printf("FIXING PARTS ID \n");
+   
+   //TODO order the list first to be more robust
+   
+   /* Give a correct id to all the parts */
+   correct_id = 0;
+   for (l = ed->collection->parts; l; l = l->next)
+   {
+      Edje_Part *p;
+      
+      p = l->data;
+      //printf(" [%d]Checking part: %s id: %d\n", correct_id, p->name, p->id);
+      if (p->id != correct_id)
+         _edje_part_id_set(ed, ed->table_parts[p->id], correct_id);
+      
+      correct_id++;
+   }
+   
+   /* If we have removed some parts realloc table_parts */
+   count = evas_list_count(ed->collection->parts);
+   if (count != ed->table_parts_size)
+   {
+      ed->table_parts = realloc(ed->table_parts, SZ(Edje_Real_Part *) * count);
+      ed->table_parts_size = count;
+   }
+   
+   //printf("\n");
+}
+
+/*****************/
+/*  GENERAL API  */
+/*****************/
+
+EAPI void
+edje_edit_string_list_free(Evas_List *lst)
+{
+   //printf("FREE LIST: \n");
+   while (lst)
+   {
+      if (lst->data) evas_stringshare_del(lst->data);
+      //printf("FREE: %s\n",lst->data);
+      lst = evas_list_remove(lst, lst->data);
+   }
+}
+
+EAPI void
+edje_edit_string_free(const char *str)
+{
+   if (str) evas_stringshare_del(str);
+}
+
+/****************/
+/*  GROUPS API  */
+/****************/
+
+EAPI unsigned char
+edje_edit_group_add(Evas_Object *obj, const char *name)
+{
+   printf("ADD GROUP: %s \n", name);
+   
+   GET_ED_OR_RETURN(0);
+   
+   Edje_Part_Collection_Directory_Entry *de;
+   Edje_Part_Collection *pc;
+   Evas_List *l;
+   //Code *cd;
+   
+   /* check if a group with the same name already exists */
+   for (l = ed->file->collection_dir->entries; l; l = l->next)
+   {
+      Edje_Part_Collection_Directory_Entry *d = l->data;
+      if (!strcmp(d->entry, name))
+         return 0;
+   }
+   
+   /* Create structs */
+   de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
+   if (!de) return 0;
+   
+   pc = mem_alloc(SZ(Edje_Part_Collection));
+   if (!pc)
+   {
+      free(de);
+      return 0;
+   }
+   
+   /* Search first free id */
+   int id = 0;
+   int search = 0;
+   while (!id)
+   {
+      unsigned char found = 0;
+      for (l = ed->file->collection_dir->entries; l; l = l->next)
+      {
+         Edje_Part_Collection_Directory_Entry *d = l->data;
+        // printf("search if %d is free [id %d]\n", search, d->id);
+         if (search == d->id)
+         {
+            found = 1;
+            break;
+         }
+      }
+      if (!found)
+         id = search;
+      else
+         search++;
+   }
+   
+   /* Init Edje_Part_Collection_Directory_Entry */
+   printf(" new id: %d\n",id);
+   de->id = id;
+   de->entry = mem_strdup(name);
+   ed->file->collection_dir->entries = evas_list_append(ed->file->collection_dir->entries, de);
+   
+   
+   /* Init Edje_Part_Collection */
+   pc->id = id;
+   pc->references = 1;  //TODO i'm not shure about this (maybe 1 ?)
+   pc->programs = NULL;
+   pc->parts = NULL;
+   pc->data = NULL;
+   pc->script = NULL;
+   pc->part = evas_stringshare_add(name);
+   
+   //cd = mem_alloc(SZ(Code));
+   //codes = evas_list_append(codes, cd);
+ 
+   ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, name, pc);
+ 
+   return 1;
+}
+
+
+EAPI unsigned char
+edje_edit_group_del(Evas_Object *obj)
+{
+   GET_ED_OR_RETURN(0)
+   
+   Evas_List *l;
+   int i;
+   Edje_Part_Collection *g;
+   g = ed->collection;
+   printf("REMOVE GROUP: %s [id: %d]\n", g->part, g->id);
+   
+   /* Don't remove the last group */
+   if (evas_list_count(ed->file->collection_dir->entries) < 2)
+      return 0;
+   
+   /* Remove collection/id from eet file */
+   Eet_File *eetf;
+   char buf[32];
+   eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+   {
+      fprintf(stderr, "Edje_Edit: Error. unable to open \"%s\" "
+                      "for writing output\n", ed->file->path);
+      return 0;
+   }
+   snprintf(buf, SZ(buf), "collections/%d",g->id);
+   eet_delete(eetf, buf);
+   eet_close(eetf);
+   
+   /* Remove all Edje_Real_Parts */
+   for (i = 0; i < ed->table_parts_size; i++)
+   {
+      _edje_real_part_free(ed->table_parts[i]);
+   }
+   ed->table_parts_size = 0;
+   free(ed->table_parts);
+   ed->table_parts = NULL;
+   
+   /* Free Group */
+   _edje_collection_free(ed->file, g);
+   
+   /* Update collection_dir */
+   for (l = ed->file->collection_dir->entries; l; l = l->next)
+   {
+      Edje_Part_Collection_Directory_Entry *e;
+      e = l->data;
+      printf("  id: %d  entry: %s\n", e->id, e->entry);
+      if (e->id == g->id)
+      {
+         ed->file->collection_dir->entries = evas_list_remove_list(
+                                    ed->file->collection_dir->entries, l);
+//         free(e->entry);  This should be right but cause a segv
+         free(e);
+         e = NULL;
+         break;
+      }
+   }
+   
+   ed->collection = NULL;
+   
+   if (ed->table_programs_size > 0)
+   {
+      free(ed->table_programs);
+      ed->table_programs = NULL;
+      ed->table_programs_size = 0;
+   }
+   
+   return 1;
+}
+
+
+EAPI unsigned char
+edje_edit_group_exist(Evas_Object *obj, const char *group)
+{
+   Evas_List *l;
+   GET_ED_OR_RETURN(0)
+   for (l = ed->file->collection_dir->entries; l; l = l->next)
+   {
+      Edje_Part_Collection_Directory_Entry *e;
+      
+      e = l->data;
+      if (e->entry && !strcmp(e->entry, group))
+         return 1;
+   }
+   return 0;
+}
+
+EAPI unsigned char
+edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
+{
+   Evas_List *l;
+   int id;
+  
+   GET_ED_OR_RETURN(0)
+   if (!new_name) return 0;
+   if (edje_edit_group_exist(obj, new_name)) return 0;
+   
+   Edje_Part_Collection *pc;
+   pc = ed->collection;
+
+   printf("Set name of current group: %s [id: %d][new name: %s]\n",
+          pc->part, pc->id, new_name); 
+   
+   //if (pc->part && ed->file->free_strings) evas_stringshare_del(pc->part); TODO FIXME
+   pc->part = evas_stringshare_add(new_name);
+   
+   l = ed->file->collection_dir->entries;
+   while (l)
+   {
+      Edje_Part_Collection_Directory_Entry *pce = l->data;
+      if (pc->id == pce->id)
+      {
+         //if (pce->entry) free(pce->entry); //TODO Also this cause segv
+         pce->entry = mem_strdup(new_name);
+         
+         //ed->file->collection_hash = evas_hash_del(ed->file->collection_hash, pc->entry, edc);
+         //ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, name, pc);
+         
+         return;
+      }
+      l = l->next;
+   }
+}
+
+EAPI int
+edje_edit_group_min_w_get(Evas_Object *obj)
+{
+   printf("Get min_w of group\n");
+   GET_ED_OR_RETURN(-1)
+   if (!ed->collection) return -1;
+   return ed->collection->prop.min.w;
+}
+EAPI void
+edje_edit_group_min_w_set(Evas_Object *obj, int w)
+{
+   printf("Set min_w of group [new w: %d]\n", w);
+   GET_ED_OR_RETURN()
+   ed->collection->prop.min.w = w;
+}
+EAPI int
+edje_edit_group_min_h_get(Evas_Object *obj)
+{
+   printf("Get min_h of group\n");
+   GET_ED_OR_RETURN(-1)
+   if (!ed->collection) return -1;
+   return ed->collection->prop.min.h;
+}
+EAPI void
+edje_edit_group_min_h_set(Evas_Object *obj, int h)
+{
+   printf("Set min_h of group [new h: %d]\n", h);
+   GET_ED_OR_RETURN()
+   ed->collection->prop.min.h = h;
+}
+EAPI int
+edje_edit_group_max_w_get(Evas_Object *obj)
+{
+   printf("Get max_w of group\n");
+   GET_ED_OR_RETURN(-1)
+   if (!ed->collection) return -1;
+   return ed->collection->prop.max.w;
+}
+EAPI void
+edje_edit_group_max_w_set(Evas_Object *obj, int w)
+{
+   printf("Set max_w of group: [new w: %d]\n", w);
+   GET_ED_OR_RETURN()
+   ed->collection->prop.max.w = w;
+}
+EAPI int
+edje_edit_group_max_h_get(Evas_Object *obj)
+{
+   printf("Get max_h of group\n");
+   GET_ED_OR_RETURN(-1)
+   if (!ed->collection) return -1;
+   return ed->collection->prop.max.h;
+}
+EAPI void
+edje_edit_group_max_h_set(Evas_Object *obj, int h)
+{
+   printf("Set max_h of group: [new h: %d]\n", h);
+   GET_ED_OR_RETURN()
+   ed->collection->prop.max.h = h;
+}
+
+/***************/
+/*  PARTS API  */
+/***************/
+
+EAPI Evas_List *
+edje_edit_parts_list_get(Evas_Object *obj)
+{
+   Evas_List *parts;
+   int i;
+   
+   GET_ED_OR_RETURN(NULL)
+   
+   //printf("EE: Found %d parts\n", ed->table_parts_size);
+   
+   parts = NULL;
+   for (i = 0; i < ed->table_parts_size; i++)
+   {
+      Edje_Real_Part *rp;
+      rp = ed->table_parts[i];
+      parts = evas_list_append(parts, evas_stringshare_add(rp->part->name));
+   }
+
+   return parts;
+}
+
+EAPI unsigned char
+edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name)
+{
+   GET_RP_OR_RETURN(0)
+   if (!new_name) return 0;
+   if (_edje_real_part_get(ed, new_name)) return 0;
+   
+   printf("Set name of part: %s [new name: %s]\n", part, new_name);
+   
+   //if (rp->part->name && ed->file->free_strings) evas_stringshare_del(rp->part->name);  TODO FIXME
+   rp->part->name = (char *)evas_stringshare_add(new_name);
+   
+   return 1;
+}
+
+
+EAPI unsigned char
+edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
+{
+   printf("ADD PART: %s [type: %d]\n", name, type);
+   
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Real_Part *rp;
+   
+   GET_ED_OR_RETURN(FALSE)
+   
+   /* Check if part already exists */
+   if (_edje_real_part_get(ed, name))
+      return FALSE;
+   
+   /* Alloc Edje_Part or return */
+   ep = mem_alloc(sizeof(Edje_Part));
+   if (!ep) return FALSE;
+   
+   /* Alloc Edje_Real_Part or return */
+   rp = mem_alloc(sizeof(Edje_Real_Part));
+   if (!rp)
+   {
+      free(ep);
+      return FALSE;
+   }
+   
+   /* Init Edje_Part */
+   pc = ed->collection;
+   pc->parts = evas_list_append(pc->parts, ep);
+   
+   ep->id = evas_list_count(pc->parts) - 1;
+   ep->type = type;
+   ep->name = evas_stringshare_add(name);
+   ep->mouse_events = 1;
+   ep->repeat_events = 0;
+   ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
+   ep->precise_is_inside = 0;
+   ep->use_alternate_font_metrics = 0;
+   ep->clip_to_id = -1;
+   ep->dragable.confine_id = -1;
+   ep->dragable.events_id = -1;
+   
+   ep->default_desc = NULL;
+   ep->other_desc = NULL;
+   
+   /* Init Edje_Real_Part */
+   rp->edje = ed;
+   _edje_ref(rp->edje);
+   rp->part = ep;
+   
+   if (ep->type == EDJE_PART_TYPE_RECTANGLE)
+      rp->object = evas_object_rectangle_add(ed->evas);
+   else if (ep->type == EDJE_PART_TYPE_IMAGE)
+      rp->object = evas_object_image_add(ed->evas);
+   else if (ep->type == EDJE_PART_TYPE_TEXT)
+   {
+      _edje_text_part_on_add(ed, rp);
+      rp->object = evas_object_text_add(ed->evas);
+      evas_object_text_font_source_set(rp->object, ed->path);
+   }
+   else if (ep->type == EDJE_PART_TYPE_SWALLOW ||
+            ep->type == EDJE_PART_TYPE_GROUP)
+   {
+      rp->object = evas_object_rectangle_add(ed->evas);
+      evas_object_color_set(rp->object, 0, 0, 0, 0);
+      evas_object_pass_events_set(rp->object, 1);
+      evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+   }
+   else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
+      rp->object = evas_object_textblock_add(ed->evas);
+   else if (ep->type == EDJE_PART_TYPE_GRADIENT)
+      rp->object = evas_object_gradient_add(ed->evas);
+   else
+   {
+      printf("EDJE ERROR: wrong part type %i!\n", ep->type);
+   }
+   if (rp->object)
+   {
+      evas_object_smart_member_add(rp->object, ed->obj);
+      evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
+      if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP)
+      {
+         if (ep->mouse_events)
+         {
+            _edje_callbacks_add(rp->object, ed, rp);
+            if (ep->repeat_events)
+               evas_object_repeat_events_set(rp->object, 1);
+
+            if (ep->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
+               evas_object_pointer_mode_set(rp->object, ep->pointer_mode);
+         }
+         else
+         {
+            evas_object_pass_events_set(rp->object, 1);
+            evas_object_pointer_mode_set(rp->object,
+                                         EVAS_OBJECT_POINTER_MODE_NOGRAB);
+         }
+         if (ep->precise_is_inside)
+            evas_object_precise_is_inside_set(rp->object, 1);
+      }
+      evas_object_clip_set(rp->object, ed->clipper);
+   }
+   rp->drag.step.x = ep->dragable.step_x;
+   rp->drag.step.y = ep->dragable.step_y;
+   rp->gradient_id = -1;
+
+   
+   /* Update table_parts */
+   ed->table_parts_size++;
+   ed->table_parts = realloc(ed->table_parts,
+                             sizeof(Edje_Real_Part *) * ed->table_parts_size);
+   
+   ed->table_parts[ep->id % ed->table_parts_size] = rp;
+   
+   
+   /* Create default description */
+   edje_edit_state_add(obj, name, "default");
+   
+   rp->param1.description = ep->default_desc;
+   rp->chosen_description = rp->param1.description;
+   
+   edje_object_calc_force(obj);
+   
+   return TRUE;
+}
+
+
+
+EAPI unsigned char
+edje_edit_part_del(Evas_Object *obj, const char* part)
+{
+   printf("REMOVE PART: %s\n", part);
+   Evas_List *l, *ll;
+   Edje_Part *ep;
+   int id;
+   
+   GET_RP_OR_RETURN()
+   ep = rp->part;
+   id = ep->id;
+   
+   if (ed->table_parts_size <= 1) return FALSE; //don't remove the last part
+      
+   /* Unlik Edje_Real_Parts that link to the removed one */
+   int i;
+   for (i = 0; i < ed->table_parts_size; i++)
+   {
+      if (i == id) continue; //don't check the deleted id
+      Edje_Real_Part *real;
+      real = ed->table_parts[i % ed->table_parts_size];
+
+      if (real->text.source == rp) real->text.source = NULL;
+      if (real->text.text_source == rp) real->text.text_source = NULL;
+      
+      if (real->param1.rel1_to_x == rp) real->param1.rel1_to_x = NULL;
+      if (real->param1.rel1_to_y == rp) real->param1.rel1_to_y = NULL;
+      if (real->param1.rel2_to_x == rp) real->param1.rel2_to_x = NULL;
+      if (real->param1.rel2_to_y == rp) real->param1.rel2_to_y = NULL;
+      
+      if (real->param2.rel1_to_x == rp) real->param2.rel1_to_x = NULL;
+      if (real->param2.rel1_to_y == rp) real->param2.rel1_to_y = NULL;
+      if (real->param2.rel2_to_x == rp) real->param2.rel2_to_x = NULL;
+      if (real->param2.rel2_to_y == rp) real->param2.rel2_to_y = NULL;
+      
+      if (real->custom.rel1_to_x == rp) real->custom.rel1_to_x = NULL;
+      if (real->custom.rel1_to_y == rp) real->custom.rel1_to_y = NULL;
+      if (real->custom.rel2_to_x == rp) real->custom.rel2_to_x = NULL;
+      if (real->custom.rel2_to_y == rp) real->custom.rel2_to_y = NULL;
+      
+      if (real->clip_to == rp)
+      {
+         evas_object_clip_set(real->object, ed->clipper);
+         real->clip_to = NULL;
+      }
+      //TODO confine ??
+   }
+   
+   /* Unlink all the parts and descriptions that refer to id */
+   _edje_part_id_set(ed, rp, -1);
+
+   /* Remove part from parts list */
+   Edje_Part_Collection *pc;
+   pc = ed->collection;
+   pc->parts = evas_list_remove(pc->parts, ep);
+   _edje_fix_parts_id(ed);
+   
+   /* Free Edje_Part and all descriptions */
+   //if (ep->name  && ed->file->free_strings) evas_stringshare_del(ep->name); TODO FIXME
+   if (ep->default_desc)
+   {
+      _edje_collection_free_part_description_free(ep->default_desc);
+      ep->default_desc = NULL;
+   }
+   while (ep->other_desc)
+   {
+      Edje_Part_Description *desc;
+      
+      desc = ep->other_desc->data;
+      ep->other_desc = evas_list_remove(ep->other_desc, desc);
+      _edje_collection_free_part_description_free(desc);
+   }
+   free(ep);
+   
+   /* Free Edje_Real_Part */
+   _edje_real_part_free(rp);
+   
+   
+   edje_object_calc_force(obj);
+   return TRUE;
+}
+
+
+
+EAPI unsigned char
+edje_edit_part_exist(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0)
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_part_restack_below(Evas_Object *obj, const char* part)
+{
+   printf("RESTACK PART: %s BELOW\n", part);
+   GET_RP_OR_RETURN(0)
+   
+   if (rp->part->id < 1) return 0;
+   Edje_Part_Collection *group;
+   group = ed->collection;
+   
+   /* update parts list */
+   Edje_Real_Part *prev;
+   prev = ed->table_parts[(rp->part->id - 1) % ed->table_parts_size];
+   group->parts = evas_list_remove(group->parts, rp->part);
+   group->parts = evas_list_prepend_relative(group->parts, rp->part, prev->part);
+   
+   _edje_parts_id_switch(ed, rp, prev);
+   
+   evas_object_stack_below(rp->object, prev->object);
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_part_restack_above(Evas_Object *obj, const char* part)
+{
+   printf("RESTACK PART: %s ABOVE\n", part);
+   GET_RP_OR_RETURN(0)
+   
+   if (rp->part->id >= ed->table_parts_size - 1) return 0;
+   
+   Edje_Part_Collection *group;
+   group = ed->collection;
+   
+   /* update parts list */
+   Edje_Real_Part *next;
+   next = ed->table_parts[(rp->part->id + 1) % ed->table_parts_size];
+   group->parts = evas_list_remove(group->parts, rp->part);
+   group->parts = evas_list_append_relative(group->parts, rp->part, next->part);
+   
+   /* update ids */
+   _edje_parts_id_switch(ed, rp, next);
+   
+   evas_object_stack_above(rp->object, next->object);
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_part_type_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0)
+   
+   return rp->part->type;
+}
+
+EAPI const char *
+edje_edit_part_selected_state_get(Evas_Object *obj, const char *part)
+{
+   char name[MAX_PATH];
+   
+   GET_RP_OR_RETURN(NULL)
+
+   if (!rp->chosen_description)
+      return "default 0.00";
+   
+   snprintf(name, MAX_PATH, "%s %.2f",
+            rp->chosen_description->state.name,
+            rp->chosen_description->state.value);
+   
+   return evas_stringshare_add(name);
+}
+
+EAPI unsigned char
+edje_edit_part_selected_state_set(Evas_Object *obj, const char *part, const char *state)
+{
+   Edje_Part_Description *pd;
+   
+   GET_RP_OR_RETURN(0)
+   
+   pd = _edje_part_description_find_byname(ed, part, state);
+   if (!pd) return 0;
+
+   printf("EDJE: Set state: %s\n",pd->state.name);
+   _edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, NULL, 0); //WHAT IS NULL ,0 
+   
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+
+EAPI const char *
+edje_edit_part_clip_to_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(NULL)
+   Edje_Real_Part *clip = NULL;
+   
+   printf("Get clip_to for part: %s [to_id: %d]\n", part, rp->part->clip_to_id);
+   if (rp->part->clip_to_id < 0) return NULL;
+   
+   clip = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
+   if (!clip || !clip->part || !clip->part->name) return NULL;
+   
+   
+   return evas_stringshare_add(clip->part->name);
+}
+EAPI unsigned char
+edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_to)
+{
+   GET_RP_OR_RETURN(0)
+   Edje_Real_Part *clip;
+   
+   /* unset clipping */
+   if (!clip_to)
+   {
+      printf("UnSet clip_to for part: %s\n", part);
+
+      if (rp->clip_to->object)
+      {
+         evas_object_pointer_mode_set(rp->clip_to->object,
+                                      EVAS_OBJECT_POINTER_MODE_AUTOGRAB);
+         evas_object_clip_unset(rp->object);
+      }
+      
+      evas_object_clip_set(rp->object, ed->clipper);
+      
+
+      rp->part->clip_to_id = -1;
+      rp->clip_to = NULL;
+      
+      edje_object_calc_force(obj);
+
+      return 1;
+   }
+   
+   /* set clipping */
+   printf("Set clip_to for part: %s [to: %s]\n", part, clip_to);
+   clip = _edje_real_part_get(ed, clip_to);
+   if (!clip || !clip->part) return 0;
+   rp->part->clip_to_id = clip->part->id;
+   rp->clip_to = clip;
+   
+   evas_object_pass_events_set(rp->clip_to->object, 1);
+   evas_object_pointer_mode_set(rp->clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+   evas_object_clip_set(rp->object, rp->clip_to->object);
+   
+   edje_object_calc_force(obj);
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_part_mouse_events_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0)
+   //printf("Get mouse_events for part: %s [%d]\n",part, rp->part->mouse_events);
+   return rp->part->mouse_events;
+}
+
+EAPI void
+edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, unsigned char mouse_events)
+{
+   GET_RP_OR_RETURN()
+   if (!rp->object) return;
+   printf("Set mouse_events for part: %s [%d]\n",part, mouse_events);
+   
+   rp->part->mouse_events = mouse_events ? 1 : 0;
+    
+   if (mouse_events)
+   {
+      evas_object_pass_events_set(rp->object, 0);
+      _edje_callbacks_add(rp->object, ed, rp);
+   }
+   else
+   {
+      evas_object_pass_events_set(rp->object, 1);
+      _edje_callbacks_del(rp->object);
+   }
+   
+}
+
+EAPI unsigned char
+edje_edit_part_repeat_events_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0)
+   //printf("Get repeat_events for part: %s [%d]\n",part, rp->part->repeat_events);
+   return rp->part->repeat_events;
+}
+
+EAPI void
+edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, unsigned char repeat_events)
+{
+   GET_RP_OR_RETURN()
+   if (!rp->object) return;
+   printf("Set repeat_events for part: %s [%d]\n",part, repeat_events);
+   
+   rp->part->repeat_events = repeat_events ? 1 : 0;
+    
+   if (repeat_events)
+   {
+      evas_object_repeat_events_set(rp->object, 1);
+   }
+   else
+   {
+      evas_object_repeat_events_set(rp->object, 0);
+   }
+   
+}
+
+
+EAPI const char *
+edje_edit_part_source_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(NULL)
+   //Edje_Real_Part *clip = NULL;
+   
+   printf("Get source for part: %s\n", part);
+   if (!rp->part->source) return NULL;
+   
+   return evas_stringshare_add(rp->part->source);
+}
+
+EAPI unsigned char
+edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source)
+{
+   GET_RP_OR_RETURN(0)
+   
+   printf("Set source for part: %s [source: %s]\n", part, source);
+   
+   if (rp->part->source)
+   {
+      //if (ed->file->free_strings)
+      //   evas_stringshare_del(rp->part->source); TODO FIXME
+      rp->part->source = NULL;
+   }
+   
+   if (source)
+      rp->part->source = evas_stringshare_add(source);
+   
+   return 1;
+}
+
+/*********************/
+/*  PART STATES API  */
+/*********************/
+EAPI Evas_List *
+edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
+{
+   Evas_List *states;
+   Evas_List *l;
+   Edje_Part_Description *state;
+   char state_name[MAX_PATH];
+   
+   GET_RP_OR_RETURN(NULL)
+   
+   //Is there a better place to put this? maybe edje_edit_init() ?
+   setlocale(LC_NUMERIC, "C");
+   
+   states = NULL;
+   
+   //append default state
+   state = rp->part->default_desc;
+   snprintf(state_name, MAX_PATH,
+            "%s %.2f", state->state.name,state->state.value);
+   states = evas_list_append(states, evas_stringshare_add(state_name));
+   //printf("NEW STATE def: %s\n", state->state.name);  
+    
+   //append other states
+   l = rp->part->other_desc;
+   while (l)
+   {
+      state = l->data;
+      snprintf(state_name, sizeof(state_name),
+               "%s %.2f", state->state.name,state->state.value);
+      states = evas_list_append(states, evas_stringshare_add(state_name));
+      //printf("NEW STATE: %s\n", state_name);
+      l = l->next;
+   }
+   return states;
+}
+
+EAPI int
+edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, const char *new_name)//state and new_name include the value in the string (ex. "default 0.00")
+{
+   char *delim;
+   double value;
+   
+   GET_PD_OR_RETURN(0)
+   printf("Set name of state: %s in part: %s [new name: %s]\n",
+          part, state, new_name);
+   
+   if (!new_name) return 0;
+   
+   /* split name from value */
+   delim = strrchr(new_name, (int)' ');
+   if (!delim) return 0;
+   if (sscanf(delim,"%lf", &value) != 1) return 0;
+   delim[0] = '\0';
+   
+   /* update programs */
+   /* update the 'state' field in all programs. update only if program has
+      a single target */
+   int i;
+   int part_id = _edje_part_id_find(ed, part);
+   for (i = 0; i < ed->table_programs_size; i++)
+   {
+      Edje_Program *epr = ed->table_programs[i];
+      if (evas_list_count(epr->targets) == 1)
+      {
+         Edje_Program_Target *t = epr->targets->data;
+         if (t->id == part_id && 
+             !strcmp(epr->state, pd->state.name) &&
+             pd->state.value == epr->value)
+         {
+            //TODO free epr->state
+            epr->state = mem_strdup(new_name);
+            epr->value = value;
+         }
+      }
+   }
+   
+   /* set name */
+   //if (pd->state.name && ed->file->free_strings) evas_stringshare_del(pd->state.name); TODO FIXME
+   pd->state.name = (char *)evas_stringshare_add(new_name);
+   /* set value */
+   pd->state.value = value;
+   
+   delim[0] = ' ';
+   printf("## SET OK %s %.2f\n", pd->state.name, pd->state.value);
+   
+   return 1;
+}
+
+
+
+EAPI void
+edje_edit_state_del(Evas_Object *obj, const char *part, const char *state)
+{
+   printf("REMOVE STATE: %s IN PART: %s\n",state, part);
+   
+   GET_RP_OR_RETURN()
+   
+   Edje_Part_Description *pd;
+   pd = _edje_part_description_find_byname(ed, part, state);
+   if (!pd) return;
+   
+   rp->part->other_desc = evas_list_remove(rp->part->other_desc, pd);
+   
+   _edje_collection_free_part_description_free(pd);
+}
+
+EAPI void
+edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
+{
+   printf("ADD STATE: %s TO PART: %s\n", name , part);
+   
+   GET_RP_OR_RETURN();
+   
+   Edje_Part_Description *pd;
+   pd = mem_alloc(sizeof(Edje_Part_Description));
+   
+   if (!rp->part->default_desc)
+      rp->part->default_desc = pd;
+   else
+      rp->part->other_desc = evas_list_append(rp->part->other_desc, pd);
+   
+   pd->state.name = evas_stringshare_add(name);
+   pd->state.value = 0.0;
+   pd->visible = 1;
+   pd->align.x = 0.5;
+   pd->align.y = 0.5;
+   pd->min.w = 0;
+   pd->min.h = 0;
+   pd->fixed.w = 0;
+   pd->fixed.h = 0;
+   pd->max.w = -1;
+   pd->max.h = -1;
+   pd->rel1.relative_x = 0.0;
+   pd->rel1.relative_y = 0.0;
+   pd->rel1.offset_x = 0;
+   pd->rel1.offset_y = 0;
+   pd->rel1.id_x = -1;
+   pd->rel1.id_y = -1;
+   pd->rel2.relative_x = 1.0;
+   pd->rel2.relative_y = 1.0;
+   pd->rel2.offset_x = -1;
+   pd->rel2.offset_y = -1;
+   pd->rel2.id_x = -1;
+   pd->rel2.id_y = -1;
+   pd->image.id = -1;
+   pd->fill.smooth = 1;
+   pd->fill.pos_rel_x = 0.0;
+   pd->fill.pos_abs_x = 0;
+   pd->fill.rel_x = 1.0;
+   pd->fill.abs_x = 0;
+   pd->fill.pos_rel_y = 0.0;
+   pd->fill.pos_abs_y = 0;
+   pd->fill.rel_y = 1.0;
+   pd->fill.abs_y = 0;
+   pd->fill.angle = 0;
+   pd->fill.spread = 0;
+   pd->fill.type = EDJE_FILL_TYPE_SCALE;
+   pd->color_class = NULL;
+   pd->color.r = 255;
+   pd->color.g = 255;
+   pd->color.b = 255;
+   pd->color.a = 255;
+   pd->color2.r = 0;
+   pd->color2.g = 0;
+   pd->color2.b = 0;
+   pd->color2.a = 255;
+   pd->color3.r = 0;
+   pd->color3.g = 0;
+   pd->color3.b = 0;
+   pd->color3.a = 128;
+   pd->text.align.x = 0.5;
+   pd->text.align.y = 0.5;
+   pd->text.id_source = -1;
+   pd->text.id_text_source = -1;
+   pd->gradient.rel1.relative_x = 0;
+   pd->gradient.rel1.relative_y = 0;
+   pd->gradient.rel1.offset_x = 0;
+   pd->gradient.rel1.offset_y = 0;
+   pd->gradient.rel2.relative_x = 1;
+   pd->gradient.rel2.relative_y = 1;
+   pd->gradient.rel2.offset_x = -1;
+   pd->gradient.rel2.offset_y = -1;
+}
+
+
+EAPI unsigned char
+edje_edit_state_exist(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   return 1;
+}
+//relative
+EAPI double
+edje_edit_state_rel1_relative_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel1 rel of part: %s state: %s [%f]\n",part,state,pd->rel1.relative_x);
+   return pd->rel1.relative_x;
+}
+
+EAPI double
+edje_edit_state_rel1_relative_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel1 rel of part: %s state: %s\n",part,state);
+   return pd->rel1.relative_y;
+}
+
+EAPI double
+edje_edit_state_rel2_relative_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel2 rel of part: %s state: %s\n",part,state);
+   return pd->rel2.relative_x;
+}
+
+EAPI double
+edje_edit_state_rel2_relative_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel2 rel of part: %s state: %s\n",part,state);
+   return pd->rel2.relative_y;
+}
+
+EAPI void
+edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN()
+   //printf("Set rel1x of part: %s state: %s to: %f\n", part, state, x);
+   //TODO check boudaries
+   pd->rel1.relative_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN()
+   //printf("Set rel1y of part: %s state: %s to: %f\n", part, state, y);
+   //TODO check boudaries
+   pd->rel1.relative_y = y;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN()
+   //printf("Set rel2x of part: %s state: %s to: %f\n", part, state, x);
+   //TODO check boudaries
+   pd->rel2.relative_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN()
+   //printf("Set rel2y of part: %s state: %s to: %f\n", part, state, y);
+   pd = _edje_part_description_find_byname(ed, part, state);
+   //TODO check boudaries
+   pd->rel2.relative_y = y;
+   edje_object_calc_force(obj);
+}
+
+//offset
+EAPI int
+edje_edit_state_rel1_offset_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel1 offset of part: %s state: %s\n",part,state);
+   return pd->rel1.offset_x;
+}
+
+EAPI int
+edje_edit_state_rel1_offset_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel1 offset of part: %s state: %s\n",part,state);
+   return pd->rel1.offset_y;
+}
+
+EAPI int
+edje_edit_state_rel2_offset_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel2 offset of part: %s state: %s\n",part,state);
+   return pd->rel2.offset_x;
+}
+
+EAPI int
+edje_edit_state_rel2_offset_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("Get rel2 offset of part: %s state: %s\n",part,state);
+   return pd->rel2.offset_y;
+}
+
+EAPI void
+edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN()
+   printf("Set rel1x offset of part: %s state: %s to: %f\n", part, state, x);
+   //TODO check boudaries
+   pd->rel1.offset_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN()
+   printf("Set rel1y offset of part: %s state: %s to: %f\n", part, state, y);
+   //TODO check boudaries
+   pd->rel1.offset_y = y;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN()
+   printf("Set rel2x offset of part: %s state: %s to: %f\n", part, state, x);
+   //TODO check boudaries
+   pd->rel2.offset_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN()
+   printf("Set rel2y offset of part: %s state: %s to: %f\n", part, state, y);
+   //TODO check boudaries
+   pd->rel2.offset_y = y;
+   edje_object_calc_force(obj);
+}
+
+//relative to
+EAPI const char *
+edje_edit_state_rel1_to_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   Edje_Real_Part *rel;
+   GET_PD_OR_RETURN(NULL)
+   //printf("Get rel1x TO of part: %s state: %s\n",part,state);
+   
+   if (pd->rel1.id_x == -1) return NULL;
+   
+   rel = ed->table_parts[pd->rel1.id_x % ed->table_parts_size];
+   
+   if (rel->part->name)
+      return evas_stringshare_add(rel->part->name);
+   else
+      return NULL;
+}
+
+EAPI const char *
+edje_edit_state_rel1_to_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   Edje_Real_Part *rel;
+   GET_PD_OR_RETURN(NULL)
+   //printf("Get rel1y TO of part: %s state: %s\n",part,state);
+
+   if (pd->rel1.id_y == -1) return NULL;
+   
+   rel = ed->table_parts[pd->rel1.id_y % ed->table_parts_size];
+   
+   if (rel->part->name)
+      return evas_stringshare_add(rel->part->name);
+   else
+      return NULL;
+}
+
+EAPI const char *
+edje_edit_state_rel2_to_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   Edje_Real_Part *rel;
+   GET_PD_OR_RETURN(NULL)
+   //printf("Get rel2x TO of part: %s state: %s\n",part,state);
+
+   if (pd->rel2.id_x == -1) return NULL;
+   
+   rel = ed->table_parts[pd->rel2.id_x % ed->table_parts_size];
+   
+   if (rel->part->name)
+      return evas_stringshare_add(rel->part->name);
+   else
+      return NULL;
+}
+
+EAPI const char *
+edje_edit_state_rel2_to_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   Edje_Real_Part *rel;
+   GET_PD_OR_RETURN(NULL)
+   //printf("Get rel2y TO of part: %s state: %s\n",part,state);
+
+   if (pd->rel2.id_y == -1) return NULL;
+   
+   rel = ed->table_parts[pd->rel2.id_y % ed->table_parts_size];
+   
+   if (rel->part->name)
+      return evas_stringshare_add(rel->part->name);
+   else
+      return NULL;
+}
+
+EAPI void
+//note after this call edje_edit_part_selected_state_set() to update !! need to fix this
+edje_edit_state_rel1_to_x_set(Evas_Object *obj, const char *part, const char *state, const char *rel_to)
+{
+   Edje_Real_Part *relp;
+   GET_PD_OR_RETURN()
+   printf("Set rel1 to x on state: %s (to part: )\n",state);
+   
+   if (rel_to)
+   {
+      relp = _edje_real_part_get(ed, rel_to);
+      if (!relp) return;
+         pd->rel1.id_x = relp->part->id;
+   }
+   else
+      pd->rel1.id_x = -1;
+   
+   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
+   // edje_object_calc_force(obj);//don't work for redraw
+}
+
+EAPI void
+//note after this call edje_edit_part_selected_state_set() to update !! need to fix this
+edje_edit_state_rel1_to_y_set(Evas_Object *obj, const char *part, const char *state, const char *rel_to)
+{
+   Edje_Real_Part *relp;
+   GET_PD_OR_RETURN()
+   
+   //printf("Set rel1 to y on state: %s (to part: %s)\n",state, rel_to);
+   
+   if (rel_to)
+   {
+      relp = _edje_real_part_get(ed, rel_to);
+      if (!relp) return;
+         pd->rel1.id_y = relp->part->id;
+   }
+   else
+      pd->rel1.id_y = -1;
+   
+   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
+   // edje_object_calc_force(obj);//don't work for redraw
+}
+
+EAPI void
+//note after this call edje_edit_part_selected_state_set() to update !! need to fix this
+edje_edit_state_rel2_to_x_set(Evas_Object *obj, const char *part, const char *state, const char *rel_to)
+{
+   Edje_Real_Part *relp;
+   GET_PD_OR_RETURN()
+   printf("Set rel2 to x on state: %s (to part: )\n",state);
+   
+   if (rel_to)
+   {
+      relp = _edje_real_part_get(ed, rel_to);
+      if (!relp) return;
+         pd->rel2.id_x = relp->part->id;
+   }
+   else
+      pd->rel2.id_x = -1;
+   
+   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
+   // edje_object_calc_force(obj);//don't work for redraw
+}
+
+EAPI void
+//note after this call edje_edit_part_selected_state_set() to update !! need to fix this
+edje_edit_state_rel2_to_y_set(Evas_Object *obj, const char *part, const char *state, const char *rel_to)
+{
+   Edje_Real_Part *relp;
+   GET_PD_OR_RETURN()
+   //printf("Set rel2 to y on state: %s (to part: %s)\n",state, rel_to);
+   
+   if (rel_to)
+   {
+      relp = _edje_real_part_get(ed, rel_to);
+      if (!relp) return;
+         pd->rel2.id_y = relp->part->id;
+   }
+   else
+      pd->rel2.id_y = -1;
+   
+   //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
+   // edje_object_calc_force(obj);//don't work for redraw
+}
+
+//colors
+EAPI void
+edje_edit_state_color_get(Evas_Object *obj, const char *part, const char *state, int *r, int *g, int *b, int *a)
+{
+   GET_PD_OR_RETURN()
+   //printf("GET COLOR of state '%s'\n", state);
+   
+   if (r) *r = pd->color.r;
+   if (g) *g = pd->color.g;
+   if (b) *b = pd->color.b;
+   if (a) *a = pd->color.a;
+}
+
+EAPI void
+edje_edit_state_color2_get(Evas_Object *obj, const char *part, const char *state, int *r, int *g, int *b, int *a)
+{
+   GET_PD_OR_RETURN()
+   //printf("GET COLOR2 of state '%s'\n", state);
+   
+   if (r) *r = pd->color2.r;
+   if (g) *g = pd->color2.g;
+   if (b) *b = pd->color2.b;
+   if (a) *a = pd->color2.a;
+}
+
+EAPI void
+edje_edit_state_color3_get(Evas_Object *obj, const char *part, const char *state, int *r, int *g, int *b, int *a)
+{
+   GET_PD_OR_RETURN()
+   //printf("GET COLOR3 of state '%s'\n", state);
+
+   if (r) *r = pd->color3.r;
+   if (g) *g = pd->color3.g;
+   if (b) *b = pd->color3.b;
+   if (a) *a = pd->color3.a;
+}
+
+EAPI void
+edje_edit_state_color_set(Evas_Object *obj, const char *part, const char *state, int r, int g, int b, int a)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET COLOR of state '%s'\n", state);
+
+   if (r > -1 && r < 256) pd->color.r = r;
+   if (g > -1 && g < 256) pd->color.g = g;
+   if (b > -1 && b < 256) pd->color.b = b;
+   if (a > -1 && a < 256) pd->color.a = a;
+    
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_color2_set(Evas_Object *obj, const char *part, const char *state, int r, int g, int b, int a)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET COLOR2 of state '%s'\n", state);
+
+   if (r > -1 && r < 256) pd->color2.r = r;
+   if (g > -1 && g < 256) pd->color2.g = g;
+   if (b > -1 && b < 256) pd->color2.b = b;
+   if (a > -1 && a < 256) pd->color2.a = a;
+    
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state, int r, int g, int b, int a)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET COLOR3 of state '%s'\n", state);
+
+   if (r > -1 && r < 256) pd->color3.r = r;
+   if (g > -1 && g < 256) pd->color3.g = g;
+   if (b > -1 && b < 256) pd->color3.b = b;
+   if (a > -1 && a < 256) pd->color3.a = a;
+    
+   edje_object_calc_force(obj);
+}
+
+//align
+EAPI double
+edje_edit_state_align_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("GET ALIGN_X of state '%s' [%f]\n", state, pd->align.x);
+   
+   return pd->align.x;
+}
+EAPI double
+edje_edit_state_align_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("GET ALIGN_Y of state '%s' [%f]\n", state, pd->align.y);
+   
+   return pd->align.y;
+}
+EAPI void
+edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const char *state, double align)
+{
+   GET_PD_OR_RETURN()
+   printf("SET ALIGN_X of state '%s' [to: %f]\n", state, align);
+   pd->align.x = align;
+}
+EAPI void
+edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *state, double align)
+{
+   GET_PD_OR_RETURN()
+   printf("SET ALIGN_Y of state '%s' [to: %f]\n", state, align);
+   pd->align.y = align;
+}
+//min & max
+EAPI int
+edje_edit_state_min_w_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   printf("GET MIN_W of state '%s' [%d]\n", state, pd->min.w);
+   return pd->min.w;
+}
+EAPI void
+edje_edit_state_min_w_set(Evas_Object *obj, const char *part, const char *state, int min_w)
+{
+   GET_PD_OR_RETURN()
+   printf("SET MIN_W of state '%s' [to: %d]\n", state, min_w);
+   pd->min.w = min_w;
+}
+EAPI int
+edje_edit_state_min_h_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   printf("GET MIN_H of state '%s' [%d]\n", state, pd->min.h);
+   return pd->min.h;
+}
+EAPI void
+edje_edit_state_min_h_set(Evas_Object *obj, const char *part, const char *state, int min_h)
+{
+   GET_PD_OR_RETURN()
+   printf("SET MIN_H of state '%s' [to: %d]\n", state, min_h);
+   pd->min.h = min_h;
+}
+
+EAPI int
+edje_edit_state_max_w_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   printf("GET MAX_W of state '%s' [%d]\n", state, pd->max.w);
+   return pd->max.w;
+}
+EAPI void
+edje_edit_state_max_w_set(Evas_Object *obj, const char *part, const char *state, int max_w)
+{
+   GET_PD_OR_RETURN()
+   printf("SET MAX_W of state '%s' [to: %d]\n", state, max_w);
+   pd->max.w = max_w;
+}
+EAPI int
+edje_edit_state_max_h_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   printf("GET MAX_H of state '%s' [%d]\n", state, pd->max.h);
+   return pd->max.h;
+}
+EAPI void
+edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state, int max_h)
+{
+   GET_PD_OR_RETURN()
+   printf("SET MAX_H of state '%s' [to: %d]\n", state, max_h);
+   pd->max.h = max_h;
+}
+//aspect
+EAPI double
+edje_edit_state_aspect_min_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   printf("GET ASPECT_MIN of state '%s' [%f]\n", state, pd->aspect.min);
+   return pd->aspect.min;
+}
+EAPI double
+edje_edit_state_aspect_max_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   printf("GET ASPECT_MAX of state '%s' [%f]\n", state, pd->aspect.max);
+   return pd->aspect.max;
+}
+EAPI void
+edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, const char *state, double aspect)
+{
+   GET_PD_OR_RETURN()
+   printf("SET ASPECT_MIN of state '%s' [to: %f]\n", state, aspect);
+   pd->aspect.min = aspect;
+}
+EAPI void
+edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *state, double aspect)
+{
+   GET_PD_OR_RETURN()
+   printf("SET ASPECT_MAX of state '%s' [to: %f]\n", state, aspect);
+   pd->aspect.max = aspect;
+}
+EAPI unsigned char
+edje_edit_state_aspect_pref_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN()
+   printf("GET ASPECT_PREF of state '%s' [%d]\n", state, pd->aspect.prefer);
+   return pd->aspect.prefer;
+}
+EAPI void
+edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *state, unsigned char pref)
+{
+   GET_PD_OR_RETURN()
+   printf("SET ASPECT_PREF of state '%s' [to: %d]\n", state, pref);
+   pd->aspect.prefer = pref;
+}
+/**************/
+/*  TEXT API */
+/**************/
+
+EAPI const char*
+edje_edit_state_text_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN()
+   //printf("GET TEXT of state: %s\n", state);
+   
+   if (pd->text.text)
+      return evas_stringshare_add(pd->text.text);
+   
+   return NULL;
+}
+
+EAPI void
+edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, const char *text)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET TEXT of state: %s\n", state);
+   
+   if (!text) return;
+   
+   //if (pd->text.text && ed->file->free_strings)
+   //   evas_stringshare_del(pd->text.text); TODO FIXME
+   
+   pd->text.text = (char *)evas_stringshare_add(text);
+    
+   edje_object_calc_force(obj);
+}
+
+EAPI int
+edje_edit_state_text_size_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(-1)
+   //printf("GET TEXT_SIZE of state: %s [%d]\n", state, pd->text.size);
+   return pd->text.size;
+}
+
+EAPI void
+edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *state, int size)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET TEXT_SIZE of state: %s [%d]\n", state, size);
+   
+   if (size < 0) return;
+
+   pd->text.size = size;
+   
+   edje_object_calc_force(obj);
+}
+
+EAPI double
+edje_edit_state_text_align_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0)
+   //printf("GET TEXT_ALIGN_X of state: %s [%f]\n", state, pd->text.align.x);
+   return pd->text.align.x;
+}
+
+EAPI void
+edje_edit_state_text_align_x_set(Evas_Object *obj, const char *part, const char *state, double align)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET TEXT_ALIGN_X of state: %s [%f]\n", state, align);
+   
+   pd->text.align.x = align;
+   edje_object_calc_force(obj);
+}
+
+EAPI double
+edje_edit_state_text_align_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN()
+   //printf("GET TEXT_ALIGN_Y of state: %s [%f]\n", state, pd->text.align.x);
+   return pd->text.align.y;
+}
+
+EAPI void
+edje_edit_state_text_align_y_set(Evas_Object *obj, const char *part, const char *state, double align)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET TEXT_ALIGN_Y of state: %s [%f]\n", state, align);
+   
+   pd->text.align.y = align;
+   edje_object_calc_force(obj);
+}
+
+EAPI Evas_List*
+edje_edit_fonts_list_get(Evas_Object *obj)
+{
+   Edje_Font_Directory_Entry *f;
+   Evas_List *fonts;
+   Evas_List *l;
+   
+   GET_ED_OR_RETURN(NULL)
+   
+   if (!ed->file) return NULL;
+   if (!ed->file->font_dir) return NULL;
+   
+   printf("GET FONT LIST for %s\n", ed->file->path);
+   
+   l = ed->file->font_dir->entries;
+   fonts = NULL;
+   while (l)
+   {
+      f = l->data;
+      fonts = evas_list_append(fonts, evas_stringshare_add(f->entry));
+      printf("   Font: %s (%s) \n", f->entry, f->path);
+      l = l->next;
+   }
+   
+   return fonts;
+}
+
+
+EAPI unsigned char
+edje_edit_font_add(Evas_Object *obj, const char* path)
+{
+   printf("ADD FONT: %s\n", path);
+   Font *fn;
+   Edje_Font_Directory_Entry *fnt;
+   Eet_File *eetf;
+   struct stat st;
+   char *name;
+   
+   GET_ED_OR_RETURN(0)
+   if (!path) return 0;
+   if (stat(path, &st) || !S_ISREG(st.st_mode)) return 0;
+   if (!ed->file) return 0;
+   if (!ed->path) return 0;
+   
+   
+   /* Create Font_Directory if not exist */
+   if (!ed->file->font_dir)
+     ed->file->font_dir = mem_alloc(sizeof(Edje_Font_Directory));
+   
+   /* Create Font */
+   fn = mem_alloc(sizeof(Font));
+   if (!fn) return 0;
+   
+   if ((name = strrchr(path, '/'))) name ++;
+   else name = (char *)path;
+   
+   fn->file = mem_strdup(name);
+   fn->name = mem_strdup(name);
+   
+   /*{
+      Evas_List *l;
+      
+      for (l = fonts; l; l = l->next)
+      {
+         Font *lfn;
+      
+         lfn = l->data;
+         if (!strcmp(lfn->name, fn->name))
+         {
+            free(fn->file);
+            free(fn->name);
+            free(fn);
+            return;
+         }
+      }
+   }
+   */
+   
+   /* Read font data from file */
+   FILE *f;
+   void *fdata = NULL;
+   int fsize = 0;
+   f = fopen(path, "rb");
+   if (f)
+   {
+      long pos;
+      
+      fseek(f, 0, SEEK_END);
+      pos = ftell(f);
+      rewind(f);
+      fdata = malloc(pos);
+      if (fdata)
+      {
+         if (fread(fdata, pos, 1, f) != 1)
+         {
+            fprintf(stderr, "Edje_Edit: Error. unable to read all of font file \"%s\"\n",
+                    path);
+            return 0;
+         }
+         fsize = pos;
+      }
+      fclose(f);
+   }
+   /* Write font to edje file */
+   char buf[MAX_PATH];
+   snprintf(buf, sizeof(buf), "fonts/%s", fn->name);
+   
+   if (fdata)
+   {
+      /* open the eet file */
+      eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+      if (!eetf)
+      {
+         fprintf(stderr,
+                 "Edje_Edit: Error. unable to open \"%s\" for writing output\n",
+                 ed->path);
+         return 0;
+      }
+      
+      if (eet_write(eetf, buf, fdata, fsize, 1) <= 0)
+      {
+         fprintf(stderr, "Edje_Edit: Error. unable to write font part \"%s\" as \"%s\" part entry\n",
+                 path, buf);
+         eet_close(eetf);
+         free(fdata);
+         return 0;
+      }
+      
+      eet_close(eetf);
+      free(fdata);
+   }
+   
+   /* Create Edje_Font_Directory_Entry */
+   if (ed->file->font_dir)
+   {
+      fnt = mem_alloc(sizeof(Edje_Font_Directory_Entry));
+      fnt->entry = mem_strdup(fn->name);
+      fnt->path = mem_strdup(buf);
+      
+      ed->file->font_dir->entries = evas_list_append(ed->file->font_dir->entries, fnt);
+      ed->file->font_hash = evas_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+   }
+   
+   
+   return 1;
+}
+
+EAPI const char*
+edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(NULL)
+   printf("GET FONT of state: %s [%s]\n", state, pd->text.font);
+   if (!pd->text.font) return NULL;
+   return evas_stringshare_add(pd->text.font);
+}
+
+EAPI void
+edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, const char *font)
+{
+   GET_PD_OR_RETURN()
+   printf("SET FONT of state: %s [%s]\n", state, font);
+   
+   //if (pd->text.font && ed->file->free_strings) evas_stringshare_del(pd->text.font); TODO FIXME
+   pd->text.font = (char *)evas_stringshare_add(font);
+    
+   edje_object_calc_force(obj);
+}
+
+EAPI unsigned char
+edje_edit_part_effect_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0)
+   printf("GET EFFECT of part: %s\n", part);
+   return rp->part->effect;
+}
+
+EAPI void
+edje_edit_part_effect_set(Evas_Object *obj, const char *part, unsigned char effect)
+{
+   GET_RP_OR_RETURN()
+   printf("SET EFFECT of part: %s [%d]\n", part, effect);
+   rp->part->effect = effect;
+   
+   edje_object_calc_force(obj);
+}
+
+/****************/
+/*  IMAGES API  */
+/****************/
+
+EAPI Evas_List*
+edje_edit_images_list_get(Evas_Object *obj)
+{
+   Edje_Image_Directory_Entry *i;
+   Evas_List *images;
+   Evas_List *l;
+   
+   GET_ED_OR_RETURN(NULL)
+   
+   if (!ed->file) return NULL;
+   if (!ed->file->image_dir) return NULL;
+   
+   printf("GET IMAGES LIST for %s\n", ed->file->path);
+   
+   l = ed->file->image_dir->entries;
+   images = NULL;
+   while (l)
+   {
+      i = l->data;
+      images = evas_list_append(images, evas_stringshare_add(i->entry));
+      printf("   Image: %s (type: %d param: %d id: %d) \n",
+             i->entry, i->source_type, i->source_param, i->id);
+      l = l->next;
+   }
+   
+   return images;
+}
+
+EAPI unsigned char
+edje_edit_image_add(Evas_Object *obj, const char* path)
+{
+   Evas_List *l;
+   Edje_Image_Directory_Entry *de;
+   int free_id;
+   char *name;
+
+   GET_ED_OR_RETURN(0)
+
+   if (!path) return 0;
+   if (!ed->file) return 0;
+   if (!ed->path) return 0;
+   
+   /* Create Image_Directory if not exist */
+   if (!ed->file->image_dir)
+     ed->file->image_dir = mem_alloc(sizeof(Edje_Image_Directory));
+   
+   /* Loop trough image directory to find if image exist */
+   printf("Add Image '%s' (total %d)\n", path,
+          evas_list_count(ed->file->image_dir->entries));
+   free_id = 0;
+   for (l = ed->file->image_dir->entries; l; l = l->next)
+   {
+      Edje_Image_Directory_Entry *i;
+      i = l->data;
+      if (!i) return 0;
+      if (i->id >= free_id) free_id = i->id + 1; /*TODO search for free (hole) id*/
+      printf("IMG: %s [%d]\n", i->entry, i->id);
+   }
+   printf("FREE ID: %d\n", free_id);
+   
+   /* Import image */
+   if (!_edje_import_image_file(ed, path, free_id))
+      return 0;
+   
+   /* Create Image Entry */
+   de = mem_alloc(sizeof(Edje_Image_Directory_Entry));
+   if (name = strrchr(path, '/')) name++;
+   else name = (char *)path;
+   de->entry = mem_strdup(name);
+   de->id = free_id;
+   de->source_type = 1;
+   de->source_param = 1;
+   
+   /* Add image to Image Directory */
+   ed->file->image_dir->entries =
+        evas_list_append(ed->file->image_dir->entries, de);
+   
+   return 1;
+}
+
+EAPI int
+edje_edit_image_id_get(Evas_Object *obj, const char *image_name)
+{
+   return _edje_image_id_find(obj, image_name);
+}
+
+EAPI const char*
+edje_edit_state_image_get(Evas_Object *obj, const char *part, const char *state)
+{
+   char *image;
+   GET_PD_OR_RETURN(NULL)
+   
+   image = (char *)_edje_image_name_find(obj, pd->image.id);
+   if (!image) return NULL;
+   
+   //printf("GET IMAGE for %s [%s]\n", state, image);
+   return evas_stringshare_add(image);
+}
+
+EAPI void
+edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state, const char *image)
+{
+   int id;
+   GET_PD_OR_RETURN()
+   
+   if (!image) return;
+    
+   id = _edje_image_id_find(obj, image);
+   printf("SET IMAGE for %s [%s]\n", state, image);
+   
+   if (id > -1) pd->image.id = id;
+   
+   edje_object_calc_force(obj);
+}
+
+EAPI Evas_List*
+edje_edit_state_tweens_list_get(Evas_Object *obj, const char *part, const char *state)
+{
+   Edje_Part_Image_Id *i;
+   Evas_List *tweens, *l;
+   const char *name;
+   GET_PD_OR_RETURN(NULL)
+   //printf("GET TWEEN LIST for %s\n", state);
+   
+   l = pd->image.tween_list;
+   tweens = NULL;
+   while (l)
+   {
+      i = l->data;
+      name = _edje_image_name_find(obj, i->id);
+      //printf("   t: %s\n", name);
+      tweens = evas_list_append(tweens, evas_stringshare_add(name));
+      l = l->next;
+   }
+   
+   return tweens;
+}
+
+EAPI unsigned char
+edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state, const char *tween)
+{
+   Edje_Part_Image_Id *i;
+   int id;
+   GET_PD_OR_RETURN(0)
+   
+   id = _edje_image_id_find(obj, tween);
+   if (id < 0) return 0;
+   
+   /* alloc Edje_Part_Image_Id */
+   i = mem_alloc(SZ(Edje_Part_Image_Id));
+   if (!i) return 0;
+   i->id = id;
+   
+   /* add to tween list */
+   pd->image.tween_list = evas_list_append(pd->image.tween_list, i);
+
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state, const char *tween)
+{
+   Evas_List *l;
+   int id;
+   GET_PD_OR_RETURN(0)
+
+   if (!pd->image.tween_list) return 0;
+   
+   id = _edje_image_id_find(obj, tween);
+   if (id < 0) return 0;
+   
+   l = pd->image.tween_list;
+   while (l)
+   {
+      Edje_Part_Image_Id *i;
+      i = l->data;
+      if (i->id == id)
+      {
+         pd->image.tween_list = evas_list_remove_list(pd->image.tween_list, l);
+         return 1;
+      }
+      l = l->next;
+   }
+   return 0;
+}
+
+EAPI void
+edje_edit_state_image_border_get(Evas_Object *obj, const char *part, const char *state, int *l, int *r, int *t, int *b)
+{
+   GET_PD_OR_RETURN()
+   //printf("GET IMAGE_BORDER of state '%s'\n", state);
+   
+   if (l) *l = pd->border.l;
+   if (r) *r = pd->border.r;
+   if (t) *t = pd->border.t;
+   if (b) *b = pd->border.b;
+}
+
+EAPI void
+edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char *state, int l, int r, int t, int b)
+{
+   GET_PD_OR_RETURN()
+   //printf("SET IMAGE_BORDER of state '%s'\n", state);
+
+   if (l > -1) pd->border.l = l;
+   if (r > -1) pd->border.r = r;
+   if (t > -1) pd->border.t = t;
+   if (b > -1) pd->border.b = b;
+    
+   edje_object_calc_force(obj);
+}
+
+/******************/
+/*  PROGRAMS API  */
+/******************/
+Edje_Program*
+_edje_program_get_byname(Evas_Object *obj, const char *prog_name)
+{
+   Edje_Program *epr;
+   int i;
+   
+   GET_ED_OR_RETURN(NULL)
+      
+   if (!prog_name) return NULL;
+
+   for (i = 0; i < ed->table_programs_size; i++)
+   {
+      epr = ed->table_programs[i];
+      if (strcmp(epr->name, prog_name) == 0)
+         return epr;
+   }
+   return NULL;
+}
+
+EAPI Evas_List *
+edje_edit_programs_list_get(Evas_Object *obj)
+{
+   Evas_List *progs;
+   int i;
+   
+   GET_ED_OR_RETURN(NULL)
+   
+   //printf("EE: Found %d programs\n", ed->table_programs_size);
+   
+   progs = NULL;
+   for (i = 0; i < ed->table_programs_size; i++)
+   {
+      Edje_Program *epr;
+      epr = ed->table_programs[i];
+      progs = evas_list_append(progs, evas_stringshare_add(epr->name));
+   }
+
+   return progs;
+}
+
+
+
+EAPI unsigned char
+edje_edit_program_add(Evas_Object *obj, const char *name)
+{
+   Edje_Program *epr;
+   Edje_Part_Collection *pc;
+   printf("ADD PROGRAM [new name: %s]\n", name);
+   GET_ED_OR_RETURN(0)
+   
+   //Check if program already exists
+   if (_edje_program_get_byname(obj, name))
+      return 0;
+   
+   //Alloc Edje_Program or return
+   epr = mem_alloc(SZ(Edje_Program));
+   if (!epr) return 0;
+   
+   //Add program to group
+   pc = ed->collection;
+   pc->programs = evas_list_append(pc->programs, epr);
+   
+   //Init Edje_Program
+   epr->id = evas_list_count(pc->programs) - 1;
+   epr->name = evas_stringshare_add(name);
+   epr->signal = NULL;
+   epr->source = NULL;
+   epr->in.from = 0.0;
+   epr->in.range = 0.0;
+   epr->action = 0;
+   epr->state = NULL;
+   epr->value = 0.0;
+   epr->state2 = NULL;
+   epr->value2 = 0.0;
+   epr->tween.mode = 1;
+   epr->tween.time = 0.0;
+   epr->targets = NULL;
+   epr->after = NULL;
+   
+   
+   //Update table_programs
+   ed->table_programs_size++;
+   ed->table_programs = realloc(ed->table_programs,
+                             sizeof(Edje_Program *) * ed->table_programs_size);
+   ed->table_programs[epr->id % ed->table_programs_size] = epr;
+   
+   //Update patterns
+   if (ed->patterns.programs.signals_patterns)
+   {
+      edje_match_patterns_free(ed->patterns.programs.signals_patterns);
+      edje_match_patterns_free(ed->patterns.programs.sources_patterns);
+   }
+   ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
+   ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+   
+   return 1;
+}
+
+
+EAPI unsigned char
+edje_edit_program_del(Evas_Object *obj, const char *prog)
+{
+   printf("DEL PROGRAM: %s\n", prog);
+   Evas_List *l;
+   int id, i;
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   
+   
+   //Remove program from programs list
+   id = epr->id;
+   Edje_Part_Collection *pc;
+   pc = ed->collection;
+   pc->programs = evas_list_remove(pc->programs, epr);
+   
+   //Free Edje_Program
+   /*if (ed->file->free_strings)
+   {
+      if (epr->name) evas_stringshare_del(epr->name);
+      if (epr->signal) evas_stringshare_del(epr->signal);
+      if (epr->source) evas_stringshare_del(epr->source);
+      if (epr->state) evas_stringshare_del(epr->state);
+      if (epr->state2) evas_stringshare_del(epr->state2);
+   } TODO FIXME*/
+   while (epr->targets)
+   {
+      Edje_Program_Target *prt;
+      
+      prt = epr->targets->data;
+      epr->targets = evas_list_remove_list(epr->targets, epr->targets);
+      free(prt);
+   }
+   while (epr->after)
+   {
+      Edje_Program_After *pa;
+
+      pa = epr->after->data;
+      epr->after = evas_list_remove_list(epr->after, epr->after);
+      free(pa);
+   }
+   free(epr);
+   
+   
+   //Update programs table
+   //We move the last program in place of the deleted one
+   //and realloc the table without the last element.
+   ed->table_programs[id % ed->table_programs_size] = ed->table_programs[ed->table_programs_size-1];
+   ed->table_programs_size--;
+   ed->table_programs = realloc(ed->table_programs,
+                             sizeof(Edje_Program *) * ed->table_programs_size);
+   
+   //Update the id of the moved program
+   int old_id;
+   if (id < ed->table_programs_size)
+   {
+      Edje_Program *p;
+      p = ed->table_programs[id % ed->table_programs_size];
+      printf("UPDATE: %s(id:%d) with new id: %d\n",
+             p->name, p->id, id);
+      old_id = p->id;
+      p->id = id;
+   }else
+      old_id = -1;
+   
+   //We also update all other programs that point to old_id and id
+   for (i = 0; i < ed->table_programs_size; i++)
+   {
+      Edje_Program *p;
+      p = ed->table_programs[i];
+     // printf("Check dependencies on %s\n",p->name);
+      /* check in afters */
+      l = p->after;
+      while (l)
+      {
+         Edje_Program_After *pa;
+         
+         pa = l->data;
+         if (pa->id == old_id)
+         {
+        //    printf("   dep on after old_id\n");
+            pa->id = id;
+         }
+         else if (pa->id == id)
+         {
+          //  printf("   dep on after id\n");
+            p->after = evas_list_remove(p->after, pa);
+         }
+         
+         if (l) l = l->next;
+      }
+      /* check in targets */
+      if (p->action == EDJE_ACTION_TYPE_ACTION_STOP)
+      {
+         l = p->targets;
+         while (l)
+         {
+            Edje_Program_Target *pt;
+            
+            pt = l->data;
+            if (pt->id == old_id)
+            {
+              // printf("   dep on target old_id\n");
+               pt->id = id;
+            }
+            else if (pt->id == id)
+            { 
+              // printf("   dep on target id\n");
+               p->targets = evas_list_remove(p->targets, pt);
+            }
+            if (l) l = l->next;
+         }
+      }
+   }
+   
+   return 1;
+}
+
+
+EAPI unsigned char
+edje_edit_program_exist(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(0)
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_program_run(Evas_Object *obj, const char *prog)
+{
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   _edje_program_run(ed, epr, 0, "", "");
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_name)
+{
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   if (!new_name) return 0;
+   
+   if (_edje_program_get_byname(obj, new_name)) return 0;
+      
+   printf("SET NAME for program: %s [new name: %s]\n", prog, new_name);
+   
+   //if (epr->name && ed->file->free_strings) evas_stringshare_del(epr->name); TODO FIXME
+   epr->name = evas_stringshare_add(new_name);
+   
+   return 1;
+}
+
+EAPI const char*
+edje_edit_program_source_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL)
+    
+   if (!epr->source) return NULL;
+   //printf("GET SOURCE for program: %s [%s]\n", prog, epr->source);
+   return evas_stringshare_add(epr->source);
+}
+
+EAPI unsigned char
+edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *source)
+{
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   if (!source) return 0;
+   
+   printf("SET SOURCE for program: %s [%s]\n", prog, source);
+   
+   //if (epr->source && ed->file->free_strings) evas_stringshare_del(epr->source); TODO FIXME
+   epr->source = evas_stringshare_add(source);
+   
+   //Update patterns
+   if (ed->patterns.programs.sources_patterns)
+      edje_match_patterns_free(ed->patterns.programs.sources_patterns);
+   ed->patterns.programs.sources_patterns = edje_match_programs_source_init(ed->collection->programs);
+   
+   return 1;
+}
+
+EAPI const char*
+edje_edit_program_signal_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL)
+    
+   if (!epr->signal) return NULL;
+   //printf("GET SIGNAL for program: %s [%s]\n", prog, epr->signal);
+   return evas_stringshare_add(epr->signal);
+}
+
+EAPI unsigned char
+edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *signal)
+{
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   if (!signal) return 0;
+   
+   printf("SET SIGNAL for program: %s [%s]\n", prog, signal);
+   
+   //if (epr->signal && ed->file->free_strings) evas_stringshare_del(epr->signal); TODO FIXME
+   epr->signal = evas_stringshare_add(signal);
+   
+   //Update patterns
+   if (ed->patterns.programs.signals_patterns)
+      edje_match_patterns_free(ed->patterns.programs.signals_patterns);
+   ed->patterns.programs.signals_patterns = edje_match_programs_signal_init(ed->collection->programs);
+   
+   return 1;
+}
+
+EAPI const char*
+edje_edit_program_state_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL)
+   
+   if (!epr->state) return NULL;
+   //printf("GET STATE for program: %s [%s %.2f]\n", prog, epr->state, epr->value);
+   return evas_stringshare_add(epr->state);
+}
+
+EAPI unsigned char
+edje_edit_program_state_set(Evas_Object *obj, const char *prog, const char *state)
+{
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   
+   printf("SET STATE for program: %s\n", prog);
+   
+   //if (epr->state && ed->file->free_strings) evas_stringshare_del(epr->state); TODO FIXME
+   epr->state = evas_stringshare_add(state);
+   
+   return 1;
+}
+
+EAPI const char*
+edje_edit_program_state2_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL)
+   
+   if (!epr->state2) return NULL;
+   //printf("GET STATE2 for program: %s [%s %.2f]\n", prog, epr->state2, epr->value2);
+   return evas_stringshare_add(epr->state2);
+}
+
+EAPI unsigned char
+edje_edit_program_state2_set(Evas_Object *obj, const char *prog, const char *state2)
+{
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   
+   printf("SET STATE2 for program: %s\n", prog);
+   
+   //if (epr->state2 && ed->file->free_strings) evas_stringshare_del(epr->state2); TODO FIXME
+   epr->state2 = evas_stringshare_add(state2);
+   
+   return 1;
+}
+
+EAPI double
+edje_edit_program_value_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(-1)
+   
+   //printf("GET VALUE for program: %s [%s %.2f]\n", prog, epr->state, epr->value);
+   return epr->value;
+}
+
+EAPI unsigned char
+edje_edit_program_value_set(Evas_Object *obj, const char *prog, double value)
+{
+   GET_EPR_OR_RETURN(0)
+   
+   //printf("SET VALUE for program: %s [%.2f]\n", prog, value);
+   epr->value = value;
+   return 1;
+}
+
+EAPI double
+edje_edit_program_value2_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(-1)
+   
+   //printf("GET VALUE2 for program: %s [%s %.2f]\n", prog, epr->state2, epr->value2);
+   return epr->value2;
+}
+
+EAPI unsigned char
+edje_edit_program_value2_set(Evas_Object *obj, const char *prog, double value)
+{
+   GET_EPR_OR_RETURN(0)
+   
+   //printf("SET VALUE for program: %s [%.2f]\n", prog, value);
+   epr->value2 = value;
+   return 1;
+}
+EAPI double
+edje_edit_program_in_from_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(0)
+   //printf("GET IN.FROM for program: %s [%f]\n", prog, epr->in.from);
+   return epr->in.from;
+}
+
+EAPI unsigned char
+edje_edit_program_in_from_set(Evas_Object *obj, const char *prog, double seconds)
+{
+   GET_EPR_OR_RETURN(0)
+   //printf("SET IN.FROM for program: %s [%f]\n", prog, epr->in.from);
+   epr->in.from = seconds;
+   return 1;
+}
+
+EAPI double
+edje_edit_program_in_range_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(0)
+   //printf("GET IN.RANGE for program: %s [%f]\n", prog, epr->in.range);
+   return epr->in.range;
+}
+
+EAPI unsigned char
+edje_edit_program_in_range_set(Evas_Object *obj, const char *prog, double seconds)
+{
+   GET_EPR_OR_RETURN(0)
+   //printf("SET IN.RANGE for program: %s [%f]\n", prog, epr->in.range);
+   epr->in.range = seconds;
+   return 1;
+}
+
+EAPI int
+edje_edit_program_transition_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(-1)
+   //printf("GET TRANSITION for program: %s [%d]\n", prog, epr->tween.mode);
+   return epr->tween.mode;
+}
+
+EAPI unsigned char
+edje_edit_program_transition_set(Evas_Object *obj, const char *prog, int transition)
+{
+   GET_EPR_OR_RETURN(0)
+   //printf("GET TRANSITION for program: %s [%d]\n", prog, epr->tween.mode);
+   epr->tween.mode = transition;
+   return 1;
+}
+
+EAPI double
+edje_edit_program_transition_time_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(-1)
+   //printf("GET TRANSITION_TIME for program: %s [%.4f]\n", prog, epr->tween.time);
+   return epr->tween.time;
+}
+
+EAPI unsigned char
+edje_edit_program_transition_time_set(Evas_Object *obj, const char *prog, double seconds)
+{
+   GET_EPR_OR_RETURN(0)
+   //printf("GET TRANSITION_TIME for program: %s [%.4f]\n", prog, epr->tween.time);
+   epr->tween.time = seconds;
+   return 1;
+}
+
+EAPI int
+edje_edit_program_action_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(-1)
+   //printf("GET ACTION for program: %s [%d]\n", prog, epr->action);
+   return epr->action;
+}
+
+EAPI unsigned char
+edje_edit_program_action_set(Evas_Object *obj, const char *prog, int action)
+{
+   GET_EPR_OR_RETURN(0)
+   //printf("SET ACTION for program: %s [%d]\n", prog, action);
+   if (action >= EDJE_ACTION_TYPE_LAST) return 0;
+   
+   epr->action = action;
+   return 1;
+}
+
+EAPI Evas_List*
+edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
+{
+   Evas_List *l, *targets;
+   
+   GET_ED_OR_RETURN(NULL)
+   GET_EPR_OR_RETURN(NULL)
+   
+   //printf("GET TARGETS for program: %s [count: %d]\n", prog, evas_list_count(epr->targets));
+   
+   l = epr->targets;
+   targets = NULL;
+   while (l)
+   {
+      Edje_Program_Target *t;
+      t = l->data;
+      
+      if (epr->action == EDJE_ACTION_TYPE_STATE_SET)
+      {
+         /* the target is a part */
+         Edje_Real_Part *p = NULL;
+         p = ed->table_parts[t->id % ed->table_parts_size];
+         if (p && p->part && p->part->name)
+            targets = evas_list_append(targets,
+                                       evas_stringshare_add(p->part->name));
+      }
+      else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
+      {
+         /* the target is a program */
+         Edje_Program *p;
+         p = ed->table_programs[t->id % ed->table_programs_size];
+         if (p && p->name)
+            targets = evas_list_append(targets,
+                                       evas_stringshare_add(p->name));
+      }
+      l = l->next;
+   }
+   return targets;
+}
+
+EAPI unsigned char
+edje_edit_program_targets_clear(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(0)
+   
+   while (epr->targets)
+   {
+      Edje_Program_Target *prt;
+      
+      prt = epr->targets->data;
+      epr->targets = evas_list_remove_list(epr->targets, epr->targets);
+      free(prt);
+   }
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *target)
+{
+   int id;
+   Edje_Program_Target *t;
+   GET_ED_OR_RETURN(0)
+   GET_EPR_OR_RETURN(0)
+   
+   if (epr->action == EDJE_ACTION_TYPE_STATE_SET)
+   {
+      /* the target is a part */
+      Edje_Real_Part *rp;
+      rp = _edje_real_part_get(ed, target);
+      if (!rp) return 0;
+      id = rp->part->id;
+   }
+   else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
+   {
+      /* the target is a program */
+      Edje_Program *tar;
+      tar = _edje_program_get_byname(obj, target);
+      if (!tar) return 0;
+      id = tar->id;
+   }
+   else
+      return 0;
+   
+   t = mem_alloc(SZ(Edje_Program_Target));
+   if (!t) return 0;
+   
+   t->id = id;
+   epr->targets = evas_list_append(epr->targets, t);
+   
+   return 1;
+}
+
+EAPI Evas_List*
+edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
+{
+   Evas_List *l, *afters;
+   
+   GET_ED_OR_RETURN(NULL)
+   GET_EPR_OR_RETURN(NULL)
+   
+  // printf("GET AFTERS for program: %s [count: %d]\n", prog, evas_list_count(epr->after));
+   
+   l = epr->after;
+   afters = NULL;
+   while (l)
+   {
+      Edje_Program_After *a;
+      Edje_Program *p = NULL;
+      
+      a = l->data;
+      p = ed->table_programs[a->id % ed->table_programs_size];
+      if (p && p->name)
+      {
+         printf("   a: %d name: %s\n", a->id, p->name);
+         afters = evas_list_append(afters, evas_stringshare_add(p->name));
+      }
+      l = l->next;
+   }
+   return afters;
+}
+
+EAPI unsigned char
+edje_edit_program_afters_clear(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(0)
+   
+   while (epr->after)
+   {
+      Edje_Program_After *pa;
+      pa = epr->after->data;
+      epr->after = evas_list_remove_list(epr->after, epr->after);
+      free(pa);
+   }
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *after)
+{
+   Edje_Program *af;
+   Edje_Program_After *a;
+   GET_EPR_OR_RETURN(0)
+   
+   af = _edje_program_get_byname(obj, after);
+   if (!af) return 0;
+   
+   a = mem_alloc(SZ(Edje_Program_After));
+   if (!a) return 0;
+   
+   a->id = af->id;
+   
+   epr->after = evas_list_append(epr->after, a);
+   
+   return 1;
+}
+
+
+/*************************/
+/*  EMBRYO SCRIPTS  API  */
+/*************************/
+
+EAPI const char*
+edje_edit_script_get(Evas_Object *obj)
+{
+   Embryo_Program   *script = NULL;
+   
+   GET_ED_OR_RETURN(NULL)
+   
+   if (!ed->collection) return NULL;
+   if (!ed->collection->script) return NULL;
+   
+   script = ed->collection->script;
+   
+   printf("Get Script [%d] %d\n",script, embryo_program_recursion_get(script));
+   
+   return "Not yet complete...";
+}
+
+
+
+
+
+static void
+_edje_generate_source(Edje *ed)
+{
+   printf("\n****** GENERATE SOURCE *********\n");
+   char tmpn[MAX_PATH];
+   int fd;
+   FILE *f;
+   long sz;
+   SrcFile *sf;
+   SrcFile_List *sfl;
+   Eet_File *eetf;
+
+   /* Open a temp file */
+   //TODO this will not work on windows
+   strcpy(tmpn, "/tmp/edje_edit.edc-tmp-XXXXXX");
+   if (!(fd = mkstemp(tmpn))) return;
+   printf("*** tmp file: %s\n", tmpn);
+   if (!(f = fopen(tmpn, "w"))) return;
+   
+   /* Write edc into file */
+   fprintf(f, "Put here all edc source\n");
+   
+   
+   fclose(f);
+   
+   
+   sfl = mem_alloc(SZ(SrcFile_List));
+   sfl->list = NULL;
+   
+   /* reopen the temp file and get the contents */
+   f = fopen(tmpn, "rb");
+   if (!f) return;
+   
+   fseek(f, 0, SEEK_END);
+   sz = ftell(f);
+   fseek(f, 0, SEEK_SET);
+   sf = mem_alloc(SZ(SrcFile));
+   sf->name = mem_strdup("edje_source.edc");
+   sf->file = mem_alloc(sz + 1);
+   fread(sf->file, sz, 1, f);
+   sf->file[sz] = '\0';
+   fseek(f, 0, SEEK_SET);
+   fclose(f);
+   
+   printf("----------\n%s\n-----------\n", sf->file);
+   sfl->list = evas_list_append(sfl->list, sf);
+   
+   /* Write the source to the edje file */
+   //~ eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
+   //~ if (!eetf) return;
+   //~ if (!_srcfile_list_edd)
+      //~ source_edd();
+   
+   //~ eet_data_write(eetf, _srcfile_list_edd, "edje_sources", &sfl, 1);
+   
+   //~ eet_close(eetf);
+   
+}
+
+
+
+#define ABORT_WRITE2(eet_file) \
+   eet_close(eet_file); \
+   return 0;
+
+EAPI int
+edje_edit_save(Evas_Object *obj)
+{
+   Edje_File *ef;
+   Eet_File *eetf;
+   int bytes;
+   char buf[256];
+   char *progname = "Edje_Edit";
+    
+   GET_ED_OR_RETURN(0)
+   
+   ef = ed->file;
+   if (!ef) return 0;
+     
+
+   printf("***********  Saving file ******************\n");
+   printf("** path: %s\n", ef->path);
+   
+   eetf = eet_open(ef->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+   {
+      fprintf(stderr, "%s: Error. unable to open \"%s\" for writing output\n",
+      progname, ef->path);
+      return 0;
+   }
+   
+   printf("** Writing Edje_File* ed->file\n");
+   bytes = eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef, 1);
+   if (bytes <= 0)
+   {
+      fprintf(stderr, "%s: Error. unable to write \"edje_file\" "
+                      "entry to \"%s\" \n", progname, ef->path);
+      ABORT_WRITE2(eetf);
+   }
+
+   if (ed->collection)
+   {
+      printf("** Writing Edje_Part_Collection* ed->collection "
+             "[id: %d]\n", ed->collection->id);
+      
+      snprintf(buf, sizeof(buf), "collections/%i", ed->collection->id);
+    
+      bytes = eet_data_write(eetf, _edje_edd_edje_part_collection,
+                             buf, ed->collection, 1);
+      if (bytes <= 0)
+      {
+         fprintf(stderr, "%s: Error. unable to write \"%s\" part entry to %s \n",
+                  progname, buf, ef->path);
+         ABORT_WRITE2(eetf);
+      }
+   }
+   
+   eet_close(eetf);
+   printf("***********  Saving DONE ******************\n");
+   return 1;
+}
+
+
+
+EAPI void
+edje_edit_print_internal_status(Evas_Object *obj)
+{
+   int i;
+   Evas_List *l;
+   GET_ED_OR_RETURN()
+      
+   //_edje_generate_source(ed);
+   //return;
+   printf("\n****** CHECKIN' INTERNAL STRUCTS STATUS *********\n");
+   
+   printf("*** Edje\n");
+   printf("    path: '%s'\n", ed->path);
+   printf("    part: '%s'\n", ed->part);
+   printf("    parent: '%s'\n", ed->parent);
+   
+   printf("\n*** Parts [table:%d list:%d]\n", ed->table_parts_size,
+          evas_list_count(ed->collection->parts));
+   for (l = ed->collection->parts; l; l = l->next)
+   {
+      Edje_Part *p;
+      Edje_Real_Part *rp;
+      
+      p = l->data;
+      rp = ed->table_parts[p->id % ed->table_parts_size];
+      printf("    [%d]%s ",p->id, p->name);
+      if (p == rp->part)
+         printf(" OK!\n");
+      else
+         printf(" WRONG (table[%id]->name = '%s')\n", p->id, rp->part->name);
+   }
+   
+   printf("\n*** Programs [table:%d list:%d]\n", ed->table_programs_size,
+          evas_list_count(ed->collection->programs));
+   for (l = ed->collection->programs; l; l = l->next)
+   {
+      Edje_Program *epr;
+      Edje_Program *epr2;
+      
+      epr = l->data;
+      epr2 = ed->table_programs[epr->id % ed->table_programs_size];
+      printf("     [%d]%s ", epr->id, epr->name);
+      if (epr == epr2)
+         printf(" OK!\n");
+      else
+         printf(" WRONG (table[%id]->name = '%s')\n", epr->id, epr2->name);
+   }
+   
+   printf("\n");
+   
+   
+   printf("******************  END  ************************\n\n");
+}
