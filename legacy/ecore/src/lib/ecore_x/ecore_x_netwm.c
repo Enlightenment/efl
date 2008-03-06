@@ -1017,12 +1017,19 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 
    if (type)
      {
+	*type = _ecore_x_netwm_window_type_type_get(atoms[0]);
+	if (num > 1)
+	  {
+	     // FIXME: mor than 1? what to do?
+	  }
+/* disable - preferred type is the first - others are hints	
 	for (i = 0; i < num; ++i)
 	  {
 	     *type = _ecore_x_netwm_window_type_type_get(atoms[i]);
 	     if (*type != ECORE_X_WINDOW_TYPE_UNKNOWN)
 	       break;
 	  }
+ */
      }
 
    free(atoms);
