@@ -334,10 +334,7 @@ _strbuf_insert(char *strbuf, const char *text, int pos, int *strbuf_len, int *st
      pos = 0;
 
    text_len = strlen(text);
-   /* ATTENTION: no + 1 is required for req_alloc as text will be
-    * inserted before the end of the string.
-    */
-   req_alloc = *strbuf_len + text_len;
+   req_alloc = *strbuf_len + text_len + 1;
    if (!_strbuf_grow_if_required(&strbuf, strbuf_alloc, req_alloc))
      return strbuf;
 
