@@ -245,132 +245,143 @@ _style_match_tag(Evas_Textblock_Style *ts, char *s)
    return NULL;
 }
 
-static char *
-_strbuf_append(char *s, const char *s2, int *len, int *alloc)
+static inline int
+_strbuf_realloc(char **strbuf, int *strbuf_alloc, int req_alloc)
 {
-   int l2;
-   int tlen;
-   
-   if (!s2) return s;
-   if ((!s) && (s2[0] == 0))
+   char *newbuf;
+   int newbuf_alloc;
+
+   newbuf_alloc = ((req_alloc + 31) >> 5) << 5;
+   if (newbuf_alloc == *strbuf_alloc)
+     return 1;
+
+   newbuf = realloc(*strbuf, newbuf_alloc);
+   if (!newbuf)
      {
-	*len = 0;
-	*alloc = 1;
-	return strdup("");
+	perror("realloc: could not allocate new strbuf");
+	return 0;
      }
-   l2 = strlen(s2);
-   tlen = *len + l2 + 1;
-   if (tlen > *alloc)
-     {
-	char *ts;
-	int talloc;
-	  
-	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc);
-	if (!ts) return s;
-	s = ts;
-	*alloc = talloc;
-     }
-   strcpy(s + *len, s2);
-   *len += l2;
-   return s;
+
+   *strbuf = newbuf;
+   *strbuf_alloc = newbuf_alloc;
+   return 1;
+}
+
+static inline int
+_strbuf_grow_if_required(char **strbuf, int *strbuf_alloc, int req_alloc)
+{
+   if (req_alloc <= *strbuf_alloc)
+     return 1;
+
+   return _strbuf_realloc(strbuf, strbuf_alloc, req_alloc);
 }
 
 static char *
-_strbuf_append_n(char *s, char *s2, int n, int *len, int *alloc)
+_strbuf_append_int(char *strbuf, const char *text, int text_len, int *strbuf_len, int *strbuf_alloc)
 {
-   int l2;
-   int tlen;
-   
-   if (!s2) return s;
-   l2 = 0;
-   if (n < 1) return s;
-   else
-     {
-	char *p;
-	for (p = s2; (l2 < n) && (*p != 0); p++, l2++);
-     }
-   tlen = *len + l2 + 1;
-   if (tlen > *alloc)
-     {
-	char *ts;
-	int talloc;
-	  
-	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc);
-	if (!ts) return s;
-	s = ts;
-	*alloc = talloc;
-     }
-   strncpy(s + *len, s2, l2);
-   *len += l2;
-   s[*len] = 0;
-   return s;
+   int req_alloc;
+
+   req_alloc = *strbuf_len + text_len + 1;
+   if (!_strbuf_grow_if_required(&strbuf, strbuf_alloc, req_alloc))
+     return strbuf;
+
+   memcpy(strbuf + *strbuf_len, text, text_len);
+   *strbuf_len += text_len;
+   strbuf[*strbuf_len] = '\0';
+
+   return strbuf;
+}
+
+static inline char *
+_strbuf_append(char *strbuf, const char *text, int *strbuf_len, int *strbuf_alloc)
+{
+   int text_len;
+
+   if ((!text) || (text[0] == '\0'))
+     return strbuf;
+
+   text_len = strlen(text);
+   return _strbuf_append_int(strbuf, text, text_len, strbuf_len, strbuf_alloc);
+}
+
+static inline char *
+_strbuf_append_n(char *strbuf, const char *text, int max_text_len, int *strbuf_len, int *strbuf_alloc)
+{
+   const char *p;
+   int text_len;
+
+   if ((!text) || (max_text_len < 1) || (text[0] == '\0'))
+     return strbuf;
+
+   text_len = 0;
+   for (p = text; (text_len < max_text_len) && (*p != '\0'); p++)
+     text_len++;
+
+   return _strbuf_append_int(strbuf, text, text_len, strbuf_len, strbuf_alloc);
 }
 
 static char *
-_strbuf_insert(char *s, char *s2, int pos, int *len, int *alloc)
+_strbuf_insert(char *strbuf, const char *text, int pos, int *strbuf_len, int *strbuf_alloc)
 {
-   int l2;
-   int tlen;
-   char *tbuf;
-   
-   if (!s2) return s;
-   else if (pos < 0) pos = 0;
-   else if (pos > *len) pos = *len;
-   l2 = strlen(s2);
-   tlen = *len + l2 + 1;
-   if (tlen > *alloc)
-     {
-	char *ts;
-	int talloc;
-	  
-	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc);
-	if (!ts) return s;
-	s = ts;
-	*alloc = talloc;
-     }
-   tbuf = alloca(*len - pos);   
-   strncpy(tbuf, s + pos, *len - pos);
-   strncpy(s + pos, s2, l2);   
-   strncpy(s + pos + l2, tbuf, *len - pos);
-   *len += l2;
-   s[*len] = 0;
-   return s;
+   int req_alloc, text_len, tail_len;
+
+   if ((!text) || (text[0] == '\0'))
+     return strbuf;
+
+   if (pos >= *strbuf_len)
+     return _strbuf_append(strbuf, text, strbuf_len, strbuf_alloc);
+   else if (pos < 0)
+     pos = 0;
+
+   text_len = strlen(text);
+   /* ATTENTION: no + 1 is required for req_alloc as text will be
+    * inserted before the end of the string.
+    */
+   req_alloc = *strbuf_len + text_len;
+   if (!_strbuf_grow_if_required(&strbuf, strbuf_alloc, req_alloc))
+     return strbuf;
+
+   tail_len = *strbuf_len - pos + 1; /* includes '\0' */
+   memmove(strbuf + pos + text_len, strbuf + pos, tail_len);
+   memcpy(strbuf + pos, text, text_len);
+   *strbuf_len += text_len;
+
+   return strbuf;
 }
 
 static char *
-_strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
+_strbuf_remove(char *strbuf, int start, int end, int *strbuf_len, int *strbuf_alloc)
 {
-   int tlen;
-   char *tbuf;
-   
-   if ((p == 0) && (p2 ==  *len))
+   int remove_len, tail_len, req_alloc;
+
+   if (!strbuf)
+     return NULL;
+
+   if (start <= 0)
+     start = 0;
+
+   if (end >= *strbuf_len)
+     end = *strbuf_len;
+
+   remove_len = end - start;
+   if (remove_len <= 0)
+     return strbuf;
+   else if (remove_len == *strbuf_len)
      {
-	free(s);
-	*len = 0;
-	*alloc = 0;
+	free(strbuf);
+	*strbuf_len = 0;
+	*strbuf_alloc = 0;
 	return NULL;
      }
-   tbuf = alloca(*len - p2 + 1);
-   strcpy(tbuf, s + p2);
-   strcpy(s + p, tbuf);
-   tlen = *len - (p2 - p) + 1;
-   if (tlen < ((*alloc >> 5) << 15))
-     {
-	char *ts;
-	int talloc;
-	  
-	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc);
-	if (!ts) return s;
-	s = ts;
-	*alloc = talloc;
-     }
-   *len += (p2 - p);
-   s[*len] = 0;
-   return s;
+
+   tail_len = *strbuf_len - end + 1; /* includes '\0' */
+   memmove(strbuf + start, strbuf + end, tail_len);
+   *strbuf_len -= remove_len;
+
+   req_alloc = *strbuf_len + 1;
+   _strbuf_realloc(&strbuf, strbuf_alloc, req_alloc);
+
+   return strbuf;
 }
 
 static void
