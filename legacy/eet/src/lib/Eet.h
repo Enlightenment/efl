@@ -224,6 +224,7 @@ extern "C" {
 
    /* FIXME: Add some documentation */
    EAPI Eet_Dictionary* eet_dictionary_get(Eet_File *ef);
+   EAPI int eet_dictionary_string_check(Eet_Dictionary *ed, const char *string);
 
    /**
     * Read a specified entry from an eet file and return data

@@ -1,7 +1,7 @@
 PROJECT_NAME           = Edje
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = doc
-INPUT                  = edje.c ./src/bin/edje_cc_handlers.c
+INPUT                  = edje.c ./src/bin/edje_cc_handlers.c ./src/lib/Edje_Edit.h
 IMAGE_PATH             = doc/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
@@ -41,7 +41,7 @@ VERBATIM_HEADERS       = NO
 SHOW_INCLUDE_FILES     = NO
 JAVADOC_AUTOBRIEF      = YES
 MULTILINE_CPP_IS_BRIEF = NO
-DETAILS_AT_TOP         = NO
+DETAILS_AT_TOP         = YES
 INHERIT_DOCS           = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = YES

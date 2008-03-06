@@ -814,7 +814,9 @@ eet_internal_read2(Eet_File *ef)
         if (eet_test_close(!ef->ed->all, ef)) return NULL;
 
         ef->ed->count = num_dictionary_entries;
-
+	ef->ed->start = start + bytes_dictionary_entries + bytes_directory_entries;
+	ef->ed->end = ef->ed->start;
+	
         for (j = 0; j < ef->ed->count; ++j)
           {
              int   hash;
@@ -838,6 +840,9 @@ eet_internal_read2(Eet_File *ef)
 
              ef->ed->all[j].mmap = start + offset;
              ef->ed->all[j].str = NULL;
+
+	     if (ef->ed->all[j].mmap + ef->ed->all[j].len > ef->ed->end)
+	       ef->ed->end = ef->ed->all[j].mmap + ef->ed->all[j].len;
 
              /* Check '\0' at the end of the string */
              if (eet_test_close(ef->ed->all[j].mmap[ef->ed->all[j].len - 1] != '\0', ef)) return NULL;

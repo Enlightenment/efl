@@ -1437,6 +1437,7 @@ _eet_data_dump_free(Node *node)
       case EET_T_UINT:
       case EET_T_ULONG_LONG:
 	break;
+      case EET_T_INLINED_STRING:
       case EET_T_STRING:
 	if (node->data.str) free(node->data.str);
 	break;
@@ -1620,6 +1621,7 @@ _eet_data_dump_encode(Eet_Dictionary *ed,
 	     free(data);
 	  }
 	break;
+      case EET_T_INLINED_STRING:
       case EET_T_STRING:
         data = eet_data_put_type(ed, node->type, &(node->data.str), &size);
 	if (data)
@@ -2033,6 +2035,18 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
                                         }
 				   }
 			      }
+			    else
+			      if (type == EET_T_INLINED_STRING)
+				{
+				   char **str;
+				 
+				   str = (char **)(((char *)data) + ede->offset);
+				   if (*str)
+				     {
+					*str = edd->func.str_alloc(*str);
+					_eet_freelist_str_add(*str);
+				     }
+				}
 			 }
 		       else if (ede->subtype)
 			 {
@@ -2244,6 +2258,7 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 			    dumpfunc(dumpdata, "ulong_long: ");
 			    snprintf(tbuf, sizeof(tbuf), "%llu", *((unsigned long long *)dd));
 			    dumpfunc(dumpdata, tbuf); break;
+			  case EET_T_INLINED_STRING:
 			  case EET_T_STRING:
 			      {
 				 char *s;

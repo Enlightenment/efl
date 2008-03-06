@@ -5,7 +5,7 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-static void _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings);
+void _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings);
 static Evas_Bool _edje_file_collection_hash_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata);
 #ifdef EDJE_PROGRAM_CACHE
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
@@ -948,7 +948,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
    free(ec);
 }
 
-static void
+void
 _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings)
 {
    while (desc->image.tween_list)

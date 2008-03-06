@@ -426,8 +426,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	     /* Add and Handle tag parsed data */
 	     if (ts)
 	       {
-                  /* FIXME: How to know if the previous value was a stringshare */
-/* 		  evas_stringshare_del(tag->value); */
+		  if (eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
+		    evas_stringshare_del(tag->value);
 		  tag->value = evas_stringshare_add(ts);
 		  buf = _edje_strbuf_append(buf, tag->value, &buflen, &bufalloc);
 		  free(ts);

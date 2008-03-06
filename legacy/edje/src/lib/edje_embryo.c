@@ -847,7 +847,7 @@ _edje_embryo_fn_get_state(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed;
    int part_id = 0;
    Edje_Real_Part *rp;
-   char *s;
+   const char *s;
 
    CHKPARAM(4);
    ed = embryo_program_data_get(ep);

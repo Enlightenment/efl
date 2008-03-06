@@ -380,31 +380,31 @@ struct _Edje_Spectrum_Color
 
 struct _Edje_Program /* a conditional program to be run */
 {
-   int        id; /* id of program */
-   char      *name; /* name of the action */
+   int         id; /* id of program */
+   const char *name; /* name of the action */
 
-   char      *signal; /* if signal emission name matches the glob here... */
-   char      *source; /* if part that emitted this (name) matches this glob */
+   const char *signal; /* if signal emission name matches the glob here... */
+   const char *source; /* if part that emitted this (name) matches this glob */
 
    struct {
-      double  from;
-      double  range;
+      double   from;
+      double   range;
    } in;
 
-   int        action; /* type - set state, stop action, set drag pos etc. */
-   char      *state; /* what state of alternates to apply, NULL = default */
-   char      *state2; /* what other state to use - for signal emit action */
-   double     value; /* value of state to apply (if multiple names match) */
-   double     value2; /* other value for drag actions */
+   int         action; /* type - set state, stop action, set drag pos etc. */
+   const char *state; /* what state of alternates to apply, NULL = default */
+   const char *state2; /* what other state to use - for signal emit action */
+   double      value; /* value of state to apply (if multiple names match) */
+   double      value2; /* other value for drag actions */
 
    struct {
-      int     mode; /* how to tween - linear, sinusoidal etc. */
-      double  time; /* time to graduate between current and new state */
+      int      mode; /* how to tween - linear, sinusoidal etc. */
+      double   time; /* time to graduate between current and new state */
    } tween;
 
-   Evas_List *targets; /* list of target parts to apply the state to */
+   Evas_List  *targets; /* list of target parts to apply the state to */
 
-   Evas_List *after; /* list of actions to run at the end of this, for looping */
+   Evas_List  *after; /* list of actions to run at the end of this, for looping */
 };
 
 struct _Edje_Program_Target /* the target of an action */
@@ -461,7 +461,7 @@ struct _Edje_Part_Collection
 
 struct _Edje_Part
 {
-   char                  *name; /* the name if any of the part */
+   const char            *name; /* the name if any of the part */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
    char                  *source;
@@ -500,7 +500,7 @@ struct _Edje_Part_Description
 {
    struct {
       double         value; /* the value of the state (for ranges) */
-      char          *name; /* the named state if any */
+      const char    *name; /* the named state if any */
    } state;
 
    Edje_Alignment align; /* 0 <-> 1.0 alignment within allocated space */

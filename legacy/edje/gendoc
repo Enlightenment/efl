@@ -1,7 +1,7 @@
 #!/bin/sh
 cp ./edje.c.in ./edje.c
 cat ./src/lib/Edje.h >> ./edje.c
-for I in `find ./src/lib -name "*.c" -print`; do
+for I in `find ./src/lib -name "*.c" -print | grep -v edje_edit.c`; do
   cat $I >> ./edje.c
 done
 rm -rf ./doc/html ./doc/latex ./doc/man
@@ -9,6 +9,8 @@ mkdir -p ./doc/html ./doc/latex ./doc/man
 doxygen
 cp doc/img/*.png doc/html/
 cp doc/img/*.gif doc/html/
+cp doc/img/*.jpg doc/html/
+cp doc/*.css doc/html/
 rm -f edje_docs.tar edje_docs.tar.gz
 tar -cvf edje_docs.tar doc/html doc/man doc/latex
 gzip -9 edje_docs.tar

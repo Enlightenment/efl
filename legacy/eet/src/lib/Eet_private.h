@@ -87,6 +87,9 @@ struct _Eet_Dictionary
 
   int           count;
   int           total;
+
+  const char   *start;
+  const char   *end;
 };
 
 Eet_Dictionary  *eet_dictionary_add(void);

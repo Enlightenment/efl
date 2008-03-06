@@ -170,8 +170,17 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed, int index)
      return NULL;
    if (index < ed->count)
      {
+#ifdef _WIN32
+	/* Windows file system could change the mmaped file when replacing a file. So we need to copy all string in memory to avoid bugs. */
+	if (ed->all[index].str == NULL)
+	  {
+	     ed->all[index].str = strdup(ed->all[index].mmap);
+	     ed->all[index].mmap = NULL;
+	  }
+#else
         if (ed->all[index].mmap)
           return ed->all[index].mmap;
+#endif
         return ed->all[index].str;
      }
    return NULL;
@@ -289,5 +298,25 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *re
         *result = ed->all[index].convert.d;
         return -1;
      }
+   return 0;
+}
+
+EAPI int
+eet_dictionary_string_check(Eet_Dictionary *ed, const char *string)
+{
+   int	i;
+
+   if (ed == NULL
+       || string == NULL)
+     return 0;
+
+   if (ed->start <= string
+       && string < ed->end)
+     return 1;
+
+   for (i = 0; i < ed->count; ++i)
+     if (ed->all[i].str == string)
+       return 1;
+
    return 0;
 }
