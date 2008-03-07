@@ -58,7 +58,7 @@ void _eet_memfile_shutdown()
 
    for (i = 0; i < _eet_memfile_info_num; i++)
      free(_eet_memfile_info[i].data);
-   
+
    free(_eet_memfile_info);
    _eet_memfile_info = NULL;
 #endif

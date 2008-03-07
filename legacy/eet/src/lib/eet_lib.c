@@ -599,13 +599,13 @@ write_error:
    return EET_ERROR_WRITE_ERROR;
 }
 
-EAPI_DEF int
+EAPI int
 eet_init(void)
 {
    return ++eet_initcount;
 }
 
-EAPI_DEF int
+EAPI int
 eet_shutdown(void)
 {
    if (--eet_initcount == 0)
@@ -617,7 +617,7 @@ eet_shutdown(void)
    return eet_initcount;
 }
 
-EAPI_DEF void
+EAPI void
 eet_clearcache(void)
 {
    int	num = 0;
@@ -816,7 +816,7 @@ eet_internal_read2(Eet_File *ef)
         ef->ed->count = num_dictionary_entries;
 	ef->ed->start = start + bytes_dictionary_entries + bytes_directory_entries;
 	ef->ed->end = ef->ed->start;
-	
+
         for (j = 0; j < ef->ed->count; ++j)
           {
              int   hash;
@@ -1043,7 +1043,7 @@ eet_internal_read(Eet_File *ef)
    return NULL;
 }
 
-EAPI_DEF Eet_File *
+EAPI Eet_File *
 eet_memopen_read(const void *data, size_t size)
 {
    Eet_File	*ef;
@@ -1070,7 +1070,7 @@ eet_memopen_read(const void *data, size_t size)
    return eet_internal_read(ef);
 }
 
-EAPI_DEF Eet_File *
+EAPI Eet_File *
 eet_open(const char *file, Eet_File_Mode mode)
 {
    FILE         *fp;
@@ -1235,7 +1235,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    return ef;
 }
 
-EAPI_DEF Eet_File_Mode
+EAPI Eet_File_Mode
 eet_mode_get(Eet_File *ef)
 {
    /* check to see its' an eet file pointer */
@@ -1245,7 +1245,7 @@ eet_mode_get(Eet_File *ef)
      return ef->mode;
 }
 
-EAPI_DEF Eet_Error
+EAPI Eet_Error
 eet_close(Eet_File *ef)
 {
    Eet_Error err;
@@ -1318,7 +1318,7 @@ eet_close(Eet_File *ef)
    return err;
 }
 
-EAPI_DEF void *
+EAPI void *
 eet_read(Eet_File *ef, const char *name, int *size_ret)
 {
    void			*data = NULL;
@@ -1417,7 +1417,7 @@ eet_read(Eet_File *ef, const char *name, int *size_ret)
    return data;
 }
 
-EAPI_DEF const void *
+EAPI const void *
 eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
 {
    const void	*data = NULL;
@@ -1462,7 +1462,7 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    return data;
 }
 
-EAPI_DEF int
+EAPI int
 eet_write(Eet_File *ef, const char *name, const void *data, int size, int compress)
 {
    Eet_File_Node	*efn;
@@ -1583,7 +1583,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
    return data_size;
 }
 
-EAPI_DEF int
+EAPI int
 eet_delete(Eet_File *ef, const char *name)
 {
    Eet_File_Node	*efn;
@@ -1637,7 +1637,7 @@ eet_delete(Eet_File *ef, const char *name)
    return exists_already;
 }
 
-EAPI_DEF Eet_Dictionary*
+EAPI Eet_Dictionary*
 eet_dictionary_get(Eet_File *ef)
 {
    if (eet_check_pointer(ef)) return NULL;
@@ -1646,7 +1646,7 @@ eet_dictionary_get(Eet_File *ef)
 }
 
 
-EAPI_DEF char **
+EAPI char **
 eet_list(Eet_File *ef, const char *glob, int *count_ret)
 {
    Eet_File_Node	*efn;
@@ -1714,7 +1714,7 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
    return list_ret;
 }
 
-EAPI_DEF int
+EAPI int
 eet_num_entries(Eet_File *ef)
 {
    int i, num, ret = 0;

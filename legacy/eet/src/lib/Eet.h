@@ -12,7 +12,6 @@
 # else
 #  define EAPI __declspec(dllimport)
 # endif
-# define EAPI_DEF
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -23,7 +22,6 @@
 # else
 #  define EAPI
 # endif
-# define EAPI_DEF EAPI
 #endif
 
 #ifdef __cplusplus
