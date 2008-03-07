@@ -1448,6 +1448,7 @@ EAPI void                ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore
 EAPI void                ecore_x_netwm_window_type_get_prefetch(Ecore_X_Window window);
 EAPI void                ecore_x_netwm_window_type_get_fetch(void);
 EAPI int                 ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type);
+EAPI int                 ecore_x_netwm_window_types_get(Ecore_X_Window win, Ecore_X_Window_Type **types);
 EAPI int                 ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action);
 EAPI void                ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action *action, unsigned int num);
 EAPI void                ecore_x_netwm_allowed_action_get_prefetch(Ecore_X_Window window);

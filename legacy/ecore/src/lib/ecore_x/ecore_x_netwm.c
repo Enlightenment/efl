@@ -1000,40 +1000,41 @@ EAPI int
 ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 {
    int                  num, i;
-   Ecore_X_Atom        *atoms;
+   Ecore_X_Atom        *atoms = NULL;
 
    if (type) *type = ECORE_X_WINDOW_TYPE_NORMAL;
 
-   num = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
+   num = ecore_x_window_prop_atom_list_get(win, 
+					   ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
 					   &atoms);
-   if (num < 0)
-     {
-	/* IMO this is not the place to mix netwm and icccm /kwo */
-	/* Check if WM_TRANSIENT_FOR is set */
-	if ((type) && (ecore_x_icccm_transient_for_get(win)))
-	  *type = ECORE_X_WINDOW_TYPE_DIALOG;
-	return 1;
-     }
-
-   if (type)
-     {
-	*type = _ecore_x_netwm_window_type_type_get(atoms[0]);
-	if (num > 1)
-	  {
-	     // FIXME: mor than 1? what to do?
-	  }
-/* disable - preferred type is the first - others are hints	
-	for (i = 0; i < num; ++i)
-	  {
-	     *type = _ecore_x_netwm_window_type_type_get(atoms[i]);
-	     if (*type != ECORE_X_WINDOW_TYPE_UNKNOWN)
-	       break;
-	  }
- */
-     }
+   if ((type) && (num >= 1) && (atoms))
+     *type = _ecore_x_netwm_window_type_type_get(atoms[0]);
 
    free(atoms);
-   return 1;
+   if (num >= 1) return 1;
+   return 0;
+}
+
+EAPI int
+ecore_x_netwm_window_types_get(Ecore_X_Window win, Ecore_X_Window_Type **types)
+{
+   int                  num, i;
+   Ecore_X_Atom        *atoms = NULL;
+
+   if (types) *types = NULL;
+   num = ecore_x_window_prop_atom_list_get(win,
+					   ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
+					   &atoms);
+   if ((num <= 0) || (!atoms))
+     {
+	if (atoms) free(atoms);
+	return 0;
+     }
+   for (i = 0; i < num; i++)
+     atoms[i] = _ecore_x_netwm_window_type_type_get(atoms[i]);
+   if (types) *types = atoms;
+   else free(atoms);
+   return num;
 }
 
 static Ecore_X_Atom
