@@ -30,17 +30,30 @@ AC_SUBST(version_info)
 
 AC_FUNC_ALLOCA
 
-win32_libs=""
+WIN32_CFLAGS=""
+WIN32_LIBS=""
 create_shared_lib=""
 case "$host_os" in
 	mingw|mingw32)
 		PKG_CHECK_MODULES([EVIL], [evil])
 		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
-		win32_libs="-lws2_32"
+		dnl needed for correct definition of EAPI
+		AC_DEFINE(EFL_EET_BUILD, 1, [Define to mention that eet is built])
+		WIN32_LIBS="-lws2_32"
+		create_shared_lib="-no-undefined "
+		;;
+	cegcc)
+		PKG_CHECK_MODULES([EVIL], [evil])
+		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+		dnl needed for correct definition of EAPI
+		AC_DEFINE(EFL_EET_BUILD, 1, [Define to mention that eet is built])
+		WIN32_CFLAGS="-mwin32"
+		WIN32_LIBS="-lws2"
 		create_shared_lib="-no-undefined "
 		;;
 esac
-AC_SUBST(win32_libs)
+AC_SUBST(WIN32_CFLAGS)
+AC_SUBST(WIN32_LIBS)
 AC_SUBST(create_shared_lib)
 
 AC_CHECK_HEADER(zlib.h,, AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))

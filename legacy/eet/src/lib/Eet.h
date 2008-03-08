@@ -4,14 +4,19 @@
 #include <stdlib.h>
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
+
 #ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+# ifdef EFL_EET_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_EET_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -22,7 +27,7 @@
 # else
 #  define EAPI
 # endif
-#endif
+#endif /* ! _WIN32 */
 
 #ifdef __cplusplus
 extern "C" {
