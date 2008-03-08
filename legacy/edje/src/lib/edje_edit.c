@@ -216,11 +216,10 @@ _edje_real_part_free(Edje_Real_Part *rp)
       rp->swallowed_object = NULL;
    }
    
-   /*if (rp->text.text) evas_stringshare_del(rp->text.text);
+   if (rp->text.text) evas_stringshare_del(rp->text.text);
    if (rp->text.font) evas_stringshare_del(rp->text.font);
    if (rp->text.cache.in_str) evas_stringshare_del(rp->text.cache.in_str);
    if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);
-   TODO FIXME */
    
    if (rp->custom.description)
    {
@@ -548,6 +547,18 @@ _edje_fix_parts_id(Edje *ed)
    //printf("\n");
 }
 
+static void
+_edje_if_string_free(Edje *ed, const char *str)
+{
+   Eet_Dictionary *dict;
+   
+   if (!ed || !str) return;
+   
+   dict = eet_dictionary_get(ed->file->ef);
+   if (eet_dictionary_string_check(dict ,str)) return;
+   evas_stringshare_del(str);
+   str = NULL;
+}
 /*****************/
 /*  GENERAL API  */
 /*****************/
@@ -636,7 +647,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    
    /* Init Edje_Part_Collection */
    pc->id = id;
-   pc->references = 1;  //TODO i'm not shure about this (maybe 1 ?)
+   pc->references = 1;  //TODO i'm not shure about this (maybe set to 0 ?)
    pc->programs = NULL;
    pc->parts = NULL;
    pc->data = NULL;
@@ -764,11 +775,15 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
       Edje_Part_Collection_Directory_Entry *pce = l->data;
       if (pc->id == pce->id)
       {
-         //if (pce->entry) free(pce->entry); //TODO Also this cause segv
-         pce->entry = mem_strdup(new_name);
-         
-         //ed->file->collection_hash = evas_hash_del(ed->file->collection_hash, pc->entry, edc);
-         //ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, name, pc);
+         ed->file->collection_hash = evas_hash_del(ed->file->collection_hash,
+                                                   pce->entry, NULL);
+         ed->file->collection_hash = evas_hash_add(ed->file->collection_hash,
+                                                   new_name, pc);
+
+         //if (pce->entry &&  //TODO Also this cause segv
+         //    !eet_dictionary_string_check(eet_dictionary_get(ed->file->ef), pce->entry))
+         //   evas_stringshare_del(pce->entry);
+         pce->entry = evas_stringshare_add(new_name);
          
          return;
       }
@@ -871,7 +886,7 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
    
    printf("Set name of part: %s [new name: %s]\n", part, new_name);
    
-   //if (rp->part->name && ed->file->free_strings) evas_stringshare_del(rp->part->name);  TODO FIXME
+   _edje_if_string_free(ed, rp->part->name);
    rp->part->name = (char *)evas_stringshare_add(new_name);
    
    return 1;
@@ -1065,7 +1080,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    _edje_fix_parts_id(ed);
    
    /* Free Edje_Part and all descriptions */
-   //if (ep->name  && ed->file->free_strings) evas_stringshare_del(ep->name); TODO FIXME
+   _edje_if_string_free(ed, ep->name);
    if (ep->default_desc)
    {
       _edje_collection_free_part_description_free(ep->default_desc);
@@ -1327,12 +1342,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
    
    printf("Set source for part: %s [source: %s]\n", part, source);
    
-   if (rp->part->source)
-   {
-      //if (ed->file->free_strings)
-      //   evas_stringshare_del(rp->part->source); TODO FIXME
-      rp->part->source = NULL;
-   }
+   _edje_if_string_free(ed, rp->part->source);
    
    if (source)
       rp->part->source = evas_stringshare_add(source);
@@ -1412,15 +1422,15 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
              !strcmp(epr->state, pd->state.name) &&
              pd->state.value == epr->value)
          {
-            //TODO free epr->state
-            epr->state = mem_strdup(new_name);
+            _edje_if_string_free(ed, epr->state);
+            epr->state = evas_stringshare_add(new_name);
             epr->value = value;
          }
       }
    }
    
    /* set name */
-   //if (pd->state.name && ed->file->free_strings) evas_stringshare_del(pd->state.name); TODO FIXME
+   _edje_if_string_free(ed, pd->state.name);
    pd->state.name = (char *)evas_stringshare_add(new_name);
    /* set value */
    pd->state.value = value;
@@ -2070,9 +2080,7 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
    
    if (!text) return;
    
-   //if (pd->text.text && ed->file->free_strings)
-   //   evas_stringshare_del(pd->text.text); TODO FIXME
-   
+   _edje_if_string_free(ed, pd->text.text);
    pd->text.text = (char *)evas_stringshare_add(text);
     
    edje_object_calc_force(obj);
@@ -2297,7 +2305,7 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
    GET_PD_OR_RETURN()
    printf("SET FONT of state: %s [%s]\n", state, font);
    
-   //if (pd->text.font && ed->file->free_strings) evas_stringshare_del(pd->text.font); TODO FIXME
+   _edje_if_string_free(ed, pd->text.font);
    pd->text.font = (char *)evas_stringshare_add(font);
     
    edje_object_calc_force(obj);
@@ -2656,14 +2664,12 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    pc->programs = evas_list_remove(pc->programs, epr);
    
    //Free Edje_Program
-   /*if (ed->file->free_strings)
-   {
-      if (epr->name) evas_stringshare_del(epr->name);
-      if (epr->signal) evas_stringshare_del(epr->signal);
-      if (epr->source) evas_stringshare_del(epr->source);
-      if (epr->state) evas_stringshare_del(epr->state);
-      if (epr->state2) evas_stringshare_del(epr->state2);
-   } TODO FIXME*/
+   _edje_if_string_free(ed, epr->name);
+   _edje_if_string_free(ed, epr->signal);
+   _edje_if_string_free(ed, epr->source);
+   _edje_if_string_free(ed, epr->state);
+   _edje_if_string_free(ed, epr->state2);
+
    while (epr->targets)
    {
       Edje_Program_Target *prt;
@@ -2785,7 +2791,7 @@ edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_n
       
    printf("SET NAME for program: %s [new name: %s]\n", prog, new_name);
    
-   //if (epr->name && ed->file->free_strings) evas_stringshare_del(epr->name); TODO FIXME
+   _edje_if_string_free(ed, epr->name);
    epr->name = evas_stringshare_add(new_name);
    
    return 1;
@@ -2810,7 +2816,7 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    
    printf("SET SOURCE for program: %s [%s]\n", prog, source);
    
-   //if (epr->source && ed->file->free_strings) evas_stringshare_del(epr->source); TODO FIXME
+   _edje_if_string_free(ed, epr->source);
    epr->source = evas_stringshare_add(source);
    
    //Update patterns
@@ -2840,7 +2846,7 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
    
    printf("SET SIGNAL for program: %s [%s]\n", prog, signal);
    
-   //if (epr->signal && ed->file->free_strings) evas_stringshare_del(epr->signal); TODO FIXME
+   _edje_if_string_free(ed, epr->signal);
    epr->signal = evas_stringshare_add(signal);
    
    //Update patterns
@@ -2869,7 +2875,7 @@ edje_edit_program_state_set(Evas_Object *obj, const char *prog, const char *stat
    
    printf("SET STATE for program: %s\n", prog);
    
-   //if (epr->state && ed->file->free_strings) evas_stringshare_del(epr->state); TODO FIXME
+   _edje_if_string_free(ed, epr->state);
    epr->state = evas_stringshare_add(state);
    
    return 1;
@@ -2893,7 +2899,7 @@ edje_edit_program_state2_set(Evas_Object *obj, const char *prog, const char *sta
    
    printf("SET STATE2 for program: %s\n", prog);
    
-   //if (epr->state2 && ed->file->free_strings) evas_stringshare_del(epr->state2); TODO FIXME
+   _edje_if_string_free(ed, epr->state2);
    epr->state2 = evas_stringshare_add(state2);
    
    return 1;
