@@ -596,11 +596,11 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	     xr.y = rect->y;
 	     xr.width = rect->w;
 	     xr.height = rect->h;
-	     free(rect);
 	     XUnionRectWithRegion(&xr, tmpr, tmpr);
 	     if (buf->priv.debug)
 	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
 						   rect->x, rect->y, rect->w, rect->h);
+	     free(rect);
 	  }
 	XSetRegion(buf->priv.x.disp, buf->priv.x.gc, tmpr);
 	evas_software_x11_x_output_buffer_paste(obr->xob, buf->priv.x.win,
