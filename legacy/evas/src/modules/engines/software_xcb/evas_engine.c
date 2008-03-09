@@ -24,13 +24,6 @@ static void *_output_setup(int w, int h, int rot, xcb_connection_t *conn, xcb_sc
 static xcb_visualtype_t *_best_visual_get(xcb_connection_t *conn, int screen);
 static xcb_colormap_t _best_colormap_get(xcb_connection_t *conn, int screen);
 static int _best_depth_get(xcb_connection_t *conn, int screen);
-static Evas_Performance *_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
-static Evas_Performance *_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth);
-static char *_output_perf_data(Evas_Performance *perf);
-static char *_output_perf_key(Evas_Performance *perf);
-static void _output_perf_free(Evas_Performance *perf);
-static void _output_perf_build(Evas_Performance *perf, const char *data);
-static void _output_perf_device_store(Evas_Performance *perf);
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
@@ -64,7 +57,6 @@ _output_setup(int               w,
               int               destination_alpha)
 {
    Render_Engine *re;
-   Outbuf_Perf   *perf;
 
    re = calloc(1, sizeof(Render_Engine));
    /* if we haven't initialized - init (automatic abort if already done) */
@@ -86,8 +78,6 @@ _output_setup(int               w,
    evas_software_xcb_x_color_init();
    evas_software_xcb_outbuf_init();
 
-   /* get any stored performance metrics from device (xserver) */
-   perf = evas_software_xcb_outbuf_perf_restore_x(conn, screen, draw, vis, cmap, depth);
    re->ob = evas_software_xcb_outbuf_setup_x(w, h, rot,
 					     OUTBUF_DEPTH_INHERIT,
 					     conn,
@@ -96,7 +86,6 @@ _output_setup(int               w,
 					     vis,
 					     cmap,
 					     depth,
-					     perf,
 					     grayscale,
 					     max_colors,
 					     mask,
@@ -104,10 +93,19 @@ _output_setup(int               w,
                                              destination_alpha);
    if (!re->ob)
      {
-        evas_software_xcb_outbuf_perf_free(perf);
 	free(re);
 	return NULL;
      }
+
+   /* for updates return 1 big buffer, but only use portions of it, also cache
+    it and keepit around until an idle_flush */
+   /* disable for now - i am hunting down why some expedite tests are slower,
+    * as well as shaped stuff is broken and probable non-32bpp is broken as
+    * convert funcs dont do the right thing
+    *
+   re->ob->onebuf = 1;
+    */
+
    evas_software_xcb_outbuf_debug_set(re->ob, debug);
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb)
@@ -186,50 +184,6 @@ _best_depth_get(xcb_connection_t *conn, int screen)
    return 0;
 }
 
-static Evas_Performance *
-_output_perf_new(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
-{
-   return evas_software_xcb_outbuf_perf_x(conn, screen, draw, vis, cmap, depth);
-   e = NULL;
-}
-
-static Evas_Performance *
-_output_perf_test(Evas *e, xcb_connection_t *conn, xcb_screen_t *screen, xcb_visualtype_t *vis, xcb_colormap_t cmap, xcb_drawable_t draw, int depth)
-{
-   return evas_software_xcb_outbuf_perf_x(conn, screen, draw, vis, cmap, depth);
-   e = NULL;
-}
-
-static char *
-_output_perf_data(Evas_Performance *perf)
-{
-   return evas_software_xcb_outbuf_perf_serialize_x(perf);
-}
-
-static char *
-_output_perf_key(Evas_Performance *perf)
-{
-   return evas_software_xcb_outbuf_perf_serialize_info_x(perf);
-}
-
-static void
-_output_perf_free(Evas_Performance *perf)
-{
-   evas_software_xcb_outbuf_perf_free(perf);
-}
-
-static void
-_output_perf_build(Evas_Performance *perf, const char *data)
-{
-   evas_software_xcb_outbuf_perf_deserialize_x(perf, data);
-}
-
-static void
-_output_perf_device_store(Evas_Performance *perf)
-{
-   evas_software_xcb_outbuf_perf_store_x(perf);
-}
-
 /* engine api this module provides */
 static void *
 eng_info(Evas *e)
@@ -245,13 +199,6 @@ eng_info(Evas *e)
    info->func.best_visual_get = _best_visual_get;
    info->func.best_colormap_get = _best_colormap_get;
    info->func.best_depth_get = _best_depth_get;
-   info->func.performance_test = _output_perf_test;
-   info->func.performance_free = _output_perf_free;
-   info->func.performance_data_get = _output_perf_data;
-   info->func.performance_key_get = _output_perf_key;
-   info->func.performance_new = _output_perf_new;
-   info->func.performance_build = _output_perf_build;
-   info->func.performance_device_store = _output_perf_device_store;
    return info;
    e = NULL;
 }
@@ -291,25 +238,28 @@ eng_setup(Evas *e, void *in)
                    info->info.destination_alpha);
    else
      {
-       re = e->engine.data.output;
-       evas_software_xcb_outbuf_free(re->ob);
-       re->ob = evas_software_xcb_outbuf_setup_x(e->output.w,
-                                                 e->output.h,
-                                                 info->info.rotation,
-                                                 OUTBUF_DEPTH_INHERIT,
-                                                 info->info.conn,
-                                                 info->info.screen,
-                                                 info->info.drawable,
-                                                 info->info.visual,
-                                                 info->info.colormap,
-                                                 info->info.depth,
-                                                 evas_software_xcb_outbuf_perf_restore_x(info->info.conn, info->info.screen, info->info.drawable, info->info.visual, info->info.colormap, info->info.depth),
-                                                 info->info.alloc_grayscale,
-                                                 info->info.alloc_colors_max,
-                                                 info->info.mask,
-                                                 info->info.shape_dither,
-                                                 info->info.destination_alpha);
-       evas_software_xcb_outbuf_debug_set(re->ob, info->info.debug);
+	int ponebuf = 0;
+
+        re = e->engine.data.output;
+	ponebuf = re->ob->onebuf;
+        evas_software_xcb_outbuf_free(re->ob);
+        re->ob = evas_software_xcb_outbuf_setup_x(e->output.w,
+                                                  e->output.h,
+                                                  info->info.rotation,
+                                                  OUTBUF_DEPTH_INHERIT,
+                                                  info->info.conn,
+                                                  info->info.screen,
+                                                  info->info.drawable,
+                                                  info->info.visual,
+                                                  info->info.colormap,
+                                                  info->info.depth,
+                                                  info->info.alloc_grayscale,
+                                                  info->info.alloc_colors_max,
+                                                  info->info.mask,
+                                                  info->info.shape_dither,
+                                                  info->info.destination_alpha);
+        evas_software_xcb_outbuf_debug_set(re->ob, info->info.debug);
+	re->ob->onebuf = ponebuf;
      }
 
    if (!e->engine.data.output) return;
@@ -327,6 +277,8 @@ static void
 eng_output_free(void *data)
 {
    Render_Engine *re;
+
+   if (!data) return;
 
    re = (Render_Engine *)data;
    evas_software_xcb_outbuf_free(re->ob);
@@ -454,6 +406,7 @@ eng_output_idle_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   evas_software_xcb_outbuf_idle_flush(re->ob);
 }
 
 /* module advertising code */

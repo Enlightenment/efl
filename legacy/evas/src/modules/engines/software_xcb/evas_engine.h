@@ -8,7 +8,6 @@
 #include <xcb/xcb_image.h>
 
 typedef struct _Outbuf                Outbuf;
-typedef struct _Outbuf_Perf           Outbuf_Perf;
 typedef struct _Outbuf_Region         Outbuf_Region;
 typedef struct _Xcb_Output_Buffer     Xcb_Output_Buffer;
 
@@ -31,7 +30,7 @@ struct _Outbuf
    Outbuf_Depth    depth;
    int             w, h;
    int             rot;
-   Outbuf_Perf    *perf;
+   int             onebuf;
 
    struct {
       Convert_Pal *pal;
@@ -46,51 +45,27 @@ struct _Outbuf
 	 int                shm;
 	 xcb_gcontext_t     gc;
 	 xcb_gcontext_t     gcm;
-	 int                swap : 1;
+	 unsigned char      swap     : 1;
 	 unsigned char      bit_swap : 1;
       } x;
       struct {
 	 DATA32    r, g, b;
       } mask;
-      /* lets not do back buf for now */
-      /* RGBA_Image  *back_buf; */
+
+      /* 1 big buffer for updates - flush on idle_flush */
+      RGBA_Image  *onebuf;
+      Evas_List   *onebuf_regions;
 
       /* a list of pending regions to write to the target */
       Evas_List   *pending_writes;
+      /* a list of previous frame pending regions to write to the target */
+      Evas_List   *prev_pending_writes;
 
-      int          mask_dither : 1;
-      int          destination_alpha : 1;
-
-      int          debug : 1;
+      unsigned char mask_dither       : 1;
+      unsigned char destination_alpha : 1;
+      unsigned char debug             : 1;
+      unsigned char synced : 1;
    } priv;
-};
-
-struct _Outbuf_Perf
-{
-   struct {
-      xcb_connection_t  *conn;
-      xcb_drawable_t     root;
-
-      char *display;
-      char *vendor;
-      int   version;
-      int   revision;
-      int   release;
-      int   w, h;
-      int   screen_count;
-      int   depth;
-      int   screen_num;
-   } x;
-   struct{
-      char *name;
-      char *version;
-      char *machine;
-   } os;
-   struct {
-      char *info;
-   } cpu;
-
-   int   min_shm_image_pixel_count;
 };
 
 struct _Outbuf_Region
@@ -105,6 +80,10 @@ struct _Xcb_Output_Buffer
    xcb_image_t            *image;
    xcb_shm_segment_info_t *shm_info;
    void                   *data;
+   int                     w;
+   int                     h;
+   int                     bpl;
+   int                     psize;
 };
 
 
@@ -165,51 +144,11 @@ Outbuf      *evas_software_xcb_outbuf_setup_x                (int               
 							      xcb_visualtype_t *vis,
 							      xcb_colormap_t    cmap,
 							      int               x_depth,
-							      Outbuf_Perf      *perf,
 							      int               grayscale,
 							      int               max_colors,
 							      xcb_drawable_t    mask,
 							      int               shape_dither,
 							      int               destination_alpha);
-
-char        *evas_software_xcb_outbuf_perf_serialize_x       (Outbuf_Perf *perf);
-void         evas_software_xcb_outbuf_perf_deserialize_x     (Outbuf_Perf *perf,
-							      const char *data);
-Outbuf_Perf *evas_software_xcb_outbuf_perf_new_x             (xcb_connection_t *conn,
-                                                              xcb_screen_t     *screen,
-							      xcb_drawable_t    draw,
-                                                              xcb_visualtype_t *vis,
-							      xcb_colormap_t    cmap,
-							      int               x_depth);
-
-char        *evas_software_xcb_outbuf_perf_serialize_info_x  (Outbuf_Perf *perf);
-void         evas_software_xcb_outbuf_perf_store_x           (Outbuf_Perf *perf);
-Outbuf_Perf *evas_software_xcb_outbuf_perf_restore_x         (xcb_connection_t *conn,
-                                                              xcb_screen_t     *screen,
-							      xcb_drawable_t    draw,
-							      xcb_visualtype_t *vis,
-							      xcb_colormap_t    cmap,
-							      int               x_depth);
-void         evas_software_xcb_outbuf_perf_free              (Outbuf_Perf *perf);
-Outbuf_Perf *evas_software_xcb_outbuf_perf_x                 (xcb_connection_t *conn,
-                                                              xcb_screen_t     *screen,
-							      xcb_drawable_t    draw,
-							      xcb_visualtype_t *vis,
-							      xcb_colormap_t    cmap,
-							      int               x_depth);
-
-void         evas_software_xcb_outbuf_blit                   (Outbuf *buf,
-							      int     src_x,
-							      int     src_y,
-							      int     w,
-							      int     h,
-							      int     dst_x,
-							      int     dst_y);
-void         evas_software_xcb_outbuf_update                 (Outbuf *buf,
-							      int     x,
-							      int     y,
-							      int     w,
-							      int     h);
 RGBA_Image  *evas_software_xcb_outbuf_new_region_for_update  (Outbuf *buf,
 							      int     x,
 							      int     y,
@@ -222,6 +161,7 @@ RGBA_Image  *evas_software_xcb_outbuf_new_region_for_update  (Outbuf *buf,
 void         evas_software_xcb_outbuf_free_region_for_update (Outbuf    *buf,
 							      RGBA_Image *update);
 void         evas_software_xcb_outbuf_flush                  (Outbuf *buf);
+void         evas_software_xcb_outbuf_idle_flush             (Outbuf *buf);
 void         evas_software_xcb_outbuf_push_updated_region    (Outbuf     *buf,
 							      RGBA_Image *update,
 							      int         x,
@@ -237,8 +177,6 @@ int          evas_software_xcb_outbuf_get_width              (Outbuf *buf);
 int          evas_software_xcb_outbuf_get_height             (Outbuf *buf);
 Outbuf_Depth evas_software_xcb_outbuf_get_depth              (Outbuf *buf);
 int          evas_software_xcb_outbuf_get_rot                (Outbuf *buf);
-int          evas_software_xcb_outbuf_get_have_backbuf       (Outbuf *buf);
-void         evas_software_xcb_outbuf_set_have_backbuf       (Outbuf *buf, int have_backbuf);
 void         evas_software_xcb_outbuf_drawable_set           (Outbuf *buf, xcb_drawable_t draw);
 void         evas_software_xcb_outbuf_mask_set               (Outbuf *buf, xcb_drawable_t mask);
 void         evas_software_xcb_outbuf_rotation_set           (Outbuf *buf, int rot);

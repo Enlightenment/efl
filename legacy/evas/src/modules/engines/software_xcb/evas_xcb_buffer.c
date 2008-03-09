@@ -128,12 +128,13 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
         if (xcbob->shm_info)
           {
              xcbob->shm_info->shmseg = xcb_generate_id(c);
-             xcbob->image = xcb_image_shm_create(c, depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, w, h);
+             xcbob->image = xcb_image_create_native(c, w, h,
+                                                    XCB_IMAGE_FORMAT_Z_PIXMAP,
+                                                    depth, NULL, ~0, NULL);
              if (xcbob->image)
                {
                   xcbob->shm_info->shmid = shmget(IPC_PRIVATE,
-                                                  xcbob->image->bytes_per_line *
-                                                  xcbob->image->height,
+                                                  xcbob->image->size,
                                                   IPC_CREAT | 0777);
                   if (xcbob->shm_info->shmid >= 0)
                     {
@@ -148,24 +149,26 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
                            /* XErrorHandler ph; */
                            /* EventHandlers eh; */
 
-/*                            xcb_sync(c, 0); */
+                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus(c), NULL));
                            _xcb_err = 0;
                            /* ph = XSetErrorHandler((XErrorHandler) */
                            /* x_output_tmp_x_err); */
                            xcb_shm_attach(c,
-                                        xcbob->shm_info->shmseg,
-                                        xcbob->shm_info->shmid, 0);
-/*                            xcb_sync(c, 0); */
+                                          xcbob->shm_info->shmseg,
+                                          xcbob->shm_info->shmid, 0);
+                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus(c), NULL));
                            /* XSetErrorHandler((XErrorHandler)ph); */
                            if (!_xcb_err)
                              {
-                                return xcbob;
+				 xcbob->bpl = xcbob->image->stride;
+				 xcbob->psize = xcbob->bpl * xcbob->h;
+                                 return xcbob;
                              }
                          }
                        shmdt(xcbob->shm_info->shmaddr);
                        shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
                     }
-                  if (xcbob->image) xcb_image_shm_destroy(xcbob->image);
+                  if (xcbob->image) xcb_image_destroy(xcbob->image);
                   xcbob->image = NULL;
                }
              if (xcbob->shm_info) free(xcbob->shm_info);
@@ -175,7 +178,8 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
 
    if (try_shm > 1) return NULL;
 
-   xcbob->image = xcb_image_create(c, depth, XCB_IMAGE_FORMAT_Z_PIXMAP, 0, data, w, h, 32, 0);
+   xcbob->image = xcb_image_create_native(c, w, h, XCB_IMAGE_FORMAT_Z_PIXMAP,
+                                          depth, NULL, 0, data);
    if (!xcbob->image)
      {
 	free(xcbob);
@@ -186,7 +190,7 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
 
    if (!xcbob->image->data)
      {
-	xcbob->image->data = malloc(xcbob->image->bytes_per_line * xcbob->image->height);
+	xcbob->image->data = malloc(xcbob->image->size);
 	if (!xcbob->image->data)
 	  {
 	     xcb_image_destroy(xcbob->image);
@@ -204,16 +208,11 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
    if (xcbob->shm_info)
      {
 	if (sync)
-          {
-             xcb_get_input_focus_reply_t *reply;
-
-             reply = xcb_get_input_focus_reply(xcbob->connection,
-                                               xcb_get_input_focus_unchecked(xcbob->connection),
-                                               NULL);
-             free(reply);
-          }
+          free(xcb_get_input_focus_reply(xcbob->connection,
+                                         xcb_get_input_focus(xcbob->connection),
+                                         NULL));
 	xcb_shm_detach(xcbob->connection, xcbob->shm_info->shmseg);
-	xcb_image_shm_destroy(xcbob->image);
+	xcb_image_destroy(xcbob->image);
 	shmdt(xcbob->shm_info->shmaddr);
 	shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
 	free(xcbob->shm_info);
@@ -243,47 +242,38 @@ evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer    *xcbob,
                           xcbob->image->width, xcbob->image->height,
                           0);
 	if (sync)
-          {
-             xcb_get_input_focus_reply_t *reply;
-
-             reply = xcb_get_input_focus_reply(xcbob->connection,
-                                               xcb_get_input_focus_unchecked(xcbob->connection),
-                                               NULL);
-             free(reply);
-          }
+          free(xcb_get_input_focus_reply(xcbob->connection,
+                                         xcb_get_input_focus(xcbob->connection),
+                                         NULL));
      }
    else
-      xcb_image_put(xcbob->connection,
-                    d,
-                    gc,
+      xcb_image_put(xcbob->connection, d, gc,
                     xcbob->image,
-                    0, 0,
-                    x, y,
-                    xcbob->image->width, xcbob->image->height);
+                    x, y, 0);
 }
 
 DATA8 *
 evas_software_xcb_x_output_buffer_data(Xcb_Output_Buffer *xcbob,
 				       int               *bytes_per_line_ret)
 {
-   if (bytes_per_line_ret) *bytes_per_line_ret = xcbob->image->bytes_per_line;
+   if (bytes_per_line_ret) *bytes_per_line_ret = xcbob->image->stride;
    return xcbob->image->data;
 }
 
 int
 evas_software_xcb_x_output_buffer_depth(Xcb_Output_Buffer *xcbob)
 {
-   return xcbob->image->bits_per_pixel;
+   return xcbob->image->bpp;
 }
 
 int
 evas_software_xcb_x_output_buffer_byte_order(Xcb_Output_Buffer *xcbob)
 {
-   return xcbob->image->image_byte_order;
+   return xcbob->image->byte_order;
 }
 
 int
 evas_software_xcb_x_output_buffer_bit_order(Xcb_Output_Buffer *xcbob)
 {
-   return xcbob->image->bitmap_format_bit_order;
+   return xcbob->image->bit_order;
 }

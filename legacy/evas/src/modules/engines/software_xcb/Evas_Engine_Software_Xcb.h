@@ -31,32 +31,10 @@ struct _Evas_Engine_Info_Software_Xcb
       int                alloc_colors_max;
    } info;
    /* engine specific function calls to query stuff about the destination */
-   /* engine (what visual & colormap & depth to use, performance info etc. */
    struct {
       xcb_visualtype_t * (*best_visual_get)   (xcb_connection_t *conn, int screen);
       xcb_colormap_t     (*best_colormap_get) (xcb_connection_t *conn, int screen);
       int                (*best_depth_get)    (xcb_connection_t *conn, int screen);
-
-      Evas_Performance *(*performance_test)         (Evas             *e,
-						     xcb_connection_t *conn,
-                                                     xcb_screen_t     *screen,
-						     xcb_visualtype_t *vis,
-						     xcb_colormap_t    cmap,
-						     xcb_drawable_t    draw,
-						     int               depth);
-      void              (*performance_free)         (Evas_Performance *perf);
-      char *            (*performance_data_get)     (Evas_Performance *perf);
-      char *            (*performance_key_get)      (Evas_Performance *perf);
-      Evas_Performance *(*performance_new)          (Evas             *e,
-						     xcb_connection_t *conn,
-                                                     xcb_screen_t     *screen,
-						     xcb_visualtype_t *vis,
-						     xcb_colormap_t    cmap,
-						     xcb_drawable_t    draw,
-						     int               depth);
-      void              (*performance_build)        (Evas_Performance *perf,
-						     const char       *data);
-      void              (*performance_device_store) (Evas_Performance *perf);
    } func;
 
    int mask_changed;
