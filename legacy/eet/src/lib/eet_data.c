@@ -981,10 +981,6 @@ eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc)
      edd->func.str_alloc = eddc->func.str_alloc;
    if (eddc->func.str_free)
      edd->func.str_free = eddc->func.str_free;
-   if (eddc->func.str_direct_alloc)
-     edd->func.str_direct_alloc = eddc->func.str_direct_alloc;
-   if (eddc->func.str_direct_free)
-     edd->func.str_direct_free = eddc->func.str_direct_free;
    edd->func.list_next = eddc->func.list_next;
    edd->func.list_append = eddc->func.list_append;
    edd->func.list_data = eddc->func.list_data;

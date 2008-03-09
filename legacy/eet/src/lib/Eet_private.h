@@ -61,22 +61,23 @@ struct _Eet_String
   const char            *mmap;
   char                  *str;
 
-  struct
-  {
-    unsigned int         converted : 1;
-    unsigned int         is_float : 1;
-  } flags;
+  int                    hash;
+  int                    len;
+
+  int                    next;
+  int                    prev;
+
   union
   {
     float                f;
     double               d;
   } convert;
 
-  int                    hash;
-  int                    len;
-
-  int                    next;
-  int                    prev;
+  struct
+  {
+    unsigned int         converted : 1;
+    unsigned int         is_float : 1;
+  } flags;
 };
 struct _Eet_Dictionary
 {

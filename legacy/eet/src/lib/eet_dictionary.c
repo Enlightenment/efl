@@ -20,9 +20,6 @@ eet_dictionary_add(void)
    if (!new)
      return NULL;
 
-   new->count = 0;
-   new->total = 0;
-
    memset(new->hash, -1, sizeof (int) * 256);
 
    return new;

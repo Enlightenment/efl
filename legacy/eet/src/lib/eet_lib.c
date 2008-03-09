@@ -29,6 +29,7 @@ struct _Eet_File
 {
    char                 *path;
    FILE                 *fp;
+   FILE			*readfp;
    Eet_File_Header      *header;
    const unsigned char  *data;
    Eet_Dictionary       *ed;
@@ -818,6 +819,7 @@ eet_internal_read2(Eet_File *ef)
         if (eet_test_close(!ef->ed->all, ef)) return NULL;
 
         ef->ed->count = num_dictionary_entries;
+	ef->ed->total = num_dictionary_entries;
 	ef->ed->start = start + bytes_dictionary_entries + bytes_directory_entries;
 	ef->ed->end = ef->ed->start;
 
@@ -1092,6 +1094,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if (ef)
 	  {
 	     eet_flush2(ef);
+	     ef->references++;
 	     ef->delete_me_now = 1;
 	     eet_close(ef);
 	  }
@@ -1104,6 +1107,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if (ef)
 	  {
 	     ef->delete_me_now = 1;
+	     ef->references++;
 	     eet_close(ef);
 	  }
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
@@ -1159,6 +1163,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    /* fill some of the members */
    ef->fp = fp;
+   ef->readfp = NULL;
    ef->path = ((char *)ef) + sizeof(Eet_File);
    strcpy(ef->path, file);
    ef->magic = EET_MAGIC_FILE;
@@ -1193,35 +1198,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* we need to delete the original file in read-write mode and re-open for writing */
    if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
-	int i;
-
-	for (i = 0; i < ef->header->directory->size; i++)
-	  {
-	     Eet_File_Node      *efn;
-
-	     for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
-	       {
-		  if (!efn->free_name)
-		    {
-		       efn->free_name = 1;
-		       efn->name = strdup(efn->name);
-		    }
-	       }
-	  }
-
-        if (ef->ed)
-          {
-             for (i = 0; i < ef->ed->count; ++i)
-	       {
-		  if (ef->ed->all[i].mmap)
-		    {
-		       ef->ed->all[i].str = strdup(ef->ed->all[i].mmap);
-		       ef->ed->all[i].mmap = NULL;
-		    }
-	       }
-          }
-
-	fclose(ef->fp);
+	ef->readfp = ef->fp;
 	unlink(ef->path);
 	ef->fp = fopen(ef->path, "wb");
      }
@@ -1311,8 +1288,8 @@ eet_close(Eet_File *ef)
    eet_dictionary_free(ef->ed);
 
    if (ef->data) munmap((void*)ef->data, ef->data_size);
-
    if (ef->fp) fclose(ef->fp);
+   if (ef->readfp) fclose(ef->readfp);
 
    /* zero out ram for struct - caution tactic against stale memory use */
    memset(ef, 0, sizeof(Eet_File));
