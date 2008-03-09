@@ -6,6 +6,7 @@ static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*fun
 static int          timers_added = 0;
 static int          timers_delete_me = 0;
 static Ecore_Timer *timers = NULL;
+static Ecore_Timer *suspended = NULL;
 static double       last_check = 0.0;
 
 /**
@@ -95,6 +96,58 @@ ecore_timer_interval_set(Ecore_Timer *timer, double in)
    timer->in = in;
 }
 
+/**
+ * 
+ *
+ */
+EAPI void
+ecore_timer_freeze(Ecore_Timer *timer)
+{
+   double now;
+
+   if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
+     {
+	ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
+                         "ecore_timer_freeze");
+        return ;
+     }
+
+   /* Timer already frozen */
+   if (timer->frozen)
+     return ;
+
+   timers = _ecore_list2_remove(timers, timer);
+   suspended = _ecore_list2_prepend(suspended, timer);
+
+   now = ecore_time_get();
+
+   timer->pending = timer->at - now;
+   timer->at = 0.0;
+   timer->frozen = 1;
+}
+
+EAPI void
+ecore_timer_thaw(Ecore_Timer *timer)
+{
+   double now;
+
+   if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
+     {
+	ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
+                         "ecore_timer_thaw");
+        return ;
+     }
+
+   /* Timer not frozen */
+   if (!timer->frozen)
+     return ;
+
+   suspended = _ecore_list2_remove(suspended, timer);
+   now = ecore_time_get();
+
+   _ecore_timer_set(timer, timer->pending + now, timer->in, timer->func, timer->data);
+}
+
 void
 _ecore_timer_shutdown(void)
 {
@@ -106,6 +159,16 @@ _ecore_timer_shutdown(void)
 	timers = _ecore_list2_remove(timers, timer);
 	ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	free(timer);
+     }
+
+   while (suspended)
+     {
+        Ecore_Timer *timer;
+
+        timer = suspended;
+        suspended = _ecore_list2_remove(suspended, timer);
+        ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
+        free(timer);
      }
 }
 
@@ -124,6 +187,21 @@ _ecore_timer_cleanup(void)
 	if (timer->delete_me)
 	  {
 	     timers = _ecore_list2_remove(timers, timer);
+	     ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
+	     free(timer);
+	     timers_delete_me--;
+	     if (timers_delete_me == 0) return;
+	  }
+     }
+   for (l = (Ecore_List2 *)suspended; l;)
+     {
+	Ecore_Timer *timer;
+	
+	timer = (Ecore_Timer *)l;
+	l = l->next;
+	if (timer->delete_me)
+	  {
+	     suspended = _ecore_list2_remove(suspended, timer);
 	     ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	     free(timer);
 	     timers_delete_me--;
@@ -188,8 +266,8 @@ _ecore_timer_call(double when)
      {
 	timer = (Ecore_Timer *)l;
 	if ((timer->at <= when) &&
-	    (!timer->just_added) &&
-	    (!timer->delete_me))
+	    (timer->just_added == 0) &&
+	    (timer->delete_me == 0))
 	  {
 	     timers = _ecore_list2_remove(timers, timer);
 	     _ecore_timer_call(when);
@@ -233,6 +311,8 @@ _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *da
    timer->func = func;
    timer->data = data;
    timer->just_added = 1;
+   timer->frozen = 0;
+   timer->pending = 0.0;
    if (timers)
      {
 	for (l = ((Ecore_List2 *)(timers))->last; l; l = l->prev)

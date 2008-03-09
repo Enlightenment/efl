@@ -281,14 +281,16 @@ struct _Ecore_Exe
 
 struct _Ecore_Timer
 {
-   Ecore_List2   __list_data;
+   Ecore_List2     __list_data;
    ECORE_MAGIC;
-   double       in;
-   double       at;
-   signed char  delete_me : 1;
-   signed char  just_added : 1;
-   int        (*func) (void *data);
-   void        *data;
+   double          in;
+   double          at;
+   double          pending;
+   unsigned char   delete_me : 1;
+   unsigned char   just_added : 1;
+   unsigned char   frozen : 1;
+   int           (*func) (void *data);
+   void           *data;
 };
 
 struct _Ecore_Idler
