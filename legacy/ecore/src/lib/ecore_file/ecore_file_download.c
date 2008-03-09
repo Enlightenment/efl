@@ -1,110 +1,97 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+#include "Ecore_Con.h"
 #include "ecore_file_private.h"
 
-static int init = 0;
+#define ECORE_MAGIC_FILE_DOWNLOAD_JOB	0xf7427cb8
 
-#ifdef HAVE_CURL
-#include <curl/curl.h>
-
-typedef struct _Ecore_File_Download_Job Ecore_File_Download_Job;
-
+typedef struct _Ecore_File_Download_Job		Ecore_File_Download_Job;
 struct _Ecore_File_Download_Job
 {
-   Ecore_Fd_Handler *fd_handler;
-   CURL *curl;
-   void (*completion_cb)(void *data, const char *file, int status);
-   int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow);
-   void *data;
-   FILE *file;
-   char *dst;
+   ECORE_MAGIC;
+
+   Ecore_Con_Url	*url_con;
+   FILE			*file;
+
+   char			*dst;
+
+   void	(*completion_cb)(void *data, const char *file, int status);
+
+   int	(*progress_cb)  (void *data, const char *file,
+			 long int dltotal, long int dlnow,
+			 long int ultotal, long int ulnow);
 };
 
+#ifdef HAVE_CURL
 Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *dst,
 						   void (*completion_cb)(void *data, const char *file, int status),
 						   int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 						   void *data);
 static int _ecore_file_download_curl_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
-static CURLM *curlm;
-static Ecore_List *_job_list;
-static fd_set _current_fd_set;
+static void _ecore_file_download_abort(Ecore_File_Download_Job *job);
+
+static int _ecore_file_download_url_complete_cb(void *data, int type, void *event);
+static int _ecore_file_download_url_progress_cb(void *data, int type, void *event);
 #endif
 
-int
+static int			 init = 0;
+static Ecore_Event_Handler	*_url_complete_handler = NULL;
+static Ecore_Event_Handler	*_url_progress_download = NULL;
+static Ecore_List		*_job_list;
+
+EAPI int
 ecore_file_download_init(void)
 {
-   if (++init != 1) return init;
+   ecore_con_url_init();
 
-#ifdef HAVE_CURL
-   FD_ZERO(&_current_fd_set);
-   _job_list = ecore_list_new();
-   if (!_job_list) return --init;
-
-   if (curl_global_init(CURL_GLOBAL_NOTHING)) return 0;
-
-   curlm = curl_multi_init();
-   if (!curlm)
+   if (init++ == 0)
      {
-	ecore_list_destroy(_job_list);
-	_job_list = NULL;
-	return --init;
+#ifdef HAVE_CURL
+	_url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
+	_url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
+#endif	
      }
-#endif
-   return init;
+   if (!_job_list)
+     {
+	_job_list = ecore_list_new();
+	if (!_job_list) return 0;
+     }
+
+   return 1;
 }
 
-int
+EAPI int
 ecore_file_download_shutdown(void)
 {
-   if (--init != 0) return init;
-#ifdef HAVE_CURL
-   Ecore_File_Download_Job *job;
-
-   if (!ecore_list_empty_is(_job_list))
+   if (--init == 0)
      {
-	ecore_list_first_goto(_job_list);
-	while ((job = ecore_list_next(_job_list)))
-	  {
-	     ecore_main_fd_handler_del(job->fd_handler);
-	     curl_multi_remove_handle(curlm, job->curl);
-	     curl_easy_cleanup(job->curl);
-	     fclose(job->file);
-	     free(job->dst);
-	     free(job);
-	  }
+	ecore_event_handler_del(_url_complete_handler);
+	ecore_event_handler_del(_url_progress_download);
+	_url_complete_handler = NULL;
+	_url_progress_download = NULL;
+
+	ecore_list_destroy(_job_list);
      }
-   ecore_list_destroy(_job_list);
-   curl_multi_cleanup(curlm);
-   curl_global_cleanup();
-#endif
-   return init;
+
+   return ecore_con_url_shutdown();
 }
 
-void
+EAPI void
 ecore_file_download_abort_all(void)
 {
-#ifdef HAVE_CURL
-   Ecore_File_Download_Job *job;
-
-   if (!_job_list)
-     return;
-
-   ecore_list_first_goto(_job_list);
-   while ((job = ecore_list_next(_job_list)))
+   if (!ecore_list_empty_is(_job_list))
      {
-	ecore_main_fd_handler_del(job->fd_handler);
-	curl_multi_remove_handle(curlm, job->curl);
-	curl_easy_cleanup(job->curl);
-	fclose(job->file);
-	free(job->dst);
-	free(job);
+	Ecore_File_Download_Job *job;
+
+	while ((job = ecore_list_first_remove(_job_list)))
+	  {
+	     _ecore_file_download_abort(job);
+	  }
      }
    ecore_list_clear(_job_list);
-#endif
 }
-
 
 /**
  * Download @p url to the given @p dst
@@ -192,18 +179,65 @@ ecore_file_download_protocol_available(const char *protocol)
 }
 
 #ifdef HAVE_CURL
+static int
+_ecore_file_download_url_compare_job(const void *data1, const void *data2)
+{
+   const Ecore_File_Download_Job	*job = data1;
+   const Ecore_Con_Url			*url = data2;
+
+   if (job->url_con == url) return 0;
+   return -1;
+}
+
+static int
+_ecore_file_download_url_complete_cb(void *data, int type, void *event)
+{
+   Ecore_Con_Event_Url_Complete	*ev = event;
+   Ecore_File_Download_Job	*job;
+
+   job = ecore_list_find(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
+   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return 1;
+
+   ecore_list_remove(_job_list);
+
+   if (job->completion_cb)
+     job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, !ev->status);
+
+   _ecore_file_download_abort(job);
+
+   return 0;
+}
+
+static int
+_ecore_file_download_url_progress_cb(void *data, int type, void *event)
+{
 /* this reports the downloads progress. if we return 0, then download
  * continues, if we return anything else, then the download stops */
-static int
-_ecore_file_download_curl_progress_func(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
-{
-   Ecore_File_Download_Job *job;
+   Ecore_Con_Event_Url_Progress	*ev = event;
+   Ecore_File_Download_Job	*job;
 
-   job = clientp;
+   job = ecore_list_find(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
+   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return 1;
 
-   if(job->progress_cb)
-     return job->progress_cb(job->data, job->dst, (long int)dltotal, (long int)dlnow, (long int)ultotal, (long int)ulnow);
+   if (job->progress_cb)
+     if (job->progress_cb(ecore_con_url_data_get(job->url_con), job->dst,
+			  (long int) ev->down.total, (long int) ev->down.now,
+			  (long int) ev->up.total, (long int) ev->up.now) != 0)
+       {
+	  ecore_list_remove(_job_list);
+	  _ecore_file_download_abort(job);
+       }
+
    return 0;
+}
+
+static void
+_ecore_file_download_abort(Ecore_File_Download_Job *job)
+{
+   ecore_con_url_destroy(job->url_con);
+   fclose(job->file);
+   free(job->dst);
+   free(job);
 }
 
 Ecore_File_Download_Job *
@@ -212,21 +246,15 @@ _ecore_file_download_curl(const char *url, const char *dst,
 						int status),
 			  int (*progress_cb)(void *data, const char *file,
 					     long int dltotal, long int dlnow,
-					     long int ultotal,
-					     long int ulnow),
+					     long int ultotal, long int ulnow),
 			  void *data)
 {
-   CURLMsg *curlmsg;
-   fd_set read_set, write_set, exc_set;
-   int fd_max;
-   int fd;
-   int flags;
-   int n_remaining, still_running;
    Ecore_File_Download_Job *job;
-   double start = 0.0;
 
    job = calloc(1, sizeof(Ecore_File_Download_Job));
    if (!job) return NULL;
+
+   ECORE_MAGIC_SET(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB);
 
    job->file = fopen(dst, "wb");
    if (!job->file)
@@ -234,158 +262,25 @@ _ecore_file_download_curl(const char *url, const char *dst,
 	free(job);
 	return NULL;
      }
-   job->curl = curl_easy_init();
-   if (!job->curl)
+   job->url_con = ecore_con_url_new(url);
+   if (!job->url_con)
      {
 	fclose(job->file);
 	free(job);
 	return NULL;
      }
 
-   curl_easy_setopt(job->curl, CURLOPT_URL, url);
-   curl_easy_setopt(job->curl, CURLOPT_WRITEDATA, job->file);
-   curl_easy_setopt(job->curl, CURLOPT_FOLLOWLOCATION, TRUE);
-   
-   if (progress_cb)
-     {
-	curl_easy_setopt(job->curl, CURLOPT_NOPROGRESS, FALSE);
-	curl_easy_setopt(job->curl, CURLOPT_PROGRESSDATA, job);
-	curl_easy_setopt(job->curl, CURLOPT_PROGRESSFUNCTION, _ecore_file_download_curl_progress_func);
-     }
+   ecore_con_url_fd_set(job->url_con, fileno(job->file));
+   ecore_con_url_data_set(job->url_con, data);
 
-   job->data = data;
+   job->dst = strdup(dst);
+
    job->completion_cb = completion_cb;
    job->progress_cb = progress_cb;
-   job->dst = strdup(dst);
    ecore_list_append(_job_list, job);
 
-   curl_multi_add_handle(curlm, job->curl);
-   start = ecore_time_get();
-   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
-     {
-	/* make this 1/100th of a second to keep interactivity high. really
-	 * though this needs to somehow get the fd from curl and use an fd handler
-	 * and thus select
-	 */
-	if ((ecore_time_get() - start) > 0.01) break;
-     }
-
-   /* check for completed jobs */
-   while ((curlmsg = curl_multi_info_read(curlm, &n_remaining)) != NULL)
-     {
-	Ecore_File_Download_Job *current;
-
-	if (curlmsg->msg != CURLMSG_DONE) continue;
-
-	/* find the job which is done */
-	ecore_list_first_goto(_job_list);
-	while ((current = ecore_list_current(_job_list)))
-	  {
-	     if (curlmsg->easy_handle == current->curl)
-	       {
-		  /* We have a match -- delete the job */
-		  if (current == job)
-		    job = NULL;
-		  if (current->fd_handler)
-		    {
-		       FD_CLR(ecore_main_fd_handler_fd_get(current->fd_handler),
-			      &_current_fd_set);
-		       ecore_main_fd_handler_del(current->fd_handler);
-		    }
-		  ecore_list_remove(_job_list);
-		  curl_multi_remove_handle(curlm, current->curl);
-		  curl_easy_cleanup(current->curl);
-		  fclose(current->file);
-		  if (current->completion_cb)
-		    current->completion_cb(current->data, current->dst,
-					   curlmsg->data.result);
-		  free(current->dst);
-		  free(current);
-		  break;
-	       }
-	     ecore_list_next(_job_list);
-	  }
-     }
-
-   if (job)
-     {
-	FD_ZERO(&read_set);
-	FD_ZERO(&write_set);
-	FD_ZERO(&exc_set);
-
-	/* Stupid curl, why can't I get the fd to the current added job? */
-	curl_multi_fdset(curlm, &read_set, &write_set, &exc_set, &fd_max);
-	for (fd = 0; fd <= fd_max; fd++)
-	  {
-	     if (!FD_ISSET(fd, &_current_fd_set))
-	       {
-		  flags = 0;
-		  if (FD_ISSET(fd, &read_set)) flags |= ECORE_FD_READ;
-		  if (FD_ISSET(fd, &write_set)) flags |= ECORE_FD_WRITE;
-		  if (FD_ISSET(fd, &exc_set)) flags |= ECORE_FD_ERROR;
-		  if (flags)
-		    {
-		       FD_SET(fd, &_current_fd_set);
-		       job->fd_handler = ecore_main_fd_handler_add(fd, flags,
-								   _ecore_file_download_curl_fd_handler,
-								   NULL, NULL, NULL);
-		    }
-	       }
-	  }
-	if (!job->fd_handler)
-	  {
-	     curl_easy_cleanup(job->curl);
-	     fclose(job->file);
-	     free(job);
-	     job = NULL;
-	  }
-     }
+   ecore_con_url_send(job->url_con, NULL, 0, NULL);
 
    return job;
-}
-
-static int
-_ecore_file_download_curl_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
-{
-   Ecore_File_Download_Job *job;
-   CURLMsg *curlmsg;
-   int n_remaining, still_running;
-   double start = 0.0;
-
-   start = ecore_time_get();
-   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
-     {
-	if ((ecore_time_get() - start) > 0.2) break;
-     }
-
-   /* Loop jobs and check if any are done */
-   while ((curlmsg = curl_multi_info_read(curlm, &n_remaining)) != NULL)
-     {
-	if (curlmsg->msg != CURLMSG_DONE) continue;
-
-	/* find the job which is done */
-	ecore_list_first_goto(_job_list);
-	while ((job = ecore_list_current(_job_list)))
-	  {
-	     if (curlmsg->easy_handle == job->curl)
-	       {
-		  /* We have a match -- delete the job */
-		  FD_CLR(ecore_main_fd_handler_fd_get(job->fd_handler),
-			&_current_fd_set);
-		  ecore_list_remove(_job_list);
-		  ecore_main_fd_handler_del(job->fd_handler);
-		  curl_multi_remove_handle(curlm, job->curl);
-		  curl_easy_cleanup(job->curl);
-		  fclose(job->file);
-		  if (job->completion_cb)
-		    job->completion_cb(job->data, job->dst, !curlmsg->data.result);
-		  free(job->dst);
-		  free(job);
-		  break;
-	       }
-	     ecore_list_next(_job_list);
-	  }
-     }
-   return 1;
 }
 #endif

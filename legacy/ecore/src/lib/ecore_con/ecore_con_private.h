@@ -78,6 +78,11 @@ struct _Ecore_Con_Url
    void              *data;
 
    Ecore_Fd_Handler  *fd_handler;
+   int		      fd;
+   int		      flags;
+
+   int		      received;
+   int		      write_fd;
 
    unsigned char      active : 1;
 };

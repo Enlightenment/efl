@@ -149,8 +149,14 @@ extern "C" {
    struct _Ecore_Con_Event_Url_Progress
      {
 	Ecore_Con_Url    *url_con;
-	double            total;
-	double            now;
+	struct {
+	   double         total;
+	   double         now;
+	} down;
+	struct {
+	   double         total;
+	   double         now;
+	} up;
      };
 
    EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
@@ -161,8 +167,7 @@ extern "C" {
    EAPI extern int ECORE_CON_EVENT_SERVER_DATA;
    EAPI extern int ECORE_CON_EVENT_URL_DATA;
    EAPI extern int ECORE_CON_EVENT_URL_COMPLETE;
-   EAPI extern int ECORE_CON_EVENT_URL_PROGRESS_DOWNLOAD;
-   EAPI extern int ECORE_CON_EVENT_URL_PROGRESS_UPLOAD;
+   EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
    
    EAPI int               ecore_con_init(void);
    EAPI int               ecore_con_shutdown(void);
@@ -196,6 +201,8 @@ extern "C" {
    EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data);
    EAPI void             *ecore_con_url_data_get(Ecore_Con_Url *url_con);
    EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
+   EAPI void		  ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
+   EAPI int		  ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
    EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type);
    EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm);
 

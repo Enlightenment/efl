@@ -100,7 +100,6 @@ if test "x$want_curl" = "xyes"; then
   PKG_CHECK_MODULES(CURL, libcurl,
     [
       AC_DEFINE(HAVE_CURL, 1, [ Downloading with CURL ])
-      requirements_ecore_file="$requirements_ecore_file libcurl"
       requirements_ecore_con="$requirements_ecore_con libcurl"
       have_curl="yes"
     ],
@@ -721,6 +720,7 @@ if test "x$have_ecore_file" = "xyes"; then
     AC_DEFINE(HAVE_POLL, 1, [ File monitoring with polling ])
     have_poll="yes"
   fi
+  requirements_ecore_file="$requirements_ecore_file $requirements_ecore_con"
 fi
 
 dnl ecore_desktop
