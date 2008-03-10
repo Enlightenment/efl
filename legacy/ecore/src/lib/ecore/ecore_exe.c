@@ -1296,7 +1296,7 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 	  }
      }
 
-   setsid();
+   if (!(flags & ECORE_EXE_NOT_LEADER)) setsid();
    if ((flags & ECORE_EXE_USE_SH))
      {
 	errno = 0;
