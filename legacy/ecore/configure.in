@@ -52,12 +52,12 @@ requirements_ecore_sdl=""
 
 dnl The first call to PKG_CHECK_MODULES is done conditionally,
 dnl so we should include this here:
-PKG_PROG_PKG_CONFIG
+dnl#PKG_PROG_PKG_CONFIG
 
 dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
-AC_CHECK_HEADERS(dlfcn.h features.h langinfo.h locale.h netinet/in.h sys/mman.h sys/time.h windows.h winsock2.h)
+AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netinet/in.h sys/mman.h sys/time.h windows.h winsock2.h])
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
 AC_SUBST(dlopen_libs)
 
@@ -73,16 +73,15 @@ AC_ARG_ENABLE(openssl,
 )
 
 if test "x$want_openssl" = "xyes"; then
-  PKG_CHECK_MODULES(SSL, openssl,
-    [
-       AC_DEFINE(USE_OPENSSL, 1, [Use OpenSSL])
-       requirements_ecore_con="$requirements_ecore_con openssl"
-       # no need to add it to req_ecore_ipc, since they
-       # depends on ecore_con anyway.
-       have_openssl="yes"
-    ],
-    [ have_openssl="no" ]
-  )
+    PKG_CHECK_MODULES([SSL], [openssl], [
+        AC_DEFINE(USE_OPENSSL, 1, [Use OpenSSL])
+        requirements_ecore_con="$requirements_ecore_con openssl"
+        # no need to add it to req_ecore_ipc, since they
+        # depends on ecore_con anyway.
+        have_openssl="yes"
+    ], [
+        have_openssl="no"
+    ])
 fi
 
 dnl curl
@@ -324,7 +323,7 @@ if test "x$have_ecore_x_xcb" != "xyes" ; then
     Xcursor_cflags=""
     use_Xcursor="no"
     PCFLAGS=$CFLAGS
-    CFLAGS=$x_cflags" "$x_includes
+    CFLAGS="$x_cflags $x_includes"
     AC_CHECK_HEADER(X11/Xcursor/Xcursor.h,
       [
         AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor,
@@ -389,12 +388,12 @@ if test "x$have_ecore_x" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   AC_MSG_RESULT($want_ecore_evas_x11)
   
   if test "x$want_ecore_evas_x11" = "xyes"; then
-    PKG_CHECK_EXISTS(evas-software-x11,
-      [
+    PKG_CHECK_MODULES(EVAS_SOFTWARE_X11, evas-software-x11, [
         AC_DEFINE(BUILD_ECORE_EVAS_X11, 1, [Support for X11 Engine in Ecore_Evas])
         have_ecore_evas_x11="yes";
-      ]
-    )
+    ], [
+        have_ecore_evas_x11="no";
+    ])
   fi
 
   dnl ecore_evas_x11_gl
@@ -410,12 +409,12 @@ if test "x$have_ecore_x" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   AC_MSG_RESULT($want_ecore_evas_x11_gl)
   
   if test "x$want_ecore_evas_x11_gl" = "xyes"; then
-    PKG_CHECK_EXISTS(evas-opengl-x11,
-      [
+    PKG_CHECK_MODULES(EVAS_OPENGL_X11, evas-opengl-x11, [
         AC_DEFINE(BUILD_ECORE_EVAS_X11_GL, 1, [Support for GL Engine in Ecore_Evas])
         have_ecore_evas_x11_gl="yes";
-      ]
-    )
+    ], [
+        have_ecore_evas_x11_gl="no"
+    ])
   fi
 
   dnl ecore_evas_xrender
@@ -432,12 +431,12 @@ if test "x$have_ecore_x" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   AC_MSG_RESULT($want_ecore_evas_xrender)
   
   if test "x$want_ecore_evas_xrender" = "xyes"; then
-    PKG_CHECK_EXISTS(evas-xrender-x11,
-      [
+    PKG_CHECK_MODULES(EVAS_XRENDER_X11, evas-xrender-x11, [
         AC_DEFINE(BUILD_ECORE_EVAS_XRENDER, 1, [Support for XRender Engine in Ecore_Evas])
-        have_ecore_evas_xrender="yes";
-      ]
-    )
+        have_ecore_evas_xrender="yes"
+    ], [
+        have_ecore_evas_xrender="no"
+    ])
   fi
 
   dnl ecore_evas_x11_16
@@ -454,7 +453,7 @@ if test "x$have_ecore_x" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   AC_MSG_RESULT($want_ecore_evas_x11_16)
   
   if test "x$want_ecore_evas_x11_16" = "xyes"; then
-    PKG_CHECK_EXISTS(evas-software-16-x11,
+    PKG_CHECK_MODULES(EVAS_SOFTWARE_16_X11, evas-software-16-x11,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_X11_16, 1, [Support for X11 16bpp Engine in Ecore_Evas])
         have_ecore_evas_x11_16="yes";
@@ -473,7 +472,7 @@ dnl ecore_win32
 # TODO: We should first check if we have win32 available before checking for win32 evas
 # TODO: Need to check if we have evas before testing win32 evas engines
 AC_MSG_CHECKING(for Evas Software DirectDraw engine)
-PKG_CHECK_EXISTS(evas-software-ddraw >= 0.9.9.41,
+PKG_CHECK_MODULES(EVAS_SOFTWARE_DDRAW, evas-software-ddraw >= 0.9.9.41,
   [ have_ddraw="yes"
     AC_DEFINE(HAVE_DIRECTDRAW, 1, [Build Ecore_Win32 with DirectDraw Code])
     ddraw_libs="-lddraw -ldxguid" ],
@@ -483,7 +482,7 @@ AC_MSG_RESULT($have_ddraw)
 AC_SUBST(ddraw_libs)
 
 AC_MSG_CHECKING(for Evas 16bpp Software DirectDraw engine)
-PKG_CHECK_EXISTS(evas-software-16-ddraw >= 0.9.9.41,
+PKG_CHECK_MODULES(EVAS_SOFTWARE_16_DDRAW, evas-software-16-ddraw >= 0.9.9.41,
   [ have_ddraw_16="yes"
     AC_DEFINE(HAVE_DIRECTDRAW_16, 1, [Build Ecore_Win32 with 16 bpp DirectDraw Code])
     ddraw_16_libs="-lddraw -ldxguid" ],
@@ -493,7 +492,7 @@ AC_MSG_RESULT($have_ddraw_16)
 AC_SUBST(ddraw_16_libs)
 
 AC_MSG_CHECKING(for Evas Direct3D engine)
-PKG_CHECK_EXISTS(evas-direct3d >= 0.9.9.41,
+PKG_CHECK_MODULES(EVAS_DIRECT3D, evas-direct3d >= 0.9.9.41,
   [ have_direct3d="yes"
     AC_DEFINE(HAVE_DIRECT3D, 1, [Build Ecore_Win32 with Direct3D Code])
     direct3d_libs="-ld3d9 -ld3dx9d" ],
@@ -503,7 +502,7 @@ AC_MSG_RESULT($have_direct3d)
 AC_SUBST(direct3d_libs)
 
 AC_MSG_CHECKING(for Evas OpenGL Glew engine)
-PKG_CHECK_EXISTS(evas-opengl-glew >= 0.9.9.41,
+PKG_CHECK_MODULES(EVAS_OPENGL_GLEW, evas-opengl-glew >= 0.9.9.41,
   [ have_opengl_glew="yes"
     AC_DEFINE(HAVE_OPENGL_GLEW, 1, [Build Ecore_Win32 with OpenGL Glew Code])
     glew_libs="-lglew32 -lgdi32" ],
@@ -559,7 +558,7 @@ if test "x$have_ecore_directfb" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   if test "x$want_ecore_evas_dfb" = "xyes" -a "x$have_ecore_directfb" = "xyes" ; then
     save_CFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS $DIRECTFB_CFLAGS"
-    PKG_CHECK_EXISTS(evas-directfb,
+    PKG_CHECK_MODULES(EVAS_DIRECTFB, evas-directfb,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
         have_ecore_evas_dfb="yes"
@@ -600,7 +599,7 @@ if test "x$have_ecore_fb" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   AC_MSG_RESULT($want_ecore_evas_fb)
   
   if test "x$want_ecore_evas_fb" = "xyes"; then
-    PKG_CHECK_EXISTS(evas-framebuffer,
+    PKG_CHECK_MODULES(EVAS_FRAMEBUFFER, evas-framebuffer,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_FB, 1, [Support for Linux FB in Ecore_Evas])
         have_ecore_evas_fb="yes"
@@ -611,36 +610,54 @@ if test "x$have_ecore_fb" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
 fi
 
 dnl ecore_sdl
-PKG_CHECK_MODULES(SDL, sdl >= 1.2.0,
-    [ have_sdl="yes" ],
-    [ have_sdl="no" ])
+AC_ARG_WITH(sdl-config, AC_HELP_STRING([--with-sdl-config=PATH], [use sdl-config specified]), [
+    SDL_CONFIG=$withval;
+    echo "using "$SDL_CONFIG" for sdl-config";
+], [
+    if test -z "$SDL_CONFIG"; then
+        AC_PATH_PROG(SDL_CONFIG, "sdl-config", "", $PATH)
+    fi
+])
+if test -z "$SDL_CONFIG" ; then SDL_CONFIG="sdl-config"; fi
+
+sdl_cflags="";
+sdl_libs="";
+have_sdl="no"
+AC_CHECK_HEADER(SDL/SDL.h, [ have_sdl="yes" ], [ have_sdl="no" ])
 
 ECORE_CHECK_MODULE([SDL], [no], [$have_sdl])
 
 dnl ecore_evas_sdl
 have_ecore_evas_sdl="no";
 if test "x$have_sdl" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
-  want_ecore_evas_sdl="yes";
-  AC_MSG_CHECKING(whether ecore_evas sdl support is to be built)
-  AC_ARG_ENABLE(ecore-evas-sdl,
-    AC_HELP_STRING([--disable-ecore-evas-sdl], [disable sdl in the ecore_evas module]),
-    [ want_ecore_evas_sdl=$enableval ]
-  )
-  AC_MSG_RESULT($want_ecore_evas_sdl)
-  
-  if test "x$want_ecore_evas_sdl" = "xyes"; then
-    save_CFLAGS=$CFLAGS
-    CFLAGS="$CFLAGS $SDL_CFLAGS"
-    PKG_CHECK_EXISTS(evas-software-sdl,
-      [
-        AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL in Ecore_Evas])
-        have_ecore_evas_sdl="yes"
-        requirements_ecore_evas="$requirements_ecore_evas ecore-sdl"
-        PKG_CHECK_MODULES(SDL, sdl >= 1.3.0,
-          [ AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL]) ],
-	  [ dummy="no" ])
-      ]
+    want_ecore_evas_sdl="yes";
+    AC_MSG_CHECKING([whether ecore_evas SDL support is to be built])
+    AC_ARG_ENABLE(ecore-evas-sdl,
+        AC_HELP_STRING([--disable-ecore-evas-sdl], [disable SDL in the ecore_evas module]),
+        [ want_ecore_evas_sdl=$enableval ]
     )
+    AC_MSG_RESULT($want_ecore_evas_sdl)
+  
+    if test "x$want_ecore_evas_sdl" = "xyes"; then
+        save_CFLAGS=$CFLAGS
+        SDL_CFLAGS=`$SDL_CONFIG --cflags`
+        SDL_LIBS=`$SDL_CONFIG --libs`
+        CFLAGS="$CFLAGS $SDL_CFLAGS"
+        AC_SUBST(SDL_CFLAGS)
+        AC_SUBST(SDL_LIBS)
+
+        PKG_CHECK_MODULES(EVAS_SOFTWARE_SDL, evas-software-sdl, [
+            AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL in Ecore_Evas])
+            have_ecore_evas_sdl="yes"
+            requirements_ecore_evas="$requirements_ecore_evas ecore-sdl"
+            PKG_CHECK_MODULES(SDL, sdl >= 1.3.0, [
+                AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL])
+            ], [
+                dummy="no"
+            ])
+        ], [
+            have_ecore_evas_sdl="no"
+        ])
     CFLAGS=$save_CFLAGS
   fi
 fi
@@ -656,12 +673,13 @@ AC_ARG_ENABLE(ecore-evas-buffer,
 AC_MSG_RESULT($want_ecore_evas_buffer)
 
 if test "x$want_ecore_evas_buffer" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
-  PKG_CHECK_EXISTS(evas-software-buffer,
+  PKG_CHECK_MODULES(EVAS_SOFTWARE_BUFFER, evas-software-buffer,
     [
       AC_DEFINE(BUILD_ECORE_EVAS_BUFFER, 1, [Support for Buffers in Ecore_Evas])
       have_ecore_evas_buffer="yes"
-    ]
-  )
+    ], [
+      have_ecore_evas_buffer="no"
+  ])
 fi
 
 dnl ecore_file
