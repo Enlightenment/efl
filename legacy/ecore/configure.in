@@ -57,7 +57,7 @@ PKG_PROG_PKG_CONFIG
 dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
-AC_CHECK_HEADERS_ONCE(dlfcn.h features.h langinfo.h locale.h netinet/in.h sys/mman.h sys/time.h windows.h winsock2.h)
+AC_CHECK_HEADERS(dlfcn.h features.h langinfo.h locale.h netinet/in.h sys/mman.h sys/time.h windows.h winsock2.h)
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
 AC_SUBST(dlopen_libs)
 
