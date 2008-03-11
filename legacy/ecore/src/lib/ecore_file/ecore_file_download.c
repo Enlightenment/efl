@@ -30,11 +30,10 @@ Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *
 						   void *data);
 static int _ecore_file_download_curl_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
-static void _ecore_file_download_abort(Ecore_File_Download_Job *job);
-
 static int _ecore_file_download_url_complete_cb(void *data, int type, void *event);
 static int _ecore_file_download_url_progress_cb(void *data, int type, void *event);
 #endif
+static void _ecore_file_download_abort(Ecore_File_Download_Job *job);
 
 static int			 init = 0;
 static Ecore_Event_Handler	*_url_complete_handler = NULL;
@@ -234,7 +233,9 @@ _ecore_file_download_url_progress_cb(void *data, int type, void *event)
 static void
 _ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
+#ifdef HAVE_CURL
    ecore_con_url_destroy(job->url_con);
+#endif  
    fclose(job->file);
    free(job->dst);
    free(job);
