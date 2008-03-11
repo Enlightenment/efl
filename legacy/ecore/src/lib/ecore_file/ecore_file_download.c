@@ -230,17 +230,6 @@ _ecore_file_download_url_progress_cb(void *data, int type, void *event)
    return 0;
 }
 
-static void
-_ecore_file_download_abort(Ecore_File_Download_Job *job)
-{
-#ifdef HAVE_CURL
-   ecore_con_url_destroy(job->url_con);
-#endif  
-   fclose(job->file);
-   free(job->dst);
-   free(job);
-}
-
 Ecore_File_Download_Job *
 _ecore_file_download_curl(const char *url, const char *dst,
 			  void (*completion_cb)(void *data, const char *file,
@@ -285,3 +274,14 @@ _ecore_file_download_curl(const char *url, const char *dst,
    return job;
 }
 #endif
+
+static void
+_ecore_file_download_abort(Ecore_File_Download_Job *job)
+{
+#ifdef HAVE_CURL
+   ecore_con_url_destroy(job->url_con);
+#endif  
+   fclose(job->file);
+   free(job->dst);
+   free(job);
+}
