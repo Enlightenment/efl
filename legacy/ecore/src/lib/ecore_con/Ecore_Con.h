@@ -25,6 +25,7 @@
 # endif
 #endif
 
+#include <time.h>
 #include <netdb.h>
 #include <Ecore_Data.h>
 
