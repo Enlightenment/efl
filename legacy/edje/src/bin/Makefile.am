@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I$(top_srcdir) \
--I$(top_srcdir)/bin \
+-I$(top_srcdir)/src/bin \
 -I$(top_srcdir)/src/lib \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \

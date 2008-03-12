@@ -15,10 +15,9 @@
 
 #include <locale.h>
 #include <errno.h>
-#include <Ecore_Evas.h>
 #include "Edje.h"
 #include "edje_private.h"
-#include "../bin/edje_cc.h"
+#include "edje_cc.h"
 #include "Edje_Edit.h"
 
 #define MAX_PATH 4096
