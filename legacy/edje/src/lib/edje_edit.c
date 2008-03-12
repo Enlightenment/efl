@@ -555,7 +555,7 @@ _edje_if_string_free(Edje *ed, const char *str)
    if (!ed || !str) return;
    
    dict = eet_dictionary_get(ed->file->ef);
-   if (eet_dictionary_string_check(dict ,str)) return;
+   if (eet_dictionary_string_check(dict, str)) return;
    evas_stringshare_del(str);
    str = NULL;
 }
