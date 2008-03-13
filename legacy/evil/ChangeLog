@@ -1,3 +1,16 @@
+2008-03-13  Vincent Torri  <doursse at users dot sf dot net>
+
+	* INSTALL:
+	* README:
+	additional notes for compilations with cegcc or mingw32ce
+
+	* configure.ac:
+	use 'win32' instead of 'cegcc' or 'mingw'
+
+	* src/lib/dlfcn/dlfcn.c (dlopen):
+	cegcc does not support LOAD_WITH_ALTERED_SEARCH_PATH.
+	Use LoadLibrary instead of LoadLibraryEx in that case.
+
 2008-03-05  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

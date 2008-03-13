@@ -3,6 +3,11 @@ The Evil library tried to port some convenient Unix functions
 to the Windows (XP, maybe below, or Mobile) platform. They
 are planned to be used in the Enlightenment Fundations Libaries.
 
+To get informations on how to install that library, see the
+INSTALL file. For mingw32ce or cegcc users, look at the end
+of that INSTALL file to have precise informations on how to
+configure the library.
+
 To get the description of the API, behavior, etc.. run
 doxygen.exe in the top level directory, then open in your
 favorite browser named Firefox the file index.html located in

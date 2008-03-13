@@ -147,8 +147,7 @@ dlopen(const char* path, int mode __UNUSED__)
            wchar_t *wpath;
 
            wpath = string_to_wchar(new_path);
-           module = LoadLibraryEx(wpath, NULL,
-                                  LOAD_WITH_ALTERED_SEARCH_PATH);
+           module = LoadLibrary(wpath);
            free(wpath);
         }
 #else

@@ -8,21 +8,23 @@ AC_CANONICAL_HOST
 dnl If the host is not windows, we exit,
 dnl otherwise, we set the correct flags
 dnl for each platform.
-mingw_libs=""
-cegcc_cflags=""
+win32_libs=""
+win32_cflags=""
 case "$host_os" in
   mingw|mingw32)
-    mingw_libs="-lole32 -luuid -lws2_32"
+    win32_libs="-lole32 -luuid -lws2_32"
     ;;
   cegcc)
-    cegcc_cflags="-mwin32"
+    win32_cflags="-mwin32"
+    win32_libs="-lws2"
+    ;;
+  mingw32ce)
+    win32_libs="-lws2"
     ;;
   *)
     AC_MSG_ERROR([OS must be Windows. Exiting...])
     ;;
 esac
-win32_cflags="${cegcc_cflags}"
-win32_libs="${mingw_libs}"
 AC_SUBST(win32_cflags)
 AC_SUBST(win32_libs)
 
