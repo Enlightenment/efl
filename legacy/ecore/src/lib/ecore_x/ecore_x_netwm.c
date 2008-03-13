@@ -999,7 +999,7 @@ ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type)
 EAPI int
 ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 {
-   int                  num, i;
+   int                  num;
    Ecore_X_Atom        *atoms = NULL;
 
    if (type) *type = ECORE_X_WINDOW_TYPE_NORMAL;
