@@ -269,7 +269,7 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
      {
 	if (url_con->active)
 	  {
-	     if (ecore_list_find(_url_con_list, _ecore_con_url_compare_cb, url_con) == url_con)
+	     if (ecore_list_find(_url_con_list, ecore_direct_compare, url_con) == url_con)
 	       ecore_list_remove(_url_con_list);
 	     url_con->active = 0;
 
