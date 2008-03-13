@@ -458,7 +458,7 @@ void
 _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 {
    Evas_List *l;
-   char *pname = NULL;
+   const char *pname = NULL;
    int free_runp = 0;
 
    if (ed->delete_me) return;
