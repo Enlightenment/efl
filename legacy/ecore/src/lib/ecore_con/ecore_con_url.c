@@ -243,15 +243,6 @@ ecore_con_url_new(const char *url)
 #endif
 }
 
-static int
-_ecore_con_url_compare_cb(const void *data1, const void *data2)
-{
-   const void	*url_con1 = data1;
-   const void	*url_con2 = data2;
-
-   return (url_con1 == url_con2) ? 0 : 1;
-}
-
 /**
  * Frees the Ecore_Con_Url.
  * @return  FIXME: To be documented. 
@@ -430,6 +421,7 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
 
    return url_con->received;
 #endif   
+   return 0;
 }
 
 /**
