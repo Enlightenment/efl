@@ -222,7 +222,7 @@ _edje_real_part_free(Edje_Real_Part *rp)
    
    if (rp->custom.description)
    {
-      _edje_collection_free_part_description_free(rp->custom.description);
+      _edje_collection_free_part_description_free(rp->custom.description, 0);
    }
 
    _edje_unref(rp->edje);
@@ -399,10 +399,12 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
          
          pt = ll->data;
          if (pt->id == old_id)
-            if (new_id == -1)
-               epr->targets = evas_list_remove(epr->targets, pt);
-            else
-               pt->id = new_id;
+	   {
+	      if (new_id == -1)
+		epr->targets = evas_list_remove(epr->targets, pt);
+	      else
+		pt->id = new_id;
+	   }
       }
    }
    
@@ -753,8 +755,7 @@ EAPI unsigned char
 edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 {
    Evas_List *l;
-   int id;
-  
+ 
    GET_ED_OR_RETURN(0)
    if (!new_name) return 0;
    if (edje_edit_group_exist(obj, new_name)) return 0;
@@ -784,10 +785,11 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
          //   evas_stringshare_del(pce->entry);
          pce->entry = evas_stringshare_add(new_name);
          
-         return;
+         return 1;
       }
       l = l->next;
    }
+   return 0;
 }
 
 EAPI int
@@ -1025,11 +1027,10 @@ EAPI unsigned char
 edje_edit_part_del(Evas_Object *obj, const char* part)
 {
    printf("REMOVE PART: %s\n", part);
-   Evas_List *l, *ll;
    Edje_Part *ep;
    int id;
    
-   GET_RP_OR_RETURN()
+   GET_RP_OR_RETURN(0)
    ep = rp->part;
    id = ep->id;
    
@@ -1082,7 +1083,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    _edje_if_string_free(ed, ep->name);
    if (ep->default_desc)
    {
-      _edje_collection_free_part_description_free(ep->default_desc);
+      _edje_collection_free_part_description_free(ep->default_desc, 0);
       ep->default_desc = NULL;
    }
    while (ep->other_desc)
@@ -1091,7 +1092,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
       
       desc = ep->other_desc->data;
       ep->other_desc = evas_list_remove(ep->other_desc, desc);
-      _edje_collection_free_part_description_free(desc);
+      _edje_collection_free_part_description_free(desc, 0);
    }
    free(ep);
    
@@ -1455,7 +1456,7 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state)
    
    rp->part->other_desc = evas_list_remove(rp->part->other_desc, pd);
    
-   _edje_collection_free_part_description_free(pd);
+   _edje_collection_free_part_description_free(pd, 0);
 }
 
 EAPI void
@@ -2044,7 +2045,7 @@ edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *s
 EAPI unsigned char
 edje_edit_state_aspect_pref_get(Evas_Object *obj, const char *part, const char *state)
 {
-   GET_PD_OR_RETURN()
+   GET_PD_OR_RETURN(0)
    printf("GET ASPECT_PREF of state '%s' [%d]\n", state, pd->aspect.prefer);
    return pd->aspect.prefer;
 }
@@ -2059,10 +2060,10 @@ edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *
 /*  TEXT API */
 /**************/
 
-EAPI const char*
+EAPI const char *
 edje_edit_state_text_get(Evas_Object *obj, const char *part, const char *state)
 {
-   GET_PD_OR_RETURN()
+   GET_PD_OR_RETURN(NULL)
    //printf("GET TEXT of state: %s\n", state);
    
    if (pd->text.text)
@@ -2127,7 +2128,7 @@ edje_edit_state_text_align_x_set(Evas_Object *obj, const char *part, const char 
 EAPI double
 edje_edit_state_text_align_y_get(Evas_Object *obj, const char *part, const char *state)
 {
-   GET_PD_OR_RETURN()
+   GET_PD_OR_RETURN(0.0)
    //printf("GET TEXT_ALIGN_Y of state: %s [%f]\n", state, pd->text.align.x);
    return pd->text.align.y;
 }
@@ -2398,7 +2399,7 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
    
    /* Create Image Entry */
    de = mem_alloc(sizeof(Edje_Image_Directory_Entry));
-   if (name = strrchr(path, '/')) name++;
+   if ((name = strrchr(path, '/'))) name++;
    else name = (char *)path;
    de->entry = mem_strdup(name);
    de->id = free_id;
@@ -3203,7 +3204,7 @@ edje_edit_script_get(Evas_Object *obj)
    
    script = ed->collection->script;
    
-   printf("Get Script [%d] %d\n",script, embryo_program_recursion_get(script));
+   printf("Get Script [%p] %d\n", script, embryo_program_recursion_get(script));
    
    return "Not yet complete...";
 }
@@ -3222,7 +3223,6 @@ _edje_generate_source(Edje *ed)
    long sz;
    SrcFile *sf;
    SrcFile_List *sfl;
-   Eet_File *eetf;
 
    /* Open a temp file */
    //TODO this will not work on windows
@@ -3339,7 +3339,6 @@ edje_edit_save(Evas_Object *obj)
 EAPI void
 edje_edit_print_internal_status(Evas_Object *obj)
 {
-   int i;
    Evas_List *l;
    GET_ED_OR_RETURN()
       

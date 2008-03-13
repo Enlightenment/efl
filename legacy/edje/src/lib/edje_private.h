@@ -428,8 +428,8 @@ struct _Edje_Part_Collection_Directory
 
 struct _Edje_Part_Collection_Directory_Entry
 {
-   char *entry; /* the nominal name of the part collection */
-   int   id; /* the id of this named part collection */
+   const char *entry; /* the nominal name of the part collection */
+   int         id; /* the id of this named part collection */
 };
 
 /*----------*/
@@ -464,7 +464,7 @@ struct _Edje_Part
    const char            *name; /* the name if any of the part */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
-   char                  *source;
+   const char            *source;
    int                    id; /* its id number */
    int                    clip_to_id; /* the part id to clip this one to */
    struct {
@@ -1029,6 +1029,8 @@ void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
 void  _edje_file_cache_shutdown(void);
 void  _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec);
+void  _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings);
+
 
 Edje *_edje_add(Evas_Object *obj);
 void  _edje_del(Edje *ed);
