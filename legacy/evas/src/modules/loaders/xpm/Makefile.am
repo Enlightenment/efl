@@ -4,7 +4,8 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS	       = -I. \
 			 -I$(top_srcdir)/src/lib \
 			 -I$(top_srcdir)/src/lib/include \
-			 @FREETYPE_CFLAGS@ @xpm_cflags@
+			 @FREETYPE_CFLAGS@ @xpm_cflags@ \
+			 @WIN32_CFLAGS@
 
 pkgdir                 = $(libdir)/evas/modules/loaders/xpm/$(MODULE_ARCH)
 

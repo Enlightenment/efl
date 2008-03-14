@@ -12,6 +12,7 @@ AM_CPPFLAGS	     = -I. \
 		       @FREETYPE_CFLAGS@ \
 		       @EET_CFLAGS@ \
 		       @FONTCONFIG_CFLAGS@ \
+		       @WIN32_CFLAGS@ \
 		       @pthread_cflags@
 
 lib_LTLIBRARIES      = libevas.la

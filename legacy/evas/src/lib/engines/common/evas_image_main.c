@@ -1,12 +1,16 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"  /* so that EAPI in Eet.h is correctly defined */
+#endif
+
+#ifdef BUILD_LOADER_EET
+# include <Eet.h>
+#endif
+
 #include "evas_common.h"
 #include "evas_private.h"
 
-#ifdef BUILD_LOADER_EET
-#include <Eet.h>
-#endif
-
 #ifdef HAVE_VALGRIND
-#include <memcheck.h>
+# include <memcheck.h>
 #endif
 
 static Evas_Cache_Image * eci = NULL;

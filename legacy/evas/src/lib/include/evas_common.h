@@ -5,8 +5,11 @@
 #ifndef EVAS_COMMON_H
 #define EVAS_COMMON_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"  /* so that EAPI in Evas.h is correctly defined */
+#endif
+
 #include "Evas.h"
-#include "config.h"
 
 /*****************************************************************************/
 
@@ -72,10 +75,6 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#ifdef _WIN32_WCE
-#include <windows.h>
-#endif
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -126,15 +125,7 @@ void *alloca (size_t);
 
 /*****************************************************************************/
 
-#ifndef _WIN32_WCE
 typedef unsigned long long		DATA64;
-#else
-typedef unsigned __int64		DATA64;
-#define strdup _strdup
-#define snprintf _snprintf
-#define rewind(f) fseek(f, 0, SEEK_SET)
-#endif
-
 typedef unsigned int			DATA32;
 typedef unsigned short			DATA16;
 typedef unsigned char                   DATA8;

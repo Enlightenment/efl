@@ -1,7 +1,11 @@
-#include "evas_common.h"
-#include "evas_private.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"  /* so that EAPI in Eet.h is correctly defined */
+#endif
 
 #include <Eet.h>
+
+#include "evas_common.h"
+#include "evas_private.h"
 
 
 int evas_image_load_file_head_eet(RGBA_Image *im, const char *file, const char *key);

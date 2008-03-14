@@ -4,7 +4,8 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS	       = -I. \
 			 -I$(top_srcdir)/src/lib \
 			 -I$(top_srcdir)/src/lib/include \
-			 @FREETYPE_CFLAGS@ @pmaps_cflags@
+			 @FREETYPE_CFLAGS@ @pmaps_cflags@ \
+			 @WIN32_CFLAGS@
 
 pkgdir                 = $(libdir)/evas/modules/loaders/pmaps/$(MODULE_ARCH)
 

@@ -7,7 +7,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
-@SDL_CFLAGS@
+@SDL_CFLAGS@ \
+@WIN32_CFLAGS@
 
 if BUILD_ENGINE_SDL
 

@@ -4,7 +4,8 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS	       = -I. \
 			 -I$(top_srcdir)/src/lib \
 			 -I$(top_srcdir)/src/lib/include \
-			 @FREETYPE_CFLAGS@ @EET_CFLAGS@
+			 @FREETYPE_CFLAGS@ @EET_CFLAGS@ \
+			 @WIN32_CFLAGS@
 
 pkgdir                 = $(libdir)/evas/modules/savers/eet/$(MODULE_ARCH)
 

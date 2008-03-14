@@ -1,9 +1,13 @@
-#include "evas_common.h"
-#include "evas_private.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"  /* so that EAPI in Eet.h is correctly defined */
+#endif
 
 #ifdef BUILD_FONT_LOADER_EET
 #include <Eet.h>
 #endif
+
+#include "evas_common.h"
+#include "evas_private.h"
 
 EAPI Evas_Imaging_Image *
 evas_imaging_image_load(const char *file, const char *key)

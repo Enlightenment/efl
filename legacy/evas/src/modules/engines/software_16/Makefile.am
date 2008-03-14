@@ -6,7 +6,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
-@FREETYPE_CFLAGS@
+@FREETYPE_CFLAGS@ \
+@WIN32_CFLAGS@
 
 if BUILD_ENGINE_SOFTWARE_16
 

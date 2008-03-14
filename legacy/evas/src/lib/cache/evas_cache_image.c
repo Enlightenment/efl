@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <assert.h>
-#include <Evas.h>
 
 #include "evas_common.h"
 #include "evas_private.h"
