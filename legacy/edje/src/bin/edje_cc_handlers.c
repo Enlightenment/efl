@@ -1751,16 +1751,20 @@ st_collections_group_parts_part_effect(void)
         part {
             ..
             dragable {
-                confine: "anotherpart";
-                events: "anotherdragablepart";
+                confine: "another part";
+                events:  "another dragable part";
                 x: 0 0 0;
                 y: 0 0 0;
             }
             ..
         }
     @description
-        This block is used to set the properties for parts that will be dragged
-        around the interface (not external drag & drop).
+        When this block is used the resulting part can be dragged around the
+        interface, do not confuse with external drag & drop. By default Edje 
+        (and most applications) will attempt to use the minimal size possible 
+        for a dragable part. If the min property is not set in the description
+        the part will be (most likely) set to 0px width and 0px height, thus
+        invisible.
     @endblock
 
     @property
@@ -1769,9 +1773,9 @@ st_collections_group_parts_part_effect(void)
         [enable/disable] [step] [count]
     @effect
         Used to setup dragging events for the X axis. The first parameter is
-        used to enable (1 or -1) and disable (0) dragging along the axis, in
-        the first case, 1 sets the starting point at 0.0 and -1 at 1.0. The
-        second parameter takes any integer and will limit movement to values
+        used to enable (1 or -1) and disable (0) dragging along the axis. When
+        enabled, 1 will set the starting point at 0.0 and -1 at 1.0. The second
+        parameter takes any integer and will limit movement to values
         divisibles by it, causing the part to jump from position to position.
         The third parameter, (question from the author: What is count for?).
     @endproperty
@@ -1799,11 +1803,11 @@ st_collections_group_parts_part_dragable_x(void)
         [enable/disable] [step] [count]
     @effect
         Used to setup dragging events for the Y axis. The first parameter is
-        used to enable (1 or -1) and disable (0) dragging along the axis, in
-        the first case, 1 sets the starting point at 0.0 and -1 at 1.0. The
-        second parameter takes any integer and will limit movement to values
+        used to enable (1 or -1) and disable (0) dragging along the axis. When
+        enabled, 1 will set the starting point at 0.0 and -1 at 1.0. The second
+        parameter takes any integer and will limit movement to values
         divisibles by it, causing the part to jump from position to position.
-        The third parame, (question from the author: What is count for?).
+        The third parameter, (question from the author: What is count for?).
     @endproperty
 */
 static void
@@ -1829,9 +1833,7 @@ st_collections_group_parts_part_dragable_y(void)
         [another part's name]
     @effect
         When set, limits the movement of the dragged part to another part's
-        container. Since the size of dragable object will be setup by the
-        application, the "min" property of "description" should be an accesible
-        size.
+        container.
     @endproperty
 */
 static void
