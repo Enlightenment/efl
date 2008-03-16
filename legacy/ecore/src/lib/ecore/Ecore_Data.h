@@ -178,11 +178,11 @@ extern "C" {
    EAPI int ecore_dlist_prepend_list(Ecore_DList * _e_dlist, Ecore_DList * prepend);
    
    /* Info about list's state */
-# define ecore_dlist_first(list) ecore_list_first(ECORE_LIST(list))
-# define ecore_dlist_last(list) ecore_list_last(ECORE_LIST(list))
+# define ecore_dlist_first(list) ecore_list_first(list)
+# define ecore_dlist_last(list) ecore_list_last(list)
    EAPI void *ecore_dlist_current(Ecore_DList *list);
    EAPI int ecore_dlist_index(Ecore_DList *list);
-# define ecore_dlist_count(list) ecore_list_count(ECORE_LIST(list))
+# define ecore_dlist_count(list) ecore_list_count(list)
    
    /* Removing items from the list */
    EAPI void *ecore_dlist_remove(Ecore_DList * _e_dlist);
@@ -192,7 +192,7 @@ extern "C" {
    
    /* Traversing the list */
 # define ecore_dlist_for_each(list, function, user_data) \
-   ecore_list_for_each(ECORE_LIST(list), function, user_data)
+   ecore_list_for_each(list, function, user_data)
    EAPI void *ecore_dlist_first_goto(Ecore_DList * _e_dlist);
    EAPI void *ecore_dlist_last_goto(Ecore_DList * _e_dlist);
    EAPI void *ecore_dlist_index_goto(Ecore_DList * _e_dlist, int index);
