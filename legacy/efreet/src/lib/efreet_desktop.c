@@ -1806,8 +1806,12 @@ efreet_desktop_command_path_absolute(const char *path)
     /* relative url */
     if (path[0] != '/')
     {
-        buf = malloc(size);
-        if (!getcwd(buf, size)) return NULL;
+        if (!(buf = malloc(size))) return NULL;
+        if (!getcwd(buf, size))
+        {
+            FREE(buf);
+            return NULL;
+        }
         len = strlen(buf);
 
         if (buf[len-1] != '/') buf = efreet_string_append(buf, &size, &len, "/");
@@ -1816,6 +1820,6 @@ efreet_desktop_command_path_absolute(const char *path)
         return buf;
     }
 
-    /* just dup an alreaady absolute buffer */
+    /* just dup an already absolute buffer */
     return strdup(path);
 }
