@@ -66,12 +66,14 @@ ecore_file_download_shutdown(void)
 {
    if (--init == 0)
      {
-	ecore_event_handler_del(_url_complete_handler);
-	ecore_event_handler_del(_url_progress_download);
+	if (_url_complete_handler)
+	  ecore_event_handler_del(_url_complete_handler);
+	if (_url_progress_download)
+	  ecore_event_handler_del(_url_progress_download);
 	_url_complete_handler = NULL;
 	_url_progress_download = NULL;
-
-	ecore_list_destroy(_job_list);
+	if (_job_list)
+	  ecore_list_destroy(_job_list);
 	_job_list = NULL;
      }
 
