@@ -2025,7 +2025,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 		    _layout_format_value_handle(c, fmt, item);
 		  else
 		    {
-		       if (!strcmp(item, "\n"))
+		       if ((!strcmp(item, "\n")) || (!strcmp(item, "\\n")))
 			 {
 			    Evas_Object_Textblock_Format_Item *fi;
 			    
@@ -2034,7 +2034,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 			    fi->w = 0;
 			    _layout_line_advance(c, fmt);
 			 }
-		       else if (!strcmp(item, "\t"))
+		       else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
 			 { 
 			    Evas_Object_Textblock_Format_Item *fi;
 			    int x2;
