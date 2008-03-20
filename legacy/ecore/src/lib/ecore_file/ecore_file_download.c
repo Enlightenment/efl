@@ -72,6 +72,7 @@ ecore_file_download_shutdown(void)
 	_url_progress_download = NULL;
 
 	ecore_list_destroy(_job_list);
+	_job_list = NULL;
      }
 
    return ecore_con_url_shutdown();
