@@ -443,6 +443,7 @@ struct _Evas_Object
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;
    int                         mouse_grabbed;
+   Evas_Object_Pointer_Mode    pointer_mode;
 
    unsigned short              store : 1;
    unsigned short              pass_events : 1;
@@ -457,10 +458,7 @@ struct _Evas_Object
    unsigned short              focused : 1;
    unsigned short              in_layer : 1;
    unsigned short              no_propagate : 1;
-
    unsigned short              precise_is_inside : 1;
-
-   Evas_Object_Pointer_Mode    pointer_mode;
 
    unsigned char               delete_me;
 };
