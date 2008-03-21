@@ -8,7 +8,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir) \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EVIL_CFLAGS@
 
 bin_PROGRAMS = embryo_cc
 
@@ -29,7 +30,7 @@ embryo_cc_scvars.c \
 embryo_cc_prefix.c \
 embryo_cc_prefix.h
 
-embryo_cc_LDADD = -lm
+embryo_cc_LDADD = @EVIL_LIBS@ -lm
 embryo_cc_DEPENDENCIES =
 
 EXTRA_DIST = \

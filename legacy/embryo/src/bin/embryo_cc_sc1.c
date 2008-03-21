@@ -20,7 +20,7 @@
  *  2.  Altered source versions must be plainly marked as such, and
  *  must not be misrepresented as being the original software.
  *  3.  This notice may not be removed or altered from any source
- *  distribution.  
+ *  distribution.
  *  Version: $Id$
  */
 
@@ -36,12 +36,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifdef _WIN32
-# include <fcntl.h>
-# include <io.h>
-# include <share.h>
-# include <sys/stat.h>
-#endif /* _WIN32 */
+#ifdef HAVE_EVIL
+# include <evil.h>
+#endif /* HAVE_EVIL */
 
 #include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
@@ -143,7 +140,7 @@ main(int argc, char *argv[], char *env[])
 	   snprintf(argv0, _MAX_PATH, "%s/%s", pwd, argv[0]);
      }				/* if */
    argv[0] = argv0;		/* set location to new first parameter */
-   
+
    e_prefix_determine(argv0);
 
    return sc_compile(argc, argv);
@@ -318,30 +315,15 @@ sc_compile(int argc, char *argv[])
 
    /* open the output file */
 
-#ifndef _WIN32
+#ifndef HAVE_EVIL
    tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
+#else
+   tmpdir = evil_tmpdir_get();
+#endif /* ! HAVE_EVIL */
 
    snprintf(outfname, _MAX_PATH, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
    fd_out = mkstemp(outfname);
-#else
-   tmpdir = getenv("TMP");
-   if (!tmpdir) tmpdir = getenv("TEMP");
-   if (!tmpdir) tmpdir = getenv("USERPROFILE");
-   if (!tmpdir) tmpdir = getenv("WINDIR");
-   if (!tmpdir) error(101, "embryo_cc.asm-tmp-XXXXXX (unable to get a valid temp path)");
-
-   snprintf(outfname, _MAX_PATH, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
-# ifdef __MINGW32__
-   if (!mktemp(outfname))
-     error(101, outfname);
-   fd_out = _sopen(outfname, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-# else
-   if (_mktemp_s(outfname, _MAX_PATH))
-     error(101, outfname);
-   _sopen_s(&fd_out, outfname, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-# endif /* __MINGW32__ */
-#endif /* _WIN32 */
    if (fd_out < 0)
      error(101, outfname);
 
@@ -706,10 +688,10 @@ setconfig(char *root)
    if ((ptr = strrchr(path, DIRSEP_CHAR)) != NULL
        || (ptr = strchr(path, ':')) != NULL)
      {
-	/* If there was no terminating "\" or ":", 
+	/* If there was no terminating "\" or ":",
 	 * the filename probably does not
 	 * contain the path; so we just don't add it
-	 * to the list in that case 
+	 * to the list in that case
 	 */
 	*(ptr + 1) = '\0';
 	if (strlen(path) < (sizeof(path) - 1 - 7))
@@ -2139,7 +2121,7 @@ funcstub(int native)
    /* "declargs()" found the ")" */
    if (!operatoradjust(opertok, sym, symbolname, tag))
       sym->usage &= ~uDEFINE;
-   /* for a native operator, also need to specify an "exported" 
+   /* for a native operator, also need to specify an "exported"
     * function name; for a native function, this is optional
     */
    if (native)
@@ -2406,7 +2388,7 @@ argcompare(arginfo * a1, arginfo * a2)
 		result = a1->numdim == a2->numdim;
 	     for (level = 0; result && level < a1->numdim; level++)
 		result = a1->dim[level] == a2->dim[level];
-	     /* ??? should also check contents of the default array 
+	     /* ??? should also check contents of the default array
 	      * (these troubles go away in a 2-pass compiler that forbids
 	      * double declarations, but Small currently does not forbid them)
 	      */
@@ -2433,8 +2415,8 @@ argcompare(arginfo * a1, arginfo * a2)
 
 /*  declargs()
  *
- *  This routine adds an entry in the local symbol table for each 
- *  argument found in the argument list. 
+ *  This routine adds an entry in the local symbol table for each
+ *  argument found in the argument list.
  *  It returns the number of arguments.
  */
 static int
@@ -2537,7 +2519,7 @@ declargs(symbol * sym)
 		       if (sym->dim.arglist == 0)
 			  error(103);	/* insufficient memory */
 		       sym->dim.arglist[argcnt] = arg;
-		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list 
+		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list
 								 * terminated */
 		    }
 		  else
@@ -2573,7 +2555,7 @@ declargs(symbol * sym)
 					      (argcnt + 2) * sizeof(arginfo));
 		       if (sym->dim.arglist == 0)
 			  error(103);	/* insufficient memory */
-		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list 
+		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list
 								 * terminated */
 		       sym->dim.arglist[argcnt].ident = iVARARGS;
 		       sym->dim.arglist[argcnt].hasdefault = FALSE;
@@ -2614,7 +2596,7 @@ declargs(symbol * sym)
 	     int                 altidx;
 
 	     /* Find the argument with the name mentioned after the "sizeof".
-	      * Note that we cannot use findloc here because we need the 
+	      * Note that we cannot use findloc here because we need the
 	      * arginfo struct, not the symbol.
 	      */
 	     ptr = arglist[idx].defvalue.size.symname;
@@ -2704,7 +2686,7 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
 	     lexpush();		/* initials() needs the "=" token again */
 	     assert(numtags > 0);
 	     /* for the moment, when a default value is given for the array,
-	      * all dimension sizes, except the last, must be non-zero 
+	      * all dimension sizes, except the last, must be non-zero
 	      * (function initials() requires to know the major dimensions)
 	      */
 	     for (level = 0; level < arg->numdim - 1; level++)
@@ -2813,7 +2795,7 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
 	if (ident == iREFERENCE)
 	   argsym->usage |= uREAD;	/* because references are passed back */
 	if (fpublic)
-	   argsym->usage |= uREAD;	/* arguments of public functions 
+	   argsym->usage |= uREAD;	/* arguments of public functions
 					 * are always "used" */
 	if (fconst)
 	   argsym->usage |= uCONST;
@@ -3182,8 +3164,8 @@ add_constant(char *name, cell val, int vclass, int tag)
 
 /*  statement           - The Statement Parser
  *
- *  This routine is called whenever the parser needs to know what 
- *  statement it encounters (i.e. whenever program syntax requires a 
+ *  This routine is called whenever the parser needs to know what
+ *  statement it encounters (i.e. whenever program syntax requires a
  *  statement).
  */
 static void
@@ -3206,11 +3188,11 @@ statement(int *lastindent, int allow_decl)
    /* lex() has set stmtindent */
    if (lastindent != NULL && tok != tLABEL)
      {
-#if 0	
+#if 0
 	if (*lastindent >= 0 && *lastindent != stmtindent &&
 	    !indent_nowarn && sc_tabsize > 0)
 	   error(217);		/* loose indentation */
-#endif	
+#endif
 	*lastindent = stmtindent;
 	indent_nowarn = TRUE;	/* if warning was blocked, re-enable it */
      }				/* if */
@@ -3534,10 +3516,10 @@ doif(void)
      {
 	/* to avoid the "dangling else" error, we want a warning if the "else"
 	 * has a lower indent than the matching "if" */
-#if 0	
+#if 0
 	if (stmtindent < ifindent && sc_tabsize > 0)
 	   error(217);		/* loose indentation */
-#endif	
+#endif
 	flab2 = getlabel();
 	if ((lastst != tRETURN) && (lastst != tGOTO))
 	   jumplabel(flab2);
@@ -3632,7 +3614,7 @@ dofor(void)
    setlabel(wq[wqLOOP]);	/* "continue" goes to this label: expr3 */
    setline(fline, fcurrent);
    /* Expressions 2 and 3 are reversed in the generated code:
-    * expression 3 precedes expression 2. 
+    * expression 3 precedes expression 2.
     * When parsing, the code is buffered and marks for
     * the start of each expression are insterted in the buffer.
     */
@@ -3646,7 +3628,7 @@ dofor(void)
    setlabel(skiplab);		/*jump to this point after 1st expression */
    if (matchtoken(';') == 0)
      {
-	test(wq[wqEXIT], FALSE, FALSE);	/* expression 2 
+	test(wq[wqEXIT], FALSE, FALSE);	/* expression 2
 					 *(jump to wq[wqEXIT] if false) */
 	needtoken(';');
      }				/* if */
@@ -3753,7 +3735,7 @@ doswitch(void)
 		     /* nothing */ ;
 		  if (cse != NULL && cse->value == val)
 		     error(40, val);	/* duplicate "case" label */
-		  /* Since the label is stored as a string in the 
+		  /* Since the label is stored as a string in the
 		   * "constvalue", the size of an identifier must
 		   * be at least 8, as there are 8
 		   * hexadecimal digits in a 32-bit number.

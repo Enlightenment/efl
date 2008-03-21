@@ -2,14 +2,19 @@
 #define _EMBRYO_H
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
-#  define EAPI __declspec(dllexport)
+
+#ifdef _WIN32
+# ifdef EFL_EMBRYO_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_EMBRYO_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -20,7 +25,7 @@
 # else
 #  define EAPI
 # endif
-#endif
+#endif /* ! _WIN32 */
 
 #ifdef  __cplusplus
 extern "C" {
@@ -43,7 +48,7 @@ extern "C" {
 	  EMBRYO_ERROR_NATIVE,       /** Native function failed */
 	  EMBRYO_ERROR_DIVIDE,       /** Divide by zero */
 	  EMBRYO_ERROR_SLEEP,        /** Go into sleepmode - code can be restarted */
-	  
+
 	  EMBRYO_ERROR_MEMORY = 16,  /** Out of memory */
 	  EMBRYO_ERROR_FORMAT,       /** Invalid file format */
 	  EMBRYO_ERROR_VERSION,      /** File is for a newer version of the Embryo_Program */
@@ -62,7 +67,7 @@ extern "C" {
 #define EMBRYO_FUNCTION_MAIN -1         /* Start at program entry point */
 #define EMBRYO_FUNCTION_CONT -2         /* Continue from last address */
   /** An invalid cell reference */
-#define EMBRYO_CELL_NONE     0x7fffffff 
+#define EMBRYO_CELL_NONE     0x7fffffff
    /* program run return values */
 #define EMBRYO_PROGRAM_OK      1
 #define EMBRYO_PROGRAM_SLEEP   2
@@ -85,10 +90,10 @@ extern "C" {
 #define EMBRYO_FLOAT_TO_CELL(f) ((Embryo_Float_Cell) f).c
 /** Embryo_Cell to float */
 #define EMBRYO_CELL_TO_FLOAT(c) ((Embryo_Float_Cell) c).f
-   
+
    EAPI int              embryo_init(void);
    EAPI int              embryo_shutdown(void);
-   
+
    EAPI Embryo_Program  *embryo_program_new(void *data, int size);
    EAPI Embryo_Program  *embryo_program_const_new(void *data, int size);
    EAPI Embryo_Program  *embryo_program_load(char *file);
@@ -122,9 +127,9 @@ extern "C" {
    EAPI int              embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell);
    EAPI int              embryo_parameter_string_push(Embryo_Program *ep, const char *str);
    EAPI int              embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num);
-   
+
 #ifdef  __cplusplus
-}         
+}
 #endif
 
 #endif

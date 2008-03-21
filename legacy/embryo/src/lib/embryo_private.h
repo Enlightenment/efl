@@ -8,12 +8,29 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <string.h>
-#if HAVE_ALLOCA_H
-#include <alloca.h>
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
 #endif
 
 #include "Embryo.h"
-#include "config.h"
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4
