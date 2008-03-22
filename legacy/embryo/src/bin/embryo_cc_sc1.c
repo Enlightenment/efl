@@ -319,7 +319,7 @@ sc_compile(int argc, char *argv[])
    tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
 #else
-   tmpdir = evil_tmpdir_get();
+   tmpdir = (char *)evil_tmpdir_get();
 #endif /* ! HAVE_EVIL */
 
    snprintf(outfname, _MAX_PATH, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);

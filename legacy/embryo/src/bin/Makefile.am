@@ -9,7 +9,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EVIL_CFLAGS@
+@EVIL_CFLAGS@ \
+@WIN32_CFLAGS@
 
 bin_PROGRAMS = embryo_cc
 

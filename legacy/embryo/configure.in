@@ -33,6 +33,7 @@ AC_FUNC_ALLOCA
 
 AC_CHECK_FUNCS(gettimeofday)
 
+WIN32_CFLAGS=""
 create_shared_lib=""
 case "$host_os" in
 	mingw|mingw32*|cegcc)
@@ -40,9 +41,13 @@ case "$host_os" in
 		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
 		dnl needed for correct definition of EAPI
 		AC_DEFINE(EFL_EMBRYO_BUILD, 1, [Define to mention that embryo is built])
+		if test "x$host_os" = "xcegcc" ; then
+			WIN32_CFLAGS="-mwin32"
+		fi
 		create_shared_lib="-no-undefined"
 		;;
 esac
+AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(create_shared_lib)
 
 AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
