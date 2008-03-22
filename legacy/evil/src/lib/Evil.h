@@ -60,6 +60,11 @@ extern "C" {
 #include <sys/time.h>
 #include <limits.h>
 
+#ifdef __CEGCC__
+# include <sys/syslimits.h>     /* for PATH_MAX */
+#endif
+
+
 #ifndef __CEGCC__
 
 # include <sys/types.h>
@@ -273,6 +278,7 @@ EAPI int pipe(int *fds);
 
 #endif /* ! __CEGCC__ */
 
+
 #if defined(__MSDOS__) || defined(__EMX__) || \
    (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
 # if defined(_MSC_VER) || defined(__MINGW32__)
@@ -290,6 +296,7 @@ EAPI int pipe(int *fds);
 #  define mkdir(p,m) _mkdir(p)
 # endif
 #endif
+
 
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
 /**
@@ -317,7 +324,9 @@ EAPI int pipe(int *fds);
  * @ingroup Evil
  */
 EAPI char *realpath(const char *file_name, char *resolved_name);
+
 #endif /* ! __CEGCC__  && ! __MINGW32CE__ */
+
 
 /**
  * @brief Initiates the use of Windows sockets.
@@ -377,10 +386,5 @@ EAPI const char *evil_tmpdir_get(void);
 #ifdef __cplusplus
 }
 #endif
-
-#ifdef _WIN32
-# undef EAPI
-# define EAPI
-#endif /* _WIN32 */
 
 #endif /* __EVIL_H__ */
