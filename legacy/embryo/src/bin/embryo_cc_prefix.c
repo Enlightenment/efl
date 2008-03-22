@@ -19,12 +19,12 @@
 #include <dirent.h>
 #include <dlfcn.h>      /* dlopen,dlclose,etc */
 #ifdef HAVE_EVIL
-# include <evil.h>      /* for realpath */ 
+# include <Evil.h>      /* for realpath */ 
 #else
 # include <pwd.h>
 # include <grp.h>
 # include <glob.h>
-#endif /* HAVE_E_WIN32 */
+#endif /* ! HAVE_EVIL */
 
 #include "embryo_cc_prefix.h"
 

@@ -37,7 +37,7 @@
 #include <string.h>
 #include <unistd.h>
 #ifdef HAVE_EVIL
-# include <evil.h>
+# include <Evil.h>
 #endif /* HAVE_EVIL */
 
 #include "embryo_cc_osdefs.h"
