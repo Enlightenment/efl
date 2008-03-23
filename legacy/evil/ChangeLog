@@ -1,3 +1,13 @@
+2008-03-23  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	add POSIX definitions
+
+	* src/lib/evil.c:
+	make realpath available with cegcc. The function
+	just copy the file name to the resolved name with
+	that compiler
+
 2008-03-13  Vincent Torri  <doursse at users dot sf dot net>
 
 	* INSTALL:

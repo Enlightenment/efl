@@ -151,6 +151,7 @@ symlink(const char *oldpath, const char *newpath)
    if (FAILED(pISL->lpVtbl->QueryInterface(pISL, &IID_IPersistFile, (void **)persit_file)))
      goto no_queryinterface;
 
+   /* FIXME: is it for cegcc ??? */
    mbstowcs(new_path, newpath, MB_CUR_MAX);
    if (FAILED(pIPF->lpVtbl->Save(pIPF, new_path, FALSE)))
      goto no_save;
@@ -345,13 +346,23 @@ pipe(int *fds)
 
 #endif /* ! __CEGCC__ */
 
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
 char *
 realpath(const char *file_name, char *resolved_name)
 {
-  return _fullpath(resolved_name, file_name, PATH_MAX);
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+   return _fullpath(resolved_name, file_name, PATH_MAX);
+#else
+   int length;
+
+   length = strlen(file_name);
+   if ((length + 1) > PATH_MAX)
+     length = PATH_MAX - 1;
+   memcpy(resolved_name, file_name, length);
+   resolved_name[length] = '\0';
+
+   return resolved_name;
+#endif /* __CEGCC__ || __MINGW32CE__ */
 }
-#endif /* ! __CEGCC__  && ! __MINGW32CE__ */
 
 int
 evil_sockets_init(void)

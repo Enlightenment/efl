@@ -282,6 +282,29 @@ EAPI int pipe(int *fds);
 #if defined(__MSDOS__) || defined(__EMX__) || \
    (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
 # if defined(_MSC_VER) || defined(__MINGW32__)
+
+struct stat
+{
+	_dev_t	st_dev;		/* Equivalent to drive number 0=A 1=B ... */
+	_ino_t	st_ino;		/* Always zero ? */
+	_mode_t	st_mode;	/* See above constants */
+	short	st_nlink;	/* Number of links. */
+	short	st_uid;		/* User: Maybe significant on NT ? */
+	short	st_gid;		/* Group: Ditto */
+	_dev_t	st_rdev;	/* Seems useless (not even filled in) */
+	_off_t	st_size;	/* File size in bytes */
+	time_t	st_atime;	/* Accessed date (always 00:00 hrs local
+				 * on FAT) */
+	time_t	st_mtime;	/* Modified time */
+	time_t	st_ctime;	/* Creation time */
+};
+
+#  define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#  define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+
+#  define S_IRUSR _S_IRUSR
+#  define S_IWUSR _S_IWUSR
+#  define S_IXUSR _S_IXUSR
 #  define S_IRGRP S_IRUSR
 #  define S_IROTH S_IRUSR
 #  define S_IWGRP S_IWUSR
@@ -294,11 +317,10 @@ EAPI int pipe(int *fds);
 #  define write(fd,buffer,count) _write((fd),(buffer),(count))
 #  define unlink(filename) _unlink((filename))
 #  define mkdir(p,m) _mkdir(p)
+
 # endif
 #endif
 
-
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
 /**
  * @brief Return an absolute or full path name for a specified relative path name.
  *
@@ -324,9 +346,6 @@ EAPI int pipe(int *fds);
  * @ingroup Evil
  */
 EAPI char *realpath(const char *file_name, char *resolved_name);
-
-#endif /* ! __CEGCC__  && ! __MINGW32CE__ */
-
 
 /**
  * @brief Initiates the use of Windows sockets.
