@@ -52,7 +52,8 @@ requirements_ecore_sdl=""
 
 dnl The first call to PKG_CHECK_MODULES is done conditionally,
 dnl so we should include this here:
-dnl#PKG_PROG_PKG_CONFIG
+
+PKG_PROG_PKG_CONFIG
 
 dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
