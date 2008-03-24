@@ -4,7 +4,7 @@ void *
 mem_alloc(size_t size)
 {
    void *mem;
-   
+
    mem = calloc(1, size);
    if (mem) return mem;
    fprintf(stderr, "%s: Error. %s:%i memory allocation of %i bytes failed. %s\n",
@@ -17,7 +17,7 @@ char *
 mem_strdup(const char *s)
 {
    void *str;
-   
+
    str = strdup(s);
    if (str) return str;
    fprintf(stderr, "%s: Error. %s:%i memory allocation of %i bytes failed. %s. string being duplicated: \"%s\"\n",

@@ -160,7 +160,7 @@ edje_file_group_exists(const char *file, const char *glob)
 	  {
              Edje_Patterns *patterns;
 
-             patterns = 
+             patterns =
                edje_match_collection_dir_init(edf->collection_dir->entries);
              if (edje_match_collection_dir_exec(patterns, glob))
                {
@@ -282,7 +282,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		  Edje_Part_Description *desc;
 
 		  desc = hist->data;
-		  if (desc->color_class) 
+		  if (desc->color_class)
                     _edje_color_class_member_add(ed, desc->color_class);
 	       }
 	  }
@@ -665,7 +665,7 @@ _edje_file_del(Edje *ed)
 		  if (rp->part->mouse_events)
 		     _edje_callbacks_del(rp->swallowed_object);
 
-                  /* Objects swallowed by the app do not get deleted, 
+                  /* Objects swallowed by the app do not get deleted,
                    but those internally swallowed (GROUP type) do. */
 		  if (rp->part->type == EDJE_PART_TYPE_GROUP)
 		    evas_object_del(rp->swallowed_object);
@@ -728,7 +728,7 @@ _edje_file_del(Edje *ed)
 static Evas_Bool data_cache_free(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    Edje_File    *edf;
-   
+
    edf = fdata;
    if (edf->free_strings) evas_stringshare_del(data);
    return 1;
@@ -792,7 +792,7 @@ _edje_file_free(Edje_File *edf)
 	     while (se->color_list)
 	       {
 		  free(se->color_list->data);
-		  se->color_list = 
+		  se->color_list =
                     evas_list_remove_list(se->color_list, se->color_list);
 	       }
              if (edf->free_strings)
@@ -829,7 +829,7 @@ _edje_file_free(Edje_File *edf)
 	Edje_Color_Class *ecc;
 
 	ecc = edf->color_classes->data;
-	edf->color_classes = 
+	edf->color_classes =
           evas_list_remove_list(edf->color_classes, edf->color_classes);
 	if (edf->free_strings && ecc->name) evas_stringshare_del(ecc->name);
 	free(ecc);
@@ -848,7 +848,7 @@ _edje_file_free(Edje_File *edf)
 	       "before calling edje_shutdown().\n"
 	       "The following errors are the edje object files and parts that are still\n"
 	       "hanging around, with their reference counts\n");
-	evas_hash_foreach(edf->collection_hash, 
+	evas_hash_foreach(edf->collection_hash,
                           _edje_file_collection_hash_foreach, edf);
 	evas_hash_free(edf->collection_hash);
      }
@@ -1009,7 +1009,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
    parent = data;
    ed = _edje_fetch(obj);
    if (!ed) return;
-   snprintf(new_src, sizeof(new_src), "%s%c%s", ed->parent, 
+   snprintf(new_src, sizeof(new_src), "%s%c%s", ed->parent,
             EDJE_PART_PATH_SEPARATOR, source);
    edje_object_signal_emit(parent, signal, new_src);
 }

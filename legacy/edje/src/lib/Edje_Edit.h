@@ -24,30 +24,30 @@
 # endif
 #endif
 
-/** 
+/**
  * @file
- * @brief Functions to deal with edje internal object. Don't use in standard 
- * situations. The use of any of the edje_edit_* functions can break your 
+ * @brief Functions to deal with edje internal object. Don't use in standard
+ * situations. The use of any of the edje_edit_* functions can break your
  * theme ability, remember that the program must be separated from the interface!
  *
  * The API can be used to query or set every part of an edje object in real time.
  * You can manage every aspect of parts, part states, programs, script and whatever
- * is contained in the edje file. For a reference of what all parameter means 
+ * is contained in the edje file. For a reference of what all parameter means
  * look at the complete @ref edcref.
- * 
+ *
  * All the functions that deals with part states include the state value inside
  * the returned strings (ex: "defaut 0.00"). For this reason there aren't
- * functions to set/get a state value, you have to pass the value inside the 
+ * functions to set/get a state value, you have to pass the value inside the
  * name string (always in the form "state x.xx").
  *
  * Don't forget to free all the strings and the lists returned by any edje_edit_*()
  * functions using edje_edit_string_free() and edje_edit_string_list_free() when
  * you don't need anymore.
- * 
+ *
  * Example: print all the part in a loaded edje_object
  * @code
  *  Evas_List *parts, *l;
- *  
+ *
  *  parts = edje_edit_parts_list_get(edje_object);
  *  while(l = parts; l; l = l->next)
  *  {
@@ -59,7 +59,7 @@
  * Example: Change the color of a rect inside an edje file
  * @code
  * Evas_Object *edje;
- * 
+ *
  * edje = edje_object_add(evas);
  * edje_object_file_set(edje,"edj/file/name", "group to load");
  * edje_edit_state_color_set(edje, "MyRectName", "default 0.00", 255, 255, 0, 255);
@@ -93,7 +93,7 @@ edje_edit_string_free(
 );
 
 /**Save the modified edje object back to his file.
- * Use this function when you are done with your editing, all the change made 
+ * Use this function when you are done with your editing, all the change made
  * to the current loaded group will be saved back to the original file.
  *
  * NOTE: for now this as 2 limitations
@@ -105,7 +105,7 @@ edje_edit_save(
    Evas_Object *obj        ///< The edje object to save
 );
 
-/**Print on standard output many information about the internal status 
+/**Print on standard output many information about the internal status
  * of the edje object.
  * This is probably only usefull to debug.
  */
@@ -113,7 +113,7 @@ EAPI void
 edje_edit_print_internal_status(
    Evas_Object *obj        ///< The edje object to inspect
 );
-   
+
 //@}
 /******************************************************************************/
 /**************************   GROUPS API   ************************************/
@@ -133,19 +133,19 @@ edje_edit_group_add(
 
 /**Delete the current group from the given edje.
  * You can only delete the currently loaded group.
- * All the parts and the programs inside the group will be deleted as well, 
+ * All the parts and the programs inside the group will be deleted as well,
  * but not image or font embedded in the edje.
  */
 EAPI unsigned char         ///@return 1 on success, 0 on failure
 edje_edit_group_del(
    Evas_Object *obj        ///< The edje object
 );
-   
+
 /**Check if a group with the given name exist in the edje.
  */
 EAPI unsigned char         ///< 1 if the group exist, 0 otherwise.
 edje_edit_group_exist(
-   Evas_Object *obj,       ///< The edje object 
+   Evas_Object *obj,       ///< The edje object
    const char *group       ///< The name of the group
 );
 
@@ -232,7 +232,7 @@ edje_edit_part_add(
 
 /**Delete the given part from the edje
  * All the reference to this part will be zeroed.
- * A group must have at least one part, so it's not possible to 
+ * A group must have at least one part, so it's not possible to
  * remove the last remaining part.
  */
 EAPI unsigned char         ///@return 1 on success, 0 if the part can't be removed
@@ -245,7 +245,7 @@ edje_edit_part_del(
  */
 EAPI unsigned char         ///< 1 if the part exist, 0 otherwise.
 edje_edit_part_exist(
-   Evas_Object *obj,       ///< The edje object 
+   Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part
 );
 
@@ -359,13 +359,13 @@ edje_edit_part_mouse_events_get(
 );
 
 /**Set mouse_events for part.*/
-EAPI void                  
+EAPI void
 edje_edit_part_mouse_events_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    unsigned char mouse_events ///< If set to 1 part will accept mouse events, 0 to ignore all mouse events from part.
 );
-  
+
 /**Get repeat_events for part.*/
 EAPI unsigned char         ///@return 1 if part will pass all events to the other parts, 0 if not
 edje_edit_part_repeat_events_get(
@@ -378,7 +378,7 @@ EAPI void
 edje_edit_part_repeat_events_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   unsigned char repeat_events /**< If set to 1 part will repeat 
+   unsigned char repeat_events /**< If set to 1 part will repeat
                                  * all the received mouse events to other parts.
                                  * If set to 0 the events received will not propagate to other parts.*/
 );
@@ -388,11 +388,11 @@ edje_edit_part_repeat_events_set(
 /**************************   STATES API   ************************************/
 /******************************************************************************/
 /** @name States API
- *  Description of gen api 2. 
+ *  Description of gen api 2.
  */ //@{
 
 /**Get the list of all the states in the given part.*/
-EAPI Evas_List *           /**@return An Evas_List* of string (char *)containing all the states names found 
+EAPI Evas_List *           /**@return An Evas_List* of string (char *)containing all the states names found
                             * in part, including the float value (ex: "default 0.00").
                             * Use edje_edit_string_list_free() when you don't need it anymore. */
 edje_edit_part_states_list_get(
@@ -405,7 +405,7 @@ edje_edit_part_states_list_get(
  */
 EAPI int
 edje_edit_state_name_set(
-   Evas_Object *obj,       ///< The edje object 
+   Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part that contain state
    const char *state,      ///< The current name of the state
    const char *new_name    ///< The new name to assign (including the value)
@@ -424,7 +424,7 @@ edje_edit_state_add(
  */
 EAPI void
 edje_edit_state_del(
-   Evas_Object *obj,       ///< The edje object 
+   Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part that contain state
    const char *state       ///< The current name of the state (including the state value)
 );
@@ -433,7 +433,7 @@ edje_edit_state_del(
  */
 EAPI unsigned char         ///< 1 if the part state exist, 0 otherwise.
 edje_edit_state_exist(
-   Evas_Object *obj,       ///< The edje object 
+   Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the state to check (including the state value)
 );
@@ -528,7 +528,7 @@ edje_edit_state_rel2_offset_y_get(
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-   
+
 /**Set the rel1 offset x value of state*/
 EAPI void
 edje_edit_state_rel1_offset_x_set(
@@ -560,7 +560,7 @@ edje_edit_state_rel2_offset_y_set(
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
    double y                ///< The new 'rel2 offset Y' value to set
-); 
+);
 
 /**Get the part name rel1x is relative to. The function return NULL if the part is relative to the whole interface.*/
 EAPI const char *          ///@return The name of the part to apply the relativity
@@ -830,13 +830,13 @@ edje_edit_state_aspect_pref_set(
    unsigned char pref      ///< The new aspect preference to set (0=none, 1=vertical, 2=horizontal, 3=both)
 );
 
-   
+
 //@}
 /******************************************************************************/
 /**************************   TEXT API   ************************************/
 /******************************************************************************/
 /** @name Text API
- *  Description of gen api 2. 
+ *  Description of gen api 2.
  */ //@{
 
 /**Get the text of a part state. Remember to free the returned string with edje_edit_string_free(). */
@@ -846,7 +846,7 @@ edje_edit_state_text_get(
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-   
+
 /**Set the text of a part state.*/
 EAPI void
 edje_edit_state_text_set(
@@ -863,7 +863,7 @@ edje_edit_state_text_size_get(
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-   
+
 /**Set the text size of a part state.*/
 EAPI void
 edje_edit_state_text_size_set(
@@ -880,7 +880,7 @@ edje_edit_state_text_align_x_get(
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-   
+
 /**Get the text vertical align of a part state. The value range is from 0.0(top) to 1.0(bottom)*/
 EAPI double                ///@return The text align Y value
 edje_edit_state_text_align_y_get(
@@ -888,7 +888,7 @@ edje_edit_state_text_align_y_get(
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-   
+
 /**Set the text horizontal align of a part state. The value range is from 0.0(right) to 1.0(left)*/
 EAPI void
 edje_edit_state_text_align_x_set(
@@ -897,7 +897,7 @@ edje_edit_state_text_align_x_set(
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
    double align            ///< The new text align X value
 );
-   
+
 /**Set the text vertical align of a part state. The value range is from 0.0(top) to 1.0(bottom)*/
 EAPI void
 edje_edit_state_text_align_y_set(
@@ -908,7 +908,7 @@ edje_edit_state_text_align_y_set(
 );
 
 /**Get the list of all the fonts in the given edje.
- * @return An Evas_List* of string (char *)containing all the fonts names found 
+ * @return An Evas_List* of string (char *)containing all the fonts names found
  * in the edje file.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
@@ -934,7 +934,7 @@ edje_edit_state_font_get(
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-   
+
 /**Set font name for a given part state. */
 EAPI void
 edje_edit_state_font_set(
@@ -949,11 +949,11 @@ edje_edit_state_font_set(
 /**************************   IMAGES API   ************************************/
 /******************************************************************************/
 /** @name Images API
- *  Description of gen api 2. 
+ *  Description of gen api 2.
  */ //@{
 
 /**Get the list of all the images in the given edje.
- * @return An Evas_List* of string (char *)containing all the images names found 
+ * @return An Evas_List* of string (char *)containing all the images names found
  * in the edje file.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
@@ -965,12 +965,12 @@ edje_edit_images_list_get(
 /**Add an new image to the image collection
  *
  * This function add the given image inside the edje. Don't add a new image part
- * but only put the image inside the edje file. It actually write directly to 
+ * but only put the image inside the edje file. It actually write directly to
  * the file so you don't have to save (and you can't undo!).
  * After you have to create a new image_part that use this image. Note that all
- * the parts in the edje share the same image collection, thus you can/must use 
+ * the parts in the edje share the same image collection, thus you can/must use
  * the same image for different part.
- * 
+ *
  * The format of the image files that can be loaded depend on the evas engine on your system
  */
 EAPI unsigned char         ///@return TRUE on success or FALSE on failure
@@ -978,7 +978,7 @@ edje_edit_image_add(
    Evas_Object *obj,       ///< The edje object
    const char* path        ///< The name of the image file to include in the edje
 );
-   
+
 /**Get normal image name for a given part state. Remember to free the returned string using edje_edit_string_free().*/
 EAPI const char *          ///@return The name of the image used by state
 edje_edit_state_image_get(
@@ -986,7 +986,7 @@ edje_edit_state_image_get(
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-   
+
 /**Set normal image for a given part state.*/
 EAPI void
 edje_edit_state_image_set(
@@ -1014,7 +1014,7 @@ edje_edit_state_image_border_get(
    int *t,                 ///< A pointer to store the top value
    int *b                  ///< A pointer to store the bottom value
 );
-   
+
 /**Set the image border of a part state. Pass -1 to any of [l,r,t,b] to leave the value untouched.*/
 EAPI void
 edje_edit_state_image_border_set(
@@ -1026,7 +1026,7 @@ edje_edit_state_image_border_set(
    int t,                  ///< The new top border (or -1)
    int b                   ///< The new bottom border (or -1)
 );
-    
+
 /**Get the list of all the tweens images in the given part state.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
@@ -1047,7 +1047,7 @@ edje_edit_state_tween_add(
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
    const char *tween       ///< The name of the image to add.
 );
-   
+
 /**Remove the first tween with the given name.
  * If none is removed the function return 0.
  * The image is not removed from the edje.
@@ -1063,9 +1063,9 @@ edje_edit_state_tween_del(
 //@}
 /******************************************************************************/
 /*************************   PROGRAMS API   ***********************************/
-/******************************************************************************/ 
+/******************************************************************************/
 /** @name Programs API
- *  Description of gen api 2. 
+ *  Description of gen api 2.
  */ //@{
 
 /**Get the list of all the programs in the given edje object.
@@ -1077,7 +1077,7 @@ EAPI Evas_List *          ///@return A string list containing all the program na
 edje_edit_programs_list_get(
    Evas_Object *obj       ///< The edje object
 );
-   
+
 /**Add a new program to the edje file
  * If a program with the same name just exist the function will fail.
  */
@@ -1086,20 +1086,20 @@ edje_edit_program_add(
    Evas_Object *obj,       ///< The edje object
    const char *name        ///< The name of the new program
 );
-   
+
 /**Remove the given program from the edje file.
  */
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_del(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The name of the program to remove
-);   
+);
 
 /**Check if a program with the given name exist in the edje object.
  */
 EAPI unsigned char         ///< 1 if the program exist, 0 otherwise.
 edje_edit_program_exist(
-   Evas_Object *obj,       ///< The edje object 
+   Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The name of the program
 );
 
@@ -1109,7 +1109,7 @@ edje_edit_program_run(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The name of the program to execute
 );
-   
+
 /**Set a new name for the given program */
 EAPI unsigned char        ///@return 1 on success or 0 on errors
 edje_edit_program_name_set(
@@ -1124,7 +1124,7 @@ edje_edit_program_source_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set source of the given program. */
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_source_set(
@@ -1139,7 +1139,7 @@ edje_edit_program_signal_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set signal of the given program. */
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_signal_set(
@@ -1149,12 +1149,12 @@ edje_edit_program_signal_set(
 );
 
 /**Get in.from of a given program.*/
-EAPI double                ///@return The delay 
+EAPI double                ///@return The delay
 edje_edit_program_in_from_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set in.from of a given program.*/
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_in_from_set(
@@ -1169,7 +1169,7 @@ edje_edit_program_in_range_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set in.range of a given program.*/
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_in_range_set(
@@ -1186,7 +1186,7 @@ edje_edit_program_action_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set the action of a given program.
  * Action can be one of EDJE_ACTION_TYPE_NONE, _STATE_SET, ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, _DRAG_VAL_STEP, _DRAG_VAL_PAGE, _SCRIPT
  */
@@ -1206,7 +1206,7 @@ edje_edit_program_targets_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Add a new target name to the list of 'targets' in the given program.
  * If program action is EDJE_ACTION_TYPE_ACTION_STOP then 'target' must be an existing program name.
  * If action is EDJE_ACTION_TYPE_STATE_SET then 'target' must be an existing part name.
@@ -1217,14 +1217,14 @@ edje_edit_program_target_add(
    const char *prog,       ///< The program name
    const char *target      ///< The name of another program or another part
 );
-   
+
 /**Clear the 'targets' list of the given program */
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_targets_clear(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Get the list of action that will be run after the give program
  * Return a list of program name.
  * Use edje_edit_string_list_free() when you don't need it anymore.
@@ -1234,7 +1234,7 @@ edje_edit_program_afters_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Add a new program name to the list of 'afters' in the given program.
  * All the programs listed in 'afters' will be executed after program execution.
  */
@@ -1244,7 +1244,7 @@ edje_edit_program_after_add(
    const char *prog,       ///< The program name
    const char *after       ///< The name of another program to add to the afters list
 );
-   
+
 /**Clear the 'afters' list of the given program */
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_afters_clear(
@@ -1261,7 +1261,7 @@ edje_edit_program_state_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set the state for the given program
  * In a STATE_SET action this is the name of state to set.
  * In a SIGNAL_EMIT action is the name of the signal to emit.
@@ -1282,7 +1282,7 @@ edje_edit_program_value_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set the value of state for the given program.
  * In a STATE_SET action this is the value of state to set.
  * Not used on SIGNAL_EMIT action.
@@ -1303,7 +1303,7 @@ edje_edit_program_state2_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set the state2 for the given program
  * In a STATE_SET action is not used
  * In a SIGNAL_EMIT action is the source of the emitted signal.
@@ -1323,7 +1323,7 @@ edje_edit_program_value2_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set the value2 of state for the given program.
  * This is used in DRAG_ACTION
  */
@@ -1342,7 +1342,7 @@ edje_edit_program_transition_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set the type of transition to use when apply animations.
  * Can be one of: EDJE_TWEEN_MODE_NONE, EDJE_TWEEN_MODE_LINEAR, EDJE_TWEEN_MODE_SINUSOIDAL, EDJE_TWEEN_MODE_ACCELERATE or EDJE_TWEEN_MODE_DECELERATE.
  */
@@ -1352,14 +1352,14 @@ edje_edit_program_transition_set(
    const char *prog,       ///< The program name
    int transition          ///< The transition type to set
 );
-      
+
 /**Get the duration of the transition in seconds.*/
 EAPI double                ///@return The duration of the transition
 edje_edit_program_transition_time_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
 );
-   
+
 /**Set the duration of the transition in seconds.*/
 EAPI unsigned char         ///@return 1 on success or 0 on errors
 edje_edit_program_transition_time_set(
@@ -1367,18 +1367,18 @@ edje_edit_program_transition_time_set(
    const char *prog,       ///< The program name
    double seconds          ///< The duration of the transition (in seconds)
 );
-   
+
 //@}
 /******************************************************************************/
 /**************************   SCRIPTS API   ***********************************/
 /******************************************************************************/
 /** @name Scripts API
- *  Description of gen api 2. 
+ *  Description of gen api 2.
  */ //@{
 EAPI const char* edje_edit_script_get(Evas_Object *obj);
 
-   
-   
+
+
 #ifdef __cplusplus
 }
 #endif

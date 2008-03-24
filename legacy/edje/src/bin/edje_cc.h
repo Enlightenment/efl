@@ -40,7 +40,7 @@ struct _Code
 {
    int       l1, l2;
    char      *shared;
-   Evas_List *programs; 
+   Evas_List *programs;
 };
 
 struct _Code_Program
@@ -74,17 +74,17 @@ void    data_queue_spectrum_slave_lookup(int *master, int *slave);
 void    data_process_lookups(void);
 void    data_process_scripts(void);
 void    data_process_script_lookups(void);
-    
+
 
 int     is_verbatim(void);
 void    track_verbatim(int on);
 void    set_verbatim(char *s, int l1, int l2);
 char   *get_verbatim(void);
-int     get_verbatim_line1(void);    
-int     get_verbatim_line2(void);    
+int     get_verbatim_line1(void);
+int     get_verbatim_line2(void);
 void    compile(void);
 int     is_param(int n);
-int     is_num(int n);    
+int     is_num(int n);
 char   *parse_str(int n);
 int     parse_enum(int n, ...);
 int     parse_int(int n);
@@ -103,7 +103,7 @@ int     source_append(Eet_File *ef);
 SrcFile_List *source_load(Eet_File *ef);
 int     source_fontmap_save(Eet_File *ef, Evas_List *fonts);
 Font_List *source_fontmap_load(Eet_File *ef);
-    
+
 void   *mem_alloc(size_t size);
 char   *mem_strdup(const char *s);
 #define SZ sizeof

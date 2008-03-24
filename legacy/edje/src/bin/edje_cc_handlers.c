@@ -186,10 +186,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.styles.style.tag", st_styles_style_tag}, /* dup */
-     {"collections.color_classes.color_class.name", st_color_class_name}, /* dup */ 
-     {"collections.color_classes.color_class.color", st_color_class_color}, /* dup */ 
-     {"collections.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
-     {"collections.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
+     {"collections.color_classes.color_class.name", st_color_class_name}, /* dup */
+     {"collections.color_classes.color_class.color", st_color_class_color}, /* dup */
+     {"collections.color_classes.color_class.color2", st_color_class_color2}, /* dup */
+     {"collections.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
@@ -202,10 +202,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.styles.style.tag", st_styles_style_tag}, /* dup */
-     {"collections.group.color_classes.color_class.name", st_color_class_name}, /* dup */ 
-     {"collections.group.color_classes.color_class.color", st_color_class_color}, /* dup */ 
-     {"collections.group.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
-     {"collections.group.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
+     {"collections.group.color_classes.color_class.name", st_color_class_name}, /* dup */
+     {"collections.group.color_classes.color_class.color", st_color_class_color}, /* dup */
+     {"collections.group.color_classes.color_class.color2", st_color_class_color2}, /* dup */
+     {"collections.group.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.image", st_images_image}, /* dup */
      {"collections.group.parts.images.image", st_images_image}, /* dup */
      {"collections.group.parts.font", st_fonts_font}, /* dup */
@@ -213,10 +213,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.parts.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.parts.styles.style.tag", st_styles_style_tag}, /* dup */
-     {"collections.group.parts.color_classes.color_class.name", st_color_class_name}, /* dup */ 
-     {"collections.group.parts.color_classes.color_class.color", st_color_class_color}, /* dup */ 
-     {"collections.group.parts.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
-     {"collections.group.parts.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
+     {"collections.group.parts.color_classes.color_class.name", st_color_class_name}, /* dup */
+     {"collections.group.parts.color_classes.color_class.color", st_color_class_color}, /* dup */
+     {"collections.group.parts.color_classes.color_class.color2", st_color_class_color2}, /* dup */
+     {"collections.group.parts.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
@@ -238,10 +238,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.parts.part.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.parts.part.styles.style.tag", st_styles_style_tag}, /* dup */
-     {"collections.group.parts.part.color_classes.color_class.name", st_color_class_name}, /* dup */ 
-     {"collections.group.parts.part.color_classes.color_class.color", st_color_class_color}, /* dup */ 
-     {"collections.group.parts.part.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
-     {"collections.group.parts.part.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
+     {"collections.group.parts.part.color_classes.color_class.name", st_color_class_name}, /* dup */
+     {"collections.group.parts.part.color_classes.color_class.color", st_color_class_color}, /* dup */
+     {"collections.group.parts.part.color_classes.color_class.color2", st_color_class_color2}, /* dup */
+     {"collections.group.parts.part.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
@@ -306,10 +306,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.parts.part.description.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.parts.part.description.styles.style.tag", st_styles_style_tag}, /* dup */
-     {"collections.group.parts.part.description.color_classes.color_class.name", st_color_class_name}, /* dup */ 
-     {"collections.group.parts.part.description.color_classes.color_class.color", st_color_class_color}, /* dup */ 
-     {"collections.group.parts.part.description.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
-     {"collections.group.parts.part.description.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
+     {"collections.group.parts.part.description.color_classes.color_class.name", st_color_class_name}, /* dup */
+     {"collections.group.parts.part.description.color_classes.color_class.color", st_color_class_color}, /* dup */
+     {"collections.group.parts.part.description.color_classes.color_class.color2", st_color_class_color2}, /* dup */
+     {"collections.group.parts.part.description.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.part.description.programs.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.programs.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.programs.font", st_fonts_font}, /* dup */
@@ -541,18 +541,18 @@ st_images_image(void)
 {
    Edje_Image_Directory_Entry *img;
    int v;
-   
+
    if (!edje_file->image_dir)
      edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
    img = mem_alloc(SZ(Edje_Image_Directory_Entry));
    img->entry = parse_str(0);
      {
 	Evas_List *l;
-	
+
 	for (l = edje_file->image_dir->entries; l; l = l->next)
 	  {
 	     Edje_Image_Directory_Entry *limg;
-	     
+
 	     limg = l->data;
 	     if (!strcmp(limg->entry, img->entry))
 	       {
@@ -632,20 +632,20 @@ st_fonts_font(void)
    Edje_Font_Directory_Entry *fnt;
 
    check_arg_count(2);
-   
+
    if (!edje_file->font_dir)
      edje_file->font_dir = mem_alloc(SZ(Edje_Font_Directory));
-   
+
    fn = mem_alloc(SZ(Font));
    fn->file = parse_str(0);
    fn->name = parse_str(1);
      {
 	Evas_List *l;
-	
+
 	for (l = fonts; l; l = l->next)
 	  {
 	     Font *lfn;
-	     
+
 	     lfn = l->data;
 	     if (!strcmp(lfn->name, fn->name))
 	       {
@@ -657,7 +657,7 @@ st_fonts_font(void)
 	  }
      }
    fonts = evas_list_append(fonts, fn);
-  
+
    if (edje_file->font_dir)
      {
 	fnt = mem_alloc(SZ(Edje_Font_Directory_Entry));
@@ -696,7 +696,7 @@ st_data_item(void)
    Edje_Data *di;
 
    check_arg_count(2);
-   
+
    di = mem_alloc(SZ(Edje_Data));
    di->key = parse_str(0);
    di->value = parse_str(1);
@@ -849,7 +849,7 @@ st_color_class_name(void)
 {
    Edje_Color_Class *cc, *tcc;
    Evas_List *l;
-   
+
    cc = evas_list_data(evas_list_last(edje_file->color_classes));
    cc->name = parse_str(0);
    for (l = edje_file->color_classes; l; l = l->next)
@@ -878,7 +878,7 @@ static void
 st_color_class_color(void)
 {
    Edje_Color_Class *cc;
-   
+
    check_arg_count(4);
 
    cc = evas_list_data(evas_list_last(edje_file->color_classes));
@@ -902,7 +902,7 @@ static void
 st_color_class_color2(void)
 {
    Edje_Color_Class *cc;
-   
+
    check_arg_count(4);
 
    cc = evas_list_data(evas_list_last(edje_file->color_classes));
@@ -926,7 +926,7 @@ static void
 st_color_class_color3(void)
 {
    Edje_Color_Class *cc;
-   
+
    check_arg_count(4);
 
    cc = evas_list_data(evas_list_last(edje_file->color_classes));
@@ -1045,7 +1045,7 @@ static void
 ob_styles_style(void)
 {
    Edje_Style *stl;
-   
+
    stl = mem_alloc(SZ(Edje_Style));
    edje_file->styles = evas_list_append(edje_file->styles, stl);
 }
@@ -1065,7 +1065,7 @@ st_styles_style_name(void)
 {
    Edje_Style *stl, *tstl;
    Evas_List *l;
-   
+
    stl = evas_list_data(evas_list_last(edje_file->styles));
    stl->name = parse_str(0);
    for (l = edje_file->styles; l; l = l->next)
@@ -1096,7 +1096,7 @@ st_styles_style_base(void)
 {
    Edje_Style *stl;
    Edje_Style_Tag *tag;
-   
+
    stl = evas_list_data(evas_list_last(edje_file->styles));
    if (stl->tags)
      {
@@ -1118,14 +1118,14 @@ st_styles_style_base(void)
         [tag name] [style properties string]
     @effect
         Style to be applied only to text between style \<tags\>..\</tags\>.
-    @endproperty  
+    @endproperty
 */
 static void
 st_styles_style_tag(void)
 {
    Edje_Style *stl;
    Edje_Style_Tag *tag;
-   
+
    stl = evas_list_data(evas_list_last(edje_file->styles));
    tag = mem_alloc(SZ(Edje_Style_Tag));
    tag->key = parse_str(0);
@@ -1188,15 +1188,15 @@ ob_collections_group(void)
    Edje_Part_Collection_Directory_Entry *de;
    Edje_Part_Collection *pc;
    Code *cd;
-   
+
    de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    edje_file->collection_dir->entries = evas_list_append(edje_file->collection_dir->entries, de);
    de->id = evas_list_count(edje_file->collection_dir->entries) - 1;
-   
+
    pc = mem_alloc(SZ(Edje_Part_Collection));
    edje_collections = evas_list_append(edje_collections, pc);
    pc->id = evas_list_count(edje_collections) - 1;
-   
+
    cd = mem_alloc(SZ(Code));
    codes = evas_list_append(codes, cd);
 }
@@ -1218,7 +1218,7 @@ st_collections_group_name(void)
    Edje_Part_Collection_Directory_Entry *de;
 
    check_arg_count(1);
-   
+
    de = evas_list_data(evas_list_last(edje_file->collection_dir->entries));
    de->entry = parse_str(0);
 }
@@ -1241,7 +1241,7 @@ st_collections_group_alias(void)
 
    check_arg_count(1);
    de = evas_list_data(evas_list_last(edje_file->collection_dir->entries));
-   
+
    alias = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    alias->id = de->id;
    alias->entry = parse_str(0);
@@ -1266,7 +1266,7 @@ st_collections_group_min(void)
    Edje_Part_Collection *pc;
 
    check_arg_count(2);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    pc->prop.min.w = parse_int_range(0, 0, 0x7fffffff);
    pc->prop.min.h = parse_int_range(1, 0, 0x7fffffff);
@@ -1289,7 +1289,7 @@ st_collections_group_max(void)
    Edje_Part_Collection *pc;
 
    check_arg_count(2);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    pc->prop.max.w = parse_int_range(0, 0, 0x7fffffff);
    pc->prop.max.h = parse_int_range(1, 0, 0x7fffffff);
@@ -1328,15 +1328,15 @@ ob_collections_group_script(void)
 {
    Edje_Part_Collection *pc;
    Code *cd;
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    cd = evas_list_data(evas_list_last(codes));
-   
+
    if (!is_verbatim()) track_verbatim(1);
    else
      {
 	char *s;
-	
+
 	s = get_verbatim();
 	if (s)
 	  {
@@ -1361,7 +1361,7 @@ st_collections_group_data_item(void)
    Edje_Data *di;
 
    check_arg_count(2);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    di = mem_alloc(SZ(Edje_Data));
    di->key = parse_str(0);
@@ -1401,10 +1401,10 @@ st_collections_group_data_item(void)
 */
 static void
 ob_collections_group_parts_part(void)
-{   
+{
    Edje_Part_Collection *pc;
    Edje_Part *ep;
-   
+
    ep = mem_alloc(SZ(Edje_Part));
    pc = evas_list_data(evas_list_last(edje_collections));
    pc->parts = evas_list_append(pc->parts, ep);
@@ -1439,18 +1439,18 @@ st_collections_group_parts_part_name(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->name = parse_str(0);
 
    {
 	Evas_List *l;
-	
+
 	for (l = pc->parts; l; l = l->next)
 	  {
 	     Edje_Part *lep;
-	     
+
 	     lep = l->data;
 	     if ((lep != ep) && (lep->name) && (!strcmp(lep->name, ep->name)))
 	       {
@@ -1487,10 +1487,10 @@ st_collections_group_parts_part_type(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
-   ep->type = parse_enum(0, 
+   ep->type = parse_enum(0,
 			 "NONE", EDJE_PART_TYPE_NONE,
 			 "RECT", EDJE_PART_TYPE_RECTANGLE,
 			 "TEXT", EDJE_PART_TYPE_TEXT,
@@ -1521,7 +1521,7 @@ st_collections_group_parts_part_mouse_events(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->mouse_events = parse_bool(0);
@@ -1545,7 +1545,7 @@ st_collections_group_parts_part_repeat_events(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->repeat_events = parse_bool(0);
@@ -1565,7 +1565,7 @@ st_collections_group_parts_part_repeat_events(void)
                 signals emitted, even outside the object, until the button is
                 released.
             @li NOGRAB, the effect will be limited to the part's container.
-        container. 
+        container.
     @endproperty
 */
 static void
@@ -1602,7 +1602,7 @@ st_collections_group_parts_part_precise_is_inside(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->precise_is_inside = parse_bool(0);
@@ -1627,7 +1627,7 @@ st_collections_group_parts_part_use_alternate_font_metrics(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->use_alternate_font_metrics = parse_bool(0);
@@ -1651,12 +1651,12 @@ st_collections_group_parts_part_clip_to_id(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ep->clip_to_id));
 	free(name);
@@ -1681,7 +1681,7 @@ st_collections_group_parts_part_source(void)
    Edje_Part *ep;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
@@ -1728,7 +1728,7 @@ st_collections_group_parts_part_effect(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
-   ep->effect = parse_enum(0, 
+   ep->effect = parse_enum(0,
                "NONE", EDJE_TEXT_EFFECT_NONE,
                "PLAIN", EDJE_TEXT_EFFECT_PLAIN,
                "OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
@@ -1760,8 +1760,8 @@ st_collections_group_parts_part_effect(void)
         }
     @description
         When this block is used the resulting part can be dragged around the
-        interface, do not confuse with external drag & drop. By default Edje 
-        (and most applications) will attempt to use the minimal size possible 
+        interface, do not confuse with external drag & drop. By default Edje
+        (and most applications) will attempt to use the minimal size possible
         for a dragable part. If the min property is not set in the description
         the part will be (most likely) set to 0px width and 0px height, thus
         invisible.
@@ -1848,7 +1848,7 @@ st_collections_group_parts_part_dragable_confine(void)
    ep = evas_list_data(evas_list_last(pc->parts));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ep->dragable.confine_id));
 	free(name);
@@ -1878,7 +1878,7 @@ st_collections_group_parts_part_dragable_events(void)
    ep = evas_list_data(evas_list_last(pc->parts));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ep->dragable.events_id));
 	free(name);
@@ -1921,9 +1921,9 @@ ob_collections_group_parts_part_description(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Part_Description *ed;
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));   
+   ep = evas_list_data(evas_list_last(pc->parts));
    ed = mem_alloc(SZ(Edje_Part_Description));
    if (!ep->default_desc)
      ep->default_desc = ed;
@@ -2105,7 +2105,7 @@ st_collections_group_parts_part_description_inherit(void)
    for (l = parent->image.tween_list; l; l = l->next)
      {
 	Edje_Part_Image_Id *iid, *iid_new;
-	
+
 	iid = l->data;
 	iid_new = mem_alloc(SZ(Edje_Part_Image_Id));
 	data_queue_image_slave_lookup(&(iid->id), &(iid_new->id));
@@ -2147,9 +2147,9 @@ st_collections_group_parts_part_description_state(void)
    char *s;
 
    check_arg_count(2);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));   
+   ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
 
@@ -2185,9 +2185,9 @@ st_collections_group_parts_part_description_visible(void)
    Edje_Part_Description *ed;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));   
+   ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->visible = parse_bool(0);
@@ -2388,7 +2388,7 @@ st_collections_group_parts_part_description_aspect_preference(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->aspect.prefer =  parse_enum(0, 
+   ed->aspect.prefer =  parse_enum(0,
 				   "NONE", EDJE_ASPECT_PREFER_NONE,
 				   "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
 				   "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
@@ -2416,7 +2416,7 @@ st_collections_group_parts_part_description_color_class(void)
    Edje_Part_Description *ed;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
@@ -2615,7 +2615,7 @@ st_collections_group_parts_part_description_rel1_to(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->rel1.id_x));
 	data_queue_part_lookup(pc, name, &(ed->rel1.id_y));
@@ -2649,7 +2649,7 @@ st_collections_group_parts_part_description_rel1_to_x(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->rel1.id_x));
 	free(name);
@@ -2683,7 +2683,7 @@ st_collections_group_parts_part_description_rel1_to_y(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->rel1.id_y));
 	free(name);
@@ -2739,7 +2739,7 @@ st_collections_group_parts_part_description_rel2_to(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->rel2.id_x));
 	data_queue_part_lookup(pc, name, &(ed->rel2.id_y));
@@ -2762,7 +2762,7 @@ st_collections_group_parts_part_description_rel2_to_x(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->rel2.id_x));
 	free(name);
@@ -2784,7 +2784,7 @@ st_collections_group_parts_part_description_rel2_to_y(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->rel2.id_y));
 	free(name);
@@ -2845,7 +2845,7 @@ st_collections_group_parts_part_description_image_normal(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_image_lookup(name, &(ed->image.id));
 	free(name);
@@ -2889,7 +2889,7 @@ st_collections_group_parts_part_description_image_tween(void)
      {
 	char *name;
 	Edje_Part_Image_Id *iid;
-	
+
 	iid = mem_alloc(SZ(Edje_Part_Image_Id));
 	ed->image.tween_list = evas_list_append(ed->image.tween_list, iid);
 	name = parse_str(0);
@@ -2935,7 +2935,7 @@ st_collections_group_parts_part_description_image_border(void)
    ed->border.l = parse_int_range(0, 0, 0x7fffffff);
    ed->border.r = parse_int_range(1, 0, 0x7fffffff);
    ed->border.t = parse_int_range(2, 0, 0x7fffffff);
-   ed->border.b = parse_int_range(3, 0, 0x7fffffff);   
+   ed->border.b = parse_int_range(3, 0, 0x7fffffff);
 }
 
 /**
@@ -3200,8 +3200,8 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->fill.pos_rel_x = parse_float_range(0, -999999999.0, 999999999.0);   
-   ed->fill.pos_rel_y = parse_float_range(1, -999999999.0, 999999999.0);   
+   ed->fill.pos_rel_x = parse_float_range(0, -999999999.0, 999999999.0);
+   ed->fill.pos_rel_y = parse_float_range(1, -999999999.0, 999999999.0);
 }
 
 /**
@@ -3295,8 +3295,8 @@ st_collections_group_parts_part_description_fill_size_relative(void)
 	exit(-1);
      }
 
-   ed->fill.rel_x = parse_float_range(0, 0.0, 999999999.0);   
-   ed->fill.rel_y = parse_float_range(1, 0.0, 999999999.0);   
+   ed->fill.rel_x = parse_float_range(0, 0.0, 999999999.0);
+   ed->fill.rel_y = parse_float_range(1, 0.0, 999999999.0);
 }
 
 /**
@@ -3381,7 +3381,7 @@ st_collections_group_parts_part_description_text_text(void)
    Edje_Part_Description *ed;
    char *str = NULL;
    int i;
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
@@ -3399,7 +3399,7 @@ st_collections_group_parts_part_description_text_text(void)
    for (i = 0; ;i++)
      {
 	char *s;
-	
+
 	if (!is_param(i)) break;
 	s = parse_str(i);
 	if (!str) str = s;
@@ -3433,7 +3433,7 @@ st_collections_group_parts_part_description_text_text_class(void)
    Edje_Part_Description *ed;
 
    check_arg_count(1);
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
@@ -3755,7 +3755,7 @@ st_collections_group_parts_part_description_text_source(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->text.id_source));
 	free(name);
@@ -3799,7 +3799,7 @@ st_collections_group_parts_part_description_text_text_source(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ed->text.id_text_source));
 	free(name);
@@ -3844,7 +3844,7 @@ st_collections_group_parts_part_description_text_elipsis(void)
    ed->text.elipsis = parse_float_range(0, 0.0, 1.0);
 }
 
-static void 
+static void
 st_collections_group_parts_part_description_gradient_type(void)
 {
    Edje_Part_Collection *pc;
@@ -3869,7 +3869,7 @@ st_collections_group_parts_part_description_gradient_type(void)
    ed->gradient.type  = parse_str(0);
 }
 
-static void 
+static void
 st_collections_group_parts_part_description_gradient_spectrum(void)
 {
    Edje_Part_Collection *pc;
@@ -3894,7 +3894,7 @@ st_collections_group_parts_part_description_gradient_spectrum(void)
 
      {
 	char *name;
-	
+
 	name = parse_str(0);
 	data_queue_spectrum_lookup(name, &(ed->gradient.id));
 	free(name);
@@ -4026,7 +4026,7 @@ ob_collections_group_programs_program(void)
 {
    Edje_Part_Collection *pc;
    Edje_Program *ep;
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = mem_alloc(SZ(Edje_Program));
    pc->programs = evas_list_append(pc->programs, ep);
@@ -4048,11 +4048,11 @@ st_collections_group_programs_program_name(void)
    ep->name = parse_str(0);
      {
 	Evas_List *l;
-	
+
 	for (l = pc->programs; l; l = l->next)
 	  {
 	     Edje_Program *lep;
-	     
+
 	     lep = l->data;
 	     if ((lep != ep) && (lep->name) && (!strcmp(lep->name, ep->name)))
 	       {
@@ -4191,10 +4191,10 @@ st_collections_group_programs_program_target(void)
      {
 	Edje_Program_Target *et;
 	char *name;
-	
+
 	et = mem_alloc(SZ(Edje_Program_Target));
 	ep->targets = evas_list_append(ep->targets, et);
-	
+
 	name = parse_str(0);
 	if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
 	  data_queue_part_lookup(pc, name, &(et->id));
@@ -4230,13 +4230,13 @@ st_collections_group_programs_program_after(void)
      {
 	Edje_Program_After *pa;
 	char *name;
-	
+
 	name = parse_str(0);
-	
+
 	pa = mem_alloc(SZ(Edje_Program_After));
 	pa->id = -1;
 	ep->after = evas_list_append(ep->after, pa);
-	
+
 	data_queue_program_lookup(pc, name, &(pa->id));
 	free(name);
      }
@@ -4248,21 +4248,21 @@ ob_collections_group_programs_program_script(void)
    Edje_Part_Collection *pc;
    Edje_Program *ep;
    Code *cd;
-   
+
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->programs));
    cd = evas_list_data(evas_list_last(codes));
-   
+
    if (!is_verbatim()) track_verbatim(1);
    else
      {
 	char *s;
-	
+
 	s = get_verbatim();
 	if (s)
 	  {
 	     Code_Program *cp;
-	     
+
 	     cp = mem_alloc(SZ(Code_Program));
 	     cp->l1 = get_verbatim_line1();
 	     cp->l2 = get_verbatim_line2();

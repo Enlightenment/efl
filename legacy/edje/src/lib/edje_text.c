@@ -360,7 +360,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	if (ep->text.source->text.font) font = ep->text.source->text.font;
 	if (ep->text.source->text.size > 0) size = ep->text.source->text.size;
      }
-   
+
    if (!text) text = "";
    if (!font) font = "";
 

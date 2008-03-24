@@ -30,7 +30,7 @@ void
 source_edd(void)
 {
    Eet_Data_Descriptor_Class eddc;
-	
+
    eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
    eddc.func.mem_alloc = NULL;
    eddc.func.mem_free = NULL;
@@ -45,21 +45,21 @@ source_edd(void)
    eddc.func.hash_free = evas_hash_free;
    eddc.func.str_direct_alloc = _edje_str_direct_alloc;
    eddc.func.str_direct_free = _edje_str_direct_free;
-   
+
    NEWD("srcfile", SrcFile);
    _srcfile_edd = eet_data_descriptor3_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_INLINED_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "file", file, EET_T_INLINED_STRING);
-   
+
    NEWD("srcfile_list", SrcFile_List);
    _srcfile_list_edd = eet_data_descriptor3_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_srcfile_list_edd, SrcFile_List, "list", list, _srcfile_edd);
-   
+
    NEWD("font", Font);
    _font_edd = eet_data_descriptor3_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "file", file, EET_T_INLINED_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "name", name, EET_T_INLINED_STRING);
-   
+
    NEWD("font_list", Font_List);
    _font_list_edd = eet_data_descriptor3_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_font_list_edd, Font_List, "list", list, _font_edd);
@@ -102,7 +102,7 @@ source_fetch_file(const char *fil, const char *filname)
 	int forgetit = 0;
 	int haveinclude = 0;
 	char *file = NULL, *fname = NULL;
-	
+
 	p = buf;
 	while ((!forgetit) && (*p))
 	  {
@@ -186,8 +186,8 @@ source_fetch_file(const char *fil, const char *filname)
 				      snprintf(file, l, "%s/%s", dir, p + 1);
 				      file[l - 1] = 0;
 				   }
-				 
-				 
+
+
 				 fname = strdup(p + 1);
 				 pp = strrchr(fname, end);
 				 if (pp) *pp = 0;
@@ -238,7 +238,7 @@ SrcFile_List *
 source_load(Eet_File *ef)
 {
    SrcFile_List *s;
-   
+
    s = eet_data_read(ef, _srcfile_list_edd, "edje_sources");
    return s;
 }
@@ -247,7 +247,7 @@ int
 source_fontmap_save(Eet_File *ef, Evas_List *fonts)
 {
    Font_List fl;
-   
+
    fl.list = fonts;
    return eet_data_write(ef, _font_list_edd, "edje_source_fontmap", &fl, 0);
 }
@@ -256,7 +256,7 @@ Font_List *
 source_fontmap_load(Eet_File *ef)
 {
    Font_List *fl;
-   
+
    fl = eet_data_read(ef, _font_list_edd, "edje_source_fontmap");
    return fl;
 }

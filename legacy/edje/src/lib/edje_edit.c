@@ -236,7 +236,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
      {
 	fprintf(stderr, "Edje_Edit: Error. unable to load image \"%s\"."
 		"Missing PNG or JPEG loader modules for Evas or "
-	 	"file does not exist, or is not readable.\n", path);
+		"file does not exist, or is not readable.\n", path);
 	evas_object_del(im);
 	im = NULL;
 	return 0;
@@ -277,8 +277,8 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    printf("***********  Writing images/%i to edj ******************\n", id);
    bytes = eet_data_image_write(eetf, buf,
 				im_data, im_w, im_h,
-			       	im_alpha,
-			       	0, 100, 1);
+				im_alpha,
+				0, 100, 1);
    if (bytes <= 0)
      {
 	fprintf(stderr, "Edje_Edit: Error. unable to write image part \"%s\" "
@@ -702,7 +702,7 @@ edje_edit_group_del(Evas_Object *obj)
 	if (e->id == g->id)
 	  {
 	     ed->file->collection_dir->entries =
-	       	evas_list_remove_list(ed->file->collection_dir->entries, l);
+		evas_list_remove_list(ed->file->collection_dir->entries, l);
 	     //         free(e->entry);  This should be right but cause a segv
 	     free(e);
 	     e = NULL;

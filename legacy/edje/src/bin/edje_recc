@@ -28,19 +28,19 @@ if [ $# -ge 1 ]; then
       -h)
         usage
       ;;
-      
+
       -help)
         usage
       ;;
-      
+
       --help)
         usage
       ;;
-      
+
       *.edj)
         IN=$I
       ;;
-      
+
       *)
         OPT=$OPT" "$I
       ;;

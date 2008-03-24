@@ -679,7 +679,7 @@ _edje_part_recalc_single(Edje *ed,
 	  {
 	     if (ep->text.text) text = ep->text.text;
 	  }
-	
+
 	if (ep->text.source)
 	  {
 	     if (ep->text.source->text.font) font = ep->text.source->text.font;

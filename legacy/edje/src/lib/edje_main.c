@@ -56,7 +56,7 @@ edje_shutdown(void)
    _edje_text_class_hash_free();
    embryo_shutdown();
    ecore_job_shutdown();
-   
+
    return 0;
 }
 

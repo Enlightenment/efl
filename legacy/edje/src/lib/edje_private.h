@@ -937,7 +937,7 @@ typedef enum _Edje_Match_Error
    EDJE_MATCH_OK,
      EDJE_MATCH_ALLOC_ERROR,
      EDJE_MATCH_SYNTAX_ERROR
-     
+
 } Edje_Match_Error;
 
 typedef struct _Edje_States     Edje_States;
