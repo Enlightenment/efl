@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <Ecore_File.h>
 #ifdef _WIN32
 # include <windows.h>
 # include <shlobj.h>
@@ -26,9 +27,6 @@ int line = 0;
 
 int        decomp(void);
 void       output(void);
-int        e_file_is_dir(char *file);
-int        e_file_mkdir(char *dir);
-int        e_file_mkpath(char *path);
 static int compiler_cmd_is_sane();
 static int root_filename_is_sane();
 
@@ -184,7 +182,7 @@ output(void)
    p = strrchr(outdir, '.');
    if (p) *p = 0;
 
-   e_file_mkpath(outdir);
+   ecore_file_mkpath(outdir);
 
    ef = eet_open(file_in, EET_FILE_MODE_READ);
 
@@ -234,7 +232,7 @@ output(void)
 		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
 		       exit(-1);
 		    }
-		  e_file_mkpath(pp);
+		  ecore_file_mkpath(pp);
 		  free(pp);
 		  if (!evas_object_image_save(im, out, NULL, "quality=100 compress=9"))
 		    {
@@ -267,7 +265,7 @@ output(void)
 	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
 	     exit (-1);
 	  }
-	e_file_mkpath(pp);
+	ecore_file_mkpath(pp);
 	free(pp);
 	if (strstr(out, "../"))
 	  {
@@ -314,7 +312,7 @@ output(void)
 		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
 		       exit (-1);
 		    }
-		  e_file_mkpath(pp);
+		  ecore_file_mkpath(pp);
 		  free(pp);
 		  if (strstr(out, "../"))
 		    {
@@ -360,55 +358,6 @@ output(void)
 	      "before running it!\n\n");
      }
    eet_close(ef);
-}
-
-int
-e_file_is_dir(char *file)
-{
-   struct stat st;
-
-   if (stat(file, &st) < 0) return 0;
-   if (S_ISDIR(st.st_mode)) return 1;
-   return 0;
-}
-
-int
-e_file_mkdir(char *dir)
-{
-#ifndef _WIN32
-   static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-
-   if (mkdir(dir, default_mode) < 0) return 0;
-#else
-   if (mkdir(dir) < 0) return 0;
-#endif /* _WIN32 */
-   return 1;
-}
-
-int
-e_file_mkpath(char *path)
-{
-   char ss[PATH_MAX];
-   int  i, ii;
-
-   ss[0] = 0;
-   i = 0;
-   ii = 0;
-   while (path[i])
-     {
-	if (ii == sizeof(ss) - 1) return 0;
-	ss[ii++] = path[i];
-	ss[ii] = 0;
-	if (path[i] == '/')
-	  {
-	     if (!e_file_is_dir(ss)) e_file_mkdir(ss);
-	     else if (!e_file_is_dir(ss)) return 0;
-	  }
-	i++;
-     }
-   if (!e_file_is_dir(ss)) e_file_mkdir(ss);
-   else if (!e_file_is_dir(ss)) return 0;
-   return 1;
 }
 
 static int
