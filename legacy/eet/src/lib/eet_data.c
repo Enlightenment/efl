@@ -2,10 +2,21 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include <math.h>
-
 #ifdef HAVE_CONFIG_H
-# include <config.h>  /* so that EAPI in Eet.h is correctly defined */
+# include <config.h>
+#endif
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <ctype.h>
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
+#ifdef _WIN32
+# include <winsock2.h>
 #endif
 
 #include "Eet.h"

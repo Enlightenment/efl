@@ -5,8 +5,10 @@
 #define _GNU_SOURCE
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>  /* so that EAPI in Eet.h is correctly defined */
+# include <config.h>
 #endif
+
+#include <stdio.h>
 
 #include "Eet.h"
 #include "Eet_private.h"
