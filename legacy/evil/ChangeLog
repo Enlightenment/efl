@@ -1,3 +1,11 @@
+2008-03-28  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	remove the stat structure and add guards
+
+	* src/lib/dlfcn/dlfcn.c:
+	include limits.h also for the cegcc compiler
+
 2008-03-23  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

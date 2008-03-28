@@ -4,7 +4,7 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#ifdef __MINGW32CE__
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
 # include <limits.h>
 #endif /* __MINGW32CE__ */
 
