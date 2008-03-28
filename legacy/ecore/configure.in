@@ -283,6 +283,11 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
       AC_DEFINE(ECORE_XCB_XPRINT, 1, [Build support for XCB xprint]) ],
       [ have_ecore_x_xcb_xprint="no" ])
 
+    PKG_CHECK_MODULES(XCB_XTEST, xcb-xtest,
+      [ have_ecore_x_xcb_xtest="yes"
+      AC_DEFINE(ECORE_XCB_XTEST, 1, [Build support for XCB xtest]) ],
+      [ have_ecore_x_xcb_xtest="no" ])
+
     AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module (XCB backend)])
     AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB backend is enabled.])
 
@@ -365,6 +370,7 @@ if test "x$have_ecore_x_xcb" != "xyes" ; then
     ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens])
     ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRSizes])
     ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
+    ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
     ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
   fi
 fi
@@ -835,9 +841,9 @@ echo "  Ecore_Txt....................: $have_ecore_txt"
 
 echo "  Ecore_Evas...................: $have_ecore_evas"
 if test "x$have_ecore_x_xcb" = "xyes" ; then
-  echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_xcb_xprint) (Xinerama: $have_ecore_x_xcb_xinerama) (Xrandr: $have_ecore_x_xcb_randr) (Xscreensaver: $have_ecore_x_xcb_screensaver) (Xshape: $have_ecore_x_xcb_shape) (Xsync: $have_ecore_x_xcb_sync) (Xrender: $have_ecore_x_xcb_render) (Xfixes: $have_ecore_x_xcb_xfixes) (Xcomposite: $have_ecore_x_xcb_composite) (Xdamage: $have_ecore_x_xcb_damage) (Xdpms: $have_ecore_x_xcb_dpms)"
+  echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_xcb_xprint) (Xinerama: $have_ecore_x_xcb_xinerama) (Xrandr: $have_ecore_x_xcb_randr) (Xscreensaver: $have_ecore_x_xcb_screensaver) (Xshape: $have_ecore_x_xcb_shape) (Xsync: $have_ecore_x_xcb_sync) (Xrender: $have_ecore_x_xcb_render) (Xfixes: $have_ecore_x_xcb_xfixes) (Xcomposite: $have_ecore_x_xcb_composite) (Xdamage: $have_ecore_x_xcb_damage) (Xdpms: $have_ecore_x_xcb_dpms) (Xtest $have_ecore_x_xcb_xtest)"
 else
-  echo "  Ecore_X (Xlib backend).......: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xcomposite: $use_xcomposite) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms)"
+  echo "  Ecore_X (Xlib backend).......: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xcomposite: $use_xcomposite) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms) (Xtest $use_xtest)"
 fi
 echo "  Ecore_Evas X11 Support.......: $have_ecore_evas_x11"
 echo "  Ecore_Evas X11 GL Support....: $have_ecore_evas_x11_gl"

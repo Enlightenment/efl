@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 @XCB_XFIXES_CFLAGS@ \
 @XCB_XINERAMA_CFLAGS@ \
 @XCB_XPRINT_CFLAGS@ \
+@XCB_XTEST_CFLAGS@ \
 @XCB_CFLAGS@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
@@ -30,6 +31,7 @@ AM_CPPFLAGS = \
 @XRANDR_CFLAGS@ \
 @XRENDER_CFLAGS@ \
 @XSS_CFLAGS@ \
+@XTEST_CFLAGS@ \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
@@ -85,6 +87,7 @@ libecore_x_la_LIBADD = \
 @XCB_XFIXES_LIBS@ \
 @XCB_XINERAMA_LIBS@ \
 @XCB_XPRINT_LIBS@ \
+@XCB_XTEST_LIBS@ \
 @XCB_LIBS@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la
@@ -130,6 +133,7 @@ ecore_x_screensaver.c \
 ecore_x_dpms.c \
 ecore_x_drawable.c \
 ecore_x_cursor.c \
+ecore_x_test.c \
 ecore_x_private.h
 
 libecore_x_la_LIBADD = \
@@ -143,6 +147,7 @@ libecore_x_la_LIBADD = \
 @XRANDR_LIBS@ \
 @XRENDER_LIBS@ \
 @XSS_LIBS@ \
+@XTEST_LIBS@ \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_txt/libecore_txt.la
@@ -185,4 +190,5 @@ ecore_x_screensaver.c \
 ecore_x_dpms.c \
 ecore_x_drawable.c \
 ecore_x_cursor.c \
+ecore_x_test.c \
 ecore_x_private.h
