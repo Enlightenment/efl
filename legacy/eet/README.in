@@ -1,5 +1,15 @@
 Eet @VERSION@
 
+******************************************************************************
+***
+*** THIS IS AN ALPHA RELEASE - PLEASE REPORT ANY PROBLEMS TO:
+*** enlightenment-devel@lists.sourceforge.net
+***
+*** We want to weed out any build, porting, compatability or functionality
+*** bugs
+***
+******************************************************************************
+
 Eet is a tiny library designed to write an arbitary set of chunks of
 data to a file and optionally compress each chunk (very much like a
 zip file) and allow fast random-access reading of the file later
@@ -17,7 +27,7 @@ COMPILING AND INSTALLING:
 
   ./configure
   make
-(as root unless youa re installing in your users directories):
+(do this as root unless you are installing in your users directories):
   make install
       
 ------------------------------------------------------------------------------
@@ -30,14 +40,3 @@ RPM: To build rpm packages:
 You will find rpm packages in your system /usr/src/redhat/* dirs (note you may
 not need to use sudo or root if you have your own ~/.rpmrc. see rpm documents
 for more details)
-
-DEB: To build deb packages:
-
-  tar zvf @PACKAGE@-@VERSION@.tar.gz
-  cd @PACKAGE@-@VERSION@
-  dpkg-buildpackage -us -uc -rfakeroot
-  cd ..
-  rm -rf @PACKAGE@-@VERSION@
-
-You will find all the debian source, binary etc. packages put in the directory
-where you first untarred the source tarball.

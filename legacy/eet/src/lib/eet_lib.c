@@ -301,13 +301,13 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
    *cache_alloc = new_cache_alloc;
 }
 
-/* internal string match. bails out at first mismatch - not comparing all */
-/* bytes in strings */
+/* internal string match. null friendly, catches same ptr */
 static int
 eet_string_match(const char *s1, const char *s2)
 {
    /* both null- no match */
    if ((!s1) || (!s2)) return 0;
+   if (s1 == s2) return 1;
    return (!strcmp(s1, s2));
 }
 
@@ -470,7 +470,7 @@ eet_flush2(Eet_File *ef)
 
    return EET_ERROR_NONE;
 
- write_error:
+   write_error:
    switch (ferror(ef->fp))
      {
       case EFBIG: error = EET_ERROR_WRITE_ERROR_FILE_TOO_BIG; break;
@@ -575,7 +575,7 @@ eet_flush(Eet_File *ef)
 
    return EET_ERROR_NONE;
 
-write_error:
+   write_error:
    switch (ferror(ef->fp))
      {
       case EFBIG:
@@ -629,19 +629,17 @@ eet_clearcache(void)
    int	i;
 
    /*
-     We need to compute the list of eet file to close separately from the cache,
-     due to eet_close removing them from the cache after each call.
-   */
+    * We need to compute the list of eet file to close separately from the cache,
+    * due to eet_close removing them from the cache after each call.
+    */
    for (i = 0; i < eet_writers_num; i++)
      {
-	if (eet_writers[i]->references <= 0)
-	  num++;
+	if (eet_writers[i]->references <= 0) num++;
      }
 
    for (i = 0; i < eet_readers_num; i++)
      {
-	if (eet_readers[i]->references <= 0)
-	  num++;
+	if (eet_readers[i]->references <= 0) num++;
      }
 
    if (num > 0)
@@ -678,7 +676,7 @@ eet_clearcache(void)
 }
 
 /* FIXME: MMAP race condition in READ_WRITE_MODE */
-static Eet_File*
+static Eet_File *
 eet_internal_read2(Eet_File *ef)
 {
    const int    *data = (const int*) ef->data;
@@ -861,7 +859,7 @@ eet_internal_read2(Eet_File *ef)
    return ef;
 }
 
-static Eet_File*
+static Eet_File *
 eet_internal_read1(Eet_File *ef)
 {
    const unsigned char	*dyn_buf = NULL;
@@ -1023,29 +1021,29 @@ eet_internal_read1(Eet_File *ef)
    return ef;
 }
 
-static Eet_File*
+static Eet_File *
 eet_internal_read(Eet_File *ef)
 {
    const int    *data = (const int*) ef->data;
 
    if (eet_test_close((ef->data == (void *)-1) || (ef->data == NULL), ef))
      return NULL;
-
+   
    if (eet_test_close(ef->data_size < sizeof(int) * 3, ef))
      return NULL;
 
    switch (ntohl(*data))
      {
       case EET_MAGIC_FILE:
-         return eet_internal_read1(ef);
+	return eet_internal_read1(ef);
       case EET_MAGIC_FILE2:
-         return eet_internal_read2(ef);
+	return eet_internal_read2(ef);
       default:
-         ef->delete_me_now = 1;
-         eet_close(ef);
-         break;
+	ef->delete_me_now = 1;
+	eet_close(ef);
+	break;
      }
-
+   
    return NULL;
 }
 
@@ -1618,7 +1616,7 @@ eet_delete(Eet_File *ef, const char *name)
    return exists_already;
 }
 
-EAPI Eet_Dictionary*
+EAPI Eet_Dictionary *
 eet_dictionary_get(Eet_File *ef)
 {
    if (eet_check_pointer(ef)) return NULL;

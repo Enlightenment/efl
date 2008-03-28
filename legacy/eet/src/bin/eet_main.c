@@ -219,6 +219,7 @@ main(int argc, char **argv)
    eet_init();
    if (argc < 2)
      {
+	help:
 	printf("Usage:\n"
 	       "  eet -l FILE.EET                      list all keys in FILE.EET\n"
 	       "  eet -x FILE.EET KEY OUT-FILE         extract data stored in KEY in FILE.EET and write to OUT-FILE\n"
@@ -230,7 +231,11 @@ main(int argc, char **argv)
 	eet_shutdown();
 	return 0;
      }
-   if ((!strcmp(argv[1], "-l")) && (argc > 2))
+   if ((!strncmp(argv[1], "-h", 2)))
+     {
+	goto help;
+     }
+   else if ((!strcmp(argv[1], "-l")) && (argc > 2))
      {
 	do_eet_list(argv[2]);
      }
