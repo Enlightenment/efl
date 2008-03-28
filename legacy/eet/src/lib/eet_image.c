@@ -24,6 +24,7 @@ void *alloca (size_t);
 #endif
 
 #include <stdio.h>
+#include <string.h>
 #include <zlib.h>
 #include <jpeglib.h>
 #include <setjmp.h>

@@ -29,6 +29,7 @@ void *alloca (size_t);
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <time.h>
+#include <string.h>
 #include <fnmatch.h>
 #include <fcntl.h>
 #include <zlib.h>
