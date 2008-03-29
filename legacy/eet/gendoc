@@ -1,5 +1,4 @@
 #!/bin/sh
-cp ./eet.c.in ./eet.c
 for I in `find ./src/lib -name "Eet.h" -print`; do
   cat $I >> ./eet.c
 done
