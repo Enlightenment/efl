@@ -1,10 +1,4 @@
 #!/bin/sh
-for I in `find ./src/lib -name "Eet.h" -print`; do
-  cat $I >> ./eet.c
-done
-#for I in `find ./src/lib -name "*.c" -print`; do
-#  cat $I >> ./eet.c
-#done
 rm -rf ./doc/html ./doc/latex ./doc/man
 doxygen
 cp doc/img/* doc/html/
