@@ -10,7 +10,7 @@ do_eet_list(const char *file)
    int i, num;
    char **list;
    Eet_File *ef;
-   
+
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
@@ -34,7 +34,7 @@ do_eet_extract(const char *file, const char *key, const char *out)
    void *data;
    int size = 0;
    FILE *f;
-   
+
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
@@ -76,7 +76,7 @@ do_eet_decode(const char *file, const char *key, const char *out)
    void *data;
    int size = 0;
    FILE *f;
-   
+
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
@@ -112,7 +112,7 @@ do_eet_insert(const char *file, const char *key, const char *out, int compress)
    void *data;
    int size = 0;
    FILE *f;
-   
+
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
      ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -156,7 +156,7 @@ do_eet_encode(const char *file, const char *key, const char *out, int compress)
    void *data;
    int size = 0;
    FILE *f;
-   
+
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
      ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -202,7 +202,7 @@ static void
 do_eet_remove(const char *file, const char *key)
 {
    Eet_File *ef;
-   
+
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
      {

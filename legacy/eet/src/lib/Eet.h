@@ -230,19 +230,19 @@ extern "C" {
     * Return a handle to the shared string dictionary of the Eet file
     * @param ef A valid eet file handle.
     * @return A handle to the dictionary of the file
-    * 
+    *
     * This function returns a handle to the dictionary of an Eet file whose
     * handle is @p ef, if a dictionary exists. NULL is returned otherwise or
     * if the file handle is known to be invalid.
     */
    EAPI Eet_Dictionary *eet_dictionary_get(Eet_File *ef);
-   
+
    /**
     * Check if a given string comes from a given dictionary
     * @param ed A valid dictionary handle
     * @param string A valid 0 byte terminated C string
     * @return 1 if it is in the dictionary, 0 otherwise
-    * 
+    *
     * This checks the given dictionary to see if the given string is actually
     * inside that dictionary (i.e. comes from it) and returns 1 if it does.
     * If the dictionary handle is invlide, the string is NULL or the string is

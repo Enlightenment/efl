@@ -34,21 +34,17 @@ WIN32_CFLAGS=""
 WIN32_LIBS=""
 create_shared_lib=""
 case "$host_os" in
-	mingw|mingw32)
+	mingw|mingw32*|cegcc)
 		PKG_CHECK_MODULES([EVIL], [evil])
 		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
 		dnl needed for correct definition of EAPI
 		AC_DEFINE(EFL_EET_BUILD, 1, [Define to mention that eet is built])
-		WIN32_LIBS="-lws2_32"
-		create_shared_lib="-no-undefined "
-		;;
-	cegcc)
-		PKG_CHECK_MODULES([EVIL], [evil])
-		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
-		dnl needed for correct definition of EAPI
-		AC_DEFINE(EFL_EET_BUILD, 1, [Define to mention that eet is built])
-		WIN32_CFLAGS="-mwin32"
-		WIN32_LIBS="-lws2"
+		if test "$host_os" = "cegcc" ; then
+			WIN32_CFLAGS="-mwin32"
+			WIN32_LIBS="-lws2"
+		else
+			WIN32_LIBS="-lws2_32"
+		fi
 		create_shared_lib="-no-undefined "
 		;;
 esac

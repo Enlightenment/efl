@@ -1065,7 +1065,7 @@ eet_internal_read(Eet_File *ef)
 
    if (eet_test_close((ef->data == (void *)-1) || (ef->data == NULL), ef))
      return NULL;
-   
+
    if (eet_test_close(ef->data_size < sizeof(int) * 3, ef))
      return NULL;
 
@@ -1080,7 +1080,7 @@ eet_internal_read(Eet_File *ef)
 	eet_close(ef);
 	break;
      }
-   
+
    return NULL;
 }
 
