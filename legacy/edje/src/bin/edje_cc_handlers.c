@@ -3844,6 +3844,48 @@ st_collections_group_parts_part_description_text_elipsis(void)
    ed->text.elipsis = parse_float_range(0, 0.0, 1.0);
 }
 
+/**
+    @page edcref
+
+    @block
+        text
+    @context
+        part {
+            description {
+                ..
+                gradient {
+                    type:    "linear";
+                    spectrum "spectrumName";
+                    rel1 {
+                        relative: 0.0 0.0;
+                        offset:     0   0;
+                    }
+                    rel2
+                        relative: 1.0 1.0;
+                        offset:    -1  -1;
+                    }
+                }
+                ..
+            }
+        }
+    @description
+        A gradient block is used to display a given "spectrum" inside a 
+        container. The container's shape is a rect but this not mean the
+        gradient is restricted to a rectangular shape.  Gradients can use 
+        "rel1" and "rel2" blocks to layout the initial and final point 
+        relatively inside the container.
+    @endblock
+
+    @property
+        type
+    @parameters
+        [the name of the type]
+    @effect
+        Alters the gradient's rendering algorithm between:
+            @li linear (default)  
+            @li radial
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_gradient_type(void)
 {
@@ -3869,6 +3911,18 @@ st_collections_group_parts_part_description_gradient_type(void)
    ed->gradient.type  = parse_str(0);
 }
 
+/**
+    @page edcref
+
+    @property
+        spectrum
+    @parameters
+        [an existing spectrum name]
+    @effect
+        Causes the gradient to display the colors as defined by a given 
+        "spectrum" in the "spectra" block.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_gradient_spectrum(void)
 {
@@ -3901,6 +3955,19 @@ st_collections_group_parts_part_description_gradient_spectrum(void)
      }
 }
 
+/**
+    @page edcref
+
+    @property
+        relative
+    @parameters
+        [a relative X coordinate] [a relative Y coordinate]
+    @effect
+        Inside rel1 places the initial point, or first color, of the gradient 
+        relatively to the gradient's container. Inside rel2 places the final 
+        point, or last color.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_gradient_rel1_relative(void)
 {
@@ -3931,6 +3998,19 @@ st_collections_group_parts_part_description_gradient_rel1_relative(void)
      }
 }
 
+/**
+    @page edcref
+
+    @property
+        offset
+    @parameters
+        [X axis] [Y axis]
+    @effect
+        Inside rel1 moves the initial point, or first color, of the gradient
+        a fixed number of pixels along either axis. Inside rel2 moves the final
+        point, or last color.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_gradient_rel1_offset(void)
 {
