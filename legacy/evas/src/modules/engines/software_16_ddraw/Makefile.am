@@ -18,8 +18,8 @@ pkg_LTLIBRARIES	= module.la
 module_la_SOURCES = \
 evas_engine.h \
 evas_engine.c \
-evas_ddraw_buffer.c \
-evas_ddraw_main.c
+evas_ddraw_buffer.cpp \
+evas_ddraw_main.cpp
 
 module_la_LIBADD = @ddraw_16_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version
@@ -33,6 +33,6 @@ endif
 EXTRA_DIST = \
 evas_engine.h \
 evas_engine.c \
-evas_ddraw_buffer.c \
-evas_ddraw_main.c \
+evas_ddraw_buffer.cpp \
+evas_ddraw_main.cpp \
 Evas_Engine_Software_16_DDraw.h

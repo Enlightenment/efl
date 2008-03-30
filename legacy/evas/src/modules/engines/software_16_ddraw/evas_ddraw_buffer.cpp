@@ -11,10 +11,10 @@ evas_software_ddraw_output_buffer_new(HWND                window,
                                       int                 width,
                                       int                 height)
 {
-   DDSURFACEDESC2       surface_desc;
+   DDSURFACEDESC        surface_desc;
    DDraw_Output_Buffer *ddob;
 
-   ddob = calloc(1, sizeof(DDraw_Output_Buffer));
+   ddob = (DDraw_Output_Buffer *)calloc(1, sizeof(DDraw_Output_Buffer));
    if (!ddob) return NULL;
 
    ddob->dd.window = window;
@@ -29,22 +29,22 @@ evas_software_ddraw_output_buffer_new(HWND                window,
    ZeroMemory(&surface_desc, sizeof(surface_desc));
    surface_desc.dwSize = sizeof(surface_desc);
 
-   if (FAILED(IDirectDrawSurface7_Lock(ddob->dd.surface_source, NULL,
-                                       &surface_desc,
-                                       DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR,
-                                       NULL)))
+   if (FAILED(ddob->dd.surface_source->Lock(NULL,
+                                            &surface_desc,
+                                            DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR,
+                                            NULL)))
      {
         free(ddob);
         return NULL;
      }
 
-   ddob->im.pixels = surface_desc.lpSurface;
+   ddob->im.pixels = (DATA16 *)surface_desc.lpSurface;
    ddob->im.w = width;
    ddob->im.h = height;
    ddob->im.stride = width;
    ddob->im.references = 1;
 
-   if (FAILED(IDirectDrawSurface7_Unlock(ddob->dd.surface_source, NULL)))
+   if (FAILED(ddob->dd.surface_source->Unlock(NULL)))
      {
         free(ddob);
         return NULL;
@@ -62,17 +62,16 @@ evas_software_ddraw_output_buffer_free(DDraw_Output_Buffer *ddob, int sync)
 void
 evas_software_ddraw_output_buffer_paste(DDraw_Output_Buffer *ddob)
 {
-   RECT    dst_rect;
-   RECT    src_rect;
-   POINT   p;
+   RECT  dst_rect;
+   RECT  src_rect;
+   POINT p;
 
    SetRect(&src_rect, 0, 0, ddob->width, ddob->height);
 
-   if (FAILED(IDirectDrawSurface7_BltFast(ddob->dd.surface_back,
-                                          0, 0,
-                                          ddob->dd.surface_source,
-                                          &src_rect,
-                                          DDBLTFAST_NOCOLORKEY | DDBLTFAST_WAIT)))
+   if (FAILED(ddob->dd.surface_back->BltFast(0, 0,
+                                             ddob->dd.surface_source,
+                                             &src_rect,
+                                             DDBLTFAST_NOCOLORKEY | DDBLTFAST_WAIT)))
      return;
 
    p.x = 0;
@@ -80,7 +79,7 @@ evas_software_ddraw_output_buffer_paste(DDraw_Output_Buffer *ddob)
    ClientToScreen(ddob->dd.window, &p);
    GetClientRect(ddob->dd.window, &dst_rect);
    OffsetRect(&dst_rect, p.x, p.y);
-   IDirectDrawSurface7_Blt(ddob->dd.surface_primary, &dst_rect,
-                           ddob->dd.surface_back, &src_rect,
-                           DDBLT_WAIT, NULL);
+   ddob->dd.surface_primary->Blt(&dst_rect,
+                                 ddob->dd.surface_back, &src_rect,
+                                 DDBLT_WAIT, NULL);
 }

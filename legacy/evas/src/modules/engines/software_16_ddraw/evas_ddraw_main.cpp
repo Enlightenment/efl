@@ -4,17 +4,15 @@
 void *
 evas_software_ddraw_lock(DDraw_Output_Buffer *ddob, int *ddraw_width, int *ddraw_height, int *ddraw_pitch, int *ddraw_depth)
 {
-   DDSURFACEDESC2 surface_desc;
-   DDSURFACEDESC *sd;
+   DDSURFACEDESC surface_desc;
 
    ZeroMemory(&surface_desc, sizeof(surface_desc));
    surface_desc.dwSize = sizeof(surface_desc);
 
-   sd = (DDSURFACEDESC *)&surface_desc;
-   if (FAILED(IDirectDrawSurface7_Lock(ddob->dd.surface_back, NULL,
-                                       sd,
-                                       DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR,
-                                       NULL)))
+   if (FAILED(ddob->dd.surface_back->Lock(NULL,
+                                          &surface_desc,
+                                          DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR | DDLOCK_WRITEONLY,
+                                          NULL)))
      return NULL;
 
    *ddraw_width = surface_desc.dwWidth;
@@ -32,7 +30,7 @@ evas_software_ddraw_unlock_and_flip(DDraw_Output_Buffer *ddob)
    RECT    src_rect;
    POINT   p;
 
-   if (FAILED(IDirectDrawSurface7_Unlock(ddob->dd.surface_back, NULL)))
+   if (FAILED(ddob->dd.surface_back->Unlock(NULL)))
      return;
 
    /* we figure out where on the primary surface our window lives */
@@ -44,22 +42,17 @@ evas_software_ddraw_unlock_and_flip(DDraw_Output_Buffer *ddob)
    SetRect(&src_rect, 0, 0, ddob->width, ddob->height);
 
    /* nothing to do if the function fails, so we don't check the result */
-   IDirectDrawSurface7_BltFast(ddob->dd.surface_primary, 0, 0,
-                               ddob->dd.surface_back, &dst_rect,
-                               DDBLTFAST_WAIT || DDBLTFAST_NOCOLORKEY);
+   ddob->dd.surface_primary->BltFast(0, 0,
+                                     ddob->dd.surface_back, &dst_rect,
+                                     DDBLTFAST_WAIT || DDBLTFAST_NOCOLORKEY);
 }
 
 void
 evas_software_ddraw_surface_resize(DDraw_Output_Buffer *ddob)
 {
-   DDSURFACEDESC2  surface_desc;
-   DDSURFACEDESC2 *sd;
+   DDSURFACEDESC surface_desc;
 
-   if (!ddob)
-     printf (" AIE AIE pas de ddob\n");
-   if (!ddob->dd.surface_back)
-     printf (" AIE AIE pas de surface_back\n");
-   IDirectDrawSurface7_Release(ddob->dd.surface_back);
+   ddob->dd.surface_back->Release();
    memset (&surface_desc, 0, sizeof (surface_desc));
    surface_desc.dwSize = sizeof (surface_desc);
    /* FIXME: that code does not compile. Must know why */
@@ -73,11 +66,6 @@ evas_software_ddraw_surface_resize(DDraw_Output_Buffer *ddob)
    surface_desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
    surface_desc.dwWidth = ddob->width;
    surface_desc.dwHeight = ddob->height;
-   /* Hack to cleanly remove a warning */
-   sd = &surface_desc;
-   IDirectDraw7_CreateSurface(ddob->dd.object,
-                              (DDSURFACEDESC *)sd,
-                              &ddob->dd.surface_back,
-                              NULL);
+   ddob->dd.object->CreateSurface(&surface_desc, &ddob->dd.surface_back, NULL);
 #endif
 }
