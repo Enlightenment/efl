@@ -15,10 +15,9 @@ struct _Evas_Engine_Info_Software_DDraw
 
    struct {
       HWND                window;
-      LPDIRECTDRAW        object;             /* DirectDraw object */
-      LPDIRECTDRAWSURFACE surface_primary; /* DirectDraw primary surface */
-      LPDIRECTDRAWSURFACE surface_back;    /* DirectDraw back surface */
-
+      LPDIRECTDRAW        object;
+      LPDIRECTDRAWSURFACE surface_primary;
+      LPDIRECTDRAWSURFACE surface_back;
       int                 depth;
       int                 rotation;
    } info;

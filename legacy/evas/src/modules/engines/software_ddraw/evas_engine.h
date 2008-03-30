@@ -120,10 +120,21 @@ DATA8 *evas_software_ddraw_output_buffer_data(DDraw_Output_Buffer *ddob,
 					      int                 *bytes_per_line_ret);
 int    evas_software_ddraw_output_buffer_depth(DDraw_Output_Buffer *ddob);
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 int   evas_software_ddraw_masks_get(Outbuf *buf);
 void *evas_software_ddraw_lock(Outbuf *buf, int *ddraw_width, int *ddraw_height, int *ddraw_pitch, int *ddraw_depth);
 void  evas_software_ddraw_unlock_and_flip(Outbuf *buf);
 void  evas_software_ddraw_surface_resize(Outbuf *buf);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* __EVAS_ENGINE_H__ */
