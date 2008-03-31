@@ -6,6 +6,25 @@
 #include "edje_private.h"
 
 void
+_edje_hold_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Evas_Event_Hold *ev;
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ev = event_info;
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if (!rp) return;
+   if (ev->hold)
+     _edje_emit(ed, "hold,on", rp->part->name);
+   else
+     _edje_emit(ed, "hold,off", rp->part->name);
+   return;
+   e = NULL;
+}
+
+void
 _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 {
    Evas_Event_Mouse_In *ev;
@@ -369,6 +388,10 @@ void
 _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)
 {
    evas_object_event_callback_add(obj,
+                                  EVAS_CALLBACK_HOLD,
+                                  _edje_hold_cb,
+                                  ed);
+   evas_object_event_callback_add(obj,
                                   EVAS_CALLBACK_MOUSE_IN,
                                   _edje_mouse_in_cb,
                                   ed);
@@ -398,6 +421,9 @@ _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)
 void
 _edje_callbacks_del(Evas_Object *obj)
 {
+   evas_object_event_callback_del(obj,
+                                  EVAS_CALLBACK_HOLD,
+                                  _edje_hold_cb);
    evas_object_event_callback_del(obj,
                                   EVAS_CALLBACK_MOUSE_IN,
                                   _edje_mouse_in_cb);

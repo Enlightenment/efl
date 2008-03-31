@@ -549,12 +549,14 @@ _edje_part_recalc_single(Edje *ed,
 	if (chosen_desc->text.id_source >= 0)
 	  {
 	     ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
-	     style = ep->text.source->chosen_description->text.style;
+	     if (ep->text.source->chosen_description->text.style)
+	       style = ep->text.source->chosen_description->text.style;
 	  }
 	else
 	  {
 	     ep->text.source = NULL;
-	     style = chosen_desc->text.style;
+	     if (chosen_desc->text.style)
+	       style = chosen_desc->text.style;
 	  }
 
 	if (chosen_desc->text.id_text_source >= 0)

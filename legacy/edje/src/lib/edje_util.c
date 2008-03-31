@@ -1201,6 +1201,10 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 		       pep = ep;
 		       didw = 1;
 		    }
+		  if ((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+		    {
+		       /* FIXME: do something */
+		    }
 	       }
 	     if (!((ep->chosen_description) &&
 		   (ep->chosen_description->fixed.h)))
