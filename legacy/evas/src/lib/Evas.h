@@ -50,7 +50,8 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_MOVE, /**< Move Event */
    EVAS_CALLBACK_RESIZE, /**< Resize Event */
    EVAS_CALLBACK_RESTACK, /**< Restack Event */
-   EVAS_CALLBACK_DEL /**< Object Being Deleted (called before Free) */
+   EVAS_CALLBACK_DEL, /**< Object Being Deleted (called before Free) */
+   EVAS_CALLBACK_HOLD /**< Events go on/off hold */
 } Evas_Callback_Type; /**< The type of event to trigger the callback */
 
 typedef enum _Evas_Button_Flags
@@ -147,6 +148,7 @@ typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move; /**< Event structur
 typedef struct _Evas_Event_Mouse_Wheel Evas_Event_Mouse_Wheel; /**< Event structure for #EVAS_CALLBACK_MOUSE_WHEEL event callbacks */
 typedef struct _Evas_Event_Key_Down   Evas_Event_Key_Down; /**< Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
 typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
+typedef struct _Evas_Event_Hold       Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
 
 #define EVAS_LOAD_ERROR_NONE                       0 /**< No error on load */
 #define EVAS_LOAD_ERROR_GENERIC                    1 /**< A non-specific error occured */
@@ -346,6 +348,15 @@ struct _Evas_Event_Key_Up /** Key release event */
    const char    *key; /**< The logical key : (eg shift+1 == exclamation) */
    const char    *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
    const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   unsigned int   timestamp;
+   Evas_Event_Flags  event_flags;
+};
+
+struct _Evas_Event_Hold /** Hold change event */
+{
+   int            hold; /**< The hold flag */
+   void          *data;
+   
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
 };
@@ -759,6 +770,7 @@ extern "C" {
    EAPI void              evas_event_feed_mouse_wheel       (Evas *e, int direction, int z, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_key_down          (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_key_up            (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_hold              (Evas *e, int hold, unsigned int timestamp, const void *data);
 
    EAPI void              evas_object_focus_set             (Evas_Object *obj, Evas_Bool focus);
    EAPI Evas_Bool         evas_object_focus_get             (const Evas_Object *obj);

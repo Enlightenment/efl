@@ -983,6 +983,45 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 }
 
 /**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
+evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data)
+{
+   Evas_List *l, *copy;
+   Evas_Event_Hold ev;
+
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
+
+   ev.hold = hold;
+   ev.data = (void *)data;
+   ev.timestamp = timestamp;
+   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   
+   _evas_walk(e);
+   copy = evas_event_list_copy(e->pointer.object.in);
+   for (l = copy; l; l = l->next)
+     {
+	Evas_Object *obj;
+
+	obj = l->data;
+	if (e->events_frozen <= 0)
+	  evas_object_event_callback_call(obj, EVAS_CALLBACK_HOLD, &ev);
+	if (e->delete_me) break;
+     }
+   if (copy) copy = evas_list_free(copy);
+   _evas_unwalk(e);
+}
+
+/**
  * @defgroup Evas_Object_Event_Flags_Group Evas Object Event Flag Functions
  *
  * Functions that deal with how events on an Evas Object are processed.
