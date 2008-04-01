@@ -786,10 +786,54 @@ parse_str(int n)
    return s;
 }
 
+static int
+_parse_enum(char *str, va_list va)
+{
+   va_list va2;
+   va_copy(va2, va); /* iterator for the error message */
+
+   for (;;)
+     {
+	char *s;
+	int   v;
+
+	s = va_arg(va, char *);
+
+	/* End of the list, nothing matched. */
+	if (!s)
+	  {
+	     fprintf(stderr, "%s: Error. %s:%i token %s not one of:",
+		     progname, file_in, line - 1, str);
+	     s = va_arg(va2, char *);
+	     while (s)
+	       {
+		  v = va_arg(va2, int);
+		  fprintf(stderr, " %s", s);
+		  s = va_arg(va2, char *);
+		  if (!s) break;
+	       }
+	     fprintf(stderr, "\n");
+	     va_end(va2);
+	     va_end(va);
+	     exit(-1);
+	  }
+
+	v = va_arg(va, int);
+	if (!strcmp(s, str))
+	  {
+	     va_end(va2);
+	     va_end(va);
+	     return v;
+	  }
+     }
+   return 0;
+}
+
 int
 parse_enum(int n, ...)
 {
    char *str;
+   int result;
    va_list va;
 
    str = evas_list_nth(params, n);
@@ -799,39 +843,28 @@ parse_enum(int n, ...)
 		progname, file_in, line - 1, n + 1);
 	exit(-1);
      }
-   va_start(va, n);
-   for (;;)
-     {
-	char *s;
-	int   v;
 
-	s = va_arg(va, char *);
-	if (!s)
-	  {
-	     fprintf(stderr, "%s: Error. %s:%i token %s not one of:",
-		     progname, file_in, line - 1, str);
-	     va_start(va, n);
-	     s = va_arg(va, char *);
-	     while (s)
-	       {
-		  v = va_arg(va, int);
-		  fprintf(stderr, " %s", s);
-		  s = va_arg(va, char *);
-		  if (!s) break;
-	       }
-	     fprintf(stderr, "\n");
-	     va_end(va);
-	     exit(-1);
-	  }
-	v = va_arg(va, int);
-	if (!strcmp(s, str))
-	  {
-	     va_end(va);
-	     return v;
-	  }
-     }
+   va_start(va, n);
+   result = _parse_enum(str, va);
    va_end(va);
-   return 0;
+
+   return result;
+}
+
+int
+parse_flags(int n, ...)
+{
+   char *str;
+   Evas_List *lst;
+   int result = 0;
+   va_list va;
+
+   va_start(va, n);
+   for (lst = evas_list_nth_list(params, n); lst != NULL; lst = lst->next)
+     result |= _parse_enum(lst->data, va);
+   va_end(va);
+
+   return result;
 }
 
 int
@@ -959,6 +992,20 @@ check_arg_count(int required_args)
      {
 	fprintf(stderr, "%s: Error. %s:%i got %i arguments, but expected %i\n",
 	      progname, file_in, line - 1, num_args, required_args);
+	exit(-1);
+     }
+}
+
+void
+check_min_arg_count(int min_required_args)
+{
+   int num_args = evas_list_count (params);
+
+   if (num_args < min_required_args)
+     {
+	fprintf(stderr, "%s: Error. %s:%i got %i arguments, "
+		"but expected at least %i\n",
+		progname, file_in, line - 1, num_args, min_required_args);
 	exit(-1);
      }
 }

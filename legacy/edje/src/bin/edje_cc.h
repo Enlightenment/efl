@@ -87,12 +87,14 @@ int     is_param(int n);
 int     is_num(int n);
 char   *parse_str(int n);
 int     parse_enum(int n, ...);
+int     parse_flags(int n, ...);
 int     parse_int(int n);
 int     parse_int_range(int n, int f, int t);
 int     parse_bool(int n);
 double  parse_float(int n);
 double  parse_float_range(int n, double f, double t);
 void    check_arg_count(int n);
+void    check_min_arg_count(int n);
 
 int     object_handler_num(void);
 int     statement_handler_num(void);
