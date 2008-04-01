@@ -826,6 +826,8 @@ _parse_enum(char *str, va_list va)
 	     return v;
 	  }
      }
+   va_end(va2);
+   va_end(va);
    return 0;
 }
 
