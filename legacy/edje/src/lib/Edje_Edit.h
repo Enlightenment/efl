@@ -383,6 +383,22 @@ edje_edit_part_repeat_events_set(
                                  * If set to 0 the events received will not propagate to other parts.*/
 );
 
+/**Get ignore_flags for part.*/
+EAPI Evas_Event_Flags        ///@return event flags ignored
+edje_edit_part_ignore_flags_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part
+);
+
+/**Set repeat_events for part. */
+EAPI void
+edje_edit_part_ignore_flags_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   Evas_Event_Flags ignore_flags ///< event flags to be ignored
+);
+
+
 //@}
 /******************************************************************************/
 /**************************   STATES API   ************************************/

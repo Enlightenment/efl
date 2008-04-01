@@ -921,6 +921,7 @@ edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
    ep->name = evas_stringshare_add(name);
    ep->mouse_events = 1;
    ep->repeat_events = 0;
+   ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
    ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
    ep->use_alternate_font_metrics = 0;
@@ -1297,6 +1298,23 @@ edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, unsigned ch
      evas_object_repeat_events_set(rp->object, 1);
    else
      evas_object_repeat_events_set(rp->object, 0);
+}
+
+EAPI Evas_Event_Flags
+edje_edit_part_ignore_flags_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+   return rp->part->ignore_flags;
+}
+
+EAPI void
+edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags)
+{
+   GET_RP_OR_RETURN();
+   if (!rp->object) return;
+   printf("Set ignore_flags for part: %s [%#x]\n", part, ignore_flags);
+
+   rp->part->ignore_flags = ignore_flags;
 }
 
 EAPI const char *

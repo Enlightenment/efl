@@ -83,6 +83,7 @@ static void st_collections_group_parts_part_type(void);
 static void st_collections_group_parts_part_effect(void);
 static void st_collections_group_parts_part_mouse_events(void);
 static void st_collections_group_parts_part_repeat_events(void);
+static void st_collections_group_parts_part_ignore_flags(void);
 static void st_collections_group_parts_part_pointer_mode(void);
 static void st_collections_group_parts_part_precise_is_inside(void);
 static void st_collections_group_parts_part_use_alternate_font_metrics(void);
@@ -222,6 +223,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
      {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
      {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
+     {"collections.group.parts.part.ignore_flags", st_collections_group_parts_part_ignore_flags},
      {"collections.group.parts.part.pointer_mode", st_collections_group_parts_part_pointer_mode},
      {"collections.group.parts.part.precise_is_inside", st_collections_group_parts_part_precise_is_inside},
      {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
@@ -1382,6 +1384,7 @@ st_collections_group_data_item(void)
                     type: IMAGE;
                     mouse_events:  1;
                     repeat_events: 0;
+                    ignore_flags: NONE;
                     clip_to: "anotherpart";
                     source:  "groupname";
                     pointer_mode: AUTOGRAB;
@@ -1412,6 +1415,7 @@ ob_collections_group_parts_part(void)
    ep->type = EDJE_PART_TYPE_IMAGE;
    ep->mouse_events = 1;
    ep->repeat_events = 0;
+   ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
    ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
    ep->use_alternate_font_metrics = 0;
@@ -1549,6 +1553,37 @@ st_collections_group_parts_part_repeat_events(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->repeat_events = parse_bool(0);
+}
+
+/**
+    @page edcref
+    @property
+        ignore_flags
+    @parameters
+        [FLAG] ...
+    @effect
+        Specifies whether events with the given flags should be ignored,
+	i.e., will not have the signals emitted to the parts. Multiple flags
+	must be separated by spaces, the effect will be ignoring all events
+	with one of the flags specified. Possible flags:
+            @li NONE (default value, no event will be ignored)
+            @li ON_HOLD
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_ignore_flags(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_min_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->ignore_flags = parse_flags(0,
+				  "NONE", EVAS_EVENT_FLAG_NONE,
+				  "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
+				  NULL);
 }
 
 /**
