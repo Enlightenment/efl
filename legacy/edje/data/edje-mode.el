@@ -50,7 +50,7 @@
 
 (defun edje-new-program-action-state-set (state value target)
   "Insert new program STATE_SET"
-  (interactive "sstate: \nvalue (0.0): \nstarget: ")
+  (interactive "sstate: \nsvalue (0.0): \nstarget: ")
   (insert
    (concat
     "               action: STATE_SET \"" state "\" "
@@ -308,6 +308,7 @@
                          "fonts"
                          "gradient"
                          "group"
+                         "ignore_flags"
                          "image"
                          "images"
                          "in"
@@ -383,6 +384,9 @@
                          "TEXTBLOCK"
                          "GRADIENT"
                          "GROUP"
+                         ; ignore flags (st_collections_group_parts_part_ignore_flags)
+                         ;"NONE"
+                         "ON_HOLD"
                          ; pointer mode (st_collections_group_parts_part_pointer_mode)
                          "AUTOGRAB"
                          "NOGRAB"
