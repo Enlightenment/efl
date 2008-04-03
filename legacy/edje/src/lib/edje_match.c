@@ -95,7 +95,7 @@ _edje_match_states_insert(Edje_States    *list,
    {
       const size_t i = idx * (patterns_max_length + 1) + pos;
 
-      if (list->has[i]) return;
+      if (list->size > i && list->has[i]) return;
       list->has[i] = 1;
    }
 
@@ -103,6 +103,7 @@ _edje_match_states_insert(Edje_States    *list,
 
    list->states[i].idx = idx;
    list->states[i].pos = pos;
+   list->has[i] = 0;
    ++list->size;
 }
 
@@ -112,7 +113,6 @@ _edje_match_states_clear(Edje_States     *list,
                          size_t           patterns_max_length)
 {
    list->size = 0;
-   memset(list->has, 0, patterns_size * (patterns_max_length + 1) * sizeof (*list->has));
 }
 
 /* Token manipulation. */
@@ -232,9 +232,6 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
 
    states->size = patterns_size;
 
-   memset(states->has,
-          0,
-          patterns_size * (patterns_max_length + 1) * sizeof (*states->has));
    for (i = 0; i < patterns_size; ++i)
      {
         states->states[i].idx = i;

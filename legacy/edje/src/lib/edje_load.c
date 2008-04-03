@@ -1002,14 +1002,24 @@ _edje_collection_free_prog_cache_matches_free_cb(const Evas_Hash *hash, const ch
 static void
 _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *source)
 {
-   Evas_Object *parent;
-   Edje *ed;
-   char new_src[4096]; /* XXX is this max reasonable? */
+   Evas_Object	*parent;
+   Edje		*ed;
+   char		 new_src[4096]; /* XXX is this max reasonable? */
+   int		 length_parent;
+   int		 length_source;
 
    parent = data;
    ed = _edje_fetch(obj);
    if (!ed) return;
-   snprintf(new_src, sizeof(new_src), "%s%c%s", ed->parent,
-            EDJE_PART_PATH_SEPARATOR, source);
+   /* Replace snprint("%s%c%s") == memcpy + *new_src + memcat */
+   length_parent = strlen(ed->parent);
+   length_source = strlen(source);
+   if (length_source + length_parent + 2 > sizeof(new_src))
+     return ;
+
+   memcpy(new_src, ed->parent, length_parent);
+   new_src[length_parent] = EDJE_PART_PATH_SEPARATOR;
+   memcpy(new_src + length_parent + 1, source, length_source + 1);
+
    edje_object_signal_emit(parent, signal, new_src);
 }
