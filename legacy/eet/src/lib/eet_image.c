@@ -23,6 +23,10 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <zlib.h>
