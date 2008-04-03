@@ -1,5 +1,18 @@
 Ecore @VERSION@
 
+Requirements:
+-------------
+
+Must:
+  libc libm
+
+Recommended:
+  libX11 libXext libXcursor libXprint libXinerama libXrandr libXss libXrender
+  libXcomposite libXfixes libXdamage libXdpms libXtest OpenSSL CURL
+
+Optional:
+  XCB SDL DirectFB
+
 Ecore is the event/X abstraction layer that makes doing selections,
 Xdnd, general X stuff, event loops, timeouts and idle handlers fast,
 optimized, and convenient. It's a separate library so anyone can make

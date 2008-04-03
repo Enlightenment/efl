@@ -1,5 +1,11 @@
 Embryo @VERSION@
 
+Requirements:
+-------------
+
+Must:
+  libc libm
+
 WARNING: gcc compatibility!!!
 There seems to be some bug (or disagreement) between embryo and gcc 3.2.x
 where IEEE floating point format encoding does not "agree" with embryo's own

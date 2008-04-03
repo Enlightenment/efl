@@ -1,5 +1,10 @@
 Eet @VERSION@
 
+Requirements:
+-------------
+Must:
+  libc libm zlib libjpeg
+
 ******************************************************************************
 ***
 *** THIS IS AN ALPHA RELEASE - PLEASE REPORT ANY PROBLEMS TO:

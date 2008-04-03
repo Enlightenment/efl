@@ -4,24 +4,17 @@ Evas is a clean display canvas API for several target display systems
 that can draw anti-aliased text, smooth super and sub-sampled scaled
 images, alpha-blend objects much and more.
 
---------------------------------------------------------------------------
-Requires:
+Requirements:
+-------------
 
-  freetype 2.1.7 and higher (I want to make this optional)
+Must:
+  libc libm freetype2.1.9+
+
+Recommended:
+  libX11 libXext libXrender fontconfig libpng libjpeg eet libpthread
 
 Optional:
-
-  X11R6
-  XCB
-  DirectFB
-  SDL
-  OpenGL (underway at the moment)
-  Linux
-  Qtopia
-  libpng
-  libjpeg
-  libeet
-  libedb
+  XCB SDL OpenGL Qtopia librsvg libtiff libgif edb DirectFB
 
 --------------------------------------------------------------------------
 Evas as of 0.9.9 has a new (and incompatible) API. Why? It's much cleaner
