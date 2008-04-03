@@ -4,6 +4,7 @@ Requirements:
 -------------
 Must:
   libc libm zlib libjpeg
+  Windows: evil
 
 ******************************************************************************
 ***
@@ -34,12 +35,12 @@ COMPILING AND INSTALLING:
   make
 (do this as root unless you are installing in your users directories):
   make install
-      
+
 ------------------------------------------------------------------------------
 BUILDING PACKAGES:
 
 RPM: To build rpm packages:
-  
+
   sudo rpm -ta @PACKAGE@-@VERSION@.tar.gz
 
 You will find rpm packages in your system /usr/src/redhat/* dirs (note you may
