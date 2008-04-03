@@ -28,8 +28,6 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
-AC_FUNC_ALLOCA
-
 WIN32_CFLAGS=""
 WIN32_LIBS=""
 create_shared_lib=""
@@ -51,6 +49,24 @@ esac
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(WIN32_LIBS)
 AC_SUBST(create_shared_lib)
+
+dnl Checking for __attribute__ support
+AC_MSG_CHECKING([for __attribute__])
+AC_CACHE_VAL(have___attribute__,
+  [
+    AC_TRY_COMPILE([#include <stdlib.h>],
+      [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
+      [have___attribute__="yes"],
+      [have___attribute__="no"])
+  ]
+)
+
+if test "x${have___attribute__}" = "xyes" ; then
+   AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
+fi
+AC_MSG_RESULT(${have___attribute__})
+
+AC_FUNC_ALLOCA
 
 AC_CHECK_HEADER(zlib.h,, AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
 AC_CHECK_HEADER(jpeglib.h,, AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))

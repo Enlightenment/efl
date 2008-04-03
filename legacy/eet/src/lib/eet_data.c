@@ -6,6 +6,12 @@
 # include <config.h>
 #endif
 
+#if HAVE___ATTRIBUTE__
+#define __UNUSED__ __attribute__((unused))
+#else
+#define __UNUSED__
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -243,7 +249,7 @@ static int words_bigendian = -1;
 
 /* CHAR TYPE */
 static int
-eet_data_get_char(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+eet_data_get_char(const Eet_Dictionary *ed __UNUSED__, const void *src, const void *src_end, void *dst)
 {
    char *s, *d;
 
@@ -256,7 +262,7 @@ eet_data_get_char(const Eet_Dictionary *ed, const void *src, const void *src_end
 }
 
 static void *
-eet_data_put_char(Eet_Dictionary *ed, const void *src, int *size_ret)
+eet_data_put_char(Eet_Dictionary *ed __UNUSED__, const void *src, int *size_ret)
 {
    char *s, *d;
 
@@ -271,7 +277,7 @@ eet_data_put_char(Eet_Dictionary *ed, const void *src, int *size_ret)
 
 /* SHORT TYPE */
 static int
-eet_data_get_short(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+eet_data_get_short(const Eet_Dictionary *ed __UNUSED__, const void *src, const void *src_end, void *dst)
 {
    short *d;
 
@@ -283,7 +289,7 @@ eet_data_get_short(const Eet_Dictionary *ed, const void *src, const void *src_en
 }
 
 static void *
-eet_data_put_short(Eet_Dictionary *ed, const void *src, int *size_ret)
+eet_data_put_short(Eet_Dictionary *ed __UNUSED__, const void *src, int *size_ret)
 {
    short *s, *d;
 
@@ -298,7 +304,7 @@ eet_data_put_short(Eet_Dictionary *ed, const void *src, int *size_ret)
 
 /* INT TYPE */
 static int
-eet_data_get_int(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+eet_data_get_int(const Eet_Dictionary *ed __UNUSED__, const void *src, const void *src_end, void *dst)
 {
    int *d;
 
@@ -310,7 +316,7 @@ eet_data_get_int(const Eet_Dictionary *ed, const void *src, const void *src_end,
 }
 
 static void *
-eet_data_put_int(Eet_Dictionary *ed, const void *src, int *size_ret)
+eet_data_put_int(Eet_Dictionary *ed __UNUSED__, const void *src, int *size_ret)
 {
    int *s, *d;
 
@@ -325,7 +331,7 @@ eet_data_put_int(Eet_Dictionary *ed, const void *src, int *size_ret)
 
 /* LONG LONG TYPE */
 static int
-eet_data_get_long_long(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+eet_data_get_long_long(const Eet_Dictionary *ed __UNUSED__, const void *src, const void *src_end, void *dst)
 {
    unsigned long long *d;
 
@@ -337,7 +343,7 @@ eet_data_get_long_long(const Eet_Dictionary *ed, const void *src, const void *sr
 }
 
 static void *
-eet_data_put_long_long(Eet_Dictionary *ed, const void *src, int *size_ret)
+eet_data_put_long_long(Eet_Dictionary *ed __UNUSED__, const void *src, int *size_ret)
 {
    unsigned long long *s, *d;
 
@@ -416,13 +422,13 @@ eet_data_put_string(Eet_Dictionary *ed, const void *src, int *size_ret)
 
 /* ALWAYS INLINED STRING TYPE */
 static int
-eet_data_get_istring(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+eet_data_get_istring(const Eet_Dictionary *ed __UNUSED__, const void *src, const void *src_end, void *dst)
 {
    return eet_data_get_string(NULL, src, src_end, dst);
 }
 
 static void *
-eet_data_put_istring(Eet_Dictionary *ed, const void *src, int *size_ret)
+eet_data_put_istring(Eet_Dictionary *ed __UNUSED__, const void *src, int *size_ret)
 {
    return eet_data_put_string(NULL, src, size_ret);
 }
@@ -1222,7 +1228,7 @@ _eet_freelist_direct_str_free(Eet_Data_Descriptor *edd)
 }
 
 static int
-eet_data_descriptor_encode_hash_cb(void *hash, const char *key, void *hdata, void *fdata)
+eet_data_descriptor_encode_hash_cb(void *hash __UNUSED__, const char *key, void *hdata, void *fdata)
 {
    Eet_Dictionary               *ed;
    Eet_Data_Encode_Hash_Info    *edehi;
