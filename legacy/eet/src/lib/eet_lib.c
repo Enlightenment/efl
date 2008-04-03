@@ -32,6 +32,7 @@ void *alloca (size_t);
 #include <string.h>
 #include <fnmatch.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <zlib.h>
 
 #ifdef HAVE_NETINET_IN_H
@@ -172,7 +173,9 @@ static Eet_File		*eet_cache_find(const char *path, Eet_File **cache, int cache_n
 static void		eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
 static void		eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
 static int		eet_string_match(const char *s1, const char *s2);
+#if 0 /* Unused */
 static Eet_Error	eet_flush(Eet_File *ef);
+#endif
 static Eet_Error	eet_flush2(Eet_File *ef);
 static Eet_File_Node	*find_node_by_name(Eet_File *ef, const char *name);
 static int		read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len);
@@ -521,6 +524,7 @@ eet_flush2(Eet_File *ef)
    return error;
 }
 
+#if 0 /* Unused */
 /* flush out writes to an eet file */
 static Eet_Error
 eet_flush(Eet_File *ef)
@@ -640,6 +644,7 @@ eet_flush(Eet_File *ef)
    ef->fp = NULL;
    return EET_ERROR_WRITE_ERROR;
 }
+#endif
 
 EAPI int
 eet_init(void)
@@ -1084,6 +1089,7 @@ eet_internal_read(Eet_File *ef)
    return NULL;
 }
 
+#if 0 /* No prototype */
 EAPI Eet_File *
 eet_memopen_read(const void *data, size_t size)
 {
@@ -1110,6 +1116,7 @@ eet_memopen_read(const void *data, size_t size)
 
    return eet_internal_read(ef);
 }
+#endif
 
 EAPI Eet_File *
 eet_open(const char *file, Eet_File_Mode mode)
