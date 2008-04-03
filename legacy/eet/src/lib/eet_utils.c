@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "Eet.h"
+#include "Eet_private.h"
+
 int
 _eet_hash_gen(const char *key, int hash_size)
 {
