@@ -1114,61 +1114,6 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
      }
 }
 
-static int
-_edje_nitoa_rec(char *string, int len, unsigned int value)
-{
-   const char	*array = "0123456789";
-   int		 length;
-   int		 quotient;
-   int		 modulo;
-
-   if (len <= 0) return 0;
-   if (value == 0) return 0;
-
-   quotient = value / 10;
-   modulo = value % 10;
-
-   length = _edje_nitoa_rec(string, len - 1, quotient);
-
-   if (length + 1 > len) return length;
-
-   string[length] = array[modulo];
-
-   return length + 1;
-}
-
-static int
-_edje_nitoa(char *string, int len, int value)
-{
-   int	length;
-
-   if (len <= 0) return 0;
-   if (len == 1)
-     {
-	*string = '\0';
-	return 1;
-     }
-
-   if (value < 0)
-     {
-	*string = '-';
-
-	++string;
-	--len;
-     }
-
-   if (value == 0)
-     {
-	strncpy(string, "0", len);
-	return 1;
-     }
-
-   length = _edje_nitoa_rec(string, len, value);
-   string[length] = '\0';
-
-   return length;
-}
-
 static void
 _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc, double pos)
 {
@@ -1228,11 +1173,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	  }
 	else
 	  {
-	     /* Replace snprint("images/%i") == memcpy + itoa */
-#define IMAGES "images/"
-	     memcpy(buf, IMAGES, strlen(IMAGES));
-	     _edje_nitoa(buf + strlen(IMAGES), sizeof(buf) - strlen(IMAGES), image_id);
-
+	     snprintf(buf, sizeof(buf), "images/%i", image_id);
 	     evas_object_image_file_set(ep->object, ed->file->path, buf);
 	     if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
 	       {
@@ -1450,12 +1391,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 				    (pf->color.g * pf->color.a) / 255,
 				    (pf->color.b * pf->color.a) / 255,
 				    pf->color.a);
-	      if (!pf->visible)
-		{
-		   evas_object_hide(ep->object);
-		   break;
-		}
-	      evas_object_show(ep->object); 
+	      if (pf->visible) evas_object_show(ep->object);
+	      else evas_object_hide(ep->object);
 	      /* move and resize are needed for all previous object => no break here. */
 	   case EDJE_PART_TYPE_SWALLOW:
 	   case EDJE_PART_TYPE_GROUP:
@@ -1499,14 +1436,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 //				   (pf->color.g * pf->color.a) / 255,
 //				   (pf->color.b * pf->color.a) / 255,
 //				   pf->color.a);
-	     if (pf->visible)
-	       {
-		  evas_object_show(ep->swallowed_object);
-		  evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
-		  evas_object_resize(ep->swallowed_object, pf->w, pf->h);
-	       }
-	     else
-	       evas_object_hide(ep->swallowed_object);
+	     evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
+	     evas_object_resize(ep->swallowed_object, pf->w, pf->h);
+	     if (pf->visible) evas_object_show(ep->swallowed_object);
+	     else evas_object_hide(ep->swallowed_object);
 	  }
      }
 
