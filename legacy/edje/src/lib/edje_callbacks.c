@@ -34,9 +34,9 @@ _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ev = event_info;
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
-   if ((!rp) || 
+   if ((!rp) ||
        ((ev->event_flags) &&
-	(!(rp->part->ignore_flags & ev->event_flags)))) return;
+	(rp->part->ignore_flags & ev->event_flags))) return;
    _edje_emit(ed, "mouse,in", rp->part->name);
    return;
    e = NULL;
@@ -52,9 +52,9 @@ _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ev = event_info;
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
-   if ((!rp) || 
-       ((ev->event_flags) && 
-	(!(rp->part->ignore_flags & ev->event_flags)))) return;
+   if ((!rp) ||
+       ((ev->event_flags) &&
+	(rp->part->ignore_flags & ev->event_flags))) return;
    _edje_emit(ed, "mouse,out", rp->part->name);
    return;
    e = NULL;
