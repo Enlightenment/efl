@@ -42,7 +42,7 @@ characters). I've tested with quite a few fonts and it works quite well.
 Though this requires a unicode compatible font with unicode charmap support
 (cyberbit is quite good actually as a font). For now Evas draws the fonts
 only from left to right, so arabic, hebrew etc. won't display quite right,
-direction-wise, but the charcters do.
+direction-wise, but the characters do.
 
 --------------------------------------------------------------------------
 if you want to know what options to enable
