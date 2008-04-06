@@ -189,7 +189,10 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 	  }
      }
 
-   if (!((c1 >= 0 || c2 >= 0) && (tw > sw)))
+   if (!(((c1 >= 0) || (c2 >= 0)) && (tw > sw)))
+     return text;
+
+   if ((c1 == 0) && (c2 == 0))
      return text;
 
    orig_len = strlen(text);
