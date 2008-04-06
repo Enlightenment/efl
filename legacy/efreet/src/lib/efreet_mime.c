@@ -921,6 +921,8 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
         }
         else
         {
+	    short tshort;
+	   
             if (!mime) continue;
             if (!entry)
             {
@@ -952,7 +954,9 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                 case '=':
                     ptr++;
-                    entry->value_len = ntohs(*((short*)(ptr)));
+	       
+	            memcpy(&tshort, ptr, sizeof(short));
+                    entry->value_len = ntohs(tshort);
                     ptr += 2;
 
                     entry->value = NEW(1, entry->value_len);
@@ -1002,12 +1006,12 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                             }
                             else if (entry->word_size == 4)
                             {
-                                ((long*)entry->value)[j] =
-                                              ntohl(((long*)entry->value)[j]);
+                                ((int*)entry->value)[j] =
+                                              ntohl(((int*)entry->value)[j]);
 
                                 if (entry->mask)
-                                    ((long*)entry->mask)[j] =
-                                              ntohl(((long*)entry->mask)[j]);
+                                    ((int*)entry->mask)[j] =
+                                              ntohl(((int*)entry->mask)[j]);
                             }
                         }
                     }
