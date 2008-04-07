@@ -46,10 +46,11 @@ _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, 
 	return NULL;
      }
    rs->xinf->references++;
-   att.dither = 0;
+   att.dither = 1;
    att.component_alpha = 0;
    att.repeat = 0;
-   rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
+   rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, 
+				  CPRepeat | CPDither | CPComponentAlpha, &att);
    if (rs->pic == None)
      {
 	XFreePixmap(rs->xinf->disp, rs->draw);
@@ -82,10 +83,11 @@ _xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alp
    rs->allocated = 0;
    rs->draw = draw;
    rs->xinf->references++;
-   att.dither = 0;
+   att.dither = 1;
    att.component_alpha = 0;
    att.repeat = 0;
-   rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
+   rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, 
+				  CPRepeat | CPDither | CPComponentAlpha, &att);
    if (rs->pic == None)
      {
 	rs->xinf->references--;
@@ -223,38 +225,62 @@ _xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pi
    if (!xim) return;
    p = (unsigned int *)xim->data;
    sp = ((unsigned int *)pixels) + (y * sw) + x;
-   jump = ((xim->line_bytes / 4) - w);
    sjump = sw - w;
    spe = sp + ((h - 1) * sw) + w;
-   if
-#ifdef WORDS_BIGENDIAN
-     (xim->xim->byte_order == LSBFirst)
-#else
-     (xim->xim->byte_order == MSBFirst)
-#endif
+   if (rs->depth == 16)
      {
-	while (sp < spe)
-	  {
-	     sple = sp + w;
-	     while (sp < sple)
-	       {
-		  *p++ = (*sp << 24) + ((*sp << 8) & 0xff0000) + ((*sp >> 8) & 0xff00) + 0xff;
-//		  *p++ = ((B_VAL(sp)) << 24) | ((G_VAL(sp)) << 16) | ((R_VAL(sp)) << 8) | 0x000000ff;
-		  sp++;
-	       }
-	     p += jump;
-	     sp += sjump;
-	  }
+	jump = ((xim->line_bytes / 2) - w);
+	/* FIXME: if rs->depth == 16 - convert */
+	Gfx_Func_Convert conv_func;
+	int swap;
+	
+#ifdef WORDS_BIGENDIAN
+	swap = (int)(xim->xim->byte_order == LSBFirst);
+#else
+	swap = (int)(xim->xim->byte_order == MSBFirst);
+#endif
+	/* FIXME: swap not handled */
+	conv_func = evas_common_convert_func_get(sp, w, h, rs->depth,
+						 rs->xinf->vis->red_mask,
+						 rs->xinf->vis->green_mask,
+						 rs->xinf->vis->blue_mask,
+						 PAL_MODE_NONE, 0);
+	if (conv_func)
+	  conv_func(sp, p, sjump, jump, w, h, x, y, NULL);
      }
    else
      {
-	while (sp < spe)
+	jump = ((xim->line_bytes / 4) - w);
+	if
+#ifdef WORDS_BIGENDIAN
+	  (xim->xim->byte_order == LSBFirst)
+#else
+	  (xim->xim->byte_order == MSBFirst)
+#endif
+	    {
+	       while (sp < spe)
+		 {
+		    sple = sp + w;
+		    while (sp < sple)
+		      {
+			 *p++ = (*sp << 24) + ((*sp << 8) & 0xff0000) + ((*sp >> 8) & 0xff00) + 0xff;
+//		  *p++ = ((B_VAL(sp)) << 24) | ((G_VAL(sp)) << 16) | ((R_VAL(sp)) << 8) | 0x000000ff;
+			 sp++;
+		      }
+		    p += jump;
+		    sp += sjump;
+		 }
+	    }
+	else
 	  {
-	     sple = sp + w;
-	     while (sp < sple)
-		*p++ = 0xff000000 | *sp++;
-	     p += jump;
-	     sp += sjump;
+	     while (sp < spe)
+	       {
+		  sple = sp + w;
+		  while (sp < sple)
+		    *p++ = 0xff000000 | *sp++;
+		  p += jump;
+		  sp += sjump;
+	       }
 	  }
      }
    _xr_image_put(xim, rs->draw, x + ox, y + oy, w, h);

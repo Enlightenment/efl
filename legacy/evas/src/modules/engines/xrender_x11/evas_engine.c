@@ -251,7 +251,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 	_xr_render_surface_solid_rectangle_set(surface, 0, 0, 0, 0, 0, 0, uw, uh);
 	return surface;
      }
-   return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt24, 0);
+   return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmtdef, 0);
 }
 
 static void

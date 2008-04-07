@@ -490,7 +490,16 @@ _xre_image_alpha_set(XR_Image *im, int alpha)
 	     if (im->alpha)
 	       im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt32, 1);
 	     else
-	       im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt24, 0);
+	       {
+		  /* FIXME: if im->depth == 16, use xinf->fmtdef */
+		  if ((im->xinf->depth == 16) &&
+		      (im->xinf->vis->red_mask == 0xf800) &&
+		      (im->xinf->vis->green_mask == 0x07e0) &&
+		      (im->xinf->vis->blue_mask == 0x001f))
+		    im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmtdef, 0);
+		  else
+		    im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt24, 0);
+	       }
 	     if (im->surface)
 	       _xr_render_surface_copy(old_surface, im->surface, 0, 0, 0, 0, im->w + 2, im->h + 2);
 	     _xr_render_surface_free(old_surface);
@@ -597,6 +606,8 @@ _xre_image_surface_gen(XR_Image *im)
 		       if (im->alpha)
 			 _xr_render_surface_argb_pixels_fill(im->surface, im->w, im->h, data, rx, ry, rw, rh, 1, 1);
 		       else
+		       /* FIXME: if im->depth == 16 - convert to 16bpp then
+			* upload */
 			 _xr_render_surface_rgb_pixels_fill(im->surface, im->w, im->h, data, rx, ry, rw, rh, 1, 1);
 		    }
 		  evas_common_tilebuf_free_render_rects(rects);
@@ -614,7 +625,16 @@ _xre_image_surface_gen(XR_Image *im)
      }
    else
      {
-	im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt24, 0);
+	/* FIXME: if im->xinf->depth == 16, use xinf->fmtdef */
+	if ((im->xinf->depth == 16) &&
+	    (im->xinf->vis->red_mask == 0xf800) &&
+	    (im->xinf->vis->green_mask == 0x07e0) &&
+	    (im->xinf->vis->blue_mask == 0x001f))
+	  im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmtdef, 0);
+	else
+	  im->surface = _xr_render_surface_new(im->xinf, im->w + 2, im->h + 2, im->xinf->fmt24, 0);
+	/* FIXME: if im->depth == 16 - convert to 16bpp then
+	 * upload */
 	_xr_render_surface_rgb_pixels_fill(im->surface, im->w, im->h, data, 0, 0, im->w, im->h, 1, 1);
      }
    /* fill borders */

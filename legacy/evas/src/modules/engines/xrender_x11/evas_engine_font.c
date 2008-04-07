@@ -12,6 +12,7 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    DATA8 *data;
    int w, h, j;
    XRenderPictureAttributes att;
+   XRenderPictFormat *fmt;
    Ximage_Image  *xim;
    Evas_Hash *pool;
    char buf[256], buf2[256];
@@ -52,14 +53,18 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    snprintf(buf2, sizeof(buf2), "%p", fg);
    pool = evas_hash_add(pool, buf2, fs);
    _xr_fg_pool = evas_hash_add(_xr_fg_pool, buf, pool);
-   
-   fs->draw = XCreatePixmap(xinf->disp, xinf->root, w, h, xinf->fmt8->depth);
+
+   /* FIXME: maybe use fmt4? */
+   fmt = xinf->fmt8;
+   fs->draw = XCreatePixmap(xinf->disp, xinf->root, w, h,fmt->depth);
    att.dither = 0;
    att.component_alpha = 0;
    att.repeat = 0;
-   fs->pic = XRenderCreatePicture(xinf->disp, fs->draw, xinf->fmt8, CPRepeat | CPDither | CPComponentAlpha, &att);
+   fs->pic = XRenderCreatePicture(xinf->disp, fs->draw,fmt, 
+				  CPRepeat | CPDither | CPComponentAlpha, &att);
    
-   xim = _xr_image_new(fs->xinf, w, h, xinf->fmt8->depth);
+   /* FIXME: handle if fmt->depth != 8 */
+   xim = _xr_image_new(fs->xinf, w, h,fmt->depth);
    if ((fg->glyph_out->bitmap.num_grays == 256) &&
        (fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays))
      {

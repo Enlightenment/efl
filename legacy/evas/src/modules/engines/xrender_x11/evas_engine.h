@@ -28,6 +28,7 @@ struct _Ximage_Info
    XRenderPictFormat *fmt8;
    XRenderPictFormat *fmt4;
    XRenderPictFormat *fmt1;
+   XRenderPictFormat *fmtdef;
    unsigned char      mul_r, mul_g, mul_b, mul_a;
    Xrender_Surface   *mul;
    int                references;

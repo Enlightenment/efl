@@ -37,13 +37,18 @@ _xr_image_info_get(Display *disp, Drawable draw, Visual *vis)
    xinf->references = 1;
    xinf->disp = disp;
    xinf->draw = draw;
-   XGetGeometry(xinf->disp, xinf->draw, &(xinf->root), &di, &di, &dui, &dui, &dui, &dui);
+   XGetGeometry(xinf->disp, xinf->draw, &(xinf->root),
+		&di, &di, &dui, &dui, &dui, &dui);
    xinf->vis = vis;
    xinf->fmt32 = XRenderFindStandardFormat(xinf->disp, PictStandardARGB32);
    xinf->fmt24 = XRenderFindStandardFormat(xinf->disp, PictStandardRGB24);
    xinf->fmt8 = XRenderFindStandardFormat(xinf->disp, PictStandardA8);
    xinf->fmt4 = XRenderFindStandardFormat(xinf->disp, PictStandardA4);
    xinf->fmt1 = XRenderFindStandardFormat(xinf->disp, PictStandardA1);
+   
+   /* find fmt for default visual */
+   xinf->fmtdef = XRenderFindVisualFormat(xinf->disp, xinf->vis);
+   
    xinf->mul = _xr_render_surface_new(xinf, 1, 1, xinf->fmt32, 1);
    _xr_render_surface_repeat_set(xinf->mul, 1);
    xinf->mul_r = xinf->mul_g = xinf->mul_b = xinf->mul_a = 0xff;
