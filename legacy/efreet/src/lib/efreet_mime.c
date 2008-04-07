@@ -921,8 +921,8 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
         }
         else
         {
-	    short tshort;
-	   
+            short tshort;
+
             if (!mime) continue;
             if (!entry)
             {
@@ -954,8 +954,8 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                 case '=':
                     ptr++;
-	       
-	            memcpy(&tshort, ptr, sizeof(short));
+       
+                    memcpy(&tshort, ptr, sizeof(short));
                     entry->value_len = ntohs(tshort);
                     ptr += 2;
 
