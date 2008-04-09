@@ -21,7 +21,7 @@
 # include <netinet/in.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && ! defined(__CEGCC__)
 # include <winsock2.h>
 #endif
 
