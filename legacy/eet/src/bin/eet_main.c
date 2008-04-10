@@ -73,7 +73,6 @@ static void
 do_eet_decode(const char *file, const char *key, const char *out)
 {
    Eet_File *ef;
-   void *data;
    int size = 0;
    FILE *f;
 
@@ -83,25 +82,18 @@ do_eet_decode(const char *file, const char *key, const char *out)
 	printf("cannot open for reading: %s\n", file);
 	exit(-1);
      }
-   data = eet_read(ef, key, &size);
-   if (!data)
-     {
-	printf("cannot read key %s\n", key);
-	exit(-1);
-     }
    f = fopen(out, "w");
    if (!f)
      {
 	printf("cannot open %s\n", out);
 	exit(-1);
      }
-   if (!eet_data_text_dump(data, size, do_eet_decode_dump, f))
+   if (!eet_data_dump(ef, key, do_eet_decode_dump, f))
      {
 	printf("cannot write to %s\n", out);
 	exit(-1);
      }
    fclose(f);
-   free(data);
    eet_close(ef);
 }
 
@@ -153,7 +145,6 @@ do_eet_encode(const char *file, const char *key, const char *out, int compress)
    Eet_File *ef;
    char *text;
    int textlen = 0;
-   void *data;
    int size = 0;
    FILE *f;
 
@@ -186,15 +177,12 @@ do_eet_encode(const char *file, const char *key, const char *out, int compress)
 	exit(-1);
      }
    fclose(f);
-   data = eet_data_text_undump(text, textlen, &size);
-   if (!data)
+   if (eet_data_undump(ef, key, text, textlen, compress))
      {
         printf("cannot parse %s\n", out);
 	exit(-1);
      }
-   eet_write(ef, key, data, size, compress);
    free(text);
-   free(data);
    eet_close(ef);
 }
 

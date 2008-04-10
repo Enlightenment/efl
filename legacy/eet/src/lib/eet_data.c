@@ -2494,6 +2494,39 @@ error:
 }
 
 EAPI int
+eet_data_dump(Eet_File *ef,
+	      const char *name,
+	      void (*dumpfunc) (void *data, const char *str),
+	      void *dumpdata)
+{
+   const Eet_Dictionary *ed = NULL;
+   const void		*data;
+   int			 ret = 0;
+   int			 required_free = 0;
+   int			 size;
+
+   ed = eet_dictionary_get(ef);
+
+   data = eet_read_direct(ef, name, &size);
+   if (!data)
+     {
+	required_free = 1;
+	data = eet_read(ef, name, &size);
+	if (!data) return 0;
+     }
+
+   if (_eet_data_descriptor_decode(ed, NULL, data, size, 0,
+				   dumpfunc, dumpdata))
+     ret = 1;
+
+   if (required_free)
+     free((void*)data);
+
+   return ret;
+}
+
+
+EAPI int
 eet_data_text_dump(const void *data_in,
 		   int size_in,
 		   void (*dumpfunc) (void *data, const char *str),
@@ -2511,6 +2544,27 @@ eet_data_text_undump(const char *text,
 		     int *size_ret)
 {
    return _eet_data_dump_parse(NULL, size_ret, text, textlen);
+}
+
+EAPI int
+eet_data_undump(Eet_File *ef,
+		const char *name,
+		const char *text,
+		int textlen,
+		int compress)
+{
+   Eet_Dictionary       *ed;
+   void                 *data_enc;
+   int                   size;
+   int                   val;
+
+   ed = eet_dictionary_get(ef);
+
+   data_enc = _eet_data_dump_parse(ed, &size, text, textlen);
+   if (!data_enc) return 0;
+   val = eet_write(ef, name, data_enc, size, compress);
+   free(data_enc);
+   return val;
 }
 
 EAPI void *

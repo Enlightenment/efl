@@ -914,6 +914,45 @@ extern "C" {
    EAPI void *eet_data_text_undump(const char *text, int textlen, int *size_ret);
 
    /**
+    * Dump an eet encoded data structure from an eet file into ascii text
+    * @param ef A valid eet file handle.
+    * @param name Name of the entry. eg: "/base/file_i_want".
+    * @param dumpfunc The function to call passed a string when new data is converted to text
+    * @param dumpdata The data to pass to the @p dumpfunc callback.
+    * @return 1 on success, 0 on failure
+    *
+    * This function will take an open and valid eet file from eet_open() request
+    * the data encoded by eet_data_descriptor_encode() corresponding to the key @p name
+    * and convert it into human readable ascii text. It does this by calling the
+    * @p dumpfunc callback for all new text that is generated. This callback should
+    * append to any existing text buffer and will be passed the pointer @p dumpdata
+    * as a parameter as well as a string with new text to be appended.
+    *
+    * @since 1.0.0
+    */
+   EAPI int eet_data_dump(Eet_File *ef, const char *name, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
+
+   /**
+    * Take an ascii encoding from eet_data_dump() and re-encode in binary.
+    * @param ef A valid eet file handle.
+    * @param name Name of the entry. eg: "/base/file_i_want".
+    * @param text The pointer to the string data to parse and encode.
+    * @param textlen The size of the string in bytes (not including 0 byte terminator).
+    * @param compress Compression flags (1 == compress, 0 = don't compress).
+    * @return 1 on success, 0 on failure
+    *
+    * This function will parse the string pointed to by @p text, encode it the same
+    * way eet_data_descriptor_encode() takes an in-memory data struct and encodes into a
+    * binary blob.
+    *
+    * The data (optionally compressed) will be in ram, pending a flush to
+    * disk (it will stay in ram till the eet file handle is closed though).
+    *
+    * @since 1.0.0
+    */
+   EAPI int eet_data_undump(Eet_File *ef, const char *name, const char *text, int textlen, int compress);
+
+   /**
     * Decode a data structure from an arbitary location in memory.
     * @param edd The data  descriptor to use when decoding.
     * @param data_in The pointer to the data to decode into a struct.
