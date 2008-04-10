@@ -483,17 +483,21 @@ eet_flush2(Eet_File *ef)
 
    /* write strings */
    if (ef->ed)
-     for (j = 0; j < ef->ed->count; ++j)
-       if (ef->ed->all[j].str)
-         {
-            if (fwrite(ef->ed->all[j].str, ef->ed->all[j].len, 1, ef->fp) != 1)
-              goto write_error;
-         }
-       else
-         {
-            if (fwrite(ef->ed->all[j].mmap, ef->ed->all[j].len, 1, ef->fp) != 1)
-              goto write_error;
-         }
+     {
+	for (j = 0; j < ef->ed->count; ++j)
+	  {
+	     if (ef->ed->all[j].str)
+	       {
+		  if (fwrite(ef->ed->all[j].str, ef->ed->all[j].len, 1, ef->fp) != 1)
+		    goto write_error;
+	       }
+	     else
+	       {
+		  if (fwrite(ef->ed->all[j].mmap, ef->ed->all[j].len, 1, ef->fp) != 1)
+		    goto write_error;
+	       }
+	  }
+     }
 
    /* write data */
    for (i = 0; i < num; i++)
