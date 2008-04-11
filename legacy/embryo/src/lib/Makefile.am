@@ -9,7 +9,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@WIN32_CFLAGS@
 
 lib_LTLIBRARIES      = libembryo.la
 include_HEADERS      = Embryo.h
