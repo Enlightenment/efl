@@ -671,6 +671,243 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
 }
 
 /**
+ * @defgroup Evas_Object_Size_Hints_Group Generic Object Size Hints Functions
+ *
+ * Functions that deals with hints about object size.
+ */
+
+/**
+ * Retrieves the size hint for the minimum size.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * Note that if any of @p w or @p h are @c NULL, the @c NULL
+ * parameters are ignored.
+ *
+ * @param obj The given evas object.
+ * @param   w Pointer to an integer in which to store the minimum width.
+ * @param   h Pointer to an integer in which to store the minimum height.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (w) *w = 0; if (h) *h = 0;
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     {
+	if (w) *w = 0; if (h) *h = 0;
+	return;
+     }
+   if (w) *w = obj->size_hints.min.w;
+   if (h) *h = obj->size_hints.min.h;
+}
+
+/**
+ * Sets the size hint for the minimum size.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param obj The given evas object.
+ * @param   w Integer to use as the minimum width hint.
+ * @param   h Integer to use as the minimum height hint.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+
+   obj->size_hints.min.w = w;
+   obj->size_hints.min.h = h;
+
+   evas_object_inform_call_changed_size_hints(obj);
+}
+
+/**
+ * Retrieves the size hint for the maximum size.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * Note that if any of @p w or @p h are @c NULL, the @c NULL
+ * parameters are ignored.
+ *
+ * @param obj The given evas object.
+ * @param   w Pointer to an integer in which to store the maximum width.
+ * @param   h Pointer to an integer in which to store the maximum height.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (w) *w = 0; if (h) *h = 0;
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     {
+	if (w) *w = 0; if (h) *h = 0;
+	return;
+     }
+   if (w) *w = obj->size_hints.max.w;
+   if (h) *h = obj->size_hints.max.h;
+}
+
+/**
+ * Sets the size hint for the maximum size.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param obj The given evas object.
+ * @param   w Integer to use as the maximum width hint.
+ * @param   h Integer to use as the maximum height hint.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+
+   obj->size_hints.max.w = w;
+   obj->size_hints.max.h = h;
+
+   evas_object_inform_call_changed_size_hints(obj);
+}
+
+/**
+ * Retrieves the size request hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * Note that if any of @p w or @p h are @c NULL, the @c NULL
+ * parameters are ignored.
+ *
+ * @param obj The given evas object.
+ * @param   w Pointer to an integer in which to store the requested width.
+ * @param   h Pointer to an integer in which to store the requested height.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (w) *w = 0; if (h) *h = 0;
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     {
+	if (w) *w = 0; if (h) *h = 0;
+	return;
+     }
+   if (w) *w = obj->size_hints.request.w;
+   if (h) *h = obj->size_hints.request.h;
+}
+
+/**
+ * Sets the requested size hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param obj The given evas object.
+ * @param   w Integer to use as the preferred width hint.
+ * @param   h Integer to use as the preferred height hint.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+
+   obj->size_hints.request.w = w;
+   obj->size_hints.request.h = h;
+
+   evas_object_inform_call_changed_size_hints(obj);
+}
+
+/**
+ * Retrieves the size aspect control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * Note that if any of @p aspect, @p w or @p h are @c NULL, the @c NULL
+ * parameters are ignored.
+ *
+ * @param    obj The given evas object.
+ * @param aspect Returns the hint on how size should be calculated.
+ * @param      w Pointer to an integer in which to store the aspect width.
+ * @param      h Pointer to an integer in which to store the aspect height.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
+   if (w) *w = 0; if (h) *h = 0;
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     {
+	if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
+	if (w) *w = 0; if (h) *h = 0;
+	return;
+     }
+   if (aspect) *aspect = obj->size_hints.aspect.mode;
+   if (w) *w = obj->size_hints.aspect.size.w;
+   if (h) *h = obj->size_hints.aspect.size.h;
+}
+
+/**
+ * Sets the size aspect control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param    obj The given evas object.
+ * @param aspect Hint on how to calculate size.
+ * @param      w Integer to use as aspect width hint.
+ * @param      h Integer to use as aspect height hint.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+
+   obj->size_hints.aspect.mode = aspect;
+   obj->size_hints.aspect.size.w = w;
+   obj->size_hints.aspect.size.h = h;
+
+   evas_object_inform_call_changed_size_hints(obj);
+}
+
+
+/**
  * @defgroup Evas_Object_Visibility_Group Generic Object Visibility Functions
  *
  * Functions that deal with the visibility of evas objects.

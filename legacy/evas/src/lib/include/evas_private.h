@@ -81,6 +81,10 @@ struct _Evas_Module_Engine
 #define RENDER_METHOD_INVALID            0x00000000
 
 typedef struct _Evas_Layer                  Evas_Layer;
+typedef struct _Evas_Size                   Evas_Size;
+typedef enum _Evas_Aspect_Control           Evas_Aspect_Control;
+typedef struct _Evas_Aspect                 Evas_Aspect;
+typedef struct _Evas_Size_Hints             Evas_Size_Hints;
 typedef struct _Evas_Font_Dir               Evas_Font_Dir;
 typedef struct _Evas_Font                   Evas_Font;
 typedef struct _Evas_Font_Alias             Evas_Font_Alias;
@@ -368,6 +372,32 @@ struct _Evas_Layer
    unsigned char     delete_me : 1;
 };
 
+struct _Evas_Size
+{
+   Evas_Coord w, h;
+};
+
+enum _Evas_Aspect_Control
+{
+   EVAS_ASPECT_CONTROL_NONE = 0,
+   EVAS_ASPECT_CONTROL_NEITHER = 1,
+   EVAS_ASPECT_CONTROL_HORIZONTAL = 2,
+   EVAS_ASPECT_CONTROL_VERTICAL = 3,
+   EVAS_ASPECT_CONTROL_BOTH = 4
+};
+
+struct _Evas_Aspect
+{
+   Evas_Aspect_Control mode;
+   Evas_Size size;
+};
+
+struct _Evas_Size_Hints
+{
+   Evas_Size min, max, request;
+   Evas_Aspect aspect;
+};
+
 struct _Evas_Object
 {
    Evas_Object_List  _list_data;
@@ -439,6 +469,8 @@ struct _Evas_Object
       Evas_List        *callbacks;
       unsigned char     deletions_waiting : 1;
    } smart;
+
+   Evas_Size_Hints      size_hints;
 
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;
@@ -727,6 +759,7 @@ void evas_object_inform_call_hide(Evas_Object *obj);
 void evas_object_inform_call_move(Evas_Object *obj);
 void evas_object_inform_call_resize(Evas_Object *obj);
 void evas_object_inform_call_restack(Evas_Object *obj);
+void evas_object_inform_call_changed_size_hints(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
 int evas_object_intercept_call_show(Evas_Object *obj);
 int evas_object_intercept_call_hide(Evas_Object *obj);

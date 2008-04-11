@@ -51,7 +51,8 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_RESIZE, /**< Resize Event */
    EVAS_CALLBACK_RESTACK, /**< Restack Event */
    EVAS_CALLBACK_DEL, /**< Object Being Deleted (called before Free) */
-   EVAS_CALLBACK_HOLD /**< Events go on/off hold */
+   EVAS_CALLBACK_HOLD, /**< Events go on/off hold */
+   EVAS_CALLBACK_CHANGED_SIZE_HINTS /**< Size hints changed event */
 } Evas_Callback_Type; /**< The type of event to trigger the callback */
 
 typedef enum _Evas_Button_Flags
@@ -699,6 +700,13 @@ extern "C" {
    EAPI void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    EAPI void              evas_object_resize                (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_geometry_get          (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+   EAPI void              evas_object_size_hint_min_get     (const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_object_size_hint_min_set     (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+   EAPI void              evas_object_size_hint_max_get     (const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_object_size_hint_max_set     (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+   EAPI void              evas_object_size_hint_request_get (const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_object_size_hint_request_set (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
    EAPI void              evas_object_show                  (Evas_Object *obj);
    EAPI void              evas_object_hide                  (Evas_Object *obj);

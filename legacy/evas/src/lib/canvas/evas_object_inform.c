@@ -32,3 +32,9 @@ evas_object_inform_call_restack(Evas_Object *obj)
 {
    evas_object_event_callback_call(obj, EVAS_CALLBACK_RESTACK, NULL);
 }
+
+void
+evas_object_inform_call_changed_size_hints(Evas_Object *obj)
+{
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, NULL);
+}
