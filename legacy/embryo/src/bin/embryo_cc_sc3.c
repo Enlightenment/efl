@@ -21,6 +21,10 @@
  *  Version: $Id$
  */
 
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -2014,7 +2018,7 @@ callfunction(symbol * sym)
 /*
  * Dont need this warning - its varargs. there is no way of knowing the
  * required tag/type...
- * 
+ *
           if (!checktag(arg[argidx].tags,arg[argidx].numtags,lval.tag))
             error(213);
  */

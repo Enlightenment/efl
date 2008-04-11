@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "embryo_private.h"
 #include <fnmatch.h>
 
@@ -22,7 +26,7 @@ static Embryo_Cell
 _embryo_str_atoi(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1;
-   
+
    /* params[1] = str */
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    STRGET(ep, s1, params[1]);
@@ -34,7 +38,7 @@ static Embryo_Cell
 _embryo_str_fnmatch(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2;
-   
+
    /* params[1] = glob */
    /* params[2] = str */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
@@ -48,7 +52,7 @@ static Embryo_Cell
 _embryo_str_strcmp(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2;
-   
+
    /* params[1] = str1 */
    /* params[2] = str2 */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return -1;
@@ -62,7 +66,7 @@ static Embryo_Cell
 _embryo_str_strncmp(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2;
-   
+
    /* params[1] = str1 */
    /* params[2] = str2 */
    /* params[3] = n */
@@ -78,7 +82,7 @@ static Embryo_Cell
 _embryo_str_strcpy(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1;
-   
+
    /* params[1] = dst */
    /* params[2] = str */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
@@ -93,7 +97,7 @@ _embryo_str_strncpy(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1;
    int l;
-   
+
    /* params[1] = dst */
    /* params[2] = str */
    /* params[3] = n */
@@ -111,7 +115,7 @@ static Embryo_Cell
 _embryo_str_strlen(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1;
-   
+
    /* params[1] = str */
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    STRGET(ep, s1, params[1]);
@@ -123,7 +127,7 @@ static Embryo_Cell
 _embryo_str_strcat(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2, *s3;
-   
+
    /* params[1] = dsr */
    /* params[2] = str */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
@@ -143,7 +147,7 @@ _embryo_str_strncat(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2, *s3;
    int l1, l2;
-   
+
    /* params[1] = dst */
    /* params[2] = str */
    /* params[3] = n */
@@ -167,7 +171,7 @@ static Embryo_Cell
 _embryo_str_strprep(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2, *s3;
-   
+
    /* params[1] = dst */
    /* params[2] = str */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
@@ -187,7 +191,7 @@ _embryo_str_strnprep(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2, *s3;
    int l1, l2;
-   
+
    /* params[1] = dst */
    /* params[2] = str */
    /* params[3] = n */
@@ -212,7 +216,7 @@ _embryo_str_strcut(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2;
    int l1;
-   
+
    /* params[1] = dst */
    /* params[2] = str */
    /* params[3] = n */
@@ -227,7 +231,7 @@ _embryo_str_strcut(Embryo_Program *ep, Embryo_Cell *params)
    if (params[4] >= l1) params[4] = l1;
    if (params[4] == params[3])
      {
-	STRSET(ep, params[1], "");   
+	STRSET(ep, params[1], "");
 	return 0;
      }
    s2 = alloca(params[4] - params[3] + 1);
@@ -245,7 +249,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
    int inesc = 0;
    int insub = 0;
    int p, pnum;
-   
+
    /* params[1] = buf */
    /* params[2] = bufsize */
    /* params[3] = format_string */
@@ -273,7 +277,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 	else
 	  {
 	     Embryo_Cell *cptr;
-	     
+
 	     if (inesc)
 	       {
 		  switch (s1[i])
@@ -315,7 +319,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 			    char fmt[10] = "";
 			    char tmp[256] = "";
 			    int l;
-			    
+
 			    if      (s1[i] == 'i') strcpy(fmt, "%i");
 			    else if (s1[i] == 'd') strcpy(fmt, "%d");
 			    else if (s1[i] == 'x') strcpy(fmt, "%x");
@@ -338,7 +342,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 			 {
 			    char tmp[256] = "";
 			    int l;
-			    
+
 			    cptr = embryo_data_address_get(ep, params[4 + p]);
 			    if (cptr) snprintf(tmp, sizeof(tmp), "%f", (double)EMBRYO_CELL_TO_FLOAT(*cptr));
 			    l = strlen(tmp);
@@ -357,7 +361,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 			 {
 			    char *tmp;
 			    int l;
-			    
+
 			    STRGET(ep, tmp, params[4 + p]);
 			    l = strlen(tmp);
 			    if ((o + l) > (params[2] - 1))
@@ -381,7 +385,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 	  }
      }
    s2[o] = 0;
-   
+
    STRSET(ep, params[1], s2);
    return o;
 }
@@ -390,7 +394,7 @@ static Embryo_Cell
 _embryo_str_strstr(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2, *p;
-   
+
    /* params[1] = str */
    /* params[2] = ndl */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
@@ -406,7 +410,7 @@ static Embryo_Cell
 _embryo_str_strchr(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2, *p;
-   
+
    /* params[1] = str */
    /* params[2] = ch */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
@@ -421,7 +425,7 @@ static Embryo_Cell
 _embryo_str_strrchr(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2, *p;
-   
+
    /* params[1] = str */
    /* params[2] = ch */
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;

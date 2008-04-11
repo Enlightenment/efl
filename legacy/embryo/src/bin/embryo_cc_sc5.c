@@ -25,6 +25,10 @@
  *  Version: $Id$
  */
 
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -67,10 +71,10 @@ error(int number, ...)
     * the error reporting is enabled only in the second pass (and only when
     * actually producing output). Fatal errors may never be ignored.
     */
-   if (((errflag) || (sc_status != statWRITE)) && 
+   if (((errflag) || (sc_status != statWRITE)) &&
        ((number < 100) || (number >= 200)))
      return 0;
-   
+
    if (number < 100)
      {
 	msg = errmsg[number - 1];
@@ -121,7 +125,7 @@ error(int number, ...)
      }				/* if */
 
    /* check whether we are seeing many errors on the same line */
-   if (((errstart < 0) && (lastline != fline)) || 
+   if (((errstart < 0) && (lastline != fline)) ||
        (lastline < errstart) || (lastline > fline) || (fcurrent != lastfile))
       errorcount = 0;
    lastline = fline;

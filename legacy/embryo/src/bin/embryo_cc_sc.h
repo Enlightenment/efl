@@ -27,6 +27,7 @@
  *      misrepresented as being the original software.
  *  3.  This notice may not be removed or altered from any source distribution.
  */
+
 #ifndef EMBRYO_CC_SC_H
 #define EMBRYO_CC_SC_H
 

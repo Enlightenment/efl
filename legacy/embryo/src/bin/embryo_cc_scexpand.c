@@ -10,8 +10,11 @@
  * Riemersma) to accept a string as input, instead of a
  * complete file.
  */
-#include <assert.h>
-#include <stdio.h>
+
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "embryo_cc_sc.h"
 
 #define STACKSIZE 16
@@ -31,7 +34,7 @@ strexpand(char *dest, unsigned char *source, int maxlen, unsigned char pairtable
 	  c = stack[--top];
 	else if ((c = *(unsigned char *)source++) == '\0')
 	  break;
-	
+
 	/* Push pair on stack or output byte to the output string */
 	if (c > 127)
 	  {

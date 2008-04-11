@@ -1,8 +1,9 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 
 #include <stdio.h>
@@ -22,7 +23,7 @@
 #include <dirent.h>
 #include <dlfcn.h>      /* dlopen,dlclose,etc */
 #ifdef HAVE_EVIL
-# include <Evil.h>      /* for realpath */ 
+# include <Evil.h>      /* for realpath */
 #else
 # include <pwd.h>
 # include <grp.h>
@@ -76,7 +77,7 @@ e_prefix_determine(char *argv0)
 	else
 	  snprintf(buf, sizeof(buf), "%s/lib", _prefix_path);
 	_prefix_path_lib = strdup(buf);
-	
+
 	if (getenv("E_DATA_DIR"))
 	  snprintf(buf, sizeof(buf), "%s/"SHARE_D, getenv("E_DATA_DIR"));
 	else
@@ -121,7 +122,7 @@ e_prefix_determine(char *argv0)
 		       _prefix_path_bin = strdup(buf);
 		       snprintf(buf, sizeof(buf), "%s/lib", _prefix_path);
 		       _prefix_path_lib = strdup(buf);
-		       
+
 		       /* check if AUTHORS file is there - then our guess is right */
 		       snprintf(buf, sizeof(buf), "%s/"MAGIC_DAT, _prefix_path);
 		       if (stat(buf, &st) == 0)
@@ -166,7 +167,7 @@ e_prefix_shutdown(void)
    E_FREE(_prefix_path_data);
    E_FREE(_prefix_path_lib);
 }
-   
+
 void
 e_prefix_fallback(void)
 {
@@ -207,18 +208,18 @@ _e_prefix_share_hunt(void)
 
    /* sometimes this isnt the case - so we need to do a more exhaustive search
     * through more parent and subdirs. hre is an example i have seen:
-    * 
+    *
     * /blah/whatever/exec/bin/exe
     * ->
     * /blah/whatever/exec/bin
     * /blah/whatever/common/share/enlightenment
     * /blah/whatever/exec/lib
     */
-   
+
    /* this is pure black magic to try and find data shares */
    /* 2. cache file doesn't exist or is invalid - we need to search - this is
     * where the real black magic begins */
-   
+
    /* BLACK MAGIC 1:
     * /blah/whatever/dir1/bin
     * /blah/whatever/dir2/share/enlightenment
@@ -227,7 +228,7 @@ _e_prefix_share_hunt(void)
      {
 	DIR                *dirp;
 	struct dirent      *dp;
-	
+
 	snprintf(buf, sizeof(buf), "%s", _prefix_path);
 	p = strrchr(buf, '/');
 	if (p) *p = 0;
@@ -235,7 +236,7 @@ _e_prefix_share_hunt(void)
 	if (dirp)
 	  {
 	     char *file;
-	     
+
 	     while ((dp = readdir(dirp)))
 	       {
 		  if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
@@ -253,7 +254,7 @@ _e_prefix_share_hunt(void)
 	     closedir(dirp);
 	  }
      }
-   
+
    /* BLACK MAGIC 2:
     * /blah/whatever/dir1/bin
     * /blah/whatever/share/enlightenment
@@ -270,13 +271,13 @@ _e_prefix_share_hunt(void)
 	     _prefix_path_data = strdup(buf2);
 	  }
      }
-   
+
    /* add more black magic as required as we discover weridnesss - remember
     * this is to save users having to set environment variables to tell
     * e where it lives, so e auto-adapts. so these code snippets are just
     * logic to figure that out for the user
     */
-   
+
    /* done. we found it - write cache file */
    if (_prefix_path_data)
      {
@@ -328,7 +329,7 @@ _e_prefix_try_proc(void)
 	int len;
 	char *p, mode[5] = "";
 	unsigned long ptr1 = 0, ptr2 = 0;
-	
+
 	len = strlen(buf);
 	if (buf[len - 1] == '\n')
 	  {
@@ -369,7 +370,7 @@ _e_prefix_try_argv(char *argv0)
    char *path, *p, *cp, *s;
    int len, lenexe;
    char buf[4096], buf2[4096], buf3[4096];
-   
+
    /* 1. is argv0 abs path? */
    if (argv0[0] == '/')
      {

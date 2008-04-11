@@ -269,19 +269,19 @@ struct _Embryo_Program
    Embryo_Native *native_calls;
    int            native_calls_size;
    int            native_calls_alloc;
-   
+
    unsigned char *code;
    unsigned char  dont_free_code : 1;
    Embryo_Cell    retval;
-   
+
    Embryo_Param  *params;
    int            params_size;
    int            params_alloc;
-   
+
    int            run_count;
-   
+
    int            max_run_cycles;
-   
+
    void          *data;
 };
 
@@ -317,5 +317,5 @@ void _embryo_fp_init(Embryo_Program *ep);
 void _embryo_rand_init(Embryo_Program *ep);
 void _embryo_str_init(Embryo_Program *ep);
 void _embryo_time_init(Embryo_Program *ep);
-    
+
 #endif

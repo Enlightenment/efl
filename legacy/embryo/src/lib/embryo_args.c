@@ -1,6 +1,7 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
 #include "embryo_private.h"
 
 #define STRSET(ep, par, str) { \
@@ -17,10 +18,10 @@ _embryo_args_numargs(Embryo_Program *ep, Embryo_Cell *params __UNUSED__)
    Embryo_Header *hdr;
    unsigned char *data;
    Embryo_Cell bytes;
-   
+
    hdr = (Embryo_Header *)ep->base;
    data = ep->base + (int)hdr->dat;
-   bytes = *(Embryo_Cell *)(data + (int)ep->frm + 
+   bytes = *(Embryo_Cell *)(data + (int)ep->frm +
 			    (2 * sizeof(Embryo_Cell)));
    return bytes / sizeof(Embryo_Cell);
 }
@@ -31,11 +32,11 @@ _embryo_args_getarg(Embryo_Program *ep, Embryo_Cell *params)
    Embryo_Header *hdr;
    unsigned char *data;
    Embryo_Cell val;
-   
+
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    hdr = (Embryo_Header *)ep->base;
    data = ep->base + (int)hdr->dat;
-   val = *(Embryo_Cell *)(data + (int)ep->frm + 
+   val = *(Embryo_Cell *)(data + (int)ep->frm +
 			  (((int)params[1] + 3) * sizeof(Embryo_Cell)));
    val += params[2] * sizeof(Embryo_Cell);
    val = *(Embryo_Cell *)(data + (int)val);
@@ -48,11 +49,11 @@ _embryo_args_setarg(Embryo_Program *ep, Embryo_Cell *params)
    Embryo_Header *hdr;
    unsigned char *data;
    Embryo_Cell val;
-   
+
    if (params[0] != (3 * sizeof(Embryo_Cell))) return 0;
    hdr = (Embryo_Header *)ep->base;
    data = ep->base + (int)hdr->dat;
-   val = *(Embryo_Cell *)(data + (int)ep->frm + 
+   val = *(Embryo_Cell *)(data + (int)ep->frm +
 			  (((int)params[1] + 3) * sizeof(Embryo_Cell)));
    val += params[2] * sizeof(Embryo_Cell);
    if ((val < 0) || ((val >= ep->hea) && (val < ep->stk))) return 0;

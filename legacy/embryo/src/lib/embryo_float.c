@@ -35,6 +35,11 @@
  *             E coding style. Added extra parameter checks.
  *             Carsten Haitzler, <raster@rasterman.com>
  */
+
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include <math.h>
 #include "embryo_private.h"
 
@@ -64,7 +69,7 @@ _embryo_fp(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 {
    /* params[1] = long value to convert to a float */
    float f;
-   
+
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    f = (float)params[1];
    return EMBRYO_FLOAT_TO_CELL(f);
@@ -78,7 +83,7 @@ _embryo_fp_str(Embryo_Program *ep, Embryo_Cell *params)
    Embryo_Cell *str;
    float f;
    int len;
-   
+
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    str = embryo_data_address_get(ep, params[1]);
    len = embryo_data_string_length_get(ep, str);
@@ -94,7 +99,7 @@ _embryo_fp_mul(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
    float f;
-   
+
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]) * EMBRYO_CELL_TO_FLOAT(params[2]);
    return EMBRYO_FLOAT_TO_CELL(f);
@@ -106,7 +111,7 @@ _embryo_fp_div(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
    /* params[1] = float dividend (top) */
    /* params[2] = float divisor (bottom) */
    float f;
-   
+
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]) / EMBRYO_CELL_TO_FLOAT(params[2]);
    return EMBRYO_FLOAT_TO_CELL(f);
@@ -118,7 +123,7 @@ _embryo_fp_add(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
    float f;
-   
+
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]) + EMBRYO_CELL_TO_FLOAT(params[2]);
    return EMBRYO_FLOAT_TO_CELL(f);
@@ -130,7 +135,7 @@ _embryo_fp_sub(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
    float f;
-   
+
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]) - EMBRYO_CELL_TO_FLOAT(params[2]);
    return EMBRYO_FLOAT_TO_CELL(f);
@@ -142,7 +147,7 @@ _embryo_fp_fract(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
-   
+
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    f -= (float)(floor((double)f));
@@ -156,7 +161,7 @@ _embryo_fp_round(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
    /* params[1] = float operand */
    /* params[2] = Type of rounding (cell) */
    float f;
-   
+
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    switch (params[2])
@@ -198,7 +203,7 @@ _embryo_fp_sqroot(Embryo_Program *ep, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
-   
+
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    f = (float)sqrt(f);
@@ -278,7 +283,7 @@ _embryo_fp_tan(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
    /* params[1] = float operand 1 (angle) */
    /* params[2] = float operand 2 (radix) */
    float f;
-   
+
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    f = _embryo_fp_degrees_to_radians(f, params[2]);
@@ -291,7 +296,7 @@ _embryo_fp_abs(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
-   
+
    if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    f = (f >= 0) ? f : -f;

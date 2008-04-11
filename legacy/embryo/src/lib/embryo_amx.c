@@ -19,6 +19,11 @@
  *      misrepresented as being the original software.
  *  3.  This notice may not be removed or altered from any source distribution.
  */
+
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "embryo_private.h"
 
 #define JUMPABS(base, ip)     ((Embryo_Cell *)(code + (*ip)))
@@ -37,7 +42,7 @@ static void
 _embryo_byte_swap_16(unsigned short *v)
 {
    unsigned char *s, t;
-   
+
    s = (unsigned char *)v;
    t = s[0]; s[0] = s[1]; s[1] = t;
 }
@@ -46,7 +51,7 @@ static void
 _embryo_byte_swap_32(unsigned int *v)
 {
    unsigned char *s, t;
-   
+
    s = (unsigned char *)v;
    t = s[0]; s[0] = s[3]; s[3] = t;
    t = s[1]; s[1] = s[2]; s[2] = t;
@@ -62,7 +67,7 @@ _embryo_native_call(Embryo_Program *ep, Embryo_Cell index, Embryo_Cell *result, 
 
    hdr = (Embryo_Header *)ep->base;
    func_entry = GETENTRY(hdr, natives, index);
-   if ((func_entry->address <= 0) || 
+   if ((func_entry->address <= 0) ||
        (func_entry->address > ep->native_calls_size))
      {
 	ep->error = EMBRYO_ERROR_CALLBACK;
@@ -84,11 +89,11 @@ _embryo_func_get(Embryo_Program *ep, int index, char *funcname)
 {
    Embryo_Header    *hdr;
    Embryo_Func_Stub *func;
-   
+
    hdr = (Embryo_Header *)ep->code;
    if (index >= (Embryo_Cell)NUMENTRIES(hdr, publics, natives))
      return EMBRYO_ERROR_INDEX;
-   
+
    func = GETENTRY(hdr, publics, index);
    strcpy(funcname, GETENTRYNAME(hdr, func));
    return EMBRYO_ERROR_NONE;
@@ -115,7 +120,7 @@ static int
 _embryo_program_init(Embryo_Program *ep, void *code)
 {
    Embryo_Header    *hdr;
-   
+
    if ((ep->flags & EMBRYO_FLAG_RELOC)) return 1;
    ep->code = (unsigned char *)code;
    hdr = (Embryo_Header *)ep->code;
@@ -136,30 +141,30 @@ _embryo_program_init(Embryo_Program *ep, void *code)
    embryo_swap_32((unsigned int *)&hdr->tags);
    embryo_swap_32((unsigned int *)&hdr->nametable);
 #endif
-   
+
    if (hdr->magic != EMBRYO_MAGIC) return 0;
    if ((hdr->file_version < MIN_FILE_VERSION) ||
       (hdr->ep_version > CUR_FILE_VERSION)) return 0;
-   if ((hdr->defsize != sizeof(Embryo_Func_Stub)) && 
+   if ((hdr->defsize != sizeof(Embryo_Func_Stub)) &&
       (hdr->defsize != (2 * sizeof(unsigned int)))) return 0;
    if (hdr->defsize == (2 * sizeof(unsigned int)))
      {
 	unsigned short *len;
-	
+
 	len = (unsigned short*)((unsigned char*)ep->code + hdr->nametable);
 #ifdef WORDS_BIGENDIAN
 	embryo_swap_16((unsigned short *)len);
-#endif	
+#endif
 	if (*len > sNAMEMAX) return 0;
      }
    if (hdr->stp <= 0) return 0;
    if ((hdr->flags & EMBRYO_FLAG_COMPACT)) return 0;
-   
+
 #ifdef WORDS_BIGENDIAN
      {
 	Embryo_Func_Stub *fs;
 	int i, num;
-	
+
 	/* also align all addresses in the public function, public variable and */
 	/* public tag tables */
 	fs = GETENTRY(hdr, publics, 0);
@@ -169,7 +174,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 	     embryo_swap_32(&(fs->address));
 	     fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
 	  }
-	
+
 	fs = GETENTRY(hdr, pubvars, 0);
 	num = NUMENTRIES(hdr, pubvars, tags);
 	for (i = 0; i < num; i++)
@@ -177,7 +182,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 	     embryo_swap_32(&(fs->address));
 	     fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
 	  }
-	
+
 	fs = GETENTRY(hdr, tags, 0);
 	num = NUMENTRIES(hdr, tags, nametable);
 	for (i = 0; i < num; i++)
@@ -186,13 +191,13 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 	     fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
 	  }
      }
-#endif   
+#endif
    ep->flags = EMBRYO_FLAG_RELOC;
 
      {
 	Embryo_Cell cip, code_size;
 	Embryo_Cell *code;
-	
+
 	code_size = hdr->dat - hdr->cod;
 	code = (Embryo_Cell *)((unsigned char *)ep->code + (int)hdr->cod);
 	for (cip = 0; cip < (code_size / sizeof(Embryo_Cell)); cip++)
@@ -203,7 +208,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 #ifdef WORDS_BIGENDIAN
 	     embryo_swap_32(&(code[cip]));
 #endif
-	     
+
 	  }
      }
    /* init native api for handling floating point - default in embryo */
@@ -235,12 +240,12 @@ embryo_program_new(void *data, int size)
 {
    Embryo_Program *ep;
    void *code_data;
-   
+
    if (size < (int)sizeof(Embryo_Header)) return NULL;
-   
+
    ep = calloc(1, sizeof(Embryo_Program));
    if (!ep) return NULL;
-   
+
    code_data = malloc(size);
    if (!code_data)
      {
@@ -255,7 +260,7 @@ embryo_program_new(void *data, int size)
 }
 
 /**
- * Creates a new Embryo program, with bytecode data that cannot be 
+ * Creates a new Embryo program, with bytecode data that cannot be
  * freed.
  * @param   data Pointer to the bytecode of the program.
  * @param   size Number of bytes of bytecode.
@@ -266,12 +271,12 @@ EAPI Embryo_Program *
 embryo_program_const_new(void *data, int size)
 {
    Embryo_Program *ep;
-   
+
    if (size < (int)sizeof(Embryo_Header)) return NULL;
-   
+
    ep = calloc(1, sizeof(Embryo_Program));
    if (!ep) return NULL;
-   
+
    if (_embryo_program_init(ep, data))
      {
 	ep->dont_free_code = 1;
@@ -296,7 +301,7 @@ embryo_program_load(char *file)
    FILE *f;
    void *program = NULL;
    int program_size = 0;
-   
+
    f = fopen(file, "rb");
    if (!f) return NULL;
    fseek(f, 0, SEEK_END);
@@ -315,7 +320,7 @@ embryo_program_load(char *file)
    rewind(f);
 #ifdef WORDS_BIGENDIAN
    embryo_swap_32((unsigned int *)(&hdr.size));
-#endif   
+#endif
    if ((int)hdr.size < program_size) program_size = hdr.size;
    program = malloc(program_size);
    if (!program)
@@ -344,7 +349,7 @@ EAPI void
 embryo_program_free(Embryo_Program *ep)
 {
    int i;
-   
+
    if (ep->base) free(ep->base);
    if ((!ep->dont_free_code) && (ep->code)) free(ep->code);
    if (ep->native_calls) free(ep->native_calls);
@@ -379,7 +384,7 @@ embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell
 
    if ((ep == NULL ) || (name == NULL) || (func == NULL)) return;
    if (strlen(name) > sNAMEMAX) return;
-   
+
    hdr = (Embryo_Header *)ep->code;
    if (hdr->defsize < 1) return;
    num = NUMENTRIES(hdr, natives, libraries);
@@ -389,9 +394,9 @@ embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell
    if (ep->native_calls_size > ep->native_calls_alloc)
      {
 	Embryo_Native *calls;
-	
+
 	ep->native_calls_alloc += 16;
-	calls = realloc(ep->native_calls, 
+	calls = realloc(ep->native_calls,
 			ep->native_calls_alloc * sizeof(Embryo_Native));
 	if (!calls)
 	  {
@@ -402,14 +407,14 @@ embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell
 	ep->native_calls = calls;
      }
    ep->native_calls[ep->native_calls_size - 1] = func;
-   
+
    func_entry = GETENTRY(hdr, natives, 0);
    for (i = 0; i < num; i++)
      {
 	if (func_entry->address == 0)
 	  {
 	     char *entry_name;
-	     
+
 	     entry_name = GETENTRYNAME(hdr, func_entry);
 	     if ((entry_name) && (!strcmp(entry_name, name)))
 	       {
@@ -420,7 +425,7 @@ embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell
 		  /* return; */
 	       }
 	  }
-	func_entry = 
+	func_entry =
 	  (Embryo_Func_Stub *)((unsigned char *)func_entry + hdr->defsize);
      }
 }
@@ -453,12 +458,12 @@ EAPI void
 embryo_program_vm_reset(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
-   
+
    if ((!ep) || (!ep->base)) return;
    hdr = (Embryo_Header *)ep->code;
    memcpy(ep->base, hdr, hdr->size);
    *(Embryo_Cell *)(ep->base + (int)hdr->stp - sizeof(Embryo_Cell)) = 0;
-   
+
    ep->hlw = hdr->hea - hdr->dat; /* stack and heap relative to data segment */
    ep->stp = hdr->stp - hdr->dat - sizeof(Embryo_Cell);
    ep->hea = ep->hlw;
@@ -549,7 +554,7 @@ embryo_swap_32(unsigned int *v)
 {
 #ifdef WORDS_BIGENDIAN
    _embryo_byte_swap_32(v);
-#endif   
+#endif
 }
 
 /**
@@ -642,14 +647,14 @@ EAPI int
 embryo_program_variable_count_get(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
-   
+
    if (!ep) return 0;
    if (!ep->base) return 0;
    hdr = (Embryo_Header *)ep->base;
    return NUMENTRIES(hdr, pubvars, tags);
 }
 
-/** 
+/**
  * Retrieves the location of the public variable in the given program
  * with the given identifier.
  * @param   ep  The given program.
@@ -664,7 +669,7 @@ embryo_program_variable_get(Embryo_Program *ep, int num)
    Embryo_Header *hdr;
    Embryo_Cell    paddr;
    char           pname[sNAMEMAX + 1];
-   
+
    if (!ep) return EMBRYO_CELL_NONE;
    if (!ep->base) return EMBRYO_CELL_NONE;
    hdr = (Embryo_Header *)ep->base;
@@ -708,7 +713,7 @@ embryo_program_error_get(Embryo_Program *ep)
 /**
  * @defgroup Embryo_Program_Data_Group Program Data Functions
  *
- * Functions that set and retrieve data associated with the given 
+ * Functions that set and retrieve data associated with the given
  * program.
  */
 
@@ -799,7 +804,7 @@ embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell)
 {
    int            len;
    Embryo_Header *hdr;
-   
+
    if ((!ep) || (!ep->base)) return 0;
    hdr = (Embryo_Header *)ep->base;
    if ((!str_cell) ||
@@ -822,7 +827,7 @@ embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
 {
    int            i;
    Embryo_Header *hdr;
-   
+
    if (!dst) return;
    if ((!ep) || (!ep->base))
      {
@@ -842,14 +847,14 @@ embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
 #ifdef WORDS_BIGENDIAN
 	  {
 	     Embryo_Cell tmp;
-	     
+
 	     tmp = str_cell[i];
 	     _embryo_byte_swap_32(&tmp);
 	     dst[i] = tmp;
 	  }
 #else
 	dst[i] = str_cell[i];
-#endif	
+#endif
      }
    dst[i] = 0;
 }
@@ -867,7 +872,7 @@ embryo_data_string_set(Embryo_Program *ep, const char *src, Embryo_Cell *str_cel
 {
    int            i;
    Embryo_Header *hdr;
-   
+
    if (!ep) return;
    if (!ep->base) return;
    hdr = (Embryo_Header *)ep->base;
@@ -891,14 +896,14 @@ embryo_data_string_set(Embryo_Program *ep, const char *src, Embryo_Cell *str_cel
 #ifdef WORDS_BIGENDIAN
 	  {
 	     Embryo_Cell tmp;
-	     
+
 	     tmp = src[i];
 	     _embryo_byte_swap_32(&tmp);
 	     str_cell[i] = tmp;
 	  }
 #else
 	str_cell[i] = src[i];
-#endif	
+#endif
      }
    str_cell[i] = 0;
 }
@@ -916,7 +921,7 @@ embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr)
 {
    Embryo_Header *hdr;
    unsigned char *data;
-   
+
    if ((!ep) || (!ep->base)) return NULL;
    hdr = (Embryo_Header *)ep->base;
    data = ep->base + (int)hdr->dat;
@@ -1012,7 +1017,7 @@ embryo_program_recursion_get(Embryo_Program *ep)
 #endif
 
 /**
- * Runs the given function of the given Embryo program in the current 
+ * Runs the given function of the given Embryo program in the current
  * virtual machine.  The parameter @p fn can be found using
  * @ref embryo_program_function_find.
  *
@@ -1216,7 +1221,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	  &&SWITCHTABLE_EMBRYO_OP_NONE, &&SWITCHTABLE_EMBRYO_OP_NONE, &&SWITCHTABLE_EMBRYO_OP_NONE, &&SWITCHTABLE_EMBRYO_OP_NONE, &&SWITCHTABLE_EMBRYO_OP_NONE,
 	  &&SWITCHTABLE_EMBRYO_OP_NONE, &&SWITCHTABLE_EMBRYO_OP_NONE, &&SWITCHTABLE_EMBRYO_OP_NONE, &&SWITCHTABLE_EMBRYO_OP_NONE
      };
-#endif     
+#endif
    if (!ep) return EMBRYO_PROGRAM_FAIL;
    if (!(ep->flags & EMBRYO_FLAG_RELOC))
      {
@@ -1234,7 +1239,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	/* FIXME: test C->vm->C->vm recursion more fully */
 	/* it seems to work... just fine!!! - strange! */
      }
-   
+
    /* set up the registers */
    hdr = (Embryo_Header *)ep->base;
    codesize = (Embryo_UCell)(hdr->dat - hdr->cod);
@@ -1290,17 +1295,17 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
    if (fn != EMBRYO_FUNCTION_CONT)
      {
 	int i;
-	
+
 	for (i = ep->params_size - 1; i >= 0; i--)
 	  {
 	     Embryo_Param *pr;
-	     
+
 	     pr = &(ep->params[i]);
 	     if (pr->string)
 	       {
 		  int len;
 		  Embryo_Cell ep_addr, *addr;
-		  
+
 		  len = strlen(pr->string);
 		  ep_addr = embryo_data_heap_push(ep, len + 1);
 		  if (ep_addr == EMBRYO_CELL_NONE)
@@ -1323,7 +1328,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	       {
 		  int len;
 		  Embryo_Cell ep_addr, *addr;
-		  
+
 		  len = pr->cell_array_size;
 		  ep_addr = embryo_data_heap_push(ep, len + 1);
 		  if (ep_addr == EMBRYO_CELL_NONE)
@@ -1333,7 +1338,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 		    }
 		  addr = embryo_data_address_get(ep, ep_addr);
 		  if (addr)
-		    memcpy(addr, pr->cell_array, 
+		    memcpy(addr, pr->cell_array,
 			   pr->cell_array_size * sizeof(Embryo_Cell));
 		  else
 		    {
@@ -1532,14 +1537,14 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 #ifdef WORDS_BIGENDIAN
 	if ((size_t)offs < sizeof(Embryo_Cell))
 	  pri ^= sizeof(Embryo_Cell) - offs;
-#endif       
+#endif
 	BREAK;
 	CASE(EMBRYO_OP_ALIGN_ALT);
 	GETPARAM(offs);
 #ifdef WORDS_BIGENDIAN
 	if ((size_t)offs < sizeof(Embryo_Cell))
 	  alt ^= sizeof(Embryo_Cell) - offs;
-#endif       
+#endif
 	BREAK;
 	CASE(EMBRYO_OP_LCTRL);
 	GETPARAM(offs);
@@ -1968,8 +1973,8 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	GETPARAM(offs);
 	CHKMEM(alt);
 	CHKMEM(alt + offs);
-	for (i = (int)alt; 
-	     (size_t)offs >= sizeof(Embryo_Cell); 
+	for (i = (int)alt;
+	     (size_t)offs >= sizeof(Embryo_Cell);
 	     i += sizeof(Embryo_Cell), offs -= sizeof(Embryo_Cell))
 	  *(Embryo_Cell *)(data + i) = pri;
 	BREAK;
@@ -2040,14 +2045,14 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 		  Embryo_Header    *hdr;
 		  int i, num;
 		  Embryo_Func_Stub *func_entry;
-		  
+
 		  hdr = (Embryo_Header *)ep->code;
 		  num = NUMENTRIES(hdr, natives, libraries);
 		  func_entry = GETENTRY(hdr, natives, 0);
 		  for (i = 0; i < num; i++)
 		    {
 		       char *entry_name;
-		       
+
 		       entry_name = GETENTRYNAME(hdr, func_entry);
 		       if (i == offs)
 			 printf("EMBRYO: CALL [%i] %s() non-existant!\n", i, entry_name);
@@ -2086,15 +2091,15 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	CASE(EMBRYO_OP_SWITCH);
 	  {
 	     Embryo_Cell *cptr;
-	     
+
 	     /* +1, to skip the "casetbl" opcode */
 	     cptr = (Embryo_Cell *)(code + (*cip)) + 1;
 	     /* number of records in the case table */
 	     num = (int)(*cptr);
 	     /* preset to "none-matched" case */
 	     cip = (Embryo_Cell *)(code + *(cptr + 1));
-	     for (cptr += 2; 
-		  (num > 0) && (*cptr != pri); 
+	     for (cptr += 2;
+		  (num > 0) && (*cptr != pri);
 		  num--, cptr += 2);
 	     /* case found */
 	     if (num > 0)
@@ -2128,7 +2133,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 #ifndef EMBRYO_EXEC_JUMPTABLE
       default:
 	ABORT(ep, EMBRYO_ERROR_INVINSTR);
-#endif		
+#endif
 	SWITCHEND;
      }
    ep->max_run_cycles = max_run_cycles;
@@ -2155,26 +2160,26 @@ embryo_program_return_value_get(Embryo_Program *ep)
 /**
  * Sets the maximum number of abstract machine cycles any given program run
  * can execute before being put to sleep and returning.
- * 
+ *
  * @param   ep The given program.
  * @param   max The number of machine cycles as a limit.
- * 
+ *
  * This sets the maximum number of abstract machine (virtual machine)
  * instructions that a single run of an embryo function (even if its main)
  * can use before embryo embryo_program_run() reutrns with the value
  * EMBRYO_PROGRAM_TOOLONG. If the function fully executes within this number
- * of cycles, embryo_program_run() will return as normal with either 
+ * of cycles, embryo_program_run() will return as normal with either
  * EMBRYO_PROGRAM_OK, EMBRYO_PROGRAM_FAIL or EMBRYO_PROGRAM_SLEEP. If the
  * run exceeds this instruction count, then EMBRYO_PROGRAM_TOOLONG will be
  * returned indicating the program exceeded its run count. If the app wishes
  * to continue running this anyway - it is free to process its own events or
- * whatever it wants and continue the function by calling 
+ * whatever it wants and continue the function by calling
  * embryo_program_run(program, EMBRYO_FUNCTION_CONT); which will start the
  * run again until the instruction count is reached. This can keep being done
  * to allow the calling program to still be able to control things outside the
  * embryo function being called. If the maximum run cycle count is 0 then the
  * program is allowed to run forever only returning when it is done.
- * 
+ *
  * It is important to note that abstract machine cycles are NOT the same as
  * the host machine cpu cycles. They are not fixed in runtime per cycle, so
  * this is more of a helper tool than a way to HARD-FORCE a script to only
@@ -2188,16 +2193,16 @@ embryo_program_return_value_get(Embryo_Program *ep)
  * on how loaded the system is. Making the max cycle run too low will
  * impact performance requiring the abstract machine to do setup and teardown
  * cycles too often comapred to cycles actually executed.
- * 
+ *
  * Also note it does NOT include nested abstract machines. IF this abstract
  * machine run calls embryo script that calls a native function that in turn
  * calls more embryo script, then the 2nd (and so on) levels are not included
  * in this run count. They can set their own max instruction count values
  * separately.
- * 
+ *
  * The default max cycle run value is 0 in any program until set with this
  * function.
- * 
+ *
  * @ingroup Embryo_Run_Group
  */
 EAPI void
@@ -2212,12 +2217,12 @@ embryo_program_max_cycle_run_set(Embryo_Program *ep, int max)
  * Retreives the maximum number of abstract machine cycles a program is allowed
  * to run.
  * @param   ep The given program.
- * @return  The number of cycles a run cycle is allowed to run for this 
+ * @return  The number of cycles a run cycle is allowed to run for this
  *          program.
- * 
+ *
  * This returns the value set by embryo_program_max_cycle_run_set(). See
  * embryo_program_max_cycle_run_set() for more information.
- * 
+ *
  * @ingroup Embryo_Run_Group
  */
 EAPI int
@@ -2245,7 +2250,7 @@ EAPI int
 embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell)
 {
    Embryo_Param *pr;
-   
+
    ep->params_size++;
    if (ep->params_size > ep->params_alloc)
      {
@@ -2276,7 +2281,7 @@ embryo_parameter_string_push(Embryo_Program *ep, const char *str)
 {
    Embryo_Param *pr;
    char *str_dup;
-   
+
    if (!str)
      return embryo_parameter_string_push(ep, "");
    str_dup = strdup(str);
@@ -2316,7 +2321,7 @@ embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num
 {
    Embryo_Param *pr;
    Embryo_Cell *cell_array;
-   
+
    cell_array = malloc(num * sizeof(Embryo_Cell));
    if ((!cells) || (num <= 0))
      return embryo_parameter_cell_push(ep, 0);

@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "embryo_private.h"
 
 /* exported random number api */
@@ -13,7 +17,7 @@ _embryo_rand_randf(Embryo_Program *ep __UNUSED__, Embryo_Cell *params __UNUSED__
 {
    double r;
    float f;
-   
+
    r = (double)(rand() & 0xffff) / 65535.0;
    f = (float)r;
    return EMBRYO_FLOAT_TO_CELL(f);
