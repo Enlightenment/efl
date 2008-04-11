@@ -606,7 +606,7 @@ if test "x$have_ecore_fb" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   AC_MSG_RESULT($want_ecore_evas_fb)
   
   if test "x$want_ecore_evas_fb" = "xyes"; then
-    PKG_CHECK_MODULES(EVAS_FRAMEBUFFER, evas-framebuffer,
+    PKG_CHECK_MODULES(EVAS_FB, evas-fb,
       [
         AC_DEFINE(BUILD_ECORE_EVAS_FB, 1, [Support for Linux FB in Ecore_Evas])
         have_ecore_evas_fb="yes"

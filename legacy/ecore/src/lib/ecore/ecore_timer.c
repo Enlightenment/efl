@@ -97,7 +97,61 @@ ecore_timer_interval_set(Ecore_Timer *timer, double in)
 }
 
 /**
- * 
+ * Add some delay for the next occurence of a timer.
+ * This doesn't affect the interval of a timer.
+ *
+ * @param   timer The timer to change.
+ * @param   add   The dalay to add to the next iteration.
+ * @ingroup Ecore_Time_Group
+ */
+EAPI void
+ecore_timer_delay(Ecore_Timer *timer, double add)
+{
+   if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
+     {
+	ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
+			 "ecore_timer_delay");
+	return;
+     }
+
+   if (timer->frozen)
+     {
+	timer->pending += add;
+     }
+   else
+     {
+	timers = _ecore_list2_remove(timers, timer);
+	_ecore_timer_set(timer, timer->at + add, timer->in, timer->func, timer->data);
+     }
+}
+
+/**
+ * Get the pending time regarding a timer.
+ *
+ * @param	timer The timer to learn from.
+ * @ingroup	Ecore_Time_Group
+ */
+EAPI double
+ecore_timer_pending_get(Ecore_Timer *timer)
+{
+   double	now;
+
+   if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
+     {
+	ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
+			 "ecore_timer_pending_get");
+	return 0;
+     }
+
+   now = ecore_time_get();
+
+   if (timer->frozen)
+     return timer->pending;
+   return timer->at - now;
+}
+
+/**
+ *
  *
  */
 EAPI void
