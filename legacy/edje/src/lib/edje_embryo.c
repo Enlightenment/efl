@@ -174,6 +174,7 @@
  * set_clip(part_id, clip_part_id)
  * get_clip(part_id)
  *
+ * part_swallow(part_id, group_name)
  *
  * ADD/DEL CUSTOM OBJECTS UNDER SOLE EMBRYO SCRIPT CONTROL
  *
@@ -2129,6 +2130,42 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* part_swallow(part_id, group_name) */
+static Embryo_Cell
+_edje_embryo_fn_part_swallow(Embryo_Program *ep, Embryo_Cell *params)
+{
+   int part_id = 0;
+   char* group_name = 0;
+   Edje *ed;
+   Edje_Real_Part *rp;
+   Evas_Object *new_obj;
+   
+   CHKPARAM(2);
+
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   GETSTR(group_name, params[2]);
+   if (!group_name) return 0;
+
+   ed = embryo_program_data_get(ep);
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (!rp) return 0;
+
+   new_obj =  edje_object_add(ed->evas);
+   if (!new_obj) return 0;
+
+   if (!edje_object_file_set(new_obj, ed->file->path, group_name)) 
+     {
+        evas_object_del(new_obj);
+        return 0;
+     }
+   edje_object_part_swallow(ed->obj, rp->part->name, new_obj);
+
+   return 0;
+}
+
 void
 _edje_embryo_script_init(Edje *ed)
 {
@@ -2202,6 +2239,8 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "custom_state", _edje_embryo_fn_custom_state);
    embryo_program_native_call_add(ep, "set_state_val", _edje_embryo_fn_set_state_val);
    embryo_program_native_call_add(ep, "get_state_val", _edje_embryo_fn_get_state_val);
+
+   embryo_program_native_call_add(ep, "part_swallow", _edje_embryo_fn_part_swallow);
 
 //   embryo_program_vm_push(ed->collection->script);
 //   _edje_embryo_globals_init(ed);

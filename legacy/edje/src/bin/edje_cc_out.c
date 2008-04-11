@@ -12,6 +12,7 @@
 
 typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;
+typedef struct _Group_Lookup Group_Lookup;
 typedef struct _String_Lookup Image_Lookup;
 typedef struct _String_Lookup Spectrum_Lookup;
 typedef struct _Slave_Lookup Slave_Lookup;
@@ -29,6 +30,11 @@ struct _Program_Lookup
    Edje_Part_Collection *pc;
    char *name;
    int *dest;
+};
+
+struct _Group_Lookup
+{
+   char *name;
 };
 
 struct _String_Lookup
@@ -50,8 +56,8 @@ struct _Code_Lookup
    int   val;
 };
 
-static void data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest);
-static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val));
+static void data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len);
+static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
 Edje_File *edje_file = NULL;
 Evas_List *edje_collections = NULL;
@@ -77,6 +83,7 @@ static Eet_Data_Descriptor *edd_edje_spectrum_color = NULL;
 
 static Evas_List *part_lookups = NULL;
 static Evas_List *program_lookups = NULL;
+static Evas_List *group_lookups = NULL;
 static Evas_List *image_lookups = NULL;
 static Evas_List *spectrum_lookups = NULL;
 static Evas_List *part_slave_lookups = NULL;
@@ -821,6 +828,16 @@ data_write(void)
 }
 
 void
+data_queue_group_lookup(char *name)
+{
+   Group_Lookup *gl;
+
+   gl = mem_alloc(SZ(Group_Lookup));
+   group_lookups = evas_list_append(group_lookups, gl);
+   gl->name = mem_strdup(name);
+}
+
+void
 data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest)
 {
    Part_Lookup *pl;
@@ -975,6 +992,31 @@ data_process_lookups(void)
 	free(pl);
      }
 
+   while (group_lookups)
+     {
+        Group_Lookup *gl;
+
+        gl = group_lookups->data;
+        for (l = edje_file->collection_dir->entries; l; l = l->next)
+          {
+             Edje_Part_Collection_Directory_Entry *de;
+             de = l->data;
+             if (!strcmp(de->entry, gl->name))
+               {
+                  break;
+               }
+          }
+        if (!l)
+          {
+             fprintf(stderr, "%s: Error. unable to find group name %s\n",
+                     progname, gl->name);
+             exit(-1);
+          }
+        group_lookups = evas_list_remove(group_lookups, gl);
+        free(gl->name);
+        free(gl);
+     }
+
    while (image_lookups)
      {
 	Image_Lookup *il;
@@ -1069,7 +1111,7 @@ data_process_lookups(void)
 }
 
 static void
-data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val))
+data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len))
 {
    char *p;
    char *key;
@@ -1097,78 +1139,72 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 	  {
 	     if (!strncmp(p, key, keyl))
 	       {
-		  Code_Lookup *cl;
+                  char *ptr;
+                  int len;
+                  int inesc = 0;
+		  char *name;
 
-		  cl = mem_alloc(SZ(Code_Lookup));
-		  if (cl)
+                  ptr = p;
+                  p += keyl;
+		  while ((*p))
 		    {
-		       int inesc = 0;
-		       char *name;
-
-		       cl->ptr = p;
-		       p += keyl;
-		       while ((*p))
-			 {
-			    if (!inesc)
+		       if (!inesc)
+		         {
+		  	    if (*p == '\\') inesc = 1;
+			    else if (*p == '\"')
 			      {
-				 if (*p == '\\') inesc = 1;
-				 else if (*p == '\"')
-				 {
-				    /* string concatenation, see below */
-				    if (*(p + 1) != '\"')
-				       break;
-				    else
-				       p++;
-				 }
+			         /* string concatenation, see below */
+				 if (*(p + 1) != '\"')
+				   break;
+				 else
+				   p++;
 			      }
-			    else
-			      inesc = 0;
-			    p++;
 			 }
-		       cl->len = p - cl->ptr + 1;
-		       name = alloca(cl->len);
-		       if (name)
-			 {
-			    char *pp;
-			    int i;
+                       else
+                            inesc = 0;
+                       p++;
+		    }
+		  len = p - ptr + 1;
+		  name = alloca(len);
+		  if (name)
+		    {
+		       char *pp;
+		       int i;
 
-			    name[0] = 0;
-			    pp = cl->ptr + keyl;
-			    inesc = 0;
-			    i = 0;
-			    while (*pp)
+		       name[0] = 0;
+		       pp = ptr + keyl;
+		       inesc = 0;
+		       i = 0;
+		       while (*pp)
+		         {
+		    	    if (!inesc)
 			      {
-				 if (!inesc)
-				   {
-				      if (*pp == '\\') inesc = 1;
-				      else if (*pp == '\"')
-					{
-					   /* concat strings like "foo""bar" to "foobar" */
-					   if (*(pp + 1) == '\"')
-					     pp++;
-					   else
-					     {
-						name[i] = 0;
-						break;
-					     }
-					}
+			         if (*pp == '\\') inesc = 1;
+			         else if (*pp == '\"')
+			    	   {
+				      /* concat strings like "foo""bar" to "foobar" */
+				      if (*(pp + 1) == '\"')
+				        pp++;
 				      else
-					{
-					   name[i] = *pp;
-					   name[i + 1] = 0;
-					   i++;
+				        {
+				   	   name[i] = 0;
+					   break;
 					}
 				   }
 				 else
-				   inesc = 0;
-				 pp++;
+				   {
+				      name[i] = *pp;
+				      name[i + 1] = 0;
+				      i++;
+				   }
 			      }
-			    func(pc, name, &(cl->val));
-			 }
-		       code_lookups = evas_list_append(code_lookups, cl);
-		    }
-		  else break;
-	       }
+			    else
+                              inesc = 0;
+			    pp++;
+			}
+		      func(pc, name, ptr, len);
+		   }
+              }
 	  }
 	else
 	  {
@@ -1186,13 +1222,49 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 }
 
 static void
-data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest)
+_data_queue_part_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
-   data_queue_image_lookup(name, dest);
+   Code_Lookup *cl;
+   cl = mem_alloc(SZ(Code_Lookup));
+   cl->ptr = ptr;
+   cl->len = len;
+
+   data_queue_part_lookup(pc, name, &(cl->val));
+
+   code_lookups = evas_list_append(code_lookups, cl);
+}
+static void
+_data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
+{
+   Code_Lookup *cl;
+   cl = mem_alloc(SZ(Code_Lookup));
+   cl->ptr = ptr;
+   cl->len = len;
+
+   data_queue_program_lookup(pc, name, &(cl->val));
+
+   code_lookups = evas_list_append(code_lookups, cl);
+}
+static void
+_data_queue_group_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
+{
+   data_queue_group_lookup(name);	
+}
+static void
+_data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
+{
+   Code_Lookup *cl;
+   cl = mem_alloc(SZ(Code_Lookup));
+   cl->ptr = ptr;
+   cl->len = len;
+
+   data_queue_image_lookup(name, &(cl->val));
+
+   code_lookups = evas_list_append(code_lookups, cl);
 }
 
 static void
-data_queue_spectrum_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest)
+_data_queue_spectrum_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest)
 {
    data_queue_spectrum_lookup(name, dest);
 }
@@ -1215,9 +1287,10 @@ data_process_scripts(void)
 
 	     if (cd->shared)
 	       {
-		  data_process_string(pc, "PART",    cd->shared, data_queue_part_lookup);
-		  data_process_string(pc, "PROGRAM", cd->shared, data_queue_program_lookup);
-		  data_process_string(pc, "IMAGE",   cd->shared, data_queue_image_pc_lookup);
+		  data_process_string(pc, "PART",    cd->shared, _data_queue_part_lookup);
+		  data_process_string(pc, "PROGRAM", cd->shared, _data_queue_program_lookup);
+		  data_process_string(pc, "IMAGE",   cd->shared, _data_queue_image_pc_lookup);
+		  data_process_string(pc, "GROUP",   cd->shared, _data_queue_group_lookup);
 	       }
 	     for (ll = cd->programs; ll; ll = ll->next)
 	       {
@@ -1226,9 +1299,10 @@ data_process_scripts(void)
 		  cp = ll->data;
 		  if (cp->script)
 		    {
-		       data_process_string(pc, "PART",    cp->script, data_queue_part_lookup);
-		       data_process_string(pc, "PROGRAM", cp->script, data_queue_program_lookup);
-		       data_process_string(pc, "IMAGE",   cp->script, data_queue_image_pc_lookup);
+		       data_process_string(pc, "PART",    cp->script, _data_queue_part_lookup);
+		       data_process_string(pc, "PROGRAM", cp->script, _data_queue_program_lookup);
+		       data_process_string(pc, "IMAGE",   cp->script, _data_queue_image_pc_lookup);
+		       data_process_string(pc, "GROUP",   cp->script, _data_queue_group_lookup);
 		    }
 	       }
 	  }

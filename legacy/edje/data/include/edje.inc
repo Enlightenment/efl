@@ -108,6 +108,7 @@ native       stop_program     (program_id);
 native       stop_programs_on (part_id);
 native       set_min_size     (Float:w, Float:h);
 native       set_max_size     (Float:w, Float:h);
+native       part_swallow     (part_id, GROUP:str[]);
 
 enum Msg_Type
 {
