@@ -1560,7 +1560,7 @@ AC_OUTPUT([
 Makefile
 evas-cairo-x11.pc
 evas-directfb.pc
-evas-framebuffer.pc
+evas-fb.pc
 evas-glitz-x11.pc
 evas-opengl-glew.pc
 evas-opengl-x11.pc
