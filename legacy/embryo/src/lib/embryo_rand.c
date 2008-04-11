@@ -3,13 +3,13 @@
 /* exported random number api */
 
 static Embryo_Cell
-_embryo_rand_rand(Embryo_Program *ep, Embryo_Cell *params)
+_embryo_rand_rand(Embryo_Program *ep __UNUSED__, Embryo_Cell *params __UNUSED__)
 {
    return (Embryo_Cell)(rand() & 0xffff);
 }
 
 static Embryo_Cell
-_embryo_rand_randf(Embryo_Program *ep, Embryo_Cell *params)
+_embryo_rand_randf(Embryo_Program *ep __UNUSED__, Embryo_Cell *params __UNUSED__)
 {
    double r;
    float f;

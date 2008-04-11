@@ -215,7 +215,7 @@ endexpr(int fullexpr)
  *  Global references: funcstatus  (referred to only)
  */
 void
-startfunc(char *fname)
+startfunc(char *fname __UNUSED__)
 {
    stgwrite("\tproc");
    stgwrite("\n");

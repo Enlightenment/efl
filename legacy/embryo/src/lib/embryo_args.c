@@ -12,7 +12,7 @@
 /* exported args api */
 
 static Embryo_Cell
-_embryo_args_numargs(Embryo_Program *ep, Embryo_Cell *params)
+_embryo_args_numargs(Embryo_Program *ep, Embryo_Cell *params __UNUSED__)
 {
    Embryo_Header *hdr;
    unsigned char *data;

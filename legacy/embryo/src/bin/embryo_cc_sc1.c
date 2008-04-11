@@ -116,7 +116,7 @@ static int         *wqptr;	/* pointer to next entry */
 static char         binfname[_MAX_PATH];	/* binary file name */
 
 int
-main(int argc, char *argv[], char *env[])
+main(int argc, char *argv[], char *env[] __UNUSED__)
 {
    char                argv0[_MAX_PATH];
    int                 i;
@@ -597,7 +597,7 @@ initglobals(void)
 
 static void
 parseoptions(int argc, char **argv, char *iname, char *oname,
-             char *pname, char *rname)
+             char *pname __UNUSED__, char *rname __UNUSED__)
 {
    char str[PATH_MAX];
    int i, stack_size;

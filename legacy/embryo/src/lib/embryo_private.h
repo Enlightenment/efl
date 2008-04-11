@@ -39,6 +39,12 @@ void *alloca (size_t);
 # endif
 #endif
 
+#if HAVE___ATTRIBUTE__
+#define __UNUSED__ __attribute__((unused))
+#else
+#define __UNUSED__
+#endif
+
 typedef enum _Embryo_Opcode Embryo_Opcode;
 
 enum _Embryo_Opcode

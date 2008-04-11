@@ -6,32 +6,13 @@
 #include <time.h>
 
 #ifndef HAVE_GETTIMEOFDAY
-#ifdef WIN32
-#include <sys/timeb.h>
-
-static int gettimeofday (struct timeval *tv, void *unused)
-{
-   struct _timeb t;
-
-   if (!tv)
-      return -1;
-
-   _ftime (&t);
-
-   tv->tv_sec = t.time;
-   tv->tv_usec = t.millitm * 1000;
-
-   return 0;
-}
-#else
-#error "Your platform isn't supported yet"
-#endif
+# error "Your platform isn't supported yet"
 #endif
 
 /* exported time api */
 
 static Embryo_Cell
-_embryo_time_seconds(Embryo_Program *ep, Embryo_Cell *params)
+_embryo_time_seconds(Embryo_Program *ep __UNUSED__, Embryo_Cell *params __UNUSED__)
 {
    struct timeval      timev;
    double t;

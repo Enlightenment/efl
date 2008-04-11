@@ -29,10 +29,6 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
-AC_FUNC_ALLOCA
-
-AC_CHECK_FUNCS(gettimeofday)
-
 WIN32_CFLAGS=""
 create_shared_lib=""
 case "$host_os" in
@@ -41,14 +37,35 @@ case "$host_os" in
 		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
 		dnl needed for correct definition of EAPI
 		AC_DEFINE(EFL_EMBRYO_BUILD, 1, [Define to mention that embryo is built])
+		AC_DEFINE(HAVE_GETTIMEOFDAY, 1, [Defined to 1 (MinGW / CeGCC platform)])
 		if test "x$host_os" = "xcegcc" ; then
 			WIN32_CFLAGS="-mwin32"
 		fi
 		create_shared_lib="-no-undefined"
 		;;
+	*)
+		AC_CHECK_FUNCS(gettimeofday)
 esac
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(create_shared_lib)
+
+dnl Checking for __attribute__ support
+AC_MSG_CHECKING([for __attribute__])
+AC_CACHE_VAL(have___attribute__,
+  [
+    AC_TRY_COMPILE([#include <stdlib.h>],
+      [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
+      [have___attribute__="yes"],
+      [have___attribute__="no"])
+  ]
+)
+
+if test "x${have___attribute__}" = "xyes" ; then
+   AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
+fi
+AC_MSG_RESULT(${have___attribute__})
+
+AC_FUNC_ALLOCA
 
 AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
 
