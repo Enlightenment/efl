@@ -131,7 +131,7 @@ delete_stringpair(stringpair * root, stringpair * item)
 }
 
 /* ----- alias table --------------------------------------------- */
-static stringpair   alias_tab = { NULL, NULL, NULL };	/* alias table */
+static stringpair   alias_tab = { NULL, NULL, NULL, 0 };    /* alias table */
 
 stringpair *
 insert_alias(char *name, char *alias)
@@ -217,7 +217,7 @@ delete_pathtable(void)
 
 /* ----- text substitution patterns ------------------------------ */
 
-static stringpair   substpair = { NULL, NULL, NULL };	/* list of substitution pairs */
+static stringpair   substpair = { NULL, NULL, NULL, 0 };    /* list of substitution pairs */
 static stringpair  *substindex['z' - 'A' + 1];	/* quick index to first character */
 
 static void

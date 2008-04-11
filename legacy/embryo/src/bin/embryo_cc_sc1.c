@@ -1176,7 +1176,7 @@ declloc(int fstatic)
    symbol             *sym;
    cell                val, size;
    char               *str;
-   value               lval = { 0 };
+   value               lval = { NULL, 0, 0, 0, 0, NULL };
    int                 cur_lit = 0;
    int                 dim[sDIMEN_MAX];
    int                 numdim, level;
@@ -3422,7 +3422,7 @@ test(int label, int parens, int invert)
 {
    int                 index, tok;
    cell                cidx;
-   value               lval = { 0 };
+   value               lval = { NULL, 0, 0, 0, 0, NULL };
    int                 localstaging = FALSE;
 
    if (!staging)
@@ -3835,7 +3835,7 @@ doassert(void)
 {
    int                 flab1, index;
    cell                cidx;
-   value               lval = { 0 };
+   value               lval = { NULL, 0, 0, 0, 0, NULL };
 
    if ((sc_debug & sCHKBOUNDS) != 0)
      {

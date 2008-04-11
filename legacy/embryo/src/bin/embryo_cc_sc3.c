@@ -515,7 +515,7 @@ plnge(int *opstr, int opoff, int (*hier) (value * lval), value * lval,
 {
    int                 lvalue, opidx;
    int                 count;
-   value               lval2 = { 0 };
+   value               lval2 = { NULL, 0, 0, 0, 0, NULL };
 
    lvalue = plnge1(hier, lval);
    if (nextop(&opidx, opstr) == 0)
@@ -547,7 +547,7 @@ static int
 plnge_rel(int *opstr, int opoff, int (*hier) (value * lval), value * lval)
 {
    int                 lvalue, opidx;
-   value               lval2 = { 0 };	/* intialize, to avoid a compiler warning */
+   value               lval2 = { NULL, 0, 0, 0, 0, NULL };
    int                 count;
 
    /* this function should only be called for relational operators */
@@ -630,7 +630,7 @@ plnge2(void         (*oper) (void),
 	  {			/* constant on right side */
 	     if (commutative(oper))
 	       {		/* test for commutative operators */
-		  value               lvaltmp = { 0 };
+		  value               lvaltmp = { NULL, 0, 0, 0, 0, NULL };
 		  stgdel(index, cidx);	/* scratch push1() and constant fetch (then
 					 * fetch the constant again */
 		  const2(lval2->constval << dbltest(oper, lval1, lval2));
@@ -760,7 +760,7 @@ calc(cell left, void (*oper) (), cell right, char *boolresult)
 int
 expression(int *constant, cell * val, int *tag, int chkfuncresult)
 {
-   value               lval = { 0 };
+   value               lval = { NULL, 0, 0, 0, 0, NULL };
 
    if (hier14(&lval))
       rvalue(&lval);
@@ -824,9 +824,8 @@ int
 hier14(value * lval1)
 {
    int                 lvalue;
-   value               lval2 = { 0 }, lval3 =
-   {
-   0};
+   value               lval2 = { NULL, 0, 0, 0, 0, NULL };
+   value               lval3 = { NULL, 0, 0, 0, 0, NULL };
    void                (*oper) (void);
    int                 tok, level, i;
    cell                val;
@@ -1064,7 +1063,7 @@ static int
 hier13(value * lval)
 {
    int                 lvalue, flab1, flab2;
-   value               lval2 = { 0 };
+   value               lval2 = { NULL, 0, 0, 0, 0, NULL };
    int                 array1, array2;
 
    lvalue = plnge1(hier12, lval);
@@ -1484,7 +1483,7 @@ hier1(value * lval1)
 {
    int                 lvalue, index, tok, symtok;
    cell                val, cidx;
-   value               lval2 = { 0 };
+   value               lval2 = { NULL, 0, 0, 0, 0, NULL };
    char               *st;
    char                close;
    symbol             *sym;
@@ -1901,7 +1900,7 @@ callfunction(symbol * sym)
    int                 nargs = 0;	/* number of arguments */
    int                 heapalloc = 0;
    int                 namedparams = FALSE;
-   value               lval = { 0 };
+   value               lval = { NULL, 0, 0, 0, 0, NULL };
    arginfo            *arg;
    char                arglist[sMAXARGS];
    constvalue          arrayszlst = { NULL, "", 0, 0 };	/* array size list starts empty */
