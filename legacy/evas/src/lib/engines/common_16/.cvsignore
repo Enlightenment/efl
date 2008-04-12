@@ -1,0 +1,6 @@
+Makefile.in
+Makefile
+.deps
+.libs
+libevas_engine_common.la
+*.lo
