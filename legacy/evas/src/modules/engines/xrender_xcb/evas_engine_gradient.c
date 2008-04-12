@@ -159,18 +159,19 @@ _xre_gradient_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *g
 	int op = dc->render_op, cuse = dc->clip.use;
 	RGBA_Image  *im;
 
-	im = evas_common_image_create(w, h);
-	if (!im) 
+        im = (RGBA_Image*) evas_cache_image_empty(evas_common_image_cache_get());
+	if (!im)
 	  {
 	    _xr_render_surface_free(gr->surface);
 	    gr->surface = NULL;
 	    return;
 	  }
+        evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 	dc->render_op = _EVAS_RENDER_FILL;
 	dc->clip.use = 0;
 	evas_common_gradient_draw(im, dc, 0, 0, w, h, gr->grad);
-	_xr_render_surface_argb_pixels_fill(gr->surface, w, h, im->image->data, 0, 0, w, h);
-	evas_common_image_free(im);
+	_xr_render_surface_argb_pixels_fill(gr->surface, w, h, im->image.data, 0, 0, w, h);
+        evas_cache_image_drop(&im->cache_entry);
 	dc->render_op = op;
 	dc->clip.use = cuse;
      }

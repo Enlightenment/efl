@@ -63,10 +63,10 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    int                 y = 0;
    int                 i, j;
 
-   if (!im || !im->image || !im->image->data || !file)
+   if (!im || !im->image.data || !file)
       return 0;
    
-   buf = alloca(im->image->w * 3 * sizeof(DATA8));
+   buf = alloca(im->cache_entry.w * 3 * sizeof(DATA8));
    f = fopen(file, "wb");
    if (!f)
      {
@@ -84,17 +84,17 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
      }
    jpeg_create_compress(&cinfo);
    jpeg_stdio_dest(&cinfo, f);
-   cinfo.image_width = im->image->w;
-   cinfo.image_height = im->image->h;
+   cinfo.image_width = im->cache_entry.w;
+   cinfo.image_height = im->cache_entry.h;
    cinfo.input_components = 3;
    cinfo.in_color_space = JCS_RGB;
    jpeg_set_defaults(&cinfo);
    jpeg_set_quality(&cinfo, quality, TRUE);
    jpeg_start_compress(&cinfo, TRUE);
-   ptr = im->image->data;
+   ptr = im->image.data;
    while (cinfo.next_scanline < cinfo.image_height)
      {
-	for (j = 0, i = 0; i < im->image->w; i++)
+	for (j = 0, i = 0; i < im->cache_entry.w; i++)
 	  {
 	     buf[j++] = ((*ptr) >> 16) & 0xff;
 	     buf[j++] = ((*ptr) >> 8) & 0xff;

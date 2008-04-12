@@ -11,15 +11,15 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
    int      src_w, src_h, dst_w, dst_h; 
 
-   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
+   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
-   if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h, 0, 0, src->image->w, src->image->h)))
+   if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h, 0, 0, src->cache_entry.w, src->cache_entry.h)))
      return;
 
-   src_w = src->image->w;
-   src_h = src->image->h;
-   dst_w = dst->image->w;
-   dst_h = dst->image->h;
+   src_w = src->cache_entry.w;
+   src_h = src->cache_entry.h;
+   dst_w = dst->cache_entry.w;
+   dst_h = dst->cache_entry.h;
 
    if (dc->clip.use)
      {
@@ -141,7 +141,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
    dst_jump = dst_w - dst_clip_w;
 
    /* figure out dest start ptr */
-   dst_ptr = dst->image->data + dst_clip_x + (dst_clip_y * dst_w);
+   dst_ptr = dst->image.data + dst_clip_x + (dst_clip_y * dst_w);
 
 /* FIXME:
  *

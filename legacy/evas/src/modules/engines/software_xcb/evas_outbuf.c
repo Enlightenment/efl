@@ -508,24 +508,19 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
        (buf->priv.mask.g == 0x00ff00) &&
        (buf->priv.mask.b == 0x0000ff))
      {
-	im = evas_cache_image_empty(evas_common_image_cache_get());
-	im->image->w = w;
-	im->image->h = h;
-	im->image->data = NULL;
-	im->image->no_free = 1;
+	im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+        if (!im) return NULL;
+        im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
+        if (!im) return NULL;
+
 	im->extended_info = obr;
 	obr->xcbob = _find_xcbob(buf->priv.x.conn,
                                  buf->priv.x.depth,
                                  w, h,
                                  use_shm,
                                  NULL);
-/*	obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn, */
-/*							   buf->priv.x.depth, */
-/*							   w, */
-/*							   h, */
-/*							   use_shm, */
-/*							   NULL); */
-	im->image->data = (DATA32 *)evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
+        im->image.no_free = 1;
+	im->image.data = (DATA32 *)evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
 	if (buf->priv.x.mask)
 	  obr->mxcbob = _find_xcbob(buf->priv.x.conn,
                                     1, w, h,
@@ -541,9 +536,8 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
    else
      {
         im = evas_cache_image_empty(evas_common_image_cache_get());
-	im->image->w = w;
-	im->image->h = h;
-        evas_common_image_surface_alloc(im->image);
+        if (!im) return NULL;
+        evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
 	  obr->xcbob = _find_xcbob(buf->priv.x.conn,
@@ -585,7 +579,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
      {
 	im->flags |= RGBA_IMAGE_HAS_ALPHA;
 	/* FIXME: faster memset! */
-	memset(im->image->data, 0, w * h * sizeof(DATA32));
+	memset(im->image.data, 0, w * h * sizeof(DATA32));
      }
    buf->priv.pending_writes = evas_list_append(buf->priv.pending_writes, im);
    return im;
@@ -832,7 +826,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
    if (!conv_func) return;
 
    data = evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
-   src_data = update->image->data;
+   src_data = update->image.data;
    if (buf->rot == 0)
      {
 	obr->x = x;

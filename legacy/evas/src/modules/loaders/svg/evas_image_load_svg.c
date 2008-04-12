@@ -50,7 +50,7 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
    /* ignore all files not called .svg or .svg.gz - because rsvg has a leak
     * where closing the handle doesn't free mem */
    ext = strrchr(file, '.');
-   if (!ext) return;
+   if (!ext) return 0;
    if (!strcasecmp(ext, ".gz"))
      {
 	if (p > file)
@@ -81,61 +81,47 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 	chdir(pcwd);
 	return 0;
      }
-   if (!im->image)
-     {
-	im->image = evas_common_image_surface_new(im);
-	if (!im->image)
-	  {
-//	     rsvg_handle_close(rsvg, NULL);
-	     g_object_unref(rsvg);
-//	     rsvg_handle_free(rsvg);
-	     chdir(pcwd);
-	     return 0;
-	  }
-     }
 
    rsvg_handle_get_dimensions(rsvg, &dim);
    w = dim.width;
    h = dim.height;
    if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
-	evas_common_image_surface_free(im->image);
-	im->image = NULL;
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
 	chdir(pcwd);
 	return 0;
      }
-   if (im->load_opts.scale_down_by > 1)
+   if (im->cache_entry.load_opts.scale_down_by > 1)
      {
-	w /= im->load_opts.scale_down_by;
-	h /= im->load_opts.scale_down_by;
+	w /= im->cache_entry.load_opts.scale_down_by;
+	h /= im->cache_entry.load_opts.scale_down_by;
      }
-   else if (im->load_opts.dpi > 0.0)
+   else if (im->cache_entry.load_opts.dpi > 0.0)
      {
-	w = (w * im->load_opts.dpi) / 90.0;
-	h = (h * im->load_opts.dpi) / 90.0;
+	w = (w * im->cache_entry.load_opts.dpi) / 90.0;
+	h = (h * im->cache_entry.load_opts.dpi) / 90.0;
      }
-   else if ((im->load_opts.w > 0) &&
-	    (im->load_opts.h > 0))
+   else if ((im->cache_entry.load_opts.w > 0) &&
+	    (im->cache_entry.load_opts.h > 0))
      {
 	int w2, h2;
 	
-	w2 = im->load_opts.w;
-	h2 = (im->load_opts.w * h) / w;
-	if (h2 > im->load_opts.h)
+	w2 = im->cache_entry.load_opts.w;
+	h2 = (im->cache_entry.load_opts.w * h) / w;
+	if (h2 > im->cache_entry.load_opts.h)
 	  {
-	     h2 = im->load_opts.h;
-	     w2 = (im->load_opts.h * w) / h;
+	     h2 = im->cache_entry.load_opts.h;
+	     w2 = (im->cache_entry.load_opts.h * w) / h;
 	  }
 	w = w2;
 	h = h2;
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   im->image->w = w;
-   im->image->h = h;
+   im->cache_entry.w = w;
+   im->cache_entry.h = h;
    im->flags |= RGBA_IMAGE_HAS_ALPHA;
 //   rsvg_handle_close(rsvg, NULL);
    g_object_unref(rsvg);
@@ -157,12 +143,11 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    char               *ext;
 
    if (!file) return 0;
-   if (!im->image) return 0;
 
    /* ignore all files not called .svg or .svg.gz - because rsvg has a leak
     * where closing the handle doesn't free mem */
    ext = strrchr(file, '.');
-   if (!ext) return;
+   if (!ext) return 0;
    if (!strcasecmp(ext, ".gz"))
      {
 	if (p > file)
@@ -190,8 +175,6 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    rsvg = rsvg_handle_new_from_file(file, NULL);
    if (!rsvg)
      {
-	evas_common_image_surface_free(im->image);
-	im->image = NULL;
 	chdir(pcwd);
 	return 0;
      }
@@ -201,49 +184,43 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    h = dim.height;
    if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
      {
-	evas_common_image_surface_free(im->image);
-	im->image = NULL;
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
 	chdir(pcwd);
 	return 0;
      }
-   if (im->load_opts.scale_down_by > 1)
+   if (im->cache_entry.load_opts.scale_down_by > 1)
      {
-	w /= im->load_opts.scale_down_by;
-	h /= im->load_opts.scale_down_by;
+	w /= im->cache_entry.load_opts.scale_down_by;
+	h /= im->cache_entry.load_opts.scale_down_by;
      }
-   else if (im->load_opts.dpi > 0.0)
+   else if (im->cache_entry.load_opts.dpi > 0.0)
      {
-	w = (w * im->load_opts.dpi) / 90.0;
-	h = (h * im->load_opts.dpi) / 90.0;
+	w = (w * im->cache_entry.load_opts.dpi) / 90.0;
+	h = (h * im->cache_entry.load_opts.dpi) / 90.0;
      }
-   else if ((im->load_opts.w > 0) &&
-	    (im->load_opts.h > 0))
+   else if ((im->cache_entry.load_opts.w > 0) &&
+	    (im->cache_entry.load_opts.h > 0))
      {
 	int w2, h2;
 	
-	w2 = im->load_opts.w;
-	h2 = (im->load_opts.w * h) / w;
-	if (h2 > im->load_opts.h)
+	w2 = im->cache_entry.load_opts.w;
+	h2 = (im->cache_entry.load_opts.w * h) / w;
+	if (h2 > im->cache_entry.load_opts.h)
 	  {
-	     h2 = im->load_opts.h;
-	     w2 = (im->load_opts.h * w) / h;
+	     h2 = im->cache_entry.load_opts.h;
+	     w2 = (im->cache_entry.load_opts.h * w) / h;
 	  }
 	w = w2;
 	h = h2;
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   im->image->w = w;
-   im->image->h = h;
    im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
+   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+   if (!im->image.data)
      {
-	evas_common_image_surface_free(im->image);
-	im->image = NULL;
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
@@ -251,14 +228,12 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
 
-   memset(im->image->data, 0, w * h * sizeof(DATA32));
+   memset(im->image.data, 0, w * h * sizeof(DATA32));
    
-   surface = cairo_image_surface_create_for_data((unsigned char *)im->image->data, CAIRO_FORMAT_ARGB32,
+   surface = cairo_image_surface_create_for_data((unsigned char *)im->image.data, CAIRO_FORMAT_ARGB32,
 						 w, h, w * sizeof(DATA32));
    if (!surface)
      {
-	evas_common_image_surface_free(im->image);
-	im->image = NULL;
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
@@ -269,8 +244,6 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    if (!cr)
      {
 	cairo_surface_destroy(surface);
-	evas_common_image_surface_free(im->image);
-	im->image = NULL;
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
 //	rsvg_handle_free(rsvg);
@@ -279,8 +252,8 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
      }
    
    cairo_scale(cr, 
-	       (double)im->image->w / dim.em, 
-	       (double)im->image->h / dim.ex);
+	       (double)im->cache_entry.w / dim.em, 
+	       (double)im->cache_entry.h / dim.ex);
    rsvg_handle_render_cairo(rsvg, cr);
    cairo_surface_destroy(surface);
    /* need to check if this is required... */

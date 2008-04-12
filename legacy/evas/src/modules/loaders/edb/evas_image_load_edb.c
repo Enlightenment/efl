@@ -73,16 +73,8 @@ evas_image_load_file_head_edb(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	free(ret);
-	e_db_close(db);
-	return 0;
-     }
-   im->image->w = w;
-   im->image->h = h;
+   im->cache_entry.w = w;
+   im->cache_entry.h = h;
    free(ret);
    e_db_close(db);
    return 1;
@@ -145,19 +137,9 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	free(ret);
-	e_db_close(db);
-	return 0;
-     }
-   im->image->w = w;
-   im->image->h = h;
    body = &(ret[8]);
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
+   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+   if (!im->image.data)
      {
 	free(ret);
 	e_db_close(db);
@@ -169,11 +151,11 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 	  {
 	     int x;
 
-	     memcpy(im->image->data, body, w * h * sizeof(DATA32));
-	     for (x = 0; x < (w * h); x++) SWAP32(im->image->data[x]);
+	     memcpy(im->image.data, body, w * h * sizeof(DATA32));
+	     for (x = 0; x < (w * h); x++) SWAP32(im->image.data[x]);
 	  }
 #else
-	memcpy(im->image->data, body, w * h * sizeof(DATA32));
+	memcpy(im->image.data, body, w * h * sizeof(DATA32));
 #endif
      }
    else
@@ -181,13 +163,13 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 	uLongf dlen;
 
 	dlen = w * h * sizeof(DATA32);
-	uncompress((Bytef *)im->image->data, &dlen, (Bytef *)body,
+	uncompress((Bytef *)im->image.data, &dlen, (Bytef *)body,
 		   (uLongf)(size - 32));
 #ifdef WORDS_BIGENDIAN
 	  {
 	     int x;
 
-	     for (x = 0; x < (w * h); x++) SWAP32(im->image->data[x]);
+	     for (x = 0; x < (w * h); x++) SWAP32(im->image.data[x]);
 	  }
 #endif
      }

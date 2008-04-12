@@ -80,16 +80,8 @@ evas_image_load_file_head_pmaps(RGBA_Image *im, const char *file,
 	return 0;
      }
 
-   if (!im->image)
-      im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	pmaps_buffer_close(&b);
-	return 0;
-     }
-
-   im->image->w = b.w;
-   im->image->h = b.h;
+   im->cache_entry.w = b.w;
+   im->cache_entry.h = b.h;
 
    pmaps_buffer_close(&b);
    return 1;
@@ -122,23 +114,14 @@ evas_image_load_file_data_pmaps(RGBA_Image *im, const char *file,
 
    pixels = b.w * b.h;
 
-   if (!im->image)
-      im->image = evas_common_image_surface_new(im);
-   if (!im->image)
+   evas_cache_image_surface_alloc(&im->cache_entry, b.w, b.h);
+   if (!im->image.data)
      {
 	pmaps_buffer_close(&b);
 	return 0;
      }
 
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
-     {
-	evas_common_image_surface_free(im->image);
-	pmaps_buffer_close(&b);
-	return 0;
-     }
-
-   ptr = im->image->data;
+   ptr = im->image.data;
 
    if (b.type[1] != '4')
      {

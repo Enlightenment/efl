@@ -167,7 +167,7 @@ _xre_font_surface_draw(Xcb_Image_Info *xcbinf, RGBA_Image *surface, RGBA_Draw_Co
    
    fs = fg->ext_dat;
    if (!fs) return;
-   target_surface = (Xcb_Render_Surface *)(surface->image->data);
+   target_surface = (Xcb_Render_Surface *)(surface->image.data);
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;

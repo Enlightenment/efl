@@ -9,51 +9,53 @@
 
 /* #define DEBUG_SDL */
 
-extern Evas_List*	evas_modules;
-
 static Evas_Func	func = {};
 static Evas_Func	pfunc = {};
 
-static void*		_sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hwsurface);
-static void		_sdl_stretch_blit		(const RGBA_Engine_Image* from, RGBA_Engine_Image* to, int w, int h);
+static void*                     _sdl_output_setup	(int w, int h, int fullscreen, int noframe, int alpha, int hwsurface);
 
-static int              _sdl_image_constructor          (RGBA_Engine_Image*, void* data);
-static void             _sdl_image_destructor           (RGBA_Engine_Image *eim);
+static Engine_Image_Entry       *_sdl_image_alloc       (void);
+static void                      _sdl_image_delete      (Engine_Image_Entry *eim);
 
-static void             _sdl_image_dirty_region         (RGBA_Engine_Image *eim, int x, int y, int w, int h);
+static int                       _sdl_image_constructor (Engine_Image_Entry*, void* data);
+static void                      _sdl_image_destructor  (Engine_Image_Entry *eim);
 
-static int              _sdl_image_dirty                (RGBA_Engine_Image *dst, const RGBA_Engine_Image *src);
+static void                      _sdl_image_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h);
 
-static int              _sdl_image_size_set             (RGBA_Engine_Image *dst, const RGBA_Engine_Image *src);
+static int                       _sdl_image_dirty       (Engine_Image_Entry *dst, const Engine_Image_Entry *src);
 
-static int              _sdl_image_update_data          (RGBA_Engine_Image* dst, void* engine_data);
+static int                       _sdl_image_size_set    (Engine_Image_Entry *dst, const Engine_Image_Entry *src);
 
-static void             _sdl_image_load                 (RGBA_Engine_Image *eim, const RGBA_Image* im);
-static int              _sdl_image_mem_size_get         (RGBA_Engine_Image *eim);
+static int                       _sdl_image_update_data (Engine_Image_Entry* dst, void* engine_data);
+
+static void                      _sdl_image_load        (Engine_Image_Entry *eim, const Image_Entry* im);
+static int                       _sdl_image_mem_size_get(Engine_Image_Entry *eim);
 
 #ifdef DEBUG_SDL
-static void             _sdl_image_debug(const char* context, RGBA_Engine_Image* im);
+static void                      _sdl_image_debug       (const char* context, Engine_Image_Entry* im);
 #endif
 
 static const Evas_Cache_Engine_Image_Func       _sdl_cache_engine_image_cb = {
-   .key = NULL,
-   .constructor = _sdl_image_constructor,
-   .destructor = _sdl_image_destructor,
-   .dirty_region = _sdl_image_dirty_region,
-   .dirty = _sdl_image_dirty,
-   .size_set = _sdl_image_size_set,
-   .update_data = _sdl_image_update_data,
-   .load = _sdl_image_load,
-   .mem_size_get = _sdl_image_mem_size_get,
-#ifdef DEBUG_SDL
-   .debug = _sdl_image_debug
+  NULL /* key */,
+  _sdl_image_alloc /* alloc */,
+  _sdl_image_delete /* dealloc */,
+  _sdl_image_constructor /* constructor */,
+  _sdl_image_destructor /* destructor */,
+  _sdl_image_dirty_region /* dirty_region */,
+  _sdl_image_dirty /* dirty */,
+  _sdl_image_size_set /* size_set */,
+  _sdl_image_update_data /* update_data */,
+  _sdl_image_load /* load */,
+  _sdl_image_mem_size_get /* mem_size_get */,
+#ifdef DEBUG_SDL  /* debug */
+  _sdl_image_debug
 #else
-   .debug = NULL
+  NULL
 #endif
 };
 
-#define _SDL_UPDATE_PIXELS(EIM) ;
-/*         EIM->src->image->data = ((SDL_Surface*) EIM->engine_data)->pixels; */
+#define _SDL_UPDATE_PIXELS(EIM)                                 \
+  ((RGBA_Image *) EIM->cache_entry.src)->image.data = EIM->surface->pixels;
 
 #define RMASK 0x00ff0000
 #define GMASK 0x0000ff00
@@ -113,13 +115,12 @@ evas_engine_sdl_setup		(Evas* e, void* in)
 
    e->engine.func = &func;
    e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
-   info->info.surface = ((Render_Engine*) e->engine.data.output)->surface;
 }
 
 static void
 evas_engine_sdl_output_free	(void *data)
 {
-   Render_Engine*		re = (Render_Engine*) data;
+   Render_Engine*		re = data;
 
    if (re->cache)
      evas_cache_engine_image_shutdown(re->cache);
@@ -132,7 +133,7 @@ evas_engine_sdl_output_free	(void *data)
      free(re->update_rects);
    free(re);
 
-   evas_common_font_shutdown();
+/*    evas_common_font_shutdown(); */
    evas_common_image_shutdown();
 
    SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -142,13 +143,14 @@ static void
 evas_engine_sdl_output_resize	(void *data, int w, int h)
 {
    /* FIXME */
-   Render_Engine*		re = (Render_Engine*) data;
-   RGBA_Engine_Image*		eim = NULL;
+   Render_Engine        *re = data;
+   SDL_Surface          *surface;
 
    if (w == re->tb->outbuf_w && h == re->tb->outbuf_h)
      return;
 
-   eim = re->rgba_engine_image;
+   /* Destroy the current screen */
+   evas_cache_engine_image_drop(&re->rgba_engine_image->cache_entry);
 
    /* Rebuil tilebuf */
    evas_common_tilebuf_free(re->tb);
@@ -157,28 +159,25 @@ evas_engine_sdl_output_resize	(void *data, int w, int h)
       evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 
    /* Build the new screen */
-   re->surface = SDL_SetVideoMode(w, h, 32,
-				  (re->hwsurface ? SDL_HWSURFACE : SDL_SWSURFACE)
-				  | (re->fullscreen ? SDL_FULLSCREEN : 0)
-				  | (re->noframe ? SDL_NOFRAME : 0)
-                                  | (re->alpha ? SDL_SRCALPHA : 0));
+   surface = SDL_SetVideoMode(w, h, 32,
+                              (re->flags.hwsurface ? SDL_HWSURFACE : SDL_SWSURFACE)
+                              | (re->flags.fullscreen ? SDL_FULLSCREEN : 0)
+                              | (re->flags.noframe ? SDL_NOFRAME : 0)
+                              | (re->flags.alpha ? SDL_SRCALPHA : 0));
 
-   if (!re->surface)
+   if (!surface)
      {
 	fprintf(stderr, "Unable to change the resolution to : %ix%i\n", w, h);
 	exit(-1);
      }
-   re->rgba_engine_image = evas_cache_engine_image_engine(re->cache, re->surface);
+   re->rgba_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->rgba_engine_image)
      {
 	fprintf(stderr, "RGBA_Image allocation from SDL failed\n");
 	exit(-1);
      }
 
-   SDL_FillRect(re->surface, NULL, 0);
-
-   /* Destroy the copy */
-   evas_cache_engine_image_drop(eim);
+   SDL_FillRect(surface, NULL, 0);
 }
 
 static void
@@ -218,13 +217,13 @@ evas_engine_sdl_output_redraws_next_update_get	(void *data,
 						 int *x, int *y, int *w, int *h,
 						 int *cx, int *cy, int *cw, int *ch)
 {
-   Render_Engine* re = (Render_Engine*) data;
-   Tilebuf_Rect*  tb_rect;
-   SDL_Rect rect;
+   Render_Engine        *re = data;
+   Tilebuf_Rect         *tb_rect;
+   SDL_Rect              rect;
 
-   if (re->end)
+   if (re->flags.end)
      {
-	re->end = 0;
+	re->flags.end = 0;
 	return NULL;
      }
    if (!re->rects)
@@ -245,7 +244,7 @@ evas_engine_sdl_output_redraws_next_update_get	(void *data,
      {
 	evas_common_tilebuf_free_render_rects(re->rects);
 	re->rects = NULL;
-	re->end = 1;
+	re->flags.end = 1;
      }
 
    rect.x = *x;
@@ -253,7 +252,7 @@ evas_engine_sdl_output_redraws_next_update_get	(void *data,
    rect.w = *w;
    rect.h = *h;
 
-   SDL_FillRect(re->surface, &rect, 0);
+   SDL_FillRect(re->rgba_engine_image->surface, &rect, 0);
 
    /* Return the "fake" surface so it is passed to the drawing routines. */
    return re->rgba_engine_image;
@@ -282,29 +281,31 @@ evas_engine_sdl_output_redraws_next_update_push	(void *data, void *surface,
 }
 
 static void
-_sdl_image_dirty_region(RGBA_Engine_Image *eim, int x, int y, int w, int h)
+_sdl_image_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h)
 {
-   SDL_UpdateRect((SDL_Surface*) eim->engine_data, x, y, w, h);
+   SDL_Engine_Image_Entry       *dst;
+
+   dst = (SDL_Engine_Image_Entry *) eim;
+
+   SDL_UpdateRect(dst->surface, x, y, w, h);
 }
 
 static void
-evas_engine_sdl_output_flush			(void *data)
+evas_engine_sdl_output_flush(void *data)
 {
-   Render_Engine				*re = (Render_Engine *) data;
+   Render_Engine        *re = (Render_Engine *) data;
 
    if (re->update_rects_count > 0)
-     SDL_UpdateRects(re->surface, re->update_rects_count, re->update_rects);
+     SDL_UpdateRects(re->rgba_engine_image->surface, re->update_rects_count, re->update_rects);
 
    re->update_rects_count = 0;
 }
 
 
 static void
-evas_engine_sdl_output_idle_flush               (void *data)
+evas_engine_sdl_output_idle_flush(void *data)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
+   (void) data;
 }
 
 /*
@@ -314,7 +315,7 @@ evas_engine_sdl_output_idle_flush               (void *data)
 static void*
 evas_engine_sdl_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
-   Render_Engine*	re = (Render_Engine*) data;
+   Render_Engine*	re = (Render_Engine*) data;;
 
    *error = 0;
    return evas_cache_engine_image_request(re->cache, file, key, lo, NULL, error);
@@ -323,13 +324,15 @@ evas_engine_sdl_image_load(void *data, const char *file, const char *key, int *e
 static int
 evas_engine_sdl_image_alpha_get(void *data, void *image)
 {
-   RGBA_Engine_Image *eim = image;
+   SDL_Engine_Image_Entry       *eim = image;
+   RGBA_Image                   *im;
 
    if (!eim) return 1;
-   switch (eim->src->cs.space)
+   im = (RGBA_Image *) eim->cache_entry.src;
+   switch (eim->cache_entry.src->space)
      {
      case EVAS_COLORSPACE_ARGB8888:
-        if (eim->src->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+        if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
      default:
         break;
      }
@@ -339,31 +342,31 @@ evas_engine_sdl_image_alpha_get(void *data, void *image)
 static void
 evas_engine_sdl_image_size_get(void *data, void *image, int *w, int *h)
 {
-   RGBA_Engine_Image*   eim;
+   SDL_Engine_Image_Entry       *eim;
 
    eim = image;
-   if (w) *w = eim->src->image->w;
-   if (h) *h = eim->src->image->h;
+   if (w) *w = eim->cache_entry.src->w;
+   if (h) *h = eim->cache_entry.src->h;
 }
 
 static int
 evas_engine_sdl_image_colorspace_get(void *data, void *image)
 {
-   RGBA_Engine_Image *eim = image;
+   SDL_Engine_Image_Entry       *eim = image;
 
    if (!eim) return EVAS_COLORSPACE_ARGB8888;
-   return eim->src->cs.space;
+   return eim->cache_entry.src->space;
 }
 
 static void
 evas_engine_sdl_image_colorspace_set(void *data, void *image, int cspace)
 {
-   RGBA_Engine_Image *eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
 
    if (!eim) return;
-   if (eim->src->cs.space == cspace) return;
+   if (eim->cache_entry.src->space == cspace) return;
 
-   evas_cache_engine_image_colorspace(eim, cspace, NULL);
+   evas_cache_engine_image_colorspace(&eim->cache_entry, cspace, NULL);
 }
 
 static void*
@@ -388,40 +391,41 @@ evas_engine_sdl_image_new_from_data(void *data, int w, int h, DATA32* image_data
 static void
 evas_engine_sdl_image_free(void *data, void *image)
 {
-   RGBA_Engine_Image*		eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
 
    (void) data;
 
-   evas_cache_engine_image_drop(eim);
+   evas_cache_engine_image_drop(&eim->cache_entry);
 }
 
 static void*
 evas_engine_sdl_image_size_set(void *data, void *image, int w, int h)
 {
-   RGBA_Engine_Image*		eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
 
    (void) data;
 
-   return evas_cache_engine_image_size_set(eim, w, h);
+   return evas_cache_engine_image_size_set(&eim->cache_entry, w, h);
 }
 
-void*
+static void*
 evas_engine_sdl_image_dirty_region(void *data,
 				   void *image,
 				   int x, int y, int w, int h)
 {
-   RGBA_Engine_Image*		eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
 
    (void) data;
 
-   return evas_cache_engine_image_dirty(eim, x, y, w, h);
+   return evas_cache_engine_image_dirty(&eim->cache_entry, x, y, w, h);
 }
 
-void*
+static void*
 evas_engine_sdl_image_data_get(void *data, void *image,
 			       int to_write, DATA32** image_data)
 {
-   RGBA_Engine_Image*		eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
+   RGBA_Image                   *im;
 
    (void) data;
 
@@ -430,19 +434,20 @@ evas_engine_sdl_image_data_get(void *data, void *image,
         *image_data = NULL;
         return NULL;
      }
+   im = (RGBA_Image *) eim->cache_entry.src;
 
-   switch (eim->src->cs.space)
+   switch (eim->cache_entry.src->space)
      {
      case EVAS_COLORSPACE_ARGB8888:
         if (to_write)
-          eim = evas_cache_engine_image_dirty(eim, 0, 0, eim->src->image->w, eim->src->image->h);
+          eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_dirty(&eim->cache_entry, 0, 0, eim->cache_entry.src->w, eim->cache_entry.src->h);
 
-        evas_cache_engine_image_load_data(eim);
-        *image_data = eim->src->image->data;
+        evas_cache_engine_image_load_data(&eim->cache_entry);
+        *image_data = im->image.data;
         break;
      case EVAS_COLORSPACE_YCBCR422P709_PL:
      case EVAS_COLORSPACE_YCBCR422P601_PL:
-        *image_data = eim->src->cs.data;
+        *image_data = im->cs.data;
         break;
      default:
         abort();
@@ -451,37 +456,39 @@ evas_engine_sdl_image_data_get(void *data, void *image,
    return eim;
 }
 
-void*
+static void*
 evas_engine_sdl_image_data_put(void *data, void *image, DATA32* image_data)
 {
-   Render_Engine*	re = (Render_Engine*) data;
-   RGBA_Engine_Image*	eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
+   Render_Engine                *re = data;
+   RGBA_Image                   *im;
 
    if (!eim) return NULL;
+   im = (RGBA_Image*) eim->cache_entry.src;
 
-   switch (eim->src->cs.space)
+   switch (eim->cache_entry.src->space)
      {
      case EVAS_COLORSPACE_ARGB8888:
-        if (image_data != eim->src->image->data)
+        if (image_data != im->image.data)
           {
-             evas_cache_engine_image_drop(eim);
-             eim = evas_cache_engine_image_data(re->cache,
-                                                eim->src->image->w, eim->src->image->h,
-                                                image_data,
-                                                func.image_alpha_get(data, eim),
-                                                func.image_colorspace_get(data, eim),
-                                                NULL);
+             evas_cache_engine_image_drop(&eim->cache_entry);
+             eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_data(re->cache,
+                                                                           eim->cache_entry.w, eim->cache_entry.h,
+                                                                           image_data,
+                                                                           func.image_alpha_get(data, eim),
+                                                                           func.image_colorspace_get(data, eim),
+                                                                           NULL);
           }
         break;
      case EVAS_COLORSPACE_YCBCR422P601_PL:
      case EVAS_COLORSPACE_YCBCR422P709_PL:
-        if (image_data != eim->src->cs.data)
+        if (image_data != im->cs.data)
           {
-             if (eim->src->cs.data)
-               if (!eim->src->cs.no_free)
-                 free(eim->src->cs.data);
-             eim->src->cs.data = image_data;
-             evas_common_image_colorspace_dirty(eim->src);
+             if (im->cs.data)
+               if (!im->cs.no_free)
+                 free(im->cs.data);
+             im->cs.data = image_data;
+             evas_common_image_colorspace_dirty(im);
           }
         break;
      default:
@@ -491,130 +498,141 @@ evas_engine_sdl_image_data_put(void *data, void *image, DATA32* image_data)
    return eim;
 }
 
-void*
+static void*
 evas_engine_sdl_image_alpha_set(void *data, void *image, int has_alpha)
 {
-   RGBA_Engine_Image*		eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
+   RGBA_Image                   *im;
 
    (void) data;
 
    if (!eim) return NULL;
-   if (eim->src->cs.space != EVAS_COLORSPACE_ARGB8888)
+
+   im = (RGBA_Image *) eim->cache_entry.src;
+
+   if (eim->cache_entry.src->space != EVAS_COLORSPACE_ARGB8888)
      {
-        eim->src->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+        im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
         return eim;
      }
 
-   eim = evas_cache_engine_image_dirty(eim, 0, 0, eim->src->image->w, eim->src->image->h);
+   eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_dirty(&eim->cache_entry, 0, 0, eim->cache_entry.w, eim->cache_entry.h);
 
    /* FIXME: update SDL_Surface flags */
    if (has_alpha)
-     eim->src->flags |= RGBA_IMAGE_HAS_ALPHA;
+     im->flags |= RGBA_IMAGE_HAS_ALPHA;
    else
-     eim->src->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+     im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
    return eim;
 }
 
-void*
+static void*
 evas_engine_sdl_image_border_set(void *data, void *image, int l, int r, int t, int b)
 {
    return image;
 }
 
-void
+static void
 evas_engine_sdl_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
 {
    /* FIXME: need to know what evas expect from this call */
 }
 
-void
+static void
 evas_engine_sdl_image_draw(void *data, void *context, void *surface, void *image,
 			   int src_region_x, int src_region_y, int src_region_w, int src_region_h,
 			   int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h,
 			   int smooth)
 {
-   Render_Engine*       re = data;
-   RGBA_Engine_Image*	eim = (RGBA_Engine_Image*) image;
-   RGBA_Engine_Image*   dst = (RGBA_Engine_Image*) surface;
-   RGBA_Draw_Context*	dc = (RGBA_Draw_Context*) context;
-   int                  mustlock_im = 0;
-   int                  mustlock_dst = 0;
+   SDL_Engine_Image_Entry       *eim = image;
+   SDL_Engine_Image_Entry       *dst = surface;
+   RGBA_Draw_Context            *dc = (RGBA_Draw_Context*) context;
+   int                           mustlock_im = 0;
+   int                           mustlock_dst = 0;
 
    (void) data;
 
-   if (eim->src->cs.space == EVAS_COLORSPACE_ARGB8888)
-     evas_cache_engine_image_load_data(eim);
+   if (eim->cache_entry.src->space == EVAS_COLORSPACE_ARGB8888)
+     evas_cache_engine_image_load_data(&eim->cache_entry);
 
    /* Fallback to software method */
-   if (SDL_MUSTLOCK(((SDL_Surface*) dst->engine_data)))
+   if (SDL_MUSTLOCK(dst->surface))
      {
         mustlock_dst = 1;
-	SDL_LockSurface(dst->engine_data);
+	SDL_LockSurface(dst->surface);
 	_SDL_UPDATE_PIXELS(dst);
      }
 
-   if (eim->engine_data && SDL_MUSTLOCK(((SDL_Surface*) eim->engine_data)))
+   if (eim->surface && SDL_MUSTLOCK(eim->surface))
      {
         mustlock_im = 1;
-	SDL_LockSurface(eim->engine_data);
+	SDL_LockSurface(eim->surface);
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_image_colorspace_normalize(eim->src);
+   evas_common_image_colorspace_normalize((RGBA_Image *) eim->cache_entry.src);
 
    if (smooth)
-     evas_common_scale_rgba_in_to_out_clip_smooth(eim->src, dst->src, dc,
+     evas_common_scale_rgba_in_to_out_clip_smooth((RGBA_Image *) eim->cache_entry.src,
+                                                  (RGBA_Image *) dst->cache_entry.src,
+                                                  dc,
                                                   src_region_x, src_region_y, src_region_w, src_region_h,
                                                   dst_region_x, dst_region_y, dst_region_w, dst_region_h);
    else
-     evas_common_scale_rgba_in_to_out_clip_sample(eim->src, dst->src, dc,
+     evas_common_scale_rgba_in_to_out_clip_sample((RGBA_Image *) eim->cache_entry.src,
+                                                  (RGBA_Image *) dst->cache_entry.src,
+                                                  dc,
                                                   src_region_x, src_region_y, src_region_w, src_region_h,
                                                   dst_region_x, dst_region_y, dst_region_w, dst_region_h);
    evas_common_cpu_end_opt ();
 
    if (mustlock_im)
-     SDL_UnlockSurface(eim->engine_data);
+     SDL_UnlockSurface(eim->surface);
 
    if (mustlock_dst)
-     SDL_UnlockSurface(dst->engine_data);
+     SDL_UnlockSurface(dst->surface);
 }
 
-void
+static void
 evas_engine_sdl_image_cache_flush(void *data)
 {
-   Render_Engine*       re = (Render_Engine*) data;
-   int                  size;
+   Render_Engine        *re = (Render_Engine*) data;
+   int                   size;
 
    size = evas_cache_engine_image_get(re->cache);
    evas_cache_engine_image_set(re->cache, 0);
    evas_cache_engine_image_set(re->cache, size);
 }
 
-void
+static void
 evas_engine_sdl_image_cache_set(void *data, int bytes)
 {
-   Render_Engine*       re = (Render_Engine*) data;
+   Render_Engine        *re = (Render_Engine*) data;
 
    evas_cache_engine_image_set(re->cache, bytes);
 }
 
-int
+static int
 evas_engine_sdl_image_cache_get(void *data)
 {
-   Render_Engine*       re = (Render_Engine*) data;
+   Render_Engine        *re = (Render_Engine*) data;
 
    return evas_cache_engine_image_get(re->cache);
 }
 
-char*
+static char*
 evas_engine_sdl_image_comment_get(void *data, void *image, char *key)
 {
-   RGBA_Engine_Image         *eim = (RGBA_Engine_Image*) image;
+   SDL_Engine_Image_Entry       *eim = image;
+   RGBA_Image                   *im;
 
-   return eim->src->info.comment;
+   if (!eim) return NULL;
+   im = (RGBA_Image *) eim->cache_entry.src;
+
+   return im->info.comment;
 }
 
-char*
+static char*
 evas_engine_sdl_image_format_get(void *data, void *image)
 {
    /* FIXME: need to know what evas expect from this call */
@@ -624,101 +642,140 @@ evas_engine_sdl_image_format_get(void *data, void *image)
 static void
 evas_engine_sdl_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
-   RGBA_Engine_Image*	eim = (RGBA_Engine_Image*) surface;
-   int                  mustlock_im = 0;
+   SDL_Engine_Image_Entry       *eim = surface;
+   int                           mustlock_im = 0;
 
-   if (eim->engine_data && SDL_MUSTLOCK(((SDL_Surface*) eim->engine_data)))
+   if (eim->surface && SDL_MUSTLOCK(eim->surface))
      {
         mustlock_im = 1;
-	SDL_LockSurface(eim->engine_data);
+	SDL_LockSurface(eim->surface);
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_font_draw(eim->src, context, font, x, y, text);
+   evas_common_font_draw((RGBA_Image *) eim->cache_entry.src, context, font, x, y, text);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)
-     SDL_UnlockSurface(eim->engine_data);
+     SDL_UnlockSurface(eim->surface);
 }
 
 static void
 evas_engine_sdl_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
-   RGBA_Engine_Image*	eim = (RGBA_Engine_Image*) surface;
-   int                  mustlock_im = 0;
+   SDL_Engine_Image_Entry       *eim = surface;
+   int                           mustlock_im = 0;
 
-   if (eim->engine_data && SDL_MUSTLOCK(((SDL_Surface*) eim->engine_data)))
+   if (eim->surface && SDL_MUSTLOCK(eim->surface))
      {
         mustlock_im = 1;
-	SDL_LockSurface(eim->engine_data);
+	SDL_LockSurface(eim->surface);
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_line_draw(eim->src, context, x1, y1, x2, y2);
+   evas_common_line_draw((RGBA_Image *) eim->cache_entry.src, context, x1, y1, x2, y2);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)
-     SDL_UnlockSurface(eim->engine_data);
+     SDL_UnlockSurface(eim->surface);
 }
 
 static void
 evas_engine_sdl_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
-   RGBA_Engine_Image*	eim = (RGBA_Engine_Image*) surface;
-   int                  mustlock_im = 0;
+   SDL_Engine_Image_Entry       *eim = surface;
+#if ENGINE_SDL_PRIMITIVE
+   RGBA_Draw_Context            *dc = context;
+#endif
+   int                           mustlock_im = 0;
 
-   if (eim->engine_data && SDL_MUSTLOCK(((SDL_Surface*) eim->engine_data)))
+#if ENGINE_SDL_PRIMITIVE
+   if (A_VAL(&dc->col.col) != 0x00)
      {
-        mustlock_im = 1;
-	SDL_LockSurface(eim->engine_data);
-	_SDL_UPDATE_PIXELS(eim);
+        if (A_VAL(&dc->col.col) != 0xFF)
+          {
+#endif
+             if (eim->surface && SDL_MUSTLOCK(eim->surface))
+               {
+                  mustlock_im = 1;
+                  SDL_LockSurface(eim->surface);
+                  _SDL_UPDATE_PIXELS(eim);
+               }
+
+             evas_common_rectangle_draw((RGBA_Image *) eim->cache_entry.src, context, x, y, w, h);
+             evas_common_cpu_end_opt();
+
+             if (mustlock_im)
+               SDL_UnlockSurface(eim->surface);
+#if ENGINE_SDL_PRIMITIVE
+          }
+        else
+          {
+             SDL_Rect        dstrect;
+
+             if (dc->clip.use)
+               {
+                  SDL_Rect   cliprect;
+
+                  cliprect.x = dc->clip.x;
+                  cliprect.y = dc->clip.y;
+                  cliprect.w = dc->clip.w;
+                  cliprect.h = dc->clip.h;
+
+                  SDL_SetClipRect(eim->surface, &cliprect);
+               }
+
+             dstrect.x = x;
+             dstrect.y = y;
+             dstrect.w = w;
+             dstrect.h = h;
+
+             SDL_FillRect(eim->surface, &dstrect, SDL_MapRGBA(eim->surface->format, R_VAL(&dc->col.col), G_VAL(&dc->col.col), B_VAL(&dc->col.col), 0xFF));
+
+             if (dc->clip.use)
+               SDL_SetClipRect(eim->surface, NULL);
+          }
      }
-
-   evas_common_rectangle_draw(eim->src, context, x, y, w, h);
-   evas_common_cpu_end_opt();
-
-   if (mustlock_im)
-     SDL_UnlockSurface(eim->engine_data);
+#endif
 }
 
 static void
 evas_engine_sdl_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
-   RGBA_Engine_Image*	eim = (RGBA_Engine_Image*) surface;
-   int                  mustlock_im = 0;
+   SDL_Engine_Image_Entry       *eim = surface;
+   int                           mustlock_im = 0;
 
-   if (eim->engine_data && SDL_MUSTLOCK(((SDL_Surface*) eim->engine_data)))
+   if (eim->surface && SDL_MUSTLOCK(eim->surface))
      {
         mustlock_im = 1;
-	SDL_LockSurface(eim->engine_data);
+	SDL_LockSurface(eim->surface);
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_polygon_draw(eim->src, context, polygon);
+   evas_common_polygon_draw((RGBA_Image *) eim->cache_entry.src, context, polygon);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)
-     SDL_UnlockSurface(eim->engine_data);
+     SDL_UnlockSurface(eim->surface);
 }
 
 static void
 evas_engine_sdl_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
-   RGBA_Engine_Image*	eim = (RGBA_Engine_Image*) surface;
-   int                  mustlock_im = 0;
+   SDL_Engine_Image_Entry       *eim = surface;
+   int                           mustlock_im = 0;
 
-   if (eim->engine_data && SDL_MUSTLOCK(((SDL_Surface*) eim->engine_data)))
+   if (eim->surface && SDL_MUSTLOCK(eim->surface))
      {
         mustlock_im = 1;
-	SDL_LockSurface(eim->engine_data);
+	SDL_LockSurface(eim->surface);
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_gradient_draw(eim->src, context, x, y, w, h, gradient);
+   evas_common_gradient_draw((RGBA_Image *) eim->cache_entry.src, context, x, y, w, h, gradient);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)
-     SDL_UnlockSurface(eim->engine_data);
+     SDL_UnlockSurface(eim->surface);
 }
 
 EAPI int module_open(Evas_Module *em)
@@ -793,6 +850,7 @@ static void*
 _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hwsurface)
 {
    Render_Engine		*re = calloc(1, sizeof(Render_Engine));
+   SDL_Surface                  *surface;
 
    /* if we haven't initialized - init (automatic abort if already done) */
    evas_common_cpu_init();
@@ -808,6 +866,9 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
    evas_common_draw_init();
    evas_common_tilebuf_init();
 
+   if (w <= 0) w = 640;
+   if (h <= 0) h = 480;
+
    re->cache = evas_cache_engine_image_init(&_sdl_cache_engine_image_cb, evas_common_image_cache_get());
    if (!re->cache)
      {
@@ -818,199 +879,221 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
    re->tb = evas_common_tilebuf_new(w, h);
    /* in preliminary tests 16x16 gave highest framerates */
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
-   re->surface = SDL_SetVideoMode(w, h, 32,
-				  (hwsurface ? SDL_HWSURFACE : SDL_SWSURFACE)
-				  | (fullscreen ? SDL_FULLSCREEN : 0)
-				  | (noframe ? SDL_NOFRAME : 0)
-                                  | (alpha ? SDL_SRCALPHA : 0));
+   surface = SDL_SetVideoMode(w, h, 32,
+                              (hwsurface ? SDL_HWSURFACE : SDL_SWSURFACE)
+                              | (fullscreen ? SDL_FULLSCREEN : 0)
+                              | (noframe ? SDL_NOFRAME : 0)
+                              | (alpha ? SDL_SRCALPHA : 0));
 
-   if (!re->surface)
-     return NULL;
+   if (!surface)
+     {
+        fprintf(stderr, "SDL_SetVideoMode [ %i x %i x 32 ] failed.\n", w, h);
+        exit(-1);
+     }
 
-   SDL_SetAlpha(re->surface, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+   SDL_SetAlpha(surface, SDL_SRCALPHA | SDL_RLEACCEL, 0);
 
    /* We create a "fake" RGBA_Image which points to the SDL surface. Each access
     * to that surface is wrapped in Lock / Unlock calls whenever the data is
     * manipulated directly. */
-   re->rgba_engine_image = evas_cache_engine_image_engine(re->cache, re->surface);
+   re->rgba_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->rgba_engine_image)
      {
 	fprintf(stderr, "RGBA_Image allocation from SDL failed\n");
         exit(-1);
      }
 
-   SDL_FillRect(re->surface, NULL, 0);
+   SDL_FillRect(surface, NULL, 0);
 
-   re->alpha = alpha;
-   re->hwsurface = hwsurface;
-   re->fullscreen = fullscreen;
-   re->noframe = noframe;
+   re->flags.alpha = alpha;
+   re->flags.hwsurface = hwsurface;
+   re->flags.fullscreen = fullscreen;
+   re->flags.noframe = noframe;
    return re;
 }
 
-static void
-_sdl_stretch_blit		(const RGBA_Engine_Image* from,
-				 RGBA_Engine_Image* to,
-				 int w, int h)
+static Engine_Image_Entry*
+_sdl_image_alloc(void)
 {
-   int                          mustlock_from = 0;
-   int                          mustlock_to = 0;
+   SDL_Engine_Image_Entry       *new;
 
-   if (from->engine_data)
-     if (SDL_MUSTLOCK(((SDL_Surface*) from->engine_data)))
-       mustlock_from = 1;
+   new = calloc(1, sizeof (SDL_Engine_Image_Entry));
 
-   if (to->engine_data)
-     if (SDL_MUSTLOCK(((SDL_Surface*) to->engine_data)))
-       mustlock_to = 1;
+   return (Engine_Image_Entry *) new;
+}
 
-   if (mustlock_from)
-     {
-        SDL_LockSurface(from->engine_data);
-        _SDL_UPDATE_PIXELS(from);
-     }
-
-   if (mustlock_to)
-     {
-        SDL_LockSurface(to->engine_data);
-        _SDL_UPDATE_PIXELS(to);
-     }
-
-   evas_common_blit_rectangle(from->src, to->src, 0, 0, w, h, 0, 0);
-
-   if (mustlock_to)
-     SDL_UnlockSurface(to->engine_data);
-
-   if (mustlock_from)
-     SDL_UnlockSurface(from->engine_data);
-
-   evas_common_cpu_end_opt();
+static void
+_sdl_image_delete(Engine_Image_Entry *eim)
+{
+   free(eim);
 }
 
 static int
-_sdl_image_constructor(RGBA_Engine_Image* eim, void* data)
+_sdl_image_constructor(Engine_Image_Entry *ie, void *data)
 {
-   SDL_Surface     *sdl = NULL;
+   SDL_Surface                  *sdl = NULL;
+   SDL_Engine_Image_Entry       *eim = (SDL_Engine_Image_Entry *) ie;
+   RGBA_Image                   *im;
 
-   if (eim->src->image->data)
+   im = (RGBA_Image *) ie->src;
+
+   if (im)
      {
-        /* FIXME: Take care of CSPACE */
-        sdl = SDL_CreateRGBSurfaceFrom(eim->src->image->data,
-                                       eim->src->image->w, eim->src->image->h,
-                                       32, eim->src->image->w * 4,
-                                       RMASK, GMASK, BMASK, AMASK);
-        eim->engine_data = sdl;
+        evas_cache_image_load_data(&im->cache_entry);
+
+        if (im->image.data)
+          {
+             /* FIXME: Take care of CSPACE */
+             sdl = SDL_CreateRGBSurfaceFrom(im->image.data,
+                                            ie->w, ie->h,
+                                            32, ie->w * 4,
+                                            RMASK, GMASK, BMASK, AMASK);
+             eim->surface = sdl;
+             eim->flags.engine_surface = 0;
+          }
      }
 
    return 0;
 }
 
 static void
-_sdl_image_destructor(RGBA_Engine_Image *eim)
+_sdl_image_destructor(Engine_Image_Entry *eie)
 {
-   if (eim->engine_data)
-     SDL_FreeSurface(eim->engine_data);
-   eim->engine_data = NULL;
+   SDL_Engine_Image_Entry       *seie = (SDL_Engine_Image_Entry *) eie;
+
+   if (seie->surface && !seie->flags.engine_surface)
+     SDL_FreeSurface(seie->surface);
+   seie->surface = NULL;
 }
 
 static int
-_sdl_image_dirty(RGBA_Engine_Image *dst, const RGBA_Engine_Image *src)
+_sdl_image_dirty(Engine_Image_Entry *dst, const Engine_Image_Entry *src)
 {
-   SDL_Surface     *sdl = NULL;
+   SDL_Engine_Image_Entry       *eim = (SDL_Engine_Image_Entry *) dst;
+   SDL_Surface                  *sdl = NULL;
+   RGBA_Image                   *im;
+
+   im = (RGBA_Image *) dst->src;
 
    /* FIXME: Take care of CSPACE */
-   sdl = SDL_CreateRGBSurfaceFrom(dst->src->image->data,
-                                  dst->src->image->w, dst->src->image->h,
-                                  32, dst->src->image->w * 4,
+   sdl = SDL_CreateRGBSurfaceFrom(im->image.data,
+                                  dst->w, dst->h,
+                                  32, dst->w * 4,
                                   0xff0000, 0xff00, 0xff, 0xff000000);
-   dst->engine_data = sdl;
+   eim->surface = sdl;
+   eim->flags.engine_surface = 0;
 
    return 0;
 }
 
 static int
-_sdl_image_update_data(RGBA_Engine_Image *dst, void* engine_data)
+_sdl_image_update_data(Engine_Image_Entry *dst, void* engine_data)
 {
-   SDL_Surface     *sdl = NULL;
+   SDL_Engine_Image_Entry       *eim = (SDL_Engine_Image_Entry *) dst;
+   SDL_Surface                  *sdl = NULL;
+   RGBA_Image                   *im;
+
+   im = (RGBA_Image *) dst->src;
 
    if (engine_data)
      {
         sdl = engine_data;
 
-        dst->src->image->data = sdl->pixels;
-        dst->src->image->no_free = 1;
-        dst->src->image->w = sdl->w;
-        dst->src->image->h = sdl->h;
-        dst->src->flags |= RGBA_IMAGE_HAS_ALPHA;
+        if (im)
+          {
+             im->image.data = sdl->pixels;
+             im->image.no_free = 1;
+             im->flags |= RGBA_IMAGE_HAS_ALPHA;
+             dst->src->w = sdl->w;
+             dst->src->h = sdl->h;
+          }
+        dst->w = sdl->w;
+        dst->h = sdl->h;
      }
    else
-     /* FIXME: Take care of CSPACE */
-     sdl = SDL_CreateRGBSurfaceFrom(dst->src->image->data,
-                                    dst->src->image->w, dst->src->image->h,
-                                    32, dst->src->image->w * 4,
-                                    RMASK, GMASK, BMASK, AMASK);
+     {
+        /* FIXME: Take care of CSPACE */
+        SDL_FreeSurface(eim->surface);
+        sdl = SDL_CreateRGBSurfaceFrom(im->image.data,
+                                       dst->w, dst->h,
+                                       32, dst->w * 4,
+                                       RMASK, GMASK, BMASK, AMASK);
+     }
 
-   dst->engine_data = sdl;
+   eim->surface = sdl;
 
    return 0;
 }
 
 static int
-_sdl_image_size_set(RGBA_Engine_Image *dst, const RGBA_Engine_Image *src)
+_sdl_image_size_set(Engine_Image_Entry *dst, const Engine_Image_Entry *src)
 {
-   SDL_Surface*    sdl;
+   SDL_Engine_Image_Entry       *eim = (SDL_Engine_Image_Entry *) dst;
+   SDL_Surface                  *sdl;
+   RGBA_Image                   *im;
 
-   sdl = SDL_CreateRGBSurfaceFrom(dst->src->image->data,
-                                  dst->src->image->w, dst->src->image->h,
-                                  32, dst->src->image->w * 4,
+   im = (RGBA_Image *) dst->src;
+
+   /* FIXME: handle im == NULL */
+   sdl = SDL_CreateRGBSurfaceFrom(im->image.data,
+                                  dst->w, dst->h,
+                                  32, dst->w * 4,
                                   RMASK, GMASK, BMASK, AMASK);
 
-   dst->engine_data = sdl;
-
-/*    _sdl_stretch_blit(src, dst, dst->src->image->w, dst->src->image->h); */
+   eim->surface = sdl;
 
    return 0;
 }
 
 static void
-_sdl_image_load(RGBA_Engine_Image *eim, const RGBA_Image *im)
+_sdl_image_load(Engine_Image_Entry *eim, const Image_Entry *ie_im)
 {
-   SDL_Surface*    sdl;
+   SDL_Engine_Image_Entry       *load = (SDL_Engine_Image_Entry *) eim;
+   SDL_Surface                  *sdl;
 
-   if (!eim->engine_data)
+   if (!load->surface)
      {
-        sdl = SDL_CreateRGBSurfaceFrom(eim->src->image->data,
-                                       eim->src->image->w, eim->src->image->h,
-                                       32, eim->src->image->w * 4,
+        RGBA_Image      *im;
+
+        im = (RGBA_Image *) ie_im;
+
+        sdl = SDL_CreateRGBSurfaceFrom(im->image.data,
+                                       eim->w, eim->h,
+                                       32, eim->w * 4,
                                        RMASK, GMASK, BMASK, AMASK);
-        eim->engine_data = sdl;
+        load->surface = sdl;
      }
 }
 
 static int
-_sdl_image_mem_size_get(RGBA_Engine_Image *eim)
+_sdl_image_mem_size_get(Engine_Image_Entry *eim)
 {
-   int  size = 0;
+   SDL_Engine_Image_Entry       *seie = (SDL_Engine_Image_Entry *) eim;
+   int                           size = 0;
 
-   if (eim->engine_data)
-     size = sizeof (SDL_Surface) + sizeof (SDL_PixelFormat) + (eim->src ? evas_common_image_ram_usage(eim->src) : 0);
+   /* FIXME: Count surface size. */
+   if (seie->surface)
+     size = sizeof (SDL_Surface) + sizeof (SDL_PixelFormat);
 
    return size;
 }
 
 #ifdef DEBUG_SDL
 static void
-_sdl_image_debug(const char* context, RGBA_Engine_Image* eim)
+_sdl_image_debug(const char* context, Engine_Image_Entry* eie)
 {
+   SDL_Engine_Image_Entry       *eim = (SDL_Engine_Image_Entry *) eie;
+
    printf ("*** %s image (%p) ***\n", context, eim);
    if (eim)
      {
-	printf ("* W: %i\n* H: %i\n", eim->src->image->w, eim->src->image->h);
-	printf ("* Pixels: %p\n* SDL Surface: %p\n", eim->src->image->data, eim->engine_data);
-        printf ("* Surface->pixels: %p\n", ((SDL_Surface*) eim->engine_data)->pixels);
-	printf ("* Flags: %i\n", eim->src->flags);
-	printf ("* Filename: %s\n* Key: %s\n", eim->src->info.file, eim->src->info.key);
-        printf ("* Reference: %i\n", eim->references);
+        printf ("* W: %i\n* H: %i\n* R: %i\n", eim->cache_entry.w, eim->cache_entry.h, eim->cache_entry.references);
+        if (eim->cache_entry.src)
+          printf ("* Pixels: %p\n* SDL Surface: %p\n",((RGBA_Image*) eim->cache_entry.src)->image.data, eim->surface);
+        if (eim->surface)
+          printf ("* Surface->pixels: %p\n", eim->surface->pixels);
+	printf ("* Key: %s\n", eim->cache_entry.cache_key);
+        printf ("* Reference: %i\n", eim->cache_entry.references);
      }
    printf ("*** ***\n");
 }

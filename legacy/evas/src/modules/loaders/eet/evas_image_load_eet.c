@@ -42,15 +42,8 @@ evas_image_load_file_head_eet(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	eet_close(ef);
-	return 0;
-     }
-   im->image->w = w;
-   im->image->h = h;
+   im->cache_entry.w = w;
+   im->cache_entry.h = h;
    eet_close(ef);
    return 1;
 }
@@ -65,7 +58,7 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
    DATA32               nas = 0;
 
    if ((!file) || (!key)) return 0;
-   if ((im->image) && (im->image->data)) return 1;
+   if (im->image.data) return 1;
    ef = eet_open((char *)file, EET_FILE_MODE_READ);
    if (!ef) return 0;
    body = eet_data_image_read(ef, (char *)key,
@@ -82,18 +75,10 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	free(body);
-	eet_close(ef);
-	return 0;
-     }
-   im->image->w = w;
-   im->image->h = h;
-   im->image->data = body;
-   im->image->no_free = 0;
+   im->cache_entry.w = w;
+   im->cache_entry.h = h;
+   im->image.data = body;
+   im->image.no_free = 0;
    if (alpha)
      {
 	end = body +(w * h);
@@ -111,7 +96,7 @@ evas_image_load_file_data_eet(RGBA_Image *im, const char *file, const char *key)
 	     if (b > a) b = a;
 	     *p = ARGB_JOIN(a, r, g, b);
 	  }
-	if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (im->image->w * im->image->h))
+	if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (im->cache_entry.w * im->cache_entry.h))
 	  im->flags |= RGBA_IMAGE_ALPHA_SPARSE;
      }
 // result is already premultiplied now if u compile with edje   

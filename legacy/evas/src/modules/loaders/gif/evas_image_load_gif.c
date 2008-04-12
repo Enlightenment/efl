@@ -94,15 +94,8 @@ evas_image_load_file_head_gif(RGBA_Image *im, const char *file, const char *key)
    } while (rec != TERMINATE_RECORD_TYPE);
 
    if (alpha >= 0) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-        DGifCloseFile(gif);
-	return 0;
-     }
-   im->image->w = w;
-   im->image->h = h;
+   im->cache_entry.w = w;
+   im->cache_entry.h = h;
 
    DGifCloseFile(gif);
    return 1;
@@ -241,20 +234,9 @@ evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key)
    } while (rec != TERMINATE_RECORD_TYPE);
 
    if (alpha >= 0) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
+   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+   if (!im->image.data)
      {
-        DGifCloseFile(gif);
-	return 0;
-     }
-   im->image->w = w;
-   im->image->h = h;
-
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
-     {
-	evas_common_image_surface_free(im->image);
         DGifCloseFile(gif);
         for (i = 0; i < h; i++)
           {
@@ -267,7 +249,7 @@ evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key)
    bg = gif->SBackGroundColor;
    cmap = (gif->Image.ColorMap ? gif->Image.ColorMap : gif->SColorMap);
 
-   ptr = im->image->data;
+   ptr = im->image.data;
    per_inc = 100.0 / (((double)w) * h);
 
    for (i = 0; i < h; i++)

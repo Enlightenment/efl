@@ -572,6 +572,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    im = image;
    /* FIXME: can move to gl_common */
    if (im->cs.space == cspace) return;
+   evas_cache_image_colorspace(&im->im.cache_entry, cspace);
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -581,13 +582,9 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 	     im->cs.data = NULL;
 	     im->cs.no_free = 0;
 	  }
-	if (!im->im->image->no_free)
-	  evas_common_image_surface_alloc(im->im->image);
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-	evas_common_image_surface_dealloc(im->im->image);
-	im->im->image->data = NULL;
 	if (im->tex) evas_gl_common_texture_free(im->tex);
 	im->tex = NULL;
 	if (im->cs.data)
@@ -844,14 +841,10 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
 	static RGBA_Image *im = NULL;
 
 	if (!im)
-	  {
-	     im = evas_common_image_new();
-	     im->image = evas_common_image_surface_new(im);
-	     im->image->no_free = 1;
-	  }
-	im->image->w = re->window->width;
-	im->image->h = re->window->height;
-	im->image->data = NULL;
+          im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+        if (!im) return ;
+        evas_cache_image_surface_alloc(&im->cache_entry, re->window->width, re->window->height);
+
 	evas_common_draw_context_font_ext_set(context,
 					      re->window->gl_context,
 					      evas_gl_font_texture_new,

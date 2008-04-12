@@ -134,8 +134,8 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 
    ext_x = 0;
    ext_y = 0;
-   ext_w = dst->image->w;
-   ext_h = dst->image->h;
+   ext_w = dst->cache_entry.w;
+   ext_h = dst->cache_entry.h;
    if (dc->clip.use)
      {
 	if (dc->clip.x > ext_x)
@@ -280,7 +280,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 	     if (((span->y) % dc->sli.h) == dc->sli.y)
 #endif
 	       {
-		  ptr = dst->image->data + (span->y * (dst->image->w)) + span->x;
+		  ptr = dst->image.data + (span->y * (dst->cache_entry.w)) + span->x;
 		  func(NULL, NULL, dc->col.col, ptr, span->w);
 	       }
 	  }

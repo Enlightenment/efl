@@ -4,7 +4,7 @@ Evas_GL_Texture *
 evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 {
    Evas_GL_Texture *tex;
-   int *im_data;
+   DATA32 *im_data;
    int im_w, im_h;
    int tw, th;
    int shift;
@@ -13,16 +13,16 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
 
-   if ((gc->ext.nv_texture_rectangle) && 
-       (!(gc->ext.arb_texture_non_power_of_two && 
+   if ((gc->ext.nv_texture_rectangle) &&
+       (!(gc->ext.arb_texture_non_power_of_two &&
 	  gc->ext.sgis_generate_mipmap)))
      {
 	tex->gc = gc;
-	tex->w = im->image->w;
-	tex->h = im->image->h;
+	tex->w = im->cache_entry.w;
+	tex->h = im->cache_entry.h;
 	tex->rectangle = 1;
-	tex->tw = im->image->w;
-	tex->th = im->image->h;
+	tex->tw = im->cache_entry.w;
+	tex->th = im->cache_entry.h;
 	tex->references = 0;
 	tex->smooth = smooth;
 	tex->changed = 1;
@@ -53,25 +53,25 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 
 	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0,
 		     texfmt, tex->w, tex->h, 0,
-		     pixfmt, NATIVE_PIX_UNIT, im->image->data);
+		     pixfmt, NATIVE_PIX_UNIT, im->image.data);
 	return tex;
      }
 
    if ((gc->ext.arb_texture_non_power_of_two) && (gc->ext.sgis_generate_mipmap))
      {
-	tw = im->image->w;
-	th = im->image->h;
+	tw = im->cache_entry.w;
+	th = im->cache_entry.h;
      }
    else
      {
-	shift = 1; while (im->image->w > shift) shift = shift << 1; tw = shift;
-	shift = 1; while (im->image->h > shift) shift = shift << 1; th = shift;
+	shift = 1; while (im->cache_entry.w > shift) shift = shift << 1; tw = shift;
+	shift = 1; while (im->cache_entry.h > shift) shift = shift << 1; th = shift;
      }
    tex->gc = gc;
    tex->w = tw;
    tex->h = th;
-   tex->tw = im->image->w;
-   tex->th = im->image->h;
+   tex->tw = im->cache_entry.w;
+   tex->th = im->cache_entry.h;
    tex->references = 0;
    tex->smooth = 0;
    tex->changed = 1;
@@ -84,15 +84,15 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    tex->references++;
 
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
-   
+
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-   im_data = im->image->data;
-   im_w = im->image->w;
-   im_h = im->image->h;
+   im_data = im->image.data;
+   im_w = im->cache_entry.w;
+   im_h = im->cache_entry.h;
 
    if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
@@ -152,7 +152,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 void
 evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 {
-   int *im_data;
+   DATA32 *im_data;
    int im_w, im_h;
    int tw, th;
    GLenum pixfmt, texfmt, target;
@@ -165,7 +165,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, tex->texture);
 
-	data = im->image->data;
+	data = im->image.data;
 #if 0 // trying the glXAllocateMemoryNV() thing but its abysmally slow
 	tmp = glXAllocateMemoryNV(tex->w * tex->h * sizeof(DATA32),
 				  0.0, 1.0, 1.0);
@@ -177,7 +177,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 				tmp);
 //	     evas_common_copy_pixels_rgba_to_rgba_mmx2(im->image->data, tmp,
 //						       tex->w * tex->h);
-	     memcpy(tmp, im->image->data,
+	     memcpy(tmp, im->image.data,
 		    tex->w * tex->h * sizeof(DATA32));
 	     data = tmp;
 	  }
@@ -245,9 +245,9 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    tex->smooth = 0;
 
-   im_data = im->image->data;
-   im_w = im->image->w;
-   im_h = im->image->h;
+   im_data = im->image.data;
+   im_w = im->cache_entry.w;
+   im_h = im->cache_entry.h;
 
    if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
@@ -312,7 +312,7 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
 void
 evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 {
-   int *im_data;
+   DATA32 *im_data;
    int tw, th;
    int im_w, im_h, w, h;
    GLenum pixfmt, texfmt;
@@ -329,8 +329,8 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 #endif
    tw = tex->w;
    th = tex->h;
-   w = im->image->w;
-   h = im->image->h;
+   w = im->cache_entry.w;
+   h = im->cache_entry.h;
    level = 0;
    im1 = im;
 
@@ -365,30 +365,31 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 	th /= 2;
 
 	level++;
-	im2 = evas_common_image_create(w, h);
+	im2 = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+        im2 = (RGBA_Image *) evas_cache_image_size_set(&im2->cache_entry, w, h);
 #ifdef BUILD_MMX
 	if (mmx)
 	  {
-	     evas_common_scale_rgba_mipmap_down_2x2_mmx(im1->image->data,
-							im2->image->data,
+	     evas_common_scale_rgba_mipmap_down_2x2_mmx(im1->image.data,
+							im2->image.data,
 							pw, ph);
 	  }
 	else
 #endif
 	  {
 	     if (im->flags & RGBA_IMAGE_HAS_ALPHA)
-	       evas_common_scale_rgba_mipmap_down_2x2_c(im1->image->data,
-							im2->image->data,
+	       evas_common_scale_rgba_mipmap_down_2x2_c(im1->image.data,
+							im2->image.data,
 							pw, ph);
 	     else
-	       evas_common_scale_rgb_mipmap_down_2x2_c(im1->image->data,
-						       im2->image->data,
+	       evas_common_scale_rgb_mipmap_down_2x2_c(im1->image.data,
+						       im2->image.data,
 						       pw, ph);
 	  }
-	if (im1 != im) evas_cache_image_drop(im1);
+	if (im1 != im) evas_cache_image_drop(&im1->cache_entry);
 	im1 = NULL;
 
-	im_data = im2->image->data;
+	im_data = im2->image.data;
 	im_w = w;
 	im_h = h;
 	glTexSubImage2D(GL_TEXTURE_2D, level,
@@ -413,7 +414,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 	im1 = im2;
 	im2 = NULL;
      }
-   if ((im1 != im) && (im1)) evas_common_image_delete(im1);
+   if ((im1 != im) && (im1)) evas_cache_image_drop(&im1->cache_entry);
    tex->have_mipmaps = 1;
 #ifdef BUILD_MMX
    if (mmx) evas_common_cpu_end_opt();

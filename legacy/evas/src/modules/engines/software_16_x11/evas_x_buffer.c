@@ -81,11 +81,9 @@ evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, i
 			    XSetErrorHandler((XErrorHandler)ph);
 			    if (!_x_err)
 			      {
-				 xob->im.pixels = xob->xim->data;
-				 xob->im.w = w;
-				 xob->im.h = h;
-				 xob->im.stride = xob->xim->bytes_per_line / sizeof(DATA16);
-				 xob->im.references = 1;
+                                 xob->im = (Soft16_Image *) evas_cache_image_data(evas_common_soft16_image_cache_get(), w, h, (DATA32 *) xob->xim->data, 0, EVAS_COLORSPACE_RGB565_A5P);
+                                 if (xob->im)
+                                   xob->im->stride = xob->xim->bytes_per_line / sizeof(DATA16);
 				 return xob;
 			      }
 			 }
@@ -121,11 +119,12 @@ evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, i
 	     return NULL;
 	  }
      }
-   xob->im.pixels = xob->xim->data;
-   xob->im.w = w;
-   xob->im.h = h;
-   xob->im.stride = xob->xim->bytes_per_line / sizeof(DATA16);
-   xob->im.references = 1;
+   if (xob->im)
+     evas_cache_image_drop(&xob->im->cache_entry);
+
+   xob->im =  (Soft16_Image *) evas_cache_image_data(evas_common_soft16_image_cache_get(), w, h, (DATA32 *) xob->xim->data, 0, EVAS_COLORSPACE_RGB565_A5P);
+   if (xob->im)
+     xob->im->stride = xob->xim->bytes_per_line / sizeof(DATA16);
    return xob;
 }
 

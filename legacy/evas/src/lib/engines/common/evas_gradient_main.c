@@ -432,7 +432,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    float           angle;
    int             direct_copy = 0, buf_step = 0;
 
-   if (!dst || !dc || !gr || !dst || !dst->image || !dst->image->data)
+   if (!dst || !dc || !gr || !dst || !dst->image.data)
 	return;
    if (!gr->map.data || !gr->type.geometer)
 	return;
@@ -440,7 +440,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	return;
    if ((w < 1) || (h < 1))
 	return;
-   clx = 0;  cly = 0;  clw = dst->image->w;  clh = dst->image->h;
+   clx = 0;  cly = 0;  clw = dst->cache_entry.w;  clh = dst->cache_entry.h;
    if ((clw < 1) || (clh < 1))  return;
 
    if (dc->clip.use)
@@ -459,14 +459,14 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	if ((dc->render_op == _EVAS_RENDER_FILL) ||
              (dc->render_op == _EVAS_RENDER_COPY))
 	  {
-	     direct_copy = 1;  buf_step = dst->image->w;
+	     direct_copy = 1;  buf_step = dst->cache_entry.w;
 	     if (gr->type.geometer->has_alpha(gr, dc->render_op))
 		dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	  }
 	else if ((dc->render_op == _EVAS_RENDER_BLEND) &&
 	          !gr->type.geometer->has_alpha(gr, dc->render_op))
 	  {
-	     direct_copy = 1;  buf_step = dst->image->w;
+	     direct_copy = 1;  buf_step = dst->cache_entry.w;
 	  }
      }
    if (!direct_copy)
@@ -514,13 +514,13 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 
    map = gr->map.data;
    len = gr->map.len;
-   pdst = dst->image->data + (y * dst->image->w) + x;
-   dst_end = pdst + (h * dst->image->w);
+   pdst = dst->image.data + (y * dst->cache_entry.w) + x;
+   dst_end = pdst + (h * dst->cache_entry.w);
    if (!direct_copy)
      {
-	buf = argb_buf->image->data;
+	buf = argb_buf->image.data;
 	if (alpha_buf)
-	   mask = (DATA8 *)alpha_buf->image->data;
+	   mask = (DATA8 *)alpha_buf->image.data;
      }
    else
 	buf = pdst;
@@ -536,7 +536,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	     evas_common_cpu_end_opt();
 	  }
 	buf += buf_step;
-	pdst += dst->image->w;
+	pdst += dst->cache_entry.w;
 	yoff++;
      }
 

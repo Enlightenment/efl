@@ -24,7 +24,7 @@ evas_imaging_image_load(const char *file, const char *key)
    im = calloc(1, sizeof(Evas_Imaging_Image));
    if (!im)
      {
-        evas_cache_image_drop(image);
+        evas_cache_image_drop(&image->cache_entry);
 	return NULL;
      }
    im->image = image;
@@ -35,7 +35,7 @@ EAPI void
 evas_imaging_image_free(Evas_Imaging_Image *im)
 {
    if (!im) return;
-   evas_cache_image_drop(im->image);
+   evas_cache_image_drop(&im->image->cache_entry);
    free(im);
 }
 
@@ -43,8 +43,8 @@ EAPI void
 evas_imaging_image_size_get(const Evas_Imaging_Image *im, int *w, int *h)
 {
    if (!im) return;
-   if (w) *w = im->image->image->w;
-   if (h) *h = im->image->image->h;
+   if (w) *w = im->image->cache_entry.w;
+   if (h) *h = im->image->cache_entry.h;
 }
 
 EAPI Evas_Bool

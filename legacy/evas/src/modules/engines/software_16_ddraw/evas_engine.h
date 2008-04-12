@@ -5,7 +5,7 @@
 #include <windows.h>
 #include <ddraw.h>
 
-#include "evas_soft16.h"
+#include "evas_common_soft16.h"
 
 typedef struct _DDraw_Output_Buffer       DDraw_Output_Buffer;
 

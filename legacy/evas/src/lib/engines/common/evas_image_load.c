@@ -29,17 +29,18 @@ static struct ext_loader_s	loaders[] = {
    { "pnm", "pmaps" }
 };
 
-EAPI int
-evas_common_load_image_module_from_file(RGBA_Image *im)
+int
+evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
+   RGBA_Image           *im = (RGBA_Image *) ie;
    const char           *loader = NULL;
-   char                 *dot;
    Evas_List            *l;
    Evas_Module          *em;
-   int                  i;
+   char                 *dot;
+   int                   i;
 
-   dot = strrchr (im->info.file, '.');
+   dot = strrchr (ie->file, '.');
    if (dot)
      {
  	for (i = 0, ++dot; i < (sizeof (loaders) / sizeof (struct ext_loader_s)); ++i)
@@ -61,7 +62,7 @@ evas_common_load_image_module_from_file(RGBA_Image *im)
 	       {
 		  evas_module_use(em);
 		  evas_image_load_func = em->functions;
-		  if (evas_image_load_func->file_head(im, im->info.file, im->info.key))
+		  if (evas_image_load_func->file_head(im, ie->file, ie->key))
 		    goto ok;
 	       }
 	  }
@@ -74,7 +75,7 @@ evas_common_load_image_module_from_file(RGBA_Image *im)
 	if (!evas_module_load(em)) continue;
         evas_image_load_func = em->functions;
 	evas_module_use(em);
-	if (evas_image_load_func->file_head(im, im->info.file, im->info.key))
+	if (evas_image_load_func->file_head(im, ie->file, ie->key))
 	  {
 	     if (evas_modules != l)
 	       {
@@ -87,39 +88,28 @@ evas_common_load_image_module_from_file(RGBA_Image *im)
    return -1;
 
   ok:
-   im->info.module = (void *)em;
-   im->info.loader = (void *)evas_image_load_func;
-   evas_module_ref((Evas_Module *)im->info.module);
+   im->info.module = (void*) em;
+   im->info.loader = (void*) evas_image_load_func;
+   evas_module_ref((Evas_Module*) im->info.module);
    return 0;
 }
 
-EAPI void
-evas_common_load_image_data_from_file(RGBA_Image *im)
+int
+evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
+   RGBA_Image           *im = (RGBA_Image *) ie;
 
-   if ((im->flags & RGBA_IMAGE_LOADED) == RGBA_IMAGE_LOADED) return;
-   if (!im->info.module) return;
+   if (!im->info.module) return -1;
+   if (ie->flags.loaded) return -1;
 
    evas_image_load_func = im->info.loader;
-   evas_module_use((Evas_Module *)im->info.module);
-   if (!evas_image_load_func->file_data(im, im->info.file, im->info.key))
-     {
-        if (!im->image->data) evas_common_image_surface_alloc(im->image);
-	if (!im->image->data)
-	  {
-	     const DATA32 pixel = 0xffffffff;
+   evas_module_use((Evas_Module*) im->info.module);
+   if (!evas_image_load_func->file_data(im, ie->file, ie->key))
+     return -1;
 
-	     im->image->w = 1;
-	     im->image->h = 1;
-	     im->image->data = (DATA32 *)&pixel;
-	     im->image->no_free = 1;
-	  }
-     }
-   else
-     {
-	evas_module_unref((Evas_Module *)im->info.module);
-	im->info.module = NULL;
-     }
-   im->flags |= RGBA_IMAGE_LOADED;
+   evas_module_unref((Evas_Module*) im->info.module);
+   im->info.module = NULL;
+
+   return 0;
 }

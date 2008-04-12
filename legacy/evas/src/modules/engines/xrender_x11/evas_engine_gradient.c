@@ -160,32 +160,26 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	RGBA_Image    *im;
 	Ximage_Image  *xim;
 
-	im = evas_common_image_new();
-	if (!im) 
-	  {
-	    _xr_render_surface_free(gr->surface);
-	    gr->surface = NULL;
-	    return;
-	  }
-	im->image = evas_common_image_surface_new(im);
-	if (!im->image) 
-	  {
-	    evas_common_image_delete(im);
-	    _xr_render_surface_free(gr->surface);
-	    gr->surface = NULL;
-	    return;
-	  }
 	xim = _xr_image_new(gr->xinf, w, h, gr->surface->depth);
 	if (!xim)
 	  {
-	    evas_common_image_delete(im);
 	    _xr_render_surface_free(gr->surface);
 	    gr->surface = NULL;
 	    return;
 	  }
-	im->image->data = (DATA32 *)xim->data;
-	im->image->w = w;  im->image->h = h;
-	im->image->no_free = 1;
+
+        im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                                  w, h,
+                                                  (DATA32 *)xim->data,
+                                                  1, EVAS_COLORSPACE_ARGB8888);
+	if (!im)
+	  {
+             /* FIXME: xim is leaking. */
+	    _xr_render_surface_free(gr->surface);
+	    gr->surface = NULL;
+	    return;
+	  }
+
 	dc->render_op = _EVAS_RENDER_FILL;
 	dc->clip.use = 0;
 	evas_common_gradient_draw(im, dc, 0, 0, w, h, gr->grad);
@@ -196,7 +190,7 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	   (xim->xim->byte_order == MSBFirst)
 #endif
 	  {
-	     DATA32  *p = im->image->data, *pe = p + (w * h);
+	     DATA32  *p = im->image.data, *pe = p + (w * h);
 	     while (p < pe)
 	       {
 		  *p = (*p << 24) + ((*p << 8) & 0xff0000) + ((*p >> 8) & 0xff00) + (*p >> 24);
@@ -204,7 +198,7 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	       }
 	  }
 	_xr_image_put(xim, gr->surface->draw, 0, 0, w, h);
-	evas_common_image_delete(im);
+	evas_cache_image_drop(&im->cache_entry);
 	dc->render_op = op;
 	dc->clip.use = cuse;
      }

@@ -2,7 +2,7 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "Evas_Engine_Software_16_X11.h"
-#include "evas_soft16.h"
+#include "evas_common_soft16.h"
 
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
@@ -65,13 +65,6 @@ eng_info_free(Evas *e, void *info)
 }
 
 static void
-_tmp_out_free(Soft16_Image *tmp_out)
-{
-   free(tmp_out->pixels);
-   free(tmp_out);
-}
-
-static void
 _tmp_out_alloc(Render_Engine *re)
 {
    Tilebuf_Rect *r;
@@ -85,9 +78,9 @@ _tmp_out_alloc(Render_Engine *re)
 
    if (re->tmp_out)
      {
-	if ((re->tmp_out->w < w) || (re->tmp_out->h < h))
+	if ((re->tmp_out->cache_entry.w < w) || (re->tmp_out->cache_entry.h < h))
 	  {
-	     _tmp_out_free(re->tmp_out);
+             evas_cache_image_drop(&re->tmp_out->cache_entry);
 	     re->tmp_out = NULL;
 	  }
      }
@@ -96,14 +89,9 @@ _tmp_out_alloc(Render_Engine *re)
      {
 	Soft16_Image *im;
 
-	im = calloc(1, sizeof(Soft16_Image));
-	im->w = w;
-	im->h = h;
-	im->stride = w + ((w % 4) ? (4 - (w % 4)) : 0);
-	im->have_alpha = 0;
-	im->references = 1;
-	im->free_pixels = 1;
-	im->pixels = malloc(h * im->stride * sizeof(DATA16));
+        im = (Soft16_Image *) evas_cache_image_empty(evas_common_soft16_image_cache_get());
+        im->flags.have_alpha = 0;
+        evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 
 	re->tmp_out = im;
      }
@@ -115,7 +103,7 @@ eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_Software_16_X11 *info;
-   X_Output_Buffer *xob;
+/*    X_Output_Buffer *xob; */
    XGCValues gcv;
    
    info = (Evas_Engine_Info_Software_16_X11 *)in;
@@ -144,7 +132,8 @@ eng_setup(Evas *e, void *in)
 	evas_common_font_init();
 	evas_common_draw_init();
 	evas_common_tilebuf_init();
-	
+	evas_common_soft16_image_init();
+
 	/* render engine specific data */
 	re = calloc(1, sizeof(Render_Engine));
 	e->engine.data.output = re;
@@ -179,7 +168,7 @@ eng_setup(Evas *e, void *in)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 	if (re->tmp_out)
 	  {
-	     _tmp_out_free(re->tmp_out);
+             evas_cache_image_drop(&re->tmp_out->cache_entry);
 	     re->tmp_out = NULL;
 	  }
      }
@@ -203,11 +192,12 @@ eng_output_free(void *data)
    if (re->gc) XFreeGC(re->disp, re->gc);
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
-   if (re->tmp_out) _tmp_out_free(re->tmp_out);
+   if (re->tmp_out) evas_cache_image_drop(&re->tmp_out->cache_entry);
    free(re);
 
    evas_common_font_shutdown();
    evas_common_image_shutdown();
+   evas_common_soft16_image_shutdown();
 }
 
 static void
@@ -237,7 +227,7 @@ eng_output_resize(void *data, int w, int h)
      }
    if (re->tmp_out)
      {
-	_tmp_out_free(re->tmp_out);
+        evas_cache_image_drop(&re->tmp_out->cache_entry);
 	re->tmp_out = NULL;
      }
 }
@@ -343,7 +333,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (re->rot == 0)
      {
 	*cx = ux; *cy = uy; *cw = uw; *ch = uh;
-	return &re->shbuf->im;
+	return re->shbuf->im;
      }
    else
      {
@@ -449,10 +439,10 @@ _tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
    DATA16 *dp, *sp;
    int y, x, d_dir;
 
-   d = &re->shbuf->im;
+   d = re->shbuf->im;
    s = re->tmp_out;
 
-   if ((w < 1) || (h < 1) || (out_x >= d->w) || (out_y >= d->h))
+   if ((w < 1) || (h < 1) || (out_x >= d->cache_entry.w) || (out_y >= d->cache_entry.h))
      return;
 
    if (re->rot == 90)
@@ -524,7 +514,7 @@ eng_output_flush(void *data)
    else return;
 
    evas_software_x11_x_output_buffer_paste
-     (re->shbuf, re->draw, re->gc, 0, 0, re->shbuf->im.w, re->shbuf->im.h, 1);
+     (re->shbuf, re->draw, re->gc, 0, 0, re->shbuf->im->cache_entry.w, re->shbuf->im->cache_entry.h, 1);
    XSetClipMask(re->disp, re->gc, None);
 }
 
@@ -546,7 +536,7 @@ eng_output_idle_flush(void *data)
      }
    if (re->tmp_out)
      {
-	_tmp_out_free(re->tmp_out);
+        evas_cache_image_drop(&re->tmp_out->cache_entry);
 	re->tmp_out = NULL;
      }
 }

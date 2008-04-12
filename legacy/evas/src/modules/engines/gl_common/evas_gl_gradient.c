@@ -1,7 +1,5 @@
 #include "evas_gl_private.h"
 
-static void _evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr);
-
 Evas_GL_Gradient *
 evas_gl_common_gradient_new(void)
 {
@@ -211,9 +209,10 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc,
      {
 	RGBA_Image *im;
 	int op = dc->render_op, cuse = dc->clip.use;
-	
-	im = evas_common_image_create(w, h);
-	if (!im) return;
+
+	im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+        if (!im) return;
+        im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
 	dc->render_op = _EVAS_RENDER_FILL;
 	dc->clip.use = 0;
 	evas_common_gradient_draw(im, dc, 0, 0, w, h, gr->grad);
@@ -221,8 +220,9 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc,
 	  gr->tex = evas_gl_common_texture_new(gc, im, 0);
 	else
 	  evas_gl_common_texture_update(gr->tex, im, 0);
-	
-	evas_common_image_delete(im);
+
+	evas_cache_image_drop(&im->cache_entry);
+
 	dc->render_op = op;
 	dc->clip.use = cuse;
 	if (!gr->tex) return;

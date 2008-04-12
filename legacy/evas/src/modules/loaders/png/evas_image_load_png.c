@@ -80,16 +80,8 @@ evas_image_load_file_head_png(RGBA_Image *im, const char *file, const char *key)
 	fclose(f);
 	return 0;
      }
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-	fclose(f);
-	return 0;
-     }
-   im->image->w = (int) w32;
-   im->image->h = (int) h32;
+   im->cache_entry.w = (int) w32;
+   im->cache_entry.h = (int) h32;
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
@@ -151,7 +143,14 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
-   if ((w32 != im->image->w) || (h32 != im->image->h))
+   evas_cache_image_surface_alloc(&im->cache_entry, w32, h32);
+   if (!im->image.data)
+     {
+	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+	fclose(f);
+	return 0;
+     }
+   if ((w32 != im->cache_entry.w) || (h32 != im->cache_entry.h))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
 	fclose(f);
@@ -179,9 +178,9 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    if (bit_depth > 8) png_set_strip_16(png_ptr);
    /* pack all pixels to byte boundaries */
    png_set_packing(png_ptr);
-   
-   w = im->image->w;
-   h = im->image->h;
+
+   w = im->cache_entry.w;
+   h = im->cache_entry.h;
    /* we want ARGB */
 #ifdef WORDS_BIGENDIAN
    png_set_swap_alpha(png_ptr);
@@ -190,23 +189,16 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    png_set_bgr(png_ptr);
    if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
 #endif
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
-     {
-	evas_common_image_surface_free(im->image);
-	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-	fclose(f);
-	return 0;
-     }
    lines = (unsigned char **) alloca(h * sizeof(unsigned char *));
 
    for (i = 0; i < h; i++)
-     lines[i] = ((unsigned char *)(im->image->data)) + (i * w * sizeof(DATA32));
+     lines[i] = ((unsigned char *)(im->image.data)) + (i * w * sizeof(DATA32));
    png_read_image(png_ptr, lines);
    png_read_end(png_ptr, info_ptr);
    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
    fclose(f);
    evas_common_image_premul(im);
+
    return 1;
    key = 0;
 }

@@ -8,13 +8,13 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-#include "evas_soft16.h"
+#include "evas_common_soft16.h"
 
 typedef struct _X_Output_Buffer       X_Output_Buffer;
 
 struct _X_Output_Buffer
 {
-   Soft16_Image    im;
+   Soft16_Image    *im;
    Display         *display;
    XImage          *xim;
    XShmSegmentInfo *shm_info;

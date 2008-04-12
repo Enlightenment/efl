@@ -22,11 +22,11 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
    int                 i = 0;
    int                 has_alpha;
 
-   if (!im || !im->image || !im->image->data || !file)
+   if (!im || !im->image.data || !file)
       return 0;
 
    has_alpha = im->flags & RGBA_IMAGE_HAS_ALPHA;
-   data = im->image->data;
+   data = im->image.data;
 
    tif = TIFFOpen(file, "w");
    if (!tif)
@@ -35,8 +35,8 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
    /* None of the TIFFSetFields are checked for errors, but since they */
    /* shouldn't fail, this shouldn't be a problem */
 
-   TIFFSetField(tif, TIFFTAG_IMAGELENGTH, im->image->h);
-   TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, im->image->w);
+   TIFFSetField(tif, TIFFTAG_IMAGELENGTH, im->cache_entry.h);
+   TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, im->cache_entry.w);
    TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
    TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
    TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
@@ -67,12 +67,12 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
         return 0;
      }
 
-   for (y = 0; y < im->image->h; y++)
+   for (y = 0; y < im->cache_entry.h; y++)
      {
         i = 0;
-        for (x = 0; x < im->image->w; x++)
+        for (x = 0; x < im->cache_entry.w; x++)
           {
-             pixel = data[(y * im->image->w) + x];
+             pixel = data[(y * im->cache_entry.w) + x];
 
              r = (pixel >> 16) & 0xff;
              g = (pixel >> 8) & 0xff;

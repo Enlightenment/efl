@@ -249,20 +249,8 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
                                 return 0;
                               }
                          }
-                       if (!im->image)
-                         {
-                            im->image = evas_common_image_surface_new(im);
-                            if (!im->image)
-                              {
-				 free(cmap);
-				 free(line);
-				 fclose(f);
-				 xpm_parse_done();
-				 return 0;
-                              }
-                         }
-                       im->image->w = w;
-                       im->image->h = h;
+                       im->cache_entry.w = w;
+                       im->cache_entry.h = h;
 
                        j = 0;
                        context++;
@@ -376,22 +364,16 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
 		       
                        if (load_data)
                          {
-			    if (im->image->data)
-			      evas_common_image_surface_dealloc(im->image);
-			    im->image->w = w;
-			    im->image->h = h;
-                            evas_common_image_surface_alloc(im->image);
-                            if (!im->image->data)
+                            evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+                            if (!im->image.data)
                               {
-                                 evas_common_image_surface_free(im->image);
-				 im->image = NULL;
                                  free(cmap);
                                  free(line);
                                  fclose(f);
                                  xpm_parse_done();
                                  return 0;
                               }
-                            ptr = im->image->data;
+                            ptr = im->image.data;
                             end = ptr + (w * h);
                             pixels = w * h;
                          }
@@ -612,7 +594,7 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
              if (!tl) break;
 	     line = tl;
           }
-        if (((ptr) && ((ptr - im->image->data) >= (w * h * sizeof(DATA32)))) ||
+        if (((ptr) && ((ptr - im->image.data) >= (w * h * sizeof(DATA32)))) ||
             ((context > 1) && (count >= pixels)))
 	  break;
      }

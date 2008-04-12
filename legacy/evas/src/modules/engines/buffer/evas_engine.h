@@ -19,15 +19,15 @@ enum _Outbuf_Depth
 
 struct _Outbuf
 {
-   int             w, h;
-   Outbuf_Depth    depth;
+   int                           w, h;
+   Outbuf_Depth                  depth;
 
-   void           *dest;
-   int             dest_row_bytes;
+   void                         *dest;
+   int                           dest_row_bytes;
 
-   int             alpha_level;
-   DATA32          color_key;
-   char            use_color_key : 1;
+   int                           alpha_level;
+   DATA32                        color_key;
+   char                          use_color_key : 1;
 
    struct {
       void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
@@ -35,7 +35,7 @@ struct _Outbuf
    } func;
 
    struct {
-      RGBA_Image  *back_buf;
+      RGBA_Image                *back_buf;
    } priv;
 };
 

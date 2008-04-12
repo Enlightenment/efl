@@ -117,24 +117,23 @@ evas_software_ddraw_outbuf_new_region_for_update(Outbuf *buf,
        (buf->priv.mask.g == 0x00ff00) &&
        (buf->priv.mask.b == 0x0000ff))
      {
-        im = evas_cache_image_empty(evas_common_image_cache_get());
-        im->image->w = width;
-        im->image->h = height;
-        im->image->data = NULL;
-        im->image->no_free = 1;
+        im = (RGBA_Image*) evas_cache_image_empty(evas_common_image_cache_get());
+        if (!im) return NULL;
+        im = (RGBA_Image*) evas_cache_image_size_set(&im->cache_entry, width, height);
+        if (!im) return NULL;
+        im->image.no_free = 1;
         ddob = evas_software_ddraw_output_buffer_new(buf->priv.dd.depth,
                                                      width,
                                                      height,
                                                      NULL);
         im->extended_info = ddob;
-        im->image->data = (DATA32 *)evas_software_ddraw_output_buffer_data(ddob, &bpl);
+        im->image.data = (DATA32 *)evas_software_ddraw_output_buffer_data(ddob, &bpl);
      }
    else
      {
         im = evas_cache_image_empty(evas_common_image_cache_get());
-        im->image->w = width;
-        im->image->h = height;
-        evas_common_image_surface_alloc(im->image);
+        if (!im) return NULL;
+        evas_cache_image_surface_alloc(&im->cache_entry, width, height);
         im->extended_info = ddob;
         if ((buf->rot == 0) || (buf->rot == 180))
           ddob = evas_software_ddraw_output_buffer_new(buf->priv.dd.depth,

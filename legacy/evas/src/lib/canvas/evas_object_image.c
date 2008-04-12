@@ -1121,18 +1121,17 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
 	     else break;
 	  }
      }
-   im = evas_cache_image_empty(evas_common_image_cache_get());
+   im = (RGBA_Image*) evas_cache_image_data(evas_common_image_cache_get(),
+                                            o->cur.image.w,
+                                            o->cur.image.h,
+                                            data,
+                                            o->cur.has_alpha,
+                                            EVAS_COLORSPACE_ARGB8888);
    if (im)
      {
-	if (o->cur.has_alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-
-        im->image->data = data;
-        im->image->w = o->cur.image.w;
-        im->image->h = o->cur.image.h;
-        im->image->no_free = 1;
         ok = evas_common_save_image_to_file(im, file, key, quality, compress);
 
-	evas_cache_image_drop(im);
+	evas_cache_image_drop(&im->cache_entry);
      }
    return ok;
 }
@@ -2332,7 +2331,7 @@ static int
 evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Image *o;
-   void *data;
+   DATA32 *data;
    int w, h, stride;
    int a;
 
@@ -2354,7 +2353,7 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
 								  o->engine_data,
 								  0,
-								  (DATA32**) &data);
+								  &data);
    if (!data)
      return 0;
 
@@ -2365,8 +2364,8 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 	  a = (*((DATA32*)(data)) >> 24) & 0xff;
 	  break;
 	case EVAS_COLORSPACE_RGB565_A5P:
-	  data = ((DATA16*)(data) + (h * stride));
-	  data = ((DATA8*)(data) + ((y * stride) + x));
+           data = (void*) ((DATA16*)(data) + (h * stride));
+	  data = (void*) ((DATA8*)(data) + ((y * stride) + x));
 	  a = (*((DATA8*)(data))) & 0x1f;
 	  break;
 	default:

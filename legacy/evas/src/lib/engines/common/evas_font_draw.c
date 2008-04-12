@@ -146,9 +146,9 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 
    fi = fn->fonts->data;
    
-   im = dst->image->data;
-   im_w = dst->image->w;
-   im_h = dst->image->h;
+   im = dst->image.data;
+   im_w = dst->cache_entry.w;
+   im_h = dst->cache_entry.h;
 
    ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
    if (dc->clip.use)

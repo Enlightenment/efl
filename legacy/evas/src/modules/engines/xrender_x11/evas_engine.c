@@ -529,11 +529,11 @@ eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
    _xre_image_border_get((XR_Image *)image, l, r, t, b);
 }
 
-static const char *
+static char *
 eng_image_comment_get(void *data, void *image, char *key)
 {
    if (!image) return NULL;
-   return ((XR_Image *)image)->comment;
+   return strdup(((XR_Image *)image)->comment);
 }
 
 static char *
@@ -551,6 +551,10 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    if (!image) return;
    im = (XR_Image *)image;
    if (im->cs.space == cspace) return;
+
+   if (im->im) evas_cache_image_drop(&im->im->cache_entry);
+   im->im = NULL;
+
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -560,15 +564,11 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 	     im->cs.data = NULL;
 	     im->cs.no_free = 0;
 	  }
-	if (im->im) evas_cache_image_drop(im->im);
-	im->im = NULL;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
 	if ((im->free_data) && (im->data)) free(im->data);
 	im->data = NULL;
-	if (im->im) evas_cache_image_drop(im->im);
-	im->im = NULL;
 	if (im->cs.data)
 	  {
 	     if (!im->cs.no_free) free(im->cs.data);
@@ -693,7 +693,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
      }
    im = (XR_Image *)image;
    if (im->im)
-     evas_common_load_image_data_from_file(im->im);
+     evas_cache_image_load_data(&im->im->cache_entry);
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -832,35 +832,32 @@ eng_image_cache_get(void *data)
 static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
-   Render_Engine *re;
-   
+   Render_Engine        *re;
+   RGBA_Image           *im;
+
    re = (Render_Engine *)data;
-     {
-	static RGBA_Image *im = NULL;
-	
-	if (!im)
-	  {
-	     im = evas_common_image_new();
-	     im->image = evas_common_image_surface_new(im);
-	     im->image->no_free = 1;
-	  }
-	im->image->w = ((Xrender_Surface *)surface)->w;
-	im->image->h = ((Xrender_Surface *)surface)->h;
-	_xr_render_surface_clips_set((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, x, y, w, h);
-	im->image->data = surface;
-	evas_common_draw_context_font_ext_set(context,
-					      re->xinf,
-					      _xre_font_surface_new,
-					      _xre_font_surface_free,
-					      _xre_font_surface_draw);
-	evas_common_font_draw(im, context, font, x, y, text);
-	evas_common_draw_context_font_ext_set(context,
-					      NULL,
-					      NULL,
-					      NULL,
-					      NULL);
-	evas_common_cpu_end_opt();
-     }
+
+   _xr_render_surface_clips_set((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, x, y, w, h);
+
+   im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                             ((Xrender_Surface *)surface)->w,
+                                             ((Xrender_Surface *)surface)->h,
+                                             surface,
+                                             0, EVAS_COLORSPACE_ARGB8888);
+   evas_common_draw_context_font_ext_set(context,
+                                         re->xinf,
+                                         _xre_font_surface_new,
+                                         _xre_font_surface_free,
+                                         _xre_font_surface_draw);
+   evas_common_font_draw(im, context, font, x, y, text);
+   evas_common_draw_context_font_ext_set(context,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL);
+   evas_common_cpu_end_opt();
+
+   evas_cache_image_drop(&im->cache_entry);
 }
 
 /* module advertising code */

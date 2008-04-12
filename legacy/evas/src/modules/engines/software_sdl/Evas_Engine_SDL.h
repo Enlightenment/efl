@@ -12,11 +12,11 @@ struct _Evas_Engine_Info_SDL
    Evas_Engine_Info magic;
 
    struct {
-      SDL_Surface		*surface;
-      int			fullscreen : 1;
-      int                       hwsurface : 1;
-      int			noframe : 1;
-      int                       alpha : 1;
+     int                        rotation;
+     int			fullscreen : 1;
+     int                        hwsurface : 1;
+     int			noframe : 1;
+     int                        alpha : 1;
    } info;
 };
 #endif

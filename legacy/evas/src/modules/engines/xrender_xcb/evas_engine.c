@@ -761,35 +761,31 @@ eng_image_cache_get(void *data)
 static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
-   Render_Engine *re;
+   Render_Engine        *re;
+   RGBA_Image           *im;
 
    re = (Render_Engine *)data;
-     {
-	static RGBA_Image *im = NULL;
 
-	if (!im)
-	  {
-	     im = evas_common_image_new();
-	     im->image = evas_common_image_surface_new(im);
-	     im->image->no_free = 1;
-	  }
-	im->image->w = ((Xcb_Render_Surface *)surface)->w;
-	im->image->h = ((Xcb_Render_Surface *)surface)->h;
-	_xr_render_surface_clips_set((Xcb_Render_Surface *)surface, (RGBA_Draw_Context *)context, x, y, w, h);
-	im->image->data = surface;
-	evas_common_draw_context_font_ext_set(context,
-					      re->xcbinf,
-					      _xre_font_surface_new,
-					      _xre_font_surface_free,
-					      _xre_font_surface_draw);
-	evas_common_font_draw(im, context, font, x, y, text);
-	evas_common_draw_context_font_ext_set(context,
-					      NULL,
-					      NULL,
-					      NULL,
-					      NULL);
-	evas_common_cpu_end_opt();
-     }
+   im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                             ((Xcb_Render_Surface *)surface)->w,
+                                             ((Xcb_Render_Surface *)surface)->h,
+                                             surface,
+                                             0, EVAS_COLORSPACE_ARGB8888);
+
+   _xr_render_surface_clips_set((Xcb_Render_Surface *)surface, (RGBA_Draw_Context *)context, x, y, w, h);
+
+   evas_common_draw_context_font_ext_set(context,
+                                         re->xcbinf,
+                                         _xre_font_surface_new,
+                                         _xre_font_surface_free,
+                                         _xre_font_surface_draw);
+   evas_common_font_draw(im, context, font, x, y, text);
+   evas_common_draw_context_font_ext_set(context,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL);
+   evas_common_cpu_end_opt();
 }
 
 /* module advertising code */

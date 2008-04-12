@@ -1,12 +1,14 @@
+#include "evas_gl_common.h"
+
 #include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glx.h>
+
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "Evas_Engine_GL_X11.h"
-#include "evas_gl_common.h"
 
 static Evas_GL_X11_Window *_evas_gl_x11_window = NULL;
 

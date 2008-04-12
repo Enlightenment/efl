@@ -139,26 +139,26 @@ evas_common_pipe_begin(RGBA_Image *im)
 	  }
      }
    y = 0;
-   h = im->image->h / thread_num;
+   h = im->cache_entry.h / thread_num;
    if (h < 1) h = 1;
    for (i = 0; i < thread_num; i++)
      {
 	RGBA_Pipe_Thread_Info *info;
 	     
-//	     if (y >= im->image->h) break;
+//	     if (y >= im->cache_entry.h) break;
 	info = calloc(1, sizeof(RGBA_Pipe_Thread_Info));
 	info->im = im;
 #ifdef EVAS_SLI
 	info->x = 0;
-	info->w = im->image->w;
+	info->w = im->cache_entry.w;
 	info->y = i;
 	info->h = thread_num;
 #else	     
 	info->x = 0;
 	info->y = y;
-	info->w = im->image->w;
+	info->w = im->cache_entry.w;
 	if (i == (thread_num - 1))
-	  info->h = im->image->h - y;
+	  info->h = im->cache_entry.h - y;
 	else
 	  info->h = h;
 	y += info->h;
@@ -485,7 +485,7 @@ evas_common_pipe_op_image_free(RGBA_Pipe_Op *op)
 {
    op->op.image.src->ref--;
    if (op->op.image.src->ref == 0)
-     evas_cache_image_drop(op->op.image.src);
+     evas_cache_image_drop(&op->op.image.src->cache_entry);
    evas_common_pipe_op_free(op);
 }
 

@@ -2,4 +2,4 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = \
-common
+common common_16

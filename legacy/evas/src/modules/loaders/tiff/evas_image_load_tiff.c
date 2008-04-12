@@ -69,11 +69,11 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
    int                 image_width, image_height;
    uint32             *pixel, pixel_value;
    int                 i, j, dy, rast_offset;
-   DATA32             *buffer_pixel, *buffer = img->image->image->data;
+   DATA32             *buffer_pixel, *buffer = img->image->image.data;
    int                 alpha_premult;
 
-   image_width = img->image->image->w;
-   image_height = img->image->image->h;
+   image_width = img->image->cache_entry.w;
+   image_height = img->image->cache_entry.h;
 
    dy = h > y ? -1 : y - h;
 
@@ -163,13 +163,6 @@ evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key
         return 0;
      }
 
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-        TIFFClose(tif);
-	return 0;
-     }
    if (tiff_image.alpha != EXTRASAMPLE_UNSPECIFIED)
      im->flags |= RGBA_IMAGE_HAS_ALPHA;
    if ((tiff_image.width < 1) || (tiff_image.height < 1) ||
@@ -178,8 +171,8 @@ evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key
 	TIFFClose(tif);
 	return 0;
      }
-   im->image->w = tiff_image.width;
-   im->image->h = tiff_image.height;
+   im->cache_entry.w = tiff_image.width;
+   im->cache_entry.h = tiff_image.height;
 
    TIFFClose(tif);
    return 1;
@@ -238,35 +231,25 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
      }
    rgba_image.image = im;
 
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-        TIFFClose(tif);
-	return 0;
-     }
    if (rgba_image.rgba.alpha != EXTRASAMPLE_UNSPECIFIED)
      im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if ((rgba_image.rgba.width != im->image->w) ||
-       (rgba_image.rgba.height != im->image->h))
+   if ((rgba_image.rgba.width != im->cache_entry.w) ||
+       (rgba_image.rgba.height != im->cache_entry.h))
      {
         TIFFClose(tif);
 	return 0;
      }
-   im->image->w = rgba_image.rgba.width;
-   im->image->h = rgba_image.rgba.height;
-   rgba_image.num_pixels = num_pixels = im->image->w * im->image->h;
 
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
+   evas_cache_image_surface_alloc(&im->cache_entry, rgba_image.rgba.width, rgba_image.rgba.height);
+   if (!im->image.data)
      {
-	evas_common_image_surface_free(im->image);
-
         TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
         TIFFClose(tif);
 
 	return 0;
      }
+
+   rgba_image.num_pixels = num_pixels = im->cache_entry.w * im->cache_entry.h;
 
    rgba_image.pper = rgba_image.py = 0;
    rast = (uint32 *) _TIFFmalloc(sizeof(uint32) * num_pixels);
@@ -285,7 +268,6 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
      {
         fprintf(stderr, "Evas Tiff loader: no put function");
 
-	evas_common_image_surface_free(im->image);
         _TIFFfree(rast);
         TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
         TIFFClose(tif);
@@ -305,13 +287,13 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
             rgba_image.rgba.put.separate = put_separate_and_raster;
          }
      }
+
    /*	if (rgba_image.rgba.samplesperpixel == 8)*/
    if (rgba_image.rgba.bitspersample == 8)
      {
         if (!TIFFRGBAImageGet((TIFFRGBAImage *) &rgba_image, rast,
                               rgba_image.rgba.width, rgba_image.rgba.height))
           {
-             evas_common_image_surface_free(im->image);
              _TIFFfree(rast);
              TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
              TIFFClose(tif);

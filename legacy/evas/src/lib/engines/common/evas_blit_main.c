@@ -32,7 +32,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
 
    /* clip clip clip */
    if (w <= 0) return;
-   if (src_x + w > src->image->w) w = src->image->w - src_x;
+   if (src_x + w > src->cache_entry.w) w = src->cache_entry.w - src_x;
    if (w <= 0) return;
    if (src_x < 0)
      {
@@ -43,7 +43,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    if (w <= 0) return;
 
    if (h <= 0) return;
-   if (src_y + h > src->image->h) h = src->image->h - src_y;
+   if (src_y + h > src->cache_entry.h) h = src->cache_entry.h - src_y;
    if (h <= 0) return;
    if (src_y < 0)
      {
@@ -54,7 +54,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    if (h <= 0) return;
 
    if (w <= 0) return;
-   if (dst_x + w > dst->image->w) w = dst->image->w - dst_x;
+   if (dst_x + w > dst->cache_entry.w) w = dst->cache_entry.w - dst_x;
    if (w <= 0) return;
    if (dst_x < 0)
      {
@@ -65,7 +65,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    if (w <= 0) return;
 
    if (h <= 0) return;
-   if (dst_y + h > dst->image->h) h = dst->image->h - dst_y;
+   if (dst_y + h > dst->cache_entry.h) h = dst->cache_entry.h - dst_y;
    if (h <= 0) return;
    if (dst_y < 0)
      {
@@ -78,13 +78,13 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    if (dst == src)
      {
 	/* src after dst - go forward */
-	if (((src_y * src->image->w) + src_x) > ((dst_y * dst->image->w) + dst_x))
+	if (((src_y * src->cache_entry.w) + src_x) > ((dst_y * dst->cache_entry.w) + dst_x))
 	  {
 	     func = evas_common_draw_func_copy_get(w, 0);
 	     for (y = 0; y < h; y++)
 	       {
-		  src_ptr = src->image->data + ((y + src_y) * src->image->w) + src_x;
-		  dst_ptr = dst->image->data + ((y + dst_y) * dst->image->w) + dst_x;
+		  src_ptr = src->image.data + ((y + src_y) * src->cache_entry.w) + src_x;
+		  dst_ptr = dst->image.data + ((y + dst_y) * dst->cache_entry.w) + dst_x;
 		  func(src_ptr, dst_ptr, w);
 	       }
 	  }
@@ -94,8 +94,8 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
 	     func = evas_common_draw_func_copy_get(w, 1);
 	     for (y = h - 1; y >= 0; y--)
 	       {
-		  src_ptr = src->image->data + ((y + src_y) * src->image->w) + src_x;
-		  dst_ptr = dst->image->data + ((y + dst_y) * dst->image->w) + dst_x;
+		  src_ptr = src->image.data + ((y + src_y) * src->cache_entry.w) + src_x;
+		  dst_ptr = dst->image.data + ((y + dst_y) * dst->cache_entry.w) + dst_x;
 		  func(src_ptr, dst_ptr, w);
 	       }
 	  }
@@ -105,8 +105,8 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
 	func = evas_common_draw_func_copy_get(w, 0);
 	for (y = 0; y < h; y++)
 	  {
-	     src_ptr = src->image->data + ((y + src_y) * src->image->w) + src_x;
-	     dst_ptr = dst->image->data + ((y + dst_y) * dst->image->w) + dst_x;
+	     src_ptr = src->image.data + ((y + src_y) * src->cache_entry.w) + src_x;
+	     dst_ptr = dst->image.data + ((y + dst_y) * dst->cache_entry.w) + dst_x;
 	     func(src_ptr, dst_ptr, w);
 	  }
      }

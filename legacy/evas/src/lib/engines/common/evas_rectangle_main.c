@@ -17,11 +17,11 @@ evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    /* handle cutouts here! */
 
    if ((w <= 0) || (h <= 0)) return;
-   if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, dst->image->w, dst->image->h)))
+   if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
    /* save out clip info */
    c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
-   evas_common_draw_context_clip_clip(dc, 0, 0, dst->image->w, dst->image->h);
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
    /* no cutouts - cut right to the chase */
    if (!dc->cutout.rects)
      {
@@ -58,7 +58,7 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
    if ((w <= 0) || (h <= 0)) return;
 
    func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst, w, dc->render_op);
-   ptr = dst->image->data + (y * dst->image->w) + x;
+   ptr = dst->image.data + (y * dst->cache_entry.w) + x;
    for (yy = 0; yy < h; yy++)
      {
 #ifdef EVAS_SLI
@@ -67,6 +67,6 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
 	  {
 	     func(NULL, NULL, dc->col.col, ptr, w);
 	  }
-	ptr += dst->image->w;
+	ptr += dst->cache_entry.w;
      }
 }

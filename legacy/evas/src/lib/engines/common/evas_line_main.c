@@ -52,8 +52,8 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, in
      }
 
    clx = cly = 0;
-   clw = dst->image->w;
-   clh = dst->image->h;
+   clw = dst->cache_entry.w;
+   clh = dst->cache_entry.h;
 
    /* save out clip info */
    cuse = dc->clip.use;
@@ -104,13 +104,13 @@ _evas_draw_point(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y)
 {
    RGBA_Gfx_Pt_Func pfunc;
 
-   if (!IN_RANGE(x, y, dst->image->w, dst->image->h))
+   if (!IN_RANGE(x, y, dst->cache_entry.w, dst->cache_entry.h))
 	return;
    if ((dc->clip.use) && (!IN_RECT(x, y, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h)))
 	return;
    pfunc = evas_common_gfx_func_composite_color_pt_get(dc->col.col, dst, dc->render_op);
    if (pfunc)
-	pfunc(0, 255, dc->col.col, dst->image->data + (dst->image->w * y) + x);
+	pfunc(0, 255, dc->col.col, dst->image.data + (dst->cache_entry.w * y) + x);
 }
 
 /*
@@ -129,7 +129,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
    RGBA_Gfx_Pt_Func pfunc;
    RGBA_Gfx_Func    sfunc;
 
-   dstw = dst->image->w;
+   dstw = dst->cache_entry.w;
    color = dc->col.col;
 
    if (y0 > y1)
@@ -170,7 +170,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 		  if (x1 > rx) x1 = rx;
 		  
 		  len = x1 - x0 + 1;
-		  p = dst->image->data + (dstw * y0) + x0;
+		  p = dst->image.data + (dstw * y0) + x0;
 		  sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
 		  if (sfunc)
 		    sfunc(NULL, NULL, color, p, len);
@@ -190,7 +190,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 	     if (y1 > by) y1 = by;
 	     
 	     len = y1 - y0 + 1;
-	     p = dst->image->data + (dstw * y0) + x0;
+	     p = dst->image.data + (dstw * y0) + x0;
 	     while (len--)
 	       {
 #ifdef EVAS_SLI
@@ -268,7 +268,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 	  }
 	if (y1 > y0)
 	  {
-	     p = dst->image->data + (dstw * y0) + x0;
+	     p = dst->image.data + (dstw * y0) + x0;
 	     len = y1 - y0 + 1;
 	     if (dx > 0)  dstw++;
 	     else  dstw--;
@@ -276,7 +276,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 	else
 	  {
 	     len = y0 - y1 + 1;
-	     p = dst->image->data + (dstw * y1) + x1;
+	     p = dst->image.data + (dstw * y1) + x1;
 	     if (dx > 0)  dstw--;
 	     else  dstw++;
 	  }
@@ -472,8 +472,8 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
    clw = dc->clip.w;
    clh = dc->clip.h;
 
-   data = dst->image->data;
-   dstw = dst->image->w;
+   data = dst->image.data;
+   dstw = dst->cache_entry.w;
 
    data += (dstw * cly) + clx;
    x0 -= clx;
@@ -579,8 +579,8 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
    clw = dc->clip.w;
    clh = dc->clip.h;
 
-   data = dst->image->data;
-   dstw = dst->image->w;
+   data = dst->image.data;
+   dstw = dst->cache_entry.w;
 
    data += (dstw * cly) + clx;
    x0 -= clx;

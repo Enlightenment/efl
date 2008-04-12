@@ -105,8 +105,8 @@ _xre_image_load(Xcb_Image_Info *xcbinf, const char *file, const char *key, Evas_
    im->fkey = strdup(buf);
    im->file = (char *)evas_stringshare_add(file);
    if (key) im->key = (char *)evas_stringshare_add(key);
-   im->w = im->im->image->w;
-   im->h = im->im->image->h;
+   im->w = im->im->cache_entry.w;
+   im->h = im->im->cache_entry.h;
    im->references = 1;
    if (lo) im->load_opts = *lo;
    if (im->im->info.comment) im->comment = (char *)evas_stringshare_add(im->im->info.comment);
@@ -199,7 +199,7 @@ __xre_image_real_free(XR_Image *im)
    if (im->file) evas_stringshare_del(im->file);
    if (im->key) evas_stringshare_del(im->key);
    if (im->fkey) free(im->fkey);
-   if (im->im) evas_cache_image_drop(im->im);
+   if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    if ((im->data) && (im->dirty)) __xre_image_dirty_hash_del(im);
    if ((im->free_data) && (im->data)) free(im->data);
    if (im->surface) _xr_render_surface_free(im->surface);
@@ -263,8 +263,8 @@ _xre_image_copy(XR_Image *im)
 	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
 	if (im->im)
 	  {
-	     evas_common_load_image_data_from_file(im->im);
-	     data = im->im->image->data;
+             evas_cache_image_load_data(&im->im->cache_entry);
+	     data = im->im->image.data;
 	  }
      }
    if (!data) return NULL;
@@ -272,7 +272,7 @@ _xre_image_copy(XR_Image *im)
    if (im2) im2->alpha = im->alpha;
    if ((im->im) && (!im->dirty))
      {
-	evas_cache_image_drop(im->im);
+	evas_cache_image_drop(&im->im->cache_entry);
 	im->im = NULL;
      }
    return im2;
@@ -337,7 +337,7 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	RGBA_Image *im_old;
 
 	im_old = im->im;
-	im->im = evas_cache_image_empty(evas_common_image_cache_get());
+	im->im = (RGBA_Image*) evas_cache_image_empty(evas_common_image_cache_get());
 	if (!im->im)
 	  {
 	     im->im = im_old;
@@ -348,11 +348,8 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	       }
 	     return;
 	  }
-        im->im->image->w = w;
-        im->im->image->h = h;
-        evas_common_image_surface_alloc(im->im->image);
-	evas_common_load_image_data_from_file(im_old);
-	if (im_old->image->data)
+        evas_cache_image_load_data(&im->im->cache_entry);
+	if (im_old->image.data)
 	  {
 	     int x = 0, y = 0, ww, hh;
 
@@ -363,11 +360,11 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	  }
 	im->free_data = 1;
         /* FIXME: Hum ? */
-	im->data = im->im->image->data;
-	im->im->image->data = NULL;
-        evas_cache_image_drop(im->im);
+	im->data = im->im->image.data;
+	im->im->image.data = NULL;
+        evas_cache_image_drop(&im->im->cache_entry);
 	im->im = NULL;
-        evas_cache_image_drop(im_old);
+        evas_cache_image_drop(&im_old->cache_entry);
 	__xre_image_dirty_hash_add(im);
      }
    else
@@ -391,8 +388,8 @@ _xre_image_data_get(XR_Image *im)
 	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
 	if (im->im)
 	  {
-	     evas_common_load_image_data_from_file(im->im);
-	     data = im->im->image->data;
+             evas_cache_image_load_data(&im->im->cache_entry);
+	     data = im->im->image.data;
 	  }
      }
    return data;
@@ -426,11 +423,11 @@ _xre_image_data_put(XR_Image *im, void *data)
      }
    else
      {
-	if (im->im) imdata = im->im->image->data;
+	if (im->im) imdata = im->im->image.data;
 	if (data == imdata) return;
 	if (im->im)
 	  {
-             evas_cache_image_drop(im->im);
+             evas_cache_image_drop(&im->im->cache_entry);
 	     im->im = NULL;
 	  }
      }
@@ -525,8 +522,8 @@ _xre_image_surface_gen(XR_Image *im)
 	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
 	if (im->im)
 	  {
-	     evas_common_load_image_data_from_file(im->im);
-	     data = im->im->image->data;
+             evas_cache_image_load_data(&im->im->cache_entry);
+	     data = im->im->image.data;
 	  }
      }
    if (!data) return;
@@ -584,7 +581,7 @@ _xre_image_surface_gen(XR_Image *im)
                           1, 1);
    if ((im->im) && (!im->dirty))
      {
-        evas_cache_image_drop(im->im);
+        evas_cache_image_drop(&im->im->cache_entry);
 	im->im = NULL;
      }
 }

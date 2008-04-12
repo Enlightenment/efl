@@ -454,7 +454,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
    /* handle cutouts here! */
 
    if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
-   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
+   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
 # ifdef BUILD_MMX
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
@@ -482,7 +482,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
      }
    /* save out clip info */
    c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
-   evas_common_draw_context_clip_clip(dc, 0, 0, dst->image->w, dst->image->h);
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
    evas_common_draw_context_clip_clip(dc, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
    /* our clip is 0 size.. abort */
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))

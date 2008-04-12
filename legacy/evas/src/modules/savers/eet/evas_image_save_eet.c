@@ -21,7 +21,7 @@ evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int 
    int alpha = 0, lossy = 0, ok = 0;
    DATA32   *data;
 
-   if (!im || !im->image || !im->image->data || !file)
+   if (!im || !im->image.data || !file)
       return 0;
 
    ef = eet_open((char *)file, EET_FILE_MODE_READ_WRITE);
@@ -41,9 +41,9 @@ evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int 
 //       evas_common_convert_argb_unpremul(data, im->image->w * im->image->h);
 //     }
 //   else
-       data = im->image->data;
+       data = im->image.data;
    ok = eet_data_image_write(ef, (char *)key, data,
-			     im->image->w, im->image->h, alpha, compress,
+			     im->cache_entry.w, im->cache_entry.h, alpha, compress,
 			     quality, lossy);
 //   if (alpha)
 //     free(data);

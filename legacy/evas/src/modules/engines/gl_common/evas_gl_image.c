@@ -3,9 +3,9 @@
 Evas_GL_Image *
 evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo)
 {
-   Evas_GL_Image *im;
-   RGBA_Image *im_im;
-   Evas_List *l;
+   Evas_GL_Image        *im;
+   RGBA_Image           *im_im;
+   Evas_List            *l;
 
    im_im = evas_common_load_image_from_file(file, key, lo);
    if (!im_im) return NULL;
@@ -15,7 +15,7 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
 	im = l->data;
 	if (im->im == im_im)
 	  {
-             evas_cache_image_drop(im_im);
+             evas_cache_image_drop(&im_im->cache_entry);
 	     gc->images = evas_list_remove_list(gc->images, l);
 	     gc->images = evas_list_prepend(gc->images, im);
 	     im->references++;
@@ -42,7 +42,7 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data, int alpha, int cspace)
+evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace)
 {
    Evas_GL_Image *im;
    Evas_List *l;
@@ -50,9 +50,9 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data,
    for (l = gc->images; l; l = l->next)
      {
 	im = l->data;
-	if (((void *)(im->im->image->data) == (void *)data) &&
-	    (im->im->image->w == w) &&
-	    (im->im->image->h == h))
+	if (((void *)(im->im->image.data) == (void *)data) &&
+	    (im->im->cache_entry.w == w) &&
+	    (im->im->cache_entry.h == h))
 	  {
 	     gc->images = evas_list_remove_list(gc->images, l);
 	     gc->images = evas_list_prepend(gc->images, im);
@@ -63,25 +63,18 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data,
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
-   im->im = evas_cache_image_empty(evas_common_image_cache_get());
+   im->im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                                 w, h, data, alpha, cspace);
    if (!im->im)
      {
 	free(im);
 	return NULL;
      }
    im->gc = gc;
-   im->im->image->w = w;
-   im->im->image->h = h;
    im->cs.space = cspace;
-   if (alpha)
-     im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	im->im->image->data = data;
-	im->im->image->no_free = 1;
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -103,42 +96,34 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data,
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data, int alpha, int cspace)
+evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace)
 {
    Evas_GL_Image *im;
 
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
-   im->im = evas_cache_image_empty(evas_common_image_cache_get());
+   im->im = (RGBA_Image *) evas_cache_image_copied_data(evas_common_image_cache_get(),
+                                                        w, h, data, alpha, cspace);
    if (!im->im)
      {
 	free(im);
 	return NULL;
      }
-   im->im->image->w = w;
-   im->im->image->h = h;
    im->gc = gc;
    im->cs.space = cspace;
-   if (alpha)
-     im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
-        evas_common_image_surface_alloc(im->im->image);
-	if (data)
-	  memcpy(im->im->image->data, data, w * h * sizeof(DATA32));
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
         if (im->tex) evas_gl_common_texture_free(im->tex);
 	im->tex = NULL;
 	im->cs.no_free = 0;
-        im->cs.data = calloc(1, im->im->image->h * sizeof(unsigned char *) * 2);
+        im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
         if ((data) && (im->cs.data))
-	  memcpy(im->cs.data, data, im->im->image->h * sizeof(unsigned char *) * 2);
+	  memcpy(im->cs.data, data, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
 	break;
       default:
 	abort();
@@ -155,37 +140,30 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspac
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
-   im->im = evas_cache_image_empty(evas_common_image_cache_get());
+   im->im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
    if (!im->im)
      {
 	free(im);
 	return NULL;
      }
-   im->im->image->w = w;
-   im->im->image->h = h;
    im->gc = gc;
    im->cs.space = cspace;
    if (alpha)
      im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
    else
      im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   evas_cache_image_colorspace(&im->im->cache_entry, cspace);
+   im->im = (RGBA_Image *) evas_cache_image_size_set(&im->im->cache_entry, w, h);
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
-        evas_common_image_surface_alloc(im->im->image);
-//	if (data)
-//	  memcpy(im->im->image->data, data, w * h * sizeof(DATA32));
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-        evas_common_image_surface_dealloc(im->im->image);
-        im->im->image->data = NULL;
 //        if (im->tex) evas_gl_common_texture_free(im->tex);
 	im->tex = NULL;
 	im->cs.no_free = 0;
-        im->cs.data = calloc(1, im->im->image->h * sizeof(unsigned char *) * 2);
-//        if ((data) && (im->cs.data))
-//	  memcpy(im->cs.data, data, im->im->image->h * sizeof(unsigned char *) * 2);
+        im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
 	break;
       default:
 	abort();
@@ -205,7 +183,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 	if (!im->cs.no_free) free(im->cs.data);
      }
    if (im->cached) im->gc->images = evas_list_remove(im->gc->images, im);
-   if (im->im) evas_cache_image_drop(im->im);
+   if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    if (im->tex) evas_gl_common_texture_free(im->tex);
    free(im);
 }
@@ -213,7 +191,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 void
 evas_gl_common_image_dirty(Evas_GL_Image *im)
 {
-   im->im = evas_cache_image_dirty(im->im, 0, 0, im->im->image->w, im->im->image->h);
+   im->im = (RGBA_Image *) evas_cache_image_dirty(&im->im->cache_entry, 0, 0, im->im->cache_entry.w, im->im->cache_entry.h);
    im->dirty = 1;
 }
 
@@ -246,14 +224,14 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
      {
         if ((im->cs.data) && (*((unsigned char **)im->cs.data)))
           {
-             if (im->dirty || !im->im->image->data)
+             if (im->dirty || !im->im->image.data)
                {
-                  free(im->im->image->data);
-                  im->im->image->data = malloc(im->im->image->w * im->im->image->h * sizeof(DATA32));
-                  if (im->im->image->data)
+                  free(im->im->image.data);
+                  im->im->image.data = malloc(im->im->cache_entry.w * im->im->cache_entry.h * sizeof(DATA32));
+                  if (im->im->image.data)
                     evas_common_convert_yuv_420p_601_rgba(im->cs.data, 
-                                                          (void *)im->im->image->data,
-                                                          im->im->image->w, im->im->image->h);
+                                                          (void *)im->im->image.data,
+                                                          im->im->cache_entry.w, im->im->cache_entry.h);
                }
           }
         space = EVAS_COLORSPACE_ARGB8888;
@@ -265,7 +243,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
    switch (space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-        evas_cache_image_load_data(im->im);
+        evas_cache_image_load_data(&im->im->cache_entry);
 	if ((im->tex) && (im->dirty))
 	  {
 	     evas_gl_common_texture_update(im->tex, im->im, im->tex->smooth);
@@ -295,12 +273,12 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
       case EVAS_COLORSPACE_YCBCR422P709_PL:
 	if ((im->tex) && (im->dirty))
 	  {
-	     evas_gl_common_ycbcr601pl_texture_update(im->tex, im->cs.data, im->im->image->w, im->im->image->h, smooth);
+	     evas_gl_common_ycbcr601pl_texture_update(im->tex, im->cs.data, im->im->cache_entry.w, im->im->cache_entry.h, smooth);
 	     im->dirty = 0;
 	  }
 	if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
 	  {
-	     im->tex = evas_gl_common_ycbcr601pl_texture_new(gc, im->cs.data, im->im->image->w, im->im->image->h, smooth);
+	     im->tex = evas_gl_common_ycbcr601pl_texture_new(gc, im->cs.data, im->im->cache_entry.w, im->im->cache_entry.h, smooth);
 	  }
 	if (!im->tex) return;
 	ow = (dw * im->tex->tw) / sw;

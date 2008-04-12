@@ -30,6 +30,7 @@ libevas_la_LIBADD       = \
 			  cache/libevas_cache.la \
 			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la \
+			  engines/common_16/libevas_engine_common_16.la \
 			  -lm \
 			  @fnmatch_libs@ \
 			  @dlopen_libs@ \
@@ -45,7 +46,8 @@ libevas_la_DEPENDENCIES = \
 			  file/libevas_file.la \
 			  cache/libevas_cache.la \
 			  imaging/libevas_imaging.la \
-			  engines/common/libevas_engine_common.la
+			  engines/common/libevas_engine_common.la \
+			  engines/common_16/libevas_engine_common_16.la
 
 libevas_la_LDFLAGS      = @create_shared_lib@ -version-info @version_info@
 

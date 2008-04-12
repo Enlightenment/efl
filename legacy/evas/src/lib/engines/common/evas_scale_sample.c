@@ -37,7 +37,7 @@ evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
    /* handle cutouts here! */
 
    if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
-   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
+   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
    /* no cutouts - cut right to the chase */
    if (!dc->cutout.rects)
@@ -51,7 +51,7 @@ evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
      }
    /* save out clip info */
    c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
-   evas_common_draw_context_clip_clip(dc, 0, 0, dst->image->w, dst->image->h);
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
    evas_common_draw_context_clip_clip(dc, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
    /* our clip is 0 size.. abort */
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
@@ -94,18 +94,18 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    int      src_w, src_h, dst_w, dst_h;
    RGBA_Gfx_Func func;
 
-   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
+   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
-   if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h, 0, 0, src->image->w, src->image->h)))
+   if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h, 0, 0, src->cache_entry.w, src->cache_entry.h)))
      return;
 
-   src_w = src->image->w;
-   src_h = src->image->h;
-   dst_w = dst->image->w;
-   dst_h = dst->image->h;
+   src_w = src->cache_entry.w;
+   src_h = src->cache_entry.h;
+   dst_w = dst->cache_entry.w;
+   dst_h = dst->cache_entry.h;
 
-   src_data = src->image->data;
-   dst_data = dst->image->data;
+   src_data = src->image.data;
+   dst_data = dst->image.data;
 
    if (dc->clip.use)
      {

@@ -4,6 +4,221 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#define FREESTRC(Var)              \
+  if (Var)                         \
+    {                              \
+       evas_stringshare_del(Var);  \
+       Var = NULL;                 \
+    }
+
+static void
+_evas_cache_image_make_dirty(Evas_Cache_Image *cache,
+                             Image_Entry *im)
+{
+   im->flags.cached = 1;
+   im->flags.dirty = 1;
+   im->flags.activ = 0;
+   im->flags.lru_nodata = 0;
+   cache->dirty = evas_object_list_prepend(cache->dirty, im);
+
+   if (im->cache_key)
+     {
+        evas_stringshare_del(im->cache_key);
+        im->cache_key = NULL;
+     }
+}
+
+static void
+_evas_cache_image_make_activ(Evas_Cache_Image *cache,
+                             Image_Entry *im,
+                             const char *key)
+{
+   im->cache_key = key;
+   if (key != NULL)
+     {
+        im->flags.cached = 1;
+        im->flags.activ = 1;
+        im->flags.lru_nodata = 0;
+        im->flags.dirty = 0;
+        cache->activ = evas_hash_direct_add(cache->activ, key, im);
+     }
+   else
+     {
+        _evas_cache_image_make_dirty(cache, im);
+     }
+}
+
+static void
+_evas_cache_image_make_inactiv(Evas_Cache_Image *cache,
+                               Image_Entry *im,
+                               const char *key)
+{
+   im->flags.activ = 0;
+   im->flags.dirty = 0;
+   im->flags.cached = 1;
+   cache->inactiv = evas_hash_direct_add(cache->inactiv, key, im);
+   cache->lru = evas_object_list_prepend(cache->lru, im);
+   cache->usage += cache->func.mem_size_get(im);
+}
+
+static void
+_evas_cache_image_remove_lru_nodata(Evas_Cache_Image *cache,
+                                    Image_Entry *im)
+{
+   if (im->flags.lru_nodata)
+     {
+        im->flags.lru_nodata = 0;
+        cache->lru_nodata = evas_object_list_remove(cache->lru_nodata, im);
+        cache->usage -= cache->func.mem_size_get(im);
+     }
+}
+
+static void
+_evas_cache_image_activ_lru_nodata(Evas_Cache_Image *cache,
+                                   Image_Entry *im)
+{
+   im->flags.need_data = 0;
+   im->flags.lru_nodata = 1;
+   cache->lru_nodata = evas_object_list_prepend(cache->lru_nodata, im);
+   cache->usage += cache->func.mem_size_get(im);
+}
+
+static void
+_evas_cache_image_remove_activ(Evas_Cache_Image *cache,
+                               Image_Entry *ie)
+{
+   if (ie->flags.cached)
+     {
+        if (ie->flags.activ)
+          {
+             cache->activ = evas_hash_del(cache->activ, ie->cache_key, ie);
+             _evas_cache_image_remove_lru_nodata(cache, ie);
+          }
+        else
+          {
+             if (ie->flags.dirty)
+               {
+                  cache->dirty = evas_object_list_remove(cache->dirty, ie);
+               }
+             else
+               {
+                  cache->inactiv = evas_hash_del(cache->inactiv, ie->cache_key, ie);
+                  cache->lru = evas_object_list_remove(cache->lru, ie);
+                  cache->usage -= cache->func.mem_size_get(ie);
+               }
+          }
+        ie->flags.cached = 0;
+        ie->flags.dirty = 0;
+        ie->flags.activ = 0;
+     }
+}
+
+static void
+_evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
+{
+   if (!ie) return ;
+
+   if (cache->func.debug)
+     cache->func.debug("deleting", ie);
+
+   cache->func.destructor(ie);
+
+   _evas_cache_image_remove_activ(cache, ie);
+
+   if (ie->cache_key)
+     {
+        evas_stringshare_del(ie->cache_key);
+        ie->cache_key = NULL;
+     }
+
+   FREESTRC(ie->file);
+   FREESTRC(ie->key);
+
+   cache->func.surface_delete(ie);
+   cache->func.delete(ie);
+}
+
+static Image_Entry *
+_evas_cache_image_entry_new(Evas_Cache_Image *cache,
+                            const char *hkey,
+                            time_t timestamp,
+                            const char *file,
+                            const char *key,
+                            RGBA_Image_Loadopts *lo,
+                            int *error)
+{
+   Image_Entry  *ie;
+   const char   *cache_key;
+
+   ie = cache->func.alloc();
+   if (!ie)
+     return NULL;
+
+   cache_key = hkey ? evas_stringshare_add(hkey) : NULL;
+
+   ie->flags.loaded = 0;
+   ie->flags.need_data = 1;
+
+   _evas_cache_image_make_activ(cache, ie, cache_key);
+
+   ie->space = EVAS_COLORSPACE_ARGB8888;
+   ie->w = -1;
+   ie->h = -1;
+
+   ie->references = 0;
+   ie->cache = cache;
+
+   ie->file = file ? evas_stringshare_add(file) : NULL;
+   ie->key = key ? evas_stringshare_add(key) : NULL;
+
+   ie->timestamp = timestamp;
+   ie->laststat = time(NULL);
+
+   ie->load_opts.scale_down_by = 0;
+   ie->load_opts.dpi = 0;
+   ie->load_opts.w = 0;
+   ie->load_opts.h = 0;
+   ie->scale = 1;
+
+   if (lo)
+     ie->load_opts = *lo;
+
+   ie->references = 0;
+   if (file)
+     {
+        *error = cache->func.constructor(ie);
+        if (*error != 0)
+          {
+             _evas_cache_image_entry_delete(cache, ie);
+             return NULL;
+          }
+     }
+   if (cache->func.debug)
+     cache->func.debug("build", ie);
+
+   return ie;
+}
+
+static void
+_evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
+                                      Image_Entry *ie,
+                                      int w,
+                                      int h)
+{
+   int  wmin;
+   int  hmin;
+
+   wmin = w > 0 ? w : 1;
+   hmin = h > 0 ? h : 1;
+   if (cache->func.surface_alloc(ie, wmin, hmin))
+     {
+        wmin = 0;
+        hmin = 0;
+     }
+   ie->w = wmin;
+   ie->h = hmin;
+}
+
 EAPI int
 evas_cache_image_usage_get(Evas_Cache_Image *cache)
 {
@@ -45,6 +260,7 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 
    new->dirty = NULL;
    new->lru = NULL;
+   new->lru_nodata = NULL;
    new->inactiv = NULL;
    new->activ = NULL;
 
@@ -57,26 +273,17 @@ static Evas_Bool
 _evas_cache_image_free_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    Evas_Cache_Image    *cache = fdata;
-   RGBA_Image          *im = data;
+   Image_Entry         *im = data;
 
-   if (cache->func.debug)
-     cache->func.debug("shutdown-activ", im);
+   _evas_cache_image_entry_delete(cache, im);
 
-   if (im->cache_key)
-     {
-	evas_stringshare_del(im->cache_key);
-	im->cache_key = NULL;
-     }
-
-   cache->func.destructor(im);
-   evas_common_image_delete(im);
    return 1;
 }
 
 EAPI void
 evas_cache_image_shutdown(Evas_Cache_Image *cache)
 {
-   RGBA_Image  *im;
+   Image_Entry  *im;
 
    assert(cache != NULL);
    cache->references--;
@@ -86,31 +293,21 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 
    while (cache->lru)
      {
-        im = (RGBA_Image *) cache->lru;
-        cache->lru = evas_object_list_remove(cache->lru, im);
+        im = (Image_Entry *) cache->lru;
+        _evas_cache_image_entry_delete(cache, im);
+     }
 
-	if (im->cache_key)
-	  {
-	     evas_stringshare_del(im->cache_key);
-	     im->cache_key = NULL;
-	  }
-
-        if (cache->func.debug)
-          cache->func.debug("shutdown-lru", im);
-        cache->func.destructor(im);
-        evas_common_image_delete(im);
+   while (cache->lru_nodata)
+     {
+        im = (Image_Entry *) cache->lru_nodata;
+        _evas_cache_image_entry_delete(cache, im);
      }
 
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
      {
-        im = (RGBA_Image *) cache->dirty;
-        cache->dirty = evas_object_list_remove(cache->dirty, im);
-
-        if (cache->func.debug)
-          cache->func.debug("shutdown-dirty", im);
-        cache->func.destructor(im);
-        evas_common_image_delete(im);
+        im = (Image_Entry *) cache->dirty;
+        _evas_cache_image_entry_delete(cache, im);
      }
 
    evas_hash_foreach(cache->activ, _evas_cache_image_free_cb, cache);
@@ -120,14 +317,17 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    free(cache);
 }
 
-EAPI RGBA_Image *
+#define STAT_GAP 2
+
+EAPI Image_Entry *
 evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error)
 {
    const char           *format;
    char                 *hkey;
-   RGBA_Image           *im;
+   Image_Entry          *im;
    Evas_Image_Load_Opts  prevent;
    int                   size;
+   int                   stat_done = 0;
    struct stat           st;
 
    assert(cache != NULL);
@@ -157,106 +357,86 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    hkey = alloca(sizeof (char) * size);
    snprintf(hkey, size, format, file, key, lo->scale_down_by, lo->dpi, lo->w, lo->h);
 
-   if (stat(file, &st) < 0)
-     {
-	im = evas_hash_find(cache->inactiv, hkey);
-	if (im)
-	  {
-	     cache->lru = evas_object_list_remove(cache->lru, im);
-	     cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
-//	     printf("IMG %p %ix%i %s SUB %i\n",
-//		    im, im->image->w, im->image->h, im->cache_key,
-//		    cache->func.mem_size_get(im));
-	     cache->usage -= cache->func.mem_size_get(im);
-	     if (im->cache_key)
-	       {
-		  evas_stringshare_del(im->cache_key);
-		  im->cache_key = NULL;
-	       }
-	     cache->func.destructor(im);
-	     evas_common_image_delete(im);
-	  }
-	return NULL;
-     }
-
    im = evas_hash_find(cache->activ, hkey);
    if (im)
      {
-	if (st.st_mtime == im->timestamp)
-	  goto on_ok;
+        time_t  t;
+        int     ok;
+
+        ok = 1;
+        t = time(NULL);
+
+        if ((t - im->laststat) > STAT_GAP)
+          {
+             stat_done = 1;
+             if (stat(file, &st) < 0) goto on_error;
+
+             im->laststat = t;
+             if (st.st_mtime != im->timestamp) ok = 0;
+          }
+        if (ok) goto on_ok;
      }
 
    im = evas_hash_find(cache->inactiv, hkey);
    if (im)
      {
-	if (st.st_mtime == im->timestamp)
-	  {
-	     cache->lru = evas_object_list_remove(cache->lru, im);
-	     cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
-	     cache->activ = evas_hash_direct_add(cache->activ, im->cache_key, im);
-//	     printf("IMG %p %ix%i %s SUB %i\n",
-//		    im, im->image->w, im->image->h, im->cache_key,
-//		    cache->func.mem_size_get(im));
-	     cache->usage -= cache->func.mem_size_get(im);
-	     goto on_ok;
-	  }
-	else
-	  {
-	     cache->lru = evas_object_list_remove(cache->lru, im);
-	     cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
-//	     printf("IMG %p %ix%i %s SUB %i\n",
-//		    im, im->image->w, im->image->h, im->cache_key,
-//		    cache->func.mem_size_get(im));
-	     cache->usage -= cache->func.mem_size_get(im);
-	     if (im->cache_key)
-	       {
-		  evas_stringshare_del(im->cache_key);
-		  im->cache_key = NULL;
-	       }
-	     cache->func.destructor(im);
-	     evas_common_image_delete(im);
-	  }
+        int     ok;
+
+        ok = 1;
+        if (!stat_done)
+          {
+             time_t  t;
+
+             t = time(NULL);
+             if ((t - im->laststat) > STAT_GAP)
+               {
+                  stat_done = 1;
+                  if (stat(file, &st) < 0) goto on_error;
+
+                  im->laststat = t;
+                  if (st.st_mtime != im->timestamp) ok = 0;
+               }
+          }
+        else
+          if (st.st_mtime != im->timestamp) ok = 0;
+
+        if (ok)
+          {
+             _evas_cache_image_remove_activ(cache, im);
+             _evas_cache_image_make_activ(cache, im, im->cache_key);
+             goto on_ok;
+          }
+
+        _evas_cache_image_entry_delete(cache, im);
      }
 
-   im = evas_common_image_new();
+   if (!stat_done)
+     {
+        if (stat(file, &st) < 0) return NULL;
+     }
+
+   im = _evas_cache_image_entry_new(cache, hkey, st.st_mtime, file, key, lo, error);
    if (!im)
-     {
-        *error = -1;
-        return NULL;
-     }
-
-   im->timestamp = st.st_mtime;
-   im->laststat = time(NULL);
-
-   if (lo) im->load_opts = *lo;
-
-   im->info.file = (char *) evas_stringshare_add(file);
-   if (key) im->info.key = (char *) evas_stringshare_add(key);
-
-   *error = cache->func.constructor(im);
-   if (*error != 0)
-     {
-        evas_common_image_delete(im);
-        return NULL;
-     }
+     return NULL;
 
    if (cache->func.debug)
      cache->func.debug("request", im);
 
-   im->references = 0;
-   im->cache_key = evas_stringshare_add(hkey);
-   im->cache = cache;
-   
-   cache->activ = evas_hash_direct_add(cache->activ, im->cache_key, im);
-   
-   on_ok:
+ on_ok:
    *error = 0;
    im->references++;
+   if (im->references > 1 && im->flags.lru_nodata)
+     _evas_cache_image_remove_lru_nodata(cache, im);
+
    return im;
+
+ on_error:
+   _evas_cache_image_entry_delete(cache, im);
+   return NULL;
 }
 
 EAPI void
-evas_cache_image_drop(RGBA_Image *im)
+evas_cache_image_drop(Image_Entry *im)
 {
    Evas_Cache_Image    *cache;
 
@@ -266,72 +446,59 @@ evas_cache_image_drop(RGBA_Image *im)
    im->references--;
    cache = im->cache;
 
-//   if (im->cache_key) printf("DROP %s -> ref = %i\n", im->cache_key, im->references);
-   if ((im->flags & RGBA_IMAGE_IS_DIRTY) == RGBA_IMAGE_IS_DIRTY)
+   if (im->flags.dirty)
      {
-//	printf("IMG %p %ix%i %s SUB %i\n",
-//	       im, im->image->w, im->image->h, im->cache_key,
-//	       cache->func.mem_size_get(im));
-//// don't decrement cache usage - unless we remove from the lru	
-//        cache->usage -= cache->func.mem_size_get(im);
-//	if (im->cache_key) printf("IM-- %s, cache = %i\n", im->cache_key, cache->usage);
-        cache->dirty = evas_object_list_remove(cache->dirty, im);
-        if (cache->func.debug)
-          cache->func.debug("drop", im);
-
-        cache->func.destructor(im);
-        evas_common_image_delete(im);
-
+        _evas_cache_image_entry_delete(cache, im);
         return ;
      }
 
    if (im->references == 0)
      {
-        cache->activ = evas_hash_del(cache->activ, im->cache_key, im);
-        cache->inactiv = evas_hash_direct_add(cache->inactiv, im->cache_key, im);
-        cache->lru = evas_object_list_prepend(cache->lru, im);
-
-//	printf("IMG %p %ix%i %s ADD %i\n",
-//	       im, im->image->w, im->image->h, im->cache_key,
-//	       cache->func.mem_size_get(im));
-	cache->usage += cache->func.mem_size_get(im);
-//	printf("FLUSH!\n");
+        _evas_cache_image_remove_activ(cache, im);
+        _evas_cache_image_make_inactiv(cache, im, im->cache_key);
 	evas_cache_image_flush(cache);
      }
 }
 
-EAPI RGBA_Image *
-evas_cache_image_dirty(RGBA_Image *im, int x, int y, int w, int h)
+EAPI void
+evas_cache_image_data_not_needed(Image_Entry *im)
 {
-   RGBA_Image          *im_dirty = im;
    Evas_Cache_Image    *cache;
 
    assert(im);
    assert(im->cache);
 
    cache = im->cache;
-   if (!(im->flags & RGBA_IMAGE_IS_DIRTY))
+
+   if (im->references > 1) return ;
+   if (im->flags.dirty || !im->flags.need_data) return ;
+
+   _evas_cache_image_activ_lru_nodata(cache, im);
+}
+
+EAPI Image_Entry *
+evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
+{
+   Image_Entry          *im_dirty = im;
+   Evas_Cache_Image     *cache;
+
+   assert(im);
+   assert(im->cache);
+
+   cache = im->cache;
+   if (!(im->flags.dirty))
      {
         if (im->references == 1)
           {
-	     if (im->cache_key)
-	       {
-		  cache->activ = evas_hash_del(cache->activ, im->cache_key, im);
-		  evas_stringshare_del(im->cache_key);
-		  im->cache_key = NULL;
-	       }
+             _evas_cache_image_remove_activ(cache, im);
              im_dirty = im;
           }
         else
           {
              int        error;
 
-             im_dirty = evas_common_image_new();
+             im_dirty = _evas_cache_image_entry_new(cache, NULL, im->timestamp, im->file, im->key, &im->load_opts, &error);
              if (!im_dirty) goto on_error;
-             im_dirty->image = evas_common_image_surface_new(im);
-             if (!im_dirty->image) goto on_error;
-             im_dirty->image->w = w;
-             im_dirty->image->h = h;
 
              if (cache->func.debug)
                cache->func.debug("dirty-src", im);
@@ -341,34 +508,32 @@ evas_cache_image_dirty(RGBA_Image *im, int x, int y, int w, int h)
 
              if (error != 0) goto on_error;
 
-             im_dirty->cache = cache;
              im_dirty->references = 1;
 
              evas_cache_image_drop(im);
           }
 
-        im_dirty->flags |= RGBA_IMAGE_IS_DIRTY;
-        cache->dirty = evas_object_list_prepend(cache->dirty, im_dirty);
+        _evas_cache_image_make_dirty(cache, im_dirty);
      }
-   
+
    if (cache->func.debug)
      cache->func.debug("dirty-region", im_dirty);
    if (cache->func.dirty_region)
      cache->func.dirty_region(im_dirty, x, y, w, h);
-   
+
    return im_dirty;
-   
-   on_error:
-   if (im_dirty) evas_common_image_delete(im_dirty);
+
+ on_error:
+   if (im_dirty) _evas_cache_image_entry_delete(cache, im_dirty);
    evas_cache_image_drop(im);
    return NULL;
 }
 
-EAPI RGBA_Image *
-evas_cache_image_alone(RGBA_Image *im)
+EAPI Image_Entry *
+evas_cache_image_alone(Image_Entry *im)
 {
-   RGBA_Image          *im_dirty = im;
-   Evas_Cache_Image    *cache;
+   Evas_Cache_Image     *cache;
+   Image_Entry          *im_dirty = im;
 
    assert(im);
    assert(im->cache);
@@ -376,28 +541,18 @@ evas_cache_image_alone(RGBA_Image *im)
    cache = im->cache;
    if (im->references == 1)
      {
-        if (!(im->flags & RGBA_IMAGE_IS_DIRTY))
+        if (!(im->flags.dirty))
           {
-             if (im->cache_key)
-	       {
-		  cache->activ = evas_hash_del(cache->activ, im->cache_key, im);
-		  evas_stringshare_del(im->cache_key);
-		  im->cache_key = NULL;
-	       }
-             im->flags |= RGBA_IMAGE_IS_DIRTY;
-             cache->dirty = evas_object_list_prepend(cache->dirty, im);
+             _evas_cache_image_remove_activ(cache, im);
+             _evas_cache_image_make_dirty(cache, im);
           }
      }
    else
      {
         int     error;
 
-        im_dirty = evas_common_image_new();
+        im_dirty = _evas_cache_image_entry_new(cache, NULL, im->timestamp, im->file, im->key, &im->load_opts, &error);
         if (!im_dirty) goto on_error;
-        im_dirty->image = evas_common_image_surface_new(im);
-        if (!im_dirty->image) goto on_error;
-        im_dirty->image->w = im->image->w;
-        im_dirty->image->h = im->image->h;
 
         if (cache->func.debug)
           cache->func.debug("dirty-src", im);
@@ -407,15 +562,7 @@ evas_cache_image_alone(RGBA_Image *im)
 
         if (error != 0) goto on_error;
 
-	if (im_dirty->cache_key)
-	  {
-	     evas_stringshare_del(im_dirty->cache_key);
-	     im_dirty->cache_key = NULL;
-	  }
-        im_dirty->flags |= RGBA_IMAGE_IS_DIRTY;
         im_dirty->references = 1;
-
-        cache->dirty = evas_object_list_prepend(cache->dirty, im_dirty);
 
         evas_cache_image_drop(im);
      }
@@ -423,30 +570,15 @@ evas_cache_image_alone(RGBA_Image *im)
    return im_dirty;
    
    on_error:
-   if (im_dirty) evas_common_image_delete(im_dirty);
+   if (im_dirty) _evas_cache_image_entry_delete(cache, im_dirty);
    evas_cache_image_drop(im);
    return NULL;
 }
 
-static RGBA_Image *
-_evas_cache_image_push_dirty(Evas_Cache_Image *cache, RGBA_Image *im)
-{
-   cache->dirty = evas_object_list_prepend(cache->dirty, im);
-
-   im->flags |= RGBA_IMAGE_IS_DIRTY;
-   if (im->cache_key)
-     {
-	evas_stringshare_del(im->cache_key);
-	im->cache_key = NULL;
-     }
-   im->cache = cache;
-   return im;
-}
-
-EAPI RGBA_Image *
+EAPI Image_Entry *
 evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
-   RGBA_Image  *im;
+   Image_Entry  *im;
 
    assert(cache);
 
@@ -454,122 +586,132 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *imag
        (cspace == EVAS_COLORSPACE_YCBCR422P709_PL))
      w &= ~0x1;
 
-   im = evas_common_image_create(w, h);
+   im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
    if (!im) return NULL;
+   im->space = cspace;
+
+   _evas_cache_image_entry_surface_alloc(cache, im, w, h);
 
    if (cache->func.copied_data(im, w, h, image_data, alpha, cspace) != 0)
      {
-        evas_common_image_delete(im);
+        _evas_cache_image_entry_delete(cache, im);
         return NULL;
      }
+   im->references = 1;
 
-   return _evas_cache_image_push_dirty(cache, im);
+   if (cache->func.debug)
+     cache->func.debug("copied-data", im);
+   return im;
 }
 
-EAPI RGBA_Image *
+EAPI Image_Entry *
 evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
-   RGBA_Image  *im;
+   Image_Entry  *im;
 
    assert(cache);
 
-   im = evas_common_image_new();
-   if (!im) return NULL;
-   im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-        evas_common_image_delete(im);
-        return NULL;
-     }
+   im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
+   im->w = w;
+   im->h = h;
 
    if (cache->func.data(im, w, h, image_data, alpha, cspace) != 0)
      {
-        evas_common_image_delete(im);
+        _evas_cache_image_entry_delete(cache, im);
         return NULL;
      }
+   im->references = 1;
 
-   return _evas_cache_image_push_dirty(cache, im);
+   if (cache->func.debug)
+     cache->func.debug("data", im);
+   return im;
 }
 
-EAPI RGBA_Image *
-evas_cache_image_size_set(RGBA_Image *im, int w, int h)
+EAPI void
+evas_cache_image_surface_alloc(Image_Entry *im, int w, int h)
+{
+   Evas_Cache_Image     *cache;
+
+   assert(im);
+   assert(im->cache);
+
+   cache = im->cache;
+
+   _evas_cache_image_entry_surface_alloc(cache, im, w, h);
+
+   if (cache->func.debug)
+     cache->func.debug("surface-alloc", im);
+}
+
+EAPI Image_Entry *
+evas_cache_image_size_set(Image_Entry *im, int w, int h)
 {
    Evas_Cache_Image    *cache;
-   RGBA_Image          *new;
+   Image_Entry         *new;
    int                  error;
 
    assert(im);
-   assert(im->image);
    assert(im->cache);
    assert(im->references > 0);
 
-   if ((im->image->w == w) && (im->image->h == h))
+   if ((im->w == w) && (im->h == h))
      return im;
 
    cache = im->cache;
 
-   new = evas_common_image_new();
+   new = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, &error);
    if (!new) goto on_error;
-   new->image = evas_common_image_surface_new(im);
-   if (!new->image) goto on_error;
-   new->image->w = w;
-   new->image->h = h;
 
-   if (cache->func.debug)
-     cache->func.debug("size_set-in", im);
+   _evas_cache_image_entry_surface_alloc(cache, new, w, h);
+
+   new->space = im->space;
+   new->load_opts = im->load_opts;
+
    error = cache->func.size_set(new, im, w, h);
-   if (cache->func.debug)
-     cache->func.debug("size_set-out", new);
-
    if (error != 0) goto on_error;
 
-   new->cache = cache;
-   new->cache_key = NULL;
-
    new->references = 1;
-//   cache->usage += cache->func.mem_size_get(new);
-
-   if (((im->flags & RGBA_IMAGE_IS_DIRTY) == RGBA_IMAGE_IS_DIRTY)
-       || (im->references > 1))
-     {
-        new->flags |= RGBA_IMAGE_IS_DIRTY;
-        cache->dirty = evas_object_list_prepend(cache->dirty, new);
-     }
-   else
-     {
-        new->cache_key = im->cache_key ? evas_stringshare_add(im->cache_key) : NULL;
-        cache->activ = evas_hash_direct_add(cache->activ, new->cache_key, new);
-     }
 
    evas_cache_image_drop(im);
-   
+
+   if (cache->func.debug)
+     cache->func.debug("size_set", new);
+
    return new;
-   
-   on_error:
-   if (new) evas_common_image_delete(new);
+
+ on_error:
+   if (new) _evas_cache_image_entry_delete(cache, new);
    evas_cache_image_drop(im);
    return NULL;
 }
 
 EAPI void
-evas_cache_image_load_data(RGBA_Image *im)
+evas_cache_image_load_data(Image_Entry *im)
 {
    Evas_Cache_Image    *cache;
+   int                  error;
 
    assert(im);
-   assert(im->image);
    assert(im->cache);
 
-   if ((im->flags & RGBA_IMAGE_LOADED) == RGBA_IMAGE_LOADED) return ;
-   
+   if (im->flags.loaded) return ;
+
    cache = im->cache;
+
+   error = cache->func.load(im);
+
    if (cache->func.debug)
      cache->func.debug("load", im);
 
-   cache->func.load(im);
-   im->flags |= RGBA_IMAGE_LOADED;
+   if (error)
+     {
+        _evas_cache_image_entry_surface_alloc(cache, im, im->w, im->h);
+        im->flags.loaded = 0;
 
-   assert(im->image->data);
+        return ;
+     }
+
+   im->flags.loaded = 1;
 }
 
 EAPI int
@@ -583,58 +725,53 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
 
    while ((cache->lru) && (cache->limit < cache->usage))
      {
-        RGBA_Image     *im;
+        Image_Entry     *im;
 
-        im = (RGBA_Image *) cache->lru->last;
-        cache->lru = evas_object_list_remove(cache->lru, im);
-        cache->inactiv = evas_hash_del(cache->inactiv, im->cache_key, im);
-//	printf("IMG %p %ix%i %s SUB %i\n",
-//	       im, im->image->w, im->image->h, im->cache_key,
-//	       cache->func.mem_size_get(im));
-        cache->usage -= cache->func.mem_size_get(im);
-
-	if (im->cache_key)
-	  {
-	     evas_stringshare_del(im->cache_key);
-	     im->cache_key = NULL;
-	  }
-//	printf("DEL IMG FROM CACHE\n");
-        cache->func.destructor(im);
-        evas_common_image_delete(im);
+        im = (Image_Entry *) cache->lru->last;
+        _evas_cache_image_entry_delete(cache, im);
      }
+
+   while ((cache->lru_nodata) && (cache->limit < cache->usage))
+     {
+        Image_Entry     *im;
+
+        im = (Image_Entry *) cache->lru_nodata->last;
+        _evas_cache_image_remove_lru_nodata(cache, im);
+
+        cache->func.surface_delete(im);
+
+        im->flags.loaded = 0;
+     }
+
    return cache->usage;
 }
 
-EAPI RGBA_Image *
+EAPI Image_Entry *
 evas_cache_image_empty(Evas_Cache_Image *cache)
 {
-   RGBA_Image  *new;
+   Image_Entry  *new;
 
-   new = evas_common_image_new();
-   if (!new) goto on_error;
-   new->image = evas_common_image_surface_new(new);
-   if (!new->image) goto on_error;
+   new = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
+   if (!new) return NULL;
 
-   new->cache = cache;
    new->references = 1;
 
-   new->cache_key = NULL;
-   new->flags |= RGBA_IMAGE_IS_DIRTY;
-
-   cache->dirty = evas_object_list_prepend(cache->dirty, new);
-
    return new;
-
-  on_error:
-   if (new) evas_common_image_delete(new);
-   return NULL;
 }
 
 EAPI void
-evas_cache_image_colorspace(RGBA_Image *im, int cspace)
+evas_cache_image_colorspace(Image_Entry *im, int cspace)
 {
-   if (!im) return ;
-   if (im->cs.space == cspace) return ;
+   Evas_Cache_Image    *cache;
 
-   evas_common_image_colorspace_set(im, cspace);
+   assert(im);
+   assert(im->cache);
+
+   cache = im->cache;
+
+   if (!im) return ;
+   if (im->space == cspace) return ;
+
+   im->space = cspace;
+   cache->func.color_space(im, cspace);
 }

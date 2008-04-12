@@ -2,7 +2,7 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "Evas_Engine_Software_16_DDraw.h"
-#include "evas_soft16.h"
+#include "evas_common_soft16.h"
 
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
@@ -144,6 +144,7 @@ eng_setup(Evas *e, void *in)
 	evas_common_font_init();
 	evas_common_draw_init();
 	evas_common_tilebuf_init();
+        evas_common_soft16_image_init();
 
 	/* render engine specific data */
 	re = calloc(1, sizeof(Render_Engine));
@@ -209,6 +210,7 @@ eng_output_free(void *data)
 
    evas_common_font_shutdown();
    evas_common_image_shutdown();
+   evas_common_soft16_image_shutdown();
 }
 
 static void

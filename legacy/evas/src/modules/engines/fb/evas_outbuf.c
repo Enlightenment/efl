@@ -14,7 +14,7 @@ evas_fb_outbuf_fb_free(Outbuf *buf)
    /* FIXME: impliment */
    printf("destroying fb info.. not implemented!!!! WARNING. LEAK!\n");
    if (buf->priv.back_buf)
-     evas_common_image_delete(buf->priv.back_buf);
+     evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
    free(buf);
 }
 
@@ -182,7 +182,7 @@ evas_fb_outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 	  {
 	     DATA32 *src_data;
 
-	     src_data = buf->priv.back_buf->image->data + (y * buf->w) + x;
+	     src_data = buf->priv.back_buf->image.data + (y * buf->w) + x;
 	     if (buf->rot == 0 || buf->rot == 180)
 	       {
 		  conv_func(src_data, data,
@@ -216,12 +216,13 @@ evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h,
 	RGBA_Image *im;
 
 	*cx = 0; *cy = 0; *cw = w; *ch = h;
-	im = evas_common_image_create(w, h);
+	im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+        im->flags |= RGBA_IMAGE_HAS_ALPHA;
+        im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
 
         /* handle framebuffers with alpha channel */
         if (buf->priv.fb.fb->fb_var.transp.length > 0) {
-           im->flags |= RGBA_IMAGE_HAS_ALPHA;
-           memset(im->image->data, 0, w * h * sizeof(DATA32));
+           memset(im->image.data, 0, w * h * sizeof(DATA32));
         }
         return im;
      }
@@ -231,7 +232,7 @@ evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h,
 void
 evas_fb_outbuf_fb_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
-   if (update != buf->priv.back_buf) evas_common_image_delete(update);
+   if (update != buf->priv.back_buf) evas_cache_image_drop(&update->cache_entry);
 }
 
 void
@@ -304,7 +305,7 @@ evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, in
 	  {
 	     DATA32 *src_data;
 
-	     src_data = update->image->data;
+	     src_data = update->image.data;
 	     if (buf->rot == 0 || buf->rot == 180)
 	       {
 		  conv_func(src_data, data,
@@ -333,7 +334,7 @@ evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth d
      return;
    if (buf->priv.back_buf)
      {
-	evas_common_image_delete(buf->priv.back_buf);
+	evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
 	buf->priv.back_buf = NULL;
      }
    if (buf->priv.fb.fb)
@@ -382,7 +383,7 @@ evas_fb_outbuf_fb_set_have_backbuf(Outbuf *buf, int have_backbuf)
    if (buf->priv.back_buf)
      {
 	if (have_backbuf) return;
-	evas_common_image_delete(buf->priv.back_buf);
+        evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
 	buf->priv.back_buf = NULL;
      }
    else
@@ -392,7 +393,8 @@ evas_fb_outbuf_fb_set_have_backbuf(Outbuf *buf, int have_backbuf)
 	  {
 	     if (buf->priv.fb.fb->fb_var.bits_per_pixel  < 24)
 	       {
-		  buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
+		  buf->priv.back_buf = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+                  buf->priv.back_buf = (RGBA_Image *) evas_cache_image_size_set(&buf->priv.back_buf->cache_entry, buf->w, buf->h);
 	       }
 	  }
      }

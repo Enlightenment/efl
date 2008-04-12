@@ -18,10 +18,10 @@
    if (!dc->mul.use)
      {
 	if ((dc->render_op == _EVAS_RENDER_BLEND) && !(src->flags & RGBA_IMAGE_HAS_ALPHA))
-	  { direct_scale = 1;  buf_step = dst->image->w; }
+	  { direct_scale = 1;  buf_step = dst->cache_entry.w; }
 	else if (dc->render_op == _EVAS_RENDER_COPY)
 	  {
-	    direct_scale = 1;  buf_step = dst->image->w;
+	    direct_scale = 1;  buf_step = dst->cache_entry.w;
 	    if (src->flags & RGBA_IMAGE_HAS_ALPHA)
 		dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	  }
@@ -61,7 +61,7 @@
 #ifdef EVAS_SLI
 	int ysli = dst_clip_y;
 #endif
-	psrc = src->image->data + (src_w * (sry + cy)) + srx;
+	psrc = src->image.data + (src_w * (sry + cy)) + srx;
 	while (pdst < pdst_end)
 	  {
 #ifdef EVAS_SLI
@@ -117,7 +117,7 @@
      }
    else if (drw == srw)
      {
-	DATA32  *ps = src->image->data + (src_w * sry) + srx + cx;
+	DATA32  *ps = src->image.data + (src_w * sry) + srx + cx;
 #ifdef EVAS_SLI
 	int ysli = dst_clip_y;
 #endif
@@ -176,7 +176,7 @@
      }
 
      {
-	DATA32  *ps = src->image->data + (src_w * sry) + srx;
+	DATA32  *ps = src->image.data + (src_w * sry) + srx;
 	int     sxx0 = sxx;
 #ifdef EVAS_SLI
 	int ysli = dst_clip_y;

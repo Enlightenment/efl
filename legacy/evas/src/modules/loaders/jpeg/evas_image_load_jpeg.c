@@ -89,16 +89,11 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
+   cinfo.dct_method = JDCT_IFAST;
+   cinfo.dither_mode = JDITHER_ORDERED;
    jpeg_start_decompress(&cinfo);
 
 /* head decoding */
-   if (!im->image)
-     im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	jpeg_destroy_decompress(&cinfo);
-	return 0;
-     }
    w = cinfo.output_width;
    h = cinfo.output_height;
    if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
@@ -106,27 +101,27 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
         jpeg_destroy_decompress(&cinfo);
 	return 0;
      }
-   if (im->load_opts.scale_down_by > 1)
+   if (im->cache_entry.load_opts.scale_down_by > 1)
      {
-	w /= im->load_opts.scale_down_by;
-	h /= im->load_opts.scale_down_by;
+	w /= im->cache_entry.load_opts.scale_down_by;
+	h /= im->cache_entry.load_opts.scale_down_by;
      }
-   else if (im->load_opts.dpi > 0.0)
+   else if (im->cache_entry.load_opts.dpi > 0.0)
      {
-	w = (w * im->load_opts.dpi) / 90.0;
-	h = (h * im->load_opts.dpi) / 90.0;
+	w = (w * im->cache_entry.load_opts.dpi) / 90.0;
+	h = (h * im->cache_entry.load_opts.dpi) / 90.0;
      }
-   else if ((im->load_opts.w > 0) &&
-	    (im->load_opts.h > 0))
+   else if ((im->cache_entry.load_opts.w > 0) &&
+	    (im->cache_entry.load_opts.h > 0))
      {
 	int w2, h2;
 	
-	w2 = im->load_opts.w;
-	h2 = (im->load_opts.w * h) / w;
-	if (h2 > im->load_opts.h)
+	w2 = im->cache_entry.load_opts.w;
+	h2 = (im->cache_entry.load_opts.w * h) / w;
+	if (h2 > im->cache_entry.load_opts.h)
 	  {
-	     h2 = im->load_opts.h;
-	     w2 = (im->load_opts.h * w) / h;
+	     h2 = im->cache_entry.load_opts.h;
+	     w2 = (im->cache_entry.load_opts.h * w) / h;
 	  }
 	w = w2;
 	h = h2;
@@ -139,19 +134,19 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
 	scalew = cinfo.output_width / w;
 	scaleh = cinfo.output_height / h;
 	
-	im->scale = scalew;
-	if (scaleh < scalew) im->scale = scaleh;
+	im->cache_entry.scale = scalew;
+	if (scaleh < scalew) im->cache_entry.scale = scaleh;
 	
-	if      (im->scale > 8) im->scale = 8;
-	else if (im->scale < 1) im->scale = 1;
+	if      (im->cache_entry.scale > 8) im->cache_entry.scale = 8;
+	else if (im->cache_entry.scale < 1) im->cache_entry.scale = 1;
 	
-	if      (im->scale == 3) im->scale = 2;
-	else if (im->scale == 5) im->scale = 4;
-	else if (im->scale == 6) im->scale = 4;
-	else if (im->scale == 7) im->scale = 4;
+	if      (im->cache_entry.scale == 3) im->cache_entry.scale = 2;
+	else if (im->cache_entry.scale == 5) im->cache_entry.scale = 4;
+	else if (im->cache_entry.scale == 6) im->cache_entry.scale = 4;
+	else if (im->cache_entry.scale == 7) im->cache_entry.scale = 4;
      }
 
-   if (im->scale > 1)
+   if (im->cache_entry.scale > 1)
      {
 	jpeg_destroy_decompress(&cinfo);
    
@@ -162,13 +157,13 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
 	cinfo.do_fancy_upsampling = FALSE;
 	cinfo.do_block_smoothing = FALSE;
 	cinfo.scale_num = 1;
-	cinfo.scale_denom = im->scale;
+	cinfo.scale_denom = im->cache_entry.scale;
 	jpeg_calc_output_dimensions(&(cinfo));
 	jpeg_start_decompress(&cinfo);
      }
    
-   im->image->w = cinfo.output_width;
-   im->image->h = cinfo.output_height;
+   im->cache_entry.w = cinfo.output_width;
+   im->cache_entry.h = cinfo.output_height;
 /* end head decoding */
 
    jpeg_destroy_decompress(&cinfo);
@@ -201,11 +196,12 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    cinfo.dct_method = JDCT_IFAST;
-   
-   if (im->scale > 1)
+   cinfo.dither_mode = JDITHER_ORDERED;
+
+   if (im->cache_entry.scale > 1)
      {
 	cinfo.scale_num = 1;
-	cinfo.scale_denom = im->scale;
+	cinfo.scale_denom = im->cache_entry.scale;
      }
    
 /* head decoding */
@@ -215,7 +211,7 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    w = cinfo.output_width;
    h = cinfo.output_height;
    
-   if ((w != im->image->w) || (h != im->image->h))
+   if ((w != im->cache_entry.w) || (h != im->cache_entry.h))
      {
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
@@ -229,13 +225,13 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
 	return 0;
      }
    data = alloca(w * 16 * 3);
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
+   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+   if (!im->image.data)
      {
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
      }
-   ptr2 = im->image->data;
+   ptr2 = im->image.data;
    count = 0;
    prevy = 0;
    if (cinfo.output_components == 3)

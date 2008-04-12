@@ -1,6 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "evas_soft16.h"
+#include "evas_common_soft16.h"
 
 /*
  *****
@@ -330,7 +330,7 @@ eng_image_alpha_get(void *data, void *image)
 
    if (!image) return 0;
    im = image;
-   return im->have_alpha;
+   return im->flags.have_alpha;
 }
 
 static int
@@ -394,7 +394,7 @@ eng_image_native_get(void *data, void *image)
 static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
-   return soft16_image_load(file, key, error, lo);
+   return evas_cache_image_request(evas_common_soft16_image_cache_get(), file, key, lo, error);
 }
 
 static void *
@@ -406,7 +406,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha,
 		cspace, __FUNCTION__, __FILE__, __LINE__);
 	return NULL;
      }
-   return soft16_image_new(w, h, -1, alpha, (DATA16 *)image_data, 0);
+   return evas_cache_image_data(evas_common_soft16_image_cache_get(), w, h, image_data, alpha, EVAS_COLORSPACE_RGB565_A5P);
 }
 
 static void *
@@ -418,13 +418,13 @@ eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int
 		cspace, __FUNCTION__, __FILE__, __LINE__);
 	return NULL;
      }
-   return soft16_image_new(w, h, -1, alpha, (DATA16 *)image_data, 1);
+   return evas_cache_image_copied_data(evas_common_soft16_image_cache_get(), w, h, image_data, alpha, EVAS_COLORSPACE_RGB565_A5P);
 }
 
 static void
 eng_image_free(void *data, void *image)
 {
-   soft16_image_free(image);
+   evas_cache_image_drop((Image_Entry *) image);
 }
 
 static void
@@ -436,8 +436,8 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
    if (h) *h = 0;
    if (!image) return;
    im = image;
-   if (w) *w = im->w;
-   if (h) *h = im->h;
+   if (w) *w = im->cache_entry.w;
+   if (h) *h = im->cache_entry.h;
 }
 
 static void *
@@ -446,10 +446,10 @@ eng_image_size_set(void *data, void *image, int w, int h)
    if (!image) return NULL;
    if ((w <= 0) || (h <= 0))
      {
-	soft16_image_free(image);
+        evas_cache_image_drop((Image_Entry *) image);
 	return NULL;
      }
-   return soft16_image_size_set(image, w, h);
+   return evas_cache_image_size_set((Image_Entry *) image, w, h);
 }
 
 static void
@@ -483,27 +483,10 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
      }
 
    im = image;
-   soft16_image_load_data(im);
+   evas_cache_image_load_data(&im->cache_entry);
 
    if (to_write)
-     {
-	if (im->references > 1)
-	  {
-	     Soft16_Image *im_new;
-
-	     im_new = soft16_image_new(im->w, im->h, im->stride, im->have_alpha,
-				       im->pixels, 1);
-	     if (!im_new)
-	       {
-		  if (image_data) *image_data = NULL;
-		  return im;
-	       }
-	     soft16_image_free(im);
-	     im = im_new;
-	  }
-	if (im->cache_key)
-	  soft16_image_cache_del(im);
-     }
+     im = (Soft16_Image *) evas_cache_image_alone(&im->cache_entry);
 
    if (image_data) *image_data = (DATA32 *) im->pixels;
 
@@ -520,17 +503,22 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    old_im = image;
    if ((DATA16 *)image_data == old_im->pixels) return old_im;
 
-   new_im = soft16_image_new(old_im->w, old_im->h, old_im->stride,
-			     old_im->have_alpha, (DATA16 *)image_data, 0);
-   soft16_image_free(old_im);
+   new_im = (Soft16_Image *) evas_cache_image_copied_data(evas_common_soft16_image_cache_get(), old_im->cache_entry.w, old_im->cache_entry.h, image_data, old_im->flags.have_alpha, EVAS_COLORSPACE_RGB565_A5P);
+   evas_cache_image_drop(&old_im->cache_entry);
    return new_im;
 }
+
+#include <assert.h>
 
 static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
-   soft16_image_load_data(image);
-   soft16_image_draw(image, surface, context,
+   Soft16_Image *im;
+
+   im = (Soft16_Image *) image;
+
+   evas_cache_image_load_data(&im->cache_entry);
+   soft16_image_draw(im, surface, context,
 		     src_x, src_y, src_w, src_h,
 		     dst_x, dst_y, dst_w, dst_h,
 		     smooth);
@@ -539,19 +527,19 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 static void
 eng_image_cache_flush(void *data)
 {
-   soft16_image_cache_flush();
+   evas_cache_image_flush(evas_common_soft16_image_cache_get());
 }
 
 static void
 eng_image_cache_set(void *data, int bytes)
 {
-   soft16_image_cache_size_set(bytes);
+   evas_cache_image_set(evas_common_soft16_image_cache_get(), bytes);
 }
 
 static int
 eng_image_cache_get(void *data)
 {
-   return soft16_image_cache_size_get();
+   return evas_cache_image_get(evas_common_soft16_image_cache_get());
 }
 
 static void *
@@ -653,17 +641,12 @@ eng_font_char_at_coords_get(void *data, void *font, const char *text, int x, int
 static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
-   static RGBA_Image *im = NULL;
-   Soft16_Image *dst = surface;
+   static RGBA_Image    *im = NULL;
+   Soft16_Image         *dst = surface;
 
    if (!im)
-     {
-	im = evas_common_image_new();
-	im->image = evas_common_image_surface_new(im);
-	im->image->no_free = 1;
-     }
-   im->image->w = dst->w;
-   im->image->h = dst->h;
+     im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+   evas_cache_image_surface_alloc(&im->cache_entry, dst->cache_entry.w, dst->cache_entry.h);
    evas_common_draw_context_font_ext_set(context,
 					 surface,
 					 soft16_font_glyph_new,

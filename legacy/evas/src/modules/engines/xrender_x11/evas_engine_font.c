@@ -162,8 +162,8 @@ _xre_font_surface_draw(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context
    
    fs = fg->ext_dat;
    if (!fs || !fs->xinf || !dc || !dc->col.col) return;
-   if (!surface || !surface->image || !surface->image->data) return;
-   target_surface = (Xrender_Surface *)(surface->image->data);
+   if (!surface || !surface->image.data) return;
+   target_surface = (Xrender_Surface *)(surface->image.data);
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;

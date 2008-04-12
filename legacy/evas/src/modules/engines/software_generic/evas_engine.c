@@ -336,7 +336,7 @@ eng_image_alpha_get(void *data, void *image)
 
    if (!image) return 1;
    im = image;
-   switch (im->cs.space)
+   switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
 	if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
@@ -353,7 +353,7 @@ eng_image_colorspace_get(void *data, void *image)
 
    if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
-   return im->cs.space;
+   return im->cache_entry.space;
 }
 
 static void *
@@ -363,12 +363,12 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 
    if (!image) return NULL;
    im = image;
-   if (im->cs.space != EVAS_COLORSPACE_ARGB8888)
+   if (im->cache_entry.space != EVAS_COLORSPACE_ARGB8888)
      {
 	im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
 	return im;
      }
-   im = evas_cache_image_alone(im);
+   im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
    evas_common_image_colorspace_dirty(im);
 
    if (has_alpha)
@@ -415,41 +415,10 @@ static void
 eng_image_colorspace_set(void *data, void *image, int cspace)
 {
    RGBA_Image *im;
-   
+
    if (!image) return;
    im = image;
-   if (im->cs.space == cspace) return;
-   switch (cspace)
-     {
-      case EVAS_COLORSPACE_ARGB8888:
-	if (im->cs.data)
-	  {
-	     if (!im->cs.no_free) free(im->cs.data);
-	     im->cs.data = NULL;
-	     im->cs.no_free = 0;
-	  }
-	break;
-      case EVAS_COLORSPACE_YCBCR422P601_PL:
-      case EVAS_COLORSPACE_YCBCR422P709_PL:
-	if (im->image->no_free)
-	  {
-	     im->image->data = NULL;
-	     im->image->no_free = 0;
-	     evas_common_image_surface_alloc(im->image);
-	  }
-	if (im->cs.data)
-	  {
-	     if (!im->cs.no_free) free(im->cs.data);
-	  }
-	im->cs.data = calloc(1, im->image->h * sizeof(unsigned char *) * 2);
-	im->cs.no_free = 0;
-	break;
-      default:
-	abort();
-	break;
-     }
-   im->cs.space = cspace;
-   evas_common_image_colorspace_dirty(im);
+   evas_cache_image_colorspace(&im->cache_entry, cspace);
 }
 
 static void
@@ -494,8 +463,8 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
    RGBA_Image *im;
 
    im = image;
-   if (w) *w = im->image->w;
-   if (h) *h = im->image->h;
+   if (w) *w = im->cache_entry.w;
+   if (h) *h = im->cache_entry.h;
 }
 
 static void *
@@ -513,7 +482,7 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
    RGBA_Image*  im = image;
 
    if (!image) return NULL;
-   im = evas_cache_image_dirty(im, x, y, w, h);
+   im = (RGBA_Image *) evas_cache_image_dirty(&im->cache_entry, x, y, w, h);
    return im;
 }
 
@@ -528,13 +497,13 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 	return NULL;
      }
    im = image;
-   evas_common_load_image_data_from_file(im);
-   switch (im->cs.space)
+   evas_cache_image_load_data(&im->cache_entry);
+   switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
 	if (to_write)
-          im = evas_cache_image_alone(im);
-	*image_data = im->image->data;
+          im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
+	*image_data = im->image.data;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -554,19 +523,19 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 
    if (!image) return NULL;
    im = image;
-   switch (im->cs.space)
+   switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (image_data != im->image->data)
+	if (image_data != im->image.data)
 	  {
 	     int w, h;
 
-	     w = im->image->w;
-	     h = im->image->h;
-	     im2 = eng_image_new_from_data(data, w, h, image_data, 
+	     w = im->cache_entry.w;
+	     h = im->cache_entry.h;
+	     im2 = eng_image_new_from_data(data, w, h, image_data,
 					   eng_image_alpha_get(data, image),
 					   eng_image_colorspace_get(data, image));
-             evas_cache_image_drop(im);
+             evas_cache_image_drop(&im->cache_entry);
 	     im = im2;
 	  }
 	break;
@@ -596,8 +565,8 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
    if (!image) return;
    im = image;
-   if (im->cs.space == EVAS_COLORSPACE_ARGB8888)
-     evas_common_load_image_data_from_file(im);
+   if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+     evas_cache_image_load_data(&im->cache_entry);
    evas_common_image_colorspace_normalize(im);
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)

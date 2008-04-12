@@ -133,10 +133,8 @@ evas_direct3d_outbuf_new_region_for_update(Outbuf *buf,
      }
    else
      {
-        im = evas_cache_image_empty(evas_common_image_cache_get());
-        im->image->w = width;
-        im->image->h = height;
-        evas_common_image_surface_alloc(im->image);
+        im = (RGBA_Image*) evas_cache_image_empty(evas_common_image_cache_get());
+        evas_cache_image_surface_alloc(&im->cache_entry, width, height);
         im->extended_info = d3dob;
         if ((buf->rot == 0) || (buf->rot == 180))
           d3dob = evas_direct3d_output_buffer_new(buf->priv.d3d.depth,
