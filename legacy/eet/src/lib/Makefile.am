@@ -18,9 +18,10 @@ eet_data.c \
 eet_image.c \
 eet_memfile.c \
 eet_dictionary.c \
-eet_utils.c \
-Eet_private.h
+eet_utils.c
 
 libeet_la_LIBADD       = @EVIL_LIBS@ @WIN32_LIBS@ -lz -ljpeg @fnmatch_libs@ -lm
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h
 libeet_la_LDFLAGS      = @create_shared_lib@ -version-info @version_info@
+
+EXTRA_DIST = Eet_private.h
