@@ -21,9 +21,10 @@ embryo_float.c \
 embryo_main.c \
 embryo_rand.c \
 embryo_str.c \
-embryo_time.c \
-embryo_private.h
+embryo_time.c
 
 libembryo_la_LIBADD       = -lm @fnmatch_libs@
 libembryo_la_DEPENDENCIES = $(top_builddir)/config.h
 libembryo_la_LDFLAGS      = @create_shared_lib@ -version-info @version_info@
+
+EXTRA_DIST = embryo_private.h
