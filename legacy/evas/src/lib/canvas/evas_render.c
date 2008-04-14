@@ -71,7 +71,7 @@ static void
 _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active_objects, Evas_List **restack_objects, Evas_List **delete_objects, int restack)
 {
    int is_active;
-   
+
 /* if (obj->cur.cache.clip.dirty) */
    evas_object_clip_recalc(obj);
    /* because of clip objects - delete 2 cycles later */
@@ -80,7 +80,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
    else if (obj->delete_me != 0) obj->delete_me++;
    /* build active object list */
    is_active = evas_object_is_active(obj);
-   if ((is_active) || (obj->delete_me != 0)) 
+   if ((is_active) || (obj->delete_me != 0))
      *active_objects = evas_list_append(*active_objects, obj);
    if (restack)
      {
@@ -92,14 +92,14 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	if (obj->smart.smart)
 	  {
 	     Evas_Object_List *l;
-	     
+
 	     obj->func->render_pre(obj);
 	     for (l = obj->smart.contained; l; l = l->next)
 	       {
 		  Evas_Object *obj2;
-		  
+
 		  obj2 = (Evas_Object *)l;
-		  _evas_render_phase1_object_process(e, obj2, 
+		  _evas_render_phase1_object_process(e, obj2,
 						     active_objects,
 						     restack_objects,
 						     delete_objects,
@@ -109,11 +109,11 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	else
 	  {
 	     if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
-		 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
+		 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 		  (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	       *restack_objects = evas_list_append(*restack_objects, obj);
 	     else if ((is_active) && (!obj->clip.clipees) &&
-		      ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
+		      ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 		       (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	       obj->func->render_pre(obj);
 	  }
@@ -121,21 +121,21 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
    else
      {
 	if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-	    ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
+	    ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 	     (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	  {
 	     if (obj->smart.smart)
 	       {
 		  Evas_Object_List *l;
-		  
+
 		  obj->func->render_pre(obj);
 		  for (l = obj->smart.contained; l; l = l->next)
 		    {
 		       Evas_Object *obj2;
-		       
+
 		       obj2 = (Evas_Object *)l;
-		       _evas_render_phase1_object_process(e, obj2, 
-							  active_objects, 
+		       _evas_render_phase1_object_process(e, obj2,
+							  active_objects,
 							  restack_objects,
 							  delete_objects,
 							  restack);
@@ -143,7 +143,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	       }
 	     else
 	       {
-		  if (evas_object_is_opaque(obj) && 
+		  if (evas_object_is_opaque(obj) &&
 		      evas_object_is_visible(obj))
 		    e->engine.func->output_redraws_rect_del(e->engine.data.output,
 							    obj->cur.cache.clip.x,
@@ -153,7 +153,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	       }
 	  }
      }
-   if (!is_active) obj->restack = 0;     
+   if (!is_active) obj->restack = 0;
 }
 
 static void
@@ -173,7 +173,7 @@ _evas_render_phase1_process(Evas *e, Evas_List **active_objects, Evas_List **res
 
 	     obj = (Evas_Object *)l2;
 	     _evas_render_phase1_object_process(e, obj, active_objects,
-						restack_objects, 
+						restack_objects,
 						delete_objects, 0);
 	  }
      }
@@ -285,11 +285,11 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 							       &cx, &cy, &cw, &ch)))
 	  {
 	     int off_x, off_y;
-	     
+
 	     if (make_updates)
 	       {
 		  Evas_Rectangle *rect;
-		  
+
 		  rect = malloc(sizeof(Evas_Rectangle));
 		  if (rect)
 		    {
@@ -303,7 +303,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	     for (ll = obscuring_objects_orig; ll; ll = ll->next)
 	       {
 		  Evas_Object *obj;
-		  
+
 		  obj = (Evas_Object *)(ll->data);
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
 		    obscuring_objects = evas_list_append(obscuring_objects, obj);
@@ -314,7 +314,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		  Evas_Object *obj;
 		  Evas_List *l3;
 		  obj = (Evas_Object *)(ll->data);
-		  
+
 		  /* if it's in our outpout rect and it doesn't clip anything */
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
 		      (!obj->clip.clipees) &&
@@ -325,8 +325,8 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		      (obj->cur.color.a > 0))
 		    {
 		       int x, y, w, h;
-		       
-		       if ((obscuring_objects) && 
+
+		       if ((obscuring_objects) &&
 			   (obscuring_objects->data == obj))
 			 obscuring_objects = evas_list_remove(obscuring_objects, obj);
 		       x = cx; y = cy; w = cw; h = ch;
@@ -351,7 +351,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 ///			      {
 ///				 abort();
 ///			      }
-			 
+
 			    e->engine.func->context_clip_set(e->engine.data.output,
 							     e->engine.data.context,
 							     x, y, w, h);
@@ -359,7 +359,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 			    for (l3 = obscuring_objects; l3; l3 = l3->next)
 			      {
 				 Evas_Object *obj2;
-				 
+
 				 obj2 = (Evas_Object *)l3->data;
 				 e->engine.func->context_cutout_add(e->engine.data.output,
 								    e->engine.data.context,
@@ -395,7 +395,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    for (ll = active_objects; ll; ll = ll->next)
      {
 	Evas_Object *obj;
-	
+
 	obj = (Evas_Object *)(ll->data);
 	obj->pre_render_done = 0;
 	if ((obj->changed) && (do_draw))
@@ -428,9 +428,9 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    e->changed = 0;
    e->viewport.changed = 0;
    e->output.changed = 0;
-   
+
    evas_module_clean();
-   
+
    return updates;
 }
 
@@ -462,7 +462,7 @@ evas_render_updates(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   
+
    if (!e->changed) return NULL;
    return evas_render_updates_internal(e, 1, 1);
 }
@@ -496,7 +496,7 @@ evas_norender(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
 //   if (!e->changed) return;
    evas_render_updates_internal(e, 0, 0);
 }
