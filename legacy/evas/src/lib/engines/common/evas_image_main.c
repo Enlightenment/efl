@@ -193,8 +193,11 @@ _evas_common_rgba_image_unload(Image_Entry* im)
 }
 
 static void
-_evas_common_rgba_image_dirty_region(Image_Entry* im, int x, int y, int w, int h)
+_evas_common_rgba_image_dirty_region(Image_Entry* ie, int x, int y, int w, int h)
 {
+   RGBA_Image   *im = (RGBA_Image *) ie;
+
+   im->flags |= RGBA_IMAGE_IS_DIRTY;
 }
 
 /* Only called when references > 0. Need to provide a fresh copie of im. */
@@ -346,7 +349,7 @@ evas_common_image_alpha_create(int w, int h)
 void
 evas_common_image_colorspace_normalize(RGBA_Image *im)
 {
-   if ((!im->cs.data) || 
+   if ((!im->cs.data) ||
        ((!im->cs.dirty) && (!(im->flags & RGBA_IMAGE_IS_DIRTY)))) return;
    switch (im->cache_entry.space)
      {
