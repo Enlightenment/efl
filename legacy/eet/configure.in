@@ -30,7 +30,8 @@ AC_SUBST(version_info)
 
 WIN32_CFLAGS=""
 WIN32_LIBS=""
-create_shared_lib=""
+lt_no_undefined=""
+lt_auto_import=""
 case "$host_os" in
 	mingw|mingw32*|cegcc)
 		PKG_CHECK_MODULES([EVIL], [evil])
@@ -40,15 +41,17 @@ case "$host_os" in
 		if test "$host_os" = "cegcc" ; then
 			WIN32_CFLAGS="-mwin32"
 			WIN32_LIBS="-lws2"
+			lt_auto_import="-Wl,--enable-auto-import"
 		else
 			WIN32_LIBS="-lws2_32"
 		fi
-		create_shared_lib="-no-undefined "
+		lt_no_undefined="-no-undefined"
 		;;
 esac
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(WIN32_LIBS)
-AC_SUBST(create_shared_lib)
+AC_SUBST(lt_no_undefined)
+AC_SUBST(lt_auto_import)
 
 dnl Checking for __attribute__ support
 AC_MSG_CHECKING([for __attribute__])
