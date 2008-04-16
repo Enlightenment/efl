@@ -89,8 +89,8 @@ ecore_sdl_feed_events(void)
           }
           case SDL_MOUSEBUTTONDOWN:
           {
-             if (event.button.button == 5 ||
-                 event.button.button == 6)
+             if (event.button.button == SDL_BUTTON_WHEELUP ||
+                 event.button.button == SDL_BUTTON_WHEELDOWN)
                {
                   Ecore_Sdl_Event_Mouse_Wheel   *ev;
 
@@ -98,7 +98,7 @@ ecore_sdl_feed_events(void)
                   ev->x = event.button.x;
                   ev->y = event.button.y;
                   ev->direction = 0;
-                  ev->wheel = event.button.button == 5 ? -1 : 1;
+                  ev->wheel = event.button.button == SDL_BUTTON_WHEELDOWN ? -1 : 1;
                   ev->time = time;
 
                   ecore_event_add(ECORE_SDL_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
