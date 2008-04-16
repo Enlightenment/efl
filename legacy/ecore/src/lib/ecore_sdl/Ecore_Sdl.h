@@ -1,5 +1,5 @@
-#ifndef _ECORE_FB_H
-#define _ECORE_FB_H
+#ifndef _ECORE_SDL_H
+#define _ECORE_SDL_H
 
 #ifdef EAPI
 #undef EAPI
