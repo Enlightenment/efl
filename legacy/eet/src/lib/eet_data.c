@@ -1973,17 +1973,21 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 	     switch (chnk.group_type)
 	       {
 		case EET_G_UNKNOWN:
-		  dumpfunc(dumpdata, "struct");break;
+		  dumpfunc(dumpdata, "struct");
+		  break;
 		case EET_G_ARRAY:
-		  dumpfunc(dumpdata, "array");break;
+		  dumpfunc(dumpdata, "array");
+		  break;
 		case EET_G_VAR_ARRAY:
-		  dumpfunc(dumpdata, "var_array");break;
+		  dumpfunc(dumpdata, "var_array");
+		  break;
 		case EET_G_LIST:
-		  dumpfunc(dumpdata, "list");break;
+		  dumpfunc(dumpdata, "list");
+		  break;
 		case EET_G_HASH:
 		  dumpfunc(dumpdata, "hash");break;
 		default:
-		  dumpfunc(dumpdata, "???");break;
+		  dumpfunc(dumpdata, "???");
 		  break;
 	       }
 	     dumpfunc(dumpdata, " {\n");
