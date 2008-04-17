@@ -183,7 +183,6 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    if (lo)
      ie->load_opts = *lo;
 
-   ie->references = 0;
    if (file)
      {
         *error = cache->func.constructor(ie);
@@ -488,11 +487,7 @@ evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
    cache = im->cache;
    if (!(im->flags.dirty))
      {
-        if (im->references == 1)
-          {
-             _evas_cache_image_remove_activ(cache, im);
-             im_dirty = im;
-          }
+        if (im->references == 1) im_dirty = im;
         else
           {
              int        error;
@@ -513,6 +508,7 @@ evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
              evas_cache_image_drop(im);
           }
 
+	_evas_cache_image_remove_activ(cache, im_dirty);
         _evas_cache_image_make_dirty(cache, im_dirty);
      }
 
