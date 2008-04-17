@@ -68,7 +68,7 @@ _edje_match_states_alloc(Edje_Patterns *ppat, int n)
    ALIGN(struct_size);
    struct_size += states_has_size;
 
-   l = malloc(n * struct_size);
+   l = calloc(1, n * struct_size);
    if (!l) return 0;
 
    ppat->states = l;
@@ -92,19 +92,21 @@ _edje_match_states_insert(Edje_States    *list,
                           size_t          idx,
                           size_t          pos)
 {
-   {
-      const size_t i = idx * (patterns_max_length + 1) + pos;
+   size_t i;
 
-      if (list->size > i && list->has[i]) return;
-      list->has[i] = 1;
-   }
-
-   const size_t i = list->size;
-
+   i = (idx * (patterns_max_length + 1)) + pos;
+   
+   if (list->size > i)
+     {
+	if (list->has[i]) return;
+     }
+   list->has[i] = 1;
+   
+   i = list->size;
    list->states[i].idx = idx;
    list->states[i].pos = pos;
    list->has[i] = 0;
-   ++list->size;
+   list->size++;
 }
 
 static void
@@ -118,11 +120,11 @@ _edje_match_states_clear(Edje_States     *list,
 /* Token manipulation. */
 
 enum status
-  {
-    patterns_not_found		= 0,
-    patterns_found		= 1,
-    patterns_syntax_error	= 2
-  };
+{
+   patterns_not_found		= 0,
+   patterns_found		= 1,
+   patterns_syntax_error	= 2
+};
 
 static size_t
 _edje_match_patterns_exec_class_token(enum status	*status,
