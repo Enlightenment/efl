@@ -637,6 +637,9 @@ extern "C" {
     * endian-independant serialised data chunks for transmission across a
     * a network or more.
     *
+    * The function pointers to the list and hash table functions are only 
+    * needed if you use those data types, else you can pass NULL instead.
+    *
     * Example:
     *
     * @code
