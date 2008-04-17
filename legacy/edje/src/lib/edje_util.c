@@ -1141,6 +1141,21 @@ edje_object_calc_force(Evas_Object *obj)
 EAPI void
 edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
+   edje_object_size_min_restricted_calc(obj, minw, minh, 0, 0);
+}
+
+/** Calculate minimum size
+ * @param obj A valid Evas_Object handle
+ * @param minw Minimum width pointer
+ * @param minh Minimum height pointer
+ * @param restrictedw Do not allow object min width calc to be less than this
+ * @param restrictedh Do not allow object min height calc to be less than this
+ *
+ * Calculates the object's minimum size ?!
+ */
+EAPI void
+edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
+{
    Edje *ed;
    Evas_Coord pw, ph;
    int maxw, maxh;
@@ -1151,8 +1166,8 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    ed = _edje_fetch(obj);
    if ((!ed) || (!ed->collection))
      {
-	if (minw) *minw = 0;
-	if (minh) *minh = 0;
+	if (minw) *minw = restrictedw;
+	if (minh) *minh = restrictedh;
 	return;
      }
    reset_maxwh = 1;
@@ -1161,8 +1176,8 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    ph = ed->h;
 
    again:
-   ed->w = 0;
-   ed->h = 0;
+   ed->w = restrictedw;
+   ed->h = restrictedh;
 
    maxw = 0;
    maxh = 0;
@@ -1226,6 +1241,8 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	  {
 	     ed->w += maxw;
 	     ed->h += maxh;
+	     if (ed->w < restrictedw) ed->w = restrictedw;
+	     if (ed->h < restrictedh) ed->h = restrictedh;
 	  }
 	if ((ed->w > 4000) || (ed->h > 4000))
 	  {
