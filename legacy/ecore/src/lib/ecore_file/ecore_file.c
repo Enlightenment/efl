@@ -459,6 +459,11 @@ ecore_file_realpath(const char *file)
 {
    char  buf[PATH_MAX];
 
+   /*
+    * Some implementations of realpath do not conform to the SUS.
+    * And as a result we must prevent a null arg from being passed.
+    */
+   if (!file) return strdup("");
    if (!realpath(file, buf)) return strdup("");
 
    return strdup(buf);
