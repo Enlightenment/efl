@@ -5,6 +5,8 @@ SUBDIRS = src
 MAINTAINERCLEANFILES = \
 Makefile.in \
 aclocal.m4 \
+autom4te.cache \
+compile \
 config.guess \
 config.h.in  \
 config.sub  \
@@ -24,16 +26,16 @@ EXTRA_DIST = \
 AUTHORS \
 COPYING \
 COPYING-PLAIN \
+autogen.sh \
 eet.c.in \
-README.in \
-README \
 eet.pc.in \
 eet.spec.in \
 eet.spec \
+README.in \
+README \
 Doxyfile \
 doc \
 gendoc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = eet.pc
-
