@@ -13,7 +13,7 @@ depcomp \
 install-sh \
 ltmain.sh  \
 missing  \
-eet_docs.tar.gz\
+eet_docs.tar.gz \
 m4/libtool.m4 \
 m4/lt~obsolete.m4 \
 m4/ltoptions.m4 \
