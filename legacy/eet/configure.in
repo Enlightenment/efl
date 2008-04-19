@@ -31,7 +31,7 @@ AC_SUBST(version_info)
 WIN32_CFLAGS=""
 WIN32_LIBS=""
 lt_no_undefined=""
-lt_auto_import=""
+lt_enable_auto_import=""
 case "$host_os" in
 	mingw|mingw32*|cegcc)
 		PKG_CHECK_MODULES([EVIL], [evil])
@@ -41,7 +41,7 @@ case "$host_os" in
 		if test "$host_os" = "cegcc" ; then
 			WIN32_CFLAGS="-mwin32"
 			WIN32_LIBS="-lws2"
-			lt_auto_import="-Wl,--enable-auto-import"
+			lt_enable_auto_import="-Wl,--enable-auto-import"
 		else
 			WIN32_LIBS="-lws2_32"
 		fi
@@ -51,23 +51,23 @@ esac
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(WIN32_LIBS)
 AC_SUBST(lt_no_undefined)
-AC_SUBST(lt_auto_import)
+AC_SUBST(lt_enable_auto_import)
 
 dnl Checking for __attribute__ support
 AC_MSG_CHECKING([for __attribute__])
-AC_CACHE_VAL(have___attribute__,
+AC_CACHE_VAL(_cv_have___attribute__,
   [
     AC_TRY_COMPILE([#include <stdlib.h>],
       [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
-      [have___attribute__="yes"],
-      [have___attribute__="no"])
+      [_cv_have___attribute__="yes"],
+      [_cv_have___attribute__="no"])
   ]
 )
 
-if test "x${have___attribute__}" = "xyes" ; then
+if test "x${_cv_have___attribute__}" = "xyes" ; then
    AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
 fi
-AC_MSG_RESULT(${have___attribute__})
+AC_MSG_RESULT(${_cv_have___attribute__})
 
 AC_FUNC_ALLOCA
 
