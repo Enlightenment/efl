@@ -16,6 +16,7 @@ AC_PROG_CC
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
+AM_PROG_CC_C_O
 
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
@@ -30,9 +31,10 @@ version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
 WIN32_CFLAGS=""
-create_shared_lib=""
+lt_no_undefined=""
+lt_enable_auto_import=""
 case "$host_os" in
-	mingw|mingw32*|cegcc)
+	mingw*|cegcc)
 		PKG_CHECK_MODULES([EVIL], evil)
 		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
 		dnl needed for correct definition of EAPI
@@ -40,30 +42,32 @@ case "$host_os" in
 		AC_DEFINE(HAVE_GETTIMEOFDAY, 1, [Defined to 1 (MinGW / CeGCC platform)])
 		if test "x$host_os" = "xcegcc" ; then
 			WIN32_CFLAGS="-mwin32"
+			lt_enable_auto_import="-Wl,--enable-auto-import"
 		fi
-		create_shared_lib="-no-undefined"
+		lt_no_undefined="-no-undefined"
 		;;
 	*)
 		AC_CHECK_FUNCS(gettimeofday)
 esac
 AC_SUBST(WIN32_CFLAGS)
-AC_SUBST(create_shared_lib)
+AC_SUBST(lt_no_undefined)
+AC_SUBST(lt_enable_auto_import)
 
 dnl Checking for __attribute__ support
 AC_MSG_CHECKING([for __attribute__])
-AC_CACHE_VAL(have___attribute__,
+AC_CACHE_VAL(_cv_have___attribute__,
   [
     AC_TRY_COMPILE([#include <stdlib.h>],
       [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
-      [have___attribute__="yes"],
-      [have___attribute__="no"])
+      [_cv_have___attribute__="yes"],
+      [_cv_have___attribute__="no"])
   ]
 )
 
-if test "x${have___attribute__}" = "xyes" ; then
+if test "x${_cv_have___attribute__}" = "xyes" ; then
    AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
 fi
-AC_MSG_RESULT(${have___attribute__})
+AC_MSG_RESULT(${_cv_have___attribute__})
 
 AC_FUNC_ALLOCA
 
