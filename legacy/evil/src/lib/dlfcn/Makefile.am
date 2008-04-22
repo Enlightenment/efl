@@ -6,4 +6,4 @@ lib_LTLIBRARIES = libdl.la
 include_HEADERS = dlfcn.h
 libdl_la_SOURCES = dlfcn.c
 
-libdl_la_LDFLAGS = -no-undefined -version-info @version_info@
+libdl_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@

@@ -5,6 +5,7 @@
 #undef WIN32_LEAN_AND_MEAN
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
+# include <wchar.h>
 # include <limits.h>
 #endif /* __MINGW32CE__ */
 
@@ -31,7 +32,8 @@ string_to_wchar(const char *text)
    int      wsize;
 
    wsize = MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, NULL, 0);
-   if (wsize == 0 || wsize > ULONG_MAX/sizeof(wchar_t))
+   if ((wsize == 0) ||
+       (wsize > (int)(ULONG_MAX/sizeof(wchar_t))))
      return NULL;
 
    wtext = malloc(wsize * sizeof(wchar_t));

@@ -10,6 +10,7 @@ dnl otherwise, we set the correct flags
 dnl for each platform.
 win32_libs=""
 win32_cflags=""
+lt_enable_auto_import=""
 case "$host_os" in
   mingw|mingw32)
     win32_libs="-lole32 -luuid -lws2_32"
@@ -17,6 +18,7 @@ case "$host_os" in
   cegcc)
     win32_cflags="-mwin32"
     win32_libs="-lws2"
+    lt_enable_auto_import="-Wl,--enable-auto-import"
     ;;
   mingw32ce)
     win32_libs="-lws2"
@@ -27,6 +29,7 @@ case "$host_os" in
 esac
 AC_SUBST(win32_cflags)
 AC_SUBST(win32_libs)
+AC_SUBST(lt_enable_auto_import)
 
 dnl needed for correct definition of EAPI
 AC_DEFINE(EFL_EVIL_BUILD, 1, [Define to mention that evil is built])
@@ -51,19 +54,19 @@ AC_PROG_CC
 AC_C_CONST
 
 AC_MSG_CHECKING([for __attribute__])
-AC_CACHE_VAL(have___attribute__,
+AC_CACHE_VAL(_cv_have___attribute__,
   [
     AC_TRY_COMPILE([#include <stdlib.h>],
       [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
-      [have___attribute__="yes"],
-      [have___attribute__="no"])
+      [_cv_have___attribute__="yes"],
+      [_cv_have___attribute__="no"])
   ]
 )
 
-if test "x${have___attribute__}" = "xyes" ; then
+if test "x${_cv_have___attribute__}" = "xyes" ; then
    AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
 fi
-AC_MSG_RESULT(${have___attribute__})
+AC_MSG_RESULT(${_cv_have___attribute__})
 
 
 AC_CONFIG_FILES([

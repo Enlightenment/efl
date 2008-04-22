@@ -8,7 +8,7 @@
 # include <io.h>
 #endif /* ! __CEGCC__ */
 
-#include <sys/mman.h>
+#include "sys/mman.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

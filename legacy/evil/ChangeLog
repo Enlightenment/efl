@@ -1,3 +1,19 @@
+2008-04-23  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/bin/Makefile.am:
+	* src/lib/Makefile.am:
+	* src/lib/dlfcn/Makefile.am:
+	* src/lib/mman/Makefile.am:
+	use -Wl,--enable-auto-import with cegcc
+	fix warning with newest autoconf
+
+	* src/lib/dlfcn/dlfcn.c: (string_to_wchar):
+	include wchar.h and fix warnings
+
+	* src/lib/mman/mman.c:
+	use relative path to include sys/mman.h
+
 2008-03-28  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
