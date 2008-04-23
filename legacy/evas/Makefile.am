@@ -2,58 +2,80 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src
 
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
-                       config.h.in config.sub configure install-sh \
-		       ltconfig ltmain.sh missing mkinstalldirs \
-		       stamp-h.in build-stamp configure-stamp depcomp \
-		       evas_docs.tar.gz evas.c \
-		       README \
-		       evas-cairo-x11.pc \
-		       evas-directfb.pc \
-		       evas-fb.pc \
-		       evas-glitz-x11.pc \
-		       evas-opengl-x11.pc \
-		       evas-opengl-glew.pc \
-		       evas-software-buffer.pc \
-		       evas-software-qtopia.pc \
-		       evas-software-x11.pc \
-		       evas-software-16-x11.pc \
-		       evas-software-xcb.pc \
-		       evas-xrender-x11.pc \
-		       evas-xrender-xcb.pc \
-		       evas-software-ddraw.pc \
-		       evas-software-16-ddraw.pc \
-		       evas-direct3d.pc \
-		       evas-software-sdl.pc \
-		       evas.pc \
-		       evas.spec
+MAINTAINERCLEANFILES = \
+Makefile.in \
+aclocal.m4 \
+config.guess \
+config.h.in \
+config.sub \
+configure \
+install-sh \
+ltconfig \
+ltmain.sh \
+missing \
+mkinstalldirs \
+stamp-h.in \
+build-stamp \
+configure-stamp \
+depcomp \
+evas_docs.tar.gz \
+evas.c \
+README \
+evas-cairo-x11.pc \
+evas-directfb.pc \
+evas-fb.pc \
+evas-glitz-x11.pc \
+evas-opengl-x11.pc \
+evas-opengl-glew.pc \
+evas-software-buffer.pc \
+evas-software-qtopia.pc \
+evas-software-x11.pc \
+evas-software-16-x11.pc \
+evas-software-xcb.pc \
+evas-xrender-x11.pc \
+evas-xrender-xcb.pc \
+evas-software-ddraw.pc \
+evas-software-16-ddraw.pc \
+evas-direct3d.pc \
+evas-software-16-wince.pc \
+evas-software-sdl.pc \
+evas.pc \
+evas.spec
 
-bin_SCRIPTS = 
+bin_SCRIPTS =
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN autogen.sh evas.c.in gendoc \
-             Doxyfile \
-	     README.in README \
-	     evas.pc.in \
-	     evas-cairo-x11.pc \
-	     evas-directfb.pc \
-	     evas-fb.pc \
-	     evas-glitz-x11.pc \
-	     evas-opengl-x11.pc \
-	     evas-opengl-glew.pc \
-	     evas-software-buffer.pc \
-	     evas-software-qtopia.pc \
-	     evas-software-x11.pc \
-	     evas-software-16-x11.pc \
-	     evas-software-xcb.pc \
-	     evas-xrender-x11.pc \
-	     evas-xrender-xcb.pc \
-	     evas-software-ddraw.pc \
-	     evas-software-16-ddraw.pc \
-	     evas-direct3d.pc \
-	     evas-software-sdl.pc \
-	     evas.pc \
-	     evas.spec.in evas.spec \
-	     doc gendoc
+EXTRA_DIST = \
+AUTHORS \
+COPYING \
+COPYING-PLAIN \
+autogen.sh \
+evas.c.in \
+gendoc \
+Doxyfile \
+README.in \
+README \
+evas.pc.in \
+evas-cairo-x11.pc \
+evas-directfb.pc \
+evas-fb.pc \
+evas-glitz-x11.pc \
+evas-opengl-x11.pc \
+evas-opengl-glew.pc \
+evas-software-buffer.pc \
+evas-software-qtopia.pc \
+evas-software-x11.pc \
+evas-software-16-x11.pc \
+evas-software-xcb.pc \
+evas-xrender-x11.pc \
+evas-xrender-xcb.pc \
+evas-software-ddraw.pc \
+evas-software-16-ddraw.pc \
+evas-direct3d.pc \
+evas-software-16-wince.pc \
+evas-software-sdl.pc \
+evas.pc \
+evas.spec.in evas.spec \
+doc gendoc
 
 if BUILD_ENGINE_SOFTWARE_X11
 psoftwarex11 = evas-software-x11.pc
@@ -112,11 +134,15 @@ psoftwareddraw = evas-software-ddraw.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_16_DDRAW
-psoftwared16draw = evas-software-16-ddraw.pc
+psoftware16ddraw = evas-software-16-ddraw.pc
 endif
 
 if BUILD_ENGINE_DIRECT3D
 pdirect3d = evas-direct3d.pc
+endif
+
+if BUILD_ENGINE_SOFTWARE_16_WINCE
+psoftware16wince = evas-software-16-wince.pc
 endif
 
 if BUILD_ENGINE_SDL
@@ -128,4 +154,4 @@ pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pfb) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
 	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psoftwaresdl) \
-	$(psoftware16x11) $(pdirect3d) $(psoftwared16draw) $(popenglglew)
+	$(psoftware16x11) $(pdirect3d) $(psoftware16ddraw) $(psoftware16wince) $(popenglglew)

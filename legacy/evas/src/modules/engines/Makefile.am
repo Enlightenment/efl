@@ -23,5 +23,6 @@ software_16 \
 software_16_x11 \
 direct3d \
 software_16_ddraw \
+software_16_wince \
 software_16_sdl
 

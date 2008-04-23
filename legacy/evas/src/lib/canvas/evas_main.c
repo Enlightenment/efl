@@ -712,6 +712,9 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_DIRECT3D
    methods = evas_list_append(methods, strdup("direct3d"));
 #endif
+#ifdef BUILD_ENGINE_SOFTWARE_16_WINCE
+   methods = evas_list_append(methods, strdup("software_16_wince"));
+#endif
 #ifdef BUILD_ENGINE_SOFTWARE_X11
    methods = evas_list_append(methods, strdup("software_x11"));
 #endif
