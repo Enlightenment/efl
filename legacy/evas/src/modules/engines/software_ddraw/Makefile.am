@@ -21,7 +21,7 @@ evas_ddraw_buffer.c \
 evas_ddraw_main.cpp
 
 module_la_LIBADD = @ddraw_libs@ $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version
+module_la_LDFLAGS = @lt_no_undefined@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 

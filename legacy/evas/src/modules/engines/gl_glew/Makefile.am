@@ -20,7 +20,7 @@ evas_engine.c \
 evas_glew_main.c
 
 module_la_LIBADD = $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la $(top_builddir)/src/lib/libevas.la @gl_libs@ @glew_libs@
-module_la_LDFLAGS = @create_shared_lib@ -module -avoid-version
+module_la_LDFLAGS = @lt_no_undefined@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 

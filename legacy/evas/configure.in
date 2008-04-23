@@ -38,7 +38,8 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 PKG_PROG_PKG_CONFIG
 
 WIN32_CFLAGS=""
-create_shared_lib=""
+lt_no_undefined=""
+lt_enable_auto_import=""
 case "$host_os" in
         mingw|mingw32*|cegcc)
 		PKG_CHECK_MODULES(EVIL, evil)
@@ -47,12 +48,14 @@ case "$host_os" in
 		AC_DEFINE(EFL_EVAS_BUILD, 1, [Define to mention that evas is built])
                 if test "$host_os" = "cegcc" ; then
                         WIN32_CFLAGS="-mwin32"
+			lt_enable_auto_import="-Wl,--enable-auto-import"
                 fi
-                create_shared_lib="-no-undefined "
+                lt_no_undefined="-no-undefined "
                 ;;
 esac
 AC_SUBST(WIN32_CFLAGS)
-AC_SUBST(create_shared_lib)
+AC_SUBST(lt_no_undefined)
+AC_SUBST(lt_enable_auto_import)
 
 x_dir=""
 x_cflags=""
