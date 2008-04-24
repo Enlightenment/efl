@@ -29,6 +29,7 @@ struct _Render_Engine
                                                   int height);
    void              (*backend_output_buffer_free)(FB_Output_Buffer *fbob);
    void              (*backend_output_buffer_paste)(FB_Output_Buffer *fbob);
+   void              (*backend_surface_resize)(FB_Output_Buffer *fbob);
 
    int               width;
    int               height;
@@ -200,6 +201,7 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_new = evas_software_wince_fb_output_buffer_new;
               re->backend_output_buffer_free = evas_software_wince_fb_output_buffer_free;
               re->backend_output_buffer_paste = evas_software_wince_fb_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_fb_surface_resize;
               break;
            case 2: /* GAPI */
               re->backend = EVAS_ENGINE_WINCE_GAPI;
@@ -213,6 +215,7 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_new = evas_software_wince_gapi_output_buffer_new;
               re->backend_output_buffer_free = evas_software_wince_gapi_output_buffer_free;
               re->backend_output_buffer_paste = evas_software_wince_gapi_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_gapi_surface_resize;
               break;
            default:
               free(re);
@@ -245,6 +248,7 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_new = evas_software_wince_fb_output_buffer_new;
               re->backend_output_buffer_free = evas_software_wince_fb_output_buffer_free;
               re->backend_output_buffer_paste = evas_software_wince_fb_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_fb_surface_resize;
               break;
            case 2: /* GAPI */
               re->backend = EVAS_ENGINE_WINCE_GAPI;
@@ -258,6 +262,7 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_new = evas_software_wince_gapi_output_buffer_new;
               re->backend_output_buffer_free = evas_software_wince_gapi_output_buffer_free;
               re->backend_output_buffer_paste = evas_software_wince_gapi_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_gapi_surface_resize;
               break;
            default:
               free(re);
@@ -313,7 +318,7 @@ eng_output_resize(void *data, int w, int h)
 
    /* FIXME: is it needed ?? */
    if (re->fbob)
-     evas_software_wince_fb_surface_resize(re->fbob);
+     re->backend_surface_resize(re->fbob);
 
    evas_common_tilebuf_free(re->tb);
    re->width = w;
@@ -323,7 +328,7 @@ eng_output_resize(void *data, int w, int h)
      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    if (re->fbob)
      {
-        evas_software_wince_fb_output_buffer_free(re->fbob);
+        re->backend_output_buffer_free(re->fbob);
 	re->fbob = NULL;
      }
    if (re->clip_rects)
@@ -624,7 +629,7 @@ eng_output_flush(void *data)
      }
    else return;
 
-   evas_software_wince_fb_output_buffer_paste(re->fbob);
+   re->backend_output_buffer_paste(re->fbob);
 
    /* FIXME : i have to manage that */
 /*    XSetClipMask(re->disp, re->gc, None); */
@@ -638,7 +643,7 @@ eng_output_idle_flush(void *data)
    re = (Render_Engine *)data;
    if (re->fbob)
      {
-	evas_software_wince_fb_output_buffer_free(re->fbob);
+	re->backend_output_buffer_free(re->fbob);
 	re->fbob = NULL;
      }
    if (re->clip_rects)
