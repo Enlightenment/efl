@@ -99,11 +99,8 @@ eng_output_setup(int w, int h, IDirectFB *dfb, IDirectFBSurface *surf, DFBSurfac
    /* We create a "fake" RGBA_Image which points the to DFB surface. Each access
     * to that surface is wrapped in Lock / Unlock calls whenever the data is
     * manipulated directly. */
-   im = evas_cache_image_empty(evas_common_image_cache_get());
-   im->image->w = w;
-   im->image->h = h;
-   im->image->no_free = 1;
-   im->image->data = NULL;
+   im = (RGBA_Image*) evas_cache_image_empty(evas_common_image_cache_get());
+   evas_cache_image_size_set(&im->cache_entry, w, h);
    re->rgba_image = im;
 
    return re;
@@ -119,7 +116,7 @@ eng_output_free(void *data)
    if (re->rects)
       evas_common_tilebuf_free_render_rects(re->rects);
    re->backbuf->Release(re->backbuf);
-   evas_cache_image_drop(re->rgba_image);
+   evas_cache_image_drop(&re->rgba_image->cache_entry);
    free(re);
 
    evas_common_font_shutdown();
@@ -151,9 +148,7 @@ eng_output_resize(void *data, int w, int h)
       new_surf->StretchBlit(new_surf, re->backbuf, NULL, NULL);
       re->backbuf->Release(re->backbuf);
       re->backbuf = new_surf;
-      re->rgba_image->image->w = w;
-      re->rgba_image->image->h = h;
-      re->rgba_image->image->data = NULL;
+      re->rgba_image = (RGBA_Image*) evas_cache_image_size_set(&re->rgba_image->cache_entry, w, h);
    }
 }
 
@@ -240,7 +235,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    re->backbuf->SetClip(re->backbuf, NULL);
 
    re->backbuf->Lock(re->backbuf, DSLF_WRITE, &pixels, &pitch);
-   re->rgba_image->image->data = pixels;
+   re->rgba_image->image.data = pixels;
    return re->rgba_image;
 }
 
@@ -258,7 +253,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
    re->surface->Flip(re->surface, &region, DSFLIP_NONE);
    evas_common_cpu_end_opt();
 
-   re->rgba_image->image->data = NULL;
+   re->rgba_image->image.data = NULL;
 }
 
 static void

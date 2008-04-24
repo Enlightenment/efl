@@ -69,26 +69,14 @@ evas_engine_directfb_image_load(void *data, const char *file, const char *key, i
    provider->RenderTo(provider, image, NULL);
    provider->Release(provider);
 
-   im = evas_common_image_new();
-   im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	image->Release(image);
-	_dfb_image_free(im);
-	return NULL;
-     }
-   im->image->w = dsc.width;
-   im->image->h = dsc.height;
-   im->image->data = (void *)image;
-   im->image->no_free = 0;
-   if (img_desc.caps & DICAPS_ALPHACHANNEL)
-      im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+					     dsc.width, dsc.height,
+					     (void*) image,
+					     img_desc.caps & DICAPS_ALPHACHANNEL,
+					     EVAS_COLORSPACE_ARGB8888);
 
-//   im->timestamp = mod_time;
-   if (file)
-     im->info.file = strdup(file);
-   if (key)
-     im->info.key = strdup(key);
+   im->cache_entry.file = strdup(file);
+   im->cache_entry.key = strdup(key);
    _dfb_image_ref(im);
 
    return im;
@@ -119,7 +107,7 @@ evas_engine_directfb_image_new_from_copied_data(void *data, int w, int h,
 
    if (im)
    {
-      surf = (IDirectFBSurface *) im->image->data;
+      surf = (IDirectFBSurface *) im->image.data;
       if (surf->Lock(surf, DSLF_WRITE, &p, &pitch) == DFB_OK)
       {
 	 memcpy(p, image_data, w * h * sizeof(DATA32));
@@ -149,9 +137,9 @@ evas_engine_directfb_image_size_get(void *data, void *image, int *w, int *h)
    re = (Render_Engine *) data;
    im = image;
    if (w)
-      *w = im->image->w;
+      *w = im->cache_entry.w;
    if (h)
-      *h = im->image->h;
+      *h = im->cache_entry.h;
 }
 
 void               *
@@ -165,15 +153,15 @@ evas_engine_directfb_image_size_set(void *data, void *image, int w, int h)
 
    re = (Render_Engine *) data;
    im_old = image;
-   im = _dfb_image_create(re, w,h);
-   old_surf = (IDirectFBSurface *) im_old->image->data;
+   im = _dfb_image_create(re, w, h);
+   old_surf = (IDirectFBSurface *) im_old->image.data;
    if (im)
      {
 	outrect.x = 0;
 	outrect.y = 0;
 	outrect.w = w;
 	outrect.h = h;
-	new_surf = (IDirectFBSurface *) im->image->data;
+	new_surf = (IDirectFBSurface *) im->image.data;
 	new_surf->StretchBlit(new_surf, old_surf, NULL, &outrect);
      }
    evas_common_cpu_end_opt;
@@ -208,8 +196,8 @@ evas_engine_directfb_image_data_get(void *data, void *image, int to_write,
 
    re = (Render_Engine *) data;
    im = image;
-   surf = (IDirectFBSurface *) im->image->data;
-   size = im->image->w * im->image->h * sizeof(DATA32);
+   surf = (IDirectFBSurface *) im->image.data;
+   size = im->cache_entry.w * im->cache_entry.h * sizeof(DATA32);
    surf->Lock(surf, DSLF_READ, &p, &pitch);
 
    if ((buf = malloc(size)))
@@ -229,12 +217,12 @@ evas_engine_directfb_image_data_put(void *data, void *image,
 
    re = (Render_Engine *)data;
    im = image;
-   if (image_data != im->image->data)
+   if (image_data != im->image.data)
      {
 	int w, h;
 
-	w = im->image->w;
-	h = im->image->h;
+	w = im->cache_entry.w;
+	h = im->cache_entry.h;
 	_dfb_image_unref(im);
         /* FIXME alpha and cspace (0, 0) is not used here yet */
 	return evas_engine_directfb_image_new_from_data(data, w, h, image_data, 0, 0);
@@ -302,10 +290,10 @@ evas_engine_directfb_image_draw(void *data, void *context, void *surface,
    DFBRectangle        outrect;
    RGBA_Image         *im = (RGBA_Image *) image;
    RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
-   IDirectFBSurface   *img = (IDirectFBSurface *) im->image->data;
+   IDirectFBSurface   *img = (IDirectFBSurface *) im->image.data;
 
-   src_w = im->image->w;
-   src_h = im->image->h;
+   src_w = im->cache_entry.w;
+   src_h = im->cache_entry.h;
    dst_w = re->tb->outbuf_w;
    dst_h = re->tb->outbuf_h;
 
@@ -573,16 +561,15 @@ evas_engine_directfb_image_native_get(void *data, void *image)
  */
 
 static void
-_dfb_image_surface_free(RGBA_Surface *is)
+_dfb_image_surface_free(RGBA_Image *im)
 {
    IDirectFBSurface *surf;
-   if ( (is->data) && (!is->no_free) )
+   if ( (im->image.data) && (!im->image.no_free) )
    {
-      surf = (IDirectFBSurface *)is->data;
+      surf = (IDirectFBSurface *)im->image.data;
       surf->Release(surf);
-      is->data = NULL;
+      im->image.data = NULL;
    }
-   free(is);
 }
 
 
@@ -593,49 +580,33 @@ _dfb_image_create(Render_Engine *re, int w, int h)
    DFBSurfaceDescription dsc;
    IDirectFBSurface   *surf;
 
-   im = evas_common_image_new();
-   if (!im) return NULL;
-   im->image = evas_common_image_surface_new(im);
-   if (!im->image)
-     {
-	_dfb_image_free(im);
-	return NULL;
-     }
-   im->image->w = w;
-   im->image->h = h;
-
    dsc.flags = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
    dsc.width = w;
    dsc.height = h;
    dsc.pixelformat = DSPF_ARGB;
 
    if (re->dfb->CreateSurface(re->dfb, &dsc, &surf) != DFB_OK)
-   {
-      _dfb_image_free(im);
-      return NULL;
-   }
-   im->image->data = (void*) surf;
-   im->flags = RGBA_IMAGE_IS_DIRTY;
-   im->references = 1;
-   return im;
+     return NULL;
+
+   return (RGBA_Image*) evas_cache_image_data(evas_common_image_cache_get(),
+					      w, h,
+					      (void*) surf,
+					      1, EVAS_COLORSPACE_ARGB8888);
 }
 
 
 static void
 _dfb_image_free(RGBA_Image *im)
 {
-   if (im->image) _dfb_image_surface_free(im->image);
-   if (im->info.file) free(im->info.file);
-   if (im->info.key) free(im->info.key);
-   if (im->info.comment) free(im->info.comment);
+   if (im->image.data) _dfb_image_surface_free(im);
    free(im);
 }
 
 static void
 _dfb_image_ref(RGBA_Image *im)
 {
-   im->references++;
-   if (im->references == 1) /* we were in cache - take us out */
+   im->cache_entry.references++;
+   if (im->cache_entry.references == 1) /* we were in cache - take us out */
      {
 	_dfb_image_uncache(im);
 	_dfb_image_store(im);
@@ -645,8 +616,8 @@ _dfb_image_ref(RGBA_Image *im)
 static void
 _dfb_image_unref(RGBA_Image *im)
 {
-   im->references--;
-   if (im->references <= 0) /* we were are now in cache - put us in */
+   im->cache_entry.references--;
+   if (im->cache_entry.references <= 0) /* we were are now in cache - put us in */
      {
 	_dfb_image_unstore(im);
 	if ((cache_size > 0) &&
@@ -741,11 +712,11 @@ _dfb_image_store(RGBA_Image *im)
 
    if (im->flags & RGBA_IMAGE_IS_DIRTY) return;
    if (im->flags & RGBA_IMAGE_INDEXED) return;
-   if ((!im->info.file) && (!im->info.key)) return;
+   if ((!im->cache_entry.file) && (!im->cache_entry.key)) return;
    l1 = 0;
-   if (im->info.file) l1 = strlen(im->info.file);
+   if (im->cache_entry.file) l1 = strlen(im->cache_entry.file);
    l2 = 0;
-   if (im->info.key) l2 = strlen(im->info.key);
+   if (im->cache_entry.key) l2 = strlen(im->cache_entry.key);
 //   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
 //   l3 = strlen(buf);
    buf[0] = 0;
@@ -753,9 +724,9 @@ _dfb_image_store(RGBA_Image *im)
    key = malloc(l1 + 3 + l2 + 3 + l3 +1);
    if (!key) return;
    key[0] = 0;
-   if (im->info.file) strcpy(key, im->info.file);
+   if (im->cache_entry.file) strcpy(key, im->cache_entry.file);
    strcat(key, "/:/");
-   if (im->info.key) strcat(key, im->info.key);
+   if (im->cache_entry.key) strcat(key, im->cache_entry.key);
    strcat(key, "/:/");
    strcat(key, buf);
    images = evas_hash_add(images, key, im);
@@ -771,11 +742,11 @@ _dfb_image_unstore(RGBA_Image *im)
    char buf[256];
 
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
-   if ((!im->info.file) && (!im->info.key)) return;
+   if ((!im->cache_entry.file) && (!im->cache_entry.key)) return;
    l1 = 0;
-   if (im->info.file) l1 = strlen(im->info.file);
+   if (im->cache_entry.file) l1 = strlen(im->cache_entry.file);
    l2 = 0;
-   if (im->info.key) l2 = strlen(im->info.key);
+   if (im->cache_entry.key) l2 = strlen(im->cache_entry.key);
 //   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
 //   l3 = strlen(buf);
    buf[0] = 0;
@@ -783,9 +754,9 @@ _dfb_image_unstore(RGBA_Image *im)
    key = malloc(l1 + 3 + l2 + 3 + l3 +1);
    if (!key) return;
    key[0] = 0;
-   if (im->info.file) strcpy(key, im->info.file);
+   if (im->cache_entry.file) strcpy(key, im->cache_entry.file);
    strcat(key, "/:/");
-   if (im->info.key) strcat(key, im->info.key);
+   if (im->cache_entry.key) strcat(key, im->cache_entry.key);
    strcat(key, "/:/");
    strcat(key, buf);
    images = evas_hash_del(images, key, im);
@@ -830,15 +801,15 @@ _dfb_image_find(const char *filename, const char *key, DATA64 timestamp)
 
 	im = (RGBA_Image *)l;
 	ok = 0;
-	if ((filename) && (im->info.file) &&
-	    (!strcmp(filename, im->info.file)))
+	if ((filename) && (im->cache_entry.file) &&
+	    (!strcmp(filename, im->cache_entry.file)))
 	  ok++;
-	if ((!filename) && (!im->info.file))
+	if ((!filename) && (!im->cache_entry.file))
 	  ok++;
-	if ((key) && (im->info.key) &&
-	    (!strcmp(key, im->info.key)))
+	if ((key) && (im->cache_entry.key) &&
+	    (!strcmp(key, im->cache_entry.key)))
 	  ok++;
-	if ((!key) && (!im->info.key))
+	if ((!key) && (!im->cache_entry.key))
 	  ok++;
 //	if (im->timestamp == timestamp)
 //	  ok++;
