@@ -98,10 +98,10 @@ typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
 typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype for engine specific native surface information */
 typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
-typedef int    Evas_Coord;
-typedef int    Evas_Font_Size;
-typedef int    Evas_Angle;
-typedef char   Evas_Bool;
+typedef int           Evas_Coord;
+typedef int           Evas_Font_Size;
+typedef int           Evas_Angle;
+typedef unsigned char Evas_Bool;
 
 struct _Evas_List /** A linked list node */
 {
