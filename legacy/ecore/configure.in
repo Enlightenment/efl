@@ -636,7 +636,7 @@ ECORE_CHECK_MODULE([SDL], [no], [$have_sdl])
 
 dnl ecore_evas_sdl
 have_ecore_evas_sdl="no";
-if test "x$have_sdl" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
+if test "x$have_ecore_sdl" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
     want_ecore_evas_sdl="yes";
     AC_MSG_CHECKING([whether ecore_evas SDL support is to be built])
     AC_ARG_ENABLE(ecore-evas-sdl,
@@ -779,6 +779,7 @@ AC_SUBST(requirements_ecore_sdl)
 # set up conditionals
 AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes -a $have_ecore_x_xcb = no)
 AM_CONDITIONAL(BUILD_ECORE_X_XCB, test $have_ecore_x_xcb = yes)
+AM_CONDITIONAL(BUILD_ECORE_EVAS_SDL, test $have_ecore_evas_sdl = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_X11, test $have_ecore_evas_x11 = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_X11_GL, test $have_ecore_evas_x11_gl = yes)
 AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, test $have_ecore_evas_xrender = yes)
