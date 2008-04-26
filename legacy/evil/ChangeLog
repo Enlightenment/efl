@@ -1,14 +1,17 @@
 2008-04-26  Vincent Torri  <doursse at users dot sf dot net>
 
-	reviewed by: <delete if not using a buddy>
-
 	* src/lib/Evil.h:
 	* src/lib/Makefile.am:
 	* src/lib/dlfcn/Makefile.am:
 	* src/lib/dlfcn/dlfcn.c: (get_last_error), (dlopen), (dlsym):
 	* src/lib/evil.c: (evil_char_to_wchar), (evil_wchar_to_char):
+	make char <--> wchar_t conversion functions public
+
 	* src/lib/mman/Makefile.am:
+	add cegcc flags
+
 	* src/lib/mman/mman.c:
+	move include
 
 2008-04-23  Vincent Torri  <doursse at users dot sf dot net>
 
