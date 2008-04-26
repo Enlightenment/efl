@@ -15,6 +15,10 @@
 # include <sys/syslimits.h>
 #endif /* __CEGCC__ */
 
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+# include <wchar.h>
+#endif /* __CEGCC__ || __MINGW32CE__ */
+
 #include <sys/types.h>
 #include <sys/timeb.h>
 #include <fcntl.h>
@@ -391,3 +395,50 @@ evil_tmpdir_get(void)
 
    return tmpdir;
 }
+
+
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+
+wchar_t *
+evil_char_to_wchar(const char *text)
+{
+   wchar_t *wtext;
+   int      wsize;
+
+   wsize = MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, NULL, 0);
+   if ((wsize == 0) ||
+       (wsize > (int)(ULONG_MAX/sizeof(wchar_t))))
+     return NULL;
+
+   wtext = malloc(wsize * sizeof(wchar_t));
+   if (wtext)
+     if (!MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, wtext, wsize))
+       return NULL;
+
+   return wtext;
+}
+
+char *
+evil_wchar_to_char(const wchar_t *text)
+{
+   char * atext;
+   int    size;
+   int    asize;
+
+   size = wcslen(text) + 1;
+
+   asize = WideCharToMultiByte(CP_ACP, 0, text, size, NULL, 0, NULL, NULL);
+   if (asize == 0)
+     return NULL;
+
+   atext = (char*)malloc((asize + 1) * sizeof(char));
+
+   if (atext)
+     if (!WideCharToMultiByte(CP_ACP, 0, text, size, atext, asize, NULL, NULL))
+       return NULL;
+   atext[asize] = '\0';
+
+   return atext;
+}
+
+#endif /* __CEGCC__ || __MINGW32CE__ */

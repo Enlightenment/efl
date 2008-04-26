@@ -8,11 +8,11 @@
 # include <io.h>
 #endif /* ! __CEGCC__ */
 
-#include "sys/mman.h"
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
+
+#include "sys/mman.h"
 
 #if HAVE___ATTRIBUTE__
 # define __UNUSED__ __attribute__((unused))

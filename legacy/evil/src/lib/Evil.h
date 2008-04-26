@@ -392,6 +392,49 @@ EAPI void evil_sockets_shutdown(void);
 EAPI const char *evil_tmpdir_get(void);
 
 
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+
+/**
+ * @brief Convert a string from char * to wchar_t *.
+ *
+ * @param text The string to convert.
+ * @return The converted string.
+ *
+ * Convert a string from char * to wchar_t * and return it. If the
+ * allocation or conversion fails, NULL is returned. On success, the
+ * returned value must be freed.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI wchar_t *evil_char_to_wchar(const char *text);
+
+/**
+ * @brief Convert a string from wchar_t * to char *.
+ *
+ * @param text The string to convert.
+ * @return The converted string.
+ *
+ * Convert a string from wchar_t * to char * and return it. If the
+ * allocation or conversion fails, NULL is returned. On success, the
+ * returned value must be freed.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI char *evil_wchar_to_char(const wchar_t *text);
+
+#endif /* __CEGCC__ || __MINGW32CE__ */
+
+
 #ifdef __cplusplus
 }
 #endif

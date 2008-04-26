@@ -5,13 +5,16 @@
 #undef WIN32_LEAN_AND_MEAN
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
-# include <wchar.h>
 # include <limits.h>
 #endif /* __MINGW32CE__ */
+
+#include "../Evil.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
+
+#include "dlfcn.h"
 
 #if HAVE___ATTRIBUTE__
 # define __UNUSED__ __attribute__((unused))
@@ -22,52 +25,6 @@
 
 static char *dl_err = NULL;
 static int dl_err_viewed = 0;
-
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
-
-static wchar_t *
-string_to_wchar(const char *text)
-{
-   wchar_t *wtext;
-   int      wsize;
-
-   wsize = MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, NULL, 0);
-   if ((wsize == 0) ||
-       (wsize > (int)(ULONG_MAX/sizeof(wchar_t))))
-     return NULL;
-
-   wtext = malloc(wsize * sizeof(wchar_t));
-   if (wtext)
-     if (!MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, wtext, wsize))
-       return NULL;
-
-   return wtext;
-}
-
-static char *
-wchar_to_string(const wchar_t *text)
-{
-   char * atext;
-   int    size;
-   int    asize;
-
-   size = wcslen(text) + 1;
-
-   asize = WideCharToMultiByte(CP_ACP, 0, text, size, NULL, 0, NULL, NULL);
-   if (asize == 0)
-     return NULL;
-
-   atext = (char*)malloc((asize + 1) * sizeof(char));
-
-   if (atext)
-     if (!WideCharToMultiByte(CP_ACP, 0, text, size, atext, asize, NULL, NULL))
-       return NULL;
-   atext[asize] = '\0';
-
-   return atext;
-}
-
-#endif /* __CEGCC__ || __MINGW32CE__ */
 
 static void
 get_last_error(char *desc)
@@ -85,7 +42,7 @@ get_last_error(char *desc)
                  (LPTSTR)&str, 0, NULL);
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
-   str2 = wchar_to_string(str);
+   str2 = evil_wchar_to_char(str);
 #else
    str2 = str;
 #endif /* ! __CEGCC__ && ! __MINGW32CE__ */
@@ -148,7 +105,7 @@ dlopen(const char* path, int mode __UNUSED__)
         {
            wchar_t *wpath;
 
-           wpath = string_to_wchar(new_path);
+           wpath = evil_char_to_wchar(new_path);
            module = LoadLibrary(wpath);
            free(wpath);
         }
@@ -186,7 +143,7 @@ dlsym(void *handle, const char *symbol)
    {
       wchar_t *wsymbol;
 
-      wsymbol = string_to_wchar(symbol);
+      wsymbol = evil_char_to_wchar(symbol);
       fp = GetProcAddress(handle, wsymbol);
       free(wsymbol);
    }
