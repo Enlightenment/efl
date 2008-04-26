@@ -263,6 +263,8 @@ evas_software_wince_gapi_output_buffer_paste(FB_Output_Buffer *fbob)
    priv = (Evas_Engine_WinCE_GAPI_Priv *)fbob->priv;
 
    buffer = priv->draw_begin();
+   if (!buffer)
+     return;
 
    if ((fbob->im->cache_entry.w == priv->width) &&
        (fbob->im->cache_entry.h == priv->height))
