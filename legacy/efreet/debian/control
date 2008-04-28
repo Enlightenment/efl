@@ -27,7 +27,7 @@ Description: Library that implements freedesktop.org specs for use with E17/EFL
 Package: libefreet-dev
 Section: libdevel
 Architecture: any
-Depends: libefreet (= ${binary:Version}), libecore-dev
+Depends: libefreet0 (= ${binary:Version}), libecore-dev
 Provides: libefreet0-dev
 Description: Development files for libefreet and libefreet-mime
  An implementation of several specifications from freedesktop.org intended for

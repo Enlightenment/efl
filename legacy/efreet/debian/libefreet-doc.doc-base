@@ -1,0 +1,10 @@
+Document: efreet
+Title: Efreet Guide
+Author: Dan Sinclair
+Abstract: This document describes Efreet API
+ and provides sample C code.
+Section: Programming/C
+
+Format: HTML
+Index: /usr/share/doc/libefreet-doc/html/index.html
+Files: /usr/share/doc/libefreet-doc/html/*.html
