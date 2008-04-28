@@ -1,57 +1,59 @@
 Source: efreet
 Section: libs
 Priority: optional
-Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: cdbs, debhelper (>= 5), libecore0-dev
-Standards-Version: 3.7.2
-
-Package: libefreet0-dev
-Section: libdevel
-Architecture: any
-Depends: libecore0-dev, libefreet0-dev (= ${Source-Version})
-Provides: libefreet-dev
-Description: Efreet headers and development files
- Efreet is an implementation of several specifications from freedesktop.org
- intended for use in Enlightenment DR17 (e17) and other applications using
- the Enlightenment Foundation Libraries (EFL). Currently, the following
- specifications are included:
-   o Base Directory
-   o Desktop Entry
-   o Icon Theme
-   o Menu
- .
- This package contains headers and static libraries for development with
- libefreet.
-
-Package: efreet0-bin
-Section: utils
-Architecture: any
-Depends: ${shlibs:Depends}, libefreet0 (= ${Source-Version})
-Provides: efreet-bin
-Description: Various binaries for use with Efreet
- Efreet is an implementation of several specifications from freedesktop.org
- intended for use in Enlightenment DR17 (e17) and other applications using
- the Enlightenment Foundation Libraries (EFL). Currently, the following
- specifications are included:
-   o Base Directory
-   o Desktop Entry
-   o Icon Theme
-   o Menu
- .
- This package contains the Efreet binaries.
+Maintainer: Falko Schmidt <falko@alphagemini.org>
+Build-Depends: debhelper (>= 6), cdbs, libecore-dev, doxygen
+Standards-Version: 3.7.3
+Homepage: http://www.enlightenment.org
 
 Package: libefreet0
 Architecture: any
-Section: libs
-Depends: ${shlibs:Depends}, libecore0
+Depends: ${shlibs:Depends}
 Provides: libefreet
 Recommends: menu-xdg
-Description: E17 library providing freedesktop.org specifications
- Efreet is an implementation of several specifications from freedesktop.org
- intended for use in Enlightenment DR17 (e17) and other applications using
- the Enlightenment Foundation Libraries (EFL). Currently, the following
- specifications are included:
-   o Base Directory
-   o Desktop Entry
-   o Icon Theme
-   o Menu.
+Description: Library that implements freedesktop.org specs for use with E17/EFL
+ An implementation of several specifications from freedesktop.org intended for
+ use in Enlightenment DR17 (e17) and other applications using the Enlightenment
+ Foundation Libraries (EFL). Currently, the following specifications are
+ included:
+  - Base Directory
+  - Desktop Entry
+  - Icon Theme
+  - Menu
+ .
+ This package provides the libefreet0 and libefreet0-mime libraries, which
+ contains efreet-based functions for dealing with mime.
+
+Package: libefreet-dev
+Section: libdevel
+Architecture: any
+Depends: libefreet (= ${binary:Version}), libecore-dev
+Provides: libefreet0-dev
+Description: Development files for libefreet and libefreet-mime
+ An implementation of several specifications from freedesktop.org intended for
+ use in Enlightenment DR17 (e17) and other applications using the Enlightenment
+ Foundation Libraries (EFL). Currently, the following specifications are
+ included:
+  - Base Directory
+  - Desktop Entry
+  - Icon Theme
+  - Menu
+ .
+ This packages contains headers and static libraries for Efreet.
+
+Package: libefreet-doc
+Section: doc
+Architecture: any
+Provides: libefreet0-doc
+Description: libefreet and libfreet-mime API documentation
+ An implementation of several specifications from freedesktop.org intended for
+ use in Enlightenment DR17 (e17) and other applications using the Enlightenment
+ Foundation Libraries (EFL). Currently, the following specifications are
+ included:
+  - Base Directory
+  - Desktop Entry
+  - Icon Theme
+  - Menu
+ .
+ This package contains HTML documentation for development with libefreet and
+ libefreet-mime.

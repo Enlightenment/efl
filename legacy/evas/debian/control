@@ -1,383 +1,319 @@
 Source: evas
 Section: libs
 Priority: optional
-Maintainer: E17 Debian Team <debian@edevelop.org>
-Build-Depends: debhelper (>= 4.2.0), cdbs (>= 0.4.3-1.1), automake1.7 | automaken, libtool, pkg-config, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev | xlibs-dev, libxrender-dev | xlibs-dev, zlib1g, libjpeg62-dev, autotools-dev, libtiff4-dev, libungif4-dev, libxpm-dev, libgl1-mesa-dev | libgl-dev, librsvg2-dev
-Standards-Version: 3.7.2
+Maintainer: Falko Schmidt <falko@alphagemini.org>
+Build-Depends: debhelper (>= 6), cdbs, libeet-dev, libfreetype6-dev, libpng12-dev | libpng-dev, libx11-dev, libxrender-dev, x11proto-xext-dev, zlib1g, libjpeg62-dev, libtiff4-dev, libgif-dev, libfontconfig1-dev, libglu1-mesa-dev, mesa-common-dev, libxpm-dev, librsvg2-dev, doxygen
+Standards-Version: 3.7.3
+Homepage: http://www.enlightenment.org
 
 Package: libevas0
-Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, libevas-loaders, libevas-savers
 Suggests: libevas0-engines
 Provides: libevas
 Description: enlightenment advanced canvas library
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
- .
- This new version of evas is much more cleaner, compact and portable; and has
- Ipaq support. The Ipaq version of the library is just 191Kb in size!
- .
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
+ .
+ This package contains the core library.
 
-Package: libevas0-dev
+Package: libevas-doc
+Architecture: all
+Section: doc
+Enhances: libevas-dev
+Description: Evas API Documentation
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ .
+ This package provides development documentation (html and manpages) for the
+ Evas library.
+
+Package: libevas-dev
 Section: libdevel
 Architecture: any
-Depends: libevas0 (= ${Source-Version}), libfreetype6-dev, zlib1g-dev, libjpeg-dev, libeet-dev
-Provides: libevas-dev
-Description: enlightenment advanced canvas library development files
+Depends: libevas0 (= ${binary:Version}), libjpeg62-dev, libx11-dev, libfreetype6-dev, libfontconfig1-dev, libeet-dev, pkg-config
+Suggests: libevas-doc
+Description: Enlightenment DR17 advanced canvas library development files
+ Evas is an advanced canvas library, providing six engines for rendering: X11,
+ OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
+ and Qtopia.
+ Due to its simple API, evas can be developed with rapidly, and cleanly.
+ .
  This package provides headers and static libraries required to develop against
  evas.
- .
+
+Package: libevas-dbg
+Architecture: any
+Section: libdevel
+Depends: libevas0 (= ${binary:Version})
+Priority: extra
+Description: enlightenment advanced canvas library
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  .
- This new version of evas is much more cleaner, compact and portable; and has
- Ipaq support. The Ipaq version of the library is just 191Kb in size!
- .
- Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
+ This package contains unstripped shared libraries. It is provided primarily
+ to provide a backtrace with names in a debugger, this makes it somewhat
+ easier to interpret core dumps. The libraries are installed in
+ /usr/lib/debug and are automatically used by gdb.
 
-Package: libevas0-engine-fb
+Package: libevas-engine-fb
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
-Provides: libevas-engine-fb
-Description: Evas module providingg the framebuffer render engine
+Depends: ${shlibs:Depends}, libevas-engine-software-generic
+Description: Evas module providing a framebuffer render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas engine module for framebuffer rendering.
+ .
+ This package contains an Evas engine module for framebuffer rendering.
  
-Package: libevas0-engine-software-x11
+Package: libevas-engine-software-x11
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
-Provides: libevas-engine-software-x11
-Description: Evas module providing the software X11 render engine
+Depends: ${shlibs:Depends}, libevas-engine-software-generic
+Description: Evas module providing a software X11 render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas engine module for software X11 rendering.
+ .
+ This package contains an Evas engine module for software X11 rendering.
 
-Package: libevas0-engine-software-generic
+Package: libevas-engine-software-generic
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0
-Provides: libevas-engine-software-generic
-Description: Evas module providing the generic software render engine
+Description: Evas module providing a generic software render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas engine module for generic software
+ .
+ This package contains an Evas engine module for generic software
  rendering.
 
-Package: libevas0-engine-buffer
+Package: libevas-engine-buffer
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
-Provides: libevas-engine-buffer
-Description: Evas module providing the buffer render engine
+Depends: ${shlibs:Depends}, libevas-engine-software-generic
+Description: Evas module providing a buffer render engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas engine module for buffer rendering.
+ .
+ This package contains an Evas engine module for buffer rendering.
 
-Package: libevas0-engine-xrender
+Package: libevas-engine-xrender
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
-Provides: libevas-engine-xrender
-Description: Evas module providing the Xrender engine
+Depends: ${shlibs:Depends}, libevas-engine-software-generic
+Description: Evas module providing a Xrender engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas engine module for Xrender.
+ .
+ This package contains an Evas engine module for Xrender.
 
-Package: libevas0-engine-gl-x11
+Package: libevas-engine-gl-x11
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libevas0-engine-software-generic
-Provides: libevas-engine-gl-x11
-Description: Evas module providing the OpenGl engine
+Depends: ${shlibs:Depends}, libevas-engine-software-generic
+Description: Evas module providing an OpenGL engine
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas engine module for OpenGl.
+ .
+ This package contains an Evas engine module for OpenGl.
 
-Package: libevas0-loader-eet
+Package: libevas-loader-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet
-Provides: libevas-loader-eet
-Description: Evas module providing the Eet loader
+Depends: ${shlibs:Depends}, libevas0, libeet0
+Description: Evas module providing an Eet loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas loader module for Eet.
+ .
+ This package contains an Evas loader module for Eet.
 
-Package: libevas0-loader-png
+Package: libevas-loader-png
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libpng12-0
-Provides: libevas-loader-png
-Description: Evas module providing the PNG loader
+Description: Evas module providing a PNG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas loader module for PNG.
+ .
+ This package contains an Evas loader module for PNG.
 
-Package: libevas0-loader-jpeg
+Package: libevas-loader-jpeg
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libjpeg62
-Provides: libevas-loader-jpeg
-Description: Evas module providing the JPEG loader
+Description: Evas module providing a JPEG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas loader module for JPEG.
+ .
+ This package contains an Evas loader module for JPEG.
 
-Package: libevas0-loader-gif
+Package: libevas-loader-gif
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libungif4g
-Provides: libevas-loader-gif
-Description: Evas module providing the GIF loader
+Description: Evas module providing a GIF loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas loader module for GIF.
+ .
+ This package contains an Evas loader module for GIF.
 
-Package: libevas0-loader-tiff
+Package: libevas-loader-tiff
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libtiff4
-Provides: libevas-loader-tiff
-Description: Evas module providing the TIFF loader
+Description: Evas module providing a TIFF loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas loader module for TIFF.
+ .
+ This package contains an Evas loader module for TIFF.
 
-Package: libevas0-loader-xpm
+Package: libevas-loader-xpm
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libxpm4
-Provides: libevas-loader-xpm
-Description: Evas module providing the X11 pixmap loader
+Description: Evas module providing a X11 pixmap loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas loader module for XPM.
+ .
+ This package contains an Evas loader module for XPM.
 
-Package: libevas0-loader-svg
+Package: libevas-loader-svg
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, librsvg2-2 
-Provides: libevas-loader-svg
-Description: Evas module providing the SVG loader
+Description: Evas module providing a SVG loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas loader module for SVG.
+ .
+ This package contains an Evas loader module for SVG.
 
-Package: libevas0-saver-eet
+Package: libevas-saver-eet
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libeet
-Provides: libevas-saver-eet
-Description: Evas module providing the Eet saver
+Description: Evas module providing an Eet saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas saver module for Eet.
+ .
+ This package contains an Evas saver module for Eet.
 
-Package: libevas0-saver-png
+Package: libevas-saver-png
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libpng12-0
-Provides: libevas-saver-png
-Description: Evas module providing the PNG saver
+Description: Evas module providing a PNG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas saver module for PNG.
+ .
+ This package contains an Evas saver module for PNG.
 
-Package: libevas0-saver-jpeg
+Package: libevas-saver-jpeg
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libjpeg62
-Provides: libevas-saver-jpeg
-Description: Evas module providing the JPEG saver
+Description: Evas module providing a JPEG saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas saver module for JPEG.
+ .
+ This package contains an Evas saver module for JPEG.
 
-Package: libevas0-saver-tiff
+Package: libevas-saver-tiff
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libevas0, libtiff4
-Provides: libevas-saver-tiff
-Description: Evas module providing the TIFF saver
+Description: Evas module providing a TIFF saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
- This package contains the Evas saver module for TIFF.
-
-Package: libevas0-engines-all
-Section: graphics
-Architecture: any
-Depends: libevas0-engine-buffer, libevas0-engine-fb, libevas0-engine-software-generic, libevas0-engine-software-x11, libevas0-engine-xrender, libevas0-engine-gl-x11
-Provides: libevas-engines-all
-Description: virtual package providing all available Evas engines
- This is a virtual package providing all available Evas engine modules.
  .
+ This package contains an Evas saver module for TIFF.
+
+Package: libevas-engines
+Architecture: any
+Depends: libevas-engine-buffer, libevas-engine-software-generic, libevas-engine-software-x11, libevas-engine-xrender
+Description: virtual package providing important Evas engine modules
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
- .
- This new version of evas is much more cleaner, compact and portable; and has
- Ipaq support. The Ipaq version of the library is just 191Kb in size!
- .
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
-
-Package: libevas0-loaders-all
-Section: graphics
-Architecture: any
-Depends: libevas0-loader-eet, libevas0-loader-jpeg, libevas0-loader-png, libevas0-loader-tiff, libevas0-loader-gif, libevas0-loader-xpm, libevas0-loader-svg
-Provides: libevas-loaders-all
-Description: virtual package providing all available Evas loaders
- This is a virtual package providing all available Evas loader modules.
  .
+ This package will install the following Evas engine modules:
+  - buffer
+  - software/genenric
+  - software/X11
+  - xrender/X11
+
+Package: libevas-engines-extra
+Architecture: any
+Depends: libevas-engine-fb, libevas-engine-gl-x11
+Description: virtual package providing optional Evas engine modules
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
- .
- This new version of evas is much more cleaner, compact and portable; and has
- Ipaq support. The Ipaq version of the library is just 191Kb in size!
- .
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
+ .
+ This package will install the following Evas engine modules:
+  - GL/X11
+  - Framebuffer
 
-Package: libevas0-savers-all
+Package: libevas-savers
 Section: graphics
 Architecture: any
-Depends: libevas0-saver-eet, libevas0-saver-jpeg, libevas0-saver-png, libevas0-saver-tiff
-Provides: libevas-savers-all
+Depends: libevas-saver-eet, libevas-saver-jpeg, libevas-saver-png, libevas-saver-tiff
 Description: virtual package providing all available Evas savers
- This is a virtual package providing all available Evas saver modules.
- .
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
- .
- This new version of evas is much more cleaner, compact and portable; and has
- Ipaq support. The Ipaq version of the library is just 191Kb in size!
- .
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
+ .
+ This is a virtual package providing all available Evas saver modules.
 
-Package: libevas0-all
+Package: libevas-loaders
 Section: graphics
 Architecture: any
-Depends: libevas0-savers-all, libevas0-savers-all, libevas0-engines-all
-Provides: libevas-all
-Description: virtual package providing all available Evas modules
- This is a virtual package providing all available Evas modules.
- .
+Depends: libevas-loader-eet, libevas-loader-jpeg, libevas-loader-png, libevas-loader-tiff, libevas-loader-gif, libevas-loader-xpm, libevas-loader-svg
+Description: virtual package providing all available Evas loaders
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
  and Qtopia.
- .
- This new version of evas is much more cleaner, compact and portable; and has
- Ipaq support. The Ipaq version of the library is just 191Kb in size!
- .
  Due to its simple API, evas can be developed with rapidly, and cleanly.
- Install evas if you want to develop applications against the only
- hardware-accelerated canvas library, or if you want to try out the
- applications under development.
-
+ .
+ This is a virtual package providing all available Evas loader modules.
