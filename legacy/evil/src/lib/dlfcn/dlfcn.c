@@ -156,6 +156,46 @@ dlsym(void *handle, const char *symbol)
    return fp;
 }
 
+int
+dladdr (void *addr __UNUSED__, Dl_info *info)
+{
+   TCHAR tpath[PATH_MAX];
+   char *path;
+   int   length;
+   int   ret = 0;
+
+  if (!info)
+    return 0;
+
+   ret = GetModuleFileName(GetModuleHandle(NULL), (LPTSTR)&tpath, PATH_MAX);
+   if (!ret)
+     return 0;
+
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+   path = evil_wchar_to_char(tpath);
+#else
+   path = tpath;
+#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+
+   length = strlen (path);
+   if (length >= PATH_MAX)
+     {
+       length = PATH_MAX - 1;
+       path[PATH_MAX - 1] = '\0';
+     }
+
+   memcpy (info->dli_fname, path, length + 1);
+   info->dli_fbase = NULL;
+   info->dli_sname = NULL;
+   info->dli_saddr = NULL;
+
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+   free (path);
+#endif /* __CEGCC__ || __MINGW32CE__ */
+
+   return 1;
+}
+
 char *
 dlerror (void)
 {

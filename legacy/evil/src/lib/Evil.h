@@ -389,8 +389,39 @@ EAPI void evil_sockets_shutdown(void);
  *
  * @ingroup Evil
  */
+
 EAPI const char *evil_tmpdir_get(void);
 
+/**
+ * @brief Get the current directory.
+ *
+ * @param buffer Buffer to store the current directory.
+ * @param size Size of the buffer.
+ * @return The current directory.
+ *
+ * On Windows desktop, use the _getcwd function in MSVCRT.
+ *
+ * On Windows CE, get the current directory by extracting the path
+ * from the executable that is running and put the result in @p buffer
+ * of length @p size. If @p size is less or equal than 0, return NULL.
+ * If the current absolute path would require a buffer longer than
+ * @p size elements, NULL is returned. If @p buffer is NULL, a buffer
+ * of length @p size is allocated and is returned. If the allocation
+ * fails, NULL is returned. On success, @p buffer is returned and
+ * contains the current directory. The last '\' is not included.
+ * If @p buffer is NULL, the returned value must be freed if not NULL.
+ *
+ * Specially usefull on WinCE where the current directory functionality
+ * is not supported.
+ *
+ * Conformity: Almost POSIX.1 (no errno set)
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP, WinCE.
+ *
+ * @ingroup Evil
+ */
+EAPI char *evil_getcwd(char *buffer, size_t size);
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 

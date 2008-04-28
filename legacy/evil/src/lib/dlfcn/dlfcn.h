@@ -1,6 +1,12 @@
 #ifndef __EVIL_DLFCN_H__
 #define __EVIL_DLFCN_H__
 
+
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+# include <sys/syslimits.h>
+#endif /* __MINGW32CE__ */
+
+
 #ifdef EAPI
 # undef EAPI
 #endif /* EAPI */
@@ -17,9 +23,22 @@
 # endif /* ! EFL_EVIL_BUILD */
 #endif /* _WIN32 */
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/**
+ * @file dlfcn.h
+ * @brief The file that provides functions to manage dynamic-link libraries
+ * @defgroup Dlfcn Functions that manage dynamic-link libraries.
+ *
+ * This header provides functions to load and unload dynamic-link
+ * libaries, to get the address of a symbol, and to get diagnostic
+ * information.
+ *
+ */
 
 
 /**
@@ -42,16 +61,24 @@ extern "C" {
 # define RTLD_GLOBAL 4 /* symbols in this dlopen'ed obj are visible
 			 to other dlopen'ed objs */
 
+
 /**
- * @file dlfcn.h
- * @brief The file that provides functions to manage dynamic-link libraries
- * @defgroup Dlfcn Functions that manage dynamic-link libraries.
- *
- * This header provides functions to load and unload dynamic-link
- * libaries, to get the address of a symbol, and to get diagnostic
- * information.
- *
+ * @typedef Dl_info
+ * @brief A structure that stores infomation of a calling process.
  */
+typedef struct Dl_info Dl_info;
+
+/**
+ * @struct Dl_info
+ * @brief A structure that stores infomation of a calling process.
+ */
+struct Dl_info
+{
+   char       *dli_fname[PATH_MAX];  /**< Filename of defining object */
+   void       *dli_fbase;            /**< Load address of that object */
+   const char *dli_sname;            /**< Name of nearest lower symbol */
+   void       *dli_saddr;            /**< Exact value of nearest symbol */
+};
 
 /**
  * Map a specified executable module (either a .dll or .exe file)
@@ -163,6 +190,30 @@ EAPI int   dlclose(void* handle);
 EAPI void *dlsym(void* handle, const char* symbol);
 
 /**
+ * Get the location of the current process (.exe)
+ *
+ * @param addr Unused.
+ * @param info Pointer to the Dl_info to fill.
+ * @return 1 on success, 0 otherwise.
+ *
+ * Fill the dli_fname member of @p info with the absolute name
+ * of the current calling process (.exe file that is executed).
+ * All other members are set to @c NULL.
+ *
+ * Contrary to the unix function, the full name of the shared
+ * library is not returned, but insted the full name of the current
+ * calling process (.exe file).
+ *
+ * Conformity: None.
+ *
+ * Supported OS: Windows Vista, Windows XP or Windows 2000
+ * Professional.
+ *
+ * @ingroup Dlfcn
+ */
+EAPI int dladdr (void *addr, Dl_info *info);
+
+/**
  * Get diagnostic information
  *
  * @return A @c NULL-terminated string if an error occured, @c NULL
@@ -190,9 +241,5 @@ EAPI char *dlerror (void);
 }
 #endif
 
-#ifdef _WIN32
-# undef EAPI
-# define EAPI
-#endif /* _WIN32 */
 
 #endif /* __EVIL_DLFCN_H__ */

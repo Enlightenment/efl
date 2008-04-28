@@ -1,3 +1,17 @@
+2008-04-28  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	* src/lib/evil.c: (evil_getcwd):
+	add getgwd-like function
+
+	* src/lib/dlfcn/dlfcn.c: (dladdr):
+	* src/lib/dlfcn/dlfcn.h:
+	add dladdr-like function. Formatting
+	Remove unused define
+
+	* src/lib/mman/sys/mman.h:
+	remove unused define
+
 2008-04-26  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

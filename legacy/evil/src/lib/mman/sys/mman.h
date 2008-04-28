@@ -1,6 +1,7 @@
 #ifndef __EVIL_SYS_MMAN_H__
 #define __EVIL_SYS_MMAN_H__
 
+
 #ifdef EAPI
 # undef EAPI
 #endif /* EAPI */
@@ -150,10 +151,6 @@ EAPI int   munmap(void  *addr,
 }
 #endif
 
-#ifdef _WIN32
-# undef EAPI
-# define EAPI
-#endif /* _WIN32 */
 
 #endif /* __EVIL_SYS_MMAN_H__ */
 

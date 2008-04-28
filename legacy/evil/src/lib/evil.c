@@ -396,6 +396,55 @@ evil_tmpdir_get(void)
    return tmpdir;
 }
 
+char *
+evil_getcwd(char *buffer, size_t size)
+{
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+   wchar_t wpath[PATH_MAX];
+   char   *cpath;
+   char   *delim;
+   int     ret = 0;
+
+   if (size <= 0)
+     return NULL;
+
+   ret = GetModuleFileName(GetModuleHandle(NULL), (LPWSTR)&wpath, PATH_MAX);
+
+   if (!ret)
+     return NULL;
+
+   cpath = evil_wchar_to_char(wpath);
+   if (!cpath)
+     return NULL;
+
+   if (strlen(cpath) >= (size - 1))
+     {
+        free(cpath);
+        return NULL;
+     }
+
+   delim = strrchr(cpath, '\\');
+   if (delim)
+     *delim = '\0';
+
+   if (!buffer)
+     {
+        buffer = (char *)malloc(sizeof(char) * size);
+        if (!buffer)
+          {
+             free(cpath);
+             return NULL;
+          }
+     }
+
+   strcpy(buffer, cpath);
+   free(cpath);
+
+   return buffer;
+#else
+   return _getcwd(buffer, size);
+#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+}
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 
