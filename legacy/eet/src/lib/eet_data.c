@@ -2111,7 +2111,7 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 				 data_ret = NULL;
 				 if (IS_SIMPLE_TYPE(type))
 				   {
-				      data_ret = calloc(1, eet_coder[type].size);
+				      data_ret = calloc(1, eet_coder[type - 1].size);
 				      if (data_ret)
 					{
 					   _eet_freelist_add(data_ret);
@@ -2171,7 +2171,7 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 				 if (!echnk.name) goto error;
 				 if (IS_SIMPLE_TYPE(type))
 				   {
-				      data_ret = calloc(1, eet_coder[type].size);
+				      data_ret = calloc(1, eet_coder[type - 1].size);
 				      if (data_ret)
 					{
 					   _eet_freelist_add(data_ret);

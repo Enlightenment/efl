@@ -1,3 +1,11 @@
 2008-04-20  Carsten Haitzler (The Rasterman)
 
 	1.0.0 release
+
+2008-04-28  Carsten Haitzler (The Rasterman)
+
+	* Fixed allocation of a list (EET_G_LIST) of simple types
+	(IS_SIMPLE_TYPE) to alloc the correct amount (using the correct type 
+	offset). Also fixed a hash (EET_G_HASH) of simple types too.
+
+
