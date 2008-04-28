@@ -1,0 +1,32 @@
+.TH EMBRYO_CC 1 "Jan 30, 2007" "0.9.1.037" "The embryo compiler"
+.SH NAME
+embryo_cc \- a small compiler
+.SH SYNOPSIS
+.B embryo_cc
+.B filename
+.RI [\| OPTIONS \|]
+.SH DESCRIPTION
+Embryo is an enlightenment adaption of the small PAWN language.
+.P
+embryo_cc is a compiler for embryo files.
+.SH EXAMPLES
+embryo_cc filename
+.SH OPTIONS
+.BI -i " \|name
+Path for include files
+.P
+.BI -o " \|name
+Set base name of output file
+.P
+.BI -S " \|num
+Stack/heap size in cells (default=4096, min=65)
+.SH FILES
+embryo_cc
+.SH BUGS
+There is a bug with gcc 3.2.x.
+.BR
+Prefer gcc 3.3.x.
+.P
+Please reports bugs to the Pkg-E Team <pkg-e-devel@lists.alioth.debian.org>
+.SH AUTHOR
+This man page was written by Ronald Claveau for the Debian GNU/Linux system (but may  be  used by others).
