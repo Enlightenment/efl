@@ -28,3 +28,5 @@ module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_Software_16_WinCE.h
+
+endif
