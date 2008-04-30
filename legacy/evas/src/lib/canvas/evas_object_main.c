@@ -67,6 +67,7 @@ evas_object_free(Evas_Object *obj, int clean_layer)
 	free(node);
      }
    obj->magic = 0;
+   if (obj->size_hints) free(obj->size_hints);
    free(obj);
 }
 
@@ -697,13 +698,13 @@ evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
    if (w) *w = 0; if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
-   if (obj->delete_me)
+   if ((!obj->size_hints) || obj->delete_me)
      {
 	if (w) *w = 0; if (h) *h = 0;
 	return;
      }
-   if (w) *w = obj->size_hints.min.w;
-   if (h) *h = obj->size_hints.min.h;
+   if (w) *w = obj->size_hints->min.w;
+   if (h) *h = obj->size_hints->min.h;
 }
 
 /**
@@ -725,9 +726,11 @@ evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
+   if (obj->size_hints)
+     obj->size_hints = calloc(1, sizeof(*obj->size_hints));
 
-   obj->size_hints.min.w = w;
-   obj->size_hints.min.h = h;
+   obj->size_hints->min.w = w;
+   obj->size_hints->min.h = h;
 
    evas_object_inform_call_changed_size_hints(obj);
 }
@@ -753,13 +756,13 @@ evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
    if (w) *w = 0; if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
-   if (obj->delete_me)
+   if ((!obj->size_hints) || obj->delete_me)
      {
 	if (w) *w = 0; if (h) *h = 0;
 	return;
      }
-   if (w) *w = obj->size_hints.max.w;
-   if (h) *h = obj->size_hints.max.h;
+   if (w) *w = obj->size_hints->max.w;
+   if (h) *h = obj->size_hints->max.h;
 }
 
 /**
@@ -781,9 +784,11 @@ evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
+   if (obj->size_hints)
+     obj->size_hints = calloc(1, sizeof(*obj->size_hints));
 
-   obj->size_hints.max.w = w;
-   obj->size_hints.max.h = h;
+   obj->size_hints->max.w = w;
+   obj->size_hints->max.h = h;
 
    evas_object_inform_call_changed_size_hints(obj);
 }
@@ -809,13 +814,13 @@ evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Co
    if (w) *w = 0; if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
-   if (obj->delete_me)
+   if ((!obj->size_hints) || obj->delete_me)
      {
 	if (w) *w = 0; if (h) *h = 0;
 	return;
      }
-   if (w) *w = obj->size_hints.request.w;
-   if (h) *h = obj->size_hints.request.h;
+   if (w) *w = obj->size_hints->request.w;
+   if (h) *h = obj->size_hints->request.h;
 }
 
 /**
@@ -837,9 +842,10 @@ evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
+   if (obj->size_hints) obj->size_hints = calloc(1, sizeof(*obj->size_hints));
 
-   obj->size_hints.request.w = w;
-   obj->size_hints.request.h = h;
+   obj->size_hints->request.w = w;
+   obj->size_hints->request.h = h;
 
    evas_object_inform_call_changed_size_hints(obj);
 }
@@ -867,15 +873,15 @@ evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *as
    if (w) *w = 0; if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
-   if (obj->delete_me)
+   if ((!obj->size_hints) || obj->delete_me)
      {
 	if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
 	if (w) *w = 0; if (h) *h = 0;
 	return;
      }
-   if (aspect) *aspect = obj->size_hints.aspect.mode;
-   if (w) *w = obj->size_hints.aspect.size.w;
-   if (h) *h = obj->size_hints.aspect.size.h;
+   if (aspect) *aspect = obj->size_hints->aspect.mode;
+   if (w) *w = obj->size_hints->aspect.size.w;
+   if (h) *h = obj->size_hints->aspect.size.h;
 }
 
 /**
@@ -898,10 +904,12 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
+   if (obj->size_hints)
+     obj->size_hints = calloc(1, sizeof(*obj->size_hints));
 
-   obj->size_hints.aspect.mode = aspect;
-   obj->size_hints.aspect.size.w = w;
-   obj->size_hints.aspect.size.h = h;
+   obj->size_hints->aspect.mode = aspect;
+   obj->size_hints->aspect.size.w = w;
+   obj->size_hints->aspect.size.h = h;
 
    evas_object_inform_call_changed_size_hints(obj);
 }

@@ -460,7 +460,7 @@ struct _Evas_Object
       unsigned char     deletions_waiting : 1;
    } smart;
 
-   Evas_Size_Hints      size_hints;
+   Evas_Size_Hints     *size_hints;
 
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;
