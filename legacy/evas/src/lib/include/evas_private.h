@@ -82,7 +82,6 @@ struct _Evas_Module_Engine
 
 typedef struct _Evas_Layer                  Evas_Layer;
 typedef struct _Evas_Size                   Evas_Size;
-typedef enum _Evas_Aspect_Control           Evas_Aspect_Control;
 typedef struct _Evas_Aspect                 Evas_Aspect;
 typedef struct _Evas_Size_Hints             Evas_Size_Hints;
 typedef struct _Evas_Font_Dir               Evas_Font_Dir;
@@ -375,15 +374,6 @@ struct _Evas_Layer
 struct _Evas_Size
 {
    Evas_Coord w, h;
-};
-
-enum _Evas_Aspect_Control
-{
-   EVAS_ASPECT_CONTROL_NONE = 0,
-   EVAS_ASPECT_CONTROL_NEITHER = 1,
-   EVAS_ASPECT_CONTROL_HORIZONTAL = 2,
-   EVAS_ASPECT_CONTROL_VERTICAL = 3,
-   EVAS_ASPECT_CONTROL_BOTH = 4
 };
 
 struct _Evas_Aspect

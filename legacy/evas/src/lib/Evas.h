@@ -119,6 +119,16 @@ struct _Evas_Rectangle /** A rectangle */
    int h; /**< height of rectangle */
 };
 
+typedef enum _Evas_Aspect_Control
+{
+   EVAS_ASPECT_CONTROL_NONE = 0,
+   EVAS_ASPECT_CONTROL_NEITHER = 1,
+   EVAS_ASPECT_CONTROL_HORIZONTAL = 2,
+   EVAS_ASPECT_CONTROL_VERTICAL = 3,
+   EVAS_ASPECT_CONTROL_BOTH = 4
+} Evas_Aspect_Control;
+
+
 #define EVAS_SMART_CLASS_VERSION 1 /** the version you have to put into the version field in the smart class struct */
 struct _Evas_Smart_Class /** a smart object class */
 {
@@ -707,6 +717,8 @@ extern "C" {
    EAPI void              evas_object_size_hint_max_set     (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_size_hint_request_get (const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void              evas_object_size_hint_request_set (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+   EAPI void              evas_object_size_hint_aspect_get  (const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_object_size_hint_aspect_set  (Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h);
 
    EAPI void              evas_object_show                  (Evas_Object *obj);
    EAPI void              evas_object_hide                  (Evas_Object *obj);
