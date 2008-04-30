@@ -1130,13 +1130,17 @@ AM_CONDITIONAL(BUILD_LOADER_PMAPS, test x$have_pmaps = xyes)
 pthread_cflags=""
 pthread_libs=""
 build_pthreads="no"
+has_pthreads="no"
 # sched_getaffinity pthread_attr_setaffinity_np
 AC_CHECK_HEADERS(pthread.h sched.h,
       [
         AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
           [
             AC_CHECK_LIB(pthread, pthread_barrier_wait,
-              [ build_pthreads="yes" ],
+              [
+	        build_pthreads="yes"
+	      	has_pthreads="yes"
+	      ],
               [ build_pthreads="no" ]
             )
           ],
@@ -1172,6 +1176,26 @@ AC_ARG_ENABLE(pthreads,
     fi
   ]
 )
+
+#######################################
+## Async events
+build_async_events="auto"
+AC_MSG_CHECKING(whether to build Async Events support)
+AC_ARG_ENABLE(async-events,
+  AC_HELP_STRING([--enable-async-events], [enable async events support]),
+  [ build_async_events=$enableval ]
+)
+AC_MSG_RESULT($build_async_events)
+
+AC_MSG_CHECKING(whether we can build Async Events support)
+if test \( "x$build_async_events" = "xyes" -o "x$build_async_events" = "xauto" \) -a "x$has_pthreads" = "xyes"; then
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(BUILD_ASYNC_EVENTS, 1, [Build async events support])
+  build_async_events="yes"
+else
+  AC_MSG_RESULT(no)
+  build_async_events="no"
+fi
 
 #######################################
 ## MMX
@@ -1760,6 +1784,8 @@ echo "  MMX.....................: $build_cpu_mmx"
 echo "  SSE.....................: $build_cpu_sse"
 echo "  ALTIVEC.................: $build_cpu_altivec"
 echo "  Thread Support..........: $build_pthreads"
+echo
+echo "Async Events..............: $build_async_events"
 echo
 echo "ARGB Software Engine Options:"
 echo "  Sampling Scaler.........: $scaler_sample"

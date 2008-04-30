@@ -824,6 +824,9 @@ void evas_module_use(Evas_Module *em);
 void evas_module_clean(void);
 void evas_module_shutdown(void);
 
+int evas_async_events_init(void);
+int evas_async_events_shutdown(void);
+
 void _evas_walk(Evas *e);
 void _evas_unwalk(Evas *e);
        

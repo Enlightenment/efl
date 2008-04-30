@@ -37,6 +37,7 @@ evas_font_dir.c \
 evas_rectangle.c \
 evas_render.c \
 evas_smart.c \
-evas_stack.c
+evas_stack.c \
+evas_async_events.c
 
 libevas_canvas_la_DEPENDENCIES = $(top_builddir)/config.h
