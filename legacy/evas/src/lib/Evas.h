@@ -86,6 +86,7 @@ typedef enum _Evas_Colorspace
 
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
+typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
 
 typedef struct _Evas_Hash Evas_Hash; /**< A Hash table handle */
@@ -117,6 +118,14 @@ struct _Evas_Rectangle /** A rectangle */
    int y; /**< top-left y co-ordinate of rectangle */
    int w; /**< width of rectangle */
    int h; /**< height of rectangle */
+};
+
+struct _Evas_Coord_Rectangle /** A rectangle in Evas_Coord */
+{
+   Evas_Coord x; /**< top-left x co-ordinate of rectangle */
+   Evas_Coord y; /**< top-left y co-ordinate of rectangle */
+   Evas_Coord w; /**< width of rectangle */
+   Evas_Coord h; /**< height of rectangle */
 };
 
 typedef enum _Evas_Aspect_Control

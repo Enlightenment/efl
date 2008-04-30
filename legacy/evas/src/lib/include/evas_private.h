@@ -412,9 +412,7 @@ struct _Evas_Object
 	    unsigned char  dirty : 1;
 	 } clip;
       } cache;
-      struct {
-	 Evas_Coord         x, y, w, h;
-      } geometry;
+      Evas_Coord_Rectangle geometry;
       struct {
 	 unsigned char  r, g, b, a;
       } color;
