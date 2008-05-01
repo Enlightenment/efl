@@ -416,15 +416,15 @@ struct _Evas_Object
       struct {
 	 unsigned char  r, g, b, a;
       } color;
-      Evas_Bool         visible : 1;
-      Evas_Bool         have_clipees : 1;
       int               layer;
       Evas_Object      *clipper;
-      Evas_Bool         anti_alias;
       struct {
          int color_space;
       } interpolation;
-      Evas_Render_Op    render_op;
+      Evas_Bool         visible : 1;
+      Evas_Bool         have_clipees : 1;
+      Evas_Bool         anti_alias : 1;
+      Evas_Render_Op    render_op : 4;
    } cur, prev;
 
    char                       *name;
@@ -463,7 +463,8 @@ struct _Evas_Object
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;
    int                         mouse_grabbed;
-   Evas_Object_Pointer_Mode    pointer_mode;
+
+   Evas_Object_Pointer_Mode    pointer_mode : 1;
 
    Evas_Bool                   store : 1;
    Evas_Bool                   pass_events : 1;
