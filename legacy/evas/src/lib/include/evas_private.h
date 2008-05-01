@@ -408,23 +408,23 @@ struct _Evas_Object
 	 struct {
 	    int            x, y, w, h;
 	    unsigned char  r, g, b, a;
-	    unsigned char  visible : 1;
-	    unsigned char  dirty : 1;
+	    Evas_Bool      visible : 1;
+	    Evas_Bool      dirty : 1;
 	 } clip;
       } cache;
       Evas_Coord_Rectangle geometry;
       struct {
 	 unsigned char  r, g, b, a;
       } color;
-      unsigned char     visible : 1;
-      unsigned char     have_clipees : 1;
+      Evas_Bool         visible : 1;
+      Evas_Bool         have_clipees : 1;
       int               layer;
       Evas_Object      *clipper;
-      unsigned char     anti_alias;
+      Evas_Bool         anti_alias;
       struct {
          int color_space;
       } interpolation;
-      int               render_op;
+      Evas_Render_Op    render_op;
    } cur, prev;
 
    char                       *name;
@@ -465,20 +465,20 @@ struct _Evas_Object
    int                         mouse_grabbed;
    Evas_Object_Pointer_Mode    pointer_mode;
 
-   unsigned short              store : 1;
-   unsigned short              pass_events : 1;
-   unsigned short              parent_pass_events : 1;
-   unsigned short              parent_cache_valid : 1;
-   unsigned short              repeat_events : 1;
-   unsigned short              restack : 1;
-   unsigned short              changed : 1;
-   unsigned short              mouse_in : 1;
-   unsigned short              pre_render_done : 1;
-   unsigned short              intercepted : 1;
-   unsigned short              focused : 1;
-   unsigned short              in_layer : 1;
-   unsigned short              no_propagate : 1;
-   unsigned short              precise_is_inside : 1;
+   Evas_Bool                   store : 1;
+   Evas_Bool                   pass_events : 1;
+   Evas_Bool                   parent_pass_events : 1;
+   Evas_Bool                   parent_cache_valid : 1;
+   Evas_Bool                   repeat_events : 1;
+   Evas_Bool                   restack : 1;
+   Evas_Bool                   changed : 1;
+   Evas_Bool                   mouse_in : 1;
+   Evas_Bool                   pre_render_done : 1;
+   Evas_Bool                   intercepted : 1;
+   Evas_Bool                   focused : 1;
+   Evas_Bool                   in_layer : 1;
+   Evas_Bool                   no_propagate : 1;
+   Evas_Bool                   precise_is_inside : 1;
 
    unsigned char               delete_me;
 };
