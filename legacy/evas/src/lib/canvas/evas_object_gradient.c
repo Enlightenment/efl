@@ -785,7 +785,7 @@ evas_object_gradient_init(Evas_Object *obj)
    obj->cur.geometry.h = 0;
    obj->cur.layer = 0;
    obj->cur.anti_alias = 1;
-   obj->cur.interpolation.color_space = EVAS_COLOR_SPACE_ARGB;
+   obj->cur.interpolation_color_space = EVAS_COLOR_SPACE_ARGB;
    obj->cur.render_op = EVAS_RENDER_BLEND;
    /* set up object-specific settings */
    obj->prev = obj->cur;
@@ -933,7 +933,7 @@ evas_object_gradient_render_pre(Evas_Object *obj)
        (obj->cur.cache.clip.b != obj->prev.cache.clip.b) ||
        (obj->cur.cache.clip.a != obj->prev.cache.clip.a)))
      { o->gradient_changed = 1;  o->changed = 1; }
-   if (!o->gradient_changed && (obj->cur.interpolation.color_space != obj->prev.interpolation.color_space))
+   if (!o->gradient_changed && (obj->cur.interpolation_color_space != obj->prev.interpolation_color_space))
      { o->gradient_changed = 1;  o->changed = 1; }
    if (!o->changed && (obj->cur.render_op != obj->prev.render_op))
 	o->changed = 1;
@@ -973,7 +973,7 @@ evas_object_gradient_render_pre(Evas_Object *obj)
 								obj->cur.cache.clip.b, obj->cur.cache.clip.a);
 	obj->layer->evas->engine.func->context_color_interpolation_set(obj->layer->evas->engine.data.output,
 									obj->layer->evas->engine.data.context,
-									obj->cur.interpolation.color_space);
+									obj->cur.interpolation_color_space);
 	if (o->gradient_changed)
 	    obj->layer->evas->engine.func->gradient_render_pre(obj->layer->evas->engine.data.output,
 								obj->layer->evas->engine.data.context,

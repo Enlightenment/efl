@@ -1193,9 +1193,9 @@ evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
-   if (obj->cur.interpolation.color_space == color_space)
+   if (obj->cur.interpolation_color_space == color_space)
    	return;
-   obj->cur.interpolation.color_space = color_space;
+   obj->cur.interpolation_color_space = color_space;
    evas_object_change(obj);
 }
 
@@ -1213,7 +1213,7 @@ evas_object_color_interpolation_get(const Evas_Object *obj)
    return 0;
    MAGIC_CHECK_END();
    if (obj->delete_me) return 0;
-   return obj->cur.interpolation.color_space;
+   return obj->cur.interpolation_color_space;
 }
 
 /**

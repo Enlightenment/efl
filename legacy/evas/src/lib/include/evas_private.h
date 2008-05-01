@@ -418,12 +418,10 @@ struct _Evas_Object
       } color;
       int               layer;
       Evas_Object      *clipper;
-      struct {
-         int color_space;
-      } interpolation;
       Evas_Bool         visible : 1;
       Evas_Bool         have_clipees : 1;
       Evas_Bool         anti_alias : 1;
+      unsigned char     interpolation_color_space : 1;
       Evas_Render_Op    render_op : 4;
    } cur, prev;
 
