@@ -202,6 +202,9 @@ struct _Evas_Native_Surface
    } data;
 };
 
+#define EVAS_LAYER_MIN -32768 /**< bottom-most layer number */
+#define EVAS_LAYER_MAX 32767  /**< top-most layer number */
+
 #define EVAS_PIXEL_FORMAT_NONE                     0 /**< No pixel format */
 #define EVAS_PIXEL_FORMAT_ARGB32                   1 /**< ARGB 32bit pixel format with A in the high byte per 32bit pixel word */
 #define EVAS_PIXEL_FORMAT_YUV420P_601              2 /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
