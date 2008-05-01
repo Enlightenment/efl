@@ -12,9 +12,7 @@ struct _Evas_Object_Image
    DATA32            magic;
 
    struct {
-      struct {
-	 Evas_Coord  x, y, w, h;
-      } fill;
+      Evas_Coord_Rectangle fill;
       struct {
 	 short       w, h, stride;
       } image;
