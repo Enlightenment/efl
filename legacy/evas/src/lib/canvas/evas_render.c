@@ -91,10 +91,10 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
      {
 	if (obj->smart.smart)
 	  {
-	     Evas_Object_List *l;
+	     const Evas_Object_List *l;
 
 	     obj->func->render_pre(obj);
-	     for (l = obj->smart.contained; l; l = l->next)
+	     for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
 	       {
 		  Evas_Object *obj2;
 
@@ -126,10 +126,10 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	  {
 	     if (obj->smart.smart)
 	       {
-		  Evas_Object_List *l;
+		  const Evas_Object_List *l;
 
 		  obj->func->render_pre(obj);
-		  for (l = obj->smart.contained; l; l = l->next)
+		  for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
 		    {
 		       Evas_Object *obj2;
 

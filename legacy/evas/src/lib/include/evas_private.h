@@ -447,13 +447,8 @@ struct _Evas_Object
    void             *object_data;
 
    struct {
-      int               walking_list;
       Evas_Smart       *smart;
-      void             *data;
       Evas_Object      *parent;
-      Evas_Object_List *contained;
-      Evas_List        *callbacks;
-      unsigned char     deletions_waiting : 1;
    } smart;
 
    Evas_Size_Hints            *size_hints;
@@ -738,6 +733,11 @@ void evas_object_smart_use(Evas_Smart *s);
 void evas_object_smart_unuse(Evas_Smart *s);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
+void evas_object_smart_member_raise(Evas_Object *member);
+void evas_object_smart_member_lower(Evas_Object *member);
+void evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other);
+void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other);
+const Evas_Object_List *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void *evas_mem_calloc(int size);
 void evas_object_event_callback_all_del(Evas_Object *obj);
 void evas_object_event_callback_cleanup(Evas_Object *obj);

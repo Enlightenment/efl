@@ -56,10 +56,7 @@ evas_object_raise(Evas_Object *obj)
 	return;
      }
    if (obj->smart.parent)
-     {
-	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
-	obj->smart.parent->smart.contained = evas_object_list_append(obj->smart.parent->smart.contained, obj);
-     }
+     evas_object_smart_member_raise(obj);
    else
      {
 	if (obj->in_layer)
@@ -115,10 +112,7 @@ evas_object_lower(Evas_Object *obj)
 	return;
      }
    if (obj->smart.parent)
-     {
-	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
-	obj->smart.parent->smart.contained = evas_object_list_prepend(obj->smart.parent->smart.contained, obj);
-     }
+     evas_object_smart_member_lower(obj);
    else
      {
 	if (obj->in_layer)
@@ -195,8 +189,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 //	     printf("BITCH! evas_object_stack_above(), %p not inside same smart as %p!\n", obj, above);
 	     return;
 	  }
-	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
-	obj->smart.parent->smart.contained = evas_object_list_append_relative(obj->smart.parent->smart.contained, obj, above);
+	evas_object_smart_member_stack_above(obj, above);
      }
    else
      {
@@ -279,8 +272,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 //	     printf("BITCH! evas_object_stack_below(), %p not inside same smart as %p!\n", obj, below);
 	     return;
 	  }
-	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
-	obj->smart.parent->smart.contained = evas_object_list_prepend_relative(obj->smart.parent->smart.contained, obj, below);
+	evas_object_smart_member_stack_below(obj, below);
      }
    else
      {

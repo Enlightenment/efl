@@ -8,6 +8,11 @@ struct _Evas_Object_Smart
 {
    DATA32            magic;
    void             *engine_data;
+   void             *data;
+   Evas_List        *callbacks;
+   Evas_Object_List *contained;
+   int               walking_list;
+   Evas_Bool         deletions_waiting : 1;
 };
 
 struct _Evas_Smart_Callback
@@ -78,7 +83,7 @@ evas_object_smart_data_set(Evas_Object *obj, void *data)
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
    return;
    MAGIC_CHECK_END();
-   obj->smart.data = data;
+   o->data = data;
 }
 
 /**
@@ -101,7 +106,7 @@ evas_object_smart_data_get(const Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
    return NULL;
    MAGIC_CHECK_END();
-   return obj->smart.data;
+   return o->data;
 }
 
 /**
@@ -177,7 +182,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    obj->cur.layer = obj->layer->layer;
    obj->layer->usage++;
    obj->smart.parent = smart_obj;
-   smart_obj->smart.contained = evas_object_list_append(smart_obj->smart.contained, obj);
+   o->contained = evas_object_list_append(o->contained, obj);
    evas_object_smart_member_cache_invalidate(obj);
    obj->restack = 1;
    evas_object_change(obj);
@@ -197,12 +202,16 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 EAPI void
 evas_object_smart_member_del(Evas_Object *obj)
 {
+   Evas_Object_Smart *o;
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
 
    if (!obj->smart.parent) return;
-   obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
+
+   o = (Evas_Object_Smart *)(obj->smart.parent->object_data);
+   o->contained = evas_object_list_remove(o->contained, obj);
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(obj);
    obj->layer->usage--;
@@ -237,18 +246,32 @@ evas_object_smart_parent_get(const Evas_Object *obj)
 EAPI Evas_List *
 evas_object_smart_members_get(const Evas_Object *obj)
 {
+   Evas_Object_Smart *o;
    Evas_List *members;
    Evas_Object_List *member;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   
+   o = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return NULL;
+   MAGIC_CHECK_END();
+
    members = NULL;
-   for (member = obj->smart.contained; member; member = member->next)
+   for (member = o->contained; member; member = member->next)
       members = evas_list_append(members, member);
    
    return members;
+}
+
+const Evas_Object_List *
+evas_object_smart_members_get_direct(const Evas_Object *obj)
+{
+   Evas_Object_Smart *o;
+
+   o = (Evas_Object_Smart *)(obj->object_data);
+   return o->contained;
 }
 
 /**
@@ -313,7 +336,7 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
    cb->event = evas_stringshare_add(event);
    cb->func = func;
    cb->func_data = (void *)data;
-   obj->smart.callbacks = evas_list_prepend(obj->smart.callbacks, cb);
+   o->callbacks = evas_list_prepend(o->callbacks, cb);
 }
 
 /**
@@ -341,7 +364,7 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
    return NULL;
    MAGIC_CHECK_END();
    if (!event) return NULL;
-   for (l = obj->smart.callbacks; l; l = l->next)
+   for (l = o->callbacks; l; l = l->next)
      {
 	Evas_Smart_Callback *cb;
 
@@ -352,7 +375,7 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
 
 	     data = cb->func_data;
 	     cb->delete_me = 1;
-	     obj->smart.deletions_waiting = 1;
+	     o->deletions_waiting = 1;
 	     evas_object_smart_callbacks_clear(obj);
 	     return data;
 	  }
@@ -388,8 +411,8 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    MAGIC_CHECK_END();
    if (!event) return;
    if (obj->delete_me) return;
-   obj->smart.walking_list++;
-   for (l = obj->smart.callbacks; l; l = l->next)
+   o->walking_list++;
+   for (l = o->callbacks; l; l = l->next)
      {
 	Evas_Smart_Callback *cb;
 
@@ -402,7 +425,7 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
 	if (obj->delete_me)
 	  break;
      }
-   obj->smart.walking_list--;
+   o->walking_list--;
    evas_object_smart_callbacks_clear(obj);
 }
 
@@ -410,11 +433,14 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
 static void
 evas_object_smart_callbacks_clear(Evas_Object *obj)
 {
+   Evas_Object_Smart *o;
    Evas_List *l;
 
-   if (obj->smart.walking_list) return;
-   if (!obj->smart.deletions_waiting) return;
-   for (l = obj->smart.callbacks; l;)
+   o = (Evas_Object_Smart *)(obj->object_data);
+
+   if (o->walking_list) return;
+   if (!o->deletions_waiting) return;
+   for (l = o->callbacks; l;)
      {
 	Evas_Smart_Callback *cb;
 
@@ -422,7 +448,7 @@ evas_object_smart_callbacks_clear(Evas_Object *obj)
 	l = l->next;
 	if (cb->delete_me)
 	  {
-	     obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
+	     o->callbacks = evas_list_remove(o->callbacks, cb);
 	     if (cb->event) evas_stringshare_del(cb->event);
 	     free(cb);
 	  }
@@ -444,40 +470,92 @@ evas_object_smart_del(Evas_Object *obj)
 void
 evas_object_smart_cleanup(Evas_Object *obj)
 {
-   Evas_Smart *s;
+   Evas_Object_Smart *o;
 
-   s = obj->smart.smart;
    if (obj->smart.parent)
      evas_object_smart_member_del(obj);
-   while (obj->smart.contained)
-     evas_object_smart_member_del((Evas_Object *)obj->smart.contained);
-   while (obj->smart.callbacks)
-     {
-	Evas_Smart_Callback *cb;
 
-	cb = obj->smart.callbacks->data;
-	obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
-	if (cb->event) evas_stringshare_del(cb->event);
-	free(cb);
+   o = (Evas_Object_Smart *)(obj->object_data);
+   if (o->magic == MAGIC_OBJ_SMART)
+     {
+	while (o->contained)
+	  evas_object_smart_member_del((Evas_Object *)o->contained);
+
+	while (o->callbacks)
+	  {
+	     Evas_Smart_Callback *cb;
+
+	     cb = o->callbacks->data;
+	     o->callbacks = evas_list_remove(o->callbacks, cb);
+	     if (cb->event) evas_stringshare_del(cb->event);
+	     free(cb);
+	  }
+
+	o->data = NULL;
      }
+
    obj->smart.parent = NULL;
-   obj->smart.data = NULL;
    obj->smart.smart = NULL;
 }
 
 void
 evas_object_smart_member_cache_invalidate(Evas_Object *obj)
 {
+   Evas_Object_Smart *o;
    Evas_Object_List *l;
-   
+
+   o = (Evas_Object_Smart *)(obj->object_data);
+   if (o->magic != MAGIC_OBJ_SMART)
+     return;
+
    obj->parent_cache_valid = 0;
-   for (l = obj->smart.contained; l; l = l->next)
+   for (l = o->contained; l; l = l->next)
      {
 	Evas_Object *obj2;
 	
 	obj2 = (Evas_Object *)l;
 	evas_object_smart_member_cache_invalidate(obj2);
      }
+}
+
+void
+evas_object_smart_member_raise(Evas_Object *member)
+{
+   Evas_Object_Smart *o;
+
+   o = (Evas_Object_Smart *)(member->smart.parent->object_data);
+   o->contained = evas_object_list_remove(o->contained, member);
+   o->contained = evas_object_list_append(o->contained, member);
+}
+
+void
+evas_object_smart_member_lower(Evas_Object *member)
+{
+   Evas_Object_Smart *o;
+
+   o = (Evas_Object_Smart *)(member->smart.parent->object_data);
+   o->contained = evas_object_list_remove(o->contained, member);
+   o->contained = evas_object_list_prepend(o->contained, member);
+}
+
+void
+evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other)
+{
+   Evas_Object_Smart *o;
+
+   o = (Evas_Object_Smart *)(member->smart.parent->object_data);
+   o->contained = evas_object_list_remove(o->contained, member);
+   o->contained = evas_object_list_append_relative(o->contained, member, other);
+}
+
+void
+evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other)
+{
+   Evas_Object_Smart *o;
+
+   o = (Evas_Object_Smart *)(member->smart.parent->object_data);
+   o->contained = evas_object_list_remove(o->contained, member);
+   o->contained = evas_object_list_prepend_relative(o->contained, member, other);
 }
 
 /* all nice and private */

@@ -1010,9 +1010,9 @@ evas_font_object_rehint(Evas_Object *obj)
 {
    if (obj->smart.smart)
      {
-	Evas_Object_List *l3;
+	const Evas_Object_List *l3;
 	
-	for (l3 = obj->smart.contained; l3; l3 = l3->next)
+	for (l3 = evas_object_smart_members_get_direct(obj); l3; l3 = l3->next)
 	  {
 	     obj = (Evas_Object *)l3;
 	     evas_font_object_rehint(obj);

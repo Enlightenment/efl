@@ -20,9 +20,9 @@ evas_event_passes_through(Evas_Object *obj)
 }
 
 static Evas_List *
-_evas_event_object_list_in_get(Evas *e, Evas_List *in, Evas_Object_List *list, Evas_Object *stop, int x, int y, int *no_rep)
+_evas_event_object_list_in_get(Evas *e, Evas_List *in, const Evas_Object_List *list, Evas_Object *stop, int x, int y, int *no_rep)
 {
-   Evas_Object_List *l;
+   const Evas_Object_List *l;
 
    if (!list) return in;
    for (l = list->last; l; l = l->prev)
@@ -47,7 +47,7 @@ _evas_event_object_list_in_get(Evas *e, Evas_List *in, Evas_Object_List *list, E
 		       
 		       norep = 0;
 		       in = _evas_event_object_list_in_get(e, in,
-							   obj->smart.contained,
+							   evas_object_smart_members_get_direct(obj),
 							   stop, x, y, &norep);
 		       if (norep)
 			 {
