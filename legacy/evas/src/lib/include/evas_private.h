@@ -361,7 +361,7 @@ struct _Evas_Layer
 {
    Evas_Object_List  _list_data;
 
-   int               layer;
+   short             layer;
    Evas_Object      *objects;
 
    Evas             *evas;
@@ -416,8 +416,8 @@ struct _Evas_Object
       struct {
 	 unsigned char  r, g, b, a;
       } color;
-      int               layer;
       Evas_Object      *clipper;
+      short             layer;
       Evas_Bool         visible : 1;
       Evas_Bool         have_clipees : 1;
       Evas_Bool         anti_alias : 1;
@@ -694,7 +694,7 @@ void evas_object_recalc_clippees(Evas_Object *obj);
 Evas_Layer *evas_layer_new(Evas *e);
 void evas_layer_pre_free(Evas_Layer *lay);
 void evas_layer_free(Evas_Layer *lay);
-Evas_Layer *evas_layer_find(Evas *e, int layer_num);
+Evas_Layer *evas_layer_find(Evas *e, short layer_num);
 void evas_layer_add(Evas_Layer *lay);
 void evas_layer_del(Evas_Layer *lay);
 void evas_object_coords_recalc(Evas_Object *obj);

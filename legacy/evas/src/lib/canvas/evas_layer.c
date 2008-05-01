@@ -78,7 +78,7 @@ evas_layer_free(Evas_Layer *lay)
 }
 
 Evas_Layer *
-evas_layer_find(Evas *e, int layer_num)
+evas_layer_find(Evas *e, short layer_num)
 {
    Evas_Object_List *list;
 
@@ -139,7 +139,7 @@ evas_layer_del(Evas_Layer *lay)
  * @ingroup Evas_Object_Layer_Group
  */
 EAPI void
-evas_object_layer_set(Evas_Object *obj, int l)
+evas_object_layer_set(Evas_Object *obj, short l)
 {
    Evas *e;
 
@@ -187,7 +187,7 @@ evas_object_layer_set(Evas_Object *obj, int l)
  * @return  Number of the layer.
  * @ingroup Evas_Object_Layer_Group
  */
-EAPI int
+EAPI short
 evas_object_layer_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

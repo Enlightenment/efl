@@ -704,8 +704,8 @@ extern "C" {
 
    EAPI const char       *evas_object_type_get              (const Evas_Object *obj);
 
-   EAPI void              evas_object_layer_set             (Evas_Object *obj, int l);
-   EAPI int               evas_object_layer_get             (const Evas_Object *obj);
+   EAPI void              evas_object_layer_set             (Evas_Object *obj, short l);
+   EAPI short             evas_object_layer_get             (const Evas_Object *obj);
 
    EAPI void              evas_object_raise                 (Evas_Object *obj);
    EAPI void              evas_object_lower                 (Evas_Object *obj);
