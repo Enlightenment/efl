@@ -478,44 +478,36 @@ fi
 dnl ecore_win32
 # TODO: We should first check if we have win32 available before checking for win32 evas
 # TODO: Need to check if we have evas before testing win32 evas engines
-AC_MSG_CHECKING(for Evas Software DirectDraw engine)
 PKG_CHECK_MODULES(EVAS_SOFTWARE_DDRAW, evas-software-ddraw >= 0.9.9.41,
   [ have_ddraw="yes"
     AC_DEFINE(HAVE_DIRECTDRAW, 1, [Build Ecore_Win32 with DirectDraw Code])
     ddraw_libs="-lddraw -ldxguid" ],
   [ have_ddraw="no" ]
 )
-AC_MSG_RESULT($have_ddraw)
 AC_SUBST(ddraw_libs)
 
-AC_MSG_CHECKING(for Evas 16bpp Software DirectDraw engine)
 PKG_CHECK_MODULES(EVAS_SOFTWARE_16_DDRAW, evas-software-16-ddraw >= 0.9.9.41,
   [ have_ddraw_16="yes"
     AC_DEFINE(HAVE_DIRECTDRAW_16, 1, [Build Ecore_Win32 with 16 bpp DirectDraw Code])
     ddraw_16_libs="-lddraw -ldxguid" ],
   [ have_ddraw_16="no" ]
 )
-AC_MSG_RESULT($have_ddraw_16)
 AC_SUBST(ddraw_16_libs)
 
-AC_MSG_CHECKING(for Evas Direct3D engine)
 PKG_CHECK_MODULES(EVAS_DIRECT3D, evas-direct3d >= 0.9.9.41,
   [ have_direct3d="yes"
     AC_DEFINE(HAVE_DIRECT3D, 1, [Build Ecore_Win32 with Direct3D Code])
     direct3d_libs="-ld3d9 -ld3dx9d" ],
   [ have_direct3d="no" ]
 )
-AC_MSG_RESULT($have_direct3d)
 AC_SUBST(direct3d_libs)
 
-AC_MSG_CHECKING(for Evas OpenGL Glew engine)
 PKG_CHECK_MODULES(EVAS_OPENGL_GLEW, evas-opengl-glew >= 0.9.9.41,
   [ have_opengl_glew="yes"
     AC_DEFINE(HAVE_OPENGL_GLEW, 1, [Build Ecore_Win32 with OpenGL Glew Code])
     glew_libs="-lglew32 -lgdi32" ],
   [ have_opengl_glew="no" ]
 )
-AC_MSG_RESULT($have_opengl_glew)
 AC_SUBST(glew_libs)
 
 have_win32="no"
