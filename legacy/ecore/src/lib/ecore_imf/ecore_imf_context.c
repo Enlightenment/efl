@@ -555,7 +555,7 @@ ecore_imf_context_new(const Ecore_IMF_Context_Class *ctxc)
 {
    Ecore_IMF_Context *ctx;
 
-   if (!ctx) return NULL;
+   if (!ctxc) return NULL;
    ctx = malloc(sizeof(Ecore_IMF_Context));
    if (!ctx) return NULL;
    ECORE_MAGIC_SET(ctx, ECORE_MAGIC_CONTEXT);
