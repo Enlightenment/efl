@@ -28,7 +28,6 @@ Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *
 						   void (*completion_cb)(void *data, const char *file, int status),
 						   int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 						   void *data);
-static int _ecore_file_download_curl_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 static int _ecore_file_download_url_complete_cb(void *data, int type, void *event);
 static int _ecore_file_download_url_progress_cb(void *data, int type, void *event);
