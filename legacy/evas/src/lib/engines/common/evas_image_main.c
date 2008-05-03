@@ -153,7 +153,14 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h)
    else
      siz = w * h * sizeof(DATA32);
 
-   im->image.data = realloc(im->image.data, siz);
+   if (im->image.no_free)
+     im->image.data = malloc(siz);
+   else
+     {
+//	im->image.data = realloc(im->image.data, siz);
+	if (im->image.data) free(im->image.data);
+	im->image.data = malloc(siz);
+     }
    if (im->image.data == NULL) return -1;
 
 #ifdef HAVE_VALGRIND
