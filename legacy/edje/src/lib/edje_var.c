@@ -170,7 +170,8 @@ _edje_var_init(Edje *ed)
    embryo_program_vm_push(ed->collection->script);
    ed->var_pool->size = embryo_program_variable_count_get(ed->collection->script);
    embryo_program_vm_pop(ed->collection->script);
-   ed->var_pool->vars = calloc(1, sizeof(Edje_Var) * ed->var_pool->size);
+   if (ed->var_pool->size > 0)
+     ed->var_pool->vars = calloc(1, sizeof(Edje_Var) * ed->var_pool->size);
 }
 
 void

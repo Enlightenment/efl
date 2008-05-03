@@ -38,8 +38,13 @@ static void
 evas_common_pipe_draw_context_copy(RGBA_Draw_Context *dc, RGBA_Pipe_Op *op)
 {
    memcpy(&(op->context), dc, sizeof(RGBA_Draw_Context));
-   op->context.cutout.rects = malloc(sizeof(Cutout_Rect) * op->context.cutout.active);
-   memcpy(op->context.cutout.rects, dc->cutout.rects, sizeof(Cutout_Rect) * op->context.cutout.active);
+   if (op->context.cutout.active > 0)
+     {
+	op->context.cutout.rects = malloc(sizeof(Cutout_Rect) * op->context.cutout.active);
+	memcpy(op->context.cutout.rects, dc->cutout.rects, sizeof(Cutout_Rect) * op->context.cutout.active);
+     }
+   else
+     op->context.cutout.rects = NULL;
 }
 
 static void
