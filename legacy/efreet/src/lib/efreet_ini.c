@@ -69,28 +69,22 @@ static Ecore_Hash *
 efreet_ini_parse(const char *file)
 {
     FILE *f;
-
     /* a static buffer for quick reading of lines that fit */
     char static_buf[4096];
-    int static_buf_len = 4096;
-
     /* a big buffer to allocate for lines that are larger than the static one */
     char *big_buf = NULL;
     int big_buf_len = 0;
-    int big_buf_step = static_buf_len;
-
+    int big_buf_step = sizeof(static_buf);
     /* the current location to read into (with fgets) and the amount to read */
     char *read_buf;
     int read_len;
-
     /* the current buffer to parse */
     char *buf;
-
     Ecore_Hash *data, *section = NULL;
 
     /* start with the static buffer */
     buf = read_buf = static_buf;
-    read_len = static_buf_len;
+    read_len = sizeof(static_buf);
 
     f = fopen(file, "rb");
     if (!f) return NULL;
@@ -229,7 +223,7 @@ efreet_ini_parse(const char *file)
 next_line:
         /* finished parsing a line. use static buffer for next line */
         buf = read_buf = static_buf;
-        read_len = static_buf_len;
+        read_len = sizeof(static_buf);
         read_buf[read_len - 2] = '\n';
     }
 
@@ -587,7 +581,7 @@ efreet_ini_unescape(const char *str)
     dest = buf;
     while(*p)
     {
-        if (*p == '\\')
+        if ((*p == '\\') && (p[1] != '\0'))
         {
             p++;
             switch (*p)
