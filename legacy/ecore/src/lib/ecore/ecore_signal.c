@@ -33,6 +33,9 @@ static void _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo);
 
 static int _ecore_signal_exe_exit_delay(void *data);
 
+//#define MAXSIGQ 256 // 32k
+#define MAXSIGQ 64 // 8k
+
 static volatile sig_atomic_t sig_count = 0;
 static volatile sig_atomic_t sigchld_count = 0;
 static volatile sig_atomic_t sigusr1_count = 0;
@@ -41,23 +44,25 @@ static volatile sig_atomic_t sighup_count = 0;
 static volatile sig_atomic_t sigquit_count = 0;
 static volatile sig_atomic_t sigint_count = 0;
 static volatile sig_atomic_t sigterm_count = 0;
-
-static volatile siginfo_t sigchld_info;
-static volatile siginfo_t sigusr1_info;
-static volatile siginfo_t sigusr2_info;
-static volatile siginfo_t sighup_info;
-static volatile siginfo_t sigquit_info;
-static volatile siginfo_t sigint_info;
-static volatile siginfo_t sigterm_info;
-
 #ifdef SIGPWR
 static volatile sig_atomic_t sigpwr_count = 0;
-static volatile siginfo_t sigpwr_info = {0};
 #endif
-
 #ifdef SIGRTMIN
 static volatile sig_atomic_t *sigrt_count = NULL;
-static volatile siginfo_t *sigrt_info = NULL;
+#endif
+
+static volatile siginfo_t sigchld_info[MAXSIGQ];
+static volatile siginfo_t sigusr1_info[MAXSIGQ];
+static volatile siginfo_t sigusr2_info[MAXSIGQ];
+static volatile siginfo_t sighup_info[MAXSIGQ];
+static volatile siginfo_t sigquit_info[MAXSIGQ];
+static volatile siginfo_t sigint_info[MAXSIGQ];
+static volatile siginfo_t sigterm_info[MAXSIGQ];
+#ifdef SIGPWR
+static volatile siginfo_t sigpwr_info[MAXSIGQ];
+#endif
+#ifdef SIGRTMIN
+static volatile siginfo_t *sigrt_info[MAXSIGQ];
 #endif
 
 void
@@ -102,10 +107,13 @@ _ecore_signal_shutdown(void)
 	sigrt_count = NULL;
      }
 
-   if (sigrt_info)
+   for (i = 0; i < MAXSIGQ; i++)
      {
-	free((siginfo_t *) sigrt_info);
-	sigrt_info = NULL;
+	if (sigrt_info[i])
+	  {
+	     free((siginfo_t *) sigrt_info[i]);
+	     sigrt_info[i] = NULL;
+	  }
      }
 #endif
 }
@@ -134,8 +142,11 @@ _ecore_signal_init(void)
    sigrt_count = calloc(1, sizeof(sig_atomic_t) * num);
    assert(sigrt_count);
 
-   sigrt_info = calloc(1, sizeof(siginfo_t) * num);
-   assert(sigrt_info);
+   for (i = 0; i < MAXSIGQ; i++)
+     {
+	sigrt_info[i] = calloc(1, sizeof(siginfo_t) * num);
+	assert(sigrt_info[i]);
+     }
 
    for (i = 0; i < num; i++)
       _ecore_signal_callback_set(SIGRTMIN + i, _ecore_signal_callback_sigrt);
@@ -154,8 +165,32 @@ _ecore_signal_call(void)
 #ifdef SIGRTMIN
    int i, num = SIGRTMAX - SIGRTMIN;
 #endif
-
-   while (sigchld_count > 0)
+   volatile sig_atomic_t n;
+   sigset_t oldset, newset;
+   
+   if (sig_count == 0) return;
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+#ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+#endif
+#ifdef SIGRTMIN
+   for (i = 0; i < num; i++)
+     sigaddset(&newset, SIGRTMIN + i);
+#endif   
+   sigprocmask(SIG_BLOCK, &newset, &oldset);
+   if (sigchld_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGCHLD in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sigchld_count, MAXSIGQ);
+   for (n = 0; n < sigchld_count; n++)
      {
 	pid_t pid;
 	int status;
@@ -183,8 +218,8 @@ _ecore_signal_call(void)
 		  e->pid = pid;
 		  e->exe = _ecore_exe_find(pid);
 
-		  if (sigchld_info.si_signo)
-		    e->data = sigchld_info; /* No need to clone this. */
+		  if ((n < MAXSIGQ) && (sigchld_info[n].si_signo))
+		    e->data = sigchld_info[n]; /* No need to clone this. */
 
                   if ((e->exe) && (e->exe->flags & (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
                      {
@@ -220,10 +255,14 @@ _ecore_signal_call(void)
 		    }
 	       }
 	  }
-	sigchld_count--;
 	sig_count--;
      }
-   while (sigusr1_count > 0)
+   sigchld_count = 0;
+   
+   if (sigusr1_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGUSR1 in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sigusr1_count, MAXSIGQ);
+   for (n = 0; n < sigusr1_count; n++)
      {
 	Ecore_Event_Signal_User *e;
 
@@ -232,15 +271,19 @@ _ecore_signal_call(void)
 	  {
 	     e->number = 1;
 
-	     if (sigusr1_info.si_signo)
-	       e->data = sigusr1_info;
+	     if ((n < MAXSIGQ) && (sigusr1_info[n].si_signo))
+	       e->data = sigusr1_info[n];
 
 	     ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
 	  }
-	sigusr1_count--;
 	sig_count--;
      }
-   while (sigusr2_count > 0)
+   sigusr1_count = 0;
+   
+   if (sigusr2_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGUSR2 in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sigusr2_count, MAXSIGQ);
+   for (n = 0; n < sigusr2_count; n++)
      {
 	Ecore_Event_Signal_User *e;
 
@@ -249,30 +292,38 @@ _ecore_signal_call(void)
 	  {
 	     e->number = 2;
 
-	     if (sigusr2_info.si_signo)
-	       e->data = sigusr2_info;
+	     if ((n < MAXSIGQ) && (sigusr2_info[n].si_signo))
+	       e->data = sigusr2_info[n];
 
 	     ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
 	  }
-	sigusr2_count--;
 	sig_count--;
      }
-   while (sighup_count > 0)
+   sigusr2_count = 0;
+   
+   if (sighup_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGHUP in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sighup_count, MAXSIGQ);
+   for (n = 0; n < sighup_count; n++)
      {
 	Ecore_Event_Signal_Hup *e;
 
 	e = _ecore_event_signal_hup_new();
 	if (e)
 	  {
-	     if (sighup_info.si_signo)
-	       e->data = sighup_info;
+	     if ((n < MAXSIGQ) && (sighup_info[n].si_signo))
+	       e->data = sighup_info[n];
 
 	     ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e, NULL, NULL);
 	  }
-	sighup_count--;
 	sig_count--;
      }
-   while (sigquit_count > 0)
+   sighup_count = 0;
+   
+   if (sigquit_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGQUIT in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sigquit_count, MAXSIGQ);
+   for (n = 0; n < sigquit_count; n++)
      {
 	Ecore_Event_Signal_Exit *e;
 
@@ -281,15 +332,19 @@ _ecore_signal_call(void)
 	  {
 	     e->quit = 1;
 
-	     if (sigquit_info.si_signo)
-	       e->data = sigquit_info;
+	     if ((n < MAXSIGQ) && (sigquit_info[n].si_signo))
+	       e->data = sigquit_info[n];
 
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
-	sigquit_count--;
 	sig_count--;
      }
-   while (sigint_count > 0)
+   sigquit_count = 0;
+
+   if (sigint_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGINT in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sigint_count, MAXSIGQ);
+   for (n = 0; n < sigint_count; n++)
      {
 	Ecore_Event_Signal_Exit *e;
 
@@ -298,15 +353,19 @@ _ecore_signal_call(void)
 	  {
 	     e->interrupt = 1;
 
-	     if (sigint_info.si_signo)
-	       e->data = sigint_info;
+	     if ((n < MAXSIGQ) && (sigint_info[n].si_signo))
+	       e->data = sigint_info[n];
 
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
-	sigint_count--;
 	sig_count--;
      }
-   while (sigterm_count > 0)
+   sigint_count = 0;
+   
+   if (sigterm_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGTERM in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sigterm_count, MAXSIGQ);
+   for (n = 0; n < sigterm_count; n++)
      {
 	Ecore_Event_Signal_Exit *e;
 
@@ -315,36 +374,43 @@ _ecore_signal_call(void)
 	  {
 	     e->terminate = 1;
 
-	     if (sigterm_info.si_signo)
-	       e->data = sigterm_info;
+	     if ((n < MAXSIGQ) && (sigterm_info[n].si_signo))
+	       e->data = sigterm_info[n];
 
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
-	sigterm_count--;
 	sig_count--;
      }
+   sigterm_count = 0;
+   
 #ifdef SIGPWR
-   while (sigpwr_count > 0)
+   if (sigpwr_count > MAXSIGQ)
+     printf("ECORE WARNING. %i SIGPWR in queue. max queue size %i. losing "
+	    "siginfo for extra signals.\n", sigpwr_count, MAXSIGQ);
+   for (n = 0; n < sigpwr_count; n++)
      {
 	Ecore_Event_Signal_Power *e;
 
 	e = _ecore_event_signal_power_new();
 	if (e)
 	  {
-	     if (sigpwr_info.si_signo)
-	       e->data = sigpwr_info;
+	     if ((n < MAXSIGQ) && (sigpwr_info[n].si_signo))
+	       e->data = sigpwr_info[n];
 
 	     ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e, NULL, NULL);
 	  }
-	sigpwr_count--;
 	sig_count--;
      }
+   sigpwr_count = 0;
 #endif
 
 #ifdef SIGRTMIN
    for (i = 0; i < num; i++)
      {
-	while (sigrt_count[i] > 0)
+	if (sigrt_count[i] > MAXSIGQ)
+	  printf("ECORE WARNING. %i SIGRT%i in queue. max queue size %i. losing "
+		 "siginfo for extra signals.\n", i + 1, sigrt_count[i], MAXSIGQ);
+	for (n = 0; n < sigrt_count[i]; n++)
 	  {
 	     Ecore_Event_Signal_Realtime *e;
 
@@ -352,17 +418,17 @@ _ecore_signal_call(void)
 	       {
 		  e->num = i;
 
-		  if (sigrt_info[i].si_signo)
-		    e->data = sigrt_info[i];
+		  if ((n < MAXSIGQ) && (sigrt_info[n][i].si_signo))
+		    e->data = sigrt_info[n][i];
 
 		  ecore_event_add(ECORE_EVENT_SIGNAL_REALTIME, e, NULL, NULL);
 	       }
-
-	     sigrt_count[i]--;
 	     sig_count--;
 	  }
+	sigrt_count[i] = 0;
      }
 #endif
+   sigprocmask(SIG_SETMASK, &oldset, NULL);
 }
 
 static void
@@ -384,10 +450,15 @@ _ecore_signal_callback_ignore(int sig __UNUSED__, siginfo_t *si __UNUSED__, void
 static void
 _ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigchld_info = *si;
-   else
-     sigchld_info.si_signo = 0;
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigchld_info[n] = *si;
+	else
+	  sigchld_info[n].si_signo = 0;
+     }
 
    sigchld_count++;
    sig_count++;
@@ -396,11 +467,15 @@ _ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 static void
 _ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigusr1_info = *si;
-   else
-     sigusr1_info.si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigusr1_info[n] = *si;
+	else
+	  sigusr1_info[n].si_signo = 0;
+     }
    sigusr1_count++;
    sig_count++;
 }
@@ -408,11 +483,15 @@ _ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 static void
 _ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigusr2_info = *si;
-   else
-     sigusr2_info.si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigusr2_info[n] = *si;
+	else
+	  sigusr2_info[n].si_signo = 0;
+     }
    sigusr2_count++;
    sig_count++;
 }
@@ -420,11 +499,15 @@ _ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 static void
 _ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sighup_info = *si;
-   else
-     sighup_info.si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sighup_info[n] = *si;
+	else
+	  sighup_info[n].si_signo = 0;
+     }
    sighup_count++;
    sig_count++;
 }
@@ -432,11 +515,15 @@ _ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
 static void
 _ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigquit_info = *si;
-   else
-     sigquit_info.si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigquit_info[n] = *si;
+	else
+	  sigquit_info[n].si_signo = 0;
+     }
    sigquit_count++;
    sig_count++;
 }
@@ -444,11 +531,15 @@ _ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 static void
 _ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigint_info = *si;
-   else
-     sigint_info.si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigint_info[n] = *si;
+	else
+	  sigint_info[n].si_signo = 0;
+     }
    sigint_count++;
    sig_count++;
 }
@@ -456,11 +547,15 @@ _ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
 static void
 _ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigterm_info = *si;
-   else
-     sigterm_info.si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigterm_info[n] = *si;
+	else
+	  sigterm_info[n].si_signo = 0;
+     }
    sigterm_count++;
    sig_count++;
 }
@@ -469,11 +564,15 @@ _ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UN
 static void
 _ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigpwr_info = *si;
-   else
-     sigpwr_info.si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigpwr_info[n] = *si;
+	else
+	  sigpwr_info[n].si_signo = 0;
+     }
    sigpwr_count++;
    sig_count++;
 }
@@ -483,11 +582,15 @@ _ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
 static void
 _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
 {
-   if (si)
-     sigrt_info[sig - SIGRTMIN] = *si;
-   else
-     sigrt_info[sig - SIGRTMIN].si_signo = 0;
-
+   volatile sig_atomic_t n;
+   n = sigchld_count;
+   if (n < MAXSIGQ)
+     {
+	if (si)
+	  sigrt_info[n][sig - SIGRTMIN] = *si;
+	else
+	  sigrt_info[n][sig - SIGRTMIN].si_signo = 0;
+     }
    sigrt_count[sig - SIGRTMIN]++;
    sig_count++;
 }
