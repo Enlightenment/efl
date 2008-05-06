@@ -614,7 +614,7 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
 
    for (i = 1; i < argc; i++)
    {
-      if (!strcmp (argv[i], "-i") && *argv[i + 1])
+      if (!strcmp (argv[i], "-i") && (i + 1 < argc) && *argv[i + 1])
       {
 	 /* include directory */
 	 i++;
@@ -629,13 +629,13 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
 
 	 insert_path(str);
       }
-      else if (!strcmp (argv[i], "-o") && *argv[i + 1])
+      else if (!strcmp (argv[i], "-o") && (i + 1 < argc) && *argv[i + 1])
       {
 	 /* output file */
 	 i++;
 	 strcpy(oname, argv[i]); /* FIXME */
       }
-      else if (!strcmp (argv[i], "-S") && *argv[i + 1])
+      else if (!strcmp (argv[i], "-S") && (i + 1 < argc) && *argv[i + 1])
       {
 	 /* stack size */
 	 i++;
