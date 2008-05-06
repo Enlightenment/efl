@@ -221,7 +221,7 @@ Description: Evas module providing a SVG loader
 Package: libevas-saver-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet
+Depends: ${shlibs:Depends}, libevas0, libeet1
 Description: Evas module providing an Eet saver
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
