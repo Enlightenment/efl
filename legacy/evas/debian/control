@@ -137,7 +137,7 @@ Description: Evas module providing an OpenGL engine
 Package: libevas-loader-eet
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libevas0, libeet0
+Depends: ${shlibs:Depends}, libevas0, libeet1
 Description: Evas module providing an Eet loader
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
