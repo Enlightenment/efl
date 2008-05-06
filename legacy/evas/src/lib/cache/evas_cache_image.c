@@ -164,6 +164,8 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    ie->space = EVAS_COLORSPACE_ARGB8888;
    ie->w = -1;
    ie->h = -1;
+   ie->allocated.w = 0;
+   ie->allocated.h = 0;
 
    ie->references = 0;
    ie->cache = cache;
@@ -209,6 +211,9 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
 
    wmin = w > 0 ? w : 1;
    hmin = h > 0 ? h : 1;
+   if (ie->allocated.w == wmin && ie->allocated.h == hmin)
+     return ;
+
    if (cache->func.surface_alloc(ie, wmin, hmin))
      {
         wmin = 0;
@@ -216,6 +221,8 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
      }
    ie->w = wmin;
    ie->h = hmin;
+   ie->allocated.w = wmin;
+   ie->allocated.h = hmin;
 }
 
 EAPI int

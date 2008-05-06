@@ -145,29 +145,17 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h)
    RGBA_Image   *im = (RGBA_Image *) ie;
    size_t        siz = 0;
 
-/*    if (im->image.data) /\* return 0; *\/ */
-/*      free(im->image.data); */
+   if (im->image.no_free) return 0;
 
    if (im->flags & RGBA_IMAGE_ALPHA_ONLY)
      siz = w * h * sizeof(DATA8);
    else
      siz = w * h * sizeof(DATA32);
 
-   /* FIXME: this is wrong. we seem to realloc data here that ismaked "no_free"
-    * whihc is wrong, but when we fix it, we break all sorts of stuff 
-    * whihc used to work. i suspect the cache changes in evas */
-#if 1   
-   im->image.data = realloc(im->image.data, siz);
+   if (im->image.data) free(im->image.data);
+   im->image.data = malloc(siz);
    if (im->image.data == NULL) return -1;
-#else   
-   if (!im->image.no_free)
-     {
-	if (im->image.data) free(im->image.data);
-	im->image.data = malloc(siz);
-	if (im->image.data == NULL) return -1;
-     }
-#endif
-   
+
 #ifdef HAVE_VALGRIND
    VALGRIND_MAKE_READABLE(im->image.data, siz);
 #endif
@@ -196,7 +184,6 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
    if (im->image.data && !im->image.no_free)
      free(im->image.data);
    im->image.data = NULL;
-   im->image.no_free = 1;
 }
 
 static void

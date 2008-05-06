@@ -299,6 +299,12 @@ struct _Image_Entry
   int                    space;
   int                    w;
   int                    h;
+
+  struct
+  {
+     int		 w;
+     int		 h;
+  } allocated;
 };
 
 struct _Engine_Image_Entry
