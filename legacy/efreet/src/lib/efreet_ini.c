@@ -69,13 +69,11 @@ efreet_ini_new(const char *file)
 static Ecore_Hash *
 efreet_ini_parse(const char *file)
 {
-    const char *buffer;
-    const char *line_start;
+    const char *buffer, *line_start;
     FILE *f;
     Ecore_Hash *data, *section = NULL;
     struct stat file_stat;
-    int line_length;
-    int left;
+    int line_length, left;
 
     f = fopen(file, "rb");
     if (!f) return NULL;
@@ -103,20 +101,34 @@ efreet_ini_parse(const char *file)
     {
         int sep;
 
-        /* strnchr like looking for end of line */
-        for (line_length = 0; line_length < left && line_start[line_length] != '\n'; ++line_length)
+        /* find the end of line */
+        for (line_length = 0; 
+                (line_length < left) && 
+                (line_start[line_length] != '\n'); ++line_length)
             ;
 
+        /* check for all white space */
+        while (isspace(line_start[0]) && (line_length > 0))
+        {
+            line_start++;
+            line_length--;
+        }
+
         /* skip empty lines and comments */
-        if (line_length == 0 || line_start[0] == '\n' || line_start[0] == '#') goto next_line;
+        if ((line_length == 0) || (line_start[0] == '\r') || 
+                (line_start[0] == '\n') || (line_start[0] == '#') ||
+                (line_start[0] == '\0')) 
+            goto next_line;
 
         /* new section */
         if (line_start[0] == '[')
         {
             int header_length;
 
-            /* strnchr like looking for ']' */
-            for (header_length = 1; header_length < line_length && line_start[header_length] != ']'; ++header_length)
+            /* find the ']' */
+            for (header_length = 1; 
+                    (header_length < line_length) && 
+                    (line_start[header_length] != ']'); ++header_length)
                 ;
 
             if (line_start[header_length] == ']')
@@ -126,18 +138,22 @@ efreet_ini_parse(const char *file)
 
                 header = alloca(header_length * sizeof(unsigned char));
                 if (!header) goto next_line;
+
                 memcpy((char*)header, line_start + 1, header_length - 1);
                 ((char*)header)[header_length - 1] = '\0';
 
                 section = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-                ecore_hash_free_key_cb_set(section, ECORE_FREE_CB(ecore_string_release));
+                ecore_hash_free_key_cb_set(section,
+                            ECORE_FREE_CB(ecore_string_release));
                 ecore_hash_free_value_cb_set(section, ECORE_FREE_CB(free));
 
                 old = ecore_hash_remove(data, header);
-                //if (old) printf("[efreet] Warning: duplicate section '%s' in file '%s'\n", header, file);
+                if (old) printf("[efreet] Warning: duplicate section '%s' "
+                                "in file '%s'\n", header, file);
+
                 IF_FREE_HASH(old);
                 ecore_hash_set(data, (void *)ecore_string_instance(header),
-                                                                section);
+                                section);
             }
             else
             {
@@ -148,58 +164,65 @@ efreet_ini_parse(const char *file)
             goto next_line;
         }
 
-        /* strnchr like looking for '=' */
-        for (sep = 0; sep < line_length && line_start[sep] != '='; ++sep)
-            ;
-
         if (section == NULL)
         {
             printf("Invalid file (%s) (missing section)\n", file);
             goto next_line;
         }
 
+        /* find for '=' */
+        for (sep = 0; (sep < line_length) && (line_start[sep] != '='); ++sep)
+            ;
+
         if (sep < line_length)
         {
-            const char *key;
-            const char *value;
+            const char *key, *value;
             char *old;
-            int key_end;
-            int value_start;
-            int value_end;
+            int key_end, value_start, value_end;
 
             /* trim whitespace from end of key */
-            for (key_end = sep - 1; key_end > 0 && isspace(line_start[key_end]); --key_end)
+            for (key_end = sep - 1; 
+                    (key_end > 0) && isspace(line_start[key_end]); --key_end)
                 ;
-            if (!isspace(line_start[key_end]))
-              key_end++;
+
+            if (!isspace(line_start[key_end])) key_end++;
 
             /* trim whitespace from start of value */
-            for (value_start = sep + 1; value_start < line_length && isspace(line_start[value_start]); ++value_start)
+            for (value_start = sep + 1; 
+                    (value_start < line_length) && 
+                    isspace(line_start[value_start]); ++value_start)
                 ;
 
             /* trim \n off of end of value */
-            for (value_end = line_length; value_end > value_start &&
-                   (line_start[value_end] == '\n' || line_start[value_end] == '\r'); --value_end)
-              ;
+            for (value_end = line_length; 
+                    (value_end > value_start) &&
+                    ((line_start[value_end] == '\n') ||
+                        (line_start[value_end] == '\r')); --value_end)
+                ;
+
             if (line_start[value_end] != '\n'
-                && line_start[value_end] != '\r'
-                && value_end < line_length)
-              value_end++;
+                    && line_start[value_end] != '\r'
+                    && value_end < line_length)
+                value_end++;
 
-            if (!(key_end > 0 && value_start < line_length && value_end > value_start))
-              {
-                 /* invalid file... */
-                 printf("Invalid file (%s) (invalid key=value pair)\n", file);
+            /* make sure we have a key. blank values are allowed */
+            if (key_end == 0)
+            {
+                /* invalid file... */
+                printf("Invalid file (%s) (invalid key=value pair)\n", file);
 
-                 goto next_line;
-              }
+                goto next_line;
+            }
 
             key = alloca((key_end + 1) * sizeof(unsigned char));
             value = alloca((value_end - value_start + 1) * sizeof(unsigned char));
             if (!key || !value) goto next_line;
+
             memcpy((char*)key, line_start, key_end);
             ((char*)key)[key_end] = '\0';
-            memcpy((char*)value, line_start + value_start, value_end - value_start);
+
+            memcpy((char*)value, line_start + value_start, 
+                    value_end - value_start);
             ((char*)value)[value_end - value_start] = '\0';
 
             old = ecore_hash_remove(section, key);
@@ -210,12 +233,6 @@ efreet_ini_parse(const char *file)
         }
         else
         {
-            /* check if line is all whitespace, if so, skip it */
-            for (sep = 0; sep < line_length && isspace(line_start[sep]); ++sep)
-                ;
-
-            if (sep < line_length) goto next_line;
-
             /* invalid file... */
             printf("Invalid file (%s) (missing = from key=value pair)\n", file);
         }
