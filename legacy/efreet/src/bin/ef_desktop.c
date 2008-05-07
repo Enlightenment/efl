@@ -5,9 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
-
-#define IF_FREE(x) do { if (x) free(x); x = NULL; } while (0);
-#define NEW(x, c) calloc(c, sizeof(x))
+#include "ef_test.h"
 
 static void *_cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining);
 
@@ -327,7 +325,8 @@ ef_cb_desktop_command_get(void)
 }
 
 static void *
-_cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
+_cb_command(void *data, Efreet_Desktop *desktop __UNUSED__,
+            char *exec, int remaining __UNUSED__)
 {
   Test_Info *info = data;
   char *expected;
@@ -352,7 +351,7 @@ _cb_command(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
 }
 
 static void *
-cb_type_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
+cb_type_parse(Efreet_Desktop *desktop __UNUSED__, Efreet_Ini *ini)
 {
     const char *val;
     val = efreet_ini_string_get(ini, "X-Test");

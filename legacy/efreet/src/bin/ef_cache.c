@@ -1,8 +1,9 @@
 #include "Efreet.h"
 #include <stdio.h>
+#include "ef_test.h"
 
 static int
-timer(void *data)
+timer(void *data __UNUSED__)
 {
     Ecore_List *list;
     Efreet_Desktop *desktop;
@@ -33,7 +34,7 @@ timer(void *data)
 }
 
 int
-main(int argc, char **argv)
+main(int argc __UNUSED__, char **argv __UNUSED__)
 {
     if (!efreet_init()) return 1;
     if (!efreet_util_init()) return 1;

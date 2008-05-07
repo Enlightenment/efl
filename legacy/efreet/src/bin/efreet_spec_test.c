@@ -1,12 +1,13 @@
 #include <Efreet.h>
 #include <stdio.h>
+#include "ef_test.h"
 
 #define PATH_MAX 4096
 
 static void dump(Efreet_Menu *menu, const char *path);
 
 int
-main(int argc, char **argv)
+main(int argc __UNUSED__, char **argv __UNUSED__)
 {
     Efreet_Menu *menu;
 

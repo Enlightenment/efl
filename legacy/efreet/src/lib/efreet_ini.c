@@ -73,7 +73,6 @@ efreet_ini_parse(const char *file)
     FILE *f;
     Ecore_Hash *data, *section = NULL;
     struct stat file_stat;
-    int buffer_length;
     int line_length;
     int left;
 
