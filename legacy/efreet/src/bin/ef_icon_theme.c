@@ -146,6 +146,7 @@ ef_icon_theme_themes_find(const char *search_dir, Ecore_Hash *themes)
             efreet_ini_section_set(ini, "Icon Theme");
 
             if (efreet_ini_boolean_get(ini, "Hidden")) skip = 1;
+            if (!efreet_ini_localestring_get(ini, "Name")) skip = 1;
             efreet_ini_free(ini);
 
             if (!skip)
