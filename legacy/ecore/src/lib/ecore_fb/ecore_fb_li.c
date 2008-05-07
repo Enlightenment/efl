@@ -1,15 +1,6 @@
 #include "Ecore_Fb.h"
 #include "ecore_fb_private.h"
 
-
-/* Copyright (C) Brad Hards (1999-2002).
- * this macro is used to tell if "bit" is set in "array"
- * it selects a byte from the array, and does a boolean AND 
- * operation with a byte that only has the relevant bit set. 
- * eg. to check for the 12th bit, we do (array[1] & 1<<4)
- */
-#define TEST_BIT(bit, array)    (array[bit/8] & (1<<(bit%8)))
-
 #define CLICK_THRESHOLD_DEFAULT 0.25
 
 static Ecore_List *_ecore_fb_li_devices = NULL;
@@ -18,6 +9,28 @@ static const char *_ecore_fb_li_kbd_syms[128 * 6] =
 {
 #include "ecore_fb_keytable.h"
 };
+
+/* Initial Copyright (C) Brad Hards (1999-2002),
+ * this function is used to tell if "bit" is set in "array"
+ * it selects a byte from the array, and does a boolean AND
+ * operation with a byte that only has the relevant bit set.
+ * eg. to check for the 12th bit, we do (array[1] & 1<<4).
+ * Moved to static inline in order to force compiler to otimized
+ * the unsued part away or force a link error if long has an unexpected
+ * size.
+ *						- bigeasy
+ */
+extern int long_has_neither_32_not_64_bits(void);
+static inline int test_bit(int bit, unsigned long *array)
+{
+	if (sizeof(long) == 4)
+		return array[bit / 32] & (1 << (bit % 32));
+
+	else if (sizeof(long) == 8)
+		return array[bit / 64] & (1 << (bit % 64));
+
+	else long_has_neither_32_nor_64_bits();
+}
 
 static void 
 _ecore_fb_li_event_free_key_down(void *data, void *ev)
@@ -334,6 +347,10 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, int listen)
 	dev->listen = listen;
 }
 
+#ifndef EV_CNT
+#define EV_CNT	(EV_MAX+1)
+#endif
+
 /*
  * Opens an input device
  */
@@ -341,7 +358,7 @@ EAPI Ecore_Fb_Input_Device *
 ecore_fb_input_device_open(const char *dev)
 {
 	Ecore_Fb_Input_Device *device;
-	char event_type_bitmask[EV_MAX/8 + 1];
+	unsigned long event_type_bitmask[EV_CNT / 32 + 1];
 	int event_type;
 	int fd;
 
@@ -378,7 +395,7 @@ ecore_fb_input_device_open(const char *dev)
 	/* set info */
 	for(event_type = 0; event_type < EV_MAX; event_type++)
 	{
-		if(!TEST_BIT(event_type, event_type_bitmask))
+		if(!test_bit(event_type, event_type_bitmask))
 			continue;
 		switch(event_type)
 		{
