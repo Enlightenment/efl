@@ -17,10 +17,10 @@ ef_mime_cb_get(void)
         char *file;
         char *mime;
     } files[] = {
-        {PACKAGE_DATA_DIR"/efreet/test/test_type.desktop", "application/x-desktop"},
-        {PACKAGE_DATA_DIR"/efreet/test/entry.png", "image/png"},
-        {PACKAGE_DATA_DIR"/efreet/test/entry", "image/png"},
-        {PACKAGE_DATA_DIR"/efreet/test/sub", "inode/directory"},
+        {PACKAGE_DATA_DIR"/test/test_type.desktop", "application/x-desktop"},
+        {PACKAGE_DATA_DIR"/test/entry.png", "image/png"},
+        {PACKAGE_DATA_DIR"/test/entry", "image/png"},
+        {PACKAGE_DATA_DIR"/test/sub", "inode/directory"},
         {NULL, NULL}
     };
 

@@ -16,7 +16,7 @@ ef_cb_desktop_parse(void)
     Efreet_Desktop *desktop;
     int ret = 1;
 
-    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test.desktop");
+    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/test/test.desktop");
     if (!desktop)
     {
         printf("No desktop found.\n");
@@ -80,7 +80,7 @@ ef_cb_desktop_file_id(void)
     Efreet_Desktop *desktop;
     int ret = 1;
 
-    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test.desktop");
+    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/test/test.desktop");
     if (desktop)
     {
         const char *id;
@@ -92,10 +92,10 @@ ef_cb_desktop_file_id(void)
             char *prefix;
             char *expected;
         } tests[] = {
-            {PACKAGE_DATA_DIR"/efreet/test/", 0, NULL, "test.desktop"},
-            {PACKAGE_DATA_DIR"/efreet/", 0, NULL, "test-test.desktop"},
-            {PACKAGE_DATA_DIR"/efreet/", 1, NULL, "test.desktop"},
-            {PACKAGE_DATA_DIR"/efreet/", 1, "prefix", "prefix-test.desktop"},
+            {PACKAGE_DATA_DIR"/test/", 0, NULL, "test.desktop"},
+            {PACKAGE_DATA_DIR"/", 0, NULL, "test-test.desktop"},
+            {PACKAGE_DATA_DIR"/", 1, NULL, "test.desktop"},
+            {PACKAGE_DATA_DIR"/", 1, "prefix", "prefix-test.desktop"},
             {NULL, 0, NULL, NULL}
         };
 
@@ -126,7 +126,7 @@ ef_cb_desktop_save(void)
     Efreet_Desktop *desktop;
 
     printf("\n");
-    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test.desktop");
+    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/test/test.desktop");
     if (!desktop)
     {
         printf("Failed to get Desktop file\n");
@@ -371,7 +371,7 @@ ef_cb_desktop_type_parse(void)
     my_type = efreet_desktop_type_add("My_Type", cb_type_parse, NULL,
                                         (Efreet_Desktop_Type_Free_Cb)free);
 
-    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/efreet/test/test_type.desktop");
+    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/test/test_type.desktop");
     if (!desktop)
     {
         printf("No desktop found.\n");

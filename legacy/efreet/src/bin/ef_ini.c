@@ -12,7 +12,7 @@ ef_cb_ini_parse(void)
 
     putenv("LC_ALL=en_US");
 
-    ini = efreet_ini_new(PACKAGE_DATA_DIR"/efreet/test/test.ini");
+    ini = efreet_ini_new(PACKAGE_DATA_DIR"/test/test.ini");
     if (!ini)
     {
         printf("efreet_ini_parse() Failed to initialize Efreet_Ini\n");
@@ -115,7 +115,7 @@ ef_cb_ini_long_line(void)
     {NULL, 0}
   };
 
-  ini = efreet_ini_new(PACKAGE_DATA_DIR"/efreet/test/long.ini");
+  ini = efreet_ini_new(PACKAGE_DATA_DIR"/test/long.ini");
   if (!ini)
   {
     printf("Ini failed to parse.\n");
