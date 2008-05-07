@@ -70,14 +70,19 @@ ecore_string_instance(const char *string)
    str = ecore_hash_get(ecore_strings, string);
    if (!str)
      {
+	int length;
 
 	/*
 	 * Allocate and initialize a new string reference.
 	 */
-	str = (Ecore_String *)malloc(sizeof(Ecore_String));
+	length = strlen(string) + 1;
 
-	str->string = strdup(string);
+	str = (Ecore_String *)malloc(sizeof(Ecore_String) + length * sizeof(char));
+
+	str->string = (char*)(str + 1);
 	str->references = 0;
+
+	memcpy(str->string, string, length);
 
 	ecore_hash_set(ecore_strings, str->string, str);
      }
@@ -110,7 +115,6 @@ ecore_string_release(const char *string)
    if (str->references < 1)
      {
 	ecore_hash_remove(ecore_strings, (char *)string);
-	FREE(str->string);
 	FREE(str);
      }
 }
@@ -147,6 +151,5 @@ ecore_string_free_cb(void *data)
    Ecore_String *str;
 
    str = data;
-   FREE(str->string);
    FREE(str);
 }
