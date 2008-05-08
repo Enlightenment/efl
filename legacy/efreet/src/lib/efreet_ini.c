@@ -55,7 +55,6 @@ efreet_ini_new(const char *file)
     if (!ini) return NULL;
 
     ini->data = efreet_ini_parse(file);
-    if (!ini->data) FREE(ini);
 
     return ini;
 }
@@ -78,7 +77,8 @@ efreet_ini_parse(const char *file)
     f = fopen(file, "rb");
     if (!f) return NULL;
 
-    if (fstat(fileno(f), &file_stat) || file_stat.st_size < 1)
+    if (fstat(fileno(f), &file_stat)
+        || file_stat.st_size < 1)
     {
         fclose(f);
         return NULL;
@@ -291,7 +291,7 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
 EAPI int
 efreet_ini_section_set(Efreet_Ini *ini, const char *section)
 {
-    if (!ini || !(ini->data) || !section) return 0;
+    if (!ini || !ini->data || !section) return 0;
 
     ini->section = ecore_hash_get(ini->data, section);
     return (ini->section ? 1 : 0);
