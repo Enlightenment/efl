@@ -19,7 +19,7 @@
 		< ((double)ECORE_HASH_CHAIN_MAX * 0.375) : FALSE)
 
 /* Private hash manipulation functions */
-static int _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node);
+static int _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node);
 static Ecore_Hash_Node * _ecore_hash_node_get(Ecore_Hash *hash, const void *key);
 static int _ecore_hash_increase(Ecore_Hash *hash);
 static int _ecore_hash_decrease(Ecore_Hash *hash);
@@ -163,7 +163,7 @@ ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
      {
 	node = _ecore_hash_node_new(key, value);
 	if (node)
-	  ret = _ecore_hash_add_node(hash, node);
+	  ret = _ecore_hash_node_add(hash, node);
      }
 
    return ret;
@@ -204,7 +204,7 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
 		  free(old);
 	       }
 	     else
-	       _ecore_hash_add_node(hash, old);
+	       _ecore_hash_node_add(hash, old);
 	  }
      }
    FREE(set->buckets);
@@ -411,7 +411,7 @@ _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd, Ecore_Free
  * @return Returns FALSE on error, TRUE on success
  */
 static int
-_ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
+_ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node)
 {
    unsigned int hash_val;
 
@@ -789,7 +789,7 @@ _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)
 	  {
 	     old_table[i] = old->next;
 	     old->next = NULL;
-	     _ecore_hash_add_node(hash, old);
+	     _ecore_hash_node_add(hash, old);
 	  }
      }
 
