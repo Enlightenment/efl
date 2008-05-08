@@ -54,6 +54,9 @@ efreet_ini_new(const char *file)
     ini = NEW(Efreet_Ini, 1);
     if (!ini) return NULL;
 
+    /* This can validly be NULL at the moment as _parse() will return NULL
+     * if the input file doesn't exist. Should we change _parse() to create
+     * the hash and only return NULL on failed parse? */
     ini->data = efreet_ini_parse(file);
 
     return ini;
@@ -62,7 +65,8 @@ efreet_ini_new(const char *file)
 /**
  * @internal
  * @param file The file to parse
- * @return Returns an Ecore_Hash with the contents of @a file, or NULL on failure
+ * @return Returns an Ecore_Hash with the contents of @a file, or NULL if the
+ *         file fails to parse or if the file doesn't exist
  * @brief Parses the ini file @a file into an Ecore_Hash
  */
 static Ecore_Hash *
@@ -77,8 +81,7 @@ efreet_ini_parse(const char *file)
     f = fopen(file, "rb");
     if (!f) return NULL;
 
-    if (fstat(fileno(f), &file_stat)
-        || file_stat.st_size < 1)
+    if (fstat(fileno(f), &file_stat) || file_stat.st_size < 1)
     {
         fclose(f);
         return NULL;
