@@ -66,13 +66,19 @@ gapi_resume           resume = NULL;
 int
 evas_software_wince_gapi_suspend(void)
 {
-   return suspend();
+   if (suspend)
+     return suspend();
+   else
+     return 0;
 }
 
 int
 evas_software_wince_gapi_resume(void)
 {
-   return resume();
+   if (resume)
+     return resume();
+   else
+     return 0;
 }
 
 void *
@@ -215,6 +221,8 @@ evas_software_wince_gapi_shutdown(void *priv)
    p = (Evas_Engine_WinCE_GAPI_Priv *)priv;
    p->close_input();
    p->close_display();
+   suspend = NULL;
+   resume = NULL;
    FreeLibrary(p->lib);
    free(p);
 }
