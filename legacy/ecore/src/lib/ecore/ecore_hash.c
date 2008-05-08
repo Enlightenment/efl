@@ -20,13 +20,13 @@
 
 /* Private hash manipulation functions */
 static int _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node);
-static Ecore_Hash_Node * _ecore_hash_get_node(Ecore_Hash *hash, const void *key);
+static Ecore_Hash_Node * _ecore_hash_node_get(Ecore_Hash *hash, const void *key);
 static int _ecore_hash_increase(Ecore_Hash *hash);
 static int _ecore_hash_decrease(Ecore_Hash *hash);
 inline int _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size);
 static int _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd,
 				      Ecore_Free_Cb valued);
-inline Ecore_Hash_Node * _ecore_hash_get_bucket(Ecore_Hash *hash,
+inline Ecore_Hash_Node * _ecore_hash_bucket_get(Ecore_Hash *hash,
 						Ecore_Hash_Node *bucket, const void *key);
 
 static Ecore_Hash_Node *_ecore_hash_node_new(void *key, void *value);
@@ -151,7 +151,7 @@ ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
-   node = _ecore_hash_get_node(hash, key);
+   node = _ecore_hash_node_get(hash, key);
    if (node)
      {
 	if (hash->free_key) hash->free_key(key);
@@ -192,7 +192,7 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
 	  {
 	     set->buckets[i] = old->next;
 	     old->next = NULL;
-	     node = _ecore_hash_get_node(hash, old->key);
+	     node = _ecore_hash_node_get(hash, old->key);
 	     if (node)
 	       {
 		  /* This key already exists. Delete the old and add the new
@@ -452,7 +452,7 @@ ecore_hash_get(Ecore_Hash *hash, const void *key)
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
 
-   node = _ecore_hash_get_node(hash, key);
+   node = _ecore_hash_node_get(hash, key);
    if (!node)
      return NULL;
 
@@ -578,7 +578,7 @@ ecore_hash_find(Ecore_Hash *hash, Ecore_Compare_Cb compare, const void *value)
  * @return Returns NULL on error, node corresponding to key on success
  */
 static Ecore_Hash_Node *
-_ecore_hash_get_node(Ecore_Hash *hash, const void *key)
+_ecore_hash_node_get(Ecore_Hash *hash, const void *key)
 {
    unsigned int hash_val;
    Ecore_Hash_Node *node = NULL;
@@ -599,7 +599,7 @@ _ecore_hash_get_node(Ecore_Hash *hash, const void *key)
    /* Grab the bucket at the specified position */
    if (hash->buckets[hash_val])
      {
-	node = _ecore_hash_get_bucket(hash, hash->buckets[hash_val], key);
+	node = _ecore_hash_bucket_get(hash, hash->buckets[hash_val], key);
 	/*
 	 * Move matched node to the front of the list as it's likely
 	 * to be searched for again soon.
@@ -622,7 +622,7 @@ _ecore_hash_get_node(Ecore_Hash *hash, const void *key)
  * @return Returns NULL on error or not found, the found node on success
  */
 inline Ecore_Hash_Node *
-_ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_Hash_Node *bucket, const void *key)
+_ecore_hash_bucket_get(Ecore_Hash *hash, Ecore_Hash_Node *bucket, const void *key)
 {
    Ecore_Hash_Node *prev = NULL;
    Ecore_Hash_Node *node = NULL;
