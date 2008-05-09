@@ -107,11 +107,13 @@ struct Evas_Engine_WinCE_GAPI_Priv
    gapi_draw_end      draw_end;
    int                width;
    int                height;
+   int                stride;
 };
 
 void *
 evas_software_wince_gapi_init (HWND window)
 {
+    WCHAR                       oemstr[100];
    _GAPI_Display_Properties     prop;
    _GAPI_Key_List               key_list;
    HMODULE                      gapi_lib;
@@ -199,8 +201,64 @@ evas_software_wince_gapi_init (HWND window)
    priv->close_input = input_close;
    priv->draw_begin = draw_begin;
    priv->draw_end = draw_end;
-   priv->width = prop.cxWidth;
-   priv->height = prop.cyHeight;
+
+   /* Ipaq H38** and H39** are completely buggy */
+   /* They are detected as portrait device (width = 240 and height = 320) */
+   /* but the framebuffer is managed like a landscape device : */
+   /*
+     240
+ +---------+
+ |         |
+ |         |
+ |         |
+ |         |
+ |         | 320
+ | ^^^     |
+ | |||     |
+ | |||     |
+ | |||     |
+ +---------+
+  ---->
+
+   */
+   /* So these devices are considered as landscape devices */
+   /* and width and height are switched. */
+   /* Other devices are managed normally : */
+   /*
+     240
+  +---------+
+| |--->     |
+| |--->     |
+| |--->     |
+v |         |
+  |         | 320
+  |         |
+  |         |
+  |         |
+  |         |
+  +---------+
+
+    */
+
+   SystemParametersInfo (SPI_GETOEMINFO, sizeof (oemstr), oemstr, 0);
+
+   if (((oemstr[12] == 'H') &&
+        (oemstr[13] == '3') &&
+        (oemstr[14] == '8')) ||
+       ((oemstr[12] == 'H') &&
+        (oemstr[13] == '3') &&
+        (oemstr[14] == '9')))
+     {
+        priv->width = prop.cyHeight;
+        priv->height = prop.cxWidth;
+        priv->stride = prop.cbxPitch;
+     }
+   else
+     {
+        priv->width = prop.cxWidth;
+        priv->height = prop.cyHeight;
+        priv->stride = prop.cbyPitch;
+     }
 
    return priv;
 
@@ -250,7 +308,7 @@ evas_software_wince_gapi_output_buffer_new(void *priv,
 
    fbob->im = (Soft16_Image *) evas_cache_image_data(evas_common_soft16_image_cache_get(), width, height, (DATA32 *)buffer, 0, EVAS_COLORSPACE_RGB565_A5P);
    if (fbob->im)
-     fbob->im->stride = width;
+     fbob->im->stride = ((Evas_Engine_WinCE_GAPI_Priv *)priv)->stride >> 1;
 
    return fbob;
 }
