@@ -53,13 +53,20 @@ _evas_cache_image_make_inactiv(Evas_Cache_Image *cache,
                                Image_Entry *im,
                                const char *key)
 {
-   im->flags.activ = 0;
-   im->flags.dirty = 0;
-   im->flags.cached = 1;
-   cache->inactiv = evas_hash_direct_add(cache->inactiv, key, im);
-   cache->lru = evas_object_list_prepend(cache->lru, im);
-   cache->usage += cache->func.mem_size_get(im);
-}
+   if (im->cache_key)
+     {
+	im->flags.activ = 0;
+	im->flags.dirty = 0;
+	im->flags.cached = 1;
+	cache->inactiv = evas_hash_direct_add(cache->inactiv, key, im);
+	cache->lru = evas_object_list_prepend(cache->lru, im);
+	cache->usage += cache->func.mem_size_get(im);
+     }
+   else
+     {
+	_evas_cache_image_entry_delete(cache, im);
+     }
+ }
 
 static void
 _evas_cache_image_remove_lru_nodata(Evas_Cache_Image *cache,
@@ -381,6 +388,9 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
              if (st.st_mtime != im->timestamp) ok = 0;
           }
         if (ok) goto on_ok;
+
+        _evas_cache_image_remove_activ(cache, im);
+	_evas_cache_image_make_dirty(cache, im);
      }
 
    im = evas_hash_find(cache->inactiv, hkey);
@@ -452,16 +462,16 @@ evas_cache_image_drop(Image_Entry *im)
    im->references--;
    cache = im->cache;
 
-   if (im->flags.dirty)
-     {
-        _evas_cache_image_entry_delete(cache, im);
-        return ;
-     }
-
    if (im->references == 0)
      {
+	if (im->flags.dirty)
+	  {
+	     _evas_cache_image_entry_delete(cache, im);
+	     return ;
+	  }
+
         _evas_cache_image_remove_activ(cache, im);
-        _evas_cache_image_make_inactiv(cache, im, im->cache_key);
+	_evas_cache_image_make_inactiv(cache, im, im->cache_key);
 	evas_cache_image_flush(cache);
      }
 }
