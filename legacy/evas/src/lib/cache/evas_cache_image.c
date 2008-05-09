@@ -11,6 +11,8 @@
        Var = NULL;                 \
     }
 
+static void _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie);
+
 static void
 _evas_cache_image_make_dirty(Evas_Cache_Image *cache,
                              Image_Entry *im)
