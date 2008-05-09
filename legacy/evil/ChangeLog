@@ -1,8 +1,13 @@
+2008-05-10  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/dlfcn/dlfcn.c: (dladdr):
+	replace all the '\' by '/' in the filename found by dladdr
+
 2008-04-28  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
 	* src/lib/evil.c: (evil_getcwd):
-	add getgwd-like function
+	add getcwd-like function
 
 	* src/lib/dlfcn/dlfcn.c: (dladdr):
 	* src/lib/dlfcn/dlfcn.h:

@@ -161,6 +161,7 @@ dladdr (void *addr __UNUSED__, Dl_info *info)
 {
    TCHAR tpath[PATH_MAX];
    char *path;
+   char *tmp;
    int   length;
    int   ret = 0;
 
@@ -182,6 +183,14 @@ dladdr (void *addr __UNUSED__, Dl_info *info)
      {
        length = PATH_MAX - 1;
        path[PATH_MAX - 1] = '\0';
+     }
+
+   /* replace '\' by '/' */
+   tmp = path;
+   while (*tmp)
+     {
+        if (*tmp == '\\') *tmp = '/';
+        tmp++;
      }
 
    memcpy (info->dli_fname, path, length + 1);
