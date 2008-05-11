@@ -201,6 +201,24 @@ EAPI int fcntl(int fd, int cmd, ...);
 EAPI int mkstemp(char *template);
 
 /**
+ * @brief Return the process identifier of the calling process.
+ *
+ * @return The process ID.
+ *
+ * Return the process identifier of the calling process. Until
+ * the process terminates, the process identifier uniquely
+ * identifies the process throughout the system.
+ *
+ * Conformity: Not appliclable.
+ *
+ * Supported OS: Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI pid_t getpid(void);
+
+/**
  * @brief Create a shell link.
  *
  * @param oldpath The file name to be linked.

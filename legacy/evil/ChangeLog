@@ -1,3 +1,9 @@
+2008-05-11  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	* src/lib/evil.c (getpid):
+	add wrapper around GetCurrentProcessId()
+
 2008-05-10  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/dlfcn/dlfcn.c: (dladdr):

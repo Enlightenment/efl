@@ -118,6 +118,12 @@ mkstemp(char *template)
    return fd;
 }
 
+pid_t
+getpid(void)
+{
+  return (pid_t)GetCurrentProcessId();
+}
+
 /* REMARK: Windows has no symbolic link. */
 /*         Nevertheless, it can create and read .lnk files */
 int
