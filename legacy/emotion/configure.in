@@ -125,6 +125,8 @@ emotion.spec
 src/Makefile
 src/lib/Makefile
 src/modules/Makefile
+src/modules/xine/Makefile
+src/modules/gstreamer/Makefile
 src/bin/Makefile
 data/Makefile
 debian/changelog

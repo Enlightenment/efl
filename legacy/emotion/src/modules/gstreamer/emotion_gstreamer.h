@@ -2,9 +2,13 @@
 #define __EMOTION_GSTREAMER_H__
 
 
+#include <Evas.h>
+#include <Ecore.h>
 #include <Ecore_Data.h>
 
 #include <gst/gst.h>
+
+#include "emotion_private.h"
 
 
 typedef struct _Emotion_Video_Sink Emotion_Video_Sink;
@@ -40,7 +44,7 @@ struct _Emotion_Gstreamer_Video
   /* eos */
   GstBus           *eos_bus;
   Ecore_Timer      *eos_timer;
-  
+
   /* Sinks */
   Ecore_List       *video_sinks;
   Ecore_List       *audio_sinks;
