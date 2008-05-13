@@ -29,6 +29,7 @@ _embryo_time_seconds(Embryo_Program *ep __UNUSED__, Embryo_Cell *params __UNUSED
 static Embryo_Cell
 _embryo_time_date(Embryo_Program *ep, Embryo_Cell *params)
 {
+   static time_t       last_tzset = 0;
    struct timeval      timev;
    struct tm          *tm;
    time_t              tt;
@@ -36,6 +37,11 @@ _embryo_time_date(Embryo_Program *ep, Embryo_Cell *params)
    if (params[0] != (8 * sizeof(Embryo_Cell))) return 0;
    gettimeofday(&timev, NULL);
    tt = (time_t)(timev.tv_sec);
+   if ((tt - last_tzset) < 1)
+     {
+	last_tzset = tt;
+	tzset();
+     }
    tm = localtime(&tt);
    if (tm)
      {
