@@ -303,7 +303,6 @@ em_init(Evas_Object  *obj,
    gst_element_set_state (ev->pipeline, GST_STATE_NULL);
    gst_object_unref (GST_OBJECT (ev->pipeline));
  failure_pipeline:
-   gst_deinit ();
  failure_gstreamer:
    free (ev);
 
@@ -322,7 +321,6 @@ em_shutdown(void *video)
    gst_element_set_state (ev->pipeline, GST_STATE_NULL);
    gst_object_unref (GST_OBJECT (ev->pipeline));
    gst_object_unref (GST_OBJECT (ev->eos_bus));
-   gst_deinit ();
 
    ecore_list_destroy (ev->video_sinks);
    ecore_list_destroy (ev->audio_sinks);
