@@ -1557,11 +1557,22 @@ _eet_data_dump_encode(Eet_Dictionary *ed,
 	     data = _eet_data_dump_encode(ed, n, &size);
 	     if (data)
 	       {
-		  eet_data_stream_write(ds, data, size);
+		  echnk = eet_data_chunk_new(data, size, node->name, node->type, node->type);
+		  eet_data_chunk_put(ed, echnk, ds);
+		  eet_data_chunk_free(echnk);
 		  free(data);
 	       }
 	  }
-	break;
+
+	/* Hash is somekind of special case, so we should embed it inside another chunk. */
+	*size_ret = ds->pos;
+	cdata = ds->data;
+
+	ds->data = NULL;
+	ds->size = 0;
+	eet_data_stream_free(ds);
+
+	return cdata;
       case EET_T_CHAR:
         data = eet_data_put_type(ed, node->type, &(node->data.c), &size);
 	if (data)
