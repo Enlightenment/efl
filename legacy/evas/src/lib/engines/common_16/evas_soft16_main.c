@@ -163,6 +163,7 @@ _evas_common_load_soft16_image_from_file(Image_Entry *ie)
    sim->cache_entry.w = sim->source->cache_entry.w;
    sim->cache_entry.h = sim->source->cache_entry.h;
    sim->flags.have_alpha = !!(im->flags & RGBA_IMAGE_HAS_ALPHA);
+   if (sim->stride < 0) sim->stride = _calc_stride(sim->cache_entry.w);
 
    return 0;
 }
