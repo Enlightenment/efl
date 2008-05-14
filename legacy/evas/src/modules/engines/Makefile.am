@@ -5,7 +5,6 @@ software_generic \
 buffer \
 cairo_common \
 cairo_x11 \
-directfb \
 fb \
 gl_common \
 gl_x11 \
