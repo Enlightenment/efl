@@ -297,6 +297,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 		    }
 		  inesc = 0;
 	       }
+	     if ((insub) && (s1[i] == '%')) pnum++;
 	     if ((insub) && (p < pnum))
 	       {
 		  switch (s1[i])
