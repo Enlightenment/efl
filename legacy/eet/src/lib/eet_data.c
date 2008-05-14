@@ -1654,6 +1654,13 @@ _eet_data_dump_encode(Eet_Dictionary *ed,
 	  }
 	break;
       case EET_T_INLINED_STRING:
+        data = eet_data_put_type(ed, node->type, &(node->data.str), &size);
+	if (data)
+	  {
+	     eet_data_stream_write(ds, data, size);
+	     free(data);
+	  }
+	break;
       case EET_T_STRING:
         data = eet_data_put_type(ed, node->type, &(node->data.str), &size);
 	if (data)
@@ -1868,6 +1875,11 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 					   else if (!strcmp(tok3, "string:"))
 					     {
 						n->type = EET_T_STRING;
+						n->data.str = strdup(tok4);
+					     }
+					   else if (!strcmp(tok3, "inlined:"))
+					     {
+						n->type = EET_T_INLINED_STRING;
 						n->data.str = strdup(tok4);
 					     }
 					   else
@@ -2295,6 +2307,18 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 			    snprintf(tbuf, sizeof(tbuf), "%llu", *((unsigned long long *)dd));
 			    dumpfunc(dumpdata, tbuf); break;
 			  case EET_T_INLINED_STRING:
+			      {
+				 char *s;
+
+				 s = *((char **)dd);
+				 if (s)
+				   {
+				      dumpfunc(dumpdata, "inlined: \"");
+				      _eet_data_dump_string_escape(dumpdata, dumpfunc, s);
+				      dumpfunc(dumpdata, "\"");
+				   }
+			      }
+			    break;
 			  case EET_T_STRING:
 			      {
 				 char *s;
