@@ -1862,7 +1862,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 						n->type = EET_T_USHORT;
 						sscanf(tok4, "%hu", &(n->data.us));
 					     }
-					   else if (!strcmp(tok3, "unit:"))
+					   else if (!strcmp(tok3, "uint:"))
 					     {
 						n->type = EET_T_UINT;
 						sscanf(tok4, "%u", &(n->data.ui));
