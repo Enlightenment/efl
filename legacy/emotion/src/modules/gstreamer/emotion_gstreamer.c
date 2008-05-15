@@ -237,8 +237,6 @@ em_init(Evas_Object  *obj,
    if (!emotion_video)
       return 0;
 
-   fprintf (stderr, "[Emotion] [gst] Init\n");
-
    ev = calloc(1, sizeof(Emotion_Gstreamer_Video));
    if (!ev) return 0;
 
@@ -304,8 +302,6 @@ em_shutdown(void *video)
    if (!ev)
      return 0;
 
-   fprintf(stderr, "[Emotion] [gst] shutdown\n");
-
    ecore_main_fd_handler_del(ev->fd_ev_handler);
 
    close(ev->fd_ev_write);
@@ -330,8 +326,6 @@ em_file_open(const char   *file,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
-
-   fprintf(stderr, "[Emotion] [gst] open\n");
 
    ev->pipeline = gst_pipeline_new ("pipeline");
    if (!ev->pipeline)
@@ -478,7 +472,6 @@ em_play(void   *video,
 {
    Emotion_Gstreamer_Video *ev;
 
-   fprintf(stderr, "[Emotion] [gst] play %p\n", ev->pipeline);
    ev = (Emotion_Gstreamer_Video *)video;
    gst_element_set_state (ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
@@ -500,7 +493,6 @@ em_stop(void *video)
      ev->eos_timer = NULL;
    }
 
-/*    fprintf(stderr, "[Emotion] [gst] stop\n"); */
    gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
    ev->play = 0;
 }
