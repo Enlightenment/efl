@@ -79,9 +79,10 @@ typedef struct _Eet_Data_Encode_Hash_Info   Eet_Data_Encode_Hash_Info;
 
 struct _Eet_Data_Basic_Type_Decoder
 {
-   int     size;
-   int   (*get) (const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
-   void *(*put) (Eet_Dictionary *ed, const void *src, int *size_ret);
+   int         size;
+   const char *name;
+   int       (*get) (const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
+   void     *(*put) (Eet_Dictionary *ed, const void *src, int *size_ret);
 };
 
 struct _Eet_Data_Chunk
@@ -202,18 +203,18 @@ static void     *_eet_data_descriptor_decode(const Eet_Dictionary *ed,
 
 const Eet_Data_Basic_Type_Decoder eet_coder[] =
 {
-     {sizeof(char),      eet_data_get_char,      eet_data_put_char     },
-     {sizeof(short),     eet_data_get_short,     eet_data_put_short    },
-     {sizeof(int),       eet_data_get_int,       eet_data_put_int      },
-     {sizeof(long long), eet_data_get_long_long, eet_data_put_long_long},
-     {sizeof(float),     eet_data_get_float,     eet_data_put_float    },
-     {sizeof(double),    eet_data_get_double,    eet_data_put_double   },
-     {sizeof(char),      eet_data_get_char,      eet_data_put_char     },
-     {sizeof(short),     eet_data_get_short,     eet_data_put_short    },
-     {sizeof(int),       eet_data_get_int,       eet_data_put_int      },
-     {sizeof(long long), eet_data_get_long_long, eet_data_put_long_long},
-     {sizeof(char *),    eet_data_get_string,    eet_data_put_string   },
-     {sizeof(char *),    eet_data_get_istring,   eet_data_put_istring  }
+     {sizeof(char),      "char",               eet_data_get_char,      eet_data_put_char     },
+     {sizeof(short),     "short",              eet_data_get_short,     eet_data_put_short    },
+     {sizeof(int),       "int",                eet_data_get_int,       eet_data_put_int      },
+     {sizeof(long long), "long_long",          eet_data_get_long_long, eet_data_put_long_long},
+     {sizeof(float),     "float",              eet_data_get_float,     eet_data_put_float    },
+     {sizeof(double),    "double",             eet_data_get_double,    eet_data_put_double   },
+     {sizeof(char),      "uchar",      eet_data_get_char,      eet_data_put_char     },
+     {sizeof(short),     "ushort",     eet_data_get_short,     eet_data_put_short    },
+     {sizeof(int),       "uint",       eet_data_get_int,       eet_data_put_int      },
+     {sizeof(long long), "ulong_long", eet_data_get_long_long, eet_data_put_long_long},
+     {sizeof(char *),    "string",             eet_data_get_string,    eet_data_put_string   },
+     {sizeof(char *),    "inlined_string",     eet_data_get_istring,   eet_data_put_istring  }
 };
 
 static int words_bigendian = -1;
@@ -1026,14 +1027,37 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 				Eet_Data_Descriptor *subtype)
 {
    Eet_Data_Element *ede;
+   Eet_Data_Descriptor *simple_type;
    /* int l1, l2, p1, p2, i;
    char *ps;*/
 
+   /* FIXME: Fail safely when realloc fail. */
    edd->elements.num++;
    edd->elements.set = realloc(edd->elements.set, edd->elements.num * sizeof(Eet_Data_Element));
    if (!edd->elements.set) return;
    ede = &(edd->elements.set[edd->elements.num - 1]);
    ede->name = name;
+
+   /*
+    * We do a special case when we do list,hash or whatever group of simple type.
+    * Instead of handling it in encode/decode/dump/undump, we create an
+    * implicit structure with only the simple type.
+    */
+   if (group_type > EET_G_UNKNOWN
+       && group_type < EET_G_LAST
+       && type != EET_T_UNKNOW
+       && subtype == NULL)
+     {
+	subtype = calloc(1, sizeof (Eet_Data_Descriptor));
+	if (!subtype) return ;
+	subtype->name = "implicit";
+	subtype->size = eet_coder[type - 1].size;
+	memcpy(&subtype->func, &edd->func, sizeof(subtype->func));
+
+	eet_data_descriptor_element_add(subtype, eet_coder[type - 1].name, type,
+					EET_G_UNKNOWN, 0, 0, NULL, NULL);
+	type = EET_T_UNKNOW;
+     }
 
    ede->type = type;
    ede->group_type = group_type;
