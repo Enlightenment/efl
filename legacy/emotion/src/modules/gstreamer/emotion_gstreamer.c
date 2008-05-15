@@ -237,7 +237,7 @@ em_init(Evas_Object  *obj,
    if (!emotion_video)
       return 0;
 
-   printf ("Init gstreamer...\n");
+   fprintf (stderr, "[Emotion] [gst] Init\n");
 
    ev = calloc(1, sizeof(Emotion_Gstreamer_Video));
    if (!ev) return 0;
@@ -248,14 +248,6 @@ em_init(Evas_Object  *obj,
    /* Initialization of gstreamer */
    if (!gst_init_check (NULL, NULL, &error))
      goto failure_gstreamer;
-
-   ev->pipeline = gst_pipeline_new ("pipeline");
-   if (!ev->pipeline)
-     goto failure_pipeline;
-
-   ev->eos_bus = gst_pipeline_get_bus (GST_PIPELINE (ev->pipeline));
-   if (!ev->eos_bus)
-     goto failure_bus;
 
    /* We allocate the sinks lists */
    ev->video_sinks = ecore_list_new ();
@@ -297,12 +289,6 @@ em_init(Evas_Object  *obj,
  failure_audio_sinks:
    ecore_list_destroy (ev->video_sinks);
  failure_video_sinks:
-   gst_object_unref (GST_OBJECT (ev->eos_bus));
- failure_bus:
-   /* this call is not really necessary */
-   gst_element_set_state (ev->pipeline, GST_STATE_NULL);
-   gst_object_unref (GST_OBJECT (ev->pipeline));
- failure_pipeline:
  failure_gstreamer:
    free (ev);
 
@@ -318,19 +304,18 @@ em_shutdown(void *video)
    if (!ev)
      return 0;
 
-   gst_element_set_state (ev->pipeline, GST_STATE_NULL);
-   gst_object_unref (GST_OBJECT (ev->pipeline));
-   gst_object_unref (GST_OBJECT (ev->eos_bus));
+   fprintf(stderr, "[Emotion] [gst] shutdown\n");
 
-   ecore_list_destroy (ev->video_sinks);
-   ecore_list_destroy (ev->audio_sinks);
+   ecore_main_fd_handler_del(ev->fd_ev_handler);
+
+   close(ev->fd_ev_write);
+   close(ev->fd_ev_read);
 
    /* FIXME: and the evas object ? */
    if (ev->obj_data) free(ev->obj_data);
 
-   ecore_main_fd_handler_del(ev->fd_ev_handler);
-   close(ev->fd_ev_write);
-   close(ev->fd_ev_read);
+   ecore_list_destroy (ev->video_sinks);
+   ecore_list_destroy (ev->audio_sinks);
 
    free(ev);
 
@@ -345,6 +330,19 @@ em_file_open(const char   *file,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
+
+   fprintf(stderr, "[Emotion] [gst] open\n");
+
+   ev->pipeline = gst_pipeline_new ("pipeline");
+   if (!ev->pipeline)
+     return 0;
+
+   ev->eos_bus = gst_pipeline_get_bus (GST_PIPELINE (ev->pipeline));
+   if (!ev->eos_bus)
+     {
+        gst_object_unref(ev->pipeline);
+        return 0;
+     }
 
    /* Evas Object */
    ev->obj = obj;
@@ -370,6 +368,7 @@ em_file_open(const char   *file,
       fprintf (stderr, "[Emotion] [gst] build CD Audio pipeline\n");
       if (!(emotion_pipeline_cdda_build (ev, device, track))) {
         fprintf (stderr, "[Emotion] [gst] error while building CD Audio pipeline\n");
+        gst_object_unref(ev->pipeline);
         return 0;
       }
    }
@@ -379,6 +378,7 @@ em_file_open(const char   *file,
       fprintf (stderr, "[Emotion] [gst] build DVD pipeline \n");
       if (!(emotion_pipeline_dvd_build (ev, NULL))) {
         fprintf (stderr, "[Emotion] [gst] error while building DVD pipeline\n");
+        gst_object_unref(ev->pipeline);
         return 0;
       }
    }
@@ -387,6 +387,7 @@ em_file_open(const char   *file,
      fprintf (stderr, "[Emotion] [gst] build URI pipeline \n");
      if (!(emotion_pipeline_uri_build (ev, file))) {
        fprintf (stderr, "[Emotion] [gst] error while building URI pipeline\n");
+        gst_object_unref(ev->pipeline);
        return 0;
      }
    }
@@ -401,6 +402,7 @@ em_file_open(const char   *file,
       fprintf (stderr, "[Emotion] [gst] build file pipeline \n");
       if (!(emotion_pipeline_file_build (ev, filename))) {
         fprintf (stderr, "[Emotion] [gst] error while building File pipeline\n");
+        gst_object_unref(ev->pipeline);
         return 0;
       }
    }
@@ -414,20 +416,20 @@ em_file_open(const char   *file,
 
      vsink = (Emotion_Video_Sink *)ecore_list_first_goto (ev->video_sinks);
      if (vsink) {
-        g_print ("video : \n");
-        g_print ("  size   : %dx%d\n", vsink->width, vsink->height);
-        g_print ("  fps    : %d/%d\n", vsink->fps_num, vsink->fps_den);
-        g_print ("  fourcc : %" GST_FOURCC_FORMAT "\n", GST_FOURCC_ARGS (vsink->fourcc));
-        g_print ("  length : %" GST_TIME_FORMAT "\n\n",
+        fprintf (stderr, "video : \n");
+        fprintf (stderr, "  size   : %dx%d\n", vsink->width, vsink->height);
+        fprintf (stderr, "  fps    : %d/%d\n", vsink->fps_num, vsink->fps_den);
+        fprintf (stderr, "  fourcc : %" GST_FOURCC_FORMAT "\n", GST_FOURCC_ARGS (vsink->fourcc));
+        fprintf (stderr, "  length : %" GST_TIME_FORMAT "\n\n",
                  GST_TIME_ARGS ((guint64)(vsink->length_time * GST_SECOND)));
      }
 
      asink = (Emotion_Audio_Sink *)ecore_list_first_goto (ev->audio_sinks);
      if (asink) {
-        g_print ("audio : \n");
-        g_print ("  chan   : %d\n", asink->channels);
-        g_print ("  rate   : %d\n", asink->samplerate);
-        g_print ("  length : %" GST_TIME_FORMAT "\n\n",
+        fprintf (stderr, "audio : \n");
+        fprintf (stderr, "  chan   : %d\n", asink->channels);
+        fprintf (stderr, "  rate   : %d\n", asink->samplerate);
+        fprintf (stderr, "  length : %" GST_TIME_FORMAT "\n\n",
                  GST_TIME_ARGS ((guint64)(asink->length_time * GST_SECOND)));
      }
    }
@@ -447,51 +449,6 @@ em_file_close(void *video)
    if (!ev)
      return;
 
-   printf("EX pause end...\n");
-   if (!emotion_object_play_get(ev->obj))
-     {
-	printf("  ... unpause\n");
-        emotion_pipeline_pause (ev->pipeline);
-     }
-
-   printf("EX stop\n");
-   gst_element_set_state (ev->pipeline, GST_STATE_READY);
-
-   /* we remove all the elements in the pipeline */
-   iter = gst_bin_iterate_elements (GST_BIN (ev->pipeline));
-   done = FALSE;
-   while (!done) {
-     switch (gst_iterator_next (iter, &data)) {
-     case GST_ITERATOR_OK: {
-       GstElement *element;
-
-       element = GST_ELEMENT (data);
-       if (element) {
-         gst_bin_remove (GST_BIN (ev->pipeline), element);
-       }
-       break;
-     }
-     case GST_ITERATOR_RESYNC: {
-       GstElement *element;
-
-       element = GST_ELEMENT (data);
-       if (element) {
-         gst_bin_remove (GST_BIN (ev->pipeline), element);
-       }
-       gst_iterator_resync (iter);
-       break;
-     }
-     case GST_ITERATOR_ERROR:
-       printf("error iter\n");
-       done = TRUE;
-       break;
-     case GST_ITERATOR_DONE:
-       done = TRUE;
-       break;
-     }
-   }
-   gst_iterator_free (iter);
-
    /* we clear the sink lists */
    ecore_list_clear (ev->video_sinks);
    ecore_list_clear (ev->audio_sinks);
@@ -501,6 +458,18 @@ em_file_close(void *video)
      ecore_timer_del (ev->eos_timer);
      ev->eos_timer = NULL;
    }
+
+   if (ev->eos_bus)
+     {
+        gst_object_unref (GST_OBJECT (ev->eos_bus));
+        ev->eos_bus = NULL;
+     }
+   if (ev->pipeline)
+     {
+        gst_element_set_state (ev->pipeline, GST_STATE_NULL);
+        gst_object_unref(ev->pipeline);
+        ev->pipeline = NULL;
+     }
 }
 
 static void
@@ -509,6 +478,7 @@ em_play(void   *video,
 {
    Emotion_Gstreamer_Video *ev;
 
+   fprintf(stderr, "[Emotion] [gst] play %p\n", ev->pipeline);
    ev = (Emotion_Gstreamer_Video *)video;
    gst_element_set_state (ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
@@ -524,14 +494,15 @@ em_stop(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
-   ev->play = 0;
-
    /* shutdown eos */
    if (ev->eos_timer) {
      ecore_timer_del (ev->eos_timer);
      ev->eos_timer = NULL;
    }
+
+/*    fprintf(stderr, "[Emotion] [gst] stop\n"); */
+   gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
+   ev->play = 0;
 }
 
 static void
@@ -1299,7 +1270,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
              buffer = buf[1];
              _emotion_frame_new(ev->obj);
              vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
-             _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
+             if (vsink) _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
           }
      }
    return 1;

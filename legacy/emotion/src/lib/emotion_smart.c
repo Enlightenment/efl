@@ -235,6 +235,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
      {
         int w, h;
 
+        if (sd->file) free(sd->file);
 	sd->file = strdup(file);
 	if (sd->module)
 	  {
@@ -256,6 +257,8 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	     sd->module->file_close(sd->video);
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
+        if (sd->file) free(sd->file);
+        sd->file = NULL;
      }
 }
 
@@ -838,6 +841,7 @@ _emotion_frame_new(Evas_Object *obj)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 //   printf("pix get set 1 %p\n", sd->obj);
    evas_object_image_pixels_dirty_set(sd->obj, 1);
+   evas_object_smart_callback_call(obj, "frame_decode", NULL);
 }
 
 EAPI void
@@ -851,7 +855,7 @@ _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
    if (len != sd->len) nlen = 1;
    sd->pos = pos;
    sd->len = len;
-   if (npos) evas_object_smart_callback_call(obj, "frame_decode", NULL);
+   if (npos) evas_object_smart_callback_call(obj, "position_update", NULL);
    if (nlen) evas_object_smart_callback_call(obj, "length_change", NULL);
 }
 

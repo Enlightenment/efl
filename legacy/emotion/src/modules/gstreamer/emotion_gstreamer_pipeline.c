@@ -122,6 +122,8 @@ file_new_decoded_pad_cb (GstElement *decodebin,
       gst_pad_link(new_pad, audiopad);
       gst_element_set_state (asink->sink, GST_STATE_PAUSED);
    }
+
+   free(str);
 }
 
 Emotion_Video_Sink *
