@@ -12,6 +12,7 @@
 #define __UNUSED__
 #endif
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -203,18 +204,18 @@ static void     *_eet_data_descriptor_decode(const Eet_Dictionary *ed,
 
 const Eet_Data_Basic_Type_Decoder eet_coder[] =
 {
-     {sizeof(char),      "char",               eet_data_get_char,      eet_data_put_char     },
-     {sizeof(short),     "short",              eet_data_get_short,     eet_data_put_short    },
-     {sizeof(int),       "int",                eet_data_get_int,       eet_data_put_int      },
-     {sizeof(long long), "long_long",          eet_data_get_long_long, eet_data_put_long_long},
-     {sizeof(float),     "float",              eet_data_get_float,     eet_data_put_float    },
-     {sizeof(double),    "double",             eet_data_get_double,    eet_data_put_double   },
+     {sizeof(char),      "char",       eet_data_get_char,      eet_data_put_char     },
+     {sizeof(short),     "short",      eet_data_get_short,     eet_data_put_short    },
+     {sizeof(int),       "int",        eet_data_get_int,       eet_data_put_int      },
+     {sizeof(long long), "long_long",  eet_data_get_long_long, eet_data_put_long_long},
+     {sizeof(float),     "float",      eet_data_get_float,     eet_data_put_float    },
+     {sizeof(double),    "double",     eet_data_get_double,    eet_data_put_double   },
      {sizeof(char),      "uchar",      eet_data_get_char,      eet_data_put_char     },
      {sizeof(short),     "ushort",     eet_data_get_short,     eet_data_put_short    },
      {sizeof(int),       "uint",       eet_data_get_int,       eet_data_put_int      },
      {sizeof(long long), "ulong_long", eet_data_get_long_long, eet_data_put_long_long},
-     {sizeof(char *),    "string",             eet_data_get_string,    eet_data_put_string   },
-     {sizeof(char *),    "inlined_string",     eet_data_get_istring,   eet_data_put_istring  }
+     {sizeof(char *),    "string",     eet_data_get_string,    eet_data_put_string   },
+     {sizeof(char *),    "inlined",    eet_data_get_istring,   eet_data_put_istring  }
 };
 
 static int words_bigendian = -1;
@@ -1281,13 +1282,10 @@ eet_data_descriptor_encode_hash_cb(void *hash __UNUSED__, const char *key, void 
 	data = NULL;
      }
 
+   assert(!IS_SIMPLE_TYPE(ede->type));
+
    /* Store data */
-   if (IS_SIMPLE_TYPE(ede->type))
-     data = eet_data_put_type(ed,
-                              ede->type,
-			      hdata,
-			      &size);
-   else if (ede->subtype)
+   if (ede->subtype)
      data = _eet_data_descriptor_encode(ed,
                                         ede->subtype,
                                         hdata,
@@ -2156,23 +2154,10 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 				 ptr = (void **)(((char *)data) + ede->offset);
 				 list = *ptr;
 				 data_ret = NULL;
-				 if (IS_SIMPLE_TYPE(type))
-				   {
-				      data_ret = calloc(1, eet_coder[type - 1].size);
-				      if (data_ret)
-					{
-					   _eet_freelist_add(data_ret);
-					   ret = eet_data_get_type(ed,
-                                                                   type,
-								   echnk.data,
-								   ((char *)echnk.data) + echnk.size,
-								   data_ret);
-					   if (ret <= 0) goto error;
-					}
-				      else
-					goto error;
-				   }
-				 else if (ede->subtype)
+
+				 assert(!IS_SIMPLE_TYPE(type));
+
+				 if (ede->subtype)
 				   data_ret = _eet_data_descriptor_decode(ed,
                                                                           ede->subtype,
 									  echnk.data,
@@ -2216,23 +2201,10 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 				 /* Read value */
 				 eet_data_chunk_get(ed, &echnk, p, size);
 				 if (!echnk.name) goto error;
-				 if (IS_SIMPLE_TYPE(type))
-				   {
-				      data_ret = calloc(1, eet_coder[type - 1].size);
-				      if (data_ret)
-					{
-					   _eet_freelist_add(data_ret);
-					   ret = eet_data_get_type(ed,
-                                                                   type,
-								   echnk.data,
-								   ((char *)echnk.data) + echnk.size,
-								   data_ret);
-					   if (ret <= 0) goto error;
-					}
-				      else
-					goto error;
-				   }
-				 else if (ede->subtype)
+
+				 assert(!IS_SIMPLE_TYPE(type));
+
+				 if (ede->subtype)
 				   {
 				      data_ret = _eet_data_descriptor_decode(ed,
                                                                              ede->subtype,
@@ -2411,24 +2383,16 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 			    void *data_ret;
 
 			    data_ret = NULL;
-			    if (IS_SIMPLE_TYPE(type))
-			      {
-				 data_ret = (void *)1;
-				 ret = eet_data_get_type(ed,
-                                                         type,
-							 echnk.data,
-							 ((char *)echnk.data) + echnk.size,
-							 dd);
-				 if (ret <= 0) goto error;
-			      }
-			    else
-			      data_ret = _eet_data_descriptor_decode(ed,
-                                                                     NULL,
-								     echnk.data,
-								     echnk.size,
-								     level + 2,
-								     dumpfunc,
-								     dumpdata);
+
+			    assert(!IS_SIMPLE_TYPE(type));
+
+			    data_ret = _eet_data_descriptor_decode(ed,
+								   NULL,
+								   echnk.data,
+								   echnk.size,
+								   level + 2,
+								   dumpfunc,
+								   dumpdata);
 			    if (!data_ret)
 			      goto error;
 			 }
@@ -2454,36 +2418,28 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 			    /* Read value */
 			    eet_data_chunk_get(ed, &echnk, p, size);
 			    if (!echnk.name) goto error;
-			    if (IS_SIMPLE_TYPE(type))
-			      {
-				 data_ret = (void *)1;
-				 ret = eet_data_get_type(ed,
-                                                         type,
-							 echnk.data,
-							 ((char *)echnk.data) + echnk.size,
-							 dd);
-				 if (ret <= 0) goto error;
-			      }
-			    else
-			      {
-				 char *s;
 
-				 s = key;
-				 if (s)
-				   {
-				      for (i = 0; i < level; i++) dumpfunc(dumpdata, "  ");
-				      dumpfunc(dumpdata, "    key \"");
-				      _eet_data_dump_string_escape(dumpdata, dumpfunc, s);
-				      dumpfunc(dumpdata, "\";\n");
-				   }
-				 data_ret = _eet_data_descriptor_decode(ed,
-                                                                        NULL,
-									echnk.data,
-									echnk.size,
-									level + 2,
-									dumpfunc,
-									dumpdata);
-			      }
+			    assert(!IS_SIMPLE_TYPE(type));
+
+			    {
+			       char *s;
+
+			       s = key;
+			       if (s)
+				 {
+				    for (i = 0; i < level; i++) dumpfunc(dumpdata, "  ");
+				    dumpfunc(dumpdata, "    key \"");
+				    _eet_data_dump_string_escape(dumpdata, dumpfunc, s);
+				    dumpfunc(dumpdata, "\";\n");
+				 }
+			       data_ret = _eet_data_descriptor_decode(ed,
+								      NULL,
+								      echnk.data,
+								      echnk.size,
+								      level + 2,
+								      dumpfunc,
+								      dumpdata);
+			    }
                             if (!data_ret)
 			      {
 				 goto error;
@@ -2711,12 +2667,9 @@ _eet_data_descriptor_encode(Eet_Dictionary *ed,
 		       l = *((void **)(((char *)data_in) + ede->offset));
 		       for (; l; l = edd->func.list_next(l))
 			 {
-			    if (IS_SIMPLE_TYPE(ede->type))
-			      data = eet_data_put_type(ed,
-                                                       ede->type,
-						       edd->func.list_data(l),
-						       &size);
-			    else if (ede->subtype)
+			    assert(!IS_SIMPLE_TYPE(ede->type));
+
+			    if (ede->subtype)
 			      data = _eet_data_descriptor_encode(ed,
                                                                  ede->subtype,
                                                                  edd->func.list_data(l),
