@@ -27,7 +27,7 @@ struct _Evas_Module_Api
 {
    int			version;
    Evas_Module_Type	type;
-   const char 		*name;
+   const char		*name;
    const char		*author;
 };
 
@@ -35,7 +35,7 @@ struct _Evas_Module_Api
 typedef struct _Evas_Module Evas_Module;
 struct _Evas_Module
 {
-   Evas_Module_Api 	*api;	
+   Evas_Module_Api	*api;
    void			*handle;	/* the dlopen handle */
    char			*path;		/* the path where this modules is */
    char			*name;		/* the name of the dir where this module is */
@@ -48,16 +48,16 @@ struct _Evas_Module
    void		*data;		/* some internal data for the module i.e the id for engines */
 
    Evas_Module_Type	type;		/* the type detected by the path */
-   
+
    int           ref; /* how many refs */
    int           last_used; /* the cycle count when it was last used */
-   
+
    unsigned char	loaded : 1;
 };
 
 
 /* the internals of the module api use this struct to reference a path with a module type
- * instead of deduce the type from the path. 
+ * instead of deduce the type from the path.
  * */
 typedef struct _Evas_Module_Path Evas_Module_Path;
 struct _Evas_Module_Path
@@ -69,7 +69,7 @@ struct _Evas_Module_Path
 typedef struct _Evas_Module_Engine Evas_Module_Engine;
 struct _Evas_Module_Engine
 {
-   int 			id;
+   int			id;
 };
 
 /* end of evas module api */
@@ -263,7 +263,7 @@ struct _Evas_Callbacks
    Evas_Object_List *callbacks;
    int               walking_list;
    unsigned char     deletions_waiting : 1;
-/*   
+/*
    Evas_Object_List *down;
    Evas_Object_List *up;
    Evas_Object_List *move;
@@ -399,7 +399,7 @@ struct _Evas_Object
 
    struct {
       struct {
-/*	 
+/*
 	 struct {
 	    int            x, y, w, h;
 	    int            validity;
@@ -655,10 +655,10 @@ struct _Evas_Func
    int  (*font_cache_get)                  (void *data);
 
    /* Engine functions will over time expand from here */
-   
+
    void (*font_hinting_set)                (void *data, void *font, int hinting);
    int  (*font_hinting_can_hint)           (void *data, int hinting);
-   
+
 /*    void (*image_rotation_set)              (void *data, void *image); */
 
 };
@@ -768,12 +768,12 @@ Evas_List *evas_font_dir_available_list(const Evas* evas);
 void evas_font_dir_available_list_free(Evas_List *available);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
-void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);   
+void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
 void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
-       
+
 extern int _evas_alloc_error;
 
 struct _Evas_Imaging_Image
@@ -787,7 +787,7 @@ struct _Evas_Imaging_Font
 };
 
 typedef struct _Evas_Mempool Evas_Mempool;
-   
+
 struct _Evas_Mempool
 {
    int           item_size;
@@ -816,9 +816,9 @@ int evas_async_events_shutdown(void);
 
 void _evas_walk(Evas *e);
 void _evas_unwalk(Evas *e);
-       
+
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
-       
+
 #define EVAS_API_OVERRIDE(func, api, prefix) \
      (api)->func = prefix##func
 #ifdef __cplusplus
