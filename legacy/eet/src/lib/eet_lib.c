@@ -1163,18 +1163,23 @@ eet_open(const char *file, Eet_File_Mode mode)
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
 	fp = fopen(file, "rb");
-	if (!fp) return NULL;
+	if (!fp) goto on_error;
 	if (fstat(fileno(fp), &file_stat))
 	  {
 	     fclose(fp);
-	     return NULL;
+	     fp = NULL;
+	     goto on_error;
 	  }
 	if ((mode == EET_FILE_MODE_READ) &&
 	    (file_stat.st_size < (sizeof(int) * 3)))
 	  {
 	     fclose(fp);
-	     return NULL;
+	     fp = NULL;
+	     goto on_error;
 	  }
+
+     on_error:
+	if (fp == NULL && mode == EET_FILE_MODE_READ) return NULL;
      }
    else
      {
@@ -1197,7 +1202,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    if (ef)
      {
 	/* reference it up and return it */
-        fclose(fp);
+	if (fp != NULL) fclose(fp);
 	ef->references++;
 	return ef;
      }
@@ -1221,8 +1226,11 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->data = NULL;
    ef->data_size = 0;
 
-   /* FIXME: Add new ed on EET_FILE_MODE_WRITE */
-   ef->ed = mode == EET_FILE_MODE_WRITE ? eet_dictionary_add() : NULL;
+   ef->ed = (mode == EET_FILE_MODE_WRITE)
+     || (ef->fp == NULL && mode == EET_FILE_MODE_READ_WRITE) ?
+     eet_dictionary_add() : NULL;
+
+   if (ef->fp == NULL && mode == EET_FILE_MODE_READ_WRITE) goto empty_file;
 
    /* if we can't open - bail out */
    if (eet_test_close(!ef->fp, ef))
@@ -1241,12 +1249,14 @@ eet_open(const char *file, Eet_File_Mode mode)
 	  return NULL;
      }
 
+ empty_file:
    /* we need to delete the original file in read-write mode and re-open for writing */
    if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
 	ef->readfp = ef->fp;
 	unlink(ef->path);
 	ef->fp = fopen(ef->path, "wb");
+	fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
      }
 
    /* add to cache */
