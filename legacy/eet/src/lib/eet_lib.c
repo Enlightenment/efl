@@ -1482,6 +1482,9 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    if (!efn)
      return NULL;
 
+   if (efn->offset < 0 && efn->data == NULL)
+     return NULL;
+
    /* get size (uncompressed, if compressed at all) */
    size = efn->data_size;
 
@@ -1590,6 +1593,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
 	     efn->size = data_size;
 	     efn->data_size = size;
 	     efn->data = data2;
+	     efn->offset = -1;
 	     exists_already = 1;
 	     break;
 	  }
@@ -1608,7 +1612,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
 
 	efn->next = ef->header->directory->nodes[hash];
 	ef->header->directory->nodes[hash] = efn;
-	efn->offset = 0;
+	efn->offset = -1;
 	efn->compression = !!compress;
 	efn->size = data_size;
 	efn->data_size = size;
@@ -1795,6 +1799,8 @@ find_node_by_name(Eet_File *ef, const char *name)
 static int
 read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len)
 {
+   if (efn->offset < 0) return 0;
+
    if (ef->data)
      {
 	if ((efn->offset + len) > ef->data_size) return 0;
