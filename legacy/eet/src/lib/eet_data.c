@@ -1007,6 +1007,8 @@ eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc)
    edd->func.hash_foreach = eddc->func.hash_foreach;
    edd->func.hash_add = eddc->func.hash_add;
    edd->func.hash_free = eddc->func.hash_free;
+   edd->func.str_direct_alloc = eddc->func.str_direct_alloc;
+   edd->func.str_direct_free = eddc->func.str_direct_free;
 
    return edd;
 }
