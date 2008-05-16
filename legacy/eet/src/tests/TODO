@@ -1,0 +1,3 @@
+The purpose of the current test is to check the validity of the result in a
+normal environment. But we should at some point also test the robustness of
+this library when for example malloc fail.

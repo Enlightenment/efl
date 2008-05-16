@@ -8,4 +8,37 @@
 	(IS_SIMPLE_TYPE) to alloc the correct amount (using the correct type 
 	offset). Also fixed a hash (EET_G_HASH) of simple types too.
 
+2008-05-14  Cedric BAIL
 
+	* Fix convertion from a text to a hash (EET_G_HASH).
+
+	* Fix inlined string (EET_T_INLINED_STRING) dump/undump by introducing
+	the new word for the parser 'inlined'.
+
+2008-05-15  Cedric BAIL
+
+	* Fix a typo preventing the parsing of unsigned int (EET_T_UINT).
+
+	* Fix group of simple type by implicitly creating a structure with
+	the simple type in it.
+
+	* Remove dead code handling group of simple type and put assert
+	instead.
+
+2008-05-16  Cedric BAIL
+
+	* Fix eet_data_descriptor3_new as it purpose was to introduce
+	str_direct_alloc/str_direct_free usage. Application should now receive
+	direct pointer to read only (mmaped) string.
+
+	* Fix EET_FILE_MODE_READ_WRITE when file doesn't exist.
+
+	* Fix some miss use of efn->offset.
+
+	* Introduce unit test in EFL. The current set provide an overall
+	coverage rate of 2111 of 2607 lines (81.0%) for eet. It helped
+	finding and fixing the bugs of the last three days.
+	  The test suite is based on library check. At this time we need
+	cvs version, look at http://check.sourceforge.net/ to find it.
+	  The covering is done by lcov and we also need the cvs version that
+	you can found at http://ltp.sourceforge.net/coverage/lcov.php.

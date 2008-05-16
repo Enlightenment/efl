@@ -29,6 +29,8 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+PKG_PROG_PKG_CONFIG
+
 WIN32_CFLAGS=""
 WIN32_LIBS=""
 lt_no_undefined=""
@@ -115,6 +117,73 @@ int main (int argc, char **argv) {
 ], AC_MSG_WARN([Cannot check when cross-compiling -- assuming null is okay])
 )
 
+dnl Unit Tests
+
+AC_ARG_ENABLE(tests,
+  [AC_HELP_STRING([--enable-tests], [Enable tests @<:@default=no@:>@])],
+  [
+   if test "x${enableval}" = "xyes" ; then
+     enable_tests="yes"
+   else
+     enable_tests="no"
+   fi
+  ],
+  [enable_tests="no"]
+)
+AC_MSG_CHECKING([if tests are built])
+AC_MSG_RESULT([${enable_tests}])
+
+if test "x${enable_tests}" = "xyes" ; then
+  PKG_CHECK_MODULES([CHECK],
+    [check >= 0.9.5],
+    [dummy="yes"],
+    [enable_tests="no"]
+  )
+fi
+
+AM_CONDITIONAL(EET_ENABLE_TESTS, test "x${enable_tests}" = "xyes")
+
+dnl Coverage
+
+AC_ARG_ENABLE(coverage,
+  [AC_HELP_STRING([--enable-coverage],
+    [compile with coverage profiling instrumentation @<:@default=no@:>@])],
+  [
+   if test "x${enableval}" = "xyes" ; then
+     enable_coverage="yes"
+   else
+     enable_coverage="no"
+   fi],
+  [enable_coverage="no"]
+)
+AC_MSG_CHECKING([whether to use profiling instrumentation])
+AC_MSG_RESULT($enable_coverage)
+
+if test "x$enable_tests" = "xno" -a "x$enable_coverage" = "xyes"; then
+  enable_coverage="no"
+fi
+
+if test "x$enable_coverage" = "xyes"; then
+  AC_CHECK_PROG(have_lcov,
+    [lcov],
+    [yes],
+    [no]
+  )
+  if test "x$have_lcov" = "xyes" ; then
+    COVERAGE_CFLAGS="-fprofile-arcs -ftest-coverage"
+    COVERAGE_LIBS="-lgcov"
+dnl remove any optimisation flag and force debug symbols
+    CFLAGS="-g -O0"
+  else
+    AC_MSG_WARN([lcov is not found, disable profiling instrumentation])
+    enable_coverage="no"
+  fi
+fi
+AC_SUBST(COVERAGE_CFLAGS)
+AC_SUBST(COVERAGE_LIBS)
+
+AM_CONDITIONAL(EET_ENABLE_COVERAGE, test "x$enable_coverage" = "xyes")
+
 #AM_CHECK_DOXYGEN()
 
 AC_OUTPUT([
@@ -124,6 +193,7 @@ eet.c
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
+src/tests/Makefile
 README
 eet.spec
 ])
@@ -140,6 +210,9 @@ echo "$PACKAGE_NAME $PACKAGE_VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
+echo
+echo "  Tests................: ${enable_tests}"
+echo "  Coverage.............: ${enable_coverage}"
 echo
 echo "  Compilation..........: make"
 echo

@@ -39,3 +39,11 @@ after the mingw32ce case
 3) run configure with the option
 
 --host=arm-wince-cegcc
+
+NOTE: If you want to be able to run make check, you need library check
+      from http://check.sourceforge.net/.
+
+NOTE: If you want to be able to run coverage test over eet, you will need
+      lcov from http://ltp.sourceforge.net/coverage/lcov.php.
+
+NOTE: For coverage support you also need check support.
