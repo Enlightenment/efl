@@ -40,5 +40,6 @@
 	finding and fixing the bugs of the last three days.
 	  The test suite is based on library check. At this time we need
 	cvs version, look at http://check.sourceforge.net/ to find it.
-	  The covering is done by lcov and we also need the cvs version that
-	you can found at http://ltp.sourceforge.net/coverage/lcov.php.
+	  The covering is done by gcov
+	  The html report is done by lcov version 1.6 or above.
+	You can found it at http://ltp.sourceforge.net/coverage/lcov.php.

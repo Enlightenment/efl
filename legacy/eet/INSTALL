@@ -11,39 +11,37 @@ Then to compile:
 To install (run this as root, or the user who handles installs):
     make install
 
-NOTE: You MUST make install Eet for it to run properly.
+To run the unit tests (See Note 5 below):
+    make check
 
-NOTE: For compilation with MinGW, fnmatch.h is probably missing.
-      That file can be found here:
+To get the coverage report (See Notes 6 and 7 below):
+    make coverage
+
+The report is created in the coverage/ subdir
+
+
+
+
+NOTE 1: You MUST make install Eet for it to run properly.
+
+NOTE 2: For compilation with MinGW, fnmatch.h is probably missing.
+        That file can be found here:
 http://www.koders.com/c/fid2B518462CB1EED3D4E31E271DB83CD1582F6EEBE.aspx
-      It should be installed in the mingw include directory.
+        It should be installed in the mingw include directory.
 
-NOTE: For compilation with mingw32ce, run configure with the option
+NOTE 3: For compilation with mingw32ce, run configure with the option
 
 --host=arm-wince-mingw32ce
 
-NOTE: For compilation with cegcc, you have to do the following steps:
+NOTE 4: For compilation with cegcc, follow the wiki:
 
-1) After having run autogen.sh, add in config.sub file:
+http://wiki.enlightenment.org/index.php/Category:EFL_Windows_CE
 
-	cegcc)
-		basic_machine=arm-unknown
-		os=-cegcc
-		;;
+NOTE 5: If you want to be able to run make check, you need library check
+        from http://check.sourceforge.net/.
 
-after the mingw32ce case
+NOTE 6: If you want to be able to run coverage test over eet, you will need
+        gcov (usually any distro provides it) and lcov from
+        http://ltp.sourceforge.net/coverage/lcov.php.
 
-2) in config.sub, add -cegcc* after -pe*. You should have a line like:
-	      | -cygwin* | -pe* | -cegcc* | -psos* | -moss* | -proelf* | -rtems* \
-
-3) run configure with the option
-
---host=arm-wince-cegcc
-
-NOTE: If you want to be able to run make check, you need library check
-      from http://check.sourceforge.net/.
-
-NOTE: If you want to be able to run coverage test over eet, you will need
-      lcov from http://ltp.sourceforge.net/coverage/lcov.php.
-
-NOTE: For coverage support you also need check support.
+NOTE 7: For coverage support you also need check support.
