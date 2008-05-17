@@ -45,6 +45,7 @@ ecore_print_warning(const char *function, const char *sparam)
 	   "\t%s\n\n"
 	   "\tbeing NULL. Please fix your program.\n", function, sparam);
    fflush(stderr);
+   if (getenv("ECORE_ERROR_ABORT")) abort();
 }
 
 /**
