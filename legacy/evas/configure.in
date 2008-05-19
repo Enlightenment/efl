@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(evas, 0.9.9.042, enlightenment-devel@lists.sourceforge.net)
+AC_INIT(evas, 0.9.9.043, enlightenment-devel@lists.sourceforge.net)
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(configure.in)
 AC_CANONICAL_BUILD
@@ -926,7 +926,7 @@ AC_ARG_ENABLE(font-loader-eet,
 
 # next, if she does, check whether EET is available
 if test "x$want_eet_image_loader" = "xyes" -o "x$want_eet_font_loader" = "xyes" -o "x$want_eet_image_loader" = "xauto" -o "x$want_eet_font_loader" = "xauto"; then
-  PKG_CHECK_MODULES(EET, eet, [have_eet="yes"],
+  PKG_CHECK_MODULES(EET, eet >= 1.0.1, [have_eet="yes"],
     [
       if test "x$want_eet_image_loader" = "xyes" -a "x$use_strict" = "xyes" -o "x$want_eet_font_loader" = "xyes" -a "x$use_strict" = "xyes"; then
         AC_MSG_ERROR([EET not found (strict dependencies checking)])

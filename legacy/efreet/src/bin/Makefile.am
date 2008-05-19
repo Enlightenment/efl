@@ -19,6 +19,7 @@ efreet_test_LDADD = $(top_builddir)/src/lib/libefreet.la \
                     $(top_builddir)/src/lib/libefreet_mime.la \
                     @ECORE_LIBS@
 efreet_test_SOURCES = \
+ef_test.h \
 ef_data_dirs.c \
 ef_icon_theme.c \
 ef_ini.c \

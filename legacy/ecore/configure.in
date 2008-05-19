@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(ecore, 0.9.9.042, enlightenment-devel@lists.sourceforge.net)
+AC_INIT(ecore, 0.9.9.043, enlightenment-devel@lists.sourceforge.net)
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(configure.in)
 AC_CANONICAL_BUILD
@@ -146,7 +146,7 @@ dnl ecore_ipc
 ECORE_CHECK_MODULE([Ipc], [yes], [$have_ecore_con])
 
 dnl ecore_config
-PKG_CHECK_MODULES(EET, [eet >= 0.9.10],
+PKG_CHECK_MODULES(EET, [eet >= 1.0.0],
   [ have_eet="yes" ],
   [ have_eet="no" ]
 )
