@@ -90,6 +90,8 @@ native       run_program      (program_id);
 native       get_drag_dir     (part_id);
 native       get_drag         (part_id, &Float:dx, &Float:dy);
 native       set_drag         (part_id, Float:dx, Float:dy);
+native       get_drag_size    (part_id, &Float:dx, &Float:dy);
+native       set_drag_size    (part_id, Float:dx, Float:dy);
 native       get_drag_step    (part_id, &Float:dx, &Float:dy);
 native       set_drag_step    (part_id, Float:dx, Float:dy);
 native       get_drag_page    (part_id, &Float:dx, &Float:dy);

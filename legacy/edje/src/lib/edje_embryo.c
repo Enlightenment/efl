@@ -80,6 +80,8 @@
  * Direction:get_drag_dir(part_id)
  * get_drag(part_id, &Float:dx, &Float:&dy)
  * set_drag(part_id, Float:dx, Float:dy)
+ * get_drag_size(part_id, &Float:dx, &Float:&dy)
+ * set_drag_size(part_id, Float:dx, Float:dy)
  * set_text(part_id, str[])
  * get_text(part_id, dst[], maxlen)
  * get_min_size(w, h)
@@ -993,6 +995,46 @@ _edje_embryo_fn_set_drag(Embryo_Program *ep, Embryo_Cell *params)
    if (part_id < 0) return 0;
    rp = ed->table_parts[part_id % ed->table_parts_size];
    edje_object_part_drag_value_set(ed->obj, rp->part->name,
+				   (double)EMBRYO_CELL_TO_FLOAT(params[2]),
+				   (double)EMBRYO_CELL_TO_FLOAT(params[3]));
+   return(0);
+}
+
+/* get_drag_size(part_id, &Float:dx, &Float:dy) */
+static Embryo_Cell
+_edje_embryo_fn_get_drag_size(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   double dx = 0.0, dy = 0.0;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   edje_object_part_drag_size_get(ed->obj, rp->part->name, &dx, &dy);
+   SETFLOAT(dx, params[2]);
+   SETFLOAT(dy, params[3]);
+
+   return 0;
+}
+
+/* set_drag_size(part_id, Float:dx, Float:dy) */
+static Embryo_Cell
+_edje_embryo_fn_set_drag_size(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   edje_object_part_drag_size_set(ed->obj, rp->part->name,
 				   (double)EMBRYO_CELL_TO_FLOAT(params[2]),
 				   (double)EMBRYO_CELL_TO_FLOAT(params[3]));
    return(0);
@@ -2216,6 +2258,8 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "get_drag_dir", _edje_embryo_fn_get_drag_dir);
    embryo_program_native_call_add(ep, "get_drag", _edje_embryo_fn_get_drag);
    embryo_program_native_call_add(ep, "set_drag", _edje_embryo_fn_set_drag);
+   embryo_program_native_call_add(ep, "get_drag_size", _edje_embryo_fn_get_drag_size);
+   embryo_program_native_call_add(ep, "set_drag_size", _edje_embryo_fn_set_drag_size);
    embryo_program_native_call_add(ep, "set_text", _edje_embryo_fn_set_text);
    embryo_program_native_call_add(ep, "get_text", _edje_embryo_fn_get_text);
    embryo_program_native_call_add(ep, "get_min_size", _edje_embryo_fn_get_min_size);
