@@ -1030,7 +1030,6 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 				Eet_Data_Descriptor *subtype)
 {
    Eet_Data_Element *ede;
-   Eet_Data_Descriptor *simple_type;
    /* int l1, l2, p1, p2, i;
    char *ps;*/
 
@@ -2148,7 +2147,6 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 			    break;
 			  case EET_G_LIST:
 			      {
-				 int ret;
 				 void *list = NULL;
 				 void **ptr;
 				 void *data_ret;
@@ -2381,7 +2379,6 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 		       break;
 		     case EET_G_LIST:
 			 {
-			    int ret;
 			    void *data_ret;
 
 			    data_ret = NULL;
