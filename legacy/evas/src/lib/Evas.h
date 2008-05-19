@@ -800,6 +800,7 @@ extern "C" {
    EAPI void              evas_event_feed_mouse_move        (Evas *e, int x, int y, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_mouse_in          (Evas *e, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_mouse_out         (Evas *e, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_mouse_cancel      (Evas *e, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_mouse_wheel       (Evas *e, int direction, int z, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_key_down          (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data);
    EAPI void              evas_event_feed_key_up            (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data);

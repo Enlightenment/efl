@@ -431,6 +431,32 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
  *
  */
 EAPI void
+evas_event_feed_mouse_cancel(Evas *e, unsigned int timestamp, const void *data)
+{
+   int i;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   if (e->events_frozen > 0) return;
+   
+   _evas_walk(e);
+   for (i = 0; i < 32; i++)
+     {
+	if ((e->pointer.button & (1 << i)))
+	  evas_event_feed_mouse_up(e, i + 1, 0, timestamp, data);
+     }
+   _evas_unwalk(e);
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
 evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestamp, const void *data)
 {
    Evas_List *l, *copy;
