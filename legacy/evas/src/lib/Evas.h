@@ -532,6 +532,7 @@ extern "C" {
    EAPI int               evas_object_image_stride_get      (const Evas_Object *obj);
    EAPI int               evas_object_image_load_error_get  (const Evas_Object *obj);
    EAPI void              evas_object_image_data_set        (Evas_Object *obj, void *data);
+   EAPI void             *evas_object_image_data_convert    (Evas_Object *obj, Evas_Colorspace to_cspace);
    EAPI void             *evas_object_image_data_get        (const Evas_Object *obj, Evas_Bool for_writing);
    EAPI void              evas_object_image_data_copy_set   (Evas_Object *obj, void *data);
    EAPI void              evas_object_image_data_update_add (Evas_Object *obj, int x, int y, int w, int h);

@@ -1039,6 +1039,9 @@ EAPI void evas_common_convert_color_rgb_to_hsv                     (int r, int g
 EAPI void evas_common_convert_color_hsv_to_rgb_int                 (int h, int s, int v, int *r, int *g, int *b);
 EAPI void evas_common_convert_color_rgb_to_hsv_int                 (int r, int g, int b, int *h, int *s, int *v);
 
+EAPI void *evas_common_convert_argb8888_to                         (void *data, int w, int h, int stride, Evas_Bool has_alpha, Evas_Colorspace cspace);
+EAPI void *evas_common_convert_rgb565_a5p_to                       (void *data, int w, int h, int stride, Evas_Bool has_alpha, Evas_Colorspace cspace);
+
 /****/
 EAPI void evas_common_scale_init                            (void);
 

@@ -67,6 +67,8 @@ static int evas_object_image_is_opaque(Evas_Object *obj);
 static int evas_object_image_was_opaque(Evas_Object *obj);
 static int evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
+static void *evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_Colorspace to_cspace);
+
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -706,6 +708,46 @@ evas_object_image_load_error_get(const Evas_Object *obj)
  */
 
 /**
+ * Converts the raw image data of the given image object to the
+ * specified colorspace.
+ *
+ * Note that this function does not modify the raw image data.
+ * If the requested colorspace is the same as the image colorspace
+ * nothing is done and NULL is returned. You should use
+ * evas_object_image_colorspace_get() to check the current image
+ * colorspace.
+ *
+ * See @ref evas_object_image_colorspace_get.
+ *
+ * @param obj The given image object.
+ * @param to_cspace The colorspace to which the image raw data will be converted.
+ * @return data A newly allocated data in the format specified by to_cspace.
+ * @ingroup Evas_Object_Image_Data
+ */
+EAPI void *
+evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
+{
+   Evas_Object_Image *o;
+   DATA32 *data;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (!o->engine_data) return NULL;
+   if (!o->cur.cspace == to_cspace) return NULL;
+   data = NULL;
+   o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
+								  o->engine_data,
+								  0,
+								  &data);
+   return evas_object_image_data_convert_internal(o, data, to_cspace);
+}
+
+/**
  * Sets the raw image data of the given image object.
  *
  * Note that the raw data must be of the same size and colorspace
@@ -1127,7 +1169,19 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
                                             EVAS_COLORSPACE_ARGB8888);
    if (im)
      {
-        ok = evas_common_save_image_to_file(im, file, key, quality, compress);
+	if (o->cur.cspace == EVAS_COLORSPACE_ARGB8888)
+	  im->image.data = data;
+	else
+	  im->image.data = evas_object_image_data_convert_internal(o,
+								   data,
+								   EVAS_COLORSPACE_ARGB8888);
+	if (im->image.data)
+	  {
+	     ok = evas_common_save_image_to_file(im, file, key, quality, compress);
+
+	     if (o->cur.cspace != EVAS_COLORSPACE_ARGB8888)
+	       free(im->image.data);
+	  }
 
 	evas_cache_image_drop(&im->cache_entry);
      }
@@ -2372,4 +2426,37 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
 
    return (a != 0);
+}
+
+static void *
+evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_Colorspace to_cspace)
+{
+   void *out = NULL;
+
+   if (!data)
+     return NULL;
+
+   switch (o->cur.cspace)
+     {
+	case EVAS_COLORSPACE_ARGB8888:
+	  out = evas_common_convert_argb8888_to(data,
+						o->cur.image.w,
+						o->cur.image.h,
+						o->cur.image.stride,
+						o->cur.has_alpha,
+						to_cspace);
+	  break;
+	case EVAS_COLORSPACE_RGB565_A5P:
+	  out = evas_common_convert_rgb565_a5p_to(data,
+						  o->cur.image.w,
+						  o->cur.image.h,
+						  o->cur.image.stride,
+						  o->cur.has_alpha,
+						  to_cspace);
+	  break;
+	default:
+	  break;
+     }
+
+   return out;
 }

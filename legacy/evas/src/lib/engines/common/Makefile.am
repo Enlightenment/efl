@@ -24,6 +24,7 @@ evas_op_mul_main_.c \
 evas_blend_main.c \
 evas_blit_main.c \
 evas_convert_color.c \
+evas_convert_colorspace.c \
 evas_convert_gry_1.c \
 evas_convert_gry_4.c \
 evas_convert_gry_8.c \
