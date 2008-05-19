@@ -513,7 +513,7 @@ eet_data_get_float(const Eet_Dictionary *ed, const void *src, const void *src_en
 static void *
 eet_data_put_float(Eet_Dictionary *ed, const void *src, int *size_ret)
 {
-   char  buf[64];
+   char  buf[128];
    int   index;
 
    _eet_double_to_string_convert(buf, (double)(*(float *)src));

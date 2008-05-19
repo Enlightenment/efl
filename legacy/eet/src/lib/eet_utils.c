@@ -150,7 +150,7 @@ _eet_string_to_double_convert(const char *src, long long *m, long *e)
 /*                                                         */
 /* where h is a hexadecimal number and e a decimal number. */
 void
-_eet_double_to_string_convert(char *des, double d)
+_eet_double_to_string_convert(char des[128], double d)
 {
    static const char look_up_table[] = {'0', '1', '2', '3', '4',
                                         '5', '6', '7', '8', '9',
@@ -199,5 +199,5 @@ _eet_double_to_string_convert(char *des, double d)
    else
      *(des++) = '+';
 
-   sprintf(des, "%d", p);
+   snprintf(des, 128, "%d", p);
 }

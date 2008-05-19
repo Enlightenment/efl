@@ -68,7 +68,7 @@ void  _eet_memfile_write_close(FILE *f);
 void  _eet_memfile_shutdown(void);
 int   _eet_hash_gen(const char *key, int hash_size);
 int   _eet_string_to_double_convert(const char *src, long long *m, long *e);
-void  _eet_double_to_string_convert(char *des, double d);
+void  _eet_double_to_string_convert(char des[128], double d);
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
