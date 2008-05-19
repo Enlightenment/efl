@@ -157,7 +157,13 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h)
    if (im->image.data == NULL) return -1;
 
 #ifdef HAVE_VALGRIND
+# ifdef VALGRIND_MAKE_READABLE  
    VALGRIND_MAKE_READABLE(im->image.data, siz);
+# else 
+#  ifdef VALGRIND_MAKE_MEM_DEFINED   
+   VALGRIND_MAKE_MEM_DEFINED(im->image.data, siz);
+#  endif   
+# endif
 #endif
 
    return 0;
