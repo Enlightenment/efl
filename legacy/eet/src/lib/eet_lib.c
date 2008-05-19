@@ -905,6 +905,7 @@ eet_internal_read2(Eet_File *ef)
    return ef;
 }
 
+#if EET_OLD_EET_FILE_FORMAT
 static Eet_File *
 eet_internal_read1(Eet_File *ef)
 {
@@ -914,6 +915,8 @@ eet_internal_read1(Eet_File *ef)
    int			 num_entries;
    int			 byte_entries;
    int			 i;
+
+   fprintf(stderr, "EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.\n", ef->path);
 
    /* build header table if read mode */
    /* geat header */
@@ -1066,7 +1069,9 @@ eet_internal_read1(Eet_File *ef)
      }
    return ef;
 }
+#endif
 
+#if EET_OLD_EET_FILE_FORMAT
 static Eet_File *
 eet_internal_read(Eet_File *ef)
 {
@@ -1080,8 +1085,10 @@ eet_internal_read(Eet_File *ef)
 
    switch (ntohl(*data))
      {
+#if EET_OLD_EET_FILE_FORMAT
       case EET_MAGIC_FILE:
 	return eet_internal_read1(ef);
+#endif
       case EET_MAGIC_FILE2:
 	return eet_internal_read2(ef);
       default:
@@ -1271,6 +1278,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    return ef;
 }
+#endif
 
 EAPI Eet_File_Mode
 eet_mode_get(Eet_File *ef)

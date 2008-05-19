@@ -184,6 +184,38 @@ AC_SUBST(COVERAGE_LIBS)
 
 AM_CONDITIONAL(EET_ENABLE_COVERAGE, test "x$enable_coverage" = "xyes")
 
+dnl Disable support for old eet file format.
+old_eet_file_format="yes"
+AC_ARG_ENABLE(old-eet-file-format,
+  AC_HELP_STRING(
+    [--disable-old-eet-file-format],
+    [disable old eet file format support. [[default=enabled]]]
+  ),
+  [ old_eet_file_format=$enableval ]
+)
+AM_CONDITIONAL(EET_OLD_EET_FILE_FORMAT, test "x$old_eet_file_format" = "xyes")
+if test "x$old_eet_file_format" = "xyes"; then
+  AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 1, [support old eet file format])
+else
+  AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 0, [support old eet file format])
+fi
+
+dnl Disable support for old eet file format.
+old_eet_file_format="yes"
+AC_ARG_ENABLE(old-eet-file-format,
+  AC_HELP_STRING(
+    [--disable-old-eet-file-format],
+    [disable old eet file format support. [[default=enabled]]]
+  ),
+  [ old_eet_file_format=$enableval ]
+)
+AM_CONDITIONAL(EET_OLD_EET_FILE_FORMAT, test "x$old_eet_file_format" = "xyes")
+if test "x$old_eet_file_format" = "xyes"; then
+  AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 1, [support old eet file format])
+else
+  AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 0, [support old eet file format])
+fi
+
 #AM_CHECK_DOXYGEN()
 
 AC_OUTPUT([
@@ -213,6 +245,10 @@ echo "Configuration Options Summary:"
 echo
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
+echo
+echo "  Old eet file format..: ${old_eet_file_format}"
+echo
+echo "  Old eet file format..: ${old_eet_file_format}"
 echo
 echo "  Compilation..........: make"
 echo
