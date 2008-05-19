@@ -106,6 +106,7 @@ native       set_text_class   (class[], font[], Float:size);
 native       get_text_class   (class[], font[], &Float:size);
 native       get_geometry     (part_id, &x, &y, &w, &h);
 native       get_mouse        (&x, &y);
+native       get_mouse_buttons();
 native       stop_program     (program_id);
 native       stop_programs_on (part_id);
 native       set_min_size     (Float:w, Float:h);

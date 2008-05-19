@@ -797,6 +797,17 @@ _edje_embryo_fn_get_mouse(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* get_mouse_buttons() */
+static Embryo_Cell
+_edje_embryo_fn_get_mouse_buttons(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+
+   CHKPARAM(0);
+   ed = embryo_program_data_get(ep);
+   return evas_pointer_button_down_mask_get(ed->evas);
+}
+
 /* emit(sig[], src[]) */
 static Embryo_Cell
 _edje_embryo_fn_emit(Embryo_Program *ep, Embryo_Cell *params)
@@ -2273,6 +2284,7 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "get_drag_page", _edje_embryo_fn_get_drag_page);
    embryo_program_native_call_add(ep, "set_drag_page", _edje_embryo_fn_set_drag_page);
    embryo_program_native_call_add(ep, "get_mouse", _edje_embryo_fn_get_mouse);
+   embryo_program_native_call_add(ep, "get_mouse_buttons", _edje_embryo_fn_get_mouse_buttons);
    embryo_program_native_call_add(ep, "stop_program", _edje_embryo_fn_stop_program);
    embryo_program_native_call_add(ep, "stop_programs_on", _edje_embryo_fn_stop_programs_on);
    embryo_program_native_call_add(ep, "set_min_size", _edje_embryo_fn_set_min_size);
