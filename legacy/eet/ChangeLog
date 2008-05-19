@@ -43,3 +43,13 @@
 	  The covering is done by gcov
 	  The html report is done by lcov version 1.6 or above.
 	You can found it at http://ltp.sourceforge.net/coverage/lcov.php.
+
+2008-05-19  Cedric BAIL
+
+	* Old Eet file format is now marked as deprecated and accessing old
+	file will display a warning. You can already remove completely all
+	code related to it, but it's still enabled by default. We will later
+	disable it by default and at some point drop the support completely.
+
+	* Remove use of strcpy and sprintf definitively.
+
