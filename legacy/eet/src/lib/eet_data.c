@@ -417,7 +417,7 @@ eet_data_put_string(Eet_Dictionary *ed, const void *src, int *size_ret)
    len = strlen(s);
    d = malloc(len + 1);
    if (!d) return NULL;
-   strcpy(d, s);
+   memcpy(d, s, len + 1);
    *size_ret = len + 1;
    return d;
 }
@@ -526,7 +526,7 @@ eet_data_put_float(Eet_Dictionary *ed, const void *src, int *size_ret)
         len = strlen(buf);
         d = malloc(len + 1);
         if (!d) return NULL;
-        strcpy(d, buf);
+	memcpy(d, buf, len + 1);
         *size_ret = len + 1;
         return d;
      }
@@ -589,7 +589,7 @@ eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret)
         len = strlen(buf);
         d = malloc(len + 1);
         if (!d) return NULL;
-        strcpy(d, buf);
+	memcpy(d, buf, len + 1);
         *size_ret = len + 1;
 
         return d;

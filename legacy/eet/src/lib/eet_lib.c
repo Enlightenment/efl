@@ -1134,6 +1134,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 {
    FILE         *fp;
    Eet_File	*ef;
+   int		 file_len;
    struct stat	 file_stat;
 
    if (!file)
@@ -1214,8 +1215,10 @@ eet_open(const char *file, Eet_File_Mode mode)
 	return ef;
      }
 
+   file_len = strlen(file) + 1;
+
    /* Allocate struct for eet file and have it zero'd out */
-   ef = malloc(sizeof(Eet_File) + strlen(file) + 1);
+   ef = malloc(sizeof(Eet_File) + file_len);
    if (!ef)
      return NULL;
 
@@ -1223,7 +1226,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->fp = fp;
    ef->readfp = NULL;
    ef->path = ((char *)ef) + sizeof(Eet_File);
-   strcpy(ef->path, file);
+   memcpy(ef->path, file, file_len);
    ef->magic = EET_MAGIC_FILE;
    ef->references = 1;
    ef->mode = mode;
