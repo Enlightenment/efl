@@ -903,6 +903,8 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
+   if (e->mode == ECORE_X_EVENT_MODE_GRAB)
+     evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
    evas_event_feed_mouse_out(ee->evas, e->time, NULL);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
