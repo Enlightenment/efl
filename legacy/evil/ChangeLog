@@ -1,3 +1,8 @@
+2008-05-20  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/dlfcn/dlfcn.h:
+	dli_fname ncorrectly declared. Thanks to Dmitriy Mazovka.
+
 2008-05-11  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
