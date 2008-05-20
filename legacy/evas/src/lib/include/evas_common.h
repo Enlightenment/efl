@@ -283,12 +283,12 @@ struct _Image_Entry
 
   struct
   {
-    unsigned int         loaded     : 1;
-    unsigned int         dirty      : 1;
-    unsigned int         activ      : 1;
-    unsigned int         need_data  : 1;
-    unsigned int         lru_nodata : 1;
-    unsigned int         cached     : 1;
+    Evas_Bool            loaded     : 1;
+    Evas_Bool            dirty      : 1;
+    Evas_Bool            activ      : 1;
+    Evas_Bool            need_data  : 1;
+    Evas_Bool            lru_nodata : 1;
+    Evas_Bool            cached     : 1;
   } flags;
 
   int                    references;
@@ -320,11 +320,11 @@ struct _Engine_Image_Entry
 
    struct
    {
-     unsigned int                cached : 1;
-     unsigned int                activ : 1;
-     unsigned int                dirty : 1;
-     unsigned int                loaded : 1;
-     unsigned int                need_parent : 1;
+     Evas_Bool                   cached : 1;
+     Evas_Bool                   activ : 1;
+     Evas_Bool                   dirty : 1;
+     Evas_Bool                   loaded : 1;
+     Evas_Bool                   need_parent : 1;
    } flags;
 
    int                           references;
@@ -347,7 +347,7 @@ struct _Cutout_Rects
 struct _RGBA_Draw_Context
 {
    struct {
-      char   use : 1;
+      Evas_Bool use : 1;
       DATA32 col;
    } mul;
    struct {
@@ -355,7 +355,7 @@ struct _RGBA_Draw_Context
    } col;
    struct RGBA_Draw_Context_clip {
       int    x, y, w, h;
-      char   use : 1;
+      Evas_Bool use : 1;
    } clip;
    Cutout_Rects cutout;
    struct {
@@ -373,7 +373,7 @@ struct _RGBA_Draw_Context
       int y, h;
    } sli;
    int            render_op;
-   unsigned char  anti_alias : 1;
+   Evas_Bool anti_alias : 1;
 };
 
 struct _RGBA_Pipe_Op
@@ -448,15 +448,15 @@ struct _RGBA_Image
    /* Colorspace stuff. */
    struct {
       void              *data;
-      unsigned int       no_free : 1;
-      unsigned int       dirty : 1;
+      Evas_Bool          no_free : 1;
+      Evas_Bool          dirty : 1;
    } cs;
 
    /* RGBA stuff */
    struct
    {
       DATA32            *data;
-      unsigned int       no_free : 1;
+      Evas_Bool          no_free : 1;
    } image;
 };
 
@@ -483,7 +483,7 @@ struct _RGBA_Gradient
 	float          angle;
 	int            direction;
 	float          offset;
-	unsigned char  has_alpha : 1;
+	Evas_Bool      has_alpha : 1;
      } map;
 
    struct {
@@ -515,8 +515,8 @@ struct _RGBA_Gradient
 
    int references;
 
-   unsigned char     imported_data : 1;
-   unsigned char     has_alpha : 1;
+   Evas_Bool imported_data : 1;
+   Evas_Bool has_alpha : 1;
 };
 
 struct _RGBA_Gradient_Type
@@ -698,12 +698,12 @@ struct _Tilebuf
 
 struct _Tilebuf_Tile
 {
-   unsigned char redraw : 1;
+   Evas_Bool redraw : 1;
 /* FIXME: need these flags later - but not now */
 /*
-   int done   : 1;
-   int edge   : 1;
-   int from   : 1;
+   Evas_Bool done   : 1;
+   Evas_Bool edge   : 1;
+   Evas_Bool from   : 1;
 
    struct {
       int dx, dy;
