@@ -113,12 +113,6 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
    hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
-   if (evas_list_alloc_error())
-     {
-	_evas_hash_alloc_error = 1;
-	free(el);
-	return hash;
-     }
    hash->population++;
    return hash;
 }
@@ -177,12 +171,6 @@ evas_hash_direct_add(Evas_Hash *hash, const char *key, const void *data)
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
    hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
-   if (evas_list_alloc_error())
-     {
-	_evas_hash_alloc_error = 1;
-	free(el);
-	return hash;
-     }
    hash->population++;
    return hash;
 }
