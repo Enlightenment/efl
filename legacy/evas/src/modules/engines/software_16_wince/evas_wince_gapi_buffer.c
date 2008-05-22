@@ -62,6 +62,7 @@ typedef int                      (*gapi_resume)(void);
 gapi_default_keys_get default_keys_get = NULL;
 gapi_suspend          suspend = NULL;
 gapi_resume           resume = NULL;
+_GAPI_Key_List       *default_keys = NULL;
 
 int
 evas_software_wince_gapi_suspend(void)
@@ -84,17 +85,7 @@ evas_software_wince_gapi_resume(void)
 void *
 evas_software_wince_gapi_default_keys(void)
 {
-   _GAPI_Key_List  key_list;
-   _GAPI_Key_List *keys;
-
-   keys = (_GAPI_Key_List *)malloc(sizeof(_GAPI_Key_List));
-   if (!keys)
-     return NULL;
-
-   key_list = default_keys_get(GX_NORMALKEYS);
-   memcpy(keys, &key_list, sizeof(_GAPI_Key_List));
-
-   return keys;
+   return default_keys;
 }
 
 
@@ -202,7 +193,16 @@ evas_software_wince_gapi_init (HWND window)
    priv->draw_begin = draw_begin;
    priv->draw_end = draw_end;
 
-   /* Ipaq H38** and H39** are completely buggy */
+   key_list = default_keys_get(GX_NORMALKEYS);
+   default_keys = (_GAPI_Key_List *)malloc(sizeof(_GAPI_Key_List));
+   if (!default_keys)
+     {
+        printf ("error : GXOpenInput\n");
+        goto close_input;
+     }
+   memcpy(default_keys, &key_list, sizeof(_GAPI_Key_List));
+
+   /* GAPI on Ipaq H38** and H39** is completely buggy */
    /* They are detected as portrait device (width = 240 and height = 320) */
    /* but the framebuffer is managed like a landscape device : */
    /*
@@ -252,6 +252,10 @@ v |         |
         priv->width = prop.cyHeight;
         priv->height = prop.cxWidth;
         priv->stride = prop.cbxPitch;
+        default_keys->vkA = 193;
+        default_keys->vkB = 194;
+        default_keys->vkC = 195;
+        default_keys->vkStart = 196;
      }
    else
      {
@@ -262,6 +266,8 @@ v |         |
 
    return priv;
 
+ close_input:
+   input_close();
  close_display:
    display_close();
  free_lib:
