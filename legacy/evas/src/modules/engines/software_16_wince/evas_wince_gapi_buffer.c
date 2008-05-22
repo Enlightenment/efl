@@ -8,6 +8,21 @@ typedef int (*evas_engine_wince_close_input)();
 typedef struct Evas_Engine_WinCE_GAPI_Priv Evas_Engine_WinCE_GAPI_Priv;
 
 
+#define GETGXINFO 0x00020000
+
+typedef struct
+{
+    long Version;               //00 (should filled with 100 before calling ExtEscape)
+    void *pvFrameBuffer;        //04
+    unsigned long cbStride;     //08
+    unsigned long cxWidth;      //0c
+    unsigned long cyHeight;     //10
+    unsigned long cBPP;         //14
+    unsigned long ffFormat;     //18
+    char Unused[0x84 - 7 * 4];
+} _GXDeviceInfo;
+
+
 #define LINK(type,name,import) \
   name = (gapi_##type)GetProcAddress (gapi_lib, import)
 
@@ -96,6 +111,7 @@ struct Evas_Engine_WinCE_GAPI_Priv
    gapi_input_close   close_input;
    gapi_draw_begin    draw_begin;
    gapi_draw_end      draw_end;
+   void              *buffer;
    int                width;
    int                height;
    int                stride;
@@ -249,6 +265,10 @@ v |         |
         (oemstr[13] == '3') &&
         (oemstr[14] == '9')))
      {
+        _GXDeviceInfo gxInfo = { 0 };
+        HDC           dc;
+        int           result;
+
         priv->width = prop.cyHeight;
         priv->height = prop.cxWidth;
         priv->stride = prop.cbxPitch;
@@ -256,16 +276,35 @@ v |         |
         default_keys->vkB = 194;
         default_keys->vkC = 195;
         default_keys->vkStart = 196;
+
+        dc = GetDC (window);
+        if (!dc)
+          goto free_keys;
+
+        gxInfo.Version = 100;
+        result = ExtEscape(dc, GETGXINFO, 0, NULL, sizeof(gxInfo),
+                           (char *) &gxInfo);
+        if (result <= 0)
+          {
+             ReleaseDC(window, dc);
+             goto free_keys;
+          }
+
+        priv->buffer = gxInfo.pvFrameBuffer;
+        ReleaseDC(window, dc);
      }
    else
      {
         priv->width = prop.cxWidth;
         priv->height = prop.cyHeight;
         priv->stride = prop.cbyPitch;
+        priv->buffer = NULL;
      }
 
    return priv;
 
+ free_keys:
+   free(default_keys);
  close_input:
    input_close();
  close_display:
@@ -337,6 +376,9 @@ evas_software_wince_gapi_output_buffer_paste(FB_Output_Buffer *fbob)
    buffer = priv->draw_begin();
    if (!buffer)
      return;
+
+   printf ("buffers : %p %p\n", buffer, priv->buffer);
+   if (priv->buffer) buffer = priv->buffer;
 
    if ((fbob->im->cache_entry.w == priv->width) &&
        (fbob->im->cache_entry.h == priv->height))
