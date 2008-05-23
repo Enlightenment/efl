@@ -3,7 +3,6 @@
 
 
 typedef int (*evas_engine_wince_close_display)();
-typedef int (*evas_engine_wince_close_input)();
 
 typedef struct Evas_Engine_WinCE_GAPI_Priv Evas_Engine_WinCE_GAPI_Priv;
 
@@ -43,41 +42,16 @@ typedef struct
    DWORD ffFormat;
 } _GAPI_Display_Properties;
 
-typedef struct
-{
-  short vkUp;        // key for up
-  POINT ptUp;        // x,y position of key/button.  Not on screen but in screen coordinates.
-  short vkDown;
-  POINT ptDown;
-  short vkLeft;
-  POINT ptLeft;
-  short vkRight;
-  POINT ptRight;
-  short vkA;
-  POINT ptA;
-  short vkB;
-  POINT ptB;
-  short vkC;
-  POINT ptC;
-  short vkStart;
-  POINT ptStart;
-} _GAPI_Key_List;
-
 typedef int                      (*gapi_display_open)(HWND hWnd, DWORD dwFlags);
 typedef int                      (*gapi_display_close)();
 typedef _GAPI_Display_Properties (*gapi_display_properties_get)(void);
 typedef void*                    (*gapi_draw_begin)(void);
 typedef int                      (*gapi_draw_end)(void);
-typedef int                      (*gapi_input_open)(void);
-typedef int                      (*gapi_input_close)(void);
-typedef _GAPI_Key_List           (*gapi_default_keys_get)(int iOptions);
 typedef int                      (*gapi_suspend)(void);
 typedef int                      (*gapi_resume)(void);
 
-gapi_default_keys_get default_keys_get = NULL;
 gapi_suspend          suspend = NULL;
 gapi_resume           resume = NULL;
-_GAPI_Key_List       *default_keys = NULL;
 
 int
 evas_software_wince_gapi_suspend(void)
@@ -97,18 +71,11 @@ evas_software_wince_gapi_resume(void)
      return 0;
 }
 
-void *
-evas_software_wince_gapi_default_keys(void)
-{
-   return default_keys;
-}
-
 
 struct Evas_Engine_WinCE_GAPI_Priv
 {
    HMODULE            lib;
    gapi_display_close close_display;
-   gapi_input_close   close_input;
    gapi_draw_begin    draw_begin;
    gapi_draw_end      draw_end;
    void              *buffer;
@@ -122,7 +89,6 @@ evas_software_wince_gapi_init (HWND window)
 {
     WCHAR                       oemstr[100];
    _GAPI_Display_Properties     prop;
-   _GAPI_Key_List               key_list;
    HMODULE                      gapi_lib;
    Evas_Engine_WinCE_GAPI_Priv *priv;
 
@@ -131,8 +97,6 @@ evas_software_wince_gapi_init (HWND window)
    gapi_display_properties_get  display_properties_get = NULL;
    gapi_draw_begin              draw_begin = NULL;
    gapi_draw_end                draw_end = NULL;
-   gapi_input_open              input_open = NULL;
-   gapi_input_close             input_close = NULL;
 
    priv = (Evas_Engine_WinCE_GAPI_Priv *)malloc(sizeof(Evas_Engine_WinCE_GAPI_Priv));
    if (!priv)
@@ -153,9 +117,6 @@ evas_software_wince_gapi_init (HWND window)
    LINK(display_properties_get, display_properties_get, L"?GXGetDisplayProperties@@YA?AUGXDisplayProperties@@XZ");
    LINK(draw_begin, draw_begin, L"?GXBeginDraw@@YAPAXXZ");
    LINK(draw_end, draw_end, L"?GXEndDraw@@YAHXZ");
-   LINK(input_open, input_open, L"?GXOpenInput@@YAHXZ" );
-   LINK(input_close, input_close, L"?GXCloseInput@@YAHXZ" );
-   LINK(default_keys_get, default_keys_get, L"?GXGetDefaultKeys@@YA?AUGXKeyList@@H@Z");
    LINK(suspend, suspend, L"?GXSuspend@@YAHXZ" );
    LINK(resume, resume, L"?GXResume@@YAHXZ" );
 
@@ -164,9 +125,6 @@ evas_software_wince_gapi_init (HWND window)
        !display_properties_get ||
        !draw_begin ||
        !draw_end ||
-       !input_open ||
-       !input_close ||
-       !default_keys_get ||
        !suspend ||
        !resume)
      {
@@ -197,26 +155,10 @@ evas_software_wince_gapi_init (HWND window)
         goto close_display;
      }
 
-   if (!input_open())
-     {
-        printf ("error : GXOpenInput\n");
-        goto close_display;
-     }
-
    priv->lib = gapi_lib;
    priv->close_display = display_close;
-   priv->close_input = input_close;
    priv->draw_begin = draw_begin;
    priv->draw_end = draw_end;
-
-   key_list = default_keys_get(GX_NORMALKEYS);
-   default_keys = (_GAPI_Key_List *)malloc(sizeof(_GAPI_Key_List));
-   if (!default_keys)
-     {
-        printf ("error : GXOpenInput\n");
-        goto close_input;
-     }
-   memcpy(default_keys, &key_list, sizeof(_GAPI_Key_List));
 
    /* GAPI on Ipaq H38** and H39** is completely buggy */
    /* They are detected as portrait device (width = 240 and height = 320) */
@@ -272,14 +214,10 @@ v |         |
         priv->width = prop.cyHeight;
         priv->height = prop.cxWidth;
         priv->stride = prop.cbxPitch;
-        default_keys->vkA = 193;
-        default_keys->vkB = 194;
-        default_keys->vkC = 195;
-        default_keys->vkStart = 196;
 
         dc = GetDC (window);
         if (!dc)
-          goto free_keys;
+          goto close_display;
 
         gxInfo.Version = 100;
         result = ExtEscape(dc, GETGXINFO, 0, NULL, sizeof(gxInfo),
@@ -287,7 +225,7 @@ v |         |
         if (result <= 0)
           {
              ReleaseDC(window, dc);
-             goto free_keys;
+             goto close_display;
           }
 
         priv->buffer = gxInfo.pvFrameBuffer;
@@ -303,10 +241,6 @@ v |         |
 
    return priv;
 
- free_keys:
-   free(default_keys);
- close_input:
-   input_close();
  close_display:
    display_close();
  free_lib:
@@ -322,7 +256,6 @@ evas_software_wince_gapi_shutdown(void *priv)
    Evas_Engine_WinCE_GAPI_Priv *p;
 
    p = (Evas_Engine_WinCE_GAPI_Priv *)priv;
-   p->close_input();
    p->close_display();
    suspend = NULL;
    resume = NULL;

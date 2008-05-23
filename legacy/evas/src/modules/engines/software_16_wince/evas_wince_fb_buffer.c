@@ -2,6 +2,21 @@
 #include "evas_engine.h"
 
 
+#define GETGXINFO 0x00020000
+
+typedef struct GXDeviceInfo
+{
+    long Version;               //00 (should filled with 100 before calling ExtEscape)
+    void *pvFrameBuffer;        //04
+    unsigned long cbStride;     //08
+    unsigned long cxWidth;      //0c
+    unsigned long cyHeight;     //10
+    unsigned long cBPP;         //14
+    unsigned long ffFormat;     //18
+    char Unused[0x84 - 7 * 4];
+} GXDeviceInfo;
+
+
 #define GETRAWFRAMEBUFFER 0x00020001
 
 typedef struct _RawFrameBufferInfo
@@ -25,10 +40,10 @@ struct Evas_Engine_WinCE_FB_Priv
    void *buffer;
 };
 
-
 void *
 evas_software_wince_fb_init (HWND   window)
 {
+   WCHAR                      oemstr[100];
    RawFrameBufferInfo         rfbi;
    HDC                        dc;
    Evas_Engine_WinCE_FB_Priv *priv;
@@ -42,6 +57,36 @@ evas_software_wince_fb_init (HWND   window)
      {
         free(priv);
         return NULL;
+     }
+
+   SystemParametersInfo (SPI_GETOEMINFO, sizeof (oemstr), oemstr, 0);
+   if (((oemstr[12] == 'H') &&
+        (oemstr[13] == '3') &&
+        (oemstr[14] == '8')) ||
+       ((oemstr[12] == 'H') &&
+        (oemstr[13] == '3') &&
+        (oemstr[14] == '9')))
+     {
+        GXDeviceInfo gxInfo = { 0 };
+        int          result;
+
+        gxInfo.Version = 100;
+        result = ExtEscape(dc, GETGXINFO, 0, NULL, sizeof(gxInfo),
+                           (char *) &gxInfo);
+        if (result <= 0)
+          {
+             ReleaseDC(window, dc);
+             free(priv);
+             return NULL;
+          }
+
+        priv->width = gxInfo.cyHeight;
+        priv->height = gxInfo.cxWidth;
+        priv->buffer = gxInfo.pvFrameBuffer;
+
+        ReleaseDC(window, dc);
+
+        return priv;
      }
 
    if (!ExtEscape(dc, GETRAWFRAMEBUFFER, 0, 0, sizeof(rfbi), (char *) &rfbi)||

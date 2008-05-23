@@ -83,18 +83,6 @@ _resume(int backend)
      }
 }
 
-static void *
-_default_keys(int backend)
-{
-   switch (backend)
-     {
-      case 2: /* gapi */
-         return evas_software_wince_gapi_default_keys();
-      default: /* other engines do not need it */
-         return NULL;
-     }
-}
-
 /* engine api this module provides */
 static void *
 eng_info(Evas *e)
@@ -106,7 +94,6 @@ eng_info(Evas *e)
    info->magic.magic = rand();
    info->func.suspend = _suspend;
    info->func.resume = _resume;
-   info->func.default_keys = _default_keys;
    return info;
    e = NULL;
 }

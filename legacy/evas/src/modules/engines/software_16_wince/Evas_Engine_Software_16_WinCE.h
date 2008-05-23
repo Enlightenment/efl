@@ -22,7 +22,6 @@ struct _Evas_Engine_Info_Software_16_WinCE
    struct {
       int   (*suspend) (int backend);
       int   (*resume)  (int backend);
-      void *(*default_keys)  (int backend);
    } func;
 };
 
