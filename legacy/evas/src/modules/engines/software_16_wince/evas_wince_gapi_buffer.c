@@ -151,7 +151,7 @@ evas_software_wince_gapi_init (HWND window)
    if ((GetSystemMetrics(SM_CXSCREEN) != (int)prop.cxWidth) ||
        (GetSystemMetrics(SM_CYSCREEN) != (int)prop.cyHeight))
      {
-        printf ("error : GAPI format mismatch\n");
+        printf ("error : GAPI size mismatch\n");
         goto close_display;
      }
 
@@ -310,7 +310,6 @@ evas_software_wince_gapi_output_buffer_paste(FB_Output_Buffer *fbob)
    if (!buffer)
      return;
 
-   printf ("buffers : %p %p\n", buffer, priv->buffer);
    if (priv->buffer) buffer = priv->buffer;
 
    if ((fbob->im->cache_entry.w == priv->width) &&
