@@ -144,7 +144,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    FREESTRC(ie->key);
 
    cache->func.surface_delete(ie);
-   cache->func.delete(ie);
+   cache->func.dealloc(ie);
 }
 
 static Image_Entry *

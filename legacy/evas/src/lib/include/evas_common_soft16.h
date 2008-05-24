@@ -4,6 +4,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef always_inline
 #if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
 #    define always_inline __attribute__((always_inline)) inline
@@ -135,5 +139,9 @@ EAPI void                soft16_line_draw(Soft16_Image *dst, RGBA_Draw_Context *
 EAPI void               *soft16_font_glyph_new(void *data, RGBA_Font_Glyph *fg);
 EAPI void                soft16_font_glyph_free(void *ext_dat);
 EAPI void                soft16_font_glyph_draw(void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

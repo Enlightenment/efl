@@ -130,9 +130,9 @@ _evas_cache_engine_image_dealloc(Evas_Cache_Engine_Image *cache, Engine_Image_En
    cache->func.destructor(eim);
    if (im) evas_cache_image_drop(im);
 
-   if (cache->func.delete)
+   if (cache->func.dealloc)
      {
-        cache->func.delete(eim);
+        cache->func.dealloc(eim);
      }
    else
      {
