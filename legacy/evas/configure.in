@@ -50,7 +50,7 @@ case "$host_os" in
                         WIN32_CFLAGS="-mwin32"
 			lt_enable_auto_import="-Wl,--enable-auto-import"
                 fi
-                lt_no_undefined="-no-undefined "
+                lt_no_undefined="-no-undefined"
                 ;;
 esac
 AC_SUBST(WIN32_CFLAGS)
