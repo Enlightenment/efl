@@ -46,4 +46,27 @@ int               evas_software_wince_gapi_suspend(void);
 int               evas_software_wince_gapi_resume(void);
 
 
+/* DirectDraw */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+void             *evas_software_wince_ddraw_init (HWND window);
+FB_Output_Buffer *evas_software_wince_ddraw_output_buffer_new (void *priv,
+                                                            int   width,
+                                                            int   height);
+void              evas_software_wince_ddraw_shutdown(void *priv);
+void              evas_software_wince_ddraw_output_buffer_free (FB_Output_Buffer *fbob);
+void              evas_software_wince_ddraw_output_buffer_paste (FB_Output_Buffer *fbob);
+
+void              evas_software_wince_ddraw_surface_resize(FB_Output_Buffer *fbob);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
 #endif /* __EVAS_ENGINE_H__ */

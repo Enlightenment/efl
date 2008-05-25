@@ -19,7 +19,8 @@ module_la_SOURCES = \
 evas_engine.h \
 evas_engine.c \
 evas_wince_fb_buffer.c \
-evas_wince_gapi_buffer.c
+evas_wince_gapi_buffer.c \
+evas_wince_ddraw_buffer.cpp
 
 module_la_CFLAGS = @WIN32_CFLAGS@
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la

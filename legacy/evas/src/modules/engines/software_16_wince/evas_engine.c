@@ -204,6 +204,20 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_paste = evas_software_wince_gapi_output_buffer_paste;
               re->backend_surface_resize = evas_software_wince_gapi_surface_resize;
               break;
+           case 3: /* DirectDraw */
+              re->backend = EVAS_ENGINE_WINCE_DDRAW;
+              re->backend_priv = evas_software_wince_ddraw_init(info->info.window);
+              if (!re->backend_priv)
+                {
+                   free(re);
+                   return;
+                }
+              re->backend_shutdown = evas_software_wince_ddraw_shutdown;
+              re->backend_output_buffer_new = evas_software_wince_ddraw_output_buffer_new;
+              re->backend_output_buffer_free = evas_software_wince_ddraw_output_buffer_free;
+              re->backend_output_buffer_paste = evas_software_wince_ddraw_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_ddraw_surface_resize;
+              break;
            default:
               free(re);
               return;
@@ -250,6 +264,20 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_free = evas_software_wince_gapi_output_buffer_free;
               re->backend_output_buffer_paste = evas_software_wince_gapi_output_buffer_paste;
               re->backend_surface_resize = evas_software_wince_gapi_surface_resize;
+              break;
+           case 3: /* DirectDraw */
+              re->backend = EVAS_ENGINE_WINCE_DDRAW;
+              re->backend_priv = evas_software_wince_ddraw_init(info->info.window);
+              if (!re->backend_priv)
+                {
+                   free(re);
+                   return;
+                }
+              re->backend_shutdown = evas_software_wince_ddraw_shutdown;
+              re->backend_output_buffer_new = evas_software_wince_ddraw_output_buffer_new;
+              re->backend_output_buffer_free = evas_software_wince_ddraw_output_buffer_free;
+              re->backend_output_buffer_paste = evas_software_wince_ddraw_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_ddraw_surface_resize;
               break;
            default:
               free(re);

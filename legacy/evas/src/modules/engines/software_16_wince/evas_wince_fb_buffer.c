@@ -162,6 +162,6 @@ evas_software_wince_fb_output_buffer_paste(FB_Output_Buffer *fbob)
 }
 
 void
-evas_software_wince_fb_surface_resize(FB_Output_Buffer *ddob)
+evas_software_wince_fb_surface_resize(FB_Output_Buffer *fbob)
 {
 }
