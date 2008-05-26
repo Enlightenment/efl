@@ -84,6 +84,7 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_RGB565_A5P /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
+typedef struct _Evas_Array            Evas_Array; /**< A generic vector */
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
@@ -103,6 +104,14 @@ typedef int           Evas_Coord;
 typedef int           Evas_Font_Size;
 typedef int           Evas_Angle;
 typedef unsigned char Evas_Bool;
+
+struct _Evas_Array /** An array of data */
+{
+   void		**data; /**< Pointer to a vector of pointer to payload */
+   unsigned int   total; /**< Total number of slot in the vector */
+   unsigned int   count; /**< Number of activ slot in the vector */
+   unsigned int	  step; /**< How much must we grow the vector When it is full */
+};
 
 struct _Evas_List /** A linked list node */
 {
@@ -416,6 +425,14 @@ extern "C" {
    EAPI Evas_List        *evas_list_reverse                 (Evas_List *list);
    EAPI Evas_List        *evas_list_sort                    (Evas_List *list, int size, int(*func)(void*,void*));
    EAPI int               evas_list_alloc_error             (void);
+
+   EAPI Evas_Array	 *evas_array_new		    (unsigned int step);
+   EAPI void		  evas_array_setup		    (Evas_Array *array, unsigned int step);
+   EAPI void		  evas_array_free		    (Evas_Array *array);
+   EAPI void		  evas_array_append		    (Evas_Array *array, void *data);
+   EAPI void		 *evas_array_get		    (Evas_Array *array, unsigned int index);
+   EAPI void		  evas_array_clean		    (Evas_Array *array);
+   EAPI void		  evas_array_flush		    (Evas_Array *array);
 
    /* FIXME: add:
     * api to add find, del members by data, size not just string and also

@@ -339,6 +339,12 @@ struct _Evas
       int   info_magic;
    } engine;
 
+   Evas_Array     delete_objects;
+   Evas_Array     active_objects;
+   Evas_Array     restack_objects;
+   Evas_Array	  render_objects;
+   Evas_Array	  pending_objects;
+
    int            delete_grabs;
    int            walking_grabs;
    Evas_List     *grabs;
@@ -466,6 +472,9 @@ struct _Evas_Object
    Evas_Bool                   repeat_events : 1;
    Evas_Bool                   restack : 1;
    Evas_Bool                   changed : 1;
+   Evas_Bool                   is_active : 1;
+   Evas_Bool                   render_pre : 1;
+   Evas_Bool                   rect_del : 1;
    Evas_Bool                   mouse_in : 1;
    Evas_Bool                   pre_render_done : 1;
    Evas_Bool                   intercepted : 1;
@@ -813,10 +822,16 @@ void _evas_unwalk(Evas *e);
 
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 
+void evas_render_invalidate(Evas *e);
+void evas_render_object_recalc(Evas_Object *obj);
+
+Evas_Bool _evas_array_grow(Evas_Array *array);
+
+#define EVAS_API_OVERRIDE(func, api, prefix) \
+     (api)->func = prefix##func
+
 #include "evas_inline.x"
 
-#define EVAS_API_OVERRIDE(func, api, prefix)    \
-     (api)->func = prefix##func
 #ifdef __cplusplus
 }
 #endif
