@@ -2,7 +2,12 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <cstdio>
+
 #include "ecore_win32_private.h"
 #include "Ecore_Win32.h"
 
@@ -11,10 +16,9 @@ EAPI int
 ecore_win32_ddraw_init(Ecore_Win32_Window *window)
 {
 #ifdef HAVE_DIRECTDRAW
-   DDSURFACEDESC2              surface_desc;
+   DDSURFACEDESC               surface_desc;
    DDPIXELFORMAT               pixel_format;
    RECT                        rect;
-   DDSURFACEDESC2             *sd;
    struct _Ecore_Win32_Window *w;
 
    if (!window)
@@ -29,19 +33,16 @@ ecore_win32_ddraw_init(Ecore_Win32_Window *window)
              rect.right - rect.left, rect.bottom - rect.top);
    }
 
-   if (FAILED(DirectDrawCreateEx(0, (void **)&w->ddraw.object,
-                                 &IID_IDirectDraw7, NULL)))
+   if (FAILED(DirectDrawCreate(NULL, &w->ddraw.object, NULL)))
      return 0;
 
-   if (FAILED(IDirectDraw7_SetCooperativeLevel(w->ddraw.object,
-                                               w->window, DDSCL_NORMAL)))
+   if (FAILED(w->ddraw.object->SetCooperativeLevel(w->window, DDSCL_NORMAL)))
      goto no_coop_level;
 
-   if (FAILED(IDirectDraw7_CreateClipper(w->ddraw.object, 0,
-                                    &w->ddraw.clipper, NULL)))
+   if (FAILED(w->ddraw.object->CreateClipper(0, &w->ddraw.clipper, NULL)))
      goto no_clipper;
 
-   if (FAILED(IDirectDrawClipper_SetHWnd(w->ddraw.clipper, 0, w->window)))
+   if (FAILED(w->ddraw.clipper->SetHWnd(0, w->window)))
      goto no_clipper_set_window;
 
    memset (&surface_desc, 0, sizeof (surface_desc));
@@ -49,16 +50,12 @@ ecore_win32_ddraw_init(Ecore_Win32_Window *window)
    surface_desc.dwFlags = DDSD_CAPS;
    surface_desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-   /* Hack to cleanly remove a warning */
-   sd = &surface_desc;
-   if (FAILED(IDirectDraw7_CreateSurface(w->ddraw.object,
-                                         (DDSURFACEDESC *)sd,
-                                         &w->ddraw.surface_primary,
-                                         NULL)))
+   if (FAILED(w->ddraw.object->CreateSurface(&surface_desc,
+                                             &w->ddraw.surface_primary,
+                                             NULL)))
      goto no_primary_surf;
 
-   if (FAILED(IDirectDrawSurface7_SetClipper(w->ddraw.surface_primary,
-                                             w->ddraw.clipper)))
+   if (FAILED(w->ddraw.surface_primary->SetClipper(w->ddraw.clipper)))
      goto no_primary_surf_set_clipper;
 
    if (!GetClientRect(w->window, &rect))
@@ -71,19 +68,15 @@ ecore_win32_ddraw_init(Ecore_Win32_Window *window)
    surface_desc.dwWidth = rect.right - rect.left;
    surface_desc.dwHeight = rect.bottom - rect.top;
 
-   /* Hack to cleanly remove a warning */
-   sd = &surface_desc;
-   if (FAILED(IDirectDraw7_CreateSurface(w->ddraw.object,
-                                         (DDSURFACEDESC *)sd,
-                                         &w->ddraw.surface_back,
-                                         NULL)))
+   if (FAILED(w->ddraw.object->CreateSurface(&surface_desc,
+                                             &w->ddraw.surface_back,
+                                             NULL)))
      goto no_back_surf;
 
    ZeroMemory(&pixel_format, sizeof(pixel_format));
    pixel_format.dwSize = sizeof(pixel_format);
 
-   if (FAILED(IDirectDrawSurface7_GetPixelFormat(w->ddraw.surface_primary,
-                                                 &pixel_format)))
+   if (FAILED(w->ddraw.surface_primary->GetPixelFormat(&pixel_format)))
      goto no_get_pix_fmt;
 
    w->ddraw.depth = pixel_format.dwRGBBitCount;
@@ -97,13 +90,13 @@ ecore_win32_ddraw_init(Ecore_Win32_Window *window)
  no_back_surf:
  no_get_client:
  no_primary_surf_set_clipper:
-   IDirectDrawSurface7_Release(w->ddraw.surface_primary);
+   w->ddraw.surface_primary->Release();
  no_primary_surf:
  no_clipper_set_window:
-   IDirectDrawClipper_Release(w->ddraw.clipper);
+   w->ddraw.clipper->Release();
  no_clipper:
  no_coop_level:
-   IDirectDraw7_Release(w->ddraw.object);
+   w->ddraw.object->Release();
 #endif /* HAVE_DIRECTDRAW */
 
    return 0;
@@ -113,10 +106,9 @@ EAPI int
 ecore_win32_ddraw_16_init(Ecore_Win32_Window *window)
 {
 #ifdef HAVE_DIRECTDRAW
-   DDSURFACEDESC2              surface_desc;
+   DDSURFACEDESC               surface_desc;
    DDPIXELFORMAT               pixel_format;
    RECT                        rect;
-   DDSURFACEDESC2             *sd;
    void                       *source;
    struct _Ecore_Win32_Window *w;
 
@@ -132,12 +124,10 @@ ecore_win32_ddraw_16_init(Ecore_Win32_Window *window)
    }
    w->ddraw.clipper = NULL;
 
-   if (FAILED(DirectDrawCreateEx(0, (void **)&w->ddraw.object,
-                                 &IID_IDirectDraw7, NULL)))
+   if (FAILED(DirectDrawCreate(NULL, &w->ddraw.object, NULL)))
      return 0;
 
-   if (FAILED(IDirectDraw7_SetCooperativeLevel(w->ddraw.object,
-                                               w->window, DDSCL_NORMAL)))
+   if (FAILED(w->ddraw.object->SetCooperativeLevel(w->window, DDSCL_NORMAL)))
      goto no_coop_level;
 
    memset (&surface_desc, 0, sizeof (surface_desc));
@@ -145,12 +135,9 @@ ecore_win32_ddraw_16_init(Ecore_Win32_Window *window)
    surface_desc.dwFlags = DDSD_CAPS;
    surface_desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-   /* Hack to cleanly remove a warning */
-   sd = &surface_desc;
-   if (FAILED(IDirectDraw7_CreateSurface(w->ddraw.object,
-                                         (DDSURFACEDESC *)sd,
-                                         &w->ddraw.surface_primary,
-                                         NULL)))
+   if (FAILED(w->ddraw.object->CreateSurface(&surface_desc,
+                                             &w->ddraw.surface_primary,
+                                             NULL)))
      goto no_primary_surf;
 
    if (!GetClientRect(w->window, &rect))
@@ -163,19 +150,15 @@ ecore_win32_ddraw_16_init(Ecore_Win32_Window *window)
    surface_desc.dwWidth = rect.right - rect.left;
    surface_desc.dwHeight = rect.bottom - rect.top;
 
-   /* Hack to cleanly remove a warning */
-   sd = &surface_desc;
-   if (FAILED(IDirectDraw7_CreateSurface(w->ddraw.object,
-                                         (DDSURFACEDESC *)sd,
-                                         &w->ddraw.surface_back,
-                                         NULL)))
+   if (FAILED(w->ddraw.object->CreateSurface(&surface_desc,
+                                             &w->ddraw.surface_back,
+                                             NULL)))
      goto no_back_surf;
 
    ZeroMemory(&pixel_format, sizeof(pixel_format));
    pixel_format.dwSize = sizeof(pixel_format);
 
-   if (FAILED(IDirectDrawSurface7_GetPixelFormat(w->ddraw.surface_primary,
-                                                 &pixel_format)))
+   if (FAILED(w->ddraw.surface_primary->GetPixelFormat(&pixel_format)))
      goto no_get_pix_fmt;
 
    w->ddraw.depth = pixel_format.dwRGBBitCount;
@@ -197,12 +180,9 @@ ecore_win32_ddraw_16_init(Ecore_Win32_Window *window)
 
    surface_desc.ddpfPixelFormat = pixel_format;
 
-   /* Hack to cleanly remove a warning */
-   sd = &surface_desc;
-   if (FAILED(IDirectDraw7_CreateSurface(w->ddraw.object,
-                                         (DDSURFACEDESC *)sd,
-                                         &w->ddraw.surface_source,
-                                         NULL)))
+   if (FAILED(w->ddraw.object->CreateSurface(&surface_desc,
+                                             &w->ddraw.surface_source,
+                                             NULL)))
      goto no_source_surf;
 
    w->backend = ECORE_WIN32_BACKEND_DIRECTDRAW_16;
@@ -216,10 +196,10 @@ ecore_win32_ddraw_16_init(Ecore_Win32_Window *window)
    /* no need to release the back surface. the next call free its memory */
  no_back_surf:
  no_get_client:
-   IDirectDrawSurface7_Release(w->ddraw.surface_primary);
+   w->ddraw.surface_primary->Release();
  no_primary_surf:
  no_coop_level:
-   IDirectDraw7_Release(w->ddraw.object);
+   w->ddraw.object->Release();
 #endif /* HAVE_DIRECTDRAW */
 
    return 0;
@@ -238,26 +218,26 @@ ecore_win32_ddraw_shutdown(Ecore_Win32_Window *window)
 
    if (w->ddraw.surface_primary)
      {
-        IDirectDrawSurface7_Release(w->ddraw.surface_primary);
+        w->ddraw.surface_primary->Release();
         w->ddraw.surface_primary = NULL;
      }
 
    if (w->ddraw.surface_source)
      {
-        DDSURFACEDESC2       surface_desc;
+        DDSURFACEDESC surface_desc;
 
         ZeroMemory(&surface_desc, sizeof(surface_desc));
         surface_desc.dwSize = sizeof(surface_desc);
 
-        if (IDirectDrawSurface7_Lock(w->ddraw.surface_source, NULL,
-                                     &surface_desc,
-                                     DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR,
-                                     NULL) == DD_OK)
+        if (w->ddraw.surface_source->Lock(NULL,
+                                          &surface_desc,
+                                          DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR,
+                                          NULL) == DD_OK)
           {
              free(surface_desc.lpSurface);
-             if (IDirectDrawSurface7_Unlock(w->ddraw.surface_source, NULL) == DD_OK)
+             if (w->ddraw.surface_source->Unlock(NULL) == DD_OK)
                {
-                  IDirectDrawSurface7_Release(w->ddraw.surface_source);
+                  w->ddraw.surface_source->Release();
                }
           }
         w->ddraw.surface_source = NULL;
@@ -267,13 +247,13 @@ ecore_win32_ddraw_shutdown(Ecore_Win32_Window *window)
 
    if (w->ddraw.clipper)
      {
-        IDirectDrawClipper_Release(w->ddraw.clipper);
+        w->ddraw.clipper->Release();
         w->ddraw.clipper = NULL;
      }
 
    if (w->ddraw.object)
      {
-        IDirectDraw7_Release(w->ddraw.object);
+        w->ddraw.object->Release();
         w->ddraw.object = NULL;
      }
 
