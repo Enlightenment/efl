@@ -67,7 +67,7 @@ extern "C" {
 #endif
 
 #define ECORE_CALLBACK_CANCEL 0 /**< Return value to remove a callback */
-#define ECORE_CALLBACK_RENEW 1  /**< Return value to keep a callback */ 
+#define ECORE_CALLBACK_RENEW 1  /**< Return value to keep a callback */
 
 #define ECORE_EVENT_NONE            0
 #define ECORE_EVENT_SIGNAL_USER     1 /**< User signal event */
@@ -110,7 +110,7 @@ extern "C" {
 	ECORE_POLLER_CORE = 0 /**< The core poller interval */
      };
    typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
-   
+
 #ifndef _WIN32
    typedef void Ecore_Exe; /**< A handle for spawned processes */
 #endif
@@ -124,7 +124,6 @@ extern "C" {
    typedef void Ecore_Event; /**< A handle for an event */
    typedef void Ecore_Animator; /**< A handle for animators */
    typedef void Ecore_Poller; /**< A handle for pollers */
-   typedef void Ecore_Pipe; /**< A handle for pipes */
 #endif
    typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
    typedef struct _Ecore_Event_Signal_Hup      Ecore_Event_Signal_Hup; /**< Hup signal event */
@@ -299,12 +298,7 @@ extern "C" {
    EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, int (*func) (void *data), const void *data);
    EAPI void         *ecore_poller_del(Ecore_Poller *poller);
 
-   EAPI Ecore_Pipe *ecore_pipe_new (void (*handler) (void *data));
-   EAPI void ecore_pipe_free(Ecore_Pipe *pipe);
-   EAPI void ecore_pipe_write(Ecore_Pipe *pipe,
-                              void       *data);
 
-   
 #ifdef __cplusplus
 }
 #endif

@@ -247,7 +247,6 @@ typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
 typedef struct _Ecore_Event         Ecore_Event;
 typedef struct _Ecore_Animator      Ecore_Animator;
 typedef struct _Ecore_Poller        Ecore_Poller;
-typedef struct _Ecore_Pipe          Ecore_Pipe;
 
 #ifndef _WIN32
 struct _Ecore_Exe
@@ -397,14 +396,6 @@ struct _Ecore_Poller
    void        *data;
 };
 
-struct _Ecore_Pipe
-{
-   int    fd_read;
-   int    fd_write;
-   int    event_data;
-   void (*handler) (void *data);
-};
-
 #endif
 
 EAPI void          _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
@@ -467,7 +458,7 @@ void          _ecore_exe_event_del_free(void *data, void *ev);
 void          _ecore_animator_shutdown(void);
 
 void          _ecore_poller_shutdown(void);
-    
+
 EAPI void         *_ecore_list2_append           (void *in_list, void *in_item);
 EAPI void         *_ecore_list2_prepend          (void *in_list, void *in_item);
 EAPI void         *_ecore_list2_append_relative  (void *in_list, void *in_item, void *in_relative);
