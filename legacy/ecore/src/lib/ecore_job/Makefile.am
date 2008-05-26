@@ -4,6 +4,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore
 
+AM_CFLAGS = @WIN32_CFLAGS@
+
 if BUILD_ECORE_JOB
 
 lib_LTLIBRARIES = libecore_job.la

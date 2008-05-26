@@ -7,6 +7,8 @@ AM_CPPFLAGS = \
 @CURL_CFLAGS@ \
 @EVIL_CFLAGS@
 
+AM_CFLAGS = @WIN32_CFLAGS@
+
 if BUILD_ECORE_CON
 lib_ecore_con_la = $(top_builddir)/src/lib/ecore_con/libecore_con.la
 endif

@@ -5,6 +5,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -DPACKAGE_LIB_DIR=\"$(libdir)\"
 
+AM_CFLAGS = @WIN32_CFLAGS@
+
 lib_LTLIBRARIES = libecore_imf.la
 include_HEADERS = \
 Ecore_IMF.h
