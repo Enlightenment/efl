@@ -70,6 +70,7 @@ evas_object_raise(Evas_Object *obj)
 	evas_object_inform_call_restack(obj);
 	return;
      }
+   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    obj->restack = 1;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);
@@ -126,6 +127,7 @@ evas_object_lower(Evas_Object *obj)
 	evas_object_inform_call_restack(obj);
 	return;
      }
+   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    obj->restack = 1;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);
@@ -209,6 +211,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 	evas_object_inform_call_restack(obj);
 	return;
      }
+   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    obj->restack = 1;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);
@@ -292,6 +295,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 	evas_object_inform_call_restack(obj);
 	return;
      }
+   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    obj->restack = 1;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);

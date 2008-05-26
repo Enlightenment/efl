@@ -68,24 +68,63 @@ evas_obscured_clear(Evas *e)
 }
 
 static void
-_evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active_objects, Evas_List **restack_objects, Evas_List **delete_objects, int restack)
+_evas_render_phase1_direct(Evas *e, Evas_Array *render_objects)
 {
+   unsigned int i;
+
+   for (i = 0; i < render_objects->count; ++i)
+     {
+	Evas_Object *obj;
+
+	obj = _evas_array_get(render_objects, i);
+	if (obj->changed) obj->func->render_pre(obj);
+	else
+	  {
+	     if (obj->smart.smart)
+	       obj->func->render_pre(obj);
+	     else
+	       if (obj->rect_del)
+		 {
+		    e->engine.func->output_redraws_rect_del(e->engine.data.output,
+							    obj->cur.cache.clip.x,
+							    obj->cur.cache.clip.y,
+							    obj->cur.cache.clip.w,
+							    obj->cur.cache.clip.h);
+		 }
+	  }
+     }
+}
+
+static Evas_Bool
+_evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active_objects, Evas_Array *restack_objects, Evas_Array *delete_objects, Evas_Array *render_objects, int restack)
+{
+   int clean_them = 0;
    int is_active;
+
+   obj->rect_del = 0;
+   obj->render_pre = 0;
 
 /* if (obj->cur.cache.clip.dirty) */
    evas_object_clip_recalc(obj);
    /* because of clip objects - delete 2 cycles later */
    if (obj->delete_me == 2)
-     *delete_objects = evas_list_append(*delete_objects, obj);
+     _evas_array_append(delete_objects, obj);
    else if (obj->delete_me != 0) obj->delete_me++;
+   /* If the object will be removed, we should not cache anything during this run. */
+   if (obj->delete_me != 0)
+     clean_them = 1;
+
    /* build active object list */
    is_active = evas_object_is_active(obj);
+
+   obj->is_active = is_active;
    if ((is_active) || (obj->delete_me != 0))
-     *active_objects = evas_list_append(*active_objects, obj);
+     _evas_array_append(active_objects, obj);
    if (restack)
      {
 	obj->restack = 1;
 	obj->changed = 1;
+	clean_them = 1;
      }
    if (obj->changed)
      {
@@ -93,7 +132,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	  {
 	     const Evas_Object_List *l;
 
-	     obj->func->render_pre(obj);
+	     _evas_array_append(render_objects, obj);
+	     obj->render_pre = 1;
 	     for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
 	       {
 		  Evas_Object *obj2;
@@ -103,6 +143,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 						     active_objects,
 						     restack_objects,
 						     delete_objects,
+						     render_objects,
 						     obj->restack);
 	       }
 	  }
@@ -111,11 +152,14 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	     if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
 		 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 		  (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-	       *restack_objects = evas_list_append(*restack_objects, obj);
+               _evas_array_append(restack_objects, obj);
 	     else if ((is_active) && (!obj->clip.clipees) &&
 		      ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 		       (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-	       obj->func->render_pre(obj);
+	       {
+		  _evas_array_append(render_objects, obj);
+		  obj->render_pre = 1;
+	       }
 	  }
      }
    else
@@ -128,7 +172,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	       {
 		  const Evas_Object_List *l;
 
-		  obj->func->render_pre(obj);
+		  _evas_array_append(render_objects, obj);
+		  obj->render_pre = 1;
 		  for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
 		    {
 		       Evas_Object *obj2;
@@ -138,6 +183,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 							  active_objects,
 							  restack_objects,
 							  delete_objects,
+							  render_objects,
 							  restack);
 		    }
 	       }
@@ -145,21 +191,22 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	       {
 		  if (evas_object_is_opaque(obj) &&
 		      evas_object_is_visible(obj))
-		    e->engine.func->output_redraws_rect_del(e->engine.data.output,
-							    obj->cur.cache.clip.x,
-							    obj->cur.cache.clip.y,
-							    obj->cur.cache.clip.w,
-							    obj->cur.cache.clip.h);
+		    {
+		       _evas_array_append(render_objects, obj);
+		       obj->rect_del = 1;
+		    }
 	       }
 	  }
      }
    if (!is_active) obj->restack = 0;
+   return clean_them;
 }
 
-static void
-_evas_render_phase1_process(Evas *e, Evas_List **active_objects, Evas_List **restack_objects, Evas_List **delete_objects)
+static Evas_Bool
+_evas_render_phase1_process(Evas *e, Evas_Array *active_objects, Evas_Array *restack_objects, Evas_Array *delete_objects, Evas_Array *render_objects)
 {
    Evas_Object_List *l;
+   int clean_them = 0;
 
    for (l = (Evas_Object_List *)e->layers; l; l = l->next)
      {
@@ -172,9 +219,67 @@ _evas_render_phase1_process(Evas *e, Evas_List **active_objects, Evas_List **res
 	     Evas_Object *obj;
 
 	     obj = (Evas_Object *)l2;
-	     _evas_render_phase1_object_process(e, obj, active_objects,
-						restack_objects,
-						delete_objects, 0);
+	     clean_them |= _evas_render_phase1_object_process(e, obj,
+							      active_objects, restack_objects,
+							      delete_objects, render_objects,
+							      0);
+	  }
+     }
+
+   return clean_them;
+}
+
+static void
+_evas_render_check_pending_objects(Evas_Array *pending_objects, Evas *e)
+{
+   unsigned int i;
+
+   for (i = 0; i < pending_objects->count; ++i)
+     {
+	Evas_Object *obj;
+	int ok = 0;
+	int is_active;
+
+	obj = _evas_array_get(pending_objects, i);
+
+	if (obj->render_pre
+	    || obj->rect_del)
+	  {
+	     evas_object_clip_recalc(obj);
+	     is_active = evas_object_is_active(obj);
+
+	     if (obj->is_active == is_active)
+	       {
+		  if (obj->changed)
+		    {
+		       if (obj->smart.smart)
+			 ok = 1;
+		       else
+			 if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
+			     ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
+			      (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+			   ok = 0;
+			 else
+			   if (is_active && (!obj->clip.clipees) &&
+			       ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+				(evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+			     ok = 1;
+		    }
+		  else
+		    {
+		       if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
+			   (!obj->cur.have_clipees || (evas_object_was_visible(obj) && (!obj->prev.have_clipees)))
+			   && evas_object_is_opaque(obj) && evas_object_is_visible(obj))
+			 if (obj->rect_del || obj->smart.smart)
+			   ok = 1;
+		    }
+	       }
+	  }
+
+	if (!ok)
+	  {
+	     evas_render_invalidate(e);
+	     return ;
 	  }
      }
 }
@@ -185,28 +290,37 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    Evas_List *updates = NULL;
    Evas_List *obscuring_objects = NULL;
    Evas_List *obscuring_objects_orig = NULL;
-   Evas_List *active_objects = NULL;
-   Evas_List *delete_objects = NULL;
-   Evas_List *restack_objects = NULL;
    Evas_List *ll;
    void *surface;
+   Evas_Bool clean_them = 0;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
+   unsigned int i;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
 
+   /* Check if the modified object mean recalculating every thing */
+   if (&e->pending_objects.count > 0)
+     {
+	_evas_render_check_pending_objects(&e->pending_objects, e);
+	evas_array_clean(&e->pending_objects);
+     }
+
    /* phase 1. add extra updates for changed objects */
-   _evas_render_phase1_process(e, &active_objects, &restack_objects, &delete_objects);
+   if (e->render_objects.count <= 0)
+     clean_them = _evas_render_phase1_process(e, &e->active_objects, &e->restack_objects, &e->delete_objects, &e->render_objects);
+
+   _evas_render_phase1_direct(e, &e->render_objects);
+
    /* phase 2. force updates for restacks */
-   while (restack_objects)
+   for (i = 0; i < e->restack_objects.count; ++i)
      {
 	Evas_Object *obj;
 
-	obj = restack_objects->data;
-	restack_objects = evas_list_remove(restack_objects, obj);
+	obj = _evas_array_get(&e->restack_objects, i);
 	obj->func->render_pre(obj);
 	e->engine.func->output_redraws_rect_add(e->engine.data.output,
 						obj->prev.cache.clip.x,
@@ -219,6 +333,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 						obj->cur.cache.clip.w,
 						obj->cur.cache.clip.h);
      }
+   evas_array_clean(&e->restack_objects);
    /* phase 3. add exposes */
    while (e->damages)
      {
@@ -259,11 +374,11 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 					       r->x, r->y, r->w, r->h);
      }
    /* build obscure objects list of active objects that obscure */
-   for (ll = active_objects; ll; ll = ll->next)
+   for (i = 0; i < e->active_objects.count; ++i)
      {
 	Evas_Object *obj;
 
-	obj = (Evas_Object *)(ll->data);
+	obj = _evas_array_get(&e->active_objects, i);
 	if (UNLIKELY(evas_object_is_opaque(obj) &&
                      evas_object_is_visible(obj) &&
                      (!obj->clip.clipees) &&
@@ -309,11 +424,12 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		    obscuring_objects = evas_list_append(obscuring_objects, obj);
 	       }
 	     /* render all object that intersect with rect */
-	     for (ll = active_objects; ll; ll = ll->next)
+             for (i = 0; i < e->active_objects.count; ++i)
 	       {
 		  Evas_Object *obj;
 		  Evas_List *l3;
-		  obj = (Evas_Object *)(ll->data);
+
+		  obj = _evas_array_get(&e->active_objects, i);
 
 		  /* if it's in our outpout rect and it doesn't clip anything */
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
@@ -392,11 +508,11 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    /* clear redraws */
    e->engine.func->output_redraws_clear(e->engine.data.output);
    /* and do a post render pass */
-   for (ll = active_objects; ll; ll = ll->next)
+   for (i = 0; i < e->active_objects.count; ++i)
      {
 	Evas_Object *obj;
 
-	obj = (Evas_Object *)(ll->data);
+	obj = _evas_array_get(&e->active_objects, i);
 	obj->pre_render_done = 0;
 	if ((obj->changed) && (do_draw))
 	  {
@@ -414,17 +530,19 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      }
    /* free our obscuring object list */
    evas_list_free(obscuring_objects_orig);
-   /* free our active object list */
-   evas_list_free(active_objects);
    /* delete all objects flagged for deletion now */
-   while (delete_objects)
+   for (i = 0; i < e->delete_objects.count; ++i)
      {
 	Evas_Object *obj;
 
-	obj = (Evas_Object *)(delete_objects->data);
-	delete_objects = evas_list_remove_list(delete_objects, delete_objects);
+	obj = _evas_array_get(&e->delete_objects, i);
 	evas_object_free(obj, 1);
      }
+
+   /* If their are some object to restack or some object to delete, it's useless to keep the render object list around. */
+   if (clean_them)
+     evas_render_invalidate(e);
+
    e->changed = 0;
    e->viewport.changed = 0;
    e->output.changed = 0;
@@ -517,4 +635,45 @@ evas_render_idle_flush(Evas *e)
    if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
        (e->engine.data.output))
      e->engine.func->output_idle_flush(e->engine.data.output);
+
+   evas_array_flush(&e->delete_objects);
+   evas_array_flush(&e->active_objects);
+   evas_array_flush(&e->restack_objects);
+   evas_array_flush(&e->render_objects);
+   evas_array_flush(&e->pending_objects);
 }
+
+void
+evas_render_invalidate(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   evas_array_clean(&e->active_objects);
+   evas_array_clean(&e->render_objects);
+   evas_array_clean(&e->pending_objects);
+
+   evas_array_flush(&e->restack_objects);
+   evas_array_flush(&e->delete_objects);
+}
+
+void
+evas_render_object_recalc(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+
+   if (!obj->changed && obj->layer)
+     {
+	Evas	*e;
+
+	e = obj->layer->evas;
+
+	if (e->active_objects.count > 0
+	    && e->render_objects.count > 0)
+	  _evas_array_append(&e->pending_objects, obj);
+     }
+}
+

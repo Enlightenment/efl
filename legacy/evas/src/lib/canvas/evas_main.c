@@ -62,6 +62,13 @@ evas_new(void)
    e->viewport.w = 1;
    e->viewport.h = 1;
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
+
+   evas_array_setup(&e->delete_objects, 16);
+   evas_array_setup(&e->active_objects, 16);
+   evas_array_setup(&e->restack_objects, 16);
+   evas_array_setup(&e->render_objects, 16);
+   evas_array_setup(&e->pending_objects, 16);
+
    return e;
 }
 
@@ -84,6 +91,8 @@ evas_free(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+
+   if (e->walking_list == 0) evas_render_idle_flush(e);
 
    if (e->walking_list > 0) return;
    del = 1;
@@ -157,7 +166,13 @@ evas_free(Evas *e)
    if (e->locks.lock.list) free(e->locks.lock.list);
 
    if (e->engine.module) evas_module_unref(e->engine.module);
-   
+
+   evas_array_flush(&e->delete_objects);
+   evas_array_flush(&e->active_objects);
+   evas_array_flush(&e->restack_objects);
+   evas_array_flush(&e->render_objects);
+   evas_array_flush(&e->pending_objects);
+
    e->magic = 0;
    free(e);
 }
