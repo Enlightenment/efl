@@ -303,53 +303,6 @@ evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int 
      }
 }
 
-void
-evas_object_coords_recalc(Evas_Object *obj)
-{
-   if (obj->smart.smart) return;
-////   if (obj->cur.cache.geometry.validity == obj->layer->evas->output_validity)
-////     return;
-////   obj->cur.cache.geometry.x =
-////     evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x);
-////   obj->cur.cache.geometry.y =
-////     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y);
-////   obj->cur.cache.geometry.w =
-////     evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.w) -
-////     evas_coord_world_x_to_screen(obj->layer->evas, 0);
-////   obj->cur.cache.geometry.h =
-////     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.h) -
-////     evas_coord_world_y_to_screen(obj->layer->evas, 0);
-   if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
-////   obj->cur.cache.geometry.validity = obj->layer->evas->output_validity;
-}
-
-int
-evas_object_is_active(Evas_Object *obj)
-{
-   if (obj->smart.smart) return 0;
-   if ((evas_object_is_visible(obj) || evas_object_was_visible(obj)) &&
-       (evas_object_is_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
-				      obj->layer->evas->output.h) ||
-	evas_object_was_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
-				       obj->layer->evas->output.h)))
-     return 1;
-   return 0;
-}
-
-int
-evas_object_is_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
-{
-   if (obj->smart.smart) return 0;
-   /* assumes coords have been recalced */
-   if ((RECTS_INTERSECT(x, y, w, h,
-			obj->cur.cache.clip.x,
-			obj->cur.cache.clip.y,
-			obj->cur.cache.clip.w,
-			obj->cur.cache.clip.h)))
-     return 1;
-   return 0;
-}
-
 int
 evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
 {
@@ -365,21 +318,6 @@ evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
 }
 
 int
-evas_object_is_visible(Evas_Object *obj)
-{
-   if (obj->smart.smart) return 0;
-   if ((obj->cur.visible) &&
-       (obj->cur.cache.clip.visible) &&
-       (obj->cur.cache.clip.a > 0))
-     {
-	if (obj->func->is_visible)
-	  return obj->func->is_visible(obj);
-	return 1;
-     }
-   return 0;
-}
-
-int
 evas_object_was_visible(Evas_Object *obj)
 {
    if (obj->smart.smart) return 0;
@@ -389,19 +327,6 @@ evas_object_was_visible(Evas_Object *obj)
      {
 	if (obj->func->was_visible)
 	  return obj->func->was_visible(obj);
-	return 1;
-     }
-   return 0;
-}
-
-int
-evas_object_is_opaque(Evas_Object *obj)
-{
-   if (obj->smart.smart) return 0;
-   if (obj->cur.cache.clip.a == 255)
-     {
-	if (obj->func->is_opaque)
-	  return obj->func->is_opaque(obj);
 	return 1;
      }
    return 0;

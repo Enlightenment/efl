@@ -2,57 +2,6 @@
 #include "evas_private.h"
 
 void
-evas_object_clip_recalc(Evas_Object *obj)
-{
-   int cx, cy, cw, ch, cvis, cr, cg, cb, ca;
-   int nx, ny, nw, nh, nvis, nr, ng, nb, na;
-
-   if (obj->layer->evas->events_frozen > 0) return;
-//   if (!obj->cur.clipper->cur.cache.clip.dirty) return;
-   evas_object_coords_recalc(obj);
-   cx = obj->cur.geometry.x; cy = obj->cur.geometry.y;
-   cw = obj->cur.geometry.w; ch = obj->cur.geometry.h;
-////   cx = obj->cur.cache.geometry.x; cy = obj->cur.cache.geometry.y;
-////   cw = obj->cur.cache.geometry.w; ch = obj->cur.cache.geometry.h;
-   if (obj->cur.color.a == 0) cvis = 0;
-   else cvis = obj->cur.visible;
-   cr = obj->cur.color.r; cg = obj->cur.color.g;
-   cb = obj->cur.color.b; ca = obj->cur.color.a;
-   if (obj->cur.clipper)
-     {
-// this causes problems... hmmm
-//	if (obj->cur.clipper->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper);
-	nx = obj->cur.clipper->cur.cache.clip.x;
-	ny = obj->cur.clipper->cur.cache.clip.y;
-	nw = obj->cur.clipper->cur.cache.clip.w;
-	nh = obj->cur.clipper->cur.cache.clip.h;
-	nvis = obj->cur.clipper->cur.cache.clip.visible;
-	nr = obj->cur.clipper->cur.cache.clip.r;
-	ng = obj->cur.clipper->cur.cache.clip.g;
-	nb = obj->cur.clipper->cur.cache.clip.b;
-	na = obj->cur.clipper->cur.cache.clip.a;
-	RECTS_CLIP_TO_RECT(cx, cy, cw, ch, nx, ny, nw, nh);
-	cvis = cvis * nvis;
-	cr = (cr * (nr + 1)) >> 8;
-	cg = (cg * (ng + 1)) >> 8;
-	cb = (cb * (nb + 1)) >> 8;
-	ca = (ca * (na + 1)) >> 8;
-     }
-   if ((ca == 0) || (cw <= 0) || (ch <= 0)) cvis = 0;
-   obj->cur.cache.clip.x = cx;
-   obj->cur.cache.clip.y = cy;
-   obj->cur.cache.clip.w = cw;
-   obj->cur.cache.clip.h = ch;
-   obj->cur.cache.clip.visible = cvis;
-   obj->cur.cache.clip.r = cr;
-   obj->cur.cache.clip.g = cg;
-   obj->cur.cache.clip.b = cb;
-   obj->cur.cache.clip.a = ca;
-   obj->cur.cache.clip.dirty = 0;
-}
-
-void
 evas_object_clip_dirty(Evas_Object *obj)
 {
    Evas_List *l;
@@ -73,18 +22,6 @@ evas_object_recalc_clippees(Evas_Object *obj)
 	for (l = obj->clip.clipees; l; l = l->next)
 	  evas_object_recalc_clippees(l->data);
      }
-}
-
-int
-evas_object_clippers_is_visible(Evas_Object *obj)
-{
-   if (obj->cur.visible)
-     {
-	if (obj->cur.clipper)
-	  return evas_object_clippers_is_visible(obj->cur.clipper);
-	return 1;
-     }
-   return 0;
 }
 
 int

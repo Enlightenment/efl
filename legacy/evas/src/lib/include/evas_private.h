@@ -688,7 +688,7 @@ Evas_List *evas_object_render_pre_clipper_change(Evas_List *updates, Evas_Object
 Evas_List *evas_object_render_pre_prev_cur_add(Evas_List *updates, Evas_Object *obj);
 void evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int is_v, int was_v);
 Evas_List * evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, int ww, int hh);
-void evas_object_clip_recalc(Evas_Object *obj);
+
 void evas_object_clip_dirty(Evas_Object *obj);
 void evas_object_recalc_clippees(Evas_Object *obj);
 Evas_Layer *evas_layer_new(Evas *e);
@@ -697,21 +697,15 @@ void evas_layer_free(Evas_Layer *lay);
 Evas_Layer *evas_layer_find(Evas *e, short layer_num);
 void evas_layer_add(Evas_Layer *lay);
 void evas_layer_del(Evas_Layer *lay);
-void evas_object_coords_recalc(Evas_Object *obj);
-int evas_object_is_active(Evas_Object *obj);
-int evas_object_is_in_output_rect(Evas_Object *obj, int x, int y, int w, int h);
-int evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h);
-int evas_object_is_visible(Evas_Object *obj);
+
 int evas_object_was_visible(Evas_Object *obj);
-int evas_object_is_opaque(Evas_Object *obj);
+int evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h);
+
 int evas_object_was_opaque(Evas_Object *obj);
 int evas_object_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 int evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-//void evas_object_recalc_clippees(Evas_Object *obj);
-int evas_object_clippers_is_visible(Evas_Object *obj);
 int evas_object_clippers_was_visible(Evas_Object *obj);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
-int evas_event_passes_through(Evas_Object *obj);
 Evas_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_file_path_is_full_path(const char *path);
 char *evas_file_path_join(const char *path, const char *end);
@@ -819,7 +813,9 @@ void _evas_unwalk(Evas *e);
 
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 
-#define EVAS_API_OVERRIDE(func, api, prefix) \
+#include "evas_inline.x"
+
+#define EVAS_API_OVERRIDE(func, api, prefix)    \
      (api)->func = prefix##func
 #ifdef __cplusplus
 }

@@ -1,24 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-int
-evas_event_passes_through(Evas_Object *obj)
-{
-   if (obj->layer->evas->events_frozen > 0) return 1;
-   if (obj->pass_events) return 1;
-   if (obj->parent_cache_valid) return obj->parent_pass_events;
-   if (obj->smart.parent)
-     {
-	int par_pass;
-	
-	par_pass = evas_event_passes_through(obj->smart.parent);
-	obj->parent_cache_valid = 1;
-	obj->parent_pass_events = par_pass;
-	return par_pass;
-     }
-   return 0;
-}
-
 static Evas_List *
 _evas_event_object_list_in_get(Evas *e, Evas_List *in, const Evas_Object_List *list, Evas_Object *stop, int x, int y, int *no_rep)
 {

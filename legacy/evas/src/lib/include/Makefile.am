@@ -2,6 +2,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = \
+evas_inline.x \
 evas_private.h \
 evas_options.h \
 evas_macros.h \
