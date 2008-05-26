@@ -4,7 +4,7 @@
 
 #include <config.h>
 
-#ifdef HAVE_WINSOCK2_H
+#ifdef _WIN32
 # include <winsock2.h>
 #endif
 

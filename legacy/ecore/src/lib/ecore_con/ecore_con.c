@@ -7,7 +7,6 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <errno.h>
-#include <netdb.h>
 
 #include <config.h>
 

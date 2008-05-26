@@ -1,6 +1,11 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Ecore_Con.h"
 #include "ecore_file_private.h"
 
@@ -42,6 +47,7 @@ static Ecore_List		*_job_list;
 EAPI int
 ecore_file_download_init(void)
 {
+#ifndef _WIN32
    ecore_con_url_init();
 
    if (init++ == 0)
@@ -49,7 +55,7 @@ ecore_file_download_init(void)
 #ifdef HAVE_CURL
 	_url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
 	_url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
-#endif	
+#endif
      }
    if (!_job_list)
      {
@@ -58,11 +64,15 @@ ecore_file_download_init(void)
      }
 
    return 1;
+#else
+   return 0;
+#endif
 }
 
 EAPI int
 ecore_file_download_shutdown(void)
 {
+#ifndef _WIN32
    if (--init == 0)
      {
 	if (_url_complete_handler)
@@ -77,6 +87,9 @@ ecore_file_download_shutdown(void)
      }
 
    return ecore_con_url_shutdown();
+#else
+   return 0;
+#endif
 }
 
 EAPI void

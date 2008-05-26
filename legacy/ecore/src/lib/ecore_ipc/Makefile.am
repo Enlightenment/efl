@@ -22,7 +22,7 @@ ecore_ipc_private.h
 libecore_ipc_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la \
-@SSL_LIBS@ @winsock_libs@
+@SSL_LIBS@
 
 libecore_ipc_la_LDFLAGS = -version-info @version_info@
 

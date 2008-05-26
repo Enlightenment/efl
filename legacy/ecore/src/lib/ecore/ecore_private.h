@@ -24,12 +24,17 @@
 #ifdef EAPI
 # undef EAPI
 #endif
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
-#  define EAPI __declspec(dllexport)
+
+#ifdef _WIN32
+# ifdef EFL_ECORE_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_ECORE_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -40,7 +45,7 @@
 # else
 #  define EAPI
 # endif
-#endif
+#endif /* ! _WIN32 */
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4
@@ -242,6 +247,7 @@ typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
 typedef struct _Ecore_Event         Ecore_Event;
 typedef struct _Ecore_Animator      Ecore_Animator;
 typedef struct _Ecore_Poller        Ecore_Poller;
+typedef struct _Ecore_Pipe          Ecore_Pipe;
 
 #ifndef _WIN32
 struct _Ecore_Exe
@@ -389,6 +395,14 @@ struct _Ecore_Poller
    signed char  delete_me : 1;
    int        (*func) (void *data);
    void        *data;
+};
+
+struct _Ecore_Pipe
+{
+   int    fd_read;
+   int    fd_write;
+   int    event_data;
+   void (*handler) (void *data);
 };
 
 #endif

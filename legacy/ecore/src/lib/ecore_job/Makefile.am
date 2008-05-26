@@ -17,7 +17,7 @@ ecore_job_private.h
 libecore_job_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la
 
-libecore_job_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@
+libecore_job_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 
 libecore_job_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

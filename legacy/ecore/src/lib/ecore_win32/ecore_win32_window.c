@@ -181,18 +181,26 @@ ecore_win32_window_del(Ecore_Win32_Window *window)
    switch (((struct _Ecore_Win32_Window *)window)->backend)
      {
      case ECORE_WIN32_BACKEND_DIRECTDRAW:
+#ifdef HAVE_DIRECTDRAW
        ecore_win32_ddraw_shutdown(window);
+#endif /* HAVE_DIRECTDRAW */
        break;
      case ECORE_WIN32_BACKEND_DIRECTDRAW_16:
+#ifdef HAVE_DIRECTDRAW
 /*        ecore_win32_ddraw_shutdown(window); */
+#endif /* HAVE_DIRECTDRAW */
        break;
      case ECORE_WIN32_BACKEND_DIRECT3D:
+#ifdef HAVE_DIRECT3D
        printf ("d3d shut 0 \n");
        ecore_win32_direct3d_shutdown(window);
        printf ("d3d shut 1 \n");
+#endif /* HAVE_DIRECT3D */
        break;
      case ECORE_WIN32_BACKEND_GLEW:
+#ifdef HAVE_OPENGL_GLEW
        ecore_win32_glew_shutdown(window);
+#endif /* HAVE_OPENGL_GLEW */
        break;
      default:
        break;

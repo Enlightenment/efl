@@ -21,7 +21,7 @@ ecore_con_private.h
 
 libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@SSL_LIBS@ @winsock_libs@ @CURL_LIBS@
+@SSL_LIBS@ @CURL_LIBS@
 
 libecore_con_la_LDFLAGS = -version-info @version_info@
 

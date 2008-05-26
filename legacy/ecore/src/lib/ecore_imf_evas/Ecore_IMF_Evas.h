@@ -4,15 +4,23 @@
 #ifndef _ECORE_IMF_EVAS_H
 #define _ECORE_IMF_EVAS_H
 
+#include <Ecore_IMF.h>
+#include <Evas.h>
+
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
-#  define EAPI __declspec(dllexport)
+
+#ifdef _WIN32
+# ifdef EFL_ECORE_IMF_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_ECORE_EVAS_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -23,10 +31,7 @@
 # else
 #  define EAPI
 # endif
-#endif
-
-#include <Ecore_IMF.h>
-#include <Evas.h>
+#endif /* ! _WIN32 */
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,18 +1,22 @@
-#include <config.h>
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif
+
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
 #endif
-#ifdef HAVE_WINDOWS_H
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
@@ -54,7 +58,9 @@ ecore_init(void)
 {
    if (++_ecore_init_count == 1)
      {
+#ifdef HAVE_LOCALE_H
 	setlocale(LC_CTYPE, "");
+#endif
 	/*
 	if (strcmp(nl_langinfo(CODESET), "UTF-8"))
 	  {
@@ -169,28 +175,26 @@ _ecore_magic_string_get(Ecore_Magic m)
 /* account for other apps and multitasking... */
 
 static int _ecore_fps_debug_init_count = 0;
-#ifndef _WIN32
 static int _ecore_fps_debug_fd = -1;
 unsigned int *_ecore_fps_runtime_mmap = NULL;
-#else
-static HANDLE _ecore_fps_debug_fd = NULL;
-static HANDLE _ecore_fps_debug_fm = NULL;
-unsigned int *_ecore_fps_runtime_mmap = NULL;
-#endif /* _WIN32 */
 
 void
 _ecore_fps_debug_init(void)
 {
-   char buf[4096];
-#ifdef _WIN32
+   char  buf[4096];
    char *tmp;
-#endif /* _WIN32 */
+   int   pid;
 
    _ecore_fps_debug_init_count++;
    if (_ecore_fps_debug_init_count > 1) return;
 
-#ifndef _WIN32
-   snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
+#ifndef HAVE_EVIL
+   tmp = "/tmp";
+#else
+   tmp = (char *)evil_tmpdir_get ();
+#endif /* HAVE_EVIL */
+   pid = (int)getpid();
+   snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
    _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
    if (_ecore_fps_debug_fd < 0)
      {
@@ -207,45 +211,6 @@ _ecore_fps_debug_init(void)
 				       MAP_SHARED,
 				       _ecore_fps_debug_fd, 0);
      }
-#else
-   tmp = getenv("TMP");
-   if (!tmp) tmp = getenv("TEMP");
-   if (!tmp) tmp = getenv("USERPROFILE");
-   if (!tmp) tmp = getenv("windir");
-   if (!tmp) tmp = "C:";
-   snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, (int)GetCurrentProcessId());
-   _ecore_fps_debug_fd = CreateFile(buf,
-                                    FILE_READ_DATA | FILE_WRITE_DATA,
-                                    FILE_SHARE_READ | FILE_SHARE_WRITE,
-                                    NULL,
-                                    CREATE_NEW,// | TRUNCATE_EXISTING,
-                                    FILE_ATTRIBUTE_NORMAL,
-                                    NULL);
-   if (_ecore_fps_debug_fd)
-     {
-	unsigned int zero = 0;
-        DWORD        out;
-
-        _ecore_fps_debug_fm = CreateFileMapping(_ecore_fps_debug_fd,
-                                                NULL,
-                                                PAGE_READWRITE,
-                                                0,
-                                                (DWORD)sizeof(unsigned int),
-                                                NULL);
-        if (_ecore_fps_debug_fm)
-          {
-             WriteFile(_ecore_fps_debug_fd,
-                       &zero, sizeof(unsigned int),
-                       &out, NULL);
-             _ecore_fps_runtime_mmap = MapViewOfFile(_ecore_fps_debug_fm,
-                                                     FILE_MAP_WRITE,
-                                                     0, 0,
-                                                     sizeof(unsigned int));
-          }
-        else
-          CloseHandle(_ecore_fps_debug_fd);
-     }
-#endif /* _WIN32 */
 }
 
 void
@@ -256,27 +221,16 @@ _ecore_fps_debug_shutdown(void)
    if (_ecore_fps_debug_fd >= 0)
      {
 	char buf[4096];
-#ifdef _WIN32
         char *tmp;
+        int   pid;
 
-        tmp = getenv("TMP");
-        if (!tmp) tmp = getenv("TEMP");
-        if (!tmp) tmp = getenv("USERPROFILE");
-        if (!tmp) tmp = getenv("windir");
-        if (!tmp) tmp = "C:/";
-	snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, (int)GetCurrentProcessId());
-	if (_ecore_fps_runtime_mmap)
-	  {
-	     UnmapViewOfFile(_ecore_fps_runtime_mmap);
-	     _ecore_fps_runtime_mmap = NULL;
-	  }
-        CloseHandle(_ecore_fps_debug_fm);
-        CloseHandle(_ecore_fps_debug_fd);
-	_ecore_fps_debug_fd = NULL;
-	_ecore_fps_debug_fm = NULL;
-	_unlink(buf);
+#ifndef HAVE_EVIL
+   tmp = "/tmp";
 #else
-	snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
+   tmp = (char *)evil_tmpdir_get ();
+#endif /* HAVE_EVIL */
+   pid = (int)getpid();
+	snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
 	unlink(buf);
 	if (_ecore_fps_runtime_mmap)
 	  {
@@ -285,7 +239,6 @@ _ecore_fps_debug_shutdown(void)
 	  }
 	close(_ecore_fps_debug_fd);
 	_ecore_fps_debug_fd = -1;
-#endif /* _WIN32 */
      }
 }
 

@@ -52,15 +52,52 @@ requirements_ecore_sdl=""
 
 dnl The first call to PKG_CHECK_MODULES is done conditionally,
 dnl so we should include this here:
-
 PKG_PROG_PKG_CONFIG
+
+dnl add windows requirements
+WIN32_CFLAGS=""
+WIN32_LIBS=""
+lt_no_undefined=""
+lt_enable_auto_import=""
+case "$host_os" in
+	mingw*|cegcc)
+		PKG_CHECK_MODULES([EVIL], [evil])
+		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
+		dnl needed for correct definition of EAPI
+		AC_DEFINE(EFL_ECORE_BUILD, 1, [Define to mention that ecore is built.])
+		AC_DEFINE(EFL_ECORE_EVAS_BUILD, 1, [Define to mention that ecore evas is built.])
+		AC_DEFINE(EFL_ECORE_FILE_BUILD, 1, [Define to mention that ecore file is built.])
+		AC_DEFINE(EFL_ECORE_IMF_BUILD, 1, [Define to mention that ecore imf is built.])
+		AC_DEFINE(EFL_ECORE_JOB_BUILD, 1, [Define to mention that ecore job is built.])
+		AC_DEFINE(EFL_ECORE_SDL_BUILD, 1, [Define to mention that ecore SDL is built.])
+		AC_DEFINE(EFL_ECORE_TXT_BUILD, 1, [Define to mention that ecore txt is built.])
+		AC_DEFINE(EFL_ECORE_WIN32_BUILD, 1, [Define to mention that ecore Win32 is built.])
+		AC_DEFINE(HAVE_DLFCN_H, 1, [Define to 1 if you have the <dlfcn.h> header file.])
+		AC_DEFINE(HAVE_SYS_MMAN_H, 1, [Define to 1 if you have the <sys/mman.h> header file.])
+		AC_DEFINE(HAVE_SYS_TIME_H, 1, [Define to 1 if you have the <sys/time.h> header file.])
+                if test "$host_os" = "cegcc" ; then
+                        WIN32_CFLAGS="-mwin32"
+                        WIN32_LIBS="-lws2"
+			lt_enable_auto_import="-Wl,--enable-auto-import"
+                else
+                        WIN32_LIBS="-lws2_32"
+                fi
+		lt_no_undefined="-no-undefined"
+		;;
+	*)
+		AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netdb.h netinet/in.h sys/time.h sys/mman.h])
+		AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
+		AC_SUBST(dlopen_libs)
+		;;
+esac
+AC_SUBST(WIN32_CFLAGS)
+AC_SUBST(WIN32_LIBS)
+AC_SUBST(lt_no_undefined)
+AC_SUBST(lt_enable_auto_import)
 
 dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
-AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netinet/in.h sys/mman.h sys/time.h windows.h winsock2.h])
-AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
-AC_SUBST(dlopen_libs)
 
 dnl openssl
 want_openssl="yes"
@@ -119,22 +156,6 @@ AC_ARG_ENABLE(abstract-sockets,
 if test "x$want_abstract_sockets" = "xyes"; then
   AC_DEFINE(HAVE_ABSTRACT_SOCKETS, 1, [Have abstract sockets namespace])
 fi
-
-dnl add windows requirements
-winsock_libs=""
-create_shared_lib=""
-ecore_file_win32_lib=""
-case "$host_os" in
-	mingw|mingw32)
-		winsock_libs="-lwsock32"
-		create_shared_lib="-no-undefined"
-		ecore_file_win32_lib="-lole32 -luuid"
-		;;
-esac
-
-AC_SUBST(winsock_libs)
-AC_SUBST(create_shared_lib)
-AC_SUBST(ecore_file_win32_lib)
 
 dnl ecore_job
 ECORE_CHECK_MODULE([Job], [yes])
@@ -748,7 +769,7 @@ dnl ecore_imf
 ECORE_CHECK_MODULE([IMF], [yes])
 
 try_ecore_imf_evas=no
-if test "x$have_ecore_imf" = xyes -a "x$have_evas" = "xyes"; then
+if test "x$have_ecore_imf" = "xyes" -a "x$have_evas" = "xyes"; then
   try_ecore_imf_evas=yes
 fi
 

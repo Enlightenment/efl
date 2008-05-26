@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "ecore_job_private.h"

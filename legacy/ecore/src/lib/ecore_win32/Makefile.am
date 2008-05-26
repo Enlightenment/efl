@@ -15,29 +15,20 @@ Ecore_Win32.h
 libecore_win32_la_SOURCES = \
 ecore_win32.c \
 ecore_win32_cursor.c \
+ecore_win32_ddraw.cpp \
 ecore_win32_direct3d.cpp \
-ecore_win32_ddraw.c \
 ecore_win32_event.c \
 ecore_win32_glew.c \
-ecore_win32_window.c \
-ecore_win32_private.h
+ecore_win32_window.c
 
 libecore_win32_la_LIBADD = \
 @ddraw_libs@ @direct3d_libs@ @glew_libs@ \
--lwsock32 \
+@WIN32_LIBS@ \
 $(top_builddir)/src/lib/ecore/libecore.la
 
-libecore_win32_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@
+libecore_win32_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 
 endif
 
 EXTRA_DIST = \
-Ecore_Win32.h \
-ecore_win32.c \
-ecore_win32_cursor.c \
-ecore_win32_direct3d.cpp \
-ecore_win32_ddraw.c \
-ecore_win32_event.c \
-ecore_win32_glew.c \
-ecore_win32_window.c \
 ecore_win32_private.h

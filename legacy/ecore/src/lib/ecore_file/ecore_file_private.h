@@ -5,8 +5,14 @@
 #ifdef __linux__
 # include <features.h>
 #endif
-#include "ecore_private.h"
+
 #include "Ecore.h"
+#include "ecore_private.h"
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "Ecore_File.h"
 
 /* ecore_file_monitor */

@@ -2,7 +2,9 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include <config.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #ifndef _FILE_OFFSET_BITS
 # define _FILE_OFFSET_BITS  64
@@ -12,131 +14,12 @@
 # include <features.h>
 #endif
 #include <ctype.h>
-#include "ecore_file_private.h"
 #include <errno.h>
 
-#ifdef _WIN32
-# include <shlobj.h>
-# include <objidl.h>
-#endif /* _WIN32 */
+#include "ecore_file_private.h"
 
 
 static int init = 0;
-
-#ifdef _WIN32
-
-/* FIXME: Windows has no symbolic link. */
-/*        Nevertheless, it can create and read .lnk files */
-static int
-symlink(const char *oldpath, const char *newpath)
-{
-   IShellLink    *pISL;
-   IShellLink   **shell_link;
-   IPersistFile  *pIPF;
-   IPersistFile **persit_file;
-   wchar_t        new_path[MB_CUR_MAX];
-
-   /* Hack to cleanly remove a warning */
-   if (FAILED(CoInitialize(NULL)))
-     return -1;
-
-   shell_link = &pISL;
-   if (FAILED(CoCreateInstance(&CLSID_ShellLink,
-                               NULL,
-                               CLSCTX_INPROC_SERVER,
-                               &IID_IShellLink,
-                               (void **)shell_link)))
-     goto no_instance;
-
-   if (FAILED(pISL->lpVtbl->SetPath(pISL, oldpath)))
-     goto no_setpath;
-
-   /* Hack to cleanly remove a warning */
-   persit_file = &pIPF;
-   if (FAILED(pISL->lpVtbl->QueryInterface(pISL, &IID_IPersistFile, (void **)persit_file)))
-     goto no_queryinterface;
-
-   mbstowcs(new_path, newpath, MB_CUR_MAX);
-   if (FAILED(pIPF->lpVtbl->Save(pIPF, new_path, FALSE)))
-     goto no_save;
-
-   pIPF->lpVtbl->Release(pIPF);
-   pISL->lpVtbl->Release(pISL);
-   CoUninitialize();
-
-   return 0;
-
- no_save:
-   pIPF->lpVtbl->Release(pIPF);
- no_queryinterface:
- no_setpath:
-   pISL->lpVtbl->Release(pISL);
- no_instance:
-   CoUninitialize();
-   return -1;
-}
-
-static int
-readlink(const char *path, char *buf, size_t bufsiz)
-{
-   IShellLink    *pISL;
-   IShellLink   **shell_link;
-   IPersistFile  *pIPF;
-   IPersistFile **persit_file;
-   wchar_t        old_path[MB_CUR_MAX];
-   char           new_path[MB_CUR_MAX];
-   int            length;
-
-   /* Hack to cleanly remove a warning */
-   if (FAILED(CoInitialize(NULL)))
-     return -1;
-
-   persit_file = &pIPF;
-   if (FAILED(CoCreateInstance(&CLSID_ShellLink,
-                               NULL,
-                               CLSCTX_INPROC_SERVER,
-                               &IID_IPersistFile,
-                               (void **)persit_file)))
-     goto no_instance;
-
-   mbstowcs(old_path, path, MB_CUR_MAX);
-   if (FAILED(pIPF->lpVtbl->Load(pIPF, old_path, STGM_READWRITE)))
-     goto no_load;
-
-   shell_link = &pISL;
-   if (FAILED(pIPF->lpVtbl->QueryInterface(pIPF, &IID_IShellLink, (void **)shell_link)))
-     goto no_queryinterface;
-
-   if (FAILED(pISL->lpVtbl->GetPath(pISL, new_path, MB_CUR_MAX, NULL, 0)))
-     goto no_getpath;
-
-   length = strlen(new_path);
-   if (length > bufsiz)
-     length = bufsiz;
-
-   memcpy(buf, new_path, length);
-
-   pISL->lpVtbl->Release(pISL);
-   pIPF->lpVtbl->Release(pIPF);
-   CoUninitialize();
-
-   return length;
-
- no_getpath:
-   pISL->lpVtbl->Release(pISL);
- no_queryinterface:
- no_load:
-   pIPF->lpVtbl->Release(pIPF);
- no_instance:
-   CoUninitialize();
-   return -1;
-}
-
-#define realpath(file_name, resolved_name) _fullpath((resolved_name), (file_name), PATH_MAX)
-
-#define mkdir(path, mode) _mkdir((path))
-
-#endif /* _WIN32 */
 
 /* externally accessible functions */
 /**
@@ -242,9 +125,8 @@ ecore_file_is_dir(const char *file)
    return 0;
 }
 
-#ifndef _WIN32
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-#endif /* _WIN32 */
+
 /**
  * Create a new directory
  * @param  dir The name of the directory to create

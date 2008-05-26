@@ -26,7 +26,9 @@
 #endif
 
 #include <time.h>
-#include <netdb.h>
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
+#endif
 #include <Ecore_Data.h>
 
 /**

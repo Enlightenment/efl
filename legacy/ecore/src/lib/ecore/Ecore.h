@@ -2,14 +2,19 @@
 #define _ECORE_H
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
-#  define EAPI __declspec(dllexport)
+
+#ifdef _WIN32
+# ifdef EFL_ECORE_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_ECORE_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -20,7 +25,7 @@
 # else
 #  define EAPI
 # endif
-#endif
+#endif /* ! _WIN32 */
 
 /**
  * @file Ecore.h
@@ -119,6 +124,7 @@ extern "C" {
    typedef void Ecore_Event; /**< A handle for an event */
    typedef void Ecore_Animator; /**< A handle for animators */
    typedef void Ecore_Poller; /**< A handle for pollers */
+   typedef void Ecore_Pipe; /**< A handle for pipes */
 #endif
    typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
    typedef struct _Ecore_Event_Signal_Hup      Ecore_Event_Signal_Hup; /**< Hup signal event */
@@ -292,6 +298,11 @@ extern "C" {
    EAPI double        ecore_poller_poll_interval_get(Ecore_Poller_Type type);
    EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, int (*func) (void *data), const void *data);
    EAPI void         *ecore_poller_del(Ecore_Poller *poller);
+
+   EAPI Ecore_Pipe *ecore_pipe_new (void (*handler) (void *data));
+   EAPI void ecore_pipe_free(Ecore_Pipe *pipe);
+   EAPI void ecore_pipe_write(Ecore_Pipe *pipe,
+                              void       *data);
 
    
 #ifdef __cplusplus

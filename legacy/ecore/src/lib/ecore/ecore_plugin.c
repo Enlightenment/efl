@@ -2,96 +2,23 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include <config.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #ifdef HAVE_DLFCN_H
 # include <dlfcn.h>
 #endif
 
-#ifdef HAVE_WINDOWS_H
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "ecore_private.h"
-#include "Ecore_Data.h"
-
-/* FIXME: that hack is a temporary one. That code will be in MinGW soon */
-#if defined(_WIN32) && !defined(HAVE_DLFCN_H)
-
-# define RTLD_LAZY 1   /* lazy function call binding */
-# define RTLD_NOW 2    /* immediate function call binding */
-# define RTLD_GLOBAL 4 /* symbols in this dlopen'ed obj are visible
-                          to other dlopen'ed objs */
-
-static char *dlerr_ptr;
-static char  dlerr_data[80];
-
-void *dlopen (const char *file, int mode)
-{
-   HMODULE hmodule;
-
-   hmodule = LoadLibrary(file);
-   if (hmodule == NULL)
-     {
-        int error;
-
-        error = GetLastError();
-        sprintf(dlerr_data, "LoadLibraryEx returned %d.", error);
-        dlerr_ptr = dlerr_data;
-     }
-   return hmodule;
-}
-
-int dlclose (void *handle)
-{
-   if (FreeLibrary(handle))
-     {
-        return 0;
-     }
-   else
-     {
-        int error;
-
-        error = GetLastError();
-        sprintf(dlerr_data, "FreeLibrary returned %d.", error);
-        dlerr_ptr = dlerr_data;
-        return -1;
-     }
-}
-
-void *dlsym (void *handle, const char *name)
-{
-   FARPROC fp;
-
-   fp = GetProcAddress(handle, name);
-   if (fp == NULL)
-     {
-        int error;
-
-        error = GetLastError();
-        sprintf(dlerr_data, "GetProcAddress returned %d.", error);
-        dlerr_ptr = dlerr_data;
-     }
-   return fp;
-}
-
-char *dlerror (void)
-{
-   if (dlerr_ptr != NULL)
-     {
-        dlerr_ptr = NULL;
-        return dlerr_data;
-     }
-   else
-     return NULL;
-}
-
+#ifdef HAVE_EVIL_H
+# include <evil.h>
 #endif
+
+#include "Ecore_Data.h"
+#include "ecore_private.h"
 
 
 static Ecore_List *loaded_plugins = NULL;

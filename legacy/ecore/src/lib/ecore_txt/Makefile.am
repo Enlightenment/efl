@@ -18,7 +18,7 @@ ecore_txt_private.h
 
 libecore_txt_la_LIBADD = @iconv_libs@
 
-libecore_txt_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@
+libecore_txt_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 
 libecore_txt_la_DEPENDENCIES =
 

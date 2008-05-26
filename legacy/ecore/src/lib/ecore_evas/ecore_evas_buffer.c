@@ -1,4 +1,8 @@
-#include "config.h"
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
@@ -7,9 +11,7 @@
 #ifdef BUILD_ECORE_EVAS_BUFFER
 static int _ecore_evas_init_count = 0;
 
-#ifndef _WIN32
 static int _ecore_evas_fps_debug = 0;
-#endif /* _WIN32 */
 
 static Ecore_Evas *ecore_evases = NULL;
 
@@ -26,10 +28,8 @@ _ecore_evas_buffer_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
-#ifndef _WIN32
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
-#endif /* _WIN32 */
    return _ecore_evas_init_count;
 }
 
@@ -99,9 +99,7 @@ _ecore_evas_buffer_shutdown(void)
 	  {
 	     _ecore_evas_free((Ecore_Evas *)ecore_evases);
 	  }
-#ifndef _WIN32
 	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
-#endif /* _WIN32 */
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;

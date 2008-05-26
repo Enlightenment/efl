@@ -34,7 +34,7 @@ endif
 
 if BUILD_ECORE_SDL
 ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl @SDL_CFLAGS@
-ECORE_SDL_LIB = $(top_builddir)/src/lib/ecore_sdl/libecore_sdl.la @SDL_LIBS@
+ECORE_SDL_LIB = $(top_builddir)/src/lib/ecore_sdl/libecore_sdl.la
 else
 ECORE_SDL_INC =
 ECORE_SDL_LIB =
@@ -78,9 +78,10 @@ $(ECORE_SDL_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @XCB_LIBS@ \
-@create_shared_lib@
+@SDL_LIBS@ \
+@EVIL_LIBS@
 
-libecore_evas_la_LDFLAGS = -version-info @version_info@
+libecore_evas_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 
 libecore_evas_la_DEPENDENCIES = \
 $(ECORE_X_LIB) \

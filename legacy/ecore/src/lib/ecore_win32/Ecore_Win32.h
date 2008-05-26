@@ -9,12 +9,17 @@
 #ifdef EAPI
 # undef EAPI
 #endif
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
-#  define EAPI __declspec(dllexport)
+
+#ifdef _WIN32
+# ifdef EFL_ECORE_WIN32_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_ECORE_WIN32_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -25,7 +30,7 @@
 # else
 #  define EAPI
 # endif
-#endif
+#endif /* ! _WIN32 */
 
 
 typedef void Ecore_Win32_Window;
@@ -433,6 +438,10 @@ EAPI int                 ecore_win32_cursor_size_get(void);
 
 /* DirectDraw */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 EAPI int                        ecore_win32_ddraw_init(Ecore_Win32_Window *window);
 
 EAPI int                        ecore_win32_ddraw_16_init(Ecore_Win32_Window *window);
@@ -450,10 +459,6 @@ EAPI Ecore_Win32_DDraw_Surface *ecore_win32_ddraw_surface_source_get(Ecore_Win32
 EAPI int                        ecore_win32_ddraw_depth_get(Ecore_Win32_Window *window);
 
 /* Direct3D */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 EAPI int                           ecore_win32_direct3d_init(Ecore_Win32_Window *window);
 

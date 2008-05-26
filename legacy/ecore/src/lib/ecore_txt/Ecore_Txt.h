@@ -1,15 +1,24 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #ifndef _ECORE_TXT_H
 #define _ECORE_TXT_H
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
-#ifdef _MSC_VER
-# ifdef BUILDING_DLL
-#  define EAPI __declspec(dllexport)
+
+#ifdef _WIN32
+# ifdef EFL_ECORE_TXT_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif
+# endif /* ! EFL_ECORE_TXT_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -20,7 +29,7 @@
 # else
 #  define EAPI
 # endif
-#endif
+#endif /* ! _WIN32 */
 
 /**
  * @file Ecore_Txt.h

@@ -1,4 +1,8 @@
-#include "config.h"
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
@@ -1787,7 +1791,6 @@ ecore_evas_window_get(Ecore_Evas *ee)
    return NULL;
 }
 
-#ifndef _WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
@@ -1860,7 +1863,6 @@ _ecore_evas_fps_debug_rendertime_add(double t)
 	*(_ecore_evas_fps_rendertime_mmap) += tm;
      }
 }
-#endif
 
 void
 _ecore_evas_free(Ecore_Evas *ee)

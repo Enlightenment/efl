@@ -8,9 +8,6 @@
 #include <cstdio>
 
 
-extern "C" {
-
-
 EAPI int
 ecore_win32_direct3d_init(Ecore_Win32_Window *window)
 {
@@ -212,6 +209,4 @@ ecore_win32_direct3d_depth_get(Ecore_Win32_Window *window)
 #else
    return 0;
 #endif /* HAVE_DIRECT3D */
-}
-
 }

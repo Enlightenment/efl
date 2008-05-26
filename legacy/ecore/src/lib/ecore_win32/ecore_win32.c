@@ -4,7 +4,6 @@
 
 #include <windowsx.h>
 
-#include "Ecore.h"
 #include "ecore_win32_private.h"
 
 

@@ -6,6 +6,10 @@
 #define __ECORE_WIN32_PRIVATE_H__
 
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -16,8 +20,11 @@
 # include <d3d9.h>
 # include <d3dx9.h>
 #endif /* HAVE_DIRECT3D */
+#ifdef HAVE_OPENGL_GLEW
+# include <GL/glew.h>
+#endif /* HAVE_OPENGL_GLEW */
 
-#include "Ecore.h"
+#include <Ecore.h>
 #include <Ecore_Data.h>
 
 #include "Ecore_Win32.h"

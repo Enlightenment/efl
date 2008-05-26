@@ -1,5 +1,7 @@
-#include "ecore_txt_private.h"
-#include "Ecore_Txt.h"
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include <iconv.h>
 #include <errno.h>
@@ -7,6 +9,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+
+#include "Ecore_Txt.h"
+#include "ecore_txt_private.h"
+
 
 /**
  * To be documented.
