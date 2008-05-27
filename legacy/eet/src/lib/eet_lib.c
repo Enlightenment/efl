@@ -1071,7 +1071,6 @@ eet_internal_read1(Eet_File *ef)
 }
 #endif
 
-#if EET_OLD_EET_FILE_FORMAT
 static Eet_File *
 eet_internal_read(Eet_File *ef)
 {
@@ -1281,7 +1280,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    return ef;
 }
-#endif
 
 EAPI Eet_File_Mode
 eet_mode_get(Eet_File *ef)
