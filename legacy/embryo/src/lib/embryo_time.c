@@ -37,7 +37,7 @@ _embryo_time_date(Embryo_Program *ep, Embryo_Cell *params)
    if (params[0] != (8 * sizeof(Embryo_Cell))) return 0;
    gettimeofday(&timev, NULL);
    tt = (time_t)(timev.tv_sec);
-   if ((tt - last_tzset) < 1)
+   if (tt > (last_tzset + 1))
      {
 	last_tzset = tt;
 	tzset();
