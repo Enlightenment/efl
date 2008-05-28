@@ -212,7 +212,8 @@ extern "C" {
    EAPI int               ecore_con_dns_lookup(const char *name,
 					       void (*done_cb)(void *data, struct hostent *hostent),
 					       void *data);
-
+					       
+   EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *uploadas);
 
 #ifdef __cplusplus
 }

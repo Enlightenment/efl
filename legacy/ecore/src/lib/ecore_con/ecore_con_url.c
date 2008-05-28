@@ -33,7 +33,7 @@
  *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com/pub/myfile");
  *   ecore_con_url_send(url, NULL, 0, NULL);
  *
- * FIXME: Support more CURL features: Authentication, FTP upload, Progress callbacks and more...
+ * FIXME: Support more CURL features: Authentication, Progress callbacks and more...
  */
 #include "Ecore.h"
 #include "ecore_private.h"
@@ -41,6 +41,7 @@
 #include "ecore_con_private.h"
 
 #include <errno.h>
+#include <sys/stat.h>
 
 /**
  * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
@@ -491,6 +492,55 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
    content_type = NULL;
 #endif
 }
+
+/**
+ * Makes a FTP upload
+ * @return  FIXME: To be documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
+EAPI int 
+ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *uploadas)
+{
+#ifdef HAVE_CURL
+   char url[4096];
+   char userpwd[4096];
+   FILE *fd;
+   struct stat file_info;	
+	
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_ftp_upload");
+	return 0;
+     }
+     
+   if (url_con->active) return 0;
+   if (!url_con->url) return 0;
+     
+   if (filename)
+     {
+	if (stat(filename, &file_info)) return 0;
+	fd = fopen(filename, "rb");
+	snprintf(url, sizeof(url), "ftp://%s/%s", url_con->url, basename(filename));
+	snprintf(userpwd, sizeof(userpwd), "%s:%s", user, pass);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 1);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_USERPWD, userpwd);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_UPLOAD, 1);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_READDATA, fd);
+	ecore_con_url_url_set(url_con, url);
+
+	return _ecore_con_url_perform(url_con);
+	fclose(fd);
+     }
+#else
+   return 0;
+   url_con = NULL;
+   filename = NULL;
+   user = NULL;
+   pass = NULL;
+   uploadas = NULL;
+#endif   
+}
+
 
 #ifdef HAVE_CURL
 static int
