@@ -38,22 +38,6 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
    updates = evas_render_updates(ee->evas);
    if (updates)
      {
-	DFBRegion region;
-	IDirectFBSurface *surface;
-	Evas_List *l;
-	
-	surface = ee->engine.directfb.window->surface;
-	for (l = updates; l; l = l->next)
-	  {
-	     Evas_Rectangle *rect;
-	     
-	     rect = l->data;
-	     region.x1 = rect->x;
-	     region.y1 = rect->y;
-	     region.x2 = rect->x + rect->w - 1;
-	     region.y2 = rect->y + rect->h - 1;
-	     surface->Flip(surface, &region,DSFLIP_BLIT);
-	  }
 	evas_render_updates_free(updates);
 	_ecore_evas_idle_timeout_update(ee);
      }
@@ -616,7 +600,6 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
      {
 	einfo->info.dfb = ecore_directfb_interface_get();
 	einfo->info.surface = window->surface;
-	einfo->info.flags = DSDRAW_BLEND;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
