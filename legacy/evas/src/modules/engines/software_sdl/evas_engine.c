@@ -284,10 +284,14 @@ static void
 _sdl_image_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h)
 {
    SDL_Engine_Image_Entry       *dst;
+   RGBA_Image *im;
 
    dst = (SDL_Engine_Image_Entry *) eim;
 
    SDL_UpdateRect(dst->surface, x, y, w, h);
+
+   im = (RGBA_Image *)eim->src;
+   im->flags |= RGBA_IMAGE_IS_DIRTY;
 }
 
 static void
