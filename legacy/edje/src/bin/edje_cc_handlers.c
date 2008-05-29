@@ -70,6 +70,7 @@ static void ob_collections(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
+static void st_collections_group_script_only(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
@@ -192,6 +193,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.name", st_collections_group_name},
+     {"collections.group.script_only", st_collections_group_script_only},
      {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
@@ -763,7 +765,7 @@ st_data_file(void)
      }
 
    data = mmap(NULL, buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-   if (!data)
+   if (data == MAP_FAILED)
      {
         fprintf(stderr, "%s: Error. %s:%i when mapping file \"%s\": \"%s\"\n",
                 progname, file_in, line, filename, strerror(errno));
@@ -1223,6 +1225,28 @@ st_collections_group_name(void)
 
    de = evas_list_data(evas_list_last(edje_file->collection_dir->entries));
    de->entry = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        script_only
+    @parameters
+        [on/off]
+    @effect
+        The flag (on/off) as to if this group is defined ONLY by script
+        callbacks such as init(), resize() and shutdown()
+    @endproperty
+*/
+static void
+st_collections_group_script_only(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   pc->script_only = parse_bool(0);
 }
 
 /**

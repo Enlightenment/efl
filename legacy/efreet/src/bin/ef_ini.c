@@ -155,3 +155,20 @@ ef_cb_ini_long_line(void)
   if (ini) efreet_ini_free(ini);
   return ret;
 }
+
+int
+ef_cb_ini_garbage(void)
+{
+  Efreet_Ini *ini;
+  int ret = 1;
+   
+  ini = efreet_ini_new(PACKAGE_DATA_DIR"/test/test_garbage");
+  if (!ini)
+  {
+    printf("Ini failed to parse.\n");
+    return 0;
+  }
+  if (ini->data) ret = 0;
+  efreet_ini_free(ini);
+  return ret;
+}

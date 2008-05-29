@@ -210,6 +210,8 @@ _ecore_fps_debug_init(void)
 				       PROT_READ | PROT_WRITE,
 				       MAP_SHARED,
 				       _ecore_fps_debug_fd, 0);
+	if (_ecore_fps_runtime_mmap == MAP_FAILED)
+	  _ecore_fps_runtime_mmap = NULL;
      }
 }
 

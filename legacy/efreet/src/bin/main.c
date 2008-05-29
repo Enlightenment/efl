@@ -16,6 +16,7 @@ int ef_cb_efreet_icon_theme_list(void);
 int ef_cb_efreet_icon_match(void);
 int ef_cb_ini_parse(void);
 int ef_cb_ini_long_line(void);
+int ef_cb_ini_garbage(void);
 #if DEFAULT_VISIBILITY
 int ef_cb_locale(void);
 #endif
@@ -53,6 +54,7 @@ static Efreet_Test tests[] = {
     {"Icon Matching", ef_cb_efreet_icon_match},
     {"INI Parsing", ef_cb_ini_parse},
     {"INI Long Line Parsing", ef_cb_ini_long_line},
+    {"INI Garbage Parsing", ef_cb_ini_garbage},
 #if DEFAULT_VISIBILITY
     {"Locale Parsing", ef_cb_locale},
 #endif

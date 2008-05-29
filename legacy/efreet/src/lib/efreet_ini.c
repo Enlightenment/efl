@@ -81,7 +81,12 @@ efreet_ini_parse(const char *file)
     f = fopen(file, "rb");
     if (!f) return NULL;
 
-    if (fstat(fileno(f), &file_stat) || file_stat.st_size < 1)
+    if (fstat(fileno(f), &file_stat) || (file_stat.st_size < 1))
+    {
+        fclose(f);
+        return NULL;
+    }
+    if (!S_ISREG(file_stat.st_mode)) /* if not a regular file - close */
     {
         fclose(f);
         return NULL;
@@ -89,7 +94,7 @@ efreet_ini_parse(const char *file)
 
     left = file_stat.st_size;
     buffer = mmap(NULL, left, PROT_READ, MAP_SHARED, fileno(f), 0);
-    if (!buffer)
+    if (buffer == MAP_FAILED)
     {
         fclose(f);
         return NULL;
@@ -107,7 +112,7 @@ efreet_ini_parse(const char *file)
         /* find the end of line */
         for (line_length = 0; 
                 (line_length < left) && 
-                (line_start[line_length] != '\n'); ++line_length)
+                (line_start[line_length] != '\n'); line_length++)
             ;
 
         /* check for all white space */
@@ -151,8 +156,8 @@ efreet_ini_parse(const char *file)
                 ecore_hash_free_value_cb_set(section, ECORE_FREE_CB(free));
 
                 old = ecore_hash_remove(data, header);
-                if (old) printf("[efreet] Warning: duplicate section '%s' "
-                                "in file '%s'\n", header, file);
+//                if (old) printf("[efreet] Warning: duplicate section '%s' "
+  //                              "in file '%s'\n", header, file);
 
                 IF_FREE_HASH(old);
                 ecore_hash_set(data, (void *)ecore_string_instance(header),
@@ -162,14 +167,14 @@ efreet_ini_parse(const char *file)
             {
                 /* invalid file - skip line? or refuse to parse file? */
                 /* just printf for now till we figure out what to do */
-                printf("Invalid file (%s) (missing ] on group name)\n", file);
+//                printf("Invalid file (%s) (missing ] on group name)\n", file);
             }
             goto next_line;
         }
 
         if (section == NULL)
         {
-            printf("Invalid file (%s) (missing section)\n", file);
+//            printf("Invalid file (%s) (missing section)\n", file);
             goto next_line;
         }
 
@@ -212,7 +217,7 @@ efreet_ini_parse(const char *file)
             if (key_end == 0)
             {
                 /* invalid file... */
-                printf("Invalid file (%s) (invalid key=value pair)\n", file);
+//                printf("Invalid file (%s) (invalid key=value pair)\n", file);
 
                 goto next_line;
             }
@@ -234,17 +239,16 @@ efreet_ini_parse(const char *file)
             ecore_hash_set(section, (void *)ecore_string_instance(key),
                            efreet_ini_unescape(value));
         }
-        else
-        {
-            /* invalid file... */
-            printf("Invalid file (%s) (missing = from key=value pair)\n", file);
-        }
+//        else
+//        {
+//            /* invalid file... */
+//            printf("Invalid file (%s) (missing = from key=value pair)\n", file);
+//        }
 
 next_line:
         left -= line_length + 1;
         line_start += line_length + 1;
     }
-
     munmap((char*) buffer, file_stat.st_size);
     fclose(f);
 

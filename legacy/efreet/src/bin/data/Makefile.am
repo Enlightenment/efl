@@ -12,6 +12,7 @@ test.menu \
 test_menu_slash_bad.menu \
 entry.png \
 entry \
-preferences.menu
+preferences.menu \
+test_garbage
 
 EXTRA_DIST = $(test_DATA)

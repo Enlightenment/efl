@@ -457,6 +457,8 @@ struct _Edje_Part_Collection
    Embryo_Program   *script; /* all the embryo script code for this group */
 
    const char       *part;
+   
+   unsigned char    script_only;
 };
 
 struct _Edje_Part

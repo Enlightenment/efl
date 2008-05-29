@@ -826,7 +826,7 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
     if (fd == -1) return;
 
     data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
-    if (data == (void *)-1)
+    if (data == MAP_FAILED)
     {
         close(fd);
         return;

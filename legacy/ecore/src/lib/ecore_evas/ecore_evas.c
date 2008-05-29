@@ -1821,6 +1821,8 @@ _ecore_evas_fps_debug_init(void)
 					       PROT_READ | PROT_WRITE,
 					       MAP_SHARED,
 					       _ecore_evas_fps_debug_fd, 0);
+	if (_ecore_evas_fps_rendertime_mmap == MAP_FAILED)
+	  _ecore_evas_fps_rendertime_mmap = NULL;
      }
 }
 
