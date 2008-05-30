@@ -782,6 +782,7 @@ struct _Evas_Cache_Image
    Evas_Object_List             *lru_nodata;
    Evas_Hash                    *inactiv;
    Evas_Hash                    *activ;
+   void                         *data;
 
    int                           usage;
    int                           limit;
@@ -1286,6 +1287,9 @@ EAPI Image_Entry*                    evas_cache_image_request(Evas_Cache_Image *
 EAPI void                            evas_cache_image_drop(Image_Entry *im);
 EAPI void                            evas_cache_image_data_not_needed(Image_Entry *im);
 EAPI int                             evas_cache_image_flush(Evas_Cache_Image *cache);
+EAPI void                            evas_cache_private_set(Evas_Cache_Image *cache, const void *data);
+EAPI void*                           evas_cache_private_get(Evas_Cache_Image *cache);
+EAPI void*                           evas_cache_private_from_image_entry_get(Image_Entry *im)
 
 EAPI int                             evas_cache_image_usage_get(Evas_Cache_Image *cache);
 EAPI int                             evas_cache_image_get(Evas_Cache_Image *cache);

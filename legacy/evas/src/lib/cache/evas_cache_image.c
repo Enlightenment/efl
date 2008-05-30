@@ -790,3 +790,32 @@ evas_cache_image_colorspace(Image_Entry *im, int cspace)
    im->space = cspace;
    cache->func.color_space(im, cspace);
 }
+
+EAPI void *
+evas_cache_private_from_image_entry_get(Image_Entry *im)
+{
+   Evas_Cache_Image	*cache;
+
+   assert(im);
+   assert(im->cache);
+
+   cache = im->cache;
+
+   return (void*) cache->data;
+}
+
+EAPI void *
+evas_cache_private_get(Evas_Cache_Image *cache)
+{
+   assert(cache);
+
+   return cache->data;
+}
+
+EAPI void
+evas_cache_private_set(Evas_Cache_Image *cache, const void *data)
+{
+   assert(cache);
+
+   cache->data = data;
+}
