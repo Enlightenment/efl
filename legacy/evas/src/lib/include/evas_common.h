@@ -1134,7 +1134,7 @@ EAPI void           evas_common_gradient_map_direction_set(RGBA_Gradient *gr, in
 EAPI void           evas_common_gradient_map              (RGBA_Draw_Context *dc, RGBA_Gradient *gr, int len);
 EAPI void           evas_common_gradient_draw             (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr);
 
-RGBA_Gradient_Type *evas_common_gradient_geometer_get    (const char *name);
+EAPI RGBA_Gradient_Type *evas_common_gradient_geometer_get    (const char *name);
 RGBA_Gradient_Type *evas_common_gradient_linear_get      (void);
 RGBA_Gradient_Type *evas_common_gradient_radial_get      (void);
 RGBA_Gradient_Type *evas_common_gradient_angular_get     (void);
