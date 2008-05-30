@@ -1486,10 +1486,11 @@ EAPI void
 ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
 {
    Window rwin, cwin;
-   int rx, ry, wx, wy;
+   int rx, ry, wx, wy, ret;
    unsigned int mask;
    
-   XQueryPointer(_ecore_x_disp, win, &rwin, &cwin, &rx, &ry, &wx, &wy, &mask);
+   ret = XQueryPointer(_ecore_x_disp, win, &rwin, &cwin, &rx, &ry, &wx, &wy, &mask);
+   if (!ret) wx = wy = -1;
    if (x) *x = wx;
    if (y) *y = wy;
 }

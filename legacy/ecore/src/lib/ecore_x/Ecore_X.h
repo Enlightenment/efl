@@ -298,8 +298,10 @@ struct _Ecore_X_Event_Key_Down
    char   *keysymbol;
    char   *key_compose;
    int     modifiers;
+   int	   same_screen;
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
+   Ecore_X_Window  root_win;
    Ecore_X_Time    time;
 };
 
@@ -309,8 +311,10 @@ struct _Ecore_X_Event_Key_Up
    char   *keysymbol;
    char   *key_compose;
    int     modifiers;
+   int	   same_screen;
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
+   Ecore_X_Window  root_win;
    Ecore_X_Time    time;
 };
 
@@ -319,11 +323,13 @@ struct _Ecore_X_Event_Mouse_Button_Down
    int     button;
    int     modifiers;
    int     x, y;
+   int	   same_screen;
    struct {
       int  x, y;
    } root;
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
+   Ecore_X_Window  root_win;
    Ecore_X_Time    time;
    unsigned int    double_click : 1;
    unsigned int    triple_click : 1;
@@ -334,11 +340,13 @@ struct _Ecore_X_Event_Mouse_Button_Up
    int     button;
    int     modifiers;
    int     x, y;
+   int	   same_screen;
    struct {
       int  x, y;
    } root;
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
+   Ecore_X_Window  root_win;
    Ecore_X_Time    time;
    unsigned int    double_click : 1;
    unsigned int    triple_click : 1;
@@ -348,11 +356,13 @@ struct _Ecore_X_Event_Mouse_Move
 {
    int     modifiers;
    int     x, y;
+   int	   same_screen;
    struct {
       int  x, y;
    } root;
    Ecore_X_Window  win;
    Ecore_X_Window  event_win;
+   Ecore_X_Window  root_win;
    Ecore_X_Time    time;
 };
 
@@ -360,13 +370,15 @@ struct _Ecore_X_Event_Mouse_In
 {
    int                  modifiers;
    int                  x, y;
+   int			same_screen;
    struct {
       int  x, y;
    } root;
    Ecore_X_Window               win;
    Ecore_X_Window               event_win;
-   Ecore_X_Event_Mode   mode;
-   Ecore_X_Event_Detail detail;
+   Ecore_X_Window		root_win;
+   Ecore_X_Event_Mode		mode;
+   Ecore_X_Event_Detail		detail;
    Ecore_X_Time                 time;
 };
 
@@ -374,13 +386,15 @@ struct _Ecore_X_Event_Mouse_Out
 {
    int                  modifiers;
    int                  x, y;
+   int			same_screen;
    struct {
       int  x, y;
    } root;
    Ecore_X_Window               win;
    Ecore_X_Window               event_win;
-   Ecore_X_Event_Mode   mode;
-   Ecore_X_Event_Detail detail;
+   Ecore_X_Window		root_win;
+   Ecore_X_Event_Mode		mode;
+   Ecore_X_Event_Detail		detail;
    Ecore_X_Time                 time;
 };
 
@@ -390,6 +404,7 @@ struct _Ecore_X_Event_Mouse_Wheel
    int z; /* ...,-2,-1 = down, 1,2,... = up */
    int modifiers;
    int x, y;
+   int same_screen;
 
    struct {
       int x, y;
@@ -397,6 +412,7 @@ struct _Ecore_X_Event_Mouse_Wheel
 
    Ecore_X_Window win;
    Ecore_X_Window event_win;
+   Ecore_X_Window root_win;
    Ecore_X_Time   time;
 };
 

@@ -228,6 +228,8 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    e->event_win = xevent->xkey.window;
    e->time = xevent->xkey.time;
    e->modifiers = xevent->xkey.state;
+   e->same_screen = xevent->xkey.same_screen;
+   e->root_win = xevent->xkey.root;
    _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_KEY_DOWN, e, _ecore_x_event_free_key_down, NULL);
 }
@@ -279,6 +281,8 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
    e->event_win = xevent->xkey.window;
    e->time = xevent->xkey.time;
    e->modifiers = xevent->xkey.state;
+   e->same_screen = xevent->xkey.same_screen;
+   e->root_win = xevent->xkey.root;
    _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_KEY_UP, e, _ecore_x_event_free_key_up, NULL);
 }
@@ -331,6 +335,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	  e->win = xevent->xbutton.window;
 	
 	e->event_win = xevent->xbutton.window;
+	e->same_screen = xevent->xbutton.same_screen;
+	e->root_win = xevent->xbutton.root;
 	e->time = xevent->xbutton.time;
 	_ecore_x_event_last_time = e->time;
 	_ecore_x_event_last_win = e->win;
@@ -374,6 +380,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     e->root.y = xevent->xbutton.y_root;
 	     if (xevent->xbutton.subwindow) e->win = xevent->xbutton.subwindow;
 	     else e->win = xevent->xbutton.window;
+	     e->same_screen = xevent->xbutton.same_screen;
+	     e->root_win = xevent->xbutton.root;
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
 	     _ecore_x_event_last_time = e->time;
@@ -405,6 +413,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     e->root.y = xevent->xbutton.y_root;
 	     if (xevent->xbutton.subwindow) e->win = xevent->xbutton.subwindow;
 	     else e->win = xevent->xbutton.window;
+	     e->same_screen = xevent->xbutton.same_screen;
+	     e->root_win = xevent->xbutton.root;
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
 	     if (e->win == e->event_win)
@@ -495,6 +505,8 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 	     e->root.y = xevent->xbutton.y_root;
 	     if (xevent->xbutton.subwindow) e->win = xevent->xbutton.subwindow;
 	     else e->win = xevent->xbutton.window;
+	     e->same_screen = xevent->xbutton.same_screen;
+	     e->root_win = xevent->xbutton.root;
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
 	     _ecore_x_event_last_time = e->time;
@@ -516,6 +528,8 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 	     e->root.y = xevent->xbutton.y_root;
 	     if (xevent->xbutton.subwindow) e->win = xevent->xbutton.subwindow;
 	     else e->win = xevent->xbutton.window;
+	     e->same_screen = xevent->xbutton.same_screen;
+	     e->root_win = xevent->xbutton.root;
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
              _ecore_x_mouse_up_count++;
@@ -561,6 +575,8 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    e->root.y = xevent->xmotion.y_root;
    if (xevent->xmotion.subwindow) e->win = xevent->xmotion.subwindow;
    else e->win = xevent->xmotion.window;
+   e->same_screen = xevent->xmotion.same_screen;
+   e->root_win = xevent->xmotion.root;
    e->event_win = xevent->xmotion.window;
    e->time = xevent->xmotion.time;
    _ecore_x_event_last_time = e->time;
@@ -589,6 +605,8 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 	e->root.y = xevent->xcrossing.y_root;
 	if (xevent->xcrossing.subwindow) e->win = xevent->xcrossing.subwindow;
 	else e->win = xevent->xcrossing.window;
+	e->same_screen = xevent->xcrossing.same_screen;
+	e->root_win = xevent->xcrossing.root;
 	e->event_win = xevent->xcrossing.window;
 	e->time = xevent->xcrossing.time;
 	_ecore_x_event_last_time = e->time;
@@ -609,6 +627,8 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 	e->root.y = xevent->xcrossing.y_root;
 	if (xevent->xcrossing.subwindow) e->win = xevent->xcrossing.subwindow;
 	else e->win = xevent->xcrossing.window;
+	e->same_screen = xevent->xcrossing.same_screen;
+	e->root_win = xevent->xcrossing.root;
 	e->event_win = xevent->xcrossing.window;
 	if      (xevent->xcrossing.mode == NotifyNormal) e->mode = ECORE_X_EVENT_MODE_NORMAL;
 	else if (xevent->xcrossing.mode == NotifyGrab)   e->mode = ECORE_X_EVENT_MODE_GRAB;
@@ -639,6 +659,8 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
 	e->root.y = xevent->xcrossing.y_root;
 	if (xevent->xcrossing.subwindow) e->win = xevent->xcrossing.subwindow;
 	else e->win = xevent->xcrossing.window;
+	e->same_screen = xevent->xcrossing.same_screen;
+	e->root_win = xevent->xcrossing.root;
 	e->event_win = xevent->xcrossing.window;
 	e->time = xevent->xcrossing.time;
 	_ecore_x_event_last_time = e->time;
@@ -659,6 +681,8 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
 	e->root.y = xevent->xcrossing.y_root;
 	if (xevent->xcrossing.subwindow) e->win = xevent->xcrossing.subwindow;
 	else e->win = xevent->xcrossing.window;
+	e->same_screen = xevent->xcrossing.same_screen;
+	e->root_win = xevent->xcrossing.root;
 	e->event_win = xevent->xcrossing.window;
 	if      (xevent->xcrossing.mode == NotifyNormal) e->mode = ECORE_X_EVENT_MODE_NORMAL;
 	else if (xevent->xcrossing.mode == NotifyGrab)   e->mode = ECORE_X_EVENT_MODE_GRAB;
