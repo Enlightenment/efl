@@ -92,29 +92,58 @@ static void _call_fn(Edje *ed, const char *fname, Embryo_Function fn);
 #define IFNJ(type) if (!si->job.type)
 #define EXPF(func) embryo_program_native_call_add(ed->collection->script, #func, _exp_##func)
 
-/* FIXME: need an oid -> ptr translation here. this is a hack. id # is linear\
- * and runs out after 2billion uses or so. the hash is fat if all u have is
- * a few objects... doesn't know how to do anything but evas_object as it
- * will evas_object_del at the end... so for now this is a testing stub. */
-static int
-_oid_track(Edje *ed, void *o)
+typedef struct _Oid Oid;
+
+struct _Oid
 {
-   char buf[64];
+   Edje *ed;
+   Evas_Object *obj;
+   Evas_Coord x, y, w, h;
+   int oid;
+};
+
+/* FIXME: using evas_hash and strings is just nasty! make a custom int hash */
+static int
+_oid_alloc(Edje *ed)
+{
    SI;
    
    si->oid.id++;
-   snprintf(buf, sizeof(buf), "%i", si->oid.id);
-   si->oid.hash = evas_hash_add(si->oid.hash, buf, o);
    return si->oid.id;
 }
 
-static void *
+static Oid *
+_oid_track(Edje *ed, Evas_Object *o)
+{
+   Oid *oi;
+   char buf[64];
+   SI;
+   
+   oi = calloc(1, sizeof(Oid));
+   if (!oi) return NULL;
+   oi->oid = _oid_alloc(ed);
+   if (!oi->oid)
+     {
+	free(oi);
+	return NULL;
+     }
+   oi->ed = ed;
+   oi->obj = o;
+   evas_object_smart_member_add(oi->obj, oi->ed->obj);
+   evas_object_clip_set(oi->obj, oi->ed->clipper);
+   evas_object_geometry_get(oi->obj, &(oi->x), &(oi->y), &(oi->w), &(oi->h));
+   snprintf(buf, sizeof(buf), "%i", oi->oid);
+   si->oid.hash = evas_hash_add(si->oid.hash, buf, oi);
+   return oi;
+}
+
+static Oid *
 _oid_find(Edje *ed, int oid)
 {
    char buf[64];
    SI;
-   
-   snprintf(buf, sizeof(buf), "%i", si->oid.id);
+
+   snprintf(buf, sizeof(buf), "%i", oid);
    return evas_hash_find(si->oid.hash, buf);
 }
 
@@ -124,36 +153,106 @@ _oid_del(Edje *ed, int oid)
    char buf[64];
    SI;
 
-   snprintf(buf, sizeof(buf), "%i", si->oid.id);
+   snprintf(buf, sizeof(buf), "%i", oid);
    si->oid.hash = evas_hash_del(si->oid.hash, buf, NULL);
 }
 
+static void
+_oid_free(Oid *oid)
+{
+   free(oid);
+}
+
+static Evas_Bool
+_oid_freeall_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+{
+   Oid *oid = data;
+   evas_object_del(oid->obj);
+   free(oid);
+   return 1;
+}
+
+static void
+_oid_freeall(Edje *ed)
+{
+   SI;
+   if (!si->oid.hash) return;
+   evas_hash_foreach(si->oid.hash, _oid_freeall_cb, ed);
+   evas_hash_free(si->oid.hash);
+   si->oid.hash = NULL;
+}
+
+static Evas_Bool
+_oid_moveall_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+{
+   Oid *oid = data;
+   evas_object_move(oid->obj, oid->ed->x + oid->x, oid->ed->y + oid->y);
+   return 1;
+}
+
+static void
+_oid_moveall(Edje *ed)
+{
+   SI;
+   if (!si->oid.hash) return;
+   evas_hash_foreach(si->oid.hash, _oid_moveall_cb, ed);
+}
+
+/**********/
+
+static Embryo_Cell
+_exp_e_obj_del(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Oid *oid;
+   SI;
+
+   CHKPARAM(1);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   evas_object_del(oid->obj);
+   _oid_del(ed, oid->oid);
+   _oid_free(oid);
+   return 0;
+}
+    
 static Embryo_Cell
 _exp_e_obj_rect_add(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Evas_Object *o;
-   int oid;
+   Oid *oid;
    SI;
    
    o = evas_object_rectangle_add(evas_object_evas_get(ed->obj));
    if (!o) return 0;
-   evas_object_smart_member_add(o, ed->obj);
-   evas_object_clip_set(o, ed->clipper);
-   _oid_track(ed, o);
-   return oid;
+   oid = _oid_track(ed, o);
+   if (oid) return oid->oid;
+   return 0;
 }
     
 static Embryo_Cell
 _exp_e_obj_show(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
-   Evas_Object *o;
+   Oid *oid;
    SI;
 
    CHKPARAM(1);
-   if (!(o = _oid_find(ed, params[1]))) return -1;
-   evas_object_show(o);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   evas_object_show(oid->obj);
+   return 0;
+}
+    
+static Embryo_Cell
+_exp_e_obj_hide(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Oid *oid;
+   SI;
+
+   CHKPARAM(1);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   evas_object_hide(oid->obj);
    return 0;
 }
     
@@ -161,12 +260,15 @@ static Embryo_Cell
 _exp_e_obj_move(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
-   Evas_Object *o;
+   Oid *oid;
    SI;
    
    CHKPARAM(3);
-   if (!(o = _oid_find(ed, params[1]))) return -1;
-   evas_object_move(o, ed->x + params[2], ed->y + params[3]);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   if ((oid->x == params[2]) && (oid->y == params[3])) return;
+   oid->x = params[2];
+   oid->y = params[3];
+   evas_object_move(oid->obj, ed->x + oid->x, ed->y + oid->y);
    return 0;
 }
     
@@ -174,12 +276,51 @@ static Embryo_Cell
 _exp_e_obj_resize(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
-   Evas_Object *o;
+   Oid *oid;
    SI;
    
    CHKPARAM(3);
-   if (!(o = _oid_find(ed, params[1]))) return -1;
-   evas_object_resize(o, params[2], params[3]);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   if ((oid->w == params[2]) && (oid->h == params[3])) return;
+   oid->w = params[2];
+   oid->h = params[3];
+   evas_object_resize(oid->obj, oid->w, oid->h);
+   return 0;
+}
+    
+static Embryo_Cell
+_exp_e_obj_geometry_set(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Oid *oid;
+   SI;
+   
+   CHKPARAM(5);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   if ((oid->x == params[2]) && (oid->y == params[3]) &&
+       (oid->w == params[4]) && (oid->h == params[5])) return;
+   oid->x = params[2];
+   oid->y = params[3];
+   oid->w = params[4];
+   oid->h = params[5];
+   evas_object_move(oid->obj, ed->x + oid->x, ed->y + oid->y);
+   evas_object_resize(oid->obj, oid->w, oid->h);
+   return 0;
+}
+    
+static Embryo_Cell
+_exp_e_obj_geometry_get(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Oid *oid;
+   SI;
+   
+   CHKPARAM(5);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   SETINT(oid->x, params[2]);
+   SETINT(oid->y, params[3]);
+   SETINT(oid->w, params[4]);
+   SETINT(oid->h, params[5]);
    return 0;
 }
     
@@ -187,12 +328,30 @@ static Embryo_Cell
 _exp_e_obj_color_set(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
-   Evas_Object *o;
+   Oid *oid;
    SI;
 
    CHKPARAM(5);
-   if (!(o = _oid_find(ed, params[1]))) return -1;
-   evas_object_color_set(o, params[2], params[3], params[4], params[5]);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   evas_object_color_set(oid->obj, params[2], params[3], params[4], params[5]);
+   return 0;
+}
+
+static Embryo_Cell
+_exp_e_obj_color_get(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Oid *oid;
+   int r, g, b, a;
+   SI;
+
+   CHKPARAM(5);
+   if (!(oid = _oid_find(ed, params[1]))) return -1;
+   evas_object_color_get(oid->obj, &r, &g , &b, &a);
+   SETINT(r, params[2]);
+   SETINT(g, params[3]);
+   SETINT(b, params[4]);
+   SETINT(a, params[5]);
    return 0;
 }
 
@@ -210,6 +369,8 @@ _exp_e_signal_emit(Embryo_Program *ep, Embryo_Cell *params)
    _edje_emit(ed, sig, src);
    return 0;
 }
+
+/**********/
 
 int
 _edje_script_only(Edje *ed)
@@ -232,11 +393,16 @@ _edje_script_only_init(Edje *ed)
 
    embryo_program_data_set(ed->collection->script, ed);
    
+   EXPF(e_obj_del);
    EXPF(e_obj_rect_add);
    EXPF(e_obj_show);
+   EXPF(e_obj_hide);
    EXPF(e_obj_move);
    EXPF(e_obj_resize);
+   EXPF(e_obj_geometry_set);
+   EXPF(e_obj_geometry_get);
    EXPF(e_obj_color_set);
+   EXPF(e_obj_color_get);
    EXPF(e_signal_emit);
    
    embryo_program_vm_push(ed->collection->script);
@@ -258,12 +424,6 @@ _edje_script_only_init(Edje *ed)
    _edje_script_only_move(ed);
 }
 
-static Evas_Bool
-_shutdown_oid_hash(const Evas_Hash *hash, const char *key, void *data, void *fdata)
-{
-   evas_object_del(data);
-   return 1;
-}
 void
 _edje_script_only_shutdown(Edje *ed)
 {
@@ -275,11 +435,7 @@ _edje_script_only_shutdown(Edje *ed)
    DELJ(hide);
    DELJ(move);
    DELJ(resize);
-   if (si->oid.hash)
-     {
-	evas_hash_foreach(si->oid.hash, _shutdown_oid_hash, ed);
-	evas_hash_free(si->oid.hash);
-     }
+   _oid_freeall(ed);
 }
 
 static void
@@ -348,7 +504,9 @@ _move_job(void *data)
    Edje *ed = data;
    SI;
    
+   _oid_moveall(ed);
    ZERJ(move);
+   IFNO(obj_move) return;
    PINT(ed->x);
    PINT(ed->y);
    CLFN(obj_move);
@@ -357,19 +515,9 @@ void
 _edje_script_only_move(Edje *ed)
 {
    SI;
-   
-   if ((si->fn.obj_move == EMBRYO_FUNCTION_NONE) &&
-       (si->fn.obj_move_immediate == EMBRYO_FUNCTION_NONE))
-     {
-	/* FIXME: auto-move sub-objects. this means we need to store in-edje
-	 * x,y and other stuff... */
-	return;
-     }
-   IFFN(obj_move)
-     {
-	DELJ(move);
-	ADDJ(move, _move_job);
-     }
+
+   DELJ(move);
+   ADDJ(move, _move_job);
    IFNO(obj_move_immediate) return;
    PINT(ed->x);
    PINT(ed->y);
