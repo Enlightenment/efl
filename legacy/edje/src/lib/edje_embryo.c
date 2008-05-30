@@ -182,54 +182,6 @@
  *
  */
 
-#define CHKPARAM(n) if (params[0] != (sizeof(Embryo_Cell) * (n))) return 0;
-#define GETSTR(str, par) { \
-   Embryo_Cell *___cptr; \
-   int ___l; \
-   str = NULL; \
-   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
-   ___l = embryo_data_string_length_get(ep, ___cptr); \
-   if (((str) = alloca(___l + 1))) \
-   embryo_data_string_get(ep, ___cptr, (str));}}
-#define GETSTREVAS(str, par) { \
-   if ((str)) { \
-	if ((par) && (!strcmp((par), (str)))) return 0; \
-	if ((par)) evas_stringshare_del((par)); \
-	(par) = (char *)evas_stringshare_add((str)); } \
-   else (par) = NULL; }
-#define GETFLOAT(val, par) { \
-   float *___cptr; \
-   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
-   val = *___cptr;}}
-#define GETINT(val, par) { \
-   int *___cptr; \
-   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
-   val = *___cptr;}}
-#define SETSTR(str, par) { \
-   Embryo_Cell *___cptr; \
-   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
-   embryo_data_string_set(ep, str, ___cptr);}}
-#define SETSTRALLOCATE(s) { \
-   if (s) { \
-	if (strlen((s)) < params[4]) { \
-	    SETSTR((s), params[3]); } \
-	else { \
-	     char *ss; \
-	     ss = alloca(strlen((s)) + 1); \
-	     strcpy(ss, (s)); \
-	     ss[params[4] - 2] = 0; \
-	     SETSTR(ss, params[3]); }} \
-   else \
-      SETSTR("", params[3]);}
-#define SETFLOAT(val, par) { \
-   float *___cptr; \
-   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
-   *___cptr = (float)val;}}
-#define SETINT(val, par) { \
-   int *___cptr; \
-   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
-   *___cptr = (int)val;}}
-
 /* get_int(id) */
 static Embryo_Cell
 _edje_embryo_fn_get_int(Embryo_Program *ep, Embryo_Cell *params)

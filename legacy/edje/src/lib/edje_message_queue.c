@@ -420,34 +420,10 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 }
 
 void
-_edje_message_process(Edje_Message *em)
+_edje_message_parameters_push(Edje_Message *em)
 {
-   Embryo_Function fn;
-   void *pdata;
    int i;
-
-   /* signals are only handled one way */
-   if (em->type == EDJE_MESSAGE_SIGNAL)
-     {
-	_edje_emit_handle(em->edje,
-			  ((Edje_Message_Signal *)em->msg)->sig,
-			  ((Edje_Message_Signal *)em->msg)->src);
-	return;
-     }
-   /* if this has been queued up for the app then just call the callback */
-   if (em->queue == EDJE_QUEUE_APP)
-     {
-	if (em->edje->message.func)
-	  em->edje->message.func(em->edje->message.data, em->edje->obj,
-				 em->type, em->id, em->msg);
-	return;
-     }
-   /* now this message is destined for the script message handler fn */
-   if (!((em->edje->collection) && (em->edje->collection->script))) return;
-   fn = embryo_program_function_find(em->edje->collection->script, "message");
-   if (fn == EMBRYO_FUNCTION_NONE) return;
-   /* reset the engine */
-   _edje_embryo_script_reset(em->edje);
+   
    /* these params ALWAYS go on */
    /* first param is the message type - always */
    embryo_parameter_cell_push(em->edje->collection->script,
@@ -556,6 +532,44 @@ _edje_message_process(Edje_Message *em)
       default:
 	break;
      }
+}
+
+void
+_edje_message_process(Edje_Message *em)
+{
+   Embryo_Function fn;
+   void *pdata;
+
+   /* signals are only handled one way */
+   if (em->type == EDJE_MESSAGE_SIGNAL)
+     {
+	_edje_emit_handle(em->edje,
+			  ((Edje_Message_Signal *)em->msg)->sig,
+			  ((Edje_Message_Signal *)em->msg)->src);
+	return;
+     }
+   /* if this has been queued up for the app then just call the callback */
+   if (em->queue == EDJE_QUEUE_APP)
+     {
+	if (em->edje->message.func)
+	  em->edje->message.func(em->edje->message.data, em->edje->obj,
+				 em->type, em->id, em->msg);
+	return;
+     }
+   /* now this message is destined for the script message handler fn */
+   if (!((em->edje->collection) && (em->edje->collection->script))) return;
+   if (_edje_script_only(em->edje))
+     {
+	_edje_script_only_message(em->edje, em);
+	return;
+     }
+   fn = embryo_program_function_find(em->edje->collection->script, "message");
+   if (fn == EMBRYO_FUNCTION_NONE) return;
+   /* reset the engine */
+   _edje_embryo_script_reset(em->edje);
+   
+   _edje_message_parameters_push(em);
+   
    embryo_program_vm_push(em->edje->collection->script);
    _edje_embryo_globals_init(em->edje);
    pdata = embryo_program_data_get(em->edje->collection->script);

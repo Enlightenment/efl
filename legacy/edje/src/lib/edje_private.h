@@ -647,6 +647,7 @@ struct _Edje
    /* for faster lookups to avoid nth list walks */
    Edje_Real_Part      **table_parts;
    Edje_Program        **table_programs;
+   void                 *script_only_data;
    int                   table_programs_size;
    int                   table_parts_size;
 
@@ -1147,6 +1148,7 @@ void          _edje_message_cb_set          (Edje *ed, void (*func) (void *data,
 Edje_Message *_edje_message_new             (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id);
 void          _edje_message_free            (Edje_Message *em);
 void          _edje_message_send            (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg);
+void          _edje_message_parameters_push (Edje_Message *em);
 void          _edje_message_process         (Edje_Message *em);
 void          _edje_message_queue_process   (void);
 void          _edje_message_queue_clear     (void);
@@ -1165,4 +1167,61 @@ void _edje_cache_file_unref(Edje_File *edf);
 
 void _edje_embryo_globals_init(Edje *ed);
 
+#define CHKPARAM(n) if (params[0] != (sizeof(Embryo_Cell) * (n))) return -1;
+#define GETSTR(str, par) { \
+   Embryo_Cell *___cptr; \
+   int ___l; \
+   str = NULL; \
+   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
+      ___l = embryo_data_string_length_get(ep, ___cptr); \
+      if (((str) = alloca(___l + 1))) \
+	embryo_data_string_get(ep, ___cptr, (str)); } }
+#define GETSTREVAS(str, par) { \
+   if ((str)) { \
+      if ((par) && (!strcmp((par), (str)))) return 0; \
+      if ((par)) evas_stringshare_del((par)); \
+      (par) = (char *)evas_stringshare_add((str)); } \
+   else (par) = NULL; }
+#define GETFLOAT(val, par) { \
+   float *___cptr; \
+   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
+      val = *___cptr; } }
+#define GETINT(val, par) { \
+   int *___cptr; \
+   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
+      val = *___cptr; } }
+#define SETSTR(str, par) { \
+   Embryo_Cell *___cptr; \
+   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
+      embryo_data_string_set(ep, str, ___cptr); } }
+#define SETSTRALLOCATE(s) { \
+   if (s) { \
+      if (strlen((s)) < params[4]) { \
+	 SETSTR((s), params[3]); } \
+      else { \
+	 char *ss; \
+	 ss = alloca(strlen((s)) + 1); \
+	 strcpy(ss, (s)); \
+	 ss[params[4] - 2] = 0; \
+	 SETSTR(ss, params[3]); } } \
+   else \
+     SETSTR("", params[3]); }
+#define SETFLOAT(val, par) { \
+   float *___cptr; \
+   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
+      *___cptr = (float)val; } }
+#define SETINT(val, par) { \
+   int *___cptr; \
+   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
+      *___cptr = (int)val; } }
+
+int _edje_script_only(Edje *ed);
+void _edje_script_only_init(Edje *ed);
+void _edje_script_only_shutdown(Edje *ed);
+void _edje_script_only_show(Edje *ed);
+void _edje_script_only_hide(Edje *ed);
+void _edje_script_only_move(Edje *ed);
+void _edje_script_only_resize(Edje *ed);
+void _edje_script_only_message(Edje *ed, Edje_Message *em);
+    
 #endif

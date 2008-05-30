@@ -88,6 +88,7 @@ _edje_smart_del(Evas_Object * obj)
    _edje_clean_objects(ed);
    _edje_edjes = evas_list_remove(_edje_edjes, obj);
    evas_object_smart_data_set(obj, NULL);
+   if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    _edje_file_del(ed);
    _edje_unref(ed);
 }
@@ -105,6 +106,12 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
    ed->y = y;
 //   evas_object_move(ed->clipper, ed->x, ed->y);
 
+   if (_edje_script_only(ed))
+     {
+	_edje_script_only_move(ed);
+	return;
+     }
+   
    for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *ep;
@@ -146,6 +153,11 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
    if ((w == ed->w) && (h == ed->h)) return;
    ed->w = w;
    ed->h = h;
+   if (_edje_script_only(ed))
+     {
+	_edje_script_only_resize(ed);
+	return;
+     }
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
    _edje_recalc(ed);
@@ -162,6 +174,11 @@ _edje_smart_show(Evas_Object * obj)
    if (evas_object_visible_get(ed->clipper)) return;
    if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
      evas_object_show(ed->clipper);
+   if (_edje_script_only(ed))
+     {  
+	_edje_script_only_show(ed);
+	return;
+     }
    _edje_emit(ed, "show", NULL);
 }
 
@@ -175,6 +192,11 @@ _edje_smart_hide(Evas_Object * obj)
    if (!evas_object_visible_get(ed->clipper)) return;
    if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
      evas_object_hide(ed->clipper);
+   if (_edje_script_only(ed))
+     {  
+	_edje_script_only_hide(ed);
+	return;
+     }
    _edje_emit(ed, "hide", NULL);
 }
 

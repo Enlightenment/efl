@@ -38,7 +38,8 @@ edje_private.h \
 edje_cache.c \
 edje_match.c \
 edje_textblock_styles.c \
-edje_edit.c
+edje_edit.c \
+edje_script_only.c
 
 libedje_la_LIBADD       = -lm @EDJE_LIBS@
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
