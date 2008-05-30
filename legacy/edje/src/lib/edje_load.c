@@ -264,9 +264,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 
    if (ed->collection)
      {
-	printf("%s %s = %i\n", file, part, ed->collection->script_only);
 	if (ed->collection->script_only)
-	  _edje_script_only_init(ed);
+	  {
+	     ed->load_error = EDJE_LOAD_ERROR_NONE;
+	     _edje_script_only_init(ed);
+	  }
 	else
 	  {
 	     Evas_List *l;
@@ -574,9 +576,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 	     _edje_thaw(ed);
 	     _edje_unblock(ed);
 	     _edje_unref(ed);
+	     ed->load_error = EDJE_LOAD_ERROR_NONE;
+	     _edje_emit(ed, "load", NULL);
 	  }
-	ed->load_error = EDJE_LOAD_ERROR_NONE;
-	_edje_emit(ed, "load", NULL);
 	return 1;
      }
    else
