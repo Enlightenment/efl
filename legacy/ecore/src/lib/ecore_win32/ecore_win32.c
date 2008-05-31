@@ -299,7 +299,7 @@ ecore_win32_init()
      }
 
    printf (" *** ecore_win32_init\n");
-   _ecore_win32_instance = GetModuleHandle(0);
+   _ecore_win32_instance = GetModuleHandle(NULL);
    if (!_ecore_win32_instance)
      return 0;
 
@@ -317,7 +317,6 @@ ecore_win32_init()
 
    if(!RegisterClass(&wc))
      {
-        UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
         FreeLibrary(_ecore_win32_instance);
         return 0;
      }

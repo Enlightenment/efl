@@ -309,6 +309,7 @@ EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST;
 
 
 /* Core */
+
 EAPI int    ecore_win32_init();
 EAPI int    ecore_win32_shutdown();
 EAPI double ecore_win32_current_time_get(void);
