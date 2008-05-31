@@ -167,8 +167,8 @@ linear_init_geom(RGBA_Gradient *gr)
 	linear_data->off = 0.0;
 	linear_data->len = 32;
 	linear_data->at_angle = 0;
+	gr->type.gdata = linear_data;
      }
-   gr->type.gdata = linear_data;
 
    linear_data->type = 0;
    if (gr->type.name && !strcmp(gr->type.name, "linear.diag"))
@@ -220,7 +220,7 @@ linear_setup_geom(RGBA_Gradient *gr)
 
    linear_data->yy0 = (linear_data->ca * (yoff << 16)) - (linear_data->sa * (xoff << 16));
    linear_data->off = gr->map.offset;
-
+   
    if ((linear_data->ca != 1.0) || (linear_data->sa != 0.0))
 	linear_data->at_angle = 1;
 }

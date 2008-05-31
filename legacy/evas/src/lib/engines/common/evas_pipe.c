@@ -470,7 +470,6 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 {
    RGBA_Pipe_Op *op;
 
-//   return; /* FIXME: still need locks in fonts */
    if ((!fn) || (!text)) return;
    dst->pipe = evas_common_pipe_add(dst->pipe, &op);
    if (!dst->pipe) return;

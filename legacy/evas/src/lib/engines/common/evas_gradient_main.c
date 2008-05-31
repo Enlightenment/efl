@@ -433,13 +433,13 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    int             direct_copy = 0, buf_step = 0;
 
    if (!dst || !dc || !gr || !dst || !dst->image.data)
-	return;
+     return;
    if (!gr->map.data || !gr->type.geometer)
-	return;
+     return;
    if ((gr->fill.w < 1) || (gr->fill.h < 1))
-	return;
+     return;
    if ((w < 1) || (h < 1))
-	return;
+     return;
    clx = 0;  cly = 0;  clw = dst->cache_entry.w;  clh = dst->cache_entry.h;
    if ((clw < 1) || (clh < 1))  return;
 
@@ -457,40 +457,41 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    if (!gr->type.geometer->has_mask(gr, dc->render_op))
      {
 	if ((dc->render_op == _EVAS_RENDER_FILL) ||
-             (dc->render_op == _EVAS_RENDER_COPY))
+	    (dc->render_op == _EVAS_RENDER_COPY))
 	  {
 	     direct_copy = 1;  buf_step = dst->cache_entry.w;
 	     if (gr->type.geometer->has_alpha(gr, dc->render_op))
-		dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	       dst->flags |= RGBA_IMAGE_HAS_ALPHA;
 	  }
 	else if ((dc->render_op == _EVAS_RENDER_BLEND) &&
-	          !gr->type.geometer->has_alpha(gr, dc->render_op))
+		 !gr->type.geometer->has_alpha(gr, dc->render_op))
 	  {
 	     direct_copy = 1;  buf_step = dst->cache_entry.w;
 	  }
      }
+
    if (!direct_copy)
      {
 	argb_buf = evas_common_image_line_buffer_obtain(w);
 	if (!argb_buf)
-	   return;
+	  return;
 	if (gr->type.geometer->has_alpha(gr, dc->render_op))
-   	   argb_buf->flags |= RGBA_IMAGE_HAS_ALPHA;
+	  argb_buf->flags |= RGBA_IMAGE_HAS_ALPHA;
 	else
-   	   argb_buf->flags &= ~RGBA_IMAGE_HAS_ALPHA;
-
+	  argb_buf->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+	
 	if (gr->type.geometer->has_mask(gr, dc->render_op))
 	  {
-	    alpha_buf = evas_common_image_alpha_line_buffer_obtain(w);
-	    if (!alpha_buf)
-	      {
-		evas_common_image_line_buffer_release(argb_buf);
-		return;
-	      }
-	    bfunc = evas_common_gfx_func_composite_pixel_mask_span_get(argb_buf, dst, w, dc->render_op);
+	     alpha_buf = evas_common_image_alpha_line_buffer_obtain(w);
+	     if (!alpha_buf)
+	       {
+		  evas_common_image_line_buffer_release(argb_buf);
+		  return;
+	       }
+	     bfunc = evas_common_gfx_func_composite_pixel_mask_span_get(argb_buf, dst, w, dc->render_op);
 	  }
 	else
-	   bfunc = evas_common_gfx_func_composite_pixel_span_get(argb_buf, dst, w, dc->render_op);
+	  bfunc = evas_common_gfx_func_composite_pixel_span_get(argb_buf, dst, w, dc->render_op);
      }
 
    gfunc = gr->type.geometer->get_fill_func(gr, dc->render_op, dc->anti_alias);
@@ -506,6 +507,29 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	return;
      }
 
+   /* I TOLD YOU! this here STOPS the gradeint bugs. it's a missing
+    * emms() before doing floating point operations! the thread pipe code
+    * just brought it out reliably. i swear i had seen this long before i
+    * ever added the thread/pipe code.
+    * 
+    * now here is why it happens. NO drawing function... EXCEPT
+    * evas_common_polygon_draw() and evas_common_gradient_draw() use floating
+    * point for drawing (the poly stuff should really lose it actually), but
+    * nicely nestled in the poly draw code is a evas_common_cpu_end_opt()
+    * before it does any operations that would use floating point. the fact
+    * is the gradient code was LUCKY before without the thread pipes to almost
+    * all the time have another func do a evas_common_cpu_end_opt() before it
+    * was called. that was no longer the case with the thread renderer and
+    * it suffered. that is why on amd systems it seemed to work as i beileve
+    * on amd cpu's the amms done by evas_common_cpu_end_opt() is not needed
+    * to do floatingpoint ops again.
+    * 
+    * after a lot of futzing about - this was the culprit (well axx and axy
+    * were garbage values eventually i found after much debugging and i traced
+    * their garbageness back to here).
+    */
+   evas_common_cpu_end_opt();
+   
    angle = (gr->fill.angle * M_PI) / 180.0;
    axx = (cos(angle) * 65536.0);
    ayy = axx;
@@ -520,10 +544,10 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
      {
 	buf = argb_buf->image.data;
 	if (alpha_buf)
-	   mask = (DATA8 *)alpha_buf->image.data;
+	  mask = (DATA8 *)alpha_buf->image.data;
      }
    else
-	buf = pdst;
+     buf = pdst;
    while (pdst < dst_end)
      {
 #ifdef EVAS_SLI
@@ -531,6 +555,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 #endif
 	  {
 	     gfunc(map, len, buf, mask, w, xoff, yoff, axx, axy, ayx, ayy, gdata);
+	     evas_common_cpu_end_opt();
 	     if (!direct_copy)
 	       bfunc(buf, mask, 0, pdst, w);
 	     evas_common_cpu_end_opt();
@@ -539,7 +564,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	pdst += dst->cache_entry.w;
 	yoff++;
      }
-
+   
    if (!direct_copy)
      {
 	evas_common_image_line_buffer_release(argb_buf);
