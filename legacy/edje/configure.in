@@ -33,16 +33,25 @@ AC_SUBST(version_info)
 
 AC_FUNC_ALLOCA
 
-create_shared_lib=""
+WIN32_CFLAGS=""
+lt_no_undefined=""
+lt_enable_auto_import=""
 edje_decc_lib=""
 case "$host_os" in
-	mingw|mingw32)
-		create_shared_lib="-no-undefined "
+	mingw*|cegcc)
+		dnl needed for correct definition of EAPI
+		AC_DEFINE(EFL_EDJE_BUILD, 1, [Define to mention that embryo is built])
+		if test "x$host_os" = "xcegcc" ; then
+			WIN32_CFLAGS="-mwin32"
+			lt_enable_auto_import="-Wl,--enable-auto-import"
+		fi
+		lt_no_undefined="-no-undefined"
 		edje_decc_lib="-lole32 -luuid"
 		;;
 esac
-
-AC_SUBST(create_shared_lib)
+AC_SUBST(WIN32_CFLAGS)
+AC_SUBST(lt_no_undefined)
+AC_SUBST(lt_enable_auto_import)
 AC_SUBST(edje_decc_lib)
 
 AC_CHECK_FUNCS(realpath)
