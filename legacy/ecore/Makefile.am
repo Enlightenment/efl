@@ -26,6 +26,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore-x.pc \
 		       ecore-win32.pc \
 		       ecore-sdl.pc \
+		       ecore-wince.pc \
 		       ecore.pc
 
 bin_SCRIPTS = 
@@ -49,6 +50,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-x.pc.in \
 	     ecore-win32.pc.in \
 	     ecore-sdl.pc.in \
+	     ecore-wince.pc.in \
 	     ecore.spec.in ecore.spec \
 	     doc gendoc
 
@@ -108,6 +110,10 @@ if BUILD_ECORE_WIN32
 pwin32 = ecore-win32.pc
 endif
 
+if BUILD_ECORE_WINCE
+pwince = ecore-wince.pc
+endif
+
 
 if BUILD_ECORE_SDL
 psdl = ecore-sdl.pc
@@ -121,4 +127,4 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	ecore.pc $(pcon) $(pconfig) $(pdfb) $(pevas) \
 	$(pfb) $(pfile) $(pdesktop) $(pimf) $(pimfevas) $(pipc) $(pjob) $(ptxt) \
-	$(px) $(pwin32) $(psdl)
+	$(px) $(pwin32) $(pwince) $(psdl)
