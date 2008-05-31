@@ -565,7 +565,7 @@ fi
 
 dnl ecore_evas_wince
 have_ecore_evas_software_16_wince="no"
-if test "x$have_ecore_software_16_wince" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
+if test "x$have_ecore_wince" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   want_ecore_evas_wince=yes
   AC_ARG_ENABLE(ecore-evas-software-16-wince,
     AC_HELP_STRING(
@@ -904,6 +904,7 @@ echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_x11_16"
 
 echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d}) (OpenGL Glew: ${have_opengl_glew})"
 echo "  Ecore_WinCE..................: $have_ecore_wince"
+echo "  Ecore_Evas WinCE Support.....: $have_ecore_evas_software_16_wince"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
 echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
 echo "  Ecore_FB.....................: $have_ecore_fb"
@@ -911,7 +912,6 @@ echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
 echo "  Ecore_SDL....................: $have_ecore_sdl"
 echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
 echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
-echo "  Ecore_Evas WinCE Support.....: $have_ecore_evas_wince"
 
 echo "  Ecore_File...................: $have_ecore_file (Inotify: $have_inotify) (Poll: $have_poll) (CURL: $have_curl)"
 echo "  Ecore_Desktop................: $have_ecore_desktop"
