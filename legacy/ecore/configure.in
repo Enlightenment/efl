@@ -48,6 +48,7 @@ requirements_ecore_job=""
 requirements_ecore_txt=""
 requirements_ecore_x=""
 requirements_ecore_win32=""
+requirements_ecore_wince=""
 requirements_ecore_sdl=""
 
 dnl The first call to PKG_CHECK_MODULES is done conditionally,
@@ -76,8 +77,9 @@ case "$host_os" in
 		AC_DEFINE(HAVE_SYS_MMAN_H, 1, [Define to 1 if you have the <sys/mman.h> header file.])
 		AC_DEFINE(HAVE_SYS_TIME_H, 1, [Define to 1 if you have the <sys/time.h> header file.])
                 if test "$host_os" = "cegcc" ; then
+			AC_DEFINE(EFL_ECORE_WINCE_BUILD, 1, [Define to mention that ecore WinCE is built.])
                         WIN32_CFLAGS="-mwin32"
-                        WIN32_LIBS="-lws2"
+                        WIN32_LIBS="-lws2 -laygshell"
 			lt_enable_auto_import="-Wl,--enable-auto-import"
                 else
                         WIN32_LIBS="-lws2_32"
@@ -555,6 +557,40 @@ if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_DIRECT3D, 1, [Support for Direct3D Engine in Ecore_Evas])
 fi
 
+ECORE_CHECK_MODULE([WinCE], [no])
+
+if test "x$have_ecore_wince" = "xyes"; then
+  requirements_ecore_evas="$requirements_ecore_evas ecore-wince"
+fi
+
+dnl ecore_evas_wince
+have_ecore_evas_software_16_wince="no"
+if test "x$have_ecore_software_16_wince" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
+  want_ecore_evas_wince=yes
+  AC_ARG_ENABLE(ecore-evas-software-16-wince,
+    AC_HELP_STRING(
+      [--enable-ecore-evas-software-16-wince],
+      [enable WinCE support in the ecore_evas module.]
+    ),
+    [ want_ecore_evas_wince=$enableval ]
+  )
+  AC_MSG_CHECKING(whether ecore_evas WinCE support is to be built)
+  AC_MSG_RESULT($want_ecore_evas_wince)
+
+  if test "x$want_ecore_evas_wince" = "xyes"; then
+    PKG_CHECK_MODULES(EVAS_SOFTWARE_16_WINCE, evas-software-16-wince, [
+        AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_16_WINCE, 1, [Support for WinCE Engine in Ecore_Evas])
+        have_ecore_evas_software_16_wince="yes";
+    ], [
+        have_ecore_evas_software_16_wince="no";
+    ])
+  fi
+
+  if test "x$have_ecore_evas_software_16_wince" = "xyes"; then
+    requirements_ecore_evas="$requirements_ecore_evas ecore-wince"
+  fi
+fi
+
 dnl ecore_dfb
 PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
   [ have_directfb="yes" ],
@@ -818,6 +854,7 @@ ecore-txt.pc
 ecore-x.pc
 ecore-win32.pc
 ecore-sdl.pc
+ecore-wince.pc
 ecore.pc
 src/Makefile
 src/bin/Makefile
@@ -838,6 +875,7 @@ src/lib/ecore_file/Makefile
 src/lib/ecore_desktop/Makefile
 src/lib/ecore_directfb/Makefile
 src/lib/ecore_win32/Makefile
+src/lib/ecore_wince/Makefile
 README
 ecore.spec
 ])
@@ -865,6 +903,7 @@ echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
 echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_x11_16"
 
 echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d}) (OpenGL Glew: ${have_opengl_glew})"
+echo "  Ecore_WinCE..................: $have_ecore_wince"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
 echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
 echo "  Ecore_FB.....................: $have_ecore_fb"
@@ -872,6 +911,7 @@ echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
 echo "  Ecore_SDL....................: $have_ecore_sdl"
 echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
 echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
+echo "  Ecore_Evas WinCE Support.....: $have_ecore_evas_wince"
 
 echo "  Ecore_File...................: $have_ecore_file (Inotify: $have_inotify) (Poll: $have_poll) (CURL: $have_curl)"
 echo "  Ecore_Desktop................: $have_ecore_desktop"

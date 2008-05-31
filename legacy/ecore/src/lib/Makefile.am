@@ -8,6 +8,7 @@ ecore_directfb \
 ecore_con \
 ecore_x \
 ecore_win32 \
+ecore_wince \
 ecore_sdl \
 ecore_ipc \
 ecore_evas \

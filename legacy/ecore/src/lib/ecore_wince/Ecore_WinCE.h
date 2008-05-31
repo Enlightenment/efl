@@ -1,0 +1,169 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifndef __ECORE_WINCE_H__
+#define __ECORE_WINCE_H__
+
+
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WINCE
+# ifdef EFL_ECORE_WINCE_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
+# else
+#  define EAPI __declspec(dllimport)
+# endif /* ! EFL_ECORE_WINCE_BUILD */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WINCE */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+typedef void Ecore_WinCE_Window;
+
+
+/* Events */
+
+typedef struct _Ecore_WinCE_Event_Key_Down              Ecore_WinCE_Event_Key_Down;
+typedef struct _Ecore_WinCE_Event_Key_Up                Ecore_WinCE_Event_Key_Up;
+typedef struct _Ecore_WinCE_Event_Window_Focus_In       Ecore_WinCE_Event_Window_Focus_In;
+typedef struct _Ecore_WinCE_Event_Window_Focus_Out      Ecore_WinCE_Event_Window_Focus_Out;
+typedef struct _Ecore_WinCE_Event_Window_Damage         Ecore_WinCE_Event_Window_Damage;
+typedef struct _Ecore_WinCE_Event_Window_Create         Ecore_WinCE_Event_Window_Create;
+typedef struct _Ecore_WinCE_Event_Window_Destroy        Ecore_WinCE_Event_Window_Destroy;
+typedef struct _Ecore_WinCE_Event_Window_Hide           Ecore_WinCE_Event_Window_Hide;
+typedef struct _Ecore_WinCE_Event_Window_Show           Ecore_WinCE_Event_Window_Show;
+typedef struct _Ecore_WinCE_Event_Window_Delete_Request Ecore_WinCE_Event_Window_Delete_Request;
+
+struct _Ecore_WinCE_Event_Key_Down
+{
+   Ecore_WinCE_Window *window;
+   char               *keyname;
+   char               *keysymbol;
+   char               *keycompose;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Key_Up
+{
+   Ecore_WinCE_Window *window;
+   char               *keyname;
+   char               *keysymbol;
+   char               *keycompose;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Focus_In
+{
+   Ecore_WinCE_Window *window;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Focus_Out
+{
+   Ecore_WinCE_Window *window;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Damage
+{
+   Ecore_WinCE_Window *window;
+   int                 x;
+   int                 y;
+   int                 width;
+   int                 height;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Create
+{
+   Ecore_WinCE_Window *window;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Destroy
+{
+   Ecore_WinCE_Window *window;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Hide
+{
+   Ecore_WinCE_Window *window;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Show
+{
+   Ecore_WinCE_Window *window;
+   double              time;
+};
+
+struct _Ecore_WinCE_Event_Window_Delete_Request
+{
+   Ecore_WinCE_Window *window;
+   double              time;
+};
+
+
+EAPI extern int ECORE_WINCE_EVENT_KEY_DOWN;
+EAPI extern int ECORE_WINCE_EVENT_KEY_UP;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_FOCUS_IN;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_FOCUS_OUT;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_DAMAGE;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_CREATE;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_DESTROY;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_HIDE;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_SHOW;
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST;
+
+
+/* Core */
+
+EAPI int    ecore_wince_init();
+EAPI int    ecore_wince_shutdown();
+EAPI double ecore_wince_current_time_get(void);
+EAPI void   ecore_wince_message_loop_begin (void);
+
+/* Window */
+
+EAPI Ecore_WinCE_Window *ecore_wince_window_new(Ecore_WinCE_Window *parent,
+                                                int                 x,
+                                                int                 y,
+                                                int                 width,
+                                                int                 height);
+
+EAPI void ecore_wince_window_del(Ecore_WinCE_Window *window);
+
+EAPI void ecore_wince_window_show(Ecore_WinCE_Window *window);
+
+EAPI void ecore_wince_window_hide(Ecore_WinCE_Window *window);
+
+EAPI void ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(void));
+
+EAPI void ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(void));
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __ECORE_WINCE_H__ */
