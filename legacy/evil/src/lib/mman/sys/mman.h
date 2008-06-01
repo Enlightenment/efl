@@ -63,9 +63,16 @@ extern "C" {
  * Interpret the address (addr) exactly.
  */
 
+/**
+ * @def MAP_FAILED
+ * Error return from mmap().
+ */
+
 #define MAP_SHARED  0x0001
 #define MAP_PRIVATE 0x0002
 #define MAP_FIXED   0x0010
+
+#define MAP_FAILED	((void *)-1)
 
 
 /**

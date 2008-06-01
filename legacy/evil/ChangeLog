@@ -1,3 +1,14 @@
+2008-06-01  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/dlfcn/dlfcn.c:
+	memory leak with cegcc
+
+	* src/lib/dlfcn/dlfcn.h:
+	include limits.h for MinGW users
+
+	* src/lib/mman/sys/mman.h:
+	add MAP_FAILED error value
+
 2008-05-20  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/dlfcn/dlfcn.h:

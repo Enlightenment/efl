@@ -4,7 +4,9 @@
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 # include <sys/syslimits.h>
-#endif /* __MINGW32CE__ */
+#else
+# include <limits.h>
+#endif /* ! __CEGCC__ || ! __MINGW32CE__ */
 
 
 #ifdef EAPI
