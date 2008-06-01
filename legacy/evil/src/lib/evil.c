@@ -388,6 +388,38 @@ evil_sockets_shutdown(void)
    WSACleanup();
 }
 
+int
+setenv(const char *name, const char *value)
+{
+  char *str;
+  int   length;
+  int   res;
+
+  length = strlen(name) + strlen(value) + 2;
+  str = (char *)malloc(length);
+  sprintf(str, "%s=%s", name, value);
+  res = _putenv(str);
+  free(str);
+
+  return res;
+}
+
+int
+unsetenv(const char *name)
+{
+  char *str;
+  int   length;
+  int   res;
+
+  length = strlen(name) + 2;
+  str = (char *)malloc(length);
+  sprintf(str, "%s=", name);
+  res = _putenv(str);
+  free(str);
+
+  return res;
+}
+
 const char *
 evil_tmpdir_get(void)
 {
@@ -400,6 +432,19 @@ evil_tmpdir_get(void)
    if (!tmpdir) tmpdir="C:\\";
 
    return tmpdir;
+}
+
+const char *
+evil_homedir_get(void)
+{
+   char *homedir;
+
+   homedir = getenv("HOME");
+   if (!homedir) homedir = getenv("USERPROFILE");
+   if (!homedir) homedir = getenv("WINDIR");
+   if (!homedir) homedir="C:\\";
+
+   return homedir;
 }
 
 char *

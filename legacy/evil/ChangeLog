@@ -1,5 +1,13 @@
 2008-06-01  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/Evil.h:
+	* src/lib/evil.c:
+	add open with several arguments
+	add getcwd, lstat, setenv, unsetenv and evil_homedir_get.
+	typo in doc
+
+2008-06-01  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/dlfcn/dlfcn.c:
 	memory leak with cegcc
 
