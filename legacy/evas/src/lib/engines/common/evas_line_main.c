@@ -95,7 +95,6 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, in
    dc->clip.y = cy;
    dc->clip.w = cw;
    dc->clip.h = ch;
-   evas_common_cpu_end_opt();
 }
 
 
