@@ -354,6 +354,38 @@ pipe(int *fds)
    return -1;
 }
 
+int
+setenv(const char *name, const char *value)
+{
+  char *str;
+  int   length;
+  int   res;
+
+  length = strlen(name) + strlen(value) + 2;
+  str = (char *)malloc(length);
+  sprintf(str, "%s=%s", name, value);
+  res = _putenv(str);
+  free(str);
+
+  return res;
+}
+
+int
+unsetenv(const char *name)
+{
+  char *str;
+  int   length;
+  int   res;
+
+  length = strlen(name) + 2;
+  str = (char *)malloc(length);
+  sprintf(str, "%s=", name);
+  res = _putenv(str);
+  free(str);
+
+  return res;
+}
+
 #endif /* ! __CEGCC__ */
 
 char *
@@ -386,38 +418,6 @@ void
 evil_sockets_shutdown(void)
 {
    WSACleanup();
-}
-
-int
-setenv(const char *name, const char *value)
-{
-  char *str;
-  int   length;
-  int   res;
-
-  length = strlen(name) + strlen(value) + 2;
-  str = (char *)malloc(length);
-  sprintf(str, "%s=%s", name, value);
-  res = _putenv(str);
-  free(str);
-
-  return res;
-}
-
-int
-unsetenv(const char *name)
-{
-  char *str;
-  int   length;
-  int   res;
-
-  length = strlen(name) + 2;
-  str = (char *)malloc(length);
-  sprintf(str, "%s=", name);
-  res = _putenv(str);
-  free(str);
-
-  return res;
 }
 
 const char *

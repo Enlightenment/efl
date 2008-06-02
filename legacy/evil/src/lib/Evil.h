@@ -294,6 +294,48 @@ EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
  */
 EAPI int pipe(int *fds);
 
+/**
+ * @brief Create, modify, or remove environment variables.
+ *
+ * @param name The name of the environment variable.
+ * @param value The value of the environment variable to set.
+ * @return 0 on success, -1 otherwise.
+ *
+ * Add the new environment variable @p name or modify its value if it
+ * exists, and set it to @p value. Environment variables define the
+ * environment in which a process executes. If @p value is @c NULL, the
+ * variable is removed (unset) and that call is equivalent to unsetenv().
+ * If the function succeeds, it returns 0, otherwise it returns -1.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI int setenv(const char *name, const char *value);
+
+/**
+ * @brief Remove environment variables.
+ *
+ * @param name The name of the environment variable.
+ * @return 0 on success, -1 otherwise.
+ *
+ * Remove the new environment variable @p name if it exists. That
+ * function is equivalent to setenv() with its second parameter to
+ * @c NULL. If the function succeeds, it returns 0, otherwise it
+ * returns -1.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI int unsetenv(const char *name);
+
 #endif /* ! __CEGCC__ */
 
 
@@ -387,48 +429,6 @@ EAPI int evil_sockets_init(void);
  * @ingroup Evil
  */
 EAPI void evil_sockets_shutdown(void);
-
-/**
- * @brief Create, modify, or remove environment variables.
- *
- * @param name The name of the environment variable.
- * @param value The value of the environment variable to set.
- * @return 0 on success, -1 otherwise.
- *
- * Add the new environment variable @p name or modify its value if it
- * exists, and set it to @p value. Environment variables define the
- * environment in which a process executes. If @p value is @c NULL, the
- * variable is removed (unset) and that call is equivalent to unsetenv().
- * If the function succeeds, it returns 0, otherwise it returns -1.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
- */
-EAPI int setenv(const char *name, const char *value);
-
-/**
- * @brief Remove environment variables.
- *
- * @param name The name of the environment variable.
- * @return 0 on success, -1 otherwise.
- *
- * Remove the new environment variable @p name if it exists. That
- * function is equivalent to setenv() with its second parameter to
- * @c NULL. If the function succeeds, it returns 0, otherwise it
- * returns -1.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
- */
-EAPI int unsetenv(const char *name);
 
 /**
  * @brief Return a dir to store temporary files.

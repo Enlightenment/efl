@@ -1,3 +1,9 @@
+2008-06-02  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	* src/lib/evil.c: (setenv), (unsetenv):
+	setenv and unsetenv are already defined with cegcc
+
 2008-06-01  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
