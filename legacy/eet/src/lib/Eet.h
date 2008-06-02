@@ -470,6 +470,45 @@ extern "C" {
    EAPI void *eet_data_image_read(Eet_File *ef, const char *name, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
+    * Read image data from the named key in the eet file.
+    * @param ef A valid eet file handle opened for reading.
+    * @param name Name of the entry. eg: "/base/file_i_want".
+    * @param src_x The starting x coordinate from where to dump the stream.
+    * @param src_y The starting y coordinate from where to dump the stream.
+    * @param d A pointer to the pixel surface.
+    * @param w The expected width in pixels of the pixel surface to decode.
+    * @param h The expected height in pixels of the pixel surface to decode.
+    * @param row_stride The length of a pixels line in the destination surface.
+    * @param alpha A pointer to the int to hold the alpha flag.
+    * @param compress A pointer to the int to hold the compression amount.
+    * @param quality A pointer to the int to hold the quality amount.
+    * @param lossy A pointer to the int to hold the lossiness flag.
+    * @return 1 on success, 0 otherwise.
+    *
+    * This function reads an image from an eet file stored under the named
+    * key in the eet file and return a pointer to the decompressed pixel data.
+    *
+    * The other parameters of the image (width, height etc.) are placed into
+    * the values pointed to (they must be supplied). The pixel data is a linear
+    * array of pixels starting from the top-left of the image scanning row by
+    * row from left to right. Each pile is a 32bit value, with the high byte
+    * being the alpha channel, the next being red, then green, and the low byte
+    * being blue. The width and height are measured in pixels and will be
+    * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
+    * that the alpha channel is not used. 1 denotes that it is significant.
+    * Compress is filled with the compression value/amount the image was
+    * stored with. The quality value is filled with the quality encoding of
+    * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
+    * the image was encoded lossily or not.
+    *
+    * On success the function returns 1, and 0 on failure. On failure the
+    * parameter values may not contain any sensible data.
+    *
+    * @since 1.0.2
+    */
+  EAPI int eet_data_image_read_to_surface(Eet_File *ef, const char *name, unsigned int src_x, unsigned int src_y, unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride, int *alpha, int *compress, int *quality, int *lossy);
+
+   /**
     * Write image data to the named key in an eet file.
     * @param ef A valid eet file handle opened for writing.
     * @param name Name of the entry. eg: "/base/file_i_want".
@@ -574,6 +613,45 @@ extern "C" {
     * @since 1.0.0
     */
    EAPI void *eet_data_image_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
+
+   /**
+    * Decode Image data into pixel data.
+    * @param data The encoded pixel data.
+    * @param size The size, in bytes, of the encoded pixel data.
+    * @param src_x The starting x coordinate from where to dump the stream.
+    * @param src_y The starting y coordinate from where to dump the stream.
+    * @param d A pointer to the pixel surface.
+    * @param w The expected width in pixels of the pixel surface to decode.
+    * @param h The expected height in pixels of the pixel surface to decode.
+    * @param row_stride The length of a pixels line in the destination surface.
+    * @param alpha A pointer to the int to hold the alpha flag.
+    * @param compress A pointer to the int to hold the compression amount.
+    * @param quality A pointer to the int to hold the quality amount.
+    * @param lossy A pointer to the int to hold the lossiness flag.
+    * @return 1 on success, 0 otherwise.
+    *
+    * This function takes encoded pixel data and decodes it into raw RGBA
+    * pixels on success.
+    *
+    * The other parameters of the image (alpha, compress etc.) are placed into
+    * the values pointed to (they must be supplied). The pixel data is a linear
+    * array of pixels starting from the top-left of the image scanning row by
+    * row from left to right. Each pixel is a 32bit value, with the high byte
+    * being the alpha channel, the next being red, then green, and the low byte
+    * being blue. The width and height are measured in pixels and will be
+    * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
+    * that the alpha channel is not used. 1 denotes that it is significant.
+    * Compress is filled with the compression value/amount the image was
+    * stored with. The quality value is filled with the quality encoding of
+    * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
+    * the image was encoded lossily or not.
+    *
+    * On success the function returns 1, and 0 on failure. On failure the
+    * parameter values may not contain any sensible data.
+    *
+    * @since 1.0.2
+    */
+   EAPI int eet_data_image_decode_to_surface(const void *data, int size, unsigned int src_x, unsigned int src_y, unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
     * Encode image data for storage or transmission.

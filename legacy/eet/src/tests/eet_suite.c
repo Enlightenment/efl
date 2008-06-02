@@ -903,10 +903,21 @@ START_TEST(eet_image)
    fail_if(compress != 0);
    fail_if(lossy != 0);
 
-   data = eet_data_image_read(ef, EET_TEST_FILE_IMAGE "0", &w, &h, &alpha, &compress, &quality, &lossy);
+   data = malloc(w * h * 4);
    fail_if(data == NULL);
-   fail_if(w != test_noalpha.w);
-   fail_if(h != test_noalpha.h);
+   result = eet_data_image_read_to_surface(ef, EET_TEST_FILE_IMAGE "0", 4, 4, data, 2, 2, w * 4, &alpha, &compress, &quality, &lossy);
+   fail_if(result != 1);
+   fail_if(alpha != test_noalpha.alpha);
+   fail_if(compress != 0);
+   fail_if(quality != 100);
+   fail_if(lossy != 0);
+   fail_if(data[0] != test_noalpha.color[4 + 4 * w]);
+   free(data);
+
+   data = malloc(w * h * 4);
+   fail_if(data == NULL);
+   result = eet_data_image_read_to_surface(ef, EET_TEST_FILE_IMAGE "0", 0, 0, data, w, h, w * 4, &alpha, &compress, &quality, &lossy);
+   fail_if(result != 1);
    fail_if(alpha != test_noalpha.alpha);
    fail_if(compress != 0);
    fail_if(quality != 100);
