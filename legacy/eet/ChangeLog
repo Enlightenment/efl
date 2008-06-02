@@ -53,3 +53,9 @@
 
 	* Remove use of strcpy and sprintf definitively.
 
+2008-06-02  Cedric BAIL
+
+	* Introduce tile support and the possibility to decompress eet
+	image inside an existing surface.
+
+
