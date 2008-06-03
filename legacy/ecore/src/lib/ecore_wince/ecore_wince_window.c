@@ -99,6 +99,8 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
         return NULL;
      }
 
+   w->pointer_is_in = 0;
+
    return w;
 }
 

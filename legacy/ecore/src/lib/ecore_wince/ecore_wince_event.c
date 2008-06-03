@@ -16,6 +16,14 @@
 
 /***** Private declarations *****/
 
+static Ecore_WinCE_Window *_ecore_wince_mouse_down_last_window = NULL;
+static Ecore_WinCE_Window *_ecore_wince_mouse_down_last_last_window = NULL;
+static double              _ecore_wince_mouse_down_last_time = 0;
+static double              _ecore_wince_mouse_down_last_last_time = 0;
+static int                 _ecore_wince_mouse_down_did_triple = 0;
+static int                 _ecore_wince_mouse_up_count = 0;
+
+
 static void _ecore_wince_event_free_key_down(void *data,
                                              void *ev);
 
@@ -93,6 +101,241 @@ _ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg)
    _ecore_wince_event_last_time = e->time;
 
    ecore_event_add(ECORE_WINCE_EVENT_KEY_UP, e, _ecore_wince_event_free_key_up, NULL);
+}
+
+void
+_ecore_wince_event_handle_button_press(Ecore_WinCE_Callback_Data *msg,
+                                       int                        button)
+{
+   Ecore_WinCE_Window *window;
+
+   window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+
+   {
+      Ecore_WinCE_Event_Mouse_Move *e;
+
+      e = (Ecore_WinCE_Event_Mouse_Move *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Move));
+      if (!e) return;
+
+      e->window = window;
+      e->x = LOWORD(msg->data_param);
+      e->y = HIWORD(msg->data_param);
+      e->time = (double)msg->time / 1000.0;
+
+      _ecore_wince_event_last_time = e->time;
+      _ecore_wince_event_last_window = e->window;
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_MOVE, e, NULL, NULL);
+   }
+
+   {
+      Ecore_WinCE_Event_Mouse_Button_Down *e;
+
+      if (_ecore_wince_mouse_down_did_triple)
+        {
+           _ecore_wince_mouse_down_last_window = NULL;
+           _ecore_wince_mouse_down_last_last_window = NULL;
+           _ecore_wince_mouse_down_last_time = 0.0;
+           _ecore_wince_mouse_down_last_last_time = 0.0;
+        }
+
+      e = (Ecore_WinCE_Event_Mouse_Button_Down *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Button_Down));
+      if (!e) return;
+
+      e->window = window;
+      e->button = button;
+      e->x = LOWORD(msg->data_param);
+      e->y = HIWORD(msg->data_param);
+      e->time = (double)msg->time / 1000.0;
+
+      if (((e->time - _ecore_wince_mouse_down_last_time) <= _ecore_wince_double_click_time) &&
+          (e->window == _ecore_wince_mouse_down_last_window))
+        e->double_click = 1;
+
+      if (((e->time - _ecore_wince_mouse_down_last_last_time) <= (2.0 * _ecore_wince_double_click_time)) &&
+          (e->window == _ecore_wince_mouse_down_last_window) &&
+          (e->window == _ecore_wince_mouse_down_last_last_window))
+        {
+           e->triple_click = 1;
+           _ecore_wince_mouse_down_did_triple = 1;
+        }
+      else
+        _ecore_wince_mouse_down_did_triple = 0;
+
+      if (!e->double_click && !e->triple_click)
+        _ecore_wince_mouse_up_count = 0;
+
+      _ecore_wince_event_last_time = e->time;
+      _ecore_wince_event_last_window = e->window;
+
+      if (!_ecore_wince_mouse_down_did_triple)
+        {
+           _ecore_wince_mouse_down_last_last_window = _ecore_wince_mouse_down_last_window;
+           _ecore_wince_mouse_down_last_window = e->window;
+           _ecore_wince_mouse_down_last_last_time = _ecore_wince_mouse_down_last_time;
+           _ecore_wince_mouse_down_last_time = e->time;
+        }
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
+   }
+   printf (" * ecore event button press\n");
+}
+
+void
+_ecore_wince_event_handle_button_release(Ecore_WinCE_Callback_Data *msg,
+                                         int                          button)
+{
+   Ecore_WinCE_Window *window;
+
+   window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+
+   {
+      Ecore_WinCE_Event_Mouse_Move *e;
+
+      e = (Ecore_WinCE_Event_Mouse_Move *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Move));
+      if (!e) return;
+
+      e->window = window;
+      e->x = LOWORD(msg->data_param);
+      e->y = HIWORD(msg->data_param);
+      e->time = (double)msg->time / 1000.0;
+
+      _ecore_wince_event_last_time = e->time;
+      _ecore_wince_event_last_window = e->window;
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_MOVE, e, NULL, NULL);
+   }
+
+   {
+      Ecore_WinCE_Event_Mouse_Button_Up *e;
+
+      e = (Ecore_WinCE_Event_Mouse_Button_Up *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Button_Up));
+      if (!e) return;
+
+      e->window = window;
+      e->button = button;
+      e->x = LOWORD(msg->data_param);
+      e->y = HIWORD(msg->data_param);
+      e->time = (double)msg->time / 1000.0;
+
+      _ecore_wince_mouse_up_count++;
+
+      if ((_ecore_wince_mouse_up_count >= 2) &&
+          ((e->time - _ecore_wince_mouse_down_last_time) <= _ecore_wince_double_click_time) &&
+          (e->window == _ecore_wince_mouse_down_last_window))
+        e->double_click = 1;
+
+      if ((_ecore_wince_mouse_up_count >= 3) &&
+          ((e->time - _ecore_wince_mouse_down_last_last_time) <= (2.0 * _ecore_wince_double_click_time)) &&
+          (e->window == _ecore_wince_mouse_down_last_window) &&
+          (e->window == _ecore_wince_mouse_down_last_last_window))
+        e->triple_click = 1;
+
+      _ecore_wince_event_last_time = e->time;
+      _ecore_wince_event_last_window = e->window;
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
+   }
+
+   printf (" * ecore event button release\n");
+}
+
+void
+_ecore_wince_event_handle_motion_notify(Ecore_WinCE_Callback_Data *msg)
+{
+   Ecore_WinCE_Event_Mouse_Move *e;
+
+   e = (Ecore_WinCE_Event_Mouse_Move *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Move));
+   if (!e) return;
+
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+   e->x = LOWORD(msg->data_param);
+   e->y = HIWORD(msg->data_param);
+   e->time = (double)msg->time / 1000.0;
+
+   ecore_event_add(ECORE_WINCE_EVENT_MOUSE_MOVE, e, NULL, NULL);
+}
+
+void
+_ecore_wince_event_handle_enter_notify(Ecore_WinCE_Callback_Data *msg)
+{
+   Ecore_WinCE_Window *window;
+
+   window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+
+   {
+      Ecore_WinCE_Event_Mouse_Move *e;
+
+      e = (Ecore_WinCE_Event_Mouse_Move *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Move));
+      if (!e) return;
+
+      e->window = window;
+      e->x = msg->x;
+      e->y = msg->y;
+      e->time = (double)msg->time / 1000.0;
+
+      _ecore_wince_event_last_time = e->time;
+      _ecore_wince_event_last_window = e->window;
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_MOVE, e, NULL, NULL);
+   }
+
+   {
+      Ecore_WinCE_Event_Mouse_In *e;
+
+      e = (Ecore_WinCE_Event_Mouse_In *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_In));
+      if (!e) return;
+
+      e->window = window;
+      e->x = msg->x;
+      e->y = msg->y;
+      e->time = (double)msg->time / 1000.0;
+
+      _ecore_wince_event_last_time = e->time;
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_IN, e, NULL, NULL);
+   }
+}
+
+void
+_ecore_wince_event_handle_leave_notify(Ecore_WinCE_Callback_Data *msg)
+{
+   Ecore_WinCE_Window *window;
+
+   window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+
+   {
+      Ecore_WinCE_Event_Mouse_Move *e;
+
+      e = (Ecore_WinCE_Event_Mouse_Move *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Move));
+      if (!e) return;
+
+      e->window = window;
+      e->x = msg->x;
+      e->y = msg->y;
+      e->time = (double)msg->time / 1000.0;
+
+      _ecore_wince_event_last_time = e->time;
+      _ecore_wince_event_last_window = e->window;
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_MOVE, e, NULL, NULL);
+   }
+
+   {
+      Ecore_WinCE_Event_Mouse_Out *e;
+
+      e = (Ecore_WinCE_Event_Mouse_Out *)calloc(1, sizeof(Ecore_WinCE_Event_Mouse_Out));
+      if (!e) return;
+
+      e->window = window;
+      e->x = msg->x;
+      e->y = msg->y;
+      e->time = (double)msg->time / 1000.0;
+
+      _ecore_wince_event_last_time = e->time;
+
+      ecore_event_add(ECORE_WINCE_EVENT_MOUSE_OUT, e, NULL, NULL);
+   }
 }
 
 void

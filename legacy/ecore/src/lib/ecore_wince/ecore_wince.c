@@ -16,20 +16,26 @@
 
 /***** Global declarations *****/
 
+double              _ecore_wince_double_click_time = 0.25;
 double              _ecore_wince_event_last_time = 0.0;
+Ecore_WinCE_Window *_ecore_wince_event_last_window = NULL;
+HINSTANCE           _ecore_wince_instance = NULL;
 
-HINSTANCE _ecore_wince_instance = NULL;
-
-EAPI int ECORE_WINCE_EVENT_KEY_DOWN              = 0;
-EAPI int ECORE_WINCE_EVENT_KEY_UP                = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_FOCUS_IN       = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_FOCUS_OUT      = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_DAMAGE         = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_CREATE         = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_DESTROY        = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_SHOW           = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_HIDE           = 0;
-EAPI int ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST = 0;
+int ECORE_WINCE_EVENT_KEY_DOWN              = 0;
+int ECORE_WINCE_EVENT_KEY_UP                = 0;
+int ECORE_WINCE_EVENT_MOUSE_BUTTON_DOWN     = 0;
+int ECORE_WINCE_EVENT_MOUSE_BUTTON_UP       = 0;
+int ECORE_WINCE_EVENT_MOUSE_MOVE            = 0;
+int ECORE_WINCE_EVENT_MOUSE_IN              = 0;
+int ECORE_WINCE_EVENT_MOUSE_OUT             = 0;
+int ECORE_WINCE_EVENT_WINDOW_FOCUS_IN       = 0;
+int ECORE_WINCE_EVENT_WINDOW_FOCUS_OUT      = 0;
+int ECORE_WINCE_EVENT_WINDOW_DAMAGE         = 0;
+int ECORE_WINCE_EVENT_WINDOW_CREATE         = 0;
+int ECORE_WINCE_EVENT_WINDOW_DESTROY        = 0;
+int ECORE_WINCE_EVENT_WINDOW_SHOW           = 0;
+int ECORE_WINCE_EVENT_WINDOW_HIDE           = 0;
+int ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST = 0;
 
 
 /***** Private declarations *****/
@@ -82,6 +88,9 @@ ecore_wince_init()
      {
         ECORE_WINCE_EVENT_KEY_DOWN              = ecore_event_type_new();
         ECORE_WINCE_EVENT_KEY_UP                = ecore_event_type_new();
+        ECORE_WINCE_EVENT_MOUSE_BUTTON_DOWN     = ecore_event_type_new();
+        ECORE_WINCE_EVENT_MOUSE_BUTTON_UP       = ecore_event_type_new();
+        ECORE_WINCE_EVENT_MOUSE_MOVE            = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
@@ -93,6 +102,8 @@ ecore_wince_init()
      }
 
    _ecore_wince_init_count++;
+
+   printf ("ecore_wince : instance + class bon\n");
 
    return _ecore_wince_init_count;
 }
@@ -111,6 +122,44 @@ ecore_wince_shutdown()
    if (_ecore_wince_init_count < 0) _ecore_wince_init_count = 0;
 
    return _ecore_wince_init_count;
+}
+
+/**
+ * Sets the timeout for a double and triple clicks to be flagged.
+ *
+ * This sets the time between clicks before the double_click flag is
+ * set in a button down event. If 3 clicks occur within double this
+ * time, the triple_click flag is also set.
+ *
+ * @param t The time in seconds
+ */
+EAPI void
+ecore_wince_double_click_time_set(double t)
+{
+   if (t < 0.0) t = 0.0;
+   _ecore_wince_double_click_time = t;
+}
+
+/**
+ * Retrieves the double and triple click flag timeout.
+ *
+ * See @ref ecore_wince_double_click_time_set for more information.
+ *
+ * @return The timeout for double clicks in seconds.
+ */
+EAPI double
+ecore_wince_double_click_time_get(void)
+{
+   return _ecore_wince_double_click_time;
+}
+
+/**
+ * Return the last event time
+ */
+EAPI double
+ecore_wince_current_time_get(void)
+{
+   return _ecore_wince_event_last_time;
 }
 
 
@@ -162,6 +211,50 @@ _ecore_wince_window_procedure(HWND   window,
        printf (" * ecore message : focus out\n");
        _ecore_wince_event_handle_focus_out(data);
        return 0;
+       /* Mouse input notifications */
+     case WM_LBUTTONDOWN:
+       printf (" * ecore message : lbuttondown\n");
+       _ecore_wince_event_handle_button_press(data, 1);
+       return 0;
+     case WM_LBUTTONUP:
+       printf (" * ecore message : lbuttonup\n");
+       _ecore_wince_event_handle_button_release(data, 1);
+       return 0;
+     case WM_MOUSEMOVE:
+       {
+          RECT                        rect;
+          struct _Ecore_WinCE_Window *w = NULL;
+
+          w = (struct _Ecore_WinCE_Window *)GetWindowLong(window, GWL_USERDATA);
+
+          if (GetClientRect(window, &rect))
+          {
+             POINT pt;
+
+             pt.x = LOWORD(data_param);
+             pt.y = HIWORD(data_param);
+             if (!PtInRect(&rect, pt))
+               {
+                  if (w->pointer_is_in)
+                    {
+                       w->pointer_is_in = 0;
+                       _ecore_wince_event_handle_leave_notify(data);
+                    }
+               }
+             else
+               {
+                  if (!w->pointer_is_in)
+                    {
+                       w->pointer_is_in = 1;
+                       _ecore_wince_event_handle_enter_notify(data);
+                    }
+
+               }
+          }
+          _ecore_wince_event_handle_motion_notify(data);
+
+          return 0;
+       }
        /* Window notifications */
      case WM_CREATE:
        {
@@ -201,13 +294,22 @@ _ecore_wince_window_procedure(HWND   window,
      case WM_PAINT:
        {
           RECT rect;
+          PAINTSTRUCT paint;
 
-          ValidateRect(window, NULL);
-          if (GetUpdateRect(window, &rect, FALSE))
+          printf (" * ecore message : paint\n");
+          if (BeginPaint(window, &paint))
             {
-               data->update = rect;
+               printf (" * ecore message : painting...\n");
+               data->update = paint.rcPaint;
                _ecore_wince_event_handle_expose(data);
+               EndPaint(window, &paint);
             }
+/*           if (GetUpdateRect(window, &rect, FALSE)) */
+/*             { */
+/*               printf (" * ecore message : painting...\n"); */
+/*                data->update = rect; */
+/*                _ecore_wince_event_handle_expose(data); */
+/*             } */
           return 0;
        }
      default:
