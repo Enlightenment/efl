@@ -91,7 +91,8 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
 
    w->window = window;
 
-   if (!SetWindowLong(window, GWL_USERDATA, (LONG)w))
+   SetLastError(0);
+   if (!SetWindowLong(window, GWL_USERDATA, (LONG)w) && (GetLastError() != 0))
      {
         DestroyWindow(window);
         free(w);
