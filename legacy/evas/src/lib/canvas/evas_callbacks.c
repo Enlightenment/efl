@@ -406,3 +406,63 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
      }
    return NULL;
 }
+
+/**
+ * Delete a callback function from an object
+ * @param obj Object to remove a callback from
+ * @param type The type of event that was triggering the callback
+ * @param func The function that was to be called when the event was triggered
+ * @param data The data pointer that was to be passed to the callback
+ * @return The data pointer that was to be passed to the callback
+ *
+ * This function removes the most recently added callback from the object
+ * @p obj which was triggered by the event type @p type and was calling the
+ * function @p func with data @p data when triggered. If the removal is
+ * successful it will also return the data pointer that was passed to
+ * evas_object_event_callback_add() (that will be the same as the parameter)
+ * when the callback was added to the object. If not successful NULL will be
+ * returned.
+ *
+ * Example:
+ * @code
+ * extern Evas_Object *object;
+ * void *my_data;
+ * void up_callback(void *data, Evas *e, Evas_Object *obj, void *event_info);
+ *
+ * my_data = evas_object_event_callback_del_full(object, EVAS_CALLBACK_MOUSE_UP, up_callback, data);
+ * @endcode
+ * @ingroup Evas_Object_Callback_Group
+ */
+EAPI void *
+evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
+{
+   /* MEM OK */
+   Evas_Object_List *l;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   if (!func) return NULL;
+
+   if (!obj->callbacks) return NULL;
+
+   for (l = obj->callbacks->callbacks; l; l = l->next)
+     {
+	Evas_Func_Node *fn;
+
+	fn = (Evas_Func_Node *)l;
+	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
+	  {
+	     void *data;
+
+	     data = fn->data;
+	     fn->delete_me = 1;
+	     obj->callbacks->deletions_waiting = 1;
+	     if (!obj->callbacks->walking_list)
+	       evas_object_event_callback_clear(obj);
+	     return data;
+	  }
+     }
+   return NULL;
+}
