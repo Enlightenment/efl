@@ -28,7 +28,7 @@ evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int 
    if (!ef) ef = eet_open((char *)file, EET_FILE_MODE_WRITE);
    if (!ef) return 0;
    if ((quality <= 100) || (compress < 0)) lossy = 1;
-   if (im->flags & RGBA_IMAGE_HAS_ALPHA) alpha = 1;
+   if (im->cache_entry.flags.alpha) alpha = 1;
 //   if (alpha)
 //     {
 //       data = malloc(im->image->w * im->image->h * sizeof(DATA32));

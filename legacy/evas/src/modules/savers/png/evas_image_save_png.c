@@ -62,7 +62,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 #endif
      }
    
-   if (im->flags & RGBA_IMAGE_HAS_ALPHA)
+   if (im->cache_entry.flags.alpha)
      {
 	data = malloc(im->cache_entry.w * im->cache_entry.h * sizeof(DATA32));
 	if (!data)
@@ -110,7 +110,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 	
 	for (y = 0; y < im->cache_entry.h; y++)
 	  {
-	     if (im->flags & RGBA_IMAGE_HAS_ALPHA)
+	     if (im->cache_entry.flags.alpha)
 	       row_ptr = (png_bytep) ptr;
 	     else
 	       {
@@ -130,7 +130,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    png_destroy_write_struct(&png_ptr, (png_infopp) & info_ptr);
    png_destroy_info_struct(png_ptr, (png_infopp) & info_ptr);
    
-   if (im->flags & RGBA_IMAGE_HAS_ALPHA)
+   if (im->cache_entry.flags.alpha)
      free(data);
    fclose(f);
    return 1;

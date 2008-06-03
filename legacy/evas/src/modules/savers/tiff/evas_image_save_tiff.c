@@ -25,7 +25,7 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
    if (!im || !im->image.data || !file)
       return 0;
 
-   has_alpha = im->flags & RGBA_IMAGE_HAS_ALPHA;
+   has_alpha = im->cache_entry.flags.alpha;
    data = im->image.data;
 
    tif = TIFFOpen(file, "w");

@@ -12,8 +12,8 @@
 #define PNG_BYTES_TO_CHECK 4
 
 
-int evas_image_load_file_head_png(RGBA_Image *im, const char *file, const char *key);
-int evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key);
+int evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key);
+int evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_png_func =
 {
@@ -23,7 +23,7 @@ Evas_Image_Load_Func evas_image_load_png_func =
 
 
 int
-evas_image_load_file_head_png(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key)
 {
    png_uint_32 w32, h32;
    FILE *f;
@@ -80,12 +80,12 @@ evas_image_load_file_head_png(RGBA_Image *im, const char *file, const char *key)
 	fclose(f);
 	return 0;
      }
-   im->cache_entry.w = (int) w32;
-   im->cache_entry.h = (int) h32;
+   ie->w = (int) w32;
+   ie->h = (int) h32;
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
-   if (hasa) im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   if (hasa) ie->flags.alpha = 1;
    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
    fclose(f);
    return 1;
@@ -93,8 +93,9 @@ evas_image_load_file_head_png(RGBA_Image *im, const char *file, const char *key)
 }
 
 int
-evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key)
 {
+   unsigned char *surface;
    png_uint_32 w32, h32;
    int w, h;
    FILE *f;
@@ -143,14 +144,15 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
-   evas_cache_image_surface_alloc(&im->cache_entry, w32, h32);
-   if (!im->image.data)
+   evas_cache_image_surface_alloc(ie, w32, h32);
+   surface = (unsigned char *) evas_cache_image_pixels(ie);
+   if (!surface)
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
 	fclose(f);
 	return 0;
      }
-   if ((w32 != im->cache_entry.w) || (h32 != im->cache_entry.h))
+   if ((w32 != ie->w) || (h32 != ie->h))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
 	fclose(f);
@@ -159,7 +161,7 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
-   if (hasa) im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   if (hasa) ie->flags.alpha = 1;
 
    /* Prep for transformations...  ultimately we want ARGB */
    /* expand palette -> RGB if necessary */
@@ -179,8 +181,8 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    /* pack all pixels to byte boundaries */
    png_set_packing(png_ptr);
 
-   w = im->cache_entry.w;
-   h = im->cache_entry.h;
+   w = ie->w;
+   h = ie->h;
    /* we want ARGB */
 #ifdef WORDS_BIGENDIAN
    png_set_swap_alpha(png_ptr);
@@ -192,12 +194,12 @@ evas_image_load_file_data_png(RGBA_Image *im, const char *file, const char *key)
    lines = (unsigned char **) alloca(h * sizeof(unsigned char *));
 
    for (i = 0; i < h; i++)
-     lines[i] = ((unsigned char *)(im->image.data)) + (i * w * sizeof(DATA32));
+     lines[i] = surface + (i * w * sizeof(DATA32));
    png_read_image(png_ptr, lines);
    png_read_end(png_ptr, info_ptr);
    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
    fclose(f);
-   evas_common_image_premul(im);
+   evas_common_image_premul(ie);
 
    return 1;
    key = 0;

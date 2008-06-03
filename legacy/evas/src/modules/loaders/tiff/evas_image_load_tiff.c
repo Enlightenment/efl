@@ -5,8 +5,8 @@
 #include <tiffio.h>
 
 
-int evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key);
-int evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key);
+int evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key);
+int evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_tiff_func =
 {
@@ -20,7 +20,7 @@ struct TIFFRGBAImage_Extra {
    TIFFRGBAImage       rgba;
    tileContigRoutine   put_contig;
    tileSeparateRoutine put_separate;
-   RGBA_Image         *image;
+   Image_Entry        *image;
    char                pper;
    uint32              num_pixels;
    uint32              py;
@@ -69,11 +69,11 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
    int                 image_width, image_height;
    uint32             *pixel, pixel_value;
    int                 i, j, dy, rast_offset;
-   DATA32             *buffer_pixel, *buffer = img->image->image.data;
+   DATA32             *buffer_pixel, *buffer = evas_cache_image_pixels(img->image);
    int                 alpha_premult;
 
-   image_width = img->image->cache_entry.w;
-   image_height = img->image->cache_entry.h;
+   image_width = img->image->w;
+   image_height = img->image->h;
 
    dy = h > y ? -1 : y - h;
 
@@ -110,7 +110,7 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
 }
 
 int
-evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key)
 {
    char                txt[1024];
    TIFFRGBAImage       tiff_image;
@@ -164,22 +164,22 @@ evas_image_load_file_head_tiff(RGBA_Image *im, const char *file, const char *key
      }
 
    if (tiff_image.alpha != EXTRASAMPLE_UNSPECIFIED)
-     im->flags |= RGBA_IMAGE_HAS_ALPHA;
+     ie->flags.alpha = 1;
    if ((tiff_image.width < 1) || (tiff_image.height < 1) ||
        (tiff_image.width > 8192) || (tiff_image.height > 8192))
      {
 	TIFFClose(tif);
 	return 0;
      }
-   im->cache_entry.w = tiff_image.width;
-   im->cache_entry.h = tiff_image.height;
+   ie->w = tiff_image.width;
+   ie->h = tiff_image.height;
 
    TIFFClose(tif);
    return 1;
 }
 
 int
-evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key)
 {
    char                txt[1024];
    TIFFRGBAImage_Extra rgba_image;
@@ -229,19 +229,19 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
         TIFFClose(tif);
         return 0;
      }
-   rgba_image.image = im;
+   rgba_image.image = ie;
 
    if (rgba_image.rgba.alpha != EXTRASAMPLE_UNSPECIFIED)
-     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if ((rgba_image.rgba.width != im->cache_entry.w) ||
-       (rgba_image.rgba.height != im->cache_entry.h))
+     ie->flags.alpha = 1;
+   if ((rgba_image.rgba.width != ie->w) ||
+       (rgba_image.rgba.height != ie->h))
      {
         TIFFClose(tif);
 	return 0;
      }
 
-   evas_cache_image_surface_alloc(&im->cache_entry, rgba_image.rgba.width, rgba_image.rgba.height);
-   if (!im->image.data)
+   evas_cache_image_surface_alloc(ie, rgba_image.rgba.width, rgba_image.rgba.height);
+   if (!evas_cache_image_pixels(ie))
      {
         TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
         TIFFClose(tif);
@@ -249,7 +249,7 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
 	return 0;
      }
 
-   rgba_image.num_pixels = num_pixels = im->cache_entry.w * im->cache_entry.h;
+   rgba_image.num_pixels = num_pixels = ie->w * ie->h;
 
    rgba_image.pper = rgba_image.py = 0;
    rast = (uint32 *) _TIFFmalloc(sizeof(uint32) * num_pixels);
@@ -311,7 +311,7 @@ evas_image_load_file_data_tiff(RGBA_Image *im, const char *file, const char *key
 
    TIFFClose(tif);
 
-   evas_common_image_set_alpha_sparse(im);
+   evas_common_image_set_alpha_sparse(ie);
    return 1;
 }
 

@@ -604,6 +604,7 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *imag
    im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
    if (!im) return NULL;
    im->space = cspace;
+   im->flags.alpha = alpha;
 
    _evas_cache_image_entry_surface_alloc(cache, im, w, h);
 
@@ -629,6 +630,7 @@ evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data,
    im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
    im->w = w;
    im->h = h;
+   im->flags.alpha = alpha;
 
    if (cache->func.data(im, w, h, image_data, alpha, cspace) != 0)
      {
@@ -784,7 +786,6 @@ evas_cache_image_colorspace(Image_Entry *im, int cspace)
 
    cache = im->cache;
 
-   if (!im) return ;
    if (im->space == cspace) return ;
 
    im->space = cspace;
@@ -818,4 +819,17 @@ evas_cache_private_set(Evas_Cache_Image *cache, const void *data)
    assert(cache);
 
    cache->data = data;
+}
+
+EAPI DATA32 *
+evas_cache_image_pixels(Image_Entry *im)
+{
+   Evas_Cache_Image    *cache;
+
+   assert(im);
+   assert(im->cache);
+
+   cache = im->cache;
+
+   return cache->func.surface_pixels(im);
 }

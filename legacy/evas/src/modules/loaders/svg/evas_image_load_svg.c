@@ -4,8 +4,8 @@
 #include <librsvg/rsvg.h>
 #include <librsvg/rsvg-cairo.h>
 
-int evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key);
-int evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key);
+int evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key);
+int evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_svg_func =
 {
@@ -36,7 +36,7 @@ svg_loader_unpremul_data(DATA32 *data, unsigned int len)
 }
 
 int
-evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key)
 {
    char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
    
@@ -93,36 +93,36 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 	chdir(pcwd);
 	return 0;
      }
-   if (im->cache_entry.load_opts.scale_down_by > 1)
+   if (ie->load_opts.scale_down_by > 1)
      {
-	w /= im->cache_entry.load_opts.scale_down_by;
-	h /= im->cache_entry.load_opts.scale_down_by;
+	w /= ie->load_opts.scale_down_by;
+	h /= ie->load_opts.scale_down_by;
      }
-   else if (im->cache_entry.load_opts.dpi > 0.0)
+   else if (ie->load_opts.dpi > 0.0)
      {
-	w = (w * im->cache_entry.load_opts.dpi) / 90.0;
-	h = (h * im->cache_entry.load_opts.dpi) / 90.0;
+	w = (w * ie->load_opts.dpi) / 90.0;
+	h = (h * ie->load_opts.dpi) / 90.0;
      }
-   else if ((im->cache_entry.load_opts.w > 0) &&
-	    (im->cache_entry.load_opts.h > 0))
+   else if ((ie->load_opts.w > 0) &&
+	    (ie->load_opts.h > 0))
      {
 	int w2, h2;
 	
-	w2 = im->cache_entry.load_opts.w;
-	h2 = (im->cache_entry.load_opts.w * h) / w;
-	if (h2 > im->cache_entry.load_opts.h)
+	w2 = ie->load_opts.w;
+	h2 = (ie->load_opts.w * h) / w;
+	if (h2 > ie->load_opts.h)
 	  {
-	     h2 = im->cache_entry.load_opts.h;
-	     w2 = (im->cache_entry.load_opts.h * w) / h;
+	     h2 = ie->load_opts.h;
+	     w2 = (ie->load_opts.h * w) / h;
 	  }
 	w = w2;
 	h = h2;
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   im->cache_entry.w = w;
-   im->cache_entry.h = h;
-   im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   ie->w = w;
+   ie->h = h;
+   ie->flags.alpha = 1;
 //   rsvg_handle_close(rsvg, NULL);
    g_object_unref(rsvg);
 //   rsvg_handle_free(rsvg);
@@ -132,8 +132,9 @@ evas_image_load_file_head_svg(RGBA_Image *im, const char *file, const char *key)
 
 /** FIXME: All evas loaders need to be tightened up **/
 int
-evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key)
 {
+   DATA32             *pixels;
    char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
    RsvgHandle         *rsvg;
    RsvgDimensionData   dim;
@@ -190,36 +191,37 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	chdir(pcwd);
 	return 0;
      }
-   if (im->cache_entry.load_opts.scale_down_by > 1)
+   if (ie->load_opts.scale_down_by > 1)
      {
-	w /= im->cache_entry.load_opts.scale_down_by;
-	h /= im->cache_entry.load_opts.scale_down_by;
+	w /= ie->load_opts.scale_down_by;
+	h /= ie->load_opts.scale_down_by;
      }
-   else if (im->cache_entry.load_opts.dpi > 0.0)
+   else if (ie->load_opts.dpi > 0.0)
      {
-	w = (w * im->cache_entry.load_opts.dpi) / 90.0;
-	h = (h * im->cache_entry.load_opts.dpi) / 90.0;
+	w = (w * ie->load_opts.dpi) / 90.0;
+	h = (h * ie->load_opts.dpi) / 90.0;
      }
-   else if ((im->cache_entry.load_opts.w > 0) &&
-	    (im->cache_entry.load_opts.h > 0))
+   else if ((ie->load_opts.w > 0) &&
+	    (ie->load_opts.h > 0))
      {
 	int w2, h2;
 	
-	w2 = im->cache_entry.load_opts.w;
-	h2 = (im->cache_entry.load_opts.w * h) / w;
-	if (h2 > im->cache_entry.load_opts.h)
+	w2 = ie->load_opts.w;
+	h2 = (ie->load_opts.w * h) / w;
+	if (h2 > ie->load_opts.h)
 	  {
-	     h2 = im->cache_entry.load_opts.h;
-	     w2 = (im->cache_entry.load_opts.h * w) / h;
+	     h2 = ie->load_opts.h;
+	     w2 = (ie->load_opts.h * w) / h;
 	  }
 	w = w2;
 	h = h2;
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
-   if (!im->image.data)
+   ie->flags.alpha = 1;
+   evas_cache_image_surface_alloc(ie, w, h);
+   pixels = evas_cache_image_pixels(ie);
+   if (!pixels)
      {
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
@@ -228,9 +230,9 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
 	return 0;
      }
 
-   memset(im->image.data, 0, w * h * sizeof(DATA32));
+   memset(pixels, 0, w * h * sizeof(DATA32));
    
-   surface = cairo_image_surface_create_for_data((unsigned char *)im->image.data, CAIRO_FORMAT_ARGB32,
+   surface = cairo_image_surface_create_for_data((unsigned char *)pixels, CAIRO_FORMAT_ARGB32,
 						 w, h, w * sizeof(DATA32));
    if (!surface)
      {
@@ -252,8 +254,8 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
      }
    
    cairo_scale(cr, 
-	       (double)im->cache_entry.w / dim.em, 
-	       (double)im->cache_entry.h / dim.ex);
+	       (double)ie->w / dim.em, 
+	       (double)ie->h / dim.ex);
    rsvg_handle_render_cairo(rsvg, cr);
    cairo_surface_destroy(surface);
    /* need to check if this is required... */
@@ -262,7 +264,7 @@ evas_image_load_file_data_svg(RGBA_Image *im, const char *file, const char *key)
    g_object_unref(rsvg);
 //   rsvg_handle_free(rsvg);
    chdir(pcwd);
-   evas_common_image_set_alpha_sparse(im);
+   evas_common_image_set_alpha_sparse(ie);
    return 1;
 }
 

@@ -477,7 +477,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 	  }
 	if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
 	  {
-	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	     im->cache_entry.flags.alpha = 1;
 	     /* FIXME: faster memset! */
 	     memset(im->image->data, 0, w * h * sizeof(DATA32));
 	  }
@@ -577,7 +577,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
      }
    if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
      {
-	im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	im->cache_entry.flags.alpha = 1;
 	/* FIXME: faster memset! */
 	memset(im->image.data, 0, w * h * sizeof(DATA32));
      }

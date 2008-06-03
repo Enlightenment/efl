@@ -51,7 +51,7 @@ EAPI Evas_Bool
 evas_imaging_image_alpha_get(const Evas_Imaging_Image *im)
 {
    if (!im) return 0;
-   if (im->image->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+   if (im->image->cache_entry.flags.alpha) return 1;
    return 0;
 }
 

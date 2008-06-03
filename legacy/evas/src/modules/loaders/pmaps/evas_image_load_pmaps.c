@@ -8,9 +8,9 @@
 #define FILE_BUFFER_SIZE 1024
 #define FILE_BUFFER_UNREAD_SIZE 16
 
-static int evas_image_load_file_head_pmaps(RGBA_Image *im,
+static int evas_image_load_file_head_pmaps(Image_Entry *ie,
 				    const char *file, const char *key);
-static int evas_image_load_file_data_pmaps(RGBA_Image *im,
+static int evas_image_load_file_data_pmaps(Image_Entry *ie,
 				    const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_pmaps_func = {
@@ -60,7 +60,7 @@ static size_t pmaps_buffer_raw_update(Pmaps_Buffer *b);
 static int pmaps_buffer_comment_skip(Pmaps_Buffer *b);
 
 static int
-evas_image_load_file_head_pmaps(RGBA_Image *im, const char *file,
+evas_image_load_file_head_pmaps(Image_Entry *ie, const char *file,
 				const char *key)
 {
    Pmaps_Buffer b;
@@ -80,8 +80,8 @@ evas_image_load_file_head_pmaps(RGBA_Image *im, const char *file,
 	return 0;
      }
 
-   im->cache_entry.w = b.w;
-   im->cache_entry.h = b.h;
+   ie->w = b.w;
+   ie->h = b.h;
 
    pmaps_buffer_close(&b);
    return 1;
@@ -90,7 +90,7 @@ evas_image_load_file_head_pmaps(RGBA_Image *im, const char *file,
 }
 
 static int
-evas_image_load_file_data_pmaps(RGBA_Image *im, const char *file,
+evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file,
 				const char *key)
 {
    Pmaps_Buffer b;
@@ -114,14 +114,14 @@ evas_image_load_file_data_pmaps(RGBA_Image *im, const char *file,
 
    pixels = b.w * b.h;
 
-   evas_cache_image_surface_alloc(&im->cache_entry, b.w, b.h);
-   if (!im->image.data)
+   evas_cache_image_surface_alloc(ie, b.w, b.h);
+   if (!evas_cache_image_pixels(ie))
      {
 	pmaps_buffer_close(&b);
 	return 0;
      }
 
-   ptr = im->image.data;
+   ptr = evas_cache_image_pixels(ie);
 
    if (b.type[1] != '4')
      {

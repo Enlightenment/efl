@@ -8,6 +8,7 @@ static void              _evas_common_soft16_image_delete(Image_Entry *ie);
 
 static int               _evas_common_soft16_image_surface_alloc(Image_Entry *ie, int w, int h);
 static void              _evas_common_soft16_image_surface_delete(Image_Entry *ie);
+static DATA32		*_evas_common_soft16_image_surface_pixels(Image_Entry *ie);
 
 static int               _evas_common_load_soft16_image_from_file(Image_Entry *ie);
 static void              _evas_common_soft16_image_unload(Image_Entry *ie);
@@ -36,6 +37,7 @@ static const Evas_Cache_Image_Func      _evas_common_soft16_image_func =
    _evas_common_soft16_image_delete,
    _evas_common_soft16_image_surface_alloc,
    _evas_common_soft16_image_surface_delete,
+   _evas_common_soft16_image_surface_pixels,
    _evas_common_load_soft16_image_from_file,
    _evas_common_soft16_image_unload,
    _evas_common_soft16_image_dirty_region,
@@ -149,6 +151,14 @@ _evas_common_soft16_image_surface_delete(Image_Entry *ie)
    im->flags.free_alpha = 0;
 }
 
+static DATA32 *
+_evas_common_soft16_image_surface_pixels(Image_Entry *ie)
+{
+   abort();
+
+   return NULL;
+}
+
 static int
 _evas_common_load_soft16_image_from_file(Image_Entry *ie)
 {
@@ -162,7 +172,7 @@ _evas_common_load_soft16_image_from_file(Image_Entry *ie)
 
    sim->cache_entry.w = sim->source->cache_entry.w;
    sim->cache_entry.h = sim->source->cache_entry.h;
-   sim->flags.have_alpha = !!(im->flags & RGBA_IMAGE_HAS_ALPHA);
+   sim->flags.have_alpha = im->cache_entry.flags.alpha;
    if (sim->stride < 0) sim->stride = _calc_stride(sim->cache_entry.w);
 
    return 0;

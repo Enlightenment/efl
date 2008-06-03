@@ -125,7 +125,7 @@ evas_software_x11_outbuf_free(Outbuf *buf)
 	im = buf->priv.pending_writes->data;
 	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	obr = im->extended_info;
-	evas_cache_image_drop(im);
+	evas_cache_image_drop(&im->cache_entry);
 	if (obr->xob) _unfind_xob(obr->xob, 0);
 	if (obr->mxob) _unfind_xob(obr->mxob, 0);
 	free(obr);
@@ -407,7 +407,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 	else
 	  {
 	     im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
-             im->flags |= alpha ? RGBA_IMAGE_HAS_ALPHA : 0;
+             im->cache_entry.flags.alpha |= alpha ? 1 : 0;
              evas_cache_image_surface_alloc(&im->cache_entry, buf->w, buf->h);
 	     im->extended_info = obr;
 	     if ((buf->rot == 0) || (buf->rot == 180))
@@ -497,7 +497,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
    else
      {
         im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
-        im->flags |= alpha ? RGBA_IMAGE_HAS_ALPHA : 0;
+        im->cache_entry.flags.alpha |= alpha ? 1 : 0;
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
@@ -637,7 +637,7 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	       evas_list_remove_list(buf->priv.prev_pending_writes, 
 				     buf->priv.prev_pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(im);
+	     evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xob) _unfind_xob(obr->xob, 0);
 	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
 /*	     
@@ -682,7 +682,7 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	     im = evas_list_data(buf->priv.pending_writes);
 	     buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(im);
+	     evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xob) _unfind_xob(obr->xob, 0);
 	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
 /*	     
@@ -726,7 +726,7 @@ evas_software_x11_outbuf_idle_flush(Outbuf *buf)
 	       evas_list_remove_list(buf->priv.prev_pending_writes, 
 				     buf->priv.prev_pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(im);
+	     evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xob) _unfind_xob(obr->xob, 0);
 	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
 	     free(obr);

@@ -516,7 +516,7 @@ eng_image_alpha_get(void *data, void *image)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+	if (im->im->cache_entry.flags.alpha) return 1;
       default:
 	break;
      }
@@ -547,8 +547,8 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    im = image;
    /* FIXME: can move to gl_common */
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return im;
-   if ((has_alpha) && (im->im->flags & RGBA_IMAGE_HAS_ALPHA)) return image;
-   else if ((!has_alpha) && (!(im->im->flags & RGBA_IMAGE_HAS_ALPHA))) return image;
+   if ((has_alpha) && (im->im->cache_entry.flags.alpha)) return image;
+   else if ((!has_alpha) && (!im->im->cache_entry.flags.alpha)) return image;
    if (im->references > 1)
     {
 	Evas_GL_Image *im_new;
@@ -562,10 +562,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
      }
    else
      evas_gl_common_image_dirty(im);
-   if (has_alpha)
-     im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
    return image;
 }
 

@@ -135,6 +135,7 @@ typedef struct _Evas_Object_List        Evas_Object_List;
 typedef struct _Evas_Hash_El            Evas_Hash_El;
 
 typedef struct _Image_Entry             Image_Entry;
+typedef struct _Image_Entry_Flags	Image_Entry_Flags;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
 
 typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
@@ -193,14 +194,14 @@ typedef void (*Gfx_Func_Gradient_Fill)(DATA32 *src, int src_len,
 typedef enum _RGBA_Image_Flags
 {
    RGBA_IMAGE_NOTHING       = (0),
-   RGBA_IMAGE_HAS_ALPHA     = (1 << 0),
+/*    RGBA_IMAGE_HAS_ALPHA     = (1 << 0), */
    RGBA_IMAGE_IS_DIRTY      = (1 << 1),
    RGBA_IMAGE_INDEXED       = (1 << 2),
    RGBA_IMAGE_ALPHA_ONLY    = (1 << 3),
    RGBA_IMAGE_ALPHA_TILES   = (1 << 4),
-   RGBA_IMAGE_ALPHA_SPARSE  = (1 << 5),
-   RGBA_IMAGE_LOADED        = (1 << 6),
-   RGBA_IMAGE_NEED_DATA     = (1 << 7)
+/*    RGBA_IMAGE_ALPHA_SPARSE  = (1 << 5), */
+/*    RGBA_IMAGE_LOADED        = (1 << 6), */
+/*    RGBA_IMAGE_NEED_DATA     = (1 << 7) */
 } RGBA_Image_Flags;
 
 typedef enum _Convert_Pal_Mode
@@ -267,6 +268,18 @@ struct _RGBA_Image_Loadopts
    int                  w, h; // if > 0 use this
 };
 
+struct _Image_Entry_Flags
+{
+   Evas_Bool loaded       : 1;
+   Evas_Bool dirty        : 1;
+   Evas_Bool activ        : 1;
+   Evas_Bool need_data    : 1;
+   Evas_Bool lru_nodata   : 1;
+   Evas_Bool cached       : 1;
+   Evas_Bool alpha        : 1;
+   Evas_Bool alpha_sparse : 1;
+};
+
 struct _Image_Entry
 {
   Evas_Object_List       _list_data;
@@ -280,16 +293,6 @@ struct _Image_Entry
 
   time_t                 timestamp;
   time_t                 laststat;
-
-  struct
-  {
-    Evas_Bool            loaded     : 1;
-    Evas_Bool            dirty      : 1;
-    Evas_Bool            activ      : 1;
-    Evas_Bool            need_data  : 1;
-    Evas_Bool            lru_nodata : 1;
-    Evas_Bool            cached     : 1;
-  } flags;
 
   int                    references;
 
@@ -305,6 +308,14 @@ struct _Image_Entry
      int		 w;
      int		 h;
   } allocated;
+
+  struct
+  {
+     void		*module;
+     void		*loader;
+  } info;
+
+  Image_Entry_Flags      flags;
 };
 
 struct _Engine_Image_Entry
@@ -432,8 +443,8 @@ struct _RGBA_Image
    RGBA_Image_Flags     flags;
    struct
      {
-	void           *module;
-	void           *loader;
+/* 	void           *module; */
+/* 	void           *loader; */
 /* 	char           *real_file; */
 	char           *comment;
 //	int             format;
@@ -610,11 +621,11 @@ struct _RGBA_Gfx_Compositor
    RGBA_Gfx_Func  (*composite_mask_color_span_get)(DATA32 col, RGBA_Image *dst, int pixels);
    RGBA_Gfx_Func  (*composite_pixel_mask_span_get)(RGBA_Image *src, RGBA_Image *dst, int pixels);
 
-   RGBA_Gfx_Pt_Func  (*composite_pixel_pt_get)(int src_flags, RGBA_Image *dst);
+   RGBA_Gfx_Pt_Func  (*composite_pixel_pt_get)(Image_Entry_Flags src_flags, RGBA_Image *dst);
    RGBA_Gfx_Pt_Func  (*composite_color_pt_get)(DATA32 col, RGBA_Image *dst);
-   RGBA_Gfx_Pt_Func  (*composite_pixel_color_pt_get)(int src_flags, DATA32 col, RGBA_Image *dst);
+   RGBA_Gfx_Pt_Func  (*composite_pixel_color_pt_get)(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst);
    RGBA_Gfx_Pt_Func  (*composite_mask_color_pt_get)(DATA32 col, RGBA_Image *dst);
-   RGBA_Gfx_Pt_Func  (*composite_pixel_mask_pt_get)(int src_flags, RGBA_Image *dst);
+   RGBA_Gfx_Pt_Func  (*composite_pixel_mask_pt_get)(Image_Entry_Flags src_flags, RGBA_Image *dst);
 };
 
 #define EVAS_RECT_SPLIT 1
@@ -745,8 +756,10 @@ struct _Evas_Cache_Image_Func
    Image_Entry *(*alloc)(void);
    void         (*dealloc)(Image_Entry *im);
 
+   /* The cache provide some helpers for surface manipulation. */
    int          (*surface_alloc)(Image_Entry *im, int w, int h);
    void         (*surface_delete)(Image_Entry *im);
+   DATA32      *(*surface_pixels)(Image_Entry *im);
 
    /* The cache is doing the allocation and deallocation, you must just do the rest. */
    int          (*constructor)(Image_Entry *im);
@@ -933,11 +946,11 @@ RGBA_Gfx_Func     evas_common_gfx_func_composite_pixel_color_span_get (RGBA_Imag
 RGBA_Gfx_Func     evas_common_gfx_func_composite_mask_color_span_get  (DATA32 col, RGBA_Image *dst, int pixels, int op);
 RGBA_Gfx_Func     evas_common_gfx_func_composite_pixel_mask_span_get  (RGBA_Image *src, RGBA_Image *dst, int pixels, int op);
 
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_pt_get   (int src_flags, RGBA_Image *dst, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_pt_get   (Image_Entry_Flags src_flags, RGBA_Image *dst, int op);
 RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_color_pt_get   (DATA32 col, RGBA_Image *dst, int op);
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_color_pt_get (int src_flags, DATA32 col, RGBA_Image *dst, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_color_pt_get (Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst, int op);
 RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_mask_color_pt_get  (DATA32 col, RGBA_Image *dst, int op);
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_mask_pt_get  (int src_flags, RGBA_Image *dst, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_mask_pt_get  (Image_Entry_Flags src_flags, RGBA_Image *dst, int op);
 
 EAPI Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int reverse);
 
@@ -1088,8 +1101,8 @@ int             evas_common_rgba_image_colorspace_set    (Image_Entry* dst, int 
 EAPI void          evas_common_image_colorspace_normalize   (RGBA_Image *im);
 EAPI void          evas_common_image_colorspace_dirty  (RGBA_Image *im);
 EAPI void          evas_common_image_cache_free        (void); /*2*/
-EAPI void          evas_common_image_premul            (RGBA_Image *im); /*2*/
-EAPI void          evas_common_image_set_alpha_sparse  (RGBA_Image *im); /*2*/
+EAPI void          evas_common_image_premul            (Image_Entry *ie); /*2*/
+EAPI void          evas_common_image_set_alpha_sparse  (Image_Entry *ie); /*2*/
 /* EAPI RGBA_Image   *evas_common_image_alpha_create      (int w, int h); */
 /* EAPI RGBA_Image   *evas_common_image_create            (int w, int h); */
 EAPI RGBA_Image   *evas_common_image_new               (void);
@@ -1299,6 +1312,7 @@ EAPI Image_Entry*                    evas_cache_image_alone(Image_Entry *im);
 EAPI Image_Entry*                    evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h);
 EAPI void                            evas_cache_image_load_data(Image_Entry *im);
 EAPI void                            evas_cache_image_surface_alloc(Image_Entry *im, int w, int h);
+EAPI DATA32*                         evas_cache_image_pixels(Image_Entry *im);
 EAPI Image_Entry*                    evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace);
 EAPI Image_Entry*                    evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace);
 EAPI void                            evas_cache_image_colorspace(Image_Entry *im, int cspace);

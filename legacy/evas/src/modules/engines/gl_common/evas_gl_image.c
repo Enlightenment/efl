@@ -148,10 +148,7 @@ evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspac
      }
    im->gc = gc;
    im->cs.space = cspace;
-   if (alpha)
-     im->im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   im->im->cache_entry.flags.alpha = alpha ? 1 : 0;
    evas_cache_image_colorspace(&im->im->cache_entry, cspace);
    im->im = (RGBA_Image *) evas_cache_image_size_set(&im->im->cache_entry, w, h);
    switch (cspace)
@@ -311,7 +308,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
 //     evas_gl_common_texture_mipmaps_build(im->tex, im->im, smooth);
 
    evas_gl_common_context_color_set(gc, r, g, b, a);
-   if ((a < 255) || (im->im->flags & RGBA_IMAGE_HAS_ALPHA))
+   if ((a < 255) || im->im->cache_entry.flags.alpha)
      evas_gl_common_context_blend_set(gc, 1);
    else evas_gl_common_context_blend_set(gc, 0);
    if (dc->clip.use)

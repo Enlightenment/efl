@@ -336,7 +336,7 @@ evas_engine_sdl_image_alpha_get(void *data, void *image)
    switch (eim->cache_entry.src->space)
      {
      case EVAS_COLORSPACE_ARGB8888:
-        if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+        if (im->cache_entry.flags.alpha) return 1;
      default:
         break;
      }
@@ -516,17 +516,14 @@ evas_engine_sdl_image_alpha_set(void *data, void *image, int has_alpha)
 
    if (eim->cache_entry.src->space != EVAS_COLORSPACE_ARGB8888)
      {
-        im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+        im->cache_entry.flags.alpha = 0;
         return eim;
      }
 
    eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_dirty(&eim->cache_entry, 0, 0, eim->cache_entry.w, eim->cache_entry.h);
 
    /* FIXME: update SDL_Surface flags */
-   if (has_alpha)
-     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
    return eim;
 }
 
@@ -1007,7 +1004,7 @@ _sdl_image_update_data(Engine_Image_Entry *dst, void* engine_data)
           {
              im->image.data = sdl->pixels;
              im->image.no_free = 1;
-             im->flags |= RGBA_IMAGE_HAS_ALPHA;
+             im->cache_entry.flags.alpha = 0;
              dst->src->w = sdl->w;
              dst->src->h = sdl->h;
           }

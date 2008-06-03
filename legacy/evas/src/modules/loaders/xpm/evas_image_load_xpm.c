@@ -1,8 +1,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-int evas_image_load_file_head_xpm(RGBA_Image *im, const char *file, const char *key);
-int evas_image_load_file_data_xpm(RGBA_Image *im, const char *file, const char *key);
+int evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key);
+int evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_xpm_func =
 {
@@ -96,7 +96,7 @@ xpm_parse_done(void)
 
 /** FIXME: clean this up and make more efficient  **/
 static int
-evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int load_data)
+evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key, int load_data)
 {
    DATA32             *ptr, *end;
    FILE               *f;
@@ -249,8 +249,8 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
                                 return 0;
                               }
                          }
-                       im->cache_entry.w = w;
-                       im->cache_entry.h = h;
+                       ie->w = w;
+                       ie->h = h;
 
                        j = 0;
                        context++;
@@ -360,12 +360,13 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
                             context++;
                          }
 
-                       if (transp) im->flags |= RGBA_IMAGE_HAS_ALPHA;
+                       if (transp) ie->flags.alpha = 1;
 		       
                        if (load_data)
                          {
-                            evas_cache_image_surface_alloc(&im->cache_entry, w, h);
-                            if (!im->image.data)
+                            evas_cache_image_surface_alloc(ie, w, h);
+                            ptr = evas_cache_image_pixels(ie);
+                            if (!ptr)
                               {
                                  free(cmap);
                                  free(line);
@@ -373,7 +374,6 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
                                  xpm_parse_done();
                                  return 0;
                               }
-                            ptr = im->image.data;
                             end = ptr + (w * h);
                             pixels = w * h;
                          }
@@ -594,7 +594,7 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
              if (!tl) break;
 	     line = tl;
           }
-        if (((ptr) && ((ptr - im->image.data) >= (w * h * sizeof(DATA32)))) ||
+        if (((ptr) && ((ptr - evas_cache_image_pixels(ie)) >= (w * h * sizeof(DATA32)))) ||
             ((context > 1) && (count >= pixels)))
 	  break;
      }
@@ -610,15 +610,15 @@ evas_image_load_file_xpm(RGBA_Image *im, const char *file, const char *key, int 
 
 
 int
-evas_image_load_file_head_xpm(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key)
 {
-  return evas_image_load_file_xpm(im, file, key, 0);
+  return evas_image_load_file_xpm(ie, file, key, 0);
 }
 
 int
-evas_image_load_file_data_xpm(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key)
 {
-  return evas_image_load_file_xpm(im, file, key, 1);
+  return evas_image_load_file_xpm(ie, file, key, 1);
 }
 
 

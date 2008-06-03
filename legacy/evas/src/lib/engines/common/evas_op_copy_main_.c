@@ -12,11 +12,11 @@ static RGBA_Gfx_Func op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, R
 static RGBA_Gfx_Func op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels);
 static RGBA_Gfx_Func op_copy_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels);
 
-static RGBA_Gfx_Pt_Func op_copy_pixel_pt_get(int src_flags, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_copy_color_pt_get(DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_pixel_mask_pt_get(int src_flags, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
 static RGBA_Gfx_Compositor  _composite_copy = { "copy", 
  op_copy_init, op_copy_shutdown, 
@@ -47,11 +47,11 @@ static RGBA_Gfx_Func op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 co
 static RGBA_Gfx_Func op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels);
 static RGBA_Gfx_Func op_copy_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels);
 
-static RGBA_Gfx_Pt_Func op_copy_rel_pixel_pt_get(int src_flags, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_rel_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_rel_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_rel_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_rel_pixel_mask_pt_get(int src_flags, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_rel_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
 static RGBA_Gfx_Compositor  _composite_copy_rel = { "copy_rel", 
  op_copy_rel_init, op_copy_rel_shutdown, 
@@ -149,12 +149,12 @@ op_copy_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (src && src->cache_entry.flags.alpha)
      {
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
@@ -167,14 +167,14 @@ op_copy_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
@@ -184,23 +184,23 @@ op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int p
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (src && src->cache_entry.flags.alpha)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
@@ -211,7 +211,7 @@ op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -227,8 +227,8 @@ op_copy_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+	dst->cache_entry.flags.alpha = 1;
+   if (src && src->cache_entry.flags.alpha)
 	s = SP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
@@ -255,16 +255,16 @@ copy_gfx_pt_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_pixel_pt_get(int src_flags, RGBA_Image *dst)
+op_copy_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src_flags & RGBA_IMAGE_HAS_ALPHA)
+   if (src_flags.alpha)
      {
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
@@ -277,40 +277,40 @@ op_copy_color_pt_get(DATA32 col, RGBA_Image *dst)
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
+op_copy_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src_flags & RGBA_IMAGE_HAS_ALPHA)
+   if (src_flags.alpha)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
@@ -321,7 +321,7 @@ op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -332,13 +332,13 @@ op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_pixel_mask_pt_get(int src_flags, RGBA_Image *dst)
+op_copy_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (src_flags & RGBA_IMAGE_HAS_ALPHA)
+	dst->cache_entry.flags.alpha = 1;
+   if (src_flags.alpha)
 	s = SP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
@@ -408,13 +408,13 @@ op_copy_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (src && src->cache_entry.flags.alpha)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
@@ -427,14 +427,14 @@ op_copy_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
@@ -444,23 +444,23 @@ op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, i
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (src && src->cache_entry.flags.alpha)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
@@ -471,7 +471,7 @@ op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -487,8 +487,8 @@ op_copy_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (src && (src->flags & RGBA_IMAGE_HAS_ALPHA))
+	dst->cache_entry.flags.alpha = 1;
+   if (src && src->cache_entry.flags.alpha)
 	s = SP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
@@ -515,17 +515,17 @@ copy_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_rel_pixel_pt_get(int src_flags, RGBA_Image *dst)
+op_copy_rel_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src_flags & RGBA_IMAGE_HAS_ALPHA)
+   if (src_flags.alpha)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
@@ -538,40 +538,40 @@ op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_rel_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst)
+op_copy_rel_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src_flags & RGBA_IMAGE_HAS_ALPHA)
+   if (src_flags.alpha)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
 	if (dst)
-	   dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && (dst->flags & RGBA_IMAGE_HAS_ALPHA))
+   if (dst && dst->cache_entry.flags.alpha)
 	d = DP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
@@ -582,7 +582,7 @@ op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -593,13 +593,13 @@ op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_rel_pixel_mask_pt_get(int src_flags, RGBA_Image *dst)
+op_copy_rel_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
    if (dst)
-	dst->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (src_flags & RGBA_IMAGE_HAS_ALPHA)
+	dst->cache_entry.flags.alpha = 1;
+   if (src_flags.alpha)
 	s = SP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }

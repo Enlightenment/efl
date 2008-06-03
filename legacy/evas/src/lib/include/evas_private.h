@@ -674,8 +674,8 @@ struct _Evas_Func
 
 struct _Evas_Image_Load_Func
 {
-  int (*file_head) (RGBA_Image *im, const char *file, const char *key);
-  int (*file_data) (RGBA_Image *im, const char *file, const char *key);
+  int (*file_head) (Image_Entry *ie, const char *file, const char *key);
+  int (*file_data) (Image_Entry *ie, const char *file, const char *key);
 };
 
 struct _Evas_Image_Save_Func

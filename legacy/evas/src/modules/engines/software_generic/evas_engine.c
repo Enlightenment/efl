@@ -339,7 +339,7 @@ eng_image_alpha_get(void *data, void *image)
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+	if (im->cache_entry.flags.alpha) return 1;
       default:
 	break;
      }
@@ -365,16 +365,13 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    im = image;
    if (im->cache_entry.space != EVAS_COLORSPACE_ARGB8888)
      {
-	im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+	im->cache_entry.flags.alpha = 0;
 	return im;
      }
    im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
    evas_common_image_colorspace_dirty(im);
 
-   if (has_alpha)
-     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   else
-     im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
    return im;
 }
 

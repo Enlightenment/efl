@@ -47,7 +47,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 	gc->change.texture = 1;
 	tex->references++;
 
-	if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+	if (im->cache_entry.flags.alpha) texfmt = GL_RGBA8;
 	else texfmt = GL_RGB8;
 	pixfmt = NATIVE_PIX_FORMAT;
 
@@ -94,7 +94,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    im_w = im->cache_entry.w;
    im_h = im->cache_entry.h;
 
-   if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+   if (im->cache_entry.flags.alpha) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
    pixfmt = NATIVE_PIX_FORMAT;
 
@@ -187,7 +187,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 	tex->gc->change.texture = 1;
 	tex->references++;
 
-	if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+	if (im->cache_entry.flags.alpha) texfmt = GL_RGBA8;
 	else texfmt = GL_RGB8;
 	pixfmt = NATIVE_PIX_FORMAT;
 
@@ -249,7 +249,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    im_w = im->cache_entry.w;
    im_h = im->cache_entry.h;
 
-   if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+   if (im->cache_entry.flags.alpha) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
    pixfmt = NATIVE_PIX_FORMAT;
 
@@ -342,7 +342,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 	if (tex) tex->references++;
      }
 
-   if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+   if (im->cache_entry.flags.alpha) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
    pixfmt = NATIVE_PIX_FORMAT;
 
@@ -377,7 +377,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 	else
 #endif
 	  {
-	     if (im->flags & RGBA_IMAGE_HAS_ALPHA)
+	     if (im->cache_entry.flags.alpha)
 	       evas_common_scale_rgba_mipmap_down_2x2_c(im1->image.data,
 							im2->image.data,
 							pw, ph);

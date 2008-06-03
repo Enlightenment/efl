@@ -17,13 +17,13 @@
    pdst_end = pdst + (dst_clip_h * dst_w);
    if (!dc->mul.use)
      {
-	if ((dc->render_op == _EVAS_RENDER_BLEND) && !(src->flags & RGBA_IMAGE_HAS_ALPHA))
+	if ((dc->render_op == _EVAS_RENDER_BLEND) && !src->cache_entry.flags.alpha)
 	  { direct_scale = 1;  buf_step = dst->cache_entry.w; }
 	else if (dc->render_op == _EVAS_RENDER_COPY)
 	  {
 	    direct_scale = 1;  buf_step = dst->cache_entry.w;
-	    if (src->flags & RGBA_IMAGE_HAS_ALPHA)
-		dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	    if (src->cache_entry.flags.alpha)
+		dst->cache_entry.flags.alpha = 1;
 	  }
      }
    if (!direct_scale)

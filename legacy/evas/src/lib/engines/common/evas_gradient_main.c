@@ -461,7 +461,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 	  {
 	     direct_copy = 1;  buf_step = dst->cache_entry.w;
 	     if (gr->type.geometer->has_alpha(gr, dc->render_op))
-	       dst->flags |= RGBA_IMAGE_HAS_ALPHA;
+	        dst->cache_entry.flags.alpha = 1;
 	  }
 	else if ((dc->render_op == _EVAS_RENDER_BLEND) &&
 		 !gr->type.geometer->has_alpha(gr, dc->render_op))
@@ -474,12 +474,9 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
      {
 	argb_buf = evas_common_image_line_buffer_obtain(w);
 	if (!argb_buf)
-	  return;
-	if (gr->type.geometer->has_alpha(gr, dc->render_op))
-	  argb_buf->flags |= RGBA_IMAGE_HAS_ALPHA;
-	else
-	  argb_buf->flags &= ~RGBA_IMAGE_HAS_ALPHA;
-	
+	   return;
+	argb_buf->cache_entry.flags.alpha = gr->type.geometer->has_alpha(gr, dc->render_op) ? 1 : 0;
+
 	if (gr->type.geometer->has_mask(gr, dc->render_op))
 	  {
 	     alpha_buf = evas_common_image_alpha_line_buffer_obtain(w);

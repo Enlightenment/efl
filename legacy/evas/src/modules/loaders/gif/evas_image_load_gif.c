@@ -8,8 +8,8 @@
 #include <gif_lib.h>
 
 
-int evas_image_load_file_head_gif(RGBA_Image *im, const char *file, const char *key);
-int evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key);
+int evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key);
+int evas_image_load_file_data_gif(Image_Entry *ie, const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_gif_func =
 {
@@ -19,7 +19,7 @@ Evas_Image_Load_Func evas_image_load_gif_func =
 
 
 int
-evas_image_load_file_head_gif(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key)
 {
    int                 fd;
    GifFileType        *gif;
@@ -93,16 +93,16 @@ evas_image_load_file_head_gif(RGBA_Image *im, const char *file, const char *key)
           }
    } while (rec != TERMINATE_RECORD_TYPE);
 
-   if (alpha >= 0) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   im->cache_entry.w = w;
-   im->cache_entry.h = h;
+   if (alpha >= 0) ie->flags.alpha = 1;
+   ie->w = w;
+   ie->h = h;
 
    DGifCloseFile(gif);
    return 1;
 }
 
 int
-evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_data_gif(Image_Entry *ie, const char *file, const char *key)
 {
    int                 intoffset[] = { 0, 4, 2, 1 };
    int                 intjump[] = { 8, 8, 4, 2 };
@@ -233,9 +233,9 @@ evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key)
           }
    } while (rec != TERMINATE_RECORD_TYPE);
 
-   if (alpha >= 0) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
-   if (!im->image.data)
+   if (alpha >= 0) ie->flags.alpha = 1;
+   evas_cache_image_surface_alloc(ie, w, h);
+   if (!evas_cache_image_pixels(ie))
      {
         DGifCloseFile(gif);
         for (i = 0; i < h; i++)
@@ -249,7 +249,7 @@ evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key)
    bg = gif->SBackGroundColor;
    cmap = (gif->Image.ColorMap ? gif->Image.ColorMap : gif->SColorMap);
 
-   ptr = im->image.data;
+   ptr = evas_cache_image_pixels(ie);
    per_inc = 100.0 / (((double)w) * h);
 
    for (i = 0; i < h; i++)
@@ -273,7 +273,7 @@ evas_image_load_file_data_gif(RGBA_Image *im, const char *file, const char *key)
            per += per_inc;
          }
      }
-   evas_common_image_premul(im);
+   evas_common_image_premul(ie);
    DGifCloseFile(gif);
    for (i = 0; i < h; i++)
      {

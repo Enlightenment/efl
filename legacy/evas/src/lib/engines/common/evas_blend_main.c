@@ -143,7 +143,7 @@ evas_common_gfx_func_composite_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, 
    RGBA_Gfx_Compositor  *comp;
    RGBA_Gfx_Func        func = NULL;
 
-   if (src && (!(src->flags & RGBA_IMAGE_HAS_ALPHA)))
+   if (src && (!src->cache_entry.flags.alpha))
      {
 	if (op == _EVAS_RENDER_BLEND)
 	   op = _EVAS_RENDER_COPY;
@@ -186,7 +186,7 @@ evas_common_gfx_func_composite_pixel_color_span_get(RGBA_Image *src, DATA32 col,
    RGBA_Gfx_Compositor  *comp;
    RGBA_Gfx_Func        func = NULL;
 
-   if ((src && (!(src->flags & RGBA_IMAGE_HAS_ALPHA))) && ((col & 0xff000000) == 0xff000000))
+   if ((src && (!src->cache_entry.flags.alpha)) && ((col & 0xff000000) == 0xff000000))
      {
 	if (op == _EVAS_RENDER_BLEND)
 	   op = _EVAS_RENDER_COPY;
@@ -231,12 +231,12 @@ evas_common_gfx_func_composite_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *
 }
 
 RGBA_Gfx_Pt_Func
-evas_common_gfx_func_composite_pixel_pt_get(int src_flags, RGBA_Image *dst, int op)
+evas_common_gfx_func_composite_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst, int op)
 {
    RGBA_Gfx_Compositor  *comp;
    RGBA_Gfx_Pt_Func     func = NULL;
 
-   if (!(src_flags & RGBA_IMAGE_HAS_ALPHA))
+   if (!src_flags.alpha)
      {
 	if (op == _EVAS_RENDER_BLEND)
 	   op = _EVAS_RENDER_COPY;
@@ -274,12 +274,12 @@ evas_common_gfx_func_composite_color_pt_get(DATA32 col, RGBA_Image *dst, int op)
 }
 
 RGBA_Gfx_Pt_Func
-evas_common_gfx_func_composite_pixel_color_pt_get(int src_flags, DATA32 col, RGBA_Image *dst, int op)
+evas_common_gfx_func_composite_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst, int op)
 {
    RGBA_Gfx_Compositor  *comp;
    RGBA_Gfx_Pt_Func     func = NULL;
 
-   if ((!(src_flags & RGBA_IMAGE_HAS_ALPHA)) && ((col & 0xff000000) == 0xff000000))
+   if ((!src_flags.alpha) && ((col & 0xff000000) == 0xff000000))
      {
 	if (op == _EVAS_RENDER_BLEND)
 	   op = _EVAS_RENDER_COPY;
@@ -310,7 +310,7 @@ evas_common_gfx_func_composite_mask_color_pt_get(DATA32 col, RGBA_Image *dst, in
 }
 
 RGBA_Gfx_Pt_Func
-evas_common_gfx_func_composite_pixel_mask_pt_get(int src_flags, RGBA_Image *dst, int op)
+evas_common_gfx_func_composite_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst, int op)
 {
    RGBA_Gfx_Compositor  *comp;
    RGBA_Gfx_Pt_Func     func = NULL;

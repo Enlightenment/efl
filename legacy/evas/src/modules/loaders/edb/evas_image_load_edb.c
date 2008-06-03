@@ -8,8 +8,8 @@
 #define SWAP32(x) (x) = ((((x) & 0x000000ff ) << 24) | (((x) & 0x0000ff00 ) << 8) | (((x) & 0x00ff0000 ) >> 8) | (((x) & 0xff000000 ) >> 24))
 
 
-int evas_image_load_file_head_edb(RGBA_Image *im, const char *file, const char *key);
-int evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key);
+int evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key);
+int evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_edb_func =
 {
@@ -19,7 +19,7 @@ Evas_Image_Load_Func evas_image_load_edb_func =
 
 
 int
-evas_image_load_file_head_edb(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key)
 {
    int                  w, h, alpha, compression, size;
    E_DB_File           *db;
@@ -72,21 +72,22 @@ evas_image_load_file_head_edb(RGBA_Image *im, const char *file, const char *key)
 	e_db_close(db);
 	return 0;
      }
-   if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   im->cache_entry.w = w;
-   im->cache_entry.h = h;
+   if (alpha) ie->flags.alpha = 1;
+   ie->w = w;
+   ie->h = h;
    free(ret);
    e_db_close(db);
    return 1;
 }
 
 int
-evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key)
 {
    int                  w, h, alpha, compression, size;
    E_DB_File           *db;
    DATA32              *ret;
    DATA32              *body;
+   DATA32              *surface;
    DATA32               header[8];
 
    if ((!file) || (!key)) return 0;
@@ -136,10 +137,11 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 	e_db_close(db);
 	return 0;
      }
-   if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   if (alpha) ie->flags.alpha = 1;
    body = &(ret[8]);
-   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
-   if (!im->image.data)
+   evas_cache_image_surface_alloc(ie, w, h);
+   surface = evas_cache_image_pixels(ie);
+   if (!surface)
      {
 	free(ret);
 	e_db_close(db);
@@ -151,11 +153,11 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 	  {
 	     int x;
 
-	     memcpy(im->image.data, body, w * h * sizeof(DATA32));
-	     for (x = 0; x < (w * h); x++) SWAP32(im->image.data[x]);
+	     memcpy(surface, body, w * h * sizeof(DATA32));
+	     for (x = 0; x < (w * h); x++) SWAP32(surface[x]);
 	  }
 #else
-	memcpy(im->image.data, body, w * h * sizeof(DATA32));
+	memcpy(surface, body, w * h * sizeof(DATA32));
 #endif
      }
    else
@@ -163,17 +165,17 @@ evas_image_load_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 	uLongf dlen;
 
 	dlen = w * h * sizeof(DATA32);
-	uncompress((Bytef *)im->image.data, &dlen, (Bytef *)body,
+	uncompress((Bytef *)surface, &dlen, (Bytef *)body,
 		   (uLongf)(size - 32));
 #ifdef WORDS_BIGENDIAN
 	  {
 	     int x;
 
-	     for (x = 0; x < (w * h); x++) SWAP32(im->image.data[x]);
+	     for (x = 0; x < (w * h); x++) SWAP32(surface[x]);
 	  }
 #endif
      }
-   evas_common_image_premul(im);
+   evas_common_image_premul(ie);
    free(ret);
    e_db_close(db);
    return 1;

@@ -15,10 +15,7 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
 	dst->cache_entry.h = h;
 	dst->image.data = image_data;
 	dst->image.no_free = 1;
-	if (alpha)
-	  dst->flags |= RGBA_IMAGE_HAS_ALPHA;
-	else
-	  dst->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = alpha ? 1 : 0;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -46,10 +43,7 @@ evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA3
    switch (cspace)
      {
      case EVAS_COLORSPACE_ARGB8888:
-	if (alpha)
-	  dst->flags |= RGBA_IMAGE_HAS_ALPHA;
-	else
-	  dst->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+	dst->cache_entry.flags.alpha = alpha ? 1 : 0;
         if (image_data)
           memcpy(dst->image.data, image_data, w * h * sizeof(DATA32));
         break;

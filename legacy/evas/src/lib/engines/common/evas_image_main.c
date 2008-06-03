@@ -32,6 +32,7 @@ static void              _evas_common_rgba_image_delete(Image_Entry *ie);
 
 static int               _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h);
 static void              _evas_common_rgba_image_surface_delete(Image_Entry *ie);
+static DATA32           *_evas_common_rgba_image_surface_pixels(Image_Entry *ie);
 
 static void              _evas_common_rgba_image_unload(Image_Entry *im);
 
@@ -55,6 +56,7 @@ static const Evas_Cache_Image_Func      _evas_common_image_func =
   _evas_common_rgba_image_delete,
   _evas_common_rgba_image_surface_alloc,
   _evas_common_rgba_image_surface_delete,
+  _evas_common_rgba_image_surface_pixels,
   evas_common_load_rgba_image_module_from_file,
   _evas_common_rgba_image_unload,
   _evas_common_rgba_image_dirty_region,
@@ -128,7 +130,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
    RGBA_Image   *im = (RGBA_Image *) ie;
 
    evas_common_pipe_free(im);
-   if (im->info.module) evas_module_unref((Evas_Module *)im->info.module);
+   if (ie->info.module) evas_module_unref((Evas_Module *)ie->info.module);
    /* memset the image to 0x99 because i recently saw a segv where an
     * seemed to be used BUT its contents were wrong - it looks like it was
     * overwritten by something from efreet - as there was an execute command
@@ -238,6 +240,14 @@ _evas_common_rgba_image_ram_usage(Image_Entry *ie)
    return 0;
 }
 
+static DATA32 *
+_evas_common_rgba_image_surface_pixels(Image_Entry *ie)
+{
+   RGBA_Image *im = (RGBA_Image *) ie;
+
+   return im->image.data;
+}
+
 #if 0
 void
 evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
@@ -246,7 +256,7 @@ evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
    DATA32 *ptr;
 
    if (is->spans) return;
-   if (!(is->im->flags & RGBA_IMAGE_HAS_ALPHA)) return;
+   if (!is->im->cache_entry.flags.alpha) return;
    /* FIXME: dont handle alpha only images yet */
    if ((is->im->flags & RGBA_IMAGE_ALPHA_ONLY)) return;
    if (tsize < 0) tsize = 0;
@@ -526,16 +536,17 @@ evas_common_image_alpha_line_buffer_release(RGBA_Image *im)
 }
 
 EAPI void
-evas_common_image_premul(RGBA_Image *im)
+evas_common_image_premul(Image_Entry *ie)
 {
    DATA32  *s, *se;
    DATA32  nas = 0;
 
-   if (!im || !im->image.data) return;
-   if (!(im->flags & RGBA_IMAGE_HAS_ALPHA)) return;
+   if (!ie) return ;
+   if (!evas_cache_image_pixels(ie)) return ;
+   if (!ie->flags.alpha) return;
 
-   s = im->image.data;
-   se = s + (im->cache_entry.w * im->cache_entry.h);
+   s = evas_cache_image_pixels(ie);
+   se = s + (ie->w * ie->h);
    while (s < se)
      {
 	DATA32  a = 1 + (*s >> 24);
@@ -546,21 +557,22 @@ evas_common_image_premul(RGBA_Image *im)
 	if ((a == 1) || (a == 256))
 	   nas++;
      }
-   if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (im->cache_entry.w * im->cache_entry.h))
-	im->flags |= RGBA_IMAGE_ALPHA_SPARSE;
+   if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (ie->w * ie->h))
+     ie->flags.alpha_sparse = 1;
 }
 
 EAPI void
-evas_common_image_set_alpha_sparse(RGBA_Image *im)
+evas_common_image_set_alpha_sparse(Image_Entry *ie)
 {
    DATA32  *s, *se;
    DATA32  nas = 0;
 
-   if (!im || !im->image.data) return;
-   if (!(im->flags & RGBA_IMAGE_HAS_ALPHA)) return;
+   if (!ie) return;
+   if (!evas_cache_image_pixels(ie)) return ;
+   if (!ie->flags.alpha) return;
 
-   s = im->image.data;
-   se = s + (im->cache_entry.w * im->cache_entry.h);
+   s = evas_cache_image_pixels(ie);
+   se = s + (ie->w * ie->h);
    while (s < se)
      {
 	DATA32  p = *s & 0xff000000;
@@ -569,6 +581,6 @@ evas_common_image_set_alpha_sparse(RGBA_Image *im)
 	   nas++;
 	s++;
      }
-   if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (im->cache_entry.w * im->cache_entry.h))
-	im->flags |= RGBA_IMAGE_ALPHA_SPARSE;
+   if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (ie->w * ie->h))
+     ie->flags.alpha_sparse = 1;
 }

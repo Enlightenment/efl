@@ -33,7 +33,6 @@ int
 evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
-   RGBA_Image           *im = (RGBA_Image *) ie;
    const char           *loader = NULL;
    Evas_List            *l;
    Evas_Module          *em;
@@ -62,7 +61,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	       {
 		  evas_module_use(em);
 		  evas_image_load_func = em->functions;
-		  if (evas_image_load_func->file_head(im, ie->file, ie->key))
+		  if (evas_image_load_func->file_head(ie, ie->file, ie->key))
 		    goto ok;
 	       }
 	  }
@@ -75,7 +74,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	if (!evas_module_load(em)) continue;
         evas_image_load_func = em->functions;
 	evas_module_use(em);
-	if (evas_image_load_func->file_head(im, ie->file, ie->key))
+	if (evas_image_load_func->file_head(ie, ie->file, ie->key))
 	  {
 	     if (evas_modules != l)
 	       {
@@ -88,9 +87,9 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    return -1;
 
   ok:
-   im->info.module = (void*) em;
-   im->info.loader = (void*) evas_image_load_func;
-   evas_module_ref((Evas_Module*) im->info.module);
+   ie->info.module = (void*) em;
+   ie->info.loader = (void*) evas_image_load_func;
+   evas_module_ref((Evas_Module*) ie->info.module);
    return 0;
 }
 
@@ -98,18 +97,17 @@ int
 evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
-   RGBA_Image           *im = (RGBA_Image *) ie;
 
-   if (!im->info.module) return -1;
+   if (!ie->info.module) return -1;
    if (ie->flags.loaded) return -1;
 
-   evas_image_load_func = im->info.loader;
-   evas_module_use((Evas_Module*) im->info.module);
-   if (!evas_image_load_func->file_data(im, ie->file, ie->key))
+   evas_image_load_func = ie->info.loader;
+   evas_module_use((Evas_Module*) ie->info.module);
+   if (!evas_image_load_func->file_data(ie, ie->file, ie->key))
      return -1;
 
-   evas_module_unref((Evas_Module*) im->info.module);
-   im->info.module = NULL;
+   evas_module_unref((Evas_Module*) ie->info.module);
+   ie->info.module = NULL;
 
    return 0;
 }

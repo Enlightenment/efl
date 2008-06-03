@@ -111,7 +111,7 @@ _xre_image_load(Xcb_Image_Info *xcbinf, const char *file, const char *key, Evas_
    if (lo) im->load_opts = *lo;
    if (im->im->info.comment) im->comment = (char *)evas_stringshare_add(im->im->info.comment);
 /*    if (im->im->info.format == 1) im->format = evas_stringshare_add("png"); */
-   if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) im->alpha = 1;
+   if (im->im->cache_entry.flags.alpha) im->alpha = 1;
    _xr_image_hash = evas_hash_direct_add(_xr_image_hash, im->fkey, im);
    return im;
 }

@@ -217,7 +217,7 @@ evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h,
 
 	*cx = 0; *cy = 0; *cw = w; *ch = h;
 	im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
-        im->flags |= RGBA_IMAGE_HAS_ALPHA;
+        im->cache_entry.flags.alpha = 1;
         im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
 
         /* handle framebuffers with alpha channel */

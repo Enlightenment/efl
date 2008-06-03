@@ -1065,7 +1065,7 @@ eng_image_alpha_get(void *data, void *image)
    if (!image) return 0;
 
    im = image;
-   if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
+   if (im->im->cache_entry.flags.alpha) return 1;
    return 0;
 }
 

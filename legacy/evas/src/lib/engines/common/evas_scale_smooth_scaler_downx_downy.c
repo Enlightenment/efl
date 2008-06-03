@@ -25,7 +25,7 @@
 /*#ifndef SCALE_USING_MMX */
 /* for now there's no mmx down scaling - so C only */
 #if 1
-   if (src->flags & RGBA_IMAGE_HAS_ALPHA)
+   if (src->cache_entry.flags.alpha)
      {
 	while (dst_clip_h--)
 	  {
@@ -150,8 +150,8 @@
    else
      {
 #ifdef DIRECT_SCALE
-        if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
-	    (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+        if ((!src->cache_entry.flags.alpha) &&
+	    (!dst->cache_entry.flags.alpha) &&
 	    (!dc->mul.use))
 	  {
 	     while (dst_clip_h--)

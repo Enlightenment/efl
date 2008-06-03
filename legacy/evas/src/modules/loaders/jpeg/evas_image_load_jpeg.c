@@ -17,14 +17,14 @@ static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 
-static int evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f);
-static int evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f);
+static int evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f);
+static int evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f);
 #if 0 /* not used at the moment */
-static int evas_image_load_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f);
+static int evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f);
 #endif
 
-int evas_image_load_file_head_jpeg(RGBA_Image *im, const char *file, const char *key);
-int evas_image_load_file_data_jpeg(RGBA_Image *im, const char *file, const char *key);
+int evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *key);
+int evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *key);
 
 Evas_Image_Load_Func evas_image_load_jpeg_func =
 {
@@ -68,7 +68,7 @@ _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
 }
 
 static int
-evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
+evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f)
 {
    int w, h, scalew, scaleh;
    struct jpeg_decompress_struct cinfo;
@@ -101,27 +101,27 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
         jpeg_destroy_decompress(&cinfo);
 	return 0;
      }
-   if (im->cache_entry.load_opts.scale_down_by > 1)
+   if (ie->load_opts.scale_down_by > 1)
      {
-	w /= im->cache_entry.load_opts.scale_down_by;
-	h /= im->cache_entry.load_opts.scale_down_by;
+	w /= ie->load_opts.scale_down_by;
+	h /= ie->load_opts.scale_down_by;
      }
-   else if (im->cache_entry.load_opts.dpi > 0.0)
+   else if (ie->load_opts.dpi > 0.0)
      {
-	w = (w * im->cache_entry.load_opts.dpi) / 90.0;
-	h = (h * im->cache_entry.load_opts.dpi) / 90.0;
+	w = (w * ie->load_opts.dpi) / 90.0;
+	h = (h * ie->load_opts.dpi) / 90.0;
      }
-   else if ((im->cache_entry.load_opts.w > 0) &&
-	    (im->cache_entry.load_opts.h > 0))
+   else if ((ie->load_opts.w > 0) &&
+	    (ie->load_opts.h > 0))
      {
 	int w2, h2;
 	
-	w2 = im->cache_entry.load_opts.w;
-	h2 = (im->cache_entry.load_opts.w * h) / w;
-	if (h2 > im->cache_entry.load_opts.h)
+	w2 = ie->load_opts.w;
+	h2 = (ie->load_opts.w * h) / w;
+	if (h2 > ie->load_opts.h)
 	  {
-	     h2 = im->cache_entry.load_opts.h;
-	     w2 = (im->cache_entry.load_opts.h * w) / h;
+	     h2 = ie->load_opts.h;
+	     w2 = (ie->load_opts.h * w) / h;
 	  }
 	w = w2;
 	h = h2;
@@ -134,19 +134,19 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
 	scalew = cinfo.output_width / w;
 	scaleh = cinfo.output_height / h;
 	
-	im->cache_entry.scale = scalew;
-	if (scaleh < scalew) im->cache_entry.scale = scaleh;
+	ie->scale = scalew;
+	if (scaleh < scalew) ie->scale = scaleh;
 	
-	if      (im->cache_entry.scale > 8) im->cache_entry.scale = 8;
-	else if (im->cache_entry.scale < 1) im->cache_entry.scale = 1;
+	if      (ie->scale > 8) ie->scale = 8;
+	else if (ie->scale < 1) ie->scale = 1;
 	
-	if      (im->cache_entry.scale == 3) im->cache_entry.scale = 2;
-	else if (im->cache_entry.scale == 5) im->cache_entry.scale = 4;
-	else if (im->cache_entry.scale == 6) im->cache_entry.scale = 4;
-	else if (im->cache_entry.scale == 7) im->cache_entry.scale = 4;
+	if      (ie->scale == 3) ie->scale = 2;
+	else if (ie->scale == 5) ie->scale = 4;
+	else if (ie->scale == 6) ie->scale = 4;
+	else if (ie->scale == 7) ie->scale = 4;
      }
 
-   if (im->cache_entry.scale > 1)
+   if (ie->scale > 1)
      {
 	jpeg_destroy_decompress(&cinfo);
    
@@ -157,13 +157,13 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
 	cinfo.do_fancy_upsampling = FALSE;
 	cinfo.do_block_smoothing = FALSE;
 	cinfo.scale_num = 1;
-	cinfo.scale_denom = im->cache_entry.scale;
+	cinfo.scale_denom = ie->scale;
 	jpeg_calc_output_dimensions(&(cinfo));
 	jpeg_start_decompress(&cinfo);
      }
    
-   im->cache_entry.w = cinfo.output_width;
-   im->cache_entry.h = cinfo.output_height;
+   ie->w = cinfo.output_width;
+   ie->h = cinfo.output_height;
 /* end head decoding */
 
    jpeg_destroy_decompress(&cinfo);
@@ -171,7 +171,7 @@ evas_image_load_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
 }
 
 static int
-evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
+evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
 {
    int w, h;
    struct jpeg_decompress_struct cinfo;
@@ -198,10 +198,10 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    cinfo.dct_method = JDCT_IFAST;
    cinfo.dither_mode = JDITHER_ORDERED;
 
-   if (im->cache_entry.scale > 1)
+   if (ie->scale > 1)
      {
 	cinfo.scale_num = 1;
-	cinfo.scale_denom = im->cache_entry.scale;
+	cinfo.scale_denom = ie->scale;
      }
    
 /* head decoding */
@@ -211,7 +211,7 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    w = cinfo.output_width;
    h = cinfo.output_height;
    
-   if ((w != im->cache_entry.w) || (h != im->cache_entry.h))
+   if ((w != ie->w) || (h != ie->h))
      {
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
@@ -225,13 +225,13 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
 	return 0;
      }
    data = alloca(w * 16 * 3);
-   evas_cache_image_surface_alloc(&im->cache_entry, w, h);
-   if (!im->image.data)
+   evas_cache_image_surface_alloc(ie, w, h);
+   if (ie->flags.loaded)
      {
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
      }
-   ptr2 = im->image.data;
+   ptr2 = evas_cache_image_pixels(ie);
    count = 0;
    prevy = 0;
    if (cinfo.output_components == 3)
@@ -286,7 +286,7 @@ evas_image_load_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
 
 #if 0 /* not used at the moment */
 static int
-evas_image_load_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
+evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f)
 {
    int w, h;
    struct jpeg_decompress_struct cinfo;
@@ -313,8 +313,8 @@ evas_image_load_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
    jpeg_start_decompress(&cinfo);
 
 /* head decoding */
-   im->image->w = w = cinfo.output_width;
-   im->image->h = h = cinfo.output_height;
+   ie->w = w = cinfo.output_width;
+   ie->h = h = cinfo.output_height;
 /* end head decoding */
 /* data decoding */
    if (cinfo.rec_outbuf_height > 16)
@@ -323,12 +323,12 @@ evas_image_load_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
 	return 0;
      }
    data = alloca(w * 16 * 3);
-   if (!im->image->data)
+   if (!ie->flags.loaded)
      {
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
      }
-   ptr2 = im->image->data;
+   ptr2 = evas_cache_image_pixels(ie);
    count = 0;
    prevy = 0;
    if (cinfo.output_components == 3)
@@ -385,7 +385,7 @@ evas_image_load_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
 #endif
 
 int
-evas_image_load_file_head_jpeg(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *key)
 {
    int val;
    FILE *f;
@@ -393,14 +393,14 @@ evas_image_load_file_head_jpeg(RGBA_Image *im, const char *file, const char *key
    if ((!file)) return 0;
    f = fopen(file, "rb");
    if (!f) return 0;
-   val = evas_image_load_file_head_jpeg_internal(im, f);
+   val = evas_image_load_file_head_jpeg_internal(ie, f);
    fclose(f);
    return val;
    key = 0;
 }
 
 int
-evas_image_load_file_data_jpeg(RGBA_Image *im, const char *file, const char *key)
+evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *key)
 {
    int val;
    FILE *f;
@@ -408,7 +408,7 @@ evas_image_load_file_data_jpeg(RGBA_Image *im, const char *file, const char *key
    if ((!file)) return 0;
    f = fopen(file, "rb");
    if (!f) return 0;
-   val = evas_image_load_file_data_jpeg_internal(im, f);
+   val = evas_image_load_file_data_jpeg_internal(ie, f);
    fclose(f);
    return val;
    key = 0;
