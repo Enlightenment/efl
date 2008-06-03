@@ -330,7 +330,7 @@ eng_image_alpha_get(void *data, void *image)
 
    if (!image) return 0;
    im = image;
-   return im->flags.have_alpha;
+   return im->cache_entry.flags.alpha;
 }
 
 static int
@@ -503,7 +503,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    old_im = image;
    if ((DATA16 *)image_data == old_im->pixels) return old_im;
 
-   new_im = (Soft16_Image *) evas_cache_image_copied_data(evas_common_soft16_image_cache_get(), old_im->cache_entry.w, old_im->cache_entry.h, image_data, old_im->flags.have_alpha, EVAS_COLORSPACE_RGB565_A5P);
+   new_im = (Soft16_Image *) evas_cache_image_copied_data(evas_common_soft16_image_cache_get(), old_im->cache_entry.w, old_im->cache_entry.h, image_data, old_im->cache_entry.flags.alpha, EVAS_COLORSPACE_RGB565_A5P);
    evas_cache_image_drop(&old_im->cache_entry);
    return new_im;
 }

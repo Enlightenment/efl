@@ -101,7 +101,7 @@ _evas_common_soft16_image_new(void)
    im->pixels = NULL;
    im->alpha = NULL;
    /* When is have_alpha set ? */
-   im->flags.have_alpha = 0;
+/*    im->flags.have_alpha = 0; */
    im->flags.free_pixels = 0;
    im->flags.free_alpha = 0;
 
@@ -122,10 +122,10 @@ _evas_common_soft16_image_surface_alloc(Image_Entry *ie, int w, int h)
 
    if (im->stride < 0) im->stride = _calc_stride(w);
 
-   im->pixels = realloc(im->pixels, IMG_BYTE_SIZE(im->stride, h, im->flags.have_alpha));
+   im->pixels = realloc(im->pixels, IMG_BYTE_SIZE(im->stride, h, ie->flags.alpha));
    if (!im->pixels) return -1;
 
-   if (im->flags.have_alpha)
+   if (ie->flags.alpha)
      {
         im->alpha = (DATA8 *)(im->pixels + (im->stride * h));
         im->flags.free_alpha = 0;
@@ -172,7 +172,7 @@ _evas_common_load_soft16_image_from_file(Image_Entry *ie)
 
    sim->cache_entry.w = sim->source->cache_entry.w;
    sim->cache_entry.h = sim->source->cache_entry.h;
-   sim->flags.have_alpha = im->cache_entry.flags.alpha;
+   ie->flags.alpha = im->cache_entry.flags.alpha;
    if (sim->stride < 0) sim->stride = _calc_stride(sim->cache_entry.w);
 
    return 0;
@@ -209,7 +209,7 @@ _evas_common_soft16_image_ram_usage(Image_Entry *ie)
    Soft16_Image *im = (Soft16_Image *) ie;
 
    if (im->pixels && im->flags.free_pixels)
-     return IMG_BYTE_SIZE(im->stride, im->cache_entry.h, im->flags.have_alpha);
+     return IMG_BYTE_SIZE(im->stride, im->cache_entry.h, ie->flags.alpha);
    return 0;
 }
 
@@ -232,14 +232,14 @@ _evas_common_soft16_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *i
    /* FIXME: handle colorspace */
    ie_dst->w = w;
    ie_dst->h = h;
+   ie_dst->flags.alpha = alpha;
 
-   im->flags.have_alpha = alpha;
    im->flags.free_pixels = 0;
    im->flags.free_alpha = 0;
 
    /* FIXME: That's bad, the application must be aware of the engine internal. */
    im->pixels = (DATA16 *) image_data;
-   if (im->flags.have_alpha)
+   if (ie_dst->flags.alpha)
      im->alpha = (DATA8 *)(im->pixels + (im->stride * h));
 
    return 0;
@@ -251,12 +251,10 @@ _evas_common_soft16_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DA
    Soft16_Image *im = (Soft16_Image *) ie_dst;
 
    /* FIXME: handle colorspace */
-   im->flags.have_alpha = alpha;
-   evas_cache_image_surface_alloc(ie_dst, w, h);
    if (image_data)
-     memcpy(im->pixels, image_data, IMG_BYTE_SIZE(im->stride, h, im->flags.have_alpha));
+     memcpy(im->pixels, image_data, IMG_BYTE_SIZE(im->stride, h, ie_dst->flags.alpha));
    else
-     memset(im->pixels, 0, IMG_BYTE_SIZE(im->stride, h, im->flags.have_alpha));
+     memset(im->pixels, 0, IMG_BYTE_SIZE(im->stride, h, ie_dst->flags.alpha));
 
    return 0;
 }
@@ -539,11 +537,11 @@ soft16_image_alpha_set(Soft16_Image *im, int have_alpha)
 {
    Soft16_Image   *new_im;
 
-   if (im->flags.have_alpha == have_alpha) return im;
+   if (im->cache_entry.flags.alpha == have_alpha) return im;
 
    new_im = (Soft16_Image *) evas_cache_image_alone(&im->cache_entry);
 
-   new_im->flags.have_alpha = have_alpha;
+   new_im->cache_entry.flags.alpha = have_alpha;
 
    if (im->cache_entry.w > 0
        && im->cache_entry.h)

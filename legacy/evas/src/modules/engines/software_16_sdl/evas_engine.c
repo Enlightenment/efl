@@ -108,7 +108,7 @@ _tmp_out_alloc(Render_Engine *re)
 	Soft16_Image *im;
 
         im = (Soft16_Image *) evas_cache_image_empty(evas_common_soft16_image_cache_get());
-        im->flags.have_alpha = 0;
+        im->cache_entry.flags.alpha = 0;
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 
 	re->tmp_out = im;
@@ -570,7 +570,7 @@ evas_engine_sdl16_image_alpha_get(void *data, void *image)
 
    if (!eim) return 1;
    im = (Soft16_Image *) eim->cache_entry.src;
-   if (im->flags.have_alpha) return 1;
+   if (im->cache_entry.flags.alpha) return 1;
    return 0;
 }
 
@@ -741,14 +741,14 @@ evas_engine_sdl16_image_alpha_set(void *data, void *image, int has_alpha)
 
    im = (Soft16_Image *) eim->cache_entry.src;
 
-   if (im->flags.have_alpha == has_alpha) return eim;
+   if (im->cache_entry.flags.alpha == has_alpha) return eim;
 
    eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_alone(&eim->cache_entry,
                                                                   NULL);
 
    im = (Soft16_Image *) eim->cache_entry.src;
 
-   im->flags.have_alpha = has_alpha;
+   im->cache_entry.flags.alpha = has_alpha;
    eim = (SDL_Engine_Image_Entry *) evas_cache_engine_image_dirty(&eim->cache_entry, 0, 0, eim->cache_entry.w, eim->cache_entry.h);
 
    return eim;
@@ -1193,7 +1193,7 @@ _sdl16_image_update_data(Engine_Image_Entry* dst, void* engine_data)
 /*              im->flags.have_alpha = 1; */
              im->alpha = NULL;
              im->flags.free_alpha = 0;
-             im->flags.have_alpha = 0;
+             im->cache_entry.flags.alpha = 0;
 
              dst->src->w = sdl->w;
              dst->src->h = sdl->h;

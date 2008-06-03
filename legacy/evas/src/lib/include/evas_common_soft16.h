@@ -95,7 +95,7 @@ struct _Soft16_Image
 
    struct
    {
-     unsigned char  have_alpha  : 1; // 1 if we have halpha
+/*      unsigned char  have_alpha  : 1; // 1 if we have halpha */
      unsigned char  free_pixels : 1; // 1 if pixels should be freed
      unsigned char  free_alpha  : 1; // 1 if alpha mask should be freed
    } flags;

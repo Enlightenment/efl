@@ -54,7 +54,7 @@ _soft16_rectangle_draw_int(Soft16_Image *dst, RGBA_Draw_Context *dc,
 
    dst_offset = dr.x + (dr.y * dst->cache_entry.w);
 
-   if (!dst->flags.have_alpha)
+   if (!dst->cache_entry.flags.alpha)
       {
 	 DATA16 rgb565;
 	 DATA8 alpha;
