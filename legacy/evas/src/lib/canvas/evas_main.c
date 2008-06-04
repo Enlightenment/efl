@@ -68,6 +68,8 @@ evas_new(void)
    evas_array_setup(&e->restack_objects, 16);
    evas_array_setup(&e->render_objects, 16);
    evas_array_setup(&e->pending_objects, 16);
+   evas_array_setup(&e->obscuring_objects, 16);
+   evas_array_setup(&e->temporary_objects, 16);
 
    return e;
 }
@@ -97,6 +99,7 @@ evas_free(Evas *e)
    if (e->walking_list > 0) return;
    del = 1;
    e->walking_list++;
+   e->cleanup = 1;
    while (del)
      {
 	del = 0;
@@ -172,6 +175,8 @@ evas_free(Evas *e)
    evas_array_flush(&e->restack_objects);
    evas_array_flush(&e->render_objects);
    evas_array_flush(&e->pending_objects);
+   evas_array_flush(&e->obscuring_objects);
+   evas_array_flush(&e->temporary_objects);
 
    e->magic = 0;
    free(e);
@@ -368,6 +373,7 @@ evas_output_size_set(Evas *e, int w, int h)
    e->output.changed = 1;
    e->output_validity++;
    e->changed = 1;
+   evas_render_invalidate(e);
 }
 
 /**

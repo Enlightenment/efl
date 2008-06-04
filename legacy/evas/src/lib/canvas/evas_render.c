@@ -242,60 +242,89 @@ _evas_render_check_pending_objects(Evas_Array *pending_objects, Evas *e)
 
 	obj = _evas_array_get(pending_objects, i);
 
-	if (obj->render_pre
-	    || obj->rect_del)
-	  {
-	     evas_object_clip_recalc(obj);
-	     is_active = evas_object_is_active(obj);
+	evas_object_clip_recalc(obj);
+	is_active = evas_object_is_active(obj);
 
-	     if (obj->is_active == is_active)
-	       {
-		  if (obj->changed)
-		    {
-		       if (obj->smart.smart)
-			 ok = 1;
-		       else
-			 if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
-			     ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
-			      (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-			   ok = 0;
-			 else
-			   if (is_active && (!obj->clip.clipees) &&
-			       ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
-				(evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-			     ok = 1;
-		    }
-		  else
-		    {
-		       if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-			   (!obj->cur.have_clipees || (evas_object_was_visible(obj) && (!obj->prev.have_clipees)))
-			   && evas_object_is_opaque(obj) && evas_object_is_visible(obj))
-			 if (obj->rect_del || obj->smart.smart)
+	if (!is_active && !obj->is_active && !obj->render_pre && !obj->rect_del)
+	  ok = 1;
+	else
+	  if (obj->is_active == is_active)
+	    {
+	       if (obj->changed)
+		 {
+		    if (obj->smart.smart)
+		      {
+			 if (obj->render_pre
+			     || obj->rect_del)
 			   ok = 1;
-		    }
-	       }
-	  }
+		      }
+		    else
+		      if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
+			  ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+			   (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+			{
+			   if (!(obj->render_pre
+				 || obj->rect_del))
+			     ok = 1;
+			}
+		      else
+			if (is_active && (!obj->clip.clipees) &&
+			    ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+			     (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+			  {
+			     if (obj->render_pre
+				 || obj->rect_del)
+			       ok = 1;
+			  }
+		 }
+	       else
+		 {
+		    if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
+			(!obj->cur.have_clipees || (evas_object_was_visible(obj) && (!obj->prev.have_clipees)))
+			&& evas_object_is_opaque(obj) && evas_object_is_visible(obj))
+		      if (obj->rect_del || obj->smart.smart)
+			{
+			   ok = 1;
+			}
+		 }
+	    }
 
 	if (!ok)
 	  {
-	     evas_render_invalidate(e);
+	     evas_array_clean(&e->active_objects);
+	     evas_array_clean(&e->render_objects);
+
+	     evas_array_clean(&e->restack_objects);
+	     evas_array_clean(&e->delete_objects);
+
+	     e->invalidate = 1;
+
 	     return ;
 	  }
      }
+}
+
+Evas_Bool pending_change(void *data, void *gdata)
+{
+   Evas_Object *obj;
+
+   obj = data;
+
+   if (obj->delete_me) return 0;
+
+   return obj->changed ? 1 : 0;
 }
 
 static Evas_List *
 evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw)
 {
    Evas_List *updates = NULL;
-   Evas_List *obscuring_objects = NULL;
-   Evas_List *obscuring_objects_orig = NULL;
    Evas_List *ll;
    void *surface;
    Evas_Bool clean_them = 0;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
-   unsigned int i;
+   unsigned int i, j;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -303,14 +332,11 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    if (!e->changed) return NULL;
 
    /* Check if the modified object mean recalculating every thing */
-   if (&e->pending_objects.count > 0)
-     {
-	_evas_render_check_pending_objects(&e->pending_objects, e);
-	evas_array_clean(&e->pending_objects);
-     }
+   if (!e->invalidate)
+     _evas_render_check_pending_objects(&e->pending_objects, e);
 
    /* phase 1. add extra updates for changed objects */
-   if (e->render_objects.count <= 0)
+   if (e->invalidate || e->render_objects.count <= 0)
      clean_them = _evas_render_phase1_process(e, &e->active_objects, &e->restack_objects, &e->delete_objects, &e->render_objects);
 
    _evas_render_phase1_direct(e, &e->render_objects);
@@ -386,14 +412,17 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
                      (!obj->delete_me) &&
                      (obj->cur.cache.clip.visible) &&
                      (!obj->smart.smart)))
-	  obscuring_objects = evas_list_append(obscuring_objects, obj);
+/* 	  obscuring_objects = evas_list_append(obscuring_objects, obj); */
+	  _evas_array_append(&e->obscuring_objects, obj);
      }
    /* save this list */
-   obscuring_objects_orig = obscuring_objects;
-   obscuring_objects = NULL;
+/*    obscuring_objects_orig = obscuring_objects; */
+/*    obscuring_objects = NULL; */
    /* phase 6. go thru each update rect and render objects in it*/
    if (do_draw)
      {
+	unsigned int offset = 0;
+
 	while ((surface =
 		e->engine.func->output_redraws_next_update_get(e->engine.data.output,
 							       &ux, &uy, &uw, &uh,
@@ -415,19 +444,18 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	     off_x = cx - ux;
 	     off_y = cy - uy;
 	     /* build obscuring objects list (in order from bottom to top) */
-	     for (ll = obscuring_objects_orig; ll; ll = ll->next)
+	     for (i = 0; i < e->obscuring_objects.count; ++i)
 	       {
 		  Evas_Object *obj;
 
-		  obj = (Evas_Object *)(ll->data);
+		  obj = (Evas_Object *) _evas_array_get(&e->obscuring_objects, i);
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
-		    obscuring_objects = evas_list_append(obscuring_objects, obj);
+		    _evas_array_append(&e->temporary_objects, obj);
 	       }
 	     /* render all object that intersect with rect */
              for (i = 0; i < e->active_objects.count; ++i)
 	       {
 		  Evas_Object *obj;
-		  Evas_List *l3;
 
 		  obj = _evas_array_get(&e->active_objects, i);
 
@@ -442,9 +470,9 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		    {
 		       int x, y, w, h;
 
-		       if ((obscuring_objects) &&
-			   (obscuring_objects->data == obj))
-			 obscuring_objects = evas_list_remove(obscuring_objects, obj);
+		       if ((e->temporary_objects.count > offset) &&
+			   (_evas_array_get(&e->temporary_objects, offset) == obj))
+			 offset++;
 		       x = cx; y = cy; w = cw; h = ch;
 		       RECTS_CLIP_TO_RECT(x, y, w, h,
 					  obj->cur.cache.clip.x + off_x,
@@ -472,11 +500,11 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 							     e->engine.data.context,
 							     x, y, w, h);
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
-			    for (l3 = obscuring_objects; l3; l3 = l3->next)
+			    for (j = offset; j < e->temporary_objects.count; ++j)
 			      {
 				 Evas_Object *obj2;
 
-				 obj2 = (Evas_Object *)l3->data;
+				 obj2 = (Evas_Object *) _evas_array_get(&e->temporary_objects, j);
 				 e->engine.func->context_cutout_add(e->engine.data.output,
 								    e->engine.data.context,
 								    obj2->cur.cache.clip.x + off_x,
@@ -500,7 +528,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 							     surface,
 							     ux, uy, uw, uh);
 	     /* free obscuring objects list */
-	     obscuring_objects = evas_list_free(obscuring_objects);
+	     evas_array_clean(&e->temporary_objects);
 	  }
 	/* flush redraws */
 	e->engine.func->output_flush(e->engine.data.output);
@@ -529,7 +557,12 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
  */
      }
    /* free our obscuring object list */
-   evas_list_free(obscuring_objects_orig);
+   evas_array_clean(&e->obscuring_objects);
+
+   /* If some object are still marked as changed, do not remove
+      them from the pending list. */
+   evas_array_remove(&e->pending_objects, pending_change, NULL);
+
    /* delete all objects flagged for deletion now */
    for (i = 0; i < e->delete_objects.count; ++i)
      {
@@ -538,14 +571,21 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	obj = _evas_array_get(&e->delete_objects, i);
 	evas_object_free(obj, 1);
      }
-
-   /* If their are some object to restack or some object to delete, it's useless to keep the render object list around. */
-   if (clean_them)
-     evas_render_invalidate(e);
+   evas_array_clean(&e->delete_objects);
 
    e->changed = 0;
    e->viewport.changed = 0;
    e->output.changed = 0;
+   e->invalidate = 0;
+
+   /* If their are some object to restack or some object to delete, it's useless to keep the render object list around. */
+   if (clean_them)
+     {
+	evas_array_clean(&e->active_objects);
+	evas_array_clean(&e->render_objects);
+
+	e->invalidate = 1;
+     }
 
    evas_module_clean();
 
@@ -640,7 +680,12 @@ evas_render_idle_flush(Evas *e)
    evas_array_flush(&e->active_objects);
    evas_array_flush(&e->restack_objects);
    evas_array_flush(&e->render_objects);
-   evas_array_flush(&e->pending_objects);
+
+   /* If some object are still marked as changed, do not remove
+      them from the pending list. */
+   evas_array_remove(&e->pending_objects, pending_change, NULL);
+
+   e->invalidate = 1;
 }
 
 void
@@ -652,10 +697,15 @@ evas_render_invalidate(Evas *e)
 
    evas_array_clean(&e->active_objects);
    evas_array_clean(&e->render_objects);
-   evas_array_clean(&e->pending_objects);
+
+   /* If some object are still marked as changed, do not remove
+      them from the pending list. */
+   evas_array_remove(&e->pending_objects, pending_change, NULL);
 
    evas_array_flush(&e->restack_objects);
    evas_array_flush(&e->delete_objects);
+
+   e->invalidate = 1;
 }
 
 void
@@ -665,15 +715,16 @@ evas_render_object_recalc(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
 
-   if (!obj->changed && obj->layer)
+   if (!obj->changed && obj->delete_me < 2)
      {
 	Evas	*e;
 
 	e = obj->layer->evas;
+	if (!e || e->cleanup) return ;
 
-	if (e->active_objects.count > 0
-	    && e->render_objects.count > 0)
-	  _evas_array_append(&e->pending_objects, obj);
+	obj->changed = 1;
+
+	_evas_array_append(&e->pending_objects, obj);
      }
 }
 

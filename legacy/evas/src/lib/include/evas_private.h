@@ -344,6 +344,8 @@ struct _Evas
    Evas_Array     restack_objects;
    Evas_Array	  render_objects;
    Evas_Array	  pending_objects;
+   Evas_Array     obscuring_objects;
+   Evas_Array     temporary_objects;
 
    int            delete_grabs;
    int            walking_grabs;
@@ -359,8 +361,10 @@ struct _Evas
    int            last_mouse_down_counter;
    int            last_mouse_up_counter;
    Evas_Font_Hinting_Flags hinting;
-   unsigned char     changed : 1;
+   unsigned char  changed : 1;
    unsigned char  delete_me : 1;
+   unsigned char  invalidate : 1;
+   unsigned char  cleanup : 1;
 };
 
 struct _Evas_Layer
