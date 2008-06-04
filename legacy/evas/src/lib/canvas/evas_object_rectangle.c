@@ -101,7 +101,6 @@ evas_object_rectangle_init(Evas_Object *obj)
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
-   obj->changed = 1;
 }
 
 static void *
@@ -289,7 +288,6 @@ evas_object_rectangle_render_post(Evas_Object *obj)
      }
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
-   obj->changed = 0;
 }
 
 static int

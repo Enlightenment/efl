@@ -99,6 +99,7 @@ evas_object_gradient_add(Evas *e)
 
 	o->engine_data = e->engine.func->gradient_new(e->engine.data.output);
      }
+   evas_object_change(obj);
    return obj;
 }
 
@@ -792,7 +793,6 @@ evas_object_gradient_init(Evas_Object *obj)
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
-   obj->changed = 1;
 }
 
 static void *
@@ -1051,7 +1051,6 @@ evas_object_gradient_render_post(Evas_Object *obj)
      }
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
-   obj->changed = 0;
    if (o->prev.type.name && (o->prev.type.name != o->cur.type.name))
 	free(o->prev.type.name);
    if (o->prev.type.params && (o->prev.type.params != o->cur.type.params))
