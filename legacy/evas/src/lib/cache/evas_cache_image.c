@@ -603,6 +603,7 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *imag
 
    im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
    if (!im) return NULL;
+
    im->space = cspace;
    im->flags.alpha = alpha;
 
@@ -679,10 +680,11 @@ evas_cache_image_size_set(Image_Entry *im, int w, int h)
    new = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, &error);
    if (!new) goto on_error;
 
-   _evas_cache_image_entry_surface_alloc(cache, new, w, h);
-
+   new->flags.alpha = im->flags.alpha;
    new->space = im->space;
    new->load_opts = im->load_opts;
+
+   _evas_cache_image_entry_surface_alloc(cache, new, w, h);
 
    error = cache->func.size_set(new, im, w, h);
    if (error != 0) goto on_error;
