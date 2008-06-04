@@ -410,7 +410,6 @@ evas_object_del(Evas_Object *obj)
    while (obj->clip.clipees) evas_object_clip_unset(obj->clip.clipees->data);
    if (obj->cur.clipper) evas_object_clip_unset(obj);
    if (obj->smart.smart) evas_object_smart_del(obj);
-   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
    evas_object_smart_cleanup(obj);
    obj->delete_me = 1;
@@ -538,7 +537,6 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    obj->cur.geometry.w = w;
    obj->cur.geometry.h = h;
 ////   obj->cur.cache.geometry.validity = 0;
-   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
@@ -873,7 +871,6 @@ evas_object_show(Evas_Object *obj)
 	evas_object_inform_call_show(obj);
 	return;
      }
-   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    obj->cur.visible = 1;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
@@ -921,7 +918,6 @@ evas_object_hide(Evas_Object *obj)
 	evas_object_inform_call_hide(obj);
 	return;
      }
-   if (obj->layer) evas_render_invalidate(obj->layer->evas);
    obj->cur.visible = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
@@ -1035,8 +1031,6 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
    obj->cur.color.r = r;
    obj->cur.color.g = g;
    obj->cur.color.b = b;
-   if ((obj->cur.color.a == 0) || (a == 0))
-     if (obj->layer) evas_render_invalidate(obj->layer->evas);
    if ((obj->cur.color.a == 0) && (a == 0)) return;
    obj->cur.color.a = a;
    evas_object_change(obj);
