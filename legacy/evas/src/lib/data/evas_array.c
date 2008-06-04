@@ -73,3 +73,41 @@ evas_array_free(Evas_Array *array)
    evas_array_flush(array);
    free(array);
 }
+
+EAPI void
+evas_array_remove(Evas_Array *array, Evas_Bool (*keep)(void *data, void *gdata), void *gdata)
+{
+   void **tmp;
+   unsigned int total = 0;
+   unsigned int i;
+
+   if (array->total == 0) return ;
+
+   tmp = malloc(sizeof (void*) * array->total);
+   if (!tmp) return ;
+
+   for (i = 0; i < array->count; ++i)
+     {
+	void *data;
+
+	data = _evas_array_get(array, i);
+
+	if (keep(data, gdata))
+	  {
+	     tmp[total] = data;
+	     total++;
+	  }
+     }
+
+   free(array->data);
+
+   if (total == 0)
+     {
+	array->data = NULL;
+	free(tmp);
+     }
+   else
+     array->data = tmp;
+
+   array->count = total;
+}

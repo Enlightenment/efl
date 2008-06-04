@@ -426,13 +426,14 @@ extern "C" {
    EAPI Evas_List        *evas_list_sort                    (Evas_List *list, int size, int(*func)(void*,void*));
    EAPI int               evas_list_alloc_error             (void);
 
-   EAPI Evas_Array	 *evas_array_new		    (unsigned int step);
-   EAPI void		  evas_array_setup		    (Evas_Array *array, unsigned int step);
-   EAPI void		  evas_array_free		    (Evas_Array *array);
-   EAPI void		  evas_array_append		    (Evas_Array *array, void *data);
-   EAPI void		 *evas_array_get		    (Evas_Array *array, unsigned int index);
-   EAPI void		  evas_array_clean		    (Evas_Array *array);
-   EAPI void		  evas_array_flush		    (Evas_Array *array);
+   EAPI Evas_Array       *evas_array_new                    (unsigned int step);
+   EAPI void              evas_array_setup                  (Evas_Array *array, unsigned int step);
+   EAPI void              evas_array_free                   (Evas_Array *array);
+   EAPI void              evas_array_append                 (Evas_Array *array, void *data);
+   EAPI void             *evas_array_get                    (Evas_Array *array, unsigned int index);
+   EAPI void              evas_array_clean                  (Evas_Array *array);
+   EAPI void              evas_array_flush                  (Evas_Array *array);
+   EAPI void              evas_array_remove                 (Evas_Array *array, Evas_Bool (*keep)(void *data, void *gdata), void *gdata);
 
    /* FIXME: add:
     * api to add find, del members by data, size not just string and also
