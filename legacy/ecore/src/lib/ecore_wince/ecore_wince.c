@@ -304,12 +304,6 @@ _ecore_wince_window_procedure(HWND   window,
                _ecore_wince_event_handle_expose(data);
                EndPaint(window, &paint);
             }
-/*           if (GetUpdateRect(window, &rect, FALSE)) */
-/*             { */
-/*               printf (" * ecore message : painting...\n"); */
-/*                data->update = rect; */
-/*                _ecore_wince_event_handle_expose(data); */
-/*             } */
           return 0;
        }
      default:

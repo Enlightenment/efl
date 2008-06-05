@@ -217,6 +217,8 @@ EAPI void ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspe
 
 EAPI void ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(void));
 
+EAPI void *ecore_wince_window_window_get(Ecore_WinCE_Window *window);
+
 
 #ifdef __cplusplus
 }

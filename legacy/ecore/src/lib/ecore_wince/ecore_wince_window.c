@@ -124,6 +124,7 @@ ecore_wince_window_show(Ecore_WinCE_Window *window)
    fprintf (stderr, " ** ecore_wince_window_show  %p\n", window);
    ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_SHOWNORMAL);
    UpdateWindow(((struct _Ecore_WinCE_Window *)window)->window);
+   SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 1, 0);
 }
 
 void
@@ -133,6 +134,7 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
 
    fprintf (stderr, " ** ecore_wince_window_hide  %p\n", window);
    ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_HIDE);
+   SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 0, 0);
 }
 
 void
@@ -157,6 +159,17 @@ ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(void))
 
    w = (struct _Ecore_WinCE_Window *)window;
    w->resume = resume;
+}
+
+void *
+ecore_wince_window_window_get(Ecore_WinCE_Window *window)
+{
+   struct _Ecore_WinCE_Window *w;
+
+   if (!window)
+     return NULL;
+
+   return ((struct _Ecore_WinCE_Window *)window)->window;
 }
 
 
