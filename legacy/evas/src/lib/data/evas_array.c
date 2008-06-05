@@ -103,11 +103,14 @@ evas_array_remove(Evas_Array *array, Evas_Bool (*keep)(void *data, void *gdata),
 
    if (total == 0)
      {
+	array->total = 0;
 	array->data = NULL;
 	free(tmp);
      }
    else
-     array->data = tmp;
+     {
+	array->data = tmp;
+     }
 
    array->count = total;
 }
