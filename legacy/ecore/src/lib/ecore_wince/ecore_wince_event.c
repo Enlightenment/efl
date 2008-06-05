@@ -355,7 +355,7 @@ _ecore_wince_event_handle_focus_in(Ecore_WinCE_Callback_Data *msg)
      }
 
    if (window->resume)
-     window->resume();
+     window->resume(window->backend);
 
    e->window = window;
 
@@ -381,7 +381,7 @@ _ecore_wince_event_handle_focus_out(Ecore_WinCE_Callback_Data *msg)
         return;
      }
    if (window->suspend)
-     window->suspend();
+     window->suspend(window->backend);
 
    e->window = window;
 

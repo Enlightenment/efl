@@ -138,7 +138,7 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
 }
 
 void
-ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(void))
+ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int), int backend)
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -146,11 +146,12 @@ ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(void))
      return;
 
    w = (struct _Ecore_WinCE_Window *)window;
+   w->backend = backend;
    w->suspend = suspend;
 }
 
 void
-ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(void))
+ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int), int backend)
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -158,7 +159,88 @@ ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(void))
      return;
 
    w = (struct _Ecore_WinCE_Window *)window;
+   w->backend = backend;
    w->resume = resume;
+}
+
+void
+ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
+                                int                *x,
+                                int                *y,
+                                int                *width,
+                                int                *height)
+{
+   RECT rect;
+   int  w;
+   int  h;
+
+   printf ("ecore_wince_window_geometry_get %p\n", window);
+   if (!window)
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (width) *width = GetSystemMetrics(SM_CXSCREEN);
+        if (height) *height = GetSystemMetrics(SM_CYSCREEN);
+
+        return;
+     }
+
+   if (!GetClientRect(((struct _Ecore_WinCE_Window *)window)->window,
+                      &rect))
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (width) *width = 0;
+        if (height) *height = 0;
+
+        return;
+     }
+
+   w = rect.right - rect.left;
+   h = rect.bottom - rect.top;
+
+   if (!GetWindowRect(((struct _Ecore_WinCE_Window *)window)->window,
+                      &rect))
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (width) *width = 0;
+        if (height) *height = 0;
+
+        return;
+     }
+
+   if (x) *x = rect.left;
+   if (y) *y = rect.top;
+   if (width) *width = w;
+   if (height) *height = h;
+}
+
+void
+ecore_wince_window_size_get(Ecore_WinCE_Window *window,
+                            int                *width,
+                            int                *height)
+{
+   RECT rect;
+
+   printf ("ecore_wince_window_size_get %p\n", window);
+   if (!window)
+     {
+        if (width) *width = GetSystemMetrics(SM_CXSCREEN);
+        if (height) *height = GetSystemMetrics(SM_CYSCREEN);
+
+        return;
+     }
+
+   if (!GetClientRect(((struct _Ecore_WinCE_Window *)window)->window,
+                      &rect))
+     {
+        if (width) *width = 0;
+        if (height) *height = 0;
+     }
+
+   if (width) *width = rect.right - rect.left;
+   if (height) *height = rect.bottom - rect.top;
 }
 
 void *

@@ -24,14 +24,15 @@ struct _Ecore_WinCE_Callback_Data
 };
 
 
-typedef int (*ecore_wince_suspend) (void);
-typedef int (*ecore_wince_resume)  (void);
+typedef int (*ecore_wince_suspend) (int);
+typedef int (*ecore_wince_resume)  (int);
 
 
 struct _Ecore_WinCE_Window
 {
    HWND                window;
 
+   int                 backend;
    ecore_wince_suspend suspend;
    ecore_wince_resume  resume;
 
