@@ -213,9 +213,11 @@ EAPI void ecore_wince_window_show(Ecore_WinCE_Window *window);
 
 EAPI void ecore_wince_window_hide(Ecore_WinCE_Window *window);
 
-  EAPI void ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int), int backend);
+EAPI void ecore_wince_window_backend_set(Ecore_WinCE_Window *window, int backend);
 
-EAPI void ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int), int backend);
+EAPI void ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int));
+
+EAPI void ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int));
 
 EAPI void ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
                                           int                *x,

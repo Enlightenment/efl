@@ -138,7 +138,7 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
 }
 
 void
-ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int), int backend)
+ecore_wince_window_backend_set(Ecore_WinCE_Window *window, int backend)
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -147,11 +147,22 @@ ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int), 
 
    w = (struct _Ecore_WinCE_Window *)window;
    w->backend = backend;
+}
+
+void
+ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int))
+{
+   struct _Ecore_WinCE_Window *w;
+
+   if (!window)
+     return;
+
+   w = (struct _Ecore_WinCE_Window *)window;
    w->suspend = suspend;
 }
 
 void
-ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int), int backend)
+ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int))
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -159,7 +170,6 @@ ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int), in
      return;
 
    w = (struct _Ecore_WinCE_Window *)window;
-   w->backend = backend;
    w->resume = resume;
 }
 
