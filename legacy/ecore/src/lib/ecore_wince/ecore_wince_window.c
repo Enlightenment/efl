@@ -13,28 +13,6 @@
 #include "Ecore_WinCE.h"
 #include "ecore_wince_private.h"
 
-char *
-_wchar_to_char(const wchar_t *text)
-{
-   char * atext;
-   int    size;
-   int    asize;
-
-   size = wcslen(text) + 1;
-
-   asize = WideCharToMultiByte(CP_ACP, 0, text, size, NULL, 0, NULL, NULL);
-   if (asize == 0)
-     return NULL;
-
-   atext = (char*)malloc((asize + 1) * sizeof(char));
-
-   if (atext)
-     if (!WideCharToMultiByte(CP_ACP, 0, text, size, atext, asize, NULL, NULL))
-       return NULL;
-   atext[asize] = '\0';
-
-   return atext;
-}
 
 /***** Private declarations *****/
 

@@ -91,6 +91,8 @@ ecore_wince_init()
         ECORE_WINCE_EVENT_MOUSE_BUTTON_DOWN     = ecore_event_type_new();
         ECORE_WINCE_EVENT_MOUSE_BUTTON_UP       = ecore_event_type_new();
         ECORE_WINCE_EVENT_MOUSE_MOVE            = ecore_event_type_new();
+        ECORE_WINCE_EVENT_MOUSE_IN              = ecore_event_type_new();
+        ECORE_WINCE_EVENT_MOUSE_OUT             = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
@@ -226,31 +228,39 @@ _ecore_wince_window_procedure(HWND   window,
           struct _Ecore_WinCE_Window *w = NULL;
 
           w = (struct _Ecore_WinCE_Window *)GetWindowLong(window, GWL_USERDATA);
+          printf (" * ecore message : mouse move\n");
 
           if (GetClientRect(window, &rect))
-          {
-             POINT pt;
+            {
+               POINT pt;
 
-             pt.x = LOWORD(data_param);
-             pt.y = HIWORD(data_param);
-             if (!PtInRect(&rect, pt))
-               {
-                  if (w->pointer_is_in)
-                    {
-                       w->pointer_is_in = 0;
-                       _ecore_wince_event_handle_leave_notify(data);
-                    }
-               }
-             else
-               {
-                  if (!w->pointer_is_in)
-                    {
-                       w->pointer_is_in = 1;
-                       _ecore_wince_event_handle_enter_notify(data);
-                    }
-
-               }
-          }
+               printf ("GetClientRect !!\n");
+               pt.x = LOWORD(data_param);
+               pt.y = HIWORD(data_param);
+               if (!PtInRect(&rect, pt))
+                 {
+                    printf ("pas dans rect...\n");
+                    if (w->pointer_is_in)
+                      {
+                         w->pointer_is_in = 0;
+                         _ecore_wince_event_handle_leave_notify(data);
+                      }
+                 }
+               else
+                 {
+                    printf ("dans rect... %d\n", w->pointer_is_in);
+                    if (!w->pointer_is_in)
+                      {
+                         printf ("w->pointer_is_in a 0\n");
+                         w->pointer_is_in = 1;
+                         _ecore_wince_event_handle_enter_notify(data);
+                      }
+                 }
+            }
+          else
+            {
+               printf ("pas de GetClientRect !!\n");
+            }
           _ecore_wince_event_handle_motion_notify(data);
 
           return 0;

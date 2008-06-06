@@ -254,6 +254,7 @@ _ecore_wince_event_handle_motion_notify(Ecore_WinCE_Callback_Data *msg)
    e->time = (double)msg->time / 1000.0;
 
    ecore_event_add(ECORE_WINCE_EVENT_MOUSE_MOVE, e, NULL, NULL);
+   printf (" * ecore event motion notify\n");
 }
 
 void
@@ -262,6 +263,7 @@ _ecore_wince_event_handle_enter_notify(Ecore_WinCE_Callback_Data *msg)
    Ecore_WinCE_Window *window;
 
    window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+   printf (" * ecore event enter notify 0\n");
 
    {
       Ecore_WinCE_Event_Mouse_Move *e;
@@ -295,6 +297,7 @@ _ecore_wince_event_handle_enter_notify(Ecore_WinCE_Callback_Data *msg)
 
       ecore_event_add(ECORE_WINCE_EVENT_MOUSE_IN, e, NULL, NULL);
    }
+   printf (" * ecore event enter notify 1\n");
 }
 
 void
@@ -336,6 +339,7 @@ _ecore_wince_event_handle_leave_notify(Ecore_WinCE_Callback_Data *msg)
 
       ecore_event_add(ECORE_WINCE_EVENT_MOUSE_OUT, e, NULL, NULL);
    }
+   printf (" * ecore event leave notify\n");
 }
 
 void
