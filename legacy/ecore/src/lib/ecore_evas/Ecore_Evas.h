@@ -64,6 +64,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_DIRECTFB 1
 #define HAVE_ECORE_EVAS_WIN32 1
 #define HAVE_ECORE_EVAS_SDL 1
+#define HAVE_ECORE_EVAS_WINCE 1
 
 typedef enum _Ecore_Evas_Engine_Type
 {
@@ -77,7 +78,8 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_DDRAW,
    ECORE_EVAS_ENGINE_SOFTWARE_DDRAW_16,
    ECORE_EVAS_ENGINE_DIRECT3D,
-   ECORE_EVAS_ENGINE_SDL
+   ECORE_EVAS_ENGINE_SDL,
+   ECORE_EVAS_ENGINE_SOFTWARE_WINCE,
 } Ecore_Evas_Engine_Type;
 
 typedef enum _Ecore_Evas_Avoid_Damage_Type
@@ -99,6 +101,10 @@ typedef struct _Ecore_DirectFB_Window Ecore_DirectFB_Window;
 
 #ifndef __ECORE_WIN32_H__
 typedef void Ecore_Win32_Window;
+#endif
+
+#ifndef __ECORE_WINCE_H__
+typedef void Ecore_WinCE_Window;
 #endif
 
 #ifndef _ECORE_EVAS_PRIVATE_H
@@ -177,6 +183,32 @@ EAPI Ecore_Evas     *ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
 EAPI Ecore_Win32_Window *ecore_evas_direct3d_window_get(Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
+
+EAPI Ecore_Evas     *ecore_evas_software_wince_new(Ecore_WinCE_Window *parent,
+                                                   int                 x,
+                                                   int                 y,
+                                                   int                 width,
+                                                   int                 height);
+
+EAPI Ecore_Evas     *ecore_evas_software_wince_fb_new(Ecore_WinCE_Window *parent,
+                                                      int                 x,
+                                                      int                 y,
+                                                      int                 width,
+                                                      int                 height);
+
+EAPI Ecore_Evas     *ecore_evas_software_wince_gapi_new(Ecore_WinCE_Window *parent,
+                                                        int                 x,
+                                                        int                 y,
+                                                        int                 width,
+                                                        int                 height);
+
+EAPI Ecore_Evas     *ecore_evas_software_wince_ddraw_new(Ecore_WinCE_Window *parent,
+                                                         int                 x,
+                                                         int                 y,
+                                                         int                 width,
+                                                         int                 height);
+
+EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(Ecore_Evas *ee);
 
 /* generic manipulation calls */
 EAPI Ecore_Evas *ecore_evas_ecore_evas_get(Evas *e);

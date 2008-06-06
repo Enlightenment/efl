@@ -77,6 +77,10 @@
 #  include <Evas_Engine_Direct3D.h>
 # endif
 #endif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
+# include "Ecore_WinCE.h"
+# include <Evas_Engine_Software_16_WinCE.h>
+#endif
 
 
 #define IDLE_FLUSH_TIME 0.5
@@ -195,6 +199,11 @@ struct _Ecore_Evas_Engine
      } state;
    } win32;
 #endif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
+   struct {
+      Ecore_WinCE_Window *window;
+   } wince;
+#endif
 
    Ecore_Timer *idle_flush_timer;
 };
@@ -292,6 +301,9 @@ int _ecore_evas_directfb_shutdown(void);
 #endif
 #ifdef BUILD_ECORE_WIN32
 int _ecore_evas_win32_shutdown(void);
+#endif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
+int _ecore_evas_wince_shutdown(void);
 #endif
 
 void _ecore_evas_fps_debug_init(void);

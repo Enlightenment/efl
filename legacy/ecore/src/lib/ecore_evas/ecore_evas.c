@@ -84,6 +84,12 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return 0;
 #endif
+      case ECORE_EVAS_ENGINE_SOFTWARE_WINCE:
+#ifdef BUILD_ECORE_EVAS_WINCE
+	return 1;
+#else
+	return 0;
+#endif
       default:
 	return 0;
 	break;
@@ -128,6 +134,9 @@ ecore_evas_shutdown(void)
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 	while (_ecore_evas_directfb_shutdown());
+#endif
+#ifdef BUILD_ECORE_EVAS_WINCE
+	while (_ecore_evas_wince_shutdown());
 #endif
 	evas_shutdown();
      }
