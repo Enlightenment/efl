@@ -133,7 +133,7 @@ _tmp_out_alloc(Render_Engine *re)
 	Soft16_Image *im;
 
         im = (Soft16_Image *) evas_cache_image_empty(evas_common_soft16_image_cache_get());
-        im->flags.have_alpha = 0;
+        im->cache_entry.flags.alpha = 0;
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 
 

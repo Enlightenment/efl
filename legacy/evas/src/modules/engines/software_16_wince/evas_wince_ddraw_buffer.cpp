@@ -33,19 +33,31 @@ evas_software_wince_ddraw_init (HWND window)
 
    priv->module = LoadLibrary(L"ddraw.dll");
    if (!priv->module)
-     goto free_priv;
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE DDraw] Can not load ddraw.dll\n");
+        goto free_priv;
+     }
 
    lib_DirectDrawCreate = (fct_DirectDrawCreate)GetProcAddress(priv->module, L"DirectDrawCreate");
    if (!lib_DirectDrawCreate)
-     goto free_lib;
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE DDraw] Can not initialize DirectDraw\n");
+        goto free_lib;
+     }
 
    res = lib_DirectDrawCreate(NULL, (IUnknown**)&priv->object, NULL);
    if (FAILED(res))
-     goto free_lib;
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE DDraw] Can not create DirectDraw object\n");
+        goto free_lib;
+     }
 
    res = priv->object->SetCooperativeLevel(window, DDSCL_FULLSCREEN);
    if (FAILED(res))
-     goto release_object;
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE DDraw] Can not set window to fullscreen\n");
+        goto release_object;
+     }
 
    memset(&surface_desc, 0, sizeof(surface_desc));
    surface_desc.dwSize = sizeof(surface_desc);
@@ -54,13 +66,19 @@ evas_software_wince_ddraw_init (HWND window)
 
    res = priv->object->CreateSurface(&surface_desc, &priv->surface, NULL);
    if (FAILED(res))
-     goto release_object;
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE DDraw] Can not create surface\n");
+        goto release_object;
+     }
 
    memset(&surface_desc, 0, sizeof(surface_desc));
    surface_desc.dwSize = sizeof(surface_desc);
    res = priv->surface->Lock(0, &surface_desc, DDLOCK_WAITNOTBUSY, 0);
    if (FAILED(res))
-     goto release_surface;
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE DDraw] Can not lock surface\n");
+        goto release_surface;
+     }
 
    priv->width = surface_desc.dwWidth;
    priv->height = surface_desc.dwHeight;
@@ -68,7 +86,10 @@ evas_software_wince_ddraw_init (HWND window)
 
    res = priv->surface->Unlock(NULL);
    if (FAILED(res))
-     goto release_surface;
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE DDraw] Can not unlock surface\n");
+        goto release_surface;
+     }
 
    return priv;
 

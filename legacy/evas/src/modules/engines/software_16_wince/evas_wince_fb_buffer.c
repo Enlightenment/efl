@@ -55,6 +55,7 @@ evas_software_wince_fb_init (HWND   window)
    dc = GetDC (window);
    if (!dc)
      {
+        fprintf (stderr, "[Evas] [Engine] [WinCE FB] Can not get DC\n");
         free(priv);
         return NULL;
      }
@@ -75,6 +76,7 @@ evas_software_wince_fb_init (HWND   window)
                            (char *) &gxInfo);
         if (result <= 0)
           {
+             fprintf (stderr, "[Evas] [Engine] [WinCE FB] [Ipaq] ExtEscape() failed\n");
              ReleaseDC(window, dc);
              free(priv);
              return NULL;
@@ -93,6 +95,7 @@ evas_software_wince_fb_init (HWND   window)
        (rfbi.wBPP != 16) ||
        (rfbi.wFormat != 1))
      {
+        fprintf (stderr, "[Evas] [Engine] [WinCE FB] ExtEscape() failed\n");
         ReleaseDC(window, dc);
         free(priv);
         return NULL;

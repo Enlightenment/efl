@@ -106,10 +106,11 @@ evas_software_wince_gapi_init (HWND window)
    if (!gapi_lib)
      {
         gapi_lib = LoadLibrary(L"gx.dll");
-        if (!gapi_lib) {
-           printf ("error : LoadLibrary\n");
-           goto free_priv;
-        }
+        if (!gapi_lib)
+          {
+             fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not load gx.dll\n");
+             goto free_priv;
+          }
      }
 
    LINK(display_open, display_open, L"?GXOpenDisplay@@YAHPAUHWND__@@K@Z");
@@ -128,13 +129,13 @@ evas_software_wince_gapi_init (HWND window)
        !suspend ||
        !resume)
      {
-        printf ("error : no valid symbols\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not find valid symbols\n");
         goto free_lib;
      }
 
    if (!display_open(window, GX_FULLSCREEN))
      {
-        printf ("error : GXOpenDisplay\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not open display\n");
         goto free_lib;
      }
 
@@ -143,7 +144,7 @@ evas_software_wince_gapi_init (HWND window)
    // verify pixel format
    if(!(prop.ffFormat & kfDirect565) || (prop.cBPP != 16))
      {
-        printf ("error : GAPI format mismatch\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] display format mismatch\n");
         goto close_display;
      }
 
@@ -151,7 +152,7 @@ evas_software_wince_gapi_init (HWND window)
    if ((GetSystemMetrics(SM_CXSCREEN) != (int)prop.cxWidth) ||
        (GetSystemMetrics(SM_CYSCREEN) != (int)prop.cyHeight))
      {
-        printf ("error : GAPI size mismatch\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] display size mismatch\n");
         goto close_display;
      }
 
@@ -217,13 +218,17 @@ v |         |
 
         dc = GetDC (window);
         if (!dc)
-          goto close_display;
+          {
+             fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not get device\n");
+             goto close_display;
+          }
 
         gxInfo.Version = 100;
         result = ExtEscape(dc, GETGXINFO, 0, NULL, sizeof(gxInfo),
                            (char *) &gxInfo);
         if (result <= 0)
           {
+             fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] ExtEscape failed\n");
              ReleaseDC(window, dc);
              goto close_display;
           }
