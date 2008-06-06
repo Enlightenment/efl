@@ -602,7 +602,6 @@ data_write(void)
 	     tmpdir = "/tmp";
 #endif
              snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
-	     strcpy(tmpn, "/tmp/edje_cc.sma-tmp-XXXXXX");
 	     fd = mkstemp(tmpn);
 	     if (fd >= 0)
 	       {
@@ -685,7 +684,6 @@ data_write(void)
 		    }
 		  close(fd);
                   snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmpdir);
-		  strcpy(tmpo, "/tmp/edje_cc.amx-tmp-XXXXXX");
 		  fd = mkstemp(tmpo);
 		  if (fd >= 0)
 		    {
