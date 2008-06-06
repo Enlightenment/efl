@@ -1,3 +1,11 @@
+2008-06-06  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	add PATH_MAX macro
+
+	* src/lib/dlfcn/dlfcn.c: (get_last_error):
+	free correctly strings
+
 2008-06-02  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

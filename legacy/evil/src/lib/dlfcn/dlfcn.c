@@ -43,7 +43,7 @@ get_last_error(char *desc)
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
    str2 = evil_wchar_to_char(str);
-   free(str);
+   LocalFree(str);
 #else
    str2 = str;
 #endif /* ! __CEGCC__ && ! __MINGW32CE__ */

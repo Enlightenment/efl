@@ -22,6 +22,11 @@ extern "C" {
 #endif
 
 
+#include <windef.h>
+
+#define PATH_MAX MAX_PATH
+
+
 /**
  * @mainpage Evil
  * @author Vincent Torri
