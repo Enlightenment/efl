@@ -31,14 +31,18 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+PKG_PROG_PKG_CONFIG
+
 AC_FUNC_ALLOCA
 
 WIN32_CFLAGS=""
 lt_no_undefined=""
 lt_enable_auto_import=""
-edje_decc_lib=""
 case "$host_os" in
 	mingw*|cegcc)
+		PKG_CHECK_MODULES([EVIL], [evil])
+		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+		AC_DEFINE(HAVE_REALPATH, 1, [Define to 1 if you have the `realpath' function.])
 		dnl needed for correct definition of EAPI
 		AC_DEFINE(EFL_EDJE_BUILD, 1, [Define to mention that embryo is built])
 		if test "x$host_os" = "xcegcc" ; then
@@ -46,15 +50,14 @@ case "$host_os" in
 			lt_enable_auto_import="-Wl,--enable-auto-import"
 		fi
 		lt_no_undefined="-no-undefined"
-		edje_decc_lib="-lole32 -luuid"
+		;;
+	*)
+		AC_CHECK_FUNCS(realpath)
 		;;
 esac
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(lt_no_undefined)
 AC_SUBST(lt_enable_auto_import)
-AC_SUBST(edje_decc_lib)
-
-AC_CHECK_FUNCS(realpath)
 
 AC_MSG_CHECKING(whether to build edje_cc)
 have_edje_cc="yes"
@@ -75,9 +78,12 @@ PKG_CHECK_MODULES(EDJE, [
   evas >= 0.9.9
   ecore-evas >= 0.9.9
   ecore-job >= 0.9.9
-  ecore-file >= 0.9.9
   eet >= 1.0.1
   embryo >= 0.9.1
+])
+
+PKG_CHECK_MODULES(ECORE_FILE, [
+  ecore-file >= 0.9.9
 ])
 
 AC_MSG_CHECKING([for location of Vim data files])
@@ -113,11 +119,9 @@ AC_SUBST(vimdir)
 EDJE_CC_PRG=""
 EDJE_DECC_PRG=""
 EDJE_RECC_PRG=""
-EDJE_THUMB_PRG=""
 if test "x$have_edje_cc" = "xyes"; then
   AM_CONDITIONAL(BUILD_EDJE_CC, true)
   AM_CONDITIONAL(BUILD_EDJE_DECC, true)
-  AM_CONDITIONAL(BUILD_EDJE_THUMB, true)
   EDJE_CC_PRG="edje_cc"
   EDJE_DECC_PRG="edje_decc"
   EDJE_RECC_PRG="edje_recc"
@@ -152,6 +156,8 @@ echo "$PACKAGE $VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
+echo
+echo "  Build binaries.......: $have_edje_cc"
 echo
 echo "  Compilation..........: make"
 echo

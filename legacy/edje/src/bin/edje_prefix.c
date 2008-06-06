@@ -1,7 +1,11 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-#include "config.h"
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -385,11 +389,7 @@ _e_prefix_try_argv(char *argv0)
 	if (getcwd(buf3, sizeof(buf3)))
 	  {
 	     snprintf(buf2, sizeof(buf2), "%s/%s", buf3, argv0);
-#ifdef _WIN32
-	     if (_fullpath(buf, buf2, _MAX_PATH))
-#else
 	     if (realpath(buf2, buf))
-#endif /* _WIN32 */
 	       {
 		  _exe_path = strdup(buf);
 		  if (access(_exe_path, X_OK) == 0) return 1;
@@ -413,11 +413,7 @@ _e_prefix_try_argv(char *argv0)
 	     strncpy(s, cp, len);
 	     s[len] = '/';
 	     strcpy(s + len + 1, argv0);
-#ifdef _WIN32
-	     if (_fullpath(buf, s, _MAX_PATH))
-#else
 	     if (realpath(s, buf))
-#endif /* _WIN32 */
 	       {
 		  if (access(buf, X_OK) == 0)
 		    {
@@ -437,11 +433,7 @@ _e_prefix_try_argv(char *argv0)
 	strncpy(s, cp, len);
 	s[len] = '/';
 	strcpy(s + len + 1, argv0);
-#ifdef _WIN32
-	if (_fullpath(buf, s, _MAX_PATH))
-#else
 	if (realpath(s, buf))
-#endif /* _WIN32 */
 	  {
 	     if (access(buf, X_OK) == 0)
 	       {

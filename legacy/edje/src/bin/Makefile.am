@@ -8,7 +8,21 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EDJE_CFLAGS@
+@EDJE_CFLAGS@ \
+@ECORE_FILE_CFLAGS@ \
+@EVIL_CFLAGS@
+
+if BUILD_EDJE_CC
+EDJE_CC = edje_cc
+else
+EDJE_CC =
+endif
+
+if BUILD_EDJE_DECC
+EDJE_DECC = edje_decc
+else
+EDJE_DECC =
+endif
 
 bin_SCRIPTS = \
 @EDJE_RECC_PRG@
@@ -16,9 +30,7 @@ bin_SCRIPTS = \
 EXTRA_DIST = @EDJE_RECC_PRG@
 EXTRA_SCRIPTS = edje_recc
 
-bin_PROGRAMS = \
-edje_cc \
-edje_decc
+bin_PROGRAMS = $(EDJE_CC) $(EDJE_DECC)
 
 EXTRA_PROGRAMS = \
 edje_cc \
@@ -37,7 +49,7 @@ edje_prefix.h \
 edje_main.h
 
 edje_cc_CFLAGS = @WIN32_CFLAGS@
-edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la $(EDJE_LIBS)
+edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la $(EDJE_LIBS) $(EVIL_LIBS)
 edje_cc_LDFLAGS = @lt_enable_auto_import@
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -49,6 +61,6 @@ edje_cc_mem.c \
 edje_cc_sources.c
 
 edje_decc_CFLAGS = @WIN32_CFLAGS@
-edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la @edje_decc_lib@ $(EDJE_LIBS)
+edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la $(EDJE_LIBS) $(ECORE_FILE_LIBS) $(EVIL_LIBS)
 edje_decc_LDFLAGS = @lt_enable_auto_import@
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la

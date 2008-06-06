@@ -125,11 +125,7 @@ main(int argc, char **argv)
 #ifdef HAVE_REALPATH
    if (!realpath(file_in, rpath) || stat(rpath, &st) || !S_ISREG(st.st_mode))
 #else
-# ifdef _WIN32
-   if (!_fullpath(rpath, file_in, _MAX_PATH) || stat(rpath, &st) || !S_ISREG(st.st_mode))
-# else
    if (stat(file_in, &st) || !S_ISREG(st.st_mode))
-# endif /* _WIN32 */
 #endif
      {
 	fprintf(stderr, "%s: Error: file not found: %s.\n", progname, file_in);
@@ -161,11 +157,7 @@ main(int argc, char **argv)
 #ifdef HAVE_REALPATH
    if (realpath(file_out, rpath2) && !strcmp (rpath, rpath2))
 #else
-# ifdef _WIN32
-   if (_fullpath(rpath2, file_out, _MAX_PATH) && !strcmp (rpath, rpath2))
-# else
    if (!strcmp (file_in, file_out))
-# endif /* _WIN32 */
 #endif
      {
 	fprintf(stderr, "%s: Error: input file equals output file.\n", progname);

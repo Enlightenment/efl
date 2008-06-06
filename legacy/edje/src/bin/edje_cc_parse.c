@@ -2,10 +2,6 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#ifdef _WIN32
-# include <windows.h>
-#endif /* _WIN32 */
-
 #include "edje_cc.h"
 
 static void  new_object(void);
@@ -609,36 +605,27 @@ get_verbatim_line2(void)
 void
 compile(void)
 {
-   int fd;
-   off_t size;
-   char *data, *p;
-#ifdef _WIN32
-   int ret;
-#endif /* _WIN32 */
    char buf[4096];
    char inc[4096];
    static char tmpn[4096];
+   int fd;
+   off_t size;
+   char *data, *p;
+   char *tmpdir;
+
+#ifdef HAVE_EVIL
+   tmpdir = evil_tmpdir_get();
+#else
+   tmpdir = "/tmp";
+#endif
 
    strncpy(inc, file_in, 4000);
    inc[4001] = 0;
    p = strrchr(inc, '/');
    if (!p) strcpy(inc, "./");
    else *p = 0;
-#ifdef _WIN32
-   ret = GetTempPath(4096, buf);
-   if ((ret > 4096) || (ret == 0))
-     fd = -1;
-   else
-     {
-        if (!GetTempFileName(buf, "edj", 0, tmpn))
-          fd = -1;
-        else
-          fd = open(tmpn, _O_RDWR | _O_BINARY | _O_CREAT, 0444);
-     }
-#else
-   strcpy(tmpn, "/tmp/edje_cc.edc-tmp-XXXXXX");
+   snprintf (tmpn, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmpdir);
    fd = mkstemp(tmpn);
-#endif /* _WIN32 */
    if (fd >= 0)
      {
 	int ret;
@@ -706,11 +693,7 @@ compile(void)
 	free(def);
  */
      }
-#ifdef _WIN32
-   fd = open(file_in, _O_RDONLY | _O_BINARY);
-#else
    fd = open(file_in, O_RDONLY);
-#endif /* _WIN32 */
    if (fd < 0)
      {
 	fprintf(stderr, "%s: Error. cannot open file \"%s\" for input. %s\n",

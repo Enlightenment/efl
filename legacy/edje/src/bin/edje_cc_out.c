@@ -2,12 +2,6 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#ifdef _WIN32
-# include <share.h>
-# include <sys/stat.h>
-#endif /* _WIN32 */
-
-
 #include "edje_cc.h"
 
 typedef struct _Part_Lookup Part_Lookup;
@@ -600,34 +594,16 @@ data_write(void)
 	  {
 	     char tmpn[4096];
 	     int fd;
-#ifdef _WIN32
 	     char *tmpdir;
-#endif /* _WIN32 */
 
-#ifdef _WIN32
-	     tmpdir = getenv("TMP");
-	     if (!tmpdir) tmpdir = getenv("TEMP");
-	     if (!tmpdir) tmpdir = getenv("USERPROFILE");
-	     if (!tmpdir) tmpdir = getenv("WINDIR");
-	     if (tmpdir)
-               {
-                  snprintf(tmpn, _MAX_PATH, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
-# ifdef __MINGW32__
-                  if (_mktemp(tmpn))
-                    fd = _sopen(tmpn, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-# else
-                  if (!_mktemp_s(tmpn, _MAX_PATH))
-                    _sopen_s(&fd, tmpn, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-# endif /* __MINGW32__ */
-                  else
-                    fd = -1;
-               }
-             else
-               fd= -1;
+#ifdef HAVE_EVIL
+	     tmpdir = evil_tmpdir_get();
 #else
+	     tmpdir = "/tmp";
+#endif
+             snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
 	     strcpy(tmpn, "/tmp/edje_cc.sma-tmp-XXXXXX");
 	     fd = mkstemp(tmpn);
-#endif /* _WIN32 */
 	     if (fd >= 0)
 	       {
 		  FILE *f;
@@ -708,30 +684,9 @@ data_write(void)
 		       fclose(f);
 		    }
 		  close(fd);
-#ifdef _WIN32
-                  tmpdir = getenv("TMP");
-                  if (!tmpdir) tmpdir = getenv("TEMP");
-                  if (!tmpdir) tmpdir = getenv("USERPROFILE");
-                  if (!tmpdir) tmpdir = getenv("WINDIR");
-                  if (tmpdir)
-                    {
-                       snprintf(tmpo, _MAX_PATH, "%s/edje_cc.amx-tmp-XXXXXX", tmpdir);
-# ifdef __MINGW32__
-                       if (_mktemp(tmpo))
-                         fd = _sopen(tmpo, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-# else
-                       if (!_mktemp_s(tmpo, _MAX_PATH))
-                         _sopen_s(&fd, tmpo, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-# endif /* __MINGW32__ */
-                       else
-                         fd = -1;
-                    }
-                  else
-                    fd= -1;
-#else
+                  snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmpdir);
 		  strcpy(tmpo, "/tmp/edje_cc.amx-tmp-XXXXXX");
 		  fd = mkstemp(tmpo);
-#endif /* _WIN32 */
 		  if (fd >= 0)
 		    {
 		       snprintf(buf, sizeof(buf),

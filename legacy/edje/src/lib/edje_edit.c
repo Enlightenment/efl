@@ -15,12 +15,16 @@
 
 #include <locale.h>
 #include <errno.h>
+#include <limits.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "Edje.h"
 #include "edje_private.h"
 #include "edje_cc.h"
 #include "Edje_Edit.h"
-
-#define MAX_PATH 4096
 
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET) \
@@ -1181,14 +1185,14 @@ edje_edit_part_type_get(Evas_Object *obj, const char *part)
 EAPI const char *
 edje_edit_part_selected_state_get(Evas_Object *obj, const char *part)
 {
-   char name[MAX_PATH];
+   char name[PATH_MAX];
 
    GET_RP_OR_RETURN(NULL);
 
    if (!rp->chosen_description)
      return "default 0.00";
 
-   snprintf(name, MAX_PATH, "%s %.2f",
+   snprintf(name, PATH_MAX, "%s %.2f",
             rp->chosen_description->state.name,
             rp->chosen_description->state.value);
 
@@ -1384,7 +1388,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
 EAPI Evas_List *
 edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
 {
-   char state_name[MAX_PATH];
+   char state_name[PATH_MAX];
    Evas_List *states;
    Evas_List *l;
    Edje_Part_Description *state;
@@ -1398,7 +1402,7 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
 
    //append default state
    state = rp->part->default_desc;
-   snprintf(state_name, MAX_PATH,
+   snprintf(state_name, PATH_MAX,
             "%s %.2f", state->state.name, state->state.value);
    states = evas_list_append(states, evas_stringshare_add(state_name));
    //printf("NEW STATE def: %s\n", state->state.name);
@@ -2261,7 +2265,7 @@ edje_edit_fonts_list_get(Evas_Object *obj)
 EAPI unsigned char
 edje_edit_font_add(Evas_Object *obj, const char* path)
 {
-   char buf[MAX_PATH];
+   char buf[PATH_MAX];
    Font *fn;
    Edje_Font_Directory_Entry *fnt;
    Eet_File *eetf;
@@ -3327,7 +3331,7 @@ static void
 _edje_generate_source(Edje *ed)
 {
    printf("\n****** GENERATE SOURCE *********\n");
-   char tmpn[MAX_PATH];
+   char tmpn[PATH_MAX];
    int fd;
    FILE *f;
    long sz;
