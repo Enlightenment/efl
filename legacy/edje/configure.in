@@ -76,7 +76,6 @@ AC_ARG_ENABLE(edje-cc, [  --disable-edje-cc       disable building of edje_cc ],
 
 PKG_CHECK_MODULES(EDJE, [
   evas >= 0.9.9
-  ecore-evas >= 0.9.9
   ecore-job >= 0.9.9
   eet >= 1.0.1
   embryo >= 0.9.1
@@ -84,6 +83,10 @@ PKG_CHECK_MODULES(EDJE, [
 
 PKG_CHECK_MODULES(ECORE_FILE, [
   ecore-file >= 0.9.9
+])
+
+PKG_CHECK_MODULES(ECORE_EVAS, [
+  ecore-evas >= 0.9.9
 ])
 
 AC_MSG_CHECKING([for location of Vim data files])
