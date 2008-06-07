@@ -3,17 +3,6 @@
 
 #include "edje_main.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdarg.h>
-#include <locale.h>
-#include <ctype.h>
-
 /* types */
 typedef struct _Font                  Font;
 typedef struct _Font_List             Font_List;

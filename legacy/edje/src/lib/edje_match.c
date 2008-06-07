@@ -1,8 +1,7 @@
-#include <stdlib.h>
-#include <stddef.h>
-#include <Evas.h>
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 
-#include "Edje.h"
 #include "edje_private.h"
 
 /* States manipulations. */

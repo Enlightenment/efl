@@ -2,13 +2,8 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "Edje.h"
 #include "edje_private.h"
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif
-#include <assert.h>
 
 /* returns with and height for this part.
  *

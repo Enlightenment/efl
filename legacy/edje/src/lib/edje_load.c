@@ -2,7 +2,6 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "Edje.h"
 #include "edje_private.h"
 
 void _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings);

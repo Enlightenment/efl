@@ -2,15 +2,26 @@
 #define _EDJE_PRIVATE_H
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif
 
-#include <Evas.h>
-#include <Ecore.h>
-#include <Eet.h>
-#include <Embryo.h>
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
+#include <limits.h>
 #include <math.h>
+#include <time.h>
+#include <assert.h>
+#include <locale.h>
+#include <errno.h>
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -29,40 +40,20 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include <limits.h>
-
-
-#ifdef EAPI
-# undef EAPI
+#ifdef HAVE_EVIL
+# include <Evil.h>
 #endif
 
-#ifdef _WIN32
-# ifdef EFL_EDJE_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EDJE_BUILD */
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <Evas.h>
+#include <Ecore.h>
+#include <Ecore_Str.h>
+#include <Ecore_Job.h>
+#include <Eet.h>
+#include <Embryo.h>
+
+#include "Edje.h"
+#include "Edje_Edit.h"
+
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4

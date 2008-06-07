@@ -13,18 +13,8 @@
  *
  */
 
-#include <locale.h>
-#include <errno.h>
-#include <limits.h>
-
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
-#include "Edje.h"
 #include "edje_private.h"
 #include "edje_cc.h"
-#include "Edje_Edit.h"
 
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET) \

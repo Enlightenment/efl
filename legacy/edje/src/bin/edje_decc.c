@@ -3,10 +3,10 @@
  */
 
 /* ugly ugly. avert your eyes. */
-#include <sys/types.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <unistd.h>
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include <Ecore_File.h>
 
