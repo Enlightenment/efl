@@ -1,9 +1,5 @@
 #include <stdlib.h>
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 # include <limits.h>
 #endif /* __MINGW32CE__ */

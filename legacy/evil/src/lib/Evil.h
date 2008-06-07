@@ -22,7 +22,13 @@ extern "C" {
 #endif
 
 
-#include <windef.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
+#ifdef PATH_MAX
+# undef PATH_MAX
+#endif /* PATH_MAX */
 
 #define PATH_MAX MAX_PATH
 
