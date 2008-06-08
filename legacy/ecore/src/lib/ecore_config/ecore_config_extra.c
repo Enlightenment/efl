@@ -407,7 +407,7 @@ ecore_config_theme_search_path_get(void)
  *         @c ECORE_CONFIG_ERR_FAIL is returned if @p path is @c NULL.
  */
 int
-ecore_config_theme_search_path_append(char *path)
+ecore_config_theme_search_path_append(const char *path)
 {
    char               *search_path, *loc, *new_search_path;
    int                 len, search_len;
@@ -430,9 +430,9 @@ ecore_config_theme_search_path_append(char *path)
 	strncat(new_search_path, path, len);
 
 	ecore_config_string_set("/e/themes/search_path", new_search_path);
-  prop = ecore_config_get("/e/themes/search_path");
-  if (prop)
-     prop->flags &= ~ECORE_CONFIG_FLAG_MODIFIED;
+	prop = ecore_config_get("/e/themes/search_path");
+	if (prop)
+	  prop->flags &= ~ECORE_CONFIG_FLAG_MODIFIED;
 
 	free(new_search_path);
 
