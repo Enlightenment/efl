@@ -25,27 +25,14 @@ static int dl_err_viewed = 0;
 static void
 get_last_error(char *desc)
 {
-   TCHAR *str;
-   char  *str2;
+   char  *str;
    int    l1;
    int    l2;
 
-   FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                 FORMAT_MESSAGE_FROM_SYSTEM |
-                 FORMAT_MESSAGE_IGNORE_INSERTS,
-                 NULL, GetLastError(),
-                 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                 (LPTSTR)&str, 0, NULL);
-
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
-   str2 = evil_wchar_to_char(str);
-   LocalFree(str);
-#else
-   str2 = str;
-#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+   str = evil_last_error_get();
 
    l1 = strlen(desc);
-   l2 = strlen(str2);
+   l2 = strlen(str);
 
    if (dl_err)
      free(dl_err);
@@ -56,10 +43,10 @@ get_last_error(char *desc)
    else
      {
         memcpy(dl_err, desc, l1);
-        memcpy(dl_err + l1, str2, l2);
+        memcpy(dl_err + l1, str, l2);
         dl_err[l1 + l2] = '\0';
      }
-   LocalFree(str2);
+   free(str);
    dl_err_viewed = 0;
 }
 
@@ -98,7 +85,7 @@ dlopen(const char* path, int mode __UNUSED__)
              else
                new_path[i] = path[i];
           }
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef UNICODE
         {
            wchar_t *wpath;
 
@@ -109,7 +96,7 @@ dlopen(const char* path, int mode __UNUSED__)
 #else
         module = LoadLibraryEx(new_path, NULL,
                                LOAD_WITH_ALTERED_SEARCH_PATH);
-#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+#endif /* ! UNICODE */
         if (!module)
           get_last_error("LoadLibraryEx returned: ");
 
@@ -136,7 +123,7 @@ dlsym(void *handle, const char *symbol)
 {
    FARPROC fp;
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef UNICODE
    {
       wchar_t *wsymbol;
 
@@ -146,7 +133,7 @@ dlsym(void *handle, const char *symbol)
    }
 #else
    fp = GetProcAddress(handle, symbol);
-#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+#endif /* ! UNICODE */
    if (!fp)
      get_last_error("GetProcAddress returned: ");
 
@@ -169,11 +156,11 @@ dladdr (void *addr __UNUSED__, Dl_info *info)
    if (!ret)
      return 0;
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef UNICODE
    path = evil_wchar_to_char(tpath);
 #else
    path = tpath;
-#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+#endif /* ! UNICODE */
 
    length = strlen (path);
    if (length >= PATH_MAX)
@@ -195,9 +182,9 @@ dladdr (void *addr __UNUSED__, Dl_info *info)
    info->dli_sname = NULL;
    info->dli_saddr = NULL;
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef UNICODE
    free (path);
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* ! UNICODE */
 
    return 1;
 }

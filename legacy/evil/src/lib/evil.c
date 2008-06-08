@@ -15,9 +15,9 @@
 # include <sys/syslimits.h>
 #endif /* __CEGCC__ */
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef UNICODE
 # include <wchar.h>
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* UNICODE */
 
 #include <sys/types.h>
 #include <sys/timeb.h>
@@ -497,7 +497,7 @@ evil_getcwd(char *buffer, size_t size)
 #endif /* ! __CEGCC__ && ! __MINGW32CE__ */
 }
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef UNICODE
 
 wchar_t *
 evil_char_to_wchar(const char *text)
@@ -541,4 +541,34 @@ evil_wchar_to_char(const wchar_t *text)
    return atext;
 }
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* UNICODE */
+
+char *
+evil_last_error_get(void)
+{
+   char   str[PATH_MAX];
+   LPTSTR str1;
+   char  *str2;
+   DWORD  err;
+
+   err = GetLastError();
+   FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                 NULL,
+                 err,
+                 0, // Default language
+                 (LPTSTR)&str1,
+                 0,
+                 NULL);
+
+#ifdef UNICODE
+   str2 = evil_wchar_to_char(str1);
+   LocalFree(str1);
+#else
+   str2 = str1;
+#endif /* ! UNICODE */
+
+   snprintf(str, PATH_MAX, "(%ld) %s", err, str2);
+   LocalFree(str2);
+
+   return strdup(str);
+}

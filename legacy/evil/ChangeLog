@@ -1,3 +1,25 @@
+2008-06-08  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	* src/lib/evil.c: (evil_last_error_get):
+	add evil_last_error_get() function to get
+	useful error string creation.
+
+	* src/lib/dlfcn/dlfcn.c: (get_last_error), (dlopen), (dlsym),
+	(dladdr):
+	use UNICODE check instead of compiler checks when needed.
+	use evil_last_error_get()
+
+	* src/lib/mman/mman.c: (mmap), (munmap):
+	file mapping does not work on Windows CE < 5.0.
+	if it is the case, just read the file and return
+	the data.
+	use evil_last_error_get()
+
+	* src/lib/mman/Makefile.am:
+	* src/lib/Makefile.am:
+	add libevil dependancy
+
 2008-06-07  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

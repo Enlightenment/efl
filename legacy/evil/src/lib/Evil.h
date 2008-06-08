@@ -517,7 +517,7 @@ EAPI const char *evil_tmpdir_get(void);
  */
 EAPI char *evil_getcwd(char *buffer, size_t size);
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef UNICODE
 
 /**
  * @brief Convert a string from char * to wchar_t *.
@@ -557,7 +557,9 @@ EAPI wchar_t *evil_char_to_wchar(const char *text);
  */
 EAPI char *evil_wchar_to_char(const wchar_t *text);
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* UNICODE */
+
+EAPI char *evil_last_error_get(void);
 
 
 #ifdef __cplusplus
