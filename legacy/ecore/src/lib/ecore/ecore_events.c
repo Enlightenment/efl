@@ -437,6 +437,7 @@ _ecore_event_call(void)
 	       ecore_main_loop_quit();
 	  }
      }
+//   printf("EVENT BATCH DONE\n");
    ecore_raw_event_type = ECORE_EVENT_NONE;
    ecore_raw_event_event = NULL;
    

@@ -563,6 +563,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    /* if these calls caused any buffered events to appear - deal with them */
    while (_ecore_main_fd_handlers_buf_call());
    while (_ecore_main_win32_message_buf_call());
+
    /* if ther are any - jump to processing them */
    if (_ecore_event_exist())
      {
@@ -673,7 +674,6 @@ _ecore_main_loop_iterate_internal(int once_only)
      {
 	/* process signals into events .... */
 	while (_ecore_signal_count_get()) _ecore_signal_call();
-
 	/* handle events ... */
 	_ecore_event_call();
 	_ecore_main_fd_handlers_cleanup();
@@ -681,6 +681,11 @@ _ecore_main_loop_iterate_internal(int once_only)
    while (_ecore_main_fd_handlers_buf_call());
    if (have_msg) _ecore_main_win32_message_buf_call();
    while (_ecore_main_win32_message_buf_call());
-   if (once_only) _ecore_idle_enterer_call();
+/* ok - too much optimising. let's call idle enterers more often. if we
+ * have events that place more events or jobs etc. on the event queue
+ * we may never get to call an idle enterer
+   if (once_only)
+ */
+     _ecore_idle_enterer_call();
    in_main_loop--;
 }
