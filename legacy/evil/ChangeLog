@@ -1,3 +1,15 @@
+2008-06-09  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	add strdup define
+
+	* src/lib/evil.c: (evil_tmpdir_get), (evil_homedir_get):
+	include stdlib.h to define MB_CUR_MAX
+	On Windows CE, tmpdir and homedir are defined as "\windows"
+
+	* src/lib/mman/mman.c: (mmap), (munmap):
+	compile the big fat hack of mmap only on Windows CE
+
 2008-06-08  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

@@ -43,7 +43,6 @@ mmap(void  *addr __UNUSED__,
      off_t  offset)
 {
    OSVERSIONINFO os_version;
-   void  *data;
 
    os_version.dwOSVersionInfoSize = sizeof(os_version);
    if (!GetVersionEx(&os_version))
@@ -57,9 +56,11 @@ mmap(void  *addr __UNUSED__,
         return MAP_FAILED;
      }
 
+#ifdef _WIN32_WCE
    if ((os_version.dwPlatformId == VER_PLATFORM_WIN32_CE) &&
        (os_version.dwMajorVersion < 5))
      {
+        void  *data;
         size_t size;
 
         data = malloc(len);
@@ -83,13 +84,17 @@ mmap(void  *addr __UNUSED__,
              free(data);
              return MAP_FAILED;
           }
+
+        return data;
      }
    else
+#endif /* ! _WIN32_WCE */
      {
         HANDLE fm;
         DWORD  protect = PAGE_NOACCESS;
         DWORD  access = 0;
         HANDLE handle;
+        void  *data;
 
         /* support only MAP_SHARED */
         if (!(flags & MAP_SHARED))
@@ -178,15 +183,16 @@ mmap(void  *addr __UNUSED__,
 
              return MAP_FAILED;
           }
-     }
 
-   return data;
+        return data;
+     }
 }
 
 int
 munmap(void  *addr,
        size_t len __UNUSED__)
 {
+#ifdef _WIN32_WCE
    OSVERSIONINFO os_version;
 
    os_version.dwOSVersionInfoSize = sizeof(os_version);
@@ -210,6 +216,7 @@ munmap(void  *addr,
         return 0;
      }
    else
+#endif /* ! _WIN32_WCE */
      {
         BOOL res;
 

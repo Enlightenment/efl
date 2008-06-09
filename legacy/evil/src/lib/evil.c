@@ -2,6 +2,7 @@
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
 
+#include <stdlib.h>
 #include <stdio.h>
 
 #ifndef __CEGCC__
@@ -423,6 +424,9 @@ evil_sockets_shutdown(void)
 const char *
 evil_tmpdir_get(void)
 {
+#ifdef _WIN32_WCE
+   return "\\windows";
+#else
    char *tmpdir;
 
    tmpdir = getenv("TMP");
@@ -432,11 +436,15 @@ evil_tmpdir_get(void)
    if (!tmpdir) tmpdir="C:\\";
 
    return tmpdir;
+#endif /* ! _WIN32_WCE */
 }
 
 const char *
 evil_homedir_get(void)
 {
+#ifdef _WIN32_WCE
+   return "\\windows";
+#else
    char *homedir;
 
    homedir = getenv("HOME");
@@ -445,6 +453,7 @@ evil_homedir_get(void)
    if (!homedir) homedir="C:\\";
 
    return homedir;
+#endif /* ! _WIN32_WCE */
 }
 
 char *

@@ -380,6 +380,7 @@ EAPI int unsetenv(const char *name);
 #  define mkdir(p,m) _mkdir(p)
 #  define getcwd(b,s) _getcwd((b),(s))
 #  define lstat(f,s) _stat((f),(s))
+#  define strdup(s) _strdup(s)
 
 # endif
 #endif
