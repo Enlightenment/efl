@@ -1252,11 +1252,8 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->data_size = file_stat.st_size;
 	ef->data = mmap(NULL, ef->data_size, PROT_READ,
 			MAP_SHARED, fileno(ef->fp), 0);
-	if (ef->data == MAP_FAILED)
-	  {
-	     ef->data = NULL;
-	     return NULL;
-	  }
+	if (eet_test_close((ef->data == MAP_FAILED), ef))
+	  return NULL;
 	ef = eet_internal_read(ef);
 	if (!ef)
 	  return NULL;
