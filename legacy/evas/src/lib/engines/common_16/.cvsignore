@@ -2,5 +2,5 @@ Makefile.in
 Makefile
 .deps
 .libs
-libevas_engine_common.la
+libevas_engine_common_16.la
 *.lo
