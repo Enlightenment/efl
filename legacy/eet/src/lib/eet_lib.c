@@ -1231,6 +1231,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->mode = mode;
    ef->header = NULL;
    ef->mtime = file_stat.st_mtime;
+   ef->writes_pending = 0;
    ef->delete_me_now = 0;
    ef->data = NULL;
    ef->data_size = 0;
