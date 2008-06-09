@@ -22,7 +22,6 @@ ecore_job_init(void)
      {
         ecore_init();
 	ecore_event_job_type = ecore_event_type_new();
-	printf("ecore_event_job_type = %i\n", ecore_event_job_type);
 	_ecore_job_handler = ecore_event_handler_add(ecore_event_job_type, _ecore_job_event_handler, NULL);
      }
 
