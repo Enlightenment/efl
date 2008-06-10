@@ -204,6 +204,7 @@ fi
 
 AC_OUTPUT([
 Makefile
+debian/changelog
 eet.pc
 eet.c
 src/Makefile
