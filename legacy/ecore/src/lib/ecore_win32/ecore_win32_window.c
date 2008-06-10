@@ -454,8 +454,8 @@ ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
 
    if (!window) return;
 
-   printf ("ecore_win32_window_size_min_get : %p  %d %d\n", window, w->min_width, w->min_height);
    w = (struct _Ecore_Win32_Window *)window;
+   printf ("ecore_win32_window_size_min_get : %p  %d %d\n", window, w->min_width, w->min_height);
    if (min_width) *min_width = w->min_width;
    if (min_height) *min_height = w->min_height;
 }
@@ -484,8 +484,8 @@ ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
 
    if (!window) return;
 
-   printf ("ecore_win32_window_size_max_get : %p  %d %d\n", window, w->max_width, w->max_height);
    w = (struct _Ecore_Win32_Window *)window;
+   printf ("ecore_win32_window_size_max_get : %p  %d %d\n", window, w->max_width, w->max_height);
    if (max_width) *max_width = w->max_width;
    if (max_height) *max_height = w->max_height;
 }
@@ -514,8 +514,8 @@ ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
 
    if (!window) return;
 
-   printf ("ecore_win32_window_size_base_get : %p  %d %d\n", window, w->base_width, w->base_height);
    w = (struct _Ecore_Win32_Window *)window;
+   printf ("ecore_win32_window_size_base_get : %p  %d %d\n", window, w->base_width, w->base_height);
    if (base_width) *base_width = w->base_width;
    if (base_height) *base_height = w->base_height;
 }
@@ -544,8 +544,8 @@ ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
 
    if (!window) return;
 
-   printf ("ecore_win32_window_size_step_get : %p  %d %d\n", window, w->step_width, w->step_height);
    w = (struct _Ecore_Win32_Window *)window;
+   printf ("ecore_win32_window_size_step_get : %p  %d %d\n", window, w->step_width, w->step_height);
    if (step_width) *step_width = w->step_width;
    if (step_height) *step_height = w->step_height;
 }
