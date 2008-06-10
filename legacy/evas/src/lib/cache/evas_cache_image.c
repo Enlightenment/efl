@@ -628,6 +628,10 @@ evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data,
 
    assert(cache);
 
+   if ((im->space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (im->space == EVAS_COLORSPACE_YCBCR422P709_PL))
+     w &= ~0x1;
+
    im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
    im->w = w;
    im->h = h;
@@ -655,6 +659,10 @@ evas_cache_image_surface_alloc(Image_Entry *im, int w, int h)
 
    cache = im->cache;
 
+   if ((im->space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (im->space == EVAS_COLORSPACE_YCBCR422P709_PL))
+     w &= ~0x1;
+
    _evas_cache_image_entry_surface_alloc(cache, im, w, h);
 
    if (cache->func.debug)
@@ -671,6 +679,10 @@ evas_cache_image_size_set(Image_Entry *im, int w, int h)
    assert(im);
    assert(im->cache);
    assert(im->references > 0);
+
+   if ((im->space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (im->space == EVAS_COLORSPACE_YCBCR422P709_PL))
+     w &= ~0x1;
 
    if ((im->w == w) && (im->h == h))
      return im;
