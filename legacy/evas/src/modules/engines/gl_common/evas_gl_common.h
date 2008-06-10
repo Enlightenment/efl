@@ -133,6 +133,8 @@ struct _Evas_GL_Image
 struct _Evas_GL_Polygon
 {
    Evas_List *points;
+   GLuint     dl;
+   Evas_Bool  changed : 1;
 };
 
 struct _Evas_GL_Polygon_Point

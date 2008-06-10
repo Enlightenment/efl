@@ -14,6 +14,7 @@ evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y)
    pt->x = x;
    pt->y = y;
    poly->points = evas_list_append(poly->points, pt);
+   poly->changed = 1;
    return poly;
 }
 
@@ -29,6 +30,7 @@ evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly)
 	poly->points = evas_list_remove(poly->points, pt);
 	free(pt);
      }
+   if (poly->dl > 0) glDeleteLists(poly->dl, 1);
    free(poly);
    return NULL;
 }
@@ -106,48 +108,62 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly)
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
 
+   if (poly->changed || poly->dl <= 0)
+     {
+	if (poly->dl > 0) glDeleteLists(poly->dl, 1);
+	poly->dl = glGenLists(1);
+
+	glNewList(poly->dl, GL_COMPILE_AND_EXECUTE);
 #ifdef GLU_TESS
-   if (!tess)
-     {
-	tess = gluNewTess();
+	if (!tess)
+	  {
+	     tess = gluNewTess();
 
-	gluTessCallback(tess, GLU_TESS_BEGIN, _evas_gl_tess_begin_cb);
-	gluTessCallback(tess, GLU_TESS_END, _evas_gl_tess_end_cb);
-	gluTessCallback(tess, GLU_TESS_ERROR, _evas_gl_tess_error_cb);
-	gluTessCallback(tess, GLU_TESS_VERTEX, _evas_gl_tess_vertex_cb);
-	gluTessCallback(tess, GLU_TESS_COMBINE, _evas_gl_tess_combine_cb);
-     }
-   num = 0;
-   num = evas_list_count(poly->points);
-   i = 0;
-   glp = malloc(num * 6 * sizeof(GLdouble));
-   gluTessNormal(tess, 0, 0, 1);
-   gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_ODD);
-   gluTessBeginPolygon(tess, NULL);
-   gluTessBeginContour(tess);
-   for (l = poly->points; l; l = l->next)
-     {
-	Evas_GL_Polygon_Point *p;
+	     gluTessCallback(tess, GLU_TESS_BEGIN, _evas_gl_tess_begin_cb);
+	     gluTessCallback(tess, GLU_TESS_END, _evas_gl_tess_end_cb);
+	     gluTessCallback(tess, GLU_TESS_ERROR, _evas_gl_tess_error_cb);
+	     gluTessCallback(tess, GLU_TESS_VERTEX, _evas_gl_tess_vertex_cb);
+	     gluTessCallback(tess, GLU_TESS_COMBINE, _evas_gl_tess_combine_cb);
+	  }
+	num = 0;
+	num = evas_list_count(poly->points);
+	i = 0;
+	glp = malloc(num * 6 * sizeof(GLdouble));
+	gluTessNormal(tess, 0, 0, 1);
+	gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_ODD);
+	gluTessBeginPolygon(tess, NULL);
+	gluTessBeginContour(tess);
+	for (l = poly->points; l; l = l->next)
+	  {
+	     Evas_GL_Polygon_Point *p;
 
-	p = l->data;
-	glp[i++] = p->x;
-	glp[i++] = p->y;
-	glp[i++] = 0;
-	gluTessVertex(tess, &(glp[i - 3]), &(glp[i - 3]));
-	i += 3;
-     }
-   gluTessEndContour(tess);
-   gluTessEndPolygon(tess);
-   free(glp);
+	     p = l->data;
+	     glp[i++] = p->x;
+	     glp[i++] = p->y;
+	     glp[i++] = 0;
+	     gluTessVertex(tess, &(glp[i - 3]), &(glp[i - 3]));
+	     i += 3;
+	  }
+	gluTessEndContour(tess);
+	gluTessEndPolygon(tess);
+	free(glp);
 #else
-   glBegin(GL_POLYGON);
-   for (l = poly->points; l; l = l->next)
-     {
-	Evas_GL_Polygon_Point *p;
+	glBegin(GL_POLYGON);
+	for (l = poly->points; l; l = l->next)
+	  {
+	     Evas_GL_Polygon_Point *p;
 
-	p = l->data;
-	glVertex2i(p->x, p->y);
-     }
-   glEnd();
+	     p = l->data;
+	     glVertex2i(p->x, p->y);
+	  }
+	glEnd();
 #endif
+	glEndList();
+
+	poly->changed = 0;
+
+	return ;
+     }
+
+   glCallList(poly->dl);
 }
