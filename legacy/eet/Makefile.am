@@ -34,20 +34,7 @@ README.in \
 README \
 Doxyfile \
 doc \
-gendoc \
-m4/doxygen.m4 \
-debian/changelog \
-debian/changelog.in \
-debian/compat \
-debian/control \
-debian/copyright \
-debian/eet.1 \
-debian/libeet-bin.install \
-debian/libeet-dev.install \
-debian/libeet-doc.dirs \
-debian/libeet-doc.doc-base \
-debian/libeet1.install \
-debian/rules
+gendoc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = eet.pc
