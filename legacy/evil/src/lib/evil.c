@@ -245,12 +245,78 @@ readlink(const char *path, char *buf, size_t bufsiz)
    return -1;
 }
 
+int
+setenv(const char *name, const char *value)
+{
+  char *str;
+  int   length;
+  int   res;
+
+  length = strlen(name) + strlen(value) + 2;
+  str = (char *)malloc(length);
+  sprintf(str, "%s=%s", name, value);
+  res = _putenv(str);
+  free(str);
+
+  return res;
+}
+
+int
+unsetenv(const char *name)
+{
+  char *str;
+  int   length;
+  int   res;
+
+  length = strlen(name) + 2;
+  str = (char *)malloc(length);
+  sprintf(str, "%s=", name);
+  res = _putenv(str);
+  free(str);
+
+  return res;
+}
+
+#endif /* ! __CEGCC__ */
+
+char *
+realpath(const char *file_name, char *resolved_name)
+{
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+   return _fullpath(resolved_name, file_name, PATH_MAX);
+#else
+   int length;
+
+   length = strlen(file_name);
+   if ((length + 1) > PATH_MAX)
+     length = PATH_MAX - 1;
+   memcpy(resolved_name, file_name, length);
+   resolved_name[length] = '\0';
+
+   return resolved_name;
+#endif /* __CEGCC__ || __MINGW32CE__ */
+}
+
+int
+evil_sockets_init(void)
+{
+   WSADATA wsa_data;
+
+   return (WSAStartup(MAKEWORD( 2, 2 ), &wsa_data) == 0) ? 1 : 0;
+}
+
+void
+evil_sockets_shutdown(void)
+{
+   WSACleanup();
+}
+
 /*
  * The code of the following functions has been kindly offered
  * by Tor Lillqvist.
  */
 int
-pipe(int *fds)
+evil_pipe(int *fds)
 {
    struct sockaddr_in saddr;
    struct timeval     tv;
@@ -355,77 +421,11 @@ pipe(int *fds)
    return -1;
 }
 
-int
-setenv(const char *name, const char *value)
-{
-  char *str;
-  int   length;
-  int   res;
-
-  length = strlen(name) + strlen(value) + 2;
-  str = (char *)malloc(length);
-  sprintf(str, "%s=%s", name, value);
-  res = _putenv(str);
-  free(str);
-
-  return res;
-}
-
-int
-unsetenv(const char *name)
-{
-  char *str;
-  int   length;
-  int   res;
-
-  length = strlen(name) + 2;
-  str = (char *)malloc(length);
-  sprintf(str, "%s=", name);
-  res = _putenv(str);
-  free(str);
-
-  return res;
-}
-
-#endif /* ! __CEGCC__ */
-
-char *
-realpath(const char *file_name, char *resolved_name)
-{
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
-   return _fullpath(resolved_name, file_name, PATH_MAX);
-#else
-   int length;
-
-   length = strlen(file_name);
-   if ((length + 1) > PATH_MAX)
-     length = PATH_MAX - 1;
-   memcpy(resolved_name, file_name, length);
-   resolved_name[length] = '\0';
-
-   return resolved_name;
-#endif /* __CEGCC__ || __MINGW32CE__ */
-}
-
-int
-evil_sockets_init(void)
-{
-   WSADATA wsa_data;
-
-   return (WSAStartup(MAKEWORD( 2, 2 ), &wsa_data) == 0) ? 1 : 0;
-}
-
-void
-evil_sockets_shutdown(void)
-{
-   WSACleanup();
-}
-
 const char *
 evil_tmpdir_get(void)
 {
 #ifdef _WIN32_WCE
-   return "\\windows";
+   return "\\temp";
 #else
    char *tmpdir;
 
@@ -443,7 +443,7 @@ const char *
 evil_homedir_get(void)
 {
 #ifdef _WIN32_WCE
-   return "\\windows";
+   return "\\my documents";
 #else
    char *homedir;
 

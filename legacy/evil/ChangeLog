@@ -1,3 +1,23 @@
+2008-06-10  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/lib/dlfcn/dlfcn.h:
+	* src/lib/mman/sys/mman.h:
+	define EFL_EVIL_MMAN_BUILD and EFL_EVIL_DLFCN_BUILD so
+	that functions in Evil.h are not declared as import
+
+	* src/lib/evil.c: (setenv), (unsetenv), (realpath),
+	(evil_sockets_init), (evil_sockets_shutdown), (evil_pipe),
+	(evil_tmpdir_get), (evil_homedir_get):
+	rename pipe() to evil_pipe().
+	set tmpdir to "Temp" and homedir to "My Documents" on WinCE
+
+	* src/lib/Evil.h:
+	define pipe() as evil_pipe(). This allow to use our pipe()
+	implementation to be usedwith cegcc, as it is broken on that
+	platform.
+	move the defines at the end of the file
+
 2008-06-09  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

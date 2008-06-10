@@ -7,7 +7,7 @@
 #endif /* EAPI */
 
 #ifdef _WIN32
-# ifdef EFL_EVIL_BUILD
+# ifdef EFL_EVIL_MMAN_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else

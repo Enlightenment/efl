@@ -287,25 +287,6 @@ EAPI int symlink(const char *oldpath, const char *newpath);
 EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 
 /**
- * @brief Create a pair of sockets.
- *
- * @param fds A pointer that contains two sockets.
- *
- * Create a pair of sockets that can be use with select().
- * Hence, evil_sockets_init() must have been caled at least
- * once before. Contrary to Unix, that functions does not
- * create a pair of file descriptors.
- *
- * Conformity: Not applicable.
- *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
- */
-EAPI int pipe(int *fds);
-
-/**
  * @brief Create, modify, or remove environment variables.
  *
  * @param name The name of the environment variable.
@@ -348,42 +329,6 @@ EAPI int setenv(const char *name, const char *value);
 EAPI int unsetenv(const char *name);
 
 #endif /* ! __CEGCC__ */
-
-
-#if defined(__MSDOS__) || defined(__EMX__) || \
-   (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
-# if defined(_MSC_VER) || defined(__MINGW32__)
-
-#  ifdef S_ISDIR
-#   undef S_ISDIR
-#  endif
-#  ifdef S_ISREG
-#   undef S_ISREG
-#  endif
-#  define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
-#  define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
-
-#  define S_IRUSR _S_IRUSR
-#  define S_IWUSR _S_IWUSR
-#  define S_IXUSR _S_IXUSR
-#  define S_IRGRP S_IRUSR
-#  define S_IROTH S_IRUSR
-#  define S_IWGRP S_IWUSR
-#  define S_IWOTH S_IWUSR
-#  define S_IXGRP S_IXUSR
-#  define S_IXOTH S_IXUSR
-#  define open(path,...) _open((path),__VA_ARGS__)
-#  define close(fd) _close(fd)
-#  define read(fd,buffer,count) _read((fd),(buffer),(count))
-#  define write(fd,buffer,count) _write((fd),(buffer),(count))
-#  define unlink(filename) _unlink((filename))
-#  define mkdir(p,m) _mkdir(p)
-#  define getcwd(b,s) _getcwd((b),(s))
-#  define lstat(f,s) _stat((f),(s))
-#  define strdup(s) _strdup(s)
-
-# endif
-#endif
 
 /**
  * @brief Return an absolute or full path name for a specified relative path name.
@@ -441,6 +386,25 @@ EAPI int evil_sockets_init(void);
  * @ingroup Evil
  */
 EAPI void evil_sockets_shutdown(void);
+
+/**
+ * @brief Create a pair of sockets.
+ *
+ * @param fds A pointer that contains two sockets.
+ *
+ * Create a pair of sockets that can be use with select().
+ * Hence, evil_sockets_init() must have been caled at least
+ * once before. Contrary to Unix, that functions does not
+ * create a pair of file descriptors.
+ *
+ * Conformity: Not applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI int evil_pipe(int *fds);
 
 /**
  * @brief Return a dir to store temporary files.
@@ -561,6 +525,44 @@ EAPI char *evil_wchar_to_char(const wchar_t *text);
 #endif /* UNICODE */
 
 EAPI char *evil_last_error_get(void);
+
+
+#if defined(__MSDOS__) || defined(__EMX__) || \
+   (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
+# if defined(_MSC_VER) || defined(__MINGW32__)
+
+#  ifdef S_ISDIR
+#   undef S_ISDIR
+#  endif
+#  ifdef S_ISREG
+#   undef S_ISREG
+#  endif
+#  define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#  define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+
+#  define S_IRUSR _S_IRUSR
+#  define S_IWUSR _S_IWUSR
+#  define S_IXUSR _S_IXUSR
+#  define S_IRGRP S_IRUSR
+#  define S_IROTH S_IRUSR
+#  define S_IWGRP S_IWUSR
+#  define S_IWOTH S_IWUSR
+#  define S_IXGRP S_IXUSR
+#  define S_IXOTH S_IXUSR
+#  define open(path,...) _open((path),__VA_ARGS__)
+#  define close(fd) _close(fd)
+#  define read(fd,buffer,count) _read((fd),(buffer),(count))
+#  define write(fd,buffer,count) _write((fd),(buffer),(count))
+#  define unlink(filename) _unlink((filename))
+#  define mkdir(p,m) _mkdir(p)
+#  define getcwd(b,s) _getcwd((b),(s))
+#  define lstat(f,s) _stat((f),(s))
+#  define strdup(s) _strdup(s)
+
+# endif
+#endif
+
+#define pipe(fd) evil_pipe(fd)
 
 
 #ifdef __cplusplus

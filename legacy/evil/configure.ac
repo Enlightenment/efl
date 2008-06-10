@@ -33,6 +33,8 @@ AC_SUBST(lt_enable_auto_import)
 
 dnl needed for correct definition of EAPI
 AC_DEFINE(EFL_EVIL_BUILD, 1, [Define to mention that evil is built])
+AC_DEFINE(EFL_EVIL_MMAM_BUILD, 1, [Define to mention that evil is built])
+AC_DEFINE(EFL_EVIL_DLFCN_BUILD, 1, [Define to mention that evil is built])
 
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 
