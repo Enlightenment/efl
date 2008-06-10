@@ -332,14 +332,14 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 static int
 eng_image_alpha_get(void *data, void *image)
 {
-   RGBA_Image *im;
+   Image_Entry *im;
 
    if (!image) return 1;
    im = image;
-   switch (im->cache_entry.space)
+   switch (im->space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (im->cache_entry.flags.alpha) return 1;
+	if (im->flags.alpha) return 1;
       default:
 	break;
      }
@@ -349,11 +349,11 @@ eng_image_alpha_get(void *data, void *image)
 static int
 eng_image_colorspace_get(void *data, void *image)
 {
-   RGBA_Image *im;
+   Image_Entry *im;
 
    if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
-   return im->cache_entry.space;
+   return im->space;
 }
 
 static void *
@@ -411,11 +411,11 @@ eng_image_format_get(void *data, void *image)
 static void
 eng_image_colorspace_set(void *data, void *image, int cspace)
 {
-   RGBA_Image *im;
+   Image_Entry *im;
 
    if (!image) return;
    im = image;
-   evas_cache_image_colorspace(&im->cache_entry, cspace);
+   evas_cache_image_colorspace(im, cspace);
 }
 
 static void
@@ -457,17 +457,17 @@ eng_image_free(void *data, void *image)
 static void
 eng_image_size_get(void *data, void *image, int *w, int *h)
 {
-   RGBA_Image *im;
+   Image_Entry *im;
 
    im = image;
-   if (w) *w = im->cache_entry.w;
-   if (h) *h = im->cache_entry.h;
+   if (w) *w = im->w;
+   if (h) *h = im->h;
 }
 
 static void *
 eng_image_size_set(void *data, void *image, int w, int h)
 {
-   RGBA_Image *im;
+   Image_Entry *im;
 
    im = image;
    return evas_cache_image_size_set(image, w, h);
@@ -476,11 +476,10 @@ eng_image_size_set(void *data, void *image, int w, int h)
 static void *
 eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
-   RGBA_Image*  im = image;
+   Image_Entry *im = image;
 
    if (!image) return NULL;
-   im = (RGBA_Image *) evas_cache_image_dirty(&im->cache_entry, x, y, w, h);
-   return im;
+   return evas_cache_image_dirty(im, x, y, w, h);
 }
 
 static void *
