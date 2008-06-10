@@ -628,8 +628,8 @@ evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data,
 
    assert(cache);
 
-   if ((im->space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
-       (im->space == EVAS_COLORSPACE_YCBCR422P709_PL))
+   if ((cspace == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (cspace == EVAS_COLORSPACE_YCBCR422P709_PL))
      w &= ~0x1;
 
    im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
