@@ -1,3 +1,8 @@
+2008-06-11  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	add defines for vc++. Thanks to Dmitriy Mazovka
+
 2008-06-10  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:

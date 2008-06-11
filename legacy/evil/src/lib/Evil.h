@@ -17,21 +17,6 @@
 # endif /* ! EFL_EVIL_BUILD */
 #endif /* _WIN32 */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#ifdef PATH_MAX
-# undef PATH_MAX
-#endif /* PATH_MAX */
-
-#define PATH_MAX MAX_PATH
-
 
 /**
  * @mainpage Evil
@@ -67,13 +52,25 @@ extern "C" {
  * the Unix versions.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
 #include <stdlib.h>
 #include <sys/time.h>
 #include <limits.h>
+#include <sys/stat.h>
 
-#ifdef __CEGCC__
-# include <sys/syslimits.h>     /* for PATH_MAX */
-#endif
+#ifdef PATH_MAX
+# undef PATH_MAX
+#endif /* PATH_MAX */
+
+#define PATH_MAX MAX_PATH
 
 
 #ifndef __CEGCC__
@@ -525,6 +522,27 @@ EAPI char *evil_wchar_to_char(const wchar_t *text);
 #endif /* UNICODE */
 
 EAPI char *evil_last_error_get(void);
+
+
+#ifdef _MSC_VER
+
+typedef int pid_t;
+
+typedef long ssize_t;
+
+typedef unsigned short mode_t;
+
+#define F_OK 0  /* Check for file existence */
+#define X_OK 1  /* MS access() doesn't check for execute permission. */
+#define W_OK 2  /* Check for write permission */
+#define R_OK 4  /* Check for read permission */
+
+#define _S_IRWXU (_S_IREAD | _S_IWRITE | _S_IEXEC)
+#define _S_IXUSR _S_IEXEC
+#define _S_IWUSR _S_IWRITE
+#define _S_IRUSR _S_IREAD
+
+#endif /* _MSC_VER */
 
 
 #if defined(__MSDOS__) || defined(__EMX__) || \
