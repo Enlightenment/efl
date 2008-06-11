@@ -6,12 +6,12 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #ifdef HAVE_DLFCN_H
 # include <dlfcn.h>
 #endif
-
-#include <stdlib.h>
-#include <stdio.h>
 
 #ifdef HAVE_EVIL_H
 # include <evil.h>
