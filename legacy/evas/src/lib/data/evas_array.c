@@ -86,7 +86,7 @@ evas_array_remove(Evas_Array *array, Evas_Bool (*keep)(void *data, void *gdata),
    tmp = malloc(sizeof (void*) * array->total);
    if (!tmp) return ;
 
-   for (i = 0; i < array->count; ++i)
+   for (i = 0; i < array->count; i++)
      {
 	void *data;
 

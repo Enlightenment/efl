@@ -79,15 +79,9 @@ evas_object_change(Evas_Object *obj)
    obj->layer->evas->changed = 1;
    if (obj->changed) return;
    evas_render_object_recalc(obj);
-   obj->changed = 1;
    /* set changed flag on all objects this one clips too */
    for (l = obj->clip.clipees; l; l = l->next)
-     {
-	Evas_Object *o;
-
-	o = (Evas_Object *)l->data;
-	evas_object_change(o);
-     }
+     evas_object_change((Evas_Object *)l->data);
    if (obj->smart.parent) evas_object_change(obj->smart.parent);
 }
 

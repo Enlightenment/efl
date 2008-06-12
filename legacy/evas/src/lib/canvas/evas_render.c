@@ -122,6 +122,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
      _evas_array_append(active_objects, obj);
    if (restack)
      {
+	if (!obj->changed)
+	  _evas_array_append(&e->pending_objects, obj);
 	obj->restack = 1;
 	obj->changed = 1;
 	clean_them = 1;
@@ -309,10 +311,8 @@ Evas_Bool pending_change(void *data, void *gdata)
    Evas_Object *obj;
 
    obj = data;
-
    if (obj->delete_me) return 0;
-
-   return obj->changed ? 1 : 0;
+   return obj->changed;
 }
 
 static Evas_List *
@@ -715,16 +715,16 @@ evas_render_object_recalc(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
 
-   if (!obj->changed && obj->delete_me < 2)
+   if ((!obj->changed) && (obj->delete_me < 2))
      {
 	Evas	*e;
 
 	e = obj->layer->evas;
 	if (!e || e->cleanup) return ;
 
+	if (!obj->changed)
+	  _evas_array_append(&e->pending_objects, obj);
 	obj->changed = 1;
-
-	_evas_array_append(&e->pending_objects, obj);
      }
 }
 
