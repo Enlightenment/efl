@@ -1308,8 +1308,6 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	target = _ecore_x_dnd_target_get();
 	target->state = ECORE_X_DND_TARGET_ENTERED;
-
-	target = _ecore_x_dnd_target_get();
 	target->source = xevent->xclient.data.l[0];
 	target->win = xevent->xclient.window;
 	target->version = (int) (xevent->xclient.data.l[1] >> 24);
