@@ -3317,17 +3317,83 @@ edje_edit_script_get(Evas_Object *obj)
    return "Not yet complete...";
 }
 
-static void
-_edje_generate_source(Edje *ed)
+#define I0 ""
+#define I1 "   "
+#define I2 "      "
+#define I3 "         "
+#define I4 "            "
+#define I5 "               "
+#define I6 "                  "
+
+static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP"};
+
+static int
+_edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
 {
-   printf("\n****** GENERATE SOURCE *********\n");
+   int i;
+   
+   fprintf(f, I3"part {\n");
+   fprintf(f, I4"name: \"%s\";\n", part);
+   fprintf(f, I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
+   if (!edje_edit_part_mouse_events_get(obj, part))
+      fprintf(f, I4"mouse_events: 0;\n");
+   if (edje_edit_part_repeat_events_get(obj, part))
+      fprintf(f, I4"repeat_events: 1;\n");
+   
+   //...and so on...
+   
+   fprintf(f, I3"}\n");//part
+}
+
+static int
+_edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
+{
+   Evas_Object *obj;
+   Evas_List *l, *ll;
+   int w, h;
+   
+   obj = edje_object_add(ed->evas);
+   if (!edje_object_file_set(obj, ed->file->path, group)) return 0;
+      
+   fprintf(f, I1"group {\n");
+   fprintf(f, I2"name: \"%s\";\n", group);
+   //TODO Support alias:
+   if ((w = edje_edit_group_min_w_get(obj)) || (h = edje_edit_group_min_h_get(obj)))
+      fprintf(f, I2"min: %d %d;\n", w, h);
+   if ((w = edje_edit_group_max_w_get(obj)) || (h = edje_edit_group_max_h_get(obj)))
+      fprintf(f, I2"max: %d %d;\n", w, h);
+   //TODO Support data
+   //TODO Support script
+   fprintf(f, I2"parts {\n");
+   ll = edje_edit_parts_list_get(obj);
+   for (l = ll; l; l = l->next)
+     {
+        _edje_generate_source_of_part(obj, (char*)l->data, f);
+     }
+   edje_edit_string_list_free(ll);
+   fprintf(f, I2"}\n");//parts
+   //TODO programs like parts
+   
+   fprintf(f, "   }\n");//group
+   
+   
+   //TODO Free the Evas_Object *obj
+}
+
+static void
+_edje_generate_source(Evas_Object *obj)
+{
+   printf("\n****** GENERATE EDC SOURCE *********\n");
    char tmpn[PATH_MAX];
    int fd;
    FILE *f;
    long sz;
    SrcFile *sf;
    SrcFile_List *sfl;
+   Evas_List *l, *ll;
 
+   GET_ED_OR_RETURN();
+   
    /* Open a temp file */
    //TODO this will not work on windows
    strcpy(tmpn, "/tmp/edje_edit.edc-tmp-XXXXXX");
@@ -3336,8 +3402,45 @@ _edje_generate_source(Edje *ed)
    if (!(f = fopen(tmpn, "w"))) return;
 
    /* Write edc into file */
-   fprintf(f, "Put here all edc source\n");
-
+   //TODO Probably we need to save the file before generation
+   
+   /* Images */
+   fprintf(f, "images {\n");
+   ll = edje_edit_images_list_get(obj);
+   for (l = ll; l; l = l->next)
+     {
+        fprintf(f, "   image: \"%s\" LOSSY 100;\n", (char*)l->data); //TODO Support more that LOSSY 100
+     }
+   fprintf(f, "}\n\n");
+   edje_edit_string_list_free(ll);
+   
+   /* Fonts */
+   //(same as images)
+   
+   /* Data */
+   //TODO Support data
+   
+   /* Color Classes */
+   //TODO Support color classes
+   
+   /* Spectra */
+   //TODO Support spectra
+   
+   /* Styles */
+   //TODO Support styles
+   
+   /* Collections */
+   
+   fprintf(f, "collections {\n");
+   ll = edje_file_collection_list(ed->file->path);
+   for (l = ll; l; l = l->next)
+     {
+        _edje_generate_source_of_group(ed, (char*)l->data, f);
+        
+     }
+   fprintf(f, "}\n\n");
+   edje_file_collection_list_free(ll);
+   
    fclose(f);
 
    sfl = mem_alloc(SZ(SrcFile_List));
@@ -3358,7 +3461,12 @@ _edje_generate_source(Edje *ed)
    fseek(f, 0, SEEK_SET);
    fclose(f);
 
-   printf("----------\n%s\n-----------\n", sf->file);
+   printf("\n\n================= EDC START HERE =========================\n%s\n"
+          "================= EDC END HERE ===========================\n"
+          "generated file: %s\n"
+          "==========================================================\n",
+          sf->file, tmpn);
+   
    sfl->list = evas_list_append(sfl->list, sf);
 
    /* Write the source to the edje file */
@@ -3439,8 +3547,9 @@ edje_edit_print_internal_status(Evas_Object *obj)
 
    GET_ED_OR_RETURN();
 
-   //_edje_generate_source(ed);
-   //return;
+   _edje_generate_source(obj);
+   return;
+   
    printf("\n****** CHECKIN' INTERNAL STRUCTS STATUS *********\n");
 
    printf("*** Edje\n");
