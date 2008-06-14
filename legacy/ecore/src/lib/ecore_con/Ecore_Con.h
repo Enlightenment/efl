@@ -209,9 +209,11 @@ extern "C" {
    EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type);
    EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm);
 
+#ifdef HAVE_NETDB_H
    EAPI int               ecore_con_dns_lookup(const char *name,
 					       void (*done_cb)(void *data, struct hostent *hostent),
 					       void *data);
+#endif
 					       
    EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *uploadas);
 
