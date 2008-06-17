@@ -244,53 +244,62 @@ _evas_render_check_pending_objects(Evas_Array *pending_objects, Evas *e)
 
 	obj = _evas_array_get(pending_objects, i);
 
+	if (!obj->layer) goto clean_stuff;
+
 	evas_object_clip_recalc(obj);
 	is_active = evas_object_is_active(obj);
 
-	if (!is_active && !obj->is_active && !obj->render_pre && !obj->rect_del)
-	  ok = 1;
-	else
-	  if (obj->is_active == is_active)
-	    {
-	       if (obj->changed)
-		 {
-		    if (obj->smart.smart)
+	if (!is_active &&
+	    !obj->is_active &&
+	    !obj->render_pre &&
+	    !obj->rect_del)
+	  {
+	     ok = 1;
+	     goto clean_stuff;
+	  }
+
+	if (obj->is_active == is_active)
+	  {
+	     if (obj->changed)
+	       {
+		  if (obj->smart.smart)
+		    {
+		       if (obj->render_pre
+			   || obj->rect_del)
+			 ok = 1;
+		    }
+		  else
+		    if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
+			((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+			 (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 		      {
-			 if (obj->render_pre
-			     || obj->rect_del)
+			 if (!(obj->render_pre
+			       || obj->rect_del))
 			   ok = 1;
 		      }
 		    else
-		      if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
+		      if (is_active && (!obj->clip.clipees) &&
 			  ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 			   (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 			{
-			   if (!(obj->render_pre
-				 || obj->rect_del))
+			   if (obj->render_pre
+			       || obj->rect_del)
 			     ok = 1;
 			}
-		      else
-			if (is_active && (!obj->clip.clipees) &&
-			    ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
-			     (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-			  {
-			     if (obj->render_pre
-				 || obj->rect_del)
-			       ok = 1;
-			  }
-		 }
-	       else
-		 {
-		    if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-			(!obj->cur.have_clipees || (evas_object_was_visible(obj) && (!obj->prev.have_clipees)))
-			&& evas_object_is_opaque(obj) && evas_object_is_visible(obj))
-		      if (obj->rect_del || obj->smart.smart)
-			{
-			   ok = 1;
-			}
-		 }
-	    }
+	       }
+	     else
+	       {
+		  if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
+		      (!obj->cur.have_clipees || (evas_object_was_visible(obj) && (!obj->prev.have_clipees)))
+		      && evas_object_is_opaque(obj) && evas_object_is_visible(obj))
+		    if (obj->rect_del || obj->smart.smart)
+		      {
+			 ok = 1;
+		      }
+	       }
+	  }
 
+     clean_stuff:
 	if (!ok)
 	  {
 	     evas_array_clean(&e->active_objects);
@@ -311,7 +320,8 @@ Evas_Bool pending_change(void *data, void *gdata)
    Evas_Object *obj;
 
    obj = data;
-   if (obj->delete_me) return 0;
+   if (!obj->layer) obj->changed = 0;
+   if (obj->delete_me) obj->changed = 0;
    return obj->changed;
 }
 
