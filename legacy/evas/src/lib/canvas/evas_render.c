@@ -320,8 +320,8 @@ Evas_Bool pending_change(void *data, void *gdata)
    Evas_Object *obj;
 
    obj = data;
+   if (obj->delete_me) return 0;
    if (!obj->layer) obj->changed = 0;
-   if (obj->delete_me) obj->changed = 0;
    return obj->changed;
 }
 
