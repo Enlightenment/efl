@@ -3327,11 +3327,9 @@ edje_edit_script_get(Evas_Object *obj)
 
 static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP"};
 
-static int
+static void
 _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
 {
-   int i;
-   
    fprintf(f, I3"part {\n");
    fprintf(f, I4"name: \"%s\";\n", part);
    fprintf(f, I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
@@ -3345,7 +3343,7 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
    fprintf(f, I3"}\n");//part
 }
 
-static int
+static void
 _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
 {
    Evas_Object *obj;
@@ -3353,7 +3351,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    int w, h;
    
    obj = edje_object_add(ed->evas);
-   if (!edje_object_file_set(obj, ed->file->path, group)) return 0;
+   if (!edje_object_file_set(obj, ed->file->path, group)) return;
       
    fprintf(f, I1"group {\n");
    fprintf(f, I2"name: \"%s\";\n", group);
