@@ -647,7 +647,7 @@ evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me)
      return;
    if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(*obj->size_hints));
+     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
 
    obj->size_hints->min.w = w;
    obj->size_hints->min.h = h;
@@ -705,7 +705,7 @@ evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me)
      return;
    if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(*obj->size_hints));
+     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
 
    obj->size_hints->max.w = w;
    obj->size_hints->max.h = h;
@@ -763,7 +763,7 @@ evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me)
      return;
    if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(*obj->size_hints));
+     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
 
    obj->size_hints->request.w = w;
    obj->size_hints->request.h = h;
@@ -826,7 +826,7 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
    if (obj->delete_me)
      return;
    if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(*obj->size_hints));
+     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
 
    obj->size_hints->aspect.mode = aspect;
    obj->size_hints->aspect.size.w = w;
