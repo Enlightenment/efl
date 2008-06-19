@@ -21,7 +21,6 @@ static Evas_Hash *ecore_evases_hash = NULL;
 static Ecore_Event_Handler *ecore_evas_event_handlers[18];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
-
 #ifdef HAVE_ECORE_X_XCB
 static xcb_visualtype_t *
 xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
@@ -1932,6 +1931,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
 	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
 	if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
+	ecore_x_icccm_title_set(ee->engine.x.win, ee->prop.title);
+	ecore_x_netwm_name_set(ee->engine.x.win, ee->prop.title);
 #endif /* BUILD_ECORE_EVAS_X11 */
      }
    else if (!strcmp(ee->driver, "xrender_x11"))
@@ -1998,7 +1999,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	if (ee->prop.borderless)
 	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
 	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
-	if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
+	if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);	
+	ecore_x_icccm_title_set(ee->engine.x.win, ee->prop.title);
+	ecore_x_netwm_name_set(ee->engine.x.win, ee->prop.title);
 #endif
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
@@ -2052,6 +2055,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
 	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
 	if (ee->prop.focused) ecore_x_window_focus(ee->engine.x.win);
+	ecore_x_icccm_title_set(ee->engine.x.win, ee->prop.title);
+	ecore_x_netwm_name_set(ee->engine.x.win, ee->prop.title);
 #endif /* BUILD_ECORE_EVAS_X11_16 */
      }
 }
