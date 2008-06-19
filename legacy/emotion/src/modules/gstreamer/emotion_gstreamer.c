@@ -435,9 +435,6 @@ static void
 em_file_close(void *video)
 {
    Emotion_Gstreamer_Video *ev;
-   GstIterator             *iter;
-   gpointer                 data;
-   gboolean                 done;
 
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev)
