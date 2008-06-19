@@ -839,7 +839,6 @@ parse_enum(int n, ...)
 int
 parse_flags(int n, ...)
 {
-   char *str;
    Evas_List *lst;
    int result = 0;
    va_list va;
