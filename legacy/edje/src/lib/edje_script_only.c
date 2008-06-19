@@ -81,6 +81,7 @@ static void _call_fn(Edje *ed, const char *fname, Embryo_Function fn);
 #define IFNO(func) if (si->fn.func == EMBRYO_FUNCTION_NONE)
 #define CLFN(func) IFFN(func) {_call_fn(ed, #func, si->fn.func);}
 #define SI Sinfo *si; si = ed->script_only_data; if (!si) return
+#define SI_RETURN(ret) Sinfo *si; si = ed->script_only_data; if (!si) return (ret)
 #define PINT(val) embryo_parameter_cell_push(ed->collection->script, (Embryo_Cell)(val))
 #define PSTR(val) embryo_parameter_string_push(ed->collection->script, val)
 #define GTFN(func) si->fn.func = embryo_program_function_find(ed->collection->script, #func)
@@ -104,7 +105,7 @@ struct _Oid
 static int
 _oid_alloc(Edje *ed)
 {
-   SI;
+   SI_RETURN(0);
    
    si->oid.id++;
    return si->oid.id;
@@ -115,7 +116,7 @@ _oid_track(Edje *ed, Evas_Object *o)
 {
    Oid *oi;
    char buf[64];
-   SI;
+   SI_RETURN(NULL);
    
    oi = calloc(1, sizeof(Oid));
    if (!oi) return NULL;
@@ -139,7 +140,7 @@ static Oid *
 _oid_find(Edje *ed, int oid)
 {
    char buf[64];
-   SI;
+   SI_RETURN(NULL);
 
    snprintf(buf, sizeof(buf), "%i", oid);
    return evas_hash_find(si->oid.hash, buf);
@@ -203,7 +204,7 @@ _exp_e_obj_del(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
 
    CHKPARAM(1);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
@@ -219,7 +220,7 @@ _exp_e_obj_rect_add(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed = embryo_program_data_get(ep);
    Evas_Object *o;
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
    
    o = evas_object_rectangle_add(evas_object_evas_get(ed->obj));
    if (!o) return 0;
@@ -233,7 +234,7 @@ _exp_e_obj_show(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
 
    CHKPARAM(1);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
@@ -246,7 +247,7 @@ _exp_e_obj_hide(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
 
    CHKPARAM(1);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
@@ -259,11 +260,11 @@ _exp_e_obj_move(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
    
    CHKPARAM(3);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
-   if ((oid->x == params[2]) && (oid->y == params[3])) return;
+   if ((oid->x == params[2]) && (oid->y == params[3])) return -1;
    oid->x = params[2];
    oid->y = params[3];
    evas_object_move(oid->obj, ed->x + oid->x, ed->y + oid->y);
@@ -275,11 +276,11 @@ _exp_e_obj_resize(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
    
    CHKPARAM(3);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
-   if ((oid->w == params[2]) && (oid->h == params[3])) return;
+   if ((oid->w == params[2]) && (oid->h == params[3])) return -1;
    oid->w = params[2];
    oid->h = params[3];
    evas_object_resize(oid->obj, oid->w, oid->h);
@@ -291,12 +292,12 @@ _exp_e_obj_geometry_set(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
    
    CHKPARAM(5);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
    if ((oid->x == params[2]) && (oid->y == params[3]) &&
-       (oid->w == params[4]) && (oid->h == params[5])) return;
+       (oid->w == params[4]) && (oid->h == params[5])) return -1;
    oid->x = params[2];
    oid->y = params[3];
    oid->w = params[4];
@@ -311,7 +312,7 @@ _exp_e_obj_geometry_get(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
    
    CHKPARAM(5);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
@@ -327,7 +328,7 @@ _exp_e_obj_color_set(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
-   SI;
+   SI_RETURN(-1);
 
    CHKPARAM(5);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
@@ -341,7 +342,7 @@ _exp_e_obj_color_get(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed = embryo_program_data_get(ep);
    Oid *oid;
    int r, g, b, a;
-   SI;
+   SI_RETURN(-1);
 
    CHKPARAM(5);
    if (!(oid = _oid_find(ed, params[1]))) return -1;
@@ -358,7 +359,7 @@ _exp_e_signal_emit(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    char *sig = NULL, *src = NULL;
-   SI;
+   SI_RETURN(-1);
    
    CHKPARAM(2);
    GETSTR(sig, params[1]);
@@ -382,7 +383,6 @@ _edje_script_only(Edje *ed)
 void
 _edje_script_only_init(Edje *ed)
 {
-   Embryo_Function fn;
    Sinfo *si;
    
    si = calloc(1, sizeof(Sinfo));
@@ -425,7 +425,6 @@ _edje_script_only_init(Edje *ed)
 void
 _edje_script_only_shutdown(Edje *ed)
 {
-   Embryo_Function fn;
    SI;
 
    CLFN(obj_shutdown);
