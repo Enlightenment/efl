@@ -23,15 +23,23 @@
  * 
  * Example Usage 1 (HTTP GET):
  *   ecore_con_url_url_set(url_con, "http://www.google.com");
- *   ecore_con_url_send(url, NULL, 0, NULL);
+ *   ecore_con_url_send(url_con, NULL, 0, NULL);
  *
  * Example usage 2 (HTTP POST):
  *   ecore_con_url_url_set(url_con, "http://www.example.com/post_handler.cgi");
- *   ecore_con_url_send(url, data, data_length, "multipart/form-data");
+ *   ecore_con_url_send(url_con, data, data_length, "multipart/form-data");
  *
  * Example Usage 3 (FTP download):
  *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com/pub/myfile");
- *   ecore_con_url_send(url, NULL, 0, NULL);
+ *   ecore_con_url_send(url_con, NULL, 0, NULL);
+ *
+ * Example Usage 4 (FTP upload as ftp://ftp.example.com/file):
+ *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
+ *   ecore_con_url_ftp_upload(url_con, "/tmp/file", "user", "pass", NULL);
+ *
+ * Example Usage 5 (FTP upload as ftp://ftp.example.com/dir/file):
+ *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
+ *   ecore_con_url_ftp_upload(url_con, "/tmp/file", "user", "pass","dir");
  *
  * FIXME: Support more CURL features: Authentication, Progress callbacks and more...
  */
@@ -42,6 +50,7 @@
 
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 /**
  * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
@@ -58,8 +67,9 @@ int ECORE_CON_EVENT_URL_PROGRESS = 0;
 #ifdef HAVE_CURL
 static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_url_perform(Ecore_Con_Url *url_con);
-static size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp);
+static size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp);
 static int _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+static size_t _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream);
 static void _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
 
@@ -495,17 +505,17 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
 
 /**
  * Makes a FTP upload
- * @return  FIXME: To be documented.
+ * @return  FIXME: To be more documented.
  * @ingroup Ecore_Con_Url_Group
  */
 EAPI int 
-ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *uploadas)
+ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *upload_dir)
 {
 #ifdef HAVE_CURL
    char url[4096];
    char userpwd[4096];
    FILE *fd;
-   struct stat file_info;	
+   struct stat file_info;
 	
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
@@ -515,21 +525,23 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, cha
      
    if (url_con->active) return 0;
    if (!url_con->url) return 0;
-     
    if (filename)
      {
 	if (stat(filename, &file_info)) return 0;
 	fd = fopen(filename, "rb");
-	snprintf(url, sizeof(url), "ftp://%s/%s", url_con->url, basename(filename));
+	if (upload_dir)
+	   snprintf(url, sizeof(url), "ftp://%s/%s/%s", url_con->url, upload_dir, basename(filename));
+	else
+	   snprintf(url, sizeof(url), "ftp://%s/%s", url_con->url, basename(filename));
 	snprintf(userpwd, sizeof(userpwd), "%s:%s", user, pass);
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 1);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_INFILESIZE_LARGE, (curl_off_t)file_info.st_size);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_USERPWD, userpwd);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_UPLOAD, 1);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_READFUNCTION, _ecore_con_url_read_cb);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_READDATA, fd);
 	ecore_con_url_url_set(url_con, url);
 
 	return _ecore_con_url_perform(url_con);
-	fclose(fd);
      }
 #else
    return 0;
@@ -537,10 +549,57 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, cha
    filename = NULL;
    user = NULL;
    pass = NULL;
-   uploadas = NULL;
+   upload_dir = NULL;
 #endif   
 }
 
+/**
+ * Enable or disable libcurl verbose output, useful for debug
+ * @return  FIXME: To be more documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
+EAPI void
+ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_verbose_set");
+	return;
+     }
+     
+   if (url_con->active) return;
+   if (!url_con->url) return;
+   if (verbose == TRUE) 
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 1);
+   else 
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 0);
+#endif
+}
+
+/**
+ * Enable or disable EPSV extension
+ * @return  FIXME: To be more documented.
+ * @ingroup Ecore_Con_Url_Group
+ */
+EAPI void
+ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_ftp_use_epsv_set");
+	return;
+     }
+     
+   if (url_con->active) return;
+   if (!url_con->url) return;
+   if (use_epsv == TRUE) 
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 1);
+   else 
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 0);
+#endif
+}
 
 #ifdef HAVE_CURL
 static int
@@ -595,11 +654,11 @@ _ecore_con_url_restart_fd_handler(void)
 }
 
 static size_t
-_ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp)
+_ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp)
 {
    Ecore_Con_Url *url_con;
    Ecore_Con_Event_Url_Data *e;
-   size_t real_size = size * nmemb;
+   size_t real_size = size * nitems;
 
    url_con = (Ecore_Con_Url *)userp;
 
@@ -685,6 +744,21 @@ _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double u
      }
 
    return 0;
+}
+
+static size_t 
+_ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream)
+{
+   size_t retcode = fread(ptr, size, nitems, stream);
+   if (ferror(stream)) {
+	fclose(stream);
+	return CURL_READFUNC_ABORT;
+   } else if ((retcode == 0) || (retcode < nitems)) {
+	fclose(stream);
+	return 0;
+   }
+   fprintf(stderr, "*** We read %d bytes from file\n", retcode);
+   return retcode;
 }
 
 static int
