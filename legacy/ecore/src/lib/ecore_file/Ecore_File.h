@@ -88,6 +88,7 @@ extern "C" {
    EAPI char       *ecore_file_app_exe_get  (const char *app);
    EAPI char       *ecore_file_escape_name  (const char *filename);
    EAPI char       *ecore_file_strip_ext    (const char *file);
+   EAPI int         ecore_file_dir_is_empty (const char *dir);
 
    EAPI Ecore_File_Monitor * ecore_file_monitor_add(const char *path,
                 void (*func) (void *data, Ecore_File_Monitor *em,

@@ -701,3 +701,30 @@ ecore_file_strip_ext(const char *path)
 
    return file;
 }
+
+/**
+ * Check if the given directory is empty. The '.' and '..' files will be ignored.
+ * @param  dir The name of the directory to check
+ * @return 1 if directory is empty, 0 if it has at least one file or -1 in case of errors
+ */
+EAPI int
+ecore_file_dir_is_empty(const char *dir)
+{
+   DIR *dirp;
+   struct dirent *dp;
+
+   dirp = opendir(dir);
+   if (!dirp) return -1;
+
+   while ((dp = readdir(dirp)))
+     {
+	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
+	  {
+	     closedir(dirp);
+	     return 0;
+	  }
+     }
+   
+   closedir(dirp);
+   return 1;
+}
