@@ -2,8 +2,10 @@
 #define __EVAS_ENGINE_SOFTWARE_DDRAW_H__
 
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <ddraw.h>
+#undef WIN32_LEAN_AND_MEAN
+
 
 typedef struct _Evas_Engine_Info_Software_DDraw Evas_Engine_Info_Software_DDraw;
 
@@ -15,9 +17,6 @@ struct _Evas_Engine_Info_Software_DDraw
 
    struct {
       HWND                window;
-      LPDIRECTDRAW        object;
-      LPDIRECTDRAWSURFACE surface_primary;
-      LPDIRECTDRAWSURFACE surface_back;
       int                 depth;
       int                 rotation;
    } info;

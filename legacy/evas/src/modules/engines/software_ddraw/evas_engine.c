@@ -1,6 +1,10 @@
-#include "evas_engine.h"
+#include "evas_common.h"
 #include "evas_private.h"
+#include "evas_engine.h"
 #include "Evas_Engine_Software_DDraw.h"
+
+/* function tables - filled in later (func and parent func) */
+static Evas_Func func, pfunc;
 
 /* engine struct data */
 typedef struct _Render_Engine Render_Engine;
@@ -15,58 +19,18 @@ struct _Render_Engine
 };
 
 
-/* function tables - filled in later (func and parent func) */
-static Evas_Func func, pfunc;
-
-/* prototypes we will use here */
-static void *_output_setup(int                 width,
-			   int                 height,
-			   int                 rotation,
-			   HWND                window,
-			   LPDIRECTDRAW        lpDD,
-			   LPDIRECTDRAWSURFACE surface_primary,
-			   LPDIRECTDRAWSURFACE surface_back,
-			   int                 w_depth);
-
-static void *eng_info(Evas *e);
-static void  eng_info_free(Evas *e,
-			   void *info);
-static void  eng_setup(Evas *e,
-		       void *info);
-static void  eng_output_free(void *data);
-static void  eng_output_resize(void *data,
-			       int   width,
-			       int   height);
-static void  eng_output_tile_size_set(void *data,
-				      int   width,
-				      int   height);
-static void  eng_output_redraws_rect_add(void *data,
-					 int   x,
-					 int   y,
-					 int   width,
-					 int   height);
-static void  eng_output_redraws_rect_del(void *data,
-					 int   x,
-					 int   y,
-					 int   width,
-					 int   height);
-static void  eng_output_redraws_clear(void *data);
-
-/* internal engine routines */
 static void *
-_output_setup(int                 width,
-	      int                 height,
-	      int                 rotation,
-	      HWND                window,
-	      LPDIRECTDRAW        object,
-	      LPDIRECTDRAWSURFACE surface_primary,
-	      LPDIRECTDRAWSURFACE surface_back,
-	      int                 w_depth)
+_output_setup(int  width,
+              int  height,
+              int  rot,
+              HWND window,
+              int  depth)
 {
    Render_Engine *re;
 
-   re = (Render_Engine *)calloc(1, sizeof(Render_Engine));
-   if (!re) return NULL;
+   re = calloc(1, sizeof(Render_Engine));
+   if (!re)
+     return NULL;
 
    /* if we haven't initialized - init (automatic abort if already done) */
    evas_common_cpu_init();
@@ -85,13 +49,23 @@ _output_setup(int                 width,
 
    evas_software_ddraw_outbuf_init();
 
-   /* get any stored performance metrics from device */
-   re->ob = evas_software_ddraw_outbuf_setup_dd(width, height, rotation, OUTBUF_DEPTH_INHERIT, window, object, surface_primary, surface_back, w_depth);
+   re->ob = evas_software_ddraw_outbuf_setup(width, height, rot,
+                                             OUTBUF_DEPTH_INHERIT,
+                                             window, depth);
    if (!re->ob)
      {
 	free(re);
 	return NULL;
      }
+
+   /* for updates return 1 big buffer, but only use portions of it, also cache
+    it and keepit around until an idle_flush */
+   /* disable for now - i am hunting down why some expedite tests are slower,
+    * as well as shaped stuff is broken and probable non-32bpp is broken as
+    * convert funcs dont do the right thing
+    *
+   re->ob->onebuf = 1;
+    */
 
    re->tb = evas_common_tilebuf_new(width, height);
    if (!re->tb)
@@ -100,21 +74,21 @@ _output_setup(int                 width,
 	free(re);
 	return NULL;
      }
-
-   /* FIXME: that comment :) */
    /* in preliminary tests 16x16 gave highest framerates */
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 
    return re;
 }
 
+
 /* engine api this module provides */
+
 static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_Software_DDraw *info;
 
-   info = (Evas_Engine_Info_Software_DDraw *)calloc(1, sizeof(Evas_Engine_Info_Software_DDraw));
+   info = calloc(1, sizeof(Evas_Engine_Info_Software_DDraw));
    if (!info) return NULL;
    info->magic.magic = rand();
    return info;
@@ -122,8 +96,7 @@ eng_info(Evas *e)
 }
 
 static void
-eng_info_free(Evas *e,
-	      void *info)
+eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Software_DDraw *in;
 
@@ -132,35 +105,46 @@ eng_info_free(Evas *e,
 }
 
 static void
-eng_setup(Evas *e,
-	  void *info)
+eng_setup(Evas *e, void *in)
 {
    Render_Engine                   *re;
-   Evas_Engine_Info_Software_DDraw *in;
+   Evas_Engine_Info_Software_DDraw *info;
 
-   in = (Evas_Engine_Info_Software_DDraw *)info;
+   info = (Evas_Engine_Info_Software_DDraw *)in;
    if (!e->engine.data.output)
-     e->engine.data.output =
-     _output_setup(e->output.w,
-		   e->output.h,
-		   in->info.rotation,
-		   in->info.window,
-		   in->info.object,
-		   in->info.surface_primary,
-		   in->info.surface_back,
-		   in->info.depth);
-  if (!e->engine.data.output) return;
-   if (!e->engine.data.context)
-     e->engine.data.context =
-     e->engine.func->context_new(e->engine.data.output);
+     e->engine.data.output = _output_setup(e->output.w,
+                                           e->output.h,
+                                           info->info.rotation,
+                                           info->info.window,
+                                           info->info.depth);
+   else
+     {
+	int ponebuf = 0;
 
-   re = (Render_Engine *)e->engine.data.output;
+	re = e->engine.data.output;
+	ponebuf = re->ob->onebuf;
+	evas_software_ddraw_outbuf_free(re->ob);
+	re->ob = evas_software_ddraw_outbuf_setup(e->output.w,
+                                                  e->output.h,
+                                                  info->info.rotation,
+                                                  OUTBUF_DEPTH_INHERIT,
+                                                  info->info.window,
+                                                  info->info.depth);
+	re->ob->onebuf = ponebuf;
+     }
+   if (!e->engine.data.output) return;
+   if (!e->engine.data.context)
+     e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
+
+   re = e->engine.data.output;
 }
 
 static void
 eng_output_free(void *data)
 {
    Render_Engine *re;
+
+   if (!data) return;
 
    re = (Render_Engine *)data;
    evas_software_ddraw_outbuf_free(re->ob);
@@ -173,9 +157,7 @@ eng_output_free(void *data)
 }
 
 static void
-eng_output_resize(void *data,
-		  int   width,
-		  int   height)
+eng_output_resize(void *data, int width, int height)
 {
    Render_Engine *re;
 
@@ -183,8 +165,8 @@ eng_output_resize(void *data,
    evas_software_ddraw_outbuf_reconfigure(re->ob,
 					  width,
 					  height,
-					  evas_software_ddraw_outbuf_rot_get(re->ob),
-					  OUTBUF_DEPTH_INHERIT);
+                                          evas_software_ddraw_outbuf_rot_get(re->ob),
+                                          OUTBUF_DEPTH_INHERIT);
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(width, height);
    if (re->tb)
@@ -192,40 +174,30 @@ eng_output_resize(void *data,
 }
 
 static void
-eng_output_tile_size_set(void *data,
-			 int   width,
-			 int   height)
+eng_output_tile_size_set(void *data, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_tilebuf_set_tile_size(re->tb, width, height);
+   evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
 
 static void
-eng_output_redraws_rect_add(void *data,
-			    int   x,
-			    int   y,
-			    int   width,
-			    int   height)
+eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_tilebuf_add_redraw(re->tb, x, y, width, height);
+   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
 
 static void
-eng_output_redraws_rect_del(void *data,
-			    int   x,
-			    int   y,
-			    int   width,
-			    int   height)
+eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_tilebuf_del_redraw(re->tb, x, y, width, height);
+   evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
 
 static void
@@ -239,14 +211,14 @@ eng_output_redraws_clear(void *data)
 
 static void *
 eng_output_redraws_next_update_get(void *data,
-				   int  *x,
-				   int  *y,
-				   int  *w,
-				   int  *h,
-				   int  *cx,
-				   int  *cy,
-				   int  *cw,
-				   int  *ch)
+                                   int  *x,
+                                   int  *y,
+                                   int  *w,
+                                   int  *h,
+                                   int  *cx,
+                                   int  *cy,
+                                   int  *cw,
+                                   int  *ch)
 {
    Render_Engine *re;
    RGBA_Image    *surface;
@@ -269,7 +241,10 @@ eng_output_redraws_next_update_get(void *data,
      }
    if (!re->cur_rect) return NULL;
    rect = (Tilebuf_Rect *)re->cur_rect;
-   ux = rect->x; uy = rect->y; uw = rect->w; uh = rect->h;
+   ux = rect->x;
+   uy = rect->y;
+   uw = rect->w;
+   uh = rect->h;
    re->cur_rect = re->cur_rect->next;
    if (!re->cur_rect)
      {
@@ -279,30 +254,33 @@ eng_output_redraws_next_update_get(void *data,
      }
 
    surface = evas_software_ddraw_outbuf_new_region_for_update(re->ob,
-							      ux, uy,
-							      uw, uh,
-							      cx, cy,
-							      cw, ch);
-   *x = ux; *y = uy; *w = uw; *h = uh;
+                                                              ux,
+                                                              uy,
+                                                              uw,
+                                                              uh,
+                                                              cx,
+                                                              cy,
+                                                              cw,
+                                                              ch);
+
+   *x = ux;
+   *y = uy;
+   *w = uw;
+   *h = uh;
 
    return surface;
 }
 
 static void
-eng_output_redraws_next_update_push(void *data,
-				    void *surface,
-				    int   x,
-				    int   y,
-				    int   w,
-				    int   h)
+eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_pipe_begin((RGBA_Image *)surface);
-   evas_common_pipe_flush((RGBA_Image *)surface);
-   evas_software_ddraw_outbuf_push_updated_region(re->ob, (RGBA_Image *)surface, x, y, w, h);
-   evas_software_ddraw_outbuf_free_region_for_update(re->ob, (RGBA_Image *)surface);
+   evas_common_pipe_begin(surface);
+   evas_common_pipe_flush(surface);
+   evas_software_ddraw_outbuf_push_updated_region(re->ob, surface, x, y, w, h);
+   evas_software_ddraw_outbuf_free_region_for_update(re->ob, surface);
    evas_common_cpu_end_opt();
 }
 
@@ -321,7 +299,9 @@ eng_output_idle_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   evas_software_ddraw_outbuf_idle_flush(re->ob);
 }
+
 
 /* module advertising code */
 EAPI int
@@ -360,8 +340,7 @@ module_close(void)
 EAPI Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_ENGINE,
-     "software_ddraw",
-     "none"
+   EVAS_MODULE_TYPE_ENGINE,
+   "software_ddraw",
+   "none"
 };
-			   
