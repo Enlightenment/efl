@@ -1044,25 +1044,13 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   printf ("ecore_evas_software_ddraw_new : ecore_win32_ddraw_init\n");
-   if (!ecore_win32_ddraw_init(ee->engine.win32.window))
-     {
-        ecore_win32_window_del(ee->engine.win32.window);
-        _ecore_evas_win32_shutdown();
-        free(ee);
-        return NULL;
-     }
-
    printf ("ecore_evas_software_ddraw_new : evas_engine_info_get\n");
    einfo = (Evas_Engine_Info_Software_DDraw *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
-        einfo->info.object = ecore_win32_ddraw_object_get(ee->engine.win32.window);
-        einfo->info.surface_primary = ecore_win32_ddraw_surface_primary_get(ee->engine.win32.window);
-        einfo->info.surface_back = ecore_win32_ddraw_surface_back_get(ee->engine.win32.window);
-        einfo->info.depth = ecore_win32_ddraw_depth_get(ee->engine.win32.window);
+        einfo->info.depth = ecore_win32_screen_depth_get();;
         einfo->info.rotation = 0;
         printf ("ecore_evas_software_ddraw_new : evas_engine_info_set\n");
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -1159,17 +1147,8 @@ ecore_evas_software_ddraw_16_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   if (!ecore_win32_ddraw_16_init(ee->engine.win32.window))
+   if (ecore_win32_screen_depth_get() != 16)
      {
-        ecore_win32_window_del(ee->engine.win32.window);
-        _ecore_evas_win32_shutdown();
-        free(ee);
-        return NULL;
-     }
-
-   if (ecore_win32_ddraw_depth_get(ee->engine.win32.window) != 16)
-     {
-        ecore_win32_ddraw_shutdown(ee->engine.win32.window);
         ecore_win32_window_del(ee->engine.win32.window);
         _ecore_evas_win32_shutdown();
         free(ee);
@@ -1181,11 +1160,12 @@ ecore_evas_software_ddraw_16_new(Ecore_Win32_Window *parent,
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
-        einfo->info.object = ecore_win32_ddraw_object_get(ee->engine.win32.window);
-        einfo->info.surface_primary = ecore_win32_ddraw_surface_primary_get(ee->engine.win32.window);
-        einfo->info.surface_back = ecore_win32_ddraw_surface_back_get(ee->engine.win32.window);
-        einfo->info.surface_source = ecore_win32_ddraw_surface_source_get(ee->engine.win32.window);
-        einfo->info.depth = ecore_win32_ddraw_depth_get(ee->engine.win32.window);
+/*         einfo->info.object = ecore_win32_ddraw_object_get(ee->engine.win32.window); */
+/*         einfo->info.surface_primary = ecore_win32_ddraw_surface_primary_get(ee->engine.win32.window); */
+/*         einfo->info.surface_back = ecore_win32_ddraw_surface_back_get(ee->engine.win32.window); */
+/*         einfo->info.surface_source = ecore_win32_ddraw_surface_source_get(ee->engine.win32.window); */
+/*         einfo->info.depth = ecore_win32_ddraw_depth_get(ee->engine.win32.window); */
+        einfo->info.depth = ecore_win32_screen_depth_get();
         printf ("ecore_evas_software_ddraw_16_new depth : %d\n", einfo->info.depth);
         einfo->info.rotation = 0;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -1282,24 +1262,12 @@ ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   if (!ecore_win32_direct3d_init(ee->engine.win32.window))
-     {
-        ecore_win32_window_del(ee->engine.win32.window);
-        _ecore_evas_win32_shutdown();
-        free(ee);
-        return NULL;
-     }
-
    einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
-        einfo->info.object = ecore_win32_direct3d_object_get(ee->engine.win32.window);
-        einfo->info.device = ecore_win32_direct3d_device_get(ee->engine.win32.window);
-        einfo->info.sprite = ecore_win32_direct3d_sprite_get(ee->engine.win32.window);
-        einfo->info.texture = ecore_win32_direct3d_texture_get(ee->engine.win32.window);
-        einfo->info.depth = ecore_win32_direct3d_depth_get(ee->engine.win32.window);
+        einfo->info.depth = ecore_win32_screen_depth_get();
         einfo->info.rotation = 0;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
