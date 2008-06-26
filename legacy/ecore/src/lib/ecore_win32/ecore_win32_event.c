@@ -329,21 +329,6 @@ _ecore_win32_event_char_get(int    key,
    return 1;
 }
 
-Ecore_Win32_Window *
-_ecore_win32_event_window_get(HWND window)
-{
-   Ecore_Win32_Window *w = NULL;
-
-   ecore_list_first_goto(_ecore_win32_windows_list);
-   while ((w = ecore_list_next(_ecore_win32_windows_list)))
-     {
-       if (((struct _Ecore_Win32_Window *)w)->window == window)
-         return w;
-     }
-
-   return w;
-}
-
 void
 _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
                                     int                        is_keystroke)
@@ -378,7 +363,12 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
      }
 
  store_key:
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+   if (!e->window)
+     {
+        free(e);
+        return;
+     }
    e->time = (double)msg->time / 1000.0;
 
    _ecore_win32_event_last_time = e->time;
@@ -420,7 +410,12 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
      }
 
  store_key:
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+   if (!e->window)
+     {
+        free(e);
+        return;
+     }
    e->time = (double)msg->time / 1000.0;
 
    _ecore_win32_event_last_time = e->time;
@@ -434,7 +429,7 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
 {
    Ecore_Win32_Window *window;
 
-   window = _ecore_win32_event_window_get(msg->window);
+   window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    if (button > 3)
      {
@@ -526,7 +521,7 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
           ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
        }
      }
-   printf (" * ecore event button press\n");
+/*    printf (" * ecore event button press\n"); */
 }
 
 void
@@ -535,7 +530,7 @@ _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
 {
    Ecore_Win32_Window *window;
 
-   window = _ecore_win32_event_window_get(msg->window);
+   window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    {
       Ecore_Win32_Event_Mouse_Move *e;
@@ -585,7 +580,7 @@ _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
       ecore_event_add(ECORE_WIN32_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
    }
 
-   printf (" * ecore event button release\n");
+/*    printf (" * ecore event button release\n"); */
 }
 
 void
@@ -596,7 +591,7 @@ _ecore_win32_event_handle_motion_notify(Ecore_Win32_Callback_Data *msg)
    e = (Ecore_Win32_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Move));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
    e->x = GET_X_LPARAM(msg->data_param);
    e->y = GET_Y_LPARAM(msg->data_param);
    e->time = (double)msg->time / 1000.0;
@@ -613,7 +608,7 @@ _ecore_win32_event_handle_enter_notify(Ecore_Win32_Callback_Data *msg)
      e = (Ecore_Win32_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Move));
      if (!e) return;
 
-     e->window = _ecore_win32_event_window_get(msg->window);
+     e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
      e->time = (double)msg->time / 1000.0;
@@ -630,7 +625,7 @@ _ecore_win32_event_handle_enter_notify(Ecore_Win32_Callback_Data *msg)
      e = (Ecore_Win32_Event_Mouse_In *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_In));
      if (!e) return;
 
-     e->window = _ecore_win32_event_window_get(msg->window);
+     e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
      e->time = (double)msg->time / 1000.0;
@@ -650,7 +645,7 @@ _ecore_win32_event_handle_leave_notify(Ecore_Win32_Callback_Data *msg)
      e = (Ecore_Win32_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Move));
      if (!e) return;
 
-     e->window = _ecore_win32_event_window_get(msg->window);
+     e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
      e->time = (double)msg->time / 1000.0;
@@ -667,7 +662,7 @@ _ecore_win32_event_handle_leave_notify(Ecore_Win32_Callback_Data *msg)
      e = (Ecore_Win32_Event_Mouse_Out *)calloc(1, sizeof(Ecore_Win32_Event_Mouse_Out));
      if (!e) return;
 
-     e->window = _ecore_win32_event_window_get(msg->window);
+     e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
      e->time = (double)msg->time / 1000.0;
@@ -686,7 +681,7 @@ _ecore_win32_event_handle_focus_in(Ecore_Win32_Callback_Data *msg)
    e = (Ecore_Win32_Event_Window_Focus_In *)calloc(1, sizeof(Ecore_Win32_Event_Window_Focus_In));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    e->time = _ecore_win32_event_last_time;
    _ecore_win32_event_last_time = e->time;
@@ -702,7 +697,7 @@ _ecore_win32_event_handle_focus_out(Ecore_Win32_Callback_Data *msg)
    e = (Ecore_Win32_Event_Window_Focus_Out *)calloc(1, sizeof(Ecore_Win32_Event_Window_Focus_Out));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    e->time = _ecore_win32_event_last_time;
    _ecore_win32_event_last_time = e->time;
@@ -718,13 +713,13 @@ _ecore_win32_event_handle_expose(Ecore_Win32_Callback_Data *msg)
    e = (Ecore_Win32_Event_Window_Damage *)calloc(1, sizeof(Ecore_Win32_Event_Window_Damage));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    e->x = msg->update.left;
    e->y = msg->update.top;
    e->width = msg->update.right - msg->update.left;
    e->height = msg->update.bottom - msg->update.top;
-   printf (" * ecore : event expose %d %d\n", e->width, e->height);
+/*    printf (" * ecore : event expose %d %d\n", e->width, e->height); */
 
    e->time = _ecore_win32_event_last_time;
 
@@ -739,7 +734,7 @@ _ecore_win32_event_handle_create_notify(Ecore_Win32_Callback_Data *msg)
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Create));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    e->time = _ecore_win32_event_last_time;
 
@@ -754,7 +749,7 @@ _ecore_win32_event_handle_destroy_notify(Ecore_Win32_Callback_Data *msg)
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Destroy));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    e->time = _ecore_win32_event_last_time;
    if (e->window == _ecore_win32_event_last_window) _ecore_win32_event_last_window = NULL;
@@ -770,7 +765,7 @@ _ecore_win32_event_handle_map_notify(Ecore_Win32_Callback_Data *msg)
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Show));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    e->time = _ecore_win32_event_last_time;
 
@@ -785,7 +780,7 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Hide));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
    e->time = _ecore_win32_event_last_time;
 
@@ -810,9 +805,9 @@ _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
         return;
      }
 
-   printf ("_ecore_win32_event_handle_configure_notify\n");
-   e->window = _ecore_win32_event_window_get(window_pos->hwnd);
-   e->abovewin = _ecore_win32_event_window_get(window_pos->hwndInsertAfter);
+/*    printf ("_ecore_win32_event_handle_configure_notify\n"); */
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
+   e->abovewin = (void *)GetWindowLong(window_pos->hwndInsertAfter, GWL_USERDATA);
    e->x = wi.rcClient.left;
    e->y = wi.rcClient.top;
    e->width = wi.rcClient.right - wi.rcClient.left;
@@ -834,11 +829,11 @@ _ecore_win32_event_handle_resize(Ecore_Win32_Callback_Data *msg)
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Resize));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
    e->width = rect.right - rect.left;
    e->height = rect.bottom - rect.top;
    e->time = _ecore_win32_event_last_time;
-   printf (" * _ecore_win32_event_handle_resize %d %d\n", e->width, e->height);
+/*    printf (" * _ecore_win32_event_handle_resize %d %d\n", e->width, e->height); */
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_RESIZE, e, NULL, NULL);
 }
@@ -851,7 +846,7 @@ _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Delete_Request));
    if (!e) return;
 
-   e->window = _ecore_win32_event_window_get(msg->window);
+   e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
    e->time = _ecore_win32_event_last_time;
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);

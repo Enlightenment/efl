@@ -7,7 +7,6 @@
 #include "ecore_win32_private.h"
 
 
-Ecore_List         *_ecore_win32_windows_list = NULL;
 HINSTANCE           _ecore_win32_instance = NULL;
 double              _ecore_win32_double_click_time = 0.25;
 double              _ecore_win32_event_last_time = 0.0;
@@ -91,15 +90,7 @@ _ecore_win32_window_procedure(HWND   window,
           RECT                        rect;
           struct _Ecore_Win32_Window *w = NULL;
 
-          ecore_list_first_goto(_ecore_win32_windows_list);
-          while ((w = ecore_list_next(_ecore_win32_windows_list)))
-            {
-               if (w->window == window)
-                 {
-                    ecore_list_remove(_ecore_win32_windows_list);
-                    break;
-                 }
-            }
+          w = (struct _Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
 
           if (GetClientRect(window, &rect))
           {
@@ -321,14 +312,6 @@ ecore_win32_init()
         return 0;
      }
 
-   _ecore_win32_windows_list = ecore_list_new();
-   if (!_ecore_win32_windows_list)
-     {
-        UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
-        FreeLibrary(_ecore_win32_instance);
-        return 0;
-     }
-
    if (!ECORE_WIN32_EVENT_KEY_DOWN)
      {
         ECORE_WIN32_EVENT_KEY_DOWN              = ecore_event_type_new();
@@ -374,8 +357,6 @@ ecore_win32_shutdown()
    if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
    if (!_ecore_win32_instance) return _ecore_win32_init_count;
 
-   ecore_list_destroy(_ecore_win32_windows_list);
-
    UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
    FreeLibrary(_ecore_win32_instance);
    _ecore_win32_instance = NULL;
@@ -383,6 +364,22 @@ ecore_win32_shutdown()
    if (_ecore_win32_init_count < 0) _ecore_win32_init_count = 0;
 
    return _ecore_win32_init_count;
+}
+
+EAPI int
+ecore_win32_screen_depth_get()
+{
+   HDC dc;
+   int depth;
+
+   dc = GetDC(NULL);
+   if (!dc)
+     return 0;
+
+   depth = GetDeviceCaps(dc, BITSPIXEL);
+   ReleaseDC(NULL, dc);
+
+   return depth;
 }
 
 /**

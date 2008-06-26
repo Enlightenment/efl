@@ -35,12 +35,6 @@
 
 typedef void Ecore_Win32_Window;
 typedef void Ecore_Win32_Cursor;
-typedef void Ecore_Win32_DDraw_Object;
-typedef void Ecore_Win32_DDraw_Surface;
-typedef void Ecore_Win32_Direct3D_Object;
-typedef void Ecore_Win32_Direct3D_Device;
-typedef void Ecore_Win32_Direct3D_Sprite;
-typedef void Ecore_Win32_Direct3D_Texture;
 typedef void Ecore_Win32_Glew_DC;
 
 /* Window state */
@@ -312,6 +306,7 @@ EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST;
 
 EAPI int    ecore_win32_init();
 EAPI int    ecore_win32_shutdown();
+EAPI int    ecore_win32_screen_depth_get();
 EAPI double ecore_win32_current_time_get(void);
 EAPI void   ecore_win32_message_loop_begin (void);
 
@@ -436,48 +431,6 @@ EAPI void                ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor);
 EAPI Ecore_Win32_Cursor *ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape);
 
 EAPI int                 ecore_win32_cursor_size_get(void);
-
-/* DirectDraw */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-EAPI int                        ecore_win32_ddraw_init(Ecore_Win32_Window *window);
-
-EAPI int                        ecore_win32_ddraw_16_init(Ecore_Win32_Window *window);
-
-EAPI void                       ecore_win32_ddraw_shutdown(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_DDraw_Object  *ecore_win32_ddraw_object_get(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_DDraw_Surface *ecore_win32_ddraw_surface_primary_get(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_DDraw_Surface *ecore_win32_ddraw_surface_back_get(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_DDraw_Surface *ecore_win32_ddraw_surface_source_get(Ecore_Win32_Window *window);
-
-EAPI int                        ecore_win32_ddraw_depth_get(Ecore_Win32_Window *window);
-
-/* Direct3D */
-
-EAPI int                           ecore_win32_direct3d_init(Ecore_Win32_Window *window);
-
-EAPI void                          ecore_win32_direct3d_shutdown(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_Direct3D_Object  *ecore_win32_direct3d_object_get(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_Direct3D_Device  *ecore_win32_direct3d_device_get(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_Direct3D_Sprite  *ecore_win32_direct3d_sprite_get(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_Direct3D_Texture *ecore_win32_direct3d_texture_get(Ecore_Win32_Window *window);
-
-EAPI int                           ecore_win32_direct3d_depth_get(Ecore_Win32_Window *window);
-
-#ifdef __cplusplus
-}
-#endif
 
 /* OpenGL Glew */
 

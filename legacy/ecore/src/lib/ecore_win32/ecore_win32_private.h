@@ -13,13 +13,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
-#ifdef HAVE_DIRECTDRAW
-# include <ddraw.h>
-#endif /* HAVE_DIRECTDRAW */
-#ifdef HAVE_DIRECT3D
-# include <d3d9.h>
-# include <d3dx9.h>
-#endif /* HAVE_DIRECT3D */
 #ifdef HAVE_OPENGL_GLEW
 # include <GL/glew.h>
 #endif /* HAVE_OPENGL_GLEW */
@@ -35,9 +28,7 @@
 
 typedef enum
 {
-   ECORE_WIN32_BACKEND_DIRECTDRAW,
    ECORE_WIN32_BACKEND_DIRECTDRAW_16,
-   ECORE_WIN32_BACKEND_DIRECT3D,
    ECORE_WIN32_BACKEND_GLEW,
    ECORE_WIN32_BACKEND_NONE
 }Ecore_Win32_Backend;
@@ -61,27 +52,6 @@ struct _Ecore_Win32_Window
    HWND                   window;
 
   Ecore_Win32_Backend     backend;
-
-#ifdef HAVE_DIRECTDRAW
-   struct {
-      LPDIRECTDRAW        object;
-      LPDIRECTDRAWSURFACE surface_primary;
-      LPDIRECTDRAWSURFACE surface_back;
-      LPDIRECTDRAWSURFACE surface_source;
-      LPDIRECTDRAWCLIPPER clipper;
-      int                 depth;
-   } ddraw;
-#endif /* HAVE_DIRECTDRAW */
-
-#ifdef HAVE_DIRECT3D
-   struct {
-      LPDIRECT3D9         object;
-      LPDIRECT3DDEVICE9   device;
-      LPD3DXSPRITE        sprite;
-      LPDIRECT3DTEXTURE9  texture;
-      int                 depth;
-   } d3d;
-#endif /* HAVE_DIRECT3D */
 
 #ifdef HAVE_OPENGL_GLEW
    struct {

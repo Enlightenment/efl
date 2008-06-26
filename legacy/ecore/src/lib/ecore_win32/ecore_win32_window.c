@@ -79,9 +79,9 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   if (ecore_list_append(_ecore_win32_windows_list, w) == FALSE)
+   SetLastError(0);
+   if (!SetWindowLong(w->window, GWL_USERDATA, (LONG)w) && (GetLastError() != 0))
      {
-        ecore_win32_ddraw_shutdown(w);
         DestroyWindow(w->window);
         free(w);
         return NULL;
@@ -167,35 +167,12 @@ ecore_win32_window_del(Ecore_Win32_Window *window)
 
    if (!window) return;
 
-   ecore_list_first_goto(_ecore_win32_windows_list);
-   while ((w = ecore_list_next(_ecore_win32_windows_list)))
-     {
-       if (w == window)
-         {
-            ecore_list_remove(_ecore_win32_windows_list);
-            break;
-         }
-     }
-/*    ecore_list_remove(_ecore_win32_windows_list); */
-
    switch (((struct _Ecore_Win32_Window *)window)->backend)
      {
-     case ECORE_WIN32_BACKEND_DIRECTDRAW:
-#ifdef HAVE_DIRECTDRAW
-       ecore_win32_ddraw_shutdown(window);
-#endif /* HAVE_DIRECTDRAW */
-       break;
      case ECORE_WIN32_BACKEND_DIRECTDRAW_16:
 #ifdef HAVE_DIRECTDRAW
 /*        ecore_win32_ddraw_shutdown(window); */
 #endif /* HAVE_DIRECTDRAW */
-       break;
-     case ECORE_WIN32_BACKEND_DIRECT3D:
-#ifdef HAVE_DIRECT3D
-       printf ("d3d shut 0 \n");
-       ecore_win32_direct3d_shutdown(window);
-       printf ("d3d shut 1 \n");
-#endif /* HAVE_DIRECT3D */
        break;
      case ECORE_WIN32_BACKEND_GLEW:
 #ifdef HAVE_OPENGL_GLEW

@@ -15,8 +15,6 @@ Ecore_Win32.h
 libecore_win32_la_SOURCES = \
 ecore_win32.c \
 ecore_win32_cursor.c \
-ecore_win32_ddraw.cpp \
-ecore_win32_direct3d.cpp \
 ecore_win32_event.c \
 ecore_win32_glew.c \
 ecore_win32_window.c
