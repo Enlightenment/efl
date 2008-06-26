@@ -503,7 +503,6 @@ dnl ecore_win32
 # TODO: Need to check if we have evas before testing win32 evas engines
 PKG_CHECK_MODULES(EVAS_SOFTWARE_DDRAW, evas-software-ddraw >= 0.9.9.41,
   [ have_ddraw="yes"
-    AC_DEFINE(HAVE_DIRECTDRAW, 1, [Build Ecore_Win32 with DirectDraw Code])
     ddraw_libs="-lddraw -ldxguid" ],
   [ have_ddraw="no" ]
 )
@@ -511,7 +510,6 @@ AC_SUBST(ddraw_libs)
 
 PKG_CHECK_MODULES(EVAS_SOFTWARE_16_DDRAW, evas-software-16-ddraw >= 0.9.9.41,
   [ have_ddraw_16="yes"
-    AC_DEFINE(HAVE_DIRECTDRAW_16, 1, [Build Ecore_Win32 with 16 bpp DirectDraw Code])
     ddraw_16_libs="-lddraw -ldxguid" ],
   [ have_ddraw_16="no" ]
 )
@@ -519,7 +517,6 @@ AC_SUBST(ddraw_16_libs)
 
 PKG_CHECK_MODULES(EVAS_DIRECT3D, evas-direct3d >= 0.9.9.41,
   [ have_direct3d="yes"
-    AC_DEFINE(HAVE_DIRECT3D, 1, [Build Ecore_Win32 with Direct3D Code])
     direct3d_libs="-ld3d9 -ld3dx9d" ],
   [ have_direct3d="no" ]
 )
@@ -527,7 +524,6 @@ AC_SUBST(direct3d_libs)
 
 PKG_CHECK_MODULES(EVAS_OPENGL_GLEW, evas-opengl-glew >= 0.9.9.41,
   [ have_opengl_glew="yes"
-    AC_DEFINE(HAVE_OPENGL_GLEW, 1, [Build Ecore_Win32 with OpenGL Glew Code])
     glew_libs="-lglew32 -lgdi32" ],
   [ have_opengl_glew="no" ]
 )
@@ -539,22 +535,35 @@ if test "x${have_ddraw}" = "xyes" -o "x${have_ddraw_16}" = "xyes" -o "x${have_di
 fi
 
 ECORE_CHECK_MODULE([Win32], [no], [$have_win32],
-  [ecore_win32_libs="$ecore_win32_libs $ddraw_libs $ddraw_16_libs $direct3d_libs"])
+  [ecore_win32_libs="-lgdi32"])
+AC_SUBST(ecore_win32_libs)
 
 if test "x$have_ecore_win32" = "xyes"; then
   requirements_ecore_evas="$requirements_ecore_evas ecore-win32"
 fi
 
+have_ecore_evas_ddraw="no"
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw}" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW, 1, [Support for DirectDraw Engine in Ecore_Evas])
+  AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW, 1, [Support for DirectDraw Engine in Ecore_Evas])
+  have_ecore_evas_ddraw="yes"
 fi
 
+have_ecore_evas_ddraw_16="no"
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_ddraw_16}" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_EVAS_DIRECTDRAW_16, 1, [Support for 16 bpp DirectDraw Engine in Ecore_Evas])
+  AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW_16, 1, [Support for 16 bpp DirectDraw Engine in Ecore_Evas])
+  have_ecore_evas_ddraw_16="yes"
 fi
 
+have_ecore_evas_direct3d="no"
 if test "x${have_ecore_win32}" = "xyes" -a "x${have_direct3d}" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_DIRECT3D, 1, [Support for Direct3D Engine in Ecore_Evas])
+  have_ecore_evas_direct3d="yes"
+fi
+
+have_ecore_evas_opengl_glew="no"
+if test "x${have_ecore_win32}" = "xyes" -a "x${have_opengl_glew}" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_EVAS_GL_GLEW, 1, [Support for OpenGL with Glew Engine in Ecore_Evas])
+  have_ecore_evas_opengl_glew="yes"
 fi
 
 ECORE_CHECK_MODULE([WinCE], [no])
@@ -901,7 +910,10 @@ echo "  Ecore_Evas X11 GL Support....: $have_ecore_evas_x11_gl"
 echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
 echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_x11_16"
 
-echo "  Ecore_Win32..................: $have_ecore_win32 (DirectDraw: ${have_ddraw}) (16bpp DirectDraw: ${have_ddraw_16}) (Direct3D: ${have_direct3d}) (OpenGL Glew: ${have_opengl_glew})"
+echo "  Ecore_Win32..................: $have_ecore_win32"
+echo "  Ecore_Evas DirectDraw Support: $have_ecore_evas_ddraw"
+echo "  Ecore_Evas Direct3D Support..: $have_ecore_evas_direct3d"
+echo "  Ecore_Evas GL Glew Support...: $have_ecore_evas_opengl_glew"
 echo "  Ecore_WinCE..................: $have_ecore_wince"
 echo "  Ecore_Evas WinCE Support.....: $have_ecore_evas_software_16_wince"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
