@@ -9,6 +9,9 @@ typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
 {
+   HWND                 win;
+   HDC                  dc;
+   HGLRC                context;
    Evas_GL_Glew_Window *window;
    int                  end;
 };
@@ -48,9 +51,18 @@ eng_setup(Evas *e, void *in)
 	re = calloc(1, sizeof(Render_Engine));
 	if (!re) return;
 
+        if (!evas_glew_init(info->info.window, &re->dc, &re->context))
+          {
+	     free(re);
+	     e->engine.data.output = NULL;
+	     return;
+          }
+
+        re->win = info->info.window;
 	e->engine.data.output = re;
-	re->window = eng_window_new(info->info.dc,
-                                    info->info.window,
+	re->window = eng_window_new(info->info.window,
+                                    re->dc,
+                                    re->context,
                                     info->info.depth,
                                     e->output.w,
                                     e->output.h);
@@ -77,10 +89,20 @@ eng_setup(Evas *e, void *in)
      }
    else
      {
+
+        if (!evas_glew_init(info->info.window, &re->dc, &re->context))
+          {
+	     free(re);
+	     e->engine.data.output = NULL;
+	     return;
+          }
+
+        re->win = info->info.window;
 	re = e->engine.data.output;
 	eng_window_free(re->window);
-	re->window = eng_window_new(info->info.dc,
-                                    info->info.window,
+	re->window = eng_window_new(info->info.window,
+                                    re->dc,
+                                    re->context,
                                     info->info.depth,
                                     e->output.w,
                                     e->output.h);
@@ -99,6 +121,7 @@ eng_output_free(void *data)
 
    re = (Render_Engine *)data;
    eng_window_free(re->window);
+   evas_glew_shutdown(re->win, re->dc, re->context);
    free(re);
 
    evas_common_font_shutdown();
@@ -241,7 +264,7 @@ eng_output_flush(void *data)
    eng_window_use(re->window);
 
 #ifdef SLOW_GL_COPY_RECT
-   SwapBuffers(re->window->dc);
+   SwapBuffers(re->dc);
 #else
    /* SLOW AS ALL HELL */
    evas_gl_common_swap_rect(re->window->gl_context,
@@ -499,13 +522,13 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    im = image;
    /* FIXME: can move to gl_common */
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return im;
-   if ((has_alpha) && im->im->cache_entry.flags.alpha) return image;
+   if ((has_alpha) && (im->im->cache_entry.flags.alpha)) return image;
    else if ((!has_alpha) && (!im->im->cache_entry.flags.alpha)) return image;
    if (im->references > 1)
     {
 	Evas_GL_Image *im_new;
 
-	im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->image->w, im->im->image->h, im->im->image->data,
+        im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->cache_entry.w, im->im->cache_entry.h, im->im->image.data,
 							   eng_image_alpha_get(data, image),
 							   eng_image_colorspace_get(data, image));
 	if (!im_new) return im;
@@ -569,7 +592,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    im = image;
    /* FIXME: can move to gl_common */
    if (im->cs.space == cspace) return;
-   evas_cache_image_colorspace(&im->im.cache_entry, cspace);
+   evas_cache_image_colorspace(&im->im->cache_entry, cspace);
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -588,7 +611,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 	  {
 	     if (!im->cs.no_free) free(im->cs.data);
 	  }
-	im->cs.data = calloc(1, im->im->image->h * sizeof(unsigned char *) * 2);
+	im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
 	im->cs.no_free = 0;
 	break;
       default:
@@ -615,8 +638,6 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   if (!re)
-     printf ("MERDE2\n");
    *error = 0;
    eng_window_use(re->window);
    return evas_gl_common_image_load(re->window->gl_context, file, key, lo);
@@ -665,8 +686,9 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
 	*h = 0;
 	return;
      }
-   if (w) *w = ((Evas_GL_Image *)image)->im->image->w;
-   if (h) *h = ((Evas_GL_Image *)image)->im->image->h;
+   if (w) *w = ((Evas_GL_Image *)image)->im->cache_entry.w;
+   if (h) *h = ((Evas_GL_Image *)image)->im->cache_entry.h;
+
 }
 
 static void *
@@ -682,7 +704,8 @@ eng_image_size_set(void *data, void *image, int w, int h)
    if ((eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P709_PL))
      w &= ~0x1;
-   if ((im_old) && (im_old->im->image->w == w) && (im_old->im->image->h == h))
+   if ((im_old) && (im_old->im->cache_entry.w == w) && (im_old->im->cache_entry.h == h))
+
      return image;
    if (im_old)
      {
@@ -729,7 +752,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
      }
    im = image;
    eng_window_use(re->window);
-   evas_common_load_image_data_from_file(im->im);
+   evas_cache_image_load_data(&im->im->cache_entry);
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -739,7 +762,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 	       {
 		  Evas_GL_Image *im_new;
 
-		  im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->image->w, im->im->image->h, im->im->image->data,
+		  im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->cache_entry.w, im->im->cache_entry.h, im->im->image.data,
 								     eng_image_alpha_get(data, image),
 								     eng_image_colorspace_get(data, image));
 		  if (!im_new)
@@ -753,7 +776,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 	     else
 	       evas_gl_common_image_dirty(im);
 	  }
-	*image_data = im->im->image->data;
+	*image_data = im->im->image.data;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -779,12 +802,12 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (image_data != im->im->image->data)
+	if (image_data != im->im->image.data)
 	  {
 	     int w, h;
 
-	     w = im->im->image->w;
-	     h = im->im->image->h;
+	     w = im->im->cache_entry.w;
+	     h = im->im->cache_entry.h;
 	     im2 = eng_image_new_from_data(data, w, h, image_data,
 					   eng_image_alpha_get(data, image),
 					   eng_image_colorspace_get(data, image));

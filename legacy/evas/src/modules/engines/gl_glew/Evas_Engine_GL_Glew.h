@@ -1,6 +1,7 @@
 #ifndef __EVAS_ENGINE_GL_GLEW_H__
 #define __EVAS_ENGINE_GL_GLEW_H__
 
+
 #include <windows.h>
 
 
@@ -14,7 +15,6 @@ struct _Evas_Engine_Info_GL_Glew
 
    /* engine specific data & parameters it needs to set up */
    struct {
-      HDC   dc;
       HWND  window;
       int   depth;
    } info;

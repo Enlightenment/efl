@@ -10,22 +10,32 @@ typedef struct _Evas_GL_Glew_Window Evas_GL_Glew_Window;
 
 struct _Evas_GL_Glew_Window
 {
-   HDC              dc;
    HWND             window;
+   HDC              dc;
+   HGLRC            context;
    int              width;
    int              height;
    int              depth;
-   HGLRC            context;
    Evas_GL_Context *gl_context;
    struct {
-      int              redraw : 1;
-      int              drew : 1;
-      int              x1, y1, x2, y2;
+      int           x1;
+      int           y1;
+      int           x2;
+      int           y2;
+      int           redraw : 1;
+      int           drew : 1;
    } draw;
 };
 
-Evas_GL_Glew_Window *eng_window_new(HDC  dc,
-                                    HWND window,
+int evas_glew_init(HWND window, HDC *dc, HGLRC *context);
+
+void evas_glew_shutdown(HWND  window,
+                        HDC   dc,
+                        HGLRC context);
+
+Evas_GL_Glew_Window *eng_window_new(HWND window,
+                                    HDC   dc,
+                                    HGLRC context,
                                     int  depth,
                                     int  width,
                                     int  height);
