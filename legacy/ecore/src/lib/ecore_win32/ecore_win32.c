@@ -14,10 +14,6 @@
 #undef WIN32_LEAN_AND_MEAN
 #include <windowsx.h>
 
-#ifdef HAVE_OPENGL_GLEW
-# include <GL/glew.h>
-#endif /* HAVE_OPENGL_GLEW */
-
 #include "Ecore.h"
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
@@ -118,17 +114,6 @@ ecore_win32_init()
         ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
      }
-
-#ifdef HAVE_OPENGL_GLEW
-   if (GLEW_VERSION_2_0)
-     {
-        printf ("pas 2.0\n");
-        return 0;
-     }
-   else {
-      printf ("2.0 !!\n");
-   }
-#endif /* HAVE_OPENGL_GLEW */
 
    _ecore_win32_init_count++;
 

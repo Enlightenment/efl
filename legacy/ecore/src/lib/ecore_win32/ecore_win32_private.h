@@ -9,13 +9,6 @@
 #define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
 
 
-typedef enum
-{
-   ECORE_WIN32_BACKEND_DIRECTDRAW_16,
-   ECORE_WIN32_BACKEND_GLEW,
-   ECORE_WIN32_BACKEND_NONE
-}Ecore_Win32_Backend;
-
 typedef struct _Ecore_Win32_Callback_Data Ecore_Win32_Callback_Data;
 
 struct _Ecore_Win32_Callback_Data
@@ -33,15 +26,6 @@ struct _Ecore_Win32_Callback_Data
 struct _Ecore_Win32_Window
 {
    HWND                   window;
-
-  Ecore_Win32_Backend     backend;
-
-#ifdef HAVE_OPENGL_GLEW
-   struct {
-      HDC                 dc;
-      int                 depth;
-   } glew;
-#endif /* HAVE_OPENGL_GLEW */
 
    DWORD                  style;          /* used to go fullscreen to normal */
    RECT                   rect;           /* used to go fullscreen to normal */

@@ -35,7 +35,6 @@
 
 typedef void Ecore_Win32_Window;
 typedef void Ecore_Win32_Cursor;
-typedef void Ecore_Win32_Glew_DC;
 
 /* Window state */
 
@@ -431,16 +430,6 @@ EAPI void                ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor);
 EAPI Ecore_Win32_Cursor *ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape);
 
 EAPI int                 ecore_win32_cursor_size_get(void);
-
-/* OpenGL Glew */
-
-EAPI int                  ecore_win32_glew_init(Ecore_Win32_Window *window);
-
-EAPI void                 ecore_win32_glew_shutdown(Ecore_Win32_Window *window);
-
-EAPI Ecore_Win32_Glew_DC *ecore_win32_glew_dc_get(Ecore_Win32_Window *window);
-
-EAPI int                  ecore_win32_glew_depth_get(Ecore_Win32_Window *window);
 
 
 #endif /* __ECORE_WIN32_H__ */

@@ -71,22 +71,6 @@ ecore_win32_window_del(Ecore_Win32_Window *window)
 {
    if (!window) return;
 
-   switch (((struct _Ecore_Win32_Window *)window)->backend)
-     {
-     case ECORE_WIN32_BACKEND_DIRECTDRAW_16:
-#ifdef HAVE_DIRECTDRAW
-/*        ecore_win32_ddraw_shutdown(window); */
-#endif /* HAVE_DIRECTDRAW */
-       break;
-     case ECORE_WIN32_BACKEND_GLEW:
-#ifdef HAVE_OPENGL_GLEW
-       ecore_win32_glew_shutdown(window);
-#endif /* HAVE_OPENGL_GLEW */
-       break;
-     default:
-       break;
-     }
-
    DestroyWindow(((struct _Ecore_Win32_Window *)window)->window);
    free(window);
    printf ("ecore_win32_window_del\n");
@@ -884,8 +868,6 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
         free(w);
         return NULL;
      }
-
-   w->backend = ECORE_WIN32_BACKEND_NONE;
 
    w->min_width   = 0;
    w->min_height  = 0;

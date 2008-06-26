@@ -16,11 +16,10 @@ libecore_win32_la_SOURCES = \
 ecore_win32.c \
 ecore_win32_cursor.c \
 ecore_win32_event.c \
-ecore_win32_glew.c \
 ecore_win32_window.c
 
 libecore_win32_la_LIBADD = \
-@ddraw_libs@ @direct3d_libs@ @glew_libs@ \
+@ecore_win32_libs@ \
 @WIN32_LIBS@ \
 $(top_builddir)/src/lib/ecore/libecore.la
 
