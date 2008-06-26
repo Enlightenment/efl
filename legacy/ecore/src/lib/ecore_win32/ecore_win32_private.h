@@ -6,23 +6,6 @@
 #define __ECORE_WIN32_PRIVATE_H__
 
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-#ifdef HAVE_OPENGL_GLEW
-# include <GL/glew.h>
-#endif /* HAVE_OPENGL_GLEW */
-
-#include <Ecore.h>
-#include <Ecore_Data.h>
-
-#include "Ecore_Win32.h"
-
-
 #define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
 
 
@@ -104,7 +87,6 @@ struct _Ecore_Win32_Window
 };
 
 
-extern Ecore_List         *_ecore_win32_windows_list;
 extern HINSTANCE           _ecore_win32_instance;
 extern double              _ecore_win32_double_click_time;
 extern double              _ecore_win32_event_last_time;

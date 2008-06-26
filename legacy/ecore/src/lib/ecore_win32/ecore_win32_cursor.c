@@ -2,9 +2,21 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
+#include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
 
-EAPI Ecore_Win32_Cursor *
+
+/***** API *****/
+
+Ecore_Win32_Cursor *
 ecore_win32_cursor_new(const void *pixels_and,
                        const void *pixels_xor,
                        int         width,
@@ -33,13 +45,13 @@ ecore_win32_cursor_new(const void *pixels_and,
    return cursor;
 }
 
-EAPI void
+void
 ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
 {
    DestroyCursor(cursor);
 }
 
-EAPI Ecore_Win32_Cursor *
+Ecore_Win32_Cursor *
 ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape)
 {
    Ecore_Win32_Cursor *cursor = NULL;
@@ -99,7 +111,7 @@ ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape)
    return cursor;
 }
 
-EAPI int
+int
 ecore_win32_cursor_size_get(void)
 {
    int width;

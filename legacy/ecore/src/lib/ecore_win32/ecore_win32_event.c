@@ -2,11 +2,24 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdlib.h>
+#include <stdio.h>   /* for printf */
+
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 #include <windowsx.h>
 
 #include "Ecore.h"
+#include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
+
+
+/***** Private declarations *****/
 
 
 static Ecore_Win32_Window *_ecore_win32_mouse_down_last_window = NULL;
@@ -16,318 +29,24 @@ static double              _ecore_win32_mouse_down_last_last_time = 0;
 static int                 _ecore_win32_mouse_down_did_triple = 0;
 static int                 _ecore_win32_mouse_up_count = 0;
 
-static void
-_ecore_win32_event_free_key_down(void *data,
-                                 void *ev)
-{
-   Ecore_Win32_Event_Key_Down *e;
+static void _ecore_win32_event_free_key_down(void *data,
+                                             void *ev);
 
-   e = ev;
-   if (e->keyname) free(e->keyname);
-   if (e->keysymbol) free(e->keysymbol);
-   if (e->keycompose) free(e->keycompose);
-   free(e);
-}
+static void _ecore_win32_event_free_key_up(void *data,
+                                           void *ev);
 
-static void
-_ecore_win32_event_free_key_up(void *data,
-                               void *ev)
-{
-   Ecore_Win32_Event_Key_Up *e;
+static int  _ecore_win32_event_keystroke_get(int    key,
+                                             char **keyname,
+                                             char **keysymbol,
+                                             char **keycompose);
 
-   e = ev;
-   if (e->keyname) free(e->keyname);
-   if (e->keysymbol) free(e->keysymbol);
-   if (e->keycompose) free(e->keycompose);
-   free(e);
-}
+static int  _ecore_win32_event_char_get(int    key,
+                                        char **keyname,
+                                        char **keysymbol,
+                                        char **keycompose);
 
-static int
-_ecore_win32_event_keystroke_get(int    key,
-                                 char **keyname,
-                                 char **keysymbol,
-                                 char **keycompose)
-{
-  char *kn;
-  char *ks;
-  char *kc;
 
-  *keyname = NULL;
-  *keysymbol = NULL;
-  *keycompose = NULL;
-
-   switch (key)
-     {
-       /* Keystroke */
-     case VK_PRIOR:
-       kn = "KP_Prior";
-       ks = "KP_Prior";
-       kc = "";
-       break;
-     case VK_NEXT:
-       kn = "KP_Next";
-       ks = "KP_Next";
-       kc = "";
-       break;
-     case VK_END:
-       kn = "KP_End";
-       ks = "KP_End";
-       kc = "";
-       break;
-     case VK_HOME:
-       kn = "KP_Home";
-       ks = "KP_Home";
-       kc = "";
-       break;
-     case VK_LEFT:
-       kn = "KP_Left";
-       ks = "KP_Left";
-       kc = "";
-       break;
-     case VK_UP:
-       kn = "KP_Up";
-       ks = "KP_Up";
-       kc = "";
-       break;
-     case VK_RIGHT:
-       kn = "KP_Right";
-       ks = "KP_Right";
-       kc = "";
-       break;
-     case VK_DOWN:
-       kn = "KP_Down";
-       ks = "KP_Down";
-       kc = "";
-       break;
-     case VK_INSERT:
-       kn = "KP_Insert";
-       ks = "KP_Insert";
-       kc = "";
-       break;
-     case VK_DELETE:
-       kn = "KP_Delete";
-       ks = "KP_Delete";
-       kc = "";
-       break;
-     case VK_F1:
-       kn = "F1";
-       ks = "F1";
-       kc = "";
-       break;
-     case VK_F2:
-       kn = "F2";
-       ks = "F2";
-       kc = "";
-       break;
-     case VK_F3:
-       kn = "F3";
-       ks = "F3";
-       kc = "";
-       break;
-     case VK_F4:
-       kn = "F4";
-       ks = "F4";
-       kc = "";
-       break;
-     case VK_F5:
-       kn = "F5";
-       ks = "F5";
-       kc = "";
-       break;
-     case VK_F6:
-       kn = "F6";
-       ks = "F6";
-       kc = "";
-       break;
-     case VK_F7:
-       kn = "F7";
-       ks = "F7";
-       kc = "";
-       break;
-     case VK_F8:
-       kn = "F8";
-       ks = "F8";
-       kc = "";
-       break;
-     case VK_F9:
-       kn = "F9";
-       ks = "F9";
-       kc = "";
-       break;
-     case VK_F10:
-       kn = "F10";
-       ks = "F10";
-       kc = "";
-       break;
-     case VK_F11:
-       kn = "F11";
-       ks = "F11";
-       kc = "";
-       break;
-     case VK_F12:
-       kn = "F12";
-       ks = "F12";
-       kc = "";
-       break;
-     case VK_F13:
-       kn = "F13";
-       ks = "F13";
-       kc = "";
-       break;
-     case VK_F14:
-       kn = "F14";
-       ks = "F14";
-       kc = "";
-       break;
-     case VK_F15:
-       kn = "F15";
-       ks = "F15";
-       kc = "";
-       break;
-     case VK_F16:
-       kn = "F16";
-       ks = "F16";
-       kc = "";
-       break;
-     case VK_F17:
-       kn = "F17";
-       ks = "F17";
-       kc = "";
-       break;
-     case VK_F18:
-       kn = "F18";
-       ks = "F18";
-       kc = "";
-       break;
-     case VK_F19:
-       kn = "F19";
-       ks = "F19";
-       kc = "";
-       break;
-     case VK_F20:
-       kn = "F20";
-       ks = "F20";
-       kc = "";
-       break;
-     case VK_F21:
-       kn = "F21";
-       ks = "F21";
-       kc = "";
-       break;
-     case VK_F22:
-       kn = "F22";
-       ks = "F22";
-       kc = "";
-       break;
-     case VK_F23:
-       kn = "F23";
-       ks = "F23";
-       kc = "";
-       break;
-     case VK_F24:
-       kn = "F24";
-       ks = "F24";
-       kc = "";
-       break;
-     default:
-       /* other non keystroke characters */
-       return 0;
-     }
-   *keyname = strdup(kn);
-   if (!*keyname) return 0;
-   *keysymbol = strdup(ks);
-   if (!*keysymbol)
-     {
-        free(*keyname);
-        *keyname = NULL;
-        return 0;
-     }
-   *keycompose = strdup(kc);
-   if (!*keycompose)
-     {
-        free(*keyname);
-        free(*keysymbol);
-        *keyname = NULL;
-        *keysymbol = NULL;
-        return 0;
-     }
-
-   return 1;
-}
-
-static int
-_ecore_win32_event_char_get(int    key,
-                            char **keyname,
-                            char **keysymbol,
-                            char **keycompose)
-{
-  char kn[32];
-  char ks[32];
-  char *kc;
-
-  *keyname = NULL;
-  *keysymbol = NULL;
-  *keycompose = NULL;
-
-   switch (key)
-     {
-     case VK_BACK:
-       strncpy(kn, "Backspace", 32);
-       strncpy(ks, "Backspace", 32);
-       kc = "";
-       break;
-     case VK_TAB:
-       strncpy(kn, "Tab", 32);
-       strncpy(ks, "Tab", 32);
-       kc = "";
-       break;
-     case 0x0a:
-       /* Line feed (Shift + Enter) */
-       strncpy(kn, "LineFeed", 32);
-       strncpy(ks, "LineFeed", 32);
-       kc = "";
-       break;
-     case VK_RETURN:
-       strncpy(kn, "Return", 32);
-       strncpy(ks, "Return", 32);
-       kc = "";
-       break;
-     case VK_ESCAPE:
-       strncpy(kn, "Escape", 32);
-       strncpy(ks, "Escape", 32);
-       kc = "";
-       break;
-     default:
-       /* displayable characters */
-       printf (" * key : %d\n", key);
-       kn[0] = (TCHAR)key;
-       kn[1] = '\0';
-       ks[0] = (TCHAR)key;
-       ks[1] = '\0';
-       kc = "";
-       break;
-     }
-   *keyname = strdup(kn);
-   if (!*keyname) return 0;
-   *keysymbol = strdup(ks);
-   if (!*keysymbol)
-     {
-        free(*keyname);
-        *keyname = NULL;
-        return 0;
-     }
-   *keycompose = strdup(kc);
-   if (!*keycompose)
-     {
-        free(*keyname);
-        free(*keysymbol);
-        *keyname = NULL;
-        *keysymbol = NULL;
-        return 0;
-     }
-
-   return 1;
-}
+/***** Global functions definitions *****/
 
 void
 _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
@@ -850,4 +569,320 @@ _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
    e->time = _ecore_win32_event_last_time;
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
+}
+
+
+/***** Private functions definitions *****/
+
+static void
+_ecore_win32_event_free_key_down(void *data,
+                                 void *ev)
+{
+   Ecore_Win32_Event_Key_Down *e;
+
+   e = ev;
+   if (e->keyname) free(e->keyname);
+   if (e->keysymbol) free(e->keysymbol);
+   if (e->keycompose) free(e->keycompose);
+   free(e);
+}
+
+static void
+_ecore_win32_event_free_key_up(void *data,
+                               void *ev)
+{
+   Ecore_Win32_Event_Key_Up *e;
+
+   e = ev;
+   if (e->keyname) free(e->keyname);
+   if (e->keysymbol) free(e->keysymbol);
+   if (e->keycompose) free(e->keycompose);
+   free(e);
+}
+
+static int
+_ecore_win32_event_keystroke_get(int    key,
+                                 char **keyname,
+                                 char **keysymbol,
+                                 char **keycompose)
+{
+  char *kn;
+  char *ks;
+  char *kc;
+
+  *keyname = NULL;
+  *keysymbol = NULL;
+  *keycompose = NULL;
+
+   switch (key)
+     {
+       /* Keystroke */
+     case VK_PRIOR:
+       kn = "KP_Prior";
+       ks = "KP_Prior";
+       kc = "";
+       break;
+     case VK_NEXT:
+       kn = "KP_Next";
+       ks = "KP_Next";
+       kc = "";
+       break;
+     case VK_END:
+       kn = "KP_End";
+       ks = "KP_End";
+       kc = "";
+       break;
+     case VK_HOME:
+       kn = "KP_Home";
+       ks = "KP_Home";
+       kc = "";
+       break;
+     case VK_LEFT:
+       kn = "KP_Left";
+       ks = "KP_Left";
+       kc = "";
+       break;
+     case VK_UP:
+       kn = "KP_Up";
+       ks = "KP_Up";
+       kc = "";
+       break;
+     case VK_RIGHT:
+       kn = "KP_Right";
+       ks = "KP_Right";
+       kc = "";
+       break;
+     case VK_DOWN:
+       kn = "KP_Down";
+       ks = "KP_Down";
+       kc = "";
+       break;
+     case VK_INSERT:
+       kn = "KP_Insert";
+       ks = "KP_Insert";
+       kc = "";
+       break;
+     case VK_DELETE:
+       kn = "KP_Delete";
+       ks = "KP_Delete";
+       kc = "";
+       break;
+     case VK_F1:
+       kn = "F1";
+       ks = "F1";
+       kc = "";
+       break;
+     case VK_F2:
+       kn = "F2";
+       ks = "F2";
+       kc = "";
+       break;
+     case VK_F3:
+       kn = "F3";
+       ks = "F3";
+       kc = "";
+       break;
+     case VK_F4:
+       kn = "F4";
+       ks = "F4";
+       kc = "";
+       break;
+     case VK_F5:
+       kn = "F5";
+       ks = "F5";
+       kc = "";
+       break;
+     case VK_F6:
+       kn = "F6";
+       ks = "F6";
+       kc = "";
+       break;
+     case VK_F7:
+       kn = "F7";
+       ks = "F7";
+       kc = "";
+       break;
+     case VK_F8:
+       kn = "F8";
+       ks = "F8";
+       kc = "";
+       break;
+     case VK_F9:
+       kn = "F9";
+       ks = "F9";
+       kc = "";
+       break;
+     case VK_F10:
+       kn = "F10";
+       ks = "F10";
+       kc = "";
+       break;
+     case VK_F11:
+       kn = "F11";
+       ks = "F11";
+       kc = "";
+       break;
+     case VK_F12:
+       kn = "F12";
+       ks = "F12";
+       kc = "";
+       break;
+     case VK_F13:
+       kn = "F13";
+       ks = "F13";
+       kc = "";
+       break;
+     case VK_F14:
+       kn = "F14";
+       ks = "F14";
+       kc = "";
+       break;
+     case VK_F15:
+       kn = "F15";
+       ks = "F15";
+       kc = "";
+       break;
+     case VK_F16:
+       kn = "F16";
+       ks = "F16";
+       kc = "";
+       break;
+     case VK_F17:
+       kn = "F17";
+       ks = "F17";
+       kc = "";
+       break;
+     case VK_F18:
+       kn = "F18";
+       ks = "F18";
+       kc = "";
+       break;
+     case VK_F19:
+       kn = "F19";
+       ks = "F19";
+       kc = "";
+       break;
+     case VK_F20:
+       kn = "F20";
+       ks = "F20";
+       kc = "";
+       break;
+     case VK_F21:
+       kn = "F21";
+       ks = "F21";
+       kc = "";
+       break;
+     case VK_F22:
+       kn = "F22";
+       ks = "F22";
+       kc = "";
+       break;
+     case VK_F23:
+       kn = "F23";
+       ks = "F23";
+       kc = "";
+       break;
+     case VK_F24:
+       kn = "F24";
+       ks = "F24";
+       kc = "";
+       break;
+     default:
+       /* other non keystroke characters */
+       return 0;
+     }
+   *keyname = strdup(kn);
+   if (!*keyname) return 0;
+   *keysymbol = strdup(ks);
+   if (!*keysymbol)
+     {
+        free(*keyname);
+        *keyname = NULL;
+        return 0;
+     }
+   *keycompose = strdup(kc);
+   if (!*keycompose)
+     {
+        free(*keyname);
+        free(*keysymbol);
+        *keyname = NULL;
+        *keysymbol = NULL;
+        return 0;
+     }
+
+   return 1;
+}
+
+static int
+_ecore_win32_event_char_get(int    key,
+                            char **keyname,
+                            char **keysymbol,
+                            char **keycompose)
+{
+  char kn[32];
+  char ks[32];
+  char *kc;
+
+  *keyname = NULL;
+  *keysymbol = NULL;
+  *keycompose = NULL;
+
+   switch (key)
+     {
+     case VK_BACK:
+       strncpy(kn, "Backspace", 32);
+       strncpy(ks, "Backspace", 32);
+       kc = "";
+       break;
+     case VK_TAB:
+       strncpy(kn, "Tab", 32);
+       strncpy(ks, "Tab", 32);
+       kc = "";
+       break;
+     case 0x0a:
+       /* Line feed (Shift + Enter) */
+       strncpy(kn, "LineFeed", 32);
+       strncpy(ks, "LineFeed", 32);
+       kc = "";
+       break;
+     case VK_RETURN:
+       strncpy(kn, "Return", 32);
+       strncpy(ks, "Return", 32);
+       kc = "";
+       break;
+     case VK_ESCAPE:
+       strncpy(kn, "Escape", 32);
+       strncpy(ks, "Escape", 32);
+       kc = "";
+       break;
+     default:
+       /* displayable characters */
+       printf (" * key : %d\n", key);
+       kn[0] = (TCHAR)key;
+       kn[1] = '\0';
+       ks[0] = (TCHAR)key;
+       ks[1] = '\0';
+       kc = "";
+       break;
+     }
+   *keyname = strdup(kn);
+   if (!*keyname) return 0;
+   *keysymbol = strdup(ks);
+   if (!*keysymbol)
+     {
+        free(*keyname);
+        *keyname = NULL;
+        return 0;
+     }
+   *keycompose = strdup(kc);
+   if (!*keycompose)
+     {
+        free(*keyname);
+        free(*keysymbol);
+        *keyname = NULL;
+        *keysymbol = NULL;
+        return 0;
+     }
+
+   return 1;
 }

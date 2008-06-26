@@ -2,17 +2,211 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdlib.h>
+#include <stdio.h>   /* for printf */
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 #include <windowsx.h>
 
+#ifdef HAVE_OPENGL_GLEW
+# include <GL/glew.h>
+#endif /* HAVE_OPENGL_GLEW */
+
+#include "Ecore.h"
+#include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
 
+
+/***** Global declarations *****/
 
 HINSTANCE           _ecore_win32_instance = NULL;
 double              _ecore_win32_double_click_time = 0.25;
 double              _ecore_win32_event_last_time = 0.0;
 Ecore_Win32_Window *_ecore_win32_event_last_window = NULL;
 
-static int          _ecore_win32_init_count = 0;
+int ECORE_WIN32_EVENT_KEY_DOWN              = 0;
+int ECORE_WIN32_EVENT_KEY_UP                = 0;
+int ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = 0;
+int ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = 0;
+int ECORE_WIN32_EVENT_MOUSE_MOVE            = 0;
+int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
+int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
+int ECORE_WIN32_EVENT_MOUSE_WHEEL           = 0;
+int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = 0;
+int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = 0;
+int ECORE_WIN32_EVENT_WINDOW_DAMAGE         = 0;
+int ECORE_WIN32_EVENT_WINDOW_CREATE         = 0;
+int ECORE_WIN32_EVENT_WINDOW_DESTROY        = 0;
+int ECORE_WIN32_EVENT_WINDOW_SHOW           = 0;
+int ECORE_WIN32_EVENT_WINDOW_HIDE           = 0;
+int ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = 0;
+int ECORE_WIN32_EVENT_WINDOW_RESIZE         = 0;
+int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
+
+
+/***** Private declarations *****/
+
+static int       _ecore_win32_init_count = 0;
+
+LRESULT CALLBACK _ecore_win32_window_procedure(HWND   window,
+                                               UINT   message,
+                                               WPARAM window_param,
+                                               LPARAM data_param);
+
+
+/***** API *****/
+
+
+int
+ecore_win32_init()
+{
+   WNDCLASS wc;
+
+   if (_ecore_win32_init_count > 0)
+     {
+	_ecore_win32_init_count++;
+	return _ecore_win32_init_count;
+     }
+
+   printf (" *** ecore_win32_init\n");
+   _ecore_win32_instance = GetModuleHandle(NULL);
+   if (!_ecore_win32_instance)
+     return 0;
+
+   memset (&wc, 0, sizeof (WNDCLASS));
+   wc.style = CS_HREDRAW | CS_VREDRAW;
+   wc.lpfnWndProc = _ecore_win32_window_procedure;
+   wc.cbClsExtra = 0;
+   wc.cbWndExtra = 0;
+   wc.hInstance = _ecore_win32_instance;
+   wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+   wc.hCursor = LoadCursor (NULL, IDC_ARROW);
+   wc.hbrBackground = (HBRUSH)(1 + COLOR_BTNFACE);
+   wc.lpszMenuName =  NULL;
+   wc.lpszClassName = ECORE_WIN32_WINDOW_CLASS;
+
+   if(!RegisterClass(&wc))
+     {
+        FreeLibrary(_ecore_win32_instance);
+        return 0;
+     }
+
+   if (!ECORE_WIN32_EVENT_KEY_DOWN)
+     {
+        ECORE_WIN32_EVENT_KEY_DOWN              = ecore_event_type_new();
+        ECORE_WIN32_EVENT_KEY_UP                = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_MOVE            = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_WHEEL           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_CREATE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DESTROY        = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_SHOW           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
+     }
+
+#ifdef HAVE_OPENGL_GLEW
+   if (GLEW_VERSION_2_0)
+     {
+        printf ("pas 2.0\n");
+        return 0;
+     }
+   else {
+      printf ("2.0 !!\n");
+   }
+#endif /* HAVE_OPENGL_GLEW */
+
+   _ecore_win32_init_count++;
+
+   return _ecore_win32_init_count;
+}
+
+int
+ecore_win32_shutdown()
+{
+   _ecore_win32_init_count++;
+   if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
+   if (!_ecore_win32_instance) return _ecore_win32_init_count;
+
+   UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
+   FreeLibrary(_ecore_win32_instance);
+   _ecore_win32_instance = NULL;
+
+   if (_ecore_win32_init_count < 0) _ecore_win32_init_count = 0;
+
+   return _ecore_win32_init_count;
+}
+
+int
+ecore_win32_screen_depth_get()
+{
+   HDC dc;
+   int depth;
+
+   dc = GetDC(NULL);
+   if (!dc)
+     return 0;
+
+   depth = GetDeviceCaps(dc, BITSPIXEL);
+   ReleaseDC(NULL, dc);
+
+   return depth;
+}
+
+/**
+ * Sets the timeout for a double and triple clicks to be flagged.
+ *
+ * This sets the time between clicks before the double_click flag is
+ * set in a button down event. If 3 clicks occur within double this
+ * time, the triple_click flag is also set.
+ *
+ * @param t The time in seconds
+ */
+void
+ecore_win32_double_click_time_set(double t)
+{
+   if (t < 0.0) t = 0.0;
+   _ecore_win32_double_click_time = t;
+}
+
+/**
+ * Retrieves the double and triple click flag timeout.
+ *
+ * See @ref ecore_win32_double_click_time_set for more information.
+ *
+ * @return The timeout for double clicks in seconds.
+ */
+double
+ecore_win32_double_click_time_get(void)
+{
+   return _ecore_win32_double_click_time;
+}
+
+/**
+ * Return the last event time
+ */
+double
+ecore_win32_current_time_get(void)
+{
+   return _ecore_win32_event_last_time;
+}
+
+
+/***** Private functions definitions *****/
 
 
 LRESULT CALLBACK
@@ -230,192 +424,4 @@ _ecore_win32_window_procedure(HWND   window,
        return DefWindowProc(window, message, window_param, data_param);
      }
 
-}
-
-/*
-  Events:
-
-x * key down
-  * key sys down
-x * key up
-  * key sys up
-x * mouse button down left
-x * mouse button down middle
-x * mouse button down right
-x * mouse button up left
-x * mouse button up middle
-x * mouse button up right
-x * mouse move (contains enter)
-x * mouse leave
-x * focus in
-x * focus out
-x * expose
-x * create
-x * destroy
-x * configure
-x * resize
-x * delete
-
-*/
-
-EAPI int ECORE_WIN32_EVENT_KEY_DOWN              = 0;
-EAPI int ECORE_WIN32_EVENT_KEY_UP                = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_MOVE            = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
-EAPI int ECORE_WIN32_EVENT_MOUSE_WHEEL           = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_DAMAGE         = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_CREATE         = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_DESTROY        = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_SHOW           = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_HIDE           = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_RESIZE         = 0;
-EAPI int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
-
-
-EAPI int
-ecore_win32_init()
-{
-   WNDCLASS wc;
-
-   if (_ecore_win32_init_count > 0)
-     {
-	_ecore_win32_init_count++;
-	return _ecore_win32_init_count;
-     }
-
-   printf (" *** ecore_win32_init\n");
-   _ecore_win32_instance = GetModuleHandle(NULL);
-   if (!_ecore_win32_instance)
-     return 0;
-
-   memset (&wc, 0, sizeof (WNDCLASS));
-   wc.style = CS_HREDRAW | CS_VREDRAW;
-   wc.lpfnWndProc = _ecore_win32_window_procedure;
-   wc.cbClsExtra = 0;
-   wc.cbWndExtra = 0;
-   wc.hInstance = _ecore_win32_instance;
-   wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
-   wc.hCursor = LoadCursor (NULL, IDC_ARROW);
-   wc.hbrBackground = (HBRUSH)(1 + COLOR_BTNFACE);
-   wc.lpszMenuName =  NULL;
-   wc.lpszClassName = ECORE_WIN32_WINDOW_CLASS;
-
-   if(!RegisterClass(&wc))
-     {
-        FreeLibrary(_ecore_win32_instance);
-        return 0;
-     }
-
-   if (!ECORE_WIN32_EVENT_KEY_DOWN)
-     {
-        ECORE_WIN32_EVENT_KEY_DOWN              = ecore_event_type_new();
-        ECORE_WIN32_EVENT_KEY_UP                = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_MOVE            = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_WHEEL           = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_CREATE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DESTROY        = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_SHOW           = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
-     }
-
-#ifdef HAVE_OPENGL_GLEW
-   if (GLEW_VERSION_2_0)
-     {
-        printf ("pas 2.0\n");
-        return 0;
-     }
-   else {
-      printf ("2.0 !!\n");
-   }
-#endif /* HAVE_OPENGL_GLEW */
-
-   _ecore_win32_init_count++;
-
-   return _ecore_win32_init_count;
-}
-
-EAPI int
-ecore_win32_shutdown()
-{
-   _ecore_win32_init_count++;
-   if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
-   if (!_ecore_win32_instance) return _ecore_win32_init_count;
-
-   UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
-   FreeLibrary(_ecore_win32_instance);
-   _ecore_win32_instance = NULL;
-
-   if (_ecore_win32_init_count < 0) _ecore_win32_init_count = 0;
-
-   return _ecore_win32_init_count;
-}
-
-EAPI int
-ecore_win32_screen_depth_get()
-{
-   HDC dc;
-   int depth;
-
-   dc = GetDC(NULL);
-   if (!dc)
-     return 0;
-
-   depth = GetDeviceCaps(dc, BITSPIXEL);
-   ReleaseDC(NULL, dc);
-
-   return depth;
-}
-
-/**
- * Sets the timeout for a double and triple clicks to be flagged.
- *
- * This sets the time between clicks before the double_click flag is
- * set in a button down event. If 3 clicks occur within double this
- * time, the triple_click flag is also set.
- *
- * @param t The time in seconds
- */
-EAPI void
-ecore_win32_double_click_time_set(double t)
-{
-   if (t < 0.0) t = 0.0;
-   _ecore_win32_double_click_time = t;
-}
-
-/**
- * Retrieves the double and triple click flag timeout.
- *
- * See @ref ecore_win32_double_click_time_set for more information.
- *
- * @return The timeout for double clicks in seconds.
- */
-EAPI double
-ecore_win32_double_click_time_get(void)
-{
-   return _ecore_win32_double_click_time;
-}
-
-/**
- * Return the last event time
- */
-EAPI double
-ecore_win32_current_time_get(void)
-{
-   return _ecore_win32_event_last_time;
 }

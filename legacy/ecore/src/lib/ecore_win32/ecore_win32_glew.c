@@ -2,11 +2,20 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>   /* for printf */
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
 #include <GL/glew.h>
-#include "ecore_win32_private.h"
+
 #include "Ecore_Win32.h"
-#include <stdio.h>
+#include "ecore_win32_private.h"
 
 
 static int _ecore_win32_glew_init = 0;
@@ -18,9 +27,7 @@ ecore_win32_glew_init(Ecore_Win32_Window *window)
    PIXELFORMATDESCRIPTOR pfd;
    int                   format;
 
-   RECT                        rect;
    struct _Ecore_Win32_Window *w;
-   DWORD                       flag;
 
    if (!window)
      return 0;
@@ -85,7 +92,6 @@ ecore_win32_glew_init(Ecore_Win32_Window *window)
    return 1;
 
  no_glew_2_0:
- no_glew_init:
  no_format:
    ReleaseDC (w->window, w->glew.dc);
  no_dc:
