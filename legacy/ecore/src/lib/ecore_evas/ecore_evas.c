@@ -78,6 +78,12 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
+      case ECORE_EVAS_ENGINE_GL_GLEW:
+#ifdef BUILD_ECORE_EVAS_GL_GLEW
+	return 1;
+#else
+	return 0;
+#endif
      case ECORE_EVAS_ENGINE_SDL:
 #ifdef BUILD_ECORE_EVAS_SDL
         return 1;

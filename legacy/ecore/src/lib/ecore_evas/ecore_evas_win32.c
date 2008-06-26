@@ -984,7 +984,7 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                               int                 width,
                               int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_DIRECTDRAW
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW
    Evas_Engine_Info_Software_DDraw *einfo;
    Ecore_Evas                      *ee;
    int                              rmethod;
@@ -1077,7 +1077,7 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
    y = 0;
    width = 0;
    height = 0;
-#endif /* BUILD_ECORE_EVAS_DIRECTDRAW */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW */
 }
 
 EAPI Ecore_Win32_Window *
@@ -1093,7 +1093,7 @@ ecore_evas_software_ddraw_16_new(Ecore_Win32_Window *parent,
                                  int                 width,
                                  int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_DIRECTDRAW_16
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW_16
    Evas_Engine_Info_Software_16_DDraw *einfo;
    Ecore_Evas                         *ee;
    int                                 rmethod;
@@ -1192,7 +1192,7 @@ ecore_evas_software_ddraw_16_new(Ecore_Win32_Window *parent,
    y = 0;
    width = 0;
    height = 0;
-#endif /* BUILD_ECORE_EVAS_DIRECTDRAW_16 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW_16 */
 }
 
 EAPI Ecore_Win32_Window *
@@ -1300,4 +1300,98 @@ EAPI Ecore_Win32_Window *
 ecore_evas_direct3d_window_get(Ecore_Evas *ee)
 {
    return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
+}
+
+EAPI Ecore_Evas *
+ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
+                       int                 x,
+                       int                 y,
+                       int                 width,
+                       int                 height)
+{
+#ifdef BUILD_ECORE_EVAS_GL_GLEW
+   Evas_Engine_Info_GL_Glew *einfo;
+   Ecore_Evas               *ee;
+   int                       rmethod;
+
+   rmethod = evas_render_method_lookup("gl_glew");
+   if (!rmethod)
+     return NULL;
+
+   if (!ecore_win32_init())
+     return NULL;
+
+   ee = calloc(1, sizeof(Ecore_Evas));
+   if (!ee)
+     return NULL;
+
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+
+   _ecore_evas_win32_init();
+
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_win32_engine_func;
+ 
+   ee->driver = "gl_glew";
+
+   if (width < 1) width = 1;
+   if (height < 1) height = 1;
+   ee->x = x;
+   ee->y = y;
+   ee->w = width;
+   ee->h = height;
+
+   ee->prop.max.w = 32767;
+   ee->prop.max.h = 32767;
+   ee->prop.layer = 4;
+   ee->prop.request_pos = 0;
+   ee->prop.sticky = 0;
+   /* FIXME: sticky to add */
+
+   /* init evas here */
+   ee->evas = evas_new();
+   evas_data_attach_set(ee->evas, ee);
+   evas_output_method_set(ee->evas, rmethod);
+   evas_output_size_set(ee->evas, width, height);
+   evas_output_viewport_set(ee->evas, 0, 0, width, height);
+
+   ee->engine.win32.parent = parent;
+   ee->engine.win32.window = ecore_win32_window_new(parent, x, y, width, height);
+   if (!ee->engine.win32.window)
+     {
+        _ecore_evas_win32_shutdown();
+        free(ee);
+        return NULL;
+     }
+
+   einfo = (Evas_Engine_Info_GL_Glew *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+        /* FIXME: REDRAW_DEBUG missing for now */
+        einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
+        einfo->info.depth = ecore_win32_screen_depth_get();
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+     }
+
+   evas_key_modifier_add(ee->evas, "Shift");
+   evas_key_modifier_add(ee->evas, "Control");
+   evas_key_modifier_add(ee->evas, "Alt");
+   evas_key_modifier_add(ee->evas, "Meta");
+   evas_key_modifier_add(ee->evas, "Hyper");
+   evas_key_modifier_add(ee->evas, "Super");
+   evas_key_lock_add(ee->evas, "Caps_Lock");
+   evas_key_lock_add(ee->evas, "Num_Lock");
+   evas_key_lock_add(ee->evas, "Scroll_Lock");
+
+   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_win32_winid_str_get(ee->engine.win32.window), ee);
+
+   return ee;
+#else
+   return NULL;
+   parent = NULL;
+   x = 0;
+   y = 0;
+   width = 0;
+   height = 0;
+#endif /* BUILD_ECORE_EVAS_GL_GLEW */
 }

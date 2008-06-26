@@ -67,14 +67,17 @@
 #endif
 #ifdef BUILD_ECORE_WIN32
 # include "Ecore_Win32.h"
-# ifdef HAVE_DIRECTDRAW
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW
 #  include <Evas_Engine_Software_DDraw.h>
 # endif
-# ifdef HAVE_DIRECTDRAW_16
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW_16
 #  include <Evas_Engine_Software_16_DDraw.h>
 # endif
-# ifdef HAVE_DIRECT3D
+# ifdef BUILD_ECORE_EVAS_DIRECT3D
 #  include <Evas_Engine_Direct3D.h>
+# endif
+# ifdef BUILD_ECORE_EVAS_GL_GLEW
+#  include <Evas_Engine_GL_Glew.h>
 # endif
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
