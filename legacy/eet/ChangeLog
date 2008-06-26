@@ -58,4 +58,10 @@
 	* Introduce tile support and the possibility to decompress eet
 	image inside an existing surface.
 
+2008-06-26  Cedric BAIL
+
+	* Massiv code cleanup.
+	* Add EET_G_ARRAY and EET_G_VAR_ARRAY support.
+	* Plan for version 2.0 API break of eet_data_descriptor_element_add.
+
 

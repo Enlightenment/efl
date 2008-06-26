@@ -200,6 +200,20 @@ else
   AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 0, [support old eet file format])
 fi
 
+dnl Assert or fail.
+prefer_assert="no"
+AC_ARG_ENABLE(assert,
+  AC_HELP_STRING(
+    [--enable-assert],
+    [enable assert, [[default=disabled]]]
+  ),
+  [ prefer_assert=$enableval ]
+)
+AM_CONDITIONAL(EET_ASSERT, test "x$prefer_assert" = "xyes")
+if test "x$prefer_assert" = "xno"; then
+  cflags="$cflags -DNDEBUG"
+fi
+
 #AM_CHECK_DOXYGEN()
 
 AC_OUTPUT([

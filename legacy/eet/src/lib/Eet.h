@@ -889,7 +889,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
-   EAPI void eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, const char *name, int type, int group_type, int offset, int count, const char *counter_name, Eet_Data_Descriptor *subtype);
+   EAPI void eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, const char *name, int type, int group_type, int offset, /* int count_offset,  */int count, const char *counter_name, Eet_Data_Descriptor *subtype);
 
    /**
     * Read a data structure from an eet file and decodes it.
@@ -1114,7 +1114,7 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
 	\
 	eet_data_descriptor_element_add(edd, name, type, EET_G_UNKNOWN, \
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
-					0, NULL, NULL); \
+					0, /* 0,  */NULL, NULL); \
      }
 
    /**
@@ -1139,7 +1139,7 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
 	\
 	eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_UNKNOWN, \
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
-					0, NULL, subtype); \
+					0, /* 0,  */NULL, subtype); \
      }
 
    /**
@@ -1163,7 +1163,7 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
 	\
 	eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_LIST, \
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
-					0, NULL, subtype); \
+					0, /* 0,  */NULL, subtype); \
      }
 
    /**
@@ -1187,7 +1187,55 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
 	\
 	eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_HASH, \
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
-					0, NULL, subtype); \
+					0, /* 0,  */NULL, subtype); \
+     }
+
+   /**
+    * Add a fixed size array type to a data descriptor
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param member The struct member itself to be encoded.
+    * @param subtype The type of hash member to add.
+    *
+    * This macro lets you easily add a fixed size array of other data types. All the
+    * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC(), with the
+    * @p subtype being the exception. This must be the data descriptor of the
+    * element that is in each member of the hash to be stored.
+    *
+    * @since 1.0.2
+    */
+#define EET_DATA_DESCRIPTOR_ADD_ARRAY(edd, struct_type, name, member, subtype) \
+     { \
+	struct_type ___ett; \
+	\
+	eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_ARRAY, \
+					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
+					/* 0,  */sizeof(___ett.member)/sizeof(___ett.member[0]), NULL, subtype); \
+     }
+
+   /**
+    * Add a variable size array type to a data descriptor
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
+    * @param member The struct member itself to be encoded.
+    * @param subtype The type of hash member to add.
+    *
+    * This macro lets you easily add a fixed size array of other data types. All the
+    * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC(), with the
+    * @p subtype being the exception. This must be the data descriptor of the
+    * element that is in each member of the hash to be stored.
+    *
+    * @since 1.0.2
+    */
+#define EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(edd, struct_type, name, member, subtype) \
+     { \
+	struct_type ___ett; \
+	\
+	eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_VAR_ARRAY, \
+					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
+					(char *)(&(___ett.member ## _count)) - (char *)(&(___ett)), /* 0,  */NULL, subtype); \
      }
 
 /***************************************************************************/

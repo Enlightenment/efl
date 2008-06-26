@@ -74,4 +74,10 @@ void  _eet_double_to_string_convert(char des[128], double d);
 #define PATH_MAX 4096
 #endif
 
+#ifdef DNDEBUG
+#define EET_ASSERT(Test, Do) if (Test == 0) Do;
+#else
+#define EET_ASSERT(Test, Do) if (Test == 0) abort();
+#endif
+
 #endif
