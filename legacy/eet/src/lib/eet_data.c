@@ -1745,7 +1745,7 @@ _eet_data_dump_encode(Eet_Dictionary *ed,
 	break;
      }
 
-   if ((node->type > EET_G_UNKNOWN) && (node->type < EET_G_LAST))
+   if ((node->type >= EET_G_UNKNOWN) && (node->type < EET_G_LAST))
      chnk = eet_data_chunk_new(ds->data, ds->pos, node->name, EET_T_UNKNOW, node->type);
    else
      chnk = eet_data_chunk_new(ds->data, ds->pos, node->name, node->type, EET_G_UNKNOWN);
@@ -2314,7 +2314,7 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 				 memset(&echnk, 0, sizeof(Eet_Data_Chunk));
 
 				 eet_data_chunk_get(ed, &echnk, p, size);
-				 if (!echnk.name) return 0;
+				 if (!echnk.name) goto error;
 				 /* get the data */
 				 data_ret = _eet_data_descriptor_decode(ed,
 									NULL,
@@ -2712,14 +2712,14 @@ eet_data_put_array(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Elemen
 static void
 eet_data_put_unknown(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element *ede, Eet_Data_Stream *ds, void *data_in)
 {
+   void *data = NULL;
    int size;
-   void *data;
 
    if (IS_SIMPLE_TYPE(ede->type))
      data = eet_data_put_type(ed, ede->type, data_in, &size);
    else if (ede->subtype)
      {
-	if (*((char **)(((char *)data_in))))
+	if (*((char **)data_in))
 	  data = _eet_data_descriptor_encode(ed,
 					     ede->subtype,
 					     *((char **)((char *)(data_in))),

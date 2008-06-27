@@ -35,6 +35,8 @@ struct _Eet_Test_Basic_Type
    unsigned short us;
    unsigned int ui;
    unsigned long long ul;
+   Eet_Test_Basic_Type *empty;
+   Eet_Test_Basic_Type *with;
 };
 
 #define EET_TEST_CHAR 0x42
@@ -108,6 +110,33 @@ _eet_test_basic_set(Eet_Test_Basic_Type *res, int i)
    res->us = EET_TEST_SHORT;
    res->ui = EET_TEST_INT;
    res->ul = EET_TEST_LONG_LONG;
+   res->empty = NULL;
+   res->with = NULL;
+
+   if (i == 0)
+     {
+	Eet_Test_Basic_Type *tmp;
+
+	tmp = malloc(sizeof (Eet_Test_Basic_Type));
+	fail_if(!tmp);
+
+	res->with = tmp;
+	tmp->c = EET_TEST_CHAR;
+	tmp->s = EET_TEST_SHORT;
+	tmp->i = EET_TEST_INT + i + 1;
+	tmp->l = EET_TEST_LONG_LONG;
+	tmp->str = EET_TEST_STRING;
+	tmp->istr = EET_TEST_STRING;
+	tmp->f1 = - EET_TEST_FLOAT;
+	tmp->d = - EET_TEST_DOUBLE;
+	tmp->f2 = EET_TEST_FLOAT4;
+	tmp->uc = EET_TEST_CHAR;
+	tmp->us = EET_TEST_SHORT;
+	tmp->ui = EET_TEST_INT;
+	tmp->ul = EET_TEST_LONG_LONG;
+	tmp->empty = NULL;
+	tmp->with = NULL;
+     }
 }
 
 static void
@@ -137,6 +166,28 @@ _eet_test_basic_check(Eet_Test_Basic_Type *result, int i)
    tmp = (result->d + EET_TEST_DOUBLE);
    if (tmp < 0) tmp = -tmp;
    fail_if(tmp > 0.00005);
+
+   fail_if(result->empty != NULL);
+   if (i == 0)
+     {
+	Eet_Test_Basic_Type *tmp;
+
+	tmp = result->with;
+	fail_if(tmp == NULL);
+
+	fail_if(tmp->c != EET_TEST_CHAR);
+	fail_if(tmp->s != EET_TEST_SHORT);
+	fail_if(tmp->i != EET_TEST_INT + i + 1);
+	fail_if(tmp->l != EET_TEST_LONG_LONG);
+	fail_if(strcmp(tmp->str, EET_TEST_STRING) != 0);
+	fail_if(strcmp(tmp->istr, EET_TEST_STRING) != 0);
+	fail_if(tmp->uc != EET_TEST_CHAR);
+	fail_if(tmp->us != EET_TEST_SHORT);
+	fail_if(tmp->ui != EET_TEST_INT);
+	fail_if(tmp->ul != EET_TEST_LONG_LONG);
+     }
+   else
+     fail_if(result->with != NULL);
 }
 
 static void
@@ -155,6 +206,9 @@ _eet_build_basic_descriptor(Eet_Data_Descriptor *edd)
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Eet_Test_Basic_Type, "us", us, EET_T_USHORT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Eet_Test_Basic_Type, "ui", ui, EET_T_UINT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Eet_Test_Basic_Type, "ul", ul, EET_T_ULONG_LONG);
+
+   EET_DATA_DESCRIPTOR_ADD_SUB(edd, Eet_Test_Basic_Type, "empty", empty, edd);
+   EET_DATA_DESCRIPTOR_ADD_SUB(edd, Eet_Test_Basic_Type, "with", with, edd);
 }
 
 START_TEST(eet_test_basic_data_type_encoding_decoding)
