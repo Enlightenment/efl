@@ -545,11 +545,15 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, cha
      }
 #else
    return 0;
+   /*
+    * DEAD CODE?
+    *
    url_con = NULL;
    filename = NULL;
    user = NULL;
    pass = NULL;
    upload_dir = NULL;
+    */
 #endif   
 }
 
@@ -750,11 +754,11 @@ static size_t
 _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream)
 {
    size_t retcode = fread(ptr, size, nitems, stream);
-   if (ferror(stream)) {
+   if (ferror((FILE*)stream)) {
 	fclose(stream);
 	return CURL_READFUNC_ABORT;
    } else if ((retcode == 0) || (retcode < nitems)) {
-	fclose(stream);
+	fclose((FILE*)stream);
 	return 0;
    }
    fprintf(stderr, "*** We read %d bytes from file\n", retcode);

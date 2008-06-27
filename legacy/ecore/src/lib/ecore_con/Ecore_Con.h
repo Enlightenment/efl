@@ -26,6 +26,7 @@
 #endif
 
 #include <time.h>
+#include <libgen.h>
 #ifdef HAVE_NETDB_H
 # include <netdb.h>
 #endif
