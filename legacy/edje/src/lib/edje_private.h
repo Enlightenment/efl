@@ -477,8 +477,8 @@ struct _Edje_Part
       /* davinchi */
       int		  events_id; /* If it is used as scrollbar */
 
-      char                x; /* can u click & drag this bit in x dir */
-      char                y; /* can u click & drag this bit in y dir */
+      signed char         x; /* can u click & drag this bit in x dir */
+      signed char         y; /* can u click & drag this bit in y dir */
    } dragable;
    unsigned char          type; /* what type (image, rect, text) */
    unsigned char          effect; /* 0 = plain... */
