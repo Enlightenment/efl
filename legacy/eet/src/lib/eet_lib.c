@@ -1267,6 +1267,8 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->readfp = ef->fp;
 	unlink(ef->path);
 	ef->fp = fopen(ef->path, "wb");
+	if (eet_test_close(!ef->fp, ef))
+	  return NULL;
 	fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
      }
 
