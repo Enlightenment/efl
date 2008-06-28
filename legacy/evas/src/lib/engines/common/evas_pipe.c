@@ -141,6 +141,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 	     /* setup initial locks */
 	     pthread_create(&(thinfo[i].thread_id), &attr, 
 			    evas_common_pipe_thread, &(thinfo[i]));
+	     pthread_attr_destroy(&attr);
 	  }
      }
    y = 0;
