@@ -543,17 +543,15 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, cha
 
 	return _ecore_con_url_perform(url_con);
      }
+   else
+	return 0;
 #else
    return 0;
-   /*
-    * DEAD CODE?
-    *
    url_con = NULL;
    filename = NULL;
    user = NULL;
    pass = NULL;
    upload_dir = NULL;
-    */
 #endif   
 }
 
