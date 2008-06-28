@@ -226,7 +226,7 @@ output(void)
 	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
 	     exit (-1);
 	  }
-	f = fopen(out, "w");
+	f = fopen(out, "wb");
 	if (!f)
 	  {
 	     printf("ERROR: unable to write file (%s).\n", out);
@@ -292,7 +292,7 @@ output(void)
 	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
 	     exit (-1);
 	  }
-	f = fopen(out, "w");
+	f = fopen(out, "wb");
 	fprintf(f, "#!/bin/sh\n");
 	fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
 	fclose(f);

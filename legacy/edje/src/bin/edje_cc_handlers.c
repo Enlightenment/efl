@@ -749,7 +749,7 @@ st_data_file(void)
    di->key = parse_str(0);
    filename = parse_str(1);
 
-   fd = open(filename, O_RDONLY);
+   fd = open(filename, O_RDONLY | O_BINARY);
    if (fd < 0)
      {
         fprintf(stderr, "%s: Error. %s:%i when opening file \"%s\": \"%s\"\n",

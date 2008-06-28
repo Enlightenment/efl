@@ -3,6 +3,15 @@
 
 #include "edje_main.h"
 
+/*
+ * On Windows, if the file is not opened in binary mode,
+ * read does not return the correct size, because of
+ * CR / LF translation.
+ */
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;

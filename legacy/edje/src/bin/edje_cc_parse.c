@@ -611,7 +611,7 @@ compile(void)
    int fd;
    off_t size;
    char *data, *p;
-   char *tmpdir;
+   const char *tmpdir;
 
 #ifdef HAVE_EVIL
    tmpdir = evil_tmpdir_get();
@@ -693,7 +693,7 @@ compile(void)
 	free(def);
  */
      }
-   fd = open(file_in, O_RDONLY);
+   fd = open(file_in, O_RDONLY | O_BINARY);
    if (fd < 0)
      {
 	fprintf(stderr, "%s: Error. cannot open file \"%s\" for input. %s\n",

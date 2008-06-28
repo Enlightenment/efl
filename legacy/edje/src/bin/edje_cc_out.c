@@ -610,7 +610,7 @@ data_write(void)
 		  char tmpo[4096];
 		  int ret;
 
-		  f = fopen(tmpn, "w");
+		  f = fopen(tmpn, "wb");
 		  if (f)
 		    {
 		       Evas_List *ll;
