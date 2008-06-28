@@ -518,6 +518,7 @@ ecore_directfb_window_del(Ecore_DirectFB_Window *ecore_window)
 {
 	DFBCHECK(ecore_window->surface->Release(ecore_window->surface));
 	DFBCHECK(ecore_window->window->Release(ecore_window->window));
+	free(ecore_window);
 }
 
 
