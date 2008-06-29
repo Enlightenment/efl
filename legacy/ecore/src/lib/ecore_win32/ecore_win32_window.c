@@ -76,6 +76,14 @@ ecore_win32_window_del(Ecore_Win32_Window *window)
    printf ("ecore_win32_window_del\n");
 }
 
+void *
+ecore_win32_window_hwnd_get(Ecore_Win32_Window *window)
+{
+   if (!window) return NULL;
+
+   return ((struct _Ecore_Win32_Window *)window)->window;
+}
+
 /*
 void
 ecore_win32_window_configure(Ecore_Win32_Window        *window,
