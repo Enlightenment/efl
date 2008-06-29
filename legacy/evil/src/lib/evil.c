@@ -36,6 +36,11 @@
 #endif /* HAVE___ATTRIBUTE__ */
 
 #include "Evil.h"
+#include "pwd/pwd.h"
+
+
+static struct passwd pw;
+
 
 #ifndef __CEGCC__
 
@@ -123,6 +128,33 @@ pid_t
 getpid(void)
 {
   return (pid_t)GetCurrentProcessId();
+}
+
+struct passwd *
+getpwuid (uid_t uid)
+{
+   static char user_name[PATH_MAX];
+   DWORD  length;
+   BOOL res;
+
+   length = PATH_MAX;
+   /* get from USERPROFILE for win 98 ? */
+   res = GetUserName(user_name, &length);
+   pw.pw_name = (res ? user_name : NULL);
+   pw.pw_passwd = NULL;
+   pw.pw_uid = uid;
+   pw.pw_gid = 0;
+   pw.pw_change = 0;
+   pw.pw_class = NULL;
+   pw.pw_gecos = (res ? user_name : NULL);
+   pw.pw_dir = (char *)evil_homedir_get();
+   pw.pw_shell = getenv("SHELL");
+   if (pw.pw_shell == NULL)
+     pw.pw_shell = "sh";
+   pw.pw_expire = 0;
+   pw.pw_fields = 0;
+
+   return &pw;
 }
 
 /* REMARK: Windows has no symbolic link. */
@@ -580,4 +612,43 @@ evil_last_error_get(void)
    LocalFree(str2);
 
    return strdup(str);
+}
+
+static char *
+replace(char *prev, char *value)
+{
+   if (value == NULL)
+     return prev;
+
+   if (prev)
+     free (prev);
+   return strdup (value);
+}
+
+char *
+nl_langinfo(nl_item index)
+{
+   static char *result = NULL;
+   static char *nothing = "";
+
+   switch (index)
+     {
+      case CODESET:
+        {
+           char *p;
+           result = replace(result, setlocale(LC_CTYPE, NULL));
+           if ((p = strrchr(result, '.' )) == NULL)
+             return nothing;
+
+           if ((++p - result) > 2)
+             strcpy(result, "cp");
+           else
+             *result = '\0';
+           strcat(result, p);
+
+           return result;
+        }
+     }
+
+   return nothing;
 }

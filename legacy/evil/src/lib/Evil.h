@@ -65,6 +65,8 @@ extern "C" {
 #include <sys/time.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <fcntl.h>
+#include <locale.h>
 
 #ifdef PATH_MAX
 # undef PATH_MAX
@@ -140,6 +142,7 @@ struct flock
    off_t     l_len;    /**< 0 means end of the file */
    pid_t     l_pid;    /**< lock owner */
 };
+
 
 /**
  * @brief Provide control over file descriptors.
@@ -523,13 +526,45 @@ EAPI char *evil_wchar_to_char(const wchar_t *text);
 
 EAPI char *evil_last_error_get(void);
 
+typedef int            nl_item;
+
+#define __NL_ITEM( CATEGORY, INDEX )  ((CATEGORY << 16) | INDEX)
+#define __NL_ITEM_CATEGORY( ITEM )    (ITEM >> 16)
+#define __NL_ITEM_INDEX( ITEM )       (ITEM & 0xffff)
+
+enum {
+  /*
+   * LC_CTYPE category...
+   * Character set classification items.
+   */
+  _NL_CTYPE_CODESET = __NL_ITEM( LC_CTYPE, 0 ),
+
+  /*
+   * Dummy entry, to terminate the list.
+   */
+  _NL_ITEM_CLASSIFICATION_END
+};
+
+/*
+ * Define the public aliases for the enumerated classification indices...
+ */
+# define CODESET       _NL_CTYPE_CODESET
+
+EAPI char *nl_langinfo(nl_item index);
+
+
+#ifndef uid_t
+typedef unsigned long  uid_t;
+#endif
+
+#ifndef gid_t
+typedef unsigned long  gid_t;
+#endif
 
 #ifdef _MSC_VER
 
-typedef int pid_t;
-
-typedef long ssize_t;
-
+typedef int            pid_t;
+typedef long           ssize_t;
 typedef unsigned short mode_t;
 
 #define F_OK 0  /* Check for file existence */
@@ -567,6 +602,7 @@ typedef unsigned short mode_t;
 #  define S_IWOTH S_IWUSR
 #  define S_IXGRP S_IXUSR
 #  define S_IXOTH S_IXUSR
+
 #  define open(path,...) _open((path),__VA_ARGS__)
 #  define close(fd) _close(fd)
 #  define read(fd,buffer,count) _read((fd),(buffer),(count))

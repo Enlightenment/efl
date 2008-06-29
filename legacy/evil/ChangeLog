@@ -1,3 +1,17 @@
+2008-06-29  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/lib/Evil.h:
+	* src/lib/Makefile.am:
+	* src/lib/evil.c:
+	* src/lib/pwd/Makefile.am:
+	* src/lib/pwd/pwd.h:
+	add langinfo and getpwuid support
+
+	* src/lib/mman/sys/mman.h:
+	* src/lib/dlfcn/dlfcn.h:
+	fix comment
+
 2008-06-11  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

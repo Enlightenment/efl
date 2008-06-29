@@ -1,7 +1,7 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = . dlfcn mman
+SUBDIRS = . dlfcn mman pwd
 
 lib_LTLIBRARIES = libevil.la
 
