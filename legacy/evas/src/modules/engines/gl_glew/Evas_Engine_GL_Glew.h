@@ -2,7 +2,9 @@
 #define __EVAS_ENGINE_GL_GLEW_H__
 
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 
 
 typedef struct _Evas_Engine_Info_GL_Glew              Evas_Engine_Info_GL_Glew;
