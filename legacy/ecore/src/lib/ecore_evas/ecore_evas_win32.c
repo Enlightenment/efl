@@ -784,6 +784,12 @@ _ecore_evas_win32_lower(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_win32_activate(Ecore_Evas *ee)
+{
+   ecore_win32_window_focus_set(ee->engine.win32.window);
+}
+
+static void
 _ecore_evas_win32_title_set(Ecore_Evas *ee, const char *title)
 {
    if (ee->prop.title) free(ee->prop.title);
@@ -951,6 +957,7 @@ static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_hide,
      _ecore_evas_win32_raise,
      _ecore_evas_win32_lower,
+     _ecore_evas_win32_activate,
      _ecore_evas_win32_title_set,
      NULL, /* _ecore_evas_x_name_class_set */
      _ecore_evas_win32_size_min_set,

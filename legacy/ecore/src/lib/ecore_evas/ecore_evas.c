@@ -950,6 +950,25 @@ ecore_evas_lower(Ecore_Evas *ee)
 }
 
 /**
+ * Activate (set focus to, via the window manager) an Ecore_Evas' window.
+ * @param ee The Ecore_Evas to activate.
+ *
+ * This functions activates the Ecore_Evas.
+ */
+EAPI void
+ecore_evas_activate(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_activate");
+	return;
+     }
+   IFC(ee, fn_activate) (ee);
+   IFE;
+}
+
+/**
  * Set the title of an Ecore_Evas' window
  * @param ee The Ecore_Evas whose title you wish to set.
  * @param t The title

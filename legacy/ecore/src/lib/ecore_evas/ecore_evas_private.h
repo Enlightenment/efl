@@ -119,6 +119,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_hide) (Ecore_Evas *ee);
    void        (*fn_raise) (Ecore_Evas *ee);
    void        (*fn_lower) (Ecore_Evas *ee);
+   void        (*fn_activate) (Ecore_Evas *ee);
    void        (*fn_title_set) (Ecore_Evas *ee, const char *t);
    void        (*fn_name_class_set) (Ecore_Evas *ee, const char *n, const char *c);
    void        (*fn_size_min_set) (Ecore_Evas *ee, int w, int h);

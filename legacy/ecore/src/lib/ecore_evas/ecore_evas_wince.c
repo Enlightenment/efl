@@ -876,6 +876,7 @@ static const Ecore_Evas_Engine_Func _ecore_wince_engine_func =
      _ecore_evas_wince_hide,
    NULL, //_ecore_evas_wince_raise,
    NULL, //_ecore_evas_wince_lower,
+   NULL, //_ecore_evas_wince_activate,
    NULL, //_ecore_evas_wince_title_set,
      NULL, /* _ecore_evas_x_name_class_set */
    NULL, //_ecore_evas_wince_size_min_set,

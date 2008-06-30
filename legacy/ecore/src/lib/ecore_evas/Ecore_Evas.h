@@ -253,6 +253,7 @@ EAPI void        ecore_evas_hide(Ecore_Evas *ee);
 EAPI int         ecore_evas_visibility_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_raise(Ecore_Evas *ee);
 EAPI void        ecore_evas_lower(Ecore_Evas *ee);
+EAPI void        ecore_evas_activate(Ecore_Evas *ee);
 EAPI void        ecore_evas_title_set(Ecore_Evas *ee, const char *t);
 EAPI const char *ecore_evas_title_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c);

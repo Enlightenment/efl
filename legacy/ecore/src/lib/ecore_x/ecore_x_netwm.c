@@ -449,6 +449,28 @@ ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win)
 }
 
 EAPI void
+ecore_x_netwm_client_active_request(Ecore_X_Window root, Ecore_X_Window win, int type, Ecore_X_Window current_win)
+{
+   XEvent xev;
+
+   if (!root) root = DefaultRootWindow(_ecore_x_disp);
+   
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_NET_ACTIVE_WINDOW;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = type;
+   xev.xclient.data.l[1] = CurrentTime;
+   xev.xclient.data.l[2] = current_win;
+   xev.xclient.data.l[3] = 0;
+   xev.xclient.data.l[4] = 0;
+   xev.xclient.data.l[5] = 0;
+
+   XSendEvent(_ecore_x_disp, root, False, NoEventMask, &xev);
+}
+
+EAPI void
 ecore_x_netwm_name_set(Ecore_X_Window win, const char *name)
 {
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_NAME, name);
@@ -1250,7 +1272,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
    xev.xclient.data.l[3] = XSyncValueHigh32(value);
    xev.xclient.data.l[4] = 0;
 
-   XSendEvent(_ecore_x_disp, win, False, 0, &xev);
+   XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
 }
 
 EAPI void

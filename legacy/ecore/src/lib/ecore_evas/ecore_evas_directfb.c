@@ -519,6 +519,7 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      _ecore_evas_directfb_hide,	        /* hide */
      NULL,				/* raise */
      NULL,				/* lower */
+     NULL,				/* activate */
      NULL,				/* title set */
      NULL,				/* name class set */
      NULL,				/* size min */

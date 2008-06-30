@@ -567,6 +567,7 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      NULL,
      NULL,
+     NULL,
      _ecore_evas_object_cursor_set,
      NULL,
      NULL,

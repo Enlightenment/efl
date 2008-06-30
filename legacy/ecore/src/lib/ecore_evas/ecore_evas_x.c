@@ -2119,6 +2119,13 @@ _ecore_evas_x_lower(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_x_activate(Ecore_Evas *ee)
+{
+   ecore_x_netwm_client_active_request(ee->engine.x.win_root, 
+				       ee->engine.x.win, 1, 0);
+}
+
+static void
 _ecore_evas_x_title_set(Ecore_Evas *ee, const char *t)
 {
    if (ee->prop.title) free(ee->prop.title);
@@ -2582,6 +2589,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_hide,
      _ecore_evas_x_raise,
      _ecore_evas_x_lower,
+     _ecore_evas_x_activate,
      _ecore_evas_x_title_set,
      _ecore_evas_x_name_class_set,
      _ecore_evas_x_size_min_set,
