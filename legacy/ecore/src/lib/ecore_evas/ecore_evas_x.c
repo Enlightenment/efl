@@ -2695,7 +2695,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	/* NB: on linux this may simply empty the env as opposed to completely
 	 * unset it to being empty - unsure as solartis libc crashes looking
 	 * for the '=' char */
-	putenv((char*)"DESKTOP_STARTUP_ID=");
+//	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
 # ifdef HAVE_ECORE_X_XCB
    einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
@@ -3028,7 +3028,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 	/* NB: on linux this may simply empty the env as opposed to completely
 	 * unset it to being empty - unsure as solartis libc crashes looking
 	 * for the '=' char */
-	putenv((char*)"DESKTOP_STARTUP_ID=");
+//	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
@@ -3187,7 +3187,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	/* NB: on linux this may simply empty the env as opposed to completely
 	 * unset it to being empty - unsure as solartis libc crashes looking
 	 * for the '=' char */
-	putenv((char*)"DESKTOP_STARTUP_ID=");
+//	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
 # ifdef HAVE_ECORE_X_XCB
    einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
@@ -3433,7 +3433,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 	/* NB: on linux this may simply empty the env as opposed to completely
 	 * unset it to being empty - unsure as solartis libc crashes looking
 	 * for the '=' char */
-	putenv((char*)"DESKTOP_STARTUP_ID=");
+//	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
    einfo = (Evas_Engine_Info_Software_16_X11 *)evas_engine_info_get(ee->evas);
 
