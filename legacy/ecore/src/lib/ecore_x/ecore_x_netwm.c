@@ -467,7 +467,8 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root, Ecore_X_Window win, int
    xev.xclient.data.l[4] = 0;
    xev.xclient.data.l[5] = 0;
 
-   XSendEvent(_ecore_x_disp, root, False, NoEventMask, &xev);
+   XSendEvent(_ecore_x_disp, root, False, 
+	      SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 }
 
 EAPI void
