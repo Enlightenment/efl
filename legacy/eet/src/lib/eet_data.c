@@ -2629,7 +2629,7 @@ eet_data_get_unknown(const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Dat
 
 	if (type == EET_T_STRING)
 	  {
-	     char **str, *str2;
+	     char **str;
 
 	     str = (char **)(((char *)data));
 	     if (*str)
@@ -2645,6 +2645,17 @@ eet_data_get_unknown(const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Dat
 		       *str = edd->func.str_direct_alloc(*str);
 		       _eet_freelist_direct_str_add(*str);
 		    }
+	       }
+	  }
+	else if (type == EET_T_INLINED_STRING)
+	  {
+	     char **str;
+
+	     str = (char **)(((char *)data));
+	     if (*str)
+	       {
+		  *str = edd->func.str_alloc(*str);
+		  _eet_freelist_str_add(*str);
 	       }
 	  }
      }
