@@ -3907,7 +3907,7 @@ st_collections_group_parts_part_description_text_elipsis(void)
     @page edcref
 
     @block
-        text
+        gradient
     @context
         part {
             description {
