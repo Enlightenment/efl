@@ -32,6 +32,8 @@
  * @brief These routines are used for Evas library interaction.
  */
 
+#include <Evas_Data.h>
+
 typedef enum _Evas_Callback_Type
 {
    EVAS_CALLBACK_MOUSE_IN, /**< Mouse In Event */
@@ -84,13 +86,10 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_RGB565_A5P /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
-typedef struct _Evas_Array            Evas_Array; /**< A generic vector */
-typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
 
-typedef struct _Evas_Hash Evas_Hash; /**< A Hash table handle */
 typedef struct _Evas Evas; /**< An Evas canvas handle */
 typedef struct _Evas_Object Evas_Object; /**< An Evas Object handle */
 typedef void Evas_Performance; /**< An Evas Performance handle */
@@ -103,23 +102,6 @@ typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type *
 typedef int           Evas_Coord;
 typedef int           Evas_Font_Size;
 typedef int           Evas_Angle;
-typedef unsigned char Evas_Bool;
-
-struct _Evas_Array /** An array of data */
-{
-   void		**data; /**< Pointer to a vector of pointer to payload */
-   unsigned int   total; /**< Total number of slot in the vector */
-   unsigned int   count; /**< Number of activ slot in the vector */
-   unsigned int	  step; /**< How much must we grow the vector When it is full */
-};
-
-struct _Evas_List /** A linked list node */
-{
-   void      *data; /**< Pointer to list element payload */
-   Evas_List *next; /**< Next member in the list */
-   Evas_List *prev; /**< Previous member in the list */
-   struct _Evas_List_Accounting *accounting; /**< Private list accounting info - don't touch */
-};
 
 struct _Evas_Rectangle /** A rectangle */
 {
@@ -402,58 +384,6 @@ typedef enum _Evas_Object_Pointer_Mode
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-   EAPI Evas_List        *evas_list_append                  (Evas_List *list, const void *data);
-   EAPI Evas_List        *evas_list_prepend                 (Evas_List *list, const void *data);
-   EAPI Evas_List        *evas_list_append_relative         (Evas_List *list, const void *data, const void *relative);
-   EAPI Evas_List        *evas_list_append_relative_list    (Evas_List *list, const void *data, Evas_List *relative);
-   EAPI Evas_List        *evas_list_prepend_relative        (Evas_List *list, const void *data, const void *relative);
-   EAPI Evas_List        *evas_list_prepend_relative_list   (Evas_List *list, const void *data, Evas_List *relative);
-   EAPI Evas_List        *evas_list_remove                  (Evas_List *list, const void *data);
-   EAPI Evas_List        *evas_list_remove_list             (Evas_List *list, Evas_List *remove_list);
-   EAPI Evas_List        *evas_list_promote_list            (Evas_List *list, Evas_List *move_list);
-   EAPI void             *evas_list_find                    (const Evas_List *list, const void *data);
-   EAPI Evas_List        *evas_list_find_list               (const Evas_List *list, const void *data);
-   EAPI Evas_List        *evas_list_free                    (Evas_List *list);
-   EAPI Evas_List        *evas_list_last                    (const Evas_List *list);
-   EAPI Evas_List        *evas_list_next                    (const Evas_List *list);
-   EAPI Evas_List        *evas_list_prev                    (const Evas_List *list);
-   EAPI void             *evas_list_data                    (const Evas_List *list);
-   EAPI int               evas_list_count                   (const Evas_List *list);
-   EAPI void             *evas_list_nth                     (const Evas_List *list, int n);
-   EAPI Evas_List        *evas_list_nth_list                (const Evas_List *list, int n);
-   EAPI Evas_List        *evas_list_reverse                 (Evas_List *list);
-   EAPI Evas_List        *evas_list_sort                    (Evas_List *list, int size, int(*func)(void*,void*));
-   EAPI int               evas_list_alloc_error             (void);
-
-   EAPI Evas_Array       *evas_array_new                    (unsigned int step);
-   EAPI void              evas_array_setup                  (Evas_Array *array, unsigned int step);
-   EAPI void              evas_array_free                   (Evas_Array *array);
-   EAPI void              evas_array_append                 (Evas_Array *array, void *data);
-   EAPI void             *evas_array_get                    (Evas_Array *array, unsigned int index);
-   EAPI void              evas_array_clean                  (Evas_Array *array);
-   EAPI void              evas_array_flush                  (Evas_Array *array);
-   EAPI void              evas_array_remove                 (Evas_Array *array, Evas_Bool (*keep)(void *data, void *gdata), void *gdata);
-
-   /* FIXME: add:
-    * api to add find, del members by data, size not just string and also
-    * provide hash generation functions settable by the app
-    *
-    * do we really need this? hmmm - let me think... there may be a better way
-    */
-   EAPI Evas_Hash        *evas_hash_add                     (Evas_Hash *hash, const char *key, const void *data);
-   EAPI Evas_Hash        *evas_hash_direct_add              (Evas_Hash *hash, const char *key, const void *data);
-   EAPI Evas_Hash        *evas_hash_del                     (Evas_Hash *hash, const char *key, const void *data);
-   EAPI void             *evas_hash_find                    (const Evas_Hash *hash, const char *key);
-   EAPI void             *evas_hash_modify                  (Evas_Hash *hash, const char *key, const void *data);
-   EAPI int               evas_hash_size                    (const Evas_Hash *hash);
-   EAPI void              evas_hash_free                    (Evas_Hash *hash);
-   EAPI void              evas_hash_foreach                 (const Evas_Hash *hash, Evas_Bool (*func) (const Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
-   EAPI int               evas_hash_alloc_error             (void);
-   
-   EAPI const char       *evas_stringshare_add              (const char *str);
-   EAPI void              evas_stringshare_del              (const char *str);
-       
 
    EAPI int               evas_alloc_error                  (void);
 

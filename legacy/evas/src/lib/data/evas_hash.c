@@ -1,6 +1,15 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+typedef struct _Evas_Hash_El Evas_Hash_El;
+
+struct _Evas_Hash_El
+{
+   Evas_Object_List  _list_data;
+   const char       *key;
+   void             *data;
+};
+
 static inline int _evas_hash_gen(const char *key);
 
 static int _evas_hash_alloc_error = 0;

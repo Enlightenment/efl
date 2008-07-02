@@ -132,8 +132,6 @@ typedef unsigned char                   DATA8;
 
 typedef struct _Evas_Object_List        Evas_Object_List;
 
-typedef struct _Evas_Hash_El            Evas_Hash_El;
-
 typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags	Image_Entry_Flags;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
@@ -252,13 +250,6 @@ struct _Evas_Hash
 {
    int               population;
    Evas_Object_List *buckets[256];
-};
-
-struct _Evas_Hash_El
-{
-   Evas_Object_List  _list_data;
-   const char       *key;
-   void             *data;
 };
 
 struct _RGBA_Image_Loadopts
