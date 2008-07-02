@@ -94,16 +94,10 @@ _evas_common_soft16_image_new(void)
 {
    Soft16_Image *im;
 
-   im = malloc(sizeof (Soft16_Image));
+   im = calloc(1, sizeof(Soft16_Image));
    if (!im) return NULL;
 
    im->stride = -1;
-   im->pixels = NULL;
-   im->alpha = NULL;
-   /* When is have_alpha set ? */
-/*    im->flags.have_alpha = 0; */
-   im->flags.free_pixels = 0;
-   im->flags.free_alpha = 0;
 
    return (Image_Entry *) im;
 }

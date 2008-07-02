@@ -93,10 +93,11 @@ _soft16_image_draw_scaled_no_mul(Soft16_Image *src, Soft16_Image *dst,
 				 int dst_offset, int w, int h,
 				 int *offset_x, int *offset_y)
 {
-   if (src->cache_entry.flags.alpha && (!dst->cache_entry.flags.alpha))
+   if ((src->cache_entry.flags.alpha && src->alpha) && 
+       (!dst->cache_entry.flags.alpha))
       _soft16_image_draw_scaled_transp_solid
 	(src, dst, dc, dst_offset, w, h, offset_x, offset_y);
-   else if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha))
+   else if (!dst->cache_entry.flags.alpha)
       _soft16_image_draw_scaled_solid_solid
 	(src, dst, dc, dst_offset, w, h, offset_x, offset_y);
    else
@@ -205,10 +206,11 @@ _soft16_image_draw_scaled_mul_alpha(Soft16_Image *src, Soft16_Image *dst,
 				    int dst_offset, int w, int h,
 				    int *offset_x, int *offset_y, DATA8 a)
 {
-   if (src->cache_entry.flags.alpha && (!dst->cache_entry.flags.alpha))
+   if ((src->cache_entry.flags.alpha && src->alpha) && 
+       (!dst->cache_entry.flags.alpha))
       _soft16_image_draw_scaled_transp_solid_mul_alpha
          (src, dst, dc, dst_offset, w, h, offset_x, offset_y, a);
-   else if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha))
+   else if (!dst->cache_entry.flags.alpha)
       _soft16_image_draw_scaled_solid_solid_mul_alpha
          (src, dst, dc, dst_offset, w, h, offset_x, offset_y, a);
    else
@@ -387,10 +389,11 @@ _soft16_image_draw_scaled_mul_color(Soft16_Image *src, Soft16_Image *dst,
 				    int *offset_x, int *offset_y,
 				    DATA8 r, DATA8 g, DATA8 b, DATA8 a)
 {
-   if (src->cache_entry.flags.alpha && (!dst->cache_entry.flags.alpha))
+   if ((src->cache_entry.flags.alpha && src->alpha) && 
+       (!dst->cache_entry.flags.alpha))
       _soft16_image_draw_scaled_transp_solid_mul_color
          (src, dst, dc, dst_offset, w, h, offset_x, offset_y, r, g, b, a);
-   else if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha))
+   else if (!dst->cache_entry.flags.alpha)
       _soft16_image_draw_scaled_solid_solid_mul_color
          (src, dst, dc, dst_offset, w, h, offset_x, offset_y, r, g, b, a);
    else
