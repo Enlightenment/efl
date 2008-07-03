@@ -553,13 +553,10 @@ enum {
 EAPI char *nl_langinfo(nl_item index);
 
 
-#ifndef uid_t
+#ifndef __CEGCC__
 typedef unsigned long  uid_t;
-#endif
-
-#ifndef gid_t
 typedef unsigned long  gid_t;
-#endif
+#endif /* ! __CEGCC__ */
 
 #ifdef _MSC_VER
 

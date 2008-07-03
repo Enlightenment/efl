@@ -1,3 +1,8 @@
+2008-07-03  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	uid_t and gid_t exist on cegcc
+
 2008-06-29  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
