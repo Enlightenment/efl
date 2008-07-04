@@ -12,6 +12,9 @@ static int _eos_timer_fct (void *data);
 
 static int   _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh);
 
+static void _for_each_tag (GstTagList const* list, gchar const* tag, void *data);
+
+static void _free_metadata (Emotion_Gstreamer_Metadata *m);
 
 /* Interface */
 
@@ -318,6 +321,7 @@ em_shutdown(void *video)
    return 1;
 }
 
+
 static unsigned char
 em_file_open(const char   *file,
 	     Evas_Object  *obj,
@@ -428,6 +432,12 @@ em_file_open(const char   *file,
      }
    }
 
+   if (ev->metadata)
+     _free_metadata(ev->metadata);
+   ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
+
+   _eos_timer_fct(ev);
+
    return 1;
 }
 
@@ -452,9 +462,16 @@ em_file_close(void *video)
 
    if (ev->eos_bus)
      {
-        gst_object_unref (GST_OBJECT (ev->eos_bus));
-        ev->eos_bus = NULL;
+       gst_object_unref (GST_OBJECT (ev->eos_bus));
+       ev->eos_bus = NULL;
      }
+
+   if(ev->metadata)
+     {
+       _free_metadata(ev->metadata);
+       ev->metadata = NULL;
+     }
+
    if (ev->pipeline)
      {
         gst_element_set_state (ev->pipeline, GST_STATE_NULL);
@@ -1113,6 +1130,8 @@ em_speed_get(void *video)
 
 static int
 em_eject(void *video)
+
+
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1125,90 +1144,37 @@ static const char *
 em_meta_get(void *video, int meta)
 {
    Emotion_Gstreamer_Video *ev;
-   GstBus                  *bus;
-   gchar                   *str = NULL;
-   gboolean                 done;
+   const char *str;
 
    ev = (Emotion_Gstreamer_Video *)video;
-   if (!ev) return NULL;
 
-   done = FALSE;
-   bus = gst_element_get_bus (ev->pipeline);
-   if (!bus) return NULL;
-
-   while (!done) {
-      GstMessage *message;
-
-      message = gst_bus_pop (bus);
-      if (message == NULL)
-        /* All messages read, we're done */
-         break;
-
-      switch (GST_MESSAGE_TYPE (message)) {
-      case GST_MESSAGE_TAG: {
-         GstTagList *new_tags;
-
-         gst_message_parse_tag (message, &new_tags);
-
-         switch (meta) {
-         case META_TRACK_TITLE:
-            gst_tag_list_get_string (new_tags, GST_TAG_TITLE, &str);
-            if (str) done = TRUE;
-            break;
-         case META_TRACK_ARTIST:
-            gst_tag_list_get_string (new_tags, GST_TAG_ARTIST, &str);
-            if (str) done = TRUE;
-            break;
-         case META_TRACK_GENRE:
-            gst_tag_list_get_string (new_tags, GST_TAG_GENRE, &str);
-            if (str) done = TRUE;
-            break;
-         case META_TRACK_COMMENT:
-            gst_tag_list_get_string (new_tags, GST_TAG_COMMENT, &str);
-            if (str) done = TRUE;
-            break;
-         case META_TRACK_ALBUM:
-            gst_tag_list_get_string (new_tags, GST_TAG_ALBUM, &str);
-            if (str) done = TRUE;
-            break;
-         case META_TRACK_YEAR: {
-            const GValue *date;
-
-            date = gst_tag_list_get_value_index (new_tags, GST_TAG_DATE, 0);
-            if (date)
-               str = g_strdup_value_contents (date);
-            if (str) done = TRUE;
-            break;
-         }
-         case META_TRACK_DISCID:
-#ifdef GST_TAG_CDDA_CDDB_DISCID
-            gst_tag_list_get_string (new_tags, GST_TAG_CDDA_CDDB_DISCID, &str);
-#endif
-            if (str) done = TRUE;
-            break;
-         case META_TRACK_COUNT: {
-            int track_count;
-
-            track_count = emotion_pipeline_cdda_track_count_get (video);
-            if (track_count > 0) {
-               char buf[64];
-
-               g_snprintf (buf, 64, "%d", track_count);
-               str = g_strdup (buf);
-               done = TRUE;
-            }
-            break;
-         }
-         }
-         break;
-      }
+   if (!ev || !ev->metadata) return NULL;
+   switch (meta)
+     {
+      case META_TRACK_TITLE:
+	 str = ev->metadata->title;
+	 break;
+      case META_TRACK_ARTIST:
+	 str = ev->metadata->artist;
+	 break;
+      case  META_TRACK_ALBUM:
+	 str = ev->metadata->album;
+	 break;
+      case META_TRACK_YEAR:
+	 str = ev->metadata->year;
+	 break;
+      case META_TRACK_GENRE:
+	 str = ev->metadata->genre;
+	 break;
+      case META_TRACK_COMMENT:
+	 str = ev->metadata->comment;
+	 break;
+      case META_TRACK_DISCID:
+	 str = ev->metadata->disc_id;
+	 break;
       default:
-         break;
-      }
-      gst_message_unref (message);
-   }
-
-   gst_object_unref (GST_OBJECT (bus));
+	 break;
+     }
 
    return str;
 }
@@ -1234,6 +1200,141 @@ module_close(Emotion_Video_Module *module,
 	     void                 *video)
 {
    em_module.shutdown(video);
+}
+
+static void
+_for_each_tag (GstTagList const* list,
+		    gchar const* tag,
+		    void *data)
+{
+   Emotion_Gstreamer_Video *ev;
+   const GValue *val;
+   int i;
+   int count;
+
+
+   ev = (Emotion_Gstreamer_Video*)data;
+
+   if (!ev || !ev->metadata) return;
+
+   count = gst_tag_list_get_tag_size (list, tag);
+   val = gst_tag_list_get_value_index (list, tag, 0);
+
+   for ( i = 0; i < count; ++i)
+     {
+	if (!strcmp (tag, GST_TAG_TITLE))
+	  {
+	     char *str;
+	     if (ev->metadata->title) g_free(ev->metadata->title);
+	     if (gst_tag_list_get_string (list, GST_TAG_TITLE, &str))
+	       ev->metadata->title = str;
+	     else
+	       ev->metadata->title = NULL;
+	     break;
+	  }
+	if (!strcmp (tag, GST_TAG_ALBUM))
+	  {
+	     gchar *str;
+	     if (ev->metadata->album) g_free(ev->metadata->album);
+	     if (gst_tag_list_get_string (list, GST_TAG_ALBUM, &str))
+	       ev->metadata->album = str;
+	     else
+	       ev->metadata->album = NULL;
+	     break;
+	  }
+	if (!strcmp (tag, GST_TAG_ARTIST))
+	  {
+	     gchar *str;
+	     if (ev->metadata->artist) g_free( ev->metadata->artist);
+	     if (gst_tag_list_get_string (list, GST_TAG_ARTIST, &str))
+	       ev->metadata->artist = str;
+	     else
+	       ev->metadata->artist = NULL;
+	     break;
+	  }
+	if (!strcmp (tag, GST_TAG_GENRE))
+	  {
+	     gchar *str;
+	     if (ev->metadata->genre) g_free( ev->metadata->genre);
+	     if (gst_tag_list_get_string (list, GST_TAG_GENRE, &str))
+	       ev->metadata->genre = str;
+	     else
+	       ev->metadata->genre = NULL;
+	     break;
+	  }
+	if (!strcmp (tag, GST_TAG_COMMENT))
+	  {
+	     gchar *str;
+	     if (ev->metadata->comment) g_free(ev->metadata->comment);
+	     if (gst_tag_list_get_string (list, GST_TAG_COMMENT, &str))
+	       ev->metadata->comment = str;
+	     else
+	       ev->metadata->comment = NULL;
+	     break;
+	  }
+	if (!strcmp (tag, GST_TAG_DATE))
+	  {
+	     gchar *str;
+	     const GValue *date;
+	     if (ev->metadata->year) g_free(ev->metadata->year);
+	     date = gst_tag_list_get_value_index (list, GST_TAG_DATE, 0);
+	     if (date)
+               str = g_strdup_value_contents (date);
+	     else
+	       str = NULL;
+	     ev->metadata->year = str;
+	     break;
+	  }
+
+	if (!strcmp (tag, GST_TAG_TRACK_NUMBER))
+	  {
+	     gchar *str;
+	     const GValue *track;
+	     if (ev->metadata->count) g_free( ev->metadata->count);
+	     track = gst_tag_list_get_value_index (list, GST_TAG_TRACK_NUMBER, 0);
+	     if (track)
+	       str = g_strdup_value_contents (track);
+	     else
+	       str = NULL;
+	     ev->metadata->count = str;
+	     break;
+	  }
+
+#ifdef GST_TAG_CDDA_CDDB_DISCID
+	if (!strcmp (tag, GST_TAG_CDDA_CDDB_DISCID))
+	  {
+	     gchar *str;
+	     const GValue *discid;
+	     if (ev->metadata->disc_id) g_free(ev->metadata->disc_id);
+	     discid = gst_tag_list_get_value_index (list, GST_TAG_CDDA_CDDB_DISCID, 0);
+	     if (discid)
+	       str = g_strdup_value_contents (discid);
+	     else
+	       str = NULL;
+	     ev->metadata->disc_id = str;
+	     break;
+	  }
+#endif
+     }
+
+}
+
+static void
+_free_metadata (Emotion_Gstreamer_Metadata *m)
+{
+  if (!m) return;
+
+  if (m->title)   g_free(m->title);
+  if (m->album)   g_free(m->album);
+  if (m->artist)  g_free(m->artist);
+  if (m->genre)   g_free(m->genre);
+  if (m->comment) g_free(m->comment);
+  if (m->year)    g_free(m->year);
+  if (m->count)   g_free(m->count);
+  if (m->disc_id) g_free(m->disc_id);
+
+  free(m);
+
 }
 
 static int
@@ -1271,7 +1372,7 @@ int _eos_timer_fct (void *data)
    GstMessage              *msg;
 
    ev = (Emotion_Gstreamer_Video *)data;
-   while ((msg = gst_bus_poll (ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS, 0))) {
+   while ((msg = gst_bus_poll (ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS | GST_MESSAGE_TAG, 0))) {
      switch (GST_MESSAGE_TYPE(msg)) {
      case GST_MESSAGE_ERROR: {
        gchar *debug;
@@ -1295,8 +1396,19 @@ int _eos_timer_fct (void *data)
        _emotion_decode_stop(ev->obj);
        _emotion_playback_finished(ev->obj);
        break;
-     default:
-       break;
+      case GST_MESSAGE_TAG:
+	{
+	   GstTagList *new_tags;
+	   gst_message_parse_tag (msg, &new_tags);
+	   if (new_tags)
+	     {
+		gst_tag_list_foreach (new_tags, (GstTagForeachFunc)_for_each_tag, ev);
+		gst_tag_list_free (new_tags);
+	     }
+	   break;
+	}
+      default:
+	 break;
      }
      gst_message_unref (msg);
    }

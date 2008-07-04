@@ -6,6 +6,8 @@
 #include <Ecore.h>
 #include <Ecore_Data.h>
 
+#define HTTP_STREAM 0
+#define RTSP_STREAM 1
 #include <gst/gst.h>
 
 #include "emotion_private.h"
@@ -33,6 +35,21 @@ struct _Emotion_Audio_Sink
   gint        channels;
   gint        samplerate;
 };
+
+typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
+
+struct _Emotion_Gstreamer_Metadata
+{
+   char *title;
+   char *album;
+   char *artist;
+   char *genre;
+   char *comment;
+   char *year;
+   char *count;
+   char *disc_id;
+};
+
 
 typedef struct _Emotion_Gstreamer_Video Emotion_Gstreamer_Video;
 
@@ -68,6 +85,8 @@ struct _Emotion_Gstreamer_Video
   int               fd_ev_read;
   int               fd_ev_write;
   Ecore_Fd_Handler *fd_ev_handler;
+
+  Emotion_Gstreamer_Metadata *metadata;
 
   Emotion_Vis       vis;
 
