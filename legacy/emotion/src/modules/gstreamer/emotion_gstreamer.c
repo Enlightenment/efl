@@ -345,29 +345,29 @@ em_file_open(const char   *file,
    ev->obj = obj;
 
    /* CD Audio */
-   if (strstr(file, "cdda://")) 
+   if (strstr(file, "cdda://"))
      {
 	const char  *device = NULL;
 	unsigned int track = 1;
 
 	device = file + strlen("cdda://");
-	if (device[0] == '/') 
+	if (device[0] == '/')
 	  {
 	     char *tmp;
 
-	     if ((tmp = strchr(device, '?')) || (tmp = strchr(device, '#'))) 
+	     if ((tmp = strchr(device, '?')) || (tmp = strchr(device, '#')))
 	       {
 		  sscanf(tmp + 1, "%d", &track);
 		  tmp[0] = '\0';
 	       }
 	  }
-	else 
+	else
 	  {
 	     device = NULL;
 	     sscanf(file, "cdda://%d", &track);
 	  }
 	fprintf(stderr, "[Emotion] [gst] build CD Audio pipeline\n");
-	if (!(emotion_pipeline_cdda_build(ev, device, track))) 
+	if (!(emotion_pipeline_cdda_build(ev, device, track)))
 	  {
 	     fprintf(stderr, "[Emotion] [gst] error while building CD Audio pipeline\n");
 	     gst_object_unref(ev->pipeline);
@@ -375,11 +375,11 @@ em_file_open(const char   *file,
 	  }
      }
    /* Dvd */
-   else if (strstr(file, "dvd://")) 
+   else if (strstr(file, "dvd://"))
      {
 
 	fprintf(stderr, "[Emotion] [gst] build DVD pipeline\n");
-	if (!(emotion_pipeline_dvd_build(ev, NULL))) 
+	if (!(emotion_pipeline_dvd_build(ev, NULL)))
 	  {
 	     fprintf(stderr, "[Emotion] [gst] error while building DVD pipeline\n");
 	     gst_object_unref(ev->pipeline);
@@ -387,10 +387,10 @@ em_file_open(const char   *file,
 	  }
      }
    /* http */
-   else if (strstr(file, "http://")) 
+   else if (strstr(file, "http://"))
      {
 	fprintf(stderr, "[Emotion] [gst] build URI pipeline\n");
-	if (!(emotion_pipeline_uri_build(ev, file))) 
+	if (!(emotion_pipeline_uri_build(ev, file)))
 	  {
 	     fprintf(stderr, "[Emotion] [gst] error while building URI pipeline\n");
 	     gst_object_unref(ev->pipeline);
@@ -398,7 +398,7 @@ em_file_open(const char   *file,
 	  }
      }
    /* Normal media file */
-   else 
+   else
      {
 	const char *filename;
 
@@ -407,7 +407,7 @@ em_file_open(const char   *file,
 		   : file;
 
 	fprintf(stderr, "[Emotion] [gst] build file pipeline\n");
-	if (!(emotion_pipeline_file_build(ev, filename))) 
+	if (!(emotion_pipeline_file_build(ev, filename)))
 	  {
 	     fprintf(stderr, "[Emotion] [gst] error while building File pipeline\n");
 	     gst_object_unref(ev->pipeline);
@@ -423,7 +423,7 @@ em_file_open(const char   *file,
 	Emotion_Audio_Sink *asink;
 
 	vsink = (Emotion_Video_Sink *)ecore_list_first_goto(ev->video_sinks);
-	if (vsink) 
+	if (vsink)
 	  {
 	     fprintf(stderr, "video : \n");
 	     fprintf(stderr, "  size   : %dx%d\n", vsink->width, vsink->height);
@@ -434,7 +434,7 @@ em_file_open(const char   *file,
 	  }
 
 	asink = (Emotion_Audio_Sink *)ecore_list_first_goto(ev->audio_sinks);
-	if (asink) 
+	if (asink)
 	  {
 	     fprintf(stderr, "audio : \n");
 	     fprintf(stderr, "  chan   : %d\n", asink->channels);
@@ -467,7 +467,7 @@ em_file_close(void *video)
    ecore_list_clear(ev->audio_sinks);
 
    /* shutdown eos */
-   if (ev->eos_timer) 
+   if (ev->eos_timer)
      {
 	ecore_timer_del(ev->eos_timer);
 	ev->eos_timer = NULL;
@@ -515,7 +515,7 @@ em_stop(void *video)
    ev = (Emotion_Gstreamer_Video *)video;
 
    /* shutdown eos */
-   if (ev->eos_timer) 
+   if (ev->eos_timer)
      {
 	ecore_timer_del(ev->eos_timer);
 	ev->eos_timer = NULL;
@@ -536,12 +536,12 @@ em_size_get(void  *video,
    ev = (Emotion_Gstreamer_Video *)video;
 
    vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
-   if (vsink) 
+   if (vsink)
      {
 	if (width) *width = vsink->width;
 	if (height) *height = vsink->height;
      }
-   else 
+   else
      {
 	if (width) *width = 0;
 	if (height) *height = 0;
@@ -563,7 +563,7 @@ em_pos_set(void   *video,
    vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
    asink = (Emotion_Audio_Sink *)ecore_list_index_goto(ev->video_sinks, ev->audio_sink_nbr);
 
-   if (vsink) 
+   if (vsink)
      {
 	gst_element_seek(vsink->sink, 1.0,
 			 GST_FORMAT_TIME,
@@ -572,7 +572,7 @@ em_pos_set(void   *video,
 			 (gint64)(pos * (double)GST_SECOND),
 			 GST_SEEK_TYPE_NONE, -1);
      }
-   if (asink) 
+   if (asink)
      {
 	gst_element_seek(asink->sink, 1.0,
 			 GST_FORMAT_TIME,
@@ -739,9 +739,9 @@ em_format_get(void *video)
    ev = (Emotion_Gstreamer_Video *)video;
 
    vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
-   if (vsink) 
+   if (vsink)
      {
-	switch (vsink->fourcc) 
+	switch (vsink->fourcc)
 	  {
 	   case GST_MAKE_FOURCC('I', '4', '2', '0'):
 	      return EMOTION_FORMAT_I420;
@@ -767,12 +767,12 @@ em_video_data_size_get(void *video, int *w, int *h)
    ev = (Emotion_Gstreamer_Video *)video;
 
    vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
-   if (vsink) 
+   if (vsink)
      {
 	*w = vsink->width;
 	*h = vsink->height;
      }
-   else 
+   else
      {
 	*w = 0;
 	*h = 0;
@@ -794,7 +794,7 @@ em_yuv_rows_get(void           *video,
 
    if (ev->obj_data)
      {
-	if (em_format_get(video) == EMOTION_FORMAT_I420) 
+	if (em_format_get(video) == EMOTION_FORMAT_I420)
 	  {
 	     for (i = 0; i < h; i++)
 	       yrows[i] = &ev->obj_data[i * w];
@@ -805,7 +805,7 @@ em_yuv_rows_get(void           *video,
 	     for (i = 0; i < (h / 2); i++)
 	       vrows[i] = &ev->obj_data[h * w + h * (w /4) + i * (w / 2)];
 	  }
-	else if (em_format_get(video) == EMOTION_FORMAT_YV12) 
+	else if (em_format_get(video) == EMOTION_FORMAT_YV12)
 	  {
 	     for (i = 0; i < h; i++)
 	       yrows[i] = &ev->obj_data[i * w];
@@ -832,7 +832,7 @@ em_bgra_data_get(void *video, unsigned char **bgra_data)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ev->obj_data && em_format_get(video) == EMOTION_FORMAT_BGRA) 
+   if (ev->obj_data && em_format_get(video) == EMOTION_FORMAT_BGRA)
      {
 	*bgra_data = ev->obj_data;
 	return 1;
@@ -1393,11 +1393,11 @@ _eos_timer_fct(void *data)
    GstMessage              *msg;
 
    ev = (Emotion_Gstreamer_Video *)data;
-   while ((msg = gst_bus_poll(ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS | GST_MESSAGE_TAG, 0))) 
+   while ((msg = gst_bus_poll(ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS | GST_MESSAGE_TAG, 0)))
      {
-	switch (GST_MESSAGE_TYPE(msg)) 
+	switch (GST_MESSAGE_TYPE(msg))
 	  {
-	   case GST_MESSAGE_ERROR: 
+	   case GST_MESSAGE_ERROR:
 		{
 		   gchar *debug;
 		   GError *err;
