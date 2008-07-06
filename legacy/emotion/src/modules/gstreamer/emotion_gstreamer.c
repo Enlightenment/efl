@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -8,13 +11,10 @@
 
 
 /* Callbacks to get the eos */
-static int _eos_timer_fct (void *data);
-
-static int   _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh);
-
-static void _for_each_tag (GstTagList const* list, gchar const* tag, void *data);
-
-static void _free_metadata (Emotion_Gstreamer_Metadata *m);
+static int  _eos_timer_fct   (void *data);
+static int  _em_fd_ev_active (void *data, Ecore_Fd_Handler *fdh);
+static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
+static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
 
 /* Interface */
 
@@ -224,8 +224,7 @@ static Emotion_Video_Module em_module =
    em_speed_get, /* speed_get */
    em_eject, /* eject */
    em_meta_get, /* meta_get */
-
-     NULL /* handle */
+   NULL /* handle */
 };
 
 static unsigned char
@@ -238,7 +237,7 @@ em_init(Evas_Object  *obj,
    int                      fds[2];
 
    if (!emotion_video)
-      return 0;
+     return 0;
 
    ev = calloc(1, sizeof(Emotion_Gstreamer_Video));
    if (!ev) return 0;
@@ -247,15 +246,15 @@ em_init(Evas_Object  *obj,
    ev->obj_data = NULL;
 
    /* Initialization of gstreamer */
-   if (!gst_init_check (NULL, NULL, &error))
+   if (!gst_init_check(NULL, NULL, &error))
      goto failure_gstreamer;
 
    /* We allocate the sinks lists */
-   ev->video_sinks = ecore_list_new ();
+   ev->video_sinks = ecore_list_new();
    if (!ev->video_sinks)
      goto failure_video_sinks;
    ecore_list_free_cb_set(ev->video_sinks, ECORE_FREE_CB(free));
-   ev->audio_sinks = ecore_list_new ();
+   ev->audio_sinks = ecore_list_new();
    if (!ev->audio_sinks)
      goto failure_audio_sinks;
    ecore_list_free_cb_set(ev->audio_sinks, ECORE_FREE_CB(free));
@@ -269,29 +268,29 @@ em_init(Evas_Object  *obj,
    ev->vis = EMOTION_VIS_GOOM;
 
    /* Create the file descriptors */
-   if (pipe(fds) == 0) {
-      ev->fd_ev_read = fds[0];
-      ev->fd_ev_write = fds[1];
-      fcntl(ev->fd_ev_read, F_SETFL, O_NONBLOCK);
-      ev->fd_ev_handler = ecore_main_fd_handler_add(ev->fd_ev_read,
-                                                    ECORE_FD_READ,
-                                                    _em_fd_ev_active,
-                                                    ev,
-                                                    NULL, NULL);
-      ecore_main_fd_handler_active_set(ev->fd_ev_handler, ECORE_FD_READ);
-   }
+   if (pipe(fds) == 0)
+     {
+	ev->fd_ev_read = fds[0];
+	ev->fd_ev_write = fds[1];
+	fcntl(ev->fd_ev_read, F_SETFL, O_NONBLOCK);
+	ev->fd_ev_handler = ecore_main_fd_handler_add(ev->fd_ev_read,
+						      ECORE_FD_READ,
+						      _em_fd_ev_active,
+						      ev, NULL, NULL);
+	ecore_main_fd_handler_active_set(ev->fd_ev_handler, ECORE_FD_READ);
+     }
    else
      goto failure_pipe;
 
    return 1;
 
- failure_pipe:
-   ecore_list_destroy (ev->audio_sinks);
- failure_audio_sinks:
-   ecore_list_destroy (ev->video_sinks);
- failure_video_sinks:
- failure_gstreamer:
-   free (ev);
+failure_pipe:
+   ecore_list_destroy(ev->audio_sinks);
+failure_audio_sinks:
+   ecore_list_destroy(ev->video_sinks);
+failure_video_sinks:
+failure_gstreamer:
+   free(ev);
 
    return 0;
 }
@@ -313,8 +312,8 @@ em_shutdown(void *video)
    /* FIXME: and the evas object ? */
    if (ev->obj_data) free(ev->obj_data);
 
-   ecore_list_destroy (ev->video_sinks);
-   ecore_list_destroy (ev->audio_sinks);
+   ecore_list_destroy(ev->video_sinks);
+   ecore_list_destroy(ev->audio_sinks);
 
    free(ev);
 
@@ -331,106 +330,119 @@ em_file_open(const char   *file,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   ev->pipeline = gst_pipeline_new ("pipeline");
+   ev->pipeline = gst_pipeline_new("pipeline");
    if (!ev->pipeline)
      return 0;
 
-   ev->eos_bus = gst_pipeline_get_bus (GST_PIPELINE (ev->pipeline));
+   ev->eos_bus = gst_pipeline_get_bus(GST_PIPELINE(ev->pipeline));
    if (!ev->eos_bus)
      {
-        gst_object_unref(ev->pipeline);
-        return 0;
+	gst_object_unref(ev->pipeline);
+	return 0;
      }
 
    /* Evas Object */
    ev->obj = obj;
 
    /* CD Audio */
-   if (strstr (file,"cdda://")) {
-      const char  *device = NULL;
-      unsigned int track = 1;
+   if (strstr(file, "cdda://")) 
+     {
+	const char  *device = NULL;
+	unsigned int track = 1;
 
-      device = file + strlen ("cdda://");
-      if (device[0] == '/') {
-         char *tmp;
+	device = file + strlen("cdda://");
+	if (device[0] == '/') 
+	  {
+	     char *tmp;
 
-         if ((tmp = strchr (device, '?')) || (tmp = strchr (device, '#'))) {
-            sscanf (tmp + 1,"%d", &track);
-            tmp[0] = '\0';
-         }
-      }
-      else {
-         device = NULL;
-         sscanf (file,"cdda://%d", &track);
-      }
-      fprintf (stderr, "[Emotion] [gst] build CD Audio pipeline\n");
-      if (!(emotion_pipeline_cdda_build (ev, device, track))) {
-        fprintf (stderr, "[Emotion] [gst] error while building CD Audio pipeline\n");
-        gst_object_unref(ev->pipeline);
-        return 0;
-      }
-   }
-   /* Dvd */
-   else if (strstr (file, "dvd://")) {
-
-      fprintf (stderr, "[Emotion] [gst] build DVD pipeline \n");
-      if (!(emotion_pipeline_dvd_build (ev, NULL))) {
-        fprintf (stderr, "[Emotion] [gst] error while building DVD pipeline\n");
-        gst_object_unref(ev->pipeline);
-        return 0;
-      }
-   }
-   /* http */
-   else if (strstr (file, "http://")) {
-     fprintf (stderr, "[Emotion] [gst] build URI pipeline \n");
-     if (!(emotion_pipeline_uri_build (ev, file))) {
-       fprintf (stderr, "[Emotion] [gst] error while building URI pipeline\n");
-        gst_object_unref(ev->pipeline);
-       return 0;
+	     if ((tmp = strchr(device, '?')) || (tmp = strchr(device, '#'))) 
+	       {
+		  sscanf(tmp + 1, "%d", &track);
+		  tmp[0] = '\0';
+	       }
+	  }
+	else 
+	  {
+	     device = NULL;
+	     sscanf(file, "cdda://%d", &track);
+	  }
+	fprintf(stderr, "[Emotion] [gst] build CD Audio pipeline\n");
+	if (!(emotion_pipeline_cdda_build(ev, device, track))) 
+	  {
+	     fprintf(stderr, "[Emotion] [gst] error while building CD Audio pipeline\n");
+	     gst_object_unref(ev->pipeline);
+	     return 0;
+	  }
      }
-   }
+   /* Dvd */
+   else if (strstr(file, "dvd://")) 
+     {
+
+	fprintf(stderr, "[Emotion] [gst] build DVD pipeline\n");
+	if (!(emotion_pipeline_dvd_build(ev, NULL))) 
+	  {
+	     fprintf(stderr, "[Emotion] [gst] error while building DVD pipeline\n");
+	     gst_object_unref(ev->pipeline);
+	     return 0;
+	  }
+     }
+   /* http */
+   else if (strstr(file, "http://")) 
+     {
+	fprintf(stderr, "[Emotion] [gst] build URI pipeline\n");
+	if (!(emotion_pipeline_uri_build(ev, file))) 
+	  {
+	     fprintf(stderr, "[Emotion] [gst] error while building URI pipeline\n");
+	     gst_object_unref(ev->pipeline);
+	     return 0;
+	  }
+     }
    /* Normal media file */
-   else {
-      const char *filename;
+   else 
+     {
+	const char *filename;
 
-      filename = strstr (file, "file://")
-        ? file + strlen ("file://")
-        : file;
+	filename = strstr(file, "file://")
+		   ? file + strlen("file://")
+		   : file;
 
-      fprintf (stderr, "[Emotion] [gst] build file pipeline \n");
-      if (!(emotion_pipeline_file_build (ev, filename))) {
-        fprintf (stderr, "[Emotion] [gst] error while building File pipeline\n");
-        gst_object_unref(ev->pipeline);
-        return 0;
-      }
-   }
+	fprintf(stderr, "[Emotion] [gst] build file pipeline\n");
+	if (!(emotion_pipeline_file_build(ev, filename))) 
+	  {
+	     fprintf(stderr, "[Emotion] [gst] error while building File pipeline\n");
+	     gst_object_unref(ev->pipeline);
+	     return 0;
+	  }
+     }
 
    ev->position = 0.0;
 
-   {
-      /* on recapitule : */
-     Emotion_Video_Sink *vsink;
-     Emotion_Audio_Sink *asink;
+     {
+	/* on recapitule : */
+	Emotion_Video_Sink *vsink;
+	Emotion_Audio_Sink *asink;
 
-     vsink = (Emotion_Video_Sink *)ecore_list_first_goto (ev->video_sinks);
-     if (vsink) {
-        fprintf (stderr, "video : \n");
-        fprintf (stderr, "  size   : %dx%d\n", vsink->width, vsink->height);
-        fprintf (stderr, "  fps    : %d/%d\n", vsink->fps_num, vsink->fps_den);
-        fprintf (stderr, "  fourcc : %" GST_FOURCC_FORMAT "\n", GST_FOURCC_ARGS (vsink->fourcc));
-        fprintf (stderr, "  length : %" GST_TIME_FORMAT "\n\n",
-                 GST_TIME_ARGS ((guint64)(vsink->length_time * GST_SECOND)));
-     }
+	vsink = (Emotion_Video_Sink *)ecore_list_first_goto(ev->video_sinks);
+	if (vsink) 
+	  {
+	     fprintf(stderr, "video : \n");
+	     fprintf(stderr, "  size   : %dx%d\n", vsink->width, vsink->height);
+	     fprintf(stderr, "  fps    : %d/%d\n", vsink->fps_num, vsink->fps_den);
+	     fprintf(stderr, "  fourcc : %" GST_FOURCC_FORMAT "\n", GST_FOURCC_ARGS(vsink->fourcc));
+	     fprintf(stderr, "  length : %" GST_TIME_FORMAT "\n\n",
+		     GST_TIME_ARGS((guint64)(vsink->length_time * GST_SECOND)));
+	  }
 
-     asink = (Emotion_Audio_Sink *)ecore_list_first_goto (ev->audio_sinks);
-     if (asink) {
-        fprintf (stderr, "audio : \n");
-        fprintf (stderr, "  chan   : %d\n", asink->channels);
-        fprintf (stderr, "  rate   : %d\n", asink->samplerate);
-        fprintf (stderr, "  length : %" GST_TIME_FORMAT "\n\n",
-                 GST_TIME_ARGS ((guint64)(asink->length_time * GST_SECOND)));
+	asink = (Emotion_Audio_Sink *)ecore_list_first_goto(ev->audio_sinks);
+	if (asink) 
+	  {
+	     fprintf(stderr, "audio : \n");
+	     fprintf(stderr, "  chan   : %d\n", asink->channels);
+	     fprintf(stderr, "  rate   : %d\n", asink->samplerate);
+	     fprintf(stderr, "  length : %" GST_TIME_FORMAT "\n\n",
+		     GST_TIME_ARGS((guint64)(asink->length_time * GST_SECOND)));
+	  }
      }
-   }
 
    if (ev->metadata)
      _free_metadata(ev->metadata);
@@ -451,32 +463,33 @@ em_file_close(void *video)
      return;
 
    /* we clear the sink lists */
-   ecore_list_clear (ev->video_sinks);
-   ecore_list_clear (ev->audio_sinks);
+   ecore_list_clear(ev->video_sinks);
+   ecore_list_clear(ev->audio_sinks);
 
    /* shutdown eos */
-   if (ev->eos_timer) {
-     ecore_timer_del (ev->eos_timer);
-     ev->eos_timer = NULL;
-   }
+   if (ev->eos_timer) 
+     {
+	ecore_timer_del(ev->eos_timer);
+	ev->eos_timer = NULL;
+     }
 
    if (ev->eos_bus)
      {
-       gst_object_unref (GST_OBJECT (ev->eos_bus));
-       ev->eos_bus = NULL;
+	gst_object_unref(GST_OBJECT(ev->eos_bus));
+	ev->eos_bus = NULL;
      }
 
-   if(ev->metadata)
+   if (ev->metadata)
      {
-       _free_metadata(ev->metadata);
-       ev->metadata = NULL;
+	_free_metadata(ev->metadata);
+	ev->metadata = NULL;
      }
 
    if (ev->pipeline)
      {
-        gst_element_set_state (ev->pipeline, GST_STATE_NULL);
-        gst_object_unref(ev->pipeline);
-        ev->pipeline = NULL;
+	gst_element_set_state(ev->pipeline, GST_STATE_NULL);
+	gst_object_unref(ev->pipeline);
+	ev->pipeline = NULL;
      }
 }
 
@@ -487,11 +500,11 @@ em_play(void   *video,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
-   gst_element_set_state (ev->pipeline, GST_STATE_PLAYING);
+   gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
 
    /* eos */
-   ev->eos_timer = ecore_timer_add (0.1, _eos_timer_fct, ev);
+   ev->eos_timer = ecore_timer_add(0.1, _eos_timer_fct, ev);
 }
 
 static void
@@ -502,12 +515,13 @@ em_stop(void *video)
    ev = (Emotion_Gstreamer_Video *)video;
 
    /* shutdown eos */
-   if (ev->eos_timer) {
-     ecore_timer_del (ev->eos_timer);
-     ev->eos_timer = NULL;
-   }
+   if (ev->eos_timer) 
+     {
+	ecore_timer_del(ev->eos_timer);
+	ev->eos_timer = NULL;
+     }
 
-   gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
+   gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
    ev->play = 0;
 }
 
@@ -521,15 +535,17 @@ em_size_get(void  *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
-   if (vsink) {
-      if (width) *width = vsink->width;
-      if (height) *height = vsink->height;
-   }
-   else {
-      if (width) *width = 0;
-      if (height) *height = 0;
-   }
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
+   if (vsink) 
+     {
+	if (width) *width = vsink->width;
+	if (height) *height = vsink->height;
+     }
+   else 
+     {
+	if (width) *width = 0;
+	if (height) *height = 0;
+     }
 }
 
 static void
@@ -544,27 +560,27 @@ em_pos_set(void   *video,
 
    if (ev->seek_to_pos == pos) return;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
-   asink = (Emotion_Audio_Sink *)ecore_list_index_goto (ev->video_sinks, ev->audio_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
+   asink = (Emotion_Audio_Sink *)ecore_list_index_goto(ev->video_sinks, ev->audio_sink_nbr);
 
-   if (vsink) {
-      gst_element_seek(vsink->sink, 1.0,
-                       GST_FORMAT_TIME,
-                       GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH,
-                       GST_SEEK_TYPE_SET,
-                       (gint64)(pos * (double)GST_SECOND),
-                       GST_SEEK_TYPE_NONE,
-                       -1);
-   }
-   if (asink) {
-      gst_element_seek(asink->sink, 1.0,
-                       GST_FORMAT_TIME,
-                       GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH,
-                       GST_SEEK_TYPE_SET,
-                       (gint64)(pos * (double)GST_SECOND),
-                       GST_SEEK_TYPE_NONE,
-                       -1);
-   }
+   if (vsink) 
+     {
+	gst_element_seek(vsink->sink, 1.0,
+			 GST_FORMAT_TIME,
+			 GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH,
+			 GST_SEEK_TYPE_SET,
+			 (gint64)(pos * (double)GST_SECOND),
+			 GST_SEEK_TYPE_NONE, -1);
+     }
+   if (asink) 
+     {
+	gst_element_seek(asink->sink, 1.0,
+			 GST_FORMAT_TIME,
+			 GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH,
+			 GST_SEEK_TYPE_SET,
+			 (gint64)(pos * (double)GST_SECOND),
+			 GST_SEEK_TYPE_NONE, -1);
+     }
    ev->seek_to_pos = pos;
 }
 
@@ -588,9 +604,9 @@ em_len_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
-      return (double)vsink->length_time;
+     return (double)vsink->length_time;
 
    return 0.0;
 }
@@ -603,9 +619,9 @@ em_fps_num_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
-      return vsink->fps_num;
+     return vsink->fps_num;
 
    return 0;
 }
@@ -618,9 +634,9 @@ em_fps_den_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
-      return vsink->fps_den;
+     return vsink->fps_den;
 
    return 1;
 }
@@ -633,9 +649,9 @@ em_fps_get(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
    if (vsink)
-      return (double)vsink->fps_num / (double)vsink->fps_den;
+     return (double)vsink->fps_num / (double)vsink->fps_den;
 
    return 0.0;
 }
@@ -677,7 +693,7 @@ em_video_handled(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ecore_list_empty_is (ev->video_sinks))
+   if (ecore_list_empty_is(ev->video_sinks))
      return 0;
 
    return 1;
@@ -690,7 +706,7 @@ em_audio_handled(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ecore_list_empty_is (ev->audio_sinks))
+   if (ecore_list_empty_is(ev->audio_sinks))
      return 0;
 
    return 1;
@@ -715,28 +731,30 @@ em_frame_done(void *video)
 }
 
 static Emotion_Format
-em_format_get (void *video)
+em_format_get(void *video)
 {
    Emotion_Gstreamer_Video *ev;
    Emotion_Video_Sink      *vsink;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
-   if (vsink) {
-      switch (vsink->fourcc) {
-      case GST_MAKE_FOURCC ('I','4','2','0'):
-         return EMOTION_FORMAT_I420;
-      case GST_MAKE_FOURCC ('Y','V','1','2'):
-         return EMOTION_FORMAT_YV12;
-      case GST_MAKE_FOURCC ('Y','U','Y','2'):
-         return EMOTION_FORMAT_YUY2;
-      case GST_MAKE_FOURCC ('A','R','G','B'):
-         return EMOTION_FORMAT_BGRA;
-      default:
-         return EMOTION_FORMAT_NONE;
-      }
-   }
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
+   if (vsink) 
+     {
+	switch (vsink->fourcc) 
+	  {
+	   case GST_MAKE_FOURCC('I', '4', '2', '0'):
+	      return EMOTION_FORMAT_I420;
+	   case GST_MAKE_FOURCC('Y', 'V', '1', '2'):
+	      return EMOTION_FORMAT_YV12;
+	   case GST_MAKE_FOURCC('Y', 'U', 'Y', '2'):
+	      return EMOTION_FORMAT_YUY2;
+	   case GST_MAKE_FOURCC('A', 'R', 'G', 'B'):
+	      return EMOTION_FORMAT_BGRA;
+	   default:
+	      return EMOTION_FORMAT_NONE;
+	  }
+     }
    return EMOTION_FORMAT_NONE;
 }
 
@@ -748,15 +766,17 @@ em_video_data_size_get(void *video, int *w, int *h)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
-   if (vsink) {
-      *w = vsink->width;
-      *h = vsink->height;
-   }
-   else {
-      *w = 0;
-      *h = 0;
-   }
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
+   if (vsink) 
+     {
+	*w = vsink->width;
+	*h = vsink->height;
+     }
+   else 
+     {
+	*w = 0;
+	*h = 0;
+     }
 }
 
 static int
@@ -774,30 +794,32 @@ em_yuv_rows_get(void           *video,
 
    if (ev->obj_data)
      {
-       if (em_format_get(video) == EMOTION_FORMAT_I420) {
-         for (i = 0; i < h; i++)
-           yrows[i] = &ev->obj_data[i * w];
+	if (em_format_get(video) == EMOTION_FORMAT_I420) 
+	  {
+	     for (i = 0; i < h; i++)
+	       yrows[i] = &ev->obj_data[i * w];
 
-         for (i = 0; i < (h / 2); i++)
-           urows[i] = &ev->obj_data[h * w + i * (w / 2) ];
+	     for (i = 0; i < (h / 2); i++)
+	       urows[i] = &ev->obj_data[h * w + i * (w / 2)];
 
-         for (i = 0; i < (h / 2); i++)
-           vrows[i] = &ev->obj_data[h * w + h * (w /4) + i * (w / 2)];
-       }
-       else if (em_format_get(video) == EMOTION_FORMAT_YV12) {
-         for (i = 0; i < h; i++)
-           yrows[i] = &ev->obj_data[i * w];
+	     for (i = 0; i < (h / 2); i++)
+	       vrows[i] = &ev->obj_data[h * w + h * (w /4) + i * (w / 2)];
+	  }
+	else if (em_format_get(video) == EMOTION_FORMAT_YV12) 
+	  {
+	     for (i = 0; i < h; i++)
+	       yrows[i] = &ev->obj_data[i * w];
 
-         for (i = 0; i < (h / 2); i++)
-           vrows[i] = &ev->obj_data[h * w + i * (w / 2) ];
+	     for (i = 0; i < (h / 2); i++)
+	       vrows[i] = &ev->obj_data[h * w + i * (w / 2)];
 
-         for (i = 0; i < (h / 2); i++)
-           urows[i] = &ev->obj_data[h * w + h * (w /4) + i * (w / 2)];
-       }
-       else
-         return 0;
+	     for (i = 0; i < (h / 2); i++)
+	       urows[i] = &ev->obj_data[h * w + h * (w /4) + i * (w / 2)];
+	  }
+	else
+	  return 0;
 
-       return 1;
+	return 1;
      }
 
    return 0;
@@ -810,10 +832,11 @@ em_bgra_data_get(void *video, unsigned char **bgra_data)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ev->obj_data && em_format_get(video) == EMOTION_FORMAT_BGRA) {
-      *bgra_data = ev->obj_data;
-      return 1;
-   }
+   if (ev->obj_data && em_format_get(video) == EMOTION_FORMAT_BGRA) 
+     {
+	*bgra_data = ev->obj_data;
+	return 1;
+     }
    return 0;
 }
 
@@ -964,15 +987,15 @@ em_audio_channel_mute_set(void *video,
      return;
 
    ev->audio_mute = mute;
-   volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
+   volume = gst_bin_get_by_name(GST_BIN(ev->pipeline), "volume");
    if (!volume) return;
 
    if (mute)
-      g_object_set (G_OBJECT (volume), "volume", 0.0, NULL);
+     g_object_set(G_OBJECT(volume), "volume", 0.0, NULL);
    else
-      g_object_set (G_OBJECT (volume), "volume", ev->volume * 10.0, NULL);
+     g_object_set(G_OBJECT(volume), "volume", ev->volume * 10.0, NULL);
 
-   gst_object_unref (volume);
+   gst_object_unref(volume);
 }
 
 static int
@@ -999,11 +1022,11 @@ em_audio_channel_volume_set(void  *video,
    if (vol > 1.0)
      vol = 1.0;
    ev->volume = vol;
-   volume = gst_bin_get_by_name (GST_BIN (ev->pipeline), "volume");
+   volume = gst_bin_get_by_name(GST_BIN(ev->pipeline), "volume");
    if (!volume) return;
-   g_object_set (G_OBJECT (volume), "volume",
-		 vol * 10.0, NULL);
-   gst_object_unref (volume);
+   g_object_set(G_OBJECT(volume), "volume",
+		vol * 10.0, NULL);
+   gst_object_unref(volume);
 }
 
 static double
@@ -1130,8 +1153,6 @@ em_speed_get(void *video)
 
 static int
 em_eject(void *video)
-
-
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1186,10 +1207,10 @@ module_open(Evas_Object           *obj,
 	    Emotion_Module_Options *opt)
 {
    if (!module)
-      return 0;
+     return 0;
 
    if (!em_module.init(obj, video, opt))
-      return 0;
+     return 0;
 
    *module = &em_module;
    return 1;
@@ -1203,7 +1224,7 @@ module_close(Emotion_Video_Module *module,
 }
 
 static void
-_for_each_tag (GstTagList const* list,
+_for_each_tag(GstTagList const* list,
 		    gchar const* tag,
 		    void *data)
 {
@@ -1217,83 +1238,83 @@ _for_each_tag (GstTagList const* list,
 
    if (!ev || !ev->metadata) return;
 
-   count = gst_tag_list_get_tag_size (list, tag);
-   val = gst_tag_list_get_value_index (list, tag, 0);
+   count = gst_tag_list_get_tag_size(list, tag);
+   val = gst_tag_list_get_value_index(list, tag, 0);
 
-   for ( i = 0; i < count; ++i)
+   for (i = 0; i < count; i++)
      {
-	if (!strcmp (tag, GST_TAG_TITLE))
+	if (!strcmp(tag, GST_TAG_TITLE))
 	  {
 	     char *str;
 	     if (ev->metadata->title) g_free(ev->metadata->title);
-	     if (gst_tag_list_get_string (list, GST_TAG_TITLE, &str))
+	     if (gst_tag_list_get_string(list, GST_TAG_TITLE, &str))
 	       ev->metadata->title = str;
 	     else
 	       ev->metadata->title = NULL;
 	     break;
 	  }
-	if (!strcmp (tag, GST_TAG_ALBUM))
+	if (!strcmp(tag, GST_TAG_ALBUM))
 	  {
 	     gchar *str;
 	     if (ev->metadata->album) g_free(ev->metadata->album);
-	     if (gst_tag_list_get_string (list, GST_TAG_ALBUM, &str))
+	     if (gst_tag_list_get_string(list, GST_TAG_ALBUM, &str))
 	       ev->metadata->album = str;
 	     else
 	       ev->metadata->album = NULL;
 	     break;
 	  }
-	if (!strcmp (tag, GST_TAG_ARTIST))
+	if (!strcmp(tag, GST_TAG_ARTIST))
 	  {
 	     gchar *str;
 	     if (ev->metadata->artist) g_free( ev->metadata->artist);
-	     if (gst_tag_list_get_string (list, GST_TAG_ARTIST, &str))
+	     if (gst_tag_list_get_string(list, GST_TAG_ARTIST, &str))
 	       ev->metadata->artist = str;
 	     else
 	       ev->metadata->artist = NULL;
 	     break;
 	  }
-	if (!strcmp (tag, GST_TAG_GENRE))
+	if (!strcmp(tag, GST_TAG_GENRE))
 	  {
 	     gchar *str;
 	     if (ev->metadata->genre) g_free( ev->metadata->genre);
-	     if (gst_tag_list_get_string (list, GST_TAG_GENRE, &str))
+	     if (gst_tag_list_get_string(list, GST_TAG_GENRE, &str))
 	       ev->metadata->genre = str;
 	     else
 	       ev->metadata->genre = NULL;
 	     break;
 	  }
-	if (!strcmp (tag, GST_TAG_COMMENT))
+	if (!strcmp(tag, GST_TAG_COMMENT))
 	  {
 	     gchar *str;
 	     if (ev->metadata->comment) g_free(ev->metadata->comment);
-	     if (gst_tag_list_get_string (list, GST_TAG_COMMENT, &str))
+	     if (gst_tag_list_get_string(list, GST_TAG_COMMENT, &str))
 	       ev->metadata->comment = str;
 	     else
 	       ev->metadata->comment = NULL;
 	     break;
 	  }
-	if (!strcmp (tag, GST_TAG_DATE))
+	if (!strcmp(tag, GST_TAG_DATE))
 	  {
 	     gchar *str;
 	     const GValue *date;
 	     if (ev->metadata->year) g_free(ev->metadata->year);
-	     date = gst_tag_list_get_value_index (list, GST_TAG_DATE, 0);
+	     date = gst_tag_list_get_value_index(list, GST_TAG_DATE, 0);
 	     if (date)
-               str = g_strdup_value_contents (date);
+               str = g_strdup_value_contents(date);
 	     else
 	       str = NULL;
 	     ev->metadata->year = str;
 	     break;
 	  }
 
-	if (!strcmp (tag, GST_TAG_TRACK_NUMBER))
+	if (!strcmp(tag, GST_TAG_TRACK_NUMBER))
 	  {
 	     gchar *str;
 	     const GValue *track;
 	     if (ev->metadata->count) g_free( ev->metadata->count);
-	     track = gst_tag_list_get_value_index (list, GST_TAG_TRACK_NUMBER, 0);
+	     track = gst_tag_list_get_value_index(list, GST_TAG_TRACK_NUMBER, 0);
 	     if (track)
-	       str = g_strdup_value_contents (track);
+	       str = g_strdup_value_contents(track);
 	     else
 	       str = NULL;
 	     ev->metadata->count = str;
@@ -1301,14 +1322,14 @@ _for_each_tag (GstTagList const* list,
 	  }
 
 #ifdef GST_TAG_CDDA_CDDB_DISCID
-	if (!strcmp (tag, GST_TAG_CDDA_CDDB_DISCID))
+	if (!strcmp(tag, GST_TAG_CDDA_CDDB_DISCID))
 	  {
 	     gchar *str;
 	     const GValue *discid;
 	     if (ev->metadata->disc_id) g_free(ev->metadata->disc_id);
-	     discid = gst_tag_list_get_value_index (list, GST_TAG_CDDA_CDDB_DISCID, 0);
+	     discid = gst_tag_list_get_value_index(list, GST_TAG_CDDA_CDDB_DISCID, 0);
 	     if (discid)
-	       str = g_strdup_value_contents (discid);
+	       str = g_strdup_value_contents(discid);
 	     else
 	       str = NULL;
 	     ev->metadata->disc_id = str;
@@ -1320,7 +1341,7 @@ _for_each_tag (GstTagList const* list,
 }
 
 static void
-_free_metadata (Emotion_Gstreamer_Metadata *m)
+_free_metadata(Emotion_Gstreamer_Metadata *m)
 {
   if (!m) return;
 
@@ -1334,7 +1355,6 @@ _free_metadata (Emotion_Gstreamer_Metadata *m)
   if (m->disc_id) g_free(m->disc_id);
 
   free(m);
-
 }
 
 static int
@@ -1352,65 +1372,69 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 
    while ((len = read(fd, buf, sizeof(buf))) > 0)
      {
-        if (len == sizeof(buf))
-          {
-             Emotion_Video_Sink *vsink;
+	if (len == sizeof(buf))
+	  {
+	     Emotion_Video_Sink *vsink;
 
-             frame_data = buf[0];
-             buffer = buf[1];
-             _emotion_frame_new(ev->obj);
-             vsink = (Emotion_Video_Sink *)ecore_list_index_goto (ev->video_sinks, ev->video_sink_nbr);
-             if (vsink) _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
-          }
+	     frame_data = buf[0];
+	     buffer = buf[1];
+	     _emotion_frame_new(ev->obj);
+	     vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
+	     if (vsink) _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
+	  }
      }
    return 1;
 }
 
-int _eos_timer_fct (void *data)
+static int
+_eos_timer_fct(void *data)
 {
    Emotion_Gstreamer_Video *ev;
    GstMessage              *msg;
 
    ev = (Emotion_Gstreamer_Video *)data;
-   while ((msg = gst_bus_poll (ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS | GST_MESSAGE_TAG, 0))) {
-     switch (GST_MESSAGE_TYPE(msg)) {
-     case GST_MESSAGE_ERROR: {
-       gchar *debug;
-       GError *err;
+   while ((msg = gst_bus_poll(ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS | GST_MESSAGE_TAG, 0))) 
+     {
+	switch (GST_MESSAGE_TYPE(msg)) 
+	  {
+	   case GST_MESSAGE_ERROR: 
+		{
+		   gchar *debug;
+		   GError *err;
 
-       gst_message_parse_error (msg, &err, &debug);
-       g_free (debug);
+		   gst_message_parse_error(msg, &err, &debug);
+		   g_free(debug);
 
-       g_print ("Error: %s\n", err->message);
-       g_error_free (err);
+		   g_print("Error: %s\n", err->message);
+		   g_error_free(err);
 
-       break;
+		   break;
+		}
+	   case GST_MESSAGE_EOS:
+	      if (ev->eos_timer)
+		{
+		   ecore_timer_del(ev->eos_timer);
+		   ev->eos_timer = NULL;
+		}
+	      ev->play = 0;
+	      _emotion_decode_stop(ev->obj);
+	      _emotion_playback_finished(ev->obj);
+	      break;
+	   case GST_MESSAGE_TAG:
+		{
+		   GstTagList *new_tags;
+		   gst_message_parse_tag(msg, &new_tags);
+		   if (new_tags)
+		     {
+			gst_tag_list_foreach(new_tags, (GstTagForeachFunc)_for_each_tag, ev);
+			gst_tag_list_free(new_tags);
+		     }
+		   break;
+		}
+	   default:
+	      break;
+	  }
+	gst_message_unref(msg);
      }
-     case GST_MESSAGE_EOS:
-       if (ev->eos_timer)
-         {
-           ecore_timer_del(ev->eos_timer);
-           ev->eos_timer = NULL;
-         }
-       ev->play = 0;
-       _emotion_decode_stop(ev->obj);
-       _emotion_playback_finished(ev->obj);
-       break;
-      case GST_MESSAGE_TAG:
-	{
-	   GstTagList *new_tags;
-	   gst_message_parse_tag (msg, &new_tags);
-	   if (new_tags)
-	     {
-		gst_tag_list_foreach (new_tags, (GstTagForeachFunc)_for_each_tag, ev);
-		gst_tag_list_free (new_tags);
-	     }
-	   break;
-	}
-      default:
-	 break;
-     }
-     gst_message_unref (msg);
-   }
    return 1;
 }
