@@ -1467,7 +1467,7 @@ efreet_desktop_command_append_quoted(char *dest, int *size, int *len, char *src)
         while (*p)
         {
             if (*p == '\'')
-                dest = efreet_string_append_char(dest, size, len, '\\');
+                dest = efreet_string_append(dest, size, len, "\'\\\'");
 
             dest = efreet_string_append_char(dest, size, len, *p);
             p++;
