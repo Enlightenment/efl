@@ -1,6 +1,50 @@
 #ifndef EVAS_INLINE_H
 #define EVAS_INLINE_H
 
+static inline void
+evas_add_rect(Evas_Rectangles *rects, int x, int y, int w, int h)
+{
+   if ((rects->count + 1) > rects->total)
+     {
+	Evas_Rectangle *_add_rect;
+	unsigned int _tmp_total;
+
+	_tmp_total = rects->total + 32;
+	_add_rect = realloc(rects->array, sizeof(Evas_Rectangle) * _tmp_total);
+	if (!_add_rect) return ;
+
+	rects->total = _tmp_total;
+	rects->array = _add_rect;
+     }
+   rects->array[rects->count].x = x;
+   rects->array[rects->count].y = y;
+   rects->array[rects->count].w = w;
+   rects->array[rects->count].h = h;
+   rects->count += 1;
+}
+
+static inline Cutout_Rect*
+evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
+                                     int x, int y, int w, int h)
+{
+   Cutout_Rect* rect;
+
+   if (rects->max < (rects->active + 1))
+     {
+	rects->max += 32;
+	rects->rects = realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
+     }
+
+   rect = rects->rects + rects->active;
+   rect->x = x;
+   rect->y = y;
+   rect->w = w;
+   rect->h = h;
+   rects->active++;
+
+   return rect;
+}
+
 static inline int
 evas_object_is_opaque(Evas_Object *obj)
 {

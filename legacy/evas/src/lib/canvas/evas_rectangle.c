@@ -1,23 +1,20 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-Evas_List *
-evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, int ww, int hh)
+void
+evas_rects_return_difference_rects(Evas_Rectangles *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh)
 {
-   Evas_List *rects = NULL;
-   Evas_Rectangle *r;
+   unsigned int available = 0;
 
    if (!RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh))
      {
-	NEW_RECT(r, x, y, w, h);
-	if (r) rects = evas_list_append(rects, r);
-	NEW_RECT(r, xx, yy, ww, hh);
-	if (r) rects = evas_list_append(rects, r);
+	evas_add_rect(rects, x, y, w, h);
+	evas_add_rect(rects, xx, yy, ww, hh);
      }
    else
      {
 	int x1[4], y1[4], i, j;
-	Evas_List *rl = NULL, *rll;
+	Evas_Rectangles tmp = { 0, 0, NULL };
 
 	if (x < xx)
 	  {
@@ -63,32 +60,42 @@ evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, i
 	  {
 	     for (i = 0; i < 3; i++)
 	       {
-		  NEW_RECT(r, x1[i], y1[j], x1[i + 1] - x1[i], y1[j + 1] - y1[j]);
-		  if (r) rl = evas_list_append(rl, r);
-	       }
-	  }
-	if (rl)
-	  {
-	     for (rll = rl; rll; rll = rll->next)
-	       {
-		  r = rll->data;
-		  if ((r->w > 0) && (r->h > 0))
-		    {
-		       int intsec1, intsec2;
+		  int intsec1, intsec2;
+		  int tx, ty, tw, th;
 
-		       intsec1 = (RECTS_INTERSECT(r->x, r->y, r->w, r->h, x, y, w, h));
-		       intsec2 = (RECTS_INTERSECT(r->x, r->y, r->w, r->h, xx, yy, ww, hh));
-		       if (intsec1 ^ intsec2)
-			 rects = evas_list_append(rects, r);
-		       else
-			 free(r);
+		  tx = x1[i];
+		  ty = y1[j];
+		  tw = x1[i + 1] - x1[i];
+		  th = y1[j + 1] - y1[j];
+
+		  intsec1 = (RECTS_INTERSECT(tx, ty, tw, th, x, y, w, h));
+		  intsec2 = (RECTS_INTERSECT(tx, ty, tw, th, xx, yy, ww, hh));
+		  if (intsec1 ^ intsec2)
+		    {
+		       evas_add_rect(rects, tx, ty, tw, th);
 		    }
-		  else
-		    free(r);
 	       }
-	     rl = evas_list_free(rl);
 	  }
+/* 	if (tmp.count > 0) */
+/* 	  { */
+/* 	     unsigned int i; */
+
+/* 	     for (i = 0; i < tmp.count; ++i) */
+/* 	       { */
+/* 		  if ((tmp.array[i].w > 0) && (tmp.array[i].h > 0)) */
+/* 		    { */
+/* 		       int intsec1, intsec2; */
+
+/* 		       intsec1 = (RECTS_INTERSECT(tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h, x, y, w, h)); */
+/* 		       intsec2 = (RECTS_INTERSECT(tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h, xx, yy, ww, hh)); */
+/* 		       if (intsec1 ^ intsec2) */
+/* 			 { */
+/* 			    evas_add_rect(rects, tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h); */
+/* 			 } */
+/* 		    } */
+/* 	       } */
+/* 	     free(tmp.array); */
+/* 	  } */
 
      }
-   return rects;
 }

@@ -103,6 +103,7 @@ typedef struct _Evas_Intercept_Func_Color   Evas_Intercept_Func_Color;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
+typedef struct _Evas_Rectangles             Evas_Rectangles;
 
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
@@ -379,6 +380,13 @@ struct _Evas_Layer
    void             *engine_data;
    int               usage;
    unsigned char     delete_me : 1;
+};
+
+struct _Evas_Rectangles
+{
+   unsigned int    total;
+   unsigned int    count;
+   Evas_Rectangle *array;
 };
 
 struct _Evas_Size
@@ -696,11 +704,11 @@ void evas_object_free(Evas_Object *obj, int clean_layer);
 void evas_object_inject(Evas_Object *obj, Evas *e);
 void evas_object_release(Evas_Object *obj, int clean_layer);
 void evas_object_change(Evas_Object *obj);
-Evas_List *evas_object_render_pre_visible_change(Evas_List *updates, Evas_Object *obj, int is_v, int was_v);
-Evas_List *evas_object_render_pre_clipper_change(Evas_List *updates, Evas_Object *obj);
-Evas_List *evas_object_render_pre_prev_cur_add(Evas_List *updates, Evas_Object *obj);
-void evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int is_v, int was_v);
-Evas_List * evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, int ww, int hh);
+void evas_object_render_pre_visible_change(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v);
+void evas_object_render_pre_clipper_change(Evas_Rectangles *rects, Evas_Object *obj);
+void evas_object_render_pre_prev_cur_add(Evas_Rectangles *rects, Evas_Object *obj);
+void evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v);
+void evas_rects_return_difference_rects(Evas_Rectangles *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh);
 
 void evas_object_clip_dirty(Evas_Object *obj);
 void evas_object_recalc_clippees(Evas_Object *obj);

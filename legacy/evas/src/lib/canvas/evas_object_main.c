@@ -85,153 +85,127 @@ evas_object_change(Evas_Object *obj)
    if (obj->smart.parent) evas_object_change(obj->smart.parent);
 }
 
-Evas_List *
-evas_object_render_pre_visible_change(Evas_List *updates, Evas_Object *obj, int is_v, int was_v)
+void
+evas_object_render_pre_visible_change(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v)
 {
-   Evas_Rectangle *r;
-
-   if (obj->smart.smart) return updates;
-   if (is_v == was_v) return updates;
+   if (obj->smart.smart) return ;
+   if (is_v == was_v) return ;
    if (is_v)
      {
-	NEW_RECT(r,
-		 obj->cur.cache.clip.x,
-		 obj->cur.cache.clip.y,
-		 obj->cur.cache.clip.w,
-		 obj->cur.cache.clip.h);
-	if (r) updates = evas_list_append(updates, r);
+	evas_add_rect(rects,
+		      obj->cur.cache.clip.x,
+		      obj->cur.cache.clip.y,
+		      obj->cur.cache.clip.w,
+		      obj->cur.cache.clip.h);
      }
    else
      {
-	NEW_RECT(r,
-		 obj->prev.cache.clip.x,
-		 obj->prev.cache.clip.y,
-		 obj->prev.cache.clip.w,
-		 obj->prev.cache.clip.h);
-	if (r) updates = evas_list_append(updates, r);
+	evas_add_rect(rects,
+		      obj->prev.cache.clip.x,
+		      obj->prev.cache.clip.y,
+		      obj->prev.cache.clip.w,
+		      obj->prev.cache.clip.h);
      }
-   return updates;
 }
 
-Evas_List *
-evas_object_render_pre_clipper_change(Evas_List *updates, Evas_Object *obj)
+void
+evas_object_render_pre_clipper_change(Evas_Rectangles *rects, Evas_Object *obj)
 {
-   Evas_Rectangle *r;
-   Evas_List *rl;
+   unsigned int i;
 
-   if (obj->smart.smart) return updates;
-   if (obj->cur.clipper == obj->prev.clipper) return updates;
+   if (obj->smart.smart) return ;
+   if (obj->cur.clipper == obj->prev.clipper) return ;
    if ((obj->cur.clipper) && (obj->prev.clipper))
      {
 	/* get difference rects between clippers */
-	rl = evas_rects_return_difference_rects(obj->cur.clipper->cur.cache.clip.x,
-						obj->cur.clipper->cur.cache.clip.y,
-						obj->cur.clipper->cur.cache.clip.w,
-						obj->cur.clipper->cur.cache.clip.h,
-						obj->prev.clipper->prev.cache.clip.x,
-						obj->prev.clipper->prev.cache.clip.y,
-						obj->prev.clipper->prev.cache.clip.w,
-						obj->prev.clipper->prev.cache.clip.h);
-	/* go thru every difference rect */
-	while (rl)
-	  {
-	     r = rl->data;
-	     rl = evas_list_remove(rl, r);
-	     updates = evas_list_append(updates, r);
-	  }
+	evas_rects_return_difference_rects(rects,
+					   obj->cur.clipper->cur.cache.clip.x,
+					   obj->cur.clipper->cur.cache.clip.y,
+					   obj->cur.clipper->cur.cache.clip.w,
+					   obj->cur.clipper->cur.cache.clip.h,
+					   obj->prev.clipper->prev.cache.clip.x,
+					   obj->prev.clipper->prev.cache.clip.y,
+					   obj->prev.clipper->prev.cache.clip.w,
+					   obj->prev.clipper->prev.cache.clip.h);
      }
    else if (obj->cur.clipper)
      {
-	rl = evas_rects_return_difference_rects(obj->cur.geometry.x,
-						obj->cur.geometry.y,
-						obj->cur.geometry.w,
-						obj->cur.geometry.h,
+	evas_rects_return_difference_rects(rects,
+					   obj->cur.geometry.x,
+					   obj->cur.geometry.y,
+					   obj->cur.geometry.w,
+					   obj->cur.geometry.h,
 ////	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
 ////						obj->cur.cache.geometry.y,
 ////						obj->cur.cache.geometry.w,
 ////						obj->cur.cache.geometry.h,
-						obj->cur.clipper->cur.cache.clip.x,
-						obj->cur.clipper->cur.cache.clip.y,
-						obj->cur.clipper->cur.cache.clip.w,
-						obj->cur.clipper->cur.cache.clip.h);
-	while (rl)
-	  {
-	     r = rl->data;
-	     rl = evas_list_remove(rl, r);
-	     updates = evas_list_append(updates, r);
-	  }
+					   obj->cur.clipper->cur.cache.clip.x,
+					   obj->cur.clipper->cur.cache.clip.y,
+					   obj->cur.clipper->cur.cache.clip.w,
+					   obj->cur.clipper->cur.cache.clip.h);
      }
    else if (obj->prev.clipper)
      {
-	rl = evas_rects_return_difference_rects(obj->prev.geometry.x,
-						obj->prev.geometry.y,
-						obj->prev.geometry.w,
-						obj->prev.geometry.h,
+	evas_rects_return_difference_rects(rects,
+					   obj->prev.geometry.x,
+					   obj->prev.geometry.y,
+					   obj->prev.geometry.w,
+					   obj->prev.geometry.h,
 ////	rl = evas_rects_return_difference_rects(obj->prev.cache.geometry.x,
 ////						obj->prev.cache.geometry.y,
 ////						obj->prev.cache.geometry.w,
 ////						obj->prev.cache.geometry.h,
-						obj->prev.clipper->prev.cache.clip.x,
-						obj->prev.clipper->prev.cache.clip.y,
-						obj->prev.clipper->prev.cache.clip.w,
-						obj->prev.clipper->prev.cache.clip.h);
-	while (rl)
-	  {
-	     r = rl->data;
-	     rl = evas_list_remove(rl, r);
-	     updates = evas_list_append(updates, r);
-	  }
+					   obj->prev.clipper->prev.cache.clip.x,
+					   obj->prev.clipper->prev.cache.clip.y,
+					   obj->prev.clipper->prev.cache.clip.w,
+					   obj->prev.clipper->prev.cache.clip.h);
      }
-   return updates;
 }
 
-Evas_List *
-evas_object_render_pre_prev_cur_add(Evas_List *updates, Evas_Object *obj)
+void
+evas_object_render_pre_prev_cur_add(Evas_Rectangles *rects, Evas_Object *obj)
 {
-   Evas_Rectangle *r;
-
-   NEW_RECT(r,
-	    obj->cur.geometry.x,
-	    obj->cur.geometry.y,
-	    obj->cur.geometry.w,
-	    obj->cur.geometry.h);
+   evas_add_rect(rects,
+		 obj->cur.geometry.x,
+		 obj->cur.geometry.y,
+		 obj->cur.geometry.w,
+		 obj->cur.geometry.h);
 ////	    obj->cur.cache.geometry.x,
 ////	    obj->cur.cache.geometry.y,
 ////	    obj->cur.cache.geometry.w,
 ////	    obj->cur.cache.geometry.h);
-   if (r) updates = evas_list_append(updates, r);
-   NEW_RECT(r,
-	    obj->prev.geometry.x,
-	    obj->prev.geometry.y,
-	    obj->prev.geometry.w,
-	    obj->prev.geometry.h);
+   evas_add_rect(rects,
+		 obj->prev.geometry.x,
+		 obj->prev.geometry.y,
+		 obj->prev.geometry.w,
+		 obj->prev.geometry.h);
 ////	    obj->prev.cache.geometry.x,
 ////	    obj->prev.cache.geometry.y,
 ////	    obj->prev.cache.geometry.w,
 ////	    obj->prev.cache.geometry.h);
-   if (r) updates = evas_list_append(updates, r);
-   return updates;
 }
 
 void
-evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int is_v, int was_v)
+evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v)
 {
    Evas_Rectangle *r;
-   int x, y, w, h;
    Evas_Object *clipper;
    Evas_List *l;
+   unsigned int i;
+   int x, y, w, h;
 
-   if (obj->smart.smart) return;
+   if (obj->smart.smart) goto end;
    /* FIXME: was_v isn't used... why? */
    was_v = 0;
    if (!obj->clip.clipees)
      {
-	while (updates)
+	for (i = 0; i < rects->count; ++i)
 	  {
-	     r = (Evas_Rectangle *)(updates->data);
-	     updates = evas_list_remove(updates, r);
 	     /* get updates and clip to current clip */
-	     x = r->x; y = r->y; w = r->w; h = r->h;
+	     x = rects->array[i].x;
+	     y = rects->array[i].y;
+	     w = rects->array[i].w;
+	     h = rects->array[i].h;
 	     RECTS_CLIP_TO_RECT(x, y, w, h,
 				obj->cur.cache.clip.x,
 				obj->cur.cache.clip.y,
@@ -241,7 +215,10 @@ evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int 
 	       obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
 								      x, y, w, h);
 	     /* get updates and clip to previous clip */
-	     x = r->x; y = r->y; w = r->w; h = r->h;
+	     x = rects->array[i].x;
+	     y = rects->array[i].y;
+	     w = rects->array[i].w;
+	     h = rects->array[i].h;
 	     RECTS_CLIP_TO_RECT(x, y, w, h,
 				obj->prev.cache.clip.x,
 				obj->prev.cache.clip.y,
@@ -250,8 +227,6 @@ evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int 
 	     if ((w > 0) && (h > 0))
 	       obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
 								      x, y, w, h);
-	     free(r);
-	     r = NULL;
 	  }
 	/* if the object is actually visible, take any parent clip changes */
 	if (is_v)
@@ -294,8 +269,21 @@ evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int 
 	     free(obj->clip.changes->data);
 	     obj->clip.changes = evas_list_remove(obj->clip.changes, obj->clip.changes->data);
 	  }
-	obj->clip.changes = updates;
+	for (i = 0; i < rects->count; ++i)
+	  {
+	     r = malloc(sizeof(Evas_Rectangle));
+	     if (!r) goto end;
+
+	     *r = rects->array[i];
+	     obj->clip.changes = evas_list_append(obj->clip.changes, r);
+	  }
      }
+
+ end:
+   free(rects->array);
+   rects->array = NULL;
+   rects->count = 0;
+   rects->total = 0;
 }
 
 int
