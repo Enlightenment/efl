@@ -64,14 +64,18 @@ struct _Outbuf
       unsigned char mask_dither       : 1;
       unsigned char destination_alpha : 1;
       unsigned char debug             : 1;
-      unsigned char synced : 1;
+      unsigned char synced            : 1;
    } priv;
 };
 
 struct _Outbuf_Region
 {
-   Xcb_Output_Buffer *xcbob, *mxcbob;
-   int x, y, w, h;
+   Xcb_Output_Buffer *xcbob;
+   Xcb_Output_Buffer *mxcbob;
+   int                x;
+   int                y;
+   int                w;
+   int                h;
 };
 
 struct _Xcb_Output_Buffer

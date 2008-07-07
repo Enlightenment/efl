@@ -3,7 +3,6 @@
 #include "evas_macros.h"
 #include <xcb/shm.h>
 #include <xcb/xcb_image.h>
-#include <xcb/xcb_atom.h>
 #include <pixman.h>
 #include <sys/time.h>
 #include <sys/utsname.h>
@@ -134,7 +133,7 @@ evas_software_xcb_outbuf_free(Outbuf * buf)
 	im = buf->priv.pending_writes->data;
 	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	obr = im->extended_info;
-	evas_cache_image_drop(im);
+	evas_cache_image_drop(&im->cache_entry);
 	if (obr->xcbob) _unfind_xcbob(obr->xcbob, 0);
 	if (obr->mxcbob) _unfind_xcbob(obr->mxcbob, 0);
 	free(obr);
@@ -378,6 +377,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
    Outbuf_Region *obr;
    int            bpl = 0;
    int            use_shm = 1;
+   int                 alpha;
 
    if ((buf->onebuf) && (buf->priv.x.shm))
      {
@@ -409,7 +409,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 		  im = buf->priv.onebuf;
 		  for (yy = y; yy < (y + h); yy++)
 		    {
-		       memset(im->image->data + (im->image->w * yy) + x,
+		       memset(im->image.data + (im->cache_entry.w * yy) + x,
 			      0, w * sizeof(DATA32));
 		    }
 	       }
@@ -425,24 +425,24 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 	*cw = w;
 	*ch = h;
 
+        alpha = ((buf->priv.x.mask) || (buf->priv.destination_alpha));
+
 	use_shm = buf->priv.x.shm;
 	if ((buf->rot == 0) &&
 	    (buf->priv.mask.r == 0xff0000) &&
 	    (buf->priv.mask.g == 0x00ff00) &&
 	    (buf->priv.mask.b == 0x0000ff))
 	  {
-	     im = evas_cache_image_empty(evas_common_image_cache_get());
-	     im->image->w = buf->w;
-	     im->image->h = buf->h;
-	     im->image->data = NULL;
-	     im->image->no_free = 1;
-	     im->extended_info = obr;
 	     obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
                                                                 buf->priv.x.depth,
                                                                 buf->w, buf->h,
                                                                 use_shm,
                                                                 NULL);
-	     im->image->data = (DATA32 *) evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
+             im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                                       buf->w, buf->h,
+                                                       (DATA32 *) evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl),
+                                                       alpha, EVAS_COLORSPACE_ARGB8888);
+	     im->extended_info = obr;
 	     if (buf->priv.x.mask)
 	       obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
                                                                    1,
@@ -452,10 +452,9 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 	  }
 	else
 	  {
-	     im = evas_cache_image_empty(evas_common_image_cache_get());
-	     im->image->w = buf->w;
-	     im->image->h = buf->h;
-	     evas_common_image_surface_alloc(im->image);
+	     im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+             im->cache_entry.flags.alpha |= alpha ? 1 : 0;
+             evas_cache_image_surface_alloc(&im->cache_entry, buf->w, buf->h);
 	     im->extended_info = obr;
 	     if ((buf->rot == 0) || (buf->rot == 180))
 	       obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
@@ -475,12 +474,10 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
                                                                    use_shm,
                                                                    NULL);
 	  }
-	if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
-	  {
-	     im->cache_entry.flags.alpha = 1;
-	     /* FIXME: faster memset! */
-	     memset(im->image->data, 0, w * h * sizeof(DATA32));
-	  }
+	if (alpha)
+          /* FIXME: faster memset! */
+          memset(im->image.data, 0, w * h * sizeof(DATA32));
+
 	buf->priv.onebuf = im;
 	return im;
      }
@@ -503,24 +500,23 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 //   use_shm = 0; /* 630 -> 1006 fps */
 //   if ((w * h) < (200 * 200)) use_shm = 0; /* 630 -> 962 fps */
 
+   alpha = ((buf->priv.x.mask) || (buf->priv.destination_alpha));
+
    if ((buf->rot == 0) &&
        (buf->priv.mask.r == 0xff0000) &&
        (buf->priv.mask.g == 0x00ff00) &&
        (buf->priv.mask.b == 0x0000ff))
      {
-	im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
-        if (!im) return NULL;
-        im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
-        if (!im) return NULL;
-
-	im->extended_info = obr;
 	obr->xcbob = _find_xcbob(buf->priv.x.conn,
                                  buf->priv.x.depth,
                                  w, h,
                                  use_shm,
                                  NULL);
-        im->image.no_free = 1;
-	im->image.data = (DATA32 *)evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
+        im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                                  w, h,
+                                                  (DATA32 *) evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl),
+                                                  alpha, EVAS_COLORSPACE_ARGB8888);
+	im->extended_info = obr;
 	if (buf->priv.x.mask)
 	  obr->mxcbob = _find_xcbob(buf->priv.x.conn,
                                     1, w, h,
@@ -535,8 +531,8 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
      }
    else
      {
-        im = evas_cache_image_empty(evas_common_image_cache_get());
-        if (!im) return NULL;
+        im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+        im->cache_entry.flags.alpha |= alpha ? 1 : 0;
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
@@ -576,11 +572,9 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 /*							      NULL); */
      }
    if ((buf->priv.x.mask) || (buf->priv.destination_alpha))
-     {
-	im->cache_entry.flags.alpha = 1;
 	/* FIXME: faster memset! */
-	memset(im->image.data, 0, w * h * sizeof(DATA32));
-     }
+     memset(im->image.data, 0, w * h * sizeof(DATA32));
+
    buf->priv.pending_writes = evas_list_append(buf->priv.pending_writes, im);
    return im;
 }
@@ -680,7 +674,7 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
              buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes,
                                                               buf->priv.pending_writes);
              obr = im->extended_info;
-             evas_cache_image_drop(im);
+	     evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xcbob) _unfind_xcbob(obr->xcbob, 0);
 	     if (obr->mxcbob) _unfind_xcbob(obr->mxcbob, 0);
 /*              if (obr->xcbob) evas_software_xcb_x_output_buffer_free(obr->xcbob, 0); */
@@ -703,11 +697,11 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
 	     if (buf->priv.debug)
 	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
 						   obr->x, obr->y, obr->w, obr->h);
-	     evas_software_x11_x_output_buffer_paste(obr->xob, buf->priv.x.win,
+	     evas_software_x11_x_output_buffer_paste(obr->xcbob, buf->priv.x.win,
 						     buf->priv.x.gc,
 						     obr->x, obr->y, 0);
-	     if (obr->mxob)
-	       evas_software_x11_x_output_buffer_paste(obr->mxob,
+	     if (obr->mxcbob)
+	       evas_software_x11_x_output_buffer_paste(obr->mxcbob,
 						       buf->priv.x.mask,
 						       buf->priv.x.gcm,
 						       obr->x, obr->y, 0);
@@ -721,17 +715,18 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
 	     RGBA_Image *im;
 	     Outbuf_Region *obr;
 
-	     im = buf->priv.pending_writes->data;
+	     im = evas_list_data(buf->priv.pending_writes);
 	     buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(im);
-	     if (obr->xob) _unfind_xob(obr->xob, 0);
-	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
+	     evas_cache_image_drop(&im->cache_entry);
+	     if (obr->xcbob) _unfind_xcbob(obr->xcbob, 0);
+	     if (obr->mxcbob) _unfind_xcbob(obr->mxcbob, 0);
 /*
-	     if (obr->xob) evas_software_x11_x_output_buffer_free(obr->xob, 0);
-	     if (obr->mxob) evas_software_x11_x_output_buffer_free(obr->mxob, 0);
+	     if (obr->xcbob) evas_software_x11_x_output_buffer_free(obr->xcbob, 0);
+	     if (obr->mxcbob) evas_software_x11_x_output_buffer_free(obr->mxcbob, 0);
  */
 	     free(obr);
+	     evas_cache_image_drop(&im->cache_entry);
 	  }
 #endif
      }
@@ -749,10 +744,10 @@ evas_software_xcb_outbuf_idle_flush(Outbuf *buf)
 	im = buf->priv.onebuf;
 	buf->priv.onebuf = NULL;
 	obr = im->extended_info;
-	evas_cache_image_drop(im);
 	if (obr->xcbob) evas_software_xcb_x_output_buffer_free(obr->xcbob, 0);
 	if (obr->mxcbob) evas_software_xcb_x_output_buffer_free(obr->mxcbob, 0);
 	free(obr);
+	evas_cache_image_drop(&im->cache_entry);
      }
    else
      {
@@ -768,7 +763,7 @@ evas_software_xcb_outbuf_idle_flush(Outbuf *buf)
 	       evas_list_remove_list(buf->priv.prev_pending_writes,
 				     buf->priv.prev_pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(im);
+	     evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xcbob) _unfind_xcbob(obr->xcbob, 0);
 	     if (obr->mxcbob) _unfind_xcbob(obr->mxcbob, 0);
 	     free(obr);
@@ -893,8 +888,9 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
      {
 	for (yy = 0; yy < obr->h; yy++)
 	  evas_software_xcb_x_write_mask_line(buf, obr->mxcbob,
-					      src_data +
-					      (yy * obr->w), obr->w, yy);
+					      src_data + (yy * obr->w),
+                                              obr->w,
+                                              yy);
 #if 1
 #else
 	/* XX async push */
@@ -907,7 +903,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
      }
 #if 1
 #else
-   xcb_flush(buf->priv.x.disp);
+   xcb_flush(buf->priv.x.conn);
 #endif
 }
 

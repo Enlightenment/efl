@@ -32,9 +32,9 @@ struct _Evas_Engine_Info_Software_Xcb
    } info;
    /* engine specific function calls to query stuff about the destination */
    struct {
-      xcb_visualtype_t * (*best_visual_get)   (xcb_connection_t *conn, int screen);
-      xcb_colormap_t     (*best_colormap_get) (xcb_connection_t *conn, int screen);
-      int                (*best_depth_get)    (xcb_connection_t *conn, int screen);
+      xcb_visualtype_t * (*best_visual_get)   (xcb_screen_t *screen);
+      xcb_colormap_t     (*best_colormap_get) (xcb_screen_t *screen);
+      int                (*best_depth_get)    (xcb_screen_t *screen);
    } func;
 
    int mask_changed;

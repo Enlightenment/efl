@@ -121,6 +121,10 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
    xcbob->connection = c;
    xcbob->image      = NULL;
    xcbob->shm_info   = NULL;
+   xcbob->w = w;
+   xcbob->h = h;
+
+   try_shm = 0;
 
    if (try_shm > 0)
      {
@@ -149,14 +153,14 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
                            /* XErrorHandler ph; */
                            /* EventHandlers eh; */
 
-                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus(c), NULL));
+                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus_unchecked(c), NULL));
                            _xcb_err = 0;
                            /* ph = XSetErrorHandler((XErrorHandler) */
                            /* x_output_tmp_x_err); */
                            xcb_shm_attach(c,
                                           xcbob->shm_info->shmseg,
                                           xcbob->shm_info->shmid, 0);
-                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus(c), NULL));
+                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus_unchecked(c), NULL));
                            /* XSetErrorHandler((XErrorHandler)ph); */
                            if (!_xcb_err)
                              {
@@ -179,7 +183,7 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
    if (try_shm > 1) return NULL;
 
    xcbob->image = xcb_image_create_native(c, w, h, XCB_IMAGE_FORMAT_Z_PIXMAP,
-                                          depth, NULL, 0, data);
+                                          depth, NULL, ~0, NULL);
    if (!xcbob->image)
      {
 	free(xcbob);
@@ -198,6 +202,10 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
 	     return NULL;
 	  }
      }
+
+   xcbob->bpl = xcbob->image->stride;
+   xcbob->psize = xcbob->image->size;
+
    return xcbob;
 }
 
@@ -209,7 +217,7 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
      {
 	if (sync)
           free(xcb_get_input_focus_reply(xcbob->connection,
-                                         xcb_get_input_focus(xcbob->connection),
+                                         xcb_get_input_focus_unchecked(xcbob->connection),
                                          NULL));
 	xcb_shm_detach(xcbob->connection, xcbob->shm_info->shmseg);
 	xcb_image_destroy(xcbob->image);
@@ -243,7 +251,7 @@ evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer    *xcbob,
                           0);
 	if (sync)
           free(xcb_get_input_focus_reply(xcbob->connection,
-                                         xcb_get_input_focus(xcbob->connection),
+                                         xcb_get_input_focus_unchecked(xcbob->connection),
                                          NULL));
      }
    else

@@ -21,9 +21,9 @@ struct _Render_Engine
 
 /* prototypes we will use here */
 static void *_output_setup(int w, int h, int rot, xcb_connection_t *conn, xcb_screen_t     *screen, xcb_drawable_t draw, xcb_visualtype_t *vis, xcb_colormap_t cmap, int depth, int debug, int grayscale, int max_colors, xcb_drawable_t mask, int shape_dither, int destination_alpha);
-static xcb_visualtype_t *_best_visual_get(xcb_connection_t *conn, int screen);
-static xcb_colormap_t _best_colormap_get(xcb_connection_t *conn, int screen);
-static int _best_depth_get(xcb_connection_t *conn, int screen);
+static xcb_visualtype_t *_best_visual_get(xcb_screen_t *screen);
+static xcb_colormap_t _best_colormap_get(xcb_screen_t *screen);
+static int _best_depth_get(xcb_screen_t *screen);
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
@@ -120,32 +120,21 @@ _output_setup(int               w,
 }
 
 static xcb_visualtype_t *
-_best_visual_get(xcb_connection_t *conn, int screen)
+_best_visual_get(xcb_screen_t *screen)
 {
-   xcb_screen_iterator_t iter_screen;
    xcb_depth_iterator_t  iter_depth;
-   xcb_screen_t         *scr = NULL;
 
-   if (!conn) return NULL;
+   if (!screen) return NULL;
 
-   iter_screen = xcb_setup_roots_iterator (xcb_get_setup (conn));
-   for (; iter_screen.rem; --screen, xcb_screen_next (&iter_screen))
-      if (screen == 0)
-        {
-           scr = iter_screen.data;
-           break;
-        }
-   if (!scr) return NULL;
-
-   iter_depth = xcb_screen_allowed_depths_iterator(scr);
+   iter_depth = xcb_screen_allowed_depths_iterator(screen);
    for (; iter_depth.rem; xcb_depth_next (&iter_depth))
      {
         xcb_visualtype_iterator_t iter_vis;
 
         iter_vis = xcb_depth_visuals_iterator(iter_depth.data);
-        for (; iter_vis.rem; --screen, xcb_visualtype_next (&iter_vis))
+        for (; iter_vis.rem; xcb_visualtype_next (&iter_vis))
           {
-            if (scr->root_visual == iter_vis.data->visual_id)
+            if (screen->root_visual == iter_vis.data->visual_id)
               return iter_vis.data;
           }
      }
@@ -154,34 +143,21 @@ _best_visual_get(xcb_connection_t *conn, int screen)
 }
 
 static xcb_colormap_t
-_best_colormap_get(xcb_connection_t *conn, int screen)
+_best_colormap_get(xcb_screen_t *screen)
 {
-   xcb_screen_iterator_t iter;
-   xcb_colormap_t        c = { 0 };
+   if (!screen)
+     return 0;
 
-   if (!conn) return c;
-
-   iter = xcb_setup_roots_iterator (xcb_get_setup (conn));
-   for (; iter.rem; --screen, xcb_screen_next (&iter))
-      if (screen == 0)
-         return iter.data->default_colormap;
-
-   return c;
+   return screen->default_colormap;
 }
 
 static int
-_best_depth_get(xcb_connection_t *conn, int screen)
+_best_depth_get(xcb_screen_t *screen)
 {
-   xcb_screen_iterator_t iter;
+   if (!screen)
+     return 0;
 
-   if (!conn) return 0;
-
-   iter = xcb_setup_roots_iterator (xcb_get_setup (conn));
-   for (; iter.rem; --screen, xcb_screen_next (&iter))
-      if (screen == 0)
-         return iter.data->root_depth;
-
-   return 0;
+   return screen->root_depth;
 }
 
 /* engine api this module provides */
