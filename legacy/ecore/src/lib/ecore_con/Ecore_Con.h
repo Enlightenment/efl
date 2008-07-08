@@ -216,7 +216,9 @@ extern "C" {
 					       void *data);
 #endif
 					       
-   EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *uploadas);
+   EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *upload_dir);
+   EAPI void		  ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose);
+   EAPI void		  ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv);
 
 #ifdef __cplusplus
 }
