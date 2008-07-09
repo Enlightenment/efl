@@ -89,7 +89,7 @@ extern "C" {
 
 
   /*
-   * Evas Array functions
+   * Evas Array Hash functions
    */
 
    EAPI Evas_Array_Hash *evas_array_hash_new        (void);
