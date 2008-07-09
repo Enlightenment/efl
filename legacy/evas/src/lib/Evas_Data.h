@@ -34,9 +34,12 @@
 
 typedef unsigned char Evas_Bool;
 
-typedef struct _Evas_Array            Evas_Array;    /**< A generic vector */
-typedef struct _Evas_Hash             Evas_Hash;     /**< A Hash table handle */
-typedef struct _Evas_List             Evas_List;     /**< A generic linked list node handle */
+typedef struct _Evas_Array       Evas_Array;             /**< A generic vector */
+typedef struct _Evas_Array_Hash  Evas_Array_Hash;
+typedef struct _Evas_Hash        Evas_Hash;              /**< A Hash table handle */
+typedef struct _Evas_List        Evas_List;              /**< A generic linked list node handle */
+typedef struct _Evas_Object_List Evas_Object_List;
+
 
 struct _Evas_Array /** An array of data */
 {
@@ -46,12 +49,24 @@ struct _Evas_Array /** An array of data */
    unsigned int	  step;   /**< How much must we grow the vector When it is full */
 };
 
+struct _Evas_Hash
+{
+   int               population;
+   Evas_Object_List *buckets[256];
+};
+
 struct _Evas_List                             /** A linked list node */
 {
    void      *data;                           /**< Pointer to list element payload */
    Evas_List *next;                           /**< Next member in the list */
    Evas_List *prev;                           /**< Previous member in the list */
    struct _Evas_List_Accounting *accounting;  /**< Private list accounting info - don't touch */
+};
+
+struct _Evas_Object_List
+{
+   Evas_Object_List  *next, *prev;
+   Evas_Object_List  *last;
 };
 
 
@@ -71,6 +86,16 @@ extern "C" {
    EAPI void        evas_array_clean                (Evas_Array *array);
    EAPI void        evas_array_flush                (Evas_Array *array);
    EAPI void        evas_array_remove               (Evas_Array *array, Evas_Bool (*keep)(void *data, void *gdata), void *gdata);
+
+
+  /*
+   * Evas Array functions
+   */
+
+   EAPI Evas_Array_Hash *evas_array_hash_new        (void);
+   EAPI void             evas_array_hash_free       (Evas_Array_Hash *hash);
+   EAPI void             evas_array_hash_add        (Evas_Array_Hash *hash, int key, int data);
+   EAPI int              evas_array_hash_search     (Evas_Array_Hash *hash, int key);
 
 
   /*
@@ -126,6 +151,8 @@ extern "C" {
    * Evas Stringshare functions
    */
 
+   EAPI void        evas_stringshare_init           (void);           /* not implemented */
+   EAPI void        evas_stringshare_shutdown       (void);           /* not implemented */
    EAPI const char *evas_stringshare_add            (const char *str);
    EAPI void        evas_stringshare_del            (const char *str);
 

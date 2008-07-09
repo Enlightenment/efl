@@ -130,8 +130,6 @@ typedef unsigned int			DATA32;
 typedef unsigned short			DATA16;
 typedef unsigned char                   DATA8;
 
-typedef struct _Evas_Object_List        Evas_Object_List;
-
 typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags	Image_Entry_Flags;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
@@ -162,9 +160,6 @@ typedef struct _Convert_Pal             Convert_Pal;
 typedef struct _Tilebuf                 Tilebuf;
 typedef struct _Tilebuf_Tile            Tilebuf_Tile;
 typedef struct _Tilebuf_Rect		Tilebuf_Rect;
-
-typedef struct _Evas_Array_Hash		Evas_Array_Hash;
-typedef struct _Evas_Array_Hash         Evas_Array_Double_Hash;
 
 /*
 typedef struct _Regionbuf             Regionbuf;
@@ -239,18 +234,6 @@ typedef enum _Font_Hint_Flags
 } Font_Hint_Flags;
 
 /*****************************************************************************/
-
-struct _Evas_Object_List
-{
-   Evas_Object_List  *next, *prev;
-   Evas_Object_List  *last;
-};
-
-struct _Evas_Hash
-{
-   int               population;
-   Evas_Object_List *buckets[256];
-};
 
 struct _RGBA_Image_Loadopts
 {
@@ -1275,14 +1258,6 @@ EAPI void evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGB
 EAPI void evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int smooth, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
 void              evas_font_dir_cache_free(void);
-
-Evas_Array_Hash	*evas_common_array_hash_new	(void);
-void		 evas_common_array_hash_free	(Evas_Array_Hash *hash);
-void		 evas_common_array_hash_add	(Evas_Array_Hash *hash, int key, int data);
-int		 evas_common_array_hash_search	(Evas_Array_Hash *hash, int key);
-
-void evas_stringshare_init(void);
-void evas_stringshare_shutdown(void);
 
 /****/
 EAPI Evas_Cache_Image*               evas_cache_image_init(const Evas_Cache_Image_Func *cb);

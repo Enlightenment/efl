@@ -18,10 +18,10 @@ struct _Evas_Array_Hash_El
    int		  *data;
 };
 
-/* 
+/*
  These functions provide an interface for a simple hash. The hash
- is and array of int array pointers. Right now that hash size is 256. 
- The hash size is static. The key and data are ints. 
+ is and array of int array pointers. Right now that hash size is 256.
+ The hash size is static. The key and data are ints.
 
  Keys must be added in ascending order because the search function
  assumes that the hash buckets are sorted.
@@ -35,17 +35,17 @@ evas_common_array_hash_new(void)
    return hash;
 }
 
-void		 
+void
 evas_common_array_hash_free(Evas_Array_Hash *hash)
 {
    int i;
-   
+
    for (i = 0; i < EAH_BUCKETS; i++)
      {
 	if (hash->buckets[i])
 	  {
 	     free(hash->buckets[i]->data);
-	     free(hash->buckets[i]);	    
+	     free(hash->buckets[i]);
 	  }
      }
 
@@ -57,10 +57,10 @@ evas_common_array_hash_add(Evas_Array_Hash *hash, int key, int data)
 {
    int hash_val;
    Evas_Array_Hash_El *el;
- 
+
    hash_val = EAH_HASH(key);
    el = hash->buckets[hash_val];
-   if (!el) 
+   if (!el)
      {
 	el = malloc(sizeof(Evas_Array_Hash_El));
 	el->data_max = 4;
@@ -73,8 +73,8 @@ evas_common_array_hash_add(Evas_Array_Hash *hash, int key, int data)
 	el->data_max *= 2;
 	el->data = realloc(el->data, sizeof(int) * el->data_max);
      }
-	
-   el->data[el->data_count++] = key;	
+
+   el->data[el->data_count++] = key;
    el->data[el->data_count++] = data;
 }
 
@@ -84,31 +84,29 @@ evas_common_array_hash_search(Evas_Array_Hash *hash, int key)
    int hash_val;
    Evas_Array_Hash_El *el;
    int low, high, i, val;
-   
+
    hash_val = EAH_HASH(key);
 
    el = hash->buckets[hash_val];
-   if (!el) 
+   if (!el)
      return 0;
 
    /* Binary Search the bucket for key */
    low = 0;
    high = ( el->data_count / 2 ) - 1;
-   
+
    while ( high >= low )
      {
 	i = (high + low) / 2;
-	
+
 	val = el->data[i << 1];
-	
-	if (val == key)  
+
+	if (val == key)
 	  return el->data[(i << 1) + 1];
 	else if (val > key)
 	  high = i - 1;
 	else
 	  low = i + 1;
-     }  
+     }
    return 0;
 }
-
-
