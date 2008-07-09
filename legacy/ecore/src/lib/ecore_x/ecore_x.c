@@ -40,30 +40,7 @@ int      _ecore_x_xcursor = 0;
 
 Ecore_X_Window _ecore_x_private_win = 0;
 
-/* FIXME - These are duplicates after making ecore atoms public */
-EAPI Ecore_X_Atom  ECORE_X_ATOM_FILE_NAME = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_STRING = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_TEXT = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_UTF8_STRING = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_COMPOUND_TEXT = 0;
-
 Ecore_X_Atom _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
-
-/*
- * GNOME hints.
- */
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WIN_LAYER = 0;
-
-/*
- * Other hints.
- */
-EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_TARGETS;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PRIMARY = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_SECONDARY = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_CLIPBOARD = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_PRIMARY = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_SECONDARY = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD = 0;
 
 EAPI int ECORE_X_EVENT_KEY_DOWN = 0;
 EAPI int ECORE_X_EVENT_KEY_UP = 0;
@@ -401,18 +378,10 @@ ecore_x_init(const char *name)
 	return 0;
      }
 
-   ECORE_X_ATOM_COMPOUND_TEXT      = XInternAtom(_ecore_x_disp, "COMPOUND_TEXT", False);
-   ECORE_X_ATOM_UTF8_STRING        = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
-   ECORE_X_ATOM_FILE_NAME          = XInternAtom(_ecore_x_disp, "FILE_NAME", False);
-   ECORE_X_ATOM_STRING             = XInternAtom(_ecore_x_disp, "STRING", False);
-   ECORE_X_ATOM_TEXT               = XInternAtom(_ecore_x_disp, "TEXT", False);
+   _ecore_x_atoms_init();
 
    /* Set up the ICCCM hints */
    ecore_x_icccm_init();
-
-   ECORE_X_ATOM_MOTIF_WM_HINTS           = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
-
-   ECORE_X_ATOM_WIN_LAYER                = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
 
    /* Set up the _NET_... hints */
    ecore_x_netwm_init();
@@ -421,13 +390,6 @@ ecore_x_init(const char *name)
    ecore_x_e_init();
    
    /* This is just to be anal about naming conventions */
-   ECORE_X_ATOM_SELECTION_TARGETS        = XInternAtom(_ecore_x_disp, "TARGETS", False);
-   ECORE_X_ATOM_SELECTION_PRIMARY        = XA_PRIMARY;
-   ECORE_X_ATOM_SELECTION_SECONDARY      = XA_SECONDARY;
-   ECORE_X_ATOM_SELECTION_CLIPBOARD      = XInternAtom(_ecore_x_disp, "CLIPBOARD", False);
-   ECORE_X_ATOM_SELECTION_PROP_PRIMARY   = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_PRIMARY", False);
-   ECORE_X_ATOM_SELECTION_PROP_SECONDARY = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_SECONDARY", False);
-   ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_CLIPBOARD", False);
 
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = ECORE_X_ATOM_WM_DELETE_WINDOW;
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = ECORE_X_ATOM_WM_TAKE_FOCUS;
@@ -955,6 +917,19 @@ ecore_x_atom_get(const char *name)
 {
    if (!_ecore_x_disp) return 0;
    return XInternAtom(_ecore_x_disp, name, False);
+}
+
+EAPI void
+ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
+{
+   Atom *atoms_int;
+   int i;
+   
+   if (!_ecore_x_disp) return 0;
+   atoms_int = alloca(num * sizeof(Atom));
+   XInternAtoms(_ecore_x_disp, names, num, False, atoms_int);
+   for (i = 0; i < num; i++)
+     atoms[i] = atoms_int[i];
 }
 
 

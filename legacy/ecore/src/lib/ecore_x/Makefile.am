@@ -73,7 +73,8 @@ ecore_xcb_window.c \
 ecore_xcb_window_prop.c \
 ecore_xcb_xinerama.c \
 ecore_xcb.c \
-ecore_xcb_private.h
+ecore_xcb_private.h \
+ecore_x_atoms_decl.h
 
 libecore_x_la_LIBADD = \
 @XCB_DAMAGE_LIBS@ \
@@ -134,7 +135,9 @@ ecore_x_dpms.c \
 ecore_x_drawable.c \
 ecore_x_cursor.c \
 ecore_x_test.c \
-ecore_x_private.h
+ecore_x_atoms.c \
+ecore_x_private.h \
+ecore_x_atoms_decl.h
 
 libecore_x_la_LIBADD = \
 @Xcursor_libs@ \
@@ -191,4 +194,6 @@ ecore_x_dpms.c \
 ecore_x_drawable.c \
 ecore_x_cursor.c \
 ecore_x_test.c \
-ecore_x_private.h
+ecore_x_atoms.c \
+ecore_x_private.h \
+ecore_x_atoms_decl.h

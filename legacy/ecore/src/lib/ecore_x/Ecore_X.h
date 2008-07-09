@@ -1274,7 +1274,8 @@ EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
 EAPI void            ecore_x_atom_get_prefetch(const char *name);
 EAPI void            ecore_x_atom_get_fetch(void);
 EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
-
+EAPI void            ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms);
+       
 
 
 EAPI void            ecore_x_icccm_init(void);

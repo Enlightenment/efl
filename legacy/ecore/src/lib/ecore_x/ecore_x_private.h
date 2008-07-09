@@ -231,6 +231,8 @@ void _ecore_x_damage_init(void);
 void _ecore_x_composite_init(void);
 void _ecore_x_dpms_init(void);
 
+void _ecore_x_atoms_init(void);
+    
 /* from sync */
 
 #endif

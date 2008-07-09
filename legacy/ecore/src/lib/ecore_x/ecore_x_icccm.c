@@ -12,58 +12,10 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-/* Atoms */
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_STATE = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_DELETE_WINDOW = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_TAKE_FOCUS = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_PROTOCOLS = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_CLASS = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_NAME = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_COMMAND = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_ICON_NAME = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_CLIENT_MACHINE = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_CHANGE_STATE = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_COLORMAP_WINDOWS = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_WINDOW_ROLE = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_HINTS = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_NORMAL_HINTS = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_CLIENT_LEADER = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_TRANSIENT_FOR = 0;
-EAPI Ecore_X_Atom  ECORE_X_ATOM_WM_SAVE_YOURSELF = 0;
 
 EAPI void
 ecore_x_icccm_init(void)
 {
-
-   ECORE_X_ATOM_WM_STATE = XInternAtom(_ecore_x_disp, "WM_STATE", False);
-   ECORE_X_ATOM_WM_DELETE_WINDOW =
-      XInternAtom(_ecore_x_disp, "WM_DELETE_WINDOW", False);
-   ECORE_X_ATOM_WM_TAKE_FOCUS =
-      XInternAtom(_ecore_x_disp, "WM_TAKE_FOCUS", False);
-   ECORE_X_ATOM_WM_PROTOCOLS =
-      XInternAtom(_ecore_x_disp, "WM_PROTOCOLS", False);
-   ECORE_X_ATOM_WM_CLASS = XInternAtom(_ecore_x_disp, "WM_CLASS", False);
-   ECORE_X_ATOM_WM_NAME = XInternAtom(_ecore_x_disp, "WM_NAME", False);
-   ECORE_X_ATOM_WM_COMMAND = XInternAtom(_ecore_x_disp, "WM_COMMAND", False);
-   ECORE_X_ATOM_WM_ICON_NAME =
-      XInternAtom(_ecore_x_disp, "WM_ICON_NAME", False);
-   ECORE_X_ATOM_WM_CLIENT_MACHINE =
-      XInternAtom(_ecore_x_disp, "WM_CLIENT_MACHINE", False);
-   ECORE_X_ATOM_WM_CHANGE_STATE =
-      XInternAtom(_ecore_x_disp, "WM_CHANGE_STATE", False);
-   ECORE_X_ATOM_WM_COLORMAP_WINDOWS =
-      XInternAtom(_ecore_x_disp, "WM_COLORMAP_WINDOWS", False);
-   ECORE_X_ATOM_WM_WINDOW_ROLE =
-      XInternAtom(_ecore_x_disp, "WM_WINDOW_ROLE", False);
-   ECORE_X_ATOM_WM_HINTS = XInternAtom(_ecore_x_disp, "WM_HINTS", False);
-   ECORE_X_ATOM_WM_NORMAL_HINTS =
-      XInternAtom(_ecore_x_disp, "WM_NORMAL_HINTS", False);
-   ECORE_X_ATOM_WM_CLIENT_LEADER =
-      XInternAtom(_ecore_x_disp, "WM_CLIENT_LEADER", False);
-   ECORE_X_ATOM_WM_TRANSIENT_FOR =
-      XInternAtom(_ecore_x_disp, "WM_TRANSIENT_FOR", False);
-   ECORE_X_ATOM_WM_SAVE_YOURSELF =
-      XInternAtom(_ecore_x_disp, "WM_SAVE_YOURSELF", False);
 }
 
 EAPI void

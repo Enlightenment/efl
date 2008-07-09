@@ -10,18 +10,9 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-/*
- * Convenience macros
- */
-#define _ATOM_GET(name) \
-     XInternAtom(_ecore_x_disp, name, False)
-
-Ecore_X_Atom        ECORE_X_ATOM_E_FRAME_SIZE = 0;
-
 EAPI void
 ecore_x_e_init(void)
 {
-   ECORE_X_ATOM_E_FRAME_SIZE = _ATOM_GET("_E_FRAME_SIZE");
 }
 
 EAPI void
