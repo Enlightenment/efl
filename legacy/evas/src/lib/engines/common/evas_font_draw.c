@@ -77,7 +77,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 		  evas_common_font_source_load_complete(fi->src);
 		  evas_common_font_int_load_complete(fi);
 
-		  evas_common_array_hash_free(fi->src->charmap);
+		  evas_array_hash_free(fi->src->charmap);
 		  fi->src->charmap = NULL;
 
 		  *fi_ret = fi;

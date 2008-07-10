@@ -1,6 +1,7 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
 #include "evas_common.h"
 #include "evas_private.h"
 
@@ -52,12 +53,12 @@ evas_common_font_source_load(const char *name)
    fs->data_size = 0;
    fs->current_size = 0;
    fs->ft.face = NULL;
-   
+
    fs->name = evas_stringshare_add(name);
    fs->file = fs->name;
-   
+
    fs->ft.orig_upem = 0;
-   
+
    fs->references = 1;
    fonts_src = evas_object_list_prepend(fonts_src, fs);
    return fs;
@@ -67,16 +68,16 @@ EAPI int
 evas_common_font_source_load_complete(RGBA_Font_Source *fs)
 {
    int error;
- 
-   error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));	
-   if (error) 
+
+   error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));
+   if (error)
      {
 	fs->ft.face = NULL;
 	return error;
      }
-   
+
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
-   if (error) 
+   if (error)
      {
 	FT_Done_Face(fs->ft.face);
 	fs->ft.face = NULL;
@@ -117,7 +118,7 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
 
    fonts_src = evas_object_list_remove(fonts_src, fs);
    FT_Done_Face(fs->ft.face);
-   if (fs->charmap) evas_common_array_hash_free(fs->charmap);
+   if (fs->charmap) evas_array_hash_free(fs->charmap);
    if (fs->name) evas_stringshare_del(fs->name);
    free(fs);
 }
@@ -132,7 +133,7 @@ evas_common_font_size_use(RGBA_Font *fn)
 	RGBA_Font_Int *fi;
 
 	fi = l->data;
-	
+
 	if (fi->src->current_size != fi->size)
 	  {
 	     FT_Activate_Size(fi->ft.size);
@@ -153,7 +154,7 @@ evas_common_font_int_memory_load(const char *name, int size, const void *data, i
    if (!fi) return NULL;
 
    fi->src = evas_common_font_source_find(name);
-   if (!fi->src) 
+   if (!fi->src)
      fi->src = evas_common_font_source_memory_load(name, data, data_size);
 
    if (!fi->src)
@@ -177,7 +178,7 @@ evas_common_font_int_load(const char *name, int size)
 
    fi = evas_common_font_int_find(name, size);
    if (fi) return fi;
-   
+
    fi = calloc(1, sizeof(RGBA_Font_Int));
    if (!fi) return NULL;
 
@@ -255,7 +256,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 	  }
      }
    fi->src->current_size = fi->size;
-   
+
    return fi;
 }
 EAPI RGBA_Font *
@@ -263,7 +264,7 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
 {
    RGBA_Font *fn;
    RGBA_Font_Int *fi;
-   
+
    fi = evas_common_font_int_memory_load(name, size, data, data_size);
    if (!fi) return NULL;
    fn = calloc(1, sizeof(RGBA_Font));
@@ -288,8 +289,8 @@ evas_common_font_load(const char *name, int size)
 
    fi = evas_common_font_int_load(name, size);
    if (!fi) return NULL;
-  
-   /* First font, complete load */ 
+
+   /* First font, complete load */
    if (!fi->ft.size)
      {
 	if (!fi->src->ft.face)
@@ -307,12 +308,12 @@ evas_common_font_load(const char *name, int size)
 	  }
 	evas_common_font_int_load_complete(fi);
      }
-   
+
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
      {
-	fi->references--;	  
-	if (fi->references == 0)	    
+	fi->references--;
+	if (fi->references == 0)
 	  {
 	     evas_common_font_int_modify_cache_by(fi, 1);
 	     evas_common_font_flush();
@@ -391,7 +392,7 @@ EAPI void
 evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
 {
    Evas_List *l;
-   
+
    if (!fn)
      return;
    fn->hinting = hinting;
@@ -492,8 +493,8 @@ font_modify_cache_cb(const Evas_Hash *hash, const char *key, void *data, void *f
 }
 
 /* when the fi->references == 0 we increase this instead of really deleting
- * we then check if the cache_useage size is larger than allowed 
- * !If the cache is NOT too large we dont delete font_int 
+ * we then check if the cache_useage size is larger than allowed
+ * !If the cache is NOT too large we dont delete font_int
  * !If the cache is too large we really delete font_int */
 EAPI void
 evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir)
@@ -594,4 +595,3 @@ evas_common_font_int_find(const char *name, int size)
      }
    return NULL;
 }
-
