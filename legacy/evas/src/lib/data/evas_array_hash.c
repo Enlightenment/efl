@@ -26,8 +26,8 @@ struct _Evas_Array_Hash_El
  Keys must be added in ascending order because the search function
  assumes that the hash buckets are sorted.
  */
-Evas_Array_Hash	*
-evas_common_array_hash_new(void)
+EAPI Evas_Array_Hash	*
+evas_array_hash_new(void)
 {
    Evas_Array_Hash *hash;
 
@@ -35,8 +35,8 @@ evas_common_array_hash_new(void)
    return hash;
 }
 
-void
-evas_common_array_hash_free(Evas_Array_Hash *hash)
+EAPI void
+evas_array_hash_free(Evas_Array_Hash *hash)
 {
    int i;
 
@@ -52,8 +52,8 @@ evas_common_array_hash_free(Evas_Array_Hash *hash)
    free(hash);
 }
 
-void
-evas_common_array_hash_add(Evas_Array_Hash *hash, int key, int data)
+EAPI void
+evas_array_hash_add(Evas_Array_Hash *hash, int key, int data)
 {
    int hash_val;
    Evas_Array_Hash_El *el;
@@ -78,8 +78,8 @@ evas_common_array_hash_add(Evas_Array_Hash *hash, int key, int data)
    el->data[el->data_count++] = data;
 }
 
-int
-evas_common_array_hash_search(Evas_Array_Hash *hash, int key)
+EAPI int
+evas_array_hash_search(Evas_Array_Hash *hash, int key)
 {
    int hash_val;
    Evas_Array_Hash_El *el;
