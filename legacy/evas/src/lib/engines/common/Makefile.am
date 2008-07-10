@@ -62,6 +62,17 @@ evas_regionbuf.c \
 evas_pipe.c
 
 EXTRA_DIST = \
+evas_convert_color.h \
+evas_convert_colorspace.h \
+evas_convert_gry_1.h \
+evas_convert_gry_4.h \
+evas_convert_gry_8.h \
+evas_convert_main.h \
+evas_convert_rgb_16.h \
+evas_convert_rgb_24.h \
+evas_convert_rgb_32.h \
+evas_convert_rgb_8.h \
+evas_convert_yuv.h \
 evas_scale_smooth_scaler.c \
 evas_scale_smooth_scaler_down.c \
 evas_scale_smooth_scaler_downx.c \
