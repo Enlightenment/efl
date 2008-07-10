@@ -2,7 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include "evas_common.h"
-#include "evas_private.h"
+#include "evas_mempool.h"
 
 typedef struct _Evas_List_Accounting Evas_List_Accounting;
 
@@ -26,7 +26,7 @@ static Evas_Mempool _evas_list_accounting_mempool =
    80,
    0, NULL, NULL
 };
-   
+
 /**
  * @defgroup Evas_List_Data_Group Linked List Creation Functions
  *
@@ -211,7 +211,7 @@ EAPI Evas_List *
 evas_list_append_relative_list(Evas_List *list, const void *data, Evas_List *relative)
 {
    Evas_List *new_l;
-   
+
    if ((!list) || (!relative)) return evas_list_append(list, data);
    _evas_list_alloc_error = 0;
    new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
@@ -228,7 +228,7 @@ evas_list_append_relative_list(Evas_List *list, const void *data, Evas_List *rel
      }
    else
      new_l->next = NULL;
-   
+
    relative->next = new_l;
    new_l->prev = relative;
    new_l->accounting = list->accounting;
@@ -300,7 +300,7 @@ EAPI Evas_List *
 evas_list_prepend_relative_list(Evas_List *list, const void *data, Evas_List *relative)
 {
    Evas_List *new_l;
-   
+
    if ((!list) || (!relative)) return evas_list_prepend(list, data);
    _evas_list_alloc_error = 0;
    new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
@@ -748,7 +748,7 @@ EAPI void *
 evas_list_nth(const Evas_List *list, int n)
 {
    Evas_List *l;
-   
+
    l = evas_list_nth_list(list, n);
    return l ? l->data : NULL;
 }
@@ -782,7 +782,7 @@ evas_list_nth_list(const Evas_List *list, int n)
    const Evas_List *l;
 
    /* check for non-existing nodes */
-   if ((!list) || (n < 0) || 
+   if ((!list) || (n < 0) ||
        (n > (list->accounting->count - 1)))
      return NULL;
 
@@ -793,7 +793,7 @@ evas_list_nth_list(const Evas_List *list, int n)
      {
 	for (i = list->accounting->count - 1,
 	     l = list->accounting->last;
-	     l; 
+	     l;
 	     l = l->prev, i--)
 	  {
 	     if (i == n) return (Evas_List *)l;

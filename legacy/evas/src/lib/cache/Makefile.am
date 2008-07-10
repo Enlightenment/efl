@@ -15,3 +15,5 @@ evas_cache_image.c \
 evas_cache_engine_image.c
 
 libevas_cache_la_DEPENDENCIES = $(top_builddir)/config.h
+
+EXTRA_DIST = evas_cache.h

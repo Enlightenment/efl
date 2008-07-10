@@ -19,3 +19,5 @@ evas_path.c \
 evas_module.c
 libevas_file_la_LIBADD = @EVIL_LIBS@
 libevas_file_la_DEPENDENCIES = $(top_builddir)/config.h
+
+EXTRA_DIST = evas_module.h evas_path.h

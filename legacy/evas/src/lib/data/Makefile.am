@@ -16,6 +16,9 @@ evas_list.c \
 evas_array.c \
 evas_object_list.c \
 evas_stringshare.c \
-evas_array_hash.c
+evas_array_hash.c \
+evas_mempool.c
 
 libevas_data_la_DEPENDENCIES = $(top_builddir)/config.h
+
+EXTRA_DIST = evas_mempool.h
