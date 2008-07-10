@@ -1,5 +1,12 @@
-#include "evas_common.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include <math.h>
+
+#include "evas_common.h"
+#include "evas_convert_main.h"
+#include "evas_convert_color.h"
 
 
 static void _get_word(char *in, char *key);

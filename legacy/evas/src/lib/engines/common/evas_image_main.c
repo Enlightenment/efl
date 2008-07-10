@@ -8,6 +8,7 @@
 
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_convert_yuv.h"
 
 #ifdef HAVE_VALGRIND
 # include <memcheck.h>

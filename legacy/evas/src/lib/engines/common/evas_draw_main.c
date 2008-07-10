@@ -1,4 +1,9 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
+#include "evas_convert_main.h"
 
 EAPI Cutout_Rects*
 evas_common_draw_context_cutouts_new(void)
@@ -37,7 +42,7 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
    rect->w = w;
    rect->h = h;
    rects->active++;
-   
+
    return rect;
 }
 
@@ -48,9 +53,9 @@ evas_common_draw_context_cutouts_del(Cutout_Rects* rects,
    if ((index >= 0) && (index < rects->active))
      {
         Cutout_Rect*    rect;
-	
+
 	rect = rects->rects + index;
-        memmove(rect, rect + 1, 
+        memmove(rect, rect + 1,
 		sizeof(Cutout_Rect) * (rects->active - index - 1));
         rects->active--;
      }

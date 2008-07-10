@@ -1,5 +1,10 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
 #include "evas_private.h"
+#include "../engines/common/evas_convert_color.h"
 
 /* private magic number for gradient objects */
 static const char o_type[] = "gradient";

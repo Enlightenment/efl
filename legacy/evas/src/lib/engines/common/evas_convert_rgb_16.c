@@ -1,4 +1,9 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
+#include "evas_convert_rgb_16.h"
 
 #ifndef BUILD_NO_DITHER_MASK
 #ifdef USE_DITHER_44

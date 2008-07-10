@@ -1,4 +1,9 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
+#include "evas_convert_colorspace.h"
 
 #define CONVERT_RGB_565_TO_RGB_888(s) \
 	(((((s) << 3) & 0xf8) | (((s) >> 2) & 0x7)) | \
@@ -11,6 +16,7 @@
 static inline void *
 evas_common_convert_argb8888_to_rgb565_a5p(void *data, int w, int h, int stride, Evas_Bool has_alpha)
 {
+   return NULL;
 }
 
 static inline void *
@@ -18,7 +24,6 @@ evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride,
 {
    DATA16 *src, *end;
    DATA32 *ret, *dst;
-   int r, g, b;
 
    src = data;
    end = src + (stride * h);

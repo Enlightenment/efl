@@ -111,8 +111,6 @@ evas_object_render_pre_visible_change(Evas_Rectangles *rects, Evas_Object *obj, 
 void
 evas_object_render_pre_clipper_change(Evas_Rectangles *rects, Evas_Object *obj)
 {
-   unsigned int i;
-
    if (obj->smart.smart) return ;
    if (obj->cur.clipper == obj->prev.clipper) return ;
    if ((obj->cur.clipper) && (obj->prev.clipper))
