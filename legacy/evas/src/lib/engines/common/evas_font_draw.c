@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
 
 EAPI RGBA_Font_Glyph *
@@ -9,9 +13,9 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    FT_Error error;
    const FT_Int32 hintflags[3] =
      { FT_LOAD_NO_HINTING, FT_LOAD_FORCE_AUTOHINT, FT_LOAD_NO_AUTOHINT };
-   
+
    hindex = index + (fi->hinting * 500000000);
-   
+
    key[0] = ((hindex       ) & 0x7f) + 1;
    key[1] = ((hindex >> 7  ) & 0x7f) + 1;
    key[2] = ((hindex >> 14 ) & 0x7f) + 1;
@@ -21,7 +25,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 
    fg = evas_hash_find(fi->glyphs, key);
    if (fg) return fg;
-   
+
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
    error = FT_Load_Glyph(fi->src->ft.face, index,
 			 FT_LOAD_RENDER | hintflags[fi->hinting]);
@@ -62,12 +66,12 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
      {
 	RGBA_Font_Int *fi;
 	int index;
-	
+
 	fi = l->data;
 
 	if (fi->src->charmap) /* Charmap loaded, FI/FS blank */
 	  {
-	     index = evas_common_array_hash_search(fi->src->charmap, gl);
+	     index = evas_array_hash_search(fi->src->charmap, gl);
 	     if (index != 0)
 	       {
 		  evas_common_font_source_load_complete(fi->src);
@@ -77,7 +81,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 		  fi->src->charmap = NULL;
 
 		  *fi_ret = fi;
-		  return index;   
+		  return index;
 	       }
 	  }
 	else if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
@@ -91,7 +95,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 		  /* Load Hash */
 		  FT_ULong  charcode;
 		  FT_UInt   gindex;
-		 
+
 		  fi->src->charmap = evas_common_array_hash_new();
 		  charcode = FT_Get_First_Char(fi->src->ft.face, &gindex);
 		  while (gindex != 0)
@@ -99,7 +103,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 		       evas_common_array_hash_add(fi->src->charmap, charcode, gindex);
 		       charcode = FT_Get_Next_Char(fi->src->ft.face, charcode, &gindex);
 		    }
-		  
+
 		  /* Free face */
 		  FT_Done_Face(fi->src->ft.face);
 		  fi->src->ft.face = NULL;
@@ -107,20 +111,20 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 	     else
 	       {
 		  evas_common_font_int_load_complete(fi);
- 
+
 		  *fi_ret = fi;
 		  return index;
 	       }
-#endif	     
+#endif
 	  }
 	else /* Charmap not loaded, FS loaded */
 	  {
 	     index = FT_Get_Char_Index(fi->src->ft.face, gl);
 	     if (index != 0)
 	       {
-		  if (!fi->ft.size) 
-		    evas_common_font_int_load_complete(fi); 
-		  
+		  if (!fi->ft.size)
+		    evas_common_font_int_load_complete(fi);
+
 		  *fi_ret = fi;
 		  return index;
 	       }
@@ -145,7 +149,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    FT_Face pface = NULL;
 
    fi = fn->fonts->data;
-   
+
    im = dst->image.data;
    im_w = dst->cache_entry.w;
    im_h = dst->cache_entry.h;
@@ -228,7 +232,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	     w = fg->glyph_out->bitmap.width;
 	     if (j < w) j = w;
 	     h = fg->glyph_out->bitmap.rows;
-/*	     
+/*
 	     if ((fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays)
 		 && (fg->glyph_out->bitmap.num_grays == 256)
 		 )
@@ -255,7 +259,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 				   {
 				      int dx, dy;
 				      int in_x, in_w;
-				      
+
 				      in_x = 0;
 				      in_w = 0;
 				      dx = chr_x;
@@ -290,13 +294,13 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 				 DATA8 *tmpbuf = NULL, *dp, *tp, bits;
 				 int bi, bj;
 				 const DATA8 bitrepl[2] = {0x0, 0xff};
-				 
+
 				 tmpbuf = alloca(w);
 				 for (i = 0; i < h; i++)
 				   {
 				      int dx, dy;
 				      int in_x, in_w, end;
-				      
+
 				      in_x = 0;
 				      in_w = 0;
 				      dx = chr_x;
