@@ -82,7 +82,8 @@ evas_scale_smooth_scaler_downx_downy.c \
 evas_scale_smooth_scaler_downy.c \
 evas_scale_smooth_scaler_noscale.c \
 evas_scale_smooth_scaler_up.c \
-evas_scale_span.h
+evas_scale_span.h \
+evas_pipe.h
 
 libevas_engine_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h
