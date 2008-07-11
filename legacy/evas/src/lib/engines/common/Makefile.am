@@ -73,13 +73,16 @@ evas_convert_rgb_24.h \
 evas_convert_rgb_32.h \
 evas_convert_rgb_8.h \
 evas_convert_yuv.h \
+evas_scale_main.h \
+evas_scale_smooth.h \
 evas_scale_smooth_scaler.c \
 evas_scale_smooth_scaler_down.c \
 evas_scale_smooth_scaler_downx.c \
 evas_scale_smooth_scaler_downx_downy.c \
 evas_scale_smooth_scaler_downy.c \
 evas_scale_smooth_scaler_noscale.c \
-evas_scale_smooth_scaler_up.c
+evas_scale_smooth_scaler_up.c \
+evas_scale_span.h
 
 libevas_engine_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h

@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
 
 static RGBA_Pipe *evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op);
@@ -10,7 +14,7 @@ evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op)
 {
    RGBA_Pipe *p;
    int first_pipe = 0;
-   
+
    if (!pipe)
      {
 	first_pipe = 1;
@@ -86,7 +90,7 @@ evas_common_pipe_thread(void *data)
 	     for (p = info->im->pipe; p; p = (RGBA_Pipe *)((Evas_Object_List *)p)->next)
 	       {
 		  int i;
-		  
+
 		  for (i = 0; i < p->op_num; i++)
 		    {
 		       if (p->op[i].op_func)
@@ -114,13 +118,13 @@ evas_common_pipe_begin(RGBA_Image *im)
 {
 #ifdef BUILD_PTHREAD
    int i, y, h;
-   
+
    if (!im->pipe) return;
    if (thread_num == 1) return;
    if (thread_num == 0)
      {
 	int cpunum;
-	
+
 	cpunum = evas_common_cpu_count();
 	thread_num = cpunum;
 	if (thread_num == 1) return;
@@ -130,7 +134,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 	  {
 	     pthread_attr_t attr;
 	     cpu_set_t cpu;
-	     
+
 	     pthread_attr_init(&attr);
 	     CPU_ZERO(&cpu);
 	     CPU_SET(i % cpunum, &cpu);
@@ -139,7 +143,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 	     thinfo[i].info = NULL;
 	     thinfo[i].barrier = thbarrier;
 	     /* setup initial locks */
-	     pthread_create(&(thinfo[i].thread_id), &attr, 
+	     pthread_create(&(thinfo[i].thread_id), &attr,
 			    evas_common_pipe_thread, &(thinfo[i]));
 	     pthread_attr_destroy(&attr);
 	  }
@@ -150,7 +154,7 @@ evas_common_pipe_begin(RGBA_Image *im)
    for (i = 0; i < thread_num; i++)
      {
 	RGBA_Pipe_Thread_Info *info;
-	     
+
 //	     if (y >= im->cache_entry.h) break;
 	info = calloc(1, sizeof(RGBA_Pipe_Thread_Info));
 	info->im = im;
@@ -159,7 +163,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 	info->w = im->cache_entry.w;
 	info->y = i;
 	info->h = thread_num;
-#else	     
+#else
 	info->x = 0;
 	info->y = y;
 	info->w = im->cache_entry.w;
@@ -168,18 +172,18 @@ evas_common_pipe_begin(RGBA_Image *im)
 	else
 	  info->h = h;
 	y += info->h;
-#endif	     
+#endif
 	thinfo[i].info = info;
      }
    /* tell worker threads to start */
    pthread_barrier_wait(&(thbarrier[0]));
-#endif   
+#endif
 }
 
 EAPI void
 evas_common_pipe_flush(RGBA_Image *im)
 {
-   
+
    RGBA_Pipe *p;
    int i;
 
@@ -210,13 +214,13 @@ evas_common_pipe_flush(RGBA_Image *im)
 EAPI void
 evas_common_pipe_free(RGBA_Image *im)
 {
-   
+
    RGBA_Pipe *p;
    int i;
-   
+
    if (!im->pipe) return;
    /* FIXME: PTHREAD join all threads here (if not finished) */
-   
+
    /* free pipe */
    while (im->pipe)
      {
@@ -241,29 +245,29 @@ evas_common_pipe_rectangle_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_
    if (info)
      {
 	RGBA_Draw_Context context;
-	
+
 	memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
 #ifdef EVAS_SLI
 	evas_common_draw_context_set_sli(&(context), info->y, info->h);
-#else	
+#else
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
-#endif	
-	evas_common_rectangle_draw(dst, &(context), 
+#endif
+	evas_common_rectangle_draw(dst, &(context),
 				   op->op.rect.x, op->op.rect.y,
 				   op->op.rect.w, op->op.rect.h);
      }
    else
-     evas_common_rectangle_draw(dst, &(op->context), 
+     evas_common_rectangle_draw(dst, &(op->context),
 				op->op.rect.x, op->op.rect.y,
 				op->op.rect.w, op->op.rect.h);
 }
 
 EAPI void
-evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, 
+evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 				int x, int y, int w, int h)
 {
    RGBA_Pipe_Op *op;
-   
+
    if ((w < 1) || (h < 1)) return;
    dst->pipe = evas_common_pipe_add(dst->pipe, &op);
    if (!dst->pipe) return;
@@ -283,19 +287,19 @@ evas_common_pipe_line_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
    if (info)
      {
 	RGBA_Draw_Context context;
-	
+
 	memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
 #ifdef EVAS_SLI
 	evas_common_draw_context_set_sli(&(context), info->y, info->h);
-#else	
+#else
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
-#endif	
-	evas_common_line_draw(dst, &(context), 
+#endif
+	evas_common_line_draw(dst, &(context),
 			      op->op.line.x0, op->op.line.y0,
 			      op->op.line.x1, op->op.line.y1);
      }
    else
-     evas_common_line_draw(dst, &(op->context), 
+     evas_common_line_draw(dst, &(op->context),
 			   op->op.line.x0, op->op.line.y0,
 			   op->op.line.x1, op->op.line.y1);
 }
@@ -305,7 +309,7 @@ evas_common_pipe_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 			   int x0, int y0, int x1, int y1)
 {
    RGBA_Pipe_Op *op;
-   
+
    dst->pipe = evas_common_pipe_add(dst->pipe, &op);
    if (!dst->pipe) return;
    op->op.line.x0 = x0;
@@ -322,7 +326,7 @@ static void
 evas_common_pipe_op_poly_free(RGBA_Pipe_Op *op)
 {
    RGBA_Polygon_Point *p;
-   
+
    while (op->op.poly.points)
      {
 	p = op->op.poly.points;
@@ -338,13 +342,13 @@ evas_common_pipe_poly_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
    if (info)
      {
 	RGBA_Draw_Context context;
-	
+
 	memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
 #ifdef EVAS_SLI
 	evas_common_draw_context_set_sli(&(context), info->y, info->h);
-#else	
+#else
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
-#endif	
+#endif
 	evas_common_polygon_draw(dst, &(context),
 				 op->op.poly.points);
      }
@@ -394,13 +398,13 @@ evas_common_pipe_grad_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
    if (info)
      {
 	RGBA_Draw_Context context;
-	
+
 	memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
 #ifdef EVAS_SLI
 	evas_common_draw_context_set_sli(&(context), info->y, info->h);
-#else	
+#else
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
-#endif	
+#endif
 	evas_common_gradient_draw(dst, &(context),
 				  op->op.grad.x, op->op.grad.y,
 				  op->op.grad.w, op->op.grad.h,
@@ -448,13 +452,13 @@ evas_common_pipe_text_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
    if (info)
      {
 	RGBA_Draw_Context context;
-	
+
 	memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
 #ifdef EVAS_SLI
 	evas_common_draw_context_set_sli(&(context), info->y, info->h);
-#else	
+#else
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
-#endif	
+#endif
 	evas_common_font_draw(dst, &(context),
 			      op->op.text.font, op->op.text.x, op->op.text.y,
 			      op->op.text.text);
