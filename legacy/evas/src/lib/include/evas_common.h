@@ -826,6 +826,7 @@ RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_mask_pt_get  (Image_En
 EAPI Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int reverse);
 
 /****/
+#include "../engines/common/evas_convert_main.h"
 
 /****/
 EAPI void evas_common_scale_init                            (void);
