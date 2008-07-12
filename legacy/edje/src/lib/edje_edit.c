@@ -550,6 +550,24 @@ _edje_if_string_free(Edje *ed, const char *str)
    evas_stringshare_del(str);
    str = NULL;
 }
+Edje_Spectrum_Directory_Entry *
+_edje_edit_spectrum_entry_get(Edje *ed, const char* spectra)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   Evas_List *l;
+   
+   if (!ed->file || !spectra || !ed->file->spectrum_dir)
+      return NULL;
+   
+   for (l = ed->file->spectrum_dir->entries; l; l = l->next)
+     {
+	s = l->data;
+	if (!strcmp(s->entry, spectra))
+	   return s;
+     }
+   
+   return NULL;
+}
 /*****************/
 /*  GENERAL API  */
 /*****************/
@@ -2133,6 +2151,146 @@ edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *
    printf("SET ASPECT_PREF of state '%s' [to: %d]\n", state, pref);
    pd->aspect.prefer = pref;
 }
+
+//fill
+EAPI double
+edje_edit_state_fill_origin_relative_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("Get state fill origin of part: %s state: %s\n", part, state);
+   return pd->fill.pos_rel_x;
+}
+
+EAPI double
+edje_edit_state_fill_origin_relative_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("Get state fill origin of part: %s state: %s\n", part, state);
+   return pd->fill.pos_rel_y;
+}
+
+EAPI int
+edje_edit_state_fill_origin_offset_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("Get state fill origin offset of part: %s state: %s\n", part, state);
+   return pd->fill.pos_abs_x;
+}
+
+EAPI int
+edje_edit_state_fill_origin_offset_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("Get state fill origin offset of part: %s state: %s\n", part, state);
+   return pd->fill.pos_abs_y;
+}
+
+
+EAPI void
+edje_edit_state_fill_origin_relative_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill origin of part: %s state: %s to: %f\n", part, state, x);
+   pd->fill.pos_rel_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_fill_origin_relative_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill origin of part: %s state: %s to: %f\n", part, state, y);
+   pd->fill.pos_rel_y = y;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_fill_origin_offset_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill origin offset x of part: %s state: %s to: %f\n", part, state, x);
+   pd->fill.pos_abs_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_fill_origin_offset_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill origin offset y of part: %s state: %s to: %f\n", part, state, y);
+   pd->fill.pos_abs_y = y;
+   edje_object_calc_force(obj);
+}
+
+EAPI double
+edje_edit_state_fill_size_relative_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0.0);
+   //printf("Get state fill size of part: %s state: %s\n", part, state);
+   return pd->fill.rel_x;
+}
+
+EAPI double
+edje_edit_state_fill_size_relative_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0.0);
+   //printf("Get state fill size of part: %s state: %s\n", part, state);
+   return pd->fill.rel_y;
+}
+
+EAPI int
+edje_edit_state_fill_size_offset_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("Get state fill size offset of part: %s state: %s\n", part, state);
+   return pd->fill.abs_x;
+}
+
+EAPI int
+edje_edit_state_fill_size_offset_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("Get state fill size offset of part: %s state: %s\n", part, state);
+   return pd->fill.abs_y;
+}
+
+EAPI void
+edje_edit_state_fill_size_relative_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill size of part: %s state: %s to: %f\n", part, state, x);
+   pd->fill.rel_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill size of part: %s state: %s to: %f\n", part, state, y);
+   pd->fill.rel_y = y;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_fill_size_offset_x_set(Evas_Object *obj, const char *part, const char *state, double x)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill size offset x of part: %s state: %s to: %f\n", part, state, x);
+   pd->fill.abs_x = x;
+   edje_object_calc_force(obj);
+}
+
+EAPI void
+edje_edit_state_fill_size_offset_y_set(Evas_Object *obj, const char *part, const char *state, double y)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state fill size offset y of part: %s state: %s to: %f\n", part, state, y);
+   pd->fill.abs_y = y;
+   edje_object_calc_force(obj);
+}
+
+
 /**************/
 /*  TEXT API */
 /**************/
@@ -2437,8 +2595,8 @@ edje_edit_images_list_get(Evas_Object *obj)
      {
 	i = l->data;
 	images = evas_list_append(images, evas_stringshare_add(i->entry));
-	printf("   Image: %s (type: %d param: %d id: %d) \n",
-	       i->entry, i->source_type, i->source_param, i->id);
+	//printf("   Image: %s (type: %d param: %d id: %d) \n",
+	//       i->entry, i->source_type, i->source_param, i->id);
      }
 
    return images;
@@ -2630,6 +2788,464 @@ edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char 
    if (b > -1) pd->border.b = b;
 
    edje_object_calc_force(obj);
+}
+
+/******************/
+/*  SPECTRUM API  */
+/******************/
+
+EAPI Evas_List *
+edje_edit_spectrum_list_get(Evas_Object *obj)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   Evas_List *spectrums = NULL;
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file) return NULL;
+   if (!ed->file->spectrum_dir) return NULL;
+
+   printf("GET SPECTRUM LIST for %s\n", ed->file->path);
+
+   for (l = ed->file->spectrum_dir->entries; l; l = l->next)
+     {
+	s = l->data;
+	printf("SPECTRUM: %s\n", s->entry);
+	spectrums = evas_list_append(spectrums, evas_stringshare_add(s->entry));
+     }
+
+   return spectrums;
+   return NULL;
+}
+
+
+EAPI unsigned char
+edje_edit_spectra_add(Evas_Object *obj, const char* name)
+{
+   int id;
+   GET_ED_OR_RETURN(0);
+   
+   printf("SPECTRA ADD [new name:%s]\n", name);
+   
+   Edje_Spectrum_Directory_Entry *s;
+   Evas_List *l;
+   
+   if (!ed->file) return 0;
+   
+   if (_edje_edit_spectrum_entry_get(ed, name)) return 0;
+   
+   if (!ed->file->spectrum_dir)
+     ed->file->spectrum_dir = mem_alloc(SZ(Edje_Spectrum_Directory));
+   
+   s = mem_alloc(SZ(Edje_Spectrum_Directory_Entry));
+   ed->file->spectrum_dir->entries = evas_list_append(ed->file->spectrum_dir->entries, s);
+   s->id = evas_list_count(ed->file->spectrum_dir->entries) - 1;
+   s->entry = (char*)evas_stringshare_add(name);
+   s->filename = NULL;
+   s->color_list = NULL;
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_spectra_del(Evas_Object *obj, const char* spectra)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   
+   GET_ED_OR_RETURN(0);
+   
+   s = _edje_edit_spectrum_entry_get(ed, spectra);
+   if (!s) return 0;
+   
+   printf("SPECTRA DEL %s\n", spectra);
+   
+   ed->file->spectrum_dir->entries = evas_list_remove(ed->file->spectrum_dir->entries, s);
+   _edje_if_string_free(ed, s->entry);
+   _edje_if_string_free(ed, s->filename);
+   while (s->color_list)
+     {
+        Edje_Spectrum_Color *color;
+        color = s->color_list->data;
+        free(color);
+        s->color_list = evas_list_remove_list(s->color_list, s->color_list);
+     }
+   free(s);
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_spectra_name_set(Evas_Object *obj, const char* spectra, const char* name)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   
+   GET_ED_OR_RETURN(0);
+
+   printf("SET SPECTRA NAME for spectra: %s [new name:%s]\n", spectra, name);
+   
+   s = _edje_edit_spectrum_entry_get(ed, spectra);
+   if (!s) return 0;
+   
+   _edje_if_string_free(ed, s->entry);
+   s->entry = (char*)evas_stringshare_add(name);
+   
+   return 1;
+}
+
+EAPI int
+edje_edit_spectra_stop_num_get(Evas_Object *obj, const char* spectra)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   
+   GET_ED_OR_RETURN(-1);
+   
+   printf("GET SPECTRA STOP NUM for spectra: %s\n", spectra);
+   
+   s = _edje_edit_spectrum_entry_get(ed, spectra);
+   if (!s) return -1;
+   
+   return evas_list_count(s->color_list);
+}
+
+EAPI unsigned char
+edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   Edje_Spectrum_Color *color;
+   GET_ED_OR_RETURN(0);
+   
+   printf("SET SPECTRA STOP NUM for spectra: %s\n", spectra);
+   
+   s = _edje_edit_spectrum_entry_get(ed, spectra);
+   if (!s) return 0;
+   
+   if (num == evas_list_count(s->color_list)) return 1;
+      
+   //destroy all colors
+   while (s->color_list)
+     {
+        color = s->color_list->data;
+        free(color);
+        s->color_list = evas_list_remove_list(s->color_list, s->color_list);
+     }
+   
+   //... and recreate
+   while (num)
+     {
+        color = mem_alloc(SZ(Edje_Spectrum_Color));
+        s->color_list = evas_list_append(s->color_list, color);
+        color->r = 255;
+        color->g = 255;
+        color->b = 255;
+        color->a = 255;
+        color->d = 10;
+        num--;
+     }
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop_number, int *r, int *g, int *b, int *a, int *d)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   Edje_Spectrum_Color *color;
+   GET_ED_OR_RETURN(0);
+   
+   s = _edje_edit_spectrum_entry_get(ed, spectra);
+   if (!s) return 0;
+   printf("GET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
+   
+   color = evas_list_nth(s->color_list, stop_number);
+   if (!color) return 0;
+   if (r) *r = color->r;
+   if (g) *g = color->g;
+   if (b) *b = color->b;
+   if (a) *a = color->a;
+   if (d) *d = color->d;
+   
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_spectra_stop_color_set(Evas_Object *obj, const char* spectra, int stop_number, int r, int g, int b, int a, int d)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   Edje_Spectrum_Color *color;
+   GET_ED_OR_RETURN(0);
+   
+   s = _edje_edit_spectrum_entry_get(ed, spectra);
+   if (!s) return 0;
+   printf("SET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
+   
+   color = evas_list_nth(s->color_list, stop_number);
+   if (!color) return 0;
+   color->r = r;
+   color->g = g;
+   color->b = b;
+   color->a = a;
+   color->d = d;
+   
+   edje_object_calc_force(obj);
+   
+   return 1;
+}
+
+
+
+/******************/
+/*  GRADIENT API  */
+/******************/
+
+EAPI const char *
+edje_edit_state_gradient_type_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(NULL);
+
+   if (!pd->gradient.type)
+      return NULL;
+
+//   printf("GET GRADIENT TYPE for part: %s state: %s [%s]\n", part, state, pd->gradient.type);
+
+   return evas_stringshare_add(pd->gradient.type);
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_type_set(Evas_Object *obj, const char *part, const char *state, const char *type)
+{
+   GET_PD_OR_RETURN(0);
+
+   if (!type) return 0;
+
+//   printf("SET GRADIENT TYPE for part: %s state: %s TO: %s\n", part, state, type);
+
+   _edje_if_string_free(ed, pd->gradient.type);
+   pd->gradient.type = (char *)evas_stringshare_add(type);
+
+   edje_object_calc_force(obj);
+   
+   return 1;
+}
+
+
+EAPI unsigned char
+edje_edit_state_gradient_use_fill_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(-1);
+
+   if (!pd->gradient.type)
+      return -1;
+   
+   if (!strcmp(pd->gradient.type, "linear"))
+      return 0;
+   return 1;
+}
+
+EAPI int
+edje_edit_state_gradient_spectra_id_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(-1);
+
+   //if (!pd->gradient.type)
+   //   return NULL;
+
+   printf("GET GRADIENT SPECTRA ID for part: %s state: %s [%d]\n", part, state, pd->gradient.id);
+
+   return pd->gradient.id;
+}
+
+//~ EAPI unsigned char
+//~ edje_edit_state_gradient_spectra_id_set(Evas_Object *obj, const char *part, const char *state, int spectra_id)
+//~ {
+   //~ GET_PD_OR_RETURN(0);
+
+   //~ printf("SET GRADIENT SPECTRA_ID for part: %s state: %s [%d]\n", part, state, spectra_id);
+
+   //~ pd->gradient.id = spectra_id;
+   
+   //~ edje_object_calc_force(obj);
+   
+   //~ return 1;
+//~ }
+
+EAPI unsigned char
+edje_edit_state_gradient_spectra_set(Evas_Object *obj, const char *part, const char *state, const char* spectra)
+{
+   Edje_Spectrum_Directory_Entry *s;
+   
+   GET_PD_OR_RETURN(0);
+
+   printf("SET GRADIENT SPECTRA for part: %s state: %s [%s]\n", part, state, spectra);
+   
+   s = _edje_edit_spectrum_entry_get(ed, spectra);
+   if (!s) return 0;
+   
+   pd->gradient.id = s->id;
+   
+   edje_object_calc_force(obj);
+   
+   return 1;
+}
+
+EAPI double
+edje_edit_state_gradient_rel1_relative_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL1 RELX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.relative_x);
+
+   return pd->gradient.rel1.relative_x;
+}
+
+EAPI double
+edje_edit_state_gradient_rel1_relative_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL1 RELY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.relative_y);
+
+   return pd->gradient.rel1.relative_y;
+}
+
+EAPI double
+edje_edit_state_gradient_rel2_relative_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL2 RELX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.relative_x);
+
+   return pd->gradient.rel2.relative_x;
+}
+
+EAPI double
+edje_edit_state_gradient_rel2_relative_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL2 RELY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.relative_y);
+
+   return pd->gradient.rel2.relative_y;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL1 RELX for part: %s state: %s [TO %f]\n", part, state, val);
+
+   pd->gradient.rel1.relative_x = val;
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL1 RELY for part: %s state: %s [TO %f]\n", part, state, val);
+
+   pd->gradient.rel1.relative_y = val;
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel2_relative_x_set(Evas_Object *obj, const char *part, const char *state, double val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL2 RELX for part: %s state: %s [TO %f]\n", part, state, val);
+
+   pd->gradient.rel2.relative_x = val;
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL2 RELY for part: %s state: %s [TO %f]\n", part, state, val);
+
+   pd->gradient.rel2.relative_y = val;
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+EAPI int
+edje_edit_state_gradient_rel1_offset_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL1 OFFSETX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.offset_x);
+
+   return pd->gradient.rel1.offset_x;
+}
+
+EAPI int
+edje_edit_state_gradient_rel1_offset_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL1 OFFSETY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.offset_y);
+
+   return pd->gradient.rel1.offset_y;
+}
+
+EAPI int
+edje_edit_state_gradient_rel2_offset_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL2 OFFSETX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.offset_x);
+
+   return pd->gradient.rel2.offset_x;
+}
+
+EAPI int
+edje_edit_state_gradient_rel2_offset_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("GET GRADIENT REL2 OFFSETY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.offset_y);
+
+   return pd->gradient.rel2.offset_y;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, int val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL1 OFFSETX for part: %s state: %s [TO %d]\n", part, state, val);
+
+   pd->gradient.rel1.offset_x = val;
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, int val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL1 OFFSETY for part: %s state: %s [TO %d]\n", part, state, val);
+
+   pd->gradient.rel1.offset_y = val;
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, int val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL2 OFFSETX for part: %s state: %s [TO %d]\n", part, state, val);
+
+   pd->gradient.rel2.offset_x = val;
+   edje_object_calc_force(obj);
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_state_gradient_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, int val)
+{
+   GET_PD_OR_RETURN(0);
+   printf("SET GRADIENT REL2 OFFSETY for part: %s state: %s [TO %d]\n", part, state, val);
+
+   pd->gradient.rel2.offset_y = val;
+   edje_object_calc_force(obj);
+   return 1;
 }
 
 /******************/
