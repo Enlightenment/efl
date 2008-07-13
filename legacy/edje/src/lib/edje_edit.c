@@ -8,7 +8,6 @@
  * Modify edje so that also ebryo source is included in the eet file
  * Write decompile info (print source) back to edje file
  * Remove images/fonts
- * Gradients
  * Draggies
  *
  */
@@ -550,6 +549,7 @@ _edje_if_string_free(Edje *ed, const char *str)
    evas_stringshare_del(str);
    str = NULL;
 }
+
 Edje_Spectrum_Directory_Entry *
 _edje_edit_spectrum_entry_get(Edje *ed, const char* spectra)
 {
@@ -2821,7 +2821,7 @@ EAPI Evas_List *
 edje_edit_spectrum_list_get(Evas_Object *obj)
 {
    Edje_Spectrum_Directory_Entry *s;
-   Evas_List *spectrums = NULL;
+   Evas_List *spectrum = NULL;
    Evas_List *l;
 
    GET_ED_OR_RETURN(NULL);
@@ -2834,12 +2834,11 @@ edje_edit_spectrum_list_get(Evas_Object *obj)
    for (l = ed->file->spectrum_dir->entries; l; l = l->next)
      {
 	s = l->data;
-        printf("SPECTRUM: %s [id: %d]\n", s->entry, s->id);
-	spectrums = evas_list_append(spectrums, evas_stringshare_add(s->entry));
+	printf("SPECTRUM: %s [id: %d]\n", s->entry, s->id);
+	spectrum = evas_list_append(spectrum, evas_stringshare_add(s->entry));
      }
 
-   return spectrums;
-   return NULL;
+   return spectrum;
 }
 
 
@@ -2848,26 +2847,26 @@ edje_edit_spectra_add(Evas_Object *obj, const char* name)
 {
    int id;
    GET_ED_OR_RETURN(0);
-   
+
    printf("SPECTRA ADD [new name:%s]\n", name);
-   
+
    Edje_Spectrum_Directory_Entry *s;
    Evas_List *l;
-   
+
    if (!ed->file) return 0;
-   
+
    if (_edje_edit_spectrum_entry_get(ed, name)) return 0;
-   
+
    if (!ed->file->spectrum_dir)
      ed->file->spectrum_dir = mem_alloc(SZ(Edje_Spectrum_Directory));
-   
+
    s = mem_alloc(SZ(Edje_Spectrum_Directory_Entry));
    ed->file->spectrum_dir->entries = evas_list_append(ed->file->spectrum_dir->entries, s);
-   s->id = evas_list_count(ed->file->spectrum_dir->entries) - 1;
+   s->id = evas_list_count(ed->file->spectrum_dir->entries) - 1; //TODO Search for id holes
    s->entry = (char*)evas_stringshare_add(name);
    s->filename = NULL;
    s->color_list = NULL;
-   
+
    return 1;
 }
 
@@ -2875,14 +2874,14 @@ EAPI unsigned char
 edje_edit_spectra_del(Evas_Object *obj, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
-   
+
    GET_ED_OR_RETURN(0);
-   
+
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
-   
+
    printf("SPECTRA DEL %s\n", spectra);
-   
+
    ed->file->spectrum_dir->entries = evas_list_remove(ed->file->spectrum_dir->entries, s);
    _edje_if_string_free(ed, s->entry);
    _edje_if_string_free(ed, s->filename);
@@ -2894,7 +2893,7 @@ edje_edit_spectra_del(Evas_Object *obj, const char* spectra)
         s->color_list = evas_list_remove_list(s->color_list, s->color_list);
      }
    free(s);
-   
+
    return 1;
 }
 
@@ -2902,17 +2901,17 @@ EAPI unsigned char
 edje_edit_spectra_name_set(Evas_Object *obj, const char* spectra, const char* name)
 {
    Edje_Spectrum_Directory_Entry *s;
-   
+
    GET_ED_OR_RETURN(0);
 
    printf("SET SPECTRA NAME for spectra: %s [new name:%s]\n", spectra, name);
-   
+
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
-   
+
    _edje_if_string_free(ed, s->entry);
    s->entry = (char*)evas_stringshare_add(name);
-   
+
    return 1;
 }
 
@@ -2920,14 +2919,14 @@ EAPI int
 edje_edit_spectra_stop_num_get(Evas_Object *obj, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
-   
+
    GET_ED_OR_RETURN(-1);
-   
+
    printf("GET SPECTRA STOP NUM for spectra: %s\n", spectra);
-   
+
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return -1;
-   
+
    return evas_list_count(s->color_list);
 }
 
@@ -2937,14 +2936,14 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
    Edje_Spectrum_Directory_Entry *s;
    Edje_Spectrum_Color *color;
    GET_ED_OR_RETURN(0);
-   
+
    printf("SET SPECTRA STOP NUM for spectra: %s\n", spectra);
-   
+
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
-   
+
    if (num == evas_list_count(s->color_list)) return 1;
-      
+
    //destroy all colors
    while (s->color_list)
      {
@@ -2952,8 +2951,8 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
         free(color);
         s->color_list = evas_list_remove_list(s->color_list, s->color_list);
      }
-   
-   //... and recreate
+
+   //... and recreate (TODO we should optimize this function)
    while (num)
      {
         color = mem_alloc(SZ(Edje_Spectrum_Color));
@@ -2965,7 +2964,7 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
         color->d = 10;
         num--;
      }
-   
+
    return 1;
 }
 
@@ -2975,11 +2974,11 @@ edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop
    Edje_Spectrum_Directory_Entry *s;
    Edje_Spectrum_Color *color;
    GET_ED_OR_RETURN(0);
-   
+
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
    printf("GET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
-   
+
    color = evas_list_nth(s->color_list, stop_number);
    if (!color) return 0;
    if (r) *r = color->r;
@@ -2987,7 +2986,7 @@ edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop
    if (b) *b = color->b;
    if (a) *a = color->a;
    if (d) *d = color->d;
-   
+
    return 1;
 }
 
@@ -2997,11 +2996,11 @@ edje_edit_spectra_stop_color_set(Evas_Object *obj, const char* spectra, int stop
    Edje_Spectrum_Directory_Entry *s;
    Edje_Spectrum_Color *color;
    GET_ED_OR_RETURN(0);
-   
+
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
    printf("SET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
-   
+
    color = evas_list_nth(s->color_list, stop_number);
    if (!color) return 0;
    color->r = r;
@@ -3009,12 +3008,11 @@ edje_edit_spectra_stop_color_set(Evas_Object *obj, const char* spectra, int stop
    color->b = b;
    color->a = a;
    color->d = d;
-   
+
    edje_object_calc_force(obj);
-   
+
    return 1;
 }
-
 
 
 /******************/
@@ -3038,16 +3036,13 @@ EAPI unsigned char
 edje_edit_state_gradient_type_set(Evas_Object *obj, const char *part, const char *state, const char *type)
 {
    GET_PD_OR_RETURN(0);
-
    if (!type) return 0;
 
 //   printf("SET GRADIENT TYPE for part: %s state: %s TO: %s\n", part, state, type);
 
    _edje_if_string_free(ed, pd->gradient.type);
    pd->gradient.type = (char *)evas_stringshare_add(type);
-
    edje_object_calc_force(obj);
-   
    return 1;
 }
 
@@ -3059,7 +3054,7 @@ edje_edit_state_gradient_use_fill_get(Evas_Object *obj, const char *part, const 
 
    if (!pd->gradient.type)
       return -1;
-   
+
    if (!strcmp(pd->gradient.type, "linear"))
       return 0;
    return 1;
@@ -3069,13 +3064,13 @@ EAPI const char *
 edje_edit_state_gradient_spectra_get(Evas_Object *obj, const char *part, const char *state)
 {
    Edje_Spectrum_Directory_Entry *s;
-   
+
    GET_PD_OR_RETURN(0);
 
    //printf("GET GRADIENT SPECTRA for part: %s state: %s\n", part, state);
    s = _edje_edit_spectrum_entry_get_by_id(ed, pd->gradient.id);
    if (!s) return 0;
-   
+
    return evas_stringshare_add(s->entry);
 }
 
@@ -3083,17 +3078,17 @@ EAPI unsigned char
 edje_edit_state_gradient_spectra_set(Evas_Object *obj, const char *part, const char *state, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
-   
+
    GET_PD_OR_RETURN(0);
 
    printf("SET GRADIENT SPECTRA for part: %s state: %s [%s]\n", part, state, spectra);
-   
+
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
 
    pd->gradient.id = s->id;
    edje_object_calc_force(obj);
-   
+
    return 1;
 }
 
@@ -3182,7 +3177,6 @@ edje_edit_state_gradient_rel1_offset_x_get(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL1 OFFSETX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.offset_x);
-
    return pd->gradient.rel1.offset_x;
 }
 
@@ -3191,7 +3185,6 @@ edje_edit_state_gradient_rel1_offset_y_get(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL1 OFFSETY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.offset_y);
-
    return pd->gradient.rel1.offset_y;
 }
 
@@ -3200,7 +3193,6 @@ edje_edit_state_gradient_rel2_offset_x_get(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL2 OFFSETX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.offset_x);
-
    return pd->gradient.rel2.offset_x;
 }
 
@@ -3209,7 +3201,6 @@ edje_edit_state_gradient_rel2_offset_y_get(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL2 OFFSETY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.offset_y);
-
    return pd->gradient.rel2.offset_y;
 }
 
