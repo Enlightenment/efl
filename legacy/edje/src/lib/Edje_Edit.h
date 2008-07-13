@@ -1327,22 +1327,13 @@ edje_edit_state_gradient_use_fill_get(
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
 
-/**Get the spectra id used by part state.*/
-EAPI int                   ///@return The spectra id
-edje_edit_state_gradient_spectra_id_get(
+/**Get the spectra used by part state. Remember to free the string with edje_edit_string_free()*/
+EAPI const char *          ///@return The spectra name used in state
+edje_edit_state_gradient_spectra_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state       ///< The name of the 'part state' (ex. "default 0.00")
 );
-
-//~ /**Set the spectra id used by part state.*/
-//~ EAPI unsigned char         ///@return 1 on success, 0 otherwise
-//~ edje_edit_state_gradient_spectra_id_set(
-   //~ Evas_Object *obj,       ///< The edje object
-   //~ const char *part,       ///< The name of the part
-   //~ const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
-   //~ int spectra_i
-//~ );
 
 /**Set the spectra used by part state.*/
 EAPI unsigned char         ///@return 1 on success, 0 otherwise
