@@ -892,11 +892,11 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
    if (mw < 0) mw = 0;
    if (mh < 0) mh = 0;
    if (mw > 0)
-     evas_object_data_set(obj, "\377 edje.minw", (void *)mw);
+     evas_object_data_set(obj, "\377 edje.minw", (void *)(long)mw);
    else
      evas_object_data_del(obj, "\377 edje.minw");
    if (mh > 0)
-     evas_object_data_set(obj, "\377 edje.minh", (void *)mh);
+     evas_object_data_set(obj, "\377 edje.minh", (void *)(long)mh);
    else
      evas_object_data_del(obj, "\377 edje.minh");
 
@@ -926,11 +926,11 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
    mw = maxw;
    mh = maxh;
    if (mw >= 0)
-     evas_object_data_set(obj, "\377 edje.maxw", (void *)mw);
+     evas_object_data_set(obj, "\377 edje.maxw", (void *)(long)mw);
    else
      evas_object_data_del(obj, "\377 edje.maxw");
    if (mh >= 0)
-     evas_object_data_set(obj, "\377 edje.maxh", (void *)mh);
+     evas_object_data_set(obj, "\377 edje.maxh", (void *)(long)mh);
    else
      evas_object_data_del(obj, "\377 edje.maxh");
 
@@ -966,15 +966,15 @@ edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas
    mw = aw;
    mh = ah;
    if (mc > 0)
-     evas_object_data_set(obj, "\377 edje.aspm", (void *)mc);
+     evas_object_data_set(obj, "\377 edje.aspm", (void *)(long)mc);
    else
      evas_object_data_del(obj, "\377 edje.aspm");
    if (mw > 0)
-     evas_object_data_set(obj, "\377 edje.aspw", (void *)mw);
+     evas_object_data_set(obj, "\377 edje.aspw", (void *)(long)mw);
    else
      evas_object_data_del(obj, "\377 edje.aspw");
    if (mh > 0)
-     evas_object_data_set(obj, "\377 edje.asph", (void *)mh);
+     evas_object_data_set(obj, "\377 edje.asph", (void *)(long)mh);
    else
      evas_object_data_del(obj, "\377 edje.asph");
 
@@ -2064,13 +2064,13 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
      {
 	int w1, h1, w2, h2, am, aw, ah;
 
-	w1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
-	h1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
-	w2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
-	h2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
-	am = (int)evas_object_data_get(obj_swallow, "\377 edje.aspm");
-	aw = (int)evas_object_data_get(obj_swallow, "\377 edje.aspw");
-	ah = (int)evas_object_data_get(obj_swallow, "\377 edje.asph");
+	w1 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.minw");
+	h1 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.minh");
+	w2 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.maxw");
+	h2 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.maxh");
+	am = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.aspm");
+	aw = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.aspw");
+	ah = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.asph");
 	rp->swallow_params.min.w = w1;
 	rp->swallow_params.min.h = h1;
 	if (w2 > 0) rp->swallow_params.max.w = w2;
