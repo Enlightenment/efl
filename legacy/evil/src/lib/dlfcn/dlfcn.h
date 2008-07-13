@@ -2,6 +2,12 @@
 #define __EVIL_DLFCN_H__
 
 
+#ifdef _MSC_VER
+# define _POSIX_
+# include <limits.h>
+# undef _POSIX_
+#endif /* _MSC_VER */
+
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 # include <sys/syslimits.h>
 #else

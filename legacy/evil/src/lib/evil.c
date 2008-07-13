@@ -162,7 +162,9 @@ getpwuid (uid_t uid)
 int
 symlink(const char *oldpath, const char *newpath)
 {
+#ifdef UNICODE
    wchar_t        new_path[MB_CUR_MAX];
+#endif /* UNICODE */
    IShellLink    *pISL;
    IShellLink   **shell_link;
    IPersistFile  *pIPF;
@@ -194,10 +196,14 @@ symlink(const char *oldpath, const char *newpath)
    if (FAILED(pISL->lpVtbl->QueryInterface(pISL, &IID_IPersistFile, (void **)persit_file)))
      goto no_queryinterface;
 
-   /* FIXME: is it for cegcc ??? */
+#ifdef UNICODE
    mbstowcs(new_path, newpath, MB_CUR_MAX);
    if (FAILED(pIPF->lpVtbl->Save(pIPF, new_path, FALSE)))
      goto no_save;
+#else
+   if (FAILED(pIPF->lpVtbl->Save(pIPF, newpath, FALSE)))
+     goto no_save;
+#endif /* ! UNICODE */
 
    pIPF->lpVtbl->Release(pIPF);
    pISL->lpVtbl->Release(pISL);
@@ -218,8 +224,10 @@ symlink(const char *oldpath, const char *newpath)
 ssize_t
 readlink(const char *path, char *buf, size_t bufsiz)
 {
+#ifdef UNICODE
    wchar_t        old_path[MB_CUR_MAX];
-   char           new_path[MB_CUR_MAX];
+#endif /* UNICODE */
+   char           new_path[PATH_MAX];
    IShellLink    *pISL;
    IShellLink   **shell_link;
    IPersistFile  *pIPF;
@@ -244,15 +252,20 @@ readlink(const char *path, char *buf, size_t bufsiz)
                                (void **)persit_file)))
      goto no_instance;
 
+#ifdef UNICODE
    mbstowcs(old_path, path, MB_CUR_MAX);
    if (FAILED(pIPF->lpVtbl->Load(pIPF, old_path, STGM_READWRITE)))
      goto no_load;
+#else
+   if (FAILED(pIPF->lpVtbl->Load(pIPF, path, STGM_READWRITE)))
+     goto no_load;
+#endif /* ! UNICODE */
 
    shell_link = &pISL;
    if (FAILED(pIPF->lpVtbl->QueryInterface(pIPF, &IID_IShellLink, (void **)shell_link)))
      goto no_queryinterface;
 
-   if (FAILED(pISL->lpVtbl->GetPath(pISL, new_path, MB_CUR_MAX, NULL, 0)))
+   if (FAILED(pISL->lpVtbl->GetPath(pISL, new_path, PATH_MAX, NULL, 0)))
      goto no_getpath;
 
    length = strlen(new_path);

@@ -1,3 +1,15 @@
+2008-07-13  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	declare pid_t, ssize_t and mode_t for vc++ before flock
+	structure (vc++)
+	* src/lib/dlfcn/dlfcn.h:
+	include limits.h for vc++
+
+	* src/lib/evil.c: (symlink), (readlink):
+	use UNICODE instead of checking the OS. Use PATH_MAX instead
+	of MB_CUR_MAX when needed
+
 2008-07-03  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

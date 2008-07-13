@@ -130,6 +130,14 @@ extern "C" {
 #  define F_UNLCK     2
 # endif /* ! F_RDLCK */
 
+#ifdef _MSC_VER
+
+typedef int            pid_t;
+typedef long           ssize_t;
+typedef unsigned short mode_t;
+
+#endif /* _MSC_VER */
+
 /**
  * @struct flock
  * @brief A structure that control the lock of a file descriptor.
@@ -559,10 +567,6 @@ typedef unsigned long  gid_t;
 #endif /* ! __CEGCC__ */
 
 #ifdef _MSC_VER
-
-typedef int            pid_t;
-typedef long           ssize_t;
-typedef unsigned short mode_t;
 
 #define F_OK 0  /* Check for file existence */
 #define X_OK 1  /* MS access() doesn't check for execute permission. */
