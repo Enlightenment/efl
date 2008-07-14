@@ -2,9 +2,12 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h> /* for NULL */
 
-#include "config.h"
 #include "Ecore.h"
 #include "ecore_private.h"
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
@@ -14,6 +17,7 @@
 # include "Ecore_WinCE.h"
 # include "ecore_wince_private.h"
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
+
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
@@ -1022,7 +1026,7 @@ ecore_evas_software_wince_new(Ecore_WinCE_Window *parent,
    y = 0;
    width = 0;
    height = 0;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_Evas *
@@ -1041,7 +1045,7 @@ ecore_evas_software_wince_fb_new(Ecore_WinCE_Window *parent,
    y = 0;
    width = 0;
    height = 0;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_Evas *
@@ -1060,7 +1064,7 @@ ecore_evas_software_wince_gapi_new(Ecore_WinCE_Window *parent,
    y = 0;
    width = 0;
    height = 0;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_Evas *
@@ -1079,7 +1083,7 @@ ecore_evas_software_wince_ddraw_new(Ecore_WinCE_Window *parent,
    y = 0;
    width = 0;
    height = 0;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_WinCE_Window *
@@ -1089,5 +1093,5 @@ ecore_evas_software_wince_window_get(Ecore_Evas *ee)
    return (Ecore_WinCE_Window *) _ecore_evas_wince_window_get(ee);
 #else
    return NULL;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }

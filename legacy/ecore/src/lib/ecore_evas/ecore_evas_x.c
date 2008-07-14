@@ -1,15 +1,20 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-#include "config.h"
+
+#ifdef _HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
+#ifdef BUILD_ECORE_EVAS_X11
+# include "Ecore_X.h"
+# include "Ecore_X_Atoms.h"
+#endif
+
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
-#ifdef BUILD_ECORE_EVAS_X11
-#include "Ecore_X.h"
-#include "Ecore_X_Atoms.h"
-#endif
 
 #ifdef BUILD_ECORE_EVAS_X11
 static int _ecore_evas_init_count = 0;
@@ -162,7 +167,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	     for (l = updates; l; l = l->next)
 	       {
 		  Evas_Rectangle *r;
-		  
+
 		  r = l->data;
 		  printf("  UP render [%p] %ix%i, [%i %i %ix%i]\n",
 			 ee, ee->w, ee->h, r->x, r->y, r->w, r->h);
@@ -243,7 +248,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 #if 0
 //		  if (ee->w == 640)
 		    printf("    --COPY PIXMAP\n");
-#endif	       
+#endif
 		  /* if we have a damage pixmap - we can avoid exposures by
 		   * disabling them just for setting the mask */
 		  ecore_x_event_mask_set(ee->engine.x.win,
@@ -329,13 +334,13 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 //		  if (ee->w == 640)
 		    {
 		       Evas_List *l;
-		       
+
 		       printf("RENDER [%p] [%i] %ix%i\n",
 			      ee, ee->visible, ee->w, ee->h);
 		       for (l = updates; l; l = l->next)
 			 {
 			    Evas_Rectangle *r;
-			    
+
 			    r = l->data;
 			    printf("   render [%i %i %ix%i]\n",
 				   r->x, r->y, r->w, r->h);
@@ -961,7 +966,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 #else
 	XRectangle xr;
 	Region tmpr;
-	
+
 	if (!ee->engine.x.damages) ee->engine.x.damages = XCreateRegion();
 	tmpr = XCreateRegion();
 	xr.x = e->x;
@@ -1067,7 +1072,7 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
 	if (ee->prop.avoid_damage)
 	  {
 	     int pdam;
-	     
+
 	     pdam = ecore_evas_avoid_damage_get(ee);
 	     ecore_evas_avoid_damage_set(ee, 0);
 	     ecore_evas_avoid_damage_set(ee, pdam);
@@ -1482,7 +1487,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 	     if (ee->prop.avoid_damage)
 	       {
 		  int pdam;
-		  
+
 		  pdam = ecore_evas_avoid_damage_get(ee);
 		  ecore_evas_avoid_damage_set(ee, 0);
 		  ecore_evas_avoid_damage_set(ee, pdam);
@@ -1531,7 +1536,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 	     if (ee->prop.avoid_damage)
 	       {
 		  int pdam;
-		  
+
 		  pdam = ecore_evas_avoid_damage_get(ee);
 		  ecore_evas_avoid_damage_set(ee, 0);
 		  ecore_evas_avoid_damage_set(ee, pdam);
@@ -2121,7 +2126,7 @@ _ecore_evas_x_lower(Ecore_Evas *ee)
 static void
 _ecore_evas_x_activate(Ecore_Evas *ee)
 {
-   ecore_x_netwm_client_active_request(ee->engine.x.win_root, 
+   ecore_x_netwm_client_active_request(ee->engine.x.win_root,
 				       ee->engine.x.win, 1, 0);
 }
 
@@ -2919,7 +2924,7 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 	  }
 	else
 	  {
-/* turn this off too- bg pixmap is controlled by avoid damage directly	     
+/* turn this off too- bg pixmap is controlled by avoid damage directly
 	     ee->engine.x.using_bg_pixmap = 0;
 	     ecore_x_window_pixmap_set(ee->engine.x.win, 0);
 	     ecore_x_window_area_expose(ee->engine.x.win, 0, 0, ee->w, ee->h);
@@ -3248,7 +3253,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	  }
 	einfo->info.conn   = ecore_x_connection_get();
         /* FIXME: uncomment that once the XCB render engine has that member */
-/* 	einfo->info.screen = screen; */
+/*	einfo->info.screen = screen; */
 	einfo->info.visual = screen->root_visual;
 # else
 	int screen;
@@ -3550,7 +3555,7 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
 	  }
 	else
 	  {
-/* turn this off too- bg pixmap is controlled by avoid damage directly	     
+/* turn this off too- bg pixmap is controlled by avoid damage directly
 	     ee->engine.x.using_bg_pixmap = 0;
 	     ecore_x_window_pixmap_set(ee->engine.x.win, 0);
 	     ecore_x_window_area_expose(ee->engine.x.win, 0, 0, ee->w, ee->h);
