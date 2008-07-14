@@ -14,7 +14,9 @@
 @author Nathan Ingersoll <ningerso\@d.umn.edu>
 @author Willem Monsuwe <willem\@stack.nl>
 @author Vincent Torri <vtorri at univ-evry dot fr>
-@date 2000-2003
+@author Gustavo Barbieri <barbieri at profusion dot mobi>
+@author Cedric Bail <moa dot bluebugs at gmail dot com>
+@date 2000-2008
 
 
 @section intro What is Evas?
@@ -43,7 +45,7 @@ cross-platform development.
 @section work How does Evas work?
 
 Evas is a canvas display library. This is markedly different from most
-display and windowing systemas as a Canvas is structural and is also a state
+display and windowing systems as a Canvas is structural and is also a state
 engine, wheras most display and windowing systems are immediate mode display
 targets. Evas handles the logic between a structural display via its' state
 engine, and controls the target windowing system in order to produce
@@ -70,7 +72,7 @@ graphics hardware on the device to be performed.
 
 The advantage of such a system is that it is simple, and gives a program
 tight control over how something looks and is drawn. Given the increasing
-comlpexity of displays and demands by users to have better looking
+complexity of displays and demands by users to have better looking
 interfaces, more and more work is needing to be done at this level by the
 internals of widget sets, custom display widgets and other programs. This
 means more and more logic and display rendering code needs to be written
@@ -119,7 +121,7 @@ the ability to have their code ported and display on different display
 systems with very little work.
 
 Evas can be seen as a display system that stands somewhere between a widget
-set and an immediate mode display system. It retains basic dislpay logic,
+set and an immediate mode display system. It retains basic display logic,
 but does very little high-level logic such as scrollbars, sliders, push
 buttons etc.
 
@@ -133,19 +135,19 @@ compiler flags that the @p evas-config script outputs. For example:
 Compiling C or C++ files into object files:
 
 @verbatim
-gcc -c main.c -o main.o `evas-config --cflags`
+gcc -c -o main.o main.c `pkg-config --cflags evas`
 @endverbatim
 
 Linking object files into a binary executable:
 
 @verbatim
-gcc main.o -o my_application `evas-config --libs`
+gcc -o my_application main.o `pkg-config --libs evas`
 @endverbatim
 
-You simply have to make sure that evas-config is in your shell's PATH (see
-the manual page for your appropriate shell), or simply use the full path to
-where @p evas-config was installed. It's that simple to link and use Evas
-once you have written your code to use it.
+You simply have to make sure that pkg-config is in your shell's PATH (see
+the manual page for your appropriate shell) and evas.pc in /usr/lib/pkgconfig
+or its path is in the PKG_CONFIG_PATH environment variable. It's that simple
+to link and use Evas once you have written your code to use it.
 
 Since the program is linked to Evas, it is now able to use any advertised
 API calls to display graphics in a canvas managed by Evas, as well as use
@@ -200,7 +202,7 @@ make install
 @todo (1.1) If image load fails due to memory allocation failure, try split it up into tiles and demand-load them
 @todo (1.2) Add external image loaders (application provided callbacks to load)
 @todo (1.2) Add loadable image loader module support (evas loads file.so)
-@todo (1.2) Add external image lodaer modules (application proivdes path to file.so)
+@todo (1.2) Add external image loader modules (application provides path to file.so)
 @todo (1.3) Add X11 primtive engine (ie pixmap)
 @todo (1.3) Add immediate mode drawing commands to image objects
 @todo (1.3) Fix FB engine to allocate vt and release properly
@@ -214,6 +216,7 @@ make install
 @todo (1.7) Allow any object to clip any other object, and not just rectangles
 @todo (1.8) Add more evas demos
 @todo (1.9) Write the error mechanism in evas_xcb_buffer.c
+@todo (1.9) Rewrite the render xcb engine
 @todo (1.10) Improve Win32 Direct3D Engine
 
 */
