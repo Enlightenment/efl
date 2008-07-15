@@ -1599,6 +1599,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
    pd->gradient.rel2.relative_y = 1;
    pd->gradient.rel2.offset_x = -1;
    pd->gradient.rel2.offset_y = -1;
+   pd->gradient.use_rel = 1;
 }
 
 EAPI unsigned char
@@ -2829,12 +2830,12 @@ edje_edit_spectrum_list_get(Evas_Object *obj)
    if (!ed->file) return NULL;
    if (!ed->file->spectrum_dir) return NULL;
 
-   printf("GET SPECTRUM LIST for %s\n", ed->file->path);
+   //printf("GET SPECTRUM LIST for %s\n", ed->file->path);
 
    for (l = ed->file->spectrum_dir->entries; l; l = l->next)
      {
 	s = l->data;
-	printf("SPECTRUM: %s [id: %d]\n", s->entry, s->id);
+	//printf("SPECTRUM: %s [id: %d]\n", s->entry, s->id);
 	spectrum = evas_list_append(spectrum, evas_stringshare_add(s->entry));
      }
 
@@ -2920,12 +2921,12 @@ edje_edit_spectra_stop_num_get(Evas_Object *obj, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
 
-   GET_ED_OR_RETURN(-1);
+   GET_ED_OR_RETURN(0);
 
-   printf("GET SPECTRA STOP NUM for spectra: %s\n", spectra);
+   //printf("GET SPECTRA STOP NUM for spectra: %s\n", spectra);
 
    s = _edje_edit_spectrum_entry_get(ed, spectra);
-   if (!s) return -1;
+   if (!s) return 0;
 
    return evas_list_count(s->color_list);
 }
@@ -2977,7 +2978,7 @@ edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop
 
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
-   printf("GET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
+   //printf("GET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
 
    color = evas_list_nth(s->color_list, stop_number);
    if (!color) return 0;
@@ -3132,7 +3133,7 @@ EAPI unsigned char
 edje_edit_state_gradient_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double val)
 {
    GET_PD_OR_RETURN(0);
-   printf("SET GRADIENT REL1 RELX for part: %s state: %s [TO %f]\n", part, state, val);
+   //printf("SET GRADIENT REL1 RELX for part: %s state: %s [TO %f]\n", part, state, val);
 
    pd->gradient.rel1.relative_x = val;
    edje_object_calc_force(obj);

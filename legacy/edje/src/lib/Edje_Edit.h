@@ -1251,7 +1251,7 @@ edje_edit_spectra_name_set(
 );
 
 /**Get the number of stops in the given spectra.*/
-EAPI int                   ///@return The number of stops
+EAPI int                   ///@return The number of stops, or 0 on errors
 edje_edit_spectra_stop_num_get(
    Evas_Object *obj,       ///< The edje object
    const char* spectra     ///< The name of the spectra
