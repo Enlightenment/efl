@@ -1701,7 +1701,9 @@ EAPI void              ecore_x_dpms_timeout_off_set(unsigned int new_timeout);
 
 EAPI int ecore_x_test_fake_key_down(const char *key);
 EAPI int ecore_x_test_fake_key_up(const char *key);
-       
+EAPI int ecore_x_test_fake_key_press(const char *key);
+EAPI const char *ecore_x_keysym_string_get(int keysym);
+   
 #ifdef __cplusplus
 }
 #endif
