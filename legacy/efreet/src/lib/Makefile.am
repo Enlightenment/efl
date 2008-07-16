@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir) \
 @ECORE_CFLAGS@
 
-lib_LTLIBRARIES = libefreet.la libefreet_mime.la
+lib_LTLIBRARIES = libefreet.la libefreet_mime.la libefreet_trash.la
 
 EFREETHEADERS = \
 Efreet.h \
@@ -43,10 +43,23 @@ $(EFREETMIMEHEADERS)
 libefreet_mime_la_SOURCES = \
 $(EFREETMIMESOURCES)
 
+
+EFREETTRASHHEADERS = \
+Efreet_Trash.h
+
+EFREETTRASHSOURCES = \
+efreet_trash.c \
+$(EFREETTRASHHEADERS)
+
+libefreet_trash_la_SOURCES = \
+$(EFREETTRASHSOURCES)
+
+
 installed_headersdir = $(prefix)/include/efreet
-installed_headers_DATA = $(EFREETHEADERS) $(EFREETMIMEHEADERS)
+installed_headers_DATA = $(EFREETHEADERS) $(EFREETMIMEHEADERS) $(EFREETTRASHHEADERS)
 
 libefreet_la_LIBADD = @ECORE_LIBS@
 libefreet_la_LDFLAGS = -version-info @version_info@
 
 libefreet_mime_la_LIBADD = @ECORE_LIBS@ libefreet.la
+libefreet_trash_la_LIBADD = @ECORE_LIBS@ libefreet.la

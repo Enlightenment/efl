@@ -1,6 +1,6 @@
 rm -f config.cache
 
-AC_INIT(efreet, 0.5.0.043, enlightenment-devel@lists.sourceforge.net)
+AC_INIT(efreet, 0.5.0.044, enlightenment-devel@lists.sourceforge.net)
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(configure.in)
 AC_CANONICAL_BUILD
@@ -69,6 +69,7 @@ AC_OUTPUT([
 efreet.spec
 efreet.pc
 efreet-mime.pc
+efreet-trash.pc
 Makefile
 src/Makefile
 src/lib/Makefile
