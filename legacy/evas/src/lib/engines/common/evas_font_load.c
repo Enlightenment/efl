@@ -259,6 +259,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 
    return fi;
 }
+
 EAPI RGBA_Font *
 evas_common_font_memory_load(const char *name, int size, const void *data, int data_size)
 {
