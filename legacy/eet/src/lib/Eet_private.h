@@ -60,6 +60,7 @@ int              eet_dictionary_string_get_size(const Eet_Dictionary *ed, int in
 const char      *eet_dictionary_string_get_char(const Eet_Dictionary *ed, int index);
 int              eet_dictionary_string_get_float(const Eet_Dictionary *ed, int index, float *result);
 int              eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *result);
+int              eet_dictionary_string_get_hash(const Eet_Dictionary *ed, int index);
 
 FILE *_eet_memfile_read_open(const void *data, size_t size);
 void  _eet_memfile_read_close(FILE *f);
