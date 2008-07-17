@@ -2,20 +2,24 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h> /* for NULL */
 
-#include "config.h"
 #include "Ecore.h"
 #include "ecore_private.h"
-#include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
-#ifdef BUILD_ECORE_WIN32
+#ifdef BUILD_ECORE_EVAS_WIN32
 # include "Ecore_Win32.h"
 # include "ecore_win32_private.h"
-#endif /* BUILD_ECORE_WIN32 */
+#endif /* BUILD_ECORE_EVAS_WIN32 */
+
+#include "ecore_evas_private.h"
+#include "Ecore_Evas.h"
 
 
-#ifdef BUILD_ECORE_WIN32
+#ifdef BUILD_ECORE_EVAS_WIN32
 
 #define ECORE_EVAS_EVENT_COUNT 14
 
@@ -416,7 +420,11 @@ _ecore_evas_win32_event_window_damage(void *data __UNUSED__, int type __UNUSED__
 
    if (ee->prop.avoid_damage)
      {
-#warning [ECORE] [WIN32] No Region code
+#ifdef _MSC_VER
+# pragma message ("[ECORE] [WIN32] No Region code")
+#else
+# warning [ECORE] [WIN32] No Region code
+#endif /* ! _MSC_VER */
      }
    else
      {
@@ -682,8 +690,10 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
    if (ee->rotation == rotation) return;
    rot_dif = ee->rotation - rotation;
    if (rot_dif < 0) rot_dif = -rot_dif;
+
    if (!strcmp(ee->driver, "software_ddraw"))
      {
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 	Evas_Engine_Info_Software_DDraw *einfo;
 
 	einfo = (Evas_Engine_Info_Software_DDraw *)evas_engine_info_get(ee->evas);
@@ -743,6 +753,7 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
 	else
 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
      }
 }
 
@@ -917,19 +928,20 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 /*    else */
 /*      _ecore_evas_win32_state_update(ee); */
 }
-#endif
+
+#endif /* BUILD_ECORE_EVAS_WIN32 */
 
 static void *
 _ecore_evas_win32_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_WIN32
+#ifdef BUILD_ECORE_EVAS_WIN32
    return ee->engine.win32.window;
 #else
    return NULL;
-#endif /* BUILD_ECORE_WIN32 */
+#endif /* BUILD_ECORE_EVAS_WIN32 */
 }
 
-#ifdef BUILD_ECORE_WIN32
+#ifdef BUILD_ECORE_EVAS_WIN32
 static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
 {
    _ecore_evas_win32_free,
@@ -980,294 +992,59 @@ static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_window_get
 };
 
-#endif /* BUILD_ECORE_WIN32 */
+#endif /* BUILD_ECORE_EVAS_WIN32 */
 
 /* API */
 
-EAPI Ecore_Evas *
-ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
-                              int                 x,
-                              int                 y,
-                              int                 width,
-                              int                 height)
+static int
+_ecore_evas_engine_software_ddraw_init(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
    Evas_Engine_Info_Software_DDraw *einfo;
-   Ecore_Evas                      *ee;
+   const char                      *driver;
    int                              rmethod;
 
-   rmethod = evas_render_method_lookup("software_ddraw");
+   driver = "software_ddraw";
+
+   rmethod = evas_render_method_lookup(driver);
    if (!rmethod)
-     return NULL;
+     return 0;
 
-   printf ("ecore_evas_software_ddraw_new : ecore_win32_init\n");
-   if (!ecore_win32_init())
-     return NULL;
-
-   ee = calloc(1, sizeof(Ecore_Evas));
-   if (!ee)
-     return NULL;
-
-   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
-
-   _ecore_evas_win32_init();
-
-   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_win32_engine_func;
-
-   ee->driver = "software_ddraw";
-
-   if (width < 1) width = 1;
-   if (height < 1) height = 1;
-   ee->x = x;
-   ee->y = y;
-   ee->w = width;
-   ee->h = height;
-
-   ee->prop.max.w = 32767;
-   ee->prop.max.h = 32767;
-   ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
-   ee->prop.sticky = 0;
-   /* FIXME: sticky to add */
-
-   /* init evas here */
-   printf ("ecore_evas_software_ddraw_new : evas_new\n");
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
-   printf ("ecore_evas_software_ddraw_new : evas_output_method_set\n");
+   ee->driver = driver;
    evas_output_method_set(ee->evas, rmethod);
-   printf ("ecore_evas_software_ddraw_new : evas_output_size_set\n");
-   evas_output_size_set(ee->evas, width, height);
-   printf ("ecore_evas_software_ddraw_new : evas_output_viewport_set\n");
-   evas_output_viewport_set(ee->evas, 0, 0, width, height);
 
-   ee->engine.win32.parent = parent;
-   printf ("ecore_evas_software_ddraw_new : ecore_win32_window_new\n");
-   ee->engine.win32.window = ecore_win32_window_new(parent, x, y, width, height);
-   if (!ee->engine.win32.window)
-     {
-        _ecore_evas_win32_shutdown();
-        free(ee);
-        return NULL;
-     }
-
-   printf ("ecore_evas_software_ddraw_new : evas_engine_info_get\n");
    einfo = (Evas_Engine_Info_Software_DDraw *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
-        einfo->info.depth = ecore_win32_screen_depth_get();;
-        einfo->info.rotation = 0;
-        printf ("ecore_evas_software_ddraw_new : evas_engine_info_set\n");
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-     }
-
-   evas_key_modifier_add(ee->evas, "Shift");
-   evas_key_modifier_add(ee->evas, "Control");
-   evas_key_modifier_add(ee->evas, "Alt");
-   evas_key_modifier_add(ee->evas, "Meta");
-   evas_key_modifier_add(ee->evas, "Hyper");
-   evas_key_modifier_add(ee->evas, "Super");
-   evas_key_lock_add(ee->evas, "Caps_Lock");
-   evas_key_lock_add(ee->evas, "Num_Lock");
-   evas_key_lock_add(ee->evas, "Scroll_Lock");
-
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_win32_winid_str_get(ee->engine.win32.window), ee);
-
-   return ee;
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW */
-}
-
-EAPI Ecore_Win32_Window *
-ecore_evas_software_ddraw_window_get(Ecore_Evas *ee)
-{
-   return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
-}
-
-EAPI Ecore_Evas *
-ecore_evas_software_ddraw_16_new(Ecore_Win32_Window *parent,
-                                 int                 x,
-                                 int                 y,
-                                 int                 width,
-                                 int                 height)
-{
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW_16
-   Evas_Engine_Info_Software_16_DDraw *einfo;
-   Ecore_Evas                         *ee;
-   int                                 rmethod;
-
-   rmethod = evas_render_method_lookup("software_16_ddraw");
-   if (!rmethod)
-     return NULL;
-
-   if (!ecore_win32_init())
-     return NULL;
-
-   ee = calloc(1, sizeof(Ecore_Evas));
-   if (!ee)
-     return NULL;
-
-   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
-
-   _ecore_evas_win32_init();
-
-   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_win32_engine_func;
-
-   ee->driver = "software_16_ddraw";
-
-   if (width < 1) width = 1;
-   if (height < 1) height = 1;
-   ee->x = x;
-   ee->y = y;
-   ee->w = width;
-   ee->h = height;
-
-   ee->prop.max.w = 32767;
-   ee->prop.max.h = 32767;
-   ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
-   ee->prop.sticky = 0;
-   /* FIXME: sticky to add */
-
-   /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
-   evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, width, height);
-   evas_output_viewport_set(ee->evas, 0, 0, width, height);
-
-   ee->engine.win32.parent = parent;
-   ee->engine.win32.window = ecore_win32_window_new(parent, x, y, width, height);
-   if (!ee->engine.win32.window)
-     {
-        _ecore_evas_win32_shutdown();
-        free(ee);
-        return NULL;
-     }
-
-   if (ecore_win32_screen_depth_get() != 16)
-     {
-        ecore_win32_window_del(ee->engine.win32.window);
-        _ecore_evas_win32_shutdown();
-        free(ee);
-        return NULL;
-     }
-
-   einfo = (Evas_Engine_Info_Software_16_DDraw *)evas_engine_info_get(ee->evas);
-   if (einfo)
-     {
-        /* FIXME: REDRAW_DEBUG missing for now */
-        einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
-/*         einfo->info.object = ecore_win32_ddraw_object_get(ee->engine.win32.window); */
-/*         einfo->info.surface_primary = ecore_win32_ddraw_surface_primary_get(ee->engine.win32.window); */
-/*         einfo->info.surface_back = ecore_win32_ddraw_surface_back_get(ee->engine.win32.window); */
-/*         einfo->info.surface_source = ecore_win32_ddraw_surface_source_get(ee->engine.win32.window); */
-/*         einfo->info.depth = ecore_win32_ddraw_depth_get(ee->engine.win32.window); */
         einfo->info.depth = ecore_win32_screen_depth_get();
-        printf ("ecore_evas_software_ddraw_16_new depth : %d\n", einfo->info.depth);
         einfo->info.rotation = 0;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
-   evas_key_modifier_add(ee->evas, "Shift");
-   evas_key_modifier_add(ee->evas, "Control");
-   evas_key_modifier_add(ee->evas, "Alt");
-   evas_key_modifier_add(ee->evas, "Meta");
-   evas_key_modifier_add(ee->evas, "Hyper");
-   evas_key_modifier_add(ee->evas, "Super");
-   evas_key_lock_add(ee->evas, "Caps_Lock");
-   evas_key_lock_add(ee->evas, "Num_Lock");
-   evas_key_lock_add(ee->evas, "Scroll_Lock");
-
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_win32_winid_str_get(ee->engine.win32.window), ee);
-
-   return ee;
+   return 1;
 #else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW_16 */
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 }
 
-EAPI Ecore_Win32_Window *
-ecore_evas_software_ddraw_16_window_get(Ecore_Evas *ee)
-{
-   return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
-}
-
-EAPI Ecore_Evas *
-ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
-                        int                 x,
-                        int                 y,
-                        int                 width,
-                        int                 height)
+static int
+_ecore_evas_engine_direct3d_init(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_DIRECT3D
    Evas_Engine_Info_Direct3D *einfo;
-   Ecore_Evas                 *ee;
-   int                         rmethod;
+   const char                *driver;
+   int                        rmethod;
 
-   rmethod = evas_render_method_lookup("direct3d");
+   driver = "direct3d";
+
+   rmethod = evas_render_method_lookup(driver);
    if (!rmethod)
-     return NULL;
+     return 0;
 
-   if (!ecore_win32_init())
-     return NULL;
-
-   ee = calloc(1, sizeof(Ecore_Evas));
-   if (!ee)
-     return NULL;
-
-   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
-
-   _ecore_evas_win32_init();
-
-   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_win32_engine_func;
- 
-   ee->driver = "direct3d";
-
-   if (width < 1) width = 1;
-   if (height < 1) height = 1;
-   ee->x = x;
-   ee->y = y;
-   ee->w = width;
-   ee->h = height;
-
-   ee->prop.max.w = 32767;
-   ee->prop.max.h = 32767;
-   ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
-   ee->prop.sticky = 0;
-   /* FIXME: sticky to add */
-
-   /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   ee->driver = driver;
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, width, height);
-   evas_output_viewport_set(ee->evas, 0, 0, width, height);
-
-   ee->engine.win32.parent = parent;
-   ee->engine.win32.window = ecore_win32_window_new(parent, x, y, width, height);
-   if (!ee->engine.win32.window)
-     {
-        _ecore_evas_win32_shutdown();
-        free(ee);
-        return NULL;
-     }
 
    einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ee->evas);
    if (einfo)
@@ -1279,51 +1056,88 @@ ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
-   evas_key_modifier_add(ee->evas, "Shift");
-   evas_key_modifier_add(ee->evas, "Control");
-   evas_key_modifier_add(ee->evas, "Alt");
-   evas_key_modifier_add(ee->evas, "Meta");
-   evas_key_modifier_add(ee->evas, "Hyper");
-   evas_key_modifier_add(ee->evas, "Super");
-   evas_key_lock_add(ee->evas, "Caps_Lock");
-   evas_key_lock_add(ee->evas, "Num_Lock");
-   evas_key_lock_add(ee->evas, "Scroll_Lock");
-
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_win32_winid_str_get(ee->engine.win32.window), ee);
-
-   return ee;
+   return 1;
 #else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* BUILD_ECORE_EVAS_DIRECT3D */
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_DIRECT3D */
 }
 
-EAPI Ecore_Win32_Window *
-ecore_evas_direct3d_window_get(Ecore_Evas *ee)
+static int
+_ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
 {
-   return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
-}
-
-EAPI Ecore_Evas *
-ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
-                       int                 x,
-                       int                 y,
-                       int                 width,
-                       int                 height)
-{
-#ifdef BUILD_ECORE_EVAS_GL_GLEW
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
    Evas_Engine_Info_GL_Glew *einfo;
-   Ecore_Evas               *ee;
+   const char               *driver;
    int                       rmethod;
 
-   rmethod = evas_render_method_lookup("gl_glew");
+   driver = "gl_glew";
+
+   rmethod = evas_render_method_lookup(driver);
    if (!rmethod)
-     return NULL;
+     return 0;
+
+   ee->driver = driver;
+   evas_output_method_set(ee->evas, rmethod);
+
+   einfo = (Evas_Engine_Info_GL_Glew *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+        /* FIXME: REDRAW_DEBUG missing for now */
+        einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
+        einfo->info.depth = ecore_win32_screen_depth_get();
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+     }
+
+   return 1;
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_GLEW */
+}
+
+static int
+_ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
+   Evas_Engine_Info_Software_DDraw *einfo;
+   const char                      *driver;
+   int                              rmethod;
+
+   driver = "software_16_ddraw";
+
+   rmethod = evas_render_method_lookup(driver);
+   if (!rmethod)
+     return 0;
+
+   ee->driver = driver;
+   evas_output_method_set(ee->evas, rmethod);
+
+   if (ecore_win32_screen_depth_get() != 16)
+     return 0;
+
+   einfo = (Evas_Engine_Info_Software_16_DDraw *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+        /* FIXME: REDRAW_DEBUG missing for now */
+        einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
+        einfo->info.depth = ecore_win32_screen_depth_get();
+        einfo->info.rotation = 0;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+     }
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
+}
+
+static Ecore_Evas *
+_ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
+                               Ecore_Win32_Window *parent,
+                               int                 x,
+                               int                 y,
+                               int                 width,
+                               int                 height)
+{
+#ifdef BUILD_ECORE_EVAS_WIN32
+   Ecore_Evas *ee;
 
    if (!ecore_win32_init())
      return NULL;
@@ -1337,8 +1151,6 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
    _ecore_evas_win32_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_win32_engine_func;
- 
-   ee->driver = "gl_glew";
 
    if (width < 1) width = 1;
    if (height < 1) height = 1;
@@ -1357,7 +1169,6 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
    /* init evas here */
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
-   evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, width, height);
    evas_output_viewport_set(ee->evas, 0, 0, width, height);
 
@@ -1370,13 +1181,11 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   einfo = (Evas_Engine_Info_GL_Glew *)evas_engine_info_get(ee->evas);
-   if (einfo)
+   if (!_ecore_evas_engine_init(ee))
      {
-        /* FIXME: REDRAW_DEBUG missing for now */
-        einfo->info.window = ((struct _Ecore_Win32_Window *)ee->engine.win32.window)->window;
-        einfo->info.depth = ecore_win32_screen_depth_get();
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        _ecore_evas_win32_shutdown();
+        free(ee);
+        return NULL;
      }
 
    evas_key_modifier_add(ee->evas, "Shift");
@@ -1400,5 +1209,112 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
    y = 0;
    width = 0;
    height = 0;
-#endif /* BUILD_ECORE_EVAS_GL_GLEW */
+#endif /* ! BUILD_ECORE_EVAS_WIN32 */
+}
+
+EAPI Ecore_Evas *
+ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
+                              int                 x,
+                              int                 y,
+                              int                 width,
+                              int                 height)
+{
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
+   return _ecore_evas_win32_new_internal(_ecore_evas_engine_software_ddraw_init,
+                                         parent,
+                                         x,
+                                         y,
+                                         width,
+                                         height);
+#else
+   return NULL;
+   parent = NULL;
+   x = 0;
+   y = 0;
+   width = 0;
+   height = 0;
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
+}
+
+EAPI Ecore_Evas *
+ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent,
+                                 int                 x,
+                                 int                 y,
+                                 int                 width,
+                                 int                 height)
+{
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
+   return _ecore_evas_win32_new_internal(_ecore_evas_engine_software_16_ddraw_init,
+                                         parent,
+                                         x,
+                                         y,
+                                         width,
+                                         height);
+#else
+   return NULL;
+   parent = NULL;
+   x = 0;
+   y = 0;
+   width = 0;
+   height = 0;
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
+}
+
+EAPI Ecore_Evas *
+ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
+                        int                 x,
+                        int                 y,
+                        int                 width,
+                        int                 height)
+{
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
+   return _ecore_evas_win32_new_internal(_ecore_evas_engine_direct3d_init,
+                                         parent,
+                                         x,
+                                         y,
+                                         width,
+                                         height);
+#else
+   return NULL;
+   parent = NULL;
+   x = 0;
+   y = 0;
+   width = 0;
+   height = 0;
+#endif /* ! BUILD_ECORE_EVAS_DIRECT3D */
+}
+
+EAPI Ecore_Evas *
+ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
+                       int                 x,
+                       int                 y,
+                       int                 width,
+                       int                 height)
+{
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
+   return _ecore_evas_win32_new_internal(_ecore_evas_engine_opengl_glew_init,
+                                         parent,
+                                         x,
+                                         y,
+                                         width,
+                                         height);
+#else
+   return NULL;
+   parent = NULL;
+   x = 0;
+   y = 0;
+   width = 0;
+   height = 0;
+#endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
+}
+
+EAPI Ecore_Win32_Window *
+ecore_evas_win32_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_WIN32
+   return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
+#else
+   return NULL;
+   ee = NULL;
+#endif /* BUILD_ECORE_EVAS_WIN32 */
 }

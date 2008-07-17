@@ -65,18 +65,18 @@
 #ifdef BUILD_ECORE_EVAS_BUFFER
 # include <Evas_Engine_Buffer.h>
 #endif
-#ifdef BUILD_ECORE_WIN32
+#ifdef BUILD_ECORE_EVAS_WIN32
 # include "Ecore_Win32.h"
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 #  include <Evas_Engine_Software_DDraw.h>
 # endif
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_DIRECTDRAW_16
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
 #  include <Evas_Engine_Software_16_DDraw.h>
 # endif
 # ifdef BUILD_ECORE_EVAS_DIRECT3D
 #  include <Evas_Engine_Direct3D.h>
 # endif
-# ifdef BUILD_ECORE_EVAS_GL_GLEW
+# ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
 #  include <Evas_Engine_GL_Glew.h>
 # endif
 #endif
@@ -194,7 +194,7 @@ struct _Ecore_Evas_Engine
       Ecore_DirectFB_Window *window;
    } directfb;
 #endif
-#ifdef BUILD_ECORE_WIN32
+#ifdef BUILD_ECORE_EVAS_WIN32
    struct {
       Ecore_Win32_Window *parent;
       Ecore_Win32_Window *window;
@@ -303,7 +303,7 @@ void _ecore_evas_buffer_render(Ecore_Evas *ee);
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 int _ecore_evas_directfb_shutdown(void);
 #endif
-#ifdef BUILD_ECORE_WIN32
+#ifdef BUILD_ECORE_EVAS_WIN32
 int _ecore_evas_win32_shutdown(void);
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE

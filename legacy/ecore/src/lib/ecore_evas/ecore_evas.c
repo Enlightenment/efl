@@ -67,7 +67,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 	return 0;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_DDRAW:
-#ifdef BUILD_ECORE_EVAS_DIRECTDRAW
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 	return 1;
 #else
 	return 0;
@@ -78,8 +78,8 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
-      case ECORE_EVAS_ENGINE_GL_GLEW:
-#ifdef BUILD_ECORE_EVAS_GL_GLEW
+      case ECORE_EVAS_ENGINE_OPENGL_GLEW:
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
 	return 1;
 #else
 	return 0;
@@ -90,8 +90,14 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return 0;
 #endif
-      case ECORE_EVAS_ENGINE_SOFTWARE_WINCE:
-#ifdef BUILD_ECORE_EVAS_WINCE
+      case ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 	return 1;
 #else
 	return 0;
