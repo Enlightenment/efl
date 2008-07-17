@@ -56,7 +56,13 @@ ecore_print_warning(const char *function, const char *sparam)
 EAPI unsigned int 
 ecore_direct_hash(const void *key)
 {
-   return ((unsigned int) key);
+#ifdef __LP64__
+   unsigned long int val = (unsigned long int)key;
+
+   return (unsigned int) ((val >> 32) ^ val);
+#else
+   return (unsigned int) key;
+#endif
 }
 
 /**
