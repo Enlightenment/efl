@@ -1174,40 +1174,67 @@ typedef struct _Eet_Free        Eet_Free;
 struct _Eet_Free
 {
   int     ref;
-  int     len;
-  int     num;
-  void  **list;
+  int     len[256];
+  int     num[256];
+  void  **list[256];
 };
+
+static int
+_eet_free_hash(void *data)
+{
+   long int ptr = (long int)(data);
+   int hash;
+
+   hash = ptr;
+   hash ^= ptr >> 8;
+   hash ^= ptr >> 16;
+   hash ^= ptr >> 24;
+
+   hash ^= ptr >> 32;
+   hash ^= ptr >> 40;
+   hash ^= ptr >> 48;
+   hash ^= ptr >> 56;
+
+   return hash & 0xFF;
+}
 
 static void
 _eet_free_add(Eet_Free *ef, void *data)
 {
-   int  i;
+   int hash;
+   int i;
 
-   for (i = 0; i < ef->num; ++i)
-     if (ef->list[i] == data) return;
+   hash = _eet_free_hash(data);
 
-   ef->num++;
-   if (ef->num > ef->len)
+   for (i = 0; i < ef->num[hash]; ++i)
+     if (ef->list[hash][i] == data) return;
+
+   ef->num[hash]++;
+   if (ef->num[hash] > ef->len[hash])
      {
         void    **tmp;
 
-        tmp = realloc(ef->list, (ef->len + 16) * sizeof(void*));
+        tmp = realloc(ef->list[hash], (ef->len[hash] + 16) * sizeof(void*));
         if (!tmp) return ;
 
-        ef->len += 16;
-        ef->list = tmp;
+        ef->len[hash] += 16;
+        ef->list[hash] = tmp;
      }
-   ef->list[ef->num - 1] = data;
+   ef->list[hash][ef->num[hash] - 1] = data;
 }
 static void
 _eet_free_reset(Eet_Free *ef)
 {
+   int i;
+
    if (ef->ref > 0) return ;
-   ef->len = 0;
-   ef->num = 0;
-   if (ef->list) free(ef->list);
-   ef->list = NULL;
+   for (i = 0; i < 256; ++i)
+     {
+	ef->len[i] = 0;
+	ef->num[i] = 0;
+	if (ef->list[i]) free(ef->list[i]);
+	ef->list[i] = NULL;
+     }
 }
 static void
 _eet_free_ref(Eet_Free *ef)
@@ -1220,7 +1247,7 @@ _eet_free_unref(Eet_Free *ef)
    ef->ref--;
 }
 
-static Eet_Free freelist = { 0, 0, 0, NULL };
+static Eet_Free freelist = { 0, { 0 }, { 0 }, { NULL } };
 
 #define _eet_freelist_add(Data)         _eet_free_add(&freelist, Data);
 #define _eet_freelist_reset()           _eet_free_reset(&freelist);
@@ -1230,20 +1257,22 @@ static Eet_Free freelist = { 0, 0, 0, NULL };
 static void
 _eet_freelist_free(Eet_Data_Descriptor *edd)
 {
+   int j;
    int i;
 
    if (freelist.ref > 0) return;
-   for (i = 0; i < freelist.num; i++)
-     {
-	if (edd)
-	  edd->func.mem_free(freelist.list[i]);
-	else
-	  free(freelist.list[i]);
-     }
+   for (j = 0; j < 256; ++j)
+     for (i = 0; i < freelist.num[j]; ++i)
+       {
+	  if (edd)
+	    edd->func.mem_free(freelist.list[j][i]);
+	  else
+	    free(freelist.list[j][i]);
+       }
    _eet_free_reset(&freelist);
 }
 
-static Eet_Free freelist_list = { 0, 0, 0, NULL };
+static Eet_Free freelist_list = { 0, { 0 }, { 0 }, { NULL } };
 
 #define _eet_freelist_list_add(Data)    _eet_free_add(&freelist_list, Data);
 #define _eet_freelist_list_reset()      _eet_free_reset(&freelist_list);
@@ -1253,18 +1282,20 @@ static Eet_Free freelist_list = { 0, 0, 0, NULL };
 static void
 _eet_freelist_list_free(Eet_Data_Descriptor *edd)
 {
+   int j;
    int i;
 
    if (freelist_list.ref > 0) return;
-   for (i = 0; i < freelist_list.num; i++)
-     {
-	if (edd)
-	  edd->func.list_free(*((void**)(freelist_list.list[i])));
-     }
+   for (j = 0; j < 256; ++j)
+     for (i = 0; i < freelist_list.num[j]; ++i)
+       {
+	  if (edd)
+	    edd->func.list_free(*((void**)(freelist_list.list[j][i])));
+       }
    _eet_free_reset(&freelist_list);
 }
 
-static Eet_Free freelist_str = { 0, 0, 0, NULL };
+static Eet_Free freelist_str = { 0, { 0 }, { 0 }, { NULL } };
 
 #define _eet_freelist_str_add(Data)     _eet_free_add(&freelist_str, Data);
 #define _eet_freelist_str_reset()       _eet_free_reset(&freelist_str);
@@ -1274,20 +1305,22 @@ static Eet_Free freelist_str = { 0, 0, 0, NULL };
 static void
 _eet_freelist_str_free(Eet_Data_Descriptor *edd)
 {
+   int j;
    int i;
 
    if (freelist_str.ref > 0) return;
-   for (i = 0; i < freelist_str.num; i++)
-     {
-	if (edd)
-          edd->func.str_free(freelist_str.list[i]);
-	else
-	  free(freelist_str.list[i]);
-     }
+   for (j = 0; j < 256; ++j)
+     for (i = 0; i < freelist_str.num[j]; ++i)
+       {
+	  if (edd)
+	    edd->func.str_free(freelist_str.list[j][i]);
+	  else
+	    free(freelist_str.list[j][i]);
+       }
    _eet_free_reset(&freelist_str);
 }
 
-static Eet_Free freelist_direct_str = { 0, 0, 0, NULL };
+static Eet_Free freelist_direct_str = { 0, { 0 }, { 0 }, { NULL } };
 
 #define _eet_freelist_direct_str_add(Data)      _eet_free_add(&freelist_direct_str, Data);
 #define _eet_freelist_direct_str_reset()        _eet_free_reset(&freelist_direct_str);
@@ -1297,16 +1330,18 @@ static Eet_Free freelist_direct_str = { 0, 0, 0, NULL };
 static void
 _eet_freelist_direct_str_free(Eet_Data_Descriptor *edd)
 {
+   int j;
    int i;
 
    if (freelist_str.ref > 0) return;
-   for (i = 0; i < freelist_str.num; i++)
-     {
-	if (edd)
-          edd->func.str_direct_free(freelist_str.list[i]);
-	else
-	  free(freelist_str.list[i]);
-     }
+   for (j = 0; j < 256; ++j)
+     for (i = 0; i < freelist_str.num[j]; ++i)
+       {
+	  if (edd)
+	    edd->func.str_direct_free(freelist_str.list[j][i]);
+	  else
+	    free(freelist_str.list[j][i]);
+       }
    _eet_free_reset(&freelist_str);
 }
 
