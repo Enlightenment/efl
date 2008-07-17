@@ -15,6 +15,8 @@ struct _Evas_Engine_Info_Software_16_WinCE
 
    struct {
       HWND  window;
+      int   width;
+      int   height;
       int   backend; /* 0: auto, 1: raw, 2: gapi, 3: ddraw */
       int   rotation;
    } info;

@@ -40,8 +40,32 @@ struct Evas_Engine_WinCE_FB_Priv
    void *buffer;
 };
 
+static int
+_evas_software_wince_gxinfo_init(HDC dc, int *width, int *height, void **buffer)
+{
+   GXDeviceInfo gxInfo = { 0 };
+   int          result;
+
+   gxInfo.Version = 100;
+   result = ExtEscape(dc, GETGXINFO, 0, NULL, sizeof(gxInfo),
+                      (char *) &gxInfo);
+   if (result <= 0)
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE FB] ExtEscape() with GETGXINFO failed\n");
+        return 0;
+     }
+
+   *width = gxInfo.cyHeight;
+   *height = gxInfo.cxWidth;
+   *buffer = gxInfo.pvFrameBuffer;
+
+   return 1;
+}
+
 void *
-evas_software_wince_fb_init (HWND   window)
+evas_software_wince_fb_init(HWND window,
+                            int  width,
+                            int  height)
 {
    WCHAR                      oemstr[100];
    RawFrameBufferInfo         rfbi;
@@ -68,23 +92,23 @@ evas_software_wince_fb_init (HWND   window)
         (oemstr[13] == '3') &&
         (oemstr[14] == '9')))
      {
-        GXDeviceInfo gxInfo = { 0 };
-        int          result;
-
-        gxInfo.Version = 100;
-        result = ExtEscape(dc, GETGXINFO, 0, NULL, sizeof(gxInfo),
-                           (char *) &gxInfo);
-        if (result <= 0)
+       if (!_evas_software_wince_gxinfo_init(dc, &priv->width, &priv->height, &priv->buffer))
           {
-             fprintf (stderr, "[Evas] [Engine] [WinCE FB] [Ipaq] ExtEscape() failed\n");
              ReleaseDC(window, dc);
              free(priv);
              return NULL;
           }
 
-        priv->width = gxInfo.cyHeight;
-        priv->height = gxInfo.cxWidth;
-        priv->buffer = gxInfo.pvFrameBuffer;
+       if ((priv->width != width) ||
+           (priv->height != height))
+         {
+            fprintf (stderr, "[Evas] [Engine] [WinCE FB] Size mismatch\n");
+            fprintf (stderr, "[Evas] [Engine] [WinCE FB] asked: %dx%d\n", width, height);
+            fprintf (stderr, "[Evas] [Engine] [WinCE FB] got  : %dx%d\n", priv->width, priv->height);
+            ReleaseDC(window, dc);
+            free(priv);
+            return NULL;
+         }
 
         ReleaseDC(window, dc);
 
@@ -95,15 +119,33 @@ evas_software_wince_fb_init (HWND   window)
        (rfbi.wBPP != 16) ||
        (rfbi.wFormat != 1))
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE FB] ExtEscape() failed\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE FB] ExtEscape() with GETRAWFRAMEBUFFER failed\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE FB] trying ExtEscape() with GETGXINFO\n");
+        if (!_evas_software_wince_gxinfo_init(dc, &priv->width, &priv->height, &priv->buffer))
+          {
+             ReleaseDC(window, dc);
+             free(priv);
+             return NULL;
+          }
+
         ReleaseDC(window, dc);
-        free(priv);
-        return NULL;
+        return priv;
      }
 
   priv->width = rfbi.cxPixels;
   priv->height = rfbi.cyPixels;
   priv->buffer = rfbi.pFramePointer;
+
+  if ((priv->width != width) ||
+      (priv->height != height))
+    {
+       fprintf (stderr, "[Evas] [Engine] [WinCE FB] Size mismatch\n");
+       fprintf (stderr, "[Evas] [Engine] [WinCE FB] asked: %dx%d\n", width, height);
+       fprintf (stderr, "[Evas] [Engine] [WinCE FB] got  : %dx%d\n", priv->width, priv->height);
+       ReleaseDC(window, dc);
+       free(priv);
+       return NULL;
+    }
 
   ReleaseDC(window, dc);
 

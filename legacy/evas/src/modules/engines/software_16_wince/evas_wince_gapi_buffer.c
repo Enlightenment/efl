@@ -85,9 +85,11 @@ struct Evas_Engine_WinCE_GAPI_Priv
 };
 
 void *
-evas_software_wince_gapi_init (HWND window)
+evas_software_wince_gapi_init(HWND window,
+                              int  width,
+                              int  height)
 {
-    WCHAR                       oemstr[100];
+   WCHAR                        oemstr[100];
    _GAPI_Display_Properties     prop;
    HMODULE                      gapi_lib;
    Evas_Engine_WinCE_GAPI_Priv *priv;
@@ -242,6 +244,15 @@ v |         |
         priv->height = prop.cyHeight;
         priv->stride = prop.cbyPitch;
         priv->buffer = NULL;
+     }
+
+   if ((priv->width != width) ||
+       (priv->height != height))
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Size mismatch\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] asked: %dx%d\n", width, height);
+        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] got  : %dx%d\n", priv->width, priv->height);
+        goto close_display;
      }
 
    return priv;

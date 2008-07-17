@@ -9,6 +9,9 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines/software_16 \
 @FREETYPE_CFLAGS@
 
+.rc.lo:
+	$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --tag=RC --mode=compile $(RC) $(RCFLAGS) $< -o $@
+
 if BUILD_ENGINE_SOFTWARE_16_WINCE
 
 pkgdir = $(libdir)/evas/modules/engines/software_16_wince/$(MODULE_ARCH)
@@ -20,7 +23,8 @@ evas_engine.h \
 evas_engine.c \
 evas_wince_fb_buffer.c \
 evas_wince_gapi_buffer.c \
-evas_wince_ddraw_buffer.cpp
+evas_wince_ddraw_buffer.cpp \
+evas_wince_gapi.rc
 
 module_la_CFLAGS = @WIN32_CFLAGS@
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la

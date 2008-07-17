@@ -136,7 +136,6 @@ _tmp_out_alloc(Render_Engine *re)
         im->cache_entry.flags.alpha = 0;
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 
-
 	re->tmp_out = im;
      }
 }
@@ -178,7 +177,7 @@ eng_setup(Evas *e, void *in)
           {
            case 1: /* FB */
               re->backend = EVAS_ENGINE_WINCE_FB;
-              re->backend_priv = evas_software_wince_fb_init(info->info.window);
+              re->backend_priv = evas_software_wince_fb_init(info->info.window, info->info.width, info->info.height);
               if (!re->backend_priv)
                 {
                    free(re);
@@ -192,7 +191,7 @@ eng_setup(Evas *e, void *in)
               break;
            case 2: /* GAPI */
               re->backend = EVAS_ENGINE_WINCE_GAPI;
-              re->backend_priv = evas_software_wince_gapi_init(info->info.window);
+              re->backend_priv = evas_software_wince_gapi_init(info->info.window, info->info.width, info->info.height);
               if (!re->backend_priv)
                 {
                    free(re);
@@ -206,7 +205,7 @@ eng_setup(Evas *e, void *in)
               break;
            case 3: /* DirectDraw */
               re->backend = EVAS_ENGINE_WINCE_DDRAW;
-              re->backend_priv = evas_software_wince_ddraw_init(info->info.window);
+              re->backend_priv = evas_software_wince_ddraw_init(info->info.window, info->info.width, info->info.height);
               if (!re->backend_priv)
                 {
                    free(re);
@@ -239,7 +238,7 @@ eng_setup(Evas *e, void *in)
           {
            case 1: /* FB */
               re->backend = EVAS_ENGINE_WINCE_FB;
-              re->backend_priv = evas_software_wince_fb_init(info->info.window);
+              re->backend_priv = evas_software_wince_fb_init(info->info.window, info->info.width, info->info.height);
               if (!re->backend_priv)
                 {
                    free(re);
@@ -253,7 +252,7 @@ eng_setup(Evas *e, void *in)
               break;
            case 2: /* GAPI */
               re->backend = EVAS_ENGINE_WINCE_GAPI;
-              re->backend_priv = evas_software_wince_gapi_init(info->info.window);
+              re->backend_priv = evas_software_wince_gapi_init(info->info.window, info->info.width, info->info.height);
               if (!re->backend_priv)
                 {
                    free(re);
@@ -267,7 +266,7 @@ eng_setup(Evas *e, void *in)
               break;
            case 3: /* DirectDraw */
               re->backend = EVAS_ENGINE_WINCE_DDRAW;
-              re->backend_priv = evas_software_wince_ddraw_init(info->info.window);
+              re->backend_priv = evas_software_wince_ddraw_init(info->info.window, info->info.width, info->info.height);
               if (!re->backend_priv)
                 {
                    free(re);
