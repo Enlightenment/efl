@@ -159,22 +159,28 @@ eet_dictionary_string_add(Eet_Dictionary *ed, const char *string)
 int
 eet_dictionary_string_get_size(const Eet_Dictionary *ed, int index)
 {
-   if (!ed)
-     return 0;
-   if (index < 0)
-     return 0;
+   if (!ed) return 0;
+   if (index < 0) return 0;
    if (index < ed->count)
      return ed->all[index].len;
    return 0;
 }
 
+int
+eet_dictionary_string_get_hash(const Eet_Dictionary *ed, int index)
+{
+   if (!ed) return -1;
+   if (index < 0) return -1;
+   if (index < ed->count)
+     return ed->all[index].hash;
+   return -1;
+}
+
 const char *
 eet_dictionary_string_get_char(const Eet_Dictionary *ed, int index)
 {
-   if (!ed)
-     return NULL;
-   if (index < 0)
-     return NULL;
+   if (!ed) return NULL;
+   if (index < 0) return NULL;
    if (index < ed->count)
      {
 #ifdef _WIN32

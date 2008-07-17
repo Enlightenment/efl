@@ -101,6 +101,7 @@ struct _Eet_Data_Chunk
    char          *name;
    int            len;
    int            size;
+   int            hash;
    void          *data;
    unsigned char  type;
    unsigned char  group_type;
@@ -388,6 +389,22 @@ eet_data_put_long_long(Eet_Dictionary *ed __UNUSED__, const void *src, int *size
 }
 
 /* STRING TYPE */
+static int
+eet_data_get_string_hash(const Eet_Dictionary *ed, const void *src, const void *src_end)
+{
+   if (ed)
+     {
+        const char       *str;
+        int               index;
+
+        if (eet_data_get_int(ed, src, src_end, &index) < 0) return -1;
+
+        return eet_dictionary_string_get_hash(ed, index);
+     }
+
+   return -1;
+}
+
 static int
 eet_data_get_string(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
 {
@@ -718,6 +735,10 @@ eet_data_chunk_get(const Eet_Dictionary *ed, Eet_Data_Chunk *chnk,
      }
 
    chnk->len = ret2;
+
+   /* Precalc hash */
+   chnk->hash = eet_data_get_string_hash(ed, (s + 8), (s + size));
+
    if (ed)
      {
         chnk->data = (char *)src + 4 + ret1 + sizeof(int);
@@ -891,12 +912,12 @@ _eet_descriptor_hash_free(Eet_Data_Descriptor *edd)
 }
 
 static Eet_Data_Element *
-_eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name)
+_eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name, int hash)
 {
-   int hash;
    Eet_Data_Descriptor_Hash *bucket;
 
-   hash = _eet_hash_gen(name, 6);
+   if (hash < 0) hash = _eet_hash_gen(name, 6);
+   else hash &= 0x3f;
    if (!edd->elements.hash.buckets[hash].element) return NULL;
    if (!strcmp(edd->elements.hash.buckets[hash].element->name, name))
      return edd->elements.hash.buckets[hash].element;
@@ -2113,7 +2134,7 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 	/* FIXME: don't REPLY on edd - work without */
 	if ((edd) && (!dumpfunc))
 	  {
-	     ede = _eet_descriptor_hash_find(edd, echnk.name);
+	     ede = _eet_descriptor_hash_find(edd, echnk.name, echnk.hash);
 	     if (ede)
 	       {
 		  int group_type = EET_G_UNKNOWN, type = EET_T_UNKNOW;

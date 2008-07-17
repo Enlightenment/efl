@@ -897,6 +897,7 @@ eet_internal_read2(Eet_File *ef)
              /* Check '\0' at the end of the string */
              if (eet_test_close(ef->ed->all[j].mmap[ef->ed->all[j].len - 1] != '\0', ef)) return NULL;
 
+	     ef->ed->all[j].hash = hash;
              if (ef->ed->all[j].prev == -1)
                ef->ed->hash[hash] = j;
           }
