@@ -10,7 +10,7 @@ evas_add_rect(Evas_Rectangles *rects, int x, int y, int w, int h)
 	unsigned int _tmp_total;
 
 	_tmp_total = rects->total + 32;
-	_add_rect = realloc(rects->array, sizeof(Evas_Rectangle) * _tmp_total);
+	_add_rect = (Evas_Rectangle *)realloc(rects->array, sizeof(Evas_Rectangle) * _tmp_total);
 	if (!_add_rect) return ;
 
 	rects->total = _tmp_total;
@@ -32,7 +32,7 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
    if (rects->max < (rects->active + 1))
      {
 	rects->max += 32;
-	rects->rects = realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
+	rects->rects = (Cutout_Rect *)realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
      }
 
    rect = rects->rects + rects->active;
@@ -67,7 +67,7 @@ evas_event_passes_through(Evas_Object *obj)
    if (obj->smart.parent)
      {
 	int par_pass;
-	
+
 	par_pass = evas_event_passes_through(obj->smart.parent);
 	obj->parent_cache_valid = 1;
 	obj->parent_pass_events = par_pass;
