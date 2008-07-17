@@ -103,6 +103,11 @@ struct _Evas_Cache_Engine_Image
 };
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 EAPI Evas_Cache_Image*        evas_cache_image_init(const Evas_Cache_Image_Func *cb);
 EAPI void                     evas_cache_image_shutdown(Evas_Cache_Image *cache);
 EAPI Image_Entry*             evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error);
@@ -148,6 +153,11 @@ EAPI void                     evas_cache_engine_image_colorspace(Engine_Image_En
 EAPI Engine_Image_Entry*      evas_cache_engine_image_size_set(Engine_Image_Entry *eim, int w, int h);
 
 EAPI void                     evas_cache_engine_image_load_data(Engine_Image_Entry *eim);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* _EVAS_CACHE_H */
