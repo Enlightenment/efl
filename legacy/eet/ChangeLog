@@ -64,4 +64,11 @@
 	* Add EET_G_ARRAY and EET_G_VAR_ARRAY support.
 	* Plan for version 2.0 API break of eet_data_descriptor_element_add.
 
+2008-07-17  Cedric BAIL
+
+	Implement various speed improvement :
+
+	* Use the precomputed hash value for Eet_Data_Chunk.
+	* Use a hash table instead of a list for pointer that need to be freed.
+
 
