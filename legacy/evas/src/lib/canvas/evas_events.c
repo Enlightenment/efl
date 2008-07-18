@@ -10,7 +10,7 @@ _evas_event_object_list_in_get(Evas *e, Evas_List *in, const Evas_Object_List *l
    for (l = list->last; l; l = l->prev)
      {
 	Evas_Object *obj;
-	
+
 	obj = (Evas_Object *)l;
 	if (obj == stop)
 	  {
@@ -26,7 +26,7 @@ _evas_event_object_list_in_get(Evas *e, Evas_List *in, const Evas_Object_List *l
 		  if (obj->smart.smart)
 		    {
 		       int norep;
-		       
+
 		       norep = 0;
 		       in = _evas_event_object_list_in_get(e, in,
 							   evas_object_smart_members_get_direct(obj),
@@ -149,17 +149,17 @@ evas_event_thaw(Evas *e)
    if (e->events_frozen == 0)
      {
 	Evas_Object_List *l;
-	
+
 	for (l = (Evas_Object_List *)e->layers; l; l = l->next)
 	  {
 	     Evas_Object_List *l2;
 	     Evas_Layer *lay;
-	     
+
 	     lay = (Evas_Layer *)l;
 	     for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
 	       {
 		  Evas_Object *obj;
-		  
+
 		  obj = (Evas_Object *)l2;
 		  evas_object_clip_recalc(obj);
 		  evas_object_recalc_clippees(obj);
@@ -231,7 +231,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    ev.flags = flags;
    ev.timestamp = timestamp;
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
-   
+
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
@@ -275,10 +275,10 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
-   
+
      {
 	Evas_Event_Mouse_Up ev;
-	
+
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
@@ -290,13 +290,13 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	ev.flags = flags;
 	ev.timestamp = timestamp;
 	ev.event_flags = EVAS_EVENT_FLAG_NONE;
-	
+
 	_evas_walk(e);
 	copy = evas_event_list_copy(e->pointer.object.in);
 	for (l = copy; l; l = l->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = l->data;
 	     if ((obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB) &&
 		 (obj->mouse_in) && (obj->mouse_grabbed > 0))
@@ -311,7 +311,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	if (copy) copy = evas_list_free(copy);
 	e->last_mouse_up_counter++;
      }
-   
+
    if (!e->pointer.button)
      {
 	Evas_List *ins;
@@ -319,7 +319,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 
 	  {
 	     Evas_Event_Mouse_Out ev;
-	     
+
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
 	     ev.output.y = e->pointer.y;
@@ -330,7 +330,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	     ev.locks = &(e->locks);
 	     ev.timestamp = timestamp;
 	     ev.event_flags = EVAS_EVENT_FLAG_NONE;
-	     
+
 	     /* get new list of ins */
 	     ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
 	     /* go thru old list of in objects */
@@ -338,12 +338,12 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	     for (l = copy; l; l = l->next)
 	       {
 		  Evas_Object *obj;
-		  
+
 		  obj = l->data;
 		  if ((!evas_list_find(ins, obj)) ||
 		      (!e->pointer.inside))
 		    {
-		       
+
 		       obj->mouse_in = 0;
 		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
@@ -355,7 +355,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	if (e->pointer.inside)
 	  {
 	     Evas_Event_Mouse_In ev;
-	     
+
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
 	     ev.output.y = e->pointer.y;
@@ -366,7 +366,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	     ev.locks = &(e->locks);
 	     ev.timestamp = timestamp;
 	     ev.event_flags = EVAS_EVENT_FLAG_NONE;
-	     
+
 	     for (l = ins; l; l = l->next)
 	       {
 		  Evas_Object *obj;
@@ -416,13 +416,13 @@ EAPI void
 evas_event_feed_mouse_cancel(Evas *e, unsigned int timestamp, const void *data)
 {
    int i;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
    if (e->events_frozen > 0) return;
-   
+
    _evas_walk(e);
    for (i = 0; i < 32; i++)
      {
@@ -462,14 +462,14 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
    ev.locks = &(e->locks);
    ev.timestamp = timestamp;
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
-   
+
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
-   
+
    for (l = copy; l; l = l->next)
      {
 	Evas_Object *obj = l->data;
-	
+
 	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
 	if (e->delete_me) break;
@@ -520,7 +520,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 
 	  {
 	     Evas_Event_Mouse_Move ev;
-	     
+
 	     ev.buttons = e->pointer.button;
 	     ev.cur.output.x = e->pointer.x;
 	     ev.cur.output.y = e->pointer.y;
@@ -539,7 +539,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	     for (l = copy; l; l = l->next)
 	       {
 		  Evas_Object *obj;
-		  
+
 		  obj = l->data;
 		  if ((obj->cur.visible) &&
 		      (evas_object_clippers_is_visible(obj)) &&
@@ -559,7 +559,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	  }
 	  {
 	     Evas_Event_Mouse_Out ev;
-	     
+
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
 	     ev.output.y = e->pointer.y;
@@ -570,12 +570,12 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	     ev.locks = &(e->locks);
 	     ev.timestamp = timestamp;
 	     ev.event_flags = EVAS_EVENT_FLAG_NONE;
-	     
+
 	     if (copy) copy = evas_list_free(copy);
 	     while (outs)
 	       {
 		  Evas_Object *obj;
-		  
+
 		  obj = outs->data;
 		  outs = evas_list_remove(outs, obj);
 		  if ((!obj->mouse_grabbed) && (!e->delete_me))
@@ -597,7 +597,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	Evas_Event_Mouse_Move ev;
 	Evas_Event_Mouse_Out ev2;
 	Evas_Event_Mouse_In ev3;
-	
+
 	ev.buttons = e->pointer.button;
 	ev.cur.output.x = e->pointer.x;
 	ev.cur.output.y = e->pointer.y;
@@ -634,7 +634,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	ev3.locks = &(e->locks);
 	ev3.timestamp = timestamp;
 	ev3.event_flags = EVAS_EVENT_FLAG_NONE;
-	
+
 	/* get all new in objects */
 	ins = evas_event_objects_event_list(e, NULL, x, y);
 	/* go thru old list of in objects */
@@ -683,7 +683,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	     if (!evas_list_find(e->pointer.object.in, obj))
 	       {
 		  obj->mouse_in = 1;
-		  
+
 		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev3);
 	       }
@@ -730,7 +730,7 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
    ev.locks = &(e->locks);
    ev.timestamp = timestamp;
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
-   
+
    _evas_walk(e);
    /* get new list of ins */
    ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
@@ -767,7 +767,7 @@ EAPI void
 evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 {
    Evas_Event_Mouse_Out ev;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -786,7 +786,7 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
    ev.locks = &(e->locks);
    ev.timestamp = timestamp;
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
-   
+
    _evas_walk(e);
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed == 0)
@@ -1013,7 +1013,7 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
    ev.data = (void *)data;
    ev.timestamp = timestamp;
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
-   
+
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
@@ -1045,7 +1045,7 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
  * pass events) instead.
  *
  * If @p pass is false, events will be processed as normal.
- * 
+ *
  * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
@@ -1146,7 +1146,7 @@ evas_object_repeat_events_get(const Evas_Object *obj)
  * This function has no effect if @p obj is not a member of a smart
  * object.
  *
- * If @p prop is true, events occuring on this object will propagate on 
+ * If @p prop is true, events occuring on this object will propagate on
  * to the smart object of which @p obj is a member.
  *
  * If @p prop is false, events for which callbacks are set on the member
