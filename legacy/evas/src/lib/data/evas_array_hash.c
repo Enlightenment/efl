@@ -6,6 +6,8 @@
 # include "config.h"
 #endif
 
+#include <stdlib.h>
+
 #include "Evas_Data.h"
 
 #define EAH_BUCKETS 256
