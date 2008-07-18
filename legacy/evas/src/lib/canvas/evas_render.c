@@ -691,10 +691,6 @@ evas_render_idle_flush(Evas *e)
    evas_array_flush(&e->restack_objects);
    evas_array_flush(&e->render_objects);
 
-   /* If some object are still marked as changed, do not remove
-      them from the pending list. */
-   evas_array_remove(&e->pending_objects, pending_change, NULL);
-
    e->invalidate = 1;
 }
 
@@ -707,10 +703,6 @@ evas_render_invalidate(Evas *e)
 
    evas_array_clean(&e->active_objects);
    evas_array_clean(&e->render_objects);
-
-   /* If some object are still marked as changed, do not remove
-      them from the pending list. */
-   evas_array_remove(&e->pending_objects, pending_change, NULL);
 
    evas_array_flush(&e->restack_objects);
    evas_array_flush(&e->delete_objects);
