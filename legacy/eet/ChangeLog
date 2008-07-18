@@ -70,5 +70,6 @@
 
 	* Use the precomputed hash value for Eet_Data_Chunk.
 	* Use a hash table instead of a list for pointer that need to be freed.
-
+	* Use directly the pointer from the dictionary to do a pointer
+	comparison instead of a strcmp.
 
