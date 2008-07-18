@@ -845,43 +845,92 @@ echo "$PACKAGE $VERSION"
 echo
 echo "Optional Modules:"
 echo
+echo " Core:"
+echo
 echo "  Ecore_Job....................: $have_ecore_job"
-echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $have_openssl) (CURL: $have_curl)"
-echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $have_openssl)"
-echo "  Ecore_Config.................: $have_ecore_config"
 echo "  Ecore_Txt....................: $have_ecore_txt"
-
-echo "  Ecore_Evas...................: $have_ecore_evas"
-if test "x$have_ecore_x_xcb" = "xyes" ; then
-  echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb (Xprint: $have_ecore_x_xcb_xprint) (Xinerama: $have_ecore_x_xcb_xinerama) (Xrandr: $have_ecore_x_xcb_randr) (Xscreensaver: $have_ecore_x_xcb_screensaver) (Xshape: $have_ecore_x_xcb_shape) (Xsync: $have_ecore_x_xcb_sync) (Xrender: $have_ecore_x_xcb_render) (Xfixes: $have_ecore_x_xcb_xfixes) (Xcomposite: $have_ecore_x_xcb_composite) (Xdamage: $have_ecore_x_xcb_damage) (Xdpms: $have_ecore_x_xcb_dpms) (Xtest $have_ecore_x_xcb_xtest)"
-else
-  echo "  Ecore_X (Xlib backend).......: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_xprint) (Xinerama: $use_xinerama) (Xrandr: $use_xrandr) (Xscreensaver: $use_xss) (Xrender: $use_xrender) (Xcomposite: $use_xcomposite) (Xfixes: $use_xfixes) (Xdamage: $use_xdamage) (Xdpms: $use_xdpms) (Xtest $use_xtest)"
+echo "  Ecore_File...................: $have_ecore_file"
+if test "x$have_ecore_file" = "xyes" ; then
+  echo "    Inotify....................: $have_inotify"
+  echo "    Poll.......................: $have_poll"
+  echo "    CURL.......................: $have_curl"
 fi
-echo "  Ecore_Evas X11 Support.......: $have_ecore_evas_x11"
-echo "  Ecore_Evas X11 GL Support....: $have_ecore_evas_x11_gl"
-echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
-echo "  Ecore_Evas X11 16bpp Support.: $have_ecore_evas_x11_16"
-
-echo "  Ecore_Win32..................: $have_ecore_win32"
-echo "  Ecore_Evas DirectDraw Support: $have_ecore_evas_software_ddraw"
-echo "  Ecore_Evas Direct3D Support..: $have_ecore_evas_direct3d"
-echo "  Ecore_Evas GL Glew Support...: $have_ecore_evas_opengl_glew"
-echo "  Ecore_Evas DirectDraw 16bpp Support: $have_ecore_evas_software_16_ddraw"
-echo "  Ecore_WinCE..................: $have_ecore_wince"
-echo "  Ecore_Evas WinCE Support.....: $have_ecore_evas_software_16_wince"
-echo "  Ecore_DFB....................: $have_ecore_directfb"
-echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
-echo "  Ecore_FB.....................: $have_ecore_fb"
-echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
-echo "  Ecore_SDL....................: $have_ecore_sdl"
-echo "  Ecore_Evas SDL Support.......: $have_ecore_evas_sdl"
-echo "  Ecore_Evas Buffer Support....: $have_ecore_evas_buffer"
-
-echo "  Ecore_File...................: $have_ecore_file (Inotify: $have_inotify) (Poll: $have_poll) (CURL: $have_curl)"
 echo "  Ecore_Desktop................: $have_ecore_desktop"
-
+echo "  Ecore_Con....................: $have_ecore_con"
+if test "x$have_ecore_con" = "xyes" ; then
+  echo "    OpenSSL....................: $have_openssl"
+  echo "    CURL.......................: $have_curl"
+fi
+echo "  Ecore_Ipc....................: $have_ecore_ipc"
+if test "x$have_ecore_con" = "xyes" ; then
+  echo "    OpenSSL....................: $have_openssl"
+fi
+echo "  Ecore_Config.................: $have_ecore_config"
 echo "  Ecore_IMF....................: $have_ecore_imf"
 echo "  Ecore_IMF_Evas...............: $have_ecore_imf_evas"
+
+echo
+echo " Graphic systems:"
+echo
+
+if test "x$have_ecore_x_xcb" = "xyes" ; then
+  echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb"
+  echo "    Xprint.....................: $have_ecore_x_xcb_xprint"
+  echo "    Xinerama...................: $have_ecore_x_xcb_xinerama"
+  echo "    Xrandr.....................: $have_ecore_x_xcb_randr"
+  echo "    Xscreensaver...............: $have_ecore_x_xcb_screensaver"
+  echo "    Xshape.....................: $have_ecore_x_xcb_shape"
+  echo "    Xsync......................: $have_ecore_x_xcb_sync"
+  echo "    Xrender....................: $have_ecore_x_xcb_render"
+  echo "    Xcomposite.................: $have_ecore_x_xcb_composite"
+  echo "    Xfixes.....................: $have_ecore_x_xcb_xfixes"
+  echo "    Xdamage....................: $have_ecore_x_xcb_damage"
+  echo "    Xdpms......................: $have_ecore_x_xcb_dpms"
+  echo "    Xtest......................: $have_ecore_x_xcb_xtest"
+else
+  if test "x$have_ecore_x" = "xyes" ; then
+    echo "  Ecore_X (Xlib backend).......: $have_ecore_x"
+    echo "    Xcursor....................: $use_Xcursor"
+    echo "    Xprint.....................: $use_xprint"
+    echo "    Xinerama...................: $use_xinerama"
+    echo "    Xrandr.....................: $use_xrandr"
+    echo "    Xscreensaver...............: $use_xss"
+    echo "    Xrender....................: $use_xrender"
+    echo "    Xcomposite.................: $use_xcomposite"
+    echo "    Xfixes.....................: $use_xfixes"
+    echo "    Xdamage....................: $use_xdamage"
+    echo "    Xdpms......................: $use_xdpms"
+    echo "    Xtest......................: $use_xtest"
+  else
+    echo "  Ecore_X......................: $have_ecore_x"
+  fi
+fi
+echo "  Ecore_Win32..................: $have_ecore_win32"
+echo "  Ecore_SDL....................: $have_ecore_sdl"
+echo "  Ecore_FB.....................: $have_ecore_fb"
+echo "  Ecore_DFB....................: $have_ecore_directfb"
+echo "  Ecore_WinCE..................: $have_ecore_wince"
+
+echo
+echo " Ecore Evas:"
+echo
+
+echo "  Ecore_Evas...................: $have_ecore_evas"
+if test "x$have_ecore_evas" = "xyes" ; then
+  echo "    Software Memory Buffer.....: $have_ecore_evas_buffer"
+  echo "    Software X11...............: $have_ecore_evas_x11"
+  echo "    XRender X11................: $have_ecore_evas_xrender"
+  echo "    OpenGL X11.................: $have_ecore_evas_x11_gl"
+  echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
+  echo "    Direct3D...................: $have_ecore_evas_direct3d"
+  echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"
+  echo "    Software SDL...............: $have_ecore_evas_sdl"
+  echo "    DirectFB...................: $have_ecore_evas_dfb"
+  echo "    Software Framebuffer.......: $have_ecore_evas_fb"
+  echo "    Software 16bit X11.........: $have_ecore_evas_x11_16"
+  echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
+  echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
+fi
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
 echo
