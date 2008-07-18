@@ -29,6 +29,7 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+LT_PROG_RC
 AC_FUNC_ALLOCA
 
 MODULE_ARCH="$host_os-$host_cpu"
