@@ -1,11 +1,46 @@
-#include "evas_common.h"
-#include "evas_private.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 
-Evas_Bool
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdlib.h>
+
+#include "Evas_Data.h"
+
+
+#ifdef __GNUC__
+# define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+# define UNLIKELY(x) (x)
+#endif
+
+
+static Evas_Bool _evas_array_grow(Evas_Array *array);
+
+static inline void
+_evas_array_append(Evas_Array *array, void *data)
+{
+   if (UNLIKELY((array->count + array->step) > array->total))
+     if (!_evas_array_grow(array)) return ;
+
+   array->data[array->count++] = data;
+}
+
+static inline void*
+_evas_array_get(Evas_Array *array, unsigned int index)
+{
+   return array->data[index];
+}
+
+
+static Evas_Bool
 _evas_array_grow(Evas_Array *array)
 {
    void **tmp;
-   unsigned int total;
+   size_t total;
 
    total = array->total + array->step;
    tmp = realloc(array->data, sizeof (void*) * total);

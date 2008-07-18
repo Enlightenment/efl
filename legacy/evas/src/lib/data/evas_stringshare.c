@@ -1,5 +1,17 @@
-#include "evas_common.h"
-#include "evas_private.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+
+#include "Evas_Data.h"
 
 typedef struct _Evas_Stringshare             Evas_Stringshare;
 typedef struct _Evas_Stringshare_El          Evas_Stringshare_El;
@@ -16,7 +28,7 @@ struct _Evas_Stringshare_El
    int                  references;
 };
 
-static Evas_Stringshare share = 
+static Evas_Stringshare share =
 {
      {
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,

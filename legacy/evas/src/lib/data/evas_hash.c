@@ -1,5 +1,15 @@
-#include "evas_common.h"
-#include "evas_private.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "Evas_Data.h"
 
 typedef struct _Evas_Hash_El Evas_Hash_El;
 
