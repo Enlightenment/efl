@@ -740,8 +740,6 @@ EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 void evas_render_invalidate(Evas *e);
 void evas_render_object_recalc(Evas_Object *obj);
 
-Evas_Bool _evas_array_grow(Evas_Array *array);
-
 #define EVAS_API_OVERRIDE(func, api, prefix) \
      (api)->func = prefix##func
 

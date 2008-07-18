@@ -9,48 +9,7 @@
 #include <stdlib.h>
 
 #include "Evas_Data.h"
-
-
-#ifdef __GNUC__
-# define UNLIKELY(x) __builtin_expect(!!(x), 0)
-#else
-# define UNLIKELY(x) (x)
-#endif
-
-
-static Evas_Bool _evas_array_grow(Evas_Array *array);
-
-static inline void
-_evas_array_append(Evas_Array *array, void *data)
-{
-   if (UNLIKELY((array->count + array->step) > array->total))
-     if (!_evas_array_grow(array)) return ;
-
-   array->data[array->count++] = data;
-}
-
-static inline void*
-_evas_array_get(Evas_Array *array, unsigned int index)
-{
-   return array->data[index];
-}
-
-
-static Evas_Bool
-_evas_array_grow(Evas_Array *array)
-{
-   void **tmp;
-   size_t total;
-
-   total = array->total + array->step;
-   tmp = realloc(array->data, sizeof (void*) * total);
-   if (!tmp) return 0;
-
-   array->total = total;
-   array->data = tmp;
-
-   return 1;
-}
+#include "evas_inline_array.x"
 
 EAPI void
 evas_array_append(Evas_Array *array, void *data)
@@ -58,7 +17,7 @@ evas_array_append(Evas_Array *array, void *data)
    _evas_array_append(array, data);
 }
 
-EAPI void*
+EAPI void *
 evas_array_get(Evas_Array *array, unsigned int index)
 {
    return _evas_array_get(array, index);
@@ -86,7 +45,7 @@ evas_array_flush(Evas_Array *array)
    array->data = NULL;
 }
 
-EAPI Evas_Array*
+EAPI Evas_Array *
 evas_array_new(unsigned int step)
 {
    Evas_Array *array;
