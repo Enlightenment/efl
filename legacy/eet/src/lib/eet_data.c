@@ -124,6 +124,7 @@ struct _Eet_Data_Descriptor_Hash
 struct _Eet_Data_Descriptor
 {
    const char           *name;
+   const Eet_Dictionary *ed;
    int                   size;
    struct {
       void *(*mem_alloc) (size_t size);
@@ -156,6 +157,7 @@ struct _Eet_Data_Element
 {
    const char          *name;
    const char          *counter_name;
+   const char          *directory_name_ptr;
    Eet_Data_Descriptor *subtype;
    int                  offset;         /* offset in bytes from the base element */
    int                  count;          /* number of elements for a fixed array */
@@ -919,12 +921,27 @@ _eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name, int hash)
    if (hash < 0) hash = _eet_hash_gen(name, 6);
    else hash &= 0x3f;
    if (!edd->elements.hash.buckets[hash].element) return NULL;
-   if (!strcmp(edd->elements.hash.buckets[hash].element->name, name))
+   /*
+     When we use the dictionnary as a source for chunk name, we will always
+     have the same pointer in name. It's a good idea to just compare pointer
+     instead of running strcmp on both string.
+   */
+   if (edd->elements.hash.buckets[hash].element->directory_name_ptr == name)
      return edd->elements.hash.buckets[hash].element;
+   if (!strcmp(edd->elements.hash.buckets[hash].element->name, name))
+     {
+	edd->elements.hash.buckets[hash].element->directory_name_ptr = name;
+	return edd->elements.hash.buckets[hash].element;
+     }
    bucket = edd->elements.hash.buckets[hash].next;
    while (bucket)
      {
-	if (!strcmp(bucket->element->name, name)) return bucket->element;
+	if (bucket->element->directory_name_ptr == name) return bucket->element;
+	if (!strcmp(bucket->element->name, name))
+	  {
+	     bucket->element->directory_name_ptr = name;
+	     return bucket->element;
+	  }
 	bucket = bucket->next;
      }
    return NULL;
@@ -974,6 +991,7 @@ eet_data_descriptor_new(const char *name,
    if (!edd) return NULL;
 
    edd->name = name;
+   edd->ed = NULL;
    edd->size = size;
    edd->func.mem_alloc = _eet_mem_alloc;
    edd->func.mem_free = _eet_mem_free;
@@ -1003,6 +1021,7 @@ eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc)
    if (!edd) return NULL;
 
    edd->name = eddc->name;
+   edd->ed = NULL;
    edd->size = eddc->size;
    edd->func.mem_alloc = _eet_mem_alloc;
    edd->func.mem_free = _eet_mem_free;
@@ -1038,6 +1057,7 @@ eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc)
    if (!edd) return NULL;
 
    edd->name = eddc->name;
+   edd->ed = NULL;
    edd->size = eddc->size;
    edd->func.mem_alloc = _eet_mem_alloc;
    edd->func.mem_free = _eet_mem_free;
@@ -1093,6 +1113,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    if (!edd->elements.set) return;
    ede = &(edd->elements.set[edd->elements.num - 1]);
    ede->name = name;
+   ede->directory_name_ptr = NULL;
 
    /*
     * We do a special case when we do list,hash or whatever group of simple type.
@@ -2103,6 +2124,12 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
      {
 	data = edd->func.mem_alloc(edd->size);
 	if (!data) return NULL;
+	if (edd->ed != ed)
+	  {
+	     for (i = 0; i < edd->elements.num; i++)
+	       edd->elements.set[i].directory_name_ptr = NULL;
+	     edd->ed = ed;
+	  }
      }
    _eet_freelist_ref();
    _eet_freelist_str_ref();
