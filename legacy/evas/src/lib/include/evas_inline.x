@@ -202,19 +202,4 @@ evas_object_clip_recalc(Evas_Object *obj)
    obj->cur.cache.clip.dirty = 0;
 }
 
-static inline void
-_evas_array_append(Evas_Array *array, void *data)
-{
-   if (UNLIKELY((array->count + array->step) > array->total))
-     if (!_evas_array_grow(array)) return ;
-
-   array->data[array->count++] = data;
-}
-
-static inline void*
-_evas_array_get(Evas_Array *array, unsigned int index)
-{
-   return array->data[index];
-}
-
 #endif
