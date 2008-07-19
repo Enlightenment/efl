@@ -76,6 +76,9 @@ evas_convert_yuv.h \
 evas_font.h \
 evas_gradient.h \
 evas_gradient_private.h \
+evas_line.h \
+evas_polygon.h \
+evas_rectangle.h \
 evas_scale_main.h \
 evas_scale_smooth.h \
 evas_scale_smooth_scaler.c \

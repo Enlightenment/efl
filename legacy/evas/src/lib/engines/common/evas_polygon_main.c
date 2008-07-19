@@ -1,6 +1,10 @@
-#include "evas_common.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 
 #include <math.h>
+
+#include "evas_common.h"
 
 typedef struct _RGBA_Span RGBA_Span;
 typedef struct _RGBA_Edge RGBA_Edge;

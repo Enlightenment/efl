@@ -869,23 +869,9 @@ EAPI RGBA_Image   *evas_common_load_image_from_file        (const char *file, co
 EAPI int           evas_common_save_image_to_file          (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
 /****/
-EAPI void           evas_common_rectangle_init          (void);
-
-EAPI void           evas_common_rectangle_draw          (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
-
-/****/
-
-/****/
-EAPI void          evas_common_line_init               (void);
-
-EAPI void          evas_common_line_draw               (RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
-
-/****/
-EAPI void                evas_common_polygon_init         (void);
-
-EAPI RGBA_Polygon_Point *evas_common_polygon_point_add    (RGBA_Polygon_Point *points, int x, int y);
-EAPI RGBA_Polygon_Point *evas_common_polygon_points_clear (RGBA_Polygon_Point *points);
-EAPI void                evas_common_polygon_draw         (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+#include "../engines/common/evas_line.h"
+#include "../engines/common/evas_polygon.h"
+#include "../engines/common/evas_rectangle.h"
 
 /****/
 EAPI void     evas_common_blit_init               (void);
