@@ -1,5 +1,11 @@
-#include "evas_common.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include <math.h>
+
+#include "evas_common.h"
+#include "evas_gradient_private.h"
 
 
 typedef struct _Radial_Data   Radial_Data;
@@ -12,31 +18,31 @@ struct _Radial_Data
    int    len;
 };
 
-static void 
+static void
 radial_init(void);
 
-static void 
+static void
 radial_shutdown(void);
 
-static void 
+static void
 radial_init_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 radial_setup_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 radial_free_geom(void *gdata);
 
-static int 
+static int
 radial_has_alpha(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 radial_has_mask(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 radial_get_map_len(RGBA_Gradient *gr);
 
-static Gfx_Func_Gradient_Fill 
+static Gfx_Func_Gradient_Fill
 radial_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa);
 
 static RGBA_Gradient_Type  radial = {"radial", radial_init, radial_shutdown,
@@ -133,24 +139,24 @@ evas_common_gradient_radial_get(void)
     return &radial;
 }
 
-static void 
+static void
 radial_init(void)
 {
 }
 
-static void 
+static void
 radial_shutdown(void)
 {
 }
 
-static void 
+static void
 radial_free_geom(void *gdata)
 {
    Radial_Data *data = (Radial_Data *)gdata;
    if (data) free(data);
 }
 
-static void 
+static void
 radial_setup_geom(RGBA_Gradient *gr)
 {
    Radial_Data   *radial_data;
@@ -228,7 +234,7 @@ radial_has_alpha(RGBA_Gradient *gr, int op)
    if (!gr || (gr->type.geometer != &radial)) return 0;
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
    radial_data = (Radial_Data *)gr->type.gdata;
@@ -248,7 +254,7 @@ radial_has_mask(RGBA_Gradient *gr, int op)
    Radial_Data   *radial_data;
 
    if (!gr || (gr->type.geometer != &radial)) return 0;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
 	radial_data = (Radial_Data *)gr->type.gdata;
@@ -286,7 +292,7 @@ radial_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
    if (!radial_data) return sfunc;
 
    radial_data->off = gr->map.offset;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
 

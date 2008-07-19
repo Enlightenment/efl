@@ -1,5 +1,11 @@
-#include "evas_common.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include <math.h>
+
+#include "evas_common.h"
+#include "evas_gradient_private.h"
 
 #define GRAD_LINEAR_DIAG 1
 #define GRAD_LINEAR_CODIAG 2
@@ -17,19 +23,19 @@ struct _Linear_Data
    unsigned char at_angle : 1;
 };
 
-static void 
+static void
 linear_init(void);
 
-static void 
+static void
 linear_shutdown(void);
 
-static void 
+static void
 linear_init_geom(RGBA_Gradient *gr);
 
 static void
 linear_setup_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 linear_free_geom(void *gdata);
 
 static int
@@ -132,17 +138,17 @@ evas_common_gradient_linear_get(void)
     return &linear;
 }
 
-static void 
+static void
 linear_init(void)
 {
 }
 
-static void 
+static void
 linear_shutdown(void)
 {
 }
 
-static void 
+static void
 linear_free_geom(void *gdata)
 {
    Linear_Data *data = (Linear_Data *)gdata;
@@ -220,7 +226,7 @@ linear_setup_geom(RGBA_Gradient *gr)
 
    linear_data->yy0 = (linear_data->ca * (yoff << 16)) - (linear_data->sa * (xoff << 16));
    linear_data->off = gr->map.offset;
-   
+
    if ((linear_data->ca != 1.0) || (linear_data->sa != 0.0))
 	linear_data->at_angle = 1;
 }
@@ -231,7 +237,7 @@ linear_has_alpha(RGBA_Gradient *gr, int op)
    if (!gr || (gr->type.geometer != &linear)) return 0;
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
    if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
@@ -245,7 +251,7 @@ static int
 linear_has_mask(RGBA_Gradient *gr, int op)
 {
    if (!gr || (gr->type.geometer != &linear)) return 0;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
 	if ( (gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
@@ -279,7 +285,7 @@ linear_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
    linear_data = (Linear_Data *)gr->type.gdata;
    if (!linear_data) return sfunc;
 
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
 
@@ -421,7 +427,7 @@ linear_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 	        y = src_len - y - 1;
 	  }
 	c = src[y];
- 	while (dst < dst_end)
+	while (dst < dst_end)
 	    *dst++ = c;
 	return;
      }
@@ -651,7 +657,7 @@ linear_restrict(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 	    return;
 	  }
 	c = src[y];
- 	while (dst < dst_end)
+	while (dst < dst_end)
 	    *dst++ = c;
 	return;
      }
@@ -791,7 +797,7 @@ linear_restrict_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int d
 	    return;
 	  }
 	c = src[y];
- 	while (dst < dst_end)
+	while (dst < dst_end)
 	  {
 	    *dst++ = c;  *mask++ = 255;
 	  }
@@ -937,7 +943,7 @@ linear_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int 
 		y = src_len - y - 1;
 	  }
 	c = src[y];
- 	while (dst < dst_end)
+	while (dst < dst_end)
 	    *dst++ = c;
 	return;
      }
@@ -1079,7 +1085,7 @@ linear_restrict_reflect_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mas
 		y = src_len - y - 1;
 	  }
 	c = src[y];
- 	while (dst < dst_end)
+	while (dst < dst_end)
 	  { *dst++ = c;  *mask++ = 255; }
 	return;
      }
@@ -1203,7 +1209,7 @@ linear_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int d
 	if (y < 0)
 	   y += src_len;
 	c = src[y];
- 	while (dst < dst_end)
+	while (dst < dst_end)
 	    *dst++ = c;
 	return;
      }
@@ -1335,7 +1341,7 @@ linear_restrict_repeat_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask
 	if (y < 0)
 	   y += src_len;
 	c = src[y];
- 	while (dst < dst_end)
+	while (dst < dst_end)
 	  { *dst++ = c;  *mask++ = 255; }
 	return;
      }

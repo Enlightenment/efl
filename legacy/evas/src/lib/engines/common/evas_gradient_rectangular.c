@@ -1,5 +1,11 @@
-#include "evas_common.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include <math.h>
+
+#include "evas_common.h"
+#include "evas_gradient_private.h"
 
 
 typedef struct _Rectangular_Data   Rectangular_Data;
@@ -12,31 +18,31 @@ struct _Rectangular_Data
    int    len;
 };
 
-static void 
+static void
 rectangular_init(void);
 
-static void 
+static void
 rectangular_shutdown(void);
 
-static void 
+static void
 rectangular_init_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 rectangular_setup_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 rectangular_free_geom(void *gdata);
 
-static int 
+static int
 rectangular_has_alpha(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 rectangular_has_mask(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 rectangular_get_map_len(RGBA_Gradient *gr);
 
-static Gfx_Func_Gradient_Fill 
+static Gfx_Func_Gradient_Fill
 rectangular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa);
 
 static RGBA_Gradient_Type  rectangular = {"rectangular", rectangular_init, rectangular_shutdown,
@@ -133,24 +139,24 @@ evas_common_gradient_rectangular_get(void)
     return &rectangular;
 }
 
-static void 
+static void
 rectangular_init(void)
 {
 }
 
-static void 
+static void
 rectangular_shutdown(void)
 {
 }
 
-static void 
+static void
 rectangular_free_geom(void *gdata)
 {
    Rectangular_Data *data = (Rectangular_Data *)gdata;
    if (data) free(data);
 }
 
-static void 
+static void
 rectangular_setup_geom(RGBA_Gradient *gr)
 {
    Rectangular_Data   *rectangular_data;
@@ -228,7 +234,7 @@ rectangular_has_alpha(RGBA_Gradient *gr, int op)
    if (!gr || (gr->type.geometer != &rectangular)) return 0;
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
    rectangular_data = (Rectangular_Data *)gr->type.gdata;
@@ -248,7 +254,7 @@ rectangular_has_mask(RGBA_Gradient *gr, int op)
    Rectangular_Data   *rectangular_data;
 
    if (!gr || (gr->type.geometer != &rectangular)) return 0;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
 	rectangular_data = (Rectangular_Data *)gr->type.gdata;
@@ -287,7 +293,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
    if (!rectangular_data) return sfunc;
 
    rectangular_data->off = gr->map.offset;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
    switch (gr->fill.spread)

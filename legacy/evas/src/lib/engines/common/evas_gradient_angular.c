@@ -1,5 +1,11 @@
-#include "evas_common.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include <math.h>
+
+#include "evas_common.h"
+#include "evas_gradient_private.h"
 
 typedef struct _Angular_Data   Angular_Data;
 struct _Angular_Data
@@ -11,31 +17,31 @@ struct _Angular_Data
    int    len;
 };
 
-static void 
+static void
 angular_init(void);
 
-static void 
+static void
 angular_shutdown(void);
 
-static void 
+static void
 angular_init_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 angular_setup_geom(RGBA_Gradient *gr);
 
-static void 
+static void
 angular_free_geom(void *gdata);
 
-static int 
+static int
 angular_has_alpha(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 angular_has_mask(RGBA_Gradient *gr, int op);
 
-static int 
+static int
 angular_get_map_len(RGBA_Gradient *gr);
 
-static Gfx_Func_Gradient_Fill 
+static Gfx_Func_Gradient_Fill
 angular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa);
 
 static RGBA_Gradient_Type  angular = {"angular", angular_init, angular_shutdown,
@@ -190,24 +196,24 @@ evas_common_gradient_angular_get(void)
     return &angular;
 }
 
-static void 
+static void
 angular_init(void)
 {
 }
 
-static void 
+static void
 angular_shutdown(void)
 {
 }
 
-static void 
+static void
 angular_free_geom(void *gdata)
 {
    Angular_Data *data = (Angular_Data *)gdata;
    if (data) free(data);
 }
 
-static void 
+static void
 angular_setup_geom(RGBA_Gradient *gr)
 {
    Angular_Data   *angular_data;
@@ -298,7 +304,7 @@ angular_has_alpha(RGBA_Gradient *gr, int op)
 
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
    angular_data = (Angular_Data *)gr->type.gdata;
@@ -308,7 +314,7 @@ angular_has_alpha(RGBA_Gradient *gr, int op)
    if ( ((gr->fill.spread == _EVAS_TEXTURE_RESTRICT) ||
          (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REFLECT) ||
          (gr->fill.spread == _EVAS_TEXTURE_RESTRICT_REPEAT))
-   	 && (angular_data->cy < 1.0) )
+	 && (angular_data->cy < 1.0) )
 	return 1;
    return 0;
 }
@@ -319,7 +325,7 @@ angular_has_mask(RGBA_Gradient *gr, int op)
    Angular_Data   *angular_data;
 
    if (!gr || (gr->type.geometer != &angular)) return 0;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
 	angular_data = (Angular_Data *)gr->type.gdata;
@@ -358,7 +364,7 @@ angular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
    if (!angular_data)  return sfunc;
 
    angular_data->off = gr->map.offset;
-   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
+   if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) ||
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
 

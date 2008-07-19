@@ -874,32 +874,6 @@ EAPI void           evas_common_rectangle_init          (void);
 EAPI void           evas_common_rectangle_draw          (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 /****/
-EAPI void           evas_common_gradient_init            (void);
-
-EAPI RGBA_Gradient *evas_common_gradient_new              (void);
-EAPI void           evas_common_gradient_free             (RGBA_Gradient *gr);
-EAPI void           evas_common_gradient_clear            (RGBA_Gradient *gr);
-EAPI void           evas_common_gradient_color_stop_add   (RGBA_Gradient *gr, int r, int g, int b, int a, int dist);
-EAPI void           evas_common_gradient_alpha_stop_add   (RGBA_Gradient *gr, int a, int dist);
-EAPI void           evas_common_gradient_color_data_set   (RGBA_Gradient *gr, DATA32 *data, int len, int alpha_flags);
-EAPI void           evas_common_gradient_alpha_data_set   (RGBA_Gradient *gr, DATA8 *adata, int len);
-EAPI void           evas_common_gradient_type_set         (RGBA_Gradient *gr, const char *name, char *params);
-EAPI void           evas_common_gradient_fill_set         (RGBA_Gradient *gr, int x, int y, int w, int h);
-EAPI void           evas_common_gradient_fill_angle_set   (RGBA_Gradient *gr, float angle);
-EAPI void           evas_common_gradient_fill_spread_set  (RGBA_Gradient *gr, int spread);
-EAPI void           evas_common_gradient_map_angle_set    (RGBA_Gradient *gr, float angle);
-EAPI void           evas_common_gradient_map_offset_set   (RGBA_Gradient *gr, float offset);
-EAPI void           evas_common_gradient_map_direction_set(RGBA_Gradient *gr, int direction);
-EAPI void           evas_common_gradient_map              (RGBA_Draw_Context *dc, RGBA_Gradient *gr, int len);
-EAPI void           evas_common_gradient_draw             (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr);
-
-EAPI RGBA_Gradient_Type *evas_common_gradient_geometer_get    (const char *name);
-RGBA_Gradient_Type *evas_common_gradient_linear_get      (void);
-RGBA_Gradient_Type *evas_common_gradient_radial_get      (void);
-RGBA_Gradient_Type *evas_common_gradient_angular_get     (void);
-RGBA_Gradient_Type *evas_common_gradient_rectangular_get (void);
-RGBA_Gradient_Type *evas_common_gradient_sinusoidal_get  (void);
-char               *evas_common_gradient_get_key_fval    (char *in, char *key, float *val);
 
 /****/
 EAPI void          evas_common_line_init               (void);
@@ -919,51 +893,8 @@ EAPI void     evas_common_blit_init               (void);
 EAPI void     evas_common_blit_rectangle          (const RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
 /****/
-
-/****/
-EAPI void              evas_common_font_init              (void);
-EAPI void              evas_common_font_shutdown          (void);
-EAPI RGBA_Font_Source *evas_common_font_source_memory_load(const char *name, const void *data, int data_size);
-EAPI RGBA_Font_Source *evas_common_font_source_load       (const char *name);
-EAPI int               evas_common_font_source_load_complete(RGBA_Font_Source *fs);
-EAPI RGBA_Font_Source *evas_common_font_source_find       (const char *name);
-EAPI void              evas_common_font_source_free       (RGBA_Font_Source *fs);
-EAPI void              evas_common_font_size_use          (RGBA_Font *fn);
-EAPI RGBA_Font        *evas_common_font_memory_load       (const char *name, int size, const void *data, int data_size);
-EAPI RGBA_Font        *evas_common_font_load              (const char *name, int size);
-EAPI RGBA_Font        *evas_common_font_add               (RGBA_Font *fn, const char *name, int size);
-EAPI RGBA_Font        *evas_common_font_memory_add        (RGBA_Font *fn, const char *name, int size, const void *data, int data_size);
-EAPI RGBA_Font_Int    *evas_common_font_int_load_init     (RGBA_Font_Int *fn);
-EAPI RGBA_Font_Int    *evas_common_font_int_load_complete (RGBA_Font_Int *fi);
-EAPI void              evas_common_font_free              (RGBA_Font *fn);
-EAPI void              evas_common_font_hinting_set       (RGBA_Font *fn, Font_Hint_Flags hinting);
-EAPI Evas_Bool         evas_common_hinting_available      (Font_Hint_Flags hinting);
-EAPI RGBA_Font        *evas_common_font_memory_hinting_load(const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting);
-EAPI RGBA_Font        *evas_common_font_hinting_load      (const char *name, int size, Font_Hint_Flags hinting);
-EAPI RGBA_Font        *evas_common_font_hinting_add       (RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting);
-EAPI RGBA_Font        *evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting);
-EAPI void              evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir);
-EAPI int               evas_common_font_cache_get         (void);
-EAPI void              evas_common_font_cache_set         (int size);
-EAPI void              evas_common_font_flush             (void);
-EAPI void              evas_common_font_flush_last        (void);
-EAPI RGBA_Font_Int    *evas_common_font_int_find          (const char *name, int size);
-EAPI int               evas_common_font_glyph_search      (RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl);
-EAPI void              evas_common_font_draw              (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
-EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index);
-EAPI int               evas_common_font_ascent_get        (RGBA_Font *fn);
-EAPI int               evas_common_font_descent_get       (RGBA_Font *fn);
-EAPI int               evas_common_font_max_ascent_get    (RGBA_Font *fn);
-EAPI int               evas_common_font_max_descent_get   (RGBA_Font *fn);
-EAPI int               evas_common_font_get_line_advance  (RGBA_Font *fn);
-EAPI void              evas_common_font_query_size        (RGBA_Font *fn, const char *text, int *w, int *h);
-EAPI int               evas_common_font_query_inset       (RGBA_Font *fn, const char *text);
-EAPI void              evas_common_font_query_advance     (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);
-EAPI int               evas_common_font_query_char_coords (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_query_text_at_pos (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_utf8_get_next     (unsigned char *buf, int *iindex);
-EAPI int               evas_common_font_utf8_get_prev     (unsigned char *buf, int *iindex);
-EAPI int               evas_common_font_utf8_get_last     (unsigned char *buf, int buflen);
+#include "../engines/common/evas_gradient.h"
+#include "../engines/common/evas_font.h"
 
 /****/
 EAPI void          evas_common_tilebuf_init               (void);

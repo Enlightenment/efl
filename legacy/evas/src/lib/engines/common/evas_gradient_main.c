@@ -8,6 +8,7 @@
 #include "evas_convert_main.h"
 #include "evas_convert_color.h"
 #include "evas_scale_span.h"
+#include "evas_gradient_private.h"
 
 
 static void _get_word(char *in, char *key);
