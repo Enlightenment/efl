@@ -1,7 +1,11 @@
-#include "evas_common.h"
-#include "evas_private.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 
 #include <assert.h>
+
+#include "evas_common.h"
+#include "evas_private.h"
 
 int
 evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *image_data, int alpha, int cspace)
