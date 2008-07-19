@@ -18,13 +18,13 @@ static RGBA_Gfx_Pt_Func op_blend_pixel_color_pt_get(Image_Entry_Flags src_flags,
 static RGBA_Gfx_Pt_Func op_blend_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_blend_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_blend = { "blend", 
+static RGBA_Gfx_Compositor  _composite_blend = { "blend",
  op_blend_init, op_blend_shutdown,
- op_blend_pixel_span_get, op_blend_color_span_get, 
- op_blend_pixel_color_span_get, op_blend_mask_color_span_get, 
+ op_blend_pixel_span_get, op_blend_color_span_get,
+ op_blend_pixel_color_span_get, op_blend_mask_color_span_get,
  op_blend_pixel_mask_span_get,
- op_blend_pixel_pt_get, op_blend_color_pt_get, 
- op_blend_pixel_color_pt_get, op_blend_mask_color_pt_get, 
+ op_blend_pixel_pt_get, op_blend_color_pt_get,
+ op_blend_pixel_color_pt_get, op_blend_mask_color_pt_get,
  op_blend_pixel_mask_pt_get
  };
 
@@ -53,13 +53,13 @@ static RGBA_Gfx_Pt_Func op_blend_rel_pixel_color_pt_get(Image_Entry_Flags src_fl
 static RGBA_Gfx_Pt_Func op_blend_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_blend_rel_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_blend_rel = { "blend_rel", 
- op_blend_rel_init, op_blend_rel_shutdown, 
- op_blend_rel_pixel_span_get, op_blend_rel_color_span_get, 
- op_blend_rel_pixel_color_span_get, op_blend_rel_mask_color_span_get, 
+static RGBA_Gfx_Compositor  _composite_blend_rel = { "blend_rel",
+ op_blend_rel_init, op_blend_rel_shutdown,
+ op_blend_rel_pixel_span_get, op_blend_rel_color_span_get,
+ op_blend_rel_pixel_color_span_get, op_blend_rel_mask_color_span_get,
  op_blend_rel_pixel_mask_span_get,
- op_blend_rel_pixel_pt_get, op_blend_rel_color_pt_get, 
- op_blend_rel_pixel_color_pt_get, op_blend_rel_mask_color_pt_get, 
+ op_blend_rel_pixel_pt_get, op_blend_rel_color_pt_get,
+ op_blend_rel_pixel_color_pt_get, op_blend_rel_mask_color_pt_get,
  op_blend_rel_pixel_mask_pt_get
  };
 

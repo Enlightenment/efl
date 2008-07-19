@@ -4,7 +4,7 @@
    int     *xapoints, *xapp;
    int     *yapoints, *yapp;
    DATA32  *buf, *src_data;
-   
+
    RGBA_Gfx_Func      func;
 
    src_data = src->image.data;
@@ -15,10 +15,10 @@
    yapoints = scale_calc_a_points(src_region_h, dst_region_h);
    if ( (!xpoints) || (!ypoints) || (!xapoints) || (!yapoints) )
 	goto done_scale_down;
-   
+
    /* a scanline buffer */
    buf = alloca(dst_clip_w * sizeof(DATA32));
-   
+
    if (dc->mul.use)
 	func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
    else
@@ -41,7 +41,7 @@
      {
 #include "evas_scale_smooth_scaler_downx_downy.c"
      }
-     
+
    done_scale_down:
    if (xpoints) free(xpoints);
    if (ypoints) free(ypoints);

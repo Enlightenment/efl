@@ -42,14 +42,14 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    dot = strrchr (ie->file, '.');
    if (dot)
      {
- 	for (i = 0, ++dot; i < (sizeof (loaders) / sizeof (struct ext_loader_s)); ++i)
- 	  {
- 	     if (!strcasecmp (dot, loaders[i].extention))
- 	       {
- 		  loader = loaders[i].loader;
- 		  break;
- 	       }
- 	  }
+	for (i = 0, ++dot; i < (sizeof (loaders) / sizeof (struct ext_loader_s)); ++i)
+	  {
+	     if (!strcasecmp (dot, loaders[i].extention))
+	       {
+		  loader = loaders[i].loader;
+		  break;
+	       }
+	  }
      }
 
    if (loader)

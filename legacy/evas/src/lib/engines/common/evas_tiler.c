@@ -82,13 +82,13 @@ inline void
 rect_init(rect_t *r, int x, int y, int w, int h)
 {
    r->area = w * h;
-   
+
    r->left = x;
    r->top = y;
-   
+
    r->right = x + w;
    r->bottom = y + h;
-   
+
    r->width = w;
    r->height = h;
 }
@@ -104,10 +104,10 @@ rect_list_print(const list_t rects)
 {
    list_node_t *node;
    int len;
-   
+
    len = 0;
    for (node = rects.head; node != NULL; node = node->next) len++;
-   
+
    printf("[");
    for (node = rects.head; node != NULL; node = node->next)
      {
@@ -145,11 +145,11 @@ inline void
 rect_list_append(list_t *rects, const rect_t r)
 {
    rect_node_t *rect_node;
-   
+
    rect_node = (rect_node_t *)rect_list_node_pool_get();
    rect_node->rect = r;
    rect_node->_lst = list_node_zeroed;
-   
+
    rect_list_append_node(rects, (list_node_t *)rect_node);
 }
 
@@ -157,7 +157,7 @@ inline void
 rect_list_append_xywh(list_t *rects, int x, int y, int w, int h)
 {
    rect_t r;
-   
+
    rect_init(&r, x, y, w, h);
    rect_list_append(rects, r);
 }
@@ -167,7 +167,7 @@ rect_list_concat(list_t *rects, list_t *other)
 {
    if (!other->head)
      return;
-   
+
    if (rects->tail)
      {
 	rects->tail->next = other->head;
@@ -196,7 +196,7 @@ rect_list_unlink_next(list_t *rects, list_node_t *parent_node)
         node = rects->head;
         rects->head = node->next;
      }
-   
+
    if (rects->tail == node) rects->tail = parent_node;
    *node = list_node_zeroed;
    return node;
@@ -215,12 +215,12 @@ void
 rect_list_clear(list_t *rects)
 {
    list_node_t *node;
-   
+
    node = rects->head;
    while (node)
      {
         list_node_t *aux;
-	
+
         aux = node->next;
         rect_list_node_pool_put(node);
         node = aux;
@@ -232,21 +232,21 @@ static inline void
 _calc_intra_rect_area(const rect_t a, const rect_t b, int *width, int *height)
 {
    int max_left, min_right, max_top, min_bottom;
-   
+
    if (a.left < b.left) max_left = b.left;
    else max_left = a.left;
-   
+
    if (a.right < b.right) min_right = a.right;
    else min_right = b.right;
-   
+
    *width = min_right - max_left;
-   
+
    if (a.top < b.top) max_top = b.top;
    else max_top = a.top;
-   
+
    if (a.bottom < b.bottom) min_bottom = a.bottom;
    else min_bottom = b.bottom;
-   
+
    *height = min_bottom - max_top;
 }
 
@@ -254,12 +254,12 @@ static inline void
 _split_strict(list_t *dirty, const rect_t current, rect_t r)
 {
    int h_1, h_2, w_1, w_2;
-   
+
    h_1 = current.top - r.top;
    h_2 = r.bottom - current.bottom;
    w_1 = current.left - r.left;
    w_2 = r.right - current.right;
-   
+
    if (h_1 > 0)
      {
 	/*    .--.r (b)                .---.r2
@@ -273,7 +273,7 @@ _split_strict(list_t *dirty, const rect_t current, rect_t r)
         r.height -= h_1;
         r.top = current.top;
      }
-   
+
    if (h_2 > 0)
      {
         /*  .-------.cur (a)
@@ -286,7 +286,7 @@ _split_strict(list_t *dirty, const rect_t current, rect_t r)
         rect_list_append_xywh(dirty, r.left, current.bottom, r.width, h_2);
         r.height -= h_2;
      }
-   
+
    if (w_1 > 0)
      {
         /* (b) r  .----.cur (a)
@@ -300,7 +300,7 @@ _split_strict(list_t *dirty, const rect_t current, rect_t r)
         /* r.width -= w_1; */
         /* r.left = current.left; */
      }
-   
+
    if (w_2 > 0)
      {
         /*  .----.cur (a)
@@ -321,16 +321,16 @@ rect_list_del_split_strict(list_t *rects, const rect_t del_r)
 {
    list_t modified = list_zeroed;
    list_node_t *cur_node, *prev_node;
-   
+
    prev_node = NULL;
    cur_node = rects->head;
    while (cur_node)
      {
         int intra_width, intra_height;
         rect_t current;
-        
+
         current = ((rect_node_t*)cur_node)->rect;
-	
+
         _calc_intra_rect_area(del_r, current, &intra_width, &intra_height);
         if ((intra_width <= 0) || (intra_height <= 0))
           {
@@ -374,33 +374,33 @@ rect_list_add_split_strict(list_t *rects, list_node_t *node)
    list_t dirty = list_zeroed;
    list_t new_dirty = list_zeroed;
    list_node_t *cur_node;
-   
+
    if (!rects->head)
      {
         rect_list_append_node(rects, node);
         return;
      }
-   
+
    rect_list_append_node(&dirty, node);
-   
+
    cur_node = rects->head;
    while (dirty.head)
      {
         rect_t current;
-	
+
         if (!cur_node)
 	  {
 	     rect_list_concat(rects, &dirty);
 	     break;
 	  }
-	
+
         current = ((rect_node_t*)cur_node)->rect;
-	
+
         while (dirty.head)
 	  {
 	     int intra_width, intra_height;
 	     rect_t r;
-	     
+
 	     r = ((rect_node_t *)dirty.head)->rect;
 	     _calc_intra_rect_area(r, current, &intra_width, &intra_height);
 	     if ((intra_width == r.width) && (intra_height == r.height))
@@ -423,7 +423,7 @@ rect_list_add_split_strict(list_t *rects, list_node_t *node)
 		  tmp = rect_list_unlink_next(&dirty, NULL);
 		  rect_list_append_node(&new_dirty, tmp);
 	       }
-	     else 
+	     else
 	       {
 		  _split_strict(&new_dirty, current, r);
 		  rect_list_del_next(&dirty, NULL);
@@ -431,7 +431,7 @@ rect_list_add_split_strict(list_t *rects, list_node_t *node)
 	  }
         dirty = new_dirty;
         new_dirty = list_zeroed;
-	
+
         cur_node = cur_node->next;
     }
 }
@@ -453,7 +453,7 @@ _calc_intra_outer_rect_area(const rect_t a, const rect_t b,
         max_left = a.left;
         min_left = b.left;
      }
-   
+
    if (a.right < b.right)
      {
         min_right = a.right;
@@ -464,15 +464,15 @@ _calc_intra_outer_rect_area(const rect_t a, const rect_t b,
         min_right = b.right;
         max_right = a.right;
      }
-   
+
    intra->left = max_left;
    intra->right = min_right;
    intra->width = min_right - max_left;
-   
+
    outer->left = min_left;
    outer->right = max_right;
    outer->width = max_right - min_left;
-   
+
    if (a.top < b.top)
      {
 	max_top = b.top;
@@ -483,7 +483,7 @@ _calc_intra_outer_rect_area(const rect_t a, const rect_t b,
         max_top = a.top;
         min_top = b.top;
      }
-   
+
    if (a.bottom < b.bottom)
      {
         min_bottom = a.bottom;
@@ -502,7 +502,7 @@ _calc_intra_outer_rect_area(const rect_t a, const rect_t b,
      intra->area = intra->width * intra->height;
    else
      intra->area = 0;
-   
+
    outer->top = min_top;
    outer->bottom = max_bottom;
    outer->height = max_bottom - min_top;
@@ -520,14 +520,14 @@ static inline int
 _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
 {
    int h_1, h_2, w_1, w_2, action;
-   
+
    h_1 = a.top - b->top;
    h_2 = b->bottom - a.bottom;
    w_1 = a.left - b->left;
    w_2 = b->right - a.right;
-   
+
    action = SPLIT_FUZZY_ACTION_NONE;
-   
+
    if (h_1 > 0)
      {
         /*    .--.r (b)                .---.r2
@@ -542,7 +542,7 @@ _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
         b->top = a.top;
         action = SPLIT_FUZZY_ACTION_SPLIT;
      }
-   
+
    if (h_2 > 0)
      {
         /*  .-------.cur (a)
@@ -556,7 +556,7 @@ _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
         b->height -= h_2;
         action = SPLIT_FUZZY_ACTION_SPLIT;
      }
-   
+
    if (((w_1 > 0) || (w_2 > 0)) && (a.height == b->height))
      return SPLIT_FUZZY_ACTION_MERGE;
 
@@ -574,7 +574,7 @@ _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
         /* b->left = a.left; */
         action = SPLIT_FUZZY_ACTION_SPLIT;
      }
-   
+
    if (w_2 > 0)
      {
         /* .----.cur (a)
@@ -589,7 +589,7 @@ _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
         /* b->width -= w_2; */
         action = SPLIT_FUZZY_ACTION_SPLIT;
      }
-   
+
    return action;
 }
 
@@ -598,25 +598,25 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 {
    list_t dirty = list_zeroed;
    list_node_t *old_last;
-   
+
    old_last = rects->tail;
-   
+
    if (!rects->head)
      {
         rect_list_append_node(rects, node);
         return old_last;
      }
-   
+
    rect_list_append_node(&dirty, node);
    while (dirty.head)
      {
 	list_node_t *d_node, *cur_node, *prev_cur_node;
         int keep_dirty;
         rect_t r;
-	
+
         d_node = rect_list_unlink_next(&dirty, NULL);
         r = ((rect_node_t *)d_node)->rect;
-	
+
         prev_cur_node = NULL;
         cur_node = rects->head;
         keep_dirty = 1;
@@ -624,12 +624,12 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 	  {
 	     int area, action;
 	     rect_t current, intra, outer;
-	     
+
 	     current = ((rect_node_t *)cur_node)->rect;
-	     
+
 	     _calc_intra_outer_rect_area(r, current, &intra, &outer);
 	     area = current.area + r.area - intra.area;
-	     
+
 	     if ((intra.width == r.width) && (intra.height == r.height))
 	       {
 		  /*  .-------.cur
@@ -666,14 +666,14 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 		   * merge them, remove both and add merged
 		   */
 		  rect_node_t *n;
-		  
+
 		  if (old_last == cur_node)
                     old_last = prev_cur_node;
-		  
+
 		  n = (rect_node_t *)rect_list_unlink_next(rects, prev_cur_node);
 		  n->rect = outer;
 		  rect_list_append_node(&dirty, (list_node_t *)n);
-		  
+
 		  keep_dirty = 0;
 		  break;
 	       }
@@ -697,13 +697,13 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 		    {
 		       /* horizontal merge is possible: remove both, add merged */
 		       rect_node_t *n;
-		       
+
 		       if (old_last == cur_node)
 			 old_last = prev_cur_node;
-		       
+
 		       n = (rect_node_t *)
 			 rect_list_unlink_next(rects, prev_cur_node);
-		       
+
 		       n->rect.left = outer.left;
 		       n->rect.width = outer.width;
 		       n->rect.right = outer.right;
@@ -721,12 +721,12 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 		       printf("Should not get here!\n");
 		       abort();
 		    }
-		  
+
 		  keep_dirty = 0;
 		  break;
 	       }
 	  }
-	
+
         if (UNLIKELY(keep_dirty)) rect_list_append_node(rects, d_node);
         else rect_list_node_pool_put(d_node);
     }
@@ -739,27 +739,27 @@ _calc_outer_rect_area(const rect_t a, const rect_t b, rect_t *outer)
 {
    int min_left, max_right;
    int min_top, max_bottom;
-   
+
    if (a.left < b.left) min_left = a.left;
    else min_left = b.left;
-   
+
    if (a.right < b.right) max_right = b.right;
    else max_right = a.right;
-   
+
    outer->left = min_left;
    outer->right = max_right;
    outer->width = max_right - min_left;
-   
+
    if (a.top < b.top) min_top = a.top;
    else min_top = b.top;
-   
+
    if (a.bottom < b.bottom) max_bottom = b.bottom;
    else max_bottom = a.bottom;
-   
+
    outer->top = min_top;
    outer->bottom = max_bottom;
    outer->height = max_bottom - min_top;
-   
+
    outer->area = outer->width * outer->height;
 }
 
@@ -771,9 +771,9 @@ rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
         list_node_t *node, *parent_node;
         rect_t r1;
         int merged;
-	
+
         r1 = ((rect_node_t *)to_merge->head)->rect;
-	
+
         merged = 0;
         parent_node = NULL;
         node = rects->head;
@@ -781,9 +781,9 @@ rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
 	  {
 	     rect_t r2, outer;
 	     int area;
-	     
+
 	     r2 = ((rect_node_t *)node)->rect;
-	     
+
 	     _calc_outer_rect_area(r1, r2, &outer);
 	     area = r1.area + r2.area; /* intra area is taken as 0 */
 	     if (outer.area - area <= accepted_error)
@@ -793,18 +793,18 @@ rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
 		   * actually r3 uses r2 instance, saves memory
 		   */
 		  rect_node_t *n;
-		  
+
 		  n = (rect_node_t *)rect_list_unlink_next(rects, parent_node);
 		  n->rect = outer;
 		  rect_list_append_node(to_merge, (list_node_t *)n);
 		  merged = 1;
 		  break;
 	       }
-	     
+
 	     parent_node = node;
 	     node = node->next;
 	  }
-	
+
         if (!merged)
 	  {
 	     list_node_t *n;
@@ -823,18 +823,18 @@ rect_list_add_split_fuzzy_and_merge(list_t *rects,
                                     int merge_accepted_error)
 {
    list_node_t *n;
-   
+
    n = rect_list_add_split_fuzzy(rects, node, split_accepted_error);
    if (n && n->next)
      {
         list_t to_merge;
-	
+
         /* split list into 2 segments, already merged and to merge */
         to_merge.head = n->next;
         to_merge.tail = rects->tail;
         rects->tail = n;
         n->next = NULL;
-	
+
         rect_list_merge_rects(rects, &to_merge, merge_accepted_error);
      }
 }
@@ -991,7 +991,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
      evas_common_regionbuf_span_del(tb->rb, x, x + w - 1, y + i);
 #elif defined(EVAS_RECT_SPLIT)
    rect_t r;
-   
+
    if (!tb->rects.head) return 0;
    if ((w <= 0) || (h <= 0)) return 0;
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
@@ -1005,7 +1005,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    w >>= 1;
    h -= 1;
    h >>= 1;
-   
+
    if ((w <= 0) || (h <= 0)) return 0;
 
    rect_init(&r, x, y, w, h);

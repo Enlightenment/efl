@@ -237,7 +237,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 
    /* figure out dest start ptr */
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
-   
+
    if (dc->mul.use)
      func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
    else
@@ -269,7 +269,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 			+ src_region_y) * src_w);
 	/* scale to dst */
 	dptr = dst_ptr;
-#ifdef DIRECT_SCALE	     
+#ifdef DIRECT_SCALE
 	if ((!src->cache_entry.flags.alpha) &&
 	     (!dst->cache_entry.flags.alpha) &&
 	     (!dc->mul.use))
@@ -292,7 +292,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	      }
 	  }
 	else
-#endif	       
+#endif
 	  {
 	    /* a scanline buffer */
 	    buf = alloca(dst_clip_w * sizeof(DATA32));

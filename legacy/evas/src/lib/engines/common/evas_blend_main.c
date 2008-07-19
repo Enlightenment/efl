@@ -322,4 +322,3 @@ evas_common_gfx_func_composite_pixel_mask_pt_get(Image_Entry_Flags src_flags, RG
 	return func;
    return _composite_pt_nothing;
 }
-

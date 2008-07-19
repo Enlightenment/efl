@@ -156,7 +156,7 @@ int
 evas_common_cpu_have_cpuid(void)
 {
    return 0;
-/*   
+/*
 #ifdef BUILD_MMX
    unsigned int have_cpu_id;
 
@@ -218,9 +218,9 @@ evas_common_cpu_count(void)
    cpu_set_t cpu;
    int i;
    static int cpus = 0;
-   
+
    if (cpus != 0) return cpus;
-   
+
    sched_getaffinity(getpid(), sizeof(cpu), &cpu);
    for (i = 0; i < TH_MAX; i++)
      {
@@ -230,5 +230,5 @@ evas_common_cpu_count(void)
    return cpus;
 #else
    return 1;
-#endif   
+#endif
 }

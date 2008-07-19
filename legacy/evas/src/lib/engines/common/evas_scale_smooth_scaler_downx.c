@@ -8,12 +8,12 @@
 #ifdef EVAS_SLI
    int ysli = dst_clip_y;
 #endif
-   
+
    dptr = dst_ptr;
    pos = (src_region_y * src_w) + src_region_x;
    dyy = dst_clip_y - dst_region_y;
    dxx = dst_clip_x - dst_region_x;
-   
+
    xp = xpoints + dxx;
    yp = ypoints + dyy;
    xapp = xapoints + dxx;
@@ -33,7 +33,7 @@
 		       Cx = *xapp >> 16;
 		       xap = *xapp & 0xffff;
 		       pix = *yp + *xp + pos;
-		       
+
 		       a = (A_VAL(pix) * xap) >> 10;
 		       r = (R_VAL(pix) * xap) >> 10;
 		       g = (G_VAL(pix) * xap) >> 10;
@@ -85,7 +85,7 @@
 		       *pbuf++ = ARGB_JOIN(a >> 4, r >> 4, g >> 4, b >> 4);
 		       xp++;  xapp++;
 		    }
-		  
+
 		  func(buf, NULL, dc->mul.col, dptr, w);
 	       }
 #ifdef EVAS_SLI
@@ -117,7 +117,7 @@
 			    Cx = *xapp >> 16;
 			    xap = *xapp & 0xffff;
 			    pix = *yp + *xp + pos;
-			    
+
 			    r = (R_VAL(pix) * xap) >> 10;
 			    g = (G_VAL(pix) * xap) >> 10;
 			    b = (B_VAL(pix) * xap) >> 10;
@@ -166,7 +166,7 @@
 #ifdef EVAS_SLI
 		  ysli++;
 #endif
-		  
+
 		  dptr += dst_w;  dst_clip_w = w;
 		  yp++;  yapp++;
 		  xp = xpoints + dxx;
@@ -174,7 +174,7 @@
 	       }
 	  }
 	else
-#endif	  
+#endif
 	  {
 	     while (dst_clip_h--)
 	       {
@@ -187,7 +187,7 @@
 			    Cx = *xapp >> 16;
 			    xap = *xapp & 0xffff;
 			    pix = *yp + *xp + pos;
-			    
+
 			    r = (R_VAL(pix) * xap) >> 10;
 			    g = (G_VAL(pix) * xap) >> 10;
 			    b = (B_VAL(pix) * xap) >> 10;
@@ -232,13 +232,13 @@
 			    *pbuf++ = ARGB_JOIN(0xff, r >> 4, g >> 4, b >> 4);
 			    xp++;  xapp++;
 			 }
-		       
+
 		       func(buf, NULL, dc->mul.col, dptr, w);
 		    }
 #ifdef EVAS_SLI
 		  ysli++;
 #endif
-		  
+
 		  pbuf = buf;
 		  dptr += dst_w;  dst_clip_w = w;
 		  yp++;  yapp++;

@@ -18,13 +18,13 @@ static RGBA_Gfx_Pt_Func op_add_pixel_color_pt_get(Image_Entry_Flags src_flags, D
 static RGBA_Gfx_Pt_Func op_add_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_add_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_add = { "add", 
+static RGBA_Gfx_Compositor  _composite_add = { "add",
  op_add_init, op_add_shutdown,
- op_add_pixel_span_get, op_add_color_span_get, 
- op_add_pixel_color_span_get, op_add_mask_color_span_get, 
+ op_add_pixel_span_get, op_add_color_span_get,
+ op_add_pixel_color_span_get, op_add_mask_color_span_get,
  op_add_pixel_mask_span_get,
- op_add_pixel_pt_get, op_add_color_pt_get, 
- op_add_pixel_color_pt_get, op_add_mask_color_pt_get, 
+ op_add_pixel_pt_get, op_add_color_pt_get,
+ op_add_pixel_color_pt_get, op_add_mask_color_pt_get,
  op_add_pixel_mask_pt_get
  };
 
@@ -52,13 +52,13 @@ static RGBA_Gfx_Pt_Func op_add_rel_pixel_color_pt_get(Image_Entry_Flags src_flag
 static RGBA_Gfx_Pt_Func op_add_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_add_rel_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_add_rel = { "add_rel", 
+static RGBA_Gfx_Compositor  _composite_add_rel = { "add_rel",
  op_add_rel_init, op_add_rel_shutdown,
- op_add_rel_pixel_span_get, op_add_rel_color_span_get, 
- op_add_rel_pixel_color_span_get, op_add_rel_mask_color_span_get, 
+ op_add_rel_pixel_span_get, op_add_rel_color_span_get,
+ op_add_rel_pixel_color_span_get, op_add_rel_mask_color_span_get,
  op_add_rel_pixel_mask_span_get,
- op_add_rel_pixel_pt_get, op_add_rel_color_pt_get, 
- op_add_rel_pixel_color_pt_get, op_add_rel_mask_color_pt_get, 
+ op_add_rel_pixel_pt_get, op_add_rel_color_pt_get,
+ op_add_rel_pixel_color_pt_get, op_add_rel_mask_color_pt_get,
  op_add_rel_pixel_mask_pt_get
  };
 
@@ -216,7 +216,7 @@ op_add_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    return add_gfx_span_func_cpu(s, m, c, d);
 }
 
-static RGBA_Gfx_Pt_Func 
+static RGBA_Gfx_Pt_Func
 add_gfx_pt_func_cpu(int s, int m, int c, int d)
 {
    RGBA_Gfx_Pt_Func  func = NULL;
@@ -446,7 +446,7 @@ op_add_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    return add_rel_gfx_span_func_cpu(s, m, c, d);
 }
 
-static RGBA_Gfx_Pt_Func 
+static RGBA_Gfx_Pt_Func
 add_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 {
    RGBA_Gfx_Pt_Func  func = NULL;

@@ -122,7 +122,7 @@ evas_common_copy_rev_pixels_c(DATA32 *src, DATA32 *dst, int len)
 
    src += len - 1;
    while (dst < dst_end)
- 	*dst++ = *src--;
+	*dst++ = *src--;
 }
 
 #ifdef BUILD_C
@@ -132,7 +132,7 @@ evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
    DATA32 *dst_end = dst + len;
 
    while (dst < dst_end)
- 	*dst++ = *src++;
+	*dst++ = *src++;
 }
 #endif
 
@@ -245,7 +245,7 @@ evas_common_copy_pixels_sse(DATA32 *src, DATA32 *dst, int len)
 	src_ptr++;
 	dst_ptr++;
      }
-#if 0   
+#if 0
 #ifdef ALIGN_FIX
    int src_align;
    int dst_align;
@@ -290,7 +290,7 @@ evas_common_copy_pixels_sse(DATA32 *src, DATA32 *dst, int len)
 	src_ptr++;
 	dst_ptr++;
      }
-#endif   
+#endif
 }
 #endif
 

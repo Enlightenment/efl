@@ -78,7 +78,7 @@
 		      {
 			 DATA32   p0, p1;
 			 int      ax;
-			 
+
 			 sx = (sxx >> 16);
 			 ax = 1 + ((sxx - (sx << 16)) >> 8);
 			 p0 = p1 = *(psrc + sx);
@@ -107,7 +107,7 @@
 	       }
 #ifdef EVAS_SLI
 	     ysli++;
-#endif	     
+#endif
 	     pdst += dst_w;
 	     psrc += src_w;
 	     buf += buf_step;
@@ -129,7 +129,7 @@
 #endif
 	       {
 		  int        ay;
-		  
+
 		  sy = syy >> 16;
 		  psrc = ps + (sy * src_w);
 		  ay = 1 + ((syy - (sy << 16)) >> 8);
@@ -142,7 +142,7 @@
 		  while (pbuf < pbuf_end)
 		    {
 		       DATA32  p0 = *psrc, p2 = p0;
-		       
+
 		       if ((sy + 1) < srh)
 			 p2 = *(psrc + src_w);
 #ifdef SCALE_USING_MMX
@@ -167,7 +167,7 @@
 	       }
 #ifdef EVAS_SLI
 	     ysli++;
-#endif	     
+#endif
 	    pdst += dst_w;
 	    syy += dsyy;
 	    buf += buf_step;
@@ -189,7 +189,7 @@
 #endif
 	       {
 		  int   ay;
-		  
+
 		  sy = syy >> 16;
 		  psrc = ps + (sy * src_w);
 		  ay = 1 + ((syy - (sy << 16)) >> 8);
@@ -205,7 +205,7 @@
 		       int     ax;
 		       DATA32  *p, *q;
 		       DATA32  p0, p1, p2, p3;
-		       
+
 		       sx = sxx >> 16;
 		       ax = 1 + ((sxx - (sx << 16)) >> 8);
 		       p = psrc + sx;  q = p + src_w;

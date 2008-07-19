@@ -160,14 +160,14 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 		  if (dx < 0)
 		    {
 		       int  tmp = x1;
-		       
+
 		       x1 = x0;
 		       x0 = tmp;
 		    }
-		  
+
 		  if (x0 < lx) x0 = lx;
 		  if (x1 > rx) x1 = rx;
-		  
+
 		  len = x1 - x0 + 1;
 		  p = dst->image.data + (dstw * y0) + x0;
 		  sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
@@ -187,7 +187,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 	  {
 	     if (y0 < ty) y0 = ty;
 	     if (y1 > by) y1 = by;
-	     
+
 	     len = y1 - y0 + 1;
 	     p = dst->image.data + (dstw * y0) + x0;
 	     while (len--)
@@ -208,7 +208,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
      {
 	int   p0_in, p1_in;
 
-	p0_in = (IN_RECT(x0, y0, clx, cly, clw, clh) ? 1 : 0);	
+	p0_in = (IN_RECT(x0, y0, clx, cly, clw, clh) ? 1 : 0);
 	p1_in = (IN_RECT(x1, y1, clx, cly, clw, clh) ? 1 : 0);
 
 	if (dx > 0)
@@ -611,9 +611,9 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 	    if ((unsigned)(px) < clw)
 	      {
 		aa = ((yy - (y << 16)) >> 8);
-	   	if ((unsigned)(py) < clh)
+		if ((unsigned)(py) < clh)
 		   pfunc(0, 255 - aa, color, p);
-	   	if ((unsigned)(py + 1) < clh)
+		if ((unsigned)(py + 1) < clh)
 		   pfunc(0, aa, color, p + dstw);
 	      }
 	    yy += dyy;

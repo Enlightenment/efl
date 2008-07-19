@@ -18,13 +18,13 @@ static RGBA_Gfx_Pt_Func op_mask_pixel_color_pt_get(Image_Entry_Flags src_flags, 
 static RGBA_Gfx_Pt_Func op_mask_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_mask_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_mask = { "mask", 
+static RGBA_Gfx_Compositor  _composite_mask = { "mask",
  op_mask_init, op_mask_shutdown,
- op_mask_pixel_span_get, op_mask_color_span_get, 
- op_mask_pixel_color_span_get, op_mask_mask_color_span_get, 
+ op_mask_pixel_span_get, op_mask_color_span_get,
+ op_mask_pixel_color_span_get, op_mask_mask_color_span_get,
  op_mask_pixel_mask_span_get,
- op_mask_pixel_pt_get, op_mask_color_pt_get, 
- op_mask_pixel_color_pt_get, op_mask_mask_color_pt_get, 
+ op_mask_pixel_pt_get, op_mask_color_pt_get,
+ op_mask_pixel_color_pt_get, op_mask_mask_color_pt_get,
  op_mask_pixel_mask_pt_get
  };
 

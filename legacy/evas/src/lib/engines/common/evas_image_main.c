@@ -93,14 +93,14 @@ evas_common_image_shutdown(void)
 ////	printf("REF--=%i\n", reference);
 // DISABLE for now - something wrong with cache shutdown freeing things
 // still in use - rage_thumb segv's now.
-// 
+//
 // actually - i think i see it. cache ref goes to 0 (and thus gets freed)
 // because in eng_setup() when a buffer changes size it is FIRST freed
 // THEN allocated again - thus brignhjing ref to 0 then back to 1 immediately
 // where it should stay at 1. - see evas_engine.c in the buffer enigne for
 // example. eng_output_free() is called BEFORE _output_setup(). although this
 // is only a SIGNE of the problem. we can patch this up with either freeing
-// after the setup (so we just pt a ref of 2 then back to 1), or just 
+// after the setup (so we just pt a ref of 2 then back to 1), or just
 // evas_common_image_init() at the start and evas_common_image_shutdown()
 // after it all. really ref 0 should only be reached when no more canvases
 // with no more objects exist anywhere.
@@ -160,12 +160,12 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h)
    if (im->image.data == NULL) return -1;
 
 #ifdef HAVE_VALGRIND
-# ifdef VALGRIND_MAKE_READABLE  
+# ifdef VALGRIND_MAKE_READABLE
    VALGRIND_MAKE_READABLE(im->image.data, siz);
-# else 
-#  ifdef VALGRIND_MAKE_MEM_DEFINED   
+# else
+#  ifdef VALGRIND_MAKE_MEM_DEFINED
    VALGRIND_MAKE_MEM_DEFINED(im->image.data, siz);
-#  endif   
+#  endif
 # endif
 #endif
 
@@ -320,8 +320,8 @@ evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
 /* { */
 /*    if ((is->data) && (!is->no_free)) */
 /*      { */
-/* 	free(is->data); */
-/* 	is->data = NULL; */
+/*	free(is->data); */
+/*	is->data = NULL; */
 /*      } */
 /* } */
 
@@ -437,7 +437,7 @@ evas_common_image_line_buffer_obtain(int len)
    if (len < EVAS_RGBA_LINE_BUFFER_MIN_LEN)
 	len = EVAS_RGBA_LINE_BUFFER_MIN_LEN;
    return evas_common_image_create(len, 1);
-/*   
+/*
    if (evas_rgba_line_buffer)
      {
 	if (evas_rgba_line_buffer->image->w >= len)
@@ -462,7 +462,7 @@ EAPI void
 evas_common_image_line_buffer_release(RGBA_Image *im)
 {
     _evas_common_rgba_image_delete(&im->cache_entry);
-/*   
+/*
    if (!evas_rgba_line_buffer) return;
    if (EVAS_RGBA_LINE_BUFFER_MAX_LEN < evas_rgba_line_buffer->image->w)
      {
@@ -482,7 +482,7 @@ EAPI void
 evas_common_image_line_buffer_free(RGBA_Image *im)
 {
     _evas_common_rgba_image_delete(&im->cache_entry);
-/*   
+/*
    if (!evas_rgba_line_buffer) return;
    evas_common_image_free(evas_rgba_line_buffer);
    evas_rgba_line_buffer = NULL;
@@ -496,7 +496,7 @@ evas_common_image_alpha_line_buffer_obtain(int len)
    if (len < EVAS_ALPHA_LINE_BUFFER_MIN_LEN)
 	len = EVAS_ALPHA_LINE_BUFFER_MIN_LEN;
    return evas_common_image_alpha_create(len, 1);
-/*   
+/*
    if (evas_alpha_line_buffer)
      {
 	if (evas_alpha_line_buffer->image->w >= len)
@@ -520,7 +520,7 @@ EAPI void
 evas_common_image_alpha_line_buffer_release(RGBA_Image *im)
 {
     _evas_common_rgba_image_delete(&im->cache_entry);
-/*   
+/*
    if (!evas_alpha_line_buffer) return;
    if (EVAS_ALPHA_LINE_BUFFER_MAX_LEN < evas_alpha_line_buffer->image->w)
      {
@@ -552,7 +552,7 @@ evas_common_image_premul(Image_Entry *ie)
      {
 	DATA32  a = 1 + (*s >> 24);
 
-	*s = (*s & 0xff000000) + (((((*s) >> 8) & 0xff) * a) & 0xff00) + 
+	*s = (*s & 0xff000000) + (((((*s) >> 8) & 0xff) * a) & 0xff00) +
 			 (((((*s) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
 	s++;
 	if ((a == 1) || (a == 256))

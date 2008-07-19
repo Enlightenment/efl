@@ -18,13 +18,13 @@ static RGBA_Gfx_Pt_Func op_copy_pixel_color_pt_get(Image_Entry_Flags src_flags, 
 static RGBA_Gfx_Pt_Func op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_copy_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_copy = { "copy", 
- op_copy_init, op_copy_shutdown, 
- op_copy_pixel_span_get, op_copy_color_span_get, 
- op_copy_pixel_color_span_get, op_copy_mask_color_span_get, 
- op_copy_pixel_mask_span_get, 
- op_copy_pixel_pt_get, op_copy_color_pt_get, 
- op_copy_pixel_color_pt_get, op_copy_mask_color_pt_get, 
+static RGBA_Gfx_Compositor  _composite_copy = { "copy",
+ op_copy_init, op_copy_shutdown,
+ op_copy_pixel_span_get, op_copy_color_span_get,
+ op_copy_pixel_color_span_get, op_copy_mask_color_span_get,
+ op_copy_pixel_mask_span_get,
+ op_copy_pixel_pt_get, op_copy_color_pt_get,
+ op_copy_pixel_color_pt_get, op_copy_mask_color_pt_get,
  op_copy_pixel_mask_pt_get
  };
 
@@ -53,13 +53,13 @@ static RGBA_Gfx_Pt_Func op_copy_rel_pixel_color_pt_get(Image_Entry_Flags src_fla
 static RGBA_Gfx_Pt_Func op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_copy_rel_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_copy_rel = { "copy_rel", 
- op_copy_rel_init, op_copy_rel_shutdown, 
- op_copy_rel_pixel_span_get, op_copy_rel_color_span_get, 
- op_copy_rel_pixel_color_span_get, op_copy_rel_mask_color_span_get, 
- op_copy_rel_pixel_mask_span_get, 
- op_copy_rel_pixel_pt_get, op_copy_color_pt_get, 
- op_copy_rel_pixel_color_pt_get, op_copy_rel_mask_color_pt_get, 
+static RGBA_Gfx_Compositor  _composite_copy_rel = { "copy_rel",
+ op_copy_rel_init, op_copy_rel_shutdown,
+ op_copy_rel_pixel_span_get, op_copy_rel_color_span_get,
+ op_copy_rel_pixel_color_span_get, op_copy_rel_mask_color_span_get,
+ op_copy_rel_pixel_mask_span_get,
+ op_copy_rel_pixel_pt_get, op_copy_color_pt_get,
+ op_copy_rel_pixel_color_pt_get, op_copy_rel_mask_color_pt_get,
  op_copy_rel_pixel_mask_pt_get
  };
 
@@ -233,7 +233,7 @@ op_copy_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
 
-static RGBA_Gfx_Pt_Func 
+static RGBA_Gfx_Pt_Func
 copy_gfx_pt_func_cpu(int s, int m, int c, int d)
 {
    RGBA_Gfx_Pt_Func  func = NULL;

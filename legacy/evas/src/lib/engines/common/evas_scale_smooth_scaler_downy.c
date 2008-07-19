@@ -8,7 +8,7 @@
 #ifdef EVAS_SLI
    int ysli = dst_clip_y;
 #endif
-   
+
    dptr = dst_ptr;
    pos = (src_region_y * src_w) + src_region_x;
    dyy = dst_clip_y - dst_region_y;
@@ -30,11 +30,11 @@
 	       {
 		  Cy = *yapp >> 16;
 		  yap = *yapp & 0xffff;
-		  
+
 		  while (dst_clip_w--)
 		    {
 		       pix = *yp + *xp + pos;
-		       
+
 		       a = (A_VAL(pix) * yap) >> 10;
 		       r = (R_VAL(pix) * yap) >> 10;
 		       g = (G_VAL(pix) * yap) >> 10;
@@ -86,7 +86,7 @@
 		       *pbuf++ = ARGB_JOIN(a >> 4, r >> 4, g >> 4, b >> 4);
 		       xp++;  xapp++;
 		    }
-		  
+
 		  func(buf, NULL, dc->mul.col, dptr, w);
                }
 #ifdef EVAS_SLI
@@ -114,12 +114,12 @@
 		    {
 		       Cy = *yapp >> 16;
 		       yap = *yapp & 0xffff;
-		       
+
 		       pbuf = dptr;
 		       while (dst_clip_w--)
 			 {
 			    pix = *yp + *xp + pos;
-			    
+
 			    r = (R_VAL(pix) * yap) >> 10;
 			    g = (G_VAL(pix) * yap) >> 10;
 			    b = (B_VAL(pix) * yap) >> 10;
@@ -175,7 +175,7 @@
 	       }
 	  }
 	else
-#endif	  
+#endif
 	  {
 	     while (dst_clip_h--)
 	       {
@@ -185,11 +185,11 @@
 		    {
 		       Cy = *yapp >> 16;
 		       yap = *yapp & 0xffff;
-		       
+
 		       while (dst_clip_w--)
 			 {
 			    pix = *yp + *xp + pos;
-			    
+
 			    r = (R_VAL(pix) * yap) >> 10;
 			    g = (G_VAL(pix) * yap) >> 10;
 			    b = (B_VAL(pix) * yap) >> 10;
@@ -234,7 +234,7 @@
 			    *pbuf++ = ARGB_JOIN(0xff, r >> 4, g >> 4, b >> 4);
 			    xp++;  xapp++;
 			 }
-		       
+
 		       func(buf, NULL, dc->mul.col, dptr, w);
 		    }
 #ifdef EVAS_SLI

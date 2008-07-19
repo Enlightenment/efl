@@ -18,13 +18,13 @@ static RGBA_Gfx_Pt_Func op_mul_pixel_color_pt_get(Image_Entry_Flags src_flags, D
 static RGBA_Gfx_Pt_Func op_mul_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
 static RGBA_Gfx_Pt_Func op_mul_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
 
-static RGBA_Gfx_Compositor  _composite_mul = { "mul", 
+static RGBA_Gfx_Compositor  _composite_mul = { "mul",
  op_mul_init, op_mul_shutdown,
- op_mul_pixel_span_get, op_mul_color_span_get, 
- op_mul_pixel_color_span_get, op_mul_mask_color_span_get, 
+ op_mul_pixel_span_get, op_mul_color_span_get,
+ op_mul_pixel_color_span_get, op_mul_mask_color_span_get,
  op_mul_pixel_mask_span_get,
- op_mul_pixel_pt_get, op_mul_color_pt_get, 
- op_mul_pixel_color_pt_get, op_mul_mask_color_pt_get, 
+ op_mul_pixel_pt_get, op_mul_color_pt_get,
+ op_mul_pixel_color_pt_get, op_mul_mask_color_pt_get,
  op_mul_pixel_mask_pt_get
  };
 

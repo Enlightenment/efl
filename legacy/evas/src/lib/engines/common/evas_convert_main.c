@@ -163,7 +163,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 {
    if ((rmask == 0) && (gmask == 0) && (bmask == 0))
      {
- 	if (depth == 8)
+	if (depth == 8)
 	  {
 #ifdef BUILD_CONVERT_8_RGB_332
 	     if (pal_mode == PAL_MODE_RGB332)
@@ -194,10 +194,10 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 	       return evas_common_convert_rgba_to_8bpp_rgb_111_dith;
 #endif
 	  }
- 	if (depth == 1)
+	if (depth == 1)
 	  {
 	  }
- 	if (depth == 4)
+	if (depth == 4)
 	  {
 	  }
      }
@@ -296,7 +296,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 		       if ((!(w & 0x1)) && (!((intptr_t)dest & 0x3)))
 			 return evas_common_convert_rgba2_to_16bpp_rgb_555_dith;
 		       else
- 			 return evas_common_convert_rgba_to_16bpp_rgb_555_dith;
+			 return evas_common_convert_rgba_to_16bpp_rgb_555_dith;
 		    }
 #endif
 #ifdef BUILD_CONVERT_16_RGB_ROT180
@@ -454,7 +454,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 	       }
 #endif
 	  }
- 	if (depth == 32)
+	if (depth == 32)
 	  {
 #ifdef BUILD_CONVERT_32_RGB_8888
 	     if ((rmask == 0x00ff0000) && (gmask == 0x0000ff00) && (bmask == 0x000000ff))
@@ -541,7 +541,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 	       }
 #endif
 	  }
- 	if (depth == 24)
+	if (depth == 24)
 	  {
 #ifdef BUILD_CONVERT_24_RGB_888
 	     if ((rmask == 0x00ff0000) && (gmask == 0x0000ff00) && (bmask == 0x000000ff))
@@ -559,7 +559,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 #endif
 	  }
 	printf("depth = %i mode = %i\n", depth, pal_mode);
- 	if (depth == 8)
+	if (depth == 8)
 	  {
 #ifdef BUILD_CONVERT_8_RGB_332
 	     if (pal_mode == PAL_MODE_RGB332)
@@ -590,10 +590,10 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 	       return evas_common_convert_rgba_to_8bpp_rgb_111_dith;
 #endif
 	  }
- 	if (depth == 1)
+	if (depth == 1)
 	  {
 	  }
- 	if (depth == 4)
+	if (depth == 4)
 	  {
 	  }
     }

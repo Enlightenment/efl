@@ -13,12 +13,12 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
    Evas_Image_Save_Func *evas_image_save_func = NULL;
    char *p;
    char *saver = NULL;
-   
+
    p = strrchr(file, '.');
    if (p)
      {
 	p++;
-	
+
 	if (!strcasecmp(p, "png"))
           saver = "png";
 	if ((!strcasecmp(p, "jpg")) || (!strcasecmp(p, "jpeg")) ||
@@ -34,7 +34,7 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
    if (saver)
      {
         Evas_Module *em;
-	
+
 	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_SAVER, saver);
 	if (em)
 	  {
