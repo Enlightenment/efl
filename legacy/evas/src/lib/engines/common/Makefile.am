@@ -62,6 +62,8 @@ evas_regionbuf.c \
 evas_pipe.c
 
 EXTRA_DIST = \
+evas_blend.h \
+evas_blend_private.h \
 evas_convert_color.h \
 evas_convert_colorspace.h \
 evas_convert_gry_1.h \

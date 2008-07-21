@@ -4,6 +4,7 @@
 
 #include "evas_common.h"
 #include "evas_scale_smooth.h"
+#include "evas_blend_private.h"
 
 
 static DATA32 **scale_calc_y_points(DATA32 *src, int sw, int sh, int dh);

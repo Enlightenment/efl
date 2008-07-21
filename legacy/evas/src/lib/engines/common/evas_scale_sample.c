@@ -3,6 +3,7 @@
  */
 
 #include "evas_common.h"
+#include "evas_blend_private.h"
 
 void scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 

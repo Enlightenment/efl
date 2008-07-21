@@ -3,6 +3,7 @@
  */
 
 #include "evas_common.h"
+#include "evas_blend_private.h"
 
 static void rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 

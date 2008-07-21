@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
 
 static RGBA_Gfx_Func     op_add_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];

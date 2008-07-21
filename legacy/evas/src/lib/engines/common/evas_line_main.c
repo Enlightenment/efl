@@ -3,6 +3,7 @@
  */
 
 #include "evas_common.h"
+#include "evas_blend_private.h"
 
 
 static void

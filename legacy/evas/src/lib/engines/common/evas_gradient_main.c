@@ -5,9 +5,7 @@
 #include <math.h>
 
 #include "evas_common.h"
-#include "evas_convert_main.h"
-#include "evas_convert_color.h"
-#include "evas_scale_span.h"
+#include "evas_blend_private.h"
 #include "evas_gradient_private.h"
 
 

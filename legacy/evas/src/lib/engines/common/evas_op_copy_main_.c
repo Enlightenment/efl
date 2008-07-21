@@ -1,4 +1,9 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
+#include "evas_blend_private.h"
 
 static RGBA_Gfx_Func     op_copy_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 static RGBA_Gfx_Pt_Func  op_copy_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];

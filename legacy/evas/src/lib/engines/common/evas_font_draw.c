@@ -3,6 +3,7 @@
  */
 
 #include "evas_common.h"
+#include "evas_blend_private.h"
 
 EAPI RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
