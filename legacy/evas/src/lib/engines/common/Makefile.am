@@ -73,6 +73,7 @@ evas_convert_rgb_24.h \
 evas_convert_rgb_32.h \
 evas_convert_rgb_8.h \
 evas_convert_yuv.h \
+evas_draw.h \
 evas_font.h \
 evas_gradient.h \
 evas_gradient_private.h \
