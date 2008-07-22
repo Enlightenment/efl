@@ -509,29 +509,28 @@ efreet_ini_localestring_get(Efreet_Ini *ini, const char *key)
     {
         snprintf(buf, maxlen, "%s[%s_%s@%s]", key, lang, country, modifier);
         val = efreet_ini_string_get(ini, buf);
-        if (val) found = 1;
+        if (val && (*val != '\0')) found = 1;
     }
 
     if (!found && lang && country)
     {
         snprintf(buf, maxlen, "%s[%s_%s]", key, lang, country);
         val = efreet_ini_string_get(ini, buf);
-        if (val) found = 1;
+        if (val && (*val != '\0')) found = 1;
     }
 
     if (!found && lang && modifier)
     {
         snprintf(buf, maxlen, "%s[%s@%s]", key, lang, modifier);
         val = efreet_ini_string_get(ini, buf);
-        if (val) found = 1;
+        if (val && (*val != '\0')) found = 1;
     }
 
     if (!found && lang)
     {
         snprintf(buf, maxlen, "%s[%s]", key, lang);
         val = efreet_ini_string_get(ini, buf);
-        if (val) found = 1;
-
+        if (val && (*val != '\0')) found = 1;
     }
 
     if (!found)
