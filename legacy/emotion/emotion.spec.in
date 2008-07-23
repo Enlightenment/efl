@@ -11,9 +11,9 @@ Source: ftp://ftp.enlightenment.org/pub/emotion/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel libxine1-devel xine-lib-devel
+#BuildSuggests: xorg-x11-devel XFree86-devel libX11-devel libxine1-devel xine-lib-devel
 #BuildSuggests: gstreamer-devel gstreamer-plugins-devel gstreamer-plugins-base-devel gstreamer-ffmpeg
-BuildRequires: XFree86-devel eet-devel evas-devel edje-devel edje-bin
+BuildRequires: eet-devel evas-devel edje-devel edje-bin
 BuildRequires: /usr/bin/xine-config
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -24,7 +24,7 @@ Emotion is a Media Library
 Summary: Emotion headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
-Requires: XFree86-devel
+Requires: eet-devel evas-devel edje-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Emotion
@@ -33,12 +33,15 @@ Headers, static libraries, test programs and documentation for Emotion
 %setup -q
 
 %build
-%{configure} --prefix=%{_prefix}
+%{configure} --prefix=%{_prefix} --enable-static --enable-shared
 %{__make} %{?_smp_mflags} %{?mflags}
 
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
 test -x `which doxygen` && sh gendoc || :
+
+# Remove useless static modules
+%{__rm} -rf $RPM_BUILD_ROOT%{_libdir}/%{name}/*a
 
 %post
 /sbin/ldconfig || :
@@ -54,7 +57,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS COPYING* README
 %dir %{_libdir}/%{name}
 %{_bindir}/%{name}_*
-%{_libdir}/libemotion.a
 %{_libdir}/libemotion.so.*
 %{_libdir}/%{name}/*.so
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.so
@@ -64,10 +66,9 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc doc/html
 %{_includedir}/*.h
-%{_libdir}/libemotion.so
+%{_libdir}/libemotion.a
 %{_libdir}/libemotion.la
-%{_libdir}/%{name}/*.a
-%{_libdir}/%{name}/*.la
+%{_libdir}/libemotion.so
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.a
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.la
 %{_libdir}/pkgconfig/%{name}.pc

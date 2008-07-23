@@ -22,6 +22,7 @@
 ## enabled features
 ##%bcond_without module_engine_software_x11
 %bcond_without lib_ecore_fb
+%bcond_without lib_ecore_imf
 
 # This just keeps a missing doxygen from killing the build.
 %define _missing_doc_files_terminate_build 0
@@ -29,8 +30,9 @@
 %define breq_lib_ecore_directfb     %{?with_lib_ecore_directfb:DirectFB}
 %define breq_lib_ecore_sdl          %{?with_lib_ecore_sdl:SDL-devel}
 
-%define ac_with_lib_ecore_fb        --%{?with_lib_ecore_fb:en}%{!?with_lib_ecore_fb:dis}able-ecore-fb
 %define ac_with_lib_ecore_directfb  --%{?with_lib_ecore_directfb:en}%{!?with_lib_ecore_directfb:dis}able-ecore-directfb
+%define ac_with_lib_ecore_fb        --%{?with_lib_ecore_fb:en}%{!?with_lib_ecore_fb:dis}able-ecore-fb
+%define ac_with_lib_ecore_imf       --%{?with_lib_ecore_imf:en}%{!?with_lib_ecore_imf:dis}able-ecore-imf
 %define ac_with_lib_ecore_sdl       --%{?with_lib_ecore_sdl:en}%{!?with_lib_ecore_sdl:dis}able-ecore-sdl
 
 Summary: Enlightened Core X interface library
@@ -44,7 +46,7 @@ URL: http://www.enlightenment.org
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel, XFree86-devel
+#BuildSuggests: xorg-x11-devel, XFree86-devel, libX11-devel
 BuildRequires: libjpeg-devel, openssl-devel %{?breq_lib_ecore_directfb}
 BuildRequires: curl-devel, evas-devel, eet-devel %{?breq_lib_ecore_sdl}
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
@@ -124,6 +126,15 @@ Requires: %{name} = %{version}
 %description file
 Ecore File Library
 
+%if %{with lib_ecore_imf}
+%package imf
+Summary: Ecore IMF functions
+Group: Development/Libraries
+Requires: %{name} = %{version}
+%description imf
+Ecore IMF functions
+%endif
+
 %package ipc
 Summary: Ecore inter-process communication functions
 Group: Development/Libraries
@@ -164,8 +175,9 @@ CFLAGS="-I/usr/kerberos/include -I/usr/X11R6/include/X11/extensions"
 LDFLAGS="-L/usr/kerberos/lib -L/usr/X11R6/%{_lib}"
 export CFLAGS LDFLAGS
 %{configure} --prefix=%{_prefix} \
-    %{?ac_with_lib_ecore_fb} \
     %{?ac_with_lib_ecore_directfb} \
+    %{?ac_with_lib_ecore_fb} \
+    %{?ac_with_lib_ecore_imf} \
     %{?ac_with_lib_ecore_sdl}
 
 %{__make} %{?_smp_mflags} %{?mflags}
@@ -228,6 +240,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files file
 %defattr(-, root, root)
 %{_libdir}/libecore_file.so.*
+
+%if %{with lib_ecore_imf}
+%files imf
+%defattr(-, root, root)
+%{_libdir}/libecore_imf*.so.*
+%endif
 
 %files ipc
 %defattr(-, root, root)

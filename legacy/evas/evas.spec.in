@@ -30,6 +30,7 @@
 %bcond_without module_engine_software_x11
 %bcond_without module_engine_buffer
 %bcond_without module_engine_fb
+%bcond_without module_loader_pmaps
 %bcond_without module_loader_png
 %bcond_without module_saver_png
 %bcond_without module_loader_jpeg
@@ -47,6 +48,7 @@
 # Macros for ./configure use
 %define ac_with_module_loader_eet --%{?with_module_loader_eet:en}%{!?with_module_loader_eet:dis}able-image-loader-eet
 %define ac_with_module_loader_jpeg --%{?with_module_loader_jpeg:en}%{!?with_module_loader_jpeg:dis}able-image-loader-jpeg
+%define ac_with_module_loader_pmaps --%{?with_module_loader_pmaps:en}%{!?with_module_loader_pmaps:dis}able-image-loader-pmaps
 %define ac_with_module_loader_png --%{?with_module_loader_png:en}%{!?with_module_loader_png:dis}able-image-loader-png
 %define ac_with_module_loader_tiff --%{?with_module_loader_tiff:en}%{!?with_module_loader_tiff:dis}able-image-loader-tiff
 %define ac_with_module_loader_gif --%{?with_module_loader_gif:en}%{!?with_module_loader_gif:dis}able-image-loader-gif
@@ -133,6 +135,15 @@ Group: System Environment/Libraries
 BuildRequires: libjpeg-devel
 %description module_saver_jpeg
 JPEG Image saver module for Evas
+%endif
+
+%if %{with module_loader_pmaps}
+%package module_loader_pmaps
+Summary: Pixmap Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libXpm-devel
+%description module_loader_pmaps
+Pixmap Image loader module for Evas
 %endif
 
 %if %{with module_loader_png}
@@ -340,6 +351,7 @@ Xrender XCB X11 rendering engine module for Evas
     %{?ac_with_module_saver_eet} \
     %{?ac_with_module_loader_jpeg} \
     %{?ac_with_module_saver_jpeg} \
+    %{?ac_with_module_loader_pmaps} \
     %{?ac_with_module_loader_png} \
     %{?ac_with_module_saver_png} \
     %{?ac_with_module_loader_tiff} \
@@ -403,6 +415,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_saver_eet
 %defattr(-, root, root)
 %{_libdir}/evas/modules/savers/eet/*/module.so
+%endif
+
+%if %{with module_loader_pmaps}
+%files module_loader_pmaps
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/pmaps/*/module.so
 %endif
 
 %if %{with module_loader_png}
