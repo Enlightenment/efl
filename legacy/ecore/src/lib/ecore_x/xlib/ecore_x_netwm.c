@@ -847,9 +847,10 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 EAPI int
 ecore_x_netwm_window_types_get(Ecore_X_Window win, Ecore_X_Window_Type **types)
 {
-   int                  num, i, j, numret;
-   Ecore_X_Atom        *atoms = NULL, *atoms2 = NULL;
-
+   int                  num, i;
+   Ecore_X_Atom        *atoms = NULL;
+   Ecore_X_Window_Type *atoms2 = NULL;
+   
    if (types) *types = NULL;
    num = ecore_x_window_prop_atom_list_get(win,
 					   ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
@@ -859,27 +860,14 @@ ecore_x_netwm_window_types_get(Ecore_X_Window win, Ecore_X_Window_Type **types)
 	if (atoms) free(atoms);
 	return 0;
      }
-   numret = 0;
-   for (i = 0; i < num; i++)
-     {
-	atoms[i] = _ecore_x_netwm_window_type_type_get(atoms[i]);
-	if (atoms[i] != 0) numret++;
-     }
-   if (numret == 0) return 0;
-   atoms2 = malloc(numret * sizeof(Ecore_X_Window_Type));
+   atoms2 = malloc(num * sizeof(Ecore_X_Window_Type));
    if (!atoms2) return 0;
-   for (j = 0, i = 0; i < num; i++)
-     {
-        if (atoms[i] != 0)
-	  {
-	     atoms2[j] = atoms[i];
-	     j++;
-	  }
-     }
+   for (i = 0; i < num; i++)
+     atoms2[i] = _ecore_x_netwm_window_type_type_get(atoms[i]);
    free(atoms);
    if (types) *types = atoms2;
    else free(atoms2);
-   return numret;
+   return num;
 }
 
 static Ecore_X_Atom
