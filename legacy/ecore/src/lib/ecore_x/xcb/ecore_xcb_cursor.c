@@ -60,7 +60,7 @@ ecore_x_cursor_new(Ecore_X_Window window,
 #endif /* ECORE_XCB_CURSOR */
      {
 	const uint32_t dither[2][2] =
-	  { 
+	  {
 	       {0, 2},
 	       {3, 1}
 	  };
@@ -91,11 +91,11 @@ ecore_x_cursor_new(Ecore_X_Window window,
                           1, mask, draw,
                           1, 1);
 
-        image = xcb_image_create(_ecore_xcb_conn, 1,
-                                 XCB_IMAGE_FORMAT_Z_PIXMAP, 0,
-                                 NULL, w, h, 32, 0);
-        image->data = malloc(image->bytes_per_line * image->height);
-	
+        image = xcb_image_create_native(_ecore_xcb_conn, w, h,
+                                 XCB_IMAGE_FORMAT_Z_PIXMAP,
+                                 32, NULL, ~0, NULL);
+        image->data = malloc(image->size);
+
 	fr = 0x00; fg = 0x00; fb = 0x00;
 	br = 0xff; bg = 0xff; bb = 0xff;
         pix = (uint32_t *)pixels;
@@ -104,7 +104,7 @@ ecore_x_cursor_new(Ecore_X_Window window,
 	     for (x = 0; x < w; x++)
 	       {
 		  uint8_t r, g, b, a;
-		  
+
 		  a = (pix[0] >> 24) & 0xff;
 		  r = (pix[0] >> 16) & 0xff;
 		  g = (pix[0] >> 8 ) & 0xff;
@@ -113,14 +113,14 @@ ecore_x_cursor_new(Ecore_X_Window window,
 		    {
 		       if ((uint32_t)(r + g + b) > brightest)
 			 {
-			    brightest = r + g + b; 
+			    brightest = r + g + b;
 			    br = r;
 			    bg = g;
 			    bb = b;
 			 }
 		       if ((uint32_t)(r + g + b) < darkest)
 			 {
-			    darkest = r + g + b; 
+			    darkest = r + g + b;
 			    fr = r;
 			    fg = g;
 			    fb = b;
@@ -129,7 +129,7 @@ ecore_x_cursor_new(Ecore_X_Window window,
 		  pix++;
 	       }
 	  }
-	
+
 	pix = (uint32_t *)pixels;
 	for (y = 0; y < h; y++)
 	  {
@@ -138,15 +138,15 @@ ecore_x_cursor_new(Ecore_X_Window window,
 		  uint32_t v;
 		  uint8_t  r, g, b;
 		  int32_t  d1, d2;
-		  
+
 		  r = (pix[0] >> 16) & 0xff;
 		  g = (pix[0] >> 8 ) & 0xff;
 		  b = (pix[0]      ) & 0xff;
-		  d1 = 
+		  d1 =
 		    ((r - fr) * (r - fr)) +
 		    ((g - fg) * (g - fg)) +
 		    ((b - fb) * (b - fb));
-		  d2 = 
+		  d2 =
 		    ((r - br) * (r - br)) +
 		    ((g - bg) * (g - bg)) +
 		    ((b - bb) * (b - bb));
@@ -167,7 +167,7 @@ ecore_x_cursor_new(Ecore_X_Window window,
         draw = pixmap;
         gc = xcb_generate_id(_ecore_xcb_conn);
         xcb_create_gc(_ecore_xcb_conn, gc, draw, 0, NULL);
-        xcb_image_put(_ecore_xcb_conn, draw, gc, image, 0, 0, 0, 0, w, h);   
+        xcb_image_put(_ecore_xcb_conn, draw, gc, image, 0, 0, 0);
         xcb_free_gc(_ecore_xcb_conn, gc);
 
 	pix = (uint32_t *)pixels;
@@ -176,7 +176,7 @@ ecore_x_cursor_new(Ecore_X_Window window,
 	     for (x = 0; x < w; x++)
 	       {
 		  uint32_t v;
-		  
+
 		  v = (((pix[0] >> 24) & 0xff) * 5) / 256;
 		  if (v > dither[x & 0x1][y & 0x1]) v = 1;
 		  else v = 0;
@@ -187,9 +187,9 @@ ecore_x_cursor_new(Ecore_X_Window window,
         draw = mask;
         gc = xcb_generate_id(_ecore_xcb_conn);
         xcb_create_gc (_ecore_xcb_conn, gc, draw, 0, NULL);
-        xcb_image_put(_ecore_xcb_conn, draw, gc, image, 0, 0, 0, 0, w, h);   
+        xcb_image_put(_ecore_xcb_conn, draw, gc, image, 0, 0, 0);
         xcb_free_gc(_ecore_xcb_conn, gc);
-	
+
 	free(image->data);
 	image->data = NULL;
 	xcb_image_destroy(image);
@@ -204,7 +204,7 @@ ecore_x_cursor_new(Ecore_X_Window window,
                            bg << 8 | bg,
                            bb << 8 | bb,
                            hot_x,
-                           hot_y);  
+                           hot_y);
 	xcb_free_pixmap(_ecore_xcb_conn, pixmap);
 	xcb_free_pixmap(_ecore_xcb_conn, mask);
 

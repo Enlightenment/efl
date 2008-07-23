@@ -244,7 +244,9 @@ ecore_x_init(const char *name)
 
 #ifdef ECORE_XCB_SYNC
    xcb_prefetch_extension_data(_ecore_xcb_conn, &xcb_sync_id);
-   cookie_sync_init = xcb_sync_initialize_unchecked(_ecore_xcb_conn);
+   cookie_sync_init = xcb_sync_initialize_unchecked(_ecore_xcb_conn,
+                                                    XCB_SYNC_MAJOR_VERSION,
+                                                    XCB_SYNC_MINOR_VERSION);
 #endif /* ECORE_XCB_SYNC */
 
 #ifdef ECORE_XCB_FIXES

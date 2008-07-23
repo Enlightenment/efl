@@ -231,9 +231,17 @@ AC_ARG_ENABLE(simple-x11,
   [ want_evas_simple_x11=$enableval ]
 )
 
-dnl ecore_x{cb}
+have_x="no"
 have_ecore_x="no"
+have_ecore_x_xlib="no"
 have_ecore_x_xcb="no"
+
+x_dir="";
+x_includes="";
+x_cflags="";
+x_libs="";
+
+dnl ecore_x{cb}
 
 AC_ARG_ENABLE(ecore-x-xcb,
   AC_HELP_STRING(
@@ -253,83 +261,79 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
   if test "x$have_ecore_x_xcb" = "xyes" ; then
     PKG_CHECK_MODULES(XCB_COMPOSITE, xcb-composite,
       [ have_ecore_x_xcb_composite="yes"
-      AC_DEFINE(ECORE_XCB_COMPOSITE, 1, [Build support for XCB composite]) ],
+        AC_DEFINE(ECORE_XCB_COMPOSITE, 1, [Build support for XCB composite]) ],
       [ have_ecore_x_xcb_composite="no" ])
 
     PKG_CHECK_MODULES(XCB_DAMAGE, xcb-damage,
       [ have_ecore_x_xcb_damage="yes"
-      AC_DEFINE(ECORE_XCB_DAMAGE, 1, [Build support for XCB damage]) ],
+        AC_DEFINE(ECORE_XCB_DAMAGE, 1, [Build support for XCB damage]) ],
       [ have_ecore_x_xcb_damage="no" ])
 
     PKG_CHECK_MODULES(XCB_DPMS, xcb-dpms,
       [ have_ecore_x_xcb_dpms="yes"
-      AC_DEFINE(ECORE_XCB_DPMS, 1, [Build support for XCB dpms]) ],
+        AC_DEFINE(ECORE_XCB_DPMS, 1, [Build support for XCB dpms]) ],
       [ have_ecore_x_xcb_dpms="no" ])
 
     PKG_CHECK_MODULES(XCB_RANDR, xcb-randr,
       [ have_ecore_x_xcb_randr="yes"
-      AC_DEFINE(ECORE_XCB_RANDR, 1, [Build support for XCB randr]) ],
+        AC_DEFINE(ECORE_XCB_RANDR, 1, [Build support for XCB randr]) ],
       [ have_ecore_x_xcb_randr="no" ])
 
     PKG_CHECK_MODULES(XCB_RENDER, xcb-render,
       [ have_ecore_x_xcb_render="yes"
-      AC_DEFINE(ECORE_XCB_RENDER, 1, [Build support for XCB render]) ],
+        AC_DEFINE(ECORE_XCB_RENDER, 1, [Build support for XCB render]) ],
       [ have_ecore_x_xcb_render="no" ])
 
     PKG_CHECK_MODULES(XCB_SCREENSAVER, xcb-screensaver,
       [ have_ecore_x_xcb_screensaver="yes"
-      AC_DEFINE(ECORE_XCB_SCREENSAVER, 1, [Build support for XCB screensaver]) ],
+        AC_DEFINE(ECORE_XCB_SCREENSAVER, 1, [Build support for XCB screensaver]) ],
       [ have_ecore_x_xcb_screensaver="no" ])
 
     PKG_CHECK_MODULES(XCB_SHAPE, xcb-shape,
       [ have_ecore_x_xcb_shape="yes"
-      AC_DEFINE(ECORE_XCB_SHAPE, 1, [Build support for XCB shape]) ],
+        AC_DEFINE(ECORE_XCB_SHAPE, 1, [Build support for XCB shape]) ],
       [ have_ecore_x_xcb_shape="no" ])
 
     PKG_CHECK_MODULES(XCB_SYNC, xcb-sync,
       [ have_ecore_x_xcb_sync="yes"
-      AC_DEFINE(ECORE_XCB_SYNC, 1, [Build support for XCB sync]) ],
+        AC_DEFINE(ECORE_XCB_SYNC, 1, [Build support for XCB sync]) ],
       [ have_ecore_x_xcb_sync="no" ])
 
     PKG_CHECK_MODULES(XCB_XFIXES, xcb-xfixes,
       [ have_ecore_x_xcb_xfixes="yes"
-      AC_DEFINE(ECORE_XCB_FIXES, 1, [Build support for XCB xfixes]) ],
+        AC_DEFINE(ECORE_XCB_FIXES, 1, [Build support for XCB xfixes]) ],
       [ have_ecore_x_xcb_xfixes="no" ])
 
     PKG_CHECK_MODULES(XCB_XINERAMA, xcb-xinerama,
       [ have_ecore_x_xcb_xinerama="yes"
-      AC_DEFINE(ECORE_XCB_XINERAMA, 1, [Build support for XCB xinerama]) ],
+        AC_DEFINE(ECORE_XCB_XINERAMA, 1, [Build support for XCB xinerama]) ],
       [ have_ecore_x_xcb_xinerama="no" ])
 
     PKG_CHECK_MODULES(XCB_XPRINT, xcb-xprint,
       [ have_ecore_x_xcb_xprint="yes"
-      AC_DEFINE(ECORE_XCB_XPRINT, 1, [Build support for XCB xprint]) ],
+        AC_DEFINE(ECORE_XCB_XPRINT, 1, [Build support for XCB xprint]) ],
       [ have_ecore_x_xcb_xprint="no" ])
 
     PKG_CHECK_MODULES(XCB_XTEST, xcb-xtest,
       [ have_ecore_x_xcb_xtest="yes"
-      AC_DEFINE(ECORE_XCB_XTEST, 1, [Build support for XCB xtest]) ],
+        AC_DEFINE(ECORE_XCB_XTEST, 1, [Build support for XCB xtest]) ],
       [ have_ecore_x_xcb_xtest="no" ])
 
-    AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module (XCB backend)])
-    AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB backend is enabled.])
+    AC_DEFINE(HAVE_ECORE_X_XCB, 1, [Defined to 1 if XCB is enabled.])
+
+    x_cflags=$XCB_CFLAGS
+    x_libs=$XCB_LIBS
+    have_x="yes"
 
     have_ecore_x_xcb_define="-DHAVE_ECORE_X_XCB"
-    have_ecore_x="yes"
     AC_SUBST(have_ecore_x_xcb_define)
   fi
 fi
 
-x_dir="";
-x_includes="";
-x_cflags="";
-x_libs="";
-if test "x$have_ecore_x_xcb" != "xyes" ; then
-  have_x="no"
+if ! test "x$have_ecore_x_xcb" = "xyes" ; then
   AC_PATH_XTRA
   AC_CHECK_HEADER(X11/X.h,
     [
-     have_x="yes"
      if test "x$want_evas_simple_x11" = "xyes"; then
        x_libs="${x_libs} -lX11 -lXext"
      else
@@ -337,17 +341,11 @@ if test "x$have_ecore_x_xcb" != "xyes" ; then
        x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
        x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
      fi
+     have_ecore_x_xlib="yes"
     ]
   )
 
-  AC_SUBST(x_cflags)
-  AC_SUBST(x_includes)
-  AC_SUBST(x_libs)
-
-  ECORE_CHECK_MODULE([X], [yes], [$have_x],
-    [ecore_x_libs="$ecore_x_libs $x_libs"])
-
-  if test "x$have_ecore_x" = "xyes"; then
+  if test "x$have_ecore_x_xlib" = "xyes"; then
     Xcursor_libs=""
     Xcursor_cflags=""
     use_Xcursor="no"
@@ -395,108 +393,141 @@ if test "x$have_ecore_x_xcb" != "xyes" ; then
     ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
     ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
     ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
+
+    AC_DEFINE(HAVE_ECORE_X_XLIB, 1, [Defined to 1 if Xlib is enabled.])
+    have_x="yes"
+
+    have_ecore_x_xlib="yes"
   fi
 fi
 
+AC_SUBST(x_cflags)
+AC_SUBST(x_includes)
+AC_SUBST(x_libs)
+
+ECORE_CHECK_MODULE([X], [yes], [$have_x],
+  [ecore_x_libs="$ecore_x_libs $x_libs"])
+
 dnl ecore_evas_x11
-have_ecore_evas_x11="no"
-have_ecore_evas_x11_gl="no";
-have_ecore_evas_xrender="no";
-have_ecore_evas_x11_16="no";
+have_ecore_evas_software_x11="no"
+have_ecore_evas_xrender_x11="no";
+have_ecore_evas_opengl_x11="no";
+have_ecore_evas_software_xcb="no"
+have_ecore_evas_xrender_xcb="no";
+have_ecore_evas_software_16_x11="no";
 if test "x$have_ecore_x" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
-  dnl ecore_evas_x11
-  want_ecore_evas_x11=yes
-  dnl disabling this will make things go haywire
-  #AC_ARG_ENABLE(ecore-evas-x11,
-  #  AC_HELP_STRING(
-  #    [--enable-ecore-evas-x11],
-  #    [enable X11 support in the ecore_evas module.]
-  #  ),
-  #  [ want_ecore_evas_x11=$enableval ]
-  #)
-  AC_MSG_CHECKING(whether ecore_evas x11 support is to be built)
-  AC_MSG_RESULT($want_ecore_evas_x11)
 
-  if test "x$want_ecore_evas_x11" = "xyes"; then
-    PKG_CHECK_MODULES(EVAS_SOFTWARE_X11, evas-software-x11, [
-        AC_DEFINE(BUILD_ECORE_EVAS_X11, 1, [Support for X11 Engine in Ecore_Evas])
-        have_ecore_evas_x11="yes";
-    ], [
-        have_ecore_evas_x11="no";
-    ])
-  fi
+  dnl ecore_evas_x Xlib
+  if test "x$have_ecore_x_xlib" = "xyes"; then
+    want_ecore_evas_software_x11="yes"
+    dnl disabling this will make things go haywire
+    #AC_ARG_ENABLE(ecore-evas-x11,
+    #  AC_HELP_STRING(
+    #    [--enable-ecore-evas-x11],
+    #    [enable X11 support in the ecore_evas module.]
+    #  ),
+    #  [ want_ecore_evas_x11=$enableval ]
+    #)
+    AC_MSG_CHECKING(whether ecore_evas Software Xlib support is to be built)
+    AC_MSG_RESULT($want_ecore_evas_software_x11)
 
-  dnl ecore_evas_x11_gl
-  want_ecore_evas_x11_gl=yes
-  AC_ARG_ENABLE(ecore-evas-x11-gl,
-    AC_HELP_STRING(
-      [--enable-ecore-evas-x11-gl],
-      [enable X11 GL support in the ecore_evas module.]
-    ),
-    [ want_ecore_evas_x11_gl=$enableval ]
-  )
-  AC_MSG_CHECKING(whether ecore_evas x11 gl support is to be built)
-  AC_MSG_RESULT($want_ecore_evas_x11_gl)
+    if test "x$want_ecore_evas_software_x11" = "xyes"; then
+      PKG_CHECK_MODULES(EVAS_SOFTWARE_X11, evas-software-x11, [
+          AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_X11, 1, [Support for Software Xlib Engine in Ecore_Evas])
+          have_ecore_evas_software_x11="yes";
+      ], [
+          have_ecore_evas_software_x11="no";
+      ])
+    fi
 
-  if test "x$want_ecore_evas_x11_gl" = "xyes"; then
-    PKG_CHECK_MODULES(EVAS_OPENGL_X11, evas-opengl-x11, [
-        AC_DEFINE(BUILD_ECORE_EVAS_X11_GL, 1, [Support for GL Engine in Ecore_Evas])
-        have_ecore_evas_x11_gl="yes";
-    ], [
-        have_ecore_evas_x11_gl="no"
-    ])
-  fi
-
-  dnl ecore_evas_xrender
-  want_ecore_evas_xrender=yes
-  AC_ARG_ENABLE(ecore-evas-xrender,
-    AC_HELP_STRING(
-      [--disable-ecore-evas-xrender],
-      [disable XRender support in the ecore_evas module. [[default=enabled]]]
-    ),
-    [ want_ecore_evas_xrender=$enableval ]
-  )
-
-  AC_MSG_CHECKING(whether ecore_evas xrender support is to be built)
-  AC_MSG_RESULT($want_ecore_evas_xrender)
-
-  if test "x$want_ecore_evas_xrender" = "xyes"; then
-    PKG_CHECK_MODULES(EVAS_XRENDER_X11, evas-xrender-x11, [
-        AC_DEFINE(BUILD_ECORE_EVAS_XRENDER, 1, [Support for XRender Engine in Ecore_Evas])
-        have_ecore_evas_xrender="yes"
-    ], [
-        have_ecore_evas_xrender="no"
-    ])
-  fi
-
-  dnl ecore_evas_x11_16
-  want_ecore_evas_x11_16=no
-  AC_ARG_ENABLE(ecore-evas-x11-16,
-    AC_HELP_STRING(
-      [--enable-ecore-evas-x11-16],
-      [enable 16bpp optimized mode support in the ecore_evas module. [[default=disabled]]]
-    ),
-    [ want_ecore_evas_x11_16=$enableval ]
-  )
-
-  AC_MSG_CHECKING(whether ecore_evas x11-16 support is to be built)
-  AC_MSG_RESULT($want_ecore_evas_x11_16)
-
-  if test "x$want_ecore_evas_x11_16" = "xyes"; then
-    PKG_CHECK_MODULES(EVAS_SOFTWARE_16_X11, evas-software-16-x11,
-      [
-        AC_DEFINE(BUILD_ECORE_EVAS_X11_16, 1, [Support for X11 16bpp Engine in Ecore_Evas])
-        have_ecore_evas_x11_16="yes";
-      ]
+    dnl ecore_evas_opengl_x11
+    want_ecore_evas_opengl_x11=yes
+    AC_ARG_ENABLE(ecore-evas-opengl-x11,
+      AC_HELP_STRING(
+        [--enable-ecore-evas-opengl-x11],
+        [enable OpenGL Xlib support in the ecore_evas module.]
+      ),
+      [ want_ecore_evas_opengl_x11=$enableval ]
     )
+    AC_MSG_CHECKING(whether ecore_evas OpenGL Xlib support is to be built)
+    AC_MSG_RESULT($want_ecore_evas_opengl_x11)
+
+    if test "x$want_ecore_evas_opengl_x11" = "xyes"; then
+      PKG_CHECK_MODULES(EVAS_OPENGL_X11, evas-opengl-x11, [
+          AC_DEFINE(BUILD_ECORE_EVAS_OPENGL_X11, 1, [Support for OpenGL Xlib Engine in Ecore_Evas])
+          have_ecore_evas_opengl_x11="yes";
+      ], [
+          have_ecore_evas_opengl_x11="no"
+      ])
+    fi
+
+    dnl ecore_evas_xrender_x11
+    want_ecore_evas_xrender_x11="yes"
+    AC_ARG_ENABLE(ecore-evas-xrender-x11,
+      AC_HELP_STRING(
+        [--disable-ecore-evas-xrender-x11],
+        [disable XRender Xlib support in the ecore_evas module. [[default=enabled]]]
+      ),
+      [ want_ecore_evas_xrender_x11=$enableval ]
+    )
+
+    AC_MSG_CHECKING(whether ecore_evas XRender Xlib support is to be built)
+    AC_MSG_RESULT($want_ecore_evas_xrender_x11)
+
+    if test "x$want_ecore_evas_xrender_x11" = "xyes"; then
+      PKG_CHECK_MODULES(EVAS_XRENDER_X11, evas-xrender-x11, [
+          AC_DEFINE(BUILD_ECORE_EVAS_XRENDER_X11, 1, [Support for XRender Xlib Engine in Ecore_Evas])
+          have_ecore_evas_xrender_x11="yes"
+      ], [
+          have_ecore_evas_xrender_x11="no"
+      ])
+    fi
+
+    dnl ecore_evas_software_16_x11
+    want_ecore_evas_software_16_x11=no
+    AC_ARG_ENABLE(ecore-evas-software-16-x11,
+      AC_HELP_STRING(
+        [--enable-ecore-evas-software-16-x11],
+        [enable 16bpp optimized mode support in the ecore_evas module. [[default=disabled]]]
+      ),
+      [ want_ecore_evas_software_16_x11=$enableval ]
+    )
+
+    AC_MSG_CHECKING(whether ecore_evas x11-16 support is to be built)
+    AC_MSG_RESULT($want_ecore_evas_software_16_x11)
+
+    if test "x$want_ecore_evas_software_16_x11" = "xyes"; then
+      PKG_CHECK_MODULES(EVAS_SOFTWARE_16_X11, evas-software-16-x11,
+        [
+          AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_16_X11, 1, [Support for X11 16bpp Engine in Ecore_Evas])
+          have_ecore_evas_software_16_x11="yes";
+        ]
+      )
+    fi
+  else
+    want_ecore_evas_software_xcb="yes"
+    ECORE_EVAS_CHECK_MODULE([software-xcb],
+      [$want_ecore_evas_software_xcb],
+      [Software XCB],
+      $have_ecore_x_xcb)
+
+    want_ecore_evas_xrender_xcb="auto"
+    ECORE_EVAS_CHECK_MODULE([xrender-xcb],
+      [$want_ecore_evas_xrender_xcb],
+      [XRender XCB],
+      $have_ecore_x_xcb)
   fi
 
-  if test "x$have_ecore_evas_x11" = "xyes" -o \
-	  "x$have_ecore_evas_x11_gl" = "yes" -o \
-	  "x$have_ecore_evas_xrender" = "yes" -o \
-	  "x$have_ecore_evas_x11_16" = "yes"; then
+  if test "x$have_ecore_evas_software_x11" = "xyes" -o \
+	  "x$have_ecore_evas_opengl_x11" = "yes" -o \
+	  "x$have_ecore_evas_xrender_x11" = "yes" -o \
+	  "x$have_ecore_evas_software_16_x11" = "yes" -o \
+          "x$have_ecore_evas_software_xcb" = "xyes" -o \
+	  "x$have_ecore_evas_xrender_xcb" = "yes"; then
+    AC_DEFINE(BUILD_ECORE_EVAS_X11, 1, [Support for X Window Engines in Ecore_Evas])
     requirements_ecore_evas="$requirements_ecore_evas ecore-x"
   fi
+
 fi
 
 dnl ecore_win32
@@ -786,16 +817,9 @@ AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_sdl)
 
 # set up conditionals
-AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes -a $have_ecore_x_xcb = no)
+AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes)
+AM_CONDITIONAL(BUILD_ECORE_X_XLIB, test $have_ecore_x_xlib = yes)
 AM_CONDITIONAL(BUILD_ECORE_X_XCB, test $have_ecore_x_xcb = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_SDL, test $have_ecore_evas_sdl = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_X11, test $have_ecore_evas_x11 = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_X11_GL, test $have_ecore_evas_x11_gl = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_XRENDER, test $have_ecore_evas_xrender = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_X11_16, test $have_ecore_evas_x11_16 = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test $have_ecore_evas_dfb = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, test $have_ecore_evas_fb = yes)
-AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, test $have_ecore_evas_buffer = yes)
 
 AC_OUTPUT([
 Makefile
@@ -822,6 +846,8 @@ src/lib/Makefile
 src/lib/ecore/Makefile
 src/lib/ecore_job/Makefile
 src/lib/ecore_x/Makefile
+src/lib/ecore_x/xlib/Makefile
+src/lib/ecore_x/xcb/Makefile
 src/lib/ecore_fb/Makefile
 src/lib/ecore_sdl/Makefile
 src/lib/ecore_evas/Makefile
@@ -873,22 +899,22 @@ echo
 echo " Graphic systems:"
 echo
 
-if test "x$have_ecore_x_xcb" = "xyes" ; then
-  echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb"
-  echo "    Xprint.....................: $have_ecore_x_xcb_xprint"
-  echo "    Xinerama...................: $have_ecore_x_xcb_xinerama"
-  echo "    Xrandr.....................: $have_ecore_x_xcb_randr"
-  echo "    Xscreensaver...............: $have_ecore_x_xcb_screensaver"
-  echo "    Xshape.....................: $have_ecore_x_xcb_shape"
-  echo "    Xsync......................: $have_ecore_x_xcb_sync"
-  echo "    Xrender....................: $have_ecore_x_xcb_render"
-  echo "    Xcomposite.................: $have_ecore_x_xcb_composite"
-  echo "    Xfixes.....................: $have_ecore_x_xcb_xfixes"
-  echo "    Xdamage....................: $have_ecore_x_xcb_damage"
-  echo "    Xdpms......................: $have_ecore_x_xcb_dpms"
-  echo "    Xtest......................: $have_ecore_x_xcb_xtest"
-else
-  if test "x$have_ecore_x" = "xyes" ; then
+if test "x$have_ecore_x" = "xyes" ; then
+  if test "x$have_ecore_x_xcb" = "xyes" ; then
+    echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb"
+    echo "    Xprint.....................: $have_ecore_x_xcb_xprint"
+    echo "    Xinerama...................: $have_ecore_x_xcb_xinerama"
+    echo "    Xrandr.....................: $have_ecore_x_xcb_randr"
+    echo "    Xscreensaver...............: $have_ecore_x_xcb_screensaver"
+    echo "    Xshape.....................: $have_ecore_x_xcb_shape"
+    echo "    Xsync......................: $have_ecore_x_xcb_sync"
+    echo "    Xrender....................: $have_ecore_x_xcb_render"
+    echo "    Xcomposite.................: $have_ecore_x_xcb_composite"
+    echo "    Xfixes.....................: $have_ecore_x_xcb_xfixes"
+    echo "    Xdamage....................: $have_ecore_x_xcb_damage"
+    echo "    Xdpms......................: $have_ecore_x_xcb_dpms"
+    echo "    Xtest......................: $have_ecore_x_xcb_xtest"
+  else
     echo "  Ecore_X (Xlib backend).......: $have_ecore_x"
     echo "    Xcursor....................: $use_Xcursor"
     echo "    Xprint.....................: $use_xprint"
@@ -901,9 +927,9 @@ else
     echo "    Xdamage....................: $use_xdamage"
     echo "    Xdpms......................: $use_xdpms"
     echo "    Xtest......................: $use_xtest"
-  else
-    echo "  Ecore_X......................: $have_ecore_x"
   fi
+else
+  echo "  Ecore_X......................: $have_ecore_x"
 fi
 echo "  Ecore_Win32..................: $have_ecore_win32"
 echo "  Ecore_SDL....................: $have_ecore_sdl"
@@ -918,16 +944,18 @@ echo
 echo "  Ecore_Evas...................: $have_ecore_evas"
 if test "x$have_ecore_evas" = "xyes" ; then
   echo "    Software Memory Buffer.....: $have_ecore_evas_buffer"
-  echo "    Software X11...............: $have_ecore_evas_x11"
-  echo "    XRender X11................: $have_ecore_evas_xrender"
-  echo "    OpenGL X11.................: $have_ecore_evas_x11_gl"
+  echo "    Software X11...............: $have_ecore_evas_software_x11"
+  echo "    XRender X11................: $have_ecore_evas_xrender_x11"
+  echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11"
+  echo "    Software XCB...............: $have_ecore_evas_software_xcb"
+  echo "    XRender XCB................: $have_ecore_evas_xrender_xcb"
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
   echo "    Direct3D...................: $have_ecore_evas_direct3d"
   echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"
   echo "    Software SDL...............: $have_ecore_evas_sdl"
   echo "    DirectFB...................: $have_ecore_evas_dfb"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
-  echo "    Software 16bit X11.........: $have_ecore_evas_x11_16"
+  echo "    Software 16bit X11.........: $have_ecore_evas_software_16_x11"
   echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
 fi

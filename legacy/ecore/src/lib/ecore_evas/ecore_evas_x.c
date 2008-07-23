@@ -2,7 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#ifdef _HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
@@ -49,9 +49,9 @@ xcb_visualtype_get(xcb_screen_t *screen, xcb_visualid_t visual)
 
    return NULL;
 }
-#endif /* HAVE_ECORE_X_XCB*/
+#endif /* HAVE_ECORE_X_XCB */
 
-#ifdef BUILD_ECORE_EVAS_X11_GL
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 # ifdef HAVE_ECORE_X_XCB
 /* noop */
 # else
@@ -426,10 +426,10 @@ _ecore_evas_x_match(Ecore_X_Window win)
 static void
 _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 {
-   if (!strcmp(ee->driver, "software_x11"))
+   if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
-#ifdef BUILD_ECORE_EVAS_X11
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	Evas_Engine_Info_Software_Xcb *einfo;
 
 	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
@@ -437,21 +437,21 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	if (einfo)
 	  {
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
              xcb_rectangle_t     rectangle;
 	     Ecore_X_GC          gc;
              uint32_t            value_list;
 # else
 	     GC gc;
 	     XGCValues gcv;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
              gc = xcb_generate_id(ecore_x_connection_get());
 	     value_list = 0;
              xcb_create_gc(ecore_x_connection_get(), gc, ee->engine.x.mask,
@@ -471,17 +471,17 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 			    0, 0, ee->w, ee->h);
 	     XFreeGC(ecore_x_display_get(), gc);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	  }
-#endif /* BUILD_ECORE_EVAS_X11 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
-   else if (!strcmp(ee->driver, "xrender_x11"))
+   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
      {
-#ifdef BUILD_ECORE_EVAS_XRENDER
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 	Evas_Engine_Info_XRender_Xcb *einfo;
 
 	einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
@@ -489,21 +489,21 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	Evas_Engine_Info_XRender_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 	if (einfo)
 	  {
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
              xcb_rectangle_t rectangle;
 	     Ecore_X_GC      gc;
              uint32_t        value_list;
 # else
 	     GC gc;
 	     XGCValues gcv;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
              gc = xcb_generate_id(ecore_x_connection_get());
 	     value_list = 0;
 	     xcb_create_gc(ecore_x_connection_get(), gc, ee->engine.x.mask,
@@ -523,18 +523,18 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 			    0, 0, ee->w, ee->h);
 	     XFreeGC(ecore_x_display_get(), gc);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 
 	  }
-#endif /* BUILD_ECORE_EVAS_XRENDER */
+#endif /* BUILD_ECORE_EVAS_XRENDER_X11 || BUILD_ECORE_EVAS_XRENDER_XCB */
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
      {
-#if BUILD_ECORE_EVAS_X11_16
-#if 0 /* XXX no shaped window support for software_16_x11 */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
+# if 0 /* XXX no shaped window support for software_16_x11 */
 	Evas_Engine_Info_Software_16_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_16_X11 *)evas_engine_info_get(ee->evas);
@@ -549,8 +549,8 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	  }
-#endif /* XXX no shaped window support for software_16_x11 */
-#endif /* BUILD_ECORE_EVAS_X11_16 */
+# endif /* XXX no shaped window support for software_16_x11 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }
 
@@ -962,7 +962,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
    if (ee->prop.avoid_damage)
      {
 #ifdef HAVE_ECORE_X_XCB
-#warning [XCB] No Region code
+# warning [XCB] No Region code
 #else
 	XRectangle xr;
 	Region tmpr;
@@ -991,7 +991,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 	XDestroyRegion(ee->engine.x.damages);
 	ee->engine.x.damages = tmpr;
  */
-#endif /* HAVE_ECORE_X_XCB */
+#endif /* ! HAVE_ECORE_X_XCB */
      }
    else
      {
@@ -1365,18 +1365,18 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
    if (ee->engine.x.gc) ecore_x_gc_del(ee->engine.x.gc);
 #ifdef HAVE_ECORE_X_XCB
-#warning [XCB] No Region code
+# warning [XCB] No Region code
 #else
    if (ee->engine.x.damages) XDestroyRegion(ee->engine.x.damages);
-#endif /* HAVE_ECORE_X_XCB */
+#endif /* ! HAVE_ECORE_X_XCB */
    ee->engine.x.pmap = 0;
    ee->engine.x.mask = 0;
    ee->engine.x.gc = 0;
 #ifdef HAVE_ECORE_X_XCB
-#warning [XCB] No Region code
+# warning [XCB] No Region code
 #else
    ee->engine.x.damages = 0;
-#endif /* HAVE_ECORE_X_XCB */
+#endif /* ! HAVE_ECORE_X_XCB */
    ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    while (ee->engine.x.win_extra)
      {
@@ -1634,27 +1634,28 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 {
    if (ee->rotation == rotation) return;
    if (!strcmp(ee->driver, "gl_x11")) return;
-   if (!strcmp(ee->driver, "software_x11"))
+   if (!strcmp(ee->driver, "xrender_x11")) return;
+   if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
-#ifdef BUILD_ECORE_EVAS_X11
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	Evas_Engine_Info_Software_Xcb *einfo;
 
 	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-#else
+# else
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-#endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	if (!einfo) return;
 	einfo->info.rotation = rotation;
 	_ecore_evas_x_rotation_set_internal
 	  (ee, rotation, (Evas_Engine_Info *)einfo);
-#endif /* BUILD_ECORE_EVAS_X11 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
    else if (!strcmp(ee->driver,  "software_16_x11"))
      {
-#if BUILD_ECORE_EVAS_X11_16
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 	Evas_Engine_Info_Software_16_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_16_X11 *)evas_engine_info_get(ee->evas);
@@ -1662,7 +1663,7 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 	einfo->info.rotation = rotation;
 	_ecore_evas_x_rotation_set_internal
 	  (ee, rotation, (Evas_Engine_Info *)einfo);
-#endif /* BUILD_ECORE_EVAS_X11_16 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }
 
@@ -1671,36 +1672,37 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 {
    if (((ee->shaped) && (shaped)) || ((!ee->shaped) && (!shaped)))
      return;
-   if (!strcmp(ee->driver, "software_x11"))
+   if (!strcmp(ee->driver, "gl_x11")) return;
+   if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
-#ifdef BUILD_ECORE_EVAS_X11
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	Evas_Engine_Info_Software_Xcb *einfo;
 
 	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-#else
+# else
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-#endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	ee->shaped = shaped;
 	if (einfo)
 	  {
 	     if (ee->shaped)
 	       {
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
                   xcb_rectangle_t rectangle;
 		  Ecore_X_GC      gc;
 		  uint32_t        value_list;
-#else
+# else
 		  GC gc;
 		  XGCValues gcv;
-#endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 		  if (!ee->engine.x.mask)
 		    ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
                   gc = xcb_generate_id(ecore_x_connection_get());
 		  value_list = 0;
 		  xcb_create_gc(ecore_x_connection_get(),
@@ -1723,7 +1725,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 				 0, 0, ee->w, ee->h);
 		  XFreeGC(ecore_x_display_get(), gc);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1739,39 +1741,39 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	       }
 	  }
-#endif /* BUILD_ECORE_EVAS_X11 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
-   else if (!strcmp(ee->driver, "xrender_x11"))
+   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
      {
-#ifdef BUILD_ECORE_EVAS_XRENDER
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 	Evas_Engine_Info_XRender_Xcb *einfo;
 # else
 	Evas_Engine_Info_XRender_X11 *einfo;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 	ee->shaped = shaped;
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 	einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
 # else
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 	if (einfo)
 	  {
 	     if (ee->shaped)
 	       {
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
                   xcb_rectangle_t rectangle;
 		  Ecore_X_GC      gc;
 		  uint32_t        value_list;
 # else
 		  GC gc;
 		  XGCValues gcv;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 		  if (!ee->engine.x.mask)
 		    ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
                   gc = xcb_generate_id(ecore_x_connection_get());
 		  value_list = 0;
 		  xcb_create_gc(ecore_x_connection_get(),
@@ -1794,7 +1796,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 				 0, 0, ee->w, ee->h);
 		  XFreeGC(ecore_x_display_get(), gc);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1810,12 +1812,12 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	       }
 	  }
-#endif
+#endif /* BUILD_ECORE_EVAS_XRENDER_X11 || BUILD_ECORE_EVAS_XRENDER_XCB */
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
      {
-#if BUILD_ECORE_EVAS_X11_16
-#if 0 /* XXX no shaped window support for software_16_x11 */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
+# if 0 /* XXX no shaped window support for software_16_x11 */
 	Evas_Engine_Info_Software_16_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_16_X11 *)evas_engine_info_get(ee->evas);
@@ -1841,8 +1843,8 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
 	       }
 	  }
-#endif /* XXX no shaped window support for software_16_x11 */
-#endif /* BUILD_ECORE_EVAS_X11_16 */
+# endif /* XXX no shaped window support for software_16_x11 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 
 }
@@ -1858,15 +1860,15 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
    xcb_get_window_attributes_reply_t *reply_attr;
 #else
    XWindowAttributes att;
-#endif /* HAVE_ECORE_X_XCB */
+#endif /* ! HAVE_ECORE_X_XCB */
 
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha)))
      return;
 
-   if (!strcmp(ee->driver, "software_x11"))
+   if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
-#ifdef BUILD_ECORE_EVAS_X11
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	Evas_Engine_Info_Software_Xcb *einfo;
 
 	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
@@ -1874,7 +1876,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-#endif /* HAVE_ECORE_X_XCB */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	if (!einfo) return;
 
@@ -1906,7 +1908,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	einfo->info.destination_alpha = alpha;
 
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	cookie_geom = xcb_get_geometry_unchecked(ecore_x_connection_get(), ee->engine.x.win);
 	cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
 
@@ -1922,7 +1924,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	einfo->info.visual = att.visual;
 	einfo->info.colormap = att.colormap;
 	einfo->info.depth = att.depth;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 //	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 //	ee->engine.x.mask = 0;
@@ -1941,12 +1943,12 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     ecore_x_icccm_title_set(ee->engine.x.win, ee->prop.title);
 	     ecore_x_netwm_name_set(ee->engine.x.win, ee->prop.title);
 	  }
-#endif /* BUILD_ECORE_EVAS_X11 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
-   else if (!strcmp(ee->driver, "xrender_x11"))
+   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
      {
-#ifdef BUILD_ECORE_EVAS_XRENDER
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 	Evas_Engine_Info_XRender_Xcb *einfo;
 
 	einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
@@ -1954,7 +1956,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	Evas_Engine_Info_XRender_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 	if (!einfo) return;
 	if (!ecore_x_composite_query()) return;
@@ -1985,7 +1987,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	einfo->info.destination_alpha = alpha;
 
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 	cookie_attr = xcb_get_window_attributes_unchecked(ecore_x_connection_get(), ee->engine.x.win);
 	reply_attr = xcb_get_window_attributes_reply(ecore_x_connection_get(), cookie_attr, NULL);
 
@@ -1994,7 +1996,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 # else
 	XGetWindowAttributes(ecore_x_display_get(), ee->engine.x.win, &att);
 	einfo->info.visual = att.visual;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 //	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 //	ee->engine.x.mask = 0;
@@ -2013,11 +2015,11 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     ecore_x_icccm_title_set(ee->engine.x.win, ee->prop.title);
 	     ecore_x_netwm_name_set(ee->engine.x.win, ee->prop.title);
 	  }
-#endif
+#endif /* BUILD_ECORE_EVAS_XRENDER_X11 || BUILD_ECORE_EVAS_XRENDER_XCB */
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
      {
-#if BUILD_ECORE_EVAS_X11_16
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 	Evas_Engine_Info_Software_16_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_16_X11 *)evas_engine_info_get(ee->evas);
@@ -2047,15 +2049,15 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     ecore_x_window_shape_input_mask_set(ee->engine.x.win, 0);
 	  }
 
-#if 0 /* XXX no alpha window support for software_16_x11 */
+# if 0 /* XXX no alpha window support for software_16_x11 */
 	einfo->info.destination_alpha = alpha;
-#endif /* XXX no alpha window support for software_16_x11 */
+# endif /* XXX no alpha window support for software_16_x11 */
 
-#if 0 /* XXX no shaped window support for software_16_x11 */
+# if 0 /* XXX no shaped window support for software_16_x11 */
 //	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 //	ee->engine.x.mask = 0;
         einfo->info.mask = ee->engine.x.mask;
-#endif /* XXX no shaped window support for software_16_x11 */
+# endif /* XXX no shaped window support for software_16_x11 */
 
 	einfo->info.drawable = ee->engine.x.win;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -2071,19 +2073,19 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     ecore_x_icccm_title_set(ee->engine.x.win, ee->prop.title);
 	     ecore_x_netwm_name_set(ee->engine.x.win, ee->prop.title);
 	  }
-#endif /* BUILD_ECORE_EVAS_X11_16 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }
-#endif
+#endif /* BUILD_ECORE_EVAS_X11 */
 
 static void *
 _ecore_evas_x_window_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_X11
-   return (void *) ee->engine.x.win;
+  return (void *) (long)ee->engine.x.win;
 #else
    return 0;
-#endif
+#endif /* BUILD_ECORE_EVAS_X11 */
 }
 
 #ifdef BUILD_ECORE_EVAS_X11
@@ -2384,7 +2386,7 @@ _ecore_evas_x_reinit_win(Ecore_Evas *ee)
      }
    else if (!strcmp(ee->driver, "xrender_x11"))
      {
-#ifdef BUILD_ECORE_EVAS_XRENDER
+#ifdef BUILD_ECORE_EVAS_XRENDER_X11
 	Evas_Engine_Info_XRender_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
@@ -2397,7 +2399,7 @@ _ecore_evas_x_reinit_win(Ecore_Evas *ee)
      }
    else if (!strcmp(ee->driver, "gl_x11"))
      {
-#ifdef BUILD_ECORE_EVAS_X11_GL
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 	Evas_Engine_Info_GL_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
@@ -2444,21 +2446,23 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 {
    if (ee->prop.avoid_damage == on) return;
    if (!strcmp(ee->driver, "gl_x11")) return;
+   if (!strcmp(ee->driver, "xrender_x11")) return;
 
    if ((!strcmp(ee->driver, "software_x11")) || (!strcmp(ee->driver, "software_xcb")))
      {
-#ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	Evas_Engine_Info_Software_Xcb *einfo;
-#else
+# else
 	Evas_Engine_Info_Software_X11 *einfo;
-#endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	ee->prop.avoid_damage = on;
-#ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-#else
+# else
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-#endif /* HAVE_ECORE_X_XCB */
+# endif /* !BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	if (einfo)
 	  {
 	     if (ee->prop.avoid_damage)
@@ -2501,10 +2505,11 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	       }
 	  }
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
      {
-#if BUILD_ECORE_EVAS_X11_16
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 	Evas_Engine_Info_Software_16_X11 *einfo;
 	ee->prop.avoid_damage = on;
 
@@ -2544,7 +2549,7 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	       }
 	  }
-#endif /* BUILD_ECORE_EVAS_X11_16 */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }
 
@@ -2616,7 +2621,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_alpha_set,
      _ecore_evas_x_window_get
 };
-#endif
+#endif /* BUILD_ECORE_EVAS_X11 */
 
 /*
  * FIXME: there are some round trips. Especially, we can split
@@ -2632,22 +2637,22 @@ EAPI Ecore_Evas *
 ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 			    int x, int y, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_X11
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
    Evas_Engine_Info_Software_Xcb *einfo;
 # else
    Evas_Engine_Info_Software_X11 *einfo;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
    Ecore_Evas *ee;
    int argb = 0;
    int rmethod;
    static int redraw_debug = -1;
 
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
    rmethod = evas_render_method_lookup("software_xcb");
 # else
    rmethod = evas_render_method_lookup("software_x11");
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
    if (!rmethod) return NULL;
    if (!ecore_x_init(disp_name)) return NULL;
    ee = calloc(1, sizeof(Ecore_Evas));
@@ -2659,11 +2664,11 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
    ee->driver = "software_xcb";
 # else
    ee->driver = "software_x11";
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;
@@ -2710,22 +2715,22 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	 * for the '=' char */
 //	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
    einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
 # else
    einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
    if (einfo)
      {
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
         xcb_screen_iterator_t iter;
 	xcb_screen_t         *screen;
 # else
 	int screen;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	/* FIXME: this is inefficient as its a round trip */
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	screen = ecore_x_default_screen_get();
         iter = xcb_setup_roots_iterator (xcb_get_setup (ecore_x_connection_get()));
 	if (iter.rem > 1)
@@ -2791,7 +2796,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	if (redraw_debug < 0)
 	  {
@@ -2800,17 +2805,17 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	     else
 	       redraw_debug = 0;
 	  }
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
 	einfo->info.conn   = ecore_x_connection_get();
 	einfo->info.screen = screen;
 # else
 	einfo->info.display  = ecore_x_display_get();
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	einfo->info.drawable = ee->engine.x.win;
 	if (argb)
 	  {
 	/* FIXME: round trip */
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
              xcb_get_geometry_cookie_t          cookie_geom;
              xcb_get_window_attributes_cookie_t cookie_attr;
              xcb_get_geometry_reply_t          *reply_geom;
@@ -2841,11 +2846,11 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  einfo->info.depth    = at.depth;
 		  einfo->info.destination_alpha = 1;
 	       }
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	  }
 	else
 	  {
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
              xcb_screen_t *screen;
 
              screen = ecore_x_default_screen_get();
@@ -2856,7 +2861,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	     einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
 	     einfo->info.colormap = DefaultColormap(ecore_x_display_get(), screen);
 	     einfo->info.depth    = DefaultDepth(ecore_x_display_get(), screen);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	     einfo->info.destination_alpha = 0;
 	  }
 	einfo->info.rotation = 0;
@@ -2878,7 +2883,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    return ee;
 #else
    return NULL;
-#endif /* BUILD_ECORE_EVAS_X11 */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_X11 && ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 }
 
 /**
@@ -2889,7 +2894,11 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_software_x11_window_get(Ecore_Evas *ee)
 {
-   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+  return (Ecore_X_Window) (long)_ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -2900,7 +2909,11 @@ ecore_evas_software_x11_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee)
 {
-   return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+  return (Ecore_X_Window) (long)_ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif
 }
 
 /**
@@ -2911,7 +2924,7 @@ ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#ifdef BUILD_ECORE_EVAS_X11
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    ee->engine.x.direct_resize = on;
    if (ee->prop.avoid_damage)
      {
@@ -2944,7 +2957,7 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 EAPI int
 ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    return ee->engine.x.direct_resize;
 #else
    return 0;
@@ -2959,7 +2972,7 @@ ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
-#ifdef BUILD_ECORE_EVAS_X11
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    Ecore_X_Window *winp;
 
    winp = malloc(sizeof(Ecore_X_Window));
@@ -2982,7 +2995,7 @@ EAPI Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 		      int x, int y, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_X11_GL
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 # ifdef HAVE_ECORE_X_XCB
    Ecore_Evas *ee = NULL;
 # else
@@ -3063,7 +3076,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    parent = 0;
    x = y = w = h = 0;
    return NULL;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
 
 /**
@@ -3074,7 +3087,11 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
 {
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
 
 /**
@@ -3085,7 +3102,11 @@ ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee)
 {
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
 
 /**
@@ -3096,11 +3117,11 @@ ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#ifdef BUILD_ECORE_EVAS_X11
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    ee->engine.x.direct_resize = on;
 #else
    return;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
 
 /**
@@ -3111,11 +3132,11 @@ ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
 EAPI int
 ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return ee->engine.x.direct_resize;
 #else
    return 0;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
 
 /**
@@ -3126,7 +3147,9 @@ ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    ecore_evas_software_x11_extra_event_window_add(ee, win);
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
 
 /**
@@ -3138,20 +3161,20 @@ EAPI Ecore_Evas *
 ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 		      int x, int y, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_XRENDER
-# ifdef HAVE_ECORE_X_XCB
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
    Evas_Engine_Info_XRender_Xcb *einfo;
 # else
    Evas_Engine_Info_XRender_X11 *einfo;
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    Ecore_Evas *ee;
    int rmethod;
 
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
    rmethod = evas_render_method_lookup("xrender_xcb");
 # else
    rmethod = evas_render_method_lookup("xrender_x11");
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    if (!rmethod) return NULL;
    if (!ecore_x_init(disp_name)) return NULL;
    ee = calloc(1, sizeof(Ecore_Evas));
@@ -3163,11 +3186,11 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
    ee->driver = "xrender_xcb";
 # else
    ee->driver = "xrender_x11";
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;
@@ -3202,14 +3225,14 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	 * for the '=' char */
 //	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
    einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
 # else
    einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    if (einfo)
      {
-# ifdef HAVE_ECORE_X_XCB
+# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
         xcb_screen_iterator_t iter;
 	xcb_screen_t         *screen;
 
@@ -3288,7 +3311,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	  }
 	einfo->info.display  = ecore_x_display_get();
 	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
-# endif /* HAVE_ECORE_X_XCB */
+# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 	einfo->info.drawable = ee->engine.x.win;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
@@ -3307,7 +3330,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
    return ee;
 #else
    return NULL;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
 
 /**
@@ -3318,7 +3341,11 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
 {
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
 
 /**
@@ -3329,7 +3356,11 @@ ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee)
 {
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
 
 /**
@@ -3340,11 +3371,11 @@ ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#ifdef BUILD_ECORE_EVAS_X11
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    ee->engine.x.direct_resize = on;
 #else
    return;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
 
 /**
@@ -3355,11 +3386,11 @@ ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
 EAPI int
 ecore_evas_xrender_x11_direct_resize_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_X11
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return ee->engine.x.direct_resize;
 #else
    return 0;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
 
 /**
@@ -3370,7 +3401,11 @@ ecore_evas_xrender_x11_direct_resize_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    ecore_evas_software_x11_extra_event_window_add(ee, win);
+#else
+   return;
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
 
 /**
@@ -3382,7 +3417,7 @@ EAPI Ecore_Evas *
 ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
                                int x, int y, int w, int h)
 {
-#if BUILD_ECORE_EVAS_X11_16
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    Evas_Engine_Info_Software_16_X11 *einfo;
    Ecore_Evas *ee;
    int argb = 0;
@@ -3509,7 +3544,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
    return ee;
 #else
    return NULL;
-#endif /* BUILD_ECORE_EVAS_X11 */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
 
 /**
@@ -3520,7 +3555,11 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 EAPI Ecore_X_Window
 ecore_evas_software_x11_16_window_get(Ecore_Evas *ee)
 {
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
 
 /**
@@ -3531,7 +3570,11 @@ ecore_evas_software_x11_16_window_get(Ecore_Evas *ee)
 EAPI Ecore_X_Window
 ecore_evas_software_x11_16_subwindow_get(Ecore_Evas *ee)
 {
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
+#else
+   return 0;
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
 
 /**
@@ -3542,7 +3585,7 @@ ecore_evas_software_x11_16_subwindow_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#if BUILD_ECORE_EVAS_X11_16
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    ee->engine.x.direct_resize = on;
    if (ee->prop.avoid_damage)
      {
@@ -3564,7 +3607,7 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
      }
 #else
    return;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
 
 /**
@@ -3575,11 +3618,11 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
 EAPI int
 ecore_evas_software_x11_16_direct_resize_get(Ecore_Evas *ee)
 {
-#if BUILD_ECORE_EVAS_X11_16
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return ee->engine.x.direct_resize;
 #else
    return 0;
-#endif
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
 
 /**
@@ -3590,7 +3633,7 @@ ecore_evas_software_x11_16_direct_resize_get(Ecore_Evas *ee)
 EAPI void
 ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
-#if BUILD_ECORE_EVAS_X11_16
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    Ecore_X_Window *winp;
 
    winp = malloc(sizeof(Ecore_X_Window));
@@ -3601,5 +3644,5 @@ ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window
 	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
      }
 #else
-#endif
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }

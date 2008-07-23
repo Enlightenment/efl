@@ -28,7 +28,9 @@ _ecore_x_sync_init(const xcb_query_extension_reply_t *reply)
 {
 #ifdef ECORE_XCB_SYNC
    if (reply && (reply->present))
-      _ecore_xcb_sync_init_cookie = xcb_sync_initialize_unchecked(_ecore_xcb_conn);
+     _ecore_xcb_sync_init_cookie = xcb_sync_initialize_unchecked(_ecore_xcb_conn,
+                                                                 XCB_SYNC_MAJOR_VERSION,
+                                                                 XCB_SYNC_MINOR_VERSION);
 #endif /* ECORE_XCB_SYNC */
 }
 

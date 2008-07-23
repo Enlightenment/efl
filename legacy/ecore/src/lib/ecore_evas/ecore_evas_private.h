@@ -23,55 +23,57 @@
 #define ECORE_MAGIC_EVAS 0x76543211
 
 #ifndef BUILD_ECORE_DIRECTFB
-#undef BUILD_ECORE_EVAS_DIRECTFB
+# undef BUILD_ECORE_EVAS_DIRECTFB
 #endif
 
 #ifdef BUILD_ECORE_EVAS_X11
 # include "Ecore_X.h"
 # ifdef HAVE_ECORE_X_XCB
-#  include <Evas_Engine_Software_Xcb.h>
 #  include <xcb/xcb.h>
-#  ifdef ECORE_XCB_RENDER
-#   include <xcb/render.h>
+#  ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
+#   include <Evas_Engine_Software_Xcb.h>
 #  endif
-#  ifdef BUILD_ECORE_EVAS_XRENDER
+#  ifdef BUILD_ECORE_EVAS_XRENDER_XCB
+#   include <xcb/render.h>
 #   include <Evas_Engine_XRender_Xcb.h>
 #  endif
-# else
-#  include <Evas_Engine_Software_X11.h>
+# endif
+# ifdef HAVE_ECORE_X_XLIB
 #  include <X11/Xlib.h>
 #  include <X11/Xutil.h>
-#  ifdef ECORE_XRENDER
+#  ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+#   include <Evas_Engine_Software_X11.h>
+#  endif
+#  ifdef BUILD_ECORE_EVAS_XRENDER_X11
 #   include <X11/extensions/Xrender.h>
-#  endif
-#  ifdef BUILD_ECORE_EVAS_X11_GL
-#   include <Evas_Engine_GL_X11.h>
-#  endif
-#  ifdef BUILD_ECORE_EVAS_XRENDER
 #   include <Evas_Engine_XRender_X11.h>
+#  endif
+#  ifdef BUILD_ECORE_EVAS_OPENGL_X11
+#    include <Evas_Engine_GL_X11.h>
 #  endif
 #  ifdef BUILD_ECORE_EVAS_X11_16
 #   include <Evas_Engine_Software_16_X11.h>
 #  endif
-# endif /* HAVE_ECORE_X_XCB */
+# endif
 #endif
+
 #ifdef BUILD_ECORE_EVAS_FB
 # include <Evas_Engine_FB.h>
 #endif
+
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 # include <Evas_Engine_DirectFB.h>
 # include "Ecore_DirectFB.h"
 #endif
+
 #ifdef BUILD_ECORE_EVAS_BUFFER
 # include <Evas_Engine_Buffer.h>
 #endif
+
 #ifdef BUILD_ECORE_EVAS_WIN32
 # include "Ecore_Win32.h"
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 #  include <Evas_Engine_Software_DDraw.h>
-# endif
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-#  include <Evas_Engine_Software_16_DDraw.h>
 # endif
 # ifdef BUILD_ECORE_EVAS_DIRECT3D
 #  include <Evas_Engine_Direct3D.h>
@@ -79,7 +81,11 @@
 # ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
 #  include <Evas_Engine_GL_Glew.h>
 # endif
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
+#  include <Evas_Engine_Software_16_DDraw.h>
+# endif
 #endif
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 # include "Ecore_WinCE.h"
 # include <Evas_Engine_Software_16_WinCE.h>
@@ -146,7 +152,7 @@ struct _Ecore_Evas_Engine
 {
    Ecore_Evas_Engine_Func *func;
 
-#ifdef BUILD_ECORE_EVAS_X11
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    struct {
       Ecore_X_Window win_root;
       Ecore_X_Window win;
@@ -154,11 +160,11 @@ struct _Ecore_Evas_Engine
       Ecore_X_Pixmap pmap;
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;
-#ifdef HAVE_ECORE_X_XCB
-#warning [XCB] No Region code
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
+# warning [XCB] No Region code
 #else
       Region         damages;
-#endif /* HAVE_ECORE_X_XCB */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
       int            px, py, pw, ph;
       unsigned char  direct_resize : 1;
       unsigned char  using_bg_pixmap : 1;

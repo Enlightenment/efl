@@ -350,6 +350,8 @@ _ecore_x_event_handle_button_press(xcb_generic_event_t *event)
 	  e->win = ev->event;
 
 	e->event_win = ev->event;
+	e->same_screen = ev->same_screen;
+	e->root_win = ev->root;
 	e->time = ev->time;
 	_ecore_xcb_event_last_time = e->time;
 	_ecore_xcb_event_last_window = e->win;
@@ -395,6 +397,8 @@ _ecore_x_event_handle_button_press(xcb_generic_event_t *event)
 	     e->root.y = ev->root_y;
 	     if (ev->child) e->win = ev->child;
 	     else e->win = ev->event;
+	     e->same_screen = ev->same_screen;
+	     e->root_win = ev->root;
 	     e->event_win = ev->event;
 	     e->time = ev->time;
 	     _ecore_xcb_event_last_time = e->time;
@@ -426,6 +430,8 @@ _ecore_x_event_handle_button_press(xcb_generic_event_t *event)
 	     e->root.y = ev->root_y;
 	     if (ev->child) e->win = ev->child;
 	     else e->win = ev->event;
+	     e->same_screen = ev->same_screen;
+	     e->root_win = ev->root;
 	     e->event_win = ev->event;
 	     e->time = ev->time;
 	     if (e->win == e->event_win)
@@ -521,6 +527,8 @@ _ecore_x_event_handle_button_release(xcb_generic_event_t *event)
 	     e->root.y = ev->root_y;
 	     if (ev->child) e->win = ev->child;
 	     else e->win = ev->event;
+	     e->same_screen = ev->same_screen;
+	     e->root_win = ev->root;
 	     e->event_win = ev->event;
 	     e->time = ev->time;
 	     _ecore_xcb_event_last_time = e->time;
@@ -542,6 +550,8 @@ _ecore_x_event_handle_button_release(xcb_generic_event_t *event)
 	     e->root.y = ev->root_y;
 	     if (ev->child) e->win = ev->child;
 	     else e->win = ev->event;
+	     e->same_screen = ev->same_screen;
+	     e->root_win = ev->root;
 	     e->event_win = ev->event;
 	     e->time = ev->time;
              _ecore_xcb_mouse_up_count++;
@@ -589,6 +599,8 @@ _ecore_x_event_handle_motion_notify(xcb_generic_event_t *event)
    e->root.y = ev->root_y;
    if (ev->child) e->win = ev->child;
    else e->win = ev->event;
+   e->same_screen = ev->same_screen;
+   e->root_win = ev->root;
    e->event_win = ev->event;
    e->time = ev->time;
    _ecore_xcb_event_last_time = e->time;
@@ -597,7 +609,7 @@ _ecore_x_event_handle_motion_notify(xcb_generic_event_t *event)
    _ecore_xcb_event_last_root_y = e->root.y;
 
    /* Xdnd handling */
-   _ecore_x_dnd_drag(e->root.x, e->root.y);
+   _ecore_x_dnd_drag(e->root_win, e->root.x, e->root.y);
 
    ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 }
@@ -621,6 +633,8 @@ _ecore_x_event_handle_enter_notify(xcb_generic_event_t *event)
 	e->root.y = ev->root_y;
 	if (ev->child) e->win = ev->child;
 	else e->win = ev->event;
+	e->same_screen = ev->same_screen_focus;
+	e->root_win = ev->root;
 	e->event_win = ev->event;
 	e->time = ev->time;
 	_ecore_xcb_event_last_time = e->time;
@@ -641,6 +655,8 @@ _ecore_x_event_handle_enter_notify(xcb_generic_event_t *event)
 	e->root.y = ev->root_y;
 	if (ev->child) e->win = ev->child;
 	else e->win = ev->event;
+	e->same_screen = ev->same_screen_focus;
+	e->root_win = ev->root;
 	e->event_win = ev->event;
         switch (ev->mode) {
         case XCB_NOTIFY_MODE_NORMAL:
@@ -700,6 +716,8 @@ _ecore_x_event_handle_leave_notify(xcb_generic_event_t *event)
 	e->root.y = ev->root_y;
 	if (ev->child) e->win = ev->child;
 	else e->win = ev->event;
+	e->same_screen = ev->same_screen_focus;
+	e->root_win = ev->root;
 	e->event_win = ev->event;
 	e->time = ev->time;
 	_ecore_xcb_event_last_time = e->time;
@@ -720,6 +738,8 @@ _ecore_x_event_handle_leave_notify(xcb_generic_event_t *event)
 	e->root.y = ev->root_y;
 	if (ev->child) e->win = ev->child;
 	else e->win = ev->event;
+	e->same_screen = ev->same_screen_focus;
+	e->root_win = ev->root;
 	e->event_win = ev->event;
         switch (ev->mode) {
         case XCB_NOTIFY_MODE_NORMAL:
@@ -767,7 +787,7 @@ _ecore_x_event_handle_leave_notify(xcb_generic_event_t *event)
 void
 _ecore_x_event_handle_focus_in(xcb_generic_event_t *event)
 {
-   xcb_focus_in_event_t            *ev;
+   xcb_focus_in_event_t          *ev;
    Ecore_X_Event_Window_Focus_In *e;
 
    ev = (xcb_focus_in_event_t *)event;
@@ -1049,7 +1069,7 @@ _ecore_x_event_handle_configure_notify(xcb_generic_event_t *event)
    e->border = ev->border_width;
    e->override = ev->override_redirect;
    /* send_event is bit 7 (0x80) of response_type */
-   e->from_wm = ev->response_type & 0x80;
+   e->from_wm = (ev->response_type & 0x80) ? 1 : 0;
    e->time = _ecore_xcb_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE, e, NULL, NULL);
 }

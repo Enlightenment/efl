@@ -23,45 +23,38 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 {
    switch (engine)
      {
-      case ECORE_EVAS_ENGINE_SOFTWARE_X11:
-#ifdef BUILD_ECORE_EVAS_X11
-	return 1;
-#else
-	return 0;
-#endif
-      case ECORE_EVAS_ENGINE_SOFTWARE_FB:
-#ifdef BUILD_ECORE_EVAS_FB
-	return 1;
-#else
-	return 0;
-#endif
-      case ECORE_EVAS_ENGINE_GL_X11:
-#ifdef BUILD_ECORE_EVAS_X11_GL
-	return 1;
-#else
-	return 0;
-#endif
-      case ECORE_EVAS_ENGINE_XRENDER_X11:
-#ifdef BUILD_ECORE_EVAS_XRENDER
-	return 1;
-#else
-	return 0;
-#endif
-
-      case ECORE_EVAS_ENGINE_SOFTWARE_X11_16:
-#ifdef BUILD_ECORE_EVAS_X11_16
-	return 1;
-#else
-	return 0;
-#endif
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
 #ifdef BUILD_ECORE_EVAS_BUFFER
 	return 1;
 #else
 	return 0;
 #endif
-      case ECORE_EVAS_ENGINE_DIRECTFB:
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
+      case ECORE_EVAS_ENGINE_SOFTWARE_X11:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_XRENDER_X11:
+#ifdef BUILD_ECORE_EVAS_XRENDER_X11
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_OPENGL_X11:
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_SOFTWARE_XCB:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_XRENDER_XCB:
+#ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 	return 1;
 #else
 	return 0;
@@ -89,6 +82,25 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
         return 1;
 #else
         return 0;
+#endif
+      case ECORE_EVAS_ENGINE_DIRECTFB:
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+	return 1;
+#else
+	return 0;
+#endif
+      case ECORE_EVAS_ENGINE_SOFTWARE_FB:
+#ifdef BUILD_ECORE_EVAS_FB
+	return 1;
+#else
+	return 0;
+#endif
+
+      case ECORE_EVAS_ENGINE_SOFTWARE_16_X11:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
+	return 1;
+#else
+	return 0;
 #endif
       case ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
@@ -138,6 +150,9 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_X11
 	while (_ecore_evas_x_shutdown());
 #endif
+#ifdef BUILD_ECORE_EVAS_WIN32
+	while (_ecore_evas_win32_shutdown());
+#endif
 #ifdef BUILD_ECORE_EVAS_FB
 	while (_ecore_evas_fb_shutdown());
 #endif
@@ -147,7 +162,7 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 	while (_ecore_evas_directfb_shutdown());
 #endif
-#ifdef BUILD_ECORE_EVAS_WINCE
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 	while (_ecore_evas_wince_shutdown());
 #endif
 	evas_shutdown();
