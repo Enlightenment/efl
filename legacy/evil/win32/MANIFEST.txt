@@ -1,0 +1,25 @@
+
+ This folder content:
+
+   common                       - common sources necessary to build efl with MSVC
+     sys                          - gettimeofday function implementation
+       time.c                       - source
+       time.h                       - header
+
+     dirent.c                     - directory functions source
+     dirent.h                     - directory functions header
+     fnmatch.c                    - fnmatch function implementation source
+     fnmatch_list_of_states.c     - fnmatch auxiliary source
+     fnmatch.h                    - fnmatch header
+     fnmatch_private.h            - fnmatch private header
+
+   vs8                          - Visual Studio 8 project files
+     start.bat                    - batch script to start work with the solution
+     evil.sln                     - Evil MSVC solution
+     libdlfcn.vcproj              - libdlfcn project
+     libevil.vcproj               - libevil project
+     libmman.vcproj               - libmman project
+
+   set_env.bat                  - common environment startup
+   MANIFEST.txt                 - this file
+   README.txt                   - about this folder
