@@ -220,6 +220,8 @@ START_TEST(eet_test_basic_data_type_encoding_decoding)
    void *transfert;
    int size;
 
+   eet_init();
+
    _eet_test_basic_set(&etbt, 0);
 
    eet_test_setup_eddc(&eddc);
@@ -243,6 +245,8 @@ START_TEST(eet_test_basic_data_type_encoding_decoding)
    free(result);
 
    eet_data_descriptor_free(edd);
+
+   eet_shutdown();
 }
 END_TEST
 
@@ -468,6 +472,8 @@ START_TEST(eet_test_data_type_encoding_decoding)
    int size;
    int test;
 
+   eet_init();
+
    _eet_test_ex_set(&etbt, 0);
    etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
    etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
@@ -499,6 +505,8 @@ START_TEST(eet_test_data_type_encoding_decoding)
    fail_if(test != 0);
    eet_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
+
+   eet_shutdown();
 }
 END_TEST
 
@@ -532,6 +540,8 @@ START_TEST(eet_test_data_type_dump_undump)
    int test;
 
    int i;
+
+   eet_init();
 
    _eet_test_ex_set(&etbt, 0);
    etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
@@ -582,6 +592,8 @@ START_TEST(eet_test_data_type_dump_undump)
    fail_if(test != 0);
    eet_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
+
+   eet_shutdown();
 }
 END_TEST
 
@@ -592,6 +604,8 @@ START_TEST(eet_file_simple_write)
    char *test;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
+
+   eet_init();
 
    mktemp(file);
 
@@ -637,6 +651,8 @@ START_TEST(eet_file_simple_write)
    eet_close(ef);
 
    fail_if(unlink(file) != 0);
+
+   eet_shutdown();
 }
 END_TEST
 
@@ -662,6 +678,8 @@ START_TEST(eet_file_data_test)
    int test;
 
    int i;
+
+   eet_init();
 
    _eet_test_ex_set(&etbt, 0);
    etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
@@ -771,6 +789,8 @@ START_TEST(eet_file_data_test)
    eet_close(ef);
 
    fail_if(unlink(file) != 0);
+
+   eet_shutdown();
 }
 END_TEST
 
@@ -794,6 +814,8 @@ START_TEST(eet_file_data_dump_test)
    int test;
 
    int i;
+
+   eet_init();
 
    _eet_test_ex_set(&etbt, 0);
    etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
@@ -857,6 +879,8 @@ START_TEST(eet_file_data_dump_test)
    fail_if(test != 0);
 
    fail_if(unlink(file) != 0);
+
+   eet_shutdown();
 }
 END_TEST
 
@@ -1062,6 +1086,63 @@ START_TEST(eet_image)
    free(data);
 
    eet_close(ef);
+
+   eet_shutdown();
+}
+END_TEST
+
+#define IM0 0x00112233
+#define IM1 0x44556677
+#define IM2 0x8899aabb
+#define IM3 0xccddeeff
+
+START_TEST(eet_small_image)
+{
+   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   unsigned int image[4];
+   unsigned int *data;
+   Eet_File *ef;
+   int w;
+   int h;
+   int alpha;
+   int compression;
+   int quality;
+   int lossy;
+   int result;
+
+   image[0] = IM0;
+   image[1] = IM1;
+   image[2] = IM2;
+   image[3] = IM3;
+
+   eet_init();
+
+   mktemp(file);
+
+   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   fail_if(!ef);
+
+   result = eet_data_image_write(ef, "/images/test", image, 2, 2, 1, 9, 100, 0);
+   fail_if(result == 0);
+
+   eet_close(ef);
+
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   fail_if(!ef);
+
+   data = (unsigned int*) eet_data_image_read(ef, "/images/test", &w, &h, &alpha, &compression, &quality, &lossy);
+   fail_if(data == NULL);
+
+   eet_close(ef);
+
+   fail_if(data[0] != IM0);
+   fail_if(data[1] != IM1);
+   fail_if(data[2] != IM2);
+   fail_if(data[3] != IM3);
+
+   free(data);
+
+   eet_shutdown();
 }
 END_TEST
 
@@ -1091,6 +1172,7 @@ eet_suite(void)
 
    tc = tcase_create("Eet Image");
    tcase_add_test(tc, eet_image);
+   tcase_add_test(tc, eet_small_image);
    suite_add_tcase(s, tc);
 
    return s;

@@ -503,8 +503,9 @@ eet_data_image_lossless_compressed_convert(int *size, const void *data, unsigned
 	if (buflen > (w * h * 4))
 	  {
 	     free(comp);
-	     *size = ((w * h * 4) + (8 * 4));
-	     return d;
+	     free(d);
+	     *size = -1;
+	     return NULL;
 	  }
 	memcpy(d + 32, comp, buflen);
 	*size = (8 * 4) + buflen;
@@ -880,10 +881,13 @@ eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned 
 
    if (lossy == 0)
      {
-	if (compress <= 0)
-	  d = eet_data_image_lossless_convert(&size, data, w, h, alpha);
-	else
+	if (compress > 0)
 	  d = eet_data_image_lossless_compressed_convert(&size, data, w, h, alpha, compress);
+
+	/* eet_data_image_lossless_compressed_convert will refuse to compress something
+	   if the result is bigger than the entry. */
+	if (compress <= 0 || d == NULL)
+	  d = eet_data_image_lossless_convert(&size, data, w, h, alpha);
      }
    else
      {

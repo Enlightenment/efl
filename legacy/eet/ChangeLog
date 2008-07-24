@@ -73,3 +73,6 @@
 	* Use directly the pointer from the dictionary to do a pointer
 	comparison instead of a strcmp.
 
+2008-07-24  Cedric BAIL
+
+	* Fix wrongly stored image when compressed size is bigger than uncompressed. Fix bug #523.
