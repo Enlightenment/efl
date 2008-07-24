@@ -1,0 +1,11 @@
+
+ This folder content:
+
+   vs8                          - Visual Studio 8 project files
+     start.bat                    - batch script to start work with the solution
+     eet.sln                      - Eet MSVC solution
+     libeet.vcproj                - libeet project
+
+   set_env.bat                  - common environment startup
+   MANIFEST.txt                 - this file
+   README.txt                   - about this folder

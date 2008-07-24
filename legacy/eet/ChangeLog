@@ -75,4 +75,12 @@
 
 2008-07-24  Cedric BAIL
 
-	* Fix wrongly stored image when compressed size is bigger than uncompressed. Fix bug #523.
+	* Fix wrongly stored image when compressed size is bigger than
+	uncompressed. Fix bug #523.
+
+2008-07-24  Vincent Torri
+
+	* Add Visual Studio solution and vc projects to compile Eet
+	with Microsoft tools.
+
+	Written by Dmitriy Mazovka.
