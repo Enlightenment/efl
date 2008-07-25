@@ -985,6 +985,20 @@ typedef enum _Ecore_X_Window_Configure_Mask {
    ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE     = (1 << 6)
 } Ecore_X_Window_Configure_Mask;
 
+typedef enum _Ecore_X_Virtual_Keyboard_State {
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_UNKNOWN,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_OFF,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_ON,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_ALPHA,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_NUMERIC,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_PIN,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_PHONE_NUMBER,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_HEX,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_TERMINAL,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_PASSWORD
+} Ecore_X_Virtual_Keyboard_State;
+
+
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW 2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
@@ -1493,7 +1507,12 @@ EAPI void                ecore_x_netwm_desktop_request_send(Ecore_X_Window win, 
 
 EAPI void                ecore_x_e_init(void);
 EAPI void                ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
-
+EAPI void                ecore_x_e_virtual_keyboard_set(Ecore_X_Window win, int is_keyboard);
+EAPI int                 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win, Ecore_X_Virtual_Keyboard_State state);
+EAPI Ecore_X_Virtual_Keyboard_State ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win, Ecore_X_Virtual_Keyboard_State state);
+       
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);
