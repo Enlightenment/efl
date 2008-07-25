@@ -986,7 +986,7 @@ typedef enum _Ecore_X_Window_Configure_Mask {
 } Ecore_X_Window_Configure_Mask;
 
 typedef enum _Ecore_X_Virtual_Keyboard_State {
-    ECORE_X_VIRTUAL_KEYOBARD_STATE_UNKNOWN,
+    ECORE_X_VIRTUAL_KEYOBARD_STATE_UNKNOWN = 0,
     ECORE_X_VIRTUAL_KEYOBARD_STATE_OFF,
     ECORE_X_VIRTUAL_KEYOBARD_STATE_ON,
     ECORE_X_VIRTUAL_KEYOBARD_STATE_ALPHA,
