@@ -51,7 +51,7 @@
 #  ifdef BUILD_ECORE_EVAS_OPENGL_X11
 #    include <Evas_Engine_GL_X11.h>
 #  endif
-#  ifdef BUILD_ECORE_EVAS_X11_16
+#  ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
 #   include <Evas_Engine_Software_16_X11.h>
 #  endif
 # endif
