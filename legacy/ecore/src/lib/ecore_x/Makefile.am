@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = xlib xcb
-
 if BUILD_ECORE_X
+
+SUBDIRS = xlib xcb
 
 if BUILD_ECORE_X_XCB
 DEP = xcb/libecore_x_xcb.la
