@@ -69,6 +69,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    /* MEM OK */
    Evas_Object_List **l_mod = NULL, *l;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
+   Evas_Bool func_call = 0;
    Evas *e;
 
    if (obj->delete_me) return;
@@ -118,7 +119,10 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 	     if ((fn->type == type) && (!fn->delete_me))
 	       {
 	          if (fn->func)
-	            fn->func(fn->data, obj->layer->evas, obj, event_info);
+		    {
+		       fn->func(fn->data, obj->layer->evas, obj, event_info);
+		       func_call = 1;
+		    }
 	       }
 	     if (obj->delete_me) break;
           }
@@ -140,8 +144,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
              ev->flags = flags;
           }
      }
-   
-   if (!((obj->no_propagate) && (l_mod) && (*l_mod)))
+   if (!((obj->no_propagate) && (l_mod) && (*l_mod)) && ((obj->no_propagate && !func_call) || !obj->no_propagate))
      {
 	if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
 	    (type <= EVAS_CALLBACK_KEY_UP))
