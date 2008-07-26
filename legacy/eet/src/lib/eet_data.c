@@ -1203,7 +1203,7 @@ struct _Eet_Free
 static int
 _eet_free_hash(void *data)
 {
-   long int ptr = (long int)(data);
+   unsigned long ptr = (unsigned long)(data);
    int hash;
 
    hash = ptr;
