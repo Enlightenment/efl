@@ -1407,7 +1407,6 @@ efreet_icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
     if (tmp)
     {
         char *t, *s, *p;
-        int last = 0;
 
         theme->directories = ecore_list_new();
         ecore_list_free_cb_set(theme->directories,
@@ -1417,17 +1416,16 @@ efreet_icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
         s = t;
         p = s;
 
-        while (!last)
+        while (p)
         {
             p = strchr(s, ',');
 
-            if (!p) last = 1;
-            else *p = '\0';
+            if (p) *p = '\0';
 
             ecore_list_append(theme->directories,
                             efreet_icon_theme_directory_new(ini, s));
 
-            if (!last) s = ++p;
+            if (p) s = ++p;
         }
 
         FREE(t);
