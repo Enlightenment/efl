@@ -50,6 +50,7 @@ ecore_xcb_shape.c \
 ecore_xcb_sync.c \
 ecore_xcb_window.c \
 ecore_xcb_window_prop.c \
+ecore_xcb_window_shadow.c \
 ecore_xcb_xinerama.c \
 ecore_xcb.c
 

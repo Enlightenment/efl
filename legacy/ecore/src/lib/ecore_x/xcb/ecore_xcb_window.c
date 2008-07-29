@@ -965,7 +965,7 @@ ecore_x_window_container_manage(Ecore_X_Window window)
      XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT;
    xcb_change_window_attributes(_ecore_xcb_conn, window,
                                 XCB_CW_EVENT_MASK, &value_list);
-                                
+
 }
 
 /**

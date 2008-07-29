@@ -148,9 +148,9 @@ EAPI int ECORE_X_LOCK_CAPS                        = 0;
 EAPI int
 ecore_x_init(const char *name)
 {
-   xcb_screen_iterator_t        iter;
-   int                          screen;
-   uint32_t                     max_request_length;
+   xcb_screen_iterator_t              iter;
+   int                                screen;
+   uint32_t                           max_request_length;
    const xcb_query_extension_reply_t *reply_big_requests;
 #ifdef ECORE_XCB_DAMAGE
    const xcb_query_extension_reply_t *reply_damage;
@@ -171,8 +171,8 @@ ecore_x_init(const char *name)
    const xcb_query_extension_reply_t *reply_shape;
 #endif /* ECORE_XCB_SHAPE */
 #ifdef ECORE_XCB_SYNC
-   xcb_sync_initialize_cookie_t cookie_sync_init;
-   xcb_sync_initialize_reply_t *reply_sync_init;
+   xcb_sync_initialize_cookie_t       cookie_sync_init;
+   xcb_sync_initialize_reply_t       *reply_sync_init;
    const xcb_query_extension_reply_t *reply_sync;
 #endif /* ECORE_XCB_SYNC */
 #ifdef ECORE_XCB_FIXES
@@ -185,7 +185,7 @@ ecore_x_init(const char *name)
    const xcb_query_extension_reply_t *reply_xprint;
 #endif /* ECORE_XCB_XPRINT */
 
-   xcb_intern_atom_cookie_t atom_cookies[ECORE_X_ATOMS_COUNT];
+   xcb_intern_atom_cookie_t           atom_cookies[ECORE_X_ATOMS_COUNT];
 
    if (_ecore_xcb_init_count > 0)
      {
