@@ -697,7 +697,6 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
  * @param theme: The theme to use
  * @param dir: The theme directory to look in
  * @param icon_name: The icon name to look for
- * @param size: The icon size to look for
  * @return Returns the icon cloest matching the given information or NULL if
  * none found
  * @brief Tries to find the file closest matching the given icon
@@ -845,28 +844,28 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
 {
     char *icon = NULL;
     char path[PATH_MAX], *ext;
+    const char *icon_path[] = { dir, "/", icon_name, NULL };
+    size_t size;
 
     if (!dir || !icon_name) return NULL;
 
+    size = efreet_array_cat(path, sizeof(path), icon_path);
     ecore_list_first_goto(efreet_icon_extensions);
     while ((ext = ecore_list_next(efreet_icon_extensions)))
     {
-        const char *icon_path[] = { dir, "/", icon_name, ext, NULL };
-        efreet_array_cat(path, sizeof(path), icon_path);
+        ecore_strlcpy(path + size, ext, sizeof(path) - size);
 
         if (ecore_file_exists(path))
         {
             icon = strdup(path);
             if (icon) break;
         }
+        *(path + size) = '\0';
     }
     /* This is to catch non-conforming .desktop files */
 #ifdef SLOPPY_SPEC
     if (!icon)
     {
-        const char *icon_path[] = { dir, "/", icon_name, NULL };
-        efreet_array_cat(path, sizeof(path), icon_path);
-
         if (ecore_file_exists(path))
         {
             icon = strdup(path);
@@ -896,13 +895,15 @@ efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
 {
     char *icon = NULL;
     char file_path[PATH_MAX];
-    const char *ext, *path_strs[] = { path, "/", dir->name, "/", icon_name, NULL, NULL };
+    const char *ext, *path_strs[] = { path, "/", dir->name, "/", icon_name, NULL };
+    size_t len;
+
+    len = efreet_array_cat(file_path, sizeof(file_path), path_strs);
 
     ecore_list_first_goto(efreet_icon_extensions);
     while ((ext = ecore_list_next(efreet_icon_extensions)))
     {
-        path_strs[5] = ext;
-        efreet_array_cat(file_path, sizeof(file_path), path_strs);
+        ecore_strlcpy(file_path + len, ext, sizeof(file_path) - len);
 
         if (ecore_file_exists(file_path))
         {
