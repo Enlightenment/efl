@@ -47,6 +47,7 @@ static int          _ecore_exe_make_sure_its_dead(void *data);
 static int          _ecore_exe_make_sure_its_really_dead(void *data);
 static Ecore_Exe_Event_Add *_ecore_exe_event_add_new(void);
 static void         _ecore_exe_event_add_free(void *data, void *ev);
+static void         _ecore_exe_dead_attach(Ecore_Exe *exe);
 
 EAPI int            ECORE_EXE_EVENT_ADD = 0;
 EAPI int            ECORE_EXE_EVENT_DEL = 0;
@@ -1007,6 +1008,40 @@ ecore_exe_continue(Ecore_Exe * exe)
 }
 
 /**
+ * Sends the given spawned process a interrupt (@c SIGINT) signal.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
+ */
+EAPI void
+ecore_exe_interrupt(Ecore_Exe * exe)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_interrupt");
+	return;
+     }
+   _ecore_exe_dead_attach(exe);
+   kill(exe->pid, SIGINT);
+}
+
+/**
+ * Sends the given spawned process a quit (@c SIGQUIT) signal.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
+ */
+EAPI void
+ecore_exe_quit(Ecore_Exe * exe)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_quit");
+	return;
+     }
+   _ecore_exe_dead_attach(exe);
+   kill(exe->pid, SIGQUIT);
+}
+
+/**
  * Sends the given spawned process a terminate (@c SIGTERM) signal.
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
@@ -1014,25 +1049,12 @@ ecore_exe_continue(Ecore_Exe * exe)
 EAPI void
 ecore_exe_terminate(Ecore_Exe * exe)
 {
-   struct _ecore_exe_dead_exe *dead;
-
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
 	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_terminate");
 	return;
      }
-
-   dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
-   if (dead)
-     {
-	dead->pid = exe->pid;
-	dead->cmd = strdup(exe->cmd);
-	IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
-	exe->doomsday_clock =
-	   ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
-	exe->doomsday_clock_dead = dead;
-     }
-
+   _ecore_exe_dead_attach(exe);
    printf("Sending TERM signal to %s (%d).\n", exe->cmd, exe->pid);
    kill(exe->pid, SIGTERM);
 }
@@ -1589,6 +1611,24 @@ _ecore_exe_event_del_free(void *data __UNUSED__, void *ev)
    if (e->exe)
       ecore_exe_free(e->exe);
    free(e);
+}
+
+static void
+_ecore_exe_dead_attach(Ecore_Exe *exe)
+{
+   struct _ecore_exe_dead_exe *dead;
+
+   if (exe->doomsday_clock_dead) return;
+   dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
+   if (dead)
+     {
+	dead->pid = exe->pid;
+	dead->cmd = strdup(exe->cmd);
+	IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
+	exe->doomsday_clock =
+	   ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
+	exe->doomsday_clock_dead = dead;
+     }
 }
 
 #endif
