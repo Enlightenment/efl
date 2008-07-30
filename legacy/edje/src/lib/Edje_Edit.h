@@ -29,6 +29,14 @@
 # endif
 #endif
 
+
+enum {
+   EDJE_EDIT_IMAGE_COMP_RAW,
+   EDJE_EDIT_IMAGE_COMP_USER,
+   EDJE_EDIT_IMAGE_COMP_COMP,
+   EDJE_EDIT_IMAGE_COMP_LOSSY
+};
+
 /**
  * @file
  * @brief Functions to deal with edje internal object. Don't use in standard
@@ -1153,6 +1161,20 @@ EAPI int                   ///< The ID of the givan image name
 edje_edit_image_id_get(
    Evas_Object *obj,       ///< The edje object
    const char *image_name
+);
+
+/**Get compression type for the given image.*/
+EAPI int                  ///@return One of EDJE_EDIT_IMAGE_COMP_RAW, EDJE_EDIT_IMAGE_COMP_USER, EDJE_EDIT_IMAGE_COMP_COMP or EDJE_EDIT_IMAGE_COMP_LOSSY
+edje_edit_image_compression_type_get(
+   Evas_Object *obj,      ///< The edje object
+   const char *image      ///< The name of the image
+);
+
+/**Get compression rate for the given image.*/
+EAPI int                  ///@return the compression rate if the image is EDJE_EDIT_IMAGE_COMP_LOSSY. Or < 0 on errors
+edje_edit_image_compression_rate_get(
+   Evas_Object *obj,      ///< The edje object
+   const char *image      ///< The name of the image
 );
 
 /**Get the image border of a part state. Pass NULL to any of [r,g,b,a] to get only the others.*/

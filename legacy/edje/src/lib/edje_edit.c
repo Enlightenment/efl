@@ -2684,6 +2684,68 @@ edje_edit_image_id_get(Evas_Object *obj, const char *image_name)
    return _edje_image_id_find(obj, image_name);
 }
 
+EAPI int 
+edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
+{
+   Edje_Image_Directory_Entry *i = NULL;
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(-1);
+
+   if (!ed->file) return -1;
+   if (!ed->file->image_dir) return -1;
+
+   for (l = ed->file->image_dir->entries; l; l = l->next)
+     {
+	i = l->data;
+	if (strcmp(i->entry, image) == 0)
+	  break;
+	i = NULL;
+     }
+
+   if (!i) return -1;
+
+   switch(i->source_type)
+     {
+	case EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT:
+		if (i->source_param == 0) // RAW
+		  return EDJE_EDIT_IMAGE_COMP_RAW;
+		else // COMP
+		  return EDJE_EDIT_IMAGE_COMP_COMP;
+		break;
+	case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY: // LOSSY
+		return EDJE_EDIT_IMAGE_COMP_LOSSY;
+		break;
+	case EDJE_IMAGE_SOURCE_TYPE_EXTERNAL: // USER
+		return EDJE_EDIT_IMAGE_COMP_USER;
+		break;
+     }
+
+   return -1;
+}
+
+EAPI int
+edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image)
+{
+   Evas_List *l;
+   Edje_Image_Directory_Entry *i;
+
+   GET_ED_OR_RETURN(-1);
+
+   // Gets the Image Entry
+   for (l = ed->file->image_dir->entries; l; l = l->next)
+     {
+	i = l->data;
+	if (strcmp(i->entry, image) == 0) break;
+	i = NULL;
+     }
+
+   if (!i) return -1;
+   if (i->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return -2;
+
+   return i->source_param;
+}
+
 EAPI const char *
 edje_edit_state_image_get(Evas_Object *obj, const char *part, const char *state)
 {
@@ -3291,8 +3353,6 @@ edje_edit_programs_list_get(Evas_Object *obj)
 
    return progs;
 }
-
-
 
 EAPI unsigned char
 edje_edit_program_add(Evas_Object *obj, const char *name)
@@ -4020,18 +4080,45 @@ _edje_generate_source(Evas_Object *obj)
    //TODO Probably we need to save the file before generation
    
    /* Images */
-   fprintf(f, "images {\n");
-   ll = edje_edit_images_list_get(obj);
-   for (l = ll; l; l = l->next)
+   if (ll = edje_edit_images_list_get(obj))
      {
-        fprintf(f, "   image: \"%s\" LOSSY 100;\n", (char*)l->data); //TODO Support more that LOSSY 100
+	fprintf(f, I0"images {\n");
+	for (l = ll; l; l = l->next)
+	  {
+		char *entry = l->data;  // Name
+		int comp = edje_edit_image_compression_type_get(obj, entry);
+		if (comp < 0) continue;
+
+		fprintf(f, I1"image: \"%s\" ", entry);
+
+		if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY)
+		  fprintf(f, "LOSSY %d;\n",
+		          edje_edit_image_compression_rate_get(obj, entry));
+		else if (comp == EDJE_EDIT_IMAGE_COMP_RAW)
+		  fprintf(f, "RAW;\n");
+		else if (comp == EDJE_EDIT_IMAGE_COMP_USER)
+		  fprintf(f, "USER;\n");
+		else fprintf(f, "COMP;\n");
+	  }
+	fprintf(f, I0"}\n\n");
+	evas_list_free(ll);
      }
-   fprintf(f, "}\n\n");
-   edje_edit_string_list_free(ll);
-   
+
    /* Fonts */
-   //(same as images)
-   
+   if (ll = edje_edit_fonts_list_get(obj))
+     {
+	fprintf(f, I0"fonts {\n");
+
+	for (l = ll; l; l = l->next)
+	  {
+		char *entry = l->data;
+		// TODO Finish me
+		fprintf(f, I1"font: \"FIXME\" \"%s\";\n", entry);
+	  }
+	fprintf(f, I0"}\n\n");
+	evas_list_free(ll); 
+     }
+
    /* Data */
    //TODO Support data
    
