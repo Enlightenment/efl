@@ -925,9 +925,9 @@ ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
    Atom *atoms_int;
    int i;
    
-   if (!_ecore_x_disp) return 0;
+   if (!_ecore_x_disp) return;
    atoms_int = alloca(num * sizeof(Atom));
-   XInternAtoms(_ecore_x_disp, names, num, False, atoms_int);
+   XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
    for (i = 0; i < num; i++)
      atoms[i] = atoms_int[i];
 }

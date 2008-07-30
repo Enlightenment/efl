@@ -197,7 +197,7 @@ _ecore_x_atoms_init(void)
    num = sizeof(items) / sizeof(Atom_Item);
    atoms = alloca(num * sizeof(Atom));
    names = alloca(num * sizeof(char *));
-   for (i = 0; i < num; i++) names[i] = items[i].name;
+   for (i = 0; i < num; i++) names[i] = (char *)items[i].name;
    XInternAtoms(_ecore_x_disp, names, num, False, atoms);
    for (i = 0; i < num; i++) *(items[i].atom) = atoms[i];
 }
