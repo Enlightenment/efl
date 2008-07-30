@@ -174,7 +174,7 @@ eina_stringshare_del(const char *str)
 }
 
 /**
- * Shutdown the ecore string internal structures
+ * Shutdown the eina string internal structures
  */
 EAPI void 
 eina_stringshare_shutdown()
