@@ -1,6 +1,8 @@
 #ifndef EINA_FILE_H_
 #define EINA_FILE_H_
 
+#include "eina_types.h"
+
 /**
  * @defgroup File_Group Memory File
  * @{

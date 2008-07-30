@@ -1,6 +1,8 @@
 #ifndef EINA_ERROR_H_
 #define EINA_ERROR_H_
 
+#include "eina_types.h"
+
 #define EINA_ERROR_PERR(fmt, ...) \
 	eina_error_print(EINA_ERROR_LEVEL_ERR, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 

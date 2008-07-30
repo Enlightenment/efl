@@ -1,4 +1,5 @@
-#include "Eina.h"
+#include "eina_error.h"
+#include "eina_list.h"
 #include "eina_private.h"
 /* TODO
  * + printing errors to stdout or stderr can be implemented
@@ -24,9 +25,9 @@ static int _err;
 
 
 #ifdef DEBUG
-static _error_level = EINA_ERROR_LEVEL_DBG;
+static Eina_Error_Level _error_level = EINA_ERROR_LEVEL_DBG;
 #else
-static _error_level = EINA_ERROR_LEVEL_ERR;
+static Eina_Error_Level _error_level = EINA_ERROR_LEVEL_ERR;
 #endif
 
 static char *_colors[EINA_ERROR_LEVELS] = {
@@ -67,7 +68,7 @@ EAPI int eina_error_init(void)
 		char *level;
 		/* TODO register the eina's basic errors */
 		/* TODO load the environment variable for getting the log level */
-		if (level = getenv("EINA_ERROR_LEVEL"))
+		if ((level = getenv("EINA_ERROR_LEVEL")))
 		{
 			_error_level = atoi(level);
 		}
@@ -119,7 +120,7 @@ EAPI int eina_error_get(void)
 /**
  *  
  */
-EAPI int eina_error_set(int err)
+EAPI void eina_error_set(int err)
 {
 	_err = err;
 }

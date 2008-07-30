@@ -1,6 +1,8 @@
 #ifndef EINA_LALLOC_H_
 #define EINA_LALLOC_H_
 
+#include "eina_types.h"
+
 /**
  * @defgroup Array_Group Array
  * @{

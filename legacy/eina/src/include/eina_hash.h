@@ -1,6 +1,8 @@
 #ifndef EINA_HASH_H_
 #define EINA_HASH_H_
 
+#include "eina_types.h"
+
 /**
  *
  */

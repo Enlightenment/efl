@@ -1,4 +1,5 @@
-#include "Eina.h"
+#include "eina_module.h"
+#include "eina_file.h"
 #include "eina_private.h"
 
 #include <dirent.h>

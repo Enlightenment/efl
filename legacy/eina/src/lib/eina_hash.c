@@ -1,4 +1,6 @@
-#include "Eina.h"
+#include "eina_hash.h"
+#include "eina_inlist.h"
+#include "eina_error.h"
 #include "eina_private.h"
 /*============================================================================*
  *                                  Local                                     * 
@@ -94,12 +96,6 @@ eina_hash_add(Eina_Hash *hash, const char *key, const void *data)
 	el->data = (void *)data;
 	hash_num = _eina_hash_gen(key);
 	hash->buckets[hash_num] = eina_inlist_prepend(hash->buckets[hash_num], el);
-	if (eina_list_alloc_error())
-	{
-		_eina_hash_alloc_error = 1;
-		free(el);
-		return hash;
-	}
 	hash->population++;
 	return hash;
 }
@@ -157,12 +153,6 @@ eina_hash_direct_add(Eina_Hash *hash, const char *key, const void *data)
 	el->data = (void *)data;
 	hash_num = _eina_hash_gen(key);
 	hash->buckets[hash_num] = eina_inlist_prepend(hash->buckets[hash_num], el);
-	if (eina_list_alloc_error())
-	{
-		_eina_hash_alloc_error = 1;
-		free(el);
-		return hash;
-	}
 	hash->population++;
 	return hash;
 }

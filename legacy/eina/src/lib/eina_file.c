@@ -1,4 +1,7 @@
-#include "Eina.h"
+#define _GNU_SOURCE
+#include <string.h>
+
+#include "eina_file.h"
 #include "eina_private.h"
 /*============================================================================*
  *                                   API                                      * 
@@ -18,10 +21,8 @@ EAPI void eina_file_dir_list(const char *dir, int recursive, Eina_File_Dir_List_
 	if (!d)
 		return;
 
-	while (de = readdir(d))
+	while ((de = readdir(d)))
 	{
-		int length;
-
 		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
 			continue;
 		
@@ -64,7 +65,7 @@ EAPI void eina_file_path_nth_get(const char *path, int n, char **left, char **ri
 		inc = -1;
 		end = (char *)path;
 	}
-	for (tmp = p; tmp != end, num != n; tmp += inc)
+	for (tmp = p, delim = p; tmp != end && num != n; tmp += inc)
 	{
 		if (*tmp == '/')
 		{

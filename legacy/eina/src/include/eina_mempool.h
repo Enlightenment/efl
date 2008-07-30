@@ -1,6 +1,8 @@
 #ifndef EINA_MEMPOOL_H_
 #define EINA_MEMPOOL_H_
 
+#include "eina_types.h"
+
 /**
  * @defgroup Memory_Pool_Group Memory Pool
  * @{

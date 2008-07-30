@@ -1,6 +1,9 @@
 #ifndef EINA_MODULE_H_
 #define EINA_MODULE_H_
 
+#include "eina_types.h"
+#include "eina_list.h"
+
 /**
  * @defgroup Module_Group Module
  * @{

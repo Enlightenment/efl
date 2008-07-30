@@ -1,6 +1,8 @@
 #ifndef EINA_INLIST_H_
 #define EINA_INLIST_H_
 
+#include "eina_types.h"
+
 /**
  * @defgroup Inline_List_Group Inline List
  * @{
