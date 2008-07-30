@@ -11,7 +11,8 @@ eina_file.h \
 eina_mempool.h \
 eina_module.h \
 eina_rectangle.h \
-eina_types.h
+eina_types.h \
+eina_stringshare.h
 
 include_HEADERS = \
 Eina.h

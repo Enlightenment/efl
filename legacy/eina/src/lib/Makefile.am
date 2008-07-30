@@ -14,7 +14,8 @@ eina_file.c \
 eina_mempool.c \
 eina_list.c \
 eina_module.c \
-eina_value.c
+eina_value.c \
+eina_stringshare.c
 
 libeina_la_LIBADD = -ldl
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
