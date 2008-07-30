@@ -14,8 +14,8 @@ eina_rectangle.h \
 eina_types.h \
 eina_stringshare.h
 
-include_HEADERS = \
-Eina.h
+installed_mainheaderdir = $(prefix)/include/eina-@VMAJ@
+installed_mainheader_DATA = Eina.h
 
-installed_headersdir = $(prefix)/include/eina
+installed_headersdir = $(prefix)/include/eina-@VMAJ@/eina
 installed_headers_DATA = $(EINAHEADERS)

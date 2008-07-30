@@ -8,5 +8,5 @@ Description: Eina
 Requires: 
 Version: @VERSION@
 Libs: -L${libdir} -leina
-Libs.private: -lm -ldl
-Cflags: -I${includedir} -I${includedir}/eina
+Libs.private: -ldl
+Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
