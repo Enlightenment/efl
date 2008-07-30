@@ -1,25 +1,25 @@
 #include "eina_lalloc.h"
 #include "eina_private.h"
 
-struct _Eina_Array
+struct _Eina_Lalloc
 {
 	void 	*data;
 	int 	num_allocated;
 	int 	num_elements;
 	int 	acc;
-	Eina_Array_Alloc alloc_cb;
-	Eina_Array_Free free_cb;
+	Eina_Lalloc_Alloc alloc_cb;
+	Eina_Lalloc_Free free_cb;
 };
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Array * eina_array_new(void *data, Eina_Array_Alloc alloc_cb, Eina_Array_Free free_cb, int num_init)
+EAPI Eina_Lalloc * eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_Lalloc_Free free_cb, int num_init)
 {
-	Eina_Array *a;
+	Eina_Lalloc *a;
 
-	a = calloc(1, sizeof(Eina_Array));
+	a = calloc(1, sizeof(Eina_Lalloc));
 	a->data = data;
 	a->alloc_cb = alloc_cb;
 	a->free_cb = free_cb;
@@ -35,7 +35,7 @@ EAPI Eina_Array * eina_array_new(void *data, Eina_Array_Alloc alloc_cb, Eina_Arr
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_array_element_add(Eina_Array *a)
+EAPI void eina_lalloc_element_add(Eina_Lalloc *a)
 {
 	if (a->num_elements == a->num_allocated)
 	{
@@ -50,7 +50,7 @@ EAPI void eina_array_element_add(Eina_Array *a)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_array_elements_add(Eina_Array *a, int num)
+EAPI void eina_lalloc_elements_add(Eina_Lalloc *a, int num)
 {
 	int tmp;
 	
@@ -71,7 +71,7 @@ EAPI void eina_array_elements_add(Eina_Array *a, int num)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_array_free(Eina_Array *a)
+EAPI void eina_lalloc_free(Eina_Lalloc *a)
 {
 	a->free_cb(a->data);
 	free(a);

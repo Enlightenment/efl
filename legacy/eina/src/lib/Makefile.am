@@ -15,6 +15,7 @@ eina_mempool.c \
 eina_list.c \
 eina_module.c \
 eina_value.c \
+eina_array.c \
 eina_stringshare.c
 
 libeina_la_LIBADD = -ldl

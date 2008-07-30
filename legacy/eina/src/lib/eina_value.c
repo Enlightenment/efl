@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "Eina.h"
+#include "eina_types.h"
 #include "eina_private.h"
 
 EAPI const unsigned int eina_prime_table[] =

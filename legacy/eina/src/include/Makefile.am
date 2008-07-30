@@ -12,6 +12,8 @@ eina_mempool.h \
 eina_module.h \
 eina_rectangle.h \
 eina_types.h \
+eina_array.h \
+eina_inline_array.x \
 eina_stringshare.h
 
 installed_mainheaderdir = $(prefix)/include/eina-@VMAJ@
