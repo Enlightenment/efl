@@ -614,7 +614,7 @@ START_TEST(eet_file_simple_write)
    ef = eet_open(file, EET_FILE_MODE_WRITE);
    fail_if(!ef);
 
-   fail_if(!eet_write(ef, "keys/tests", buffer, sizeof(*buffer), 1));
+   fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 1));
 
    fail_if(eet_mode_get(ef) != EET_FILE_MODE_WRITE);
 
@@ -629,9 +629,9 @@ START_TEST(eet_file_simple_write)
 
    test = eet_read(ef, "keys/tests", &size);
    fail_if(!test);
-   fail_if(size != sizeof(*buffer));
+   fail_if(size != strlen(buffer) + 1);
 
-   fail_if(memcmp(test, buffer, sizeof(*buffer)) != 0);
+   fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
    fail_if(eet_mode_get(ef) != EET_FILE_MODE_READ);
    fail_if(eet_num_entries(ef) != 1);
@@ -644,9 +644,9 @@ START_TEST(eet_file_simple_write)
 
    test = eet_read(ef, "keys/tests", &size);
    fail_if(!test);
-   fail_if(size != sizeof(*buffer));
+   fail_if(size != strlen(buffer) + 1);
 
-   fail_if(memcmp(test, buffer, sizeof(*buffer)) != 0);
+   fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
    eet_close(ef);
 
