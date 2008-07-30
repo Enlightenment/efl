@@ -1,0 +1,92 @@
+# get rid of that stupid cache mechanism
+rm -f config.cache
+
+AC_INIT(eina, 0.0.1, enlightenment-devel@lists.sourceforge.net)
+AC_PREREQ(2.52)
+AC_CONFIG_SRCDIR(configure.in)
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_ISC_POSIX
+
+AM_INIT_AUTOMAKE(1.6 dist-bzip2)
+AM_CONFIG_HEADER(config.h)
+
+AC_LIBTOOL_WIN32_DLL
+define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
+define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
+AC_PROG_LIBTOOL
+
+VMAJ=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $1);}'`
+VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
+VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
+SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
+version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+AC_SUBST(version_info)
+
+# Checks for programs
+AC_PROG_CC
+
+# Checks for libraries
+
+# Checks for header files
+AC_HEADER_ASSERT
+AC_HEADER_DIRENT
+AC_HEADER_TIME
+
+# Checks for types
+
+# Checks for structures
+
+# Checks for compiler characteristics
+AC_C_CONST
+AC_C_BIGENDIAN
+AC_PROG_CC_STDC
+
+if ! test "${VMIC}" = "x" ; then
+   CFLAGS="${CFLAGS} -Wall -W -Wextra" # -Werror
+fi
+
+# Checks for linker characteristics
+lt_enable_auto_import=""
+case "$host_os" in
+   mingw*|cegcc*)
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+   ;;
+esac
+AC_SUBST(lt_enable_auto_import)
+
+# Checks for library functions
+
+## Make the debug preprocessor configurable
+
+AC_CONFIG_FILES([
+Makefile
+eina.pc
+src/Makefile
+src/include/Makefile
+src/lib/Makefile
+src/modules/Makefile
+src/modules/mm_policies/Makefile
+])
+
+AC_OUTPUT
+
+#####################################################################
+## Info
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE $VERSION"
+echo "------------------------------------------------------------------------"
+echo
+echo
+echo "Configuration Options Summary:"
+echo
+echo "Installation Path.........: $prefix"
+echo
+echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE,"
+echo "and then afterwards as root (or the user who will install this), type"
+echo "'make install'. Change users with 'su' or 'sudo' appropriately."
+echo

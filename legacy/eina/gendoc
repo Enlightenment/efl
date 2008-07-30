@@ -1,0 +1,9 @@
+#!/bin/sh
+rm -rf ./doc/html ./doc/latex ./doc/man
+mkdir -p ./doc/html ./doc/latex ./doc/man 2>/dev/null
+doxygen
+#cp doc/img/*.png doc/html/
+rm -f edata_docs.tar ecore_docs.tar.gz
+tar -cvf edata_docs.tar doc/html doc/man doc/latex
+gzip -9f edata_docs.tar
+exit 0
