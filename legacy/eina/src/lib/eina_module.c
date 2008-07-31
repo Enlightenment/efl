@@ -46,12 +46,14 @@ static int _dir_list_get_cb(Eina_Module *m, void *data)
 	{
 		cb_data->list = eina_list_append(cb_data->list, m);
 	}
+
+	return ret;
 }
 
 static void _dir_list_cb(const char *name, const char *path, void *data)
 {
 	Dir_List_Cb_Data *cb_data = data;
-	int length;
+	unsigned int length;
 
 	length = strlen(name);
 	if (length < strlen(MODULE_EXTENSION) + 1) /* x.so */
