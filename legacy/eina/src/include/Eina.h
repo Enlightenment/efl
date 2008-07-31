@@ -27,6 +27,7 @@ extern "C" {
 #include "eina_error.h"
 #include "eina_array.h"
 #include "eina_stringshare.h"
+#include "eina_magic.h"
 
 #ifdef __cplusplus
 }
