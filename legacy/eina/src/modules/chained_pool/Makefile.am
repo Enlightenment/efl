@@ -1,0 +1,16 @@
+MAINTAINERCLEANFILES = \
+Makefile.in
+
+AM_CPPFLAGS = \
+-I. \
+-I$(top_srcdir)/src/include
+
+controllerdir = $(libdir)/eina/chained_pool/
+controller_LTLIBRARIES = eina_chained_mempool.la
+
+eina_chained_mempool_la_SOURCES = \
+eina_chained_mempool.c
+
+eina_chained_mempool_la_LIBADD       = $(top_builddir)/src/lib/libeina.la
+eina_chained_mempool_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
+eina_chained_mempool_la_DEPENDENCIES = $(top_builddir)/src/lib/libeina.la
