@@ -11,6 +11,8 @@ AC_ISC_POSIX
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
+AC_C___ATTRIBUTE__
+
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -151,6 +153,7 @@ src/include/Makefile
 src/lib/Makefile
 src/modules/Makefile
 src/modules/mm_policies/Makefile
+src/modules/chained_pool/Makefile
 ])
 
 AC_OUTPUT
