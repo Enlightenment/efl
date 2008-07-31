@@ -60,6 +60,21 @@ AC_ARG_ENABLE([coverage],
 AC_MSG_CHECKING([whether to use profiling instrumentation])
 AC_MSG_RESULT([$enable_coverage])
 
+# Ememoa memory pool
+
+AC_ARG_ENABLE([ememoa],
+   [AC_HELP_STRING([--enable-ememoa], [build ememoa memory pool module @<:@default=yes@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_ememoa="yes"
+    else
+       enable_ememoa="no"
+    fi
+   ],
+   [enable_ememoa="yes"]
+)
+AC_MSG_CHECKING([whether to use ememoa for memory pool])
+AC_MSG_RESULT([$enable_ememoa])
 
 ### Checks for libraries
 
@@ -72,9 +87,15 @@ if test "x${enable_tests}" = "xyes" ; then
       [enable_tests="no"]
    )
 fi
-
 AM_CONDITIONAL(EINA_ENABLE_TESTS, test "x${enable_tests}" = "xyes")
 
+# Check ememoa memory pool library
+PKG_CHECK_MODULES([EMEMOA],
+      [ememoa >= 0.0.26 ],
+      [enable_ememoa="yes"],
+      [enable_ememoa="no"]
+)
+AM_CONDITIONAL(EINA_ENABLE_EMEMOA, test "x${enable_ememoa}" = "xyes")
 
 ### Checks for header files
 AC_HEADER_ASSERT
@@ -152,8 +173,9 @@ src/Makefile
 src/include/Makefile
 src/lib/Makefile
 src/modules/Makefile
-src/modules/mm_policies/Makefile
-src/modules/chained_pool/Makefile
+src/modules/mp/Makefile
+src/modules/mp/chained_pool/Makefile
+src/modules/mp/ememoa_fixed/Makefile
 ])
 
 AC_OUTPUT
@@ -173,6 +195,9 @@ echo "Configuration Options Summary:"
 echo
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
+echo
+echo "Memory pool:"
+echo "  Ememoa...............: ${enable_ememoa}"
 echo
 echo "  Installation.........: make install"
 echo

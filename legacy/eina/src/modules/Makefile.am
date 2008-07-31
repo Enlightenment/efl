@@ -1,4 +1,4 @@
-SUBDIRS = mm_policies chained_pool
+SUBDIRS = mp
 
 MAINTAINERCLEANFILES = \
 Makefile.in
