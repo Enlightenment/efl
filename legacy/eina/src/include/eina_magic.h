@@ -9,7 +9,7 @@
 
 #define EINA_MAGIC_SET(d, m)       (d)->__magic = (m)
 #define EINA_MAGIC_CHECK(d, m)     ((d) && ((d)->__magic == (m)))
-#define EINA_MAGIC_FAIL(d, m, fn)  _eina_magic_fail((d), (d) ? (d)->__magic : 0, (m), (__FUNCTION__));
+#define EINA_MAGIC_FAIL(d, m, fn)  eina_magic_fail((d), (d) ? (d)->__magic : 0, (m), (__FUNCTION__));
 
 typedef unsigned int               Eina_Magic;
 
