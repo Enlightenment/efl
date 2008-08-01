@@ -82,6 +82,7 @@ eina_stringshare_init()
 	share = calloc(1, sizeof(Eina_Stringshare));
 	if (!share)
 	  return 0;
+	eina_error_init();
      }
    eina_stringshare_init_count++;
 
@@ -198,6 +199,8 @@ eina_stringshare_shutdown()
 	  }
 	free(share);
 	share = NULL;
+
+	eina_error_shutdown();
      }
 }
 
