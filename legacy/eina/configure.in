@@ -119,7 +119,7 @@ if test "x$enable_coverage" = "xyes"; then
       COVERAGE_CFLAGS="-fprofile-arcs -ftest-coverage"
       COVERAGE_LIBS="-lgcov"
 # remove any optimisation flag and force debug symbols
-      DEBUG_CFLAGS="-g -O0"
+      DEBUG_CFLAGS="-g -O0 -DDEBUG"
    else
       AC_MSG_WARN([lcov is not found, disable profiling instrumentation])
       enable_coverage="no"
