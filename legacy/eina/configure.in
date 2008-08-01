@@ -11,8 +11,6 @@ AC_ISC_POSIX
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
-AC_C___ATTRIBUTE__
-
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -90,11 +88,13 @@ fi
 AM_CONDITIONAL(EINA_ENABLE_TESTS, test "x${enable_tests}" = "xyes")
 
 # Check ememoa memory pool library
+
 PKG_CHECK_MODULES([EMEMOA],
       [ememoa >= 0.0.26 ],
       [enable_ememoa="yes"],
       [enable_ememoa="no"]
 )
+
 AM_CONDITIONAL(EINA_ENABLE_EMEMOA, test "x${enable_ememoa}" = "xyes")
 
 ### Checks for header files
@@ -141,6 +141,7 @@ AM_CONDITIONAL(EINA_ENABLE_COVERAGE, test "x${enable_coverage}" = "xyes")
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_PROG_CC_STDC
+AC_C___ATTRIBUTE__
 
 if test "x$enable_coverage" = "xyes"; then
    CFLAGS="${DEBUG_CFLAGS}"
@@ -197,8 +198,8 @@ echo
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo
-echo "Memory pool:"
-echo "  Ememoa...............: ${enable_ememoa}"
+echo "  Memory pool:"
+echo "    Ememoa.............: ${enable_ememoa}"
 echo
 echo "  Installation.........: make install"
 echo
