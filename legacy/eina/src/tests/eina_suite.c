@@ -10,6 +10,8 @@ struct _Eina_Test_Case
 static const Eina_Test_Case etc[] = {
   { "Array", eina_test_array },
   { "String Share", eina_test_stringshare },
+  { "Error", eina_test_error },
+  { "Magic", eina_test_magic },
   { NULL, NULL }
 };
 

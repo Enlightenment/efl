@@ -9,5 +9,7 @@
 
 void eina_test_stringshare(TCase *tc);
 void eina_test_array(TCase *tc);
+void eina_test_error(TCase *tc);
+void eina_test_magic(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */
