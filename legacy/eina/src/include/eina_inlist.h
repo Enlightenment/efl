@@ -27,8 +27,8 @@ EAPI void * eina_inlist_find(void *in_list, void *in_item);
 
 //typedef Eina_Bool (*Eina_Iterator_Func)(Eina_Inlist *l, void *data);
 
-#define EINA_INLIST_ITER_NEXT(list, l) for (l = (Eina_Inlist *)list; l; l = l->next)
-#define EINA_INLIST_ITER_LAST(list, l) for (l = ((Eina_Inlist *)list)->last; l; l = l->prev)
+#define EINA_INLIST_ITER_NEXT(list, l) for (l = (void*)(Eina_Inlist *)list; l; l = (void*)((Eina_Inlist *)l)->next)
+#define EINA_INLIST_ITER_LAST(list, l) for (l = (void*)((Eina_Inlist *)list)->last; l; l = (void*)((Eina_Inlist *)l)->prev)
 
 /** @} */
 

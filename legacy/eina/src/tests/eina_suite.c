@@ -12,6 +12,7 @@ static const Eina_Test_Case etc[] = {
   { "String Share", eina_test_stringshare },
   { "Error", eina_test_error },
   { "Magic", eina_test_magic },
+  { "Inlist", eina_test_inlist },
   { NULL, NULL }
 };
 

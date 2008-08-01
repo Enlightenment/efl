@@ -96,16 +96,15 @@ EAPI void * eina_inlist_prepend_relative(void *in_list, void *in_item,
 		relative->prev = new_l;
 		if (new_l->prev) {
 			new_l->prev->next = new_l;
-			if (!new_l->next)
-				list->last = new_l;
+			/* new_l->next could not be NULL, as it was set to 'relative' */
+			assert(new_l->next);
 			return list;
 		} else {
-			if (!new_l->next)
-				new_l->last = new_l;
-			else {
-				new_l->last = list->last;
-				list->last = NULL;
-			}
+			/* new_l->next could not be NULL, as it was set to 'relative' */
+			assert(new_l->next);
+
+			new_l->last = list->last;
+			list->last = NULL;
 			return new_l;
 		}
 	}
