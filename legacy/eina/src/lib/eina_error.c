@@ -12,7 +12,6 @@
 /*============================================================================*
  *                                  Local                                     * 
  *============================================================================*/
-static int _curr = 1;
 static int _init_count = 0;
 static Eina_List *_error_list;
 static int _err;
@@ -49,13 +48,6 @@ static void _error_print(Eina_Error_Level level, const char *file,
 	}
 }
 /*============================================================================*
- *                                 Global                                     * 
- *============================================================================*/
-void eina_error_magic_check(unsigned int magic, unsigned int cmp)
-{
-	assert(magic == cmp);
-}
-/*============================================================================*
  *                                   API                                      * 
  *============================================================================*/
 /**
@@ -63,7 +55,7 @@ void eina_error_magic_check(unsigned int magic, unsigned int cmp)
  */
 EAPI int eina_error_init(void)
 {
-	if (!_init_count) 
+	if (!_init_count)
 	{
 		char *level;
 		/* TODO register the eina's basic errors */
@@ -81,8 +73,6 @@ EAPI int eina_error_init(void)
  */
 EAPI int eina_error_shutdown(void)
 {
-	if (!_init_count)
-		return _init_count;
 	_init_count--;
 	if (!_init_count)
 	{
@@ -103,12 +93,9 @@ EAPI int eina_error_shutdown(void)
  */
 EAPI int eina_error_register(const char *msg)
 {
-	char *str;
-	
-	str = strdup(msg);
-	_error_list = eina_list_append(_error_list, str);
-	
-	return ++_curr;
+	_error_list = eina_list_append(_error_list, strdup(msg));
+
+	return eina_list_count(_error_list);
 }
 /**
  * 
@@ -131,7 +118,7 @@ EAPI void eina_error_set(int err)
  */
 EAPI const char * eina_error_msg_get(int error)
 {
-	return eina_list_nth(_error_list, error);
+	return eina_list_nth(_error_list, error - 1);
 }
 /**
  * 
@@ -146,9 +133,10 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 	va_end(args);
 }
 /**
- * 
+ *
  */
 EAPI void eina_error_log_level_set(Eina_Error_Level level)
 {
 	_error_level = level;
 }
+

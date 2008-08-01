@@ -27,6 +27,8 @@ typedef enum _Eina_Error_Level
 EAPI int eina_error_init(void);
 EAPI int eina_error_shutdown(void);
 EAPI int eina_error_register(const char *msg);
+EAPI int eina_error_get(void);
+EAPI void eina_error_set(int err);
 EAPI const char * eina_error_msg_get(int error);
 EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 		const char *function, int line, const char *fmt, ...);
