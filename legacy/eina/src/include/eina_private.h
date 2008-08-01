@@ -19,7 +19,6 @@
 #include <dirent.h>
 #include <string.h>
 
-#define DEBUG
 #include <assert.h>
 
 #ifndef PATH_MAX
