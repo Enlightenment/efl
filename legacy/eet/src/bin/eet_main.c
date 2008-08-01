@@ -176,7 +176,7 @@ do_eet_encode(const char *file, const char *key, const char *out, int compress)
 	exit(-1);
      }
    fclose(f);
-   if (eet_data_undump(ef, key, text, textlen, compress))
+   if (!eet_data_undump(ef, key, text, textlen, compress))
      {
         printf("cannot parse %s\n", out);
 	exit(-1);
