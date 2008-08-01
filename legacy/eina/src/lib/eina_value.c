@@ -33,14 +33,3 @@ EAPI const unsigned int eina_prime_table[] =
      2053, 4093, 8191, 16381, 32771, 65537, 131071, 262147, 524287, 1048573,
      2097143, 4194301, 8388617, 16777213
 };
-
-inline void eina_print_warning(const char *function, const char *sparam)
-{
-	fprintf(stderr, "***** Developer Warning ***** :\n"
-		"\tThis program is calling:\n\n"
-		"\t%s();\n\n"
-		"\tWith the parameter:\n\n"
-		"\t%s\n\n"
-		"\tbeing NULL. Please fix your program.\n", function, sparam);
-	fflush(stderr);
-}
