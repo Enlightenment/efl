@@ -1,7 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I$(top_srcdir)/src/include
+-I$(top_srcdir)/src/include \
+@COVERAGE_CFLAGS@
 
 lib_LTLIBRARIES = libeina.la
 
@@ -19,6 +20,6 @@ eina_array.c \
 eina_magic.c \
 eina_stringshare.c
 
-libeina_la_LIBADD = -ldl
+libeina_la_LIBADD = -ldl @COVERAGE_LIBS@
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 libeina_la_DEPENDENCIES = $(top_builddir)/config.h
