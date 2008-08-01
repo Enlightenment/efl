@@ -25,3 +25,4 @@ doc
 *.spec
 README
 mkinstalldirs
+coverage
