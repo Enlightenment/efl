@@ -89,8 +89,8 @@ typedef struct _Eina_Mempool_Backend
    void (*free)(void *data, void *element);
    void *(*alloc)(void *data, unsigned int size);
    void *(*realloc)(void *data, void *element, unsigned int size);
-   void (*garbage_collect)(void);
-   void (*statistics)(void);
+   void (*garbage_collect)(void *data);
+   void (*statistics)(void *data);
    void (*shutdown)(void *data);
 } Eina_Mempool_Backend;
 
