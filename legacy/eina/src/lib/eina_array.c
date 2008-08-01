@@ -6,7 +6,9 @@
 # include "config.h"
 #endif
 
+#include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "eina_array.h"
 #include "eina_inline_array.x"
@@ -68,19 +70,58 @@ eina_array_free(Eina_Array *array)
    free(array);
 }
 
+#include <stdio.h>
+
 EAPI void
 eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata)
 {
    void **tmp;
    unsigned int total = 0;
+   unsigned int limit;
    unsigned int i;
 
    if (array->total == 0) return ;
 
+   for (i = 0; i < array->count; ++i)
+     {
+	void *data;
+
+	data = _eina_array_get(array, i);
+
+	if (keep(data, gdata) == EINA_FALSE)
+	  break;
+     }
+   limit = i;
+   for (; i < array->count; ++i)
+     {
+	void *data;
+
+	data = _eina_array_get(array, i);
+
+	if (keep(data, gdata) == EINA_TRUE)
+	  break;
+     }
+   /* Special case all objects that need to stay are at the beginning of the array. */
+   if (i == array->count)
+     {
+	array->count = limit;
+	if (array->count == 0)
+	  {
+	     free(array->data);
+	     array->total = 0;
+	     array->data = NULL;
+	  }
+
+	return ;
+     }
+
    tmp = malloc(sizeof (void*) * array->total);
    if (!tmp) return ;
 
-   for (i = 0; i < array->count; i++)
+   memcpy(tmp, array->data, limit * sizeof(void*));
+   total = limit;
+
+   for (; i < array->count; ++i)
      {
 	void *data;
 
@@ -95,16 +136,10 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 
    free(array->data);
 
-   if (total == 0)
-     {
-	array->total = 0;
-	array->data = NULL;
-	free(tmp);
-     }
-   else
-     {
-	array->data = tmp;
-     }
+   /* If we do not keep any object in the array, we should have exited
+      earlier in test (i == array->count). */
+   assert(total != 0);
 
+   array->data = tmp;
    array->count = total;
 }

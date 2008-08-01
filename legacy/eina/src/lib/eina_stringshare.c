@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "eina_stringshare.h"
+#include "eina_error.h"
 
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
@@ -69,7 +70,7 @@ _eina_stringshare_hash_gen(const char *str, int *len)
  * Initialize the eina stringshare internal structure.
  * @return  Zero on failure, non-zero on successful initialization.
  */
-EAPI int 
+EAPI int
 eina_stringshare_init()
 {
    /*
@@ -82,7 +83,6 @@ eina_stringshare_init()
 	if (!share)
 	  return 0;
      }
-   
    eina_stringshare_init_count++;
 
    return 1;
@@ -169,14 +169,14 @@ eina_stringshare_del(const char *str)
 	     return;
 	  }
      }
-   printf("EEEK trying to del non-shared stringshare \"%s\"\n", str);
-   abort();
+   EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
+   if (getenv("EINA_ERROR_ABORT")) abort();
 }
 
 /**
  * Shutdown the eina string internal structures
  */
-EAPI void 
+EAPI void
 eina_stringshare_shutdown()
 {
    --eina_stringshare_init_count;

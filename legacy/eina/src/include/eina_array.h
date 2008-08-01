@@ -1,6 +1,8 @@
 #ifndef EINA_ARRAY_H_
 #define EINA_ARRAY_H_
 
+#include <stdlib.h>
+
 #include "eina_types.h"
 
 typedef struct _Eina_Array       Eina_Array;             /**< A generic vector */
@@ -20,5 +22,9 @@ EAPI void       *eina_array_get                  (Eina_Array *array, unsigned in
 EAPI void        eina_array_clean                (Eina_Array *array);
 EAPI void        eina_array_flush                (Eina_Array *array);
 EAPI void        eina_array_remove               (Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata);
+
+#define EINA_ARRAY_ITER_NEXT(array, index, item) for ((index) = 0, (item) = _eina_array_get((array), (index)); (index) < (array)->count; ++(index), (item) = _eina_array_get((array), (index)))
+
+#include "eina_inline_array.x"
 
 #endif
