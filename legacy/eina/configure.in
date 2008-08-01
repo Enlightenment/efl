@@ -176,6 +176,7 @@ src/modules/Makefile
 src/modules/mp/Makefile
 src/modules/mp/chained_pool/Makefile
 src/modules/mp/ememoa_fixed/Makefile
+src/tests/Makefile
 ])
 
 AC_OUTPUT
