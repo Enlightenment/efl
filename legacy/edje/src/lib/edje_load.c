@@ -1013,19 +1013,21 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
    Evas_Object	*parent;
    Edje		*ed;
    char		 new_src[4096]; /* XXX is this max reasonable? */
-   int		 length_parent;
+   int		 length_parent = 0;
    int		 length_source;
 
    parent = data;
    ed = _edje_fetch(obj);
    if (!ed) return;
    /* Replace snprint("%s%c%s") == memcpy + *new_src + memcat */
-   length_parent = strlen(ed->parent);
+   if (ed->parent)
+     length_parent = strlen(ed->parent);
    length_source = strlen(source);
    if (length_source + length_parent + 2 > sizeof(new_src))
      return ;
 
-   memcpy(new_src, ed->parent, length_parent);
+   if (ed->parent)
+     memcpy(new_src, ed->parent, length_parent);
    new_src[length_parent] = EDJE_PART_PATH_SEPARATOR;
    memcpy(new_src + length_parent + 1, source, length_source + 1);
 
