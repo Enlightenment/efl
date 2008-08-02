@@ -193,9 +193,7 @@ efreet_trash_ls(void)
     files = ecore_file_ls(buf);
 
     while (infofile = ecore_list_next(files))
-    {
         printf("FILE: %s\n", infofile);
-    }
 
     return files;
 }
@@ -284,7 +282,6 @@ efreet_uri_escape(Efreet_Uri *uri)
     memset(dest, 0, PATH_MAX * 3 + 4);
     snprintf(dest, strlen(uri->protocol) + 4, "%s://", uri->protocol);
 
-
     /* Most app doesn't handle the hostname in the uri so it's put to NULL */
     for (i = strlen(uri->protocol) + 3, p = uri->path; *p != '\0'; p++, i++)
     {
@@ -311,6 +308,5 @@ efreet_uri_free(Efreet_Uri *uri)
     IF_RELEASE(uri->protocol);
     IF_RELEASE(uri->path);
     IF_RELEASE(uri->hostname);
-    free(uri);
-    uri = NULL;
+    FREE(uri);
 }
