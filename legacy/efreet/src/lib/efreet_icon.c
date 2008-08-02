@@ -389,7 +389,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
 
 /**
  * @param theme_name: The icon theme to look for
- * @param icon: List of icons to look for
+ * @param icons: List of icons to look for
  * @param size; The icon size to look for
  * @return Returns the path representing first found icon or
  * NULL if none of the icons are found

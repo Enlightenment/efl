@@ -3,10 +3,11 @@
 #define EFREET_TRASH_H
 
 /**
- * @file efreet_trash.h
+ * @file Efreet_Trash.h
  * @brief Contains the methods used to support the FDO trash specification.
  * @addtogroup Efreet_Trash Efreet_Trash: The XDG Trash Specification
- * Some better explanation here...
+ * Efreet_Trash.h provides all of the necessary headers and includes to
+ * work with Efreet_Trash.
  * @{
  */
 
@@ -35,9 +36,7 @@
 extern "C" {
 #endif
 
-/**
- * @{
- */
+
 
 /**
  * Efreet_Uri

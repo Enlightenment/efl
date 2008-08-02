@@ -174,7 +174,9 @@ efreet_mime_type_get(const char *file)
 }
 
 /**
- * @param file: The file to find the mime type icon
+ * @param mime: The name of the mime type
+ * @param theme: The name of the theme to search icons in
+ * @param size: The wanted size of the icon
  * @return Returns mime type icon path as a string
  * @brief Retreive the mime type icon for a file
  */
@@ -306,7 +308,6 @@ efreet_mime_globs_type_get(const char *file)
 
 /**
  * @param file: The file to check the mime type
- * @param methods: The methods to use, see Efreet_Mime_Method structure
  * @return Returns mime type as a string
  * @brief Retreive the special mime type of a file
  */
@@ -318,7 +319,6 @@ efreet_mime_special_type_get(const char *file)
 
 /**
  * @param file: The file to check the mime type
- * @param methods: The methods to use, see Efreet_Mime_Method structure
  * @return Returns mime type as a string
  * @brief Retreive the fallback mime type of a file
  */

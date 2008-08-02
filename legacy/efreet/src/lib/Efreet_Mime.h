@@ -5,18 +5,14 @@
 /**
  * @file Efreet_Mime.h
  * @brief The file that must be included by any project wishing to use
- * Efreet_Mime. Efreet_Mime.h provides all of the necessary headers and
- * includes to work with Efreet_Mime.
- */
-
-/**
- * @mainpage The Efreet Mime Library
- *
- * @section intro Introduction
- *
+ * @addtogroup Efreet_Mime Efreet_Mime: The XDG Shared Mime Info standard
  * Efreet Mime is a library designed to help apps work with the
  * Freedesktop.org Shared Mime Info standard.
+ * Efreet_Mime.h provides all of the necessary headers and
+ * includes to work with Efreet_Mime.
+ * @{
  */
+
 
 #ifdef EAPI
 #undef EAPI
@@ -43,9 +39,6 @@
 extern "C" {
 #endif
 
-/**
- * @{
- */
 
 EAPI int         efreet_mime_init(void);
 EAPI void        efreet_mime_shutdown(void);

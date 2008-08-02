@@ -799,6 +799,7 @@ efreet_menu_save_indent(FILE *f, int indent)
 /**
  * @param menu: The menu to work with
  * @param desktop: The desktop to insert
+ * @param pos: The position to place the new desktop
  * @return Returns 1 on success, 0 on failure
  * @brief Insert a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
@@ -838,6 +839,7 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 }
 
 /**
+ * @param menu: The menu to work with
  * @param desktop: The desktop to remove
  * @return Returns 1 on success, 0 on failure
  * @brief Remove a desktop element in a menu structure. Only accepts desktop files

@@ -22,6 +22,8 @@
  * @li Icon Theme Specification
  * @li Desktop Entry Specification
  * @li Desktop Menu Specification
+ * @li Shared Mime Info Specification
+ * @li Trash Specification
  */
 
 #ifdef EAPI
