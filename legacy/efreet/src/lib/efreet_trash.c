@@ -108,8 +108,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
             return 0;
         }
     }
-   
-      
+
     /* create info file */
     snprintf(dest, PATH_MAX, "%s/info/%s.trashinfo",
              efreet_trash_dir_get(), fname);
@@ -119,7 +118,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
         fputs("[Trash Info]\n", f); //TODO is '\n' right?? (or \r\c??)
 
         fputs("Path=", f);
-        escaped = efreet_uri_escape(uri);
+        escaped = efreet_uri_encode(uri);
         fputs(escaped + 7, f); // +7 == don't write 'file://'
         IF_RELEASE(escaped);
 
@@ -198,115 +197,3 @@ efreet_trash_ls(void)
     return files;
 }
 
-
-/**
- * @param val: a valid uri string to parse
- * @return Return The corresponding Efreet_Uri structure. Or NULL on errors.
- * @brief Parse a single uri and return an Efreet_Uri struct. If there's no
- * hostname in the uri then the hostname parameter is NULL. All the uri escaped
- * chars will be converted back.
- */
-EAPI Efreet_Uri *
-efreet_uri_parse(const char *val)
-{
-    Efreet_Uri *uri;
-    const char *p;
-    char protocol[64], hostname[_POSIX_HOST_NAME_MAX], path[PATH_MAX];
-    int i = 0;
-
-    /* An uri should be in the form <protocol>://<hostname>/<path> */
-    p = strstr(val, "://");
-    if (!p) return NULL;
-
-    memset(protocol, 0, 64);
-    memset(hostname, 0, _POSIX_HOST_NAME_MAX);
-    memset(path, 0, PATH_MAX);
-
-    /* parse protocol */
-    p = val;
-    for (i = 0; *p != ':' && *p != '\0' && i < 64; p++, i++)
-         protocol[i] = *p;
-    protocol[i] = '\0';
-
-    /* parse hostname */
-    p += 3;
-    if (*p != '/')
-    {
-        for (i = 0; *p != '/' && *p != '\0' && i < _POSIX_HOST_NAME_MAX; p++, i++)
-            hostname[i] = *p;
-        hostname[i] = '\0';
-    }
-    else
-        hostname[0] = '\0';
-
-    /* parse path */
-    /* See http://www.faqs.org/rfcs/rfc1738.html for the escaped chars */
-    for (i = 0; *p != '\0' && i < PATH_MAX; i++, p++)
-    {
-        if (*p == '%')
-        {
-            path[i] = *(++p);
-            path[i + 1] = *(++p);
-            path[i] = (char)strtol(&(path[i]), NULL, 16);
-            path[i + 1] = '\0';
-        }
-        else
-            path[i] = *p;
-    }
-
-    uri = NEW(Efreet_Uri, 1);
-    if (!uri) return NULL;
-
-    uri->protocol = ecore_string_instance(protocol);
-    uri->hostname = ecore_string_instance(hostname);
-    uri->path = ecore_string_instance(path);
-
-    return uri;
-}
-
-/**
- * @param uri: The uri structure to escape
- * @return The string rapresentation of an uri (ex: 'file:///home/my%20name')
- * @brief Get the string rapresentation of the given uri struct escaping
- * illegal caracters. The resulting string will contain the protocol but not the
- * hostname, as many apps doesn't handle it.
- */
-EAPI const char *
-efreet_uri_escape(Efreet_Uri *uri)
-{
-    char dest[PATH_MAX * 3 + 4];
-    const char *p;
-    int i;
-
-    if (!uri || !uri->path || !uri->protocol) return NULL;
-    memset(dest, 0, PATH_MAX * 3 + 4);
-    snprintf(dest, strlen(uri->protocol) + 4, "%s://", uri->protocol);
-
-    /* Most app doesn't handle the hostname in the uri so it's put to NULL */
-    for (i = strlen(uri->protocol) + 3, p = uri->path; *p != '\0'; p++, i++)
-    {
-        if (isalnum(*p) || strchr("/$-_.+!*'()", *p))
-            dest[i] = *p;
-        else
-        {
-            snprintf(&(dest[i]), 4, "%%%02X", *p);
-            i += 2;
-        }
-    }
-
-    return ecore_string_instance(dest);
-}
-
-/**
- * @param uri: The uri to free
- * @brief Free the given uri structure.
- */
-EAPI void
-efreet_uri_free(Efreet_Uri *uri)
-{
-    if (!uri) return;
-    IF_RELEASE(uri->protocol);
-    IF_RELEASE(uri->path);
-    IF_RELEASE(uri->hostname);
-    FREE(uri);
-}

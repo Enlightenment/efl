@@ -2,15 +2,6 @@
 #ifndef EFREET_TRASH_H
 #define EFREET_TRASH_H
 
-/**
- * @file Efreet_Trash.h
- * @brief Contains the methods used to support the FDO trash specification.
- * @addtogroup Efreet_Trash Efreet_Trash: The XDG Trash Specification
- * Efreet_Trash.h provides all of the necessary headers and includes to
- * work with Efreet_Trash.
- * @{
- */
-
 #ifdef EAPI
 #undef EAPI
 #endif
@@ -36,29 +27,14 @@
 extern "C" {
 #endif
 
-
-
 /**
- * Efreet_Uri
+ * @file Efreet_Trash.h
+ * @brief Contains the methods used to support the FDO trash specification.
+ * @addtogroup Efreet_Trash Efreet_Trash: The XDG Trash Specification
+ * Efreet_Trash.h provides all of the necessary headers and includes to
+ * work with Efreet_Trash.
+ * @{
  */
-typedef struct Efreet_Uri Efreet_Uri;
-
-/**
- * Efreet_Uri
- * @brief Contains a simple rappresentation of an uri. The string don't have 
- * special chars escaped.
- */
-struct Efreet_Uri
-{
-    const char *protocol;   /**< The name of the host if any, or NULL */
-    const char *hostname;   /**< The name of the host if any, or NULL */
-    const char *path;       /**< The full file path whitout protocol nor host*/
-};
-
-
-EAPI const char *efreet_uri_escape(Efreet_Uri *uri);
-EAPI Efreet_Uri *efreet_uri_parse(const char *val);
-EAPI void        efreet_uri_free(Efreet_Uri *uri);
 
 EAPI int         efreet_trash_init(void);
 EAPI void        efreet_trash_shutdown(void);
@@ -68,8 +44,7 @@ EAPI int         efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete);
 EAPI Ecore_List *efreet_trash_ls(void);
 EAPI int         efreet_trash_is_empty(void);
 EAPI int         efreet_trash_empty_trash(void);
-   
-   
+
 /**
  * @}
  */
