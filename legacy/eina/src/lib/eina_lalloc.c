@@ -35,43 +35,64 @@ EAPI Eina_Lalloc * eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_lalloc_element_add(Eina_Lalloc *a)
+EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
 {
 	if (a->num_elements == a->num_allocated)
 	{
-		a->num_allocated = (1 << a->acc);
-		a->acc++;
-		a->alloc_cb(a->data, a->num_allocated);
-	}
-	a->num_elements++;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void eina_lalloc_elements_add(Eina_Lalloc *a, int num)
-{
-	int tmp;
-	
-	tmp = a->num_elements + num;
-	if (tmp > a->num_allocated)
-	{
-		while (tmp > a->num_allocated)
+		if (a->alloc_cb(a->data, (1 << a->acc)) == EINA_TRUE)
 		{
 			a->num_allocated = (1 << a->acc);
 			a->acc++;
+		} else {
+			return EINA_FALSE;
 		}
-		a->alloc_cb(a->data, a->num_allocated);
 	}
-	a->num_elements += num;
+	a->num_elements++;
+
+	return EINA_TRUE;
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_lalloc_free(Eina_Lalloc *a)
+EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num)
+{
+	int tmp;
+
+	tmp = a->num_elements + num;
+	if (tmp > a->num_allocated)
+	{
+		int allocated;
+		int acc;
+
+		allocated = a->num_allocated;
+		acc = a->acc;
+
+		while (tmp > allocated)
+		{
+			allocated = (1 << acc);
+			acc++;
+		}
+
+		if (a->alloc_cb(a->data, allocated) == EINA_TRUE)
+		{
+			a->num_allocated = allocated;
+			a->acc = acc;
+		} else {
+			return EINA_FALSE;
+		}
+	}
+	a->num_elements += num;
+
+	return EINA_TRUE;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void eina_lalloc_delete(Eina_Lalloc *a)
 {
 	a->free_cb(a->data);
 	free(a);

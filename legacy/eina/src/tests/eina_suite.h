@@ -12,5 +12,6 @@ void eina_test_array(TCase *tc);
 void eina_test_error(TCase *tc);
 void eina_test_magic(TCase *tc);
 void eina_test_inlist(TCase *tc);
+void eina_test_lalloc(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */
