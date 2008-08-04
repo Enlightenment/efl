@@ -14,7 +14,7 @@
  *============================================================================*/
 static int _init_count = 0;
 static Eina_List *_error_list;
-static int _err;
+static Eina_Error _err;
 
 #define RED     "\033[31;1m"
 #define GREEN   "\033[32;1m"
@@ -91,7 +91,7 @@ EAPI int eina_error_shutdown(void)
  * @param str The description of the error
  * @return The unique number identifier for this error
  */
-EAPI int eina_error_register(const char *msg)
+EAPI Eina_Error eina_error_register(const char *msg)
 {
 	_error_list = eina_list_append(_error_list, strdup(msg));
 
@@ -100,14 +100,14 @@ EAPI int eina_error_register(const char *msg)
 /**
  * 
  */
-EAPI int eina_error_get(void)
+EAPI Eina_Error eina_error_get(void)
 {
 	return _err;
 }
 /**
  *  
  */
-EAPI void eina_error_set(int err)
+EAPI void eina_error_set(Eina_Error err)
 {
 	_err = err;
 }
