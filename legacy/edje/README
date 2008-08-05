@@ -19,7 +19,6 @@ Quick start-up guide:
   cvs co e17/libs/eet
   cd e17/libs/eet
   ./autogen.sh
-  ./configure
   make
   sudo make install
   cd
@@ -29,7 +28,6 @@ Quick start-up guide:
   cvs co e17/libs/evas
   cd e17/libs/evas
   ./autogen.sh
-  ./configure
   make
   sudo make install
   cd
@@ -39,7 +37,6 @@ Quick start-up guide:
   cvs co e17/libs/ecore
   cd e17/libs/ecore
   ./autogen.sh
-  ./configure
   make
   sudo make install
   cd
@@ -49,7 +46,6 @@ Quick start-up guide:
   cvs co e17/libs/embryo
   cd e17/libs/embryo
   ./autogen.sh
-  ./configure
   make
   sudo make install
   cd
