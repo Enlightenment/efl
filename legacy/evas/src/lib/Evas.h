@@ -250,7 +250,7 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
    Evas_Event_Flags  event_flags;
 };
 
-struct _Evas_Event_Mouse_Up /** Mouse butotn relase event */
+struct _Evas_Event_Mouse_Up /** Mouse button release event */
 {
    int button; /**< Mouse button number that was raised (1 - 32) */
    struct {
