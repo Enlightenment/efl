@@ -14,8 +14,6 @@ struct _Eina_Lazy_Allocator_Test
 static Eina_Bool
 _test_alloc(Eina_Lazy_Allocator_Test *elat, int num)
 {
-   fprintf(stderr, "%i %i\n", elat->num, num);
-
    if (elat->num == 10 && num == 1) return EINA_FALSE;
    if (elat->num == 122 && num == 128) return EINA_FALSE;
 
