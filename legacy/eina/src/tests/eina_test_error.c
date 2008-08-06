@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "eina_suite.h"
 #include "eina_error.h"
 
@@ -16,11 +18,11 @@ END_TEST
 
 #define TEST_TEXT "The big test\n"
 
-#include <stdio.h>
-
 START_TEST(eina_error_errno)
 {
    int test;
+
+   setenv("EINA_ERROR_LEVEL", "1", 0);
 
    eina_error_init();
 
@@ -37,12 +39,16 @@ END_TEST
 
 START_TEST(eina_error_macro)
 {
+   eina_error_init();
+
    eina_error_log_level_set(EINA_ERROR_LEVEL_DBG);
 
    EINA_ERROR_PERR("An error\n");
    EINA_ERROR_PINFO("An info\n");
    EINA_ERROR_PWARN("A warning\n");
    EINA_ERROR_PDBG("A debug\n");
+
+   eina_error_shutdown();
 }
 END_TEST
 
