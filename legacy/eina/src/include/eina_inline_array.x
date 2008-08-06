@@ -1,5 +1,5 @@
-#ifndef EVAS_INLINE_ARRAY_H
-#define EVAS_INLINE_ARRAY_H
+#ifndef EINA_INLINE_ARRAY_X_
+#define EINA_INLINE_ARRAY_X_
 
 #ifdef __GNUC__
 # define UNLIKELY(x) __builtin_expect(!!(x), 0)
