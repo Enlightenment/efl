@@ -28,6 +28,10 @@ extern "C" {
 #include "eina_array.h"
 #include "eina_stringshare.h"
 #include "eina_magic.h"
+#include "eina_counter.h"
+
+EAPI int eina_init(void);
+EAPI int eina_shutdown(void);
 
 #ifdef __cplusplus
 }
