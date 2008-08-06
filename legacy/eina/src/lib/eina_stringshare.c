@@ -12,6 +12,7 @@
 
 #include "eina_stringshare.h"
 #include "eina_error.h"
+#include "eina_private.h"
 
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
@@ -29,22 +30,6 @@ struct _Eina_Stringshare_Node
 
 static Eina_Stringshare *share = NULL;
 static int eina_stringshare_init_count = 0;
-
-static inline int
-_eina_stringshare_hash_gen(const char *str, int *len)
-{
-   unsigned int hash_num = 5381;
-   const unsigned char *ptr;
-
-   for (ptr = (const unsigned char *)str; *ptr; ptr++)
-     {
-	hash_num = (hash_num * 33) ^ *ptr;
-     }
-
-   hash_num &= 0x3ff;
-   *len = ptr - (const unsigned char *)str;
-   return (int)hash_num;
-}
 
 /**
  * @defgroup Eina_Stringshare_Group String Instance Functions
@@ -104,7 +89,8 @@ eina_stringshare_add(const char *str)
    Eina_Stringshare_Node *el, *pel = NULL;
 
    if (!str) return NULL;
-   hash_num = _eina_stringshare_hash_gen(str, &slen);
+   slen = strlen(str) + 1;
+   hash_num = eina_hash_djb2(str, slen) & 0x3FF;
    for (el = share->buckets[hash_num]; el; pel = el, el = el->next)
      {
 	el_str = ((char *)el) + sizeof(Eina_Stringshare_Node);
@@ -145,7 +131,8 @@ eina_stringshare_del(const char *str)
    Eina_Stringshare_Node *el, *pel = NULL;
 
    if (!str) return;
-   hash_num = _eina_stringshare_hash_gen(str, &slen);
+   slen = strlen(str) + 1;
+   hash_num = eina_hash_djb2(str, slen) & 0x3FF;
    for (el = share->buckets[hash_num]; el; pel = el, el = el->next)
      {
 	el_str = ((char *)el) + sizeof(Eina_Stringshare_Node);
@@ -177,7 +164,7 @@ eina_stringshare_del(const char *str)
 /**
  * Shutdown the eina string internal structures
  */
-EAPI void
+EAPI int
 eina_stringshare_shutdown()
 {
    --eina_stringshare_init_count;
@@ -202,5 +189,7 @@ eina_stringshare_shutdown()
 
 	eina_error_shutdown();
      }
+
+   return eina_stringshare_init_count;
 }
 
