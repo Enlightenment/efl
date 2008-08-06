@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdint.h>
+
 #include "eina_hash.h"
 #include "eina_inlist.h"
 #include "eina_error.h"
@@ -6,43 +12,279 @@
  *                                  Local                                     * 
  *============================================================================*/
 typedef struct _Eina_Hash_El Eina_Hash_El;
-
 struct _Eina_Hash
 {
-   int population;
+   Eina_Key_Length key_length_cb;
+   Eina_Key_Cmp key_cmp_cb;
+   Eina_Key_Hash key_hash_cb;
+
    Eina_Inlist *buckets[256];
+   int population;
 };
 
 struct _Eina_Hash_El
 {
    Eina_Inlist _list_data;
-   const char *key;
+
    void *data;
+   const void *key;
+   unsigned int length;
 };
 
-static inline int _eina_hash_gen(const char *key);
+static int _eina_hash_init_count = 0;
+static int EINA_HASH_ERROR_OUT_OF_MEMORY = 0;
 
-static int _eina_hash_alloc_error = 0;
-
-static inline int _eina_hash_gen(const char *key)
+static inline Eina_Hash_El *
+_eina_hash_find_by_hash(const Eina_Hash *hash, const char *key, int key_length, int key_hash)
 {
-	unsigned int hash_num = 5381;
-	const unsigned char *ptr;
+   Eina_Hash_El *el;
 
-	if (!key)
-		return 0;
-	for (ptr = (unsigned char *)key; *ptr; ptr++)
-		hash_num = (hash_num * 33) ^ *ptr;
+   key_hash &= 0xFF;
 
-	hash_num &= 0xff;
-	return (int)hash_num;
+   EINA_INLIST_ITER_NEXT(hash->buckets[key_hash], el)
+     if (!hash->key_cmp_cb(el->key, el->length, key, key_length)) return el;
+
+   return NULL;
 }
+
+static inline Eina_Hash_El *
+_eina_hash_find_by_data(const Eina_Hash *hash, const void *data, int *key_hash)
+{
+   Eina_Hash_El *el;
+   int hash_num;
+
+   /* FIXME: Use an iterator for this stuff */
+   for (hash_num = 0; hash_num < 256; hash_num++)
+     EINA_INLIST_ITER_NEXT(hash->buckets[hash_num], el)
+       if (el->data == data)
+	 {
+	    *key_hash = hash_num;
+	    return el;
+	 }
+
+   return NULL;
+}
+
+static inline void
+_eina_hash_reorder(Eina_Hash *hash, Eina_Hash_El *el, int key_hash)
+{
+   key_hash &= 0xFF;
+
+   if ((void*) el != (void*) hash->buckets[key_hash])
+     {
+	hash->buckets[key_hash] = eina_inlist_remove(hash->buckets[key_hash], el);
+	hash->buckets[key_hash] = eina_inlist_prepend(hash->buckets[key_hash], el);
+     }
+}
+
+static unsigned int
+_eina_string_key_length(const char *key)
+{
+   if (!key) return 0;
+   return strlen(key) + 1;
+}
+
+static int
+_eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
+		     const char *key2, __UNUSED__ int key2_length)
+{
+   return strcmp(key1, key2);
+}
+
 /*============================================================================*
- *                                 Global                                     * 
+ *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
- *                                   API                                      * 
+ *                                   API                                      *
  *============================================================================*/
+/**
+ * Initialize the eina hash internal structure.
+ * @return  Zero on failure, non-zero on successful initialization.
+ */
+EAPI int
+eina_hash_init(void)
+{
+   _eina_hash_init_count++;
+
+   if (_eina_hash_init_count == 1)
+     {
+	eina_error_init();
+	EINA_HASH_ERROR_OUT_OF_MEMORY = eina_error_register("Eina_Hash out of memory");
+     }
+
+   return _eina_hash_init_count;
+}
+
+/**
+ * Shutdown the eina hash internal structures
+ */
+EAPI int
+eina_hash_shutdown(void)
+{
+   _eina_hash_init_count--;
+
+   if (_eina_hash_init_count == 0) eina_error_shutdown();
+
+   return _eina_hash_init_count;
+}
+
+EAPI Eina_Hash *
+eina_hash_new(Eina_Key_Length key_length_cb,
+	      Eina_Key_Cmp key_cmp_cb,
+	      Eina_Key_Hash key_hash_cb)
+{
+   /* FIXME: Use mempool. */
+   Eina_Hash *new;
+
+   eina_error_set(0);
+   if (!key_length_cb || !key_cmp_cb) return NULL;
+
+   new = calloc(1, sizeof (Eina_Hash));
+   if (!new) goto on_error;
+
+   new->key_length_cb = key_length_cb;
+   new->key_cmp_cb = key_cmp_cb;
+   new->key_hash_cb = key_hash_cb;
+
+   return new;
+
+ on_error:
+   eina_error_set(EINA_HASH_ERROR_OUT_OF_MEMORY);
+   return NULL;
+}
+
+EAPI Eina_Hash *
+eina_hash_string_djb2_new(void)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+			EINA_KEY_CMP(_eina_string_key_cmp),
+			EINA_KEY_HASH(eina_hash_djb2));
+}
+
+EAPI Eina_Hash *
+eina_hash_string_superfast_new(void)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+			EINA_KEY_CMP(_eina_string_key_cmp),
+			EINA_KEY_HASH(eina_hash_superfast));
+}
+
+/**
+ * Adds an entry to the given hash table.
+ *
+ * @p key is expected to be a unique string within the hash table.
+ * Otherwise, you cannot be sure which inserted data pointer will be
+ * accessed with @ref eina_hash_find , and removed with
+ * @ref eina_hash_del .
+ *
+ * @p key_hash is expected to always match @p key. Otherwise, you
+ * cannot be sure to find it again with @ref eina_hash_find_by_hash.
+ *
+ * Key strings are case sensitive.
+ *
+ * @ref eina_error_get should be used to determine if an
+ * allocation error occurred during this function.
+ *
+ * @param   hash The given hash table.  Can be @c NULL.
+ * @param   key  A unique key.  Can be @c NULL.
+ * @param   key_length Should be the length of @p key (don't forget to count '\0' for string).
+ * @param   key_hash The hash that will always match key.
+ * @param   data Data to associate with the string given by @p key.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ * @ingroup Eina_Hash_Data
+ */
+EAPI Eina_Bool
+eina_hash_add_by_hash(Eina_Hash *hash,
+		      const void *key, int key_length, int key_hash,
+		      const void *data)
+{
+   Eina_Hash_El *el;
+
+   eina_error_set(0);
+   if ((!hash) || (!key) || (!data)) return EINA_FALSE;
+
+   /* Alloc every needed thing.*/
+   el = malloc(sizeof (Eina_Hash_El) + key_length);
+   if (!el) goto on_error;
+
+   /* Setup the element */
+   el->length = key_length;
+   el->data = (void *) data;
+   el->key = (char *) (el + 1);
+   memcpy((char *) el->key, key, key_length);
+
+   /* eina hash have 256 buckets. */
+   key_hash &= 0xFF;
+
+   /* add the new element to the hash. */
+   hash->buckets[key_hash] = eina_inlist_prepend(hash->buckets[key_hash], el);
+   hash->population++;
+   return EINA_TRUE;
+
+ on_error:
+   eina_error_set(EINA_HASH_ERROR_OUT_OF_MEMORY);
+   return EINA_FALSE;
+}
+
+/**
+ * Adds an entry to the given hash table and does not duplicate the string key.
+ *
+ * @p key is expected to be a unique string within the hash table.
+ * Otherwise, you cannot be sure which inserted data pointer will be
+ * accessed with @ref eina_hash_find , and removed with
+ * @ref eina_hash_del . This call does not make a copy of the key so it must
+ * be a string constant or stored elsewhere (in the object being added) etc.
+ *
+ * @p key_hash is expected to always match @p key. Otherwise, you
+ * cannot be sure to find it again with @ref eina_hash_find_by_hash.
+ *
+ * Key strings are case sensitive.
+ *
+ * @ref eina_error_get should be used to determine if an
+ * allocation error occurred during this function.
+ *
+ * @param   hash The given hash table.  Can be @c NULL.
+ * @param   key  A unique key.  Can be @c NULL.
+ * @param   key_length Should be the length of @p key (don't forget to count '\0' for string).
+ * @param   key_hash The hash that will always match key.
+ * @param   data Data to associate with the string given by @p key.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ * @ingroup Eina_Hash_Data
+ */
+EAPI Eina_Bool
+eina_hash_direct_add_by_hash(Eina_Hash *hash,
+			     const void *key, int key_length, int key_hash,
+			     const void *data)
+{
+   Eina_Hash_El *el;
+
+   eina_error_set(0);
+   if ((!hash) || (!key) || (!data)) return EINA_FALSE;
+
+   /* Alloc every needed thing.*/
+   el = malloc(sizeof (Eina_Hash_El));
+   if (!el) goto on_error;
+
+   /* Setup the element */
+   el->length = key_length;
+   el->data = (void *) data;
+   el->key = key;
+
+   /* eina hash have 256 buckets. */
+   key_hash &= 0xFF;
+
+   /* add the new element to the hash. */
+   hash->buckets[key_hash] = eina_inlist_prepend(hash->buckets[key_hash], el);
+   hash->population++;
+   return EINA_TRUE;
+
+ on_error:
+   eina_error_set(EINA_HASH_ERROR_OUT_OF_MEMORY);
+   return EINA_FALSE;
+}
+
 /**
  * Adds an entry to the given hash table.
  *
@@ -56,49 +298,27 @@ static inline int _eina_hash_gen(const char *key)
  * @ref eina_hash_alloc_error should be used to determine if an
  * allocation error occurred during this function.
  *
- * @param   hash The given hash table.  Can be @c NULL, in which case a
- *               new hash table is allocated and returned.
- * @param   key  A unique string.  Can be @c NULL.
+ * @param   hash The given hash table.  Can be @c NULL.
+ * @param   key  A unique key.  Can be @c NULL.
  * @param   data Data to associate with the string given by @p key.
- * @return  Either the given hash table, or if the given value for @p
- *          hash is @c NULL, then a new one.  @c NULL will be returned
- *          if memory could not be allocated for a new table.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ * @ingroup Eina_Hash_Data
  */
-EAPI Eina_Hash *
-eina_hash_add(Eina_Hash *hash, const char *key, const void *data)
+EAPI Eina_Bool
+eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
 {
-	int hash_num;
-	Eina_Hash_El *el;
+   unsigned int key_length;
+   int key_hash;
 
-	if ((!key) || (!data)) return hash;
-	_eina_hash_alloc_error = 0;
-	if (!hash)
-	{
-		hash = calloc(1, sizeof(struct _Eina_Hash));
-		if (!hash)
-		{
-			_eina_hash_alloc_error = 1;
-			return NULL;
-		}
-	}
-	if (!(el = malloc(sizeof(struct _Eina_Hash_El) + strlen(key) + 1)))
-	{
-		if (hash->population <= 0)
-		{
-			free(hash);
-			hash = NULL;
-		}
-		_eina_hash_alloc_error = 1;
-		return hash;
-	};
-	el->key = ((char *)el) + sizeof(struct _Eina_Hash_El);
-	strcpy((char *) el->key, key);
-	el->data = (void *)data;
-	hash_num = _eina_hash_gen(key);
-	hash->buckets[hash_num] = eina_inlist_prepend(hash->buckets[hash_num], el);
-	hash->population++;
-	return hash;
+   if ((!hash) || (!key) || (!data)) return EINA_FALSE;
+
+   key_length = hash->key_length_cb(key);
+   key_hash = hash->key_hash_cb(key, key_length);
+
+   return eina_hash_add_by_hash(hash, key, key_length, key_hash, data);
 }
+
 /**
  * Adds an entry to the given hash table and does not duplicate the string key.
  *
@@ -113,48 +333,61 @@ eina_hash_add(Eina_Hash *hash, const char *key, const void *data)
  * @ref eina_hash_alloc_error should be used to determine if an
  * allocation error occurred during this function.
  *
- * @param   hash The given hash table.  Can be @c NULL, in which case a
- *               new hash table is allocated and returned.
- * @param   key  A unique string.  Can be @c NULL.
+ * @param   hash The given hash table.  Can be @c NULL.
+ * @param   key  A unique key.  Can be @c NULL.
  * @param   data Data to associate with the string given by @p key.
- * @return  Either the given hash table, or if the given value for @p
- *          hash is @c NULL, then a new one.  @c NULL will be returned
- *          if memory could not be allocated for a new table.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
  * @ingroup Eina_Hash_Data
  */
-EAPI Eina_Hash *
-eina_hash_direct_add(Eina_Hash *hash, const char *key, const void *data)
+EAPI Eina_Bool
+eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
 {
-	int hash_num;
-	Eina_Hash_El *el;
+   int key_length;
+   int key_hash;
 
-	if ((!key) || (!data)) return hash;
-	_eina_hash_alloc_error = 0;
-	if (!hash)
-	{
-		hash = calloc(1, sizeof(struct _Eina_Hash));
-		if (!hash)
-		{
-			_eina_hash_alloc_error = 1;
-			return NULL;
-		}
-	}
-	if (!(el = malloc(sizeof(struct _Eina_Hash_El))))
-	{
-		if (hash->population <= 0)
-		{
-			free(hash);
-			hash = NULL;
-		}
-		_eina_hash_alloc_error = 1;
-		return hash;
-	};
-	el->key = key;
-	el->data = (void *)data;
-	hash_num = _eina_hash_gen(key);
-	hash->buckets[hash_num] = eina_inlist_prepend(hash->buckets[hash_num], el);
-	hash->population++;
-	return hash;
+   if ((!hash) || (!key) || (!data)) return EINA_FALSE;
+
+   key_length = hash->key_length_cb(key);
+   key_hash = hash->key_hash_cb(key, key_length);
+
+   return eina_hash_direct_add_by_hash(hash, key, key_length, key_hash, data);
+}
+
+/**
+ * Removes the entry identified by @p key and @p key_hash or @p data from the given
+ * hash table.
+ *
+ * If @p key is @c NULL, then @p data is used to find a match to
+ * remove.
+ *
+ * @param   hash The given hash table.
+ * @param   key  The key.  Can be @c NULL.
+ * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
+ * @param   data The data pointer to remove if @p key is @c NULL.
+ *               Otherwise, not required and can be @c NULL.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ * @ingroup Eina_Hash_Data
+ */
+EAPI Eina_Bool
+eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
+{
+   Eina_Hash_El *el = NULL;
+
+   if (!hash) return EINA_FALSE;
+   if (!key) el = _eina_hash_find_by_data(hash, data, &key_hash);
+   else el = _eina_hash_find_by_hash(hash, key, key_length, key_hash);
+
+   if (!el) return EINA_FALSE;
+
+   key_hash &= 0xFF;
+
+   hash->buckets[key_hash] = eina_inlist_remove(hash->buckets[key_hash], el);
+   free(el);
+   hash->population--;
+
+   return EINA_TRUE;
 }
 
 /**
@@ -165,145 +398,128 @@ eina_hash_direct_add(Eina_Hash *hash, const char *key, const void *data)
  * remove.
  *
  * @param   hash The given hash table.
- * @param   key  The key string.  Can be @c NULL.
+ * @param   key  The key.  Can be @c NULL.
  * @param   data The data pointer to remove if @p key is @c NULL.
  *               Otherwise, not required and can be @c NULL.
- * @return  The modified hash table.  If there are no entries left, the
- *          hash table will be freed and @c NULL will be returned.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
  * @ingroup Eina_Hash_Data
  */
-EAPI Eina_Hash *
-eina_hash_del(Eina_Hash *hash, const char *key, const void *data)
+EAPI Eina_Bool
+eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
 {
-	int hash_num;
-	Eina_Hash_El *el;
-	Eina_Inlist *l;
+   int key_length = 0;
+   int hash_num;
 
-	if (!hash) return NULL;
-	if (!key)
-	{
-		int hash_num;
+   if (!hash) return EINA_FALSE;
+   if (key)
+     {
+	key_length = hash->key_length_cb(key);
+	hash_num = hash->key_hash_cb(key, key_length);
+     }
 
-		for (hash_num = 0; hash_num < 256; hash_num++)
-		{
-			for (l = hash->buckets[hash_num]; l; l = l->next)
-			{
-				el = (Eina_Hash_El *)l;
-				if (el->data == data)
-				{
-					hash->buckets[hash_num] = eina_inlist_remove(hash->buckets[hash_num], el);
-					free(el);
-					hash->population--;
-					if (hash->population <= 0)
-					{
-						free(hash);
-						hash = NULL;
-					}
-					return hash;
-				}
-			}
-		}
-	}
-	else
-	{
-		hash_num = _eina_hash_gen(key);
-		for (l = hash->buckets[hash_num]; l; l = l->next)
-		{
-			el = (Eina_Hash_El *)l;
-			if (!strcmp(el->key, key))
-			{
-				hash->buckets[hash_num] = eina_inlist_remove(hash->buckets[hash_num], el);
-				free(el);
-				hash->population--;
-				if (hash->population <= 0)
-				{
-					free(hash);
-					hash = NULL;
-				}
-				return hash;
-			}
-		}
-	}
-	return hash;
+   return eina_hash_del_by_hash(hash, key, key_length, hash_num, data);
 }
 
 /**
  * Retrieves a specific entry in the given hash table.
  * @param   hash The given hash table.
- * @param   key  The key string of the entry to find.
+ * @param   key  The key of the entry to find.
+ * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
  * @return  The data pointer for the stored entry, or @c NULL if not
  *          found.
  * @ingroup Eina_Hash_Data
  */
-EAPI void * eina_hash_find(const Eina_Hash *hash, const char *key)
+EAPI void *
+eina_hash_find_by_hash(const Eina_Hash *hash, const void *key, int key_length, int key_hash)
 {
-	int hash_num;
-	Eina_Hash_El *el;
-	Eina_Inlist *l;
+   Eina_Hash_El *el;
 
-	_eina_hash_alloc_error = 0;
-	if ((!hash) || (!key))
-		return NULL;
-	hash_num = _eina_hash_gen(key);
-	for (l = hash->buckets[hash_num]; l; l = l->next) {
-		el = (Eina_Hash_El *)l;
-		if (!strcmp(el->key, key)) {
-			if (l != hash->buckets[hash_num]) {
-				Eina_Inlist *bucket;
+   if ((!hash) || (!key)) return NULL;
 
-				bucket = hash->buckets[hash_num];
-				bucket = eina_inlist_remove(bucket, el);
-				bucket = eina_inlist_prepend(bucket, el);
-				((Eina_Hash *)hash)->buckets[hash_num]
-						= bucket;
-			}
-			return el->data;
-		}
-	}
-	return NULL;
+   el = _eina_hash_find_by_hash(hash, key, key_length, key_hash);
+   if (el)
+     {
+	_eina_hash_reorder((Eina_Hash *) hash, el, key_hash);
+	return el->data;
+     }
+   return NULL;
+}
+
+/**
+ * Retrieves a specific entry in the given hash table.
+ * @param   hash The given hash table.
+ * @param   key  The key of the entry to find.
+ * @return  The data pointer for the stored entry, or @c NULL if not
+ *          found.
+ * @ingroup Eina_Hash_Data
+ */
+EAPI void *
+eina_hash_find(const Eina_Hash *hash, const void *key)
+{
+   int key_length;
+   int hash_num;
+
+   if ((!hash) || (!key)) return NULL;
+
+   key_length = hash->key_length_cb(key);
+   hash_num = hash->key_hash_cb(key, key_length);
+
+   return eina_hash_find_by_hash(hash, key, key_length, hash_num);
 }
 
 /**
  * Modifies the entry pointer at the specified key and returns the old entry
  * @param   hash The given hash table.
- * @param   key  The key string of the entry to modify.
+ * @param   key  The key of the entry to modify.
+ * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
  * @param   data The data to replace the old entry, if it exists.
  * @return  The data pointer for the old stored entry, or @c NULL if not
  *          found. If an existing entry is not found, nothing is added to the
  *          hash.
  * @ingroup Eina_Hash_Data
  */
-EAPI void * eina_hash_modify(Eina_Hash *hash, const char *key, const void *data)
+EAPI void *
+eina_hash_modify_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
 {
-	int hash_num;
-	Eina_Hash_El *el;
-	Eina_Inlist *l;
+   Eina_Hash_El *el;
+   void *old_data = NULL;
 
-	_eina_hash_alloc_error = 0;
-	if (!hash)
-		return NULL;
-	hash_num = _eina_hash_gen(key);
-	for (l = hash->buckets[hash_num]; l; l = l->next) {
-		el = (Eina_Hash_El *)l;
-		if ((key) && (!strcmp(el->key, key))) {
-			void *old_data;
+   if (!hash) return NULL;
 
-			if (l != hash->buckets[hash_num]) {
-				hash->buckets[hash_num]
-						= eina_inlist_remove(
-								hash->buckets[hash_num],
-								el);
-				hash->buckets[hash_num]
-						= eina_inlist_prepend(
-								hash->buckets[hash_num],
-								el);
-			}
-			old_data = el->data;
-			el->data = (void *) data;
-			return old_data;
-		}
-	}
-	return NULL;
+   el = _eina_hash_find_by_hash(hash, key, key_length, key_hash);
+   if (el)
+     {
+	_eina_hash_reorder((Eina_Hash *) hash, el, key_hash);
+	old_data = el->data;
+	el->data = (void *) data;
+     }
+
+   return old_data;
+}
+
+/**
+ * Modifies the entry pointer at the specified key and returns the old entry
+ * @param   hash The given hash table.
+ * @param   key  The key of the entry to modify.
+ * @param   data The data to replace the old entry, if it exists.
+ * @return  The data pointer for the old stored entry, or @c NULL if not
+ *          found. If an existing entry is not found, nothing is added to the
+ *          hash.
+ * @ingroup Eina_Hash_Data
+ */
+EAPI void *
+eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
+{
+   int key_length;
+   int hash_num;
+
+   if (!hash) return NULL;
+
+   key_length = hash->key_length_cb(key);
+   hash_num = hash->key_hash_cb(key, key_length);
+
+   return eina_hash_modify_by_hash(hash, key, key_length, hash_num, data);
 }
 
 /**
@@ -318,11 +534,11 @@ EAPI void * eina_hash_modify(Eina_Hash *hash, const char *key, const void *data)
  * @return @c 256 if @p hash is not @c NULL.  @c 0 otherwise.
  * @ingroup Eina_Hash_General_Group
  */
-EAPI int eina_hash_size(const Eina_Hash *hash)
+EAPI int
+eina_hash_population(const Eina_Hash *hash)
 {
-	if (!hash)
-		return 0;
-	return 256;
+   if (!hash) return 0;
+   return hash->population;
 }
 
 /**
@@ -349,26 +565,29 @@ EAPI int eina_hash_size(const Eina_Hash *hash)
  * @endcode
  * @ingroup Eina_Hash_General_Group
  */
-EAPI void eina_hash_free(Eina_Hash *hash)
+EAPI void
+eina_hash_free(Eina_Hash *hash)
 {
-	int i, size;
+   int i;
 
-	if (!hash)
-		return;
-	size = eina_hash_size(hash);
-	for (i = 0; i < size; i++) {
-		while (hash->buckets[i]) {
-			Eina_Hash_El *el;
+   if (!hash) return;
 
-			el = (Eina_Hash_El *)hash->buckets[i];
-			hash->buckets[i] = eina_inlist_remove(
-					hash->buckets[i], el);
-			free(el);
-		}
-	}
-	free(hash);
+   /* FIXME: Should have used an iterator. */
+   for (i = 0; i < 256; i++)
+     {
+	while (hash->buckets[i])
+	  {
+	     Eina_Hash_El *el;
+
+	     el = (Eina_Hash_El *)hash->buckets[i];
+	     hash->buckets[i] = eina_inlist_remove(hash->buckets[i], el);
+	     free(el);
+	  }
+     }
+   free(hash);
 }
 
+/* FIXME: Create a generic foreach function in the iterator implementation. */
 /**
  * Call a function on every member stored in the hash table
  * @param hash The hash table whose members will be walked
@@ -404,60 +623,91 @@ EAPI void eina_hash_free(Eina_Hash *hash)
  */
 EAPI void eina_hash_foreach(
 		const Eina_Hash *hash,
-		Eina_Bool (*func) (const Eina_Hash *hash, const char *key, void *data, void *fdata),
+		Eina_Foreach func,
 		const void *fdata)
 {
-	int i, size;
+   int i;
 
-	if (!hash)
-		return;
-	size = eina_hash_size(hash);
-	for (i = 0; i < size; i++) {
-		Eina_Inlist *l, *next_l;
+   if (!hash) return;
+   for (i = 0; i < 256; i++)
+     {
+	Eina_Inlist *l, *next_l;
 
-		for (l = hash->buckets[i]; l;) {
-			Eina_Hash_El *el;
+	for (l = hash->buckets[i]; l;)
+	  {
+	     Eina_Hash_El *el;
 
-			next_l = l->next;
-			el = (Eina_Hash_El *)l;
-			if (!func(hash, el->key, el->data, (void *)fdata))
-				return;
-			l = next_l;
-		}
-	}
-}
-
-/**
- * Return memory allocation failure flag after an function requiring allocation
- * @return The state of the allocation flag
- *
- * This function returns the state of the memory allocation flag. This flag is
- * set if memory allocations fail during eina_hash_add() calls. If they do, 1
- * will be returned, otherwise 0 will be returned. The flag will remain in its
- * current state until the next call that requires allocation is called, and
- * is then reset.
- *
- * Example:
- * @code
- * Eina_Hash *hash = NULL;
- * extern void *my_data;
- *
- * hash = eina_hash_add(hash, "My Data", my_data);
- * if (eina_hash_alloc_error())
- *   {
- *     fprintf(stderr, "ERROR: Memory is low. Hash allocation failed.\n");
- *     exit(-1);
- *   }
- * if (eina_hash_find(hash, "My Data") == my_data)
- *   {
- *     printf("My Data inserted and successfully found.\n");
- *   }
- * @endcode
- * @ingroup Eina_Hash_General_Group
- */
-EAPI int eina_hash_alloc_error(void)
-{
-	return _eina_hash_alloc_error;
+	     next_l = l->next;
+	     el = (Eina_Hash_El *)l;
+	     if (!func(hash, el->key, el->data, (void *)fdata))
+	       return;
+	     l = next_l;
+	  }
+     }
 }
 
 /* Common hash functions */
+
+/* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html)
+   used by WebCore (http://webkit.org/blog/8/hashtables-part-2/) */
+#undef get16bits
+#if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
+  || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
+#define get16bits(d) (*((const uint16_t *) (d)))
+#endif
+
+#if !defined (get16bits)
+#define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
+                       +(uint32_t)(((const uint8_t *)(d))[0]) )
+#endif
+
+int
+eina_hash_superfast(const char *key, int len)
+{
+   int hash = len, tmp;
+   int rem;
+
+   rem = len & 3;
+   len >>= 2;
+
+   /* Main loop */
+   for ( ;len > 0; len--)
+     {
+	hash += get16bits(key);
+	tmp = (get16bits(key + 2) << 11) ^ hash;
+	hash = (hash << 16) ^ tmp;
+	key += 2 * sizeof (uint16_t);
+	hash += hash >> 11;
+     }
+
+   /* Handle end cases */
+   switch (rem)
+     {
+      case 3:
+	 hash += get16bits(key);
+	 hash ^= hash << 16;
+	 hash ^= key[sizeof (uint16_t)] << 18;
+	 hash += hash >> 11;
+	 break;
+      case 2:
+	 hash += get16bits(key);
+	 hash ^= hash << 11;
+	 hash += hash >> 17;
+	 break;
+      case 1:
+	 hash += *key;
+	 hash ^= hash << 10;
+	 hash += hash >> 1;
+     }
+
+   /* Force "avalanching" of final 127 bits */
+   hash ^= hash << 3;
+   hash += hash >> 5;
+   hash ^= hash << 4;
+   hash += hash >> 17;
+   hash ^= hash << 25;
+   hash += hash >> 6;
+
+   return hash;
+}
+
