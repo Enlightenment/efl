@@ -14,6 +14,9 @@ static const Eina_Test_Case etc[] = {
   { "Magic", eina_test_magic },
   { "Inlist", eina_test_inlist },
   { "Lazy alloc", eina_test_lalloc },
+  { "Main", eina_test_main },
+  { "Counter", eina_test_counter },
+  { "Hash", eina_test_hash },
   { NULL, NULL }
 };
 
