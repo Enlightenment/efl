@@ -18,8 +18,10 @@ eina_module.c \
 eina_value.c \
 eina_array.c \
 eina_magic.c \
+eina_main.c \
+eina_counter.c \
 eina_stringshare.c
 
-libeina_la_LIBADD = -ldl @COVERAGE_LIBS@
+libeina_la_LIBADD = -ldl -lrt @COVERAGE_LIBS@
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 libeina_la_DEPENDENCIES = $(top_builddir)/config.h

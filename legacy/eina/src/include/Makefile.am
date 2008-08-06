@@ -4,6 +4,7 @@ EINAHEADERS = \
 eina_error.h \
 eina_f16p16.h \
 eina_hash.h \
+eina_inline_hash.x \
 eina_lalloc.h \
 eina_inlist.h \
 eina_list.h \
@@ -13,6 +14,7 @@ eina_module.h \
 eina_rectangle.h \
 eina_types.h \
 eina_array.h \
+eina_counter.h \
 eina_inline_array.x \
 eina_magic.h \
 eina_stringshare.h
