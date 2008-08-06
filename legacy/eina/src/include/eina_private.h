@@ -79,9 +79,9 @@ void          _eina_fps_debug_runtime_add(double t);
 
 
 extern int    _eina_fps_debug;
-
 /* old code finish */
-/* mp */
+
+/* Memory Pool */
 typedef struct _Eina_Mempool_Backend
 {
    void *(*init)(const char *context, const char *options, va_list args);

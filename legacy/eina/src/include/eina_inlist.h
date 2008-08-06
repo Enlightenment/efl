@@ -25,8 +25,6 @@ EAPI void * eina_inlist_prepend_relative(void *in_list, void *in_item, void *in_
 EAPI void * eina_inlist_remove(void *in_list, void *in_item);
 EAPI void * eina_inlist_find(void *in_list, void *in_item);
 
-//typedef Eina_Bool (*Eina_Iterator_Func)(Eina_Inlist *l, void *data);
-
 #define EINA_INLIST_ITER_NEXT(list, l) for (l = (void*)(Eina_Inlist *)list; l; l = (void*)((Eina_Inlist *)l)->next)
 #define EINA_INLIST_ITER_LAST(list, l) for (l = (void*)((Eina_Inlist *)list)->last; l; l = (void*)((Eina_Inlist *)l)->prev)
 
