@@ -6,3 +6,4 @@ Makefile
 .libs
 .deps
 eina_suite
+eina_bench

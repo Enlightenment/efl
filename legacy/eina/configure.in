@@ -58,6 +58,23 @@ AC_ARG_ENABLE([coverage],
 AC_MSG_CHECKING([whether to use profiling instrumentation])
 AC_MSG_RESULT([$enable_coverage])
 
+# Benchmarking tests
+
+AC_ARG_ENABLE([tests],
+   [AC_HELP_STRING([--enable-tests], [enable tests @<:@default=no@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_bench="yes"
+    else
+       enable_bench="no"
+    fi
+   ],
+   [enable_bench="no"]
+)
+AC_MSG_CHECKING([whether tests are built])
+AC_MSG_RESULT([${enable_bench}])
+AM_CONDITIONAL(EINA_ENABLE_BENCH, test "x${enable_bench}" = "xyes")
+
 # Ememoa memory pool
 
 AC_ARG_ENABLE([ememoa],
@@ -197,6 +214,7 @@ echo "Configuration Options Summary:"
 echo
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
+echo "  Bench................: ${enable_bench}"
 echo
 echo "  Memory pool:"
 echo "    Ememoa.............: ${enable_ememoa}"
