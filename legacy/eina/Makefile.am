@@ -70,7 +70,7 @@ coverage:
 	@make lcov-report
 
 clean-local:
-	@rm -rf coverage
+	@rm -rf coverage benchmark
 else
 lcov-reset:
 	@echo "reconfigure with --enable-coverage"
@@ -80,4 +80,17 @@ lcov-report:
 
 coverage:
 	@echo "reconfigure with --enable-tests --enable-coverage"
+endif
+
+if EINA_ENABLE_BENCH
+
+benchmark:
+	@make -C src bench
+	@mkdir result || true
+	@cd result && ../src/tests/eina_bench `date +%F_%T`
+
+else
+
+bench:
+	@echo "reconfigure with --enable-bench"
 endif
