@@ -52,9 +52,19 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <assert.h>
+
+#include "eina_error.h"
 #include "eina_list.h"
 #include "eina_private.h"
 
+/*============================================================================*
+ *                                  Local                                     * 
+ *============================================================================*/
 struct _Eina_List /** A linked list node */
 {
    void      *data; /**< Pointer to list element payload */
@@ -64,38 +74,72 @@ struct _Eina_List /** A linked list node */
 };
 
 typedef struct _Eina_List_Accounting Eina_List_Accounting;
-
 struct _Eina_List_Accounting
 {
    Eina_List *last;
    int        count;
 };
 
-static int _eina_list_alloc_error = 0;
-
-typedef struct _Eina_Mempool2 Eina_Mempool2;
-
-struct _Eina_Mempool2
+static inline Eina_List_Accounting*
+_eina_list_mempool_accounting_new(__UNUSED__ Eina_List *list)
 {
-   int           item_size;
-   int           pool_size;
-   int           usage;
-   void         *first, *last;
-};
+   Eina_List_Accounting *tmp;
 
-void *_mempool2_malloc(Eina_Mempool2 *pool, int size)
-{
-	return malloc(size);
+   tmp = malloc(sizeof (Eina_List_Accounting));
+   if (!tmp) eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+
+   return tmp;
 }
-void  _mempool2_free(Eina_Mempool2 *pool, void *ptr)
+static inline void
+_eina_list_mempool_accounting_free(Eina_List_Accounting *accounting)
 {
-	free(ptr);
-}
-void *_mempool2_calloc(Eina_Mempool2 *pool, int size)
-{
-	return calloc(1, size);
+   free(accounting);
 }
 
+static inline Eina_List*
+_eina_list_mempool_list_new(__UNUSED__ Eina_List *list)
+{
+   Eina_List *tmp;
+
+   tmp = malloc(sizeof (Eina_List));
+   if (!tmp) eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+
+   return tmp;
+}
+static inline void
+_eina_list_mempool_list_free(Eina_List *list)
+{
+   list->accounting->count--;
+   if (list->accounting->count == 0)
+     _eina_list_mempool_accounting_free(list->accounting);
+
+   free(list);
+}
+
+static Eina_List *
+_eina_list_setup_accounting(Eina_List *list)
+{
+   list->accounting = _eina_list_mempool_accounting_new(list);
+   if (!list->accounting) goto on_error;
+
+   list->accounting->last = list;
+   list->accounting->count = 1;
+
+   return list;
+
+ on_error:
+   _eina_list_mempool_list_free(list);
+   return NULL;
+}
+
+static inline void
+_eina_list_update_accounting(Eina_List *list, Eina_List *new_list)
+{
+   list->accounting->count++;
+   new_list->accounting = list->accounting;
+}
+
+#if 0
 static Eina_Mempool2 _eina_list_mempool =
 {
    sizeof(Eina_List),
@@ -108,12 +152,30 @@ static Eina_Mempool2 _eina_list_accounting_mempool =
    80,
    0, NULL, NULL
 };
-   
+#endif
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 /**
  * @defgroup Eina_List_Data_Group Linked List Creation Functions
  *
  * Functions that add data to an Eina_List.
  */
+EAPI int
+eina_list_init(void)
+{
+   return eina_error_init();
+}
+
+EAPI int
+eina_list_shutdown(void)
+{
+   return eina_error_shutdown();
+}
 
 /**
  * Appends the given data to the given linked list.
@@ -146,35 +208,24 @@ eina_list_append(Eina_List *list, const void *data)
 {
    Eina_List *l, *new_l;
 
-   _eina_list_alloc_error = 0;
-   new_l = _mempool2_malloc(&_eina_list_mempool, sizeof(Eina_List));
-   if (!new_l)
-     {
-	_eina_list_alloc_error = 1;
-	return list;
-     }
+   eina_error_set(0);
+   new_l = _eina_list_mempool_list_new(list);
+   if (!new_l) return list;
    new_l->next = NULL;
    new_l->data = (void *)data;
    if (!list)
      {
 	new_l->prev = NULL;
-	new_l->accounting = _mempool2_malloc(&_eina_list_accounting_mempool, sizeof(Eina_List_Accounting));
-	if (!new_l->accounting)
-	  {
-	     _eina_list_alloc_error = 1;
-	     _mempool2_free(&_eina_list_mempool, new_l);
-	     return list;
-	  }
-	new_l->accounting->last = new_l;
-	new_l->accounting->count = 1;
-	return new_l;
+	return _eina_list_setup_accounting(new_l);
      }
+
    l = list->accounting->last;
+   list->accounting->last = new_l;
+
    l->next = new_l;
    new_l->prev = l;
-   new_l->accounting = list->accounting;
-   list->accounting->last = new_l;
-   list->accounting->count++;
+
+   _eina_list_update_accounting(list, new_l);
    return list;
 }
 
@@ -209,33 +260,20 @@ eina_list_prepend(Eina_List *list, const void *data)
 {
    Eina_List *new_l;
 
-   _eina_list_alloc_error = 0;
-   new_l = _mempool2_malloc(&_eina_list_mempool, sizeof(Eina_List));
-   if (!new_l)
-     {
-	_eina_list_alloc_error = 1;
-	return list;
-     }
+   eina_error_set(0);
+   new_l = _eina_list_mempool_list_new(list);
+   if (!new_l) return list;
+
    new_l->prev = NULL;
-   new_l->data = (void *)data;
-   if (!list)
-     {
-	new_l->next = NULL;
-	new_l->accounting = _mempool2_malloc(&_eina_list_accounting_mempool, sizeof(Eina_List_Accounting));
-	if (!new_l->accounting)
-	  {
-	     _eina_list_alloc_error = 1;
-	     _mempool2_free(&_eina_list_mempool, new_l);
-	     return list;
-	  }
-	new_l->accounting->last = new_l;
-	new_l->accounting->count = 1;
-	return new_l;
-     }
    new_l->next = list;
+   new_l->data = (void *)data;
+
+   if (!list) return _eina_list_setup_accounting(new_l);
+
    list->prev = new_l;
-   new_l->accounting = list->accounting;
-   list->accounting->count++;
+
+   _eina_list_update_accounting(list, new_l);
+
    return new_l;
 }
 
@@ -293,30 +331,26 @@ EAPI Eina_List *
 eina_list_append_relative_list(Eina_List *list, const void *data, Eina_List *relative)
 {
    Eina_List *new_l;
-   
+
    if ((!list) || (!relative)) return eina_list_append(list, data);
-   _eina_list_alloc_error = 0;
-   new_l = _mempool2_malloc(&_eina_list_mempool, sizeof(Eina_List));
-   if (!new_l)
-     {
-	_eina_list_alloc_error = 1;
-	return list;
-     }
+   eina_error_set(0);
+   new_l = _eina_list_mempool_list_new(list);
+   if (!new_l) return list;
+
+   new_l->next = relative->next;
    new_l->data = (void *)data;
+
    if (relative->next)
-     {
-	new_l->next = relative->next;
-	relative->next->prev = new_l;
-     }
-   else
-     new_l->next = NULL;
-   
+     relative->next->prev = new_l;
+
    relative->next = new_l;
    new_l->prev = relative;
-   new_l->accounting = list->accounting;
-   list->accounting->count++;
+
+   _eina_list_update_accounting(list, new_l);
+
    if (!new_l->next)
      new_l->accounting->last = new_l;
+
    return list;
 }
 
@@ -369,7 +403,6 @@ eina_list_prepend_relative(Eina_List *list, const void *data, const void *relati
 {
    Eina_List *l;
 
-   _eina_list_alloc_error = 0;
    for (l = list; l; l = l->next)
      {
 	if (l->data == relative)
@@ -382,24 +415,24 @@ EAPI Eina_List *
 eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *relative)
 {
    Eina_List *new_l;
-   
+
    if ((!list) || (!relative)) return eina_list_prepend(list, data);
-   _eina_list_alloc_error = 0;
-   new_l = _mempool2_malloc(&_eina_list_mempool, sizeof(Eina_List));
-   if (!new_l)
-     {
-	_eina_list_alloc_error = 1;
-	return list;
-     }
-   new_l->data = (void *)data;
+   eina_error_set(0);
+   new_l = _eina_list_mempool_list_new(list);
+   if (!new_l) return list;
+
    new_l->prev = relative->prev;
    new_l->next = relative;
+   new_l->data = (void *)data;
+
    if (relative->prev) relative->prev->next = new_l;
    relative->prev = new_l;
-   new_l->accounting = list->accounting;
-   list->accounting->count++;
+
+   _eina_list_update_accounting(list, new_l);
+
    if (new_l->prev)
      return list;
+
    return new_l;
 }
 
@@ -478,10 +511,8 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
      return_l = remove_list->next;
    if (remove_list == list->accounting->last)
      list->accounting->last = remove_list->prev;
-   list->accounting->count--;
-   if (list->accounting->count == 0)
-     _mempool2_free(&_eina_list_accounting_mempool, list->accounting);
-   _mempool2_free(&_eina_list_mempool, remove_list);
+
+   _eina_list_mempool_list_free(remove_list);
    return return_l;
 }
 
@@ -516,26 +547,27 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
 EAPI Eina_List *
 eina_list_promote_list(Eina_List *list, Eina_List *move_list)
 {
-   Eina_List *return_l;
-
    if (!list) return NULL;
    if (!move_list) return list;
+   /* Promoting head to be head. */
    if (move_list == list) return list;
-   if (move_list->next) move_list->next->prev = move_list->prev;
-   if (move_list->prev)
-     {
-	move_list->prev->next = move_list->next;
-	return_l = list;
-     }
-   else
-     return_l = move_list->next;
+
+   /* Update pointer to the last entry if necessary. */
    if (move_list == list->accounting->last)
      list->accounting->last = move_list->prev;
-   move_list->prev = return_l->prev;
-   if (return_l->prev)
-     return_l->prev->next = move_list;
-   return_l->prev = move_list;
-   move_list->next = return_l;
+
+   /* Remove the promoted item from the list. */
+   if (move_list->next) move_list->next->prev = move_list->prev;
+   if (move_list->prev) move_list->prev->next = move_list->next;
+   else list = move_list->next;
+
+   assert(list);
+
+   move_list->prev = list->prev;
+   if (list->prev)
+     list->prev->next = move_list;
+   list->prev = move_list;
+   move_list->next = list;
    return move_list;
 }
 
@@ -639,12 +671,12 @@ eina_list_free(Eina_List *list)
    Eina_List *l, *free_l;
 
    if (!list) return NULL;
-   _mempool2_free(&_eina_list_accounting_mempool, list->accounting);
    for (l = list; l;)
      {
 	free_l = l;
 	l = l->next;
-	_mempool2_free(&_eina_list_mempool, free_l);
+
+	_eina_list_mempool_list_free(free_l);
      }
    return NULL;
 }
@@ -864,7 +896,7 @@ eina_list_nth_list(const Eina_List *list, int n)
    const Eina_List *l;
 
    /* check for non-existing nodes */
-   if ((!list) || (n < 0) || 
+   if ((!list) || (n < 0) ||
        (n > (list->accounting->count - 1)))
      return NULL;
 
@@ -875,7 +907,7 @@ eina_list_nth_list(const Eina_List *list, int n)
      {
 	for (i = list->accounting->count - 1,
 	     l = list->accounting->last;
-	     l; 
+	     l;
 	     l = l->prev, i--)
 	  {
 	     if (i == n) return (Eina_List *)l;
@@ -888,7 +920,7 @@ eina_list_nth_list(const Eina_List *list, int n)
 	     if (i == n) return (Eina_List *)l;
 	  }
      }
-   return NULL;
+   abort();
 }
 
 /**
@@ -978,10 +1010,9 @@ eina_list_sort(Eina_List *list, int size, int (*func)(void *, void *))
    Eina_List*   last;
    unsigned int	list_number;
    unsigned int	middle;
-   int		list_size;
+   unsigned int	list_size;
 
-   if (!list || !func)
-     return NULL;
+   if (!list || !func) return NULL;
 
    /* if the caller specified an invalid size, sort the whole list */
    if ((size <= 0) ||
@@ -1073,34 +1104,4 @@ eina_list_sort(Eina_List *list, int size, int (*func)(void *, void *))
 
    list->accounting->last = last;
    return list;
-}
-/**
- * Return the memory allocation failure flag after any operation needin allocation
- * @return The state of the allocation flag
- *
- * This function returns the state of the memory allocation flag. This flag is
- * set if memory allocations during eina_list_append(), eina_list_prepend(),
- * eina_list_append_relative(), or eina_list_prepend_relative() fail. If they
- * do fail, 1 will be returned, otherwise 0 will be returned. The flag will
- * remain in its current state until the next call that requires allocation
- * is called, and is then reset.
- *
- * Example:
- * @code
- * Eina_List *list = NULL;
- * extern void *my_data;
- *
- * list = eina_list_append(list, my_data);
- * if (eina_list_alloc_error())
- *   {
- *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *     exit(-1);
- *   }
- * @endcode
- * @ingroup Eina_List_General_Group
- */
-EAPI int
-eina_list_alloc_error(void)
-{
-   return _eina_list_alloc_error;
 }

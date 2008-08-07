@@ -28,6 +28,9 @@
 
 typedef struct _Eina_List Eina_List;
 
+EAPI int eina_list_init(void);
+EAPI int eina_list_shutdown(void);
+
 EAPI Eina_List *eina_list_append (Eina_List *list, const void *data);
 EAPI Eina_List *eina_list_prepend (Eina_List *list, const void *data);
 EAPI Eina_List *eina_list_append_relative (Eina_List *list, const void *data, const void *relative);
@@ -49,7 +52,6 @@ EAPI void *eina_list_nth(const Eina_List *list, int n);
 EAPI Eina_List *eina_list_nth_list (const Eina_List *list, int n);
 EAPI Eina_List *eina_list_reverse (Eina_List *list);
 EAPI Eina_List *eina_list_sort (Eina_List *list, int size, int(*func)(void*,void*));
-EAPI int eina_list_alloc_error(void);
 
 
 /** @} */

@@ -34,5 +34,6 @@ void eina_test_lalloc(TCase *tc);
 void eina_test_main(TCase *tc);
 void eina_test_counter(TCase *tc);
 void eina_test_hash(TCase *tc);
+void eina_test_list(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

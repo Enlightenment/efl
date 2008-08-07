@@ -40,6 +40,7 @@ static Eina_Error _err;
 #define WHITE   "\033[37;1m"
 #define NOTHING "\033[0m"
 
+int EINA_ERROR_OUT_OF_MEMORY = 0;
 
 #ifdef DEBUG
 static Eina_Error_Level _error_level = EINA_ERROR_LEVEL_DBG;
@@ -82,6 +83,7 @@ EAPI int eina_error_init(void)
 		{
 			_error_level = atoi(level);
 		}
+		EINA_ERROR_OUT_OF_MEMORY = eina_error_register("Out of memory");
 	}
 	/* get all the modules */
 	return ++_init_count;

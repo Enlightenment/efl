@@ -44,6 +44,8 @@ typedef enum _Eina_Error_Level
 
 typedef int Eina_Error;
 
+EAPI extern int EINA_ERROR_OUT_OF_MEMORY;
+
 EAPI int eina_error_init(void);
 EAPI int eina_error_shutdown(void);
 EAPI Eina_Error eina_error_register(const char *msg);
