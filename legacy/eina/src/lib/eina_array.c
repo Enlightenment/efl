@@ -27,8 +27,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "eina_error.h"
 #include "eina_array.h"
 #include "eina_inline_array.x"
+
+EAPI int
+eina_array_init(void)
+{
+   return eina_error_init();
+}
+
+EAPI int
+eina_array_shutdown(void)
+{
+   return eina_error_shutdown();
+}
 
 EAPI void
 eina_array_append(Eina_Array *array, void *data)
@@ -69,8 +82,12 @@ eina_array_new(unsigned int step)
 {
    Eina_Array *array;
 
+   eina_error_set(0);
    array = malloc(sizeof (Eina_Array));
-   if (!array) return NULL;
+   if (!array) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
    array->data = NULL;
    array->total = 0;
@@ -132,8 +149,12 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 	return ;
      }
 
+   eina_error_set(0);
    tmp = malloc(sizeof (void*) * array->total);
-   if (!tmp) return ;
+   if (!tmp) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return ;
+   }
 
    memcpy(tmp, array->data, limit * sizeof(void*));
    total = limit;

@@ -27,6 +27,7 @@
 #include "eina_inlist.h"
 #include "eina_error.h"
 #include "eina_private.h"
+
 /*============================================================================*
  *                                  Local                                     * 
  *============================================================================*/
@@ -51,7 +52,6 @@ struct _Eina_Hash_El
 };
 
 static int _eina_hash_init_count = 0;
-static int EINA_HASH_ERROR_OUT_OF_MEMORY = 0;
 
 static inline Eina_Hash_El *
 _eina_hash_find_by_hash(const Eina_Hash *hash, const char *key, int key_length, int key_hash)
@@ -126,10 +126,7 @@ eina_hash_init(void)
    _eina_hash_init_count++;
 
    if (_eina_hash_init_count == 1)
-     {
-	eina_error_init();
-	EINA_HASH_ERROR_OUT_OF_MEMORY = eina_error_register("Eina_Hash out of memory");
-     }
+     eina_error_init();
 
    return _eina_hash_init_count;
 }
@@ -168,7 +165,7 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    return new;
 
  on_error:
-   eina_error_set(EINA_HASH_ERROR_OUT_OF_MEMORY);
+   eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
    return NULL;
 }
 
@@ -242,7 +239,7 @@ eina_hash_add_by_hash(Eina_Hash *hash,
    return EINA_TRUE;
 
  on_error:
-   eina_error_set(EINA_HASH_ERROR_OUT_OF_MEMORY);
+   eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
    return EINA_FALSE;
 }
 
@@ -300,7 +297,7 @@ eina_hash_direct_add_by_hash(Eina_Hash *hash,
    return EINA_TRUE;
 
  on_error:
-   eina_error_set(EINA_HASH_ERROR_OUT_OF_MEMORY);
+   eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
    return EINA_FALSE;
 }
 

@@ -27,6 +27,8 @@ START_TEST(eina_array_simple)
    char *tmp;
    unsigned int i;
 
+   eina_array_init();
+
    ea = eina_array_new(11);
    fail_if(!ea);
 
@@ -53,6 +55,8 @@ START_TEST(eina_array_simple)
    eina_array_clean(ea);
    eina_array_flush(ea);
    eina_array_free(ea);
+
+   eina_array_shutdown();
 }
 END_TEST
 
@@ -61,6 +65,8 @@ START_TEST(eina_array_static)
    Eina_Array sea = { NULL, 0, 0, 0 };
    char *tmp;
    unsigned int i;
+
+   eina_array_init();
 
    eina_array_setup(&sea, 10);
 
@@ -86,6 +92,8 @@ START_TEST(eina_array_static)
 
    eina_array_clean(&sea);
    eina_array_flush(&sea);
+
+   eina_array_shutdown();
 }
 END_TEST
 
@@ -106,6 +114,8 @@ START_TEST(eina_array_remove_stuff)
    Eina_Array *ea;
    int *tmp;
    unsigned int i;
+
+   eina_array_init();
 
    ea = eina_array_new(64);
    fail_if(!ea);
@@ -153,6 +163,8 @@ START_TEST(eina_array_remove_stuff)
    fail_if(eina_array_count(ea) != 0);
 
    eina_array_free(ea);
+
+   eina_array_shutdown();
 }
 END_TEST
 
