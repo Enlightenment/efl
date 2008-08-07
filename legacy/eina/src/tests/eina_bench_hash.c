@@ -86,7 +86,7 @@ eina_bench_lookup_djb2(int request)
 
    for (i = 0; i < (unsigned int) request; ++i)
      {
-	char *tmp_key[10];
+	char tmp_key[10];
 
 	tmp_val = malloc(sizeof (int));
 
