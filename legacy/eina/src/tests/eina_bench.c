@@ -178,6 +178,7 @@ struct _Eina_Bench_Case
 
 static const Eina_Bench_Case etc[] = {
   { "Hash", eina_bench_hash },
+  { "Array vs List vs Inlist", eina_bench_array },
   { NULL, NULL }
 };
 
