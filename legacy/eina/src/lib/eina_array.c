@@ -110,6 +110,7 @@ EAPI void
 eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata)
 {
    void **tmp;
+   void *data;
    unsigned int total = 0;
    unsigned int limit;
    unsigned int i;
@@ -118,22 +119,17 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 
    for (i = 0; i < array->count; ++i)
      {
-	void *data;
-
 	data = _eina_array_get(array, i);
 
-	if (keep(data, gdata) == EINA_FALSE)
-	  break;
+	if (keep(data, gdata) == EINA_FALSE) break;
      }
    limit = i;
+   if (i < array->count) ++i;
    for (; i < array->count; ++i)
      {
-	void *data;
-
 	data = _eina_array_get(array, i);
 
-	if (keep(data, gdata) == EINA_TRUE)
-	  break;
+	if (keep(data, gdata) == EINA_TRUE) break;
      }
    /* Special case all objects that need to stay are at the beginning of the array. */
    if (i == array->count)
@@ -159,10 +155,15 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    memcpy(tmp, array->data, limit * sizeof(void*));
    total = limit;
 
+   if (i < array->count)
+     {
+	tmp[total] = data;
+	total++;
+	++i;
+     }
+
    for (; i < array->count; ++i)
      {
-	void *data;
-
 	data = _eina_array_get(array, i);
 
 	if (keep(data, gdata))
