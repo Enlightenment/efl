@@ -26,6 +26,8 @@ eina_init(void)
    r = eina_error_init();
    r += eina_hash_init();
    r += eina_stringshare_init();
+   r += eina_list_init();
+   r += eina_array_init();
 
    return r;
 }
@@ -35,6 +37,8 @@ eina_shutdown(void)
 {
    int r;
 
+   eina_array_shutdown();
+   eina_list_shutdown();
    r = eina_stringshare_shutdown();
    r += eina_hash_shutdown();
    r += eina_error_shutdown();
