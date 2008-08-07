@@ -34,7 +34,8 @@ bench_PROGRAMS = eina_bench
 
 eina_bench_SOURCES = \
 eina_bench.c \
-eina_bench_hash.c
+eina_bench_hash.c \
+eina_bench_array.c
 
 eina_bench_LDADD = $(top_builddir)/src/lib/libeina.la
 
