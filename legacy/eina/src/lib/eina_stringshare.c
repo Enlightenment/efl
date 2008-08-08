@@ -140,7 +140,7 @@ eina_stringshare_add(const char *str)
 
    if (!str) return NULL;
    slen = strlen(str) + 1;
-   hash_num = eina_hash_djb2(str, slen) & 0x3FF;
+   hash_num = eina_hash_superfast(str, slen) & 0x3FF;
    for (el = share->buckets[hash_num]; el; pel = el, el = el->next)
      {
 	el_str = ((char *)el) + sizeof(Eina_Stringshare_Node);
@@ -182,7 +182,7 @@ eina_stringshare_del(const char *str)
 
    if (!str) return;
    slen = strlen(str) + 1;
-   hash_num = eina_hash_djb2(str, slen) & 0x3FF;
+   hash_num = eina_hash_superfast(str, slen) & 0x3FF;
    for (el = share->buckets[hash_num]; el; pel = el, el = el->next)
      {
 	el_str = ((char *)el) + sizeof(Eina_Stringshare_Node);
