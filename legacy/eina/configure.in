@@ -194,6 +194,7 @@ src/modules/Makefile
 src/modules/mp/Makefile
 src/modules/mp/chained_pool/Makefile
 src/modules/mp/ememoa_fixed/Makefile
+src/modules/mp/pass_through/Makefile
 src/tests/Makefile
 ])
 
