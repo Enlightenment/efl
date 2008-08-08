@@ -17,6 +17,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "eina_suite.h"
 #include "eina_error.h"
@@ -60,6 +61,7 @@ START_TEST(eina_error_macro)
    eina_error_init();
 
    eina_error_log_level_set(EINA_ERROR_LEVEL_DBG);
+   eina_error_print_cb_set(eina_error_print_cb_file, stderr);
 
    EINA_ERROR_PERR("An error\n");
    EINA_ERROR_PINFO("An info\n");

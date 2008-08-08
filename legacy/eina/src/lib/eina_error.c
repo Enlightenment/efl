@@ -16,6 +16,10 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "eina_error.h"
 #include "eina_list.h"
 #include "eina_private.h"
@@ -149,7 +153,7 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
  *
  */
 EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
-		const char *fnc, int line, const char *fmt, void *data,
+		const char *fnc, int line, const char *fmt, __UNUSED__ void *data,
 		va_list args)
 {
 	printf("%s", _colors[level]);
@@ -160,7 +164,7 @@ EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
 /**
  *
  */
-EAPI void eina_error_print_cb_file(Eina_Error_Level level, const char *file,
+EAPI void eina_error_print_cb_file(__UNUSED__ Eina_Error_Level level, const char *file,
 		const char *fnc, int line, const char *fmt, void *data,
 		va_list args)
 {
