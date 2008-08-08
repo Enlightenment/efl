@@ -26,7 +26,7 @@
 #endif
 
 static inline Eina_Bool
-_eina_array_grow(Eina_Array *array)
+eina_array_grow(Eina_Array *array)
 {
    void **tmp;
    unsigned int total;
@@ -42,16 +42,16 @@ _eina_array_grow(Eina_Array *array)
 }
 
 static inline void
-_eina_array_append(Eina_Array *array, void *data)
+eina_array_append(Eina_Array *array, void *data)
 {
    if (UNLIKELY((array->count + array->step) > array->total))
-     if (!_eina_array_grow(array)) return ;
+     if (!eina_array_grow(array)) return ;
 
    array->data[array->count++] = data;
 }
 
 static inline void *
-_eina_array_get(Eina_Array *array, unsigned int index)
+eina_array_get(Eina_Array *array, unsigned int index)
 {
    return array->data[index];
 }
