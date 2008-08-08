@@ -33,6 +33,8 @@
 static int _init_count = 0;
 static Eina_List *_error_list;
 static Eina_Error _err;
+static Eina_Error_Print_Cb _print_cb = eina_error_print_cb_stdout;
+static void *_print_cb_data = NULL;
 
 #define RED     "\033[31;1m"
 #define GREEN   "\033[32;1m"
@@ -55,17 +57,7 @@ static char *_colors[EINA_ERROR_LEVELS] = {
 	[EINA_ERROR_LEVEL_DBG] = GREEN,
 };
 
-static void _error_print(Eina_Error_Level level, const char *file,
-		const char *fnc, int line, const char *fmt, va_list args)
-{
-	if (level <= _error_level)
-	{
-		printf("%s", _colors[level]);
-		printf("[%s:%d] %s() ", file, line, fnc);
-		printf("%s", _colors[EINA_ERROR_LEVEL_INFO]);
-		vprintf(fmt, args);
-	}
-}
+
 /*============================================================================*
  *                                   API                                      * 
  *============================================================================*/
@@ -141,16 +133,49 @@ EAPI const char * eina_error_msg_get(int error)
 	return eina_list_nth(_error_list, error - 1);
 }
 /**
- * 
+ *
  */
-EAPI void eina_error_print(Eina_Error_Level level, const char *file, 
+EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 		const char *fnc, int line, const char *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	_error_print(level, file, fnc, line, fmt, args);
+	if (level <= _error_level)
+		_print_cb(level, file, fnc, line, fmt, _print_cb_data, args);
 	va_end(args);
+}
+/**
+ *
+ */
+EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
+		const char *fnc, int line, const char *fmt, void *data,
+		va_list args)
+{
+	printf("%s", _colors[level]);
+	printf("[%s:%d] %s() ", file, line, fnc);
+	printf("%s", _colors[EINA_ERROR_LEVEL_INFO]);
+	vprintf(fmt, args);
+}
+/**
+ *
+ */
+EAPI void eina_error_print_cb_file(Eina_Error_Level level, const char *file,
+		const char *fnc, int line, const char *fmt, void *data,
+		va_list args)
+{
+	FILE *f = data;
+
+	fprintf(f, "[%s:%d] %s() ", file, line, fnc);
+	vfprintf(f, fmt, args);
+}
+/**
+ *
+ */
+EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data)
+{
+	_print_cb = cb;
+	_print_cb_data = data;
 }
 /**
  *

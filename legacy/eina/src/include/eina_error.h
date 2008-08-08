@@ -19,6 +19,8 @@
 #ifndef EINA_ERROR_H_
 #define EINA_ERROR_H_
 
+#include <stdarg.h>
+
 #include "eina_types.h"
 
 #define EINA_ERROR_PERR(fmt, ...) \
@@ -43,6 +45,9 @@ typedef enum _Eina_Error_Level
 } Eina_Error_Level;
 
 typedef int Eina_Error;
+typedef void (*Eina_Error_Print_Cb)(Eina_Error_Level level, const char *file,
+                const char *fnc, int line, const char *fmt, void *data,
+		va_list args);
 
 EAPI extern int EINA_ERROR_OUT_OF_MEMORY;
 
@@ -54,6 +59,13 @@ EAPI void eina_error_set(Eina_Error err);
 EAPI const char * eina_error_msg_get(Eina_Error error);
 EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 		const char *function, int line, const char *fmt, ...);
+EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
+                const char *fnc, int line, const char *fmt, void *data,
+		va_list args);
+EAPI void eina_error_print_cb_file(Eina_Error_Level level, const char *file,
+                const char *fnc, int line, const char *fmt, void *data,
+                va_list args);
+EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data);
 EAPI void eina_error_log_level_set(Eina_Error_Level level);
 
 #endif /*EINA_ERROR_H_*/
