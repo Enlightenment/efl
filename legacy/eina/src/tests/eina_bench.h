@@ -28,5 +28,6 @@ void eina_bench_register(Eina_Bench *bench, const char *name, Eina_Bench_Specime
 
 void eina_bench_hash(Eina_Bench *bench);
 void eina_bench_array(Eina_Bench *bench);
+void eina_bench_stringshare(Eina_Bench *bench);
 
 #endif
