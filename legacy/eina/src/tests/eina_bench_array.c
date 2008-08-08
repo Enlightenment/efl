@@ -50,7 +50,7 @@ static Eina_Bool keep(void *data, __UNUSED__ void *gdata)
 }
 
 static void
-eina_bench_array_4evas_render(int request)
+eina_bench_array_4evas_render_inline(int request)
 {
    Eina_Array *array;
    Eina_Bench_Object *ebo;
@@ -79,16 +79,20 @@ eina_bench_array_4evas_render(int request)
 	  {
 	     EINA_ARRAY_ITER_NEXT(array, j, ebo)
 	       free(ebo);
+	     EINA_ARRAY_ITER_END;
+
 	     eina_array_clean(array);
 	  }
 	else if (i % 30 == 0) eina_array_remove(array, keep, NULL);
 
 	EINA_ARRAY_ITER_NEXT(array, j, ebo)
 	  ebo->keep = rand() < (RAND_MAX / 2) ? ebo->keep : EINA_FALSE;
+	EINA_ARRAY_ITER_END;
      }
 
    EINA_ARRAY_ITER_NEXT(array, j, ebo)
      free(ebo);
+   EINA_ARRAY_ITER_END;
 
    eina_array_free(array);
 
@@ -227,7 +231,7 @@ eina_bench_inlist_4evas_render(int request)
 
 void eina_bench_array(Eina_Bench *bench)
 {
-   eina_bench_register(bench, "array", EINA_BENCH(eina_bench_array_4evas_render), 200, 4000, 100);
+   eina_bench_register(bench, "array-inline", EINA_BENCH(eina_bench_array_4evas_render_inline), 200, 4000, 100);
    eina_bench_register(bench, "list", EINA_BENCH(eina_bench_list_4evas_render), 200, 4000, 100);
    eina_bench_register(bench, "inlist", EINA_BENCH(eina_bench_inlist_4evas_render), 200, 4000, 100);
 }

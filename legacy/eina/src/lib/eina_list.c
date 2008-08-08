@@ -65,21 +65,6 @@
 /*============================================================================*
  *                                  Local                                     * 
  *============================================================================*/
-struct _Eina_List /** A linked list node */
-{
-   void      *data; /**< Pointer to list element payload */
-   Eina_List *next; /**< Next member in the list */
-   Eina_List *prev; /**< Previous member in the list */
-   struct _Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
-};
-
-typedef struct _Eina_List_Accounting Eina_List_Accounting;
-struct _Eina_List_Accounting
-{
-   Eina_List *last;
-   int        count;
-};
-
 static inline Eina_List_Accounting*
 _eina_list_mempool_accounting_new(__UNUSED__ Eina_List *list)
 {
@@ -604,12 +589,7 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
 EAPI void *
 eina_list_find(const Eina_List *list, const void *data)
 {
-   const Eina_List *l;
-
-   for (l = list; l; l = l->next)
-     {
-	if (l->data == data) return (void *)data;
-     }
+   if (eina_list_find_list(list, data)) return data;
    return NULL;
 }
 
@@ -712,12 +692,7 @@ eina_list_free(Eina_List *list)
  * @endcode
  * @ingroup Eina_List_Traverse_Group
  */
-EAPI Eina_List *
-eina_list_last(const Eina_List *list)
-{
-   if (!list) return NULL;
-   return list->accounting->last;
-}
+static inline Eina_List *eina_list_last(const Eina_List *list);
 
 /**
  * Get the next list node after the specified list node
@@ -740,12 +715,7 @@ eina_list_last(const Eina_List *list)
  * @endcode
  * @ingroup Eina_List_Traverse_Group
  */
-EAPI Eina_List *
-eina_list_next(const Eina_List *list)
-{
-   if (!list) return NULL;
-   return list->next;
-}
+static inline Eina_List *eina_list_next(const Eina_List *list);
 
 /**
  * Get the previous list node before the specified list node
@@ -769,12 +739,7 @@ eina_list_next(const Eina_List *list)
  * @endcode
  * @ingroup Eina_List_Traverse_Group
  */
-EAPI Eina_List *
-eina_list_prev(const Eina_List *list)
-{
-   if (!list) return NULL;
-   return list->prev;
-}
+static inline Eina_List *eina_list_prev(const Eina_List *list);
 
 /**
  * @defgroup Eina_List_General_Group Linked List General Functions
@@ -803,12 +768,7 @@ eina_list_prev(const Eina_List *list)
  * @endcode
  * @ingroup Eina_List_General_Group
  */
-EAPI void *
-eina_list_data(const Eina_List *list)
-{
-   if (!list) return NULL;
-   return list->data;
-}
+static inline void *eina_list_data(const Eina_List *list);
 
 /**
  * Get the count of the number of items in a list
@@ -829,12 +789,7 @@ eina_list_data(const Eina_List *list)
  * @endcode
  * @ingroup Eina_List_General_Group
  */
-EAPI int
-eina_list_count(const Eina_List *list)
-{
-   if (!list) return 0;
-   return list->accounting->count;
-}
+static inline int eina_list_count(const Eina_List *list);
 
 /**
  * Get the nth member's data pointer in a list

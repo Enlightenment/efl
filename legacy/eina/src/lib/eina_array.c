@@ -44,18 +44,6 @@ eina_array_shutdown(void)
 }
 
 EAPI void
-eina_array_append(Eina_Array *array, void *data)
-{
-   _eina_array_append(array, data);
-}
-
-EAPI void *
-eina_array_get(Eina_Array *array, unsigned int index)
-{
-   return _eina_array_get(array, index);
-}
-
-EAPI void
 eina_array_clean(Eina_Array *array)
 {
    array->count = 0;
@@ -119,7 +107,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 
    for (i = 0; i < array->count; ++i)
      {
-	data = _eina_array_get(array, i);
+	data = eina_array_get(array, i);
 
 	if (keep(data, gdata) == EINA_FALSE) break;
      }
@@ -127,7 +115,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    if (i < array->count) ++i;
    for (; i < array->count; ++i)
      {
-	data = _eina_array_get(array, i);
+	data = eina_array_get(array, i);
 
 	if (keep(data, gdata) == EINA_TRUE) break;
      }
@@ -164,7 +152,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 
    for (; i < array->count; ++i)
      {
-	data = _eina_array_get(array, i);
+	data = eina_array_get(array, i);
 
 	if (keep(data, gdata))
 	  {

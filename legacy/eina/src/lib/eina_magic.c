@@ -73,6 +73,7 @@ eina_magic_string_get(Eina_Magic magic)
    EINA_ARRAY_ITER_NEXT(strings, i, ems)
      if (ems->magic == magic)
        return ems->string;
+   EINA_ARRAY_ITER_END;
 
    return NULL;
 }
@@ -95,6 +96,7 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
 	    ems->string = NULL;
 	  return ;
        }
+   EINA_ARRAY_ITER_END;
 
    ems = malloc(sizeof (Eina_Magic_String));
    ems->magic = magic;
@@ -103,7 +105,7 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
    else
      ems->string = NULL;
 
-   _eina_array_append(strings, ems);
+   eina_array_append(strings, ems);
 }
 
 EAPI void

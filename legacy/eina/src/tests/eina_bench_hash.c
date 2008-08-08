@@ -68,6 +68,7 @@ eina_bench_lookup_superfast(int request)
 
    EINA_ARRAY_ITER_NEXT(array, i, tmp_val)
      free(tmp_val);
+   EINA_ARRAY_ITER_END;
 
    eina_array_free(array);
 }
@@ -115,6 +116,7 @@ eina_bench_lookup_djb2(int request)
 
    EINA_ARRAY_ITER_NEXT(array, i, tmp_val)
      free(tmp_val);
+   EINA_ARRAY_ITER_END;
 
    eina_array_free(array);
 }
@@ -164,6 +166,7 @@ eina_bench_lookup_djb2_inline(int request)
 
    EINA_ARRAY_ITER_NEXT(array, i, tmp_val)
      free(tmp_val);
+   EINA_ARRAY_ITER_END;
 
    eina_array_free(array);
 }

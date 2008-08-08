@@ -17,7 +17,8 @@ eina_array.h \
 eina_counter.h \
 eina_inline_array.x \
 eina_magic.h \
-eina_stringshare.h
+eina_stringshare.h \
+eina_inline_list.x
 
 installed_mainheaderdir = $(prefix)/include/eina-@VMAJ@
 installed_mainheader_DATA = Eina.h
