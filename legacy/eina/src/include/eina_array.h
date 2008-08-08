@@ -46,7 +46,7 @@ static inline void        * eina_array_get    (Eina_Array *array, unsigned int i
 static inline void          eina_array_append (Eina_Array *array, void *data);
 static inline unsigned int  eina_array_count  (Eina_Array *array);
 
-#define EINA_ARRAY_ITER_NEXT(array, index, item) \
+#define EINA_ARRAY_ITER_NEXT(array, index, item)		  \
   for ((index) = 0; (index) < eina_array_count(array); ++(index)) \
     {								  \
        (item) = eina_array_get((array), (index));
