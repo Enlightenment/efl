@@ -50,6 +50,7 @@ START_TEST(eina_hash_simple)
    fail_if(eina_hash_add(hash, "42", &array[1]) != EINA_TRUE);
    fail_if(eina_hash_direct_add(hash, "4", &array[2]) != EINA_TRUE);
    fail_if(eina_hash_direct_add(hash, "5", &array[3]) != EINA_TRUE);
+   fail_if(eina_hash_add(hash, "", "") != EINA_TRUE);
 
    test = eina_hash_find(hash, "4");
    fail_if(!test);
@@ -67,7 +68,7 @@ START_TEST(eina_hash_simple)
    fail_if(!test);
    fail_if(*test != 6);
 
-   fail_if(eina_hash_population(hash) != 4);
+   fail_if(eina_hash_population(hash) != 5);
 
    fail_if(eina_hash_find(hash, "120") != NULL);
 
