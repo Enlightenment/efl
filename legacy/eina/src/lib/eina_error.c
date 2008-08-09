@@ -104,7 +104,7 @@ EAPI int eina_error_shutdown(void)
 
 /**
  * Register a new error type
- * @param str The description of the error
+ * @param msg The description of the error
  * @return The unique number identifier for this error
  */
 EAPI Eina_Error eina_error_register(const char *msg)

@@ -170,7 +170,7 @@ eina_stringshare_add(const char *str)
  *
  * It will free the string if no other instances are left.
  *
- * @param   string The given string.
+ * @param str string The given string.
  * @ingroup Eina_Stringshare_Group
  */
 EAPI void

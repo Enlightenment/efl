@@ -203,7 +203,7 @@ eina_hash_string_superfast_new(void)
  *
  * @param   hash The given hash table.  Can be @c NULL.
  * @param   key  A unique key.  Can be @c NULL.
- * @param   key_length Should be the length of @p key (don't forget to count '\0' for string).
+ * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that will always match key.
  * @param   data Data to associate with the string given by @p key.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
@@ -262,7 +262,7 @@ eina_hash_add_by_hash(Eina_Hash *hash,
  *
  * @param   hash The given hash table.  Can be @c NULL.
  * @param   key  A unique key.  Can be @c NULL.
- * @param   key_length Should be the length of @p key (don't forget to count '\0' for string).
+ * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that will always match key.
  * @param   data Data to associate with the string given by @p key.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
@@ -311,7 +311,7 @@ eina_hash_direct_add_by_hash(Eina_Hash *hash,
  *
  * Key strings are case sensitive.
  *
- * @ref eina_hash_alloc_error should be used to determine if an
+ * @ref eina_error_get() should be used to determine if an
  * allocation error occurred during this function.
  *
  * @param   hash The given hash table.  Can be @c NULL.
@@ -346,7 +346,7 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
  *
  * Key strings are case sensitive.
  *
- * @ref eina_hash_alloc_error should be used to determine if an
+ * @ref eina_error_get() should be used to determine if an
  * allocation error occurred during this function.
  *
  * @param   hash The given hash table.  Can be @c NULL.
@@ -379,6 +379,7 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
  *
  * @param   hash The given hash table.
  * @param   key  The key.  Can be @c NULL.
+ * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
  * @param   data The data pointer to remove if @p key is @c NULL.
  *               Otherwise, not required and can be @c NULL.
@@ -441,6 +442,7 @@ eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
  * Retrieves a specific entry in the given hash table.
  * @param   hash The given hash table.
  * @param   key  The key of the entry to find.
+ * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
  * @return  The data pointer for the stored entry, or @c NULL if not
  *          found.
@@ -488,6 +490,7 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
  * Modifies the entry pointer at the specified key and returns the old entry
  * @param   hash The given hash table.
  * @param   key  The key of the entry to modify.
+ * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
  * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
  * @param   data The data to replace the old entry, if it exists.
  * @return  The data pointer for the old stored entry, or @c NULL if not
@@ -556,11 +559,6 @@ eina_hash_population(const Eina_Hash *hash)
    if (!hash) return 0;
    return hash->population;
 }
-
-/**
- * @todo Complete polishing documentation for eina_hash.c. The
- * functions' docs may be grouped, but they need some simplification.
- */
 
 /**
  * Free an entire hash table

@@ -21,12 +21,17 @@
 
 #include "eina_file.h"
 #include "eina_private.h"
+
 /*============================================================================*
  *                                   API                                      * 
  *============================================================================*/
+
 /**
  * Lis all files on the directory calling the function for every file found
+ * @param dir The directory name
  * @param recursive Iterate recursively in the directory
+ * @param cb The callback to be called
+ * @param data The data to pass to the callback
  */
 EAPI void eina_file_dir_list(const char *dir, int recursive, Eina_File_Dir_List_Cb cb, void *data)
 {
