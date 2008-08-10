@@ -2178,7 +2178,8 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 		  dumpfunc(dumpdata, "list");
 		  break;
 		case EET_G_HASH:
-		  dumpfunc(dumpdata, "hash");break;
+		  dumpfunc(dumpdata, "hash");
+		  break;
 		default:
 		  dumpfunc(dumpdata, "???");
 		  break;
