@@ -2718,8 +2718,7 @@ eet_data_get_unknown(const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Dat
 	     str = (char **)(((char *)data));
 	     if (*str)
 	       {
-		  if (ed == NULL
-		      || edd->func.str_direct_alloc == NULL)
+		  if ((ed == NULL) || (edd->func.str_direct_alloc == NULL))
 		    {
 		       *str = edd->func.str_alloc(*str);
 		       _eet_freelist_str_add(*str);
