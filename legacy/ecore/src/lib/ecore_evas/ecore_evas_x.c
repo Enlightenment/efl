@@ -2129,7 +2129,7 @@ static void
 _ecore_evas_x_activate(Ecore_Evas *ee)
 {
    ecore_x_netwm_client_active_request(ee->engine.x.win_root,
-				       ee->engine.x.win, 1, 0);
+				       ee->engine.x.win, 2, 0);
 }
 
 static void
