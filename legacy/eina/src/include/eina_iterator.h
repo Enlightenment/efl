@@ -26,10 +26,8 @@ typedef struct _Eina_Iterator Eina_Iterator;
 
 EAPI void eina_iterator_free           (Eina_Iterator *iterator);
 
-EAPI void *eina_iterator_data_get      (Eina_Iterator *iterator);
 EAPI void *eina_iterator_container_get (Eina_Iterator *iterator);
-
-EAPI Eina_Error eina_iterator_next     (Eina_Iterator *iterator);
+EAPI Eina_Bool eina_iterator_next      (Eina_Iterator *iterator, void **data);
 
 EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
 					Eina_Each callback,

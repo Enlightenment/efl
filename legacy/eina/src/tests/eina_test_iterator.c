@@ -61,16 +61,12 @@ START_TEST(eina_iterator_array_simple)
    it = eina_array_iterator_new(ea);
    fail_if(!it);
 
-   tmp = eina_iterator_data_get(it);
-   fail_if(!tmp);
-   fail_if(*tmp != 0);
-
    i = -1;
    eina_iterator_foreach(it, EINA_EACH(eina_iterator_array_check), &i);
    fail_if(i != 199);
 
    fail_if(eina_iterator_container_get(it) != ea);
-   fail_if(eina_iterator_next(it) != EINA_FALSE);
+   fail_if(eina_iterator_next(it, &tmp) != EINA_FALSE);
 
    eina_iterator_free(it);
 

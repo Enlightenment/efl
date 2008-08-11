@@ -60,7 +60,7 @@ START_TEST(eina_accessor_array_simple)
    it = eina_array_accessor_new(ea);
    fail_if(!it);
 
-   tmp = eina_accessor_data_get(it, 100);
+   fail_if(eina_accessor_data_get(it, 100, &tmp) != EINA_TRUE);
    fail_if(!tmp);
    fail_if(*tmp != 100);
 

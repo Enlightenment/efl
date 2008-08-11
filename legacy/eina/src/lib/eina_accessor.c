@@ -32,12 +32,11 @@ eina_accessor_free(Eina_Accessor *accessor)
    if (accessor) accessor->free(accessor);
 }
 
-EAPI void *
-eina_accessor_data_get(Eina_Accessor *accessor, unsigned int position)
+EAPI Eina_Bool
+eina_accessor_data_get(Eina_Accessor *accessor, unsigned int position, void **data)
 {
-   if (!accessor) return NULL;
-   if (accessor->jump_at(accessor, position) != EINA_TRUE) return NULL;
-   return accessor->get_content(accessor);
+   if (!accessor) return EINA_FALSE;
+   return accessor->jump_at(accessor, position, data);
 }
 
 EAPI void *
@@ -61,16 +60,8 @@ eina_accessor_over(Eina_Accessor *accessor,
    if (!accessor) return ;
    if (!(start < end)) return ;
 
-   if (accessor->jump_at(accessor, start) != EINA_TRUE) return ;
-
-   container = accessor->get_container(accessor);
-   do {
-      data = accessor->get_content(accessor);
-
+   for (i = start; i < end && accessor->jump_at(accessor, i, &data) == EINA_TRUE; ++i)
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
-
-      ++i;
-   } while (i < end && accessor->jump_at(accessor, i) == EINA_TRUE);
 }
 
 

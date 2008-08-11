@@ -115,30 +115,25 @@ typedef struct _Eina_Mempool_Backend
 } Eina_Mempool_Backend;
 
 /* Iterator/accessor private type */
-typedef Eina_Bool (*Eina_Iterator_Next_Callback)(Eina_Iterator *it);
-typedef void *(*Eina_Iterator_Get_Content_Callback)(Eina_Iterator *it);
+typedef Eina_Bool (*Eina_Iterator_Next_Callback)(Eina_Iterator *it, void **data);
 typedef void *(*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
 typedef void (*Eina_Iterator_Free_Callback)(Eina_Iterator *it);
 
 #define FUNC_ITERATOR_NEXT(Function) ((Eina_Iterator_Next_Callback)Function)
-#define FUNC_ITERATOR_GET_CONTENT(Function) ((Eina_Iterator_Get_Content_Callback)Function)
 #define FUNC_ITERATOR_GET_CONTAINER(Function) ((Eina_Iterator_Get_Container_Callback)Function)
 #define FUNC_ITERATOR_FREE(Function) ((Eina_Iterator_Free_Callback)Function)
 
-typedef Eina_Bool (*Eina_Accessor_Jump_At_Callback)(Eina_Accessor *it, unsigned int index);
-typedef void *(*Eina_Accessor_Get_Content_Callback)(Eina_Accessor *it);
+typedef Eina_Bool (*Eina_Accessor_Jump_At_Callback)(Eina_Accessor *it, unsigned int index, void **data);
 typedef void *(*Eina_Accessor_Get_Container_Callback)(Eina_Accessor *it);
 typedef void (*Eina_Accessor_Free_Callback)(Eina_Accessor *it);
 
 #define FUNC_ACCESSOR_JUMP_AT(Function) ((Eina_Accessor_Jump_At_Callback)Function)
-#define FUNC_ACCESSOR_GET_CONTENT(Function) ((Eina_Accessor_Get_Content_Callback)Function)
 #define FUNC_ACCESSOR_GET_CONTAINER(Function) ((Eina_Accessor_Get_Container_Callback)Function)
 #define FUNC_ACCESSOR_FREE(Function) ((Eina_Accessor_Free_Callback)Function)
 
 struct _Eina_Iterator
 {
    Eina_Iterator_Next_Callback          next;
-   Eina_Iterator_Get_Content_Callback   get_content;
    Eina_Iterator_Get_Container_Callback get_container;
    Eina_Iterator_Free_Callback          free;
 };
@@ -146,9 +141,9 @@ struct _Eina_Iterator
 struct _Eina_Accessor
 {
    Eina_Accessor_Jump_At_Callback       jump_at;
-   Eina_Accessor_Get_Content_Callback   get_content;
    Eina_Accessor_Get_Container_Callback	get_container;
    Eina_Accessor_Free_Callback          free;
 };
 
 #endif /* EINA_PRIVATE_H_ */
+

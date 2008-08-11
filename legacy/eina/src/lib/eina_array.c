@@ -181,21 +181,15 @@ struct _Eina_Iterator_Array
    unsigned int index;
 };
 
-static Eina_Bool
-eina_array_iterator_next(Eina_Iterator_Array *it)
-{
-   if (!(it->index + 1 < eina_array_count(it->array)))
-     return EINA_FALSE;
-   it->index++;
-   return EINA_TRUE;
-}
-
 static void *
-eina_array_iterator_get_content(Eina_Iterator_Array *it)
+eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 {
    if (!(it->index < eina_array_count(it->array)))
-     return NULL;
-   return eina_array_get(it->array, it->index);
+     return EINA_FALSE;
+   if (data)
+     *data = eina_array_get(it->array, it->index);
+   it->index++;
+   return EINA_TRUE;
 }
 
 static Eina_Array *
@@ -228,7 +222,6 @@ eina_array_iterator_new(const Eina_Array *array)
    it->array = array;
 
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_array_iterator_next);
-   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(eina_array_iterator_get_content);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_array_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
 
@@ -241,24 +234,16 @@ struct _Eina_Accessor_Array
    Eina_Accessor accessor;
 
    const Eina_Array *array;
-   unsigned int index;
 };
 
 static Eina_Bool
-eina_array_accessor_jump_at(Eina_Accessor_Array *it, unsigned int index)
+eina_array_accessor_jump_at(Eina_Accessor_Array *it, unsigned int index, void **data)
 {
    if (!(index < eina_array_count(it->array)))
      return EINA_FALSE;
-   it->index = index;
+   if (data)
+     *data = eina_array_get(it->array, index);
    return EINA_TRUE;
-}
-
-static void *
-eina_array_accessor_get_content(Eina_Accessor_Array *it)
-{
-   if (!(it->index < eina_array_count(it->array)))
-     return NULL;
-   return eina_array_get(it->array, it->index);
 }
 
 static Eina_Array *
@@ -290,7 +275,6 @@ eina_array_accessor_new(const Eina_Array *array)
    it->array = array;
 
    it->accessor.jump_at = FUNC_ACCESSOR_JUMP_AT(eina_array_accessor_jump_at);
-   it->accessor.get_content = FUNC_ACCESSOR_GET_CONTENT(eina_array_accessor_get_content);
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_array_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
 

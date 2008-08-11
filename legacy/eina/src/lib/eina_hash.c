@@ -57,10 +57,14 @@ struct _Eina_Hash_Foreach
    const void *fdata;
 };
 
+typedef void *(*Eina_Iterator_Get_Content_Callback)(Eina_Iterator_Hash *it);
+#define FUNC_ITERATOR_GET_CONTENT(Function) ((Eina_Iterator_Get_Content_Callback)Function)
+
 struct _Eina_Iterator_Hash
 {
    Eina_Iterator iterator;
 
+   Eina_Iterator_Get_Content_Callback get_content;
    const Eina_Hash *hash;
 
    Eina_Inlist *current;
@@ -134,8 +138,35 @@ _eina_foreach_cb(const Eina_Hash *hash, Eina_Hash_Tuple *data, Eina_Hash_Foreach
    return fdata->cb((Eina_Hash *) hash, data->key, data->data, (void*) fdata->fdata);
 }
 
+static void *
+_eina_hash_iterator_data_get_content(Eina_Iterator_Hash *it)
+{
+   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
+
+   if (!stuff) return NULL;
+   return stuff->tuple.data;
+}
+
+static void *
+_eina_hash_iterator_key_get_content(Eina_Iterator_Hash *it)
+{
+   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
+
+   if (!stuff) return NULL;
+   return (void *) stuff->tuple.key;
+}
+
+static Eina_Hash_Tuple *
+_eina_hash_iterator_tuple_get_content(Eina_Iterator_Hash *it)
+{
+   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
+
+   if (!stuff) return NULL;
+   return &stuff->tuple;
+}
+
 static Eina_Bool
-_eina_hash_iterator_next(Eina_Iterator_Hash *it)
+_eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
 {
    Eina_Inlist *move;
    int bucket;
@@ -170,34 +201,10 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it)
    it->bucket = bucket;
    it->current = move;
 
+   if (data)
+     *data = it->get_content(it);
+
    return EINA_TRUE;
-}
-
-static void *
-_eina_hash_iterator_data_get_content(Eina_Iterator_Hash *it)
-{
-   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
-
-   if (!stuff) return NULL;
-   return stuff->tuple.data;
-}
-
-static void *
-_eina_hash_iterator_key_get_content(Eina_Iterator_Hash *it)
-{
-   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
-
-   if (!stuff) return NULL;
-   return (void *) stuff->tuple.key;
-}
-
-static Eina_Hash_Tuple *
-_eina_hash_iterator_tuple_get_content(Eina_Iterator_Hash *it)
-{
-   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
-
-   if (!stuff) return NULL;
-   return &stuff->tuple;
 }
 
 static void *
@@ -767,13 +774,11 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
    if (!it) return NULL;
 
    it->hash = hash;
+   it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_data_get_content);
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
-   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_data_get_content);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
-
-   _eina_hash_iterator_next(it);
 
    return &it->iterator;
 }
@@ -790,13 +795,11 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    if (!it) return NULL;
 
    it->hash = hash;
+   it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_key_get_content);
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
-   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_key_get_content);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
-
-   _eina_hash_iterator_next(it);
 
    return &it->iterator;
 }
@@ -813,13 +816,11 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    if (!it) return NULL;
 
    it->hash = hash;
+   it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_tuple_get_content);
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
-   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_tuple_get_content);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
-
-   _eina_hash_iterator_next(it);
 
    return &it->iterator;
 }

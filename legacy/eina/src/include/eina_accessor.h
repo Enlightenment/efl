@@ -26,7 +26,7 @@ typedef struct _Eina_Accessor Eina_Accessor;
 
 EAPI void eina_accessor_free           (Eina_Accessor *accessor);
 
-EAPI void *eina_accessor_data_get      (Eina_Accessor *accessor, unsigned int position);
+EAPI Eina_Bool eina_accessor_data_get  (Eina_Accessor *accessor, unsigned int position, void **data);
 EAPI void *eina_accessor_container_get (Eina_Accessor *accessor);
 
 EAPI void eina_accessor_over           (Eina_Accessor *accessor,
