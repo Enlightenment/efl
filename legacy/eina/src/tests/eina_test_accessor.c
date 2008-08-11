@@ -16,59 +16,70 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <time.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
 
-#include "eina_stringshare.h"
-#include "eina_bench.h"
+#include "eina_suite.h"
 #include "eina_array.h"
+#include "eina_private.h"
 
-static void
-eina_bench_stringshare_job(int request)
+static Eina_Bool
+eina_accessor_check(__UNUSED__ const Eina_Array *array,
+		    int *data,  int *fdata)
 {
-   const char *tmp;
+   fail_if(*fdata > *data);
+   *fdata = *data;
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_accessor_array_simple)
+{
+   Eina_Accessor *it;
    Eina_Array *ea;
-   Eina_Array_Iterator it;
-   unsigned int j;
+   int *tmp;
    int i;
 
-   eina_stringshare_init();
    eina_array_init();
 
-   ea = eina_array_new(request);
+   ea = eina_array_new(11);
+   fail_if(!ea);
 
-   for (i = 0; i < request; ++i)
+   for (i = 0; i < 200; ++i)
      {
-	char build[64];
-
-	snprintf(build, 64, "string_%i", i);
-	tmp = eina_stringshare_add(build);
+	tmp = malloc(sizeof(int));
+	fail_if(!tmp);
+	*tmp = i;
 
 	eina_array_append(ea, tmp);
      }
 
-   srand(time(NULL));
+   it = eina_array_accessor_new(ea);
+   fail_if(!it);
 
-   for (j = 0; j < 200; ++j)
-     for (i = 0; i < request; ++i)
-       {
-	  char build[64];
+   tmp = eina_accessor_data_get(it, 100);
+   fail_if(!tmp);
+   fail_if(*tmp != 100);
 
-	  snprintf(build, 64, "string_%i", rand() % request);
-	  tmp = eina_stringshare_add(build);
+   i = 50;
+   eina_accessor_over(it, EINA_EACH(eina_accessor_check), 50, 100, &i);
+   fail_if(i != 99);
 
-	  eina_array_append(ea, tmp);
-       }
+   fail_if(eina_accessor_container_get(it) != ea);
 
-   EINA_ARRAY_ITER_NEXT(ea, j, tmp, it)
-     eina_stringshare_del(tmp);
+   eina_accessor_free(it);
+
+   eina_array_free(ea);
 
    eina_array_shutdown();
-   eina_stringshare_shutdown();
 }
+END_TEST
 
-void eina_bench_stringshare(Eina_Bench *bench)
+void
+eina_test_accessor(TCase *tc)
 {
-   eina_bench_register(bench, "stringshare", EINA_BENCH(eina_bench_stringshare_job), 100, 20100, 500);
+   tcase_add_test(tc, eina_accessor_array_simple);
 }

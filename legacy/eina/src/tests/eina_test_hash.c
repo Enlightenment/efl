@@ -16,6 +16,10 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,6 +38,20 @@ START_TEST(eina_hash_init_shutdown)
    eina_hash_shutdown();
 }
 END_TEST
+
+static Eina_Bool
+eina_foreach_check(__UNUSED__ const Eina_Hash *hash, const void *key, void *data, __UNUSED__ void *fdata)
+{
+   int *j = data;
+   int i;
+
+   if (strlen(key) <= 0) return EINA_TRUE;
+
+   i = atoi(key);
+   fail_if(i != *j);
+
+   return EINA_TRUE;
+}
 
 START_TEST(eina_hash_simple)
 {
@@ -59,6 +77,8 @@ START_TEST(eina_hash_simple)
    test = eina_hash_find(hash, "42");
    fail_if(!test);
    fail_if(*test != 42);
+
+   eina_hash_foreach(hash, eina_foreach_check, NULL);
 
    test = eina_hash_modify(hash, "5", &array[4]);
    fail_if(!test);

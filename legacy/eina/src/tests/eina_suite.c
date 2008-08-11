@@ -36,6 +36,8 @@ static const Eina_Test_Case etc[] = {
   { "Counter", eina_test_counter },
   { "Hash", eina_test_hash },
   { "List", eina_test_list },
+  { "Iterator", eina_test_iterator },
+  { "Accessor", eina_test_accessor },
   { NULL, NULL }
 };
 

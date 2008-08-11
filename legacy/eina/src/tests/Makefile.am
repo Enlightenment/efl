@@ -22,6 +22,8 @@ eina_test_main.c 	\
 eina_test_counter.c 	\
 eina_test_lalloc.c 	\
 eina_test_hash.c 	\
+eina_test_iterator.c	\
+eina_test_accessor.c	\
 eina_test_list.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la

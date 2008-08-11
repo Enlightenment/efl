@@ -32,6 +32,9 @@
  *                                  Local                                     * 
  *============================================================================*/
 typedef struct _Eina_Hash_El Eina_Hash_El;
+typedef struct _Eina_Hash_Foreach Eina_Hash_Foreach;
+typedef struct _Eina_Iterator_Hash Eina_Iterator_Hash;
+
 struct _Eina_Hash
 {
    Eina_Key_Length key_length_cb;
@@ -45,10 +48,25 @@ struct _Eina_Hash
 struct _Eina_Hash_El
 {
    Eina_Inlist _list_data;
+   Eina_Hash_Tuple tuple;
+};
 
-   void *data;
-   const void *key;
-   unsigned int length;
+struct _Eina_Hash_Foreach
+{
+   Eina_Foreach cb;
+   const void *fdata;
+};
+
+struct _Eina_Iterator_Hash
+{
+   Eina_Iterator iterator;
+
+   const Eina_Hash *hash;
+
+   Eina_Inlist *current;
+   int bucket;
+
+   int index;
 };
 
 static int _eina_hash_init_count = 0;
@@ -61,7 +79,7 @@ _eina_hash_find_by_hash(const Eina_Hash *hash, const char *key, int key_length, 
    key_hash &= 0xFF;
 
    EINA_INLIST_ITER_NEXT(hash->buckets[key_hash], el)
-     if (!hash->key_cmp_cb(el->key, el->length, key, key_length)) return el;
+     if (!hash->key_cmp_cb(el->tuple.key, el->tuple.key_length, key, key_length)) return el;
 
    return NULL;
 }
@@ -75,7 +93,7 @@ _eina_hash_find_by_data(const Eina_Hash *hash, const void *data, int *key_hash)
    /* FIXME: Use an iterator for this stuff */
    for (hash_num = 0; hash_num < 256; hash_num++)
      EINA_INLIST_ITER_NEXT(hash->buckets[hash_num], el)
-       if (el->data == data)
+       if (el->tuple.data == data)
 	 {
 	    *key_hash = hash_num;
 	    return el;
@@ -108,6 +126,90 @@ _eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
 		     const char *key2, __UNUSED__ int key2_length)
 {
    return strcmp(key1, key2);
+}
+
+static Eina_Bool
+_eina_foreach_cb(const Eina_Hash *hash, Eina_Hash_Tuple *data, Eina_Hash_Foreach *fdata)
+{
+   return fdata->cb((Eina_Hash *) hash, data->key, data->data, (void*) fdata->fdata);
+}
+
+static Eina_Bool
+_eina_hash_iterator_next(Eina_Iterator_Hash *it)
+{
+   Eina_Inlist *move;
+   int bucket;
+
+   if (!(it->index + 1 < it->hash->population)) return EINA_FALSE;
+   if (it->current == NULL)
+     {
+	move = NULL;
+	bucket = 0;
+	it->index = -1;
+     }
+   else
+     {
+	bucket = it->bucket;
+	move = it->current->next;
+     }
+
+   if (!move)
+     {
+	while (bucket < 256)
+	  {
+	     if (it->hash->buckets[bucket] != NULL)
+	       {
+		  move = it->hash->buckets[bucket];
+		  break ;
+	       }
+	     ++bucket;
+	  }
+     }
+
+   it->index++;
+   it->bucket = bucket;
+   it->current = move;
+
+   return EINA_TRUE;
+}
+
+static void *
+_eina_hash_iterator_data_get_content(Eina_Iterator_Hash *it)
+{
+   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
+
+   if (!stuff) return NULL;
+   return stuff->tuple.data;
+}
+
+static void *
+_eina_hash_iterator_key_get_content(Eina_Iterator_Hash *it)
+{
+   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
+
+   if (!stuff) return NULL;
+   return (void *) stuff->tuple.key;
+}
+
+static Eina_Hash_Tuple *
+_eina_hash_iterator_tuple_get_content(Eina_Iterator_Hash *it)
+{
+   Eina_Hash_El *stuff = (Eina_Hash_El *) it->current;
+
+   if (!stuff) return NULL;
+   return &stuff->tuple;
+}
+
+static void *
+_eina_hash_iterator_get_container(Eina_Iterator_Hash *it)
+{
+   return (void *) it->hash;
+}
+
+static void
+_eina_hash_iterator_free(Eina_Iterator_Hash *it)
+{
+   free(it);
 }
 
 /*============================================================================*
@@ -225,10 +327,10 @@ eina_hash_add_by_hash(Eina_Hash *hash,
    if (!el) goto on_error;
 
    /* Setup the element */
-   el->length = key_length;
-   el->data = (void *) data;
-   el->key = (char *) (el + 1);
-   memcpy((char *) el->key, key, key_length);
+   el->tuple.key_length = key_length;
+   el->tuple.data = (void *) data;
+   el->tuple.key = (char *) (el + 1);
+   memcpy((char *) el->tuple.key, key, key_length);
 
    /* eina hash have 256 buckets. */
    key_hash &= 0xFF;
@@ -284,9 +386,9 @@ eina_hash_direct_add_by_hash(Eina_Hash *hash,
    if (!el) goto on_error;
 
    /* Setup the element */
-   el->length = key_length;
-   el->data = (void *) data;
-   el->key = key;
+   el->tuple.key_length = key_length;
+   el->tuple.data = (void *) data;
+   el->tuple.key = key;
 
    /* eina hash have 256 buckets. */
    key_hash &= 0xFF;
@@ -459,7 +561,7 @@ eina_hash_find_by_hash(const Eina_Hash *hash, const void *key, int key_length, i
    if (el)
      {
 	_eina_hash_reorder((Eina_Hash *) hash, el, key_hash);
-	return el->data;
+	return el->tuple.data;
      }
    return NULL;
 }
@@ -510,8 +612,8 @@ eina_hash_modify_by_hash(Eina_Hash *hash, const void *key, int key_length, int k
    if (el)
      {
 	_eina_hash_reorder((Eina_Hash *) hash, el, key_hash);
-	old_data = el->data;
-	el->data = (void *) data;
+	old_data = el->tuple.data;
+	el->tuple.data = (void *) data;
      }
 
    return old_data;
@@ -601,7 +703,9 @@ eina_hash_free(Eina_Hash *hash)
    free(hash);
 }
 
-/* FIXME: Create a generic foreach function in the iterator implementation. */
+/*============================================================================*
+ *                                Iterator                                    *
+ *============================================================================*/
 /**
  * Call a function on every member stored in the hash table
  * @param hash The hash table whose members will be walked
@@ -635,29 +739,89 @@ eina_hash_free(Eina_Hash *hash)
  * @endcode
  * @ingroup Eina_Hash_General_Group
  */
-EAPI void eina_hash_foreach(
-		const Eina_Hash *hash,
-		Eina_Foreach func,
-		const void *fdata)
+EAPI void
+eina_hash_foreach(const Eina_Hash *hash,
+		  Eina_Foreach func,
+		  const void *fdata)
 {
-   int i;
+   Eina_Iterator *it;
+   Eina_Hash_Foreach foreach;
 
-   if (!hash) return;
-   for (i = 0; i < 256; i++)
-     {
-	Eina_Inlist *l, *next_l;
+   foreach.cb = func;
+   foreach.fdata = fdata;
 
-	for (l = hash->buckets[i]; l;)
-	  {
-	     Eina_Hash_El *el;
+   it = eina_hash_iterator_tuple_new(hash);
+   eina_iterator_foreach(it, EINA_EACH(_eina_foreach_cb), &foreach);
+   eina_iterator_free(it);
+}
 
-	     next_l = l->next;
-	     el = (Eina_Hash_El *)l;
-	     if (!func(hash, el->key, el->data, (void *)fdata))
-	       return;
-	     l = next_l;
-	  }
-     }
+EAPI Eina_Iterator *
+eina_hash_iterator_data_new(const Eina_Hash *hash)
+{
+   Eina_Iterator_Hash *it;
+
+   if (!hash) return NULL;
+   if (hash->population <= 0) return NULL;
+
+   it = calloc(1, sizeof (Eina_Iterator_Hash));
+   if (!it) return NULL;
+
+   it->hash = hash;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
+   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_data_get_content);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
+
+   _eina_hash_iterator_next(it);
+
+   return &it->iterator;
+}
+
+EAPI Eina_Iterator *
+eina_hash_iterator_key_new(const Eina_Hash *hash)
+{
+   Eina_Iterator_Hash *it;
+
+   if (!hash) return NULL;
+   if (hash->population <= 0) return NULL;
+
+   it = calloc(1, sizeof (Eina_Iterator_Hash));
+   if (!it) return NULL;
+
+   it->hash = hash;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
+   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_key_get_content);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
+
+   _eina_hash_iterator_next(it);
+
+   return &it->iterator;
+}
+
+EAPI Eina_Iterator *
+eina_hash_iterator_tuple_new(const Eina_Hash *hash)
+{
+   Eina_Iterator_Hash *it;
+
+   if (!hash) return NULL;
+   if (hash->population <= 0) return NULL;
+
+   it = calloc(1, sizeof (Eina_Iterator_Hash));
+   if (!it) return NULL;
+
+   it->hash = hash;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
+   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_tuple_get_content);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
+
+   _eina_hash_iterator_next(it);
+
+   return &it->iterator;
 }
 
 /* Common hash functions */

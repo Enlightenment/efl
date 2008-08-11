@@ -22,8 +22,12 @@
 #include <stdlib.h>
 
 #include "eina_types.h"
+#include "eina_iterator.h"
+#include "eina_accessor.h"
 
 typedef struct _Eina_Array       Eina_Array;             /**< A generic vector */
+typedef void**                   Eina_Array_Iterator;
+
 struct _Eina_Array /** An array of data */
 {
    void		**data;   /**< Pointer to a vector of pointer to payload */
@@ -42,16 +46,17 @@ EAPI void         eina_array_clean    (Eina_Array *array);
 EAPI void         eina_array_flush    (Eina_Array *array);
 EAPI void         eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata);
 
-static inline void        * eina_array_get    (Eina_Array *array, unsigned int index);
+EAPI Eina_Iterator *eina_array_iterator_new(const Eina_Array *array);
+EAPI Eina_Accessor *eina_array_accessor_new(const Eina_Array *array);
+
+static inline void        * eina_array_get    (const Eina_Array *array, unsigned int index);
 static inline void          eina_array_append (Eina_Array *array, void *data);
-static inline unsigned int  eina_array_count  (Eina_Array *array);
+static inline unsigned int  eina_array_count  (const Eina_Array *array);
 
-#define EINA_ARRAY_ITER_NEXT(array, index, item)		  \
-  for ((index) = 0; (index) < eina_array_count(array); ++(index)) \
-    {								  \
-       (item) = eina_array_get((array), (index));
-
-#define EINA_ARRAY_ITER_END }
+#define EINA_ARRAY_ITER_NEXT(array, index, item, iterator)		\
+  for (index = 0, iterator = (array)->data, item = iterator != NULL ? *(iterator) : NULL; \
+       index < eina_array_count(array);					\
+       ++(index), item = *(++(iterator)))
 
 #include "eina_inline_array.x"
 

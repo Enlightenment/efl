@@ -31,6 +31,7 @@ eina_bench_lookup_superfast(int request)
    Eina_Hash *hash = NULL;
    Eina_Array *array = NULL;
    int *tmp_val;
+   Eina_Array_Iterator it;
    unsigned int i;
 
    array = eina_array_new(1000);
@@ -66,9 +67,8 @@ eina_bench_lookup_superfast(int request)
 
    eina_hash_free(hash);
 
-   EINA_ARRAY_ITER_NEXT(array, i, tmp_val)
+   EINA_ARRAY_ITER_NEXT(array, i, tmp_val, it)
      free(tmp_val);
-   EINA_ARRAY_ITER_END;
 
    eina_array_free(array);
 }
@@ -79,6 +79,7 @@ eina_bench_lookup_djb2(int request)
    Eina_Hash *hash = NULL;
    Eina_Array *array = NULL;
    int *tmp_val;
+   Eina_Array_Iterator it;
    unsigned int i;
 
    array = eina_array_new(1000);
@@ -114,9 +115,8 @@ eina_bench_lookup_djb2(int request)
 
    eina_hash_free(hash);
 
-   EINA_ARRAY_ITER_NEXT(array, i, tmp_val)
+   EINA_ARRAY_ITER_NEXT(array, i, tmp_val, it)
      free(tmp_val);
-   EINA_ARRAY_ITER_END;
 
    eina_array_free(array);
 }
@@ -127,6 +127,7 @@ eina_bench_lookup_djb2_inline(int request)
    Eina_Hash *hash = NULL;
    Eina_Array *array = NULL;
    int *tmp_val;
+   Eina_Array_Iterator it;
    unsigned int i;
 
    array = eina_array_new(1000);
@@ -164,9 +165,8 @@ eina_bench_lookup_djb2_inline(int request)
 
    eina_hash_free(hash);
 
-   EINA_ARRAY_ITER_NEXT(array, i, tmp_val)
+   EINA_ARRAY_ITER_NEXT(array, i, tmp_val, it)
      free(tmp_val);
-   EINA_ARRAY_ITER_END;
 
    eina_array_free(array);
 }

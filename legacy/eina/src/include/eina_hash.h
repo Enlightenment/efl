@@ -21,11 +21,21 @@
 #define EINA_HASH_H_
 
 #include "eina_types.h"
+#include "eina_iterator.h"
 
 /**
  *
  */
 typedef struct _Eina_Hash Eina_Hash;
+typedef struct _Eina_Hash_Tuple Eina_Hash_Tuple;
+struct _Eina_Hash_Tuple
+{
+   const void *key;
+   void *data;
+
+   unsigned int key_length;
+};
+
 typedef unsigned int (*Eina_Key_Length)(const void *key);
 #define EINA_KEY_LENGTH(Function) ((Eina_Key_Length)Function)
 typedef int (*Eina_Key_Cmp)(const void *key1, int key1_length,
@@ -66,7 +76,10 @@ EAPI void      * eina_hash_modify_by_hash(Eina_Hash *hash,
 					  const void *key, int key_length, int key_hash,
 					  const void *data);
 
-/* FIXME: Should go with iterator support. */
+EAPI Eina_Iterator * eina_hash_iterator_key_new(const Eina_Hash *hash);
+EAPI Eina_Iterator * eina_hash_iterator_data_new(const Eina_Hash *hash);
+EAPI Eina_Iterator * eina_hash_iterator_tuple_new(const Eina_Hash *hash);
+
 typedef Eina_Bool (*Eina_Foreach)(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 EAPI void        eina_hash_foreach(const Eina_Hash *hash,
 				   Eina_Foreach cb,

@@ -16,26 +16,23 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EINA_SUITE_H_
-#define EINA_SUITE_H_
+#ifndef EINA_ACCESSOR_H__
+#define EINA_ACCESSOR_H__
 
-#include <check.h>
+#include "eina_types.h"
+#include "eina_error.h"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
+typedef struct _Eina_Accessor Eina_Accessor;
+
+EAPI void eina_accessor_free           (Eina_Accessor *accessor);
+
+EAPI void *eina_accessor_data_get      (Eina_Accessor *accessor, unsigned int position);
+EAPI void *eina_accessor_container_get (Eina_Accessor *accessor);
+
+EAPI void eina_accessor_over           (Eina_Accessor *accessor,
+					Eina_Each cb,
+					unsigned int start,
+					unsigned int end,
+					const void *fdata);
+
 #endif
-
-void eina_test_stringshare(TCase *tc);
-void eina_test_array(TCase *tc);
-void eina_test_error(TCase *tc);
-void eina_test_magic(TCase *tc);
-void eina_test_inlist(TCase *tc);
-void eina_test_lalloc(TCase *tc);
-void eina_test_main(TCase *tc);
-void eina_test_counter(TCase *tc);
-void eina_test_hash(TCase *tc);
-void eina_test_list(TCase *tc);
-void eina_test_iterator(TCase *tc);
-void eina_test_accessor(TCase *tc);
-
-#endif /* EINA_SUITE_H_ */

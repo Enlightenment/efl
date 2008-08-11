@@ -20,6 +20,8 @@ eina_array.c \
 eina_magic.c \
 eina_main.c \
 eina_counter.c \
+eina_iterator.c \
+eina_accessor.c \
 eina_stringshare.c
 
 libeina_la_LIBADD = -ldl -lrt @COVERAGE_LIBS@

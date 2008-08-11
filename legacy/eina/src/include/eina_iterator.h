@@ -16,26 +16,23 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EINA_SUITE_H_
-#define EINA_SUITE_H_
+#ifndef EINA_ITERATOR_H__
+#define EINA_ITERATOR_H__
 
-#include <check.h>
+#include "eina_types.h"
+#include "eina_error.h"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
+typedef struct _Eina_Iterator Eina_Iterator;
+
+EAPI void eina_iterator_free           (Eina_Iterator *iterator);
+
+EAPI void *eina_iterator_data_get      (Eina_Iterator *iterator);
+EAPI void *eina_iterator_container_get (Eina_Iterator *iterator);
+
+EAPI Eina_Error eina_iterator_next     (Eina_Iterator *iterator);
+
+EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
+					Eina_Each callback,
+					const void *fdata);
+
 #endif
-
-void eina_test_stringshare(TCase *tc);
-void eina_test_array(TCase *tc);
-void eina_test_error(TCase *tc);
-void eina_test_magic(TCase *tc);
-void eina_test_inlist(TCase *tc);
-void eina_test_lalloc(TCase *tc);
-void eina_test_main(TCase *tc);
-void eina_test_counter(TCase *tc);
-void eina_test_hash(TCase *tc);
-void eina_test_list(TCase *tc);
-void eina_test_iterator(TCase *tc);
-void eina_test_accessor(TCase *tc);
-
-#endif /* EINA_SUITE_H_ */

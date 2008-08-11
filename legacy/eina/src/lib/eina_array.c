@@ -30,6 +30,7 @@
 #include "eina_error.h"
 #include "eina_array.h"
 #include "eina_inline_array.x"
+#include "eina_private.h"
 
 EAPI int
 eina_array_init(void)
@@ -170,3 +171,129 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    array->data = tmp;
    array->count = total;
 }
+
+typedef struct _Eina_Iterator_Array Eina_Iterator_Array;
+struct _Eina_Iterator_Array
+{
+   Eina_Iterator iterator;
+
+   const Eina_Array *array;
+   unsigned int index;
+};
+
+static Eina_Bool
+eina_array_iterator_next(Eina_Iterator_Array *it)
+{
+   if (!(it->index + 1 < eina_array_count(it->array)))
+     return EINA_FALSE;
+   it->index++;
+   return EINA_TRUE;
+}
+
+static void *
+eina_array_iterator_get_content(Eina_Iterator_Array *it)
+{
+   if (!(it->index < eina_array_count(it->array)))
+     return NULL;
+   return eina_array_get(it->array, it->index);
+}
+
+static Eina_Array *
+eina_array_iterator_get_container(Eina_Iterator_Array *it)
+{
+   return (Eina_Array *) it->array;
+}
+
+static void
+eina_array_iterator_free(Eina_Iterator_Array *it)
+{
+   free(it);
+}
+
+EAPI Eina_Iterator *
+eina_array_iterator_new(const Eina_Array *array)
+{
+   Eina_Iterator_Array *it;
+
+   if (!array) return NULL;
+   if (eina_array_count(array) <= 0) return NULL;
+
+   eina_error_set(0);
+   it = calloc(1, sizeof (Eina_Iterator_Array));
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
+
+   it->array = array;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(eina_array_iterator_next);
+   it->iterator.get_content = FUNC_ITERATOR_GET_CONTENT(eina_array_iterator_get_content);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_array_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
+
+   return &it->iterator;
+}
+
+typedef struct _Eina_Accessor_Array Eina_Accessor_Array;
+struct _Eina_Accessor_Array
+{
+   Eina_Accessor accessor;
+
+   const Eina_Array *array;
+   unsigned int index;
+};
+
+static Eina_Bool
+eina_array_accessor_jump_at(Eina_Accessor_Array *it, unsigned int index)
+{
+   if (!(index < eina_array_count(it->array)))
+     return EINA_FALSE;
+   it->index = index;
+   return EINA_TRUE;
+}
+
+static void *
+eina_array_accessor_get_content(Eina_Accessor_Array *it)
+{
+   if (!(it->index < eina_array_count(it->array)))
+     return NULL;
+   return eina_array_get(it->array, it->index);
+}
+
+static Eina_Array *
+eina_array_accessor_get_container(Eina_Accessor_Array *it)
+{
+   return (Eina_Array *) it->array;
+}
+
+static void
+eina_array_accessor_free(Eina_Accessor_Array *it)
+{
+   free(it);
+}
+
+EAPI Eina_Accessor *
+eina_array_accessor_new(const Eina_Array *array)
+{
+   Eina_Accessor_Array *it;
+
+   if (!array) return NULL;
+
+   eina_error_set(0);
+   it = calloc(1, sizeof (Eina_Accessor_Array));
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
+
+   it->array = array;
+
+   it->accessor.jump_at = FUNC_ACCESSOR_JUMP_AT(eina_array_accessor_jump_at);
+   it->accessor.get_content = FUNC_ACCESSOR_GET_CONTENT(eina_array_accessor_get_content);
+   it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_array_accessor_get_container);
+   it->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
+
+   return &it->accessor;
+}
+
