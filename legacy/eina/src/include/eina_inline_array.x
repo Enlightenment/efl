@@ -51,13 +51,13 @@ eina_array_append(Eina_Array *array, void *data)
 }
 
 static inline void *
-eina_array_get(Eina_Array *array, unsigned int index)
+eina_array_get(const Eina_Array *array, unsigned int index)
 {
    return array->data[index];
 }
 
 static inline unsigned int
-eina_array_count(Eina_Array *array)
+eina_array_count(const Eina_Array *array)
 {
    return array->count;
 }
