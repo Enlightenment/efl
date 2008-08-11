@@ -21,7 +21,7 @@
 #include "eina_module.h"
 #include "eina_private.h"
 /*============================================================================*
- *                                  Local                                     * 
+ *                                  Local                                     *
  *============================================================================*/
 static Eina_List *_modules;
 static int _init_count = 0;
@@ -63,23 +63,23 @@ _new_from_buffer(const char *module, const char *context, const char *options, v
 	return NULL;
 }
 /*============================================================================*
- *                                   API                                      * 
+ *                                   API                                      *
  *============================================================================*/
 /**
- * 
+ *
  */
 EAPI int
 eina_mempool_init(void)
 {
-	if (!_init_count) 
+	if (!_init_count)
 	{
-		_modules = eina_module_list_get("/usr/local/lib/eina/mm_policies", 0, NULL, NULL);
+		_modules = eina_module_list_get("/usr/local/lib/eina/modules/mp", 0, NULL, NULL);
 	}
 	/* get all the modules */
 	return ++_init_count;
 }
 /**
- * 
+ *
  */
 EAPI int
 eina_mempool_shutdown(void)
