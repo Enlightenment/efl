@@ -71,16 +71,13 @@ EAPI extern const unsigned int eina_prime_table[];
 #define EINA_SORT_MIN 0
 #define EINA_SORT_MAX 1
 
-typedef void (*Eina_For_Each) (void *value, void *user_data);
-#define EINA_FOR_EACH(function) ((Eina_For_Each)function)
-
-typedef void (*Eina_Free_Cb) (void *data);
-#define EINA_FREE_CB(func) ((Eina_Free_Cb)func)
-
-typedef unsigned int (*Eina_Hash_Cb) (const void *key);
-#define EINA_HASH_CB(function) ((Eina_Hash_Cb)function)
-
 typedef int (*Eina_Compare_Cb) (const void *data1, const void *data2);
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
+
+typedef Eina_Bool (*Eina_Each)(const void *container,
+			       void *data,
+			       void *fdata);
+#define EINA_EACH(Function) ((Eina_Each)Function)
+
 
 #endif /*EINA_TYPES_H_*/
