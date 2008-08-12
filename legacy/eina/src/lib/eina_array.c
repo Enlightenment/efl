@@ -237,7 +237,7 @@ struct _Eina_Accessor_Array
 };
 
 static Eina_Bool
-eina_array_accessor_jump_at(Eina_Accessor_Array *it, unsigned int index, void **data)
+eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **data)
 {
    if (!(index < eina_array_count(it->array)))
      return EINA_FALSE;
@@ -274,7 +274,7 @@ eina_array_accessor_new(const Eina_Array *array)
 
    it->array = array;
 
-   it->accessor.jump_at = FUNC_ACCESSOR_JUMP_AT(eina_array_accessor_jump_at);
+   it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_array_accessor_get_at);
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_array_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
 

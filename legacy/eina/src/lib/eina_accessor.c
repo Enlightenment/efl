@@ -36,7 +36,7 @@ EAPI Eina_Bool
 eina_accessor_data_get(Eina_Accessor *accessor, unsigned int position, void **data)
 {
    if (!accessor) return EINA_FALSE;
-   return accessor->jump_at(accessor, position, data);
+   return accessor->get_at(accessor, position, data);
 }
 
 EAPI void *
@@ -60,7 +60,7 @@ eina_accessor_over(Eina_Accessor *accessor,
    if (!accessor) return ;
    if (!(start < end)) return ;
 
-   for (i = start; i < end && accessor->jump_at(accessor, i, &data) == EINA_TRUE; ++i)
+   for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE; ++i)
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
 }
 
