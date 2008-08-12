@@ -106,7 +106,7 @@ eina_iterator_ebo_free(__UNUSED__ const Eina_Array *array,
 }
 
 static Eina_Bool
-eina_iterator_ebo_rand(__UNUSED__ const Eina_Array *array,
+eina_iterator_ebo_rand(__UNUSED__ const void *container,
 		       Eina_Bench_Object *ebo,  __UNUSED__ void *fdata)
 {
    ebo->keep = rand() < (RAND_MAX / 2) ? ebo->keep : EINA_FALSE;
@@ -294,11 +294,75 @@ eina_bench_inlist_4evas_render(int request)
      }
 }
 
+static void
+eina_bench_inlist_4evas_render_iterator(int request)
+{
+   Eina_Inlist *head = NULL;
+   Eina_Inlist *tmp;
+   Eina_Bench_Object *ebo;
+   Eina_Iterator *it;
+   int i;
+   int j;
+
+   for (i = 0; i < 1000; ++i)
+     {
+	for (j = 0; j < request; ++j)
+	  {
+	     ebo = malloc(sizeof (Eina_Bench_Object));
+	     if (!ebo) continue ;
+
+	     ebo->keep = rand() < (RAND_MAX / 2) ? EINA_TRUE : EINA_FALSE;
+
+	     head = eina_inlist_prepend(head, ebo);
+	  }
+
+	if (i == 500)
+	  {
+	     while (head)
+	       {
+		  tmp = head;
+		  head = head->next;
+		  free(tmp);
+	       }
+	  }
+	else
+	  {
+	     if (i % 30 == 0)
+	       {
+		  tmp = head;
+		  while(tmp)
+		    {
+		       ebo = (Eina_Bench_Object *) tmp;
+
+		       tmp = tmp->next;
+		       if (ebo->keep == EINA_FALSE)
+			 {
+			    head = eina_inlist_remove(head, ebo);
+			    free(ebo);
+			 }
+		    }
+	       }
+	  }
+
+	it = eina_inlist_iterator_new(head);
+	eina_iterator_foreach(it, EINA_EACH(eina_iterator_ebo_rand), NULL);
+	eina_iterator_free(it);
+     }
+
+   while (head)
+     {
+	tmp = head;
+	head = head->next;
+	free(tmp);
+     }
+}
+
 void eina_bench_array(Eina_Bench *bench)
 {
    eina_bench_register(bench, "array-inline", EINA_BENCH(eina_bench_array_4evas_render_inline), 200, 4000, 100);
    eina_bench_register(bench, "array-iterator", EINA_BENCH(eina_bench_array_4evas_render_iterator), 200, 4000, 100);
    eina_bench_register(bench, "list", EINA_BENCH(eina_bench_list_4evas_render), 200, 4000, 100);
    eina_bench_register(bench, "inlist", EINA_BENCH(eina_bench_inlist_4evas_render), 200, 4000, 100);
+   eina_bench_register(bench, "inlist-iterator", EINA_BENCH(eina_bench_inlist_4evas_render_iterator), 200, 4000, 100);
 }
 
