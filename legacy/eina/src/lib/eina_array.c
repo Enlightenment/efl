@@ -32,6 +32,77 @@
 #include "eina_inline_array.x"
 #include "eina_private.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+typedef struct _Eina_Iterator_Array Eina_Iterator_Array;
+struct _Eina_Iterator_Array
+{
+   Eina_Iterator iterator;
+
+   const Eina_Array *array;
+   unsigned int index;
+};
+
+typedef struct _Eina_Accessor_Array Eina_Accessor_Array;
+struct _Eina_Accessor_Array
+{
+   Eina_Accessor accessor;
+
+   const Eina_Array *array;
+};
+
+static Eina_Bool
+eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
+{
+   if (!(it->index < eina_array_count(it->array)))
+     return EINA_FALSE;
+   if (data)
+     *data = eina_array_get(it->array, it->index);
+   it->index++;
+   return EINA_TRUE;
+}
+
+static Eina_Array *
+eina_array_iterator_get_container(Eina_Iterator_Array *it)
+{
+   return (Eina_Array *) it->array;
+}
+
+static void
+eina_array_iterator_free(Eina_Iterator_Array *it)
+{
+   free(it);
+}
+
+static Eina_Bool
+eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **data)
+{
+   if (!(index < eina_array_count(it->array)))
+     return EINA_FALSE;
+   if (data)
+     *data = eina_array_get(it->array, index);
+   return EINA_TRUE;
+}
+
+static Eina_Array *
+eina_array_accessor_get_container(Eina_Accessor_Array *it)
+{
+   return (Eina_Array *) it->array;
+}
+
+static void
+eina_array_accessor_free(Eina_Accessor_Array *it)
+{
+   free(it);
+}
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 EAPI int
 eina_array_init(void)
 {
@@ -92,8 +163,6 @@ eina_array_free(Eina_Array *array)
    eina_array_flush(array);
    free(array);
 }
-
-#include <stdio.h>
 
 EAPI void
 eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata)
@@ -172,38 +241,6 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    array->count = total;
 }
 
-typedef struct _Eina_Iterator_Array Eina_Iterator_Array;
-struct _Eina_Iterator_Array
-{
-   Eina_Iterator iterator;
-
-   const Eina_Array *array;
-   unsigned int index;
-};
-
-static void *
-eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
-{
-   if (!(it->index < eina_array_count(it->array)))
-     return EINA_FALSE;
-   if (data)
-     *data = eina_array_get(it->array, it->index);
-   it->index++;
-   return EINA_TRUE;
-}
-
-static Eina_Array *
-eina_array_iterator_get_container(Eina_Iterator_Array *it)
-{
-   return (Eina_Array *) it->array;
-}
-
-static void
-eina_array_iterator_free(Eina_Iterator_Array *it)
-{
-   free(it);
-}
-
 EAPI Eina_Iterator *
 eina_array_iterator_new(const Eina_Array *array)
 {
@@ -226,36 +263,6 @@ eina_array_iterator_new(const Eina_Array *array)
    it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
 
    return &it->iterator;
-}
-
-typedef struct _Eina_Accessor_Array Eina_Accessor_Array;
-struct _Eina_Accessor_Array
-{
-   Eina_Accessor accessor;
-
-   const Eina_Array *array;
-};
-
-static Eina_Bool
-eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **data)
-{
-   if (!(index < eina_array_count(it->array)))
-     return EINA_FALSE;
-   if (data)
-     *data = eina_array_get(it->array, index);
-   return EINA_TRUE;
-}
-
-static Eina_Array *
-eina_array_accessor_get_container(Eina_Accessor_Array *it)
-{
-   return (Eina_Array *) it->array;
-}
-
-static void
-eina_array_accessor_free(Eina_Accessor_Array *it)
-{
-   free(it);
 }
 
 EAPI Eina_Accessor *

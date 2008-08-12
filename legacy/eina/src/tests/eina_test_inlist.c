@@ -39,7 +39,7 @@ _eina_test_inlist_build(int i)
 
    return tmp;
 }
-#include <stdio.h>
+
 START_TEST(eina_inlist_simple)
 {
    Eina_Test_Inlist *lst = NULL;

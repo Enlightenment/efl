@@ -29,7 +29,7 @@
 #include "eina_private.h"
 
 /*============================================================================*
- *                                  Local                                     * 
+ *                                  Local                                     *
  *============================================================================*/
 typedef struct _Eina_Hash_El Eina_Hash_El;
 typedef struct _Eina_Hash_Foreach Eina_Hash_Foreach;
