@@ -22,7 +22,108 @@
 /* FIXME: TODO please, refactor this :) */
 
 /*============================================================================*
- *                                   API                                      * 
+ *                                  Local                                     *
+ *============================================================================*/
+typedef struct _Eina_Iterator_Inlist Eina_Iterator_Inlist;
+typedef struct _Eina_Accessor_Inlist Eina_Accessor_Inlist;
+
+struct _Eina_Iterator_Inlist
+{
+	Eina_Iterator iterator;
+	const Eina_Inlist *head;
+	const Eina_Inlist *current;
+};
+
+struct _Eina_Accessor_Inlist
+{
+	Eina_Accessor accessor;
+
+	const Eina_Inlist *head;
+	const Eina_Inlist *current;
+
+	unsigned int index;
+};
+
+static Eina_Bool
+eina_inlist_iterator_next(Eina_Iterator_Inlist *it, void **data) {
+	if (it->current == NULL) return EINA_FALSE;
+	if (data) *data = (void*) it->current;
+
+	it->current = it->current->next;
+
+	return EINA_TRUE;
+}
+
+static Eina_Inlist *
+eina_inlist_iterator_get_container(Eina_Iterator_Inlist *it) {
+	return (Eina_Inlist*) it->head;
+}
+
+static void
+eina_inlist_iterator_free(Eina_Iterator_Inlist *it) {
+	free(it);
+}
+
+static Eina_Bool
+eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it, unsigned int index, void **data) {
+	const Eina_Inlist *over;
+	unsigned int middle;
+	unsigned int i;
+
+	if (it->index == index) {
+		over = it->current;
+	} else if (index > it->index) {
+		/* Looking after current. */
+		for (i = it->index, over = it->current;
+		     i < index && over != NULL;
+		     ++i, over = over->next)
+			;
+
+		if (over == NULL) return EINA_FALSE;
+	} else {
+		middle = it->index >> 1;
+
+		if (index > middle) {
+			/* Looking backward from current. */
+			for (i = it->index, over = it->current;
+			     i > index && over != NULL;
+			     --i, over = over->prev)
+				;
+
+			if (over == NULL) return EINA_FALSE;
+		} else {
+			/* Looking from the start. */
+			for (i = 0, over = it->head;
+			     i < index && over != NULL;
+			     ++i, over = over->next)
+				;
+
+			if (over == NULL) return EINA_FALSE;
+		}
+	}
+
+	it->current = over;
+	it->index = index;
+
+	if (data) *data = (void*) over;
+	return EINA_TRUE;
+}
+
+static Eina_Inlist *
+eina_inlist_accessor_get_container(Eina_Accessor_Inlist *it) {
+	return (Eina_Inlist *) it->head;
+}
+
+static void
+eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
+	free(it);
+}
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/*============================================================================*
+ *                                   API                                      *
  *============================================================================*/
 /**
  * To be documented
@@ -175,4 +276,49 @@ EAPI void * eina_inlist_find(void *in_list, void *in_item) {
 			return item;
 	}
 	return NULL;
+}
+
+EAPI Eina_Iterator *eina_inlist_iterator_new(const void *in_list) {
+	Eina_Iterator_Inlist *it;
+
+	if (!in_list) return NULL;
+
+	eina_error_set(0);
+	it = calloc(1, sizeof (Eina_Iterator_Inlist));
+	if (!it) {
+		eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+		return NULL;
+	}
+
+	it->head = in_list;
+	it->current = in_list;
+
+	it->iterator.next = FUNC_ITERATOR_NEXT(eina_inlist_iterator_next);
+	it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_inlist_iterator_get_container);
+	it->iterator.free = FUNC_ITERATOR_FREE(eina_inlist_iterator_free);
+
+	return &it->iterator;
+}
+
+EAPI Eina_Accessor *eina_inlist_accessor_new(const void *in_list) {
+	Eina_Accessor_Inlist *it;
+
+	if (!in_list) return NULL;
+
+	eina_error_set(0);
+	it = calloc(1, sizeof (Eina_Accessor_Inlist));
+	if (!it) {
+		eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+		return NULL;
+	}
+
+	it->head = in_list;
+	it->current = in_list;
+	it->index = 0;
+
+	it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_inlist_accessor_get_at);
+	it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_inlist_accessor_get_container);
+	it->accessor.free = FUNC_ACCESSOR_FREE(eina_inlist_accessor_free);
+
+	return &it->accessor;
 }

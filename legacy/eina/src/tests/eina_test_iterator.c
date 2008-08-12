@@ -25,6 +25,7 @@
 #include "eina_suite.h"
 #include "eina_array.h"
 #include "eina_hash.h"
+#include "eina_inlist.h"
 #include "eina_private.h"
 
 static Eina_Bool
@@ -66,7 +67,7 @@ START_TEST(eina_iterator_array_simple)
    fail_if(i != 199);
 
    fail_if(eina_iterator_container_get(it) != ea);
-   fail_if(eina_iterator_next(it, &tmp) != EINA_FALSE);
+   fail_if(eina_iterator_next(it, (void**) &tmp) != EINA_FALSE);
 
    eina_iterator_free(it);
 
@@ -136,9 +137,85 @@ START_TEST(eina_iterator_hash_simple)
 }
 END_TEST
 
+typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
+struct _Eina_Test_Inlist
+{
+   Eina_Inlist list;
+   int i;
+};
+
+static Eina_Test_Inlist*
+_eina_test_inlist_build(int i)
+{
+   Eina_Test_Inlist *tmp;
+
+   tmp = malloc(sizeof(Eina_Test_Inlist));
+   fail_if(!tmp);
+   tmp->i = i;
+
+   return tmp;
+}
+
+static Eina_Bool
+eina_iterator_inlist_data_check(__UNUSED__ const Eina_Inlist *in_list, Eina_Test_Inlist *data, int *fdata)
+{
+   switch (*fdata)
+     {
+      case 0: fail_if(data->i != 27); break;
+      case 1: fail_if(data->i != 42); break;
+      case 2: fail_if(data->i != 3227); break;
+      case 3: fail_if(data->i != 1664); break;
+      case 4: fail_if(data->i != 81); break;
+     }
+
+   (*fdata)++;
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_iterator_inlist_simple)
+{
+   Eina_Test_Inlist *lst = NULL;
+   Eina_Test_Inlist *tmp;
+   Eina_Test_Inlist *prev;
+   Eina_Iterator *it;
+   int i = 0;
+
+   tmp = _eina_test_inlist_build(42);
+   lst = eina_inlist_append(lst, tmp);
+   fail_if(!lst);
+
+   tmp = _eina_test_inlist_build(1664);
+   lst = eina_inlist_append_relative(lst, tmp, lst);
+   fail_if(!lst);
+   fail_if(lst->i != 42);
+
+   prev = tmp;
+   tmp = _eina_test_inlist_build(3227);
+   lst = eina_inlist_prepend_relative(lst, tmp, prev);
+   fail_if(!lst);
+   fail_if(lst->i != 42);
+
+   tmp = _eina_test_inlist_build(27);
+   lst = eina_inlist_prepend_relative(lst, tmp, NULL);
+
+   tmp = _eina_test_inlist_build(81);
+   lst = eina_inlist_append_relative(lst, tmp, NULL);
+
+   it = eina_inlist_iterator_new(lst);
+   fail_if(!it);
+
+   eina_iterator_foreach(it, EINA_EACH(eina_iterator_inlist_data_check), &i);
+   eina_iterator_free(it);
+
+   fail_if(i != 5);
+}
+END_TEST
+
 void
 eina_test_iterator(TCase *tc)
 {
    tcase_add_test(tc, eina_iterator_array_simple);
    tcase_add_test(tc, eina_iterator_hash_simple);
+   tcase_add_test(tc, eina_iterator_inlist_simple);
 }

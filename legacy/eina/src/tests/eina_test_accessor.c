@@ -24,6 +24,7 @@
 
 #include "eina_suite.h"
 #include "eina_array.h"
+#include "eina_inlist.h"
 #include "eina_private.h"
 
 static Eina_Bool
@@ -60,7 +61,7 @@ START_TEST(eina_accessor_array_simple)
    it = eina_array_accessor_new(ea);
    fail_if(!it);
 
-   fail_if(eina_accessor_data_get(it, 100, &tmp) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 100, (void**) &tmp) != EINA_TRUE);
    fail_if(!tmp);
    fail_if(*tmp != 100);
 
@@ -78,8 +79,95 @@ START_TEST(eina_accessor_array_simple)
 }
 END_TEST
 
+typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
+struct _Eina_Test_Inlist
+{
+   Eina_Inlist list;
+   int i;
+};
+
+static Eina_Test_Inlist*
+_eina_test_inlist_build(int i)
+{
+   Eina_Test_Inlist *tmp;
+
+   tmp = malloc(sizeof(Eina_Test_Inlist));
+   fail_if(!tmp);
+   tmp->i = i;
+
+   return tmp;
+}
+
+static Eina_Bool
+eina_accessor_inlist_data_check(__UNUSED__ const Eina_Inlist *in_list, Eina_Test_Inlist *data, int *fdata)
+{
+   switch (*fdata)
+     {
+      case 0: fail_if(data->i != 3227); break;
+      case 1: fail_if(data->i != 1664); break;
+     }
+
+   (*fdata)++;
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_accessor_inlist_simple)
+{
+   Eina_Test_Inlist *lst = NULL;
+   Eina_Test_Inlist *tmp;
+   Eina_Test_Inlist *prev;
+   Eina_Accessor *it;
+   int i = 0;
+
+   tmp = _eina_test_inlist_build(42);
+   lst = eina_inlist_append(lst, tmp);
+   fail_if(!lst);
+
+   tmp = _eina_test_inlist_build(1664);
+   lst = eina_inlist_append_relative(lst, tmp, lst);
+   fail_if(!lst);
+   fail_if(lst->i != 42);
+
+   prev = tmp;
+   tmp = _eina_test_inlist_build(3227);
+   lst = eina_inlist_prepend_relative(lst, tmp, prev);
+   fail_if(!lst);
+   fail_if(lst->i != 42);
+
+   tmp = _eina_test_inlist_build(27);
+   lst = eina_inlist_prepend_relative(lst, tmp, NULL);
+
+   tmp = _eina_test_inlist_build(81);
+   lst = eina_inlist_append_relative(lst, tmp, NULL);
+
+   tmp = _eina_test_inlist_build(7);
+   lst = eina_inlist_append(lst, tmp);
+
+   it = eina_inlist_accessor_new(lst);
+   fail_if(!it);
+   fail_if(eina_accessor_container_get(it) != lst);
+
+   eina_accessor_over(it, EINA_EACH(eina_accessor_inlist_data_check), 2, 4, &i);
+
+   fail_if(eina_accessor_data_get(it, 5, (void**) &tmp) != EINA_TRUE);
+   fail_if(eina_accessor_data_get(it, 3, (void**) &tmp) != EINA_TRUE);
+   fail_if(tmp->i != 1664);
+   fail_if(eina_accessor_data_get(it, 3, (void**) &tmp) != EINA_TRUE);
+   fail_if(tmp->i != 1664);
+   fail_if(eina_accessor_data_get(it, 1, (void**) &tmp) != EINA_TRUE);
+   fail_if(tmp->i != 42);
+
+   eina_accessor_free(it);
+
+   fail_if(i != 2);
+}
+END_TEST
+
+
 void
 eina_test_accessor(TCase *tc)
 {
    tcase_add_test(tc, eina_accessor_array_simple);
+   tcase_add_test(tc, eina_accessor_inlist_simple);
 }
