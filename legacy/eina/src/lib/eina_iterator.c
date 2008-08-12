@@ -33,24 +33,17 @@ eina_iterator_free(Eina_Iterator *iterator)
 }
 
 EAPI void *
-eina_iterator_data_get(Eina_Iterator *iterator)
-{
-   if (!iterator) return NULL;
-   return iterator->get_content(iterator);
-}
-
-EAPI void *
 eina_iterator_container_get(Eina_Iterator *iterator)
 {
    if (!iterator) return NULL;
    return iterator->get_container(iterator);
 }
 
-EAPI Eina_Error
-eina_iterator_next(Eina_Iterator *iterator)
+EAPI Eina_Bool
+eina_iterator_next(Eina_Iterator *iterator, void **data)
 {
    if (!iterator) return EINA_FALSE;
-   return iterator->next(iterator);
+   return iterator->next(iterator, data);
 }
 
 EAPI void
@@ -64,9 +57,7 @@ eina_iterator_foreach(Eina_Iterator *iterator,
    if (!iterator) return ;
 
    container = iterator->get_container(iterator);
-   while ((data = iterator->get_content(iterator)) != NULL) {
+   while (iterator->next(iterator, &data) == EINA_TRUE) {
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
-      if (iterator->next(iterator) != EINA_TRUE)
-	break ;
    }
 }
