@@ -49,7 +49,7 @@ typedef void (*Eina_Error_Print_Cb)(Eina_Error_Level level, const char *file,
                 const char *fnc, int line, const char *fmt, void *data,
 		va_list args);
 
-EAPI extern int EINA_ERROR_OUT_OF_MEMORY;
+EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY;
 
 EAPI int eina_error_init(void);
 EAPI int eina_error_shutdown(void);
