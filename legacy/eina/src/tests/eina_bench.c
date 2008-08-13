@@ -158,7 +158,7 @@ eina_bench_run(Eina_Bench *bench)
 	else fprintf(main_script, ", \\\n");
 
 	fprintf(main_script,
-		"\"%s\" using 1:2 title \'%s\' with points",
+		"\"%s\" using 1:2 title \'%s\' with line",
 		buffer, run->name);
      }
 
@@ -177,9 +177,9 @@ struct _Eina_Bench_Case
 };
 
 static const Eina_Bench_Case etc[] = {
-  { "Hash", eina_bench_hash },
+/*   { "Hash", eina_bench_hash }, */
   { "Array vs List vs Inlist", eina_bench_array },
-  { "Stringshare", eina_bench_stringshare },
+/*   { "Stringshare", eina_bench_stringshare }, */
   { NULL, NULL }
 };
 
