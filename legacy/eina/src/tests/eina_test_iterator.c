@@ -26,6 +26,7 @@
 #include "eina_array.h"
 #include "eina_hash.h"
 #include "eina_inlist.h"
+#include "eina_list.h"
 #include "eina_private.h"
 
 static Eina_Bool
@@ -212,10 +213,68 @@ START_TEST(eina_iterator_inlist_simple)
 }
 END_TEST
 
+static Eina_Bool
+eina_iterator_list_data_check(__UNUSED__ const Eina_List *list, int *data, int *fdata)
+{
+   switch (*fdata)
+     {
+      case 0: fail_if(*data != 81); break;
+      case 1: fail_if(*data != 7); break;
+      case 2: fail_if(*data != 9); break;
+      case 3: fail_if(*data != 6); break;
+      case 4: fail_if(*data != 42); break;
+      case 5: fail_if(*data != 1); break;
+      case 6: fail_if(*data != 1337); break;
+     }
+
+   (*fdata)++;
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_iterator_list_simple)
+{
+   Eina_List *list = NULL;
+   Eina_Iterator *it;
+   int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
+   int i = 0;
+
+   eina_list_init();
+
+   list = eina_list_append(list, &data[0]);
+   fail_if(list == NULL);
+
+   list = eina_list_prepend(list, &data[1]);
+   fail_if(list == NULL);
+
+   list = eina_list_append(list, &data[2]);
+   fail_if(list == NULL);
+
+   list = eina_list_append(list, &data[3]);
+   fail_if(list == NULL);
+
+   list = eina_list_prepend(list, &data[4]);
+   fail_if(list == NULL);
+
+   list = eina_list_append(list, &data[5]);
+   fail_if(list == NULL);
+
+   list = eina_list_prepend(list, &data[6]);
+   fail_if(list == NULL);
+
+   it = eina_list_iterator_new(list);
+   fail_if(!it);
+
+   eina_iterator_foreach(it, EINA_EACH(eina_iterator_list_data_check), &i);
+   eina_iterator_free(it);
+}
+END_TEST
+
 void
 eina_test_iterator(TCase *tc)
 {
    tcase_add_test(tc, eina_iterator_array_simple);
    tcase_add_test(tc, eina_iterator_hash_simple);
    tcase_add_test(tc, eina_iterator_inlist_simple);
+   tcase_add_test(tc, eina_iterator_list_simple);
 }

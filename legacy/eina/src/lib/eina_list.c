@@ -65,6 +65,27 @@
 /*============================================================================*
  *                                  Local                                     * 
  *============================================================================*/
+typedef struct _Eina_Iterator_List Eina_Iterator_List;
+typedef struct _Eina_Accessor_List Eina_Accessor_List;
+
+struct _Eina_Iterator_List
+{
+   Eina_Iterator iterator;
+
+   const Eina_List *head;
+   const Eina_List *current;
+};
+
+struct _Eina_Accessor_List
+{
+   Eina_Accessor accessor;
+
+   const Eina_List *head;
+   const Eina_List *current;
+
+   unsigned int index;
+};
+
 static inline Eina_List_Accounting*
 _eina_list_mempool_accounting_new(__UNUSED__ Eina_List *list)
 {
@@ -138,6 +159,108 @@ static Eina_Mempool2 _eina_list_accounting_mempool =
    0, NULL, NULL
 };
 #endif
+
+static Eina_Bool
+eina_list_iterator_next(Eina_Iterator_List *it, void **data)
+{
+   if (it->current == NULL) return EINA_FALSE;
+   if (data) *data = eina_list_data(it->current);
+
+   it->current = eina_list_next(it->current);
+
+   return EINA_TRUE;
+}
+
+static Eina_List *
+eina_list_iterator_get_container(Eina_Iterator_List *it)
+{
+   return (Eina_List *) it->head;
+}
+
+static void
+eina_list_iterator_free(Eina_Iterator_List *it)
+{
+   free(it);
+}
+
+static Eina_Bool
+eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **data)
+{
+   const Eina_List *over;
+   unsigned int middle;
+   unsigned int i;
+
+   if (index > eina_list_count(it->head)) return EINA_FALSE;
+
+   if (it->index == index)
+     {
+	over = it->current;
+     }
+   else if (index > it->index)
+     {
+	/* After current position. */
+	middle = ((eina_list_count(it->head) - it->index) >> 1) + it->index;
+
+	if (index > middle)
+	  {
+	     /* Go backward from the end. */
+	     for (i = eina_list_count(it->head) - 1, over = eina_list_last(it->head);
+		  i > index && over != NULL;
+		  --i, over = eina_list_prev(over))
+	       ;
+	  }
+	else
+	  {
+	     /* Go forward from current. */
+	     for (i = it->index, over = it->current;
+		  i < index && over != NULL;
+		  ++i, over = eina_list_next(over))
+	       ;
+	  }
+     }
+   else
+     {
+	/* Before current position. */
+	middle = it->index >> 1;
+
+	if (index > middle)
+	  {
+	     /* Go backward from current. */
+	     for (i = it->index, over = it->current;
+		  i > index && over != NULL;
+		  --i, over = eina_list_prev(over))
+	       ;
+	  }
+	else
+	  {
+	     /* Go forward from start. */
+	     for (i = 0, over = it->head;
+		  i < index && over != NULL;
+		  ++i, over = eina_list_next(over))
+	       ;
+	  }
+     }
+
+   if (over == NULL) return EINA_FALSE;
+
+   it->current = over;
+   it->index = index;
+
+   if (data) *data = eina_list_data(it->current);
+   return EINA_TRUE;
+}
+
+static Eina_List *
+eina_list_accessor_get_container(Eina_Accessor_List *it)
+{
+   return (Eina_List *) it->head;
+}
+
+static void
+eina_list_accessor_free(Eina_Accessor_List *it)
+{
+   free(it);
+}
 
 /*============================================================================*
  *                                 Global                                     *
@@ -589,7 +712,7 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
 EAPI void *
 eina_list_find(const Eina_List *list, const void *data)
 {
-   if (eina_list_find_list(list, data)) return data;
+   if (eina_list_find_list(list, data)) return (void*) data;
    return NULL;
 }
 
@@ -789,7 +912,7 @@ static inline void *eina_list_data(const Eina_List *list);
  * @endcode
  * @ingroup Eina_List_General_Group
  */
-static inline int eina_list_count(const Eina_List *list);
+static inline unsigned int eina_list_count(const Eina_List *list);
 
 /**
  * Get the nth member's data pointer in a list
@@ -814,10 +937,10 @@ static inline int eina_list_count(const Eina_List *list);
  * @ingroup Eina_List_Find_Group
  */
 EAPI void *
-eina_list_nth(const Eina_List *list, int n)
+eina_list_nth(const Eina_List *list, unsigned int n)
 {
    Eina_List *l;
-   
+
    l = eina_list_nth_list(list, n);
    return l ? l->data : NULL;
 }
@@ -845,14 +968,13 @@ eina_list_nth(const Eina_List *list, int n)
  * @ingroup Eina_List_Find_Group
  */
 EAPI Eina_List *
-eina_list_nth_list(const Eina_List *list, int n)
+eina_list_nth_list(const Eina_List *list, unsigned int n)
 {
-   int i;
    const Eina_List *l;
+   unsigned int i;
 
    /* check for non-existing nodes */
-   if ((!list) || (n < 0) ||
-       (n > (list->accounting->count - 1)))
+   if ((!list) || (n > (list->accounting->count - 1)))
      return NULL;
 
    /* if the node is in the 2nd half of the list, search from the end
@@ -960,7 +1082,7 @@ eina_list_reverse(Eina_List *list)
  * @ingroup Eina_List_Ordering_Group
  */
 EAPI Eina_List *
-eina_list_sort(Eina_List *list, int size, int (*func)(void *, void *))
+eina_list_sort(Eina_List *list, unsigned int size, int (*func)(void *, void *))
 {
    Eina_List*   last;
    unsigned int	list_number;
@@ -970,7 +1092,7 @@ eina_list_sort(Eina_List *list, int size, int (*func)(void *, void *))
    if (!list || !func) return NULL;
 
    /* if the caller specified an invalid size, sort the whole list */
-   if ((size <= 0) ||
+   if ((size == 0) ||
        (size > list->accounting->count))
      size = list->accounting->count;
 
@@ -1060,3 +1182,53 @@ eina_list_sort(Eina_List *list, int size, int (*func)(void *, void *))
    list->accounting->last = last;
    return list;
 }
+
+EAPI Eina_Iterator *
+eina_list_iterator_new(const Eina_List *list)
+{
+   Eina_Iterator_List *it;
+
+   if (!list) return NULL;
+
+   eina_error_set(0);
+   it = calloc(1, sizeof (Eina_Iterator_List));
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
+
+   it->head = list;
+   it->current = list;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(eina_list_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_list_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_list_iterator_free);
+
+   return &it->iterator;
+}
+
+EAPI Eina_Accessor *
+eina_list_accessor_new(const Eina_List *list)
+{
+   Eina_Accessor_List *it;
+
+   if (!list) return NULL;
+
+   eina_error_set(0);
+   it = calloc(1, sizeof (Eina_Accessor_List));
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
+
+   it->head = list;
+   it->current = list;
+   it->index = 0;
+
+   it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_list_accessor_get_at);
+   it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_list_accessor_get_container);
+   it->accessor.free = FUNC_ACCESSOR_FREE(eina_list_accessor_free);
+
+   return &it->accessor;
+}
+

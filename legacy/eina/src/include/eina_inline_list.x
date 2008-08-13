@@ -47,7 +47,7 @@ eina_list_data(const Eina_List *list)
    return list->data;
 }
 
-static inline int
+static inline unsigned int
 eina_list_count(const Eina_List *list)
 {
    if (!list) return 0;

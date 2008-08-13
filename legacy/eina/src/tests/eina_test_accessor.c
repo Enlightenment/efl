@@ -25,6 +25,7 @@
 #include "eina_suite.h"
 #include "eina_array.h"
 #include "eina_inlist.h"
+#include "eina_list.h"
 #include "eina_private.h"
 
 static Eina_Bool
@@ -164,10 +165,75 @@ START_TEST(eina_accessor_inlist_simple)
 }
 END_TEST
 
+static Eina_Bool
+eina_iterator_list_data_check(__UNUSED__ const Eina_List *list, int *data, int *fdata)
+{
+   switch (*fdata)
+     {
+      case 0: fail_if(*data != 9); break;
+      case 1: fail_if(*data != 6); break;
+     }
+
+   (*fdata)++;
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_accessor_list_simple)
+{
+   Eina_List *list = NULL;
+   Eina_Accessor *it;
+   int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
+   int *j;
+   int i = 0;
+
+   eina_list_init();
+
+   list = eina_list_append(list, &data[0]);
+   fail_if(list == NULL);
+
+   list = eina_list_prepend(list, &data[1]);
+   fail_if(list == NULL);
+
+   list = eina_list_append(list, &data[2]);
+   fail_if(list == NULL);
+
+   list = eina_list_append(list, &data[3]);
+   fail_if(list == NULL);
+
+   list = eina_list_prepend(list, &data[4]);
+   fail_if(list == NULL);
+
+   list = eina_list_append(list, &data[5]);
+   fail_if(list == NULL);
+
+   list = eina_list_prepend(list, &data[6]);
+   fail_if(list == NULL);
+
+   it = eina_list_accessor_new(list);
+   fail_if(!it);
+
+   eina_accessor_over(it, EINA_EACH(eina_iterator_list_data_check), 2, 4, &i);
+
+   fail_if(eina_accessor_data_get(it, 5, (void**) &j) != EINA_TRUE);
+   fail_if(*j != 1);
+   fail_if(eina_accessor_data_get(it, 3, (void**) &j) != EINA_TRUE);
+   fail_if(*j != 6);
+   fail_if(eina_accessor_data_get(it, 3, (void**) &j) != EINA_TRUE);
+   fail_if(*j != 6);
+   fail_if(eina_accessor_data_get(it, 1, (void**) &j) != EINA_TRUE);
+   fail_if(*j != 7);
+   fail_if(eina_accessor_data_get(it, 5, (void**) &j) != EINA_TRUE);
+   fail_if(*j != 1);
+
+   eina_accessor_free(it);
+}
+END_TEST
 
 void
 eina_test_accessor(TCase *tc)
 {
    tcase_add_test(tc, eina_accessor_array_simple);
    tcase_add_test(tc, eina_accessor_inlist_simple);
+   tcase_add_test(tc, eina_accessor_list_simple);
 }
