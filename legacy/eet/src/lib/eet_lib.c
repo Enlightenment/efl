@@ -377,6 +377,13 @@ eet_flush2(Eet_File *ef)
      return EET_ERROR_NOT_WRITABLE;
    if (!ef->writes_pending)
      return EET_ERROR_NONE;
+   if (ef->mode == EET_FILE_MODE_READ_WRITE && ef->fp == NULL)
+     {
+	unlink(ef->path);
+	ef->fp = fopen(ef->path, "wb");
+	if (!ef->fp) return EET_ERROR_NOT_WRITABLE;
+	fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
+     }
 
    /* calculate string base offset and data base offset */
    num = (1 << ef->header->directory->size);
@@ -523,7 +530,7 @@ eet_flush2(Eet_File *ef)
       case EPIPE: error = EET_ERROR_WRITE_ERROR_FILE_CLOSED; break;
       default: error = EET_ERROR_WRITE_ERROR; break;
      }
-   fclose(ef->fp);
+   if (ef->fp) fclose(ef->fp);
    ef->fp = NULL;
    return error;
 }
@@ -1266,11 +1273,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
 	ef->readfp = ef->fp;
-	unlink(ef->path);
-	ef->fp = fopen(ef->path, "wb");
-	if (eet_test_close(!ef->fp, ef))
-	  return NULL;
-	fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
+	ef->fp = NULL;
      }
 
    /* add to cache */
