@@ -46,7 +46,7 @@ static void *_print_cb_data = NULL;
 #define WHITE   "\033[37;1m"
 #define NOTHING "\033[0m"
 
-int EINA_ERROR_OUT_OF_MEMORY = 0;
+EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
 
 #ifdef DEBUG
 static Eina_Error_Level _error_level = EINA_ERROR_LEVEL_DBG;
