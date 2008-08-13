@@ -16,7 +16,11 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Eina.h"
+#include "eina_error.h"
+#include "eina_hash.h"
+#include "eina_stringshare.h"
+#include "eina_list.h"
+#include "eina_array.h"
 
 EAPI int
 eina_init(void)
