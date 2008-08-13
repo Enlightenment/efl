@@ -79,7 +79,6 @@ eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it, unsigned int index, void *
 		     ++i, over = over->next)
 			;
 
-		if (over == NULL) return EINA_FALSE;
 	} else {
 		middle = it->index >> 1;
 
@@ -89,18 +88,16 @@ eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it, unsigned int index, void *
 			     i > index && over != NULL;
 			     --i, over = over->prev)
 				;
-
-			if (over == NULL) return EINA_FALSE;
 		} else {
 			/* Looking from the start. */
 			for (i = 0, over = it->head;
 			     i < index && over != NULL;
 			     ++i, over = over->next)
 				;
-
-			if (over == NULL) return EINA_FALSE;
 		}
 	}
+
+	if (over == NULL) return EINA_FALSE;
 
 	it->current = over;
 	it->index = index;
