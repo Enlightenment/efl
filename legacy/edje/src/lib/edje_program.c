@@ -262,7 +262,7 @@ edje_object_play_set(Evas_Object *obj, int play)
  * 1 if Edje set to play
  */
 EAPI int
-edje_object_play_get(Evas_Object *obj)
+edje_object_play_get(const Evas_Object *obj)
 {
    Edje *ed;
 
@@ -343,7 +343,7 @@ edje_object_animation_set(Evas_Object *obj, int on)
  * 1 if animated
  */
 EAPI int
-edje_object_animation_get(Evas_Object *obj)
+edje_object_animation_get(const Evas_Object *obj)
 {
    Edje *ed;
 

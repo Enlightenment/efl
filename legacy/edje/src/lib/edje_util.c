@@ -94,7 +94,7 @@ edje_fontset_append_get(void)
  * @endcode
  */
 EAPI const char *
-edje_object_data_get(Evas_Object *obj, const char *key)
+edje_object_data_get(const Evas_Object *obj, const char *key)
 {
    Edje *ed;
    Evas_List *l;
@@ -683,7 +683,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
  * 1 if Edje part exists
  */
 EAPI int
-edje_object_part_exists(Evas_Object *obj, const char *part)
+edje_object_part_exists(const Evas_Object *obj, const char *part)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -707,8 +707,8 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
  * @return Returns the Evas_Object corresponding to the given part,
  * or NULL on failure (if the part doesn't exist)
  **/
-EAPI Evas_Object *
-edje_object_part_object_get(Evas_Object *obj, const char *part)
+EAPI const Evas_Object *
+edje_object_part_object_get(const Evas_Object *obj, const char *part)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -734,7 +734,7 @@ edje_object_part_object_get(Evas_Object *obj, const char *part)
  * values you are uninterested in.
  */
 EAPI void
-edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
+edje_object_part_geometry_get(const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -821,7 +821,7 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
  * @return The text string
  */
 EAPI const char *
-edje_object_part_text_get(Evas_Object *obj, const char *part)
+edje_object_part_text_get(const Evas_Object *obj, const char *part)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1032,7 +1032,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
  * @return The swallowed object, or NULL if there is none.
  */
 EAPI Evas_Object *
-edje_object_part_swallow_get(Evas_Object *obj, const char *part)
+edje_object_part_swallow_get(const Evas_Object *obj, const char *part)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1053,7 +1053,7 @@ edje_object_part_swallow_get(Evas_Object *obj, const char *part)
  * to zero if no Edje is connected to the Evas Object.
  */
 EAPI void
-edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
+edje_object_size_min_get(const Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    Edje *ed;
 
@@ -1077,7 +1077,7 @@ edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
  * to zero if no Edje is connected to the Evas Object.
  */
 EAPI void
-edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
+edje_object_size_max_get(const Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Edje *ed;
 
@@ -1280,7 +1280,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
  */
 /* FIXME: Correctly return other states */
 EAPI const char *
-edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
+edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val_ret)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1328,7 +1328,7 @@ edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
  * 3: Dragable in X & Y directions
  */
 EAPI int
-edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
+edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1386,7 +1386,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
  */
 /* FIXME: Should this be x and y instead of dx/dy? */
 EAPI void
-edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, double *dy)
+edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1452,7 +1452,7 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
  * Gets the dragable object size.
  */
 EAPI void
-edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, double *dh)
+edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double *dw, double *dh)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1510,7 +1510,7 @@ edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, do
  * Gets the x and y step increments for the dragable object.
  */
 EAPI void
-edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, double *dy)
+edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1568,7 +1568,7 @@ edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, do
  * Gets the x,y page step increments for the dragable object.
  */
 EAPI void
-edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, double *dy)
+edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -1923,7 +1923,7 @@ _edje_text_class_hash_free(void)
 }
 
 Edje *
-_edje_fetch(Evas_Object *obj)
+_edje_fetch(const Evas_Object *obj)
 {
    Edje *ed;
    char *type;

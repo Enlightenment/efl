@@ -49,7 +49,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
  * interested in one of the values.
  */
 EAPI void
-edje_object_file_get(Evas_Object *obj, const char **file, const char **group)
+edje_object_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
    Edje *ed;
 
@@ -79,7 +79,7 @@ edje_object_file_get(Evas_Object *obj, const char **file, const char **group)
  * 7: Incompatible File
  */
 EAPI int
-edje_object_load_error_get(Evas_Object *obj)
+edje_object_load_error_get(const Evas_Object *obj)
 {
    Edje *ed;
 

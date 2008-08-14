@@ -1073,7 +1073,7 @@ void              _edje_text_class_member_del(Edje *ed, const char *text_class);
 void              _edje_text_class_members_free(void);
 void              _edje_text_class_hash_free(void);
 
-Edje             *_edje_fetch(Evas_Object *obj);
+Edje             *_edje_fetch(const Evas_Object *obj);
 int               _edje_freeze(Edje *ed);
 int               _edje_thaw(Edje *ed);
 int               _edje_block(Edje *ed);
