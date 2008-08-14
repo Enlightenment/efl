@@ -331,25 +331,23 @@ efreet_icon_find_theme_check(const char *theme_name)
  * @brief Retrives the path to the given icon.
  */
 EAPI char *
-efreet_icon_path_find(const char *theme_name, const char *icon, const char *size)
+efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
     char *value = NULL;
     Efreet_Icon_Theme *theme;
-    unsigned int real_size;
 
     theme = efreet_icon_find_theme_check(theme_name);
-    real_size = atoi(size);
 
 #ifdef SLOPPY_SPEC
     {
         char *tmp;
 
         tmp = efreet_icon_remove_extension(icon);
-        value = efreet_icon_find_helper(theme, tmp, real_size);
+        value = efreet_icon_find_helper(theme, tmp, size);
         FREE(tmp);
     }
 #else
-    value = efreet_icon_find_helper(theme, icon, real_size);
+    value = efreet_icon_find_helper(theme, icon, size);
 #endif
 
     /* we didn't find the icon in the theme or in the inherited directories
@@ -374,15 +372,13 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
  */
 EAPI char *
 efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
-                                                            const char *size)
+                                                            unsigned int size)
 {
     const char *icon = NULL;
     char *value = NULL;
     Efreet_Icon_Theme *theme;
-    unsigned int real_size;
 
     theme = efreet_icon_find_theme_check(theme_name);
-    real_size = atoi(size);
 
     ecore_list_first_goto(icons);
 #ifdef SLOPPY_SPEC
@@ -395,11 +391,11 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
         while ((icon = ecore_list_next(icons)))
             ecore_list_append(tmps, efreet_icon_remove_extension(icon));
 
-        value = efreet_icon_list_find_helper(theme, tmps, real_size);
+        value = efreet_icon_list_find_helper(theme, tmps, size);
         ecore_list_destroy(tmps);
     }
 #else
-    value = efreet_icon_list_find_helper(theme, icons, real_size);
+    value = efreet_icon_list_find_helper(theme, icons, size);
 #endif
 
     /* we didn't find the icons in the theme or in the inherited directories
@@ -429,7 +425,7 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
  * @brief Retrieves all of the information about the given icon.
  */
 EAPI Efreet_Icon *
-efreet_icon_find(const char *theme_name, const char *icon, const char *size)
+efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
 {
     char *path;
 

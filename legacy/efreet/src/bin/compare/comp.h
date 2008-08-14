@@ -3,7 +3,7 @@
 
 #define LOOPS 1000
 #define THEME "Tango"
-#define SIZE "16x16"
+#define SIZE 16
 
 #define ADDRESS_BOOK_NEW "address-book-new"
 #define APPLICATION_EXIT "application-exit"

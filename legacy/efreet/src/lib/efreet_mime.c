@@ -175,7 +175,7 @@ efreet_mime_type_get(const char *file)
  * @brief Retreive the mime type icon for a file
  */
 EAPI char *
-efreet_mime_type_icon_get(const char *mime, const char *theme, const char *size)
+efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size)
 {
     char *icon = NULL;
     Ecore_List *icons  = NULL;

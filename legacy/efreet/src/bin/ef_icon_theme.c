@@ -8,8 +8,8 @@
 #define PATH_MAX 4096
 #endif
 
-#define SIZE "128x128"
-#define THEME "Tango"
+#define SIZE 128
+#define THEME "Human"
 #define FREE(x) do { free(x); x = NULL; } while (0);
 
 static void ef_icon_theme_themes_find(const char *search_dir,
@@ -262,6 +262,7 @@ const char *icons[] =
     "accessories-text-editor",
     "help-browser",
     "multimedia-volume-control",
+#if 0
     "preferences-desktop-accessibility",
     "preferences-desktop-font",
     "preferences-desktop-keyboard",
@@ -416,6 +417,7 @@ const char *icons[] =
     "weather-showers-scattered",
     "weather-snow",
     "weather-storm",
+#endif
     NULL
 };
 
@@ -449,6 +451,7 @@ ef_cb_efreet_icon_match(void)
     ef_icons_find(theme, themes, icon_hash);
     ecore_list_destroy(themes);
 
+    double start = ecore_time_get();
     for (i = 0; icons[i] != NULL; i++)
     {
         char *path, *s;
@@ -457,11 +460,13 @@ ef_cb_efreet_icon_match(void)
 
         if (!path)
         {
+#if 0
             if (ecore_hash_get(icon_hash, icons[i]))
             {
                 printf("NOT FOUND %s\n", icons[i]);
                 ret = 0;
             }
+#endif
             continue;
         }
 
@@ -477,7 +482,31 @@ ef_cb_efreet_icon_match(void)
         }
         free(path);
     }
+    printf("Time: %f\n", (ecore_time_get() - start));
     ecore_hash_destroy(icon_hash);
+
+    start = ecore_time_get();
+    for (i = 0; icons[i] != NULL; i++)
+    {
+        char *path, *s;
+
+        path = efreet_icon_path_find(THEME, icons[i], SIZE);
+
+        if (!path) continue;
+
+        s = strrchr(path, '.');
+        if (s) *s = '\0';
+        s = strrchr(path, '/');
+        if (s) s++;
+
+        if (s && strcmp(s, icons[i]))
+        {
+            printf("Name mismatch name (%s) vs ef (%s)\n", icons[i], s);
+            ret = 0;
+        }
+        free(path);
+    }
+    printf("Time: %f\n", (ecore_time_get() - start));
 
     return ret;
 }
