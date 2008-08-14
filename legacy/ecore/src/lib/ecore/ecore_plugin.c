@@ -18,6 +18,7 @@
 #endif
 
 #include "Ecore_Data.h"
+#include "Ecore_Str.h"
 #include "ecore_private.h"
 
 
