@@ -344,13 +344,20 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
     if (cache)
     {
         ecore_list_remove(efreet_icon_cache);
-        if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
+        if (!cache->path)
+        {
+            if (ecore_time_get() < (cache->lasttime + 5))
+            {
+                ecore_list_prepend(efreet_icon_cache, cache);
+                return NULL;
+            }
+        }
+        else if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
         {
             ecore_list_prepend(efreet_icon_cache, cache);
             return strdup(cache->path);
         }
-        else
-            efreet_icon_cache_free(cache);
+        efreet_icon_cache_free(cache);
     }
 
     theme = efreet_icon_find_theme_check(theme_name);
@@ -372,17 +379,17 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
      */
     if (!value) value = efreet_icon_fallback_icon(icon);
 
+    cache = NEW(Efreet_Icon_Cache, 1);
+    cache->key = strdup(key);
     if ((value) && !stat(value, &st))
     {
-        Efreet_Icon_Cache *cache;
-
-        cache = NEW(Efreet_Icon_Cache, 1);
-        cache->key = strdup(key);
         cache->path = strdup(value);
         cache->lasttime = st.st_mtime;
-        ecore_list_prepend(efreet_icon_cache, cache);
-        efreet_icon_cache_flush();
     }
+    else
+        cache->lasttime = ecore_time_get();
+    ecore_list_prepend(efreet_icon_cache, cache);
+    efreet_icon_cache_flush();
 
     return value;
 }
@@ -451,11 +458,11 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
  * @brief Retrieves all of the information about the given icon.
  */
 EAPI Efreet_Icon *
-efreet_icon_find(const char *theme, const char *icon, const char *size)
+efreet_icon_find(const char *theme_name, const char *icon, const char *size)
 {
     char *path;
 
-    path = efreet_icon_path_find(theme, icon, size);
+    path = efreet_icon_path_find(theme_name, icon, size);
     if (path)
     {
         Efreet_Icon *icon;

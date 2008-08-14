@@ -170,7 +170,7 @@ EAPI Efreet_Icon       *efreet_icon_find(const char *theme_name,
 EAPI char              *efreet_icon_list_find(const char *theme_name,
                                                 Ecore_List *icons,
                                                 const char *size);
-EAPI char              *efreet_icon_path_find(const char *theme,
+EAPI char              *efreet_icon_path_find(const char *theme_name,
                                                 const char *icon,
                                                 const char *size);
 EAPI void               efreet_icon_free(Efreet_Icon *icon);
