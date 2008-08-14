@@ -4,11 +4,10 @@
 
 static char *efreet_icon_deprecated_user_dir = NULL;
 static char *efreet_icon_user_dir = NULL;
-static Ecore_Hash *efreet_icon_dirs_cached = NULL;
 static Ecore_Hash *efreet_icon_themes = NULL;
-Ecore_List *efreet_icon_extensions = NULL;
+static Ecore_List *efreet_icon_extensions = NULL;
 static Ecore_List *efreet_extra_icon_dirs = NULL;
-static Ecore_List *efreet_icon_cache = NULL;
+static Ecore_Hash *efreet_icon_cache = NULL;
 
 static int efreet_icon_init_count = 0;
 
@@ -75,8 +74,10 @@ static int efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme,
                                                         const char *dir);
 
 static int efreet_icon_cache_find(Efreet_Icon_Cache *value, const char *key);
-static void efreet_icon_cache_flush(void);
+static void efreet_icon_cache_flush(Ecore_List *list);
 static void efreet_icon_cache_free(Efreet_Icon_Cache *value);
+static char *efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, const char *size);
+static void efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, const char *size, const char *value);
 
 /**
  * @internal
@@ -112,8 +113,8 @@ efreet_icon_init(void)
                             ECORE_FREE_CB(efreet_icon_theme_free));
         efreet_extra_icon_dirs = ecore_list_new();
 
-        efreet_icon_cache = ecore_list_new();
-        ecore_list_free_cb_set(efreet_icon_cache, ECORE_FREE_CB(efreet_icon_cache_free));
+        efreet_icon_cache = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
+        ecore_hash_free_value_cb_set(efreet_icon_cache, ECORE_FREE_CB(ecore_list_destroy));
     }
 
     return 1;
@@ -135,10 +136,9 @@ efreet_icon_shutdown(void)
 
     IF_FREE_LIST(efreet_icon_extensions);
     IF_FREE_HASH(efreet_icon_themes);
-    IF_FREE_HASH(efreet_icon_dirs_cached);
     IF_FREE_LIST(efreet_extra_icon_dirs);
 
-    IF_FREE_LIST(efreet_icon_cache);
+    IF_FREE_HASH(efreet_icon_cache);
 
     ecore_shutdown();
     efreet_icon_init_count = 0;
@@ -333,32 +333,8 @@ efreet_icon_find_theme_check(const char *theme_name)
 EAPI char *
 efreet_icon_path_find(const char *theme_name, const char *icon, const char *size)
 {
-    struct stat st;
     char *value = NULL;
-    char key[4096];
-    Efreet_Icon_Cache *cache;
     Efreet_Icon_Theme *theme;
-
-    snprintf(key, sizeof(key), "%s %s %s", theme_name, icon, size);
-    cache = ecore_list_find(efreet_icon_cache, ECORE_COMPARE_CB(efreet_icon_cache_find), key);
-    if (cache)
-    {
-        ecore_list_remove(efreet_icon_cache);
-        if (!cache->path)
-        {
-            if (ecore_time_get() < (cache->lasttime + 5))
-            {
-                ecore_list_prepend(efreet_icon_cache, cache);
-                return NULL;
-            }
-        }
-        else if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
-        {
-            ecore_list_prepend(efreet_icon_cache, cache);
-            return strdup(cache->path);
-        }
-        efreet_icon_cache_free(cache);
-    }
 
     theme = efreet_icon_find_theme_check(theme_name);
 
@@ -377,20 +353,9 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
     /* we didn't find the icon in the theme or in the inherited directories
      * then just look for a non theme icon
      */
-    if (!value) value = efreet_icon_fallback_icon(icon);
+    if (!value || (value == (void *)-1)) value = efreet_icon_fallback_icon(icon);
 
-    cache = NEW(Efreet_Icon_Cache, 1);
-    cache->key = strdup(key);
-    if ((value) && !stat(value, &st))
-    {
-        cache->path = strdup(value);
-        cache->lasttime = st.st_mtime;
-    }
-    else
-        cache->lasttime = ecore_time_get();
-    ecore_list_prepend(efreet_icon_cache, cache);
-    efreet_icon_cache_flush();
-
+    if (value == (void *)-1) value = NULL;
     return value;
 }
 
@@ -436,16 +401,18 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
     /* we didn't find the icons in the theme or in the inherited directories
      * then just look for a non theme icon
      */
-    if (!value)
+    if (!value || (value == (void *)-1))
     {
         ecore_list_first_goto(icons);
         while ((icon = ecore_list_next(icons)))
         {
-            if ((value = efreet_icon_fallback_icon(icon)))
+            value = efreet_icon_fallback_icon(icon);
+            if (value && (value != (void *)-1))
                 break;
         }
     }
 
+    if (value == (void *)-1) value = NULL;
     return value;
 }
 
@@ -502,7 +469,7 @@ efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
             if ((!parent_theme) || (parent_theme == theme)) continue;
 
             value = efreet_icon_find_helper(parent_theme, icon, size);
-            if (value) break;
+            if (value && (value != (void *)-1)) break;
         }
     }
     /* if this isn't the hicolor theme, and we have no other fallbacks
@@ -547,7 +514,7 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
     value = efreet_icon_lookup_icon(theme, icon, size);
 
     /* we didin't find the image check the inherited themes */
-    if (!value)
+    if (!value || (value == (void *)-1))
         value = efreet_icon_find_fallback(theme, icon, size);
 
     recurse--;
@@ -582,7 +549,7 @@ efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
 
             value = efreet_icon_list_find_helper(parent_theme,
                                                         icons, size);
-            if (value) break;
+            if (value && (value != (void *)-1)) break;
         }
     }
 
@@ -631,12 +598,13 @@ efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
     ecore_list_first_goto(icons);
     while ((icon = ecore_list_next(icons)))
     {
-        if ((value = efreet_icon_lookup_icon(theme, icon, size)))
+        value = efreet_icon_lookup_icon(theme, icon, size);
+        if (value && (value != (void *)-1))
             break;
     }
 
     /* we didn't find the image check the inherited themes */
-    if (!value)
+    if (!value || (value == (void *)-1))
         value = efreet_icon_list_find_fallback(theme, icons, size);
 
     recurse--;
@@ -664,6 +632,8 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
     if (!theme || (theme->paths.count == 0) || !icon_name || !size)
         return NULL;
 
+    icon = efreet_icon_cache_check(theme, icon_name, size);
+    if (icon) return icon;
     real_size = atoi(size);
 
     /* search for allowed size == requested size */
@@ -673,7 +643,11 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
         if (!efreet_icon_directory_size_match(dir, real_size)) continue;
         icon = efreet_icon_lookup_directory(theme, dir,
                                             icon_name);
-        if (icon) return icon;
+        if (icon)
+        {
+            efreet_icon_cache_add(theme, icon_name, size, icon);
+            return icon;
+        }
     }
 
     /* search for any icon that matches */
@@ -695,6 +669,7 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
         }
     }
 
+    efreet_icon_cache_add(theme, icon_name, size, icon);
     return icon;
 }
 
@@ -806,6 +781,8 @@ efreet_icon_fallback_icon(const char *icon_name)
     char *icon;
 
     if (!icon_name) return NULL;
+    icon = efreet_icon_cache_check(NULL, icon_name, NULL);
+    if (icon) return icon;
 
     icon = efreet_icon_fallback_dir_scan(efreet_icon_deprecated_user_dir_get(), icon_name);
     if (!icon)
@@ -820,7 +797,11 @@ efreet_icon_fallback_icon(const char *icon_name)
         while ((dir = ecore_list_next(efreet_extra_icon_dirs)))
         {
             icon = efreet_icon_fallback_dir_scan(dir, icon_name);
-            if (icon) return icon;
+            if (icon)
+            {
+                efreet_icon_cache_add(NULL, icon_name, NULL, icon);
+                return icon;
+            }
         }
 
         xdg_dirs = efreet_data_dirs_get();
@@ -829,12 +810,17 @@ efreet_icon_fallback_icon(const char *icon_name)
         {
             snprintf(path, PATH_MAX, "%s/icons", dir);
             icon = efreet_icon_fallback_dir_scan(path, icon_name);
-            if (icon) return icon;
+            if (icon)
+            {
+                efreet_icon_cache_add(NULL, icon_name, NULL, icon);
+                return icon;
+            }
         }
 
         icon = efreet_icon_fallback_dir_scan("/usr/share/pixmaps", icon_name);
     }
 
+    efreet_icon_cache_add(NULL, icon_name, NULL, icon);
     return icon;
 }
 
@@ -1212,6 +1198,7 @@ efreet_icon_theme_cache_check(Efreet_Icon_Theme *theme)
                 break;
         }
     }
+    theme->last_cache_check = new_check;
 }
 
 /**
@@ -1230,8 +1217,7 @@ efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme, const char *dir)
     /* have we modified this directory since our last cache check? */
     if (stat(dir, &buf) || (buf.st_mtime > theme->last_cache_check))
     {
-        if (efreet_icon_dirs_cached)
-            ecore_hash_remove(efreet_icon_dirs_cached, dir);
+        ecore_hash_remove(efreet_icon_cache, theme);
         return 0;
     }
 
@@ -1564,17 +1550,17 @@ efreet_icon_cache_find(Efreet_Icon_Cache *value, const char *key)
 }
 
 static void
-efreet_icon_cache_flush(void)
+efreet_icon_cache_flush(Ecore_List *list)
 {
     /* TODO:
      * * Dynamic cache size
      * * Maybe add references to cache, so that we sort on how often a value is used
      */
-    while (ecore_list_count(efreet_icon_cache) > 100)
+    while (ecore_list_count(list) > 100)
     {
         Efreet_Icon_Cache *cache;
 
-        cache = ecore_list_last_remove(efreet_icon_cache);
+        cache = ecore_list_last_remove(list);
         efreet_icon_cache_free(cache);
     }
 }
@@ -1587,4 +1573,71 @@ efreet_icon_cache_free(Efreet_Icon_Cache *value)
     IF_FREE(value->key);
     IF_FREE(value->path);
     free(value);
+}
+
+static char *
+efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, const char *size)
+{
+    Ecore_List *list;
+    Efreet_Icon_Cache *cache;
+    char key[4096];
+    struct stat st;
+
+    list = ecore_hash_get(efreet_icon_cache, theme);
+    if (!list)
+    {
+        list = ecore_list_new();
+        ecore_list_free_cb_set(list, ECORE_FREE_CB(efreet_icon_cache_free));
+        ecore_hash_set(efreet_icon_cache, theme, list);
+        return NULL;
+    }
+
+    snprintf(key, sizeof(key), "%s %s", icon, size);
+    cache = ecore_list_find(list, ECORE_COMPARE_CB(efreet_icon_cache_find), key);
+    if (cache)
+    {
+        ecore_list_remove(list);
+        if (!cache->path)
+        {
+            ecore_list_prepend(list, cache);
+            return (void *)-1;
+        }
+        else if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
+        {
+            ecore_list_prepend(list, cache);
+            return strdup(cache->path);
+        }
+        efreet_icon_cache_free(cache);
+    }
+    return NULL;
+}
+
+static void
+efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, const char *size, const char *value)
+{
+    Ecore_List *list;
+    Efreet_Icon_Cache *cache;
+    char key[4096];
+    struct stat st;
+
+    list = ecore_hash_get(efreet_icon_cache, theme);
+    if (!list)
+    {
+        list = ecore_list_new();
+        ecore_list_free_cb_set(list, ECORE_FREE_CB(efreet_icon_cache_free));
+        ecore_hash_set(efreet_icon_cache, theme, list);
+    }
+
+    snprintf(key, sizeof(key), "%s %s", icon, size);
+    cache = NEW(Efreet_Icon_Cache, 1);
+    cache->key = strdup(key);
+    if ((value) && !stat(value, &st))
+    {
+        cache->path = strdup(value);
+        cache->lasttime = st.st_mtime;
+    }
+    else
+        cache->lasttime = ecore_time_get();
+    ecore_list_prepend(list, cache);
+    efreet_icon_cache_flush(list);
 }
