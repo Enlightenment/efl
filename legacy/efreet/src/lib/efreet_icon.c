@@ -25,16 +25,16 @@ static Efreet_Icon_Theme *efreet_icon_find_theme_check(const char *theme_name);
 
 static char *efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
                                        const char *icon,
-                                       const char *size);
+                                       unsigned int size);
 static char *efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
                                             Ecore_List *icons,
-                                            const char *size);
+                                            unsigned int size);
 static char *efreet_icon_find_helper(Efreet_Icon_Theme *theme,
-                                     const char *icon, const char *size);
+                                     const char *icon, unsigned int size);
 static char *efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
-                                          Ecore_List *icons, const char *size);
+                                          Ecore_List *icons, unsigned int size);
 static char *efreet_icon_lookup_icon(Efreet_Icon_Theme *theme,
-                                     const char *icon_name, const char *size);
+                                     const char *icon_name, unsigned int size);
 static char *efreet_icon_fallback_icon(const char *icon_name);
 static char *efreet_icon_fallback_dir_scan(const char *dir,
                                            const char *icon_name);
@@ -76,8 +76,8 @@ static int efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme,
 static int efreet_icon_cache_find(Efreet_Icon_Cache *value, const char *key);
 static void efreet_icon_cache_flush(Ecore_List *list);
 static void efreet_icon_cache_free(Efreet_Icon_Cache *value);
-static char *efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, const char *size);
-static void efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, const char *size, const char *value);
+static char *efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int size);
+static void efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int size, const char *value);
 
 /**
  * @internal
@@ -335,19 +335,21 @@ efreet_icon_path_find(const char *theme_name, const char *icon, const char *size
 {
     char *value = NULL;
     Efreet_Icon_Theme *theme;
+    unsigned int real_size;
 
     theme = efreet_icon_find_theme_check(theme_name);
+    real_size = atoi(size);
 
 #ifdef SLOPPY_SPEC
     {
         char *tmp;
 
         tmp = efreet_icon_remove_extension(icon);
-        value = efreet_icon_find_helper(theme, tmp, size);
+        value = efreet_icon_find_helper(theme, tmp, real_size);
         FREE(tmp);
     }
 #else
-    value = efreet_icon_find_helper(theme, icon, size);
+    value = efreet_icon_find_helper(theme, icon, real_size);
 #endif
 
     /* we didn't find the icon in the theme or in the inherited directories
@@ -377,8 +379,10 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
     const char *icon = NULL;
     char *value = NULL;
     Efreet_Icon_Theme *theme;
+    unsigned int real_size;
 
     theme = efreet_icon_find_theme_check(theme_name);
+    real_size = atoi(size);
 
     ecore_list_first_goto(icons);
 #ifdef SLOPPY_SPEC
@@ -391,11 +395,11 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
         while ((icon = ecore_list_next(icons)))
             ecore_list_append(tmps, efreet_icon_remove_extension(icon));
 
-        value = efreet_icon_list_find_helper(theme, tmps, size);
+        value = efreet_icon_list_find_helper(theme, tmps, real_size);
         ecore_list_destroy(tmps);
     }
 #else
-    value = efreet_icon_list_find_helper(theme, icons, size);
+    value = efreet_icon_list_find_helper(theme, icons, real_size);
 #endif
 
     /* we didn't find the icons in the theme or in the inherited directories
@@ -453,7 +457,7 @@ efreet_icon_find(const char *theme_name, const char *icon, const char *size)
  */
 static char *
 efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
-                          const char *icon, const char *size)
+                          const char *icon, unsigned int size)
 {
     char *parent = NULL;
     char *value = NULL;
@@ -497,7 +501,7 @@ efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
  */
 static char *
 efreet_icon_find_helper(Efreet_Icon_Theme *theme,
-                        const char *icon, const char *size)
+                        const char *icon, unsigned int size)
 {
     char *value;
     static int recurse = 0;
@@ -532,7 +536,7 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
  */
 static char *
 efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
-                               Ecore_List *icons, const char *size)
+                               Ecore_List *icons, unsigned int size)
 {
     char *parent = NULL;
     char *value = NULL;
@@ -580,7 +584,7 @@ efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
  */
 static char *
 efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
-                             Ecore_List *icons, const char *size)
+                             Ecore_List *icons, unsigned int size)
 {
     char *value = NULL;
     const char *icon = NULL;
@@ -622,25 +626,23 @@ efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
  */
 static char *
 efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
-                                                    const char *size)
+                                                    unsigned int size)
 {
     char *icon = NULL, *tmp = NULL;
     Efreet_Icon_Theme_Directory *dir;
     int minimal_size = INT_MAX;
-    unsigned int real_size;
 
     if (!theme || (theme->paths.count == 0) || !icon_name || !size)
         return NULL;
 
     icon = efreet_icon_cache_check(theme, icon_name, size);
     if (icon) return icon;
-    real_size = atoi(size);
 
     /* search for allowed size == requested size */
     ecore_list_first_goto(theme->directories);
     while ((dir = ecore_list_next(theme->directories)))
     {
-        if (!efreet_icon_directory_size_match(dir, real_size)) continue;
+        if (!efreet_icon_directory_size_match(dir, size)) continue;
         icon = efreet_icon_lookup_directory(theme, dir,
                                             icon_name);
         if (icon)
@@ -656,7 +658,7 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
     {
         int distance;
 
-        distance = efreet_icon_directory_size_distance(dir, real_size);
+        distance = efreet_icon_directory_size_distance(dir, size);
         if (distance >= minimal_size) continue;
 
         tmp = efreet_icon_lookup_directory(theme, dir,
@@ -781,7 +783,7 @@ efreet_icon_fallback_icon(const char *icon_name)
     char *icon;
 
     if (!icon_name) return NULL;
-    icon = efreet_icon_cache_check(NULL, icon_name, NULL);
+    icon = efreet_icon_cache_check(NULL, icon_name, 0);
     if (icon) return icon;
 
     icon = efreet_icon_fallback_dir_scan(efreet_icon_deprecated_user_dir_get(), icon_name);
@@ -799,7 +801,7 @@ efreet_icon_fallback_icon(const char *icon_name)
             icon = efreet_icon_fallback_dir_scan(dir, icon_name);
             if (icon)
             {
-                efreet_icon_cache_add(NULL, icon_name, NULL, icon);
+                efreet_icon_cache_add(NULL, icon_name, 0, icon);
                 return icon;
             }
         }
@@ -812,7 +814,7 @@ efreet_icon_fallback_icon(const char *icon_name)
             icon = efreet_icon_fallback_dir_scan(path, icon_name);
             if (icon)
             {
-                efreet_icon_cache_add(NULL, icon_name, NULL, icon);
+                efreet_icon_cache_add(NULL, icon_name, 0, icon);
                 return icon;
             }
         }
@@ -820,7 +822,7 @@ efreet_icon_fallback_icon(const char *icon_name)
         icon = efreet_icon_fallback_dir_scan("/usr/share/pixmaps", icon_name);
     }
 
-    efreet_icon_cache_add(NULL, icon_name, NULL, icon);
+    efreet_icon_cache_add(NULL, icon_name, 0, icon);
     return icon;
 }
 
@@ -1576,7 +1578,7 @@ efreet_icon_cache_free(Efreet_Icon_Cache *value)
 }
 
 static char *
-efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, const char *size)
+efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int size)
 {
     Ecore_List *list;
     Efreet_Icon_Cache *cache;
@@ -1592,7 +1594,7 @@ efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, const char *
         return NULL;
     }
 
-    snprintf(key, sizeof(key), "%s %s", icon, size);
+    snprintf(key, sizeof(key), "%s %d", icon, size);
     cache = ecore_list_find(list, ECORE_COMPARE_CB(efreet_icon_cache_find), key);
     if (cache)
     {
@@ -1613,7 +1615,7 @@ efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, const char *
 }
 
 static void
-efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, const char *size, const char *value)
+efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int size, const char *value)
 {
     Ecore_List *list;
     Efreet_Icon_Cache *cache;
@@ -1628,7 +1630,7 @@ efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, const char *si
         ecore_hash_set(efreet_icon_cache, theme, list);
     }
 
-    snprintf(key, sizeof(key), "%s %s", icon, size);
+    snprintf(key, sizeof(key), "%s %d", icon, size);
     cache = NEW(Efreet_Icon_Cache, 1);
     cache->key = strdup(key);
     if ((value) && !stat(value, &st))
