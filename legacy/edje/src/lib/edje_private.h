@@ -622,7 +622,7 @@ typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
 struct _Edje
 {
    const char           *path;
-   const char           *part;
+   const char           *group;
    const char           *parent;
 
    Evas_Coord            x, y, w, h;

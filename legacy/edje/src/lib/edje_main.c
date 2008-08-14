@@ -88,10 +88,10 @@ _edje_del(Edje *ed)
    _edje_callbacks_patterns_clean(ed);
    _edje_file_del(ed);
    if (ed->path) evas_stringshare_del(ed->path);
-   if (ed->part) evas_stringshare_del(ed->part);
+   if (ed->group) evas_stringshare_del(ed->group);
    if (ed->parent) evas_stringshare_del(ed->parent);
    ed->path = NULL;
-   ed->part = NULL;
+   ed->group = NULL;
    if ((ed->actions) || (ed->pending_actions))
      {
 	_edje_animators = evas_list_remove(_edje_animators, ed);

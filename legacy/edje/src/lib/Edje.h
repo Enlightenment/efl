@@ -203,8 +203,8 @@ extern "C" {
    EAPI const char  *edje_object_data_get            (Evas_Object *obj, const char *key);
 
    /* edje_load.c */
-   EAPI int          edje_object_file_set            (Evas_Object *obj, const char *file, const char *part);
-   EAPI void         edje_object_file_get            (Evas_Object *obj, const char **file, const char **part);
+   EAPI int          edje_object_file_set            (Evas_Object *obj, const char *file, const char *group);
+   EAPI void         edje_object_file_get            (Evas_Object *obj, const char **file, const char **group);
    EAPI int          edje_object_load_error_get      (Evas_Object *obj);
 
    /* edje_program.c */

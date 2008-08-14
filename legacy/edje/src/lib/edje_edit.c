@@ -4256,7 +4256,7 @@ edje_edit_print_internal_status(Evas_Object *obj)
 
    printf("*** Edje\n");
    printf("    path: '%s'\n", ed->path);
-   printf("    part: '%s'\n", ed->part);
+   printf("    group: '%s'\n", ed->group);
    printf("    parent: '%s'\n", ed->parent);
 
    printf("\n*** Parts [table:%d list:%d]\n", ed->table_parts_size,

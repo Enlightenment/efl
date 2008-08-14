@@ -1245,7 +1245,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	if ((ed->w > 4000) || (ed->h > 4000))
 	  {
 	     printf("EDJE ERROR: file %s, group %s has a non-fixed part. add fixed: 1 1; ???\n",
-		    ed->path, ed->part);
+		    ed->path, ed->group);
 	     if (pep)
 	       printf("  Problem part is: %s\n", pep->part->name);
 	     printf("  Will recalc min size not allowing broken parts to affect the result.\n");

@@ -9,7 +9,7 @@ static Evas_Bool _edje_file_collection_hash_foreach(const Evas_Hash *hash, const
 #ifdef EDJE_PROGRAM_CACHE
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 #endif
-static int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *part, Evas_List *group_path);
+static int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, Evas_List *group_path);
 static void _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *source);
 
 static Evas_List *_edje_swallows_collect(Edje *ed);
@@ -20,7 +20,7 @@ static Evas_List *_edje_swallows_collect(Edje *ed);
 /** Sets the EET file and group to load @a obj from
  * @param obj A valid Evas_Object handle
  * @param file The path to the EET file
- * @param part The group name in the Edje
+ * @param group The group name in the Edje
  * @return 0 on Error\n
  * 1 on Success and sets EDJE_LOAD_ERROR_NONE
  *
@@ -29,27 +29,27 @@ static Evas_List *_edje_swallows_collect(Edje *ed);
  * specifies the file and group name to load @a obj from.
  */
 EAPI int
-edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
+edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 {
-   return _edje_object_file_set_internal(obj, file, part, NULL);
+   return _edje_object_file_set_internal(obj, file, group, NULL);
 }
 
 /* FIXDOC: Verify/expand doc. */
 /** Get the file and group name that @a obj was loaded from
  * @param obj A valid Evas_Object handle
  * @param file A pointer to store a pointer to the filename in
- * @param part A pointer to store a pointer to the group name in
+ * @param group A pointer to store a pointer to the group name in
  *
  * This gets the EET file location and group for the given Evas_Object.
  * If @a obj is either not an edje file, or has not had its file/group set
- * using edje_object_file_set(), then both @a file and @a part will be set
+ * using edje_object_file_set(), then both @a file and @a group will be set
  * to NULL.
  *
- * It is valid to pass in NULL for either @a file or @a part if you are not
+ * It is valid to pass in NULL for either @a file or @a group if you are not
  * interested in one of the values.
  */
 EAPI void
-edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
+edje_object_file_get(Evas_Object *obj, const char **file, const char **group)
 {
    Edje *ed;
 
@@ -57,11 +57,11 @@ edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
    if (!ed)
      {
 	if (file) *file = NULL;
-	if (part) *part = NULL;
+	if (group) *group = NULL;
 	return;
      }
    if (file) *file = ed->path;
-   if (part) *part = ed->part;
+   if (group) *group = ed->group;
 }
 
 /* FIXDOC: Verify. return error? */
@@ -229,7 +229,7 @@ _edje_programs_patterns_init(Edje *ed)
 }
 
 static int
-_edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *part, Evas_List *group_path)
+_edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, Evas_List *group_path)
 {
    Edje *ed;
    int n;
@@ -240,9 +240,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
    ed = _edje_fetch(obj);
    if (!ed) return 0;
    if (!file) file = "";
-   if (!part) part = "";
+   if (!group) group = "";
    if (((ed->path) && (!strcmp(file, ed->path))) &&
-	(ed->part) && (!strcmp(part, ed->part)))
+	(ed->group) && (!strcmp(group, ed->group)))
      return 1;
 
    old_swallows = _edje_swallows_collect(ed);
@@ -251,9 +251,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
    _edje_file_del(ed);
 
    if (ed->path) evas_stringshare_del(ed->path);
-   if (ed->part) evas_stringshare_del(ed->part);
+   if (ed->group) evas_stringshare_del(ed->group);
    ed->path = evas_stringshare_add(file);
-   ed->part = evas_stringshare_add(part);
+   ed->group = evas_stringshare_add(group);
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
   _edje_file_add(ed);
@@ -489,7 +489,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *p
 		       const char *group_path_entry = evas_stringshare_add(rp->part->source);
 		       if (!group_path)
 			 {
-			    group_path = evas_list_append(NULL, evas_stringshare_add(part));
+			    group_path = evas_list_append(NULL, evas_stringshare_add(group));
 			    group_path_started = 1;
 			 }
 		       /* make sure that this group isn't already in the tree of parents */
@@ -590,7 +590,7 @@ void
 _edje_file_add(Edje *ed)
 {
    if (_edje_edd_edje_file == NULL) return;
-   ed->file = _edje_cache_file_coll_open(ed->path, ed->part,
+   ed->file = _edje_cache_file_coll_open(ed->path, ed->group,
 					 &(ed->load_error),
 					 &(ed->collection));
 
