@@ -35,6 +35,7 @@ _ecore_x_dnd_init(void)
 	_source->win = None;
 	_source->dest = None;
 	_source->state = ECORE_X_DND_SOURCE_IDLE;
+	_source->prev.window = 0;
 
 	_target = calloc(1, sizeof(Ecore_X_DND_Target));
 	_target->win = None;
@@ -335,6 +336,7 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    ecore_x_window_ignore_set(_source->win, 1);
    _source->state = ECORE_X_DND_SOURCE_DRAGGING;
    _source->time = _ecore_x_event_last_time;
+   _source->prev.window = 0;
 
    /* Default Accepted Action: move */
    _source->action = ECORE_X_ATOM_XDND_ACTION_MOVE;
@@ -383,6 +385,8 @@ ecore_x_dnd_drop(void)
 	_source->state = ECORE_X_DND_SOURCE_IDLE;
      }
    ecore_x_window_ignore_set(_source->win, 0);
+
+   _source->prev.window = 0;
 
    return status;
 }
@@ -459,6 +463,20 @@ ecore_x_dnd_send_finished(void)
    XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
 
    _target->state = ECORE_X_DND_TARGET_IDLE;
+}
+
+void
+ecore_x_dnd_source_action_set(Ecore_X_Atom action)
+{
+   _source->action = action;
+   if (_source->prev.window)
+     _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
+}
+
+Ecore_X_Atom
+ecore_x_dnd_source_action_get(void)
+{
+   return _source->action;
 }
 
 void
@@ -560,9 +578,12 @@ _ecore_x_dnd_drag(Ecore_X_Window root, int x, int y)
 	     xev.xclient.data.l[4] = _source->action; /* Version 2, Needs to be pre-set */
 	     XSendEvent(_ecore_x_disp, win, False, 0, &xev);
 
-	     _source->await_status = 1;
+	     _source->await_status = 1; 
 	  }
      }
 
+   _source->prev.x = x;
+   _source->prev.y = y;
+   _source->prev.window = root;
    _source->dest = win;
 }

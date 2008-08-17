@@ -30,6 +30,7 @@ _ecore_x_dnd_init(void)
 	_source->win = XCB_NONE;
 	_source->dest = XCB_NONE;
 	_source->state = ECORE_X_DND_SOURCE_IDLE;
+	_source->prev.window = 0;
 
 	_target = calloc(1, sizeof(Ecore_X_DND_Target));
 	_target->win = XCB_NONE;
@@ -485,6 +486,7 @@ ecore_x_dnd_begin(Ecore_X_Window source,
    ecore_x_window_ignore_set(_source->win, 1);
    _source->state = ECORE_X_DND_SOURCE_DRAGGING;
    _source->time = _ecore_xcb_event_last_time;
+   _source->prev.window = 0;
 
    /* Default Accepted Action: ask */
    _source->action = ECORE_X_ATOM_XDND_ACTION_COPY;
@@ -532,6 +534,7 @@ ecore_x_dnd_drop(void)
      }
    ecore_x_window_ignore_set(_source->win, 0);
 
+   _source->prev.window = 0;
    _source->dest = XCB_NONE;
 
    return status;
@@ -608,6 +611,20 @@ ecore_x_dnd_send_finished(void)
    xcb_send_event(_ecore_xcb_conn, 0, _target->source, 0, (const char *)&ev);
 
    _target->state = ECORE_X_DND_TARGET_IDLE;
+}
+
+void
+ecore_x_dnd_source_action_set(Ecore_X_Atom action)
+{
+   _source->action = action;
+   if (_source->prev.window)
+     _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
+}
+
+Ecore_X_Atom
+ecore_x_dnd_source_action_get(void)
+{
+   return _source->action;
 }
 
 void
@@ -747,5 +764,8 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
 	  }
      }
 
+   _source->prev.x = x;
+   _source->prev.y = y;
+   _source->prev.window = root;
    _source->dest = win;
 }

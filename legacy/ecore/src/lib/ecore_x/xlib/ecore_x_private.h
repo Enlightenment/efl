@@ -103,6 +103,11 @@ typedef struct _Ecore_X_DND_Source
       unsigned short width, height;
    } rectangle;
 
+   struct {
+      Ecore_X_Window window;
+      int x, y;
+   } prev;
+
    Time time;
 
    Ecore_X_Atom action, accepted_action;

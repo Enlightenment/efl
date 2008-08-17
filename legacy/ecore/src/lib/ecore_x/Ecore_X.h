@@ -1078,6 +1078,8 @@ EAPI int              ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *da
 EAPI int              ecore_x_dnd_drop(void);
 EAPI void             ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action);
 EAPI void             ecore_x_dnd_send_finished(void);
+EAPI void             ecore_x_dnd_source_action_set(Ecore_X_Atom action);
+EAPI Ecore_X_Atom     ecore_x_dnd_source_action_get(void);
 
 EAPI Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
