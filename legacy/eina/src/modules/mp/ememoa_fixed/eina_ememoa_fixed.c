@@ -29,6 +29,7 @@
 
 #include "eina_inlist.h"
 #include "eina_error.h"
+#include "eina_module.h"
 
 #include "eina_private.h"
 
@@ -130,7 +131,7 @@ eina_ememoa_fixed_shutdown(void *data)
    free(efm);
 }
 
-Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend mp_backend = {
   .init = &eina_ememoa_fixed_init,
   .shutdown = &eina_ememoa_fixed_shutdown,
   .realloc = &eina_ememoa_fixed_realloc,
@@ -139,3 +140,5 @@ Eina_Mempool_Backend mp_backend = {
   .garbage_collect = &eina_ememoa_fixed_gc,
   .statistics = &eina_ememoa_fixed_statistics
 };
+
+EINA_MODULE("ememoa_fixed", "mp", NULL, &mp_backend);

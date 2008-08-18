@@ -2,9 +2,13 @@ MAINTAINERCLEANFILES = Makefile.in
 
 benchdir = $(bindir)
 
-AM_CPPFLAGS = \
--I$(top_srcdir)/src/lib \
--I$(top_srcdir)/src/include \
+AM_CPPFLAGS = 					\
+-I$(top_srcdir)/src/lib 			\
+-I$(top_srcdir)/src/include 			\
+-DPACKAGE_BIN_DIR=\"$(bindir)\" 		\
+-DPACKAGE_LIB_DIR=\"$(libdir)\" 		\
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" 	\
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" 	\
 @CHECK_CFLAGS@
 
 if EINA_ENABLE_TESTS
@@ -24,6 +28,7 @@ eina_test_lalloc.c 	\
 eina_test_hash.c 	\
 eina_test_iterator.c	\
 eina_test_accessor.c	\
+eina_test_module.c	\
 eina_test_list.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la

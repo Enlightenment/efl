@@ -23,8 +23,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_List *_modules;
+static Eina_Module_Group *_group;
 static int _init_count = 0;
+
+EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
 
 struct _Eina_Mempool
 {
@@ -35,33 +37,37 @@ struct _Eina_Mempool
 	Eina_Mempool_Backend *backend;
 	void *backend_data;
 };
+
 static Eina_Mempool *
 _new_from_buffer(const char *module, const char *context, const char *options, va_list args)
 {
-	Eina_List *l;
+	Eina_Mempool *mp;
+	Eina_Module *m;
 
-	/* load the module with filename == name */
-	for (l = _modules; l; l = eina_list_next(l))
-	{
-		Eina_Module *m;
-
-		m = eina_list_data(l);
-		/* check if the requested module name exists */
-		if (!strncmp(eina_module_name_get(m), module, strlen(module) + 1))
-		{
-			Eina_Mempool *mp;
-
-			mp = malloc(sizeof(Eina_Mempool));
-			eina_module_load(m);
-			mp->module = m;
-			mp->backend = eina_module_symbol_get(m, "mp_backend");
-			mp->backend_data = mp->backend->init(context, options, args);
-
-			return mp;
-		}
+	eina_error_set(0);
+	m = eina_module_new(_group, module);
+	if (!m) return NULL;
+	if (eina_module_load(m) == EINA_FALSE) {
+		eina_error_set(EINA_ERROR_NOT_MEMPOOL_MODULE);
+		goto on_error;
 	}
+
+	mp = malloc(sizeof(Eina_Mempool));
+	if (!mp) {
+		eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+		goto on_error;
+	}
+	mp->module = m;
+	mp->backend = eina_module_export_object_get(m);
+	mp->backend_data = mp->backend->init(context, options, args);
+
+	return mp;
+
+  on_error:
+	if (m) eina_module_delete(m);
 	return NULL;
 }
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -73,11 +79,19 @@ eina_mempool_init(void)
 {
 	if (!_init_count)
 	{
-		_modules = eina_module_list_get("/usr/local/lib/eina/modules/mp", 0, NULL, NULL);
+		eina_module_init();
+
+		_group = eina_module_group_new();
+		if (!_group) return 0;
+
+		eina_module_app_register(_group, "eina", "mp", NULL);
+
+		EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_register("Not a memory pool module.");
 	}
 	/* get all the modules */
 	return ++_init_count;
 }
+
 /**
  *
  */
@@ -90,10 +104,12 @@ eina_mempool_shutdown(void)
 	if (!_init_count)
 	{
 		/* remove the list of modules */
-		eina_module_list_free(_modules);
+		eina_module_group_delete(_group);
+		eina_module_shutdown();
 	}
 	return _init_count;
 }
+
 /**
  * 
  */
@@ -111,6 +127,7 @@ eina_mempool_new(const char *name, const char *context, const char *options, ...
 
 	return mp;
 }
+
 /**
  * 
  */
@@ -122,6 +139,7 @@ EAPI void eina_mempool_delete(Eina_Mempool *mp)
 	eina_module_unload(mp->module);
 	free(mp);
 }
+
 /**
  * 
  */
@@ -132,6 +150,7 @@ EAPI void * eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int s
 
 	return mp->backend->realloc(mp->backend_data, element, size);
 }
+
 /**
  * 
  */
@@ -142,6 +161,7 @@ EAPI void * eina_mempool_alloc(Eina_Mempool *mp, unsigned int size)
 
 	return mp->backend->alloc(mp->backend_data, size);
 }
+
 /**
  * 
  */

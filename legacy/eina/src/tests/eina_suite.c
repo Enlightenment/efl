@@ -38,6 +38,7 @@ static const Eina_Test_Case etc[] = {
   { "List", eina_test_list },
   { "Iterator", eina_test_iterator },
   { "Accessor", eina_test_accessor },
+  { "Module", eina_test_module },
   { NULL, NULL }
 };
 

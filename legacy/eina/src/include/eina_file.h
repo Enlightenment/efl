@@ -27,9 +27,9 @@
  */
 
 typedef void (*Eina_File_Dir_List_Cb)(const char *name, const char *path, void *data);
+#define EINA_FILE_DIR_LIST_CB(Function) ((Eina_File_Dir_List_Cb)Function)
 
-EAPI void eina_file_dir_list(const char *dir, int recursive, Eina_File_Dir_List_Cb cb, void *data);
-EAPI void eina_file_path_nth_get(const char *path, int n, char **left, char **right);
+EAPI Eina_Bool eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb cb, void *data);
 
 /** @} */
 

@@ -28,6 +28,7 @@
 
 #include "eina_inlist.h"
 #include "eina_error.h"
+#include "eina_module.h"
 
 #include "eina_private.h"
 
@@ -209,10 +210,12 @@ eina_chained_mempool_shutdown(void *data)
    free(mp);
 }
 
-Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend mp_backend = {
   .init = &eina_chained_mempool_init,
   .shutdown = &eina_chained_mempool_shutdown,
   .realloc = &eina_chained_mempool_realloc,
   .alloc = &eina_chained_mempool_malloc,
   .free = &eina_chained_mempool_free
 };
+
+EINA_MODULE("chaine_mempool", "mp", NULL, &mp_backend);

@@ -37,5 +37,6 @@ void eina_test_hash(TCase *tc);
 void eina_test_list(TCase *tc);
 void eina_test_iterator(TCase *tc);
 void eina_test_accessor(TCase *tc);
+void eina_test_module(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

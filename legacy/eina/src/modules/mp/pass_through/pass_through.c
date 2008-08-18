@@ -26,6 +26,7 @@
 #include <stdlib.h>
 
 #include "eina_types.h"
+#include "eina_module.h"
 #include "eina_private.h"
 
 static void *
@@ -57,7 +58,7 @@ eina_pass_through_shutdown(__UNUSED__ void *data)
 {
 }
 
-Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend mp_backend = {
   .init = &eina_pass_through_init,
   .shutdown = &eina_pass_through_shutdown,
   .realloc = &eina_pass_through_realloc,
@@ -67,4 +68,5 @@ Eina_Mempool_Backend mp_backend = {
   .statistics = NULL
 };
 
+EINA_MODULE("pass_through", "mp", NULL, &mp_backend);
 

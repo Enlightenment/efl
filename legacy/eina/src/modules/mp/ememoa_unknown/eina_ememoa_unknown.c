@@ -29,6 +29,7 @@
 #include <ememoa_mempool_unknown_size.h>
 
 #include "eina_types.h"
+#include "eina_module.h"
 #include "eina_private.h"
 
 typedef struct _Eina_Ememoa_Unknown_Size_Mempool Eina_Ememoa_Unknown_Size_Mempool;
@@ -136,7 +137,7 @@ eina_ememoa_unknown_size_shutdown(void *data)
    free(efm);
 }
 
-Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend mp_backend = {
   .init = &eina_ememoa_unknown_size_init,
   .shutdown = &eina_ememoa_unknown_size_shutdown,
   .realloc = &eina_ememoa_unknown_size_realloc,
@@ -146,3 +147,4 @@ Eina_Mempool_Backend mp_backend = {
   .statistics = &eina_ememoa_unknown_size_statistics
 };
 
+EINA_MODULE("ememoa_unknown", "mp", NULL, &mp_backend);

@@ -20,12 +20,15 @@
 #define EINA_MEMPOOL_H_
 
 #include "eina_types.h"
+#include "eina_error.h"
 
 /**
  * @defgroup Memory_Pool_Group Memory Pool
  * @{
  */
 typedef struct _Eina_Mempool Eina_Mempool;
+
+EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 EAPI int eina_mempool_init(void);
 EAPI int eina_mempool_shutdown(void);
