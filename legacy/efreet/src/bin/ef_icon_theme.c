@@ -9,7 +9,7 @@
 #endif
 
 #define SIZE 128
-#define THEME "Human"
+#define THEME "Tango"
 #define FREE(x) do { free(x); x = NULL; } while (0);
 
 static void ef_icon_theme_themes_find(const char *search_dir,
