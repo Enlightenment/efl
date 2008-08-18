@@ -216,7 +216,7 @@ main(int argc, char **argv)
 	       "  eet -r FILE.EET KEY                  remove KEY in FILE.EET\n"
 	       );
 	eet_shutdown();
-	return 0;
+	return -1;
      }
    if ((!strncmp(argv[1], "-h", 2)))
      {
@@ -245,6 +245,10 @@ main(int argc, char **argv)
    else if ((!strcmp(argv[1], "-r")) && (argc > 3))
      {
 	do_eet_remove(argv[2], argv[3]);
+     }
+   else
+     {
+	return -1;
      }
    eet_shutdown();
    return 0;
