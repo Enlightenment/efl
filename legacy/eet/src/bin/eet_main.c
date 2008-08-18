@@ -248,7 +248,7 @@ main(int argc, char **argv)
      }
    else
      {
-	return -1;
+	goto help;
      }
    eet_shutdown();
    return 0;
