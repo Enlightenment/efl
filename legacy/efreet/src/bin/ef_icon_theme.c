@@ -460,7 +460,7 @@ ef_cb_efreet_icon_match(void)
 
         if (!path)
         {
-#if 0
+#if 1
             if (ecore_hash_get(icon_hash, icons[i]))
             {
                 printf("NOT FOUND %s\n", icons[i]);
@@ -468,6 +468,10 @@ ef_cb_efreet_icon_match(void)
             }
 #endif
             continue;
+        }
+        else if (!ecore_hash_get(icon_hash, icons[i]))
+        {
+            printf("Found icon not in hash: %s\n", icons[i]);
         }
 
         s = strrchr(path, '.');
@@ -620,9 +624,7 @@ ef_read_dir(const char *dir, Ecore_Hash *icons)
         {
             *p = '\0';
 
-            p = strrchr(file, '/');
-            if (p) p++;
-            if (p) ecore_hash_set(icons, strdup(p), strdup(p));
+            ecore_hash_set(icons, strdup(file), strdup(file));
         }
 
         FREE(file);
