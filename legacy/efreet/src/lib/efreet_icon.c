@@ -2,6 +2,8 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+#define NON_EXISTING (void *)-1
+
 static char *efreet_icon_deprecated_user_dir = NULL;
 static char *efreet_icon_user_dir = NULL;
 static Ecore_Hash *efreet_icon_themes = NULL;
@@ -353,9 +355,9 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
     /* we didn't find the icon in the theme or in the inherited directories
      * then just look for a non theme icon
      */
-    if (!value || (value == (void *)-1)) value = efreet_icon_fallback_icon(icon);
+    if (!value || (value == NON_EXISTING)) value = efreet_icon_fallback_icon(icon);
 
-    if (value == (void *)-1) value = NULL;
+    if (value == NON_EXISTING) value = NULL;
     return value;
 }
 
@@ -401,18 +403,18 @@ efreet_icon_list_find(const char *theme_name, Ecore_List *icons,
     /* we didn't find the icons in the theme or in the inherited directories
      * then just look for a non theme icon
      */
-    if (!value || (value == (void *)-1))
+    if (!value || (value == NON_EXISTING))
     {
         ecore_list_first_goto(icons);
         while ((icon = ecore_list_next(icons)))
         {
             value = efreet_icon_fallback_icon(icon);
-            if (value && (value != (void *)-1))
+            if (value && (value != NON_EXISTING))
                 break;
         }
     }
 
-    if (value == (void *)-1) value = NULL;
+    if (value == NON_EXISTING) value = NULL;
     return value;
 }
 
@@ -469,7 +471,7 @@ efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
             if ((!parent_theme) || (parent_theme == theme)) continue;
 
             value = efreet_icon_find_helper(parent_theme, icon, size);
-            if (value && (value != (void *)-1)) break;
+            if (value && (value != NON_EXISTING)) break;
         }
     }
     /* if this isn't the hicolor theme, and we have no other fallbacks
@@ -514,7 +516,7 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
     value = efreet_icon_lookup_icon(theme, icon, size);
 
     /* we didin't find the image check the inherited themes */
-    if (!value || (value == (void *)-1))
+    if (!value || (value == NON_EXISTING))
         value = efreet_icon_find_fallback(theme, icon, size);
 
     recurse--;
@@ -549,7 +551,7 @@ efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
 
             value = efreet_icon_list_find_helper(parent_theme,
                                                         icons, size);
-            if (value && (value != (void *)-1)) break;
+            if (value && (value != NON_EXISTING)) break;
         }
     }
 
@@ -599,12 +601,12 @@ efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
     while ((icon = ecore_list_next(icons)))
     {
         value = efreet_icon_lookup_icon(theme, icon, size);
-        if (value && (value != (void *)-1))
+        if (value && (value != NON_EXISTING))
             break;
     }
 
     /* we didn't find the image check the inherited themes */
-    if (!value || (value == (void *)-1))
+    if (!value || (value == NON_EXISTING))
         value = efreet_icon_list_find_fallback(theme, icons, size);
 
     recurse--;
@@ -1598,7 +1600,7 @@ efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int
         if (!cache->path)
         {
             ecore_list_prepend(list, cache);
-            return (void *)-1;
+            return NON_EXISTING;
         }
         else if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
         {
