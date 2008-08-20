@@ -344,7 +344,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    const char           *format;
    char                 *hkey;
    Image_Entry          *im;
-   Evas_Image_Load_Opts  prevent;
+   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0 };
    int                   size;
    int                   stat_done = 0;
    struct stat           st;
