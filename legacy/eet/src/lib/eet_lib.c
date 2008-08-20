@@ -860,7 +860,7 @@ eet_internal_read2(Eet_File *ef)
         const int       *dico = (const int*) ef->data + EET_FILE2_DIRECTORY_ENTRY_COUNT * num_directory_entries + EET_FILE2_HEADER_COUNT;
         int              j;
 
-        if (eet_test_close((num_directory_entries * EET_FILE2_DICTIONARY_ENTRY_SIZE + index) > (bytes_dictionary_entries + bytes_directory_entries), ef))
+        if (eet_test_close((num_dictionary_entries * EET_FILE2_DICTIONARY_ENTRY_SIZE + index) > (bytes_dictionary_entries + bytes_directory_entries), ef))
             return NULL;
 
         ef->ed = calloc(1, sizeof (Eet_Dictionary));
