@@ -356,7 +356,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    if ((!lo) ||
        (lo &&
         (lo->scale_down_by == 0) &&
-        (lo->dpi = 0.0) &&
+        (lo->dpi == 0.0) &&
         ((lo->w == 0) || (lo->h == 0))))
      {
         lo = &prevent;
