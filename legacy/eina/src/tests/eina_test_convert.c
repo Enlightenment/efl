@@ -25,7 +25,6 @@
 START_TEST(eina_convert_simple)
 {
    char tmp[128];
-   int length;
 
    fail_if(eina_convert_itoa(0, tmp) != 1);
    fail_if(strcmp(tmp, "0") != 0);
