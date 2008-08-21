@@ -196,38 +196,11 @@ check_spectrum (Edje_Spectrum_Directory_Entry *se, Eet_File *ef)
    ABORT_WRITE(ef, file_out);
 }
 
-void
-data_write(void)
+static int
+data_write_header(Eet_File *ef)
 {
-   Eet_File *ef;
-   Evas_List *l;
-   int bytes;
-   int input_bytes;
-   int total_bytes;
-   int src_bytes;
-   int fmap_bytes;
-   int input_raw_bytes;
-   int image_num;
-   int font_num;
-   int collection_num;
-   int i;
+   int bytes = 0;
 
-   bytes = 0;
-   input_bytes = 0;
-   total_bytes = 0;
-   src_bytes = 0;
-   fmap_bytes = 0;
-   input_raw_bytes = 0;
-   image_num = 0;
-   font_num = 0;
-   collection_num = 0;
-   ef = eet_open(file_out, EET_FILE_MODE_WRITE);
-   if (!ef)
-     {
-	fprintf(stderr, "%s: Error. unable to open \"%s\" for writing output\n",
-		progname, file_out);
-	exit(-1);
-     }
    if (edje_file)
      {
 
@@ -247,14 +220,24 @@ data_write(void)
 		     progname, file_out);
 	     ABORT_WRITE(ef, file_out);
 	  }
-	else
-	  total_bytes += bytes;
      }
+
    if (verbose)
      {
 	printf("%s: Wrote %9i bytes (%4iKb) for \"edje_file\" header\n",
 	       progname, bytes, (bytes + 512) / 1024);
      }
+
+   return bytes;
+}
+
+static int
+data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_bytes)
+{
+   Evas_List *l;;
+   int bytes = 0;
+   int total_bytes = 0;
+
    for (l = fonts; l; l = l->next)
      {
 	Font *fn;
@@ -336,10 +319,10 @@ data_write(void)
 	       }
 	     else
 	       {
-		  font_num++;
+		  *font_num += 1;
 		  total_bytes += bytes;
-		  input_bytes += fsize;
-		  input_raw_bytes += fsize;
+		  *input_bytes += fsize;
+		  *input_raw_bytes += fsize;
 	       }
 	     if (verbose)
 	       {
@@ -351,6 +334,17 @@ data_write(void)
 	     free(fdata);
 	  }
      }
+
+   return total_bytes;
+}
+
+static int
+data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw_bytes)
+{
+   Evas_List *l;
+   int bytes = 0;
+   int total_bytes = 0;
+
    if ((edje_file) && (edje_file->image_dir))
      {
 	Ecore_Evas *ee;
@@ -481,7 +475,7 @@ data_write(void)
 			      }
 			    else
 			      {
-				 image_num++;
+				 *image_num += 1;
 				 total_bytes += bytes;
 			      }
 			 }
@@ -499,8 +493,8 @@ data_write(void)
 			    evas_object_image_file_get(im, &file, NULL);
 			    if ((file) && (stat(file, &st) != 0))
 			      st.st_size = 0;
-			    input_bytes += st.st_size;
-			    input_raw_bytes += im_w * im_h * 4;
+			    *input_bytes += st.st_size;
+			    *input_raw_bytes += im_w * im_h * 4;
 			    printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
 				   progname, bytes, (bytes + 512) / 1024, buf, img->entry,
 				   100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
@@ -522,31 +516,53 @@ data_write(void)
 	ecore_shutdown();
      }
 
+   return total_bytes;
+}
+
+static void
+check_groups_names(Eet_File *ef)
+{
+   Evas_List *l;
+
+   if (!edje_file->collection_dir)
+     return;
+
    /* check that all groups have names */
-   if (edje_file->collection_dir)
+   for (l = edje_file->collection_dir->entries; l; l = l->next)
      {
-	for (l = edje_file->collection_dir->entries; l; l = l->next)
+	Edje_Part_Collection_Directory_Entry *de;
+	de = l->data;
+	if (!de->entry)
 	  {
-	     Edje_Part_Collection_Directory_Entry *de;
-	     de = l->data;
-	     if (!de->entry)
-	       {
-		  fprintf(stderr, "%s: Error. collection %i: name missing.\n",
-			progname, de->id);
-		  ABORT_WRITE(ef, file_out);
-	       }
+	     fprintf(stderr, "%s: Error. collection %i: name missing.\n",
+		     progname, de->id);
+	     ABORT_WRITE(ef, file_out);
 	  }
      }
+}
+
+static void
+check_spectra(Eet_File *ef)
+{
+   Evas_List *l;
+
+   if (!edje_file->spectrum_dir)
+     return;
+
    /* check that all spectra are valid */
-   if (edje_file->spectrum_dir)
+   for (l = edje_file->spectrum_dir->entries; l; l = l->next)
      {
-	for (l = edje_file->spectrum_dir->entries; l; l = l->next)
-	  {
-	     Edje_Spectrum_Directory_Entry *se;
-	     se = l->data;
-	     check_spectrum(se, ef);
-	  }
+	Edje_Spectrum_Directory_Entry *se;
+	se = l->data;
+	check_spectrum(se, ef);
      }
+}
+
+static void
+check_groups(Eet_File *ef)
+{
+   Evas_List *l;
+
    /* sanity checks for parts and programs */
    for (l = edje_collections; l; l = l->next)
      {
@@ -555,10 +571,19 @@ data_write(void)
 
 	pc = l->data;
 	for (ll = pc->parts; ll; ll = ll->next)
-	  check_part (pc, ll->data, ef);
+	  check_part(pc, ll->data, ef);
 	for (ll = pc->programs; ll; ll = ll->next)
-	  check_program (pc, ll->data, ef);
+	  check_program(pc, ll->data, ef);
      }
+}
+
+static int
+data_write_groups(Eet_File *ef, int *collection_num)
+{
+   Evas_List *l;
+   int bytes = 0;
+   int total_bytes = 0;
+
    for (l = edje_collections; l; l = l->next)
      {
 	Edje_Part_Collection *pc;
@@ -575,7 +600,7 @@ data_write(void)
 	  }
 	else
 	  {
-	     collection_num++;
+	     *collection_num += 1;
 	     total_bytes += bytes;
 	  }
 	if (verbose)
@@ -584,6 +609,16 @@ data_write(void)
 		    progname, bytes, (bytes + 512) / 1024, buf);
 	  }
      }
+
+   return total_bytes;
+}
+
+static void
+data_write_scripts(Eet_File *ef)
+{
+   Evas_List *l;
+   int i;
+
    for (i = 0, l = codes; l; l = l->next, i++)
      {
 	Code *cd;
@@ -734,11 +769,49 @@ data_write(void)
 	       }
 	  }
      }
+}
+
+void
+data_write(void)
+{
+   Eet_File *ef;
+   int input_bytes = 0;
+   int total_bytes = 0;
+   int src_bytes = 0;
+   int fmap_bytes = 0;
+   int input_raw_bytes = 0;
+   int image_num = 0;
+   int font_num = 0;
+   int collection_num = 0;
+
+   ef = eet_open(file_out, EET_FILE_MODE_WRITE);
+   if (!ef)
+     {
+	fprintf(stderr, "%s: Error. unable to open \"%s\" for writing output\n",
+		progname, file_out);
+	exit(-1);
+     }
+
+   total_bytes += data_write_header(ef);
+   total_bytes += data_write_fonts(ef, &font_num, &input_bytes,
+				   &input_raw_bytes);
+   total_bytes += data_write_images(ef, &image_num, &input_bytes,
+				    &input_raw_bytes);
+
+   check_groups_names(ef);
+   check_spectra(ef);
+   check_groups(ef);
+
+   total_bytes += data_write_groups(ef, &collection_num);
+   data_write_scripts(ef);
+
    src_bytes = source_append(ef);
    total_bytes += src_bytes;
    fmap_bytes = source_fontmap_save(ef, fonts);
    total_bytes += fmap_bytes;
+
    eet_close(ef);
+
    if (verbose)
      {
 	struct stat st;
