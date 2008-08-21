@@ -865,11 +865,11 @@ extern "C" {
    EAPI int                 evas_imaging_font_max_ascent_get            (const Evas_Imaging_Font *fn);
    EAPI int                 evas_imaging_font_max_descent_get           (const Evas_Imaging_Font *fn);
    EAPI int                 evas_imaging_font_line_advance_get          (const Evas_Imaging_Font *fn);
-   EAPI void                evas_imaging_font_string_advance_get        (const Evas_Imaging_Font *fn, char *str, int *x, int *y);
-   EAPI void                evas_imaging_font_string_size_query         (const Evas_Imaging_Font *fn, char *str, int *w, int *h);
-   EAPI int                 evas_imaging_font_string_inset_get          (const Evas_Imaging_Font *fn, char *str);
-   EAPI int                 evas_imaging_font_string_char_coords_get    (const Evas_Imaging_Font *fn, char *str, int pos, int *cx, int *cy, int *cw, int *ch);
-   EAPI int                 evas_imaging_font_string_char_at_coords_get (const Evas_Imaging_Font *fn, char *str, int x, int y, int *cx, int *cy, int *cw, int *ch);
+   EAPI void                evas_imaging_font_string_advance_get        (const Evas_Imaging_Font *fn, const char *str, int *x, int *y);
+   EAPI void                evas_imaging_font_string_size_query         (const Evas_Imaging_Font *fn, const char *str, int *w, int *h);
+   EAPI int                 evas_imaging_font_string_inset_get          (const Evas_Imaging_Font *fn, const char *str);
+   EAPI int                 evas_imaging_font_string_char_coords_get    (const Evas_Imaging_Font *fn, const char *str, int pos, int *cx, int *cy, int *cw, int *ch);
+   EAPI int                 evas_imaging_font_string_char_at_coords_get (const Evas_Imaging_Font *fn, const char *str, int x, int y, int *cx, int *cy, int *cw, int *ch);
 
    EAPI void                evas_imaging_font_cache_set  (int bytes);
    EAPI int                 evas_imaging_font_cache_get  (void);
