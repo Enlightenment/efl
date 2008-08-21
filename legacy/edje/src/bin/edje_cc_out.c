@@ -613,160 +613,193 @@ data_write_groups(Eet_File *ef, int *collection_num)
 }
 
 static void
+create_script_file(Eet_File *ef, const char *filename, const Code *cd)
+{
+   FILE *f = fopen(filename, "wb");
+   if (!f)
+     {
+	fprintf(stderr, "%s: Error. Unable to open temp file \"%s\" for script compilation \n",
+		progname, filename);
+	ABORT_WRITE(ef, file_out);
+     }
+
+   Evas_List *ll;
+
+   fprintf(f, "#include <edje>\n");
+   int ln = 2;
+
+   if (cd->shared)
+     {
+	while (ln < (cd->l1 - 1))
+	  {
+	     fprintf(f, " \n");
+	     ln++;
+	  }
+	{
+	   char *sp;
+	   int hash = 0;
+	   int newlined = 0;
+
+	   for (sp = cd->shared; *sp; sp++)
+	     {
+		if ((sp[0] == '#') && (newlined))
+		  {
+		     hash = 1;
+		  }
+		newlined = 0;
+		if (sp[0] == '\n') newlined = 1;
+		if (!hash) fputc(sp[0], f);
+		else if (sp[0] == '\n') hash = 0;
+	     }
+	   fputc('\n', f);
+	}
+	ln += cd->l2 - cd->l1 + 1;
+     }
+   for (ll = cd->programs; ll; ll = ll->next)
+     {
+	Code_Program *cp;
+
+	cp = ll->data;
+	if (cp->script)
+	  {
+	     while (ln < (cp->l1 - 1))
+	       {
+		  fprintf(f, " \n");
+		  ln++;
+	       }
+	     /* FIXME: this prototype needs to be */
+	     /* formalised and set in stone */
+	     fprintf(f, "public _p%i(sig[], src[]) {", cp->id);
+	     {
+		char *sp;
+		int hash = 0;
+		int newlined = 0;
+
+		for (sp = cp->script; *sp; sp++)
+		  {
+		     if ((sp[0] == '#') && (newlined))
+		       {
+			  hash = 1;
+		       }
+		     newlined = 0;
+		     if (sp[0] == '\n') newlined = 1;
+		     if (!hash) fputc(sp[0], f);
+		     else if (sp[0] == '\n') hash = 0;
+		  }
+	     }
+	     fprintf(f, "}");
+	     ln += cp->l2 - cp->l1 + 1;
+	  }
+     }
+
+   fclose(f);
+}
+
+static void
+compile_script_file(Eet_File *ef, const char *source, const char *output,
+		    int script_num)
+{
+   FILE *f;
+   char buf[4096];
+   int ret;
+
+   snprintf(buf, sizeof(buf),
+	    "embryo_cc -i %s/include -o %s %s",
+	    e_prefix_data_get(), output, source);
+   ret = system(buf);
+
+   /* accept warnings in the embryo code */
+   if (ret < 0 || ret > 1)
+     {
+	fprintf(stderr, "%s: Warning. Compiling script code not clean.\n",
+		progname);
+	ABORT_WRITE(ef, file_out);
+     }
+
+   f = fopen(output, "rb");
+   if (!f)
+     {
+	fprintf(stderr, "%s: Error. Unable to open script object \"%s\" for reading \n",
+		progname, output);
+	ABORT_WRITE(ef, file_out);
+     }
+
+   int size;
+   void *data;
+
+   fseek(f, 0, SEEK_END);
+   size = ftell(f);
+   rewind(f);
+
+   if (size > 0)
+     {
+	int bt;
+
+	data = malloc(size);
+	if (data)
+	  {
+	     if (fread(data, size, 1, f) != 1)
+	       {
+		  fprintf(stderr, "%s: Error. Unable to read all of script object \"%s\"\n",
+			  progname, output);
+		  ABORT_WRITE(ef, file_out);
+	       }
+	     snprintf(buf, sizeof(buf), "scripts/%i", script_num);
+	     bt = eet_write(ef, buf, data, size, 1);
+	     free(data);
+	  }
+     }
+
+   fclose(f);
+}
+
+static void
 data_write_scripts(Eet_File *ef)
 {
    Evas_List *l;
    int i;
 
+#ifdef HAVE_EVIL
+   char *tmpdir = evil_tmpdir_get();
+#else
+   char *tmpdir = "/tmp";
+#endif
+
    for (i = 0, l = codes; l; l = l->next, i++)
      {
-	Code *cd;
-	int ln = 0;
+	int fd;
+	Code *cd = l->data;
 
-	cd = l->data;
-	if ((cd->shared) || (cd->programs))
+	if ((!cd->shared) && (!cd->programs))
+	  continue;
+
+	char tmpn[4096];
+	snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
+	fd = mkstemp(tmpn);
+	if (fd < 0)
 	  {
-	     char tmpn[4096];
-	     int fd;
-	     char *tmpdir;
-
-#ifdef HAVE_EVIL
-	     tmpdir = evil_tmpdir_get();
-#else
-	     tmpdir = "/tmp";
-#endif
-             snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
-	     fd = mkstemp(tmpn);
-	     if (fd >= 0)
-	       {
-		  FILE *f;
-		  char buf[4096];
-		  char tmpo[4096];
-		  int ret;
-
-		  f = fopen(tmpn, "wb");
-		  if (f)
-		    {
-		       Evas_List *ll;
-
-		       fprintf(f, "#include <edje>\n");
-		       ln = 2;
-		       if (cd->shared)
-			 {
-			    while (ln < (cd->l1 - 1))
-			      {
-				 fprintf(f, " \n");
-				 ln++;
-			      }
-			      {
-				 char *sp;
-				 int hash = 0;
-				 int newlined = 0;
-
-				 for (sp = cd->shared; *sp; sp++)
-				   {
-				      if ((sp[0] == '#') && (newlined))
-					{
-					   hash = 1;
-					}
-				      newlined = 0;
-				      if (sp[0] == '\n') newlined = 1;
-				      if (!hash) fputc(sp[0], f);
-				      else if (sp[0] == '\n') hash = 0;
-				   }
-				 fputc('\n', f);
-			      }
-			    ln += cd->l2 - cd->l1 + 1;
-			 }
-		       for (ll = cd->programs; ll; ll = ll->next)
-			 {
-			    Code_Program *cp;
-
-			    cp = ll->data;
-			    if (cp->script)
-			      {
-				 while (ln < (cp->l1 - 1))
-				   {
-				      fprintf(f, " \n");
-				      ln++;
-				   }
-				 /* FIXME: this prototype needs to be */
-				 /* formalised and set in stone */
-				 fprintf(f, "public _p%i(sig[], src[]) {", cp->id);
-				   {
-				      char *sp;
-				      int hash = 0;
-				      int newlined = 0;
-
-				      for (sp = cp->script; *sp; sp++)
-					{
-					   if ((sp[0] == '#') && (newlined))
-					     {
-						hash = 1;
-					     }
-					   newlined = 0;
-					   if (sp[0] == '\n') newlined = 1;
-					   if (!hash) fputc(sp[0], f);
-					   else if (sp[0] == '\n') hash = 0;
-					}
-				   }
-				 fprintf(f, "}");
-				 ln += cp->l2 - cp->l1 + 1;
-			      }
-			 }
-		       fclose(f);
-		    }
-		  close(fd);
-                  snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmpdir);
-		  fd = mkstemp(tmpo);
-		  if (fd >= 0)
-		    {
-		       snprintf(buf, sizeof(buf),
-				"embryo_cc -i %s/include -o %s %s",
-				e_prefix_data_get(), tmpo, tmpn);
-		       ret = system(buf);
-		       /* accept warnings in the embryo code */
-		       if (ret < 0 || ret > 1)
-			 {
-			    fprintf(stderr, "%s: Warning. Compiling script code not clean.\n",
-				    progname);
-			    ABORT_WRITE(ef, file_out);
-			 }
-		       close(fd);
-		    }
-		  f = fopen(tmpo, "rb");
-		  if (f)
-		    {
-		       int size;
-		       void *data;
-
-		       fseek(f, 0, SEEK_END);
-		       size = ftell(f);
-		       rewind(f);
-		       if (size > 0)
-			 {
-			    int bt;
-
-			    data = malloc(size);
-			    if (data)
-			      {
-				 if (fread(data, size, 1, f) != 1)
-				   {
-				      fprintf(stderr, "%s: Error. unable to read all of script object \"%s\"\n",
-					      progname, tmpo);
-				      ABORT_WRITE(ef, file_out);
-				   }
-				 snprintf(buf, sizeof(buf), "scripts/%i", i);
-				 bt = eet_write(ef, buf, data, size, 1);
-				 free(data);
-			      }
-			 }
-		       fclose(f);
-		    }
-		  unlink(tmpn);
-		  unlink(tmpo);
-	       }
+	     fprintf(stderr, "%s: Error. Unable to open temp file \"%s\" for script compilation \n",
+		     progname, tmpn);
+	     ABORT_WRITE(ef, file_out);
 	  }
+
+	create_script_file(ef, tmpn, cd);
+	close(fd);
+
+	char tmpo[4096];
+	snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmpdir);
+	fd = mkstemp(tmpo);
+	if (fd < 0)
+	  {
+	     fprintf(stderr, "%s: Error. Unable to open temp file \"%s\" for script compilation \n",
+		     progname, tmpn);
+	     ABORT_WRITE(ef, file_out);
+	  }
+	compile_script_file(ef, tmpn, tmpo, i);
+	close(fd);
+
+	unlink(tmpn);
+	unlink(tmpo);
      }
 }
 
