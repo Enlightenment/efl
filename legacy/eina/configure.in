@@ -66,8 +66,8 @@ AC_MSG_RESULT([$enable_coverage])
 
 # Benchmarking tests
 
-AC_ARG_ENABLE([tests],
-   [AC_HELP_STRING([--enable-tests], [enable tests @<:@default=no@:>@])],
+AC_ARG_ENABLE([benchmark],
+   [AC_HELP_STRING([--enable-benchmark], [enable tests @<:@default=no@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        enable_bench="yes"
@@ -77,7 +77,7 @@ AC_ARG_ENABLE([tests],
    ],
    [enable_bench="no"]
 )
-AC_MSG_CHECKING([whether tests are built])
+AC_MSG_CHECKING([whether benchmark are built])
 AC_MSG_RESULT([${enable_bench}])
 AM_CONDITIONAL(EINA_ENABLE_BENCH, test "x${enable_bench}" = "xyes")
 
