@@ -88,6 +88,19 @@ static Evas_List *spectrum_slave_lookups= NULL;
    unlink(file); \
    exit(-1);
 
+static void
+error_and_abort(Eet_File *ef, const char *fmt, ...)
+{
+   va_list ap;
+
+   fprintf(stderr, "%s: Error. ", progname);
+
+   va_start(ap, fmt);
+   vfprintf(stderr, fmt, ap);
+   va_end(ap);
+   ABORT_WRITE(ef, file_out);
+}
+
 void
 data_setup(void)
 {
@@ -115,26 +128,19 @@ check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
 
    return;
    if (epd->image.id == -1)
-     {
-	fprintf(stderr, "%s: Error. collection %i: image attributes missing "
-	      "for part \"%s\", description \"%s\" %f\n",
-	      progname, pc->id, ep->name, epd->state.name, epd->state.value);
-	ABORT_WRITE(ef, file_out);
-     }
+     error_and_abort(ef, "Collection %i: image attributes missing for "
+		     "part \"%s\", description \"%s\" %f\n",
+		     pc->id, ep->name, epd->state.name, epd->state.value);
 
    for (l = epd->image.tween_list; l; l = l->next)
      {
 	Edje_Part_Image_Id *iid = l->data;
 
 	if (iid->id == -1)
-	  {
-	     fprintf(stderr, "%s: Error. collection %i: tween image id missing "
-		   "for part \"%s\", description \"%s\" %f\n",
-		   progname, pc->id, ep->name, epd->state.name,
-		   epd->state.value);
-	     ABORT_WRITE(ef, file_out);
-	  }
-     }
+	  error_and_abort(ef, "Collection %i: tween image id missing for "
+			  "part \"%s\", description \"%s\" %f\n",
+			  pc->id, ep->name, epd->state.name, epd->state.value);
+    }
 }
 
 static void
@@ -144,11 +150,8 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
    Evas_List *l;
 
    if (!epd)
-     {
-	fprintf(stderr, "%s: Error. collection %i: default description missing "
-	      "for part \"%s\"\n", progname, pc->id, ep->name);
-	ABORT_WRITE(ef, file_out);
-     }
+     error_and_abort(ef, "Collection %i: default description missing "
+		     "for part \"%s\"\n", pc->id, ep->name);
 
    if (ep->type == EDJE_PART_TYPE_IMAGE)
      {
@@ -170,12 +173,8 @@ check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
       case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
       case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
 	 if (!ep->targets)
-	   {
-	      fprintf(stderr, "%s: Error. collection %i: "
-		    "target missing in program %s\n",
-		    progname, pc->id, ep->name);
-	      ABORT_WRITE(ef, file_out);
-	   }
+	   error_and_abort(ef, "Collection %i: target missing in program "
+			   "\"%s\"\n", pc->id, ep->name);
 	 break;
       default:
 	 break;
@@ -186,13 +185,10 @@ static void
 check_spectrum (Edje_Spectrum_Directory_Entry *se, Eet_File *ef)
 {
    if (!se->entry)
-     fprintf(stderr, "%s: Error. Spectrum missing a name.\n", progname);
+     error_and_abort(ef, "Spectrum missing a name.\n");
    else if (!se->color_list)
-     fprintf(stderr, "%s: Error. Spectrum %s is empty. At least one color must be given.", progname, se->entry);
-   else
-     return;
-
-   ABORT_WRITE(ef, file_out);
+     error_and_abort(ef, "Spectrum %s is empty. At least one color must be "
+		     "given.", se->entry);
 }
 
 static int
@@ -214,11 +210,8 @@ data_write_header(Eet_File *ef)
 	  }
 	bytes = eet_data_write(ef, edd_edje_file, "edje_file", edje_file, 1);
 	if (bytes <= 0)
-	  {
-	     fprintf(stderr, "%s: Error. unable to write \"edje_file\" entry to \"%s\" \n",
-		     progname, file_out);
-	     ABORT_WRITE(ef, file_out);
-	  }
+	  error_and_abort(ef, "Unable to write \"edje_file\" entry to \"%s\" \n",
+			  file_out);
      }
 
    if (verbose)
@@ -258,11 +251,8 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 	     if (fdata)
 	       {
 		  if (fread(fdata, pos, 1, f) != 1)
-		    {
-		       fprintf(stderr, "%s: Error. unable to read all of font file \"%s\"\n",
-			       progname, fn->file);
-		       ABORT_WRITE(ef, file_out);
-		    }
+		    error_and_abort(ef, "Unable to read all of font "
+				    "file \"%s\"\n", fn->file);
 		  fsize = pos;
 	       }
 	     fclose(f);
@@ -286,11 +276,8 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 		       if (fdata)
 			 {
 			    if (fread(fdata, pos, 1, f) != 1)
-			      {
-				 fprintf(stderr, "%s: Error. unable to read all of font file \"%s\"\n",
-					 progname, buf);
-				 ABORT_WRITE(ef, file_out);
-			      }
+			      error_and_abort(ef, "Unable to read all of font "
+					      "file \"%s\"\n", buf);
 			    fsize = pos;
 			 }
 		       fclose(f);
@@ -300,9 +287,8 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 	  }
 	if (!fdata)
 	  {
-	     fprintf(stderr, "%s: Error. unable to load font part \"%s\" entry to %s \n",
-		     progname, fn->file, file_out);
-	     ABORT_WRITE(ef, file_out);
+	     error_and_abort(ef, "Unable to load font part \"%s\" entry "
+			     "to %s \n", fn->file, file_out);
 	  }
 	else
 	  {
@@ -311,18 +297,14 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 	     snprintf(buf, sizeof(buf), "fonts/%s", fn->name);
 	     bytes = eet_write(ef, buf, fdata, fsize, 1);
 	     if (bytes <= 0)
-	       {
-		  fprintf(stderr, "%s: Error. unable to write font part \"%s\" as \"%s\" part entry to %s \n",
-			  progname, fn->file, buf, file_out);
-		  ABORT_WRITE(ef, file_out);
-	       }
-	     else
-	       {
-		  *font_num += 1;
-		  total_bytes += bytes;
-		  *input_bytes += fsize;
-		  *input_raw_bytes += fsize;
-	       }
+	       error_and_abort(ef, "Unable to write font part \"%s\" as \"%s\" "
+			       "part entry to %s \n", fn->file, buf, file_out);
+
+	     *font_num += 1;
+	     total_bytes += bytes;
+	     *input_bytes += fsize;
+	     *input_raw_bytes += fsize;
+
 	     if (verbose)
 	       {
 		  printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" font entry \"%s\" compress: [real: %2.1f%%]\n",
@@ -351,12 +333,12 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 
 	ecore_init();
 	ecore_evas_init();
+
 	ee = ecore_evas_buffer_new(1, 1);
 	if (!ee)
-	  {
-	     fprintf(stderr, "Error. cannot create buffer engine canvas for image load.\n");
-	     ABORT_WRITE(ef, file_out);
-	  }
+	  error_and_abort(ef, "Cannot create buffer engine canvas for image "
+			  "load.\n");
+
 	evas = ecore_evas_get(ee);
 	for (l = edje_file->image_dir->entries; l; l = l->next)
 	  {
@@ -467,23 +449,22 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 							   im_alpha,
 							   0, qual, 1);
 			    if (bytes <= 0)
-			      {
-				 fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s\n",
-					 progname, img->entry, buf, file_out);
-				 ABORT_WRITE(ef, file_out);
-			      }
-			    else
-			      {
-				 *image_num += 1;
-				 total_bytes += bytes;
-			      }
+			      error_and_abort(ef, "Unable to write image part "
+					      "\"%s\" as \"%s\" part entry to "
+					      "%s\n", img->entry, buf,
+					      file_out);
+
+			    *image_num += 1;
+			    total_bytes += bytes;
 			 }
 		       else
 			 {
-			    fprintf(stderr, "%s: Error. unable to load image for image part \"%s\" as \"%s\" part entry to %s\n",
-				    progname, img->entry, buf, file_out);
-			    ABORT_WRITE(ef, file_out);
+			    error_and_abort(ef, "Unable to load image for "
+					    "image part \"%s\" as \"%s\" part "
+					    "entry to %s\n", img->entry, buf,
+					    file_out);
 			 }
+
 		       if (verbose)
 			 {
 			    struct stat st;
@@ -504,9 +485,8 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 		    }
 		  else
 		    {
-		       fprintf(stderr, "%s: Error. unable to load image for image \"%s\" part entry to %s. Missing PNG or JPEG loader modules for Evas or file does not exist, or is not readable.\n",
-			       progname, img->entry, file_out);
-		       ABORT_WRITE(ef, file_out);
+		       error_and_abort(ef, "Unable to load image for image \"%s\" part entry to %s. Missing PNG or JPEG loader modules for Evas or file does not exist, or is not readable.\n",
+				       img->entry, file_out);
 		    }
 	       }
 	  }
@@ -532,11 +512,7 @@ check_groups_names(Eet_File *ef)
 	Edje_Part_Collection_Directory_Entry *de;
 	de = l->data;
 	if (!de->entry)
-	  {
-	     fprintf(stderr, "%s: Error. collection %i: name missing.\n",
-		     progname, de->id);
-	     ABORT_WRITE(ef, file_out);
-	  }
+	  error_and_abort(ef, "Collection %i: name missing.\n", de->id);
      }
 }
 
@@ -592,16 +568,12 @@ data_write_groups(Eet_File *ef, int *collection_num)
 	snprintf(buf, sizeof(buf), "collections/%i", pc->id);
 	bytes = eet_data_write(ef, edd_edje_part_collection, buf, pc, 1);
 	if (bytes <= 0)
-	  {
-	     fprintf(stderr, "%s: Error. unable to write \"%s\" part entry to %s \n",
-		     progname, buf, file_out);
-	     ABORT_WRITE(ef, file_out);
-	  }
-	else
-	  {
-	     *collection_num += 1;
-	     total_bytes += bytes;
-	  }
+	  error_and_abort(ef, "Error. Unable to write \"%s\" part entry "
+			  "to %s\n", buf, file_out);
+
+	*collection_num += 1;
+	total_bytes += bytes;
+
 	if (verbose)
 	  {
 	     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" collection entry\n",
@@ -617,11 +589,8 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd)
 {
    FILE *f = fopen(filename, "wb");
    if (!f)
-     {
-	fprintf(stderr, "%s: Error. Unable to open temp file \"%s\" for script compilation \n",
-		progname, filename);
-	ABORT_WRITE(ef, file_out);
-     }
+     error_and_abort(ef, "Unable to open temp file \"%s\" for script "
+		     "compilation.\n", filename);
 
    Evas_List *ll;
 
@@ -710,40 +679,28 @@ compile_script_file(Eet_File *ef, const char *source, const char *output,
 
    /* accept warnings in the embryo code */
    if (ret < 0 || ret > 1)
-     {
-	fprintf(stderr, "%s: Warning. Compiling script code not clean.\n",
-		progname);
-	ABORT_WRITE(ef, file_out);
-     }
+     error_and_abort(ef, "Compiling script code not clean.\n");
 
    f = fopen(output, "rb");
    if (!f)
-     {
-	fprintf(stderr, "%s: Error. Unable to open script object \"%s\" for reading \n",
-		progname, output);
-	ABORT_WRITE(ef, file_out);
-     }
-
-   int size;
-   void *data;
+     error_and_abort(ef, "Unable to open script object \"%s\" for reading.\n",
+		     output);
 
    fseek(f, 0, SEEK_END);
-   size = ftell(f);
+   int size = ftell(f);
    rewind(f);
 
    if (size > 0)
      {
 	int bt;
+	void *data = malloc(size);
 
-	data = malloc(size);
 	if (data)
 	  {
 	     if (fread(data, size, 1, f) != 1)
-	       {
-		  fprintf(stderr, "%s: Error. Unable to read all of script object \"%s\"\n",
-			  progname, output);
-		  ABORT_WRITE(ef, file_out);
-	       }
+	       error_and_abort(ef, "Unable to read all of script object "
+			       "\"%s\"\n", output);
+
 	     snprintf(buf, sizeof(buf), "scripts/%i", script_num);
 	     bt = eet_write(ef, buf, data, size, 1);
 	     free(data);
@@ -777,11 +734,8 @@ data_write_scripts(Eet_File *ef)
 	snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
 	fd = mkstemp(tmpn);
 	if (fd < 0)
-	  {
-	     fprintf(stderr, "%s: Error. Unable to open temp file \"%s\" for script compilation \n",
-		     progname, tmpn);
-	     ABORT_WRITE(ef, file_out);
-	  }
+	  error_and_abort(ef, "Unable to open temp file \"%s\" for script "
+			  "compilation.\n", tmpn);
 
 	create_script_file(ef, tmpn, cd);
 	close(fd);
@@ -791,10 +745,11 @@ data_write_scripts(Eet_File *ef)
 	fd = mkstemp(tmpo);
 	if (fd < 0)
 	  {
-	     fprintf(stderr, "%s: Error. Unable to open temp file \"%s\" for script compilation \n",
-		     progname, tmpn);
-	     ABORT_WRITE(ef, file_out);
+	     unlink(tmpn);
+	     error_and_abort(ef, "Unable to open temp file \"%s\" for script "
+			     "compilation.\n", tmpn);
 	  }
+
 	compile_script_file(ef, tmpn, tmpo, i);
 	close(fd);
 
@@ -819,7 +774,7 @@ data_write(void)
    ef = eet_open(file_out, EET_FILE_MODE_WRITE);
    if (!ef)
      {
-	fprintf(stderr, "%s: Error. unable to open \"%s\" for writing output\n",
+	fprintf(stderr, "%s: Error. Unable to open \"%s\" for writing output\n",
 		progname, file_out);
 	exit(-1);
      }
@@ -1013,7 +968,7 @@ data_process_lookups(void)
 	  }
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. unable to find part name %s\n",
+	     fprintf(stderr, "%s: Error. Unable to find part name \"%s\".\n",
 		     progname, pl->name);
 	     exit(-1);
 	  }
@@ -1041,7 +996,7 @@ data_process_lookups(void)
 	  }
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. unable to find program name %s\n",
+	     fprintf(stderr, "%s: Error. Unable to find program name \"%s\".\n",
 		     progname, pl->name);
 	     exit(-1);
 	  }
@@ -1066,7 +1021,7 @@ data_process_lookups(void)
           }
         if (!l)
           {
-             fprintf(stderr, "%s: Error. unable to find group name %s\n",
+             fprintf(stderr, "%s: Error. Unable to find group name \"%s\".\n",
                      progname, gl->name);
              exit(-1);
           }
@@ -1104,7 +1059,7 @@ data_process_lookups(void)
 
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. unable to find image name %s\n",
+	     fprintf(stderr, "%s: Error. Unable to find image name \"%s\".\n",
 		     progname, il->name);
 	     exit(-1);
 	  }
