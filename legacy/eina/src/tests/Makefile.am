@@ -29,6 +29,7 @@ eina_test_hash.c 	\
 eina_test_iterator.c	\
 eina_test_accessor.c	\
 eina_test_module.c	\
+eina_test_convert.c	\
 eina_test_list.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la
@@ -43,6 +44,7 @@ eina_bench_SOURCES = 	\
 eina_bench.c 		\
 eina_bench_hash.c 	\
 eina_bench_stringshare.c \
+eina_bench_convert.c	\
 eina_bench_array.c
 
 eina_bench_LDADD = $(top_builddir)/src/lib/libeina.la

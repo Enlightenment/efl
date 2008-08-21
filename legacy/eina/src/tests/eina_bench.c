@@ -177,9 +177,10 @@ struct _Eina_Bench_Case
 };
 
 static const Eina_Bench_Case etc[] = {
-/*   { "Hash", eina_bench_hash }, */
+  { "Hash", eina_bench_hash },
   { "Array vs List vs Inlist", eina_bench_array },
 /*   { "Stringshare", eina_bench_stringshare }, */
+/*   { "Convert", eina_bench_convert }, */
   { NULL, NULL }
 };
 

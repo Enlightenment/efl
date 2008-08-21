@@ -1,5 +1,5 @@
 /* EINA - EFL data type library
- * Copyright (C) 2008 Cedric Bail
+ * Copyright (C) 2008 Cedric BAIL, Vincent Torri
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,19 +16,20 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EINA_BENCH_H_
-#define EINA_BENCH_H_
+#ifndef EINA_CONVERT_H_
+#define EINA_CONVERT_H_
 
-typedef struct _Eina_Bench Eina_Bench;
-typedef void (*Eina_Bench_Specimens)(int request);
-#define EINA_BENCH(Function) ((Eina_Bench_Specimens)Function)
+#include "eina_types.h"
+#include "eina_error.h"
 
-void eina_bench_register(Eina_Bench *bench, const char *name, Eina_Bench_Specimens bench_cb,
-			 int count_start, int count_end, int count_set);
+EAPI extern Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND;
+EAPI extern Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND;
+EAPI extern Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH;
 
-void eina_bench_hash(Eina_Bench *bench);
-void eina_bench_array(Eina_Bench *bench);
-void eina_bench_stringshare(Eina_Bench *bench);
-void eina_bench_convert(Eina_Bench *bench);
+EAPI int eina_convert_itoa(int n, char *s);
+EAPI int eina_convert_xtoa(unsigned int n, char *s);
+EAPI int eina_convert_dtoa(double d, char *des);
+EAPI Eina_Bool eina_convert_atod(const char *src, int length, long long *m, long *e);
 
-#endif
+#endif /* EINA_CONVERT_H_ */
+
