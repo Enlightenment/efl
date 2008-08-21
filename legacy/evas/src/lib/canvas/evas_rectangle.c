@@ -4,8 +4,6 @@
 void
 evas_rects_return_difference_rects(Evas_Rectangles *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh)
 {
-   unsigned int available = 0;
-
    if (!RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh))
      {
 	evas_add_rect(rects, x, y, w, h);
@@ -14,7 +12,6 @@ evas_rects_return_difference_rects(Evas_Rectangles *rects, int x, int y, int w, 
    else
      {
 	int x1[4], y1[4], i, j;
-	Evas_Rectangles tmp = { 0, 0, NULL };
 
 	if (x < xx)
 	  {
