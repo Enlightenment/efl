@@ -50,7 +50,6 @@ struct _Code_Lookup
    int   val;
 };
 
-static void data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len);
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
 Edje_File *edje_file = NULL;
@@ -1287,12 +1286,6 @@ _data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int
    data_queue_image_lookup(name, &(cl->val));
 
    code_lookups = evas_list_append(code_lookups, cl);
-}
-
-static void
-_data_queue_spectrum_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest)
-{
-   data_queue_spectrum_lookup(name, dest);
 }
 
 void
