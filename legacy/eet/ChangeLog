@@ -84,3 +84,8 @@
 	with Microsoft tools.
 
 	Written by Dmitriy Mazovka.
+
+2008-08-20  Cedric BAIL
+
+	* Fix the dictionnary check during eet_open.
+
