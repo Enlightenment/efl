@@ -199,10 +199,13 @@ edje_file_data_get(const char *file, const char *key)
    if (key)
      {
 	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
-	if ((edf != NULL) && (edf->data_cache != NULL))
+	if (edf != NULL)
 	  {
-	     str = evas_hash_find(edf->data_cache, key);
-	     if (str) str = strdup(str);
+	     if (edf->data_cache != NULL)
+	       {
+		  str = evas_hash_find(edf->data_cache, key);
+		  if (str) str = strdup(str);
+	       }
 	     _edje_cache_file_unref(edf);
 	  }
      }

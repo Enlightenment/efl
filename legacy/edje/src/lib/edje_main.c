@@ -23,6 +23,7 @@ edje_init(void)
 	_edje_edd_setup();
 	_edje_text_init();
 	embryo_init();
+	eet_init();
      }
    _edje_message_init();
    return initted;
@@ -51,6 +52,7 @@ edje_shutdown(void)
    _edje_text_class_hash_free();
    embryo_shutdown();
    ecore_job_shutdown();
+   eet_shutdown();
 
    return 0;
 }
