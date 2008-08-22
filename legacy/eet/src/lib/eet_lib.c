@@ -318,7 +318,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
    for (j = i; j < new_cache_num; j++)
      new_cache[j] = new_cache[j + 1];
 
-   if (new_cache_num < (new_cache_alloc - 16))
+   if (new_cache_num <= (new_cache_alloc - 16))
      {
 	new_cache_alloc -= 16;
 	if (new_cache_num > 0)

@@ -2505,6 +2505,7 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 	_eet_freelist_reset();
 	_eet_freelist_str_reset();
 	_eet_freelist_list_reset();
+	_eet_freelist_direct_str_reset();
      }
    if (dumpfunc)
      {
