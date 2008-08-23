@@ -83,24 +83,6 @@ eina_rectangles_intersect(Eina_Rectangle *r1, Eina_Rectangle *r2)
  * FIXME: To be fixed
  */
 static inline Eina_Bool
-eina_rectangle_hspan_inside(Eina_Rectangle *r, int x, int l)
-{
-
-}
-/**
- * To be documented
- * FIXME: To be fixed
- */
-static inline Eina_Bool
-eina_rectangle_vspan_inside(Eina_Rectangle *r, int y, int l)
-{
-
-}
-/**
- * To be documented
- * FIXME: To be fixed
- */
-static inline Eina_Bool
 eina_rectangle_xcoord_inside(Eina_Rectangle *r, int x)
 {
 	return ((x >= r->x) && (x < (r->x + r->w)));

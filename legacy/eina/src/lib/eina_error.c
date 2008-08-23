@@ -144,9 +144,11 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 {
 	va_list args;
 
+	if (level > _error_level)
+		return;
+	
 	va_start(args, fmt);
-	if (level <= _error_level)
-		_print_cb(level, file, fnc, line, fmt, _print_cb_data, args);
+	_print_cb(level, file, fnc, line, fmt, _print_cb_data, args);
 	va_end(args);
 }
 /**
