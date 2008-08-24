@@ -27,6 +27,9 @@
 # endif
 #endif /* ! _WIN32 */
 
+/* we need this for size_t */
+#include <stddef.h>
+
 /**
  * @file Ecore_Str.h
  * @brief Contains useful C string functions.
