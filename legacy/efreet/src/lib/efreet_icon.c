@@ -313,7 +313,7 @@ static Efreet_Icon_Theme *
 efreet_icon_find_theme_check(const char *theme_name)
 {
     Efreet_Icon_Theme *theme = NULL;
-    theme = efreet_icon_theme_find(theme_name);
+    if (theme_name) theme = efreet_icon_theme_find(theme_name);
     if (!theme)
     {
         theme = efreet_icon_theme_new();
