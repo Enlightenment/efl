@@ -46,6 +46,9 @@ evas_gradient_radial.c \
 evas_gradient_angular.c \
 evas_gradient_rectangular.c \
 evas_gradient_sinusoidal.c \
+evas_gradient2_main.c \
+evas_gradient2_linear.c \
+evas_gradient2_radial.c \
 evas_image_load.c \
 evas_image_save.c \
 evas_image_main.c \

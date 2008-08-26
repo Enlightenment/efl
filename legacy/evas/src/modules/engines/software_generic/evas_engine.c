@@ -193,6 +193,165 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
      }
 }
 
+static void
+eng_gradient2_color_np_stop_insert(void *data, void *gradient, int r, int g, int b, int a, float pos)
+{
+   evas_common_gradient2_color_np_stop_insert(gradient, r, g, b, a, pos);
+}
+
+static void
+eng_gradient2_clear(void *data, void *gradient)
+{
+   evas_common_gradient2_clear(gradient);
+}
+
+static void
+eng_gradient2_fill_transform_set(void *data, void *gradient, void *transform)
+{
+   evas_common_gradient2_fill_transform_set(gradient, transform);
+}
+
+static void
+eng_gradient2_fill_spread_set
+(void *data, void *gradient, int spread)
+{
+   evas_common_gradient2_fill_spread_set(gradient, spread);
+}
+
+static void *
+eng_gradient2_linear_new(void *data)
+{
+   return evas_common_gradient2_linear_new();
+}
+
+static void
+eng_gradient2_linear_free(void *data, void *linear_gradient)
+{
+   evas_common_gradient2_free(linear_gradient);
+}
+
+static void
+eng_gradient2_linear_fill_set(void *data, void *linear_gradient, float x0, float y0, float x1, float y1)
+{
+   evas_common_gradient2_linear_fill_set(linear_gradient, x0, y0, x1, y1);
+}
+
+static int
+eng_gradient2_linear_is_opaque(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)linear_gradient;
+
+   if (!dc || !gr || !gr->type.geometer)  return 0;
+   return !(gr->type.geometer->has_alpha(gr, dc->render_op) |
+              gr->type.geometer->has_mask(gr, dc->render_op));
+}
+
+static int
+eng_gradient2_linear_is_visible(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+
+   if (!dc || !linear_gradient)  return 0;
+   return 1;
+}
+
+static void
+eng_gradient2_linear_render_pre(void *data, void *context, void *linear_gradient)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)linear_gradient;
+   int  len;
+
+   if (!dc || !gr || !gr->type.geometer)  return;
+   gr->type.geometer->geom_update(gr);
+   len = gr->type.geometer->get_map_len(gr);
+   evas_common_gradient2_map(dc, gr, len);
+}
+
+static void
+eng_gradient2_linear_render_post(void *data, void *linear_gradient)
+{
+}
+
+static void
+eng_gradient2_linear_draw(void *data, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h)
+{
+#ifdef BUILD_PTHREAD
+   if (cpunum > 1)
+     evas_common_pipe_grad2_draw(surface, context, x, y, w, h, linear_gradient);
+   else
+#endif
+     evas_common_gradient2_draw(surface, context, x, y, w, h, linear_gradient);
+}
+
+static void *
+eng_gradient2_radial_new(void *data)
+{
+   return evas_common_gradient2_radial_new();
+}
+
+static void
+eng_gradient2_radial_free(void *data, void *radial_gradient)
+{
+   evas_common_gradient2_free(radial_gradient);
+}
+
+static void
+eng_gradient2_radial_fill_set(void *data, void *radial_gradient, float cx, float cy, float rx, float ry)
+{
+   evas_common_gradient2_radial_fill_set(radial_gradient, cx, cy, rx, ry);
+}
+
+static int
+eng_gradient2_radial_is_opaque(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)radial_gradient;
+
+   if (!dc || !gr || !gr->type.geometer)  return 0;
+   return !(gr->type.geometer->has_alpha(gr, dc->render_op) |
+              gr->type.geometer->has_mask(gr, dc->render_op));
+}
+
+static int
+eng_gradient2_radial_is_visible(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+
+   if (!dc || !radial_gradient)  return 0;
+   return 1;
+}
+
+static void
+eng_gradient2_radial_render_pre(void *data, void *context, void *radial_gradient)
+{
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)radial_gradient;
+   int  len;
+
+   if (!dc || !gr || !gr->type.geometer)  return;
+   gr->type.geometer->geom_update(gr);
+   len = gr->type.geometer->get_map_len(gr);
+   evas_common_gradient2_map(dc, gr, len);
+}
+
+static void
+eng_gradient2_radial_render_post(void *data, void *radial_gradient)
+{
+}
+
+static void
+eng_gradient2_radial_draw(void *data, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h)
+{
+#ifdef BUILD_PTHREAD
+   if (cpunum > 1)
+     evas_common_pipe_grad2_draw(surface, context, x, y, w, h, radial_gradient);
+   else
+#endif
+     evas_common_gradient2_draw(surface, context, x, y, w, h, radial_gradient);
+}
+
 static void *
 eng_gradient_new(void *data)
 {
@@ -799,6 +958,29 @@ static Evas_Func func =
      eng_polygon_points_clear,
      eng_polygon_draw,
      /* gradient draw funcs */
+     eng_gradient2_color_np_stop_insert,
+     eng_gradient2_clear,
+     eng_gradient2_fill_transform_set,
+     eng_gradient2_fill_spread_set,
+
+     eng_gradient2_linear_new,
+     eng_gradient2_linear_free,
+     eng_gradient2_linear_fill_set,
+     eng_gradient2_linear_is_opaque,
+     eng_gradient2_linear_is_visible,
+     eng_gradient2_linear_render_pre,
+     eng_gradient2_linear_render_post,
+     eng_gradient2_linear_draw,
+
+     eng_gradient2_radial_new,
+     eng_gradient2_radial_free,
+     eng_gradient2_radial_fill_set,
+     eng_gradient2_radial_is_opaque,
+     eng_gradient2_radial_is_visible,
+     eng_gradient2_radial_render_pre,
+     eng_gradient2_radial_render_post,
+     eng_gradient2_radial_draw,
+
      eng_gradient_new,
      eng_gradient_free,
      eng_gradient_color_stop_add,

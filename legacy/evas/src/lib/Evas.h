@@ -86,6 +86,7 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_RGB565_A5P /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
+typedef struct _Evas_Transform Evas_Transform; /**< An Evas projective or affine transform */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
@@ -102,6 +103,13 @@ typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type *
 typedef int           Evas_Coord;
 typedef int           Evas_Font_Size;
 typedef int           Evas_Angle;
+
+struct _Evas_Transform /** An affine or projective coordinate transformation matrix */
+{
+   float mxx, mxy, mxz;
+   float myx, myy, myz;
+   float mzx, mzy, mzz;
+};
 
 struct _Evas_Rectangle /** A rectangle */
 {
@@ -459,6 +467,23 @@ extern "C" {
    EAPI int               evas_object_gradient_direction_get (const Evas_Object *obj);
    EAPI void              evas_object_gradient_offset_set    (Evas_Object *obj, float offset);
    EAPI float             evas_object_gradient_offset_get    (const Evas_Object *obj);
+
+/* new gradient2 objects - generic properties */
+   EAPI void              evas_object_gradient2_color_np_stop_insert (Evas_Object *obj, int r, int g, int b, int a, float pos);
+   EAPI void              evas_object_gradient2_fill_spread_set   (Evas_Object *obj, int tile_mode);
+   EAPI int               evas_object_gradient2_fill_spread_get   (const Evas_Object *obj);
+   EAPI void              evas_object_gradient2_fill_transform_set (Evas_Object *obj, Evas_Transform *t);
+   EAPI void              evas_object_gradient2_fill_transform_get (const Evas_Object *obj, Evas_Transform *t);
+
+/* linear gradient2 objects */
+   EAPI Evas_Object      *evas_object_gradient2_linear_add            (Evas *e);
+   EAPI void              evas_object_gradient2_linear_fill_set (Evas_Object *obj, float x0, float y0, float x1, float y1);
+   EAPI void              evas_object_gradient2_linear_fill_get (const Evas_Object *obj, float *x0, float *y0, float *x1, float *y1);
+
+/* radial gradient2 objects */
+   EAPI Evas_Object      *evas_object_gradient2_radial_add            (Evas *e);
+   EAPI void              evas_object_gradient2_radial_fill_set (Evas_Object *obj, float cx, float cy, float rx, float ry);
+   EAPI void              evas_object_gradient2_radial_fill_get (const Evas_Object *obj, float *cx, float *cy, float *rx, float *ry);
 
 /* polygon objects */
    EAPI Evas_Object      *evas_object_polygon_add           (Evas *e);

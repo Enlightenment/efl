@@ -52,6 +52,11 @@ typedef struct _Evas_Rectangles             Evas_Rectangles;
 #define MAGIC_OBJ_SMART     0x71777777
 #define MAGIC_OBJ_TEXTBLOCK 0x71777778
 #define MAGIC_SMART         0x72777770
+#define MAGIC_OBJ_GRADIENT_LINEAR  0x72777771
+#define MAGIC_OBJ_GRADIENT_RADIAL  0x72777772
+#define MAGIC_OBJ_SHAPE  0x72777773
+#define MAGIC_OBJ_CONTAINER  0x72777774
+#define MAGIC_OBJ_CUSTOM  0x72777775
 
 #ifdef MAGIC_DEBUG
 #define MAGIC_CHECK_FAILED(o, t, m) \
@@ -484,6 +489,9 @@ struct _Evas_Object_Func
    void (*render_pre) (Evas_Object *obj);
    void (*render_post) (Evas_Object *obj);
 
+   int  (*visual_id_get) (Evas_Object *obj);
+   void *(*engine_data_get) (Evas_Object *obj);
+
    void (*store) (Evas_Object *obj);
    void (*unstore) (Evas_Object *obj);
 
@@ -543,6 +551,29 @@ struct _Evas_Func
    void *(*polygon_point_add)              (void *data, void *context, void *polygon, int x, int y);
    void *(*polygon_points_clear)           (void *data, void *context, void *polygon);
    void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon);
+
+   void (*gradient2_color_np_stop_insert)   (void *data, void *gradient, int r, int g, int b, int a, float pos);
+   void (*gradient2_clear)                  (void *data, void *gradient);
+   void (*gradient2_fill_transform_set)     (void *data, void *gradient, void *transform);
+   void (*gradient2_fill_spread_set)        (void *data, void *gradient, int spread);
+
+   void *(*gradient2_linear_new)                   (void *data);
+   void (*gradient2_linear_free)                   (void *data, void *linear_gradient);
+   void (*gradient2_linear_fill_set)               (void *data, void *linear_gradient, float x0, float y0, float x1, float y1);
+   int  (*gradient2_linear_is_opaque)              (void *data, void *context, void *linear_gradient, int x, int y, int w, int h);
+   int  (*gradient2_linear_is_visible)             (void *data, void *context, void *linear_gradient, int x, int y, int w, int h);
+   void (*gradient2_linear_render_pre)             (void *data, void *context, void *linear_gradient);
+   void (*gradient2_linear_render_post)            (void *data, void *linear_gradient);
+   void (*gradient2_linear_draw)                   (void *data, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h);
+
+   void *(*gradient2_radial_new)                   (void *data);
+   void (*gradient2_radial_free)                   (void *data, void *radial_gradient);
+   void (*gradient2_radial_fill_set)               (void *data, void *radial_gradient, float cx, float cy, float rx, float ry);
+   int  (*gradient2_radial_is_opaque)              (void *data, void *context, void *radial_gradient, int x, int y, int w, int h);
+   int  (*gradient2_radial_is_visible)             (void *data, void *context, void *radial_gradient, int x, int y, int w, int h);
+   void (*gradient2_radial_render_pre)             (void *data, void *context, void *radial_gradient);
+   void (*gradient2_radial_render_post)            (void *data, void *radial_gradient);
+   void (*gradient2_radial_draw)                   (void *data, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h);
 
    void *(*gradient_new)                   (void *data);
    void (*gradient_free)                   (void *data, void *gradient);

@@ -20,6 +20,10 @@ static void evas_object_rectangle_render(Evas_Object *obj, void *output, void *c
 static void evas_object_rectangle_free(Evas_Object *obj);
 static void evas_object_rectangle_render_pre(Evas_Object *obj);
 static void evas_object_rectangle_render_post(Evas_Object *obj);
+
+static int evas_object_rectangle_visual_type_get(Evas_Object *obj);
+static void *evas_object_rectangle_engine_data_get(Evas_Object *obj);
+
 static int evas_object_rectangle_is_opaque(Evas_Object *obj);
 static int evas_object_rectangle_was_opaque(Evas_Object *obj);
 
@@ -39,6 +43,8 @@ static const Evas_Object_Func object_func =
      evas_object_rectangle_render,
      evas_object_rectangle_render_pre,
      evas_object_rectangle_render_post,
+     evas_object_rectangle_visual_type_get,
+     evas_object_rectangle_engine_data_get,
    /* these are optional. NULL = nothing */
      NULL,
      NULL,
@@ -311,6 +317,25 @@ evas_object_rectangle_was_opaque(Evas_Object *obj)
 	return 0;
    return 1;
 }
+
+static int evas_object_rectangle_visual_type_get(Evas_Object *obj)
+{
+   Evas_Object_Rectangle *o;
+
+   o = (Evas_Object_Rectangle *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_SHAPE;
+}
+
+static void *evas_object_rectangle_engine_data_get(Evas_Object *obj)
+{
+   Evas_Object_Rectangle *o;
+
+   o = (Evas_Object_Rectangle *)(obj->object_data);
+   if (!o) return NULL;
+   return o->engine_data;
+}
+
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
 static void

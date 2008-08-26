@@ -31,6 +31,9 @@ static void evas_object_polygon_free(Evas_Object *obj);
 static void evas_object_polygon_render_pre(Evas_Object *obj);
 static void evas_object_polygon_render_post(Evas_Object *obj);
 
+static int evas_object_polygon_visual_type_get(Evas_Object *obj);
+static void *evas_object_polygon_engine_data_get(Evas_Object *obj);
+
 static int evas_object_polygon_is_opaque(Evas_Object *obj);
 static int evas_object_polygon_was_opaque(Evas_Object *obj);
 static int evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
@@ -43,6 +46,8 @@ static const Evas_Object_Func object_func =
      evas_object_polygon_render,
      evas_object_polygon_render_pre,
      evas_object_polygon_render_post,
+     evas_object_polygon_visual_type_get,
+     evas_object_polygon_engine_data_get,
    /* these are optional. NULL = nothing */
      NULL,
      NULL,
@@ -407,6 +412,24 @@ evas_object_polygon_render_post(Evas_Object *obj)
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
    o->changed = 0;
+}
+
+static int evas_object_polygon_visual_type_get(Evas_Object *obj)
+{
+   Evas_Object_Polygon *o;
+
+   o = (Evas_Object_Polygon *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_SHAPE;
+}
+
+static void *evas_object_polygon_engine_data_get(Evas_Object *obj)
+{
+   Evas_Object_Polygon *o;
+
+   o = (Evas_Object_Polygon *)(obj->object_data);
+   if (!o) return NULL;
+   return o->engine_data;
 }
 
 static int

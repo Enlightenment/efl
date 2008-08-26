@@ -70,6 +70,9 @@ static void evas_object_image_free(Evas_Object *obj);
 static void evas_object_image_render_pre(Evas_Object *obj);
 static void evas_object_image_render_post(Evas_Object *obj);
 
+static int evas_object_image_visual_type_get(Evas_Object *obj);
+static void *evas_object_image_engine_data_get(Evas_Object *obj);
+
 static int evas_object_image_is_opaque(Evas_Object *obj);
 static int evas_object_image_was_opaque(Evas_Object *obj);
 static int evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
@@ -83,6 +86,8 @@ static const Evas_Object_Func object_func =
    evas_object_image_render,
    evas_object_image_render_pre,
    evas_object_image_render_post,
+     evas_object_image_visual_type_get,
+     evas_object_image_engine_data_get,
    /* these are optional. NULL = nothing */
    NULL,
    NULL,
@@ -2334,6 +2339,24 @@ evas_object_image_render_post(Evas_Object *obj)
    o->prev = o->cur;
    o->changed = 0;
    /* FIXME: copy strings across */
+}
+
+static int evas_object_image_visual_type_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   o = (Evas_Object_Image *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_IMAGE;
+}
+
+static void *evas_object_image_engine_data_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   o = (Evas_Object_Image *)(obj->object_data);
+   if (!o) return NULL;
+   return o->engine_data;
 }
 
 static int

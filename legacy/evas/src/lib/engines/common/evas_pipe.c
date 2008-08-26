@@ -437,6 +437,59 @@ evas_common_pipe_grad_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    evas_common_pipe_draw_context_copy(dc, op);
 }
 
+/**************** GRAD2 ******************/
+static void
+evas_common_pipe_op_grad2_free(RGBA_Pipe_Op *op)
+{
+   evas_common_gradient2_free(op->op.grad2.grad);
+   evas_common_pipe_op_free(op);
+}
+
+static void
+evas_common_pipe_grad2_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info)
+{
+   if (info)
+     {
+	RGBA_Draw_Context context;
+	
+	memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
+#ifdef EVAS_SLI
+	evas_common_draw_context_set_sli(&(context), info->y, info->h);
+#else	
+	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
+#endif	
+	evas_common_gradient2_draw(dst, &(context),
+				  op->op.grad2.x, op->op.grad2.y,
+				  op->op.grad2.w, op->op.grad2.h,
+				  op->op.grad2.grad);
+     }
+   else
+     evas_common_gradient2_draw(dst, &(op->context),
+			       op->op.grad2.x, op->op.grad2.y,
+			       op->op.grad2.w, op->op.grad2.h,
+			       op->op.grad2.grad);
+}
+
+EAPI void
+evas_common_pipe_grad2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
+			   int x, int y, int w, int h, RGBA_Gradient2 *gr)
+{
+   RGBA_Pipe_Op *op;
+
+   if (!gr) return;
+   dst->pipe = evas_common_pipe_add(dst->pipe, &op);
+   if (!dst->pipe) return;
+   op->op.grad2.x = x;
+   op->op.grad2.y = y;
+   op->op.grad2.w = w;
+   op->op.grad2.h = h;
+   gr->references++;
+   op->op.grad2.grad = gr;
+   op->op_func = evas_common_pipe_grad2_draw_do;
+   op->free_func = evas_common_pipe_op_grad2_free;
+   evas_common_pipe_draw_context_copy(dc, op);
+}
+
 /**************** TEXT ******************/
 static void
 evas_common_pipe_op_text_free(RGBA_Pipe_Op *op)

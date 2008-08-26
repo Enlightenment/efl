@@ -32,6 +32,9 @@ static void evas_object_smart_free(Evas_Object *obj);
 static void evas_object_smart_render_pre(Evas_Object *obj);
 static void evas_object_smart_render_post(Evas_Object *obj);
 
+static int evas_object_smart_visual_type_get(Evas_Object *obj);
+static void *evas_object_smart_engine_data_get(Evas_Object *obj);
+
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -39,6 +42,8 @@ static const Evas_Object_Func object_func =
      evas_object_smart_render,
      evas_object_smart_render_pre,
      evas_object_smart_render_post,
+     evas_object_smart_visual_type_get,
+     evas_object_smart_engine_data_get,
      /* these are optional. NULL = nothing */
      NULL,
      NULL,
@@ -625,4 +630,22 @@ static void
 evas_object_smart_render_post(Evas_Object *obj)
 {
    obj->prev = obj->cur;
+}
+
+static int evas_object_smart_visual_type_get(Evas_Object *obj)
+{
+   Evas_Object_Smart *o;
+
+   o = (Evas_Object_Smart *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_CONTAINER;
+}
+
+static void *evas_object_smart_engine_data_get(Evas_Object *obj)
+{
+   Evas_Object_Smart *o;
+
+   o = (Evas_Object_Smart *)(obj->object_data);
+   if (!o) return NULL;
+   return o->engine_data;
 }
