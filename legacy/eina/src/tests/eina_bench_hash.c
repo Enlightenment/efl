@@ -26,6 +26,54 @@
 #include "eina_bench.h"
 
 static void
+eina_bench_lookup_rbtree(int request)
+{
+   Eina_Hash *hash = NULL;
+   Eina_Array *array = NULL;
+   int *tmp_val;
+   Eina_Array_Iterator it;
+   unsigned int i;
+
+   array = eina_array_new(1000);
+
+   hash = eina_hash_string_superfast_new();
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	char tmp_key[10];
+
+	tmp_val = malloc(sizeof (int));
+
+	if (!tmp_val) continue ;
+
+	snprintf(tmp_key, 10, "%i", i);
+	*tmp_val = i;
+
+	eina_hash_add(hash, tmp_key, tmp_val);
+
+	eina_array_push(array, tmp_val);
+     }
+
+   srand(time(NULL));
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	char tmp_key[10];
+
+	snprintf(tmp_key, 10, "%i", rand() % request);
+
+	tmp_val = eina_hash_find(hash, tmp_key);
+     }
+
+   eina_hash_free(hash);
+
+   EINA_ARRAY_ITER_NEXT(array, i, tmp_val, it)
+     free(tmp_val);
+
+   eina_array_free(array);
+}
+
+static void
 eina_bench_lookup_superfast(int request)
 {
    Eina_Hash *hash = NULL;
@@ -51,7 +99,7 @@ eina_bench_lookup_superfast(int request)
 
 	eina_hash_add(hash, tmp_key, tmp_val);
 
-	eina_array_append(array, tmp_val);
+	eina_array_push(array, tmp_val);
      }
 
    srand(time(NULL));
@@ -99,7 +147,7 @@ eina_bench_lookup_djb2(int request)
 
 	eina_hash_add(hash, tmp_key, tmp_val);
 
-	eina_array_append(array, tmp_val);
+	eina_array_push(array, tmp_val);
      }
 
    srand(time(NULL));
@@ -148,7 +196,7 @@ eina_bench_lookup_djb2_inline(int request)
 
 	eina_hash_add_by_hash(hash, tmp_key, length, eina_hash_djb2(tmp_key, length), tmp_val);
 
-	eina_array_append(array, tmp_val);
+	eina_array_push(array, tmp_val);
      }
 
    srand(time(NULL));

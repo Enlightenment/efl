@@ -42,12 +42,19 @@ eina_array_grow(Eina_Array *array)
 }
 
 static inline void
-eina_array_append(Eina_Array *array, const void *data)
+eina_array_push(Eina_Array *array, const void *data)
 {
    if (UNLIKELY((array->count + array->step) > array->total))
      if (!eina_array_grow(array)) return ;
 
    array->data[array->count++] = (void*) data;
+}
+
+static inline void *
+eina_array_pop(Eina_Array *array)
+{
+   if (array->count <= 0) return NULL;
+   return array->data[--array->count];
 }
 
 static inline void *

@@ -101,14 +101,14 @@ START_TEST(eina_stringshare_collision)
    for (i = 0; i < 10000; ++i)
      {
 	snprintf(buffer, 1024, "%i", rand());
-	eina_array_append(ea, (void*) eina_stringshare_add(buffer));
+	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
 	if (rand() > RAND_MAX / 2) eina_stringshare_add(buffer);
      }
 
    for (i = 0; i < 10000; ++i)
      {
 	snprintf(buffer, 1024, "%i", 60000 - i);
-	eina_array_append(ea, (void*) eina_stringshare_add(buffer));
+	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
 	eina_stringshare_add(buffer);
      }
 

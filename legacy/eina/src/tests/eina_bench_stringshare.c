@@ -45,7 +45,7 @@ eina_bench_stringshare_job(int request)
 	snprintf(build, 64, "string_%i", i);
 	tmp = eina_stringshare_add(build);
 
-	eina_array_append(ea, tmp);
+	eina_array_push(ea, tmp);
      }
 
    srand(time(NULL));
@@ -58,7 +58,7 @@ eina_bench_stringshare_job(int request)
 	  snprintf(build, 64, "string_%i", rand() % request);
 	  tmp = eina_stringshare_add(build);
 
-	  eina_array_append(ea, tmp);
+	  eina_array_push(ea, tmp);
        }
 
    EINA_ARRAY_ITER_NEXT(ea, j, tmp, it)

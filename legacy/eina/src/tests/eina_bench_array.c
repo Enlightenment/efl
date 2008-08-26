@@ -73,7 +73,7 @@ eina_bench_array_4evas_render_inline(int request)
 
 	     ebo->keep = rand() < (RAND_MAX / 2) ? EINA_TRUE : EINA_FALSE;
 
-	     eina_array_append(array, ebo);
+	     eina_array_push(array, ebo);
 	  }
 
 	if (i == 500)
@@ -137,7 +137,7 @@ eina_bench_array_4evas_render_iterator(int request)
 
 	     ebo->keep = rand() < (RAND_MAX / 2) ? EINA_TRUE : EINA_FALSE;
 
-	     eina_array_append(array, ebo);
+	     eina_array_push(array, ebo);
 	  }
 
 	if (i == 500)

@@ -105,7 +105,7 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
    else
      ems->string = NULL;
 
-   eina_array_append(strings, ems);
+   eina_array_push(strings, ems);
 }
 
 EAPI void

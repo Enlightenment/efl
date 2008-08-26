@@ -56,7 +56,7 @@ START_TEST(eina_accessor_array_simple)
 	fail_if(!tmp);
 	*tmp = i;
 
-	eina_array_append(ea, tmp);
+	eina_array_push(ea, tmp);
      }
 
    it = eina_array_accessor_new(ea);

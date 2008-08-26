@@ -33,17 +33,21 @@ START_TEST(eina_array_simple)
    ea = eina_array_new(11);
    fail_if(!ea);
 
-   for (i = 0; i < 200; ++i)
+   for (i = 0; i < 201; ++i)
      {
 	tmp = malloc(sizeof(char) * 10);
 	fail_if(!tmp);
 	snprintf(tmp, 10, "%i", i);
 
-	eina_array_append(ea, tmp);
+	eina_array_push(ea, tmp);
      }
 
    fail_if(eina_array_get(ea, 10) == NULL);
    fail_if(atoi(eina_array_get(ea, 10)) != 10);
+   tmp = eina_array_pop(ea);
+   fail_if(tmp == NULL);
+   fail_if(atoi(tmp) != 200);
+   free(tmp);
 
    EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
      {
@@ -78,7 +82,7 @@ START_TEST(eina_array_static)
 	fail_if(!tmp);
 	snprintf(tmp, 10, "%i", i);
 
-	eina_array_append(&sea, tmp);
+	eina_array_push(&sea, tmp);
      }
 
    fail_if(eina_array_get(&sea, 10) == NULL);
@@ -129,7 +133,7 @@ START_TEST(eina_array_remove_stuff)
 	fail_if(!tmp);
 	*tmp = i;
 
-	eina_array_append(ea, tmp);
+	eina_array_push(ea, tmp);
      }
 
    // Remove the first 10 items

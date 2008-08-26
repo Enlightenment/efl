@@ -50,7 +50,8 @@ EAPI Eina_Iterator *eina_array_iterator_new(const Eina_Array *array);
 EAPI Eina_Accessor *eina_array_accessor_new(const Eina_Array *array);
 
 static inline void        * eina_array_get    (const Eina_Array *array, unsigned int index);
-static inline void          eina_array_append (Eina_Array *array, const void *data);
+static inline void          eina_array_push   (Eina_Array *array, const void *data);
+static inline void        * eina_array_pop    (Eina_Array *array);
 static inline unsigned int  eina_array_count  (const Eina_Array *array);
 
 #define EINA_ARRAY_ITER_NEXT(array, index, item, iterator)		\
