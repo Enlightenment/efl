@@ -75,6 +75,17 @@ struct _Eina_Iterator_Hash
 
 static int _eina_hash_init_count = 0;
 
+#undef get16bits
+#if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
+  || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
+#define get16bits(d) (*((const uint16_t *) (d)))
+#endif
+
+#if !defined (get16bits)
+#define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
+                       +(uint32_t)(((const uint8_t *)(d))[0]) )
+#endif
+
 static inline Eina_Hash_El *
 _eina_hash_find_by_hash(const Eina_Hash *hash, const char *key, int key_length, int key_hash)
 {
@@ -829,18 +840,7 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
 
 /* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html)
    used by WebCore (http://webkit.org/blog/8/hashtables-part-2/) */
-#undef get16bits
-#if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
-  || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
-#define get16bits(d) (*((const uint16_t *) (d)))
-#endif
-
-#if !defined (get16bits)
-#define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
-                       +(uint32_t)(((const uint8_t *)(d))[0]) )
-#endif
-
-int
+EAPI int
 eina_hash_superfast(const char *key, int len)
 {
    int hash = len, tmp;
