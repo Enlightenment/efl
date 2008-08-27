@@ -40,6 +40,7 @@ static const Eina_Test_Case etc[] = {
   { "Accessor", eina_test_accessor },
   { "Module", eina_test_module },
   { "Convert", eina_test_convert },
+/*   { "Rbtree", eina_test_rbtree }, */
   { NULL, NULL }
 };
 

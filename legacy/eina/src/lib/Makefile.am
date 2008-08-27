@@ -26,6 +26,7 @@ eina_counter.c \
 eina_iterator.c \
 eina_accessor.c \
 eina_convert.c \
+eina_rbtree.c \
 eina_stringshare.c
 
 libeina_la_LIBADD = -ldl -lrt @COVERAGE_LIBS@ -lm

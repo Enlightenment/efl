@@ -39,5 +39,6 @@ void eina_test_iterator(TCase *tc);
 void eina_test_accessor(TCase *tc);
 void eina_test_module(TCase *tc);
 void eina_test_convert(TCase *tc);
+void eina_test_rbtree(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

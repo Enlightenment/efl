@@ -27,6 +27,7 @@
 #include "eina_hash.h"
 #include "eina_inlist.h"
 #include "eina_list.h"
+#include "eina_rbtree.h"
 #include "eina_private.h"
 
 static Eina_Bool
@@ -270,6 +271,132 @@ START_TEST(eina_iterator_list_simple)
 }
 END_TEST
 
+typedef struct _Eina_Rbtree_Int Eina_Rbtree_Int;
+struct _Eina_Rbtree_Int
+{
+   Eina_Rbtree node;
+   int value;
+};
+
+static Eina_Rbtree_Direction
+eina_rbtree_int_cmp(const Eina_Rbtree_Int *left, const Eina_Rbtree_Int *right)
+{
+   if (!left) return EINA_RBTREE_RIGHT;
+   if (!right) return EINA_RBTREE_LEFT;
+
+   if (left->value < right->value) return EINA_RBTREE_LEFT;
+   return EINA_RBTREE_RIGHT;
+}
+
+static Eina_Rbtree *
+_eina_rbtree_int_new(int value)
+{
+   Eina_Rbtree_Int *it;
+
+   it = malloc(sizeof (Eina_Rbtree_Int));
+   fail_if(!it);
+
+   it->value = value;
+
+   return &it->node;
+}
+
+static Eina_Bool
+eina_iterator_rbtree_data_check_sorted(__UNUSED__ const Eina_List *list, Eina_Rbtree_Int *data, int *fdata)
+{
+   switch (*fdata)
+     {
+      case 0: fail_if(data->value != 10); break;
+      case 1: fail_if(data->value != 27); break;
+      case 2: fail_if(data->value != 42); break;
+      case 3: fail_if(data->value != 69); break;
+      case 4: fail_if(data->value != 1337); break;
+     }
+
+   (*fdata)++;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+eina_iterator_rbtree_data_check_prefix(__UNUSED__ const Eina_List *list, Eina_Rbtree_Int *data, int *fdata)
+{
+   switch (*fdata)
+     {
+      case 0: fail_if(data->value != 27); break;
+      case 1: fail_if(data->value != 10); break;
+      case 2: fail_if(data->value != 69); break;
+      case 3: fail_if(data->value != 42); break;
+      case 4: fail_if(data->value != 1337); break;
+     }
+
+   (*fdata)++;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+eina_iterator_rbtree_data_check_postfix(__UNUSED__ const Eina_List *list, Eina_Rbtree_Int *data, int *fdata)
+{
+   switch (*fdata)
+     {
+      case 0: fail_if(data->value != 10); break;
+      case 1: fail_if(data->value != 42); break;
+      case 2: fail_if(data->value != 1337); break;
+      case 3: fail_if(data->value != 69); break;
+      case 4: fail_if(data->value != 27); break;
+     }
+
+   (*fdata)++;
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_iterator_rbtree_simple)
+{
+   Eina_Rbtree *root = NULL;
+   Eina_Iterator *it;
+   int i;
+
+   root = eina_rbtree_inline_insert(NULL, _eina_rbtree_int_new(10), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   fail_if(!root);
+
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(1337), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   fail_if(!root);
+
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(27), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   fail_if(!root);
+
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(69), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   fail_if(!root);
+
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(42), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   fail_if(!root);
+
+   i = 0;
+   it = eina_rbtree_iterator_prefix(root);
+   fail_if(!it);
+
+   eina_iterator_foreach(it, EINA_EACH(eina_iterator_rbtree_data_check_prefix), &i);
+   eina_iterator_free(it);
+
+   /* This will return the item sorted. */
+   i = 0;
+   it = eina_rbtree_iterator_infix(root);
+   fail_if(!it);
+
+   eina_iterator_foreach(it, EINA_EACH(eina_iterator_rbtree_data_check_sorted), &i);
+   eina_iterator_free(it);
+
+   i = 0;
+   it = eina_rbtree_iterator_postfix(root);
+   fail_if(!it);
+
+   eina_iterator_foreach(it, EINA_EACH(eina_iterator_rbtree_data_check_postfix), &i);
+   eina_iterator_free(it);
+}
+END_TEST
+
 void
 eina_test_iterator(TCase *tc)
 {
@@ -277,4 +404,5 @@ eina_test_iterator(TCase *tc)
    tcase_add_test(tc, eina_iterator_hash_simple);
    tcase_add_test(tc, eina_iterator_inlist_simple);
    tcase_add_test(tc, eina_iterator_list_simple);
+   tcase_add_test(tc, eina_iterator_rbtree_simple);
 }
