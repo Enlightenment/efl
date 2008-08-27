@@ -16,9 +16,17 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+
+#ifdef EINA_BENCH_HAVE_GLIB
+#include <glib.h>
+#endif
 
 #include "eina_stringshare.h"
 #include "eina_bench.h"
@@ -68,7 +76,43 @@ eina_bench_stringshare_job(int request)
    eina_stringshare_shutdown();
 }
 
+#ifdef EINA_BENCH_HAVE_GLIB
+static void
+eina_bench_stringchunk_job(int request)
+{
+   GStringChunk *chunk;
+   unsigned int j;
+   int i;
+
+   chunk = g_string_chunk_new(4096);
+
+   for (i = 0; i < request; ++i)
+     {
+	char build[64];
+
+	snprintf(build, 64, "string_%i", i);
+	g_string_chunk_insert_const(chunk, build);
+     }
+
+   srand(time(NULL));
+
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < request; ++i)
+       {
+	  char build[64];
+
+	  snprintf(build, 64, "string_%i", rand() % request);
+	  g_string_chunk_insert_const(chunk, build);
+       }
+
+   g_string_chunk_free(chunk);
+}
+#endif
+
 void eina_bench_stringshare(Eina_Bench *bench)
 {
    eina_bench_register(bench, "stringshare", EINA_BENCH(eina_bench_stringshare_job), 100, 20100, 500);
+#ifdef EINA_BENCH_HAVE_GLIB
+   eina_bench_register(bench, "stringchunk (glib)", EINA_BENCH(eina_bench_stringchunk_job), 100, 20100, 500);
+#endif
 }

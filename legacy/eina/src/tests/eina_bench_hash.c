@@ -16,10 +16,18 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+#ifdef EINA_BENCH_HAVE_GLIB
+#include <glib.h>
+#endif
 
 #include "eina_hash.h"
 #include "eina_array.h"
@@ -219,9 +227,57 @@ eina_bench_lookup_djb2_inline(int request)
    eina_array_free(array);
 }
 
+#ifdef EINA_BENCH_HAVE_GLIB
+typedef struct _Eina_Bench_Glib Eina_Bench_Glib;
+struct _Eina_Bench_Glib
+{
+   char *key;
+   int value;
+};
+
+static void
+eina_bench_lookup_ghash(int request)
+{
+   Eina_Bench_Glib *elm;
+   GHashTable *hash;
+   unsigned int i;
+
+   hash = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, free);
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	elm = malloc(sizeof (Eina_Bench_Glib) + 10);
+	if (!elm) continue ;
+
+	elm->key = (char*) (elm + 1);
+
+	snprintf(elm->key, 10, "%i", i);
+	elm->value = i;
+
+	g_hash_table_insert(hash, elm->key, elm);
+     }
+
+   srand(time(NULL));
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	char tmp_key[10];
+
+	snprintf(tmp_key, 10, "%i", rand() % request);
+
+	elm = g_hash_table_lookup(hash, tmp_key);
+     }
+
+   g_hash_table_destroy(hash);
+}
+#endif
+
 void eina_bench_hash(Eina_Bench *bench)
 {
    eina_bench_register(bench, "superfast-lookup", EINA_BENCH(eina_bench_lookup_superfast), 1000, 180000, 2500);
    eina_bench_register(bench, "djb2-lookup", EINA_BENCH(eina_bench_lookup_djb2), 1000, 180000, 2500);
    eina_bench_register(bench, "djb2-lookup-inline", EINA_BENCH(eina_bench_lookup_djb2_inline), 1000, 180000, 2500);
+#ifdef EINA_BENCH_HAVE_GLIB
+   eina_bench_register(bench, "ghash-lookup", EINA_BENCH(eina_bench_lookup_ghash), 1000, 180000, 2500);
+#endif
 }

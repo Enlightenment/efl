@@ -9,7 +9,8 @@ AM_CPPFLAGS = 					\
 -DPACKAGE_LIB_DIR=\"$(libdir)\" 		\
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" 	\
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" 	\
-@CHECK_CFLAGS@
+@CHECK_CFLAGS@					\
+@GLIB_CFLAGS@
 
 if EINA_HAVE_GLIB
 
@@ -54,7 +55,7 @@ eina_bench_stringshare.c \
 eina_bench_convert.c	\
 eina_bench_array.c
 
-eina_bench_LDADD = $(top_builddir)/src/lib/libeina.la
+eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
 
 endif
 
