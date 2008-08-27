@@ -2,14 +2,16 @@ SUBDIRS = lib include modules tests
 
 MAINTAINERCLEANFILES = Makefile.in
 
+.PHONY: benchmark
+
 if EINA_ENABLE_BENCH
 
-bench: all
+benchmark: all
 	make -C tests eina_bench
 
 else
 
-bench:
+benchmark:
 	@echo "reconfigure with --enable-bench"
 
 endif

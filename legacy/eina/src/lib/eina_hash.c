@@ -31,6 +31,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 typedef struct _Eina_Hash_El Eina_Hash_El;
 typedef struct _Eina_Hash_Foreach Eina_Hash_Foreach;
 typedef struct _Eina_Iterator_Hash Eina_Iterator_Hash;
@@ -78,12 +83,12 @@ static int _eina_hash_init_count = 0;
 #undef get16bits
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
   || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
-#define get16bits(d) (*((const uint16_t *) (d)))
+# define get16bits(d) (*((const uint16_t *) (d)))
 #endif
 
 #if !defined (get16bits)
-#define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
-                       +(uint32_t)(((const uint8_t *)(d))[0]) )
+# define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
+                        +(uint32_t)(((const uint8_t *)(d))[0]) )
 #endif
 
 static inline Eina_Hash_El *
@@ -230,12 +235,50 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
    free(it);
 }
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
+/**
+ * @addtogroup Eina_Hash_Group Hash Functions
+ *
+ * @brief give a small description here : what it is for, what it does
+ * , etc...
+ *
+ * Hash API. Give some hints about the use (functions that must be
+ * used like init / shutdown), general use, etc... Give also a link to
+ * tutorial below.
+ *
+ * @section hashtable_algo Algorithm
+ *
+ * Give here the algorithm used in the implementation
+ *
+ * @section hashtable_perf Performance
+ *
+ * Give some hints about performance if it is possible, and an image !
+ *
+ * @section hashtable_tutorial Tutorial
+ *
+ * Here is a fantastic tutorial about our hash table
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Hash_Init_Group Hash Init and Shutdown Functions
+ *
+ * Functions that init and shut down hash system.
+ *
+ * @{
+ */
+
 /**
  * Initialize the eina hash internal structure.
  * @return  Zero on failure, non-zero on successful initialization.
@@ -263,6 +306,18 @@ eina_hash_shutdown(void)
 
    return _eina_hash_init_count;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_Hash_Creation_Group Hash Creation Functions
+ *
+ * Functions that create hash tables.
+ *
+ * @{
+ */
 
 EAPI Eina_Hash *
 eina_hash_new(Eina_Key_Length key_length_cb,
@@ -306,6 +361,70 @@ eina_hash_string_superfast_new(void)
 }
 
 /**
+ * Retrieves the number of buckets available in the given hash table.
+ * @param hash The given hash table.
+ * @return @c 256 if @p hash is not @c NULL.  @c 0 otherwise.
+ */
+EAPI int
+eina_hash_population(const Eina_Hash *hash)
+{
+   if (!hash) return 0;
+   return hash->population;
+}
+
+/**
+ * Free an entire hash table
+ * @param hash The hash table to be freed
+ *
+ * This function frees up all the memory allocated to storing the specified
+ * hash tale pointed to by @p hash. Any entries in the table that the program
+ * has no more pointers for elsewhere may now be lost, so this should only be
+ * called if the program has lready freed any allocated data in the hash table
+ * or has the pointers for data in teh table stored elswehere as well.
+ *
+ * Example:
+ * @code
+ * extern Eina_Hash *hash;
+ *
+ * eina_hash_free(hash);
+ * hash = NULL;
+ * @endcode
+ */
+EAPI void
+eina_hash_free(Eina_Hash *hash)
+{
+   int i;
+
+   if (!hash) return;
+
+   /* FIXME: Should have used an iterator. */
+   for (i = 0; i < 256; i++)
+     {
+	while (hash->buckets[i])
+	  {
+	     Eina_Hash_El *el;
+
+	     el = (Eina_Hash_El *)hash->buckets[i];
+	     hash->buckets[i] = eina_inlist_remove(hash->buckets[i], el);
+	     free(el);
+	  }
+     }
+   free(hash);
+}
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_Hash_Data_Group Hash Data Functions
+ *
+ * Functions that add, access or remove data from hashes.
+ *
+ * @{
+ */
+
+/**
  * Adds an entry to the given hash table.
  *
  * @p key is expected to be a unique string within the hash table.
@@ -328,7 +447,6 @@ eina_hash_string_superfast_new(void)
  * @param   data Data to associate with the string given by @p key.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
  *          thing goes fine.
- * @ingroup Eina_Hash_Data
  */
 EAPI Eina_Bool
 eina_hash_add_by_hash(Eina_Hash *hash,
@@ -387,7 +505,6 @@ eina_hash_add_by_hash(Eina_Hash *hash,
  * @param   data Data to associate with the string given by @p key.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
  *          thing goes fine.
- * @ingroup Eina_Hash_Data
  */
 EAPI Eina_Bool
 eina_hash_direct_add_by_hash(Eina_Hash *hash,
@@ -439,7 +556,6 @@ eina_hash_direct_add_by_hash(Eina_Hash *hash,
  * @param   data Data to associate with the string given by @p key.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
  *          thing goes fine.
- * @ingroup Eina_Hash_Data
  */
 EAPI Eina_Bool
 eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
@@ -474,7 +590,6 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
  * @param   data Data to associate with the string given by @p key.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
  *          thing goes fine.
- * @ingroup Eina_Hash_Data
  */
 EAPI Eina_Bool
 eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
@@ -505,7 +620,6 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
  *               Otherwise, not required and can be @c NULL.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
  *          thing goes fine.
- * @ingroup Eina_Hash_Data
  */
 EAPI Eina_Bool
 eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
@@ -540,7 +654,6 @@ eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_
  *               Otherwise, not required and can be @c NULL.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
  *          thing goes fine.
- * @ingroup Eina_Hash_Data
  */
 EAPI Eina_Bool
 eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
@@ -566,7 +679,6 @@ eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
  * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
  * @return  The data pointer for the stored entry, or @c NULL if not
  *          found.
- * @ingroup Eina_Hash_Data
  */
 EAPI void *
 eina_hash_find_by_hash(const Eina_Hash *hash, const void *key, int key_length, int key_hash)
@@ -590,7 +702,6 @@ eina_hash_find_by_hash(const Eina_Hash *hash, const void *key, int key_length, i
  * @param   key  The key of the entry to find.
  * @return  The data pointer for the stored entry, or @c NULL if not
  *          found.
- * @ingroup Eina_Hash_Data
  */
 EAPI void *
 eina_hash_find(const Eina_Hash *hash, const void *key)
@@ -616,7 +727,6 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
  * @return  The data pointer for the old stored entry, or @c NULL if not
  *          found. If an existing entry is not found, nothing is added to the
  *          hash.
- * @ingroup Eina_Hash_Data
  */
 EAPI void *
 eina_hash_modify_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
@@ -645,7 +755,6 @@ eina_hash_modify_by_hash(Eina_Hash *hash, const void *key, int key_length, int k
  * @return  The data pointer for the old stored entry, or @c NULL if not
  *          found. If an existing entry is not found, nothing is added to the
  *          hash.
- * @ingroup Eina_Hash_Data
  */
 EAPI void *
 eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
@@ -662,68 +771,21 @@ eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
 }
 
 /**
- * @defgroup Eina_Hash_General_Group Hash General Functions
- *
- * Miscellaneous functions that operate on hash objects.
+ * @}
  */
-
-/**
- * Retrieves the number of buckets available in the given hash table.
- * @param hash The given hash table.
- * @return @c 256 if @p hash is not @c NULL.  @c 0 otherwise.
- * @ingroup Eina_Hash_General_Group
- */
-EAPI int
-eina_hash_population(const Eina_Hash *hash)
-{
-   if (!hash) return 0;
-   return hash->population;
-}
-
-/**
- * Free an entire hash table
- * @param hash The hash table to be freed
- *
- * This function frees up all the memory allocated to storing the specified
- * hash tale pointed to by @p hash. Any entries in the table that the program
- * has no more pointers for elsewhere may now be lost, so this should only be
- * called if the program has lready freed any allocated data in the hash table
- * or has the pointers for data in teh table stored elswehere as well.
- *
- * Example:
- * @code
- * extern Eina_Hash *hash;
- *
- * eina_hash_free(hash);
- * hash = NULL;
- * @endcode
- * @ingroup Eina_Hash_General_Group
- */
-EAPI void
-eina_hash_free(Eina_Hash *hash)
-{
-   int i;
-
-   if (!hash) return;
-
-   /* FIXME: Should have used an iterator. */
-   for (i = 0; i < 256; i++)
-     {
-	while (hash->buckets[i])
-	  {
-	     Eina_Hash_El *el;
-
-	     el = (Eina_Hash_El *)hash->buckets[i];
-	     hash->buckets[i] = eina_inlist_remove(hash->buckets[i], el);
-	     free(el);
-	  }
-     }
-   free(hash);
-}
 
 /*============================================================================*
  *                                Iterator                                    *
  *============================================================================*/
+
+/**
+ * @addtogroup Eina_Hash_Iterator_Group Hash Iterator Functions
+ *
+ * Functions that iterate over hash tables.
+ *
+ * @{
+ */
+
 /**
  * Call a function on every member stored in the hash table
  * @param hash The hash table whose members will be walked
@@ -755,7 +817,6 @@ eina_hash_free(Eina_Hash *hash)
  *   free(hash_fn_data);
  * }
  * @endcode
- * @ingroup Eina_Hash_General_Group
  */
 EAPI void
 eina_hash_foreach(const Eina_Hash *hash,
@@ -836,6 +897,10 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    return &it->iterator;
 }
 
+/**
+ * @}
+ */
+
 /* Common hash functions */
 
 /* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html)
@@ -890,3 +955,6 @@ eina_hash_superfast(const char *key, int len)
    return hash;
 }
 
+/**
+ * @}
+ */

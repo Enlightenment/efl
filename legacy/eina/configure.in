@@ -108,15 +108,18 @@ if test "x${enable_tests}" = "xyes" ; then
       [enable_tests="no"]
    )
 fi
+
 AM_CONDITIONAL(EINA_ENABLE_TESTS, test "x${enable_tests}" = "xyes")
 
 # Check ememoa memory pool library
 
-PKG_CHECK_MODULES([EMEMOA],
+if test "x${enable_ememoa}" = "xyes" ; then
+   PKG_CHECK_MODULES([EMEMOA],
       [ememoa >= 0.0.26 ],
       [enable_ememoa="yes"],
       [enable_ememoa="no"]
-)
+   )
+fi
 
 AM_CONDITIONAL(EINA_ENABLE_EMEMOA, test "x${enable_ememoa}" = "xyes")
 
@@ -136,7 +139,7 @@ if test "x$enable_tests" = "xno" -a "x$enable_coverage" = "xyes" ; then
    enable_coverage="no"
 fi
 
-if test "x$enable_coverage" = "xyes"; then
+if test "x$enable_coverage" = "xyes" ; then
    AC_CHECK_PROG(have_lcov, [lcov], [yes], [no])
    if test "x$have_lcov" = "xyes" ; then
       COVERAGE_CFLAGS="-fprofile-arcs -ftest-coverage"
@@ -153,6 +156,11 @@ AC_SUBST(COVERAGE_LIBS)
 
 AM_CONDITIONAL(EINA_ENABLE_COVERAGE, test "x${enable_coverage}" = "xyes")
 
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+AM_CONDITIONAL(EINA_BUILD_DOC, test "x${build_doc}" = "xyes")
 
 ### Checks for types
 
@@ -166,7 +174,7 @@ AC_C_BIGENDIAN
 AC_PROG_CC_STDC
 AC_C___ATTRIBUTE__
 
-if test "x$enable_coverage" = "xyes"; then
+if test "x$enable_coverage" = "xyes" ; then
    CFLAGS="${DEBUG_CFLAGS}"
 fi
 
@@ -193,6 +201,7 @@ AC_SUBST(lt_enable_auto_import)
 AC_CONFIG_FILES([
 Makefile
 eina.pc
+doc/Makefile
 src/Makefile
 src/include/Makefile
 src/lib/Makefile
@@ -220,6 +229,7 @@ echo
 echo
 echo "Configuration Options Summary:"
 echo
+echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo "  Bench................: ${enable_bench}"

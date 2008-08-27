@@ -2,7 +2,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = src doc
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -32,6 +32,14 @@ eina.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = eina.pc
+
+.PHONY: doc coverage benchmark
+
+# Documentation
+
+doc:
+	@echo "entering doc/"
+	make -C doc doc
 
 # Unit tests
 
@@ -85,12 +93,12 @@ endif
 if EINA_ENABLE_BENCH
 
 benchmark:
-	@make -C src bench
+	@make -C src benchmark
 	@mkdir result || true
 	@cd result && ../src/tests/eina_bench `date +%F_%T`
 
 else
 
-bench:
+benchmark:
 	@echo "reconfigure with --enable-bench"
 endif

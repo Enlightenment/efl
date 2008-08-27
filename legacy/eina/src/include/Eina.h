@@ -21,9 +21,40 @@
 
 /**
  * @mainpage Eina
- * @file Eina.h
- * @brief Contains list, hash, debugging and tree functions.
- * TODO add debug functions, magic functions, etc
+ * @author Jorge Luis Zapata Muga
+ * @date 2008
+ *
+ * @section intro_sec Introduction
+ *
+ * The Eina library is a library that implemente an API for data types
+ * in an efficient way. It also provides some useful tools like
+ * opengin shared libraries and errors management.
+ *
+ * This library is cross-platform and can be compiled and used on
+ * Linux and Windows (XP and CE).
+ *
+ * The data types that are available are
+ * @li hash table
+ * @li list
+ * @li string share
+ *
+ * This document describes each data type by providing the algorithms
+ * used in the implementation, the performance, a short tutorial and
+ * the API.
+ *
+ * @section eina_data_types_sec Eina Data Types
+ *
+ * @subsection hashtable Hash Table
+ *
+ * give a small description here : what it is for, what it does
+ * , etc...
+ *
+ * To look at documentation of our hash tables, follow the link @ref
+ * Eina_Hash_Group.
+ *
+ * @todo add debug function
+ * @todo add magic function
+ * @todo add other todo items :)
  */
 
 #include <stdint.h>
