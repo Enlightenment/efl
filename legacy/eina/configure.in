@@ -99,6 +99,8 @@ AC_MSG_RESULT([$enable_ememoa])
 
 ### Checks for libraries
 
+PKG_PROG_PKG_CONFIG
+
 # Check library for unit tests
 
 if test "x${enable_tests}" = "xyes" ; then
@@ -110,6 +112,18 @@ if test "x${enable_tests}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL(EINA_ENABLE_TESTS, test "x${enable_tests}" = "xyes")
+
+# Glib library for comparison in the benchmark
+
+if test "x${enable_bench}" = "xyes" ; then
+   PKG_CHECK_MODULES([GLIB],
+      [glib-2.0],
+      [have_glib="yes"],
+      [have_glib="no"]
+   )
+fi
+
+AM_CONDITIONAL(EINA_HAVE_GLIB, test "x${have_glib}" = "xyes")
 
 # Check ememoa memory pool library
 

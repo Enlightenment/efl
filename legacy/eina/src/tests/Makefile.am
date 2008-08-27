@@ -11,6 +11,12 @@ AM_CPPFLAGS = 					\
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" 	\
 @CHECK_CFLAGS@
 
+if EINA_HAVE_GLIB
+
+AM_CPPFLAGS += -DEINA_BENCH_HAVE_GLIB
+
+endif
+
 if EINA_ENABLE_TESTS
 
 check_PROGRAMS = eina_suite
