@@ -18,6 +18,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+#include <float.h>
 
 #include "eina_convert.h"
 #include "eina_suite.h"
@@ -52,8 +54,51 @@ START_TEST(eina_convert_simple)
 }
 END_TEST
 
+#define EET_TEST_DOUBLE0 123.45689
+#define EET_TEST_DOUBLE1 1.0
+#define EET_TEST_DOUBLE2 0.25
+#define EET_TEST_DOUBLE3 0.0001234
+#define EET_TEST_DOUBLE4 123456789.9876543210
+
+static void
+_eina_convert_check(double test, int length)
+{
+   char tmp[128];
+   long long int m = 0;
+   long e = 0;
+   double r;
+
+   fail_if(eina_convert_dtoa(test, tmp) != length);
+   fail_if(eina_convert_atod(tmp, 128, &m, &e) != EINA_TRUE);
+   r = ldexp((double)m, e);
+   fail_if(fabs(r - test) > DBL_MIN);
+}
+
+START_TEST(eina_convert_double)
+{
+   long long int m = 0;
+   long e = 0;
+
+   eina_convert_init();
+
+   _eina_convert_check(EET_TEST_DOUBLE0, 20);
+   _eina_convert_check(-EET_TEST_DOUBLE0, 21);
+   _eina_convert_check(EET_TEST_DOUBLE1, 6);
+   _eina_convert_check(EET_TEST_DOUBLE2, 6);
+   _eina_convert_check(EET_TEST_DOUBLE3, 21);
+   _eina_convert_check(EET_TEST_DOUBLE4, 21);
+
+   fail_if(eina_convert_atod("ah ah ah", 8, &m, &e) != EINA_FALSE);
+   fail_if(eina_convert_atod("0xjo", 8, &m, &e) != EINA_FALSE);
+   fail_if(eina_convert_atod("0xp", 8, &m, &e) != EINA_FALSE);
+
+   eina_convert_shutdown();
+}
+END_TEST
+
 void
 eina_test_convert(TCase *tc)
 {
    tcase_add_test(tc, eina_convert_simple);
+   tcase_add_test(tc, eina_convert_double);
 }

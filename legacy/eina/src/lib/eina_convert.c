@@ -163,7 +163,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    if (strncmp(str, "0x", 2))
      {
 	eina_error_set(EINA_ERROR_CONVERT_0X_NOT_FOUND);
-	EINA_ERROR_PDBG("'0x' not found in '%s'", src);
+	EINA_ERROR_PDBG("'0x' not found in '%s'\n", src);
         return EINA_FALSE;
      }
 
@@ -184,9 +184,6 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
              mantisse <<= 4;
              mantisse += HEXA_TO_INT(*str);
           }
-
-	str++;
-	length--; if (length <= 0) goto on_length_error;
      }
    if (sign < 0) mantisse = -mantisse;
 
@@ -194,7 +191,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    if (*str != 'p')
      {
 	eina_error_set(EINA_ERROR_CONVERT_P_NOT_FOUND);
-	EINA_ERROR_PDBG("'p' not found in '%s'", src);
+	EINA_ERROR_PDBG("'p' not found in '%s'\n", src);
         return EINA_FALSE;
      }
    sign = +1;
