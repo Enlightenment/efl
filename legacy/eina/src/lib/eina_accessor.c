@@ -60,6 +60,7 @@ eina_accessor_over(Eina_Accessor *accessor,
    if (!accessor) return ;
    if (!(start < end)) return ;
 
+   container = eina_accessor_container_get(accessor);
    for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE; ++i)
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
 }
