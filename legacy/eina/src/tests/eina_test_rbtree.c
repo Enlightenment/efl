@@ -188,6 +188,37 @@ START_TEST(eina_rbtree_remove)
 }
 END_TEST
 
+static void
+eina_rbtree_display_int(Eina_Rbtree_Int *root, int offset)
+{
+   int i;
+
+   for (i = 0; i < offset; ++i)
+     fprintf(stderr, "\t");
+
+   if (!root)
+     {
+	fprintf(stderr, "NULL\n");
+	return ;
+     }
+
+   fprintf(stderr, "v: %i ", root->value);
+
+   if (root->node.color == EINA_RBTREE_RED)
+     fprintf(stderr, "r");
+   else
+     fprintf(stderr, "b");
+   fprintf(stderr, "\n");
+
+   for (i = 0; i < offset; ++i)
+     fprintf(stderr, "\t");
+   eina_rbtree_display_int((Eina_Rbtree_Int*) root->node.son[EINA_RBTREE_RIGHT], offset + 1);
+
+   for (i = 0; i < offset; ++i)
+     fprintf(stderr, "\t");
+   eina_rbtree_display_int((Eina_Rbtree_Int*) root->node.son[EINA_RBTREE_LEFT], offset + 1);
+}
+
 START_TEST(eina_rbtree_simple_remove)
 {
    Eina_Rbtree *root = NULL;
@@ -201,6 +232,10 @@ START_TEST(eina_rbtree_simple_remove)
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
    fail_if(root == NULL);
+
+   fprintf(stderr, "******\n");
+   eina_rbtree_display_int((Eina_Rbtree_Int*) root, 0);
+   fprintf(stderr, "******\n");
 
    i = 69;
    lookup = eina_rbtree_inline_lookup(root, &i, sizeof (int), EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key));
@@ -228,6 +263,10 @@ START_TEST(eina_rbtree_simple_remove2)
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
    fail_if(root == NULL);
+
+   fprintf(stderr, "******\n");
+   eina_rbtree_display_int((Eina_Rbtree_Int*) root, 0);
+   fprintf(stderr, "******\n");
 
    i = 69;
    lookup = eina_rbtree_inline_lookup(root, &i, sizeof (int), EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key));
