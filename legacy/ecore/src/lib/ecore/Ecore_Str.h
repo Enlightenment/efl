@@ -38,8 +38,6 @@
 # ifdef __cplusplus
 extern "C" {
 # endif
-/* we need this for size_t */
-#include <stddef.h>
 
 # ifdef __sgi
 #  define __FUNCTION__ "unknown"
