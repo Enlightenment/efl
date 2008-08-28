@@ -167,7 +167,7 @@ START_TEST(eina_rbtree_remove)
 
    srand(time(NULL));
 
-   for (i = 0; i < 100; ++i)
+   for (i = 0; i < 500; ++i)
      {
 	item = _eina_rbtree_int_new(rand());
 	eina_array_push(ea, item);
@@ -188,37 +188,6 @@ START_TEST(eina_rbtree_remove)
 }
 END_TEST
 
-static void
-eina_rbtree_display_int(Eina_Rbtree_Int *root, int offset)
-{
-   int i;
-
-   for (i = 0; i < offset; ++i)
-     fprintf(stderr, "\t");
-
-   if (!root)
-     {
-	fprintf(stderr, "NULL\n");
-	return ;
-     }
-
-   fprintf(stderr, "v: %i ", root->value);
-
-   if (root->node.color == EINA_RBTREE_RED)
-     fprintf(stderr, "r");
-   else
-     fprintf(stderr, "b");
-   fprintf(stderr, "\n");
-
-   for (i = 0; i < offset; ++i)
-     fprintf(stderr, "\t");
-   eina_rbtree_display_int((Eina_Rbtree_Int*) root->node.son[EINA_RBTREE_RIGHT], offset + 1);
-
-   for (i = 0; i < offset; ++i)
-     fprintf(stderr, "\t");
-   eina_rbtree_display_int((Eina_Rbtree_Int*) root->node.son[EINA_RBTREE_LEFT], offset + 1);
-}
-
 START_TEST(eina_rbtree_simple_remove)
 {
    Eina_Rbtree *root = NULL;
@@ -233,20 +202,12 @@ START_TEST(eina_rbtree_simple_remove)
 
    fail_if(root == NULL);
 
-   fprintf(stderr, "** before **\n");
-   eina_rbtree_display_int((Eina_Rbtree_Int*) root, 0);
-   fprintf(stderr, "******\n");
-
    i = 69;
    lookup = eina_rbtree_inline_lookup(root, &i, sizeof (int), EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key));
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
    fail_if(lookup == NULL);
 
    root = eina_rbtree_inline_remove(root, lookup, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
-
-   fprintf(stderr, "** after **\n");
-   eina_rbtree_display_int((Eina_Rbtree_Int*) root, 0);
-   fprintf(stderr, "******\n");
 
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 }
@@ -269,10 +230,6 @@ START_TEST(eina_rbtree_simple_remove2)
 
    fail_if(root == NULL);
 
-   fprintf(stderr, "** before **\n");
-   eina_rbtree_display_int((Eina_Rbtree_Int*) root, 0);
-   fprintf(stderr, "******\n");
-
    i = 69;
    lookup = eina_rbtree_inline_lookup(root, &i, sizeof (int), EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key));
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
@@ -280,9 +237,39 @@ START_TEST(eina_rbtree_simple_remove2)
 
    root = eina_rbtree_inline_remove(root, lookup, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
-   fprintf(stderr, "** after **\n");
-   eina_rbtree_display_int((Eina_Rbtree_Int*) root, 0);
-   fprintf(stderr, "******\n");
+   _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+}
+END_TEST
+
+START_TEST(eina_rbtree_simple_remove3)
+{
+   Eina_Rbtree *root = NULL;
+   Eina_Rbtree *lookup;
+   int i;
+
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1113497590), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(499187507), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1693860487), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(26211080), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(797272577), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1252184882), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1448158229), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1821884856), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(346086006), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(936357333), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1462073936), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1717320055), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) _eina_rbtree_int_new(1845524606), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+
+   fail_if(root == NULL);
+
+   i = 1113497590;
+   lookup = eina_rbtree_inline_lookup(root, &i, sizeof (int), EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key));
+   _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   fail_if(lookup == NULL);
+
+   root = eina_rbtree_inline_remove(root, lookup, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 }
@@ -296,5 +283,6 @@ eina_test_rbtree(TCase *tc)
    tcase_add_test(tc, eina_rbtree_remove);
    tcase_add_test(tc, eina_rbtree_simple_remove);
    tcase_add_test(tc, eina_rbtree_simple_remove2);
+   tcase_add_test(tc, eina_rbtree_simple_remove3);
 }
 
