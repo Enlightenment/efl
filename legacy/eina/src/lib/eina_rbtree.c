@@ -429,22 +429,6 @@ eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
    return root;
 }
 
-EAPI Eina_Rbtree *
-eina_rbtree_inline_lookup(Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp)
-{
-   int result;
-
-   while (root)
-     {
-	result = cmp(root, key, length);
-	if (result == 0) return root;
-
-	root = root->son[result < 0 ? 0 : 1];
-     }
-
-   return NULL;
-}
-
 EAPI Eina_Iterator *
 eina_rbtree_iterator_prefix(const Eina_Rbtree *root)
 {

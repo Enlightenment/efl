@@ -22,6 +22,7 @@ eina_inline_list.x \
 eina_accessor.h \
 eina_convert.h \
 eina_rbtree.h \
+eina_inline_rbtree.x \
 eina_iterator.h
 
 installed_mainheaderdir = $(prefix)/include/eina-@VMAJ@
