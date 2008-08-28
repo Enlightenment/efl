@@ -16,9 +16,18 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+
+#ifdef EINA_BENCH_HAVE_GLIB
+#include <glib.h>
+#endif
 
 #include "eina_bench.h"
 #include "eina_convert.h"
@@ -79,12 +88,73 @@ eina_bench_convert_snprintf_x(int request)
      }
 }
 
+static void
+eina_bench_convert_snprintf_a(int request)
+{
+   char tmp[128];
+   double r;
+   int i;
+
+   srand(time(NULL));
+
+   for (i = 0; i < request; ++i)
+     {
+	r = 10000 * (rand() / ((double)RAND_MAX + 1));
+	snprintf(tmp, 128, "%a", r);
+	sscanf(tmp, "%la", &r);
+     }
+}
+
+static void
+eina_bench_convert_dtoa(int request)
+{
+   char tmp[128];
+   long long m;
+   long e;
+   double r;
+   int i;
+
+   srand(time(NULL));
+
+   for (i = 0; i < request; ++i)
+     {
+	r = 10000 * (rand() / ((double)RAND_MAX + 1));
+	eina_convert_dtoa(r, tmp);
+	eina_convert_atod(tmp, 128, &m, &e);
+	r = ldexp((double)m, e);
+     }
+}
+
+#ifdef EINA_BENCH_HAVE_GLIB
+static void
+eina_bench_convert_gstrtod(int request)
+{
+   char tmp[128];
+   double r;
+   int i;
+
+   srand(time(NULL));
+
+   for (i = 0; i < request; ++i)
+     {
+	r = 10000 * (rand() / ((double)RAND_MAX + 1));
+	g_ascii_dtostr(tmp, 128, r);
+	r = g_ascii_strtod(tmp, NULL);
+     }
+}
+#endif
+
 void eina_bench_convert(Eina_Bench *bench)
 {
    eina_bench_register(bench, "itoa 10", EINA_BENCH(eina_bench_convert_itoa_10), 1000, 200000, 500);
    eina_bench_register(bench, "itoa 16", EINA_BENCH(eina_bench_convert_itoa_16), 1000, 200000, 500);
    eina_bench_register(bench, "snprintf 10", EINA_BENCH(eina_bench_convert_snprintf_10), 1000, 200000, 500);
    eina_bench_register(bench, "snprintf 16", EINA_BENCH(eina_bench_convert_snprintf_x), 1000, 200000, 500);
+   eina_bench_register(bench, "snprintf a", EINA_BENCH(eina_bench_convert_snprintf_a), 1000, 200000, 500);
+   eina_bench_register(bench, "dtoa", EINA_BENCH(eina_bench_convert_dtoa), 1000, 200000, 500);
+#ifdef EINA_BENCH_HAVE_GLIB
+   eina_bench_register(bench, "gstrtod", EINA_BENCH(eina_bench_convert_gstrtod), 1000, 200000, 500);
+#endif
 }
 
 
