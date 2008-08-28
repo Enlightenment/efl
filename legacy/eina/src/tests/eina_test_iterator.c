@@ -358,19 +358,19 @@ START_TEST(eina_iterator_rbtree_simple)
    Eina_Iterator *it;
    int i;
 
-   root = eina_rbtree_inline_insert(NULL, _eina_rbtree_int_new(10), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(NULL, _eina_rbtree_int_new(10), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(1337), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(1337), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(27), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(27), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(69), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(69), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
    fail_if(!root);
 
-   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(42), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
+   root = eina_rbtree_inline_insert(root, _eina_rbtree_int_new(42), EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
    fail_if(!root);
 
    i = 0;

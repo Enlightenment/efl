@@ -32,53 +32,68 @@
 #include "eina_hash.h"
 #include "eina_array.h"
 #include "eina_bench.h"
+#include "eina_rbtree.h"
+
+typedef struct _Eina_Bench_Rbtree Eina_Bench_Rbtree;
+struct _Eina_Bench_Rbtree
+{
+   Eina_Rbtree node;
+   char key[10];
+   int value;
+};
+
+static Eina_Rbtree_Direction
+_eina_bench_rbtree_cmp(const Eina_Bench_Rbtree *left, const Eina_Bench_Rbtree *right, __UNUSED__ void *data)
+{
+   if (!left) return EINA_RBTREE_RIGHT;
+   if (!right) return EINA_RBTREE_LEFT;
+
+   return strcmp(left->key, right->key) < 0 ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
+}
+
+static inline int
+_eina_bench_rbtree_key(const Eina_Bench_Rbtree *node, const char *key, int length, __UNUSED__ void *data)
+{
+   return strncmp(node->key, key, length);
+}
 
 static void
 eina_bench_lookup_rbtree(int request)
 {
-   Eina_Hash *hash = NULL;
-   Eina_Array *array = NULL;
-   int *tmp_val;
-   Eina_Array_Iterator it;
-   unsigned int i;
+   Eina_Rbtree *root = NULL;
+   Eina_Rbtree *tmp;
+   int i;
 
-   array = eina_array_new(1000);
-
-   hash = eina_hash_string_superfast_new();
-
-   for (i = 0; i < (unsigned int) request; ++i)
+   for (i = 0; i < request; ++i)
      {
-	char tmp_key[10];
+	Eina_Bench_Rbtree *tmp;
 
-	tmp_val = malloc(sizeof (int));
+	tmp = malloc(sizeof (Eina_Bench_Rbtree));
+	if (!tmp) continue ;
 
-	if (!tmp_val) continue ;
+	tmp->value = i;
+	snprintf(tmp->key, 10, "%i", i);
 
-	snprintf(tmp_key, 10, "%i", i);
-	*tmp_val = i;
-
-	eina_hash_add(hash, tmp_key, tmp_val);
-
-	eina_array_push(array, tmp_val);
+	root = eina_rbtree_inline_insert(root, &tmp->node, EINA_RBTREE_CMP_NODE_CB(_eina_bench_rbtree_cmp), NULL);
      }
 
    srand(time(NULL));
 
-   for (i = 0; i < (unsigned int) request; ++i)
+   for (i = 0; i < request; ++i)
      {
 	char tmp_key[10];
 
 	snprintf(tmp_key, 10, "%i", rand() % request);
 
-	tmp_val = eina_hash_find(hash, tmp_key);
+	tmp = eina_rbtree_inline_lookup(root, tmp_key, 10, EINA_RBTREE_CMP_KEY_CB(_eina_bench_rbtree_key), NULL);
      }
 
-   eina_hash_free(hash);
-
-   EINA_ARRAY_ITER_NEXT(array, i, tmp_val, it)
-     free(tmp_val);
-
-   eina_array_free(array);
+   while (root)
+     {
+	tmp = root;
+	root = eina_rbtree_inline_remove(root, root, EINA_RBTREE_CMP_NODE_CB(_eina_bench_rbtree_cmp), NULL);
+	free(tmp);
+     }
 }
 
 static void
@@ -277,6 +292,7 @@ void eina_bench_hash(Eina_Bench *bench)
    eina_bench_register(bench, "superfast-lookup", EINA_BENCH(eina_bench_lookup_superfast), 1000, 180000, 2500);
    eina_bench_register(bench, "djb2-lookup", EINA_BENCH(eina_bench_lookup_djb2), 1000, 180000, 2500);
    eina_bench_register(bench, "djb2-lookup-inline", EINA_BENCH(eina_bench_lookup_djb2_inline), 1000, 180000, 2500);
+   eina_bench_register(bench, "rbtree", EINA_BENCH(eina_bench_lookup_rbtree), 1000, 180000, 2500);
 #ifdef EINA_BENCH_HAVE_GLIB
    eina_bench_register(bench, "ghash-lookup", EINA_BENCH(eina_bench_lookup_ghash), 1000, 180000, 2500);
 #endif

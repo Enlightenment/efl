@@ -140,7 +140,7 @@ eina_stringshare_init()
 }
 
 static int
-_eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length)
+_eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length, __UNUSED__ void *data)
 {
    const char *el_str;
 
@@ -149,7 +149,7 @@ _eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int le
 }
 
 static Eina_Rbtree_Direction
-_eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right)
+_eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right, __UNUSED__ void *data)
 {
    if (!left) return EINA_RBTREE_RIGHT;
    if (!right) return EINA_RBTREE_LEFT;
@@ -176,7 +176,7 @@ eina_stringshare_add(const char *str)
    slen = strlen(str) + 1;
    hash_num = eina_hash_superfast(str, slen) & 0x3FF;
 
-   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp));
+   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
    if (el)
      {
 	el->references++;
@@ -190,7 +190,7 @@ eina_stringshare_add(const char *str)
    el_str = (char*) (el + 1);
    memcpy(el_str, str, slen + 1);
 
-   share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node));
+   share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
 
    return el_str;
 }
@@ -212,13 +212,13 @@ eina_stringshare_del(const char *str)
    slen = strlen(str) + 1;
    hash_num = eina_hash_superfast(str, slen) & 0x3FF;
 
-   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp));
+   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
    if (el)
      {
 	el->references--;
 	if (el->references == 0)
 	  {
-	     share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_remove((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node));
+	     share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_remove((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
 	     free(el);
 	  }
 	return ;
@@ -246,7 +246,7 @@ eina_stringshare_shutdown()
 	     while (el)
 	       {
 		  save = el;
-		  el = eina_rbtree_inline_remove(el, el, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node));
+		  el = eina_rbtree_inline_remove(el, el, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
 		  free(save);
 	       }
 	     share->buckets[i] = NULL;

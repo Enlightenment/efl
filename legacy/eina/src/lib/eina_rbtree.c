@@ -75,7 +75,7 @@ static Eina_Rbtree *
 _eina_rbtree_iterator_get_content(Eina_Iterator_Rbtree *it)
 {
    if (eina_array_count(it->stack) <= 0) return NULL;
-   return eina_array_get(it->stack, eina_array_count(it->stack) - 1);
+   return eina_array_get(it->stack, 0);
 }
 
 static void
@@ -240,7 +240,7 @@ _eina_rbtree_inline_double_rotation(Eina_Rbtree *node, Eina_Rbtree_Direction dir
  *============================================================================*/
 
 EAPI Eina_Rbtree *
-eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp)
+eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data)
 {
    Eina_Rbtree head;
    Eina_Rbtree *g, *t;  /* Grandparent & parent */
@@ -300,7 +300,7 @@ eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
 	  break;
 
 	last = dir;
-	dir = cmp(q, node);
+	dir = cmp(q, node, (void*) data);
 
 	/* Update helpers */
 	if ( g != NULL )
@@ -319,7 +319,7 @@ eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
 }
 
 EAPI Eina_Rbtree *
-eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp)
+eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data)
 {
    Eina_Rbtree head;
    Eina_Rbtree *q, *p, *g;
@@ -343,7 +343,7 @@ eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
 	/* Update helpers */
 	g = p; p = q;
 	q = q->son[dir];
-	dir = cmp(q, node);
+	dir = cmp(q, node, (void*) data);
 
 	/* Save parent node found */
 	if (q == node)
