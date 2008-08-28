@@ -26,6 +26,9 @@ EAPI extern Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND;
 EAPI extern Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND;
 EAPI extern Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH;
 
+EAPI int eina_convert_init(void);
+EAPI int eina_convert_shutdown(void);
+
 EAPI int eina_convert_itoa(int n, char *s);
 EAPI int eina_convert_xtoa(unsigned int n, char *s);
 EAPI int eina_convert_dtoa(double d, char *des);
