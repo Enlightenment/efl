@@ -338,6 +338,8 @@ eina_list_shutdown(void)
  * @addtogroup Eina_List_Data_Group Linked List Add Functions
  *
  * Functions that add data to an Eina_List.
+ *
+ * @{
  */
 
 /**
@@ -603,6 +605,8 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
  * @addtogroup Eina_List_Remove_Group Linked List Remove Functions
  *
  * Functions that remove data from linked lists.
+ *
+ * @{
  */
 
 /**
@@ -781,6 +785,8 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
  * @addtogroup Eina_List_Find_Group Linked List Find Functions
  *
  * Functions that find specified data in a linked list.
+ *
+ * @{
  */
 
 /**
@@ -939,6 +945,8 @@ eina_list_nth_list(const Eina_List *list, unsigned int n)
  * @addtogroup Eina_List_Traverse_Group Linked List Traverse Functions
  *
  * Functions that you can use to traverse a linked list.
+ *
+ * @{
  */
 
 /**
@@ -1020,6 +1028,8 @@ static inline Eina_List *eina_list_prev(const Eina_List *list);
  * @addtogroup Eina_List_General_Group Linked List General Functions
  *
  * Miscellaneous functions that work on linked lists.
+ *
+ * @{
  */
 
 /**
@@ -1072,6 +1082,8 @@ static inline unsigned int eina_list_count(const Eina_List *list);
  * @addtogroup Eina_List_Ordering_Group Linked List Ordering Functions
  *
  * Functions that change the ordering of data in a linked list.
+ *
+ * @{
  */
 
 /**
