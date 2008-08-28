@@ -63,8 +63,13 @@
 #include "eina_private.h"
 
 /*============================================================================*
- *                                  Local                                     * 
+ *                                  Local                                     *
  *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 typedef struct _Eina_Iterator_List Eina_Iterator_List;
 typedef struct _Eina_Accessor_List Eina_Accessor_List;
 
@@ -262,16 +267,53 @@ eina_list_accessor_free(Eina_Accessor_List *it)
    free(it);
 }
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
 /**
- * @defgroup Eina_List_Data_Group Linked List Creation Functions
+ * @addtogroup Eina_List_Group List Functions
  *
- * Functions that add data to an Eina_List.
+ * @brief give a small description here : what it is for, what it does
+ * , etc...
+ *
+ * List API. Give some hints about the use (functions that must be
+ * used like init / shutdown), general use, etc... Give also a link to
+ * tutorial below.
+ *
+ * @section listtable_algo Algorithm
+ *
+ * Give here the algorithm used in the implementation
+ *
+ * @section list_perf Performance
+ *
+ * Give some hints about performance if it is possible, and an image !
+ *
+ * @section list_tutorial Tutorial
+ *
+ * Here is a fantastic tutorial about our list
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_List_Init_Group List Init and Shutdown Functions
+ *
+ * Functions that init and shut down list system.
+ *
+ * @{
+ */
+
+/**
+ * Initialize the eina list internal structure.
+ * @return  Zero on failure, non-zero on successful initialization.
  */
 EAPI int
 eina_list_init(void)
@@ -279,11 +321,24 @@ eina_list_init(void)
    return eina_error_init();
 }
 
+/**
+ * Shutdown the eina list internal structures
+ */
 EAPI int
 eina_list_shutdown(void)
 {
    return eina_error_shutdown();
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_List_Data_Group Linked List Add Functions
+ *
+ * Functions that add data to an Eina_List.
+ */
 
 /**
  * Appends the given data to the given linked list.
@@ -309,7 +364,6 @@ eina_list_shutdown(void)
  * @return  A new list pointer that should be used in place of the one
  *          given to this function if successful.  Otherwise, the old
  *          pointer is returned.
- * @ingroup Eina_List_Data_Group
  */
 EAPI Eina_List *
 eina_list_append(Eina_List *list, const void *data)
@@ -361,7 +415,6 @@ eina_list_append(Eina_List *list, const void *data)
  * @return  A new list pointer that should be used in place of the one
  *          given to this function, if successful.  Otherwise, the old
  *          pointer is returned.
- * @ingroup Eina_List_Data_Group
  */
 EAPI Eina_List *
 eina_list_prepend(Eina_List *list, const void *data)
@@ -420,7 +473,6 @@ eina_list_prepend(Eina_List *list, const void *data)
  * @return  A new list pointer that should be used in place of the one
  *          given to this function if successful.  Otherwise, the old pointer
  *          is returned.
- * @ingroup Eina_List_Data_Group
  */
 EAPI Eina_List *
 eina_list_append_relative(Eina_List *list, const void *data, const void *relative)
@@ -504,7 +556,6 @@ eina_list_append_relative_list(Eina_List *list, const void *data, Eina_List *rel
  * @return  A new list pointer that should be used in place of the one
  *          given to this function if successful.  Otherwise the old pointer
  *          is returned.
- * @ingroup Eina_List_Data_Group
  */
 EAPI Eina_List *
 eina_list_prepend_relative(Eina_List *list, const void *data, const void *relative)
@@ -545,7 +596,11 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
 }
 
 /**
- * @defgroup Eina_List_Remove_Group Linked List Remove Functions
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_List_Remove_Group Linked List Remove Functions
  *
  * Functions that remove data from linked lists.
  */
@@ -559,7 +614,6 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
  * @param   data The specified data.
  * @return  A new list pointer that should be used in place of the one
  *          passed to this functions.
- * @ingroup Eina_List_Remove_Group
  */
 EAPI Eina_List *
 eina_list_remove(Eina_List *list, const void *data)
@@ -600,7 +654,6 @@ eina_list_remove(Eina_List *list, const void *data)
  *       }
  *   }
  * @endcode
- * @ingroup Eina_List_Remove_Group
  */
 EAPI Eina_List *
 eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
@@ -623,6 +676,48 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
    _eina_list_mempool_list_free(remove_list);
    return return_l;
 }
+
+/**
+ * Free an entire list and all the nodes, ignoring the data contained
+ * @param list The list to free
+ * @return A NULL pointer
+ *
+ * This function will free all the list nodes in list specified by @p list.
+ *
+ * Example:
+ * @code
+ * extern Eina_List *list;
+ *
+ * list = eina_list_free(list);
+ * @endcode
+ */
+EAPI Eina_List *
+eina_list_free(Eina_List *list)
+{
+   Eina_List *l, *free_l;
+
+   if (!list) return NULL;
+   for (l = list; l;)
+     {
+	free_l = l;
+	l = l->next;
+
+	_eina_list_mempool_list_free(free_l);
+     }
+   return NULL;
+}
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_List_Promote_Group List Promote Functions
+ *
+ * Functions that promote data of a list (?)
+ *
+ * @{
+ */
 
 /**
  * Moves the specified data to the head of the list
@@ -650,7 +745,6 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
  *       }
  *   }
  * @endcode
- * @ingroup Eina_List_Promote_Group
  */
 EAPI Eina_List *
 eina_list_promote_list(Eina_List *list, Eina_List *move_list)
@@ -679,10 +773,12 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
    return move_list;
 }
 
-
+/**
+ * @}
+ */
 
 /**
- * @defgroup Eina_List_Find_Group Linked List Find Functions
+ * @addtogroup Eina_List_Find_Group Linked List Find Functions
  *
  * Functions that find specified data in a linked list.
  */
@@ -707,7 +803,6 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
  *     printf("Found member %p\n", my_data);
  *   }
  * @endcode
- * @ingroup Eina_List_Find_Group
  */
 EAPI void *
 eina_list_find(const Eina_List *list, const void *data)
@@ -739,7 +834,6 @@ eina_list_find(const Eina_List *list, const void *data)
  *     printf("Found member %p\n", found_node->data);
  *   }
  * @endcode
- * @ingroup Eina_List_Find_Group
  */
 EAPI Eina_List *
 eina_list_find_list(const Eina_List *list, const void *data)
@@ -752,167 +846,6 @@ eina_list_find_list(const Eina_List *list, const void *data)
      }
    return NULL;
 }
-
-/**
- * Free an entire list and all the nodes, ignoring the data contained
- * @param list The list to free
- * @return A NULL pointer
- *
- * This function will free all the list nodes in list specified by @p list.
- *
- * Example:
- * @code
- * extern Eina_List *list;
- *
- * list = eina_list_free(list);
- * @endcode
- * @ingroup Eina_List_Remove_Group
- */
-EAPI Eina_List *
-eina_list_free(Eina_List *list)
-{
-   Eina_List *l, *free_l;
-
-   if (!list) return NULL;
-   for (l = list; l;)
-     {
-	free_l = l;
-	l = l->next;
-
-	_eina_list_mempool_list_free(free_l);
-     }
-   return NULL;
-}
-
-/**
- * @defgroup Eina_List_Traverse_Group Linked List Traverse Functions
- *
- * Functions that you can use to traverse a linked list.
- */
-
-/**
- * Get the last list node in the list
- * @param list The list to get the last list node from
- * @return The last list node in the list @p list
- *
- * This function will return the last list node in the list (or NULL if the
- * list is empty).
- *
- * NB: This is a order-1 operation (it takes the same short time regardless of
- * the length of the list).
- *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *last, *l;
- *
- * last = eina_list_last(list);
- * printf("The list in reverse:\n");
- * for (l = last; l; l = l->prev)
- *   {
- *     printf("%p\n", l->data);
- *   }
- * @endcode
- * @ingroup Eina_List_Traverse_Group
- */
-static inline Eina_List *eina_list_last(const Eina_List *list);
-
-/**
- * Get the next list node after the specified list node
- * @param list The list node to get the next list node from
- * @return The next list node, or NULL if no next list node exists
- *
- * This function returns the next list node after the current one. It is
- * equivalent to list->next.
- *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *l;
- *
- * printf("The list:\n");
- * for (l = list; l; l = eina_list_next(l))
- *   {
- *     printf("%p\n", l->data);
- *   }
- * @endcode
- * @ingroup Eina_List_Traverse_Group
- */
-static inline Eina_List *eina_list_next(const Eina_List *list);
-
-/**
- * Get the previous list node before the specified list node
- * @param list The list node to get the previous list node from
- * @return The previous list node, or NULL if no previous list node exists
- *
- * This function returns the previous list node before the current one. It is
- * equivalent to list->prev.
- *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *last, *l;
- *
- * last = eina_list_last(list);
- * printf("The list in reverse:\n");
- * for (l = last; l; l = eina_list_prev(l))
- *   {
- *     printf("%p\n", l->data);
- *   }
- * @endcode
- * @ingroup Eina_List_Traverse_Group
- */
-static inline Eina_List *eina_list_prev(const Eina_List *list);
-
-/**
- * @defgroup Eina_List_General_Group Linked List General Functions
- *
- * Miscellaneous functions that work on linked lists.
- */
-
-/**
- * Get the list node data member
- * @param list The list node to get the data member of
- * @return The data member from the list node @p list
- *
- * This function returns the data member of the specified list node @p list.
- * It is equivalent to list->data.
- *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *l;
- *
- * printf("The list:\n");
- * for (l = list; l; l = eina_list_next(l))
- *   {
- *     printf("%p\n", eina_list_data(l));
- *   }
- * @endcode
- * @ingroup Eina_List_General_Group
- */
-static inline void *eina_list_data(const Eina_List *list);
-
-/**
- * Get the count of the number of items in a list
- * @param list The list whose count to return
- * @return The number of members in the list @p list
- *
- * This function returns how many members in the specified list: @p list. If
- * the list is empty (NULL), 0 is returned.
- *
- * NB: This is an order-1 operation and takes the same tiem regardless of the
- * length of the list.
- *
- * Example:
- * @code
- * extern Eina_List *list;
- *
- * printf("The list has %i members\n", eina_list_count(list));
- * @endcode
- * @ingroup Eina_List_General_Group
- */
-static inline unsigned int eina_list_count(const Eina_List *list);
 
 /**
  * Get the nth member's data pointer in a list
@@ -934,7 +867,6 @@ static inline unsigned int eina_list_count(const Eina_List *list);
  * if (data)
  *   printf("Element number %i has data %p\n", number, data);
  * @endcode
- * @ingroup Eina_List_Find_Group
  */
 EAPI void *
 eina_list_nth(const Eina_List *list, unsigned int n)
@@ -965,7 +897,6 @@ eina_list_nth(const Eina_List *list, unsigned int n)
  * if (nth_list)
  *   printf("Element number %i has data %p\n", number, nth_list->data);
  * @endcode
- * @ingroup Eina_List_Find_Group
  */
 EAPI Eina_List *
 eina_list_nth_list(const Eina_List *list, unsigned int n)
@@ -1001,7 +932,144 @@ eina_list_nth_list(const Eina_List *list, unsigned int n)
 }
 
 /**
- * @defgroup Eina_List_Ordering_Group Linked List Ordering Functions
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_List_Traverse_Group Linked List Traverse Functions
+ *
+ * Functions that you can use to traverse a linked list.
+ */
+
+/**
+ * Get the last list node in the list
+ * @param list The list to get the last list node from
+ * @return The last list node in the list @p list
+ *
+ * This function will return the last list node in the list (or NULL if the
+ * list is empty).
+ *
+ * NB: This is a order-1 operation (it takes the same short time regardless of
+ * the length of the list).
+ *
+ * Example:
+ * @code
+ * extern Eina_List *list;
+ * Eina_List *last, *l;
+ *
+ * last = eina_list_last(list);
+ * printf("The list in reverse:\n");
+ * for (l = last; l; l = l->prev)
+ *   {
+ *     printf("%p\n", l->data);
+ *   }
+ * @endcode
+ */
+static inline Eina_List *eina_list_last(const Eina_List *list);
+
+/**
+ * Get the next list node after the specified list node
+ * @param list The list node to get the next list node from
+ * @return The next list node, or NULL if no next list node exists
+ *
+ * This function returns the next list node after the current one. It is
+ * equivalent to list->next.
+ *
+ * Example:
+ * @code
+ * extern Eina_List *list;
+ * Eina_List *l;
+ *
+ * printf("The list:\n");
+ * for (l = list; l; l = eina_list_next(l))
+ *   {
+ *     printf("%p\n", l->data);
+ *   }
+ * @endcode
+ */
+static inline Eina_List *eina_list_next(const Eina_List *list);
+
+/**
+ * Get the previous list node before the specified list node
+ * @param list The list node to get the previous list node from
+ * @return The previous list node, or NULL if no previous list node exists
+ *
+ * This function returns the previous list node before the current one. It is
+ * equivalent to list->prev.
+ *
+ * Example:
+ * @code
+ * extern Eina_List *list;
+ * Eina_List *last, *l;
+ *
+ * last = eina_list_last(list);
+ * printf("The list in reverse:\n");
+ * for (l = last; l; l = eina_list_prev(l))
+ *   {
+ *     printf("%p\n", l->data);
+ *   }
+ * @endcode
+ */
+static inline Eina_List *eina_list_prev(const Eina_List *list);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_List_General_Group Linked List General Functions
+ *
+ * Miscellaneous functions that work on linked lists.
+ */
+
+/**
+ * Get the list node data member
+ * @param list The list node to get the data member of
+ * @return The data member from the list node @p list
+ *
+ * This function returns the data member of the specified list node @p list.
+ * It is equivalent to list->data.
+ *
+ * Example:
+ * @code
+ * extern Eina_List *list;
+ * Eina_List *l;
+ *
+ * printf("The list:\n");
+ * for (l = list; l; l = eina_list_next(l))
+ *   {
+ *     printf("%p\n", eina_list_data(l));
+ *   }
+ * @endcode
+ */
+static inline void *eina_list_data(const Eina_List *list);
+
+/**
+ * Get the count of the number of items in a list
+ * @param list The list whose count to return
+ * @return The number of members in the list @p list
+ *
+ * This function returns how many members in the specified list: @p list. If
+ * the list is empty (NULL), 0 is returned.
+ *
+ * NB: This is an order-1 operation and takes the same tiem regardless of the
+ * length of the list.
+ *
+ * Example:
+ * @code
+ * extern Eina_List *list;
+ *
+ * printf("The list has %i members\n", eina_list_count(list));
+ * @endcode
+ */
+static inline unsigned int eina_list_count(const Eina_List *list);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eina_List_Ordering_Group Linked List Ordering Functions
  *
  * Functions that change the ordering of data in a linked list.
  */
@@ -1020,7 +1088,6 @@ eina_list_nth_list(const Eina_List *list, unsigned int n)
  *
  * list = eina_list_reverse(list);
  * @endcode
- * @ingroup Eina_List_Ordering_Group
  */
 EAPI Eina_List *
 eina_list_reverse(Eina_List *list)
@@ -1079,7 +1146,6 @@ eina_list_reverse(Eina_List *list)
  *     exit(-1);
  *   }
  * @endcode
- * @ingroup Eina_List_Ordering_Group
  */
 EAPI Eina_List *
 eina_list_sort(Eina_List *list, unsigned int size, int (*func)(void *, void *))
@@ -1183,6 +1249,10 @@ eina_list_sort(Eina_List *list, unsigned int size, int (*func)(void *, void *))
    return list;
 }
 
+/**
+ * @}
+ */
+
 EAPI Eina_Iterator *
 eina_list_iterator_new(const Eina_List *list)
 {
@@ -1232,3 +1302,6 @@ eina_list_accessor_new(const Eina_List *list)
    return &it->accessor;
 }
 
+/**
+ * @}
+ */

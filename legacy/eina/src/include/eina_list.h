@@ -25,11 +25,6 @@
 #include "eina_iterator.h"
 #include "eina_accessor.h"
 
-/**
- * @defgroup List_Group List
- * @{
- */
-
 typedef struct _Eina_List Eina_List;
 typedef struct _Eina_List_Accounting Eina_List_Accounting;
 
@@ -78,7 +73,6 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list);
 
 #define EINA_LIST_ITER_NEXT(list, l, data) for (l = list, data = eina_list_data(l); l; l = eina_list_next(l), data = eina_list_data(l))
 
-/** @} */
 #include "eina_inline_list.x"
 
 #endif /* EINA_LIST_H_ */
