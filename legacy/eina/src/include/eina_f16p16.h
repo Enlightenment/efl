@@ -19,6 +19,8 @@
 #ifndef EINA_F16P16_H_
 #define EINA_F16P16_H_
 
+#include <stdint.h>
+
 /**
  * To be documented
  * FIXME: To be fixed
