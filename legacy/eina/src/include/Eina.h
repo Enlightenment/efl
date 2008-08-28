@@ -28,7 +28,8 @@
  *
  * The Eina library is a library that implemente an API for data types
  * in an efficient way. It also provides some useful tools like
- * opengin shared libraries and errors management.
+ * openin shared libraries, errors management, type conversion,
+ * time accounting and memory pool.
  *
  * This library is cross-platform and can be compiled and used on
  * Linux and Windows (XP and CE).
@@ -36,7 +37,10 @@
  * The data types that are available are
  * @li hash table
  * @li list
- * @li string share
+ * @li inlined list
+ * @li array
+ * @li shared string
+ * @li inlined red black tree
  *
  * This document describes each data type by providing the algorithms
  * used in the implementation, the performance, a short tutorial and
@@ -51,6 +55,16 @@
  *
  * To look at documentation of our hash tables, follow the link @ref
  * Eina_Hash_Group.
+ *
+ * @subsection list List
+ *
+ * @subsection inlist Inlined List
+ *
+ * @subsection array Array
+ *
+ * @subsection stringshare Shared String
+ *
+ * @subsection rbtree Inlined Red Black Tree
  *
  * @todo add debug function
  * @todo add magic function
@@ -76,6 +90,9 @@ extern "C" {
 #include "eina_stringshare.h"
 #include "eina_magic.h"
 #include "eina_counter.h"
+#include "eina_rbtree.h"
+#include "eina_accessor.h"
+#include "eina_iterator.h"
 
 EAPI int eina_init(void);
 EAPI int eina_shutdown(void);
