@@ -20,19 +20,29 @@
 # include "config.h"
 #endif
 
+#include <sys/types.h>
+#include <dirent.h>
+#include <string.h>
+#include <dlfcn.h>
+
 #include "eina_module.h"
 #include "eina_file.h"
 #include "eina_private.h"
 #include "eina_inlist.h"
 
-#include <sys/types.h>
-#include <dirent.h>
-#include <string.h>
-#include <dlfcn.h>
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define MODULE_EXTENSION ".so"
+
+/**
+ * @cond LOCAL
+ */
+
+#ifdef _WIN32
+# define MODULE_EXTENSION ".so"
+#else
+# define MODULE_EXTENSION ".dll"
+#endif /* ! _WIN32 */
 #define MODULE_SUBDIR "/modules/"
 #define MODULE_BASE_EXTENTION "module"
 
@@ -208,6 +218,10 @@ _eina_dir_module_cb(const char *name, const char *path, Eina_Dir_List *data)
    free(module);
 }
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -278,11 +292,12 @@ eina_module_init(void)
 	}
    }
 #else
-   self_name = malloc(strlen(PACKAGE_LIB_DIR) + strlen("/libeina.so") + 1);
+   self_name = malloc(strlen(PACKAGE_LIB_DIR) + strlen("/libeina") + strlen(MODULE_EXTENSION) + 1);
    if (self_name)
      {
 	strcpy(self_name, PACKAGE_LIB_DIR);
-	strcat(self_name, "/libeina.so");
+	strcat(self_name, "/libeina");
+	strcat(self_name, MODULE_EXTENSION);
      }
 #endif
 
