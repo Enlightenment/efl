@@ -205,7 +205,8 @@ fi
 ### Checks for linker characteristics
 lt_enable_auto_import=""
 case "$host_os" in
-   mingw*|cegcc*)
+   mingw* | cegcc*)
+      AC_DEFINE(EFL_EINA_BUILD, 1, [Define to mention that eina is built])
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
 esac
