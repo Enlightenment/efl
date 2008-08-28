@@ -16,6 +16,13 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdlib.h>
+#include <assert.h>
+
 #include "eina_inlist.h"
 #include "eina_private.h"
 
@@ -24,6 +31,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
 typedef struct _Eina_Iterator_Inlist Eina_Iterator_Inlist;
 typedef struct _Eina_Accessor_Inlist Eina_Accessor_Inlist;
 
@@ -119,9 +127,11 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
 /**
  * To be documented
  * FIXME: To be fixed

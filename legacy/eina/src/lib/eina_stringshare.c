@@ -64,6 +64,10 @@
 #include "eina_error.h"
 #include "eina_private.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
 
@@ -81,8 +85,16 @@ struct _Eina_Stringshare_Node
 static Eina_Stringshare *share = NULL;
 static int eina_stringshare_init_count = 0;
 
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
 /**
- * @defgroup Eina_Stringshare_Group String Instance Functions
+ * @addtogroup Eina_Stringshare_Group String Instance Functions
  *
  * These functions allow you to store one copy of a string, and use it
  * throughout your program.
@@ -99,6 +111,8 @@ static int eina_stringshare_init_count = 0;
  * a significant impact as you scale the number of copies up. It improves
  * string creation/destruction speed, reduces memory use and decreases
  * memory fragmentation, so a win all-around.
+ *
+ * @{
  */
 
 /**
@@ -129,7 +143,6 @@ eina_stringshare_init()
  * @param   str The string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success.
  *          @c NULL on failure.
- * @ingroup Eina_Stringshare_Group
  */
 EAPI const char *
 eina_stringshare_add(const char *str)
@@ -171,7 +184,6 @@ eina_stringshare_add(const char *str)
  * It will free the string if no other instances are left.
  *
  * @param str string The given string.
- * @ingroup Eina_Stringshare_Group
  */
 EAPI void
 eina_stringshare_del(const char *str)
@@ -243,3 +255,6 @@ eina_stringshare_shutdown()
    return eina_stringshare_init_count;
 }
 
+/**
+ * @}
+ */

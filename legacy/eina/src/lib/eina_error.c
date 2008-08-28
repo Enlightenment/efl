@@ -20,20 +20,26 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
+#include <string.h>
+
 #include "eina_error.h"
 #include "eina_list.h"
 #include "eina_private.h"
+
 /* TODO
  * + printing errors to stdout or stderr can be implemented
- * using a queue, usful for multiple threads printing
+ * using a queue, useful for multiple threads printing
  * + add a wapper for assert?
  * + add common error numbers, messages
  * + add a calltrace of erros, not only store the last error but a list of them
  * and also store the function that set it
  */
+
 /*============================================================================*
- *                                  Local                                     * 
+ *                                  Local                                     *
  *============================================================================*/
+
 static int _init_count = 0;
 static Eina_List *_error_list;
 static Eina_Error _err;
@@ -63,10 +69,15 @@ static char *_colors[EINA_ERROR_LEVELS] = {
 
 
 /*============================================================================*
- *                                   API                                      * 
+ *                                 Global                                     *
  *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
 /**
- * 
+ *
  */
 EAPI int eina_error_init(void)
 {
@@ -85,7 +96,7 @@ EAPI int eina_error_init(void)
 	return ++_init_count;
 }
 /**
- * 
+ *
  */
 EAPI int eina_error_shutdown(void)
 {
@@ -114,14 +125,14 @@ EAPI Eina_Error eina_error_register(const char *msg)
 	return eina_list_count(_error_list);
 }
 /**
- * 
+ *
  */
 EAPI Eina_Error eina_error_get(void)
 {
 	return _err;
 }
 /**
- *  
+ *
  */
 EAPI void eina_error_set(Eina_Error err)
 {
@@ -146,7 +157,7 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 
 	if (level > _error_level)
 		return;
-	
+
 	va_start(args, fmt);
 	_print_cb(level, file, fnc, line, fmt, _print_cb_data, args);
 	va_end(args);
@@ -190,4 +201,3 @@ EAPI void eina_error_log_level_set(Eina_Error_Level level)
 {
 	_error_level = level;
 }
-

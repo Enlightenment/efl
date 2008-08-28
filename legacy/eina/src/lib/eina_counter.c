@@ -16,15 +16,23 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "eina_counter.h"
 #include "eina_inlist.h"
 #include "eina_error.h"
 #include "eina_private.h"
+
 /*============================================================================*
- *                                  Local                                     * 
+ *                                  Local                                     *
  *============================================================================*/
+
 typedef struct _Eina_Clock Eina_Clock;
 
 struct _Eina_Counter
@@ -52,6 +60,7 @@ static int EINA_COUNTER_ERROR_OUT_OF_MEMORY = 0;
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

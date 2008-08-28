@@ -16,17 +16,23 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <assert.h>
+
 #include "eina_mempool.h"
 #include "eina_list.h"
 #include "eina_module.h"
 #include "eina_private.h"
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
 static Eina_Module_Group *_group;
 static int _init_count = 0;
-
-EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
 
 struct _Eina_Mempool
 {
@@ -69,8 +75,15 @@ _new_from_buffer(const char *module, const char *context, const char *options, v
 }
 
 /*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
+EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
+
 /**
  *
  */

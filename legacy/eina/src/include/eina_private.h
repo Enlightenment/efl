@@ -19,26 +19,6 @@
 #ifndef EINA_PRIVATE_H_
 #define EINA_PRIVATE_H_
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <dirent.h>
-#include <string.h>
-
-#include <assert.h>
-
 #include "eina_iterator.h"
 #include "eina_accessor.h"
 

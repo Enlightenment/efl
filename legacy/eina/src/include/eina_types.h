@@ -80,4 +80,4 @@ typedef Eina_Bool (*Eina_Each)(const void *container,
 #define EINA_EACH(Function) ((Eina_Each)Function)
 
 
-#endif /*EINA_TYPES_H_*/
+#endif /* EINA_TYPES_H_ */

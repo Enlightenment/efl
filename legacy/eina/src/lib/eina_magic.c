@@ -16,15 +16,24 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <string.h>
+
 #include "eina_array.h"
 #include "eina_error.h"
-
 #include "eina_private.h"
 
 #ifndef DEBUG
-#define DEBUG
+# define DEBUG
 #endif
 #include "eina_magic.h"
+
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
 
 typedef struct _Eina_Magic_String Eina_Magic_String;
 struct _Eina_Magic_String
@@ -35,6 +44,14 @@ struct _Eina_Magic_String
 
 static int _eina_magic_string_count = 0;
 static Eina_Array *strings = NULL;
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 
 EAPI int
 eina_magic_string_init()

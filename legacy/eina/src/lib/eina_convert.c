@@ -26,14 +26,14 @@
 
 #include "eina_convert.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
 static const char look_up_table[] = {'0', '1', '2', '3', '4',
 				     '5', '6', '7', '8', '9',
 				     'a', 'b', 'c', 'd', 'e', 'f'};
 static int _init_count = 0;
-
-EAPI Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND = 0;
-EAPI Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND = 0;
-EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
 
 #define HEXA_TO_INT(Hexa) (Hexa >= 'a') ? Hexa - 'a' + 10 : Hexa - '0'
 
@@ -48,6 +48,18 @@ static inline void reverse(char s[], int length)
 	s[j] = c;
      }
 }
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+EAPI Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND = 0;
+EAPI Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND = 0;
+EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
 
 /*
  * Come from the second edition of The C Programming Language ("K&R2") on page 64

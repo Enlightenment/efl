@@ -57,8 +57,6 @@
  * @todo add other todo items :)
  */
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

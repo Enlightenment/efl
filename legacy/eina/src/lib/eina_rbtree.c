@@ -16,6 +16,10 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,6 +31,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
 #define EINA_RBTREE_ITERATOR_PREFIX_MASK  0x1
 #define EINA_RBTREE_ITERATOR_INFIX_MASK   0x2
 #define EINA_RBTREE_ITERATOR_POSTFIX_MASK 0x4
@@ -229,9 +234,11 @@ _eina_rbtree_inline_double_rotation(Eina_Rbtree *node, Eina_Rbtree_Direction dir
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
 EAPI Eina_Rbtree *
 eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp)
 {
