@@ -42,7 +42,7 @@
 #ifdef _WIN32
 # define MODULE_EXTENSION ".dll"
 #else
-# define MODULE_EXTENSION ".do"
+# define MODULE_EXTENSION ".so"
 #endif /* ! _WIN32 */
 #define MODULE_SUBDIR "/modules/"
 #define MODULE_BASE_EXTENTION "module"
