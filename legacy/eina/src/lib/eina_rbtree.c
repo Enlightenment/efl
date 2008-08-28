@@ -360,13 +360,13 @@ eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
 
 		if (s != NULL)
 		  {
-		     if (!_eina_rbtree_is_red(s->son[!last])
-			 && !_eina_rbtree_is_red(s->son[last]))
+		     if (!_eina_rbtree_is_red(s->son[EINA_RBTREE_LEFT])
+			 && !_eina_rbtree_is_red(s->son[EINA_RBTREE_RIGHT]))
 		       {
 			  /* Color flip */
 			  p->color = EINA_RBTREE_BLACK;
-			  p->son[0]->color = EINA_RBTREE_RED;
-			  p->son[1]->color = EINA_RBTREE_RED;
+			  p->son[EINA_RBTREE_LEFT]->color = EINA_RBTREE_RED;
+			  p->son[EINA_RBTREE_RIGHT]->color = EINA_RBTREE_RED;
 		       }
 		     else
 		       {
@@ -375,9 +375,23 @@ eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
 			  dir2 = g->son[1] == p ? EINA_RBTREE_RIGHT : EINA_RBTREE_LEFT;
 
 			  if (_eina_rbtree_is_red(s->son[last]))
-			    g->son[dir2] = _eina_rbtree_inline_double_rotation(g->son[dir2], last);
+			    {
+			       g->son[dir2] = _eina_rbtree_inline_double_rotation(p, last);
+			       if (f == g)
+				 {
+				    p = g->son[dir2]->son[last];
+				    f = g->son[dir2];
+				 }
+			    }
 			  else if (_eina_rbtree_is_red(s->son[!last]))
-			    g->son[dir2] = _eina_rbtree_inline_single_rotation(g->son[dir2], last);
+			    {
+			       g->son[dir2] = _eina_rbtree_inline_single_rotation(p, last);
+			       if (f == g)
+				 {
+				    p = g->son[dir2]->son[last];
+				    f = g->son[dir2];
+				 }
+			    }
 
 			  /* Ensure correct coloring */
 			  q->color = g->son[dir2]->color = EINA_RBTREE_RED;
