@@ -30,21 +30,15 @@
 
 #include "eina_stringshare.h"
 #include "eina_bench.h"
-#include "eina_array.h"
 
 static void
 eina_bench_stringshare_job(int request)
 {
    const char *tmp;
-   Eina_Array *ea;
-   Eina_Array_Iterator it;
    unsigned int j;
    int i;
 
    eina_stringshare_init();
-   eina_array_init();
-
-   ea = eina_array_new(request);
 
    for (i = 0; i < request; ++i)
      {
@@ -52,8 +46,6 @@ eina_bench_stringshare_job(int request)
 
 	snprintf(build, 64, "string_%i", i);
 	tmp = eina_stringshare_add(build);
-
-	eina_array_push(ea, tmp);
      }
 
    srand(time(NULL));
@@ -65,14 +57,8 @@ eina_bench_stringshare_job(int request)
 
 	  snprintf(build, 64, "string_%i", rand() % request);
 	  tmp = eina_stringshare_add(build);
-
-	  eina_array_push(ea, tmp);
        }
 
-   EINA_ARRAY_ITER_NEXT(ea, j, tmp, it)
-     eina_stringshare_del(tmp);
-
-   eina_array_shutdown();
    eina_stringshare_shutdown();
 }
 

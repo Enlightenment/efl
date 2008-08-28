@@ -61,6 +61,7 @@
 
 #include "eina_stringshare.h"
 #include "eina_hash.h"
+#include "eina_rbtree.h"
 #include "eina_error.h"
 #include "eina_private.h"
 
@@ -78,8 +79,8 @@ struct _Eina_Stringshare
 
 struct _Eina_Stringshare_Node
 {
-   Eina_Stringshare_Node *next;
-   int                  references;
+   Eina_Rbtree node;
+   int         references;
 };
 
 static Eina_Stringshare *share = NULL;
@@ -138,6 +139,26 @@ eina_stringshare_init()
    return 1;
 }
 
+static int
+_eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length)
+{
+   const char *el_str;
+
+   el_str = (const char *) (node + 1);
+   return strncmp(el_str, key, length);
+}
+
+static Eina_Rbtree_Direction
+_eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right)
+{
+   if (!left) return EINA_RBTREE_RIGHT;
+   if (!right) return EINA_RBTREE_LEFT;
+
+   if (strcmp((const char*) (left + 1), (const char*) (right + 1)) < 0)
+     return EINA_RBTREE_LEFT;
+   return EINA_RBTREE_RIGHT;
+}
+
 /**
  * Retrieves an instance of a string for use in a program.
  * @param   str The string to retrieve an instance of.
@@ -147,34 +168,30 @@ eina_stringshare_init()
 EAPI const char *
 eina_stringshare_add(const char *str)
 {
-   int hash_num, slen;
+   Eina_Stringshare_Node *el;
    char *el_str;
-   Eina_Stringshare_Node *el, *pel = NULL;
+   int hash_num, slen;
 
    if (!str) return NULL;
    slen = strlen(str) + 1;
    hash_num = eina_hash_superfast(str, slen) & 0x3FF;
-   for (el = share->buckets[hash_num]; el; pel = el, el = el->next)
+
+   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp));
+   if (el)
      {
-	el_str = ((char *)el) + sizeof(Eina_Stringshare_Node);
-	if (!strcmp(el_str, str))
-	  {
-	     if (pel)
-	       {
-		  pel->next = el->next;
-		  el->next = share->buckets[hash_num];
-		  share->buckets[hash_num] = el;
-	       }
-	     el->references++;
-	     return el_str;
-	  }
+	el->references++;
+	return (const char*) (el + 1);
      }
-   if (!(el = malloc(sizeof(Eina_Stringshare_Node) + slen + 1))) return NULL;
-   el_str = ((char *)el) + sizeof(Eina_Stringshare_Node);
-   strcpy(el_str, str);
+
+   el = malloc(sizeof (Eina_Stringshare_Node) + slen + 1);
+   if (!el) return NULL;
    el->references = 1;
-   el->next = share->buckets[hash_num];
-   share->buckets[hash_num] = el;
+
+   el_str = (char*) (el + 1);
+   memcpy(el_str, str, slen + 1);
+
+   share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node));
+
    return el_str;
 }
 
@@ -188,36 +205,23 @@ eina_stringshare_add(const char *str)
 EAPI void
 eina_stringshare_del(const char *str)
 {
+   Eina_Stringshare_Node *el;
    int hash_num, slen;
-   char *el_str;
-   Eina_Stringshare_Node *el, *pel = NULL;
 
    if (!str) return;
    slen = strlen(str) + 1;
    hash_num = eina_hash_superfast(str, slen) & 0x3FF;
-   for (el = share->buckets[hash_num]; el; pel = el, el = el->next)
+
+   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp));
+   if (el)
      {
-	el_str = ((char *)el) + sizeof(Eina_Stringshare_Node);
-	if (el_str == str)
+	el->references--;
+	if (el->references == 0)
 	  {
-	     el->references--;
-	     if (el->references == 0)
-	       {
-		  if (pel) pel->next = el->next;
-		  else share->buckets[hash_num] = el->next;
-		  free(el);
-	       }
-	     else
-	       {
-		  if (pel)
-		    {
-		       pel->next = el->next;
-		       el->next = share->buckets[hash_num];
-		       share->buckets[hash_num] = el;
-		    }
-	       }
-	     return;
+	     share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_remove((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node));
+	     free(el);
 	  }
+	return ;
      }
    EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
    if (getenv("EINA_ERROR_ABORT")) abort();
@@ -236,13 +240,14 @@ eina_stringshare_shutdown()
 	/* remove any string still in the table */
 	for (i = 0; i < 1024; i++)
 	  {
-	     Eina_Stringshare_Node *el = share->buckets[i];
+	     Eina_Rbtree *el = (Eina_Rbtree*) share->buckets[i];
+	     Eina_Rbtree *save;
+
 	     while (el)
 	       {
-		  Eina_Stringshare_Node *cur = el;
-		  el = el->next;
-		  cur->next = NULL;
-		  free(cur);
+		  save = el;
+		  el = eina_rbtree_inline_remove(el, el, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node));
+		  free(save);
 	       }
 	     share->buckets[i] = NULL;
 	  }
