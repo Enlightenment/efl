@@ -30,6 +30,7 @@
 
 #include "eina_stringshare.h"
 #include "eina_bench.h"
+#include "eina_convert.h"
 
 static void
 eina_bench_stringshare_job(int request)
@@ -42,9 +43,9 @@ eina_bench_stringshare_job(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char build[64];
+	char build[64] = "string_";
 
-	snprintf(build, 64, "string_%i", i);
+	eina_convert_xtoa(i, build + 7);
 	tmp = eina_stringshare_add(build);
      }
 
@@ -53,9 +54,9 @@ eina_bench_stringshare_job(int request)
    for (j = 0; j < 200; ++j)
      for (i = 0; i < request; ++i)
        {
-	  char build[64];
+	  char build[64] = "string_";
 
-	  snprintf(build, 64, "string_%i", rand() % request);
+	  eina_convert_xtoa(rand() % request, build + 7);
 	  tmp = eina_stringshare_add(build);
        }
 
@@ -74,9 +75,9 @@ eina_bench_stringchunk_job(int request)
 
    for (i = 0; i < request; ++i)
      {
-	char build[64];
+	char build[64] = "string_";
 
-	snprintf(build, 64, "string_%i", i);
+	eina_convert_xtoa(i, build + 7);
 	g_string_chunk_insert_const(chunk, build);
      }
 
@@ -85,9 +86,9 @@ eina_bench_stringchunk_job(int request)
    for (j = 0; j < 200; ++j)
      for (i = 0; i < request; ++i)
        {
-	  char build[64];
+	  char build[64] = "string_";
 
-	  snprintf(build, 64, "string_%i", rand() % request);
+	  eina_convert_xtoa(rand() % request, build + 7);
 	  g_string_chunk_insert_const(chunk, build);
        }
 
