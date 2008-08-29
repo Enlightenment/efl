@@ -225,9 +225,9 @@ eina_counter_dump(Eina_Counter *counter, FILE *out)
         end = clk->end.tv_sec * 1000000000 + clk->end.tv_nsec;
         diff = (clk->end.tv_sec - clk->start.tv_sec) * 1000000000 + clk->end.tv_nsec - clk->start.tv_nsec;
 #else
-        start = (long int)(((long long int)clk->start.pc.QuadPart * 1000000000ll) / (long long int)_eina_counter_frequency.QuadPart);
-        end = (long int)(((long long int)clk->end.pc.QuadPart * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
-        diff = (long int)(((long long int)(clk->end.pc.QuadPart - clk->start.pc.QuadPart) * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
+        start = (long int)(((long long int)clk->start.QuadPart * 1000000000ll) / (long long int)_eina_counter_frequency.QuadPart);
+        end = (long int)(((long long int)clk->end.QuadPart * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
+        diff = (long int)(((long long int)(clk->end.QuadPart - clk->start.QuadPart) * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
 #endif /* _WIN2 */
 
 	fprintf(out, "%i\t%li\t%li\t%li\n",
