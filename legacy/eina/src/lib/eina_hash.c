@@ -102,18 +102,15 @@ static int _eina_hash_init_count = 0;
 #endif
 
 static inline int
-_eina_hash_rbtree_key(const Eina_Hash_El *el, const char *key, int key_length, const Eina_Hash *hash)
+_eina_hash_rbtree_key(const Eina_Hash_El *el, const char *key, int key_length, Eina_Key_Cmp cmp)
 {
-   return hash->key_cmp_cb(el->tuple.key, el->tuple.key_length, key, key_length);
+   return cmp(el->tuple.key, el->tuple.key_length, key, key_length);
 }
 
 static Eina_Rbtree_Direction
-_eina_hash_rbtree_node(const Eina_Hash_El *left, const Eina_Hash_El *right, const Eina_Hash *hash)
+_eina_hash_rbtree_node(const Eina_Hash_El *left, const Eina_Hash_El *right, Eina_Key_Cmp cmp)
 {
-   if (!left) return EINA_RBTREE_RIGHT;
-   if (!right) return EINA_RBTREE_LEFT;
-
-   if (hash->key_cmp_cb(left->tuple.key, left->tuple.key_length, right->tuple.key, right->tuple.key_length) < 0)
+   if (cmp(left->tuple.key, left->tuple.key_length, right->tuple.key, right->tuple.key_length) < 0)
      return EINA_RBTREE_LEFT;
    return EINA_RBTREE_RIGHT;
 }
@@ -136,7 +133,7 @@ _eina_hash_find_by_hash(const Eina_Hash *hash, const char *key, int key_length, 
 
    key_hash &= 0xFF;
 
-   el = (Eina_Hash_El*) eina_rbtree_inline_lookup(hash->buckets[key_hash], key, key_length, EINA_RBTREE_CMP_KEY_CB(_eina_hash_rbtree_key), hash);
+   el = (Eina_Hash_El*) eina_rbtree_inline_lookup(hash->buckets[key_hash], key, key_length, EINA_RBTREE_CMP_KEY_CB(_eina_hash_rbtree_key), hash->key_cmp_cb);
    return el;
 }
 
@@ -447,7 +444,7 @@ eina_hash_free(Eina_Hash *hash)
 	     Eina_Rbtree *el;
 
 	     el = hash->buckets[i];
-	     hash->buckets[i] = eina_rbtree_inline_remove(hash->buckets[i], el, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash);
+	     hash->buckets[i] = eina_rbtree_inline_remove(hash->buckets[i], el, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash->key_cmp_cb);
 	     free(el);
 	  }
      }
@@ -514,7 +511,7 @@ eina_hash_add_by_hash(Eina_Hash *hash,
    key_hash &= 0xFF;
 
    /* add the new element to the hash. */
-   hash->buckets[key_hash] = eina_rbtree_inline_insert(hash->buckets[key_hash], &el->_node_data, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash);
+   hash->buckets[key_hash] = eina_rbtree_inline_insert(hash->buckets[key_hash], &el->_node_data, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash->key_cmp_cb);
    hash->population++;
    return EINA_TRUE;
 
@@ -571,7 +568,7 @@ eina_hash_direct_add_by_hash(Eina_Hash *hash,
    key_hash &= 0xFF;
 
    /* add the new element to the hash. */
-   hash->buckets[key_hash] = eina_rbtree_inline_insert(hash->buckets[key_hash], &el->_node_data, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash);
+   hash->buckets[key_hash] = eina_rbtree_inline_insert(hash->buckets[key_hash], &el->_node_data, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash->key_cmp_cb);
    hash->population++;
    return EINA_TRUE;
 
@@ -676,7 +673,7 @@ eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_
 
    key_hash &= 0xFF;
 
-   hash->buckets[key_hash] = eina_rbtree_inline_remove(hash->buckets[key_hash], &el->_node_data, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash);
+   hash->buckets[key_hash] = eina_rbtree_inline_remove(hash->buckets[key_hash], &el->_node_data, EINA_RBTREE_CMP_NODE_CB(_eina_hash_rbtree_node), hash->key_cmp_cb);
    free(el);
    hash->population--;
 

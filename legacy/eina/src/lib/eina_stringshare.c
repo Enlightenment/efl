@@ -98,9 +98,6 @@ _eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int le
 static Eina_Rbtree_Direction
 _eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right, __UNUSED__ void *data)
 {
-   if (!left) return EINA_RBTREE_RIGHT;
-   if (!right) return EINA_RBTREE_LEFT;
-
    if (strcmp((const char*) (left + 1), (const char*) (right + 1)) < 0)
      return EINA_RBTREE_LEFT;
    return EINA_RBTREE_RIGHT;
