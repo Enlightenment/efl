@@ -116,7 +116,7 @@ eina_bench_run(Eina_Bench *bench)
 	   "unset label                            # remove any previous labels\n"
 	   "set xtic auto                          # set xtics automatically\n"
 	   "set ytic auto                          # set ytics automatically\n"
-	   "set logscale y\n"
+/* 	   "set logscale y\n" */
 	   "set terminal png size 1024,768\n"
 	   "set output \"output_%s_%s.png\"\n"
 	   "set title \"%s %s\n"
@@ -179,8 +179,8 @@ struct _Eina_Bench_Case
 static const Eina_Bench_Case etc[] = {
   { "Hash", eina_bench_hash },
   { "Array vs List vs Inlist", eina_bench_array },
-/*   { "Stringshare", eina_bench_stringshare }, */
-/*   { "Convert", eina_bench_convert }, */
+  { "Stringshare", eina_bench_stringshare },
+  { "Convert", eina_bench_convert },
   { NULL, NULL }
 };
 
