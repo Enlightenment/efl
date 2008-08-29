@@ -172,6 +172,112 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
    soft16_polygon_draw(surface, context, polygon);
 }
 
+static void
+eng_gradient2_color_np_stop_insert(void *data, void *gradient, int r, int g, int b, int a, float pos)
+{
+}
+
+static void
+eng_gradient2_clear(void *data, void *gradient)
+{
+}
+
+static void
+eng_gradient2_fill_transform_set(void *data, void *gradient, void *transform)
+{
+}
+
+static void
+eng_gradient2_fill_spread_set(void *data, void *gradient, int spread)
+{
+}
+
+static void *
+eng_gradient2_linear_new(void *data)
+{
+   return NULL;
+}
+
+static void
+eng_gradient2_linear_free(void *data, void *linear_gradient)
+{
+}
+
+static void
+eng_gradient2_linear_fill_set(void *data, void *linear_gradient, int x0, int y0, int x1, int y1)
+{
+}
+
+static int
+eng_gradient2_linear_is_opaque(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+{
+   return 1;
+}
+
+static int
+eng_gradient2_linear_is_visible(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+{
+   return 1;
+}
+
+static void
+eng_gradient2_linear_render_pre(void *data, void *context, void *linear_gradient)
+{
+}
+
+static void
+eng_gradient2_linear_render_post(void *data, void *linear_gradient)
+{
+}
+
+static void
+eng_gradient2_linear_draw(void *data, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h)
+{
+}
+
+static void *
+eng_gradient2_radial_new(void *data)
+{
+   return NULL;
+}
+
+static void
+eng_gradient2_radial_free(void *data, void *radial_gradient)
+{
+}
+
+static void
+eng_gradient2_radial_fill_set(void *data, void *radial_gradient, float cx, float cy, float rx, float ry)
+{
+}
+
+static int
+eng_gradient2_radial_is_opaque(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+{
+   return 1;
+}
+
+static int
+eng_gradient2_radial_is_visible(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+{
+   return 1;
+}
+
+static void
+eng_gradient2_radial_render_pre(void *data, void *context, void *radial_gradient)
+{
+}
+
+static void
+eng_gradient2_radial_render_post(void *data, void *radial_gradient)
+{
+}
+
+static void
+eng_gradient2_radial_draw(void *data, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h)
+{
+}
+
 static void *
 eng_gradient_new(void *data)
 {
@@ -743,6 +849,29 @@ static Evas_Func func =
      eng_polygon_points_clear,
      eng_polygon_draw,
      /* gradient draw funcs */
+     eng_gradient2_color_np_stop_insert,
+     eng_gradient2_clear,
+     eng_gradient2_fill_transform_set,
+     eng_gradient2_fill_spread_set,
+     
+     eng_gradient2_linear_new,
+     eng_gradient2_linear_free,
+     eng_gradient2_linear_fill_set,
+     eng_gradient2_linear_is_opaque,
+     eng_gradient2_linear_is_visible,
+     eng_gradient2_linear_render_pre,
+     eng_gradient2_linear_render_post,
+     eng_gradient2_linear_draw,
+     
+     eng_gradient2_radial_new,
+     eng_gradient2_radial_free,
+     eng_gradient2_radial_fill_set,
+     eng_gradient2_radial_is_opaque,
+     eng_gradient2_radial_is_visible,
+     eng_gradient2_radial_render_pre,
+     eng_gradient2_radial_render_post,
+     eng_gradient2_radial_draw,
+     
      eng_gradient_new,
      eng_gradient_free,
      eng_gradient_color_stop_add,
