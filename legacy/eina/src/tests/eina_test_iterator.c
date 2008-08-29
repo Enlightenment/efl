@@ -281,8 +281,8 @@ struct _Eina_Rbtree_Int
 static Eina_Rbtree_Direction
 eina_rbtree_int_cmp(const Eina_Rbtree_Int *left, const Eina_Rbtree_Int *right)
 {
-   if (!left) return EINA_RBTREE_RIGHT;
-   if (!right) return EINA_RBTREE_LEFT;
+   fail_if(!left);
+   fail_if(!right);
 
    if (left->value < right->value) return EINA_RBTREE_LEFT;
    return EINA_RBTREE_RIGHT;
