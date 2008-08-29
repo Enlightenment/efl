@@ -33,6 +33,7 @@
 #include "eina_array.h"
 #include "eina_bench.h"
 #include "eina_rbtree.h"
+#include "eina_convert.h"
 
 typedef struct _Eina_Bench_Rbtree Eina_Bench_Rbtree;
 struct _Eina_Bench_Rbtree
@@ -72,7 +73,7 @@ eina_bench_lookup_rbtree(int request)
 	if (!tmp) continue ;
 
 	tmp->value = i;
-	snprintf(tmp->key, 10, "%i", i);
+	eina_convert_itoa(i, tmp->key);
 
 	root = eina_rbtree_inline_insert(root, &tmp->node, EINA_RBTREE_CMP_NODE_CB(_eina_bench_rbtree_cmp), NULL);
      }
@@ -83,7 +84,7 @@ eina_bench_lookup_rbtree(int request)
      {
 	char tmp_key[10];
 
-	snprintf(tmp_key, 10, "%i", rand() % request);
+	eina_convert_itoa(rand() % request, tmp_key);
 
 	tmp = eina_rbtree_inline_lookup(root, tmp_key, 10, EINA_RBTREE_CMP_KEY_CB(_eina_bench_rbtree_key), NULL);
      }
@@ -117,7 +118,7 @@ eina_bench_lookup_superfast(int request)
 
 	if (!tmp_val) continue ;
 
-	snprintf(tmp_key, 10, "%i", i);
+	eina_convert_itoa(i, tmp_key);
 	*tmp_val = i;
 
 	eina_hash_add(hash, tmp_key, tmp_val);
@@ -131,7 +132,7 @@ eina_bench_lookup_superfast(int request)
      {
 	char tmp_key[10];
 
-	snprintf(tmp_key, 10, "%i", rand() % request);
+	eina_convert_itoa(rand() % request, tmp_key);
 
 	tmp_val = eina_hash_find(hash, tmp_key);
      }
@@ -165,7 +166,7 @@ eina_bench_lookup_djb2(int request)
 
 	if (!tmp_key || !tmp_val) continue ;
 
-	snprintf(tmp_key, 10, "%i", i);
+	eina_convert_itoa(i, tmp_key);
 	*tmp_val = i;
 
 	eina_hash_add(hash, tmp_key, tmp_val);
@@ -179,7 +180,7 @@ eina_bench_lookup_djb2(int request)
      {
 	char tmp_key[10];
 
-	snprintf(tmp_key, 10, "%i", rand() % request);
+	eina_convert_itoa(rand() % request, tmp_key);
 
 	tmp_val = eina_hash_find(hash, tmp_key);
      }
@@ -214,7 +215,7 @@ eina_bench_lookup_djb2_inline(int request)
 
 	if (!tmp_key || !tmp_val) continue ;
 
-	length = snprintf(tmp_key, 10, "%i", i) + 1;
+	length = eina_convert_itoa(i, tmp_key) + 1;
 	*tmp_val = i;
 
 	eina_hash_add_by_hash(hash, tmp_key, length, eina_hash_djb2(tmp_key, length), tmp_val);
@@ -229,7 +230,7 @@ eina_bench_lookup_djb2_inline(int request)
 	char tmp_key[10];
 	int length;
 
-	length = snprintf(tmp_key, 10, "%i", rand() % request) + 1;
+	length = eina_convert_itoa(rand() % request, tmp_key) + 1;
 
 	tmp_val = eina_hash_find_by_hash(hash, tmp_key, length,  eina_hash_djb2(tmp_key, length));
      }
@@ -266,7 +267,7 @@ eina_bench_lookup_ghash(int request)
 
 	elm->key = (char*) (elm + 1);
 
-	snprintf(elm->key, 10, "%i", i);
+	eina_convert_itoa(i, elm->key);
 	elm->value = i;
 
 	g_hash_table_insert(hash, elm->key, elm);
@@ -278,7 +279,7 @@ eina_bench_lookup_ghash(int request)
      {
 	char tmp_key[10];
 
-	snprintf(tmp_key, 10, "%i", rand() % request);
+	eina_convert_itoa(rand() % request, tmp_key);
 
 	elm = g_hash_table_lookup(hash, tmp_key);
      }
