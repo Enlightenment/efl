@@ -20,6 +20,7 @@
 
 #include "eina_suite.h"
 #include "eina_array.h"
+#include "eina_convert.h"
 
 START_TEST(eina_array_simple)
 {
@@ -37,7 +38,7 @@ START_TEST(eina_array_simple)
      {
 	tmp = malloc(sizeof(char) * 10);
 	fail_if(!tmp);
-	snprintf(tmp, 10, "%i", i);
+	eina_convert_itoa(i, tmp);
 
 	eina_array_push(ea, tmp);
      }
@@ -80,7 +81,7 @@ START_TEST(eina_array_static)
      {
 	tmp = malloc(sizeof(char) * 10);
 	fail_if(!tmp);
-	snprintf(tmp, 10, "%i", i);
+	eina_convert_itoa(i, tmp);
 
 	eina_array_push(&sea, tmp);
      }

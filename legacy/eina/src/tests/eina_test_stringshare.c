@@ -23,6 +23,7 @@
 #include "eina_suite.h"
 #include "eina_stringshare.h"
 #include "eina_array.h"
+#include "eina_convert.h"
 
 START_TEST(eina_stringshare_init_shutdown)
 {
@@ -100,14 +101,14 @@ START_TEST(eina_stringshare_collision)
 
    for (i = 0; i < 10000; ++i)
      {
-	snprintf(buffer, 1024, "%i", rand());
+	eina_convert_itoa(rand(), buffer);
 	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
 	if (rand() > RAND_MAX / 2) eina_stringshare_add(buffer);
      }
 
    for (i = 0; i < 10000; ++i)
      {
-	snprintf(buffer, 1024, "%i", 60000 - i);
+	eina_convert_itoa(60000 - i, buffer);
 	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
 	eina_stringshare_add(buffer);
      }

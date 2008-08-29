@@ -125,7 +125,7 @@ START_TEST(eina_hash_extended)
      {
 	char *tmp = malloc(10);
 	fail_if(!tmp);
-	snprintf(tmp, 10, "%i", i);
+	eina_convert_itoa(i, tmp);
 	fail_if(eina_hash_direct_add(hash, tmp, tmp) != EINA_TRUE);
      }
 
