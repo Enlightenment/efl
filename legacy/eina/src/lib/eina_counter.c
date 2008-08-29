@@ -22,7 +22,17 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#ifndef _WIN32
+# include <time.h>
+#else
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+struct timespec
+{
+   LARGE_INTEGER pc;
+};
+#endif /* ! _WIN2 */
 
 #include "eina_counter.h"
 #include "eina_inlist.h"
@@ -57,6 +67,23 @@ struct _Eina_Clock
 static int _eina_counter_init_count = 0;
 static int EINA_COUNTER_ERROR_OUT_OF_MEMORY = 0;
 
+#ifndef _WIN32
+static inline int
+_eina_counter_time_get(struct timespec *tp)
+{
+   return clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
+}
+#else
+static int EINA_COUNTER_ERROR_WINDOWS = 0;
+static LARGE_INTEGER _eina_counter_frequency;
+
+static inline int
+_eina_counter_time_get(struct timespec *tp)
+{
+   return QueryPerformanceCounter(&tp->pc);
+}
+#endif /* _WIN2 */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -74,6 +101,14 @@ eina_counter_init(void)
      {
 	eina_error_init();
 	EINA_COUNTER_ERROR_OUT_OF_MEMORY  = eina_error_register("Eina_Counter out of memory");
+#ifdef _WIN32
+        if (!QueryPerformanceFrequency(&_eina_counter_frequency))
+          {
+             EINA_COUNTER_ERROR_WINDOWS = eina_error_register("Change your OS, you moron !");
+             _eina_counter_init_count--;
+             return 0;
+          }
+#endif /* _WIN2 */
      }
 
    return _eina_counter_init_count;
@@ -135,7 +170,7 @@ eina_counter_start(Eina_Counter *counter)
    struct timespec tp;
 
    if (!counter) return ;
-   if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tp) != 0) return ;
+   if (!_eina_counter_time_get(&tp)) return;
 
    clk = calloc(1, sizeof (Eina_Clock));
    if (!clk)
@@ -157,7 +192,7 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
    struct timespec tp;
 
    if (!counter) return ;
-   if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tp) != 0) return ;
+   if (!_eina_counter_time_get(&tp)) return;
 
    clk = (Eina_Clock *) counter->clocks;
 
@@ -177,12 +212,26 @@ eina_counter_dump(Eina_Counter *counter, FILE *out)
 
    EINA_INLIST_ITER_LAST(counter->clocks, clk)
      {
+        long int start;
+        long int end;
+        long int diff;
+
+#ifndef _WIN32
+        start = clk->start.tv_sec * 1000000000 + clk->start.tv_nsec;
+        end = clk->end.tv_sec * 1000000000 + clk->end.tv_nsec;
+        diff = (clk->end.tv_sec - clk->start.tv_sec) * 1000000000 + clk->end.tv_nsec - clk->start.tv_nsec;
+#else
+        start = (long int)(((long long int)clk->start.pc.QuadPart * 1000000000ll) / (long long int)_eina_counter_frequency.QuadPart);
+        end = (long int)(((long long int)clk->end.pc.QuadPart * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
+        diff = (long int)(((long long int)(clk->end.pc.QuadPart - clk->start.pc.QuadPart) * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
+#endif /* _WIN2 */
+
 	if (clk->valid == EINA_TRUE)
 	  fprintf(out, "%i\t%li\t%li\t%li\n",
 		  clk->specimen,
-		  (clk->end.tv_sec * 1000000000 + clk->end.tv_nsec) - (clk->start.tv_sec * 1000000000 + clk->start.tv_nsec),
-		  clk->start.tv_sec * 1000000000 + clk->start.tv_nsec,
-		  clk->end.tv_sec * 1000000000 + clk->end.tv_nsec);
+		  diff,
+		  start,
+		  end);
      }
 }
 
