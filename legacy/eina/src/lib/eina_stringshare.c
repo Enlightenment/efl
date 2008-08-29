@@ -80,6 +80,7 @@ struct _Eina_Stringshare
 struct _Eina_Stringshare_Node
 {
    Eina_Rbtree node;
+   int         length;
    int         references;
 };
 
@@ -90,15 +91,22 @@ static int
 _eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length, __UNUSED__ void *data)
 {
    const char *el_str;
+   int rlen;
+
+   rlen = length < node->length ? length : node->length;
 
    el_str = (const char *) (node + 1);
-   return strncmp(el_str, key, length);
+   return memcmp(el_str, key, rlen);
 }
 
 static Eina_Rbtree_Direction
 _eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right, __UNUSED__ void *data)
 {
-   if (strcmp((const char*) (left + 1), (const char*) (right + 1)) < 0)
+   int rlen;
+
+   rlen = left->length < right->length ? left->length : right->length;
+
+   if (memcmp((const char*) (left + 1), (const char*) (right + 1), rlen) < 0)
      return EINA_RBTREE_LEFT;
    return EINA_RBTREE_RIGHT;
 }
@@ -180,12 +188,13 @@ eina_stringshare_add(const char *str)
 	return (const char*) (el + 1);
      }
 
-   el = malloc(sizeof (Eina_Stringshare_Node) + slen + 1);
+   el = malloc(sizeof (Eina_Stringshare_Node) + slen);
    if (!el) return NULL;
    el->references = 1;
+   el->length = slen;
 
    el_str = (char*) (el + 1);
-   memcpy(el_str, str, slen + 1);
+   memcpy(el_str, str, slen);
 
    share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
 
