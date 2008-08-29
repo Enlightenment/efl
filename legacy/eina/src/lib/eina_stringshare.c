@@ -86,6 +86,26 @@ struct _Eina_Stringshare_Node
 static Eina_Stringshare *share = NULL;
 static int eina_stringshare_init_count = 0;
 
+static int
+_eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length, __UNUSED__ void *data)
+{
+   const char *el_str;
+
+   el_str = (const char *) (node + 1);
+   return strncmp(el_str, key, length);
+}
+
+static Eina_Rbtree_Direction
+_eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right, __UNUSED__ void *data)
+{
+   if (!left) return EINA_RBTREE_RIGHT;
+   if (!right) return EINA_RBTREE_LEFT;
+
+   if (strcmp((const char*) (left + 1), (const char*) (right + 1)) < 0)
+     return EINA_RBTREE_LEFT;
+   return EINA_RBTREE_RIGHT;
+}
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -137,26 +157,6 @@ eina_stringshare_init()
    eina_stringshare_init_count++;
 
    return 1;
-}
-
-static int
-_eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length, __UNUSED__ void *data)
-{
-   const char *el_str;
-
-   el_str = (const char *) (node + 1);
-   return strncmp(el_str, key, length);
-}
-
-static Eina_Rbtree_Direction
-_eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right, __UNUSED__ void *data)
-{
-   if (!left) return EINA_RBTREE_RIGHT;
-   if (!right) return EINA_RBTREE_LEFT;
-
-   if (strcmp((const char*) (left + 1), (const char*) (right + 1)) < 0)
-     return EINA_RBTREE_LEFT;
-   return EINA_RBTREE_RIGHT;
 }
 
 /**
