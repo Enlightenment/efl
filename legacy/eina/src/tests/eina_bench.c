@@ -203,4 +203,6 @@ main(int argc, char **argv)
 
 	eina_bench_delete(test);
      }
+
+   return 0;
 }
