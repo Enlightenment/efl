@@ -64,10 +64,11 @@ extern "C" {
  * Symbols in this dlopen'ed obj are visible to other dlopen'ed objs
  */
 
-# define RTLD_LAZY 1   /* lazy function call binding */
-# define RTLD_NOW 2    /* immediate function call binding */
-# define RTLD_GLOBAL 4 /* symbols in this dlopen'ed obj are visible
-			 to other dlopen'ed objs */
+# define RTLD_LAZY    0x00001  /* lazy function call binding */
+# define RTLD_NOW     0x00002  /* immediate function call binding */
+# define RTLD_GLOBAL  0x00100  /* symbols in this dlopen'ed obj are visible
+			          to other dlopen'ed objs */
+#define RTLD_NODELETE 0x01000  /* do not delete object when closed.  */
 
 
 /**
