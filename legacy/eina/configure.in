@@ -104,6 +104,15 @@ AC_MSG_RESULT([$enable_ememoa])
 
 PKG_PROG_PKG_CONFIG
 
+# Evil library for compilation on Windows CE
+
+case "$host_os" in
+   mingw32ce* | cegcc*)
+   PKG_CHECK_MODULES([EVIL], [evil])
+   AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+   ;;
+esac
+
 # Check library for unit tests
 
 if test "x${enable_tests}" = "xyes" ; then
@@ -193,6 +202,17 @@ AC_C_BIGENDIAN
 AC_PROG_CC_STDC
 AC_C___ATTRIBUTE__
 
+EINA_CFLAGS="${COVERAGE_CFLAGS}"
+case "${host_os}" in
+   cegcc*)
+      EINA_CFLAGS="${EINA_CFLAGS=} ${EVIL_CFLAGS} -mwin32"
+   ;;
+   mingw*)
+      EINA_CFLAGS="${EINA_CFLAGS=} ${EVIL_CFLAGS}"
+   ;;
+esac
+AC_SUBST(EINA_CFLAGS)
+
 if test "x$enable_coverage" = "xyes" ; then
    CFLAGS="${DEBUG_CFLAGS}"
 fi
@@ -203,13 +223,19 @@ fi
 
 
 ### Checks for linker characteristics
+EINA_LIBS=""
 lt_enable_auto_import=""
-case "$host_os" in
+case "${host_os}" in
    mingw* | cegcc*)
       AC_DEFINE(EFL_EINA_BUILD, 1, [Define to mention that eina is built])
+      EINA_LIBS="${COVERAGE_LIBS} ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
+   *)
+      EINA_LIBS="${COVERAGE_LIBS} -ldl -lrt -lm"
+   ;;
 esac
+AC_SUBST(EINA_LIBS)
 AC_SUBST(lt_enable_auto_import)
 
 

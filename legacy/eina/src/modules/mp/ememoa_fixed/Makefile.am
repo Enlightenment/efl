@@ -20,3 +20,6 @@ eina_ememoa_fixed_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -modul
 eina_ememoa_fixed_la_DEPENDENCIES = $(top_builddir)/src/lib/libeina.la
 
 endif
+
+clean-local:
+	rm -rf *.gcno

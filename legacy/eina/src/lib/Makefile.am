@@ -5,7 +5,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@COVERAGE_CFLAGS@
+@EINA_CFLAGS@
 
 lib_LTLIBRARIES = libeina.la
 
@@ -29,6 +29,8 @@ eina_convert.c \
 eina_rbtree.c \
 eina_stringshare.c
 
-libeina_la_LIBADD = -ldl -lrt @COVERAGE_LIBS@ -lm
+libeina_la_LIBADD = @EINA_LIBS@
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
-libeina_la_DEPENDENCIES = $(top_builddir)/config.h
+
+clean-local:
+	rm -rf *.gcno

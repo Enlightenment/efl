@@ -28,7 +28,7 @@
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # undef WIN32_LEAN_AND_MEAN
-#endif /* ! _WIN2 */
+#endif /* _WIN2 */
 
 #include "eina_counter.h"
 #include "eina_inlist.h"

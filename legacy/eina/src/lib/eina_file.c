@@ -20,12 +20,21 @@
 # include <config.h>
 #endif
 
-#define _GNU_SOURCE
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
+
+#ifndef _WIN32
+# define _GNU_SOURCE
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
+# include <dirent.h>
+#else
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+# include <Evil.h>
+#endif /* _WIN2 */
+
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -66,6 +75,7 @@ void *alloca (size_t);
 EAPI Eina_Bool
 eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb cb, void *data)
 {
+#ifndef _WIN32
 	struct dirent *de;
 	DIR *d;
 
@@ -107,6 +117,69 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 	}
 
 	closedir(d);
+#else
+	WIN32_FIND_DATA file;
+	HANDLE          hSearch;
+	char           *new_dir;
+	TCHAR          *tdir;
+	int             length_dir;
+
+	if (!cb) return EINA_FALSE;
+	if (!dir || (*dir == '\0')) return EINA_FALSE;
+
+	length_dir = strlen(dir);
+	new_dir = (char *)alloca(length_dir + 5);
+	if (!new_dir) return EINA_FALSE;
+
+	memcpy(new_dir, dir, length_dir);
+	memcpy(new_dir + length_dir, "/*.*", 5);
+
+#ifdef UNICODE
+	tdir =  evil_char_to_wchar(new_dir);
+#else
+	tdir = new_dir;
+#endif /* ! UNICODE */
+	hSearch = FindFirstFile(tdir, &file);
+#ifdef UNICODE
+	free(tdir);
+#endif /* UNICODE */
+
+	if (hSearch == INVALID_HANDLE_VALUE) return EINA_FALSE;
+
+	do
+	{
+		char *filename;
+
+#ifdef UNICODE
+		filename = evil_wchar_to_char(file.cFileName);
+#else
+		filename = file.cFileName;
+#endif /* ! UNICODE */
+		if (!strcmp(filename, ".") || !strcmp(filename, ".."))
+			continue;
+
+		cb(filename, dir, data);
+
+		if (recursive == EINA_TRUE) {
+			char *path;
+
+			path = alloca(strlen(dir) + strlen(filename) + 2);
+			strcpy(path, dir);
+			strcat(path, "/");
+			strcat(path, filename);
+
+			if (!(file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				continue ;
+
+			eina_file_dir_list(path, recursive, cb, data);
+		}
+#ifdef UNICODE
+		free(filename);
+#endif /* UNICODE */
+
+	} while (FindNextFile(hSearch, &file));
+	FindClose(hSearch);
+#endif /* _WIN32 */
 
 	return EINA_TRUE;
 }
