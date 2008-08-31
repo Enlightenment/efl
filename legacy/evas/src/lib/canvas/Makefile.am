@@ -39,7 +39,8 @@ evas_rectangle.c \
 evas_render.c \
 evas_smart.c \
 evas_stack.c \
-evas_async_events.c
+evas_async_events.c \
+evas_transform.c
 
 EXTRA_DIST = \
 evas_object_gradient2_linear.c \

@@ -500,6 +500,10 @@ extern "C" {
    EAPI Evas_Bool         evas_object_image_border_center_fill_get(const Evas_Object *obj);
    EAPI void              evas_object_image_fill_set        (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_image_fill_get        (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_object_image_fill_spread_set   (Evas_Object *obj, int tile_mode);
+   EAPI int               evas_object_image_fill_spread_get   (const Evas_Object *obj);
+   EAPI void              evas_object_image_fill_transform_set (Evas_Object *obj, Evas_Transform *t);
+   EAPI void              evas_object_image_fill_transform_get (const Evas_Object *obj, Evas_Transform *t);
    EAPI void              evas_object_image_size_set        (Evas_Object *obj, int w, int h);
    EAPI void              evas_object_image_size_get        (const Evas_Object *obj, int *w, int *h);
    EAPI int               evas_object_image_stride_get      (const Evas_Object *obj);
@@ -864,6 +868,20 @@ extern "C" {
 
    EAPI void              evas_data_argb_premul             (unsigned int *data, unsigned int len);
    EAPI void              evas_data_argb_unpremul           (unsigned int *data, unsigned int len);
+
+/* Evas utility routines for working with transforms */
+   /* Set t to the identity */
+   EAPI void              evas_transform_identity_set       (Evas_Transform *t);
+   /* Left-multiply t by an xy rotation defined by the given angle (in degrees) */
+   EAPI void              evas_transform_rotate             (double angle, Evas_Transform *t);
+   /* Left-multiply t by an xy translation defined by the given dx, dy values */
+   EAPI void              evas_transform_translate          (float dx, float dy, Evas_Transform *t);
+   /* Left-multiply t by an xy scaling defined by the given sx, sy factors */
+   EAPI void              evas_transform_scale              (float sx, float sy, Evas_Transform *t);
+   /* Left-multiply t by an xy shearing defined by the given sh, sv values */
+   EAPI void              evas_transform_shear              (float sh, float sv, Evas_Transform *t);
+   /* Left-multiply t by the given transform l */
+   EAPI void              evas_transform_compose            (Evas_Transform *l, Evas_Transform *t);
 
 /* Evas imaging api - exports some of the comon gfx engine routines */
 /* this is not complete and should be considered experimental. use at your */

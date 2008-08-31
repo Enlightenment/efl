@@ -43,7 +43,8 @@ static void evas_object_text_free(Evas_Object *obj);
 static void evas_object_text_render_pre(Evas_Object *obj);
 static void evas_object_text_render_post(Evas_Object *obj);
 
-static int evas_object_text_visual_type_get(Evas_Object *obj);
+static unsigned int evas_object_text_id_get(Evas_Object *obj);
+static unsigned int evas_object_text_visual_id_get(Evas_Object *obj);
 static void *evas_object_text_engine_data_get(Evas_Object *obj);
 
 static int evas_object_text_is_opaque(Evas_Object *obj);
@@ -56,7 +57,8 @@ static const Evas_Object_Func object_func =
      evas_object_text_render,
      evas_object_text_render_pre,
      evas_object_text_render_post,
-     evas_object_text_visual_type_get,
+     evas_object_text_id_get,
+     evas_object_text_visual_id_get,
      evas_object_text_engine_data_get,
    /* these are optional. NULL = nothing */
      NULL,
@@ -1669,7 +1671,16 @@ evas_object_text_render_post(Evas_Object *obj)
    o->changed = 0;
 }
 
-static int evas_object_text_visual_type_get(Evas_Object *obj)
+static unsigned int evas_object_text_id_get(Evas_Object *obj)
+{
+   Evas_Object_Text *o;
+
+   o = (Evas_Object_Text *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_TEXT;
+}
+
+static unsigned int evas_object_text_visual_id_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
 

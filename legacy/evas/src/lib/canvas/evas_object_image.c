@@ -19,6 +19,8 @@ struct _Evas_Object_Image
    DATA32            magic;
 
    struct {
+      Evas_Common_Transform  transform;
+      int         spread;
       Evas_Coord_Rectangle fill;
       struct {
 	 short       w, h, stride;
@@ -70,7 +72,8 @@ static void evas_object_image_free(Evas_Object *obj);
 static void evas_object_image_render_pre(Evas_Object *obj);
 static void evas_object_image_render_post(Evas_Object *obj);
 
-static int evas_object_image_visual_type_get(Evas_Object *obj);
+static unsigned int evas_object_image_id_get(Evas_Object *obj);
+static unsigned int evas_object_image_visual_id_get(Evas_Object *obj);
 static void *evas_object_image_engine_data_get(Evas_Object *obj);
 
 static int evas_object_image_is_opaque(Evas_Object *obj);
@@ -86,8 +89,9 @@ static const Evas_Object_Func object_func =
    evas_object_image_render,
    evas_object_image_render_pre,
    evas_object_image_render_post,
-     evas_object_image_visual_type_get,
-     evas_object_image_engine_data_get,
+   evas_object_image_id_get,
+   evas_object_image_visual_id_get,
+   evas_object_image_engine_data_get,
    /* these are optional. NULL = nothing */
    NULL,
    NULL,
@@ -562,6 +566,132 @@ evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y,
    if (y) *y = o->cur.fill.y;
    if (w) *w = o->cur.fill.w;
    if (h) *h = o->cur.fill.h;
+}
+
+
+/**
+ * Sets the tiling mode for the given evas image object's fill.
+ * @param   obj   The given evas image object.
+ * @param   spread One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT,
+ * EVAS_TEXTURE_RESTRICT, or EVAS_TEXTURE_PAD.
+ * @ingroup Evas_Object_Image_Fill_Group
+ */
+EAPI void
+evas_object_image_fill_spread_set(Evas_Object *obj, int spread)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if (spread == o->cur.spread) return;
+   o->cur.spread = spread;
+   o->changed = 1;
+   evas_object_change(obj);
+}
+
+/**
+ * Retrieves the spread (tiling mode) for the given image object's fill.
+ * @param   obj The given evas image object.
+ * @return  The current spread mode of the image object.
+ * @ingroup Evas_Object_Image_Fill_Group
+ */
+EAPI int
+evas_object_image_fill_spread_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EVAS_TEXTURE_REPEAT;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return EVAS_TEXTURE_REPEAT;
+   MAGIC_CHECK_END();
+   return o->cur.spread;
+}
+
+EAPI void
+evas_object_image_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if (!t)
+     {
+	o->cur.transform.mxx = 1;
+	o->cur.transform.mxy = 0;
+	o->cur.transform.mxz = 0;
+	o->cur.transform.myx = 0;
+	o->cur.transform.myy = 1;
+	o->cur.transform.myz = 0;
+	o->cur.transform.mzx = 0;
+	o->cur.transform.mzy = 0;
+	o->cur.transform.mzz = 1;
+
+	o->changed;
+	evas_object_change(obj);
+	return;
+     }
+   if ( (o->cur.transform.mxx == t->mxx) ||
+	 (o->cur.transform.mxy == t->mxy) ||
+	 (o->cur.transform.mxy == t->mxy) ||
+	 (o->cur.transform.mxy == t->mxy) ||
+	 (o->cur.transform.mxy == t->mxy) ||
+	 (o->cur.transform.mxy == t->mxy) ||
+	 (o->cur.transform.mxy == t->mxy) ||
+	 (o->cur.transform.mxy == t->mxy) ||
+	 (o->cur.transform.mxy == t->mxy) )
+	    return;
+
+   o->cur.transform.mxx = t->mxx;
+   o->cur.transform.mxy = t->mxy;
+   o->cur.transform.mxz = t->mxz;
+   o->cur.transform.myx = t->myx;
+   o->cur.transform.myy = t->myy;
+   o->cur.transform.myz = t->myz;
+   o->cur.transform.mzx = t->mzx;
+   o->cur.transform.mzy = t->mzy;
+   o->cur.transform.mzz = t->mzz;
+
+   o->changed;
+   evas_object_change(obj);
+}
+
+EAPI void
+evas_object_image_fill_transform_get (const Evas_Object *obj, Evas_Transform *t)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if (t)
+     {
+        t->mxx = o->cur.transform.mxx;
+        t->mxy = o->cur.transform.mxy;
+        t->mxz = o->cur.transform.mxz;
+        t->myx = o->cur.transform.myx;
+        t->myy = o->cur.transform.myy;
+        t->myz = o->cur.transform.myz;
+        t->mzx = o->cur.transform.mzx;
+        t->mzy = o->cur.transform.mzy;
+        t->mzz = o->cur.transform.mzz;
+     }
 }
 
 /**
@@ -1858,6 +1988,8 @@ evas_object_image_new(void)
    o->cur.smooth_scale = 1;
    o->cur.border.fill = 1;
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
+   o->cur.transform.mxx = o->cur.transform.myy = o->cur.transform.mzz = 1;
+   o->cur.spread = EVAS_TEXTURE_REPEAT;
    o->prev = o->cur;
    return o;
 }
@@ -2341,7 +2473,16 @@ evas_object_image_render_post(Evas_Object *obj)
    /* FIXME: copy strings across */
 }
 
-static int evas_object_image_visual_type_get(Evas_Object *obj)
+static unsigned int evas_object_image_id_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   o = (Evas_Object_Image *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_IMAGE;
+}
+
+static unsigned int evas_object_image_visual_id_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
 

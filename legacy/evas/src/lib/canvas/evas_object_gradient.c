@@ -49,6 +49,10 @@ static void evas_object_gradient_free(Evas_Object *obj);
 static void evas_object_gradient_render_pre(Evas_Object *obj);
 static void evas_object_gradient_render_post(Evas_Object *obj);
 
+static unsigned int evas_object_gradient_id_get(Evas_Object *obj);
+static unsigned int evas_object_gradient_visual_id_get(Evas_Object *obj);
+static void *evas_object_gradient_engine_data_get(Evas_Object *obj);
+
 static int evas_object_gradient_is_opaque(Evas_Object *obj);
 static int evas_object_gradient_was_opaque(Evas_Object *obj);
 
@@ -59,6 +63,9 @@ static const Evas_Object_Func object_func =
      evas_object_gradient_render,
      evas_object_gradient_render_pre,
      evas_object_gradient_render_post,
+     evas_object_gradient_id_get,
+     evas_object_gradient_visual_id_get,
+     evas_object_gradient_engine_data_get,
    /* these are optional. NULL = nothing */
      NULL,
      NULL,
@@ -1064,6 +1071,33 @@ evas_object_gradient_render_post(Evas_Object *obj)
    o->changed = 0;
    o->gradient_changed = 0;
    o->type_changed = 0;
+}
+
+static unsigned int evas_object_gradient_id_get(Evas_Object *obj)
+{
+   Evas_Object_Gradient *o;
+
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_GRADIENT;
+}
+
+static unsigned int evas_object_gradient_visual_id_get(Evas_Object *obj)
+{
+   Evas_Object_Gradient *o;
+
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_GRADIENT;
+}
+
+static void *evas_object_gradient_engine_data_get(Evas_Object *obj)
+{
+   Evas_Object_Gradient *o;
+
+   o = (Evas_Object_Gradient *)(obj->object_data);
+   if (!o) return NULL;
+   return o->engine_data;
 }
 
 static int

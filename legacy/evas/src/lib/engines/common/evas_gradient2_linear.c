@@ -2,12 +2,17 @@
 #include "evas_private.h"
 #include <math.h>
 
+#define LINEAR_EPSILON 0.000030517578125
+#define LINEAR_INT_TOLERANCE 0.001953125
+// 1/512 = 0.001953125 <-- will use this one as our subpixel pos tolerance.
+// 1/256 = 0.00390625  <-- though this one would be ok too for our uses.
+
 typedef struct _Linear_Data   Linear_Data;
 
 struct _Linear_Data
 {
    float    x0, y0, x1, y1;
-   float    fx0, fy0, fx1, fy1;
+   float    fx0, fy0;
    int      ayx, ayy;
    int      len;
    unsigned char int_axis_aligned : 1;
@@ -147,6 +152,7 @@ linear_update_geom(RGBA_Gradient2 *gr)
 {
    Linear_Data *linear_data;
    double f;
+   double fx0, fy0, fx1, fy1;
    int len;
 
    if (!gr || (gr->type.geometer != &linear)) return;
@@ -155,38 +161,37 @@ linear_update_geom(RGBA_Gradient2 *gr)
 
    linear_data->int_axis_aligned = 0;
    linear_data->len = 0;
-   f = (gr->fill.transform.mxx * gr->fill.transform.myy) - (gr->fill.transform.mxy * gr->fill.transform.myx);
-   if (!f) return;
+   f = (gr->fill.transform.mxx * (double)gr->fill.transform.myy) - (gr->fill.transform.mxy * (double)gr->fill.transform.myx);
+   if (fabs(f) < LINEAR_EPSILON) return;
 
    f = 1.0 / f;
-   linear_data->fx0 = (((gr->fill.transform.myy * linear_data->x0) - (gr->fill.transform.mxy * linear_data->y0)) * f) - gr->fill.transform.mxz;
-   linear_data->fy0 = ((-(gr->fill.transform.myx * linear_data->x0) + (gr->fill.transform.mxx * linear_data->y0)) * f) - gr->fill.transform.myz;
+   fx0 = (((gr->fill.transform.myy * (double)linear_data->x0) - (gr->fill.transform.mxy * (double)linear_data->y0)) * f) - gr->fill.transform.mxz;
+   fy0 = ((-(gr->fill.transform.myx * (double)linear_data->x0) + (gr->fill.transform.mxx * (double)linear_data->y0)) * f) - gr->fill.transform.myz;
 
-   linear_data->fx1 = (((gr->fill.transform.myy * linear_data->x1) - (gr->fill.transform.mxy * linear_data->y1)) * f)  - gr->fill.transform.mxz;
-   linear_data->fy1 = ((-(gr->fill.transform.myx * linear_data->x1) + (gr->fill.transform.mxx * linear_data->y1)) * f) - gr->fill.transform.myz;
+   fx1 = (((gr->fill.transform.myy * (double)linear_data->x1) - (gr->fill.transform.mxy * (double)linear_data->y1)) * f) - gr->fill.transform.mxz;
+   fy1 = ((-(gr->fill.transform.myx * (double)linear_data->x1) + (gr->fill.transform.mxx * (double)linear_data->y1)) * f) - gr->fill.transform.myz;
 
-   f = hypot(linear_data->fx0 - linear_data->fx1, linear_data->fy0 - linear_data->fy1);
-   linear_data->len = len = f;
+   f = hypot(fx1 - fx0, fy1 - fy0);
+   linear_data->len = len = f + 0.5;
    if (!len) return;
 
-   linear_data->ayx = ((double)(linear_data->fx1 - linear_data->fx0) * 65536) / f;
-   linear_data->ayy = ((double)(linear_data->fy1 - linear_data->fy0) * 65536) / f;
+   linear_data->ayx = ((fx1 - fx0) / f) * 65536;
+   linear_data->ayy = ((fy1 - fy0) / f) * 65536;
 
-// 1/512 = 0.001953125 <-- will use this one as our subpixel pos tolerance.
-// 1/256 = 0.00390625  <-- though this one would be ok too for our uses.
-
-   if (fabs(linear_data->fy0 - linear_data->fy1) < 0.001953125)
+   if (fabs(fy0 - fy1) < LINEAR_INT_TOLERANCE)
      {
-	if ( (fabs(((int)linear_data->fy0) - linear_data->fy0) < 0.001953125) &&
-	    (fabs(((int)linear_data->fy1) - linear_data->fy1) < 0.001953125) )
+	if ( (fabs(((int)fy0) - fy0) < LINEAR_INT_TOLERANCE) &&
+	    (fabs(((int)fy1) - fy1) < LINEAR_INT_TOLERANCE) )
 	   { linear_data->int_axis_aligned = 1;  linear_data->ayy = 0; }
      }
-   else if (fabs(linear_data->fx0 - linear_data->fx1) < 0.001953125)
+   else if (fabs(fx0 - fx1) < LINEAR_INT_TOLERANCE)
      {
-	if ( (fabs(((int)linear_data->fx0) - linear_data->fx0) < 0.001953125) &&
-	    (fabs(((int)linear_data->fx1) - linear_data->fx1) < 0.001953125) )
+	if ( (fabs(((int)fx0) - fx0) < LINEAR_INT_TOLERANCE) &&
+	    (fabs(((int)fx1) - fx1) < LINEAR_INT_TOLERANCE) )
 	   { linear_data->int_axis_aligned = 1;  linear_data->ayx = 0; }
      }
+   linear_data->fx0 = fx0;
+   linear_data->fy0 = fy0;
 }
 
 static int
@@ -348,9 +353,9 @@ linear_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len
 	int  l = (yy >> 16);
 	int  a = 1 + ((yy & 0xffff) >> 8);
 
-	l = l % src_len;
-	if (l < 0)
-	   l += src_len;
+	if ((l >= src_len) || (l < 0))
+	   { l = l % src_len;  if (l < 0) l += src_len; }
+
 #ifdef BUILD_MMX
 	MOV_P2R(src[l], mm1, mm0)
 #else
@@ -581,7 +586,7 @@ linear_restrict_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_l
 	if ((unsigned)(l + 1) < (src_len + 1))
 	  {
 	    int  a = 1 + ((yy & 0xffff) >> 8);
-	    int    lp = l;
+	    int  lp = l;
 
 	    if (l == -1) lp = 0;
 #ifdef BUILD_MMX
@@ -646,7 +651,7 @@ linear_restrict_masked_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, in
 	if ((unsigned)(l + 1) < (src_len + 1))
 	  {
 	    int  a = 1 + ((yy & 0xffff) >> 8);
-	    int    lp = l;
+	    int  lp = l;
 
 	    if (l == -1) lp = 0;
 

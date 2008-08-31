@@ -34,7 +34,8 @@ static void evas_object_gradient2_radial_render(Evas_Object *obj, void *output, 
 static void evas_object_gradient2_radial_render_pre(Evas_Object *obj);
 static void evas_object_gradient2_radial_render_post(Evas_Object *obj);
 
-static int evas_object_gradient2_radial_visual_type_get(Evas_Object *obj);
+static unsigned int evas_object_gradient2_radial_id_get(Evas_Object *obj);
+static unsigned int evas_object_gradient2_radial_visual_id_get(Evas_Object *obj);
 static void *evas_object_gradient2_radial_engine_data_get(Evas_Object *obj);
 
 static int evas_object_gradient2_radial_is_opaque(Evas_Object *obj);
@@ -47,7 +48,8 @@ static const Evas_Object_Func rg_object_func =
      evas_object_gradient2_radial_render,
      evas_object_gradient2_radial_render_pre,
      evas_object_gradient2_radial_render_post,
-     evas_object_gradient2_radial_visual_type_get,
+     evas_object_gradient2_radial_id_get,
+     evas_object_gradient2_radial_visual_id_get,
      evas_object_gradient2_radial_engine_data_get,
    /* these are optional. NULL = nothing */
      NULL,
@@ -417,7 +419,16 @@ evas_object_gradient2_radial_render_post(Evas_Object *obj)
    og->gradient_changed = 0;
 }
 
-static int evas_object_gradient2_radial_visual_type_get(Evas_Object *obj)
+static unsigned int evas_object_gradient2_radial_id_get(Evas_Object *obj)
+{
+   Evas_Object_Gradient2_Radial *o;
+
+   o = (Evas_Object_Gradient2_Radial *)(obj->object_data);
+   if (!o) return 0;
+   return MAGIC_OBJ_GRADIENT_RADIAL;
+}
+
+static unsigned int evas_object_gradient2_radial_visual_id_get(Evas_Object *obj)
 {
    Evas_Object_Gradient2_Radial *o;
 

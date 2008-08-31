@@ -2,13 +2,14 @@
 #include "evas_private.h"
 #include <math.h>
 
+#define RADIAL_EPSILON 0.000030517578125
 
 typedef struct _Radial_Data   Radial_Data;
 
 struct _Radial_Data
 {
-   int    axx, axy, axz;
-   int    ayx, ayy, ayz;
+   int    axx, axy;
+   int    ayx, ayy;
    float  cx, cy, rx, ry;
    float  cx0, cy0;
    int    len;
@@ -79,8 +80,9 @@ evas_common_gradient2_radial_fill_set(RGBA_Gradient2 *gr, float cx, float cy, fl
    if (gr->type.geometer != &radial) return;
    radial_data = (Radial_Data *)gr->type.gdata;
    if (!radial_data) return;
+   if (rx < 0) rx = -rx;  if (ry < 0) ry = -ry;
    radial_data->cx = cx;  radial_data->cy = cy;
-   radial_data->rx = rx;  radial_data->ry = ry;
+   radial_data->rx = 1 + rx;  radial_data->ry = 1 + ry;
 }
 
 
@@ -88,23 +90,23 @@ evas_common_gradient2_radial_fill_set(RGBA_Gradient2 *gr, float cx, float cy, fl
 
 static void
 radial_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
-                          int x, int y, void *params_data);
+                  int x, int y, void *params_data);
 
 static void
 radial_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
-                         int x, int y, void *params_data);
+                 int x, int y, void *params_data);
 
 static void
 radial_restrict_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
-                                int x, int y, void *params_data);
+                   int x, int y, void *params_data);
 
 static void
 radial_restrict_masked_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
-                                int x, int y, void *params_data);
+                          int x, int y, void *params_data);
 
 static void
 radial_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
-                      int x, int y, void *params_data);
+              int x, int y, void *params_data);
 
 
 static void 
@@ -138,8 +140,8 @@ radial_init_geom(RGBA_Gradient2 *gr)
 	if (!radial_data)  return;
 	radial_data->cx = radial_data->cy = 0;
 	radial_data->rx = radial_data->ry = 0;
-	radial_data->axx = 65536;  radial_data->axy = 0;  radial_data->axz = 0;
-	radial_data->ayx = 0;  radial_data->ayy = 65536;  radial_data->ayz = 0;
+	radial_data->axx = 65536;  radial_data->axy = 0;
+	radial_data->ayx = 0;  radial_data->ayy = 65536;
 	radial_data->len = 0;
     }
    gr->type.gdata = radial_data;
@@ -150,40 +152,42 @@ radial_update_geom(RGBA_Gradient2 *gr)
 {
    Radial_Data   *radial_data;
    double f, flen;
+   double  fx1, fy1;
    int len;
-   float  fx1, fy1;
 
    if (!gr || (gr->type.geometer != &radial)) return;
 
    radial_data = (Radial_Data *)gr->type.gdata;
    if (!radial_data) return;
 
+   if ((radial_data->rx < RADIAL_EPSILON) || (radial_data->ry < RADIAL_EPSILON)) return;
+
    radial_data->len = 0;
-   f = (gr->fill.transform.mxx * gr->fill.transform.myy) - (gr->fill.transform.mxy * gr->fill.transform.myx);
-   if (!f) return;
+   f = (gr->fill.transform.mxx * (double)gr->fill.transform.myy) - (gr->fill.transform.mxy * (double)gr->fill.transform.myx);
+   if (fabs(f) < RADIAL_EPSILON) return;
 
    f = 1.0 / f;
-   radial_data->cx0 = (((gr->fill.transform.myy * radial_data->cx) - (gr->fill.transform.mxy * radial_data->cy)) * f) - gr->fill.transform.mxz;
-   radial_data->cy0 = ((-(gr->fill.transform.myx * radial_data->cx) + (gr->fill.transform.mxx * radial_data->cy)) * f) - gr->fill.transform.myz;
+   radial_data->cx0 = (((gr->fill.transform.myy * (double)radial_data->cx) - (gr->fill.transform.mxy * (double)radial_data->cy)) * f) - gr->fill.transform.mxz;
+   radial_data->cy0 = ((-(gr->fill.transform.myx * (double)radial_data->cx) + (gr->fill.transform.mxx * (double)radial_data->cy)) * f) - gr->fill.transform.myz;
 
-   fx1 = (((gr->fill.transform.myy * (radial_data->cx + radial_data->rx)) - (gr->fill.transform.mxy * (radial_data->cy))) * f)  - gr->fill.transform.mxz;
-   fy1 = ((-(gr->fill.transform.myx * (radial_data->cx + radial_data->rx)) + (gr->fill.transform.mxx * (radial_data->cy))) * f) - gr->fill.transform.myz;
+   fx1 = (gr->fill.transform.myy * (double)radial_data->rx) * f;
+   fy1 = (gr->fill.transform.myx * (double)radial_data->rx) * f;
 
-   flen = hypot(radial_data->cx0 - fx1, radial_data->cy0 - fy1);
+   flen = hypot(fx1, fy1);
 
-   fx1 = (((gr->fill.transform.myy * (radial_data->cx)) - (gr->fill.transform.mxy * (radial_data->cy + radial_data->ry))) * f)  - gr->fill.transform.mxz;
-   fy1 = ((-(gr->fill.transform.myx * (radial_data->cx)) + (gr->fill.transform.mxx * (radial_data->cy + radial_data->ry))) * f) - gr->fill.transform.myz;
+   fx1 = (gr->fill.transform.mxy * (double)radial_data->ry) * f;
+   fy1 = (gr->fill.transform.mxx * (double)radial_data->ry) * f;
 
-   flen = MAX(flen,hypot(radial_data->cx0 - fx1, radial_data->cy0 - fy1));
-   radial_data->len = len = flen;
+   flen = sqrt(flen * hypot(fx1, fy1));
+
+   radial_data->len = len = flen + 0.5;
    if (!len) return;
 
    radial_data->axx = (((double)gr->fill.transform.mxx * 65536) * flen) / radial_data->rx;
    radial_data->axy = (((double)gr->fill.transform.mxy * 65536) * flen) / radial_data->rx;
-   radial_data->axz = (((double)gr->fill.transform.mxz * 65536) * flen) / radial_data->rx;
+
    radial_data->ayx = (((double)gr->fill.transform.myx * 65536) * flen) / radial_data->ry;
    radial_data->ayy = (((double)gr->fill.transform.myy * 65536) * flen) / radial_data->ry;
-   radial_data->ayz = (((double)gr->fill.transform.myz * 65536) * flen) / radial_data->ry;
 }
 
 static int
@@ -281,8 +285,8 @@ radial_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len
    int  xx, yy;
 
    evas_common_cpu_end_opt();
-   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5)) + gdata->axz;
-   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5)) + gdata->ayz;
+   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5));
+   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5));
 
    while (dst < dst_end)
      {
@@ -290,7 +294,7 @@ radial_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len
 	unsigned int  l = (ll >> 16);
 	int  a = 1 + ((ll & 0xffff) >> 8);
 
-	if (l > (src_len - 1))
+	if (l >= src_len)
 	    l = l % src_len;
 	*dst = src[l];
 	if (l + 1 < src_len)
@@ -315,8 +319,8 @@ radial_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_le
    int  xx, yy;
 
    evas_common_cpu_end_opt();
-   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5)) + gdata->axz;
-   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5)) + gdata->ayz;
+   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5));
+   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5));
 
    while (dst < dst_end)
      {
@@ -350,8 +354,8 @@ radial_restrict_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_l
    int  xx, yy;
 
    evas_common_cpu_end_opt();
-   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5)) + gdata->axz;
-   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5)) + gdata->ayz;
+   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5));
+   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5));
 
    while (dst < dst_end)
      {
@@ -386,8 +390,8 @@ radial_restrict_masked_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, in
    int  xx, yy;
 
    evas_common_cpu_end_opt();
-   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5)) + gdata->axz;
-   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5)) + gdata->ayz;
+   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5));
+   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5));
 
    while (dst < dst_end)
      {
@@ -422,8 +426,8 @@ radial_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
    int  xx, yy;
 
    evas_common_cpu_end_opt();
-   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5)) + gdata->axz;
-   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5)) + gdata->ayz;
+   xx = (gdata->axx * (x - gdata->cx0 + 0.5)) + (gdata->axy * (y - gdata->cy0 + 0.5));
+   yy = (gdata->ayx * (x - gdata->cx0 + 0.5)) + (gdata->ayy * (y - gdata->cy0 + 0.5));
 
    while (dst < dst_end)
      {

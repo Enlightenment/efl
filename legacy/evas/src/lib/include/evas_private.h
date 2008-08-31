@@ -489,7 +489,8 @@ struct _Evas_Object_Func
    void (*render_pre) (Evas_Object *obj);
    void (*render_post) (Evas_Object *obj);
 
-   int  (*visual_id_get) (Evas_Object *obj);
+   unsigned int  (*type_id_get) (Evas_Object *obj);
+   unsigned int  (*visual_id_get) (Evas_Object *obj);
    void *(*engine_data_get) (Evas_Object *obj);
 
    void (*store) (Evas_Object *obj);
