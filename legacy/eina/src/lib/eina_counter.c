@@ -1,5 +1,5 @@
 /* EINA - EFL data type library
- * Copyright (C) 2008 Cedric Bail
+ * Copyright (C) 2008 Cedric Bail, vincent Torri
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
