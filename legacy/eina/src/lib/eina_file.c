@@ -1,5 +1,5 @@
 /* EINA - EFL data type library
- * Copyright (C) 2007-2008 Jorge Luis Zapata Muga
+ * Copyright (C) 2007-2008 Jorge Luis Zapata Muga, Vincent Torri
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,7 +66,7 @@ void *alloca (size_t);
  *============================================================================*/
 
 /**
- * Lis all files on the directory calling the function for every file found
+ * List all files on the directory calling the function for every file found
  * @param dir The directory name
  * @param recursive Iterate recursively in the directory
  * @param cb The callback to be called
@@ -183,3 +183,46 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 
 	return EINA_TRUE;
 }
+
+/**
+ *
+ */
+EAPI void
+eina_file_path_nth_get(const char *path, int n, char **left, char **right)
+{
+	char *p;
+	char *end;
+	char *tmp;
+	char *delim;
+	int inc;
+	int num = 0;
+
+	if (!left && !right)
+		return;
+
+	if (n > 0) {
+		p = (char *)path;
+		inc = 1;
+		end = (char *)path + strlen(path);
+	} else {
+		p = (char *)path + strlen(path);
+		inc = -1;
+		end = (char *)path;
+	}
+
+	for (tmp = p, delim = p; tmp != end && num != n; tmp += inc)
+	{
+		if (*tmp == '/') {
+			num += inc;
+			delim = tmp;
+		}
+	}
+
+	if (left) {
+		*left = strndup(path, delim - path + 1);
+	}
+	if (right) {
+		*right = strdup(delim + 1);
+	}
+}
+
