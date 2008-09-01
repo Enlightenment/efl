@@ -205,10 +205,10 @@ AC_C___ATTRIBUTE__
 EINA_CFLAGS="${COVERAGE_CFLAGS}"
 case "${host_os}" in
    cegcc*)
-      EINA_CFLAGS="${EINA_CFLAGS=} ${EVIL_CFLAGS} -mwin32"
+      EINA_CFLAGS="${EINA_CFLAGS} ${EVIL_CFLAGS} -mwin32"
    ;;
    mingw*)
-      EINA_CFLAGS="${EINA_CFLAGS=} ${EVIL_CFLAGS}"
+      EINA_CFLAGS="${EINA_CFLAGS} ${EVIL_CFLAGS}"
    ;;
 esac
 AC_SUBST(EINA_CFLAGS)
