@@ -295,7 +295,6 @@ ecore_file_cp(const char *src, const char *dst)
 EAPI int
 ecore_file_mv(const char *src, const char *dst)
 {
-   if (ecore_file_exists(dst)) return 0;
    if (rename(src, dst))
      {
 	if (errno == EXDEV)
