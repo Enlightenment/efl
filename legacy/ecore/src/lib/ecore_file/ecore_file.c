@@ -311,49 +311,49 @@ ecore_file_mv(const char *src, const char *dst)
 	     stat(src, &st);
 	     if (S_ISREG(st.st_mode))
 	       {
-                  // Since we can't directly rename, try to 
-                  // copy to temp file in the dst directory
-                  // and then rename.
-                  snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX", 
-                           ecore_file_dir_get(dst),
-                           ecore_file_file_get(dst));
-                  fd = mkstemp(buf);
-                  if(fd < 0)
-                    {
-                       perror("mkstemp");
-                       goto FAIL;
-                    }
-                  close(fd);
+		  // Since we can't directly rename, try to 
+		  // copy to temp file in the dst directory
+		  // and then rename.
+		  snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX", 
+			   ecore_file_dir_get(dst),
+			   ecore_file_file_get(dst));
+		  fd = mkstemp(buf);
+		  if (fd < 0)
+		    {
+		       perror("mkstemp");
+		       goto FAIL;
+		    }
+		  close(fd);
 
-                  // Copy to temp file
-                  if(!ecore_file_cp(src,buf))
-                    goto FAIL;
+		  // Copy to temp file
+		  if (!ecore_file_cp(src, buf))
+		    goto FAIL;
 
-                  // Set file permissions of temp file to match src
-                  chmod(buf, st.st_mode);
+		  // Set file permissions of temp file to match src
+		  chmod(buf, st.st_mode);
 
-                  // Try to atomically move temp file to dst
-                  if (rename(buf, dst))
-                    {
-                       // If we still cannot atomically move
-                       // do a normal copy and hope for the best.
-                       if(!ecore_file_cp(buf, dst))
-                           goto FAIL;
-                    }
+		  // Try to atomically move temp file to dst
+		  if (rename(buf, dst))
+		    {
+		       // If we still cannot atomically move
+		       // do a normal copy and hope for the best.
+		       if (!ecore_file_cp(buf, dst))
+			 goto FAIL;
+		    }
 
-                  // Delete temporary file and src
-                  ecore_file_unlink(buf);
-                  ecore_file_unlink(src);
-                  goto PASS;
+		  // Delete temporary file and src
+		  ecore_file_unlink(buf);
+		  ecore_file_unlink(src);
+		  goto PASS;
 	       }
 	  }
 	goto FAIL;
      }
 
-   PASS:
+PASS:
    return 1;
 
-   FAIL:
+FAIL:
    return 0;
 }
 
