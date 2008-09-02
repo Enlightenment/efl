@@ -295,24 +295,66 @@ ecore_file_cp(const char *src, const char *dst)
 EAPI int
 ecore_file_mv(const char *src, const char *dst)
 {
+   char buf[PATH_MAX];
+   int fd;
+
    if (rename(src, dst))
      {
+        // File cannot be moved directly because
+        // it resides on a different mount point.
 	if (errno == EXDEV)
 	  {
 	     struct stat st;
 
+             // Make sure this is a regular file before
+             // we do anything fancy.
 	     stat(src, &st);
 	     if (S_ISREG(st.st_mode))
 	       {
-		  ecore_file_cp(src, dst);
-		  chmod(dst, st.st_mode);
-		  ecore_file_unlink(src);
-		  return 1;
+                  // Since we can't directly rename, try to 
+                  // copy to temp file in the dst directory
+                  // and then rename.
+                  snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX", 
+                           ecore_file_dir_get(dst),
+                           ecore_file_file_get(dst));
+                  fd = mkstemp(buf);
+                  if(fd < 0)
+                    {
+                       perror("mkstemp");
+                       goto FAIL;
+                    }
+                  close(fd);
+
+                  // Copy to temp file
+                  if(!ecore_file_cp(src,buf))
+                    goto FAIL;
+
+                  // Set file permissions of temp file to match src
+                  chmod(buf, st.st_mode);
+
+                  // Try to atomically move temp file to dst
+                  if (rename(buf, dst))
+                    {
+                       // If we still cannot atomically move
+                       // do a normal copy and hope for the best.
+                       if(!ecore_file_cp(buf, dst))
+                           goto FAIL;
+                    }
+
+                  // Delete temporary file and src
+                  ecore_file_unlink(buf);
+                  ecore_file_unlink(src);
+                  goto PASS;
 	       }
 	  }
-	return 0;
+	goto FAIL;
      }
+
+   PASS:
    return 1;
+
+   FAIL:
+   return 0;
 }
 
 /**
