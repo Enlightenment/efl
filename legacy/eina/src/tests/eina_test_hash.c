@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include "eina_hash.h"
+#include "eina_convert.h"
 #include "eina_suite.h"
 
 START_TEST(eina_hash_init_shutdown)
