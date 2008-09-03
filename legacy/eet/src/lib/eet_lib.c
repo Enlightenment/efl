@@ -1106,7 +1106,6 @@ eet_internal_read(Eet_File *ef)
    return NULL;
 }
 
-#if 0 /* No prototype */
 EAPI Eet_File *
 eet_memopen_read(const void *data, size_t size)
 {
@@ -1128,12 +1127,12 @@ eet_memopen_read(const void *data, size_t size)
    ef->mtime = 0;
    ef->delete_me_now = 1;
    ef->fp = NULL;
+   ef->readfp = NULL;
    ef->data = data;
    ef->data_size = size;
 
    return eet_internal_read(ef);
 }
-#endif
 
 EAPI Eet_File *
 eet_open(const char *file, Eet_File_Mode mode)

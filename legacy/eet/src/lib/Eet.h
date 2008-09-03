@@ -215,6 +215,16 @@ extern "C" {
    EAPI Eet_File *eet_open(const char *file, Eet_File_Mode mode);
 
    /**
+    * Open an eet file directly from a memory location. The data are not copied,
+    * so you must keep them around as long as the eet file is open. Their is
+    * currently no cache for this kind of Eet_File, so it's reopen every time
+    * you do use eet_memopen_read.
+    *
+    * @since 2.0.0
+    */
+   EAPI Eet_File *eet_memopen_read(const void *data, size_t size);
+
+   /**
     * Get the mode an Eet_File was opened with.
     * @param ef A valid eet file handle.
     * @return The mode ef was opened with.
