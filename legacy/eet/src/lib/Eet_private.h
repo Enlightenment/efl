@@ -62,11 +62,6 @@ int              eet_dictionary_string_get_float(const Eet_Dictionary *ed, int i
 int              eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *result);
 int              eet_dictionary_string_get_hash(const Eet_Dictionary *ed, int index);
 
-FILE *_eet_memfile_read_open(const void *data, size_t size);
-void  _eet_memfile_read_close(FILE *f);
-FILE *_eet_memfile_write_open(void **data, size_t *size);
-void  _eet_memfile_write_close(FILE *f);
-void  _eet_memfile_shutdown(void);
 int   _eet_hash_gen(const char *key, int hash_size);
 int   _eet_string_to_double_convert(const char *src, long long *m, long *e);
 void  _eet_double_to_string_convert(char des[128], double d);
