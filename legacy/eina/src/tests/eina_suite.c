@@ -41,6 +41,7 @@ static const Eina_Test_Case etc[] = {
   { "Module", eina_test_module },
   { "Convert", eina_test_convert },
   { "Rbtree", eina_test_rbtree },
+  { "File", eina_test_file },
   { NULL, NULL }
 };
 

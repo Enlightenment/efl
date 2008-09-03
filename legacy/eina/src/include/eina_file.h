@@ -20,6 +20,7 @@
 #define EINA_FILE_H_
 
 #include "eina_types.h"
+#include "eina_array.h"
 
 /**
  * @defgroup File_Group Memory File
@@ -30,6 +31,7 @@ typedef void (*Eina_File_Dir_List_Cb)(const char *name, const char *path, void *
 #define EINA_FILE_DIR_LIST_CB(Function) ((Eina_File_Dir_List_Cb)Function)
 
 EAPI Eina_Bool eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb cb, void *data);
+EAPI Eina_Array *eina_file_split(char *path);
 
 /** @} */
 

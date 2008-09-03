@@ -35,7 +35,6 @@
 # include <Evil.h>
 #endif /* _WIN2 */
 
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -53,6 +52,11 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#ifndef _WIN32
+# define PATH_DELIM '/'
+#else
+# define PATH_DELIM '\\'
+#endif
 
 #include "eina_file.h"
 #include "eina_private.h"
@@ -187,42 +191,33 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 /**
  *
  */
-EAPI void
-eina_file_path_nth_get(const char *path, int n, char **left, char **right)
+EAPI Eina_Array *
+eina_file_split(char *path)
 {
-	char *p;
-	char *end;
-	char *tmp;
-	char *delim;
-	int inc;
-	int num = 0;
+	Eina_Array *ea;
+	char *current;
+	int length;
 
-	if (!left && !right)
-		return;
+	if (!path) return NULL;
 
-	if (n > 0) {
-		p = (char *)path;
-		inc = 1;
-		end = (char *)path + strlen(path);
-	} else {
-		p = (char *)path + strlen(path);
-		inc = -1;
-		end = (char *)path;
-	}
+	ea = eina_array_new(16);
 
-	for (tmp = p, delim = p; tmp != end && num != n; tmp += inc)
+	if (!ea) return NULL;
+
+	for (current = strchr(path, PATH_DELIM);
+	     current != NULL;
+	     path = current + 1, current = strchr(path, PATH_DELIM))
 	{
-		if (*tmp == '/') {
-			num += inc;
-			delim = tmp;
-		}
+		length = current - path;
+
+		if (length <= 0) continue ;
+
+		eina_array_push(ea, path);
+		*current = '\0';
 	}
 
-	if (left) {
-		*left = strndup(path, delim - path + 1);
-	}
-	if (right) {
-		*right = strdup(delim + 1);
-	}
+	if (*path != '\0')
+		eina_array_push(ea, path);
+
+	return ea;
 }
-
