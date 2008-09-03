@@ -40,10 +40,10 @@ eina_init(void)
    int r;
 
    r = eina_error_init();
-   r += eina_hash_init();
-   r += eina_stringshare_init();
-   r += eina_list_init();
-   r += eina_array_init();
+   eina_hash_init();
+   eina_stringshare_init();
+   eina_list_init();
+   eina_array_init();
 
    return r;
 }
@@ -55,9 +55,9 @@ eina_shutdown(void)
 
    eina_array_shutdown();
    eina_list_shutdown();
-   r = eina_stringshare_shutdown();
-   r += eina_hash_shutdown();
-   r += eina_error_shutdown();
+   eina_stringshare_shutdown();
+   eina_hash_shutdown();
+   r = eina_error_shutdown();
 
    return r;
 }

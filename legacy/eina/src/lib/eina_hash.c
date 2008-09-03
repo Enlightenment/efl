@@ -88,8 +88,6 @@ struct _Eina_Hash_Each
    const void *data;
 };
 
-static int _eina_hash_init_count = 0;
-
 #undef get16bits
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
   || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
@@ -325,12 +323,7 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
 EAPI int
 eina_hash_init(void)
 {
-   _eina_hash_init_count++;
-
-   if (_eina_hash_init_count == 1)
-     eina_error_init();
-
-   return _eina_hash_init_count;
+   return eina_error_init();
 }
 
 /**
@@ -339,11 +332,7 @@ eina_hash_init(void)
 EAPI int
 eina_hash_shutdown(void)
 {
-   _eina_hash_init_count--;
-
-   if (_eina_hash_init_count == 0) eina_error_shutdown();
-
-   return _eina_hash_init_count;
+   return eina_error_shutdown();
 }
 
 /**

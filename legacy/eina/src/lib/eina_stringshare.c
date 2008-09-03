@@ -85,7 +85,7 @@ struct _Eina_Stringshare_Node
 };
 
 static Eina_Stringshare *share = NULL;
-static int eina_stringshare_init_count = 0;
+static int _eina_stringshare_init_count = 0;
 
 static int
 _eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length, __UNUSED__ void *data)
@@ -152,16 +152,16 @@ eina_stringshare_init()
     * No strings have been loaded at this point, so create the hash
     * table for storing string info for later.
     */
-   if (!eina_stringshare_init_count)
+   if (!_eina_stringshare_init_count)
      {
 	share = calloc(1, sizeof(Eina_Stringshare));
 	if (!share)
 	  return 0;
 	eina_error_init();
      }
-   eina_stringshare_init_count++;
+   _eina_stringshare_init_count++;
 
-   return 1;
+   return _eina_stringshare_init_count;
 }
 
 /**
@@ -239,8 +239,8 @@ eina_stringshare_del(const char *str)
 EAPI int
 eina_stringshare_shutdown()
 {
-   --eina_stringshare_init_count;
-   if (!eina_stringshare_init_count)
+   --_eina_stringshare_init_count;
+   if (!_eina_stringshare_init_count)
      {
 	int i;
 	/* remove any string still in the table */
@@ -263,7 +263,7 @@ eina_stringshare_shutdown()
 	eina_error_shutdown();
      }
 
-   return eina_stringshare_init_count;
+   return _eina_stringshare_init_count;
 }
 
 /**
