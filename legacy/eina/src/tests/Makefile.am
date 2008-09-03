@@ -38,6 +38,7 @@ eina_test_accessor.c	\
 eina_test_module.c	\
 eina_test_convert.c	\
 eina_test_rbtree.c	\
+eina_test_file.c	\
 eina_test_list.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la
