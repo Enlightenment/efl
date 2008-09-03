@@ -44,155 +44,9 @@ typedef struct _JPEG_error_mgr             *emptr;
 
 struct _JPEG_error_mgr
 {
-   struct jpeg_error_mgr pub;
-   jmp_buf setjmp_buffer;
+   struct     jpeg_error_mgr pub;
+   jmp_buf    setjmp_buffer;
 };
-
-struct jpeg_membuf_src {
-   struct jpeg_source_mgr pub;
-
-   const char *buf;
-   size_t len;
-};
-
-static void
-_eet_jpeg_membuf_src_init(j_decompress_ptr cinfo)
-{
-}
-
-static boolean
-_eet_jpeg_membuf_src_fill(j_decompress_ptr cinfo)
-{
-   static const JOCTET jpeg_eoi[2] = { 0xFF, JPEG_EOI };
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
-
-   src->pub.bytes_in_buffer = sizeof(jpeg_eoi);
-   src->pub.next_input_byte = jpeg_eoi;
-
-   return TRUE;
-}
-
-static void
-_eet_jpeg_membuf_src_skip(j_decompress_ptr cinfo, long num_bytes)
-{
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
-
-   src->pub.bytes_in_buffer -= num_bytes;
-   src->pub.next_input_byte += num_bytes;
-}
-
-static void
-_eet_jpeg_membuf_src_term(j_decompress_ptr cinfo)
-{
-   free(cinfo->src);
-   cinfo->src = NULL;
-}
-
-static int
-eet_jpeg_membuf_src(j_decompress_ptr cinfo, const void *buf, size_t len)
-{
-   struct jpeg_membuf_src *src;
-
-   src = malloc(sizeof(*src));
-   if (!src) return -1;
-
-   cinfo->src = &src->pub;
-   src->buf = buf;
-   src->len = len;
-   src->pub.init_source = _eet_jpeg_membuf_src_init;
-   src->pub.fill_input_buffer = _eet_jpeg_membuf_src_fill;
-   src->pub.skip_input_data = _eet_jpeg_membuf_src_skip;
-   src->pub.resync_to_restart = jpeg_resync_to_restart;
-   src->pub.term_source = _eet_jpeg_membuf_src_term;
-   src->pub.bytes_in_buffer = src->len;
-   src->pub.next_input_byte = src->buf;
-
-   return 0;
-}
-
-struct jpeg_membuf_dst {
-   struct jpeg_destination_mgr pub;
-
-   void **dst_buf;
-   size_t *dst_len;
-
-   char *buf;
-   size_t len;
-   int failed;
-};
-
-static void
-_eet_jpeg_membuf_dst_init(j_compress_ptr cinfo)
-{
-}
-
-static boolean
-_eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
-{
-   struct jpeg_membuf_dst *dst = (struct jpeg_membuf_dst *)cinfo->dest;
-   char *buf;
-
-   if (dst->len >= 0x40000000 ||
-       (buf = realloc(dst->buf, dst->len * 2)) == NULL) {
-      dst->failed = 1;
-      dst->pub.next_output_byte = dst->buf;
-      dst->pub.free_in_buffer = dst->len;
-      return TRUE;
-   }
-
-   dst->pub.next_output_byte =
-     buf + ((char *)dst->pub.next_output_byte - dst->buf);
-   dst->buf = buf;
-   dst->pub.free_in_buffer += dst->len;
-   dst->len *= 2;
-
-   return FALSE;
-}
-
-static void
-_eet_jpeg_membuf_dst_term(j_compress_ptr cinfo)
-{
-   struct jpeg_membuf_dst *dst = (struct jpeg_membuf_dst *)cinfo->dest;
-
-   if (dst->failed) {
-      *dst->dst_buf = NULL;
-      *dst->dst_len = 0;
-      free(dst->buf);
-   } else {
-      *dst->dst_buf = dst->buf;
-      *dst->dst_len = (char *)dst->pub.next_output_byte - dst->buf;
-   }
-   free(dst);
-   cinfo->dest = NULL;
-}
-
-static int
-eet_jpeg_membuf_dst(j_compress_ptr cinfo, void **buf, size_t *len)
-{
-   struct jpeg_membuf_dst *dst;
-
-   dst = malloc(sizeof(*dst));
-   if (!dst) return -1;
-
-   dst->buf = malloc(32768);
-   if (!dst->buf) {
-      free(dst);
-      return -1;
-   }
-   dst->len = 32768;
-
-   cinfo->dest = &dst->pub;
-   dst->pub.init_destination = _eet_jpeg_membuf_dst_init;
-   dst->pub.empty_output_buffer = _eet_jpeg_membuf_dst_flush;
-   dst->pub.term_destination = _eet_jpeg_membuf_dst_term;
-   dst->pub.free_in_buffer = dst->len;
-   dst->pub.next_output_byte = dst->buf;
-   dst->dst_buf = buf;
-   dst->dst_len = len;
-   dst->failed = 0;
-
-   return 0;
-}
 
 /*---*/
 
@@ -276,22 +130,24 @@ _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
 static int
 eet_data_image_jpeg_header_decode(const void *data, int size, unsigned int *w, unsigned int *h)
 {
-   struct jpeg_decompress_struct cinfo = { 0 };
+   struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
+   FILE *f;
 
+   f = _eet_memfile_read_open(data, (size_t)size);
+   if (!f) return 0;
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
    jerr.pub.output_message = _JPEGErrorHandler;
-   if (setjmp(jerr.setjmp_buffer)) return 0;
-   jpeg_create_decompress(&cinfo);
-
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
+   if (setjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
 	return 0;
      }
-
+   jpeg_create_decompress(&cinfo);
+   jpeg_stdio_src(&cinfo, f);
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
@@ -300,14 +156,15 @@ eet_data_image_jpeg_header_decode(const void *data, int size, unsigned int *w, u
    /* head decoding */
    *w = cinfo.output_width;
    *h = cinfo.output_height;
-
-   free(cinfo.src);
-   cinfo.src = NULL;
-
-   jpeg_destroy_decompress(&cinfo);
-
    if ((*w < 1) || (*h < 1) || (*w > 8192) || (*h > 8192))
-      return 0;
+     {
+	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
+	return 0;
+     }
+   /* end head decoding */
+   jpeg_destroy_decompress(&cinfo);
+   _eet_memfile_read_close(f);
    return 1;
 }
 
@@ -315,30 +172,33 @@ static int
 eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, unsigned int src_y,
 			       unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride)
 {
-   struct jpeg_decompress_struct cinfo = { 0 };
+   struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    unsigned char *ptr, *line[16], *tdata = NULL;
    unsigned int *ptr2, *tmp;
    unsigned int iw, ih;
    int x, y, l, scans;
    int i, count, prevy;
+   FILE *f;
 
    /* FIXME: handle src_x, src_y and row_stride correctly */
    if (!d) return 0;
 
+   f = _eet_memfile_read_open(data, (size_t)size);
+   if (!f) return 0;
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
    jerr.pub.output_message = _JPEGErrorHandler;
-   if (setjmp(jerr.setjmp_buffer)) return 0;
-   jpeg_create_decompress(&cinfo);
-
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
+   if (setjmp(jerr.setjmp_buffer))
      {
+	if (tdata) free(tdata);
 	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
 	return 0;
      }
-
+   jpeg_create_decompress(&cinfo);
+   jpeg_stdio_src(&cinfo, f);
    jpeg_read_header(&cinfo, TRUE);
    cinfo.dct_method = JDCT_FASTEST;
    cinfo.do_fancy_upsampling = FALSE;
@@ -350,20 +210,16 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, u
    ih = cinfo.output_height;
    if ((iw != w) || (ih != h))
      {
-	free(cinfo.src);
-	cinfo.src = NULL;
-
 	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
 	return 0;
      }
    /* end head decoding */
    /* data decoding */
    if (cinfo.rec_outbuf_height > 16)
      {
-	free(cinfo.src);
-	cinfo.src = NULL;
-
 	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
 	return 0;
      }
    tdata = alloca((iw) * 16 * 3);
@@ -446,6 +302,7 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, u
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
+   _eet_memfile_read_close(f);
    return 1;
 }
 
@@ -453,26 +310,38 @@ static void *
 eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int src_x, unsigned int src_y,
 				 unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride)
 {
-   struct jpeg_decompress_struct cinfo = { 0 };
+   struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    unsigned char *ptr, *line[16], *tdata = NULL;
    unsigned int *ptr2, *tmp;
    int x, y, l, scans;
    int i, count, prevy, iw;
+   FILE *f;
 
+   f = _eet_memfile_read_open(data, (size_t)size);
+   if (!f) return NULL;
+
+   if (0)
+     {
+	char buf[1];
+
+	while (fread(buf, 1, 1, f));
+	_eet_memfile_read_close(f);
+	return d;
+     }
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
    jerr.pub.output_message = _JPEGErrorHandler;
-   if (setjmp(jerr.setjmp_buffer)) return NULL;
-   jpeg_create_decompress(&cinfo);
-
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
+   if (setjmp(jerr.setjmp_buffer))
      {
+	if (tdata) free(tdata);
 	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
-
+   jpeg_create_decompress(&cinfo);
+   jpeg_stdio_src(&cinfo, f);
    jpeg_read_header(&cinfo, TRUE);
    cinfo.dct_method = JDCT_FASTEST;
    cinfo.do_fancy_upsampling = FALSE;
@@ -484,20 +353,16 @@ eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int src_x,
    if (w != cinfo.output_width
        || h != cinfo.output_height)
      {
-	free(cinfo.src);
-	cinfo.src = NULL;
-
 	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    /* end head decoding */
    /* data decoding */
    if (cinfo.rec_outbuf_height > 16)
      {
-	free(cinfo.src);
-	cinfo.src = NULL;
-
 	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    tdata = alloca(w * 16 * 3);
@@ -544,6 +409,7 @@ eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int src_x,
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
+   _eet_memfile_read_close(f);
    return d;
 }
 
@@ -662,6 +528,9 @@ eet_data_image_jpeg_convert(int *size, const void *data, unsigned int w, unsigne
 
    (void) alpha; /* unused */
 
+   f =_eet_memfile_write_open(&d, &sz);
+   if (!f) return NULL;
+
    buf = alloca(3 * w);
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
@@ -671,12 +540,12 @@ eet_data_image_jpeg_convert(int *size, const void *data, unsigned int w, unsigne
    if (setjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_compress(&cinfo);
-	/* XXX free buffer in cinfo */
+	_eet_memfile_write_close(f);
 	if (d) free(d);
 	return NULL;
      }
    jpeg_create_compress(&cinfo);
-   eet_jpeg_membuf_dst(&cinfo, &d, &sz);
+   jpeg_stdio_dest(&cinfo, f);
    cinfo.image_width = w;
    cinfo.image_height = h;
    cinfo.input_components = 3;
@@ -714,6 +583,7 @@ eet_data_image_jpeg_convert(int *size, const void *data, unsigned int w, unsigne
    jpeg_finish_compress(&cinfo);
    jpeg_destroy_compress(&cinfo);
 
+   _eet_memfile_write_close(f);
    *size = sz;
    return d;
 }
@@ -744,7 +614,11 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	struct _JPEG_error_mgr jerr;
 	JSAMPROW *jbuf;
 	struct jpeg_compress_struct cinfo;
+	FILE *f;
 	unsigned char *buf;
+
+	f = _eet_memfile_write_open(&d, &sz);
+	if (!f) return NULL;
 
 	buf = alloca(3 * w);
 
@@ -755,11 +629,12 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	if (setjmp(jerr.setjmp_buffer))
 	  {
 	     jpeg_destroy_compress(&cinfo);
+	     _eet_memfile_write_close(f);
 	     if (d) free(d);
 	     return NULL;
 	  }
 	jpeg_create_compress(&cinfo);
-	eet_jpeg_membuf_dst(&cinfo, &d, &sz);
+	jpeg_stdio_dest(&cinfo, f);
 	cinfo.image_width = w;
 	cinfo.image_height = h;
 	cinfo.input_components = 3;
@@ -797,6 +672,7 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
 
+	_eet_memfile_write_close(f);
 	d1 = d;
 	sz1 = sz;
      }
@@ -807,7 +683,15 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	struct _JPEG_error_mgr jerr;
 	JSAMPROW *jbuf;
 	struct jpeg_compress_struct cinfo;
+	FILE *f;
 	unsigned char *buf;
+
+	f = _eet_memfile_write_open(&d, &sz);
+	if (!f)
+	  {
+	     free(d1);
+	     return NULL;
+	  }
 
 	buf = alloca(3 * w);
 
@@ -818,12 +702,13 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	if (setjmp(jerr.setjmp_buffer))
 	  {
 	     jpeg_destroy_compress(&cinfo);
+	     _eet_memfile_write_close(f);
 	     if (d) free(d);
 	     free(d1);
 	     return NULL;
 	  }
 	jpeg_create_compress(&cinfo);
-	eet_jpeg_membuf_dst(&cinfo, &d, &sz);
+	jpeg_stdio_dest(&cinfo, f);
 	cinfo.image_width = w;
 	cinfo.image_height = h;
 	cinfo.input_components = 1;
@@ -859,6 +744,7 @@ eet_data_image_jpeg_alpha_convert(int *size, const void *data, unsigned int w, u
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
 
+	_eet_memfile_write_close(f);
 	d2 = d;
 	sz2 = sz;
      }
