@@ -288,13 +288,13 @@ eina_bench_lookup_ghash(int request)
 }
 #endif
 
-void eina_bench_hash(Eina_Bench *bench)
+void eina_bench_hash(Eina_Benchmark *bench)
 {
-   eina_bench_register(bench, "superfast-lookup", EINA_BENCH(eina_bench_lookup_superfast), 1000, 180000, 2500);
-   eina_bench_register(bench, "djb2-lookup", EINA_BENCH(eina_bench_lookup_djb2), 1000, 180000, 2500);
-   eina_bench_register(bench, "djb2-lookup-inline", EINA_BENCH(eina_bench_lookup_djb2_inline), 1000, 180000, 2500);
-   eina_bench_register(bench, "rbtree", EINA_BENCH(eina_bench_lookup_rbtree), 1000, 180000, 2500);
+   eina_benchmark_register(bench, "superfast-lookup", EINA_BENCHMARK(eina_bench_lookup_superfast), 1000, 180000, 2500);
+   eina_benchmark_register(bench, "djb2-lookup", EINA_BENCHMARK(eina_bench_lookup_djb2), 1000, 180000, 2500);
+   eina_benchmark_register(bench, "djb2-lookup-inline", EINA_BENCHMARK(eina_bench_lookup_djb2_inline), 1000, 180000, 2500);
+   eina_benchmark_register(bench, "rbtree", EINA_BENCHMARK(eina_bench_lookup_rbtree), 1000, 180000, 2500);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_bench_register(bench, "ghash-lookup", EINA_BENCH(eina_bench_lookup_ghash), 1000, 180000, 2500);
+   eina_benchmark_register(bench, "ghash-lookup", EINA_BENCHMARK(eina_bench_lookup_ghash), 1000, 180000, 2500);
 #endif
 }

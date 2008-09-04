@@ -22,6 +22,7 @@ eina_inline_list.x \
 eina_accessor.h \
 eina_convert.h \
 eina_rbtree.h \
+eina_benchmark.h \
 eina_inline_rbtree.x \
 eina_iterator.h
 

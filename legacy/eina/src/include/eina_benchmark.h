@@ -16,14 +16,21 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EINA_BENCH_H_
-#define EINA_BENCH_H_
+#ifndef EINA_BENCHMARK_H_
+#define EINA_BENCHMARK_H_
 
-#include "eina_benchmark.h"
+#include "eina_array.h"
 
-void eina_bench_hash(Eina_Benchmark *bench);
-void eina_bench_array(Eina_Benchmark *bench);
-void eina_bench_stringshare(Eina_Benchmark *bench);
-void eina_bench_convert(Eina_Benchmark *bench);
+typedef struct _Eina_Benchmark Eina_Benchmark;
+typedef void (*Eina_Benchmark_Specimens)(int request);
+#define EINA_BENCHMARK(Function) ((Eina_Benchmark_Specimens)Function)
+
+EAPI Eina_Benchmark *eina_benchmark_new(const char *name, const char *run);
+EAPI void eina_benchmark_free(Eina_Benchmark *bench);
+
+EAPI void eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_Specimens bench_cb,
+				  int count_start, int count_end, int count_set);
+
+EAPI Eina_Array *eina_benchmark_run(Eina_Benchmark *bench);
 
 #endif

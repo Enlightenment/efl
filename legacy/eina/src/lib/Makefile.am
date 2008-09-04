@@ -27,6 +27,7 @@ eina_iterator.c \
 eina_accessor.c \
 eina_convert.c \
 eina_rbtree.c \
+eina_benchmark.c \
 eina_stringshare.c
 
 libeina_la_LIBADD = @EINA_LIBS@

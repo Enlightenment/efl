@@ -96,10 +96,10 @@ eina_bench_stringchunk_job(int request)
 }
 #endif
 
-void eina_bench_stringshare(Eina_Bench *bench)
+void eina_bench_stringshare(Eina_Benchmark *bench)
 {
-   eina_bench_register(bench, "stringshare", EINA_BENCH(eina_bench_stringshare_job), 100, 20100, 500);
+   eina_benchmark_register(bench, "stringshare", EINA_BENCHMARK(eina_bench_stringshare_job), 100, 20100, 500);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_bench_register(bench, "stringchunk (glib)", EINA_BENCH(eina_bench_stringchunk_job), 100, 20100, 500);
+   eina_benchmark_register(bench, "stringchunk (glib)", EINA_BENCHMARK(eina_bench_stringchunk_job), 100, 20100, 500);
 #endif
 }

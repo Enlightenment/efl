@@ -552,17 +552,17 @@ eina_bench_gptrarray_4evas_render(int request)
 }
 #endif
 
-void eina_bench_array(Eina_Bench *bench)
+void eina_bench_array(Eina_Benchmark *bench)
 {
-   eina_bench_register(bench, "array-inline", EINA_BENCH(eina_bench_array_4evas_render_inline), 200, 4000, 100);
-   eina_bench_register(bench, "array-iterator", EINA_BENCH(eina_bench_array_4evas_render_iterator), 200, 4000, 100);
-   eina_bench_register(bench, "list", EINA_BENCH(eina_bench_list_4evas_render), 200, 4000, 100);
-   eina_bench_register(bench, "list-iterator", EINA_BENCH(eina_bench_list_4evas_render_iterator), 200, 4000, 100);
-   eina_bench_register(bench, "inlist", EINA_BENCH(eina_bench_inlist_4evas_render), 200, 4000, 100);
-   eina_bench_register(bench, "inlist-iterator", EINA_BENCH(eina_bench_inlist_4evas_render_iterator), 200, 4000, 100);
+   eina_benchmark_register(bench, "array-inline", EINA_BENCHMARK(eina_bench_array_4evas_render_inline), 200, 4000, 100);
+   eina_benchmark_register(bench, "array-iterator", EINA_BENCHMARK(eina_bench_array_4evas_render_iterator), 200, 4000, 100);
+   eina_benchmark_register(bench, "list", EINA_BENCHMARK(eina_bench_list_4evas_render), 200, 4000, 100);
+   eina_benchmark_register(bench, "list-iterator", EINA_BENCHMARK(eina_bench_list_4evas_render_iterator), 200, 4000, 100);
+   eina_benchmark_register(bench, "inlist", EINA_BENCHMARK(eina_bench_inlist_4evas_render), 200, 4000, 100);
+   eina_benchmark_register(bench, "inlist-iterator", EINA_BENCHMARK(eina_bench_inlist_4evas_render_iterator), 200, 4000, 100);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_bench_register(bench, "glist", EINA_BENCH(eina_bench_glist_4evas_render), 200, 4000, 100);
-   eina_bench_register(bench, "gptrarray", EINA_BENCH(eina_bench_gptrarray_4evas_render), 200, 4000, 100);
+   eina_benchmark_register(bench, "glist", EINA_BENCHMARK(eina_bench_glist_4evas_render), 200, 4000, 100);
+   eina_benchmark_register(bench, "gptrarray", EINA_BENCHMARK(eina_bench_gptrarray_4evas_render), 200, 4000, 100);
 #endif
 }
 

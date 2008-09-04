@@ -144,16 +144,16 @@ eina_bench_convert_gstrtod(int request)
 }
 #endif
 
-void eina_bench_convert(Eina_Bench *bench)
+void eina_bench_convert(Eina_Benchmark *bench)
 {
-   eina_bench_register(bench, "itoa 10", EINA_BENCH(eina_bench_convert_itoa_10), 1000, 200000, 500);
-   eina_bench_register(bench, "itoa 16", EINA_BENCH(eina_bench_convert_itoa_16), 1000, 200000, 500);
-   eina_bench_register(bench, "snprintf 10", EINA_BENCH(eina_bench_convert_snprintf_10), 1000, 200000, 500);
-   eina_bench_register(bench, "snprintf 16", EINA_BENCH(eina_bench_convert_snprintf_x), 1000, 200000, 500);
-   eina_bench_register(bench, "snprintf a", EINA_BENCH(eina_bench_convert_snprintf_a), 1000, 200000, 500);
-   eina_bench_register(bench, "dtoa", EINA_BENCH(eina_bench_convert_dtoa), 1000, 200000, 500);
+   eina_benchmark_register(bench, "itoa 10", EINA_BENCHMARK(eina_bench_convert_itoa_10), 1000, 200000, 500);
+   eina_benchmark_register(bench, "itoa 16", EINA_BENCHMARK(eina_bench_convert_itoa_16), 1000, 200000, 500);
+   eina_benchmark_register(bench, "snprintf 10", EINA_BENCHMARK(eina_bench_convert_snprintf_10), 1000, 200000, 500);
+   eina_benchmark_register(bench, "snprintf 16", EINA_BENCHMARK(eina_bench_convert_snprintf_x), 1000, 200000, 500);
+   eina_benchmark_register(bench, "snprintf a", EINA_BENCHMARK(eina_bench_convert_snprintf_a), 1000, 200000, 500);
+   eina_benchmark_register(bench, "dtoa", EINA_BENCHMARK(eina_bench_convert_dtoa), 1000, 200000, 500);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_bench_register(bench, "gstrtod", EINA_BENCH(eina_bench_convert_gstrtod), 1000, 200000, 500);
+   eina_benchmark_register(bench, "gstrtod", EINA_BENCHMARK(eina_bench_convert_gstrtod), 1000, 200000, 500);
 #endif
 }
 
