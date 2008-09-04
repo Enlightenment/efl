@@ -22,9 +22,6 @@
 START_TEST(eina_file_split_simple)
 {
    Eina_Array *ea;
-   char *tmp;
-   Eina_Array_Iterator it;
-   unsigned int i;
 
    eina_array_init();
 
