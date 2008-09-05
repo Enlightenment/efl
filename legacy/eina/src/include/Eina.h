@@ -35,12 +35,12 @@
  * Linux and Windows (XP and CE).
  *
  * The data types that are available are
- * @li hash table
- * @li list
- * @li inlined list
  * @li array
- * @li shared string
+ * @li hash table
+ * @li inlined list
  * @li inlined red black tree
+ * @li list
+ * @li shared string
  *
  * This document describes each data type by providing the algorithms
  * used in the implementation, the performance, a short tutorial and
@@ -48,23 +48,29 @@
  *
  * @section eina_data_types_sec Eina Data Types
  *
- * @subsection hashtable Hash Table
+ * @subsection eina_array Array
  *
- * give a small description here : what it is for, what it does
- * , etc...
+ * @subsection eina_hash Hash Table
  *
- * To look at documentation of our hash tables, follow the link @ref
- * Eina_Hash_Group.
+ * @subsection eina_inlist Inlined List
  *
- * @subsection list List
+ * @subsection eina_rbtree Inlined Red Black Tree
  *
- * @subsection inlist Inlined List
+ * @subsection eina_list List
  *
- * @subsection array Array
+ * @subsection eina_stringshare Shared String
  *
- * @subsection stringshare Shared String
+ * @section eina_tools_sec Eina Tools
  *
- * @subsection rbtree Inlined Red Black Tree
+ * @subsection eina_convert Convert Functions
+ *
+ * @subsection eina_counter Timing Functions
+ *
+ * @subsection eina_error Error Functions
+ *
+ * Take a look at the API of @ref Eina_Error_Group.
+ *
+ * Take a look at the @ref tutorial_error_page.
  *
  * @todo add debug function
  * @todo add magic function

@@ -45,7 +45,7 @@ START_TEST(eina_error_errno)
 
    eina_error_init();
 
-   test = eina_error_register(TEST_TEXT);
+   test = eina_error_msg_register(TEST_TEXT);
    fail_if(!eina_error_msg_get(test));
    fail_if(strcmp(eina_error_msg_get(test), TEST_TEXT) != 0);
 

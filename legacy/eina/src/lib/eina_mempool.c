@@ -99,7 +99,7 @@ eina_mempool_init(void)
 
 		eina_module_app_register(_group, "eina", "mp", NULL);
 
-		EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_register("Not a memory pool module.");
+		EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_register("Not a memory pool module.");
 	}
 	/* get all the modules */
 	return ++_init_count;

@@ -102,11 +102,11 @@ eina_counter_init(void)
    if (_eina_counter_init_count == 1)
      {
 	eina_error_init();
-	EINA_COUNTER_ERROR_OUT_OF_MEMORY  = eina_error_register("Eina_Counter out of memory");
+	EINA_COUNTER_ERROR_OUT_OF_MEMORY  = eina_error_msg_register("Eina_Counter out of memory");
 #ifdef _WIN32
         if (!QueryPerformanceFrequency(&_eina_counter_frequency))
           {
-             EINA_COUNTER_ERROR_WINDOWS = eina_error_register("Change your OS, you moron !");
+             EINA_COUNTER_ERROR_WINDOWS = eina_error_msg_register("Change your OS, you moron !");
              _eina_counter_init_count--;
              return 0;
           }

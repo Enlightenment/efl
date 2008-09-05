@@ -117,9 +117,9 @@ eina_convert_init(void)
    if (_init_count > 1) goto init_out;
 
    eina_error_init();
-   EINA_ERROR_CONVERT_0X_NOT_FOUND = eina_error_register("Error during string convertion to float, First '0x' was not found.");
-   EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_register("Error during string convertion to float, First 'p' was not found.");
-   EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_register("Error outrun string limit during convertion string convertion to float.");
+   EINA_ERROR_CONVERT_0X_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First '0x' was not found.");
+   EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
+   EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
 
  init_out:
    return _init_count;
