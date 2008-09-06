@@ -144,8 +144,7 @@
  *
  * before the calls of the tests in the above example.
  *
- * @section tutorial_error_advanced_display Advanced usage of print
- * callbacks
+ * @section tutorial_error_advanced_display Advanced usage of print callbacks
  *
  * The error module allows the user to change the way
  * eina_error_print() displays the messages. It suffices to pass to
@@ -258,6 +257,8 @@
  * or a lib should manage. Then, when an error can occur, use
  * eina_error_set(), and when errors are managed, use eina_error_get().
  *
+ * Here is an example of use:
+ *
  * @code
  * #include <stdlib.h>
  * #include <stdio.h>
@@ -323,6 +324,9 @@
  *    return EXIT_SUCCESS;
  * }
  * @endcode
+ *
+ * Of course, instead of printf(), eina_error_print() can be used to
+ * have beautiful error messages.
  */
 
 #ifdef HAVE_CONFIG_H
