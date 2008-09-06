@@ -255,7 +255,10 @@
  *
  * So one has to fisrt register all the error messages that a program
  * or a lib should manage. Then, when an error can occur, use
- * eina_error_set(), and when errors are managed, use eina_error_get().
+ * eina_error_set(), and when errors are managed, use
+ * eina_error_get(). If eina_error_set() is used to set an error, do
+ * not forget to call before eina_error_set0), to remove previous set
+ * errors.
  *
  * Here is an example of use:
  *
@@ -270,12 +273,16 @@
  *
  * voi *data_new()
  * {
+ *    eina_error_set(0);
+ *
  *    eina_error_set(MY_ERROR_NULL);
  *    return NULL;
  * }
  *
  * int test(int n)
  * {
+ *    eina_error_set(0);
+ *
  *    if (n < 0)
  *    {
  *       eina_error_set(MY_ERROR_NEGATIVE);
@@ -306,6 +313,16 @@
  *       err = eina_error_get();
  *       if (err)
  *          printf("Error during memory allocation: %s\n",
+ *                 eina_error_msg_get(err));
+ *    }
+ *
+ *    if (!test(0))
+ *    {
+ *       Eina_Error err;
+ *
+ *       err = eina_error_get();
+ *       if (err)
+ *          printf("Error during test function: %s\n",
  *                 eina_error_msg_get(err));
  *    }
  *
