@@ -144,10 +144,185 @@
  *
  * before the calls of the tests in the above example.
  *
+ * @section tutorial_error_advanced_display Advanced usage of print
+ * callbacks
+ *
+ * The error module allows the user to change the way
+ * eina_error_print() displays the messages. It suffices to pass to
+ * eina_error_print_cb_set() the function used to display the
+ * message. That  function must be of type #Eina_Error_Print_Cb. As a
+ * custom data can be passed to that callback, powerful display
+ * messages can be displayed.
+ *
+ * It is suggested to not use __FILE__, __FUNCTION__ or __LINE__ when
+ * writing that callback, but when defining macros (like
+ * EINA_ERROR_PERR() and other macros).
+ *
+ * Here is an example of custom callback, whose behavior can be
+ * changed at runtime:
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <eina_error.h>
+ *
+ * #define ERROR(fmt, ...)                                    \
+ *    eina_error_print(EINA_ERROR_LEVEL_ERR, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+ *
+ * typedef struct _Data Data;
+ *
+ * struct _Data
+ * {
+ *    int to_stderr;
+ * };
+ *
+ * void print_cb(Eina_Error_Level level,
+ *               const char *file,
+ *               const char *fnc,
+ *               int line,
+ *               const char *fmt,
+ *               void *data,
+ *               va_list args)
+ * {
+ *    Data *d;
+ *    FILE *output;
+ *    char *str;
+ *
+ *    d = (Data *)data;
+ *    if (d->to_stderr)
+ *    {
+ *       output = stderr;
+ *       str = "stderr";
+ *    }
+ *    else
+ *    {
+ *       output = stdout;
+ *       str = "stdout";
+ *    }
+ *
+ *    fprintf(output, "%s:%s (%d) %s: ", file, fnc, line, str);
+ *    vfprintf(output, fmt, args);
+ * }
+ *
+ * void test(Data *data, int i)
+ * {
+ *    if (i < 0)
+ *       data->to_stderr = 0;
+ *    else
+ *       data->to_stderr = 1;
+ *
+ *    ERROR("error message...\n");
+ * }
+ *
+ * int main(void)
+ * {
+ *    Data *data;
+ *
+ *    if (!eina_error_init())
+ *    {
+ *       printf ("Error during the initialization of eina_error module\n");
+ *       return EXIT_FAILURE;
+ *    }
+ *
+ *    data = (Data *)malloc(sizeof(Data));
+ *    if (!data)
+ *    {
+ *       printf ("Error during memory allocation\n");
+ *       eina_error_shutdown();
+ *       return EXIT_FAILURE;
+ *    }
+ *
+ *    eina_error_print_cb_set(print_cb, data);
+ *
+ *    test(data, -1);
+ *    test(data, 0);
+ *
+ *    eina_error_shutdown();
+ *
+ *    return EXIT_SUCCESS;
+ * }
+ * @endcode
+ *
  * @section tutorial_error_registering_msg Registering messages
  *
- * @section tutorial_error_advanced_display Advanced usage of print callbacks
+ * The error module can provide a system that mimic the errno system
+ * of the C standard library. It consists in 2 parts:
  *
+ * @li a way of registering new messages with
+ * eina_error_msg_register() and eina_error_msg_get(),
+ * @li a way of setting / getting last error message with
+ * eina_error_set() / eina_error_get().
+ *
+ * So one has to fisrt register all the error messages that a program
+ * or a lib should manage. Then, when an error can occur, use
+ * eina_error_set(), and when errors are managed, use eina_error_get().
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <eina_error.h>
+ *
+ * Eina_Error MY_ERROR_NEGATIVE;
+ * Eina_Error MY_ERROR_NULL;
+ *
+ * voi *data_new()
+ * {
+ *    eina_error_set(MY_ERROR_NULL);
+ *    return NULL;
+ * }
+ *
+ * int test(int n)
+ * {
+ *    if (n < 0)
+ *    {
+ *       eina_error_set(MY_ERROR_NEGATIVE);
+ *       return 0;
+ *    }
+ *
+ *    return 1;
+ * }
+ *
+ * int main(void)
+ * {
+ *    void *data;
+ *
+ *    if (!eina_error_init())
+ *    {
+ *       printf ("Error during the initialization of eina_error module\n");
+ *       return EXIT_FAILURE;
+ *    }
+ *
+ *    MY_ERROR_NEGATIVE = eina_error_msg_register("Negative number");
+ *    MY_ERROR_NULL = eina_error_msg_register("NULL pointer");
+
+ *    data = data_new();
+ *    if (!data)
+ *    {
+ *       Eina_Error err;
+ *
+ *       err = eina_error_get();
+ *       if (err)
+ *          printf("Error during memory allocation: %s\n",
+ *                 eina_error_msg_get(err));
+ *    }
+ *
+ *    if (!test(-1))
+ *    {
+ *       Eina_Error err;
+ *
+ *       err = eina_error_get();
+ *       if (err)
+ *          printf("Error during test function: %s\n",
+ *                 eina_error_msg_get(err));
+ *    }
+ *
+ *    eina_error_shutdown();
+ *
+ *    return EXIT_SUCCESS;
+ * }
+ * @endcode
  */
 
 #ifdef HAVE_CONFIG_H
@@ -164,9 +339,9 @@
 /* TODO
  * + printing errors to stdout or stderr can be implemented
  * using a queue, useful for multiple threads printing
- * + add a wapper for assert?
+ * + add a wrapper for assert?
  * + add common error numbers, messages
- * + add a calltrace of erros, not only store the last error but a list of them
+ * + add a calltrace of errors, not only store the last error but a list of them
  * and also store the function that set it
  */
 
@@ -311,8 +486,8 @@ EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
  * #EINA_ERROR_LEVEL_INFO and #EINA_ERROR_LEVEL_DBG. That value can
  * also be set later with eina_error_log_level_set().
  *
- * If you call explicitely this function and once you don't need
- * anymore the error subsystem, then call eina_error_shutdown() to
+ * If you call explicitely this function and once the error subsystem
+ * is not used anymore, then eina_error_shutdown() must be called to
  * shut down the error system.
  */
 EAPI int eina_error_init(void)
@@ -341,7 +516,7 @@ EAPI int eina_error_init(void)
  * This function shut down the error system set up by
  * eina_error_init(). It is called by eina_shutdown() and by all
  * subsystems shutdown functions. It returns 0 when it is called the
- * same number of times that eina_error_init() and it clears the error
+ * same number of times than eina_error_init() and it clears the error
  * list.
  */
 EAPI int eina_error_shutdown(void)
@@ -463,7 +638,7 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 }
 
 /**
- * @brief Print callback that send the error message to stdout.
+ * @brief Print callback that sends the error message to stdout.
  *
  * @param level The error level.
  * @param file The name of the file where the error occurred.
@@ -474,8 +649,8 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
  * @param args The arguments that will be converted.
  *
  * This function is used to send a formatted error message to standard
- * output and as a print callback, with eina_error_print(). This is
- * the default print callback.
+ * output and is used as a print callback, with
+ * eina_error_print(). This is the default print callback.
  */
 EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
 		const char *fnc, int line, const char *fmt, __UNUSED__ void *data,
@@ -488,7 +663,7 @@ EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
 }
 
 /**
- * @brief Print callback that send the error message to a specified stream.
+ * @brief Print callback that sends the error message to a specified stream.
  *
  * @param level Unused.
  * @param file The name of the file where the error occurred.
@@ -520,8 +695,8 @@ EAPI void eina_error_print_cb_file(__UNUSED__ Eina_Error_Level level, const char
  * @param cb The print callback.
  * @param data The data to pass to the callback
  *
- * This function set the default print callback @p cb used by
- * eina_error_print(). A data an be passed to that callback with
+ * This function sets the default print callback @p cb used by
+ * eina_error_print(). A data can be passed to that callback with
  * @p data.
  */
 EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data)
@@ -535,7 +710,7 @@ EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data)
  *
  * @param level The error level.
  *
- * This function sets the error log level @p level. I it used in
+ * This function sets the error log level @p level. It is used in
  * eina_error_print().
  */
 EAPI void eina_error_log_level_set(Eina_Error_Level level)
