@@ -24,7 +24,36 @@
  * @author Jorge Luis Zapata Muga
  * @date 2008
  *
- * @section intro_sec Introduction
+ * @section eina_toc_sec Table of contents
+ *
+ * <ul>
+ *   <li> @ref eina_intro_sec
+ *   <li> @ref eina_data_types_sec
+ *   <ul>
+ *     <li> @ref eina_container_subsec
+ *     <ul>
+ *       <li> @ref eina_array_subsubsec
+ *       <li> @ref eina_hash_subsubsec
+ *       <li> @ref eina_inlist_subsubsec
+ *       <li> @ref eina_rbtree_subsubsec
+ *       <li> @ref eina_list_subsubsec
+ *     </ul>
+ *     <li> @ref eina_stringshare_subsec
+ *   </ul>
+ *   <li> @ref eina_access_contents_sec
+ *   <ul>
+ *     <li> @ref eina_iterators_subsec
+ *     <li> @ref eina_accessors_subsec
+ *   </ul>
+ *   <li> @ref eina_tools_sec
+ *   <ul>
+ *     <li> @ref eina_convert_subsec
+ *     <li> @ref eina_counter_subsec
+ *     <li> @ref eina_error_subsec
+ *   </ul>
+ * </ul>
+ *
+ * @section eina_intro_sec Introduction
  *
  * The Eina library is a library that implemente an API for data types
  * in an efficient way. It also provides some useful tools like
@@ -48,25 +77,49 @@
  *
  * @section eina_data_types_sec Eina Data Types
  *
- * @subsection eina_array Array
+ * @subsection eina_container_subsec Containers
  *
- * @subsection eina_hash Hash Table
+ * Containers are data types that hold data and allow iteration over
+ * their elements with an @ref eina_iterators, or eventually an
+ * @ref eina_accessors. The only data type that is not a container (in
+ * that sense) is the @ref eina_stringshare.
  *
- * @subsection eina_inlist Inlined List
+ * @subsubsection eina_array_subsubsec Array
  *
- * @subsection eina_rbtree Inlined Red Black Tree
+ * @subsubsection eina_hash_subsubsec Hash Table
  *
- * @subsection eina_list List
+ * @subsubsection eina_inlist_subsubsec Inlined List
  *
- * @subsection eina_stringshare Shared String
+ * @subsubsection eina_rbtree_subsubsec Inlined Red Black Tree
+ *
+ * @subsubsection eina_list_subsubsec List
+ *
+ * @subsection eina_stringshare_subsec Shared String
+ *
+ * @section eina_access_contents_sec Accessing Data Struct Contents
+ *
+ * For the above data types, you can access to the elements
+ * sequentially with iterators, or randomly with accessors. They are
+ * created from the data types (named 'containers') themselves and
+ * allow a genenric way to traverse these data types.
+ *
+ * @subsection eina_iterators_subsec Iterator
+ *
+ * Iterators allow to access the data of a container in a sequential
+ * way. They can only access the next element. To look at the API, go
+ * to @ref Eina_Iterator_Group.
+ *
+ * @subsection eina_accessors_subsec Accessor
+ *
+ * Accessors can access randomly the elements of a container.
  *
  * @section eina_tools_sec Eina Tools
  *
- * @subsection eina_convert Convert Functions
+ * @subsection eina_convert_subsec Convert Functions
  *
- * @subsection eina_counter Timing Functions
+ * @subsection eina_counter_subsec Timing Functions
  *
- * @subsection eina_error Error Functions
+ * @subsection eina_error_subsec Error Functions
  *
  * Take a look at the API of @ref Eina_Error_Group.
  *

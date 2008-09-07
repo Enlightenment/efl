@@ -36,12 +36,48 @@
  *                                   API                                      *
  *============================================================================*/
 
+/**
+ * @addtogroup Eina_Iterators_Group Iterators Functions
+ *
+ * @brief These functions manage iterators on containers.
+ *
+ * These functions allow to iterate over a container in a generic way,
+ * without knowing which container is used (a bit like iterators in
+ * the C++ STL). Iterators only allows sequential iteration (that is,
+ * from an element to the next one). For random iteration, see
+ * @ref Eina_Accessors.
+ *
+ * An iterator is created from container data types, so no creation
+ * function is available here. An iterator is deleted with
+ * eina_iterator_free(). To get the data and iterate, use
+ * eina_iterator_next(). To call a function on all the elements of a
+ * container, use eina_iterator_foreach().
+ *
+ * @{
+ */
+
+/**
+ * @brief Free an iterator
+ *
+ * @param iterator The iterator to free.
+ *
+ * This function frees @p iterator if it is not @c NULL;
+ */
 EAPI void
 eina_iterator_free(Eina_Iterator *iterator)
 {
    if (iterator) iterator->free(iterator);
 }
 
+/**
+ * @brief Return the container of an iterator.
+ *
+ * @param iterator The iterator.
+ * @return The container which created the iterator.
+ *
+ * This function returns the container which created @p iterator. If
+ * @p iterator is @c NULL, this function returns @c NULL.
+ */
 EAPI void *
 eina_iterator_container_get(Eina_Iterator *iterator)
 {
@@ -49,6 +85,18 @@ eina_iterator_container_get(Eina_Iterator *iterator)
    return iterator->get_container(iterator);
 }
 
+/**
+ * @brief Return the value of the current element and go to the next one.
+ *
+ * @param iterator The iterator.
+ * @param data The data of the element.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function returns the value of the current element pointed by
+ * @p iterator in @p data, then goes to the next element. If @p
+ * iterator is @c NULL or if a problem occured, #EINA_FALSE is
+ * returned, otherwise #EINA_TRUE is returned.
+ */
 EAPI Eina_Bool
 eina_iterator_next(Eina_Iterator *iterator, void **data)
 {
@@ -56,6 +104,18 @@ eina_iterator_next(Eina_Iterator *iterator, void **data)
    return iterator->next(iterator, data);
 }
 
+/**
+ * @brief Iterate over the container and execute a callback on each element.
+ *
+ * @param iterator The iterator.
+ * @param cb The callback called on each iteration.
+ * @param fdata The data passed to the callback.
+ *
+ * This function iterates over the elements pointed by @p iterator,
+ * beginning from the current element. For Each element, the callback
+ * @p cb is called with the data @p fdata.If @p iterator is @c NULL,
+ * the function returns immediatly.
+ */
 EAPI void
 eina_iterator_foreach(Eina_Iterator *iterator,
 		      Eina_Each cb,
@@ -71,3 +131,7 @@ eina_iterator_foreach(Eina_Iterator *iterator,
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
    }
 }
+
+/**
+ * @}
+ */

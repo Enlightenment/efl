@@ -20,8 +20,17 @@
 #define EINA_ITERATOR_H__
 
 #include "eina_types.h"
-#include "eina_error.h"
 
+/**
+ * @defgroup Eina_Iterator_Group Iterator Functions
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Iterator
+ * Type for iterators.
+ */
 typedef struct _Eina_Iterator Eina_Iterator;
 
 EAPI void eina_iterator_free           (Eina_Iterator *iterator);
@@ -32,5 +41,9 @@ EAPI Eina_Bool eina_iterator_next      (Eina_Iterator *iterator, void **data);
 EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
 					Eina_Each callback,
 					const void *fdata);
+
+/**
+ * @}
+ */
 
 #endif
