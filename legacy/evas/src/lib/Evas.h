@@ -923,6 +923,30 @@ extern "C" {
    EAPI void                evas_imaging_font_cache_set  (int bytes);
    EAPI int                 evas_imaging_font_cache_get  (void);
 
+
+   /**
+    * Utilities:
+    */
+
+   /**
+    * Every subclass should provide this at the beginning of their own
+    * data set with evas_object_smart_data_set().
+    */
+   typedef struct _Evas_Object_Smart_Clipped_Data Evas_Object_Smart_Clipped_Data;
+   struct _Evas_Object_Smart_Clipped_Data
+   {
+      Evas_Object *clipper;
+      Evas *evas;
+   };
+
+   EAPI Evas_Object *evas_object_smart_clipped_clipper_get(Evas_Object *obj);
+   EAPI void evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc);
+   EAPI void evas_object_smart_clipped_member_add(Evas_Object *obj, Evas_Object *member);
+   EAPI void evas_object_smart_clipped_member_del(Evas_Object *member);
+
+   /* convenience */
+   EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);
+
 #ifdef __cplusplus
 }
 #endif
