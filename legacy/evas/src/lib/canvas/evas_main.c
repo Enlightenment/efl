@@ -70,6 +70,7 @@ evas_new(void)
    evas_array_setup(&e->pending_objects, 16);
    evas_array_setup(&e->obscuring_objects, 16);
    evas_array_setup(&e->temporary_objects, 16);
+   evas_array_setup(&e->calculate_objects, 16);
 
    return e;
 }

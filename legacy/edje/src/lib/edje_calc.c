@@ -136,13 +136,22 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 void
 _edje_recalc(Edje *ed)
 {
+   if (ed->postponed) return ;
+   evas_object_smart_changed(ed->obj);
+   ed->postponed = 1;
+}
+
+void
+_edje_recalc_do(Edje *ed)
+{
    int i;
 
    if (!ed->dirty) return;
    if (ed->freeze)
      {
 	ed->recalc = 1;
-	if (!ed->calc_only) return;
+	if (!ed->calc_only &&
+	    !ed->postponed) return;
      }
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -161,6 +170,7 @@ _edje_recalc(Edje *ed)
 	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
      }
    ed->dirty = 0;
+   ed->postponed = 0;
    if (!ed->calc_only) ed->recalc = 0;
 }
 

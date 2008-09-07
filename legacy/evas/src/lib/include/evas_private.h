@@ -288,6 +288,7 @@ struct _Evas
    Evas_Array	  pending_objects;
    Evas_Array     obscuring_objects;
    Evas_Array     temporary_objects;
+   Evas_Array     calculate_objects;
 
    int            delete_grabs;
    int            walking_grabs;
@@ -713,6 +714,7 @@ void evas_object_smart_member_lower(Evas_Object *member);
 void evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other);
 void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other);
 const Evas_Object_List *evas_object_smart_members_get_direct(const Evas_Object *obj);
+void evas_call_smarts_calculate(Evas *e);
 void *evas_mem_calloc(int size);
 void evas_object_event_callback_all_del(Evas_Object *obj);
 void evas_object_event_callback_cleanup(Evas_Object *obj);

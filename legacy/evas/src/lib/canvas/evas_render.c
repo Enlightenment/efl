@@ -341,6 +341,8 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
 
+   evas_call_smarts_calculate(e);
+
    /* Check if the modified object mean recalculating every thing */
    if (!e->invalidate)
      _evas_render_check_pending_objects(&e->pending_objects, e);

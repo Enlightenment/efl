@@ -13,6 +13,7 @@ struct _Evas_Object_Smart
    Evas_Object_List *contained;
    int               walking_list;
    Evas_Bool         deletions_waiting : 1;
+   Evas_Bool         need_recalculate : 1;
 };
 
 struct _Evas_Smart_Callback
@@ -434,6 +435,163 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
      }
    o->walking_list--;
    evas_object_smart_callbacks_clear(obj);
+}
+
+/**
+ * Set the need_recalculate flag of given smart object.
+ *
+ * If this flag is set then calculate() callback (method) of the given
+ * smart object will be called, if one is provided, during render phase
+ * usually evas_render(). After this step, this flag will be automatically
+ * unset.
+ *
+ * If no calculate() is provided, this flag will be left unchanged.
+ *
+ * @note just setting this flag will not make scene dirty and evas_render()
+ *       will have no effect. To do that, use evas_object_smart_changed(),
+ *       that will automatically call this function with 1 as parameter.
+ *
+ * @param obj the smart object
+ * @param value if one want to set or unset the need_recalculate flag.
+ *
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI void
+evas_object_smart_need_recalculate_set(Evas_Object *obj, Evas_Bool value)
+{
+   Evas_Object_Smart *o;
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = obj->object_data;
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return;
+   MAGIC_CHECK_END();
+
+   value = !!value;
+   if (o->need_recalculate == value)
+     return;
+   o->need_recalculate = value;
+
+   if (!obj->smart.smart->smart_class->calculate)
+     return;
+
+   /* XXX: objects can be present multiple times in calculate_objects()
+    * XXX: after a set-unset-set cycle, but it's not a problem since
+    * XXX: on _evas_render_call_smart_calculate() will check for the flag
+    * XXX: and it will be unset after the first.
+    */
+   if (o->need_recalculate)
+     {
+	Evas *e;
+	e = obj->layer->evas;
+	_evas_array_append(&e->calculate_objects, obj);
+     }
+   /* TODO: else, remove from array */
+}
+
+/**
+ * Get the current value of need_recalculate flag.
+ *
+ * @note this flag will be unset during the render phase, after calculate()
+ *       is called if one is provided.  If no calculate() is provided, then
+ *       the flag will be left unchanged after render phase.
+ *
+ * @param obj the smart object
+ * @return if flag is set or not.
+ *
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI Evas_Bool
+evas_object_smart_need_recalculate_get(Evas_Object *obj)
+{
+   Evas_Object_Smart *o;
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = obj->object_data;
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return;
+   MAGIC_CHECK_END();
+
+   return o->need_recalculate;
+}
+
+/**
+ * Call user provided calculate() and unset need_calculate.
+ *
+ * @param obj the smart object
+ * @return if flag is set or not.
+ *
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI void
+evas_object_smart_calculate(Evas_Object *obj)
+{
+   Evas_Object_Smart *o;
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = obj->object_data;
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return;
+   MAGIC_CHECK_END();
+
+   if (obj->smart.smart->smart_class->calculate)
+     obj->smart.smart->smart_class->calculate(obj);
+   o->need_recalculate = 0;
+}
+
+/**
+ * Call calculate() on all smart objects that need_recalculate.
+ *
+ * @internal
+ */
+void
+evas_call_smarts_calculate(Evas *e)
+{
+   Evas_Array *calculate;
+   unsigned int i;
+
+   calculate = &e->calculate_objects;
+   for (i = 0; i < calculate->count; ++i)
+     {
+	Evas_Object *obj;
+	Evas_Object_Smart *o;
+
+	obj = _evas_array_get(calculate, i);
+	if (obj->delete_me)
+	  continue;
+
+	o = obj->object_data;
+	if (o->need_recalculate)
+	  {
+	     obj->smart.smart->smart_class->calculate(obj);
+	     o->need_recalculate = 0;
+	  }
+     }
+
+   evas_array_flush(calculate);
+}
+
+/**
+ * Mark smart object as changed, dirty.
+ *
+ * This will inform the scene that it changed and needs to be redraw, also
+ * setting need_recalculate on the given object.
+ *
+ * @see evas_object_smart_need_recalculate_set().
+ *
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI void
+evas_object_smart_changed(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   evas_object_change(obj);
+   evas_object_smart_need_recalculate_set(obj, 1);
 }
 
 /* internal calls */

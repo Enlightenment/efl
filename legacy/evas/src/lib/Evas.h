@@ -137,7 +137,7 @@ typedef enum _Evas_Aspect_Control
 } Evas_Aspect_Control;
 
 
-#define EVAS_SMART_CLASS_VERSION 1 /** the version you have to put into the version field in the smart class struct */
+#define EVAS_SMART_CLASS_VERSION 2 /** the version you have to put into the version field in the smart class struct */
 struct _Evas_Smart_Class /** a smart object class */
 {
    const char *name; /** the string name of the class */
@@ -153,6 +153,7 @@ struct _Evas_Smart_Class /** a smart object class */
    void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a); // FIXME: DELETE ME
    void  (*clip_set)    (Evas_Object *o, Evas_Object *clip); // FIXME: DELETE ME
    void  (*clip_unset)  (Evas_Object *o); // FIXME: DELETE ME
+   void  (*calculate)   (Evas_Object *o);
 
    const void *data;
 };
@@ -767,6 +768,11 @@ extern "C" {
    EAPI void              evas_object_smart_callback_add    (Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void             *evas_object_smart_callback_del    (Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info));
    EAPI void              evas_object_smart_callback_call   (Evas_Object *obj, const char *event, void *event_info);
+   EAPI void              evas_object_smart_changed         (Evas_Object *obj);
+   EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, Evas_Bool value);
+   EAPI Evas_Bool         evas_object_smart_need_recalculate_get(Evas_Object *obj);
+   EAPI void               evas_object_smart_calculate      (Evas_Object *obj);
+
 
 /* events */
    EAPI void              evas_event_freeze                 (Evas *e);
