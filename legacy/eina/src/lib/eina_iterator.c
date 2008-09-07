@@ -37,15 +37,21 @@
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Iterators_Group Iterators Functions
+ * @addtogroup Eina_Content_Access_Group Content Access
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Iterator_Group Iterators Functions
  *
  * @brief These functions manage iterators on containers.
  *
- * These functions allow to iterate over a container in a generic way,
- * without knowing which container is used (a bit like iterators in
- * the C++ STL). Iterators only allows sequential iteration (that is,
- * from an element to the next one). For random iteration, see
- * @ref Eina_Accessors.
+ * These functions allow to access elements of a container in a
+ * generic way, without knowing which container is used (a bit like
+ * iterators in the C++ STL). Iterators only allows sequential access
+ * (that is, from an element to the next one). For random access, see
+ * @ref Eina_Accessor_Group.
  *
  * An iterator is created from container data types, so no creation
  * function is available here. An iterator is deleted with
@@ -57,7 +63,7 @@
  */
 
 /**
- * @brief Free an iterator
+ * @brief Free an iterator.
  *
  * @param iterator The iterator to free.
  *
@@ -131,6 +137,10 @@ eina_iterator_foreach(Eina_Iterator *iterator,
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
    }
 }
+
+/**
+ * @}
+ */
 
 /**
  * @}

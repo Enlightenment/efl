@@ -20,8 +20,17 @@
 #define EINA_ACCESSOR_H__
 
 #include "eina_types.h"
-#include "eina_error.h"
 
+/**
+ * @defgroup Eina_Accessor_Group Accessor Functions
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Accessor
+ * Type for accessors.
+ */
 typedef struct _Eina_Accessor Eina_Accessor;
 
 EAPI void eina_accessor_free           (Eina_Accessor *accessor);
@@ -34,5 +43,9 @@ EAPI void eina_accessor_over           (Eina_Accessor *accessor,
 					unsigned int start,
 					unsigned int end,
 					const void *fdata);
+
+/**
+ * @}
+ */
 
 #endif

@@ -80,9 +80,9 @@
  * @subsection eina_container_subsec Containers
  *
  * Containers are data types that hold data and allow iteration over
- * their elements with an @ref eina_iterators, or eventually an
- * @ref eina_accessors. The only data type that is not a container (in
- * that sense) is the @ref eina_stringshare.
+ * their elements with an @ref eina_iterators_subsec, or eventually an
+ * @ref eina_accessors_subsec. The only data type that is not a container (in
+ * that sense) is the @ref eina_stringshare_subsec.
  *
  * @subsubsection eina_array_subsubsec Array
  *
@@ -98,20 +98,22 @@
  *
  * @section eina_access_contents_sec Accessing Data Struct Contents
  *
- * For the above data types, you can access to the elements
+ * For the container data types, you can access to the elements
  * sequentially with iterators, or randomly with accessors. They are
- * created from the data types (named 'containers') themselves and
- * allow a genenric way to traverse these data types.
+ * created from the data types themselves and allow a generic way to
+ * traverse these data types.
  *
  * @subsection eina_iterators_subsec Iterator
  *
- * Iterators allow to access the data of a container in a sequential
- * way. They can only access the next element. To look at the API, go
- * to @ref Eina_Iterator_Group.
+ * Iterators allow a sequential access of the data of a
+ * container. They can only access the next element. To look at the
+ * API, go to @ref Eina_Iterator_Group.
  *
  * @subsection eina_accessors_subsec Accessor
  *
- * Accessors can access randomly the elements of a container.
+ * Accessors allow a random access of the data of a container. They
+ * can access an element at any position. To look at the API, go to
+ * @ref Eina_Accessor_Group.
  *
  * @section eina_tools_sec Eina Tools
  *
