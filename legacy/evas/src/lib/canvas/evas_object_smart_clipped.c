@@ -224,6 +224,17 @@ evas_object_smart_clipped_member_del(Evas_Object *member)
  *    return &sc;
  * }
  * @endcode
+ *
+ * Default behavior is:
+ *  - add: creates a hidden clipper with "infinite" size;
+ *  - del: delete all children objects;
+ *  - move: move all objects relative relatively;
+ *  - resize: not defined;
+ *  - show: if there are children objects, show clipper;
+ *  - hide: hides clipper;
+ *  - color_set: set the color of clipper;
+ *  - clip_set: set clipper of clipper;
+ *  - clip_unset: unset the clipper of clipper;
  */
 EAPI void
 evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
