@@ -19,6 +19,8 @@
 #ifndef EINA_PRIVATE_H_
 #define EINA_PRIVATE_H_
 
+#include <stdarg.h>
+
 #include "eina_iterator.h"
 #include "eina_accessor.h"
 

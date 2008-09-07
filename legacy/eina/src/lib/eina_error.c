@@ -415,7 +415,7 @@ static char *_colors[EINA_ERROR_LEVELS] = {
 /**
  * @addtogroup Eina_Error_Group Error Functions
  *
- * @brief These functions provide error management for porjects.
+ * @brief These functions provide error management for projects.
  *
  * The error system must be initialized with eina_error_init() and
  * shut down with eina_error_shutdown(). The most generic way to print
@@ -593,7 +593,8 @@ EAPI const char * eina_error_msg_get(Eina_Error error)
  *
  * @return The last error.
  *
- * This function returns the last error set by eina_error_set().
+ * This function returns the last error set by eina_error_set(). The
+ * description of the message is returned by eina_error_msg_get().
  */
 EAPI Eina_Error eina_error_get(void)
 {

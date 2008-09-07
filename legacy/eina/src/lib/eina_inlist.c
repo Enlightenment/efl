@@ -24,6 +24,7 @@
 #include <assert.h>
 
 #include "eina_inlist.h"
+#include "eina_error.h"
 #include "eina_private.h"
 
 /* FIXME: TODO please, refactor this :) */

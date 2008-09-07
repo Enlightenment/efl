@@ -25,6 +25,10 @@
 # define UNLIKELY(x) (x)
 #endif
 
+/**
+ * @cond LOCAL
+ */
+
 static inline Eina_Bool
 eina_array_grow(Eina_Array *array)
 {
@@ -32,8 +36,12 @@ eina_array_grow(Eina_Array *array)
    unsigned int total;
 
    total = array->total + array->step;
+   eina_error_set(0);
    tmp = realloc(array->data, sizeof (void*) * total);
-   if (UNLIKELY(!tmp)) return 0;
+   if (UNLIKELY(!tmp)) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return 0;
+   }
 
    array->total = total;
    array->data = tmp;
@@ -41,15 +49,52 @@ eina_array_grow(Eina_Array *array)
    return 1;
 }
 
-static inline void
+/**
+ * @endcond
+ */
+
+/**
+ * @addtogroup Eina_Array_Group Array Functions
+ *
+ * @brief These functions provide array management.
+ *
+ * @{
+ */
+
+/**
+ * @brief Append a data to an array.
+ *
+ * @param array The array.
+ * @param data The data to add.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function appends @p data to @p array. For performance
+ * reasons, there is no check of @p array. If it is @c NULL or
+ * invalid, the program may crash. if an allocation is necessary and
+ * fails, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY is
+ * set. Otherwise, #EINA_TRUE is returned.
+ */
+static inline Eina_Bool
 eina_array_push(Eina_Array *array, const void *data)
 {
    if (UNLIKELY((array->count + array->step) > array->total))
-     if (!eina_array_grow(array)) return ;
+     if (!eina_array_grow(array)) return EINA_FALSE;
 
    array->data[array->count++] = (void*) data;
+   return EINA_TRUE;
 }
 
+/**
+ * @brief Remove the last data of an array.
+ *
+ * @param array The array.
+ * @return The retrieved data.
+ *
+ * This function removes the last data of @p array and returns it. For
+ * performance reasons, there is no check of @p array. If it is
+ * @c NULL or invalid, the program may crash. If the count member is
+ * less or equal than 0, @c NULL is returned.
+ */
 static inline void *
 eina_array_pop(Eina_Array *array)
 {
@@ -57,16 +102,41 @@ eina_array_pop(Eina_Array *array)
    return array->data[--array->count];
 }
 
+/**
+ * @brief Return the data at a given position in an array.
+ *
+ * @param array The array.
+ * @param index The potition of the data to retrieve.
+ * @return The retrieved data.
+ *
+ * This function returns the data at the position @p index in @p
+ * array. For performance reasons, there is no check of @p array or @p
+ * index. If it is @c NULL or invalid, the program may crash.
+ */
 static inline void *
 eina_array_get(const Eina_Array *array, unsigned int index)
 {
    return array->data[index];
 }
 
+/**
+ * @brief Return the number of elements in the array.
+ *
+ * @param array The array.
+ * @return The number of elements.
+ *
+ * This function returns the number of elements in @p array. For
+ * performance reasons, there is no check of @p array. If it is
+ * @c NULL or invalid, the program may crash.
+ */
 static inline unsigned int
 eina_array_count(const Eina_Array *array)
 {
    return array->count;
 }
+
+/**
+ * @}
+ */
 
 #endif

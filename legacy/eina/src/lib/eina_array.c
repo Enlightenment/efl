@@ -36,6 +36,10 @@
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 typedef struct _Eina_Iterator_Array Eina_Iterator_Array;
 struct _Eina_Iterator_Array
 {
@@ -98,6 +102,11 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
    free(it);
 }
 
+/**
+ * @endcond
+ */
+
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -106,40 +115,61 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
  *                                   API                                      *
  *============================================================================*/
 
+/**
+ * @addtogroup Eina_Array_Group Array Functions
+ *
+ * @brief These functions provide array management.
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the array module.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function just sets up the error module or Eina. It is also
+ * called by eina_init(). It returns 0 on failure, otherwise it
+ * returns the number of times eina_error_init() has already been
+ * called.
+ */
 EAPI int
 eina_array_init(void)
 {
    return eina_error_init();
 }
 
+/**
+ * @brief Shut down the array module.
+ *
+ * @return 0 when the error module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function just shut down the error module set up by
+ * eina_array_init(). It is also called by eina_shutdown(). It returns
+ * 0 when it is called the same number of times than
+ * eina_error_init().
+ */
 EAPI int
 eina_array_shutdown(void)
 {
    return eina_error_shutdown();
 }
 
-EAPI void
-eina_array_clean(Eina_Array *array)
-{
-   array->count = 0;
-}
-
-EAPI void
-eina_array_setup(Eina_Array *array, unsigned int step)
-{
-   array->step = step;
-}
-
-EAPI void
-eina_array_flush(Eina_Array *array)
-{
-   array->count = 0;
-   array->total = 0;
-
-   if (array->data) free(array->data);
-   array->data = NULL;
-}
-
+/**
+ * @brief Create a new array.
+ *
+ * @param step The count of pointers to add when increasing the array size.
+ * @return @c NULL on failure, non @c NULL otherwise.
+ *
+ * This function creates a new array. When adding an element, the array
+ * allocates @p step elements. When that buffer is full, then adding
+ * another element will increase the buffer of @p step elements again.
+ *
+ * This function return a valid array on success, or @c NULL if memory
+ * allocation fails. In hat case, the error is set to
+ * #EINA_ERROR_OUT_OF_MEMORY.
+ */
 EAPI Eina_Array *
 eina_array_new(unsigned int step)
 {
@@ -160,6 +190,15 @@ eina_array_new(unsigned int step)
    return array;
 }
 
+/**
+ * @brief Free an array.
+ *
+ * @param array The array to free.
+ *
+ * This function free @p array. It calls first eina_array_flush() then
+ * free the memory of the pointeur. It's up to the user to free the
+ * memory allocated for the elements of @p array.
+ */
 EAPI void
 eina_array_free(Eina_Array *array)
 {
@@ -167,6 +206,69 @@ eina_array_free(Eina_Array *array)
    free(array);
 }
 
+/**
+ * @brief Set the step of an array.
+ *
+ * @param array The array.
+ * @param step The count of pointers to add when increasing the array size.
+ *
+ * This function set the step of @p array to @p step. For performance
+ * reasons, there is no check of @p array. If it is @c NULL or
+ * invalid, the program may crash.
+ */
+EAPI void
+eina_array_step_set(Eina_Array *array, unsigned int step)
+{
+   array->step = step;
+}
+
+/**
+ * @brief Clean an array.
+ *
+ * @param array The array to clean.
+ *
+ * This function set the count member of @p array to 0. For
+ * performance reasons, there is no check of @p array. If it is
+ * @c NULL or invalid, the program may crash.
+ */
+EAPI void
+eina_array_clean(Eina_Array *array)
+{
+   array->count = 0;
+}
+
+/**
+ * @brief Flush an array.
+ *
+ * @param array The array to flush.
+ *
+ * This function set the count and total members of @p array to 0,
+ * frees and set to NULL its data member. For performance reasons,
+ * there is no check of @p array. If it is @c NULL or invalid, the
+ * program may crash.
+ */
+EAPI void
+eina_array_flush(Eina_Array *array)
+{
+   array->count = 0;
+   array->total = 0;
+
+   if (array->data) free(array->data);
+   array->data = NULL;
+}
+
+/**
+ * @brief Rebuild an array by specifying the data to keep.
+ *
+ * @param array The array.
+ * @param keep The functions which selects the data to keep.
+ * @param gdata The data to pass to the function keep.
+ *
+ * This function rebuilds @p array be specifying the elements to keep
+ * with the function @p keep. @p gdata is an additional data to pass
+ * to @p keep. For performance reasons, there is no check of @p
+ * array. If it is @c NULL or invalid, the program may crash.
+ */
 EAPI void
 eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata)
 {
@@ -244,6 +346,18 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    array->count = total;
 }
 
+/**
+ * @brief Returned a new iterator asociated to an array.
+ *
+ * @param array The array.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to
+ * @p array. If @p array is @c NULL or the count member of @p array is
+ * less or equal than 0, this function returns NULL. If the memory can
+ * not be allocated, NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
+ * set. Otherwise, a valid iterator is returned.
+ */
 EAPI Eina_Iterator *
 eina_array_iterator_new(const Eina_Array *array)
 {
@@ -268,6 +382,18 @@ eina_array_iterator_new(const Eina_Array *array)
    return &it->iterator;
 }
 
+/**
+ * @brief Returned a new accessor asociated to an array.
+ *
+ * @param array The array.
+ * @return A new accessor.
+ *
+ * This function returns a newly allocated accessor associated to
+ * @p array. If @p array is @c NULL or the count member of @p array is
+ * less or equal than 0, this function returns NULL. If the memory can
+ * not be allocated, NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
+ * set. Otherwise, a valid accessor is returned.
+ */
 EAPI Eina_Accessor *
 eina_array_accessor_new(const Eina_Array *array)
 {
@@ -290,4 +416,8 @@ eina_array_accessor_new(const Eina_Array *array)
 
    return &it->accessor;
 }
+
+/**
+ * @}
+ */
 
