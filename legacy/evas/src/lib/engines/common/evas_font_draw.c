@@ -205,8 +205,13 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	  {
 	     FT_Vector delta;
 
+	     /* NOTE: ft2 seems to have a bug. and sometimes returns bizarre
+	      * values to kern by - given same font, same size and same
+	      * prev_index and index. auto/bytecode or none hinting doesnt
+	      * matter */
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-				ft_kerning_default, &delta) == 0)
+				ft_kerning_default, 
+				&delta) == 0)
 	       pen_x += delta.x >> 6;
 	  }
 	pface = fi->src->ft.face;
