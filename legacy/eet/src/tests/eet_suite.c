@@ -1,9 +1,16 @@
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
 #include <stdio.h>
+#include <fcntl.h>
 
 #include <check.h>
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include "eet_suite.h"
 
@@ -1146,6 +1153,77 @@ START_TEST(eet_small_image)
 }
 END_TEST
 
+START_TEST(eet_identity_simple)
+{
+   const char *buffer = "Here is a string of data to save !";
+   const void *tmp;
+   Eet_File *ef;
+   Eet_Key *k;
+   char *test;
+   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   int size;
+   int fd;
+
+   eet_init();
+
+   mktemp(file);
+   chdir("src/tests");
+
+   /* Sign an eet file. */
+   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   fail_if(!ef);
+
+   fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
+
+   k = eet_identity_open("cert.pem", "key.pem", NULL);
+   fail_if(!k);
+
+   fail_if(eet_identity_set(ef, k) != EET_ERROR_NONE);
+
+   eet_close(ef);
+
+   /* Open a signed file. */
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   fail_if(!ef);
+
+   test = eet_read(ef, "keys/tests", &size);
+   fail_if(!test);
+   fail_if(size != strlen(buffer) + 1);
+
+   fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
+
+   tmp = eet_identity_x509(ef, &size);
+   fail_if(tmp == NULL);
+
+   eet_close(ef);
+
+   /* As we are changing file contain in less than 1s, this could get unnoticed
+      by eet cache system. */
+   eet_clearcache();
+
+   /* Corrupting the file. */
+   fd = open(file, O_WRONLY);
+   fail_if(fd < 0);
+
+   fail_if(lseek(fd, 200, SEEK_SET) != 200);
+   fail_if(write(fd, "42", 2) != 2);
+   fail_if(lseek(fd, 50, SEEK_SET) != 50);
+   fail_if(write(fd, "42", 2) != 2);
+   fail_if(lseek(fd, 88, SEEK_SET) != 88);
+   fail_if(write(fd, "42", 2) != 2);
+
+   close(fd);
+
+   /* Attempt to open a modified file. */
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   fail_if(ef);
+
+   fail_if(unlink(file) != 0);
+
+   eet_shutdown();
+}
+END_TEST
+
 Suite *
 eet_suite(void)
 {
@@ -1174,6 +1252,12 @@ eet_suite(void)
    tcase_add_test(tc, eet_image);
    tcase_add_test(tc, eet_small_image);
    suite_add_tcase(s, tc);
+
+#ifdef HAVE_SIGNATURE
+   tc = tcase_create("Eet Identity");
+   tcase_add_test(tc, eet_identity_simple);
+   suite_add_tcase(s, tc);
+#endif
 
    return s;
 }

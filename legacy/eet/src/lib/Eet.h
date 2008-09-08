@@ -2,6 +2,7 @@
 #define _EET_H
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -86,12 +87,19 @@ extern "C" {
 	EET_ERROR_WRITE_ERROR_FILE_TOO_BIG,
 	EET_ERROR_WRITE_ERROR_IO_ERROR,
 	EET_ERROR_WRITE_ERROR_OUT_OF_SPACE,
-	EET_ERROR_WRITE_ERROR_FILE_CLOSED
+	EET_ERROR_WRITE_ERROR_FILE_CLOSED,
+	EET_ERROR_MMAP_FAILED,
+	EET_ERROR_X509_ENCODING_FAILED,
+	EET_ERROR_SIGNATURE_FAILED,
+	EET_ERROR_INVALID_SIGNATURE,
+	EET_ERROR_NOT_SIGNED,
+	EET_ERROR_NOT_IMPLEMENTED
      } Eet_Error;
 
    typedef struct _Eet_File                  Eet_File;
    typedef struct _Eet_Dictionary            Eet_Dictionary;
    typedef struct _Eet_Data_Descriptor       Eet_Data_Descriptor;
+   typedef struct _Eet_Key                   Eet_Key;
 
    typedef struct _Eet_Data_Descriptor_Class Eet_Data_Descriptor_Class;
 
@@ -247,6 +255,60 @@ extern "C" {
     */
    EAPI Eet_Error eet_close(Eet_File *ef);
 
+  /**
+   * Callback used to request if needed the password of a private key.
+   *
+   * @since 2.0.0
+   */
+   typedef int (*Eet_Key_Password_Callback)(char *buffer, int size, int rwflag, void *data);
+
+   /**
+    * Create an Eet_Key needed for signing an eet file.
+    *
+    * The certificate should provide the public that match the private key.
+    * No verification is done to ensure that.
+    *
+    * @since 2.0.0
+    */
+   EAPI Eet_Key* eet_identity_open(const char *certificate_file, const char *private_key_file, Eet_Key_Password_Callback cb);
+
+    /**
+     * Close and release all ressource used by an Eet_Key.
+     * An reference counter prevent it from being freed until all file using it are
+     * also closed.
+     *
+     * @since 2.0.0
+     */
+   EAPI void eet_identity_close(Eet_Key *key);
+
+    /**
+     * Set a key to sign a file
+     *
+     * @since 2.0.0
+     */
+   EAPI Eet_Error eet_identity_set(Eet_File *ef, Eet_Key *key);
+
+    /**
+     * Display both private and public key of an Eet_Key.
+     *
+     * @since 2.0.0
+     */
+   EAPI void eet_identity_print(Eet_Key *key, FILE *out);
+
+    /**
+     * Get the x509 der certificate associated with an Eet_File. Will return NULL
+     * if the file is not signed.
+     *
+     * @since 2.0.0
+     */
+   EAPI const void *eet_identity_x509(Eet_File *ef, int *der_length);
+
+   /**
+    * Display the x509 der certificate to out.
+    *
+    * @since 2.0.0
+    */
+   EAPI void eet_identity_certificate_print(const unsigned char *certificate, int der_length, FILE *out);
 
    /**
     * Return a handle to the shared string dictionary of the Eet file

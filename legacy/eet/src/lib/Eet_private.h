@@ -12,6 +12,14 @@
 # endif
 #endif
 
+#include "config.h"
+
+#ifdef HAVE_OPENSSL
+#include <openssl/evp.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
+#endif
+
 typedef struct _Eet_String              Eet_String;
 
 struct _Eet_String
@@ -53,6 +61,15 @@ struct _Eet_Dictionary
   const char   *end;
 };
 
+struct _Eet_Key
+{
+   int          references;
+#ifdef HAVE_SIGNATURE
+   X509	       *certificate;
+   EVP_PKEY    *private_key;
+#endif
+};
+
 Eet_Dictionary  *eet_dictionary_add(void);
 void             eet_dictionary_free(Eet_Dictionary *ed);
 int              eet_dictionary_string_add(Eet_Dictionary *ed, const char *string);
@@ -65,6 +82,15 @@ int              eet_dictionary_string_get_hash(const Eet_Dictionary *ed, int in
 int   _eet_hash_gen(const char *key, int hash_size);
 int   _eet_string_to_double_convert(const char *src, long long *m, long *e);
 void  _eet_double_to_string_convert(char des[128], double d);
+
+const void* eet_identity_check(const void *data_base, unsigned int data_length,
+			       const void *signature_base, unsigned int signature_length,
+			       int *x509_length);
+Eet_Error eet_cypher(void *data, unsigned int size, const char *key, unsigned int length);
+Eet_Error eet_decypher(void *data, unsigned int size, const char *key, unsigned int length);
+Eet_Error eet_identity_sign(FILE *fp, Eet_Key *key);
+void eet_identity_unref(Eet_Key *key);
+void eet_identity_ref(Eet_Key *key);
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096

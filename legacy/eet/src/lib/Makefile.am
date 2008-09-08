@@ -8,7 +8,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EVIL_CFLAGS@ \
-@COVERAGE_CFLAGS@
+@COVERAGE_CFLAGS@ \
+@OPENSSL_CFLAGS@
 
 include_HEADERS = Eet.h
 
@@ -18,6 +19,7 @@ libeet_la_SOURCES  = \
 eet_lib.c \
 eet_data.c \
 eet_image.c \
+eet_cypher.c \
 eet_dictionary.c \
 eet_utils.c
 

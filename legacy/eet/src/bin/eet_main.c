@@ -200,6 +200,50 @@ do_eet_remove(const char *file, const char *key)
    eet_close(ef);
 }
 
+static void
+do_eet_check(const char *file)
+{
+   Eet_File *ef;
+   const void *der;
+   int der_length;
+
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   if (!ef)
+     {
+	fprintf(stdout, "checking signature of `%s` failed\n", file);
+	exit(-1);
+     }
+
+   der = eet_identity_x509(ef, &der_length);
+
+   eet_identity_certificate_print(der, der_length, stdout);
+
+   eet_close(ef);
+}
+
+static void
+do_eet_sign(const char *file, const char *private_key, const char *public_key)
+{
+   Eet_File *ef;
+   Eet_Key *key;
+
+   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+   if (!ef)
+     {
+	fprintf(stdout, "cannot open for read+write: %s.\n", file);
+	exit(-1);
+     }
+
+   key = eet_identity_open(public_key, private_key, NULL);
+
+   fprintf(stdout, "Using the following key to sign `%s`.\n", file);
+   eet_identity_print(key, stdout);
+
+   eet_identity_set(ef, key);
+
+   eet_close(ef);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -214,6 +258,8 @@ main(int argc, char **argv)
 	       "  eet -i FILE.EET KEY IN-FILE COMPRESS insert data to KEY in FILE.EET from IN-FILE and if COMPRESS is 1, compress it\n"
 	       "  eet -e FILE.EET KEY IN-FILE COMPRESS insert and encode to KEY in FILE.EET from IN-FILE and if COMPRESS is 1, compress it\n"
 	       "  eet -r FILE.EET KEY                  remove KEY in FILE.EET\n"
+	       "  eet -c FILE.EET                      report and check the signature information of an eet file\n"
+	       "  eet -s FILE.EET PRIVATE_KEY PUBLIC_KEY sign FILE.EET with PRIVATE_KEY and attach PUBLIC_KEY as it's certificate\n"
 	       );
 	eet_shutdown();
 	return -1;
@@ -245,6 +291,18 @@ main(int argc, char **argv)
    else if ((!strcmp(argv[1], "-r")) && (argc > 3))
      {
 	do_eet_remove(argv[2], argv[3]);
+     }
+   else
+     {
+	goto help;
+     }
+   else if ((!strcmp(argv[1], "-c")) && (argc > 2))
+     {
+	do_eet_check(argv[2]);
+     }
+   else if ((!strcmp(argv[1], "-s")) && (argc > 4))
+     {
+	do_eet_sign(argv[2], argv[3], argv[4]);
      }
    else
      {
