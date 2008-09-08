@@ -292,10 +292,6 @@ main(int argc, char **argv)
      {
 	do_eet_remove(argv[2], argv[3]);
      }
-   else
-     {
-	goto help;
-     }
    else if ((!strcmp(argv[1], "-c")) && (argc > 2))
      {
 	do_eet_check(argv[2]);
