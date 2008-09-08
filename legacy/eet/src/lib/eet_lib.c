@@ -552,6 +552,7 @@ eet_flush2(Eet_File *ef)
       case EPIPE: error = EET_ERROR_WRITE_ERROR_FILE_CLOSED; break;
       default: error = EET_ERROR_WRITE_ERROR; break;
      }
+   sign_error:
    if (ef->fp) fclose(ef->fp);
    ef->fp = NULL;
    return error;
