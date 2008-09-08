@@ -390,7 +390,7 @@ eet_flush2(Eet_File *ef)
 	int fd;
 
 	unlink(ef->path);
-	fd = open(file, O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
+	fd = open(ef->path, O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
 	ef->fp = fdopen(fd, "wb");
 	if (!ef->fp) return EET_ERROR_NOT_WRITABLE;
 	fcntl(fileno(ef->fp), F_SETFD, FD_CLOEXEC);
