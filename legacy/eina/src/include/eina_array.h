@@ -64,7 +64,7 @@ EAPI void         eina_array_free     (Eina_Array *array);
 EAPI void         eina_array_step_set (Eina_Array *array, unsigned int step);
 EAPI void         eina_array_clean    (Eina_Array *array);
 EAPI void         eina_array_flush    (Eina_Array *array);
-EAPI void         eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata);
+EAPI Eina_Bool    eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata);
 
 static inline Eina_Bool     eina_array_push  (Eina_Array *array, const void *data);
 static inline void         *eina_array_pop   (Eina_Array *array);

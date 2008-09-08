@@ -102,6 +102,26 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
    free(it);
 }
 
+EAPI Eina_Bool
+eina_array_grow(Eina_Array *array)
+{
+   void **tmp;
+   unsigned int total;
+
+   total = array->total + array->step;
+   eina_error_set(0);
+   tmp = realloc(array->data, sizeof (void*) * total);
+   if (UNLIKELY(!tmp)) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return 0;
+   }
+
+   array->total = total;
+   array->data = tmp;
+
+   return 1;
+}
+
 /**
  * @endcond
  */
@@ -268,8 +288,12 @@ eina_array_flush(Eina_Array *array)
  * with the function @p keep. @p gdata is an additional data to pass
  * to @p keep. For performance reasons, there is no check of @p
  * array. If it is @c NULL or invalid, the program may crash.
+ *
+ * This function always return a valid array. If it wasn't able to
+ * remove items due to an allocation failure, it will return EINA_FALSE
+ * and the error is set to #EINA_ERROR_OUT_OF_MEMORY.
  */
-EAPI void
+EAPI Eina_Bool
 eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata)
 {
    void **tmp;
@@ -278,7 +302,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    unsigned int limit;
    unsigned int i;
 
-   if (array->total == 0) return ;
+   if (array->total == 0) return EINA_TRUE;
 
    for (i = 0; i < array->count; ++i)
      {
@@ -305,14 +329,14 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 	     array->data = NULL;
 	  }
 
-	return ;
+	return EINA_TRUE;
      }
 
    eina_error_set(0);
    tmp = malloc(sizeof (void*) * array->total);
    if (!tmp) {
       eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-      return ;
+      return EINA_FALSE;
    }
 
    memcpy(tmp, array->data, limit * sizeof(void*));
@@ -344,6 +368,8 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 
    array->data = tmp;
    array->count = total;
+
+   return EINA_TRUE;
 }
 
 /**

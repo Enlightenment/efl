@@ -29,25 +29,7 @@
  * @cond LOCAL
  */
 
-static inline Eina_Bool
-eina_array_grow(Eina_Array *array)
-{
-   void **tmp;
-   unsigned int total;
-
-   total = array->total + array->step;
-   eina_error_set(0);
-   tmp = realloc(array->data, sizeof (void*) * total);
-   if (UNLIKELY(!tmp)) {
-      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-      return 0;
-   }
-
-   array->total = total;
-   array->data = tmp;
-
-   return 1;
-}
+EAPI Eina_Bool eina_array_grow(Eina_Array *array);
 
 /**
  * @endcond

@@ -1,3 +1,4 @@
+
 /* EINA - EFL data type library
  * Copyright (C) 2008 Cedric Bail
  *
@@ -75,7 +76,7 @@ START_TEST(eina_array_static)
 
    eina_array_init();
 
-   eina_array_setup(&sea, 10);
+   eina_array_step_set(&sea, 10);
 
    for (i = 0; i < 200; ++i)
      {
@@ -144,7 +145,7 @@ START_TEST(eina_array_remove_stuff)
 	fail_if(!tmp);
 	*tmp = 0;
      }
-   eina_array_remove(ea, keep_int, NULL);
+   fail_if(eina_array_remove(ea, keep_int, NULL) != EINA_TRUE);
 
    fail_if(eina_array_count(ea) != 990);
    EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
