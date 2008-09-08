@@ -1267,11 +1267,15 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
    else
      {
+	int fd;
+
 	if (mode != EET_FILE_MODE_WRITE) return NULL;
 	memset(&file_stat, 0, sizeof(file_stat));
 	/* opening for write - delete old copy of file right away */
 	unlink(file);
-	fp = fopen(file, "wb");
+	fd = open(file, O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
+	fp = fdopen(fd, "wb");
+	if (!fp) return NULL;
      }
 
    /* We found one */
