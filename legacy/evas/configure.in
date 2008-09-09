@@ -405,30 +405,30 @@ AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, test "x$have_evas_software_xcb" = "xye
 
 #######################################
 ## Check if we should build the directfb engine
-#want_evas_directfb="no";
-#have_evas_directfb="no";
-#
-#AC_MSG_CHECKING(whether directfb backend is to be built)
-#AC_ARG_ENABLE(directfb,
-#  AC_HELP_STRING([--enable-directfb], [enable the DirectFB rendering backend]),
-#  [ want_evas_directfb=$enableval ]
-#)
-#AC_MSG_RESULT($want_evas_directfb)
-#
-#if test "x$want_evas_directfb" = "xyes"; then
-#  PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
-#    [
-#      AC_DEFINE(BUILD_ENGINE_DIRECTFB, 1, [DirectFB Rendering Backend])
-#      have_evas_directfb="yes"
-#    ],
-#    [
-#      if test "x$want_evas_directfb" = "xyes" -a "x$use_strict" = "xyes" ; then
-#        AC_MSG_ERROR([DirectFB not found (strict dependencies checking)])
-#      fi
-#    ]
-#  )
-#fi
-#AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, test "x$have_evas_directfb" = "xyes")
+want_evas_directfb="no";
+have_evas_directfb="no";
+
+AC_MSG_CHECKING(whether directfb backend is to be built)
+AC_ARG_ENABLE(directfb,
+  AC_HELP_STRING([--enable-directfb], [enable the DirectFB rendering backend]),
+  [ want_evas_directfb=$enableval ]
+)
+AC_MSG_RESULT($want_evas_directfb)
+
+if test "x$want_evas_directfb" = "xyes"; then
+  PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
+    [
+      AC_DEFINE(BUILD_ENGINE_DIRECTFB, 1, [DirectFB Rendering Backend])
+      have_evas_directfb="yes"
+    ],
+    [
+      if test "x$want_evas_directfb" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([DirectFB not found (strict dependencies checking)])
+      fi
+    ]
+  )
+fi
+AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, test "x$have_evas_directfb" = "xyes")
 
 #######################################
 ## Check if we should build the sdl engine
@@ -1653,6 +1653,7 @@ AC_SUBST(pthread_libs)
 AC_OUTPUT([
 Makefile
 evas-cairo-x11.pc
+evas-directfb.pc
 evas-fb.pc
 evas-glitz-x11.pc
 evas-opengl-glew.pc
@@ -1698,6 +1699,7 @@ src/modules/engines/fb/Makefile
 src/modules/engines/buffer/Makefile
 src/modules/engines/software_win32_gdi/Makefile
 src/modules/engines/software_qtopia/Makefile
+src/modules/engines/directfb/Makefile
 src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_glew/Makefile
 src/modules/engines/gl_x11/Makefile
@@ -1764,6 +1766,7 @@ echo "  Software 16bit X11.........: $have_evas_software_16_x11"
 echo "  Software 16bit Directdraw..: $have_evas_software_16_ddraw"
 echo "  Software 16bit WinCE.......: $have_evas_software_16_wince"
 echo "  Software 16bit SDL.........: $have_evas_sdl (primitive: $sdl_primitive)"
+echo "  DirectFB...................: $have_evas_directfb"
 # FIXME: opengl engine needs to be fixed and tested lots for all drivers
 # FIXME: xrender engine to be written
 echo

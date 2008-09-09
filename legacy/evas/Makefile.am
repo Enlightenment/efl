@@ -88,9 +88,9 @@ if BUILD_ENGINE_SOFTWARE_XCB
 psoftwarexcb = evas-software-xcb.pc
 endif
 
-#if BUILD_ENGINE_DIRECTFB
-#pdirectfb = evas-directfb.pc
-#endif
+if BUILD_ENGINE_DIRECTFB
+pdirectfb = evas-directfb.pc
+endif
 
 if BUILD_ENGINE_FB
 pfb = evas-fb.pc
