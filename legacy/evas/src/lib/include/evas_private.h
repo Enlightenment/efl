@@ -372,6 +372,7 @@ struct _Evas_Object
 	    Evas_Bool      dirty : 1;
 	 } clip;
       } cache;
+      double scale;
       Evas_Coord_Rectangle geometry;
       struct {
 	 unsigned char  r, g, b, a;

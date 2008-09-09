@@ -31,6 +31,8 @@ evas_object_new(void)
    if (!obj) return NULL;
 
    obj->magic = MAGIC_OBJ;
+   obj->cur.scale = 1.0;
+   obj->prev.scale = 1.0;
 
    return obj;
 }
@@ -1065,7 +1067,7 @@ evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
    if (obj->cur.anti_alias == !!anti_alias)
-   	return;
+     return;
    obj->cur.anti_alias = !!anti_alias;
    evas_object_change(obj);
 }
@@ -1085,6 +1087,42 @@ evas_object_anti_alias_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    if (obj->delete_me) return 0;
    return obj->cur.anti_alias;
+}
+
+/**
+ * Sets the scaling factor for an evas object. Does not affect all objects.
+ * @param   obj The given evas object.
+ * @param   scale. The scaling factor. 1.0 == none.
+ * @ingroup Evas_Object_Group
+ */
+EAPI void
+evas_object_scale_set(Evas_Object *obj, double scale)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return;
+   if (obj->cur.scale == scale)
+     return;
+   obj->cur.scale = scale;
+   evas_object_change(obj);
+}
+
+
+/**
+ * Retrieves the scaling factor for the given evas object.
+ * @param   obj The given evas object.
+ * @return  The scaling factor.
+ * @ingroup Evas_Object_Group
+ */
+EAPI double
+evas_object_scale_get(const Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return 1.0;
+   return obj->cur.scale;
 }
 
 /**

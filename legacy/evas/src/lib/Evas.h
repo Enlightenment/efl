@@ -721,6 +721,9 @@ extern "C" {
    EAPI void              evas_object_anti_alias_set        (Evas_Object *obj, Evas_Bool antialias);
    EAPI Evas_Bool         evas_object_anti_alias_get        (const Evas_Object *obj);
 
+   EAPI void              evas_object_scale_set             (Evas_Object *obj, double scale);
+   EAPI double            evas_object_scale_get             (const Evas_Object *obj);
+
    EAPI void              evas_object_color_set             (Evas_Object *obj, int r, int g, int b, int a);
    EAPI void              evas_object_color_get             (const Evas_Object *obj, int *r, int *g, int *b, int *a);
 

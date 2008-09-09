@@ -191,7 +191,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	evas_font_free(obj->layer->evas, o->engine_data);
 	o->engine_data = NULL;
      }
-   o->engine_data = evas_font_load(obj->layer->evas, font, o->cur.source, size);
+   o->engine_data = evas_font_load(obj->layer->evas, font, o->cur.source, size * obj->cur.scale);
    if (!same_font)
      {
 	if (o->cur.font) evas_stringshare_del(o->cur.font);
@@ -1608,6 +1608,11 @@ evas_object_text_render_pre(Evas_Object *obj)
 	goto done;
      }
    if (obj->cur.render_op != obj->prev.render_op)
+     {
+	evas_object_render_pre_prev_cur_add(&rects, obj);
+	goto done;
+     }
+   if (obj->cur.scale != obj->prev.scale)
      {
 	evas_object_render_pre_prev_cur_add(&rects, obj);
 	goto done;
