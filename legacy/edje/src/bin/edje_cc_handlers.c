@@ -85,6 +85,7 @@ static void st_collections_group_parts_part_effect(void);
 static void st_collections_group_parts_part_mouse_events(void);
 static void st_collections_group_parts_part_repeat_events(void);
 static void st_collections_group_parts_part_ignore_flags(void);
+static void st_collections_group_parts_part_scale(void);
 static void st_collections_group_parts_part_pointer_mode(void);
 static void st_collections_group_parts_part_precise_is_inside(void);
 static void st_collections_group_parts_part_use_alternate_font_metrics(void);
@@ -226,6 +227,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
      {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
      {"collections.group.parts.part.ignore_flags", st_collections_group_parts_part_ignore_flags},
+     {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
      {"collections.group.parts.part.pointer_mode", st_collections_group_parts_part_pointer_mode},
      {"collections.group.parts.part.precise_is_inside", st_collections_group_parts_part_precise_is_inside},
      {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
@@ -1440,6 +1442,7 @@ ob_collections_group_parts_part(void)
    ep->mouse_events = 1;
    ep->repeat_events = 0;
    ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
+   ep->scale = 0;
    ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
    ep->use_alternate_font_metrics = 0;
@@ -1608,6 +1611,35 @@ st_collections_group_parts_part_ignore_flags(void)
 				  "NONE", EVAS_EVENT_FLAG_NONE,
 				  "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
 				  NULL);
+}
+
+/**
+    @page edcref
+    @property
+        scale
+    @parameters
+        [1 or 0]
+    @effect
+        Specifies whether the part will scale its size with an edje scaling
+        factor. By default scale is off (0) and the default scale factor is
+        1.0 - that means no scaling. This would be used to scale properties
+        such as font size, min/max size of the part, and possibly can be used
+        to scale based on DPI of the target device. The reason to be selective
+        is that some things work well being scaled, others do not, so the
+        designer gets to choose what works best.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_scale(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->scale = parse_bool(0);
 }
 
 /**

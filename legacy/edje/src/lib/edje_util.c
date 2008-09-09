@@ -11,6 +11,7 @@ static Evas_Hash *_edje_text_class_hash = NULL;
 static Evas_Hash *_edje_text_class_member_hash = NULL;
 
 char *_edje_fontset_append = NULL;
+double _edje_scale = 1.0;
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
 
@@ -37,6 +38,7 @@ edje_freeze(void)
 {
    Evas_List *l;
 
+   // FIXME: could just have a global freeze instead of per object
    for (l = _edje_edjes; l; l = l->next)
      edje_object_freeze((Evas_Object *)(l->data));
 }
@@ -50,6 +52,7 @@ edje_thaw(void)
 {
    Evas_List *l;
 
+   // FIXME: could just have a global freeze instead of per object
    for (l = _edje_edjes; l; l = l->next)
      edje_object_thaw((Evas_Object *)(l->data));
 }
@@ -68,6 +71,23 @@ EAPI const char *
 edje_fontset_append_get(void)
 {
    return _edje_fontset_append;
+}
+
+EAPI void
+edje_scale_set(double scale)
+{
+   Evas_List *l;
+
+   if (_edje_scale == scale) return;
+   _edje_scale = scale;
+   for (l = _edje_edjes; l; l = l->next)
+     edje_object_calc_force((Evas_Object *)(l->data));
+}
+
+EAPI double
+edje_scale_get(void)
+{
+   return _edje_scale;
 }
 
 /* FIXDOC: Verify/Expand */

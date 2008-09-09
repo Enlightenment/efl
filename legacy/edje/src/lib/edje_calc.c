@@ -280,6 +280,11 @@ _edje_part_recalc_single(Edje *ed,
 	     else
 	       maxw = MIN(ep->swallow_params.max.w, desc->max.w);
 	  }
+	if (ep->part->scale)
+	  {
+	     minw *= _edje_scale;
+	     maxw *= _edje_scale;
+	  }
      }
 //   if (flags & FLAG_Y)
      {
@@ -296,6 +301,11 @@ _edje_part_recalc_single(Edje *ed,
 	       maxh = ep->swallow_params.max.h;
 	     else
 	       maxh = MIN(ep->swallow_params.max.h, desc->max.h);
+	  }
+	if (ep->part->scale)
+	  {
+	     minh *= _edje_scale;
+	     maxh *= _edje_scale;
 	  }
      }
    /* relative coords of top left & bottom right */
@@ -588,6 +598,9 @@ _edje_part_recalc_single(Edje *ed,
 	     stl = NULL;
 	  }
 
+	if (ep->part->scale)
+	  evas_object_scale_set(ep->object, _edje_scale);
+	
 	if (stl)
 	  {
 	     const char *ptxt;
@@ -716,6 +729,8 @@ _edje_part_recalc_single(Edje *ed,
 		  inlined_font = 1;
 	       }
 	  }
+	if (ep->part->scale)
+	  evas_object_scale_set(ep->object, _edje_scale);
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
 

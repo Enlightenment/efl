@@ -485,9 +485,10 @@ struct _Edje_Part
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
    Evas_Event_Flags       ignore_flags;
+   unsigned char          scale; /* should certain properties scale with edje scale factor? */
    unsigned char          precise_is_inside;
    unsigned char          use_alternate_font_metrics;
-   char                   pointer_mode;
+   unsigned char          pointer_mode;
 };
 
 struct _Edje_Part_Image_Id
@@ -1003,6 +1004,7 @@ extern Evas_List       *_edje_animators;
 extern Evas_List       *_edje_edjes;
 
 extern char            *_edje_fontset_append;
+extern double           _edje_scale;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name, double val);

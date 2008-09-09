@@ -171,6 +171,8 @@ extern "C" {
    EAPI void         edje_thaw                       (void);
    EAPI void         edje_fontset_append_set         (const char *fonts);
    EAPI const char  *edje_fontset_append_get         (void);
+   EAPI void         edje_scale_set                  (double scale);
+   EAPI double       edje_scale_get                  (void);
 
    /* edje_load.c */
    EAPI Evas_List   *edje_file_collection_list       (const char *file);
