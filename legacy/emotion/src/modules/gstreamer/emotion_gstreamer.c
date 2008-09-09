@@ -558,8 +558,6 @@ em_pos_set(void   *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (ev->seek_to_pos == pos) return;
-
    vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
    asink = (Emotion_Audio_Sink *)ecore_list_index_goto(ev->video_sinks, ev->audio_sink_nbr);
 
@@ -581,7 +579,6 @@ em_pos_set(void   *video,
 			 (gint64)(pos * (double)GST_SECOND),
 			 GST_SEEK_TYPE_NONE, -1);
      }
-   ev->seek_to_pos = pos;
 }
 
 static void
