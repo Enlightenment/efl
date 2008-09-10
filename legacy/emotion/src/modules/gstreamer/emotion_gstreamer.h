@@ -83,6 +83,7 @@ struct _Emotion_Gstreamer_Video
 
    volatile int      seek_to;
    volatile int      get_poslen;
+   volatile double   seek_to_pos;
 
    int               fd_ev_read;
    int               fd_ev_write;

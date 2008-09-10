@@ -266,6 +266,7 @@ em_init(Evas_Object  *obj,
    ev->video_sink_nbr = 0;
    ev->audio_sink_nbr = 0;
    ev->vis = EMOTION_VIS_GOOM;
+   ev->seek_to_pos = -1;
 
    /* Create the file descriptors */
    if (pipe(fds) == 0)
@@ -557,6 +558,7 @@ em_pos_set(void   *video,
    Emotion_Audio_Sink      *asink;
 
    ev = (Emotion_Gstreamer_Video *)video;
+   if (ev->seek_to_pos == pos) return;
 
    vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
    asink = (Emotion_Audio_Sink *)ecore_list_index_goto(ev->video_sinks, ev->audio_sink_nbr);
@@ -579,6 +581,7 @@ em_pos_set(void   *video,
 			 (gint64)(pos * (double)GST_SECOND),
 			 GST_SEEK_TYPE_NONE, -1);
      }
+   ev->seek_to_pos = pos;
 }
 
 static void
