@@ -29,8 +29,6 @@ struct _Emotion_Xine_Video
    volatile int              spu_channel;
    volatile int              audio_channel;
    volatile int              video_channel;
-   volatile double           seek_to_pos;
-   volatile double           seeked_pos;
    volatile int              fq;
    Emotion_Vis               vis;
     int                       fd_read;

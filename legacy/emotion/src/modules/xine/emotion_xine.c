@@ -282,16 +282,12 @@ _em_slave(void *par)
 		       double pos;
 		       
 		       pos = *((double *)eev->xine_event);
-		       if (ev->seeked_pos != ev->seek_to_pos)
-			 {
-			    if (ev->no_time)
-			      xine_play(ev->stream, pos * 65535, 0);
-			    else
-			      xine_play(ev->stream, 0, pos * 1000);
-			    if (!ev->play)
-			      xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
-			    ev->seeked_pos = ev->seek_to_pos;
-			 }
+		       if (ev->no_time)
+			 xine_play(ev->stream, pos * 65535, 0);
+		       else
+			 xine_play(ev->stream, 0, pos * 1000);
+		       if (!ev->play)
+			 xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
 		       _em_module_event(ev, 6);
 		    }
 		  break;
@@ -407,8 +403,6 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev->get_pos_thread_deleted = 0;
    ev->opening = 1;
    ev->play_ok = 0;
-   ev->seek_to_pos = -1;
-   ev->seeked_pos = -1;
    
    if (opt)
      {
@@ -509,10 +503,8 @@ em_pos_set(void *ef, double pos)
    double *ppos;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (pos == ev->seek_to_pos) return;
    ppos = malloc(sizeof(double));
    *ppos = pos;
-   ev->seek_to_pos = pos;
    _em_slave_event(ev, 6, ppos);
 }
 
