@@ -1,8 +1,8 @@
 #include <math.h>
 #include "evas_engine.h"
 
-/* Work around bug in DirectFB FillSpans(), but uses twice as much memory */
-#define USE_SPAN_RECTS 1
+/* reduce calls to DirectFB (FillSpans), but uses twice as much memory */
+//#define USE_SPAN_RECTS 1
 
 #define MAX_SPANS 512
 typedef struct _RGBA_Edge RGBA_Edge;
@@ -91,7 +91,9 @@ polygon_span_add(span_t *span, int y, int x, int w)
 static void
 polygon_spans_fill(IDirectFBSurface *surface, int y, const span_t *spans, int n_spans)
 {
-   surface->FillSpans(surface, y, spans, n_spans);
+   /* directfb automatically increments y for each span */
+   for (; n_spans > 0; n_spans--, spans++)
+     surface->FillSpans(surface, y, spans, 1);
 }
 #else /* USE_SPAN_RECTS */
 typedef DFBRectangle span_t;
