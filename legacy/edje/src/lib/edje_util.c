@@ -12,6 +12,8 @@ static Evas_Hash *_edje_text_class_member_hash = NULL;
 
 char *_edje_fontset_append = NULL;
 double _edje_scale = 1.0;
+int _edje_freeze_val = 0;
+int _edje_freeze_calc_count = 0;
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
 
@@ -29,6 +31,8 @@ Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
 
 /* FIXDOC: These all need to be looked over, Verified/Expanded upon.  I just got lazy and stopped putting FIXDOC next to each function in this file. */
 
+//#define FASTFREEZE 1
+
 /** Freeze all Edje objects in the current process.
  *
  * See edje_object_freeze() for more.
@@ -36,11 +40,17 @@ Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
 EAPI void
 edje_freeze(void)
 {
+#ifdef FASTFREEZE   
+   _edje_freeze_val++;
+   printf("fr ++ ->%i\n", _edje_freeze_val);
+#else   
+// FIXME: could just have a global freeze instead of per object
+// above i tried.. but this broke some things. notable e17's menus. why?
    Evas_List *l;
 
-   // FIXME: could just have a global freeze instead of per object
    for (l = _edje_edjes; l; l = l->next)
      edje_object_freeze((Evas_Object *)(l->data));
+#endif   
 }
 
 /** Thaw all Edje objects in the current process.
@@ -50,11 +60,39 @@ edje_freeze(void)
 EAPI void
 edje_thaw(void)
 {
+#ifdef FASTFREEZE   
+   _edje_freeze_val--;
+   printf("fr -- ->%i\n", _edje_freeze_val);
+   if ((_edje_freeze_val == 0) && (_edje_freeze_calc_count > 0))
+     {
+	Evas_List *l;
+
+	_edje_freeze_calc_count = 0;
+	for (l = _edje_edjes; l; l = l->next)
+	  {
+	     Edje *ed;
+	     
+	     ed = _edje_fetch(l->data);
+	     if (ed->recalc)
+	       {
+		  if (ed->freeze == 0)
+		    {
+		       printf("  CALC %p\n", l->data);
+		       _edje_recalc(ed);
+		    }
+		  else
+		    printf("  !CALC %p\n", l->data);
+	       }
+	  }
+     }
+#else   
+// FIXME: could just have a global freeze instead of per object
+// comment as above.. why?
    Evas_List *l;
 
-   // FIXME: could just have a global freeze instead of per object
    for (l = _edje_edjes; l; l = l->next)
      edje_object_thaw((Evas_Object *)(l->data));
+#endif   
 }
 
 /* FIXDOC: Expand */
@@ -1138,15 +1176,22 @@ EAPI void
 edje_object_calc_force(Evas_Object *obj)
 {
    Edje *ed;
-   int pf;
+   int pf, pf2;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
    ed->dirty = 1;
+   
+   pf2 = _edje_freeze_val;
    pf = ed->freeze;
+   
+   _edje_freeze_val = 0;
    ed->freeze = 0;
+   
    _edje_recalc(ed);
+   
    ed->freeze = pf;
+   _edje_freeze_val = pf2;
 }
 
 /** Calculate minimum size

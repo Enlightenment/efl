@@ -1004,6 +1004,8 @@ extern Evas_List       *_edje_edjes;
 
 extern char            *_edje_fontset_append;
 extern double           _edje_scale;
+extern int              _edje_freeze_val;
+extern int              _edje_freeze_calc_count;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name, double val);
