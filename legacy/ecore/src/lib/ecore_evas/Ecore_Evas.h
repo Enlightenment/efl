@@ -122,6 +122,11 @@ EAPI int         ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type eng
 EAPI int         ecore_evas_init(void);
 EAPI int         ecore_evas_shutdown(void);
 
+EAPI Evas_List  *ecore_evas_engines_get(void);
+EAPI void        ecore_evas_engines_free(Evas_List *engines);
+EAPI Ecore_Evas *ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options);
+
+
 /* engine/target specific init calls */
 EAPI Ecore_Evas     *ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window  ecore_evas_software_x11_window_get(Ecore_Evas *ee);

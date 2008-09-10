@@ -7,6 +7,7 @@
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
+#include <string.h>
 
 static int _ecore_evas_init_count = 0;
 
@@ -169,6 +170,403 @@ ecore_evas_shutdown(void)
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
+}
+
+struct ecore_evas_engine {
+   const char *name;
+   Ecore_Evas *(*constructor)(int x, int y, int w, int h, const char *extra_options);
+};
+
+/* inline is just to avoid need to ifdef around it */
+static inline void
+_ecore_evas_parse_extra_options_str(const char *extra_options, const char *key, char **value)
+{
+   int len = strlen(key);
+
+   while (extra_options)
+     {
+	const char *p;
+
+	if (strncmp(extra_options, key, len) != 0)
+	  {
+	     extra_options = strchr(extra_options, ';');
+	     if (extra_options)
+	       extra_options++;
+	     continue;
+	  }
+
+	extra_options += len;
+	p = strchr(extra_options, ';');
+	if (p)
+	  {
+	     len = p - extra_options;
+	     *value = malloc(len + 1);
+	     memcpy(*value, extra_options, len);
+	     (*value)[len] = '\0';
+	     extra_options = p + 1;
+	  }
+	else
+	  {
+	     *value = strdup(extra_options);
+	     extra_options = NULL;
+	  }
+     }
+}
+
+/* inline is just to avoid need to ifdef around it */
+static inline const char *
+_ecore_evas_parse_extra_options_uint(const char *extra_options, const char *key, unsigned int *value)
+{
+   int len = strlen(key);
+
+   while (extra_options)
+     {
+	const char *p;
+
+	if (strncmp(extra_options, key, len) != 0)
+	  {
+	     extra_options = strchr(extra_options, ';');
+	     if (extra_options)
+	       extra_options++;
+	     continue;
+	  }
+
+	extra_options += len;
+	*value = strtol(extra_options, NULL, 0);
+
+	p = strchr(extra_options, ';');
+	if (p)
+	  extra_options = p + 1;
+	else
+	  extra_options = NULL;
+     }
+}
+
+/* inline is just to avoid need to ifdef around it */
+static inline const char *
+_ecore_evas_parse_extra_options_x(const char *extra_options, char **disp_name, unsigned int *parent)
+{
+   _ecore_evas_parse_extra_options_str(extra_options, "display=", disp_name);
+   _ecore_evas_parse_extra_options_uint(extra_options, "parent=", parent);
+   return extra_options;
+}
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+static Ecore_Evas *
+_ecore_evas_constructor_software_x11(int x, int y, int w, int h, const char *extra_options)
+{
+   unsigned int parent = 0;
+   char *disp_name = NULL;
+   Ecore_Evas *ee;
+
+   _ecore_evas_parse_extra_options_x(extra_options, &disp_name, &parent);
+   ee = ecore_evas_software_x11_new(disp_name, parent, x, y, w, h);
+   free(disp_name);
+
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_XRENDER_X11
+static Ecore_Evas *
+_ecore_evas_constructor_xrender_x11(int x, int y, int w, int h, const char *extra_options)
+{
+   unsigned int parent = 0;
+   char *disp_name = NULL;
+   Ecore_Evas *ee;
+
+   _ecore_evas_parse_extra_options_x(extra_options, &disp_name, &parent);
+   ee = ecore_evas_xrender_x11_new(disp_name, parent, x, y, w, h);
+   free(disp_name);
+
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
+static Ecore_Evas *
+_ecore_evas_constructor_opengl_x11(int x, int y, int w, int h, const char *extra_options)
+{
+   Ecore_X_Window parent = 0;
+   char *disp_name = NULL;
+   Ecore_Evas *ee;
+
+   _ecore_evas_parse_extra_options_x(extra_options, &disp_name, &parent);
+   ee = ecore_evas_gl_x11_new(disp_name, parent, x, y, w, h);
+   free(disp_name);
+
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
+static Ecore_Evas *
+_ecore_evas_constructor_software_16_x11(int x, int y, int w, int h, const char *extra_options)
+{
+   Ecore_X_Window parent = 0;
+   char *disp_name = NULL;
+   Ecore_Evas *ee;
+
+   _ecore_evas_parse_extra_options_x(extra_options, &disp_name, &parent);
+   ee = ecore_evas_software_x11_16_new(disp_name, parent, x, y, w, h);
+   free(disp_name);
+
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SDL
+static Ecore_Evas *
+_ecore_evas_constructor_sdl(int x, int y, int w, int h, const char *extra_options)
+{
+   Ecore_Evas *ee;
+   unsigned int fullscreen = 0, hwsurface = 0, noframe = 0, alpha = 0;
+   char *name = NULL;
+
+   _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
+   _ecore_evas_parse_extra_options_uint(extra_options, "fullscreen=", &fullscreen);
+   _ecore_evas_parse_extra_options_uint(extra_options, "hwsurface=", &hwsurface);
+   _ecore_evas_parse_extra_options_uint(extra_options, "alpha=", &alpha);
+
+   ee = ecore_evas_sdl_new(name, w, h, fullscreen, hwsurface, noframe, alpha);
+   free(name);
+
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+static Ecore_Evas *
+_ecore_evas_constructor_directfb(int x, int y, int w, int h, const char *extra_options)
+{
+   Ecore_Evas *ee;
+   char *disp_name = NULL;
+   unsigned int windowed = 1;
+
+   _ecore_evas_parse_extra_options_str(extra_options, "display=", &disp_name);
+   _ecore_evas_parse_extra_options_uint(extra_options, "windowed=", &windowed);
+
+   ee = ecore_evas_directfb_new(disp_name, windowed, x, y, w, h);
+   free(disp_name);
+
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_FB
+static Ecore_Evas *
+_ecore_evas_constructor_fb(int x, int y, int w, int h, const char *extra_options)
+{
+   Ecore_Evas *ee;
+   char *disp_name = NULL;
+   unsigned int rotation = 0;
+
+   _ecore_evas_parse_extra_options_str(extra_options, "display=", &disp_name);
+   _ecore_evas_parse_extra_options_uint(extra_options, "rotation=", &rotation);
+
+   ee = ecore_evas_fb_new(disp_name, rotation, w, h);
+   free(disp_name);
+
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
+static Ecore_Evas *
+_ecore_evas_constructor_software_ddraw(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_software_ddraw_new(NULL, x, y, w, h);
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
+static Ecore_Evas *
+_ecore_evas_constructor_direct3d(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_direct3d_new(NULL, x, y, w, h);
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
+static Ecore_Evas *
+_ecore_evas_constructor_opengl_glew(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_gl_glew_new(NULL, x, y, w, h);
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
+static Ecore_Evas *
+_ecore_evas_constructor_software_16_ddraw(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_software_ddraw_new(NULL, x, y, w, h);
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
+static Ecore_Evas *
+_ecore_evas_constructor_software_16_wince(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_software_wince_new(NULL, x, y, w, h);
+}
+
+static Ecore_Evas *
+_ecore_evas_constructor_software_16_wince_fb(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_software_wince_fb_new(NULL, x, y, w, h);
+}
+
+static Ecore_Evas *
+_ecore_evas_constructor_software_16_wince_gapi(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_software_wince_gapi_new(NULL, x, y, w, h);
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_BUFFER
+static Ecore_Evas *
+_ecore_evas_constructor_buffer(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_buffer_new(w, h);
+}
+#endif
+
+/* note: keep sorted by priority, highest first */
+static const struct ecore_evas_engine _engines[] = {
+  /* unix */
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+  {"software_x11", _ecore_evas_constructor_software_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_XRENDER_X11
+  {"xrender_x11", _ecore_evas_constructor_xrender_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
+  {"opengl_x11", _ecore_evas_constructor_opengl_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
+  {"software_xcb", _ecore_evas_constructor_software_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_XRENDER_XCB
+  {"xrender_xcb", _ecore_evas_constructor_xrender_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
+  {"software_16_x11", _ecore_evas_constructor_software_16_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_SDL
+  {"sdl", _ecore_evas_constructor_sdl},
+#endif
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+  {"directfb", _ecore_evas_constructor_directfb},
+#endif
+#ifdef BUILD_ECORE_EVAS_FB
+  {"fb", _ecore_evas_constructor_fb},
+#endif
+
+  /* windows */
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
+  {"software_ddraw", _ecore_evas_constructor_software_ddraw},
+#endif
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
+  {"direct3d", _ecore_evas_constructor_direct3d},
+#endif
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
+  {"opengl_glew", _ecore_evas_constructor_opengl_glew},
+#endif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
+  {"software_16_ddraw", _ecore_evas_constructor_software_16_ddraw},
+#endif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
+  {"software_16_wince", _ecore_evas_constructor_software_16_wince},
+  {"software_16_wince_fb", _ecore_evas_constructor_software_16_wince_fb},
+  {"software_16_wince_gapi", _ecore_evas_constructor_software_16_wince_gapi},
+#endif
+
+  /* independent */
+#ifdef BUILD_ECORE_EVAS_BUFFER
+  {"buffer", _ecore_evas_constructor_buffer},
+#endif
+  {NULL, NULL}
+};
+
+/**
+ * Returns a list of supported engines names.
+ *
+ * @return newly allocated list with engines names. Engines names
+ * strings are internal and should be considered constants, do not
+ * free them, to avoid problems use ecore_evas_engines_free()
+ */
+EAPI Evas_List *
+ecore_evas_engines_get(void)
+{
+   const struct ecore_evas_engine *itr;
+   Evas_List *lst = NULL;
+
+   for (itr = _engines; itr->name != NULL; itr++)
+     lst = evas_list_append(lst, itr->name);
+
+   return lst;
+}
+
+/**
+ * Free list returned by ecore_evas_engines_get()
+ */
+EAPI void
+ecore_evas_engines_free(Evas_List *engines)
+{
+   evas_list_free(engines);
+}
+
+static Ecore_Evas *
+_ecore_evas_new_auto_discover(int x, int y, int w, int h, const char *extra_options)
+{
+   const struct ecore_evas_engine *itr;
+
+   for (itr = _engines; itr->constructor != NULL; itr++)
+     {
+	Ecore_Evas *ee;
+
+	ee = itr->constructor(x, y, w, h, extra_options);
+	if (ee)
+	  return ee;
+     }
+
+   return NULL;
+}
+
+/**
+ * Creates a new Ecore_Evas based on engine name and common parameters.
+ *
+ * @param engine_name engine name as returned by
+ *        ecore_evas_engines_get() or NULL to use environment variable
+ *        ECORE_EVAS_ENGINE, that can be undefined and in this case
+ *        this call will try to find the first working engine.
+ * @param x horizontal position of window (not supported in all engines)
+ * @param y vertical position of window (not supported in all engines)
+ * @param w width of window
+ * @param h height of window
+ * @param extra_options string with extra parameter, dependent on engines
+ *        or NULL. String is usually in the form: 'key1=value1;key2=value2'.
+ *        Pay attention that when getting that from shell commands, most
+ *        consider ';' as the command terminator, so you need to escape
+ *        it or use quotes.
+ *
+ * @param Ecore_Evas instance or NULL if creation failed.
+ */
+EAPI Ecore_Evas *
+ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options)
+{
+   const struct ecore_evas_engine *itr;
+
+   if (!engine_name)
+     engine_name = getenv("ECORE_EVAS_ENGINE");
+   if (!engine_name)
+     return _ecore_evas_new_auto_discover(x, y, w, h, extra_options);
+
+   for (itr = _engines; itr->name != NULL; itr++)
+     if (strcmp(itr->name, engine_name) == 0)
+       return itr->constructor(x, y, w, h, extra_options);
+
+   return NULL;
 }
 
 /**
