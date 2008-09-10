@@ -1526,7 +1526,7 @@ static Emotion_Video_Module em_module =
      NULL /* handle */
 };
 
-unsigned char
+EAPI unsigned char
 module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
 {
    if (!module)
@@ -1539,7 +1539,7 @@ module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video,
    return 1;
 }
 
-void
+EAPI void
 module_close(Emotion_Video_Module *module, void *video)
 {
    em_module.shutdown(video);

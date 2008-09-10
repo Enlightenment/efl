@@ -86,7 +86,7 @@ struct _Emotion_Xine_Event
    int   mtype;
 };
 
-unsigned char         module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt);
-void                  module_close(Emotion_Video_Module *module, void *video);
+EAPI unsigned char         module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt);
+EAPI void                  module_close(Emotion_Video_Module *module, void *video);
 
 #endif

@@ -1200,7 +1200,7 @@ em_meta_get(void *video, int meta)
    return str;
 }
 
-unsigned char
+EAPI unsigned char
 module_open(Evas_Object           *obj,
 	    Emotion_Video_Module **module,
 	    void                 **video,
@@ -1216,7 +1216,7 @@ module_open(Evas_Object           *obj,
    return 1;
 }
 
-void
+EAPI void
 module_close(Emotion_Video_Module *module,
 	     void                 *video)
 {
