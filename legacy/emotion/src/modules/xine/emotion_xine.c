@@ -407,6 +407,8 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev->get_pos_thread_deleted = 0;
    ev->opening = 1;
    ev->play_ok = 0;
+   ev->seek_to_pos = -1;
+   ev->seeked_pos = -1;
    
    if (opt)
      {
