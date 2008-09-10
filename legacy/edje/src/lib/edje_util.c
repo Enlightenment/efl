@@ -53,6 +53,29 @@ edje_freeze(void)
 #endif   
 }
 
+#ifdef FASTFREEZE   
+static void
+_edje_thaw_edje(Edje *ed)
+{
+   int i;
+   
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	
+	rp = ed->table_parts[i];
+	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+	  {
+	     Edje *ed2;
+	     
+	     ed2 = _edje_fetch(rp->swallowed_object);
+	     if (ed2) _edje_thaw_edje(ed2);
+	  }
+     }
+   if ((ed->recalc) && (ed->freeze <= 0)) _edje_recalc(ed);
+}
+#endif
+
 /** Thaw all Edje objects in the current process.
  *
  * See edje_object_thaw() for more.
@@ -63,7 +86,7 @@ edje_thaw(void)
 #ifdef FASTFREEZE   
    _edje_freeze_val--;
    printf("fr -- ->%i\n", _edje_freeze_val);
-   if ((_edje_freeze_val == 0) && (_edje_freeze_calc_count > 0))
+   if ((_edje_freeze_val <= 0) && (_edje_freeze_calc_count > 0))
      {
 	Evas_List *l;
 
@@ -73,16 +96,7 @@ edje_thaw(void)
 	     Edje *ed;
 	     
 	     ed = _edje_fetch(l->data);
-	     if (ed->recalc)
-	       {
-		  if (ed->freeze == 0)
-		    {
-		       printf("  CALC %p\n", l->data);
-		       _edje_recalc(ed);
-		    }
-		  else
-		    printf("  !CALC %p\n", l->data);
-	       }
+	     if (ed) _edje_thaw_edje(ed);
 	  }
      }
 #else   

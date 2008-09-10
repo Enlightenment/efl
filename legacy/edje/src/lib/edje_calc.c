@@ -144,9 +144,12 @@ _edje_recalc(Edje *ed)
      }
    if ((ed->freeze > 0) || (_edje_freeze_val > 0))
      {
-	_edje_freeze_calc_count++;
 	ed->recalc = 1;
-	if (!ed->calc_only) return;
+	if (!ed->calc_only)
+	  {
+	     if (_edje_freeze_val > 0) _edje_freeze_calc_count++;
+	     return;
+	  }
      }
    for (i = 0; i < ed->table_parts_size; i++)
      {
