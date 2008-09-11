@@ -1521,8 +1521,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 				    (pf->color.g * pf->color.a) / 255,
 				    (pf->color.b * pf->color.a) / 255,
 				    pf->color.a);
-	      if (pf->visible) evas_object_show(ep->object);
-	      else evas_object_hide(ep->object);
+	      if (!pf->visible)
+		{
+		   evas_object_hide(ep->object);
+		   break;
+		}
+	      evas_object_show(ep->object);
 	      /* move and resize are needed for all previous object => no break here. */
 	   case EDJE_PART_TYPE_SWALLOW:
 	   case EDJE_PART_TYPE_GROUP:
@@ -1566,10 +1570,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 //				   (pf->color.g * pf->color.a) / 255,
 //				   (pf->color.b * pf->color.a) / 255,
 //				   pf->color.a);
-	     evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
-	     evas_object_resize(ep->swallowed_object, pf->w, pf->h);
-	     if (pf->visible) evas_object_show(ep->swallowed_object);
-	     else evas_object_hide(ep->swallowed_object);
+	     if (pf->visible)
+	       {
+		  evas_object_show(ep->swallowed_object);
+		  evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
+		  evas_object_resize(ep->swallowed_object, pf->w, pf->h);
+	       }
+	     else
+	       evas_object_hide(ep->swallowed_object);
 	  }
      }
 
