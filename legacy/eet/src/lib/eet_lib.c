@@ -968,7 +968,7 @@ eet_internal_read2(Eet_File *ef)
 					  buffer, ef->data_size - signature_base_offset,
 					  &ef->x509_length);
 
-	if (eet_test_close(ef->x509_der == NULL)) return NULL;
+	if (eet_test_close(ef->x509_der == NULL), ef) return NULL;
 #else
 	fprintf(stderr, "This file could be signed but you didn't compile the necessary code to check the signature.\n");
 #endif
