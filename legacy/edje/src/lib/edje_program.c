@@ -916,6 +916,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 #ifdef EDJE_PROGRAM_CACHE
 	  {
 	     Evas_List *matches;
+	     Evas_List *l;
 
 	     if (evas_hash_find(ec->prog_cache.no_matches, tmps))
 	       {
@@ -964,7 +965,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 #ifdef EDJE_PROGRAM_CACHE
 	     if (tmps)
 	       {
-		  if (matched == 0)
+		  if (data.matched == 0)
 		    ec->prog_cache.no_matches =
 		    evas_hash_add(ec->prog_cache.no_matches, tmps, ed);
 		  else

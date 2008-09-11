@@ -92,12 +92,6 @@ void *alloca (size_t);
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
-
-/* Cache result of program glob matches - this uses up extra ram with the gain
- * of faster program matching if a part has LOTS of programs.
-#define EDJE_PROGRAM_CACHE
-*/
-
 struct _Edje_Position_Scale
 {
    double x, y;

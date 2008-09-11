@@ -90,6 +90,20 @@ PKG_CHECK_MODULES(ECORE_EVAS, [
   ecore-evas >= 0.9.9
 ])
 
+dnl Optional EDJE_PROGRAM_CACHE (use much more ram, but increase speed in some case)
+want_edje_program_cache="no"
+AC_ARG_ENABLE(edje-program-cache,
+  AC_HELP_STRING(
+    [--enable-edje-program-cache],
+    [enable EDJE_PROGRAM_CACHE support. [[default=disabled]]]
+  ),
+  [ want_edje_program_cache=$enableval ]
+)
+AM_CONDITIONAL(EDJE_PROGRAM_CACHE, test "x$want_edje_program_cache" = "xyes")
+if test "x$want_edje_program_cache" = "xyes"; then
+  AC_DEFINE(EDJE_PROGRAM_CACHE, 1, [Cache result of program glob matches - this uses up extra ram with the gain of faster program matching])
+fi
+
 AC_MSG_CHECKING([for location of Vim data files])
 install_vim="yes";
 AC_ARG_WITH(vim,
@@ -160,6 +174,8 @@ echo "$PACKAGE $VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
+echo
+echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
 echo
 echo "  Build binaries.......: $have_edje_cc"
 echo
