@@ -193,6 +193,7 @@ EAPI Ecore_Evas *ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
 EAPI Ecore_Win32_Window *ecore_evas_win32_window_get(Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
+EAPI Ecore_Evas     *ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
 
 EAPI Ecore_Evas     *ecore_evas_software_wince_new(Ecore_WinCE_Window *parent,
                                                    int                 x,

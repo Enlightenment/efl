@@ -211,6 +211,19 @@ _ecore_evas_sdl_event_video_expose(void *data __UNUSED__, int type __UNUSED__, v
    return 0;
 }
 
+static void
+_ecore_evas_render(Ecore_Evas *ee)
+{
+   Evas_List *updates;
+
+   updates = evas_render_updates(ee->evas);
+   if (updates)
+     {
+	evas_render_updates_free(updates);
+	_ecore_evas_idle_timeout_update(ee);
+     }
+}
+
 static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
@@ -229,22 +242,18 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	Ecore_Evas *ee;
 
 	ee = (Ecore_Evas *)l;
-	if (ee->visible)
-	  {
-	     Evas_List *updates;
-	     
-	     if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
-	     updates = evas_render_updates(ee->evas);
-	     if (updates)
-	       {
-		  evas_render_updates_free(updates);
-		  _ecore_evas_idle_timeout_update(ee);
-	       }
-             if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-	  }
+	if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+
+	if (ee->prop.avoid_damage) _ecore_evas_render(ee);
+	else if ((ee->visible) ||
+		 ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+		 ((ee->should_be_visible) && (ee->prop.override)))
+	  _ecore_evas_render(ee);
 	else
 	  evas_norender(ee->evas);
+
+	if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
      }
 #ifndef _WIN32
    if (_ecore_evas_fps_debug)
@@ -429,21 +438,17 @@ static const Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL,
    NULL
 };
-#endif
 
-EAPI Ecore_Evas*
-ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
+static Ecore_Evas*
+_ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
-#ifdef BUILD_ECORE_EVAS_SDL
    Evas_Engine_Info_SDL *einfo;
    Ecore_Evas           *ee;
-   int                  rmethod;
 
    if (!name)
      name = ecore_evas_sdl_default;
 
-   rmethod = evas_render_method_lookup("software_sdl");
-   if (!rmethod) return NULL;
+   if (ecore_evases) return NULL;
 
    if (!ecore_sdl_init(name)) return NULL;
 
@@ -487,6 +492,7 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface
    einfo = (Evas_Engine_Info_SDL*) evas_engine_info_get(ee->evas);
    if (einfo)
      {
+        einfo->info.rotation = 0;
         einfo->info.fullscreen = fullscreen;
         einfo->info.hwsurface = hwsurface;
         einfo->info.noframe = noframe;
@@ -505,8 +511,39 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
+   SDL_ShowCursor(SDL_DISABLE);
+
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    return ee;
+}
+#endif
+
+EAPI Ecore_Evas*
+ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
+{
+#ifdef BUILD_ECORE_EVAS_SDL
+   int                  rmethod;
+
+   rmethod = evas_render_method_lookup("software_sdl");
+   if (!rmethod) return NULL;
+
+   return _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
+#else
+   fprintf(stderr, "OUTCH !\n");
+   return NULL;
+#endif
+}
+
+EAPI Ecore_Evas*
+ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
+{
+#ifdef BUILD_ECORE_EVAS_SDL
+   int                  rmethod;
+
+   rmethod = evas_render_method_lookup("software_16_sdl");
+   if (!rmethod) return NULL;
+
+   return _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
 #else
    fprintf(stderr, "OUTCH !\n");
    return NULL;
