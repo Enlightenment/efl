@@ -179,7 +179,7 @@ static int   eet_data_get_char(const Eet_Dictionary *ed, const void *src, const 
 static void *eet_data_put_char(Eet_Dictionary *ed, const void *src, int *size_ret);
 static int   eet_data_get_short(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_short(Eet_Dictionary *ed, const void *src, int *size_ret);
-static int   eet_data_get_int(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
+static inline int   eet_data_get_int(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_int(Eet_Dictionary *ed, const void *src, int *size_ret);
 static int   eet_data_get_long_long(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_long_long(Eet_Dictionary *ed, const void *src, int *size_ret);
@@ -187,7 +187,7 @@ static int   eet_data_get_float(const Eet_Dictionary *ed, const void *src, const
 static void *eet_data_put_float(Eet_Dictionary *ed, const void *src, int *size_ret);
 static int   eet_data_get_double(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret);
-static int   eet_data_get_string(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
+static inline int   eet_data_get_string(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_string(Eet_Dictionary *ed, const void *src, int *size_ret);
 static int   eet_data_get_istring(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_istring(Eet_Dictionary *ed, const void *src, int *size_ret);
@@ -338,7 +338,7 @@ eet_data_put_short(Eet_Dictionary *ed __UNUSED__, const void *src, int *size_ret
 }
 
 /* INT TYPE */
-static int
+static inline int
 eet_data_get_int(const Eet_Dictionary *ed __UNUSED__, const void *src, const void *src_end, void *dst)
 {
    int *d;
@@ -392,7 +392,7 @@ eet_data_put_long_long(Eet_Dictionary *ed __UNUSED__, const void *src, int *size
 }
 
 /* STRING TYPE */
-static int
+static inline int
 eet_data_get_string_hash(const Eet_Dictionary *ed, const void *src, const void *src_end)
 {
    if (ed)
@@ -407,7 +407,7 @@ eet_data_get_string_hash(const Eet_Dictionary *ed, const void *src, const void *
    return -1;
 }
 
-static int
+static inline int
 eet_data_get_string(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
 {
    char *s, **d;
@@ -649,7 +649,7 @@ eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret)
    return eet_data_put_int(ed, &index, size_ret);
 }
 
-static int
+static inline int
 eet_data_get_type(const Eet_Dictionary *ed, int type, const void *src, const void *src_end, void *dest)
 {
    int ret;
@@ -658,7 +658,7 @@ eet_data_get_type(const Eet_Dictionary *ed, int type, const void *src, const voi
    return ret;
 }
 
-static void *
+static inline void *
 eet_data_put_type(Eet_Dictionary *ed, int type, const void *src, int *size_ret)
 {
    void *ret;
@@ -680,7 +680,7 @@ eet_data_put_type(Eet_Dictionary *ed, int type, const void *src, int *size_ret)
  *
  */
 
-static void
+static inline void
 eet_data_chunk_get(const Eet_Dictionary *ed, Eet_Data_Chunk *chnk,
 		   const void *src, int size)
 {
@@ -755,7 +755,7 @@ eet_data_chunk_get(const Eet_Dictionary *ed, Eet_Data_Chunk *chnk,
    return;
 }
 
-static Eet_Data_Chunk *
+static inline Eet_Data_Chunk *
 eet_data_chunk_new(void *data, int size, const char *name, int type, int group_type)
 {
    Eet_Data_Chunk *chnk;
@@ -773,14 +773,14 @@ eet_data_chunk_new(void *data, int size, const char *name, int type, int group_t
    return chnk;
 }
 
-static void
+static inline void
 eet_data_chunk_free(Eet_Data_Chunk *chnk)
 {
    if (chnk->name) free(chnk->name);
    free(chnk);
 }
 
-static Eet_Data_Stream *
+static inline Eet_Data_Stream *
 eet_data_stream_new(void)
 {
    Eet_Data_Stream *ds;
@@ -790,14 +790,14 @@ eet_data_stream_new(void)
    return ds;
 }
 
-static void
+static inline void
 eet_data_stream_free(Eet_Data_Stream *ds)
 {
    if (ds->data) free(ds->data);
    free(ds);
 }
 
-static void
+static inline void
 eet_data_stream_write(Eet_Data_Stream *ds, const void *data, int size)
 {
    char *p;
