@@ -470,10 +470,6 @@ static const struct ecore_evas_engine _engines[] = {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
   {"software_16_x11", _ecore_evas_constructor_software_16_x11},
 #endif
-#ifdef BUILD_ECORE_EVAS_SDL
-  {"sdl", _ecore_evas_constructor_sdl},
-  {"software_16_sdl", _ecore_evas_constructor_sdl16},
-#endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
   {"directfb", _ecore_evas_constructor_directfb},
 #endif
@@ -498,6 +494,12 @@ static const struct ecore_evas_engine _engines[] = {
   {"software_16_wince", _ecore_evas_constructor_software_16_wince},
   {"software_16_wince_fb", _ecore_evas_constructor_software_16_wince_fb},
   {"software_16_wince_gapi", _ecore_evas_constructor_software_16_wince_gapi},
+#endif
+
+  /* Last chance to have a window */
+#ifdef BUILD_ECORE_EVAS_SDL
+  {"sdl", _ecore_evas_constructor_sdl},
+  {"software_16_sdl", _ecore_evas_constructor_sdl16},
 #endif
 
   /* independent */
