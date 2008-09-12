@@ -127,6 +127,7 @@ AM_CONDITIONAL(EINA_ENABLE_TESTS, test "x${enable_tests}" = "xyes")
 
 # Glib library for comparison in the benchmark
 
+have_glib="no"
 if test "x${enable_bench}" = "xyes" ; then
    PKG_CHECK_MODULES([GLIB],
       [glib-2.0],
@@ -136,6 +137,32 @@ if test "x${enable_bench}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL(EINA_HAVE_GLIB, test "x${have_glib}" = "xyes")
+
+# Evas library for comparison in the benchmark
+
+have_evas="no"
+if test "x${enable_bench}" = "xyes" ; then
+   PKG_CHECK_MODULES([EVAS],
+      [evas],
+      [have_evas="yes"],
+      [have_evas="no"]
+   )
+fi
+
+AM_CONDITIONAL(EINA_HAVE_EVAS, test "x${have_evas}" = "xyes")
+
+# Ecore library for comparison in the benchmark
+
+have_ecore="no"
+if test "x${enable_bench}" = "xyes" ; then
+   PKG_CHECK_MODULES([ECORE],
+      [ecore],
+      [have_ecore="yes"],
+      [have_ecore="no"]
+   )
+fi
+
+AM_CONDITIONAL(EINA_HAVE_ECORE, test "x${have_ecore}" = "xyes")
 
 # Check ememoa memory pool library
 
@@ -280,6 +307,11 @@ echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo "  Bench................: ${enable_bench}"
+if test "x${enable_bench}" = "xyes" ; then
+echo "    Glib...............: ${have_glib}"
+echo "    Evas...............: ${have_evas}"
+echo "    Ecore..............: ${have_ecore}"
+fi
 echo
 echo "  Memory pool:"
 echo "    Ememoa.............: ${enable_ememoa}"

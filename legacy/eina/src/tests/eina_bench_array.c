@@ -29,6 +29,14 @@
 #include <glib.h>
 #endif
 
+#ifdef EINA_BENCH_HAVE_EVAS
+#include <Evas.h>
+#endif
+
+#ifdef EINA_BENCH_HAVE_ECORE
+#include <Ecore.h>
+#endif
+
 #include "eina_bench.h"
 #include "eina_array.h"
 #include "eina_list.h"
