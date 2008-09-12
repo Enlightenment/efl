@@ -5,14 +5,19 @@
 #define _GNU_SOURCE
 #endif
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Evas.h"
 
 #include "../file/evas_module.h"
 #include "../file/evas_path.h"
 
-
+#ifdef EVAS_MAGIC_DEBUG
 /* complain when peole pass in wrong object types etc. */
-#define MAGIC_DEBUG
+# define MAGIC_DEBUG
+#endif
 
 #define RENDER_METHOD_INVALID            0x00000000
 
@@ -59,20 +64,21 @@ typedef struct _Evas_Rectangles             Evas_Rectangles;
 #define MAGIC_OBJ_CUSTOM  0x72777775
 
 #ifdef MAGIC_DEBUG
-#define MAGIC_CHECK_FAILED(o, t, m) \
+# define MAGIC_CHECK_FAILED(o, t, m) \
 {evas_debug_error(); \
  if (!o) evas_debug_input_null(); \
  else if (((t *)o)->magic == 0) evas_debug_magic_null(); \
  else evas_debug_magic_wrong((m), ((t *)o)->magic); \
 }
-#else
-#define MAGIC_CHECK_FAILED(o, t, m)
-#endif
-#define MAGIC_CHECK(o, t, m) \
+# define MAGIC_CHECK(o, t, m) \
 {if ((!o) || (!(((t *)o)->magic == (m)))) { \
 MAGIC_CHECK_FAILED(o, t, m)
-#define MAGIC_CHECK_END() \
-}}
+# define MAGIC_CHECK_END() }}
+#else
+# define MAGIC_CHECK_FAILED(o, t, m)
+# define MAGIC_CHECK(o, t, m)  { if (!o) {
+# define MAGIC_CHECK_END() }}
+#endif
 
 #define NEW_RECT(_r, _x, _y, _w, _h) \
 {(_r) = malloc(sizeof(Evas_Rectangle)); \

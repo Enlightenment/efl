@@ -1367,6 +1367,24 @@ AC_ARG_ENABLE(cpu-c,
   ]
 )
 
+#######################################
+## MAGIC_DEBUG
+want_evas_magic_debug="yes"
+AC_MSG_CHECKING(whether to check magic for evas object)
+AC_ARG_ENABLE(evas-magic-debug,
+  AC_HELP_STRING(
+    [--disable-evas-magic-debug],
+    [disable MAGIC_DEBUG check when people pass in wrong object type. [[default=enabled]]]
+  ),
+  [ want_evas_magic_debug="$enableval" ]
+)
+AC_MSG_RESULT($want_evas_magic_debug)
+
+AM_CONDITIONAL(EVAS_MAGIC_DEBUG, test "x$want_evas_magic_debug" = "xyes")
+if test "x$want_evas_magic_debug" = "xyes"; then
+  AC_DEFINE(EVAS_MAGIC_DEBUG, 1, [complain when peole pass in wrong object types etc.])
+fi
+
 #####################################################################
 ## ARGB engine options
 
@@ -1797,6 +1815,7 @@ echo "  MMX.....................: $build_cpu_mmx"
 echo "  SSE.....................: $build_cpu_sse"
 echo "  ALTIVEC.................: $build_cpu_altivec"
 echo "  Thread Support..........: $build_pthreads"
+echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo
 echo "Async Events..............: $build_async_events"
 echo
