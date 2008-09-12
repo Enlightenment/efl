@@ -493,6 +493,8 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPHEADER, url_con->headers);
 
+   url_con->received = 0;
+
    return _ecore_con_url_perform(url_con);
 #else
    return 0;
@@ -734,7 +736,7 @@ _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double u
 
    url_con = clientp;
 
-   e = calloc(1, sizeof(Ecore_Con_Event_Url_Progress));
+   e = malloc(sizeof(Ecore_Con_Event_Url_Progress));
    if (e)
      {
 	e->url_con = url_con;
@@ -767,7 +769,6 @@ static int
 _ecore_con_url_perform(Ecore_Con_Url *url_con)
 {
    fd_set read_set, write_set, exc_set;
-   double start;
    int fd_max;
    int fd;
    int flags;
@@ -776,7 +777,6 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 
    ecore_list_append(_url_con_list, url_con);
 
-   start = ecore_time_get();
    url_con->active = 1;
    curl_multi_add_handle(curlm, url_con->curl_easy);
    /* This one can't be stopped, or the download never start. */
@@ -835,8 +835,8 @@ _ecore_con_url_idler_handler(void *data)
 
    start = ecore_time_get();
    while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
-     /* make this 1/20th of a second to keep interactivity high */
-     if ((ecore_time_get() - start) > 0.2)
+     /* make this not more than a frametime to keep interactivity high */
+     if ((ecore_time_get() - start) > ecore_animator_frametime_get())
        {
 	  done = 0;
 	  break;
