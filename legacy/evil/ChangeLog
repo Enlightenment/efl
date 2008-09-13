@@ -1,3 +1,8 @@
+2008-09-13  Vincent Torri  <doursse at users dot sf dot net>
+
+	* big rework of evil
+	* addition of a unit test for memcpy
+
 2008-07-13  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

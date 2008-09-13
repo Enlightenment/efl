@@ -10,7 +10,6 @@ dnl otherwise, we set the correct flags
 dnl for each platform.
 win32_libs=""
 win32_cflags=""
-lt_enable_auto_import=""
 case "$host_os" in
   mingw|mingw32)
     win32_libs="-lole32 -luuid -lws2_32"
@@ -18,7 +17,6 @@ case "$host_os" in
   cegcc)
     win32_cflags="-mwin32"
     win32_libs="-lws2"
-    lt_enable_auto_import="-Wl,--enable-auto-import"
     ;;
   mingw32ce)
     win32_libs="-lws2"
@@ -29,7 +27,6 @@ case "$host_os" in
 esac
 AC_SUBST(win32_cflags)
 AC_SUBST(win32_libs)
-AC_SUBST(lt_enable_auto_import)
 
 dnl needed for correct definition of EAPI
 AC_DEFINE(EFL_EVIL_BUILD, 1, [Define to mention that evil is built])
@@ -51,6 +48,7 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+AM_PROG_AS
 AC_LANG(C)
 AC_PROG_CPP
 AC_PROG_CC
@@ -79,8 +77,6 @@ src/Makefile
 src/bin/Makefile
 src/lib/Makefile
 src/lib/dlfcn/Makefile
-src/lib/mman/Makefile
-src/lib/pwd/Makefile
 ])
 
 AC_OUTPUT

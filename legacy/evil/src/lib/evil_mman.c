@@ -10,7 +10,7 @@
 # include <io.h>
 #endif /* ! __CEGCC__ */
 
-#include "../Evil.h"
+#include "Evil.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

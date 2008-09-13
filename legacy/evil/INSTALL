@@ -235,26 +235,3 @@ an Autoconf bug.  Until the bug is fixed you can use this workaround:
 `configure' also accepts some other, not widely useful, options.  Run
 `configure --help' for more details.
 
-================================================================================
-
-NOTE: For compilation with mingw32ce, run configure with the option
-
---host=arm-wince-mingw32ce
-
-NOTE: For compilation with cegcc, you have to do the following steps:
-
-1) After having run autogen.sh, add in config.sub file:
-
-	cegcc)
-		basic_machine=arm-unknown
-		os=-cegcc
-		;;
-
-after the mingw32ce case
-
-2) in config.sub, add -cegcc* after -pe*. You should have a line like:
-	      | -cygwin* | -pe* | -cegcc* | -psos* | -moss* | -proelf* | -rtems* \
-
-3) run configure with the option
-
---host=arm-wince-cegcc

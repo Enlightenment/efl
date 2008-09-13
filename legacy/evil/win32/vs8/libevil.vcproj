@@ -192,6 +192,26 @@
 				RelativePath="..\..\src\lib\evil.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_mman.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_pwd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_stdlib.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_unistd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_util.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
