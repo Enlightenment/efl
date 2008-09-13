@@ -12,14 +12,14 @@ _evas_array_grow(Evas_Array *array)
 {
    void **tmp;
    size_t total;
-   
+
    total = array->total + array->step;
-   tmp = realloc(array->data, sizeof (void*) * total);
+   tmp = (void **)realloc(array->data, sizeof (void*) * total);
    if (!tmp) return 0;
-   
+
    array->total = total;
    array->data = tmp;
-   
+
    return 1;
 }
 
@@ -28,7 +28,7 @@ _evas_array_append(Evas_Array *array, void *data)
 {
    if (UNLIKELY((array->count + array->step) > array->total))
      if (!_evas_array_grow(array)) return ;
-   
+
    array->data[array->count++] = data;
 }
 
