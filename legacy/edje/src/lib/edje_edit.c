@@ -896,6 +896,130 @@ edje_edit_group_max_h_set(Evas_Object *obj, int h)
 }
 
 /***************/
+/*  DATA API   */
+/***************/
+
+EAPI Evas_List *
+edje_edit_data_list_get(Evas_Object * obj)
+{
+   Evas_List *datas, *l;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file || !ed->file->data)
+     return NULL;
+
+   datas = NULL;
+   for (l = ed->file->data; l; l = l->next)
+     {
+	Edje_Data *d = l->data;
+	datas = evas_list_append(datas, evas_stringshare_add(d->key));
+     }
+
+   return datas;
+}
+
+EAPI unsigned char
+edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
+{
+   Evas_List *l;
+   Edje_Data *d;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!itemname || !ed->file)
+     return 0;
+
+   for (l = ed->file->data; l; l = l->next)
+     {
+	Edje_Data *dd = l->data;
+	if (strcmp(dd->key, itemname) == 0)
+	  return 0;
+     }
+
+   d = mem_alloc(sizeof(Edje_Data));
+   if (!d) return 0;
+
+   d->key = (char*)evas_stringshare_add(itemname);
+   if (value) d->value = (char*)evas_stringshare_add(value);
+   else d->value = NULL;
+
+   ed->file->data = evas_list_append(ed->file->data, d);
+
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_data_del(Evas_Object *obj, const char *itemname)
+{
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!itemname || !ed->file || !ed->file->data)
+     return 0;
+
+   for (l = ed->file->data; l; l = l->next)
+     {
+	Edje_Data *d = l->data;
+	if (strcmp(d->key, itemname) == 0)
+          {
+             _edje_if_string_free(ed, d->key);
+             _edje_if_string_free(ed, d->value);
+             ed->file->data = evas_list_remove(ed->file->data, d);
+             free(d);
+             return 1;
+          }
+     }
+   return 0;
+}
+
+EAPI const char *
+edje_edit_data_value_get(Evas_Object * obj, char *itemname)
+{
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!itemname || !ed->file || !ed->file->data)
+     return NULL;
+
+   for (l = ed->file->data; l; l = l->next)
+     {
+	Edje_Data *d = l->data;
+	if (strcmp(d->key, itemname) == 0)
+	  return evas_stringshare_add(d->value);
+     }
+
+   return NULL;
+}
+
+EAPI unsigned char
+edje_edit_data_value_set( Evas_Object * obj, const char *itemname, const char *value)
+{
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!itemname || !value || !ed->file || !ed->file->data)
+     return 0;
+
+   for (l = ed->file->data; l; l = l->next)
+     {
+	Edje_Data *d = l->data;
+	if (strcmp(d->key, itemname) == 0)
+	  {
+		_edje_if_string_free(ed, d->value);
+		d->value = (char*)evas_stringshare_add(value);
+		return 1;
+	  }
+     }
+
+   return 0;
+}
+
+
+/***************/
 /*  PARTS API  */
 /***************/
 
