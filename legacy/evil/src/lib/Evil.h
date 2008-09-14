@@ -68,11 +68,21 @@ extern "C" {
 #include <fcntl.h>
 #include <locale.h>
 
+
 #ifdef PATH_MAX
 # undef PATH_MAX
 #endif /* PATH_MAX */
 
 #define PATH_MAX MAX_PATH
+
+
+#ifdef _MSC_VER
+
+typedef SSIZE_T        ssize_t;
+typedef unsigned short mode_t;
+
+#endif /* _MSC_VER */
+
 
 #include "evil_stdlib.h"
 #include "evil_unistd.h"
@@ -133,13 +143,6 @@ extern "C" {
 #  define F_WRLCK     1
 #  define F_UNLCK     2
 # endif /* ! F_RDLCK */
-
-#ifdef _MSC_VER
-
-typedef long           ssize_t;
-typedef unsigned short mode_t;
-
-#endif /* _MSC_VER */
 
 /**
  * @struct flock

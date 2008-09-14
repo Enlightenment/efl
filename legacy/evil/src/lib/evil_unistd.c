@@ -2,6 +2,12 @@
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
 
+#ifdef _MSC_VER
+# include <shobjidl.h>
+# include <errno.h>
+# include <shlguid.h>
+#endif
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */

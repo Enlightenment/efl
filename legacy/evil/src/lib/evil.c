@@ -9,7 +9,6 @@
 # include <errno.h>
 # include <sys/locking.h>
 # include <io.h>
-# include <share.h>
 # include <shlobj.h>
 # include <objidl.h>
 #else
@@ -36,9 +35,6 @@
 #endif /* HAVE___ATTRIBUTE__ */
 
 #include "Evil.h"
-
-
-static struct passwd pw;
 
 
 #ifndef __CEGCC__

@@ -1,3 +1,20 @@
+2008-09-14  Vincent Torri  <doursse at users dot sf dot net>
+
+	Fix compilation with vc++. Based on patch by Dmitriy Mazovka
+
+	* src/lib/Evil.h:
+	move typedef's
+
+	* src/lib/evil.c:
+	remove declaration and include
+
+	* src/lib/evil_stdlib.c:
+	simplify mkstmp implementation
+	fix getenv
+
+	* src/lib/evil_unistd.c:
+	include correct headers for readlink and symlink
+
 2008-09-13  Vincent Torri  <doursse at users dot sf dot net>
 
 	* big rework of evil

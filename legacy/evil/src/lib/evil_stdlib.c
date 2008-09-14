@@ -1,5 +1,8 @@
 
 #include <stdio.h>
+#ifndef __CEGCC__
+# include <io.h>
+#endif /* ! __CEGCC__ */
 #ifndef __MINGW32CE__
 #include <errno.h>
 #endif /* ! __MINGW32CE__ */
@@ -126,6 +129,7 @@ setenv(const char *name,
    char *old_name;
    char *str;
    int   length;
+   int   res;
 
    if (!name || !*name)
      return -1;
@@ -139,7 +143,7 @@ setenv(const char *name,
 
    /* if name is already set and overwrite is 0, we exit with success */
    old_name = getenv(name);
-   if (!overwrite && oldname)
+   if (!overwrite && old_name)
      return 0;
 
    length = strlen(name) + strlen(value) + 2;
@@ -155,6 +159,8 @@ setenv(const char *name,
      sprintf(str, "%s=%s", name, value);
    res = _putenv(str);
    free(str);
+
+   return res;
 
 #else /* __CEGCC__ || __MINGW32CE__ */
 
@@ -224,29 +230,22 @@ unsetenv(const char *name)
  *
  */
 
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+#ifndef __CEGCC__
 
 int
 mkstemp(char *template)
 {
    int fd;
 
-#ifdef __MINGW32__
    if (!_mktemp(template))
      return -1;
 
-   fd = _sopen(template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-#else
-   if (_mktemp_s(template, PATH_MAX) != 0)
-     return -1;
-
-   _sopen_s(&fd, template, _O_RDWR | _O_BINARY | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
-#endif /* ! __MINGW32__ */
+   fd = _open(template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
 
    return fd;
 }
 
-#endif /* ! ( __CEGCC__ || __MINGW32CE__ ) */
+#endif /* ! __CEGCC__ */
 
 
 char *
