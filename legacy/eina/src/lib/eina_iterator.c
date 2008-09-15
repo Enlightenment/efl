@@ -43,7 +43,7 @@
  */
 
 /**
- * @addtogroup Eina_Iterator_Group Iterators Functions
+ * @addtogroup Eina_Iterator_Group Iterator Functions
  *
  * @brief These functions manage iterators on containers.
  *

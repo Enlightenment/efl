@@ -51,6 +51,14 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+
+/**
+ * @page tutorial_stringshare_page Stringshare Tutorial
+ *
+ * to be written...
+ *
+ */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -68,6 +76,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
 
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
@@ -111,6 +123,11 @@ _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare
    return EINA_RBTREE_RIGHT;
 }
 
+/**
+ * @endcond
+ */
+
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -138,12 +155,20 @@ _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare
  * string creation/destruction speed, reduces memory use and decreases
  * memory fragmentation, so a win all-around.
  *
+ * For more information, you can look at the @ref tutorial_stringshare_page.
+ *
  * @{
  */
 
 /**
- * Initialize the eina stringshare internal structure.
- * @return  Zero on failure, non-zero on successful initialization.
+ * @brief Initialize the eina stringshare internal structure.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function allocates the memory needed by the stringshare
+ * internal structure and sets up the error module or Eina. It is also
+ * called by eina_init(). It returns 0 on failure, otherwise it
+ * returns the number of times it has already been called.
  */
 EAPI int
 eina_stringshare_init()
@@ -165,10 +190,66 @@ eina_stringshare_init()
 }
 
 /**
- * Retrieves an instance of a string for use in a program.
+ * @brief Shut down the eina stringshare internal structures
+ *
+ * @return 0 when the stringshare module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function frees the memory allocated by eina_stringshare_init()
+ * and shut down the error module. It is also called by
+ * eina_shutdown(). It returns 0 when it is called the same number of
+ * times than eina_stringshare_init().
+ */
+EAPI int
+eina_stringshare_shutdown()
+{
+   --_eina_stringshare_init_count;
+   if (!_eina_stringshare_init_count)
+     {
+	int i;
+	/* remove any string still in the table */
+	for (i = 0; i < 256; i++)
+	  {
+	     Eina_Stringshare_Head *ed = share->buckets[i];
+	     Eina_Stringshare_Head *save;
+
+	     while (ed)
+	       {
+		  save = ed;
+		  ed = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(&ed->node, &ed->node,
+									  EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+		  while (save->head)
+		    {
+		       Eina_Stringshare_Node *el = save->head;
+
+		       save->head = el->next;
+		       free(el);
+		    }
+		  free(save);
+	       }
+	     share->buckets[i] = NULL;
+	  }
+	free(share);
+	share = NULL;
+
+	eina_error_shutdown();
+     }
+
+   return _eina_stringshare_init_count;
+}
+
+/**
+ * @brief Retrieve an instance of a string for use in a program.
+ *
  * @param   str The string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success.
  *          @c NULL on failure.
+ *
+ * This function retrieves an instance of @p str. If @p str is
+ * @c NULL, then @c NULL is returned. If @p str is already stored, it
+ * is just returned and its reference counter is increased. Otherwise
+ * it is added to the strings to be searched and a duplicated string
+ * of @p str is returned.
  */
 EAPI const char *
 eina_stringshare_add(const char *str)
@@ -224,11 +305,14 @@ eina_stringshare_add(const char *str)
 }
 
 /**
- * Notes that the given string has lost an instance.
- *
- * It will free the string if no other instances are left.
+ * @brief Note that the given string has lost an instance.
  *
  * @param str string The given string.
+ *
+ * This function decreases the reference counter associated to @p str
+ * if it exists. If that counter reaches 0, the memory associated to
+ * @p str is freed. If @p str is NULL, the function returns
+ * immediatly.
  */
 EAPI void
 eina_stringshare_del(const char *str)
@@ -277,47 +361,6 @@ eina_stringshare_del(const char *str)
  on_error:
    EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
    if (getenv("EINA_ERROR_ABORT")) abort();
-}
-
-/**
- * Shutdown the eina string internal structures
- */
-EAPI int
-eina_stringshare_shutdown()
-{
-   --_eina_stringshare_init_count;
-   if (!_eina_stringshare_init_count)
-     {
-	int i;
-	/* remove any string still in the table */
-	for (i = 0; i < 256; i++)
-	  {
-	     Eina_Stringshare_Head *ed = share->buckets[i];
-	     Eina_Stringshare_Head *save;
-
-	     while (ed)
-	       {
-		  save = ed;
-		  ed = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(&ed->node, &ed->node,
-									  EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
-		  while (save->head)
-		    {
-		       Eina_Stringshare_Node *el = save->head;
-
-		       save->head = el->next;
-		       free(el);
-		    }
-		  free(save);
-	       }
-	     share->buckets[i] = NULL;
-	  }
-	free(share);
-	share = NULL;
-
-	eina_error_shutdown();
-     }
-
-   return _eina_stringshare_init_count;
 }
 
 /**

@@ -43,7 +43,7 @@
  */
 
 /**
- * @addtogroup Eina_Accessor_Group Accessors Functions
+ * @addtogroup Eina_Accessor_Group Accessor Functions
  *
  * @brief These functions manage accessor on containers.
  *
