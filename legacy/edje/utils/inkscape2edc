@@ -1,0 +1,309 @@
+#!/usr/bin/env python
+
+import os
+import os.path
+import subprocess
+import logging as log
+import re
+
+
+class Inkscape2Edc(object):
+    cmd = "inkscape --without-gui"
+    def __init__(self, infile, outfile, group,
+                 relative1_x=None, relative2_x=None,
+                 relative1_y=None, relative2_y=None,
+                 images_dir="",
+                 show_max=True, show_min=True, show_mouse_events=True):
+        self.infile = infile
+        self.outfile = outfile
+        self.group = group
+        self.relative1_x = relative1_x
+        self.relative2_x = relative2_x
+        self.relative1_y = relative1_y
+        self.relative2_y = relative2_y
+        self.images_dir = images_dir
+        self.show_max = show_max
+        self.show_min = show_min
+        self.show_mouse_events = show_mouse_events
+
+        self.images = {}
+        self.sizes = {}
+        self.known_ids = tuple()
+        self.w = 0
+        self.h = 0
+
+        self.out = open(self.outfile, "wb")
+        self.basedir = os.path.dirname(self.outfile)
+
+    def _exec_cmd(self, *args):
+        s = " ".join(args)
+        cmd = "%s --file=%r %s" % (self.cmd, self.infile, s)
+        try:
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, shell=True)
+        except Exception, e:
+            log.error("cmd=%r exception: %s", cmd, e)
+            return ""
+
+        out, err = p.communicate()
+        if err:
+            log.error("cmd=%r error: %s", cmd, err)
+
+        return out
+
+    def load_sizes(self):
+        sizes = self._exec_cmd("--query-all").split('\n')
+
+        self.sizes = {}
+        order = []
+        for line in sizes:
+            if not line:
+                continue
+            try:
+                oid, x, y, w, h = line.split(',')
+            except ValueError:
+                log.warn("could not parse size line: %r", line)
+                continue
+            x = float(x)
+            y = float(y)
+            w = float(w)
+            h = float(h)
+            self.sizes[oid] = (x, y, w, h)
+            order.append(oid)
+
+        self.known_ids = tuple(order)
+
+        self.w = float(self._exec_cmd("--query-width"))
+        self.h = float(self._exec_cmd("--query-height"))
+
+    def output_file_header(self):
+        self.out.write("""\
+collections {
+   group {
+      name: "%(group)s";
+""" % self.__dict__)
+
+        if self.show_min:
+            self.out.write("      min: %(w)d %(h)d;\n" % self.__dict__)
+
+        if self.show_max:
+            self.out.write("      max: %(w)d %(h)d;\n" % self.__dict__)
+
+    def output_file_section_parts_begin(self):
+        self.out.write("      parts {\n")
+
+    def output_file_section_parts_end(self):
+        self.out.write("      }\n")
+
+    def output_file_section_images_begin(self):
+        self.out.write("      images {\n")
+
+    def output_file_section_images_end(self):
+        self.out.write("      }\n")
+
+    def output_file_foot(self):
+        self.out.write("""\
+   }
+}
+""")
+
+    def output_image(self, oid):
+        img = os.path.join(self.images_dir, oid)
+        img += ".png"
+
+        self._exec_cmd("--export-id='%s'" % oid,
+                       "--export-id-only",
+                       "--export-png='%s'" % os.path.join(self.basedir, img))
+
+        self.out.write('         image: "%s" COMP;\n' % img)
+        self.images[oid] = img
+
+    def output_part_desc_rel(self, x, y, w, h):
+        def choose_rel(relative, value, value_max):
+            if relative is not None:
+                return relative
+            elif value <= abs(value_max - value):
+                return 0.0
+            else:
+                return 1.0
+
+        x2 = x + w - 1
+        y2 = y + h - 1
+
+        rx1 = choose_rel(self.relative1_x, x, w)
+        rx2 = choose_rel(self.relative2_x, x2, w)
+        ry1 = choose_rel(self.relative1_y, y, h)
+        ry2 = choose_rel(self.relative2_y, y2, h)
+
+        ox1 = x - self.w * rx1
+        ox2 = x2 - self.w * rx2
+
+        oy1 = y - self.h * ry1
+        oy2 = y2 - self.h * ry2
+
+        self.out.write("""\
+                rel1 {
+                   relative: %03.1f %03.1f;
+                   offset: %d %d;
+                }
+                rel2 {
+                   relative: %03.1f %03.1f;
+                   offset: %d %d;
+                }
+""" % (rx1, ry1, ox1, oy1, rx2, ry2, ox2, oy2))
+
+
+    def output_part(self, oid):
+        try:
+            x, y, w, h = self.sizes[oid]
+        except KeyError:
+            log.error("no such object id: %s", oid)
+            return
+
+        info = {
+            "name": oid,
+            "x": x,
+            "y": y,
+            "w": w,
+            "h": h,
+            }
+
+        self.out.write("""
+         part {
+            name: "%(name)s";
+            type: IMAGE;
+""" % info)
+
+        if self.show_mouse_events:
+            self.out.write("            mouse_events: 0;\n")
+
+        self.out.write("""\
+            description {
+                state: "default" 0.0;
+""")
+
+        if self.show_min:
+            self.out.write("                min: %(w)d %(h)d;\n" % info)
+
+        if self.show_max:
+            self.out.write("                max: %(w)d %(h)d;\n" % info)
+
+        self.output_part_desc_rel(x, y, w, h)
+        self.out.write("""\
+               image.normal: "%s";
+            }
+         }
+""" % (self.images[oid],))
+
+
+def foreach_id(inkscape2edc, ids=None, re_exclude=None):
+    if ids:
+        for oid in inkscape2edc.known_ids:
+            if oid in ids:
+                yield oid
+    else:
+        for oid in inkscape2edc.known_ids:
+            if re_exclude is not None and re_exclude.match(oid):
+                continue
+            yield oid
+
+
+if __name__ == "__main__":
+    import optparse
+
+    usage = "usage: %prog [options] <input.svg>"
+    parser = optparse.OptionParser(usage=usage)
+
+    parser.add_option("-i", "--id", action="append", default=[],
+                      help=("Object ID to use, it will be the part name. "
+                            "Multiple usage to use more object ids."))
+    parser.add_option("-e", "--exclude", action="store", default=None,
+                      help=("Exclude regular expression."
+                            "Matching IDs will be ignored."))
+    parser.add_option("-o", "--output", action="store", default=None,
+                      help="Output file to use")
+    parser.add_option("-g", "--group", action="store", default=None,
+                      help="Group name")
+    parser.add_option("-d", "--images-dir", action="store", default="",
+                      help="Directory where to output images.")
+    parser.add_option("--no-min", action="store_true",
+                      help="Do not output min values")
+    parser.add_option("--no-max", action="store_true",
+                      help="Do not output max values")
+    parser.add_option("--no-mouse_events", action="store_true",
+                      help="Do not output mouse_events lines")
+    parser.add_option("--relative1-y", action="store",
+                      choices=("top", "bottom", "auto"),
+                      default="auto",
+                      help=("Choose what to use as base for rel1 y values, "
+                            "top=0.0, bottom=1.0, auto=nearest"))
+    parser.add_option("--relative2-y", action="store",
+                      choices=("top", "bottom", "auto"),
+                      default="auto",
+                      help=("Choose what to use as base for rel2 y values, "
+                            "top=0.0, bottom=1.0, auto=nearest"))
+    parser.add_option("--relative1-x", action="store",
+                      choices=("left", "right", "auto"),
+                      default="auto",
+                      help=("Choose what to use as base for rel1 x values, "
+                            "left=0.0, right=1.0, auto=nearest"))
+    parser.add_option("--relative2-x", action="store",
+                      choices=("left", "right", "auto"),
+                      default="auto",
+                      help=("Choose what to use as base for rel2 x values, "
+                            "left=0.0, right=1.0, auto=nearest"))
+
+
+    options, args = parser.parse_args()
+
+    try:
+        infile = args[0]
+    except IndexError:
+        parser.print_help()
+        raise SystemExit("missing input file name")
+
+    fname = os.path.splitext(infile)[0]
+    if not options.output:
+        options.output = fname + ".edc"
+
+    if not options.group:
+        options.group = fname
+
+    rx_map = {"left": 0.0, "right": 1.0}
+    options.relative1_x = rx_map.get(options.relative1_x, None)
+    options.relative2_x = rx_map.get(options.relative2_x, None)
+
+    ry_map = {"top": 0.0, "bottom": 1.0}
+    options.relative1_y = ry_map.get(options.relative1_y, None)
+    options.relative2_y = ry_map.get(options.relative2_y, None)
+
+    o = Inkscape2Edc(infile, options.output, options.group,
+                     relative1_x=options.relative1_x,
+                     relative2_x=options.relative2_x,
+                     relative1_y=options.relative1_y,
+                     relative2_y=options.relative2_y,
+                     images_dir=options.images_dir,
+                     show_max=not options.no_max, show_min=not options.no_min,
+                     show_mouse_events=not options.no_mouse_events)
+
+    re_exclude = None
+    if options.exclude:
+        re_exclude = re.compile(options.exclude)
+
+    if options.images_dir:
+        os.makedirs(options.images_dir)
+
+    o.load_sizes()
+    o.output_file_header()
+
+    o.output_file_section_images_begin()
+    for oid in foreach_id(o, options.id, re_exclude):
+        o.output_image(oid)
+    o.output_file_section_images_end()
+
+    o.output_file_section_parts_begin()
+    for oid in foreach_id(o, options.id, re_exclude):
+        o.output_part(oid)
+    o.output_file_section_parts_end()
+
+    o.output_file_foot()

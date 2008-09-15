@@ -19,6 +19,9 @@ AM_PROG_CC_C_O
 AC_HEADER_STDC
 AC_C_CONST
 
+AM_PATH_PYTHON([2.5], , [:])
+AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != : ])
+
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -160,6 +163,7 @@ data/include/Makefile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
+utils/Makefile
 ])
 
 
