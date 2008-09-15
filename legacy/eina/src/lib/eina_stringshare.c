@@ -71,42 +71,42 @@
 
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
+typedef struct _Eina_Stringshare_Head        Eina_Stringshare_Head;
 
 struct _Eina_Stringshare
 {
-   Eina_Stringshare_Node *buckets[1024];
+   Eina_Stringshare_Head *buckets[256];
+};
+
+struct _Eina_Stringshare_Head
+{
+   Eina_Rbtree            node;
+   int                    hash;
+
+   Eina_Stringshare_Node *head;
 };
 
 struct _Eina_Stringshare_Node
 {
-   Eina_Rbtree node;
-   int         length;
-   int         references;
+   Eina_Stringshare_Node *next;
+
+   int			  length;
+   int                    references;
 };
 
 static Eina_Stringshare *share = NULL;
 static int _eina_stringshare_init_count = 0;
 
 static int
-_eina_stringshare_cmp(const Eina_Stringshare_Node *node, const char *key, int length, __UNUSED__ void *data)
+_eina_stringshare_cmp(const Eina_Stringshare_Head *node, const int *hash, __UNUSED__ int length, __UNUSED__ void *data)
 {
-   const char *el_str;
-   int rlen;
-
-   rlen = length < node->length ? length : node->length;
-
-   el_str = (const char *) (node + 1);
-   return memcmp(el_str, key, rlen);
+   return node->hash - *hash;
 }
 
 static Eina_Rbtree_Direction
-_eina_stringshare_node(const Eina_Stringshare_Node *left, const Eina_Stringshare_Node *right, __UNUSED__ void *data)
+_eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare_Head *right, __UNUSED__ void *data)
 {
-   int rlen;
-
-   rlen = left->length < right->length ? left->length : right->length;
-
-   if (memcmp((const char*) (left + 1), (const char*) (right + 1), rlen) < 0)
+   if (left->hash - right->hash < 0)
      return EINA_RBTREE_LEFT;
    return EINA_RBTREE_RIGHT;
 }
@@ -173,15 +173,37 @@ eina_stringshare_init()
 EAPI const char *
 eina_stringshare_add(const char *str)
 {
+   Eina_Stringshare_Head *ed;
    Eina_Stringshare_Node *el;
    char *el_str;
-   int hash_num, slen;
+   int hash_num, slen, hash;
 
    if (!str) return NULL;
    slen = strlen(str) + 1;
-   hash_num = eina_hash_superfast(str, slen) & 0x3FF;
+   hash = eina_hash_djb2(str, slen);
+   hash_num = hash & 0xFF;
+   hash &= 0xFFF;
 
-   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
+   ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num],
+							   &hash, sizeof (hash),
+							   EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
+   if (!ed)
+     {
+	ed = malloc(sizeof (Eina_Stringshare_Head));
+	if (!ed) return NULL;
+	ed->hash = hash;
+	ed->head = NULL;
+
+	share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num],
+										      &ed->node,
+										      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+     }
+
+   for (el = ed->head;
+	el && slen != el->length && memcmp(str, (const char*) (el + 1), slen) != 0;
+	el = el->next)
+     ;
+
    if (el)
      {
 	el->references++;
@@ -196,7 +218,8 @@ eina_stringshare_add(const char *str)
    el_str = (char*) (el + 1);
    memcpy(el_str, str, slen);
 
-   share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+   el->next = ed->head;
+   ed->head = el;
 
    return el_str;
 }
@@ -211,24 +234,49 @@ eina_stringshare_add(const char *str)
 EAPI void
 eina_stringshare_del(const char *str)
 {
+   Eina_Stringshare_Head *ed;
    Eina_Stringshare_Node *el;
-   int hash_num, slen;
+   Eina_Stringshare_Node *prev;
+   int hash_num, slen, hash;
 
    if (!str) return;
    slen = strlen(str) + 1;
-   hash_num = eina_hash_superfast(str, slen) & 0x3FF;
+   hash = eina_hash_djb2(str, slen);
+   hash_num = hash & 0xFF;
+   hash &= 0xFFF;
 
-   el = (Eina_Stringshare_Node*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num], str, slen, EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
+   ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup(&share->buckets[hash_num]->node,
+							   &hash, sizeof (hash),
+							   EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
+   if (!ed) goto on_error;
+
+   for (prev = NULL, el = ed->head;
+	el && (const char*) (el + 1) != str;
+	el = el->next)
+     ;
+
    if (el)
      {
 	el->references--;
 	if (el->references == 0)
 	  {
-	     share->buckets[hash_num] = (Eina_Stringshare_Node*) eina_rbtree_inline_remove((Eina_Rbtree*) share->buckets[hash_num], &el->node, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+	     if (prev) prev->next = el->next;
+	     else ed->head = el->next;
 	     free(el);
+
+	     if (ed->head == NULL)
+	       {
+		  share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(&share->buckets[hash_num]->node,
+												&ed->node,
+												EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node),
+												NULL);
+		  free(ed);
+	       }
 	  }
 	return ;
      }
+
+ on_error:
    EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
    if (getenv("EINA_ERROR_ABORT")) abort();
 }
@@ -244,15 +292,23 @@ eina_stringshare_shutdown()
      {
 	int i;
 	/* remove any string still in the table */
-	for (i = 0; i < 1024; i++)
+	for (i = 0; i < 256; i++)
 	  {
-	     Eina_Rbtree *el = (Eina_Rbtree*) share->buckets[i];
-	     Eina_Rbtree *save;
+	     Eina_Stringshare_Head *ed = share->buckets[i];
+	     Eina_Stringshare_Head *save;
 
-	     while (el)
+	     while (ed)
 	       {
-		  save = el;
-		  el = eina_rbtree_inline_remove(el, el, EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+		  save = ed;
+		  ed = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(&ed->node, &ed->node,
+									  EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+		  while (save->head)
+		    {
+		       Eina_Stringshare_Node *el = save->head;
+
+		       save->head = el->next;
+		       free(el);
+		    }
 		  free(save);
 	       }
 	     share->buckets[i] = NULL;
