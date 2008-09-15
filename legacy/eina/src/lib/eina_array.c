@@ -19,6 +19,14 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+ * @page tutorial_array_page Array Tutorial
+ *
+ * to be written...
+ *
+ */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -60,10 +68,10 @@ struct _Eina_Accessor_Array
 static Eina_Bool
 eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 {
-   if (!(it->index < eina_array_count(it->array)))
+   if (!(it->index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
-     *data = eina_array_get(it->array, it->index);
+     *data = eina_array_data_get(it->array, it->index);
    it->index++;
    return EINA_TRUE;
 }
@@ -83,10 +91,10 @@ eina_array_iterator_free(Eina_Iterator_Array *it)
 static Eina_Bool
 eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **data)
 {
-   if (!(index < eina_array_count(it->array)))
+   if (!(index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
-     *data = eina_array_get(it->array, index);
+     *data = eina_array_data_get(it->array, index);
    return EINA_TRUE;
 }
 
@@ -139,6 +147,30 @@ eina_array_grow(Eina_Array *array)
  * @addtogroup Eina_Array_Group Array Functions
  *
  * @brief These functions provide array management.
+ *
+ * To use the array data type, eina_array_init() must be called before
+ * any other array functions. When no more array function is used,
+ * eina_array_shutdown() must be called to free all the resources.
+ *
+ * An array must be created with eina_array_new(). It allocated all
+ * the necessary data for an array. When not needed anymore, an array
+ * is freed with eina_array_free(). This function does not free any
+ * allocated memory used to store the data of each element. For that,
+ * just iterate over the array to free them. A convenient way to do
+ * that is by using #EINA_ARRAY_ITER_NEXT. An example of code is given
+ * in the description of this macro.
+ *
+ * @warning All the other functions do not check if the used array is
+ * valid or not. It's up to the user to be sure of that. It is
+ * designed like that for performance reasons.
+ *
+ * The usual features of an array are classic ones: to append an
+ * element, use eina_array_push() and to remove the last element, use
+ * eina_array_pop(). To retrieve the element at a given positin, use
+ * eina_array_data_get(). The number of elements can be retrieved with
+ * eina_array_count_get().
+ *
+ * For more information, you can look at the @ref tutorial_array_page.
  *
  * @{
  */
@@ -306,7 +338,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 
    for (i = 0; i < array->count; ++i)
      {
-	data = eina_array_get(array, i);
+	data = eina_array_data_get(array, i);
 
 	if (keep(data, gdata) == EINA_FALSE) break;
      }
@@ -314,7 +346,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    if (i < array->count) ++i;
    for (; i < array->count; ++i)
      {
-	data = eina_array_get(array, i);
+	data = eina_array_data_get(array, i);
 
 	if (keep(data, gdata) == EINA_TRUE) break;
      }
@@ -351,7 +383,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
 
    for (; i < array->count; ++i)
      {
-	data = eina_array_get(array, i);
+	data = eina_array_data_get(array, i);
 
 	if (keep(data, gdata))
 	  {
@@ -390,7 +422,7 @@ eina_array_iterator_new(const Eina_Array *array)
    Eina_Iterator_Array *it;
 
    if (!array) return NULL;
-   if (eina_array_count(array) <= 0) return NULL;
+   if (eina_array_count_get(array) <= 0) return NULL;
 
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Array));

@@ -44,8 +44,8 @@ START_TEST(eina_array_simple)
 	eina_array_push(ea, tmp);
      }
 
-   fail_if(eina_array_get(ea, 10) == NULL);
-   fail_if(atoi(eina_array_get(ea, 10)) != 10);
+   fail_if(eina_array_data_get(ea, 10) == NULL);
+   fail_if(atoi(eina_array_data_get(ea, 10)) != 10);
    tmp = eina_array_pop(ea);
    fail_if(tmp == NULL);
    fail_if(atoi(tmp) != 200);
@@ -87,8 +87,8 @@ START_TEST(eina_array_static)
 	eina_array_push(&sea, tmp);
      }
 
-   fail_if(eina_array_get(&sea, 10) == NULL);
-   fail_if(atoi(eina_array_get(&sea, 10)) != 10);
+   fail_if(eina_array_data_get(&sea, 10) == NULL);
+   fail_if(atoi(eina_array_data_get(&sea, 10)) != 10);
 
    EINA_ARRAY_ITER_NEXT(&sea, i, tmp, it)
      {
@@ -141,27 +141,27 @@ START_TEST(eina_array_remove_stuff)
    // Remove the first 10 items
    for (i = 0; i < 10; ++i)
      {
-	tmp = eina_array_get(ea, i);
+	tmp = eina_array_data_get(ea, i);
 	fail_if(!tmp);
 	*tmp = 0;
      }
    fail_if(eina_array_remove(ea, keep_int, NULL) != EINA_TRUE);
 
-   fail_if(eina_array_count(ea) != 990);
+   fail_if(eina_array_count_get(ea) != 990);
    EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
      fail_if(*tmp == 0);
 
    // Remove the last items
    for (i = 980; i < 990; ++i)
      {
-	tmp = eina_array_get(ea, i);
+	tmp = eina_array_data_get(ea, i);
 	fail_if(!tmp);
 	*tmp = 0;
      }
    eina_array_remove(ea, keep_int, NULL);
 
    // Remove all items
-   fail_if(eina_array_count(ea) != 980);
+   fail_if(eina_array_count_get(ea) != 980);
    EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
      {
 	fail_if(*tmp == 0);
@@ -170,7 +170,7 @@ START_TEST(eina_array_remove_stuff)
 
    eina_array_remove(ea, keep_int, NULL);
 
-   fail_if(eina_array_count(ea) != 0);
+   fail_if(eina_array_count_get(ea) != 0);
 
    eina_array_free(ea);
 

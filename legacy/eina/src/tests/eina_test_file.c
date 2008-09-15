@@ -31,25 +31,25 @@ START_TEST(eina_file_split_simple)
    ea = eina_file_split(strdup("/this/is/a/small/test"));
 
    fail_if(!ea);
-   fail_if(eina_array_count(ea) != 5);
-   fail_if(strcmp(eina_array_get(ea, 0), "this"));
-   fail_if(strcmp(eina_array_get(ea, 1), "is"));
-   fail_if(strcmp(eina_array_get(ea, 2), "a"));
-   fail_if(strcmp(eina_array_get(ea, 3), "small"));
-   fail_if(strcmp(eina_array_get(ea, 4), "test"));
+   fail_if(eina_array_count_get(ea) != 5);
+   fail_if(strcmp(eina_array_data_get(ea, 0), "this"));
+   fail_if(strcmp(eina_array_data_get(ea, 1), "is"));
+   fail_if(strcmp(eina_array_data_get(ea, 2), "a"));
+   fail_if(strcmp(eina_array_data_get(ea, 3), "small"));
+   fail_if(strcmp(eina_array_data_get(ea, 4), "test"));
 
    eina_array_free(ea);
 
    ea = eina_file_split(strdup("this//is///a /more/complex///case///"));
 
    fail_if(!ea);
-   fail_if(eina_array_count(ea) != 6);
-   fail_if(strcmp(eina_array_get(ea, 0), "this"));
-   fail_if(strcmp(eina_array_get(ea, 1), "is"));
-   fail_if(strcmp(eina_array_get(ea, 2), "a "));
-   fail_if(strcmp(eina_array_get(ea, 3), "more"));
-   fail_if(strcmp(eina_array_get(ea, 4), "complex"));
-   fail_if(strcmp(eina_array_get(ea, 5), "case"));
+   fail_if(eina_array_count_get(ea) != 6);
+   fail_if(strcmp(eina_array_data_get(ea, 0), "this"));
+   fail_if(strcmp(eina_array_data_get(ea, 1), "is"));
+   fail_if(strcmp(eina_array_data_get(ea, 2), "a "));
+   fail_if(strcmp(eina_array_data_get(ea, 3), "more"));
+   fail_if(strcmp(eina_array_data_get(ea, 4), "complex"));
+   fail_if(strcmp(eina_array_data_get(ea, 5), "case"));
 
    eina_array_free(ea);
 

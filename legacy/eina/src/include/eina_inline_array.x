@@ -96,7 +96,7 @@ eina_array_pop(Eina_Array *array)
  * index. If it is @c NULL or invalid, the program may crash.
  */
 static inline void *
-eina_array_get(const Eina_Array *array, unsigned int index)
+eina_array_data_get(const Eina_Array *array, unsigned int index)
 {
    return array->data[index];
 }
@@ -112,7 +112,7 @@ eina_array_get(const Eina_Array *array, unsigned int index)
  * @c NULL or invalid, the program may crash.
  */
 static inline unsigned int
-eina_array_count(const Eina_Array *array)
+eina_array_count_get(const Eina_Array *array)
 {
    return array->count;
 }

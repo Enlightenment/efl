@@ -134,7 +134,7 @@ START_TEST(eina_stringshare_collision)
      }
 
    for (i = 0; i < 200; ++i)
-     eina_stringshare_del(eina_array_get(ea, i));
+     eina_stringshare_del(eina_array_data_get(ea, i));
 
    eina_stringshare_shutdown();
 

@@ -40,7 +40,7 @@ typedef struct _Eina_Array Eina_Array;
 
 /**
  * @typedef Eina_Array_Iterator
- * Type for an iterator oon arrays.
+ * Type for an iterator on arrays, used with #EINA_ARRAY_ITER_NEXT.
  */
 typedef void **Eina_Array_Iterator;
 
@@ -68,15 +68,47 @@ EAPI Eina_Bool    eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void
 
 static inline Eina_Bool     eina_array_push  (Eina_Array *array, const void *data);
 static inline void         *eina_array_pop   (Eina_Array *array);
-static inline void         *eina_array_get   (const Eina_Array *array, unsigned int index);
-static inline unsigned int  eina_array_count (const Eina_Array *array);
+static inline void         *eina_array_data_get (const Eina_Array *array, unsigned int index);
+static inline unsigned int  eina_array_count_get (const Eina_Array *array);
 
 EAPI Eina_Iterator *eina_array_iterator_new (const Eina_Array *array);
 EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array);
 
+/**
+ * @def EINA_ARRAY_ITER_NEXT
+ * @brief Macro to iterate over an array easily
+ *
+ * @param array The array to iterate over.
+ * @param index The integer number that is increased while itareting.
+ * @param item The data
+ * @param iterator The iterator
+ *
+ * This macro allow the iteration over @p array in an easy way. It
+ * iterates from the first element to the last one. @pindex is an
+ * integer that increase from 0 to the number of elements. @p item is
+ * the data of each element of @p array, so it is a pointer to a type
+ * chosen by the user. @p iterator is of type #Eina_Array_Iterator.
+ *
+ * This macro can be used for freeing the data of an array, like in
+ * the following example:
+ *
+ * @code
+ * Eina_Array          *array;
+ * char                *item;
+ * Eina_Array_Iterator *iterator;
+ * unsigned int         i;
+ *
+ * // array is already filled,
+ * // its elements are just duplicated strings,
+ * // EINA_ARRAY_ITER_NEXT will be used to free those strings
+ *
+ * EINA_ARRAY_ITER_NEXT(array, i, item, iterator)
+ *   free(item);
+ * @endcode
+ */
 #define EINA_ARRAY_ITER_NEXT(array, index, item, iterator)		\
   for (index = 0, iterator = (array)->data, item = iterator != NULL ? *(iterator) : NULL; \
-       index < eina_array_count(array);					\
+       index < eina_array_count_get(array);					\
        ++(index), item = *(++(iterator)))
 
 #include "eina_inline_array.x"
