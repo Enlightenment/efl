@@ -86,6 +86,26 @@ START_TEST(eina_stringshare_test_share)
 }
 END_TEST
 
+START_TEST(eina_stringshare_putstuff)
+{
+   const char *tmp;
+   int i;
+
+   eina_stringshare_init();
+
+   for (i = 10000; i > 0; --i)
+     {
+	char build[64] = "string_";
+
+	eina_convert_xtoa(i, build + 7);
+	tmp = eina_stringshare_add(build);
+	fail_if(tmp != eina_stringshare_add(build));
+     }
+
+   eina_stringshare_shutdown();
+}
+END_TEST
+
 START_TEST(eina_stringshare_collision)
 {
    Eina_Array *ea;
@@ -141,4 +161,5 @@ eina_test_stringshare(TCase *tc)
    tcase_add_test(tc, eina_stringshare_test_share);
    tcase_add_test(tc, eina_stringshare_collision);
    tcase_add_test(tc, eina_stringshare_not_owned);
+   tcase_add_test(tc, eina_stringshare_putstuff);
 }
