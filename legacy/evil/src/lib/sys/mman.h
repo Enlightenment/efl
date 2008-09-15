@@ -1,22 +1,8 @@
 #ifndef __EVIL_SYS_MMAN_H__
 #define __EVIL_SYS_MMAN_H__
 
+#include <Evil.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif /* EAPI */
-
-#ifdef _WIN32
-# ifdef EFL_EVIL_MMAN_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVIL_MMAN_BUILD */
-#endif /* _WIN32 */
 
 #ifdef __cplusplus
 extern "C" {

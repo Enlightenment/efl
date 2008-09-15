@@ -4,8 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libevil", "libevil.vcproj", "{689B4F2B-666D-439F-9BF3-1203D813DE3F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdlfcn", "libdlfcn.vcproj", "{2DAB1902-38E3-4F58-8403-C1BC7C077E1F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmman", "libmman.vcproj", "{799E26AA-26BC-4C21-B65F-0DF8F02E8F5F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{689B4F2B-666D-439F-9BF3-1203D813DE3F} = {689B4F2B-666D-439F-9BF3-1203D813DE3F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +22,6 @@ Global
 		{2DAB1902-38E3-4F58-8403-C1BC7C077E1F}.Debug|Win32.Build.0 = Debug|Win32
 		{2DAB1902-38E3-4F58-8403-C1BC7C077E1F}.Release|Win32.ActiveCfg = Release|Win32
 		{2DAB1902-38E3-4F58-8403-C1BC7C077E1F}.Release|Win32.Build.0 = Release|Win32
-		{799E26AA-26BC-4C21-B65F-0DF8F02E8F5F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{799E26AA-26BC-4C21-B65F-0DF8F02E8F5F}.Debug|Win32.Build.0 = Debug|Win32
-		{799E26AA-26BC-4C21-B65F-0DF8F02E8F5F}.Release|Win32.ActiveCfg = Release|Win32
-		{799E26AA-26BC-4C21-B65F-0DF8F02E8F5F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

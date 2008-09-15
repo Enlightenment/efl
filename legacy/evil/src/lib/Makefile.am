@@ -5,11 +5,20 @@ SUBDIRS = . dlfcn
 
 lib_LTLIBRARIES = libevil.la
 
-include_HEADERS = Evil.h evil_stdlib.h evil_unistd.h evil_util.h
-nobase_include_HEADERS = sys/mman.h
+include_HEADERS = \
+Evil.h \
+evil_fcntl.h \
+evil_langinfo.h \
+evil_stdlib.h \
+evil_unistd.h \
+evil_util.h
+
+nobase_include_HEADERS = pwd.h sys/mman.h
 
 libevil_la_SOURCES = \
 evil.c \
+evil_fcntl.c \
+evil_langinfo.c \
 evil_mman.c \
 evil_pwd.c \
 evil_stdlib.c \

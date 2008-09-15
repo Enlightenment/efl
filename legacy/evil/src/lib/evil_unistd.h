@@ -2,13 +2,6 @@
 #define __EVIL_UNISTD_H__
 
 
-#ifdef _MSC_VER
-
-typedef int            pid_t;
-
-#endif /* _MSC_VER */
-
-
 /*
  * Process identifer related functions
  *

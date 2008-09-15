@@ -7,10 +7,10 @@
 #include "pwd.h"
 
 
-static struct passwd pw;
-
-
 #ifndef __CEGCC__
+
+
+static struct passwd pw;
 
 struct passwd *
 getpwuid (uid_t uid)
@@ -38,5 +38,6 @@ getpwuid (uid_t uid)
 
    return &pw;
 }
+
 
 #endif /* ! __CEGCC__ */

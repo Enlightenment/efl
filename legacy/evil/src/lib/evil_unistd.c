@@ -2,10 +2,11 @@
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#ifdef _MSC_VER
-# include <shobjidl.h>
+#if defined(_MSC_VER) || \
+   (defined(__MINGW32__) && ! defined(__MINGW32CE__))
+# include <shlobj.h>
+# include <objidl.h>
 # include <errno.h>
-# include <shlguid.h>
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -30,6 +31,20 @@ getpid(void)
  * Symbolic links and directory related functions
  *
  */
+
+#if defined(__CEGCC__) || defined(__MINGW32CE__)
+
+DWORD SHCreateShortcutEx(LPTSTR lpszDir,
+                         LPTSTR lpszTarget,
+                         LPTSTR szShortcut,
+                         LPDWORD lpcbShortcut);
+
+BOOL SHGetShortcutTarget(LPTSTR szShortcut,
+                         LPTSTR szTarget,
+                         int cbMax );
+
+#endif /* __CEGCC__ || __MINGW32CE__ */
+
 
 /* REMARK: Windows has no symbolic link. */
 /*         Nevertheless, it can create and read .lnk files */

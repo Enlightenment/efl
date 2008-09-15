@@ -1,5 +1,5 @@
 #ifndef	_FNMATCH_H
-#define	_FNMATCH_H	
+#define	_FNMATCH_H
 
 #ifdef EVIL_COMMON_API
 # undef EVIL_COMMON_API
@@ -37,7 +37,9 @@ extern "C" {
 #endif
 
 /* Value returned by `fnmatch' if STRING does not match PATTERN.  */
-#define	FNM_NOMATCH	1
+#define	FNM_NOMATCH   1
+#define FNM_SYNTAXERR 2
+#define FNM_NOMEM     3
 
 /* Match STRING against the filename pattern PATTERN,
    returning zero if it matches, FNM_NOMATCH if not.  */

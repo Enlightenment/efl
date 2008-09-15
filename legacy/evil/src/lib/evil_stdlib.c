@@ -26,7 +26,7 @@ _evil_stdlib_error_display(const char *fct,
    char *error;
 
    error = evil_format_message(res);
-   fprintf(stderr, "[Evil] [%s] ERROR: %ld\n", fct, error);
+   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, error);
    free(error);
 }
 
@@ -191,11 +191,11 @@ setenv(const char *name,
    if (!overwrite && (disposition == REG_OPENED_EXISTING_KEY))
      return 0;
 
-   if ((res = RegSetValueEx (key,
-                             (LPCWSTR)name,
-                             0, REG_SZ,
-                             value,
-                             strlen(value) + 1)) != ERROR_SUCCESS)
+   if ((res = RegSetValueEx(key,
+                            (LPCWSTR)name,
+                            0, REG_SZ,
+                            (const BYTE *)value,
+                            strlen(value) + 1)) != ERROR_SUCCESS)
      {
         _evil_stdlib_error_display("setenv", res);
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
@@ -219,7 +219,7 @@ setenv(const char *name,
 int
 unsetenv(const char *name)
 {
-   setenv(name, NULL, 1);
+   return setenv(name, NULL, 1);
 }
 
 #endif /* ! __CEGCC__ */

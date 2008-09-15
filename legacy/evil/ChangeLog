@@ -1,3 +1,61 @@
+2008-09-15  Vincent Torri  <doursse at users dot sf dot net>
+
+	* Makefile.am:
+	add autogen.sh in archive distribution
+
+	* configure.ac:
+	remove useless defines
+	first support of mingw32msvc compiler
+
+	* src/lib/Evil.h:
+	move some macro definitions
+
+	* src/lib/Makefile.am:
+	add evil_(fcntl/langinfo).(c/h) and install pwd.h
+
+	* src/lib/dlfcn/dlfcn.h:
+	remove useless ifdef
+
+	* src/lib/evil.c:
+	comment all code for now. It will be deleted later
+
+	* src/lib/evil_fcntl.c:
+	* src/lib/evil_fcntl.h:
+	* src/lib/evil_langinfo.c:
+	* src/lib/evil_langinfo.h:
+	move fcntl and langinfo related code to their own files
+
+	* src/lib/evil_mman.c:
+	remove useless inclusion
+
+	* src/lib/evil_pwd.c:
+	pw var is not needed with cegcc
+
+	* src/lib/evil_stdlib.c:
+	fix bugs, formatting
+
+	* src/lib/evil_unistd.c:
+	add missing declarations and fix header files
+
+	* src/lib/evil_unistd.h:
+	move pid_t typedef to Evil.h
+
+	* src/lib/evil_util.c:
+	additional include and fix a bug in output
+
+	* src/lib/pwd.h:
+	use EAPI from Evil.h, define struct passwd when not using cegcc
+
+	* src/lib/sys/mman.h:
+	use EAPI from Evil.h
+
+	* win32/common/fnmatch.c:
+	* win32/common/fnmatch.h:
+	* win32/common/fnmatch_list_of_states.c:
+	* win32/vs8/evil.sln:
+	fix and cleanup with vc++ compilation
+	Based on patch by Dmitriy Mazovka
+
 2008-09-14  Vincent Torri  <doursse at users dot sf dot net>
 
 	Fix compilation with vc++. Based on patch by Dmitriy Mazovka

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <wchar.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -84,7 +85,7 @@ evil_format_message(long err)
      return NULL;
 
    snprintf(disp, strlen(str) + strlen("(00000) ") + 1,
-            "(%5d) %s", err, str);
+            "(%5ld) %s", err, str);
 
    free(str);
 

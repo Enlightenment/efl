@@ -24,6 +24,7 @@ EXTRA_DIST = \
 COPYING \
 COPYING-PLAIN \
 Doxyfile \
+autogen.sh \
 evil.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig

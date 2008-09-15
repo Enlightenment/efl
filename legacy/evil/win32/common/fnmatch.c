@@ -59,12 +59,14 @@ fnmatch_match_class(const char	*class,
 		    char	c)
 {
   const size_t		complement = fnmatch_complement_class(class + 1);
+  enum fnmatch_status	status;
+  size_t		pos;
 
   if (complement == FNM_SYNTAXERR)
     return FNM_SYNTAXERR;
 
-  enum fnmatch_status	status = fnmatch_not_found;
-  size_t		pos = 1 + complement;
+  status = fnmatch_not_found;
+  pos = 1 + complement;
 
   do
     pos += fnmatch_match_class_token(&status, class + pos, c);
@@ -136,11 +138,12 @@ size_t
 fnmatch_check_finals(const char				*pattern,
 		     const struct list_of_states	*states)
 {
-  for (size_t i = 0; i < states->size; ++i)
+   size_t i, j;
+  for (i = 0; i < states->size; ++i)
     {
       _Bool	match = 1;
 
-      for (size_t j = states->states[i]; pattern[j]; ++j)
+      for (j = states->states[i]; pattern[j]; ++j)
 	if (pattern[j] != '*')
 	  {
 	    match = 0;
@@ -158,24 +161,29 @@ fnmatch(const char	*pattern,
 	const char	*string,
 	int		flags)
 {
+   struct list_of_states	*states;
+   struct list_of_states	*new_states;
+  _Bool	leading = 1;
+  char* c;
+  size_t	r;
+
   assert(pattern);
   assert(string);
 
-  struct list_of_states	*states =
-    fnmatch_list_of_states_alloc(2, strlen(pattern));
-  struct list_of_states	*new_states = states + 1;
+  states = fnmatch_list_of_states_alloc(2, strlen(pattern));
+  new_states = states + 1;
 
   if (! states)
     return FNM_NOMEM;
   fnmatch_init_states(states);
 
-  _Bool	leading = 1;
 
-  for (const char* c = string; *c && states->size; ++c)
+  for (c = string; *c && states->size; ++c)
     {
+       size_t i;
       fnmatch_list_of_states_clear(new_states);
 
-      for (size_t i = 0; i < states->size; ++i)
+      for (i = 0; i < states->size; ++i)
 	{
 	  const size_t	pos = states->states[i];
 
@@ -212,7 +220,7 @@ fnmatch(const char	*pattern,
       leading = *c == '/' && (flags & FNM_PATHNAME);
     }
 
-  const size_t	r = fnmatch_check_finals(pattern, states);
+  r = fnmatch_check_finals(pattern, states);
   fnmatch_list_of_states_free(states < new_states ? states : new_states, 2);
   return r;
 }

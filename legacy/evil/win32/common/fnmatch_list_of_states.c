@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 #include "fnmatch_private.h"
 
@@ -16,14 +15,14 @@ fnmatch_list_of_states_alloc(size_t n, size_t pattern_len)
   const size_t	states_has_size = states_size + has_size;
   const size_t	struct_size	= sizeof (*l) + states_has_size;
 
-  uint8_t *states;
-  uint8_t *has;
+  unsigned char *states;
+  unsigned char *has;
   size_t i;
 
   if (! (l = malloc(n * struct_size)))
     return 0;
 
-  states = (uint8_t *) (l + n);
+  states = (unsigned char *) (l + n);
   has = states + states_size;
 
   for (i = 0; i < n; ++i)

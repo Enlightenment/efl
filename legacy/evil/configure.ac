@@ -11,7 +11,7 @@ dnl for each platform.
 win32_libs=""
 win32_cflags=""
 case "$host_os" in
-  mingw|mingw32)
+  mingw | mingw32 | mingw32msvc)
     win32_libs="-lole32 -luuid -lws2_32"
     ;;
   cegcc)
@@ -30,9 +30,7 @@ AC_SUBST(win32_libs)
 
 dnl needed for correct definition of EAPI
 AC_DEFINE(EFL_EVIL_BUILD, 1, [Define to mention that evil is built])
-AC_DEFINE(EFL_EVIL_MMAN_BUILD, 1, [Define to mention that evil mman is built])
 AC_DEFINE(EFL_EVIL_DLFCN_BUILD, 1, [Define to mention that evil dlfcn is built])
-AC_DEFINE(EFL_EVIL_PWD_BUILD, 1, [Define to mention that evil pwd is built])
 
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 

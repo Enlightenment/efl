@@ -78,151 +78,6 @@ extern "C" {
 
 #ifdef _MSC_VER
 
-typedef SSIZE_T        ssize_t;
-typedef unsigned short mode_t;
-
-#endif /* _MSC_VER */
-
-
-#include "evil_stdlib.h"
-#include "evil_unistd.h"
-#include "evil_util.h"
-
-
-#ifndef __CEGCC__
-
-# include <sys/types.h>
-
-/**
- * @def FD_CLOEXEC
- * Specifies that the file descriptor should be closed when an exec()
- * function is invoked.
- */
-# define FD_CLOEXEC 1
-
-/**
- * @def F_SETFD
- * Specifies that fcntl() should set the file descriptor flags
- * associated with the filedes argument.
- */
-
-/**
- * @def F_SETLK
- * Specifies that fcntl() should set or clear a file segment lock
- * according to the lock description pointed to by the third argument.
- */
-
-/**
- * @def F_SETLKW
- * Equivalent to F_SETLK except that if a shared or exclusive lock
- * is blocked by other locks, the thread shall wait until the request
- * can be satisfied.
- */
-
-# define F_SETFD    2
-# define F_SETLK    6
-# define F_SETLKW   7
-
-/**
- * @def F_RDLCK
- * Read (or shared) lock
- */
-
-/**
- * @def F_WRLCK
- * Write (or exclusive) lock
- */
-
-/**
- * @def F_UNLCK
- * Remove lock
- */
-
-# ifndef F_RDLCK
-#  define F_RDLCK     0
-#  define F_WRLCK     1
-#  define F_UNLCK     2
-# endif /* ! F_RDLCK */
-
-/**
- * @struct flock
- * @brief A structure that control the lock of a file descriptor.
- */
-struct flock
-{
-   short int l_type;   /**< lock type: read, write, ... */
-   short int l_whence; /**< type of l_start */
-   off_t     l_start;  /**< starting offset */
-   off_t     l_len;    /**< 0 means end of the file */
-   pid_t     l_pid;    /**< lock owner */
-};
-
-
-/**
- * @brief Provide control over file descriptors.
- *
- * @param fd The file descriptor.
- * @param cmd The type of control.
- * @return 0 on success, -1 otherwise.
- *
- * Performs one of various miscellaneous operations on @p fd.
- * The operation in question is determined by @p cmd:
- *
- * - F_SETFD: Set the close-on-exec flag to the value specified
- *   by the argument after command (only the least significant
- *   bit is used).
- * - F_SETLK and F_SETLKW: used to manage discretionary file locks.
- *   The third argument must be a pointer to a struct flock (that
- *   may be overwritten by this call).
- *
- * This function returns 0 on success, -1 otherwise.
- *
- * Conformity: None.
- *
- * Supported OS: Windows Vista, Windows XP or Windows 2000
- * Professional.
- *
- * @ingroup Evil
- */
-EAPI int fcntl(int fd, int cmd, ...);
-
-
-#endif /* ! __CEGCC__ */
-
-typedef int            nl_item;
-
-#define __NL_ITEM( CATEGORY, INDEX )  ((CATEGORY << 16) | INDEX)
-#define __NL_ITEM_CATEGORY( ITEM )    (ITEM >> 16)
-#define __NL_ITEM_INDEX( ITEM )       (ITEM & 0xffff)
-
-enum {
-  /*
-   * LC_CTYPE category...
-   * Character set classification items.
-   */
-  _NL_CTYPE_CODESET = __NL_ITEM( LC_CTYPE, 0 ),
-
-  /*
-   * Dummy entry, to terminate the list.
-   */
-  _NL_ITEM_CLASSIFICATION_END
-};
-
-/*
- * Define the public aliases for the enumerated classification indices...
- */
-# define CODESET       _NL_CTYPE_CODESET
-
-EAPI char *nl_langinfo(nl_item index);
-
-
-#ifndef __CEGCC__
-typedef unsigned long  uid_t;
-typedef unsigned long  gid_t;
-#endif /* ! __CEGCC__ */
-
-#ifdef _MSC_VER
-
 #define F_OK 0  /* Check for file existence */
 #define X_OK 1  /* MS access() doesn't check for execute permission. */
 #define W_OK 2  /* Check for write permission */
@@ -233,7 +88,26 @@ typedef unsigned long  gid_t;
 #define _S_IWUSR _S_IWRITE
 #define _S_IRUSR _S_IREAD
 
+typedef int            pid_t;
+typedef SSIZE_T        ssize_t;
+typedef unsigned short mode_t;
+
 #endif /* _MSC_VER */
+
+
+#ifndef __CEGCC__
+
+typedef unsigned long  uid_t;
+typedef unsigned long  gid_t;
+
+#endif /* ! __CEGCC__ */
+
+
+#include "evil_fcntl.h"
+#include "evil_langinfo.h"
+#include "evil_stdlib.h"
+#include "evil_unistd.h"
+#include "evil_util.h"
 
 
 #if defined(__MSDOS__) || defined(__EMX__) || \

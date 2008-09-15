@@ -8,7 +8,7 @@
 # undef _POSIX_
 #endif /* _MSC_VER */
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#if defined(__CEGCC__)
 # include <sys/syslimits.h>
 #else
 # include <limits.h>
