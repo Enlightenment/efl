@@ -179,8 +179,7 @@ eina_stringshare_add(const char *str)
    int hash_num, slen, hash;
 
    if (!str) return NULL;
-   slen = strlen(str) + 1;
-   hash = eina_hash_djb2(str, slen);
+   hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
    hash &= 0xFFF;
 
@@ -240,8 +239,7 @@ eina_stringshare_del(const char *str)
    int hash_num, slen, hash;
 
    if (!str) return;
-   slen = strlen(str) + 1;
-   hash = eina_hash_djb2(str, slen);
+   hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
    hash &= 0xFFF;
 
