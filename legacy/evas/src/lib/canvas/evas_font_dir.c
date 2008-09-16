@@ -322,6 +322,11 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 
 	/* do matching */
 	set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
+	if (!set)
+	  {
+	     fprintf(stderr, "ERROR: no fontconfig font matches '%s'. It was the last resource, no font found!\n", name);
+	     goto fc_end;
+	  }
 
 	/* Do loading for all in family */
 	for (i = 0; i < set->nfont; i++)
@@ -337,6 +342,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	  }
 
 	FcFontSetDestroy(set);
+     fc_end:
 	FcPatternDestroy(p_nm);
      }
 #endif
