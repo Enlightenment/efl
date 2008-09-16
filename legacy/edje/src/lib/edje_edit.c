@@ -2438,6 +2438,23 @@ edje_edit_state_fill_size_offset_y_set(Evas_Object *obj, const char *part, const
    edje_object_calc_force(obj);
 }
 
+EAPI unsigned char
+edje_edit_state_visible_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   //printf("Get state visible flag of part: %s state: %s\n", part, state);
+   return pd->visible;
+}
+
+EAPI void
+edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, unsigned char visible)
+{
+   GET_PD_OR_RETURN();
+   printf("Set state visible flag of part: %s state: %s to: %d\n", part, state, visible);
+   if (visible) pd->visible = 1;
+   else         pd->visible = 0;
+   edje_object_calc_force(obj);
+}
 
 /**************/
 /*  TEXT API */

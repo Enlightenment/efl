@@ -1042,6 +1042,24 @@ edje_edit_state_fill_size_offset_y_set(
    double y                ///< The new value to set
 );
 
+/**Get the visibility of a part state.*/
+EAPI unsigned char         ///@return TRUE if the state is visible
+edje_edit_state_visible_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Set the visibility of a part state.*/
+EAPI void
+edje_edit_state_visible_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   unsigned char visible   ///< TRUE to set the state visible
+);
+
+
 //@}
 /******************************************************************************/
 /**************************   TEXT API   ************************************/
