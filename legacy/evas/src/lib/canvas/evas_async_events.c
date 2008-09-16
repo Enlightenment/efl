@@ -18,7 +18,7 @@ typedef struct _Evas_Event_Async	Evas_Event_Async;
 struct _Evas_Event_Async
 {
    void			(*func)(void *target, Evas_Callback_Type type, void *event_info);
-   void			 *target;
+   const void		 *target;
    Evas_Callback_Type	  type;
    void			 *event_info;
 };
@@ -99,7 +99,7 @@ evas_async_events_process(void)
 	     size += check;
 	     if (size == sizeof(current))
 	       {
-		  if (current.func) current.func(current.target, current.type, current.event_info);
+		  if (current.func) current.func((void*) current.target, current.type, current.event_info);
 		  size = 0;
 		  count++;
 	       }
@@ -124,7 +124,7 @@ evas_async_events_process(void)
 }
 
 EAPI Evas_Bool
-evas_async_events_put(void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info))
+evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info))
 {
 #ifdef BUILD_ASYNC_EVENTS
    Evas_Event_Async new;
@@ -163,7 +163,9 @@ evas_async_events_put(void *target, Evas_Callback_Type type, void *event_info, v
 
    return result;
 #else
-   return 0;
+   func(target, type, event_info);
+
+   return 1;
 #endif
 }
 

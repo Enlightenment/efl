@@ -8,6 +8,22 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#ifdef BUILD_ASYNC_PRELOAD
+#include <pthread.h>
+
+static Evas_List *preload = NULL;
+static Image_Entry *current = NULL;
+
+static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mutex_surface_alloc = PTHREAD_MUTEX_INITIALIZER;
+static pthread_t tid;
+
+static Evas_Bool running = 0;
+
+static void* _evas_cache_background_load(void *);
+#endif
+
 #define FREESTRC(Var)              \
   if (Var)                         \
     {                              \
@@ -227,16 +243,87 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
    if (ie->allocated.w == wmin && ie->allocated.h == hmin)
      return ;
 
+#ifdef BUILD_ASYNC_PRELOAD
+   pthread_mutex_lock(&mutex_surface_alloc);
+#endif
+
    if (cache->func.surface_alloc(ie, wmin, hmin))
      {
         wmin = 0;
         hmin = 0;
      }
+
+#ifdef BUILD_ASYNC_PRELOAD
+   pthread_mutex_unlock(&mutex_surface_alloc);
+#endif
+
    ie->w = wmin;
    ie->h = hmin;
    ie->allocated.w = wmin;
    ie->allocated.h = hmin;
 }
+
+#ifdef BUILD_ASYNC_PRELOAD
+static int
+_evas_cache_image_entry_preload_add(Evas_Cache_Image *cache,
+				    Image_Entry *ie,
+				    const void *target)
+{
+   int ret = 0;
+
+   pthread_mutex_lock(&mutex);
+
+   if (!ie->flags.preload)
+     {
+	preload = evas_list_append(preload, ie);
+	ie->flags.preload = 1;
+	ie->target = target;
+
+	if (!running)
+	  {
+	     if (pthread_create(&tid, NULL, _evas_cache_background_load, NULL) == 0)
+	       running = 1;
+	  }
+
+	ret = 1;
+     }
+
+   pthread_mutex_unlock(&mutex);
+
+   return ret;
+}
+
+static int
+_evas_cache_image_entry_preload_remove(Evas_Cache_Image *cache,
+				       Image_Entry *ie)
+{
+   int ret = 0;
+
+   if (running)
+     {
+	pthread_mutex_lock(&mutex);
+
+	if (ie->flags.preload)
+	  {
+	     if (current == ie)
+	       {
+		  /* Wait until ie is processed. */
+		  pthread_cond_wait(&cond, &mutex);
+	       }
+	     else
+	       {
+		  preload = evas_list_remove(preload, ie);
+		  ie->flags.preload = 0;
+		  ret = 1;
+	       }
+	  }
+
+	pthread_mutex_unlock(&mutex);
+     }
+
+   return ret;
+}
+#endif
 
 EAPI int
 evas_cache_image_usage_get(Evas_Cache_Image *cache)
@@ -470,6 +557,10 @@ evas_cache_image_drop(Image_Entry *im)
 
    if (im->references == 0)
      {
+#ifdef BUILD_ASYNC_PRELOAD
+	_evas_cache_image_entry_preload_remove(cache, im);
+#endif
+
 	if (im->flags.dirty)
 	  {
 	     _evas_cache_image_entry_delete(cache, im);
@@ -731,6 +822,12 @@ evas_cache_image_load_data(Image_Entry *im)
 
    if (im->flags.loaded) return ;
 
+#ifdef BUILD_ASYNC_PRELOAD
+   /* We check a first time, to prevent useless lock. */
+   _evas_cache_image_entry_preload_remove(cache, im);
+   if (im->flags.loaded) return ;
+#endif
+
    cache = im->cache;
 
    error = cache->func.load(im);
@@ -749,12 +846,47 @@ evas_cache_image_load_data(Image_Entry *im)
    im->flags.loaded = 1;
 }
 
+EAPI void
+evas_cache_image_preload_data(Image_Entry *im, const void *target)
+{
+#ifdef BUILD_ASYNC_PRELOAD
+   Evas_Cache_Image    *cache;
+
+   assert(im);
+   assert(im->cache);
+
+   if (im->flags.loaded) return ;
+
+   cache = im->cache;
+
+   _evas_cache_image_entry_preload_add(cache, im, target);
+#else
+   evas_cache_image_load_data(im);
+
+   evas_async_events_put(target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, evas_object_event_callback_call);
+#endif
+}
+
+EAPI void
+evas_cache_image_preload_cancel(Image_Entry *im)
+{
+#ifdef BUILD_ASYNC_PRELOAD
+   Evas_Cache_Image    *cache;
+
+   assert(im);
+   assert(im->cache);
+
+   _evas_cache_image_entry_preload_remove(cache, im);
+#else
+   (void) im;
+#endif
+}
+
 EAPI int
 evas_cache_image_flush(Evas_Cache_Image *cache)
 {
    assert(cache);
 
-//   printf("cache->limit = %i (used = %i)\n", cache->limit, cache->usage);
    if (cache->limit == -1)
      return -1;
 
@@ -851,3 +983,64 @@ evas_cache_image_pixels(Image_Entry *im)
 
    return cache->func.surface_pixels(im);
 }
+
+#ifdef BUILD_ASYNC_PRELOAD
+static void*
+_evas_cache_background_load(void *data)
+{
+   (void) data;
+
+ restart:
+   while (preload)
+     {
+	pthread_mutex_lock(&mutex);
+
+	current = evas_list_data(preload);
+	preload = evas_list_remove(preload, current);
+
+	pthread_mutex_unlock(&mutex);
+
+	if (current)
+	  {
+	     Evas_Cache_Image *cache;
+	     int error;
+
+	     cache = current->cache;
+
+	     error = cache->func.load(current);
+	     if (cache->func.debug)
+	       cache->func.debug("load", current);
+
+	     if (error)
+	       {
+		  _evas_cache_image_entry_surface_alloc(cache, current,
+							current->w, current->h);
+		  current->flags.loaded = 0;
+	       }
+	     else
+	       {
+		  current->flags.loaded = 1;
+	       }
+
+	     current->flags.preload = 0;
+	  }
+
+	evas_async_events_put(current->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, evas_object_event_callback_call);
+
+	current = NULL;
+	pthread_cond_signal(&cond);
+     }
+
+   pthread_mutex_lock(&mutex);
+   if (preload)
+     {
+	pthread_mutex_unlock(&mutex);
+	goto restart;
+     }
+
+   running = 0;
+   pthread_mutex_unlock(&mutex);
+
+   return NULL;
+}
+#endif

@@ -614,7 +614,23 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    return new_im;
 }
 
-#include <assert.h>
+static void
+eng_image_data_preload_request(void *data, void *image, void *target)
+{
+   Soft16_Image *im = image;
+
+   if (!im) return ;
+   evas_cache_image_preload_data(&im->cache_entry, target);
+}
+
+static void
+eng_image_data_preload_cancel(void *data, void *image)
+{
+   Soft16_Image *im = image;
+
+   if (!im) return ;
+   evas_cache_image_preload_cancel(&im->cache_entry);
+}
 
 static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
@@ -902,6 +918,8 @@ static Evas_Func func =
      eng_image_dirty_region,
      eng_image_data_get,
      eng_image_data_put,
+     eng_image_data_preload_request,
+     eng_image_data_preload_cancel,
      eng_image_alpha_set,
      eng_image_alpha_get,
      eng_image_border_set,

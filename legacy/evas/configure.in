@@ -1136,16 +1136,24 @@ pthread_cflags=""
 pthread_libs=""
 build_pthreads="no"
 has_pthreads="no"
+need_pthreads="no"
+# basic pthread support
+AC_CHECK_HEADER(pthread.h,
+  [
+   has_pthreads="yes"
+  ],
+  [
+   has_pthreads="no"
+  ]
+)
+
 # sched_getaffinity pthread_attr_setaffinity_np
 AC_CHECK_HEADERS(pthread.h sched.h,
       [
         AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
           [
             AC_CHECK_LIB(pthread, pthread_barrier_wait,
-              [
-	        build_pthreads="yes"
-	      	has_pthreads="yes"
-	      ],
+              [ build_pthreads="yes" ],
               [ build_pthreads="no" ]
             )
           ],
@@ -1166,8 +1174,7 @@ AC_ARG_ENABLE(pthreads,
           AC_MSG_RESULT(yes)
           AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
           build_pthreads="yes"
-          pthread_cflags=""
-          pthread_libs="-lpthread"
+	  need_pthreads="yes"
         else
           if "x$use_strict" = "xyes"; then
             AC_MSG_ERROR(pthreads headers or functions not found (strict dependencies checking))
@@ -1184,8 +1191,7 @@ AC_ARG_ENABLE(pthreads,
     AC_MSG_RESULT($build_pthreads)
     if test "x$build_pthreads" = "xyes" ; then
       AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
-      pthread_cflags=""
-      pthread_libs="-lpthread"
+      need_pthreads="yes"
     fi
   ]
 )
@@ -1205,9 +1211,42 @@ if test \( "x$build_async_events" = "xyes" -o "x$build_async_events" = "xauto" \
   AC_MSG_RESULT(yes)
   AC_DEFINE(BUILD_ASYNC_EVENTS, 1, [Build async events support])
   build_async_events="yes"
+  need_pthreads="yes"
 else
   AC_MSG_RESULT(no)
   build_async_events="no"
+fi
+
+#######################################
+## Async image preload
+build_async_preload="auto"
+AC_MSG_CHECKING(whether to build Async Image Preload support)
+AC_ARG_ENABLE(async-preload,
+  AC_HELP_STRING([--enable-async-preload], [enable async image preloading support]),
+  [ build_async_preload=$enableval ]
+)
+AC_MSG_RESULT($build_async_preload)
+
+AC_MSG_CHECKING(whether we can build Async Image Preload support)
+if test \( "x$build_async_preload" = "xyes" -o "x$build_async_preload" = "xauto" \) -a "x$build_async_events" = "xyes"; then
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(BUILD_ASYNC_PRELOAD, 1, [Build async image preload support])
+  build_async_preload="yes"
+  need_pthreads="yes"
+else
+  AC_MSG_RESULT(no)
+  build_async_preload="no"
+fi
+
+#######################################
+## Link with pthread if needed
+AC_MSG_CHECKING(whether we should link with pthread)
+if test "x$need_pthreads" = "xyes"; then
+  AC_MSG_RESULT(yes)
+  pthread_cflags=""
+  pthread_libs="-lpthread"
+else
+  AC_MSG_RESULT(no)
 fi
 
 #######################################
@@ -1818,6 +1857,7 @@ echo "  Thread Support..........: $build_pthreads"
 echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo
 echo "Async Events..............: $build_async_events"
+echo "Async Image Preload.......: $build_async_preload"
 echo
 echo "ARGB Software Engine Options:"
 echo "  Sampling Scaler.........: $scaler_sample"

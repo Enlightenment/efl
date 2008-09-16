@@ -79,6 +79,8 @@ static void *eng_image_size_set(void *data, void *image, int w, int h);
 static void *eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h);
 static void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data);
 static void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
+static void eng_image_data_preload_request(void *data, void *image, void *target);
+static void eng_image_data_preload_cancel(void *data, void *image);
 static void *eng_image_alpha_set(void *data, void *image, int has_alpha);
 static int eng_image_alpha_get(void *data, void *image);
 static void *eng_image_border_set(void *data, void *image, int l, int r, int t, int b);
@@ -197,6 +199,8 @@ static Evas_Func eng_func =
      eng_image_dirty_region,
      eng_image_data_get,
      eng_image_data_put,
+     eng_image_data_preload_request,
+     eng_image_data_preload_cancel,
      eng_image_alpha_set,
      eng_image_alpha_get,
      eng_image_border_set,
@@ -1037,6 +1041,26 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 
 static void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
+{
+   Render_Engine *re;
+
+   /* FIXME */
+   re = (Render_Engine *)data;
+   return image;
+}
+
+static void
+eng_image_data_preload_request(void *data, void *image, void *target)
+{
+   Render_Engine *re;
+
+   /* FIXME */
+   re = (Render_Engine *)data;
+   return image;
+}
+
+static void
+eng_image_data_preload_cancel(void *data, void *image)
 {
    Render_Engine *re;
 

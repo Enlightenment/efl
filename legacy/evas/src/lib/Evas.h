@@ -54,7 +54,8 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_RESTACK, /**< Restack Event */
    EVAS_CALLBACK_DEL, /**< Object Being Deleted (called before Free) */
    EVAS_CALLBACK_HOLD, /**< Events go on/off hold */
-   EVAS_CALLBACK_CHANGED_SIZE_HINTS /**< Size hints changed event */
+   EVAS_CALLBACK_CHANGED_SIZE_HINTS, /**< Size hints changed event */
+   EVAS_CALLBACK_IMAGE_PRELOADED /**< Image as been preloaded */
 } Evas_Callback_Type; /**< The type of event to trigger the callback */
 
 typedef enum _Evas_Button_Flags
@@ -518,6 +519,7 @@ extern "C" {
    EAPI Evas_Bool         evas_object_image_alpha_get       (const Evas_Object *obj);
    EAPI void              evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale);
    EAPI Evas_Bool         evas_object_image_smooth_scale_get(const Evas_Object *obj);
+   EAPI void              evas_object_image_preload         (const Evas_Object *obj, Evas_Bool cancel);
    EAPI void              evas_object_image_reload          (Evas_Object *obj);
    EAPI Evas_Bool         evas_object_image_save            (const Evas_Object *obj, const char *file, const char *key, const char *flags);
    EAPI Evas_Bool         evas_object_image_pixels_import          (Evas_Object *obj, Evas_Pixel_Import_Source *pixels);
@@ -838,7 +840,7 @@ extern "C" {
 
    EAPI int		  evas_async_events_fd_get          (void);
    EAPI int		  evas_async_events_process	    (void);
-   EAPI Evas_Bool	  evas_async_events_put             (void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info));
+   EAPI Evas_Bool	  evas_async_events_put             (const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info));
 
    EAPI void              evas_object_intercept_show_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data);
    EAPI void             *evas_object_intercept_show_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));

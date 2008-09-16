@@ -259,6 +259,9 @@ struct _Image_Entry_Flags
    Evas_Bool cached       : 1;
    Evas_Bool alpha        : 1;
    Evas_Bool alpha_sparse : 1;
+#ifdef BUILD_ASYNC_PRELOAD
+   Evas_Bool preload      : 1;
+#endif
 };
 
 struct _Image_Entry
@@ -271,6 +274,8 @@ struct _Image_Entry
 
   const char            *file;
   const char            *key;
+
+  const void            *target;
 
   time_t                 timestamp;
   time_t                 laststat;

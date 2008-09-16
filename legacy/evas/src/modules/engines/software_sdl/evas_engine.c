@@ -502,6 +502,30 @@ evas_engine_sdl_image_data_put(void *data, void *image, DATA32* image_data)
    return eim;
 }
 
+static void
+evas_engine_sdl_image_data_preload_request(void *data, void *image, const void *target)
+{
+   SDL_Engine_Image_Entry       *eim = image;
+   RGBA_Image                   *im;
+
+   if (!eim) return ;
+   im = (RGBA_Image*) eim->cache_entry.src;
+   if (!im) return ;
+   evas_cache_image_preload_data(&im->cache_entry, target);
+}
+
+static void
+evas_engine_sdl_image_data_preload_cancel(void *data, void *image)
+{
+   SDL_Engine_Image_Entry       *eim = image;
+   RGBA_Image                   *im;
+
+   if (!eim) return ;
+   im = (RGBA_Image*) eim->cache_entry.src;
+   if (!im) return ;
+   evas_cache_image_preload_cancel(&im->cache_entry);
+}
+
 static void*
 evas_engine_sdl_image_alpha_set(void *data, void *image, int has_alpha)
 {
@@ -812,6 +836,8 @@ EAPI int module_open(Evas_Module *em)
    ORD(image_dirty_region);
    ORD(image_data_get);
    ORD(image_data_put);
+   ORD(image_data_preload_request);
+   ORD(image_data_preload_cancel);
    ORD(image_alpha_set);
    ORD(image_alpha_get);
    ORD(image_border_set);

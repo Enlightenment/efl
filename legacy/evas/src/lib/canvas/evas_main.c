@@ -8,7 +8,10 @@ EAPI int
 evas_init(void)
 {
    if (initcount == 0)
-     evas_module_init();
+     {
+	evas_module_init();
+	evas_async_events_init();
+     }
    return ++initcount;
 }
 
@@ -18,6 +21,7 @@ evas_shutdown(void)
    initcount--;
    if (initcount == 0)
      {
+	evas_async_events_shutdown();
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
 	evas_module_shutdown();

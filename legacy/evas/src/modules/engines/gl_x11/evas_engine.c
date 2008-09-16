@@ -967,6 +967,30 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
+eng_image_data_preload_request(void *data, void *image, void *target)
+{
+   Evas_GL_Image *gim = image;
+   RGBA_Image *im;
+
+   if (!gim) return ;
+   im = (RGBA_Image*) gim->im;
+   if (!im) return ;
+   evas_cache_image_preload_data(&im->cache_entry, target);
+}
+
+static void
+eng_image_data_preload_cancel(void *data, void *image)
+{
+   Evas_GL_Image *gim = image;
+   RGBA_Image *im;
+
+   if (!gim) return ;
+   im = (RGBA_Image*) gim->im;
+   if (!im) return ;
+   evas_cache_image_preload_cancel(&im->cache_entry);
+}
+
+static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
@@ -1123,6 +1147,8 @@ module_open(Evas_Module *em)
    ORD(image_dirty_region);
    ORD(image_data_get);
    ORD(image_data_put);
+   ORD(image_data_preload_request);
+   ORD(image_data_preload_cancel);
    ORD(image_alpha_set);
    ORD(image_alpha_get);
    ORD(image_border_set);

@@ -998,6 +998,41 @@ evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
 }
 
 /**
+ * Preload image in the background
+ *
+ * This function request the preload of the data image in the background. The
+ * worked is queued before being processed.
+ *
+ * If cancel is set, it will remove the image from the workqueue.
+ *
+ * @param obj The given image object.
+ * @param cancel 0 means add to the workqueue, 1 remove it.
+ * @ingroup Evas_Object_Image_Data
+ */
+EAPI void
+evas_object_image_preload(const Evas_Object *obj, Evas_Bool cancel)
+{
+   Evas_Object_Image *o;
+   DATA32 *data;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return ;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return ;
+   MAGIC_CHECK_END();
+   if (!o->engine_data) return ;
+   if (cancel)
+     obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+							      o->engine_data);
+   else
+     obj->layer->evas->engine.func->image_data_preload_request(obj->layer->evas->engine.data.output,
+							       o->engine_data,
+							       obj);
+}
+
+/**
  * Replaces the raw image data of the given image object.
  *
  * This function lets the application replace an image object's internal pixel
