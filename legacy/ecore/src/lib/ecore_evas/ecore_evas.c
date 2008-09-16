@@ -10,6 +10,8 @@
 #include <string.h>
 
 static int _ecore_evas_init_count = 0;
+static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
+static int _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 /**
  * Query if a particular renginering engine target has support
@@ -132,7 +134,18 @@ EAPI int
 ecore_evas_init(void)
 {
    if (_ecore_evas_init_count == 0)
-     evas_init ();
+     {
+	int fd;
+
+	evas_init ();
+
+	fd = evas_async_events_fd_get();
+	if (fd > 0)
+	  _ecore_evas_async_events_fd = ecore_main_fd_handler_add(fd,
+								  ECORE_FD_READ,
+								  _ecore_evas_async_events_fd_handler, NULL,
+								  NULL, NULL);
+     }
    return ++_ecore_evas_init_count;
 }
 
@@ -166,6 +179,9 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 	while (_ecore_evas_wince_shutdown());
 #endif
+	if (_ecore_evas_async_events_fd)
+	  ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
+
 	evas_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
@@ -2378,6 +2394,14 @@ _ecore_evas_cb_idle_flush(void *data)
    evas_render_idle_flush(ee->evas);
    ee->engine.idle_flush_timer = NULL;
    return 0;
+}
+
+static int
+_ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   evas_async_events_process();
+
+   return 1;
 }
 
 void
