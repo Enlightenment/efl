@@ -29,6 +29,14 @@
 #include <glib.h>
 #endif
 
+#ifdef EINA_BENCH_HAVE_EVAS
+#include <Evas.h>
+#endif
+
+#ifdef EINA_BENCH_HAVE_ECORE
+#include <Ecore_Data.h>
+#endif
+
 #include "eina_hash.h"
 #include "eina_array.h"
 #include "eina_bench.h"
@@ -288,6 +296,101 @@ eina_bench_lookup_ghash(int request)
 }
 #endif
 
+#ifdef EINA_BENCH_HAVE_EVAS
+static void
+eina_bench_lookup_evas(int request)
+{
+   Evas_Hash *hash = NULL;
+   Eina_Array *array = NULL;
+   int *tmp_val;
+   Eina_Array_Iterator it;
+   unsigned int i;
+
+   array = eina_array_new(1000);
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	char tmp_key[10];
+
+	tmp_val = malloc(sizeof (int));
+
+	if (!tmp_key || !tmp_val) continue ;
+
+	eina_convert_itoa(i, tmp_key);
+	*tmp_val = i;
+
+	hash = evas_hash_add(hash, tmp_key, tmp_val);
+
+	eina_array_push(array, tmp_val);
+     }
+
+   srand(time(NULL));
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	char tmp_key[10];
+
+	eina_convert_itoa(rand() % request, tmp_key);
+
+	tmp_val = evas_hash_find(hash, tmp_key);
+     }
+
+   evas_hash_free(hash);
+
+   EINA_ARRAY_ITER_NEXT(array, i, tmp_val, it)
+     free(tmp_val);
+
+   eina_array_free(array);
+}
+#endif
+
+#ifdef EINA_BENCH_HAVE_ECORE
+typedef struct _Eina_Bench_Ecore Eina_Bench_Ecore;
+struct _Eina_Bench_Ecore
+{
+   char *key;
+   int value;
+};
+
+static void
+eina_bench_lookup_ecore(int request)
+{
+   Ecore_Hash *hash = NULL;
+   Eina_Bench_Ecore *elm;
+   unsigned int i;
+
+   hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+
+   ecore_hash_free_key_cb_set(hash, NULL);
+   ecore_hash_free_value_cb_set(hash, free);
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	elm = malloc(sizeof (Eina_Bench_Ecore) + 10);
+	if (!elm) continue;
+
+	elm->key = (char*) (elm + 1);
+	eina_convert_itoa(i, elm->key);
+	elm->value = i;
+
+	ecore_hash_set(hash, elm->key, elm);
+     }
+
+   srand(time(NULL));
+
+   for (i = 0; i < (unsigned int) request; ++i)
+     {
+	char tmp_key[10];
+
+	eina_convert_itoa(rand() % request, tmp_key);
+
+	elm = ecore_hash_get(hash, tmp_key);
+     }
+
+   ecore_hash_destroy(hash);
+}
+#endif
+
 void eina_bench_hash(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "superfast-lookup", EINA_BENCHMARK(eina_bench_lookup_superfast), 1000, 180000, 2500);
@@ -296,5 +399,11 @@ void eina_bench_hash(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "rbtree", EINA_BENCHMARK(eina_bench_lookup_rbtree), 1000, 180000, 2500);
 #ifdef EINA_BENCH_HAVE_GLIB
    eina_benchmark_register(bench, "ghash-lookup", EINA_BENCHMARK(eina_bench_lookup_ghash), 1000, 180000, 2500);
+#endif
+#ifdef EINA_BENCH_HAVE_EVAS
+   eina_benchmark_register(bench, "evas-lookup", EINA_BENCHMARK(eina_bench_lookup_evas), 1000, 180000, 2500);
+#endif
+#ifdef EINA_BENCH_HAVE_ECORE
+   eina_benchmark_register(bench, "ecore-lookup", EINA_BENCHMARK(eina_bench_lookup_ecore), 1000, 180000, 2500);
 #endif
 }
