@@ -19,8 +19,8 @@
 #
 # INSTALL:
 #
-#      cp gimp-edje-save.py ~/.gimp/plug-ins/
-#      chmod +x ~/.gimp/plug-ins/gimp-edje-save.py
+#      cp gimp-edje-export.py ~/.gimp/plug-ins/
+#      chmod +x ~/.gimp/plug-ins/gimp-edje-export.py
 #
 #    Notes:
 #     - ~/.gimp may change depending on gimp version, ie: ~/.gimp-2.4.
