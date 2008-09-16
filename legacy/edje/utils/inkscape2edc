@@ -142,14 +142,14 @@ collections {
         oy2 = y2 - self.h * ry2
 
         self.out.write("""\
-                rel1 {
-                   relative: %03.1f %03.1f;
-                   offset: %d %d;
-                }
-                rel2 {
-                   relative: %03.1f %03.1f;
-                   offset: %d %d;
-                }
+               rel1 {
+                  relative: %03.1f %03.1f;
+                  offset: %d %d;
+               }
+               rel2 {
+                  relative: %03.1f %03.1f;
+                  offset: %d %d;
+               }
 """ % (rx1, ry1, ox1, oy1, rx2, ry2, ox2, oy2))
 
 
@@ -179,14 +179,14 @@ collections {
 
         self.out.write("""\
             description {
-                state: "default" 0.0;
+               state: "default" 0.0;
 """)
 
         if self.show_min:
-            self.out.write("                min: %(w)d %(h)d;\n" % info)
+            self.out.write("               min: %(w)d %(h)d;\n" % info)
 
         if self.show_max:
-            self.out.write("                max: %(w)d %(h)d;\n" % info)
+            self.out.write("               max: %(w)d %(h)d;\n" % info)
 
         self.output_part_desc_rel(x, y, w, h)
         self.out.write("""\
