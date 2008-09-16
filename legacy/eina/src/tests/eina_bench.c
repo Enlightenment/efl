@@ -69,5 +69,7 @@ main(int argc, char **argv)
 	eina_benchmark_free(test);
      }
 
+   eina_bench_e17();
+
    return 0;
 }

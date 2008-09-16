@@ -164,6 +164,23 @@ fi
 
 AM_CONDITIONAL(EINA_HAVE_ECORE, test "x${have_ecore}" = "xyes")
 
+# Check if we want to benchmark on real data
+enable_bench_e17="no"
+AC_ARG_ENABLE([benchmark-e17],
+   [AC_HELP_STRING([--enable-benchmark-e17], [disable heavy benchmark @<:@default=no@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_bench_e17="yes"
+    else
+       enable_bench_e17="no"
+    fi
+   ],
+   [enable_bench_e17="no"]
+)
+AC_MSG_CHECKING([whether e17 real data benchmark are built])
+AC_MSG_RESULT([${enable_bench_e17}])
+AM_CONDITIONAL(EINA_ENABLE_BENCH_E17, test "x${enable_bench_e17}" = "xyes")
+
 # Check ememoa memory pool library
 
 if test "x${enable_ememoa}" = "xyes" ; then
@@ -311,6 +328,7 @@ if test "x${enable_bench}" = "xyes" ; then
 echo "    Glib...............: ${have_glib}"
 echo "    Evas...............: ${have_evas}"
 echo "    Ecore..............: ${have_ecore}"
+echo "    E17 real data......: ${enable_bench_e17}"
 fi
 echo
 echo "  Memory pool:"

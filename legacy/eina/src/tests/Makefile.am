@@ -32,6 +32,12 @@ AM_CPPFLAGS += -DEINA_BENCH_HAVE_ECORE
 
 endif
 
+if EINA_ENABLE_BENCH_E17
+
+AM_CPPFLAGS += -DEINA_ENABLE_BENCH_E17
+
+endif
+
 if EINA_ENABLE_TESTS
 
 check_PROGRAMS = eina_suite
@@ -69,6 +75,7 @@ eina_bench.c 		\
 eina_bench_hash.c 	\
 eina_bench_stringshare.c \
 eina_bench_convert.c	\
+eina_bench_stringshare_e17.c \
 eina_bench_array.c
 
 eina_bench_LDADD = @ECORE_LIBS@ @EVAS_LIBS@ @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
