@@ -163,6 +163,48 @@ START_TEST(eina_mempool_ememoa_fixed)
 }
 END_TEST
 
+START_TEST(eina_mempool_ememoa_unknown)
+{
+   Eina_Module_Group *gp;
+   Eina_Mempool *mp;
+   int *tbl[512];
+   int i;
+
+   eina_mempool_init();
+
+   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
+
+   gp = eina_mempool_module_group_get();
+   fail_if(!gp);
+   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
+
+   mp = eina_mempool_new("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
+   fail_if(!mp);
+
+   for (i = 0; i < 512; ++i)
+     {
+	tbl[i] = eina_mempool_alloc(mp, sizeof (int));
+	fail_if(!tbl[i]);
+	*tbl[i] = i;
+     }
+
+   for (i = 0; i < 512; ++i)
+     fail_if(*tbl[i] != i);
+
+   for (i = 0; i < 256; ++i)
+     eina_mempool_free(mp, tbl[i]);
+
+   for (i = 256; i < 512; ++i)
+     tbl[i] = eina_mempool_realloc(mp, tbl[i], 2 * sizeof (int));
+
+   eina_mempool_gc(mp);
+   eina_mempool_statistics(mp);
+
+   eina_mempool_delete(mp);
+
+   eina_mempool_shutdown();
+}
+END_TEST
 #endif
 
 void
@@ -173,6 +215,7 @@ eina_test_mempool(TCase *tc)
    tcase_add_test(tc, eina_mempool_pass_through);
 #ifdef EINA_EMEMOA_SUPPORT
    tcase_add_test(tc, eina_mempool_ememoa_fixed);
+   tcase_add_test(tc, eina_mempool_ememoa_unknown);
 #endif
 }
 
