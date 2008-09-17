@@ -31,6 +31,7 @@ static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
 static int _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static int _ecore_con_mcast_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_con_server_flush(Ecore_Con_Server *svr);
 static void _ecore_con_client_flush(Ecore_Con_Client *cl);
@@ -154,8 +155,10 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    Ecore_Con_Type      type;
    struct sockaddr_in  socket_addr;
    struct sockaddr_un  socket_unix;
+   struct ip_mreq      mreq;
    struct linger       lin;
    char                buf[4096];
+   const int           on=1;
 
    if (port < 0) return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
@@ -317,6 +320,25 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
 				    _ecore_con_svr_handler, svr, NULL, NULL);
 	if (!svr->fd_handler) goto error;
+     }
+   else if (type == ECORE_CON_REMOTE_MCAST)
+     {
+       svr->fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+       if(svr->fd < 0) goto error;
+       mreq.imr_multiaddr.s_addr = inet_addr(name);
+       mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+       if (setsockopt(svr->fd, SOL_IP, IP_ADD_MEMBERSHIP, &mreq,sizeof(mreq)) != 0) goto error;
+       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &on,sizeof(on)) != 0) goto error;
+       if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+       if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+       socket_addr.sin_family = AF_INET;
+       socket_addr.sin_port = htons(port);
+       socket_addr.sin_addr.s_addr = inet_addr(name);
+       if (bind(svr->fd, (struct sockaddr *)&socket_addr,sizeof(struct sockaddr_in)) < 0) goto error;
+       svr->fd_handler =
+	 ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+				   _ecore_con_mcast_handler, svr, NULL, NULL);
+       if (!svr->fd_handler) goto error;
      }
 
 #if USE_OPENSSL
@@ -1407,6 +1429,76 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	_ecore_con_server_flush(svr);
      }
 
+   return 1;
+}
+
+static int
+_ecore_con_mcast_handler(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   Ecore_Con_Client   *cl;
+
+   cl = data;
+   if (cl->dead) return 1;
+   if (cl->delete_me) return 1;
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+     {
+       unsigned char buf[65536];
+       int num;
+
+       errno = 0;
+       num = read(cl->fd, buf, 65536);
+       if (num > 0)
+	 {
+	   if (!cl->delete_me)
+	     {
+	       Ecore_Con_Event_Client_Data *e;
+	       unsigned char *inbuf;
+
+	       inbuf = malloc(num);
+	       if(inbuf == NULL)
+		 return 1;
+	       memcpy(inbuf, buf, num);
+	
+	       e = calloc(1, sizeof(Ecore_Con_Event_Client_Data));
+	       if (e)
+		 {
+		   cl->event_count++;
+		   e->client = cl;
+		   e->data = inbuf;
+		   e->size = num;
+		   ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
+				   _ecore_con_event_client_data_free,
+				   NULL);
+		 }
+	     }
+	   if ((errno == EIO) ||  (errno == EBADF) ||
+	       (errno == EPIPE) || (errno == EINVAL) ||
+	       (errno == ENOSPC) || (num == 0)/* is num == 0 right? */)
+	     {
+	       if (!cl->delete_me)
+		 {
+		   /* we lost our client! */
+		   Ecore_Con_Event_Client_Del *e;
+		
+		   e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
+		   if (e)
+		     {
+		       cl->event_count++;
+		       e->client = cl;
+		       ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
+				       _ecore_con_event_client_del_free,
+				       NULL);
+		     }
+		 }
+	       cl->dead = 1;
+	       if (cl->fd_handler)
+		 ecore_main_fd_handler_del(cl->fd_handler);
+	       cl->fd_handler = NULL;
+	     }
+	 }
+     }
+   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
+     _ecore_con_client_flush(cl);
    return 1;
 }
 
