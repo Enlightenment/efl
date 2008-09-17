@@ -210,6 +210,8 @@ eina_counter_dump(Eina_Counter *counter, FILE *out)
 {
    Eina_Clock *clk;
 
+   if (!counter || !out) return ;
+
    fprintf(out, "# specimen\texperiment time\tstarting time\tending time\n");
 
    EINA_INLIST_ITER_LAST(counter->clocks, clk)

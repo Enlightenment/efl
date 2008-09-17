@@ -79,6 +79,8 @@ START_TEST(eina_counter_break)
 
    eina_counter_delete(cnt);
 
+   eina_counter_dump(NULL, stderr);
+
    eina_counter_shutdown();
 }
 END_TEST
