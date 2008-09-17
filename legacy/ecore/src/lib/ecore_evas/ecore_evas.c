@@ -138,6 +138,7 @@ ecore_evas_init(void)
 	int fd;
 
 	evas_init ();
+	ecore_init();
 
 	fd = evas_async_events_fd_get();
 	if (fd > 0)
@@ -182,6 +183,7 @@ ecore_evas_shutdown(void)
 	if (_ecore_evas_async_events_fd)
 	  ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
 
+	ecore_shutdown();
 	evas_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
