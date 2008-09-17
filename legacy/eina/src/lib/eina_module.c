@@ -114,6 +114,7 @@ struct _Eina_Root_Directory
 struct _Eina_Dir_List
 {
    Eina_Module_Group *modules;
+   Eina_Module *module;
    Eina_List *list;
    void *data;
 
@@ -207,12 +208,30 @@ _eina_dir_module_cb(const char *name, const char *path, Eina_Dir_List *data)
 			     name, length_name);
    if (!module) return ;
 
-   if (data->cb(module, data->data) == EINA_TRUE)
+   if (data->cb)
      {
-	data->modules->loaded_module = eina_inlist_prepend(data->modules->loaded_module, module);
-	data->list = eina_list_append(data->list, module);
+	if (data->cb(module, data->data) == EINA_TRUE)
+	  {
+	     data->modules->loaded_module = eina_inlist_prepend(data->modules->loaded_module, module);
+	     data->list = eina_list_append(data->list, module);
 
-	return ;
+	     return ;
+	  }
+     }
+   else
+     {
+	if (strcmp(module->name, data->data) == 0)
+	  {
+	     /* FIXME: Compare version instead of taking the last one. */
+	     if (data->module)
+	       {
+		  eina_module_unload(module);
+		  free(module);
+	       }
+
+	     data->module = module;
+	     return ;
+	  }
      }
 
    eina_module_unload(module);
@@ -511,6 +530,7 @@ eina_module_new(Eina_Module_Group *modules, const char *name)
    Eina_Directory *dir;
    Eina_Module *module;
    Eina_Static *slib;
+   Eina_Dir_List edl;
    char path[PATH_MAX];
    int length;
 
@@ -584,7 +604,17 @@ eina_module_new(Eina_Module_Group *modules, const char *name)
 	return module;
      }
 
-   return NULL;
+   edl.list = NULL;
+   edl.modules = modules;
+   edl.module = NULL;
+   edl.data = (void*) name;
+   edl.cb = NULL;
+
+   /* Lookup for library in a directory or recursively. */
+   EINA_INLIST_ITER_NEXT(modules->recursive_directory, root)
+     eina_file_dir_list(root->path, EINA_TRUE, EINA_FILE_DIR_LIST_CB(_eina_dir_module_cb), &edl);
+
+   return edl.module;
 }
 
 EAPI void
@@ -726,7 +756,7 @@ eina_module_load(Eina_Module *module)
 
    module->load_references++;
 
-   if (module->load_references != 1) return EINA_FALSE;
+   if (module->load_references > 1) return EINA_TRUE;
 
    if (module->is_static_library == EINA_FALSE)
      {
