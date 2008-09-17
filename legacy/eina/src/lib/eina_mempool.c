@@ -123,6 +123,12 @@ eina_mempool_shutdown(void)
 	return _init_count;
 }
 
+EAPI Eina_Module_Group *
+eina_mempool_module_group_get(void)
+{
+	return _group;
+}
+
 /**
  * 
  */
@@ -184,4 +190,20 @@ EAPI void eina_mempool_free(Eina_Mempool *mp, void *element)
 	assert(mp->backend->free);
 
 	mp->backend->free(mp->backend_data, element);
+}
+
+EAPI void eina_mempool_gc(Eina_Mempool *mp)
+{
+	assert(mp);
+	assert(mp->backend->garbage_collect);
+
+	mp->backend->garbage_collect(mp->backend_data);
+}
+
+EAPI void eina_mempool_statistics(Eina_Mempool *mp)
+{
+	assert(mp);
+	assert(mp->backend->statistics);
+
+	mp->backend->statistics(mp->backend_data);
 }
