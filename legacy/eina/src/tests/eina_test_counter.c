@@ -66,9 +66,27 @@ START_TEST(eina_counter_simple)
 }
 END_TEST
 
+START_TEST(eina_counter_break)
+{
+   Eina_Counter *cnt;
+
+   eina_counter_init();
+
+   cnt = eina_counter_add("eina_test");
+   fail_if(!cnt);
+
+   eina_counter_stop(cnt, 10);
+
+   eina_counter_delete(cnt);
+
+   eina_counter_shutdown();
+}
+END_TEST
+
 void eina_test_counter(TCase *tc)
 {
    tcase_add_test(tc, eina_counter_init_shutdown);
    tcase_add_test(tc, eina_counter_simple);
+   tcase_add_test(tc, eina_counter_break);
 }
 

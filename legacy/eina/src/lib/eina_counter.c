@@ -198,7 +198,7 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
 
    clk = (Eina_Clock *) counter->clocks;
 
-   if (clk->valid == EINA_TRUE) return ;
+   if (!clk || clk->valid == EINA_TRUE) return ;
 
    clk->end = tp;
    clk->specimen = specimen;
