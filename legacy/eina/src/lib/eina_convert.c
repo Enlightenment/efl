@@ -30,10 +30,14 @@
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 static const char look_up_table[] = {'0', '1', '2', '3', '4',
 				     '5', '6', '7', '8', '9',
 				     'a', 'b', 'c', 'd', 'e', 'f'};
-static int _init_count = 0;
+static int _eina_convert_init_count = 0;
 
 #define HEXA_TO_INT(Hexa) (Hexa >= 'a') ? Hexa - 'a' + 10 : Hexa - '0'
 
@@ -49,6 +53,10 @@ static inline void reverse(char s[], int length)
      }
 }
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -57,12 +65,102 @@ static inline void reverse(char s[], int length)
  *                                   API                                      *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 EAPI Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
 
+/**
+ * @endcond
+ */
+
+/**
+ * @addtogroup Eina_Tools_Group Tools Modules
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Convert_Group Convert Functions
+ *
+ * These functions allow you to convert integer or real numbers to
+ * string or conversely.
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the eina convert internal structure.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function sets up the error module of Eina and registers the
+ * errors #EINA_ERROR_CONVERT_0X_NOT_FOUND,
+ * #EINA_ERROR_CONVERT_P_NOT_FOUND and
+ * #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH. It is also called by
+ * eina_init(). It returns 0 on failure, otherwise it returns the
+ * number of times it has already been called.
+ */
+EAPI int
+eina_convert_init(void)
+{
+   _eina_convert_init_count++;
+
+   if (_eina_convert_init_count > 1) goto init_out;
+
+   eina_error_init();
+   EINA_ERROR_CONVERT_0X_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First '0x' was not found.");
+   EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
+   EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
+
+ init_out:
+   return _eina_convert_init_count;
+}
+
+/**
+ * @brief Shut down the eina convert internal structures
+ *
+ * @return 0 when the convert module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function just shuts down the error module. It is also called by
+ * eina_shutdown(). It returns 0 when it is called the same number of
+ * times than eina_convert_init().
+ */
+EAPI int
+eina_convert_shutdown(void)
+{
+   _eina_convert_init_count--;
+
+   if (_eina_convert_init_count > 0) goto shutdown_out;
+
+   eina_error_shutdown();
+
+ shutdown_out:
+   return _eina_convert_init_count;
+}
+
 /*
  * Come from the second edition of The C Programming Language ("K&R2") on page 64
+ */
+
+/**
+ * @brief Convert an integer number to a string in decimal base.
+ *
+ * @param n The integer to convert.
+ * @param s The buffer to store the converted integer.
+ * @return The length of the string, including the nul terminated
+ * character.
+ *
+ * This function converts @p n to a nul terminated string. The
+ * converted string is in decimal base. As no check is done, @p s must
+ * be a buffer that is sufficiently large to store the integer.
+ *
+ * The returned value is the length os the string, including the nul
+ * terminated character.
  */
 EAPI int
 eina_convert_itoa(int n, char *s)
@@ -88,6 +186,21 @@ eina_convert_itoa(int n, char *s)
    return i + r;
 }
 
+/**
+ * @brief Convert an integer number to a string in hexadecimal base.
+ *
+ * @param n The integer to convert.
+ * @param s The buffer to store the converted integer.
+ * @return The length of the string, including the nul terminated
+ * character.
+ *
+ * This function converts @p n to a nul terminated string. The
+ * converted string is in hexadecimal base. As no check is done, @p s
+ * must be a buffer that is sufficiently large to store the integer.
+ *
+ * The returned value is the length os the string, including the nul
+ * terminated character.
+ */
 EAPI int
 eina_convert_xtoa(unsigned int n, char *s)
 {
@@ -105,52 +218,48 @@ eina_convert_xtoa(unsigned int n, char *s)
    return i;
 }
 
-/* On Windows (using MinGW or VC++), printf-like functions */
-/* rely on MSVCRT, which does not fully support the C99    */
-/* specifications. In particular, they do not support the  */
-/* modifier character %a.                                  */
-EAPI int
-eina_convert_init(void)
-{
-   _init_count++;
-
-   if (_init_count > 1) goto init_out;
-
-   eina_error_init();
-   EINA_ERROR_CONVERT_0X_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First '0x' was not found.");
-   EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
-   EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
-
- init_out:
-   return _init_count;
-}
-
-EAPI int
-eina_convert_shutdown(void)
-{
-   _init_count--;
-
-   if (_init_count > 0) goto shutdown_out;
-
-   eina_error_shutdown();
-
- shutdown_out:
-   return _init_count;
-}
-
-/* That function converts a string created by a valid %a   */
-/* modifier to a double.                                   */
-/*                                                         */
-/* The string must have the following format:              */
-/*                                                         */
-/*  [-]0xh.hhhhhp[+-]e                                     */
-/*                                                         */
-/* where e is a decimal number.                            */
-/* If n is the number of cyphers after the point, the      */
-/* returned mantisse and exponents are                     */
-/*                                                         */
-/*  mantisse: [-]hhhhhh                                    */
-/*  exponent: 2^([+-]e - 4 * n)                            */
+/**
+ * @brief Convert a string to a double
+ *
+ * @param src The string to convert.
+ * @param length The length of the string.
+ * @param m The mantisse.
+ * @param e The exponent.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function converts the string @p s of length @p length that
+ * represent a double in hexadecimal base to a double. It is used to
+ * replace the use of snprintf() with the \%a modifier, which is
+ * missing on some platform (like Windows (tm) or OpenBSD).
+ *
+ * The string must have the following format:
+ *
+ * @code
+ * [-]0xh.hhhhhp[+-]e
+ * @endcode
+ *
+ * where the h are the hexadecimal cyphers of the mantiss and e the
+ * exponent (a decimal number). If n is the number of cypers after the
+ * point, the returned mantiss and exponents are:
+ *
+ * @code
+ * mantiss  : [-]hhhhhh
+ * exponent : 2^([+-]e - 4 * n)
+ * @endcode
+ *
+ * The mantiss and exponent are stored in the buffers pointed
+ * respectively by @p m and @p e.
+ *
+ * If the string is invalid, the error is set to:
+ *
+ * @li #EINA_ERROR_CONVERT_0X_NOT_FOUND if no 0x is found,
+ * @li #EINA_ERROR_CONVERT_P_NOT_FOUND if no p is found,
+ * @li #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH if @p length is not
+ * correct.
+ *
+ * In those cases, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
+ */
 EAPI Eina_Bool
 eina_convert_atod(const char *src, int length, long long *m, long *e)
 {
@@ -239,12 +348,28 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    return EINA_FALSE;
 }
 
-/* That function converts a double to a string that as the */
-/* following format:                                       */
-/*                                                         */
-/*  [-]0xh.hhhhhp[+-]e                                     */
-/*                                                         */
-/* where h is a hexadecimal number and e a decimal number. */
+/**
+ * @brief Convert a double to a string
+ *
+ * @param d The double to convert.
+ * @param des The destination buffer to store the converted double.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function converts the double @p d to a string. The string is
+ * stored in the buffer pointed by @p des and must be sufficiently
+ * large to contain the converted double. The returned string is
+ * terminated and has the following format:
+ *
+ * @code
+ * [-]0xh.hhhhhp[+-]e
+ * @endcode
+ *
+ * where the h are the hexadecimal cyphers of the mantiss and e the
+ * exponent (a decimal number).
+ *
+ * The returned value is the length of the string, including the nul
+ * character.
+ */
 EAPI int
 eina_convert_dtoa(double d, char *des)
 {
@@ -304,3 +429,11 @@ eina_convert_dtoa(double d, char *des)
 
    return length + eina_convert_itoa(p, des);
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

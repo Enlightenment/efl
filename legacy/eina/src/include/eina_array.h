@@ -84,7 +84,7 @@ EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array);
  * @param iterator The iterator
  *
  * This macro allow the iteration over @p array in an easy way. It
- * iterates from the first element to the last one. @pindex is an
+ * iterates from the first element to the last one. @p index is an
  * integer that increase from 0 to the number of elements. @p item is
  * the data of each element of @p array, so it is a pointer to a type
  * chosen by the user. @p iterator is of type #Eina_Array_Iterator.

@@ -16,6 +16,14 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+ * @page tutorial_counter_page Counter Tutorial
+ *
+ * to be written...
+ *
+ */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -38,6 +46,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
 
 #ifndef _WIN32
 typedef struct timespec Eina_Nano_Time;
@@ -86,6 +98,10 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
 }
 #endif /* _WIN2 */
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -94,6 +110,35 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
  *                                   API                                      *
  *============================================================================*/
 
+/**
+ * @addtogroup Eina_Tools_Group Tools Modules
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Counter_Group Counter Functions
+ *
+ * These functions allow you to get the time spent in a part of a code.
+ *
+ * For more information, you can look at the @ref tutorial_counter_page.
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the eina counter internal structure.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function allocates the memory needed by the counter, which
+ * means that it sets up the error module of Eina, and only on Windows
+ * it initializes the high precision timer. It also registers the errors
+ * #EINA_COUNTER_ERROR_OUT_OF_MEMORY and, if on Windows,
+ * #EINA_COUNTER_ERROR_WINDOWS. It is also called by eina_init(). It
+ * returns 0 on failure, otherwise it returns the number of times it
+ * has already been called.
+ */
 EAPI int
 eina_counter_init(void)
 {
@@ -116,6 +161,16 @@ eina_counter_init(void)
    return _eina_counter_init_count;
 }
 
+/**
+ * @brief Shut down the eina counter internal structures
+ *
+ * @return 0 when the counter module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function just shuts down the error module. It is also called by
+ * eina_shutdown(). It returns 0 when it is called the same number of
+ * times than eina_counter_init().
+ */
 EAPI int
 eina_counter_shutdown(void)
 {
@@ -126,6 +181,16 @@ eina_counter_shutdown(void)
    return _eina_counter_init_count;
 }
 
+/**
+ * @brief Return a counter.
+ *
+ * @param name The name of the counter.
+ *
+ * This function returns a new counter. It is characterized by @p
+ * name. If @p name is @c NULL, the function returns @c NULL
+ * immediatly. If memory allocation fails, @c NULL is returned and the
+ * error is set to #EINA_COUNTER_ERROR_OUT_OF_MEMORY.
+ */
 EAPI Eina_Counter *
 eina_counter_add(const char *name)
 {
@@ -149,10 +214,20 @@ eina_counter_add(const char *name)
    return counter;
 }
 
+/**
+ * @brief Delete a counter.
+ *
+ * @param counter The counter to delete.
+ *
+ * This function remove the clock of @p counter from the used clocks
+ * (see eina_counter_start()) and frees the memory allocated for
+ * @p counter. If @p counter is @c NULL, the functions returns
+ * immediatly.
+ */
 EAPI void
 eina_counter_delete(Eina_Counter *counter)
 {
-   if (!counter) return ;
+   if (!counter) return;
 
    while (counter->clocks)
      {
@@ -165,20 +240,36 @@ eina_counter_delete(Eina_Counter *counter)
    free(counter);
 }
 
+/**
+ * @brief Start the time count.
+ *
+ * @param counter The counter.
+ *
+ * This function specifies that the part of the code beginning just
+ * after its call is being to be timed, using @p counter. If
+ * @p counter is @c NULL, this function returns immediatly.
+ *
+ * This function adds the clock associated to @p counter in a list. If
+ * the memory needed by that clock can not be allocated, the function
+ * returns and the error is set to #EINA_COUNTER_ERROR_OUT_OF_MEMORY.
+ *
+ * To stop the timing, eina_counter_stop() must be called with the
+ * same counter.
+ */
 EAPI void
 eina_counter_start(Eina_Counter *counter)
 {
    Eina_Clock *clk;
    Eina_Nano_Time tp;
 
-   if (!counter) return ;
+   if (!counter) return;
    if (_eina_counter_time_get(&tp) != 0) return;
 
    clk = calloc(1, sizeof (Eina_Clock));
    if (!clk)
      {
 	eina_error_set(EINA_COUNTER_ERROR_OUT_OF_MEMORY);
-	return ;
+	return;
      }
 
    counter->clocks = eina_inlist_prepend(counter->clocks, clk);
@@ -187,30 +278,57 @@ eina_counter_start(Eina_Counter *counter)
    clk->start = tp;
 }
 
+/**
+ * @brief Stop the time count.
+ *
+ * @param counter The counter.
+ * @param specimen The specimen.
+ *
+ * This function stop the timing that has been started with
+ * eina_counter_start(). @p counter must be the same than the one used
+ * with eina_counter_start(). @p specimen is the number of times the
+ * test should be done. If @p counter or its associated clock are
+ * @c NULL, or if the time can't be retrieved the function exits.
+ */
 EAPI void
 eina_counter_stop(Eina_Counter *counter, int specimen)
 {
    Eina_Clock *clk;
    Eina_Nano_Time tp;
 
-   if (!counter) return ;
+   if (!counter) return;
    if (_eina_counter_time_get(&tp) != 0) return;
 
    clk = (Eina_Clock *) counter->clocks;
 
-   if (!clk || clk->valid == EINA_TRUE) return ;
+   if (!clk || clk->valid == EINA_TRUE) return;
 
    clk->end = tp;
    clk->specimen = specimen;
    clk->valid = EINA_TRUE;
 }
 
+/**
+ * @brief Dump the result of all clocks of a counter to a stream.
+ *
+ * @param counter The counter.
+ * @param out The stream to dump the clocks.
+ *
+ * This function dump all the valid clocks of @p counter to the stream
+ * @p out. If @p counter or @p out are @c NULL, the functions exits
+ * immediatly. Otherwise, the output is formattted like that:
+ *
+ * @code
+ * \# specimen    experiment time    starting time    ending time
+ * 1              208                120000           120208
+ * @endcode
+*/
 EAPI void
 eina_counter_dump(Eina_Counter *counter, FILE *out)
 {
    Eina_Clock *clk;
 
-   if (!counter || !out) return ;
+   if (!counter || !out) return;
 
    fprintf(out, "# specimen\texperiment time\tstarting time\tending time\n");
 
@@ -220,7 +338,7 @@ eina_counter_dump(Eina_Counter *counter, FILE *out)
         long int end;
         long int diff;
 
-	if (clk->valid == EINA_FALSE) continue ;
+	if (clk->valid == EINA_FALSE) continue;
 
 #ifndef _WIN32
         start = clk->start.tv_sec * 1000000000 + clk->start.tv_nsec;
@@ -240,3 +358,10 @@ eina_counter_dump(Eina_Counter *counter, FILE *out)
      }
 }
 
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

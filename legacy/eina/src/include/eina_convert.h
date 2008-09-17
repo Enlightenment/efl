@@ -22,8 +22,34 @@
 #include "eina_types.h"
 #include "eina_error.h"
 
+/**
+ * @addtogroup Eina_Tools_Group Tools Modules
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Convert_Group Convert Functions
+ *
+ * @{
+ */
+
+/**
+ * @var EINA_ERROR_CONVERT_P_NOT_FOUND
+ * Error identifier corresponding to string not containing 'p'.
+ */
 EAPI extern Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND;
+
+/**
+ * @var EINA_ERROR_CONVERT_0X_NOT_FOUND
+ * Error identifier corresponding to string not containing '0x'.
+ */
 EAPI extern Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND;
+
+/**
+ * @var EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH
+ * Error identifier corresponding to length of the string being too small.
+ */
 EAPI extern Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH;
 
 EAPI int eina_convert_init(void);
@@ -34,5 +60,12 @@ EAPI int eina_convert_xtoa(unsigned int n, char *s);
 EAPI int eina_convert_dtoa(double d, char *des);
 EAPI Eina_Bool eina_convert_atod(const char *src, int length, long long *m, long *e);
 
-#endif /* EINA_CONVERT_H_ */
+/**
+ * @}
+ */
 
+/**
+ * @}
+ */
+
+#endif /* EINA_CONVERT_H_ */

@@ -413,6 +413,12 @@ static char *_colors[EINA_ERROR_LEVELS] = {
  *============================================================================*/
 
 /**
+ * @addtogroup Eina_Tools_Group Tools Modules
+ *
+ * @{
+ */
+
+/**
  * @addtogroup Eina_Error_Group Error Functions
  *
  * @brief These functions provide error management for projects.
@@ -739,6 +745,10 @@ EAPI void eina_error_log_level_set(Eina_Error_Level level)
 {
 	_error_level = level;
 }
+
+/**
+ * @}
+ */
 
 /**
  * @}

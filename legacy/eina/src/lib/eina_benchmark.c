@@ -16,6 +16,14 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+ * @page tutorial_benchmark_page Benchmark Tutorial
+ *
+ * to be written...
+ *
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
@@ -24,6 +32,14 @@
 #include "eina_benchmark.h"
 #include "eina_inlist.h"
 #include "eina_counter.h"
+
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
 
 typedef struct _Eina_Run Eina_Run;
 struct _Eina_Run
@@ -44,6 +60,34 @@ struct _Eina_Benchmark
 
    Eina_Inlist *runs;
 };
+
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Tools_Group Tools Modules
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Benchmark_Group Benchmark Functions
+ *
+ * These functions allow you to add benchmark framework in a project.
+ *
+ * For more information, you can look at the @ref tutorial_benchmark_page.
+ *
+ * @{
+ */
 
 EAPI Eina_Benchmark *
 eina_benchmark_new(const char *name, const char *run)
@@ -183,3 +227,11 @@ eina_benchmark_run(Eina_Benchmark *bench)
 
    return ea;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

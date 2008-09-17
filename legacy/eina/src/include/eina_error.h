@@ -24,6 +24,12 @@
 #include "eina_types.h"
 
 /**
+ * @addtogroup Eina_Tools_Group Tools Modules
+ *
+ * @{
+ */
+
+/**
  * @defgroup Eina_Error_Group Error Functions
  *
  * @{
@@ -119,6 +125,10 @@ EAPI void eina_error_print_cb_file(Eina_Error_Level level, const char *file,
                 va_list args);
 EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data);
 EAPI void eina_error_log_level_set(Eina_Error_Level level);
+
+/**
+ * @}
+ */
 
 /**
  * @}

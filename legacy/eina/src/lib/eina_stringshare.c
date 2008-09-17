@@ -166,7 +166,7 @@ _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare
  * @return 1 or greater on success, 0 on error.
  *
  * This function allocates the memory needed by the stringshare
- * internal structure and sets up the error module or Eina. It is also
+ * internal structure and sets up the error module of Eina. It is also
  * called by eina_init(). It returns 0 on failure, otherwise it
  * returns the number of times it has already been called.
  */
@@ -196,7 +196,7 @@ eina_stringshare_init()
  * greater otherwise.
  *
  * This function frees the memory allocated by eina_stringshare_init()
- * and shut down the error module. It is also called by
+ * and shuts down the error module. It is also called by
  * eina_shutdown(). It returns 0 when it is called the same number of
  * times than eina_stringshare_init().
  */

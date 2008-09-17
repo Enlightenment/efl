@@ -97,7 +97,7 @@ eina_accessor_container_get(Eina_Accessor *accessor)
  * @param accessor The accessor.
  * @param position The position of the element.
  * @param data The pointer that stores the data to retrieve.
- * @return #EINA_TRUE on success, #EIA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function retrieves the data of the element pointed by
  * @p accessor at the porition @p position, and stores it in

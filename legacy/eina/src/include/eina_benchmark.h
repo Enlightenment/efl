@@ -21,6 +21,18 @@
 
 #include "eina_array.h"
 
+/**
+ * @addtogroup Eina_Tools_Group Tools Modules
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Benchmark_Group Benchmark Functions
+ *
+ * @{
+ */
+
 typedef struct _Eina_Benchmark Eina_Benchmark;
 typedef void (*Eina_Benchmark_Specimens)(int request);
 #define EINA_BENCHMARK(Function) ((Eina_Benchmark_Specimens)Function)
@@ -33,4 +45,12 @@ EAPI void eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_
 
 EAPI Eina_Array *eina_benchmark_run(Eina_Benchmark *bench);
 
-#endif
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+
+#endif /* EINA_BENCHMARK_H_ */

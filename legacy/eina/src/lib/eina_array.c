@@ -219,7 +219,7 @@ eina_array_shutdown(void)
  * another element will increase the buffer of @p step elements again.
  *
  * This function return a valid array on success, or @c NULL if memory
- * allocation fails. In hat case, the error is set to
+ * allocation fails. In that case, the error is set to
  * #EINA_ERROR_OUT_OF_MEMORY.
  */
 EAPI Eina_Array *
@@ -247,7 +247,7 @@ eina_array_new(unsigned int step)
  *
  * @param array The array to free.
  *
- * This function free @p array. It calls first eina_array_flush() then
+ * This function frees @p array. It calls first eina_array_flush() then
  * free the memory of the pointeur. It's up to the user to free the
  * memory allocated for the elements of @p array.
  */
@@ -264,7 +264,7 @@ eina_array_free(Eina_Array *array)
  * @param array The array.
  * @param step The count of pointers to add when increasing the array size.
  *
- * This function set the step of @p array to @p step. For performance
+ * This function sets the step of @p array to @p step. For performance
  * reasons, there is no check of @p array. If it is @c NULL or
  * invalid, the program may crash.
  */
@@ -279,7 +279,7 @@ eina_array_step_set(Eina_Array *array, unsigned int step)
  *
  * @param array The array to clean.
  *
- * This function set the count member of @p array to 0. For
+ * This function sets the count member of @p array to 0. For
  * performance reasons, there is no check of @p array. If it is
  * @c NULL or invalid, the program may crash.
  */
@@ -294,7 +294,7 @@ eina_array_clean(Eina_Array *array)
  *
  * @param array The array to flush.
  *
- * This function set the count and total members of @p array to 0,
+ * This function sets the count and total members of @p array to 0,
  * frees and set to NULL its data member. For performance reasons,
  * there is no check of @p array. If it is @c NULL or invalid, the
  * program may crash.
