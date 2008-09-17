@@ -43,6 +43,7 @@ static const Eina_Test_Case etc[] = {
   { "Rbtree", eina_test_rbtree },
   { "File", eina_test_file },
   { "Benchmark", eina_test_benchmark },
+  { "Mempool", eina_test_mempool },
   { NULL, NULL }
 };
 
