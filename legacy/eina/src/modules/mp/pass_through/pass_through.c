@@ -50,7 +50,7 @@ eina_pass_through_realloc(__UNUSED__ void *data, void *ptr, unsigned int size)
 static void*
 eina_pass_through_init(__UNUSED__ const char *context, __UNUSED__ const char *option, __UNUSED__ va_list args)
 {
-   return NULL;
+   return (void*) 0x1;
 }
 
 static void
