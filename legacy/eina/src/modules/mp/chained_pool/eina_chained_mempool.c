@@ -81,7 +81,7 @@ static void *
 eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 {
    Chained_Mempool *pool = data;
-   Chained_Pool *p;
+   Chained_Pool *p = NULL;
    Eina_Inlist *item;
    void *mem;
 
@@ -218,4 +218,4 @@ static Eina_Mempool_Backend mp_backend = {
   .free = &eina_chained_mempool_free
 };
 
-EINA_MODULE("chaine_mempool", "mp", NULL, &mp_backend);
+EINA_MODULE("chained_mempool", "mp", NULL, &mp_backend);
