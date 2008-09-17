@@ -119,7 +119,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	       }
 	     ed->dirty = 1;
 	  }
-	_edje_recalc_do(ed);
+	_edje_recalc(ed);
 /*
 	_edje_thaw(ed);
 	_edje_unref(ed);
@@ -141,7 +141,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 		    _edje_emit(ed, "drag", rp->part->name);
 		  ed->dirty = 1;
 		  rp->drag.need_reset = 1;
-		  _edje_recalc_do(ed);
+		  _edje_recalc(ed);
 	       }
 	  }
      }
@@ -164,7 +164,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	rp->clicked_button = ev->button;
 	rp->still_in = 1;
      }
-//   _edje_recalc_do(ed);
+//   _edje_recalc(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
    return;
@@ -228,7 +228,7 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    rp->clicked_button = 0;
    rp->still_in = 0;
 
-//   _edje_recalc_do(ed);
+//   _edje_recalc(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
    return;
@@ -284,7 +284,7 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	       rp->drag.tmp.y = ev->cur.canvas.y - rp->drag.down.y;
 	     ed->dirty = 1;
 	  }
-	_edje_recalc_do(ed);
+	_edje_recalc(ed);
      }
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
      {
@@ -301,7 +301,7 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 		  if (!ignored)
 		    _edje_emit(ed, "drag", rp->part->name);
 		  ed->dirty = 1;
-		  _edje_recalc_do(ed);
+		  _edje_recalc(ed);
 	       }
 	  }
      }

@@ -787,10 +787,6 @@ edje_object_part_object_get(const Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    return rp->object;
@@ -824,10 +820,6 @@ edje_object_part_geometry_get(const Evas_Object *obj, const char *part, Evas_Coo
 	if (h) *h = 0;
 	return;
      }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
@@ -908,10 +900,6 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    if (rp->part->type == EDJE_PART_TYPE_TEXT)
@@ -939,10 +927,6 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return;
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_SWALLOW) return;
@@ -1109,7 +1093,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 	rp->swallow_params.max.w = 0;
 	rp->swallow_params.max.h = 0;
 	rp->edje->dirty = 1;
-	_edje_recalc_do(rp->edje);
+	_edje_recalc(rp->edje);
 	return;
      }
 }
@@ -1127,10 +1111,6 @@ edje_object_part_swallow_get(const Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    return rp->swallowed_object;
@@ -1180,10 +1160,6 @@ edje_object_size_max_get(const Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *m
 	if (maxh) *maxh = 0;
 	return;
      }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    if (ed->collection->prop.max.w == 0)
      {
 	/* XXX TODO: convert maxw to 0, fix things that break. */
@@ -1226,7 +1202,7 @@ edje_object_calc_force(Evas_Object *obj)
    _edje_freeze_val = 0;
    ed->freeze = 0;
    
-   _edje_recalc_do(ed);
+   _edje_recalc(ed);
    
    ed->freeze = pf;
    _edje_freeze_val = pf2;
@@ -1290,7 +1266,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 
 	ok = 0;
 	ed->dirty = 1;
-	_edje_recalc_do(ed);
+	_edje_recalc(ed);
 	if (reset_maxwh)
 	  {
 	     maxw = 0;
@@ -1394,10 +1370,6 @@ edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val
 	if (val_ret) *val_ret = 0;
 	return "";
      }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
@@ -1442,10 +1414,6 @@ edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return EDJE_DRAG_DIR_NONE;
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return EDJE_DRAG_DIR_NONE;
    if ((rp->part->dragable.x) && (rp->part->dragable.y)) return EDJE_DRAG_DIR_XY;
@@ -1510,10 +1478,6 @@ edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double
 	if (dy) *dy = 0;
 	return;
      }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
@@ -1579,10 +1543,6 @@ edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double 
 	if (dh) *dh = 0;
 	return;
      }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
@@ -1641,10 +1601,6 @@ edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double 
 	if (dy) *dy = 0;
 	return;
      }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
@@ -1703,10 +1659,6 @@ edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double 
 	if (dy) *dy = 0;
 	return;
      }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
@@ -2224,5 +2176,5 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
      evas_object_precise_is_inside_set(obj_swallow, 1);
 
    rp->edje->dirty = 1;
-   _edje_recalc_do(rp->edje);
+   _edje_recalc(rp->edje);
 }
