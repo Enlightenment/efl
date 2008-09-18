@@ -34,16 +34,6 @@
 static Eina_Module_Group *_group;
 static int _init_count = 0;
 
-struct _Eina_Mempool
-{
-#ifdef DEBUG
-	unsigned int magic;
-#endif
-	Eina_Module *module;
-	Eina_Mempool_Backend *backend;
-	void *backend_data;
-};
-
 static Eina_Mempool *
 _new_from_buffer(const char *module, const char *context, const char *options, va_list args)
 {
@@ -60,8 +50,8 @@ _new_from_buffer(const char *module, const char *context, const char *options, v
 	mp = malloc(sizeof(Eina_Mempool));
 	if (!mp) goto on_error;
 	mp->module = m;
-	mp->backend = eina_module_export_object_get(m);
-	mp->backend_data = mp->backend->init(context, options, args);
+	mp->backend = *(Eina_Mempool_Backend *)eina_module_export_object_get(m);
+	mp->backend_data = mp->backend.init(context, options, args);
 
 	return mp;
 
@@ -108,16 +98,14 @@ eina_mempool_init(void)
 EAPI int
 eina_mempool_shutdown(void)
 {
-	if (!_init_count)
-		return _init_count;
 	_init_count--;
-	if (!_init_count)
-	{
-		/* remove the list of modules */
-		eina_module_group_delete(_group);
-		eina_module_shutdown();
-	}
-	return _init_count;
+	if (_init_count != 0) return _init_count;
+
+	/* remove the list of modules */
+	eina_module_group_delete(_group);
+	eina_module_shutdown();
+
+	return 0;
 }
 
 EAPI Eina_Module_Group *
@@ -135,7 +123,7 @@ eina_mempool_new(const char *name, const char *context, const char *options, ...
 	Eina_Mempool *mp;
 	va_list args;
 
-	assert(name);
+	if (!name) return NULL;
 
 	va_start(args, options);
 	mp = _new_from_buffer(name, context, options, args);
@@ -149,58 +137,25 @@ eina_mempool_new(const char *name, const char *context, const char *options, ...
  */
 EAPI void eina_mempool_delete(Eina_Mempool *mp)
 {
-	assert(mp);
+	if (!mp) return ;
 
-	mp->backend->shutdown(mp->backend_data);
+	mp->backend.shutdown(mp->backend_data);
 	eina_module_unload(mp->module);
 	free(mp);
-}
-
-/**
- * 
- */
-EAPI void * eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size)
-{
-	assert(mp);
-	assert(mp->backend->realloc);
-
-	return mp->backend->realloc(mp->backend_data, element, size);
-}
-
-/**
- * 
- */
-EAPI void * eina_mempool_alloc(Eina_Mempool *mp, unsigned int size)
-{
-	assert(mp);
-	assert(mp->backend->alloc);
-
-	return mp->backend->alloc(mp->backend_data, size);
-}
-
-/**
- * 
- */
-EAPI void eina_mempool_free(Eina_Mempool *mp, void *element)
-{
-	assert(mp);
-	assert(mp->backend->free);
-
-	mp->backend->free(mp->backend_data, element);
 }
 
 EAPI void eina_mempool_gc(Eina_Mempool *mp)
 {
 	assert(mp);
-	assert(mp->backend->garbage_collect);
+	assert(mp->backend.garbage_collect);
 
-	mp->backend->garbage_collect(mp->backend_data);
+	mp->backend.garbage_collect(mp->backend_data);
 }
 
 EAPI void eina_mempool_statistics(Eina_Mempool *mp)
 {
 	assert(mp);
-	assert(mp->backend->statistics);
+	assert(mp->backend.statistics);
 
-	mp->backend->statistics(mp->backend_data);
+	mp->backend.statistics(mp->backend_data);
 }

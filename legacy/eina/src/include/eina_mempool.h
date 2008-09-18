@@ -38,12 +38,14 @@ EAPI Eina_Module_Group * eina_mempool_module_group_get(void);
 EAPI Eina_Mempool * eina_mempool_new(const char *module, const char *context, const char *options, ...);
 EAPI void eina_mempool_delete(Eina_Mempool *mp);
 
-EAPI void * eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size);
-EAPI void * eina_mempool_alloc(Eina_Mempool *mp, unsigned int size);
-EAPI void eina_mempool_free(Eina_Mempool *mp, void *element);
+static inline void * eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size);
+static inline void * eina_mempool_alloc(Eina_Mempool *mp, unsigned int size);
+static inline void eina_mempool_free(Eina_Mempool *mp, void *element);
 
 EAPI void eina_mempool_gc(Eina_Mempool *mp);
 EAPI void eina_mempool_statistics(Eina_Mempool *mp);
+
+#include "eina_inline_mempool.x"
 
 /** @} */
 
