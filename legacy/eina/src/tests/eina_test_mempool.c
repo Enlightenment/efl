@@ -25,15 +25,9 @@
 
 START_TEST(eina_mempool_init_shutdown)
 {
-   Eina_Module_Group *gp;
    Eina_Mempool *mp;
 
    eina_mempool_init();
-
-   gp = eina_mempool_module_group_get();
-   fail_if(!gp);
-
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
 
    mp = eina_mempool_new("test", "test", NULL);
    fail_if(mp != NULL);
@@ -44,18 +38,11 @@ END_TEST
 
 START_TEST(eina_mempool_chained_mempool)
 {
-   Eina_Module_Group *gp;
    Eina_Mempool *mp;
    int *tbl[512];
    int i;
 
    eina_mempool_init();
-
-   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
-
-   gp = eina_mempool_module_group_get();
-   fail_if(!gp);
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
 
    mp = eina_mempool_new("chained_mempool", "test", NULL, sizeof (int), 256);
    fail_if(!mp);
@@ -83,18 +70,11 @@ END_TEST
 
 START_TEST(eina_mempool_pass_through)
 {
-   Eina_Module_Group *gp;
    Eina_Mempool *mp;
    int *tbl[512];
    int i;
 
    eina_mempool_init();
-
-   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
-
-   gp = eina_mempool_module_group_get();
-   fail_if(!gp);
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
 
    mp = eina_mempool_new("pass_through", "test", NULL, sizeof (int), 8, 0);
    fail_if(!mp);
@@ -123,18 +103,11 @@ END_TEST
 #ifdef EINA_EMEMOA_SUPPORT
 START_TEST(eina_mempool_ememoa_fixed)
 {
-   Eina_Module_Group *gp;
    Eina_Mempool *mp;
    int *tbl[512];
    int i;
 
    eina_mempool_init();
-
-   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
-
-   gp = eina_mempool_module_group_get();
-   fail_if(!gp);
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
 
    mp = eina_mempool_new("ememoa_fixed", "test", NULL, sizeof (int), 8, 0);
    fail_if(!mp);
@@ -165,18 +138,11 @@ END_TEST
 
 START_TEST(eina_mempool_ememoa_unknown)
 {
-   Eina_Module_Group *gp;
    Eina_Mempool *mp;
    int *tbl[512];
    int i;
 
    eina_mempool_init();
-
-   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
-
-   gp = eina_mempool_module_group_get();
-   fail_if(!gp);
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
 
    mp = eina_mempool_new("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
    fail_if(!mp);

@@ -17,6 +17,7 @@
  */
 
 #include "eina_suite.h"
+#include "eina_mempool.h"
 
 typedef struct _Eina_Test_Case Eina_Test_Case;
 struct _Eina_Test_Case
@@ -71,6 +72,7 @@ eina_build_suite(void)
 int
 main(void)
 {
+   Eina_Module_Group *gp;
    Suite *s;
    SRunner *sr;
    int failed_count;
@@ -78,9 +80,18 @@ main(void)
 
    s = eina_build_suite();
    sr = srunner_create(s);
+
+   eina_mempool_init();
+
+   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
+   gp = eina_mempool_module_group_get();
+   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
+
    srunner_run_all(sr, CK_NORMAL);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
+
+   eina_mempool_shutdown();
 
    return (failed_count == 0) ? 0 : 255;
 }
