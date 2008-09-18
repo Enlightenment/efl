@@ -31,6 +31,7 @@
 #include "eina_types.h"
 #include "eina_module.h"
 #include "eina_private.h"
+#include "eina_mempool.h"
 
 typedef struct _Eina_Ememoa_Unknown_Size_Mempool Eina_Ememoa_Unknown_Size_Mempool;
 struct _Eina_Ememoa_Unknown_Size_Mempool
@@ -83,7 +84,7 @@ static void*
 eina_ememoa_unknown_size_init(const char *context, __UNUSED__ const char *option, va_list args)
 {
    struct ememoa_mempool_desc_s *desc = NULL;
-   Eina_Ememoa_Unknown_Size_Mempool *efm;
+   Eina_Ememoa_Unknown_Size_Mempool *efm = NULL;
    Eina_Bool thread_protect;
    unsigned int *items_map;
    unsigned int items_count;
