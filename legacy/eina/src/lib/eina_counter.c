@@ -79,7 +79,6 @@ struct _Eina_Clock
 };
 
 static int _eina_counter_init_count = 0;
-static int EINA_COUNTER_ERROR_OUT_OF_MEMORY = 0;
 
 #ifndef _WIN32
 static inline int
@@ -134,7 +133,7 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
  * This function allocates the memory needed by the counter, which
  * means that it sets up the error module of Eina, and only on Windows
  * it initializes the high precision timer. It also registers the errors
- * #EINA_COUNTER_ERROR_OUT_OF_MEMORY and, if on Windows,
+ * #EINA_ERROR_OUT_OF_MEMORY and, if on Windows,
  * #EINA_COUNTER_ERROR_WINDOWS. It is also called by eina_init(). It
  * returns 0 on failure, otherwise it returns the number of times it
  * has already been called.
@@ -147,7 +146,6 @@ eina_counter_init(void)
    if (_eina_counter_init_count == 1)
      {
 	eina_error_init();
-	EINA_COUNTER_ERROR_OUT_OF_MEMORY  = eina_error_msg_register("Eina_Counter out of memory");
 #ifdef _WIN32
         if (!QueryPerformanceFrequency(&_eina_counter_frequency))
           {
@@ -189,7 +187,7 @@ eina_counter_shutdown(void)
  * This function returns a new counter. It is characterized by @p
  * name. If @p name is @c NULL, the function returns @c NULL
  * immediatly. If memory allocation fails, @c NULL is returned and the
- * error is set to #EINA_COUNTER_ERROR_OUT_OF_MEMORY.
+ * error is set to #EINA_ERROR_OUT_OF_MEMORY.
  */
 EAPI Eina_Counter *
 eina_counter_add(const char *name)
@@ -201,10 +199,11 @@ eina_counter_add(const char *name)
 
    length = strlen(name) + 1;
 
+   eina_error_set(0);
    counter = calloc(1, sizeof (Eina_Counter) + length);
    if (!counter)
      {
-	eina_error_set(EINA_COUNTER_ERROR_OUT_OF_MEMORY);
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
 	return NULL;
      }
 
@@ -251,7 +250,7 @@ eina_counter_delete(Eina_Counter *counter)
  *
  * This function adds the clock associated to @p counter in a list. If
  * the memory needed by that clock can not be allocated, the function
- * returns and the error is set to #EINA_COUNTER_ERROR_OUT_OF_MEMORY.
+ * returns and the error is set to #EINA_ERROR_OUT_OF_MEMORY.
  *
  * To stop the timing, eina_counter_stop() must be called with the
  * same counter.
@@ -265,10 +264,11 @@ eina_counter_start(Eina_Counter *counter)
    if (!counter) return;
    if (_eina_counter_time_get(&tp) != 0) return;
 
+   eina_error_set(0);
    clk = calloc(1, sizeof (Eina_Clock));
    if (!clk)
      {
-	eina_error_set(EINA_COUNTER_ERROR_OUT_OF_MEMORY);
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
 	return;
      }
 
