@@ -49,20 +49,16 @@ _new_from_buffer(const char *module, const char *context, const char *options, v
 {
 	Eina_Mempool *mp;
 	Eina_Module *m;
+	Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 	eina_error_set(0);
 	m = eina_module_new(_group, module);
 	if (!m) return NULL;
-	if (eina_module_load(m) == EINA_FALSE) {
-		eina_error_set(EINA_ERROR_NOT_MEMPOOL_MODULE);
-		goto on_error;
-	}
+	if (eina_module_load(m) == EINA_FALSE) goto on_error;
 
+	err = EINA_ERROR_OUT_OF_MEMORY;
 	mp = malloc(sizeof(Eina_Mempool));
-	if (!mp) {
-		eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-		goto on_error;
-	}
+	if (!mp) goto on_error;
 	mp->module = m;
 	mp->backend = eina_module_export_object_get(m);
 	mp->backend_data = mp->backend->init(context, options, args);
@@ -70,6 +66,7 @@ _new_from_buffer(const char *module, const char *context, const char *options, v
 	return mp;
 
   on_error:
+	eina_error_set(err);
 	if (m) eina_module_delete(m);
 	return NULL;
 }
