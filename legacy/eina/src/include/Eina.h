@@ -154,6 +154,7 @@ extern "C" {
 #include "eina_rbtree.h"
 #include "eina_accessor.h"
 #include "eina_iterator.h"
+#include "eina_benchmark.h"
 
 EAPI int eina_init(void);
 EAPI int eina_shutdown(void);
