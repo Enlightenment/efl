@@ -137,196 +137,189 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void * eina_inlist_append(void *in_list, void *in_item) {
-	Eina_Inlist *l, *new_l;
-	Eina_Inlist *list;
+EAPI Eina_Inlist *
+eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
+{
+   Eina_Inlist *l;
 
-	list = in_list;
-	new_l = in_item;
+   new_l->next = NULL;
+   if (!list) {
+      new_l->prev = NULL;
+      new_l->last = new_l;
+      return new_l;
+   }
+   if (list->last)
+     l = list->last;
+   else
+     for (l = list; (l) && (l->next); l = l->next)
+       ;
+   l->next = new_l;
+   new_l->prev = l;
+   list->last = new_l;
+   return list;
+}
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Inlist *
+eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
+{
+   new_l->prev = NULL;
+   if (!list) {
+      new_l->next = NULL;
+      new_l->last = new_l;
+      return new_l;
+   }
+   new_l->next = list;
+   list->prev = new_l;
+   new_l->last = list->last;
+   list->last = NULL;
+   return new_l;
+}
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Inlist *
+eina_inlist_append_relative(Eina_Inlist *list,
+			    Eina_Inlist *new_l,
+			    Eina_Inlist *relative)
+{
+   if (relative) {
+      if (relative->next) {
+	 new_l->next = relative->next;
+	 relative->next->prev = new_l;
+      } else
 	new_l->next = NULL;
-	if (!list) {
-		new_l->prev = NULL;
-		new_l->last = new_l;
-		return new_l;
-	}
-	if (list->last)
-		l = list->last;
-	else
-		for (l = list; (l) && (l->next); l = l->next)
-			;
-	l->next = new_l;
-	new_l->prev = l;
+      relative->next = new_l;
+      new_l->prev = relative;
+      if (!new_l->next)
 	list->last = new_l;
-	return list;
+      return list;
+   }
+   return eina_inlist_append(list, new_l);
 }
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void * eina_inlist_prepend(void *in_list, void *in_item) {
-	Eina_Inlist *new_l;
-	Eina_Inlist *list;
+EAPI Eina_Inlist *
+eina_inlist_prepend_relative(Eina_Inlist *list,
+			     Eina_Inlist *new_l,
+			     Eina_Inlist *relative)
+{
+   if (relative) {
+      new_l->prev = relative->prev;
+      new_l->next = relative;
+      relative->prev = new_l;
+      if (new_l->prev) {
+	 new_l->prev->next = new_l;
+	 /* new_l->next could not be NULL, as it was set to 'relative' */
+	 assert(new_l->next);
+	 return list;
+      } else {
+	 /* new_l->next could not be NULL, as it was set to 'relative' */
+	 assert(new_l->next);
 
-	list = in_list;
-	new_l = in_item;
-	new_l->prev = NULL;
-	if (!list) {
-		new_l->next = NULL;
-		new_l->last = new_l;
-		return new_l;
-	}
-	new_l->next = list;
-	list->prev = new_l;
-	new_l->last = list->last;
-	list->last = NULL;
-	return new_l;
+	 new_l->last = list->last;
+	 list->last = NULL;
+	 return new_l;
+      }
+   }
+   return eina_inlist_prepend(list, new_l);
 }
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void * eina_inlist_append_relative(void *in_list, void *in_item,
-		void *in_relative) {
-	Eina_Inlist *list, *relative, *new_l;
+EAPI Eina_Inlist *
+eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
+{
+   Eina_Inlist *return_l;
 
-	list = in_list;
-	new_l = in_item;
-	relative = in_relative;
-	if (relative) {
-		if (relative->next) {
-			new_l->next = relative->next;
-			relative->next->prev = new_l;
-		} else
-			new_l->next = NULL;
-		relative->next = new_l;
-		new_l->prev = relative;
-		if (!new_l->next)
-			list->last = new_l;
-		return list;
-	}
-	return eina_inlist_append(list, new_l);
+   /* checkme */
+   if (!list) return list;
+   if (!item) return list;
+
+   if (item->next)
+     item->next->prev = item->prev;
+
+   if (item->prev) {
+      item->prev->next = item->next;
+      return_l = list;
+   } else {
+      return_l = item->next;
+      if (return_l)
+	return_l->last = list->last;
+   }
+   if (item == list->last)
+     list->last = item->prev;
+   item->next = NULL;
+   item->prev = NULL;
+   return return_l;
 }
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void * eina_inlist_prepend_relative(void *in_list, void *in_item,
-		void *in_relative) {
-	Eina_Inlist *list, *relative, *new_l;
+EAPI Eina_Inlist *
+eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
+{
+   Eina_Inlist *l;
 
-	list = in_list;
-	new_l = in_item;
-	relative = in_relative;
-	if (relative) {
-		new_l->prev = relative->prev;
-		new_l->next = relative;
-		relative->prev = new_l;
-		if (new_l->prev) {
-			new_l->prev->next = new_l;
-			/* new_l->next could not be NULL, as it was set to 'relative' */
-			assert(new_l->next);
-			return list;
-		} else {
-			/* new_l->next could not be NULL, as it was set to 'relative' */
-			assert(new_l->next);
-
-			new_l->last = list->last;
-			list->last = NULL;
-			return new_l;
-		}
-	}
-	return eina_inlist_prepend(list, new_l);
-}
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void * eina_inlist_remove(void *in_list, void *in_item) {
-	Eina_Inlist *return_l;
-	Eina_Inlist *list, *item;
-
-	/* checkme */
-	if (!in_list)
-		return in_list;
-
-	list = in_list;
-	item = in_item;
-	if (!item)
-		return list;
-	if (item->next)
-		item->next->prev = item->prev;
-	if (item->prev) {
-		item->prev->next = item->next;
-		return_l = list;
-	} else {
-		return_l = item->next;
-		if (return_l)
-			return_l->last = list->last;
-	}
-	if (item == list->last)
-		list->last = item->prev;
-	item->next = NULL;
-	item->prev = NULL;
-	return return_l;
-}
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void * eina_inlist_find(void *in_list, void *in_item) {
-	Eina_Inlist *l;
-	Eina_Inlist *list, *item;
-
-	list = in_list;
-	item = in_item;
-	for (l = list; l; l = l->next) {
-		if (l == item)
-			return item;
-	}
-	return NULL;
+   for (l = list; l; l = l->next) {
+      if (l == item)
+	return item;
+   }
+   return NULL;
 }
 
-EAPI Eina_Iterator *eina_inlist_iterator_new(const void *in_list) {
-	Eina_Iterator_Inlist *it;
+EAPI Eina_Iterator *
+eina_inlist_iterator_new(const Eina_Inlist *list)
+{
+   Eina_Iterator_Inlist *it;
 
-	if (!in_list) return NULL;
+   if (!list) return NULL;
 
-	eina_error_set(0);
-	it = calloc(1, sizeof (Eina_Iterator_Inlist));
-	if (!it) {
-		eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-		return NULL;
-	}
+   eina_error_set(0);
+   it = calloc(1, sizeof (Eina_Iterator_Inlist));
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
-	it->head = in_list;
-	it->current = in_list;
+   it->head = list;
+   it->current = list;
 
-	it->iterator.next = FUNC_ITERATOR_NEXT(eina_inlist_iterator_next);
-	it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_inlist_iterator_get_container);
-	it->iterator.free = FUNC_ITERATOR_FREE(eina_inlist_iterator_free);
+   it->iterator.next = FUNC_ITERATOR_NEXT(eina_inlist_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_inlist_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_inlist_iterator_free);
 
-	return &it->iterator;
+   return &it->iterator;
 }
 
-EAPI Eina_Accessor *eina_inlist_accessor_new(const void *in_list) {
-	Eina_Accessor_Inlist *it;
+EAPI Eina_Accessor *
+eina_inlist_accessor_new(const Eina_Inlist *list)
+{
+   Eina_Accessor_Inlist *it;
 
-	if (!in_list) return NULL;
+   if (!list) return NULL;
 
-	eina_error_set(0);
-	it = calloc(1, sizeof (Eina_Accessor_Inlist));
-	if (!it) {
-		eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-		return NULL;
-	}
+   eina_error_set(0);
+   it = calloc(1, sizeof (Eina_Accessor_Inlist));
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
-	it->head = in_list;
-	it->current = in_list;
-	it->index = 0;
+   it->head = list;
+   it->current = list;
+   it->index = 0;
 
-	it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_inlist_accessor_get_at);
-	it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_inlist_accessor_get_container);
-	it->accessor.free = FUNC_ACCESSOR_FREE(eina_inlist_accessor_free);
+   it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_inlist_accessor_get_at);
+   it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_inlist_accessor_get_container);
+   it->accessor.free = FUNC_ACCESSOR_FREE(eina_inlist_accessor_free);
 
-	return &it->accessor;
+   return &it->accessor;
 }

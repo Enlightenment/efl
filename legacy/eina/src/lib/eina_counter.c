@@ -61,7 +61,7 @@ typedef struct _Eina_Clock Eina_Clock;
 
 struct _Eina_Counter
 {
-   Eina_Inlist __list;
+   EINA_INLIST;
 
    Eina_Inlist *clocks;
    const char *name;
@@ -69,7 +69,7 @@ struct _Eina_Counter
 
 struct _Eina_Clock
 {
-   Eina_Inlist __list;
+   EINA_INLIST;
 
    Eina_Nano_Time start;
    Eina_Nano_Time end;
@@ -272,7 +272,7 @@ eina_counter_start(Eina_Counter *counter)
 	return;
      }
 
-   counter->clocks = eina_inlist_prepend(counter->clocks, clk);
+   counter->clocks = eina_inlist_prepend(counter->clocks, EINA_INLIST_GET(clk));
 
    clk->valid = EINA_FALSE;
    clk->start = tp;

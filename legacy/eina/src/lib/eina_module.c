@@ -55,7 +55,7 @@ typedef struct _Eina_App Eina_App;
 
 struct _Eina_Module
 {
-   Eina_Inlist          __list;
+   EINA_INLIST;
 
    const char         * path;
    const char         * name;
@@ -73,7 +73,7 @@ struct _Eina_Module
 
 struct _Eina_Directory
 {
-   Eina_Inlist  __list;
+   EINA_INLIST;
 
    const char * path;
    const char * extention;
@@ -90,7 +90,7 @@ struct _Eina_App
 
 struct _Eina_Static
 {
-   Eina_Inlist        __list;
+   EINA_INLIST;
    Eina_Module_Export static_desc;
 };
 
@@ -106,7 +106,7 @@ struct _Eina_Module_Group
 
 struct _Eina_Root_Directory
 {
-   Eina_Inlist  __list;
+   EINA_INLIST;
 
    const char * path;
 };
@@ -134,7 +134,6 @@ _eina_module_build(Eina_Module_Group *modules, Eina_App *app,
    void *handle;
 
    handle = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
-   fprintf(stderr, "b [%s] %p\n", path, handle);
    if (!handle) return NULL;
 
    module = calloc(1, sizeof (Eina_Module) + length_path + strlen(name) + 1);
@@ -212,7 +211,7 @@ _eina_dir_module_cb(const char *name, const char *path, Eina_Dir_List *data)
      {
 	if (data->cb(module, data->data) == EINA_TRUE)
 	  {
-	     data->modules->loaded_module = eina_inlist_prepend(data->modules->loaded_module, module);
+	     data->modules->loaded_module = eina_inlist_prepend(data->modules->loaded_module, EINA_INLIST_GET(module));
 	     data->list = eina_list_append(data->list, module);
 
 	     return ;
@@ -378,7 +377,7 @@ eina_module_root_add(const char *root_path)
    root->path = (char*)(root + 1);
    memcpy((char*) root->path, root_path, length);
 
-   root_directory = eina_inlist_prepend(root_directory, root);
+   root_directory = eina_inlist_prepend(root_directory, EINA_INLIST_GET(root));
 }
 
 EAPI Eina_Module_Group *
@@ -437,9 +436,9 @@ eina_module_path_register(Eina_Module_Group *modules, const char *path, Eina_Boo
    memcpy((char*) dir->path, path, length);
 
    if (recursive)
-     modules->recursive_directory = eina_inlist_prepend(modules->recursive_directory, dir);
+     modules->recursive_directory = eina_inlist_prepend(modules->recursive_directory, EINA_INLIST_GET(dir));
    else
-     modules->root_directory = eina_inlist_prepend(modules->root_directory, dir);
+     modules->root_directory = eina_inlist_prepend(modules->root_directory, EINA_INLIST_GET(dir));
 }
 
 EAPI void
@@ -505,7 +504,7 @@ eina_module_app_register(Eina_Module_Group *modules, const char *app, const char
      }
    strcat((char*) dir->extention, MODULE_EXTENSION);
 
-   modules->lookup_directory = eina_inlist_prepend(modules->lookup_directory, dir);
+   modules->lookup_directory = eina_inlist_prepend(modules->lookup_directory, EINA_INLIST_GET(dir));
 }
 
 EAPI void
@@ -520,7 +519,7 @@ eina_module_register(Eina_Module_Group *modules, const Eina_Module_Export *stati
 
    library->static_desc = *static_module;
 
-   modules->static_libraries = eina_inlist_prepend(modules->static_libraries, library);
+   modules->static_libraries = eina_inlist_prepend(modules->static_libraries, EINA_INLIST_GET(library));
 }
 
 EAPI Eina_Module *
@@ -560,7 +559,7 @@ eina_module_new(Eina_Module_Group *modules, const char *name)
 	  module->references = 1;
 	  module->is_static_library = EINA_TRUE;
 
-	  modules->loaded_module = eina_inlist_prepend(modules->loaded_module, module);
+	  modules->loaded_module = eina_inlist_prepend(modules->loaded_module, EINA_INLIST_GET(module));
 
 	  return module;
        }
@@ -578,7 +577,7 @@ eina_module_new(Eina_Module_Group *modules, const char *name)
 				      name);
 	  if (!module) continue ;
 
-	  modules->loaded_module = eina_inlist_prepend(modules->loaded_module, module);
+	  modules->loaded_module = eina_inlist_prepend(modules->loaded_module, EINA_INLIST_GET(module));
 	  return module;
        }
 
@@ -600,7 +599,7 @@ eina_module_new(Eina_Module_Group *modules, const char *name)
 	     continue ;
 	  }
 
-	modules->loaded_module = eina_inlist_prepend(modules->loaded_module, module);
+	modules->loaded_module = eina_inlist_prepend(modules->loaded_module, EINA_INLIST_GET(module));
 	return module;
      }
 
@@ -626,7 +625,7 @@ eina_module_delete(Eina_Module *module)
 
    if (module->references != 0) return ;
 
-   module->group->loaded_module = eina_inlist_remove(module->group->loaded_module, module);
+   module->group->loaded_module = eina_inlist_remove(module->group->loaded_module, EINA_INLIST_GET(module));
 
    if (module->handle) dlclose(module->handle);
    free(module);
@@ -671,7 +670,7 @@ eina_module_list_new(Eina_Module_Group *modules, Eina_Module_Cb cb, void *data)
 
 	if (cb(module, data) == EINA_TRUE)
 	  {
-	     modules->loaded_module = eina_inlist_prepend(modules->loaded_module, module);
+	     modules->loaded_module = eina_inlist_prepend(modules->loaded_module, EINA_INLIST_GET(module));
 	     list = eina_list_append(list, module);
 	  }
 	else
@@ -706,7 +705,7 @@ eina_module_list_new(Eina_Module_Group *modules, Eina_Module_Cb cb, void *data)
 
 	       if (cb(module, data) == EINA_TRUE)
 		 {
-		    modules->loaded_module = eina_inlist_prepend(modules->loaded_module, module);
+		    modules->loaded_module = eina_inlist_prepend(modules->loaded_module, EINA_INLIST_GET(module));
 		    list = eina_list_append(list, module);
 		 }
 	       else

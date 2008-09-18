@@ -44,7 +44,7 @@
 typedef struct _Eina_Run Eina_Run;
 struct _Eina_Run
 {
-   Eina_Inlist __list;
+   EINA_INLIST;
 
    Eina_Benchmark_Specimens cb;
    const char *name;
@@ -176,7 +176,7 @@ eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_
    run->end = count_end;
    run->step = count_step;
 
-   bench->runs = eina_inlist_append(bench->runs, run);
+   bench->runs = eina_inlist_append(bench->runs, EINA_INLIST_GET(run));
 }
 
 EAPI Eina_Array *

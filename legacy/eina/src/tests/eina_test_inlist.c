@@ -24,7 +24,7 @@
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist
 {
-   Eina_Inlist list;
+   EINA_INLIST;
    int i;
 };
 
@@ -42,41 +42,41 @@ _eina_test_inlist_build(int i)
 
 START_TEST(eina_inlist_simple)
 {
-   Eina_Test_Inlist *lst = NULL;
+   Eina_Inlist *lst = NULL;
    Eina_Test_Inlist *tmp;
    Eina_Test_Inlist *prev;
    int i = 0;
 
    tmp = _eina_test_inlist_build(42);
-   lst = eina_inlist_append(lst, tmp);
+   lst = eina_inlist_append(lst, EINA_INLIST_GET(tmp));
    fail_if(!lst);
 
-   lst = eina_inlist_remove(lst, tmp);
-   lst = eina_inlist_prepend(lst, tmp);
+   lst = eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
+   lst = eina_inlist_prepend(lst, EINA_INLIST_GET(tmp));
 
    tmp = _eina_test_inlist_build(1664);
-   lst = eina_inlist_append_relative(lst, tmp, lst);
+   lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), lst);
    fail_if(!lst);
-   fail_if(lst->i != 42);
+   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
 
    prev = tmp;
    tmp = _eina_test_inlist_build(3227);
-   lst = eina_inlist_prepend_relative(lst, tmp, prev);
+   lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), EINA_INLIST_GET(prev));
    fail_if(!lst);
-   fail_if(lst->i != 42);
+   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
 
-   lst = eina_inlist_remove(lst, tmp);
+   lst = eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
 
-   lst = eina_inlist_append_relative(lst, tmp, lst);
-   lst = eina_inlist_remove(lst, tmp);
+   lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), lst);
+   lst = eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
 
-   lst = eina_inlist_prepend_relative(lst, tmp, lst);
+   lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), lst);
 
    tmp = _eina_test_inlist_build(27);
-   lst = eina_inlist_prepend_relative(lst, tmp, NULL);
+   lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), NULL);
 
    tmp = _eina_test_inlist_build(81);
-   lst = eina_inlist_append_relative(lst, tmp, NULL);
+   lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), NULL);
 
    EINA_INLIST_ITER_NEXT(lst, tmp)
      {
@@ -92,12 +92,12 @@ START_TEST(eina_inlist_simple)
 	++i;
      }
 
-   eina_inlist_remove(NULL, tmp);
+   eina_inlist_remove(NULL, EINA_INLIST_GET(tmp));
    lst = eina_inlist_remove(lst, NULL);
 
-   tmp = eina_inlist_find(lst, prev);
-   eina_inlist_remove(lst, tmp);
-   tmp = eina_inlist_find(lst, tmp);
+   tmp = (Eina_Test_Inlist*) eina_inlist_find(lst, EINA_INLIST_GET(prev));
+   eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
+   tmp = (Eina_Test_Inlist*) eina_inlist_find(lst, EINA_INLIST_GET(tmp));
    fail_if(tmp != NULL);
 
    while (lst)

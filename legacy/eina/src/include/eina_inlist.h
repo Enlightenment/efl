@@ -28,9 +28,7 @@
  * @{
  */
 
-/* TODO change the prototype to use an Eina_Inlist */
 typedef struct _Eina_Inlist Eina_Inlist;
-
 struct _Eina_Inlist
 {
    Eina_Inlist *next;
@@ -38,18 +36,21 @@ struct _Eina_Inlist
    Eina_Inlist *last;
 };
 
-EAPI void * eina_inlist_append(void *in_list, void *in_item);
-EAPI void * eina_inlist_prepend(void *in_list, void *in_item);
-EAPI void * eina_inlist_append_relative(void *in_list, void *in_item, void *in_relative);
-EAPI void * eina_inlist_prepend_relative(void *in_list, void *in_item, void *in_relative);
-EAPI void * eina_inlist_remove(void *in_list, void *in_item);
-EAPI void * eina_inlist_find(void *in_list, void *in_item);
+#define EINA_INLIST Eina_Inlist __in_list
+#define EINA_INLIST_GET(Inlist) &(Inlist->__in_list)
 
-EAPI Eina_Iterator *eina_inlist_iterator_new(const void *in_list);
-EAPI Eina_Accessor *eina_inlist_accessor_new(const void *in_list);
+EAPI Eina_Inlist * eina_inlist_append(Eina_Inlist *in_list, Eina_Inlist *in_item);
+EAPI Eina_Inlist * eina_inlist_prepend(Eina_Inlist *in_list, Eina_Inlist *in_item);
+EAPI Eina_Inlist * eina_inlist_append_relative(Eina_Inlist *in_list, Eina_Inlist *in_item, Eina_Inlist *in_relative);
+EAPI Eina_Inlist * eina_inlist_prepend_relative(Eina_Inlist *in_list, Eina_Inlist *in_item, Eina_Inlist *in_relative);
+EAPI Eina_Inlist * eina_inlist_remove(Eina_Inlist *in_list, Eina_Inlist *in_item);
+EAPI Eina_Inlist * eina_inlist_find(Eina_Inlist *in_list, Eina_Inlist *in_item);
 
-#define EINA_INLIST_ITER_NEXT(list, l) for (l = (void*)(Eina_Inlist *)list; l; l = (void*)((Eina_Inlist *)l)->next)
-#define EINA_INLIST_ITER_LAST(list, l) for (l = (void*)((Eina_Inlist *)list)->last; l; l = (void*)((Eina_Inlist *)l)->prev)
+EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list);
+EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list);
+
+#define EINA_INLIST_ITER_NEXT(list, l) for (l = (void*)list; l; l = (void*)(l->__in_list.next))
+#define EINA_INLIST_ITER_LAST(list, l) for (l = (void*)(list->last); l; l = (void*)(l->__in_list.prev))
 
 /** @} */
 
