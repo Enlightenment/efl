@@ -82,7 +82,7 @@ static void*
 eina_ememoa_fixed_init(const char *context, __UNUSED__ const char *option, va_list args)
 {
    struct ememoa_mempool_desc_s *desc = NULL;
-   Eina_Ememoa_Fixed_Mempool *efm;
+   Eina_Ememoa_Fixed_Mempool *efm = NULL;
    Eina_Bool thread_protect;
    int context_length;
    int item_size;
