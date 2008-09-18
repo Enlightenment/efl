@@ -219,8 +219,6 @@ eina_benchmark_run(Eina_Benchmark *bench)
 	   "set ylabel \"time\"\n"
 	   "plot ", bench->name, bench->run, bench->name, bench->run);
 
-   eina_counter_init();
-
    EINA_INLIST_ITER_NEXT(bench->runs, run)
      {
 	Eina_Counter *counter;
@@ -260,8 +258,6 @@ eina_benchmark_run(Eina_Benchmark *bench)
      }
 
    fprintf(main_script, "\n");
-
-   eina_counter_shutdown();
 
    fclose(main_script);
 
