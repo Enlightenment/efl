@@ -327,7 +327,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
        if(svr->fd < 0) goto error;
        mreq.imr_multiaddr.s_addr = inet_addr(name);
        mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-       if (setsockopt(svr->fd, SOL_IP, IP_ADD_MEMBERSHIP, &mreq,sizeof(mreq)) != 0) goto error;
+       if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq,sizeof(mreq)) != 0) goto error;
        if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &on,sizeof(on)) != 0) goto error;
        if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
        if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
