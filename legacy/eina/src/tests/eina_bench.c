@@ -21,6 +21,7 @@
 #include <limits.h>
 
 #include "eina_bench.h"
+#include "eina_mempool.h"
 
 typedef struct _Eina_Benchmark_Case Eina_Benchmark_Case;
 struct _Eina_Benchmark_Case
@@ -40,6 +41,7 @@ static const Eina_Benchmark_Case etc[] = {
 int
 main(int argc, char **argv)
 {
+   Eina_Module_Group *gp;
    Eina_Benchmark *test;
    Eina_Array *ea;
    unsigned int i;
@@ -71,7 +73,15 @@ main(int argc, char **argv)
 	eina_benchmark_free(test);
      }
 
+   eina_mempool_init();
+
+   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
+   gp = eina_mempool_module_group_get();
+   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
+
    eina_bench_e17();
+
+   eina_mempool_shutdown();
 
    eina_benchmark_shutdown();
 
