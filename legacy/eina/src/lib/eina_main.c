@@ -25,6 +25,8 @@
 #include "eina_stringshare.h"
 #include "eina_list.h"
 #include "eina_array.h"
+#include "eina_counter.h"
+#include "eina_benchmark.h"
 
 /*============================================================================*
  *                                 Global                                     *
@@ -44,6 +46,8 @@ eina_init(void)
    eina_stringshare_init();
    eina_list_init();
    eina_array_init();
+   eina_counter_init();
+   eina_benchmark_init();
 
    return r;
 }
@@ -53,6 +57,8 @@ eina_shutdown(void)
 {
    int r;
 
+   eina_benchmark_shutdown();
+   eina_counter_shutdown();
    eina_array_shutdown();
    eina_list_shutdown();
    eina_stringshare_shutdown();

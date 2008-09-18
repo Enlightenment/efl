@@ -61,6 +61,8 @@ struct _Eina_Benchmark
    Eina_Inlist *runs;
 };
 
+static int _eina_benchmark_count = 0;
+
 /**
  * @endcond
  */
@@ -89,13 +91,46 @@ struct _Eina_Benchmark
  * @{
  */
 
+EAPI int
+eina_benchmark_init(void)
+{
+   _eina_benchmark_count++;
+
+   if (_eina_benchmark_count > 1) return _eina_benchmark_count;
+
+   eina_error_init();
+   eina_array_init();
+   eina_counter_init();
+
+   return _eina_benchmark_count;
+}
+
+EAPI int
+eina_benchmark_shutdown(void)
+{
+   _eina_benchmark_count--;
+
+   if (_eina_benchmark_count != 0) return _eina_benchmark_count;
+
+   eina_counter_shutdown();
+   eina_array_shutdown();
+   eina_error_shutdown();
+
+   return 0;
+}
+
 EAPI Eina_Benchmark *
 eina_benchmark_new(const char *name, const char *run)
 {
    Eina_Benchmark *new;
 
+   eina_error_set(0);
    new = calloc(1, sizeof (Eina_Benchmark));
-   if (!new) return NULL;
+   if (!new)
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return NULL;
+     }
 
    new->name = name;
    new->run = run;
@@ -127,8 +162,13 @@ eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_
 
    if (!bench) return ;
 
+   eina_error_set(0);
    run = calloc(1, sizeof (Eina_Run));
-   if (!run) return ;
+   if (!run)
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return ;
+     }
 
    run->cb = bench_cb;
    run->name = name;

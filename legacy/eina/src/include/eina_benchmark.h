@@ -37,6 +37,9 @@ typedef struct _Eina_Benchmark Eina_Benchmark;
 typedef void (*Eina_Benchmark_Specimens)(int request);
 #define EINA_BENCHMARK(Function) ((Eina_Benchmark_Specimens)Function)
 
+EAPI int eina_benchmark_init(void);
+EAPI int eina_benchmark_shutdown(void);
+
 EAPI Eina_Benchmark *eina_benchmark_new(const char *name, const char *run);
 EAPI void eina_benchmark_free(Eina_Benchmark *bench);
 

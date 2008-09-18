@@ -46,6 +46,8 @@ main(int argc, char **argv)
 
    if (argc != 2) return -1;
 
+   eina_benchmark_init();
+
    for (i = 0; etc[i].bench_case != NULL; ++i)
      {
 	test = eina_benchmark_new(etc[i].bench_case, argv[1]);
@@ -70,6 +72,8 @@ main(int argc, char **argv)
      }
 
    eina_bench_e17();
+
+   eina_benchmark_shutdown();
 
    return 0;
 }
