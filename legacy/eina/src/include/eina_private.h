@@ -84,18 +84,6 @@ void          _eina_fps_debug_runtime_add(double t);
 extern int    _eina_fps_debug;
 /* old code finish */
 
-/* Memory Pool */
-typedef struct _Eina_Mempool_Backend
-{
-   void *(*init)(const char *context, const char *options, va_list args);
-   void (*free)(void *data, void *element);
-   void *(*alloc)(void *data, unsigned int size);
-   void *(*realloc)(void *data, void *element, unsigned int size);
-   void (*garbage_collect)(void *data);
-   void (*statistics)(void *data);
-   void (*shutdown)(void *data);
-} Eina_Mempool_Backend;
-
 /* Iterator/accessor private type */
 typedef Eina_Bool (*Eina_Iterator_Next_Callback)(Eina_Iterator *it, void **data);
 typedef void *(*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
