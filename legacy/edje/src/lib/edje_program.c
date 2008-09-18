@@ -418,7 +418,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     if (!ed->actions)
 	       _edje_animators = evas_list_remove(_edje_animators, ed);
 	  }
-	_edje_emit(ed, "program,stop", runp->program->name);
+//	_edje_emit(ed, "program,stop", runp->program->name);
 	if (_edje_block_break(ed))
 	  {
 	     if (!ed->walking_actions) free(runp);
@@ -499,7 +499,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 	     _edje_animators = evas_list_remove(_edje_animators, ed);
 	  }
      }
-   _edje_emit(ed, "program,stop", pname);
+//   _edje_emit(ed, "program,stop", pname);
    _edje_thaw(ed);
    _edje_unref(ed);
    if (free_runp) free(runp);
@@ -575,7 +575,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 			 }
 		    }
 	       }
-	     _edje_emit(ed, "program,start", pr->name);
+//	     _edje_emit(ed, "program,start", pr->name);
 	     if (_edje_block_break(ed))
 	       {
 		  ed->actions = evas_list_append(ed->actions, runp);
@@ -615,9 +615,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 			 }
 		    }
 	       }
-	     _edje_emit(ed, "program,start", pr->name);
+//	     _edje_emit(ed, "program,start", pr->name);
 	     if (_edje_block_break(ed)) goto break_prog;
-	     _edje_emit(ed, "program,stop", pr->name);
+//	     _edje_emit(ed, "program,stop", pr->name);
 	     if (_edje_block_break(ed)) goto break_prog;
 
 	     for (l = pr->after; l; l = l->next)
@@ -637,7 +637,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
      }
    else if (pr->action == EDJE_ACTION_TYPE_ACTION_STOP)
      {
-	_edje_emit(ed, "program,start", pr->name);
+//	_edje_emit(ed, "program,start", pr->name);
 	for (l = pr->targets; l; l = l->next)
 	  {
 	     Edje_Program_Target *pt;
@@ -671,21 +671,21 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	     done:
 	        continue;
 	  }
-	_edje_emit(ed, "program,stop", pr->name);
+//	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
    else if (pr->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
      {
-	_edje_emit(ed, "program,start", pr->name);
+//	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	_edje_emit(ed, pr->state, pr->state2);
 	if (_edje_block_break(ed)) goto break_prog;
-	_edje_emit(ed, "program,stop", pr->name);
+//	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
    else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
      {
-	_edje_emit(ed, "program,start", pr->name);
+//	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	for (l = pr->targets; l; l = l->next)
 	  {
@@ -710,12 +710,12 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 		    }
 	       }
 	  }
-	_edje_emit(ed, "program,stop", pr->name);
+//	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
    else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
      {
-	_edje_emit(ed, "program,start", pr->name);
+//	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	for (l = pr->targets; l; l = l->next)
 	  {
@@ -740,12 +740,12 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 		    }
 	       }
 	  }
-	_edje_emit(ed, "program,stop", pr->name);
+//	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
    else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
      {
-	_edje_emit(ed, "program,start", pr->name);
+//	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	for (l = pr->targets; l; l = l->next)
 	  {
@@ -770,25 +770,25 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 		    }
 	       }
 	  }
-	_edje_emit(ed, "program,stop", pr->name);
+//	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
    else if (pr->action == EDJE_ACTION_TYPE_SCRIPT)
      {
 	char fname[128];
 
-	_edje_emit(ed, "program,start", pr->name);
+//	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	snprintf(fname, sizeof(fname), "_p%i", pr->id);
 	_edje_embryo_test_run(ed, fname, ssig, ssrc);
-	_edje_emit(ed, "program,stop", pr->name);
+//	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
 	_edje_recalc(ed);
      }
    else
      {
-	_edje_emit(ed, "program,start", pr->name);
-	_edje_emit(ed, "program,stop", pr->name);
+//	_edje_emit(ed, "program,start", pr->name);
+//	_edje_emit(ed, "program,stop", pr->name);
      }
    if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET)
 	 /* hmm this fucks somethgin up. must look into it later */
