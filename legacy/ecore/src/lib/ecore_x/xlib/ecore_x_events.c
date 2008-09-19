@@ -834,6 +834,7 @@ _ecore_x_event_handle_destroy_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Destroy));
    if (!e) return;
    e->win =  xevent->xdestroywindow.window;
+   e->event_win = xevent->xdestroywindow.event;
    e->time = _ecore_x_event_last_time;
    if (e->win == _ecore_x_event_last_win) _ecore_x_event_last_win = 0;
    ecore_event_add(ECORE_X_EVENT_WINDOW_DESTROY, e, NULL, NULL);   
@@ -847,6 +848,7 @@ _ecore_x_event_handle_unmap_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Hide));
    if (!e) return;
    e->win = xevent->xunmap.window;
+   e->event_win = xevent->xunmap.event;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_HIDE, e, NULL, NULL);
 }
@@ -859,6 +861,7 @@ _ecore_x_event_handle_map_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Show));
    if (!e) return;
    e->win = xevent->xmap.window;
+   e->event_win = xevent->xmap.event;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW, e, NULL, NULL);
 }
@@ -884,6 +887,7 @@ _ecore_x_event_handle_reparent_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Reparent));
    if (!e) return;
    e->win = xevent->xreparent.window;
+   e->event_win = xevent->xreparent.event;
    e->parent = xevent->xreparent.parent;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_REPARENT, e, NULL, NULL);
@@ -897,6 +901,7 @@ _ecore_x_event_handle_configure_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Configure));
    if (!e) return;
    e->win = xevent->xconfigure.window;
+   e->event_win = xevent->xconfigure.event;
    e->abovewin = xevent->xconfigure.above;
    e->x = xevent->xconfigure.x;
    e->y = xevent->xconfigure.y;
@@ -917,6 +922,7 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Configure_Request));
    if (!e) return;
    e->win = xevent->xconfigurerequest.window;
+   e->parent_win = xevent->xconfigurerequest.parent;
    e->abovewin = xevent->xconfigurerequest.above;
    e->x = xevent->xconfigurerequest.x;
    e->y = xevent->xconfigurerequest.y;
