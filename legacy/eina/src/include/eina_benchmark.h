@@ -61,8 +61,8 @@ EAPI int eina_benchmark_shutdown(void);
 EAPI Eina_Benchmark *eina_benchmark_new(const char *name, const char *run);
 EAPI void eina_benchmark_free(Eina_Benchmark *bench);
 
-EAPI void eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_Specimens bench_cb,
-				  int count_start, int count_end, int count_set);
+EAPI Eina_Bool eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_Specimens bench_cb,
+				       int count_start, int count_end, int count_set);
 
 EAPI Eina_Array *eina_benchmark_run(Eina_Benchmark *bench);
 

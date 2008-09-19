@@ -235,20 +235,21 @@ eina_benchmark_free(Eina_Benchmark *bench)
  * allocation of the memory of the test to add fails, the error is set
  * to #EINA_ERROR_OUT_OF_MEMORY.
  */
-EAPI void
+EAPI Eina_Bool
 eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_Specimens bench_cb,
 			int count_start, int count_end, int count_step)
 {
    Eina_Run *run;
 
-   if (!bench) return ;
+   if (!bench) return EINA_FALSE;
+   if (count_step == 0) return EINA_FALSE;
 
    eina_error_set(0);
    run = calloc(1, sizeof (Eina_Run));
    if (!run)
      {
 	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	return ;
+	return EINA_FALSE;
      }
 
    run->cb = bench_cb;
@@ -258,6 +259,8 @@ eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_
    run->step = count_step;
 
    bench->runs = eina_inlist_append(bench->runs, EINA_INLIST_GET(run));
+
+   return EINA_TRUE;
 }
 
 /**
