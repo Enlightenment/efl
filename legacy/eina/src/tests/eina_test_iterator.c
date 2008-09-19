@@ -142,7 +142,7 @@ END_TEST
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist
 {
-   Eina_Inlist list;
+   EINA_INLIST;
    int i;
 };
 
@@ -177,32 +177,32 @@ eina_iterator_inlist_data_check(__UNUSED__ const Eina_Inlist *in_list, Eina_Test
 
 START_TEST(eina_iterator_inlist_simple)
 {
-   Eina_Test_Inlist *lst = NULL;
+   Eina_Inlist *lst = NULL;
    Eina_Test_Inlist *tmp;
    Eina_Test_Inlist *prev;
    Eina_Iterator *it;
    int i = 0;
 
    tmp = _eina_test_inlist_build(42);
-   lst = eina_inlist_append(lst, tmp);
+   lst = eina_inlist_append(lst, EINA_INLIST_GET(tmp));
    fail_if(!lst);
 
    tmp = _eina_test_inlist_build(1664);
-   lst = eina_inlist_append_relative(lst, tmp, lst);
+   lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), lst);
    fail_if(!lst);
-   fail_if(lst->i != 42);
+   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
 
    prev = tmp;
    tmp = _eina_test_inlist_build(3227);
-   lst = eina_inlist_prepend_relative(lst, tmp, prev);
+   lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), EINA_INLIST_GET(prev));
    fail_if(!lst);
-   fail_if(lst->i != 42);
+   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
 
    tmp = _eina_test_inlist_build(27);
-   lst = eina_inlist_prepend_relative(lst, tmp, NULL);
+   lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), NULL);
 
    tmp = _eina_test_inlist_build(81);
-   lst = eina_inlist_append_relative(lst, tmp, NULL);
+   lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), NULL);
 
    it = eina_inlist_iterator_new(lst);
    fail_if(!it);
