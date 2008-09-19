@@ -137,7 +137,13 @@ _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Stringshare_Group String Instance Functions
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Stringshare_Group Stringshare
  *
  * These functions allow you to store one copy of a string, and use it
  * throughout your program.
@@ -362,6 +368,10 @@ eina_stringshare_del(const char *str)
    EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
    if (getenv("EINA_ERROR_ABORT")) abort();
 }
+
+/**
+ * @}
+ */
 
 /**
  * @}

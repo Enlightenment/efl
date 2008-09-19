@@ -23,13 +23,13 @@
 #include "eina_error.h"
 
 /**
- * @addtogroup Eina_Tools_Group Tools Modules
+ * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
 
 /**
- * @defgroup Eina_Convert_Group Convert Functions
+ * @defgroup Eina_Convert_Group Convert
  *
  * @{
  */

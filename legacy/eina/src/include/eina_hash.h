@@ -24,8 +24,23 @@
 #include "eina_iterator.h"
 
 /**
+ * @addtogroup Eina_Data_Types_Group Data Types
  *
+ * @{
  */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Hash_Group Hash Table
+ *
+ * @{
+ */
+
 typedef struct _Eina_Hash Eina_Hash;
 typedef struct _Eina_Hash_Tuple Eina_Hash_Tuple;
 struct _Eina_Hash_Tuple
@@ -93,5 +108,17 @@ EAPI int eina_hash_superfast(const char *key, int len);
 static inline int eina_hash_djb2(const char *key, int len);
 
 #include "eina_inline_hash.x"
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 #endif /*EINA_HASH_H_*/

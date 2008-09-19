@@ -76,21 +76,48 @@ static int _eina_benchmark_count = 0;
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Tools_Group Tools Modules
+ * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
 
 /**
- * @addtogroup Eina_Benchmark_Group Benchmark Functions
+ * @addtogroup Eina_Benchmark_Group Benchmark
  *
- * These functions allow you to add benchmark framework in a project.
+ * These functions allow you to add benchmark framework in a project
+ * for timing critical part and detect slow parts of code. It is used
+ * in Eina to compare the time used by eina, glib, evas and ecore data
+ * types.
+ *
+ * The benchmark module must be initialized with eina_benchmark_init()
+ * and shut down with eina_benchmark_shutdown(). A benchmark is
+ * created with eina_benchmark_new() and freed with
+ * eina_benchmark_free().
+ *
+ * eina_benchmark_register() adds a test to a benchmark. That test can
+ * be run a certain amount of times. Adding more than one test to be
+ * executed allows the comparison between several parts of a program,
+ * or different implementations.
+ *
+ * eina_benchmark_run() runs all the tests registered with
+ * eina_benchmark_register(). The amount of time of each test is
+ * written in a gnuplot file.
  *
  * For more information, you can look at the @ref tutorial_benchmark_page.
  *
  * @{
  */
 
+/**
+ * @brief Initialize the benchmark module.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function sets up the error, array and counter modules or
+ * Eina. It is also called by eina_init(). It returns 0 on failure,
+ * otherwise it returns the number of times eina_error_init() has
+ * already been called.
+ */
 EAPI int
 eina_benchmark_init(void)
 {
@@ -105,6 +132,16 @@ eina_benchmark_init(void)
    return _eina_benchmark_count;
 }
 
+/**
+ * @brief Shut down the benchmark module.
+ *
+ * @return 0 when the error module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function shut down the error, array and counter modules set up
+ * by eina_array_init(). It is also called by eina_shutdown(). It returns
+ * 0 when it is called the same number of times than eina_error_init().
+ */
 EAPI int
 eina_benchmark_shutdown(void)
 {
@@ -119,6 +156,20 @@ eina_benchmark_shutdown(void)
    return 0;
 }
 
+/**
+ * @brief Create a new array.
+ *
+ * @param name The name of the benchmark.
+ * @param run The name of the run.
+ * @return @c NULL on failure, non @c NULL otherwise.
+ *
+ * This function creates a new benchmark. @p name and @p run are used
+ * to name the gnuplot file that eina_benchmark_run() will create.
+ *
+ * This function return a valid benchmark on success, or @c NULL if
+ * memory allocation fails. In that case, the error is set to
+ * #EINA_ERROR_OUT_OF_MEMORY.
+ */
 EAPI Eina_Benchmark *
 eina_benchmark_new(const char *name, const char *run)
 {
@@ -138,6 +189,15 @@ eina_benchmark_new(const char *name, const char *run)
    return new;
 }
 
+/**
+ * @brief Free a benchmark object.
+ *
+ * @param bench The benchmark to free.
+ *
+ * This function removes all the benchmark tests that have been
+ * registered and frees @p bench. If @p bench is @c NULL, this
+ * function returns immediatly.
+ */
 EAPI void
 eina_benchmark_free(Eina_Benchmark *bench)
 {
@@ -154,6 +214,27 @@ eina_benchmark_free(Eina_Benchmark *bench)
    free(bench);
 }
 
+/**
+ * @brief Add a test to a benchmark.
+ *
+ * @param bench The benchmark.
+ * @param name The name of the test.
+ * @param bench_cb The test function to be called.
+ * @param count_start The start data to be passed to @p bench_cb.
+ * @param count_end The end data to be passed to @p bench_cb.
+ * @param count_step The step data to be passed to @p bench_cb.
+ *
+ * This function adds the test named @p name to @p benchmark. @p
+ * bench_cb is the function called when the test is executed. That
+ * test can be executed a certain amount of time. @p start, @p end and
+ * @p step define a loop with a step increment. The integer that is
+ * increasing by @p step from @p start to @p end is passed to @p
+ * bench_cb when eina_benchmark_run() is called.
+ *
+ * If @p bench is @c NULL, this function returns imediatly. If the
+ * allocation of the memory of the test to add fails, the error is set
+ * to #EINA_ERROR_OUT_OF_MEMORY.
+ */
 EAPI void
 eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_Specimens bench_cb,
 			int count_start, int count_end, int count_step)
@@ -179,6 +260,31 @@ eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_
    bench->runs = eina_inlist_append(bench->runs, EINA_INLIST_GET(run));
 }
 
+/**
+ * @brief Run the benchmark tests that have been registered.
+ *
+ * @param bench The benchmark.
+ * @return The list of names of the test files.
+ *
+ * This function runs all the tests that as been registered with
+ * eina_benchmark_register() and save the result in a gnuplot
+ * file. The name of the file has the following format:
+ *
+ * @code
+ * bench_[name]_[run]%s.gnuplot
+ * @endcode
+ *
+ * where [name] and [run] are the values passed to
+ * eina_benchmark_new().
+ *
+ * Each registered test is executed and timed. The time is written to
+ * the gnuplot file. The number of times each test is executed is
+ * controlled by the parameters passed to eina_benchmark_register().
+ *
+ * If @p bench is @c NULL, this functions returns @c NULL
+ * immediatly. Otherwise, it returns the list of the names of each
+ * test.
+ */
 EAPI Eina_Array *
 eina_benchmark_run(Eina_Benchmark *bench)
 {

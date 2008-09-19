@@ -280,7 +280,19 @@ eina_list_accessor_free(Eina_Accessor_List *it)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_List_Group List Functions
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_List_Group List
  *
  * @brief give a small description here : what it is for, what it does
  * , etc...
@@ -305,14 +317,6 @@ eina_list_accessor_free(Eina_Accessor_List *it)
  */
 
 /**
- * @addtogroup Eina_List_Init_Group List Init and Shutdown Functions
- *
- * Functions that init and shut down list system.
- *
- * @{
- */
-
-/**
  * Initialize the eina list internal structure.
  * @return  Zero on failure, non-zero on successful initialization.
  */
@@ -330,18 +334,6 @@ eina_list_shutdown(void)
 {
    return eina_error_shutdown();
 }
-
-/**
- * @}
- */
-
-/**
- * @addtogroup Eina_List_Data_Group Linked List Add Functions
- *
- * Functions that add data to an Eina_List.
- *
- * @{
- */
 
 /**
  * Appends the given data to the given linked list.
@@ -599,18 +591,6 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
 }
 
 /**
- * @}
- */
-
-/**
- * @addtogroup Eina_List_Remove_Group Linked List Remove Functions
- *
- * Functions that remove data from linked lists.
- *
- * @{
- */
-
-/**
  * Removes the first instance of the specified data from the given list.
  *
  * If the specified data is not in the given list, nothing is done.
@@ -713,18 +693,6 @@ eina_list_free(Eina_List *list)
 }
 
 /**
- * @}
- */
-
-/**
- * @addtogroup Eina_List_Promote_Group List Promote Functions
- *
- * Functions that promote data of a list (?)
- *
- * @{
- */
-
-/**
  * Moves the specified data to the head of the list
  *
  * Move a specified member to the head of the list
@@ -777,18 +745,6 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
    move_list->next = list;
    return move_list;
 }
-
-/**
- * @}
- */
-
-/**
- * @addtogroup Eina_List_Find_Group Linked List Find Functions
- *
- * Functions that find specified data in a linked list.
- *
- * @{
- */
 
 /**
  * Find a member of a list and return the member
@@ -939,18 +895,6 @@ eina_list_nth_list(const Eina_List *list, unsigned int n)
 }
 
 /**
- * @}
- */
-
-/**
- * @addtogroup Eina_List_Traverse_Group Linked List Traverse Functions
- *
- * Functions that you can use to traverse a linked list.
- *
- * @{
- */
-
-/**
  * Get the last list node in the list
  * @param list The list to get the last list node from
  * @return The last list node in the list @p list
@@ -1022,18 +966,6 @@ static inline Eina_List *eina_list_next(const Eina_List *list);
 static inline Eina_List *eina_list_prev(const Eina_List *list);
 
 /**
- * @}
- */
-
-/**
- * @addtogroup Eina_List_General_Group Linked List General Functions
- *
- * Miscellaneous functions that work on linked lists.
- *
- * @{
- */
-
-/**
  * Get the list node data member
  * @param list The list node to get the data member of
  * @return The data member from the list node @p list
@@ -1074,18 +1006,6 @@ static inline void *eina_list_data(const Eina_List *list);
  * @endcode
  */
 static inline unsigned int eina_list_count(const Eina_List *list);
-
-/**
- * @}
- */
-
-/**
- * @addtogroup Eina_List_Ordering_Group Linked List Ordering Functions
- *
- * Functions that change the ordering of data in a linked list.
- *
- * @{
- */
 
 /**
  * Reverse all the elements in the list
@@ -1262,10 +1182,6 @@ eina_list_sort(Eina_List *list, unsigned int size, int (*func)(void *, void *))
    return list;
 }
 
-/**
- * @}
- */
-
 EAPI Eina_Iterator *
 eina_list_iterator_new(const Eina_List *list)
 {
@@ -1314,6 +1230,14 @@ eina_list_accessor_new(const Eina_List *list)
 
    return &it->accessor;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 /**
  * @}

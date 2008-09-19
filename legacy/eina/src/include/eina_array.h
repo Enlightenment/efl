@@ -27,14 +27,26 @@
 #include "eina_accessor.h"
 
 /**
- * @defgroup Eina_Array_Group Array Functions
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Array_Group Array
  *
  * @{
  */
 
 /**
  * @typedef Eina_Array
- * Type for generic vector.
+ * Type for a generic vector.
  */
 typedef struct _Eina_Array Eina_Array;
 
@@ -112,6 +124,14 @@ EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array);
        ++(index), item = *(++(iterator)))
 
 #include "eina_inline_array.x"
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 /**
  * @}

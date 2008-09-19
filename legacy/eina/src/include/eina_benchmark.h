@@ -22,20 +22,38 @@
 #include "eina_array.h"
 
 /**
- * @addtogroup Eina_Tools_Group Tools Modules
+ * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
 
 /**
- * @defgroup Eina_Benchmark_Group Benchmark Functions
+ * @defgroup Eina_Benchmark_Group Benchmark
  *
  * @{
  */
 
+/**
+ * @typedef Eina_Benchmark
+ * Type for a benchmark.
+ */
 typedef struct _Eina_Benchmark Eina_Benchmark;
+
+/**
+ * @typedef Eina_Benchmark_Specimens
+ * Type for a test function to be called when running a benchmark.
+ */
 typedef void (*Eina_Benchmark_Specimens)(int request);
-#define EINA_BENCHMARK(Function) ((Eina_Benchmark_Specimens)Function)
+
+/**
+ * @def EINA_BENCHMARK
+ * @brief cast to an #Eina_Benchmark_Specimens.
+ *
+ * @param function The function to cast.
+ *
+ * This macro casts @p function to Eina_Benchmark_Specimens.
+ */
+#define EINA_BENCHMARK(function) ((Eina_Benchmark_Specimens)function)
 
 EAPI int eina_benchmark_init(void);
 EAPI int eina_benchmark_shutdown(void);

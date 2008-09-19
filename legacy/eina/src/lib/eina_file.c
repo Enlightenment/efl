@@ -66,15 +66,42 @@ void *alloca (size_t);
  *============================================================================*/
 
 /*============================================================================*
- *                                   API                                      * 
+ *                                   API                                      *
  *============================================================================*/
 
 /**
- * List all files on the directory calling the function for every file found
- * @param dir The directory name
- * @param recursive Iterate recursively in the directory
- * @param cb The callback to be called
- * @param data The data to pass to the callback
+ * @addtogroup Eina_Tools_Group Tools
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_File_Group Memory File
+ *
+ * @brief Functions to traverse directories and split paths
+ *
+ * To be documented...
+ *
+ * @{
+ */
+
+/**
+ * @brief List all files on the directory calling the function for every file found.
+ *
+ * @param dir The directory name.
+ * @param recursive Iterate recursively in the directory.
+ * @param cb The callback to be called.
+ * @param data The data to pass to the callback.
+ * @return #EINA_TRUE on success, #EINA_FALSE oterwise.
+ *
+ * This function lists all the files in @p dir. To list also all the
+ * sub directoris recursively, @p recursive must be set to #EINA_TRUE,
+ * otherwise it must be set to #EINA_FALSE. For each found file, @p cb
+ * is called and @p data is passed to it.
+ *
+ * If @p cb or @p dir are @c NULL, or if @p dir is a string of size 0,
+ * or if @p dir can not be opened, this function returns #EINA_FALSE
+ * immediatly. otherwise, it returns #EINA_TRUE.
  */
 EAPI Eina_Bool
 eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb cb, void *data)
@@ -189,7 +216,15 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 }
 
 /**
+ * @brief Split a path according to the delimiter of the filesystem.
  *
+ * @param path The path to split.
+ * @return An array of the parts of the path to split.
+ *
+ * This function splits @p path according to the delimiter of the used
+ * filesystem. If  @p path is @c NULL or if the array can not be
+ * created, @c NULL is returned, otherwise, an array with the
+ * different parts of @p path is returned.
  */
 EAPI Eina_Array *
 eina_file_split(char *path)
@@ -221,3 +256,11 @@ eina_file_split(char *path)
 
 	return ea;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

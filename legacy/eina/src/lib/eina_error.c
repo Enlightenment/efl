@@ -413,13 +413,13 @@ static char *_colors[EINA_ERROR_LEVELS] = {
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Tools_Group Tools Modules
+ * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
 
 /**
- * @addtogroup Eina_Error_Group Error Functions
+ * @addtogroup Eina_Error_Group Error
  *
  * @brief These functions provide error management for projects.
  *

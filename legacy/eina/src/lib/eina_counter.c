@@ -110,13 +110,13 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Tools_Group Tools Modules
+ * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
 
 /**
- * @addtogroup Eina_Counter_Group Counter Functions
+ * @addtogroup Eina_Counter_Group Counter
  *
  * These functions allow you to get the time spent in a part of a code.
  *

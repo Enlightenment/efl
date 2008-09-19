@@ -284,7 +284,19 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Hash_Group Hash Functions
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Hash_Group Hash Table
  *
  * @brief give a small description here : what it is for, what it does
  * , etc...
@@ -309,16 +321,14 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  */
 
 /**
- * @addtogroup Eina_Hash_Init_Group Hash Init and Shutdown Functions
+ * @brief Initialize the hash table module.
  *
- * Functions that init and shut down hash system.
+ * @return 1 or greater on success, 0 on error.
  *
- * @{
- */
-
-/**
- * Initialize the eina hash internal structure.
- * @return  Zero on failure, non-zero on successful initialization.
+ * This function just sets up the error module or Eina. It is also
+ * called by eina_init(). It returns 0 on failure, otherwise it
+ * returns the number of times eina_error_init() has already been
+ * called.
  */
 EAPI int
 eina_hash_init(void)
@@ -327,25 +337,21 @@ eina_hash_init(void)
 }
 
 /**
- * Shutdown the eina hash internal structures
+ * @brief Shut down the hash table module.
+ *
+ * @return 0 when the error module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function just shut down the error module set up by
+ * eina_hash_init(). It is also called by eina_shutdown(). It returns
+ * 0 when it is called the same number of times than
+ * eina_error_init().
  */
 EAPI int
 eina_hash_shutdown(void)
 {
    return eina_error_shutdown();
 }
-
-/**
- * @}
- */
-
-/**
- * @addtogroup Eina_Hash_Creation_Group Hash Creation Functions
- *
- * Functions that create hash tables.
- *
- * @{
- */
 
 EAPI Eina_Hash *
 eina_hash_new(Eina_Key_Length key_length_cb,
@@ -439,18 +445,6 @@ eina_hash_free(Eina_Hash *hash)
      }
    free(hash);
 }
-
-/**
- * @}
- */
-
-/**
- * @addtogroup Eina_Hash_Data_Group Hash Data Functions
- *
- * Functions that add, access or remove data from hashes.
- *
- * @{
- */
 
 /**
  * Adds an entry to the given hash table.
@@ -793,21 +787,9 @@ eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
    return eina_hash_modify_by_hash(hash, key, key_length, hash_num, data);
 }
 
-/**
- * @}
- */
-
 /*============================================================================*
  *                                Iterator                                    *
  *============================================================================*/
-
-/**
- * @addtogroup Eina_Hash_Iterator_Group Hash Iterator Functions
- *
- * Functions that iterate over hash tables.
- *
- * @{
- */
 
 /**
  * Call a function on every member stored in the hash table
@@ -920,10 +902,6 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    return &it->iterator;
 }
 
-/**
- * @}
- */
-
 /* Common hash functions */
 
 /* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html)
@@ -977,6 +955,14 @@ eina_hash_superfast(const char *key, int len)
 
    return hash;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 /**
  * @}

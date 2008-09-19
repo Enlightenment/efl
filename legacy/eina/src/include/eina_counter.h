@@ -24,13 +24,13 @@
 #include "eina_types.h"
 
 /**
- * @addtogroup Eina_Tools_Group Tools Modules
+ * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
 
 /**
- * @defgroup Eina_Counter_Group Counter Functions
+ * @defgroup Eina_Counter_Group Counter
  *
  * @{
  */

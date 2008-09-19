@@ -78,13 +78,13 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  */
 
 /**
- * @addtogroup Eina_Tools_Group Tools Modules
+ * @addtogroup Eina_Tools_Group Tools
  *
  * @{
  */
 
 /**
- * @addtogroup Eina_Convert_Group Convert Functions
+ * @addtogroup Eina_Convert_Group Convert
  *
  * These functions allow you to convert integer or real numbers to
  * string or conversely.

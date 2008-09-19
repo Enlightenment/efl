@@ -144,7 +144,19 @@ eina_array_grow(Eina_Array *array)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Array_Group Array Functions
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Array_Group Array
  *
  * @brief These functions provide array management.
  *
@@ -249,7 +261,8 @@ eina_array_new(unsigned int step)
  *
  * This function frees @p array. It calls first eina_array_flush() then
  * free the memory of the pointeur. It's up to the user to free the
- * memory allocated for the elements of @p array.
+ * memory allocated for the elements of @p array. For performance
+ * reasons, there is no check of @p array.
  */
 EAPI void
 eina_array_free(Eina_Array *array)
@@ -315,6 +328,7 @@ eina_array_flush(Eina_Array *array)
  * @param array The array.
  * @param keep The functions which selects the data to keep.
  * @param gdata The data to pass to the function keep.
+ * @return #EINA_TRUE on success, #EINA_FALSE oterwise.
  *
  * This function rebuilds @p array be specifying the elements to keep
  * with the function @p keep. @p gdata is an additional data to pass
@@ -322,7 +336,7 @@ eina_array_flush(Eina_Array *array)
  * array. If it is @c NULL or invalid, the program may crash.
  *
  * This function always return a valid array. If it wasn't able to
- * remove items due to an allocation failure, it will return EINA_FALSE
+ * remove items due to an allocation failure, it will return #EINA_FALSE
  * and the error is set to #EINA_ERROR_OUT_OF_MEMORY.
  */
 EAPI Eina_Bool
@@ -474,6 +488,14 @@ eina_array_accessor_new(const Eina_Array *array)
 
    return &it->accessor;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 /**
  * @}

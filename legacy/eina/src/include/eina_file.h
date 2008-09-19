@@ -23,16 +23,42 @@
 #include "eina_array.h"
 
 /**
- * @defgroup File_Group Memory File
+ * @addtogroup Eina_Tools_Group Tools
+ *
  * @{
  */
 
+/**
+ * @defgroup Eina_File_Group Memory File
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_File_Dir_List_Cb
+ * Type for a callback.
+ */
 typedef void (*Eina_File_Dir_List_Cb)(const char *name, const char *path, void *data);
-#define EINA_FILE_DIR_LIST_CB(Function) ((Eina_File_Dir_List_Cb)Function)
+
+/**
+ * @def EINA_FILE_DIR_LIST_CB
+ * @brief cast to an #Eina_File_Dir_List_Cb.
+ *
+ * @param function The function to cast.
+ *
+ * This macro casts @p function to Eina_File_Dir_List_Cb.
+ */
+#define EINA_FILE_DIR_LIST_CB(function) ((Eina_File_Dir_List_Cb)function)
 
 EAPI Eina_Bool eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb cb, void *data);
 EAPI Eina_Array *eina_file_split(char *path);
 
-/** @} */
+/**
+ * @}
+ */
 
-#endif /*EINA_FILE_H_*/
+/**
+ * @}
+ */
+
+#endif /* EINA_FILE_H_ */

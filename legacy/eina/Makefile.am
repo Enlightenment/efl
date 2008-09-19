@@ -95,7 +95,7 @@ if EINA_ENABLE_BENCH
 benchmark:
 	@make -C src benchmark
 	@mkdir result || true
-	@cd result && ../src/tests/eina_bench `date +%F_%T`
+	@cd result && ../src/tests/eina_bench `date +%F_%s`
 
 else
 

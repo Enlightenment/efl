@@ -36,7 +36,7 @@ EAPI Eina_Bool eina_array_grow(Eina_Array *array);
  */
 
 /**
- * @addtogroup Eina_Array_Group Array Functions
+ * @addtogroup Eina_Array_Group Array
  *
  * @brief These functions provide array management.
  *
