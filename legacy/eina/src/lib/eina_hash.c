@@ -100,9 +100,15 @@ struct _Eina_Hash_Each
 #endif
 
 static inline int
-_eina_hash_rbtree_key(const Eina_Hash_El *el, const char *key, int key_length, Eina_Key_Cmp cmp)
+_eina_hash_rbtree_key(const Eina_Hash_El *el, const Eina_Hash_Tuple *tuple, __UNUSED__ int key_length, Eina_Key_Cmp cmp)
 {
-   return cmp(el->tuple.key, el->tuple.key_length, key, key_length);
+   int result;
+
+   result = cmp(el->tuple.key, el->tuple.key_length, tuple->key, tuple->key_length);
+   if (result == 0)
+     if (tuple->data && el->tuple.data != tuple->data)
+       return 1;
+   return result;
 }
 
 static Eina_Rbtree_Direction
@@ -125,13 +131,13 @@ _eina_hash_rbtree_each(__UNUSED__ const Eina_Rbtree *container, const Eina_Hash_
 }
 
 static inline Eina_Hash_El *
-_eina_hash_find_by_hash(const Eina_Hash *hash, const char *key, int key_length, int key_hash)
+_eina_hash_find_by_hash(const Eina_Hash *hash, Eina_Hash_Tuple *tuple, int key_hash)
 {
    Eina_Hash_El *el;
 
    key_hash &= 0xFF;
 
-   el = (Eina_Hash_El*) eina_rbtree_inline_lookup(hash->buckets[key_hash], key, key_length, EINA_RBTREE_CMP_KEY_CB(_eina_hash_rbtree_key), hash->key_cmp_cb);
+   el = (Eina_Hash_El*) eina_rbtree_inline_lookup(hash->buckets[key_hash], tuple, sizeof (Eina_Hash_Tuple), EINA_RBTREE_CMP_KEY_CB(_eina_hash_rbtree_key), hash->key_cmp_cb);
    return el;
 }
 
@@ -647,12 +653,18 @@ EAPI Eina_Bool
 eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
 {
    Eina_Hash_El *el = NULL;
+   Eina_Hash_Tuple tuple;
+
+   tuple.key = (void *) key;
+   tuple.key_length = key_length;
+   tuple.data = (void *) data;
 
    if (!hash) return EINA_FALSE;
    if (!key) el = _eina_hash_find_by_data(hash, data, &key_hash);
-   else el = _eina_hash_find_by_hash(hash, key, key_length, key_hash);
+   else el = _eina_hash_find_by_hash(hash, &tuple, key_hash);
 
    if (!el) return EINA_FALSE;
+   if (data && el->tuple.data != data) return EINA_FALSE;
 
    key_hash &= 0xFF;
 
@@ -706,10 +718,15 @@ EAPI void *
 eina_hash_find_by_hash(const Eina_Hash *hash, const void *key, int key_length, int key_hash)
 {
    Eina_Hash_El *el;
+   Eina_Hash_Tuple tuple;
 
    if ((!hash) || (!key)) return NULL;
 
-   el = _eina_hash_find_by_hash(hash, key, key_length, key_hash);
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   el = _eina_hash_find_by_hash(hash, &tuple, key_hash);
    if (el) return el->tuple.data;
    return NULL;
 }
@@ -751,10 +768,15 @@ eina_hash_modify_by_hash(Eina_Hash *hash, const void *key, int key_length, int k
 {
    Eina_Hash_El *el;
    void *old_data = NULL;
+   Eina_Hash_Tuple tuple;
 
    if (!hash) return NULL;
 
-   el = _eina_hash_find_by_hash(hash, key, key_length, key_hash);
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   el = _eina_hash_find_by_hash(hash, &tuple, key_hash);
    if (el)
      {
 	old_data = el->tuple.data;

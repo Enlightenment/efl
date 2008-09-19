@@ -138,9 +138,34 @@ START_TEST(eina_hash_extended)
 }
 END_TEST
 
+START_TEST(eina_hash_double_item)
+{
+   Eina_Hash *hash = NULL;
+   int i[] = { 7, 7 };
+   int *test;
+
+   fail_if(eina_hash_init() <= 0);
+
+   hash = eina_hash_string_superfast_new();
+   fail_if(hash == NULL);
+
+   fail_if(eina_hash_add(hash, "7", &i[0]) != EINA_TRUE);
+   fail_if(eina_hash_add(hash, "7", &i[1]) != EINA_TRUE);
+
+   fail_if(eina_hash_del(hash, "7", &i[1]) != EINA_TRUE);
+   test = eina_hash_find(hash, "7");
+   fail_if(test != &i[0]);
+
+   eina_hash_free(hash);
+
+   fail_if(eina_hash_shutdown() > 0);
+}
+END_TEST
+
 void eina_test_hash(TCase *tc)
 {
    tcase_add_test(tc, eina_hash_init_shutdown);
    tcase_add_test(tc, eina_hash_simple);
    tcase_add_test(tc, eina_hash_extended);
+   tcase_add_test(tc, eina_hash_double_item);
 }
