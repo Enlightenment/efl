@@ -249,15 +249,18 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
 	     el = (Evas_Hash_El *)l;
 	     if (!strcmp(el->key, key))
 	       {
-		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		  free(el);
-		  hash->population--;
-		  if (hash->population <= 0)
+                  if ((!data) || (el->data == data))
 		    {
-		       free(hash);
-		       hash = NULL;
+		       hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
+		       free(el);
+		       hash->population--;
+		       if (hash->population <= 0)
+			 {
+			    free(hash);
+			    hash = NULL;
+			 }
+		       return hash;
 		    }
-		  return hash;
 	       }
 	  }
      }
