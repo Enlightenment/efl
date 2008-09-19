@@ -684,29 +684,28 @@ eet_flush(Eet_File *ef)
 EAPI int
 eet_init(void)
 {
+   eet_initcount++;
+
+   if (eet_initcount > 1) return eet_initcount;
+
 #ifdef HAVE_OPENSSL
-   /* Just load the crypto library error strings,
-    * SSL_load_error_strings() loads the crypto AND the SSL ones */
-   /* SSL_load_error_strings();*/
-   static int call_once = 0;
-
-   if (call_once == 0)
-     {
-	call_once = 1;
-	ERR_load_crypto_strings();
-     }
-
+   ERR_load_crypto_strings();
 #endif
-   return ++eet_initcount;
+
+   return eet_initcount;
 }
 
 EAPI int
 eet_shutdown(void)
 {
-   if (--eet_initcount == 0)
-     {
-	eet_clearcache();
-     }
+   eet_initcount--;
+
+   if (eet_initcount > 0) return eet_initcount;
+
+   eet_clearcache();
+#ifdef HAVE_OPENSSL
+   ERR_free_strings();
+#endif
 
    return eet_initcount;
 }
