@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: evil
 Description: Library that ports on Windows some specific Unix functions.
 Version: @VERSION@
-Libs: -L${libdir} -levil -lmman -ldl
+Libs: -L${libdir} -levil -ldl
 Libs.private:
 Cflags: -I${includedir}

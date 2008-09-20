@@ -66,7 +66,6 @@ extern "C" {
 #include <limits.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <locale.h>
 
 
 #ifdef PATH_MAX
