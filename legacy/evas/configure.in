@@ -389,7 +389,7 @@ AC_MSG_RESULT($want_evas_software_xcb)
 if test "x$want_evas_software_xcb" = "xyes"; then
   PKG_CHECK_MODULES(
     XCB,
-    xcb xcb-shm xcb-image pixman-1,
+    xcb xcb-shm xcb-image >= 0.2.1 pixman-1,
     [
       AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
       have_evas_software_xcb="yes"
@@ -452,7 +452,7 @@ if test "x$want_evas_sdl" = "xyes"; then
     ],
     [
       if test "x$want_evas_sdl" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([Sdl not found (strict dependencies checking)])
+        AC_MSG_ERROR([SDL not found (strict dependencies checking)])
       fi
     ]
   )
@@ -759,7 +759,7 @@ AC_MSG_RESULT($want_evas_xrender_xcb)
 if test "x$want_evas_xrender_xcb" = "xyes"; then
   PKG_CHECK_MODULES(
     XCBRENDER,
-    xcb xcb-shm xcb-render xcb-image,
+    xcb xcb-shm xcb-render xcb-image >= 0.2.1,
     [
       AC_DEFINE(BUILD_ENGINE_XRENDER_XCB, 1, [Xrender XCB Rendering Backend])
       have_evas_xrender_xcb="yes"
