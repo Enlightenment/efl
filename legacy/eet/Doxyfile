@@ -1,7 +1,7 @@
 PROJECT_NAME           = Eet
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = doc
-INPUT                  = eet.c.in src/lib/Eet.h
+INPUT                  = eet.c src/lib/Eet.h
 IMAGE_PATH             = doc/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
