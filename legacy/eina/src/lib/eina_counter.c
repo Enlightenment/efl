@@ -16,14 +16,6 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-
-/**
- * @page tutorial_counter_page Counter Tutorial
- *
- * to be written...
- *
- */
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -118,9 +110,79 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
 /**
  * @addtogroup Eina_Counter_Group Counter
  *
- * These functions allow you to get the time spent in a part of a code.
+ * @brief These functions allow you to get the time spent in a part of a code.
  *
- * For more information, you can look at the @ref tutorial_counter_page.
+ * The counter system must be initialized with eina_counter_init() and
+ * shut down with eina_counter_shutdown(). The create a counter, use
+ * eina_counter_add(). To free it, use eina_counter_delete().
+ *
+ * To time a part of a code, call eina_counter_start() just before it,
+ * and eina_counter_stop() just after it. Each time you start to time
+ * a code, a clock is added to a list. You can give a number of that
+ * clock with the second argument of eina_counter_stop(). To send all
+ * the registered clocks to a stream (like stdout, ofr a file), use
+ * eina_counter_dump().
+ *
+ * Here is a straightforward example:
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <eina_counter.h>
+ *
+ * void test_malloc(void)
+ * {
+ *    int i;
+ *
+ *    for (i = 0; i < 100000; ++i)
+ *    {
+ *       void *buf;
+ *
+ *       buf = malloc(100);
+ *       free(buf);
+ *    }
+ * }
+ *
+ * int main(void)
+ * {
+ *    Eina_Counter *counter;
+ *
+ *    if (!eina_counter_init())
+ *    {
+ *        printf("Error during the initialization of eina_counter module\n");
+ *        return EXIT_FAILURE;
+ *    }
+ *
+ *    counter = eina_counter_add("malloc");
+ *
+ *    eina_counter_start(counter);
+ *    test_malloc();
+ *    eina_counter_stop(counter, 1);
+ *
+ *    eina_counter_dump(counter, stdout);
+ *
+ *    eina_counter_delete(counter);
+ *    eina_counter_shutdown();
+ *
+ *    return EXIT_SUCCESS;
+ * }
+ * @endcode
+ *
+ * Compile this code with the following commant:
+ *
+ * @code
+ * gcc -Wall -o test_eina_counter test_eina.c `pkg-config --cflags --libs eina`
+ * @endcode
+ *
+ * The result should be something like that:
+ *
+ * @code
+ * # specimen	experiment time	starting time	ending time
+ * 1	9794125	783816	10577941
+ * @endcode
+ *
+ * Note that the displayed time is in nanosecond.
  *
  * @{
  */
@@ -282,13 +344,13 @@ eina_counter_start(Eina_Counter *counter)
  * @brief Stop the time count.
  *
  * @param counter The counter.
- * @param specimen The specimen.
+ * @param specimen The number of the test.
  *
  * This function stop the timing that has been started with
  * eina_counter_start(). @p counter must be the same than the one used
- * with eina_counter_start(). @p specimen is the number of times the
- * test should be done. If @p counter or its associated clock are
- * @c NULL, or if the time can't be retrieved the function exits.
+ * with eina_counter_start(). @p specimen is the number of the
+ * test. If @p counter or its associated clock are  @c NULL, or if the
+ * time can't be retrieved the function exits.
  */
 EAPI void
 eina_counter_stop(Eina_Counter *counter, int specimen)
@@ -322,6 +384,8 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
  * \# specimen    experiment time    starting time    ending time
  * 1              208                120000           120208
  * @endcode
+ *
+ * The unit of time is the nanosecond.
 */
 EAPI void
 eina_counter_dump(Eina_Counter *counter, FILE *out)
