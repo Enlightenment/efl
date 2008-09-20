@@ -15,6 +15,13 @@ AC_PROG_CXX
 AC_C_BIGENDIAN
 AC_PROG_CC
 AM_PROG_CC_STDC
+m4_ifdef([AC_PROG_OBJC],
+         [AC_PROG_OBJC],
+         [AC_CHECK_TOOL([OBJC], [gcc])
+          AC_SUBST([OBJC])
+          AC_SUBST([OBJCFLAGS])
+         ])
+AC_PROG_OBJC
 AC_HEADER_STDC
 AC_C_CONST
 AC_CHECK_SIZEOF(int, 4)
@@ -50,6 +57,7 @@ requirements_ecore_x=""
 requirements_ecore_win32=""
 requirements_ecore_wince=""
 requirements_ecore_sdl=""
+requirements_ecore_quartz=""
 
 dnl The first call to PKG_CHECK_MODULES is done conditionally,
 dnl so we should include this here:
@@ -71,6 +79,7 @@ case "$host_os" in
 		AC_DEFINE(EFL_ECORE_IMF_BUILD, 1, [Define to mention that ecore imf is built.])
 		AC_DEFINE(EFL_ECORE_JOB_BUILD, 1, [Define to mention that ecore job is built.])
 		AC_DEFINE(EFL_ECORE_SDL_BUILD, 1, [Define to mention that ecore SDL is built.])
+		AC_DEFINE(EFL_ECORE_QUARTZ_BUILD, 1, [Define to mention that ecore Quartz is built.])
 		AC_DEFINE(EFL_ECORE_TXT_BUILD, 1, [Define to mention that ecore txt is built.])
 		AC_DEFINE(EFL_ECORE_WIN32_BUILD, 1, [Define to mention that ecore Win32 is built.])
 		AC_DEFINE(HAVE_DLFCN_H, 1, [Define to 1 if you have the <dlfcn.h> header file.])
@@ -709,6 +718,49 @@ if test "x$have_ecore_sdl" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   fi
 fi
 
+dnl ecore_quartz
+
+quartz_cflags="";
+quartz_libs="";
+have_quartz="no"
+AC_CHECK_HEADER(Cocoa/Cocoa.h, 
+               [ have_quartz="yes"; 
+	         quartz_cflags="-framework Cocoa"; 
+		 quartz_libs="-framework Cocoa" ], 
+	       [ have_quartz="no" ])
+
+ECORE_CHECK_MODULE([QUARTZ], [no], [$have_quartz])
+
+dnl ecore_evas_quartz
+have_ecore_evas_quartz="no";
+if test "x$have_ecore_quartz" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
+    want_ecore_evas_quartz="yes";
+    AC_MSG_CHECKING([whether ecore_evas Quartz support is to be built])
+    AC_ARG_ENABLE(ecore-evas-quartz,
+        AC_HELP_STRING([--disable-ecore-evas-quartz], [disable Quartz in the ecore_evas module]),
+        [ want_ecore_evas_quartz=$enableval ]
+    )
+    AC_MSG_RESULT($want_ecore_evas_quartz)
+
+    if test "x$want_ecore_evas_quartz" = "xyes"; then
+        save_CFLAGS=$CFLAGS
+        QUARTZ_CFLAGS=`-framework Cocoa`
+        QUARTZ_LIBS=`-framework Cocoa`
+        CFLAGS="$CFLAGS $QUARTZ_CFLAGS"
+        AC_SUBST(QUARTZ_CFLAGS)
+        AC_SUBST(QUARTZ_LIBS)
+
+        PKG_CHECK_MODULES(EVAS_QUARTZ, evas-quartz, [
+            AC_DEFINE(BUILD_ECORE_EVAS_QUARTZ, 1, [Support for Quartz in Ecore_Evas])
+            have_ecore_evas_quartz="yes"
+            requirements_ecore_evas="$requirements_ecore_evas ecore-quartz"
+        ], [
+            have_ecore_evas_quartz="no"
+        ])
+    CFLAGS=$save_CFLAGS
+  fi
+fi
+
 dnl ecore_evas_buffer
 want_ecore_evas_buffer="yes";
 have_ecore_evas_buffer="no";
@@ -815,6 +867,7 @@ AC_SUBST(requirements_ecore_job)
 AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_sdl)
+AC_SUBST(requirements_ecore_quartz)
 
 # set up conditionals
 AM_CONDITIONAL(BUILD_ECORE_X, test $have_ecore_x = yes)
@@ -838,6 +891,7 @@ ecore-txt.pc
 ecore-x.pc
 ecore-win32.pc
 ecore-sdl.pc
+ecore-quartz.pc
 ecore-wince.pc
 ecore.pc
 src/Makefile
@@ -850,6 +904,7 @@ src/lib/ecore_x/xlib/Makefile
 src/lib/ecore_x/xcb/Makefile
 src/lib/ecore_fb/Makefile
 src/lib/ecore_sdl/Makefile
+src/lib/ecore_quartz/Makefile
 src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Makefile
 src/lib/ecore_imf/Makefile
@@ -933,6 +988,7 @@ else
 fi
 echo "  Ecore_Win32..................: $have_ecore_win32"
 echo "  Ecore_SDL....................: $have_ecore_sdl"
+echo "  Ecore_Quartz.................: $have_ecore_quartz"
 echo "  Ecore_FB.....................: $have_ecore_fb"
 echo "  Ecore_DFB....................: $have_ecore_directfb"
 echo "  Ecore_WinCE..................: $have_ecore_wince"
@@ -953,6 +1009,7 @@ if test "x$have_ecore_evas" = "xyes" ; then
   echo "    Direct3D...................: $have_ecore_evas_direct3d"
   echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"
   echo "    Software SDL...............: $have_ecore_evas_sdl"
+  echo "    Quartz.....................: $have_ecore_evas_quartz"
   echo "    DirectFB...................: $have_ecore_evas_dfb"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Software 16bit X11.........: $have_ecore_evas_software_16_x11"

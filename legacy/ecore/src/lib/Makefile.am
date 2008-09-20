@@ -10,6 +10,7 @@ ecore_x \
 ecore_win32 \
 ecore_wince \
 ecore_sdl \
+ecore_quartz \
 ecore_ipc \
 ecore_evas \
 ecore_config \

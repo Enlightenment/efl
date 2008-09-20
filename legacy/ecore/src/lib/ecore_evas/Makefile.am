@@ -40,6 +40,14 @@ ECORE_SDL_INC =
 ECORE_SDL_LIB =
 endif
 
+if BUILD_ECORE_QUARTZ
+ECORE_QUARTZ_INC = -I$(top_srcdir)/src/lib/ecore_quartz @QUARTZ_CFLAGS@ -xobjective-c -framework Cocoa
+ECORE_QUARTZ_LIB = $(top_builddir)/src/lib/ecore_quartz/libecore_quartz.la
+else
+ECORE_QUARTZ_INC =
+ECORE_QUARTZ_LIB =
+endif
+
 if BUILD_ECORE_WINCE
 ECORE_WINCE_INC = -I$(top_srcdir)/src/lib/ecore_wince
 ECORE_WINCE_LIB = $(top_builddir)/src/lib/ecore_wince/libecore_wince.la
@@ -58,6 +66,7 @@ $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
 $(ECORE_WIN32_INC) \
 $(ECORE_SDL_INC) \
+$(ECORE_QUARTZ_INC) \
 $(ECORE_WINCE_INC) \
 @EVAS_CFLAGS@ \
 @XCB_CFLAGS@
@@ -78,6 +87,7 @@ ecore_evas_buffer.c \
 ecore_evas_directfb.c \
 ecore_evas_win32.c \
 ecore_evas_sdl.c \
+ecore_evas_quartz.c \
 ecore_evas_wince.c
 
 libecore_evas_la_LIBADD = \
@@ -86,11 +96,13 @@ $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
 $(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
+$(ECORE_QUARTZ_LIB) \
 $(ECORE_WINCE_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @XCB_LIBS@ \
 @SDL_LIBS@ \
+@QUARTZ_LIBS@ \
 @EVIL_LIBS@
 
 libecore_evas_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
@@ -101,6 +113,7 @@ $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
 $(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
+$(ECORE_QUARTZ_LIB) \
 $(ECORE_WINCE_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la
 
