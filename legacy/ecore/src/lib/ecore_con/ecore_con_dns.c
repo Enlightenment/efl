@@ -129,12 +129,12 @@ ecore_con_dns_lookup(const char *name,
      }
    /* PARENT */
    cbdata->handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _ecore_con_dns_exit_handler, cbdata);
+   close(fd[1]);
    if (!cbdata->handler)
      {
 	ecore_main_fd_handler_del(cbdata->fdh);
 	free(cbdata);
 	close(fd[0]);
-	close(fd[1]);
 	return 0;
      }
    dns_slaves = _ecore_list2_append(dns_slaves, cbdata);
@@ -169,7 +169,6 @@ _ecore_con_dns_slave_free(CB_Data *cbdata)
 {
    dns_slaves = _ecore_list2_remove(dns_slaves, cbdata);
    close(ecore_main_fd_handler_fd_get(cbdata->fdh));
-   close(cbdata->fd2);
    ecore_main_fd_handler_del(cbdata->fdh);
    ecore_event_handler_del(cbdata->handler);
    free(cbdata);
