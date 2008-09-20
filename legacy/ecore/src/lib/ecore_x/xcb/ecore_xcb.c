@@ -1267,6 +1267,56 @@ ecore_x_pointer_control_get(int *accel_num,
 }
 
 EAPI int
+ecore_x_pointer_mapping_set(unsigned char *map,
+			    int nmap)
+{
+   xcb_set_pointer_mapping(_ecore_xcb_conn, nmap, map);
+   return 1;
+}
+
+EAPI void
+ecore_x_pointer_mapping_get_prefetch(void)
+{
+   xcb_get_pointer_mapping_cookie_t cookie;
+
+   cookie = xcb_get_pointer_mapping_unchecked(_ecore_xcb_conn);
+   _ecore_xcb_cookie_cache(cookie.sequence);
+}
+
+EAPI void
+ecore_x_pointer_mapping_get_fetch(void)
+{
+   xcb_get_pointer_mapping_cookie_t cookie;
+   xcb_get_pointer_mapping_reply_t *reply;
+
+   cookie.sequence = _ecore_xcb_cookie_get();
+   reply = xcb_get_pointer_mapping_reply(_ecore_xcb_conn, cookie, NULL);
+   _ecore_xcb_reply_cache(reply);
+}
+
+EAPI int
+ecore_x_pointer_mapping_get(unsigned char *map,
+                            int nmap)
+{
+   xcb_get_pointer_mapping_reply_t *reply;
+   int i;
+   uint8_t tmp;
+
+   reply = _ecore_xcb_reply_get();
+   if (!reply) return 0;
+
+   if (nmap > xcb_get_pointer_mapping_map_length(reply))
+     return 0;
+
+   tmp = xcb_get_pointer_mapping_map(reply);
+
+   for (i = 0; i < nmap; i++)
+     map[i] = tmp[i];
+
+   return 1;
+}
+
+EAPI int
 ecore_x_pointer_grab(Ecore_X_Window window)
 {
    xcb_grab_pointer_cookie_t cookie;

@@ -1584,6 +1584,10 @@ EAPI int  ecore_x_pointer_control_set(int accel_num, int accel_denom, int thresh
 EAPI void ecore_x_pointer_control_get_prefetch(void);
 EAPI void ecore_x_pointer_control_get_fetch(void);
 EAPI int  ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold);
+EAPI int  ecore_x_pointer_mapping_set(unsigned char *map, int nmap);
+EAPI void ecore_x_pointer_mapping_get_prefetch(void);
+EAPI void ecore_x_pointer_mapping_get_fetch(void);
+EAPI int  ecore_x_pointer_mapping_get(unsigned char *map, int nmap);
 EAPI int  ecore_x_pointer_grab(Ecore_X_Window win);
 EAPI int  ecore_x_pointer_confine_grab(Ecore_X_Window win);
 EAPI void ecore_x_pointer_ungrab(void);

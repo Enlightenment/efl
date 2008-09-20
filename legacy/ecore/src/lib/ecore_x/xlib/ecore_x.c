@@ -1013,12 +1013,23 @@ ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
 				accel_num, accel_denom, threshold);
 }
 
-
 EAPI int
 ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold)
 {
    return XGetPointerControl(_ecore_x_disp, 
 				accel_num, accel_denom, threshold);
+}
+
+EAPI int
+ecore_x_pointer_mapping_set(unsigned char *map, int nmap)
+{
+   return XSetPointerMapping(_ecore_x_disp, map, nmap);
+}
+
+EAPI int
+ecore_x_pointer_mapping_get(unsigned char *map, int nmap)
+{
+   return XGetPointerMapping(_ecore_x_disp, map, nmap);
 }
 
 EAPI int
