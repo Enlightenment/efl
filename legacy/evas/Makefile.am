@@ -27,6 +27,7 @@ evas-fb.pc \
 evas-glitz-x11.pc \
 evas-opengl-x11.pc \
 evas-opengl-glew.pc \
+evas-quartz.pc \
 evas-software-buffer.pc \
 evas-software-qtopia.pc \
 evas-software-x11.pc \
@@ -112,6 +113,10 @@ if BUILD_ENGINE_GL_X11
 popenglx11 = evas-opengl-x11.pc
 endif
 
+if BUILD_ENGINE_QUARTZ
+pquartz = evas-quartz.pc
+endif
+
 if BUILD_ENGINE_GL_GLEW
 popenglglew = evas-opengl-glew.pc
 endif
@@ -151,6 +156,6 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pfb) \
-	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pcairox11) \
+	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pquartz) $(pcairox11) \
 	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psoftwaresdl) \
 	$(psoftware16x11) $(pdirect3d) $(psoftware16ddraw) $(psoftware16wince) $(popenglglew)

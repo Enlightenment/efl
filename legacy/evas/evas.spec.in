@@ -19,6 +19,7 @@
 %bcond_with    module_saver_edb
 %bcond_with    module_engine_directfb
 %bcond_with    module_engine_gl_x11
+%bcond_with    module_engine_quartz
 %bcond_with    module_engine_software_qtopia
 %bcond_with    module_engine_software_sdl
 %bcond_with    module_engine_software_xcb
@@ -67,6 +68,7 @@
 %define ac_with_module_engine_fb --%{?with_module_engine_fb:en}%{!?with_module_engine_fb:dis}able-fb
 %define ac_with_module_engine_xrender_x11 --%{?with_module_engine_xrender_x11:en}%{!?with_module_engine_xrender_x11:dis}able-xrender-x11
 %define ac_with_module_engine_gl_x11 --%{?with_module_engine_gl_x11:en}%{!?with_module_engine_gl_x11:dis}able-gl-x11
+%define ac_with_module_engine_quartz --%{?with_module_engine_quartz:en}%{!?with_module_engine_quartz:dis}able-quartz
 %define ac_with_module_engine_directfb --%{?with_module_engine_directfb:en}%{!?with_module_engine_directfb:dis}able-directfb
 %define ac_with_module_engine_software_qtopia --%{?with_module_engine_software_qtopia:en}%{!?with_module_engine_software_qtopia:dis}able-software-qtopia
 %define ac_with_module_engine_software_sdl --%{?with_module_engine_software_sdl:en}%{!?with_module_engine_software_sdl:dis}able-sdl
@@ -287,6 +289,16 @@ Requires: evas
 OpenGL under X11 rendering engine module for Evas
 %endif
 
+%if %{with module_engine_quartz}
+%package module_engine_quartz
+Summary: Quartz rendering engine module for Evas
+Group: System Environment/Libraries
+#BuildSuggests: 
+Requires: evas
+%description module_engine_quartz
+Quartz rendering engine module for Evas
+%endif
+
 %if %{with module_engine_directfb}
 %package module_engine_directfb
 Summary: Directfb rendering engine module for Evas
@@ -366,6 +378,7 @@ Xrender XCB X11 rendering engine module for Evas
     %{?ac_with_module_engine_fb} \
     %{?ac_with_module_engine_xrender_x11} \
     %{?ac_with_module_engine_gl_x11} \
+	%{?ac_with_module_engine_quartz} \
     %{?ac_with_module_engine_directfb} \
     %{?ac_with_module_engine_software_qtopia} \
     %{?ac_with_module_engine_software_sdl} \
@@ -517,6 +530,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_engine_gl_x11
 %defattr(-, root, root)
 %{_libdir}/evas/modules/engines/gl_x11/*/module.so
+%endif
+
+%if %{with module_engine_quartz}
+%files module_engine_quartz
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/quartz/*/module.so
 %endif
 
 %if %{with module_engine_directfb}

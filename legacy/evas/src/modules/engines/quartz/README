@@ -1,0 +1,32 @@
+================
+==INSTALLATION==
+================
+
+Here's what I had to do to get Evas_Quartz working on a fresh install of Mac OS X Leopard (Evas_Quartz is currently not versions prior to 10.5):
+
+1) Install all system software updates.
+
+2) Install the XCode developer tools (this includes GCC).
+
+3) Install macports.
+
+4) Put /opt/local/bin in your path, permanently. (I put it in front of everything else, because the newer versions of autotools provided by ports are required to build evas)
+
+5) With macports, install the following: m4, autoconf, automake, libtool, pkgconfig, zlib, libpng, jpeg, freetype, tiff.
+
+6) Check out a version of Evas that includes Evas_Quartz (from CVS).
+
+7) Set up your environment. You need to, at the very least, set:
+	CFLAGS=-I/opt/local/include
+	LDFLAGS=-L/opt/local/lib
+	
+8) Build and install eet.
+
+9) Build and install evas. Make sure to use --enable-quartz when configuring!
+
+==============
+==KNOWN BUGS==
+==============
+
+****  A few different types of gradients don't currently draw.
+**    Textbox drawing is a little bit off (because of hardcoded constants that shouldn't exist).

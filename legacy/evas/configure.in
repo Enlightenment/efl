@@ -596,6 +596,36 @@ fi
 AM_CONDITIONAL(BUILD_ENGINE_GL_X11, test "x$have_evas_gl_x11" = "xyes")
 
 #######################################
+## Check if we should build the quartz engine
+## FIXME: someone more experienced with Autotools-on-OSX: how do Frameworks work with AC_CHECK_HEADERS?
+## I want this to detect Cocoa/Cocoa.h, but it's not in the normal include path.
+want_evas_quartz="no";
+have_evas_quartz="no";
+
+AC_MSG_CHECKING(whether quartz backend is to be built)
+AC_ARG_ENABLE(quartz,
+  AC_HELP_STRING([--enable-quartz], [enable the Quartz display engine]),
+  [ want_evas_quartz=$enableval ]
+)
+AC_MSG_RESULT($want_evas_quartz)
+
+if test "x$want_evas_quartz" = "xyes"; then
+  AC_PATH_X
+  AC_PATH_XTRA
+  AC_CHECK_HEADERS(/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h,
+    [
+      have_evas_quartz="yes"
+    ],
+    [
+	  if test "x$want_evas_quartz" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Quartz not found (strict dependencies checking)])
+      fi
+    ]
+  )
+fi
+AM_CONDITIONAL(BUILD_ENGINE_QUARTZ, test "x$have_evas_quartz" = "xyes")
+
+#######################################
 ## Check if we should build the gl_glew engine
 want_evas_gl_glew="no";
 have_evas_gl_glew="no";
@@ -1684,6 +1714,9 @@ AC_SUBST(x_libs)
 AC_SUBST(gl_cflags)
 AC_SUBST(gl_libs)
 
+AC_SUBST(quartz_cflags)
+AC_SUBST(quartz_libs)
+
 AC_SUBST(qt_cflags)
 AC_SUBST(qt_libs)
 AC_SUBST(qt_moc)
@@ -1715,6 +1748,7 @@ evas-fb.pc
 evas-glitz-x11.pc
 evas-opengl-glew.pc
 evas-opengl-x11.pc
+evas-quartz.pc
 evas-software-buffer.pc
 evas-software-qtopia.pc
 evas-software-x11.pc
@@ -1760,6 +1794,7 @@ src/modules/engines/directfb/Makefile
 src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_glew/Makefile
 src/modules/engines/gl_x11/Makefile
+src/modules/engines/quartz/Makefile
 src/modules/engines/cairo_common/Makefile
 src/modules/engines/cairo_x11/Makefile
 src/modules/engines/xrender_x11/Makefile
@@ -1814,6 +1849,7 @@ echo "  Software XCB...............: $have_evas_software_xcb"
 echo "  XRender XCB................: $have_evas_xrender_xcb"
 echo "  Software DirectDraw........: $have_evas_software_ddraw"
 echo "  Direct3d...................: $have_evas_direct3d"
+echo "  Quartz.....................: $have_evas_quartz"
 echo "  OpenGL Glew................: $have_evas_gl_glew"
 echo "  Software SDL...............: $have_evas_sdl (primitive: $sdl_primitive)"
 echo "  Software Framebuffer.......: $have_evas_fb"
