@@ -1,5 +1,10 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = \
-common common_16
+SUBDIRS = common
+
+if BUILD_ENGINE_SOFTWARE_16
+
+SUBDIRS += common_16
+
+endif
