@@ -41,6 +41,9 @@ struct _Eina_Rbtree
    Eina_Rbtree_Color  color : 1;
 };
 
+#define EINA_RBTREE Eina_Rbtree __rbtree
+#define EINA_RBTREE_GET(Rbtree) &(Rbtree->__rbtree)
+
 typedef Eina_Rbtree_Direction (*Eina_Rbtree_Cmp_Node_Cb)(const Eina_Rbtree *left, const Eina_Rbtree *right, void *data);
 #define EINA_RBTREE_CMP_NODE_CB(Function) ((Eina_Rbtree_Cmp_Node_Cb) Function)
 
