@@ -106,6 +106,8 @@ struct _Eina_Stringshare_Node
 
    int			  length;
    int                    references;
+
+   Eina_Bool		  begin : 1;
 };
 
 static Eina_Stringshare *share = NULL;
@@ -231,7 +233,7 @@ eina_stringshare_shutdown()
 		       Eina_Stringshare_Node *el = save->head;
 
 		       save->head = el->next;
-		       free(el);
+		       if (el->begin == EINA_FALSE) free(el);
 		    }
 		  free(save);
 	       }
@@ -262,6 +264,8 @@ eina_stringshare_shutdown()
 EAPI const char *
 eina_stringshare_add(const char *str)
 {
+   Eina_Stringshare_Node *nel = NULL;
+   Eina_Stringshare_Node *tmp;
    Eina_Stringshare_Head *ed;
    Eina_Stringshare_Node *el;
    char *el_str;
@@ -277,7 +281,7 @@ eina_stringshare_add(const char *str)
 							   EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
    if (!ed)
      {
-	ed = malloc(sizeof (Eina_Stringshare_Head));
+	ed = malloc(sizeof (Eina_Stringshare_Head) + sizeof (Eina_Stringshare_Node) + slen);
 	if (!ed) return NULL;
 	ed->hash = hash;
 	ed->head = NULL;
@@ -285,29 +289,44 @@ eina_stringshare_add(const char *str)
 	share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num],
 										      &ed->node,
 										      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+
+	nel = (Eina_Stringshare_Node*) (ed + 1);
+	nel->begin = EINA_TRUE;
      }
 
-   for (el = ed->head;
+   for (el = ed->head, tmp = NULL;
 	el && slen != el->length && memcmp(str, (const char*) (el + 1), slen) != 0;
-	el = el->next)
+	tmp = el, el = el->next)
      ;
 
    if (el)
      {
+	if (tmp)
+	  {
+	     tmp->next = el->next;
+	     el->next = ed->head;
+	     ed->head = el;
+	  }
+
 	el->references++;
 	return (const char*) (el + 1);
      }
 
-   el = malloc(sizeof (Eina_Stringshare_Node) + slen);
-   if (!el) return NULL;
-   el->references = 1;
-   el->length = slen;
+   if (!nel)
+     {
+	nel = malloc(sizeof (Eina_Stringshare_Node) + slen);
+	if (!nel) return NULL;
+	nel->begin = EINA_FALSE;
+     }
 
-   el_str = (char*) (el + 1);
+   nel->references = 1;
+   nel->length = slen;
+
+   el_str = (char*) (nel + 1);
    memcpy(el_str, str, slen);
 
-   el->next = ed->head;
-   ed->head = el;
+   nel->next = ed->head;
+   ed->head = nel;
 
    return el_str;
 }
@@ -345,26 +364,25 @@ eina_stringshare_del(const char *str)
 	el = el->next)
      ;
 
-   if (el)
-     {
-	el->references--;
-	if (el->references == 0)
-	  {
-	     if (prev) prev->next = el->next;
-	     else ed->head = el->next;
-	     free(el);
+   if (!el) goto on_error;
 
-	     if (ed->head == NULL)
-	       {
-		  share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(&share->buckets[hash_num]->node,
+   el->references--;
+   if (el->references == 0)
+     {
+	if (prev) prev->next = el->next;
+	else ed->head = el->next;
+	if (el->begin == EINA_FALSE) free(el);
+
+	if (ed->head == NULL)
+	  {
+	     share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(&share->buckets[hash_num]->node,
 												&ed->node,
 												EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node),
-												NULL);
-		  free(ed);
-	       }
+											   NULL);
+	     free(ed);
 	  }
-	return ;
      }
+   return ;
 
  on_error:
    EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
