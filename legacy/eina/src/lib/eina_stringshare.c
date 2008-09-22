@@ -82,6 +82,7 @@
  */
 
 #define EINA_STRINGSHARE_BUCKETS 256
+#define EINA_STRINGSHARE_MASK 0xFF
 
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
@@ -274,7 +275,7 @@ eina_stringshare_add(const char *str)
    if (!str) return NULL;
    hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
-   hash &= 0xFF;
+   hash &= EINA_STRINGSHARE_MASK;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num],
 							   &hash, sizeof (hash),
@@ -352,7 +353,7 @@ eina_stringshare_del(const char *str)
    if (!str) return;
    hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
-   hash &= 0xFF;
+   hash &= EINA_STRINGSHARE_MASK;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup(&share->buckets[hash_num]->node,
 							   &hash, sizeof (hash),
