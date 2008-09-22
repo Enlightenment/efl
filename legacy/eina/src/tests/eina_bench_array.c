@@ -45,7 +45,7 @@
 typedef struct _Eina_Bench_Object Eina_Bench_Object;
 struct _Eina_Bench_Object
 {
-   Eina_Inlist __list;
+   EINA_INLIST;
 
    void *somewhere;
    int data;
@@ -330,7 +330,7 @@ eina_bench_inlist_4evas_render(int request)
 
 	     ebo->keep = rand() < (RAND_MAX / 2) ? EINA_TRUE : EINA_FALSE;
 
-	     head = eina_inlist_prepend(head, ebo);
+	     head = eina_inlist_prepend(head, EINA_INLIST_GET(ebo));
 	  }
 
 	if (i == 500)
@@ -354,7 +354,7 @@ eina_bench_inlist_4evas_render(int request)
 		       tmp = tmp->next;
 		       if (ebo->keep == EINA_FALSE)
 			 {
-			    head = eina_inlist_remove(head, ebo);
+			    head = eina_inlist_remove(head, EINA_INLIST_GET(ebo));
 			    free(ebo);
 			 }
 		    }
@@ -392,7 +392,7 @@ eina_bench_inlist_4evas_render_iterator(int request)
 
 	     ebo->keep = rand() < (RAND_MAX / 2) ? EINA_TRUE : EINA_FALSE;
 
-	     head = eina_inlist_prepend(head, ebo);
+	     head = eina_inlist_prepend(head, EINA_INLIST_GET(ebo));
 	  }
 
 	if (i == 500)
@@ -416,7 +416,7 @@ eina_bench_inlist_4evas_render_iterator(int request)
 		       tmp = tmp->next;
 		       if (ebo->keep == EINA_FALSE)
 			 {
-			    head = eina_inlist_remove(head, ebo);
+			    head = eina_inlist_remove(head, EINA_INLIST_GET(ebo));
 			    free(ebo);
 			 }
 		    }
