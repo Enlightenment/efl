@@ -81,13 +81,15 @@
  * @cond LOCAL
  */
 
+#define EINA_STRINGSHARE_BUCKETS 256
+
 typedef struct _Eina_Stringshare             Eina_Stringshare;
 typedef struct _Eina_Stringshare_Node        Eina_Stringshare_Node;
 typedef struct _Eina_Stringshare_Head        Eina_Stringshare_Head;
 
 struct _Eina_Stringshare
 {
-   Eina_Stringshare_Head *buckets[256];
+   Eina_Stringshare_Head *buckets[EINA_STRINGSHARE_BUCKETS];
 };
 
 struct _Eina_Stringshare_Head
@@ -214,7 +216,7 @@ eina_stringshare_shutdown()
      {
 	int i;
 	/* remove any string still in the table */
-	for (i = 0; i < 256; i++)
+	for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
 	  {
 	     Eina_Stringshare_Head *ed = share->buckets[i];
 	     Eina_Stringshare_Head *save;
