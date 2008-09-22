@@ -274,7 +274,7 @@ eina_stringshare_add(const char *str)
    if (!str) return NULL;
    hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
-   hash &= 0xFFF;
+   hash &= 0xFF;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num],
 							   &hash, sizeof (hash),
@@ -352,7 +352,7 @@ eina_stringshare_del(const char *str)
    if (!str) return;
    hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
-   hash &= 0xFFF;
+   hash &= 0xFF;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup(&share->buckets[hash_num]->node,
 							   &hash, sizeof (hash),
