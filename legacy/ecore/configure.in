@@ -21,7 +21,6 @@ m4_ifdef([AC_PROG_OBJC],
           AC_SUBST([OBJC])
           AC_SUBST([OBJCFLAGS])
          ])
-AC_PROG_OBJC
 AC_HEADER_STDC
 AC_C_CONST
 AC_CHECK_SIZEOF(int, 4)
