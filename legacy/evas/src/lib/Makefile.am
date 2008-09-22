@@ -30,14 +30,13 @@ file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
 engines/common/libevas_engine_common.la \
-engines/common_16/libevas_engine_common_16.la \
--lm \
 @fnmatch_libs@ \
 @dlopen_libs@ \
 @FREETYPE_LIBS@ \
 @EET_LIBS@ \
 @FONTCONFIG_LIBS@ \
-@pthread_libs@
+@pthread_libs@ \
+-lm
 
 libevas_la_DEPENDENCIES = \
 $(top_builddir)/config.h \
@@ -46,8 +45,14 @@ data/libevas_data.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
-engines/common/libevas_engine_common.la \
-engines/common_16/libevas_engine_common_16.la
+engines/common/libevas_engine_common.la
+
+if BUILD_ENGINE_SOFTWARE_16
+
+libevas_la_LIBADD += engines/common_16/libevas_engine_common_16.la
+libevas_la_DEPENDENCIES += engines/common_16/libevas_engine_common_16.la
+
+endif
 
 libevas_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 
