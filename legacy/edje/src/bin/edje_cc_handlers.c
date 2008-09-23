@@ -4192,6 +4192,35 @@ st_collections_group_parts_part_description_gradient_rel2_offset(void)
      }
 }
 
+/**
+    @page edcref
+    @block
+        program
+    @context
+        group {
+            programs {
+               ..
+                  program {
+                     name: "programname";
+                     signal: "signalname";
+                     source: "partname";
+                     in: 0.3 0.0;
+                     action: STATE_SET "statename" state_value;
+                     transition: LINEAR 0.5;
+                     target: "partname";
+                     target: "anotherpart";
+                     after: "programname";
+                     after: "anotherprogram";
+                  }
+               ..
+            }
+        }
+    @description
+        Programs define how your interface reacts to events.
+        Programs can change the state of parts, react to events or trigger
+        other events.
+    @endblock
+*/
 static void
 ob_collections_group_programs_program(void)
 {
@@ -4206,6 +4235,16 @@ ob_collections_group_programs_program(void)
    ep->after = NULL;
 }
 
+/**
+    @page edcref
+    @property
+        name
+    @parameters
+        [program name]
+    @effect
+        Symbolic name of program as a unique identifier.
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_name(void)
 {
@@ -4235,6 +4274,20 @@ st_collections_group_programs_program_name(void)
      }
 }
 
+/**
+    @page edcref
+    @property
+        signal
+    @parameters
+        [signal name]
+    @effect
+        Specifies signal(s) that should cause the program to run. The signal
+        received must match the specified source to run.
+        Signals may be globbed, but only one signal keyword per program
+        may be used. ex: signal: "mouse,clicked,*"; (clicking any mouse button
+        that matches source starts program).
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_signal(void)
 {
@@ -4248,6 +4301,18 @@ st_collections_group_programs_program_signal(void)
    ep->signal = parse_str(0);
 }
 
+/**
+    @page edcref
+    @property
+        source
+    @parameters
+        [source name]
+    @effect
+        Source of accepted signal. Sources may be globbed, but only one source
+        keyword per program may be used. ex:source: "button-*"; (Signals from
+        any part or program named "button-*" are accepted)
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_source(void)
 {
@@ -4261,6 +4326,17 @@ st_collections_group_programs_program_source(void)
    ep->source = parse_str(0);
 }
 
+/**
+    @page edcref
+    @property
+        in
+    @parameters
+        [from] [range]
+    @effect
+        Wait 'from' seconds before executing the program. And add a random
+        number of seconds (from 0 to 'range') to the total waiting time.
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_in(void)
 {
@@ -4275,6 +4351,21 @@ st_collections_group_programs_program_in(void)
    ep->in.range = parse_float_range(1, 0.0, 999999999.0);
 }
 
+/**
+    @page edcref
+    @property
+        action
+    @parameters
+        [type] [param1] [param2]
+    @effect
+        Action to be performed by the program. Valid actions are: STATE_SET,
+        ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP and DRAG_VAL_PAGE.
+        Only one action can be specified per program. Examples:\n
+           action: STATE_SET "statename" 0.5;\n
+           action: ACTION_STOP "programname";\n
+           action: SIGNAL_EMIT "signalname" "emitter";
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_action(void)
 {
@@ -4330,6 +4421,19 @@ st_collections_group_programs_program_action(void)
    }
 }
 
+/**
+    @page edcref
+    @property
+        transition
+    @parameters
+        [type] [length]
+    @effect
+        Defines how transistions occur using STATE_SET action.\n
+        Where 'type' is the style of the transistion and 'length' is a double
+        specifying the number of seconds in which to preform the transistion.\n
+        Valid types are: LINEAR, SINUSOIDAL, ACCELERATE, and DECELERATE.
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_transition(void)
 {
@@ -4349,6 +4453,18 @@ st_collections_group_programs_program_transition(void)
    ep->tween.time = parse_float_range(1, 0.0, 999999999.0);
 }
 
+/**
+    @page edcref
+    @property
+        target
+    @parameters
+        [target]
+    @effect
+        Program or part on which the specified action acts. Multiple target
+        keywords may be specified, one per target. SIGNAL_EMITs do not have
+        targets.
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_target(void)
 {
@@ -4388,6 +4504,18 @@ st_collections_group_programs_program_target(void)
      }
 }
 
+/**
+    @page edcref
+    @property
+        after
+    @parameters
+        [after]
+    @effect
+        Specifies a program to run after the current program completes. The
+        source and signal parameters of a program run as an "after" are ignored.
+        Multiple "after" statements can be specified per program.
+    @endproperty
+*/
 static void
 st_collections_group_programs_program_after(void)
 {
