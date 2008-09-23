@@ -29,6 +29,10 @@
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 struct _Eina_Lalloc
 {
 	void 	*data;
@@ -39,6 +43,10 @@ struct _Eina_Lalloc
 	Eina_Lalloc_Free free_cb;
 };
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -48,9 +56,11 @@ struct _Eina_Lalloc
  *============================================================================*/
 
 /**
- * To be documented
- * FIXME: To be fixed
+ * @addtogroup Eina_Lalloc_Group Lazy allocator
+ *
+ * @{
  */
+
 EAPI Eina_Lalloc * eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_Lalloc_Free free_cb, int num_init)
 {
 	Eina_Lalloc *a;
@@ -67,10 +77,12 @@ EAPI Eina_Lalloc * eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_
 	return a;
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
+EAPI void eina_lalloc_delete(Eina_Lalloc *a)
+{
+	a->free_cb(a->data);
+	free(a);
+}
+
 EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
 {
 	if (a->num_elements == a->num_allocated)
@@ -88,10 +100,6 @@ EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
 	return EINA_TRUE;
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num)
 {
 	int tmp;
@@ -125,11 +133,5 @@ EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num)
 }
 
 /**
- * To be documented
- * FIXME: To be fixed
+ * @}
  */
-EAPI void eina_lalloc_delete(Eina_Lalloc *a)
-{
-	a->free_cb(a->data);
-	free(a);
-}

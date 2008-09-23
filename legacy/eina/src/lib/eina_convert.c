@@ -89,6 +89,115 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  * These functions allow you to convert integer or real numbers to
  * string or conversely.
  *
+ * To use these function, you have to call eina_convert_init()
+ * first, and eina_convert_shutdown() when they are not used anymore.
+ *
+ * @section Eina_Convert_From_Integer_To_Sring Conversion from integer to string
+ *
+ * To convert an integer to a string in the decimal base,
+ * eina_convert_itoa() should be used. If the hexadecimal base is
+ * wanted, eina_convert_xtoa() should be used. They all need a bufffer
+ * sufficiently large to store all the cyphers.
+ *
+ * Here is an exemple of use:
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <eina_convert.h>
+ *
+ * int main(void)
+ * {
+ *    char *tmp[128];
+ *
+ *    if (!eina_convert_init())
+ *    {
+ *        printf ("Error during the initialization of eina_convert module\n");
+ *        return EXIT_FAILURE;
+ *    }
+ *
+ *    eina_convert_itoa(45, tmp);
+ *    printf("value: %s\n", tmp);
+
+ *    eina_convert_xtoa(0xA1, tmp);
+ *    printf("value: %s\n", tmp);
+ *
+ *    eina_convert_shutdown();
+ *
+ *    return EXIT_SUCCESS;
+ * }
+ * @endcode
+ *
+ * Compile this code with the following commant:
+ *
+ * @code
+ * gcc -Wall -o test_eina_convert test_eina.c `pkg-config --cflags --libs eina`
+ * @endcode
+ *
+ * @note
+ * The alphabetical cyphers are in lower case.
+ *
+ * @section Eina_Convert_Double Conversion double / string
+ *
+ * To convert a double to a string, eina_convert_dtoa() should be
+ * used. Like with the integer functions, a buffer must be used. The
+ * resulting string ghas the following format (which is the result
+ * obtained with snprintf() and the @%a modifier):
+ *
+ * @code
+ * [-]0xh.hhhhhp[+-]e
+ * @endcode
+ *
+ * To convert a string to a double, eina_convert_atod() should be
+ * used. The format of the string must be as above. Then, the double
+ * has the following mantiss and exponent:
+ *
+ * @code
+ * mantiss  : [-]hhhhhh
+ * exponent : 2^([+-]e - 4 * n)
+ * @endcode
+ *
+ * with n being number of cypers after the point in the string
+ * format. To obtain the double number from the mantiss and exponent,
+ * use ldexp().
+ *
+ * Here is an exemple of use:
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <eina_convert.h>
+ *
+ * int main(void)
+ * {
+ *    char     *tmp[128];
+ *    long long int m = 0;
+ *    long int  e = 0;
+ *    doule     r;
+ *
+ *    if (!eina_convert_init())
+ *    {
+ *        printf ("Error during the initialization of eina_convert module\n");
+ *        return EXIT_FAILURE;
+ *    }
+ *
+ *    eina_convert_dtoa(40.56, tmp);
+ *    printf("value: %s\n", tmp);
+
+ *    eina_convert_atod(tmp, 128, &m, &e);
+ *    r = ldexp((double)m, e);
+ *    printf("value: %s\n", tmp);
+ *
+ *    eina_convert_shutdown();
+ *
+ *    return EXIT_SUCCESS;
+ * }
+ * @endcode
+ *
+ * Compile this code with the same command as above.
+ *
  * @{
  */
 
@@ -195,8 +304,9 @@ eina_convert_itoa(int n, char *s)
  * character.
  *
  * This function converts @p n to a nul terminated string. The
- * converted string is in hexadecimal base. As no check is done, @p s
- * must be a buffer that is sufficiently large to store the integer.
+ * converted string is in hexadecimal base and the alphabetical
+ * cyphers are in lower case. As no check is done, @p s must be a
+ * buffer that is sufficiently large to store the integer.
  *
  * The returned value is the length os the string, including the nul
  * terminated character.
