@@ -4144,6 +4144,137 @@ edje_edit_script_get(Evas_Object *obj)
 #define I6 "                  "
 
 static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP"};
+static void
+_edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
+{
+   Edje_Spectrum_Directory_Entry *d;
+   Edje_Spectrum_Color *color = NULL;
+   Evas_List *l;
+
+   if (!ed || !name || !f) return;
+
+   if (d = _edje_edit_spectrum_entry_get(ed, name))
+     {
+	fprintf(f, I1 "spectrum {\n");
+	fprintf(f, I2 "name: \"%s\";\n", d->entry);
+
+	for (l = d->color_list; l; l = l->next)
+	  {
+		color = l->data;
+		if (color)
+		  fprintf(f, I2 "color: %d %d %d %d %d;\n", color->r, color->g,
+			  color->b, color->a, color->d);
+	  }
+
+	fprintf(f, I1 "}\n\n");
+     }
+}
+
+_edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
+{
+   Evas_List *l, *ll;
+   const char *s, *s2;
+   double db, db2;
+
+   GET_ED_OR_RETURN();
+
+   fprintf(f, I3"program {\n");
+   fprintf(f, I4"name: \"%s\";\n", program);
+
+   /* Signal */
+   if (s = edje_edit_program_signal_get(obj, program))
+     {
+	fprintf(f, I4"signal: \"%s\";\n", s);
+	edje_edit_string_free(s);
+     }
+
+   /* Source */
+   if (s = edje_edit_program_source_get(obj, program))
+     {
+	fprintf(f, I4"source: \"%s\";\n", s);
+	edje_edit_string_free(s);
+     }
+
+   /* Action */
+   switch (edje_edit_program_action_get(obj, program))
+     {
+     case EDJE_ACTION_TYPE_ACTION_STOP:
+	fprintf(f, I4"action: ACTION_STOP;\n");
+	break;
+     case EDJE_ACTION_TYPE_STATE_SET:
+	if (s = edje_edit_program_state_get(obj, program))
+	  {
+		fprintf(f, I4"action: STATE_SET \"%s\" %.2f;\n", s,
+			edje_edit_program_value_get(obj, program));
+		edje_edit_string_free(s);
+	  }
+	break;
+     case EDJE_ACTION_TYPE_SIGNAL_EMIT:
+	s = edje_edit_program_state_get(obj, program);
+	s2 = edje_edit_program_state2_get(obj, program);
+	if (s && s2)
+	  {
+		fprintf(f, I4"action: SIGNAL_EMIT \"%s\" \"%s\";\n", s, s2);
+		edje_edit_string_free(s);
+		edje_edit_string_free(s2);
+	  }
+	break;
+     //TODO Drag
+     //~ case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+	//~ fprintf(f, I4"action: DRAG_VAL_SET TODO;\n");
+	//~ break;
+     //~ case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+	//~ fprintf(f, I4"action: DRAG_VAL_STEP TODO;\n");
+	//~ break;
+     //~ case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+	//~ fprintf(f, I4"action: DRAG_VAL_PAGE TODO;\n");
+	//~ break;
+     }
+
+   /* Transition */
+   db = edje_edit_program_transition_time_get(obj, program);
+   switch (edje_edit_program_transition_get(obj, program))
+     {
+     case EDJE_TWEEN_MODE_LINEAR:
+	fprintf(f, I4"transition: LINEAR %.5f;\n", db);
+	break;
+     case EDJE_TWEEN_MODE_ACCELERATE:
+	fprintf(f, I4"transition: ACCELERATE %.5f;\n", db);
+	break;
+     case EDJE_TWEEN_MODE_DECELERATE:
+	fprintf(f, I4"transition: DECELERATE %.5f;\n", db);
+	break;
+     case EDJE_TWEEN_MODE_SINUSOIDAL:
+	fprintf(f, I4"transition: SINUSOIDAL %.5f;\n", db);
+	break;
+     }
+
+   /* In */
+   db = edje_edit_program_in_from_get(obj, program);
+   db2 = edje_edit_program_in_range_get(obj, program);
+   if (db || db2)
+     fprintf(f, I4"in: %.5f %.5f;\n", db, db2);
+
+   /* Targets */
+   if (ll = edje_edit_program_targets_get(obj, program))
+     {
+	for (l = ll; l; l = l->next)
+	  fprintf(f, I4"target: \"%s\";\n", (char *)l->data);
+	edje_edit_string_list_free(ll);
+     }
+
+   /* Afters */
+   if (ll = edje_edit_program_afters_get(obj, program))
+     {
+	for (l = ll; l; l = l->next)
+	  fprintf(f, I4"after: \"%s\";\n", (char *)l->data);
+	edje_edit_string_list_free(ll);
+     }
+
+   // TODO script {}
+
+   fprintf(f, I3 "}\n");
+}
 
 static void
 _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
@@ -4180,6 +4311,8 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
       fprintf(f, I2"max: %d %d;\n", w, h);
    //TODO Support data
    //TODO Support script
+
+   /* Parts */
    fprintf(f, I2"parts {\n");
    ll = edje_edit_parts_list_get(obj);
    for (l = ll; l; l = l->next)
@@ -4188,7 +4321,17 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
      }
    edje_edit_string_list_free(ll);
    fprintf(f, I2"}\n");//parts
-   //TODO programs like parts
+
+   /* Programs */
+   if (ll = edje_edit_programs_list_get(obj))
+     {
+	fprintf(f, I2 "programs {\n");
+	for (l = ll; l; l = l->next)
+	     _edje_generate_source_of_program(obj, (char *)l->data, f);
+	fprintf(f, I2 "}\n");
+	edje_edit_string_list_free(ll);
+     }
+   
    
    fprintf(f, "   }\n");//group
    
@@ -4242,7 +4385,7 @@ _edje_generate_source(Evas_Object *obj)
 		else fprintf(f, "COMP;\n");
 	  }
 	fprintf(f, I0"}\n\n");
-	evas_list_free(ll);
+	edje_edit_string_list_free(ll);
      }
 
    /* Fonts */
@@ -4257,17 +4400,38 @@ _edje_generate_source(Evas_Object *obj)
 		fprintf(f, I1"font: \"FIXME\" \"%s\";\n", entry);
 	  }
 	fprintf(f, I0"}\n\n");
-	evas_list_free(ll); 
+	edje_edit_string_list_free(ll);
      }
 
    /* Data */
-   //TODO Support data
-   
+   if (ll = edje_edit_data_list_get(obj))
+     {
+	fprintf(f, I0 "data {\n");
+
+	for (l = ll; l; l = l->next)
+	  {
+		fprintf(f, I1 "item: \"%s\" \"%s\";\n", (char *)l->data,
+			edje_edit_data_value_get(obj, (char *)l->data));
+	  }
+
+	fprintf(f, I0 "}\n\n");
+	edje_edit_string_list_free(ll);
+     }
+
    /* Color Classes */
    //TODO Support color classes
    
-   /* Spectra */
-   //TODO Support spectra
+   /* Spectrum */
+   if (ll = edje_edit_spectrum_list_get(obj))
+     {
+	fprintf(f, I0 "spectra {\n");
+
+	for (l = ll; l; l = l->next)
+	  _edje_generate_source_of_spectra(ed, (char *)l->data, f);
+
+	fprintf(f, I0 "}\n\n");
+	edje_edit_string_list_free(ll);
+     }
    
    /* Styles */
    //TODO Support styles
