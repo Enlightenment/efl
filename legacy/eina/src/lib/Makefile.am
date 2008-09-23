@@ -30,8 +30,6 @@ eina_rbtree.c \
 eina_benchmark.c \
 eina_stringshare.c
 
-libeina_la_LIBADD = @EINA_LIBS@
-
 if EINA_STATIC_BUILD_CHAINED_POOL
 
 libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/chained_pool/eina_chained_mempool.c
@@ -56,6 +54,7 @@ libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/pass_through/pass_through.c
 
 endif
 
+libeina_la_LIBADD = @EINA_LIBS@
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
 clean-local:
