@@ -88,7 +88,7 @@ EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array);
 
 /**
  * @def EINA_ARRAY_ITER_NEXT
- * @brief Macro to iterate over an array easily
+ * @brief Macro to iterate over an array easily.
  *
  * @param array The array to iterate over.
  * @param index The integer number that is increased while itareting.

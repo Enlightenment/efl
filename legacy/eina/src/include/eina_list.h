@@ -43,9 +43,18 @@
  * @{
  */
 
+/**
+ * @typedef Eina_List
+ * Type for a generic single linked list.
+ */
 typedef struct _Eina_List Eina_List;
+
 typedef struct _Eina_List_Accounting Eina_List_Accounting;
 
+/**
+ * @struct _Eina_List
+ * Type for a generic single linked list.
+ */
 struct _Eina_List /** A linked list node */
 {
    void      *data; /**< Pointer to list element payload */
@@ -53,6 +62,7 @@ struct _Eina_List /** A linked list node */
    Eina_List *prev; /**< Previous member in the list */
    struct _Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
 };
+
 struct _Eina_List_Accounting
 {
    Eina_List *last;
@@ -89,6 +99,35 @@ static inline unsigned int eina_list_count(const Eina_List *list);
 EAPI Eina_Iterator *eina_list_iterator_new(const Eina_List *list);
 EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list);
 
+/**
+ * @def EINA_LIST_ITER_NEXT
+ * @brief Macro to iterate over a list easily.
+ *
+ * @param list The list to iterate over.
+ * @param l A list that is used as loop index.
+ * @param data The data
+ *
+ * This macro allow the iteration over @p list in an easy way. It
+ * iterates from the first element to the last one. @p data is the
+ * data of each element of the list. @p l is an #Eina_List that is
+ * used as counter.
+ *
+ * This macro can be used for freeing the data of alist, like in
+ * the following example:
+ *
+ * @code
+ * Eina_List *list;
+ * Eina_List *l;
+ * char       *data;
+ *
+ * // list is already filled,
+ * // its elements are just duplicated strings,
+ * // EINA_LIST_ITER_NEXT will be used to free those strings
+ *
+ * EINA_LIST_ITER_NEXT(list, l, data)
+ *   free(data);
+ * @endcode
+ */
 #define EINA_LIST_ITER_NEXT(list, l, data) for (l = list, data = eina_list_data(l); l; l = eina_list_next(l), data = eina_list_data(l))
 
 #include "eina_inline_list.x"

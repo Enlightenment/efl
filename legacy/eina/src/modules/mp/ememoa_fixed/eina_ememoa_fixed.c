@@ -132,6 +132,8 @@ eina_ememoa_fixed_shutdown(void *data)
    free(efm);
 }
 
+#ifndef EINA_STATIC_BUILD_EMEMOA_FIXED
+
 static Eina_Mempool_Backend mp_backend = {
   .init = &eina_ememoa_fixed_init,
   .shutdown = &eina_ememoa_fixed_shutdown,
@@ -143,3 +145,5 @@ static Eina_Mempool_Backend mp_backend = {
 };
 
 EINA_MODULE("ememoa_fixed", "mp", NULL, &mp_backend);
+
+#endif /* ! EINA_STATIC_BUILD_EMEMOA_FIXED */

@@ -19,6 +19,14 @@
 #ifndef EINA_LIST_INLINE_H_
 #define EINA_LIST_INLINE_H_
 
+/**
+ * @addtogroup Eina_List_Group List
+ *
+ * @brief These functions provide list management.
+ *
+ * @{
+ */
+
 static inline Eina_List *
 eina_list_last(const Eina_List *list)
 {
@@ -53,5 +61,9 @@ eina_list_count(const Eina_List *list)
    if (!list) return 0;
    return list->accounting->count;
 }
+
+/**
+ * @}
+ */
 
 #endif /* EINA_LIST_INLINE_H_ */

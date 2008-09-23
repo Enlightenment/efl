@@ -144,18 +144,6 @@ eina_array_grow(Eina_Array *array)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Array_Group Array
  *
  * @brief These functions provide array management.
@@ -260,9 +248,10 @@ eina_array_new(unsigned int step)
  * @param array The array to free.
  *
  * This function frees @p array. It calls first eina_array_flush() then
- * free the memory of the pointeur. It's up to the user to free the
- * memory allocated for the elements of @p array. For performance
- * reasons, there is no check of @p array.
+ * free the memory of the pointeur. It does not free the memory
+ * allocated for the elements of @p array. To free them, use
+ * #EINA_ARRAY_ITER_NEXT. For performance reasons, there is no check
+ * of @p array.
  */
 EAPI void
 eina_array_free(Eina_Array *array)
@@ -488,14 +477,6 @@ eina_array_accessor_new(const Eina_Array *array)
 
    return &it->accessor;
 }
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /**
  * @}

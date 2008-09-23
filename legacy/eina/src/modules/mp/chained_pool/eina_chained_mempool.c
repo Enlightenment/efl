@@ -205,6 +205,8 @@ eina_chained_mempool_shutdown(void *data)
    free(mp);
 }
 
+#ifndef EINA_STATIC_BUILD_CHAINED_POOL
+
 static Eina_Mempool_Backend mp_backend = {
   .init = &eina_chained_mempool_init,
   .shutdown = &eina_chained_mempool_shutdown,
@@ -214,3 +216,5 @@ static Eina_Mempool_Backend mp_backend = {
 };
 
 EINA_MODULE("chained_mempool", "mp", NULL, &mp_backend);
+
+#endif /* ! EINA_STATIC_BUILD_CHAINED_POOL */

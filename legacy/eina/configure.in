@@ -101,69 +101,10 @@ AC_MSG_RESULT([$enable_ememoa])
 
 # Static linking
 
-AC_ARG_ENABLE([static-chained-pool],
-   [AC_HELP_STRING([--enable-static-chained-pool], [enable static build of chained pool @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_static_chained_pool="yes"
-    else
-       enable_static_chained_pool="no"
-    fi
-   ],
-   [enable_static_chained_pool="no"]
-)
-AC_MSG_CHECKING([whether chained pool is statically build])
-AC_MSG_RESULT([${enable_static_chained_pool}])
-
-AM_CONDITIONAL(EINA_STATIC_BUILD_CHAINED_POOL, test "x${enable_static_chainedpool}" = "xyes")
-
-AC_ARG_ENABLE([static-ememoa-fixed],
-   [AC_HELP_STRING([--enable-static-ememoa-fixed], [enable static link of ememoa fixed @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_static_ememoa_fixed="yes"
-    else
-       enable_static_ememoa_fixed="no"
-    fi
-   ],
-   [enable_static_ememoa_fixed="no"]
-)
-AC_MSG_CHECKING([whether ememoa fixed is staticlly linked])
-AC_MSG_RESULT([${enable_static_ememoa_fixed}])
-
-AM_CONDITIONAL(EINA_STATIC_BUILD_EMEMOA_FIXED, test "x${enable_static_ememoa_fixed}" = "xyes")
-
-AC_ARG_ENABLE([static-ememoa-unknown],
-   [AC_HELP_STRING([--enable-static-ememoa-unknown], [enable static link of ememoa unknown @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_static_ememoa_unknown="yes"
-    else
-       enable_static_ememoa_unknown="no"
-    fi
-   ],
-   [enable_static_ememoa_unknown="no"]
-)
-AC_MSG_CHECKING([whether ememoa unknown is staticlly linked])
-AC_MSG_RESULT([${enable_static_ememoa_unknown}])
-
-AM_CONDITIONAL(EINA_STATIC_BUILD_EMEMOA_UNKNOWN, test "x${enable_static_ememoa_unknown}" = "xyes")
-
-AC_ARG_ENABLE([static-pass-through],
-   [AC_HELP_STRING([--enable-static-pass-through], [enable static link of pass through @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_static_pass_through="yes"
-    else
-       enable_static_pass_through="no"
-    fi
-   ],
-   [enable_static_pass_through="no"]
-)
-AC_MSG_CHECKING([whether pass through is staticlly linked])
-AC_MSG_RESULT([${enable_static_pass_through}])
-
-AM_CONDITIONAL(EINA_STATIC_BUILD_PASS_THROUGH, test "x${enable_static_pass_through}" = "xyes")
+EINA_CHECK_STATIC([chained-pool], [chained pool])
+EINA_CHECK_STATIC([ememoa-fixed], [ememoa fixed])
+EINA_CHECK_STATIC([ememoa-unknown], [ememoa unknown])
+EINA_CHECK_STATIC([pass-through], [pass through])
 
 
 ### Checks for libraries

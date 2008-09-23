@@ -9,6 +9,8 @@ AM_CPPFLAGS = \
 
 if EINA_ENABLE_EMEMOA
 
+if !EINA_STATIC_BUILD_EMEMOA_UNKNOWN
+
 controllerdir = $(libdir)/eina/chained_pool/
 controller_LTLIBRARIES = eina_ememoa_unknown.la
 
@@ -17,7 +19,10 @@ eina_ememoa_unknown.c
 
 eina_ememoa_unknown_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EMEMOA_LIBS@ @COVERAGE_LIBS@
 eina_ememoa_unknown_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
+eina_ememoa_unknown_la_LIBTOOLFLAGS = --tag=disable-static
 eina_ememoa_unknown_la_DEPENDENCIES = $(top_builddir)/src/lib/libeina.la
+
+endif
 
 endif
 

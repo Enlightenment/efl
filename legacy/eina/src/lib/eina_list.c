@@ -52,6 +52,14 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+
+/**
+ * @page tutorial_list_page List Tutorial
+ *
+ * to be written...
+ *
+ */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -280,45 +288,24 @@ eina_list_accessor_free(Eina_Accessor_List *it)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_List_Group List
  *
- * @brief give a small description here : what it is for, what it does
- * , etc...
+ * @brief These functions provide single linked list management.
  *
- * List API. Give some hints about the use (functions that must be
- * used like init / shutdown), general use, etc... Give also a link to
- * tutorial below.
- *
- * @section listtable_algo Algorithm
- *
- * Give here the algorithm used in the implementation
- *
- * @section list_perf Performance
- *
- * Give some hints about performance if it is possible, and an image !
- *
- * @section list_tutorial Tutorial
- *
- * Here is a fantastic tutorial about our list
+ * For more information, you can look at the @ref tutorial_list_page.
  *
  * @{
  */
 
 /**
- * Initialize the eina list internal structure.
- * @return  Zero on failure, non-zero on successful initialization.
+ * @brief Initialize the list module.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function just sets up the error module or Eina. It is also
+ * called by eina_init(). It returns 0 on failure, otherwise it
+ * returns the number of times eina_error_init() has already been
+ * called.
  */
 EAPI int
 eina_list_init(void)
@@ -327,7 +314,15 @@ eina_list_init(void)
 }
 
 /**
- * Shutdown the eina list internal structures
+ * @brief Shut down the list module.
+ *
+ * @return 0 when the error module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function just shut down the error module set up by
+ * eina_list_init(). It is also called by eina_shutdown(). It returns
+ * 0 when it is called the same number of times than
+ * eina_error_init().
  */
 EAPI int
 eina_list_shutdown(void)
@@ -336,7 +331,16 @@ eina_list_shutdown(void)
 }
 
 /**
- * Appends the given data to the given linked list.
+ * @brief Append the given data to the given linked list.
+ *
+ * @param list The given list.
+ * @param data The data to append.
+ * @return A list pointer.
+ *
+ * This function appends @p data to @p list. If @p data is @c NULL, a
+ * new list is returned. On success, a new list pointer that should be
+ * used in place of the one given to this function is
+ * returned. Otherwise, the old pointer is returned.
  *
  * The following example code demonstrates how to ensure that the
  * given data has been successfully appended.
@@ -346,19 +350,12 @@ eina_list_shutdown(void)
  * extern void *my_data;
  *
  * list = eina_list_append(list, my_data);
- * if (eina_list_alloc_error())
+ * if (eina_error_get())
  *   {
  *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
  *     exit(-1);
  *   }
  * @endcode
- *
- * @param   list The given list.  If @c NULL is given, then a new list
- *               is created.
- * @param   data The data to append.
- * @return  A new list pointer that should be used in place of the one
- *          given to this function if successful.  Otherwise, the old
- *          pointer is returned.
  */
 EAPI Eina_List *
 eina_list_append(Eina_List *list, const void *data)
@@ -387,7 +384,16 @@ eina_list_append(Eina_List *list, const void *data)
 }
 
 /**
- * Prepends the given data to the given linked list.
+ * @brief Prepends the given data to the given linked list.
+ *
+ * @param list The given list.
+ * @param data The data to prepend.
+ * @return A list pointer.
+ *
+ * This function prepends @p data to @p list. If @p data is @c NULL, a
+ * new list is returned. On success, a new list pointer that should be
+ * used in place of the one given to this function is
+ * returned. Otherwise, the old pointer is returned.
  *
  * The following example code demonstrates how to ensure that the
  * given data has been successfully prepended.
@@ -398,18 +404,12 @@ eina_list_append(Eina_List *list, const void *data)
  * extern void *my_data;
  *
  * list = eina_list_prepend(list, my_data);
- * if (eina_list_alloc_error())
+ * if (eina_error_get())
  *   {
  *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
  *     exit(-1);
  *   }
  * @endcode
- *
- * @param   list The given list.
- * @param   data The given data.
- * @return  A new list pointer that should be used in place of the one
- *          given to this function, if successful.  Otherwise, the old
- *          pointer is returned.
  */
 EAPI Eina_List *
 eina_list_prepend(Eina_List *list, const void *data)
@@ -434,11 +434,20 @@ eina_list_prepend(Eina_List *list, const void *data)
 }
 
 /**
- * Inserts the given data into the given linked list after the specified data.
+ * @brief Insert the given data into the given linked list after the specified data.
  *
- * If @p relative is not in the list, @p data is appended to the end of the
- * list.  If there are multiple instances of @p relative in the list,
- * @p data is inserted after the first instance.
+ * @param list The given linked list.
+ * @param data The data to insert.
+ * @param relative The data to insert after.
+ * @return A list pointer.
+ *
+ * This function inserts @p data to @p list after @p relative. If
+ * @p relative is not in the list, @p data is appended to the end of
+ * the list.  If @p list is @c NULL, a  new list is returned. If there
+ * are multiple instances of @p relative in the list, @p data is
+ * inserted after the first instance.On success, a new list pointer
+ * that should be used in place of the one given to this function is
+ * returned. Otherwise, the old pointer is returned.
  *
  * The following example code demonstrates how to ensure that the
  * given data has been successfully inserted.
@@ -449,25 +458,18 @@ eina_list_prepend(Eina_List *list, const void *data)
  * extern void *relative_member;
  *
  * list = eina_list_append(list, relative_member);
- * if (eina_list_alloc_error())
+ * if (eina_error_get())
  *   {
  *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
  *     exit(-1);
  *   }
  * list = eina_list_append_relative(list, my_data, relative_member);
- * if (eina_list_alloc_error())
+ * if (eina_error_get())
  *   {
  *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
  *     exit(-1);
  *   }
  * @endcode
- *
- * @param   list The given linked list.
- * @param   data The given data.
- * @param   relative The data to insert after.
- * @return  A new list pointer that should be used in place of the one
- *          given to this function if successful.  Otherwise, the old pointer
- *          is returned.
  */
 EAPI Eina_List *
 eina_list_append_relative(Eina_List *list, const void *data, const void *relative)
@@ -482,6 +484,23 @@ eina_list_append_relative(Eina_List *list, const void *data, const void *relativ
    return eina_list_append(list, data);
 }
 
+/**
+ * @brief Append a list node to a linked list after the specified member
+ *
+ * @param list The given linked list.
+ * @param data The data to insert.
+ * @param relative The list node to insert after.
+ * @return A list pointer.
+ *
+ * This function inserts @p data to @p list after the list node
+ * @p relative. If @p list or @p relative are @c NULL, @p data is just
+ * appended to @p list using eina_list_append(). If @p list is
+ * @c NULL, a  new list is returned. If there are multiple instances
+ * of @p relative in the list, @p data is inserted after the first
+ * instance. On success, a new list pointer that should be used in
+ * place of the one given to this function is returned. Otherwise, the
+ * old pointer is returned.
+ */
 EAPI Eina_List *
 eina_list_append_relative_list(Eina_List *list, const void *data, Eina_List *relative)
 {
@@ -510,18 +529,20 @@ eina_list_append_relative_list(Eina_List *list, const void *data, Eina_List *rel
 }
 
 /**
- * Prepend a data pointer to a linked list before the memeber specified
- * @param list The list handle to prepend @p data too
- * @param data The data pointer to prepend to list @p list before @p relative
- * @param relative The data pointer before which to insert @p data
- * @return A new list handle to replace the old one
-
- * Inserts the given data into the given linked list before the member
- * specified.
+ * @brief Prepend a data pointer to a linked list before the specified member
  *
- * If @p relative is not in the list, @p data is prepended to the
- * start of the list.  If there are multiple instances of @p relative
- * in the list, @p data is inserted before the first instance.
+ * @param list The given linked list.
+ * @param data The data to insert.
+ * @param relative The data to insert before.
+ * @return A list pointer.
+ *
+ * This function inserts @p data to @p list before @p relative. If
+ * @p relative is not in the list, @p data is prepended to the list
+ * with eina_list_prepend(). If @p list is @c NULL, a  new list is
+ * returned. If there are multiple instances of @p relative in the
+ * list, @p data is inserted before the first instance. On success, a
+ * new list pointer that should be used in place of the one given to
+ * this function is returned. Otherwise, the old pointer is returned.
  *
  * The following code example demonstrates how to ensure that the
  * given data has been successfully inserted.
@@ -532,25 +553,18 @@ eina_list_append_relative_list(Eina_List *list, const void *data, Eina_List *rel
  * extern void *relative_member;
  *
  * list = eina_list_append(list, relative_member);
- * if (eina_list_alloc_error())
+ * if (eina_error_get_error())
  *   {
  *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
  *     exit(-1);
  *   }
  * list = eina_list_prepend_relative(list, my_data, relative_member);
- * if (eina_list_alloc_error())
+ * if (eina_error_get())
  *   {
  *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
  *     exit(-1);
  *   }
  * @endcode
- *
- * @param   list The given linked list.
- * @param   data The given data.
- * @param   relative The data to insert before.
- * @return  A new list pointer that should be used in place of the one
- *          given to this function if successful.  Otherwise the old pointer
- *          is returned.
  */
 EAPI Eina_List *
 eina_list_prepend_relative(Eina_List *list, const void *data, const void *relative)
@@ -565,6 +579,23 @@ eina_list_prepend_relative(Eina_List *list, const void *data, const void *relati
    return eina_list_prepend(list, data);
 }
 
+/**
+ * @brief Prepend a list node to a linked list before the specified member
+ *
+ * @param list The given linked list.
+ * @param data The data to insert.
+ * @param relative The list node to insert before.
+ * @return A list pointer.
+ *
+ * This function inserts @p data to @p list before the list node
+ * @p relative. If @p list or @p relative are @c NULL, @p data is just
+ * prepended to @p list using eina_list_prepend(). If @p list is
+ * @c NULL, a  new list is returned. If there are multiple instances
+ * of @p relative in the list, @p data is inserted before the first
+ * instance. On success, a new list pointer that should be used in
+ * place of the one given to this function is returned. Otherwise, the
+ * old pointer is returned.
+ */
 EAPI Eina_List *
 eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *relative)
 {
@@ -591,14 +622,18 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
 }
 
 /**
- * Removes the first instance of the specified data from the given list.
+ * @brief Remove the first instance of the specified data from the given list.
  *
- * If the specified data is not in the given list, nothing is done.
+ * @param list The given list.
+ * @param data The specified data.
+ * @return A list pointer.
  *
- * @param   list The given list.
- * @param   data The specified data.
- * @return  A new list pointer that should be used in place of the one
- *          passed to this functions.
+ * This function removes the first instance of @p data from
+ * @p list. If the specified data is not in the given list (tihis
+ * include the case where @p data is @c NULL), nothing is done. If
+ * @p list is @c NULL, @c NULL is returned, otherwise a new list
+ * pointer that should be used in place of the one passed to this
+ * function.
  */
 EAPI Eina_List *
 eina_list_remove(Eina_List *list, const void *data)
@@ -614,17 +649,20 @@ eina_list_remove(Eina_List *list, const void *data)
 }
 
 /**
- * Removes the specified data
+ * @brief Remove the specified data.
  *
- * Remove a specified member from a list
- * @param list The list handle to remove @p remove_list from
- * @param remove_list The list node which is to be removed
- * @return A new list handle to replace the old one
+ * @param list The given linked list.
+ * @param remove_list The list node which is to be removed.
+ * @return A list pointer.
  *
- * Calling this function takes the list node @p remove_list and removes it
- * from the list @p list, freeing the list node structure @p remove_list.
+ * This function removes the list node @p remove_list from @p list and
+ * frees the list node structure @p remove_list. If @p list is
+ * @c NULL, this function returns @c NULL. If @p remove_list is
+ * @c NULL, it returns @p list, otherwise, a new list pointer that
+ * should be used in place of the one passed to this function.
  *
- * Example:
+ * The following code gives an example.
+ *
  * @code
  * extern Eina_List *list;
  * Eina_List *l;
@@ -663,18 +701,13 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
 }
 
 /**
- * Free an entire list and all the nodes, ignoring the data contained
+ * @brief Free an entire list and all the nodes, ignoring the data contained.
+
  * @param list The list to free
  * @return A NULL pointer
  *
- * This function will free all the list nodes in list specified by @p list.
- *
- * Example:
- * @code
- * extern Eina_List *list;
- *
- * list = eina_list_free(list);
- * @endcode
+ * This function frees all the nodes of @p list. It does not free the
+ * data of the nodes. To free them, use #EINA_LIST_ITER_NEXT.
  */
 EAPI Eina_List *
 eina_list_free(Eina_List *list)
@@ -693,15 +726,16 @@ eina_list_free(Eina_List *list)
 }
 
 /**
- * Moves the specified data to the head of the list
+ * @brief Move the specified data to the head of the list.
  *
- * Move a specified member to the head of the list
- * @param list The list handle to move @p inside
- * @param move_list The list node which is to be moved
+ * @param list The list handle to move the data.
+ * @param move_list The list node to move.
  * @return A new list handle to replace the old one
  *
- * Calling this function takes the list node @p move_list and moves it
- * to the front of the @p list.
+ * This function move @p move_list to the front of @p list. If list is
+ * @c NULL, @c NULL is returned. If @p move_list is @c NULL,
+ * @p list is returned. Otherwise, a new list pointer that should be
+ * used in place of the one passed to this function.
  *
  * Example:
  * @code
@@ -747,13 +781,14 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
 }
 
 /**
- * Find a member of a list and return the member
- * @param list The list handle to search for @p data
- * @param data The data pointer to find in the list @p list
- * @return The found member data pointer
+ * @brief Find a member of a list and return the member.
  *
- * A call to this function will search the list @p list from beginning to end
- * for the first member whose data pointer is @p data. If it is found, @p data
+ * @param list The list to search for a data.
+ * @param data The data pointer to find in the list.
+ * @return The found member data pointer if foun, @c NULL otherwise.
+ *
+ * This function searches in @p list from beginning to end for the
+ * first member whose data pointer is @p data. If it is found, @p data
  * will be returned, otherwise NULL will be returned.
  *
  * Example:
@@ -775,28 +810,16 @@ eina_list_find(const Eina_List *list, const void *data)
 }
 
 /**
- * Find a member of a list and return the list node containing that member
- * @param list The list handle to search for @p data
- * @param data The data pointer to find in the list @p list
- * @return The found members list node
+ * @brief Find a member of a list and return the list node containing that member.
  *
- * A call to this function will search the list @p list from beginning to end
- * for the first member whose data pointer is @p data. If it is found, the
- * list node containing the specified member will be returned, otherwise NULL
- * will be returned.
+ * @param list The list to search for data.
+ * @param data The data pointer to find in the list.
+ * @return The found members list node on success, @c NULL otherwise.
  *
- * Example:
- * @code
- * extern Eina_List *list;
- * extern void *my_data;
- * Eina_List *found_node;
- *
- * found_node = eina_list_find_list(list, my_data);
- * if (found_node)
- *   {
- *     printf("Found member %p\n", found_node->data);
- *   }
- * @endcode
+ * This function searches in @p list from beginning to end for the
+ * first member whose data pointer is @p data. If it is found, the
+ * list node containing the specified member is returned, otherwise
+ * @c NULL is returned.
  */
 EAPI Eina_List *
 eina_list_find_list(const Eina_List *list, const void *data)
@@ -811,25 +834,16 @@ eina_list_find_list(const Eina_List *list, const void *data)
 }
 
 /**
- * Get the nth member's data pointer in a list
- * @param list The list to get member number @p n from
- * @param n The number of the element (0 being the first)
- * @return The data pointer stored in the specified element
+ * @brief Get the nth member's data pointer in a list.
  *
- * This function returns the data pointer of element number @p n, in the list
- * @p list. The first element in the array is element number 0. If the element
- * number @p n does not exist, NULL will be returned.
+ * @param list The list to get the specified member number from.
+ * @param n The number of the element (0 being the first).
+ * @return The data pointer stored in the specified element.
  *
- * Example:
- * @code
- * extern Eina_List *list;
- * extern int number;
- * void *data;
- *
- * data = eina_list_nth(list, number);
- * if (data)
- *   printf("Element number %i has data %p\n", number, data);
- * @endcode
+ * This function returns the data pointer of element number @p n, in
+ * the @p list. The first element in the array is element number 0. If
+ * the element number @p n does not exist, @c NULL is
+ * returned. Otherwise, the data of the found element is returned.
  */
 EAPI void *
 eina_list_nth(const Eina_List *list, unsigned int n)
@@ -841,25 +855,18 @@ eina_list_nth(const Eina_List *list, unsigned int n)
 }
 
 /**
- * Get the nth member's list node in a list
- * @param list The list to get member number @p n from
- * @param n The number of the element (0 being the first)
- * @return The list node stored in the numbered element
+ * @brief Get the nth member's list node in a list.
  *
- * This function returns the list node of element number @p n, in the list
- * @p list. The first element in the array is element number 0. If the element
- * number @p n does not exist, NULL will be returned.
+ * @param list The list to get the specfied member number from.
+ * @param n The number of the element (0 being the first).
+ * @return The list node stored in the numbered element.
  *
- * Example:
- * @code
- * extern Eina_List *list;
- * extern int number;
- * Eina_List *nth_list;
- *
- * nth_list = eina_list_nth_list(list, number);
- * if (nth_list)
- *   printf("Element number %i has data %p\n", number, nth_list->data);
- * @endcode
+ * This function returns the list node of element number @p n, in
+ * @ list. The first element in the array is element number 0. If the
+ * element number @p n does not exist or @p list is @c NULL or @p n is
+ * greater than the count of elements in @p list minus 1, @c NULL is
+ * returned. Otherwise the list node stored in the numbered element is
+ * returned.
  */
 EAPI Eina_List *
 eina_list_nth_list(const Eina_List *list, unsigned int n)
@@ -895,132 +902,79 @@ eina_list_nth_list(const Eina_List *list, unsigned int n)
 }
 
 /**
- * Get the last list node in the list
- * @param list The list to get the last list node from
- * @return The last list node in the list @p list
+ * @brief Get the last list node in the list.
  *
- * This function will return the last list node in the list (or NULL if the
- * list is empty).
+ * @param list The list to get the last list node from.
+ * @return The last list node in the list.
  *
- * NB: This is a order-1 operation (it takes the same short time regardless of
- * the length of the list).
+ * This function returns the last list node in the list. If @p list is
+ * @c NULL or empty, @c NULL is returned.
  *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *last, *l;
- *
- * last = eina_list_last(list);
- * printf("The list in reverse:\n");
- * for (l = last; l; l = l->prev)
- *   {
- *     printf("%p\n", l->data);
- *   }
- * @endcode
+ * This is a order-1 operation (it takes the same short time
+ * regardless of the length of the list).
  */
 static inline Eina_List *eina_list_last(const Eina_List *list);
 
 /**
- * Get the next list node after the specified list node
+ * @brief Get the next list node after the specified list node.
+ *
  * @param list The list node to get the next list node from
- * @return The next list node, or NULL if no next list node exists
+ * @return The next list node on success, @c NULL otherwise.
  *
- * This function returns the next list node after the current one. It is
- * equivalent to list->next.
- *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *l;
- *
- * printf("The list:\n");
- * for (l = list; l; l = eina_list_next(l))
- *   {
- *     printf("%p\n", l->data);
- *   }
- * @endcode
+ * This function returns the next list node after the current one in
+ * @p list. It is equivalent to list->next. If @p list is @c NULL or
+ * if no next list node exists, it returns @c NULL.
  */
 static inline Eina_List *eina_list_next(const Eina_List *list);
 
 /**
- * Get the previous list node before the specified list node
- * @param list The list node to get the previous list node from
- * @return The previous list node, or NULL if no previous list node exists
+ * @brief Get the previous list node before the specified list node.
  *
- * This function returns the previous list node before the current one. It is
- * equivalent to list->prev.
+ * @param list The list node to get the previous list node from.
+ * @return The previous list node o success, @c NULL otherwise.
+ * if no previous list node exists
  *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *last, *l;
- *
- * last = eina_list_last(list);
- * printf("The list in reverse:\n");
- * for (l = last; l; l = eina_list_prev(l))
- *   {
- *     printf("%p\n", l->data);
- *   }
- * @endcode
+ * This function returns the previous list node before the current one
+ * in @p list. It is equivalent to list->prev. If @p list is @c NULL or
+ * if no previous list node exists, it returns @c NULL.
  */
 static inline Eina_List *eina_list_prev(const Eina_List *list);
 
 /**
- * Get the list node data member
- * @param list The list node to get the data member of
- * @return The data member from the list node @p list
+ * @brief Get the list node data member.
  *
- * This function returns the data member of the specified list node @p list.
- * It is equivalent to list->data.
+ * @param list The list node to get the data member of.
+ * @return The data member from the list node.
  *
- * Example:
- * @code
- * extern Eina_List *list;
- * Eina_List *l;
- *
- * printf("The list:\n");
- * for (l = list; l; l = eina_list_next(l))
- *   {
- *     printf("%p\n", eina_list_data(l));
- *   }
- * @endcode
+ * This function returns the data member of the specified list node @p
+ * list. It is equivalent to list->data. If @p list is @c NULL, this
+ * function returns @c NULL.
  */
 static inline void *eina_list_data(const Eina_List *list);
 
 /**
- * Get the count of the number of items in a list
- * @param list The list whose count to return
- * @return The number of members in the list @p list
+ * @brief Get the count of the number of items in a list.
  *
- * This function returns how many members in the specified list: @p list. If
- * the list is empty (NULL), 0 is returned.
+ * @param list The list whose count to return.
+ * @return The number of members in the list.
  *
- * NB: This is an order-1 operation and takes the same tiem regardless of the
- * length of the list.
+ * This function returns how many members @p list contains. If the
+ * list is @c NULL, 0 is returned.
  *
- * Example:
- * @code
- * extern Eina_List *list;
- *
- * printf("The list has %i members\n", eina_list_count(list));
- * @endcode
+ * NB: This is an order-1 operation and takes the same tiem regardless
+ * of the length of the list.
  */
 static inline unsigned int eina_list_count(const Eina_List *list);
 
 /**
- * Reverse all the elements in the list
- * @param list The list to reverse
- * @return The list after it has been reversed
+ * @brief Reverse all the elements in the list.
  *
- * This takes a list @p list, and reverses the order of all elements in the
- * list, so the last member is now first, and so on.
+ * @param list The list to reverse.
+ * @return The list after it has been reversed.
  *
- * Example:
- * @code
- * extern Eina_List *list;
- *
- * list = eina_list_reverse(list);
- * @endcode
+ * This function reverses the order of all elements in @p list, so the
+ * last member is now first, and so on. If @p list is @c NULL, this
+ * functon returns @c NULL.
  */
 EAPI Eina_List *
 eina_list_reverse(Eina_List *list)
@@ -1046,16 +1000,19 @@ eina_list_reverse(Eina_List *list)
 }
 
 /**
- * Sort a list according to the ordering func will return
- * @param list The list handle to sort
- * @param size The length of the list to sort
- * @param func A function pointer that can handle comparing the list data
- * nodes
- * @return A new sorted list
+ * @brief Sort a list according to the ordering func will return.
  *
- * This function sorts your list.  The data in your nodes can be arbitrary,
- * you just have to be smart enough to know what kind of data is in your
- * lists
+ * @param list The list handle to sort.
+ * @param size The length of the list to sort.
+ * @param func A function pointer that can handle comparing the list data
+ * nodes.
+ * @return A new sorted list.
+ *
+ * This function sorts @p list. @p size if the number of the first
+ * element to sort. If @p size is 0 or greater than the number of
+ * elements in @p list, all the elemnts are sorted. @p func is used to
+ * compare two elements of @p list. If @p list or @p func are @c NULL,
+ * this function returns @c NULL.
  *
  * Example:
  * @code
@@ -1073,7 +1030,7 @@ eina_list_reverse(Eina_List *list)
  * extern Eina_List *list;
  *
  * list = eina_list_sort(list, eina_list_count(list), sort_cb);
- * if (eina_list_alloc_error())
+ * if (eina_error_get())
  *   {
  *     fprintf(stderr, "ERROR: Memory is low. List Sorting failed.\n");
  *     exit(-1);
@@ -1182,6 +1139,18 @@ eina_list_sort(Eina_List *list, unsigned int size, int (*func)(void *, void *))
    return list;
 }
 
+/**
+ * @brief Returned a new iterator asociated to a list.
+ *
+ * @param list The list.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to
+ * @p list. If @p list is @c NULL or the count member of @p list is
+ * less or equal than 0, this function returns NULL. If the memory can
+ * not be allocated, NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
+ * set. Otherwise, a valid iterator is returned.
+ */
 EAPI Eina_Iterator *
 eina_list_iterator_new(const Eina_List *list)
 {
@@ -1206,6 +1175,18 @@ eina_list_iterator_new(const Eina_List *list)
    return &it->iterator;
 }
 
+/**
+ * @brief Returned a new accessor asociated to a list.
+ *
+ * @param list The list.
+ * @return A new accessor.
+ *
+ * This function returns a newly allocated accessor associated to
+ * @p list. If @p list is @c NULL or the count member of @p list is
+ * less or equal than 0, this function returns NULL. If the memory can
+ * not be allocated, NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
+ * set. Otherwise, a valid accessor is returned.
+ */
 EAPI Eina_Accessor *
 eina_list_accessor_new(const Eina_List *list)
 {
@@ -1230,14 +1211,6 @@ eina_list_accessor_new(const Eina_List *list)
 
    return &it->accessor;
 }
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /**
  * @}
