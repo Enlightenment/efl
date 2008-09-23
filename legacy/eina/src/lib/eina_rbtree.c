@@ -447,3 +447,13 @@ eina_rbtree_iterator_postfix(const Eina_Rbtree *root)
    return _eina_rbtree_iterator_build(root, EINA_RBTREE_ITERATOR_POSTFIX_MASK);
 }
 
+EAPI void
+eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func)
+{
+   if (!root) return ;
+
+   eina_rbtree_delete(root->son[0], func);
+   eina_rbtree_delete(root->son[1], func);
+   func(root);
+}
+

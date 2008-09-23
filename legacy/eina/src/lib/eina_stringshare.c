@@ -128,6 +128,19 @@ _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare
    return EINA_RBTREE_RIGHT;
 }
 
+static void
+_eina_stringshare_head_free(Eina_Stringshare_Head *ed)
+{
+   while (ed->head)
+     {
+	Eina_Stringshare_Node *el = ed->head;
+
+	ed->head = ed->head->next;
+	if (el->begin == EINA_FALSE) free(el);
+     }
+   free(ed);
+}
+
 /**
  * @endcond
  */
@@ -221,23 +234,7 @@ eina_stringshare_shutdown()
 	/* remove any string still in the table */
 	for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
 	  {
-	     Eina_Stringshare_Head *ed = share->buckets[i];
-	     Eina_Stringshare_Head *save;
-
-	     while (ed)
-	       {
-		  save = ed;
-		  ed = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(&ed->node, &ed->node,
-									  EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
-		  while (save->head)
-		    {
-		       Eina_Stringshare_Node *el = save->head;
-
-		       save->head = el->next;
-		       if (el->begin == EINA_FALSE) free(el);
-		    }
-		  free(save);
-	       }
+	     eina_rbtree_delete(share->buckets[i], EINA_RBTREE_FREE_CB(_eina_stringshare_head_free));
 	     share->buckets[i] = NULL;
 	  }
 	free(share);
