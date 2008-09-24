@@ -55,14 +55,13 @@ typedef void (*Eina_Rbtree_Free_Cb)(Eina_Rbtree *node);
 
 EAPI Eina_Rbtree *eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data);
 EAPI Eina_Rbtree *eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data);
+EAPI void eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func);
 
 static inline Eina_Rbtree *eina_rbtree_inline_lookup(Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp, const void *data);
 
 EAPI Eina_Iterator *eina_rbtree_iterator_prefix(const Eina_Rbtree *root);
 EAPI Eina_Iterator *eina_rbtree_iterator_infix(const Eina_Rbtree *root);
 EAPI Eina_Iterator *eina_rbtree_iterator_postfix(const Eina_Rbtree *root);
-
-EAPI void eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func);
 
 #include "eina_inline_rbtree.x"
 
