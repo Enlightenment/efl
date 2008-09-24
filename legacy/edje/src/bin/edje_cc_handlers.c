@@ -1194,7 +1194,7 @@ ob_collections_group(void)
    Edje_Part_Collection_Directory_Entry *de;
    Edje_Part_Collection *pc;
    Code *cd;
-
+   
    de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    edje_file->collection_dir->entries = evas_list_append(edje_file->collection_dir->entries, de);
    de->id = evas_list_count(edje_file->collection_dir->entries) - 1;
@@ -1222,11 +1222,47 @@ static void
 st_collections_group_name(void)
 {
    Edje_Part_Collection_Directory_Entry *de;
-
+   Evas_List *l;
+   
    check_arg_count(1);
 
    de = evas_list_data(evas_list_last(edje_file->collection_dir->entries));
    de->entry = parse_str(0);
+   for (l = edje_file->collection_dir->entries; l; l = l->next)
+     {
+	Edje_Part_Collection_Directory_Entry *de_other;
+	
+	de_other = l->data;
+	if ((de_other != de) && (de_other->entry) && 
+	    (!strcmp(de->entry, de_other->entry)))
+	  {
+	     Edje_Part_Collection *pc;
+	     Code *cd;
+	     int i;
+	     
+	     pc = evas_list_nth(edje_collections, de_other->id);
+	     cd = evas_list_nth(codes, de_other->id);
+	     
+	     edje_file->collection_dir->entries = 
+	       evas_list_remove(edje_file->collection_dir->entries, de_other);
+	     edje_collections = 
+	       evas_list_remove(edje_collections, pc);
+	     codes =
+	       evas_list_remove(codes, cd);
+	     
+	     for (i = 0, l = edje_file->collection_dir->entries; l; l = l->next, i++)
+	       {
+		  de_other = l->data;
+		  de_other->id = i;
+	       }
+	     for (i = 0, l = edje_collections; l; l = l->next, i++)
+	       {
+		  pc = l->data;
+		  pc->id = i;
+	       }
+	     break;
+	  }
+     }
 }
 
 /**
