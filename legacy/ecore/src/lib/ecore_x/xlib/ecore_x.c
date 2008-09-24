@@ -605,6 +605,24 @@ ecore_x_current_time_get(void)
    return _ecore_x_event_last_time;
 }
 
+/**
+ * Return the screen DPI
+ *
+ * This is a simplistic call to get DPI. It does not account for differing
+ * DPI in the x amd y axes nor does it accoutn for multihead or xinerama and
+ * xrander where different parts of the screen may have differen DPI etc.
+ *
+ * @return the general screen DPI (dots/pixels per inch).
+ */
+EAPI int
+ecore_x_dpi_get(void)
+{
+   Screen *s;
+   
+   s = DefaultScreenOfDisplay(_ecore_x_disp);
+   return (s->width / (s->mwidth * 254)) / 10;
+}
+
 static int
 _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {

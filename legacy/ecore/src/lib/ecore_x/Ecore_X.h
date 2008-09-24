@@ -1029,6 +1029,7 @@ EAPI void             ecore_x_flush(void);
 EAPI void             ecore_x_sync(void);
 EAPI void             ecore_x_killall(Ecore_X_Window root);
 EAPI void             ecore_x_kill(Ecore_X_Window win);
+EAPI int              ecore_x_dpi_get(void);
 
 EAPI Ecore_X_Time     ecore_x_current_time_get(void);
 
