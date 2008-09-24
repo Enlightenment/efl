@@ -35,7 +35,6 @@ START_TEST(eina_module_init_shutdown)
      eina_module_shutdown();
      eina_module_init();
       eina_module_init();
-      eina_module_root_add(PACKAGE_BUILD_DIR);
       eina_module_shutdown();
      eina_module_shutdown();
     eina_module_shutdown();
@@ -43,65 +42,36 @@ START_TEST(eina_module_init_shutdown)
 }
 END_TEST
 
-static int i42 = 42;
-static Eina_Module_Export static_test = { "simple", NULL, "test", &i42 };
-EAPI int stupid_test = 7;
-
-static Eina_Bool
-_eina_module_test_cb(__UNUSED__ Eina_Module *m, __UNUSED__ void *data)
+static Eina_Bool list_cb(Eina_Module *m, void *data)
 {
+   int *sym;
+   const char *file;
+   
+   /* the reference count */
+   eina_module_load(m);
+   /* get */   
+   sym = eina_module_symbol_get(m, "dummy_symbol");
+   fail_if(!sym);
+   fail_if(*sym != 0xbad);
+   file = eina_module_file_get(m);
+   fail_if(!file);
+   eina_module_unload(m);
+   
    return EINA_TRUE;
 }
 
-START_TEST(eina_module_simple)
+
+START_TEST(eina_module_load_unload)
 {
-   Eina_Module_Group *gp;
-   Eina_Module *m;
-   Eina_List *list;
-
+   Eina_List *_modules;
+   
    eina_module_init();
-
-   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
-
-   gp = eina_module_group_new();
-   fail_if(!gp);
-
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/lib", EINA_FALSE);
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/lib", EINA_FALSE);
-
-   eina_module_app_register(gp, "eina", "test", NULL);
-   eina_module_app_register(gp, "eina", "bench", "1.0.0");
-
-   eina_module_register(gp, &static_test);
-
-   m = eina_module_new(gp, "unknown");
-   fail_if(m);
-
-   m = eina_module_new(gp, "simple");
-   fail_if(!m);
-
-   fail_if(eina_module_load(m) != EINA_TRUE);
-
-   fprintf(stderr, "path: %s\n", eina_module_path_get(m));
-   fail_if(strcmp("test", eina_module_export_type_get(m)));
-   fail_if(eina_module_export_version_get(m) != NULL);
-   fail_if(strcmp("simple", eina_module_export_name_get(m)));
-   fail_if(eina_module_export_object_get(m) != &i42);
-   fail_if(eina_module_symbol_get(m, "eina_list_init") != &eina_list_init);
-
-   eina_module_unload(m);
-   eina_module_delete(m);
-
-   list = eina_module_list_new(gp, _eina_module_test_cb, NULL);
-   eina_module_list_load(list);
-   eina_module_list_unload(list);
-   eina_module_list_delete(list);
-
-   m = eina_module_new(gp, "simple");
-
-   eina_module_group_delete(gp);
-
+   _modules = eina_module_list_get(PACKAGE_BUILD_DIR"/src/tests/", 1, &list_cb, NULL);
+   fail_if(!_modules);
+   eina_module_list_load(_modules);
+   eina_module_list_unload(_modules);
+   eina_module_list_delete(_modules);
+   /* TODO delete the list */
    eina_module_shutdown();
 }
 END_TEST
@@ -110,5 +80,5 @@ void
 eina_test_module(TCase *tc)
 {
    tcase_add_test(tc, eina_module_init_shutdown);
-   tcase_add_test(tc, eina_module_simple);
+   tcase_add_test(tc, eina_module_load_unload);
 }

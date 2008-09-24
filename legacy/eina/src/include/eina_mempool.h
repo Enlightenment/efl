@@ -33,7 +33,6 @@ EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 EAPI int eina_mempool_init(void);
 EAPI int eina_mempool_shutdown(void);
-EAPI Eina_Module_Group * eina_mempool_module_group_get(void);
 
 EAPI Eina_Mempool * eina_mempool_new(const char *module, const char *context, const char *options, ...);
 EAPI void eina_mempool_delete(Eina_Mempool *mp);

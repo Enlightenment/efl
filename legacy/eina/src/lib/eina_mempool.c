@@ -23,48 +23,78 @@
 #include <assert.h>
 
 #include "eina_mempool.h"
-#include "eina_list.h"
+#include "eina_hash.h"
 #include "eina_module.h"
 #include "eina_private.h"
 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-
-static Eina_Module_Group *_group;
+static Eina_Hash *_backends;
+static Eina_List *_modules;
 static int _init_count = 0;
 
 static Eina_Mempool *
-_new_from_buffer(const char *module, const char *context, const char *options, va_list args)
+_new_from_buffer(const char *name, const char *context, const char *options, va_list args)
 {
+	Eina_Mempool_Backend *be;
 	Eina_Mempool *mp;
-	Eina_Module *m;
+	
 	Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 	eina_error_set(0);
-	m = eina_module_new(_group, module);
-	if (!m) return NULL;
-	if (eina_module_load(m) == EINA_FALSE) goto on_error;
+	be = eina_hash_find(_backends, name);
+	if (!be)
+		goto on_error;
 
 	err = EINA_ERROR_OUT_OF_MEMORY;
 	mp = malloc(sizeof(Eina_Mempool));
 	if (!mp) goto on_error;
-	mp->module = m;
-	mp->backend = *(Eina_Mempool_Backend *)eina_module_export_object_get(m);
+
+	/* FIXME why backend is not a pointer? */
+	mp->backend = *be;
 	mp->backend_data = mp->backend.init(context, options, args);
 
 	return mp;
 
   on_error:
 	eina_error_set(err);
-	if (m) eina_module_delete(m);
 	return NULL;
 }
+
+/* Built-in backend's prototypes */
+#ifdef EINA_STATIC_BUILD_CHAINED_POOL
+Eina_Bool chained_init(void);
+void chained_shutdown(void);
+#endif
+
+#ifdef EINA_STATIC_BUILD_PASS_THROUGH
+Eina_Bool pass_through_init(void);
+void pass_through_shutdown(void);
+#endif
+
+#ifdef EINA_STATIC_BUILD_EMEMOA_UNKNOWN
+Eina_Bool ememoa_unknown_init(void);
+void ememoa_unknown_shutdown(void);
+#endif
+
+#ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
+Eina_Bool ememoa_fixed_init(void);
+void ememoa_fixed_shutdown(void);
+#endif
 
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be)
+{
+	return eina_hash_add(_backends, be->name, be);	
+}
 
+void eina_mempool_unregister(Eina_Mempool_Backend *be)
+{
+	eina_hash_del(_backends, be->name, be);
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -79,16 +109,28 @@ eina_mempool_init(void)
 {
 	if (!_init_count)
 	{
+		eina_hash_init();
 		eina_module_init();
 
-		_group = eina_module_group_new();
-		if (!_group) return 0;
-
-		eina_module_app_register(_group, "eina", "mp", NULL);
-
 		EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_register("Not a memory pool module.");
+		_backends = eina_hash_string_superfast_new();
+		/* dynamic backends */
+		_modules = eina_module_list_get(PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
+		eina_module_list_load(_modules);
+		/* builtin backends */
+#ifdef EINA_STATIC_BUILD_CHAINED_POOL
+		chained_init();
+#endif
+#ifdef EINA_STATIC_BUILD_PASS_THROUGH
+		pass_through_init();
+#endif
+#ifdef EINA_STATIC_BUILD_EMEMOA_UNKNOWN
+		ememoa_unknown_init();
+#endif
+#ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
+		ememoa_fixed_init();
+#endif
 	}
-	/* get all the modules */
 	return ++_init_count;
 }
 
@@ -101,17 +143,25 @@ eina_mempool_shutdown(void)
 	_init_count--;
 	if (_init_count != 0) return _init_count;
 
-	/* remove the list of modules */
-	eina_module_group_delete(_group);
+	/* builtin backends */
+#ifdef EINA_STATIC_BUILD_CHAINED_POOL
+	chained_shutdown();
+#endif
+#ifdef EINA_STATIC_BUILD_PASS_THROUGH
+	pass_through_shutdown();
+#endif
+#ifdef EINA_STATIC_BUILD_EMEMOA_UNKNOWN
+	ememoa_unknown_shutdown();
+#endif
+#ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
+	ememoa_fixed_shutdown();
+#endif
+	/* dynamic backends */
+	eina_module_list_unload(_modules);
 	eina_module_shutdown();
-
+	/* TODO delete the _modules list */
+	eina_hash_shutdown();
 	return 0;
-}
-
-EAPI Eina_Module_Group *
-eina_mempool_module_group_get(void)
-{
-	return _group;
 }
 
 /**
@@ -140,7 +190,6 @@ EAPI void eina_mempool_delete(Eina_Mempool *mp)
 	if (!mp) return ;
 
 	mp->backend.shutdown(mp->backend_data);
-	eina_module_unload(mp->module);
 	free(mp);
 }
 

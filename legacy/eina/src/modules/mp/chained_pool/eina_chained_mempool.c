@@ -205,9 +205,8 @@ eina_chained_mempool_shutdown(void *data)
    free(mp);
 }
 
-#ifndef EINA_STATIC_BUILD_CHAINED_POOL
-
 static Eina_Mempool_Backend mp_backend = {
+  .name ="chained_mempool",
   .init = &eina_chained_mempool_init,
   .shutdown = &eina_chained_mempool_shutdown,
   .realloc = &eina_chained_mempool_realloc,
@@ -215,6 +214,19 @@ static Eina_Mempool_Backend mp_backend = {
   .free = &eina_chained_mempool_free
 };
 
-EINA_MODULE("chained_mempool", "mp", NULL, &mp_backend);
+Eina_Bool chained_init(void)
+{
+	return eina_mempool_register(&mp_backend);
+}
+
+void chained_shutdown(void)
+{
+	eina_mempool_unregister(&mp_backend);
+}
+
+#ifndef EINA_STATIC_BUILD_CHAINED_POOL
+
+EINA_MODULE_INIT(chained_init);
+EINA_MODULE_SHUTDOWN(chained_shutdown);
 
 #endif /* ! EINA_STATIC_BUILD_CHAINED_POOL */

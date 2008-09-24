@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 
 if !EINA_STATIC_BUILD_PASS_THROUGH
 
-controllerdir = $(libdir)/eina/pass_through/
+controllerdir = $(libdir)/eina/mp/
 controller_LTLIBRARIES = pass_through.la
 
 pass_through_la_SOURCES = \

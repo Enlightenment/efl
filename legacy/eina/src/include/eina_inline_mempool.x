@@ -23,6 +23,7 @@
 typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 struct _Eina_Mempool_Backend
 {
+   const char *name;
    void *(*init)(const char *context, const char *options, va_list args);
    void (*free)(void *data, void *element);
    void *(*alloc)(void *data, unsigned int size);
@@ -34,7 +35,6 @@ struct _Eina_Mempool_Backend
 
 struct _Eina_Mempool
 {
-   Eina_Module *module;
    Eina_Mempool_Backend backend;
    void *backend_data;
 };
@@ -56,5 +56,9 @@ eina_mempool_free(Eina_Mempool *mp, void *element)
 {
    mp->backend.free(mp->backend_data, element);
 }
+
+/* FIXME Do we actually need to export this functions?? */
+Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be);
+void eina_mempool_unregister(Eina_Mempool_Backend *be);
 
 #endif

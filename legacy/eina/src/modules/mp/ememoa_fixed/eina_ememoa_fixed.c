@@ -132,9 +132,8 @@ eina_ememoa_fixed_shutdown(void *data)
    free(efm);
 }
 
-#ifndef EINA_STATIC_BUILD_EMEMOA_FIXED
-
 static Eina_Mempool_Backend mp_backend = {
+  .name = "ememoa_fixed",
   .init = &eina_ememoa_fixed_init,
   .shutdown = &eina_ememoa_fixed_shutdown,
   .realloc = &eina_ememoa_fixed_realloc,
@@ -144,6 +143,20 @@ static Eina_Mempool_Backend mp_backend = {
   .statistics = &eina_ememoa_fixed_statistics
 };
 
-EINA_MODULE("ememoa_fixed", "mp", NULL, &mp_backend);
+Eina_Bool ememoa_fixed_init(void)
+{
+	return eina_mempool_register(&mp_backend);
+}
+
+void ememoa_fixed_shutdown(void)
+{
+	eina_mempool_unregister(&mp_backend);
+}
+
+
+#ifndef EINA_STATIC_BUILD_EMEMOA_FIXED
+
+EINA_MODULE_INIT(ememoa_fixed_init);
+EINA_MODULE_SHUTDOWN(ememoa_fixed_shutdown);
 
 #endif /* ! EINA_STATIC_BUILD_EMEMOA_FIXED */

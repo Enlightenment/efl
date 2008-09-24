@@ -69,10 +69,29 @@ eina_build_suite(void)
    return s;
 }
 
+/* FIXME this is a copy from eina_test_mempool
+ * we should remove the duplication
+ */
+static Eina_List *_modules;
+static void _mempool_init(void)
+{
+    eina_mempool_init();
+    /* force modules to be loaded in case they are not installed */
+    _modules = eina_module_list_get(PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
+    eina_module_list_load(_modules);
+}
+
+static void _mempool_shutdown(void)
+{
+   eina_module_list_delete(_modules);
+   /* TODO delete the list */
+   eina_mempool_shutdown();
+}
+
 int
 main(void)
 {
-   Eina_Module_Group *gp;
+   //Eina_Module_Group *gp;
    Suite *s;
    SRunner *sr;
    int failed_count;
@@ -81,17 +100,13 @@ main(void)
    s = eina_build_suite();
    sr = srunner_create(s);
 
-   eina_mempool_init();
-
-   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
-   gp = eina_mempool_module_group_get();
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
+   _mempool_init();
 
    srunner_run_all(sr, CK_NORMAL);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
 
-   eina_mempool_shutdown();
+   _mempool_shutdown();
 
    return (failed_count == 0) ? 0 : 255;
 }

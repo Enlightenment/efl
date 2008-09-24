@@ -11,7 +11,7 @@ if EINA_ENABLE_EMEMOA
 
 if !EINA_STATIC_BUILD_EMEMOA_FIXED
 
-controllerdir = $(libdir)/eina/chained_pool/
+controllerdir = $(libdir)/eina/mp/
 controller_LTLIBRARIES = eina_ememoa_fixed.la
 
 eina_ememoa_fixed_la_SOURCES = \
