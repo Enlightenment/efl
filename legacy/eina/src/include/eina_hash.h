@@ -64,9 +64,10 @@ EAPI int eina_hash_shutdown(void);
 
 EAPI Eina_Hash * eina_hash_new(Eina_Key_Length key_length_cb,
 			       Eina_Key_Cmp key_cmp_cb,
-			       Eina_Key_Hash key_hash_cb);
-EAPI Eina_Hash * eina_hash_string_djb2_new(void);
-EAPI Eina_Hash * eina_hash_string_superfast_new(void);
+			       Eina_Key_Hash key_hash_cb,
+			       Eina_Free_Cb data_free_cb);
+EAPI Eina_Hash * eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
+EAPI Eina_Hash * eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
 
 EAPI Eina_Bool   eina_hash_add(Eina_Hash *hash, const void *key, const void *data);
 EAPI Eina_Bool   eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data);

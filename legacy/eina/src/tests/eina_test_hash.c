@@ -60,9 +60,10 @@ START_TEST(eina_hash_simple)
    int *test;
    int array[] = { 1, 42, 4, 5, 6 };
 
-   fail_if(eina_hash_init() <= 0);
+   /* As mempool is already initialized and it use hash, we should have 2 init. */
+   fail_if(eina_hash_init() != 2);
 
-   hash = eina_hash_string_superfast_new();
+   hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
 
    fail_if(eina_hash_add(hash, "1", &array[0]) != EINA_TRUE);
@@ -106,7 +107,8 @@ START_TEST(eina_hash_simple)
 
    eina_hash_free(hash);
 
-   fail_if(eina_hash_shutdown() > 0);
+   /* Same comment as eina_hash_init */
+   fail_if(eina_hash_shutdown() != 1);
 }
 END_TEST
 
@@ -115,9 +117,9 @@ START_TEST(eina_hash_extended)
    Eina_Hash *hash = NULL;
    int i;
 
-   fail_if(eina_hash_init() <= 0);
+   fail_if(eina_hash_init() != 2);
 
-   hash = eina_hash_string_djb2_new();
+   hash = eina_hash_string_djb2_new(NULL);
    fail_if(hash == NULL);
 
    fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
@@ -134,7 +136,7 @@ START_TEST(eina_hash_extended)
 
    eina_hash_free(hash);
 
-   fail_if(eina_hash_shutdown() > 0);
+   fail_if(eina_hash_shutdown() != 1);
 }
 END_TEST
 
@@ -144,9 +146,9 @@ START_TEST(eina_hash_double_item)
    int i[] = { 7, 7 };
    int *test;
 
-   fail_if(eina_hash_init() <= 0);
+   fail_if(eina_hash_init() != 2);
 
-   hash = eina_hash_string_superfast_new();
+   hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
 
    fail_if(eina_hash_add(hash, "7", &i[0]) != EINA_TRUE);
@@ -158,7 +160,7 @@ START_TEST(eina_hash_double_item)
 
    eina_hash_free(hash);
 
-   fail_if(eina_hash_shutdown() > 0);
+   fail_if(eina_hash_shutdown() != 1);
 }
 END_TEST
 

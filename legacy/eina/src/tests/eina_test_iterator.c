@@ -112,7 +112,7 @@ START_TEST(eina_iterator_hash_simple)
 
    eina_hash_init();
 
-   hash = eina_hash_string_superfast_new();
+   hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
 
    fail_if(eina_hash_add(hash, "1", &array[0]) != EINA_TRUE);

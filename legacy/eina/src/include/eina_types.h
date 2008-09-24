@@ -79,5 +79,7 @@ typedef Eina_Bool (*Eina_Each)(const void *container,
 			       void *fdata);
 #define EINA_EACH(Function) ((Eina_Each)Function)
 
+typedef void (*Eina_Free_Cb)(void *data);
+#define EINA_FREE_CB(Function) ((Eina_Free_Cb)Function)
 
 #endif /* EINA_TYPES_H_ */

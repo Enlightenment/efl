@@ -113,7 +113,7 @@ eina_mempool_init(void)
 		eina_module_init();
 
 		EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_register("Not a memory pool module.");
-		_backends = eina_hash_string_superfast_new();
+		_backends = eina_hash_string_superfast_new(NULL);
 		/* dynamic backends */
 		_modules = eina_module_list_get(PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
 		eina_module_list_load(_modules);

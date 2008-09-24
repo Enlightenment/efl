@@ -448,12 +448,12 @@ eina_rbtree_iterator_postfix(const Eina_Rbtree *root)
 }
 
 EAPI void
-eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func)
+eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data)
 {
    if (!root) return ;
 
-   eina_rbtree_delete(root->son[0], func);
-   eina_rbtree_delete(root->son[1], func);
-   func(root);
+   eina_rbtree_delete(root->son[0], func, data);
+   eina_rbtree_delete(root->son[1], func, data);
+   func(root, data);
 }
 
