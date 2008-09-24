@@ -19,10 +19,13 @@
 #include "Eina.h"
 #include "eina_suite.h"
 
+#include <stdio.h>
 START_TEST(eina_simple)
 {
-   fail_if(!eina_init());
-   fail_if(eina_shutdown() != 0);
+   /* Eina_error as already been initialized by eina_hash
+      that was called by eina_mempool_init that's why we don't have 0 here */
+   fail_if(eina_init() != 2);
+   fail_if(eina_shutdown() != 1);
 }
 END_TEST
 
