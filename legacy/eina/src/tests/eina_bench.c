@@ -38,10 +38,28 @@ static const Eina_Benchmark_Case etc[] = {
   { NULL, NULL }
 };
 
+/* FIXME this is a copy from eina_test_mempool
+ * we should remove the duplication
+ */
+static Eina_List *_modules;
+static void _mempool_init(void)
+{
+    eina_mempool_init();
+    /* force modules to be loaded in case they are not installed */
+    _modules = eina_module_list_get(PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
+    eina_module_list_load(_modules);
+}
+
+static void _mempool_shutdown(void)
+{
+   eina_module_list_delete(_modules);
+   /* TODO delete the list */
+   eina_mempool_shutdown();
+}
+
 int
 main(int argc, char **argv)
 {
-   Eina_Module_Group *gp;
    Eina_Benchmark *test;
    Eina_Array *ea;
    unsigned int i;
@@ -73,11 +91,7 @@ main(int argc, char **argv)
 	eina_benchmark_free(test);
      }
 
-   eina_mempool_init();
-
-   eina_module_root_add(PACKAGE_BUILD_DIR"/src/tests");
-   gp = eina_mempool_module_group_get();
-   eina_module_path_register(gp, PACKAGE_BUILD_DIR"/src/modules", EINA_TRUE);
+   _mempool_init();
 
    eina_bench_e17();
 
@@ -85,5 +99,7 @@ main(int argc, char **argv)
 
    eina_benchmark_shutdown();
 
+   _mempool_shutdown();
+   
    return 0;
 }

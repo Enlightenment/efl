@@ -91,7 +91,6 @@ static void _mempool_shutdown(void)
 int
 main(void)
 {
-   //Eina_Module_Group *gp;
    Suite *s;
    SRunner *sr;
    int failed_count;
