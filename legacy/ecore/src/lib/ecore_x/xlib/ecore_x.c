@@ -620,7 +620,8 @@ ecore_x_dpi_get(void)
    Screen *s;
    
    s = DefaultScreenOfDisplay(_ecore_x_disp);
-   return (s->width / (s->mwidth * 254)) / 10;
+   if (s->mwidth <= 0) return 75;
+   return (((s->width * 254) / s->mwidth) + 5) / 10;
 }
 
 static int
