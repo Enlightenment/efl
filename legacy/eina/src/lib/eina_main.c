@@ -27,6 +27,7 @@
 #include "eina_array.h"
 #include "eina_counter.h"
 #include "eina_benchmark.h"
+#include "eina_magic.h"
 
 /*============================================================================*
  *                                 Global                                     *
@@ -48,6 +49,7 @@ eina_init(void)
    eina_array_init();
    eina_counter_init();
    eina_benchmark_init();
+   eina_magic_string_init();
 
    return r;
 }
@@ -57,6 +59,7 @@ eina_shutdown(void)
 {
    int r;
 
+   eina_magic_string_shutdown();
    eina_benchmark_shutdown();
    eina_counter_shutdown();
    eina_array_shutdown();
