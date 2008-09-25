@@ -24,6 +24,7 @@
 #include "eina_types.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
+#include "eina_magic.h"
 
 /**
  * @addtogroup Eina_Data_Types_Group Data Types
@@ -57,6 +58,8 @@ typedef struct _Eina_List_Accounting Eina_List_Accounting;
  */
 struct _Eina_List /** A linked list node */
 {
+   EINA_MAGIC;
+
    void      *data; /**< Pointer to list element payload */
    Eina_List *next; /**< Next member in the list */
    Eina_List *prev; /**< Previous member in the list */
@@ -65,6 +68,8 @@ struct _Eina_List /** A linked list node */
 
 struct _Eina_List_Accounting
 {
+   EINA_MAGIC;
+
    Eina_List *last;
    unsigned int count;
 };
@@ -82,8 +87,8 @@ EAPI Eina_List *eina_list_prepend_relative_list (Eina_List *list, const void *da
 EAPI Eina_List *eina_list_remove (Eina_List *list, const void *data);
 EAPI Eina_List *eina_list_remove_list (Eina_List *list, Eina_List *remove_list);
 EAPI Eina_List *eina_list_promote_list (Eina_List *list, Eina_List *move_list);
-EAPI void *eina_list_find(const Eina_List *list, const void *data);
-EAPI Eina_List *eina_list_find_list (const Eina_List *list, const void *data);
+EAPI void *eina_list_data_find(const Eina_List *list, const void *data);
+EAPI Eina_List *eina_list_data_find_list (const Eina_List *list, const void *data);
 EAPI Eina_List *eina_list_free (Eina_List *list);
 EAPI void *eina_list_nth(const Eina_List *list, unsigned int n);
 EAPI Eina_List *eina_list_nth_list (const Eina_List *list, unsigned int n);
@@ -93,7 +98,7 @@ EAPI Eina_List *eina_list_sort (Eina_List *list, unsigned int size, Eina_Compare
 static inline Eina_List *eina_list_last (const Eina_List *list);
 static inline Eina_List *eina_list_next (const Eina_List *list);
 static inline Eina_List *eina_list_prev (const Eina_List *list);
-static inline void *eina_list_data(const Eina_List *list);
+static inline void *eina_list_data_get(const Eina_List *list);
 static inline unsigned int eina_list_count(const Eina_List *list);
 
 EAPI Eina_Iterator *eina_list_iterator_new(const Eina_List *list);
@@ -128,7 +133,7 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list);
  *   free(data);
  * @endcode
  */
-#define EINA_LIST_ITER_NEXT(list, l, data) for (l = list, data = eina_list_data(l); l; l = eina_list_next(l), data = eina_list_data(l))
+#define EINA_LIST_ITER_NEXT(list, l, data) for (l = list, data = eina_list_data_get(l); l; l = eina_list_next(l), data = eina_list_data_get(l))
 
 #include "eina_inline_list.x"
 

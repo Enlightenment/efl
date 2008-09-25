@@ -25,6 +25,7 @@
 #include "eina_error.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
+#include "eina_magic.h"
 
 /**
  * @addtogroup Eina_Data_Types_Group Data Types
@@ -62,6 +63,8 @@ typedef void **Eina_Array_Iterator;
  */
 struct _Eina_Array
 {
+   EINA_MAGIC;
+
    void		**data;   /**< Pointer to a vector of pointer to payload */
    unsigned int   total;  /**< Total number of slot in the vector */
    unsigned int   count;  /**< Number of activ slot in the vector */

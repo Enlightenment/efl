@@ -21,10 +21,10 @@
 #include "eina_list.h"
 #include "eina_suite.h"
 
-static int eina_int_cmp(void *a, void *b)
+static int eina_int_cmp(const void *a, const void *b)
 {
-   int *ia = a;
-   int *ib = b;
+   const int *ia = a;
+   const int *ib = b;
 
    return *ia - *ib;
 }
@@ -57,7 +57,7 @@ START_TEST(eina_test_simple)
    list = eina_list_remove(list, &data[0]);
    fail_if(list == NULL);
 
-   tmp = eina_list_find_list(list, &data[2]);
+   tmp = eina_list_data_find_list(list, &data[2]);
    fail_if(tmp == NULL);
 
    list = eina_list_append_relative_list(list, &data[3], tmp);
@@ -78,9 +78,9 @@ START_TEST(eina_test_simple)
    list = eina_list_remove_list(list, tmp);
    fail_if(list == NULL);
 
-   fail_if(eina_list_find_list(list, &data[2]) != NULL);
-   fail_if(eina_list_find(list, &data[2]) != NULL);
-   fail_if(eina_list_find(list, &data[5]) != &data[5]);
+   fail_if(eina_list_data_find_list(list, &data[2]) != NULL);
+   fail_if(eina_list_data_find(list, &data[2]) != NULL);
+   fail_if(eina_list_data_find(list, &data[5]) != &data[5]);
 
    fail_if(eina_list_count(list) != 5);
    fail_if(eina_list_nth(list, 4) != &data[3]);
@@ -91,7 +91,7 @@ START_TEST(eina_test_simple)
      {
 	int *data;
 
-	data = eina_list_data(tmp);
+	data = eina_list_data_get(tmp);
 	fail_if(data == NULL);
 	fail_if(*data != result[i]);
      }
@@ -102,7 +102,7 @@ START_TEST(eina_test_simple)
      {
 	int *data;
 
-	data = eina_list_data(tmp);
+	data = eina_list_data_get(tmp);
 	fail_if(data == NULL);
 	fail_if(*data != result[i - 1]);
      }
@@ -136,7 +136,7 @@ START_TEST(eina_test_simple)
      {
 	int *data;
 
-	data = eina_list_data(tmp);
+	data = eina_list_data_get(tmp);
 	fail_if(*test1 > *data);
 
 	test1 = data;
@@ -156,8 +156,8 @@ START_TEST(eina_test_simple)
 
    list = eina_list_promote_list(eina_list_next(list), list);
    fail_if(list == NULL);
-   fail_if(eina_list_data(list) != test1);
-   fail_if(eina_list_data(eina_list_next(list)) != test2);
+   fail_if(eina_list_data_get(list) != test1);
+   fail_if(eina_list_data_get(eina_list_next(list)) != test2);
 
    list = eina_list_remove_list(list, list);
    fail_if(list == NULL);

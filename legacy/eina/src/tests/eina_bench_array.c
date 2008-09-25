@@ -204,7 +204,7 @@ eina_bench_list_4evas_render(int request)
 	  {
 	     while (list)
 	       {
-		  free(eina_list_data(list));
+		  free(eina_list_data_get(list));
 		  list = eina_list_remove_list(list, list);
 	       }
 	  }
@@ -217,7 +217,7 @@ eina_bench_list_4evas_render(int request)
 		    {
 		       Eina_List *reminder = tmp;
 
-		       ebo = eina_list_data(reminder);
+		       ebo = eina_list_data_get(reminder);
 		       tmp = eina_list_next(tmp);
 
 		       if (ebo->keep == EINA_FALSE)
@@ -231,7 +231,7 @@ eina_bench_list_4evas_render(int request)
 
 	for (tmp = list; tmp; tmp = eina_list_next(tmp))
 	  {
-	     ebo = eina_list_data(tmp);
+	     ebo = eina_list_data_get(tmp);
 
 	     ebo->keep = rand() < (RAND_MAX / 2) ? ebo->keep : EINA_FALSE;
 	  }
@@ -239,7 +239,7 @@ eina_bench_list_4evas_render(int request)
 
    while (list)
      {
-	free(eina_list_data(list));
+	free(eina_list_data_get(list));
 	list = eina_list_remove_list(list, list);
      }
 
@@ -274,7 +274,7 @@ eina_bench_list_4evas_render_iterator(int request)
 	  {
 	     while (list)
 	       {
-		  free(eina_list_data(list));
+		  free(eina_list_data_get(list));
 		  list = eina_list_remove_list(list, list);
 	       }
 	  }
@@ -287,7 +287,7 @@ eina_bench_list_4evas_render_iterator(int request)
 		    {
 		       Eina_List *reminder = tmp;
 
-		       ebo = eina_list_data(reminder);
+		       ebo = eina_list_data_get(reminder);
 		       tmp = eina_list_next(tmp);
 
 		       if (ebo->keep == EINA_FALSE)
@@ -306,7 +306,7 @@ eina_bench_list_4evas_render_iterator(int request)
 
    while (list)
      {
-	free(eina_list_data(list));
+	free(eina_list_data_get(list));
 	list = eina_list_remove_list(list, list);
      }
 

@@ -49,7 +49,7 @@ eina_list_prev(const Eina_List *list)
 }
 
 static inline void *
-eina_list_data(const Eina_List *list)
+eina_list_data_get(const Eina_List *list)
 {
    if (!list) return NULL;
    return list->data;

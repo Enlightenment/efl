@@ -69,7 +69,7 @@ eina_bench_sort_eina(int request)
 
    while (list)
      {
-	free(eina_list_data(list));
+	free(eina_list_data_get(list));
 	list = eina_list_remove_list(list, list);
      }
 

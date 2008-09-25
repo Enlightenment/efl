@@ -48,10 +48,31 @@
  * @cond LOCAL
  */
 
+#define EINA_MAGIC_CHECK_ARRAY(d)				\
+   do {								\
+     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY))		\
+       EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY);			\
+   } while (0);
+
+#define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d)			\
+   do {								\
+     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ITERATOR))	\
+       EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY_ITERATOR);		\
+   } while (0);
+
+#define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d)			\
+   do {								\
+     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ACCESSOR))	\
+       EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);			\
+   } while (0);
+
+
 typedef struct _Eina_Iterator_Array Eina_Iterator_Array;
 struct _Eina_Iterator_Array
 {
    Eina_Iterator iterator;
+
+   EINA_MAGIC;
 
    const Eina_Array *array;
    unsigned int index;
@@ -62,12 +83,18 @@ struct _Eina_Accessor_Array
 {
    Eina_Accessor accessor;
 
+   EINA_MAGIC;
+
    const Eina_Array *array;
 };
+
+static int _eina_array_init_count = 0;
 
 static Eina_Bool
 eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 {
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
+
    if (!(it->index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
@@ -79,18 +106,22 @@ eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 static Eina_Array *
 eina_array_iterator_get_container(Eina_Iterator_Array *it)
 {
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
    return (Eina_Array *) it->array;
 }
 
 static void
 eina_array_iterator_free(Eina_Iterator_Array *it)
 {
-   free(it);
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
+   MAGIC_FREE(it);
 }
 
 static Eina_Bool
 eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **data)
 {
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
+
    if (!(index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
@@ -101,13 +132,15 @@ eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **d
 static Eina_Array *
 eina_array_accessor_get_container(Eina_Accessor_Array *it)
 {
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
    return (Eina_Array *) it->array;
 }
 
 static void
 eina_array_accessor_free(Eina_Accessor_Array *it)
 {
-   free(it);
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
+   MAGIC_FREE(it);
 }
 
 EAPI Eina_Bool
@@ -115,6 +148,8 @@ eina_array_grow(Eina_Array *array)
 {
    void **tmp;
    unsigned int total;
+
+   EINA_MAGIC_CHECK_ARRAY(array);
 
    total = array->total + array->step;
    eina_error_set(0);
@@ -188,7 +223,24 @@ eina_array_grow(Eina_Array *array)
 EAPI int
 eina_array_init(void)
 {
-   return eina_error_init();
+  if (!_eina_array_init_count)
+    {
+      eina_error_init();
+      eina_magic_string_init();
+
+      eina_magic_string_set(EINA_MAGIC_ITERATOR,
+			    "Eina Iterator");
+      eina_magic_string_set(EINA_MAGIC_ACCESSOR,
+			    "Eina Accessor");
+      eina_magic_string_set(EINA_MAGIC_ARRAY,
+			    "Eina Array");
+      eina_magic_string_set(EINA_MAGIC_ARRAY_ITERATOR,
+			    "Eina Array Iterator");
+      eina_magic_string_set(EINA_MAGIC_ARRAY_ACCESSOR,
+			    "Eina Array Accessor");
+    }
+
+  return ++_eina_array_init_count;
 }
 
 /**
@@ -205,7 +257,14 @@ eina_array_init(void)
 EAPI int
 eina_array_shutdown(void)
 {
-   return eina_error_shutdown();
+   --_eina_array_init_count;
+   if (!_eina_array_init_count)
+     {
+       eina_magic_string_shutdown();
+       eina_error_shutdown();
+     }
+
+   return _eina_array_init_count;
 }
 
 /**
@@ -234,6 +293,8 @@ eina_array_new(unsigned int step)
       return NULL;
    }
 
+   EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
+
    array->data = NULL;
    array->total = 0;
    array->count = 0;
@@ -257,7 +318,9 @@ EAPI void
 eina_array_free(Eina_Array *array)
 {
    eina_array_flush(array);
-   free(array);
+
+   EINA_MAGIC_CHECK_ARRAY(array);
+   MAGIC_FREE(array);
 }
 
 /**
@@ -273,7 +336,11 @@ eina_array_free(Eina_Array *array)
 EAPI void
 eina_array_step_set(Eina_Array *array, unsigned int step)
 {
-   array->step = step;
+  array->data = NULL;
+  array->total = 0;
+  array->count = 0;
+  array->step = step;
+  EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
 }
 
 /**
@@ -288,6 +355,7 @@ eina_array_step_set(Eina_Array *array, unsigned int step)
 EAPI void
 eina_array_clean(Eina_Array *array)
 {
+   EINA_MAGIC_CHECK_ARRAY(array);
    array->count = 0;
 }
 
@@ -304,6 +372,7 @@ eina_array_clean(Eina_Array *array)
 EAPI void
 eina_array_flush(Eina_Array *array)
 {
+   EINA_MAGIC_CHECK_ARRAY(array);
    array->count = 0;
    array->total = 0;
 
@@ -337,6 +406,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    unsigned int limit;
    unsigned int i;
 
+   EINA_MAGIC_CHECK_ARRAY(array);
    if (array->total == 0) return EINA_TRUE;
 
    for (i = 0; i < array->count; ++i)
@@ -434,6 +504,9 @@ eina_array_iterator_new(const Eina_Array *array)
       return NULL;
    }
 
+   EINA_MAGIC_SET(it, EINA_MAGIC_ARRAY_ITERATOR);
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
    it->array = array;
 
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_array_iterator_next);
@@ -468,6 +541,9 @@ eina_array_accessor_new(const Eina_Array *array)
       eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
       return NULL;
    }
+
+   EINA_MAGIC_SET(it, EINA_MAGIC_ARRAY_ACCESSOR);
+   EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);
 
    it->array = array;
 

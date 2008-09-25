@@ -374,7 +374,7 @@
  * @cond LOCAL
  */
 
-static int _init_count = 0;
+static int _eina_error_init_count = 0;
 static Eina_List *_error_list;
 static Eina_Error _err;
 static Eina_Error_Print_Cb _print_cb = eina_error_print_cb_stdout;
@@ -519,7 +519,7 @@ EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
  */
 EAPI int eina_error_init(void)
 {
-	if (!_init_count)
+	if (!_eina_error_init_count)
 	{
 		char *level;
 		/* TODO register the eina's basic errors */
@@ -531,7 +531,7 @@ EAPI int eina_error_init(void)
 		EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_register("Out of memory");
 	}
 	/* get all the modules */
-	return ++_init_count;
+	return ++_eina_error_init_count;
 }
 
 /**
@@ -548,17 +548,17 @@ EAPI int eina_error_init(void)
  */
 EAPI int eina_error_shutdown(void)
 {
-	_init_count--;
-	if (!_init_count)
+	_eina_error_init_count--;
+	if (!_eina_error_init_count)
 	{
 		/* remove the error strings */
 		while (_error_list)
 		{
-			free(eina_list_data(_error_list));
+			free(eina_list_data_get(_error_list));
 			_error_list = eina_list_free(_error_list);
 		}
 	}
-	return _init_count;
+	return _eina_error_init_count;
 }
 
 /**

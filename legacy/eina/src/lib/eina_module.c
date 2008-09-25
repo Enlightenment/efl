@@ -290,7 +290,7 @@ EAPI void eina_module_list_load(Eina_List *list)
 	{
 		Eina_Module *m;
 		
-		m = eina_list_data(l);
+		m = eina_list_data_get(l);
 		eina_module_load(m);
 	}
 }
@@ -306,7 +306,7 @@ EAPI void eina_module_list_unload(Eina_List *list)
 	{
 		Eina_Module *m;
 		
-		m = eina_list_data(l);
+		m = eina_list_data_get(l);
 		eina_module_unload(m);
 	}
 }
@@ -323,7 +323,7 @@ EAPI void eina_module_list_delete(Eina_List *list)
 	{
 		Eina_Module *m;
 		
-		m = eina_list_data(l);
+		m = eina_list_data_get(l);
 		eina_module_delete(m);
 	}
 }
