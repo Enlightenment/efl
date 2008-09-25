@@ -21,6 +21,7 @@
 
 #include <stdarg.h>
 
+#include "eina_magic.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
 
@@ -46,15 +47,42 @@
 
 #define READBUFSIZ 65536
 
+/* eina magic types */
+#define EINA_MAGIC_STRINGSHARE 0x10452571
+#define EINA_MAGIC_STRINGSHARE_NODE 0x95204152
+#define EINA_MAGIC_STRINGSHARE_HEAD 0x35294051
+
 /* undef the following, we want out version */
 #undef FREE
-#define FREE(ptr) free(ptr); ptr = NULL;
+#define FREE(ptr)				\
+  do {						\
+     free(ptr);					\
+     ptr = NULL;				\
+  } while(0);
 
 #undef IF_FREE
-#define IF_FREE(ptr) if (ptr) free(ptr); ptr = NULL;
+#define IF_FREE(ptr)				\
+  do {						\
+     if (ptr) {					\
+	free(ptr);				\
+	ptr = NULL;				\
+     }						\
+  } while(0);
 
 #undef IF_FN_DEL
-#define IF_FN_DEL(_fn, ptr) if (ptr) { _fn(ptr); ptr = NULL; }
+#define IF_FN_DEL(_fn, ptr)			\
+  do {						\
+     if (ptr) {					\
+	_fn(ptr);				\
+	ptr = NULL;				\
+     }						\
+  } while(0);
+
+#define MAGIC_FREE(ptr)					\
+  do {							\
+     EINA_MAGIC_SET(ptr, EINA_MAGIC_NONE);		\
+     FREE(ptr);						\
+  } while(0);
 
 inline void eina_print_warning(const char *function, const char *sparam);
 

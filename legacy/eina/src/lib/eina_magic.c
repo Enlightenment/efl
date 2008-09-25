@@ -24,12 +24,12 @@
 
 #include "eina_array.h"
 #include "eina_error.h"
-#include "eina_private.h"
 
 #ifndef DEBUG
 # define DEBUG
 #endif
 #include "eina_magic.h"
+#include "eina_private.h"
 
 /*============================================================================*
  *                                  Local                                     *
