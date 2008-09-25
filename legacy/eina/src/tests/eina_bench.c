@@ -35,6 +35,7 @@ static const Eina_Benchmark_Case etc[] = {
   { "Array vs List vs Inlist", eina_bench_array },
   { "Stringshare", eina_bench_stringshare },
   { "Convert", eina_bench_convert },
+  { "Sort", eina_bench_sort },
   { NULL, NULL }
 };
 

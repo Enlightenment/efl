@@ -84,6 +84,7 @@ bench_PROGRAMS = eina_bench
 
 eina_bench_SOURCES = 	\
 eina_bench.c 		\
+eina_bench_sort.c	\
 eina_bench_hash.c 	\
 eina_bench_stringshare.c \
 eina_bench_convert.c	\

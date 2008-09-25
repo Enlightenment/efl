@@ -1038,7 +1038,7 @@ eina_list_reverse(Eina_List *list)
  * @endcode
  */
 EAPI Eina_List *
-eina_list_sort(Eina_List *list, unsigned int size, int (*func)(void *, void *))
+eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
 {
    Eina_List*   last;
    unsigned int	list_number;

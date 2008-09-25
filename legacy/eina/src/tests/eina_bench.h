@@ -25,6 +25,7 @@ void eina_bench_hash(Eina_Benchmark *bench);
 void eina_bench_array(Eina_Benchmark *bench);
 void eina_bench_stringshare(Eina_Benchmark *bench);
 void eina_bench_convert(Eina_Benchmark *bench);
+void eina_bench_sort(Eina_Benchmark *bench);
 
 /* Specific benchmark. */
 void eina_bench_e17(void);
