@@ -105,6 +105,7 @@
 	* Improve hash generation speed for big files.
 	* Inline more functions explicitly for speed.
 
+2008-09-25  Carsten Haitzler (The Rasterman)
 
-
+	1.1.0 release
 
