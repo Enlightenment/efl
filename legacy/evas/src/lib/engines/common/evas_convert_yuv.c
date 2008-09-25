@@ -315,31 +315,19 @@ _evas_yv12torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  u = (*up++) - 128;
 		  v = (*vp++) - 128;
 
-		  A_VAL(dp1) = 0xff;
 		  y = RZ(YMUL) * ((*yp1++) - 16);
-		  r = (y + (_crv * v)) >> RES;
-		  r = LUT_CLIP(r);
-		  R_VAL(dp1) = r;
-		  g = (y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES;
-		  g = LUT_CLIP(g);
-		  G_VAL(dp1) = g;
-		  b = (y + (_cbu * u) + RZ(OFF)) >> RES;
-		  b = LUT_CLIP(b);
-		  B_VAL(dp1) = b;
+		  r = LUT_CLIP((y + (_crv * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 
-		  A_VAL(dp1) = 0xff;
 		  y = RZ(YMUL) * ((*yp1++) - 16);
-		  r = (y + (_crv * v)) >> RES;
-		  r = LUT_CLIP(r);
-		  R_VAL(dp1) = r;
-		  g = (y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES;
-		  g = LUT_CLIP(g);
-		  G_VAL(dp1) = g;
-		  b = (y + (_cbu * u) + RZ(OFF)) >> RES;
-		  b = LUT_CLIP(b);
-		  B_VAL(dp1) = b;
+		  r = LUT_CLIP((y + (_crv * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 	       }
@@ -490,31 +478,19 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  u = (*up++) - 128;
 		  v = (*vp++) - 128;
 
-		  A_VAL(dp1) = 0xff;
 		  y = RZ(YMUL) * ((*yp1++) - 16);
-		  r = (y + (_crv * v)) >> RES;
-		  r = LUT_CLIP(r);
-		  R_VAL(dp1) = r;
-		  g = (y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES;
-		  g = LUT_CLIP(g);
-		  G_VAL(dp1) = g;
-		  b = (y + (_cbu * u) + RZ(OFF)) >> RES;
-		  b = LUT_CLIP(b);
-		  B_VAL(dp1) = b;
+		  r = LUT_CLIP((y + (_crv * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 
-		  A_VAL(dp1) = 0xff;
 		  y = RZ(YMUL) * ((*yp1++) - 16);
-		  r = (y + (_crv * v)) >> RES;
-		  r = LUT_CLIP(r);
-		  R_VAL(dp1) = r;
-		  g = (y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES;
-		  g = LUT_CLIP(g);
-		  G_VAL(dp1) = g;
-		  b = (y + (_cbu * u) + RZ(OFF)) >> RES;
-		  b = LUT_CLIP(b);
-		  B_VAL(dp1) = b;
+		  r = LUT_CLIP((y + (_crv * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 	       }
@@ -802,63 +778,39 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 
 	     /* do the top 2 pixels of the 2x2 block whcih shared u & v */
 	     /* yuv to rgb */
-	     A_VAL(dp1) = 0xff;
 	     y = YMUL * ((*yp1++) - 16);
-	     r = (y + (crv * v)) >> 16;
-	     r = LUT_CLIP(r);
-	     R_VAL(dp1) = r;
-	     g = (y - (cgu * u) - (cgv * v) + OFF) >>16;
-	     g = LUT_CLIP(g);
-	     G_VAL(dp1) = g;
-	     b = (y + (cbu * u) + OFF) >> 16;
-	     b = LUT_CLIP(b);
-	     B_VAL(dp1) = b;
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 	     dp1 += 4;
 
 	     /* yuv to rgb */
-	     A_VAL(dp1) = 0xff;
 	     y = YMUL * ((*yp1++) - 16);
-	     r = (y + (crv * v)) >> 16;
-	     r = LUT_CLIP(r);
-	     R_VAL(dp1) = r;
-	     g = (y - (cgu * u) - (cgv * v) + OFF) >>16;
-	     g = LUT_CLIP(g);
-	     G_VAL(dp1) = g;
-	     b = (y + (cbu * u) + OFF) >> 16;
-	     b = LUT_CLIP(b);
-	     B_VAL(dp1) = b;
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 	     dp1 += 4;
 
 	     /* do the bottom 2 pixels */
 	     /* yuv to rgb */
-	     A_VAL(dp2) = 0xff;
 	     y = YMUL * ((*yp2++) - 16);
-	     r = (y + (crv * v)) >> 16;
-	     r = LUT_CLIP(r);
-	     R_VAL(dp2) = r;
-	     g = (y - (cgu * u) - (cgv * v) + OFF) >>16;
-	     g = LUT_CLIP(g);
-	     G_VAL(dp2) = g;
-	     b = (y + (cbu * u) + OFF) >> 16;
-	     b = LUT_CLIP(b);
-	     B_VAL(dp2) = b;
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(r,g,b);
 
 	     dp2 += 4;
 
 	     /* yuv to rgb */
-	     A_VAL(dp2) = 0xff;
 	     y = YMUL * ((*yp2++) - 16);
-	     r = (y + (crv * v)) >> 16;
-	     r = LUT_CLIP(r);
-	     R_VAL(dp2) = r;
-	     g = (y - (cgu * u) - (cgv * v) + OFF) >>16;
-	     g = LUT_CLIP(g);
-	     G_VAL(dp2) = g;
-	     b = (y + (cbu * u) + OFF) >> 16;
-	     b = LUT_CLIP(b);
-	     B_VAL(dp2) = b;
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(r,g,b);
 
 	     dp2 += 4;
 	  }
@@ -874,7 +826,7 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
 #ifdef BUILD_C
    int xx, yy;
-   int y, u, v, r, g, b;
+   int y, u, v;
    unsigned char *yp1, *yp2, *up, *vp;
    unsigned char *dp1, *dp2;
 
@@ -905,66 +857,26 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
              /* do the top 2 pixels of the 2x2 block whcih shared u & v */
 	     /* yuv to rgb */
 	     y = _v1164[*yp1++];
-	     r = y + v;
-	     r = LUT_CLIP(r);
-	     g = y -  vmu;
-	     g = LUT_CLIP(g);
-	     b = y + u;
-	     b = LUT_CLIP(b);
-
-	     A_VAL(dp1) = 0xff;
-	     R_VAL(dp1) = r;
-	     G_VAL(dp1) = g;
-	     B_VAL(dp1) = b;
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
 
 	     dp1 += 4;
 
 	     /* yuv to rgb */
 	     y = _v1164[*yp1++];
-	     r = y + v;
-	     r = LUT_CLIP(r);
-	     g = y -  vmu;
-	     g = LUT_CLIP(g);
-	     b = y + u;
-	     b = LUT_CLIP(b);
-
-	     A_VAL(dp1) = 0xff;
-	     R_VAL(dp1) = r;
-	     G_VAL(dp1) = g;
-	     B_VAL(dp1) = b;
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
 
 	     dp1 += 4;
 
 	     /* do the bottom 2 pixels */
 	     /* yuv to rgb */
 	     y = _v1164[*yp2++];
-	     r = y + v;
-	     r = LUT_CLIP(r);
-	     g = y -  vmu;
-	     g = LUT_CLIP(g);
-	     b = y + u;
-	     b = LUT_CLIP(b);
-
-	     A_VAL(dp2) = 0xff;
-	     R_VAL(dp2) = r;
-	     G_VAL(dp2) = g;
-	     B_VAL(dp2) = b;
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
 
 	     dp2 += 4;
 
 	     /* yuv to rgb */
 	     y = _v1164[*yp2++];
-	     r = y + v;
-	     r = LUT_CLIP(r);
-	     g = y -  vmu;
-	     g = LUT_CLIP(g);
-	     b = y + u;
-	     b = LUT_CLIP(b);
-
-	     A_VAL(dp2) = 0xff;
-	     R_VAL(dp2) = r;
-	     G_VAL(dp2) = g;
-	     B_VAL(dp2) = b;
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
 	     
 	     dp2 += 4;
 	  }
@@ -976,3 +888,4 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 }
 
 #endif
+
