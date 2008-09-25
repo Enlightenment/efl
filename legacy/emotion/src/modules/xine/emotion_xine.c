@@ -11,13 +11,14 @@ static void           em_play                    (void *ef, double pos);
 static void           em_stop                    (void *ef);
 static void           em_size_get                (void *ef, int *w, int *h);
 static void           em_pos_set                 (void *ef, double pos);
-static void           em_vis_set                 (void *ef, Emotion_Vis vis);
 static double         em_len_get                 (void *ef);
 static int            em_fps_num_get             (void *ef);
 static int            em_fps_den_get             (void *ef);
 static double         em_fps_get                 (void *ef);
 static double         em_pos_get                 (void *ef);
+static void           em_vis_set                 (void *ef, Emotion_Vis vis);
 static Emotion_Vis    em_vis_get                 (void *ef);
+static Evas_Bool      em_vis_supported           (void *ef, Emotion_Vis vis);
 static double         em_ratio_get               (void *ef);
 static int            em_seekable                (void *ef);
 static void           em_frame_done              (void *ef);
@@ -508,17 +509,6 @@ em_pos_set(void *ef, double pos)
    _em_slave_event(ev, 6, ppos);
 }
 
-static void
-em_vis_set(void       *ef,
-	   Emotion_Vis vis)
-{
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
-   if (ev->vis == vis) return;
-   ev->vis = vis;
-}
-
 static double
 em_len_get(void *ef)
 {
@@ -564,6 +554,16 @@ em_pos_get(void *ef)
    return ev->pos;
 }
 
+static void
+em_vis_set(void *ef, Emotion_Vis vis)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = (Emotion_Xine_Video *)ef;
+   if (ev->vis == vis) return;
+   ev->vis = vis;
+}
+
 static Emotion_Vis
 em_vis_get(void *ef)
 {
@@ -572,6 +572,12 @@ em_vis_get(void *ef)
    ev = (Emotion_Xine_Video *)ef;
 
    return ev->vis;
+}
+
+static Evas_Bool
+em_vis_supported(void *ef, Emotion_Vis vis)
+{
+   return 0;
 }
 
 static double
@@ -1467,13 +1473,14 @@ static Emotion_Video_Module em_module =
      em_stop, /* stop */
      em_size_get, /* size_get */
      em_pos_set, /* pos_set */
-     em_vis_set, /* vis_set */
      em_len_get, /* len_get */
      em_fps_num_get, /* fps_num_get */
      em_fps_den_get, /* fps_den_get */
      em_fps_get, /* fps_get */
      em_pos_get, /* pos_get */
+     em_vis_set, /* vis_set */
      em_vis_get, /* vis_get */
+     em_vis_supported, /* vis_supported */
      em_ratio_get, /* ratio_get */
      em_video_handled, /* video_handled */
      em_audio_handled, /* audio_handled */

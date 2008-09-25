@@ -46,6 +46,7 @@ static int          startw     = 800;
 static int          starth     = 600;
 
 static Evas_List   *video_objs = NULL;
+static Emotion_Vis  vis        = EMOTION_VIS_NONE;
 
 static int
 main_start(int argc, char **argv)
@@ -92,6 +93,11 @@ main_start(int argc, char **argv)
                {
 		  mode = 3;
                }
+	     else if ((!strcmp(argv[i], "-vis")) && (i < (argc - 1)))
+	       {
+		  vis = atoi(argv[i + 1]);
+		  i++;
+	       }
           }
      }
 #if HAVE_ECORE_EVAS_X
@@ -368,6 +374,33 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     evas_object_del(video_objs->data);
 	     video_objs = evas_list_remove_list(video_objs, video_objs);
 	     printf("done\n");
+	  }
+     }
+   else if (!strcmp(ev->keyname, "z"))
+     {
+	Evas_List *l;
+
+	vis = (vis + 1) % EMOTION_VIS_LAST;
+	printf("new visualization: %d\n", vis);
+
+
+	for (l = video_objs; l; l = l->next)
+	  {
+	     Evas_Object *obj;
+	     Evas_Bool supported;
+
+	     obj = l->data;
+	     supported = emotion_object_vis_supported(obj, vis);
+	     if (supported)
+	       emotion_object_vis_set(obj, vis);
+	     else
+	       {
+		  const char *file;
+
+		  file = emotion_object_file_get(obj);
+		  printf("object %p (%s) does not support visualization %d\n",
+			 obj, file, vis);
+	       }
 	  }
      }
    else
@@ -736,6 +769,7 @@ init_video_object(char *module_filename, char *filename)
    o = emotion_object_add(evas);
    if (!emotion_object_init(o, module_filename))
      return;
+   emotion_object_vis_set(o, vis);
    emotion_object_file_set(o, filename);
    emotion_object_play_set(o, 1);
    evas_object_move(o, 0, 0);
@@ -836,7 +870,7 @@ main(int argc, char **argv)
 	    (!strcmp(argv[i], "--help"))))
 	  {
 	     printf("Usage:\n");
-	     printf("  %s [-gl] [-g WxH] [-xine] [-gstreamer] filename\n", argv[0]);
+	     printf("  %s [-gl] [-g WxH] [-vis NUMBER] [-xine] [-gstreamer] filename\n", argv[0]);
 	     exit(-1);
 	  }
 	else if (!strcmp(argv[i], "-gl"))
@@ -855,6 +889,10 @@ main(int argc, char **argv)
 	else if (!strcmp(argv[i], "-gstreamer"))
 	  {
              module_filename = "gstreamer";
+	  }
+	else if ((!strcmp(argv[i], "-vis")) && (i < (argc - 1)))
+	  {
+	     i++;
 	  }
         else
 	  {

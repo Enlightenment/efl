@@ -42,8 +42,6 @@ static void           em_size_get                 (void            *video,
 static void           em_pos_set                  (void            *video,
                                                    double           pos);
 
-static void           em_vis_set                  (void            *video,
-                                                   Emotion_Vis      vis);
 
 static double         em_len_get                  (void            *video);
 
@@ -55,7 +53,13 @@ static double         em_fps_get                  (void            *video);
 
 static double         em_pos_get                  (void            *video);
 
+static void           em_vis_set                  (void            *video,
+                                                   Emotion_Vis      vis);
+
 static Emotion_Vis    em_vis_get                  (void            *video);
+
+static Evas_Bool      em_vis_supported            (void            *video,
+                                                   Emotion_Vis      vis);
 
 static double         em_ratio_get                (void            *video);
 
@@ -177,13 +181,14 @@ static Emotion_Video_Module em_module =
    em_stop, /* stop */
    em_size_get, /* size_get */
    em_pos_set, /* pos_set */
-   em_vis_set, /* vis_set */
    em_len_get, /* len_get */
    em_fps_num_get, /* fps_num_get */
    em_fps_den_get, /* fps_den_get */
    em_fps_get, /* fps_get */
    em_pos_get, /* pos_get */
+   em_vis_set, /* vis_set */
    em_vis_get, /* vis_get */
+   em_vis_supported, /* vis_supported */
    em_ratio_get, /* ratio_get */
    em_video_handled, /* video_handled */
    em_audio_handled, /* audio_handled */
@@ -265,7 +270,7 @@ em_init(Evas_Object  *obj,
    ev->ratio = 1.0;
    ev->video_sink_nbr = 0;
    ev->audio_sink_nbr = 0;
-   ev->vis = EMOTION_VIS_GOOM;
+   ev->vis = EMOTION_VIS_NONE;
 
    /* Create the file descriptors */
    if (pipe(fds) == 0)
@@ -581,18 +586,6 @@ em_pos_set(void   *video,
      }
 }
 
-static void
-em_vis_set(void       *video,
-	   Emotion_Vis vis)
-{
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-
-   if (ev->vis == vis) return;
-   ev->vis = vis;
-}
-
 static double
 em_len_get(void *video)
 {
@@ -663,6 +656,18 @@ em_pos_get(void *video)
    return ev->position;
 }
 
+static void
+em_vis_set(void *video,
+	   Emotion_Vis vis)
+{
+   Emotion_Gstreamer_Video *ev;
+
+   ev = (Emotion_Gstreamer_Video *)video;
+
+   if (ev->vis == vis) return;
+   ev->vis = vis;
+}
+
 static Emotion_Vis
 em_vis_get(void *video)
 {
@@ -671,6 +676,27 @@ em_vis_get(void *video)
    ev = (Emotion_Gstreamer_Video *)video;
 
    return ev->vis;
+}
+
+static Evas_Bool
+em_vis_supported(void *ef, Emotion_Vis vis)
+{
+   const char *name;
+   GstElementFactory *factory;
+
+   if (vis == EMOTION_VIS_NONE)
+     return 1;
+
+   name = emotion_visualization_element_name_get(vis);
+   if (!name)
+     return 0;
+
+   factory = gst_element_factory_find(name);
+   if (!factory)
+     return 0;
+
+   gst_object_unref(factory);
+   return 1;
 }
 
 static double

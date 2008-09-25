@@ -74,9 +74,34 @@ enum _Emotion_Meta_Info
    EMOTION_META_INFO_TRACK_COUNT
 };
 
+enum _Emotion_Vis
+{
+  EMOTION_VIS_NONE,
+  EMOTION_VIS_GOOM,
+  EMOTION_VIS_LIBVISUAL_BUMPSCOPE,
+  EMOTION_VIS_LIBVISUAL_CORONA,
+  EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES,
+  EMOTION_VIS_LIBVISUAL_GDKPIXBUF,
+  EMOTION_VIS_LIBVISUAL_G_FORCE,
+  EMOTION_VIS_LIBVISUAL_GOOM,
+  EMOTION_VIS_LIBVISUAL_INFINITE,
+  EMOTION_VIS_LIBVISUAL_JAKDAW,
+  EMOTION_VIS_LIBVISUAL_JESS,
+  EMOTION_VIS_LIBVISUAL_LV_ANALYSER,
+  EMOTION_VIS_LIBVISUAL_LV_FLOWER,
+  EMOTION_VIS_LIBVISUAL_LV_GLTEST,
+  EMOTION_VIS_LIBVISUAL_LV_SCOPE,
+  EMOTION_VIS_LIBVISUAL_MADSPIN,
+  EMOTION_VIS_LIBVISUAL_NEBULUS,
+  EMOTION_VIS_LIBVISUAL_OINKSIE,
+  EMOTION_VIS_LIBVISUAL_PLASMA,
+  EMOTION_VIS_LAST /* sentinel */
+};
+
 typedef enum _Emotion_Module    Emotion_Module;
 typedef enum _Emotion_Event     Emotion_Event;
 typedef enum _Emotion_Meta_Info Emotion_Meta_Info;
+typedef enum _Emotion_Vis       Emotion_Vis;
 
 #define EMOTION_CHANNEL_AUTO -1
 #define EMOTION_CHANNEL_DEFAULT 0
@@ -139,6 +164,10 @@ EAPI int          emotion_object_ref_num_get           (Evas_Object *obj);
 EAPI int          emotion_object_spu_button_count_get  (Evas_Object *obj);
 EAPI int          emotion_object_spu_button_get        (Evas_Object *obj);
 EAPI const char  *emotion_object_meta_info_get         (Evas_Object *obj, Emotion_Meta_Info meta);
+
+EAPI void         emotion_object_vis_set               (Evas_Object *obj, Emotion_Vis visualization);
+EAPI Emotion_Vis  emotion_object_vis_get               (Evas_Object *obj);
+EAPI Evas_Bool    emotion_object_vis_supported         (Evas_Object *obj, Emotion_Vis visualization);
 
 #ifdef __cplusplus
 }

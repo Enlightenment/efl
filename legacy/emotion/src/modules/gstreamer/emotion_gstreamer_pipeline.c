@@ -249,6 +249,54 @@ emotion_pipeline_cdda_track_count_get(void *video)
    return tracks_count;
 }
 
+const char *
+emotion_visualization_element_name_get(Emotion_Vis visualisation)
+{
+   switch (visualisation)
+     {
+      case EMOTION_VIS_NONE:
+	 return NULL;
+      case EMOTION_VIS_GOOM:
+	 return "goom";
+      case EMOTION_VIS_LIBVISUAL_BUMPSCOPE:
+	 return "libvisual_bumpscope";
+      case EMOTION_VIS_LIBVISUAL_CORONA:
+	 return "libvisual_corona";
+      case EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES:
+	 return "libvisual_dancingparticles";
+      case EMOTION_VIS_LIBVISUAL_GDKPIXBUF:
+	 return "libvisual_gdkpixbuf";
+      case EMOTION_VIS_LIBVISUAL_G_FORCE:
+	 return "libvisual_G-Force";
+      case EMOTION_VIS_LIBVISUAL_GOOM:
+	 return "libvisual_goom";
+      case EMOTION_VIS_LIBVISUAL_INFINITE:
+	 return "libvisual_infinite";
+      case EMOTION_VIS_LIBVISUAL_JAKDAW:
+	 return "libvisual_jakdaw";
+      case EMOTION_VIS_LIBVISUAL_JESS:
+	 return "libvisual_jess";
+      case EMOTION_VIS_LIBVISUAL_LV_ANALYSER:
+	 return "libvisual_lv_analyzer";
+      case EMOTION_VIS_LIBVISUAL_LV_FLOWER:
+	 return "libvisual_lv_flower";
+      case EMOTION_VIS_LIBVISUAL_LV_GLTEST:
+	 return "libvisual_lv_gltest";
+      case EMOTION_VIS_LIBVISUAL_LV_SCOPE:
+	 return "libvisual_lv_scope";
+      case EMOTION_VIS_LIBVISUAL_MADSPIN:
+	 return "libvisual_madspin";
+      case EMOTION_VIS_LIBVISUAL_NEBULUS:
+	 return "libvisual_nebulus";
+      case EMOTION_VIS_LIBVISUAL_OINKSIE:
+	 return "libvisual_oinksie";
+      case EMOTION_VIS_LIBVISUAL_PLASMA:
+	 return "libvisual_plazma";
+      default:
+	 return "goom";
+     }
+}
+
 GstElement *
 emotion_audio_sink_create(Emotion_Gstreamer_Video *ev, int index)
 {
@@ -302,102 +350,46 @@ emotion_audio_sink_create(Emotion_Gstreamer_Video *ev, int index)
 
    /* visualisation part */
      {
-	GstElement *vis = NULL;
-	char       *vis_name;
+	const char *vis_name = emotion_visualization_element_name_get(ev->vis);
 
-	switch (ev->vis)
+	if (vis_name)
 	  {
-	   case EMOTION_VIS_GOOM:
-	      vis_name = "goom";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_BUMPSCOPE:
-	      vis_name = "libvisual_bumpscope";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_CORONA:
-	      vis_name = "libvisual_corona";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES:
-	      vis_name = "libvisual_dancingparticles";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_GDKPIXBUF:
-	      vis_name = "libvisual_gdkpixbuf";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_G_FORCE:
-	      vis_name = "libvisual_G-Force";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_GOOM:
-	      vis_name = "libvisual_goom";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_INFINITE:
-	      vis_name = "libvisual_infinite";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_JAKDAW:
-	      vis_name = "libvisual_jakdaw";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_JESS:
-	      vis_name = "libvisual_jess";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_LV_ANALYSER:
-	      vis_name = "libvisual_lv_analyzer";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_LV_FLOWER:
-	      vis_name = "libvisual_lv_flower";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_LV_GLTEST:
-	      vis_name = "libvisual_lv_gltest";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_LV_SCOPE:
-	      vis_name = "libvisual_lv_scope";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_MADSPIN:
-	      vis_name = "libvisual_madspin";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_NEBULUS:
-	      vis_name = "libvisual_nebulus";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_OINKSIE:
-	      vis_name = "libvisual_oinksie";
-	      break;
-	   case EMOTION_VIS_LIBVISUAL_PLASMA:
-	      vis_name = "libvisual_plazma";
-	      break;
-	   default:
-	      vis_name = "goom";
-	      break;
-	  }
+	     GstElement *vis;
 
-	g_snprintf(buf, 128, "vis%d", index);
-	if ((vis = gst_element_factory_make(vis_name, buf)))
-	  {
-	     GstElement *queue;
-	     GstElement *conv;
-	     GstElement *cspace;
-	     GstElement *sink;
-	     GstPad     *vispad;
-	     GstCaps    *caps;
+	     g_snprintf(buf, 128, "vis%d", index);
+	     vis = gst_element_factory_make(vis_name, buf);
+	     if (vis)
+	       {
+		  GstElement *queue;
+		  GstElement *conv;
+		  GstElement *cspace;
+		  GstElement *sink;
+		  GstPad     *vispad;
+		  GstCaps    *caps;
 
-	     g_snprintf(buf, 128, "visbin%d", index);
-	     visbin = gst_bin_new(buf);
+		  g_snprintf(buf, 128, "visbin%d", index);
+		  visbin = gst_bin_new(buf);
 
-	     queue = gst_element_factory_make("queue", NULL);
-	     conv = gst_element_factory_make("audioconvert", NULL);
-	     cspace = gst_element_factory_make("ffmpegcolorspace", NULL);
-	     g_snprintf(buf, 128, "vissink%d", index);
-	     sink = gst_element_factory_make("fakesink", buf);
+		  queue = gst_element_factory_make("queue", NULL);
+		  conv = gst_element_factory_make("audioconvert", NULL);
+		  cspace = gst_element_factory_make("ffmpegcolorspace", NULL);
+		  g_snprintf(buf, 128, "vissink%d", index);
+		  sink = gst_element_factory_make("fakesink", buf);
 
-	     gst_bin_add_many(GST_BIN(visbin),
-			      queue, conv, vis, cspace, sink, NULL);
-	     gst_element_link_many(queue, conv, vis, cspace, NULL);
-	     caps = gst_caps_new_simple("video/x-raw-rgb",
-					"bpp", G_TYPE_INT, 32,
-				       	"width", G_TYPE_INT, 320,
-				       	"height", G_TYPE_INT, 200,
-				       	NULL);
-	     gst_element_link_filtered(cspace, sink, caps);
+		  gst_bin_add_many(GST_BIN(visbin),
+				   queue, conv, vis, cspace, sink, NULL);
+		  gst_element_link_many(queue, conv, vis, cspace, NULL);
+		  caps = gst_caps_new_simple("video/x-raw-rgb",
+					     "bpp", G_TYPE_INT, 32,
+					     "width", G_TYPE_INT, 320,
+					     "height", G_TYPE_INT, 200,
+					     NULL);
+		  gst_element_link_filtered(cspace, sink, caps);
 
-	     vispad = gst_element_get_pad(queue, "sink");
-	     gst_element_add_pad(visbin, gst_ghost_pad_new("sink", vispad));
-	     gst_object_unref(vispad);
+		  vispad = gst_element_get_pad(queue, "sink");
+		  gst_element_add_pad(visbin, gst_ghost_pad_new("sink", vispad));
+		  gst_object_unref(vispad);
+	       }
 	  }
      }
 

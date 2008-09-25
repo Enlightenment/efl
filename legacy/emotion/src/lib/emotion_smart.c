@@ -815,8 +815,41 @@ emotion_object_meta_info_get(Evas_Object *obj, Emotion_Meta_Info meta)
    return NULL;
 }
 
+EAPI void
+emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
+{
+   Smart_Data *sd;
 
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (!sd->module) return;
+   if (!sd->video) return;
+   if (!sd->module->vis_set) return;
+   sd->module->vis_set(sd->video, visualization);
+}
 
+EAPI Emotion_Vis
+emotion_object_vis_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_VIS_NONE);
+   if (!sd->module) return EMOTION_VIS_NONE;
+   if (!sd->video) return EMOTION_VIS_NONE;
+   if (!sd->module->vis_get) return EMOTION_VIS_NONE;
+   return sd->module->vis_get(sd->video);
+}
+
+EAPI Evas_Bool
+emotion_object_vis_supported(Evas_Object *obj, Emotion_Vis visualization)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->module) return 0;
+   if (!sd->video) return 0;
+   if (!sd->module->vis_supported) return 0;
+   return sd->module->vis_supported(sd->video, visualization);
+}
 
 
 

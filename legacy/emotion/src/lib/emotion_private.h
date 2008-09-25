@@ -6,6 +6,7 @@
 #include <Ecore_Job.h>
 #include <Ecore_Data.h>
 #include <Ecore_Str.h>
+#include <Emotion.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,7 +24,6 @@
 #define META_TRACK_COUNT 8
 
 typedef enum _Emotion_Format Emotion_Format;
-typedef enum _Emotion_Vis Emotion_Vis;
 typedef struct _Emotion_Video_Module Emotion_Video_Module;
 typedef struct _Emotion_Module_Options Emotion_Module_Options;
 
@@ -34,28 +34,6 @@ enum _Emotion_Format
    EMOTION_FORMAT_YV12,
    EMOTION_FORMAT_YUY2,     /* unused for now since evas does not support yuy2 format */
    EMOTION_FORMAT_BGRA
-};
-
-enum _Emotion_Vis
-{
-  EMOTION_VIS_GOOM,
-  EMOTION_VIS_LIBVISUAL_BUMPSCOPE,
-  EMOTION_VIS_LIBVISUAL_CORONA,
-  EMOTION_VIS_LIBVISUAL_DANCING_PARTICLES,
-  EMOTION_VIS_LIBVISUAL_GDKPIXBUF,
-  EMOTION_VIS_LIBVISUAL_G_FORCE,
-  EMOTION_VIS_LIBVISUAL_GOOM,
-  EMOTION_VIS_LIBVISUAL_INFINITE,
-  EMOTION_VIS_LIBVISUAL_JAKDAW,
-  EMOTION_VIS_LIBVISUAL_JESS,
-  EMOTION_VIS_LIBVISUAL_LV_ANALYSER,
-  EMOTION_VIS_LIBVISUAL_LV_FLOWER,
-  EMOTION_VIS_LIBVISUAL_LV_GLTEST,
-  EMOTION_VIS_LIBVISUAL_LV_SCOPE,
-  EMOTION_VIS_LIBVISUAL_MADSPIN,
-  EMOTION_VIS_LIBVISUAL_NEBULUS,
-  EMOTION_VIS_LIBVISUAL_OINKSIE,
-  EMOTION_VIS_LIBVISUAL_PLASMA
 };
 
 struct _Emotion_Module_Options
@@ -74,13 +52,14 @@ struct _Emotion_Video_Module
    void           (*stop) (void *ef);
    void           (*size_get) (void *ef, int *w, int *h);
    void           (*pos_set) (void *ef, double pos);
-   void           (*vis_set) (void *ef, Emotion_Vis vis);
    double         (*len_get) (void *ef);
    int            (*fps_num_get) (void *ef);
    int            (*fps_den_get) (void *ef);
    double         (*fps_get) (void *ef);
    double         (*pos_get) (void *ef);
+   void           (*vis_set) (void *ef, Emotion_Vis vis);
    Emotion_Vis    (*vis_get) (void *ef);
+   Evas_Bool      (*vis_supported) (void *ef, Emotion_Vis vis);
    double         (*ratio_get) (void *ef);
    int            (*video_handled) (void *ef);
    int            (*audio_handled) (void *ef);

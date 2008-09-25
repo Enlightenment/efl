@@ -37,5 +37,7 @@ void file_new_decoded_pad_cb (GstElement *decodebin,
                               gboolean    last,
                               gpointer    user_data);
 
+const char *emotion_visualization_element_name_get(Emotion_Vis visualisation);
+
 
 #endif /* __EMOTION_GSTREAMER_PIPELINE_H__ */
