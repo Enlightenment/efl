@@ -27,10 +27,12 @@
 #endif
 
 static void _ecore_con_cb_dns_lookup(void *data, struct hostent *he);
+static void _ecore_con_cb_udp_dns_lookup(void *data, struct hostent *he);
 static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
 static int _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static int _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_mcast_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_con_server_flush(Ecore_Con_Server *svr);
@@ -452,7 +454,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    /* unset the SSL flag for the following checks */
    type &= ECORE_CON_TYPE;
 #endif
-   if ((type == ECORE_CON_REMOTE_SYSTEM) && (port < 0)) return NULL;
+   if ((type == ECORE_CON_REMOTE_SYSTEM || type == ECORE_CON_REMOTE_UDP) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
@@ -552,6 +554,11 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
      {
 	if (!ecore_con_dns_lookup(svr->name, _ecore_con_cb_dns_lookup, svr))
 	  goto error;
+     }
+   else if (type == ECORE_CON_REMOTE_UDP)
+     {
+       if (!ecore_con_dns_lookup(svr->name, _ecore_con_cb_udp_dns_lookup, svr))
+	 goto error;
      }
 
    return svr;
@@ -1242,6 +1249,51 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
    kill_server(svr);
 }
 
+static void
+_ecore_con_cb_udp_dns_lookup(void *data, struct hostent *he)
+{
+   Ecore_Con_Server   *svr;
+   struct sockaddr_in  socket_addr;
+   int                 curstate = 0;
+   char                buf[64];
+   uint32_t            ip;
+
+   svr = data;
+
+   if (!he) goto error;
+   svr->fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+   if (svr->fd < 0) goto error;
+   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) 
+     goto error;
+   socket_addr.sin_family = AF_INET;
+   socket_addr.sin_port = htons(svr->port);
+   memcpy((struct in_addr *)&socket_addr.sin_addr,
+	  he->h_addr, sizeof(struct in_addr));
+   if (connect(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0)
+     goto error;
+   else
+     svr->fd_handler = 
+       ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ | ECORE_FD_WRITE,
+				 _ecore_con_cl_udp_handler, svr, NULL, NULL);
+
+   if (!svr->fd_handler) goto error;
+   ip = socket_addr.sin_addr.s_addr;
+   snprintf(buf, sizeof(buf),
+	    "%i.%i.%i.%i",
+	    (ip      ) & 0xff,
+	    (ip >> 8 ) & 0xff,
+	    (ip >> 16) & 0xff,
+	    (ip >> 24) & 0xff);
+   svr->ip = strdup(buf);
+
+   return;
+
+   error:
+   kill_server(svr);
+}
+
 static int
 svr_try_connect_plain(Ecore_Con_Server *svr)
 {
@@ -1429,6 +1481,53 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	_ecore_con_server_flush(svr);
      }
 
+   return 1;
+}
+
+static int
+_ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   Ecore_Con_Server   *svr;
+
+   svr = data;
+   if (svr->dead) return 1;
+   if (svr->delete_me) return 1;
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+     {
+       unsigned char buf[65536];
+       int           num = 0;
+       
+       errno = 0;
+       num = read(svr->fd, buf, 65536);
+       if (num > 0)
+	 {
+	   if (!svr->delete_me)
+	     {
+	       Ecore_Con_Event_Server_Data *e;
+	       unsigned char *inbuf;
+
+	       inbuf = malloc(num);
+	       if(inbuf == NULL)
+		 return 1;
+	       memcpy(inbuf, buf, num);
+
+	       e = calloc(1, sizeof(Ecore_Con_Event_Server_Data));
+	       if (e)
+		 {
+		   svr->event_count++;
+		   e->server = svr;
+		   e->data = inbuf;
+		   e->size = num;
+		   ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
+				   _ecore_con_event_server_data_free,
+				   NULL);
+		 }
+	     }
+	 }
+     }
+   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
+       _ecore_con_server_flush(svr);
+   
    return 1;
 }
 
