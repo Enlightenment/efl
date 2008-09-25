@@ -132,7 +132,7 @@ ecore_con_shutdown(void)
  *     the Unix socket "~/.ecore/[name]/[port]".
  * @li If @a compl_type is @c ECORE_CON_LOCAL_SYSTEM, the server will listen
  *     on Unix socket "/tmp/.ecore_service|[name]|[port]".
- * @li If @a compl_type is @c ECORE_CON_REMOTE_SYSTEM, the server will listen
+ * @li If @a compl_type is @c ECORE_CON_REMOTE_TCP, the server will listen
  *     on TCP port @c port.
  *
  * @param  compl_type The connection type.
@@ -304,7 +304,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	umask(pmode);
 	if (!svr->fd_handler) goto error;
      }
-   else if (type == ECORE_CON_REMOTE_SYSTEM)
+   else if (type == ECORE_CON_REMOTE_TCP)
      {
 	svr->fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (svr->fd < 0) goto error;
@@ -416,7 +416,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
  * @li If @a compl_type is @c ECORE_CON_LOCAL_SYSTEM, the function will
  *     connect to the server listening on the Unix socket
  *     "/tmp/.ecore_service|[name]|[port]".
- * @li If @a compl_type is @c ECORE_CON_REMOTE_SYSTEM, the function will
+ * @li If @a compl_type is @c ECORE_CON_REMOTE_TCP, the function will
  *     connect to the server listening on the TCP port "[name]:[port]".
  *
  * @param  compl_type The connection type.
@@ -454,7 +454,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    /* unset the SSL flag for the following checks */
    type &= ECORE_CON_TYPE;
 #endif
-   if ((type == ECORE_CON_REMOTE_SYSTEM || type == ECORE_CON_REMOTE_UDP) && (port < 0)) return NULL;
+   if ((type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_UDP) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
@@ -550,7 +550,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    ecore_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
 
-   if (type == ECORE_CON_REMOTE_SYSTEM)
+   if (type == ECORE_CON_REMOTE_TCP)
      {
 	if (!ecore_con_dns_lookup(svr->name, _ecore_con_cb_dns_lookup, svr))
 	  goto error;
