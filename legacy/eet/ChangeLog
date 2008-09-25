@@ -95,7 +95,7 @@
 
 2008-09-03  Cedric BAIL
 
-	* Fix inline-jpeg deocde to use mem buf, not tmp-file on platforms that
+	* Fix inline-jpeg decode to use mem buf, not tmp-file on platforms that
 	don't support mem_open() etc.
 	* Add eet_memopen_read() to be able to open an eet file already
 	mapped in memory (eg compiled-in or mmaped some other way).
