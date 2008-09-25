@@ -22,14 +22,13 @@
 
 #include <string.h>
 
-#include "eina_array.h"
-#include "eina_error.h"
-
 #ifndef DEBUG
 # define DEBUG
 #endif
 #include "eina_magic.h"
 #include "eina_private.h"
+#include "eina_array.h"
+#include "eina_error.h"
 
 /*============================================================================*
  *                                  Local                                     *

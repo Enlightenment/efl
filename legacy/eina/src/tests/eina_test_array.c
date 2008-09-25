@@ -69,7 +69,7 @@ END_TEST
 
 START_TEST(eina_array_static)
 {
-   Eina_Array sea = { NULL, 0, 0, 0 };
+   Eina_Array sea;
    char *tmp;
    Eina_Array_Iterator it;
    unsigned int i;

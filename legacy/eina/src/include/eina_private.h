@@ -48,9 +48,21 @@
 #define READBUFSIZ 65536
 
 /* eina magic types */
-#define EINA_MAGIC_STRINGSHARE 0x10452571
-#define EINA_MAGIC_STRINGSHARE_NODE 0x95204152
-#define EINA_MAGIC_STRINGSHARE_HEAD 0x35294051
+#define EINA_MAGIC_ITERATOR 0x98761233
+#define EINA_MAGIC_ACCESSOR 0x98761232
+
+#define EINA_MAGIC_STRINGSHARE 0x98761234
+#define EINA_MAGIC_STRINGSHARE_NODE 0x98761235
+#define EINA_MAGIC_STRINGSHARE_HEAD 0x98761236
+
+#define EINA_MAGIC_LIST	0x98761237
+#define EINA_MAGIC_LIST_ITERATOR 0x98761238
+#define EINA_MAGIC_LIST_ACCESSOR 0x98761239
+#define EINA_MAGIC_LIST_ACCOUNTING 0x9876123a
+
+#define EINA_MAGIC_ARRAY 0x9876123b
+#define EINA_MAGIC_ARRAY_ITERATOR 0x9876123c
+#define EINA_MAGIC_ARRAY_ACCESSOR 0x9876123d
 
 /* undef the following, we want out version */
 #undef FREE
@@ -131,6 +143,8 @@ typedef void (*Eina_Accessor_Free_Callback)(Eina_Accessor *it);
 
 struct _Eina_Iterator
 {
+   EINA_MAGIC;
+
    Eina_Iterator_Next_Callback          next;
    Eina_Iterator_Get_Container_Callback get_container;
    Eina_Iterator_Free_Callback          free;
@@ -138,6 +152,8 @@ struct _Eina_Iterator
 
 struct _Eina_Accessor
 {
+   EINA_MAGIC;
+
    Eina_Accessor_Get_At_Callback        get_at;
    Eina_Accessor_Get_Container_Callback	get_container;
    Eina_Accessor_Free_Callback          free;
