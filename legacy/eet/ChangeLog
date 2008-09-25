@@ -89,3 +89,22 @@
 
 	* Fix the dictionnary check during eet_open.
 
+2008-08-22  Cedric BAIL
+
+	* Fix memory leaks in eet_data strings
+
+2008-09-03  Cedric BAIL
+
+	* Fix inline-jpeg deocde to use mem buf, not tmp-file on platforms that
+	don't support mem_open() etc.
+	* Add eet_memopen_read() to be able to open an eet file already
+	mapped in memory (eg compiled-in or mmaped some other way).
+
+2008-09-11  Cedric BAIL
+
+	* Improve hash generation speed for big files.
+	* Inline more functions explicitly for speed.
+
+
+
+
