@@ -319,6 +319,8 @@ emotion_object_position_get(Evas_Object *obj)
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
    if (!sd->module) return 0.0;
    if (!sd->video) return 0.0;
+   if (!sd->module->pos_get) return 0.0;
+   sd->pos = sd->module->pos_get(sd->video);
    return sd->pos;
 }
 

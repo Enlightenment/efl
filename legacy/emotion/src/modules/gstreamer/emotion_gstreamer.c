@@ -590,13 +590,42 @@ static double
 em_len_get(void *video)
 {
    Emotion_Gstreamer_Video *ev;
-   Emotion_Video_Sink      *vsink;
+   Emotion_Video_Sink *vsink;
+   Emotion_Audio_Sink *asink;
+   GstFormat fmt;
+   gint64 val;
+   gboolean ret;
 
-   ev = (Emotion_Gstreamer_Video *)video;
+   ev = video;
+   fmt = GST_FORMAT_TIME;
+   ret = gst_element_query_duration(ev->pipeline, &fmt, &val);
+   if (!ret)
+     goto fallback;
 
-   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
-   if (vsink)
-     return (double)vsink->length_time;
+   if (fmt != GST_FORMAT_TIME)
+     {
+	fprintf(stderr, "requrested duration in time, but got %s instead.",
+		gst_format_get_name(fmt));
+	goto fallback;
+     }
+
+   if (val <= 0.0)
+     goto fallback;
+
+   return val / 1000000000.0;
+
+ fallback:
+   fputs("Gstreamer reported no length, try existing sinks...\n", stderr);
+
+   ecore_list_first_goto(ev->audio_sinks);
+   while ((asink = ecore_list_next(ev->audio_sinks)) != NULL)
+     if (asink->length_time >= 0)
+       return asink->length_time;
+
+   ecore_list_first_goto(ev->video_sinks);
+   while ((vsink = ecore_list_next(ev->video_sinks)) != NULL)
+     if (vsink->length_time >= 0)
+       return vsink->length_time;
 
    return 0.0;
 }
@@ -650,9 +679,24 @@ static double
 em_pos_get(void *video)
 {
    Emotion_Gstreamer_Video *ev;
+   GstFormat fmt;
+   gint64 val;
+   gboolean ret;
 
-   ev = (Emotion_Gstreamer_Video *)video;
+   ev = video;
+   fmt = GST_FORMAT_TIME;
+   ret = gst_element_query_position(ev->pipeline, &fmt, &val);
+   if (!ret)
+     return ev->position;
 
+   if (fmt != GST_FORMAT_TIME)
+     {
+	fprintf(stderr, "requrested position in time, but got %s instead.",
+		gst_format_get_name(fmt));
+	return ev->position;
+     }
+
+   ev->position = val / 1000000000.0;
    return ev->position;
 }
 

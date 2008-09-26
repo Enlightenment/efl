@@ -551,6 +551,7 @@ em_pos_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
+   _em_get_pos_len(ev);
    return ev->pos;
 }
 
@@ -1456,6 +1457,7 @@ _em_get_pos_len_th(void *par)
 static void
 _em_get_pos_len(Emotion_Xine_Video *ev)
 {
+   if (!ev->play_ok) return;
    if (ev->get_poslen) return;
    ev->get_poslen = 1;
    pthread_mutex_lock(&(ev->get_pos_len_mutex));

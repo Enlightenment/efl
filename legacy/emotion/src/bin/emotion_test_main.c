@@ -467,18 +467,17 @@ video_obj_move_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
 }
 
 static void
-video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 {
-   Evas_Object *oe;
-   double pos, len;
+   double pos, len, scale;
    char buf[256];
    int ph, pm, ps, pf, lh, lm, ls;
 
-   oe = data;
    pos = emotion_object_position_get(obj);
    len = emotion_object_play_length_get(obj);
 //   printf("%3.3f, %3.3f\n", pos, len);
-   edje_object_part_drag_value_set(oe, "video_progress", pos / len, 0.0);
+   scale = (len > 0.0) ? pos / len : 0.0;
+   edje_object_part_drag_value_set(edje, "video_progress", scale, 0.0);
    lh = len / 3600;
    lm = len / 60 - (lh * 60);
    ls = len - (lm * 60);
@@ -488,7 +487,13 @@ video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info)
    pf = pos * 100 - (ps * 100) - (pm * 60 * 100) - (ph * 60 * 60 * 100);
    snprintf(buf, sizeof(buf), "%i:%02i:%02i.%02i / %i:%02i:%02i",
 	    ph, pm, ps, pf, lh, lm, ls);
-   edje_object_part_text_set(oe, "video_progress_txt", buf);
+   edje_object_part_text_set(edje, "video_progress_txt", buf);
+}
+
+static void
+video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   video_obj_time_changed(obj, data);
 
    if (0)
      {
@@ -524,25 +529,13 @@ video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 video_obj_length_change_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *oe;
-   double pos, len;
-   char buf[256];
-   int ph, pm, ps, pf, lh, lm, ls;
+   video_obj_time_changed(obj, data);
+}
 
-   oe = data;
-   pos = emotion_object_position_get(obj);
-   len = emotion_object_play_length_get(obj);
-   edje_object_part_drag_value_set(oe, "video_progress", pos / len, 0.0);
-   lh = len / 3600;
-   lm = len / 60 - (lh * 60);
-   ls = len - (lm * 60);
-   ph = pos / 3600;
-   pm = pos / 60 - (ph * 60);
-   ps = pos - (pm * 60);
-   pf = pos * 100 - (ps * 100) - (pm * 60 * 100) - (ph * 60 * 60 * 100);
-   snprintf(buf, sizeof(buf), "%i:%02i:%02i.%02i / %i:%02i:%02i",
-	    ph, pm, ps, pf, lh, lm, ls);
-   edje_object_part_text_set(oe, "video_progress_txt", buf);
+static void
+video_obj_position_update_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   video_obj_time_changed(obj, data);
 }
 
 static void
@@ -801,6 +794,7 @@ init_video_object(char *module_filename, char *filename)
    evas_object_smart_callback_add(o, "frame_decode", video_obj_frame_decode_cb, oe);
    evas_object_smart_callback_add(o, "frame_resize", video_obj_frame_resize_cb, oe);
    evas_object_smart_callback_add(o, "length_change", video_obj_length_change_cb, oe);
+   evas_object_smart_callback_add(o, "position_update", video_obj_position_update_cb, oe);
 
    evas_object_smart_callback_add(o, "decode_stop", video_obj_stopped_cb, oe);
    evas_object_smart_callback_add(o, "channels_change", video_obj_channels_cb, oe);
@@ -846,6 +840,17 @@ enter_idle(void *data)
 	frames = 0;
      }
    return 1;
+}
+
+static int
+check_positions(void *data)
+{
+   const Evas_List *lst;
+
+   for (lst = video_objs; lst != NULL; lst = lst->next)
+     video_obj_time_changed(lst->data, evas_object_smart_parent_get(lst->data));
+
+   return !!video_objs;
 }
 
 int
@@ -902,6 +907,7 @@ main(int argc, char **argv)
      }
 
    ecore_idle_enterer_add(enter_idle, NULL);
+   ecore_animator_add(check_positions, NULL);
 
    ecore_main_loop_begin();
    main_stop();
