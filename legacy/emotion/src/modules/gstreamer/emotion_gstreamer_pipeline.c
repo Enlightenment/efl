@@ -297,6 +297,124 @@ emotion_visualization_element_name_get(Emotion_Vis visualisation)
      }
 }
 
+static GstElement *
+emotion_visualization_bin_create(Emotion_Gstreamer_Video *ev, int index)
+{
+   const char *vis_name;
+   char buf[64];
+   GstElement *vis, *visbin, *queue, *conv, *cspace, *sink;
+   GstPad *vispad;
+   GstCaps *caps;
+
+   if (ev->vis == EMOTION_VIS_NONE)
+     return NULL;
+
+   vis_name = emotion_visualization_element_name_get(ev->vis);
+   if (!vis_name)
+     return NULL;
+
+   g_snprintf(buf, sizeof(buf), "vis%d", index);
+   vis = gst_element_factory_make(vis_name, buf);
+   if (!vis)
+     return NULL;
+
+   g_snprintf(buf, sizeof(buf), "visbin%d", index);
+   visbin = gst_bin_new(buf);
+
+   queue = gst_element_factory_make("queue", NULL);
+   conv = gst_element_factory_make("audioconvert", NULL);
+   cspace = gst_element_factory_make("ffmpegcolorspace", NULL);
+   g_snprintf(buf, sizeof(buf), "vissink%d", index);
+   sink = gst_element_factory_make("fakesink", buf);
+
+   if ((!visbin) || (!queue) || (!conv) || (!cspace) || (!sink))
+     goto error;
+
+   gst_bin_add_many(GST_BIN(visbin), queue, conv, vis, cspace, sink, NULL);
+   gst_element_link_many(queue, conv, vis, cspace, NULL);
+   caps = gst_caps_new_simple("video/x-raw-rgb",
+			      "bpp", G_TYPE_INT, 32,
+			      "width", G_TYPE_INT, 320,
+			      "height", G_TYPE_INT, 200,
+			      NULL);
+   gst_element_link_filtered(cspace, sink, caps);
+
+   vispad = gst_element_get_pad(queue, "sink");
+   gst_element_add_pad(visbin, gst_ghost_pad_new("sink", vispad));
+   gst_object_unref(vispad);
+
+   return visbin;
+
+ error:
+   if (vis)
+     gst_object_unref(vis);
+   if (visbin)
+     gst_object_unref(visbin);
+   if (queue)
+     gst_object_unref(queue);
+   if (conv)
+     gst_object_unref(conv);
+   if (cspace)
+     gst_object_unref(cspace);
+   if (sink)
+     gst_object_unref(sink);
+
+   return NULL;
+}
+
+static GstElement *
+emotion_audio_bin_create(Emotion_Gstreamer_Video *ev, int index)
+{
+   GstElement *audiobin, *queue, *conv, *resample, *volume, *sink;
+   GstPad *audiopad;
+   double vol;
+
+   audiobin = gst_bin_new(NULL);
+   queue = gst_element_factory_make("queue", NULL);
+   conv = gst_element_factory_make("audioconvert", NULL);
+   resample = gst_element_factory_make("audioresample", NULL);
+   volume = gst_element_factory_make("volume", "volume");
+
+   if (index == 1)
+     sink = gst_element_factory_make("autoaudiosink", NULL);
+   else
+     /* XXX hack: use a proper mixer element here */
+     sink = gst_element_factory_make("fakesink", NULL);
+
+   if ((!audiobin) || (!queue) || (!conv) || (!resample) || (!volume) || (!sink))
+     goto error;
+
+   g_object_get(volume, "volume", &vol, NULL);
+   ev->volume = vol;
+
+   gst_bin_add_many(GST_BIN(audiobin),
+		    queue, conv, resample, volume, sink, NULL);
+   gst_element_link_many(queue, conv, resample, volume, sink, NULL);
+
+   audiopad = gst_element_get_pad(queue, "sink");
+   gst_element_add_pad(audiobin, gst_ghost_pad_new("sink", audiopad));
+   gst_object_unref(audiopad);
+
+   return audiobin;
+
+ error:
+   if (audiobin)
+     gst_object_unref(audiobin);
+   if (queue)
+     gst_object_unref(queue);
+   if (conv)
+     gst_object_unref(conv);
+   if (resample)
+     gst_object_unref(resample);
+   if (volume)
+     gst_object_unref(volume);
+   if (sink)
+     gst_object_unref(sink);
+
+   return NULL;
+}
+
+
 GstElement *
 emotion_audio_sink_create(Emotion_Gstreamer_Video *ev, int index)
 {
@@ -308,94 +426,23 @@ emotion_audio_sink_create(Emotion_Gstreamer_Video *ev, int index)
    GstPad     *teepad;
    GstPad     *binpad;
 
-   /* audio sink */
+   audiobin = emotion_audio_bin_create(ev, index);
+   if (!audiobin)
+     return NULL;
+
    bin = gst_bin_new(NULL);
-   if (!bin) return NULL;
+   if (!bin)
+     {
+	gst_object_unref(audiobin);
+	return NULL;
+     }
 
    g_snprintf(buf, 128, "tee%d", index);
    tee = gst_element_factory_make("tee", buf);
 
-   /* audio part */
-     {
-	GstElement *queue;
-	GstElement *conv;
-	GstElement *resample;
-	GstElement *volume;
-	GstElement *sink;
-	GstPad     *audiopad;
-	double      vol;
+   visbin = emotion_visualization_bin_create(ev, index);
 
-	audiobin = gst_bin_new(NULL);
-
-	queue = gst_element_factory_make("queue", NULL);
-	conv = gst_element_factory_make("audioconvert", NULL);
-	resample = gst_element_factory_make("audioresample", NULL);
-	volume = gst_element_factory_make("volume", "volume");
-	g_object_get(G_OBJECT(volume), "volume", &vol, NULL);
-	ev->volume = vol / 10.0;
-
-	if (index == 1)
-	  sink = gst_element_factory_make("autoaudiosink", NULL);
-	else
-	  sink = gst_element_factory_make("fakesink", NULL);
-
-	gst_bin_add_many(GST_BIN(audiobin),
-			 queue, conv, resample, volume, sink, NULL);
-	gst_element_link_many(queue, conv, resample, volume, sink, NULL);
-
-	audiopad = gst_element_get_pad(queue, "sink");
-	gst_element_add_pad(audiobin, gst_ghost_pad_new("sink", audiopad));
-	gst_object_unref(audiopad);
-     }
-
-   /* visualisation part */
-     {
-	const char *vis_name = emotion_visualization_element_name_get(ev->vis);
-
-	if (vis_name)
-	  {
-	     GstElement *vis;
-
-	     g_snprintf(buf, 128, "vis%d", index);
-	     vis = gst_element_factory_make(vis_name, buf);
-	     if (vis)
-	       {
-		  GstElement *queue;
-		  GstElement *conv;
-		  GstElement *cspace;
-		  GstElement *sink;
-		  GstPad     *vispad;
-		  GstCaps    *caps;
-
-		  g_snprintf(buf, 128, "visbin%d", index);
-		  visbin = gst_bin_new(buf);
-
-		  queue = gst_element_factory_make("queue", NULL);
-		  conv = gst_element_factory_make("audioconvert", NULL);
-		  cspace = gst_element_factory_make("ffmpegcolorspace", NULL);
-		  g_snprintf(buf, 128, "vissink%d", index);
-		  sink = gst_element_factory_make("fakesink", buf);
-
-		  gst_bin_add_many(GST_BIN(visbin),
-				   queue, conv, vis, cspace, sink, NULL);
-		  gst_element_link_many(queue, conv, vis, cspace, NULL);
-		  caps = gst_caps_new_simple("video/x-raw-rgb",
-					     "bpp", G_TYPE_INT, 32,
-					     "width", G_TYPE_INT, 320,
-					     "height", G_TYPE_INT, 200,
-					     NULL);
-		  gst_element_link_filtered(cspace, sink, caps);
-
-		  vispad = gst_element_get_pad(queue, "sink");
-		  gst_element_add_pad(visbin, gst_ghost_pad_new("sink", vispad));
-		  gst_object_unref(vispad);
-	       }
-	  }
-     }
-
-   gst_bin_add_many(GST_BIN(bin), tee, audiobin, NULL);
-   if (visbin)
-     gst_bin_add(GST_BIN(bin), visbin);
+   gst_bin_add_many(GST_BIN(bin), tee, audiobin, visbin, NULL);
 
    binpad = gst_element_get_pad(audiobin, "sink");
    teepad = gst_element_get_request_pad(tee, "src%d");
