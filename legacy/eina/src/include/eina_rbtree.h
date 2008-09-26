@@ -19,6 +19,8 @@
 #ifndef EINA_RBTREE_H__
 #define EINA_RBTREE_H__
 
+#include <stdlib.h>
+
 #include "eina_types.h"
 #include "eina_error.h"
 #include "eina_iterator.h"
