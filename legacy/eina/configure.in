@@ -126,7 +126,7 @@ EINA_CHECK_STATIC([chained-pool], [chained pool])
 EINA_CHECK_STATIC([ememoa-fixed], [ememoa fixed])
 EINA_CHECK_STATIC([ememoa-unknown], [ememoa unknown])
 EINA_CHECK_STATIC([pass-through], [pass through])
-
+EINA_CHECK_STATIC([fixed-bitmap], [fixed bitmap])
 
 ### Checks for libraries
 
@@ -333,6 +333,7 @@ src/modules/mp/chained_pool/Makefile
 src/modules/mp/ememoa_fixed/Makefile
 src/modules/mp/ememoa_unknown/Makefile
 src/modules/mp/pass_through/Makefile
+src/modules/mp/fixed_bitmap/Makefile
 src/tests/Makefile
 ])
 

@@ -83,6 +83,11 @@ Eina_Bool ememoa_fixed_init(void);
 void ememoa_fixed_shutdown(void);
 #endif
 
+#ifdef EINA_STATIC_BUILD_FIXED_BITMAP
+Eina_Bool fixed_bitmap_init(void);
+void fixed_bitmap_shutdown(void);
+#endif
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

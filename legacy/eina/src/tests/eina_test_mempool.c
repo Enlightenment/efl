@@ -25,7 +25,8 @@
 
 static Eina_List *_modules;
 
-static void _mempool_init(void)
+static void
+_mempool_init(void)
 {
     eina_mempool_init();
     /* force modules to be loaded in case they are not installed */
@@ -33,11 +34,47 @@ static void _mempool_init(void)
     eina_module_list_load(_modules);
 }
 
-static void _mempool_shutdown(void)
+static void
+_mempool_shutdown(void)
 {
    eina_module_list_delete(_modules);
    /* TODO delete the list */
    eina_mempool_shutdown();
+}
+
+static void
+_eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
+{
+   int *tbl[512];
+   int i;
+
+   fail_if(!mp);
+
+   for (i = 0; i < 512; ++i)
+     {
+	tbl[i] = eina_mempool_alloc(mp, sizeof (int));
+	fail_if(!tbl[i]);
+	*tbl[i] = i;
+     }
+
+   for (i = 0; i < 512; ++i)
+     fail_if(*tbl[i] != i);
+
+   for (i = 0; i < 256; ++i)
+     eina_mempool_free(mp, tbl[i]);
+
+   if (with_realloc)
+     fail_if(eina_mempool_realloc(mp, tbl[500], 25) == NULL);
+   else
+     fail_if(eina_mempool_realloc(mp, tbl[500], 25) != NULL);
+
+   if (with_gc)
+     {
+	eina_mempool_gc(mp);
+	eina_mempool_statistics(mp);
+     }
+
+   eina_mempool_delete(mp);
 }
 
 START_TEST(eina_mempool_init_shutdown)
@@ -56,30 +93,11 @@ END_TEST
 START_TEST(eina_mempool_chained_mempool)
 {
    Eina_Mempool *mp;
-   int *tbl[512];
-   int i;
 
    _mempool_init();
 
    mp = eina_mempool_new("chained_mempool", "test", NULL, sizeof (int), 256);
-   fail_if(!mp);
-
-   for (i = 0; i < 512; ++i)
-     {
-	tbl[i] = eina_mempool_alloc(mp, sizeof (int));
-	fail_if(!tbl[i]);
-	*tbl[i] = i;
-     }
-
-   for (i = 0; i < 512; ++i)
-     fail_if(*tbl[i] != i);
-
-   for (i = 0; i < 256; ++i)
-     eina_mempool_free(mp, tbl[i]);
-
-   fail_if(eina_mempool_realloc(mp, tbl[500], 25) != NULL);
-
-   eina_mempool_delete(mp);
+   _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE);
 
    _mempool_shutdown();
 }
@@ -88,30 +106,24 @@ END_TEST
 START_TEST(eina_mempool_pass_through)
 {
    Eina_Mempool *mp;
-   int *tbl[512];
-   int i;
 
    _mempool_init();
 
    mp = eina_mempool_new("pass_through", "test", NULL, sizeof (int), 8, 0);
-   fail_if(!mp);
+   _eina_mempool_test(mp, EINA_TRUE, EINA_FALSE);
 
-   for (i = 0; i < 512; ++i)
-     {
-	tbl[i] = eina_mempool_alloc(mp, sizeof (int));
-	fail_if(!tbl[i]);
-	*tbl[i] = i;
-     }
+   _mempool_shutdown();
+}
+END_TEST
 
-   for (i = 0; i < 512; ++i)
-     fail_if(*tbl[i] != i);
+START_TEST(eina_mempool_fixed_bitmap)
+{
+   Eina_Mempool *mp;
 
-   for (i = 0; i < 256; ++i)
-     eina_mempool_free(mp, tbl[i]);
+   _mempool_init();
 
-   fail_if(eina_mempool_realloc(mp, tbl[500], 25) == NULL);
-
-   eina_mempool_delete(mp);
+   mp = eina_mempool_new("fixed_bitmap", "test", NULL, sizeof (int));
+   _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE);
 
    _mempool_shutdown();
 }
@@ -121,33 +133,11 @@ END_TEST
 START_TEST(eina_mempool_ememoa_fixed)
 {
    Eina_Mempool *mp;
-   int *tbl[512];
-   int i;
 
    _mempool_init();
 
    mp = eina_mempool_new("ememoa_fixed", "test", NULL, sizeof (int), 8, 0);
-   fail_if(!mp);
-
-   for (i = 0; i < 512; ++i)
-     {
-	tbl[i] = eina_mempool_alloc(mp, sizeof (int));
-	fail_if(!tbl[i]);
-	*tbl[i] = i;
-     }
-
-   for (i = 0; i < 512; ++i)
-     fail_if(*tbl[i] != i);
-
-   for (i = 0; i < 256; ++i)
-     eina_mempool_free(mp, tbl[i]);
-
-   fail_if(eina_mempool_realloc(mp, tbl[500], 25) != NULL);
-
-   eina_mempool_gc(mp);
-   eina_mempool_statistics(mp);
-
-   eina_mempool_delete(mp);
+   _eina_mempool_test(mp, EINA_FALSE, EINA_TRUE);
 
    _mempool_shutdown();
 }
@@ -156,34 +146,11 @@ END_TEST
 START_TEST(eina_mempool_ememoa_unknown)
 {
    Eina_Mempool *mp;
-   int *tbl[512];
-   int i;
 
    _mempool_init();
 
    mp = eina_mempool_new("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
-   fail_if(!mp);
-
-   for (i = 0; i < 512; ++i)
-     {
-	tbl[i] = eina_mempool_alloc(mp, sizeof (int));
-	fail_if(!tbl[i]);
-	*tbl[i] = i;
-     }
-
-   for (i = 0; i < 512; ++i)
-     fail_if(*tbl[i] != i);
-
-   for (i = 0; i < 256; ++i)
-     eina_mempool_free(mp, tbl[i]);
-
-   for (i = 256; i < 512; ++i)
-     tbl[i] = eina_mempool_realloc(mp, tbl[i], 2 * sizeof (int));
-
-   eina_mempool_gc(mp);
-   eina_mempool_statistics(mp);
-
-   eina_mempool_delete(mp);
+   _eina_mempool_test(mp, EINA_TRUE, EINA_TRUE);
 
    _mempool_shutdown();
 }
@@ -196,6 +163,7 @@ eina_test_mempool(TCase *tc)
    tcase_add_test(tc, eina_mempool_init_shutdown);
    tcase_add_test(tc, eina_mempool_chained_mempool);
    tcase_add_test(tc, eina_mempool_pass_through);
+   tcase_add_test(tc, eina_mempool_fixed_bitmap);
 #ifdef EINA_EMEMOA_SUPPORT
    tcase_add_test(tc, eina_mempool_ememoa_fixed);
    tcase_add_test(tc, eina_mempool_ememoa_unknown);
