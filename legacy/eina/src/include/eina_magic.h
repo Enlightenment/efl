@@ -19,7 +19,7 @@
 #ifndef EINA_MAGIC_H_
 #define EINA_MAGIC_H_
 
-#ifdef DEBUG
+#ifdef EINA_MAGIC_DEBUG
 
 #include "eina_types.h"
 

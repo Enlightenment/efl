@@ -18,6 +18,8 @@
 
 #include <stdlib.h>
 
+#define EINA_MAGIC_DEBUG
+
 #include "eina_suite.h"
 #include "eina_magic.h"
 

@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 
+#include "eina_config.h"
+
 #include "eina_types.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"

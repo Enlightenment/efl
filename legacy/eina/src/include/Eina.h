@@ -136,6 +136,7 @@
 extern "C" {
 #endif
 
+#include "eina_config.h"
 #include "eina_types.h"
 #include "eina_f16p16.h"
 #include "eina_rectangle.h"

@@ -34,6 +34,27 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
 
 ### Additional options to configure
 
+# Magic debug
+AC_ARG_ENABLE([magic-debug],
+   [AC_HELP_STRING([--enable-magic-debug], [enable magic debug of eina structure])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_magic_debug="yes"
+    else
+       enable_magic_debug="no"
+    fi
+   ],
+   [enable_magic_debug="yes"]
+)
+AC_MSG_CHECKING([whether magic debug is enable])
+AC_MSG_RESULT([${enable_magic_debug}])
+
+EINA_MAGIC_DEBUG=0
+if test "x${enable_magic_debug}" = "xyes" ; then
+   EINA_MAGIC_DEBUG=1
+fi
+AC_SUBST(EINA_MAGIC_DEBUG)
+
 # Unit tests
 
 AC_ARG_ENABLE([tests],
@@ -304,6 +325,7 @@ eina.pc
 doc/Makefile
 src/Makefile
 src/include/Makefile
+src/include/eina_config.h
 src/lib/Makefile
 src/modules/Makefile
 src/modules/mp/Makefile
@@ -339,6 +361,7 @@ echo "    Evas...............: ${have_evas}"
 echo "    Ecore..............: ${have_ecore}"
 echo "    E17 real data......: ${enable_bench_e17}"
 fi
+echo "  Magic debug..........: ${enable_magic_debug}"
 echo
 echo "  Memory pool:"
 echo "    Ememoa.............: ${enable_ememoa}"

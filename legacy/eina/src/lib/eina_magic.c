@@ -20,15 +20,16 @@
 # include "config.h"
 #endif
 
+#include <stdlib.h>
 #include <string.h>
 
-#ifndef DEBUG
-# define DEBUG
-#endif
+#define EINA_MAGIC_DEBUG
 #include "eina_magic.h"
+
+#include "eina_config.h"
 #include "eina_private.h"
-#include "eina_array.h"
 #include "eina_error.h"
+#include "eina_inlist.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -37,12 +38,14 @@
 typedef struct _Eina_Magic_String Eina_Magic_String;
 struct _Eina_Magic_String
 {
+   EINA_INLIST;
+
    char *string;
    Eina_Magic magic;
 };
 
 static int _eina_magic_string_count = 0;
-static Eina_Array *strings = NULL;
+static Eina_Inlist *strings = NULL;
 
 /*============================================================================*
  *                                 Global                                     *
@@ -57,9 +60,6 @@ eina_magic_string_init()
 {
    ++_eina_magic_string_count;
 
-   if (_eina_magic_string_count == 1)
-     strings = eina_array_new(8);
-
    return _eina_magic_string_count;
 }
 
@@ -70,24 +70,28 @@ eina_magic_string_shutdown()
 
    if (_eina_magic_string_count == 0)
      {
-	eina_array_free(strings);
-	strings = NULL;
+	/* Free all strings. */
+	while (strings)
+	  {
+	     Eina_Magic_String *tmp;
+
+	     tmp = (Eina_Magic_String*) strings;
+	     strings = eina_inlist_remove(strings, strings);
+
+	     free(tmp->string);
+	     free(tmp);
+	  }
      }
 
    return _eina_magic_string_count;
 }
 
-
 EAPI const char*
 eina_magic_string_get(Eina_Magic magic)
 {
    Eina_Magic_String *ems;
-   Eina_Array_Iterator it;
-   unsigned int i;
 
-   if (!strings) return NULL;
-
-   EINA_ARRAY_ITER_NEXT(strings, i, ems, it)
+   EINA_INLIST_ITER_NEXT(strings, ems)
      if (ems->magic == magic)
        return ems->string;
 
@@ -98,12 +102,8 @@ EAPI void
 eina_magic_string_set(Eina_Magic magic, const char *magic_name)
 {
    Eina_Magic_String *ems;
-   Eina_Array_Iterator it;
-   unsigned int i;
 
-   if (!strings) return ;
-
-   EINA_ARRAY_ITER_NEXT(strings, i, ems, it)
+   EINA_INLIST_ITER_NEXT(strings, ems)
      if (ems->magic == magic)
        {
 	  free(ems->string);
@@ -121,7 +121,7 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
    else
      ems->string = NULL;
 
-   eina_array_push(strings, ems);
+   strings = eina_inlist_prepend(strings, EINA_INLIST_GET(ems));
 }
 
 EAPI void
