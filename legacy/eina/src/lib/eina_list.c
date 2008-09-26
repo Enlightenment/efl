@@ -1,7 +1,7 @@
 /* EINA - EFL data type library
  * Copyright (C) 2002-2008 Carsten Haitzler, Gustavo Sverzut Barbieri, Tilman Sauerbeck,
  *                         Vincent Torri, Cedric Bail, Jorge Luis Zapata Muga,
- *                         Corey Donohoe
+ *                         Corey Donohoe, Arnaud de Turckheim, Alexandre Becoulet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,8 +64,6 @@
 # include "config.h"
 #endif
 
-#include <stdio.h>
-
 #include "eina_error.h"
 #include "eina_list.h"
 #include "eina_private.h"
@@ -101,6 +99,8 @@
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_LIST_ACCOUNTING))	\
       EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ACCOUNTING);		\
   } while(0);
+
+#define EINA_LIST_SORT_STACK_SIZE 32
 
 typedef struct _Eina_Iterator_List Eina_Iterator_List;
 typedef struct _Eina_Accessor_List Eina_Accessor_List;
@@ -328,6 +328,41 @@ eina_list_accessor_free(Eina_Accessor_List *it)
    EINA_MAGIC_CHECK_LIST_ACCESSOR(it);
 
    MAGIC_FREE(it);
+}
+
+static void
+eina_list_sort_rebuild_prev(Eina_List *list)
+{
+   Eina_List *prev = 0;
+
+   EINA_MAGIC_CHECK_LIST(list);
+
+   for (; list; list = list->next)
+     {
+       list->prev = prev;
+       prev = list;
+     }
+}
+
+static Eina_List *
+eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
+{
+   Eina_List *first, *last;
+
+   if (func(a->data, b->data) < 0)
+     a = (last = first = a)->next;
+   else
+     b = (last = first = b)->next;
+
+   while (a && b)
+     if (func(a->data, b->data) < 0)
+       a = (last = last->next = a)->next;
+     else
+       b = (last = last->next = b)->next;
+
+   last->next = a ? a : b;
+
+   return first;
 }
 
 /**
@@ -562,13 +597,13 @@ eina_list_append_relative(Eina_List *list, const void *data, const void *relativ
 {
    Eina_List *l;
    void *list_data;
-
+   
    if (list) EINA_MAGIC_CHECK_LIST(list);
 
    EINA_LIST_ITER_NEXT(list, l, list_data)
      {
-	if (list_data == relative)
-	  return eina_list_append_relative_list(list, data, l);
+         if (list_data == relative)
+             return eina_list_append_relative_list(list, data, l);
      }
 
    return eina_list_append(list, data);
@@ -662,13 +697,13 @@ eina_list_prepend_relative(Eina_List *list, const void *data, const void *relati
 {
    Eina_List *l;
    void *list_data;
-
+   
    if (list) EINA_MAGIC_CHECK_LIST(list);
 
    EINA_LIST_ITER_NEXT(list, l, list_data)
      {
-	if (list_data == relative)
-	  return eina_list_prepend_relative_list(list, data, l);
+         if (list_data == relative)
+             return eina_list_prepend_relative_list(list, data, l);
      }
    return eina_list_prepend(list, data);
 }
@@ -741,8 +776,8 @@ eina_list_remove(Eina_List *list, const void *data)
 
    EINA_LIST_ITER_NEXT(list, l, list_data)
      {
-	if (list_data == data)
-	  return eina_list_remove_list(list, l);
+         if (list_data == data)
+             return eina_list_remove_list(list, l);
      }
 
    return list;
@@ -1162,10 +1197,11 @@ eina_list_reverse(Eina_List *list)
 EAPI Eina_List *
 eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
 {
-   Eina_List*   last;
-   unsigned int	list_number;
-   unsigned int	middle;
-   unsigned int	list_size;
+   unsigned int i = 0;
+   unsigned int n = 0;
+   Eina_List *tail = list;
+   Eina_List *unsort = list;
+   Eina_List *stack[EINA_LIST_SORT_STACK_SIZE];
 
    if (!list || !func) return NULL;
 
@@ -1176,90 +1212,57 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
        (size > list->accounting->count))
      size = list->accounting->count;
 
-   last = list->accounting->last;
-   middle = size - size / 2;
-
-   for (list_number = middle, list_size = 1;
-	list_size < middle * 2;
-	list_number >>= 1, list_size <<= 1)
+   for (; size; size--)
      {
-	Eina_List	*head1 = list;
-	unsigned int	limit = size;
-	unsigned int	process_list;
-	unsigned int	pass_number;
-	unsigned int	split_size = list_size;
+   
+       unsort = unsort->next;
+     }
+   if (unsort)
+     unsort->prev->next = NULL;
 
-	for (process_list = 0; process_list < list_number + 1; ++process_list)
-	  {
-	     Eina_List		*head2;
-	     unsigned int	size_sum;
-	     int		size1, size2;
-	     int		i;
 
-	     size1 = limit < split_size ? limit : split_size;
-	     limit -= size1;
+   while (tail)
+     {
+       unsigned int idx, tmp;
+      
+       Eina_List *a = tail;
+       Eina_List *b = tail->next;
 
-	     size2 = limit < split_size ? limit : split_size;
-	     limit -= size2;
+       if (!b)
+	 {
+	   stack[i++] = a;
+	   break;
+	 }
 
-	     size_sum = size1 + size2;
+       tail = b->next;
+      
+       if (func(a->data, b->data) < 0)
+	 ((stack[i++] = a)->next = b)->next = 0;
+       else
+	 ((stack[i++] = b)->next = a)->next = 0;
 
-	     for (head2 = head1, i = 0; i < size1; ++i)
-	       head2 = eina_list_next (head2);
-
-	     for (pass_number = 0; pass_number < size_sum; ++pass_number)
-	       {
-		  Eina_List	*next;
-		  Eina_List	*prev1;
-		  Eina_List	*prev2;
-
-		  if (size1 == 0 || head1 == NULL) /* List1 is empty, head1 is already at the end of the list. So only need to update head2 */
-		    {
-		       for (; pass_number < size_sum; ++pass_number)
-			 head2 = eina_list_next (head2);
-		       break;
-		    }
-		  else
-		    if (size2 == 0 || head2 == NULL) /* List2 is empty, just leave */
-		      break;
-		    else
-		      if (func (head1->data, head2->data) < 0)
-			{
-			   head1 = eina_list_next (head1);
-			   --size1;
-			}
-		      else
-			{
-			   next = eina_list_next (head2);
-			   prev1 = eina_list_prev (head1);
-			   prev2 = eina_list_prev (head2);
-
-			   if (next)
-			     next->prev = prev2;
-			   if (prev1)
-			     prev1->next = head2;
-			   if (prev2)
-			     prev2->next = next;
-
-			   head2->prev = prev1;
-			   head2->next = head1;
-			   head1->prev = head2;
-
-			   --size2;
-
-                           if (head1 == list)
-                             list = head2;
-                           if (head2 == last)
-                             last = prev2;
-
-			   head2 = next;
-			}
-	       }
-	     head1 = head2;
-	  }
+       tmp = n++;
+       for (idx = n ^ tmp; idx &= idx - 1; i--)
+	 stack[i-2] = eina_list_sort_merge(stack[i-2], stack[i-1], func);
      }
 
-   list->accounting->last = last;
+   while (i-- > 1)
+     stack[i-1] = eina_list_sort_merge(stack[i-1], stack[i], func);
+   
+   list = stack[0];
+   eina_list_sort_rebuild_prev(list);
+   
+   for (tail = list; tail->next; tail = tail->next)
+     ;
+
+   if (unsort)
+     {
+       tail->next = unsort;
+       unsort->prev = tail;
+     }
+   else
+     list->accounting->last = tail;
+
    return list;
 }
 
