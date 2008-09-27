@@ -12,6 +12,6 @@ check_PROGRAMS = eet_suite
 eet_suite_SOURCES = eet_suite.c eet_data_suite.c
 eet_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeet.la
 
-EXTRA_DIST = eet_suite.h
-
 endif
+
+EXTRA_DIST = eet_suite.h
