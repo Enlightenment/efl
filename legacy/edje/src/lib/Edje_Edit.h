@@ -258,8 +258,31 @@ edje_edit_data_value_get(
 EAPI unsigned char        ///@return TRUE on success
 edje_edit_data_value_set(
    Evas_Object * obj,     ///< The edje object
-   const char *itemname,        ///< The name of the data item
-   const char *value            ///< The new value to set
+   const char *itemname,  ///< The name of the data item
+   const char *value      ///< The new value to set
+);
+
+EAPI unsigned char        ///@return TRUE on success
+edje_edit_data_name_set(
+   Evas_Object *obj,     ///< The edje object
+   const char *itemname, ///< The name of the data item
+   const char *newname   ///< The new name to set
+);
+
+//@}
+/******************************************************************************/
+/***********************   COLOR CLASSES API   ********************************/
+/******************************************************************************/
+/** @name Color Classes API
+ *  Functions to deal with Color Classes (see @ref edcref).
+ */ //@{
+
+/**Get the list of all the Color Classes in the given edje object.
+ * Use edje_edit_string_list_free() when you don't need it anymore.
+ */
+EAPI Evas_List *           ///@return An Evas_List* of string (char *)containing all the classes names.
+edje_edit_color_classes_list_get(
+   Evas_Object * obj       ///< The edje object
 );
 
 

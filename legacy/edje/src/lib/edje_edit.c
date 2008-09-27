@@ -995,7 +995,7 @@ edje_edit_data_value_get(Evas_Object * obj, char *itemname)
 }
 
 EAPI unsigned char
-edje_edit_data_value_set( Evas_Object * obj, const char *itemname, const char *value)
+edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *value)
 {
    Evas_List *l;
 
@@ -1016,6 +1016,55 @@ edje_edit_data_value_set( Evas_Object * obj, const char *itemname, const char *v
      }
 
    return 0;
+}
+
+EAPI unsigned char
+edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *newname)
+{
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!itemname || !newname || !ed->file || !ed->file->data)
+     return 0;
+
+   for (l = ed->file->data; l; l = l->next)
+     {
+	Edje_Data *d = l->data;
+	if (strcmp(d->key, itemname) == 0)
+	  {
+		_edje_if_string_free(ed, d->key);
+		d->key = (char*)evas_stringshare_add(newname);
+		return 1;
+	  }
+     }
+
+   return 0;
+}
+
+/***********************/
+/*  COLOR CLASSES API  */
+/***********************/
+
+EAPI Evas_List *
+edje_edit_color_classes_list_get(Evas_Object * obj)
+{
+   Edje_Color_Class *cc;
+   Evas_List *classes = NULL;
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(NULL);
+printf("GET CLASSES LIST\n");
+   if (!ed->file || !!ed->color_classes)
+      return NULL;
+printf("GET CLASSES LIST %d\n", evas_list_count(ed->color_classes));
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	cc = l->data;
+	classes = evas_list_append(classes, evas_stringshare_add(cc->name));
+     }
+
+   return classes;
 }
 
 
