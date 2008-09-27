@@ -1,0 +1,72 @@
+#
+# TODO for emotion/vlc plugin
+#
+
+# Known bug
+When changing video size at begining, there is sometimes SEGV in evas.
+The plugin first load the movie with default geometry, wait for it inputThread from VLC to be launched
+and read the movie geometry. Then it stops vlc and start it again with known geometry and realloc frames.
+Plugin warn emotion that size changed using API func "_emotion_frame_resize" thru fd_write/fd_read socket.
+
+It seems that it tries to convert original picture from YUV to BGRA but it's already in RGBA format. 
+p im->cache_entry = {_list_data = {next = 0x818f860, prev = 0x0, last = 0x818f860}, cache = 0x80627f0, cache_key = 0x0, file = 0x0, key = 0x0, 
+	timestamp = 0, laststat = 1221825297, references = 1, scale = 1 '\001', load_opts = {scale_down_by = 0, dpi = 0, w = 0, h = 0}, 
+	space = 1, w = 384, h = 288, allocated = {w = 384, h = 288}, info = {module = 0x0, loader = 0x0}, flags = {loaded = 0 '\0', 
+	dirty = 1 '\001', activ = 0 '\0', need_data = 1 '\001', lru_nodata = 0 '\0', cached = 1 '\001', alpha = 0 '\0', alpha_sparse = 0 '\0'}}
+We can see cache is 1 (=EVAS_COLORSPACE_YCBCR422P601_PL) instead of 0 (=EVAS_COLORSPACE_ARGB8888).
+
+GDB TRACE =
+evas_common_convert_yuv_420p_601_rgba (src=0xb40a6008, dst=0xb3e72008 "", w=720, h=400) at evas_convert_yuv.c:198
+198		     movd_m2r(*up, mm3);
+(gdb) bt
+0  evas_common_convert_yuv_420p_601_rgba (src=0xb40a6008, dst=0xb3e72008 "", w=720, h=400) at evas_convert_yuv.c:198
+1  0xb7f3e087 in evas_common_image_colorspace_normalize (im=0x8090a88) at evas_image_main.c:388
+2  0xb7e6486d in eng_image_draw (data=0x8063388, context=0x8061120, surface=0x8090808, image=0x8090a88, src_x=0, src_y=0, src_w=720, src_h=400, dst_x=0, dst_y=0, dst_w=800, dst_h=600, smooth=1) at evas_engine.c:566
+3  0xb7ee027b in evas_object_image_render (obj=0x8061788, output=0x8063388, context=0x8061120, surface=0x8090808, x=0, y=0) at evas_object_image.c:1974
+4  0xb7f09db1 in evas_render_updates_internal (e=0x8063c80, make_updates=1 '\001', do_draw=1 '\001') at evas_render.c:526
+5  0xb7e7f3d6 in _ecore_evas_x_render (ee=0x8063a98) at ecore_evas_x.c:330
+6  0xb7e82207 in _ecore_evas_x_idle_enter (data=0x0) at ecore_evas_x.c:1320
+7  0xb7ea738b in _ecore_idle_enterer_call () at ecore_idle_enterer.c:101
+8  0xb7eaaae5 in _ecore_main_loop_iterate_internal (once_only=0) at ecore_main.c:691
+9  0xb7eaaccf in ecore_main_loop_begin () at ecore_main.c:87
+10 0x08048bb2 in main ()
+
+# Missing functions (empty bodies) int emotion_vlc.c
+/* STUB */
+static void em_event_feed(void *ef, int event)
+--
+/* STUB */
+static void em_event_mouse_button_feed(void *ef, int button, int x, int y)
+--
+/* STUB */
+static void em_event_mouse_move_feed(void *ef, int x, int y)
+--
+/* STUB */
+static void em_video_channel_set(void *ef, int channel)
+--
+/* STUB */
+static int em_video_channel_get(void *ef)
+--
+/* STUB */
+static const char * em_video_channel_name_get(void *ef, int channel)
+--
+/* STUB */
+static int em_audio_channel_count(void *ef)
+--
+/* STUB */
+static const char * em_audio_channel_name_get(void *ef, int channel)
+--
+/* STUB */
+static int em_spu_channel_count(void *ef)
+--
+/* STUB */
+static const char * em_spu_channel_name_get(void *ef, int channel)
+--
+/* STUB */
+static void em_spu_channel_mute_set(void *ef, int mute)
+--
+/* STUB */
+static int em_spu_channel_mute_get(void *ef)
+--
+/* STUB */
+static const char * em_chapter_name_get(void *ef, int chapter)
