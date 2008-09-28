@@ -1049,22 +1049,178 @@ edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *new
 EAPI Evas_List *
 edje_edit_color_classes_list_get(Evas_Object * obj)
 {
-   Edje_Color_Class *cc;
    Evas_List *classes = NULL;
    Evas_List *l;
 
    GET_ED_OR_RETURN(NULL);
-printf("GET CLASSES LIST\n");
-   if (!ed->file || !!ed->color_classes)
+
+   if (!ed->file || !ed->file->color_classes)
       return NULL;
-printf("GET CLASSES LIST %d\n", evas_list_count(ed->color_classes));
+printf("GET CLASSES LIST %d %d\n", evas_list_count(ed->color_classes), evas_list_count(ed->file->color_classes));
    for (l = ed->file->color_classes; l; l = l->next)
      {
+	Edje_Color_Class *cc;
+
 	cc = l->data;
 	classes = evas_list_append(classes, evas_stringshare_add(cc->name));
      }
 
    return classes;
+}
+
+EAPI unsigned char
+edje_edit_color_class_colors_get(Evas_Object *obj, const char *class_name, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
+{
+   Evas_List *l;
+   GET_ED_OR_RETURN(0);
+
+   if (!ed->file || !ed->file->color_classes)
+      return 0;
+
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	Edje_Color_Class *cc;
+
+	cc = l->data;
+	if (!strcmp(cc->name, class_name))
+	  {
+		if (r) *r = cc->r;
+		if (g) *g = cc->g;
+		if (b) *b = cc->b;
+		if (a) *a = cc->a;
+
+		if (r2) *r2 = cc->r2;
+		if (g2) *g2 = cc->g2;
+		if (b2) *b2 = cc->b2;
+		if (a2) *a2 = cc->a2;
+
+		if (r3) *r3 = cc->r3;
+		if (g3) *g3 = cc->g3;
+		if (b3) *b3 = cc->b3;
+		if (a3) *a3 = cc->a3;
+
+		return 1;
+	  }
+     }
+   return 0;
+}
+
+EAPI unsigned char
+edje_edit_color_class_colors_set(Evas_Object *obj, const char *class_name, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
+{
+   Evas_List *l;
+   GET_ED_OR_RETURN(0);
+
+   if (!ed->file || !ed->file->color_classes)
+      return 0;
+
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	Edje_Color_Class *cc;
+
+	cc = l->data;
+	if (!strcmp(cc->name, class_name))
+	  {
+		if (r > -1) cc->r = r;
+		if (g > -1) cc->g = g;
+		if (b > -1) cc->b = b;
+		if (a > -1) cc->a = a;
+
+		if (r2 > -1) cc->r2 = r2;
+		if (g2 > -1) cc->g2 = g2;
+		if (b2 > -1) cc->b2 = b2;
+		if (a2 > -1) cc->a2 = a2;
+
+		if (r3 > -1) cc->r3 = r3;
+		if (g3 > -1) cc->g3 = g3;
+		if (b3 > -1) cc->b3 = b3;
+		if (a3 > -1) cc->a3 = a3;
+
+		return 1;
+	  }
+     }
+   return 0;
+}
+
+EAPI unsigned char
+edje_edit_color_class_add(Evas_Object *obj, const char *name)
+{
+   Evas_List *l;
+   Edje_Color_Class *c;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!name || !ed->file)
+     return 0;
+
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	Edje_Color_Class *cc = l->data;
+	if (strcmp(cc->name, name) == 0)
+	  return 0;
+     }
+
+   c = mem_alloc(sizeof(Edje_Color_Class));
+   if (!c) return 0;
+
+   c->name = (char*)evas_stringshare_add(name);
+   c->r = c->g = c->b = c->a = 255;
+   c->r2 = c->g2 = c->b2 = c->a2 = 255;
+   c->r3 = c->g3 = c->b3 = c->a3 = 255;
+
+   ed->file->color_classes = evas_list_append(ed->file->color_classes, c);
+
+   return 1;
+}
+
+EAPI unsigned char
+edje_edit_color_class_del(Evas_Object *obj, const char *name)
+{
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!name || !ed->file || !ed->file->color_classes)
+     return 0;
+
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	Edje_Color_Class *cc = l->data;
+	if (strcmp(cc->name, name) == 0)
+          {
+             _edje_if_string_free(ed, cc->name);
+             ed->file->color_classes = evas_list_remove(ed->file->color_classes, cc);
+             free(cc);
+             return 1;
+          }
+     }
+   return 0;
+}
+
+EAPI unsigned char
+edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *newname)
+{
+   Evas_List *l;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!ed->file || !ed->file->color_classes)
+      return 0;
+
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	Edje_Color_Class *cc;
+
+	cc = l->data;
+	if (!strcmp(cc->name, name))
+	  {
+		_edje_if_string_free(ed, cc->name);
+		cc->name = (char*)evas_stringshare_add(newname);
+		return 1;
+	  }
+     }
+
+   return 0;
 }
 
 

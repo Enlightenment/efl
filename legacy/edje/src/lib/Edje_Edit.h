@@ -262,6 +262,7 @@ edje_edit_data_value_set(
    const char *value      ///< The new value to set
 );
 
+/** Change the name of the given data object */
 EAPI unsigned char        ///@return TRUE on success
 edje_edit_data_name_set(
    Evas_Object *obj,     ///< The edje object
@@ -277,12 +278,78 @@ edje_edit_data_name_set(
  *  Functions to deal with Color Classes (see @ref edcref).
  */ //@{
 
-/**Get the list of all the Color Classes in the given edje object.
- * Use edje_edit_string_list_free() when you don't need it anymore.
+/** Get the list of all the Color Classes in the given edje object.
+ *  Use edje_edit_string_list_free() when you don't need it anymore.
  */
 EAPI Evas_List *           ///@return An Evas_List* of string (char *)containing all the classes names.
 edje_edit_color_classes_list_get(
    Evas_Object * obj       ///< The edje object
+);
+
+/** Create a new color class object in the given edje
+ *  If another class with the same name exists nothing is created and FALSE is returned.
+ */
+EAPI unsigned char        ///@return TRUE on success
+edje_edit_color_class_add(
+   Evas_Object *obj,      ///< The edje object
+   const char *name       ///< The name of the new color class
+);
+
+/** Delete the given class object from edje */
+EAPI unsigned char        ///@return TRUE on success
+edje_edit_color_class_del(
+   Evas_Object *obj,      ///< The edje object
+   const char *name       ///< The name of the color class to delete
+);
+
+/** Get all the colors that compose the class.
+ *  You can pass NULL to colors you are not intrested in
+ */
+EAPI unsigned char         ///@return TRUE on success
+edje_edit_color_class_colors_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *class_name, ///< The name of the color class
+   int *r,  ///< Where to store the red component of the standard color
+   int *g,  ///< Where to store the green component of the standard color
+   int *b,  ///< Where to store the blue component of the standard color
+   int *a,  ///< Where to store the alpha component of the standard color
+   int *r2, ///< Where to store the red component of the second color
+   int *g2, ///< Where to store the green component of the second color
+   int *b2, ///< Where to store the green component of the second color
+   int *a2, ///< Where to store the green component of the second color
+   int *r3, ///< Where to store the red component of the third color
+   int *g3, ///< Where to store the green component of the third color
+   int *b3, ///< Where to store the blue component of the third color
+   int *a3  ///< Where to store the alpha component of the third color
+);
+
+/** Set the colors for the given color class.
+ *  If you set a color to -1 it will not be touched
+ */
+EAPI unsigned char         ///@return TRUE on success
+edje_edit_color_class_colors_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *class_name, ///< The name of the color class
+   int r,    ///< The red component of the standard color
+   int g,    ///< The green component of the standard color
+   int b,    ///< The blue component of the standard color
+   int a,    ///< The alpha component of the standard color
+   int r2,   ///< The red component of the second color
+   int g2,   ///< The green component of the second color
+   int b2,   ///< The blue component of the second color
+   int a2,   ///< The alpha component of the second color
+   int r3,   ///< The red component of the third color
+   int g3,   ///< The green component of the third color
+   int b3,   ///< The blue component of the third color
+   int a3    ///< The alpha component of the third color
+);
+
+/** Change the name of a color class */
+EAPI unsigned char        ///@return TRUE on success
+edje_edit_color_class_name_set(
+   Evas_Object *obj,      ///< The edje object
+   const char *name,      ///< The name of the color class
+   const char *newname    ///< The new name to assign
 );
 
 
