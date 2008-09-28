@@ -4388,10 +4388,32 @@ _edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
 			  color->b, color->a, color->d);
 	  }
 
-	fprintf(f, I1 "}\n\n");
+	fprintf(f, I1 "}\n");
      }
 }
 
+ static void
+_edje_generate_source_of_colorclass(Edje * ed, const char *name, FILE * f)
+{
+   Evas_List *l;
+   Edje_Color_Class *cc;
+
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	cc = l->data;
+	if (!strcmp(cc->name, name))
+	  {
+	     fprintf(f, I1 "color_class {\n");
+	     fprintf(f, I2 "name: \"%s\";\n", cc->name);
+	     fprintf(f, I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
+	     fprintf(f, I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
+	     fprintf(f, I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
+	     fprintf(f, I1 "}\n");
+	  }
+     }
+}
+
+static void
 _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 {
    Evas_List *l, *ll;
@@ -4549,7 +4571,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
      {
 	fprintf(f, I2 "programs {\n");
 	for (l = ll; l; l = l->next)
-	     _edje_generate_source_of_program(obj, (char *)l->data, f);
+	  _edje_generate_source_of_program(obj, (char *)l->data, f);
 	fprintf(f, I2 "}\n");
 	edje_edit_string_list_free(ll);
      }
@@ -4641,7 +4663,14 @@ _edje_generate_source(Evas_Object *obj)
      }
 
    /* Color Classes */
-   //TODO Support color classes
+   if (ll = edje_edit_color_classes_list_get(obj))
+     {
+	fprintf(f, I0 "color_classes {\n");
+	for (l = ll; l; l = l->next)
+	  _edje_generate_source_of_colorclass(ed, (char *)l->data, f);
+	fprintf(f, I0 "}\n\n");
+	edje_edit_string_list_free(ll);
+     }
    
    /* Spectrum */
    if (ll = edje_edit_spectrum_list_get(obj))
