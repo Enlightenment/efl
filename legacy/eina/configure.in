@@ -288,11 +288,11 @@ esac
 AC_SUBST(EINA_CFLAGS)
 
 if test "x$enable_coverage" = "xyes" ; then
-   CFLAGS="${DEBUG_CFLAGS}"
+   EINA_CFLAGS="${EINA_CFLAGS} ${DEBUG_CFLAGS}"
 fi
 
 if ! test "${VMIC}" = "x" ; then
-   CFLAGS="${CFLAGS} -Wall -W -Wextra" # -Werror
+   EINA_CFLAGS="${EINA_CFLAGS} -Wall -W -Wextra" # -Werror
 fi
 
 
