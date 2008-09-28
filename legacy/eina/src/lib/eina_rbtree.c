@@ -456,4 +456,3 @@ eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data)
    eina_rbtree_delete(root->son[1], func, data);
    func(root, data);
 }
-

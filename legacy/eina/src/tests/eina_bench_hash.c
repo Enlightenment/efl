@@ -26,15 +26,15 @@
 #include <time.h>
 
 #ifdef EINA_BENCH_HAVE_GLIB
-#include <glib.h>
+# include <glib.h>
 #endif
 
 #ifdef EINA_BENCH_HAVE_EVAS
-#include <Evas.h>
+# include <Evas.h>
 #endif
 
 #ifdef EINA_BENCH_HAVE_ECORE
-#include <Ecore_Data.h>
+# include <Ecore_Data.h>
 #endif
 
 #include "eina_hash.h"

@@ -26,7 +26,7 @@
 #include <math.h>
 
 #ifdef EINA_BENCH_HAVE_GLIB
-#include <glib.h>
+# include <glib.h>
 #endif
 
 #include "eina_bench.h"
