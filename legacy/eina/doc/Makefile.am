@@ -1,6 +1,5 @@
 
-MAINTAINERCLEANFILES = \
-Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 .PHONY: doc
 
@@ -19,3 +18,5 @@ endif
 
 clean-local:
 	@rm -rf html/ latex/ man/
+
+EXTRA_DIST = Doxyfile

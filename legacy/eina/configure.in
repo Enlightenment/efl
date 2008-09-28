@@ -285,7 +285,6 @@ case "${host_os}" in
       EINA_CFLAGS="${EINA_CFLAGS} ${EVIL_CFLAGS}"
    ;;
 esac
-AC_SUBST(EINA_CFLAGS)
 
 if test "x$enable_coverage" = "xyes" ; then
    EINA_CFLAGS="${EINA_CFLAGS} ${DEBUG_CFLAGS}"
@@ -294,6 +293,8 @@ fi
 if ! test "${VMIC}" = "x" ; then
    EINA_CFLAGS="${EINA_CFLAGS} -Wall -W -Wextra" # -Werror
 fi
+
+AC_SUBST(EINA_CFLAGS)
 
 
 ### Checks for linker characteristics
@@ -317,11 +318,28 @@ AC_SUBST(lt_enable_auto_import)
 AC_FUNC_ALLOCA
 
 
+### Create the .pc.in file according to the major version
+cat > eina-${VMAJ}.pc.in << EOF
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Eina
+Description: A Library that implements fast data types and miscellaneous tools
+Requires:
+Version: @VERSION@
+Libs: -L${libdir} -leina
+Libs.private: -ldl
+Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
+EOF
+
+
 ### Make the debug preprocessor configurable
 
 AC_CONFIG_FILES([
 Makefile
-eina.pc
+eina-${VMAJ}.pc
 doc/Makefile
 src/Makefile
 src/include/Makefile

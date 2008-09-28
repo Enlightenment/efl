@@ -4,34 +4,32 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src doc
 
+DISTCLEANFILES = \
+eina-@VMAJ@.pc.in
+
 MAINTAINERCLEANFILES = \
 Makefile.in \
 aclocal.m4 \
 config.guess \
 config.h.in \
+config.h.in~ \
 config.sub \
 configure \
+depcomp \
 install-sh \
 ltconfig \
 ltmain.sh \
-missing mkinstalldirs \
-stamp-h.in \
-build-stamp \
-configure-stamp \
-depcomp \
-eina.pc \
-eina_docs.tar.gz
+missing
 
 EXTRA_DIST = \
 AUTHORS \
 COPYING \
-gendoc \
-Doxyfile \
+OLD-COPYING.PLAIN \
 README \
-eina.pc
+eina-@VMAJ@.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = eina.pc
+pkgconfig_DATA = eina-@VMAJ@.pc
 
 .PHONY: doc coverage benchmark
 
@@ -76,9 +74,6 @@ coverage:
 	@make lcov-reset
 	@make check
 	@make lcov-report
-
-clean-local:
-	@rm -rf coverage benchmark
 else
 lcov-reset:
 	@echo "reconfigure with --enable-coverage"
@@ -102,3 +97,6 @@ else
 benchmark:
 	@echo "reconfigure with --enable-bench"
 endif
+
+clean-local:
+	@rm -rf coverage benchmark

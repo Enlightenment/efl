@@ -27,10 +27,14 @@ eina_inline_rbtree.x \
 eina_inline_mempool.x \
 eina_iterator.h
 
-EXTRA_DIST = eina_config.h.in
-
 installed_mainheaderdir = $(prefix)/include/eina-@VMAJ@
 installed_mainheader_DATA = Eina.h eina_config.h
 
 installed_headersdir = $(prefix)/include/eina-@VMAJ@/eina
 installed_headers_DATA = $(EINAHEADERS)
+
+EXTRA_DIST = \
+Eina.h \
+eina_config.h.in \
+$(EINAHEADERS) \
+eina_private.h
