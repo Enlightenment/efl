@@ -2661,6 +2661,23 @@ edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *stat
    edje_object_calc_force(obj);
 }
 
+EAPI const char*
+edje_edit_state_color_class_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(NULL);
+   printf("Get ColorClass of part: %s state: %s\n", part, state);
+   return evas_stringshare_add(pd->color_class);
+}
+
+EAPI void
+edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *state, const char *color_class)
+{
+   GET_PD_OR_RETURN();
+   printf("Set ColorClass of part: %s state: %s [to: %s]\n", part, state, color_class);
+   _edje_if_string_free(ed, pd->color_class);
+   pd->color_class = (char*)evas_stringshare_add(color_class);
+}
+
 /**************/
 /*  TEXT API */
 /**************/

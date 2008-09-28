@@ -1149,6 +1149,23 @@ edje_edit_state_visible_set(
    unsigned char visible   ///< TRUE to set the state visible
 );
 
+/**Get the color class of the given part state. Remember to free the string with edje_edit_string_free()*/
+EAPI const char*           ///@return The current color_class of the part state
+edje_edit_state_color_class_get(
+   Evas_Object *obj,      ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Set the color class for the given part state.*/
+EAPI void
+edje_edit_state_color_class_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *color_class ///< The new color_class to assign
+);
+
 
 //@}
 /******************************************************************************/
