@@ -1,3 +1,16 @@
+2008-09-28  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/bin/Makefile.am:
+	* src/bin/test_memcpy.c:
+	compile memcpy_glibc.S only if cegcc or mingw32ce is used
+
+	* src/bin/test_pipe.c:
+	use evil_sockets_init and evil_sockets_shutdown.
+
+	* src/lib/evil_unistd.c:
+	formatting
+
 2008-09-15  Vincent Torri  <doursse at users dot sf dot net>
 
 	* Makefile.am:

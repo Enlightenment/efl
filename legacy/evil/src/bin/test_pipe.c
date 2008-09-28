@@ -1,8 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
 # undef WIN32_LEAN_AND_MEAN
-
-#include <stdio.h>
 
 #include "Evil.h"
 
@@ -34,7 +35,6 @@ int
 main (int argc, char *argv[])
 {
    int sockets[2];
-   WSADATA  version_data;
    int ret;
    fd_set         rfds;
    struct timeval t;
@@ -42,25 +42,28 @@ main (int argc, char *argv[])
    DWORD thread_id;
    HANDLE h;
 
+   if (!evil_sockets_init())
+     return EXIT_FAILURE;
+
    FD_ZERO(&rfds);
 
    t.tv_sec = 5;
    t.tv_usec = 0;
 
-   WSAStartup(MAKEWORD(2, 2), &version_data);
-
    if (pipe(sockets) < 0)
      {
-        printf ("error\n");
-        return -1;
+        printf ("can not create sockets\n");
+        evil_sockets_shutdown();
+        return EXIT_FAILURE;
      }
+
    FD_SET(sockets[FDREAD], &rfds);
    d = (data *)malloc(sizeof (data));
    d->val = 14;
    d->fd_write = sockets[FDWRITE];
    printf (" pointeur sent........: %p\n", d);
 
-   h = CreateThread (NULL, 0, thread, d, 0, &thread_id);
+   h = CreateThread(NULL, 0, thread, d, 0, &thread_id);
 
    ret = select(sockets[FDREAD] + 1, &rfds, NULL, NULL, &t);
 
@@ -91,5 +94,7 @@ main (int argc, char *argv[])
 
    CloseHandle (h);
 
-   return 0;
+   evil_sockets_shutdown();
+
+   return EXIT_SUCCESS;
 }

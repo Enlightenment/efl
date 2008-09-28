@@ -8,6 +8,7 @@ AC_CANONICAL_HOST
 dnl If the host is not windows, we exit,
 dnl otherwise, we set the correct flags
 dnl for each platform.
+have_wince="no"
 win32_libs=""
 win32_cflags=""
 case "$host_os" in
@@ -15,10 +16,12 @@ case "$host_os" in
     win32_libs="-lole32 -luuid -lws2_32"
     ;;
   cegcc)
+    have_wince="yes"
     win32_cflags="-mwin32"
     win32_libs="-lws2"
     ;;
   mingw32ce)
+    have_wince="yes"
     win32_libs="-lws2"
     ;;
   *)
@@ -27,6 +30,12 @@ case "$host_os" in
 esac
 AC_SUBST(win32_cflags)
 AC_SUBST(win32_libs)
+
+if test "x${have_wince}" = "xyes" ; then
+  AC_DEFINE(EVIL_HAVE_WINCE, 1, [Define to mention that Windows CE is the target])
+fi
+
+AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
 
 dnl needed for correct definition of EAPI
 AC_DEFINE(EFL_EVIL_BUILD, 1, [Define to mention that evil is built])

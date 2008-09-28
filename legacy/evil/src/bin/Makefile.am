@@ -11,7 +11,14 @@ AM_CFLAGS = @win32_cflags@
 
 bin_PROGRAMS = suite test_dlfcn test_pipe test_evil
 
-suite_SOURCES = suite.c test_memcpy.c memcpy_glibc.S
+suite_SOURCES = suite.c test_memcpy.c
+
+if EVIL_HAVE_WINCE
+
+suite_SOURCES +=  memcpy_glibc.S
+
+endif
+
 suite_LDADD = $(top_builddir)/src/lib/libevil.la
 suite_LDFLAGS = -Wl,--enable-auto-import
 suite_DEPENDENCIES = $(top_builddir)/src/lib/libevil.la

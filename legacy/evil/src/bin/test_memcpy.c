@@ -7,6 +7,10 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include "suite.h"
 #include "test_memcpy.h"
 
@@ -70,7 +74,9 @@ test_memcpy_tests_run(size_t align1, size_t align2, size_t len)
    printf ("length: %6d, align %2d/%2d:", (int)len, align1, align2);
 
    test_memcpy_test_run(memcpy, s2, s1, len);
+#ifdef EVIL_HAVE_WINCE
    test_memcpy_test_run(memcpy_glibc, s2, s1, len);
+#endif /* EVIL_HAVE_WINCE */
 
    printf ("\n");
 }

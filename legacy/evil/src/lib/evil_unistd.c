@@ -74,9 +74,9 @@ symlink(const char *oldpath, const char *newpath)
 
    return res ? 0 : -1;
 #else
-#ifdef UNICODE
+# ifdef UNICODE
    wchar_t        new_path[MB_CUR_MAX];
-#endif /* UNICODE */
+# endif /* UNICODE */
    IShellLink    *pISL;
    IShellLink   **shell_link;
    IPersistFile  *pIPF;
@@ -108,14 +108,14 @@ symlink(const char *oldpath, const char *newpath)
    if (FAILED(pISL->lpVtbl->QueryInterface(pISL, &IID_IPersistFile, (void **)persit_file)))
      goto no_queryinterface;
 
-#ifdef UNICODE
+# ifdef UNICODE
    mbstowcs(new_path, newpath, MB_CUR_MAX);
    if (FAILED(pIPF->lpVtbl->Save(pIPF, new_path, FALSE)))
      goto no_save;
-#else
+# else
    if (FAILED(pIPF->lpVtbl->Save(pIPF, newpath, FALSE)))
      goto no_save;
-#endif /* ! UNICODE */
+# endif /* ! UNICODE */
 
    pIPF->lpVtbl->Release(pIPF);
    pISL->lpVtbl->Release(pISL);
@@ -169,9 +169,9 @@ readlink(const char *path, char *buf, size_t bufsiz)
 
    return length;
 #else
-#ifdef UNICODE
+# ifdef UNICODE
    wchar_t        old_path[MB_CUR_MAX];
-#endif /* UNICODE */
+# endif /* UNICODE */
    char           new_path[PATH_MAX];
    IShellLink    *pISL;
    IShellLink   **shell_link;
@@ -197,14 +197,14 @@ readlink(const char *path, char *buf, size_t bufsiz)
                                (void **)persit_file)))
      goto no_instance;
 
-#ifdef UNICODE
+# ifdef UNICODE
    mbstowcs(old_path, path, MB_CUR_MAX);
    if (FAILED(pIPF->lpVtbl->Load(pIPF, old_path, STGM_READWRITE)))
      goto no_load;
-#else
+# else
    if (FAILED(pIPF->lpVtbl->Load(pIPF, path, STGM_READWRITE)))
      goto no_load;
-#endif /* ! UNICODE */
+# endif /* ! UNICODE */
 
    shell_link = &pISL;
    if (FAILED(pIPF->lpVtbl->QueryInterface(pIPF, &IID_IShellLink, (void **)shell_link)))
@@ -297,7 +297,7 @@ evil_sockets_init(void)
 {
    WSADATA wsa_data;
 
-   return (WSAStartup(MAKEWORD( 2, 2 ), &wsa_data) == 0) ? 1 : 0;
+   return (WSAStartup(MAKEWORD(2, 2), &wsa_data) == 0) ? 1 : 0;
 }
 
 void
