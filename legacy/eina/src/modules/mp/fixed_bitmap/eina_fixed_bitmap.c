@@ -100,7 +100,7 @@ static void *
 eina_fixed_bitmap_malloc(void *data, __UNUSED__ unsigned int size)
 {
    Eina_Fixed_Bitmap *mp = data;
-   Eina_Fixed_Bitmap_Pool *pool;
+   Eina_Fixed_Bitmap_Pool *pool = NULL;
    void *ptr;
    int index;
 
@@ -140,7 +140,6 @@ eina_fixed_bitmap_malloc(void *data, __UNUSED__ unsigned int size)
    return ptr;
 }
 
-#include <stdio.h>
 static void
 eina_fixed_bitmap_free(void *data, void *ptr)
 {
