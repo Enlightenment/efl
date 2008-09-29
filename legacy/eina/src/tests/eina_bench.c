@@ -36,6 +36,7 @@ static const Eina_Benchmark_Case etc[] = {
   { "Stringshare", eina_bench_stringshare },
   { "Convert", eina_bench_convert },
   { "Sort", eina_bench_sort },
+  { "Mempool", eina_bench_mempool },
   { NULL, NULL }
 };
 
@@ -67,6 +68,8 @@ main(int argc, char **argv)
 
    if (argc != 2) return -1;
 
+   _mempool_init();
+
    eina_benchmark_init();
 
    for (i = 0; etc[i].bench_case != NULL; ++i)
@@ -92,15 +95,10 @@ main(int argc, char **argv)
 	eina_benchmark_free(test);
      }
 
-   _mempool_init();
-
    eina_bench_e17();
-
-   eina_mempool_shutdown();
 
    eina_benchmark_shutdown();
 
    _mempool_shutdown();
-   
    return 0;
 }

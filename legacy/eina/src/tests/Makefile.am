@@ -88,6 +88,7 @@ eina_bench_sort.c	\
 eina_bench_hash.c 	\
 eina_bench_stringshare.c \
 eina_bench_convert.c	\
+eina_bench_mempool.c	\
 eina_bench_stringshare_e17.c \
 eina_bench_array.c
 
