@@ -20,7 +20,6 @@ eina_ememoa_unknown.c
 eina_ememoa_unknown_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EMEMOA_LIBS@ @EINA_LIBS@
 eina_ememoa_unknown_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 eina_ememoa_unknown_la_LIBTOOLFLAGS = --tag=disable-static
-eina_ememoa_unknown_la_DEPENDENCIES = $(top_builddir)/src/lib/libeina.la
 
 endif
 

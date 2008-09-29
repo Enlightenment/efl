@@ -74,7 +74,6 @@ eina_test_module_dummy.c
 module_dummy_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EINA_LIBS@
 module_dummy_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
-module_dummy_la_DEPENDENCIES = $(top_builddir)/src/lib/libeina.la
 
 endif
 

@@ -17,7 +17,6 @@ pass_through.c
 pass_through_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EINA_LIBS@
 pass_through_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 pass_through_la_LIBTOOLFLAGS = --tag=disable-static
-pass_through_la_DEPENDENCIES = $(top_builddir)/src/lib/libeina.la
 
 endif
 
