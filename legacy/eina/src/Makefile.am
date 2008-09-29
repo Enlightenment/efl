@@ -4,7 +4,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 .PHONY: benchmark
 
-if EINA_ENABLE_BENCH
+if EFL_ENABLE_BENCHMARK
 
 benchmark: all
 	make -C tests eina_bench
@@ -12,6 +12,6 @@ benchmark: all
 else
 
 benchmark:
-	@echo "reconfigure with --enable-bench"
+	@echo "reconfigure with --enable-benchmark"
 
 endif

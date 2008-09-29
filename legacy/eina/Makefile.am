@@ -41,7 +41,7 @@ doc:
 
 # Unit tests
 
-if EINA_ENABLE_TESTS
+if EFL_ENABLE_TESTS
 
 check-local:
 	@./src/tests/eina_suite
@@ -55,7 +55,7 @@ endif
 
 # Coverage report
 
-if EINA_ENABLE_COVERAGE
+if EFL_ENABLE_COVERAGE
 lcov-reset:
 	@rm -rf coverage
 	@find . -name "*.gcda" -exec rm {} \;
@@ -85,7 +85,7 @@ coverage:
 	@echo "reconfigure with --enable-tests --enable-coverage"
 endif
 
-if EINA_ENABLE_BENCH
+if EFL_ENABLE_BENCHMARK
 
 benchmark:
 	@make -C src benchmark

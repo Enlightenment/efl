@@ -32,13 +32,13 @@ AM_CPPFLAGS += -DEINA_BENCH_HAVE_ECORE
 
 endif
 
-if EINA_ENABLE_BENCH_E17
+if EINA_ENABLE_BENCHMARK_E17
 
 AM_CPPFLAGS += -DEINA_ENABLE_BENCH_E17
 
 endif
 
-if EINA_ENABLE_TESTS
+if EFL_ENABLE_TESTS
 
 check_PROGRAMS = eina_suite
 
@@ -71,14 +71,14 @@ module_dummy_LTLIBRARIES = module_dummy.la
 module_dummy_la_SOURCES = \
 eina_test_module_dummy.c
 
-module_dummy_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @COVERAGE_LIBS@
+module_dummy_la_LIBADD       = $(top_builddir)/src/lib/libeina.la @EINA_LIBS@
 module_dummy_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
 module_dummy_la_DEPENDENCIES = $(top_builddir)/src/lib/libeina.la
 
 endif
 
-if EINA_ENABLE_BENCH
+if EFL_ENABLE_BENCHMARK
 
 bench_PROGRAMS = eina_bench
 
