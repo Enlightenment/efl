@@ -27,7 +27,7 @@ static void
 _eina_benchmark_specimens(int request)
 {
    int i;
-   int a;
+   int a = 0;
 
    for (i = 0; i < request; ++i)
      a += i;
