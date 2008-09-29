@@ -112,6 +112,7 @@ struct _Eina_Stringshare_Head
 {
    EINA_RBTREE;
    EINA_MAGIC;
+
    int                    hash;
 
    Eina_Stringshare_Node *head;
@@ -310,16 +311,16 @@ eina_stringshare_add(const char *str)
    hash &= EINA_STRINGSHARE_MASK;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num],
-							   &hash, sizeof (hash),
+							   &hash, 0,
 							   EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
    if (!ed)
      {
 	ed = malloc(sizeof (Eina_Stringshare_Head) + sizeof (Eina_Stringshare_Node) + slen);
 	if (!ed) return NULL;
+	EINA_MAGIC_SET(ed, EINA_MAGIC_STRINGSHARE_HEAD);
+
 	ed->hash = hash;
 	ed->head = NULL;
-
-	EINA_MAGIC_SET(ed, EINA_MAGIC_STRINGSHARE_HEAD);
 
 	share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num],
 										      EINA_RBTREE_GET(ed),
@@ -327,6 +328,7 @@ eina_stringshare_add(const char *str)
 
 	nel = (Eina_Stringshare_Node*) (ed + 1);
 	EINA_MAGIC_SET(nel, EINA_MAGIC_STRINGSHARE_NODE);
+
 	nel->begin = EINA_TRUE;
      }
 
@@ -354,9 +356,9 @@ eina_stringshare_add(const char *str)
      {
 	nel = malloc(sizeof (Eina_Stringshare_Node) + slen);
 	if (!nel) return NULL;
-	nel->begin = EINA_FALSE;
-
 	EINA_MAGIC_SET(nel, EINA_MAGIC_STRINGSHARE_NODE);
+
+	nel->begin = EINA_FALSE;
      }
 
    nel->references = 1;
@@ -395,7 +397,7 @@ eina_stringshare_del(const char *str)
    hash &= EINA_STRINGSHARE_MASK;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup(EINA_RBTREE_GET(share->buckets[hash_num]),
-							   &hash, sizeof (hash),
+							   &hash, 0,
 							   EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
    if (!ed) goto on_error;
 
@@ -403,10 +405,12 @@ eina_stringshare_del(const char *str)
 
    for (prev = NULL, el = ed->head;
 	el && (const char*) (el + 1) != str;
-	el = el->next)
+	prev = el, el = el->next)
      ;
 
    if (!el) goto on_error;
+
+   EINA_MAGIC_CHECK_STRINGSHARE_NODE(el);
 
    el->references--;
    if (el->references == 0)
