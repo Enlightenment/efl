@@ -20,8 +20,9 @@
 # include "config.h"
 #endif
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "eina_hash.h"
 #include "eina_convert.h"

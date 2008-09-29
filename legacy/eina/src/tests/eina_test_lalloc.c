@@ -16,8 +16,12 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "eina_suite.h"
 #include "eina_lalloc.h"

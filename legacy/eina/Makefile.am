@@ -63,7 +63,7 @@ lcov-reset:
 
 lcov-report:
 	@mkdir coverage
-	@lcov --compat-libtool --directory src --capture --output-file coverage/coverage.info
+	@lcov --compat-libtool --directory $(top_srcdir)/src --capture --output-file coverage/coverage.info
 	@lcov -l coverage/coverage.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d: -f1 > coverage/remove
 	@lcov -r coverage/coverage.info `cat coverage/remove` > coverage/coverage.cleaned.info
 	@rm coverage/remove
@@ -88,6 +88,7 @@ endif
 if EFL_ENABLE_BENCHMARK
 
 benchmark:
+	@rm -rf result
 	@make -C src benchmark
 	@mkdir result || true
 	@cd result && ../src/tests/eina_bench `date +%F_%s`

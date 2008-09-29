@@ -16,10 +16,15 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdio.h>
+
 #include "Eina.h"
 #include "eina_suite.h"
 
-#include <stdio.h>
 START_TEST(eina_simple)
 {
    /* Eina_error as already been initialized by eina_hash

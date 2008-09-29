@@ -16,8 +16,13 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "eina_suite.h"
 #include "eina_error.h"

@@ -16,10 +16,14 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "eina_suite.h"
-#include "eina_benchmark.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
 #include <unistd.h>
+
+#include "eina_suite.h"
+#include "eina_benchmark.h"
 
 static int global_test = 0;
 

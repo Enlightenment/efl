@@ -21,8 +21,8 @@
 #endif
 
 #include <stdlib.h>
-#include <time.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "eina_array.h"
 #include "eina_suite.h"
