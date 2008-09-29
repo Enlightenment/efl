@@ -23,7 +23,7 @@
 #include "eina_suite.h"
 #include "eina_mempool.h"
 
-static Eina_List *_modules;
+static Eina_Array *_modules;
 
 static void
 _mempool_init(void)

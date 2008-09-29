@@ -21,6 +21,7 @@
 #endif
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "eina_mempool.h"
 #include "eina_hash.h"
@@ -31,7 +32,7 @@
  *                                  Local                                     *
  *============================================================================*/
 static Eina_Hash *_backends;
-static Eina_List *_modules;
+static Eina_Array *_modules;
 static int _init_count = 0;
 
 static Eina_Mempool *

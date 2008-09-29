@@ -20,7 +20,7 @@
 #define EINA_MODULE_H_
 
 #include "eina_types.h"
-#include "eina_list.h"
+#include "eina_array.h"
 
 /**
  * @defgroup Module_Group Module
@@ -46,10 +46,10 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m);
 EAPI void *eina_module_symbol_get(Eina_Module *module, const char *symbol);
 EAPI const char * eina_module_file_get(Eina_Module *m);
 
-EAPI Eina_List * eina_module_list_get(const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data);
-EAPI void eina_module_list_load(Eina_List *list);
-EAPI void eina_module_list_unload(Eina_List *list);
-EAPI void eina_module_list_delete(Eina_List *list);
+EAPI Eina_Array * eina_module_list_get(const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data);
+EAPI void eina_module_list_load(Eina_Array *list);
+EAPI void eina_module_list_unload(Eina_Array *list);
+EAPI void eina_module_list_delete(Eina_Array *list);
 
 /** @} */
 

@@ -1,4 +1,3 @@
-
 /* EINA - EFL data type library
  * Copyright (C) 2008 Cedric Bail
  *

@@ -29,7 +29,6 @@
 #include "eina_module.h"
 #include "eina_file.h"
 #include "eina_private.h"
-#include "eina_inlist.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -50,7 +49,6 @@
 
 struct _Eina_Module
 {
-	EINA_INLIST;
 	char *file;
 	void *handle;
 	int ref;
@@ -60,7 +58,7 @@ typedef struct _Dir_List_Get_Cb_Data
 {
 	Eina_Module_Cb cb;
 	void *data;
-	Eina_List *list;
+	Eina_Array *array;
 } Dir_List_Get_Cb_Data;
 
 typedef struct _Dir_List_Cb_Data
@@ -80,7 +78,7 @@ static Eina_Bool _dir_list_get_cb(Eina_Module *m, void *data)
 	}
 	if (ret)
 	{
-		cb_data->list = eina_list_append(cb_data->list, m);
+		eina_array_push(cb_data->array, m);
 	}
 	return ret;
 }
@@ -164,7 +162,7 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 		goto ok;
 	if ((*initcall)() == EINA_TRUE)
 		goto ok;
-	
+
 	dlclose(dl_handle);
 	return EINA_FALSE;
 ok:
@@ -189,6 +187,7 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m)
 		if ((shut) && (*shut))
 			(*shut)();
 		dlclose(m->handle);
+		m->handle = NULL;
 		return EINA_TRUE;
 	}
 	return EINA_FALSE;
@@ -208,7 +207,7 @@ EAPI Eina_Module * eina_module_new(const char *file)
 	m->file = strdup(file);
 	m->ref = 0;
 	m->handle = NULL;
-	
+
 	return m;
 }
 /**
@@ -237,7 +236,7 @@ EAPI void * eina_module_symbol_get(Eina_Module *m, const char *symbol)
 	if ((!m) || (!m->handle))
 		return NULL;
 
-	return dlsym(m->handle, symbol);	
+	return dlsym(m->handle, symbol);
 }
 /**
  * To be documented
@@ -246,7 +245,7 @@ EAPI void * eina_module_symbol_get(Eina_Module *m, const char *symbol)
 EAPI const char * eina_module_file_get(Eina_Module *m)
 {
 	if (!m) return NULL;
-	
+
 	return m->file;
 }
 
@@ -259,72 +258,62 @@ EAPI const char * eina_module_file_get(Eina_Module *m)
  * it won't be added to the list, if it is one, it will.
  * @param data Data passed to the callback function
  */
-EAPI Eina_List * eina_module_list_get(const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data)
+EAPI Eina_Array * eina_module_list_get(const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data)
 {
 	Dir_List_Get_Cb_Data list_get_cb_data;
 	Dir_List_Cb_Data list_cb_data;
-	
+
 	if (!path)
 		return NULL;
 
-	list_get_cb_data.list = NULL;
+	list_get_cb_data.array = eina_array_new(4);
 	list_get_cb_data.cb = cb;
 	list_get_cb_data.data = data;
-	
+
 	list_cb_data.cb = &_dir_list_get_cb;
 	list_cb_data.data = &list_get_cb_data;
-	
+
 	eina_file_dir_list(path, recursive, &_dir_list_cb, &list_cb_data);
-	
-	return list_get_cb_data.list;
+
+	return list_get_cb_data.array;
 }
 /**
  * Load every module on the list of modules
  * @param list The list of modules
  */
-EAPI void eina_module_list_load(Eina_List *list)
+EAPI void eina_module_list_load(Eina_Array *array)
 {
-	Eina_List *l;
-	
-	for (l = list; l; l = eina_list_next(l))
-	{
-		Eina_Module *m;
-		
-		m = eina_list_data_get(l);
+	Eina_Array_Iterator iterator;
+	Eina_Module *m;
+	unsigned int i;
+
+	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
 		eina_module_load(m);
-	}
 }
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_module_list_unload(Eina_List *list)
+EAPI void eina_module_list_unload(Eina_Array *array)
 {
-	Eina_List *l;
-	
-	for (l = list; l; l = eina_list_next(l))
-	{
-		Eina_Module *m;
-		
-		m = eina_list_data_get(l);
+	Eina_Array_Iterator iterator;
+	Eina_Module *m;
+	unsigned int i;
+
+	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
 		eina_module_unload(m);
-	}
 }
 /**
  * Helper function that iterates over the list of modules and calls
  * eina_module_delete on each
- * 
  */
-EAPI void eina_module_list_delete(Eina_List *list)
+EAPI void eina_module_list_delete(Eina_Array *array)
 {
-	Eina_List *l;
-	
-	for (l = list; l; l = eina_list_next(l))
-	{
-		Eina_Module *m;
-		
-		m = eina_list_data_get(l);
+	Eina_Array_Iterator iterator;
+	Eina_Module *m;
+	unsigned int i;
+
+	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
 		eina_module_delete(m);
-	}
 }
 

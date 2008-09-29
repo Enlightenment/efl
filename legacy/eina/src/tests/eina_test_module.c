@@ -46,25 +46,25 @@ static Eina_Bool list_cb(Eina_Module *m, void *data)
 {
    int *sym;
    const char *file;
-   
+
    /* the reference count */
    eina_module_load(m);
-   /* get */   
+   /* get */
    sym = eina_module_symbol_get(m, "dummy_symbol");
    fail_if(!sym);
    fail_if(*sym != 0xbad);
    file = eina_module_file_get(m);
    fail_if(!file);
    eina_module_unload(m);
-   
+
    return EINA_TRUE;
 }
 
 
 START_TEST(eina_module_load_unload)
 {
-   Eina_List *_modules;
-   
+   Eina_Array *_modules;
+
    eina_module_init();
    _modules = eina_module_list_get(PACKAGE_BUILD_DIR"/src/tests/", 1, &list_cb, NULL);
    fail_if(!_modules);

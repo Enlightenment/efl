@@ -72,7 +72,7 @@ eina_build_suite(void)
 /* FIXME this is a copy from eina_test_mempool
  * we should remove the duplication
  */
-static Eina_List *_modules;
+static Eina_Array *_modules;
 static void _mempool_init(void)
 {
     eina_mempool_init();
