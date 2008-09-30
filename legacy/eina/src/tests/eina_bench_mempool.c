@@ -20,6 +20,10 @@
 # include "config.h"
 #endif
 
+#ifdef EINA_BENCH_HAVE_GLIB
+# include <glib.h>
+#endif
+
 #include "eina_bench.h"
 #include "eina_array.h"
 #include "eina_mempool.h"
@@ -103,6 +107,36 @@ eina_mempool_ememoa_unknown(int request)
 }
 #endif
 
+#ifdef EINA_BENCH_HAVE_GLIB
+static void
+eina_mempool_glib(int request)
+{
+   Eina_Array *array;
+   int i;
+   int j;
+
+   eina_array_init();
+   array = eina_array_new(32);
+
+   for (i = 0; i < 100; ++i)
+     {
+	for (j = 0; j < request; ++j)
+	  {
+	     eina_array_push(array, g_slice_alloc(sizeof (int)));
+	  }
+
+	for (j = 0; j < request; ++j)
+	  {
+	     g_slice_free1(sizeof (int), eina_array_pop(array));
+	  }
+     }
+
+   eina_array_free(array);
+   eina_array_shutdown();
+
+}
+#endif
+
 void
 eina_bench_mempool(Eina_Benchmark *bench)
 {
@@ -112,5 +146,8 @@ eina_bench_mempool(Eina_Benchmark *bench)
 #ifdef EINA_EMEMOA_SUPPORT
    eina_benchmark_register(bench, "ememoa fixed", EINA_BENCHMARK(eina_mempool_ememoa_fixed), 10, 1000, 10);
    eina_benchmark_register(bench, "ememoa unknown", EINA_BENCHMARK(eina_mempool_ememoa_unknown), 10, 1000, 10);
+#endif
+#ifdef EINA_BENCH_HAVE_GLIB
+   eina_benchmark_register(bench, "gslice", EINA_BENCHMARK(eina_mempool_glib), 10, 1000, 10);
 #endif
 }
