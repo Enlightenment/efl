@@ -352,9 +352,10 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "eina_error.h"
-#include "eina_list.h"
+#include "eina_inlist.h"
 #include "eina_private.h"
 
 /* TODO
@@ -375,7 +376,8 @@
  */
 
 static int _eina_error_init_count = 0;
-static Eina_List *_error_list;
+static Eina_Inlist *_error_list = NULL;
+static int _error_list_count = 0;
 static Eina_Error _err;
 static Eina_Error_Print_Cb _print_cb = eina_error_print_cb_stdout;
 static void *_print_cb_data = NULL;
@@ -548,15 +550,20 @@ EAPI int eina_error_init(void)
  */
 EAPI int eina_error_shutdown(void)
 {
+	Eina_Inlist *tmp;
+
 	_eina_error_init_count--;
 	if (!_eina_error_init_count)
 	{
 		/* remove the error strings */
 		while (_error_list)
 		{
-			free(eina_list_data_get(_error_list));
-			_error_list = eina_list_free(_error_list);
+			tmp = _error_list;
+
+			_error_list = _error_list->next;
+			free(tmp);
 		}
+		_error_list_count = 0;
 	}
 	return _eina_error_init_count;
 }
@@ -574,9 +581,19 @@ EAPI int eina_error_shutdown(void)
  */
 EAPI Eina_Error eina_error_msg_register(const char *msg)
 {
-	_error_list = eina_list_append(_error_list, strdup(msg));
+	Eina_Inlist *tmp;
+	int length;
 
-	return eina_list_count(_error_list);
+	length = strlen(msg) + 1;
+
+	tmp = malloc(sizeof (Eina_Inlist) + length);
+	if (!tmp) return 0;
+
+	memcpy((char*)(tmp + 1), msg, length);
+
+	_error_list = eina_inlist_append(_error_list, tmp);
+
+	return ++_error_list_count;
 }
 
 /**
@@ -591,7 +608,12 @@ EAPI Eina_Error eina_error_msg_register(const char *msg)
  */
 EAPI const char * eina_error_msg_get(Eina_Error error)
 {
-	return eina_list_nth(_error_list, error - 1);
+	Eina_Inlist *tmp;
+	int i;
+
+	for (i = 0, tmp = _error_list; i < error - 1; ++i, tmp = tmp->next)
+		;
+	return (char*) (tmp + 1);
 }
 
 /**
