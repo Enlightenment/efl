@@ -66,6 +66,7 @@
 
 #include "eina_error.h"
 #include "eina_list.h"
+#include "eina_mempool.h"
 #include "eina_private.h"
 
 /*============================================================================*
@@ -128,14 +129,16 @@ struct _Eina_Accessor_List
 };
 
 static int _eina_list_init_count = 0;
+static Eina_Mempool *_eina_list_mp = NULL;
+static Eina_Mempool *_eina_list_accounting_mp = NULL;
 
 static inline Eina_List_Accounting*
 _eina_list_mempool_accounting_new(__UNUSED__ Eina_List *list)
 {
    Eina_List_Accounting *tmp;
 
-   tmp = malloc(sizeof (Eina_List_Accounting));
-   if (!tmp) eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+   tmp = eina_mempool_alloc(_eina_list_accounting_mp, sizeof (Eina_List_Accounting));
+   if (!tmp) return NULL;
 
    EINA_MAGIC_SET(tmp, EINA_MAGIC_LIST_ACCOUNTING);
 
@@ -146,7 +149,8 @@ _eina_list_mempool_accounting_free(Eina_List_Accounting *accounting)
 {
    EINA_MAGIC_CHECK_LIST_ACCOUNTING(accounting);
 
-   MAGIC_FREE(accounting);
+   EINA_MAGIC_SET(accounting, EINA_MAGIC_NONE);
+   eina_mempool_free(_eina_list_accounting_mp, accounting);
 }
 
 static inline Eina_List*
@@ -154,8 +158,8 @@ _eina_list_mempool_list_new(__UNUSED__ Eina_List *list)
 {
    Eina_List *tmp;
 
-   tmp = malloc(sizeof (Eina_List));
-   if (!tmp) eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+   tmp = eina_mempool_alloc(_eina_list_mp, sizeof (Eina_List));
+   if (!tmp) return NULL;
 
    EINA_MAGIC_SET(tmp, EINA_MAGIC_LIST);
 
@@ -170,7 +174,8 @@ _eina_list_mempool_list_free(Eina_List *list)
    if (list->accounting->count == 0)
      _eina_list_mempool_accounting_free(list->accounting);
 
-   MAGIC_FREE(list);
+   EINA_MAGIC_SET(list, EINA_MAGIC_NONE);
+   eina_mempool_free(_eina_list_mp, list);
 }
 
 static Eina_List *
@@ -404,6 +409,12 @@ eina_list_init(void)
      {
        eina_error_init();
        eina_magic_string_init();
+       eina_mempool_init();
+
+       _eina_list_mp = eina_mempool_new("chained_mempool", "list", NULL,
+					sizeof (Eina_List), 320);
+       _eina_list_accounting_mp = eina_mempool_new("chained_mempool", "list_accounting", NULL,
+						   sizeof (Eina_List_Accounting), 80);
 
        eina_magic_string_set(EINA_MAGIC_ITERATOR,
 			     "Eina Iterator");
@@ -440,8 +451,12 @@ eina_list_shutdown(void)
 
    if (!_eina_list_init_count)
      {
-       eina_magic_string_shutdown();
-       eina_error_shutdown();
+	eina_mempool_delete(_eina_list_accounting_mp);
+	eina_mempool_delete(_eina_list_mp);
+
+	eina_mempool_shutdown();
+	eina_magic_string_shutdown();
+	eina_error_shutdown();
      }
 
    return _eina_list_init_count;
