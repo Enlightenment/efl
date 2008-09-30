@@ -54,4 +54,5 @@ src/lib/Makefile
 src/bin/Makefile
 data/Makefile
 data/themes/Makefile
+data/images/Makefile
 ])
