@@ -106,11 +106,11 @@ eina_mempool_ememoa_unknown(int request)
 void
 eina_bench_mempool(Eina_Benchmark *bench)
 {
-/*    eina_benchmark_register(bench, "chained mempool", EINA_BENCHMARK(eina_mempool_chained_mempool), 10, 100, 10); */
-   eina_benchmark_register(bench, "pass through", EINA_BENCHMARK(eina_mempool_pass_through), 10, 10000, 100);
-   eina_benchmark_register(bench, "fixed bitmap", EINA_BENCHMARK(eina_mempool_fixed_bitmap), 10, 10000, 100);
+   eina_benchmark_register(bench, "chained mempool", EINA_BENCHMARK(eina_mempool_chained_mempool), 10, 1000, 10);
+   eina_benchmark_register(bench, "pass through", EINA_BENCHMARK(eina_mempool_pass_through), 10, 1000, 10);
+   eina_benchmark_register(bench, "fixed bitmap", EINA_BENCHMARK(eina_mempool_fixed_bitmap), 10, 1000, 10);
 #ifdef EINA_EMEMOA_SUPPORT
-   eina_benchmark_register(bench, "ememoa fixed", EINA_BENCHMARK(eina_mempool_ememoa_fixed), 10, 10000, 100);
-   eina_benchmark_register(bench, "ememoa unknown", EINA_BENCHMARK(eina_mempool_ememoa_unknown), 10, 10000, 100);
+   eina_benchmark_register(bench, "ememoa fixed", EINA_BENCHMARK(eina_mempool_ememoa_fixed), 10, 1000, 10);
+   eina_benchmark_register(bench, "ememoa unknown", EINA_BENCHMARK(eina_mempool_ememoa_unknown), 10, 1000, 10);
 #endif
 }

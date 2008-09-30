@@ -92,6 +92,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 	if (p->base)
 	  {
 	     pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
+	     pool->first = eina_inlist_append(pool->first, EINA_INLIST_GET(p));
 	     break;
 	  }
      }
@@ -128,6 +129,7 @@ eina_chained_mempool_free(void *data, void *ptr)
    item_alloc = ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
    psize = item_alloc * pool->pool_size;
    // look 4 pool
+
    EINA_INLIST_ITER_NEXT(pool->first, p)
      {
 	// pool mem base
