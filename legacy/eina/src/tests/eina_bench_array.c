@@ -21,9 +21,8 @@
 #endif
 
 #include <stdlib.h>
-#include <time.h>
-
 #include <stdio.h>
+#include <time.h>
 
 #ifdef EINA_BENCH_HAVE_GLIB
 # include <glib.h>

@@ -20,9 +20,9 @@
 # include "config.h"
 #endif
 
-#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include <math.h>
 
 #ifdef EINA_BENCH_HAVE_GLIB
