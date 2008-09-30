@@ -88,7 +88,6 @@ endif
 if EFL_ENABLE_BENCHMARK
 
 benchmark:
-	@rm -rf result
 	@make -C src benchmark
 	@mkdir result || true
 	@cd result && ../src/tests/eina_bench `date +%F_%s`
