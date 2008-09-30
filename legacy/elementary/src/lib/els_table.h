@@ -1,0 +1,10 @@
+Evas_Object *_els_smart_table_add               (Evas *evas);
+int          _els_smart_table_freeze            (Evas_Object *obj);
+int          _els_smart_table_thaw              (Evas_Object *obj);
+void         _els_smart_table_homogenous_set    (Evas_Object *obj, int homogenous);
+void         _els_smart_table_pack              (Evas_Object *obj, Evas_Object *child, int col, int row, int colspan, int rowspan);
+void         _els_smart_table_pack_options_set  (Evas_Object *obj, int fill_w, int fill_h, int expand_w, int expand_h, double align_x, double align_y, Evas_Coord min_w, Evas_Coord min_h, Evas_Coord max_w, Evas_Coord max_h);
+void         _els_smart_table_unpack            (Evas_Object *obj);
+void         _els_smart_table_col_row_size_get  (Evas_Object *obj, int *cols, int *rows);
+void         _els_smart_table_min_size_get      (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
+void         _els_smart_table_max_size_get      (Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh);
