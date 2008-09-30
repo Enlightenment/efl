@@ -119,6 +119,8 @@ START_TEST(eina_test_simple)
 
    list = eina_list_sort(list, 2, eina_int_cmp);
 
+   list = eina_list_sort(list, 2, eina_int_cmp);
+
    test1 = eina_list_nth(list, 0);
    test2 = eina_list_nth(list, 1);
    test3 = eina_list_nth(list, 2);
@@ -126,6 +128,16 @@ START_TEST(eina_test_simple)
    fail_if(test1 == NULL || test2 == NULL || test3 == NULL);
    fail_if(*test1 > *test2);
    fail_if(*test3 == *test2);
+
+   list = eina_list_sort(list, 5, eina_int_cmp);
+
+   test1 = eina_list_nth(list, 3);
+   test2 = eina_list_nth(list, 4);
+   test3 = eina_list_nth(list, 5);
+
+   fail_if(test1 == NULL || test2 == NULL || test3 == NULL);
+   fail_if(*test1 > *test2);
+   fail_if(*test3 > *test2);
 
    list = eina_list_append(list, &data[8]);
    fail_if(list == NULL);

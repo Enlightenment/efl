@@ -1200,7 +1200,7 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
    unsigned int i = 0;
    unsigned int n = 0;
    Eina_List *tail = list;
-   Eina_List *unsort = list;
+   Eina_List *unsort = NULL;
    Eina_List *stack[EINA_LIST_SORT_STACK_SIZE];
 
    if (!list || !func) return NULL;
@@ -1212,19 +1212,17 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
        (size > list->accounting->count))
      size = list->accounting->count;
 
-   for (; size; size--)
+   if (size != list->accounting->count)
      {
-   
-       unsort = unsort->next;
+	unsort = eina_list_nth_list(list, size);
+	if (unsort)
+	  unsort->prev->next = NULL;
      }
-   if (unsort)
-     unsort->prev->next = NULL;
-
 
    while (tail)
      {
        unsigned int idx, tmp;
-      
+
        Eina_List *a = tail;
        Eina_List *b = tail->next;
 
@@ -1235,7 +1233,7 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
 	 }
 
        tail = b->next;
-      
+
        if (func(a->data, b->data) < 0)
 	 ((stack[i++] = a)->next = b)->next = 0;
        else
@@ -1248,10 +1246,10 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
 
    while (i-- > 1)
      stack[i-1] = eina_list_sort_merge(stack[i-1], stack[i], func);
-   
+
    list = stack[0];
    eina_list_sort_rebuild_prev(list);
-   
+
    for (tail = list; tail->next; tail = tail->next)
      ;
 
