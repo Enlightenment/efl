@@ -26,6 +26,60 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
    int dith, dith2;
    int x, y;
 
+#ifdef BUILD_LINE_DITHER_MASK
+   for (y = 0; y < h; y++)
+     {
+	if ((y + dith_y) & 0x1)
+	  {
+	     for (x = 0; x < w; x+=2)
+	       {
+		  DATA32  p = *src++,  q = *src++;
+		  r1 = ((p & 0xff0000) + 0x030000) >> 19;
+		  if (r1 > 0x1f) r1 = 0x1f;
+		  g1 = ((p & 0xff00) + 0x000100) >> 10;
+		  if (g1 > 0x3f) g1 = 0x3f;
+		  b1 = ((p & 0xff) + 0x000003) >> 3;
+		  if (b1 > 0x1f) b1 = 0x1f;
+		  r2 = ((q & 0xff0000) + 0x030000) >> 19;
+		  if (r2 > 0x1f) r2 = 0x1f;
+		  g2 = ((q & 0xff00) + 0x000100) >> 10;
+		  if (g2 > 0x3f) g2 = 0x3f;
+		  b2 = ((q & 0xff) + 0x000003) >> 3;
+		  if (b2 > 0x1f) b2 = 0x1f;
+#ifndef WORDS_BIGENDIAN
+		  *((DATA32 *)d) = (r2 << 27) | (g2 << 21) | (b2 << 16) |
+		    (r1 << 11) | (g1 << 5) | (b1);
+#else
+		  *((DATA32 *)d) = (r1 << 27) | (g1 << 21) | (b1 << 16) |
+		    (r2 << 11) | (g2 << 5) | (b2);
+#endif
+		  d += 2;
+	       }
+	  }
+	else
+	  {
+	     x = w;
+	     while (w > 0)
+	       {
+		  DATA32  p = *src++, q = *src++;
+
+#ifndef WORDS_BIGENDIAN
+		  *((DATA32 *)d) =
+		    (((q & 0xff0000) >> 19) << 27) | (((q & 0xff00) >> 10) << 21) | (((q & 0xff) >> 3) << 16) |
+		    (((p & 0xff0000) >> 19) << 11) | (((p & 0xff00) >> 10) << 5) | ((p & 0xff) >> 3);
+#else
+		  *((DATA32 *)d) =
+		    (((p & 0xff0000) >> 19) << 27) | (((p & 0xff00) >> 10) << 21) | (((p & 0xff) >> 3) << 16) |
+		    (((q & 0xff0000) >> 19) << 11) | (((q & 0xff00) >> 10) << 5) | ((q & 0xff) >> 3);
+#endif
+		  d += 2;  w -= 2;
+	       }
+	     w = x;
+	  }
+	src += src_jump;
+	d += dst_jump;
+     }
+#else
    for (y = 0; y < h; y++)
      {
 	for (x = 0; x < w; x++)
@@ -52,7 +106,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	    if ((r2 < 0x1f) && ((((q & 0xff0000) >> 16) - (r2 << 3)) >= dith )) r2++;
 	    if ((g2 < 0x3f) && ((((q & 0xff00) >> 8) - (g2 << 2)) >= dith2)) g2++;
 	    if ((b2 < 0x1f) && (((q & 0xff) - (b2 << 3)) >= dith )) b2++;
-
+	     
 #ifndef WORDS_BIGENDIAN
 	    *((DATA32 *)d) = (r2 << 27) | (g2 << 21) | (b2 << 16) |
 	                     (r1 << 11) | (g1 << 5) | (b1);
@@ -65,6 +119,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	src += src_jump;
 	d += dst_jump;
      }
+#endif   
    return;
    pal = 0;
 #else
@@ -110,6 +165,38 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
    int dith, dith2;
    int x, y;
 
+#ifdef BUILD_LINE_DITHER_MASK
+   for (y = 0; y < h; y++)
+     {
+	if ((y + dith_y) & 0x1)
+	  {
+	     for (x = 0; x < w; x++)
+	       {
+		  DATA32  p = *src++;
+		  
+		  r = (p & 0xff0000) >> 19;
+		  if (r > 0x1f) r = 0x1f;
+		  g = (p & 0xff00) >> 10;
+		  if (g > 0x3f) g = 0x3f;
+		  b = (p & 0xff) >> 3;
+		  if (b > 0x1f) b = 0x1f;
+		  *d++ = (r << 11) | (g << 5) | b;
+	       }
+	  }
+	else
+	  {
+	     x = w;
+	     while (w--)
+	       {
+		  *d++ = (((*src & 0xff0000) >> 19) << 11) | (((*src & 0xff00) >> 10) << 5) | ((*src & 0xff) >> 3);
+		  src++;
+	       }
+	     w = x;
+	  }
+	src += src_jump;
+	d += dst_jump;
+     }
+#else   
    for (y = 0; y < h; y++)
      {
 	for (x = 0; x < w; x++)
@@ -131,6 +218,7 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
 	src += src_jump;
 	d += dst_jump;
      }
+#endif   
    return;
    pal = 0;
 #else

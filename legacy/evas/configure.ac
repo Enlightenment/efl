@@ -1556,6 +1556,29 @@ AC_ARG_ENABLE(small-dither-mask,
 )
 
 #######################################
+## Alternate Line dither mask instead of big one (lower quality - but fastest)
+conv_line_dither="no"
+AC_MSG_CHECKING(whether to build line dither mask code)
+AC_ARG_ENABLE(line-dither-mask,
+  AC_HELP_STRING([--enable-line-dither-mask], [enable line dither mask code]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(BUILD_LINE_DITHER_MASK, 1, [Line Dither Mask Support])
+        conv_line_dither="yes"
+      else
+        AC_MSG_RESULT(no)
+        conv_line_dither="no"
+      fi
+  ], [
+      AC_MSG_RESULT($conv_line_dither)
+      if test "x$conv_line_dither" = "xyes" ; then
+        AC_DEFINE(BUILD_LINE_DITHER_MASK, 1, [Line Dither Mask Support])
+      fi
+  ]
+)
+
+#######################################
 ## No dither mask at all for 16bpp
 conv_no_dither="no"
 AC_MSG_CHECKING(whether to build without dither mask for 16bpp)
@@ -1904,6 +1927,7 @@ echo "  YUV Converter...........: $conv_yuv"
 echo
 echo "ARGB Conversion Options:"
 echo "  Smaller Dither Mask.....: $conv_small_dither"
+echo "  Line Dither Mask........: $conv_line_dither"
 echo "  No Dither Mask for 16bpp: $conv_no_dither"
 echo "  8bpp RGB 332............: $conv_8_rgb_332"
 echo "  8bpp RGB 666............: $conv_8_rgb_666"
