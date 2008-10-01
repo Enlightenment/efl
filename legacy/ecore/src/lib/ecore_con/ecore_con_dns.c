@@ -120,6 +120,10 @@ ecore_con_dns_lookup(const char *name,
 		    sizeof(struct in_addr));
 	     write(fd[1], &(addr.s_addr), sizeof(in_addr_t));
 	  }
+	else
+	  {
+	     write(fd[1], "", 1);
+	  }
 	close(fd[1]);
 # ifdef __USE_ISOC99
 	_Exit(0);
