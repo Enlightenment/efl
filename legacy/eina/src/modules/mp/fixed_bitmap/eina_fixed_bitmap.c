@@ -132,10 +132,7 @@ eina_fixed_bitmap_malloc(void *data, __UNUSED__ unsigned int size)
    ptr = (unsigned char*) (pool + 1) + index * mp->item_size;
 
    if (pool->bitmask == 0)
-     {
-	mp->head = eina_inlist_remove(mp->head, EINA_INLIST_GET(pool));
-	mp->head = eina_inlist_append(mp->head, EINA_INLIST_GET(pool));
-     }
+     mp->head = eina_inlist_demote(mp->head, EINA_INLIST_GET(pool));
 
    return ptr;
 }
@@ -169,10 +166,7 @@ eina_fixed_bitmap_free(void *data, void *ptr)
 	free(pool);
      }
    else if (push_front)
-     {
-	mp->head = eina_inlist_remove(mp->head, EINA_INLIST_GET(pool));
-	mp->head = eina_inlist_prepend(mp->head, EINA_INLIST_GET(pool));
-     }
+     mp->head = eina_inlist_promote(mp->head, EINA_INLIST_GET(pool));
 }
 
 static void *

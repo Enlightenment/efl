@@ -335,10 +335,10 @@ eina_list_accessor_free(Eina_Accessor_List *it)
    MAGIC_FREE(it);
 }
 
-static void
+static Eina_List *
 eina_list_sort_rebuild_prev(Eina_List *list)
 {
-   Eina_List *prev = 0;
+   Eina_List *prev = NULL;
 
    EINA_MAGIC_CHECK_LIST(list);
 
@@ -347,6 +347,8 @@ eina_list_sort_rebuild_prev(Eina_List *list)
        list->prev = prev;
        prev = list;
      }
+
+   return prev;
 }
 
 static Eina_List *
@@ -1263,10 +1265,7 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
      stack[i-1] = eina_list_sort_merge(stack[i-1], stack[i], func);
 
    list = stack[0];
-   eina_list_sort_rebuild_prev(list);
-
-   for (tail = list; tail->next; tail = tail->next)
-     ;
+   tail = eina_list_sort_rebuild_prev(list);
 
    if (unsort)
      {

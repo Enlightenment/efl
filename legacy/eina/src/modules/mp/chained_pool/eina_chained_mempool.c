@@ -51,7 +51,7 @@ struct _Chained_Pool
    int usage;
 };
 
-static Chained_Pool *
+static inline Chained_Pool *
 _eina_chained_mp_pool_new(Chained_Mempool *pool)
 {
    Chained_Pool *p;
@@ -72,7 +72,7 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
    return p;
 }
 
-static void
+static inline void
 _eina_chained_mp_pool_free(Chained_Pool *p)
 {
    free(p);
@@ -91,8 +91,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 	// base is not NULL - has a free slot
 	if (p->base)
 	  {
-	     pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
-	     pool->first = eina_inlist_append(pool->first, EINA_INLIST_GET(p));
+	     pool->first = eina_inlist_demote(pool->first, EINA_INLIST_GET(p));
 	     break;
 	  }
      }
@@ -109,10 +108,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    p->base = *((void **)mem);
    // move to end - it just filled up
    if (!p->base)
-     {
-	pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
-	pool->first = eina_inlist_append(pool->first, EINA_INLIST_GET(p));
-     }
+     pool->first = eina_inlist_demote(pool->first, EINA_INLIST_GET(p));
    p->usage++;
    pool->usage++;
    return mem;
@@ -143,13 +139,17 @@ eina_chained_mempool_free(void *data, void *ptr)
 	     p->base = ptr;
 	     p->usage--;
 	     pool->usage--;
-	     pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
 	     if (p->usage == 0)
-	       // free bucket
-	       _eina_chained_mp_pool_free(p);
+	       {
+		  // free bucket
+		  pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
+		  _eina_chained_mp_pool_free(p);
+	       }
 	     else
-	       // move to front
-	       pool->first = eina_inlist_prepend(pool->first, EINA_INLIST_GET(p));
+	       {
+		  // move to front
+		  pool->first = eina_inlist_promote(pool->first, EINA_INLIST_GET(p));
+	       }
 	     break;
 	  }
      }

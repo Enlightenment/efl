@@ -45,6 +45,8 @@ EAPI Eina_Inlist * eina_inlist_append_relative(Eina_Inlist *in_list, Eina_Inlist
 EAPI Eina_Inlist * eina_inlist_prepend_relative(Eina_Inlist *in_list, Eina_Inlist *in_item, Eina_Inlist *in_relative);
 EAPI Eina_Inlist * eina_inlist_remove(Eina_Inlist *in_list, Eina_Inlist *in_item);
 EAPI Eina_Inlist * eina_inlist_find(Eina_Inlist *in_list, Eina_Inlist *in_item);
+EAPI Eina_Inlist * eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item);
+EAPI Eina_Inlist * eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item);
 
 EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list);
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list);

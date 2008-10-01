@@ -264,6 +264,65 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
  * FIXME: To be fixed
  */
 EAPI Eina_Inlist *
+eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
+{
+   if (item == list) return list;
+   if (!item || !list) return list;
+
+   if (item->next)
+     item->next->prev = item->prev;
+   item->prev->next = item->next;
+
+   if (list->last == item)
+     list->last = item->prev;
+
+   item->next = list;
+   item->prev = NULL;
+   item->last = list->last;
+
+   list->prev = item;
+   list->last = NULL;
+
+   return item;
+}
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Inlist *
+eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
+{
+   Eina_Inlist *l;
+
+   if (!item || !list) return list;
+   if (list->last == item) return list;
+
+   if (!list->last)
+     {
+	for (l = list; l->next; l = l->next)
+	  ;
+	list->last = l;
+     }
+
+   l = list;
+   if (item->prev)
+     item->prev->next = item->next;
+   else
+     l = item->next;
+   item->next->prev = item->prev;
+
+   list->last->next = item;
+   item->prev = list->last;
+   item->next = NULL;
+
+   l->last = item;
+   return l;
+}
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Inlist *
 eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
 {
    Eina_Inlist *l;
