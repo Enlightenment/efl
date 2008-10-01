@@ -20,6 +20,13 @@
 
 #define READBUFSIZ 65536
 
+typedef enum _Ecore_Con_State
+  {
+     ECORE_CON_CONNECTED,
+     ECORE_CON_DISCONNECTED,
+     ECORE_CON_INPROGRESS
+  } Ecore_Con_State;
+
 struct _Ecore_Con_Client
 {
    ECORE_MAGIC;

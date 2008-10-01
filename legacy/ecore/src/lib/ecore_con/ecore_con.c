@@ -1127,18 +1127,18 @@ svr_try_connect_ssl(Ecore_Con_Server *svr)
    ssl_init_count++;
 
    res = SSL_connect(svr->ssl);
-   if (res == 1) return 1;
+   if (res == 1) return ECORE_CON_CONNECTED;
    ssl_err = SSL_get_error(svr->ssl, res);
 
-   if (ssl_err == SSL_ERROR_NONE) return 1;
+   if (ssl_err == SSL_ERROR_NONE) return ECORE_CON_CONNECTED;
    if (ssl_err == SSL_ERROR_WANT_READ)       flag = ECORE_FD_READ;
    else if (ssl_err == SSL_ERROR_WANT_WRITE) flag = ECORE_FD_WRITE;
-   else return -1;
+   else return ECORE_CON_DISCONNECTED;
    if (svr->fd_handler)
      {
 	if (flag) ecore_main_fd_handler_active_set(svr->fd_handler, flag);
      }
-   return 0;
+   return ECORE_CON_INPROGRESS;
 }
 #endif
 
@@ -1294,7 +1294,7 @@ _ecore_con_cb_udp_dns_lookup(void *data, struct hostent *he)
    kill_server(svr);
 }
 
-static int
+static Ecore_Con_State
 svr_try_connect_plain(Ecore_Con_Server *svr)
 {
    int so_err = 0;
@@ -1303,10 +1303,14 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
    if (getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, &so_err, &size) < 0)
      so_err = -1;
 
+   if (so_err == EINPROGRESS && !svr->dead)
+     return ECORE_CON_INPROGRESS;
+
    if (so_err != 0)
      {
 	/* we lost our server! */
 	kill_server(svr);
+	return ECORE_CON_DISCONNECTED;
      }
    else
      {
@@ -1331,11 +1335,15 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
 	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
 	  }
      }
-   return (!svr->dead);
+
+   if (!svr->dead)
+     return ECORE_CON_CONNECTED;
+   else
+     return ECORE_CON_DISCONNECTED;
 }
 
 /* returns 1 on success, 0 on failure */
-static int svr_try_connect(Ecore_Con_Server *svr)
+static Ecore_Con_State svr_try_connect(Ecore_Con_Server *svr)
 {
 #if USE_OPENSSL
    if (!svr->ssl)
@@ -1346,13 +1354,13 @@ static int svr_try_connect(Ecore_Con_Server *svr)
      }
    else
      switch (svr_try_connect_ssl(svr)) {
-      case 1:
+      case ECORE_CON_CONNECTED:
 	return svr_try_connect_plain(svr);
-      case -1:
+      case ECORE_CON_DISCONNECTED:
 	kill_server(svr);
-	return 0;
+	return ECORE_DISCONNECTED;
       default:
-	return 0;
+	return ECORE_INPROGRESS;
      }
 #endif
 }
@@ -1374,7 +1382,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	unsigned char *inbuf = NULL;
 	int            inbuf_num = 0;
 
-	if (svr->connecting && !svr_try_connect(svr))
+	if (svr->connecting && (svr_try_connect(svr) != ECORE_CON_CONNECTED))
 	   return 1;
 
 	for (;;)
