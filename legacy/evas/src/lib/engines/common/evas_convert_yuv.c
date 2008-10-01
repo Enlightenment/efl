@@ -761,7 +761,7 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
    crv = CRV;   /* 1.596 */
    cbu = CBU;   /* 2.018 */
    cgu = CGU;   /* 0.391 */
-   cgv = CGU;   /* 0.813 */
+   cgv = CGV;   /* 0.813 */
 
    for (yy = 0; yy < h; yy += 2)
      {
