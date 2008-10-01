@@ -1,6 +1,5 @@
-#include <Evas.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "evas_common.h"
+#include "evas_private.h"
 
 /**
  * @addtogroup Evas_Smart_Object_Group
