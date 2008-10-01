@@ -1960,7 +1960,8 @@ st_collections_group_parts_part_dragable_y(void)
         [another part's name]
     @effect
         When set, limits the movement of the dragged part to another part's
-        container.
+        container. When you use confine don't forget to set a min size for the
+        part, or the draggie will not show up.
     @endproperty
 */
 static void
