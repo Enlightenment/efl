@@ -1358,9 +1358,9 @@ static Ecore_Con_State svr_try_connect(Ecore_Con_Server *svr)
 	return svr_try_connect_plain(svr);
       case ECORE_CON_DISCONNECTED:
 	kill_server(svr);
-	return ECORE_DISCONNECTED;
+	return ECORE_CON_DISCONNECTED;
       default:
-	return ECORE_INPROGRESS;
+	return ECORE_CON_INPROGRESS;
      }
 #endif
 }
