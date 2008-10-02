@@ -60,5 +60,6 @@ extern Elm_Toggle_Class _elm_toggle_class;
 extern Elm_Clock_Class _elm_clock_class;
 extern Elm_Frame_Class _elm_frame_class;
 extern Elm_Pad_Class _elm_pad_class;
+extern Elm_Contactlist_Class _elm_contactlist_class;
   
 #endif

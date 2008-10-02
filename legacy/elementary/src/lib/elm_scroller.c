@@ -20,7 +20,8 @@ static void
 _elm_scroller_geom_set(Elm_Scroller *sc, int x, int y, int w, int h)
 {
    Evas_Coord vw, vh;
-   
+
+   printf("sc geom set %ix%i (am %ix%i)\n", w, h, sc->w, sc->h);
    if ((sc->w != w) || (sc->h != h) || (sc->x != x) || (sc->y != y))
      {
 	Evas_List *l;

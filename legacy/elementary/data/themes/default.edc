@@ -2118,4 +2118,86 @@ collections {
 	 }
       }
    }
+   
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "contact";
+      images {
+	 image: "bt_base1.png" COMP;
+	 image: "bt_base2.png" COMP;
+	 image: "bt_hilight.png" COMP;
+	 image: "bt_shine.png" COMP;
+    }
+      parts {
+	 part { name: "button_image";
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       image {
+		  normal: "bt_base2.png";
+		  border: 7 7 7 7;
+	       }
+	    }
+	    description { state: "clicked" 0.0;
+	       inherit: "default" 0.0;
+	       image.normal: "bt_base1.png";
+	    }
+	 }
+	 part { name: "elm.swallow.contents";
+	    type: SWALLOW;
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       aspect: 1.0 1.0;
+	       aspect_preference: VERTICAL;
+	       align: 0.0 0.5;
+	       rel1.offset: 4 4;
+	       rel2.offset: 4 -5;
+	       rel2.relative: 0.0 1.0;
+	       color: 255 0 0 128;
+	    }
+	 }
+         part {
+	    name:          "elm.text";
+	    type:          TEXT;
+	    effect:        SOFT_SHADOW;
+	    mouse_events:  0;
+	    scale: 1;
+	    description { state: "default" 0.0;
+	       align: 0.0 1.0;
+	       rel1.to_x: "elm.swallow.contents";
+	       rel1.relative: 1.0 1.0;
+               rel1.offset: 0 -5;
+	       rel2.offset: -5 -5;
+	       color: 224 224 224 255;
+	       color3: 0 0 0 64;
+	       text {
+		  text: "Name of Contact goes here";
+		  font: "Sans:style=Bold,Edje-Vera-Bold";
+		  size: 10;
+		  min: 0 1;
+		  align: 0.0 1.0;
+	       }
+	    }
+	 }
+	 part {	  name: "over1";
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel2.relative: 1.0 0.5;
+	       image {
+		  normal: "bt_hilight.png";
+		  border: 7 7 7 0;
+	       }
+	    }
+	 }
+	 part { name: "over2";
+	    mouse_events: 1;
+	    repeat_events: 1;
+            ignore_flags: ON_HOLD;
+	    description { state: "default" 0.0;
+	       image {
+		  normal: "bt_shine.png";
+		  border: 7 7 7 7;
+	       }
+	    }
+	 }
+      }
+   }
 }

@@ -23,6 +23,7 @@ _elm_table_pack(Elm_Table *tb, Elm_Widget *wid, int x, int y, int w, int h)
 {
    tb->child_add(tb, wid);
    _els_smart_table_pack(tb->base, wid->base, x, y, w, h);
+   elm_widget_sizing_update(wid);
 }
 
 static void

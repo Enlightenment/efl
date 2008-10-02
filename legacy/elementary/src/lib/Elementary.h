@@ -80,7 +80,8 @@ extern "C" {
 	  ELM_OBJ_TOGGLE,
 	  ELM_OBJ_CLOCK,
 	  ELM_OBJ_FRAME,
-	  ELM_OBJ_PAD
+	  ELM_OBJ_PAD,
+	  ELM_OBJ_CONTACTLIST
 //	  ELM_OBJ_CHECK, // FIXME: do
 //	  ELM_OBJ_RADIO, // FIXME: do
 //        ELM_OBJ_SEP, // FIXME: do (separator horiz or vert)
@@ -151,6 +152,8 @@ extern "C" {
    typedef struct _Elm_Frame           Elm_Frame;
    typedef struct _Elm_Pad_Class       Elm_Pad_Class;
    typedef struct _Elm_Pad             Elm_Pad;
+   typedef struct _Elm_Contactlist_Class Elm_Contactlist_Class;
+   typedef struct _Elm_Contactlist       Elm_Contactlist;
    
    typedef void (*Elm_Cb_Func) (void *data, Elm_Obj *obj, Elm_Cb_Type type, void *info);
    
@@ -313,11 +316,8 @@ extern "C" {
    
 /**************************************************************************/   
    /* Scroller (scrollframe/scrolledview) Object */
-#define Elm_Scroller_Class_Methods \
-   void (*file_set)  (Elm_Scroller *scroller, const char *file, const char *group);
-#define Elm_Scroller_Class_All Elm_Widget_Class_All; Elm_Scroller_Class_Methods; \
-   const char *file; \
-   const char *group
+#define Elm_Scroller_Class_Methods
+#define Elm_Scroller_Class_All Elm_Widget_Class_All; Elm_Scroller_Class_Methods;
    
    /* Object specific ones */
    EAPI Elm_Scroller *elm_scroller_new(Elm_Win *win);
@@ -548,6 +548,32 @@ extern "C" {
    struct _Elm_Pad
      {
 	Elm_Pad_Class_All;
+     };
+   
+/**************************************************************************/   
+   /* Contactlist Object */
+#define Elm_Contactlist_Class_Methods \
+   void (*file_set)  (Elm_Contactlist *cl, const char *file, const char *group);
+#define Elm_Contactlist_Class_All Elm_Widget_Class_All; Elm_Contactlist_Class_Methods; \
+   const char *file; \
+   const char *group
+   
+   /* Object specific ones */
+   EAPI Elm_Contactlist *elm_contactlist_new(Elm_Win *win);
+   struct _Elm_Contactlist_Class
+     {
+	void *parent;
+	Elm_Obj_Type type;
+	Elm_Contactlist_Class_Methods;
+     };
+   struct _Elm_Contactlist
+     {
+	Elm_Contactlist_Class_All;
+
+	Elm_Box *box;
+	Elm_Scroller *scroller;
+	Elm_Button *button;
+	Elm_Box *listbox;
      };
    
 #endif

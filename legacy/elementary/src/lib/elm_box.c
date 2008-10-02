@@ -30,6 +30,7 @@ _elm_box_pack_start(Elm_Box *bx, Elm_Widget *wid)
 {
    bx->child_add(bx, wid);
    _els_smart_box_pack_start(bx->base, wid->base);
+   elm_widget_sizing_update(wid);
 }
 
 static void
@@ -37,6 +38,7 @@ _elm_box_pack_end(Elm_Box *bx, Elm_Widget *wid)
 {
    bx->child_add(bx, wid);
    _els_smart_box_pack_end(bx->base, wid->base);
+   elm_widget_sizing_update(wid);
 }
 
 static void
@@ -44,6 +46,7 @@ _elm_box_pack_before(Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_before)
 {
    bx->child_add(bx, wid);
    _els_smart_box_pack_before(bx->base, wid->base, wid_before->base);
+   elm_widget_sizing_update(wid);
 }
 
 static void
@@ -51,6 +54,7 @@ _elm_box_pack_after(Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_after)
 {
    bx->child_add(bx, wid);
    _els_smart_box_pack_after(bx->base, wid->base, wid_after->base);
+   elm_widget_sizing_update(wid);
 }
 
 static void
@@ -61,6 +65,7 @@ _elm_box_size_alloc(Elm_Box *bx, int w, int h)
    _els_smart_box_min_size_get(bx->base, &mw, &mh);
    if (w < mw) w = mw;
    if (h < mh) h = mh;
+   printf("box %p size alloc to %ix%i\n", bx, w, h);
    bx->req.w = w;
    bx->req.h = h;
 }
@@ -69,7 +74,7 @@ static void
 _elm_box_size_req(Elm_Box *bx, Elm_Widget *child, int w, int h)
 {
    Evas_Coord mw, mh;
-   
+
    if (child)
      {
 	Evas_Coord maxx, maxy;
