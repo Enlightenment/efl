@@ -157,6 +157,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    size_t orig_len;
 
    *free_text = 0;
+   if (sw <= 1) return "";
 
    if (ep->part->scale) evas_object_scale_set(ep->object, _edje_scale);
    evas_object_text_font_set(ep->object, font, size);
