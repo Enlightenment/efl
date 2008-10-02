@@ -117,15 +117,6 @@ inline void eina_print_warning(const char *function, const char *sparam);
 	    return; \
 	 }
 
-void          _eina_fps_debug_init(void);
-void          _eina_fps_debug_shutdown(void);
-void          _eina_fps_debug_runtime_add(double t);
-
-
-
-extern int    _eina_fps_debug;
-/* old code finish */
-
 /* Iterator/accessor private type */
 typedef Eina_Bool (*Eina_Iterator_Next_Callback)(Eina_Iterator *it, void **data);
 typedef void *(*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
