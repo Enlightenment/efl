@@ -4366,6 +4366,8 @@ edje_edit_script_get(Evas_Object *obj)
 #define I6 "                  "
 
 static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP"};
+static char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
+static char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
 static void
 _edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
 {
@@ -4520,9 +4522,121 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    fprintf(f, I3 "}\n");
 }
 
+
+static void
+_edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, FILE *f)
+{
+   Evas_List *l, *ll;
+   Edje_Real_Part *rp;
+   
+   GET_PD_OR_RETURN();
+   
+   rp = _edje_real_part_get(ed, part);
+   if (!rp) return;
+   
+   fprintf(f, I4"description {\n");
+   //TODO Support inherit
+   fprintf(f, I5"state: \"%s\" %g;\n", pd->state.name, pd->state.value);
+   
+   if (!pd->visible)
+     fprintf(f, I5"visible: 0;\n");
+   
+   if (pd->align.x != 0.5 || pd->align.y != 0.5)
+     fprintf(f, I5"align: %g %g;\n", pd->align.x, pd->align.y);
+   
+   //TODO Support fixed
+   
+   if (pd->min.w || pd->min.h)
+     fprintf(f, I5"min: %d %d;\n", pd->min.w, pd->min.h);
+   if (pd->max.w != -1 || pd->max.h != -1)
+     fprintf(f, I5"max: %d %d;\n", pd->max.w, pd->max.h);
+   
+   //TODO Support step
+   
+   if (pd->aspect.min || pd->aspect.max)
+      fprintf(f, I5"aspect: %g %g;\n", pd->aspect.min, pd->aspect.max);
+   if (pd->aspect.prefer)
+      fprintf(f, I5"aspect_preference: %s;\n", prefers[pd->aspect.prefer]);
+   
+   if (pd->color_class)
+      fprintf(f, I5"color_class: \"%s\";\n", pd->color_class);
+   
+   if (pd->color.r != 255 || pd->color.g != 255 ||
+       pd->color.b != 255 ||  pd->color.a != 255)
+      fprintf(f, I5"color: %d %d %d %d;\n",
+              pd->color.r, pd->color.g, pd->color.b, pd->color.a);
+   if (pd->color2.r != 0 || pd->color2.g != 0 ||
+        pd->color2.b != 0 ||  pd->color2.a != 255)
+      fprintf(f, I5"color2: %d %d %d %d;\n",
+              pd->color2.r, pd->color2.g, pd->color2.b, pd->color2.a);
+   if (pd->color3.r != 0 || pd->color3.g != 0 ||
+        pd->color3.b != 0 ||  pd->color3.a != 128)
+      fprintf(f, I5"color3: %d %d %d %d;\n",
+              pd->color3.r, pd->color3.g, pd->color3.b, pd->color3.a);
+   
+   //Rel1
+   fprintf(f, I5"rel1 {\n");
+   if (pd->rel1.relative_x || pd->rel1.relative_y)
+     fprintf(f, I6"relative: %g %g;\n", pd->rel1.relative_x, pd->rel1.relative_y);
+   if (pd->rel1.offset_x || pd->rel1.offset_y)
+     fprintf(f, I6"offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
+   if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
+      fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
+   else
+     {
+      if (pd->rel1.id_x != -1)
+        fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
+      if (pd->rel1.id_y != -1)
+       fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel1.id_y]->part->name);
+     }
+   fprintf(f, I5"}\n");//rel1
+   
+   //Rel2
+   fprintf(f, I5"rel2 {\n");
+   if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0)
+     fprintf(f, I6"relative: %g %g;\n", pd->rel2.relative_x, pd->rel2.relative_y);
+   if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
+     fprintf(f, I6"offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
+   if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
+      fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
+   else
+     {
+      if (pd->rel2.id_x != -1)
+        fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
+      if (pd->rel2.id_y != -1)
+       fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel2.id_y]->part->name);
+     }
+   fprintf(f, I5"}\n");//rel2
+   
+   //Image
+   if (rp->part->type == EDJE_PART_TYPE_IMAGE)
+   {
+      fprintf(f, I5"image {\n");
+      fprintf(f, I6"normal: \"%s\";\n", _edje_image_name_find(obj, pd->image.id));
+      
+      ll = edje_edit_state_tweens_list_get(obj, part, state);
+      for (l = ll; l; l = l->next)
+           fprintf(f, I6"tween: \"%s\";\n", (char *)l->data);
+      edje_edit_string_list_free(ll);
+      
+      if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
+           fprintf(f, I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
+      //TODO Support middle
+      fprintf(f, I5"}\n");//image
+   }
+   
+   //...and so on...
+   
+   
+   fprintf(f, I4"}\n");//description
+}
+
 static void
 _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
 {
+   const char *str;
+   Evas_List *l, *ll;
+   
    fprintf(f, I3"part {\n");
    fprintf(f, I4"name: \"%s\";\n", part);
    fprintf(f, I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
@@ -4530,8 +4644,30 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
       fprintf(f, I4"mouse_events: 0;\n");
    if (edje_edit_part_repeat_events_get(obj, part))
       fprintf(f, I4"repeat_events: 1;\n");
-   
-   //...and so on...
+   //TODO Support ignore_flags
+   //TODO Support scale
+   //TODO Support pointer_mode
+   //TODO Support precise_is_inside
+   //TODO Support use_alternate_font_metrics
+   if ((str = edje_edit_part_clip_to_get(obj, part)))
+     {
+        fprintf(f, I4"clip_to: \"%s\";\n", str);
+        edje_edit_string_free(str);
+     }
+   if ((str = edje_edit_part_source_get(obj, part)))
+     {
+        fprintf(f, I4"source: \"%s\";\n", str);
+        edje_edit_string_free(str);
+     }
+   if (edje_edit_part_effect_get(obj, part))
+     fprintf(f, I4"effect: %s;\n", effects[edje_edit_part_effect_get(obj, part)]);
+   //TODO Support dragable
+    
+   //Descriptions
+   ll = edje_edit_part_states_list_get(obj, part);
+   for (l = ll; l; l = l->next)
+     _edje_generate_source_of_state(obj, part, (char*)l->data, f);
+   edje_edit_string_list_free(ll);
    
    fprintf(f, I3"}\n");//part
 }
