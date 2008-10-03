@@ -15,7 +15,7 @@ suite_SOURCES = suite.c test_memcpy.c
 
 if EVIL_HAVE_WINCE
 
-suite_SOURCES +=  memcpy_glibc.S
+suite_SOURCES +=  memcpy_glibc_arm.S
 
 endif
 

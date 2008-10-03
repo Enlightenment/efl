@@ -1,3 +1,8 @@
+2008-10-03  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/Makefile.am:
+	rename memcpy_glibc.S to memcpy_glibc_arm.S
+
 2008-09-28  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
