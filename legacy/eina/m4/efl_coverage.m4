@@ -19,25 +19,25 @@ AC_ARG_ENABLE([coverage],
    [AC_HELP_STRING([--enable-coverage], [compile with coverage profiling instrumentation @<:@default=no@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
-       _eina_enable_coverage="yes"
+       _efl_enable_coverage="yes"
     else
-       _eina_enable_coverage="no"
+       _efl_enable_coverage="no"
     fi
    ],
-   [_eina_enable_coverage="no"]
+   [_efl_enable_coverage="no"]
 )
 AC_MSG_CHECKING([whether to use profiling instrumentation])
-AC_MSG_RESULT([$_eina_enable_coverage])
+AC_MSG_RESULT([$_efl_enable_coverage])
 
 dnl lcov check
 
-if test ! "x$1" = "xyes" -a "x$_eina_enable_coverage" = "xyes" ; then
+if test ! "x$1" = "xyes" -a "x$_efl_enable_coverage" = "xyes" ; then
    AC_MSG_WARN([Coverage report requested but tests not being built, disable profiling instrumentation.])
    AC_MSG_WARN([Run configure with --enable-tests])
-   _eina_enable_coverage="no"
+   _efl_enable_coverage="no"
 fi
 
-if test "x$_eina_enable_coverage" = "xyes" ; then
+if test "x$_efl_enable_coverage" = "xyes" ; then
    AC_CHECK_PROG(have_lcov, [lcov], [yes], [no])
    if test "x$have_lcov" = "xyes" ; then
       EFL_COVERAGE_CFLAGS="-fprofile-arcs -ftest-coverage"
@@ -46,7 +46,7 @@ if test "x$_eina_enable_coverage" = "xyes" ; then
       EFL_DEBUG_CFLAGS="-g -O0 -DDEBUG"
    else
       AC_MSG_WARN([lcov is not found, disable profiling instrumentation])
-      _eina_enable_coverage="no"
+      _efl_enable_coverage="no"
    fi
 fi
 
@@ -54,9 +54,9 @@ dnl Substitution
 AC_SUBST(EFL_COVERAGE_CFLAGS)
 AC_SUBST(EFL_COVERAGE_LIBS)
 
-AM_CONDITIONAL(EFL_ENABLE_COVERAGE, test "x${_eina_enable_coverage}" = "xyes")
+AM_CONDITIONAL(EFL_ENABLE_COVERAGE, test "x${_efl_enable_coverage}" = "xyes")
 
-if test "x${_eina_enable_coverage}" = "xyes" ; then
+if test "x${_efl_enable_coverage}" = "xyes" ; then
    ifelse([$2], , :, [$2])
 else
    ifelse([$3], , :, [$3])

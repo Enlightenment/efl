@@ -1,8 +1,8 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(eina, 0.0.1, enlightenment-devel@lists.sourceforge.net)
-AC_PREREQ(2.52)
+AC_INIT([eina], [0.0.1], [enlightenment-devel@lists.sourceforge.net])
+AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR(configure.ac)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -30,6 +30,13 @@ AC_SUBST(version_info)
 MODULE_ARCH="$host_os-$host_cpu"
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
+
+EFL_CHECK_CPU_MMX([have_mmx="yes"], [have_mmx="no"])
+EFL_CHECK_CPU_SSE([have_sse="yes"], [have_sse="no"])
+EFL_CHECK_CPU_SSE2([have_sse2="yes"], [have_sse2="no"])
+EFL_CHECK_CPU_ALTIVEC([have_altivec="yes"], [have_altivec="no"])
+
+EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
 
 
 ### Additional options to configure
@@ -195,8 +202,9 @@ AM_CONDITIONAL(EINA_BUILD_DOC, test "x${build_doc}" = "xyes")
 ### Checks for compiler characteristics
 AC_C_CONST
 AC_C_BIGENDIAN
-AC_PROG_CC_STDC
+AC_C_INLINE
 AC_C___ATTRIBUTE__
+AC_PROG_CC_STDC
 
 EINA_CFLAGS="${EFL_COVERAGE_CFLAGS}"
 case "${host_os}" in
@@ -302,6 +310,16 @@ echo "    Evas...............: ${have_evas}"
 echo "    Ecore..............: ${have_ecore}"
 echo "    E17 real data......: ${enable_benchmark_e17}"
 fi
+echo
+echo "CPU Specific Extensions:"
+echo
+echo "  MMX..................: ${have_mmx}"
+echo "  SSE..................: ${have_sse}"
+echo "  SSE2.................: ${have_sse2}"
+echo "  ALTIVEC..............: ${have_altivec}"
+echo
+echo "  Thread Support.......: ${have_pthread}"
+echo
 echo "  Magic debug..........: ${enable_magic_debug}"
 echo
 echo "  Memory pool:"

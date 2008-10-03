@@ -15,19 +15,19 @@ AC_ARG_ENABLE([benchmark],
    [AC_HELP_STRING([--enable-benchmark], [enable tests @<:@default=no@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
-       _eina_enable_benchmark="yes"
+       _efl_enable_benchmark="yes"
     else
-       _eina_enable_benchmark="no"
+       _efl_enable_benchmark="no"
     fi
    ],
-   [_eina_enable_benchmark="no"]
+   [_efl_enable_benchmark="no"]
 )
 AC_MSG_CHECKING([whether benchmark are built])
-AC_MSG_RESULT([${_eina_enable_benchmark}])
+AC_MSG_RESULT([${_efl_enable_benchmark}])
 
-AM_CONDITIONAL(EFL_ENABLE_BENCHMARK, test "x${_eina_enable_benchmark}" = "xyes")
+AM_CONDITIONAL(EFL_ENABLE_BENCHMARK, test "x${_efl_enable_benchmark}" = "xyes")
 
-if test "x${_eina_enable_benchmark}" = "xyes" ; then
+if test "x${_efl_enable_benchmark}" = "xyes" ; then
    ifelse([$1], , :, [$1])
 else
    ifelse([$2], , :, [$2])
