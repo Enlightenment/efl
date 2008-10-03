@@ -527,11 +527,11 @@ if test "x$have_ecore_x" = "xyes" -a "x$have_ecore_evas" = "xyes"; then
   fi
 
   if test "x$have_ecore_evas_software_x11" = "xyes" -o \
-	  "x$have_ecore_evas_opengl_x11" = "yes" -o \
-	  "x$have_ecore_evas_xrender_x11" = "yes" -o \
-	  "x$have_ecore_evas_software_16_x11" = "yes" -o \
+	  "x$have_ecore_evas_opengl_x11" = "xyes" -o \
+	  "x$have_ecore_evas_xrender_x11" = "xyes" -o \
+	  "x$have_ecore_evas_software_16_x11" = "xyes" -o \
           "x$have_ecore_evas_software_xcb" = "xyes" -o \
-	  "x$have_ecore_evas_xrender_xcb" = "yes"; then
+	  "x$have_ecore_evas_xrender_xcb" = "xyes"; then
     AC_DEFINE(BUILD_ECORE_EVAS_X11, 1, [Support for X Window Engines in Ecore_Evas])
     requirements_ecore_evas="$requirements_ecore_evas ecore-x"
   fi
@@ -569,9 +569,9 @@ ECORE_EVAS_CHECK_MODULE([software-16-ddraw],
   $have_ecore_win32)
 
 if test "x$have_ecore_evas_software_ddraw" = "xyes" -o \
-        "x$have_ecore_evas_direct3d" = "yes" -o \
-        "x$have_ecore_evas_opengl_glew" = "yes" -o \
-        "x$have_ecore_evas_software_16_ddraw" = "yes"; then
+        "x$have_ecore_evas_direct3d" = "xyes" -o \
+        "x$have_ecore_evas_opengl_glew" = "xyes" -o \
+        "x$have_ecore_evas_software_16_ddraw" = "xyes"; then
   AC_DEFINE(BUILD_ECORE_EVAS_WIN32, 1, [Support for Win32 Engine in Ecore_Evas])
   requirements_ecore_evas="$requirements_ecore_evas ecore-win32"
 fi
