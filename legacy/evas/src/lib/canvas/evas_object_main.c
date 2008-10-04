@@ -661,12 +661,12 @@ EAPI void
 evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   if (w) *w = 0; if (h) *h = 0;
+   if (w) *w = -1; if (h) *h = -1;
    return;
    MAGIC_CHECK_END();
    if ((!obj->size_hints) || obj->delete_me)
      {
-	if (w) *w = 0; if (h) *h = 0;
+	if (w) *w = -1; if (h) *h = -1;
 	return;
      }
    if (w) *w = obj->size_hints->max.w;
