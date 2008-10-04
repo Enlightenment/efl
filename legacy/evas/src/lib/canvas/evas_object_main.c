@@ -893,12 +893,12 @@ EAPI void
 evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   if (x) *x = 1.0; if (y) *y = 1.0;
+   if (x) *x = 0.0; if (y) *y = 0.0;
    return;
    MAGIC_CHECK_END();
    if ((!obj->size_hints) || obj->delete_me)
      {
-	if (x) *x = 1.0; if (y) *y = 1.0;
+	if (x) *x = 0.0; if (y) *y = 0.0;
 	return;
      }
    if (x) *x = obj->size_hints->weight.x;
