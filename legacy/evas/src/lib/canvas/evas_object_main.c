@@ -584,6 +584,17 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
  *
  * Functions that deals with hints about object size.
  */
+static void
+_evas_object_size_hint_alloc(Evas_Object *obj)
+{
+   if (obj->size_hints) return;
+   
+   obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   obj->size_hints->max.w = -1;
+   obj->size_hints->max.h = -1;
+   obj->size_hints->align.x = 0.5;
+   obj->size_hints->align.y = 0.5;
+}
 
 /**
  * Retrieves the size hint for the minimum size.
@@ -634,8 +645,7 @@ evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
-   if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   _evas_object_size_hint_alloc(obj);
 
    obj->size_hints->min.w = w;
    obj->size_hints->min.h = h;
@@ -692,8 +702,7 @@ evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
-   if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   _evas_object_size_hint_alloc(obj);
 
    obj->size_hints->max.w = w;
    obj->size_hints->max.h = h;
@@ -750,8 +759,7 @@ evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
-   if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   _evas_object_size_hint_alloc(obj);
 
    obj->size_hints->request.w = w;
    obj->size_hints->request.h = h;
@@ -813,8 +821,7 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
-   if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   _evas_object_size_hint_alloc(obj);
 
    obj->size_hints->aspect.mode = aspect;
    obj->size_hints->aspect.size.w = w;
@@ -869,8 +876,7 @@ evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
-   if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   _evas_object_size_hint_alloc(obj);
 
    obj->size_hints->align.x = x;
    obj->size_hints->align.x = y;
@@ -924,8 +930,7 @@ evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
-   if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   _evas_object_size_hint_alloc(obj);
 
    obj->size_hints->weight.x = x;
    obj->size_hints->weight.x = y;
@@ -983,8 +988,7 @@ evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, 
    MAGIC_CHECK_END();
    if (obj->delete_me)
      return;
-   if (!obj->size_hints)
-     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+   _evas_object_size_hint_alloc(obj);
 
    obj->size_hints->padding.l = l;
    obj->size_hints->padding.r = r;
