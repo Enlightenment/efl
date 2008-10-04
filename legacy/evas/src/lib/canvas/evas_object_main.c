@@ -646,7 +646,7 @@ evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
-
+   if ((obj->size_hints->min.w == w) && (obj->size_hints->min.h == h)) return;
    obj->size_hints->min.w = w;
    obj->size_hints->min.h = h;
 
@@ -703,7 +703,7 @@ evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
-
+   if ((obj->size_hints->max.w == w) && (obj->size_hints->max.h == h)) return;
    obj->size_hints->max.w = w;
    obj->size_hints->max.h = h;
 
@@ -760,7 +760,7 @@ evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
-
+   if ((obj->size_hints->request.w == w) && (obj->size_hints->request.h == h)) return;
    obj->size_hints->request.w = w;
    obj->size_hints->request.h = h;
 
@@ -822,7 +822,7 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
-
+   if ((obj->size_hints->aspect.mode == aspect) &&  (obj->size_hints->aspect.size.w == w) && (obj->size_hints->aspect.size.h == h)) return;
    obj->size_hints->aspect.mode = aspect;
    obj->size_hints->aspect.size.w = w;
    obj->size_hints->aspect.size.h = h;
@@ -877,9 +877,9 @@ evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
-
+   if ((obj->size_hints->align.x == x) && (obj->size_hints->align.y == y)) return;
    obj->size_hints->align.x = x;
-   obj->size_hints->align.x = y;
+   obj->size_hints->align.y = y;
 
    evas_object_inform_call_changed_size_hints(obj);
 }
@@ -931,9 +931,9 @@ evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
-
+   if ((obj->size_hints->weight.x == x) && (obj->size_hints->weight.y == y)) return;
    obj->size_hints->weight.x = x;
-   obj->size_hints->weight.x = y;
+   obj->size_hints->weight.y = y;
 
    evas_object_inform_call_changed_size_hints(obj);
 }
@@ -989,8 +989,8 @@ evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, 
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
+   if ((obj->size_hints->padding.l == l) && (obj->size_hints->padding.r == r) && (obj->size_hints->padding.t == t) && (obj->size_hints->padding.b == b)) return;
 
-   obj->size_hints->padding.l = l;
    obj->size_hints->padding.r = r;
    obj->size_hints->padding.t = t;
    obj->size_hints->padding.b = b;
