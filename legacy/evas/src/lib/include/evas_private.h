@@ -24,6 +24,8 @@
 typedef struct _Evas_Layer                  Evas_Layer;
 typedef struct _Evas_Size                   Evas_Size;
 typedef struct _Evas_Aspect                 Evas_Aspect;
+typedef struct _Evas_Border                 Evas_Border;
+typedef struct _Evas_Double_Pair            Evas_Double_Pair;
 typedef struct _Evas_Size_Hints             Evas_Size_Hints;
 typedef struct _Evas_Font_Dir               Evas_Font_Dir;
 typedef struct _Evas_Font                   Evas_Font;
@@ -348,10 +350,22 @@ struct _Evas_Aspect
    Evas_Size size;
 };
 
+struct _Evas_Border
+{
+   Evas_Coord l, r, t, b;
+};
+
+struct _Evas_Double_Pair
+{
+   double x, y;
+};
+
 struct _Evas_Size_Hints
 {
    Evas_Size min, max, request;
    Evas_Aspect aspect;
+   Evas_Double_Pair align, weight;
+   Evas_Border padding;
 };
 
 struct _Evas_Object

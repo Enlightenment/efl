@@ -712,7 +712,13 @@ extern "C" {
    EAPI void              evas_object_size_hint_request_set (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_size_hint_aspect_get  (const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h);
    EAPI void              evas_object_size_hint_aspect_set  (Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h);
-
+   EAPI void              evas_object_size_hint_align_get   (const Evas_Object *obj, double *x, double *y);
+   EAPI void              evas_object_size_hint_align_set   (Evas_Object *obj, double x, double y);
+   EAPI void              evas_object_size_hint_weight_get  (const Evas_Object *obj, double *x, double *y);
+   EAPI void              evas_object_size_hint_weight_set  (Evas_Object *obj, double x, double y);
+   EAPI void              evas_object_size_hint_padding_get (const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
+   EAPI void              evas_object_size_hint_padding_set (Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b);
+       
    EAPI void              evas_object_show                  (Evas_Object *obj);
    EAPI void              evas_object_hide                  (Evas_Object *obj);
    EAPI Evas_Bool         evas_object_visible_get           (const Evas_Object *obj);

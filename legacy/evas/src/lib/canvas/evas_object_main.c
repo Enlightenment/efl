@@ -823,6 +823,176 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
    evas_object_inform_call_changed_size_hints(obj);
 }
 
+/**
+ * Retrieves the size align control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param    obj The given evas object.
+ * @param      w Pointer to a double in which to store the align x.
+ * @param      h Pointer to a double in which to store the align y.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (x) *x = 0.0; if (y) *y = 0.0;
+   return;
+   MAGIC_CHECK_END();
+   if ((!obj->size_hints) || obj->delete_me)
+     {
+	if (x) *x = 0.0; if (y) *y = 0.0;
+	return;
+     }
+   if (x) *x = obj->size_hints->align.x;
+   if (y) *y = obj->size_hints->align.y;
+}
+
+/**
+ * Sets the size align control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param    obj The given evas object.
+ * @param      x Double (0.0-1.0) to use as align x hint.
+ * @param      y Double (0.0-1.0) to use as align y hint.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+   if (!obj->size_hints)
+     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+
+   obj->size_hints->align.x = x;
+   obj->size_hints->align.x = y;
+
+   evas_object_inform_call_changed_size_hints(obj);
+}
+
+/**
+ * Retrieves the size weight control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param    obj The given evas object.
+ * @param      w Pointer to a double in which to store the weight x.
+ * @param      h Pointer to a double in which to store the weight y.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (x) *x = 0.0; if (y) *y = 0.0;
+   return;
+   MAGIC_CHECK_END();
+   if ((!obj->size_hints) || obj->delete_me)
+     {
+	if (x) *x = 0.0; if (y) *y = 0.0;
+	return;
+     }
+   if (x) *x = obj->size_hints->weight.x;
+   if (y) *y = obj->size_hints->weight.y;
+}
+
+/**
+ * Sets the size weight control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param    obj The given evas object.
+ * @param      x Double (0.0-1.0) to use as weight x hint.
+ * @param      y Double (0.0-1.0) to use as weight y hint.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+   if (!obj->size_hints)
+     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+
+   obj->size_hints->weight.x = x;
+   obj->size_hints->weight.x = y;
+
+   evas_object_inform_call_changed_size_hints(obj);
+}
+
+/**
+ * Retrieves the size padding control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param    obj The given evas object.
+ * @param      w Pointer to a double in which to store the padding x.
+ * @param      h Pointer to a double in which to store the padding y.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (l) *l = 0; if (r) *r = 0;
+   if (t) *t = 0; if (b) *b = 0;
+   return;
+   MAGIC_CHECK_END();
+   if ((!obj->size_hints) || obj->delete_me)
+     {
+	if (l) *l = 0; if (r) *r = 0;
+	if (t) *t = 0; if (b) *b = 0;
+	return;
+     }
+   if (l) *l = obj->size_hints->padding.l;
+   if (r) *r = obj->size_hints->padding.r;
+   if (t) *t = obj->size_hints->padding.t;
+   if (b) *b = obj->size_hints->padding.b;
+}
+
+/**
+ * Sets the size padding control hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should
+ * be used whenever appropriate.
+ *
+ * @param    obj The given evas object.
+ * @param      x Double (0.0-1.0) to use as padding x hint.
+ * @param      y Double (0.0-1.0) to use as padding y hint.
+ * @ingroup Evas_Object_Size_Hints_Group
+ */
+EAPI void
+evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+   if (!obj->size_hints)
+     obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
+
+   obj->size_hints->padding.l = l;
+   obj->size_hints->padding.r = r;
+   obj->size_hints->padding.t = t;
+   obj->size_hints->padding.b = b;
+
+   evas_object_inform_call_changed_size_hints(obj);
+}
 
 /**
  * @defgroup Evas_Object_Visibility_Group Generic Object Visibility Functions
