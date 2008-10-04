@@ -990,7 +990,7 @@ evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, 
      return;
    _evas_object_size_hint_alloc(obj);
    if ((obj->size_hints->padding.l == l) && (obj->size_hints->padding.r == r) && (obj->size_hints->padding.t == t) && (obj->size_hints->padding.b == b)) return;
-
+   obj->size_hints->padding.l = l;
    obj->size_hints->padding.r = r;
    obj->size_hints->padding.t = t;
    obj->size_hints->padding.b = b;
