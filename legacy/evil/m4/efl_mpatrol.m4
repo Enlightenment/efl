@@ -111,8 +111,10 @@ __mp_clearleaktable();
 
 fi
 
-EFL_MPATROL_CPPFLAGS="-include ${_efl_mpatrol_includedir}/mpatrol.h"
-EFL_MPATROL_LIBS="-L${_efl_mpatrol_libdir} -lmpatrol -lbfd -liberty -limagehlp"
+if test "x${_efl_enable_mpatrol}" = "xyes" ; then
+   EFL_MPATROL_CPPFLAGS="-include ${_efl_mpatrol_includedir}/mpatrol.h"
+   EFL_MPATROL_LIBS="-L${_efl_mpatrol_libdir} -lmpatrol -lbfd -liberty -limagehlp"
+fi
 
 AC_SUBST(EFL_MPATROL_CPPFLAGS)
 AC_SUBST(EFL_MPATROL_LIBS)
