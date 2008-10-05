@@ -959,24 +959,12 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
    int mw, mh;
    Edje_Real_Part *rp;
 
-   mw = minw;
-   mh = minh;
-   if (mw < 0) mw = 0;
-   if (mh < 0) mh = 0;
-   if (mw > 0)
-     evas_object_data_set(obj, "\377 edje.minw", (void *)(long)mw);
-   else
-     evas_object_data_del(obj, "\377 edje.minw");
-   if (mh > 0)
-     evas_object_data_set(obj, "\377 edje.minh", (void *)(long)mh);
-   else
-     evas_object_data_del(obj, "\377 edje.minh");
-
+   evas_object_size_hint_min_set(obj, minw, minh);
    rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
    if (rp)
      {
-	rp->swallow_params.min.w = mw;
-	rp->swallow_params.min.h = mh;
+	rp->swallow_params.min.w = minw;
+	rp->swallow_params.min.h = minh;
 
 	_recalc_extern_parent(obj);
      }
@@ -992,25 +980,14 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
 EAPI void
 edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh)
 {
-   int mw, mh;
    Edje_Real_Part *rp;
 
-   mw = maxw;
-   mh = maxh;
-   if (mw >= 0)
-     evas_object_data_set(obj, "\377 edje.maxw", (void *)(long)mw);
-   else
-     evas_object_data_del(obj, "\377 edje.maxw");
-   if (mh >= 0)
-     evas_object_data_set(obj, "\377 edje.maxh", (void *)(long)mh);
-   else
-     evas_object_data_del(obj, "\377 edje.maxh");
-
+   evas_object_size_hint_max_set(obj, maxw, maxh);
    rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
    if (rp)
      {
-	rp->swallow_params.max.w = mw >= 0 ? mw : -1;
-	rp->swallow_params.max.h = mh >= 0 ? mh : -1;
+	rp->swallow_params.max.w = maxw;
+	rp->swallow_params.max.h = maxh;
 
 	_recalc_extern_parent(obj);
      }
@@ -1030,33 +1007,28 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
 EAPI void
 edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah)
 {
-   int mw, mh;
-   int mc;
    Edje_Real_Part *rp;
+   Evas_Aspect_Control asp;
 
-   mc = aspect;
-   mw = aw;
-   mh = ah;
-   if (mc > 0)
-     evas_object_data_set(obj, "\377 edje.aspm", (void *)(long)mc);
-   else
-     evas_object_data_del(obj, "\377 edje.aspm");
-   if (mw > 0)
-     evas_object_data_set(obj, "\377 edje.aspw", (void *)(long)mw);
-   else
-     evas_object_data_del(obj, "\377 edje.aspw");
-   if (mh > 0)
-     evas_object_data_set(obj, "\377 edje.asph", (void *)(long)mh);
-   else
-     evas_object_data_del(obj, "\377 edje.asph");
-
+   asp = EVAS_ASPECT_CONTROL_NONE;
+   switch (aspect)
+     {
+      case EDJE_ASPECT_CONTROL_NONE: asp = EVAS_ASPECT_CONTROL_NONE; break;
+      case EDJE_ASPECT_CONTROL_NEITHER: asp = EVAS_ASPECT_CONTROL_NEITHER; break;
+      case EDJE_ASPECT_CONTROL_HORIZONTAL: asp = EVAS_ASPECT_CONTROL_HORIZONTAL; break;
+      case EDJE_ASPECT_CONTROL_VERTICAL: asp = EVAS_ASPECT_CONTROL_VERTICAL; break;
+      case EDJE_ASPECT_CONTROL_BOTH: asp = EVAS_ASPECT_CONTROL_BOTH; break;
+      default: break;
+     }
+   if (aw < 1) aw = 1;
+   if (ah < 1) ah = 1;
+   evas_object_size_hint_aspect_set(obj, asp, aw, ah);
    rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
    if (rp)
      {
-	rp->swallow_params.aspect.mode = mc > 0 ? mc : 0;
-	rp->swallow_params.aspect.w = mw > 0 ? mw : 0;
-	rp->swallow_params.aspect.h = mh > 0 ? mh : 0;
-
+	rp->swallow_params.aspect.mode = aspect;
+	rp->swallow_params.aspect.w = aw;
+	rp->swallow_params.aspect.h = ah;
         _recalc_extern_parent(obj);
      }
 }
@@ -2141,20 +2113,25 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
 	rp->swallow_params.max.h = h;
      }
      {
-	int w1, h1, w2, h2, am, aw, ah;
+	Evas_Coord w1, h1, w2, h2, aw, ah;
+	Evas_Aspect_Control am;
 
-	w1 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.minw");
-	h1 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.minh");
-	w2 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.maxw");
-	h2 = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.maxh");
-	am = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.aspm");
-	aw = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.aspw");
-	ah = (int)(long)evas_object_data_get(obj_swallow, "\377 edje.asph");
+	evas_object_size_hint_min_get(obj_swallow, &w1, &h1);
+	evas_object_size_hint_max_get(obj_swallow, &w2, &h2);
+	evas_object_size_hint_aspect_get(obj_swallow, &am, &aw, &ah);
 	rp->swallow_params.min.w = w1;
 	rp->swallow_params.min.h = h1;
 	if (w2 > 0) rp->swallow_params.max.w = w2;
 	if (h2 > 0) rp->swallow_params.max.h = h2;
-	rp->swallow_params.aspect.mode = am;
+  	switch (am)
+	  {
+	   case EVAS_ASPECT_CONTROL_NONE: rp->swallow_params.aspect.mode = EDJE_ASPECT_CONTROL_NONE; break;
+	   case EVAS_ASPECT_CONTROL_NEITHER: rp->swallow_params.aspect.mode = EDJE_ASPECT_CONTROL_NEITHER; break;
+	   case EVAS_ASPECT_CONTROL_HORIZONTAL: rp->swallow_params.aspect.mode = EDJE_ASPECT_CONTROL_HORIZONTAL; break;
+	   case EVAS_ASPECT_CONTROL_VERTICAL: rp->swallow_params.aspect.mode = EDJE_ASPECT_CONTROL_VERTICAL; break;
+	   case EVAS_ASPECT_CONTROL_BOTH: rp->swallow_params.aspect.mode = EDJE_ASPECT_CONTROL_BOTH; break;
+	   default: break;
+	  }
 	rp->swallow_params.aspect.w = aw;
 	rp->swallow_params.aspect.h = ah;
 	evas_object_data_set(rp->swallowed_object, "\377 edje.swallowing_part", rp);
