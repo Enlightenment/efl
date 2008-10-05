@@ -822,7 +822,7 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(obj);
-   if ((obj->size_hints->aspect.mode == aspect) &&  (obj->size_hints->aspect.size.w == w) && (obj->size_hints->aspect.size.h == h)) return;
+   if ((obj->size_hints->aspect.mode == aspect) && (obj->size_hints->aspect.size.w == w) && (obj->size_hints->aspect.size.h == h)) return;
    obj->size_hints->aspect.mode = aspect;
    obj->size_hints->aspect.size.w = w;
    obj->size_hints->aspect.size.h = h;
