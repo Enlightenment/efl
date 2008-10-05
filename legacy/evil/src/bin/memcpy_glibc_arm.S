@@ -53,7 +53,7 @@
 #define push            lsr
 #endif
 
-		.text
+	.text
 
 /* Prototype: void *memcpy_glibc(void *dest, const void *src, size_t n); */
 

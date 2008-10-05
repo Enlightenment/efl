@@ -1,3 +1,35 @@
+2008-10-05  Vincent Torri  <doursse at users dot sf dot net>
+
+	* m4:
+	add m4 macro for doxygen, mpatrol and __attribute__
+
+	* doc:
+	move Doxyfile from toplevel dir to doc/
+
+	* src/bin/Makefile.am
+	* src/lib/Makefile.am
+	* src/lib/dlfcn/Makefile.am
+	remove _DEPENDENCIES, add flags for mpatrol and put
+	defines for EAPI
+
+	* src/bin:
+	add memcpy for i686. Need an asm expert to modify it
+
+	* src/bin/memcpy_glibc_arm.S:
+	formatting
+
+	* src/bin/suite.c:
+	fix seg fault by increasing the size of the buffers
+
+	* src/bin/test_memcpy.c:
+	add a test with a bigger size for the memory to copy
+
+	* configure.ac:
+	reorganise a lot, use m4 macro, add mpatrol support
+
+	* Makefile.am:
+	add doc rule
+
 2008-10-03  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/Makefile.am:

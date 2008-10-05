@@ -116,4 +116,5 @@ test_memcpy(void)
   test_memcpy_tests_run(0, 0, 2 * getpagesize ());
   test_memcpy_tests_run(0, 0, 4 * getpagesize ());
   test_memcpy_tests_run(0, 0, 8 * getpagesize ());
+  test_memcpy_tests_run(0, 0, 16 * getpagesize ());
 }

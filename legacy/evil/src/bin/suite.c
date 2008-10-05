@@ -152,10 +152,10 @@ main()
 
    page_size = 2 * getpagesize();
 
-   buf1 = (unsigned char *)malloc(4 * getpagesize());
+   buf1 = (unsigned char *)malloc(16 * getpagesize());
    if (!buf1) return EXIT_FAILURE;
 
-   buf2 = (unsigned char *)malloc(4 * getpagesize());
+   buf2 = (unsigned char *)malloc(16 * getpagesize());
    if (!buf2)
      {
         free(buf1);

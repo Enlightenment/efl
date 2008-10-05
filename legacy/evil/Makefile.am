@@ -1,4 +1,6 @@
 
+ACLOCAL_AMFLAGS = -I m4
+
 MAINTAINERCLEANFILES = \
 aclocal.m4 \
 compile \
@@ -23,9 +25,16 @@ SUBDIRS = src
 EXTRA_DIST = \
 COPYING \
 COPYING-PLAIN \
-Doxyfile \
 autogen.sh \
 evil.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = evil.pc
+
+.PHONY: doc
+
+# Documentation
+
+doc:
+	@echo "entering doc/"
+	make -C doc doc

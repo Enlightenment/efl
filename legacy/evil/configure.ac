@@ -1,45 +1,18 @@
 
-AC_INIT(evil, 0.0.1, enlightenment-devel@lists.sourceforge.net)
-AC_PREREQ(2.52)
+AC_INIT([evil], [0.0.1], [enlightenment-devel@lists.sourceforge.net])
+AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_HOST
 
-dnl If the host is not windows, we exit,
-dnl otherwise, we set the correct flags
-dnl for each platform.
-have_wince="no"
-win32_libs=""
-win32_cflags=""
+dnl If the host is not Windows, we exit
 case "$host_os" in
-  mingw | mingw32 | mingw32msvc)
-    win32_libs="-lole32 -luuid -lws2_32"
-    ;;
-  cegcc)
-    have_wince="yes"
-    win32_cflags="-mwin32"
-    win32_libs="-lws2"
-    ;;
-  mingw32ce)
-    have_wince="yes"
-    win32_libs="-lws2"
+  mingw* | cegcc*)
     ;;
   *)
     AC_MSG_ERROR([OS must be Windows. Exiting...])
     ;;
 esac
-AC_SUBST(win32_cflags)
-AC_SUBST(win32_libs)
-
-if test "x${have_wince}" = "xyes" ; then
-  AC_DEFINE(EVIL_HAVE_WINCE, 1, [Define to mention that Windows CE is the target])
-fi
-
-AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
-
-dnl needed for correct definition of EAPI
-AC_DEFINE(EFL_EVIL_BUILD, 1, [Define to mention that evil is built])
-AC_DEFINE(EFL_EVIL_DLFCN_BUILD, 1, [Define to mention that evil dlfcn is built])
 
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 
@@ -55,31 +28,82 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+
+### Checks for libraries
+
+win32_libs=""
+case "$host_os" in
+  mingw | mingw32 | mingw32msvc)
+    win32_libs="-lole32 -luuid -lws2_32"
+    ;;
+  cegcc)
+    win32_libs="-lws2"
+    ;;
+  mingw32ce)
+    win32_libs="-lws2"
+    ;;
+esac
+AC_SUBST(win32_libs)
+
+EFL_CHECK_MPATROL([have_mpatrol="yes"], [have_mpatrol="no"])
+
+
+### Checks for header files
+
+
+### Checks for programs
 AM_PROG_AS
 AC_LANG(C)
 AC_PROG_CPP
 AC_PROG_CC
+
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
+### Checks for types
+
+
+### Checks for structures
+
+
+### Checks for compiler characteristics
 AC_C_CONST
+AC_C___ATTRIBUTE__
 
-AC_MSG_CHECKING([for __attribute__])
-AC_CACHE_VAL(_cv_have___attribute__,
-  [
-    AC_TRY_COMPILE([#include <stdlib.h>],
-      [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
-      [_cv_have___attribute__="yes"],
-      [_cv_have___attribute__="no"])
-  ]
-)
+win32_cflags=""
+case "$host_os" in
+  cegcc)
+    have_wince="yes"
+    win32_cflags="-mwin32"
+    ;;
+  mingw32ce)
+    have_wince="yes"
+    ;;
+  *)
+    have_wince="no"
+    ;;
+esac
+AC_SUBST(win32_cflags)
 
-if test "x${_cv_have___attribute__}" = "xyes" ; then
-   AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
+if test "x${have_wince}" = "xyes" ; then
+  AC_DEFINE(EVIL_HAVE_WINCE, 1, [Define to mention that Windows CE is the target])
 fi
-AC_MSG_RESULT(${_cv_have___attribute__})
+
+AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
+
+
+### Checks for linker characteristics
+
+
+### Checks for library functions
 
 
 AC_CONFIG_FILES([
 Makefile
 evil.pc
+doc/Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
@@ -102,6 +126,9 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
+echo
+echo "  Documentation........: ${build_doc}"
+echo "  Mpatrol..............: ${have_mpatrol}"
 echo
 echo "  Compilation..........: make"
 echo
