@@ -487,6 +487,8 @@ _ecore_main_win32_message(double timeout)
                return 1;
           }
      }
+#else
+   timeout = 0.0;
 #endif /* _WIN32 */
 
    return 0;

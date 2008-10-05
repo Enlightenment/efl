@@ -85,7 +85,7 @@ _ecore_poller_next_tick_eval(void)
 }
 
 static int
-_ecore_poller_cb_timer(void *data)
+_ecore_poller_cb_timer(void *data __UNUSED__)
 {
    int i;
    Ecore_List2 *l;
@@ -194,7 +194,7 @@ _ecore_poller_cb_timer(void *data)
  * by @p type to the time period defined by @p poll_time.
  */
 EAPI void
-ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time)
+ecore_poller_poll_interval_set(Ecore_Poller_Type type __UNUSED__, double poll_time)
 {
    poll_interval = poll_time;
    _ecore_poller_next_tick_eval();
@@ -209,7 +209,7 @@ ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time)
  * This will get the time between ticks of the specifider ticker clock.
  */
 EAPI double
-ecore_poller_poll_interval_get(Ecore_Poller_Type type)
+ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
 {
    return poll_interval;
 }
@@ -262,7 +262,7 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type)
  * invalid.
  */
 EAPI Ecore_Poller *
-ecore_poller_add(Ecore_Poller_Type type, int interval, int (*func) (void *data), const void *data)
+ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, int (*func) (void *data), const void *data)
 {
    Ecore_Poller *poller;
    int ibit;
