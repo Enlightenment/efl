@@ -875,7 +875,7 @@ main(int argc, char **argv)
 	    (!strcmp(argv[i], "--help"))))
 	  {
 	     printf("Usage:\n");
-	     printf("  %s [-gl] [-g WxH] [-vis NUMBER] [-xine] [-gstreamer] filename\n", argv[0]);
+	     printf("  %s [-gl] [-g WxH] [-vis NUMBER] [-xine] [-gstreamer] [-vlc] filename\n", argv[0]);
 	     exit(-1);
 	  }
 	else if (!strcmp(argv[i], "-gl"))
@@ -894,6 +894,10 @@ main(int argc, char **argv)
 	else if (!strcmp(argv[i], "-gstreamer"))
 	  {
              module_filename = "gstreamer";
+	  }
+	else if (!strcmp(argv[i], "-vlc"))
+	  {
+             module_filename = "vlc";
 	  }
 	else if ((!strcmp(argv[i], "-vis")) && (i < (argc - 1)))
 	  {
