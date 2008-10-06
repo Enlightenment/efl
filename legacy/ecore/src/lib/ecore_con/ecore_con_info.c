@@ -194,6 +194,8 @@ _ecore_con_info_get(Ecore_Con_Server *svr,
 	    container.info.ai_canonname = NULL;
 	    container.info.ai_next = NULL;
 	    memcpy(&container.addr, result->ai_addr, sizeof(struct sockaddr));
+	    memset(container.ip, 0, sizeof(container.ip));
+	    memset(container.service, 0, sizeof(container.service));
 	    if (!getnameinfo(&container.addr, container.info.ai_addrlen,
 			     hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
 			     NI_NUMERICHOST | NI_NUMERICSERV))
@@ -201,12 +203,7 @@ _ecore_con_info_get(Ecore_Con_Server *svr,
 		memcpy(container.ip, hbuf, sizeof(container.ip));
 		memcpy(container.service, sbuf, sizeof(container.service));
 	      }
-	    else
-	      {
-		memset(container.ip, 0, sizeof(container.ip));
-		memset(container.service, 0, sizeof(container.service));
-	      }
-	    write(fd[1], &container, sizeof(container));
+	    write(fd[1], &container, sizeof(Ecore_Con_Netinfo));
 	  }
 	else
 	  write(fd[1], "", 1);
