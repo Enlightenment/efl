@@ -78,6 +78,7 @@ eina_bench_lookup_rbtree(int request)
    Eina_Rbtree *root = NULL;
    Eina_Rbtree *tmp;
    int i;
+   int j;
 
    for (i = 0; i < request; ++i)
      {
@@ -94,14 +95,15 @@ eina_bench_lookup_rbtree(int request)
 
    srand(time(NULL));
 
-   for (i = 0; i < request; ++i)
-     {
-	char tmp_key[10];
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < request; ++i)
+       {
+	  char tmp_key[10];
 
-	eina_convert_itoa(rand() % request, tmp_key);
+	  eina_convert_itoa(rand() % request, tmp_key);
 
-	tmp = eina_rbtree_inline_lookup(root, tmp_key, 10, EINA_RBTREE_CMP_KEY_CB(_eina_bench_rbtree_key), NULL);
-     }
+	  tmp = eina_rbtree_inline_lookup(root, tmp_key, 10, EINA_RBTREE_CMP_KEY_CB(_eina_bench_rbtree_key), NULL);
+       }
 
    eina_rbtree_delete(root, EINA_RBTREE_FREE_CB(_eina_bench_rbtree_free), NULL);
 }
@@ -112,6 +114,7 @@ eina_bench_lookup_superfast(int request)
    Eina_Hash *hash = NULL;
    int *tmp_val;
    unsigned int i;
+   unsigned int j;
 
    hash = eina_hash_string_superfast_new(free);
 
@@ -131,14 +134,14 @@ eina_bench_lookup_superfast(int request)
 
    srand(time(NULL));
 
-   for (i = 0; i < (unsigned int) request; ++i)
-     {
-	char tmp_key[10];
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < (unsigned int) request; ++i)
+       {
+	  char tmp_key[10];
 
-	eina_convert_itoa(rand() % request, tmp_key);
-
-	tmp_val = eina_hash_find(hash, tmp_key);
-     }
+	  eina_convert_itoa(rand() % request, tmp_key);
+	  tmp_val = eina_hash_find(hash, tmp_key);
+       }
 
    eina_hash_free(hash);
 }
@@ -149,6 +152,7 @@ eina_bench_lookup_djb2(int request)
    Eina_Hash *hash = NULL;
    int *tmp_val;
    unsigned int i;
+   unsigned int j;
 
    hash = eina_hash_string_djb2_new(free);
 
@@ -168,14 +172,15 @@ eina_bench_lookup_djb2(int request)
 
    srand(time(NULL));
 
-   for (i = 0; i < (unsigned int) request; ++i)
-     {
-	char tmp_key[10];
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < (unsigned int) request; ++i)
+       {
+	  char tmp_key[10];
 
-	eina_convert_itoa(rand() % request, tmp_key);
+	  eina_convert_itoa(rand() % request, tmp_key);
 
-	tmp_val = eina_hash_find(hash, tmp_key);
-     }
+	  tmp_val = eina_hash_find(hash, tmp_key);
+       }
 
    eina_hash_free(hash);
 }
@@ -193,6 +198,7 @@ eina_bench_lookup_djb2_inline(int request)
    Eina_Hash *hash = NULL;
    Eina_Bench_DJB2 *elm;
    unsigned int i;
+   unsigned int j;
 
    hash = eina_hash_string_djb2_new(free);
 
@@ -213,15 +219,16 @@ eina_bench_lookup_djb2_inline(int request)
 
    srand(time(NULL));
 
-   for (i = 0; i < (unsigned int) request; ++i)
-     {
-	char tmp_key[10];
-	int length = 6;
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < (unsigned int) request; ++i)
+       {
+	  char tmp_key[10];
+	  int length = 6;
 
-	length = eina_convert_itoa(rand() % request, tmp_key) + 1;
+	  length = eina_convert_itoa(rand() % request, tmp_key) + 1;
 
-	elm = eina_hash_find_by_hash(hash, tmp_key, length, eina_hash_superfast(tmp_key, length));
-     }
+	  elm = eina_hash_find_by_hash(hash, tmp_key, length, eina_hash_superfast(tmp_key, length));
+       }
 
    eina_hash_free(hash);
 }
@@ -240,6 +247,7 @@ eina_bench_lookup_ghash(int request)
    Eina_Bench_Glib *elm;
    GHashTable *hash;
    unsigned int i;
+   unsigned int j;
 
    hash = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, free);
 
@@ -258,14 +266,15 @@ eina_bench_lookup_ghash(int request)
 
    srand(time(NULL));
 
-   for (i = 0; i < (unsigned int) request; ++i)
-     {
-	char tmp_key[10];
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < (unsigned int) request; ++i)
+       {
+	  char tmp_key[10];
 
-	eina_convert_itoa(rand() % request, tmp_key);
+	  eina_convert_itoa(rand() % request, tmp_key);
 
-	elm = g_hash_table_lookup(hash, tmp_key);
-     }
+	  elm = g_hash_table_lookup(hash, tmp_key);
+       }
 
    g_hash_table_destroy(hash);
 }
@@ -280,6 +289,7 @@ eina_bench_lookup_evas(int request)
    int *tmp_val;
    Eina_Array_Iterator it;
    unsigned int i;
+   unsigned int j;
 
    array = eina_array_new(1000);
 
@@ -301,14 +311,15 @@ eina_bench_lookup_evas(int request)
 
    srand(time(NULL));
 
-   for (i = 0; i < (unsigned int) request; ++i)
-     {
-	char tmp_key[10];
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < (unsigned int) request; ++i)
+       {
+	  char tmp_key[10];
 
-	eina_convert_itoa(rand() % request, tmp_key);
+	  eina_convert_itoa(rand() % request, tmp_key);
 
-	tmp_val = evas_hash_find(hash, tmp_key);
-     }
+	  tmp_val = evas_hash_find(hash, tmp_key);
+       }
 
    evas_hash_free(hash);
 
@@ -333,6 +344,7 @@ eina_bench_lookup_ecore(int request)
    Ecore_Hash *hash = NULL;
    Eina_Bench_Ecore *elm;
    unsigned int i;
+   unsigned int j;
 
    hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
 
@@ -353,14 +365,15 @@ eina_bench_lookup_ecore(int request)
 
    srand(time(NULL));
 
-   for (i = 0; i < (unsigned int) request; ++i)
-     {
-	char tmp_key[10];
+   for (j = 0; j < 200; ++j)
+     for (i = 0; i < (unsigned int) request; ++i)
+       {
+	  char tmp_key[10];
 
-	eina_convert_itoa(rand() % request, tmp_key);
+	  eina_convert_itoa(rand() % request, tmp_key);
 
-	elm = ecore_hash_get(hash, tmp_key);
-     }
+	  elm = ecore_hash_get(hash, tmp_key);
+       }
 
    ecore_hash_destroy(hash);
 }
@@ -368,17 +381,17 @@ eina_bench_lookup_ecore(int request)
 
 void eina_bench_hash(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "superfast-lookup", EINA_BENCHMARK(eina_bench_lookup_superfast), 10, 8000, 50);
-   eina_benchmark_register(bench, "djb2-lookup", EINA_BENCHMARK(eina_bench_lookup_djb2), 10, 8000, 50);
-   eina_benchmark_register(bench, "djb2-lookup-inline", EINA_BENCHMARK(eina_bench_lookup_djb2_inline), 10, 8000, 50);
-   eina_benchmark_register(bench, "rbtree", EINA_BENCHMARK(eina_bench_lookup_rbtree), 10, 8000, 50);
+   eina_benchmark_register(bench, "superfast-lookup", EINA_BENCHMARK(eina_bench_lookup_superfast), 10, 2000, 10);
+   eina_benchmark_register(bench, "djb2-lookup", EINA_BENCHMARK(eina_bench_lookup_djb2), 10, 2000, 10);
+   eina_benchmark_register(bench, "djb2-lookup-inline", EINA_BENCHMARK(eina_bench_lookup_djb2_inline), 10, 2000, 10);
+   eina_benchmark_register(bench, "rbtree", EINA_BENCHMARK(eina_bench_lookup_rbtree), 10, 2000, 10);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_benchmark_register(bench, "ghash-lookup", EINA_BENCHMARK(eina_bench_lookup_ghash), 10, 8000, 50);
+   eina_benchmark_register(bench, "ghash-lookup", EINA_BENCHMARK(eina_bench_lookup_ghash), 10, 2000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_EVAS
-   eina_benchmark_register(bench, "evas-lookup", EINA_BENCHMARK(eina_bench_lookup_evas), 10, 8000, 50);
+   eina_benchmark_register(bench, "evas-lookup", EINA_BENCHMARK(eina_bench_lookup_evas), 10, 2000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_ECORE
-   eina_benchmark_register(bench, "ecore-lookup", EINA_BENCHMARK(eina_bench_lookup_ecore), 10, 8000, 50);
+   eina_benchmark_register(bench, "ecore-lookup", EINA_BENCHMARK(eina_bench_lookup_ecore), 10, 2000, 10);
 #endif
 }
