@@ -69,10 +69,11 @@
 extern "C" {
 #endif
    
-   typedef struct _Ecore_Con_Server Ecore_Con_Server; /**< A connection handle */
-   typedef struct _Ecore_Con_Client Ecore_Con_Client; /**< A connection handle */
-   typedef struct _Ecore_Con_Url    Ecore_Con_Url;
-   
+   typedef struct _Ecore_Con_Server  Ecore_Con_Server; /**< A connection handle */
+   typedef struct _Ecore_Con_Client  Ecore_Con_Client; /**< A connection handle */
+   typedef struct _Ecore_Con_Url     Ecore_Con_Url;
+   typedef struct _Ecore_Con_Netinfo Ecore_Con_Netinfo;
+
    typedef enum _Ecore_Con_Type
      {
 	ECORE_CON_LOCAL_USER,
