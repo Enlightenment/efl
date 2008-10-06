@@ -214,7 +214,7 @@ eina_bench_lookup_djb2_inline(int request)
 	length = eina_convert_itoa(i, elm->key) + 1;
 	elm->value = i;
 
-	eina_hash_direct_add_by_hash(hash, elm->key, length, eina_hash_superfast(elm->key, length), elm);
+	eina_hash_direct_add_by_hash(hash, elm->key, length, eina_hash_djb2(elm->key, length), elm);
      }
 
    srand(time(NULL));
@@ -227,7 +227,7 @@ eina_bench_lookup_djb2_inline(int request)
 
 	  length = eina_convert_itoa(rand() % request, tmp_key) + 1;
 
-	  elm = eina_hash_find_by_hash(hash, tmp_key, length, eina_hash_superfast(tmp_key, length));
+	  elm = eina_hash_find_by_hash(hash, tmp_key, length, eina_hash_djb2(tmp_key, length));
        }
 
    eina_hash_free(hash);
@@ -381,17 +381,17 @@ eina_bench_lookup_ecore(int request)
 
 void eina_bench_hash(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "superfast-lookup", EINA_BENCHMARK(eina_bench_lookup_superfast), 10, 2000, 10);
-   eina_benchmark_register(bench, "djb2-lookup", EINA_BENCHMARK(eina_bench_lookup_djb2), 10, 2000, 10);
-   eina_benchmark_register(bench, "djb2-lookup-inline", EINA_BENCHMARK(eina_bench_lookup_djb2_inline), 10, 2000, 10);
-   eina_benchmark_register(bench, "rbtree", EINA_BENCHMARK(eina_bench_lookup_rbtree), 10, 2000, 10);
+   eina_benchmark_register(bench, "superfast-lookup", EINA_BENCHMARK(eina_bench_lookup_superfast), 10, 3000, 10);
+   eina_benchmark_register(bench, "djb2-lookup", EINA_BENCHMARK(eina_bench_lookup_djb2), 10, 3000, 10);
+   eina_benchmark_register(bench, "djb2-lookup-inline", EINA_BENCHMARK(eina_bench_lookup_djb2_inline), 10, 3000, 10);
+   eina_benchmark_register(bench, "rbtree", EINA_BENCHMARK(eina_bench_lookup_rbtree), 10, 3000, 10);
 #ifdef EINA_BENCH_HAVE_GLIB
-   eina_benchmark_register(bench, "ghash-lookup", EINA_BENCHMARK(eina_bench_lookup_ghash), 10, 2000, 10);
+   eina_benchmark_register(bench, "ghash-lookup", EINA_BENCHMARK(eina_bench_lookup_ghash), 10, 3000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_EVAS
-   eina_benchmark_register(bench, "evas-lookup", EINA_BENCHMARK(eina_bench_lookup_evas), 10, 2000, 10);
+   eina_benchmark_register(bench, "evas-lookup", EINA_BENCHMARK(eina_bench_lookup_evas), 10, 3000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_ECORE
-   eina_benchmark_register(bench, "ecore-lookup", EINA_BENCHMARK(eina_bench_lookup_ecore), 10, 2000, 10);
+   eina_benchmark_register(bench, "ecore-lookup", EINA_BENCHMARK(eina_bench_lookup_ecore), 10, 3000, 10);
 #endif
 }
