@@ -1060,7 +1060,7 @@ em_audio_channel_mute_set(void *video,
    if (mute)
      g_object_set(G_OBJECT(volume), "volume", 0.0, NULL);
    else
-     g_object_set(G_OBJECT(volume), "volume", ev->volume * 10.0, NULL);
+     g_object_set(G_OBJECT(volume), "volume", ev->volume, NULL);
 
    gst_object_unref(volume);
 }
@@ -1091,8 +1091,7 @@ em_audio_channel_volume_set(void  *video,
    ev->volume = vol;
    volume = gst_bin_get_by_name(GST_BIN(ev->pipeline), "volume");
    if (!volume) return;
-   g_object_set(G_OBJECT(volume), "volume",
-		vol * 10.0, NULL);
+   g_object_set(G_OBJECT(volume), "volume", vol, NULL);
    gst_object_unref(volume);
 }
 
