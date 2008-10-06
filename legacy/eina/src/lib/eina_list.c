@@ -407,15 +407,24 @@ eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
 EAPI int
 eina_list_init(void)
 {
+   char *choice;
+
    if (!_eina_list_init_count)
      {
        eina_error_init();
        eina_magic_string_init();
        eina_mempool_init();
 
-       _eina_list_mp = eina_mempool_new("chained_mempool", "list", NULL,
+#ifdef EINA_DEFAULT_MEMPOOL
+       choice = "pass_through";
+#else
+       if (!(choice = getenv("EINA_MEMPOOL")))
+	 choice = "chained_mempool";
+#endif
+
+       _eina_list_mp = eina_mempool_new(choice, "list", NULL,
 					sizeof (Eina_List), 320);
-       _eina_list_accounting_mp = eina_mempool_new("chained_mempool", "list_accounting", NULL,
+       _eina_list_accounting_mp = eina_mempool_new(choice, "list_accounting", NULL,
 						   sizeof (Eina_List_Accounting), 80);
 
        eina_magic_string_set(EINA_MAGIC_ITERATOR,

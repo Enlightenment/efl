@@ -62,6 +62,27 @@ if test "x${enable_magic_debug}" = "xyes" ; then
 fi
 AC_SUBST(EINA_MAGIC_DEBUG)
 
+# Choose best memory pool
+AC_ARG_ENABLE([default-mempool],
+   [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer])],
+   [
+    if test "x${enableval}" = "xyes"; then
+       enable_default_mempool="yes"
+    else
+       enable_default_mempool="no"
+    fi
+   ],
+   [enable_default_mempool="no"]
+)
+AC_MSG_CHECKING([whether to use default mempool allocator])
+AC_MSG_RESULT([${enable_default_mempool}])
+
+EINA_DEFAULT_MEMPOOL=0
+if test "x${enable_default_mempool}" = "xyes" ; then
+   EINA_DEFAULT_MEMPOOL=1
+fi
+AC_SUBST(EINA_DEFAULT_MEMPOOL)
+
 # Ememoa memory pool
 
 AC_ARG_ENABLE([ememoa],
@@ -321,6 +342,8 @@ echo
 echo "  Thread Support.......: ${have_pthread}"
 echo
 echo "  Magic debug..........: ${enable_magic_debug}"
+echo
+echo "  Default mempool......: ${enable_default_mempool}"
 echo
 echo "  Memory pool:"
 echo "    Ememoa.............: ${enable_ememoa}"

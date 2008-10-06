@@ -24,4 +24,9 @@
 #define EINA_MAGIC_DEBUG
 #endif
 
+#undef EINA_DEFAULT_MEMPOOL
+#if @EINA_DEFAULT_MEMPOOL@
+#define EINA_DEFAULT_MEMPOOL
+#endif
+
 #endif /* EINA_CONFIG_H_ */
