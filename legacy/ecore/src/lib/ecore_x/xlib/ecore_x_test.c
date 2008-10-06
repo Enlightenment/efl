@@ -77,9 +77,9 @@ ecore_x_test_fake_key_press(const char *key)
      }
    if (keycode == 0)
      {
-	static int mod;
-	static KeySym *keysyms;
-	static int keycode_min, keycode_max, keycode_num;
+	static int mod = 0;
+	KeySym *keysyms;
+	int keycode_min, keycode_max, keycode_num;
 	int i;	
 
 	XDisplayKeycodes(_ecore_x_disp, &keycode_min, &keycode_max);
@@ -92,6 +92,7 @@ ecore_x_test_fake_key_press(const char *key)
 	keysyms[i] = keysym;
 	XChangeKeyboardMapping(_ecore_x_disp, keycode_min, keycode_num,
 			       keysyms, (keycode_max - keycode_min));
+	XFree(keysyms);
 	XSync(_ecore_x_disp, False);
 	keycode = keycode_max - mod - 1;
      }
