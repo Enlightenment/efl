@@ -1538,6 +1538,23 @@ edje_edit_state_gradient_spectra_set(
    const char* spectra     ///< The spectra name to assign
 );
 
+/**Get the angle of the gradient.*/
+EAPI int                   ///@return The angle of the gradient
+edje_edit_state_gradient_angle_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Set the angle of the gradient.*/
+EAPI void
+edje_edit_state_gradient_angle_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   int angle               ///< The angle to set
+);
+
 /**Get the gradien rel1 relative x value */
 EAPI double                ///@return The gradien rel1 relative x value
 edje_edit_state_gradient_rel1_relative_x_get(

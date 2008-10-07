@@ -3205,9 +3205,10 @@ st_collections_group_parts_part_description_fill_spread(void)
     @property
         angle
     @parameters
-        TODO
+        [angle]
     @effect
-        TODO
+        The angle of rotation of a GRADIENT part. It is invalid in any other
+        part type. The angle is espressed as an int, in the range 0 - 360.
     @endproperty
 */
 static void
@@ -4012,6 +4013,9 @@ st_collections_group_parts_part_description_text_elipsis(void)
         Alters the gradient's rendering algorithm between:
             @li linear (default)  
             @li radial
+            @li rectangular
+            @li angular
+            @li sinusoidal
     @endproperty
 */
 static void

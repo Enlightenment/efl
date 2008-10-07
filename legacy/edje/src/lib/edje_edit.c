@@ -3481,8 +3481,8 @@ edje_edit_state_gradient_use_fill_get(Evas_Object *obj, const char *part, const 
    if (!pd->gradient.type)
       return -1;
 
-   if (!strcmp(pd->gradient.type, "linear"))
-      return 0;
+   //~ if (!strcmp(pd->gradient.type, "linear"))
+      //~ return 0;
    return 1;
 }
 
@@ -3516,6 +3516,21 @@ edje_edit_state_gradient_spectra_set(Evas_Object *obj, const char *part, const c
    edje_object_calc_force(obj);
 
    return 1;
+}
+
+EAPI int
+edje_edit_state_gradient_angle_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0);
+   return pd->fill.angle;
+}
+
+EAPI void
+edje_edit_state_gradient_angle_set(Evas_Object *obj, const char *part, const char *state, int angle)
+{
+   GET_PD_OR_RETURN();
+   pd->fill.angle = angle;
+   edje_object_calc_force(obj);
 }
 
 EAPI double
@@ -4364,6 +4379,7 @@ edje_edit_script_get(Evas_Object *obj)
 #define I4 "            "
 #define I5 "               "
 #define I6 "                  "
+#define I7 "                     "
 
 static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP"};
 static char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
@@ -4528,6 +4544,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 {
    Evas_List *l, *ll;
    Edje_Real_Part *rp;
+   const char *str;
    
    GET_PD_OR_RETURN();
    
@@ -4575,55 +4592,135 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
               pd->color3.r, pd->color3.g, pd->color3.b, pd->color3.a);
    
    //Rel1
-   fprintf(f, I5"rel1 {\n");
-   if (pd->rel1.relative_x || pd->rel1.relative_y)
-     fprintf(f, I6"relative: %g %g;\n", pd->rel1.relative_x, pd->rel1.relative_y);
-   if (pd->rel1.offset_x || pd->rel1.offset_y)
-     fprintf(f, I6"offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
-   if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
-      fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
-   else
+   if (pd->rel1.relative_x || pd->rel1.relative_y || pd->rel1.offset_x ||
+       pd->rel1.offset_y || pd->rel1.id_x != -1 || pd->rel1.id_y != -1)
      {
-      if (pd->rel1.id_x != -1)
-        fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
-      if (pd->rel1.id_y != -1)
-       fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel1.id_y]->part->name);
+	fprintf(f, I5"rel1 {\n");
+	if (pd->rel1.relative_x || pd->rel1.relative_y)
+	  fprintf(f, I6"relative: %g %g;\n", pd->rel1.relative_x, pd->rel1.relative_y);
+	if (pd->rel1.offset_x || pd->rel1.offset_y)
+	  fprintf(f, I6"offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
+	if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
+	  fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
+	else
+	  {
+		if (pd->rel1.id_x != -1)
+		  fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
+		if (pd->rel1.id_y != -1)
+		  fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel1.id_y]->part->name);
+	  }
+	fprintf(f, I5"}\n");//rel1
      }
-   fprintf(f, I5"}\n");//rel1
    
    //Rel2
-   fprintf(f, I5"rel2 {\n");
-   if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0)
-     fprintf(f, I6"relative: %g %g;\n", pd->rel2.relative_x, pd->rel2.relative_y);
-   if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
-     fprintf(f, I6"offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
-   if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
-      fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
-   else
+   if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0 ||
+       pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1 ||
+       pd->rel2.id_x != -1 || pd->rel2.id_y != -1)
      {
-      if (pd->rel2.id_x != -1)
-        fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
-      if (pd->rel2.id_y != -1)
-       fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel2.id_y]->part->name);
+	fprintf(f, I5"rel2 {\n");
+	if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0)
+	  fprintf(f, I6"relative: %g %g;\n", pd->rel2.relative_x, pd->rel2.relative_y);
+	if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
+	  fprintf(f, I6"offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
+	if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
+	  fprintf(f, I6"to: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
+	else
+	  {
+		if (pd->rel2.id_x != -1)
+		  fprintf(f, I6"to_x: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
+		if (pd->rel2.id_y != -1)
+		  fprintf(f, I6"to_y: \"%s\";\n", ed->table_parts[pd->rel2.id_y]->part->name);
+	  }
+	fprintf(f, I5"}\n");//rel2
      }
-   fprintf(f, I5"}\n");//rel2
    
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
-   {
-      fprintf(f, I5"image {\n");
-      fprintf(f, I6"normal: \"%s\";\n", _edje_image_name_find(obj, pd->image.id));
+     {
+	fprintf(f, I5"image {\n");
+	fprintf(f, I6"normal: \"%s\";\n", _edje_image_name_find(obj, pd->image.id));
+
+	ll = edje_edit_state_tweens_list_get(obj, part, state);
+	for (l = ll; l; l = l->next)
+	  fprintf(f, I6"tween: \"%s\";\n", (char *)l->data);
+	edje_edit_string_list_free(ll);
       
-      ll = edje_edit_state_tweens_list_get(obj, part, state);
-      for (l = ll; l; l = l->next)
-           fprintf(f, I6"tween: \"%s\";\n", (char *)l->data);
-      edje_edit_string_list_free(ll);
+	if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
+	  fprintf(f, I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
+	//TODO Support middle
+	fprintf(f, I5"}\n");//image
+     }
+   
+   //Fill
+   if (rp->part->type == EDJE_PART_TYPE_IMAGE ||
+       rp->part->type == EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(f, I5"fill {\n");
+	if (!pd->fill.smooth)
+	  fprintf(f, I6"smooth: 0;\n");
+        //TODO Support spread
+        //TODO Support angle
+        //TODO Support type
+        
+	if (pd->fill.pos_rel_x || pd->fill.pos_rel_y ||
+            pd->fill.pos_abs_x || pd->fill.pos_abs_y)
+	  {
+		fprintf(f, I6"origin {\n");
+		if (pd->fill.pos_rel_x || pd->fill.pos_rel_y)
+		  fprintf(f, I7"relative: %g %g;\n", pd->fill.pos_rel_x, pd->fill.pos_rel_y);
+		if (pd->fill.pos_abs_x || pd->fill.pos_abs_y)
+		  fprintf(f, I7"offset: %d %d;\n", pd->fill.pos_abs_x, pd->fill.pos_abs_y);
+		fprintf(f, I6"}\n");
+          }
+
+	if (pd->fill.rel_x != 1.0 || pd->fill.rel_y != 1.0 ||
+            pd->fill.abs_x || pd->fill.abs_y)
+	  {
+		fprintf(f, I6"size {\n");
+		if (pd->fill.rel_x != 1.0 || pd->fill.rel_y != 1.0)
+		  fprintf(f, I7"relative: %g %g;\n", pd->fill.rel_x, pd->fill.rel_y);
+		if (pd->fill.abs_x || pd->fill.abs_y)
+		  fprintf(f, I7"offset: %d %d;\n", pd->fill.abs_x, pd->fill.abs_y);
+		fprintf(f, I6"}\n");
+          }
+        
+	fprintf(f, I5"}\n");
+     }
       
-      if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
-           fprintf(f, I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
-      //TODO Support middle
-      fprintf(f, I5"}\n");//image
-   }
+   //Text
+   if (rp->part->type == EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(f, I5"text {\n");
+	if (pd->text.text)
+	  fprintf(f, I6"text: \"%s\";\n", pd->text.text);
+	fprintf(f, I6"font: \"%s\";\n", pd->text.font);
+	fprintf(f, I6"size: %d;\n", pd->text.size);
+	if (pd->text.text_class)
+	  fprintf(f, I6"text_class: \"%s\";\n", pd->text.text_class);
+        //TODO Support fit
+        //TODO Support min & max
+        if (pd->text.align.x != 0.5 || pd->text.align.y != 0.5)
+	  fprintf(f, I6"align: %g %g;\n", pd->text.align.x, pd->text.align.y);
+        //TODO Support source
+        //TODO Support text_source
+        //TODO Support elipsis
+	fprintf(f, I5"}\n");
+     }
+
+   //Gradient
+   if (rp->part->type == EDJE_PART_TYPE_GRADIENT)
+     {
+	fprintf(f, I5"gradient {\n");
+	fprintf(f, I6"type: \"%s\";\n", pd->gradient.type);
+	str = edje_edit_state_gradient_spectra_get(obj, part, state);
+	if (str)
+	  {
+		fprintf(f, I6"spectrum: \"%s\";\n", str);
+		edje_edit_string_free(str);
+	  }
+        //TODO rel1 and 2 seems unused
+	fprintf(f, I5"}\n");
+     }
    
    //...and so on...
    
