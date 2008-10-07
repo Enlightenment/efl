@@ -111,7 +111,7 @@ EAPI void
 elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->lay, file, group);
+   edje_object_file_set(wd->lay, file, group);
    _sizing_eval(obj);
 }
 
@@ -144,4 +144,11 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 	wd->subs = evas_list_append(wd->subs, si);
 	_sizing_eval(obj);
      }
+}
+
+EAPI Evas_Object *
+elm_layout_edje_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->lay;
 }

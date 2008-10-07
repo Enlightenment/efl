@@ -164,10 +164,18 @@ extern "C" {
     * "changed" - the user changed the time
     */
 
+   EAPI Evas_Object *elm_layout_add(Evas_Object *parent);
+   EAPI void         elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+   EAPI Evas_Object *elm_layout_edje_get(Evas_Object *obj);
+   /* smart callbacks elm_win objects will call:
+    */
+   
 // FIXME: fixes to do
 // * current sizing inefficient
 // * scroller could do with page up/down/left/right buttons and and idea of
 //   a page size
+// * tab widget focusing (not useful for touchscreen tho...)
 //    
 // FIXME: immediate hitlist for widgets:
 // HOVER: select a widget (any) and attach a hover to it - the over will hover

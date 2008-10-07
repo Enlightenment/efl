@@ -1,0 +1,61 @@
+collections {
+   group { name: "layout";
+      images {
+	 image: "over.png" COMP;
+	 image: "under.png" COMP;
+      }
+      parts {
+	 part { name: "under";
+	    description { state: "default" 0.0;
+	       align: 0.5 0.0;
+	       aspect: 1.486068111 1.486068111;
+	       aspect_preference: HORIZONTAL;
+	       image.normal: "under.png";
+	    }
+	 }
+	 part { name: "element1";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+	       rel1 {
+		  relative: 0.2 0.2;
+	       }
+	       rel2 {
+		  relative: 0.4 0.3;
+	       }
+	    }
+	 }
+	 part { name: "element2";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+	       rel1 {
+		  relative: 0.6 0.3;
+	       }
+	       rel2 {
+		  relative: 0.9 0.5;
+	       }
+	    }
+	 }
+	 part { name: "element3";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+	       rel1 {
+		  relative: 0.1 0.7;
+	       }
+	       rel2 {
+		  relative: 0.9 0.9;
+	       }
+	    }
+	 }
+	 part { name: "over";
+	    description { state: "default" 0.0;
+	       align: 0.0 1.0;
+	       aspect: 2.238095238 2.238095238;
+	       max: 329 147;
+	       aspect_preference: HORIZONTAL;
+	       image.normal: "over.png";
+	    }
+	 }
+      }
+   }
+}
+	 
