@@ -56,6 +56,8 @@ elm_init(int argc, char **argv)
 EAPI void
 elm_shutdown(void)
 {
+   _elm_win_shutdown();
+   
    free(_elm_config);
    free(_elm_appname);
    ecore_evas_shutdown();

@@ -1,137 +1,576 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static void _elm_widget_geom_set(Elm_Widget *wid, int x, int y, int w, int h);
-static void _elm_widget_show(Elm_Widget *wid);
-static void _elm_widget_hide(Elm_Widget *wid);
-static void _elm_widget_size_alloc(Elm_Widget *wid, int w, int h);
-static void _elm_widget_size_req(Elm_Widget *wid, Elm_Widget *child, int w, int h);
-static void _elm_widget_del(Elm_Widget *wid);
-static void _elm_widget_above(Elm_Widget *wid, Elm_Widget *above);
-static void _elm_widget_below(Elm_Widget *wid, Elm_Widget *below);
-    
-Elm_Widget_Class _elm_widget_class =
+#define SMART_NAME "e_widget"
+#define API_ENTRY Smart_Data *sd; sd = evas_object_smart_data_get(obj); if ((!obj) || (!sd) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
+#define INTERNAL_ENTRY Smart_Data *sd; sd = evas_object_smart_data_get(obj); if (!sd) return;
+typedef struct _Smart_Data Smart_Data;
+
+struct _Smart_Data
+{ 
+   Evas_Object   *parent_obj;
+   Evas_Coord     x, y, w, h;
+   Evas_Coord     minw, minh;
+   Evas_List     *subobjs;
+   Evas_Object   *resize_obj;
+   void         (*del_func) (Evas_Object *obj);
+   void         (*focus_func) (Evas_Object *obj);
+   void         (*activate_func) (Evas_Object *obj);
+   void         (*disable_func) (Evas_Object *obj);
+   void         (*on_focus_func) (void *data, Evas_Object *obj);
+   void          *on_focus_data;
+   void         (*on_change_func) (void *data, Evas_Object *obj);
+   void          *on_change_data;
+   void          *data;
+   unsigned char  can_focus : 1;
+   unsigned char  child_can_focus : 1;
+   unsigned char  focused : 1;
+   unsigned char  disabled : 1;
+}; 
+
+/* local subsystem functions */
+static void _smart_reconfigure(Smart_Data *sd);
+static void _smart_add(Evas_Object *obj);
+static void _smart_del(Evas_Object *obj);
+static void _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static void _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+static void _smart_show(Evas_Object *obj);
+static void _smart_hide(Evas_Object *obj);
+static void _smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
+static void _smart_clip_set(Evas_Object *obj, Evas_Object * clip);
+static void _smart_clip_unset(Evas_Object *obj);
+static void _smart_init(void);
+
+/* local subsystem globals */
+static Evas_Smart *_e_smart = NULL;
+
+/* externally accessible functions */
+EAPI Evas_Object *
+elm_widget_add(Evas *evas)
 {
-   &_elm_obj_class, /* parent */
-     ELM_OBJ_WIDGET,
-     _elm_widget_geom_set,
-     _elm_widget_show,
-     _elm_widget_hide,
-     _elm_widget_size_alloc,
-     _elm_widget_size_req,
-     _elm_widget_above,
-     _elm_widget_below
-};
-
-static void
-_elm_widget_geom_set(Elm_Widget *wid, int x, int y, int w, int h)
-{
-   if ((wid->x != x) || (wid->y != y))
-     {
-	wid->x = x;
-	wid->y = y; 
-	evas_object_move(wid->base, wid->x, wid->y);
-     }
-   if ((wid->w != w) || (wid->h != h))
-     {
-	wid->w = w;
-	wid->h = h;
-	evas_object_resize(wid->base, wid->w, wid->h);
-	_elm_obj_nest_push();
-	_elm_cb_call(ELM_OBJ(wid), ELM_CB_RESIZE, NULL);
-	_elm_obj_nest_pop();
-     }
-}
-
-static void
-_elm_widget_show(Elm_Widget *wid)
-{
-   evas_object_show(wid->base);
-}
-
-static void
-_elm_widget_hide(Elm_Widget *wid)
-{
-   evas_object_hide(wid->base);
-}
-
-static void
-_elm_widget_size_alloc(Elm_Widget *wid, int w, int h)
-{
-   // FIXME: widget gets to implement min/max etc. size here (indicating
-   // given the input w, h - what size it is willing to accept, then the
-   // parent checks and geometry_set()'s the child
-   wid->req.w = w;
-   wid->req.h = h;
-}
-
-static void
-_elm_widget_size_req(Elm_Widget *wid, Elm_Widget *child, int w, int h)
-{
-   // FIXME: a child will ask its parent for a requested size if something
-   // with its sizing setup. this is the call in the parent that will be
-   // called
-}
-
-static void
-_elm_widget_above(Elm_Widget *wid, Elm_Widget *above)
-{
-   if (above) evas_object_stack_above(wid->base, above->base);
-   else evas_object_raise(wid->base);
-}
-
-static void
-_elm_widget_below(Elm_Widget *wid, Elm_Widget *below)
-{
-   if (below) evas_object_stack_below(wid->base, below->base);
-   else evas_object_lower(wid->base);
-}
-
-static void
-_elm_widget_del(Elm_Widget *wid)
-{    
-   if (_elm_obj_del_defer(ELM_OBJ(wid))) return;
-   
-   evas_object_del(wid->base);
-   
-   ((Elm_Obj_Class *)(((Elm_Widget_Class *)(wid->clas))->parent))->del(ELM_OBJ(wid));
-}
-
-void
-_elm_widget_init(Elm_Widget *wid)
-{
-   _elm_obj_init(ELM_OBJ(wid));
-   wid->clas = &_elm_widget_class;
-   wid->type = ELM_OBJ_WIDGET;
-
-   wid->del = _elm_widget_del;
-   
-   wid->geom_set = _elm_widget_geom_set;
-   wid->show = _elm_widget_show;
-   wid->hide = _elm_widget_hide;
-   wid->size_alloc = _elm_widget_size_alloc;
-   wid->size_req = _elm_widget_size_req;
-   wid->above = _elm_widget_above;
-   wid->below = _elm_widget_below;
-
-   wid->align_x = 0.5;
-   wid->align_y = 0.5;
-   wid->expand_x = 1;
-   wid->expand_y = 1;
-   wid->fill_x = 1;
-   wid->fill_y = 1;
-}
-
-void
-_elm_widget_post_init(Elm_Widget *wid)
-{
-   if (wid->base) evas_object_data_set(wid->base, "__Elm", wid);
+   _smart_init();
+   return evas_object_smart_add(evas, _e_smart);
 }
 
 EAPI void
-elm_widget_sizing_update(Elm_Widget *wid)
+elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
-   wid->size_alloc(wid, 0, 0);
-   if (!wid->parent) return;
-   ((Elm_Widget *)(wid->parent))->size_req(wid->parent, wid, wid->w, wid->h);
+   API_ENTRY return;
+   sd->del_func = func;
+}
+
+EAPI void
+elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
+{
+   API_ENTRY return;
+   sd->focus_func = func;
+}
+
+EAPI void
+elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
+{
+   API_ENTRY return;
+   sd->activate_func = func;
+}
+
+EAPI void
+elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
+{
+   API_ENTRY return;
+   sd->disable_func = func;
+}
+
+EAPI void
+elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
+{
+   API_ENTRY return;
+   sd->on_focus_func = func;
+   sd->on_focus_data = data;
+}
+
+EAPI void
+elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
+{
+   API_ENTRY return;
+   sd->on_change_func = func;
+   sd->on_change_data = data;
+}
+
+EAPI void
+elm_widget_data_set(Evas_Object *obj, void *data)
+{
+   API_ENTRY return;
+   sd->data = data;
+}
+
+EAPI void *
+elm_widget_data_get(Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+   return sd->data;
+}
+
+EAPI void
+elm_widget_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
+{
+   API_ENTRY return;
+   if (minw >= 0)
+     sd->minw = minw;
+   if (minh >= 0)
+     sd->minh = minh;
+}
+
+EAPI void
+elm_widget_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
+{
+   API_ENTRY return;
+   if (minw) *minw = sd->minw;
+   if (minh) *minh = sd->minh;
+}
+
+EAPI void
+elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
+{
+   API_ENTRY return;
+   sd->subobjs = evas_list_append(sd->subobjs, sobj);
+   if (!sd->child_can_focus)
+     {
+	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 1;
+     }
+   if (!strcmp(evas_object_type_get(sobj), SMART_NAME))
+     {
+	sd = evas_object_smart_data_get(sobj);
+	if (sd)
+	  {
+	     if (sd->parent_obj) elm_widget_sub_object_del(sd->parent_obj, sobj);
+	     sd->parent_obj = obj;
+	  }
+     }
+}
+
+EAPI void
+elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
+{
+   API_ENTRY return;
+   sd->subobjs = evas_list_remove(sd->subobjs, sobj);
+   if (!sd->child_can_focus)
+     {
+	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 0;
+     }
+}
+
+EAPI void
+elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
+{
+   API_ENTRY return;
+   if (sd->resize_obj) evas_object_smart_member_del(sd->resize_obj);
+   sd->resize_obj = sobj;
+   evas_object_smart_member_add(sobj, obj);
+   _smart_reconfigure(sd);
+}
+
+EAPI void
+elm_widget_can_focus_set(Evas_Object *obj, int can_focus)
+{
+   API_ENTRY return;
+   sd->can_focus = can_focus;
+}
+
+EAPI int
+elm_widget_can_focus_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   if (sd->can_focus) return 1;
+   if (sd->child_can_focus) return 1;
+   return 0;
+}
+
+EAPI int
+elm_widget_focus_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   return sd->focused;
+}
+
+EAPI Evas_Object *
+elm_widget_focused_object_get(Evas_Object *obj)
+{
+   Evas_List *l;
+   API_ENTRY return NULL;
+   if (!sd->focused) return NULL;
+   for (l = sd->subobjs; l; l = l->next)
+     {  
+	Evas_Object *fobj;
+	
+	fobj = elm_widget_focused_object_get(l->data);
+	if (fobj) return fobj;
+     }
+   return obj;
+}
+
+EAPI int
+elm_widget_focus_jump(Evas_Object *obj, int forward)
+{
+   API_ENTRY return 0;
+   if (!elm_widget_can_focus_get(obj)) return 0;
+       
+   /* if it has a focus func its an end-point widget like a button */
+   if (sd->focus_func)
+     {
+	if (!sd->focused) sd->focused = 1;
+	else sd->focused = 0;
+	sd->focus_func(obj);
+	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
+	return sd->focused;
+     }
+   /* its some container */
+   else
+     {
+	Evas_List *l;
+	int focus_next;
+	
+	focus_next = 0;
+	if (!sd->focused)
+	  {
+	     elm_widget_focus_set(obj, forward);
+	     sd->focused = 1;
+	     if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
+	     return 1;
+	  }
+	else
+	  {
+	     if (forward)
+	       {
+		  for (l = sd->subobjs; l; l = l->next)
+		    {
+		       if (elm_widget_can_focus_get(l->data))
+			 {
+			    if ((focus_next) &&
+				(!elm_widget_disabled_get(l->data)))
+			      {
+				 /* the previous focused item was unfocused - so focus
+				  * the next one (that can be focused) */
+				 if (elm_widget_focus_jump(l->data, forward)) return 1;
+				 else break;
+			      }
+			    else
+			      {
+				 if (elm_widget_focus_get(l->data))
+				   {
+				      /* jump to the next focused item or focus this item */
+				      if (elm_widget_focus_jump(l->data, forward)) return 1;
+				      /* it returned 0 - it got to the last item and is past it */
+				      focus_next = 1;
+				   }
+			      }
+			 }
+		    }
+	       }
+	     else
+	       {
+		  for (l = evas_list_last(sd->subobjs); l; l = l->prev)
+		    {
+		       if (elm_widget_can_focus_get(l->data))
+			 {
+			    if ((focus_next) &&
+				(!elm_widget_disabled_get(l->data)))
+			      {
+				 /* the previous focused item was unfocused - so focus
+				  * the next one (that can be focused) */
+				 if (elm_widget_focus_jump(l->data, forward)) return 1;
+				 else break;
+			      }
+			    else
+			      {
+				 if (elm_widget_focus_get(l->data))
+				   {
+				      /* jump to the next focused item or focus this item */
+				      if (elm_widget_focus_jump(l->data, forward)) return 1;
+				      /* it returned 0 - it got to the last item and is past it */
+				      focus_next = 1;
+				   }
+			      }
+			 }
+		    }
+	       }
+	  }
+     }
+   /* no next item can be focused */
+   sd->focused = 0;
+   return 0;
+}
+
+EAPI void
+elm_widget_focus_set(Evas_Object *obj, int first)
+{
+   API_ENTRY return;
+   if (!sd->focused)
+     {
+	sd->focused = 1;
+	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
+     }
+   if (sd->focus_func)
+     {
+	sd->focus_func(obj);
+	return;
+     }
+   else
+     {
+	Evas_List *l;
+	     
+	if (first)
+	  {
+	     for (l = sd->subobjs; l; l = l->next)
+	       {
+		  if ((elm_widget_can_focus_get(l->data)) &&
+		      (!elm_widget_disabled_get(l->data)))
+		    {
+		       elm_widget_focus_set(l->data, first);
+		       break;
+		    }
+	       }
+	  }
+	else
+	  {
+	     for (l = evas_list_last(sd->subobjs); l; l = l->prev)
+	       {
+		  if ((elm_widget_can_focus_get(l->data)) &&
+		      (!elm_widget_disabled_get(l->data)))
+		    {
+		       elm_widget_focus_set(l->data, first);
+		       break;
+		    }
+	       }
+	  }
+     }
+}
+
+EAPI Evas_Object *
+elm_widget_parent_get(Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+   return sd->parent_obj;
+}
+
+EAPI void
+elm_widget_focused_object_clear(Evas_Object *obj)
+{
+   Evas_List *l;
+   API_ENTRY return;
+   if (!sd->focused) return;
+   sd->focused = 0;
+   for (l = sd->subobjs; l; l = l->next)
+     {  
+	if (elm_widget_focus_get(l->data))
+	  {
+	     elm_widget_focused_object_clear(l->data);
+	     break;
+	  }
+     }
+   if (sd->focus_func) sd->focus_func(obj);
+}
+
+EAPI void
+elm_widget_focus_steal(Evas_Object *obj)
+{
+   Evas_Object *parent, *o;
+   API_ENTRY return;
+   if (sd->focused) return;
+   if (sd->disabled) return;
+   parent = obj;
+   for (;;)
+     {
+	o = elm_widget_parent_get(parent);
+	if (!o) break;
+	parent = o;
+     }
+   elm_widget_focused_object_clear(parent);
+   parent = obj;
+   for (;;)
+     {
+	sd = evas_object_smart_data_get(parent);
+	sd->focused = 1;
+	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, parent);
+	o = elm_widget_parent_get(parent);
+	if (!o) break;
+	parent = o;
+     }
+   sd = evas_object_smart_data_get(obj);
+   if (sd->focus_func) sd->focus_func(obj);
+   return;
+}
+
+EAPI void
+elm_widget_activate(Evas_Object *obj)
+{
+   API_ENTRY return;
+   elm_widget_change(obj);
+   if (sd->activate_func) sd->activate_func(obj);
+}
+
+EAPI void
+elm_widget_change(Evas_Object *obj)
+{
+   API_ENTRY return;
+   elm_widget_change(elm_widget_parent_get(obj));
+   if (sd->on_change_func) sd->on_change_func(sd->on_change_data, obj);
+}
+
+EAPI void
+elm_widget_disabled_set(Evas_Object *obj, int disabled)
+{
+   API_ENTRY return;
+   if (((sd->disabled) && (disabled)) ||
+       ((!sd->disabled) && (!disabled))) return;
+   sd->disabled = disabled;
+   if (sd->focused)
+     {
+	Evas_Object *o, *parent;
+
+	parent = obj;
+        for (;;)
+          {
+	     o = elm_widget_parent_get(parent);
+	     if (!o) break;
+	     parent = o;
+	  }
+	elm_widget_focus_jump(parent, 1);
+     }
+   if (sd->disable_func) sd->disable_func(obj);
+}
+
+EAPI int
+elm_widget_disabled_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   return sd->disabled;
+}
+
+EAPI void
+elm_widget_min_size_resize(Evas_Object *obj)
+{
+   API_ENTRY return;
+   evas_object_resize(obj, sd->minw, sd->minh);
+}
+
+/* local subsystem functions */
+static void
+_smart_reconfigure(Smart_Data *sd)
+{
+   if (sd->resize_obj)
+     {
+	evas_object_move(sd->resize_obj, sd->x, sd->y);
+	evas_object_resize(sd->resize_obj, sd->w, sd->h);
+    }
+}
+
+static void
+_smart_add(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   sd = calloc(1, sizeof(Smart_Data));
+   if (!sd) return;
+   sd->x = 0;
+   sd->y = 0;
+   sd->w = 0;
+   sd->h = 0;
+   sd->can_focus = 1;
+   evas_object_smart_data_set(obj, sd);
+}
+
+static void
+_smart_del(Evas_Object *obj)
+{
+   Evas_Object *sobj;
+   
+   INTERNAL_ENTRY;
+   if (sd->del_func) sd->del_func(obj);
+   while (sd->subobjs)
+     {
+	sobj = sd->subobjs->data;
+	sd->subobjs = evas_list_remove_list(sd->subobjs, sd->subobjs);
+	evas_object_del(sobj);
+     }
+   free(sd);
+}
+
+static void
+_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   INTERNAL_ENTRY;
+   sd->x = x;
+   sd->y = y;
+   _smart_reconfigure(sd);
+}
+
+static void
+_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   INTERNAL_ENTRY;
+   sd->w = w;
+   sd->h = h;
+   _smart_reconfigure(sd);
+}
+
+static void
+_smart_show(Evas_Object *obj)
+{
+   INTERNAL_ENTRY;
+   evas_object_show(sd->resize_obj);
+}
+
+static void
+_smart_hide(Evas_Object *obj)
+{
+   INTERNAL_ENTRY;
+   evas_object_hide(sd->resize_obj);
+}
+
+static void
+_smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
+{
+   INTERNAL_ENTRY;
+   evas_object_color_set(sd->resize_obj, r, g, b, a);
+}
+
+static void
+_smart_clip_set(Evas_Object *obj, Evas_Object *clip)
+{
+   INTERNAL_ENTRY;
+   evas_object_clip_set(sd->resize_obj, clip);
+}
+
+static void
+_smart_clip_unset(Evas_Object *obj)
+{
+   INTERNAL_ENTRY;
+   evas_object_clip_unset(sd->resize_obj);
+}  
+
+/* never need to touch this */
+
+static void
+_smart_init(void)
+{
+   if (_e_smart) return;
+     {
+	static const Evas_Smart_Class sc =
+	  {
+	     SMART_NAME,
+	       EVAS_SMART_CLASS_VERSION,
+	       _smart_add,
+	       _smart_del, 
+	       _smart_move,
+	       _smart_resize,
+	       _smart_show,
+	       _smart_hide,
+	       _smart_color_set,
+	       _smart_clip_set,
+	       _smart_clip_unset,
+	       NULL,
+	       NULL
+	  };
+        _e_smart = evas_smart_class_new(&sc);
+     }
 }

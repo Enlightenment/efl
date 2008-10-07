@@ -1,975 +1,589 @@
 #include <Elementary.h>
 
-/* This is a test app (that is also functional) to test the api and serve
- * as an example
- */
+// FIXME: add more explicit tests for:
+// labels
+// frames
+// scroller
+
+static void my_win_del(void *data, Evas_Object *obj, void *event_info);
+static void my_bt_1(void *data, Evas_Object *obj, void *event_info);
+static void my_win_main(void);
 
 static void
-on_win_resize(void *data, Elm_Win *win, Elm_Cb_Type type, void *info)
+my_win_del(void *data, Evas_Object *obj, void *event_info)
 {
-   /* window is resized */
-   printf("resize to: %ix%i\n", win->w, win->h);
+   /* called when my_win_main is requested to be deleted */
+   elm_exit(); /* exit the program's main loop that runs in elm_run() */
 }
 
 static void
-on_win_del_req(void *data, Elm_Win *win, Elm_Cb_Type type, void *info)
+my_bt_1(void *data, Evas_Object *obj, void *event_info)
 {
-   /* because autodel is on - after this callback the window will be deleted */
-   /* but to be explicit - exit the app when window is closed */
-   elm_exit();
-}
-
-static void
-win_bg_simple(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-
-   win = elm_win_new(); /* create a window */
-   win->name_set(win, "win_simple"); /* set the window name - used by window 
-				      * manager. make it uniqie for windows
-				      * with in this application */
-   win->title_set(win, "Simple Window with default Bg"); /* set the title */
-   win->autodel = 0; /* dont auto delete the window if someone closes it.
-		      * this means the del+req handler has to delete it. by
-		      * default it is on */
-   /* add a callback that is called when the user tries to close the window */
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   /* add a callback that gets called when the window is resized */
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   /* our window needs a baground, so ask for one - it will be set with a
-    * default bg */
-   bg = elm_bg_new(win);
-   bg->show(bg); /* show the bg */
+   Evas_Object *win, *bg;
    
-   win->size_req(win, NULL, 240, 320); /* request that the window is 240x240 
-					* no min/max size enforced */
-   win->show(win); /* show the window */
+   win = elm_win_add(NULL, "bg-plain", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Bg Plain");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   /* allow bg to expand in x & y */
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+   
+   /* set size hints. a minimum size for the bg. this should propagate back
+    * to the window thus limiting its size based off the bg as the bg is one
+    * of the window's resize objects. */
+   evas_object_size_hint_min_set(bg, 160, 160);
+   /* and set a maximum size. not needed very often. normally used together
+    * with evas_object_size_hint_min_set() at the same size to make a
+    * window not resizable */
+   evas_object_size_hint_max_set(bg, 640, 640);
+   /* and now just resize the window to a size you want. normally widgets
+    * will determine the initial size though */
+   evas_object_resize(win, 320, 320);
+   /* and show the window */
+   evas_object_show(win);
 }
 
 static void
-win_bg_image(void)
+my_bt_2(void *data, Evas_Object *obj, void *event_info)
 {
-   Elm_Win *win;
-   Elm_Bg *bg;
+   Evas_Object *win, *bg;
    char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "bg-image", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Bg Image");
+   elm_win_autodel_set(win, 1);
 
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with and image Bg");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   /* this is a test - shows how to have your own custom wallpaper in
-    * your app - don't use this unless you have a very good reason! there
-    * is a default and all apps look nicer sharing the default, but if
-    * you insist... */
+   bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
-   bg->file_set(bg, buf, NULL); /* set the bg - the NULL is for special
-				 * files that contain multiple images
-				 * inside 1 file. not normally used but
-				 * might be if you have archive files with
-				 * multiple images in them */
-   bg->show(bg);
-
-   win->size_req(win, NULL, 240, 240);
-   win->show(win);
+   elm_bg_file_set(bg, buf, NULL);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+   
+   evas_object_size_hint_min_set(bg, 160, 160);
+   evas_object_size_hint_max_set(bg, 640, 640);
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
 }
 
 static void
-win_scrollable_label(void)
+my_bt_3(void *data, Evas_Object *obj, void *event_info)
 {
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Scroller *scroller;
-   Elm_Label *label;
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with scroller and label inside");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->show(bg);
-   
-   scroller = elm_scroller_new(win);
-   
-   label = elm_label_new(win);
-   label->text_set(label, 
-		   "Hello world<br>"
-		   "<br>"
-		   "I am a label. I come here to temonstrate how to put<br>"
-		   "text into a label, with newlines, even markup to test<br>"
-		   "things like <b>bold text</b> where markup can be custom<br>"
-		   "and extensible, defined by the theme's textbloxk style<br>"
-		   "for the label.<br>"
-		   "<br>"
-		   "Note that the markup is html-like and things like newline<br>"
-		   "chars and tab chars like stdout text are not valid text<br>"
-		   "markup mechanisms. Use markup tags instead.<br>"
-		   "<br>"
-		   "Now we shall borrow some text from another test program<br>"
-		   "(Expedite) to put some more tests in here<br>"
-		   "<br>"
-		   "<style=outline color=#fff outline_color=#000>Styled</> "
-		   "<style=shadow shadow_color=#fff8>text</> "
-		   "<style=soft_shadow shadow_color=#0002>should</> "
-		   "<style=glow color=#fff glow2_color=#fe87 glow_color=#f214 >go here</> "
-		   "<style=far_shadow shadow_color=#0005>as it is</> "
-		   "<style=outline_shadow color=#fff outline_color=#8228 shadow_color=#005>within</> "
-		   "<style=outline_soft_shadow color=#fff outline_color=#8228 shadow_color=#0002>right tags</> "
-		   "<style=far_soft_shadow color=#fff shadow_color=#0002>to make it align to the</> "
-		   "<underline=on underline_color=#00f>right hand</> "
-		   "<backing=on backing_color=#fff8>side </><backing_color=#ff08>of</><backing_color=#0f08> </>"
-		   "<strikethrough=on strikethrough_color=#f0f8>the textblock</>."
-		   "<br>"
-		   "<underline=double underline_color=#f00 underline2_color=#00f>now we need</> "
-		   "to test some <color=#f00 font_size=8>C</><color=#0f0 font_size=10>O</>"
-		   "<color=#00f font_size=12>L</><color=#fff font_size=14>O</>"
-		   "<color=#ff0 font_size=16>R</><color=#0ff font_size=18> Bla Rai</>"
-		   "<color=#f0f font_size=20> Stuff</>."
-		   "<br>"
-		   "<style=outline color=#fff outline_color=#000>Round about the cauldron go;</> "
-		   "In the poison'd entrails throw.<br>"
-		   "<style=shadow shadow_color=#fff8>Toad, that under cold stone</> "
-		   "Days and nights has thirty-one<br>"
-		   "<style=soft_shadow shadow_color=#0002>Swelter'd venom sleeping got,</> "
-		   "<style=glow color=#fff glow2_color=#fe87 glow_color=#f214 >Boil thou first i' the charmed pot.</><br>"
-		   "Double, double toil and trouble; "
-		   "Fire burn, and cauldron bubble.<br>"
-		   "<style=far_shadow shadow_color=#0005>Fillet of a fenny snake,</> "
-		   "In the cauldron boil and bake;<br>"
-		   "<style=outline_shadow color=#fff outline_color=#8228 shadow_color=#005>Eye of newt and toe of frog,</> "
-		   "<underline=on underline_color=#00f>Wool of bat and tongue of dog,</><br>"
-		   "<backing=on backing_color=#fff8>Adder's fork and blind-worm's sting,</> "
-		   "<underline=double underline_color=#f00 underline2_color=#00f>Lizard's leg and owlet's wing,</><br>"
-		   "<color=#808 font_size=20>For a charm of powerful trouble, "
-		   "Like a hell-broth boil and bubble.<br>"
-		   "Double, double toil and trouble;</> "
-		   "Fire burn and cauldron bubble.<br>"
-		   "Scale of dragon, tooth of wolf, "
-		   "Witches' mummy, maw and gulf<br>"
-		   "Of the ravin'd salt-sea shark, "
-		   "Root of hemlock digg'd i' the dark,<br>"
-		   "Liver of blaspheming Jew, "
-		   "Gall of goat, and slips of yew<br>"
-		   "Silver'd in the moon's eclipse, "
-		   "Nose of Turk and Tartar's lips,<br>"
-		   "Finger of birth-strangled babe "
-		   "Ditch-deliver'd by a drab,<br>"
-		   "Make the gruel thick and slab: "
-		   "Add thereto a tiger's chaudron,<br>"
-		   "For the ingredients of our cauldron. "
-		   "Double, double toil and trouble;<br>"
-		   "Fire burn and cauldron bubble. "
-		   "Cool it with a baboon's blood,<br>"
-		   "Then the charm is firm and good.<br>"
-		   "<br>"
-		   "Heizölrückstoßabdämpfung fløde pingüino kilómetros cœur déçu l'âme<br>"
-		   "plutôt naïve Louÿs rêva crapaüter Íosa Úrmhac Óighe pór Éava Ádhaim<br>"
-		   );
-   scroller->child_add(scroller, label);
-   label->show(label);
-   scroller->show(scroller);
-
-   win->size_req(win, NULL, 240, 480);
-   win->show(win);
-}
-
-static void
-win_label_determines_min_size(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Label *label;
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with label setting minimum size");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->expand_x = 0; /* allows the window to grow in the y axis because */
-   bg->expand_y = 1; /* its only child can expand in y */
-   bg->show(bg);
-   
-   label = elm_label_new(win);
-   label->text_set(label, 
-		   "Hello world<br>"
-		   "<br>"
-		   "I am a label. I come here to temonstrate how to put<br>"
-		   "text into a label, with newlines, even markup to test<br>"
-		   "things like <b>bold text</b> where markup can be custom<br>"
-		   "and extensible, defined by the theme's textbloxk style<br>"
-		   "for the label.<br>"
-		   "<br>"
-		   "Note that the markup is html-like and things like newline<br>"
-		   "chars and tab chars like stdout text are not valid text<br>"
-		   "markup mechanisms. Use markup tags instead.<br>"
-		   );
-   label->show(label);
-   label->expand_x = 0; /* allows the window to grow in the y axis because */
-   label->expand_y = 1; /* its only child can expand in y */
-   /* why do i change expand on both bg and label? both are children of the
-    * window widget and thus both affect the window sizing. if any expands
-    * in an axis then window expanding is allowed always */
-   elm_widget_sizing_update(label); /* make sure that the lable knows about its
-				     * sizing changes like expand above */
-   win->show(win);
-}
-
-static void
-win_box_vert_of_labels(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Box *box;
-   Elm_Label *label;
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with box + labels setting minimum size");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->expand_x = 1;
-   bg->expand_y = 1;
-   bg->show(bg);
-   
-   box = elm_box_new(win);
-   box->expand_x = 1;
-   box->expand_y = 1;
-   
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 0/0, Fill X/Y 0/0, Align: 0.5 0.5");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 0.5;
-   label->align_y = 0.5;
-   label->expand_x = 0;
-   label->expand_y = 0;
-   label->fill_x = 0;
-   label->fill_y = 0;
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 1/1, Fill X/Y 0/0, Align: 0.5 0.5");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 0.5;
-   label->align_y = 0.5;
-   label->expand_x = 1;
-   label->expand_y = 1;
-   label->fill_x = 0;
-   label->fill_y = 0;
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 1/1, Fill X/Y 1/1, Align: 0.5 0.5");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 0.5;
-   label->align_y = 0.5;
-   label->expand_x = 1;
-   label->expand_y = 1;
-   label->fill_x = 1;
-   label->fill_y = 1;
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 0/0, Fill X/Y 1/1, Align: 0.5 0.5");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 0.5;
-   label->align_y = 0.5;
-   label->expand_x = 0;
-   label->expand_y = 0;
-   label->fill_x = 1;
-   label->fill_y = 1;
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 0/0, Fill X/Y 1/1, Align: 0.0 0.5");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 0.0;
-   label->align_y = 0.5;
-   label->expand_x = 0;
-   label->expand_y = 0;
-   label->fill_x = 1;
-   label->fill_y = 1;
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 0/0, Fill X/Y 1/1, Align: 1.0 0.5");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 1.0;
-   label->align_y = 0.5;
-   label->expand_x = 0;
-   label->expand_y = 0;
-   label->fill_x = 1;
-   label->fill_y = 1;
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 0/0, Fill X/Y 1/1, Align: 0.5 0.0");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 0.5;
-   label->align_y = 0.0;
-   label->expand_x = 0;
-   label->expand_y = 0;
-   label->fill_x = 1;
-   label->fill_y = 1;
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Expand X/Y 0/0, Fill X/Y 1/1, Align: 0.5 1.0");
-   box->pack_end(box, label);
-   label->show(label);
-   label->align_x = 0.5;
-   label->align_y = 1.0;
-   label->expand_x = 0;
-   label->expand_y = 0;
-   label->fill_x = 1;
-   label->fill_y = 1;
-   elm_widget_sizing_update(label);
-
-   elm_widget_sizing_update(box);
-   box->show(box);
-   
-   win->show(win);
-}
-
-static void
-win_scrollable_box_vert_of_labels(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Scroller *scroller;
-   Elm_Box *box;
-   Elm_Label *label;
-   int i;
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with scroller and box + labels inside");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->expand_x = 1;
-   bg->expand_y = 1;
-   bg->show(bg);
-   
-   scroller = elm_scroller_new(win);
-
-   box = elm_box_new(win);
-   box->expand_x = 1;
-   box->expand_y = 1;
-
-   for (i = 0; i < 40; i++)
-     {
-	char buf[200];
-	
-	snprintf(buf, sizeof(buf), "This is a Label in a box, #%i", i);
-	label = elm_label_new(win);
-	label->text_set(label, buf);
-	box->pack_end(box, label);
-	label->show(label);
-	label->expand_x = 0;
-	label->expand_y = 0;
-	elm_widget_sizing_update(label);
-	label->show(label);
-     }
-
-   scroller->child_add(scroller, box);
-   
-   elm_widget_sizing_update(box);
-   box->show(box);
-   
-   scroller->show(scroller);
-
-   win->size_req(win, NULL, 240, 240);
-   win->show(win);
-}
-
-static void
-win_table_of_labels(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Table *table;
-   Elm_Label *label;
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with table + labels setting minimum size");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->expand_x = 1;
-   bg->expand_y = 1;
-   bg->show(bg);
-   
-   table = elm_table_new(win);
-   table->expand_x = 1;
-   table->expand_y = 1;
-   
-   label = elm_label_new(win);
-   label->text_set(label, "X");
-   table->pack(table, label, 0, 0, 1, 1);
-   label->fill_x = 0;
-   label->fill_y = 0;
-   label->show(label);
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Y");
-   table->pack(table, label, 1, 0, 1, 1);
-   label->fill_x = 0;
-   label->fill_y = 0;
-   label->show(label);
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "Z");
-   table->pack(table, label, 2, 0, 1, 1);
-   label->fill_x = 0;
-   label->fill_y = 0;
-   label->show(label);
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "A");
-   table->pack(table, label, 0, 1, 1, 1);
-   label->fill_x = 0;
-   label->fill_y = 0;
-   label->show(label);
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "BB");
-   table->pack(table, label, 1, 1, 2, 1);
-   label->fill_x = 0;
-   label->fill_y = 0;
-   label->show(label);
-   elm_widget_sizing_update(label);
-
-   label = elm_label_new(win);
-   label->text_set(label, "CCC");
-   table->pack(table, label, 0, 2, 3, 1);
-   label->fill_x = 0;
-   label->fill_y = 0;
-   label->show(label);
-   elm_widget_sizing_update(label);
-
-   elm_widget_sizing_update(table);
-   table->show(table);
-   
-   win->show(win);
-}
-
-static void
-on_button_activate(void *data, Elm_Button *bt, Elm_Cb_Type type, void *info)
-{
-   printf("Button %p activate\n", bt);
-}
-
-static void
-win_table_of_buttons(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Icon *icon;
-   Elm_Table *table;
-   Elm_Button *button;
+   Evas_Object *win, *bg, *ic;
    char buf[PATH_MAX];
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with table + buttons setting minimum size");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->expand_x = 1;
-   bg->expand_y = 1;
-   bg->show(bg);
    
-   table = elm_table_new(win);
-   table->expand_x = 1;
-   table->expand_y = 1;
+   win = elm_win_add(NULL, "icon-transparent", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Icon Transparent");
+   elm_win_autodel_set(win, 1);
+   elm_win_alpha_set(win, 1);
 
-   button = elm_button_new(win);
-   button->text_set(button, "Button 1");
-   table->pack(table, button, 0, 0, 1, 1);
-   button->fill_x = 0;
-   button->fill_y = 0;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   elm_win_resize_object_add(win, ic);
+   evas_object_show(ic);
+   
+   evas_object_show(win);
+}
 
-   button = elm_button_new(win);
-   button->text_set(button, "Button 2");
-   table->pack(table, button, 1, 0, 1, 1);
-   button->fill_x = 0;
-   button->fill_y = 0;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
+static void
+my_bt_4(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *ic;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "box-vert", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Box Vert");
+   elm_win_autodel_set(win, 1);
 
-   button = elm_button_new(win);
-   button->text_set(button, "Button 3");
-   table->pack(table, button, 2, 0, 1, 1);
-   button->fill_x = 0;
-   button->fill_y = 0;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   elm_win_resize_object_add(win, bx);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_show(bx);
 
-   button = elm_button_new(win);
-   button->text_set(button, "Button 4");
-   table->pack(table, button, 0, 1, 1, 1);
-   button->fill_x = 1;
-   button->fill_y = 0;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
-
-   button = elm_button_new(win);
-   icon = elm_icon_new(win);
+   ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   icon->file_set(icon, buf, NULL);
-   icon->scale_up = 0;
-   icon->layout_update(icon);
-   button->child_add(button, icon);
-   table->pack(table, button, 1, 1, 2, 1);
-   button->fill_x = 1;
-   button->fill_y = 1;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
-
-   button = elm_button_new(win);
-   button->text_set(button, "Button 6");
-   icon = elm_icon_new(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
-   icon->file_set(icon, buf, NULL);
-   button->child_add(button, icon);
-   table->pack(table, button, 0, 2, 3, 1);
-   button->fill_x = 1;
-   button->fill_y = 1;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
-
-   elm_widget_sizing_update(table);
-   table->show(table);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.5, 0.5);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
    
-   win->show(win);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.0, 0.5);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 1.0, 0.5);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   
+   evas_object_show(win);
 }
 
 static void
-on_toggle_changed(void *data, Elm_Toggle *tg, Elm_Cb_Type type, void *info)
+my_bt_5(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("toggle: %i\n", tg->state);
-}
-
-static void
-win_box_vert_of_toggles(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Box *box;
-   Elm_Toggle *toggle;
-   Elm_Icon *icon;
+   Evas_Object *win, *bg, *bx, *ic;
    char buf[PATH_MAX];
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with box + toggles setting min size");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->expand_x = 0;
-   bg->expand_y = 0;
-   bg->show(bg);
    
-   box = elm_box_new(win);
-   box->expand_x = 0;
-   box->expand_y = 0;
+   win = elm_win_add(NULL, "box-horiz", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Box Horiz");
+   elm_win_autodel_set(win, 1);
 
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Label ON/OFF");
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Icon + Label ON/OFF");
-   icon = elm_icon_new(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
-   icon->file_set(icon, buf, NULL);
-   toggle->child_add(toggle, icon);
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, NULL);
-   icon = elm_icon_new(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
-   icon->file_set(icon, buf, NULL);
-   toggle->child_add(toggle, icon);
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Label Yes/No");
-   toggle->states_text_set(toggle, "Yes", "No");
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   elm_widget_sizing_update(box);
-   box->show(box);
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
    
-   win->show(win);
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, 1);
+   elm_win_resize_object_add(win, bx);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_show(bx);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.5, 0.5);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.5, 0.0);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.0, 1.0);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   
+   evas_object_show(win);
 }
 
 static void
-win_scrollable_box_vert_of_toggles_and_buttons(void)
+my_bt_6(void *data, Evas_Object *obj, void *event_info)
 {
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Box *box;
-   Elm_Scroller *scroller;
-   Elm_Toggle *toggle;
-   Elm_Icon *icon;
-   Elm_Button *button;
-   Elm_Label *label;
+   Evas_Object *win, *bg, *bx, *ic, *bt;
    char buf[PATH_MAX];
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with scroller + box + toggles + buttons");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   bg->expand_x = 1;
-   bg->expand_y = 1;
-   bg->show(bg);
    
-   scroller = elm_scroller_new(win);
+   win = elm_win_add(NULL, "buttons", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Buttons");
+   elm_win_autodel_set(win, 1);
 
-   box = elm_box_new(win);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Label ON/OFF");
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Icon + Label ON/OFF");
-   icon = elm_icon_new(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
-   icon->file_set(icon, buf, NULL);
-   toggle->child_add(toggle, icon);
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, NULL);
-   icon = elm_icon_new(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
-   icon->file_set(icon, buf, NULL);
-   toggle->child_add(toggle, icon);
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Label Yes/No");
-   toggle->states_text_set(toggle, "Yes", "No");
-   toggle->state = 1;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Toggle ");
-   toggle->states_text_set(toggle, "Up", "Down");
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Toggle ");
-   toggle->states_text_set(toggle, "In", "Out");
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Toggle ");
-   toggle->states_text_set(toggle, "Up", "Down");
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   label = elm_label_new(win);
-   label->text_set(label, 
-		   "Hello world<br>"
-		   "<br>"
-		   "I am a label. I come here to temonstrate how to put<br>"
-		   "text into a label, with newlines, even markup to test<br>"
-		   "things like <b>bold text</b> where markup can be custom<br>"
-		   "and extensible, defined by the theme's textbloxk style<br>"
-		   "for the label.<br>"
-		   "<br>"
-		   "Note that the markup is html-like and things like newline<br>"
-		   "chars and tab chars like stdout text are not valid text<br>"
-		   "markup mechanisms. Use markup tags instead.<br>"
-		   );
-   box->pack_end(box, label);
-   label->expand_y = 0;
-   label->fill_y = 0;
-   elm_widget_sizing_update(label);
-   label->show(label);
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
    
-   button = elm_button_new(win);
-   button->text_set(button, "Button 1");
-   box->pack_end(box, button);
-   button->expand_y = 0;
-   button->fill_y = 0;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
-   
-   button = elm_button_new(win);
-   button->text_set(button, "Button 2");
-   box->pack_end(box, button);
-   button->expand_y = 0;
-   button->fill_y = 0;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
-   
-   button = elm_button_new(win);
-   button->text_set(button, "Button 3");
-   box->pack_end(box, button);
-   button->expand_y = 0;
-   button->fill_y = 0;
-   button->show(button);
-   elm_widget_sizing_update(button);
-   button->cb_add(button, ELM_CB_ACTIVATED, on_button_activate, NULL);
-   
-   scroller->child_add(scroller, box);
-   
-   elm_widget_sizing_update(box);
-   box->show(box);
-   
-   scroller->show(scroller);
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
 
-   win->size_req(win, NULL, 400, 320);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Icon sized to button");
+   elm_button_icon_set(bt, ic);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_show(ic);
    
-   win->show(win);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Icon no scale");
+   elm_button_icon_set(bt, ic);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_show(ic);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Label Only");
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   bt = elm_button_add(win);
+   elm_button_icon_set(bt, ic);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_show(ic);
+   
+   evas_object_show(win);
 }
 
 static void
-on_clock_changed(void *data, Elm_Clock *cloc, Elm_Cb_Type type, void *info)
+my_bt_7(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("clock: %i:%i:%i\n", cloc->hrs, cloc->min, cloc->sec);
-}
-
-static void
-win_box_vert_of_clock_and_toggles(void)
-{
-   Elm_Win *win;
-   Elm_Bg *bg;
-   Elm_Box *box;
-   Elm_Toggle *toggle;
-   Elm_Clock *cloc;
-   Elm_Pad *pad;
-   Elm_Frame *frame;
+   Evas_Object *win, *bg, *bx, *ic, *tg;
    char buf[PATH_MAX];
-
-   win = elm_win_new();
-   win->name_set(win, "win_bg");
-   win->title_set(win, "Simple Window with box + toggles setting min size");
-   win->autodel = 0;
-   win->cb_add(win, ELM_CB_DEL_REQ, on_win_del_req, NULL);
-   win->cb_add(win, ELM_CB_RESIZE, on_win_resize, NULL);
-
-   bg = elm_bg_new(win);
-   snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
-   bg->file_set(bg, buf, NULL);
-   bg->expand_x = 0;
-   bg->expand_y = 0;
-   bg->show(bg);
    
-   pad = elm_pad_new(win);
-   pad->expand_x = 0;
-   pad->expand_y = 0;
-   pad->show(pad);
+   win = elm_win_add(NULL, "toggles", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Toggles");
+   elm_win_autodel_set(win, 1);
 
-   frame = elm_frame_new(win);
-   pad->child_add(pad, frame);
-   frame->text_set(frame, "Time");
-   frame->expand_x = 0;
-   frame->expand_y = 0;
-   frame->show(frame);
-/*
-   pad = elm_pad_new(win);
-   frame->child_add(frame, pad);
-   pad->expand_x = 0;
-   pad->expand_y = 0;
-   pad->show(pad);
-*/
-   box = elm_box_new(win);
-//   pad->child_add(pad, box);
-   frame->child_add(frame, box);
-   box->expand_x = 0;
-   box->expand_y = 0;
-
-   toggle = elm_toggle_new(win);
-   toggle->text_set(toggle, "Alarm");
-   toggle->states_text_set(toggle, "ON", "OFF");
-   toggle->state = 0;
-   toggle->layout_update(toggle);
-   toggle->cb_add(toggle, ELM_CB_CHANGED, on_toggle_changed, NULL);
-   box->pack_end(box, toggle);
-   toggle->show(toggle);
-   toggle->expand_y = 0;
-   toggle->fill_y = 0;
-   elm_widget_sizing_update(toggle);
-
-   cloc = elm_clock_new(win);
-   cloc->expand_x = 0;
-   cloc->fill_x = 0;
-   cloc->edit = 1;
-   cloc->hrs = 6;
-   cloc->min = 54;
-   cloc->sec = 32;
-   cloc->time_update(cloc);
-   cloc->cb_add(cloc, ELM_CB_CHANGED, on_clock_changed, NULL);
-   box->pack_end(box, cloc);
-   elm_widget_sizing_update(cloc);
-   cloc->show(cloc);
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
    
-   cloc = elm_clock_new(win);
-   cloc->expand_x = 0;
-   cloc->fill_x = 0;
-   box->pack_end(box, cloc);
-   elm_widget_sizing_update(cloc);
-   cloc->show(cloc);
-   
-   cloc = elm_clock_new(win);
-   cloc->am_pm = 0;
-   cloc->seconds = 1;
-   cloc->time_update(cloc);
-   cloc->expand_x = 0;
-   cloc->fill_x = 0;
-   box->pack_end(box, cloc);
-   elm_widget_sizing_update(cloc);
-   cloc->show(cloc);
-   
-   cloc = elm_clock_new(win);
-   cloc->am_pm = 0;
-   cloc->seconds = 0;
-   cloc->time_update(cloc);
-   cloc->expand_x = 0;
-   cloc->fill_x = 0;
-   box->pack_end(box, cloc);
-   elm_widget_sizing_update(cloc);
-   cloc->show(cloc);
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
 
-/*   
-   cloc = elm_clock_new(win);
-   cloc->am_pm = 1;
-   cloc->seconds = 0;
-   cloc->time_update(cloc);
-   cloc->expand_x = 0;
-   cloc->fill_x = 0;
-   box->pack_end(box, cloc);
-   elm_widget_sizing_update(cloc);
-   cloc->show(cloc);
- */
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   tg = elm_toggle_add(win);
+   elm_toggle_label_set(tg, "Icon sized to toggle");
+   elm_toggle_icon_set(tg, ic);
+   elm_toggle_state_set(tg, 1);
+   elm_toggle_states_labels_set(tg, "Yes", "No");
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+   evas_object_show(ic);
    
-   elm_widget_sizing_update(box);
-   box->show(box);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   tg = elm_toggle_add(win);
+   elm_toggle_label_set(tg, "Icon no scale");
+   elm_toggle_icon_set(tg, ic);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+   evas_object_show(ic);
+   
+   tg = elm_toggle_add(win);
+   elm_toggle_label_set(tg, "Label Only");
+   elm_toggle_states_labels_set(tg, "Big", "Small");
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   tg = elm_toggle_add(win);
+   elm_toggle_icon_set(tg, ic);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+   evas_object_show(ic);
+   
+   evas_object_show(win);
+}
 
-   win->show(win);
+static void
+my_bt_8(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *tb, *bt;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "table", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Table");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+   
+   tb = elm_table_add(win);
+   elm_win_resize_object_add(win, tb);
+   evas_object_size_hint_weight_set(tb, 1.0, 1.0);
+   evas_object_show(tb);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 1");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   elm_table_pack(tb, bt, 0, 0, 1, 1);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 2");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   elm_table_pack(tb, bt, 1, 0, 1, 1);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 3");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   elm_table_pack(tb, bt, 2, 0, 1, 1);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 4");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   elm_table_pack(tb, bt, 0, 1, 2, 1);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 5");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   elm_table_pack(tb, bt, 2, 1, 1, 3);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 6");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   elm_table_pack(tb, bt, 0, 2, 2, 2);
+   evas_object_show(bt);
+   
+   evas_object_show(win);
+}
+
+static void
+my_bt_9(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *ck;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Clock");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   ck = elm_clock_add(win);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+   
+   ck = elm_clock_add(win);
+   elm_clock_show_am_pm_set(ck, 1);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+   
+   ck = elm_clock_add(win);
+   elm_clock_show_seconds_set(ck, 1);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+   
+   ck = elm_clock_add(win);
+   elm_clock_show_seconds_set(ck, 1);
+   elm_clock_show_am_pm_set(ck, 1);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+   
+   ck = elm_clock_add(win);
+   elm_clock_edit_set(ck, 1);
+   elm_clock_show_seconds_set(ck, 1);
+   elm_clock_show_am_pm_set(ck, 1);
+   elm_clock_time_set(ck, 10, 11, 12);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+   
+   evas_object_show(win);
+}
+
+static void
+my_win_main(void)
+{
+   Evas_Object *win, *bg, *bx0, *lb, *bx, *bt, *sc, *fr;
+   
+   /* 1 create an elm window - it returns an evas object. this is a little
+    * special as the object lives in the canvas that is inside the window
+    * so what is returned is really inside the window, but as you manipulate
+    * the evas object returned - the window will respond. elm_win makes sure
+    * of that so you can blindly treat it like any other evas object
+    * pretty much, just as long as you know it has special significance */
+   /* the first parameter is a "parent" window - eg for a dialog you want to
+    * have a main window it is related to, here it is NULL meaning there
+    * is no parent. "main" is the name of the window - used by the window
+    * manager for identifying the window uniquely amongst all the windows
+    * within this application (and all instances of the application). the
+    * type is a basic window (the final parameter) */
+   win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
+   /* set the title of the window - this is in the titlebar */
+   elm_win_title_set(win, "Elementary Tests");
+   
+   /* set a callback on the window when "delete-request" is emitted as
+    * a callback. when this happens my_win_del() is called and the 
+    * data pointer (first param) is passed the final param here (in this
+    * case it is NULL). This is how you can pass specific things to a
+    * callback like objects or data layered on top */
+   evas_object_smart_callback_add(win, "delete-request", my_win_del, NULL);
+
+   /* add a background to our window. this just uses the standard theme set
+    * background. without a backgorund, you could make a window seem
+    * transparent with elm_win_alpha_set(win, 1); for example. if you have
+    * a compositor running this will make the window able to be
+    * semi-transparent and any space not filled by object/widget pixels will
+    * be transparent or translucent based on alpha. if you do not have a
+    * comnpositor running this should fall back to using shaped windows
+    * (which have a mask). both these features will be slow and rely on
+    * a lot more resources, so only use it if you need it. */
+   bg = elm_bg_add(win);
+   /* set weight to 1.0 x 1.0 == expand in both x and y direction */
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   /* tell the window that this object is to be resized along with the window.
+    * also as a result this object will be one of several objects that
+    * controls the minimum/maximum size of the window */
+   elm_win_resize_object_add(win, bg);
+   /* and show the background */
+   evas_object_show(bg);
+
+   /* add a box layout widget to the window */
+   bx0 = elm_box_add(win);
+   /* allow base box (bx0) to expand in x and y */
+   evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
+   /* tell the window that the box affects window size and also will be 
+    * resized when the window is */
+   elm_win_resize_object_add(win, bx0);
+   evas_object_show(bx0);
+
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Information");
+   elm_box_pack_end(bx0, fr);
+   evas_object_show(fr);
+   
+   lb = elm_label_add(win);
+   elm_label_label_set(lb, 
+		       "Please slect a test from the list below<br>"
+		       "by clicking the test button to show the<br>"
+		       "test window.");
+   elm_frame_content_set(fr, lb);
+   evas_object_show(lb);
+   
+   /* add a scroller object - anything inside is scrollable */
+   sc = elm_scroller_add(win);
+   /* add scroller to main box */
+   evas_object_size_hint_weight_set(sc, 1.0, 1.0);
+   evas_object_size_hint_align_set(sc, -1.0, -1.0);
+   elm_box_pack_end(bx0, sc);
+   evas_object_show(sc);
+   
+   /* add a box layout widget to the window */
+   bx = elm_box_add(win);
+   /* set weight to 1.0 x 1.0 == expand in x and y) */
+   evas_object_size_hint_weight_set(bx, 1.0, 0.0);
+
+   /* set the box ad the child int he scrolled view*/
+   elm_scroller_child_set(sc, bx);
+   /* show the box, scroller and main box */
+   evas_object_show(bx);
+   
+   /* create a button */
+   bt = elm_button_add(win);
+   /* set the button label */
+   elm_button_label_set(bt, "Bg Plain");
+   /* add a callback to be run when the button is clicked */
+   evas_object_smart_callback_add(bt, "clicked", my_bt_1, NULL);
+   /* the button should fill any space it is given horizontally */
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   /* put the button at the end of the box */
+   elm_box_pack_end(bx, bt);
+   /* show the button */
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Bg Image");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_2, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Icon Transparent");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_3, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Box Vert");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_4, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Box Horiz");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_5, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Buttons");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_6, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Toggles");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_7, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Table");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_8, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Clock");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_9, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   /* set an initial window size */
+   evas_object_resize(win, 320, 320);
+   /* show the window */
+   evas_object_show(win);
 }
 
 int
@@ -979,18 +593,7 @@ main(int argc, char **argv)
     * types, enums and macros will be Elm_ and ELM_ etc.) */
    elm_init(argc, argv);
 
-   /* setup some windows with test widgets in them */
-   win_bg_simple();
-   win_bg_image();
-   win_scrollable_label();
-   win_label_determines_min_size();
-   win_box_vert_of_labels();
-   win_scrollable_box_vert_of_labels();
-   win_table_of_labels();
-   win_table_of_buttons();
-   win_box_vert_of_toggles();
-   win_scrollable_box_vert_of_toggles_and_buttons();
-   win_box_vert_of_clock_and_toggles();
+   my_win_main();
    
    elm_run(); /* and run the program now  and handle all events etc. */
    

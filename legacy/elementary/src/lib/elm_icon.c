@@ -1,103 +1,137 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static void _elm_icon_file_set(Elm_Icon *icon, const char *file, const char *group);
-static void _elm_icon_layout_update(Elm_Icon *icon);
+typedef struct _Widget_Data Widget_Data;
 
-Elm_Icon_Class _elm_icon_class =
+struct _Widget_Data
 {
-   &_elm_widget_class,
-     ELM_OBJ_ICON,
-     _elm_icon_file_set,
-     _elm_icon_layout_update
+   Evas_Object *img;
+   const char  *file, *group;
+   Evas_Bool    scale_up : 1;
+   Evas_Bool    scale_down : 1;
+   Evas_Bool    smooth : 1;
+   Evas_Bool    fill_outside : 1;
+   Evas_Bool    no_scale : 1;
 };
 
+static void _del_hook(Evas_Object *obj);
+static void _sizing_eval(Evas_Object *obj);
+
 static void
-_elm_icon_file_set(Elm_Icon *icon, const char *file, const char *group)
+_del_hook(Evas_Object *obj)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   free(wd);
+}
+
+static void
+_sizing_eval(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   int w, h;
+ 
+   _els_smart_icon_size_get(wd->img, &w, &h);
+   _els_smart_icon_scale_up_set(wd->img, wd->scale_up);
+   _els_smart_icon_scale_down_set(wd->img, wd->scale_down);
+   _els_smart_icon_smooth_scale_set(wd->img, wd->smooth);
+   _els_smart_icon_fill_inside_set(wd->img, !(wd->fill_outside));
+   if (wd->no_scale) _els_smart_icon_scale_set(wd->img, 1.0);
+   else
+     {
+	_els_smart_icon_scale_set(wd->img, _elm_config->scale);
+	w *= _elm_config->scale;
+	h *= _elm_config->scale;
+     }
+   if (!wd->scale_down)
+     {
+	minw = w;
+	minh = h;
+     }
+   if (!wd->scale_up)
+     {
+	maxw = w;
+	maxh = h;
+     }
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, maxw, maxh);
+}
+
+EAPI Evas_Object *
+elm_icon_add(Evas_Object *parent)
+{
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+   
+   wd = ELM_NEW(Widget_Data);
+   e = evas_object_evas_get(parent);
+   obj = elm_widget_add(e);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_can_focus_set(obj, 0);
+   
+   wd->img = _els_smart_icon_add(e);
+   evas_object_repeat_events_set(wd->img, 1);
+   elm_widget_resize_object_set(obj, wd->img);   
+
+   wd->smooth = 1;
+   wd->scale_up = 1;
+   wd->scale_down = 1;
+   
+   _sizing_eval(obj);
+   return obj;
+}
+
+EAPI void
+elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    const char *p;
    
    if (!file) return;
-   if (icon->file) evas_stringshare_del(icon->file);
-   if (file) icon->file = evas_stringshare_add(file);
-   else icon->file = NULL;
-   if (icon->group) evas_stringshare_del(icon->group);
-   if (group) icon->group = evas_stringshare_add(group);
-   else icon->group = NULL;
+   if (wd->file) evas_stringshare_del(wd->file);
+   if (file) wd->file = evas_stringshare_add(file);
+   else wd->file = NULL;
+   if (wd->group) evas_stringshare_del(wd->group);
+   if (group) wd->group = evas_stringshare_add(group);
+   else wd->group = NULL;
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
-     _els_smart_icon_file_edje_set(icon->base, file, group);
+     _els_smart_icon_file_edje_set(wd->img, file, group);
    else 
-     _els_smart_icon_file_key_set(icon->base, file, group);
-   icon->layout_update(icon);
+     _els_smart_icon_file_key_set(wd->img, file, group);
+   _sizing_eval(obj);
 }
 
-static void
-_elm_icon_layout_update(Elm_Icon *icon)
+EAPI void
+elm_icon_smooth_set(Evas_Object *obj, Evas_Bool smooth)
 {
-   _els_smart_icon_scale_up_set(icon->base, icon->scale_up);
-   _els_smart_icon_scale_down_set(icon->base, icon->scale_down);
-   _els_smart_icon_smooth_scale_set(icon->base, icon->smooth);
-   _els_smart_icon_fill_inside_set(icon->base, !(icon->fill_outside));
-   if (icon->no_scale) _els_smart_icon_scale_set(icon->base, 1.0);
-   else _els_smart_icon_scale_set(icon->base, _elm_config->scale);
-   if ((!icon->scale_down) || (!icon->scale_up))
-     ((Elm_Widget *)(icon->parent))->size_req(icon->parent, icon, 0, 0);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->smooth = smooth;
+   _sizing_eval(obj);
 }
 
-static void
-_elm_icon_size_alloc(Elm_Icon *icon, int w, int h)
+EAPI void
+elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale)
 {
-   int tw, th;
-   
-   _els_smart_icon_size_get(icon->base, &tw, &th);
-   if (!icon->scale_down)
-     {
-	if (w < tw) w = tw;
-	if (h < th) h = th;
-     }
-   if (!icon->scale_up)
-     {
-	if (w > tw) w = tw;
-	if (h > th) h = th;
-     }
-   icon->req.w = w;
-   icon->req.h = h;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->no_scale = no_scale;
+   _sizing_eval(obj);
 }
 
-static void
-_elm_icon_del(Elm_Icon *icon)
+EAPI void
+elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down)
 {
-   if (icon->group) evas_stringshare_del(icon->group);
-   if (icon->file) evas_stringshare_del(icon->file);
-   ((Elm_Obj_Class *)(((Elm_Icon_Class *)(icon->clas))->parent))->del(ELM_OBJ(icon));
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->scale_up = scale_up;
+   wd->scale_down = scale_down;
+   _sizing_eval(obj);
 }
 
-EAPI Elm_Icon *
-elm_icon_new(Elm_Win *win)
+EAPI void
+elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside)
 {
-   Elm_Icon *icon;
-   
-   icon = ELM_NEW(Elm_Icon);
-   
-   _elm_widget_init(icon);
-   icon->clas = &_elm_icon_class;
-   icon->type = ELM_OBJ_ICON;
-
-   icon->del = _elm_icon_del;
-   
-   icon->size_alloc = _elm_icon_size_alloc;
-   
-   icon->file_set = _elm_icon_file_set;
-   icon->layout_update = _elm_icon_layout_update;
-
-   icon->smooth = 1;
-   icon->scale_up = 1;
-   icon->scale_down = 1;
-   
-   icon->base = _els_smart_icon_add(win->evas);
-   evas_object_repeat_events_set(icon->base, 1);
-   
-   _elm_widget_post_init(icon);
-   win->child_add(win, icon);
-   return icon;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->fill_outside = fill_outside;
+   _sizing_eval(obj);
 }

@@ -1,6 +1,4 @@
 Evas_Object *_els_smart_box_add               (Evas *evas);
-int          _els_smart_box_freeze            (Evas_Object *obj);
-int          _els_smart_box_thaw              (Evas_Object *obj);
 void         _els_smart_box_orientation_set   (Evas_Object *obj, int horizontal);
 int          _els_smart_box_orientation_get   (Evas_Object *obj);
 void         _els_smart_box_homogenous_set    (Evas_Object *obj, int homogenous);
@@ -8,7 +6,6 @@ int          _els_smart_box_pack_start        (Evas_Object *obj, Evas_Object *ch
 int          _els_smart_box_pack_end          (Evas_Object *obj, Evas_Object *child);
 int          _els_smart_box_pack_before       (Evas_Object *obj, Evas_Object *child, Evas_Object *before);
 int          _els_smart_box_pack_after        (Evas_Object *obj, Evas_Object *child, Evas_Object *after);
-void         _els_smart_box_pack_options_set  (Evas_Object *obj, int fill_w, int fill_h, int expand_w, int expand_h, double align_x, double align_y, Evas_Coord min_w, Evas_Coord min_h, Evas_Coord max_w, Evas_Coord max_h);
 void         _els_smart_box_unpack            (Evas_Object *obj);
 void         _els_smart_box_min_size_get      (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
 void         _els_smart_box_max_size_get      (Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh);

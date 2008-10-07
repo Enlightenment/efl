@@ -1,105 +1,81 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static void _elm_table_layout_update(Elm_Table *tb);
-static void _elm_table_pack(Elm_Table *tb, Elm_Widget *wid, int x, int y, int w, int h);
+typedef struct _Widget_Data Widget_Data;
 
-Elm_Table_Class _elm_table_class =
+struct _Widget_Data
 {
-   &_elm_widget_class,
-     ELM_OBJ_TABLE,
-     _elm_table_layout_update,
-     _elm_table_pack,
+   Evas_Object *tbl;
 };
 
+static void _del_hook(Evas_Object *obj);
+static void _sizing_eval(Evas_Object *obj);
+
 static void
-_elm_table_layout_update(Elm_Table *tb)
+_del_hook(Evas_Object *obj)
 {
-   _els_smart_table_homogenous_set(tb->base, tb->homogenous);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   free(wd);
 }
 
 static void
-_elm_table_pack(Elm_Table *tb, Elm_Widget *wid, int x, int y, int w, int h)
+_sizing_eval(Evas_Object *obj)
 {
-   tb->child_add(tb, wid);
-   _els_smart_table_pack(tb->base, wid->base, x, y, w, h);
-   elm_widget_sizing_update(wid);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord w, h;
+   
+   evas_object_size_hint_min_get(wd->tbl, &minw, &minh);
+   evas_object_size_hint_max_get(wd->tbl, &maxw, &maxh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, maxw, maxh);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (w < minw) w = minw;
+   if (h < minh) h = minh;
+   if ((maxw >= 0) && (w > maxw)) w = maxw;
+   if ((maxh >= 0) && (h > maxh)) h = maxh;
+   evas_object_resize(obj, w, h);
 }
 
 static void
-_elm_table_size_alloc(Elm_Table *tb, int w, int h)
+_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Evas_Coord mw, mh;
-   
-   _els_smart_table_min_size_get(tb->base, &mw, &mh);
-   if (w < mw) w = mw;
-   if (h < mh) h = mh;
-   tb->req.w = w;
-   tb->req.h = h;
-}
-    
-static void
-_elm_table_size_req(Elm_Table *tb, Elm_Widget *child, int w, int h)
-{
-   Evas_Coord mw, mh;
-   
-   if (child)
-     {
-	Evas_Coord maxx, maxy;
-	
-	child->size_alloc(child, 0, 0);
-	maxx = child->req.w;
-	maxy = child->req.h;
-	if (child->expand_x) maxx = 32767;
-	if (child->expand_y) maxy = 32767;
-	_els_smart_table_pack_options_set(child->base,
-					  child->fill_x, child->fill_y,
-					  child->expand_x, child->expand_y,
-					  child->align_x, child->align_y,
-					  child->req.w, child->req.h,
-					  maxx, maxy);
-     }
-   else
-     {
-	// FIXME: handle.
-     }
-   _els_smart_table_min_size_get(tb->base, &mw, &mh);
-   ((Elm_Widget *)(tb->parent))->size_req(tb->parent, tb, mw, mh);
-   tb->geom_set(tb, tb->x, tb->y, mw, mh);
+   _sizing_eval(data);
 }
 
-static void
-_elm_on_child_del(void *data, Elm_Table *tb, Elm_Cb_Type type, Elm_Obj *obj)
+EAPI Evas_Object *
+elm_table_add(Evas_Object *parent)
 {
-   Evas_Coord mw, mh;
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
    
-   if (!(obj->hastype(obj, ELM_OBJ_WIDGET))) return;
-   _els_smart_table_unpack(((Elm_Widget *)(obj))->base);
-   ((Elm_Widget *)(tb->parent))->size_req(tb->parent, tb, mw, mh);
-   tb->geom_set(tb, tb->x, tb->y, mw, mh);
+   wd = ELM_NEW(Widget_Data);
+   e = evas_object_evas_get(parent);
+   obj = elm_widget_add(e);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   
+   wd->tbl = _els_smart_table_add(e);
+   elm_widget_sub_object_add(obj, wd->tbl);
+   evas_object_event_callback_add(wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				  _changed_size_hints, obj);
+   elm_widget_resize_object_set(obj, wd->tbl);
+   return obj;
 }
 
-EAPI Elm_Table *
-elm_table_new(Elm_Win *win)
+EAPI void
+elm_table_homogenous_set(Evas_Object *obj, Evas_Bool homogenous)
 {
-   Elm_Table *tb;
-   
-   tb = ELM_NEW(Elm_Table);
-   
-   _elm_widget_init(tb);
-   tb->clas = &_elm_table_class;
-   tb->type = ELM_OBJ_TABLE;
-   
-   tb->layout_update = _elm_table_layout_update;
-   tb->pack = _elm_table_pack;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_table_homogenous_set(wd->tbl, homogenous);
+}
 
-   tb->size_alloc = _elm_table_size_alloc;
-   tb->size_req = _elm_table_size_req;
-   
-   tb->base = _els_smart_table_add(win->evas);
-   
-   tb->cb_add(tb, ELM_CB_CHILD_DEL, _elm_on_child_del, NULL);
-   _elm_widget_post_init(tb);
-   win->child_add(win, tb);
-   return tb;
+EAPI void
+elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_table_pack(wd->tbl, subobj, x, y, w, h);
+   elm_widget_sub_object_add(obj, subobj);
+   // FIXME: track new sub obj...
 }

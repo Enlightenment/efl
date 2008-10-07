@@ -1,136 +1,115 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static void _elm_box_layout_update(Elm_Box *bx);
-static void _elm_box_pack_start(Elm_Box *bx, Elm_Widget *wid);
-static void _elm_box_pack_end(Elm_Box *bx, Elm_Widget *wid);
-static void _elm_box_pack_before(Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_before);
-static void _elm_box_pack_after(Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_after);
+typedef struct _Widget_Data Widget_Data;
 
-Elm_Box_Class _elm_box_class =
+struct _Widget_Data
 {
-   &_elm_widget_class,
-     ELM_OBJ_SCROLLER,
-     _elm_box_layout_update,
-     _elm_box_pack_start,
-     _elm_box_pack_end,
-     _elm_box_pack_before,
-     _elm_box_pack_after
+   Evas_Object *box;
 };
 
+static void _del_hook(Evas_Object *obj);
+static void _sizing_eval(Evas_Object *obj);
+
 static void
-_elm_box_layout_update(Elm_Box *bx)
+_del_hook(Evas_Object *obj)
 {
-   _els_smart_box_orientation_set(bx->base, bx->horizontal);
-   _els_smart_box_homogenous_set(bx->base, bx->homogenous);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   free(wd);
 }
 
 static void
-_elm_box_pack_start(Elm_Box *bx, Elm_Widget *wid)
+_sizing_eval(Evas_Object *obj)
 {
-   bx->child_add(bx, wid);
-   _els_smart_box_pack_start(bx->base, wid->base);
-   elm_widget_sizing_update(wid);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord w, h;
+
+   evas_object_size_hint_min_get(wd->box, &minw, &minh);
+   evas_object_size_hint_max_get(wd->box, &maxw, &maxh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, maxw, maxh);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (w < minw) w = minw;
+   if (h < minh) h = minh;
+   if ((maxw >= 0) && (w > maxw)) w = maxw;
+   if ((maxh >= 0) && (h > maxh)) h = maxh;
+   evas_object_resize(obj, w, h);
 }
 
 static void
-_elm_box_pack_end(Elm_Box *bx, Elm_Widget *wid)
+_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   bx->child_add(bx, wid);
-   _els_smart_box_pack_end(bx->base, wid->base);
-   elm_widget_sizing_update(wid);
-}
-
-static void
-_elm_box_pack_before(Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_before)
-{
-   bx->child_add(bx, wid);
-   _els_smart_box_pack_before(bx->base, wid->base, wid_before->base);
-   elm_widget_sizing_update(wid);
-}
-
-static void
-_elm_box_pack_after(Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_after)
-{
-   bx->child_add(bx, wid);
-   _els_smart_box_pack_after(bx->base, wid->base, wid_after->base);
-   elm_widget_sizing_update(wid);
-}
-
-static void
-_elm_box_size_alloc(Elm_Box *bx, int w, int h)
-{
-   Evas_Coord mw, mh;
-   
-   _els_smart_box_min_size_get(bx->base, &mw, &mh);
-   if (w < mw) w = mw;
-   if (h < mh) h = mh;
-   printf("box %p size alloc to %ix%i\n", bx, w, h);
-   bx->req.w = w;
-   bx->req.h = h;
+   _sizing_eval(data);
 }
     
-static void
-_elm_box_size_req(Elm_Box *bx, Elm_Widget *child, int w, int h)
+EAPI Evas_Object *
+elm_box_add(Evas_Object *parent)
 {
-   Evas_Coord mw, mh;
-
-   if (child)
-     {
-	Evas_Coord maxx, maxy;
-	
-	child->size_alloc(child, 0, 0);
-	maxx = child->req.w;
-	maxy = child->req.h;
-	if (child->expand_x) maxx = 32767;
-	if (child->expand_y) maxy = 32767;
-	_els_smart_box_pack_options_set(child->base,
-					child->fill_x, child->fill_y,
-					child->expand_x, child->expand_y,
-					child->align_x, child->align_y,
-					child->req.w, child->req.h,
-					maxx, maxy);
-     }
-   else
-     {
-	// FIXME: handle.
-     }
-   _els_smart_box_min_size_get(bx->base, &mw, &mh);
-   ((Elm_Widget *)(bx->parent))->size_req(bx->parent, bx, mw, mh);
-   bx->geom_set(bx, bx->x, bx->y, mw, mh);
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+   
+   wd = ELM_NEW(Widget_Data);
+   e = evas_object_evas_get(parent);
+   obj = elm_widget_add(e);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   
+   wd->box = _els_smart_box_add(e);
+   elm_widget_sub_object_add(obj, wd->box);
+   evas_object_event_callback_add(wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				  _changed_size_hints, obj);
+   elm_widget_resize_object_set(obj, wd->box);   
+   return obj;
 }
 
-static void
-_elm_on_child_del(void *data, Elm_Box *bx, Elm_Cb_Type type, Elm_Obj *obj)
+EAPI void
+elm_box_horizontal_set(Evas_Object *obj, Evas_Bool horizontal)
 {
-   if (!(obj->hastype(obj, ELM_OBJ_WIDGET))) return;
-   _els_smart_box_unpack(((Elm_Widget *)(obj))->base);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_orientation_set(wd->box, horizontal);
 }
 
-EAPI Elm_Box *
-elm_box_new(Elm_Win *win)
+EAPI void
+elm_box_homogenous_set(Evas_Object *obj, Evas_Bool homogenous)
 {
-   Elm_Box *bx;
-   
-   bx = ELM_NEW(Elm_Box);
-   _elm_widget_init(bx);
-   
-   bx->clas = &_elm_box_class;
-   bx->type = ELM_OBJ_BOX;
-   
-   bx->layout_update = _elm_box_layout_update;
-   bx->pack_start = _elm_box_pack_start;
-   bx->pack_end = _elm_box_pack_end;
-   bx->pack_before = _elm_box_pack_before;
-   bx->pack_after = _elm_box_pack_after;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_homogenous_set(wd->box, homogenous);
+}
 
-   bx->size_alloc = _elm_box_size_alloc;
-   bx->size_req = _elm_box_size_req;
-   
-   bx->base = _els_smart_box_add(win->evas);
-   
-   bx->cb_add(bx, ELM_CB_CHILD_DEL, _elm_on_child_del, NULL);
-   _elm_widget_post_init(bx);
-   win->child_add(win, bx);
-   return bx;
+EAPI void
+elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_pack_start(wd->box, subobj);
+   elm_widget_sub_object_add(obj, subobj);
+   // FIXME: track new sub obj...
+}
+
+EAPI void
+elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_pack_end(wd->box, subobj);
+   elm_widget_sub_object_add(obj, subobj);
+   // FIXME: track new sub obj...
+}
+
+EAPI void
+elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_pack_before(wd->box, subobj, before);
+   elm_widget_sub_object_add(obj, subobj);
+   // FIXME: track new sub obj...
+}
+
+EAPI void
+elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_pack_after(wd->box, subobj, after);
+   elm_widget_sub_object_add(obj, subobj);
+   // FIXME: track new sub obj...
 }

@@ -16,23 +16,20 @@ include_HEADERS = Elementary.h
 libelementary_la_SOURCES = \
 elm_priv.h \
 elm_main.c \
-elm_obj.c \
-elm_callback.c \
-elm_win.c \
 elm_theme.c \
+\
+elm_win.c \
 elm_widget.c \
 elm_bg.c \
+elm_icon.c \
+elm_box.c \
+elm_button.c \
 elm_scroller.c \
 elm_label.c \
-elm_box.c \
-elm_table.c \
-elm_button.c \
-elm_icon.c \
 elm_toggle.c \
-elm_clock.c \
 elm_frame.c \
-elm_pad.c \
-elm_contactlist.c \
+elm_table.c \
+elm_clock.c \
 \
 els_pan.c \
 els_pan.h \
@@ -44,6 +41,9 @@ els_table.c \
 els_table.h \
 els_icon.c \
 els_icon.h
+
+#... later
+#elm_contactlist.c
 
 libelementary_la_CFLAGS = 
 libelementary_la_LIBADD = @my_libs@ @ELEMENTARY_LIBS@

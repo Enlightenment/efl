@@ -1,20 +1,28 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static void _elm_bg_file_set(Elm_Bg *bg, const char *file, const char *group);
-static void _elm_bg_del(Elm_Bg *bg);
+typedef struct _Widget_Data Widget_Data;
 
-Elm_Bg_Class _elm_bg_class =
+struct _Widget_Data
 {
-   &_elm_widget_class,
-     ELM_OBJ_BG,
-     _elm_bg_file_set
+   Evas_Object *img, *custom_img;
+   const char  *file, *group;
 };
 
+static void _del_hook(Evas_Object *obj);
+static void _custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info);
+
 static void
-_elm_bg_custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info)
+_del_hook(Evas_Object *obj)
 {
-   Elm_Bg *bg = data;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   free(wd);
+}
+
+static void
+_custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = data;
    int iw = 0, ih = 0;
    Evas_Coord x, y, w, h, ow = 0, oh = 0;
 
@@ -34,66 +42,57 @@ _elm_bg_custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info)
    evas_object_image_fill_set(obj, x, y, w, h);
 }
 
-static void
-_elm_bg_file_set(Elm_Bg *bg, const char *file, const char *group)
+EAPI Evas_Object *
+elm_bg_add(Evas_Object *parent)
 {
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+   
+   wd = ELM_NEW(Widget_Data);
+   e = evas_object_evas_get(parent);
+   obj = elm_widget_add(e);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_can_focus_set(obj, 0);
+   
+   wd->img = edje_object_add(e);
+   _elm_theme_set(wd->img, "bg", "bg");
+   elm_widget_resize_object_set(obj, wd->img);   
+   return obj;
+}
+
+EAPI void
+elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    const char *p;
    
-   if (bg->custom_bg)
+   if (wd->custom_img)
      {
-	evas_object_del(bg->custom_bg);
-	bg->custom_bg = NULL;
+	evas_object_del(wd->custom_img);
+	wd->custom_img = NULL;
      }
    if (!file) return;
-   if (bg->file) evas_stringshare_del(bg->file);
-   if (file) bg->file = evas_stringshare_add(file);
-   else bg->file = NULL;
-   if (bg->group) evas_stringshare_del(bg->group);
-   if (group) bg->group = evas_stringshare_add(group);
-   else bg->group = NULL;
+   if (wd->file) evas_stringshare_del(wd->file);
+   if (file) wd->file = evas_stringshare_add(file);
+   else wd->file = NULL;
+   if (wd->group) evas_stringshare_del(wd->group);
+   if (group) wd->group = evas_stringshare_add(group);
+   else wd->group = NULL;
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      {
-	bg->custom_bg = edje_object_add(evas_object_evas_get(bg->base));
-	edje_object_file_set(bg->custom_bg, file, group);
+	wd->custom_img = edje_object_add(evas_object_evas_get(wd->img));
+	edje_object_file_set(wd->custom_img, file, group);
      }
    else 
      {
-	bg->custom_bg = evas_object_image_add(evas_object_evas_get(bg->base));
-	evas_object_event_callback_add(bg->custom_bg, EVAS_CALLBACK_RESIZE, _elm_bg_custom_resize, bg);
-	evas_object_image_file_set(bg->custom_bg, file, group);
+	wd->custom_img = evas_object_image_add(evas_object_evas_get(wd->img));
+	evas_object_event_callback_add(wd->custom_img, EVAS_CALLBACK_RESIZE, _custom_resize, wd);
+	evas_object_image_file_set(wd->custom_img, file, group);
      }
-   evas_object_repeat_events_set(bg->custom_bg, 1);
-   edje_object_part_swallow(bg->base, "elm.swallow.background", bg->custom_bg);
-   evas_object_show(bg->custom_bg);
-}
-
-static void
-_elm_bg_del(Elm_Bg *bg)
-{
-   if (bg->custom_bg) evas_object_del(bg->custom_bg);
-   if (bg->group) evas_stringshare_del(bg->group);
-   if (bg->file) evas_stringshare_del(bg->file);
-   ((Elm_Obj_Class *)(((Elm_Bg_Class *)(bg->clas))->parent))->del(ELM_OBJ(bg));
-}
-
-EAPI Elm_Bg *
-elm_bg_new(Elm_Win *win)
-{
-   Elm_Bg *bg;
-   
-   bg = ELM_NEW(Elm_Bg);
-   
-   _elm_widget_init(bg);
-   bg->clas = &_elm_bg_class;
-   bg->type = ELM_OBJ_BG;
-
-   bg->del = _elm_bg_del;
-   
-   bg->file_set = _elm_bg_file_set;
-
-   bg->base = edje_object_add(win->evas);
-   _elm_theme_set(bg->base, "bg", "bg");
-   _elm_widget_post_init(bg);
-   win->child_add(win, bg);
-   return bg;
+   elm_widget_sub_object_add(obj, wd->custom_img);
+   evas_object_repeat_events_set(wd->custom_img, 1);
+   edje_object_part_swallow(wd->img, "elm.swallow.background", wd->custom_img);
+   evas_object_show(wd->custom_img);
 }

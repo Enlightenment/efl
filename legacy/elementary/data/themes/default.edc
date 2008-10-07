@@ -56,7 +56,7 @@ collections {
 	       }
 	    }
 	 }
-	 part { name: "elm.swallow.contents";
+	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
 	       rel1.offset:  4 4;
@@ -398,7 +398,7 @@ collections {
 	       image.normal: "bt_base1.png";
 	    }
 	 }
-	 part { name: "elm.swallow.contents";
+	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
 	       visible: 0;
@@ -423,7 +423,7 @@ collections {
 	    scale: 1;
 	    description { state: "default" 0.0;
 	       visible: 0;
-	       rel1.to_x: "elm.swallow.contents";
+	       rel1.to_x: "elm.swallow.content";
 	       rel1.relative: 1.0 0.0;
                rel1.offset: 0 4;
 	       rel2.offset: -5 -5;
@@ -501,13 +501,13 @@ collections {
 	    signal: "elm,state,icon,visible";
 	    source: "elm";
 	    action:  STATE_SET "visible" 0.0;
-	    target: "elm.swallow.contents";
+	    target: "elm.swallow.content";
 	 }
 	 program { name: "icon_hide";
 	    signal: "elm,state,icon,hidden";
 	    source: "elm";
 	    action:  STATE_SET "default" 0.0;
-	    target: "elm.swallow.contents";
+	    target: "elm.swallow.content";
 	 }
       }
    }
@@ -696,7 +696,7 @@ collections {
 	       }
 	    }
 	 }
-	 part { name: "elm.swallow.contents";
+	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
 	       visible: 0;
@@ -720,7 +720,7 @@ collections {
 	    scale: 1;
 	    description { state: "default" 0.0;
 	       visible: 0;
-	       rel1.to_x: "elm.swallow.contents";
+	       rel1.to_x: "elm.swallow.content";
 	       rel1.relative: 1.0 0.0;
                rel1.offset: 0 4;
 	       rel2.to_x: "bg";
@@ -790,13 +790,13 @@ collections {
 	    signal: "elm,state,icon,visible";
 	    source: "elm";
 	    action:  STATE_SET "visible" 0.0;
-	    target: "elm.swallow.contents";
+	    target: "elm.swallow.content";
 	 }
 	 program { name: "icon_hide";
 	    signal: "elm,state,icon,hidden";
 	    source: "elm";
 	    action:  STATE_SET "default" 0.0;
-	    target: "elm.swallow.contents";
+	    target: "elm.swallow.content";
 	 }
       }
    }
@@ -2141,7 +2141,7 @@ collections {
 	       image.normal: "bt_base1.png";
 	    }
 	 }
-	 part { name: "elm.swallow.contents";
+	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    type: RECT;
 	    description { state: "default" 0.0;
@@ -2162,7 +2162,7 @@ collections {
 	    scale: 1;
 	    description { state: "default" 0.0;
 	       align: 0.0 1.0;
-	       rel1.to_x: "elm.swallow.contents";
+	       rel1.to_x: "elm.swallow.content";
 	       rel1.relative: 1.0 1.0;
                rel1.offset: 0 -5;
 	       rel2.offset: -5 -5;

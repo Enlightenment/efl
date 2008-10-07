@@ -9,39 +9,17 @@ struct _Smart_Data
    Evas_Coord       x, y, w, h;
    Evas_Object     *obj;
    Evas_Object     *clip;
-   int              frozen;
    unsigned char    changed : 1;
    unsigned char    horizontal : 1;
    unsigned char    homogenous : 1;
    Evas_List       *items;
-   struct {
-      Evas_Coord    w, h;
-   } min, max;
-   struct {
-      double        x, y;
-   } align;
 }; 
 
-struct _Box_Item
-{
-   Smart_Data    *sd;
-   unsigned char    fill_w : 1;
-   unsigned char    fill_h : 1;
-   unsigned char    expand_w : 1;
-   unsigned char    expand_h : 1;
-   struct {
-      Evas_Coord    w, h;
-   } min, max;
-   struct {
-      double        x, y;
-   } align;
-   Evas_Object     *obj;
-};
-
 /* local subsystem functions */
-static Box_Item *_smart_adopt(Smart_Data *sd, Evas_Object *obj);
+static void        _smart_adopt(Smart_Data *sd, Evas_Object *obj);
 static void        _smart_disown(Evas_Object *obj);
 static void        _smart_item_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void        _smart_item_changed_size_hints_hook(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void        _smart_reconfigure(Smart_Data *sd);
 static void        _smart_extents_calculate(Smart_Data *sd);
 
@@ -67,29 +45,6 @@ _els_smart_box_add(Evas *evas)
    return evas_object_smart_add(evas, _e_smart);
 }
 
-int
-_els_smart_box_freeze(Evas_Object *obj)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return 0;
-   sd->frozen++;
-   return sd->frozen;
-}
-
-int
-_els_smart_box_thaw(Evas_Object *obj)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return 0;
-   sd->frozen--;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
-   return sd->frozen;
-}
-
 void
 _els_smart_box_orientation_set(Evas_Object *obj, int horizontal)
 {
@@ -99,8 +54,7 @@ _els_smart_box_orientation_set(Evas_Object *obj, int horizontal)
    if (!sd) return;
    if (sd->horizontal == horizontal) return;
    sd->horizontal = horizontal;
-   sd->changed = 1;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
+   _smart_reconfigure(sd);
 }
 
 int
@@ -122,8 +76,7 @@ _els_smart_box_homogenous_set(Evas_Object *obj, int homogenous)
    if (!sd) return;
    if (sd->homogenous == homogenous) return;
    sd->homogenous = homogenous;
-   sd->changed = 1;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
+   _smart_reconfigure(sd);
 }
 
 int
@@ -136,8 +89,7 @@ _els_smart_box_pack_start(Evas_Object *obj, Evas_Object *child)
    if (!sd) return 0;
    _smart_adopt(sd, child);
    sd->items = evas_list_prepend(sd->items, child);
-   sd->changed = 1;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
+   _smart_reconfigure(sd);
    return 0;
 }
 
@@ -151,8 +103,7 @@ _els_smart_box_pack_end(Evas_Object *obj, Evas_Object *child)
    if (!sd) return 0;
    _smart_adopt(sd, child);
    sd->items = evas_list_append(sd->items, child);   
-   sd->changed = 1;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
+   _smart_reconfigure(sd);
    return evas_list_count(sd->items) - 1;
 }
 
@@ -172,8 +123,7 @@ _els_smart_box_pack_before(Evas_Object *obj, Evas_Object *child, Evas_Object *be
      {
 	if (l->data == child) break;
      }
-   sd->changed = 1;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
+   _smart_reconfigure(sd);
    return i;
 }
 
@@ -193,125 +143,56 @@ _els_smart_box_pack_after(Evas_Object *obj, Evas_Object *child, Evas_Object *aft
      {
 	if (l->data == child) break;
      }
-   sd->changed = 1;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
+   _smart_reconfigure(sd);
    return i;
-}
-
-
-void
-_els_smart_box_pack_options_set(Evas_Object *obj, int fill_w, int fill_h, int expand_w, int expand_h, double align_x, double align_y, Evas_Coord min_w, Evas_Coord min_h, Evas_Coord max_w, Evas_Coord max_h)
-{
-   Box_Item *bi;
-   
-   bi = evas_object_data_get(obj, "e_box_data");
-   if (!bi) return;
-   bi->fill_w = fill_w;
-   bi->fill_h = fill_h;
-   bi->expand_w = expand_w;
-   bi->expand_h = expand_h;
-   bi->align.x = align_x;
-   bi->align.y = align_y;
-   bi->min.w = min_w;
-   bi->min.h = min_h;
-   bi->max.w = max_w;
-   bi->max.h = max_h;
-   bi->sd->changed = 1;
-   if (bi->sd->frozen <= 0) _smart_reconfigure(bi->sd);
 }
 
 void
 _els_smart_box_unpack(Evas_Object *obj)
 {
-   Box_Item *bi;
    Smart_Data *sd;
    
    if (!obj) return;
-   bi = evas_object_data_get(obj, "e_box_data");
-   if (!bi) return;
-   sd = bi->sd;
+   sd = evas_object_smart_data_get(evas_object_smart_parent_get(obj));
    if (!sd) return;
    sd->items = evas_list_remove(sd->items, obj);
    _smart_disown(obj);
-   sd->changed = 1;
-   if (sd->frozen <= 0) _smart_reconfigure(sd);
-}
-
-void
-_els_smart_box_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-   if (sd->changed) _smart_extents_calculate(sd);
-   if (minw) *minw = sd->min.w;
-   if (minh) *minh = sd->min.h;
-}
-
-void
-_els_smart_box_max_size_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-   if (sd->changed) _smart_extents_calculate(sd);
-   if (maxw) *maxw = sd->max.w;
-   if (maxh) *maxh = sd->max.h;
+   _smart_reconfigure(sd);
 }
 
 /* local subsystem functions */
-static Box_Item *
+static void
 _smart_adopt(Smart_Data *sd, Evas_Object *obj)
 {
-   Box_Item *bi;
-   
-   bi = calloc(1, sizeof(Box_Item));
-   if (!bi) return NULL;
-   bi->sd = sd;
-   bi->obj = obj;
-   /* defaults */
-   bi->fill_w = 0;
-   bi->fill_h = 0;
-   bi->expand_w = 0;
-   bi->expand_h = 0;
-   bi->align.x = 0.5;
-   bi->align.y = 0.5;
-   bi->min.w = 0;
-   bi->min.h = 0;
-   bi->max.w = 0;
-   bi->max.h = 0;
    evas_object_clip_set(obj, sd->clip);
-   evas_object_smart_member_add(obj, bi->sd->obj);
-   evas_object_data_set(obj, "e_box_data", bi);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FREE,
+   evas_object_smart_member_add(obj, sd->obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
 				  _smart_item_del_hook, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+				  _smart_item_changed_size_hints_hook, NULL);
    if ((!evas_object_visible_get(sd->clip)) &&
        (evas_object_visible_get(sd->obj)))
      evas_object_show(sd->clip);
-   return bi;
 }
 
 static void
 _smart_disown(Evas_Object *obj)
 {
-   Box_Item *bi;
+   Smart_Data *sd;
    
-   bi = evas_object_data_get(obj, "e_box_data");
-   if (!bi) return;
-   if (!bi->sd->items)
+   sd = evas_object_smart_data_get(evas_object_smart_parent_get(obj));
+   if (!sd) return;
+   if (sd->items)
      {
-	if (evas_object_visible_get(bi->sd->clip))
-	  evas_object_hide(bi->sd->clip);
+	if (evas_object_visible_get(sd->clip))
+	  evas_object_hide(sd->clip);
      }
-   evas_object_event_callback_del(obj,
-				  EVAS_CALLBACK_FREE,
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
 				  _smart_item_del_hook);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+				  _smart_item_changed_size_hints_hook);
    evas_object_smart_member_del(obj);
    evas_object_clip_unset(obj);
-   evas_object_data_del(obj, "e_box_data");
-   free(bi);
 }
 
 static void
@@ -321,64 +202,67 @@ _smart_item_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+_smart_item_changed_size_hints_hook(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(evas_object_smart_parent_get(obj));
+   _smart_reconfigure(sd);
+}
+
+static void
 _smart_reconfigure(Smart_Data *sd)
 {
    Evas_Coord x, y, w, h, xx, yy;
    Evas_List *l;
-   int minw, minh, wdif, hdif;
-   int count, expand;
+   Evas_Coord minw, minh, wdif, hdif, mnw, mnh, mxw, mxh;
+   int count, expand, fw, fh, xw, xh;
+   double ax, ay, wx, wy;
 
-   if (!sd->changed) return;
+   _smart_extents_calculate(sd);
    
    x = sd->x;
    y = sd->y;
    w = sd->w;
    h = sd->h;
 
-   _smart_extents_calculate(sd);
-   minw = sd->min.w;
-   minh = sd->min.h;
+   evas_object_size_hint_min_get(sd->obj, &minw, &minh);
+   evas_object_size_hint_align_get(sd->obj, &ax, &ay);
    count = evas_list_count(sd->items);
    expand = 0;
    if (w < minw)
      {
-	x = x + ((w - minw) * (1.0 - sd->align.x));
+	x = x + ((w - minw) * (1.0 - ax));
 	w = minw;
      }
    if (h < minh)
      {
-	y = y + ((h - minh) * (1.0 - sd->align.y));
+	y = y + ((h - minh) * (1.0 - ay));
 	h = minh;
      }
    for (l = sd->items; l; l = l->next)
      {
-	Box_Item *bi;
-	Evas_Object *obj;
-	
-	obj = l->data;
-	bi = evas_object_data_get(obj, "e_box_data");
-	if (bi)
+	evas_object_size_hint_weight_get(l->data, &wx, &wy);
+	if (sd->horizontal)
 	  {
-	     if (sd->horizontal)
-	       {
-		  if (bi->expand_w) expand++;
-	       }
-	     else
-	       {
-		  if (bi->expand_h) expand++;
-	       }
+	     if (wx > 0.0) expand++;
+	  }
+	else
+	  {
+	     if (wy > 0.0) expand++;
 	  }
      }
    if (expand == 0)
      {
+	evas_object_size_hint_align_get(sd->obj, &ax, &ay);
 	if (sd->horizontal)
 	  {
-	     x += (double)(w - minw) * sd->align.x;
+	     x += (double)(w - minw) * ax;
 	     w = minw;
 	  }
 	else
 	  {
-	     y += (double)(h - minh) * sd->align.y;
+	     y += (double)(h - minh) * ay;
 	     h = minh;
 	  }
      }
@@ -388,138 +272,134 @@ _smart_reconfigure(Smart_Data *sd)
    yy = y;
    for (l = sd->items; l; l = l->next)
      {
-	Box_Item *bi;
 	Evas_Object *obj;
 	
 	obj = l->data;
-	bi = evas_object_data_get(obj, "e_box_data");
-	if (bi)
+	evas_object_size_hint_align_get(l->data, &ax, &ay);
+	evas_object_size_hint_weight_get(l->data, &wx, &wy);
+	evas_object_size_hint_min_get(l->data, &mnw, &mnh);
+	evas_object_size_hint_max_get(l->data, &mxw, &mxh);
+	fw = fh = 0;
+	xw = xh = 0;
+	if (ax == -1.0) {fw = 1; ax = 0.5;}
+	if (ay == -1.0) {fh = 1; ay = 0.5;}
+	if (wx > 0.0) xw = 1;
+	if (wy > 0.0) xh = 1;
+	if (sd->horizontal)
 	  {
-	     if (sd->horizontal)
+	     if (sd->homogenous)
 	       {
-		  if (sd->homogenous)
-		    {
-		       Evas_Coord ww, hh, ow, oh;
-		       
-		       ww = (w / (Evas_Coord)count);
-		       hh = h;
-		       ow = bi->min.w;
-		       if (bi->fill_w) ow = ww;
-		       if ((bi->max.w >= 0) && (bi->max.w < ow)) 
-                         ow = bi->max.w;
-		       oh = bi->min.h;
-		       if (bi->fill_h) oh = hh;
-		       if ((bi->max.h >= 0) && (bi->max.h < oh)) 
-                         oh = bi->max.h;
-		       evas_object_move(obj, 
-					xx + (Evas_Coord)(((double)(ww - ow)) * bi->align.x),
-					yy + (Evas_Coord)(((double)(hh - oh)) * bi->align.y));
-		       evas_object_resize(obj, ow, oh);
-		       xx += ww;
-		    }
-		  else
-		    {
-		       Evas_Coord ww, hh, ow, oh;
-		       
-		       ww = bi->min.w;
-		       if ((expand > 0) && (bi->expand_w))
-			 {
-			    if (expand == 1) ow = wdif;
-			    else ow = (w - minw) / expand;
-			    wdif -= ow;
-			    ww += ow;
-			 }
-		       hh = h;
-		       ow = bi->min.w;
-		       if (bi->fill_w) ow = ww;
-		       if ((bi->max.w >= 0) && (bi->max.w < ow)) ow = bi->max.w;
-		       oh = bi->min.h;
-		       if (bi->fill_h) oh = hh;
-		       if ((bi->max.h >= 0) && (bi->max.h < oh)) oh = bi->max.h;
-		       evas_object_move(obj, 
-					xx + (Evas_Coord)(((double)(ww - ow)) * bi->align.x),
-					yy + (Evas_Coord)(((double)(hh - oh)) * bi->align.y));
-		       evas_object_resize(obj, ow, oh);
-		       xx += ww;
-		    }
+		  Evas_Coord ww, hh, ow, oh;
+		  
+		  ww = (w / (Evas_Coord)count);
+		  hh = h;
+		  ow = mnw;
+		  if (fw) ow = ww;
+		  if ((mxw >= 0) && (mxw < ow)) 
+		    ow = mxw;
+		  oh = mnh;
+		  if (fh) oh = hh;
+		  if ((mxh >= 0) && (mxh < oh)) 
+		    oh = mxh;
+		  evas_object_move(obj, 
+				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+		  evas_object_resize(obj, ow, oh);
+		  xx += ww;
 	       }
 	     else
 	       {
-		  if (sd->homogenous)
+		  Evas_Coord ww, hh, ow, oh;
+		  
+		  ww = mnw;
+		  if ((expand > 0) && (xw))
 		    {
-		       Evas_Coord ww, hh, ow, oh;
-		       
-		       ww = w;
-		       hh = (h / (Evas_Coord)count);
-		       ow = bi->min.w;
-		       if (bi->fill_w) ow = ww;
-		       if ((bi->max.w >= 0) && (bi->max.w < ow)) ow = bi->max.w;
-		       oh = bi->min.h;
-		       if (bi->fill_h) oh = hh;
-		       if ((bi->max.h >= 0) && (bi->max.h < oh)) oh = bi->max.h;
-		       evas_object_move(obj, 
-					xx + (Evas_Coord)(((double)(ww - ow)) * bi->align.x),
-					yy + (Evas_Coord)(((double)(hh - oh)) * bi->align.y));
-		       evas_object_resize(obj, ow, oh);
-		       yy += hh;
+		       if (expand == 1) ow = wdif;
+		       else ow = (w - minw) / expand;
+		       wdif -= ow;
+		       ww += ow;
 		    }
-		  else
+		  hh = h;
+		  ow = mnw;
+		  if (fw) ow = ww;
+		  if ((mxw >= 0) && (mxw < ow)) ow = mxw;
+		  oh = mnh;
+		  if (fh) oh = hh;
+		  if ((mxh >= 0) && (mxh < oh)) oh = mxh;
+		  evas_object_move(obj, 
+				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+		  evas_object_resize(obj, ow, oh);
+		  xx += ww;
+	       }
+	  }
+	else
+	  {
+	     if (sd->homogenous)
+	       {
+		  Evas_Coord ww, hh, ow, oh;
+		  
+		  ww = w;
+		  hh = (h / (Evas_Coord)count);
+		  ow = mnw;
+		  if (fw) ow = ww;
+		  if ((mxw >= 0) && (mxw < ow)) ow = mxw;
+		  oh = mnh;
+		  if (fh) oh = hh;
+		  if ((mxh >= 0) && (mxh < oh)) oh = mxh;
+		  evas_object_move(obj, 
+				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+		  evas_object_resize(obj, ow, oh);
+		  yy += hh;
+	       }
+	     else
+	       {
+		  Evas_Coord ww, hh, ow, oh;
+		  
+		  ww = w;
+		  hh = mnh;
+		  if ((expand > 0) && (xh))
 		    {
-		       Evas_Coord ww, hh, ow, oh;
-		       
-		       ww = w;
-		       hh = bi->min.h;
-		       if ((expand > 0) && (bi->expand_h))
-			 {
-			    if (expand == 1) oh = hdif;
-			    else oh = (h - minh) / expand;
-			    hdif -= oh;
-			    hh += oh;
-			 }
-		       ow = bi->min.w;
-		       if (bi->fill_w) ow = ww;
-		       if ((bi->max.w >= 0) && (bi->max.w < ow)) ow = bi->max.w;
-		       oh = bi->min.h;
-		       if (bi->fill_h) oh = hh;
-		       if ((bi->max.h >= 0) && (bi->max.h < oh)) oh = bi->max.h;
-		       evas_object_move(obj, 
-					xx + (Evas_Coord)(((double)(ww - ow)) * bi->align.x),
-					yy + (Evas_Coord)(((double)(hh - oh)) * bi->align.y));
-		       evas_object_resize(obj, ow, oh);
-		       yy += hh;
+		       if (expand == 1) oh = hdif;
+		       else oh = (h - minh) / expand;
+		       hdif -= oh;
+		       hh += oh;
 		    }
+		  ow = mnw;
+		  if (fw) ow = ww;
+		  if ((mxw >= 0) && (mxw < ow)) ow = mxw;
+		  oh = mnh;
+		  if (fh) oh = hh;
+		  if ((mxh >= 0) && (mxh < oh)) oh = mxh;
+		  evas_object_move(obj, 
+				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+		  evas_object_resize(obj, ow, oh);
+		  yy += hh;
 	       }
 	  }
      }
-   sd->changed = 0;
 }
 
 static void
 _smart_extents_calculate(Smart_Data *sd)
 {
    Evas_List *l;
-   int minw, minh;
+   Evas_Coord minw, minh, maxw, maxh, mnw, mnh;
 
    /* FIXME: need to calc max */
-   sd->max.w = -1; /* max < 0 == unlimited */
-   sd->max.h = -1;
-   
    minw = 0;
    minh = 0;
+   maxw = -1;
+   maxh = -1;
    if (sd->homogenous)
      {
 	for (l = sd->items; l; l = l->next)
 	  {
-	     Box_Item *bi;
-	     Evas_Object *obj;
-	     
-	     obj = l->data;
-	     bi = evas_object_data_get(obj, "e_box_data");	
-	     if (bi)
-	       {
-                  if (minh < bi->min.h) minh = bi->min.h;
-                  if (minw < bi->min.w) minw = bi->min.w;
-	       }
+	     evas_object_size_hint_min_get(l->data, &mnw, &mnh);
+	     if (minh < mnh) minh = mnh;
+	     if (minw < mnw) minw = mnw;
 	  }
 	if (sd->horizontal)
           minw *= evas_list_count(sd->items);	     
@@ -530,28 +410,20 @@ _smart_extents_calculate(Smart_Data *sd)
      {
 	for (l = sd->items; l; l = l->next)
 	  {
-	     Box_Item *bi;
-	     Evas_Object *obj;
-	     
-	     obj = l->data;
-	     bi = evas_object_data_get(obj, "e_box_data");
-	     if (bi)
+	     evas_object_size_hint_min_get(l->data, &mnw, &mnh);
+	     if (sd->horizontal)
 	       {
-		  if (sd->horizontal)
-		    {
-		       if (minh < bi->min.h) minh = bi->min.h;
-		       minw += bi->min.w;
-		    }
-		  else
-		    {
-		       if (minw < bi->min.w) minw = bi->min.w;
-		       minh += bi->min.h;
-		    }
+		  if (minh < mnh) minh = mnh;
+		  minw += mnw;
+	       }
+	     else
+	       {
+		  if (minw < mnw) minw = mnw;
+		  minh += mnh;
 	       }
 	  }
      }
-   sd->min.w = minw;
-   sd->min.h = minh;
+   evas_object_size_hint_min_set(sd->obj, minw, minh);
 }
 
 static void
@@ -587,12 +459,6 @@ _smart_add(Evas_Object *obj)
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
    sd->obj = obj;
-   sd->x = 0;
-   sd->y = 0;
-   sd->w = 0;
-   sd->h = 0;
-   sd->align.x = 0.5;
-   sd->align.y = 0.5;
    sd->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(sd->clip, obj);
    evas_object_move(sd->clip, -100004, -100004);
@@ -608,7 +474,6 @@ _smart_del(Evas_Object *obj)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   _els_smart_box_freeze(obj);
    while (sd->items)
      {
 	Evas_Object *child;
@@ -616,7 +481,6 @@ _smart_del(Evas_Object *obj)
 	child = sd->items->data;
 	_els_smart_box_unpack(child);
      }
-   _els_smart_box_thaw(obj);
    evas_object_del(sd->clip);
    free(sd);
 }
@@ -625,23 +489,19 @@ static void
 _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Smart_Data *sd;
+   Evas_List *l;
+   Evas_Coord dx, dy;
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if ((x == sd->x) && (y == sd->y)) return;
+   dx = x - sd->x;
+   dy = y - sd->y;
+   for (l = sd->items; l; l = l->next)
      {
-	Evas_List *l;
-	Evas_Coord dx, dy;
+	Evas_Coord ox, oy;
 	
-	dx = x - sd->x;
-	dy = y - sd->y;
-	for (l = sd->items; l; l = l->next)
-	  {
-	     Evas_Coord ox, oy;
-	     
-	     evas_object_geometry_get(l->data, &ox, &oy, NULL, NULL);
-	     evas_object_move(l->data, ox + dx, oy + dy);
-	  }
+	evas_object_geometry_get(l->data, &ox, &oy, NULL, NULL);
+	evas_object_move(l->data, ox + dx, oy + dy);
      }
    sd->x = x;
    sd->y = y;
@@ -654,10 +514,8 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if ((w == sd->w) && (h == sd->h)) return;
    sd->w = w;
    sd->h = h;
-   sd->changed = 1;
    _smart_reconfigure(sd);
 }
 

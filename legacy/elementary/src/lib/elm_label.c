@@ -1,68 +1,58 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static void _elm_label_text_set(Elm_Label *lb, const char *text);
+typedef struct _Widget_Data Widget_Data;
 
-Elm_Label_Class _elm_label_class =
+struct _Widget_Data
 {
-   &_elm_widget_class,
-     ELM_OBJ_LABEL,
-     _elm_label_text_set
+   Evas_Object *lbl;
 };
 
+static void _del_hook(Evas_Object *obj);
+static void _sizing_eval(Evas_Object *obj);
+
 static void
-_elm_label_text_set(Elm_Label *lb, const char *text)
+_del_hook(Evas_Object *obj)
 {
-   Evas_Coord mw, mh;
-   
-   if (lb->text) evas_stringshare_del(lb->text);
-   if (text) lb->text = evas_stringshare_add(text);
-   else lb->text = NULL;
-   edje_object_part_text_set(lb->base, "elm.text", text);
-   edje_object_size_min_calc(lb->base, &mw, &mh);
-   if ((lb->minw != mw) || (lb->minh != mh))
-     {
-	lb->minw = mw;
-	lb->minh = mh;
-	((Elm_Widget *)(lb->parent))->size_req(lb->parent, lb, lb->minw, lb->minh);
-	lb->geom_set(lb, lb->x, lb->y, lb->minw, lb->minh);
-     }
+   Widget_Data *wd = elm_widget_data_get(obj);
+   free(wd);
 }
 
 static void
-_elm_label_size_alloc(Elm_Label *lb, int w, int h)
+_sizing_eval(Evas_Object *obj)
 {
-   lb->req.w = lb->minw;
-   lb->req.h = lb->minh;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   
+   edje_object_size_min_calc(wd->lbl, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-static void
-_elm_label_del(Elm_Label *lb)
+EAPI Evas_Object *
+elm_label_add(Evas_Object *parent)
 {
-   if (lb->text) evas_stringshare_del(lb->text);
-   ((Elm_Obj_Class *)(((Elm_Label_Class *)(lb->clas))->parent))->del(ELM_OBJ(lb));
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+   
+   wd = ELM_NEW(Widget_Data);
+   e = evas_object_evas_get(parent);
+   obj = elm_widget_add(e);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_can_focus_set(obj, 0);
+   
+   wd->lbl = edje_object_add(e);
+   _elm_theme_set(wd->lbl, "label", "label");
+   elm_widget_resize_object_set(obj, wd->lbl);
+   return obj;
 }
 
-EAPI Elm_Label *
-elm_label_new(Elm_Win *win)
+EAPI void
+elm_label_label_set(Evas_Object *obj, const char *label)
 {
-   Elm_Label *lb;
-   
-   lb = ELM_NEW(Elm_Label);
-   
-   _elm_widget_init(lb);
-   lb->clas = &_elm_label_class;
-   lb->type = ELM_OBJ_LABEL;
-   
-   lb->del = _elm_label_del;
-
-   lb->size_alloc = _elm_label_size_alloc;
-   
-   lb->text_set = _elm_label_text_set;
-
-   lb->base = edje_object_add(win->evas);
-   _elm_theme_set(lb->base, "label", "label");
-   _elm_widget_post_init(lb);
-   win->child_add(win, lb);
-   return lb;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_part_text_set(wd->lbl, "elm.text", label);
+   _sizing_eval(obj);
 }

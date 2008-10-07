@@ -61,519 +61,107 @@
 extern "C" {
 #endif
 
-// FIXME: need to be able to enable/disable widgets
-// FIXME: need to determine scale from dpi   
-   /* Types here */
-   typedef enum _Elm_Obj_Type
-     {
-	  ELM_OBJ_OBJ,
-	  ELM_OBJ_CB,	
-	  ELM_OBJ_WIDGET,
-	  ELM_OBJ_WIN,
-	  ELM_OBJ_BG,
-	  ELM_OBJ_SCROLLER,
-	  ELM_OBJ_LABEL,
-	  ELM_OBJ_BOX,
-	  ELM_OBJ_TABLE,
-	  ELM_OBJ_BUTTON,
-	  ELM_OBJ_ICON,
-	  ELM_OBJ_TOGGLE,
-	  ELM_OBJ_CLOCK,
-	  ELM_OBJ_FRAME,
-	  ELM_OBJ_PAD,
-	  ELM_OBJ_CONTACTLIST
-//	  ELM_OBJ_CHECK, // FIXME: do
-//	  ELM_OBJ_RADIO, // FIXME: do
-//        ELM_OBJ_SEP, // FIXME: do (separator horiz or vert)
-//	  ELM_OBJ_EXPANDER // FIXME: do (like a paned but slides open/closed)
-//	  ELM_OBJ_SPIN, // FIXME: do
-//	  ELM_OBJ_SLIDER, // FIXME: do
-//	  ELM_OBJ_ENTRY, // FIXME: do
-//	  ELM_OBJ_EDITOR, // FIXME: do
-//	  ELM_OBJ_LISTITEM, // FIXME: do
-// 	  ELM_OBJ_BUSY, // FIXME: do
-//	  // FIXME: list more widgets to do here like:
-//	  // CONTACT, SELECTOR, FILES, PREVIEW, SIGNALINFO, CALLINFO,
-//	  // CELLEDIT (csv - maybe later xls or some other cell format),
-//	  // COLORSEL, TACHO ... 
-//	  
-//	  wrap other basic ecore things:
-//	  ELM_OBJ_TIMER,
-//	  ELM_OBJ_ANIMATOR,
-//	  ELM_OBJ_JOB,
-    } Elm_Obj_Type;
-   
-   typedef enum _Elm_Cb_Type
-     {
-	  ELM_CB_DEL,
-	  ELM_CB_CHILD_ADD,
-	  ELM_CB_CHILD_DEL,
-	  ELM_CB_UNPARENT,
-	  ELM_CB_PARENT,
-	  ELM_CB_DEL_REQ,
-	  ELM_CB_RESIZE,
-	  ELM_CB_CHANGED,
-	  ELM_CB_ACTIVATED
-     } Elm_Cb_Type;
-   
+/**************************************************************************/   
+   /* Objects */
    typedef enum _Elm_Win_Type
      {
 	ELM_WIN_BASIC,
 	  ELM_WIN_DIALOG_BASIC
      } Elm_Win_Type;
    
-   typedef struct _Elm_Obj_Class       Elm_Obj_Class;
-   typedef struct _Elm_Obj             Elm_Obj;
-   typedef struct _Elm_Cb_Class        Elm_Cb_Class;
-   typedef struct _Elm_Cb              Elm_Cb;
-   typedef struct _Elm_Win_Class       Elm_Win_Class;
-   typedef struct _Elm_Win             Elm_Win;
-   typedef struct _Elm_Widget_Class    Elm_Widget_Class;
-   typedef struct _Elm_Widget          Elm_Widget;
-   typedef struct _Elm_Bg_Class        Elm_Bg_Class;
-   typedef struct _Elm_Bg              Elm_Bg;
-   typedef struct _Elm_Scroller_Class  Elm_Scroller_Class;
-   typedef struct _Elm_Scroller        Elm_Scroller;
-   typedef struct _Elm_Label_Class     Elm_Label_Class;
-   typedef struct _Elm_Label           Elm_Label;
-   typedef struct _Elm_Box_Class       Elm_Box_Class;
-   typedef struct _Elm_Box             Elm_Box;
-   typedef struct _Elm_Table_Class     Elm_Table_Class;
-   typedef struct _Elm_Table           Elm_Table;
-   typedef struct _Elm_Button_Class    Elm_Button_Class;
-   typedef struct _Elm_Button          Elm_Button;
-   typedef struct _Elm_Icon_Class      Elm_Icon_Class;
-   typedef struct _Elm_Icon            Elm_Icon;
-   typedef struct _Elm_Toggle_Class    Elm_Toggle_Class;
-   typedef struct _Elm_Toggle          Elm_Toggle;
-   typedef struct _Elm_Clock_Class     Elm_Clock_Class;
-   typedef struct _Elm_Clock           Elm_Clock;
-   typedef struct _Elm_Frame_Class     Elm_Frame_Class;
-   typedef struct _Elm_Frame           Elm_Frame;
-   typedef struct _Elm_Pad_Class       Elm_Pad_Class;
-   typedef struct _Elm_Pad             Elm_Pad;
-   typedef struct _Elm_Contactlist_Class Elm_Contactlist_Class;
-   typedef struct _Elm_Contactlist       Elm_Contactlist;
-   
-   typedef void (*Elm_Cb_Func) (void *data, Elm_Obj *obj, Elm_Cb_Type type, void *info);
-   
-   /* API calls here */
-
 /**************************************************************************/   
    /* General calls */
-   EAPI void elm_init(int argc, char **argv);
-   EAPI void elm_shutdown(void);
-   EAPI void elm_run(void);
-   EAPI void elm_exit(void);
+   EAPI void         elm_init(int argc, char **argv);
+   EAPI void         elm_shutdown(void);
+   EAPI void         elm_run(void);
+   EAPI void         elm_exit(void);
+   
+   EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
+   EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
+   EAPI void         elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);
+   EAPI void         elm_win_title_set(Evas_Object *obj, const char *title);
+   EAPI void         elm_win_autodel_set(Evas_Object *obj, Evas_Bool autodel);
+   EAPI void         elm_win_activate(Evas_Object *obj);
+   EAPI void         elm_win_borderless_set(Evas_Object *obj, Evas_Bool borderless);
+   EAPI void         elm_win_shaped_set(Evas_Object *obj, Evas_Bool shaped);
+   EAPI void         elm_win_alpha_set(Evas_Object *obj, Evas_Bool alpha);
+   EAPI void         elm_win_override_set(Evas_Object *obj, Evas_Bool override);
+// FIXME: implement more of the above calls
+   /* smart callbacks elm_win objects will call:
+    * "delete-request" - the user requested to delete the window
+    */
 
-/**************************************************************************/   
-   /* Generic Elm Object */
-#define Elm_Obj_Class_Methods \
-   void (*del)                        (Elm_Obj *obj); \
-   void (*ref)                        (Elm_Obj *obj); \
-   void (*unref)                      (Elm_Obj *obj); \
-   Elm_Cb *(*cb_add)                  (Elm_Obj *obj, Elm_Cb_Type type, Elm_Cb_Func func, void *data); \
-   void (*child_add)                  (Elm_Obj *obj, Elm_Obj *child); \
-   void (*unparent)                   (Elm_Obj *obj); \
-   int  (*hastype)                    (Elm_Obj *obj, Elm_Obj_Type type)
-#define Elm_Obj_Class_All Elm_Obj_Class_Methods; \
-   Elm_Obj_Type   type; \
-   void          *clas; /* the obj class and parent classes */ \
-   Elm_Obj       *parent; \
-   Evas_List     *children; \
-   Evas_List     *cbs; \
-   int            refs; \
-   unsigned char  delete_me : 1; \
-   unsigned char  delete_deferred : 1
-   
-   struct _Elm_Obj_Class
-     {
-	void *parent;
-        Elm_Obj_Type type;
-	Elm_Obj_Class_Methods;
-     };
-   struct _Elm_Obj
-     {
-	Elm_Obj_Class_All;
-     };
-#define ELM_OBJ(o) ((Elm_Obj *)o)   
-   
-/**************************************************************************/   
-   /* Callback Object */
-#define Elm_Cb_Class_Methods
-#define Elm_Cb_Class_All Elm_Obj_Class_All; Elm_Cb_Class_Methods; \
-   Elm_Cb_Class_Methods; \
-   Elm_Cb_Type  cb_type; \
-   Elm_Cb_Func  func; \
-   void              *data;
-   struct _Elm_Cb_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Cb_Class_Methods;
-     };
-   struct _Elm_Cb
-     {
-	Elm_Cb_Class_All;
-     };
+   EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
+   EAPI void         elm_bg_file_set(Evas_Object *obj, const char *file, const char *group);
+   /* smart callbacks elm_win objects will call:
+    */
 
-/**************************************************************************/   
-   /* Widget Object */
-#define Elm_Widget_Class_Methods \
-   void (*geom_set)   (Elm_Widget *wid, int x, int y, int w, int h); \
-   void (*show)       (Elm_Widget *wid); \
-   void (*hide)       (Elm_Widget *wid); \
-   void (*size_alloc) (Elm_Widget *wid, int w, int h); \
-   void (*size_req)   (Elm_Widget *wid, Elm_Widget *child, int w, int h); \
-   void (*above)      (Elm_Widget *wid, Elm_Widget *above); \
-   void (*below)      (Elm_Widget *wid, Elm_Widget *below)
-   
-#define Elm_Widget_Class_All Elm_Obj_Class_All; Elm_Widget_Class_Methods; \
-   int x, y, w, h; \
-   struct { int w, h; } req; \
-   Evas_Object *base; \
-   double align_x, align_y; \
-   unsigned char expand_x : 1; \
-   unsigned char expand_y : 1; \
-   unsigned char fill_x : 1; \
-   unsigned char fill_y : 1
-   
-   /* Object specific ones */
-   // FIXME: should this be a function or widget method call?
-   EAPI void elm_widget_sizing_update(Elm_Widget *wid);
-   struct _Elm_Widget_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Widget_Class_Methods;
-     };
-   struct _Elm_Widget
-     {
-	Elm_Widget_Class_All;
-     };
-   
-#ifdef __cplusplus
-}
-#endif
+   EAPI Evas_Object *elm_icon_add(Evas_Object *parent);
+   EAPI void         elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void         elm_icon_smooth_set(Evas_Object *obj, Evas_Bool smooth);
+   EAPI void         elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale);
+   EAPI void         elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down);
+   EAPI void         elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside);
+   /* smart callbacks elm_win objects will call:
+    */
 
-/**************************************************************************/   
-   /* Window Object */
-#define Elm_Win_Class_Methods \
-   void (*name_set)  (Elm_Win *win, const char *name); \
-   void (*title_set) (Elm_Win *win, const char *title)
-// FIXME:   
-// cover methods & state for:
-// type, fullscreen, icon, activate, shaped, alpha, borderless, iconified,
-// setting parent window (for dialogs)
-#define Elm_Win_Class_All Elm_Widget_Class_All; Elm_Win_Class_Methods; \
-   Elm_Win_Type  win_type; \
-   const char   *name; \
-   const char   *title; \
-   unsigned char autodel : 1
+   EAPI Evas_Object *elm_box_add(Evas_Object *parent);
+   EAPI void         elm_box_horizontal_set(Evas_Object *obj, Evas_Bool horizontal);
+   EAPI void         elm_box_homogenous_set(Evas_Object *obj, Evas_Bool homogenous);
+   EAPI void         elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj);
+   EAPI void         elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj);
+   EAPI void         elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before);
+   EAPI void         elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after);
+   /* smart callbacks elm_win objects will call:
+    */
    
-   /* Object specific ones */
-   EAPI Elm_Win *elm_win_new(void);
-   struct _Elm_Win_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Win_Class_Methods;
-     };
-   struct _Elm_Win
-     {
-	Elm_Win_Class_All;
-	
-	Ecore_Evas     *ee; /* private */
-	Evas           *evas; /* private */
-	Ecore_X_Window  xwin; /* private */
-	Ecore_Job      *deferred_resize_job; /* private */
-	Ecore_Job      *deferred_child_eval_job; /* private */
-	unsigned char   showme : 1; /* private */
-     };
+   EAPI Evas_Object *elm_button_add(Evas_Object *parent);
+   EAPI void         elm_button_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
+   /* smart callbacks elm_win objects will call:
+    * "clicked" - the user clicked the button
+    */
    
-/**************************************************************************/   
-   /* Background Object */
-#define Elm_Bg_Class_Methods \
-   void (*file_set)  (Elm_Bg *bg, const char *file, const char *group);
-#define Elm_Bg_Class_All Elm_Widget_Class_All; Elm_Bg_Class_Methods; \
-   const char *file; \
-   const char *group
-   
-   /* Object specific ones */
-   EAPI Elm_Bg *elm_bg_new(Elm_Win *win);
-   struct _Elm_Bg_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Bg_Class_Methods;
-     };
-   struct _Elm_Bg
-     {
-	Elm_Bg_Class_All;
-	
-	Evas_Object *custom_bg;
-     };
-   
-/**************************************************************************/   
-   /* Scroller (scrollframe/scrolledview) Object */
-#define Elm_Scroller_Class_Methods
-#define Elm_Scroller_Class_All Elm_Widget_Class_All; Elm_Scroller_Class_Methods;
-   
-   /* Object specific ones */
-   EAPI Elm_Scroller *elm_scroller_new(Elm_Win *win);
-   struct _Elm_Scroller_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Scroller_Class_Methods;
-     };
-   struct _Elm_Scroller
-     {
-	Elm_Scroller_Class_All;
-	
-	Evas_Object *scroller_pan;
-     };
-   
-/**************************************************************************/   
-   /* Label Object */
-#define Elm_Label_Class_Methods \
-   void (*text_set)  (Elm_Label *lb, const char *text)
-#define Elm_Label_Class_All Elm_Widget_Class_All; Elm_Label_Class_Methods; \
-   const char *text; \
-   int minw, minh
-   
-   /* Object specific ones */
-   EAPI Elm_Label *elm_label_new(Elm_Win *win);
-   struct _Elm_Label_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Label_Class_Methods;
-     };
-   struct _Elm_Label
-     {
-	Elm_Label_Class_All;
-     };
-   
-/**************************************************************************/   
-   /* Box Object */
-#define Elm_Box_Class_Methods \
-   void (*layout_update)  (Elm_Box *bx); \
-   void (*pack_start)     (Elm_Box *bx, Elm_Widget *wid); \
-   void (*pack_end)       (Elm_Box *bx, Elm_Widget *wid); \
-   void (*pack_before)    (Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_before); \
-   void (*pack_after)     (Elm_Box *bx, Elm_Widget *wid, Elm_Widget *wid_after);
+   EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
+   EAPI void         elm_scroller_child_set(Evas_Object *obj, Evas_Object *child);
+   /* smart callbacks elm_win objects will call:
+    */
 
-#define Elm_Box_Class_All Elm_Widget_Class_All; Elm_Box_Class_Methods; \
-   unsigned char horizontal : 1; \
-   unsigned char homogenous : 1
+   EAPI Evas_Object *elm_label_add(Evas_Object *parent);
+   EAPI void         elm_label_label_set(Evas_Object *obj, const char *label);
+   /* smart callbacks elm_win objects will call:
+    */
+       
+   EAPI Evas_Object *elm_toggle_add(Evas_Object *parent);
+   EAPI void         elm_toggle_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
+   EAPI void         elm_toggle_state_set(Evas_Object *obj, Evas_Bool state);
+   EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Evas_Bool *statep);
+   /* smart callbacks elm_win objects will call:
+    * "changed" - the user toggled the state
+    */
    
-   /* Object specific ones */
-   EAPI Elm_Box *elm_box_new(Elm_Win *win);
-   struct _Elm_Box_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Box_Class_Methods;
-     };
-   struct _Elm_Box
-     {
-	Elm_Box_Class_All;
-     };
+   EAPI Evas_Object *elm_frame_add(Evas_Object *parent);
+   EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
+   /* smart callbacks elm_win objects will call:
+    */
+       
+   EAPI Evas_Object *elm_table_add(Evas_Object *parent);
+   EAPI void         elm_table_homogenous_set(Evas_Object *obj, Evas_Bool homogenous);
+   EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
+   /* smart callbacks elm_win objects will call:
+    */
    
-/**************************************************************************/   
-   /* Table Object */
-#define Elm_Table_Class_Methods \
-   void (*layout_update)  (Elm_Table *tb); \
-   void (*pack)           (Elm_Table *tb, Elm_Widget *wid, int x, int y, int w, int h)
-#define Elm_Table_Class_All Elm_Widget_Class_All; Elm_Table_Class_Methods; \
-   unsigned char homogenous : 1
-   
-   /* Object specific ones */
-   EAPI Elm_Table *elm_table_new(Elm_Win *win);
-   struct _Elm_Table_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Table_Class_Methods;
-     };
-   struct _Elm_Table
-     {
-	Elm_Table_Class_All;
-     };
-   
-/**************************************************************************/   
-   /* Button Object */
-#define Elm_Button_Class_Methods \
-   void (*text_set)  (Elm_Button *bt, const char *text)
-#define Elm_Button_Class_All Elm_Widget_Class_All; Elm_Button_Class_Methods; \
-   const char *text; \
-   int minw, minh
-   
-   /* Object specific ones */
-   EAPI Elm_Button *elm_button_new(Elm_Win *win);
-   struct _Elm_Button_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Button_Class_Methods;
-     };
-   struct _Elm_Button
-     {
-	Elm_Button_Class_All;
-     };
-   
-/**************************************************************************/   
-   /* Icon Object */
-#define Elm_Icon_Class_Methods \
-   void (*file_set)  (Elm_Icon *icon, const char *file, const char *group); \
-   void (*layout_update)  (Elm_Icon *icon)
-#define Elm_Icon_Class_All Elm_Widget_Class_All; Elm_Icon_Class_Methods; \
-   unsigned char scale_up : 1; \
-   unsigned char scale_down : 1; \
-   unsigned char fill_outside : 1; \
-   unsigned char smooth : 1; \
-   unsigned char no_scale : 1; \
-   const char *file; \
-   const char *group
-   
-   /* Object specific ones */
-   EAPI Elm_Icon *elm_icon_new(Elm_Win *win);
-   struct _Elm_Icon_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Icon_Class_Methods;
-     };
-   struct _Elm_Icon
-     {
-	Elm_Icon_Class_All;
-     };
+   EAPI Evas_Object *elm_clock_add(Evas_Object *parent);
+   EAPI void         elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec);
+   EAPI void         elm_clock_time_get(Evas_Object *obj, int *hrs, int *min, int *sec);
+   EAPI void         elm_clock_edit_set(Evas_Object *obj, Evas_Bool edit);
+   EAPI void         elm_clock_show_am_pm_set(Evas_Object *obj, Evas_Bool am_pm);
+   EAPI void         elm_clock_show_seconds_set(Evas_Object *obj, Evas_Bool seconds);
+   /* smart callbacks elm_win objects will call:
+    * "changed" - the user changed the time
+    */
 
-/**************************************************************************/   
-   /* Toggle Object */
-#define Elm_Toggle_Class_Methods \
-   void (*text_set)  (Elm_Toggle *tg, const char *text); \
-   void (*layout_update)  (Elm_Toggle *tg); \
-   void (*states_text_set) (Elm_Toggle *tg, const char *ontext, const char *offtext)
-#define Elm_Toggle_Class_All Elm_Widget_Class_All; Elm_Toggle_Class_Methods; \
-   const char *text; \
-   int minw, minh; \
-   int state; \
-   int *state_ptr
-   
-   /* Object specific ones */
-   EAPI Elm_Toggle *elm_toggle_new(Elm_Win *win);
-   struct _Elm_Toggle_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Toggle_Class_Methods;
-     };
-   struct _Elm_Toggle
-     {
-	Elm_Toggle_Class_All;
-     };
-   
-/**************************************************************************/   
-   /* Clock Object */
-#define Elm_Clock_Class_Methods \
-   void (*time_update) (Elm_Clock *ck)
-#define Elm_Clock_Class_All Elm_Widget_Class_All; Elm_Clock_Class_Methods; \
-   int hrs, min, sec; \
-   int minw, minh; \
-   unsigned char seconds : 1; \
-   unsigned char am_pm : 1; \
-   unsigned char edit : 1
-   
-   /* Object specific ones */
-   EAPI Elm_Clock *elm_clock_new(Elm_Win *win);
-   struct _Elm_Clock_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Clock_Class_Methods;
-     };
-   struct _Elm_Clock
-     {
-	Elm_Clock_Class_All;
-	
-	Evas_Object *digit[6];
-	Evas_Object *ampm;
-	Ecore_Timer *ticker;
-	struct {
-	   int hrs, min, sec;
-	   char ampm;
-	   char seconds;
-	   char am_pm;
-	   char edit;
-	} cur;
-     };
-   
-/**************************************************************************/   
-   /* Frame Object */
-#define Elm_Frame_Class_Methods \
-   void (*text_set)  (Elm_Frame *fr, const char *text)
-#define Elm_Frame_Class_All Elm_Widget_Class_All; Elm_Frame_Class_Methods; \
-   const char *text; \
-   int minw, minh
-   
-   /* Object specific ones */
-   EAPI Elm_Frame *elm_frame_new(Elm_Win *win);
-   struct _Elm_Frame_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Frame_Class_Methods;
-     };
-   struct _Elm_Frame
-     {
-	Elm_Frame_Class_All;
-     };
-   
-/**************************************************************************/   
-   /* Pad Object */
-#define Elm_Pad_Class_Methods
-#define Elm_Pad_Class_All Elm_Widget_Class_All; Elm_Pad_Class_Methods; \
-   int minw, minh
-   
-   /* Object specific ones */
-   EAPI Elm_Pad *elm_pad_new(Elm_Win *win);
-   struct _Elm_Pad_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Pad_Class_Methods;
-     };
-   struct _Elm_Pad
-     {
-	Elm_Pad_Class_All;
-     };
-   
-/**************************************************************************/   
-   /* Contactlist Object */
-#define Elm_Contactlist_Class_Methods \
-   void (*file_set)  (Elm_Contactlist *cl, const char *file, const char *group);
-#define Elm_Contactlist_Class_All Elm_Widget_Class_All; Elm_Contactlist_Class_Methods; \
-   const char *file; \
-   const char *group
-   
-   /* Object specific ones */
-   EAPI Elm_Contactlist *elm_contactlist_new(Elm_Win *win);
-   struct _Elm_Contactlist_Class
-     {
-	void *parent;
-	Elm_Obj_Type type;
-	Elm_Contactlist_Class_Methods;
-     };
-   struct _Elm_Contactlist
-     {
-	Elm_Contactlist_Class_All;
-
-	Elm_Box *box;
-	Elm_Scroller *scroller;
-	Elm_Button *button;
-	Elm_Box *listbox;
-     };
-   
 #endif

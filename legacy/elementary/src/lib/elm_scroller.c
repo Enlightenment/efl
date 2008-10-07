@@ -1,100 +1,96 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static void _elm_scroller_del(Elm_Scroller *sc);
-    
-Elm_Scroller_Class _elm_scroller_class =
+typedef struct _Widget_Data Widget_Data;
+
+struct _Widget_Data
 {
-   &_elm_widget_class,
-     ELM_OBJ_SCROLLER
+   Evas_Object *scr;
+   Evas_Object *child;
 };
 
+static void _del_hook(Evas_Object *obj);
+static void _sizing_eval(Evas_Object *obj);
+
 static void
-_elm_scroller_del(Elm_Scroller *sc)
+_del_hook(Evas_Object *obj)
 {
-   evas_object_del(sc->scroller_pan);
-   ((Elm_Obj_Class *)(((Elm_Scroller_Class *)(sc->clas))->parent))->del(ELM_OBJ(sc));
+   Widget_Data *wd = elm_widget_data_get(obj);
+   free(wd);
 }
 
 static void
-_elm_scroller_geom_set(Elm_Scroller *sc, int x, int y, int w, int h)
+_sizing_eval(Evas_Object *obj)
 {
-   Evas_Coord vw, vh;
-
-   printf("sc geom set %ix%i (am %ix%i)\n", w, h, sc->w, sc->h);
-   if ((sc->w != w) || (sc->h != h) || (sc->x != x) || (sc->y != y))
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord  vw, vh, minw, minh, maxw, maxh;
+   double xw, xy;
+   
+   evas_object_size_hint_min_get(wd->child, &minw, &minh);
+   evas_object_size_hint_max_get(wd->child, &maxw, &maxh);
+   evas_object_size_hint_weight_get(wd->child, &xw, &xy);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
+   if (xw > 0.0)
      {
-	Evas_List *l;
-	int tries = 0;
-	
-	((Elm_Widget_Class *)(((Elm_Scroller_Class *)(sc->clas))->parent))->geom_set(sc, x, y, w, h);
-	again:
-	tries++;
-	elm_smart_scroller_child_viewport_size_get(sc->base, &vw, &vh);
-	for (l = sc->children; l; l = l->next)
-	  {
-	     if (((Elm_Obj *)(l->data))->hastype(l->data, ELM_OBJ_WIDGET))
-	       {
-		  ((Elm_Widget *)(l->data))->size_alloc(l->data, vw, vh);
-		  ((Elm_Widget *)(l->data))->geom_set(l->data, 
-						      ((Elm_Widget *)(l->data))->x,
-						      ((Elm_Widget *)(l->data))->y,
-						      ((Elm_Widget *)(l->data))->req.w,
-						      ((Elm_Widget *)(l->data))->req.h);
-// FIXME: if scrollbars affect viewport size then we get an on/off effect of
-// resizing child up and down. we need to find a way to avoid this. this tries
-// this is a hack - but works.
-		  if ((tries == 1) &&
-		      (((vw == ((Elm_Widget *)(l->data))->req.w) ||
-			(vh == ((Elm_Widget *)(l->data))->req.h)))) goto again;
-	       }
-	  }
+	if ((minw > 0) && (vw < minw)) vw = minw;
+	else if ((maxw > 0) && (vw > maxw)) vw = maxw;
      }
+   else if (minw > 0) vw = minw;
+   if (xy > 0.0)
+     {
+	if ((minh > 0) && (vh < minh)) vh = minh;
+	else if ((maxh > 0) && (vh > maxh)) vh = maxh;
+     }
+   else if (minh > 0) vh = minh;
+   evas_object_resize(wd->child, vw, vh);
 }
 
 static void
-_elm_on_child_add(void *data, Elm_Scroller *sc, Elm_Cb_Type type, Elm_Obj *obj)
+_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Evas_Coord vw, vh;
-   
-   if (!(obj->hastype(obj, ELM_OBJ_WIDGET))) return;
-   elm_smart_scroller_child_set(sc->base, ((Elm_Widget *)(obj))->base);
-   elm_smart_scroller_child_viewport_size_get(sc->base, &vw, &vh);
-   ((Elm_Widget *)(obj))->size_alloc(obj, vw, vh);
-   ((Elm_Widget *)(obj))->geom_set(obj, 
-				   ((Elm_Widget *)(obj))->x,
-				   ((Elm_Widget *)(obj))->y,
-				   ((Elm_Widget *)(obj))->req.w,
-				   ((Elm_Widget *)(obj))->req.h);
+   _sizing_eval(data);
 }
 
 static void
-_elm_on_child_del(void *data, Elm_Scroller *sc, Elm_Cb_Type type, Elm_Obj *obj)
+_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   if (!(obj->hastype(obj, ELM_OBJ_WIDGET))) return;
-   elm_smart_scroller_child_set(sc->base, NULL);
+   _sizing_eval(data);
 }
 
-EAPI Elm_Scroller *
-elm_scroller_new(Elm_Win *win)
+EAPI Evas_Object *
+elm_scroller_add(Evas_Object *parent)
 {
-   Elm_Scroller *sc;
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+   Evas_Coord vw, vh, minw, minh;
    
-   sc = ELM_NEW(Elm_Scroller);
-   _elm_widget_init(sc);
+   wd = ELM_NEW(Widget_Data);
+   e = evas_object_evas_get(parent);
+   obj = elm_widget_add(e);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
    
-   sc->clas = &_elm_scroller_class;
-   sc->type = ELM_OBJ_SCROLLER;
+   wd->scr = elm_smart_scroller_add(e);
+   elm_widget_resize_object_set(obj, wd->scr);
    
-   sc->del = _elm_scroller_del;
+   edje_object_size_min_calc(wd->scr, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
    
-   sc->geom_set = _elm_scroller_geom_set;
+   _sizing_eval(obj);
+   return obj;
+}
 
-   sc->base = elm_smart_scroller_add(win->evas);
-   
-   sc->cb_add(sc, ELM_CB_CHILD_ADD, _elm_on_child_add, NULL);
-   sc->cb_add(sc, ELM_CB_CHILD_DEL, _elm_on_child_del, NULL);
-   _elm_widget_post_init(sc);
-   win->child_add(win, sc);
-   return sc;
+EAPI void
+elm_scroller_child_set(Evas_Object *obj, Evas_Object *child)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->child = child;
+   elm_smart_scroller_child_set(wd->scr, child);
+   evas_object_event_callback_add(child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+				  _changed_size_hints, obj);
+   elm_widget_sub_object_add(obj, child);
+   // FIXME: track new sub obj...
+   _sizing_eval(obj);
 }
