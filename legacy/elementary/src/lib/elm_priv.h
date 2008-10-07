@@ -64,38 +64,8 @@ EAPI void         elm_widget_disabled_set(Evas_Object *obj, int disabled);
 EAPI int          elm_widget_disabled_get(Evas_Object *obj);
 EAPI void         elm_widget_min_size_resize(Evas_Object *obj);
 
-/*
-void _elm_obj_init(Elm_Obj *obj);
-void _elm_obj_nest_push(void);
-void _elm_obj_nest_pop(void);
-int _elm_obj_del_defer(Elm_Obj *obj);
-Elm_Cb *_elm_cb_new(void);
-void _elm_cb_call(Elm_Obj *obj, Elm_Cb_Type, void *info);
-int _elm_theme_set(Evas_Object *o, const char *clas, const char *group);
-void _elm_widget_init(Elm_Widget *wid);
-void _elm_widget_post_init(Elm_Widget *wid);
-*/  
-
 extern char *_elm_appname;
 
 extern Elm_Config *_elm_config;
-
-/*
-extern Elm_Obj_Class _elm_obj_class;
-extern Elm_Win_Class _elm_win_class;
-extern Elm_Widget_Class _elm_widget_class;
-extern Elm_Bg_Class _elm_bg_class;
-extern Elm_Scroller_Class _elm_scroller_class;
-extern Elm_Label_Class _elm_label_class;
-extern Elm_Box_Class _elm_box_class;
-extern Elm_Table_Class _elm_table_class;
-extern Elm_Button_Class _elm_button_class;
-extern Elm_Icon_Class _elm_icon_class;
-extern Elm_Toggle_Class _elm_toggle_class;
-extern Elm_Clock_Class _elm_clock_class;
-extern Elm_Frame_Class _elm_frame_class;
-extern Elm_Pad_Class _elm_pad_class;
-extern Elm_Contactlist_Class _elm_contactlist_class;
-*/
 
 #endif
