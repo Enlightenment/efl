@@ -6,11 +6,12 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *scr;
-   Evas_Object *child;
+   Evas_Object *content;
 };
 
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
+static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -26,9 +27,9 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord  vw, vh, minw, minh, maxw, maxh;
    double xw, xy;
    
-   evas_object_size_hint_min_get(wd->child, &minw, &minh);
-   evas_object_size_hint_max_get(wd->child, &maxw, &maxh);
-   evas_object_size_hint_weight_get(wd->child, &xw, &xy);
+   evas_object_size_hint_min_get(wd->content, &minw, &minh);
+   evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
+   evas_object_size_hint_weight_get(wd->content, &xw, &xy);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    if (xw > 0.0)
      {
@@ -42,13 +43,27 @@ _sizing_eval(Evas_Object *obj)
 	else if ((maxh > 0) && (vh > maxh)) vh = maxh;
      }
    else if (minh > 0) vh = minh;
-   evas_object_resize(wd->child, vw, vh);
+   evas_object_resize(wd->content, vw, vh);
 }
 
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    _sizing_eval(data);
+}
+
+static void
+_sub_del(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
+   if (sub == wd->content)
+     {
+	evas_object_event_callback_del
+	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	wd->content = NULL;
+	_sizing_eval(obj);
+     }
 }
 
 static void
@@ -77,20 +92,26 @@ elm_scroller_add(Evas_Object *parent)
    edje_object_size_min_calc(wd->scr, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
+
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    
    _sizing_eval(obj);
    return obj;
 }
 
 EAPI void
-elm_scroller_child_set(Evas_Object *obj, Evas_Object *child)
+elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   wd->child = child;
-   elm_smart_scroller_child_set(wd->scr, child);
-   evas_object_event_callback_add(child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-				  _changed_size_hints, obj);
-   elm_widget_sub_object_add(obj, child);
-   // FIXME: track new sub obj...
-   _sizing_eval(obj);
+   if ((wd->content != content) && (wd->content))
+     elm_widget_sub_object_del(obj, wd->content);
+   wd->content = content;
+   if (content)
+     {
+	elm_smart_scroller_child_set(wd->scr, content);
+	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+				       _changed_size_hints, obj);
+	elm_widget_sub_object_add(obj, content);
+	_sizing_eval(obj);
+     }
 }

@@ -10,6 +10,8 @@ struct _Widget_Data
 
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
+static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -43,6 +45,16 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
    _sizing_eval(data);
 }
 
+static void
+_sub_del(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
+   evas_object_event_callback_del
+     (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+   _sizing_eval(obj);
+}
+
 EAPI Evas_Object *
 elm_table_add(Evas_Object *parent)
 {
@@ -61,6 +73,9 @@ elm_table_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
    elm_widget_resize_object_set(obj, wd->tbl);
+
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   
    return obj;
 }
 
@@ -77,5 +92,4 @@ elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_table_pack(wd->tbl, subobj, x, y, w, h);
    elm_widget_sub_object_add(obj, subobj);
-   // FIXME: track new sub obj...
 }

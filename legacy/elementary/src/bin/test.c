@@ -506,8 +506,8 @@ my_win_main(void)
    /* set weight to 1.0 x 1.0 == expand in x and y) */
    evas_object_size_hint_weight_set(bx, 1.0, 0.0);
 
-   /* set the box ad the child int he scrolled view*/
-   elm_scroller_child_set(sc, bx);
+   /* set the box ad the content in the scrolled view*/
+   elm_scroller_content_set(sc, bx);
    /* show the box, scroller and main box */
    evas_object_show(bx);
    

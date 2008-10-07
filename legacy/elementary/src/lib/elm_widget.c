@@ -146,6 +146,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 	     sd->parent_obj = obj;
 	  }
      }
+   evas_object_smart_callback_call(obj, "sub-object-add", sobj);
 }
 
 EAPI void
@@ -157,6 +158,7 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
      {
 	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 0;
      }
+   evas_object_smart_callback_call(obj, "sub-object-del", sobj);
 }
 
 EAPI void
@@ -167,6 +169,7 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    sd->resize_obj = sobj;
    evas_object_smart_member_add(sobj, obj);
    _smart_reconfigure(sd);
+   evas_object_smart_callback_call(obj, "sub-object-add", sobj);
 }
 
 EAPI void

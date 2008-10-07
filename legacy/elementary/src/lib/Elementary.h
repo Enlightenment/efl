@@ -123,7 +123,7 @@ extern "C" {
     */
    
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
-   EAPI void         elm_scroller_child_set(Evas_Object *obj, Evas_Object *child);
+   EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
    /* smart callbacks elm_win objects will call:
     */
 
@@ -164,4 +164,18 @@ extern "C" {
     * "changed" - the user changed the time
     */
 
+// FIXME: fixes to do
+// * current sizing inefficient
+// * scroller could do with page up/down/left/right buttons and and idea of
+//   a page size
+//    
+// FIXME: immediate hitlist for widgets:
+// HOVER: select a widget (any) and attach a hover to it - the over will hover
+//        on top of the hover target and accept child widgets. haver may
+//        optionally place something to cover the window (under the hover
+//        widget, above everything else)
+// POPSEL: a buttont that when pressed uses a hover to display a h/v box or
+//         a table of options surrounding the button with scroll butons at
+//         the end and the ability to drag and scroll
+   
 #endif

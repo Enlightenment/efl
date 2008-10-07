@@ -10,6 +10,8 @@ struct _Widget_Data
 
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
+static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -42,7 +44,17 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    _sizing_eval(data);
 }
-    
+
+static void
+_sub_del(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
+   evas_object_event_callback_del
+     (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+   _sizing_eval(obj);
+}
+
 EAPI Evas_Object *
 elm_box_add(Evas_Object *parent)
 {
@@ -60,7 +72,10 @@ elm_box_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, wd->box);
    evas_object_event_callback_add(wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
-   elm_widget_resize_object_set(obj, wd->box);   
+   elm_widget_resize_object_set(obj, wd->box);
+
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   
    return obj;
 }
 
@@ -84,7 +99,6 @@ elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_box_pack_start(wd->box, subobj);
    elm_widget_sub_object_add(obj, subobj);
-   // FIXME: track new sub obj...
 }
 
 EAPI void
@@ -93,7 +107,6 @@ elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_box_pack_end(wd->box, subobj);
    elm_widget_sub_object_add(obj, subobj);
-   // FIXME: track new sub obj...
 }
 
 EAPI void
@@ -102,7 +115,6 @@ elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_box_pack_before(wd->box, subobj, before);
    elm_widget_sub_object_add(obj, subobj);
-   // FIXME: track new sub obj...
 }
 
 EAPI void
@@ -111,5 +123,4 @@ elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_box_pack_after(wd->box, subobj, after);
    elm_widget_sub_object_add(obj, subobj);
-   // FIXME: track new sub obj...
 }

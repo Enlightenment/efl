@@ -30,6 +30,7 @@ elm_toggle.c \
 elm_frame.c \
 elm_table.c \
 elm_clock.c \
+elm_layout.c \
 \
 els_pan.c \
 els_pan.h \

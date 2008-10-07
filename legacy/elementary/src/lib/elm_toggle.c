@@ -6,6 +6,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *tgl;
+   Evas_Object *icon;
    Evas_Bool state;
    Evas_Bool *statep;
 };
@@ -13,6 +14,7 @@ struct _Widget_Data
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_toggle_off(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_toggle_on(void *data, Evas_Object *obj, const char *emission, const char *source);
 
@@ -38,8 +40,24 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (obj != wd->icon) return;
    edje_object_part_swallow(wd->tgl, "elm.swallow.content", obj);
    _sizing_eval(data);
+}
+
+static void
+_sub_del(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
+   if (sub == wd->icon)
+     {
+	edje_object_signal_emit(wd->tgl, "elm,state,icon,hidden", "elm");
+	evas_object_event_callback_del
+	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	wd->icon = NULL;
+	_sizing_eval(obj);
+     }
 }
 
 static void
@@ -78,6 +96,8 @@ elm_toggle_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,on", "", _signal_toggle_on, obj);
    edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,off", "", _signal_toggle_off, obj);
    elm_widget_resize_object_set(obj, wd->tgl);
+
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    
    _sizing_eval(obj);
    return obj;
@@ -107,13 +127,18 @@ EAPI void
 elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
-   edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
-   elm_widget_sub_object_add(obj, icon);
-   evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
-   // FIXME: track new sub obj...
-   _sizing_eval(obj);
+   if ((wd->icon != icon) && (wd->icon))
+     elm_widget_sub_object_del(obj, wd->icon);
+   wd->icon = icon;
+   if (icon)
+     {
+	edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
+	edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
+	elm_widget_sub_object_add(obj, icon);
+	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _changed_size_hints, obj);
+	_sizing_eval(obj);
+     }
 }
 
 EAPI void
