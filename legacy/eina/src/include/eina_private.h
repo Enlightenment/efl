@@ -98,25 +98,6 @@
      FREE(ptr);						\
   } while(0);
 
-inline void eina_print_warning(const char *function, const char *sparam);
-
-/* convenience macros for checking pointer parameters for non-NULL */
-#undef CHECK_PARAM_POINTER_RETURN
-#define CHECK_PARAM_POINTER_RETURN(sparam, param, ret) \
-     if (!(param)) \
-	 { \
-	    eina_print_warning(__FUNCTION__, sparam); \
-	    return ret; \
-	 }
-
-#undef CHECK_PARAM_POINTER
-#define CHECK_PARAM_POINTER(sparam, param) \
-     if (!(param)) \
-	 { \
-	    eina_print_warning(__FUNCTION__, sparam); \
-	    return; \
-	 }
-
 /* Iterator/accessor private type */
 typedef Eina_Bool (*Eina_Iterator_Next_Callback)(Eina_Iterator *it, void **data);
 typedef void *(*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
