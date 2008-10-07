@@ -95,7 +95,7 @@ struct _Ecore_Con_Url
 };
 #endif
 
-struct _Ecore_Con_Netinfo
+struct _Ecore_Con_Info
 {
    struct addrinfo info;
    struct sockaddr addr;

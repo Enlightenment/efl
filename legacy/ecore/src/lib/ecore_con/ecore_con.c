@@ -26,10 +26,10 @@
 # include <winsock2.h>
 #endif
 
-static void _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Netinfo *info);
-static void _ecore_con_cb_udp_connect(void *data, Ecore_Con_Netinfo *info);
-static void _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Netinfo *info);
-static void _ecore_con_cb_udp_listen(void *data, Ecore_Con_Netinfo *info);
+static void _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *info);
+static void _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *info);
+static void _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *info);
+static void _ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *info);
 
 static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
@@ -185,6 +185,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    struct sockaddr_un  socket_unix;
    struct linger       lin;
    char                buf[4096];
+   mode_t	       pmode;
 
    if (port < 0) return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
@@ -215,7 +216,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
      {
 	const char *homedir;
 	struct stat st;
-	mode_t pmode, mask;
+	mode_t mask;
 	int socket_unix_len;
 
 	if (!name) goto error;
@@ -252,28 +253,12 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	pmode = umask(mask);
 	start:
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	if (svr->fd < 0)
-	  {
-	     umask(pmode);
-	     goto error;
-	  }
-	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-	  {
-	     umask(pmode);
-	     goto error;
-	  }
-	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-	  {
-	     umask(pmode);
-	     goto error;
-	  }
+	if (svr->fd < 0) goto error_umask;
+	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error_umask;
+	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error_umask;
 	lin.l_onoff = 1;
 	lin.l_linger = 0;
-	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
-	  {
-	     umask(pmode);
-	     goto error;
-	  }
+	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error_umask;
 	socket_unix.sun_family = AF_UNIX;
 	if (type == ECORE_CON_LOCAL_ABSTRACT)
 	  {
@@ -285,8 +270,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
 #else
 	     fprintf(stderr, "Your system does not support abstract sockets!\n");
-	     umask(pmode);
-	     goto error;
+	     goto error_umask;
 #endif
 	  }
 	else
@@ -303,36 +287,19 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 		      (type == ECORE_CON_LOCAL_SYSTEM))
 		    {
 		       if (unlink(buf) < 0)
-			 {
-			    umask(pmode);
-			    goto error;
-			 }
+			 goto error_umask;
 		       else
 			 goto start;
 		    }
 		  else
-		    {
-		       umask(pmode);
-		       goto error;
-		    }
+		    goto error_umask;
 	       }
 	     else
-	       {
-		  umask(pmode);
-		  goto error;
-	       }
+	       goto error_umask;
 	  }
-	if (listen(svr->fd, 4096) < 0)
-	  {
-	     umask(pmode);
-	     goto error;
-	  }
+	if (listen(svr->fd, 4096) < 0) goto error_umask;
 	svr->path = strdup(buf);
-	if (!svr->path)
-	  {
-	     umask(pmode);
-	     goto error;
-	  }
+	if (!svr->path) goto error_umask;
 	svr->fd_handler =
 	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
 				    _ecore_con_svr_handler, svr, NULL, NULL);
@@ -355,6 +322,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 
    return svr;
 
+   error_umask:
+   umask(pmode);
    error:
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
@@ -1127,7 +1096,7 @@ kill_server(Ecore_Con_Server *svr)
 }
 
 static void
-_ecore_con_cb_tcp_listen(void *data, Ecore_Con_Netinfo *net_info)
+_ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server *svr;
    struct linger lin;
@@ -1161,7 +1130,7 @@ _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Netinfo *net_info)
 }
 
 static void
-_ecore_con_cb_udp_listen(void *data, Ecore_Con_Netinfo *net_info)
+_ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server *svr;
    Ecore_Con_Type type;
@@ -1215,7 +1184,7 @@ _ecore_con_cb_udp_listen(void *data, Ecore_Con_Netinfo *net_info)
 }
 
 static void
-_ecore_con_cb_tcp_connect(void *data, Ecore_Con_Netinfo *net_info)
+_ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server   *svr;
    struct sockaddr_in  socket_addr;
@@ -1259,7 +1228,7 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Netinfo *net_info)
 }
 
 static void
-_ecore_con_cb_udp_connect(void *data, Ecore_Con_Netinfo *net_info)
+_ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server   *svr;
    struct sockaddr_in  socket_addr;

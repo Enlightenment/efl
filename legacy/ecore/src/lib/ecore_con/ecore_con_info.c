@@ -20,12 +20,10 @@
 
 typedef struct _CB_Data CB_Data;
 
-typedef void (*CB_Func)(void *data, Ecore_Con_Netinfo *infos);
-
 struct _CB_Data
 {
    Ecore_List2 __list_data;
-   CB_Func cb_done;
+   Ecore_Con_Info_Cb cb_done;
    void *data;
    Ecore_Fd_Handler *fdh;
    pid_t pid;
@@ -34,7 +32,6 @@ struct _CB_Data
 };
 
 
-static int _ecore_con_info_get(Ecore_Con_Server *svr, CB_Func done_cb, void *data);
 static void _ecore_con_info_readdata(CB_Data *cbdata);
 static void _ecore_con_info_slave_free(CB_Data *cbdata);
 static int _ecore_con_info_data_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -42,16 +39,15 @@ static int _ecore_con_info_exit_handler(void *data, int type __UNUSED__, void *e
 
 static int info_init = 0;
 static Ecore_List2 *info_slaves = NULL;
-static struct addrinfo hints;
 
-int
+EAPI int
 ecore_con_info_init(void)
 {
    info_init++;
    return info_init;
 }
 
-int
+EAPI int
 ecore_con_info_shutdown(void)
 {
    info_init--;
@@ -62,11 +58,13 @@ ecore_con_info_shutdown(void)
    return info_init;
 }
 
-int
+EAPI int
 ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
-			   CB_Func done_cb,
+			   Ecore_Con_Info_Cb done_cb,
 			   void *data)
 {
+   struct addrinfo hints;
+
    memset(&hints, 0, sizeof(struct addrinfo));
    hints.ai_family = AF_UNSPEC;
    hints.ai_socktype = SOCK_STREAM;
@@ -76,14 +74,16 @@ ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
    hints.ai_next = NULL;
    hints.ai_addr = NULL;
 
-   return _ecore_con_info_get(svr, done_cb, data);
+   return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
-int
+EAPI int
 ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
-			  CB_Func done_cb,
+			  Ecore_Con_Info_Cb done_cb,
 			  void *data)
 {
+   struct addrinfo hints;
+
    memset(&hints, 0, sizeof(struct addrinfo));
    hints.ai_family = AF_UNSPEC;
    hints.ai_socktype = SOCK_STREAM;
@@ -93,14 +93,16 @@ ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
    hints.ai_next = NULL;
    hints.ai_addr = NULL;
 
-   return _ecore_con_info_get(svr, done_cb, data);
+   return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
-int
+EAPI int
 ecore_con_info_udp_connect(Ecore_Con_Server *svr,
-			   CB_Func done_cb,
+			   Ecore_Con_Info_Cb done_cb,
 			   void *data)
 {
+   struct addrinfo hints;
+
    memset(&hints, 0, sizeof(struct addrinfo));
    hints.ai_family = AF_UNSPEC;
    hints.ai_socktype = SOCK_DGRAM;
@@ -110,14 +112,16 @@ ecore_con_info_udp_connect(Ecore_Con_Server *svr,
    hints.ai_next = NULL;
    hints.ai_addr = NULL;
 
-   return _ecore_con_info_get(svr, done_cb, data);
+   return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
-int
+EAPI int
 ecore_con_info_udp_listen(Ecore_Con_Server *svr,
-			  CB_Func done_cb,
+			  Ecore_Con_Info_Cb done_cb,
 			  void *data)
 {
+   struct addrinfo hints;
+
    memset(&hints, 0, sizeof(struct addrinfo));
    hints.ai_family = AF_UNSPEC;
    hints.ai_socktype = SOCK_DGRAM;
@@ -127,14 +131,16 @@ ecore_con_info_udp_listen(Ecore_Con_Server *svr,
    hints.ai_next = NULL;
    hints.ai_addr = NULL;
 
-   return _ecore_con_info_get(svr, done_cb, data);
+   return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
-int
-ecore_con_pre_mcast_listen(Ecore_Con_Server *svr,
-			   CB_Func done_cb,
+EAPI int
+ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
+			   Ecore_Con_Info_Cb done_cb,
 			   void *data)
 {
+   struct addrinfo hints;
+
    memset(&hints, 0, sizeof(struct addrinfo));
    hints.ai_family = AF_UNSPEC;
    hints.ai_socktype = SOCK_DGRAM;
@@ -144,13 +150,14 @@ ecore_con_pre_mcast_listen(Ecore_Con_Server *svr,
    hints.ai_next = NULL;
    hints.ai_addr = NULL;
 
-   return _ecore_con_info_get(svr, done_cb, data);
+   return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
-static int
-_ecore_con_info_get(Ecore_Con_Server *svr,
-		    CB_Func done_cb,
-		    void *data)
+EAPI int
+ecore_con_info_get(Ecore_Con_Server *svr,
+		   Ecore_Con_Info_Cb done_cb,
+		   void *data,
+		   struct addrinfo *hints)
 {
    CB_Data *cbdata;
    int fd[2];
@@ -179,7 +186,7 @@ _ecore_con_info_get(Ecore_Con_Server *svr,
 
    if ((cbdata->pid = fork()) == 0)
      {
-        Ecore_Con_Netinfo container;
+        Ecore_Con_Info container;
 	struct addrinfo *result;
 	char service[NI_MAXSERV];
 	char hbuf[NI_MAXHOST];
@@ -203,7 +210,7 @@ _ecore_con_info_get(Ecore_Con_Server *svr,
 		memcpy(container.ip, hbuf, sizeof(container.ip));
 		memcpy(container.service, sbuf, sizeof(container.service));
 	      }
-	    write(fd[1], &container, sizeof(Ecore_Con_Netinfo));
+	    write(fd[1], &container, sizeof(Ecore_Con_Info));
 	  }
 	else
 	  write(fd[1], "", 1);
@@ -232,12 +239,12 @@ _ecore_con_info_get(Ecore_Con_Server *svr,
 static void
 _ecore_con_info_readdata(CB_Data *cbdata)
 {
-   Ecore_Con_Netinfo container;
+   Ecore_Con_Info container;
    ssize_t size;
 
    size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), &container,
-	       sizeof(Ecore_Con_Netinfo));
-   if (size == sizeof(Ecore_Con_Netinfo))
+	       sizeof(Ecore_Con_Info));
+   if (size == sizeof(Ecore_Con_Info))
      {
         container.info.ai_addr = &container.addr;
 	cbdata->cb_done(cbdata->data, &container);
