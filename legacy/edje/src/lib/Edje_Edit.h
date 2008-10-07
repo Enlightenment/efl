@@ -1243,6 +1243,57 @@ edje_edit_state_text_align_y_set(
    double align            ///< The new text align Y value
 );
 
+/**Get the text elipsis of a part state. The value range is from 0.0(right) to 1.0(left)*/
+EAPI double                ///@return The text elipsis value
+edje_edit_state_text_elipsis_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Set the text vertical align of a part state. The value range is from 0.0(right) to 1.0(left)*/
+EAPI void
+edje_edit_state_text_elipsis_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   double balance          ///< The position where to cut the string
+);
+
+/**Get if the text part fit it's container horizontally */
+EAPI unsigned char         ///@return 1 If the part fit it's container horizontally
+edje_edit_state_text_fit_x_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Set if the text part should fit it's container horizontally */
+EAPI void
+edje_edit_state_text_fit_x_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   unsigned char fit       ///< 1 to make the text fit it's container
+);
+
+/**Get if the text part fit it's container vertically */
+EAPI unsigned char         ///@return 1 If the part fit it's container vertically
+edje_edit_state_text_fit_y_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Set if the text part should fit it's container vertically */
+EAPI void
+edje_edit_state_text_fit_y_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   unsigned char fit       ///< 1 to make the text fit it's container
+);
+
 /**Get the list of all the fonts in the given edje.
  * Use edje_edit_string_list_free() when you don't need the list anymore.
  */

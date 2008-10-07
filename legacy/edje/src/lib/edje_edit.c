@@ -2773,6 +2773,64 @@ edje_edit_state_text_align_y_set(Evas_Object *obj, const char *part, const char 
    edje_object_calc_force(obj);
 }
 
+EAPI double
+edje_edit_state_text_elipsis_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(0.0);
+
+   //printf("GET TEXT_ELIPSIS of state: %s [%f]\n", state, pd->text.elipsis);
+   return pd->text.elipsis;
+}
+
+EAPI void
+edje_edit_state_text_elipsis_set(Evas_Object *obj, const char *part, const char *state, double balance)
+{
+   GET_PD_OR_RETURN();
+
+   //printf("SET TEXT_ELIPSIS of state: %s [%f]\n", state, balance);
+
+   pd->text.elipsis = balance;
+   edje_object_calc_force(obj);
+}
+
+EAPI unsigned char
+edje_edit_state_text_fit_x_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN();
+   //printf("GET TEXT_FIT_VERT of state: %s \n", state);
+   return pd->text.fit_x;
+}
+
+EAPI void
+edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *state, unsigned char fit)
+{
+   GET_PD_OR_RETURN();
+
+   //printf("SET TEXT_FIT_VERT of state: %s\n", state);
+
+   pd->text.fit_x = fit ? 1 : 0;
+   edje_object_calc_force(obj);
+}
+
+EAPI unsigned char
+edje_edit_state_text_fit_y_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN();
+   //printf("GET TEXT_FIT_VERT of state: %s \n", state);
+   return pd->text.fit_y;
+}
+
+EAPI void
+edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *state, unsigned char fit)
+{
+   GET_PD_OR_RETURN();
+
+   //printf("SET TEXT_FIT_VERT of state: %s\n", state);
+
+   pd->text.fit_y = fit ? 1 : 0;
+   edje_object_calc_force(obj);
+}
+
 EAPI Evas_List *
 edje_edit_fonts_list_get(Evas_Object *obj)
 {
@@ -4656,10 +4714,11 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
        rp->part->type == EDJE_PART_TYPE_GRADIENT)
      {
 	fprintf(f, I5"fill {\n");
-	if (!pd->fill.smooth)
+	if (rp->part->type == EDJE_PART_TYPE_IMAGE && !pd->fill.smooth)
 	  fprintf(f, I6"smooth: 0;\n");
         //TODO Support spread
-        //TODO Support angle
+	if (rp->part->type == EDJE_PART_TYPE_GRADIENT && pd->fill.angle)
+	  fprintf(f, I6"angle: %d;\n", pd->fill.angle);
         //TODO Support type
         
 	if (pd->fill.pos_rel_x || pd->fill.pos_rel_y ||
@@ -4697,13 +4756,15 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	fprintf(f, I6"size: %d;\n", pd->text.size);
 	if (pd->text.text_class)
 	  fprintf(f, I6"text_class: \"%s\";\n", pd->text.text_class);
-        //TODO Support fit
+	if (pd->text.fit_x || pd->text.fit_y)
+	  fprintf(f, I6"fit: %d %d;\n", pd->text.fit_x, pd->text.fit_y);
         //TODO Support min & max
-        if (pd->text.align.x != 0.5 || pd->text.align.y != 0.5)
+	if (pd->text.align.x != 0.5 || pd->text.align.y != 0.5)
 	  fprintf(f, I6"align: %g %g;\n", pd->text.align.x, pd->text.align.y);
         //TODO Support source
         //TODO Support text_source
-        //TODO Support elipsis
+	if (pd->text.elipsis)
+	  fprintf(f, I6"elipsis: %g;\n", pd->text.elipsis);
 	fprintf(f, I5"}\n");
      }
 
@@ -4721,9 +4782,6 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         //TODO rel1 and 2 seems unused
 	fprintf(f, I5"}\n");
      }
-   
-   //...and so on...
-   
    
    fprintf(f, I4"}\n");//description
 }
