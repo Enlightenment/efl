@@ -73,11 +73,12 @@ static int _ecore_con_free_ssl(Ecore_Con_Server *svr);
   do {				\
     svr->ssl = NULL;		\
     svr->ssl_ctx = NULL;	\
-  } while (0);
+  } while (0)
 #else
 # define INIT_SSL(svr) 0
 # define SHUTDOWN_SSL(svr) 0
 # define FREE_SSL(svr) 0
+# define UNSET_SSL(svr) 0
 #endif
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
