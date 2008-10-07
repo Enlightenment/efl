@@ -44,8 +44,6 @@ EAPI void         elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (v
 EAPI void         elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void         elm_widget_data_set(Evas_Object *obj, void *data);
 EAPI void        *elm_widget_data_get(Evas_Object *obj);
-EAPI void         elm_widget_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
-EAPI void         elm_widget_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
 EAPI void         elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI void         elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
 EAPI void         elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
@@ -62,7 +60,6 @@ EAPI void         elm_widget_activate(Evas_Object *obj);
 EAPI void         elm_widget_change(Evas_Object *obj);
 EAPI void         elm_widget_disabled_set(Evas_Object *obj, int disabled);
 EAPI int          elm_widget_disabled_get(Evas_Object *obj);
-EAPI void         elm_widget_min_size_resize(Evas_Object *obj);
 
 extern char *_elm_appname;
 

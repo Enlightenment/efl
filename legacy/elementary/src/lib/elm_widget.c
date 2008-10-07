@@ -10,8 +10,8 @@ struct _Smart_Data
 { 
    Evas_Object   *parent_obj;
    Evas_Coord     x, y, w, h;
-   Evas_Coord     minw, minh;
    Evas_List     *subobjs;
+   Evas_List     *hovers;
    Evas_Object   *resize_obj;
    void         (*del_func) (Evas_Object *obj);
    void         (*focus_func) (Evas_Object *obj);
@@ -108,24 +108,6 @@ elm_widget_data_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->data;
-}
-
-EAPI void
-elm_widget_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
-{
-   API_ENTRY return;
-   if (minw >= 0)
-     sd->minw = minw;
-   if (minh >= 0)
-     sd->minh = minh;
-}
-
-EAPI void
-elm_widget_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
-{
-   API_ENTRY return;
-   if (minw) *minw = sd->minw;
-   if (minh) *minh = sd->minh;
 }
 
 EAPI void
@@ -447,13 +429,6 @@ elm_widget_disabled_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->disabled;
-}
-
-EAPI void
-elm_widget_min_size_resize(Evas_Object *obj)
-{
-   API_ENTRY return;
-   evas_object_resize(obj, sd->minw, sd->minh);
 }
 
 /* local subsystem functions */
