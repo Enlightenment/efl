@@ -1424,6 +1424,23 @@ edje_edit_state_image_border_set(
    int b                   ///< The new bottom border (or -1)
 );
 
+/**Get if the image center should be draw. 1 means to draw the center, 0 to don't draw it.*/
+EAPI unsigned char         ///@return 1 if the center of the bordered image is draw
+edje_edit_state_image_border_fill_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Set if the image center should be draw. 1 means to draw the center, 0 to don't draw it.*/
+EAPI void
+edje_edit_state_image_border_fill_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   unsigned char fill      ///< If set to 0 the image center isn't draw
+);
+
 /**Get the list of all the tweens images in the given part state.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */

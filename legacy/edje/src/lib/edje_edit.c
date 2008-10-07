@@ -3297,6 +3297,22 @@ edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char 
    edje_object_calc_force(obj);
 }
 
+EAPI unsigned char
+edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN();
+   return pd->border.no_fill ? 0 : 1;
+}
+
+EAPI void
+edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const char *state, unsigned char fill)
+{
+   GET_PD_OR_RETURN();
+   pd->border.no_fill = fill ? 0 : 1;
+
+   edje_object_calc_force(obj);
+}
+
 /******************/
 /*  SPECTRUM API  */
 /******************/
@@ -4479,12 +4495,12 @@ _edje_generate_source_of_colorclass(Edje * ed, const char *name, FILE * f)
 	cc = l->data;
 	if (!strcmp(cc->name, name))
 	  {
-	     fprintf(f, I1 "color_class {\n");
-	     fprintf(f, I2 "name: \"%s\";\n", cc->name);
-	     fprintf(f, I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
-	     fprintf(f, I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
-	     fprintf(f, I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
-	     fprintf(f, I1 "}\n");
+		fprintf(f, I1 "color_class {\n");
+		fprintf(f, I2 "name: \"%s\";\n", cc->name);
+		fprintf(f, I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
+		fprintf(f, I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
+		fprintf(f, I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
+		fprintf(f, I1 "}\n");
 	  }
      }
 }
@@ -4539,7 +4555,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 		edje_edit_string_free(s2);
 	  }
 	break;
-     //TODO Drag
+     //TODO Support Drag
      //~ case EDJE_ACTION_TYPE_DRAG_VAL_SET:
 	//~ fprintf(f, I4"action: DRAG_VAL_SET TODO;\n");
 	//~ break;
@@ -4591,7 +4607,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 	edje_edit_string_list_free(ll);
      }
 
-   // TODO script {}
+   // TODO Support script {}
 
    fprintf(f, I3 "}\n");
 }
@@ -4705,7 +4721,9 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
       
 	if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
 	  fprintf(f, I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
-	//TODO Support middle
+	if (pd->border.no_fill)
+	  fprintf(f, I6"middle: 0;\n");
+
 	fprintf(f, I5"}\n");//image
      }
    
@@ -4931,8 +4949,8 @@ _edje_generate_source(Evas_Object *obj)
 	for (l = ll; l; l = l->next)
 	  {
 		char *entry = l->data;
-		// TODO Finish me
-		fprintf(f, I1"font: \"FIXME\" \"%s\";\n", entry);
+		// TODO Fixme the filename is wrong
+		fprintf(f, I1"font: \"%s.ttf\" \"%s\";\n", entry, entry);
 	  }
 	fprintf(f, I0"}\n\n");
 	edje_edit_string_list_free(ll);
@@ -4974,22 +4992,18 @@ _edje_generate_source(Evas_Object *obj)
 	fprintf(f, I0 "}\n\n");
 	edje_edit_string_list_free(ll);
      }
-   
+
    /* Styles */
    //TODO Support styles
-   
+
    /* Collections */
-   
    fprintf(f, "collections {\n");
    ll = edje_file_collection_list(ed->file->path);
    for (l = ll; l; l = l->next)
-     {
-        _edje_generate_source_of_group(ed, (char*)l->data, f);
-        
-     }
+     _edje_generate_source_of_group(ed, (char*)l->data, f);
    fprintf(f, "}\n\n");
    edje_file_collection_list_free(ll);
-   
+
    fclose(f);
 
    sfl = mem_alloc(SZ(SrcFile_List));
