@@ -28,6 +28,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   elm_hover_target_set(obj, NULL);
    elm_hover_parent_set(obj, NULL);
    while (wd->subs)
      {
@@ -120,6 +121,13 @@ _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+_target_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   wd->target = NULL;
+}
+
+static void
 _signal_dismiss(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -143,7 +151,6 @@ static void
 _parent_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   evas_object_show(wd->cov);
 }
 
 static void
@@ -211,9 +218,17 @@ EAPI void
 elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->target)
+     {
+	evas_object_event_callback_del(wd->target, EVAS_CALLBACK_DEL, _target_del);
+     }
    wd->target = target;
-   elm_widget_hover_object_set(target, obj);
-   _sizing_eval(obj);
+   if (wd->target)
+     {
+	evas_object_event_callback_add(wd->target, EVAS_CALLBACK_DEL, _target_del, obj);
+	elm_widget_hover_object_set(target, obj);
+	_sizing_eval(obj);
+     }
 }
 
 EAPI void

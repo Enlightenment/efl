@@ -473,7 +473,7 @@ my_hover_bt_1(void *data, Evas_Object *obj, void *event_info)
 static void
 my_bt_11(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bt, *hv;
+   Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "hover", ELM_WIN_BASIC);
@@ -507,6 +507,12 @@ my_bt_11(void *data, Evas_Object *obj, void *event_info)
 
    bx = elm_box_add(win);
    
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Top 1");
    elm_box_pack_end(bx, bt);
