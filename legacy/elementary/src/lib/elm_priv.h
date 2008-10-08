@@ -47,6 +47,7 @@ EAPI void        *elm_widget_data_get(Evas_Object *obj);
 EAPI void         elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI void         elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
 EAPI void         elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
+EAPI void         elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj);
 EAPI void         elm_widget_can_focus_set(Evas_Object *obj, int can_focus);
 EAPI int          elm_widget_can_focus_get(Evas_Object *obj);
 EAPI int          elm_widget_focus_get(Evas_Object *obj);

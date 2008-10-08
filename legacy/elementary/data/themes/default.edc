@@ -2120,13 +2120,61 @@ collections {
    }
    
 ///////////////////////////////////////////////////////////////////////////////
+   group { name: "hover";
+      images {
+	 image: "bt_base1.png" COMP;
+	 image: "bt_base2.png" COMP;
+	 image: "bt_hilight.png" COMP;
+	 image: "bt_shine.png" COMP;
+      }
+      parts {
+	 part { name: "base";
+	    type: RECT;
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 200;
+	    }
+	 }
+	 part { name: "box";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       color: 255 255 255 200;
+	       rel1.to: "elm.swallow.size";
+	       rel1.offset: -2 -2;
+	       rel2.to: "elm.swallow.size";
+	       rel2.offset: 1 1;
+	    }
+	 }
+	 part { name: "elm.swallow.offset";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 0.0 0.0;
+	       rel1.relative: 0.0 0.0;
+	       rel2.relative: 0.0 0.0;
+	    }
+	 }
+	 part { name: "elm.swallow.size";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 0.0 0.0;
+	       rel1.to: "elm.swallow.offset";
+	       rel1.relative: 1.0 1.0;
+	       rel2.to: "elm.swallow.offset";
+	       rel2.relative: 1.0 1.0;
+	    }
+	 }
+      }
+   }
+   
+///////////////////////////////////////////////////////////////////////////////
    group { name: "contact";
       images {
 	 image: "bt_base1.png" COMP;
 	 image: "bt_base2.png" COMP;
 	 image: "bt_hilight.png" COMP;
 	 image: "bt_shine.png" COMP;
-    }
+      }
       parts {
 	 part { name: "button_image";
 	    mouse_events: 1;

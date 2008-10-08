@@ -425,7 +425,7 @@ my_bt_9(void *data, Evas_Object *obj, void *event_info)
 static void
 my_bt_10(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *ly, *ck, *bt;
+   Evas_Object *win, *bg, *ly, *bt;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
@@ -459,6 +459,50 @@ my_bt_10(void *data, Evas_Object *obj, void *event_info)
    elm_layout_content_set(ly, "element3", bt);
    evas_object_show(bt);
    
+   evas_object_show(win);
+}
+
+static void
+my_hover_bt_1(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *hv = data;
+   
+   evas_object_show(hv);
+}
+
+static void
+my_bt_11(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *bt, *hv;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "hover", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Hover");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   hv = elm_hover_add(win);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button");
+   evas_object_smart_callback_add(bt, "clicked", my_hover_bt_1, hv);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   elm_hover_parent_set(hv, win);
+   elm_hover_target_set(hv, bt);
+   
+   evas_object_size_hint_min_set(bg, 160, 160);
+   evas_object_size_hint_max_set(bg, 640, 640);
+   evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
 
@@ -621,6 +665,13 @@ my_win_main(void)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Layout");
    evas_object_smart_callback_add(bt, "clicked", my_bt_10, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Hover");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_11, NULL);
    evas_object_size_hint_align_set(bt, -1.0, 0.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);

@@ -171,6 +171,12 @@ extern "C" {
    /* smart callbacks elm_win objects will call:
     */
    
+   EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
+   EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
+   EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
+   /* smart callbacks elm_win objects will call:
+    */
+   
 // FIXME: fixes to do
 // * current sizing inefficient
 // * scroller could do with page up/down/left/right buttons and and idea of

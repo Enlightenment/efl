@@ -42,13 +42,15 @@ elm_init(int argc, char **argv)
        (_elm_config->engine == ELM_XRENDER_X11) ||
        (_elm_config->engine == ELM_OPENGL_X11))
      {
-	int val;
+	int val = 1000;
 	
 	ecore_x_init(NULL);
 	if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
 					   ecore_x_atom_get("ENLIGHTENMENT_SCALE"),
-					   &val, 1))
-	  _elm_config->scale = (double)val / 1000.0;
+					   &val, 1) > 0)
+	  {
+	     if (val > 0) _elm_config->scale = (double)val / 1000.0;
+	  }
      }
     
 }

@@ -31,6 +31,7 @@ elm_frame.c \
 elm_table.c \
 elm_clock.c \
 elm_layout.c \
+elm_hover.c \
 \
 els_pan.c \
 els_pan.h \

@@ -2,8 +2,8 @@
 #include "elm_priv.h"
 
 #define SMART_NAME "e_widget"
-#define API_ENTRY Smart_Data *sd; sd = evas_object_smart_data_get(obj); if ((!obj) || (!sd) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
-#define INTERNAL_ENTRY Smart_Data *sd; sd = evas_object_smart_data_get(obj); if (!sd) return;
+#define API_ENTRY Smart_Data *sd = evas_object_smart_data_get(obj); if ((!obj) || (!sd) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
+#define INTERNAL_ENTRY Smart_Data *sd = evas_object_smart_data_get(obj); if (!sd) return;
 typedef struct _Smart_Data Smart_Data;
 
 struct _Smart_Data
@@ -11,8 +11,8 @@ struct _Smart_Data
    Evas_Object   *parent_obj;
    Evas_Coord     x, y, w, h;
    Evas_List     *subobjs;
-   Evas_List     *hovers;
    Evas_Object   *resize_obj;
+   Evas_Object   *hover_obj;
    void         (*del_func) (Evas_Object *obj);
    void         (*focus_func) (Evas_Object *obj);
    void         (*activate_func) (Evas_Object *obj);
@@ -43,6 +43,15 @@ static void _smart_init(void);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
+
+static void
+_sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Smart_Data *sd = data;
+   if (obj == sd->resize_obj) sd->resize_obj = NULL;
+   else if (obj == sd->hover_obj) sd->hover_obj = NULL;
+   else sd->subobjs = evas_list_remove(sd->subobjs, obj);
+}
 
 /* externally accessible functions */
 EAPI Evas_Object *
@@ -147,11 +156,35 @@ EAPI void
 elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
-   if (sd->resize_obj) evas_object_smart_member_del(sd->resize_obj);
+   if (sd->resize_obj)
+     {
+	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
+	evas_object_smart_member_del(sd->resize_obj);
+     }
    sd->resize_obj = sobj;
-   evas_object_smart_member_add(sobj, obj);
-   _smart_reconfigure(sd);
-   evas_object_smart_callback_call(obj, "sub-object-add", sobj);
+   if (sd->resize_obj)
+     {
+	evas_object_smart_member_add(sobj, obj);
+	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+	_smart_reconfigure(sd);
+	evas_object_smart_callback_call(obj, "sub-object-add", sobj);
+     }
+}
+
+EAPI void
+elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj)
+{
+   API_ENTRY return;
+   if (sd->hover_obj)
+     {
+	evas_object_event_callback_del(sd->hover_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
+     }
+   sd->hover_obj = sobj;
+   if (sd->hover_obj)
+     {
+	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+	_smart_reconfigure(sd);
+     }
 }
 
 EAPI void
@@ -439,7 +472,12 @@ _smart_reconfigure(Smart_Data *sd)
      {
 	evas_object_move(sd->resize_obj, sd->x, sd->y);
 	evas_object_resize(sd->resize_obj, sd->w, sd->h);
-    }
+     }
+   if (sd->hover_obj)
+     {
+	evas_object_move(sd->hover_obj, sd->x, sd->y);
+	evas_object_resize(sd->hover_obj, sd->w, sd->h);
+     }
 }
 
 static void
@@ -464,10 +502,23 @@ _smart_del(Evas_Object *obj)
    
    INTERNAL_ENTRY;
    if (sd->del_func) sd->del_func(obj);
+   if (sd->resize_obj)
+     {
+	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
+	sd->resize_obj = NULL;
+	evas_object_del(sd->resize_obj);
+     }
+   if (sd->hover_obj)
+     {
+	evas_object_event_callback_del(sd->hover_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
+	sd->hover_obj = NULL;
+	evas_object_del(sd->hover_obj);
+     }
    while (sd->subobjs)
      {
 	sobj = sd->subobjs->data;
 	sd->subobjs = evas_list_remove_list(sd->subobjs, sd->subobjs);
+	evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
 	evas_object_del(sobj);
      }
    free(sd);
