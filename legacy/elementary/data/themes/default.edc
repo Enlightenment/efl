@@ -2155,9 +2155,9 @@ collections {
 	    description { state: "default" 0.0;
 	       image.normal: "shad_circ.png";
 	       rel1.to: "elm.swallow.size";
-	       rel1.offset: -20 -20;
+	       rel1.offset: -32 -32;
 	       rel2.to: "elm.swallow.size";
-	       rel2.offset: 19 19;
+	       rel2.offset: 31 31;
                fill.smooth: 0;
 	    }
 	 }
