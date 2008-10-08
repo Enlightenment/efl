@@ -215,6 +215,7 @@ _em_slave(void *par)
 			    ev->ratio = (double)v / 10000.0;
 			    ev->just_loaded = 1;
 			    ev->get_poslen = 0;
+			    xine_set_param(ev->stream, XINE_PARAM_AUDIO_VOLUME, ev->volume * 100);
 			 }
 		       _em_module_event(ev, 2); /* event - open done */
 		    }
@@ -312,12 +313,7 @@ _em_slave(void *par)
 		  break;
 		case 10: /* vol */
 		    {
-		       double vol;
-		       
-		       vol = *((double *)eev->xine_event);
-		       if (vol < 0.0) vol = 0.0;
-		       if (vol > 1.0) vol = 1.0;
-		       xine_set_param(ev->stream, XINE_PARAM_AUDIO_VOLUME, vol * 100);
+		       xine_set_param(ev->stream, XINE_PARAM_AUDIO_VOLUME, ev->volume * 100);
 		       _em_module_event(ev, 10);
 		    }
 		  break;
@@ -979,12 +975,13 @@ static void
 em_audio_channel_volume_set(void *ef, double vol)
 {
    Emotion_Xine_Video *ev;
-   double *ppos;
    
+   if (vol < 0.0) vol = 0.0;
+   else if (vol > 1.0) vol = 1.0;
+
    ev = (Emotion_Xine_Video *)ef;
-   ppos = malloc(sizeof(double));
-   *ppos = vol;
-   _em_slave_event(ev, 10, ppos);
+   ev->volume = vol;
+   _em_slave_event(ev, 10, NULL);
 }
 
 static double
@@ -993,8 +990,9 @@ em_audio_channel_volume_get(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   if (ev->opening || (!ev->play_ok)) return 0;
-   return (double)xine_get_param(ev->stream, XINE_PARAM_AUDIO_VOLUME) / 100.0;
+   if (ev->opening || (!ev->play_ok)) return ev->volume;
+   ev->volume = xine_get_param(ev->stream, XINE_PARAM_AUDIO_VOLUME) / 100.0;
+   return ev->volume;
 }
 
 static int

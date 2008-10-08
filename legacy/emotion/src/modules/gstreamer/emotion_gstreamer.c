@@ -453,6 +453,8 @@ em_file_open(const char   *file,
      _free_metadata(ev->metadata);
    ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
 
+  em_audio_channel_volume_set(ev, ev->volume);
+
    _eos_timer_fct(ev);
 
    return 1;

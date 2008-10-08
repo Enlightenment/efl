@@ -20,6 +20,7 @@ struct _Emotion_Xine_Video
    xine_event_queue_t       *queue;
    volatile double           len;
    volatile double           pos;
+   volatile double           volume;
    double                    fps;
    double                    ratio;
    int                       w, h;
