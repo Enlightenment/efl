@@ -87,13 +87,13 @@ extern "C" {
    EAPI void         elm_win_alpha_set(Evas_Object *obj, Evas_Bool alpha);
    EAPI void         elm_win_override_set(Evas_Object *obj, Evas_Bool override);
 // FIXME: implement more of the above calls
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     * "delete-request" - the user requested to delete the window
     */
 
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
    EAPI void         elm_bg_file_set(Evas_Object *obj, const char *file, const char *group);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
 
    EAPI Evas_Object *elm_icon_add(Evas_Object *parent);
@@ -102,7 +102,7 @@ extern "C" {
    EAPI void         elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale);
    EAPI void         elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down);
    EAPI void         elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     * "clicked" - the user clicked the icon
     */
 
@@ -113,24 +113,24 @@ extern "C" {
    EAPI void         elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before);
    EAPI void         elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
    
    EAPI Evas_Object *elm_button_add(Evas_Object *parent);
    EAPI void         elm_button_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     * "clicked" - the user clicked the button
     */
    
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
    EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
 
    EAPI Evas_Object *elm_label_add(Evas_Object *parent);
    EAPI void         elm_label_label_set(Evas_Object *obj, const char *label);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
        
    EAPI Evas_Object *elm_toggle_add(Evas_Object *parent);
@@ -139,20 +139,20 @@ extern "C" {
    EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
    EAPI void         elm_toggle_state_set(Evas_Object *obj, Evas_Bool state);
    EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Evas_Bool *statep);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     * "changed" - the user toggled the state
     */
    
    EAPI Evas_Object *elm_frame_add(Evas_Object *parent);
    EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
        
    EAPI Evas_Object *elm_table_add(Evas_Object *parent);
    EAPI void         elm_table_homogenous_set(Evas_Object *obj, Evas_Bool homogenous);
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
    
    EAPI Evas_Object *elm_clock_add(Evas_Object *parent);
@@ -161,7 +161,7 @@ extern "C" {
    EAPI void         elm_clock_edit_set(Evas_Object *obj, Evas_Bool edit);
    EAPI void         elm_clock_show_am_pm_set(Evas_Object *obj, Evas_Bool am_pm);
    EAPI void         elm_clock_show_seconds_set(Evas_Object *obj, Evas_Bool seconds);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     * "changed" - the user changed the time
     */
 
@@ -169,15 +169,14 @@ extern "C" {
    EAPI void         elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI Evas_Object *elm_layout_edje_get(Evas_Object *obj);
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
    
    EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
    EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
-       
-   /* smart callbacks elm_win objects will call:
+   /* smart callbacks called:
     */
    
 // FIXME: fixes to do
@@ -185,11 +184,8 @@ extern "C" {
 // * scroller could do with page up/down/left/right buttons and and idea of
 //   a page size
 // * tab widget focusing (not useful for touchscreen tho...)
-// * icon should optionally be able to collect events and call clicked
-//   callbacks
 // * hover needs a way to animate show/hide (slide out slots) and have some
 //   graphics for around middle
-// * hover needs to track move/resize and del of parent
 // * hover needs to be able to use custom hover style
 // * frame needs to be able to use custom frame style
 // * all widgets need a way to use a custom style

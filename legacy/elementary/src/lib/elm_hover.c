@@ -28,6 +28,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   elm_hover_parent_set(obj, NULL);
    while (wd->subs)
      {
         Subinfo *si = wd->subs->data;
@@ -126,6 +127,40 @@ _signal_dismiss(void *data, Evas_Object *obj, const char *emission, const char *
    evas_object_hide(data);
 }
 
+static void
+_parent_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _sizing_eval(data);
+}
+
+static void
+_parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _sizing_eval(data);
+}
+
+static void
+_parent_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   evas_object_show(wd->cov);
+}
+
+static void
+_parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   evas_object_hide(wd->cov);
+}
+
+static void
+_parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   wd->parent = NULL;
+   _sizing_eval(data);
+}
+
 EAPI Evas_Object *
 elm_hover_add(Evas_Object *parent)
 {
@@ -185,8 +220,24 @@ EAPI void
 elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->parent)
+     {
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_MOVE, _parent_move);
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize);
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_SHOW, _parent_show);
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_HIDE, _parent_hide);
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_DEL, _parent_del);
+     }
    wd->parent = parent;
-   elm_widget_sub_object_add(parent, obj);
+   if (wd->parent)
+     {
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_MOVE, _parent_move, obj);
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize, obj);
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_SHOW, _parent_show, obj);
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_HIDE, _parent_hide, obj);
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_DEL, _parent_del, obj);
+	elm_widget_sub_object_add(parent, obj);
+     }
    _sizing_eval(obj);
 }
 
