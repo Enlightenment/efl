@@ -97,30 +97,30 @@ EAPI void
 elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _els_smart_box_pack_start(wd->box, subobj);
    elm_widget_sub_object_add(obj, subobj);
+   _els_smart_box_pack_start(wd->box, subobj);
 }
 
 EAPI void
 elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _els_smart_box_pack_end(wd->box, subobj);
    elm_widget_sub_object_add(obj, subobj);
+   _els_smart_box_pack_end(wd->box, subobj);
 }
 
 EAPI void
 elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _els_smart_box_pack_before(wd->box, subobj, before);
    elm_widget_sub_object_add(obj, subobj);
+   _els_smart_box_pack_before(wd->box, subobj, before);
 }
 
 EAPI void
 elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _els_smart_box_pack_after(wd->box, subobj, after);
    elm_widget_sub_object_add(obj, subobj);
+   _els_smart_box_pack_after(wd->box, subobj, after);
 }

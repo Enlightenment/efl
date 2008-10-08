@@ -134,8 +134,8 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
      }
    if (content)
      {
-	edje_object_part_swallow(wd->lay, swallow, content);
 	elm_widget_sub_object_add(obj, content);
+	edje_object_part_swallow(wd->lay, swallow, content);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);

@@ -108,10 +108,10 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
    wd->content = content;
    if (content)
      {
+	elm_widget_sub_object_add(obj, content);
 	elm_smart_scroller_child_set(wd->scr, content);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
 				       _changed_size_hints, obj);
-	elm_widget_sub_object_add(obj, content);
 	_sizing_eval(obj);
      }
 }

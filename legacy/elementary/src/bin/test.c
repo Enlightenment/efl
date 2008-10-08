@@ -500,6 +500,46 @@ my_bt_11(void *data, Evas_Object *obj, void *event_info)
    elm_hover_parent_set(hv, win);
    elm_hover_target_set(hv, bt);
    
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Popup");
+   elm_hover_content_set(hv, "middle", bt);
+   evas_object_show(bt);
+
+   bx = elm_box_add(win);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Top 1");
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Top 2");
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Top 3");
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   evas_object_show(bx);
+   elm_hover_content_set(hv, "top", bx);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Bottom");
+   elm_hover_content_set(hv, "bottom", bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Left");
+   elm_hover_content_set(hv, "left", bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Right");
+   elm_hover_content_set(hv, "right", bt);
+   evas_object_show(bt);
+   
    evas_object_size_hint_min_set(bg, 160, 160);
    evas_object_size_hint_max_set(bg, 640, 640);
    evas_object_resize(win, 320, 320);

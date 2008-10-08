@@ -90,6 +90,6 @@ EAPI void
 elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _els_smart_table_pack(wd->tbl, subobj, x, y, w, h);
    elm_widget_sub_object_add(obj, subobj);
+   _els_smart_table_pack(wd->tbl, subobj, x, y, w, h);
 }

@@ -28,7 +28,6 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-/*   
    while (wd->subs)
      {
         Subinfo *si = wd->subs->data;
@@ -36,7 +35,6 @@ _del_hook(Evas_Object *obj)
 	evas_stringshare_del(si->swallow);
 	free(si);
      }
- */
    free(wd);
 }
 
@@ -51,9 +49,9 @@ _sizing_eval(Evas_Object *obj)
    evas_object_move(wd->cov, x, y);
    evas_object_resize(wd->cov, w, h);
    evas_object_size_hint_min_set(wd->offset, x2 - x, y2 - y);
-   edje_object_part_swallow(wd->hov, "elm.swallow.offset", wd->offset);
+   edje_object_part_swallow(wd->cov, "elm.swallow.offset", wd->offset);
    evas_object_size_hint_min_set(wd->size, w2, h2);
-   edje_object_part_swallow(wd->hov, "elm.swallow.size", wd->size);
+   edje_object_part_swallow(wd->cov, "elm.swallow.size", wd->size);
 }
 
 static void
@@ -61,18 +59,15 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_List *l;
-/*   
    for (l = wd->subs; l; l = l->next)
      {
 	Subinfo *si = l->data;
 	if (si->obj == obj)
 	  {
 	     edje_object_part_swallow(wd->hov, si->swallow, obj);
-	     _sizing_eval(obj);
 	     break;
 	  }
      }
- */
 }
 
 static void
@@ -82,7 +77,6 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    Evas_List *l;
 
-/*   
    for (l = wd->subs; l; l = l->next)
      {
 	Subinfo *si = l->data;
@@ -96,7 +90,6 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	     break;
 	  }
      }
- */
 }    
 
 static void
@@ -126,7 +119,7 @@ _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_cov_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_signal_dismiss(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    evas_object_smart_callback_call(data, "clicked", NULL);
@@ -148,6 +141,7 @@ elm_hover_add(Evas_Object *parent)
 
    wd->hov = evas_object_rectangle_add(e);
    evas_object_color_set(wd->hov, 0, 0, 0, 0);
+   evas_object_pass_events_set(wd->hov, 1);
    elm_widget_resize_object_set(obj, wd->hov);
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_MOVE, _hov_move, obj);
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_RESIZE, _hov_resize, obj);
@@ -157,18 +151,20 @@ elm_hover_add(Evas_Object *parent)
    wd->cov = edje_object_add(e);
    _elm_theme_set(wd->cov, "hover", "hover");
    elm_widget_sub_object_add(obj, wd->cov);
-   evas_object_event_callback_add(wd->cov, EVAS_CALLBACK_MOUSE_DOWN, _cov_down, obj);
+   edje_object_signal_callback_add(wd->cov, "elm,action,dismiss", "", _signal_dismiss, obj);
    
    wd->offset = evas_object_rectangle_add(e);
+   evas_object_pass_events_set(wd->offset, 1);
    evas_object_color_set(wd->offset, 0, 0, 0, 0);
    elm_widget_sub_object_add(obj, wd->offset);
    
    wd->size = evas_object_rectangle_add(e);
+   evas_object_pass_events_set(wd->size, 1);
    evas_object_color_set(wd->size, 0, 0, 0, 0);
    elm_widget_sub_object_add(obj, wd->size);
    
-   edje_object_part_swallow(wd->hov, "elm.swallow.offset", wd->offset);
-   edje_object_part_swallow(wd->hov, "elm.swallow.size", wd->size);
+   edje_object_part_swallow(wd->cov, "elm.swallow.offset", wd->offset);
+   edje_object_part_swallow(wd->cov, "elm.swallow.size", wd->size);
    
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    
@@ -194,18 +190,19 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    _sizing_eval(obj);
 }
 
-/*
 EAPI void
 elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
    Evas_List *l;
-   
+   char buf[1024];
+
+   snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", swallow);
    for (l = wd->subs; l; l = l->next)
      {
 	si = l->data;
-	if (!strcmp(swallow, si->swallow))
+	if (!strcmp(buf, si->swallow))
 	  {
 	     if (content == si->obj) return;
 	     elm_widget_sub_object_del(obj, si->obj);
@@ -214,15 +211,14 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
      }
    if (content)
      {
-	edje_object_part_swallow(wd->hov, swallow, content);
 	elm_widget_sub_object_add(obj, content);
+	edje_object_part_swallow(wd->cov, buf, content);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);
-	si->swallow = evas_stringshare_add(swallow);
+	si->swallow = evas_stringshare_add(buf);
 	si->obj = content;
 	wd->subs = evas_list_append(wd->subs, si);
 	_sizing_eval(obj);
      }
 }
-*/

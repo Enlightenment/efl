@@ -57,7 +57,8 @@ flip_shad.png \
 sb_runnerh.png \
 sb_runnerv.png \
 shelf_inset.png \
-tog_base.png
+tog_base.png \
+shad_circ.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
