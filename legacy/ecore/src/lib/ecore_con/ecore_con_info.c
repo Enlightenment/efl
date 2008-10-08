@@ -195,7 +195,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 	/* FIXME with EINA */
 	snprintf(service, NI_MAXSERV, "%i", svr->port);
 	/* CHILD */
-	if (!getaddrinfo(svr->name, service, &hints, &result) && result)
+	if (!getaddrinfo(svr->name, service, hints, &result) && result)
 	  {
 	    memcpy(&container.info, result, sizeof(struct addrinfo));
 	    container.info.ai_canonname = NULL;
