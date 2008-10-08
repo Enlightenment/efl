@@ -87,7 +87,10 @@ _els_smart_icon_size_get(Evas_Object *obj, int *w, int *h)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   evas_object_image_size_get(sd->obj, &tw, &th);
+   if (!strcmp(evas_object_type_get(sd->obj), "edje"))
+     edje_object_size_min_get(sd->obj, &tw, &th);
+   else
+     evas_object_image_size_get(sd->obj, &tw, &th);
    tw = ((double)tw) * sd->scale;
    th = ((double)th) * sd->scale;
    if (w) *w = tw;

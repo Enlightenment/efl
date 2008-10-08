@@ -92,7 +92,7 @@ elm_toggle_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    
    wd->tgl = edje_object_add(e);
-   _elm_theme_set(wd->tgl, "toggle", "toggle");
+   _elm_theme_set(wd->tgl, "toggle", "base", "default");
    edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,on", "", _signal_toggle_on, obj);
    edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,off", "", _signal_toggle_off, obj);
    elm_widget_resize_object_set(obj, wd->tgl);

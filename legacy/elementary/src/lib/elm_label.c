@@ -44,7 +44,7 @@ elm_label_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
    
    wd->lbl = edje_object_add(e);
-   _elm_theme_set(wd->lbl, "label", "label");
+   _elm_theme_set(wd->lbl, "label", "base", "default");
    elm_widget_resize_object_set(obj, wd->lbl);
    return obj;
 }

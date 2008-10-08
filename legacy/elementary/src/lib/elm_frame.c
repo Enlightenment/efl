@@ -68,7 +68,7 @@ elm_frame_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    
    wd->frm = edje_object_add(e);
-   _elm_theme_set(wd->frm, "frame", "frame");
+   _elm_theme_set(wd->frm, "frame", "base", "default");
    elm_widget_resize_object_set(obj, wd->frm);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);

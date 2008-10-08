@@ -57,7 +57,7 @@ elm_bg_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
    
    wd->img = edje_object_add(e);
-   _elm_theme_set(wd->img, "bg", "bg");
+   _elm_theme_set(wd->img, "bg", "base", "default");
    elm_widget_resize_object_set(obj, wd->img);   
    return obj;
 }

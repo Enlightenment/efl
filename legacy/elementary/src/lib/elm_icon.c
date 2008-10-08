@@ -6,7 +6,6 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *img;
-   const char  *file, *group;
    Evas_Bool    scale_up : 1;
    Evas_Bool    scale_down : 1;
    Evas_Bool    smooth : 1;
@@ -16,6 +15,7 @@ struct _Widget_Data
 
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
+static void _mouse_up(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -57,6 +57,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
+static void
+_mouse_up(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "clicked", NULL);
+}
+
 EAPI Evas_Object *
 elm_icon_add(Evas_Object *parent)
 {
@@ -72,6 +78,8 @@ elm_icon_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
    
    wd->img = _els_smart_icon_add(e);
+   evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
+				  _mouse_up, obj);
    evas_object_repeat_events_set(wd->img, 1);
    elm_widget_resize_object_set(obj, wd->img);   
 
@@ -90,16 +98,20 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
    const char *p;
    
    if (!file) return;
-   if (wd->file) evas_stringshare_del(wd->file);
-   if (file) wd->file = evas_stringshare_add(file);
-   else wd->file = NULL;
-   if (wd->group) evas_stringshare_del(wd->group);
-   if (group) wd->group = evas_stringshare_add(group);
-   else wd->group = NULL;
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      _els_smart_icon_file_edje_set(wd->img, file, group);
    else 
      _els_smart_icon_file_key_set(wd->img, file, group);
+   _sizing_eval(obj);
+}
+
+EAPI void
+elm_icon_standard_set(Evas_Object *obj, const char *name)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   
+   if (!name) return;
+   _elm_theme_icon_set(wd->img, name, "default");
    _sizing_eval(obj);
 }
 

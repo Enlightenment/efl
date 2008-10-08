@@ -140,8 +140,8 @@ elm_hover_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
 
    wd->hov = evas_object_rectangle_add(e);
-   evas_object_color_set(wd->hov, 0, 0, 0, 0);
    evas_object_pass_events_set(wd->hov, 1);
+   evas_object_color_set(wd->hov, 0, 0, 0, 0);
    elm_widget_resize_object_set(obj, wd->hov);
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_MOVE, _hov_move, obj);
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_RESIZE, _hov_resize, obj);
@@ -149,7 +149,7 @@ elm_hover_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_HIDE, _hov_hide, obj);
    
    wd->cov = edje_object_add(e);
-   _elm_theme_set(wd->cov, "hover", "hover");
+   _elm_theme_set(wd->cov, "hover", "base", "default");
    elm_widget_sub_object_add(obj, wd->cov);
    edje_object_signal_callback_add(wd->cov, "elm,action,dismiss", "", _signal_dismiss, obj);
    

@@ -103,6 +103,7 @@ extern "C" {
    EAPI void         elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down);
    EAPI void         elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside);
    /* smart callbacks elm_win objects will call:
+    * "clicked" - the user clicked the icon
     */
 
    EAPI Evas_Object *elm_box_add(Evas_Object *parent);

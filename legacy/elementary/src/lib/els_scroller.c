@@ -931,7 +931,7 @@ _smart_add(Evas_Object *obj)
    
    o = edje_object_add(evas_object_evas_get(obj));
    sd->edje_obj = o;
-   _elm_theme_set(o, "scroller", "scroller");
+   _elm_theme_set(o, "scroller", "base", "default");
    edje_object_signal_callback_add(o, "drag*", "elm.dragable.vbar", _smart_edje_drag_v, sd);
    edje_object_signal_callback_add(o, "drag*", "elm.dragable.hbar", _smart_edje_drag_h, sd);
    evas_object_smart_member_add(o, obj);

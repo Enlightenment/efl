@@ -34,6 +34,9 @@ struct _Elm_Config
 
 void _elm_win_shutdown(void);
 
+int _elm_theme_set(Evas_Object *o, const char *clas, const char *group, const char *style);
+int _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style);
+    
 /* FIXME: should this be public? for now - private (but public symbols) */
 EAPI Evas_Object *elm_widget_add(Evas *evas);
 EAPI void         elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));

@@ -1,7 +1,7 @@
 collections {
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "bg";
+   group { name: "elm/bg/base/default";
       images {
          image: "dia_grad.png" COMP;
 	 image: "dia_topshad.png" COMP;
@@ -67,7 +67,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "scroller";
+   group { name: "elm/scroller/base/default";
       images {
 	 image: "shelf_inset.png" COMP;
 	 image: "bt_sm_base2.png" COMP;
@@ -350,7 +350,7 @@ collections {
    }
    
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "label";
+   group { name: "elm/label/base/default";
       styles
 	{
 	   style { name: "textblock_style";
@@ -377,7 +377,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "button";
+   group { name: "elm/button/base/default";
       images {
 	 image: "bt_base1.png" COMP;
 	 image: "bt_base2.png" COMP;
@@ -513,7 +513,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "toggle";
+   group { name: "elm/toggle/base/default";
       images {
          image: "shelf_inset.png" COMP;
 	 image: "bt_basew.png" COMP;
@@ -802,7 +802,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "flipdigit";
+   group { name: "elm/clock/flipdigit/default";
       images {
          image: "flip_base.png" COMP;
          image: "flip_base_shad.png" COMP;
@@ -1388,7 +1388,7 @@ collections {
    }
    
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "flipampm";
+   group { name: "elm/clock/flipampm/default";
       images {
          image: "flip_base.png" COMP;
          image: "flip_base_shad.png" COMP;
@@ -1697,7 +1697,7 @@ collections {
    }
    
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "clock/all";
+   group { name: "elm/clock/base-all/default";
       parts {
 	 part { name: "d0";
 	    type: SWALLOW;
@@ -1792,7 +1792,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "clock/seconds";
+   group { name: "elm/clock/base-seconds/default";
       parts {
 	 part { name: "d0";
 	    type: SWALLOW;
@@ -1879,7 +1879,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "clock/am_pm";
+   group { name: "elm/clock/base-am_pm/default";
       parts {
 	 part { name: "d0";
 	    type: SWALLOW;
@@ -1939,7 +1939,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "clock";
+   group { name: "elm/clock/base/default";
       parts {
 	 part { name: "d0";
 	    type: SWALLOW;
@@ -1991,50 +1991,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "pad";
-      parts {
-	 part { name: "t";
-	    type: RECT;
-	    mouse_events: 0;
-	    scale: 1;
-	    description { state: "default" 0.0;
-	       visible: 0;
-	       align: 0.0 0.0;
-	       min: 4 4;
-	       max: 4 4;
-	       rel1.relative: 0.0 0.0;
-	       rel2.relative: 0.0 0.0;
-	       rel2.offset: 0 0;
-	    }
-	 }
-	 part { name: "b";
-	    type: RECT;
-	    mouse_events: 0;
-	    scale: 1;
-	    description { state: "default" 0.0;
-	       visible: 0;
-	       align: 1.0 1.0;
-	       min: 4 4;
-	       max: 4 4;
-	       rel1.relative: 1.0 1.0;
-	       rel1.offset: -1 -1;
-	       rel2.relative: 1.0 1.0;
-	    }
-	 }
-	 part { name: "elm.swallow.content";
-	    type: SWALLOW;
-	    description { state: "default" 0.0;
-	       rel1.to: "t";
-	       rel1.relative: 1.0 1.0;
-	       rel2.to: "b";
-	       rel2.relative: 0.0 0.0;
-	    }
-	 }
-      }
-   }
-   
-///////////////////////////////////////////////////////////////////////////////
-   group { name: "frame";
+   group { name: "elm/frame/base/default";
       images {
 	 image: "frame_1.png" COMP;
 	 image: "frame_2.png" COMP;
@@ -2120,7 +2077,7 @@ collections {
    }
    
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "hover";
+   group { name: "elm/hover/base/default";
       images {
 	 image: "shad_circ.png" COMP;
       }
@@ -2236,9 +2193,15 @@ collections {
 	 }
       }
    }
+
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/icon/base/default"; min: 10 10;
+      images.image: "bt_base1.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "bt_base1.png"; } } } }
    
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "contact";
+   group { name: "elm/contact/base/default";
       images {
 	 image: "bt_base1.png" COMP;
 	 image: "bt_base2.png" COMP;

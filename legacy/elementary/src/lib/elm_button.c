@@ -78,7 +78,7 @@ elm_button_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    
    wd->btn = edje_object_add(e);
-   _elm_theme_set(wd->btn, "button", "button");
+   _elm_theme_set(wd->btn, "button", "base", "default");
    edje_object_signal_callback_add(wd->btn, "elm,action,click", "", _signal_clicked, obj);
    elm_widget_resize_object_set(obj, wd->btn);
 
