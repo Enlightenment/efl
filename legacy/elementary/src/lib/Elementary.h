@@ -174,6 +174,8 @@ extern "C" {
    EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
    EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+       
    /* smart callbacks elm_win objects will call:
     */
    
@@ -182,13 +184,17 @@ extern "C" {
 // * scroller could do with page up/down/left/right buttons and and idea of
 //   a page size
 // * tab widget focusing (not useful for touchscreen tho...)
+// * icon should optionally be able to collect events and call clicked
+//   callbacks
+// * hover needs a way to animate show/hide (slide out slots) and have some
+//   graphics for around middle
+// * hover needs to track move/resize and del of parent
+// * hover needs to be able to use custom hover style
+// * frame needs to be able to use custom frame style
+// * all widgets need a way to use a custom style
 //    
 // FIXME: immediate hitlist for widgets:
-// HOVER: select a widget (any) and attach a hover to it - the over will hover
-//        on top of the hover target and accept child widgets. haver may
-//        optionally place something to cover the window (under the hover
-//        widget, above everything else)
-// POPSEL: a buttont that when pressed uses a hover to display a h/v box or
+// POPSEL: a button that when pressed uses a hover to display a h/v box or
 //         a table of options surrounding the button with scroll butons at
 //         the end and the ability to drag and scroll
    

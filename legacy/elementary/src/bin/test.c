@@ -511,17 +511,14 @@ my_bt_11(void *data, Evas_Object *obj, void *event_info)
    elm_button_label_set(bt, "Top 1");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Top 2");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Top 3");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
    evas_object_show(bx);
    elm_hover_content_set(hv, "top", bx);
 
