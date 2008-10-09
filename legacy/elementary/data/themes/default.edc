@@ -68,6 +68,24 @@ collections {
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/scroller/base/default";
+      script {
+	 public sbvis_v, sbvis_h, sbvis_timer;
+	 public timer0(val) {
+	    new v;
+	    v = get_int(sbvis_v);
+	    if (v) {
+	       emit("do-hide-vbar", "");
+	       set_int(sbvis_v, 0);
+	    }
+	    v = get_int(sbvis_h);
+	    if (v) {
+	       emit("do-hide-hbar", "");
+	       set_int(sbvis_h, 0);
+	    }
+	    set_int(sbvis_timer, 0);
+	    return 0;
+	 }
+      }
       images {
 	 image: "shelf_inset.png" COMP;
 	 image: "bt_sm_base2.png" COMP;
@@ -305,46 +323,82 @@ collections {
 	 }
       }
       programs {
-	 program { name: "sb_vbar_show";
+	 program { name: "load";
+	    signal: "load";
+	    source: "";
+	    script {
+	       set_int(sbvis_h, 0);
+	       set_int(sbvis_v, 0);
+	       set_int(sbvis_timer, 0);
+	    }
+	 }
+/*	 
+	 program { name: "vbar_show";
 	    signal: "elm,action,show,vbar";
 	    source: "elm";
+	 }
+	 program { name: "vbar_hide";
+	    signal: "elm,action,hide,vbar";
+	    source: "elm";
+	 }
+	 program { name: "hbar_show";
+	    signal: "elm,action,show,hbar";
+	    source: "elm";
+	 }
+	 program { name: "hbar_hide";
+	    signal: "elm,action,hide,hbar";
+	    source: "elm";
+	 }
+ */
+	 program { name: "sb_vbar_show";
+	    signal: "do-show-vbar";
+	    source: "";
 	    action:  STATE_SET "default" 0.0;
 	    transition: LINEAR 1.0;
 	    target: "sb_vbar_clip";
-	    after: "sb_vbar_hide";
 	 }
 	 program { name: "sb_vbar_hide";
-	    signal: "elm,action,hide,vbar";
-	    source: "elm";
+	    signal: "do-hide-vbar";
+	    source: "";
 	    action:  STATE_SET "hidden" 0.0;
 	    transition: LINEAR 1.0;
 	    target: "sb_vbar_clip";
 	 }
 	 program { name: "sb_hbar_show";
-	    signal: "elm,action,show,hbar";
-	    source: "elm";
+	    signal: "do-show-hbar";
+	    source: "";
 	    action:  STATE_SET "default" 0.0;
 	    transition: LINEAR 1.0;
 	    target: "sb_hbar_clip";
-	    after: "sb_hbar_hide";
 	 }
 	 program { name: "sb_hbar_hide";
-	    signal: "elm,action,hide,hbar";
-	    source: "elm";
+	    signal: "do-hide-hbar";
+	    source: "";
 	    action:  STATE_SET "hidden" 0.0;
 	    transition: LINEAR 1.0;
 	    target: "sb_hbar_clip";
 	 }
-	 // FIXME: check if visible and only if not - do this
 	 program { name: "scroll";
 	    signal: "elm,action,scroll";
 	    source: "elm";
 	    action:  STATE_SET "default" 0.0;
-	    transition: LINEAR 1.0;
-	    target: "sb_vbar_clip";
-	    target: "sb_hbar_clip";
-	    after: "sb_vbar_hide";
-	    after: "sb_hbar_hide";
+	    script {
+	       new v;
+	       v = get_int(sbvis_v);
+	       if (!v) {
+		  emit("do-show-vbar", "");
+		  set_int(sbvis_v, 1);
+	       }
+	       v = get_int(sbvis_h);
+	       if (!v) {
+		  emit("do-show-hbar", "");
+		  set_int(sbvis_h, 1);
+	       }
+	       v = get_int(sbvis_timer);
+	       if (v > 0) cancel_timer(v);
+	       v = timer(2.0, "timer0", 0);
+	       set_int(sbvis_timer, v);
+	    }
 	 }
       }
    }
