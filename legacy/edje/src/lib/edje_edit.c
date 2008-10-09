@@ -6,7 +6,6 @@
  * TODO
  * -----------------------------------------------------------------
  * Modify edje so that also ebryo source is included in the eet file
- * Write decompile info (print source) back to edje file
  * Remove images/fonts
  * Draggies
  *
