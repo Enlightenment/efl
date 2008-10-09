@@ -26,23 +26,17 @@
 # include <winsock2.h>
 #endif
 
-static void _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *info);
-static void _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *info);
-static void _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *info);
-static void _ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *info);
-
+static void _ecore_con_cb_dns_lookup(void *data, struct hostent *he);
+static void _ecore_con_cb_udp_dns_lookup(void *data, struct hostent *he);
 static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
-
 static int _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
-static int _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static int _ecore_con_mcast_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler);
-
 static void _ecore_con_server_flush(Ecore_Con_Server *svr);
 static void _ecore_con_client_flush(Ecore_Con_Client *cl);
-
 static void _ecore_con_event_client_add_free(void *data, void *ev);
 static void _ecore_con_event_client_del_free(void *data, void *ev);
 static void _ecore_con_event_client_data_free(void *data, void *ev);
@@ -59,26 +53,8 @@ EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
 
 static Ecore_List *servers = NULL;
 static int init_count = 0;
-
 #if USE_OPENSSL
 static int ssl_init_count = 0;
-static int _ecore_con_init_ssl(Ecore_Con_Server *svr);
-static int _ecore_con_shutdown_ssl(Ecore_Con_Server *svr);
-static int _ecore_con_free_ssl(Ecore_Con_Server *svr);
-
-# define INIT_SSL(svr) _ecore_con_init_ssl(svr)
-# define SHUTDOWN_SSL(svr) _ecore_con_shutdown_ssl(svr)
-# define FREE_SSL(svr) _ecore_con_free_ssl(svr)
-# define UNSET_SSL(svr)		\
-  do {				\
-    svr->ssl = NULL;		\
-    svr->ssl_ctx = NULL;	\
-  } while (0)
-#else
-# define INIT_SSL(svr) 0
-# define SHUTDOWN_SSL(svr) 0
-# define FREE_SSL(svr) 0
-# define UNSET_SSL(svr) 0
 #endif
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
@@ -112,7 +88,6 @@ ecore_con_init(void)
 
    /* TODO Remember return value, if it fails, use gethostbyname() */
    ecore_con_dns_init();
-   ecore_con_info_init();
 
    servers = ecore_list_new();
 
@@ -135,7 +110,6 @@ ecore_con_shutdown(void)
    ecore_list_destroy(servers);
    servers = NULL;
 
-   ecore_con_info_shutdown();
    ecore_con_dns_shutdown();
 
    ecore_shutdown();
@@ -183,9 +157,10 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    Ecore_Con_Type      type;
    struct sockaddr_in  socket_addr;
    struct sockaddr_un  socket_unix;
+   struct ip_mreq      mreq;
    struct linger       lin;
    char                buf[4096];
-   mode_t	       pmode;
+   const int           on=1;
 
    if (port < 0) return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
@@ -194,29 +169,18 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    svr = calloc(1, sizeof(Ecore_Con_Server));
    if (!svr) return NULL;
 
-   svr->name = strdup(name);
-   if (!svr->name) goto error;
-   svr->type = compl_type;
-   svr->port = port;
-   svr->data = (void *)data;
-   svr->created = 1;
-   svr->reject_excess_clients = 0;
-   svr->client_limit = -1;
-   svr->clients = ecore_list_new();
-   svr->ppid = getpid();
-   /* Set ssl and ssl_ctx fields to NULL */
-   UNSET_SSL(svr);
-   ecore_list_append(servers, svr);
-   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
-
-   type = compl_type & ECORE_CON_TYPE;
+   type = compl_type;
+#if USE_OPENSSL
+   /* unset the SSL flag for the following checks */
+   type &= ECORE_CON_TYPE;
+#endif
 
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      {
 	const char *homedir;
 	struct stat st;
-	mode_t mask;
+	mode_t pmode, mask;
 	int socket_unix_len;
 
 	if (!name) goto error;
@@ -253,12 +217,28 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	pmode = umask(mask);
 	start:
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	if (svr->fd < 0) goto error_umask;
-	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error_umask;
-	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error_umask;
+	if (svr->fd < 0)
+	  {
+	     umask(pmode);
+	     goto error;
+	  }
+	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
+	  {
+	     umask(pmode);
+	     goto error;
+	  }
+	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
+	  {
+	     umask(pmode);
+	     goto error;
+	  }
 	lin.l_onoff = 1;
 	lin.l_linger = 0;
-	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error_umask;
+	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
+	  {
+	     umask(pmode);
+	     goto error;
+	  }
 	socket_unix.sun_family = AF_UNIX;
 	if (type == ECORE_CON_LOCAL_ABSTRACT)
 	  {
@@ -270,7 +250,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
 #else
 	     fprintf(stderr, "Your system does not support abstract sockets!\n");
-	     goto error_umask;
+	     umask(pmode);
+	     goto error;
 #endif
 	  }
 	else
@@ -283,47 +264,132 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	     if (connect(svr->fd, (struct sockaddr *)&socket_unix,
 			 socket_unix_len) < 0)
 	       {
-		  if ((type == ECORE_CON_LOCAL_USER) ||
+		  if ((type == ECORE_CON_LOCAL_USER) || 
 		      (type == ECORE_CON_LOCAL_SYSTEM))
 		    {
 		       if (unlink(buf) < 0)
-			 goto error_umask;
+			 {
+			    umask(pmode);
+			    goto error;
+			 }
 		       else
 			 goto start;
 		    }
 		  else
-		    goto error_umask;
+		    {
+		       umask(pmode);
+		       goto error;
+		    }
 	       }
 	     else
-	       goto error_umask;
+	       {
+		  umask(pmode);
+		  goto error;
+	       }
 	  }
-	if (listen(svr->fd, 4096) < 0) goto error_umask;
+	if (listen(svr->fd, 4096) < 0)
+	  {
+	     umask(pmode);
+	     goto error;
+	  }
 	svr->path = strdup(buf);
-	if (!svr->path) goto error_umask;
-	svr->fd_handler =
+	if (!svr->path)
+	  {
+	     umask(pmode);
+	     goto error;
+	  }
+	svr->fd_handler = 
 	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
 				    _ecore_con_svr_handler, svr, NULL, NULL);
 	umask(pmode);
 	if (!svr->fd_handler) goto error;
-
-	INIT_SSL(svr);
      }
-
-   if (type == ECORE_CON_REMOTE_TCP)
+   else if (type == ECORE_CON_REMOTE_TCP)
      {
-        /* TCP */
-        if (!ecore_con_info_tcp_listen(svr, _ecore_con_cb_tcp_listen, svr)) goto error;
+	svr->fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (svr->fd < 0) goto error;
+	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+	lin.l_onoff = 1;
+	lin.l_linger = 0;
+	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error;
+	socket_addr.sin_family = AF_INET;
+	socket_addr.sin_port = htons(port);
+	socket_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	if (bind(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0) goto error;
+	if (listen(svr->fd, 4096) < 0) goto error;
+	svr->fd_handler = 
+	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+				    _ecore_con_svr_handler, svr, NULL, NULL);
+	if (!svr->fd_handler) goto error;
      }
-   else if (type == ECORE_CON_REMOTE_MCAST || type == ECORE_CON_REMOTE_UDP)
+   else if (type == ECORE_CON_REMOTE_MCAST)
      {
-        /* UDP and MCAST */
-        if (!ecore_con_info_udp_listen(svr, _ecore_con_cb_udp_listen, svr)) goto error;
+       svr->fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+       if(svr->fd < 0) goto error;
+       mreq.imr_multiaddr.s_addr = inet_addr(name);
+       mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+       if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq,sizeof(mreq)) != 0) goto error;
+       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &on,sizeof(on)) != 0) goto error;
+       if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+       if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+       socket_addr.sin_family = AF_INET;
+       socket_addr.sin_port = htons(port);
+       socket_addr.sin_addr.s_addr = inet_addr(name);
+       if (bind(svr->fd, (struct sockaddr *)&socket_addr,sizeof(struct sockaddr_in)) < 0) goto error;
+       svr->fd_handler =
+	 ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+				   _ecore_con_mcast_handler, svr, NULL, NULL);
+       if (!svr->fd_handler) goto error;
      }
 
+#if USE_OPENSSL
+   if (compl_type & ECORE_CON_SSL)
+     {
+	if (!ssl_init_count)
+	  {
+	     SSL_library_init();
+	     SSL_load_error_strings();
+	  }
+	ssl_init_count++;
+
+	switch (compl_type & ECORE_CON_SSL)
+	  {
+	   case ECORE_CON_USE_SSL2:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+		goto error;
+	      break;
+	   case ECORE_CON_USE_SSL3:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
+		goto error;
+	      break;
+	   case ECORE_CON_USE_TLS:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())))
+		goto error;
+	      break;
+	  }
+
+	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
+	  goto error;
+
+	SSL_set_fd(svr->ssl, svr->fd);
+     }
+#endif
+
+   svr->name = strdup(name);
+   if (!svr->name) goto error;
+   svr->type = type;
+   svr->port = port;
+   svr->data = (void *)data;
+   svr->created = 1;
+   svr->reject_excess_clients = 0;
+   svr->client_limit = -1;
+   svr->clients = ecore_list_new();
+   svr->ppid = getpid();
+   ecore_list_append(servers, svr);
+   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
    return svr;
 
-   error_umask:
-   umask(pmode);
    error:
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
@@ -331,7 +397,10 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    if (svr->write_buf) free(svr->write_buf);
    if (svr->ip) free(svr->ip);
-   FREE_SSL(svr);
+#if USE_OPENSSL
+   if (svr->ssl) SSL_free(svr->ssl);
+   if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
+#endif
    free(svr);
    return NULL;
 }
@@ -380,21 +449,11 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    svr = calloc(1, sizeof(Ecore_Con_Server));
    if (!svr) return NULL;
 
-   svr->name = strdup(name);
-   if (!svr->name) goto error;
-   svr->type = compl_type;
-   svr->port = port;
-   svr->data = (void *)data;
-   svr->created = 0;
-   svr->reject_excess_clients = 0;
-   svr->client_limit = -1;
-   svr->clients = ecore_list_new();
-   UNSET_SSL(svr);
-   ecore_list_append(servers, svr);
-   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
-
-   type = compl_type & ECORE_CON_TYPE;
-
+   type = compl_type;
+#if USE_OPENSSL
+   /* unset the SSL flag for the following checks */
+   type &= ECORE_CON_TYPE;
+#endif
    if ((type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_UDP) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
@@ -458,7 +517,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 	if (connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) goto error;
 	svr->path = strdup(buf);
 	if (!svr->path) goto error;
-	svr->fd_handler =
+	svr->fd_handler = 
 	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
 				    _ecore_con_cl_handler, svr, NULL, NULL);
 	if (!svr->fd_handler) goto error;
@@ -479,15 +538,27 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 	  }
      }
 
+   svr->name = strdup(name);
+   if (!svr->name) goto error;
+   svr->type = compl_type;
+   svr->port = port;
+   svr->data = (void *)data;
+   svr->created = 0;
+   svr->reject_excess_clients = 0;
+   svr->client_limit = -1;
+   svr->clients = ecore_list_new();
+   ecore_list_append(servers, svr);
+   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
+
    if (type == ECORE_CON_REMOTE_TCP)
      {
-        /* TCP */
-        if (!ecore_con_info_tcp_connect(svr, _ecore_con_cb_tcp_connect, svr)) goto error;
+	if (!ecore_con_dns_lookup(svr->name, _ecore_con_cb_dns_lookup, svr))
+	  goto error;
      }
    else if (type == ECORE_CON_REMOTE_UDP)
      {
-        /* UDP and MCAST */
-        if (!ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect, svr)) goto error;
+       if (!ecore_con_dns_lookup(svr->name, _ecore_con_cb_udp_dns_lookup, svr))
+	 goto error;
      }
 
    return svr;
@@ -497,7 +568,10 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    if (svr->path) free(svr->path);
    if (svr->fd >= 0) close(svr->fd);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
-   FREE_SSL(svr);
+#if USE_OPENSSL
+   if (svr->ssl) SSL_free(svr->ssl);
+   if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
+#endif
    free(svr);
    return NULL;
 }
@@ -732,20 +806,15 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
    if (size < 1) return 0;
    if (cl->fd_handler)
      ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
-
-   if(cl->server && cl->server->type == ECORE_CON_REMOTE_UDP)
+   if (cl->buf)
      {
-       sendto(cl->server->fd, data, size, 0, (struct sockaddr *) cl->data, sizeof(struct sockaddr_in));
-     }
-   else if (cl->buf)
-     {
-       unsigned char *newbuf;
+	unsigned char *newbuf;
 
-       newbuf = realloc(cl->buf, cl->buf_size + size);
-       if (newbuf) cl->buf = newbuf;
-       else return 0;
-       memcpy(cl->buf + cl->buf_size, data, size);
-       cl->buf_size += size;
+	newbuf = realloc(cl->buf, cl->buf_size + size);
+	if (newbuf) cl->buf = newbuf;
+	else return 0;
+	memcpy(cl->buf + cl->buf_size, data, size);
+	cl->buf_size += size;
      }
    else
      {
@@ -784,20 +853,14 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
 EAPI void *
 ecore_con_client_del(Ecore_Con_Client *cl)
 {
-   void *data = NULL;
+   void *data;
 
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
 	ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_del");
 	return NULL;
      }
-
-   if(cl->data && cl->server && (cl->server->type == ECORE_CON_REMOTE_UDP ||
-				 cl->server->type == ECORE_CON_REMOTE_MCAST))
-     free(cl->data);
-   else
-     data = cl->data;
-
+   data = cl->data;
    cl->data = NULL;
    cl->delete_me = 1;
    if (cl->event_count > 0)
@@ -928,11 +991,17 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    while (!ecore_list_empty_is(svr->clients))
      _ecore_con_client_free(ecore_list_first_remove(svr->clients));
    ecore_list_destroy(svr->clients);
-   if ((svr->created) && (svr->path) && (svr->ppid == getpid()))
+   if ((svr->created) && (svr->path) && (svr->ppid == getpid())) 
      unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
-   SHUTDOWN_SSL(svr);
-   FREE_SSL(svr);
+#if USE_OPENSSL
+   if (svr->ssl)
+     {
+	SSL_shutdown(svr->ssl);
+	SSL_free(svr->ssl);
+     }
+   if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
+#endif
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
    if (svr->ip) free(svr->ip);
@@ -1007,7 +1076,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	fcntl(new_fd, F_SETFD, FD_CLOEXEC);
 	cl->fd = new_fd;
 	cl->server = svr;
-	cl->fd_handler =
+	cl->fd_handler = 
 	  ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
 				    _ecore_con_svr_cl_handler, cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
@@ -1096,170 +1165,132 @@ kill_server(Ecore_Con_Server *svr)
 }
 
 static void
-_ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *net_info)
-{
-   Ecore_Con_Server *svr;
-   struct linger lin;
-
-   svr = data;
-
-   if(!net_info) goto error;
-
-   svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype, net_info->info.ai_protocol);
-   if (svr->fd < 0) goto error;
-   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
-   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   lin.l_onoff = 1;
-   lin.l_linger = 0;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error;
-   if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0) goto error;
-   if (listen(svr->fd, 4096) < 0) goto error;
-   svr->fd_handler =
-     ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-			       _ecore_con_svr_handler, svr, NULL, NULL);
-   if (!svr->fd_handler) goto error;
-
-   if (INIT_SSL(svr))
-     goto error;
-
-   return;
-
-   error:
-   FREE_SSL(svr);
-   kill_server(svr);
-}
-
-static void
-_ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *net_info)
-{
-   Ecore_Con_Server *svr;
-   Ecore_Con_Type type;
-   struct ip_mreq mreq;
-   struct ipv6_mreq mreq6;
-   const int on = 1;
-
-   svr = data;
-   type = svr->type;
-   type &= ECORE_CON_TYPE;
-
-   if (!net_info) goto error;
-
-   svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype, net_info->info.ai_protocol);
-   if(svr->fd < 0) goto error;
-
-   if (type == ECORE_CON_REMOTE_MCAST)
-     {
-       if (net_info->info.ai_family == AF_INET)
-	 {
-	   if (!inet_pton(net_info->info.ai_family, net_info->ip, &mreq.imr_multiaddr)) goto error;
-	   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-	   if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq,sizeof(mreq)) != 0) goto error;
-	 }
-       else if (net_info->info.ai_family == AF_INET6)
-	 {
-	   if (!inet_pton(net_info->info.ai_family, net_info->ip, &mreq6.ipv6mr_multiaddr)) goto error;
-	   mreq6.ipv6mr_interface = htonl(INADDR_ANY);
-	   if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq6,sizeof(mreq6)) != 0) goto error;
-	 }
-       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &on,sizeof(on)) != 0) goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
-   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0) goto error;
-   svr->fd_handler =
-     ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-			       _ecore_con_svr_udp_handler, svr, NULL, NULL);
-   if (!svr->fd_handler) goto error;
-   svr->ip = strdup(net_info->ip);
-
-   if (INIT_SSL(svr))
-     goto error;
-
-   return;
-
-   error:
-   FREE_SSL(svr);
-   kill_server(svr);
-}
-
-static void
-_ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
+_ecore_con_cb_dns_lookup(void *data, struct hostent *he)
 {
    Ecore_Con_Server   *svr;
    struct sockaddr_in  socket_addr;
    int                 curstate = 0;
    char                buf[64];
+   uint32_t            ip;
 
    svr = data;
 
-   if (!net_info) goto error;
-   svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype, net_info->info.ai_protocol);
+   if (!he) goto error;
+   svr->fd = socket(AF_INET, SOCK_STREAM, 0);
    if (svr->fd < 0) goto error;
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) 
      goto error;
-   if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
+   socket_addr.sin_family = AF_INET;
+   socket_addr.sin_port = htons(svr->port);
+   memcpy((struct in_addr *)&socket_addr.sin_addr,
+	  he->h_addr, sizeof(struct in_addr));
+   if (connect(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0)
      {
 	if (errno != EINPROGRESS)
 	  goto error;
 	svr->connecting = 1;
-	svr->fd_handler =
+	svr->fd_handler = 
 	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ | ECORE_FD_WRITE,
 				    _ecore_con_cl_handler, svr, NULL, NULL);
      }
    else
-     svr->fd_handler =
+     svr->fd_handler = 
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
 			       _ecore_con_cl_handler, svr, NULL, NULL);
 
    if (!svr->fd_handler) goto error;
-   svr->ip = strdup(net_info->ip);
+   ip = socket_addr.sin_addr.s_addr;
+   snprintf(buf, sizeof(buf),
+	    "%i.%i.%i.%i",
+	    (ip      ) & 0xff,
+	    (ip >> 8 ) & 0xff,
+	    (ip >> 16) & 0xff,
+	    (ip >> 24) & 0xff);
+   svr->ip = strdup(buf);
 
-   if (INIT_SSL(svr))
-     goto error;
+#if USE_OPENSSL
+   if (svr->type & ECORE_CON_SSL)
+     {
+	if (!ssl_init_count)
+	  {
+	     SSL_library_init();
+	     SSL_load_error_strings();
+	  }
+	ssl_init_count++;
+
+	switch (svr->type & ECORE_CON_SSL)
+	  {
+	   case ECORE_CON_USE_SSL2:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+		goto error;
+	      break;
+	   case ECORE_CON_USE_SSL3:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
+		goto error;
+	      break;
+	   case ECORE_CON_USE_TLS:
+	      if (!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())))
+		goto error;
+	      break;
+	  }
+
+	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
+	  goto error;
+
+	SSL_set_fd(svr->ssl, svr->fd);
+     }
+#endif
 
    return;
 
    error:
-   FREE_SSL(svr);
    kill_server(svr);
 }
 
 static void
-_ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
+_ecore_con_cb_udp_dns_lookup(void *data, struct hostent *he)
 {
    Ecore_Con_Server   *svr;
    struct sockaddr_in  socket_addr;
    int                 curstate = 0;
    char                buf[64];
+   uint32_t            ip;
 
    svr = data;
 
-   if (!net_info) goto error;
-   svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype, net_info->info.ai_protocol);
+   if (!he) goto error;
+   svr->fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
    if (svr->fd < 0) goto error;
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) 
      goto error;
-   if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
+   socket_addr.sin_family = AF_INET;
+   socket_addr.sin_port = htons(svr->port);
+   memcpy((struct in_addr *)&socket_addr.sin_addr,
+	  he->h_addr, sizeof(struct in_addr));
+   if (connect(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0)
      goto error;
    else
-     svr->fd_handler =
+     svr->fd_handler = 
        ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ | ECORE_FD_WRITE,
 				 _ecore_con_cl_udp_handler, svr, NULL, NULL);
-   if (!svr->fd_handler) goto error;
-   svr->ip = strdup(net_info->ip);
 
-   if (INIT_SSL(svr))
-     goto error;
+   if (!svr->fd_handler) goto error;
+   ip = socket_addr.sin_addr.s_addr;
+   snprintf(buf, sizeof(buf),
+	    "%i.%i.%i.%i",
+	    (ip      ) & 0xff,
+	    (ip >> 8 ) & 0xff,
+	    (ip >> 16) & 0xff,
+	    (ip >> 24) & 0xff);
+   svr->ip = strdup(buf);
 
    return;
 
    error:
-   FREE_SSL(svr);
    kill_server(svr);
 }
 
@@ -1473,7 +1504,7 @@ _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
      {
        unsigned char buf[65536];
        int           num = 0;
-
+       
        errno = 0;
        num = read(svr->fd, buf, 65536);
        if (num > 0)
@@ -1504,78 +1535,41 @@ _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
      }
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
        _ecore_con_server_flush(svr);
-
+   
    return 1;
 }
 
 static int
-_ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_con_mcast_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
-   Ecore_Con_Server   *svr;
-   Ecore_Con_Client *cl;
+   Ecore_Con_Client   *cl;
 
-   svr = data;
-   if (svr->dead) return 1;
-   if (svr->delete_me) return 1;
+   cl = data;
+   if (cl->dead) return 1;
+   if (cl->delete_me) return 1;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
-       unsigned char buf[READBUFSIZ];
-       struct sockaddr_in client_addr;
-       int num, client_addr_len = sizeof(client_addr);
+       unsigned char buf[65536];
+       int num;
 
        errno = 0;
-       num = recvfrom(svr->fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*) &client_addr, &client_addr_len);
-
+       num = read(cl->fd, buf, 65536);
        if (num > 0)
 	 {
-	   if (!svr->delete_me)
+	   if (!cl->delete_me)
 	     {
 	       Ecore_Con_Event_Client_Data *e;
 	       unsigned char *inbuf;
-	       uint32_t ip;
-	       char ipbuf[64];
-
-	       /* Create a new client for use in the client data event */
-	       cl = calloc(1, sizeof(Ecore_Con_Client));
-	       if(cl == NULL)
-		 return 1;
-	       cl->buf = NULL;
-	       cl->fd = 0;
-	       cl->fd_handler = NULL;
-	       cl->server = svr;
-	       cl->data = calloc(1, sizeof(client_addr));
-	       if(cl->data == NULL)
-		 {
-		   free(cl);
-		   return 1;
-		 }
-	       memcpy(cl->data,  &client_addr, sizeof(client_addr));
-	       ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
-	       ecore_list_append(svr->clients, cl);
-
-	       ip = client_addr.sin_addr.s_addr;
-	       snprintf(ipbuf, sizeof(ipbuf),
-			"%i.%i.%i.%i",
-			(ip      ) & 0xff,
-			(ip >> 8 ) & 0xff,
-			(ip >> 16) & 0xff,
-			(ip >> 24) & 0xff);
-	       cl->ip = strdup(ipbuf);
 
 	       inbuf = malloc(num);
 	       if(inbuf == NULL)
-		 {
-		   free(cl->data);
-		   free(cl);
-		   return 1;
-		 }
-
+		 return 1;
 	       memcpy(inbuf, buf, num);
-
+	
 	       e = calloc(1, sizeof(Ecore_Con_Event_Client_Data));
 	       if (e)
 		 {
-		   svr->event_count++;
+		   cl->event_count++;
 		   e->client = cl;
 		   e->data = inbuf;
 		   e->size = num;
@@ -1583,44 +1577,30 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 				   _ecore_con_event_client_data_free,
 				   NULL);
 		 }
-
-	       if(!cl->delete_me)
-		 {
-		   Ecore_Con_Event_Client_Add *add;
-
-		   add = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
-		   if(add)
-		     {
-		       /*cl->event_count++;*/
-		       add->client = cl;
-		       ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, add,
-				       _ecore_con_event_client_add_free, NULL);
-		     }
-		 }
 	     }
 	   if ((errno == EIO) ||  (errno == EBADF) ||
 	       (errno == EPIPE) || (errno == EINVAL) ||
 	       (errno == ENOSPC) || (num == 0)/* is num == 0 right? */)
 	     {
-	       if (!svr->delete_me)
+	       if (!cl->delete_me)
 		 {
 		   /* we lost our client! */
 		   Ecore_Con_Event_Client_Del *e;
-
+		
 		   e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
 		   if (e)
 		     {
-		       svr->event_count++;
+		       cl->event_count++;
 		       e->client = cl;
 		       ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
 				       _ecore_con_event_client_del_free,
 				       NULL);
 		     }
 		 }
-	       svr->dead = 1;
-	       if (svr->fd_handler)
-		 ecore_main_fd_handler_del(svr->fd_handler);
-	       svr->fd_handler = NULL;
+	       cl->dead = 1;
+	       if (cl->fd_handler)
+		 ecore_main_fd_handler_del(cl->fd_handler);
+	       cl->fd_handler = NULL;
 	     }
 	 }
      }
@@ -1720,9 +1700,9 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
    if (!svr->write_buf) return;
 
    /* check whether we need to write anything at all.
-    * we must not write zero bytes with SSL_write() since it
-    * causes undefined behaviour
-    */
+	* we must not write zero bytes with SSL_write() since it
+	* causes undefined behaviour
+	*/
    if (svr->write_buf_size == svr->write_buf_offset)
       return;
 
@@ -1862,9 +1842,7 @@ _ecore_con_event_client_data_free(void *data __UNUSED__, void *ev)
    e = ev;
    e->client->event_count--;
    if (e->data) free(e->data);
-   if ((e->client->event_count == 0) && (e->client->delete_me) ||
-       (e->client->server && (e->client->server->type == ECORE_CON_REMOTE_UDP ||
-			      e->client->server->type == ECORE_CON_REMOTE_MCAST)))
+   if ((e->client->event_count == 0) && (e->client->delete_me))
      ecore_con_client_del(e->client);
    free(e);
 }
@@ -1905,60 +1883,3 @@ _ecore_con_event_server_data_free(void *data __UNUSED__, void *ev)
      ecore_con_server_del(e->server);
    free(e);
 }
-
-#if USE_OPENSSL
-
-static int
-_ecore_con_init_ssl(Ecore_Con_Server *svr)
-{
-  if (svr->type & ECORE_CON_SSL)
-    {
-      if (!ssl_init_count)
-	{
-	  SSL_library_init();
-	  SSL_load_error_strings();
-	}
-      ssl_init_count++;
-
-      switch (svr->type & ECORE_CON_SSL)
-	{
-	case ECORE_CON_USE_SSL2:
-	  if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
-	    return 1;
-	  break;
-	case ECORE_CON_USE_SSL3:
-	  if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
-	    return 1;
-	  break;
-	case ECORE_CON_USE_TLS:
-	  if (!(svr->ssl_ctx = SSL_CTX_new(TLSv1_client_method())))
-	    return 1;
-	  break;
-	}
-
-      if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
-	return 1;
-
-      SSL_set_fd(svr->ssl, svr->fd);
-    }
-  return 0;
-}
-
-static int
-_ecore_con_shutdown_ssl(Ecore_Con_Server *svr)
-{
-  if (svr->ssl) SSL_shutdown(svr->ssl);
-  return 0;
-}
-
-static int
-_ecore_con_free_ssl(Ecore_Con_Server *svr)
-{
-  if (svr->ssl) SSL_free(svr->ssl);
-  if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
-  UNSET_SSL(svr);
-
-  return 0;
-}
-
-#endif

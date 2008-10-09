@@ -95,14 +95,6 @@ struct _Ecore_Con_Url
 };
 #endif
 
-struct _Ecore_Con_Info
-{
-   struct addrinfo info;
-   struct sockaddr addr;
-   char		   ip[NI_MAXHOST];
-   char		   service[NI_MAXSERV];
-};
-
 /* from ecore_con_dns.c */
 int ecore_con_dns_init(void);
 int ecore_con_dns_shutdown(void);
