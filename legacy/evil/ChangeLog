@@ -1,3 +1,46 @@
+2008-10-09  Vincent Torri  <doursse at users dot sf dot net>
+
+	* AUTHORS:
+	mention Tor's contribution
+
+	* configure.ac:
+	mention m4 directory, check errno header file,
+	add conditionnal when mingw32ce is used, minor
+	formatting
+
+	* m4/efl_doxygen.m4:
+	fix comments
+
+	* src/lib/Makefile.am:
+	include fnmatch files only when mingw32ce is used
+
+	* src/lib/evil_fcntl.c:
+	define correctly _get_osfhandle on mingw32ce
+
+	* src/lib/evil_pwd.c:
+	fix getpwuid() when cegcc or mingw32ce are used
+
+	* src/lib/evil_stdlib.c:
+	fix mkstemp() on all Windows platform, guard errno stuff
+
+	* src/lib/evil_stdlib.h:
+	template -> __template because 'template ' is a c++ keyword.
+
+	* src/lib/evil_unistd.c:
+	guard errno stuff
+
+	* src/lib/evil_fnmatch.c:
+	* src/lib/evil_fnmatch_list_of_states.c:
+	* src/lib/evil_fnmatch_private.h:
+	* src/lib/fnmatch.h:
+	added files
+
+	* win32/common/fnmatch.c:
+	* win32/common/fnmatch.h:
+	* win32/common/fnmatch_list_of_states.c:
+	* win32/common/fnmatch_private.h:
+	removed files
+
 2008-10-05  Vincent Torri  <doursse at users dot sf dot net>
 
 	* m4:

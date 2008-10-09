@@ -2,6 +2,7 @@
 AC_INIT([evil], [0.0.1], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_HOST
 
@@ -36,10 +37,10 @@ case "$host_os" in
   mingw | mingw32 | mingw32msvc)
     win32_libs="-lole32 -luuid -lws2_32"
     ;;
-  cegcc)
+  cegcc*)
     win32_libs="-lws2"
     ;;
-  mingw32ce)
+  mingw32ce*)
     win32_libs="-lws2"
     ;;
 esac
@@ -49,6 +50,7 @@ EFL_CHECK_MPATROL([have_mpatrol="yes"], [have_mpatrol="no"])
 
 
 ### Checks for header files
+AC_CHECK_HEADERS_ONCE([errno.h])
 
 
 ### Checks for programs
@@ -73,13 +75,16 @@ AC_C_CONST
 AC_C___ATTRIBUTE__
 
 win32_cflags=""
+have_wince="no"
+have_mingw32ce="no"
 case "$host_os" in
-  cegcc)
+  cegcc*)
     have_wince="yes"
     win32_cflags="-mwin32"
     ;;
-  mingw32ce)
+  mingw32ce*)
     have_wince="yes"
+    have_mingw32ce="yes"
     ;;
   *)
     have_wince="no"
@@ -92,6 +97,7 @@ if test "x${have_wince}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
+AM_CONDITIONAL(EVIL_HAVE_MINGW32CE, test "x${have_mingw32ce}" = "xyes")
 
 
 ### Checks for linker characteristics

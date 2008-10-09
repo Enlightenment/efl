@@ -12,12 +12,19 @@
 #include "Evil.h"
 
 
+#if defined(__CEGCC__)
+# define _get_osfhandle get_osfhandle
+# elif defined (__MINGW32CE__)
+# define _get_osfhandle(FILEDES) ((HANDLE)FILEDES)
+#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+
+
 /*
  * port of fcntl function
  *
  */
 
-#ifndef __CEGCC__
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
 
 int fcntl(int fd, int cmd, ...)
 {
@@ -79,4 +86,4 @@ int fcntl(int fd, int cmd, ...)
    return res;
 }
 
-#endif /* ! __CEGCC__ */
+#endif /* __CEGCC__ || __MINGW32CE__ */

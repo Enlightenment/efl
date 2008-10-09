@@ -1,8 +1,12 @@
-dnl Configure script for doxygen
-dnl Vincent Torri 2008-08-25
-dnl
+dnl Copyright (C) 2008 Vincent Torri <vtorri at univ-evry dot fr>
+dnl That code is public domain and can be freely used or copied.
+
+dnl Macro that check if doxygen is available or not.
+
 dnl EFL_CHECK_DOXYGEN([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl Test for the doxygen program, and define DOXYGEN.
+dnl Test for the doxygen program
+dnl Defines DOXYGEN
+dnl Defines the automake conditionnal EFL_BUILD_DOC
 dnl
 AC_DEFUN([EFL_CHECK_DOXYGEN],
 [

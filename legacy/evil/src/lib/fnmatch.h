@@ -1,19 +1,21 @@
 #ifndef	_FNMATCH_H
 #define	_FNMATCH_H
 
-#ifdef EVIL_COMMON_API
-# undef EVIL_COMMON_API
-#endif /* EVIL_COMMON_API */
+#ifdef EAPI
+# undef EAPI
+#endif /* EAPI */
 
+#ifdef _WIN32
 # ifdef EFL_EVIL_BUILD
 #  ifdef DLL_EXPORT
-#   define EVIL_COMMON_API __declspec(dllexport)
+#   define EAPI __declspec(dllexport)
 #  else
-#   define EVIL_COMMON_API
+#   define EAPI
 #  endif /* ! DLL_EXPORT */
 # else
-#  define EVIL_COMMON_API __declspec(dllimport)
+#  define EAPI __declspec(dllimport)
 # endif /* ! EFL_EVIL_BUILD */
+#endif /* _WIN32 */
 
 #ifdef	__cplusplus
 extern "C" {
@@ -43,7 +45,7 @@ extern "C" {
 
 /* Match STRING against the filename pattern PATTERN,
    returning zero if it matches, FNM_NOMATCH if not.  */
-EVIL_COMMON_API int fnmatch(const char *__pattern, const char *__string, int __flags);
+EAPI int fnmatch(const char *__pattern, const char *__string, int __flags);
 
 #ifdef	__cplusplus
 }

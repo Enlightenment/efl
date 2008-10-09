@@ -1,3 +1,12 @@
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif /* HAVE_ERRNO_H */
+
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -6,12 +15,7 @@
    (defined(__MINGW32__) && ! defined(__MINGW32CE__))
 # include <shlobj.h>
 # include <objidl.h>
-# include <errno.h>
 #endif
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif /* HAVE_CONFIG_H */
 
 #include "Evil.h"
 
@@ -87,7 +91,9 @@ symlink(const char *oldpath, const char *newpath)
    if (FAILED(res))
      {
         if (res == E_OUTOFMEMORY)
+#ifdef HAVE_ERRNO_H
           errno = ENOMEM;
+#endif /* HAVE_ERRNO_H */
         return -1;
      }
 
@@ -184,7 +190,9 @@ readlink(const char *path, char *buf, size_t bufsiz)
    if (FAILED(res))
      {
         if (res == E_OUTOFMEMORY)
+#ifdef HAVE_ERRNO_H
           errno = ENOMEM;
+#endif /* HAVE_ERRNO_H */
         return -1;
      }
 

@@ -2,22 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "fnmatch_private.h"
+#include "evil_fnmatch_private.h"
 
 struct list_of_states*
-fnmatch_list_of_states_alloc(size_t n, size_t pattern_len)
+fnmatch_list_of_states_alloc(size_t n,
+                             size_t pattern_len)
 {
   struct list_of_states	*l;
 
-  const size_t	reserved	= pattern_len + 1;
-  const size_t	states_size	= sizeof (*l->states) * reserved;
-  const size_t	has_size	= sizeof (*l->has) * reserved;
+  const size_t	reserved        = pattern_len + 1;
+  const size_t	states_size     = sizeof (*l->states) * reserved;
+  const size_t	has_size        = sizeof (*l->has) * reserved;
   const size_t	states_has_size = states_size + has_size;
-  const size_t	struct_size	= sizeof (*l) + states_has_size;
+  const size_t	struct_size     = sizeof (*l) + states_has_size;
 
   unsigned char *states;
   unsigned char *has;
-  size_t i;
+  size_t         i;
 
   if (! (l = malloc(n * struct_size)))
     return 0;
@@ -29,7 +30,7 @@ fnmatch_list_of_states_alloc(size_t n, size_t pattern_len)
     {
       l[i].reserved = reserved;
       l[i].states = (size_t *) states;
-      l[i].has = (_Bool *) has;
+      l[i].has = (e_bool *) has;
       states += states_has_size;
       has += states_has_size;
     }
@@ -38,7 +39,8 @@ fnmatch_list_of_states_alloc(size_t n, size_t pattern_len)
 }
 
 void
-fnmatch_list_of_states_free(struct list_of_states *lists, size_t n)
+fnmatch_list_of_states_free(struct list_of_states *lists,
+                            size_t                 n)
 {
   assert(lists);
 
@@ -47,7 +49,8 @@ fnmatch_list_of_states_free(struct list_of_states *lists, size_t n)
 }
 
 void
-fnmatch_list_of_states_insert(struct list_of_states *list, size_t state)
+fnmatch_list_of_states_insert(struct list_of_states *list,
+                              size_t                 state)
 {
   assert(list);
   assert(state < list->reserved);

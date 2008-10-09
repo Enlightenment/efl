@@ -99,11 +99,7 @@ EAPI int unsetenv(const char *name);
  * temporary file. Otherwise, it returns -1 and errno is set to the
  * following values:
  * - EINVAL: @p template has an invalid format.
- * - EACCESS: Given path is a directory, or file is read-only, but an
- * open-for-writing operation was attempted.
  * - EEXISTS: File name already exists.
- * - EMFILE: No more file descriptors available.
- * - ENOENT: File or path not found.
  *
  * Conformity: Should follow BSD conformity.
  *
@@ -112,7 +108,7 @@ EAPI int unsetenv(const char *name);
  *
  * @ingroup Evil
  */
-EAPI int mkstemp(char *template);
+EAPI int mkstemp(char *__template);
 
 /**
  * @brief Return an absolute or full path name for a specified relative path name.

@@ -4,6 +4,10 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <windows.h>
+#include <security.h>
+
+#include "Evil.h"
 #include "pwd.h"
 
 
@@ -16,12 +20,35 @@ struct passwd *
 getpwuid (uid_t uid)
 {
    static char user_name[PATH_MAX];
-   DWORD  length;
-   BOOL res;
+   TCHAR       name[PATH_MAX];
+   ULONG       length;
+   BOOLEAN     res;
+#ifdef UNICODE
+   char       *a_name;
+# endif /* UNICODE */
 
    length = PATH_MAX;
    /* get from USERPROFILE for win 98 ? */
-   res = GetUserName(user_name, &length);
+   res = GetUserNameEx(NameUnknown, name, &length);
+#ifdef UNICODE
+   if (res)
+     {
+        a_name = evil_wchar_to_char(name);
+        if (a_name)
+          {
+             int length;
+
+             length = strlen(a_name);
+             if (length >= PATH_MAX)
+               length = PATH_MAX;
+             memcpy(user_name, a_name, length);
+             user_name[length] = '\0';
+             free(a_name);
+          }
+        else
+          res = 0;
+     }
+#endif /* UNICODE */
    pw.pw_name = (res ? user_name : NULL);
    pw.pw_passwd = NULL;
    pw.pw_uid = uid;

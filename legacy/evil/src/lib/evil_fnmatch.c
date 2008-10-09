@@ -2,20 +2,20 @@
 #include <string.h>
 
 #include "fnmatch.h"
-#include "fnmatch_private.h"
+#include "evil_fnmatch_private.h"
 
 enum fnmatch_status
-  {
-    fnmatch_not_found		= 0,
-    fnmatch_found		= 1,
-    fnmatch_syntax_error	= 2
-  };
+{
+  fnmatch_not_found    = 0,
+  fnmatch_found        = 1,
+  fnmatch_syntax_error = 2
+};
 
 static
 size_t
-fnmatch_match_class_token(enum fnmatch_status	*status,
-			  const char		*class_token,
-			  char			c)
+fnmatch_match_class_token(enum fnmatch_status *status,
+			  const char          *class_token,
+			  char                 c)
 {
   if (! *class_token)
     {
@@ -55,12 +55,12 @@ fnmatch_complement_class(const char *class_token)
 
 static
 size_t
-fnmatch_match_class(const char	*class,
-		    char	c)
+fnmatch_match_class(const char *class,
+		    char        c)
 {
-  const size_t		complement = fnmatch_complement_class(class + 1);
-  enum fnmatch_status	status;
-  size_t		pos;
+  const size_t        complement = fnmatch_complement_class(class + 1);
+  enum fnmatch_status status;
+  size_t              pos;
 
   if (complement == FNM_SYNTAXERR)
     return FNM_SYNTAXERR;
@@ -83,7 +83,8 @@ fnmatch_match_class(const char	*class,
 
 static
 size_t
-fnmatch_chrcasecmp(char a, char b)
+fnmatch_chrcasecmp(char a,
+                   char b)
 {
   if ('A' <= a && a <= 'Z')
     a += 'a' - 'A';
@@ -94,10 +95,10 @@ fnmatch_chrcasecmp(char a, char b)
 
 static
 size_t
-fnmatch_match_token(const char	*token,
-		    char	c,
-		    _Bool	leading,
-		    int		flags)
+fnmatch_match_token(const char *token,
+		    char        c,
+		    e_bool      leading,
+		    int         flags)
 {
   if (*token == '\\' && !(flags & FNM_NOESCAPE))
     return token[1] ? (token[1] == c ? 2 : 0) : FNM_SYNTAXERR;
@@ -135,37 +136,37 @@ fnmatch_init_states(struct list_of_states *states)
 
 static
 size_t
-fnmatch_check_finals(const char				*pattern,
-		     const struct list_of_states	*states)
+fnmatch_check_finals(const char                  *pattern,
+		     const struct list_of_states *states)
 {
    size_t i, j;
-  for (i = 0; i < states->size; ++i)
-    {
-      _Bool	match = 1;
+   for (i = 0; i < states->size; ++i)
+     {
+       e_bool match = 1;
 
-      for (j = states->states[i]; pattern[j]; ++j)
-	if (pattern[j] != '*')
-	  {
-	    match = 0;
-	    break;
-	  }
+       for (j = states->states[i]; pattern[j]; ++j)
+         if (pattern[j] != '*')
+           {
+             match = 0;
+             break;
+           }
 
-      if (match)
-	return 0;
-    }
-  return FNM_NOMATCH;
+       if (match)
+         return 0;
+     }
+   return FNM_NOMATCH;
 }
 
 int
-fnmatch(const char	*pattern,
-	const char	*string,
-	int		flags)
+fnmatch(const char *pattern,
+	const char *string,
+	int         flags)
 {
-   struct list_of_states	*states;
-   struct list_of_states	*new_states;
-  _Bool	leading = 1;
-  char* c;
-  size_t	r;
+   struct list_of_states *states;
+   struct list_of_states *new_states;
+   e_bool                 leading = 1;
+   char                  *c;
+   size_t                 r;
 
   assert(pattern);
   assert(string);
@@ -185,7 +186,7 @@ fnmatch(const char	*pattern,
 
       for (i = 0; i < states->size; ++i)
 	{
-	  const size_t	pos = states->states[i];
+	  const size_t pos = states->states[i];
 
 	  if (! pattern[pos])
 	    {
@@ -212,7 +213,7 @@ fnmatch(const char	*pattern,
 	    }
 	}
       {
-	struct list_of_states	*tmp = states;
+	struct list_of_states *tmp = states;
 
 	states = new_states;
 	new_states = tmp;

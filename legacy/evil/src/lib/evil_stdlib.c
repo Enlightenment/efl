@@ -1,19 +1,19 @@
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <stdio.h>
 #ifndef __CEGCC__
 # include <io.h>
 #endif /* ! __CEGCC__ */
-#ifndef __MINGW32CE__
+#ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif /* ! __MINGW32CE__ */
+#endif /* HAVE_ERRNO_H */
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif /* HAVE_CONFIG_H */
 
 #include "Evil.h"
 
@@ -137,7 +137,9 @@ setenv(const char *name,
    /* if '=' is found, return EINVAL */
    if (strchr (name, '='))
      {
+#ifdef HAVE_ERRNO_H
         errno = EINVAL;
+#endif /* HAVE_ERRNO_H */
         return -1;
      }
 
@@ -150,7 +152,9 @@ setenv(const char *name,
    str = (char *)malloc(length);
    if (!str)
      {
+#ifdef HAVE_ERRNO_H
         errno = ENOMEM;
+#endif /* HAVE_ERRNO_H */
         return -1;
      }
    if (!value)
@@ -230,22 +234,65 @@ unsetenv(const char *name)
  *
  */
 
-#ifndef __CEGCC__
-
 int
 mkstemp(char *template)
 {
-   int fd;
+   const char lookup[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+   char *suffix;
+   DWORD val;
+   int   length;
+   int   i;
 
-   if (!_mktemp(template))
-     return -1;
+   if (!template)
+     return 0;
 
-   fd = _open(template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
+   length = strlen(template);
+   if ((length < 6) ||
+       (strncmp (template + length - 6, "XXXXXX", 6)))
+     {
+#ifdef HAVE_ERRNO_H
+        errno = EINVAL;
+#endif /* HAVE_ERRNO_H */
+        return -1;
+     }
 
-   return fd;
+   suffix = template + length - 6;
+
+   val = GetTickCount();
+   val += GetCurrentProcessId();
+
+   for (i = 0; i < 32768; i++)
+     {
+        DWORD v;
+        int fd;
+
+        v = val;
+
+        suffix[0] = lookup[v % 62];
+        v /= 62;
+        suffix[1] = lookup[v % 62];
+        v /= 62;
+        suffix[2] = lookup[v % 62];
+        v /= 62;
+        suffix[3] = lookup[v % 62];
+        v /= 62;
+        suffix[4] = lookup[v % 62];
+        v /= 62;
+        suffix[5] = lookup[v % 62];
+        v /= 62;
+
+        fd = _open(template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
+        if (fd >= 0)
+          return fd;
+
+        val += 7777;
+     }
+
+#ifdef HAVE_ERRNO_H
+   errno = EEXIST;
+#endif /* HAVE_ERRNO_H */
+   return -1;
 }
-
-#endif /* ! __CEGCC__ */
 
 
 char *
