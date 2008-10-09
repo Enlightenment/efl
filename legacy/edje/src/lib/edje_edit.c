@@ -613,6 +613,13 @@ edje_edit_string_free(const char *str)
    if (str) evas_stringshare_del(str);
 }
 
+EAPI const char*
+edje_edit_compiler_get(Evas_Object *obj)
+{
+   GET_ED_OR_RETURN(0);
+   return evas_stringshare_add(ed->file->compiler);
+}
+
 /****************/
 /*  GROUPS API  */
 /****************/
@@ -4428,7 +4435,6 @@ edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *afte
 /*************************/
 /*  EMBRYO SCRIPTS  API  */
 /*************************/
-
 EAPI const char *
 edje_edit_script_get(Evas_Object *obj)
 {
@@ -4446,6 +4452,10 @@ edje_edit_script_get(Evas_Object *obj)
    return "Not yet complete...";
 }
 
+
+/***************************/
+/*  EDC SOURCE GENERATION  */
+/***************************/
 #define I0 ""
 #define I1 "   "
 #define I2 "      "
@@ -4892,16 +4902,15 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    //TODO Free the Evas_Object *obj
 }
 
-static void
+static const char* //return the name of the temp file containing the edc
 _edje_generate_source(Evas_Object *obj)
 {
    printf("\n****** GENERATE EDC SOURCE *********\n");
    char tmpn[PATH_MAX];
    int fd;
    FILE *f;
-   long sz;
-   SrcFile *sf;
-   SrcFile_List *sfl;
+
+
    Evas_List *l, *ll;
 
    GET_ED_OR_RETURN();
@@ -4909,9 +4918,9 @@ _edje_generate_source(Evas_Object *obj)
    /* Open a temp file */
    //TODO this will not work on windows
    strcpy(tmpn, "/tmp/edje_edit.edc-tmp-XXXXXX");
-   if (!(fd = mkstemp(tmpn))) return;
+   if (!(fd = mkstemp(tmpn))) return NULL;
    printf("*** tmp file: %s\n", tmpn);
-   if (!(f = fopen(tmpn, "w"))) return;
+   if (!(f = fopen(tmpn, "w"))) return NULL;
 
    /* Write edc into file */
    //TODO Probably we need to save the file before generation
@@ -5006,46 +5015,61 @@ _edje_generate_source(Evas_Object *obj)
 
    fclose(f);
 
-   sfl = mem_alloc(SZ(SrcFile_List));
-   sfl->list = NULL;
-
-   /* reopen the temp file and get the contents */
-   f = fopen(tmpn, "rb");
-   if (!f) return;
-
-   fseek(f, 0, SEEK_END);
-   sz = ftell(f);
-   fseek(f, 0, SEEK_SET);
-   sf = mem_alloc(SZ(SrcFile));
-   sf->name = mem_strdup("edje_source.edc");
-   sf->file = mem_alloc(sz + 1);
-   fread(sf->file, sz, 1, f);
-   sf->file[sz] = '\0';
-   fseek(f, 0, SEEK_SET);
-   fclose(f);
-
-   printf("\n\n================= EDC START HERE =========================\n%s\n"
-          "================= EDC END HERE ===========================\n"
-          "generated file: %s\n"
-          "==========================================================\n",
-          sf->file, tmpn);
-   
-   sfl->list = evas_list_append(sfl->list, sf);
-
-   /* Write the source to the edje file */
-   //~ eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
-   //~ if (!eetf) return;
-   //~ if (!_srcfile_list_edd)
-      //~ source_edd();
-
-   //~ eet_data_write(eetf, _srcfile_list_edd, "edje_sources", &sfl, 1);
-
-   //~ eet_close(eetf);
+   return evas_stringshare_add(tmpn);
 }
 
-#define ABORT_WRITE2(eet_file) \
-   eet_close(eet_file); \
-   return 0;
+
+
+/*********************/
+/*  SAVING ROUTINES  */
+/*********************/
+////////////////////////////////////////
+static char *
+_edje_edit_str_direct_alloc(const char *str)
+{
+   return (char *)str;
+}
+
+static void
+_edje_edit_str_direct_free(const char *str)
+{
+}
+
+static Eet_Data_Descriptor *_srcfile_edd = NULL;
+static Eet_Data_Descriptor *_srcfile_list_edd = NULL;
+
+void
+source_edd(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+
+   eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
+   eddc.func.mem_alloc = NULL;
+   eddc.func.mem_free = NULL;
+   eddc.func.str_alloc = evas_stringshare_add;
+   eddc.func.str_free = evas_stringshare_del;
+   eddc.func.list_next = evas_list_next;
+   eddc.func.list_append = evas_list_append;
+   eddc.func.list_data = evas_list_data;
+   eddc.func.list_free = evas_list_free;
+   eddc.func.hash_foreach = evas_hash_foreach;
+   eddc.func.hash_add = evas_hash_add;
+   eddc.func.hash_free = evas_hash_free;
+   eddc.func.str_direct_alloc = _edje_edit_str_direct_alloc;
+   eddc.func.str_direct_free = _edje_edit_str_direct_free;
+
+   eddc.name = "srcfile"; 
+   eddc.size = sizeof(SrcFile);
+   _srcfile_edd = eet_data_descriptor3_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_INLINED_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "file", file, EET_T_INLINED_STRING);
+
+   eddc.name = "srcfile_list"; 
+   eddc.size = sizeof(SrcFile_List);
+   _srcfile_list_edd = eet_data_descriptor3_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_srcfile_list_edd, SrcFile_List, "list", list, _srcfile_edd);
+}
+/////////////////////////////////////////
 
 EAPI int
 edje_edit_save(Evas_Object *obj)
@@ -5054,7 +5078,6 @@ edje_edit_save(Evas_Object *obj)
    Edje_File *ef;
    Eet_File *eetf;
    int bytes;
-   char *progname = "Edje_Edit";
 
    GET_ED_OR_RETURN(0);
 
@@ -5063,24 +5086,35 @@ edje_edit_save(Evas_Object *obj)
 
    printf("***********  Saving file ******************\n");
    printf("** path: %s\n", ef->path);
+   
+   /* Set compiler name */
+   if (strcmp(ef->compiler, "edje_edit"))
+     {
+	_edje_if_string_free(ed, ef->compiler);
+	ef->compiler = strdup("edje_edit");
+     }
 
+   /* Open the eet file */
    eetf = eet_open(ef->path, EET_FILE_MODE_READ_WRITE);
    if (!eetf)
      {
-	fprintf(stderr, "%s: Error. unable to open \"%s\" for writing output\n",
-	        progname, ef->path);
+	fprintf(stderr, "Error. unable to open \"%s\" for writing output\n",
+	        ef->path);
 	return 0;
      }
 
+   /* Write Edje_File structure */
    printf("** Writing Edje_File* ed->file\n");
    bytes = eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef, 1);
    if (bytes <= 0)
      {
-	fprintf(stderr, "%s: Error. unable to write \"edje_file\" "
-	        "entry to \"%s\" \n", progname, ef->path);
-	ABORT_WRITE2(eetf);
+	fprintf(stderr, "Error. unable to write \"edje_file\" "
+	        "entry to \"%s\" \n", ef->path);
+	eet_close(eetf);
+	return 0;
      }
 
+   /* Write all the collections */
    if (ed->collection)
      {
 	printf("** Writing Edje_Part_Collection* ed->collection "
@@ -5092,12 +5126,70 @@ edje_edit_save(Evas_Object *obj)
 	                       buf, ed->collection, 1);
 	if (bytes <= 0)
 	  {
-	     fprintf(stderr, "%s: Error. unable to write \"%s\" part entry to %s \n",
-		     progname, buf, ef->path);
-	     ABORT_WRITE2(eetf);
+		fprintf(stderr, "Error. unable to write \"%s\" part entry to %s \n",
+		        buf, ef->path);
+		eet_close(eetf);
+		return 0;
 	  }
      }
 
+   /* Write the new edc source */
+   SrcFile *sf;
+   SrcFile_List *sfl;
+   const char *source_file;
+   FILE *f;
+   long sz;
+
+   source_file = _edje_generate_source(obj);
+   if (!source_file)
+     {
+	fprintf(stderr, "Error: can't create edc source\n");
+	eet_close(eetf);
+	return 0;
+     }
+   printf("** Writing EDC Source [from: %s]\n", source_file);
+
+   //open the temp file and put the contents in SrcFile
+   sf = mem_alloc(SZ(SrcFile));
+   sf->name = mem_strdup("generated_source.edc");
+
+   f = fopen(source_file, "rb");
+   if (!f)
+     {
+	fprintf(stderr, "Error. unable to read the created edc source [%s]\n",
+	        source_file);
+	eet_close(eetf);
+	return 0;
+     }
+
+   fseek(f, 0, SEEK_END);
+   sz = ftell(f);
+   fseek(f, 0, SEEK_SET);
+
+   sf->file = mem_alloc(sz + 1);
+   fread(sf->file, sz, 1, f);
+   sf->file[sz] = '\0';
+   fseek(f, 0, SEEK_SET);
+   fclose(f);
+
+   //create the needed list of source files (only one)
+   sfl = mem_alloc(SZ(SrcFile_List));
+   sfl->list = NULL;
+   sfl->list = evas_list_append(sfl->list, sf);
+
+   // write the sources list to the eet file
+   source_edd();
+   bytes = eet_data_write(eetf, _srcfile_list_edd, "edje_sources", sfl, 1);
+   if (bytes <= 0)
+    {
+	fprintf(stderr, "Error. unable to write edc source\n");
+	eet_close(eetf);
+	return 0;
+    }
+
+   /* Clear stuff */
+   unlink(source_file);
+   evas_stringshare_del(source_file);
    eet_close(eetf);
    printf("***********  Saving DONE ******************\n");
    return 1;

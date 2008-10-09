@@ -105,6 +105,14 @@ edje_edit_string_free(
    const char *str         ///< The string to free.
 );
 
+/** Get the name of the program that compiled the edje file.@n
+  * Can be 'edje_cc' or 'edje_edit'
+  */
+EAPI const char*           ///@return The compiler name. Don't forget to free the string with edje_edit_string_free()
+edje_edit_compiler_get(
+   Evas_Object *obj        ///< The edje object
+);
+
 /**Save the modified edje object back to his file.
  * Use this function when you are done with your editing, all the change made
  * to the current loaded group will be saved back to the original file.
