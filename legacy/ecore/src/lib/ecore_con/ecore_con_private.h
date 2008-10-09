@@ -95,7 +95,23 @@ struct _Ecore_Con_Url
 };
 #endif
 
+struct _Ecore_Con_Info
+{
+   struct addrinfo info;
+   struct sockaddr addr;
+   char		   ip[NI_MAXHOST];
+   char		   service[NI_MAXSERV];
+};
+
 /* from ecore_con_dns.c */
 int ecore_con_dns_init(void);
 int ecore_con_dns_shutdown(void);
+/* from ecore_con_info.c */
+int ecore_con_info_init(void);
+int ecore_con_info_shutdown(void);
+int ecore_con_info_tcp_connect(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
+int ecore_con_info_tcp_listen(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
+int ecore_con_info_udp_connect(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
+int ecore_con_info_mcast_listen(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
+
 #endif
