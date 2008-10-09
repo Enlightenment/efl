@@ -176,6 +176,7 @@ extern "C" {
    EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+   EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style);
    /* smart callbacks called:
     */
    

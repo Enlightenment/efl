@@ -110,14 +110,42 @@ static void
 _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Evas_List *l;
+   // FIXME: use signals for show for hov
    evas_object_show(wd->cov);
+   edje_object_signal_emit(wd->cov, "elm,action,show", "elm");
+   for (l = wd->subs; l; l = l->next)
+     {
+	Subinfo *si = l->data;
+	char buf[1024];
+	if (!strncmp(si->swallow, "elm.swallow.slot.", 17))
+	  {
+	     snprintf(buf, sizeof(buf), "elm,action,slot,%s,show", 
+		      si->swallow + 17);
+	     edje_object_signal_emit(wd->cov, buf, "elm");
+	  }
+     }
 }
 
 static void
 _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Evas_List *l;
+   // FIXME: use signals for hide for hov
+   edje_object_signal_emit(wd->cov, "elm,action,hide", "elm");
    evas_object_hide(wd->cov);
+   for (l = wd->subs; l; l = l->next)
+     {
+	Subinfo *si = l->data;
+	char buf[1024];
+	if (!strncmp(si->swallow, "elm.swallow.slot.", 17))
+	  {
+	     snprintf(buf, sizeof(buf), "elm,action,slot,%s,hide", 
+		      si->swallow + 17);
+	     edje_object_signal_emit(wd->cov, buf, "elm");
+	  }
+     }
 }
 
 static void
@@ -287,4 +315,12 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 	wd->subs = evas_list_append(wd->subs, si);
 	_sizing_eval(obj);
      }
+}
+
+EAPI void
+elm_hover_style_set(Evas_Object *obj, const char *style)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _elm_theme_set(wd->cov, "hover", "base", style);
+   _sizing_eval(obj);
 }
