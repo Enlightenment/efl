@@ -69,7 +69,7 @@ AC_ARG_WITH([doxygen],
 dnl
 dnl Substitution
 dnl
-AC_SUBST([${DOXYGEN]])
+AC_SUBST([DOXYGEN])
 
 AM_CONDITIONAL(EFL_BUILD_DOC, test "x${BUILD_DOCS}" = "xyes")
 
