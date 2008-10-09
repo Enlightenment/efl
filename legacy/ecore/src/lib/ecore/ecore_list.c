@@ -318,7 +318,7 @@ ecore_list_empty_is(Ecore_List *list)
 {
    int ret = TRUE;
 
-   CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+   CHECK_PARAM_POINTER_RETURN("list", list, TRUE);
 
    if (list->nodes)
      ret = FALSE;
