@@ -556,6 +556,125 @@ edje_edit_part_ignore_flags_set(
    Evas_Event_Flags ignore_flags ///< event flags to be ignored
 );
 
+/**Get horizontal dragable state for part.(1, -1 or 0) */
+EAPI int                   ///@return 1 (or -1) if the part can be dragged horizontally
+edje_edit_part_drag_x_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part
+);
+
+/**Set horizontal dragable state for part.(1, -1 or 0) */
+EAPI void
+edje_edit_part_drag_x_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   int drag                ///< Set to 1 (or -1) if the part should be dragged horizontally
+);
+
+/**Get vertical dragable state for part.(1, -1 or 0) */
+EAPI int                   ///@return 1 (or -1) if the part can be dragged vertically
+edje_edit_part_drag_y_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part
+);
+
+/**Set vertical dragable state for part.(1, -1 or 0) */
+EAPI void
+edje_edit_part_drag_y_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   int drag                ///< Set to 1 (or -1) if the part should be dragged vertically
+);
+
+/**Get horizontal dragable step for part.*/
+EAPI int                   ///@return The drag horizontal step value
+edje_edit_part_drag_step_x_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part
+);
+
+/**Set horizontal dragable state for part.*/
+EAPI void
+edje_edit_part_drag_step_x_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   int step                ///< The step value
+);
+
+/**Get vertical dragable step for part.*/
+EAPI int                   ///@return The drag vertical step value
+edje_edit_part_drag_step_y_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part
+);
+
+/**Set vertical dragable state for part.*/
+EAPI void
+edje_edit_part_drag_step_y_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   int step                ///< The step value
+);
+
+/**Get horizontal dragable count for part.*/
+EAPI int                   ///@return The drag horizontal count value
+edje_edit_part_drag_count_x_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part
+);
+
+/**Set horizontal dragable count for part.*/
+EAPI void
+edje_edit_part_drag_count_x_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   int count               ///< The count value
+);
+
+/**Get vertical dragable count for part.*/
+EAPI int                   ///@return The drag vertical count value
+edje_edit_part_drag_count_y_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the part
+);
+
+/**Set vertical dragable count for part.*/
+EAPI void
+edje_edit_part_drag_count_y_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   int count               ///< The count value
+);
+
+/**Get the name of the part that is used as 'confine' for the given draggies.*/
+EAPI const char*
+edje_edit_part_drag_confine_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *part        ///< The name of the drag part
+);
+
+/**Set the name of the part that is used as 'confine' for the given draggies.*/
+EAPI void
+edje_edit_part_drag_confine_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the drag part
+   const char *confine     ///< The name of the confine part, or NULL to unset confine
+);
+
+/**Get the name of the part that is used as the receiver of the drag event.*/
+EAPI const char*
+edje_edit_part_drag_event_get(
+   Evas_Object *obj,      ///< The edje object
+   const char *part       ///< The name of the drag part
+);
+
+/**Set the name of the part that will recive events from the given draggies.*/
+EAPI void
+edje_edit_part_drag_event_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the drag part
+   const char *event       ///< The name of the part that will receive events, or NULL to unset.
+);
 
 //@}
 /******************************************************************************/

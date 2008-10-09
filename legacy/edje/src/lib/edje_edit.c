@@ -7,7 +7,6 @@
  * -----------------------------------------------------------------
  * Modify edje so that also ebryo source is included in the eet file
  * Remove images/fonts
- * Draggies
  *
  */
 
@@ -1748,6 +1747,163 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
    return 1;
 }
 
+EAPI int
+edje_edit_part_drag_x_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+   //printf("Get dragX for part: %s\n", part);
+   return rp->part->dragable.x;
+}
+
+EAPI void
+edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag)
+{
+   GET_RP_OR_RETURN();
+   printf("Set dragX for part: %s\n", part);
+   rp->part->dragable.x = drag;
+}
+
+EAPI int
+edje_edit_part_drag_y_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+   //printf("Get dragY for part: %s\n", part);
+   return rp->part->dragable.y;
+}
+
+EAPI void
+edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag)
+{
+   GET_RP_OR_RETURN();
+   printf("Set dragY for part: %s\n", part);
+   rp->part->dragable.y = drag;
+}
+
+EAPI int
+edje_edit_part_drag_step_x_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+   //printf("Get dragX_STEP for part: %s\n", part);
+   return rp->part->dragable.step_x;
+}
+
+EAPI void
+edje_edit_part_drag_step_x_set(Evas_Object *obj, const char *part, int step)
+{
+   GET_RP_OR_RETURN();
+   printf("Set dragX_STEP for part: %s\n", part);
+   rp->part->dragable.step_x = step;
+}
+
+EAPI int
+edje_edit_part_drag_step_y_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+   //printf("Get dragY_STEP for part: %s\n", part);
+   return rp->part->dragable.step_y;
+}
+
+EAPI void
+edje_edit_part_drag_step_y_set(Evas_Object *obj, const char *part, int step)
+{
+   GET_RP_OR_RETURN();
+   printf("Set dragY_STEP for part: %s\n", part);
+   rp->part->dragable.step_y = step;
+}
+
+EAPI int
+edje_edit_part_drag_count_x_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+   //printf("Get dragX_COUNT for part: %s\n", part);
+   return rp->part->dragable.count_x;
+}
+
+EAPI void
+edje_edit_part_drag_count_x_set(Evas_Object *obj, const char *part, int count)
+{
+   GET_RP_OR_RETURN();
+   printf("Set dragX_COUNT for part: %s\n", part);
+   rp->part->dragable.count_x = count;
+}
+
+EAPI int
+edje_edit_part_drag_count_y_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+   //printf("Get dragY_COUNT for part: %s\n", part);
+   return rp->part->dragable.count_y;
+}
+
+EAPI void
+edje_edit_part_drag_count_y_set(Evas_Object *obj, const char *part, int count)
+{
+   GET_RP_OR_RETURN();
+   printf("Set dragY_COUNT for part: %s\n", part);
+   rp->part->dragable.count_y = count;
+}
+
+EAPI const char*
+edje_edit_part_drag_confine_get(Evas_Object *obj, const char *part)
+{
+   Edje_Real_Part *confine;
+   //printf("******Get drag confine\n");
+   GET_RP_OR_RETURN(NULL);
+
+   if (rp->part->dragable.confine_id < 0)
+      return NULL;
+
+   confine = ed->table_parts[rp->part->dragable.confine_id];
+   return evas_stringshare_add(confine->part->name);
+}
+
+EAPI void
+edje_edit_part_drag_confine_set(Evas_Object *obj, const char *part, const char *confine)
+{
+   Edje_Real_Part *confine_part;
+   printf("******Set drag confine to: %s\n", confine);
+   GET_RP_OR_RETURN();
+
+   if (!confine)
+     {
+      rp->part->dragable.confine_id = -1;
+      return;
+     }
+
+   confine_part = _edje_real_part_get(ed, confine);
+   rp->part->dragable.confine_id = confine_part->part->id;
+}
+
+EAPI const char*
+edje_edit_part_drag_event_get(Evas_Object *obj, const char *part)
+{
+   Edje_Real_Part *events;
+   //printf("******Get drag event part\n");
+   GET_RP_OR_RETURN(NULL);
+
+   if (rp->part->dragable.events_id < 0)
+      return NULL;
+
+   events = ed->table_parts[rp->part->dragable.events_id];
+   return evas_stringshare_add(events->part->name);
+}
+
+EAPI void
+edje_edit_part_drag_event_set(Evas_Object *obj, const char *part, const char *event)
+{
+   Edje_Real_Part *event_part;
+   printf("******Set drag event to: %s\n", event);
+   GET_RP_OR_RETURN();
+
+   if (!event)
+     {
+      rp->part->dragable.events_id = -1;
+      return;
+     }
+
+   event_part = _edje_real_part_get(ed, event);
+   rp->part->dragable.events_id = event_part->part->id;
+}
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -4843,8 +4999,31 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
      }
    if (edje_edit_part_effect_get(obj, part))
      fprintf(f, I4"effect: %s;\n", effects[edje_edit_part_effect_get(obj, part)]);
-   //TODO Support dragable
-    
+
+   //Dragable
+   if (edje_edit_part_drag_x_get(obj, part) ||
+       edje_edit_part_drag_x_get(obj, part))
+     {
+	fprintf(f, I4"dragable {\n");
+	fprintf(f, I5"x: %d %d %d;\n", edje_edit_part_drag_x_get(obj, part),
+	                               edje_edit_part_drag_step_x_get(obj, part),
+	                               edje_edit_part_drag_count_x_get(obj, part));
+	fprintf(f, I5"y: %d %d %d;\n", edje_edit_part_drag_y_get(obj, part),
+	                               edje_edit_part_drag_step_y_get(obj, part),
+	                               edje_edit_part_drag_count_y_get(obj, part));
+	if (str = edje_edit_part_drag_confine_get(obj, part))
+	  {
+		fprintf(f, I5"confine: \"%s\";\n", str);
+		edje_edit_string_free(str);
+	  }
+	if (str = edje_edit_part_drag_event_get(obj, part))
+	  {
+		fprintf(f, I5"events: \"%s\";\n", str);
+		edje_edit_string_free(str);
+	  }
+	fprintf(f, I4"}\n");
+     }
+
    //Descriptions
    ll = edje_edit_part_states_list_get(obj, part);
    for (l = ll; l; l = l->next)
