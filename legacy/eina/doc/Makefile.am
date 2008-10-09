@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 .PHONY: doc
 
-if EINA_BUILD_DOC
+if EFL_BUILD_DOC
 
 doc: all
 	rm -rf html/ latex/ man/

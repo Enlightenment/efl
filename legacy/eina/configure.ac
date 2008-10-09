@@ -211,8 +211,6 @@ AC_PROG_CC
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
-AM_CONDITIONAL(EINA_BUILD_DOC, test "x${build_doc}" = "xyes")
-
 
 ### Checks for types
 
