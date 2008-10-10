@@ -5,6 +5,7 @@
 #include <strings.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include <check.h>
 
@@ -69,7 +70,7 @@ struct _Eet_Test_Image
 {
    unsigned int w;
    unsigned int h;
-   unsigned int alpha;
+   int alpha;
    unsigned int color[];
 };
 
@@ -154,7 +155,7 @@ _eet_test_basic_check(Eet_Test_Basic_Type *result, int i)
    fail_if(result->c != EET_TEST_CHAR);
    fail_if(result->s != EET_TEST_SHORT);
    fail_if(result->i != EET_TEST_INT + i);
-   fail_if(result->l != EET_TEST_LONG_LONG);
+   fail_if(result->l != (long long) EET_TEST_LONG_LONG);
    fail_if(strcmp(result->str, EET_TEST_STRING) != 0);
    fail_if(strcmp(result->istr, EET_TEST_STRING) != 0);
    fail_if(result->uc != EET_TEST_CHAR);
@@ -185,7 +186,7 @@ _eet_test_basic_check(Eet_Test_Basic_Type *result, int i)
 	fail_if(tmp->c != EET_TEST_CHAR);
 	fail_if(tmp->s != EET_TEST_SHORT);
 	fail_if(tmp->i != EET_TEST_INT + i + 1);
-	fail_if(tmp->l != EET_TEST_LONG_LONG);
+	fail_if(tmp->l != (long long) EET_TEST_LONG_LONG);
 	fail_if(strcmp(tmp->str, EET_TEST_STRING) != 0);
 	fail_if(strcmp(tmp->istr, EET_TEST_STRING) != 0);
 	fail_if(tmp->uc != EET_TEST_CHAR);
@@ -400,7 +401,7 @@ static int
 _eet_test_ex_check(Eet_Test_Ex_Type *stuff, int offset)
 {
    double tmp;
-   int i;
+   unsigned int i;
 
    if (!stuff) return 1;
 
@@ -430,7 +431,7 @@ _eet_test_ex_check(Eet_Test_Ex_Type *stuff, int offset)
 
    if (stuff->uc != EET_TEST_CHAR + offset) return 1;
    if (stuff->us != EET_TEST_SHORT + offset) return 1;
-   if (stuff->ui != EET_TEST_INT + offset) return 1;
+   if (stuff->ui != (unsigned int) EET_TEST_INT + offset) return 1;
    if (stuff->ul != EET_TEST_LONG_LONG + offset) return 1;
 
    for (i = 0; i < 5; ++i)
@@ -472,7 +473,6 @@ START_TEST(eet_test_data_type_encoding_decoding)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
-   Eet_Test_Ex_Type *tmp;
    void *transfert;
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
@@ -636,7 +636,7 @@ START_TEST(eet_file_simple_write)
 
    test = eet_read(ef, "keys/tests", &size);
    fail_if(!test);
-   fail_if(size != strlen(buffer) + 1);
+   fail_if(size != (int) strlen(buffer) + 1);
 
    fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
@@ -651,7 +651,7 @@ START_TEST(eet_file_simple_write)
 
    test = eet_read(ef, "keys/tests", &size);
    fail_if(!test);
-   fail_if(size != strlen(buffer) + 1);
+   fail_if(size != (int) strlen(buffer) + 1);
 
    fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
@@ -665,26 +665,16 @@ END_TEST
 
 START_TEST(eet_file_data_test)
 {
-   const char *buffer = "Here is a string of data to save !";
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
-   Eet_Test_Ex_Type *tmp;
    Eet_Dictionary *ed;
    Eet_File *ef;
    char **list;
-   char *transfert1;
-   char *transfert2;
-   char *string1;
-   char *string2;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
    int size;
-   int size1;
-   int size2;
    int test;
-
-   int i;
 
    eet_init();
 
@@ -810,8 +800,6 @@ START_TEST(eet_file_data_dump_test)
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
    Eet_File *ef;
-   char *transfert1;
-   char *transfert2;
    char *string1;
    char *string2;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
@@ -869,7 +857,7 @@ START_TEST(eet_file_data_dump_test)
    fail_if(!ef);
 
    result = eet_data_read(ef, edd, EET_TEST_FILE_KEY1);
-   fail_if(!transfert1);
+   fail_if(!result);
 
    eet_close(ef);
 
@@ -895,14 +883,14 @@ START_TEST(eet_image)
 {
    Eet_File *ef;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
-   int *data;
+   unsigned int *data;
    int compress;
    int quality;
    int result;
    int lossy;
    int alpha;
-   int w;
-   int h;
+   unsigned int w;
+   unsigned int h;
 
    mktemp(file);
 
@@ -1109,8 +1097,8 @@ START_TEST(eet_small_image)
    unsigned int image[4];
    unsigned int *data;
    Eet_File *ef;
-   int w;
-   int h;
+   unsigned int w;
+   unsigned int h;
    int alpha;
    int compression;
    int quality;
@@ -1188,7 +1176,7 @@ START_TEST(eet_identity_simple)
 
    test = eet_read(ef, "keys/tests", &size);
    fail_if(!test);
-   fail_if(size != strlen(buffer) + 1);
+   fail_if(size != (int) strlen(buffer) + 1);
 
    fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
 
