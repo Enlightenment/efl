@@ -20,14 +20,7 @@
 # include "config.h"
 #endif
 
-#include "eina_error.h"
-#include "eina_hash.h"
-#include "eina_stringshare.h"
-#include "eina_list.h"
-#include "eina_array.h"
-#include "eina_counter.h"
-#include "eina_benchmark.h"
-#include "eina_magic.h"
+#include "Eina.h"
 
 /*============================================================================*
  *                                 Global                                     *

@@ -56,7 +56,7 @@ static Eina_Inlist *strings = NULL;
  *============================================================================*/
 
 EAPI int
-eina_magic_string_init()
+eina_magic_string_init(void)
 {
    ++_eina_magic_string_count;
 
@@ -64,7 +64,7 @@ eina_magic_string_init()
 }
 
 EAPI int
-eina_magic_string_shutdown()
+eina_magic_string_shutdown(void)
 {
    --_eina_magic_string_count;
 

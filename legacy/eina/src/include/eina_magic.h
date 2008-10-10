@@ -33,8 +33,8 @@
 
 typedef unsigned int               Eina_Magic;
 
-EAPI int eina_magic_string_init();
-EAPI int eina_magic_string_shutdown();
+EAPI int eina_magic_string_init(void);
+EAPI int eina_magic_string_shutdown(void);
 
 EAPI const char* eina_magic_string_get(Eina_Magic magic);
 EAPI void eina_magic_string_set(Eina_Magic magic, const char *magic_name);
