@@ -606,7 +606,7 @@ collections {
 	    scale: 1;
 	    clip_to: "clipper";
 	    mouse_events: 1;
-	    dragable {
+ 	    dragable {
 	       x: 1 1 0;
 	       y: 0 0 0;
 	       confine: "bg";
@@ -622,11 +622,24 @@ collections {
 	       color: 0 0 0 0;
 	    }
 	 }
+         part { name: "button_events";
+	    type: RECT;
+ 	    dragable {
+	       events: "button";
+	    }
+	    description { state: "default" 0.0;
+	       rel1.to: "bg";
+	       rel1.offset: -8 -8;
+	       rel2.to: "bg";
+	       rel2.offset: 7 7;
+	       color: 0 0 0 0;
+	    }
+	 }
          part { name: "onrect";
 	    type: RECT;
 	    scale: 1;
 	    clip_to: "clipper";
-	    mouse_events: 1;
+	    mouse_events: 0;
 	    description { state: "default" 0.0;
 	       rel1.to: "button";
 	       rel1.relative: -3.0 0.0;
@@ -639,7 +652,7 @@ collections {
 	    type: RECT;
 	    scale: 1;
 	    clip_to: "clipper";
-	    mouse_events: 1;
+	    mouse_events: 0;
 	    description { state: "default" 0.0;
 	       rel1.to: "button";
 	       rel1.relative: 1.0 0.0;

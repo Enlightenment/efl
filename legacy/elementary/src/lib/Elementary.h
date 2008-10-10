@@ -181,15 +181,13 @@ extern "C" {
     */
    
 // FIXME: fixes to do
-// * current sizing inefficient
+// * current sizing tree inefficient
 // * scroller could do with page up/down/left/right buttons and and idea of
 //   a page size
 // * tab widget focusing (not useful for touchscreen tho...)
-// * hover needs a way to animate show/hide (slide out slots) and have some
-//   graphics for around middle
-// * hover needs to be able to use custom hover style
 // * frame needs to be able to use custom frame style
-// * all widgets need a way to use a custom style
+// * button needs to be able to use custom frame style
+// * toggle needs to be able to use custom frame style
 //    
 // FIXME: immediate hitlist for widgets:
 // POPSEL: a button that when pressed uses a hover to display a h/v box or
