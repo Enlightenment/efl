@@ -101,15 +101,13 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	  {
 	     if (events->part->dragable.x)
 	       {
-		  events->drag.tmp.x = ev->canvas.x - x - (events->x + events->w / 2);
-		  events->drag.down.x = ev->canvas.x - x;
-		  events->x = ev->canvas.x - x - events->w / 2;
+		  events->drag.down.x = ev->canvas.x;
+		  events->drag.tmp.x = 0;
 	       }
 	     if (events->part->dragable.y)
 	       {
-		  events->drag.tmp.y = ev->canvas.y - y - (events->y + events->h / 2);
-		  events->drag.down.y = ev->canvas.y - y;
-		  events->y = ev->canvas.y - y - events->h / 2;
+		  events->drag.down.y = ev->canvas.y;
+		  events->drag.tmp.y = 0;
 	       }
 
 	     if (!ignored)
@@ -132,7 +130,8 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     int dir;
 
 	     dir = _edje_part_dragable_calc(ed, rp, &dx, &dy);
-
+	     printf("calc down %3.3f %3.3f\n", dx, dy);
+	     
 	     if ((dx != rp->drag.val.x) || (dy != rp->drag.val.y))
 	       {
 		  rp->drag.val.x = dx;
