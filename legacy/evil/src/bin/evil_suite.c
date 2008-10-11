@@ -5,8 +5,8 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#include "suite.h"
-#include "test_memcpy.h"
+#include "evil_suite.h"
+#include "evil_test_memcpy.h"
 
 
 typedef void(*function)(void);
@@ -33,6 +33,15 @@ struct suite
 unsigned char *buf1 = NULL;
 unsigned char *buf2 = NULL;
 size_t         page_size = 0;
+
+
+#ifdef __MINGW32CE__
+static int
+getpagesize()
+{
+   return 1024;
+}
+#endif /* __MINGW32CE__ */
 
 
 suite *
@@ -150,7 +159,7 @@ main()
    suite *s;
    int i;
 
-   page_size = 2 * getpagesize();
+   page_size = 2 * 1024;
 
    buf1 = (unsigned char *)malloc(16 * getpagesize());
    if (!buf1) return EXIT_FAILURE;

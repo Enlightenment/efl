@@ -13,29 +13,19 @@ evil_stdlib.h \
 evil_unistd.h \
 evil_util.h
 
-nobase_include_HEADERS = pwd.h sys/mman.h
-
-if EVIL_HAVE_MINGW32CE
-
-nobase_include_HEADERS += fnmatch.h
-
-endif
+nobase_include_HEADERS = fnmatch.h pwd.h sys/mman.h
 
 libevil_la_SOURCES = \
 evil.c \
 evil_fcntl.c \
+evil_fnmatch.c \
+evil_fnmatch_list_of_states.c \
 evil_langinfo.c \
 evil_mman.c \
 evil_pwd.c \
 evil_stdlib.c \
 evil_unistd.c \
 evil_util.c
-
-if EVIL_HAVE_MINGW32CE
-
-libevil_la_SOURCES += evil_fnmatch.c evil_fnmatch_list_of_states.c
-
-endif
 
 libevil_la_CPPFLAGS = -DEFL_EVIL_BUILD -D_WIN32_WCE=0x0420
 libevil_la_CFLAGS = @win32_cflags@

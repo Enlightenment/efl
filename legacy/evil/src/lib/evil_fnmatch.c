@@ -1,3 +1,5 @@
+#if defined (_MSC_VER) || defined (__MINGW32CE__)
+
 #include <assert.h>
 #include <string.h>
 
@@ -225,3 +227,5 @@ fnmatch(const char *pattern,
   fnmatch_list_of_states_free(states < new_states ? states : new_states, 2);
   return r;
 }
+
+#endif /* _MSC_VER || __MINGW32CE__ */

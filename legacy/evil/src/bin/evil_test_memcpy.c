@@ -11,8 +11,8 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "suite.h"
-#include "test_memcpy.h"
+#include "evil_suite.h"
+#include "evil_test_memcpy.h"
 
 
 typedef void *(*memcpy_decl)(void *dest, const void *src, size_t n);

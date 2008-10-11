@@ -1,3 +1,21 @@
+2008-10-11  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/lib/Makefile.am:
+	* src/lib/evil_fnmatch.c:
+	* src/lib/evil_fnmatch_list_of_states.c:
+	add guards instead of not including fnmatch source
+	file in Makefile.am (for mingw32ce only)
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	* src/bin/evil_test_memcpy.c:
+	* src/bin/suite.c:
+	* src/bin/suite.h:
+	* src/bin/test_memcpy.c:
+	* src/bin/test_memcpy.h:
+	rename files
+
 2008-10-09  Vincent Torri  <doursse at users dot sf dot net>
 
 	* AUTHORS:

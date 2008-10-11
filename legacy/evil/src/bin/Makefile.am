@@ -9,13 +9,13 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @win32_cflags@
 
-bin_PROGRAMS = suite test_dlfcn test_pipe test_evil
+bin_PROGRAMS = evil_suite test_dlfcn test_pipe test_evil
 
-suite_SOURCES = suite.c test_memcpy.c
+evil_suite_SOURCES = evil_suite.c evil_test_memcpy.c
 
 if EVIL_HAVE_WINCE
 
-suite_SOURCES +=  memcpy_glibc_arm.S
+evil_suite_SOURCES +=  memcpy_glibc_arm.S
 
 #else
 
@@ -23,8 +23,8 @@ suite_SOURCES +=  memcpy_glibc_arm.S
 
 endif
 
-suite_LDADD = $(top_builddir)/src/lib/libevil.la
-suite_LDFLAGS = -Wl,--enable-auto-import
+evil_suite_LDADD = $(top_builddir)/src/lib/libevil.la
+evil_suite_LDFLAGS = -Wl,--enable-auto-import
 
 test_dlfcn_SOURCES = test_dlfcn.c
 test_dlfcn_LDADD = $(top_builddir)/src/lib/libevil.la $(top_builddir)/src/lib/dlfcn/libdl.la
@@ -38,4 +38,4 @@ test_evil_SOURCES = test_evil.c
 test_evil_LDADD = $(top_builddir)/src/lib/libevil.la
 test_evil_LDFLAGS = -Wl,--enable-auto-import
 
-EXTRA_DIST = suite.h test_memcpy.h
+EXTRA_DIST = evil_suite.h evil_test_memcpy.h
