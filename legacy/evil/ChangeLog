@@ -2,6 +2,32 @@
 
 	* configure.ac:
 	* src/lib/Makefile.am:
+	readd guards suppressed in previous commit
+
+	* src/lib/Evil.h:
+	include new header files
+
+	* src/lib/errno.h:
+	* src/lib/evil_errno.c:
+	add fake errno system with mingw32ce
+
+	* src/lib/evil_fcntl.c:
+	* src/lib/evil_fcntl.h:
+	fix compilation on cegcc and mingw32 (mainly does
+	nothing on Windows CE)
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	add rewind and perror for mingw32ce
+
+	* src/lib/evil_string.c:
+	* src/lib/evil_string.h:
+	add strerror for mingw32ce
+
+2008-10-11  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/lib/Makefile.am:
 	* src/lib/evil_fnmatch.c:
 	* src/lib/evil_fnmatch_list_of_states.c:
 	add guards instead of not including fnmatch source
@@ -42,7 +68,7 @@
 	fix mkstemp() on all Windows platform, guard errno stuff
 
 	* src/lib/evil_stdlib.h:
-	template -> __template because 'template ' is a c++ keyword.
+	template -> __template because 'template' is a c++ keyword.
 
 	* src/lib/evil_unistd.c:
 	guard errno stuff

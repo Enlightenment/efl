@@ -24,8 +24,6 @@
  *
  */
 
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
-
 int fcntl(int fd, int cmd, ...)
 {
    va_list va;
@@ -45,10 +43,13 @@ int fcntl(int fd, int cmd, ...)
         flag = va_arg(va, long);
         if (flag == FD_CLOEXEC)
           {
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
              if (SetHandleInformation(h, HANDLE_FLAG_INHERIT, 0))
                res = 0;
+#endif /* __CEGCC__ || __MINGW32CE__ */
           }
      }
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
    else if ((cmd == F_SETLK) || (cmd == F_SETLKW))
      {
         struct flock fl;
@@ -81,9 +82,9 @@ int fcntl(int fd, int cmd, ...)
           res = _locking(fd, _LK_UNLCK, fl.l_len);
      }
 
+#endif /* __CEGCC__ || __MINGW32CE__ */
+
    va_end(va);
 
    return res;
 }
-
-#endif /* __CEGCC__ || __MINGW32CE__ */

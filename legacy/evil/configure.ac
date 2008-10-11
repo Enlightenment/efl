@@ -97,6 +97,7 @@ if test "x${have_wince}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
+AM_CONDITIONAL(EVIL_HAVE_MINGW32CE, test "x${have_mingw32ce}" = "xyes")
 
 
 ### Checks for linker characteristics

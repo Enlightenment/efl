@@ -10,13 +10,22 @@ Evil.h \
 evil_fcntl.h \
 evil_langinfo.h \
 evil_stdlib.h \
+evil_stdio.h \
+evil_string.h \
 evil_unistd.h \
 evil_util.h
 
-nobase_include_HEADERS = fnmatch.h pwd.h sys/mman.h
+nobase_include_HEADERS = pwd.h sys/mman.h
+
+if EVIL_HAVE_MINGW32CE
+
+nobase_include_HEADERS += fnmatch.h errno.h
+
+endif
 
 libevil_la_SOURCES = \
 evil.c \
+evil_errno.c \
 evil_fcntl.c \
 evil_fnmatch.c \
 evil_fnmatch_list_of_states.c \
@@ -24,6 +33,8 @@ evil_langinfo.c \
 evil_mman.c \
 evil_pwd.c \
 evil_stdlib.c \
+evil_stdio.c \
+evil_string.c \
 evil_unistd.c \
 evil_util.c
 
