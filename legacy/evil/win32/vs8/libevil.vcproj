@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="libevil"
 	ProjectGUID="{689B4F2B-666D-439F-9BF3-1203D813DE3F}"
 	RootNamespace="libevil"
@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline"
+				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -64,7 +64,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="wsock32.lib"
+				AdditionalDependencies="wsock32.lib Secur32.lib"
 				OutputFile="$(OutDir)\libevil.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline"
+				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -144,7 +144,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="wsock32.lib"
+				AdditionalDependencies="wsock32.lib Secur32.lib"
 				OutputFile="$(OutDir)\libevil.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"
@@ -193,6 +193,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\evil_fnmatch.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_fnmatch_list_of_states.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\evil_mman.c"
 				>
 			</File>
@@ -222,6 +230,14 @@
 				RelativePath="..\..\src\lib\Evil.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_fnmatch_private.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\fnmatch.h"
+				>
+			</File>
 			<Filter
 				Name="pwd"
 				>
@@ -246,22 +262,6 @@
 			</File>
 			<File
 				RelativePath="..\common\dirent.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\fnmatch.c"
-				>
-			</File>
-			<File
-				RelativePath="..\common\fnmatch.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\fnmatch_list_of_states.c"
-				>
-			</File>
-			<File
-				RelativePath="..\common\fnmatch_private.h"
 				>
 			</File>
 			<Filter
