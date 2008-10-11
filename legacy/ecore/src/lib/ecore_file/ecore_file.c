@@ -33,12 +33,18 @@ ecore_file_init()
 {
    if (++init != 1) return init;
 
-   if (!ecore_file_monitor_init())
-     goto error;
-   if (!ecore_file_path_init())
-     goto error;
-   if (!ecore_file_download_init())
-     goto error;
+//   if (!
+       ecore_file_monitor_init();
+//       )
+//     goto error;
+//   if (!
+       ecore_file_path_init();
+//       )
+//     goto error;
+//   if (!
+       ecore_file_download_init();
+//       )
+//     goto error;
    return init;
 
 error:
