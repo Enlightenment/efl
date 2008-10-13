@@ -28,6 +28,7 @@ _edje_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje *ed = data;
    _edje_emit(ed, "focus,in", "");
+   // FIXME: emit focus,in to selections and cursors
 }
     
 static void
@@ -35,6 +36,7 @@ _edje_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje *ed = data;
    _edje_emit(ed, "focus,out", "");
+   // FIXME: emit focus,out to selections and cursors
 }
 
 static void
@@ -43,9 +45,11 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Edje *ed = data;
    Evas_Event_Key_Down *ev = event_info;
    Edje_Real_Part *rp = ed->focused_part;
-   Entry *en = rp->entry_data;
+   Entry *en;
    Evas_Bool control, alt, shift;
-   if ((!rp) || (!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+   if (!rp) return;
+   en = rp->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
    if (!ev->key) return;
@@ -56,7 +60,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    if (!strcmp(ev->key, "Escape"))
      {
-	// dead keys here. Escape for now (shoudl emit these)
+	// dead keys here. Escape for now (should emit these)
      }
    else if (!strcmp(ev->key, "Up"))
      {
@@ -313,8 +317,10 @@ _edje_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Edje *ed = data;
    Evas_Event_Key_Up *ev = event_info;
    Edje_Real_Part *rp = ed->focused_part;
-   Entry *en = rp->entry_data;
-   if ((!rp) || (!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+   Entry *en;
+   if (!rp) return;
+   en = rp->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
 }
@@ -324,9 +330,11 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 {
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Down *ev = event_info;
-   Entry *en = rp->entry_data;
+   Entry *en;
    Evas_Coord x, y, w, h;
-   if ((!rp) || (!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+   if (!rp) return;
+   en = rp->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
@@ -362,9 +370,11 @@ _edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Up *ev = event_info;
-   Entry *en = rp->entry_data;
+   Entry *en;
    Evas_Coord x, y, w, h;
-   if ((!rp) || (!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+   if (!rp) return;
+   en = rp->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
@@ -397,9 +407,11 @@ _edje_part_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 {
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Move *ev = event_info;
-   Entry *en = rp->entry_data;
+   Entry *en;
    Evas_Coord x, y, w, h;
-   if ((!rp) || (!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+   if (!rp) return;
+   en = rp->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
    if (!en->sel_start) return;
