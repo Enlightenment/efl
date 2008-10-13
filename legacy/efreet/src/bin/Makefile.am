@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib \
 @ECORE_CFLAGS@ \
+@EINA_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
@@ -17,7 +18,7 @@ efreet_test_DEPENDENCIES = $(top_builddir)/src/lib/libefreet.la \
                            $(top_builddir)/src/lib/libefreet_mime.la
 efreet_test_LDADD = $(top_builddir)/src/lib/libefreet.la \
                     $(top_builddir)/src/lib/libefreet_mime.la \
-                    @ECORE_LIBS@
+                    @ECORE_LIBS@ @EINA_LIBS@
 efreet_test_SOURCES = \
 ef_test.h \
 ef_data_dirs.c \
@@ -35,11 +36,11 @@ ef_locale.c
 endif
 
 efreet_spec_test_DEPENDENCIES = $(top_builddir)/src/lib/libefreet.la
-efreet_spec_test_LDADD = $(top_builddir)/src/lib/libefreet.la
+efreet_spec_test_LDADD = $(top_builddir)/src/lib/libefreet.la @EINA_LIBS@
 efreet_spec_test_SOURCES = \
 efreet_spec_test.c
 
 efreet_cache_test_DEPENDENCIES = $(top_builddir)/src/lib/libefreet.la
-efreet_cache_test_LDADD = $(top_builddir)/src/lib/libefreet.la @ECORE_LIBS@
+efreet_cache_test_LDADD = $(top_builddir)/src/lib/libefreet.la @ECORE_LIBS@ @EINA_LIBS@
 efreet_cache_test_SOURCES = \
 ef_cache.c
