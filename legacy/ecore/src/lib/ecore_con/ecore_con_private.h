@@ -97,8 +97,8 @@ struct _Ecore_Con_Url
 
 struct _Ecore_Con_Info
 {
+   unsigned int    size;
    struct addrinfo info;
-   struct sockaddr addr;
    char		   ip[NI_MAXHOST];
    char		   service[NI_MAXSERV];
 };

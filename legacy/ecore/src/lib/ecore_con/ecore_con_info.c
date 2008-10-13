@@ -186,31 +186,44 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 
    if ((cbdata->pid = fork()) == 0)
      {
-        Ecore_Con_Info container;
+        Ecore_Con_Info *container;
 	struct addrinfo *result;
 	char service[NI_MAXSERV];
 	char hbuf[NI_MAXHOST];
 	char sbuf[NI_MAXSERV];
+	void *tosend;
+	int tosend_len;
+	int canonname_len = 0;
 
 	/* FIXME with EINA */
 	snprintf(service, NI_MAXSERV, "%i", svr->port);
 	/* CHILD */
 	if (!getaddrinfo(svr->name, service, hints, &result) && result)
 	  {
-	    memcpy(&container.info, result, sizeof(struct addrinfo));
-	    container.info.ai_canonname = NULL;
-	    container.info.ai_next = NULL;
-	    memcpy(&container.addr, result->ai_addr, sizeof(struct sockaddr));
-	    memset(container.ip, 0, sizeof(container.ip));
-	    memset(container.service, 0, sizeof(container.service));
-	    if (!getnameinfo(&container.addr, container.info.ai_addrlen,
+	    if (result->ai_canonname)
+	      canonname_len = strlen(result->ai_canonname) + 1;
+	    tosend_len = sizeof(Ecore_Con_Info) + result->ai_addrlen + canonname_len;
+	    tosend = malloc(tosend_len);
+	    container = (Ecore_Con_Info *)tosend;
+
+	    container->size = tosend_len;
+	    memset(container->ip, 0, sizeof(container->ip));
+	    memset(container->service, 0, sizeof(container->service));
+
+	    memcpy(&container->info, result, sizeof(struct addrinfo));
+	    memcpy(tosend + sizeof(Ecore_Con_Info), result->ai_addr, result->ai_addrlen);
+	    memcpy(tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen, result->ai_canonname, canonname_len);
+
+	    if (!getnameinfo(result->ai_addr, result->ai_addrlen,
 			     hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
 			     NI_NUMERICHOST | NI_NUMERICSERV))
 	      {
-		memcpy(container.ip, hbuf, sizeof(container.ip));
-		memcpy(container.service, sbuf, sizeof(container.service));
+		memcpy(container->ip, hbuf, sizeof(container->ip));
+		memcpy(container->service, sbuf, sizeof(container->service));
 	      }
-	    write(fd[1], &container, sizeof(Ecore_Con_Info));
+	    write(fd[1], tosend, tosend_len);
+
+	    free(tosend);
 	  }
 	else
 	  write(fd[1], "", 1);
@@ -240,14 +253,40 @@ static void
 _ecore_con_info_readdata(CB_Data *cbdata)
 {
    Ecore_Con_Info container;
+   Ecore_Con_Info *recv;
+   void *torecv;
+   int torecv_len;
+
    ssize_t size;
 
    size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), &container,
 	       sizeof(Ecore_Con_Info));
    if (size == sizeof(Ecore_Con_Info))
      {
-        container.info.ai_addr = &container.addr;
-	cbdata->cb_done(cbdata->data, &container);
+        torecv_len = container.size;
+	torecv = malloc(torecv_len);
+
+	memcpy(torecv, &container, sizeof(Ecore_Con_Info));
+
+	size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), torecv + sizeof(Ecore_Con_Info),
+		    torecv_len - sizeof(Ecore_Con_Info));
+	if (size == torecv_len - sizeof(Ecore_Con_Info))
+	  {
+	    recv = (Ecore_Con_Info *)torecv;
+
+	    recv->info.ai_addr = torecv + sizeof(Ecore_Con_Info);
+	    if (torecv != (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
+	      recv->info.ai_canonname = torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
+	    else
+	      recv->info.ai_canonname = NULL;
+	    recv->info.ai_next = NULL;
+
+	    cbdata->cb_done(cbdata->data, recv);
+
+	    free(torecv);
+	  }
+	else
+	  cbdata->cb_done(cbdata->data, NULL);
      }
    else
      cbdata->cb_done(cbdata->data, NULL);
