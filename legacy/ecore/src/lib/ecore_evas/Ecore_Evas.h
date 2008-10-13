@@ -82,7 +82,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
    ECORE_EVAS_ENGINE_SOFTWARE_16_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW,
-   ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE,
+   ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE
 } Ecore_Evas_Engine_Type;
 
 typedef enum _Ecore_Evas_Avoid_Damage_Type

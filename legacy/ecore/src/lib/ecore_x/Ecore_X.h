@@ -954,7 +954,7 @@ typedef enum _Ecore_X_Window_State_Hint {
    ECORE_X_WINDOW_STATE_HINT_NORMAL,
 
    /** The window wants to start in an iconified state */
-   ECORE_X_WINDOW_STATE_HINT_ICONIC,
+   ECORE_X_WINDOW_STATE_HINT_ICONIC
 } Ecore_X_Window_State_Hint;
 
 typedef enum _Ecore_X_Window_Type {
@@ -1399,7 +1399,7 @@ typedef enum _Ecore_X_MWM_Hint_Input
    ECORE_X_MWM_HINT_INPUT_MODELESS = 0,
    ECORE_X_MWM_HINT_INPUT_PRIMARY_APPLICATION_MODAL = 1,
    ECORE_X_MWM_HINT_INPUT_SYSTEM_MODAL = 2,
-   ECORE_X_MWM_HINT_INPUT_FULL_APPLICATION_MODAL = 3,
+   ECORE_X_MWM_HINT_INPUT_FULL_APPLICATION_MODAL = 3
 } Ecore_X_MWM_Hint_Input;
 
 EAPI void ecore_x_mwm_hints_get_prefetch(Ecore_X_Window window);
