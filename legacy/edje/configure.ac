@@ -38,6 +38,8 @@ PKG_PROG_PKG_CONFIG
 
 AC_FUNC_ALLOCA
 
+PKG_CHECK_MODULES([EINA], [eina-0])
+
 WIN32_CFLAGS=""
 lt_no_undefined=""
 lt_enable_auto_import=""
