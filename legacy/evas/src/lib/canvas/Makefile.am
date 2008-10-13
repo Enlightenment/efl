@@ -8,7 +8,7 @@ AM_CPPFLAGS	     = -I. \
 		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 		       @FREETYPE_CFLAGS@ @EET_CFLAGS@ \
-		       @FONTCONFIG_CFLAGS@
+		       @FONTCONFIG_CFLAGS@ @EINA_CFLAGS@
 
 noinst_LTLIBRARIES   = libevas_canvas.la
 libevas_canvas_la_SOURCES  = \

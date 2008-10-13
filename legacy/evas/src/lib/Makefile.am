@@ -10,6 +10,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @EET_CFLAGS@ \
 @FONTCONFIG_CFLAGS@ \
@@ -36,6 +37,7 @@ engines/common/libevas_engine_common.la \
 @EET_LIBS@ \
 @FONTCONFIG_LIBS@ \
 @pthread_libs@ \
+@EINA_LIBS@ \
 -lm
 
 libevas_la_DEPENDENCIES = \

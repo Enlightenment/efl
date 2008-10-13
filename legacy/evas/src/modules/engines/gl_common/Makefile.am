@@ -6,6 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
 @FREETYPE_CFLAGS@ \
+@EINA_CFLAGS@ \
 @gl_cflags@
 
 if BUILD_ENGINE_GL_COMMON
@@ -24,7 +25,7 @@ evas_gl_polygon.c \
 evas_gl_rectangle.c \
 evas_gl_texture.c
 
-libevas_engine_gl_common_la_LIBADD = @gl_libs@ $(top_builddir)/src/lib/libevas.la
+libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @gl_libs@ $(top_builddir)/src/lib/libevas.la
 libevas_engine_gl_common_la_DEPENDENCIES = $(top_builddir)/config.h
 
 endif

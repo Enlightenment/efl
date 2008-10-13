@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 -I$(top_srcdir)/src/modules/engines/software_16 \
 @FREETYPE_CFLAGS@ \
+@EINA_CFLAGS@ \
 @x_cflags@
 
 if BUILD_ENGINE_SOFTWARE_16_X11
@@ -21,7 +22,7 @@ evas_engine.h \
 evas_engine.c \
 evas_x_buffer.c
 
-module_la_LIBADD = @x_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @x_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h

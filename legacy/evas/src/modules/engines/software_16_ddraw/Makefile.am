@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
 -I$(top_srcdir)/src/modules/engines/software_16 \
+@EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@
 
 if BUILD_ENGINE_SOFTWARE_16_DDRAW
@@ -21,7 +22,7 @@ evas_engine.c \
 evas_ddraw_buffer.cpp \
 evas_ddraw_main.cpp
 
-module_la_LIBADD = @ddraw_16_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @ddraw_16_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @lt_no_undefined@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h

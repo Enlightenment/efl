@@ -7,7 +7,8 @@ AM_CPPFLAGS	     = -I. \
 		       -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-		       @FREETYPE_CFLAGS@
+		       @FREETYPE_CFLAGS@ \
+		       @EINA_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_cache.la
 libevas_cache_la_SOURCES  = \

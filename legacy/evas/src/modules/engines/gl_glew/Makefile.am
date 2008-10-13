@@ -6,6 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines/gl_common \
+@EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@
 
 if BUILD_ENGINE_GL_GLEW

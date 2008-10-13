@@ -1,7 +1,7 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CPPFLAGS = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include -I$(top_srcdir)/src/modules/engines/cairo_common @FREETYPE_CFLAGS@ @x_cflags@ @CAIRO_CFLAGS@
+AM_CPPFLAGS = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include -I$(top_srcdir)/src/modules/engines/cairo_common @FREETYPE_CFLAGS@ @x_cflags@ @CAIRO_CFLAGS@ @EINA_CFLAGS@
 
 if BUILD_ENGINE_CAIRO_X11
 
@@ -14,7 +14,7 @@ evas_engine.h \
 evas_engine.c \
 evas_x_main.c
 
-module_la_LIBADD = @CAIRO_LIBS@ @x_libs@ $(top_builddir)/src/modules/engines/cairo_common/libevas_engine_cairo_common.la $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @CAIRO_LIBS@ @x_libs@ $(top_builddir)/src/modules/engines/cairo_common/libevas_engine_cairo_common.la $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h

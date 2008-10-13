@@ -6,7 +6,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
-@FREETYPE_CFLAGS@
+@FREETYPE_CFLAGS@ \
+@EINA_CFLAGS@
 
 if BUILD_ENGINE_FB
 
@@ -20,7 +21,7 @@ evas_engine.c \
 evas_fb_main.c \
 evas_outbuf.c
 
-module_la_LIBADD = $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h

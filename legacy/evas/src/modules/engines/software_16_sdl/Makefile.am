@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include @FREETYPE_CFLAGS@ @SDL_CFLAGS@
+INCLUDES = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include @FREETYPE_CFLAGS@ @SDL_CFLAGS@ @EINA_CFLAGS@
 
 if BUILD_ENGINE_SDL
 
@@ -14,7 +14,7 @@ module_la_SOURCES  = \
 evas_engine.c \
 evas_engine.h
 
-module_la_LIBADD = @SDL_LIBS@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @SDL_LIBS@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @lt_no_undefined@ -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 module_la_DEPENDENCIES = $(top_builddir)/config.h
 

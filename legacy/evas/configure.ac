@@ -78,6 +78,9 @@ AC_ARG_ENABLE(strict,
   [use_strict="no"]
 )
 
+#####################################################################
+# Check evas strong dependencie
+PKG_CHECK_MODULES([EINA], [eina-0])
 
 #####################################################################
 

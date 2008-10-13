@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines/gl_common \
 @FREETYPE_CFLAGS@ \
+@EINA_CFLAGS@ \
 @x_cflags@ \
 @gl_cflags@
 
@@ -21,7 +22,7 @@ evas_engine.h \
 evas_engine.c \
 evas_x_main.c
 
-module_la_LIBADD = @gl_libs@ @x_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @gl_libs@ @x_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h

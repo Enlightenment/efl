@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
+@EINA_CFLAGS@ \
 @qt_cflags@
 
 AM_CXXFLAGS = $(CFLAGS) -DQT_QWS_EBX -DQT_QWS_CUSTOM -DQWS -DNO_DEBUG
@@ -22,7 +23,7 @@ evas_engine.c \
 evas_outbuf.c \
 evas_qt_main.cpp
 
-module_la_LIBADD = @qt_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @qt_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 module_la_DEPENDENCIES = $(top_builddir)/config.h
