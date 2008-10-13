@@ -548,13 +548,16 @@ eet_flush2(Eet_File *ef)
    return EET_ERROR_NONE;
 
    write_error:
-   switch (ferror(ef->fp))
+   if (ferror(ef->fp))
      {
-      case EFBIG: error = EET_ERROR_WRITE_ERROR_FILE_TOO_BIG; break;
-      case EIO: error = EET_ERROR_WRITE_ERROR_IO_ERROR; break;
-      case ENOSPC: error = EET_ERROR_WRITE_ERROR_OUT_OF_SPACE; break;
-      case EPIPE: error = EET_ERROR_WRITE_ERROR_FILE_CLOSED; break;
-      default: error = EET_ERROR_WRITE_ERROR; break;
+	switch (errno)
+	  {
+	   case EFBIG: error = EET_ERROR_WRITE_ERROR_FILE_TOO_BIG; break;
+	   case EIO: error = EET_ERROR_WRITE_ERROR_IO_ERROR; break;
+	   case ENOSPC: error = EET_ERROR_WRITE_ERROR_OUT_OF_SPACE; break;
+	   case EPIPE: error = EET_ERROR_WRITE_ERROR_FILE_CLOSED; break;
+	   default: error = EET_ERROR_WRITE_ERROR; break;
+	  }
      }
    sign_error:
    if (ef->fp) fclose(ef->fp);
@@ -655,31 +658,34 @@ eet_flush(Eet_File *ef)
    return EET_ERROR_NONE;
 
    write_error:
-   switch (ferror(ef->fp))
+   if (ferror(ef->fp))
      {
-      case EFBIG:
-	fclose(ef->fp);
-	ef->fp = NULL;
-	return EET_ERROR_WRITE_ERROR_FILE_TOO_BIG;
-      case EIO:
-	fclose(ef->fp);
-	ef->fp = NULL;
-	return EET_ERROR_WRITE_ERROR_IO_ERROR;
-      case ENOSPC:
-	fclose(ef->fp);
-	ef->fp = NULL;
-	return EET_ERROR_WRITE_ERROR_OUT_OF_SPACE;
-      case EPIPE:
-	fclose(ef->fp);
-	ef->fp = NULL;
-	return EET_ERROR_WRITE_ERROR_FILE_CLOSED;
-      default:
-	fclose(ef->fp);
-	ef->fp = NULL;
-	return EET_ERROR_WRITE_ERROR;
+	switch (errno)
+	  {
+	   case EFBIG:
+	      fclose(ef->fp);
+	      ef->fp = NULL;
+	      return EET_ERROR_WRITE_ERROR_FILE_TOO_BIG;
+	   case EIO:
+	      fclose(ef->fp);
+	      ef->fp = NULL;
+	      return EET_ERROR_WRITE_ERROR_IO_ERROR;
+	   case ENOSPC:
+	      fclose(ef->fp);
+	      ef->fp = NULL;
+	      return EET_ERROR_WRITE_ERROR_OUT_OF_SPACE;
+	   case EPIPE:
+	      fclose(ef->fp);
+	      ef->fp = NULL;
+	      return EET_ERROR_WRITE_ERROR_FILE_CLOSED;
+	   default:
+	      fclose(ef->fp);
+	      ef->fp = NULL;
+	      return EET_ERROR_WRITE_ERROR;
+	  }
      }
    sign_error:
-   fclose(ef->fp);
+   if (ef->fp) fclose(ef->fp);
    ef->fp = NULL;
    return EET_ERROR_WRITE_ERROR;
 }
