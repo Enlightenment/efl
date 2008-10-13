@@ -12,6 +12,8 @@ _eet_str_direct_alloc(const char *str)
 static void
 _eet_str_direct_free(const char *str)
 {
+   /* FIXME: Use attribute unused */
+   (void) str;
 }
 
 /* Internal list stuff. */
@@ -106,8 +108,6 @@ Eet_Hash*
 eet_hash_add(Eet_Hash *hash, const char *key, const void *data)
 {
    Eet_Hash_Item *item;
-   Eet_List *find;
-   int index;
 
    if (!hash) hash = calloc(1, sizeof (Eet_Hash));
    if (!hash) return NULL;
@@ -150,14 +150,14 @@ eet_test_setup_eddc(Eet_Data_Descriptor_Class *eddc)
    eddc->func.mem_free = NULL;
    eddc->func.str_alloc = NULL;
    eddc->func.str_free = NULL;
-   eddc->func.list_next = eet_list_next;
-   eddc->func.list_append = eet_list_prepend;
-   eddc->func.list_data = eet_list_data;
-   eddc->func.list_free = eet_list_free;
-   eddc->func.hash_foreach = eet_hash_foreach;
-   eddc->func.hash_add = eet_hash_add;
-   eddc->func.hash_free = eet_hash_free;
-   eddc->func.str_direct_alloc = _eet_str_direct_alloc;
-   eddc->func.str_direct_free = _eet_str_direct_free;
+   eddc->func.list_next = (void*) eet_list_next;
+   eddc->func.list_append = (void*) eet_list_prepend;
+   eddc->func.list_data = (void*) eet_list_data;
+   eddc->func.list_free = (void*) eet_list_free;
+   eddc->func.hash_foreach = (void*) eet_hash_foreach;
+   eddc->func.hash_add = (void*) eet_hash_add;
+   eddc->func.hash_free = (void*) eet_hash_free;
+   eddc->func.str_direct_alloc = (void*) _eet_str_direct_alloc;
+   eddc->func.str_direct_free = (void*) _eet_str_direct_free;
 }
 

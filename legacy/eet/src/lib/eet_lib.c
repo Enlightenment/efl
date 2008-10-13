@@ -47,6 +47,10 @@ void *alloca (size_t);
 # include <Evil.h>
 #endif
 
+#ifdef HAVE_OPENSSL
+# include <openssl/err.h>
+#endif
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -902,7 +906,7 @@ eet_internal_read2(Eet_File *ef)
         const int       *dico = (const int*) ef->data + EET_FILE2_DIRECTORY_ENTRY_COUNT * num_directory_entries + EET_FILE2_HEADER_COUNT;
         int              j;
 
-        if (eet_test_close((num_dictionary_entries * EET_FILE2_DICTIONARY_ENTRY_SIZE + index) > (bytes_dictionary_entries + bytes_directory_entries), ef))
+        if (eet_test_close((num_dictionary_entries * (int) EET_FILE2_DICTIONARY_ENTRY_SIZE + index) > (bytes_dictionary_entries + bytes_directory_entries), ef))
             return NULL;
 
         ef->ed = calloc(1, sizeof (Eet_Dictionary));
@@ -1016,7 +1020,7 @@ eet_internal_read1(Eet_File *ef)
      return NULL;
 
    /* check we will not outrun the file limit */
-   if (eet_test_close(((byte_entries + sizeof(int) * 3) > ef->data_size), ef))
+   if (eet_test_close(((byte_entries + (int) sizeof(int) * 3) > ef->data_size), ef))
      return NULL;
 
    /* allocate header */
@@ -1150,7 +1154,7 @@ eet_internal_read(Eet_File *ef)
    if (eet_test_close((ef->data == (void *)-1) || (ef->data == NULL), ef))
      return NULL;
 
-   if (eet_test_close(ef->data_size < sizeof(int) * 3, ef))
+   if (eet_test_close(ef->data_size < (int) sizeof(int) * 3, ef))
      return NULL;
 
    switch (ntohl(*data))
@@ -1249,7 +1253,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     goto on_error;
 	  }
 	if ((mode == EET_FILE_MODE_READ) &&
-	    (file_stat.st_size < (sizeof(int) * 3)))
+	    (file_stat.st_size < ((int) sizeof(int) * 3)))
 	  {
 	     fclose(fp);
 	     fp = NULL;

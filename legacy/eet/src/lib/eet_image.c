@@ -51,13 +51,15 @@ struct _JPEG_error_mgr
 struct jpeg_membuf_src {
    struct jpeg_source_mgr pub;
 
-   const char *buf;
+   const unsigned char *buf;
    size_t len;
 };
 
 static void
 _eet_jpeg_membuf_src_init(j_decompress_ptr cinfo)
 {
+   /* FIXME: Use attribute unused */
+   (void) cinfo;
 }
 
 static boolean
@@ -116,7 +118,7 @@ struct jpeg_membuf_dst {
    void **dst_buf;
    size_t *dst_len;
 
-   char *buf;
+   unsigned char *buf;
    size_t len;
    int failed;
 };
@@ -124,13 +126,15 @@ struct jpeg_membuf_dst {
 static void
 _eet_jpeg_membuf_dst_init(j_compress_ptr cinfo)
 {
+   /* FIXME: Use eina attribute */
+   (void) cinfo;
 }
 
 static boolean
 _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
 {
    struct jpeg_membuf_dst *dst = (struct jpeg_membuf_dst *)cinfo->dest;
-   char *buf;
+   unsigned char *buf;
 
    if (dst->len >= 0x40000000 ||
        (buf = realloc(dst->buf, dst->len * 2)) == NULL) {
@@ -141,7 +145,7 @@ _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
    }
 
    dst->pub.next_output_byte =
-     buf + ((char *)dst->pub.next_output_byte - dst->buf);
+     buf + ((unsigned char *)dst->pub.next_output_byte - dst->buf);
    dst->buf = buf;
    dst->pub.free_in_buffer += dst->len;
    dst->len *= 2;
@@ -160,7 +164,7 @@ _eet_jpeg_membuf_dst_term(j_compress_ptr cinfo)
       free(dst->buf);
    } else {
       *dst->dst_buf = dst->buf;
-      *dst->dst_len = (char *)dst->pub.next_output_byte - dst->buf;
+      *dst->dst_len = (unsigned char *)dst->pub.next_output_byte - dst->buf;
    }
    free(dst);
    cinfo->dest = NULL;
@@ -276,8 +280,10 @@ _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
 static int
 eet_data_image_jpeg_header_decode(const void *data, int size, unsigned int *w, unsigned int *h)
 {
-   struct jpeg_decompress_struct cinfo = { 0 };
+   struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
+
+   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -315,16 +321,18 @@ static int
 eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, unsigned int src_y,
 			       unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride)
 {
-   struct jpeg_decompress_struct cinfo = { 0 };
+   struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    unsigned char *ptr, *line[16], *tdata = NULL;
    unsigned int *ptr2, *tmp;
    unsigned int iw, ih;
-   int x, y, l, scans;
-   int i, count, prevy;
+   unsigned int x, y, l, scans;
+   unsigned int i, count, prevy;
 
    /* FIXME: handle src_x, src_y and row_stride correctly */
    if (!d) return 0;
+
+   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -373,7 +381,7 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, u
 
    if (cinfo.output_components == 3)
      {
-	for (i = 0; i < cinfo.rec_outbuf_height; i++)
+	for (i = 0; i < (unsigned int) cinfo.rec_outbuf_height; i++)
 	  line[i] = tdata + (i * (iw) * 3);
 	for (l = 0; l < ih; l += cinfo.rec_outbuf_height)
 	  {
@@ -385,7 +393,7 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, u
 	     if (l + scans >= src_y && l < src_y + h)
 	       {
 		  y = src_y - l;
-		  if (y < 0) y = 0;
+		  if (src_y < l) y = 0;
 		  for (ptr += 3 * iw * y; y < scans && (y + l) < (src_y + h); y++)
 		    {
 		       tmp = ptr2;
@@ -409,7 +417,7 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, u
      }
    else if (cinfo.output_components == 1)
      {
-	for (i = 0; i < cinfo.rec_outbuf_height; i++)
+	for (i = 0; i < (unsigned int) cinfo.rec_outbuf_height; i++)
 	  line[i] = tdata + (i * (iw));
 	for (l = 0; l < (ih); l += cinfo.rec_outbuf_height)
 	  {
@@ -421,7 +429,7 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, u
 	     if (l >= src_y && l < src_y + h)
 	       {
 		  y = src_y - l;
-		  if (y < 0) y = 0;
+		  if (src_y < l) y = 0;
 		  for (ptr += iw * y; y < scans && (y + l) < (src_y + h); y++)
 		    {
 		       tmp = ptr2;
@@ -453,12 +461,14 @@ static void *
 eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int src_x, unsigned int src_y,
 				 unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride)
 {
-   struct jpeg_decompress_struct cinfo = { 0 };
+   struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    unsigned char *ptr, *line[16], *tdata = NULL;
    unsigned int *ptr2, *tmp;
-   int x, y, l, scans;
-   int i, count, prevy, iw;
+   unsigned int x, y, l, scans;
+   unsigned int i, count, prevy, iw;
+
+   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -506,7 +516,7 @@ eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int src_x,
    prevy = 0;
    if (cinfo.output_components == 1)
      {
-	for (i = 0; i < cinfo.rec_outbuf_height; i++)
+	for (i = 0; i < (unsigned int) cinfo.rec_outbuf_height; i++)
 	  line[i] = tdata + (i * w);
 	for (l = 0; l < h; l += cinfo.rec_outbuf_height)
 	  {
@@ -518,7 +528,7 @@ eet_data_image_jpeg_alpha_decode(const void *data, int size, unsigned int src_x,
 	     if (l >= src_y && l < src_y + h)
 	       {
 		  y = src_y - l;
-		  if (y < 0) y = 0;
+		  if (src_y < l) y = 0;
 		  for (ptr += iw * y; y < scans && (y + l) < (src_y + h); y++)
 		    {
 		       tmp = ptr2;
@@ -651,18 +661,19 @@ eet_data_image_lossless_compressed_convert(int *size, const void *data, unsigned
 static void *
 eet_data_image_jpeg_convert(int *size, const void *data, unsigned int w, unsigned int h, int alpha, int quality)
 {
+   struct jpeg_compress_struct cinfo;
+   struct _JPEG_error_mgr jerr;
    const int *ptr;
    void *d = NULL;
    size_t sz = 0;
-   struct _JPEG_error_mgr jerr;
    JSAMPROW *jbuf;
-   struct jpeg_compress_struct cinfo;
-   FILE *f;
    unsigned char *buf;
 
    (void) alpha; /* unused */
 
    buf = alloca(3 * w);
+
+   memset(&cinfo, 0, sizeof (struct jpeg_compress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;

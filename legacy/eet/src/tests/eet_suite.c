@@ -449,6 +449,9 @@ func(const Eet_Hash *hash, const char *key, void *data, void *fdata)
 {
    int *res = fdata;
 
+   /* FIXME: Use attribute unused */
+   (void) hash;
+
    if (strcmp(key, EET_TEST_KEY1) != 0
        && strcmp(key, EET_TEST_KEY2) != 0) *res = 1;
    if (_eet_test_ex_check(data, 2)) *res = 1;
@@ -461,6 +464,10 @@ func7(const Eet_Hash *hash, const char *key, void *data, void *fdata)
 {
    int *res = fdata;
    int *val;
+
+   /* FIXME: Use attribute unused */
+   (void) hash;
+   (void) key;
 
    val = data;
    if (!val) *res = 1;
@@ -535,7 +542,6 @@ START_TEST(eet_test_data_type_dump_undump)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
-   Eet_Test_Ex_Type *tmp;
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
    char *transfert1;
@@ -545,8 +551,6 @@ START_TEST(eet_test_data_type_dump_undump)
    int size1;
    int size2;
    int test;
-
-   int i;
 
    eet_init();
 
@@ -793,22 +797,14 @@ END_TEST
 
 START_TEST(eet_file_data_dump_test)
 {
-   const char *buffer = "Here is a string of data to save !";
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
-   Eet_Test_Ex_Type *tmp;
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
    Eet_File *ef;
    char *string1;
-   char *string2;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
-   int size;
-   int size1;
-   int size2;
    int test;
-
-   int i;
 
    eet_init();
 
