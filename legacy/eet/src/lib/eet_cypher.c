@@ -17,6 +17,10 @@
 # include <openssl/dsa.h>
 #endif
 
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -134,16 +138,16 @@ Eet_Error
 eet_identity_sign(FILE *fp, Eet_Key *key)
 {
 #ifdef HAVE_SIGNATURE
+   Eet_Error err = EET_ERROR_NONE;
    unsigned char *x509_der = NULL;
    void *sign = NULL;
    void *data;
    int head[3];
-   EVP_MD_CTX md_ctx;
-   struct stat st_buf;
-   Eet_Error err = EET_ERROR_NONE;
-   int sign_length;
+   unsigned int sign_length;
    int x509_length;
    int fd;
+   EVP_MD_CTX md_ctx;
+   struct stat st_buf;
 
    /* A few check and flush pending write. */
    if (!fp
@@ -320,7 +324,16 @@ Eet_Error
 eet_cypher(void *data, unsigned int size, const char *key, unsigned int length)
 {
 #ifdef HAVE_CYPHER
+   (void) data;
+   (void) size;
+   (void) key;
+   (void) length;
+   return EET_ERROR_NOT_IMPLEMENTED;
 #else
+   (void) data;
+   (void) size;
+   (void) key;
+   (void) length;
    return EET_ERROR_NOT_IMPLEMENTED;
 #endif
 }
@@ -329,7 +342,16 @@ Eet_Error
 eet_decypher(void *data, unsigned int size, const char *key, unsigned int length)
 {
 #ifdef HAVE_CYPHER
+   (void) data;
+   (void) size;
+   (void) key;
+   (void) length;
+   return EET_ERROR_NOT_IMPLEMENTED;
 #else
+   (void) data;
+   (void) size;
+   (void) key;
+   (void) length;
    return EET_ERROR_NOT_IMPLEMENTED;
 #endif
 }
