@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
-@DIRECTFB_CFLAGS@
+@DIRECTFB_CFLAGS@ @EINA_CFLAGS@
 
 if BUILD_ECORE_DIRECTFB
 
@@ -18,7 +18,8 @@ ecore_directfb_private.h
 
 libecore_directfb_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@DIRECTFB_LIBS@
+@DIRECTFB_LIBS@ \
+@EINA_LIBS@
 
 libecore_directfb_la_LDFLAGS = -version-info @version_info@
 

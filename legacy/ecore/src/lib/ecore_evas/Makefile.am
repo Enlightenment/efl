@@ -69,7 +69,8 @@ $(ECORE_SDL_INC) \
 $(ECORE_QUARTZ_INC) \
 $(ECORE_WINCE_INC) \
 @EVAS_CFLAGS@ \
-@XCB_CFLAGS@
+@XCB_CFLAGS@ \
+@EINA_CFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -103,7 +104,8 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @XCB_LIBS@ \
 @SDL_LIBS@ \
 @QUARTZ_LIBS@ \
-@EVIL_LIBS@
+@EVIL_LIBS@ \
+@EINA_LIBS@
 
 libecore_evas_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 

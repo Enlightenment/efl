@@ -2,7 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore
+-I$(top_builddir)/src/lib/ecore \
+@EINA_CFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -17,7 +18,8 @@ ecore_job.c \
 ecore_job_private.h
 
 libecore_job_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la
+$(top_builddir)/src/lib/ecore/libecore.la \
+@EINA_LIBS@
 
 libecore_job_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 

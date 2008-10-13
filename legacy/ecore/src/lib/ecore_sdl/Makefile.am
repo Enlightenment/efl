@@ -3,7 +3,8 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
-@SDL_CFLAGS@
+@SDL_CFLAGS@ \
+@EINA_CFLAGS@
 
 if BUILD_ECORE_SDL
 
@@ -17,7 +18,8 @@ Ecore_Sdl_Keys.h
 
 libecore_sdl_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@SDL_LIBS@
+@SDL_LIBS@ \
+@EINA_LIBS@
 
 libecore_sdl_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 

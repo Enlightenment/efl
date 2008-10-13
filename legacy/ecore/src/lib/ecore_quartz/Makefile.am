@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
-@QUARTZ_CFLAGS@
+@QUARTZ_CFLAGS@ @EINA_CFLAGS@
 
 if BUILD_ECORE_QUARTZ
 
@@ -21,7 +21,8 @@ Ecore_Quartz.h
 
 libecore_quartz_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@QUARTZ_LIBS@
+@QUARTZ_LIBS@ \
+@EINA_LIBS@
 
 libecore_quartz_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 

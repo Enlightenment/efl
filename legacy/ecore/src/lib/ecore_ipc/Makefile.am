@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_ipc \
-@SSL_CFLAGS@
+@SSL_CFLAGS@ @EINA_CFLAGS@
 
 if BUILD_ECORE_IPC
 
@@ -22,7 +22,8 @@ ecore_ipc_private.h
 libecore_ipc_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la \
-@SSL_LIBS@
+@SSL_LIBS@ \
+@EINA_LIBS@
 
 libecore_ipc_la_LDFLAGS = -version-info @version_info@
 

@@ -5,7 +5,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_builddir)/src/lib/ecore \
 @CURL_CFLAGS@ \
-@EVIL_CFLAGS@
+@EVIL_CFLAGS@ \
+@EINA_CFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -30,7 +31,8 @@ ecore_file_download.c
 libecore_file_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(lib_ecore_con_la) \
-@EVIL_LIBS@
+@EVIL_LIBS@ \
+@EINA_LIBS@
 
 libecore_file_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 

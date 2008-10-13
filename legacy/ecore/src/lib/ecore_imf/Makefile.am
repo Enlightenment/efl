@@ -3,7 +3,8 @@ MAINTAINERCLEANFILES = Makefile.in
 if BUILD_ECORE_IMF
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
--DPACKAGE_LIB_DIR=\"$(libdir)\"
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+@EINA_CFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -18,7 +19,8 @@ ecore_imf_module.c \
 ecore_imf_private.h
 
 libecore_imf_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la
+$(top_builddir)/src/lib/ecore/libecore.la \
+@EINA_LIBS@
 
 libecore_imf_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 endif

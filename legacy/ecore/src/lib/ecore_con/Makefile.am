@@ -5,7 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
-@SSL_CFLAGS@ @CURL_CFLAGS@
+@SSL_CFLAGS@ @CURL_CFLAGS@ @EINA_CFLAGS@
 
 if BUILD_ECORE_CON
 
@@ -22,7 +22,7 @@ ecore_con_private.h
 
 libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@SSL_LIBS@ @CURL_LIBS@
+@SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@
 
 libecore_con_la_LDFLAGS = -version-info @version_info@
 

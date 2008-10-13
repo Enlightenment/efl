@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EVAS_CFLAGS@ @EET_CFLAGS@
+@EVAS_CFLAGS@ @EET_CFLAGS@ @EINA_CFLAGS@
 
 CLEANFILES = $(DB)
 
@@ -47,6 +47,7 @@ ecore_config_private.h
 libecore_config_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
+@EINA_LIBS@ \
 @EET_LIBS@ \
 @EVAS_LIBS@
 
@@ -67,6 +68,7 @@ ecore_config_private.h
 libecore_config_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EET_LIBS@ \
+@EINA_LIBS@ \
 @EVAS_LIBS@
 
 libecore_config_la_DEPENDENCIES = \

@@ -62,6 +62,8 @@ dnl The first call to PKG_CHECK_MODULES is done conditionally,
 dnl so we should include this here:
 PKG_PROG_PKG_CONFIG
 
+PKG_CHECK_MODULES([EINA], [eina-0])
+
 dnl add windows requirements
 WIN32_CFLAGS=""
 WIN32_LIBS=""

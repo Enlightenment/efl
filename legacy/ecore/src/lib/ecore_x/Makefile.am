@@ -14,13 +14,15 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
 -I$(top_builddir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore_txt
+-I$(top_builddir)/src/lib/ecore_txt \
+@EINA_CFLAGS@
 
 lib_LTLIBRARIES = libecore_x.la
 
 libecore_x_la_SOURCES =
 
-libecore_x_la_LIBADD = $(DEP)
+libecore_x_la_LIBADD = $(DEP) \
+@EINA_LIBS@
 
 libecore_x_la_LDFLAGS = -version-info @version_info@
 
