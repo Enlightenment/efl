@@ -785,6 +785,39 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	if (_edje_block_break(ed)) goto break_prog;
 	_edje_recalc(ed);
      }
+   else if (pr->action == EDJE_ACTION_TYPE_FOCUS_SET)
+     {
+	if (!pr->targets)
+	  {
+	     ed->focused_part = NULL;
+	  }
+	else
+	  {
+	     for (l = pr->targets; l; l = l->next)
+	       {
+		  Edje_Real_Part *rp;
+		  Edje_Program_Target *pt;
+	     
+		  pt = l->data;
+		  if (pt->id >= 0)
+		    {
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp)
+			 {
+			    if (ed->focused_part != rp)
+			      {
+				 if (ed->focused_part)
+				   _edje_emit(ed, "focus,part,out", 
+					      ed->focused_part->part->name);
+				 ed->focused_part = rp;
+				 _edje_emit(ed, "focus,part,in",
+					    ed->focused_part->part->name);
+			      }
+ 			 }
+		    }
+	       }
+	  }
+     }
    else
      {
 //	_edje_emit(ed, "program,start", pr->name);

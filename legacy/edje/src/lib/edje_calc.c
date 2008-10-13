@@ -1533,6 +1533,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      /* visibility and color have no meaning on SWALLOW and GROUP part. */
 	      evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
 	      evas_object_resize(ep->object, pf->w, pf->h);
+	      if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+	        _edje_entry_real_part_configure(ep);
 	      break;
 	   case EDJE_PART_TYPE_TEXT:
 	      /* This is correctly handle in _edje_text_recalc_apply at the moment. */

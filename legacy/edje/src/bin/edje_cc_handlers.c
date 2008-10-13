@@ -91,10 +91,15 @@ static void st_collections_group_parts_part_precise_is_inside(void);
 static void st_collections_group_parts_part_use_alternate_font_metrics(void);
 static void st_collections_group_parts_part_clip_to_id(void);
 static void st_collections_group_parts_part_source(void);
+static void st_collections_group_parts_part_source2(void);
+static void st_collections_group_parts_part_source3(void);
+static void st_collections_group_parts_part_source4(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
 static void st_collections_group_parts_part_dragable_events(void);
+static void st_collections_group_parts_part_entry_mode(void);
+static void st_collections_group_parts_part_multiline(void);
 
 static void ob_collections_group_parts_part_description(void);
 static void st_collections_group_parts_part_description_inherit(void);
@@ -233,10 +238,15 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
      {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
      {"collections.group.parts.part.source", st_collections_group_parts_part_source},
+     {"collections.group.parts.part.source2", st_collections_group_parts_part_source2},
+     {"collections.group.parts.part.source3", st_collections_group_parts_part_source3},
+     {"collections.group.parts.part.source4", st_collections_group_parts_part_source4},
      {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
      {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
      {"collections.group.parts.part.dragable.events", st_collections_group_parts_part_dragable_events},
+     {"collections.group.parts.part.entry_mode", st_collections_group_parts_part_entry_mode},
+     {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
      {"collections.group.parts.part.image", st_images_image}, /* dup */
      {"collections.group.parts.part.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
@@ -1797,8 +1807,11 @@ st_collections_group_parts_part_clip_to_id(void)
     @parameters
         [another group's name]
     @effect
-        Only available to GROUP parts. Swallows the specified group into the
-        part's container.
+        Only available to GROUP or TEXTBLOCK parts. Swallows the specified 
+        group into the part's container if a GROUP. If TEXTBLOCK it is used
+        for the group to be loaded and used for selection display UNDER the
+        selected text. source2 is used for on top of the selected text, if
+        source2 is specified.
     @endproperty
 */
 static void
@@ -1812,16 +1825,89 @@ st_collections_group_parts_part_source(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_GROUP)
-     {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"source attribute in non-GROUP part.\n",
-		progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   //XXX validate this somehow (need to decide on the format also)
+   //FIXME: validate this somehow (need to decide on the format also)
    ep->source = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        source2
+    @parameters
+        [another group's name]
+    @effect
+        Only available to TEXTBLOCK parts. It is used for the group to be 
+        loaded and used for selection display OVER the selected text. source
+        is used for under of the selected text, if source is specified.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_source2(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   //FIXME: validate this somehow (need to decide on the format also)
+   ep->source2 = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        source3
+    @parameters
+        [another group's name]
+    @effect
+        Only available to TEXTBLOCK parts. It is used for the group to be 
+        loaded and used for cursor display UNDER the cursor position. source4
+        is used for over the cursor text, if source4 is specified.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_source3(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   //FIXME: validate this somehow (need to decide on the format also)
+   ep->source3 = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        source4
+    @parameters
+        [another group's name]
+    @effect
+        Only available to TEXTBLOCK parts. It is used for the group to be 
+        loaded and used for cursor display OVER the cursor position. source3
+        is used for under the cursor text, if source4 is specified.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_source4(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   //FIXME: validate this somehow (need to decide on the format also)
+   ep->source4 = parse_str(0);
 }
 
 /**
@@ -2011,6 +2097,66 @@ st_collections_group_parts_part_dragable_events(void)
 	data_queue_part_lookup(pc, name, &(ep->dragable.events_id));
 	free(name);
      }
+}
+
+/**
+    @page edcref
+    @property
+        entry_mode
+    @parameters
+        Sets the edit mode for a textblock part to one of:
+        @li NONE
+        @li SELECTABLE
+        @li EDITABLE
+        @li PASSWORD
+    @effect
+        It causes the part be editable if the edje object has the keyboard
+        focus AND the part has the edje focus (or selectable always
+        regardless of focus) and in the event of password mode, not
+        selectable and all text chars replaced with *'s but editable and
+        pastable.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_entry_mode(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->entry_mode = parse_enum(0,
+			       "NONE", EDJE_ENTRY_EDIT_MODE_NONE,
+			       "PLAIN", EDJE_ENTRY_EDIT_MODE_SELECTABLE,
+			       "EDITABLE", EDJE_ENTRY_EDIT_MODE_EDITABLE,
+			       "PASSOWRD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
+			       NULL);
+}
+
+/**
+    @page edcref
+    @property
+        multiline
+    @parameters
+        0 or 1 (boolean) off/on
+    @effect
+        It causes a textblock that is editable to allow multiple lines for
+        editing.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_multiline(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->multiline = parse_bool(0);
 }
 
 /**
@@ -4400,7 +4546,8 @@ st_collections_group_programs_program_in(void)
         [type] [param1] [param2]
     @effect
         Action to be performed by the program. Valid actions are: STATE_SET,
-        ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP and DRAG_VAL_PAGE.
+        ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
+        FOCUS_SET.
         Only one action can be specified per program. Examples:\n
            action: STATE_SET "statename" 0.5;\n
            action: ACTION_STOP "programname";\n
@@ -4423,6 +4570,7 @@ st_collections_group_programs_program_action(void)
 			   "DRAG_VAL_STEP", EDJE_ACTION_TYPE_DRAG_VAL_STEP,
 			   "DRAG_VAL_PAGE", EDJE_ACTION_TYPE_DRAG_VAL_PAGE,
 			   "SCRIPT", EDJE_ACTION_TYPE_SCRIPT,
+			   "FOCUS_SET", EDJE_ACTION_TYPE_FOCUS_SET,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -4449,17 +4597,22 @@ st_collections_group_programs_program_action(void)
 	ep->value = parse_float(1);
 	ep->value2 = parse_float(2);
      }
-
-   switch (ep->action) {
+   
+   switch (ep->action)
+     {
       case EDJE_ACTION_TYPE_ACTION_STOP:
-	 check_arg_count(1);
-	 break;
+	check_arg_count(1);
+	break;
       case EDJE_ACTION_TYPE_SCRIPT:
-	 /* FIXME: what's this? people usually just use script{}, no? */
-	 break;
+	/* this is implicitly set by script {} so this is here just for
+	 * completeness */
+	break;
+      case EDJE_ACTION_TYPE_FOCUS_SET:
+	check_arg_count(1);
+	break;
       default:
-	 check_arg_count(3);
-   }
+	check_arg_count(3);
+     }
 }
 
 /**
@@ -4533,6 +4686,8 @@ st_collections_group_programs_program_target(void)
 	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
 	  data_queue_part_lookup(pc, name, &(et->id));
 	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
+	  data_queue_part_lookup(pc, name, &(et->id));
+	else if (ep->action == EDJE_ACTION_TYPE_FOCUS_SET)
 	  data_queue_part_lookup(pc, name, &(et->id));
 	else
 	  {

@@ -207,7 +207,8 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 #define EDJE_ACTION_TYPE_DRAG_VAL_STEP 5
 #define EDJE_ACTION_TYPE_DRAG_VAL_PAGE 6
 #define EDJE_ACTION_TYPE_SCRIPT        7
-#define EDJE_ACTION_TYPE_LAST          8
+#define EDJE_ACTION_TYPE_FOCUS_SET     8
+#define EDJE_ACTION_TYPE_LAST          9
 
 #define EDJE_TWEEN_MODE_NONE       0
 #define EDJE_TWEEN_MODE_LINEAR     1
@@ -258,6 +259,12 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 #define EDJE_STATE_PARAM_TEXT_ALIGN   30
 #define EDJE_STATE_PARAM_VISIBLE      31
 #define EDJE_STATE_PARAM_LAST         32
+
+// FIXME: doing
+#define EDJE_ENTRY_EDIT_MODE_NONE 0
+#define EDJE_ENTRY_EDIT_MODE_SELECTABLE 1
+#define EDJE_ENTRY_EDIT_MODE_EDITABLE 2
+#define EDJE_ENTRY_EDIT_MODE_PASSWORD 3
 
 #define EDJE_PART_PATH_SEPARATOR ':'
 #define EDJE_PART_PATH_SEPARATOR_STRING ":"
@@ -456,7 +463,7 @@ struct _Edje_Part
    const char            *name; /* the name if any of the part */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
-   const char            *source;
+   const char            *source, *source2, *source3, *source4;
    int                    id; /* its id number */
    int                    clip_to_id; /* the part id to clip this one to */
    struct {
@@ -483,6 +490,8 @@ struct _Edje_Part
    unsigned char          precise_is_inside;
    unsigned char          use_alternate_font_metrics;
    unsigned char          pointer_mode;
+   unsigned char          entry_mode;
+   unsigned char          multiline;
 };
 
 struct _Edje_Part_Image_Id
@@ -638,6 +647,7 @@ struct _Edje
    /* for faster lookups to avoid nth list walks */
    Edje_Real_Part      **table_parts;
    Edje_Program        **table_programs;
+   Edje_Real_Part       *focused_part;
    void                 *script_only_data;
    int                   table_programs_size;
    int                   table_parts_size;
@@ -684,6 +694,10 @@ struct _Edje_Real_Part
    Evas_Object              *object;
    Evas_List                *extra_objects;
    Evas_Object              *swallowed_object;
+   void                     *entry_data;
+   Evas_Object              *cursorbg_object;
+   Evas_Object              *cursorfg_object;
+   // FIXME: add selection objects
    Edje_Part                *part;
    int                       x, y, w, h;
    Edje_Rectangle            req;
@@ -1217,5 +1231,11 @@ void _edje_script_only_hide(Edje *ed);
 void _edje_script_only_move(Edje *ed);
 void _edje_script_only_resize(Edje *ed);
 void _edje_script_only_message(Edje *ed, Edje_Message *em);
+
+void _edje_entry_init(Edje *ed);
+void _edje_entry_shutdown(Edje *ed);
+void _edje_entry_real_part_init(Edje_Real_Part *rp);
+void _edje_entry_real_part_shutdown(Edje_Real_Part *rp);
+void _edje_entry_real_part_configure(Edje_Real_Part *rp);
     
 #endif

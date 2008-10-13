@@ -40,7 +40,8 @@ edje_cache.c \
 edje_match.c \
 edje_textblock_styles.c \
 edje_edit.c \
-edje_script_only.c
+edje_script_only.c \
+edje_entry.c
 
 libedje_la_CFLAGS = @WIN32_CFLAGS@
 libedje_la_LIBADD = @EDJE_LIBS@ -lm

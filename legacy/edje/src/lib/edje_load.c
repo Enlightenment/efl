@@ -434,6 +434,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 rp->text.source = ed->table_parts[rp->param1.description->text.id_source % ed->table_parts_size];
 		       if (rp->param1.description->text.id_text_source >= 0)
 			 rp->text.text_source = ed->table_parts[rp->param1.description->text.id_text_source % ed->table_parts_size];
+		       if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+			 _edje_entry_real_part_init(rp);
 		    }
 	       }
 	     
@@ -659,6 +661,8 @@ _edje_file_del(Edje *ed)
 	     Edje_Real_Part *rp;
 
 	     rp = ed->table_parts[i];
+	     if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+	       _edje_entry_real_part_shutdown(rp);
 	     if (rp->object)
 	       {
 		  _edje_text_real_part_on_del(ed, rp);
