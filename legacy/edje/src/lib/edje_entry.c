@@ -76,7 +76,14 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	if (evas_object_textblock_line_number_geometry_get(rp->object, line_num, &lx, &ly, &lw, &lh))
 	  {
 	     evas_textblock_cursor_char_geometry_get(en->cursor, &cx, &cy, &cw, &ch);
-	     evas_textblock_cursor_char_coord_set(en->cursor, cx + (cw / 2), ly + (lh / 2));
+	     if (!evas_textblock_cursor_char_coord_set(en->cursor, cx + (cw / 2), ly + (lh / 2)))
+	       {
+		  evas_textblock_cursor_line_coord_set(en->cursor, ly + (lh / 2));
+		  if (cx + (cw / 2) < (lx + (lw / 2)))
+		    evas_textblock_cursor_line_first(en->cursor);
+		  else
+		    evas_textblock_cursor_line_last(en->cursor);
+	       }
 	  }
 	if (shift)
 	  {
@@ -97,7 +104,14 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	if (evas_object_textblock_line_number_geometry_get(rp->object, line_num, &lx, &ly, &lw, &lh))
 	  {
 	     evas_textblock_cursor_char_geometry_get(en->cursor, &cx, &cy, &cw, &ch);
-	     evas_textblock_cursor_char_coord_set(en->cursor, cx + (cw / 2), ly + (lh / 2));
+	     if (!evas_textblock_cursor_char_coord_set(en->cursor, cx + (cw / 2), ly + (lh / 2)))
+	       {
+		  evas_textblock_cursor_line_coord_set(en->cursor, ly + (lh / 2));
+		  if (cx + (cw / 2) < (lx + (lw / 2)))
+		    evas_textblock_cursor_line_first(en->cursor);
+		  else
+		    evas_textblock_cursor_line_last(en->cursor);
+	       }
 	  }
 	if (shift)
 	  {
@@ -148,11 +162,15 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	  {
 	     if ((en->sel_start) && (en->sel_end) && (en->have_selection))
 	       {
+		  printf("del sel\n");
 		  evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
 	       }
 	     else
 	       {
-		  evas_textblock_cursor_node_prev(en->cursor);
+		  if (!evas_textblock_cursor_char_prev(en->cursor))
+		    {
+		       evas_textblock_cursor_node_prev(en->cursor);
+		    }
 		  evas_textblock_cursor_char_delete(en->cursor);
 	       }
 	  }
@@ -290,6 +308,8 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
      {
 	// newline
+	evas_textblock_cursor_format_prepend(en->cursor, "\n");
+	evas_textblock_cursor_node_next(en->cursor);
      }
    else if ((!strcmp(ev->key, "Multi_key")))
      {
@@ -306,7 +326,20 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
 	// FIXME: if composing.. store 2 keys
 	if (ev->string)
-	  evas_textblock_cursor_text_prepend(en->cursor, ev->string);
+	  {
+	     if (evas_textblock_cursor_node_format_get(en->cursor))
+	       {
+		  printf("on format node\n");
+		  while (evas_textblock_cursor_node_prev(en->cursor))
+		    {
+		       if (!evas_textblock_cursor_node_format_get(en->cursor))
+			 break;
+		    }
+		  evas_textblock_cursor_text_append(en->cursor, ev->string);
+	       }
+	     else
+	       evas_textblock_cursor_text_prepend(en->cursor, ev->string);
+	  }
      }
    _edje_entry_real_part_configure(rp);
 }
@@ -531,10 +564,14 @@ _edje_entry_real_part_configure(Edje_Real_Part *rp)
    
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
    // move cursor/selections etc.
-   evas_textblock_cursor_char_geometry_get(en->cursor, &xx, &yy, &ww, &hh);
-   evas_object_move(en->cursor_bg, x + xx, y + yy);
+   if (evas_textblock_cursor_char_geometry_get(en->cursor, &xx, &yy, &ww, &hh) < 0)
+     {
+	printf("line < 0!\n");
+     }
+   printf("%i %i %ix%i\n", xx, yy, ww, hh);
    if (ww < 1) ww = 1;
    if (hh < 1) ww = 1;
+   evas_object_move(en->cursor_bg, x + xx, y + yy);
    evas_object_resize(en->cursor_bg, ww, hh);
    // FIXME: move/resize en->sel (record the sels and intended geom)
 }
