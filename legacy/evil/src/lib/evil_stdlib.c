@@ -6,7 +6,7 @@
 #include <stdio.h>
 #ifndef __CEGCC__
 # include <io.h>
-#endif /* ! __CEGCC__ */
+#endif /* __CEGCC__ */
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
@@ -112,6 +112,25 @@ putenv(const char *string)
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
    return _putenv(string);
 #else
+   char *str;
+   char *egal;
+   char *name;
+   char *value;
+
+   str = strdup(string);
+   if (!str)
+     return -1;
+   egal = strchr(str, '=');
+   if (!egal)
+     return -1;
+
+   value = egal + 1;
+   *egal = '\0';
+   name = str;
+   setenv(name, value, 1);
+   free(str);
+
+   return 0;
 #endif /* __CEGCC__ || __MINGW32CE__ */
 }
 
@@ -281,7 +300,23 @@ mkstemp(char *template)
         suffix[5] = lookup[v % 62];
         v /= 62;
 
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
         fd = _open(template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
+#else /* __CEGCC__ || __MINGW32CE__ */
+        {
+           FILE *f;
+
+           f = fopen(template, "rwb");
+           if (!f)
+             {
+#ifdef HAVE_ERRNO_H
+                errno = EEXIST;
+#endif /* HAVE_ERRNO_H */
+                return -1;
+             }
+           fd = fileno(f);
+        }
+#endif /* __CEGCC__ || __MINGW32CE__ */
         if (fd >= 0)
           return fd;
 

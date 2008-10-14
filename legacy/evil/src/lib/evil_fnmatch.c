@@ -181,7 +181,7 @@ fnmatch(const char *pattern,
   fnmatch_init_states(states);
 
 
-  for (c = string; *c && states->size; ++c)
+  for (c = (char *)string; *c && states->size; ++c)
     {
        size_t i;
       fnmatch_list_of_states_clear(new_states);

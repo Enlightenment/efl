@@ -2,6 +2,8 @@
 #define __EVIL_FCNTL_H__
 
 
+#ifndef __CEGCC__
+
 # include <sys/types.h>
 
 /**
@@ -96,6 +98,9 @@ struct flock
  * @ingroup Evil
  */
 EAPI int fcntl(int fd, int cmd, ...);
+
+
+#endif /* ! __CEGCC__ */
 
 
 #endif /* __EVIL_FCNTL_H__ */

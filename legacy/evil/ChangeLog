@@ -1,8 +1,19 @@
+2008-10-14  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_fcntl.h:
+	don't use it with the cegcc compiler
+
+	* src/lib/evil_fnmatch.c:
+	fix warning
+
+	* src/lib/evil_stdlib.c:
+	fix putenv and mkstemp with cegcc and mingw32ce
+
 2008-10-11  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
 	* src/lib/Makefile.am:
-	readd guards suppressed in previous commit
+	re-add guards suppressed in previous commit
 
 	* src/lib/Evil.h:
 	include new header files
