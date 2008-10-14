@@ -32,6 +32,9 @@ elm_table.c \
 elm_clock.c \
 elm_layout.c \
 elm_hover.c \
+elm_entry.c \
+elm_contact.c \
+elm_contactlist.c \
 \
 els_pan.c \
 els_pan.h \
@@ -44,8 +47,6 @@ els_table.h \
 els_icon.c \
 els_icon.h
 
-#... later
-#elm_contactlist.c
 
 libelementary_la_CFLAGS = 
 libelementary_la_LIBADD = @my_libs@ @ELEMENTARY_LIBS@

@@ -179,6 +179,8 @@ extern "C" {
    EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style);
    /* smart callbacks called:
     */
+
+   EAPI Evas_Object *elm_entry_add(Evas_Object *parent);
    
 // FIXME: fixes to do
 // * current sizing tree inefficient
@@ -190,6 +192,8 @@ extern "C" {
 // * toggle needs to be able to use custom frame style
 //    
 // FIXME: immediate hitlist for widgets:
+// ENTRY: 1 or more line text entry
+// 
 // POPSEL: a button that when pressed uses a hover to display a h/v box or
 //         a table of options surrounding the button with scroll butons at
 //         the end and the ability to drag and scroll

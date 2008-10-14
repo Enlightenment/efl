@@ -669,7 +669,7 @@ _smart_scrollbar_read(Smart_Data *sd)
 static void
 _smart_scrollbar_reset(Smart_Data *sd)
 {
-   Evas_Coord px, py;
+   Evas_Coord px = 0, py = 0;
    
    edje_object_part_drag_value_set(sd->edje_obj, "elm.dragable.vbar", 0.0, 0.0);
    edje_object_part_drag_value_set(sd->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
@@ -880,7 +880,7 @@ _smart_scrollbar_size_adjust(Smart_Data *sd)
      }
    else
      {
-	Evas_Coord px, py;
+	Evas_Coord px = 0, py = 0;
 	
 	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
 	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
