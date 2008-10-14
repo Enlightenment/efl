@@ -83,6 +83,25 @@ if test "x${enable_default_mempool}" = "xyes" ; then
 fi
 AC_SUBST(EINA_DEFAULT_MEMPOOL)
 
+# Report stringshare usage
+AC_ARG_ENABLE([stringshare-usage],
+   [AC_HELP_STRING([--enable-stringshare-usage], [Report stringshare usage on stringshare shutdown])],
+   [
+    if test "x${enableval}" = "xyes"; then
+       enable_stringshare_usage="yes"
+    else
+       enable_stringshare_usage="no"
+    fi
+   ],
+   [enable_stringshare_usage="no"]
+)
+AC_MSG_CHECKING([whether to report stringshare usage])
+AC_MSG_RESULT([${enable_stringshare_usage}])
+
+if test "x${enable_stringshare_usage}" = "xyes"; then
+   AC_DEFINE(EINA_STRINGSHARE_USAGE, 1, [Report Eina stringshare usage pattern])
+fi
+
 # Ememoa memory pool
 
 AC_ARG_ENABLE([ememoa],
@@ -340,6 +359,8 @@ echo
 echo "  Thread Support.......: ${have_pthread}"
 echo
 echo "  Magic debug..........: ${enable_magic_debug}"
+echo
+echo "  Report string usage..: ${enable_stringshare_usage}"
 echo
 echo "  Default mempool......: ${enable_default_mempool}"
 echo

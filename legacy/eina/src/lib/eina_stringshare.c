@@ -115,6 +115,10 @@ struct _Eina_Stringshare_Head
 
    int                    hash;
 
+#ifdef EINA_STRINGSHARE_USAGE
+   int                    population;
+#endif
+
    Eina_Stringshare_Node *head;
 };
 
@@ -132,6 +136,12 @@ struct _Eina_Stringshare_Node
 
 static Eina_Stringshare *share = NULL;
 static int _eina_stringshare_init_count = 0;
+
+#ifdef EINA_STRINGSHARE_USAGE
+static int population = 0;
+static int max_population = 0;
+static int max_node_population = 0;
+#endif
 
 static int
 _eina_stringshare_cmp(const Eina_Stringshare_Head *ed, const int *hash, __UNUSED__ int length, __UNUSED__ void *data)
@@ -263,6 +273,12 @@ eina_stringshare_init()
 EAPI int
 eina_stringshare_shutdown()
 {
+#ifdef EINA_STRINGSHARE_USAGE
+   fprintf(stderr, "eina stringshare statistic:\n");
+   fprintf(stderr, " * maximum shared strings : %i\n", max_population);
+   fprintf(stderr, " * maximum shared strings per node : %i\n", max_node_population);
+#endif
+
    --_eina_stringshare_init_count;
    if (!_eina_stringshare_init_count)
      {
@@ -274,6 +290,12 @@ eina_stringshare_shutdown()
 	     share->buckets[i] = NULL;
 	  }
 	MAGIC_FREE(share);
+
+#ifdef EINA_STRINGSHARE_USAGE
+	population = 0;
+	max_node_population = 0;
+	max_population = 0;
+#endif
 
 	eina_magic_string_shutdown();
 	eina_error_shutdown();
@@ -322,6 +344,10 @@ eina_stringshare_add(const char *str)
 	ed->hash = hash;
 	ed->head = NULL;
 
+#ifdef EINA_STRINGSHARE_USAGE
+	ed->population = 0;
+#endif
+
 	share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num],
 										      EINA_RBTREE_GET(ed),
 										      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
@@ -369,6 +395,13 @@ eina_stringshare_add(const char *str)
 
    nel->next = ed->head;
    ed->head = nel;
+
+#ifdef EINA_STRINGSHARE_USAGE
+   ed->population++;
+   population++;
+   if (population > max_population) max_population = population;
+   if (ed->population > max_node_population) max_node_population = ed->population;
+#endif
 
    return el_str;
 }
@@ -419,6 +452,11 @@ eina_stringshare_del(const char *str)
 	else ed->head = el->next;
 	if (el->begin == EINA_FALSE)
 	  MAGIC_FREE(el);
+
+#ifdef EINA_STRINGSHARE_USAGE
+	ed->population--;
+	population--;
+#endif
 
 	if (ed->head == NULL)
 	  {
