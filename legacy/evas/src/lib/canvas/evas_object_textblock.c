@@ -3212,7 +3212,7 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
      }
    cur->node = n;
    index = cur->pos;
-   if (cur->pos >= (n->len - 1))
+   if (cur->pos > (n->len - 1))
      n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
    else
      n->text = _strbuf_insert(n->text, (char *)text, cur->pos, &(n->len), &(n->alloc));
@@ -3868,7 +3868,15 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 						it->text,
 						pos,
 						&x, &y, &w, &h);
-	if (ret <= 0) return -1;
+	if (ret <= 0)
+	  {
+	     if (it->format->font.font)
+	        cur->ENFN->font_string_size_get(cur->ENDT, it->format->font.font,
+						it->text, &w, &h);
+	     x = w;
+	     y = 0;
+	     w = 0;
+	  }
 	x = ln->x + it->x - it->inset + x;
 	if (x < ln->x)
 	  {
@@ -3885,8 +3893,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 	w = fi->w;
 	h = ln->h;
      }
-   else
-     return -1;
+   else return -1;
    if (cx) *cx = x;
    if (cy) *cy = y;
    if (cw) *cw = w;
