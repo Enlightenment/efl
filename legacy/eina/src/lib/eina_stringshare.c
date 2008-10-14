@@ -308,7 +308,7 @@ eina_stringshare_add(const char *str)
    if (!str) return NULL;
    hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
-   hash &= EINA_STRINGSHARE_MASK;
+   hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num],
 							   &hash, 0,
@@ -335,7 +335,7 @@ eina_stringshare_add(const char *str)
    EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
 
    for (el = ed->head, tmp = NULL;
-	el && slen != el->length && memcmp(str, (const char*) (el + 1), slen) != 0;
+	el && (slen != el->length || memcmp(str, (const char*) (el + 1), slen) != 0);
 	tmp = el, el = el->next)
      ;
 
@@ -394,7 +394,7 @@ eina_stringshare_del(const char *str)
    if (!str) return;
    hash = eina_hash_djb2_len(str, &slen);
    hash_num = hash & 0xFF;
-   hash &= EINA_STRINGSHARE_MASK;
+   hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
    ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup(EINA_RBTREE_GET(share->buckets[hash_num]),
 							   &hash, 0,
