@@ -136,7 +136,6 @@ EAPI Image_Entry*             evas_cache_image_size_set(Image_Entry *im, int w, 
 EAPI Evas_Cache_Engine_Image* evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_Image *parent);
 EAPI void                     evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache);
 
-EAPI void                     evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache);
 EAPI int                      evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache);
 EAPI int                      evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache);
 EAPI void                     evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit);
