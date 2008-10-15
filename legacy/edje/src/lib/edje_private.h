@@ -260,7 +260,6 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 #define EDJE_STATE_PARAM_VISIBLE      31
 #define EDJE_STATE_PARAM_LAST         32
 
-// FIXME: doing
 #define EDJE_ENTRY_EDIT_MODE_NONE 0
 #define EDJE_ENTRY_EDIT_MODE_SELECTABLE 1
 #define EDJE_ENTRY_EDIT_MODE_EDITABLE 2
@@ -1237,5 +1236,10 @@ void _edje_entry_shutdown(Edje *ed);
 void _edje_entry_real_part_init(Edje_Real_Part *rp);
 void _edje_entry_real_part_shutdown(Edje_Real_Part *rp);
 void _edje_entry_real_part_configure(Edje_Real_Part *rp);
+char *_edje_entry_selection_get(Edje_Real_Part *rp);
+const char *_edje_entry_text_get(Edje_Real_Part *rp);
+void _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text);
+void _edje_entry_set_cursor_start(Edje_Real_Part *rp);
+void _edje_entry_set_cursor_end(Edje_Real_Part *rp);
     
 #endif

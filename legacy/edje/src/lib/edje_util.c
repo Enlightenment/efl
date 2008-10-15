@@ -878,9 +878,17 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
    if ((rp->text.text) && (text) &&
        (!strcmp(rp->text.text, text)))
      return;
-   if (rp->text.text) evas_stringshare_del(rp->text.text);
-   if (text) rp->text.text = evas_stringshare_add(text);
-   else rp->text.text = NULL;
+   if (rp->text.text)
+     {
+	evas_stringshare_del(rp->text.text);
+	rp->text.text = NULL;
+     }
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+	_edje_entry_text_markup_set(rp, text);
+     }
+   else
+     if (text) rp->text.text = evas_stringshare_add(text);
    rp->edje->dirty = 1;
    _edje_recalc(rp->edje);
    if (rp->edje->text_change.func)
@@ -902,8 +910,15 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
    if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
-   if (rp->part->type == EDJE_PART_TYPE_TEXT)
-     return rp->text.text;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+	return _edje_entry_text_get(rp);
+     }
+   else
+     {
+	if (rp->part->type == EDJE_PART_TYPE_TEXT)
+	  return rp->text.text;
+     }
    return NULL;
 }
 

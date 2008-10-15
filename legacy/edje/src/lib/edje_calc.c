@@ -644,11 +644,19 @@ _edje_part_recalc_single(Edje *ed,
 
 	     if (evas_object_textblock_style_get(ep->object) != stl->style)
 	       evas_object_textblock_style_set(ep->object, stl->style);
-	     ptxt = evas_object_textblock_text_markup_get(ep->object);
-	     if (((!ptxt) && (text)) ||
-		 ((ptxt) && (text) && (strcmp(ptxt, text))) ||
-		 ((ptxt) && (!text)))
-	       evas_object_textblock_text_markup_set(ep->object, text);
+	     // FIXME: need to account for editing
+	     if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+	       {
+		  // do nothing - should be done elsewhere
+	       }
+	     else
+	       {
+		  ptxt = evas_object_textblock_text_markup_get(ep->object);
+		  if (((!ptxt) && (text)) ||
+		      ((ptxt) && (text) && (strcmp(ptxt, text))) ||
+		      ((ptxt) && (!text)))
+		    evas_object_textblock_text_markup_set(ep->object, text);
+	       }
 	     if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	       {
 		  int mw = 0, mh = 0;
