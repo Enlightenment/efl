@@ -103,14 +103,14 @@ _xre_image_load(Xcb_Image_Info *xcbinf, const char *file, const char *key, Evas_
    im->xcbinf = xcbinf;
    im->xcbinf->references++;
    im->fkey = strdup(buf);
-   im->file = (char *)evas_stringshare_add(file);
-   if (key) im->key = (char *)evas_stringshare_add(key);
+   im->file = (char *)eina_stringshare_add(file);
+   if (key) im->key = (char *)eina_stringshare_add(key);
    im->w = im->im->cache_entry.w;
    im->h = im->im->cache_entry.h;
    im->references = 1;
    if (lo) im->load_opts = *lo;
-   if (im->im->info.comment) im->comment = (char *)evas_stringshare_add(im->im->info.comment);
-/*    if (im->im->info.format == 1) im->format = evas_stringshare_add("png"); */
+   if (im->im->info.comment) im->comment = (char *)eina_stringshare_add(im->im->info.comment);
+/*    if (im->im->info.format == 1) im->format = eina_stringshare_add("png"); */
    if (im->im->cache_entry.flags.alpha) im->alpha = 1;
    _xr_image_hash = evas_hash_direct_add(_xr_image_hash, im->fkey, im);
    return im;
@@ -196,15 +196,15 @@ _xre_image_new(Xcb_Image_Info *xcbinf, int w, int h)
 static void
 __xre_image_real_free(XR_Image *im)
 {
-   if (im->file) evas_stringshare_del(im->file);
-   if (im->key) evas_stringshare_del(im->key);
+   if (im->file) eina_stringshare_del(im->file);
+   if (im->key) eina_stringshare_del(im->key);
    if (im->fkey) free(im->fkey);
    if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    if ((im->data) && (im->dirty)) __xre_image_dirty_hash_del(im);
    if ((im->free_data) && (im->data)) free(im->data);
    if (im->surface) _xr_render_surface_free(im->surface);
-   if (im->format) evas_stringshare_del(im->format);
-   if (im->comment) evas_stringshare_del(im->comment);
+   if (im->format) eina_stringshare_del(im->format);
+   if (im->comment) eina_stringshare_del(im->comment);
    if (im->updates) evas_common_tilebuf_free(im->updates);
    _xr_image_info_free(im->xcbinf);
    free(im);

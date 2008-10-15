@@ -116,7 +116,7 @@ _evas_cache_engine_image_alloc(Evas_Cache_Engine_Image *cache,
  on_error:
    if (eim)
      evas_cache_engine_image_drop(eim);
-   evas_stringshare_del(hkey);
+   eina_stringshare_del(hkey);
    evas_cache_image_drop(ie);
    return NULL;
 }
@@ -314,7 +314,7 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    if (cache->func.key)
      ekey = cache->func.key(im, file, key, lo, data);
    else
-     ekey = evas_stringshare_add(im->cache_key);
+     ekey = eina_stringshare_add(im->cache_key);
    if (!ekey)
      goto on_error;
 
@@ -350,7 +350,7 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    if (!eim)
      {
         if (im) evas_cache_image_drop(im);
-        if (ekey) evas_stringshare_del(ekey);
+        if (ekey) eina_stringshare_del(ekey);
      }
    else
      {
@@ -577,7 +577,7 @@ evas_cache_engine_image_size_set(Engine_Image_Entry *eim, int w, int h)
         eim->src = NULL;
      }
 
-   hkey = (eim->references > 1 ) ? evas_stringshare_add(eim->cache_key) : NULL;
+   hkey = (eim->references > 1 ) ? eina_stringshare_add(eim->cache_key) : NULL;
 
    new = _evas_cache_engine_image_alloc(cache, im, hkey);
    if (!new) goto on_error;

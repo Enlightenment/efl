@@ -33,7 +33,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
 	free(fs);
 	return NULL;
      }
-   fs->name = evas_stringshare_add(name);
+   fs->name = eina_stringshare_add(name);
    fs->file = NULL;
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
@@ -54,7 +54,7 @@ evas_common_font_source_load(const char *name)
    fs->current_size = 0;
    fs->ft.face = NULL;
 
-   fs->name = evas_stringshare_add(name);
+   fs->name = eina_stringshare_add(name);
    fs->file = fs->name;
 
    fs->ft.orig_upem = 0;
@@ -119,7 +119,7 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
    fonts_src = evas_object_list_remove(fonts_src, fs);
    FT_Done_Face(fs->ft.face);
    if (fs->charmap) evas_array_hash_free(fs->charmap);
-   if (fs->name) evas_stringshare_del(fs->name);
+   if (fs->name) eina_stringshare_del(fs->name);
    free(fs);
 }
 

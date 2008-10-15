@@ -61,7 +61,7 @@ struct _Evas_Cache_Image
 
 struct _Evas_Cache_Engine_Image_Func
 {
-   /* Must return a char* allocated with evas_stringshare_add. */
+   /* Must return a char* allocated with eina_stringshare_add. */
    char*                (*key)(Image_Entry *im, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error);
 
    Engine_Image_Entry*  (*alloc)(void);

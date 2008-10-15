@@ -27,7 +27,7 @@ static void* _evas_cache_background_load(void *);
 #define FREESTRC(Var)              \
   if (Var)                         \
     {                              \
-       evas_stringshare_del(Var);  \
+       eina_stringshare_del(Var);  \
        Var = NULL;                 \
     }
 
@@ -45,7 +45,7 @@ _evas_cache_image_make_dirty(Evas_Cache_Image *cache,
 
    if (im->cache_key)
      {
-        evas_stringshare_del(im->cache_key);
+        eina_stringshare_del(im->cache_key);
         im->cache_key = NULL;
      }
 }
@@ -156,7 +156,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 
    if (ie->cache_key)
      {
-        evas_stringshare_del(ie->cache_key);
+        eina_stringshare_del(ie->cache_key);
         ie->cache_key = NULL;
      }
 
@@ -183,7 +183,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    if (!ie)
      return NULL;
 
-   cache_key = hkey ? evas_stringshare_add(hkey) : NULL;
+   cache_key = hkey ? eina_stringshare_add(hkey) : NULL;
 
    ie->flags.loaded = 0;
    ie->flags.need_data = 1;
@@ -199,8 +199,8 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    ie->references = 0;
    ie->cache = cache;
 
-   ie->file = file ? evas_stringshare_add(file) : NULL;
-   ie->key = key ? evas_stringshare_add(key) : NULL;
+   ie->file = file ? eina_stringshare_add(file) : NULL;
+   ie->key = key ? eina_stringshare_add(key) : NULL;
 
    ie->timestamp = timestamp;
    ie->laststat = time(NULL);

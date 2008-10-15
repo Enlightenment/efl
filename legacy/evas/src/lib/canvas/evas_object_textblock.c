@@ -407,9 +407,9 @@ _format_free(const Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 {
    fmt->ref--;
    if (fmt->ref > 0) return;
-   if (fmt->font.name) evas_stringshare_del(fmt->font.name);
-   if (fmt->font.fallbacks) evas_stringshare_del(fmt->font.fallbacks);
-   if (fmt->font.source) evas_stringshare_del(fmt->font.source);
+   if (fmt->font.name) eina_stringshare_del(fmt->font.name);
+   if (fmt->font.fallbacks) eina_stringshare_del(fmt->font.fallbacks);
+   if (fmt->font.source) eina_stringshare_del(fmt->font.source);
    evas_font_free(obj->layer->evas, fmt->font.font);
    free(fmt);
 }
@@ -433,7 +433,7 @@ _line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 	
 	fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
 	ln->format_items = evas_object_list_remove(ln->format_items, ln->format_items);
-	if (fi->item) evas_stringshare_del(fi->item);
+	if (fi->item) eina_stringshare_del(fi->item);
 	free(fi);
      }
    if (ln) free(ln);
@@ -903,57 +903,57 @@ static const char *tabstopsstr;
 static void
 _format_command_init(void)
 {
-   fontstr = evas_stringshare_add("font");
-   font_fallbacksstr = evas_stringshare_add("font_fallbacks");
-   font_sizestr = evas_stringshare_add("font_size");
-   font_sourcestr = evas_stringshare_add("font_source");
-   colorstr = evas_stringshare_add("color");
-   underline_colorstr = evas_stringshare_add("underline_color");
-   underline2_colorstr = evas_stringshare_add("underline2_color");
-   outline_colorstr = evas_stringshare_add("outline_color");
-   shadow_colorstr = evas_stringshare_add("shadow_color");
-   glow_colorstr = evas_stringshare_add("glow_color");
-   glow2_colorstr = evas_stringshare_add("glow2_color");
-   backing_colorstr = evas_stringshare_add("backing_color");
-   strikethrough_colorstr = evas_stringshare_add("strikethrough_color");
-   alignstr = evas_stringshare_add("align");
-   valignstr = evas_stringshare_add("valign");
-   wrapstr = evas_stringshare_add("wrap");
-   left_marginstr = evas_stringshare_add("left_margin");
-   right_marginstr = evas_stringshare_add("right_margin");
-   underlinestr = evas_stringshare_add("underline");
-   strikethroughstr = evas_stringshare_add("strikethrough");
-   backingstr = evas_stringshare_add("backing");
-   stylestr = evas_stringshare_add("style");
-   tabstopsstr = evas_stringshare_add("tabstops");
+   fontstr = eina_stringshare_add("font");
+   font_fallbacksstr = eina_stringshare_add("font_fallbacks");
+   font_sizestr = eina_stringshare_add("font_size");
+   font_sourcestr = eina_stringshare_add("font_source");
+   colorstr = eina_stringshare_add("color");
+   underline_colorstr = eina_stringshare_add("underline_color");
+   underline2_colorstr = eina_stringshare_add("underline2_color");
+   outline_colorstr = eina_stringshare_add("outline_color");
+   shadow_colorstr = eina_stringshare_add("shadow_color");
+   glow_colorstr = eina_stringshare_add("glow_color");
+   glow2_colorstr = eina_stringshare_add("glow2_color");
+   backing_colorstr = eina_stringshare_add("backing_color");
+   strikethrough_colorstr = eina_stringshare_add("strikethrough_color");
+   alignstr = eina_stringshare_add("align");
+   valignstr = eina_stringshare_add("valign");
+   wrapstr = eina_stringshare_add("wrap");
+   left_marginstr = eina_stringshare_add("left_margin");
+   right_marginstr = eina_stringshare_add("right_margin");
+   underlinestr = eina_stringshare_add("underline");
+   strikethroughstr = eina_stringshare_add("strikethrough");
+   backingstr = eina_stringshare_add("backing");
+   stylestr = eina_stringshare_add("style");
+   tabstopsstr = eina_stringshare_add("tabstops");
 }
 
 static void
 _format_command_shutdown(void)
 {
-   evas_stringshare_del(fontstr);
-   evas_stringshare_del(font_fallbacksstr);
-   evas_stringshare_del(font_sizestr);
-   evas_stringshare_del(font_sourcestr);
-   evas_stringshare_del(colorstr);
-   evas_stringshare_del(underline_colorstr);
-   evas_stringshare_del(underline2_colorstr);
-   evas_stringshare_del(outline_colorstr);
-   evas_stringshare_del(shadow_colorstr);
-   evas_stringshare_del(glow_colorstr);
-   evas_stringshare_del(glow2_colorstr);
-   evas_stringshare_del(backing_colorstr);
-   evas_stringshare_del(strikethrough_colorstr);
-   evas_stringshare_del(alignstr);
-   evas_stringshare_del(valignstr);
-   evas_stringshare_del(wrapstr);
-   evas_stringshare_del(left_marginstr);
-   evas_stringshare_del(right_marginstr);
-   evas_stringshare_del(underlinestr);
-   evas_stringshare_del(strikethroughstr);
-   evas_stringshare_del(backingstr);
-   evas_stringshare_del(stylestr);
-   evas_stringshare_del(tabstopsstr);
+   eina_stringshare_del(fontstr);
+   eina_stringshare_del(font_fallbacksstr);
+   eina_stringshare_del(font_sizestr);
+   eina_stringshare_del(font_sourcestr);
+   eina_stringshare_del(colorstr);
+   eina_stringshare_del(underline_colorstr);
+   eina_stringshare_del(underline2_colorstr);
+   eina_stringshare_del(outline_colorstr);
+   eina_stringshare_del(shadow_colorstr);
+   eina_stringshare_del(glow_colorstr);
+   eina_stringshare_del(glow2_colorstr);
+   eina_stringshare_del(backing_colorstr);
+   eina_stringshare_del(strikethrough_colorstr);
+   eina_stringshare_del(alignstr);
+   eina_stringshare_del(valignstr);
+   eina_stringshare_del(wrapstr);
+   eina_stringshare_del(left_marginstr);
+   eina_stringshare_del(right_marginstr);
+   eina_stringshare_del(underlinestr);
+   eina_stringshare_del(strikethroughstr);
+   eina_stringshare_del(backingstr);
+   eina_stringshare_del(stylestr);
+   eina_stringshare_del(tabstopsstr);
 }
 
 static void
@@ -985,8 +985,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	if ((!fmt->font.name) ||
 	    ((fmt->font.name) && (strcmp(fmt->font.name, tmp_param))))
 	  {
-	     if (fmt->font.name) evas_stringshare_del(fmt->font.name);
-	     fmt->font.name = evas_stringshare_add(tmp_param);
+	     if (fmt->font.name) eina_stringshare_del(fmt->font.name);
+	     fmt->font.name = eina_stringshare_add(tmp_param);
 	     new_font = 1;
 	  }
      }
@@ -998,8 +998,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	     /* policy - when we say "fallbacks" do we prepend and use prior
 	      * fallbacks... or should we replace. for now we replace
 	      */
-	     if (fmt->font.fallbacks) evas_stringshare_del(fmt->font.fallbacks);
-	     fmt->font.fallbacks = evas_stringshare_add(tmp_param);
+	     if (fmt->font.fallbacks) eina_stringshare_del(fmt->font.fallbacks);
+	     fmt->font.fallbacks = eina_stringshare_add(tmp_param);
 	     new_font = 1;
 	  }
      }
@@ -1019,8 +1019,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	if ((!fmt->font.source) ||
 	    ((fmt->font.source) && (strcmp(fmt->font.source, tmp_param))))
 	  {
-	     if (fmt->font.source) evas_stringshare_del(fmt->font.source);
-	     fmt->font.source = evas_stringshare_add(tmp_param);
+	     if (fmt->font.source) eina_stringshare_del(fmt->font.source);
+	     fmt->font.source = eina_stringshare_add(tmp_param);
 	     new_font = 1;
 	  }
      }
@@ -1254,11 +1254,11 @@ _format_param_parse(char *item, const char **key, const char **val)
    
    p = strchr(item, '=');
    *p = '\0';
-   k = evas_stringshare_add(item);
+   k = eina_stringshare_add(item);
    *key = k;
    *p = '=';
    p++;
-   v = evas_stringshare_add(p);
+   v = eina_stringshare_add(p);
    *val = v;
 }
 
@@ -1319,8 +1319,8 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *str)
 	     
 	     _format_param_parse(item, &key, &val);
 	     _format_command(obj, fmt, key, val);
-	     evas_stringshare_del(key);
-	     evas_stringshare_del(val);
+	     eina_stringshare_del(key);
+	     eina_stringshare_del(val);
 	  }
 	else
 	  {
@@ -1339,9 +1339,9 @@ _format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
    fmt2 = calloc(1, sizeof(Evas_Object_Textblock_Format));
    memcpy(fmt2, fmt, sizeof(Evas_Object_Textblock_Format));
    fmt2->ref = 1;
-   if (fmt->font.name) fmt2->font.name = evas_stringshare_add(fmt->font.name);
-   if (fmt->font.fallbacks) fmt2->font.fallbacks = evas_stringshare_add(fmt->font.fallbacks);
-   if (fmt->font.source) fmt2->font.source = evas_stringshare_add(fmt->font.source);
+   if (fmt->font.name) fmt2->font.name = eina_stringshare_add(fmt->font.name);
+   if (fmt->font.fallbacks) fmt2->font.fallbacks = eina_stringshare_add(fmt->font.fallbacks);
+   if (fmt->font.source) fmt2->font.source = eina_stringshare_add(fmt->font.source);
 
    if ((fmt2->font.name) && (fmt2->font.fallbacks))
      {
@@ -1459,8 +1459,8 @@ _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *it
    
    _format_param_parse(item, &key, &val);
    if ((key) && (val)) _format_command(c->obj, fmt, key, val);
-   if (key) evas_stringshare_del(key);
-   if (val) evas_stringshare_del(val);
+   if (key) eina_stringshare_del(key);
+   if (val) eina_stringshare_del(val);
    c->align = fmt->halign;
    c->marginl = fmt->margin.l;
    c->marginr = fmt->margin.r;
@@ -2014,7 +2014,7 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node *n, char *item)
    Evas_Object_Textblock_Format_Item *fi;
    
    fi = calloc(1, sizeof(Evas_Object_Textblock_Format_Item));
-   fi->item = evas_stringshare_add(item);
+   fi->item = eina_stringshare_add(item);
    fi->source_node = n;
    c->ln->format_items = evas_object_list_append(c->ln->format_items, fi);
    return fi;

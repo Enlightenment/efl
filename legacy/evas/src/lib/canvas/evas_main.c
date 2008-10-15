@@ -9,6 +9,7 @@ evas_init(void)
 {
    if (initcount == 0)
      {
+	eina_init();
 	evas_module_init();
 	evas_async_events_init();
      }
@@ -25,6 +26,7 @@ evas_shutdown(void)
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
 	evas_module_shutdown();
+	eina_shutdown();
      }
    return initcount;
 }
