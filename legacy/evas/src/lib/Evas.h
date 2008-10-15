@@ -619,7 +619,8 @@ extern "C" {
    typedef enum _Evas_Textblock_Text_Type
      {
 	EVAS_TEXTBLOCK_TEXT_RAW,
-	EVAS_TEXTBLOCK_TEXT_PLAIN
+	EVAS_TEXTBLOCK_TEXT_PLAIN,
+	EVAS_TEXTBLOCK_TEXT_MARKUP
      } Evas_Textblock_Text_Type;
    
    EAPI Evas_Object                 *evas_object_textblock_add(Evas *e);
@@ -668,6 +669,7 @@ extern "C" {
    EAPI const char                  *evas_textblock_cursor_node_text_get(const Evas_Textblock_Cursor *cur);
    EAPI int                          evas_textblock_cursor_node_text_length_get(const Evas_Textblock_Cursor *cur);
    EAPI const char                  *evas_textblock_cursor_node_format_get(const Evas_Textblock_Cursor *cur);
+   EAPI Evas_Bool                    evas_textblock_cursor_node_format_is_visible_get(const Evas_Textblock_Cursor *cur);
    EAPI char                        *evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format);
        
    EAPI int                          evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
