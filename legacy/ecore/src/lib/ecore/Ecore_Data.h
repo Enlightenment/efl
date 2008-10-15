@@ -30,6 +30,8 @@
 /* we need this for size_t */
 #include <stddef.h>
 
+#include <Eina.h>
+
 /**
  * @file Ecore_Data.h
  * @brief Contains threading, list, hash, debugging and tree functions.
@@ -387,20 +389,13 @@ extern "C" {
    
    EAPI void *ecore_sheap_item(Ecore_Sheap *heap, int i);
    
-   
-   typedef struct _ecore_string Ecore_String;
-   struct _ecore_string {
-      char *string;
-      int references;
-   };
-   
-   EAPI int ecore_string_init(void);
-   EAPI void ecore_string_shutdown(void);
-   EAPI const char *ecore_string_instance(const char *string);
-   EAPI void ecore_string_release(const char *string);
-   EAPI void ecore_string_hash_dump_graph(void);
-   EAPI void ecore_string_hash_dump_stats(void);
-   
+  #define ecore_string_init eina_stringshare_init
+  #define ecore_string_shutdown eina_stringshare_shutdown
+  #define ecore_string_instance eina_stringshare_add
+  #define ecore_string_release eina_stringshare_del
+
+  #define ecore_string_hash_dump_graph (void)0
+  #define ecore_string_hash_dump_stats (void)0
    
    typedef struct _Ecore_Tree_Node Ecore_Tree_Node;
 # define ECORE_TREE_NODE(object) ((Ecore_Tree_Node *)object)
