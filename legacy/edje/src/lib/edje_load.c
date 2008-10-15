@@ -116,7 +116,7 @@ edje_file_collection_list(const char *file)
 		  Edje_Part_Collection_Directory_Entry *ce;
 
 		  ce = l->data;
-		  lst = evas_list_append(lst, evas_stringshare_add(ce->entry));
+		  lst = evas_list_append(lst, eina_stringshare_add(ce->entry));
 	       }
 	  }
 	_edje_cache_file_unref(edf);
@@ -134,7 +134,7 @@ edje_file_collection_list_free(Evas_List *lst)
 {
    while (lst)
      {
-	if (lst->data) evas_stringshare_del(lst->data);
+	if (lst->data) eina_stringshare_del(lst->data);
 	lst = evas_list_remove(lst, lst->data);
      }
 }
@@ -253,10 +253,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    _edje_file_del(ed);
 
-   if (ed->path) evas_stringshare_del(ed->path);
-   if (ed->group) evas_stringshare_del(ed->group);
-   ed->path = evas_stringshare_add(file);
-   ed->group = evas_stringshare_add(group);
+   if (ed->path) eina_stringshare_del(ed->path);
+   if (ed->group) eina_stringshare_del(ed->group);
+   ed->path = eina_stringshare_add(file);
+   ed->group = eina_stringshare_add(group);
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
   _edje_file_add(ed);
@@ -491,10 +491,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       Evas_List *l;
 		       Evas_Object *child_obj;
 		       Edje *child_ed;
-		       const char *group_path_entry = evas_stringshare_add(rp->part->source);
+		       const char *group_path_entry = eina_stringshare_add(rp->part->source);
 		       if (!group_path)
 			 {
-			    group_path = evas_list_append(NULL, evas_stringshare_add(group));
+			    group_path = evas_list_append(NULL, eina_stringshare_add(group));
 			    group_path_started = 1;
 			 }
 		       /* make sure that this group isn't already in the tree of parents */
@@ -506,10 +506,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 				 _edje_unblock(ed);
 				 _edje_unref(ed);
 				 _edje_file_del(ed);
-				 evas_stringshare_del(group_path_entry);
+				 eina_stringshare_del(group_path_entry);
 				 if (group_path_started)
 				   {
-				      evas_stringshare_del(group_path->data);
+				      eina_stringshare_del(group_path->data);
 				      evas_list_free(group_path);
 				   }
 				 ed->load_error = EDJE_LOAD_ERROR_RECURSIVE_REFERENCE;
@@ -530,7 +530,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			      {
 				 while (group_path)
 				   {
-				      evas_stringshare_del(group_path->data);
+				      eina_stringshare_del(group_path->data);
 				      group_path = evas_list_remove_list(group_path, group_path);
 				   }
 			      }
@@ -538,10 +538,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			    return 0;
 			 }
 		       child_ed = _edje_fetch(child_obj);
-		       child_ed->parent = evas_stringshare_add(rp->part->name);
+		       child_ed->parent = eina_stringshare_add(rp->part->name);
 		       
 		       group_path = evas_list_remove(group_path, group_path_entry);
-		       evas_stringshare_del(group_path_entry);
+		       eina_stringshare_del(group_path_entry);
 		       
 		       edje_object_signal_callback_add(child_obj, "*", "*", _cb_signal_repeat, obj);
 		       _edje_real_part_swallow(rp, child_obj);
@@ -552,7 +552,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	       {
 		  while (group_path)
 		    {
-		       evas_stringshare_del(group_path->data);
+		       eina_stringshare_del(group_path->data);
 		       group_path = evas_list_remove_list(group_path, group_path);
 		    }
 	       }
@@ -572,7 +572,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       old_swallows = evas_list_remove_list(old_swallows, old_swallows);
 		       
 		       edje_object_part_swallow(obj, name, swallow);
-		       evas_stringshare_del(name);
+		       eina_stringshare_del(name);
 		    }
 	       }
 	     
@@ -622,7 +622,7 @@ _edje_swallows_collect(Edje *ed)
 
 	rp = ed->table_parts[i];
 	if (rp->part->type != EDJE_PART_TYPE_SWALLOW || !rp->swallowed_object) continue;
-	swallows = evas_list_append(swallows, evas_stringshare_add(rp->part->name));
+	swallows = evas_list_append(swallows, eina_stringshare_add(rp->part->name));
 	swallows = evas_list_append(swallows, rp->swallowed_object);
      }
    return swallows;
@@ -687,10 +687,10 @@ _edje_file_del(Edje *ed)
 
 		  rp->swallowed_object = NULL;
 	       }
-	     if (rp->text.text) evas_stringshare_del(rp->text.text);
-	     if (rp->text.font) evas_stringshare_del(rp->text.font);
-	     if (rp->text.cache.in_str) evas_stringshare_del(rp->text.cache.in_str);
-	     if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);
+	     if (rp->text.text) eina_stringshare_del(rp->text.text);
+	     if (rp->text.font) eina_stringshare_del(rp->text.font);
+	     if (rp->text.cache.in_str) eina_stringshare_del(rp->text.cache.in_str);
+	     if (rp->text.cache.out_str) eina_stringshare_del(rp->text.cache.out_str);
 
 	     if (rp->custom.description)
 	       _edje_collection_free_part_description_free(rp->custom.description, ed->file->free_strings);
@@ -745,7 +745,7 @@ static Evas_Bool data_cache_free(const Evas_Hash *hash, const char *key, void *d
    Edje_File    *edf;
 
    edf = fdata;
-   if (edf->free_strings) evas_stringshare_del(data);
+   if (edf->free_strings) eina_stringshare_del(data);
    return 1;
 }
 
@@ -762,7 +762,7 @@ _edje_file_free(Edje_File *edf)
 	     edf->font_dir->entries =
 	       evas_list_remove_list(edf->font_dir->entries, edf->font_dir->entries);
 	     edf->font_hash = evas_hash_del(edf->font_hash, fe->entry, edf);
-	     if (edf->free_strings && fe->path) evas_stringshare_del(fe->path);
+	     if (edf->free_strings && fe->path) eina_stringshare_del(fe->path);
 	     free(fe);
 	  }
 	free(edf->font_dir);
@@ -776,7 +776,7 @@ _edje_file_free(Edje_File *edf)
 	     ie = edf->image_dir->entries->data;
 	     edf->image_dir->entries =
 	       evas_list_remove_list(edf->image_dir->entries, edf->image_dir->entries);
-	     if (edf->free_strings && ie->entry) evas_stringshare_del(ie->entry);
+	     if (edf->free_strings && ie->entry) eina_stringshare_del(ie->entry);
 	     free(ie);
 	  }
 	free(edf->image_dir);
@@ -790,7 +790,7 @@ _edje_file_free(Edje_File *edf)
 	     ce = edf->collection_dir->entries->data;
 	     edf->collection_dir->entries =
 	       evas_list_remove_list(edf->collection_dir->entries, edf->collection_dir->entries);
-	     if (edf->free_strings && ce->entry) evas_stringshare_del(ce->entry);
+	     if (edf->free_strings && ce->entry) eina_stringshare_del(ce->entry);
 	     free(ce);
 	  }
 	free(edf->collection_dir);
@@ -812,8 +812,8 @@ _edje_file_free(Edje_File *edf)
 	       }
              if (edf->free_strings)
                {
-                  if (se->entry) evas_stringshare_del(se->entry);
-                  if (se->filename) evas_stringshare_del(se->filename);
+                  if (se->entry) eina_stringshare_del(se->entry);
+                  if (se->filename) eina_stringshare_del(se->filename);
                }
 	     free(se);
 	  }
@@ -827,8 +827,8 @@ _edje_file_free(Edje_File *edf)
 	edf->data = evas_list_remove(edf->data, edt);
         if (edf->free_strings)
           {
-             if (edt->key) evas_stringshare_del(edt->key);
-             if (edt->value) evas_stringshare_del(edt->value);
+             if (edt->key) eina_stringshare_del(edt->key);
+             if (edt->value) eina_stringshare_del(edt->value);
           }
 	free(edt);
      }
@@ -846,7 +846,7 @@ _edje_file_free(Edje_File *edf)
 	ecc = edf->color_classes->data;
 	edf->color_classes =
           evas_list_remove_list(edf->color_classes, edf->color_classes);
-	if (edf->free_strings && ecc->name) evas_stringshare_del(ecc->name);
+	if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
 	free(ecc);
      }
 
@@ -867,8 +867,8 @@ _edje_file_free(Edje_File *edf)
                           _edje_file_collection_hash_foreach, edf);
 	evas_hash_free(edf->collection_hash);
      }
-   if (edf->path) evas_stringshare_del(edf->path);
-   if (edf->free_strings && edf->compiler) evas_stringshare_del(edf->compiler);
+   if (edf->path) eina_stringshare_del(edf->path);
+   if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
    if (edf->collection_cache) _edje_cache_coll_flush(edf);
    _edje_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
@@ -886,11 +886,11 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	ec->programs = evas_list_remove_list(ec->programs, ec->programs);
         if (edf->free_strings)
           {
-             if (pr->name) evas_stringshare_del(pr->name);
-             if (pr->signal) evas_stringshare_del(pr->signal);
-             if (pr->source) evas_stringshare_del(pr->source);
-             if (pr->state) evas_stringshare_del(pr->state);
-             if (pr->state2) evas_stringshare_del(pr->state2);
+             if (pr->name) eina_stringshare_del(pr->name);
+             if (pr->signal) eina_stringshare_del(pr->signal);
+             if (pr->source) eina_stringshare_del(pr->source);
+             if (pr->state) eina_stringshare_del(pr->state);
+             if (pr->state2) eina_stringshare_del(pr->state2);
           }
 	while (pr->targets)
 	  {
@@ -916,7 +916,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 
 	ep = ec->parts->data;
 	ec->parts = evas_list_remove(ec->parts, ep);
-	if (edf->free_strings && ep->name) evas_stringshare_del(ep->name);
+	if (edf->free_strings && ep->name) eina_stringshare_del(ep->name);
 	if (ep->default_desc)
 	  {
 	     _edje_collection_free_part_description_free(ep->default_desc, edf->free_strings);
@@ -942,13 +942,13 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	     ec->data = evas_list_remove(ec->data, edt);
              if (edf->free_strings)
                {
-                  if (edt->key) evas_stringshare_del(edt->key);
-                  if (edt->value) evas_stringshare_del(edt->value);
+                  if (edt->key) eina_stringshare_del(edt->key);
+                  if (edt->value) eina_stringshare_del(edt->value);
                }
 	     free(edt);
 	  }
      }
-   if (edf->free_strings && ec->part) evas_stringshare_del(ec->part);
+   if (edf->free_strings && ec->part) eina_stringshare_del(ec->part);
 #ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
@@ -976,13 +976,13 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigne
      }
    if (free_strings)
      {
-	if (desc->color_class)     evas_stringshare_del(desc->color_class);
-	if (desc->text.text)       evas_stringshare_del(desc->text.text);
-	if (desc->text.text_class) evas_stringshare_del(desc->text.text_class);
-	if (desc->text.style)      evas_stringshare_del(desc->text.style);
-	if (desc->text.font)       evas_stringshare_del(desc->text.font);
-	if (desc->gradient.type)   evas_stringshare_del(desc->gradient.type);
-	if (desc->gradient.params) evas_stringshare_del(desc->gradient.params);
+	if (desc->color_class)     eina_stringshare_del(desc->color_class);
+	if (desc->text.text)       eina_stringshare_del(desc->text.text);
+	if (desc->text.text_class) eina_stringshare_del(desc->text.text_class);
+	if (desc->text.style)      eina_stringshare_del(desc->text.style);
+	if (desc->text.font)       eina_stringshare_del(desc->text.font);
+	if (desc->gradient.type)   eina_stringshare_del(desc->gradient.type);
+	if (desc->gradient.params) eina_stringshare_del(desc->gradient.params);
      }
    free(desc);
 }

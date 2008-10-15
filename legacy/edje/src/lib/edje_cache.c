@@ -45,7 +45,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 	free(data);
      }
 
-   edc->part = evas_stringshare_add(coll);
+   edc->part = eina_stringshare_add(coll);
    edc->references = 1;
    edf->collection_hash = evas_hash_add(edf->collection_hash, coll, edc);
    return edc;
@@ -70,9 +70,9 @@ _edje_font_hash(Edje_File *edf)
 	     tmp = alloca(length);
 
 	     snprintf(tmp, length, "fonts/%s", fnt->entry);
-	     fnt->path = evas_stringshare_add(tmp);
+	     fnt->path = eina_stringshare_add(tmp);
              if (edf->free_strings)
-               evas_stringshare_del(fnt->entry);
+               eina_stringshare_del(fnt->entry);
 	     fnt->entry = fnt->path + 6;
 	     edf->font_hash = evas_hash_direct_add(edf->font_hash, fnt->entry, fnt);
 
@@ -128,7 +128,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 	return NULL;
      }
 
-   edf->path = evas_stringshare_add(file);
+   edf->path = eina_stringshare_add(file);
    edf->references = 1;
 
    _edje_textblock_style_parse_and_fix(edf);
@@ -136,7 +136,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    for (l = edf->data; l; l = l->next)
      {
 	Edje_Data *di = l->data;
-	edf->data_cache = evas_hash_add(edf->data_cache, evas_stringshare_add(di->key), di->value);
+	edf->data_cache = evas_hash_add(edf->data_cache, eina_stringshare_add(di->key), di->value);
      }
 
    if (coll)

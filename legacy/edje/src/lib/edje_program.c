@@ -94,9 +94,9 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
    if (ed->delete_me) return;
    escb = calloc(1, sizeof(Edje_Signal_Callback));
    if ((emission) && (emission[0]))
-     escb->signal = evas_stringshare_add(emission);
+     escb->signal = eina_stringshare_add(emission);
    if ((source) && (source[0]))
-     escb->source = evas_stringshare_add(source);
+     escb->source = eina_stringshare_add(source);
    escb->func = func;
    escb->data = data;
    ed->callbacks = evas_list_append(ed->callbacks, escb);
@@ -155,8 +155,8 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 		  _edje_callbacks_patterns_clean(ed);
 
 		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
-		  if (escb->signal) evas_stringshare_del(escb->signal);
-		  if (escb->source) evas_stringshare_del(escb->source);
+		  if (escb->signal) eina_stringshare_del(escb->signal);
+		  if (escb->source) eina_stringshare_del(escb->source);
 		  free(escb);
 	       }
 	     return data;
@@ -1068,8 +1068,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 	     if (escb->delete_me)
 	       {
 		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
-		  if (escb->signal) evas_stringshare_del(escb->signal);
-		  if (escb->source) evas_stringshare_del(escb->source);
+		  if (escb->signal) eina_stringshare_del(escb->signal);
+		  if (escb->source) eina_stringshare_del(escb->source);
 		  free(escb);
 	       }
 	     l = next_l;

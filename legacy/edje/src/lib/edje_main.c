@@ -18,6 +18,7 @@ edje_init(void)
    initted++;
    if (initted == 1)
      {
+	eina_init();
         ecore_job_init();
 	srand(time(NULL));
 	_edje_edd_setup();
@@ -53,6 +54,7 @@ edje_shutdown(void)
    embryo_shutdown();
    ecore_job_shutdown();
    eet_shutdown();
+   eina_shutdown();
 
    return 0;
 }
@@ -89,9 +91,9 @@ _edje_del(Edje *ed)
    _edje_message_del(ed);
    _edje_callbacks_patterns_clean(ed);
    _edje_file_del(ed);
-   if (ed->path) evas_stringshare_del(ed->path);
-   if (ed->group) evas_stringshare_del(ed->group);
-   if (ed->parent) evas_stringshare_del(ed->parent);
+   if (ed->path) eina_stringshare_del(ed->path);
+   if (ed->group) eina_stringshare_del(ed->group);
+   if (ed->parent) eina_stringshare_del(ed->parent);
    ed->path = NULL;
    ed->group = NULL;
    if ((ed->actions) || (ed->pending_actions))
@@ -120,8 +122,8 @@ _edje_del(Edje *ed)
 
 	escb = ed->callbacks->data;
 	ed->callbacks = evas_list_remove(ed->callbacks, escb);
-	if (escb->signal) evas_stringshare_del(escb->signal);
-	if (escb->source) evas_stringshare_del(escb->source);
+	if (escb->signal) eina_stringshare_del(escb->signal);
+	if (escb->source) eina_stringshare_del(escb->source);
 	free(escb);
      }
    while (ed->color_classes)
@@ -130,7 +132,7 @@ _edje_del(Edje *ed)
 
 	cc = ed->color_classes->data;
 	ed->color_classes = evas_list_remove(ed->color_classes, cc);
-	if (cc->name) evas_stringshare_del(cc->name);
+	if (cc->name) eina_stringshare_del(cc->name);
 	free(cc);
      }
    while (ed->text_classes)
@@ -139,8 +141,8 @@ _edje_del(Edje *ed)
 
 	tc = ed->text_classes->data;
 	ed->text_classes = evas_list_remove(ed->text_classes, tc);
-	if (tc->name) evas_stringshare_del(tc->name);
-	if (tc->font) evas_stringshare_del(tc->font);
+	if (tc->name) eina_stringshare_del(tc->name);
+	if (tc->font) eina_stringshare_del(tc->font);
 	free(tc);
      }
    free(ed);

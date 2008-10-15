@@ -170,7 +170,7 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 	     else if (!strcmp(key, "text_class"))
 	       {
 		  if (tag_ret)
-		    (*tag_ret)->text_class = evas_stringshare_add(val);
+		    (*tag_ret)->text_class = eina_stringshare_add(val);
 	       }
 	     else if (!strcmp(key, "font_size"))
 	       {
@@ -189,12 +189,12 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 
 			    tmpstr = _edje_strbuf_append(tmpstr, "fonts/", &tmplen, &tmpalloc);
 			    tmpstr = _edje_strbuf_append(tmpstr, val, &tmplen, &tmpalloc);
-			    (*tag_ret)->font = evas_stringshare_add(tmpstr);
+			    (*tag_ret)->font = eina_stringshare_add(tmpstr);
 			    free(tmpstr);
 			 }
 		       else
 			 {
-			    (*tag_ret)->font = evas_stringshare_add(val);
+			    (*tag_ret)->font = eina_stringshare_add(val);
 			 }
 		    }
 	       }
@@ -426,8 +426,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	     if (ts)
 	       {
 		  if (eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
-		    evas_stringshare_del(tag->value);
-		  tag->value = evas_stringshare_add(ts);
+		    eina_stringshare_del(tag->value);
+		  tag->value = eina_stringshare_add(ts);
 		  buf = _edje_strbuf_append(buf, tag->value, &buflen, &bufalloc);
 		  free(ts);
 	       }
@@ -488,15 +488,15 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 	     stl->tags = evas_list_remove_list(stl->tags, stl->tags);
              if (edf->free_strings)
                {
-                  if (tag->key) evas_stringshare_del(tag->key);
+                  if (tag->key) eina_stringshare_del(tag->key);
 /*                FIXME: Find a proper way to handle it. */
-                  if (tag->value) evas_stringshare_del(tag->value);
-                  if (tag->text_class) evas_stringshare_del(tag->text_class);
-                  if (tag->font) evas_stringshare_del(tag->font);
+                  if (tag->value) eina_stringshare_del(tag->value);
+                  if (tag->text_class) eina_stringshare_del(tag->text_class);
+                  if (tag->font) eina_stringshare_del(tag->font);
                }
              free(tag);
 	  }
-        if (edf->free_strings && stl->name) evas_stringshare_del(stl->name);
+        if (edf->free_strings && stl->name) eina_stringshare_del(stl->name);
 	if (stl->style) evas_textblock_style_free(stl->style);
 	free(stl);
      }

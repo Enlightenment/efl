@@ -44,12 +44,14 @@ void *alloca (size_t);
 # include <Evil.h>
 #endif
 
+#include <Eina.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Str.h>
 #include <Ecore_Job.h>
 #include <Eet.h>
 #include <Embryo.h>
+#include <eina_stringshare.h>
 
 #include "Edje.h"
 #include "Edje_Edit.h"
@@ -1186,8 +1188,8 @@ void _edje_embryo_globals_init(Edje *ed);
 #define GETSTREVAS(str, par) { \
    if ((str)) { \
       if ((par) && (!strcmp((par), (str)))) return 0; \
-      if ((par)) evas_stringshare_del((par)); \
-      (par) = (char *)evas_stringshare_add((str)); } \
+      if ((par)) eina_stringshare_del((par)); \
+      (par) = (char *)eina_stringshare_add((str)); } \
    else (par) = NULL; }
 #define GETFLOAT(val, par) { \
    float *___cptr; \

@@ -200,10 +200,10 @@ _edje_real_part_free(Edje_Real_Part *rp)
 	rp->swallowed_object = NULL;
      }
 
-   if (rp->text.text) evas_stringshare_del(rp->text.text);
-   if (rp->text.font) evas_stringshare_del(rp->text.font);
-   if (rp->text.cache.in_str) evas_stringshare_del(rp->text.cache.in_str);
-   if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);
+   if (rp->text.text) eina_stringshare_del(rp->text.text);
+   if (rp->text.font) eina_stringshare_del(rp->text.font);
+   if (rp->text.cache.in_str) eina_stringshare_del(rp->text.cache.in_str);
+   if (rp->text.cache.out_str) eina_stringshare_del(rp->text.cache.out_str);
 
    if (rp->custom.description)
      _edje_collection_free_part_description_free(rp->custom.description, 0);
@@ -544,7 +544,7 @@ _edje_if_string_free(Edje *ed, const char *str)
 
    dict = eet_dictionary_get(ed->file->ef);
    if (eet_dictionary_string_check(dict, str)) return;
-   evas_stringshare_del(str);
+   eina_stringshare_del(str);
    str = NULL;
 }
 
@@ -599,7 +599,7 @@ edje_edit_string_list_free(Evas_List *lst)
    //printf("FREE LIST: \n");
    while (lst)
      {
-	if (lst->data) evas_stringshare_del(lst->data);
+	if (lst->data) eina_stringshare_del(lst->data);
 	//printf("FREE: %s\n", lst->data);
 	lst = evas_list_remove(lst, lst->data);
      }
@@ -608,14 +608,14 @@ edje_edit_string_list_free(Evas_List *lst)
 EAPI void
 edje_edit_string_free(const char *str)
 {
-   if (str) evas_stringshare_del(str);
+   if (str) eina_stringshare_del(str);
 }
 
 EAPI const char*
 edje_edit_compiler_get(Evas_Object *obj)
 {
    GET_ED_OR_RETURN(0);
-   return evas_stringshare_add(ed->file->compiler);
+   return eina_stringshare_add(ed->file->compiler);
 }
 
 /****************/
@@ -692,7 +692,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    pc->parts = NULL;
    pc->data = NULL;
    pc->script = NULL;
-   pc->part = evas_stringshare_add(name);
+   pc->part = eina_stringshare_add(name);
 
    //cd = mem_alloc(SZ(Code));
    //codes = evas_list_append(codes, cd);
@@ -807,8 +807,8 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    printf("Set name of current group: %s [id: %d][new name: %s]\n",
 	 pc->part, pc->id, new_name);
 
-   //if (pc->part && ed->file->free_strings) evas_stringshare_del(pc->part); TODO FIXME
-   pc->part = evas_stringshare_add(new_name);
+   //if (pc->part && ed->file->free_strings) eina_stringshare_del(pc->part); TODO FIXME
+   pc->part = eina_stringshare_add(new_name);
 
    for (l = ed->file->collection_dir->entries; l; l = l->next)
      {
@@ -823,8 +823,8 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 
 	     //if (pce->entry &&  //TODO Also this cause segv
 	     //    !eet_dictionary_string_check(eet_dictionary_get(ed->file->ef), pce->entry))
-	     //   evas_stringshare_del(pce->entry);
-	     pce->entry = evas_stringshare_add(new_name);
+	     //   eina_stringshare_del(pce->entry);
+	     pce->entry = eina_stringshare_add(new_name);
 
 	     return 1;
 	  }
@@ -918,7 +918,7 @@ edje_edit_data_list_get(Evas_Object * obj)
    for (l = ed->file->data; l; l = l->next)
      {
 	Edje_Data *d = l->data;
-	datas = evas_list_append(datas, evas_stringshare_add(d->key));
+	datas = evas_list_append(datas, eina_stringshare_add(d->key));
      }
 
    return datas;
@@ -945,8 +945,8 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
    d = mem_alloc(sizeof(Edje_Data));
    if (!d) return 0;
 
-   d->key = (char*)evas_stringshare_add(itemname);
-   if (value) d->value = (char*)evas_stringshare_add(value);
+   d->key = (char*)eina_stringshare_add(itemname);
+   if (value) d->value = (char*)eina_stringshare_add(value);
    else d->value = NULL;
 
    ed->file->data = evas_list_append(ed->file->data, d);
@@ -993,7 +993,7 @@ edje_edit_data_value_get(Evas_Object * obj, char *itemname)
      {
 	Edje_Data *d = l->data;
 	if (strcmp(d->key, itemname) == 0)
-	  return evas_stringshare_add(d->value);
+	  return eina_stringshare_add(d->value);
      }
 
    return NULL;
@@ -1015,7 +1015,7 @@ edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *val
 	if (strcmp(d->key, itemname) == 0)
 	  {
 		_edje_if_string_free(ed, d->value);
-		d->value = (char*)evas_stringshare_add(value);
+		d->value = (char*)eina_stringshare_add(value);
 		return 1;
 	  }
      }
@@ -1039,7 +1039,7 @@ edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *new
 	if (strcmp(d->key, itemname) == 0)
 	  {
 		_edje_if_string_free(ed, d->key);
-		d->key = (char*)evas_stringshare_add(newname);
+		d->key = (char*)eina_stringshare_add(newname);
 		return 1;
 	  }
      }
@@ -1067,7 +1067,7 @@ printf("GET CLASSES LIST %d %d\n", evas_list_count(ed->color_classes), evas_list
 	Edje_Color_Class *cc;
 
 	cc = l->data;
-	classes = evas_list_append(classes, evas_stringshare_add(cc->name));
+	classes = evas_list_append(classes, eina_stringshare_add(cc->name));
      }
 
    return classes;
@@ -1168,7 +1168,7 @@ edje_edit_color_class_add(Evas_Object *obj, const char *name)
    c = mem_alloc(sizeof(Edje_Color_Class));
    if (!c) return 0;
 
-   c->name = (char*)evas_stringshare_add(name);
+   c->name = (char*)eina_stringshare_add(name);
    c->r = c->g = c->b = c->a = 255;
    c->r2 = c->g2 = c->b2 = c->a2 = 255;
    c->r3 = c->g3 = c->b3 = c->a3 = 255;
@@ -1220,7 +1220,7 @@ edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *n
 	if (!strcmp(cc->name, name))
 	  {
 		_edje_if_string_free(ed, cc->name);
-		cc->name = (char*)evas_stringshare_add(newname);
+		cc->name = (char*)eina_stringshare_add(newname);
 		return 1;
 	  }
      }
@@ -1249,7 +1249,7 @@ edje_edit_parts_list_get(Evas_Object *obj)
 	Edje_Real_Part *rp;
 
 	rp = ed->table_parts[i];
-	parts = evas_list_append(parts, evas_stringshare_add(rp->part->name));
+	parts = evas_list_append(parts, eina_stringshare_add(rp->part->name));
      }
 
    return parts;
@@ -1266,7 +1266,7 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
    printf("Set name of part: %s [new name: %s]\n", part, new_name);
 
    _edje_if_string_free(ed, rp->part->name);
-   rp->part->name = (char *)evas_stringshare_add(new_name);
+   rp->part->name = (char *)eina_stringshare_add(new_name);
 
    return 1;
 }
@@ -1304,7 +1304,7 @@ edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
 
    ep->id = evas_list_count(pc->parts) - 1;
    ep->type = type;
-   ep->name = evas_stringshare_add(name);
+   ep->name = eina_stringshare_add(name);
    ep->mouse_events = 1;
    ep->repeat_events = 0;
    ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
@@ -1561,7 +1561,7 @@ edje_edit_part_selected_state_get(Evas_Object *obj, const char *part)
             rp->chosen_description->state.name,
             rp->chosen_description->state.value);
 
-   return evas_stringshare_add(name);
+   return eina_stringshare_add(name);
 }
 
 EAPI unsigned char
@@ -1594,7 +1594,7 @@ edje_edit_part_clip_to_get(Evas_Object *obj, const char *part)
    clip = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
    if (!clip || !clip->part || !clip->part->name) return NULL;
 
-   return evas_stringshare_add(clip->part->name);
+   return eina_stringshare_add(clip->part->name);
 }
 
 EAPI unsigned char
@@ -1729,7 +1729,7 @@ edje_edit_part_source_get(Evas_Object *obj, const char *part)
    printf("Get source for part: %s\n", part);
    if (!rp->part->source) return NULL;
 
-   return evas_stringshare_add(rp->part->source);
+   return eina_stringshare_add(rp->part->source);
 }
 
 EAPI unsigned char
@@ -1742,7 +1742,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
    _edje_if_string_free(ed, rp->part->source);
 
    if (source)
-     rp->part->source = evas_stringshare_add(source);
+     rp->part->source = eina_stringshare_add(source);
 
    return 1;
 }
@@ -1854,7 +1854,7 @@ edje_edit_part_drag_confine_get(Evas_Object *obj, const char *part)
       return NULL;
 
    confine = ed->table_parts[rp->part->dragable.confine_id];
-   return evas_stringshare_add(confine->part->name);
+   return eina_stringshare_add(confine->part->name);
 }
 
 EAPI void
@@ -1885,7 +1885,7 @@ edje_edit_part_drag_event_get(Evas_Object *obj, const char *part)
       return NULL;
 
    events = ed->table_parts[rp->part->dragable.events_id];
-   return evas_stringshare_add(events->part->name);
+   return eina_stringshare_add(events->part->name);
 }
 
 EAPI void
@@ -1926,7 +1926,7 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
    state = rp->part->default_desc;
    snprintf(state_name, PATH_MAX,
             "%s %.2f", state->state.name, state->state.value);
-   states = evas_list_append(states, evas_stringshare_add(state_name));
+   states = evas_list_append(states, eina_stringshare_add(state_name));
    //printf("NEW STATE def: %s\n", state->state.name);
 
    //append other states
@@ -1935,7 +1935,7 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
 	state = l->data;
 	snprintf(state_name, sizeof(state_name),
 	         "%s %.2f", state->state.name, state->state.value);
-	states = evas_list_append(states, evas_stringshare_add(state_name));
+	states = evas_list_append(states, eina_stringshare_add(state_name));
 	//printf("NEW STATE: %s\n", state_name);
      }
    return states;
@@ -1978,7 +1978,7 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
 		 pd->state.value == epr->value)
 	       {
 		  _edje_if_string_free(ed, epr->state);
-		  epr->state = evas_stringshare_add(new_name);
+		  epr->state = eina_stringshare_add(new_name);
 		  epr->value = value;
 	       }
 	  }
@@ -1986,7 +1986,7 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
 
    /* set name */
    _edje_if_string_free(ed, pd->state.name);
-   pd->state.name = (char *)evas_stringshare_add(new_name);
+   pd->state.name = (char *)eina_stringshare_add(new_name);
    /* set value */
    pd->state.value = value;
 
@@ -2029,7 +2029,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
    else
      rp->part->other_desc = evas_list_append(rp->part->other_desc, pd);
 
-   pd->state.name = evas_stringshare_add(name);
+   pd->state.name = eina_stringshare_add(name);
    pd->state.value = 0.0;
    pd->visible = 1;
    pd->align.x = 0.5;
@@ -2262,7 +2262,7 @@ edje_edit_state_rel1_to_x_get(Evas_Object *obj, const char *part, const char *st
    rel = ed->table_parts[pd->rel1.id_x % ed->table_parts_size];
 
    if (rel->part->name)
-     return evas_stringshare_add(rel->part->name);
+     return eina_stringshare_add(rel->part->name);
    else
      return NULL;
 }
@@ -2281,7 +2281,7 @@ edje_edit_state_rel1_to_y_get(Evas_Object *obj, const char *part, const char *st
    rel = ed->table_parts[pd->rel1.id_y % ed->table_parts_size];
 
    if (rel->part->name)
-     return evas_stringshare_add(rel->part->name);
+     return eina_stringshare_add(rel->part->name);
    else
      return NULL;
 }
@@ -2300,7 +2300,7 @@ edje_edit_state_rel2_to_x_get(Evas_Object *obj, const char *part, const char *st
    rel = ed->table_parts[pd->rel2.id_x % ed->table_parts_size];
 
    if (rel->part->name)
-     return evas_stringshare_add(rel->part->name);
+     return eina_stringshare_add(rel->part->name);
    else
      return NULL;
 }
@@ -2319,7 +2319,7 @@ edje_edit_state_rel2_to_y_get(Evas_Object *obj, const char *part, const char *st
    rel = ed->table_parts[pd->rel2.id_y % ed->table_parts_size];
 
    if (rel->part->name)
-     return evas_stringshare_add(rel->part->name);
+     return eina_stringshare_add(rel->part->name);
    else
      return NULL;
 }
@@ -2828,7 +2828,7 @@ edje_edit_state_color_class_get(Evas_Object *obj, const char *part, const char *
 {
    GET_PD_OR_RETURN(NULL);
    printf("Get ColorClass of part: %s state: %s\n", part, state);
-   return evas_stringshare_add(pd->color_class);
+   return eina_stringshare_add(pd->color_class);
 }
 
 EAPI void
@@ -2837,7 +2837,7 @@ edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *
    GET_PD_OR_RETURN();
    printf("Set ColorClass of part: %s state: %s [to: %s]\n", part, state, color_class);
    _edje_if_string_free(ed, pd->color_class);
-   pd->color_class = (char*)evas_stringshare_add(color_class);
+   pd->color_class = (char*)eina_stringshare_add(color_class);
 }
 
 /**************/
@@ -2852,7 +2852,7 @@ edje_edit_state_text_get(Evas_Object *obj, const char *part, const char *state)
    //printf("GET TEXT of state: %s\n", state);
 
    if (pd->text.text)
-     return evas_stringshare_add(pd->text.text);
+     return eina_stringshare_add(pd->text.text);
 
    return NULL;
 }
@@ -2867,7 +2867,7 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
    if (!text) return;
 
    _edje_if_string_free(ed, pd->text.text);
-   pd->text.text = (char *)evas_stringshare_add(text);
+   pd->text.text = (char *)eina_stringshare_add(text);
 
    edje_object_calc_force(obj);
 }
@@ -3010,7 +3010,7 @@ edje_edit_fonts_list_get(Evas_Object *obj)
    for (l = ed->file->font_dir->entries; l; l = l->next)
      {
 	f = l->data;
-	fonts = evas_list_append(fonts, evas_stringshare_add(f->entry));
+	fonts = evas_list_append(fonts, eina_stringshare_add(f->entry));
 	printf("   Font: %s (%s) \n", f->entry, f->path);
      }
 
@@ -3144,7 +3144,7 @@ edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state)
 
    printf("GET FONT of state: %s [%s]\n", state, pd->text.font);
    if (!pd->text.font) return NULL;
-   return evas_stringshare_add(pd->text.font);
+   return eina_stringshare_add(pd->text.font);
 }
 
 EAPI void
@@ -3155,7 +3155,7 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
    printf("SET FONT of state: %s [%s]\n", state, font);
 
    _edje_if_string_free(ed, pd->text.font);
-   pd->text.font = (char *)evas_stringshare_add(font);
+   pd->text.font = (char *)eina_stringshare_add(font);
 
    edje_object_calc_force(obj);
 }
@@ -3201,7 +3201,7 @@ edje_edit_images_list_get(Evas_Object *obj)
    for (l = ed->file->image_dir->entries; l; l = l->next)
      {
 	i = l->data;
-	images = evas_list_append(images, evas_stringshare_add(i->entry));
+	images = evas_list_append(images, eina_stringshare_add(i->entry));
 	//printf("   Image: %s (type: %d param: %d id: %d) \n",
 	//       i->entry, i->source_type, i->source_param, i->id);
      }
@@ -3340,7 +3340,7 @@ edje_edit_state_image_get(Evas_Object *obj, const char *part, const char *state)
    if (!image) return NULL;
 
    //printf("GET IMAGE for %s [%s]\n", state, image);
-   return evas_stringshare_add(image);
+   return eina_stringshare_add(image);
 }
 
 EAPI void
@@ -3376,7 +3376,7 @@ edje_edit_state_tweens_list_get(Evas_Object *obj, const char *part, const char *
 	i = l->data;
 	name = _edje_image_name_find(obj, i->id);
 	//printf("   t: %s\n", name);
-	tweens = evas_list_append(tweens, evas_stringshare_add(name));
+	tweens = evas_list_append(tweens, eina_stringshare_add(name));
      }
 
    return tweens;
@@ -3497,7 +3497,7 @@ edje_edit_spectrum_list_get(Evas_Object *obj)
      {
 	s = l->data;
 	//printf("SPECTRUM: %s [id: %d]\n", s->entry, s->id);
-	spectrum = evas_list_append(spectrum, evas_stringshare_add(s->entry));
+	spectrum = evas_list_append(spectrum, eina_stringshare_add(s->entry));
      }
 
    return spectrum;
@@ -3525,7 +3525,7 @@ edje_edit_spectra_add(Evas_Object *obj, const char* name)
    s = mem_alloc(SZ(Edje_Spectrum_Directory_Entry));
    ed->file->spectrum_dir->entries = evas_list_append(ed->file->spectrum_dir->entries, s);
    s->id = evas_list_count(ed->file->spectrum_dir->entries) - 1; //TODO Search for id holes
-   s->entry = (char*)evas_stringshare_add(name);
+   s->entry = (char*)eina_stringshare_add(name);
    s->filename = NULL;
    s->color_list = NULL;
 
@@ -3572,7 +3572,7 @@ edje_edit_spectra_name_set(Evas_Object *obj, const char* spectra, const char* na
    if (!s) return 0;
 
    _edje_if_string_free(ed, s->entry);
-   s->entry = (char*)evas_stringshare_add(name);
+   s->entry = (char*)eina_stringshare_add(name);
 
    return 1;
 }
@@ -3691,7 +3691,7 @@ edje_edit_state_gradient_type_get(Evas_Object *obj, const char *part, const char
 
 //   printf("GET GRADIENT TYPE for part: %s state: %s [%s]\n", part, state, pd->gradient.type);
 
-   return evas_stringshare_add(pd->gradient.type);
+   return eina_stringshare_add(pd->gradient.type);
 }
 
 EAPI unsigned char
@@ -3703,7 +3703,7 @@ edje_edit_state_gradient_type_set(Evas_Object *obj, const char *part, const char
 //   printf("SET GRADIENT TYPE for part: %s state: %s TO: %s\n", part, state, type);
 
    _edje_if_string_free(ed, pd->gradient.type);
-   pd->gradient.type = (char *)evas_stringshare_add(type);
+   pd->gradient.type = (char *)eina_stringshare_add(type);
    edje_object_calc_force(obj);
    return 1;
 }
@@ -3733,7 +3733,7 @@ edje_edit_state_gradient_spectra_get(Evas_Object *obj, const char *part, const c
    s = _edje_edit_spectrum_entry_get_by_id(ed, pd->gradient.id);
    if (!s) return 0;
 
-   return evas_stringshare_add(s->entry);
+   return eina_stringshare_add(s->entry);
 }
 
 EAPI unsigned char
@@ -3962,7 +3962,7 @@ edje_edit_programs_list_get(Evas_Object *obj)
 	Edje_Program *epr;
 
 	epr = ed->table_programs[i];
-	progs = evas_list_append(progs, evas_stringshare_add(epr->name));
+	progs = evas_list_append(progs, eina_stringshare_add(epr->name));
      }
 
    return progs;
@@ -3992,7 +3992,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 
    //Init Edje_Program
    epr->id = evas_list_count(pc->programs) - 1;
-   epr->name = evas_stringshare_add(name);
+   epr->name = eina_stringshare_add(name);
    epr->signal = NULL;
    epr->source = NULL;
    epr->in.from = 0.0;
@@ -4177,7 +4177,7 @@ edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_n
    printf("SET NAME for program: %s [new name: %s]\n", prog, new_name);
 
    _edje_if_string_free(ed, epr->name);
-   epr->name = evas_stringshare_add(new_name);
+   epr->name = eina_stringshare_add(new_name);
 
    return 1;
 }
@@ -4189,7 +4189,7 @@ edje_edit_program_source_get(Evas_Object *obj, const char *prog)
 
    if (!epr->source) return NULL;
    //printf("GET SOURCE for program: %s [%s]\n", prog, epr->source);
-   return evas_stringshare_add(epr->source);
+   return eina_stringshare_add(epr->source);
 }
 
 EAPI unsigned char
@@ -4203,7 +4203,7 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    printf("SET SOURCE for program: %s [%s]\n", prog, source);
 
    _edje_if_string_free(ed, epr->source);
-   epr->source = evas_stringshare_add(source);
+   epr->source = eina_stringshare_add(source);
 
    //Update patterns
    if (ed->patterns.programs.sources_patterns)
@@ -4220,7 +4220,7 @@ edje_edit_program_signal_get(Evas_Object *obj, const char *prog)
 
    if (!epr->signal) return NULL;
    //printf("GET SIGNAL for program: %s [%s]\n", prog, epr->signal);
-   return evas_stringshare_add(epr->signal);
+   return eina_stringshare_add(epr->signal);
 }
 
 EAPI unsigned char
@@ -4234,7 +4234,7 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
    printf("SET SIGNAL for program: %s [%s]\n", prog, signal);
 
    _edje_if_string_free(ed, epr->signal);
-   epr->signal = evas_stringshare_add(signal);
+   epr->signal = eina_stringshare_add(signal);
 
    //Update patterns
    if (ed->patterns.programs.signals_patterns)
@@ -4251,7 +4251,7 @@ edje_edit_program_state_get(Evas_Object *obj, const char *prog)
 
    if (!epr->state) return NULL;
    //printf("GET STATE for program: %s [%s %.2f]\n", prog, epr->state, epr->value);
-   return evas_stringshare_add(epr->state);
+   return eina_stringshare_add(epr->state);
 }
 
 EAPI unsigned char
@@ -4263,7 +4263,7 @@ edje_edit_program_state_set(Evas_Object *obj, const char *prog, const char *stat
    printf("SET STATE for program: %s\n", prog);
 
    _edje_if_string_free(ed, epr->state);
-   epr->state = evas_stringshare_add(state);
+   epr->state = eina_stringshare_add(state);
 
    return 1;
 }
@@ -4275,7 +4275,7 @@ edje_edit_program_state2_get(Evas_Object *obj, const char *prog)
 
    if (!epr->state2) return NULL;
    //printf("GET STATE2 for program: %s [%s %.2f]\n", prog, epr->state2, epr->value2);
-   return evas_stringshare_add(epr->state2);
+   return eina_stringshare_add(epr->state2);
 }
 
 EAPI unsigned char
@@ -4287,7 +4287,7 @@ edje_edit_program_state2_set(Evas_Object *obj, const char *prog, const char *sta
    printf("SET STATE2 for program: %s\n", prog);
 
    _edje_if_string_free(ed, epr->state2);
-   epr->state2 = evas_stringshare_add(state2);
+   epr->state2 = eina_stringshare_add(state2);
 
    return 1;
 }
@@ -4451,7 +4451,7 @@ edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
 	     p = ed->table_parts[t->id % ed->table_parts_size];
 	     if (p && p->part && p->part->name)
 	       targets = evas_list_append(targets,
-		     evas_stringshare_add(p->part->name));
+		     eina_stringshare_add(p->part->name));
 	  }
 	else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
 	  {
@@ -4461,7 +4461,7 @@ edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
 	     p = ed->table_programs[t->id % ed->table_programs_size];
 	     if (p && p->name)
 	       targets = evas_list_append(targets,
-		     evas_stringshare_add(p->name));
+		     eina_stringshare_add(p->name));
 	  }
      }
    return targets;
@@ -4543,7 +4543,7 @@ edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
 	if (p && p->name)
 	  {
 	     printf("   a: %d name: %s\n", a->id, p->name);
-	     afters = evas_list_append(afters, evas_stringshare_add(p->name));
+	     afters = evas_list_append(afters, eina_stringshare_add(p->name));
 	  }
      }
    return afters;
@@ -5193,7 +5193,7 @@ _edje_generate_source(Evas_Object *obj)
 
    fclose(f);
 
-   return evas_stringshare_add(tmpn);
+   return eina_stringshare_add(tmpn);
 }
 
 
@@ -5224,8 +5224,8 @@ source_edd(void)
    eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
    eddc.func.mem_alloc = NULL;
    eddc.func.mem_free = NULL;
-   eddc.func.str_alloc = evas_stringshare_add;
-   eddc.func.str_free = evas_stringshare_del;
+   eddc.func.str_alloc = eina_stringshare_add;
+   eddc.func.str_free = eina_stringshare_del;
    eddc.func.list_next = evas_list_next;
    eddc.func.list_append = evas_list_append;
    eddc.func.list_data = evas_list_data;
@@ -5367,7 +5367,7 @@ edje_edit_save(Evas_Object *obj)
 
    /* Clear stuff */
    unlink(source_file);
-   evas_stringshare_del(source_file);
+   eina_stringshare_del(source_file);
    eet_close(eetf);
    printf("***********  Saving DONE ******************\n");
    return 1;

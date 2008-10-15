@@ -50,6 +50,8 @@ main(int argc, char **argv)
 
    setlocale(LC_NUMERIC, "C");
 
+   eina_init();
+
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
@@ -187,6 +189,8 @@ main(int argc, char **argv)
    data_write();
 
    edje_shutdown();
+
+   eina_shutdown();
 
    return 0;
 }

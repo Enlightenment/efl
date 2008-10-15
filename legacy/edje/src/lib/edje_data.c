@@ -81,8 +81,8 @@ _edje_edd_setup(void)
    eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
    eddc.func.mem_alloc = NULL;
    eddc.func.mem_free = NULL;
-   eddc.func.str_alloc = (char *(*)(const char *))evas_stringshare_add;
-   eddc.func.str_free = evas_stringshare_del;
+   eddc.func.str_alloc = (char *(*)(const char *))eina_stringshare_add;
+   eddc.func.str_free = eina_stringshare_del;
    eddc.func.list_next = (void *(*)(void *))evas_list_next;
    eddc.func.list_append = (void *(*)(void *, void *))evas_list_append;
    eddc.func.list_data = (void *(*)(void *))evas_list_data;
