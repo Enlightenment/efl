@@ -287,7 +287,7 @@ AC_FUNC_ALLOCA
 
 
 ### Create the .pc.in file according to the major version
-cat > ${top_srcdir}/eina-${VMAJ}.pc.in << EOF
+cat > ${srcdir}/eina-${VMAJ}.pc.in << EOF
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
