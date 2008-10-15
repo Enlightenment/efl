@@ -20,6 +20,11 @@
 #endif
 
 #ifdef BUILD_PTHREAD
+
+#ifndef __USE_GNU
+#define __USE_GNU
+#endif
+
 # include <pthread.h>
 # include <sched.h>
 # define LK(x)  pthread_mutex_t x
