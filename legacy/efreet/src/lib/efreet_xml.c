@@ -28,7 +28,7 @@ int
 efreet_xml_init(void)
 {
     if (init++) return init;
-    if (!ecore_string_init()) return --init;
+    if (!eina_stringshare_init()) return --init;
     return init;
 }
 
@@ -41,7 +41,7 @@ int
 efreet_xml_shutdown(void)
 {
     if (--init) return init;
-    ecore_string_shutdown();
+    eina_stringshare_shutdown();
     return init;
 }
 
@@ -98,7 +98,7 @@ efreet_xml_del(Efreet_Xml *xml)
     if (xml->children) ecore_dlist_destroy(xml->children);
     xml->children = NULL;
 
-    if (xml->tag) ecore_string_release(xml->tag);
+    if (xml->tag) eina_stringshare_del(xml->tag);
     if (xml->attributes)
     {
         Efreet_Xml_Attribute **curr;
@@ -106,8 +106,8 @@ efreet_xml_del(Efreet_Xml *xml)
         curr = xml->attributes;
         while (*curr)
         {
-            ecore_string_release((*curr)->key);
-            ecore_string_release((*curr)->value);
+            eina_stringshare_del((*curr)->key);
+            eina_stringshare_del((*curr)->value);
 
             FREE(*curr);
             curr++;
@@ -192,7 +192,7 @@ efreet_xml_parse(char **data, int *size)
     xml = NEW(Efreet_Xml, 1);
     if (!xml)
     {
-        ecore_string_release(tag);
+        eina_stringshare_del(tag);
         return NULL;
     }
 
@@ -291,7 +291,7 @@ efreet_xml_tag_parse(char **data, int *size, const char **tag)
     if (buf_size > 256) buf_size = 256;
     memcpy(buf, start, buf_size - 1);
     buf[buf_size - 1] = '\0';
-    *tag = ecore_string_instance(buf);
+    *tag = eina_stringshare_add(buf);
 
     return 1;
 }
@@ -339,7 +339,7 @@ efreet_xml_attributes_parse(char **data, int *size,
             if (buf_size > 256) buf_size = 256;
             memcpy(buf, start, buf_size - 1);
             buf[buf_size - 1] = '\0';
-            attr[count].key = ecore_string_instance(buf);
+            attr[count].key = eina_stringshare_add(buf);
 
             /* search for '=', key/value seperator */
             start = NULL;
@@ -413,7 +413,7 @@ efreet_xml_attributes_parse(char **data, int *size,
             if (buf_size > 256) buf_size = 256;
             memcpy(buf, start, buf_size - 1);
             buf[buf_size - 1] = '\0';
-            attr[count].value = ecore_string_instance(buf);
+            attr[count].value = eina_stringshare_add(buf);
 
             count++;
         }
@@ -434,8 +434,8 @@ efreet_xml_attributes_parse(char **data, int *size,
 ERROR:
     while (count >= 0)
     {
-        if (attr[count].key) ecore_string_release(attr[count].key);
-        if (attr[count].value) ecore_string_release(attr[count].value);
+        if (attr[count].key) eina_stringshare_del(attr[count].key);
+        if (attr[count].value) eina_stringshare_del(attr[count].value);
         count--;
     }
     error = 1;

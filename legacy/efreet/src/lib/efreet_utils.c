@@ -107,15 +107,15 @@ efreet_util_init(void)
     if (!EFREET_EVENT_DESKTOP_CHANGE)
         EFREET_EVENT_DESKTOP_CHANGE = ecore_event_type_new();
     desktop_by_file_id = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(desktop_by_file_id, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_key_cb_set(desktop_by_file_id, ECORE_FREE_CB(eina_stringshare_del));
     ecore_hash_free_value_cb_set(desktop_by_file_id, ECORE_FREE_CB(efreet_util_desktop_free));
 
     file_id_by_desktop_path = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
-    ecore_hash_free_value_cb_set(file_id_by_desktop_path, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_key_cb_set(file_id_by_desktop_path, ECORE_FREE_CB(eina_stringshare_del));
+    ecore_hash_free_value_cb_set(file_id_by_desktop_path, ECORE_FREE_CB(eina_stringshare_del));
 
     desktops_by_category = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(desktops_by_category, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_key_cb_set(desktops_by_category, ECORE_FREE_CB(eina_stringshare_del));
     ecore_hash_free_value_cb_set(desktops_by_category, ECORE_FREE_CB(ecore_list_destroy));
 
     monitors = ecore_list_new();
@@ -232,9 +232,9 @@ efreet_util_path_to_file_id(const char *path)
         p++;
     }
     free(base);
-    file_id = ecore_string_instance(tmp);
+    file_id = eina_stringshare_add(tmp);
     free(tmp);
-    ecore_hash_set(file_id_by_desktop_path, (void *)ecore_string_instance(path),
+    ecore_hash_set(file_id_by_desktop_path, (void *)eina_stringshare_add(path),
                                                         (void *)file_id);
     return file_id;
 }
@@ -245,10 +245,10 @@ efreet_util_desktop_mime_list(const char *mime)
     Efreet_Cache_Search_List search;
 
     search.list = ecore_list_new();
-    search.what = ecore_string_instance(mime);
+    search.what = eina_stringshare_add(mime);
 
     ecore_hash_for_each_node(desktop_by_file_id, efreet_util_cache_search_mime, &search);
-    ecore_string_release(search.what);
+    eina_stringshare_del(search.what);
 
     if (ecore_list_empty_is(search.list)) IF_FREE_LIST(search.list);
     return search.list;
@@ -315,7 +315,7 @@ efreet_util_desktop_file_id_find(const char *file_id)
         ud->priority = priority;
         ud->desktop = desktop;
 
-        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+        ecore_hash_set(desktop_by_file_id, (void *)eina_stringshare_add(file_id), ud);
         efreet_util_desktops_by_category_add(desktop);
 
         ev = NEW(Efreet_Event_Desktop_Change, 1);
@@ -569,8 +569,8 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
 
     if (!ecore_hash_get(file_id_by_desktop_path, desktop->orig_path))
         ecore_hash_set(file_id_by_desktop_path,
-                        (void *)ecore_string_instance(desktop->orig_path),
-                        (void *)ecore_string_instance(file_id));
+                        (void *)eina_stringshare_add(desktop->orig_path),
+                        (void *)eina_stringshare_add(file_id));
 
     ud = ecore_hash_get(desktop_by_file_id, file_id);
     if (!ud)
@@ -579,7 +579,7 @@ efreet_util_cache_add(const char *path, const char *file_id, int priority, int e
         ud->priority = priority;
         ud->desktop = desktop;
 
-        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+        ecore_hash_set(desktop_by_file_id, (void *)eina_stringshare_add(file_id), ud);
         efreet_util_desktops_by_category_add(desktop);
 
         if (event)
@@ -703,7 +703,7 @@ efreet_util_cache_reload(const char *path, const char *file_id, int priority)
         ud->priority = priority;
         ud->desktop = desktop;
 
-        ecore_hash_set(desktop_by_file_id, (void *)ecore_string_instance(file_id), ud);
+        ecore_hash_set(desktop_by_file_id, (void *)eina_stringshare_add(file_id), ud);
         efreet_util_desktops_by_category_remove(ud->desktop);
         efreet_util_desktops_by_category_add(desktop);
 
@@ -1049,7 +1049,7 @@ efreet_util_desktops_by_category_add(Efreet_Desktop *desktop)
         {
             list = ecore_list_new();
             ecore_hash_set(desktops_by_category,
-                    (void *)ecore_string_instance(category), list);
+                    (void *)eina_stringshare_add(category), list);
         }
         if (!ecore_list_goto(list, desktop))
             ecore_list_append(list, desktop);

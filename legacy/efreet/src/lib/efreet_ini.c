@@ -22,7 +22,7 @@ int
 efreet_ini_init(void)
 {
     if (init++) return init;
-    if (!ecore_string_init()) return --init;
+    if (!eina_stringshare_init()) return --init;
     return init;
 }
 
@@ -35,7 +35,7 @@ int
 efreet_ini_shutdown(void)
 {
     if (--init) return init;
-    ecore_string_shutdown();
+    eina_stringshare_shutdown();
     return init;
 }
 
@@ -101,7 +101,7 @@ efreet_ini_parse(const char *file)
     }
 
     data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(data, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_key_cb_set(data, ECORE_FREE_CB(eina_stringshare_del));
     ecore_hash_free_value_cb_set(data, ECORE_FREE_CB(ecore_hash_destroy));
 
     line_start = buffer;
@@ -152,7 +152,7 @@ efreet_ini_parse(const char *file)
 
                 section = ecore_hash_new(ecore_str_hash, ecore_str_compare);
                 ecore_hash_free_key_cb_set(section,
-                            ECORE_FREE_CB(ecore_string_release));
+                            ECORE_FREE_CB(eina_stringshare_del));
                 ecore_hash_free_value_cb_set(section, ECORE_FREE_CB(free));
 
                 old = ecore_hash_remove(data, header);
@@ -160,7 +160,7 @@ efreet_ini_parse(const char *file)
   //                              "in file '%s'\n", header, file);
 
                 IF_FREE_HASH(old);
-                ecore_hash_set(data, (void *)ecore_string_instance(header),
+                ecore_hash_set(data, (void *)eina_stringshare_add(header),
                                 section);
             }
             else
@@ -236,7 +236,7 @@ efreet_ini_parse(const char *file)
             old = ecore_hash_remove(section, key);
             IF_FREE(old);
 
-            ecore_hash_set(section, (void *)ecore_string_instance(key),
+            ecore_hash_set(section, (void *)eina_stringshare_add(key),
                            efreet_ini_unescape(value));
         }
 //        else
@@ -320,15 +320,15 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
     if (!ini->data)
     {
         ini->data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-        ecore_hash_free_key_cb_set(ini->data, ECORE_FREE_CB(ecore_string_release));
+        ecore_hash_free_key_cb_set(ini->data, ECORE_FREE_CB(eina_stringshare_del));
         ecore_hash_free_value_cb_set(ini->data, ECORE_FREE_CB(ecore_hash_destroy));
     }
     if (ecore_hash_get(ini->data, section)) return;
 
     hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(hash, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_key_cb_set(hash, ECORE_FREE_CB(eina_stringshare_del));
     ecore_hash_free_value_cb_set(hash, ECORE_FREE_CB(free));
-    ecore_hash_set(ini->data, (void *)ecore_string_instance(section), hash);
+    ecore_hash_set(ini->data, (void *)eina_stringshare_add(section), hash);
 }
 
 /**
@@ -358,7 +358,7 @@ efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
 {
     if (!ini || !key || !ini->section) return;
 
-    ecore_hash_set(ini->section, (void *)ecore_string_instance(key), strdup(value));
+    ecore_hash_set(ini->section, (void *)eina_stringshare_add(key), strdup(value));
 }
 
 /**

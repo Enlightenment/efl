@@ -113,7 +113,7 @@ int
 efreet_desktop_init(void)
 {
     if (init++) return init;
-    if (!ecore_string_init()) return --init;
+    if (!eina_stringshare_init()) return --init;
     if (!ecore_file_init()) return --init;
 
     efreet_desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
@@ -146,7 +146,7 @@ efreet_desktop_shutdown(void)
 {
     if (--init) return init;
     ecore_file_shutdown();
-    ecore_string_shutdown();
+    eina_stringshare_shutdown();
 
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
@@ -536,8 +536,8 @@ efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop __UNUSED__,
 EAPI void
 efreet_desktop_environment_set(const char *environment)
 {
-    if (desktop_environment) ecore_string_release(desktop_environment);
-    if (environment) desktop_environment = ecore_string_instance(environment);
+    if (desktop_environment) eina_stringshare_del(desktop_environment);
+    if (environment) desktop_environment = eina_stringshare_add(environment);
     else desktop_environment = NULL;
 }
 
@@ -578,14 +578,14 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
     {
         desktop->categories = ecore_list_new();
         ecore_list_free_cb_set(desktop->categories,
-                                ECORE_FREE_CB(ecore_string_release));
+                                ECORE_FREE_CB(eina_stringshare_del));
     }
     else
         if (ecore_list_find(desktop->categories,
                                 ECORE_COMPARE_CB(strcmp), category)) return;
 
     ecore_list_append(desktop->categories,
-                        (void *)ecore_string_instance(category));
+                        (void *)eina_stringshare_add(category));
 }
 
 /**
@@ -723,7 +723,7 @@ efreet_desktop_string_list_parse(const char *string)
     list = ecore_list_new();
     if (!list) return NULL;
 
-    ecore_list_free_cb_set(list, ECORE_FREE_CB(ecore_string_release));
+    ecore_list_free_cb_set(list, ECORE_FREE_CB(eina_stringshare_del));
 
     tmp = strdup(string);
     s = tmp;
@@ -732,7 +732,7 @@ efreet_desktop_string_list_parse(const char *string)
     {
         if (p > tmp && *(p-1) == '\\') continue;
         *p = '\0';
-        ecore_list_append(list, (void *)ecore_string_instance(s));
+        ecore_list_append(list, (void *)eina_stringshare_add(s));
         s = p + 1;
     }
     /* If this is true, the .desktop file does not follow the standard */
@@ -742,7 +742,7 @@ efreet_desktop_string_list_parse(const char *string)
         printf("[Efreet]: Found a string list without ';' "
                 "at the end: %s\n", string);
 #endif
-        ecore_list_append(list, (void *)ecore_string_instance(s));
+        ecore_list_append(list, (void *)eina_stringshare_add(s));
     }
 
     free(tmp);
@@ -1006,12 +1006,12 @@ efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
     {
         desktop->x = ecore_hash_new(ecore_str_hash, ecore_str_compare);
         ecore_hash_free_key_cb_set(desktop->x,
-                            ECORE_FREE_CB(ecore_string_release));
+                            ECORE_FREE_CB(eina_stringshare_del));
         ecore_hash_free_value_cb_set(desktop->x,
-                            ECORE_FREE_CB(ecore_string_release));
+                            ECORE_FREE_CB(eina_stringshare_del));
     }
-    ecore_hash_set(desktop->x, (void *)ecore_string_instance(node->key),
-            (void *)ecore_string_instance(node->value));
+    ecore_hash_set(desktop->x, (void *)eina_stringshare_add(node->key),
+            (void *)eina_stringshare_add(node->value));
 }
 
 /**

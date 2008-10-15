@@ -19,6 +19,7 @@ EAPI int
 efreet_init(void)
 {
     if (init++) return init;
+    if (!eina_stringshare_init()) return --init;
     if (!efreet_base_init()) return --init;
     if (!efreet_xml_init()) return --init;
     if (!efreet_icon_init()) return --init;
@@ -44,6 +45,7 @@ efreet_shutdown(void)
     efreet_icon_shutdown();
     efreet_xml_shutdown();
     efreet_base_shutdown();
+    eina_stringshare_shutdown();
 
     IF_FREE(efreet_lang);
     IF_FREE(efreet_lang_country);

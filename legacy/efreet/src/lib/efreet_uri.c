@@ -60,9 +60,9 @@ efreet_uri_decode(const char *full_uri)
     uri = NEW(Efreet_Uri, 1);
     if (!uri) return NULL;
 
-    uri->protocol = ecore_string_instance(protocol);
-    uri->hostname = ecore_string_instance(hostname);
-    uri->path = ecore_string_instance(path);
+    uri->protocol = eina_stringshare_add(protocol);
+    uri->hostname = eina_stringshare_add(hostname);
+    uri->path = eina_stringshare_add(path);
 
     return uri;
 }
@@ -71,7 +71,7 @@ efreet_uri_decode(const char *full_uri)
  * @param uri: Create an URI string from an Efreet_Uri struct
  * @return The string rapresentation of uri (ex: 'file:///home/my%20name')
  * @brief Get the string rapresentation of the given uri struct escaping
- * illegal caracters. Remember to free the string with ecore_string_release()
+ * illegal caracters. Remember to free the string with eina_stringshare_del()
  * when you don't need it anymore.
  * @note The resulting string will contain the protocol and the path but not
  * the hostname, as many apps doesn't handle it.
@@ -99,7 +99,7 @@ efreet_uri_encode(Efreet_Uri *uri)
         }
     }
 
-    return ecore_string_instance(dest);
+    return eina_stringshare_add(dest);
 }
 
 /**

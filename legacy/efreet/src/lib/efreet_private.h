@@ -32,6 +32,7 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Ecore_Str.h>
+#include <eina_stringshare.h>
 
 #include "efreet_xml.h"
 #include "efreet_ini.h"
@@ -56,11 +57,11 @@
 
 /**
  * @def IF_RELEASE(x)
- * If x is set, ecore_string_release x and set to NULL
+ * If x is set, eina_stringshare_del x and set to NULL
  */
 #define IF_RELEASE(x) do { \
     if (x) { \
-        const char *__tmp; __tmp = (x); (x) = NULL; ecore_string_release(__tmp); \
+        const char *__tmp; __tmp = (x); (x) = NULL; eina_stringshare_del(__tmp); \
     } \
     (x) = NULL; \
 } while (0)

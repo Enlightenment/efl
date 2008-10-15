@@ -110,7 +110,7 @@ ef_cb_desktop_file_id(void)
                 printf("Expecting id: %s, got: %s\n", tests[i].expected, id);
                 ret = 0;
             }
-            if (id) ecore_string_release(id);
+            if (id) eina_stringshare_del(id);
         }
     }
     else

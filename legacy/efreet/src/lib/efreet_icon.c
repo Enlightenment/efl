@@ -199,7 +199,7 @@ efreet_icon_extension_add(const char *ext)
  * directories are used to look for icons after looking in the user icon dir
  * and before looking in standard system directories. The order of search is
  * from first to last directory in this list. the strings in the list should
- * be created with ecore_string_instance().
+ * be created with eina_stringshare_add().
  */
 EAPI Ecore_List *
 efreet_icon_extra_list_get(void)
@@ -256,14 +256,14 @@ efreet_icon_theme_find(const char *theme_name)
     const char *key;
     Efreet_Icon_Theme *theme;
 
-    key = ecore_string_instance(theme_name);
+    key = eina_stringshare_add(theme_name);
     theme = ecore_hash_get(efreet_icon_themes, key);
     if (!theme)
     {
         efreet_icon_theme_dir_scan_all(theme_name);
         theme = ecore_hash_get(efreet_icon_themes, key);
     }
-    ecore_string_release(key);
+    eina_stringshare_del(key);
 
     return theme;
 }
@@ -318,7 +318,7 @@ efreet_icon_find_theme_check(const char *theme_name)
     {
         theme = efreet_icon_theme_new();
         theme->fake = 1;
-        theme->name.internal = ecore_string_instance(theme_name);
+        theme->name.internal = eina_stringshare_add(theme_name);
         ecore_hash_set(efreet_icon_themes, (void *)theme->name.internal, theme);
     }
 
@@ -1288,7 +1288,7 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
                 || !ecore_file_is_dir(path))
             continue;
 
-        key = ecore_string_instance(dir->d_name);
+        key = eina_stringshare_add(dir->d_name);
         theme = ecore_hash_get(efreet_icon_themes, key);
 
         if (!theme)
@@ -1302,7 +1302,7 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
         {
             if (theme->fake)
                 theme->fake = 0;
-            ecore_string_release(key);
+            eina_stringshare_del(key);
         }
 
         efreet_icon_theme_path_add(theme, path);
@@ -1356,7 +1356,7 @@ efreet_icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 
     efreet_ini_section_set(ini, "Icon Theme");
     tmp = efreet_ini_localestring_get(ini, "Name");
-    if (tmp) theme->name.name = ecore_string_instance(tmp);
+    if (tmp) theme->name.name = eina_stringshare_add(tmp);
 
     tmp = efreet_ini_localestring_get(ini, "Comment");
     if (tmp) theme->comment = strdup(tmp);

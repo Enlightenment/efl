@@ -44,7 +44,7 @@ efreet_trash_dir_get(void)
         return NULL;
 
     IF_RELEASE(efreet_trash_dir);
-    efreet_trash_dir = ecore_string_instance(buf);
+    efreet_trash_dir = eina_stringshare_add(buf);
 
     snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir);
     if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))

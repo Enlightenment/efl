@@ -365,9 +365,9 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
 
     IF_FREE_HASH(wild);
     wild = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(wild, ECORE_FREE_CB(ecore_string_release));
+    ecore_hash_free_key_cb_set(wild, ECORE_FREE_CB(eina_stringshare_del));
     ecore_hash_free_value_cb_set(wild,
-                    ECORE_FREE_CB(ecore_string_release));
+                    ECORE_FREE_CB(eina_stringshare_del));
     IF_FREE_LIST(globs);
     globs = ecore_list_new();
     ecore_list_free_cb_set(globs, efreet_mime_glob_free);
@@ -688,8 +688,8 @@ efreet_mime_mime_types_load(const char *file)
             strncpy(ext, pp, (p - pp));
             ext[p - pp] = 0;
 
-            ecore_hash_set(wild, (void*)ecore_string_instance(ext),
-                                            (void*)ecore_string_instance(mimetype));
+            ecore_hash_set(wild, (void*)eina_stringshare_add(ext),
+                                            (void*)eina_stringshare_add(mimetype));
         }
         while ((*p != '\n') && (*p != 0));
     }
@@ -746,16 +746,16 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
 
         if (ext[0] == '*' && ext[1] == '.')
         {
-            ecore_hash_set(wild, (void*)ecore_string_instance(&(ext[2])),
-                                      (void*)ecore_string_instance(mimetype));
+            ecore_hash_set(wild, (void*)eina_stringshare_add(&(ext[2])),
+                                      (void*)eina_stringshare_add(mimetype));
         }
         else
         {
             mime = NEW(Efreet_Mime_Glob, 1);
             if (mime)
             {
-                mime->mime = ecore_string_instance(mimetype);
-                mime->glob = ecore_string_instance(ext);
+                mime->mime = eina_stringshare_add(mimetype);
+                mime->glob = eina_stringshare_add(ext);
                 if ((!mime->mime) || (!mime->glob))
                 {
                     IF_RELEASE(mime->mime);
@@ -901,7 +901,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
             memcpy(&buf, ptr, val - ptr);
             buf[val - ptr] = '\0';
 
-            mime->mime = ecore_string_instance(buf);
+            mime->mime = eina_stringshare_add(buf);
             ptr = ++val;
 
             while (*ptr != '\n') ptr++;

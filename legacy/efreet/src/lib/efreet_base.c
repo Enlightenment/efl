@@ -21,7 +21,7 @@ static Ecore_List *efreet_dirs_get(const char *key,
 int
 efreet_base_init(void)
 {
-    if (!ecore_string_init()) return 0;
+    if (!eina_stringshare_init()) return 0;
 
     return 1;
 }
@@ -42,7 +42,7 @@ efreet_base_shutdown(void)
     IF_FREE_LIST(xdg_data_dirs);
     IF_FREE_LIST(xdg_config_dirs);
 
-    ecore_string_shutdown();
+    eina_stringshare_shutdown();
 }
 
 /**
@@ -59,7 +59,7 @@ efreet_home_dir_get(void)
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
         efreet_home_dir = "/tmp";
 
-    efreet_home_dir = ecore_string_instance(efreet_home_dir);
+    efreet_home_dir = eina_stringshare_add(efreet_home_dir);
 
     return efreet_home_dir;
 }
@@ -160,10 +160,10 @@ efreet_dir_get(const char *key, const char *fallback)
         dir = malloc(sizeof(char) * len);
         snprintf(dir, len, "%s%s", user, fallback);
 
-        t = ecore_string_instance(dir);
+        t = eina_stringshare_add(dir);
         FREE(dir);
     }
-    else t = ecore_string_instance(dir);
+    else t = eina_stringshare_add(dir);
 
     return t;
 }
@@ -188,7 +188,7 @@ efreet_dirs_get(const char *key, const char *fallback)
     if (!path || (path[0] == '\0')) path = fallback;
 
     dirs = ecore_list_new();
-    ecore_list_free_cb_set(dirs, ECORE_FREE_CB(ecore_string_release));
+    ecore_list_free_cb_set(dirs, ECORE_FREE_CB(eina_stringshare_del));
     if (!path) return dirs;
 
     tmp = strdup(path);
@@ -198,13 +198,13 @@ efreet_dirs_get(const char *key, const char *fallback)
     {
         *p = '\0';
         if (!ecore_list_find(dirs, ECORE_COMPARE_CB(strcmp), s))
-            ecore_list_append(dirs, (void *)ecore_string_instance(s));
+            ecore_list_append(dirs, (void *)eina_stringshare_add(s));
 
         s = ++p;
         p = strchr(s, ':');
     }
     if (!ecore_list_find(dirs, ECORE_COMPARE_CB(strcmp), s))
-      ecore_list_append(dirs, (void *)ecore_string_instance(s));
+      ecore_list_append(dirs, (void *)eina_stringshare_add(s));
     FREE(tmp);
 
     return dirs;
