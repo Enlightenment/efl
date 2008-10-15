@@ -630,6 +630,70 @@ my_bt_12(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_entry_bt_1(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+}
+
+static void
+my_entry_bt_2(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   printf("TEXT:\n");
+   printf("%s\n",
+	  elm_entry_entry_get(en));
+}
+
+static void
+my_bt_13(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *bt, *en;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Clear");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_1, en);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   en = elm_entry_add(win);
+   elm_entry_entry_set(en,
+		       "This is an entry widget in this window that<br>"
+		       "uses markup <b>like this</b> for styling and<br>"
+		       "formatting <em>like this</em>, as well as<br>"
+		       "<a href=X><link>links in the text</link></a>, so enter text<br>"
+		       "in here to edit it.");
+   evas_object_size_hint_weight_set(en, 1.0, 1.0);
+   evas_object_size_hint_align_set(en, -1.0, -1.0);
+   elm_box_pack_end(bx, en);
+   evas_object_show(en);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Print");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_2, en);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   elm_widget_focus_set(en, 1);
+   
+   evas_object_show(win);
+}
+
+static void
 my_win_main(void)
 {
    Evas_Object *win, *bg, *bx0, *lb, *bx, *bt, *sc, *fr;
@@ -802,6 +866,13 @@ my_win_main(void)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Hover 2");
    evas_object_smart_callback_add(bt, "clicked", my_bt_12, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Entry");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_13, NULL);
    evas_object_size_hint_align_set(bt, -1.0, 0.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);

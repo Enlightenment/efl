@@ -64,3 +64,10 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
    edje_object_part_text_set(wd->ent, "elm.text", entry);
    _sizing_eval(obj);
 }
+
+EAPI const char *
+elm_entry_entry_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return edje_object_part_text_get(wd->ent, "elm.text");
+}

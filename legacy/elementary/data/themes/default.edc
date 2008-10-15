@@ -2662,6 +2662,49 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/entry/base/default";
+      styles
+	{
+	   style { name: "entry_textblock_style";
+	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+	      tag:  "br" "\n";
+	      tag:  "tab" "\t";
+	      tag:  "em" "+ font=Sans:style=Oblique";
+	      tag:  "b" "+ font=Sans:style=Bold";
+	      tag:  "link" "+ color=#800 underline=on underline_color=#8008";
+	      tag:  "hilight" "+ font=Sans:style=Bold";
+	   }
+	}
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: EDITABLE;
+	    multiline: 1;
+//	    source: "X"; // selection under
+//	    source2: "X"; // selection over
+	    source3: "elm/button/base/default"; // cursor under
+//	    source4: "X"; // cursor over
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_textblock_style";
+		  min: 1 1;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+      }
+   }
+
+///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/icon/base/default"; min: 10 10;
       images.image: "bt_base1.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0;
