@@ -181,8 +181,12 @@ extern "C" {
     */
 
    EAPI Evas_Object *elm_entry_add(Evas_Object *parent);
-   EAPI void elm_entry_entry_set(Evas_Object *obj, const char *entry);
-   EAPI const char *elm_entry_entry_get(Evas_Object *obj);
+   EAPI void         elm_entry_entry_set(Evas_Object *obj, const char *entry);
+   EAPI const char  *elm_entry_entry_get(Evas_Object *obj);
+   EAPI const char  *elm_entry_selection_get(Evas_Object *obj);
+   EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry);
+   /* smart callbacks called:
+    */
        
 // FIXME: fixes to do
 // * current sizing tree inefficient
