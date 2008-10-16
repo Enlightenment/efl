@@ -1,7 +1,7 @@
 PROJECT_NAME           = Eet
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = .
-INPUT                  = ../eet.c ../src/lib
+INPUT                  = eet.c ../src/lib
 IMAGE_PATH             = img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
@@ -102,7 +102,7 @@ GENERATE_MAN           = YES
 MAN_OUTPUT             = man
 MAN_EXTENSION          = .3
 MAN_LINKS              = YES
-GENERATE_XML           = YES
+GENERATE_XML           = NO
 XML_SCHEMA             = 
 XML_DTD                = 
 GENERATE_AUTOGEN_DEF   = NO

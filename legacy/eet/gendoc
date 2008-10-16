@@ -1,8 +1,0 @@
-#!/bin/sh
-rm -rf ./doc/html ./doc/latex ./doc/man
-doxygen
-cp doc/img/* doc/html/
-rm -f eet_docs.tar eet_docs.tar.gz
-tar -cvf eet_docs.tar doc/html doc/man doc/latex
-gzip -9 eet_docs.tar
-exit 0

@@ -5,7 +5,7 @@ AM_CPPFLAGS = \
 @CHECK_CFLAGS@
 
 
-if EET_ENABLE_TESTS
+if EFL_ENABLE_TESTS
 
 check_PROGRAMS = eet_suite
 

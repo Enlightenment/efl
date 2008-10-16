@@ -1,46 +1,32 @@
 
-if BUILD_DOCS
-
-# install documentation
-docdir = $(datadir)/$(PACKAGE)/doc
-
-all-local: doc-build.stamp
-
-# rule to remove all old created files
-doc-prepare.stamp:
-	@if test -d html ; then \
-	  rm -rf html/ latex/ man/ xml/; \
-	fi
-
-# rule to build documentation and copy necessary files
-doc-build.stamp: doc-prepare.stamp
-	@doxygen
-	@cp img/*.png html/
-
-# rules to clean
-clean-local:
-	@rm -rf html/ latex/ man/ xml/
-
-# rule to install the documentation in $(docdir)
-install-data-local:
-	@if ! test -d "$(DESTDIR)$(datadir)/$(PACKAGE)"; then \
-	  $(mkinstalldirs) "$(DESTDIR)$(datadir)/$(PACKAGE)"; \
-	fi
-	@if ! test -d "$(DESTDIR)$(docdir)"; then \
-	  $(mkinstalldirs) "$(DESTDIR)$(docdir)"; \
-	fi
-	@cp -pr html/ man/ latex/ xml/ "$(DESTDIR)$(docdir)"
-
-# rule to uninstall the documentation
-uninstall-local:
-	rm -rf $(DESTDIR)$(docdir)
-
-
 MAINTAINERCLEANFILES = Makefile.in eet.c
 
-DISTCLEANFILES = Makefile.in eet.c
+.PHONY: doc
+
+if EFL_BUILD_DOC
+
+doc-clean:
+	rm -rf html/ latex/ man/ xml/ $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar*
+
+doc: all doc-clean
+	$(DOXYGEN)
+	cp img/*.png html/
+	rm -rf $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar*
+	mkdir -p $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)/doc
+	cp -R html/ latex/ man/ $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)/doc
+	tar cf $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)
+	bzip2 -9 $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar
+	rm -rf $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)
+	mv $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar.bz2 $(top_srcdir)
+
+else
+
+doc:
+	@echo "Documentation not built. Run ./configure --help"
 
 endif
 
-EXTRA_DIST = Doxyfile eet.css foot.html head.html img/
+clean-local: doc-clean
+
+EXTRA_DIST = Doxyfile eet.css foot.html head.html img/ eet.c.in
 

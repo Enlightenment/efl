@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = src doc
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -26,21 +26,26 @@ AUTHORS \
 COPYING \
 COPYING-PLAIN \
 autogen.sh \
-eet.c.in \
 eet.pc.in \
 eet.spec.in \
 eet.spec \
 README.in \
-README \
-Doxyfile \
-doc \
-gendoc
+README
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = eet.pc
 
+.PHONY: doc coverage
 
-if EET_ENABLE_TESTS
+# Documentation
+
+doc:
+	@echo "entering doc/"
+	make -C doc doc
+
+# Unit tests
+
+if EFL_ENABLE_TESTS
 
 check-local:
 	@./src/tests/eet_suite
@@ -52,7 +57,9 @@ check-local:
 
 endif
 
-if EET_ENABLE_COVERAGE
+# Coverage report
+
+if EFL_ENABLE_COVERAGE
 lcov-reset:
 	@rm -rf coverage
 	@find . -name "*.gcda" -exec rm {} \;
