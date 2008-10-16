@@ -2682,10 +2682,10 @@ collections {
 	    scale: 1;
 	    entry_mode: EDITABLE;
 	    multiline: 1;
-//	    source: "X"; // selection under
+	    source: "elm/entry/selection/default"; // selection under
 //	    source2: "X"; // selection over
-	    source3: "elm/button/base/default"; // cursor under
-//	    source4: "X"; // cursor over
+//	    source3: "X"; // cursor under
+	    source4: "elm/entry/cursor/default"; // cursor under
 	    description { state: "default" 0.0;
 	       text {
 		  style: "entry_textblock_style";
@@ -2704,6 +2704,137 @@ collections {
       }
    }
 
+   group { name: "elm/entry/cursor/default";
+      images {
+	 image: "cur_box.png" COMP;
+	 image: "cur_hi.png" COMP;
+	 image: "cur_shad.png" COMP;
+	 image: "cur_shine.png" COMP;
+	 image: "cur_glow.png" COMP;
+      }
+      parts {      
+         part { name: "clip";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1.offset: -10 0;
+	       rel2.offset: 9 9;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 0;
+	    }
+	 }
+         part { name: "bg";
+	    mouse_events: 0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1.to: "base";
+	       rel1.offset: -2 0;
+	       rel2.to: "base";
+	       rel2.offset: 1 1;
+	       image.border: 2 2 2 2;
+	       image.normal: "cur_shad.png";
+	    }
+	 }
+         part { name: "base";
+	    mouse_events: 0;
+	    scale: 1;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       min: 2 2;
+	       align: 0.5 1.0;
+	       rel1.relative: 0.0 1.0;
+	       rel1.offset: 0 -1;
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: -1 -1;
+	       image.normal: "cur_box.png";
+	    }
+	 }
+         part { name: "hi";
+	    mouse_events: 0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1.to: "base";
+	       rel2.to: "base";
+	       rel2.relative: 1.0 0.5;
+	       image.normal: "cur_hi.png";
+	    }
+	 }
+         part { name: "shine";
+	    mouse_events: 0;
+	    clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1.to: "base";
+	       rel2.to: "base";
+	       rel2.relative: 1.0 0.75;
+	       image.border: 2 2 1 0;
+	       image.normal: "cur_shine.png";
+	       fill.smooth: 0;
+	    }
+	 }
+         part { name: "glow";
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1.to: "base";
+	       rel1.relative: 0.0 -2.0;
+	       rel1.offset: -2 0;
+	       rel2.to: "base";
+	       rel2.relative: 1.0 0.0;
+	       rel2.offset: 1 1;
+	       image.border: 2 2 0 4;
+	       image.normal: "cur_glow.png";
+	       fill.smooth: 0;
+	    }
+	    description { state: "hidden" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 255 255 0;
+	    }
+	 }
+      }
+      programs {
+	 program { name: "show";
+            signal: "show";
+	    source: "";
+            action: STATE_SET "hidden" 0.0;
+	    in: 1.0 0.0;
+	    transition: DECELERATE 2.0;
+	    target: "glow";
+	    after: "show2";
+	 }
+	 program { name: "show2";
+            action: STATE_SET "hidden" 0.0;
+	    in: 0.2 0.0;
+	    target: "clip";
+	    after: "show3";
+	 }
+	 program { name: "show3";
+            action: STATE_SET "default" 0.0;
+	    in: 0.5 0.0;
+	    target: "clip";
+	    after: "show4";
+	 }
+	 program { name: "show4";
+            action: STATE_SET "default" 0.0;
+	    in: 0.5 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "glow";
+	    after: "show";
+	 }
+      }
+   }
+   
+   group { name: "elm/entry/selection/default";
+      parts {      
+         part { name: "bg";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       color: 128 128 128 128;
+	    }
+	 }
+      }
+   }
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/icon/base/default"; min: 10 10;
       images.image: "bt_base1.png" COMP; parts { part { name: "base";
