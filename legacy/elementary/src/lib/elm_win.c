@@ -354,11 +354,11 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	free(win);
 	return NULL;
      }
-   printf("_elm_config->bgpixmap = %i\n"
-	  "_elm_config->compositing = %i\n",
-	  _elm_config->bgpixmap, _elm_config->compositing);
    if (_elm_config->bgpixmap && !_elm_config->compositing)
-     ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_BUILT_IN);
+     ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
+// bg pixmap done by x - has other issues like can be redrawn by x before it
+// is filled/ready by app   
+//     ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_BUILT_IN);
    
    win->type = type;
    win->parent = parent;
