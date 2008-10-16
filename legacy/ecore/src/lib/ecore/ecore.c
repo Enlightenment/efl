@@ -67,6 +67,7 @@ ecore_init(void)
 	     printf("WARNING: not a utf8 locale!\n");
 	  }
 	 */
+	eina_init();
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();
 	_ecore_signal_init();
@@ -103,6 +104,7 @@ ecore_shutdown(void)
    _ecore_event_shutdown();
    _ecore_main_shutdown();
    _ecore_signal_shutdown();
+   eina_shutdown();
 
    return _ecore_init_count;
 }
