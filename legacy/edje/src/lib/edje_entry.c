@@ -751,6 +751,7 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
    // set text as markup
    evas_object_textblock_text_markup_set(rp->object, text); 
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_entry_set_cursor_start(rp);
 }
 
 void
