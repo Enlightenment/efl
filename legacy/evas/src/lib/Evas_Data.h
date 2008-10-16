@@ -27,6 +27,8 @@
 # endif
 #endif /* ! _WIN32 */
 
+#include <Eina.h>
+
 /**
  * @file
  * @brief These routines are used for Evas data types.
@@ -34,31 +36,17 @@
 
 typedef unsigned char Evas_Bool;
 
+#define Evas_List Eina_List
+#define Evas_Object_List Eina_Inlist
+
 typedef struct _Evas_Array_Hash  Evas_Array_Hash;
 typedef struct _Evas_Hash        Evas_Hash;              /**< A Hash table handle */
-typedef struct _Evas_List        Evas_List;              /**< A generic linked list node handle */
-typedef struct _Evas_Object_List Evas_Object_List;
 
 struct _Evas_Hash
 {
    int               population;
    Evas_Object_List *buckets[256];
 };
-
-struct _Evas_List                             /** A linked list node */
-{
-   void      *data;                           /**< Pointer to list element payload */
-   Evas_List *next;                           /**< Next member in the list */
-   Evas_List *prev;                           /**< Previous member in the list */
-   struct _Evas_List_Accounting *accounting;  /**< Private list accounting info - don't touch */
-};
-
-struct _Evas_Object_List
-{
-   Evas_Object_List  *next, *prev;
-   Evas_Object_List  *last;
-};
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -99,50 +87,47 @@ extern "C" {
    * Evas List functions
    */
 
-   EAPI Evas_List  *evas_list_append                (Evas_List *list, const void *data);
-   EAPI Evas_List  *evas_list_prepend               (Evas_List *list, const void *data);
-   EAPI Evas_List  *evas_list_append_relative       (Evas_List *list, const void *data, const void *relative);
-   EAPI Evas_List  *evas_list_append_relative_list  (Evas_List *list, const void *data, Evas_List *relative);
-   EAPI Evas_List  *evas_list_prepend_relative      (Evas_List *list, const void *data, const void *relative);
-   EAPI Evas_List  *evas_list_prepend_relative_list (Evas_List *list, const void *data, Evas_List *relative);
-   EAPI Evas_List  *evas_list_remove                (Evas_List *list, const void *data);
-   EAPI Evas_List  *evas_list_remove_list           (Evas_List *list, Evas_List *remove_list);
-   EAPI Evas_List  *evas_list_promote_list          (Evas_List *list, Evas_List *move_list);
-   EAPI void       *evas_list_find                  (const Evas_List *list, const void *data);
-   EAPI Evas_List  *evas_list_find_list             (const Evas_List *list, const void *data);
-   EAPI Evas_List  *evas_list_free                  (Evas_List *list);
-   EAPI Evas_List  *evas_list_last                  (const Evas_List *list);
-   EAPI Evas_List  *evas_list_next                  (const Evas_List *list);
-   EAPI Evas_List  *evas_list_prev                  (const Evas_List *list);
-   EAPI void       *evas_list_data                  (const Evas_List *list);
-   EAPI int         evas_list_count                 (const Evas_List *list);
-   EAPI void       *evas_list_nth                   (const Evas_List *list, int n);
-   EAPI Evas_List  *evas_list_nth_list              (const Evas_List *list, int n);
-   EAPI Evas_List  *evas_list_reverse               (Evas_List *list);
-   EAPI Evas_List  *evas_list_sort                  (Evas_List *list, int size, int(*func)(void*,void*));
-   EAPI int         evas_list_alloc_error           (void);
-
+  #define evas_list_append eina_list_append
+  #define evas_list_prepend eina_list_prepend
+  #define evas_list_append_relative eina_list_append_relative
+  #define evas_list_append_relative_list eina_list_append_relative_list
+  #define evas_list_prepend_relative eina_list_prepend_relative
+  #define evas_list_prepend_relative_list eina_list_prepend_relative_list
+  #define evas_list_remove eina_list_remove
+  #define evas_list_remove_list eina_list_remove_list
+  #define evas_list_promote_list eina_list_promote_list
+  #define evas_list_find eina_list_data_find
+  #define evas_list_find_list eina_list_data_find_list
+  #define evas_list_free eina_list_free
+  #define evas_list_last eina_list_last
+  #define evas_list_next eina_list_next
+  #define evas_list_prev eina_list_prev
+  #define evas_list_data eina_list_data_get
+  #define evas_list_count eina_list_count
+  #define evas_list_nth eina_list_nth
+  #define evas_list_nth_list eina_list_nth_list
+  #define evas_list_reverse eina_list_reverse
+  #define evas_list_sort eina_list_sort
+  #define evas_list_alloc_error eina_error_get
 
   /*
    * Evas Object List functions
    */
-
-   EAPI void *evas_object_list_append               (void *in_list, void *in_item);
-   EAPI void *evas_object_list_prepend              (void *in_list, void *in_item);
-   EAPI void *evas_object_list_append_relative      (void *in_list, void *in_item, void *in_relative);
-   EAPI void *evas_object_list_prepend_relative     (void *in_list, void *in_item, void *in_relative);
-   EAPI void *evas_object_list_remove               (void *in_list, void *in_item);
-   EAPI void *evas_object_list_find                 (void *in_list, void *in_item);
-
+  #define evas_object_list_append eina_inlist_append
+  #define evas_object_list_prepend eina_inlist_prepend
+  #define evas_object_list_append_relative eina_inlist_append_relative
+  #define evas_object_list_prepend_relative eina_inlist_prepend_relative
+  #define evas_object_list_remove eina_inlist_remove
+  #define evas_object_list_find eina_inlist_find
 
   /*
    * Evas Stringshare functions
    */
 
-   EAPI void        evas_stringshare_init           (void);           /* not implemented */
-   EAPI void        evas_stringshare_shutdown       (void);           /* not implemented */
-   EAPI const char *evas_stringshare_add            (const char *str);
-   EAPI void        evas_stringshare_del            (const char *str);
+  #define evas_stringshare_init eina_stringshare_init
+  #define evas_stringshare_shutdown eina_stringshare_shutdown
+  #define evas_stringshare_add eina_stringshare_add
+  #define evas_stringshare_del eina_stringshare_del
 
 #ifdef __cplusplus
 }

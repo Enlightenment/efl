@@ -5,6 +5,7 @@ includedir=@includedir@
 
 Name: evas
 Description: Evas canvas display library
+Requires: eina-0
 Version: @VERSION@
 Libs: -L${libdir} -levas
 Libs.private: @pthread_libs@ @dlopen_libs@ @EDB_LIBS@ @EET_LIBS@ @FREETYPE_LIBS@ @FONTCONFIG_LIBS@

@@ -12,9 +12,6 @@ AM_CPPFLAGS	     = -I. \
 noinst_LTLIBRARIES      = libevas_data.la
 libevas_data_la_SOURCES  = \
 evas_hash.c \
-evas_list.c \
-evas_object_list.c \
-evas_stringshare.c \
 evas_array_hash.c \
 evas_mempool.c
 
