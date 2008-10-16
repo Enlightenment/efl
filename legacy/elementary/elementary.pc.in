@@ -5,6 +5,7 @@ includedir=@includedir@
 
 Name: elementary
 Description: Mobile device touchscreen widget library
+Requires: evas ecore ecore-x ecore-evas ecore-job ecore-txt ecore-file eet edje
 Version: @VERSION@
 Libs: -L${libdir} -lelementary
 Libs.private: @my_libs@ @ELEMENTARY_LIBS@
