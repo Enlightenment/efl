@@ -354,6 +354,11 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	free(win);
 	return NULL;
      }
+   printf("_elm_config->bgpixmap = %i\n"
+	  "_elm_config->compositing = %i\n",
+	  _elm_config->bgpixmap, _elm_config->compositing);
+   if (_elm_config->bgpixmap && !_elm_config->compositing)
+     ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_BUILT_IN);
    
    win->type = type;
    win->parent = parent;
@@ -476,7 +481,7 @@ elm_win_alpha_set(Evas_Object *obj, Evas_Bool alpha)
      {
 	if (alpha)
 	  {
-	     if (!ecore_x_screen_is_composited(0))
+	     if (!_elm_config->compositing)
 	       elm_win_shaped_set(obj, alpha);
 	     else
 	       ecore_evas_alpha_set(win->ee, alpha);

@@ -28,6 +28,8 @@ struct _Elm_Config
    double thumbscroll_momentum_threshhold;
    double thumbscroll_friction;
    double scale;
+   int bgpixmap;
+   int compositing;
 };
 
 #define ELM_NEW(t) calloc(1, sizeof(t))

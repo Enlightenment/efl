@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: eet
-Description: Library for speedy data storage, retrieval, and compression
+Name: elementary
+Description: Mobile device touchscreen widget library
 Version: @VERSION@
 Libs: -L${libdir} -lelementary
 Libs.private: @my_libs@ @ELEMENTARY_LIBS@

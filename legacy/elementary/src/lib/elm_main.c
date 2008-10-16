@@ -36,6 +36,8 @@ elm_init(int argc, char **argv)
    _elm_config->thumbscroll_momentum_threshhold = 100.0;
    _elm_config->thumbscroll_friction = 1.0;
    _elm_config->scale = 1.0;
+   _elm_config->bgpixmap = 1;
+   _elm_config->compositing = 1;
 
    if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
        (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
@@ -51,8 +53,10 @@ elm_init(int argc, char **argv)
 	  {
 	     if (val > 0) _elm_config->scale = (double)val / 1000.0;
 	  }
+	if (!ecore_x_screen_is_composited(0))
+	  _elm_config->compositing = 0;
      }
-    
+   
 }
 
 EAPI void
