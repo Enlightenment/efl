@@ -301,8 +301,14 @@ _strbuf_append(char *strbuf, const char *text, int *strbuf_len, int *strbuf_allo
 {
    int text_len;
 
-   if ((!text) || (text[0] == '\0'))
+   if (!text)
      return strbuf;
+   if ((!strbuf) && (text[0] == '\0'))
+     {
+	*strbuf_len = 0;
+	*strbuf_alloc = 1;
+	return strdup(text);
+     }
 
    text_len = strlen(text);
    return _strbuf_append_int(strbuf, text, text_len, strbuf_len, strbuf_alloc);
@@ -2065,7 +2071,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->align = 0.0;
 
    _format_command_init();
-
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
@@ -2259,6 +2264,12 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
    Evas_Object_Textblock *o;
    
    o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
+     {
+	Evas_Object_Textblock_Node *nn;
+	
+	nn = l;
+     }
    for (l = (Evas_Object_List *)o->lines; l; l = l->next)
      {
         Evas_Object_Textblock_Line *ln;
@@ -2277,6 +2288,18 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 		       *itr = it;
 		       return;
 		    }
+	       }
+	  }
+	for (ll = (Evas_Object_List *)ln->format_items; ll; ll = ll->next)
+	  {
+	     Evas_Object_Textblock_Format_Item *it;
+
+	     it = (Evas_Object_Textblock_Format_Item *)ll;
+	     if (it->source_node == n)
+	       {
+		  *lnr = ln;
+		  *itr = it;
+		  return;
 	       }
 	  }
      }
