@@ -17,10 +17,7 @@ missing \
 mkinstalldirs \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)*
 
-maintainer-clean-local:
-	rm -rf doc/
-
-SUBDIRS = src
+SUBDIRS = src doc
 
 EXTRA_DIST = \
 COPYING \

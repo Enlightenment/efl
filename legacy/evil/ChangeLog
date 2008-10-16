@@ -1,3 +1,11 @@
+2008-10-16  Vincent Torri  <doursse at users dot sf dot net>
+
+	* Makefile.am:
+	add the doc subdir
+
+	* src/lib/Makefile.am:
+	add evil_fnmatch_private.h in tarballs
+
 2008-10-14  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_fcntl.h:
