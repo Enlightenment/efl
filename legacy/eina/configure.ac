@@ -140,7 +140,7 @@ PKG_PROG_PKG_CONFIG
 # Evil library for compilation on Windows CE
 
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw* | cegcc*)
    PKG_CHECK_MODULES([EVIL], [evil])
    AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
    ;;
@@ -266,16 +266,16 @@ AC_SUBST(EINA_CFLAGS)
 
 
 ### Checks for linker characteristics
-EINA_LIBS=""
+EINA_LIBS="${EFL_COVERAGE_LIBS}"
 lt_enable_auto_import=""
 case "${host_os}" in
    mingw* | cegcc*)
       AC_DEFINE(EFL_EINA_BUILD, 1, [Define to mention that eina is built])
-      EINA_LIBS="${COVERAGE_LIBS} ${EVIL_LIBS} -lm"
+      EINA_LIBS="${EINA_LIBS} ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
    *)
-      EINA_LIBS="${EFL_COVERAGE_LIBS} -ldl -lrt -lm"
+      EINA_LIBS="${EINA_LIBS} -ldl -lrt -lm"
    ;;
 esac
 AC_SUBST(EINA_LIBS)

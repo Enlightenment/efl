@@ -67,6 +67,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_stringshare.h"
 #include "eina_hash.h"
 #include "eina_rbtree.h"

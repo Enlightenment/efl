@@ -354,6 +354,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_error.h"
 #include "eina_inlist.h"
 #include "eina_private.h"
