@@ -35,7 +35,7 @@ AC_SUBST(version_info)
 win32_libs=""
 case "$host_os" in
   mingw | mingw32 | mingw32msvc)
-    win32_libs="-lole32 -luuid -lws2_32"
+    win32_libs="-lole32 -luuid -lws2_32 -lsecur32"
     ;;
   cegcc*)
     win32_libs="-lws2"

@@ -35,7 +35,7 @@ test_memcpy_test_run(memcpy_decl fct, char *dst, const char *src, size_t len)
 
    best = 1000000000.0;
 
-   for (i = 0; i < 32; ++i)
+   for (i = 0; i < 128; ++i)
      {
         double time;
 
@@ -86,31 +86,31 @@ test_memcpy(void)
 {
    size_t i;
 
-/*   for (i = 0; i < 18; ++i) */
-/*     { */
-/*       test_memcpy_tests_run(0, 0, 1 << i); */
-/*       test_memcpy_tests_run(i, 0, 1 << i); */
-/*       test_memcpy_tests_run(0, i, 1 << i); */
-/*       test_memcpy_tests_run(i, i, 1 << i); */
-/*     } */
+  for (i = 0; i < 18; ++i)
+    {
+      test_memcpy_tests_run(0, 0, 1 << i);
+      test_memcpy_tests_run(i, 0, 1 << i);
+      test_memcpy_tests_run(0, i, 1 << i);
+      test_memcpy_tests_run(i, i, 1 << i);
+    }
 
-/*   for (i = 0; i < 32; ++i) */
-/*     { */
-/*       test_memcpy_tests_run(0, 0, i); */
-/*       test_memcpy_tests_run(i, 0, i); */
-/*       test_memcpy_tests_run(0, i, i); */
-/*       test_memcpy_tests_run(i, i, i); */
-/*     } */
+  for (i = 0; i < 32; ++i)
+    {
+      test_memcpy_tests_run(0, 0, i);
+      test_memcpy_tests_run(i, 0, i);
+      test_memcpy_tests_run(0, i, i);
+      test_memcpy_tests_run(i, i, i);
+    }
 
-/*   for (i = 3; i < 32; ++i) */
-/*     { */
-/*       if ((i & (i - 1)) == 0) */
-/* 	continue; */
-/*       test_memcpy_tests_run(0, 0, 16 * i); */
-/*       test_memcpy_tests_run(i, 0, 16 * i); */
-/*       test_memcpy_tests_run(0, i, 16 * i); */
-/*       test_memcpy_tests_run(i, i, 16 * i); */
-/*     } */
+  for (i = 3; i < 32; ++i)
+    {
+      if ((i & (i - 1)) == 0)
+	continue;
+      test_memcpy_tests_run(0, 0, 16 * i);
+      test_memcpy_tests_run(i, 0, 16 * i);
+      test_memcpy_tests_run(0, i, 16 * i);
+      test_memcpy_tests_run(i, i, 16 * i);
+    }
 
   test_memcpy_tests_run(0, 0, getpagesize ());
   test_memcpy_tests_run(0, 0, 2 * getpagesize ());

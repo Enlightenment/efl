@@ -1,5 +1,18 @@
 2008-10-16  Vincent Torri  <doursse at users dot sf dot net>
 
+	* configure.ac:
+	* src/lib/Makefile.am:
+	fix compilation on MinGW. Windows 2000 is
+	the minimum version supported by Evil (hence
+	other EFL). Goodbye Windows 98.
+
+	* src/bin/evil_test_memcpy.c:
+	re-enable small memcpy tests. It seems that memcpy
+	provided by glibc and the oem driver on Ipaq
+	3970 I have, have the same speed.
+
+2008-10-16  Vincent Torri  <doursse at users dot sf dot net>
+
 	* Makefile.am:
 	add the doc subdir
 
