@@ -69,14 +69,14 @@ evas_new(void)
    e->viewport.h = 1;
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
 
-   evas_array_setup(&e->delete_objects, 16);
-   evas_array_setup(&e->active_objects, 16);
-   evas_array_setup(&e->restack_objects, 16);
-   evas_array_setup(&e->render_objects, 16);
-   evas_array_setup(&e->pending_objects, 16);
-   evas_array_setup(&e->obscuring_objects, 16);
-   evas_array_setup(&e->temporary_objects, 16);
-   evas_array_setup(&e->calculate_objects, 16);
+   eina_array_step_set(&e->delete_objects, 16);
+   eina_array_step_set(&e->active_objects, 16);
+   eina_array_step_set(&e->restack_objects, 16);
+   eina_array_step_set(&e->render_objects, 16);
+   eina_array_step_set(&e->pending_objects, 16);
+   eina_array_step_set(&e->obscuring_objects, 16);
+   eina_array_step_set(&e->temporary_objects, 16);
+   eina_array_step_set(&e->calculate_objects, 16);
 
    return e;
 }
@@ -177,13 +177,13 @@ evas_free(Evas *e)
 
    if (e->engine.module) evas_module_unref(e->engine.module);
 
-   evas_array_flush(&e->delete_objects);
-   evas_array_flush(&e->active_objects);
-   evas_array_flush(&e->restack_objects);
-   evas_array_flush(&e->render_objects);
-   evas_array_flush(&e->pending_objects);
-   evas_array_flush(&e->obscuring_objects);
-   evas_array_flush(&e->temporary_objects);
+   eina_array_flush(&e->delete_objects);
+   eina_array_flush(&e->active_objects);
+   eina_array_flush(&e->restack_objects);
+   eina_array_flush(&e->render_objects);
+   eina_array_flush(&e->pending_objects);
+   eina_array_flush(&e->obscuring_objects);
+   eina_array_flush(&e->temporary_objects);
 
    e->magic = 0;
    free(e);

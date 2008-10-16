@@ -485,7 +485,7 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Evas_Bool value)
      {
 	Evas *e;
 	e = obj->layer->evas;
-	_evas_array_append(&e->calculate_objects, obj);
+	eina_array_push(&e->calculate_objects, obj);
      }
    /* TODO: else, remove from array */
 }
@@ -550,7 +550,7 @@ evas_object_smart_calculate(Evas_Object *obj)
 void
 evas_call_smarts_calculate(Evas *e)
 {
-   Evas_Array *calculate;
+   Eina_Array *calculate;
    unsigned int i;
 
    calculate = &e->calculate_objects;
@@ -559,7 +559,7 @@ evas_call_smarts_calculate(Evas *e)
 	Evas_Object *obj;
 	Evas_Object_Smart *o;
 
-	obj = _evas_array_get(calculate, i);
+	obj = eina_array_data_get(calculate, i);
 	if (obj->delete_me)
 	  continue;
 
@@ -571,7 +571,7 @@ evas_call_smarts_calculate(Evas *e)
 	  }
      }
 
-   evas_array_flush(calculate);
+   eina_array_flush(calculate);
 }
 
 /**

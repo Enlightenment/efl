@@ -68,7 +68,7 @@ evas_obscured_clear(Evas *e)
 }
 
 static void
-_evas_render_phase1_direct(Evas *e, Evas_Array *render_objects)
+_evas_render_phase1_direct(Evas *e, Eina_Array *render_objects)
 {
    unsigned int i;
 
@@ -76,7 +76,7 @@ _evas_render_phase1_direct(Evas *e, Evas_Array *render_objects)
      {
 	Evas_Object *obj;
 
-	obj = _evas_array_get(render_objects, i);
+	obj = eina_array_data_get(render_objects, i);
 	if (obj->changed) obj->func->render_pre(obj);
 	else
 	  {
@@ -96,7 +96,7 @@ _evas_render_phase1_direct(Evas *e, Evas_Array *render_objects)
 }
 
 static Evas_Bool
-_evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active_objects, Evas_Array *restack_objects, Evas_Array *delete_objects, Evas_Array *render_objects, int restack)
+_evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active_objects, Eina_Array *restack_objects, Eina_Array *delete_objects, Eina_Array *render_objects, int restack)
 {
    int clean_them = 0;
    int is_active;
@@ -108,7 +108,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
    evas_object_clip_recalc(obj);
    /* because of clip objects - delete 2 cycles later */
    if (obj->delete_me == 2)
-     _evas_array_append(delete_objects, obj);
+     eina_array_push(delete_objects, obj);
    else if (obj->delete_me != 0) obj->delete_me++;
    /* If the object will be removed, we should not cache anything during this run. */
    if (obj->delete_me != 0)
@@ -119,11 +119,11 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
 
    obj->is_active = is_active;
    if ((is_active) || (obj->delete_me != 0))
-     _evas_array_append(active_objects, obj);
+     eina_array_push(active_objects, obj);
    if (restack)
      {
 	if (!obj->changed)
-	  _evas_array_append(&e->pending_objects, obj);
+	  eina_array_push(&e->pending_objects, obj);
 	obj->restack = 1;
 	obj->changed = 1;
 	clean_them = 1;
@@ -134,7 +134,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
 	  {
 	     const Evas_Object_List *l;
 
-	     _evas_array_append(render_objects, obj);
+	     eina_array_push(render_objects, obj);
 	     obj->render_pre = 1;
 	     for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
 	       {
@@ -154,12 +154,12 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
 	     if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
 		 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 		  (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-               _evas_array_append(restack_objects, obj);
+               eina_array_push(restack_objects, obj);
 	     else if ((is_active) && (!obj->clip.clipees) &&
 		      ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 		       (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	       {
-		  _evas_array_append(render_objects, obj);
+		  eina_array_push(render_objects, obj);
 		  obj->render_pre = 1;
 	       }
 	  }
@@ -174,7 +174,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
 	       {
 		  const Evas_Object_List *l;
 
-		  _evas_array_append(render_objects, obj);
+		  eina_array_push(render_objects, obj);
 		  obj->render_pre = 1;
 		  for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
 		    {
@@ -194,7 +194,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
 		  if (evas_object_is_opaque(obj) &&
 		      evas_object_is_visible(obj))
 		    {
-		       _evas_array_append(render_objects, obj);
+		       eina_array_push(render_objects, obj);
 		       obj->rect_del = 1;
 		    }
 	       }
@@ -205,7 +205,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_Array *active
 }
 
 static Evas_Bool
-_evas_render_phase1_process(Evas *e, Evas_Array *active_objects, Evas_Array *restack_objects, Evas_Array *delete_objects, Evas_Array *render_objects)
+_evas_render_phase1_process(Evas *e, Eina_Array *active_objects, Eina_Array *restack_objects, Eina_Array *delete_objects, Eina_Array *render_objects)
 {
    Evas_Object_List *l;
    int clean_them = 0;
@@ -232,7 +232,7 @@ _evas_render_phase1_process(Evas *e, Evas_Array *active_objects, Evas_Array *res
 }
 
 static void
-_evas_render_check_pending_objects(Evas_Array *pending_objects, Evas *e)
+_evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 {
    unsigned int i;
 
@@ -242,7 +242,7 @@ _evas_render_check_pending_objects(Evas_Array *pending_objects, Evas *e)
 	int ok = 0;
 	int is_active;
 
-	obj = _evas_array_get(pending_objects, i);
+	obj = eina_array_data_get(pending_objects, i);
 
 	if (!obj->layer) goto clean_stuff;
 
@@ -302,11 +302,11 @@ _evas_render_check_pending_objects(Evas_Array *pending_objects, Evas *e)
      clean_stuff:
 	if (!ok)
 	  {
-	     evas_array_clean(&e->active_objects);
-	     evas_array_clean(&e->render_objects);
+	     eina_array_clean(&e->active_objects);
+	     eina_array_clean(&e->render_objects);
 
-	     evas_array_clean(&e->restack_objects);
-	     evas_array_clean(&e->delete_objects);
+	     eina_array_clean(&e->restack_objects);
+	     eina_array_clean(&e->delete_objects);
 
 	     e->invalidate = 1;
 
@@ -315,14 +315,14 @@ _evas_render_check_pending_objects(Evas_Array *pending_objects, Evas *e)
      }
 }
 
-Evas_Bool pending_change(void *data, void *gdata)
+Eina_Bool pending_change(void *data, void *gdata)
 {
    Evas_Object *obj;
 
    obj = data;
-   if (obj->delete_me) return 0;
+   if (obj->delete_me) return EINA_FALSE;
    if (!obj->layer) obj->changed = 0;
-   return obj->changed;
+   return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
 
 static Evas_List *
@@ -358,7 +358,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      {
 	Evas_Object *obj;
 
-	obj = _evas_array_get(&e->restack_objects, i);
+	obj = eina_array_data_get(&e->restack_objects, i);
 	obj->func->render_pre(obj);
 	e->engine.func->output_redraws_rect_add(e->engine.data.output,
 						obj->prev.cache.clip.x,
@@ -371,7 +371,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 						obj->cur.cache.clip.w,
 						obj->cur.cache.clip.h);
      }
-   evas_array_clean(&e->restack_objects);
+   eina_array_clean(&e->restack_objects);
    /* phase 3. add exposes */
    while (e->damages)
      {
@@ -416,7 +416,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      {
 	Evas_Object *obj;
 
-	obj = _evas_array_get(&e->active_objects, i);
+	obj = eina_array_data_get(&e->active_objects, i);
 	if (UNLIKELY(evas_object_is_opaque(obj) &&
                      evas_object_is_visible(obj) &&
                      (!obj->clip.clipees) &&
@@ -425,7 +425,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
                      (obj->cur.cache.clip.visible) &&
                      (!obj->smart.smart)))
 /* 	  obscuring_objects = evas_list_append(obscuring_objects, obj); */
-	  _evas_array_append(&e->obscuring_objects, obj);
+	  eina_array_push(&e->obscuring_objects, obj);
      }
    /* save this list */
 /*    obscuring_objects_orig = obscuring_objects; */
@@ -460,16 +460,16 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	       {
 		  Evas_Object *obj;
 
-		  obj = (Evas_Object *) _evas_array_get(&e->obscuring_objects, i);
+		  obj = (Evas_Object *) eina_array_data_get(&e->obscuring_objects, i);
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
-		    _evas_array_append(&e->temporary_objects, obj);
+		    eina_array_push(&e->temporary_objects, obj);
 	       }
 	     /* render all object that intersect with rect */
              for (i = 0; i < e->active_objects.count; ++i)
 	       {
 		  Evas_Object *obj;
 
-		  obj = _evas_array_get(&e->active_objects, i);
+		  obj = eina_array_data_get(&e->active_objects, i);
 
 		  /* if it's in our outpout rect and it doesn't clip anything */
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
@@ -483,7 +483,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		       int x, y, w, h;
 
 		       if ((e->temporary_objects.count > offset) &&
-			   (_evas_array_get(&e->temporary_objects, offset) == obj))
+			   (eina_array_data_get(&e->temporary_objects, offset) == obj))
 			 offset++;
 		       x = cx; y = cy; w = cw; h = ch;
 		       RECTS_CLIP_TO_RECT(x, y, w, h,
@@ -516,7 +516,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 			      {
 				 Evas_Object *obj2;
 
-				 obj2 = (Evas_Object *) _evas_array_get(&e->temporary_objects, j);
+				 obj2 = (Evas_Object *) eina_array_data_get(&e->temporary_objects, j);
 				 e->engine.func->context_cutout_add(e->engine.data.output,
 								    e->engine.data.context,
 								    obj2->cur.cache.clip.x + off_x,
@@ -540,7 +540,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 							     surface,
 							     ux, uy, uw, uh);
 	     /* free obscuring objects list */
-	     evas_array_clean(&e->temporary_objects);
+	     eina_array_clean(&e->temporary_objects);
 	  }
 	/* flush redraws */
 	e->engine.func->output_flush(e->engine.data.output);
@@ -552,7 +552,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      {
 	Evas_Object *obj;
 
-	obj = _evas_array_get(&e->active_objects, i);
+	obj = eina_array_data_get(&e->active_objects, i);
 	obj->pre_render_done = 0;
 	if ((obj->changed) && (do_draw))
 	  {
@@ -569,21 +569,21 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
  */
      }
    /* free our obscuring object list */
-   evas_array_clean(&e->obscuring_objects);
+   eina_array_clean(&e->obscuring_objects);
 
    /* If some object are still marked as changed, do not remove
       them from the pending list. */
-   evas_array_remove(&e->pending_objects, pending_change, NULL);
+   eina_array_remove(&e->pending_objects, pending_change, NULL);
 
    /* delete all objects flagged for deletion now */
    for (i = 0; i < e->delete_objects.count; ++i)
      {
 	Evas_Object *obj;
 
-	obj = _evas_array_get(&e->delete_objects, i);
+	obj = eina_array_data_get(&e->delete_objects, i);
 	evas_object_free(obj, 1);
      }
-   evas_array_clean(&e->delete_objects);
+   eina_array_clean(&e->delete_objects);
 
    e->changed = 0;
    e->viewport.changed = 0;
@@ -593,8 +593,8 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    /* If their are some object to restack or some object to delete, it's useless to keep the render object list around. */
    if (clean_them)
      {
-	evas_array_clean(&e->active_objects);
-	evas_array_clean(&e->render_objects);
+	eina_array_clean(&e->active_objects);
+	eina_array_clean(&e->render_objects);
 
 	e->invalidate = 1;
      }
@@ -688,10 +688,10 @@ evas_render_idle_flush(Evas *e)
        (e->engine.data.output))
      e->engine.func->output_idle_flush(e->engine.data.output);
 
-   evas_array_flush(&e->delete_objects);
-   evas_array_flush(&e->active_objects);
-   evas_array_flush(&e->restack_objects);
-   evas_array_flush(&e->render_objects);
+   eina_array_flush(&e->delete_objects);
+   eina_array_flush(&e->active_objects);
+   eina_array_flush(&e->restack_objects);
+   eina_array_flush(&e->render_objects);
 
    e->invalidate = 1;
 }
@@ -703,11 +703,11 @@ evas_render_invalidate(Evas *e)
    return;
    MAGIC_CHECK_END();
 
-   evas_array_clean(&e->active_objects);
-   evas_array_clean(&e->render_objects);
+   eina_array_clean(&e->active_objects);
+   eina_array_clean(&e->render_objects);
 
-   evas_array_flush(&e->restack_objects);
-   evas_array_flush(&e->delete_objects);
+   eina_array_flush(&e->restack_objects);
+   eina_array_flush(&e->delete_objects);
 
    e->invalidate = 1;
 }
@@ -727,7 +727,7 @@ evas_render_object_recalc(Evas_Object *obj)
 	if (!e || e->cleanup) return ;
 
 	if (!obj->changed)
-	  _evas_array_append(&e->pending_objects, obj);
+	  eina_array_push(&e->pending_objects, obj);
 	obj->changed = 1;
      }
 }

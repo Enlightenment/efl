@@ -9,6 +9,7 @@
 # include <config.h>
 #endif
 
+#include <Eina.h>
 #include "Evas.h"
 
 #include "../file/evas_module.h"
@@ -289,14 +290,14 @@ struct _Evas
       int   info_magic;
    } engine;
 
-   Evas_Array     delete_objects;
-   Evas_Array     active_objects;
-   Evas_Array     restack_objects;
-   Evas_Array	  render_objects;
-   Evas_Array	  pending_objects;
-   Evas_Array     obscuring_objects;
-   Evas_Array     temporary_objects;
-   Evas_Array     calculate_objects;
+   Eina_Array     delete_objects;
+   Eina_Array     active_objects;
+   Eina_Array     restack_objects;
+   Eina_Array	  render_objects;
+   Eina_Array	  pending_objects;
+   Eina_Array     obscuring_objects;
+   Eina_Array     temporary_objects;
+   Eina_Array     calculate_objects;
 
    int            delete_grabs;
    int            walking_grabs;

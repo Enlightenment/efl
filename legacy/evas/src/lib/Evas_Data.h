@@ -34,20 +34,10 @@
 
 typedef unsigned char Evas_Bool;
 
-typedef struct _Evas_Array       Evas_Array;             /**< A generic vector */
 typedef struct _Evas_Array_Hash  Evas_Array_Hash;
 typedef struct _Evas_Hash        Evas_Hash;              /**< A Hash table handle */
 typedef struct _Evas_List        Evas_List;              /**< A generic linked list node handle */
 typedef struct _Evas_Object_List Evas_Object_List;
-
-
-struct _Evas_Array /** An array of data */
-{
-   void		**data;   /**< Pointer to a vector of pointer to payload */
-   unsigned int   total;  /**< Total number of slot in the vector */
-   unsigned int   count;  /**< Number of activ slot in the vector */
-   unsigned int	  step;   /**< How much must we grow the vector When it is full */
-};
 
 struct _Evas_Hash
 {
@@ -73,20 +63,6 @@ struct _Evas_Object_List
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-  /*
-   * Evas Array functions
-   */
-
-   EAPI Evas_Array *evas_array_new                  (unsigned int step);
-   EAPI void        evas_array_setup                (Evas_Array *array, unsigned int step);
-   EAPI void        evas_array_free                 (Evas_Array *array);
-   EAPI void        evas_array_append               (Evas_Array *array, void *data);
-   EAPI void       *evas_array_get                  (Evas_Array *array, unsigned int index);
-   EAPI void        evas_array_clean                (Evas_Array *array);
-   EAPI void        evas_array_flush                (Evas_Array *array);
-   EAPI void        evas_array_remove               (Evas_Array *array, Evas_Bool (*keep)(void *data, void *gdata), void *gdata);
-
 
   /*
    * Evas Array Hash functions

@@ -202,6 +202,4 @@ evas_object_clip_recalc(Evas_Object *obj)
    obj->cur.cache.clip.dirty = 0;
 }
 
-#include "data/evas_inline_array.x"
-
 #endif
