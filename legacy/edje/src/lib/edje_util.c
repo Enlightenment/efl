@@ -884,9 +884,7 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 	rp->text.text = NULL;
      }
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-	_edje_entry_text_markup_set(rp, text);
-     }
+     _edje_entry_text_markup_set(rp, text);
    else
      if (text) rp->text.text = eina_stringshare_add(text);
    rp->edje->dirty = 1;
@@ -911,15 +909,56 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
 	return _edje_entry_text_get(rp);
-     }
    else
      {
-	if (rp->part->type == EDJE_PART_TYPE_TEXT)
-	  return rp->text.text;
+	if (rp->part->type == EDJE_PART_TYPE_TEXT) return rp->text.text;
      }
    return NULL;
+}
+
+/** Returns the selection text of the object part
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return The text string
+ */
+EAPI const char *
+edje_object_part_text_selection_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     return _edje_entry_selection_get(rp);
+   return NULL;
+}
+
+/** Inserts the text for an object part just before the cursor position
+ * @param obj A valid Evas Object handle
+ * @param part The part name
+ * @param text The text string
+ */
+EAPI void
+edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *text)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
+   if (rp->part->entry_mode <= EDJE_ENTRY_EDIT_MODE_NONE) return;
+   _edje_entry_text_markup_insert(rp, text);
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+   if (rp->edje->text_change.func)
+     rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
 }
 
 /** Swallows an object into the edje

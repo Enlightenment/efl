@@ -1238,9 +1238,10 @@ void _edje_entry_shutdown(Edje *ed);
 void _edje_entry_real_part_init(Edje_Real_Part *rp);
 void _edje_entry_real_part_shutdown(Edje_Real_Part *rp);
 void _edje_entry_real_part_configure(Edje_Real_Part *rp);
-char *_edje_entry_selection_get(Edje_Real_Part *rp);
+const char *_edje_entry_selection_get(Edje_Real_Part *rp);
 const char *_edje_entry_text_get(Edje_Real_Part *rp);
 void _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text);
+void _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text);
 void _edje_entry_set_cursor_start(Edje_Real_Part *rp);
 void _edje_entry_set_cursor_end(Edje_Real_Part *rp);
     
