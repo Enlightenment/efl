@@ -407,7 +407,9 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 		       else
 			 {
 			    evas_textblock_cursor_copy(en->cursor, c1);
-			    _curs_back(en->cursor, rp->object, en);
+			    if (evas_textblock_cursor_node_format_get(en->cursor) &&
+				(!evas_textblock_cursor_node_format_is_visible_get(en->cursor)))
+			      _curs_back(en->cursor, rp->object, en);
 			 }
 		    }
 		  else
@@ -732,8 +734,6 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_UP, _edje_part_mouse_up_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
 
-   // FIXME: make cursor object correct
-//   en->cursor_bg = evas_object_rectangle_add(evas_object_evas_get(rp->object));
    en->cursor_bg = edje_object_add(rp->edje->evas);
    edje_object_file_set(en->cursor_bg, rp->edje->path, rp->part->source3);
    evas_object_smart_member_add(en->cursor_bg, rp->edje->obj);
@@ -780,7 +780,10 @@ _edje_entry_real_part_configure(Edje_Real_Part *rp)
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   evas_textblock_cursor_char_geometry_get(en->cursor, &xx, &yy, &ww, &hh);
+   int ln;
+   
+   ln = evas_textblock_cursor_char_geometry_get(en->cursor, &xx, &yy, &ww, &hh);
+   printf("@%i | %i %i %ix%i\n", ln, xx, yy, ww, hh);
    if (ww < 1) ww = 1;
    if (hh < 1) ww = 1;
    if (en->cursor_bg)
