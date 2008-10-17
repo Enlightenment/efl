@@ -2966,6 +2966,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 		  if (*s == '-') pop = 1;
 		  while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
 		  if (pop) txt = _strbuf_append(txt, "/", &txt_len, &txt_alloc);
+		  if (push) txt = _strbuf_append(txt, "+ ", &txt_len, &txt_alloc);
 		  txt = _strbuf_append(txt, s, &txt_len, &txt_alloc);
 	       }
 	     txt = _strbuf_append(txt, ">", &txt_len, &txt_alloc);
@@ -3907,33 +3908,38 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    if (chr == 0) return;
    if (n1 == n2)
      {
-	if (cur1->pos == cur2->pos)
+        if (n1->type == NODE_TEXT)
 	  {
-	     evas_textblock_cursor_char_delete(cur1);
-	     evas_textblock_cursor_copy(cur1, cur2);
-	     return;
-	  }
-	n1->text = _strbuf_remove(n1->text, cur1->pos, index, &(n1->len), &(n1->alloc));
-	if (!n1->text)
-	  {
-	     evas_textblock_cursor_node_delete(cur1);
-	     evas_textblock_cursor_copy(cur1, cur2);
-	     return;
-	  }
-	if (cur1->pos >= n1->len)
-	  {
-	     n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n1)->next);
-	     if (n2)
+	     if (cur1->pos == cur2->pos)
 	       {
-		  cur1->node = n2;
-		  cur1->pos = 0;
+		  evas_textblock_cursor_char_delete(cur1);
+		  evas_textblock_cursor_copy(cur1, cur2);
+		  return;
 	       }
-	     else
+	     n1->text = _strbuf_remove(n1->text, cur1->pos, index, &(n1->len), &(n1->alloc));
+	     if (!n1->text)
 	       {
-		  cur1->pos = 0;
-		  evas_textblock_cursor_char_last(cur1);
+		  evas_textblock_cursor_node_delete(cur1);
+		  evas_textblock_cursor_copy(cur1, cur2);
+		  return;
+	       }
+	     if (cur1->pos >= n1->len)
+	       {
+		  n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n1)->next);
+		  if (n2)
+		    {
+		       cur1->node = n2;
+		       cur1->pos = 0;
+		    }
+		  else
+		    {
+		       cur1->pos = 0;
+		       evas_textblock_cursor_char_last(cur1);
+		    }
 	       }
 	  }
+	else
+	  evas_textblock_cursor_node_delete(cur1);
 	evas_textblock_cursor_copy(cur1, cur2);
      }
    else
@@ -4392,6 +4398,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		       if (*s == '-') pop = 1;
 		       while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
 		       if (pop) str = _strbuf_append(str, "/", &len, &alloc);
+		       if (push) str = _strbuf_append(str, "+ ", &len, &alloc);
 		       str = _strbuf_append(str, s, &len, &alloc);
 		    }
 		  str = _strbuf_append(str, ">", &len, &alloc);
