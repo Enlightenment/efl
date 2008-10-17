@@ -2719,20 +2719,23 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 			      evas_textblock_cursor_format_append(o->cursor, match);
 			    else
 			      {
-				 if (ttag[0] == '/')
-				   evas_textblock_cursor_format_append(o->cursor, "-");
-				 else
+				 char *ttag2;
+				 
+				 ttag2 = malloc(strlen(ttag) + 2 + 1);
+				 if (ttag2)
 				   {
-				      char *ttag2;
-				      
-				      ttag2 = malloc(strlen(ttag) + 2 + 1);
-				      if (ttag2)
+				      if (ttag[0] == '/')
+					{
+					   strcpy(ttag2, "- ");
+					   strcat(ttag2, ttag + 1);
+					}
+				      else
 					{
 					   strcpy(ttag2, "+ ");
 					   strcat(ttag2, ttag);
-					   evas_textblock_cursor_format_append(o->cursor, ttag2);
-					   free(ttag2);
 					}
+				      evas_textblock_cursor_format_append(o->cursor, ttag2);
+				      free(ttag2);
 				   }
 			      }
 			    free(ttag);
@@ -2852,20 +2855,24 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
 			      evas_textblock_cursor_format_prepend(cur, match);
 			    else
 			      {
-				 if (ttag[0] == '/')
-				   evas_textblock_cursor_format_prepend(cur, "-");
-				 else
+				 char *ttag2;
+				 
+				 ttag2 = malloc(strlen(ttag) + 2 + 1);
+				 if (ttag2)
 				   {
-				      char *ttag2;
-				      
-				      ttag2 = malloc(strlen(ttag) + 2 + 1);
-				      if (ttag2)
+				      if (ttag[0] == '/')
+					{
+					   strcpy(ttag2, "- ");
+					   strcat(ttag2, ttag + 1);
+					}
+				      else
 					{
 					   strcpy(ttag2, "+ ");
 					   strcat(ttag2, ttag);
-					   evas_textblock_cursor_format_prepend(cur, ttag2);
-					   free(ttag2);
 					}
+				      strcat(ttag2, ttag);
+				      evas_textblock_cursor_format_append(o->cursor, ttag2);
+				      free(ttag2);
 				   }
 			      }
 			    free(ttag);
