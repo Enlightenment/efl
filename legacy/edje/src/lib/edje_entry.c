@@ -314,6 +314,21 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
+_range_del(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+{
+   Evas_Textblock_Cursor *c1;
+   
+   c1 = evas_object_textblock_cursor_new(o);
+   evas_textblock_cursor_node_last(c1);
+   if (!evas_textblock_cursor_compare(en->sel_end, c1))
+     evas_textblock_cursor_node_prev(en->sel_end);
+   if (!evas_textblock_cursor_compare(en->sel_start, c1))
+     evas_textblock_cursor_node_prev(en->sel_start);
+   evas_textblock_cursor_free(c1);
+   evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
+}
+
+static void
 _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje *ed = data;
@@ -382,18 +397,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	else
 	  {
 	     if (en->have_selection)
-	       {
-		  Evas_Textblock_Cursor *c1;
-		  
-		  c1 = evas_object_textblock_cursor_new(rp->object);
-		  evas_textblock_cursor_node_last(c1);
-		  if (!evas_textblock_cursor_compare(en->sel_end, c1))
-		    evas_textblock_cursor_node_prev(en->sel_end);
-		  if (!evas_textblock_cursor_compare(en->sel_start, c1))
-		    evas_textblock_cursor_node_prev(en->sel_start);
-		  evas_textblock_cursor_free(c1);
-		  evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
-	       }
+	       _range_del(en->cursor, rp->object, en);
 	     else
 	       {
 		  Evas_Textblock_Cursor *c1, *c2;
@@ -437,9 +441,11 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	else
 	  {	
 	     if (en->have_selection)
-	       evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
+	       _range_del(en->cursor, rp->object, en);
 	     else
-	       evas_textblock_cursor_char_delete(en->cursor);
+	       {
+		  evas_textblock_cursor_char_delete(en->cursor);
+	       }
 	  }
 	_sel_clear(en->cursor, rp->object, en);
 	_curs_update_from_curs(en->cursor, rp->object, en);
@@ -554,7 +560,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	if (ev->string)
 	  {
             if (en->have_selection)
-	       evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
+	       _range_del(en->cursor, rp->object, en);
 	     evas_textblock_cursor_text_prepend(en->cursor, ev->string);
 	     _sel_clear(en->cursor, rp->object, en);
 	     _curs_update_from_curs(en->cursor, rp->object, en);
@@ -780,10 +786,6 @@ _edje_entry_real_part_configure(Edje_Real_Part *rp)
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   int ln;
-   
-   ln = evas_textblock_cursor_char_geometry_get(en->cursor, &xx, &yy, &ww, &hh);
-   printf("@%i | %i %i %ix%i\n", ln, xx, yy, ww, hh);
    if (ww < 1) ww = 1;
    if (hh < 1) ww = 1;
    if (en->cursor_bg)
