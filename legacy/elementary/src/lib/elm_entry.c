@@ -130,7 +130,6 @@ _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord cx, cy, cw, ch;
    evas_object_smart_callback_call(data, "cursor,changed", NULL);
-   
    // FIXME: handle auto-scroll within parent (get cursor - if not visible
    // jump so it is)
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", &cx, &cy, &cw, &ch);
@@ -149,7 +148,28 @@ static void
 _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   char *buf, *buf2, *p, *p2, *n;
+   int buflen;
    printf("UP %s\n", emission);
+   p = strchr(emission, ',');
+   if (p)
+     {
+	n = p + 1;
+	buflen = 200 + strlen(n);
+	buf = alloca(buflen);
+	p2 = p -1;
+	while (p2 >= emission)
+	  {
+	     if (*p2 == ',') break;
+	     p2--;
+	  }
+	p2++;
+	buf2 = alloca(5 + p - p2);
+	strncpy(buf2, p2, p - p2);
+	buf2[p - p2] = 0;
+	snprintf(buf, buflen, "anchor,%s,clicked,*s", buf2, n);
+	evas_object_smart_callback_call(data, buf, NULL);
+     }
 }
 
 static void

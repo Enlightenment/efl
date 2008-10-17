@@ -731,7 +731,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   // HACK! not exposed! (should expose some later?)
+   // FIXME: HACK! not exposed! (should expose some later?)
    elm_widget_focus_set(en, 1);
    
    evas_object_show(win);
@@ -763,6 +763,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, sc);
    
    en = elm_entry_add(win);
+   // FIXME: HACK! not exposed!
    evas_object_propagate_events_set(en, 0);
    elm_entry_entry_set(en,
 		       "This is an entry widget in this window that<br>"
@@ -819,7 +820,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   // HACK! not exposed! (should expose some later?)
+   // FIXME: HACK! not exposed! (should expose some later?)
    elm_widget_focus_set(en, 1);
 
    evas_object_resize(win, 320, 300);
