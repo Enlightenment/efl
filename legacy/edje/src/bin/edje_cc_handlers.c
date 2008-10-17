@@ -1214,7 +1214,9 @@ ob_collections_group(void)
         [group name]
     @effect
         The name that will be used by the application to load the resulting
-        Edje object, must be unique within the theme.
+        Edje object and to identify the group to shallow in a GROUP part. If a
+        group with the same name exists already it will be completely overriden
+        by the new group.
     @endproperty
 */
 static void
