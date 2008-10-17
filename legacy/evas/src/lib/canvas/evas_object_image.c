@@ -1786,25 +1786,21 @@ evas_image_cache_flush(Evas *e)
 EAPI void
 evas_image_cache_reload(Evas *e)
 {
-   Evas_Object_List *l;
+   Evas_Layer *layer;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
    evas_image_cache_flush(e);
-   for (l = (Evas_Object_List *)e->layers; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(e->layers, layer)
      {
-	Evas_Layer *layer;
-	Evas_Object_List *l2;
+	Evas_Object *obj;
 
-	layer = (Evas_Layer *)l;
-        for (l2 = (Evas_Object_List *)layer->objects; l2; l2 = l2->next)
+	EINA_INLIST_ITER_NEXT(layer->objects, obj)
 	  {
-	     Evas_Object *obj;
 	     Evas_Object_Image *o;
 
-	     obj = (Evas_Object *)l2;
 	     o = (Evas_Object_Image *)(obj->object_data);
 	     if (o->magic == MAGIC_OBJ_IMAGE)
 	       {
@@ -1813,18 +1809,14 @@ evas_image_cache_reload(Evas *e)
 	  }
      }
    evas_image_cache_flush(e);
-   for (l = (Evas_Object_List *)e->layers; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(e->layers, layer)
      {
-	Evas_Layer *layer;
-	Evas_Object_List *l2;
+	Evas_Object *obj;
 
-	layer = (Evas_Layer *)l;
-        for (l2 = (Evas_Object_List *)layer->objects; l2; l2 = l2->next)
+	EINA_INLIST_ITER_NEXT(layer->objects, obj)
 	  {
-	     Evas_Object *obj;
 	     Evas_Object_Image *o;
 
-	     obj = (Evas_Object *)l2;
 	     o = (Evas_Object_Image *)(obj->object_data);
 	     if (o->magic == MAGIC_OBJ_IMAGE)
 	       {

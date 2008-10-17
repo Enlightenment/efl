@@ -29,7 +29,7 @@ struct _Render_Engine
 
    Tilebuf                      *tb;
    Tilebuf_Rect                 *rects;
-   Evas_Object_List             *cur_rect;
+   Eina_Inlist                  *cur_rect;
 
    DFBRegion                    *update_regions;
    unsigned int                  update_regions_count;
@@ -39,6 +39,6 @@ struct _Render_Engine
 };
 
 int _dfb_surface_set_color_from_context(IDirectFBSurface *surface, RGBA_Draw_Context *dc);
-void _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Evas_Object_List *points);
+void _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist *points);
 
 #endif

@@ -88,7 +88,7 @@ _tmp_out_alloc(Render_Engine *re)
    Tilebuf_Rect *r;
    int w = 0, h = 0;
 
-   for (r = re->rects; r; r = (Tilebuf_Rect *)(r->_list_data.next))
+   EINA_INLIST_ITER_NEXT(re->rects, r)
      {
 	if (r->w > w) w = r->w;
 	if (r->h > h) h = r->h;
@@ -340,7 +340,7 @@ evas_engine_sdl16_output_redraws_next_update_get(void *data,
    *cy = *y = tb_rect->y;
    *cw = *w = tb_rect->w;
    *ch = *h = tb_rect->h;
-   re->cur_rect = (Tilebuf_Rect *)(re->cur_rect->_list_data.next);
+   re->cur_rect = (Tilebuf_Rect *)((EINA_INLIST_GET(re->cur_rect))->next);
    if (!re->cur_rect)
      {
         evas_common_tilebuf_free_render_rects(re->rects);

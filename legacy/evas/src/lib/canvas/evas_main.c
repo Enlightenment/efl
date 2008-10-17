@@ -93,7 +93,7 @@ evas_new(void)
 EAPI void
 evas_free(Evas *e)
 {
-   Evas_Object_List *l;
+   Evas_Layer *lay;
    int i;
    int del;
 
@@ -110,18 +110,14 @@ evas_free(Evas *e)
    while (del)
      {
 	del = 0;
-	for (l = (Evas_Object_List *)(e->layers); l; l = l->next)
+	EINA_INLIST_ITER_NEXT(e->layers, lay)
 	  {
-	     Evas_Layer *lay;
-	     Evas_Object_List *ll;
+	     Evas_Object *o;
 
-	     lay = (Evas_Layer *)l;
 	     evas_layer_pre_free(lay);
-	     for (ll = (Evas_Object_List *)lay->objects; ll; ll = ll->next)
-	       {
-		  Evas_Object *o;
 
-		  o = (Evas_Object *)ll;
+	     EINA_INLIST_ITER_NEXT(lay->objects, o)
+	       {
 		  if ((o->callbacks) && (o->callbacks->walking_list))
 		    {
 		       /* Defer free */
@@ -136,14 +132,12 @@ evas_free(Evas *e)
      }
    while (e->layers)
      {
-	Evas_Layer *lay;
-
 	lay = e->layers;
 	evas_layer_del(lay);
 	evas_layer_free(lay);
      }
    e->walking_list--;
-   
+
    evas_font_path_clear(e);
    e->pointer.object.in = evas_list_free(e->pointer.object.in);
 

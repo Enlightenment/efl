@@ -536,7 +536,7 @@ _xre_image_surface_gen(XR_Image *im)
 	     rects = evas_common_tilebuf_get_render_rects(im->updates);
 	     if (rects)
 	       {
-		  for (r = rects; r; r = (Tilebuf_Rect *)((Evas_Object_List *)r)->next)
+		  EINA_INLIST_ITER_NEXT(rects, r)
 		    {
 		       int rx, ry, rw, rh;
 		       

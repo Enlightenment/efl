@@ -1018,13 +1018,8 @@ evas_font_object_rehint(Evas_Object *obj)
 {
    if (obj->smart.smart)
      {
-	const Evas_Object_List *l3;
-	
-	for (l3 = evas_object_smart_members_get_direct(obj); l3; l3 = l3->next)
-	  {
-	     obj = (Evas_Object *)l3;
-	     evas_font_object_rehint(obj);
-	  }
+	EINA_INLIST_ITER_NEXT(evas_object_smart_members_get_direct(obj), obj)
+	  evas_font_object_rehint(obj);
      }
    else
      {
@@ -1038,26 +1033,19 @@ evas_font_object_rehint(Evas_Object *obj)
 EAPI void
 evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
 {
-   Evas_Object_List *l;
-   
+   Evas_Layer *lay;
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
    if (e->hinting == hinting) return;
    e->hinting = hinting;
-   for (l = (Evas_Object_List *)e->layers; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(e->layers, lay)
      {
-	Evas_Object_List *l2;
-	Evas_Layer *lay;
-	
-	lay = (Evas_Layer *)l;
-	for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
-	  {
-	     Evas_Object *obj;
-	     
-	     obj = (Evas_Object *)l2;
-	     evas_font_object_rehint(obj);
-	  }
+	Evas_Object *obj;
+
+	EINA_INLIST_ITER_NEXT(lay->objects, obj)
+	  evas_font_object_rehint(obj);
      }
 }
 

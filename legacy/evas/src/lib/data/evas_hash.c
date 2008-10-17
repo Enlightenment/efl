@@ -15,7 +15,7 @@ typedef struct _Evas_Hash_El Evas_Hash_El;
 
 struct _Evas_Hash_El
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    const char       *key;
    void             *data;
 };
@@ -131,7 +131,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
    strcpy((char *) el->key, key);
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
-   hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+   hash->buckets[hash_num] = eina_inlist_prepend(hash->buckets[hash_num], EINA_INLIST_GET(el));
    hash->population++;
    return hash;
 }
@@ -189,7 +189,7 @@ evas_hash_direct_add(Evas_Hash *hash, const char *key, const void *data)
    el->key = key;
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
-   hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+   hash->buckets[hash_num] = eina_inlist_prepend(hash->buckets[hash_num], EINA_INLIST_GET(el));
    hash->population++;
    return hash;
 }
@@ -214,55 +214,48 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
 {
    int hash_num;
    Evas_Hash_El *el;
-   Evas_Object_List *l;
 
    if (!hash) return NULL;
    if (!key)
      {
 	int hash_num;
-	
+
 	for (hash_num = 0; hash_num < 256; hash_num++)
 	  {
-	     for (l = hash->buckets[hash_num]; l; l = l->next)
-	       {
-		  el = (Evas_Hash_El *)l;
-		  if (el->data == data)
-		    {
-		       hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		       free(el);
-		       hash->population--;
-		       if (hash->population <= 0)
-			 {
-			    free(hash);
-			    hash = NULL;
-			 }
-		       return hash;
-		    }
-	       }
+	     EINA_INLIST_ITER_NEXT(hash->buckets[hash_num], el)
+	       if (el->data == data)
+		 {
+		    hash->buckets[hash_num] = eina_inlist_remove(hash->buckets[hash_num], EINA_INLIST_GET(el));
+		    free(el);
+		    hash->population--;
+		    if (hash->population <= 0)
+		      {
+			 free(hash);
+			 hash = NULL;
+		      }
+		    return hash;
+		 }
 	  }
      }
    else
      {
 	hash_num = _evas_hash_gen(key);
-	for (l = hash->buckets[hash_num]; l; l = l->next)
-	  {
-	     el = (Evas_Hash_El *)l;
-	     if (!strcmp(el->key, key))
-	       {
-                  if ((!data) || (el->data == data))
-		    {
-		       hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		       free(el);
-		       hash->population--;
-		       if (hash->population <= 0)
-			 {
-			    free(hash);
-			    hash = NULL;
-			 }
-		       return hash;
-		    }
-	       }
-	  }
+	EINA_INLIST_ITER_NEXT(hash->buckets[hash_num], el)
+	  if (!strcmp(el->key, key))
+	    {
+	       if ((!data) || (el->data == data))
+		 {
+		    hash->buckets[hash_num] = eina_inlist_remove(hash->buckets[hash_num], EINA_INLIST_GET(el));
+		    free(el);
+		    hash->population--;
+		    if (hash->population <= 0)
+		      {
+			 free(hash);
+			 hash = NULL;
+		      }
+		    return hash;
+		 }
+	    }
      }
    return hash;
 }
@@ -280,28 +273,16 @@ evas_hash_find(const Evas_Hash *hash, const char *key)
 {
    int hash_num;
    Evas_Hash_El *el;
-   Evas_Object_List *l;
 
    _evas_hash_alloc_error = 0;
    if ((!hash) || (!key)) return NULL;
    hash_num = _evas_hash_gen(key);
-   for (l = hash->buckets[hash_num]; l; l = l->next)
-     {
-	el = (Evas_Hash_El *)l;
-	if (!strcmp(el->key, key))
-	  {
-	     if (l != hash->buckets[hash_num])
-	       {
-		  Evas_Object_List *bucket;
-
-		  bucket = hash->buckets[hash_num];
-		  bucket = evas_object_list_remove(bucket, el);
-		  bucket = evas_object_list_prepend(bucket, el);
-		  ((Evas_Hash *)hash)->buckets[hash_num] = bucket;
-	       }
-	     return el->data;
-	  }
-     }
+   EINA_INLIST_ITER_NEXT(hash->buckets[hash_num], el)
+     if (!strcmp(el->key, key))
+       {
+	  ((Evas_Hash *)hash)->buckets[hash_num] = eina_inlist_promote(((Evas_Hash *)hash)->buckets[hash_num], EINA_INLIST_GET(el));
+	  return el->data;
+       }
    return NULL;
 }
 
@@ -320,28 +301,21 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
 {
    int hash_num;
    Evas_Hash_El *el;
-   Evas_Object_List *l;
 
    _evas_hash_alloc_error = 0;
    if (!hash) return NULL;
    hash_num = _evas_hash_gen(key);
-   for (l = hash->buckets[hash_num]; l; l = l->next)
-     {
-	el = (Evas_Hash_El *)l;
-	if ((key) && (!strcmp(el->key, key)))
-	  {
-	     void *old_data;
-	     
-	     if (l != hash->buckets[hash_num])
-	       {
-		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
-	       }
-	     old_data = el->data;
-	     el->data = (void *) data;
-	     return old_data;
-	  }
-     }
+   EINA_INLIST_ITER_NEXT(hash->buckets[hash_num], el)
+     if ((key) && (!strcmp(el->key, key)))
+       {
+	  void *old_data;
+
+	  hash->buckets[hash_num] = eina_inlist_promote(hash->buckets[hash_num], EINA_INLIST_GET(el));
+
+	  old_data = el->data;
+	  el->data = (void *) data;
+	  return old_data;
+       }
    return NULL;
 }
 
@@ -402,7 +376,7 @@ evas_hash_free(Evas_Hash *hash)
 	     Evas_Hash_El *el;
 
 	     el = (Evas_Hash_El *)hash->buckets[i];
-	     hash->buckets[i] = evas_object_list_remove(hash->buckets[i], el);
+	     hash->buckets[i] = eina_inlist_remove(hash->buckets[i], EINA_INLIST_GET(el));
 	     free(el);
 	  }
      }
@@ -451,7 +425,7 @@ evas_hash_foreach(const Evas_Hash *hash, Evas_Bool (*func) (const Evas_Hash *has
    size = evas_hash_size(hash);
    for (i = 0; i < size; i++)
      {
-	Evas_Object_List *l, *next_l;
+	Eina_Inlist *l, *next_l;
 
 	for (l = hash->buckets[i]; l;)
 	  {

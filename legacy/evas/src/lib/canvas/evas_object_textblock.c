@@ -27,20 +27,20 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 #define  NODE_FORMAT 1
 
 struct _Evas_Object_Style_Tag
-{  Evas_Object_List _list_data;
+{  EINA_INLIST;
    char *tag;
    char *replace;
 };
 
 struct _Evas_Object_Textblock_Node
-{  Evas_Object_List _list_data;
+{  EINA_INLIST;
    char *text;
    int   type;
    int   len, alloc;
 };
 
 struct _Evas_Object_Textblock_Line
-{  Evas_Object_List _list_data;
+{  EINA_INLIST;
    Evas_Object_Textblock_Item        *items;
    Evas_Object_Textblock_Format_Item *format_items;
    int                                x, y, w, h;
@@ -49,7 +49,7 @@ struct _Evas_Object_Textblock_Line
 };
 
 struct _Evas_Object_Textblock_Item
-{  Evas_Object_List _list_data;
+{  EINA_INLIST;
    char                         *text;
    Evas_Object_Textblock_Format *format;
    Evas_Object_Textblock_Node   *source_node;
@@ -60,7 +60,7 @@ struct _Evas_Object_Textblock_Item
 };
 
 struct _Evas_Object_Textblock_Format_Item
-{  Evas_Object_List _list_data;
+{  EINA_INLIST;
    const char                   *item;
    Evas_Object_Textblock_Node   *source_node;
    int                           x, w;
@@ -209,7 +209,7 @@ _style_clear(Evas_Textblock_Style *ts)
 	Evas_Object_Style_Tag *tag;
 	
 	tag = (Evas_Object_Style_Tag *)ts->tags;
-	ts->tags = evas_object_list_remove(ts->tags, tag);
+	ts->tags = (Evas_Object_Style_Tag *)eina_inlist_remove(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
 	free(tag->tag);
 	free(tag->replace);
 	free(tag);
@@ -222,13 +222,10 @@ _style_clear(Evas_Textblock_Style *ts)
 static char *
 _style_match_replace(Evas_Textblock_Style *ts, char *s)
 {
-   Evas_Object_List *l;
-   
-   for (l = (Evas_Object_List *)ts->tags; l; l = l->next)
+   Evas_Object_Style_Tag *tag;
+
+   EINA_INLIST_ITER_NEXT(ts->tags, tag)
      {
-	Evas_Object_Style_Tag *tag;
-	
-	tag = (Evas_Object_Style_Tag *)l;
 	if (!strcmp(tag->replace, s)) return tag->tag;
      }
    return NULL;
@@ -237,13 +234,10 @@ _style_match_replace(Evas_Textblock_Style *ts, char *s)
 static char *
 _style_match_tag(Evas_Textblock_Style *ts, char *s)
 {
-   Evas_Object_List *l;
+   Evas_Object_Style_Tag *tag;
 
-   for (l = (Evas_Object_List *)ts->tags; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(ts->tags, tag)
      {
-	Evas_Object_Style_Tag *tag;
-	
-	tag = (Evas_Object_Style_Tag *)l;
 	if (!strcmp(tag->tag, s)) return tag->replace;
      }
    return NULL;
@@ -402,7 +396,7 @@ _nodes_clear(const Evas_Object *obj)
 	Evas_Object_Textblock_Node *n;
 	
 	n = (Evas_Object_Textblock_Node *)o->nodes;
-	o->nodes = evas_object_list_remove(o->nodes, n);
+	o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
 	if (n->text) free(n->text);
 	free(n);
      }
@@ -428,7 +422,7 @@ _line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 	Evas_Object_Textblock_Item *it;
 	
 	it = (Evas_Object_Textblock_Item *)ln->items;
-	ln->items = evas_object_list_remove(ln->items, ln->items);
+	ln->items = (Evas_Object_Textblock_Item *)eina_inlist_remove(EINA_INLIST_GET(ln->items), EINA_INLIST_GET(ln->items));
 	if (it->text) free(it->text);
 	_format_free(obj, it->format);
 	free(it);
@@ -438,7 +432,8 @@ _line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 	Evas_Object_Textblock_Format_Item *fi;
 	
 	fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
-	ln->format_items = evas_object_list_remove(ln->format_items, ln->format_items);
+	ln->format_items = (Evas_Object_Textblock_Format_Item *)eina_inlist_remove(EINA_INLIST_GET(ln->format_items),
+										   EINA_INLIST_GET(ln->format_items));
 	if (fi->item) eina_stringshare_del(fi->item);
 	free(fi);
      }
@@ -456,7 +451,7 @@ _lines_clear(const Evas_Object *obj, Evas_Object_Textblock_Line *lines)
 	Evas_Object_Textblock_Line *ln;
 	
 	ln = (Evas_Object_Textblock_Line *)lines;
-	lines = evas_object_list_remove(lines, ln);
+	lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(lines), EINA_INLIST_GET(ln));
 	_line_free(obj, ln);
      }
 }
@@ -471,14 +466,14 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
    
    if (n1->type != NODE_TEXT) return;
    o = (Evas_Object_Textblock *)(obj->object_data);
-   n0 = (Evas_Object_Textblock_Node *)((Evas_Object_List *)n1)->prev;
-   n2 = (Evas_Object_Textblock_Node *)((Evas_Object_List *)n1)->next;
+   n0 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->prev;
+   n2 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->next;
    if ((n0) && (n0->type == NODE_TEXT))
      {
 	plen = n0->len;
 	n0->text = _strbuf_append(n0->text, n1->text, &(n0->len), &(n0->alloc));
-	((Evas_Object_List *)n0)->next = (Evas_Object_List *)n2;
-	if (n2) ((Evas_Object_List *)n2)->prev = (Evas_Object_List *)n0;
+	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
+	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
 	// fix any cursors in n1
 	if (n1 == o->cursor->node)
 	  {
@@ -501,11 +496,11 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
      {
 	n0 = n1;
 	n1 = n2;
-	n2 = (Evas_Object_Textblock_Node *)((Evas_Object_List *)n1)->next;
+	n2 = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->next;
 	plen = n0->len;
 	n0->text = _strbuf_append(n0->text, n1->text, &(n0->len), &(n0->alloc));
-	((Evas_Object_List *)n0)->next = (Evas_Object_List *)n2;
-	if (n2) ((Evas_Object_List *)n2)->prev = (Evas_Object_List *)n0;
+	(EINA_INLIST_GET(n0))->next = EINA_INLIST_GET(n2);
+	if (n2) (EINA_INLIST_GET(n2))->prev = EINA_INLIST_GET(n0);
 	// fix any cursors in n1
 	if (n1 == o->cursor->node)
 	  {
@@ -1433,7 +1428,7 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->align = fmt->halign;
    c->marginl = fmt->margin.l;
    c->marginr = fmt->margin.r;
-   c->lines = evas_object_list_append(c->lines, c->ln);
+   c->lines = (Evas_Object_Textblock_Line *)eina_inlist_append(EINA_INLIST_GET(c->lines), EINA_INLIST_GET(c->ln));
    c->x = 0;
    c->maxascent = c->maxdescent = 0;
    c->ln->line_no = -1;
@@ -1491,16 +1486,14 @@ static void
 _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
-   Evas_Object_List *l;
-   
+
    c->maxascent = c->maxdescent = 0;
    if (!c->ln->items)
      _layout_format_ascent_descent_adjust(c, fmt);
-   for (l = (Evas_Object_List *)c->ln->items; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(c->ln->items, it)
      {
 	int endx;
-	
-	it = (Evas_Object_Textblock_Item *)l;
+
 	if (it->format->font.font)
 	  it->baseline = c->ENFN->font_max_ascent_get(c->ENDT, it->format->font.font);
 	_layout_format_ascent_descent_adjust(c, it->format);
@@ -1658,7 +1651,7 @@ _layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textb
    free(it);
    if (c->ln->items)
      {
-	it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+	it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
 	return _layout_strip_trailing_whitespace(c, fmt, it);
      }
    return 0;
@@ -1689,7 +1682,7 @@ _layout_last_item_ends_in_whitespace(Ctxt *c)
    Evas_Object_Textblock_Item *it;
 
    if (!c->ln->items) return 1;
-   it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+   it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
    return _layout_ends_with_space(it->text);
 }
 
@@ -1737,11 +1730,9 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
    Evas_Object_Textblock_Item *pit, *new_it = NULL;
    Evas_List *remove_items = NULL, *l;
    int index, tw, th, inset, adv;
-   
+
    /* it is not appended yet */
-   for (pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
-	pit;
-	pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)pit)->prev)
+   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(c->ln->items)), pit)
      {
 	if (_layout_ends_with_space(pit->text))
 	  {
@@ -1763,7 +1754,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
      }
    for (l = remove_items; l; l = l->next)
      {
-	c->ln->items = evas_object_list_remove(c->ln->items, l->data);
+       c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_remove(EINA_INLIST_GET(c->ln->items), l->data);
      }
    /* new line now */
    if (remove_items)
@@ -1792,7 +1783,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 	if (new_it->format->font.font)
 	  adv = c->ENFN->font_h_advance_get(c->ENDT, new_it->format->font.font, new_it->text);
 	c->x += adv;
-	c->ln->items = evas_object_list_append(c->ln->items, new_it);
+	c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(new_it));
      }
    while (remove_items)
      {
@@ -1802,7 +1793,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 	pit->x = c->x;
 	adv = c->ENFN->font_h_advance_get(c->ENDT, pit->format->font.font, pit->text);
 	c->x += adv;
-	c->ln->items = evas_object_list_append(c->ln->items, pit);
+	c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(pit));
      }
    if (it)
      {
@@ -1812,7 +1803,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 	if (it->format->font.font)
 	  adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
 	c->x += adv;
-	c->ln->items = evas_object_list_append(c->ln->items, it);
+	c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(it));
      }
 }
 
@@ -1896,7 +1887,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				      if (it->text) free(it->text);
 				      _format_free(c->obj, it->format);
 				      free(it);
-				      it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+				      it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
 				      _layout_strip_trailing_whitespace(c, fmt, it);
 				      twrap = _layout_word_end(str, wrap);
 				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
@@ -2010,7 +2001,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	     if (fmt->font.font)
 	       adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font, it->text);
 	     c->x += adv;
-	     c->ln->items = evas_object_list_append(c->ln->items, it);
+	     c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(it));
 	  }
 	if (new_line)
 	  {
@@ -2037,7 +2028,8 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node *n, char *item)
    fi = calloc(1, sizeof(Evas_Object_Textblock_Format_Item));
    fi->item = eina_stringshare_add(item);
    fi->source_node = n;
-   c->ln->format_items = evas_object_list_append(c->ln->format_items, fi);
+   c->ln->format_items = (Evas_Object_Textblock_Format_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->format_items),
+										 EINA_INLIST_GET(fi));
    return fi;
 }
 
@@ -2046,7 +2038,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 {
    Evas_Object_Textblock *o;
    Ctxt ctxt, *c;
-   Evas_Object_List *l;
+   Evas_Object_Textblock_Line *ln;
+   Evas_Object_Textblock_Node *n;
    Evas_List *removes = NULL;
    Evas_Object_Textblock_Format *fmt = NULL;
    int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
@@ -2085,11 +2078,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	return;
      }
    /* run through all text and format nodes generating lines */
-   for (l = (Evas_Object_List *)c->o->nodes; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(c->o->nodes, n)
      {
-	Evas_Object_Textblock_Node *n;
-	
-	n = (Evas_Object_Textblock_Node *)l;
 	if (!c->ln) _layout_line_new(c, fmt);
 	if ((n->type == NODE_FORMAT) && (n->text))
 	  {
@@ -2143,7 +2133,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 			      {
 				 Evas_Object_Textblock_Item *it;
 				 
-				 it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+				 it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
 				 _layout_strip_trailing_whitespace(c, fmt, it);
 			      }
 			    fi = _layout_format_item_add(c, n, item);
@@ -2183,11 +2173,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	c->format_stack = evas_list_remove_list(c->format_stack, c->format_stack);
 	_format_free(c->obj, fmt);
      }
-   for (l = (Evas_Object_List *)c->lines; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(c->lines, ln)
      {
-	Evas_Object_Textblock_Line *ln;
-	
-	ln = (Evas_Object_Textblock_Line *)l;
 	if (ln->line_no == -1)
 	  {
 	     removes = evas_list_append(removes, ln);
@@ -2199,10 +2186,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
      }
    while (removes)
      {
-	Evas_Object_Textblock_Line *ln;
-	
 	ln = removes->data;
-	c->lines = evas_object_list_remove(c->lines, ln);
+	c->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(c->lines), EINA_INLIST_GET(ln));
 	removes = evas_list_remove_list(removes, removes);
 	_line_free(obj, ln);
      }
@@ -2260,26 +2245,20 @@ _relayout(const Evas_Object *obj)
 static void
 _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
 {
-   Evas_Object_List *l, *ll;
+   Evas_Object_Textblock_Line *ln;
+/*    Evas_Object_Textblock_Node *nn; */
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
-   for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
+/*    EINA_INLIST_ITER_NEXT(o->nodes, nn) */
+/*      ; */
+   EINA_INLIST_ITER_NEXT(o->lines, ln)
      {
-	Evas_Object_Textblock_Node *nn;
-	
-	nn = l;
-     }
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
-     {
-        Evas_Object_Textblock_Line *ln;
+	Evas_Object_Textblock_Format_Item *fit;
+	Evas_Object_Textblock_Item *it;
 
-        ln = (Evas_Object_Textblock_Line *)l;
-	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	EINA_INLIST_ITER_NEXT(ln->items, it)
 	  {
-	     Evas_Object_Textblock_Item *it;
-
-	     it = (Evas_Object_Textblock_Item *)ll;
 	     if (it->source_node == n)
 	       {
 		  if ((int)(it->source_pos + strlen(it->text)) >= pos)
@@ -2290,15 +2269,13 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 		    }
 	       }
 	  }
-	for (ll = (Evas_Object_List *)ln->format_items; ll; ll = ll->next)
+	EINA_INLIST_ITER_NEXT(ln->format_items, fit)
 	  {
-	     Evas_Object_Textblock_Format_Item *it;
-
-	     it = (Evas_Object_Textblock_Format_Item *)ll;
-	     if (it->source_node == n)
+	     if (fit->source_node == n)
 	       {
 		  *lnr = ln;
-		  *itr = it;
+		  /* FIXME: Is that really what we want ? */
+		  *itr = fit;
 		  return;
 	       }
 	  }
@@ -2308,20 +2285,16 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 static void
 _find_layout_format_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Format_Item **fir)
 {
-   Evas_Object_List *l, *ll;
+   Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(o->lines, ln)
      {
-        Evas_Object_Textblock_Line *ln;
+	Evas_Object_Textblock_Format_Item *fi;
 
-        ln = (Evas_Object_Textblock_Line *)l;
-	for (ll = (Evas_Object_List *)ln->format_items; ll; ll = ll->next)
+	EINA_INLIST_ITER_NEXT(ln->format_items, fi)
 	  {
-	     Evas_Object_Textblock_Format_Item *fi;
-
-	     fi = (Evas_Object_Textblock_Format_Item *)ll;
 	     if (fi->source_node == n)
 	       {
 		  *lnr = ln;
@@ -2335,15 +2308,12 @@ _find_layout_format_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node
 static Evas_Object_Textblock_Line *
 _find_layout_line_num(const Evas_Object *obj, int line)
 {
-   Evas_Object_List *l;
+   Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
    
    o = (Evas_Object_Textblock *)(obj->object_data);
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(o->lines, ln)
      {
-        Evas_Object_Textblock_Line *ln;
-
-        ln = (Evas_Object_Textblock_Line *)l;
 	if (ln->line_no == line) return ln;
      }
    return NULL;
@@ -2495,7 +2465,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 			      {
 				 tag->tag = tags;
 				 tag->replace = replaces;
-				 ts->tags = evas_object_list_append(ts->tags, tag);
+				 ts->tags = (Evas_Object_Style_Tag *)eina_inlist_append(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
 			      }
 			    else
 			      {
@@ -2941,17 +2911,14 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
 EAPI const char *
 evas_object_textblock_text_markup_get(const Evas_Object *obj)
 {
-   Evas_Object_List *l;
+   Evas_Object_Textblock_Node *n;
    char *txt = NULL;
    int txt_len = 0, txt_alloc = 0;
    
    TB_HEAD_RETURN(NULL);
    if (o->markup_text) return(o->markup_text);
-   for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(o->nodes, n)
      {
-	Evas_Object_Textblock_Node *n;
-	
-	n = (Evas_Object_Textblock_Node *)l;
         if ((n->type == NODE_FORMAT) && (n->text))
 	  {
 	     char *tag = _style_match_replace(o->style, n->text);
@@ -3090,7 +3057,7 @@ evas_textblock_cursor_node_last(Evas_Textblock_Cursor *cur)
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (o->nodes)
      {
-	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(o->nodes))->last);
+	cur->node = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(o->nodes))->last);
 	cur->pos = 0;
 	evas_textblock_cursor_char_last(cur);
      }
@@ -3114,9 +3081,9 @@ evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
    if (!cur) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!cur->node) return 0;
-   if (((Evas_Object_List *)(cur->node))->next)
+   if ((EINA_INLIST_GET(cur->node))->next)
      {
-	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(cur->node))->next);
+	cur->node = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(cur->node))->next);
 	cur->pos = 0;
 	return 1;
      }
@@ -3136,9 +3103,9 @@ evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur)
    if (!cur) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!cur->node) return 0;
-   if (((Evas_Object_List *)(cur->node))->prev)
+   if ((EINA_INLIST_GET(cur->node))->prev)
      {
-	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(cur->node))->prev);
+	cur->node = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(cur->node))->prev);
 	evas_textblock_cursor_char_last(cur);
 	return 1;
      }
@@ -3292,11 +3259,11 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
      _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
    if (!ln) return;
    if (ln->items)
-     it = (Evas_Object_Textblock_Item *)(((Evas_Object_List *)ln->items)->last);
+     it = (Evas_Object_Textblock_Item *)((EINA_INLIST_GET(ln->items))->last);
    else
      it = NULL;
    if (ln->format_items)
-     fi = (Evas_Object_Textblock_Format_Item *)(((Evas_Object_List *)ln->format_items)->last);
+     fi = (Evas_Object_Textblock_Format_Item *)((EINA_INLIST_GET(ln->format_items))->last);
    else
      fi = NULL;
    if ((it) && (fi))
@@ -3398,7 +3365,7 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 EAPI int
 evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
-   Evas_Object_List *l1, *l2;
+   Eina_Inlist *l1, *l2;
    
    if (!cur1) return 0;
    if (!cur2) return 0;
@@ -3410,11 +3377,11 @@ evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Text
 	else if (cur1->pos > cur2->pos) return 1; /* cur2 < cur1 */
 	return 0; /* cur1 == cur2 */
      }
-   for (l1 = (Evas_Object_List *)cur1->node, 
-	l2 = (Evas_Object_List *)cur1->node; (l1) || (l2);)
+   for (l1 = EINA_INLIST_GET(cur1->node),
+	  l2 = EINA_INLIST_GET(cur1->node); (l1) || (l2);)
      {
-	if (l1 == (Evas_Object_List *)cur2->node) return 1; /* cur2 < cur 1 */
-	else if (l2 == (Evas_Object_List *)cur2->node) return -1; /* cur1 < cur 2 */
+	if (l1 == EINA_INLIST_GET(cur2->node)) return 1; /* cur2 < cur 1 */
+	else if (l2 == EINA_INLIST_GET(cur2->node)) return -1; /* cur1 < cur 2 */
 	else if (!l1) return -1; /* cur1 < cur 2 */
 	else if (!l2) return 1; /* cur2 < cur 1 */
 	if (l1) l1 = l1->prev;
@@ -3486,9 +3453,11 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
 	n = calloc(1, sizeof(Evas_Object_Textblock_Node));
 	n->type = NODE_TEXT;
 	if (nrel)
-	  o->nodes = evas_object_list_append_relative(o->nodes, n, nrel);
+	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
+									       EINA_INLIST_GET(n),
+									       EINA_INLIST_GET(nrel));
 	else
-	  o->nodes = evas_object_list_append(o->nodes, n);
+	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
      }
    cur->node = n;
    index = cur->pos;
@@ -3563,9 +3532,11 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 	n = calloc(1, sizeof(Evas_Object_Textblock_Node));
 	n->type = NODE_TEXT;
 	if (nrel)
-	  o->nodes = evas_object_list_prepend_relative(o->nodes, n, nrel);
+	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend_relative(EINA_INLIST_GET(o->nodes),
+										EINA_INLIST_GET(n),
+										EINA_INLIST_GET(nrel));
 	else
-	  o->nodes = evas_object_list_prepend(o->nodes, n);
+	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
      }
    cur->node = n;
    index = cur->pos;
@@ -3607,11 +3578,13 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
    n->alloc = n->len + 1;
    if (!nc)
      {
-	o->nodes = evas_object_list_append(o->nodes, n);
+        o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
      }
    else if (nc->type == NODE_FORMAT)
      {
-	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+        o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
+									     EINA_INLIST_GET(n),
+									     EINA_INLIST_GET(nc));
      }
    else if (nc->type == NODE_TEXT)
      {
@@ -3625,13 +3598,17 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
 	     if (ch != 0)
 	       cur->pos = index;
 	  }
-	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+	o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
+									     EINA_INLIST_GET(n),
+									     EINA_INLIST_GET(nc));
 	if ((ch != 0) && (cur->pos < nc->len))
 	  {
 	     n2 = calloc(1, sizeof(Evas_Object_Textblock_Node));
 	     n2->type = NODE_TEXT;
 	     n2->text = _strbuf_append(n2->text, (char *)(nc->text + cur->pos), &(n2->len), &(n2->alloc));
-	     o->nodes = evas_object_list_append_relative(o->nodes, n2, n);
+	     o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
+										  EINA_INLIST_GET(n2),
+										  EINA_INLIST_GET(n));
 	     
 	     *(nc->text + cur->pos) = 0;
 	     nc->len = cur->pos;
@@ -3678,13 +3655,15 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
    n->alloc = n->len + 1;
    if (!nc)
      {
-	o->nodes = evas_object_list_prepend(o->nodes, n);
+	o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
 	cur->node = n;
 	cur->pos = 0;
      }
    else if (nc->type == NODE_FORMAT)
      {
-	o->nodes = evas_object_list_prepend_relative(o->nodes, n, nc);
+        o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend_relative(EINA_INLIST_GET(o->nodes),
+									      EINA_INLIST_GET(n),
+									      EINA_INLIST_GET(nc));
 	cur->node = nc;
 	cur->pos = 0;
      }
@@ -3693,15 +3672,21 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
 	char *ts;
 	
 	if (cur->pos == 0)
-	  o->nodes = evas_object_list_prepend_relative(o->nodes, n, nc);
+ 	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend_relative(EINA_INLIST_GET(o->nodes),
+										EINA_INLIST_GET(n),
+										EINA_INLIST_GET(nc));
 	else
-	  o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
+									       EINA_INLIST_GET(n),
+									       EINA_INLIST_GET(nc));
 	if ((cur->pos <= nc->len) && (cur->pos != 0))
 	  {
 	     n2 = calloc(1, sizeof(Evas_Object_Textblock_Node));
 	     n2->type = NODE_TEXT;
 	     n2->text = _strbuf_append(n2->text, (char *)(nc->text + cur->pos), &(n2->len), &(n2->alloc));
-	     o->nodes = evas_object_list_append_relative(o->nodes, n2, n);
+	     o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_append_relative(EINA_INLIST_GET(o->nodes),
+										  EINA_INLIST_GET(n2),
+										  EINA_INLIST_GET(n));
 	     
 	     *(nc->text + cur->pos) = 0;
 	     nc->len = cur->pos;
@@ -3746,8 +3731,8 @@ evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    n = cur->node;
    if ((n->text) && (!strcmp(n->text, "\n")) && 
-       (!((Evas_Object_List *)n)->next)) return;
-   n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n)->next);
+       (!(EINA_INLIST_GET(n))->next)) return;
+   n2 = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(n))->next);
    if (n2)
      {
 	cur->node = n2;
@@ -3755,7 +3740,7 @@ evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
      }
    else
      {
-	n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n)->prev);
+	n2 = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(n))->prev);
 	cur->node = n2;
 	cur->pos = 0;
 	evas_textblock_cursor_char_last(cur);
@@ -3785,7 +3770,7 @@ evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
 	  }
      }
    
-   o->nodes = evas_object_list_remove(o->nodes, n);
+   o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
    if (n->text) free(n->text);
    free(n);
    
@@ -3834,7 +3819,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
      }
    if (cur->pos == n->len)
      {
-	n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n)->next);
+	n2 = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(n))->next);
 	if (n2)
 	  {
 	     cur->node = n2;
@@ -3893,7 +3878,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n1, *n2, *n, *tn;
-   Evas_Object_List *l;
    int chr, index;
    
    if (!cur1) return;
@@ -3932,7 +3916,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 	       }
 	     if (cur1->pos >= n1->len)
 	       {
-		  n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n1)->next);
+		  n2 = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(n1))->next);
 		  if (n2)
 		    {
 		       cur1->node = n2;
@@ -3953,14 +3937,15 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      {
 	Evas_List *removes, *format_hump = NULL;
 	Evas_Textblock_Cursor tcur;
-	
+	Eina_Inlist *l;
+
 	tcur.node = n2;
 	tcur.pos = 0;
 	index = cur2->pos;
 	chr = evas_common_font_utf8_get_next((unsigned char *)n2->text, &index);
 	if ((chr == 0) || (index >= n2->len))
 	  {
-	     tcur.node = (Evas_Object_Textblock_Node *)((Evas_Object_List *)n2)->next;
+	     tcur.node = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n2))->next;
 	     tcur.pos = 0;
 	     if (!tcur.node)
 	       {
@@ -3973,7 +3958,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 		    }
 		  else
 		    {
-		       tcur.node = (Evas_Object_Textblock_Node *)((Evas_Object_List *)n1)->prev;
+		       tcur.node = (Evas_Object_Textblock_Node *)(EINA_INLIST_GET(n1))->prev;
 		       if ((tcur.node) && (tcur.node->type == NODE_TEXT))
 			 tcur.pos = evas_common_font_utf8_get_last((unsigned char *)tcur.node->text, tcur.node->len);
 		       else
@@ -3983,7 +3968,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 	  }
 	n1->text = _strbuf_remove(n1->text, cur1->pos, n1->len, &(n1->len), &(n1->alloc));
 	removes = NULL;
-	for (l = ((Evas_Object_List *)n1)->next; l != (Evas_Object_List *)n2; l = l->next)
+	for (l = (EINA_INLIST_GET(n1))->next; l != EINA_INLIST_GET(n2); l = l->next)
 	  removes = evas_list_append(removes, l);
 	if (n1->type == NODE_TEXT)
 	  {
@@ -3996,7 +3981,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 	       format_hump = evas_list_append(format_hump, n1);
 	     else
 	       {
-		  o->nodes = evas_object_list_remove(o->nodes, n1);
+                  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n1));
 		  if (n1->text) free(n1->text);
 		  free(n1);
 	       }
@@ -4007,7 +3992,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 	     n = removes->data;
 	     if (n->type == NODE_TEXT)
 	       {
-		  o->nodes = evas_object_list_remove(o->nodes, n);
+    		  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
 		  if (n->text) free(n->text);
 		  free(n);
 	       }
@@ -4023,17 +4008,20 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 		       if (tn)
 			 {
 			    format_hump = evas_list_remove_list(format_hump, evas_list_last(format_hump));
-			    o->nodes = evas_object_list_remove(o->nodes, tn);
+			    o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes),
+											EINA_INLIST_GET(tn));
 			    if (tn->text) free(tn->text);
 			    free(tn);
-			    o->nodes = evas_object_list_remove(o->nodes, n);
+			    o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes),
+											EINA_INLIST_GET(n));
 			    if (n->text) free(n->text);
 			    free(n);
 			 }
 		    }
 		  else
 		    {
-		       o->nodes = evas_object_list_remove(o->nodes, n);
+		       o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes),
+										   EINA_INLIST_GET(n));
 		       if (n->text) free(n->text);
 		       free(n);
 		    }
@@ -4050,14 +4038,14 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 	  {
 	     if (tcur.node == n2)
 	       {
-		  if (((Evas_Object_List *)n2)->next)
+		  if ((EINA_INLIST_GET(n2))->next)
 		    {
-		       tcur.node = ((Evas_Object_List *)n2)->next;
+		       tcur.node = (Evas_Object_Textblock_Node *) (EINA_INLIST_GET(n2))->next;
 		       tcur.pos = 0;
 		    }
 		  else
 		    {
-		       tcur.node = ((Evas_Object_List *)n2)->next;
+		       tcur.node = (Evas_Object_Textblock_Node *) (EINA_INLIST_GET(n2))->next;
 		       if (tcur.node)
 			 {
 			    if (tcur.node->type == NODE_TEXT)
@@ -4069,7 +4057,8 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 	       }
 	     if (n2->text[0] == '-')
 	       {
-		  o->nodes = evas_object_list_remove(o->nodes, n2);
+		  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes),
+									      EINA_INLIST_GET(n2));
 		  if (n2->text) free(n2->text);
 		  free(n2);
 		  n = evas_list_data(evas_list_last(format_hump));
@@ -4077,14 +4066,14 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 		    {
 		       if (tcur.node == n)
 			 {
-			    if (((Evas_Object_List *)n)->next)
+			    if ((EINA_INLIST_GET(n))->next)
 			      {
-				 tcur.node = ((Evas_Object_List *)n)->next;
+				 tcur.node = (Evas_Object_Textblock_Node *) (EINA_INLIST_GET(n))->next;
 				 tcur.pos = 0;
 			      }
 			    else
 			      {
-				 tcur.node = ((Evas_Object_List *)n)->next;
+				 tcur.node = (Evas_Object_Textblock_Node *) (EINA_INLIST_GET(n))->next;
 				 if (tcur.node)
 				   {
 				      if (tcur.node->type == NODE_TEXT)
@@ -4094,14 +4083,16 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 				   }
 			      }
 			 }
-		       o->nodes = evas_object_list_remove(o->nodes, n);
+  		       o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes),
+										   EINA_INLIST_GET(n));
 		       if (n->text) free(n->text);
 		       free(n);
 		    }
 	       }
 	     else
 	       {
-		  o->nodes = evas_object_list_remove(o->nodes, n2);
+  		  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_remove(EINA_INLIST_GET(o->nodes),
+									      EINA_INLIST_GET(n2));
 		  if (n2->text) free(n2->text);
 		  free(n2);
 	       }
@@ -4257,7 +4248,6 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n1, *n2, *n;
-   Evas_Object_List *l;
    char *str = NULL, *s;
    int len = 0, alloc = 0, chr, index;
    
@@ -4277,9 +4267,8 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    n2 = cur2->node;
    index = cur2->pos;
    chr = evas_common_font_utf8_get_next((unsigned char *)n2->text, &index);
-   for (l = (Evas_Object_List *)n1; ;l = l->next)
+   EINA_INLIST_ITER_NEXT(n1, n)
      {
-	n = (Evas_Object_Textblock_Node *)l;
 	if (n->type == NODE_TEXT)
 	  {
 	     s = n->text;
@@ -4411,7 +4400,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		  str = _strbuf_append(str, ">", &len, &alloc);
 	       }
 	  }
-	if (l == (Evas_Object_List *)n2) break;
+	if (n == n2) break;
      }
    return str;
 }
@@ -4548,7 +4537,7 @@ EAPI Evas_Bool
 evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_List *l, *ll;
+   Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
    
@@ -4557,17 +4546,13 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    if (!o->formatted.valid) _relayout(cur->obj);
    x += o->style_pad.l;
    y += o->style_pad.t;
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(o->lines, ln)
      {
-        Evas_Object_Textblock_Line *ln;
-
-        ln = (Evas_Object_Textblock_Line *)l;
 	if (ln->y > y) break;
 	if ((ln->y <= y) && ((ln->y + ln->h) > y))
 	  {
-	     for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	     EINA_INLIST_ITER_NEXT(ln->items, it)
 	       {
-		  it = (Evas_Object_Textblock_Item *)ll;
 		  if ((it->x + ln->x) > x)
 		    {
 		       it_break = it;
@@ -4577,7 +4562,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 		    {
 		       int pos;
 		       int cx, cy, cw, ch;
-		       
+
 		       pos = -1;
 		       if (it->format->font.font)
 			 pos = cur->ENFN->font_char_at_coords_get(cur->ENDT,
@@ -4592,9 +4577,8 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 		       return 1;
 		    }
 	       }
-	     for (ll = (Evas_Object_List *)ln->format_items; ll; ll = ll->next)
+	     EINA_INLIST_ITER_NEXT(ln->format_items, fi)
 	       {
-		  fi = (Evas_Object_Textblock_Format_Item *)ll;
 		  if ((fi->x + ln->x) > x) break;
 		  if (((fi->x + ln->x) <= x) && (((fi->x + ln->x) + fi->w) > x))
 		    {
@@ -4625,17 +4609,14 @@ EAPI int
 evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_List *l;
-   
+   Evas_Object_Textblock_Line *ln;
+
    if (!cur) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    y += o->style_pad.t;
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(o->lines, ln)
      {
-        Evas_Object_Textblock_Line *ln;
-
-        ln = (Evas_Object_Textblock_Line *)l;
 	if (ln->y > y) break;
 	if ((ln->y <= y) && ((ln->y + ln->h) > y))
 	  {
@@ -4934,8 +4915,8 @@ evas_object_textblock_free(Evas_Object *obj)
 static void
 evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
+   Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
-   Evas_Object_List *l, *ll;
    int i, j;
    int pback = 0, backx = 0;
    int pline = 0, linex = 0;
@@ -4975,21 +4956,18 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 ////                                                  obj->cur.cache.geometry.h);
 #endif
 #define ITEM_WALK() \
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next) \
+   EINA_INLIST_ITER_NEXT(o->lines, ln) \
      { \
-	Evas_Object_Textblock_Line *ln; \
+	Evas_Object_Textblock_Item *it; \
 	\
-	ln = (Evas_Object_Textblock_Line *)l; \
         pback = 0; \
         pline = 0; \
         pline2 = 0; \
 	pstrike = 0; \
-	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next) \
+	EINA_INLIST_ITER_NEXT(ln->items, it) \
 	  { \
-	     Evas_Object_Textblock_Item *it; \
 	     int yoff; \
 	     \
-	     it = (Evas_Object_Textblock_Item *)ll; \
 	     yoff = ln->baseline; \
 	     if (it->format->valign != -1.0) \
 	       yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline;
@@ -5026,7 +5004,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    pback = 0;
    /* backing */
    ITEM_WALK();
-   if ((it->format->backing) && (!pback) && (ll->next))
+   if ((it->format->backing) && (!pback) && ((EINA_INLIST_GET(it))->next))
      {
 	pback = 1;
 	backx = it->x;
@@ -5036,7 +5014,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	a = it->format->color.backing.a;
      }
    else if (((pback) && (!it->format->backing)) ||
-	    (!ll->next) ||
+	    (!(EINA_INLIST_GET(it))->next) ||
 	    (it->format->color.backing.r != r) ||
 	    (it->format->color.backing.g != g) ||
 	    (it->format->color.backing.b != b) ||
@@ -5182,7 +5160,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    ITEM_WALK();
    COLOR_SET(normal);
    DRAW_TEXT(0, 0);
-   if ((it->format->strikethrough) && (!pstrike) && (ll->next))
+   if ((it->format->strikethrough) && (!pstrike) && ((EINA_INLIST_GET(it))->next))
      {
 	pstrike = 1;
 	strikex = it->x;
@@ -5192,7 +5170,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	a3 = it->format->color.strikethrough.a;
      }
    else if (((pstrike) && (!it->format->strikethrough)) ||
-	    (!ll->next) ||
+	    (!(EINA_INLIST_GET(it))->next) ||
 	    (it->format->color.strikethrough.r != r3) ||
 	    (it->format->color.strikethrough.g != g3) ||
 	    (it->format->color.strikethrough.b != b3) ||
@@ -5237,7 +5215,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	b3 = it->format->color.strikethrough.b;
 	a3 = it->format->color.strikethrough.a;
      }
-   if ((it->format->underline) && (!pline) && (ll->next))
+   if ((it->format->underline) && (!pline) && ((EINA_INLIST_GET(it))->next))
      {
 	pline = 1;
 	linex = it->x;
@@ -5247,7 +5225,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	a = it->format->color.underline.a;
      }
    else if (((pline) && (!it->format->underline)) ||
-	    (!ll->next) ||
+	    (!(EINA_INLIST_GET(it))->next) ||
 	    (it->format->color.underline.r != r) ||
 	    (it->format->color.underline.g != g) ||
 	    (it->format->color.underline.b != b) ||
@@ -5292,7 +5270,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	b = it->format->color.underline.b;
 	a = it->format->color.underline.a;
      }
-   if ((it->format->underline2) && (!pline2) && (ll->next))
+   if ((it->format->underline2) && (!pline2) && ((EINA_INLIST_GET(it))->next))
      {
 	pline2 = 1;
 	line2x = it->x;
@@ -5302,7 +5280,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	a2 = it->format->color.underline2.a;
      }
    else if (((pline2) && (!it->format->underline2)) ||
-	    (!ll->next) ||
+	    (!(EINA_INLIST_GET(it))->next) ||
 	    (it->format->color.underline2.r != r2) ||
 	    (it->format->color.underline2.g != g2) ||
 	    (it->format->color.underline2.b != b2) ||
@@ -5553,19 +5531,15 @@ void
 _evas_object_textblock_rehint(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_List *l, *ll;
-   
+   Evas_Object_Textblock_Line *ln;
+
    o = (Evas_Object_Textblock *)(obj->object_data);
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(o->lines, ln)
      {
-	Evas_Object_Textblock_Line *ln;
-	
-	ln = (Evas_Object_Textblock_Line *)l;
-	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	Evas_Object_Textblock_Item *it;
+
+	EINA_INLIST_ITER_NEXT(ln->items, it)
 	  {
-	     Evas_Object_Textblock_Item *it;
-	     
-	     it = (Evas_Object_Textblock_Item *)ll;
 	     if (it->format->font.font)
 	       evas_font_load_hinting_set(obj->layer->evas,
 					  it->format->font.font,

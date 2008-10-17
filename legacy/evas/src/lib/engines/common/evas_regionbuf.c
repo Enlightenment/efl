@@ -33,7 +33,7 @@ evas_common_regionbuf_clear(Regionbuf *rb)
 	     Regionspan *span;
 
 	     span = rb->spans[y];
-	     rb->spans[y] = evas_object_list_remove(rb->spans[y], rb->spans[y]);
+	     rb->spans[y] = eina_inlist_remove(rb->spans[y], rb->spans[y]);
 	     free(span);
 	  }
      }
@@ -42,7 +42,6 @@ evas_common_regionbuf_clear(Regionbuf *rb)
 void
 evas_common_regionbuf_span_add(Regionbuf *rb, int x1, int x2, int y)
 {
-   Evas_Object_List *l;
    Regionspan *span, *span2, *nspan, *sp_start, *sp_stop;
 
    /* abort if outside */
@@ -55,10 +54,9 @@ evas_common_regionbuf_span_add(Regionbuf *rb, int x1, int x2, int y)
    if (x2 < (rb->w - 1)) x2 = rb->w - 1;
    sp_start = NULL;
    sp_stop = NULL;
-   for (l = (Evas_Object_List *)rb->spans[y]; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(rb->spans[y], span)
      {
-	span = (Regionspan *)l;
-	nspan = (Regionspan *)l->next;
+	nspan = (Regionspan *)(EINA_INLIST_GET(span))->next;
 	/* we dont know what t do with the span yet */
 	if (!sp_start)
 	  {
@@ -110,7 +108,7 @@ evas_common_regionbuf_span_add(Regionbuf *rb, int x1, int x2, int y)
 		  span2 = calloc(1, sizeof(Regionspan));
 		  span2->x1 = x1;
 		  span2->x2 = x2;
-		  rb->spans[y] = evas_object_list_prepend_relative(rb->spans[y], span2, sp_start);
+		  rb->spans[y] = eina_inlist_prepend_relative(rb->spans[y], span2, sp_start);
 		  return;
 	       }
 	     if (x1 < sp_start->x1)
@@ -121,17 +119,19 @@ evas_common_regionbuf_span_add(Regionbuf *rb, int x1, int x2, int y)
 	  }
 	else
 	  {
+	     Eina_Inlist *l;
+
 	     /* remove all nodes after sp_start and before_sp_stop because
 	      * the new  */
-	     for (l = ((Evas_Object_List *)sp_start)->next; l != (Evas_Object_List *)sp_stop;)
+	     for (l = (EINA_INLIST_GET(sp_start))->next; l != EINA_INLIST_GET(sp_stop);)
 	       {
 		  span = (Regionspan *)l;
 		  l = l->next;
-		  rb->spans[y] = evas_object_list_remove(rb->spans[y], span);
+		  rb->spans[y] = eina_inlist_remove(rb->spans[y], span);
 		  free(span);
 	       }
 	     /* remove the end span */
-	     rb->spans[y] = evas_object_list_remove(rb->spans[y], sp_stop);
+	     rb->spans[y] = eina_inlist_remove(rb->spans[y], sp_stop);
 	     /* if the new span is before the start span - extend */
 	     if (x1 < sp_start->x1)
 	       sp_start->x1 = x1;
@@ -149,14 +149,13 @@ evas_common_regionbuf_span_add(Regionbuf *rb, int x1, int x2, int y)
    span2 = calloc(1, sizeof(Regionspan));
    span2->x1 = x1;
    span2->x2 = x2;
-   rb->spans[y] = evas_object_list_append(rb->spans[y], span2);
+   rb->spans[y] = eina_inlist_append(rb->spans[y], span2);
 }
 
 void
 evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
 {
    /* FIXME: del span */
-   Evas_Object_List *l;
    Regionspan *span, *span2, *nspan, *sp_start, *sp_stop;
 
    /* abort if outside */
@@ -169,10 +168,9 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
    if (x2 < (rb->w - 1)) x2 = rb->w - 1;
    sp_start = NULL;
    sp_stop = NULL;
-   for (l = (Evas_Object_List *)rb->spans[y]; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(rb->spans[y], span)
      {
-	span = (Regionspan *)l;
-	nspan = (Regionspan *)l->next;
+	nspan = (Regionspan *)(EINA_INLIST_GET(l))->next;
 	/* we dont know what t do with the span yet */
 	if (!sp_start)
 	  {
@@ -233,7 +231,7 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
 		    }
 		  else
 		    {
-		       rb->spans[y] = evas_object_list_remove(rb->spans[y], sp_start);
+		       rb->spans[y] = eina_inlist_remove(rb->spans[y], sp_start);
 		       return;
 		    }
 	       }
@@ -249,7 +247,7 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
 		  /* remove it all */
 		  else
 		    {
-		       rb->spans[y] = evas_object_list_remove(rb->spans[y], sp_start);
+		       rb->spans[y] = eina_inlist_remove(rb->spans[y], sp_start);
 		       return;
 		    }
 		  return;
@@ -260,26 +258,28 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
 		  span2 = calloc(1, sizeof(Regionspan));
 		  span2->x1 = sp_start->x1;
 		  span2->x2 = x1 - 1;
-		  rb->spans[y] = evas_object_list_prepend_relative(rb->spans[y], span2, sp_start);
+		  rb->spans[y] = eina_inlist_prepend_relative(rb->spans[y], span2, sp_start);
 		  sp_start->x1 = x2 + 1;
 		  return;
 	       }
 	  }
 	else
 	  {
+	     Eina_Inlist *l;
+
 	     /* remove all nodes after sp_start and before_sp_stop because
 	      * the new  */
-	     for (l = ((Evas_Object_List *)sp_start)->next; l != (Evas_Object_List *)sp_stop;)
+	     for (l = (EINA_INLIST_GET(sp_start))->next; l != EINA_INLIST_GET(sp_stop);)
 	       {
 		  span = (Regionspan *)l;
 		  l = l->next;
-		  rb->spans[y] = evas_object_list_remove(rb->spans[y], span);
+		  rb->spans[y] = eina_inlist_remove(rb->spans[y], span);
 		  free(span);
 	       }
 	     /* all of the start span is cut out */
 	     if (x1 <= sp_start->x1)
 	       {
-		  rb->spans[y] = evas_object_list_remove(rb->spans[y], sp_start);
+		  rb->spans[y] = eina_inlist_remove(rb->spans[y], sp_start);
 		  free(sp_start);
 	       }
 	     /* chup it off at the new span start */
@@ -288,7 +288,7 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
 	     /* all of the end span is cut out */
 	     if (x2 >= sp_stop->x2)
 	       {
-		  rb->spans[y] = evas_object_list_remove(rb->spans[y], sp_stop);
+		  rb->spans[y] = eina_inlist_remove(rb->spans[y], sp_stop);
 		  free(sp_stop);
 	       }
 	     /* chop it up at the end */
@@ -308,22 +308,22 @@ evas_common_regionbuf_rects_get(Regionbuf *rb)
    /* FIXME: take spans, make rects */
    for (y = 0; y < rb->h; y++)
      {
-	Evas_Object_List *l, *ll;
+	Regionspan *sp_start;
+	Eina_Inlist *l, *ll;
 
-	for (l = (Evas_Object_List *)rb->spans[y]; l;)
+	for (l = EINA_INLIST_GET(rb->spans[y]); l;)
 	  {
 	     Regionspan *span;
-	     Regionspan *sp_start;
 	     int yy;
 
 	     sp_start = (Regionspan *)l;
 	     l = l->next;
-	     rb->spans[y] = evas_object_list_remove(rb->spans[y], sp_start);
+	     rb->spans[y] = eina_inlist_remove(rb->spans[y], sp_start);
 	     for (yy = y + 1; yy < rb->h; yy++)
 	       {
 		  int match = 0;
 
-		  for (ll = (Evas_Object_List *)rb->spans[yy]; ll;)
+		  for (ll = EINA_INLIST_GET(rb->spans[yy]); ll;)
 		    {
 		       span = (Regionspan *)ll;
 		       ll = ll->next;
@@ -335,7 +335,7 @@ evas_common_regionbuf_rects_get(Regionbuf *rb)
 				 goto coallate;
 			      }
 			    match = 1;
-			    rb->spans[yy] = evas_object_list_remove(rb->spans[yy], span);
+			    rb->spans[yy] = eina_inlist_remove(rb->spans[yy], span);
 			    free(span);
 			 }
 		    }
@@ -347,7 +347,7 @@ evas_common_regionbuf_rects_get(Regionbuf *rb)
 	     r->y = y;
 	     r->w = sp_start->x2 - sp_start->x1 + 1;
 	     r->h = yy - y;
-	     rects = evas_object_list_append(rects, r);
+	     rects = eina_inlist_append(rects, r);
 	     free(sp_start);
 	  }
      }

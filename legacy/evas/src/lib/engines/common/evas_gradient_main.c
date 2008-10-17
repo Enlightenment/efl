@@ -44,12 +44,12 @@ _evas_common_gradient_stops_free(RGBA_Gradient *gr)
    if (!gr) return;
    if (gr->color.stops)
      {
-	Evas_Object_List *l;
+	Eina_Inlist *l;
 
 	while (gr->color.stops)
 	  {
 	   l = gr->color.stops;
-	   gr->color.stops = evas_object_list_remove(gr->color.stops, gr->color.stops);
+	   gr->color.stops = eina_inlist_remove(gr->color.stops, gr->color.stops);
 	   free(l);
 	  }
 	gr->color.stops = NULL;
@@ -57,12 +57,12 @@ _evas_common_gradient_stops_free(RGBA_Gradient *gr)
      }
    if (gr->alpha.stops)
      {
-	Evas_Object_List *l;
+	Eina_Inlist *l;
 
 	while (gr->alpha.stops)
 	  {
 	   l = gr->alpha.stops;
-	   gr->alpha.stops = evas_object_list_remove(gr->alpha.stops, gr->alpha.stops);
+	   gr->alpha.stops = eina_inlist_remove(gr->alpha.stops, gr->alpha.stops);
 	   free(l);
 	  }
 	gr->alpha.stops = NULL;
@@ -220,7 +220,7 @@ evas_common_gradient_color_stop_add(RGBA_Gradient *gr, int r, int g, int b, int 
 
    if (!gr->color.stops)
      {
-	gr->color.stops = evas_object_list_append(gr->color.stops, gc);
+       gr->color.stops = eina_inlist_append(gr->color.stops, EINA_INLIST_GET(gc));
 	gr->color.nstops = 1;
 	gr->color.len = 1;
 	if (a < 255)
@@ -237,9 +237,9 @@ evas_common_gradient_color_stop_add(RGBA_Gradient *gr, int r, int g, int b, int 
    gcm->b = (gc_last->b + b) / 2;
    gcm->a = (gc_last->a + a) / 2;
    gcm->dist = dist;
-   gr->color.stops = evas_object_list_append(gr->color.stops, gcm);
+   gr->color.stops = eina_inlist_append(gr->color.stops, EINA_INLIST_GET(gcm));
    gr->color.len += gc_last->dist;
-   gr->color.stops = evas_object_list_append(gr->color.stops, gc);
+   gr->color.stops = eina_inlist_append(gr->color.stops, EINA_INLIST_GET(gc));
    gr->color.len += dist;
    gr->color.nstops += 2;
    if (a < 255)
@@ -271,7 +271,7 @@ evas_common_gradient_alpha_stop_add(RGBA_Gradient *gr, int a, int dist)
 
    if (!gr->alpha.stops)
      {
-	gr->alpha.stops = evas_object_list_append(gr->alpha.stops, ga);
+        gr->alpha.stops = eina_inlist_append(gr->alpha.stops, EINA_INLIST_GET(ga));
 	gr->alpha.nstops = 1;
 	gr->alpha.len = 1;
 	if (a < 255)
@@ -285,9 +285,9 @@ evas_common_gradient_alpha_stop_add(RGBA_Gradient *gr, int a, int dist)
 	{ free(ga); free(gam); return; }
    gam->a = (ga_last->a + a) / 2;
    gam->dist = dist;
-   gr->alpha.stops = evas_object_list_append(gr->alpha.stops, gam);
+   gr->alpha.stops = eina_inlist_append(gr->alpha.stops, EINA_INLIST_GET(gam));
    gr->alpha.len += ga_last->dist;
-   gr->alpha.stops = evas_object_list_append(gr->alpha.stops, ga);
+   gr->alpha.stops = eina_inlist_append(gr->alpha.stops, EINA_INLIST_GET(ga));
    gr->alpha.len += dist;
    gr->alpha.nstops += 2;
    if (a < 255)
@@ -617,7 +617,7 @@ evas_common_gradient_map_argb(RGBA_Draw_Context *dc, RGBA_Gradient *gr, int len)
 
    if (gr->color.stops)
      {
-	Evas_Object_List  *lc;
+	Eina_Inlist  *lc;
 	RGBA_Gradient_Color_Stop  *gc, *gc_next;
 	DATA32  *pmap, *map_end;
 	int   i, dii;
@@ -681,7 +681,7 @@ evas_common_gradient_map_argb(RGBA_Draw_Context *dc, RGBA_Gradient *gr, int len)
 
    if (gr->alpha.stops)
      {
-	Evas_Object_List  *lc;
+	Eina_Inlist  *lc;
 	RGBA_Gradient_Alpha_Stop  *ga, *ga_next;
 	DATA8  *pamap, *amap_end;
 	int   i, dii;
@@ -789,7 +789,7 @@ evas_common_gradient_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient *gr, int len)
 
    if (gr->color.stops)
      {
-	Evas_Object_List  *lc;
+	Eina_Inlist  *lc;
 	RGBA_Gradient_Color_Stop  *gc, *gc_next;
 	DATA32  *pmap, *map_end;
 	int   i, dii;
@@ -846,7 +846,7 @@ evas_common_gradient_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient *gr, int len)
 
    if (gr->alpha.stops)
      {
-	Evas_Object_List  *lc;
+	Eina_Inlist  *lc;
 	RGBA_Gradient_Alpha_Stop  *ga, *ga_next;
 	DATA8  *pamap, *amap_end;
 	int   i, dii;

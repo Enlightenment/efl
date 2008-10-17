@@ -10,7 +10,7 @@ struct _Evas_Object_Smart
    void             *engine_data;
    void             *data;
    Evas_List        *callbacks;
-   Evas_Object_List *contained;
+   Eina_Inlist *contained;
    int               walking_list;
    Evas_Bool         deletions_waiting : 1;
    Evas_Bool         need_recalculate : 1;
@@ -190,7 +190,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    obj->cur.layer = obj->layer->layer;
    obj->layer->usage++;
    obj->smart.parent = smart_obj;
-   o->contained = evas_object_list_append(o->contained, obj);
+   o->contained = eina_inlist_append(o->contained, EINA_INLIST_GET(obj));
    evas_object_smart_member_cache_invalidate(obj);
    obj->restack = 1;
    evas_object_change(obj);
@@ -219,7 +219,7 @@ evas_object_smart_member_del(Evas_Object *obj)
    if (!obj->smart.parent) return;
 
    o = (Evas_Object_Smart *)(obj->smart.parent->object_data);
-   o->contained = evas_object_list_remove(o->contained, obj);
+   o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(obj));
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(obj);
    obj->layer->usage--;
@@ -256,7 +256,7 @@ evas_object_smart_members_get(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
    Evas_List *members;
-   Evas_Object_List *member;
+   Eina_Inlist *member;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -273,7 +273,7 @@ evas_object_smart_members_get(const Evas_Object *obj)
    return members;
 }
 
-const Evas_Object_List *
+const Eina_Inlist *
 evas_object_smart_members_get_direct(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
@@ -507,11 +507,11 @@ evas_object_smart_need_recalculate_get(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
+   return 0;
    MAGIC_CHECK_END();
    o = obj->object_data;
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return;
+   return 0;
    MAGIC_CHECK_END();
 
    return o->need_recalculate;
@@ -530,11 +530,11 @@ evas_object_smart_calculate(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
+   return 0;
    MAGIC_CHECK_END();
    o = obj->object_data;
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return;
+   return 0;
    MAGIC_CHECK_END();
 
    if (obj->smart.smart->smart_class->calculate)
@@ -667,7 +667,7 @@ void
 evas_object_smart_member_cache_invalidate(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    o = (Evas_Object_Smart *)(obj->object_data);
    if (o->magic != MAGIC_OBJ_SMART)
@@ -689,8 +689,7 @@ evas_object_smart_member_raise(Evas_Object *member)
    Evas_Object_Smart *o;
 
    o = (Evas_Object_Smart *)(member->smart.parent->object_data);
-   o->contained = evas_object_list_remove(o->contained, member);
-   o->contained = evas_object_list_append(o->contained, member);
+   o->contained = eina_inlist_demote(o->contained, EINA_INLIST_GET(member));
 }
 
 void
@@ -699,8 +698,7 @@ evas_object_smart_member_lower(Evas_Object *member)
    Evas_Object_Smart *o;
 
    o = (Evas_Object_Smart *)(member->smart.parent->object_data);
-   o->contained = evas_object_list_remove(o->contained, member);
-   o->contained = evas_object_list_prepend(o->contained, member);
+   o->contained = eina_inlist_promote(o->contained, EINA_INLIST_GET(member));
 }
 
 void
@@ -709,8 +707,8 @@ evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other)
    Evas_Object_Smart *o;
 
    o = (Evas_Object_Smart *)(member->smart.parent->object_data);
-   o->contained = evas_object_list_remove(o->contained, member);
-   o->contained = evas_object_list_append_relative(o->contained, member, other);
+   o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(member));
+   o->contained = eina_inlist_append_relative(o->contained, EINA_INLIST_GET(member), EINA_INLIST_GET(other));
 }
 
 void
@@ -719,8 +717,8 @@ evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other)
    Evas_Object_Smart *o;
 
    o = (Evas_Object_Smart *)(member->smart.parent->object_data);
-   o->contained = evas_object_list_remove(o->contained, member);
-   o->contained = evas_object_list_prepend_relative(o->contained, member, other);
+   o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(member));
+   o->contained = eina_inlist_prepend_relative(o->contained, EINA_INLIST_GET(member), EINA_INLIST_GET(other));
 }
 
 /* all nice and private */

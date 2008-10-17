@@ -46,10 +46,10 @@ struct _Evas_Cache_Image
 {
    Evas_Cache_Image_Func         func;
 
-   Evas_Object_List             *dirty;
+   Eina_Inlist                  *dirty;
 
-   Evas_Object_List             *lru;
-   Evas_Object_List             *lru_nodata;
+   Eina_Inlist                  *lru;
+   Eina_Inlist                  *lru_nodata;
    Evas_Hash                    *inactiv;
    Evas_Hash                    *activ;
    void                         *data;
@@ -87,11 +87,11 @@ struct _Evas_Cache_Engine_Image
 {
    Evas_Cache_Engine_Image_Func func;
 
-   Evas_Object_List*            dirty;
+   Eina_Inlist*            dirty;
 
    Evas_Hash*                   activ;
    Evas_Hash*                   inactiv;
-   Evas_Object_List*            lru;
+   Eina_Inlist*            lru;
 
    Evas_Cache_Image*            parent;
    Evas_Cache_Engine_Image*     brother;

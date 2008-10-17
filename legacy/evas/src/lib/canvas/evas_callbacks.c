@@ -1,13 +1,13 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static void evas_object_event_callback_list_post_free(Evas_Object_List **list);
+static void evas_object_event_callback_list_post_free(Eina_Inlist **list);
 static void evas_object_event_callback_clear(Evas_Object *obj);
 
 static void
-evas_object_event_callback_list_post_free(Evas_Object_List **list)
+evas_object_event_callback_list_post_free(Eina_Inlist **list)
 {
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    /* MEM OK */
    for (l = *list; l;)
@@ -18,7 +18,7 @@ evas_object_event_callback_list_post_free(Evas_Object_List **list)
 	l = l->next;
 	if (fn->delete_me)
 	  {
-	     *list = evas_object_list_remove(*list, fn);
+	    *list = eina_inlist_remove(*list, EINA_INLIST_GET(fn));
 	     free(fn);
 	  }
      }
@@ -41,7 +41,7 @@ evas_object_event_callback_clear(Evas_Object *obj)
 void
 evas_object_event_callback_all_del(Evas_Object *obj)
 {
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    if (!obj->callbacks) return;
    for (l = obj->callbacks->callbacks; l; l = l->next)
@@ -67,7 +67,7 @@ void
 evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info)
 {
    /* MEM OK */
-   Evas_Object_List **l_mod = NULL, *l;
+   Eina_Inlist **l_mod = NULL, *l;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
    Evas *e;
 
@@ -346,7 +346,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 	return;
      }
    obj->callbacks->callbacks = 
-     evas_object_list_append(obj->callbacks->callbacks, fn);
+     eina_inlist_append(obj->callbacks->callbacks, EINA_INLIST_GET(fn));
 }
 
 /**
@@ -377,7 +377,7 @@ EAPI void *
 evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
 {
    /* MEM OK */
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -437,7 +437,7 @@ EAPI void *
 evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
 {
    /* MEM OK */
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;

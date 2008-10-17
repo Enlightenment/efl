@@ -15,7 +15,7 @@ _evas_cache_engine_image_make_dirty(Evas_Cache_Engine_Image *cache,
    eim->flags.dirty = 1;
    eim->flags.loaded = 1;
    eim->flags.activ = 0;
-   cache->dirty = evas_object_list_prepend(cache->dirty, eim);
+   cache->dirty = eina_inlist_prepend(cache->dirty, EINA_INLIST_GET(eim));
 }
 
 static void
@@ -38,7 +38,7 @@ _evas_cache_engine_image_make_inactive(Evas_Cache_Engine_Image *cache,
    eim->flags.dirty = 0;
    eim->flags.activ = 0;
    cache->inactiv = evas_hash_add(cache->inactiv, key, eim);
-   cache->lru = evas_object_list_prepend(cache->lru, eim);
+   cache->lru = eina_inlist_prepend(cache->lru, EINA_INLIST_GET(eim));
    cache->usage += cache->func.mem_size_get(eim);
 }
 
@@ -50,7 +50,7 @@ _evas_cache_engine_image_remove_activ(Evas_Cache_Engine_Image *cache,
      {
         if (eim->flags.dirty)
           {
-             cache->dirty = evas_object_list_remove(cache->dirty, eim);
+	     cache->dirty = eina_inlist_remove(cache->dirty, EINA_INLIST_GET(eim));
           }
         else
           if (eim->flags.activ)
@@ -61,7 +61,7 @@ _evas_cache_engine_image_remove_activ(Evas_Cache_Engine_Image *cache,
             {
                cache->usage -= cache->func.mem_size_get(eim);
                cache->inactiv = evas_hash_del(cache->inactiv, eim->cache_key, eim);
-               cache->lru = evas_object_list_remove(cache->lru, eim);
+               cache->lru = eina_inlist_remove(cache->lru, EINA_INLIST_GET(eim));
             }
         eim->flags.cached = 0;
         eim->flags.dirty = 0;

@@ -81,7 +81,6 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
    RGBA_Polygon_Point *pt;
    RGBA_Vertex       *point;
    RGBA_Edge         *edges;
-   Evas_Object_List *l;
    int                num_active_edges;
    int                n;
    int                i, j, k;
@@ -114,8 +113,7 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
      return;
 
    n = 0;
-   for (l = (Evas_Object_List *)points; l; l = l->next)
-     n++;
+   EINA_INLIST_ITER_NEXT(points, pt) n++;
 
    if (n < 3)
      return;
@@ -139,24 +137,26 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
 	return;
      }
 
-   for (k = 0, l = (Evas_Object_List *)points; l; k++, l = l->next)
+   k = 0;
+   EINA_INLIST_ITER_NEXT(points, pt)
      {
-	pt = (RGBA_Polygon_Point *)l;
 	point[k].x = pt->x;
 	point[k].y = pt->y;
 	point[k].i = k;
+	k++;
      }
    qsort(point, n, sizeof(RGBA_Vertex), polygon_point_sorter);
 
    for (k = 0; k < n; k++)
      sorted_index[k] = point[k].i;
 
-   for (k = 0, l = (Evas_Object_List *)points; l; k++, l = l->next)
+   k = 0;
+   EINA_INLIST_ITER_NEXT(points, pt)
      {
-	pt = (RGBA_Polygon_Point *)l;
 	point[k].x = pt->x;
 	point[k].y = pt->y;
 	point[k].i = k;
+	k++;
      }
 
    y0 = MAX(ext_y, ceil(point[sorted_index[0]].y - 0.5));

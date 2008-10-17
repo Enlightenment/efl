@@ -820,8 +820,7 @@ _xre_poly_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point
 /*    int op; */
 
 /*    if ((!rs) || (!dc)) return; */
-/*    num = 0; */
-/*    for (pt = points; pt; pt = (RGBA_Polygon_Point *)(((Evas_Object_List *)pt)->next)) num++; */
+/*    num = 0; EINA_INLIST_ITER_NEXT(points, pt) num++; */
 /*    if (num < 3) return; */
 /*    a = (dc->col.col >> 24) & 0xff; */
 /*    if (a == 0) return; */
@@ -841,7 +840,7 @@ _xre_poly_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point
 /*    pts = malloc(num * sizeof(XPointDouble)); */
 /*    if (!pts) return; */
 /*    i = 0; */
-/*    for (pt = points; pt; pt = (RGBA_Polygon_Point *)(((Evas_Object_List *)pt)->next)) */
+/*    EINA_INLIST_ITER_NEXT(points, pt) */
 /*      { */
 /*	if (i < num) */
 /*	  { */

@@ -283,7 +283,7 @@ evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
 	       {
 		  if (a == 0)
 		    {
-		       is->spans[y] = evas_object_list_append(is->spans[y], sp);
+		       is->spans[y] = eina_inlist_append(is->spans[y], sp);
 		       sp = NULL;
 		    }
 		  else
@@ -313,7 +313,7 @@ evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
 	  }
 	if (sp)
 	  {
-	     is->spans[y] = evas_object_list_append(is->spans[y], sp);
+	     is->spans[y] = eina_inlist_append(is->spans[y], sp);
 	     sp = NULL;
 	  }
      }

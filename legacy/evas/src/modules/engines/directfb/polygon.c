@@ -116,12 +116,11 @@ polygon_spans_fill(IDirectFBSurface *surface, int y, const span_t *spans, int n_
 
 
 void
-_dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Evas_Object_List *points)
+_dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist *points)
 {
    RGBA_Polygon_Point *pt;
    RGBA_Vertex        *point;
    RGBA_Edge          *edges;
-   Evas_Object_List   *l;
    int                 num_active_edges;
    int                 n;
    int                 i, j, k;
@@ -160,7 +159,7 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Evas_Object_
    if (!_dfb_surface_set_color_from_context(surface, dc))
      return;
 
-   n = 0; for (l = (Evas_Object_List *)points; l; l = l->next) n++;
+   n = 0; EINA_INLIST_ITER_NEXT(points, pt) n++;
    if (n < 3) return;
    edges = malloc(sizeof(RGBA_Edge) * n);
    if (!edges) return;
@@ -179,9 +178,8 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Evas_Object_
      }
 
    k = 0;
-   for (l = (Evas_Object_List *)points; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(points, pt)
      {
-	pt = (RGBA_Polygon_Point *)l;
 	point[k].x = pt->x;
 	point[k].y = pt->y;
 	point[k].i = k;
@@ -190,9 +188,8 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Evas_Object_
    qsort(point, n, sizeof(RGBA_Vertex), polygon_point_sorter);
    for (k = 0; k < n; k++) sorted_index[k] = point[k].i;
    k = 0;
-   for (l = (Evas_Object_List *)points; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(points, pt)
      {
-	pt = (RGBA_Polygon_Point *)l;
 	point[k].x = pt->x;
 	point[k].y = pt->y;
 	point[k].i = k;

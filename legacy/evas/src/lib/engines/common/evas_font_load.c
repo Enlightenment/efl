@@ -9,8 +9,8 @@ extern FT_Library         evas_ft_lib;
 
 static int                font_cache_usage = 0;
 static int                font_cache = 0;
-static Evas_Object_List * fonts_src = NULL;
-static Evas_Object_List * fonts = NULL;
+static Eina_Inlist * fonts_src = NULL;
+static Eina_Inlist * fonts = NULL;
 
 static Evas_Bool font_modify_cache_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata);
 static Evas_Bool font_flush_free_glyph_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata);
@@ -38,7 +38,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    fs->references = 1;
-   fonts_src = evas_object_list_prepend(fonts_src, fs);
+   fonts_src = eina_inlist_prepend(fonts_src, EINA_INLIST_GET(fs));
    return fs;
 }
 
@@ -60,7 +60,7 @@ evas_common_font_source_load(const char *name)
    fs->ft.orig_upem = 0;
 
    fs->references = 1;
-   fonts_src = evas_object_list_prepend(fonts_src, fs);
+   fonts_src = eina_inlist_prepend(fonts_src, EINA_INLIST_GET(fs));
    return fs;
 }
 
@@ -91,7 +91,7 @@ evas_common_font_source_load_complete(RGBA_Font_Source *fs)
 EAPI RGBA_Font_Source *
 evas_common_font_source_find(const char *name)
 {
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    if (!name) return NULL;
    for (l = fonts_src; l; l = l->next)
@@ -102,8 +102,7 @@ evas_common_font_source_find(const char *name)
 	if ((fs->name) && (!strcmp(name, fs->name)))
 	  {
 	     fs->references++;
-	     fonts_src = evas_object_list_remove(fonts_src, fs);
-	     fonts_src = evas_object_list_prepend(fonts_src, fs);
+	     fonts_src = eina_inlist_demote(fonts_src, EINA_INLIST_GET(fs));
 	     return fs;
 	  }
      }
@@ -116,7 +115,7 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
    fs->references--;
    if (fs->references > 0) return;
 
-   fonts_src = evas_object_list_remove(fonts_src, fs);
+   fonts_src = eina_inlist_remove(fonts_src, EINA_INLIST_GET(fs));
    FT_Done_Face(fs->ft.face);
    if (fs->charmap) evas_array_hash_free(fs->charmap);
    if (fs->name) eina_stringshare_del(fs->name);
@@ -204,7 +203,7 @@ evas_common_font_int_load_init(RGBA_Font_Int *fi)
    fi->glyphs = NULL;
    fi->usage = 0;
    fi->references = 1;
-   fonts = evas_object_list_prepend(fonts, fi);
+   fonts = eina_inlist_prepend(fonts, EINA_INLIST_GET(fi));
    return fi;
 }
 
@@ -550,7 +549,7 @@ font_flush_free_glyph_cb(const Evas_Hash *hash, const char *key, void *data, voi
 EAPI void
 evas_common_font_flush_last(void)
 {
-   Evas_Object_List *l;
+   Eina_Inlist *l;
    RGBA_Font_Int *fi = NULL;
 
    for (l = fonts; l; l = l->next)
@@ -564,7 +563,7 @@ evas_common_font_flush_last(void)
 
    FT_Done_Size(fi->ft.size);
 
-   fonts = evas_object_list_remove(fonts, fi);
+   fonts = eina_inlist_remove(fonts, EINA_INLIST_GET(fi));
    evas_common_font_int_modify_cache_by(fi, -1);
 
    evas_hash_foreach(fi->glyphs, font_flush_free_glyph_cb, NULL);
@@ -578,7 +577,7 @@ evas_common_font_flush_last(void)
 EAPI RGBA_Font_Int *
 evas_common_font_int_find(const char *name, int size)
 {
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    for (l = fonts; l; l = l->next)
      {
@@ -589,8 +588,7 @@ evas_common_font_int_find(const char *name, int size)
 	  {
 	     if (fi->references == 0) evas_common_font_int_modify_cache_by(fi, -1);
 	     fi->references++;
-	     fonts = evas_object_list_remove(fonts, fi);
-	     fonts = evas_object_list_prepend(fonts, fi);
+	     fonts = eina_inlist_promote(fonts, EINA_INLIST_GET(fi));
 	     return fi;
 	  }
      }

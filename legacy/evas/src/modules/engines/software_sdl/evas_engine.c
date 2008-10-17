@@ -229,7 +229,7 @@ evas_engine_sdl_output_redraws_next_update_get	(void *data,
    if (!re->rects)
      {
 	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
-	re->cur_rect = (Evas_Object_List *) re->rects;
+	re->cur_rect = EINA_INLIST_GET(re->rects);
      }
    if (!re->cur_rect)
       return NULL;

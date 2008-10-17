@@ -49,12 +49,12 @@ _evas_common_gradient2_stops_free(RGBA_Gradient2 *gr)
    if (!gr) return;
    if (gr->stops.stops)
      {
-	Evas_Object_List *l;
+	Eina_Inlist *l;
 
 	while (gr->stops.stops)
 	  {
 	   l = gr->stops.stops;
-	   gr->stops.stops = evas_object_list_remove(gr->stops.stops, gr->stops.stops);
+	   gr->stops.stops = eina_inlist_remove(gr->stops.stops, gr->stops.stops);
 	   free(l);
 	  }
 	gr->stops.stops = NULL;
@@ -90,7 +90,7 @@ EAPI void
 evas_common_gradient2_color_np_stop_insert(RGBA_Gradient2 *gr, int r, int g, int b, int a, float pos)
 {
    RGBA_Gradient2_Color_Np_Stop *gc;
-   Evas_Object_List *l;
+   Eina_Inlist *l;
 
    if (!gr) return;
    if (!gr->stops.stops)
@@ -104,8 +104,8 @@ evas_common_gradient2_color_np_stop_insert(RGBA_Gradient2 *gr, int r, int g, int
 	gc->r = gc->g = gc->b = gc->a = 255;  gc->pos = 0.0;  gc->dist = 0;
 	gc1->r = gc1->g = gc1->b = gc1->a = 255;  gc1->pos = 1.0;  gc1->dist = 0;
 
-	gr->stops.stops = evas_object_list_append(gr->stops.stops, gc);
-	gr->stops.stops = evas_object_list_append(gr->stops.stops, gc1);
+	gr->stops.stops = eina_inlist_append(gr->stops.stops, EINA_INLIST_GET(gc));
+	gr->stops.stops = eina_inlist_append(gr->stops.stops, EINA_INLIST_GET(gc1));
 	gr->stops.nstops = 2;
 	gr->stops.len = 0;
      }
@@ -158,7 +158,7 @@ evas_common_gradient2_color_np_stop_insert(RGBA_Gradient2 *gr, int r, int g, int
    gc->pos = pos;
    gc->dist = 0;
 
-   gr->stops.stops = evas_object_list_prepend_relative(gr->stops.stops, gc, l);
+   gr->stops.stops = eina_inlist_prepend_relative(gr->stops.stops, EINA_INLIST_GET(gc), l);
    gr->stops.nstops++;
    if (a < 255)
 	gr->has_alpha = 1;
@@ -314,7 +314,7 @@ evas_common_gradient2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 static void
 _evas_common_gradient2_stops_scale(RGBA_Gradient2 *gr)
 {
-   Evas_Object_List  *l;
+   Eina_Inlist  *l;
    RGBA_Gradient2_Color_Np_Stop  *gc, *gc_next;
    double  scale;
    int  len;
@@ -384,7 +384,7 @@ _evas_common_gradient2_map_argb(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int l
    _evas_common_gradient2_stops_scale(gr);
 
      {
-	Evas_Object_List  *lc;
+	Eina_Inlist  *lc;
 	RGBA_Gradient2_Color_Np_Stop  *gc, *gc_next;
 	DATA32  *pmap, *map_end;
 	DATA8   *pamap = NULL;
@@ -484,7 +484,7 @@ _evas_common_gradient2_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int l
    _evas_common_gradient2_stops_scale(gr);
 
      {
-	Evas_Object_List  *lc;
+	Eina_Inlist  *lc;
 	RGBA_Gradient2_Color_Np_Stop  *gc, *gc_next;
 	DATA32  *pmap, *map_end;
 	DATA8   *pamap = NULL;

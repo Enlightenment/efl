@@ -13,12 +13,12 @@
  */
 //#define FORWARD_NOOP_RESIZES_TO_SMART_OBJS
 
-static Evas_Object_List *
+static Eina_Inlist *
 get_layer_objects_last(Evas_Layer *l)
 {
    if( !l || !l->objects ) return NULL;
 
-   return ((Evas_Object_List *)(l->objects))->last;
+   return (EINA_INLIST_GET(l->objects))->last;
 }
 
 /* evas internal stuff */
@@ -1403,7 +1403,7 @@ evas_object_evas_get(const Evas_Object *obj)
 EAPI Evas_Object *
 evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
-   Evas_Object_List *l;
+   Evas_Layer *lay;
    int xx, yy;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1413,17 +1413,12 @@ evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool i
    yy = y;
 ////   xx = evas_coord_world_x_to_screen(e, x);
 ////   yy = evas_coord_world_y_to_screen(e, y);
-   for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
+   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
      {
-	Evas_Object_List *l2;
-	Evas_Layer *lay;
+	Evas_Object *obj;
 
-	lay = (Evas_Layer *)l;
-	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
+	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
 	  {
-	     Evas_Object *obj;
-
-	     obj = (Evas_Object *)l2;
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
@@ -1458,7 +1453,7 @@ evas_object_top_at_pointer_get(const Evas *e)
 EAPI Evas_Object *
 evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
-   Evas_Object_List *l;
+   Evas_Layer *lay;
    int xx, yy, ww, hh;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1474,17 +1469,12 @@ evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas
 ////   hh = evas_coord_world_y_to_screen(e, h);
    if (ww < 1) ww = 1;
    if (hh < 1) hh = 1;
-   for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
+   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
      {
-	Evas_Object_List *l2;
-	Evas_Layer *lay;
+	Evas_Object *obj;
 
-	lay = (Evas_Layer *)l;
-	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
+	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
 	  {
-	     Evas_Object *obj;
-
-	     obj = (Evas_Object *)l2;
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
@@ -1507,7 +1497,7 @@ EAPI Evas_List *
 evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
-   Evas_Object_List *l;
+   Evas_Layer *lay;
    int xx, yy;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1517,17 +1507,12 @@ evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool incl
    yy = y;
 ////   xx = evas_coord_world_x_to_screen(e, x);
 ////   yy = evas_coord_world_y_to_screen(e, y);
-   for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
+   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
      {
-	Evas_Object_List *l2;
-	Evas_Layer *lay;
+	Evas_Object *obj;
 
-	lay = (Evas_Layer *)l;
-	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
+	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
 	  {
-	     Evas_Object *obj;
-
-	     obj = (Evas_Object *)l2;
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
@@ -1550,7 +1535,7 @@ EAPI Evas_List *
 evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
-   Evas_Object_List *l;
+   Evas_Layer *lay;
    int xx, yy, ww, hh;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1558,7 +1543,7 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
    MAGIC_CHECK_END();
    xx = x;
    yy = y;
-   ww = w;                                
+   ww = w;
    hh = h;
 ////   xx = evas_coord_world_x_to_screen(e, x);
 ////   yy = evas_coord_world_y_to_screen(e, y);
@@ -1566,17 +1551,12 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
 ////   hh = evas_coord_world_y_to_screen(e, h);
    if (ww < 1) ww = 1;
    if (hh < 1) hh = 1;
-   for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
+   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
      {
-	Evas_Object_List *l2;
-	Evas_Layer *lay;
+	Evas_Object *obj;
 
-	lay = (Evas_Layer *)l;
-	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
+	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
 	  {
-	     Evas_Object *obj;
-
-	     obj = (Evas_Object *)l2;
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;

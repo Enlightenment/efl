@@ -37,7 +37,6 @@
 typedef unsigned char Evas_Bool;
 
 #define Evas_List Eina_List
-#define Evas_Object_List Eina_Inlist
 
 typedef struct _Evas_Array_Hash  Evas_Array_Hash;
 typedef struct _Evas_Hash        Evas_Hash;              /**< A Hash table handle */
@@ -45,7 +44,7 @@ typedef struct _Evas_Hash        Evas_Hash;              /**< A Hash table handl
 struct _Evas_Hash
 {
    int               population;
-   Evas_Object_List *buckets[256];
+   Eina_Inlist      *buckets[256];
 };
 
 #ifdef __cplusplus
@@ -109,16 +108,6 @@ extern "C" {
   #define evas_list_reverse eina_list_reverse
   #define evas_list_sort eina_list_sort
   #define evas_list_alloc_error eina_error_get
-
-  /*
-   * Evas Object List functions
-   */
-  #define evas_object_list_append eina_inlist_append
-  #define evas_object_list_prepend eina_inlist_prepend
-  #define evas_object_list_append_relative eina_inlist_append_relative
-  #define evas_object_list_prepend_relative eina_inlist_prepend_relative
-  #define evas_object_list_remove eina_inlist_remove
-  #define evas_object_list_find eina_inlist_find
 
   /*
    * Evas Stringshare functions

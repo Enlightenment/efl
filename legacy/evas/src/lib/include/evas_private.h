@@ -211,32 +211,32 @@ struct _Evas_Lock
 
 struct _Evas_Callbacks
 {
-   Evas_Object_List *callbacks;
+   Eina_Inlist *callbacks;
    int               walking_list;
    unsigned char     deletions_waiting : 1;
 /*
-   Evas_Object_List *down;
-   Evas_Object_List *up;
-   Evas_Object_List *move;
-   Evas_Object_List *in;
-   Evas_Object_List *out;
-   Evas_Object_List *wheel;
-   Evas_Object_List *key_down;
-   Evas_Object_List *key_up;
-   Evas_Object_List *free;
-   Evas_Object_List *obj_focus_in;
-   Evas_Object_List *obj_focus_out;
-   Evas_Object_List *obj_show;
-   Evas_Object_List *obj_hide;
-   Evas_Object_List *obj_move;
-   Evas_Object_List *obj_resize;
-   Evas_Object_List *obj_restack;
+   Eina_Inlist *down;
+   Eina_Inlist *up;
+   Eina_Inlist *move;
+   Eina_Inlist *in;
+   Eina_Inlist *out;
+   Eina_Inlist *wheel;
+   Eina_Inlist *key_down;
+   Eina_Inlist *key_up;
+   Eina_Inlist *free;
+   Eina_Inlist *obj_focus_in;
+   Eina_Inlist *obj_focus_out;
+   Eina_Inlist *obj_show;
+   Eina_Inlist *obj_hide;
+   Eina_Inlist *obj_move;
+   Eina_Inlist *obj_resize;
+   Eina_Inlist *obj_restack;
  */
 };
 
 struct _Evas
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
 
    DATA32            magic;
 
@@ -321,7 +321,7 @@ struct _Evas
 
 struct _Evas_Layer
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
 
    short             layer;
    Evas_Object      *objects;
@@ -371,7 +371,7 @@ struct _Evas_Size_Hints
 
 struct _Evas_Object
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
 
    DATA32            magic;
 
@@ -464,7 +464,7 @@ struct _Evas_Object
 
 struct _Evas_Func_Node
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info);
    void *data;
    Evas_Callback_Type type;
@@ -737,7 +737,7 @@ void evas_object_smart_member_raise(Evas_Object *member);
 void evas_object_smart_member_lower(Evas_Object *member);
 void evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other);
 void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other);
-const Evas_Object_List *evas_object_smart_members_get_direct(const Evas_Object *obj);
+const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
 void *evas_mem_calloc(int size);
 void evas_object_event_callback_all_del(Evas_Object *obj);

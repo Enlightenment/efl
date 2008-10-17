@@ -5,7 +5,6 @@
 static const list_node_t list_node_zeroed = { NULL };
 static const list_t list_zeroed = { NULL, NULL };
 
-
 typedef struct list_node_pool
 {
    list_node_t *node;
@@ -1128,15 +1127,12 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 	    Tilebuf_Rect *r;
 
 	    r = malloc(sizeof(Tilebuf_Rect));
-	    r->_list_data.next = NULL;
-	    r->_list_data.prev = NULL;
-	    r->_list_data.last = NULL;
 	    r->x = cur.left;
 	    r->y = cur.top;
 	    r->w = cur.width;
 	    r->h = cur.height;
 
-	    rects = evas_object_list_append(rects, r);
+	    rects = (Tilebuf_Rect *)eina_inlist_append(EINA_INLIST_GET(rects), EINA_INLIST_GET(r));
 	 }
    }
    return rects;
@@ -1217,7 +1213,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 		  r->y = y * tb->tile_size.h;
 		  r->w = (xx) * tb->tile_size.w;
 		  r->h = (yy) * tb->tile_size.h;
-		  rects = evas_object_list_append(rects, r);
+		  rects = eina_inlist_append(rects, r);
 		  x = x + (xx - 1);
                   tbt += xx - 1;
 	       }
@@ -1235,7 +1231,7 @@ evas_common_tilebuf_free_render_rects(Tilebuf_Rect *rects)
 	Tilebuf_Rect *r;
 
 	r = rects;
-	rects = evas_object_list_remove(rects, r);
+	rects = (Tilebuf_Rect *)eina_inlist_remove(EINA_INLIST_GET(rects), EINA_INLIST_GET(r));
 	free(r);
      }
 }

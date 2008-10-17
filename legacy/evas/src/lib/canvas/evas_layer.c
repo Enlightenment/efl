@@ -14,7 +14,7 @@ evas_object_inject(Evas_Object *obj, Evas *e)
 	lay->layer = obj->cur.layer;
 	evas_layer_add(lay);
      }
-   lay->objects = evas_object_list_append(lay->objects, obj);
+   lay->objects = (Evas_Object *)eina_inlist_append(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(obj));
    lay->usage++;
    obj->layer = lay;
    obj->in_layer = 1;
@@ -24,7 +24,7 @@ void
 evas_object_release(Evas_Object *obj, int clean_layer)
 {
    if (!obj->in_layer) return;
-   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+   obj->layer->objects = (Evas_Object *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects), EINA_INLIST_GET(obj));
    obj->layer->usage--;
    if (clean_layer)
      {
@@ -52,13 +52,10 @@ evas_layer_new(Evas *e)
 void
 evas_layer_pre_free(Evas_Layer *lay)
 {
-   Evas_Object_List *l;
+   Evas_Object *obj;
 
-   for (l = (Evas_Object_List *)lay->objects; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(lay->objects, obj)
      {
-	Evas_Object *obj;
-
-	obj = (Evas_Object *)l;
 	if ((!obj->smart.parent) && (!obj->delete_me))
 	  evas_object_del(obj);
      }
@@ -80,13 +77,10 @@ evas_layer_free(Evas_Layer *lay)
 Evas_Layer *
 evas_layer_find(Evas *e, short layer_num)
 {
-   Evas_Object_List *list;
+   Evas_Layer *layer;
 
-   for (list = (Evas_Object_List *)e->layers; list; list = list->next)
+   EINA_INLIST_ITER_NEXT(e->layers, layer)
      {
-	Evas_Layer *layer;
-
-	layer = (Evas_Layer *)list;
 	if (layer->layer == layer_num) return layer;
      }
    return NULL;
@@ -95,31 +89,28 @@ evas_layer_find(Evas *e, short layer_num)
 void
 evas_layer_add(Evas_Layer *lay)
 {
-   Evas_Object_List *list;
+   Evas_Layer *layer;
 
-   for (list = (Evas_Object_List *)lay->evas->layers; list; list = list->next)
+   EINA_INLIST_ITER_NEXT(lay->evas->layers, layer)
      {
-	Evas_Layer *layer;
-
-	layer = (Evas_Layer *)list;
 	if (layer->layer > lay->layer)
 	  {
-	     lay->evas->layers = evas_object_list_prepend_relative(lay->evas->layers, lay, layer);
+	     lay->evas->layers = (Evas_Layer *)eina_inlist_prepend_relative(EINA_INLIST_GET(lay->evas->layers),
+									    EINA_INLIST_GET(lay),
+									    EINA_INLIST_GET(layer));
 	     return;
 	  }
      }
-   lay->evas->layers = evas_object_list_append(lay->evas->layers, lay);
+   lay->evas->layers = (Evas_Layer *)eina_inlist_append(EINA_INLIST_GET(lay->evas->layers), EINA_INLIST_GET(lay));
 }
 
 void
 evas_layer_del(Evas_Layer *lay)
 {
-   Evas_Object_List *ol;
    Evas *e;
 
-   ol = (Evas_Object_List *)lay;
    e = lay->evas;
-   e->layers = evas_object_list_remove(e->layers, lay);
+   e->layers = (Evas_Layer *)eina_inlist_remove(EINA_INLIST_GET(e->layers), EINA_INLIST_GET(lay));
 }
 
 /* public functions */

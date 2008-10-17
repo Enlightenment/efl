@@ -41,7 +41,7 @@ _evas_cache_image_make_dirty(Evas_Cache_Image *cache,
    im->flags.dirty = 1;
    im->flags.activ = 0;
    im->flags.lru_nodata = 0;
-   cache->dirty = evas_object_list_prepend(cache->dirty, im);
+   cache->dirty = eina_inlist_prepend(cache->dirty, EINA_INLIST_GET(im));
 
    if (im->cache_key)
      {
@@ -81,7 +81,7 @@ _evas_cache_image_make_inactiv(Evas_Cache_Image *cache,
 	im->flags.dirty = 0;
 	im->flags.cached = 1;
 	cache->inactiv = evas_hash_direct_add(cache->inactiv, key, im);
-	cache->lru = evas_object_list_prepend(cache->lru, im);
+	cache->lru = eina_inlist_prepend(cache->lru, EINA_INLIST_GET(im));
 	cache->usage += cache->func.mem_size_get(im);
      }
    else
@@ -97,7 +97,7 @@ _evas_cache_image_remove_lru_nodata(Evas_Cache_Image *cache,
    if (im->flags.lru_nodata)
      {
         im->flags.lru_nodata = 0;
-        cache->lru_nodata = evas_object_list_remove(cache->lru_nodata, im);
+        cache->lru_nodata = eina_inlist_remove(cache->lru_nodata, EINA_INLIST_GET(im));
         cache->usage -= cache->func.mem_size_get(im);
      }
 }
@@ -108,7 +108,7 @@ _evas_cache_image_activ_lru_nodata(Evas_Cache_Image *cache,
 {
    im->flags.need_data = 0;
    im->flags.lru_nodata = 1;
-   cache->lru_nodata = evas_object_list_prepend(cache->lru_nodata, im);
+   cache->lru_nodata = eina_inlist_prepend(cache->lru_nodata, EINA_INLIST_GET(im));
    cache->usage += cache->func.mem_size_get(im);
 }
 
@@ -127,12 +127,12 @@ _evas_cache_image_remove_activ(Evas_Cache_Image *cache,
           {
              if (ie->flags.dirty)
                {
-                  cache->dirty = evas_object_list_remove(cache->dirty, ie);
+ 		  cache->dirty = eina_inlist_remove(cache->dirty, EINA_INLIST_GET(ie));
                }
              else
                {
                   cache->inactiv = evas_hash_del(cache->inactiv, ie->cache_key, ie);
-                  cache->lru = evas_object_list_remove(cache->lru, ie);
+                  cache->lru = eina_inlist_remove(cache->lru, EINA_INLIST_GET(ie));
                   cache->usage -= cache->func.mem_size_get(ie);
                }
           }

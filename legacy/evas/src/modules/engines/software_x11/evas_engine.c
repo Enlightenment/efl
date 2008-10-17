@@ -14,7 +14,7 @@ struct _Render_Engine
    Tilebuf          *tb;
    Outbuf           *ob;
    Tilebuf_Rect     *rects;
-   Evas_Object_List *cur_rect;
+   Eina_Inlist      *cur_rect;
    int               end : 1;
 };
 
@@ -288,7 +288,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (!re->rects)
      {
 	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
-	re->cur_rect = (Evas_Object_List *)re->rects;
+	re->cur_rect = EINA_INLIST_GET(re->rects);
      }
    if (!re->cur_rect) return NULL;
    rect = (Tilebuf_Rect *)re->cur_rect;

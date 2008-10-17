@@ -4,15 +4,15 @@
 static Evas_Object *
 evas_object_above_get_internal(const Evas_Object *obj)
 {
-   if (((Evas_Object_List *)obj)->next)
-     return (Evas_Object *)(((Evas_Object_List *)obj)->next);
+   if ((EINA_INLIST_GET(obj))->next)
+     return (Evas_Object *)((EINA_INLIST_GET(obj))->next);
    else
      {
-	if (((Evas_Object_List *)(((Evas_Object *)obj)->layer))->next)
+	if ((EINA_INLIST_GET(((Evas_Object*)(obj))->layer))->next)
 	  {
 	     Evas_Layer *l;
 
-	     l = (Evas_Layer *)(((Evas_Object_List *)(((Evas_Object *)obj)->layer))->next);
+	     l = (Evas_Layer *)((EINA_INLIST_GET((((Evas_Object *)obj)->layer)))->next);
 	     return l->objects;
 	  }
      }
@@ -22,16 +22,16 @@ evas_object_above_get_internal(const Evas_Object *obj)
 static Evas_Object *
 evas_object_below_get_internal(const Evas_Object *obj)
 {
-   if (((Evas_Object_List *)obj)->prev)
-     return (Evas_Object *)(((Evas_Object_List *)obj)->prev);
+   if ((EINA_INLIST_GET(obj))->prev)
+     return (Evas_Object *)((EINA_INLIST_GET(obj))->prev);
    else
      {
-        if (((Evas_Object_List *)(((Evas_Object *)obj)->layer))->prev)
+        if ((EINA_INLIST_GET((((Evas_Object *)obj)->layer)))->prev)
 	  {
 	     Evas_Layer *l;
 
-	     l = (Evas_Layer *)(((Evas_Object_List *)(((Evas_Object *)obj)->layer))->prev);
-	     return (Evas_Object *)(((Evas_Object_List *)(l->objects))->last);
+	     l = (Evas_Layer *)((EINA_INLIST_GET((((Evas_Object *)obj)->layer)))->prev);
+	     return (Evas_Object *)((EINA_INLIST_GET((l->objects)))->last);
 	  }
      }
    return NULL;
@@ -50,7 +50,7 @@ evas_object_raise(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_raise(obj)) return;
-   if (!(((Evas_Object_List *)obj)->next))
+   if (!((EINA_INLIST_GET(obj))->next))
      {
 	evas_object_inform_call_restack(obj);
 	return;
@@ -60,10 +60,8 @@ evas_object_raise(Evas_Object *obj)
    else
      {
 	if (obj->in_layer)
-	  {
-	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-	     obj->layer->objects = evas_object_list_append(obj->layer->objects, obj);
-	  }
+	  obj->layer->objects = (Evas_Object *)eina_inlist_demote(EINA_INLIST_GET(obj->layer->objects),
+								  EINA_INLIST_GET(obj));
      }
    if (obj->clip.clipees)
      {
@@ -107,7 +105,7 @@ evas_object_lower(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_lower(obj)) return;
-   if (!(((Evas_Object_List *)obj)->prev))
+   if (!((EINA_INLIST_GET(obj))->prev))
      {
 	evas_object_inform_call_restack(obj);
 	return;
@@ -117,10 +115,8 @@ evas_object_lower(Evas_Object *obj)
    else
      {
 	if (obj->in_layer)
-	  {
-	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-	     obj->layer->objects = evas_object_list_prepend(obj->layer->objects, obj);
-	  }
+	  obj->layer->objects = (Evas_Object *)eina_inlist_promote(EINA_INLIST_GET(obj->layer->objects),
+								   EINA_INLIST_GET(obj));
      }
    if (obj->clip.clipees)
      {
@@ -179,7 +175,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 	evas_object_raise(obj);
 	return;
      }
-   if (((Evas_Object_List *)obj)->prev == (Evas_Object_List *)above)
+   if ((EINA_INLIST_GET(obj))->prev == EINA_INLIST_GET(above))
      {
 	evas_object_inform_call_restack(obj);
 	return;
@@ -202,8 +198,11 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 	  }
 	if (obj->in_layer)
 	  {
-	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-	     obj->layer->objects = evas_object_list_append_relative(obj->layer->objects, obj, above);
+ 	     obj->layer->objects = (Evas_Object *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects),
+								     EINA_INLIST_GET(obj));
+	     obj->layer->objects = (Evas_Object *)eina_inlist_append_relative(EINA_INLIST_GET(obj->layer->objects),
+									      EINA_INLIST_GET(obj),
+									      EINA_INLIST_GET(above));
 	  }
      }
    if (obj->clip.clipees)
@@ -263,7 +262,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 	evas_object_lower(obj);
 	return;
      }
-   if (((Evas_Object_List *)obj)->next == (Evas_Object_List *)below)
+   if ((EINA_INLIST_GET(obj))->next == EINA_INLIST_GET(below))
      {
 	evas_object_inform_call_restack(obj);
 	return;
@@ -286,8 +285,11 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 	  }
 	if (obj->in_layer)
 	  {
-	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-	     obj->layer->objects = evas_object_list_prepend_relative(obj->layer->objects, obj, below);
+	     obj->layer->objects = (Evas_Object *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects),
+								     EINA_INLIST_GET(obj));
+	     obj->layer->objects = (Evas_Object *)eina_inlist_prepend_relative(EINA_INLIST_GET(obj->layer->objects),
+									       EINA_INLIST_GET(obj),
+									       EINA_INLIST_GET(below));
 	  }
      }
    if (obj->clip.clipees)
@@ -336,7 +338,7 @@ evas_object_above_get(const Evas_Object *obj)
      {
 	do
 	  {
-	     obj = (Evas_Object *)(((Evas_Object_List *)(obj))->next);
+	     obj = (Evas_Object *)((EINA_INLIST_GET(obj))->next);
 	     if ((obj) && (!obj->delete_me)) return (Evas_Object *)obj;
 	  }
 	while (obj);
@@ -368,7 +370,7 @@ evas_object_below_get(const Evas_Object *obj)
      {
 	do
 	  {
-	     obj = (Evas_Object *)(((Evas_Object_List *)(obj))->prev);
+	     obj = (Evas_Object *)((EINA_INLIST_GET(obj))->prev);
 	     if ((obj) && (!obj->delete_me)) return (Evas_Object *)obj;
 	  }
 	while (obj);
@@ -421,20 +423,20 @@ EAPI Evas_Object *
 evas_object_top_get(const Evas *e)
 {
    Evas_Object *obj = NULL;
-   Evas_Object_List *list;
+   Eina_Inlist *list;
    Evas_Layer *layer;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
 
-   list = (Evas_Object_List *) e->layers;
+   list = EINA_INLIST_GET(e->layers);
    if (!list) return NULL;
 
    layer = (Evas_Layer *) list->last;
    if (!layer) return NULL;
 
-   list = (Evas_Object_List *) layer->objects;
+   list = EINA_INLIST_GET(layer->objects);
    if (!list) return NULL;
 
    obj = (Evas_Object *) list->last;

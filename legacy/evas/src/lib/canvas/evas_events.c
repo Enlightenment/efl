@@ -2,16 +2,13 @@
 #include "evas_private.h"
 
 static Evas_List *
-_evas_event_object_list_in_get(Evas *e, Evas_List *in, const Evas_Object_List *list, Evas_Object *stop, int x, int y, int *no_rep)
+_evas_event_object_list_in_get(Evas *e, Evas_List *in, const Eina_Inlist *list, Evas_Object *stop, int x, int y, int *no_rep)
 {
-   const Evas_Object_List *l;
+   Evas_Object *obj;
 
    if (!list) return in;
-   for (l = list->last; l; l = l->prev)
+   EINA_INLIST_ITER_LAST(list, obj)
      {
-	Evas_Object *obj;
-
-	obj = (Evas_Object *)l;
 	if (obj == stop)
 	  {
 	     *no_rep = 1;
@@ -61,18 +58,16 @@ _evas_event_object_list_in_get(Evas *e, Evas_List *in, const Evas_Object_List *l
 Evas_List *
 evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 {
-   Evas_Object_List *l;
+   Evas_Layer *lay;
    Evas_List *in = NULL;
 
    if (!e->layers) return NULL;
-   for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
+   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
      {
-	Evas_Layer *lay;
 	int norep;
 
-	lay = (Evas_Layer *)l;
 	norep = 0;
-	in = _evas_event_object_list_in_get(e, in, (Evas_Object_List *)lay->objects, stop,
+	in = _evas_event_object_list_in_get(e, in, EINA_INLIST_GET(lay->objects), stop,
 					    x, y, &norep);
 	if (norep) return in;
      }
@@ -148,19 +143,14 @@ evas_event_thaw(Evas *e)
    e->events_frozen--;
    if (e->events_frozen == 0)
      {
-	Evas_Object_List *l;
+	Evas_Layer *lay;
 
-	for (l = (Evas_Object_List *)e->layers; l; l = l->next)
+	EINA_INLIST_ITER_NEXT((EINA_INLIST_GET(e->layers)), lay)
 	  {
-	     Evas_Object_List *l2;
-	     Evas_Layer *lay;
+	     Evas_Object *obj;
 
-	     lay = (Evas_Layer *)l;
-	     for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
+	     EINA_INLIST_ITER_NEXT(lay->objects, obj)
 	       {
-		  Evas_Object *obj;
-
-		  obj = (Evas_Object *)l2;
 		  evas_object_clip_recalc(obj);
 		  evas_object_recalc_clippees(obj);
 	       }

@@ -9,6 +9,7 @@
 # include "config.h"  /* so that EAPI in Evas.h is correctly defined */
 #endif
 
+#include <Eina.h>
 #include "Evas.h"
 
 /*****************************************************************************/
@@ -271,7 +272,7 @@ struct _Image_Entry_Flags
 
 struct _Image_Entry
 {
-  Evas_Object_List       _list_data;
+  EINA_INLIST;
 
   Evas_Cache_Image      *cache;
 
@@ -311,7 +312,7 @@ struct _Image_Entry
 
 struct _Engine_Image_Entry
 {
-   Evas_Object_List              _list_data;
+   EINA_INLIST;
 
    /* Upper Engine data. */
    Image_Entry                  *src;
@@ -427,7 +428,7 @@ struct _RGBA_Pipe_Op
 
 struct _RGBA_Pipe
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    int               op_num;
    RGBA_Pipe_Op      op[PIPE_LEN];
 };
@@ -475,14 +476,14 @@ struct _RGBA_Image
 
 struct _RGBA_Gradient_Color_Stop
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    int               r, g, b, a;
    int               dist;
 };
 
 struct _RGBA_Gradient_Alpha_Stop
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    int               a;
    int               dist;
 };
@@ -500,13 +501,13 @@ struct _RGBA_Gradient
      } map;
 
    struct {
-	Evas_Object_List *stops;
+	Eina_Inlist *stops;
 	DATA32           *data;
 	int               nstops;
 	int               len;
    }  color;
    struct {
-	Evas_Object_List *stops;
+	Eina_Inlist *stops;
 	DATA8            *data;
 	int               nstops;
 	int               len;
@@ -548,7 +549,7 @@ struct _RGBA_Gradient_Type
 
 struct _RGBA_Gradient2_Color_Np_Stop
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    int               r, g, b, a;
    float             pos;
    int               dist;
@@ -564,7 +565,7 @@ struct _RGBA_Gradient2
      } map;
 
    struct {
-	Evas_Object_List *stops;
+	Eina_Inlist *stops;
 	int               nstops;
 	DATA32           *cdata;
 	DATA8            *adata;
@@ -605,7 +606,7 @@ struct _RGBA_Gradient2_Type
 
 struct _RGBA_Polygon_Point
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    int               x, y;
 };
 
@@ -619,7 +620,7 @@ struct _RGBA_Font
 
 struct _RGBA_Font_Int
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
 
    RGBA_Font_Source *src;
 
@@ -640,7 +641,7 @@ struct _RGBA_Font_Int
 
 struct _RGBA_Font_Source
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
 
    const char       *name;
    const char       *file;
@@ -783,7 +784,7 @@ struct _Tilebuf_Tile
 
 struct _Tilebuf_Rect
 {
-   Evas_Object_List  _list_data;
+   EINA_INLIST;
    int               x, y, w, h;
 };
 /*
@@ -795,7 +796,7 @@ struct _Regionbuf
 
 struct _Regionspan
 {
-   Evas_Object_List  _list_data;
+  EINA_INLIST;
    int x1, x2;
 };
 */

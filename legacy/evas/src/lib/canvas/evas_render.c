@@ -132,15 +132,12 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
      {
 	if (obj->smart.smart)
 	  {
-	     const Evas_Object_List *l;
+	     Evas_Object *obj2;
 
 	     eina_array_push(render_objects, obj);
 	     obj->render_pre = 1;
-	     for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
+	     EINA_INLIST_ITER_NEXT(evas_object_smart_members_get_direct(obj), obj2)
 	       {
-		  Evas_Object *obj2;
-
-		  obj2 = (Evas_Object *)l;
 		  _evas_render_phase1_object_process(e, obj2,
 						     active_objects,
 						     restack_objects,
@@ -172,15 +169,12 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 	  {
 	     if (obj->smart.smart)
 	       {
-		  const Evas_Object_List *l;
+		  Evas_Object *obj2;
 
 		  eina_array_push(render_objects, obj);
 		  obj->render_pre = 1;
-		  for (l = evas_object_smart_members_get_direct(obj); l; l = l->next)
+		  EINA_INLIST_ITER_NEXT(evas_object_smart_members_get_direct(obj), obj2)
 		    {
-		       Evas_Object *obj2;
-
-		       obj2 = (Evas_Object *)l;
 		       _evas_render_phase1_object_process(e, obj2,
 							  active_objects,
 							  restack_objects,
@@ -207,20 +201,15 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 static Evas_Bool
 _evas_render_phase1_process(Evas *e, Eina_Array *active_objects, Eina_Array *restack_objects, Eina_Array *delete_objects, Eina_Array *render_objects)
 {
-   Evas_Object_List *l;
+   Evas_Layer *lay;
    int clean_them = 0;
 
-   for (l = (Evas_Object_List *)e->layers; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(e->layers, lay)
      {
-	Evas_Object_List *l2;
-	Evas_Layer *lay;
+	Evas_Object *obj;
 
-	lay = (Evas_Layer *)l;
-	for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
+	EINA_INLIST_ITER_NEXT(lay->objects, obj)
 	  {
-	     Evas_Object *obj;
-
-	     obj = (Evas_Object *)l2;
 	     clean_them |= _evas_render_phase1_object_process(e, obj,
 							      active_objects, restack_objects,
 							      delete_objects, render_objects,
@@ -315,7 +304,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
      }
 }
 
-Eina_Bool pending_change(void *data, void *gdata)
+Eina_Bool pending_change(void *data, __UNUSED__ void *gdata)
 {
    Evas_Object *obj;
 

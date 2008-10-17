@@ -25,7 +25,7 @@ struct _Render_Engine
 
    Tilebuf                      *tb;
    Tilebuf_Rect                 *rects;
-   Evas_Object_List             *cur_rect;
+   Eina_Inlist                  *cur_rect;
 
    Evas_Cache_Engine_Image      *cache;
 

@@ -20,14 +20,14 @@ evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op)
 	first_pipe = 1;
 	p = calloc(1, sizeof(RGBA_Pipe));
 	if (!p) return NULL;
-	pipe = evas_object_list_append(pipe, p);
+	pipe = (RGBA_Pipe *)eina_inlist_append(EINA_INLIST_GET(pipe), EINA_INLIST_GET(p));
      }
-   p = (RGBA_Pipe *)((Evas_Object_List *)pipe)->last;
+   p = (RGBA_Pipe *)(EINA_INLIST_GET(pipe))->last;
    if (p->op_num == PIPE_LEN)
      {
 	p = calloc(1, sizeof(RGBA_Pipe));
 	if (!p) return NULL;
-	pipe = evas_object_list_append(pipe, p);
+	pipe = (RGBA_Pipe *)eina_inlist_append(EINA_INLIST_GET(pipe), EINA_INLIST_GET(p));
      }
    p->op_num++;
    *op = &(p->op[p->op_num - 1]);
@@ -87,7 +87,7 @@ evas_common_pipe_thread(void *data)
 //	  {
 //	     thinfo->info = NULL;
 //	     printf(" TH %i GO\n", thinfo->thread_num);
-	     for (p = info->im->pipe; p; p = (RGBA_Pipe *)((Evas_Object_List *)p)->next)
+	EINA_INLIST_ITER_NEXT(EINA_INLIST_GET(info->im->pipe), p)
 	       {
 		  int i;
 
@@ -198,7 +198,7 @@ evas_common_pipe_flush(RGBA_Image *im)
 #endif
      {
 	/* process pipe - 1 thead */
-	for (p = im->pipe; p; p = (RGBA_Pipe *)((Evas_Object_List *)p)->next)
+	for (p = im->pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
 	  {
 	     for (i = 0; i < p->op_num; i++)
 	       {
@@ -230,7 +230,7 @@ evas_common_pipe_free(RGBA_Image *im)
 	     if (p->op[i].free_func)
 	       p->op[i].free_func(&(p->op[i]));
 	  }
-	im->pipe = evas_object_list_remove(im->pipe, p);
+	im->pipe = (RGBA_Pipe *)eina_inlist_remove(EINA_INLIST_GET(im->pipe), EINA_INLIST_GET(p));
 	free(p);
      }
 }
@@ -330,7 +330,8 @@ evas_common_pipe_op_poly_free(RGBA_Pipe_Op *op)
    while (op->op.poly.points)
      {
 	p = op->op.poly.points;
-	op->op.poly.points = evas_object_list_remove(op->op.poly.points, p);
+	op->op.poly.points = (RGBA_Polygon_Point *)eina_inlist_remove(EINA_INLIST_GET(op->op.poly.points),
+								      EINA_INLIST_GET(p));
 	free(p);
      }
    evas_common_pipe_op_free(op);
@@ -368,14 +369,14 @@ evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    dst->pipe = evas_common_pipe_add(dst->pipe, &op);
    if (!dst->pipe) return;
    /* FIXME: copy points - maybe we should refcount? */
-   for (p = points; p; p = (RGBA_Polygon_Point *)((Evas_Object_List *)p)->next)
+   for (p = points; p; p = (RGBA_Polygon_Point *)(EINA_INLIST_GET(p))->next)
      {
 	pp = calloc(1, sizeof(RGBA_Polygon_Point));
 	if (pp)
 	  {
 	     pp->x = p->x;
 	     pp->y = p->y;
-	     pts = evas_object_list_append(pts, pp);
+	     pts = (RGBA_Polygon_Point *)eina_inlist_append(EINA_INLIST_GET(pts), EINA_INLIST_GET(pp));
 	  }
      }
    op->op.poly.points = pts;
