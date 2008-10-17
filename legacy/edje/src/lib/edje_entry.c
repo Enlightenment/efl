@@ -85,10 +85,21 @@ _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	  {
 	     while (evas_textblock_cursor_node_format_get(c))
 	       {
-		  if (evas_textblock_cursor_node_format_is_visible_get(c)) break;
-		  if (!evas_textblock_cursor_node_next(c)) break;
+		  if (evas_textblock_cursor_node_format_is_visible_get(c))
+		    break;
+		  if (!evas_textblock_cursor_node_next(c))
+		    break;
 	       }
 	  }
+     }
+   else
+     {
+	int len, pos;
+	
+	len = evas_textblock_cursor_node_text_length_get(c);
+	pos = evas_textblock_cursor_pos_get(c);
+	if (pos == len)
+	  evas_textblock_cursor_node_next(c);
      }
    _curs_update_from_curs(c, o, en);
 }
@@ -329,6 +340,39 @@ _range_del(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
+_backspace(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+{
+   Evas_Textblock_Cursor *c1, *c2;
+   int nodel = 0;
+   
+   c1 = evas_object_textblock_cursor_new(o);
+   if (!evas_textblock_cursor_char_prev(c))
+     {
+	if (!evas_textblock_cursor_node_prev(c))
+	  nodel = 1;
+	else
+	  {
+	     evas_textblock_cursor_copy(c, c1);
+	     if (evas_textblock_cursor_node_format_get(c) &&
+		 (!evas_textblock_cursor_node_format_is_visible_get(c)))
+	       _curs_back(c, o, en);
+	  }
+     }
+   else
+     evas_textblock_cursor_copy(c, c1);
+   c2 = evas_object_textblock_cursor_new(o);
+   evas_textblock_cursor_copy(c, c2);
+   if (!nodel) evas_textblock_cursor_range_delete(c1, c2);
+   evas_textblock_cursor_copy(c, c1);
+   _curs_back(c, o, en);
+   if (evas_textblock_cursor_compare(c, c1))
+     _curs_next(c, o, en);
+   
+   evas_textblock_cursor_free(c1);
+   evas_textblock_cursor_free(c2);
+}
+
+static void
 _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje *ed = data;
@@ -399,31 +443,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     if (en->have_selection)
 	       _range_del(en->cursor, rp->object, en);
 	     else
-	       {
-		  Evas_Textblock_Cursor *c1, *c2;
-		  int nodel = 0;
-		  
-		  c1 = evas_object_textblock_cursor_new(rp->object);
-		  if (!evas_textblock_cursor_char_prev(en->cursor))
-		    {
-		       if (!evas_textblock_cursor_node_prev(en->cursor))
-			 nodel = 1;
-		       else
-			 {
-			    evas_textblock_cursor_copy(en->cursor, c1);
-			    if (evas_textblock_cursor_node_format_get(en->cursor) &&
-				(!evas_textblock_cursor_node_format_is_visible_get(en->cursor)))
-			      _curs_back(en->cursor, rp->object, en);
-			 }
-		    }
-		  else
-		    evas_textblock_cursor_copy(en->cursor, c1);
-		  c2 = evas_object_textblock_cursor_new(rp->object);
-		  evas_textblock_cursor_copy(en->cursor, c2);
-		  if (!nodel) evas_textblock_cursor_range_delete(c1, c2);
-		  evas_textblock_cursor_free(c1);
-		  evas_textblock_cursor_free(c2);
-	       }
+	       _backspace(en->cursor, rp->object, en);
 	  }
 	_sel_clear(en->cursor, rp->object, en);
 	_curs_update_from_curs(en->cursor, rp->object, en);
@@ -444,22 +464,14 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	       _range_del(en->cursor, rp->object, en);
 	     else
 	       {
-		  Evas_Textblock_Cursor *c1, *c2;
-		  int nodel = 0;
+		  Evas_Textblock_Cursor *c1;
 		  
 		  c1 = evas_object_textblock_cursor_new(rp->object);
 		  evas_textblock_cursor_copy(en->cursor, c1);
 		  _curs_next(en->cursor, rp->object, en);
-		  if (!evas_textblock_cursor_char_prev(en->cursor))
-		    {
-		       if (!evas_textblock_cursor_node_prev(en->cursor))
-			 nodel = 1;
-		    }
-		  c2 = evas_object_textblock_cursor_new(rp->object);
-		  evas_textblock_cursor_copy(en->cursor, c2);
-		  if (!nodel) evas_textblock_cursor_range_delete(c1, c2);
+		  if (evas_textblock_cursor_compare(en->cursor, c1))
+		    _backspace(en->cursor, rp->object, en);
 		  evas_textblock_cursor_free(c1);
-		  evas_textblock_cursor_free(c2);
 	       }
 	  }
 	_sel_clear(en->cursor, rp->object, en);
