@@ -31,7 +31,7 @@ AC_SUBST(version_info)
 PKG_PROG_PKG_CONFIG
 
 PKG_CHECK_MODULES([ELEMENTARY], [
-   eina
+   eina-0
    eet
    evas
    ecore
