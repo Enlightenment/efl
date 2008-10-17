@@ -3179,8 +3179,9 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
    if (cur->node->type == NODE_FORMAT) return 0;
    if (!cur->node->text) return 0;
    index = cur->pos;
+   if (index == 0) return 0;
    ch = evas_common_font_utf8_get_prev((unsigned char *)(cur->node->text), &index);
-   if ((ch == 0) || (index < 0)) return 0;
+   if (/*(ch == 0) || */(index < 0)) return 0;
    cur->pos = index;
    return 1;
 }
