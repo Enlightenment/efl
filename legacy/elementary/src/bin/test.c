@@ -1,10 +1,5 @@
 #include <Elementary.h>
 
-// FIXME: add more explicit tests for:
-// labels
-// frames
-// scroller
-
 static void my_win_del(void *data, Evas_Object *obj, void *event_info);
 static void my_bt_1(void *data, Evas_Object *obj, void *event_info);
 static void my_win_main(void);
@@ -682,6 +677,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    en = elm_entry_add(win);
+   elm_entry_line_wrap_set(en, 0);
    elm_entry_entry_set(en,
 		       "This is an entry widget in this window that<br>"
 		       "uses markup <b>like this</> for styling and<br>"
@@ -737,6 +733,96 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
 
    // HACK! not exposed! (should expose some later?)
    elm_widget_focus_set(en, 1);
+   
+   evas_object_show(win);
+}
+
+static void
+my_bt_14(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *sc;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "entry-scrolled", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry Scrolled");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, 1.0, 1.0);
+   evas_object_size_hint_align_set(sc, -1.0, -1.0);
+   elm_box_pack_end(bx, sc);
+   
+   en = elm_entry_add(win);
+   evas_object_propagate_events_set(en, 0);
+   elm_entry_entry_set(en,
+		       "This is an entry widget in this window that<br>"
+		       "uses markup <b>like this</> for styling and<br>"
+		       "formatting <em>like this</>, as well as<br>"
+		       "<a href=X><link>links in the text</></a>, so enter text<br>"
+		       "in here to edit it. By the way, links are<br>"
+		       "called <a href=anc-02>Anchors</a> so you will need<br>"
+		       "to refer to them this way. At the end here is a really long line to test line wrapping to see if it works. But just in case this line is not long enough I will add more here to really test it out, as Elementary really needs some good testing to see if entry widgets work as advertised.");
+   evas_object_size_hint_weight_set(en, 1.0, 0.0);
+   evas_object_size_hint_align_set(en, -1.0, -1.0);
+   elm_scroller_content_set(sc, en);
+   evas_object_show(en);
+
+   evas_object_show(sc);
+   
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
+   evas_object_size_hint_align_set(bx2, -1.0, -1.0);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Clear");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_1, en);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Print");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_2, en);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Selection");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_3, en);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Insert");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_4, en);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   // HACK! not exposed! (should expose some later?)
+   elm_widget_focus_set(en, 1);
+
+   evas_object_resize(win, 320, 300);
    
    evas_object_show(win);
 }
@@ -925,8 +1011,15 @@ my_win_main(void)
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Entry Scrolled");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_14, NULL);
+   evas_object_size_hint_align_set(bt, -1.0, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
    /* set an initial window size */
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320, 520);
    /* show the window */
    evas_object_show(win);
 }

@@ -21,7 +21,10 @@ struct _Smart_Data
    void          *on_focus_data;
    void         (*on_change_func) (void *data, Evas_Object *obj);
    void          *on_change_data;
+   void         (*on_show_region_func) (void *data, Evas_Object *obj);
+   void          *on_show_region_data;
    void          *data;
+   Evas_Coord     rx, ry, rw, rh;
    unsigned char  can_focus : 1;
    unsigned char  child_can_focus : 1;
    unsigned char  focused : 1;
@@ -103,6 +106,14 @@ elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_O
    API_ENTRY return;
    sd->on_change_func = func;
    sd->on_change_data = data;
+}
+
+EAPI void
+elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
+{
+   API_ENTRY return;
+   sd->on_show_region_func = func;
+   sd->on_show_region_data = data;
 }
 
 EAPI void
@@ -462,6 +473,28 @@ elm_widget_disabled_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->disabled;
+}
+
+EAPI void
+elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   API_ENTRY return;
+   if ((x == sd->rx) && (y == sd->ry) && (w == sd->rw) && (h == sd->rh)) return;
+   sd->rx = x;
+   sd->ry = y;
+   sd->rw = w;
+   sd->rh = h;
+   if (sd->on_show_region_func) sd->on_show_region_func(sd->on_show_region_data, obj);
+}
+
+EAPI void
+elm_widget_show_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   API_ENTRY return;
+   if (x) *x = sd->rx;
+   if (y) *y = sd->ry;
+   if (w) *w = sd->rw;
+   if (h) *h = sd->rh;
 }
 
 /* local subsystem functions */

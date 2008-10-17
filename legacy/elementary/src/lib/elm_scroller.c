@@ -10,6 +10,7 @@ struct _Widget_Data
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
@@ -18,6 +19,15 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
+}
+
+static void
+_show_region_hook(void *data, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord x, y, w, h;
+   elm_widget_show_region_get(obj, &x, &y, &w, &h);
+   elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
 static void
@@ -59,6 +69,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    if (sub == wd->content)
      {
+	elm_widget_on_show_region_hook_set(wd->content, NULL, NULL);
 	evas_object_event_callback_del
 	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
 	wd->content = NULL;
@@ -108,6 +119,7 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
    wd->content = content;
    if (content)
      {
+	elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
 	elm_widget_sub_object_add(obj, content);
 	elm_smart_scroller_child_set(wd->scr, content);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 

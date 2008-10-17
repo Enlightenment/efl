@@ -46,6 +46,8 @@
 #endif
 
 /* EFL headers */
+#include <Eina.h>
+#include <Eet.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_X.h>
@@ -53,7 +55,6 @@
 #include <Ecore_Job.h>
 #include <Ecore_Txt.h>
 #include <Ecore_File.h>
-#include <Eet.h>
 #include <Edje.h>
 
 /* allow usage from c++ */
@@ -185,6 +186,7 @@ extern "C" {
    EAPI const char  *elm_entry_entry_get(Evas_Object *obj);
    EAPI const char  *elm_entry_selection_get(Evas_Object *obj);
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry);
+   EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap);
    /* smart callbacks called:
     */
        

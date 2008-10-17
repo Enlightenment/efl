@@ -230,7 +230,7 @@ void
 elm_smart_scroller_child_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny;
-   
+
    API_ENTRY return;
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);

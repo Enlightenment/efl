@@ -47,6 +47,7 @@ EAPI void         elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (E
 EAPI void         elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void         elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+EAPI void         elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void         elm_widget_data_set(Evas_Object *obj, void *data);
 EAPI void        *elm_widget_data_get(Evas_Object *obj);
 EAPI void         elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
@@ -66,7 +67,10 @@ EAPI void         elm_widget_activate(Evas_Object *obj);
 EAPI void         elm_widget_change(Evas_Object *obj);
 EAPI void         elm_widget_disabled_set(Evas_Object *obj, int disabled);
 EAPI int          elm_widget_disabled_get(Evas_Object *obj);
-
+EAPI void         elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+EAPI void         elm_widget_show_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   
+					 
 extern char *_elm_appname;
 
 extern Elm_Config *_elm_config;
