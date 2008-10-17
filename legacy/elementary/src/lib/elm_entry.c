@@ -104,9 +104,48 @@ static void
 _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord cx, cy, cw, ch;
    evas_object_smart_callback_call(data, "cursor,changed", NULL);
+   
    // FIXME: handle auto-scroll within parent (get cursor - if not visible
    // jump so it is)
+   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", &cx, &cy, &cw, &ch);
+   printf("CURSOR: @%i+%i %ix%i\n", cx, cy, cw, ch);
+}
+
+static void
+_signal_anchor_down(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   printf("DOWN %s\n", emission);
+}
+
+static void
+_signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   printf("UP %s\n", emission);
+}
+
+static void
+_signal_anchor_move(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   printf("MOVE %s\n", emission);
+}
+
+static void
+_signal_anchor_in(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   printf("IN %s\n", emission);
+}
+
+static void
+_signal_anchor_out(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   printf("OUT %s\n", emission);
 }
 
 EAPI Evas_Object *
@@ -134,6 +173,11 @@ elm_entry_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text", _signal_entry_copy_notify, obj);
    edje_object_signal_callback_add(wd->ent, "entry,cut,notify", "elm.text", _signal_entry_cut_notify, obj);
    edje_object_signal_callback_add(wd->ent, "cursor,changed", "elm.text", _signal_cursor_changed, obj);
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,down,*", "elm.text", _signal_anchor_down, obj);
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,up,*", "elm.text", _signal_anchor_up, obj);
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,move,*", "elm.text", _signal_anchor_move, obj);
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,in,*", "elm.text", _signal_anchor_in, obj);
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,out,*", "elm.text", _signal_anchor_out, obj);
    elm_widget_resize_object_set(obj, wd->ent);
    return obj;
 }
@@ -143,6 +187,14 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_part_text_set(wd->ent, "elm.text", entry);
+   
+   // debug
+     {
+	Evas_List *l, *an;
+	an = edje_object_part_text_anchor_list_get(wd->ent, "elm.text");
+	for (l = an; l; l = l->next)
+	  printf("ANCHOR: %s\n", l->data);
+     }
    _sizing_eval(obj);
 }
 

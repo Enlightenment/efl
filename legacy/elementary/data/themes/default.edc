@@ -2685,7 +2685,9 @@ collections {
 	    source: "elm/entry/selection/default"; // selection under
 //	    source2: "X"; // selection over
 //	    source3: "X"; // cursor under
-	    source4: "elm/entry/cursor/default"; // cursor under
+	    source4: "elm/entry/cursor/default"; // cursorover
+	    source5: "elm/entry/anchor/default"; // anchor under
+//	    source6: "X"; // anchor over
 	    description { state: "default" 0.0;
 	       text {
 		  style: "entry_textblock_style";
@@ -2831,6 +2833,18 @@ collections {
 	    mouse_events: 0;
 	    description { state: "default" 0.0;
 	       color: 128 128 128 128;
+	    }
+	 }
+      }
+   }
+   
+   group { name: "elm/entry/anchor/default";
+      parts {      
+         part { name: "bg";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       color: 128 0 0 64;
 	    }
 	 }
       }

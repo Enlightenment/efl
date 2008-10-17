@@ -686,8 +686,10 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
 		       "This is an entry widget in this window that<br>"
 		       "uses markup <b>like this</> for styling and<br>"
 		       "formatting <em>like this</>, as well as<br>"
-		       "<+a href=X><link>links in the text</></>, so enter text<br>"
-		       "in here to edit it.");
+		       "<a href=X><link>links in the text</></a>, so enter text<br>"
+		       "in here to edit it. By the way, links are<br>"
+		       "called <a href=anc-02>Anchors</a> so you will need<br>"
+		       "to refer to them this way.");
    evas_object_size_hint_weight_set(en, 1.0, 1.0);
    evas_object_size_hint_align_set(en, -1.0, -1.0);
    elm_box_pack_end(bx, en);
