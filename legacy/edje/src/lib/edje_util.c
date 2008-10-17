@@ -961,6 +961,57 @@ edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *tex
      rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
 }
 
+/** Returns a list of char * anchor names
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return The list of anchors
+ */
+EAPI Evas_List *
+edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     return _edje_entry_anchors_list(rp);
+   return NULL;
+}
+
+/** Returns the cursor geometry of the part relative to the edje object
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param x Cursor X position
+ * @param y Cursor Y position
+ * @param w Cursor width
+ * @param h Cursor height
+ */
+EAPI void
+edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+	_edje_entry_cursor_geometry_get(rp, x, y, w, h);
+	if (x) *x -= rp->edje->x;
+	if (y) *y -= rp->edje->y;
+     }
+   return;
+}
+
 /** Swallows an object into the edje
  * @param obj A valid Evas_Object handle
  * @param part The part name

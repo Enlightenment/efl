@@ -464,7 +464,7 @@ struct _Edje_Part
    const char            *name; /* the name if any of the part */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
-   const char            *source, *source2, *source3, *source4;
+   const char            *source, *source2, *source3, *source4, *source5, *source6;
    int                    id; /* its id number */
    int                    clip_to_id; /* the part id to clip this one to */
    struct {
@@ -1244,5 +1244,6 @@ void _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text);
 void _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text);
 void _edje_entry_set_cursor_start(Edje_Real_Part *rp);
 void _edje_entry_set_cursor_end(Edje_Real_Part *rp);
+const Evas_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
     
 #endif

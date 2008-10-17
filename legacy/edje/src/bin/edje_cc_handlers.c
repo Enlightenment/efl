@@ -94,6 +94,8 @@ static void st_collections_group_parts_part_source(void);
 static void st_collections_group_parts_part_source2(void);
 static void st_collections_group_parts_part_source3(void);
 static void st_collections_group_parts_part_source4(void);
+static void st_collections_group_parts_part_source5(void);
+static void st_collections_group_parts_part_source6(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
@@ -241,6 +243,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.source2", st_collections_group_parts_part_source2},
      {"collections.group.parts.part.source3", st_collections_group_parts_part_source3},
      {"collections.group.parts.part.source4", st_collections_group_parts_part_source4},
+     {"collections.group.parts.part.source5", st_collections_group_parts_part_source5},
+     {"collections.group.parts.part.source6", st_collections_group_parts_part_source6},
      {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
      {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
@@ -1899,6 +1903,60 @@ st_collections_group_parts_part_source4(void)
 
    //FIXME: validate this somehow (need to decide on the format also)
    ep->source4 = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        source5
+    @parameters
+        [another group's name]
+    @effect
+        Only available to TEXTBLOCK parts. It is used for the group to be 
+        loaded and used for anchors display UNDER the anchor position. source6
+        is used for over the anchors text, if source6 is specified.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_source5(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   //FIXME: validate this somehow (need to decide on the format also)
+   ep->source5 = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        source6
+    @parameters
+        [another group's name]
+    @effect
+        Only available to TEXTBLOCK parts. It is used for the group to be 
+        loaded and used for anchor display OVER the anchor position. source5
+        is used for under the anchor text, if source6 is specified.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_source6(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   //FIXME: validate this somehow (need to decide on the format also)
+   ep->source6 = parse_str(0);
 }
 
 /**
