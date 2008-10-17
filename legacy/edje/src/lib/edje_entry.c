@@ -444,7 +444,22 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	       _range_del(en->cursor, rp->object, en);
 	     else
 	       {
-		  evas_textblock_cursor_char_delete(en->cursor);
+		  Evas_Textblock_Cursor *c1, *c2;
+		  int nodel = 0;
+		  
+		  c1 = evas_object_textblock_cursor_new(rp->object);
+		  evas_textblock_cursor_copy(en->cursor, c1);
+		  _curs_next(en->cursor, rp->object, en);
+		  if (!evas_textblock_cursor_char_prev(en->cursor))
+		    {
+		       if (!evas_textblock_cursor_node_prev(en->cursor))
+			 nodel = 1;
+		    }
+		  c2 = evas_object_textblock_cursor_new(rp->object);
+		  evas_textblock_cursor_copy(en->cursor, c2);
+		  if (!nodel) evas_textblock_cursor_range_delete(c1, c2);
+		  evas_textblock_cursor_free(c1);
+		  evas_textblock_cursor_free(c2);
 	       }
 	  }
 	_sel_clear(en->cursor, rp->object, en);
@@ -771,7 +786,6 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
    _sel_clear(en->cursor, rp->object, en);
    evas_object_del(en->cursor_bg);
    evas_object_del(en->cursor_fg);
-   // FIXME: delete cursor objects, sel cursors and en->sel's undo buffer copy/cut buffer
    free(en);
 }
 
@@ -786,6 +800,7 @@ _edje_entry_real_part_configure(Edje_Real_Part *rp)
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
+   evas_textblock_cursor_char_geometry_get(en->cursor, &xx, &yy, &ww, &hh);
    if (ww < 1) ww = 1;
    if (hh < 1) ww = 1;
    if (en->cursor_bg)
