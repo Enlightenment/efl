@@ -428,18 +428,38 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 EAPI Image_Entry *
 evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error)
 {
+   const char           *ckey = "(null)";
    const char           *format;
    char                 *hkey;
    Image_Entry          *im;
    Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0 };
    int                   size;
    int                   stat_done = 0;
+   int                   file_length;
+   int                   key_length;
    struct stat           st;
 
    assert(cache != NULL);
 
    if (!file && !key) return NULL;
    if (!file) return NULL;
+
+   file_length = strlen(file);
+   key_length = key ? strlen(key) : 6;
+
+   size = file_length + key_length + 64;
+   hkey = alloca(sizeof (char) * size);
+
+   memcpy(hkey, file, file_length);
+   size = file_length;
+
+   memcpy(hkey + size, "//://", 5);
+   size += 5;
+
+   if (key) ckey = key;
+   memcpy(hkey + size, ckey, key_length);
+   size += key_length;
+
    if ((!lo) ||
        (lo &&
         (lo->scale_down_by == 0) &&
@@ -454,14 +474,28 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
      }
    else
      {
-        if (key)
-          format = "%s//://%s//@/%i/%1.5f/%ix%i";
-        else
-          format = "%s//://%p//@/%i/%1.5f/%ix%i";
+	memcpy(hkey + size, "//@/", 4);
+	size += 4;
+
+	size += eina_convert_xtoa(lo->scale_down_by, hkey + size);
+
+	hkey[size] = '/';
+	size += 1;
+
+	size += eina_convert_dtoa(lo->dpi, hkey + size);
+
+	hkey[size] = '/';
+	size += 1;
+
+	size += eina_convert_xtoa(lo->w, hkey + size);
+
+	hkey[size] = 'x';
+	size += 1;
+
+	size += eina_convert_xtoa(lo->h, hkey + size);
      }
-   size = strlen(file) + (key ? strlen(key) : 6) + 64;
-   hkey = alloca(sizeof (char) * size);
-   snprintf(hkey, size, format, file, key, lo->scale_down_by, lo->dpi, lo->w, lo->h);
+
+   hkey[size] = '\0';
 
    im = evas_hash_find(cache->activ, hkey);
    if (im)
