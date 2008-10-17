@@ -688,8 +688,8 @@ st_fonts_font(void)
         data
     @context
         data {
-            item: "arbitraryname" "arbitraryvalue";
-            item: "othername" "othervalue";
+            item: "key" "value";
+            file: "otherkey" "filename.ext";
             ..
         }
     @description
@@ -703,7 +703,8 @@ st_fonts_font(void)
     @parameters
         [parameter name] [parameter value]
     @effect
-        Defines each additional parameter.
+        Defines a new parameter, the value will be the string specified next to
+        it.
     @endproperty
  */
 static void
@@ -721,26 +722,14 @@ st_data_item(void)
 
 /**
     @page edcref
-    @block
-        data
-    @context
-        data {
-            file: "arbitraryname" "filename";
-            file: "othername" "otherfilename";
-            ..
-        }
-    @description
-        The "data" block is used to pass arbitrary parameters from the theme to
-        the application. Unlike the "images" and "fonts" blocks, additional
-        "data" blocks can only be included inside the "group" block.
-    @endblock
-
     @property
         file
     @parameters
         [parameter name] [parameter filename]
     @effect
-        Defines each additional parameter.
+        Defines a new parameter , the value will be the contents of the
+        specified file formated as a single string of text. This property only
+        works with plain text files.
     @endproperty
  */
 static void
