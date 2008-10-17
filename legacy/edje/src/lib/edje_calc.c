@@ -1582,9 +1582,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 //				   pf->color.a);
 	     if (pf->visible)
 	       {
-		  evas_object_show(ep->swallowed_object);
 		  evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
 		  evas_object_resize(ep->swallowed_object, pf->w, pf->h);
+		  evas_object_show(ep->swallowed_object);
 	       }
 	     else
 	       evas_object_hide(ep->swallowed_object);

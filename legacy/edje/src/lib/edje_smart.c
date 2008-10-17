@@ -126,6 +126,8 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	ep = ed->table_parts[i];
 	evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
 	evas_object_move(ep->object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
+	if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+	  _edje_entry_real_part_configure(ep);
 	if (ep->swallowed_object)
 	  {
 	     evas_object_geometry_get(ep->swallowed_object, &ox, &oy, NULL, NULL);
