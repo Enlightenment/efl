@@ -28,18 +28,11 @@ struct _Sel
    Evas_Textblock_Rectangle rect;
 };
 
-// FIXME: this has to emit signals for "request selection", "set selection"
-// so copy & paste work, need api calls to insert text, insert format,
-// get text (with markup) delete text, etc. etc. etc.
-// 
-// FIXME: cursor when at end of text doesnt display right
-
 static void
 _edje_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje *ed = data;
    _edje_emit(ed, "focus,in", "");
-   // FIXME: emit focus,in to selections and cursors
 }
     
 static void
@@ -47,7 +40,6 @@ _edje_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje *ed = data;
    _edje_emit(ed, "focus,out", "");
-   // FIXME: emit focus,out to selections and cursors
 }
 
 static void
