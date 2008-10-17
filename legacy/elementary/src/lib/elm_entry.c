@@ -151,7 +151,7 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
    char *buf, *buf2, *p, *p2, *n;
    int buflen;
    printf("UP %s\n", emission);
-   p = strchr(emission, ',');
+   p = strrchr(emission, ',');
    if (p)
      {
 	n = p + 1;
@@ -167,7 +167,7 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
 	buf2 = alloca(5 + p - p2);
 	strncpy(buf2, p2, p - p2);
 	buf2[p - p2] = 0;
-	snprintf(buf, buflen, "anchor,%s,clicked,*s", buf2, n);
+	snprintf(buf, buflen, "anchor,%s,clicked,%s", buf2, n);
 	evas_object_smart_callback_call(data, buf, NULL);
      }
 }
