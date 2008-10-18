@@ -188,6 +188,15 @@ extern "C" {
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry);
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap);
    /* smart callbacks called:
+    * "changed" - the text content changed
+    * "selection,start" -
+    * "selection,changed" -
+    * "selection,cleared" -
+    * "selection,paste" -
+    * "selection,copy" -
+    * "selection,cut" -
+    * "cursor,changed" -
+    * "anchor,X,clicked,N" - achor called X was clicked with button N
     */
        
 // FIXME: fixes to do

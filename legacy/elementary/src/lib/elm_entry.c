@@ -6,7 +6,10 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *ent;
+   Evas_Coord lastw;
+   Evas_Bool changed;
    Evas_Bool linewrap;
+   Ecore_Job *deferred_recalc_job;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -26,7 +29,26 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    free(wd);
+}
+
+static void
+_elm_win_recalc_job(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord resw, resh, minminw;
+   
+   wd->deferred_recalc_job = NULL;
+   evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
+   resh = 0;
+   minminw = 0;
+   edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, 0, 0);
+   minminw = minw;
+   edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
+   evas_object_size_hint_min_set(data, minminw, minh);
+   evas_object_size_hint_max_set(data, minminw, maxh);
 }
 
 static void
@@ -39,16 +61,15 @@ _sizing_eval(Evas_Object *obj)
    if (wd->linewrap)
      {
 	evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
-	resh = 0;
-	minminw = 0;
-	edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, 0, 0);
-	minminw = minw;
-	edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
-	evas_object_size_hint_min_set(obj, minminw, minh);
-	evas_object_size_hint_max_set(obj, minminw, maxh);
+	if ((resw == wd->lastw) && (!wd->changed)) return;
+	wd->changed = 0;
+	wd->lastw = resw;
+	if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
+	wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
      }
    else
      {
+	evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
 	edje_object_size_min_calc(wd->ent, &minw, &minh);
 	evas_object_size_hint_min_set(obj, minw, minh);
 	evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -74,6 +95,7 @@ _signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    evas_object_smart_callback_call(data, "changed", NULL);
+   wd->changed = 1;
    _sizing_eval(data);
 }
 
@@ -105,6 +127,7 @@ static void
 _signal_entry_paste_request(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   evas_object_smart_callback_call(data, "selection,paste", NULL);
    // FIXME: x clipboard/copy and paste - request
 }
 
@@ -112,7 +135,7 @@ static void
 _signal_entry_copy_notify(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, "selection,copy", NULL);
    // FIXME: x clipboard/copy & paste - do
 }
 
@@ -120,7 +143,9 @@ static void
 _signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, "selection,cut", NULL);
+   wd->changed = 1;
+   _sizing_eval(data);
    // FIXME: x clipboard/copy & paste - do
 }
 
@@ -244,6 +269,7 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
 	for (l = an; l; l = l->next)
 	  printf("ANCHOR: %s\n", l->data);
      }
+   wd->changed = 1;
    _sizing_eval(obj);
 }
 
@@ -266,6 +292,7 @@ elm_entry_entry_insert(Evas_Object *obj, const char *entry)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_part_text_insert(wd->ent, "elm.text", entry);
+   wd->changed = 1;
    _sizing_eval(obj);
 }
 
