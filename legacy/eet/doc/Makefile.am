@@ -19,14 +19,14 @@ doc: all doc-clean
 	rm -rf $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)
 	mv $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar.bz2 $(top_srcdir)
 
+clean-local: doc-clean
+
 else
 
 doc:
 	@echo "Documentation not built. Run ./configure --help"
 
 endif
-
-clean-local: doc-clean
 
 EXTRA_DIST = Doxyfile eet.css foot.html head.html img/ eet.c.in
 
