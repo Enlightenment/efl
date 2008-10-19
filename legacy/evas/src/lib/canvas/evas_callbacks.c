@@ -143,9 +143,12 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    
    if (!((obj->no_propagate) && (l_mod) && (*l_mod)))
      {
-	if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
-	    (type <= EVAS_CALLBACK_KEY_UP))
-	  evas_object_event_callback_call(obj->smart.parent, type, event_info);
+	if (!obj->no_propagate)
+	  {
+	     if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
+		 (type <= EVAS_CALLBACK_KEY_UP))
+	       evas_object_event_callback_call(obj->smart.parent, type, event_info);
+	  }
      }
    _evas_unwalk(e);
 }

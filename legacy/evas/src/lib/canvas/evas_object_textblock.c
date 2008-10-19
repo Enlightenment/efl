@@ -2493,7 +2493,16 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 	obj = l->data;
 	o = (Evas_Object_Textblock *)(obj->object_data);
 	if (o->markup_text)
-	  evas_object_textblock_text_markup_set(obj, o->markup_text);
+	  {
+	     char *m;
+	     
+	     m = strdup(o->markup_text);
+	     if (m)
+	       {
+		  evas_object_textblock_text_markup_set(obj, m);
+		  free(m);
+	       }
+	  }
      }
 }
 
