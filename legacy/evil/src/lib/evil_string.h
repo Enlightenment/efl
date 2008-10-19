@@ -13,5 +13,16 @@ EAPI char *strerror (int errnum);
 
 #endif /* __MINGW32CE__ */
 
+#ifndef __CEGCC__
+
+/*
+ * bit related functions
+ *
+ */
+
+EAPI int ffs(int i);
+
+#endif /* ! __CEGCC__ */
+
 
 #endif /* __EVIL_STRING_H__ */

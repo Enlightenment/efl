@@ -1,3 +1,13 @@
+2008-10-19  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/errno.h:
+	* src/lib/evil_errno.c:
+	export errno symbol.
+
+	* src/lib/evil_string.c:
+	* src/lib/evil_string.h:
+	add a (slow) implementation of ffs(). Needed for eina
+
 2008-10-16  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:

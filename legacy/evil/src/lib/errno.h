@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-extern int errno;
+extern EAPI int errno;
 
 /* Fake values */
 #define E2BIG           1

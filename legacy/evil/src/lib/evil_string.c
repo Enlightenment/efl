@@ -19,3 +19,27 @@ char *strerror (int errnum)
 }
 
 #endif /* __MINGW32CE__ */
+
+
+#ifndef __CEGCC__
+
+/*
+ * bit related functions
+ *
+ */
+
+int ffs(int i)
+{
+   int size;
+   int x;
+
+   if (!i) return 1;
+
+   /* remove the sign bit */
+   x = i & -i;
+   size = sizeof(int) << 3;
+   for (i = size; i > 0; --i, x << 1)
+     if (x & (1 << (size - 1))) return i;
+}
+
+#endif /* ! __CEGCC__ */
