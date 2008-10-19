@@ -44,11 +44,11 @@ static unsigned char em_init(Evas_Object *obj, void **emotion_video, Emotion_Mod
 
 	if (!emotion_video) return 0;
 
-	ev = (Emotion_Vlc_Video*)malloc(sizeof(Emotion_Vlc_Video));
+	ev = (Emotion_Vlc_Video*)calloc(1, sizeof(Emotion_Vlc_Video));
 	ASSERT_EV(ev) return 0;
 	memset(ev, 0, sizeof(Emotion_Vlc_Video));
 
-	ef = (Emotion_Vlc_Video_Frame*)malloc(sizeof(Emotion_Vlc_Video_Frame));
+	ef = (Emotion_Vlc_Video_Frame*)calloc(1, sizeof(Emotion_Vlc_Video_Frame));
 	if (!ef) return 0;
 	memset(ef, 0, sizeof(Emotion_Vlc_Video_Frame));
 
@@ -303,16 +303,6 @@ static void em_pos_set(void *ef, double pos)
 	CATCH(ev->vlc_ex)
 }
 
-static void em_vis_set(void *ef, Emotion_Vis vis)
-{
-	Emotion_Vlc_Video *ev;
-
-	ev = (Emotion_Vlc_Video *)ef;
-	ASSERT_EV(ev) return;
-	if (ev->vis == vis) return;
-	ev->vis = vis;
-}
-
 static double em_len_get(void *ef)
 {
 	Emotion_Vlc_Video *ev;
@@ -356,12 +346,30 @@ static double em_pos_get(void *ef)
 	return ev->pos;
 }
 
+static void em_vis_set(void *ef, Emotion_Vis vis)
+{
+	Emotion_Vlc_Video *ev;
+
+	ev = (Emotion_Vlc_Video *)ef;
+	ASSERT_EV(ev) return;
+	if (ev->vis == vis) return;
+	ev->vis = vis;
+}
+
 static Emotion_Vis em_vis_get(void *ef)
 {
 	Emotion_Vlc_Video *ev;
 
 	ev = (Emotion_Vlc_Video *)ef;
 	return ev->vis;
+}
+
+static Evas_Bool em_vis_supported(void *ef, Emotion_Vis vis)
+{
+	Emotion_Vlc_Video *ev;
+
+	ev = (Emotion_Vlc_Video *)ef;
+	return 0;
 }
 
 static double em_ratio_get(void *ef)
@@ -442,8 +450,23 @@ static void em_video_data_size_get(void *ef, int *w, int *h)
 
 static int em_yuv_rows_get(void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows)
 {
-	Emotion_Vlc_Video *ev;
-	return 0;
+   Emotion_Vlc_Video *ev;
+   volatile Emotion_Vlc_Video_Frame *fr;
+   
+   ev = (Emotion_Vlc_Video *)ef;
+   fr = ev->cur_frame;
+   if (!fr) return 0;
+   if (fr->frame_A)
+     {
+	int i;
+	
+	// FIXME: this is wrong. see xine/gst modules
+	for (i = 0; i < h; i++) yrows[i] = fr->frame_A + (i * w);
+	for (i = 0; i < (h / 2); i++) urows[i] = fr->frame_A + (i * w);
+	for (i = 0; i < (h / 2); i++) vrows[i] = fr->frame_A + (i * w);
+	return 1;
+     }
+   return 0;
 }
 
 static int em_bgra_data_get(void *ef, unsigned char **bgra_data)
@@ -1126,13 +1149,14 @@ static Emotion_Video_Module em_module =
 	em_stop, /* stop */
 	em_size_get, /* size_get */
 	em_pos_set, /* pos_set */
-	em_vis_set, /* vis_set */
 	em_len_get, /* len_get */
 	em_fps_num_get, /* fps_num_get */
 	em_fps_den_get, /* fps_den_get */
 	em_fps_get, /* fps_get */
 	em_pos_get, /* pos_get */
+	em_vis_set, /* vis_set */
 	em_vis_get, /* vis_get */
+        em_vis_supported, /* vis_supported */
 	em_ratio_get, /* ratio_get */
 	em_video_handled, /* video_handled */
 	em_audio_handled, /* audio_handled */
@@ -1140,7 +1164,7 @@ static Emotion_Video_Module em_module =
 	em_frame_done, /* frame_done */
 	em_format_get, /* format_get */
 	em_video_data_size_get, /* video_data_size_get */
-	NULL, /* yuv_rows_get */
+	em_yuv_rows_get, /* yuv_rows_get */
 	em_bgra_data_get, /* bgra_data_get */
 	em_event_feed, /* event_feed */
 	em_event_mouse_button_feed, /* event_mouse_button_feed */
