@@ -2,7 +2,7 @@
 #define __EVIL_TEST_MEMCPY__
 
 
-void test_memcpy(void);
+int test_memcpy(suite *s);
 
 
 #endif /* __EVIL_TEST_MEMCPY__ */

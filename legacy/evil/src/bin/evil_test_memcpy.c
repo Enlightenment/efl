@@ -1,7 +1,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/time.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -20,13 +19,22 @@ typedef void *(*memcpy_decl)(void *dest, const void *src, size_t n);
 void *memcpy_glibc(void *dest, const void *src, size_t n);
 
 
-extern unsigned char *buf1;
-extern unsigned char *buf2;
-extern size_t         page_size;
+static unsigned char *buf1 = NULL;
+static unsigned char *buf2 = NULL;
+static size_t         page_size = 0;
+
+
+#ifdef __MINGW32CE__
+static int
+getpagesize()
+{
+   return 1024;
+}
+#endif /* __MINGW32CE__ */
 
 
 static void
-test_memcpy_test_run(memcpy_decl fct, char *dst, const char *src, size_t len)
+test_memcpy_test_run(suite *s, memcpy_decl fct, char *dst, const char *src, size_t len)
 {
    double start;
    double end;
@@ -39,10 +47,10 @@ test_memcpy_test_run(memcpy_decl fct, char *dst, const char *src, size_t len)
      {
         double time;
 
-        suite_time_start();
+        suite_time_start(s);
         fct(dst, src, len);
-        suite_time_stop();
-        time = suite_time_get();
+        suite_time_stop(s);
+        time = suite_time_get(s);
         if (time < best) best = time;
      }
 
@@ -50,7 +58,7 @@ test_memcpy_test_run(memcpy_decl fct, char *dst, const char *src, size_t len)
 }
 
 static void
-test_memcpy_tests_run(size_t align1, size_t align2, size_t len)
+test_memcpy_tests_run(suite *s, size_t align1, size_t align2, size_t len)
 {
    size_t i, j;
    char *s1, *s2;
@@ -73,48 +81,68 @@ test_memcpy_tests_run(size_t align1, size_t align2, size_t len)
 
    printf ("length: %6d, align %2d/%2d:", (int)len, align1, align2);
 
-   test_memcpy_test_run(memcpy, s2, s1, len);
+   test_memcpy_test_run(s, memcpy, s2, s1, len);
 #ifdef EVIL_HAVE_WINCE
-   test_memcpy_test_run(memcpy_glibc, s2, s1, len);
+   test_memcpy_test_run(s, memcpy_glibc, s2, s1, len);
 #endif /* EVIL_HAVE_WINCE */
 
    printf ("\n");
 }
 
-void
-test_memcpy(void)
+int
+test_memcpy(suite *s)
 {
    size_t i;
 
+   page_size = 2 * 1024;
+
+   buf1 = (unsigned char *)malloc(16 * getpagesize());
+   if (!buf1) return 0;
+
+   buf2 = (unsigned char *)malloc(16 * getpagesize());
+   if (!buf2)
+     {
+        free(buf1);
+        return 0;
+     }
+
+   memset (buf1, 0xa5, page_size);
+   memset (buf2, 0x5a, page_size);
+
   for (i = 0; i < 18; ++i)
     {
-      test_memcpy_tests_run(0, 0, 1 << i);
-      test_memcpy_tests_run(i, 0, 1 << i);
-      test_memcpy_tests_run(0, i, 1 << i);
-      test_memcpy_tests_run(i, i, 1 << i);
+      test_memcpy_tests_run(s, 0, 0, 1 << i);
+      test_memcpy_tests_run(s, i, 0, 1 << i);
+      test_memcpy_tests_run(s, 0, i, 1 << i);
+      test_memcpy_tests_run(s, i, i, 1 << i);
     }
 
   for (i = 0; i < 32; ++i)
     {
-      test_memcpy_tests_run(0, 0, i);
-      test_memcpy_tests_run(i, 0, i);
-      test_memcpy_tests_run(0, i, i);
-      test_memcpy_tests_run(i, i, i);
+      test_memcpy_tests_run(s, 0, 0, i);
+      test_memcpy_tests_run(s, i, 0, i);
+      test_memcpy_tests_run(s, 0, i, i);
+      test_memcpy_tests_run(s, i, i, i);
     }
 
   for (i = 3; i < 32; ++i)
     {
       if ((i & (i - 1)) == 0)
 	continue;
-      test_memcpy_tests_run(0, 0, 16 * i);
-      test_memcpy_tests_run(i, 0, 16 * i);
-      test_memcpy_tests_run(0, i, 16 * i);
-      test_memcpy_tests_run(i, i, 16 * i);
+      test_memcpy_tests_run(s, 0, 0, 16 * i);
+      test_memcpy_tests_run(s, i, 0, 16 * i);
+      test_memcpy_tests_run(s, 0, i, 16 * i);
+      test_memcpy_tests_run(s, i, i, 16 * i);
     }
 
-  test_memcpy_tests_run(0, 0, getpagesize ());
-  test_memcpy_tests_run(0, 0, 2 * getpagesize ());
-  test_memcpy_tests_run(0, 0, 4 * getpagesize ());
-  test_memcpy_tests_run(0, 0, 8 * getpagesize ());
-  test_memcpy_tests_run(0, 0, 16 * getpagesize ());
+  test_memcpy_tests_run(s, 0, 0, getpagesize ());
+  test_memcpy_tests_run(s, 0, 0, 2 * getpagesize ());
+  test_memcpy_tests_run(s, 0, 0, 4 * getpagesize ());
+  test_memcpy_tests_run(s, 0, 0, 8 * getpagesize ());
+  test_memcpy_tests_run(s, 0, 0, 16 * getpagesize ());
+
+  free(buf2);
+  free(buf1);
+
+  return 1;
 }

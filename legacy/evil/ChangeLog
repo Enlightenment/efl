@@ -1,3 +1,11 @@
+2008-10-20  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/evil_suite.c:
+	* src/bin/evil_suite.h:
+	* src/bin/evil_test_memcpy.c:
+	* src/bin/evil_test_memcpy.h:
+	clean suite and memcpy test code
+
 2008-10-19  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/errno.h:

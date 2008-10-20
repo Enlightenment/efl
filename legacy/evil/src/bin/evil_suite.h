@@ -6,13 +6,9 @@ typedef struct test test;
 typedef struct list list;
 typedef struct suite suite;
 
-LARGE_INTEGER freq;
-LARGE_INTEGER start;
-LARGE_INTEGER end;
-
-void suite_time_start();
-void suite_time_stop();
-double suite_time_get();
+void suite_time_start(suite *s);
+void suite_time_stop(suite *s);
+double suite_time_get(suite *s);
 
 
 #endif /* __EVIL_SUITE_H__ */

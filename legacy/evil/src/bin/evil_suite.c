@@ -9,7 +9,7 @@
 #include "evil_test_memcpy.h"
 
 
-typedef void(*function)(void);
+typedef int(*function)(suite *s);
 
 struct test
 {
@@ -20,28 +20,19 @@ struct test
 struct list
 {
   void *data;
+   int  succeed;
   list *next;
 };
 
 struct suite
 {
+   LARGE_INTEGER freq;
+   LARGE_INTEGER start;
+   LARGE_INTEGER end;
+
    list         *first;
    list         *l;
 };
-
-
-unsigned char *buf1 = NULL;
-unsigned char *buf2 = NULL;
-size_t         page_size = 0;
-
-
-#ifdef __MINGW32CE__
-static int
-getpagesize()
-{
-   return 1024;
-}
-#endif /* __MINGW32CE__ */
 
 
 suite *
@@ -49,11 +40,14 @@ suite_new(void)
 {
    suite *s;
 
-   if (!QueryPerformanceFrequency(&freq))
-     return NULL;
-
    s = (suite *)malloc(sizeof(suite));
    if (!s) return NULL;
+
+   if (!QueryPerformanceFrequency(&s->freq))
+     {
+        free(s);
+        return NULL;
+     }
 
    s->first = NULL;
    s->l = NULL;
@@ -82,21 +76,21 @@ suite_del(suite *s)
 }
 
 void
-suite_time_start()
+suite_time_start(suite *s)
 {
-   QueryPerformanceCounter(&start);
+   QueryPerformanceCounter(&s->start);
 }
 
 void
-suite_time_stop()
+suite_time_stop(suite *s)
 {
-   QueryPerformanceCounter(&end);
+   QueryPerformanceCounter(&s->end);
 }
 
 double
-suite_time_get()
+suite_time_get(suite *s)
 {
-   return (double)(end.QuadPart - start.QuadPart) / (double)freq.QuadPart;
+   return (double)(s->end.QuadPart - s->start.QuadPart) / (double)s->freq.QuadPart;
 }
 
 void
@@ -119,6 +113,7 @@ suite_test_add(suite *s, const char *name, function fct)
    t->fct = fct;
 
    l->data = t;
+   l->succeed = 0;
    l->next = NULL;
 
    if (!s->first) s->first = l;
@@ -143,8 +138,8 @@ suite_run(suite *s)
         test *t;
 
         t = (test *)l->data;
-        printf("%s test\n", t->name);
-        t->fct();
+        l->succeed = t->fct(s);
+        printf("%s test: %s\n", t->name, l->succeed ? "success" : "failure");
         l = l->next;
      }
 }
@@ -153,34 +148,15 @@ int
 main()
 {
    test tests[] = {
-     { "memcpy", test_memcpy },
-     { NULL,             NULL },
+     { "memcpy",  test_memcpy },
+     { NULL,      NULL },
    };
    suite *s;
    int i;
 
-   page_size = 2 * 1024;
-
-   buf1 = (unsigned char *)malloc(16 * getpagesize());
-   if (!buf1) return EXIT_FAILURE;
-
-   buf2 = (unsigned char *)malloc(16 * getpagesize());
-   if (!buf2)
-     {
-        free(buf1);
-        return EXIT_FAILURE;
-     }
-
-   memset (buf1, 0xa5, page_size);
-   memset (buf2, 0x5a, page_size);
-
    s = suite_new();
    if (!s)
-     {
-        free(buf2);
-        free(buf1);
-        return EXIT_FAILURE;
-     }
+     return EXIT_FAILURE;
 
    for (i = 0; ; ++i)
      {
@@ -193,8 +169,6 @@ main()
    suite_run(s);
 
    suite_del(s);
-   free(buf2);
-   free(buf1);
 
    return EXIT_SUCCESS;
 }
