@@ -443,7 +443,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
         exponent += *str - '0';
      }
 
-   if (length <= 0) goto on_length_error;
+   if (length < 0) goto on_length_error;
 
    if (sign < 0)
      exponent = -exponent;
