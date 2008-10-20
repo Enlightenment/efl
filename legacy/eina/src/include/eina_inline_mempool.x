@@ -20,7 +20,6 @@
 #define EINA_INLINE_MEMPOOL_X_
 
 /* Memory Pool */
-typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 struct _Eina_Mempool_Backend
 {
    const char *name;
