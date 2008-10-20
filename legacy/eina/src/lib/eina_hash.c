@@ -369,7 +369,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
    Eina_Bool ok;
    int bucket;
 
-   if (!(it->index + 1 < it->hash->population)) return EINA_FALSE;
+   if (!(it->index < it->hash->population)) return EINA_FALSE;
    if (it->current == NULL)
      {
 	ok = EINA_FALSE;
@@ -389,6 +389,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
 	       {
 		  eina_iterator_free(it->current);
 		  it->current = NULL;
+		  it->bucket++;
 	       }
 	     else
 	       {
@@ -416,6 +417,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
 	  }
 	it->list = eina_rbtree_iterator_prefix(it->eh->head);
 	ok = eina_iterator_next(it->list, (void**) &it->el);
+	if (bucket == EINA_HASH_BUCKET_SIZE) ok = EINA_FALSE;
      }
 
    it->index++;
