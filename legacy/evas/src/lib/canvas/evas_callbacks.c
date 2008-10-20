@@ -41,16 +41,11 @@ evas_object_event_callback_clear(Evas_Object *obj)
 void
 evas_object_event_callback_all_del(Evas_Object *obj)
 {
-   Eina_Inlist *l;
+   Evas_Func_Node *fn;
 
    if (!obj->callbacks) return;
-   for (l = obj->callbacks->callbacks; l; l = l->next)
-     {
-	Evas_Func_Node *fn;
-
-	fn = (Evas_Func_Node *)l;
-	fn->delete_me = 1;
-     }
+   EINA_INLIST_ITER_NEXT(obj->callbacks->callbacks, fn)
+     fn->delete_me = 1;
 }
 
 void
@@ -380,7 +375,7 @@ EAPI void *
 evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
 {
    /* MEM OK */
-   Eina_Inlist *l;
+   Evas_Func_Node *fn;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -390,11 +385,8 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 
    if (!obj->callbacks) return NULL;
 
-   for (l = obj->callbacks->callbacks; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(obj->callbacks->callbacks, fn)
      {
-	Evas_Func_Node *fn;
-
-	fn = (Evas_Func_Node *)l;
 	if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
 	  {
 	     void *data;
@@ -440,7 +432,7 @@ EAPI void *
 evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
 {
    /* MEM OK */
-   Eina_Inlist *l;
+   Evas_Func_Node *fn;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -450,11 +442,8 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, v
 
    if (!obj->callbacks) return NULL;
 
-   for (l = obj->callbacks->callbacks; l; l = l->next)
+   EINA_INLIST_ITER_NEXT(obj->callbacks->callbacks, fn)
      {
-	Evas_Func_Node *fn;
-
-	fn = (Evas_Func_Node *)l;
 	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
 	  {
 	     void *data;
