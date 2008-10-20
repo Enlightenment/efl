@@ -5007,10 +5007,14 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
 						 it->w, it->h, it->w, it->h, it->text);
 #endif
+#define ITEM_WALK_LINE_SKIP_DROP() \
+   if ((ln->y + ln->h) <= 0) continue; \
+   if (ln->y > obj->cur.geometry.h) break
    
    pback = 0;
    /* backing */
    ITEM_WALK();
+   ITEM_WALK_LINE_SKIP_DROP();
    if ((it->format->backing) && (!pback) && ((EINA_INLIST_GET(it))->next))
      {
 	pback = 1;
@@ -5070,6 +5074,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    
    /* shadows */
    ITEM_WALK();
+   ITEM_WALK_LINE_SKIP_DROP();
    if (it->format->style == EVAS_TEXT_STYLE_SHADOW)
      {
 	COLOR_SET(shadow);
@@ -5114,6 +5119,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    
    /* glows */
    ITEM_WALK();
+   ITEM_WALK_LINE_SKIP_DROP();
    if (it->format->style == EVAS_TEXT_STYLE_GLOW)
      {
 	for (j = 0; j < 5; j++)
@@ -5137,6 +5143,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    
    /* outlines */
    ITEM_WALK();
+   ITEM_WALK_LINE_SKIP_DROP();
    if ((it->format->style == EVAS_TEXT_STYLE_OUTLINE) ||
        (it->format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
        (it->format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
@@ -5165,6 +5172,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    
    /* normal text */
    ITEM_WALK();
+   ITEM_WALK_LINE_SKIP_DROP();
    COLOR_SET(normal);
    DRAW_TEXT(0, 0);
    if ((it->format->strikethrough) && (!pstrike) && ((EINA_INLIST_GET(it))->next))
