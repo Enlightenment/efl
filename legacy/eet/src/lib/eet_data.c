@@ -26,6 +26,8 @@
 # include <winsock2.h>
 #endif
 
+#include <Eina.h>
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -545,7 +547,7 @@ eet_data_get_float(const Eet_Dictionary *ed, const void *src, const void *src_en
 
         if (_eet_data_float_cache_get(s, len, d) != 0) return len + 1;
 
-        _eet_string_to_double_convert(s, &mantisse, &exponent);
+	if (eina_convert_atod(s, len, &mantisse, &exponent) == EINA_FALSE) return -1;
         *d = (float)ldexp((double)mantisse, exponent);
 
         return len + 1;
@@ -564,7 +566,7 @@ eet_data_put_float(Eet_Dictionary *ed, const void *src, int *size_ret)
    char  buf[128];
    int   index;
 
-   _eet_double_to_string_convert(buf, (double)(*(float *)src));
+   eina_convert_dtoa((double)(*(float *)src), buf);
 
    if (!ed)
      {
@@ -608,7 +610,7 @@ eet_data_get_double(const Eet_Dictionary *ed, const void *src, const void *src_e
 
         if (_eet_data_double_cache_get(s, len, d) != 0) return len + 1;
 
-        _eet_string_to_double_convert(s, &mantisse, &exponent);
+	if (eina_convert_atod(s, len, &mantisse, &exponent) == EINA_FALSE) return -1;
         *d = ldexp((double) mantisse, exponent);
 
         return len + 1;
@@ -627,7 +629,7 @@ eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret)
    char  buf[128];
    int   index;
 
-   _eet_double_to_string_convert(buf, (double)(*(double *)src));
+   eina_convert_dtoa((double)(*(double *)src), buf);
 
    if (!ed)
      {

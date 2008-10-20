@@ -10,6 +10,8 @@
 #include <string.h>
 #include <math.h>
 
+#include <Eina.h>
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -264,7 +266,7 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed, int index, float *resu
                   long long    mantisse = 0;
                   long         exponent = 0;
 
-                  if (!_eet_string_to_double_convert(str, &mantisse, &exponent))
+                  if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
                     return 0;
 
                   ed->all[index].convert.f = ldexpf((float) mantisse, exponent);
@@ -299,7 +301,7 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *re
                   long long    mantisse = 0;
                   long         exponent = 0;
 
-                  if (!_eet_string_to_double_convert(str, &mantisse, &exponent))
+                  if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
                     return 0;
 
                   ed->all[index].convert.d = ldexp((double) mantisse, exponent);

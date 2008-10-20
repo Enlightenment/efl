@@ -80,8 +80,6 @@ int              eet_dictionary_string_get_double(const Eet_Dictionary *ed, int 
 int              eet_dictionary_string_get_hash(const Eet_Dictionary *ed, int index);
 
 int   _eet_hash_gen(const char *key, int hash_size);
-int   _eet_string_to_double_convert(const char *src, long long *m, long *e);
-void  _eet_double_to_string_convert(char des[128], double d);
 
 const void* eet_identity_check(const void *data_base, unsigned int data_length,
 			       const void *signature_base, unsigned int signature_length,

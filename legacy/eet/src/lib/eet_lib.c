@@ -51,6 +51,8 @@ void *alloca (size_t);
 # include <openssl/err.h>
 #endif
 
+#include <Eina.h>
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -702,6 +704,8 @@ eet_init(void)
    ERR_load_crypto_strings();
 #endif
 
+   eina_init();
+
    return eet_initcount;
 }
 
@@ -716,6 +720,8 @@ eet_shutdown(void)
 #ifdef HAVE_OPENSSL
    ERR_free_strings();
 #endif
+
+   eina_shutdown();
 
    return eet_initcount;
 }
