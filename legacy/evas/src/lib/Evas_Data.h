@@ -37,15 +37,9 @@
 typedef unsigned char Evas_Bool;
 
 #define Evas_List Eina_List
+#define Evas_Hash Eina_Hash
 
 typedef struct _Evas_Array_Hash  Evas_Array_Hash;
-typedef struct _Evas_Hash        Evas_Hash;              /**< A Hash table handle */
-
-struct _Evas_Hash
-{
-   int               population;
-   Eina_Inlist      *buckets[256];
-};
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,16 +65,48 @@ extern "C" {
     *
     * do we really need this? hmmm - let me think... there may be a better way
     */
-   EAPI Evas_Hash  *evas_hash_add                   (Evas_Hash *hash, const char *key, const void *data);
-   EAPI Evas_Hash  *evas_hash_direct_add            (Evas_Hash *hash, const char *key, const void *data);
-   EAPI Evas_Hash  *evas_hash_del                   (Evas_Hash *hash, const char *key, const void *data);
-   EAPI void       *evas_hash_find                  (const Evas_Hash *hash, const char *key);
-   EAPI void       *evas_hash_modify                (Evas_Hash *hash, const char *key, const void *data);
-   EAPI int         evas_hash_size                  (const Evas_Hash *hash);
-   EAPI void        evas_hash_free                  (Evas_Hash *hash);
-   EAPI void        evas_hash_foreach               (const Evas_Hash *hash, Evas_Bool (*func) (const Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
-   EAPI int         evas_hash_alloc_error           (void);
+  static inline Eina_Hash *evas_hash_add(Eina_Hash *hash, const char *key, const void *data)
+  {
+     if (!hash) hash = eina_hash_string_superfast_new(NULL);
+     if (!hash) return NULL;
 
+     eina_hash_add(hash, key, data);
+     return hash;
+  }
+
+  static inline Eina_Hash *evas_hash_direct_add(Eina_Hash *hash, const char *key, const void *data)
+  {
+     if (!hash) hash = eina_hash_string_superfast_new(NULL);
+     if (!hash) return NULL;
+
+     eina_hash_direct_add(hash, key, data);
+     return hash;
+  }
+
+  static inline Eina_Hash *evas_hash_del(Eina_Hash *hash, const char *key, const void *data)
+  {
+     if (!hash) return NULL;
+     eina_hash_del(hash, key, data);
+
+     if (eina_hash_population(hash) == 0)
+       {
+	  eina_hash_free(hash);
+	  return NULL;
+       }
+
+     return hash;
+  }
+  static inline int evas_hash_size(const Eina_Hash *hash)
+  {
+     if (!hash) return 0;
+     return 255;
+  }
+
+  #define evas_hash_find eina_hash_find
+  #define evas_hash_modify eina_hash_modify
+  #define evas_hash_free eina_hash_free
+  #define evas_hash_foreach eina_hash_foreach
+  #define evas_hash_alloc_error eina_error_get
 
   /*
    * Evas List functions

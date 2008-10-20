@@ -498,7 +498,7 @@ evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir)
 {
    int sz_hash = 0;
 
-   if (fi->glyphs) sz_hash = sizeof(Evas_Hash);
+   if (fi->glyphs) sz_hash = evas_hash_size(fi->glyphs);
    evas_hash_foreach(fi->glyphs, font_modify_cache_cb, &dir);
    font_cache_usage += dir * (sizeof(RGBA_Font) + sz_hash +
 			      sizeof(FT_FaceRec) + 16384); /* fudge values */
