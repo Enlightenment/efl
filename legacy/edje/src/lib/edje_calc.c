@@ -2,6 +2,8 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <eina_convert.h>
+
 #include "edje_private.h"
 
 #define FLAG_NONE 0
@@ -1183,65 +1185,9 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
      }
 }
 
-static int
-_edje_nitoa_rec(char *string, int len, unsigned int value)
-{
-   const char	*array = "0123456789";
-   int		 length;
-   int		 quotient;
-   int		 modulo;
-
-   if (len <= 0) return 0;
-   if (value == 0) return 0;
-
-   quotient = value / 10;
-   modulo = value % 10;
-
-   length = _edje_nitoa_rec(string, len - 1, quotient);
-
-   if (length + 1 > len) return length;
-
-   string[length] = array[modulo];
-
-   return length + 1;
-}
-
-static int
-_edje_nitoa(char *string, int len, int value)
-{
-   int	length;
-
-   if (len <= 0) return 0;
-   if (len == 1)
-     {
-	*string = '\0';
-	return 1;
-     }
-
-   if (value < 0)
-     {
-	*string = '-';
-
-	++string;
-	--len;
-     }
-
-   if (value == 0)
-     {
-	strncpy(string, "0", len);
-	return 1;
-     }
-
-   length = _edje_nitoa_rec(string, len, value);
-   string[length] = '\0';
-
-   return length;
-}
-
 static void
 _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc, double pos)
 {
-   char buf[4096];
    int image_id;
    int image_count, image_num;
 
@@ -1297,10 +1243,12 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	  }
 	else
 	  {
+	     char buf[1024];
+
 	     /* Replace snprint("images/%i") == memcpy + itoa */
 #define IMAGES "images/"
 	     memcpy(buf, IMAGES, strlen(IMAGES));
-	     _edje_nitoa(buf + strlen(IMAGES), sizeof(buf) - strlen(IMAGES), image_id);
+	     eina_convert_itoa(image_id, buf + strlen(IMAGES)); /* No need to check length as 2³² need only 10 characteres. */
 
 	     evas_object_image_file_set(ep->object, ed->file->path, buf);
 	     if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
