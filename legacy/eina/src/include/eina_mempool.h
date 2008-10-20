@@ -29,6 +29,8 @@
  */
 typedef struct _Eina_Mempool Eina_Mempool;
 
+#include "eina_inline_mempool.x"
+
 EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 EAPI int eina_mempool_init(void);
@@ -46,8 +48,6 @@ EAPI void eina_mempool_statistics(Eina_Mempool *mp);
 
 EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be);
 EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be);
-
-#include "eina_inline_mempool.x"
 
 /** @} */
 
