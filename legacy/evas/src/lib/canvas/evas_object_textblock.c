@@ -532,6 +532,7 @@ static const char escape_strings[] =
 	"&lt;\0\x3c\0"
 	"&gt;\0\x3e\0"
 	"&amp;\0\x26\0"
+	" \0\x20\0" /* NOTE: this here to avoid escaping to &nbsp */
 	"&nbsp;\0\x20\0" /* NOTE: we allow nsbp's to break as we map early - maybe map to ascii 0x01 and then make the rendering code think 0x01 -> 0x20 */
 	"&quot;\0\x22\0"
 	/* all the rest */
@@ -2064,6 +2065,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->align = 0.0;
 
    _format_command_init();
+   printf("LAYOUT!\n");
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
@@ -2597,6 +2599,40 @@ _is_eq_and_advance(const char *s, const char *s_end,
    return s == s_end;
 }
 
+static inline const char *
+_escaped_char_match(const char *s, int *adv)
+{
+   const char *map_itr, *map_end, *mc, *sc;
+
+   map_itr = escape_strings;
+   map_end = map_itr + sizeof(escape_strings);
+
+   while (map_itr < map_end)
+     {
+	const char *escape;
+	int match;
+	
+	escape = map_itr;
+	_advance_after_end_of_string(&map_itr);
+	mc = map_itr;
+	sc = s;
+	match = 1;
+	while ((*mc) && (*sc))
+	  {
+	     if (*sc != *mc) match = 0;
+	     mc++;
+	     sc++;
+	  }
+	if (match)
+	  {
+	     *adv = mc - map_itr;
+	     return escape;
+	  }
+	_advance_after_end_of_string(&map_itr);
+     }
+   return NULL;
+}
+
 static inline void
 _append_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 		     const char *s_end)
@@ -2956,31 +2992,29 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 	  }
 	else if ((n->type == NODE_TEXT) && (n->text))
 	  {
-	     if (strchr(n->text, '<') || strchr(n->text, '>') ||
-		 strchr(n->text, '&'))
+	     const char *p = n->text;
+	     
+	     while (*p)
 	       {
-		  char *p;
+		  const char *escape;
+		  int adv;
 		  
-		  p = n->text;
-		  while (*p)
+		  escape = _escaped_char_match(p, &adv);
+		  if (escape)
 		    {
-		       char s[2];
+		       p += adv;
+		       txt = _strbuf_append(txt, escape, &txt_len, &txt_alloc);
+		    }
+		  else
+		    {
+		       char str[2];
 		       
-		       s[0] = *p;
-		       s[1] = 0;
-		       if (s[0] == '<')
-			 txt = _strbuf_append(txt, "&lt;", &txt_len, &txt_alloc);
-		       else if (s[0] == '>')
-			 txt = _strbuf_append(txt, "&gt;", &txt_len, &txt_alloc);
-		       else if (s[0] == '&')
-			 txt = _strbuf_append(txt, "&amp;", &txt_len, &txt_alloc);
-		       else
-			 txt = _strbuf_append(txt, s, &txt_len, &txt_alloc);
+		       str[0] = *p;
+		       str[1] = 0;
+		       txt = _strbuf_append(txt, str, &txt_len, &txt_alloc);
 		       p++;
 		    }
 	       }
-	     else
-	       txt = _strbuf_append(txt, n->text, &txt_len, &txt_alloc);
 	  }
      }
    o->markup_text = txt;
@@ -4257,8 +4291,8 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n1, *n2, *n;
-   char *str = NULL, *s;
-   int len = 0, alloc = 0, chr, index;
+   char *txt = NULL, *s;
+   int txt_len = 0, txt_alloc = 0, chr, index;
    
    if (!cur1) return NULL;
    if (!cur2) return NULL;
@@ -4283,66 +4317,47 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 	     s = n->text;
 	     if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
 	       {
-		  if (strchr(n->text, '<') || strchr(n->text, '>') ||
-		      strchr(n->text, '&'))
+		  char *p, *ps, *pe;
+		  
+		  if ((n == n1) && (n == n2))
 		    {
-		       char *p, *ps, *pe;
-		       
-		       if ((n == n1) && (n == n2))
-			 {
-			    ps = n->text + cur1->pos;
-			    pe = ps + index - cur1->pos + 1;
-			 }
-		       else if (n == n1)
-			 {
-			    ps = n->text + cur1->pos;
-			    pe = ps + strlen(ps);
-			 }
-		       else if (n == n2)
-			 {
-			    ps = n->text;
-			    pe = ps + cur1->pos + 1;
-			 }
-		       else
-			 {
-			    ps = n->text;
-			    pe = ps + strlen(ps);
-			 }
-		       for (p = ps; p < pe; p++)
-			 {
-			    char st[2];
-			    
-			    st[0] = *p;
-			    st[1] = 0;
-			    if (st[0] == '<')
-			      str = _strbuf_append(str, "&lt;", &len, &alloc);
-			    else if (st[0] == '>')
-			      str = _strbuf_append(str, "&gt;", &len, &alloc);
-			    else if (st[0] == '&')
-			      str = _strbuf_append(str, "&amp;", &len, &alloc);
-			    else
-			      str = _strbuf_append(str, st, &len, &alloc);
-			 }
+		       ps = n->text + cur1->pos;
+		       pe = ps + index - cur1->pos + 1;
+		    }
+		  else if (n == n1)
+		    {
+		       ps = n->text + cur1->pos;
+		       pe = ps + strlen(ps);
+		    }
+		  else if (n == n2)
+		    {
+		       ps = n->text;
+		       pe = ps + cur1->pos + 1;
 		    }
 		  else
 		    {
-		       if ((n == n1) && (n == n2))
+		       ps = n->text;
+		       pe = ps + strlen(ps);
+		    }
+		  while (p < pe)
+		    {
+		       const char *escape;
+		       int adv;
+		       
+		       escape = _escaped_char_match(p, &adv);
+		       if (escape)
 			 {
-			    s += cur1->pos;
-			    str = _strbuf_append_n(str, s, index - cur1->pos, &len, &alloc);
-			 }
-		       else if (n == n1)
-			 {
-			    s += cur1->pos;
-			    str = _strbuf_append(str, s, &len, &alloc);
-			 }
-		       else if (n == n2)
-			 {
-			    str = _strbuf_append_n(str, s, index, &len, &alloc);
+			    p += adv;
+			    txt = _strbuf_append(txt, escape, &txt_len, &txt_alloc);
 			 }
 		       else
 			 {
-			    str = _strbuf_append(str, s, &len, &alloc);
+			    char str[2];
+			    
+			    str[0] = *p;
+			    str[1] = 0;
+			    txt = _strbuf_append(txt, str, &txt_len, &txt_alloc);
+			    p++;
 			 }
 		    }
 	       }
@@ -4351,21 +4366,21 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		  if ((n == n1) && (n == n2))
 		    {
 		       s += cur1->pos;
-		       str = _strbuf_append_n(str, s, index - cur1->pos, &len, &alloc);
+		       txt = _strbuf_append_n(txt, s, index - cur1->pos, &txt_len, &txt_alloc);
 		       
 		    }
 		  else if (n == n1)
 		    {
 		       s += cur1->pos;
-		       str = _strbuf_append(str, s, &len, &alloc);
+		       txt = _strbuf_append(txt, s, &txt_len, &txt_alloc);
 		    }
 		  else if (n == n2)
 		    {
-		       str = _strbuf_append_n(str, s, index, &len, &alloc);
+		       txt = _strbuf_append_n(txt, s, index, &txt_len, &txt_alloc);
 		    }
 		  else
 		    {
-		       str = _strbuf_append(str, s, &len, &alloc);
+		       txt = _strbuf_append(txt, s, &txt_len, &txt_alloc);
 		    }
 	       }
 	  }
@@ -4377,20 +4392,20 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		  while (*s)
 		    {
 		       if (*s == '\n')
-			 str = _strbuf_append(str, "\n", &len, &alloc);
+			 txt = _strbuf_append(txt, "\n", &txt_len, &txt_alloc);
 		       else if (*s == '\t')
-			 str = _strbuf_append(str, "\t", &len, &alloc);
+			 txt = _strbuf_append(txt, "\t", &txt_len, &txt_alloc);
 		       s++;
 		    }
 	       }
 	     else if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
 	       {
 		  char *tag = _style_match_replace(o->style, n->text);
-		  str = _strbuf_append(str, "<", &len, &alloc);
+		  txt = _strbuf_append(txt, "<", &txt_len, &txt_alloc);
 		  if (tag)
 		    {
 		       // FIXME: need to escape
-		       str = _strbuf_append(str, tag, &len, &alloc);
+		       txt = _strbuf_append(txt, tag, &txt_len, &txt_alloc);
 		    }
 		  else
 		    {
@@ -4402,16 +4417,16 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		       if (*s == '+') push = 1;
 		       if (*s == '-') pop = 1;
 		       while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
-		       if (pop) str = _strbuf_append(str, "/", &len, &alloc);
-		       if (push) str = _strbuf_append(str, "+ ", &len, &alloc);
-		       str = _strbuf_append(str, s, &len, &alloc);
+		       if (pop) txt = _strbuf_append(txt, "/", &txt_len, &txt_alloc);
+		       if (push) txt = _strbuf_append(txt, "+ ", &txt_len, &txt_alloc);
+		       txt = _strbuf_append(txt, s, &txt_len, &txt_alloc);
 		    }
-		  str = _strbuf_append(str, ">", &len, &alloc);
+		  txt = _strbuf_append(txt, ">", &txt_len, &txt_alloc);
 	       }
 	  }
 	if (n == n2) break;
      }
-   return str;
+   return txt;
 }
 
 /*
