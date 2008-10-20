@@ -2065,7 +2065,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->align = 0.0;
 
    _format_command_init();
-   printf("LAYOUT!\n");
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
@@ -4963,22 +4962,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
-#if 0 /* using for some debugging. will go soon */
-    obj->layer->evas->engine.func->context_color_set(output,
-                                                     context,
-                                                     230, 160, 30, 100);
-    obj->layer->evas->engine.func->rectangle_draw(output,
-                                                  context,
-                                                  surface,
-                                                  obj->cur.geometry.x + x,
-                                                  obj->cur.geometry.y + y,
-                                                  obj->cur.geometry.w,
-                                                  obj->cur.geometry.h);
-////                                                  obj->cur.cache.geometry.x + x,
-////                                                  obj->cur.cache.geometry.y + y,
-////                                                  obj->cur.cache.geometry.w,
-////                                                  obj->cur.cache.geometry.h);
-#endif
 #define ITEM_WALK() \
    EINA_INLIST_ITER_NEXT(o->lines, ln) \
      { \
