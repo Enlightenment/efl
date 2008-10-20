@@ -57,8 +57,4 @@ eina_mempool_free(Eina_Mempool *mp, void *element)
    mp->backend.free(mp->backend_data, element);
 }
 
-/* FIXME Do we actually need to export this functions?? */
-Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be);
-void eina_mempool_unregister(Eina_Mempool_Backend *be);
-
 #endif

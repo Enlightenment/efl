@@ -92,12 +92,12 @@ void fixed_bitmap_shutdown(void);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be)
+EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be)
 {
-	return eina_hash_add(_backends, be->name, be);	
+	return eina_hash_add(_backends, be->name, be);
 }
 
-void eina_mempool_unregister(Eina_Mempool_Backend *be)
+EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be)
 {
 	eina_hash_del(_backends, be->name, be);
 }

@@ -44,6 +44,9 @@ static inline void eina_mempool_free(Eina_Mempool *mp, void *element);
 EAPI void eina_mempool_gc(Eina_Mempool *mp);
 EAPI void eina_mempool_statistics(Eina_Mempool *mp);
 
+EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be);
+EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be);
+
 #include "eina_inline_mempool.x"
 
 /** @} */
