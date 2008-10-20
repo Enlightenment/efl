@@ -278,7 +278,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	  }
 	if (bind(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
 	  {
-	    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) &&
+	    if (((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM)) &&
 		(connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) &&
 		(unlink(buf) >= 0))
 	      goto start;
