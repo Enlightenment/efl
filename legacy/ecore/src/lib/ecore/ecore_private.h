@@ -17,6 +17,8 @@
 #include <limits.h>
 #include <dirent.h>
 
+#include <eina_types.h>
+
 #ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
 #endif
@@ -52,12 +54,6 @@
 // BROKEN in gcc 4 on amd64
 //#  pragma GCC visibility push(hidden)
 # endif
-#endif
-
-#if HAVE___ATTRIBUTE__
-# define __UNUSED__ __attribute__((unused))
-#else
-# define __UNUSED__
 #endif
 
 #ifndef PATH_MAX

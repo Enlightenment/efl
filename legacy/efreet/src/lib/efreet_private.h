@@ -29,10 +29,10 @@
 #include <alloca.h>
 #endif
 
+#include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Ecore_Str.h>
-#include <eina_stringshare.h>
 
 #include "efreet_xml.h"
 #include "efreet_ini.h"
@@ -98,16 +98,6 @@
     } \
     (x) = NULL; \
 } while (0)
-
-/**
- * @def __UNUSED__
- * A flag to mark a function parameter as unused
- */
-#if HAVE___ATTRIBUTE__
-#define __UNUSED__ __attribute__((unused))
-#else
-#define __UNUSED__
-#endif
 
 #ifndef PATH_MAX
 /**

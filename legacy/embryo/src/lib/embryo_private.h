@@ -30,6 +30,8 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <eina_types.h>
+
 #include "Embryo.h"
 
 #ifdef __GNUC__
@@ -37,12 +39,6 @@ void *alloca (size_t);
 // BROKEN in gcc 4 on amd64
 //#  pragma GCC visibility push(hidden)
 # endif
-#endif
-
-#if HAVE___ATTRIBUTE__
-#define __UNUSED__ __attribute__((unused))
-#else
-#define __UNUSED__
 #endif
 
 typedef enum _Embryo_Opcode Embryo_Opcode;

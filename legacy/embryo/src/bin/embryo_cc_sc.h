@@ -35,14 +35,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <setjmp.h>
+
+#include <eina_types.h>
+
 #include "embryo_cc_osdefs.h"
 #include "embryo_cc_amx.h"
-
-#if HAVE___ATTRIBUTE__
-#define __UNUSED__ __attribute__((unused))
-#else
-#define __UNUSED__
-#endif
 
 /* Note: the "cell" and "ucell" types are defined in AMX.H */
 
