@@ -9,7 +9,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EINA_CFLAGS@
 
 include_HEADERS = Embryo.h
 
@@ -25,7 +26,7 @@ embryo_str.c \
 embryo_time.c
 
 libembryo_la_CFLAGS = @WIN32_CFLAGS@
-libembryo_la_LIBADD = -lm @fnmatch_libs@
+libembryo_la_LIBADD = -lm @fnmatch_libs@ @EINA_LIBS@
 libembryo_la_DEPENDENCIES = $(top_builddir)/config.h
 libembryo_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
 

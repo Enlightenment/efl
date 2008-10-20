@@ -30,6 +30,8 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+PKG_CHECK_MODULES([EINA], [eina-0])
+
 WIN32_CFLAGS=""
 lt_no_undefined=""
 lt_enable_auto_import=""
