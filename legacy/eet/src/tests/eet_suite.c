@@ -13,6 +13,8 @@
 # include <config.h>
 #endif
 
+#include <Eina.h>
+
 #include "eet_suite.h"
 
 START_TEST(eet_test_init)
@@ -275,10 +277,10 @@ struct _Eet_Test_Ex_Type
    double d2;
    double d3;
    double d4;
-   Eet_List *list;
-   Eet_Hash *hash;
-   Eet_List *ilist;
-   Eet_Hash *ihash;
+   Eina_List *list;
+   Eina_Hash *hash;
+   Eina_List *ilist;
+   Eina_Hash *ihash;
    Eet_Test_Basic_Type sarray1[10];
    unsigned int sarray2[5];
    unsigned int varray1_count;
@@ -444,36 +446,29 @@ _eet_test_ex_check(Eet_Test_Ex_Type *stuff, int offset)
    return 0;
 }
 
-static int
-func(const Eet_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+func(__UNUSED__ const Eina_Hash *hash, const char *key, void *data, void *fdata)
 {
    int *res = fdata;
-
-   /* FIXME: Use attribute unused */
-   (void) hash;
 
    if (strcmp(key, EET_TEST_KEY1) != 0
        && strcmp(key, EET_TEST_KEY2) != 0) *res = 1;
    if (_eet_test_ex_check(data, 2)) *res = 1;
 
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
-func7(const Eet_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+func7(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const char *key, void *data, void *fdata)
 {
    int *res = fdata;
    int *val;
-
-   /* FIXME: Use attribute unused */
-   (void) hash;
-   (void) key;
 
    val = data;
    if (!val) *res = 1;
    if (*val != 7) *res = 1;
 
-   return 1;
+   return EINA_TRUE;
 }
 
 START_TEST(eet_test_data_type_encoding_decoding)
@@ -489,10 +484,12 @@ START_TEST(eet_test_data_type_encoding_decoding)
    eet_init();
 
    _eet_test_ex_set(&etbt, 0);
-   etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
-   etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
-   etbt.ilist = eet_list_prepend(etbt.ilist, &i42);
-   etbt.ihash = eet_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
+   etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
+   etbt.hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
+   etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
+   etbt.ihash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -510,14 +507,14 @@ START_TEST(eet_test_data_type_encoding_decoding)
    fail_if(!result);
 
    fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eet_list_data(result->list), 1) != 0);
-   fail_if(eet_list_data(result->ilist) == NULL);
-   fail_if(*((int*)eet_list_data(result->ilist)) != 42);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(eina_list_data_get(result->ilist) == NULL);
+   fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
 
    test = 0;
-   eet_hash_foreach(result->hash, func, &test);
+   eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eet_hash_foreach(result->ihash, func7, &test);
+   eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    eet_shutdown();
@@ -555,14 +552,18 @@ START_TEST(eet_test_data_type_dump_undump)
    eet_init();
 
    _eet_test_ex_set(&etbt, 0);
-   etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
-   etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
-   etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
-   etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY2, _eet_test_ex_set(NULL, 2));
-   etbt.ilist = eet_list_prepend(etbt.ilist, &i42);
-   etbt.ilist = eet_list_prepend(etbt.ilist, &i42);
-   etbt.ihash = eet_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
-   etbt.ihash = eet_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
+   etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
+   etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
+   etbt.hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
+   etbt.hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.hash, EET_TEST_KEY2, _eet_test_ex_set(NULL, 2));
+   etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
+   etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
+   etbt.ihash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
+   etbt.ihash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -594,14 +595,14 @@ START_TEST(eet_test_data_type_dump_undump)
    fail_if(!result);
 
    fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eet_list_data(result->list), 1) != 0);
-   fail_if(eet_list_data(result->ilist) == NULL);
-   fail_if(*((int*)eet_list_data(result->ilist)) != 42);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(eina_list_data_get(result->ilist) == NULL);
+   fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
 
    test = 0;
-   eet_hash_foreach(result->hash, func, &test);
+   eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eet_hash_foreach(result->ihash, func7, &test);
+   eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    eet_shutdown();
@@ -683,14 +684,18 @@ START_TEST(eet_file_data_test)
    eet_init();
 
    _eet_test_ex_set(&etbt, 0);
-   etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
-   etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
-   etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
-   etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY2, _eet_test_ex_set(NULL, 2));
-   etbt.ilist = eet_list_prepend(etbt.ilist, &i42);
-   etbt.ilist = eet_list_prepend(etbt.ilist, &i42);
-   etbt.ihash = eet_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
-   etbt.ihash = eet_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
+   etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
+   etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
+   etbt.hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
+   etbt.hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.hash, EET_TEST_KEY2, _eet_test_ex_set(NULL, 2));
+   etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
+   etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
+   etbt.ihash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
+   etbt.ihash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -753,14 +758,14 @@ START_TEST(eet_file_data_test)
 
    /* Test the resulting data. */
    fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eet_list_data(result->list), 1) != 0);
-   fail_if(eet_list_data(result->ilist) == NULL);
-   fail_if(*((int*)eet_list_data(result->ilist)) != 42);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(eina_list_data_get(result->ilist) == NULL);
+   fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
 
    test = 0;
-   eet_hash_foreach(result->hash, func, &test);
+   eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eet_hash_foreach(result->ihash, func7, &test);
+   eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    list = eet_list(ef, "keys/*", &size);
@@ -809,14 +814,18 @@ START_TEST(eet_file_data_dump_test)
    eet_init();
 
    _eet_test_ex_set(&etbt, 0);
-   etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
-   etbt.list = eet_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
-   etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
-   etbt.hash = eet_hash_add(etbt.hash, EET_TEST_KEY2, _eet_test_ex_set(NULL, 2));
-   etbt.ilist = eet_list_prepend(etbt.ilist, &i42);
-   etbt.ilist = eet_list_prepend(etbt.ilist, &i42);
-   etbt.ihash = eet_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
-   etbt.ihash = eet_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
+   etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
+   etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
+   etbt.hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
+   etbt.hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.hash, EET_TEST_KEY2, _eet_test_ex_set(NULL, 2));
+   etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
+   etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
+   etbt.ihash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
+   etbt.ihash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -859,14 +868,14 @@ START_TEST(eet_file_data_dump_test)
 
    /* Test the resulting data. */
    fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eet_list_data(result->list), 1) != 0);
-   fail_if(eet_list_data(result->ilist) == NULL);
-   fail_if(*((int*)eet_list_data(result->ilist)) != 42);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(eina_list_data_get(result->ilist) == NULL);
+   fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
 
    test = 0;
-   eet_hash_foreach(result->hash, func, &test);
+   eina_hash_foreach(result->hash, func, &test);
    fail_if(test != 0);
-   eet_hash_foreach(result->ihash, func7, &test);
+   eina_hash_foreach(result->ihash, func7, &test);
    fail_if(test != 0);
 
    fail_if(unlink(file) != 0);
