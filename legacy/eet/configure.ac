@@ -183,6 +183,8 @@ if test "x$prefer_assert" = "xno"; then
 fi
 AC_SUBST(DEBUG_CFLAGS)
 
+PKG_CHECK_MODULES(EINA, [eina-0])
+
 EFL_CHECK_DOXYGEN([enable_doc="yes"], [enable_doc="no"])
 
 AC_OUTPUT([
