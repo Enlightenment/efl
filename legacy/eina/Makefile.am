@@ -4,9 +4,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src doc
 
-DISTCLEANFILES = \
-eina-@VMAJ@.pc.in
-
 MAINTAINERCLEANFILES = \
 Makefile.in \
 aclocal.m4 \
@@ -21,15 +18,15 @@ ltconfig \
 ltmain.sh \
 missing
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = eina-0.pc
+
 EXTRA_DIST = \
 AUTHORS \
 COPYING \
 OLD-COPYING.PLAIN \
 README \
-eina-@VMAJ@.pc.in
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = eina-@VMAJ@.pc
+$(pkgconfig_DATA)
 
 .PHONY: doc coverage benchmark
 

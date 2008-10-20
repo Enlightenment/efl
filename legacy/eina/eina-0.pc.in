@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Eina
+Description: A Library that implements fast data types and miscellaneous tools
+Requires:
+Version: @VERSION@
+Libs: -L${exec_prefix}/lib -leina
+Libs.private: -ldl
+Cflags: -I${prefix}/include/eina-@VMAJ@ -I${prefix}/include/eina-@VMAJ@/eina

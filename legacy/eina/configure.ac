@@ -8,7 +8,7 @@ AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
 
-AM_INIT_AUTOMAKE(1.10 dist-bzip2)
+AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
 AC_LIBTOOL_WIN32_DLL
@@ -307,7 +307,7 @@ EOF
 
 AC_CONFIG_FILES([
 Makefile
-eina-${VMAJ}.pc
+eina-0.pc
 doc/Makefile
 src/Makefile
 src/include/Makefile
