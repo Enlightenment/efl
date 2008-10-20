@@ -287,20 +287,20 @@ AC_FUNC_ALLOCA
 
 
 ### Create the .pc.in file according to the major version
-cat > ${srcdir}/eina-${VMAJ}.pc.in << EOF
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-includedir=@includedir@
-
-Name: Eina
-Description: A Library that implements fast data types and miscellaneous tools
-Requires:
-Version: @VERSION@
-Libs: -L${libdir} -leina
-Libs.private: -ldl
-Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
-EOF
+#cat > ${srcdir}/eina-${VMAJ}.pc.in << EOF
+#prefix=@prefix@
+#exec_prefix=@exec_prefix@
+#libdir=@libdir@
+#includedir=@includedir@
+#
+#Name: Eina
+#Description: A Library that implements fast data types and miscellaneous tools
+#Requires:
+#Version: @VERSION@
+#Libs: -L${libdir} -leina
+#Libs.private: -ldl
+#Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
+#EOF
 
 
 ### Make the debug preprocessor configurable
