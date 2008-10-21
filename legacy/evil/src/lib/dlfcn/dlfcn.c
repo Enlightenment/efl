@@ -2,7 +2,7 @@
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 # include <limits.h>
-#endif /* __MINGW32CE__ */
+#endif /* __CEGCC__ || __MINGW32CE__ */
 
 #include "../Evil.h"
 
@@ -11,12 +11,6 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "dlfcn.h"
-
-#if HAVE___ATTRIBUTE__
-# define __UNUSED__ __attribute__((unused))
-#else
-# define __UNUSED__
-#endif /* HAVE___ATTRIBUTE__ */
 
 
 static char *dl_err = NULL;

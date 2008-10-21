@@ -16,12 +16,6 @@
 
 #include "sys/mman.h"
 
-#if HAVE___ATTRIBUTE__
-# define __UNUSED__ __attribute__((unused))
-#else
-# define __UNUSED__
-#endif /* HAVE___ATTRIBUTE__ */
-
 #if defined(__CEGCC__)
 # define _get_osfhandle get_osfhandle
 # elif defined (__MINGW32CE__)

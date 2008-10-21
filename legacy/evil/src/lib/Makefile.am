@@ -24,7 +24,6 @@ nobase_include_HEADERS += fnmatch.h errno.h
 endif
 
 libevil_la_SOURCES = \
-evil.c \
 evil_errno.c \
 evil_fcntl.c \
 evil_fnmatch.c \

@@ -1,5 +1,18 @@
 2008-10-21  Vincent Torri  <doursse at users dot sf dot net>
 
+	* m4/ac_attribute.m4:
+	use newer file from PROTO/autotools
+
+	* src/lib/dlfcn/dlfcn.c:
+	* src/lib/evil_mman.c:
+	no need to define __UNUSED__ anymore with the new m4 macro
+
+	* src/lib/Makefile.am:
+	* src/lib/evil.c:
+	remove useless file
+
+2008-10-21  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/Evil.h:
 	use getcwd() from evil_unistd.c
 
